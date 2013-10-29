@@ -6790,7 +6790,6 @@
     <ClCompile Include="..\page\CaptionUserPreferencesMediaAF.cpp">
       <Filter>page</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSSVGGraphicsElement.cpp" />
     <ClCompile Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateAVCF.cpp">
       <Filter>platform\graphics\avfoundation\cf</Filter>
     </ClCompile>
@@ -6799,6 +6798,9 @@
     </ClCompile>
     <ClCompile Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateLegacyAVCF.cpp">
       <Filter>platform\graphics\avfoundation\cf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\win\StructuredExceptionHandlerSuppressor.cpp">
+      <Filter>platform\win</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -15220,5 +15222,10 @@
     <CustomBuildStep Include="..\rendering\RenderThemeWin.h">
       <Filter>rendering</Filter>
     </CustomBuildStep>
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="..\platform\win\makesafeseh.asm">
+      <Filter>platform\win</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

@@ -58,6 +58,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -4180,6 +4181,7 @@
     <ClCompile Include="..\platform\win\SharedBufferWin.cpp" />
     <ClCompile Include="..\platform\win\SharedTimerWin.cpp" />
     <ClCompile Include="..\platform\win\SoundWin.cpp" />
+    <ClCompile Include="..\platform\win\StructuredExceptionHandlerSuppressor.cpp" />
     <ClCompile Include="..\platform\win\SystemInfo.cpp" />
     <ClCompile Include="..\platform\win\TemporaryLinkStubs.cpp" />
     <ClCompile Include="..\platform\win\WCDataObject.cpp">
@@ -13281,6 +13283,9 @@
     <None Include="..\css\mediaControls.css" />
     <None Include="..\css\plugIns.css" />
     <None Include="..\css\quirks.css" />
+    <MASM Include="..\platform\win\makesafeseh.asm">
+      <FileType>Document</FileType>
+    </MASM>
     <None Include="..\xml\XPathGrammar.y" />
     <None Include="..\bindings\scripts\CodeGenerator.pm" />
     <None Include="..\bindings\scripts\CodeGeneratorJS.pm" />
@@ -13553,5 +13558,6 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
   </ImportGroup>
 </Project>
