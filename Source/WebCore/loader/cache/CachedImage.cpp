@@ -313,7 +313,7 @@ inline void CachedImage::createImage()
         return;
 #if USE(CG) && !USE(WEBKIT_IMAGE_DECODERS)
     else if (m_response.mimeType() == "application/pdf")
-        m_image = PDFDocumentImage::create();
+        m_image = PDFDocumentImage::create(this);
 #endif
 #if ENABLE(SVG)
     else if (m_response.mimeType() == "image/svg+xml") {

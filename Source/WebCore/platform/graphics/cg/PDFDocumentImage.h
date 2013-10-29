@@ -26,6 +26,7 @@
 #ifndef PDFDocumentImage_h
 #define PDFDocumentImage_h
 
+#include "AffineTransform.h"
 #include "FloatRect.h"
 #include "GraphicsTypes.h"
 #include "Image.h"
@@ -42,17 +43,20 @@ OBJC_CLASS PDFDocument;
 namespace WebCore {
 
 class GraphicsContext;
+class ImageBuffer;
 
-class PDFDocumentImage : public Image {
+class PDFDocumentImage FINAL : public Image {
 public:
-    static PassRefPtr<PDFDocumentImage> create()
+    static PassRefPtr<PDFDocumentImage> create(ImageObserver* observer)
     {
-        return adoptRef(new PDFDocumentImage);
+        return adoptRef(new PDFDocumentImage(observer));
     }
 
 private:
-    PDFDocumentImage();
+    PDFDocumentImage(ImageObserver*);
     virtual ~PDFDocumentImage();
+
+    virtual bool isPDFDocumentImage() const OVERRIDE { return true; }
 
     virtual String filenameExtension() const OVERRIDE;
 
@@ -60,10 +64,8 @@ private:
 
     virtual bool dataChanged(bool allDataReceived) OVERRIDE;
 
-    // FIXME: PDF Images are underreporting decoded sizes and will be unable
-    // to prune because these functions are not implemented yet.
-    virtual void destroyDecodedData(bool /*destroyAll*/ = true) OVERRIDE { }
-    virtual unsigned decodedSize() const OVERRIDE { return 0; }
+    virtual void destroyDecodedData(bool /*destroyAll*/ = true) OVERRIDE;
+    virtual unsigned decodedSize() const OVERRIDE;
 
     virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) OVERRIDE;
     virtual IntSize size() const OVERRIDE;
@@ -80,11 +82,20 @@ private:
     unsigned pageCount() const;
     void drawPDFPage(GraphicsContext*);
 
+    void updateCachedImageIfNeeded(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect);
+    bool cacheParametersMatch(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect) const;
+
 #if USE(PDFKIT_FOR_PDFDOCUMENTIMAGE)
     RetainPtr<PDFDocument> m_document;
 #else
     RetainPtr<CGPDFDocumentRef> m_document;
 #endif
+
+    OwnPtr<ImageBuffer> m_cachedImageBuffer;
+    AffineTransform m_cachedTransform;
+    FloatSize m_cachedDestinationSize;
+    FloatRect m_cachedSourceRect;
+    size_t m_cachedBytes;
 
     FloatRect m_mediaBox;
     FloatRect m_cropBox;
