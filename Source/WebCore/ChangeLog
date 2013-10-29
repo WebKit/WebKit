@@ -3,6 +3,16 @@
         Get IDBTransactionBackendLevelDBOperations *almost* ready to go cross platform.
         https://bugs.webkit.org/show_bug.cgi?id=123451
 
+        Reviewed by NOBODY (My bad, non-reviewed, non-building code got in there)
+
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::processPendingCalls): Remove the auto line I was trying from review feedback.
+
+2013-10-29  Brady Eidson  <beidson@apple.com>
+
+        Get IDBTransactionBackendLevelDBOperations *almost* ready to go cross platform.
+        https://bugs.webkit.org/show_bug.cgi?id=123451
+
         Reviewed by Andreas Kling.
 
         This involves:

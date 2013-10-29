@@ -422,7 +422,6 @@ void IDBDatabaseBackendImpl::processPendingCalls()
     Deque<OwnPtr<IDBPendingOpenCall>> pendingOpenCalls;
     m_pendingOpenCalls.swap(pendingOpenCalls);
 
-    auto pendingOpenCalls = std::move(m_pendingOpenCalls);
     while (!pendingOpenCalls.isEmpty()) {
         OwnPtr<IDBPendingOpenCall> pendingOpenCall = pendingOpenCalls.takeFirst();
         openConnection(pendingOpenCall->callbacks(), pendingOpenCall->databaseCallbacks(), pendingOpenCall->transactionId(), pendingOpenCall->version());
