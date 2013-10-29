@@ -440,6 +440,9 @@ webkit.org/b/123431 [ Mavericks ] http/tests/local/link-stylesheet-load-order.ht
 
 [ Mavericks ] editing/selection/5057506-2.html [ ImageOnlyFailure ]
 
+# <rdar://problem/15171108>
+[ Mavericks ] fast/forms/form-associated-element-removal.html [ Crash Pass ]
+
 ### END OF (3) Unclassified failures
 ########################################
 

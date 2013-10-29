@@ -1,3 +1,10 @@
+2013-10-29  Simon Fraser  <simon.fraser@apple.com>
+
+        fast/forms/form-associated-element-removal.html can crash because of an underlying
+        media bug.
+        
+        * platform/mac-wk2/TestExpectations:
+
 2013-10-25  Brent Fulgham  <bfulgham@apple.com>
 
         [MathML] invalid cast in WebCore::toRenderMathMLBlock
