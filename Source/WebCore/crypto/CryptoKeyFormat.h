@@ -23,48 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoKey_h
-#define CryptoKey_h
-
-#include "CryptoAlgorithmIdentifier.h"
-#include "CryptoKeyType.h"
-#include "CryptoKeyUsage.h"
-#include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+#ifndef CryptoKeyFormat_h
+#define CryptoKeyFormat_h
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-class CryptoAlgorithmDescriptionBuilder;
+ENUM_CLASS(CryptoKeyFormat) {
+    // An unformatted sequence of bytes. Intended for secret keys.
+    Raw,
 
-ENUM_CLASS(CryptoKeyType) {
-    Secret,
-    Public,
-    Private
+    // The DER encoding of the PrivateKeyInfo structure from RFC 5208.
+    PKCS8,
+
+    // The DER encoding of the SubjectPublicKeyInfo structure from RFC 5280.
+    SPKI,
+
+    // The key is represented as JSON according to the JSON Web Key format.
+    JWK
 };
 
-class CryptoKey : public RefCounted<CryptoKey> {
-public:
-    CryptoKey(CryptoAlgorithmIdentifier, CryptoKeyType, bool extractable, CryptoKeyUsage);
-    virtual ~CryptoKey();
-
-    String type() const;
-    bool extractable() const { return m_extractable; }
-    virtual void buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder&) const;
-    Vector<String> usages() const;
-
-    bool allows(CryptoKeyUsage usage) const { return usage == (m_usages & usage); }
-
-private:
-    CryptoAlgorithmIdentifier m_algorithm;
-    CryptoKeyType m_type;
-    bool m_extractable;
-    CryptoKeyUsage m_usages;
-};
-
-} // namespace WebCore
+}
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoKey_h
+#endif // CryptoKeyFormat_h

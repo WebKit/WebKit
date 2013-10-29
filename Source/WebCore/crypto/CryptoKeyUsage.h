@@ -23,48 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoKey_h
-#define CryptoKey_h
-
-#include "CryptoAlgorithmIdentifier.h"
-#include "CryptoKeyType.h"
-#include "CryptoKeyUsage.h"
-#include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+#ifndef CryptoKeyUsage_h
+#define CryptoKeyUsage_h
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-class CryptoAlgorithmDescriptionBuilder;
-
-ENUM_CLASS(CryptoKeyType) {
-    Secret,
-    Public,
-    Private
+enum {
+    CryptoKeyUsageEncrypt = 1 << 0,
+    CryptoKeyUsageDecrypt = 1 << 1,
+    CryptoKeyUsageSign = 1 << 2,
+    CryptoKeyUsageVerify = 1 << 3,
+    CryptoKeyUsageDeriveKey = 1 << 4,
+    CryptoKeyUsageDeriveBits = 1 << 5,
+    CryptoKeyUsageWrapKey = 1 << 6,
+    CryptoKeyUsageUnwrapKey = 1 << 7
 };
 
-class CryptoKey : public RefCounted<CryptoKey> {
-public:
-    CryptoKey(CryptoAlgorithmIdentifier, CryptoKeyType, bool extractable, CryptoKeyUsage);
-    virtual ~CryptoKey();
+typedef int CryptoKeyUsage;
 
-    String type() const;
-    bool extractable() const { return m_extractable; }
-    virtual void buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder&) const;
-    Vector<String> usages() const;
-
-    bool allows(CryptoKeyUsage usage) const { return usage == (m_usages & usage); }
-
-private:
-    CryptoAlgorithmIdentifier m_algorithm;
-    CryptoKeyType m_type;
-    bool m_extractable;
-    CryptoKeyUsage m_usages;
-};
-
-} // namespace WebCore
+}
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoKey_h
+#endif // CryptoKeyUsage_h

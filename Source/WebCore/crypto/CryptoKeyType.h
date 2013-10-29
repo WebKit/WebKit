@@ -23,21 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoKey_h
-#define CryptoKey_h
-
-#include "CryptoAlgorithmIdentifier.h"
-#include "CryptoKeyType.h"
-#include "CryptoKeyUsage.h"
-#include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+#ifndef CryptoKeyType_h
+#define CryptoKeyType_h
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
-
-class CryptoAlgorithmDescriptionBuilder;
 
 ENUM_CLASS(CryptoKeyType) {
     Secret,
@@ -45,26 +36,7 @@ ENUM_CLASS(CryptoKeyType) {
     Private
 };
 
-class CryptoKey : public RefCounted<CryptoKey> {
-public:
-    CryptoKey(CryptoAlgorithmIdentifier, CryptoKeyType, bool extractable, CryptoKeyUsage);
-    virtual ~CryptoKey();
-
-    String type() const;
-    bool extractable() const { return m_extractable; }
-    virtual void buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder&) const;
-    Vector<String> usages() const;
-
-    bool allows(CryptoKeyUsage usage) const { return usage == (m_usages & usage); }
-
-private:
-    CryptoAlgorithmIdentifier m_algorithm;
-    CryptoKeyType m_type;
-    bool m_extractable;
-    CryptoKeyUsage m_usages;
-};
-
 } // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoKey_h
+#endif // CryptoKeyType_h

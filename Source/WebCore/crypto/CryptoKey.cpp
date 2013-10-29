@@ -29,17 +29,62 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoAlgorithmDescriptionBuilder.h"
+#include "CryptoAlgorithmRegistry.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+CryptoKey::CryptoKey(CryptoAlgorithmIdentifier algorithm, CryptoKeyType type, bool extractable, CryptoKeyUsage usages)
+    : m_algorithm(algorithm)
+    , m_type(type)
+    , m_extractable(extractable)
+    , m_usages(usages)
+{
+}
 
 CryptoKey::~CryptoKey()
 {
 }
 
-void CryptoKey::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& /*builder*/) const
+String CryptoKey::type() const
 {
-    // Will do something like builder.add("name", m_algorithmName);
+    switch (m_type) {
+    case CryptoKeyType::Secret:
+        return ASCIILiteral("secret");
+    case CryptoKeyType::Public:
+        return ASCIILiteral("public");
+    case CryptoKeyType::Private:
+        return ASCIILiteral("private");
+    }
+}
+
+void CryptoKey::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& builder) const
+{
+    builder.add("name", CryptoAlgorithmRegistry::shared().nameForIdentifier(m_algorithm));
     // Subclasses will add other keys.
+}
+
+Vector<String> CryptoKey::usages() const
+{
+    Vector<String> result;
+    if (m_usages & CryptoKeyUsageEncrypt)
+        result.append(ASCIILiteral("encrypt"));
+    if (m_usages & CryptoKeyUsageDecrypt)
+        result.append(ASCIILiteral("decrypt"));
+    if (m_usages & CryptoKeyUsageSign)
+        result.append(ASCIILiteral("sign"));
+    if (m_usages & CryptoKeyUsageVerify)
+        result.append(ASCIILiteral("verify"));
+    if (m_usages & CryptoKeyUsageDeriveKey)
+        result.append(ASCIILiteral("deriveKey"));
+    if (m_usages & CryptoKeyUsageDeriveBits)
+        result.append(ASCIILiteral("deriveBits"));
+    if (m_usages & CryptoKeyUsageWrapKey)
+        result.append(ASCIILiteral("wrapKey"));
+    if (m_usages & CryptoKeyUsageUnwrapKey)
+        result.append(ASCIILiteral("unwrapKey"));
+
+    return result;
 }
 
 } // namespace WebCore
