@@ -1,8 +1,8 @@
 2013-10-29  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed Mac debug build fix after r158183.
-        Remove the duplicated << overloaded operator from RemoteLayerTreeTransaction for printing out
-        a given FloatSize object. The RemoteLayerTreeTransaction inherits from TextStream, which already
+        Remove the duplicated << overloaded operator from RemoteLayerTreeTextStream for printing out
+        a given FloatSize object. The RemoteLayerTreeTextStream inherits from TextStream, which already
         provides that overloaded operator. Format of the output is a bit different so hopefully nothing
         breaks further.
 
