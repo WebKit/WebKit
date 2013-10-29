@@ -161,7 +161,7 @@ void RenderThemeGtk::adjustRepaintRect(const RenderObject* renderObject, IntRect
 {
     GtkStyleContext* context = 0;
     bool checkInteriorFocus = false;
-    ControlPart part = renderObject->style()->appearance();
+    ControlPart part = renderObject->style().appearance();
     switch (part) {
     case CheckboxPart:
     case RadioPart:
@@ -242,7 +242,7 @@ static void paintToggle(const RenderThemeGtk* theme, GType widgetType, RenderObj
         rect.setHeight(indicatorSize); // In case rect.height() was equal to indicatorSize + 1.
     }
 
-    gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style()->direction())));
+    gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style().direction())));
     gtk_style_context_add_class(context, widgetType == GTK_TYPE_CHECK_BUTTON ? GTK_STYLE_CLASS_CHECK : GTK_STYLE_CLASS_RADIO);
 
     guint flags = 0;
@@ -368,7 +368,7 @@ bool RenderThemeGtk::paintButton(RenderObject* renderObject, const PaintInfo& pa
     GtkStyleContext* context = getStyleContext(GTK_TYPE_BUTTON);
     gtk_style_context_save(context);
 
-    gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style()->direction())));
+    gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style().direction())));
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_BUTTON);
 
     renderButton(this, context, renderObject, paintInfo, rect);
@@ -467,7 +467,7 @@ int RenderThemeGtk::popupInternalPaddingBottom(RenderStyle* style) const
 bool RenderThemeGtk::paintMenuList(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     cairo_t* cairoContext = paintInfo.context->platformContext()->cr();
-    GtkTextDirection direction = static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style()->direction()));
+    GtkTextDirection direction = static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style().direction()));
 
     // Paint the button.
     GtkStyleContext* buttonStyleContext = getStyleContext(GTK_TYPE_BUTTON);
@@ -600,7 +600,7 @@ bool RenderThemeGtk::paintTextField(RenderObject* renderObject, const PaintInfo&
     GtkStyleContext* context = getStyleContext(GTK_TYPE_ENTRY);
     gtk_style_context_save(context);
 
-    gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style()->direction())));
+    gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style().direction())));
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_ENTRY);
 
     guint flags = 0;
@@ -645,13 +645,13 @@ static void applySliderStyleContextClasses(GtkStyleContext* context, ControlPart
 
 bool RenderThemeGtk::paintSliderTrack(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    ControlPart part = renderObject->style()->appearance();
+    ControlPart part = renderObject->style().appearance();
     ASSERT_UNUSED(part, part == SliderHorizontalPart || part == SliderVerticalPart || part == MediaVolumeSliderPart);
 
     GtkStyleContext* context = getStyleContext(GTK_TYPE_SCALE);
     gtk_style_context_save(context);
 
-    gtk_style_context_set_direction(context, gtkTextDirection(renderObject->style()->direction()));
+    gtk_style_context_set_direction(context, gtkTextDirection(renderObject->style().direction()));
     applySliderStyleContextClasses(context, part);
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_TROUGH);
 
@@ -680,13 +680,13 @@ bool RenderThemeGtk::paintSliderTrack(RenderObject* renderObject, const PaintInf
 
 bool RenderThemeGtk::paintSliderThumb(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    ControlPart part = renderObject->style()->appearance();
+    ControlPart part = renderObject->style().appearance();
     ASSERT(part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart || part == MediaVolumeSliderThumbPart);
 
     GtkStyleContext* context = getStyleContext(GTK_TYPE_SCALE);
     gtk_style_context_save(context);
 
-    gtk_style_context_set_direction(context, gtkTextDirection(renderObject->style()->direction()));
+    gtk_style_context_set_direction(context, gtkTextDirection(renderObject->style().direction()));
     applySliderStyleContextClasses(context, part);
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_SLIDER);
 
@@ -857,7 +857,7 @@ bool RenderThemeGtk::paintInnerSpinButton(RenderObject* renderObject, const Pain
     GtkStyleContext* context = getStyleContext(GTK_TYPE_SPIN_BUTTON);
     gtk_style_context_save(context);
 
-    GtkTextDirection direction = static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style()->direction()));
+    GtkTextDirection direction = static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style().direction()));
     gtk_style_context_set_direction(context, direction);
 
     guint flags = 0;

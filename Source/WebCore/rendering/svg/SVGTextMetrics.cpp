@@ -65,18 +65,17 @@ SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText* textRenderer, const TextRun&
 
 TextRun SVGTextMetrics::constructTextRun(RenderSVGInlineText* text, const UChar* characters, unsigned position, unsigned length)
 {
-    RenderStyle* style = text->style();
-    ASSERT(style);
+    const RenderStyle& style = text->style();
 
     TextRun run(characters + position
                 , length
                 , 0 /* xPos, only relevant with allowTabs=true */
                 , 0 /* padding, only relevant for justified text, not relevant for SVG */
                 , TextRun::AllowTrailingExpansion
-                , style->direction()
-                , isOverride(style->unicodeBidi()) /* directionalOverride */);
+                , style.direction()
+                , isOverride(style.unicodeBidi()) /* directionalOverride */);
 
-    if (textRunNeedsRenderingContext(style->font()))
+    if (textRunNeedsRenderingContext(style.font()))
         run.setRenderingContext(SVGTextRunRenderingContext::create(*text));
 
     run.disableRoundingHacks();
@@ -100,7 +99,7 @@ SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText* text, unsigned position, uns
 {
     ASSERT(text);
 
-    bool needsContext = textRunNeedsRenderingContext(text->style()->font());
+    bool needsContext = textRunNeedsRenderingContext(text->style().font());
     float scalingFactor = text->scalingFactor();
     ASSERT(scalingFactor);
 

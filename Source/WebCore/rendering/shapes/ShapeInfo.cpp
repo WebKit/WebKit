@@ -59,10 +59,10 @@ const Shape* ShapeInfo<RenderType>::computedShape() const
     if (Shape* shape = m_shape.get())
         return shape;
 
-    WritingMode writingMode = m_renderer->style()->writingMode();
-    Length margin = m_renderer->style()->shapeMargin();
-    Length padding = m_renderer->style()->shapePadding();
-    float shapeImageThreshold = m_renderer->style()->shapeImageThreshold();
+    WritingMode writingMode = m_renderer->style().writingMode();
+    Length margin = m_renderer->style().shapeMargin();
+    Length padding = m_renderer->style().shapePadding();
+    float shapeImageThreshold = m_renderer->style().shapeImageThreshold();
     const ShapeValue* shapeValue = this->shapeValue();
     ASSERT(shapeValue);
 

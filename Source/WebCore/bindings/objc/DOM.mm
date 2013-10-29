@@ -382,7 +382,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     auto renderer = core(self)->renderer();
     if (!renderer)
         return nil;
-    return renderer->style()->font().primaryFont()->getNSFont();
+    return renderer->style().font().primaryFont()->getNSFont();
 }
 
 - (NSData *)_imageTIFFRepresentation

@@ -80,15 +80,15 @@ PassRefPtr<RenderStyle> PseudoElement::customStyleForRenderer()
 void PseudoElement::didAttachRenderers()
 {
     RenderElement* renderer = this->renderer();
-    if (!renderer || renderer->style()->hasFlowFrom())
+    if (!renderer || renderer->style().hasFlowFrom())
         return;
 
-    RenderStyle* style = renderer->style();
-    ASSERT(style->contentData());
+    RenderStyle& style = renderer->style();
+    ASSERT(style.contentData());
 
-    for (const ContentData* content = style->contentData(); content; content = content->next()) {
-        RenderObject* child = content->createRenderer(document(), *style);
-        if (renderer->isChildAllowed(*child, *style)) {
+    for (const ContentData* content = style.contentData(); content; content = content->next()) {
+        RenderObject* child = content->createRenderer(document(), style);
+        if (renderer->isChildAllowed(*child, style)) {
             renderer->addChild(child);
             if (child->isQuote())
                 toRenderQuote(child)->attachQuote();
@@ -114,7 +114,7 @@ void PseudoElement::didRecalcStyle(Style::Change)
         // We only manage the style for the generated content which must be images or text.
         if (!child->isImage())
             continue;
-        toRenderImage(child)->setPseudoStyle(renderer->style());
+        toRenderImage(child)->setPseudoStyle(&renderer->style());
     }
 }
 

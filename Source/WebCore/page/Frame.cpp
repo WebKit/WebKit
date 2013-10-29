@@ -342,7 +342,7 @@ String Frame::searchForLabelsAboveCell(RegularExpression* regExp, HTMLTableCellE
         // search within the above cell we found for a match
         size_t lengthSearched = 0;    
         for (Text* textNode = TextNodeTraversal::firstWithin(aboveCell); textNode; textNode = TextNodeTraversal::next(textNode, aboveCell)) {
-            if (!textNode->renderer() || textNode->renderer()->style()->visibility() != VISIBLE)
+            if (!textNode->renderer() || textNode->renderer()->style().visibility() != VISIBLE)
                 continue;
             // For each text chunk, run the regexp
             String nodeString = textNode->data();
@@ -397,7 +397,7 @@ String Frame::searchForLabelsBeforeElement(const Vector<String>& labels, Element
                 return result;
             }
             searchedCellAbove = true;
-        } else if (n->isTextNode() && n->renderer() && n->renderer()->style()->visibility() == VISIBLE) {
+        } else if (n->isTextNode() && n->renderer() && n->renderer()->style().visibility() == VISIBLE) {
             // For each text chunk, run the regexp
             String nodeString = n->nodeValue();
             // add 100 for slop, to make it more likely that we'll search whole nodes
@@ -510,7 +510,7 @@ FloatSize Frame::resizePageRectsKeepingRatio(const FloatSize& originalSize, cons
     if (!contentRenderer())
         return FloatSize();
 
-    if (contentRenderer()->style()->isHorizontalWritingMode()) {
+    if (contentRenderer()->style().isHorizontalWritingMode()) {
         ASSERT(fabs(originalSize.width()) > numeric_limits<float>::epsilon());
         float ratio = originalSize.height() / originalSize.width();
         resultSize.setWidth(floorf(expectedSize.width()));
@@ -1036,7 +1036,7 @@ DragImageRef Frame::nodeImage(Node* node)
 
     ImageOrientationDescription orientationDescription(renderer->shouldRespectImageOrientation());
 #if ENABLE(CSS_IMAGE_ORIENTATION)
-    orientationDescription.setImageOrientationEnum(renderer->style()->imageOrientation());
+    orientationDescription.setImageOrientationEnum(renderer->style().imageOrientation());
 #endif
     return createDragImageFromImage(image.get(), orientationDescription);
 }

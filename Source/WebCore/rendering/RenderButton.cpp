@@ -65,8 +65,8 @@ void RenderButton::addChild(RenderObject* newChild, RenderObject* beforeChild)
     if (!m_inner) {
         // Create an anonymous block.
         ASSERT(!firstChild());
-        m_inner = createAnonymousBlock(style()->display());
-        setupInnerStyle(m_inner->style());
+        m_inner = createAnonymousBlock(style().display());
+        setupInnerStyle(&m_inner->style());
         RenderFlexibleBox::addChild(m_inner);
     }
     
@@ -94,9 +94,9 @@ void RenderButton::styleWillChange(StyleDifference diff, const RenderStyle& newS
         // it right below. Here we change it back to 0 to avoid getting a spurious layout hint
         // because of the difference. Same goes for the other properties.
         // FIXME: Make this hack unnecessary.
-        m_inner->style()->setFlexGrow(newStyle.initialFlexGrow());
-        m_inner->style()->setMarginTop(newStyle.initialMargin());
-        m_inner->style()->setMarginBottom(newStyle.initialMargin());
+        m_inner->style().setFlexGrow(newStyle.initialFlexGrow());
+        m_inner->style().setMarginTop(newStyle.initialMargin());
+        m_inner->style().setMarginBottom(newStyle.initialMargin());
     }
     RenderBlock::styleWillChange(diff, newStyle);
 }
@@ -106,7 +106,7 @@ void RenderButton::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     RenderBlock::styleDidChange(diff, oldStyle);
 
     if (m_inner) // RenderBlock handled updating the anonymous block's style.
-        setupInnerStyle(m_inner->style());
+        setupInnerStyle(&m_inner->style());
 
     if (!m_default && theme()->isDefault(this)) {
         if (!m_timer)
@@ -131,7 +131,7 @@ void RenderButton::setupInnerStyle(RenderStyle* innerStyle)
     // when the content overflows, treat it the same as align-items: flex-start.
     innerStyle->setMarginTop(Length());
     innerStyle->setMarginBottom(Length());
-    innerStyle->setFlexDirection(style()->flexDirection());
+    innerStyle->setFlexDirection(style().flexDirection());
 }
 
 void RenderButton::updateFromElement()

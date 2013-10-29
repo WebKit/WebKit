@@ -106,7 +106,7 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, R
     if (!image || !(image->isBitmapImage() || image->isPDFDocumentImage()) || context->paintingDisabled())
         return false;
 
-    switch (object->style()->imageRendering()) {
+    switch (object->style().imageRendering()) {
     case ImageRenderingOptimizeSpeed:
     case ImageRenderingCrispEdges:
         return true;

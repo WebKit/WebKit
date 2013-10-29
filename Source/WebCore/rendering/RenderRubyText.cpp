@@ -53,7 +53,7 @@ bool RenderRubyText::isChildAllowed(const RenderObject& child, const RenderStyle
 
 ETextAlign RenderRubyText::textAlignmentForLine(bool endsWithSoftBreak) const
 {
-    ETextAlign textAlign = style()->textAlign();
+    ETextAlign textAlign = style().textAlign();
     // FIXME: This check is bogus since user can set the initial value.
     if (textAlign != RenderStyle::initialTextAlign())
         return RenderBlockFlow::textAlignmentForLine(endsWithSoftBreak);
@@ -64,7 +64,7 @@ ETextAlign RenderRubyText::textAlignmentForLine(bool endsWithSoftBreak) const
 
 void RenderRubyText::adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const
 {
-    ETextAlign textAlign = style()->textAlign();
+    ETextAlign textAlign = style().textAlign();
     // FIXME: This check is bogus since user can set the initial value.
     if (textAlign != RenderStyle::initialTextAlign())
         return RenderBlockFlow::adjustInlineDirectionLineBounds(expansionOpportunityCount, logicalLeft, logicalWidth);
@@ -77,7 +77,7 @@ void RenderRubyText::adjustInlineDirectionLineBounds(int expansionOpportunityCou
     // ruby character on each side.
     float inset = (logicalWidth - maxPreferredLogicalWidth) / (expansionOpportunityCount + 1);
     if (expansionOpportunityCount)
-        inset = min<float>(2 * style()->fontSize(), inset);
+        inset = min<float>(2 * style().fontSize(), inset);
 
     logicalLeft += inset / 2;
     logicalWidth -= inset;

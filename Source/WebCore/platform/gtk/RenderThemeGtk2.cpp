@@ -112,7 +112,7 @@ static void adjustRectForFocus(GtkWidget* widget, IntRect& rect, bool ignoreInte
 
 void RenderThemeGtk::adjustRepaintRect(const RenderObject* renderObject, IntRect& rect)
 {
-    ControlPart part = renderObject->style()->appearance();
+    ControlPart part = renderObject->style().appearance();
     switch (part) {
     case CheckboxPart:
     case RadioPart: {
@@ -163,7 +163,7 @@ static void paintToggle(RenderThemeGtk* theme, RenderObject* renderObject, const
     // checked state. Every GTK+ theme I tested merely looks at the shadow type (and not the
     // 'active' property) to determine whether or not to draw the check.
     gtk_widget_set_sensitive(widget, theme->isEnabled(renderObject) && !theme->isReadOnlyControl(renderObject));
-    gtk_widget_set_direction(widget, gtkTextDirection(renderObject->style()->direction()));
+    gtk_widget_set_direction(widget, gtkTextDirection(renderObject->style().direction()));
 
     bool indeterminate = theme->isIndeterminate(renderObject);
     gtk_toggle_button_set_inconsistent(GTK_TOGGLE_BUTTON(widget), indeterminate);
@@ -238,7 +238,7 @@ bool RenderThemeGtk::paintButton(RenderObject* object, const PaintInfo& info, co
 
     GtkStateType state = getGtkStateType(this, object);
     gtk_widget_set_state(widget, state);
-    gtk_widget_set_direction(widget, gtkTextDirection(object->style()->direction()));
+    gtk_widget_set_direction(widget, gtkTextDirection(object->style().direction()));
 
     if (isFocused(object)) {
         setWidgetHasFocus(widget, TRUE);
@@ -378,7 +378,7 @@ bool RenderThemeGtk::paintMenuList(RenderObject* object, const PaintInfo& info, 
 
     int leftBorder = 0, rightBorder = 0, bottomBorder = 0, topBorder = 0;
     getButtonInnerBorder(gtkComboBoxButton(), leftBorder, topBorder, rightBorder, bottomBorder);
-    RenderStyle* style = object->style();
+    RenderStyle* style = &object->style();
     int arrowSize = comboBoxArrowSize(style);
     GtkStyle* buttonStyle = gtk_widget_get_style(gtkComboBoxButton());
 
@@ -429,7 +429,7 @@ bool RenderThemeGtk::paintTextField(RenderObject* renderObject, const PaintInfo&
     bool enabled = isEnabled(renderObject) && !isReadOnlyControl(renderObject);
     GtkStateType backgroundState = enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE;
     gtk_widget_set_sensitive(widget, enabled);
-    gtk_widget_set_direction(widget, gtkTextDirection(renderObject->style()->direction()));
+    gtk_widget_set_direction(widget, gtkTextDirection(renderObject->style().direction()));
     setWidgetHasFocus(widget, isFocused(renderObject));
 
     WidgetRenderingContext widgetContext(info.context, rect);
@@ -470,7 +470,7 @@ bool RenderThemeGtk::paintSliderTrack(RenderObject* object, const PaintInfo& inf
     if (info.context->paintingDisabled())
         return false;
 
-    ControlPart part = object->style()->appearance();
+    ControlPart part = object->style().appearance();
     ASSERT(part == SliderHorizontalPart || part == SliderVerticalPart || part == MediaVolumeSliderPart);
 
     // We shrink the trough rect slightly to make room for the focus indicator.
@@ -483,7 +483,7 @@ bool RenderThemeGtk::paintSliderTrack(RenderObject* object, const PaintInfo& inf
         widget = gtkVScale();
         troughRect.inflateY(-gtk_widget_get_style(widget)->ythickness);
     }
-    gtk_widget_set_direction(widget, gtkTextDirection(object->style()->direction()));
+    gtk_widget_set_direction(widget, gtkTextDirection(object->style().direction()));
 
     WidgetRenderingContext widgetContext(info.context, rect);
     widgetContext.gtkPaintBox(troughRect, widget, GTK_STATE_ACTIVE, GTK_SHADOW_OUT, "trough");
@@ -498,7 +498,7 @@ bool RenderThemeGtk::paintSliderThumb(RenderObject* object, const PaintInfo& inf
     if (info.context->paintingDisabled())
         return false;
 
-    ControlPart part = object->style()->appearance();
+    ControlPart part = object->style().appearance();
     ASSERT(part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart || part == MediaVolumeSliderThumbPart);
 
     GtkWidget* widget = 0;
@@ -513,7 +513,7 @@ bool RenderThemeGtk::paintSliderThumb(RenderObject* object, const PaintInfo& inf
         detail = "vscale";
         orientation = GTK_ORIENTATION_VERTICAL;
     }
-    gtk_widget_set_direction(widget, gtkTextDirection(object->style()->direction()));
+    gtk_widget_set_direction(widget, gtkTextDirection(object->style().direction()));
 
     // Only some themes have slider thumbs respond to clicks and some don't. This information is
     // gathered via the 'activate-slider' property, but it's deprecated in GTK+ 2.22 and removed in
@@ -552,7 +552,7 @@ void RenderThemeGtk::adjustSliderThumbSize(RenderStyle* style, Element*) const
 bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     GtkWidget* widget = gtkProgressBar();
-    gtk_widget_set_direction(widget, gtkTextDirection(renderObject->style()->direction()));
+    gtk_widget_set_direction(widget, gtkTextDirection(renderObject->style().direction()));
 
     WidgetRenderingContext widgetContext(paintInfo.context, rect);
     IntRect fullProgressBarRect(IntPoint(), rect.size());
@@ -597,7 +597,7 @@ bool RenderThemeGtk::paintInnerSpinButton(RenderObject* renderObject, const Pain
 
     WidgetRenderingContext widgetContext(paintInfo.context, expandedRect);
     GtkWidget* widget = gtkSpinButton();
-    gtk_widget_set_direction(widget, gtkTextDirection(renderObject->style()->direction()));
+    gtk_widget_set_direction(widget, gtkTextDirection(renderObject->style().direction()));
 
     IntRect fullSpinButtonRect(IntPoint(), expandedRect.size());
     widgetContext.gtkPaintBox(fullSpinButtonRect, widget, GTK_STATE_NORMAL, GTK_SHADOW_IN, "spinbutton");

@@ -35,8 +35,8 @@ public:
 
     bool hasInitializedStyle() const { return m_hasInitializedStyle; }
 
-    RenderStyle* style() const { return const_cast<RenderStyle*>(&m_style.get()); }
-    RenderStyle* firstLineStyle() const;
+    RenderStyle& style() const { return const_cast<RenderStyle&>(m_style.get()); }
+    RenderStyle& firstLineStyle() const;
 
     void initializeStyle();
 
@@ -178,9 +178,9 @@ private:
     static bool s_noLongerAffectsParentBlock;
 };
 
-inline RenderStyle* RenderElement::firstLineStyle() const
+inline RenderStyle& RenderElement::firstLineStyle() const
 {
-    return document().styleSheetCollection().usesFirstLineRules() ? cachedFirstLineStyle() : style();
+    return document().styleSheetCollection().usesFirstLineRules() ? *cachedFirstLineStyle() : style();
 }
 
 inline void RenderElement::setAncestorLineBoxDirty(bool f)
@@ -279,14 +279,14 @@ inline bool RenderObject::isRenderInline() const
     return isRenderElement() && toRenderElement(this)->isRenderInline();
 }
 
-inline RenderStyle* RenderObject::style() const
+inline RenderStyle& RenderObject::style() const
 {
     if (isText())
         return m_parent->style();
     return toRenderElement(this)->style();
 }
 
-inline RenderStyle* RenderObject::firstLineStyle() const
+inline RenderStyle& RenderObject::firstLineStyle() const
 {
     if (isText())
         return m_parent->firstLineStyle();

@@ -196,7 +196,7 @@ bool RenderView::initializeLayoutState(LayoutState& state)
     // pagination information.
     RenderBox* seamlessAncestor = enclosingSeamlessRenderer(document());
     LayoutState* seamlessLayoutState = seamlessAncestor ? seamlessAncestor->view().layoutState() : 0;
-    bool shouldInheritPagination = seamlessLayoutState && !m_pageLogicalHeight && seamlessAncestor->style()->writingMode() == style()->writingMode();
+    bool shouldInheritPagination = seamlessLayoutState && !m_pageLogicalHeight && seamlessAncestor->style().writingMode() == style().writingMode();
     
     state.m_pageLogicalHeight = shouldInheritPagination ? seamlessLayoutState->m_pageLogicalHeight : m_pageLogicalHeight;
     state.m_pageLogicalHeightChanged = shouldInheritPagination ? seamlessLayoutState->m_pageLogicalHeightChanged : m_pageLogicalHeightChanged;
@@ -205,7 +205,7 @@ bool RenderView::initializeLayoutState(LayoutState& state)
         // Set up the correct pagination offset. We can use a negative offset in order to push the top of the RenderView into its correct place
         // on a page. We can take the iframe's offset from the logical top of the first page and make the negative into the pagination offset within the child
         // view.
-        bool isFlipped = seamlessAncestor->style()->isFlippedBlocksWritingMode();
+        bool isFlipped = seamlessAncestor->style().isFlippedBlocksWritingMode();
         LayoutSize layoutOffset = seamlessLayoutState->layoutOffset();
         LayoutSize iFrameOffset(layoutOffset.width() + seamlessAncestor->x() + (!isFlipped ? seamlessAncestor->borderLeft() + seamlessAncestor->paddingLeft() :
             seamlessAncestor->borderRight() + seamlessAncestor->paddingRight()),
@@ -308,12 +308,12 @@ void RenderView::layout()
             RenderBox& box = toRenderBox(*child);
             if (box.hasRelativeLogicalHeight()
                 || box.hasViewportPercentageLogicalHeight()
-                || box.style()->logicalHeight().isPercent()
-                || box.style()->logicalMinHeight().isPercent()
-                || box.style()->logicalMaxHeight().isPercent()
-                || box.style()->logicalHeight().isViewportPercentage()
-                || box.style()->logicalMinHeight().isViewportPercentage()
-                || box.style()->logicalMaxHeight().isViewportPercentage()
+                || box.style().logicalHeight().isPercent()
+                || box.style().logicalMinHeight().isPercent()
+                || box.style().logicalMaxHeight().isPercent()
+                || box.style().logicalHeight().isViewportPercentage()
+                || box.style().logicalMinHeight().isViewportPercentage()
+                || box.style().logicalMaxHeight().isViewportPercentage()
 #if ENABLE(SVG)
                 || box.isSVGRoot()
 #endif
@@ -353,7 +353,7 @@ LayoutUnit RenderView::pageOrViewLogicalHeight() const
     if (document().printing())
         return pageLogicalHeight();
     
-    if (hasColumns() && !style()->hasInlineColumnAxis()) {
+    if (hasColumns() && !style().hasInlineColumnAxis()) {
         if (int pageLength = frameView().pagination().pageLength)
             return pageLength;
     }
@@ -416,7 +416,7 @@ bool RenderView::requiresColumns(int) const
 void RenderView::calcColumnWidth()
 {
     int columnWidth = contentLogicalWidth();
-    if (style()->hasInlineColumnAxis()) {
+    if (style().hasInlineColumnAxis()) {
         if (int pageLength = frameView().pagination().pageLength)
             columnWidth = pageLength;
     }
@@ -452,17 +452,17 @@ static inline bool rendererObscuresBackground(RenderElement* rootObject)
     if (!rootObject)
         return false;
     
-    RenderStyle* style = rootObject->style();
-    if (style->visibility() != VISIBLE
-        || style->opacity() != 1
-        || style->hasTransform())
+    const RenderStyle& style = rootObject->style();
+    if (style.visibility() != VISIBLE
+        || style.opacity() != 1
+        || style.hasTransform())
         return false;
     
     if (isComposited(rootObject))
         return false;
 
     const RenderElement* rootRenderer = rootObject->rendererForRootBackground();
-    if (rootRenderer->style()->backgroundClip() == TextFillBox)
+    if (rootRenderer->style().backgroundClip() == TextFillBox)
         return false;
 
     return true;
@@ -530,7 +530,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
         if (baseColor.alpha()) {
             CompositeOperator previousOperator = paintInfo.context->compositeOperation();
             paintInfo.context->setCompositeOperation(CompositeCopy);
-            paintInfo.context->fillRect(paintInfo.rect, baseColor, style()->colorSpace());
+            paintInfo.context->fillRect(paintInfo.rect, baseColor, style().colorSpace());
             paintInfo.context->setCompositeOperation(previousOperator);
         } else
             paintInfo.context->clearRect(paintInfo.rect);
@@ -620,10 +620,10 @@ void RenderView::computeRectForRepaint(const RenderLayerModelObject* repaintCont
     if (printing())
         return;
 
-    if (style()->isFlippedBlocksWritingMode()) {
+    if (style().isFlippedBlocksWritingMode()) {
         // We have to flip by hand since the view's logical height has not been determined.  We
         // can use the viewport width and height.
-        if (style()->isHorizontalWritingMode())
+        if (style().isHorizontalWritingMode())
             rect.setY(viewHeight() - rect.maxY());
         else
             rect.setX(viewWidth() - rect.maxX());
@@ -1000,7 +1000,7 @@ int RenderView::viewHeight() const
     int height = 0;
     if (!shouldUsePrintingLayout()) {
         height = frameView().layoutHeight();
-        height = frameView().useFixedLayout() ? ceilf(style()->effectiveZoom() * float(height)) : height;
+        height = frameView().useFixedLayout() ? ceilf(style().effectiveZoom() * float(height)) : height;
     }
     return height;
 }
@@ -1010,14 +1010,14 @@ int RenderView::viewWidth() const
     int width = 0;
     if (!shouldUsePrintingLayout()) {
         width = frameView().layoutWidth();
-        width = frameView().useFixedLayout() ? ceilf(style()->effectiveZoom() * float(width)) : width;
+        width = frameView().useFixedLayout() ? ceilf(style().effectiveZoom() * float(width)) : width;
     }
     return width;
 }
 
 int RenderView::viewLogicalHeight() const
 {
-    int height = style()->isHorizontalWritingMode() ? viewHeight() : viewWidth();
+    int height = style().isHorizontalWritingMode() ? viewHeight() : viewWidth();
     return height;
 }
 

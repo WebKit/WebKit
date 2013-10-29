@@ -72,21 +72,21 @@ static Path createRightArrowPath()
 
 RenderDetailsMarker::Orientation RenderDetailsMarker::orientation() const
 {
-    switch (style()->writingMode()) {
+    switch (style().writingMode()) {
     case TopToBottomWritingMode:
-        if (style()->isLeftToRightDirection())
+        if (style().isLeftToRightDirection())
             return isOpen() ? Down : Right;
         return isOpen() ? Down : Left;
     case RightToLeftWritingMode:
-        if (style()->isLeftToRightDirection())
+        if (style().isLeftToRightDirection())
             return isOpen() ? Left : Down;
         return isOpen() ? Left : Up;
     case LeftToRightWritingMode:
-        if (style()->isLeftToRightDirection())
+        if (style().isLeftToRightDirection())
             return isOpen() ? Right : Down;
         return isOpen() ? Right : Up;
     case BottomToTopWritingMode:
-        if (style()->isLeftToRightDirection())
+        if (style().isLeftToRightDirection())
             return isOpen() ? Up : Right;
         return isOpen() ? Up : Left;
     }
@@ -115,7 +115,7 @@ Path RenderDetailsMarker::getPath(const LayoutPoint& origin) const
 
 void RenderDetailsMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (paintInfo.phase != PaintPhaseForeground || style()->visibility() != VISIBLE) {
+    if (paintInfo.phase != PaintPhaseForeground || style().visibility() != VISIBLE) {
         RenderBlockFlow::paint(paintInfo, paintOffset);
         return;
     }
@@ -128,11 +128,11 @@ void RenderDetailsMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (!paintInfo.rect.intersects(pixelSnappedIntRect(overflowRect)))
         return;
 
-    const Color color(style()->visitedDependentColor(CSSPropertyColor));
-    paintInfo.context->setStrokeColor(color, style()->colorSpace());
+    const Color color(style().visitedDependentColor(CSSPropertyColor));
+    paintInfo.context->setStrokeColor(color, style().colorSpace());
     paintInfo.context->setStrokeStyle(SolidStroke);
     paintInfo.context->setStrokeThickness(1.0f);
-    paintInfo.context->setFillColor(color, style()->colorSpace());
+    paintInfo.context->setFillColor(color, style().colorSpace());
 
     boxOrigin.move(borderLeft() + paddingLeft(), borderTop() + paddingTop());
     paintInfo.context->fillPath(getPath(boxOrigin));

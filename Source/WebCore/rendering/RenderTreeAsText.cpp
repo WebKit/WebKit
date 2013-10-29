@@ -220,8 +220,8 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     if (behavior & RenderAsTextShowAddresses)
         ts << " " << static_cast<const void*>(&o);
 
-    if (o.style() && o.style()->zIndex())
-        ts << " zI: " << o.style()->zIndex();
+    if (o.style().zIndex())
+        ts << " zI: " << o.style().zIndex();
 
     if (o.node()) {
         String tagName = getTagName(o.node());
@@ -288,28 +288,28 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
             ts << " " << quoteAndEscapeNonPrintables(toRenderFileUploadControl(&o)->fileTextValue());
 
         if (o.parent()) {
-            Color color = o.style()->visitedDependentColor(CSSPropertyColor);
-            if (o.parent()->style()->visitedDependentColor(CSSPropertyColor) != color)
+            Color color = o.style().visitedDependentColor(CSSPropertyColor);
+            if (o.parent()->style().visitedDependentColor(CSSPropertyColor) != color)
                 ts << " [color=" << color.nameForRenderTreeAsText() << "]";
 
             // Do not dump invalid or transparent backgrounds, since that is the default.
-            Color backgroundColor = o.style()->visitedDependentColor(CSSPropertyBackgroundColor);
-            if (o.parent()->style()->visitedDependentColor(CSSPropertyBackgroundColor) != backgroundColor
+            Color backgroundColor = o.style().visitedDependentColor(CSSPropertyBackgroundColor);
+            if (o.parent()->style().visitedDependentColor(CSSPropertyBackgroundColor) != backgroundColor
                 && backgroundColor.isValid() && backgroundColor.rgb())
                 ts << " [bgcolor=" << backgroundColor.nameForRenderTreeAsText() << "]";
             
-            Color textFillColor = o.style()->visitedDependentColor(CSSPropertyWebkitTextFillColor);
-            if (o.parent()->style()->visitedDependentColor(CSSPropertyWebkitTextFillColor) != textFillColor
+            Color textFillColor = o.style().visitedDependentColor(CSSPropertyWebkitTextFillColor);
+            if (o.parent()->style().visitedDependentColor(CSSPropertyWebkitTextFillColor) != textFillColor
                 && textFillColor.isValid() && textFillColor != color && textFillColor.rgb())
                 ts << " [textFillColor=" << textFillColor.nameForRenderTreeAsText() << "]";
 
-            Color textStrokeColor = o.style()->visitedDependentColor(CSSPropertyWebkitTextStrokeColor);
-            if (o.parent()->style()->visitedDependentColor(CSSPropertyWebkitTextStrokeColor) != textStrokeColor
+            Color textStrokeColor = o.style().visitedDependentColor(CSSPropertyWebkitTextStrokeColor);
+            if (o.parent()->style().visitedDependentColor(CSSPropertyWebkitTextStrokeColor) != textStrokeColor
                 && textStrokeColor.isValid() && textStrokeColor != color && textStrokeColor.rgb())
                 ts << " [textStrokeColor=" << textStrokeColor.nameForRenderTreeAsText() << "]";
 
-            if (o.parent()->style()->textStrokeWidth() != o.style()->textStrokeWidth() && o.style()->textStrokeWidth() > 0)
-                ts << " [textStrokeWidth=" << o.style()->textStrokeWidth() << "]";
+            if (o.parent()->style().textStrokeWidth() != o.style().textStrokeWidth() && o.style().textStrokeWidth() > 0)
+                ts << " [textStrokeWidth=" << o.style().textStrokeWidth() << "]";
         }
 
         if (!o.isBoxModelObject() || o.isLineBreak())
@@ -319,56 +319,56 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         if (box.borderTop() || box.borderRight() || box.borderBottom() || box.borderLeft()) {
             ts << " [border:";
 
-            BorderValue prevBorder = o.style()->borderTop();
+            BorderValue prevBorder = o.style().borderTop();
             if (!box.borderTop())
                 ts << " none";
             else {
                 ts << " (" << box.borderTop() << "px ";
-                printBorderStyle(ts, o.style()->borderTopStyle());
-                Color col = o.style()->borderTopColor();
+                printBorderStyle(ts, o.style().borderTopStyle());
+                Color col = o.style().borderTopColor();
                 if (!col.isValid())
-                    col = o.style()->color();
+                    col = o.style().color();
                 ts << col.nameForRenderTreeAsText() << ")";
             }
 
-            if (o.style()->borderRight() != prevBorder) {
-                prevBorder = o.style()->borderRight();
+            if (o.style().borderRight() != prevBorder) {
+                prevBorder = o.style().borderRight();
                 if (!box.borderRight())
                     ts << " none";
                 else {
                     ts << " (" << box.borderRight() << "px ";
-                    printBorderStyle(ts, o.style()->borderRightStyle());
-                    Color col = o.style()->borderRightColor();
+                    printBorderStyle(ts, o.style().borderRightStyle());
+                    Color col = o.style().borderRightColor();
                     if (!col.isValid())
-                        col = o.style()->color();
+                        col = o.style().color();
                     ts << col.nameForRenderTreeAsText() << ")";
                 }
             }
 
-            if (o.style()->borderBottom() != prevBorder) {
-                prevBorder = box.style()->borderBottom();
+            if (o.style().borderBottom() != prevBorder) {
+                prevBorder = box.style().borderBottom();
                 if (!box.borderBottom())
                     ts << " none";
                 else {
                     ts << " (" << box.borderBottom() << "px ";
-                    printBorderStyle(ts, o.style()->borderBottomStyle());
-                    Color col = o.style()->borderBottomColor();
+                    printBorderStyle(ts, o.style().borderBottomStyle());
+                    Color col = o.style().borderBottomColor();
                     if (!col.isValid())
-                        col = o.style()->color();
+                        col = o.style().color();
                     ts << col.nameForRenderTreeAsText() << ")";
                 }
             }
 
-            if (o.style()->borderLeft() != prevBorder) {
-                prevBorder = o.style()->borderLeft();
+            if (o.style().borderLeft() != prevBorder) {
+                prevBorder = o.style().borderLeft();
                 if (!box.borderLeft())
                     ts << " none";
                 else {
                     ts << " (" << box.borderLeft() << "px ";
-                    printBorderStyle(ts, o.style()->borderLeftStyle());
-                    Color col = o.style()->borderLeftColor();
+                    printBorderStyle(ts, o.style().borderLeftStyle());
+                    Color col = o.style().borderLeftColor();
                     if (!col.isValid())
-                        col = o.style()->color();
+                        col = o.style().color();
                     ts << col.nameForRenderTreeAsText() << ")";
                 }
             }
@@ -377,7 +377,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         }
 
 #if ENABLE(MATHML)
-        // We want to show any layout padding, both CSS padding and intrinsic padding, so we can't just check o.style()->hasPadding().
+        // We want to show any layout padding, both CSS padding and intrinsic padding, so we can't just check o.style().hasPadding().
         if (o.isRenderMathMLBlock() && (box.paddingTop() || box.paddingRight() || box.paddingBottom() || box.paddingLeft())) {
             ts << " [";
             LayoutUnit cssTop = box.computedCSSPaddingTop();
@@ -530,7 +530,7 @@ static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBo
     ts << ": "
         << quoteAndEscapeNonPrintables(String(o.text()).substring(run.start(), run.len()));
     if (run.hasHyphen())
-        ts << " + hyphen string " << quoteAndEscapeNonPrintables(o.style()->hyphenString());
+        ts << " + hyphen string " << quoteAndEscapeNonPrintables(o.style().hyphenString());
     ts << "\n";
 }
 

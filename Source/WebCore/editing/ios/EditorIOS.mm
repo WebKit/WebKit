@@ -248,7 +248,7 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
             if (!renderer)
                 continue;
             // FIXME: Are there any node types that have renderers, but that we should be skipping?
-            const SimpleFontData* primaryFont = renderer->style()->font().primaryFont();
+            const SimpleFontData* primaryFont = renderer->style().font().primaryFont();
             if (!font)
                 font = primaryFont;
             else if (font != primaryFont) {

@@ -40,7 +40,7 @@ LayoutRect RenderSVGBlock::visualOverflowRect() const
 {
     LayoutRect borderRect = borderBoxRect();
 
-    if (const ShadowData* textShadow = style()->textShadow())
+    if (const ShadowData* textShadow = style().textShadow())
         textShadow->adjustRectForShadow(borderRect);
 
     return borderRect;
@@ -99,7 +99,7 @@ void RenderSVGBlock::styleDidChange(StyleDifference diff, const RenderStyle* old
     if (diff == StyleDifferenceLayout)
         setNeedsBoundariesUpdate();
     RenderBlockFlow::styleDidChange(diff, oldStyle);
-    SVGResourcesCache::clientStyleChanged(*this, diff, *style());
+    SVGResourcesCache::clientStyleChanged(*this, diff, style());
 }
 
 }

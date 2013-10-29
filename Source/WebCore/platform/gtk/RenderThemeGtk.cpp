@@ -166,8 +166,8 @@ int RenderThemeGtk::baselinePosition(const RenderObject* o) const
         return 0;
 
     // FIXME: This strategy is possibly incorrect for the GTK+ port.
-    if (o->style()->appearance() == CheckboxPart
-        || o->style()->appearance() == RadioPart) {
+    if (o->style().appearance() == CheckboxPart
+        || o->style().appearance() == RadioPart) {
         const RenderBox* box = toRenderBox(o);
         return box->marginTop() + box->height() - 2;
     }
@@ -335,7 +335,7 @@ bool RenderThemeGtk::paintSearchFieldResultsDecoration(RenderObject* renderObjec
         return false;
 
     GRefPtr<GdkPixbuf> icon = getStockIconForWidgetType(GTK_TYPE_ENTRY, GTK_STOCK_FIND,
-                                                        gtkTextDirection(renderObject->style()->direction()),
+                                                        gtkTextDirection(renderObject->style().direction()),
                                                         gtkIconState(this, renderObject),
                                                         getIconSizeForPixelSize(rect.height()));
     paintGdkPixbuf(paintInfo.context, icon.get(), iconRect);
@@ -354,7 +354,7 @@ bool RenderThemeGtk::paintSearchFieldCancelButton(RenderObject* renderObject, co
         return false;
 
     GRefPtr<GdkPixbuf> icon = getStockIconForWidgetType(GTK_TYPE_ENTRY, GTK_STOCK_CLEAR,
-                                                        gtkTextDirection(renderObject->style()->direction()),
+                                                        gtkTextDirection(renderObject->style().direction()),
                                                         gtkIconState(this, renderObject),
                                                         getIconSizeForPixelSize(rect.height()));
     paintGdkPixbuf(paintInfo.context, icon.get(), iconRect);
@@ -382,7 +382,7 @@ bool RenderThemeGtk::paintCapsLockIndicator(RenderObject* renderObject, const Pa
 
     int iconSize = std::min(rect.width(), rect.height());
     GRefPtr<GdkPixbuf> icon = getStockIconForWidgetType(GTK_TYPE_ENTRY, GTK_STOCK_CAPS_LOCK_WARNING,
-                                                        gtkTextDirection(renderObject->style()->direction()),
+                                                        gtkTextDirection(renderObject->style().direction()),
                                                         0, getIconSizeForPixelSize(iconSize));
 
     // Only re-scale the icon when it's smaller than the minimum icon size.
@@ -493,7 +493,7 @@ bool RenderThemeGtk::paintMediaButton(RenderObject* renderObject, GraphicsContex
                      rect.y() + (rect.height() - m_mediaIconSize) / 2,
                      m_mediaIconSize, m_mediaIconSize);
     GRefPtr<GdkPixbuf> icon = getStockSymbolicIconForWidgetType(GTK_TYPE_CONTAINER, symbolicIconName, fallbackStockIconName,
-        gtkTextDirection(renderObject->style()->direction()), gtkIconState(this, renderObject), iconRect.width());
+        gtkTextDirection(renderObject->style().direction()), gtkIconState(this, renderObject), iconRect.width());
     paintGdkPixbuf(context, icon.get(), iconRect);
     return false;
 }
@@ -565,7 +565,7 @@ bool RenderThemeGtk::paintMediaSliderTrack(RenderObject* o, const PaintInfo& pai
 
     float mediaDuration = mediaElement->duration();
     float totalTrackWidth = r.width();
-    RenderStyle* style = o->style();
+    RenderStyle* style = &o->style();
     RefPtr<TimeRanges> timeRanges = mediaElement->buffered();
     for (unsigned index = 0; index < timeRanges->length(); ++index) {
         float start = timeRanges->start(index, IGNORE_EXCEPTION);
@@ -588,7 +588,7 @@ bool RenderThemeGtk::paintMediaSliderTrack(RenderObject* o, const PaintInfo& pai
 
 bool RenderThemeGtk::paintMediaSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    RenderStyle* style = o->style();
+    RenderStyle* style = &o->style();
     paintInfo.context->fillRoundedRect(RoundedRect(r, borderRadiiFromStyle(style)), style->visitedDependentColor(CSSPropertyColor), style->colorSpace());
     return false;
 }
@@ -614,7 +614,7 @@ bool RenderThemeGtk::paintMediaVolumeSliderTrack(RenderObject* renderObject, con
 
     int rectHeight = rect.height();
     float trackHeight = rectHeight * volume;
-    RenderStyle* style = renderObject->style();
+    RenderStyle* style = &renderObject->style();
     IntRect volumeRect(rect);
     volumeRect.move(0, rectHeight - trackHeight);
     volumeRect.setHeight(ceil(trackHeight));
@@ -668,7 +668,7 @@ IntRect RenderThemeGtk::calculateProgressRect(RenderObject* renderObject, const 
     RenderProgress* renderProgress = toRenderProgress(renderObject);
     if (renderProgress->isDeterminate()) {
         int progressWidth = progressRect.width() * renderProgress->position();
-        if (renderObject->style()->direction() == RTL)
+        if (renderObject->style().direction() == RTL)
             progressRect.setX(progressRect.x() + progressRect.width() - progressWidth);
         progressRect.setWidth(progressWidth);
         return progressRect;

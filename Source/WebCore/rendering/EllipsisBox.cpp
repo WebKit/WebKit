@@ -89,7 +89,7 @@ InlineBox* EllipsisBox::markupBox() const
     // If the last line-box on the last line of a block is a link, -webkit-line-clamp paints that box after the ellipsis.
     // It does not actually move the link.
     InlineBox* anchorBox = lastLine->lastChild();
-    if (!anchorBox || !anchorBox->renderer().style()->isLink())
+    if (!anchorBox || !anchorBox->renderer().style().isLink())
         return 0;
 
     return anchorBox;

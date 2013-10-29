@@ -200,7 +200,7 @@ void RenderRubyRun::removeChild(RenderObject& child)
 
 RenderRubyBase* RenderRubyRun::createRubyBase() const
 {
-    auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK);
+    auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), BLOCK);
     newStyle.get().setTextAlign(CENTER); // FIXME: use WEBKIT_CENTER?
     auto renderer = new RenderRubyBase(document(), std::move(newStyle));
     renderer->initializeStyle();
@@ -210,7 +210,7 @@ RenderRubyBase* RenderRubyRun::createRubyBase() const
 RenderRubyRun* RenderRubyRun::staticCreateRubyRun(const RenderObject* parentRuby)
 {
     ASSERT(parentRuby && parentRuby->isRuby());
-    auto renderer = new RenderRubyRun(parentRuby->document(), RenderStyle::createAnonymousStyleWithDisplay(parentRuby->style(), INLINE_BLOCK));
+    auto renderer = new RenderRubyRun(parentRuby->document(), RenderStyle::createAnonymousStyleWithDisplay(&parentRuby->style(), INLINE_BLOCK));
     renderer->initializeStyle();
     return renderer;
 }
@@ -248,7 +248,7 @@ void RenderRubyRun::layout()
         lastLineRubyTextBottom = rootBox->logicalBottomLayoutOverflow();
     }
 
-    if (style()->isFlippedLinesWritingMode() == (style()->rubyPosition() == RubyPositionAfter)) {
+    if (style().isFlippedLinesWritingMode() == (style().rubyPosition() == RubyPositionAfter)) {
         LayoutUnit firstLineTop = 0;
         if (RenderRubyBase* rb = rubyBase()) {
             RootInlineBox* rootBox = rb->firstRootBox();
@@ -278,8 +278,8 @@ static bool shouldOverhang(bool firstLine, const RenderObject* renderer, const R
 {
     if (!renderer || !renderer->isText())
         return false;
-    const RenderStyle& rubyBaseStyle = firstLine ? *rubyBase.firstLineStyle() : *rubyBase.style();
-    const RenderStyle& style = firstLine ? *renderer->firstLineStyle() : *renderer->style();
+    const RenderStyle& rubyBaseStyle = firstLine ? rubyBase.firstLineStyle() : rubyBase.style();
+    const RenderStyle& style = firstLine ? renderer->firstLineStyle() : renderer->style();
     return style.fontSize() <= rubyBaseStyle.fontSize();
 }
 
@@ -307,8 +307,8 @@ void RenderRubyRun::getOverhang(bool firstLine, RenderObject* startRenderer, Ren
         logicalRightOverhang = min<int>(logicalRightOverhang, logicalWidth - rootInlineBox->logicalRight());
     }
 
-    startOverhang = style()->isLeftToRightDirection() ? logicalLeftOverhang : logicalRightOverhang;
-    endOverhang = style()->isLeftToRightDirection() ? logicalRightOverhang : logicalLeftOverhang;
+    startOverhang = style().isLeftToRightDirection() ? logicalLeftOverhang : logicalRightOverhang;
+    endOverhang = style().isLeftToRightDirection() ? logicalRightOverhang : logicalLeftOverhang;
 
     if (!shouldOverhang(firstLine, startRenderer, *rubyBase))
         startOverhang = 0;
@@ -318,7 +318,7 @@ void RenderRubyRun::getOverhang(bool firstLine, RenderObject* startRenderer, Ren
     // We overhang a ruby only if the neighboring render object is a text.
     // We can overhang the ruby by no more than half the width of the neighboring text
     // and no more than half the font size.
-    const RenderStyle& rubyTextStyle = firstLine ? *rubyText->firstLineStyle() : *rubyText->style();
+    const RenderStyle& rubyTextStyle = firstLine ? rubyText->firstLineStyle() : rubyText->style();
     int halfWidthOfFontSize = rubyTextStyle.fontSize() / 2;
     if (startOverhang)
         startOverhang = min<int>(startOverhang, min<int>(toRenderText(startRenderer)->minLogicalWidth(), halfWidthOfFontSize));

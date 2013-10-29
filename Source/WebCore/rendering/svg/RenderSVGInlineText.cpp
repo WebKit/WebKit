@@ -86,7 +86,7 @@ void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle
     RenderText::styleDidChange(diff, oldStyle);
     updateScaledFont();
 
-    bool newPreserves = style() ? style()->whiteSpace() == PRE : false;
+    bool newPreserves = style().whiteSpace() == PRE;
     bool oldPreserves = oldStyle ? oldStyle->whiteSpace() == PRE : false;
     if (oldPreserves && !newPreserves) {
         setText(applySVGWhitespaceRules(originalText(), false), true);
@@ -219,7 +219,7 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point)
 
 void RenderSVGInlineText::updateScaledFont()
 {
-    computeNewScaledFontForStyle(this, style(), m_scalingFactor, m_scaledFont);
+    computeNewScaledFontForStyle(this, &style(), m_scalingFactor, m_scaledFont);
 }
 
 void RenderSVGInlineText::computeNewScaledFontForStyle(RenderObject* renderer, const RenderStyle* style, float& scalingFactor, Font& scaledFont)

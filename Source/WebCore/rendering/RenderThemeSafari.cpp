@@ -263,9 +263,9 @@ bool RenderThemeSafari::isControlStyled(const RenderStyle* style, const BorderDa
 
 void RenderThemeSafari::adjustRepaintRect(const RenderObject* o, IntRect& r)
 {
-    NSControlSize controlSize = controlSizeForFont(o->style());
+    NSControlSize controlSize = controlSizeForFont(&o->style());
 
-    switch (o->style()->appearance()) {
+    switch (o->style().appearance()) {
         case CheckboxPart: {
             // We inflate the rect as needed to account for padding included in the cell to accommodate the checkbox
             // shadow" and the check.  We don't consider this part of the bounds of the control in WebKit.
@@ -319,7 +319,7 @@ int RenderThemeSafari::baselinePosition(const RenderObject* o) const
     if (!o->isBox())
         return 0;
 
-    if (o->style()->appearance() == CheckboxPart || o->style()->appearance() == RadioPart) {
+    if (o->style().appearance() == CheckboxPart || o->style().appearance() == RadioPart) {
         const RenderBox* box = toRenderBox(o);
         return box->marginTop() + box->height() - 2; // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.
     }
@@ -333,7 +333,7 @@ bool RenderThemeSafari::controlSupportsTints(const RenderObject* o) const
         return false;
 
     // Checkboxes only have tint when checked.
-    if (o->style()->appearance() == CheckboxPart)
+    if (o->style().appearance() == CheckboxPart)
         return isChecked(o);
 
     // For now assume other controls have tint if enabled.
@@ -417,7 +417,7 @@ bool RenderThemeSafari::paintCheckbox(RenderObject* o, const PaintInfo& paintInf
 {
     ASSERT(SafariThemeLibrary());
 
-    NSControlSize controlSize = controlSizeForFont(o->style());
+    NSControlSize controlSize = controlSizeForFont(&o->style());
 
     IntRect inflatedRect = inflateRect(r, checkboxSizes()[controlSize], checkboxMargins(controlSize));  
     paintThemePart(SafariTheme::CheckboxPart, paintInfo.context->platformContext(), inflatedRect, controlSize, determineState(o));
@@ -456,7 +456,7 @@ bool RenderThemeSafari::paintRadio(RenderObject* o, const PaintInfo& paintInfo, 
 {
     ASSERT(SafariThemeLibrary());
 
-    NSControlSize controlSize = controlSizeForFont(o->style());
+    NSControlSize controlSize = controlSizeForFont(&o->style());
  
     IntRect inflatedRect = inflateRect(r, radioSizes()[controlSize], radioMargins(controlSize));    
     paintThemePart(RadioButtonPart, paintInfo.context->platformContext(), inflatedRect, controlSize, determineState(o));
@@ -687,7 +687,7 @@ bool RenderThemeSafari::paintMenuList(RenderObject* o, const PaintInfo& info, co
     size.setWidth(r.width());
 
     // Now inflate it to account for the shadow.
-    if (r.width() >= minimumMenuListSize(o->style()))
+    if (r.width() >= minimumMenuListSize(&o->style()))
         inflatedRect = inflateRect(inflatedRect, size, popupButtonMargins(controlSize));
 
     paintThemePart(DropDownButtonPart, info.context->platformContext(), inflatedRect, controlSize, determineState(o));
@@ -755,7 +755,7 @@ void RenderThemeSafari::paintMenuListButtonGradients(RenderObject* o, const Pain
 
     paintInfo.context->save();
 
-    RoundedRect bound = o->style()->getRoundedBorderFor(r);
+    RoundedRect bound = o->style().getRoundedBorderFor(r);
     int radius = bound.radii().topLeft().width();
 
     CGColorSpaceRef cspace = deviceRGBColorSpaceRef();
@@ -809,15 +809,15 @@ void RenderThemeSafari::paintMenuListButtonGradients(RenderObject* o, const Pain
 
 bool RenderThemeSafari::paintMenuListButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    IntRect bounds = IntRect(r.x() + o->style()->borderLeftWidth(),
-                             r.y() + o->style()->borderTopWidth(),
-                             r.width() - o->style()->borderLeftWidth() - o->style()->borderRightWidth(),
-                             r.height() - o->style()->borderTopWidth() - o->style()->borderBottomWidth());
+    IntRect bounds = IntRect(r.x() + o->style().borderLeftWidth(),
+                             r.y() + o->style().borderTopWidth(),
+                             r.width() - o->style().borderLeftWidth() - o->style().borderRightWidth(),
+                             r.height() - o->style().borderTopWidth() - o->style().borderBottomWidth());
     // Draw the gradients to give the styled popup menu a button appearance
     paintMenuListButtonGradients(o, paintInfo, bounds);
     
     // Since we actually know the size of the control here, we restrict the font scale to make sure the arrow will fit vertically in the bounds
-    float fontScale = min(o->style()->fontSize() / baseFontSize, bounds.height() / baseArrowHeight);
+    float fontScale = min(o->style().fontSize() / baseFontSize, bounds.height() / baseArrowHeight);
     float centerY = bounds.y() + bounds.height() / 2.0f;
     float arrowHeight = baseArrowHeight * fontScale;
     float arrowWidth = baseArrowWidth * fontScale;
@@ -828,7 +828,7 @@ bool RenderThemeSafari::paintMenuListButton(RenderObject* o, const PaintInfo& pa
 
     paintInfo.context->save();
 
-    paintInfo.context->setFillColor(o->style()->visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
+    paintInfo.context->setFillColor(o->style().visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
     paintInfo.context->setStrokeColor(NoStroke, ColorSpaceDeviceRGB);
 
     FloatPoint arrow[3];
@@ -958,12 +958,12 @@ bool RenderThemeSafari::paintSliderTrack(RenderObject* o, const PaintInfo& paint
     IntSize radius(trackRadius, trackRadius);
     RoundedRect bounds(r, radius, radius, radius, radius);
 
-    if (o->style()->appearance() ==  SliderHorizontalPart)
+    if (o->style().appearance() ==  SliderHorizontalPart)
         bounds.setRect(IntRect(r.x(),
                                r.y() + r.height() / 2 - trackWidth / 2,
                                r.width(),
                                trackWidth));
-    else if (o->style()->appearance() == SliderVerticalPart)
+    else if (o->style().appearance() == SliderVerticalPart)
         bounds.setRect(IntRect(r.x() + r.width() / 2 - trackWidth / 2,
                                r.y(),
                                trackWidth, 
@@ -978,7 +978,7 @@ bool RenderThemeSafari::paintSliderTrack(RenderObject* o, const PaintInfo& paint
     struct CGFunctionCallbacks mainCallbacks = { 0, TrackGradientInterpolate, NULL };
     RetainPtr<CGFunctionRef> mainFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks));
     RetainPtr<CGShadingRef> mainShading;
-    if (o->style()->appearance() == SliderVerticalPart)
+    if (o->style().appearance() == SliderVerticalPart)
         mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.rect().x(),  bounds.rect().maxY()), CGPointMake(bounds.rect().maxX(), bounds.rect().maxY()), mainFunction.get(), false, false));
     else
         mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.rect().x(),  bounds.rect().y()), CGPointMake(bounds.rect().x(), bounds.rect().maxY()), mainFunction.get(), false, false));

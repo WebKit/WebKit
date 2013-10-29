@@ -55,12 +55,12 @@ void RenderListItem::styleDidChange(StyleDifference diff, const RenderStyle* old
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
 
-    if (style()->listStyleType() != NoneListStyle
-        || (style()->listStyleImage() && !style()->listStyleImage()->errorOccurred())) {
+    if (style().listStyleType() != NoneListStyle
+        || (style().listStyleImage() && !style().listStyleImage()->errorOccurred())) {
         auto newStyle = RenderStyle::create();
         // The marker always inherits from the list item, regardless of where it might end
         // up (e.g., in some deeply nested line box). See CSS3 spec.
-        newStyle.get().inheritFrom(style());
+        newStyle.get().inheritFrom(&style());
         if (!m_marker) {
             m_marker = new RenderListMarker(*this, std::move(newStyle));
             m_marker->initializeStyle();
@@ -350,7 +350,7 @@ void RenderListItem::positionListMarker()
         LayoutUnit lineBottom = rootBox.lineBottom();
 
         // FIXME: Need to account for relative positioning in the layout overflow.
-        if (style()->isLeftToRightDirection()) {
+        if (style().isLeftToRightDirection()) {
             LayoutUnit leftLineOffset = logicalLeftOffsetForLine(blockOffset, logicalLeftOffsetForLine(blockOffset, false), false);
             markerLogicalLeft = leftLineOffset - lineOffset - paddingStart() - borderStart() + m_marker->marginStart();
             m_marker->inlineBoxWrapper()->adjustLineDirectionPosition(markerLogicalLeft - markerOldLogicalLeft);
@@ -399,7 +399,7 @@ void RenderListItem::positionListMarker()
 
         if (adjustOverflow) {
             LayoutRect markerRect(markerLogicalLeft + lineOffset, blockOffset, m_marker->width(), m_marker->height());
-            if (!style()->isHorizontalWritingMode())
+            if (!style().isHorizontalWritingMode())
                 markerRect = markerRect.transposedRect();
             RenderBox* o = m_marker;
             bool propagateVisualOverflow = true;
@@ -451,12 +451,12 @@ String RenderListItem::markerTextWithSuffix() const
     const String markerSuffix = m_marker->suffix();
     StringBuilder result;
 
-    if (!m_marker->style()->isLeftToRightDirection())
+    if (!m_marker->style().isLeftToRightDirection())
         result.append(markerSuffix);
 
     result.append(markerText);
 
-    if (m_marker->style()->isLeftToRightDirection())
+    if (m_marker->style().isLeftToRightDirection())
         result.append(markerSuffix);
 
     return result.toString();

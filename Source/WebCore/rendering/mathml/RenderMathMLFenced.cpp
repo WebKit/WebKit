@@ -84,11 +84,11 @@ void RenderMathMLFenced::updateFromElement()
 
 RenderMathMLOperator* RenderMathMLFenced::createMathMLOperator(UChar uChar, RenderMathMLOperator::OperatorType operatorType)
 {
-    auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), FLEX);
+    auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), FLEX);
     newStyle.get().setFlexDirection(FlowColumn);
-    newStyle.get().setMarginEnd(Length((operatorType == RenderMathMLOperator::Fence ? gFenceMarginEms : gSeparatorMarginEndEms) * style()->fontSize(), Fixed));
+    newStyle.get().setMarginEnd(Length((operatorType == RenderMathMLOperator::Fence ? gFenceMarginEms : gSeparatorMarginEndEms) * style().fontSize(), Fixed));
     if (operatorType == RenderMathMLOperator::Fence)
-        newStyle.get().setMarginStart(Length(gFenceMarginEms * style()->fontSize(), Fixed));
+        newStyle.get().setMarginStart(Length(gFenceMarginEms * style().fontSize(), Fixed));
     RenderMathMLOperator* newOperator = new RenderMathMLOperator(element(), std::move(newStyle), uChar);
     newOperator->setOperatorType(operatorType);
     newOperator->initializeStyle();
@@ -160,14 +160,14 @@ void RenderMathMLFenced::styleDidChange(StyleDifference diff, const RenderStyle*
     
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->node() == &element()) {
-            ASSERT(child->style()->refCount() == 1);
-            child->style()->inheritFrom(style());
+            ASSERT(child->style().refCount() == 1);
+            child->style().inheritFrom(&style());
             bool isFence = child == firstChild() || child == lastChild();
-            child->style()->setMarginEnd(Length((isFence ? gFenceMarginEms : gSeparatorMarginEndEms) * style()->fontSize(), Fixed));
+            child->style().setMarginEnd(Length((isFence ? gFenceMarginEms : gSeparatorMarginEndEms) * style().fontSize(), Fixed));
             if (isFence) {
                 RenderMathMLBlock* block = toRenderMathMLBlock(child);
                 toRenderMathMLOperator(block)->updateFromElement();
-                child->style()->setMarginStart(Length(gFenceMarginEms * style()->fontSize(), Fixed));
+                child->style().setMarginStart(Length(gFenceMarginEms * style().fontSize(), Fixed));
             }
         }
     }

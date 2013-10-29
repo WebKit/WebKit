@@ -151,7 +151,7 @@ void RenderMultiColumnSet::updateLogicalWidth()
 void RenderMultiColumnSet::prepareForLayout()
 {
     RenderMultiColumnBlock* multicolBlock = toRenderMultiColumnBlock(parent());
-    RenderStyle* multicolStyle = multicolBlock->style();
+    const RenderStyle& multicolStyle = multicolBlock->style();
 
     // Set box logical top.
     ASSERT(!previousSiblingBox() || !previousSiblingBox()->isRenderMultiColumnSet()); // FIXME: multiple set not implemented; need to examine previous set to calculate the correct logical top.
@@ -163,10 +163,10 @@ void RenderMultiColumnSet::prepareForLayout()
     if (multicolBlock->requiresBalancing()) {
         // Set maximum column height. We will not stretch beyond this.
         m_maxColumnHeight = LayoutUnit::max();
-        if (!multicolStyle->logicalHeight().isAuto())
-            m_maxColumnHeight = multicolBlock->computeContentLogicalHeight(multicolStyle->logicalHeight());
-        if (!multicolStyle->logicalMaxHeight().isUndefined()) {
-            LayoutUnit logicalMaxHeight = multicolBlock->computeContentLogicalHeight(multicolStyle->logicalMaxHeight());
+        if (!multicolStyle.logicalHeight().isAuto())
+            m_maxColumnHeight = multicolBlock->computeContentLogicalHeight(multicolStyle.logicalHeight());
+        if (!multicolStyle.logicalMaxHeight().isUndefined()) {
+            LayoutUnit logicalMaxHeight = multicolBlock->computeContentLogicalHeight(multicolStyle.logicalMaxHeight());
             if (m_maxColumnHeight > logicalMaxHeight)
                 m_maxColumnHeight = logicalMaxHeight;
         }
@@ -190,9 +190,9 @@ LayoutUnit RenderMultiColumnSet::columnGap() const
     // FIXME: Eventually we will cache the column gap when the widths of columns start varying, but for now we just
     // go to the parent block to get the gap.
     RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
-    if (parentBlock->style()->hasNormalColumnGap())
-        return parentBlock->style()->fontDescription().computedPixelSize(); // "1em" is recommended as the normal gap setting. Matches <p> margins.
-    return parentBlock->style()->columnGap();
+    if (parentBlock->style().hasNormalColumnGap())
+        return parentBlock->style().fontDescription().computedPixelSize(); // "1em" is recommended as the normal gap setting. Matches <p> margins.
+    return parentBlock->style().columnGap();
 }
 
 unsigned RenderMultiColumnSet::columnCount() const
@@ -216,7 +216,7 @@ LayoutRect RenderMultiColumnSet::columnRectAt(unsigned index) const
     LayoutUnit colLogicalTop = borderAndPaddingBefore();
     LayoutUnit colLogicalLeft = borderAndPaddingLogicalLeft();
     LayoutUnit colGap = columnGap();
-    if (style()->isLeftToRightDirection())
+    if (style().isLeftToRightDirection())
         colLogicalLeft += index * (colLogicalWidth + colGap);
     else
         colLogicalLeft += contentLogicalWidth() - colLogicalWidth - index * (colLogicalWidth + colGap);
@@ -270,8 +270,8 @@ LayoutRect RenderMultiColumnSet::flowThreadPortionOverflowRect(const LayoutRect&
     // This problem applies to regions and pages as well and is not unique to columns.
     bool isFirstColumn = !index;
     bool isLastColumn = index == colCount - 1;
-    bool isLeftmostColumn = style()->isLeftToRightDirection() ? isFirstColumn : isLastColumn;
-    bool isRightmostColumn = style()->isLeftToRightDirection() ? isLastColumn : isFirstColumn;
+    bool isLeftmostColumn = style().isLeftToRightDirection() ? isFirstColumn : isLastColumn;
+    bool isRightmostColumn = style().isLeftToRightDirection() ? isLastColumn : isFirstColumn;
 
     // Calculate the overflow rectangle, based on the flow thread's, clipped at column logical
     // top/bottom unless it's the first/last column.
@@ -295,7 +295,7 @@ LayoutRect RenderMultiColumnSet::flowThreadPortionOverflowRect(const LayoutRect&
 
 void RenderMultiColumnSet::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (style()->visibility() != VISIBLE)
+    if (style().visibility() != VISIBLE)
         return;
 
     RenderBlock::paintObject(paintInfo, paintOffset);
@@ -316,11 +316,11 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
     if (paintInfo.context->paintingDisabled())
         return;
 
-    RenderStyle* blockStyle = toRenderMultiColumnBlock(parent())->style();
-    const Color& ruleColor = blockStyle->visitedDependentColor(CSSPropertyWebkitColumnRuleColor);
-    bool ruleTransparent = blockStyle->columnRuleIsTransparent();
-    EBorderStyle ruleStyle = blockStyle->columnRuleStyle();
-    LayoutUnit ruleThickness = blockStyle->columnRuleWidth();
+    const RenderStyle& blockStyle = toRenderMultiColumnBlock(parent())->style();
+    const Color& ruleColor = blockStyle.visitedDependentColor(CSSPropertyWebkitColumnRuleColor);
+    bool ruleTransparent = blockStyle.columnRuleIsTransparent();
+    EBorderStyle ruleStyle = blockStyle.columnRuleStyle();
+    LayoutUnit ruleThickness = blockStyle.columnRuleWidth();
     LayoutUnit colGap = columnGap();
     bool renderRule = ruleStyle > BHIDDEN && !ruleTransparent;
     if (!renderRule)
@@ -332,7 +332,7 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
 
     bool antialias = shouldAntialiasLines(paintInfo.context);
 
-    bool leftToRight = style()->isLeftToRightDirection();
+    bool leftToRight = style().isLeftToRightDirection();
     LayoutUnit currLogicalLeftOffset = leftToRight ? LayoutUnit() : contentLogicalWidth();
     LayoutUnit ruleAdd = borderAndPaddingLogicalLeft();
     LayoutUnit ruleLogicalLeft = leftToRight ? LayoutUnit() : contentLogicalWidth();
@@ -473,11 +473,11 @@ void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, cons
         // our column index.
         LayoutPoint translationOffset;
         LayoutUnit inlineOffset = i * (colLogicalWidth + colGap);
-        if (!style()->isLeftToRightDirection())
+        if (!style().isLeftToRightDirection())
             inlineOffset = -inlineOffset;
         translationOffset.setX(inlineOffset);
         LayoutUnit blockOffset = isHorizontalWritingMode() ? -flowThreadPortion.y() : -flowThreadPortion.x();
-        if (isFlippedBlocksWritingMode(style()->writingMode()))
+        if (isFlippedBlocksWritingMode(style().writingMode()))
             blockOffset = -blockOffset;
         translationOffset.setY(blockOffset);
         if (!isHorizontalWritingMode())
@@ -520,12 +520,12 @@ void RenderMultiColumnSet::adjustRegionBoundsFromFlowThreadPortionRect(const Int
     LayoutPoint translationOffset;
 
     LayoutUnit inlineOffset = startColumn * (colLogicalWidth + colGap);
-    if (!style()->isLeftToRightDirection())
+    if (!style().isLeftToRightDirection())
         inlineOffset = -inlineOffset;
     translationOffset.setX(inlineOffset);
         
     LayoutUnit blockOffset = isHorizontalWritingMode() ? -flowThreadPortion.y() : -flowThreadPortion.x();
-    if (isFlippedBlocksWritingMode(style()->writingMode()))
+    if (isFlippedBlocksWritingMode(style().writingMode()))
         blockOffset = -blockOffset;
     translationOffset.setY(blockOffset);
     

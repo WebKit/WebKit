@@ -1451,8 +1451,8 @@ void CaretBase::paintCaret(Node* node, GraphicsContext* context, const LayoutPoi
     Element* element = node->isElementNode() ? toElement(node) : node->parentElement();
 
     if (element && element->renderer()) {
-        caretColor = element->renderer()->style()->visitedDependentColor(CSSPropertyColor);
-        colorSpace = element->renderer()->style()->colorSpace();
+        caretColor = element->renderer()->style().visitedDependentColor(CSSPropertyColor);
+        colorSpace = element->renderer()->style().colorSpace();
     }
 
     context->fillRect(caret, caretColor, colorSpace);
@@ -1704,7 +1704,7 @@ void FrameSelection::focusedOrActiveStateChanged()
     if (Element* element = m_frame->document()->focusedElement()) {
         element->setNeedsStyleRecalc();
         if (RenderObject* renderer = element->renderer())
-            if (renderer && renderer->style()->hasAppearance())
+            if (renderer && renderer->style().hasAppearance())
                 renderer->theme()->stateChanged(renderer, FocusState);
     }
 }

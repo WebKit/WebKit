@@ -93,7 +93,7 @@ bool RenderInputSpeech::paintInputFieldSpeechButton(RenderObject* object, const 
         image = imageStateRecording.get();
     else if (speechButton->state() == InputFieldSpeechButtonElement::Recognizing)
         image = imageStateWaiting.get();
-    paintInfo.context->drawImage(image, object->style()->colorSpace(), pixelSnappedIntRect(buttonRect));
+    paintInfo.context->drawImage(image, object->style().colorSpace(), pixelSnappedIntRect(buttonRect));
 
     return false;
 }

@@ -85,7 +85,7 @@ void SVGTextLayoutAttributesBuilder::rebuildMetricsForTextRenderer(RenderSVGInli
 
 static inline void processRenderSVGInlineText(RenderSVGInlineText* text, unsigned& atCharacter, const UChar*& lastCharacter)
 {
-    if (text->style()->whiteSpace() == PRE) {
+    if (text->style().whiteSpace() == PRE) {
         atCharacter += text->textLength();
         return;
     }

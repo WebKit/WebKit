@@ -111,7 +111,7 @@ RenderFullScreen* RenderFullScreen::wrapRenderer(RenderObject* object, RenderEle
 {
     RenderFullScreen* fullscreenRenderer = new RenderFullScreen(document, createFullScreenStyle());
     fullscreenRenderer->initializeStyle();
-    if (parent && !parent->isChildAllowed(*fullscreenRenderer, *fullscreenRenderer->style())) {
+    if (parent && !parent->isChildAllowed(*fullscreenRenderer, fullscreenRenderer->style())) {
         fullscreenRenderer->destroy();
         return 0;
     }

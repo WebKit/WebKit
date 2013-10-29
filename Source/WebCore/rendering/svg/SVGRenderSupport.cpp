@@ -59,13 +59,13 @@ FloatRect SVGRenderSupport::repaintRectForRendererInLocalCoordinatesExcludingSVG
 LayoutRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderObject* object, const RenderLayerModelObject* repaintContainer)
 {
     // Return early for any cases where we don't actually paint
-    if (object->style()->visibility() != VISIBLE && !object->enclosingLayer()->hasVisibleContent())
+    if (object->style().visibility() != VISIBLE && !object->enclosingLayer()->hasVisibleContent())
         return LayoutRect();
 
     // Pass our local paint rect to computeRectForRepaint() which will
     // map to parent coords and recurse up the parent chain.
     FloatRect repaintRect = repaintRectForRendererInLocalCoordinatesExcludingSVGShadow(object);
-    const SVGRenderStyle* svgStyle = object->style()->svgStyle();
+    const SVGRenderStyle* svgStyle = object->style().svgStyle();
     if (const ShadowData* shadow = svgStyle->shadow())
         shadow->adjustRectForShadow(repaintRect);
     object->computeFloatRectForRepaint(repaintContainer, repaintRect);
@@ -74,10 +74,10 @@ LayoutRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderObject* o
 
 void SVGRenderSupport::computeFloatRectForRepaint(const RenderObject* object, const RenderLayerModelObject* repaintContainer, FloatRect& repaintRect, bool fixed)
 {
-    const SVGRenderStyle* svgStyle = object->style()->svgStyle();
+    const SVGRenderStyle* svgStyle = object->style().svgStyle();
     if (const ShadowData* shadow = svgStyle->shadow())
         shadow->adjustRectForShadow(repaintRect);
-    repaintRect.inflate(object->style()->outlineWidth());
+    repaintRect.inflate(object->style().outlineWidth());
 
     // Translate to coords in our parent renderer, and then call computeFloatRectForRepaint() on our parent.
     repaintRect = object->localToParentTransform().mapRect(repaintRect);
@@ -299,15 +299,15 @@ void SVGRenderSupport::layoutChildren(RenderObject* start, bool selfNeedsLayout)
 bool SVGRenderSupport::isOverflowHidden(const RenderObject* object)
 {
     // SVG doesn't support independent x/y overflow
-    ASSERT(object->style()->overflowX() == object->style()->overflowY());
+    ASSERT(object->style().overflowX() == object->style().overflowY());
 
     // OSCROLL is never set for SVG - see StyleResolver::adjustRenderStyle
-    ASSERT(object->style()->overflowX() != OSCROLL);
+    ASSERT(object->style().overflowX() != OSCROLL);
 
     // RenderSVGRoot should never query for overflow state - it should always clip itself to the initial viewport size.
     ASSERT(!object->isRoot());
 
-    return object->style()->overflowX() == OHIDDEN;
+    return object->style().overflowX() == OHIDDEN;
 }
 
 bool SVGRenderSupport::rendererHasSVGShadow(const RenderObject* object)
@@ -349,13 +349,11 @@ void SVGRenderSupport::intersectRepaintRectWithShadows(const RenderObject* objec
     AffineTransform localToRootTransform;
 
     while (currentObject && rendererHasSVGShadow(currentObject)) {
-        RenderStyle* style = currentObject->style();
-        if (style) {
-            const SVGRenderStyle* svgStyle = style->svgStyle();
-            if (svgStyle) {
-                if (const ShadowData* shadow = svgStyle->shadow())
-                    shadow->adjustRectForShadow(repaintRect);
-            }
+        const RenderStyle& style = currentObject->style();
+        const SVGRenderStyle* svgStyle = style.svgStyle();
+        if (svgStyle) {
+            if (const ShadowData* shadow = svgStyle->shadow())
+                shadow->adjustRectForShadow(repaintRect);
         }
 
         repaintRect = currentObject->localToParentTransform().mapRect(repaintRect);
@@ -458,7 +456,7 @@ void SVGRenderSupport::childAdded(RenderObject* parent, RenderObject* child)
 void SVGRenderSupport::styleChanged(RenderObject* object)
 {
     RenderObject* parent = object->parent();
-    SVGRenderSupport::setRendererHasSVGShadow(object, (parent && SVGRenderSupport::rendererHasSVGShadow(parent)) || (object->style()->svgStyle() && object->style()->svgStyle()->shadow()));
+    SVGRenderSupport::setRendererHasSVGShadow(object, (parent && SVGRenderSupport::rendererHasSVGShadow(parent)) || (object->style().svgStyle() && object->style().svgStyle()->shadow()));
 }
 
 }

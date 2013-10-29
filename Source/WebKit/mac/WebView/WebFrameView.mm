@@ -575,7 +575,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     RenderView* renderView = document->renderView();
     if (!renderView)
         return YES;
-    return renderView->style()->isHorizontalWritingMode();
+    return renderView->style().isHorizontalWritingMode();
 }
 
 - (BOOL)_isFlippedDocument
@@ -589,7 +589,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     RenderView* renderView = document->renderView();
     if (!renderView)
         return NO;
-    return renderView->style()->isFlippedBlocksWritingMode();
+    return renderView->style().isFlippedBlocksWritingMode();
 }
 
 - (BOOL)_scrollToBeginningOfDocument

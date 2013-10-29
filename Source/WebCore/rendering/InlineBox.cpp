@@ -231,7 +231,7 @@ void InlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, Layo
         return;
 
     LayoutPoint childPoint = paintOffset;
-    if (parent()->renderer().style()->isFlippedBlocksWritingMode() && renderer.isBox()) // Faster than calling containingBlock().
+    if (parent()->renderer().style().isFlippedBlocksWritingMode() && renderer.isBox()) // Faster than calling containingBlock().
         childPoint = m_renderer.containingBlock()->flipForWritingModeForChild(&toRenderBox(renderer), childPoint);
     
     // Paint all phases of replaced elements atomically, as though the replaced element established its
@@ -259,7 +259,7 @@ bool InlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
     // own stacking context.  (See Appendix E.2, section 6.4 on inline block/table elements in the CSS2.1
     // specification.)
     LayoutPoint childPoint = accumulatedOffset;
-    if (parent()->renderer().style()->isFlippedBlocksWritingMode() && !renderer().isLineBreak()) // Faster than calling containingBlock().
+    if (parent()->renderer().style().isFlippedBlocksWritingMode() && !renderer().isLineBreak()) // Faster than calling containingBlock().
         childPoint = m_renderer.containingBlock()->flipForWritingModeForChild(&toRenderBox(renderer()), childPoint);
     
     return m_renderer.hitTest(request, result, locationInContainer, childPoint);
@@ -364,10 +364,10 @@ void InlineBox::clearKnownToHaveNoOverflow()
 
 FloatPoint InlineBox::locationIncludingFlipping()
 {
-    if (!m_renderer.style()->isFlippedBlocksWritingMode())
+    if (!m_renderer.style().isFlippedBlocksWritingMode())
         return FloatPoint(x(), y());
     RenderBlockFlow& block = root().blockFlow();
-    if (block.style()->isHorizontalWritingMode())
+    if (block.style().isHorizontalWritingMode())
         return FloatPoint(x(), block.height() - height() - y());
     else
         return FloatPoint(block.width() - width() - x(), y());
@@ -375,28 +375,28 @@ FloatPoint InlineBox::locationIncludingFlipping()
 
 void InlineBox::flipForWritingMode(FloatRect& rect)
 {
-    if (!m_renderer.style()->isFlippedBlocksWritingMode())
+    if (!m_renderer.style().isFlippedBlocksWritingMode())
         return;
     root().blockFlow().flipForWritingMode(rect);
 }
 
 FloatPoint InlineBox::flipForWritingMode(const FloatPoint& point)
 {
-    if (!m_renderer.style()->isFlippedBlocksWritingMode())
+    if (!m_renderer.style().isFlippedBlocksWritingMode())
         return point;
     return root().blockFlow().flipForWritingMode(point);
 }
 
 void InlineBox::flipForWritingMode(LayoutRect& rect)
 {
-    if (!m_renderer.style()->isFlippedBlocksWritingMode())
+    if (!m_renderer.style().isFlippedBlocksWritingMode())
         return;
     root().blockFlow().flipForWritingMode(rect);
 }
 
 LayoutPoint InlineBox::flipForWritingMode(const LayoutPoint& point)
 {
-    if (!m_renderer.style()->isFlippedBlocksWritingMode())
+    if (!m_renderer.style().isFlippedBlocksWritingMode())
         return point;
     return root().blockFlow().flipForWritingMode(point);
 }

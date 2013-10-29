@@ -87,7 +87,7 @@ static WKMediaControllerThemeState determineState(RenderObject* o)
 // Utility to scale when the UI part are not scaled by wkDrawMediaUIPart
 static FloatRect getUnzoomedRectAndAdjustCurrentContext(RenderObject* o, const PaintInfo& paintInfo, const IntRect &originalRect)
 {
-    float zoomLevel = o->style()->effectiveZoom();
+    float zoomLevel = o->style().effectiveZoom();
     FloatRect unzoomedRect(originalRect);
     if (zoomLevel != 1.0f) {
         unzoomedRect.setWidth(unzoomedRect.width() / zoomLevel);
@@ -226,7 +226,7 @@ IntPoint RenderMediaControls::volumeSliderOffsetFromMuteButton(RenderBox* muteBu
     static const int xOffset = -4;
     static const int yOffset = 5;
 
-    float zoomLevel = muteButtonBox->style()->effectiveZoom();
+    float zoomLevel = muteButtonBox->style().effectiveZoom();
     int y = yOffset * zoomLevel + muteButtonBox->pixelSnappedOffsetHeight() - size.height();
     FloatPoint absPoint = muteButtonBox->localToAbsolute(FloatPoint(muteButtonBox->pixelSnappedOffsetLeft(), y), IsFixed | UseTransforms);
     if (absPoint.y() < 0)

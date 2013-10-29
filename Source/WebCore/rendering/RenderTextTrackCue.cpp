@@ -48,7 +48,7 @@ void RenderTextTrackCue::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     RenderBlockFlow::layout();
 
-    LayoutStateMaintainer statePusher(&view(), this, locationOffset(), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
+    LayoutStateMaintainer statePusher(&view(), this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
     
     if (m_cue->cueType()== TextTrackCue::WebVTT) {
         if (m_cue->snapToLines())

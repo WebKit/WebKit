@@ -93,17 +93,16 @@ void SVGTextChunkBuilder::addTextChunk(Vector<SVGInlineTextBox*>& lineLayoutBoxe
     SVGInlineTextBox* textBox = lineLayoutBoxes[boxStart];
     ASSERT(textBox);
 
-    const RenderStyle* style = textBox->renderer().style();
-    ASSERT(style);
+    const RenderStyle& style = textBox->renderer().style();
 
-    const SVGRenderStyle* svgStyle = style->svgStyle();
+    const SVGRenderStyle* svgStyle = style.svgStyle();
     ASSERT(svgStyle);
 
     // Build chunk style flags.
     unsigned chunkStyle = SVGTextChunk::DefaultStyle;
 
     // Handle 'direction' property.
-    if (!style->isLeftToRightDirection())
+    if (!style.isLeftToRightDirection())
         chunkStyle |= SVGTextChunk::RightToLeftText;
 
     // Handle 'writing-mode' property.

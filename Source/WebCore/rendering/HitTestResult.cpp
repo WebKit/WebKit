@@ -201,7 +201,7 @@ String HitTestResult::spellingToolTip(TextDirection& dir) const
         return String();
 
     if (auto renderer = m_innerNonSharedNode->renderer())
-        dir = renderer->style()->direction();
+        dir = renderer->style().direction();
     return marker->description();
 }
 
@@ -229,7 +229,7 @@ String HitTestResult::title(TextDirection& dir) const
             String title = toElement(titleNode)->title();
             if (!title.isEmpty()) {
                 if (auto renderer = titleNode->renderer())
-                    dir = renderer->style()->direction();
+                    dir = renderer->style().direction();
                 return title;
             }
         }
@@ -246,10 +246,10 @@ String HitTestResult::innerTextIfTruncated(TextDirection& dir) const
         if (auto renderer = toElement(truncatedNode)->renderer()) {
             if (renderer->isRenderBlockFlow()) {
                 RenderBlockFlow* block = toRenderBlockFlow(renderer);
-                if (block->style()->textOverflow()) {
+                if (block->style().textOverflow()) {
                     for (RootInlineBox* line = block->firstRootBox(); line; line = line->nextRootBox()) {
                         if (line->hasEllipsisBox()) {
-                            dir = block->style()->direction();
+                            dir = block->style().direction();
                             return toElement(truncatedNode)->innerText();
                         }
                     }

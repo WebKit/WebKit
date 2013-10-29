@@ -296,8 +296,8 @@ StyleResolver::StyleResolver(Document& document, bool matchAuthorAndUserStyles)
 void StyleResolver::appendAuthorStyleSheets(unsigned firstNew, const Vector<RefPtr<CSSStyleSheet>>& styleSheets)
 {
     m_ruleSets.appendAuthorStyleSheets(firstNew, styleSheets, m_medium.get(), m_inspectorCSSOMWrappers, document().isViewSource(), this);
-    if (document().renderView() && document().renderView()->style())
-        document().renderView()->style()->font().update(fontSelector());
+    if (auto renderView = document().renderView())
+        renderView->style().font().update(fontSelector());
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     viewportStyleResolver()->resolve();

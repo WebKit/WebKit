@@ -130,7 +130,7 @@ void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject* newFloat
             newLeft += shapeOutsideInfo->rightMarginBoxDelta();
 #endif
 
-        if (shouldIndentText() && m_block.style()->isLeftToRightDirection())
+        if (shouldIndentText() && m_block.style().isLeftToRightDirection())
             newLeft += floorToInt(m_block.textIndentOffset());
         m_left = std::max<float>(m_left, newLeft);
     } else {
@@ -142,7 +142,7 @@ void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject* newFloat
             newRight += shapeOutsideInfo->leftMarginBoxDelta();
 #endif
 
-        if (shouldIndentText() && !m_block.style()->isLeftToRightDirection())
+        if (shouldIndentText() && !m_block.style().isLeftToRightDirection())
             newRight -= floorToInt(m_block.textIndentOffset());
         m_right = std::min<float>(m_right, newRight);
     }

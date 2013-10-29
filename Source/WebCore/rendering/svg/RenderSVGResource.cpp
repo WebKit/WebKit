@@ -45,7 +45,7 @@ static inline bool inheritColorFromParentStyleIfNeeded(RenderElement& object, bo
         return true;
     if (!object.parent())
         return false;
-    const SVGRenderStyle* parentSVGStyle = object.parent()->style()->svgStyle();
+    const SVGRenderStyle* parentSVGStyle = object.parent()->style().svgStyle();
     color = applyToFill ? parentSVGStyle->fillPaintColor() : parentSVGStyle->strokePaintColor();
     return true;
 }

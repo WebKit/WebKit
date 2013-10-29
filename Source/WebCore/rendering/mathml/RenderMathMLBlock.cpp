@@ -62,7 +62,7 @@ bool RenderMathMLBlock::isChildAllowed(const RenderObject& child, const RenderSt
 
 RenderMathMLBlock* RenderMathMLBlock::createAnonymousMathMLBlock(EDisplay display)
 {
-    RenderMathMLBlock* newBlock = new RenderMathMLBlock(document(), RenderStyle::createAnonymousStyleWithDisplay(style(), display));
+    RenderMathMLBlock* newBlock = new RenderMathMLBlock(document(), RenderStyle::createAnonymousStyleWithDisplay(&style(), display));
     newBlock->initializeStyle();
     return newBlock;
 }
@@ -83,7 +83,7 @@ int RenderMathMLBlock::baselinePosition(FontBaseline baselineType, bool firstLin
 
 const char* RenderMathMLBlock::renderName() const
 {
-    EDisplay display = style()->display();
+    EDisplay display = style().display();
     if (display == FLEX)
         return isAnonymous() ? "RenderMathMLBlock (anonymous, flex)" : "RenderMathMLBlock (flex)";
     if (display == INLINE_FLEX)
@@ -306,7 +306,7 @@ int RenderMathMLTable::firstLineBaseline() const
     // In legal MathML, we'll have a MathML parent. That RenderFlexibleBox parent will use our firstLineBaseline() for baseline alignment, per
     // http://dev.w3.org/csswg/css3-flexbox/#flex-baselines. We want to vertically center an <mtable>, such as a matrix. Essentially the whole <mtable> element fits on a
     // single line, whose baseline gives this centering. This is different than RenderTable::firstLineBoxBaseline, which returns the baseline of the first row of a <table>.
-    return (logicalHeight() + style()->fontMetrics().xHeight()) / 2;
+    return (logicalHeight() + style().fontMetrics().xHeight()) / 2;
 }
 
 }    

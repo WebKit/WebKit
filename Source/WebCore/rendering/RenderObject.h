@@ -476,7 +476,7 @@ public:
         // RenderBlock::createAnonymousBlock(). This includes creating an anonymous
         // RenderBlock having a BLOCK or BOX display. Other classes such as RenderTextFragment
         // are not RenderBlocks and will return false. See https://bugs.webkit.org/show_bug.cgi?id=56709. 
-        return isAnonymous() && (style()->display() == BLOCK || style()->display() == BOX) && style()->styleType() == NOPSEUDO && isRenderBlock() && !isListMarker() && !isRenderFlowThread() && !isRenderView()
+        return isAnonymous() && (style().display() == BLOCK || style().display() == BOX) && style().styleType() == NOPSEUDO && isRenderBlock() && !isListMarker() && !isRenderFlowThread() && !isRenderView()
 #if ENABLE(FULLSCREEN_API)
             && !isRenderFullScreen()
             && !isRenderFullScreenPlaceholder()
@@ -486,8 +486,8 @@ public:
 #endif
             ;
     }
-    bool isAnonymousColumnsBlock() const { return style()->specifiesColumns() && isAnonymousBlock(); }
-    bool isAnonymousColumnSpanBlock() const { return style()->columnSpan() && isAnonymousBlock(); }
+    bool isAnonymousColumnsBlock() const { return style().specifiesColumns() && isAnonymousBlock(); }
+    bool isAnonymousColumnSpanBlock() const { return style().columnSpan() && isAnonymousBlock(); }
     bool isElementContinuation() const { return node() && node()->renderer() != this; }
     bool isInlineElementContinuation() const { return isElementContinuation() && isInline(); }
     bool isBlockElementContinuation() const { return isElementContinuation() && !isInline(); }
@@ -509,7 +509,7 @@ public:
     bool isBox() const { return m_bitfields.isBox(); }
     bool isRenderView() const  { return m_bitfields.isBox() && m_bitfields.isTextOrRenderView(); }
     bool isInline() const { return m_bitfields.isInline(); } // inline object
-    bool isRunIn() const { return style()->display() == RUN_IN; } // run-in object
+    bool isRunIn() const { return style().display() == RUN_IN; } // run-in object
     bool isDragging() const { return m_bitfields.isDragging(); }
     bool isReplaced() const { return m_bitfields.isReplaced(); } // a "replaced" element (see CSS)
     bool isHorizontalWritingMode() const { return m_bitfields.horizontalWritingMode(); }
@@ -526,7 +526,7 @@ public:
     bool backgroundIsKnownToBeObscured();
     bool borderImageIsLoadedAndCanBeRendered() const;
     bool mustRepaintBackgroundOrBorder() const;
-    bool hasBackground() const { return style()->hasBackground(); }
+    bool hasBackground() const { return style().hasBackground(); }
     bool hasEntirelyFixedBackground() const;
 
     bool needsLayout() const
@@ -551,23 +551,23 @@ public:
 
     bool isSelectionBorder() const;
 
-    bool hasClip() const { return isOutOfFlowPositioned() && style()->hasClip(); }
+    bool hasClip() const { return isOutOfFlowPositioned() && style().hasClip(); }
     bool hasOverflowClip() const { return m_bitfields.hasOverflowClip(); }
     bool hasClipOrOverflowClip() const { return hasClip() || hasOverflowClip(); }
 
     bool hasTransform() const { return m_bitfields.hasTransform(); }
-    bool hasMask() const { return style() && style()->hasMask(); }
-    bool hasClipPath() const { return style() && style()->clipPath(); }
-    bool hasHiddenBackface() const { return style() && style()->backfaceVisibility() == BackfaceVisibilityHidden; }
+    bool hasMask() const { return style().hasMask(); }
+    bool hasClipPath() const { return style().clipPath(); }
+    bool hasHiddenBackface() const { return style().backfaceVisibility() == BackfaceVisibilityHidden; }
 
 #if ENABLE(CSS_FILTERS)
-    bool hasFilter() const { return style() && style()->hasFilter(); }
+    bool hasFilter() const { return style().hasFilter(); }
 #else
     bool hasFilter() const { return false; }
 #endif
 
 #if ENABLE(CSS_COMPOSITING)
-    bool hasBlendMode() const { return style() && style()->hasBlendMode(); }
+    bool hasBlendMode() const { return style().hasBlendMode(); }
 #else
     bool hasBlendMode() const { return false; }
 #endif
@@ -598,7 +598,7 @@ public:
     Frame& frame() const; // Defined in RenderView.h
 
     bool hasOutlineAnnotation() const;
-    bool hasOutline() const { return style()->hasOutline() || hasOutlineAnnotation(); }
+    bool hasOutline() const { return style().hasOutline() || hasOutlineAnnotation(); }
 
     // Returns the object containing this one. Can be different from parent for positioned elements.
     // If repaintContainer and repaintContainerSkipped are not null, on return *repaintContainerSkipped
@@ -717,12 +717,13 @@ public:
     virtual LayoutUnit minPreferredLogicalWidth() const { return 0; }
     virtual LayoutUnit maxPreferredLogicalWidth() const { return 0; }
 
-    RenderStyle* style() const;
-    RenderStyle* firstLineStyle() const;
+    RenderStyle& style() const;
+    RenderStyle& firstLineStyle() const;
 
     // Anonymous blocks that are part of of a continuation chain will return their inline continuation's outline style instead.
     // This is typically only relevant when repainting.
-    virtual RenderStyle* outlineStyleForRepaint() const { return style(); }
+    // FIXME: Return a reference.
+    virtual RenderStyle* outlineStyleForRepaint() const { return &const_cast<RenderStyle&>(style()); }
     
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
 
@@ -784,8 +785,8 @@ public:
 
     bool isFloatingOrOutOfFlowPositioned() const { return (isFloating() || isOutOfFlowPositioned()); }
 
-    bool isTransparent() const { return style()->opacity() < 1.0f; }
-    float opacity() const { return style()->opacity(); }
+    bool isTransparent() const { return style().opacity() < 1.0f; }
+    float opacity() const { return style().opacity(); }
 
     bool hasReflection() const { return m_bitfields.hasReflection(); }
 
@@ -869,7 +870,7 @@ public:
 
     AnimationController& animation() const;
 
-    bool visibleToHitTesting() const { return style()->visibility() == VISIBLE && style()->pointerEvents() != PE_NONE; }
+    bool visibleToHitTesting() const { return style().visibility() == VISIBLE && style().pointerEvents() != PE_NONE; }
 
     // Map points and quads through elements, potentially via 3d transforms. You should never need to call these directly; use
     // localToAbsolute/absoluteToLocal methods instead.
@@ -1069,7 +1070,7 @@ inline bool RenderObject::isBeforeContent() const
     // Text nodes don't have their own styles, so ignore the style on a text node.
     if (isText())
         return false;
-    if (style()->styleType() != BEFORE)
+    if (style().styleType() != BEFORE)
         return false;
     return true;
 }
@@ -1079,7 +1080,7 @@ inline bool RenderObject::isAfterContent() const
     // Text nodes don't have their own styles, so ignore the style on a text node.
     if (isText())
         return false;
-    if (style()->styleType() != AFTER)
+    if (style().styleType() != AFTER)
         return false;
     return true;
 }
@@ -1108,7 +1109,7 @@ inline bool RenderObject::preservesNewline() const
         return false;
 #endif
         
-    return style()->preserveNewline();
+    return style().preserveNewline();
 }
 
 inline void RenderObject::setSelectionStateIfNeeded(SelectionState state)
@@ -1148,13 +1149,13 @@ inline bool RenderObject::backgroundIsKnownToBeObscured()
 
 inline int adjustForAbsoluteZoom(int value, RenderObject* renderer)
 {
-    return adjustForAbsoluteZoom(value, renderer->style());
+    return adjustForAbsoluteZoom(value, &renderer->style());
 }
 
 #if ENABLE(SUBPIXEL_LAYOUT)
 inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, RenderObject* renderer)
 {
-    return adjustLayoutUnitForAbsoluteZoom(value, renderer->style());
+    return adjustLayoutUnitForAbsoluteZoom(value, &renderer->style());
 }
 #endif
 

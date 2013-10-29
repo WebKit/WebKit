@@ -217,7 +217,7 @@ static inline PassRefPtr<StyleImage> blendFilter(const AnimationBase* anim, Cach
 
     RefPtr<StyleCachedImage> styledImage = StyleCachedImage::create(image);
     RefPtr<CSSImageValue> imageValue = CSSImageValue::create(image->url(), styledImage.get());
-    RefPtr<CSSValue> filterValue = ComputedStyleExtractor::valueForFilter(anim->renderer(), anim->renderer()->style(), filterResult, DoNotAdjustPixelValues);
+    RefPtr<CSSValue> filterValue = ComputedStyleExtractor::valueForFilter(anim->renderer(), &anim->renderer()->style(), filterResult, DoNotAdjustPixelValues);
     RefPtr<CSSFilterImageValue> result = CSSFilterImageValue::create(imageValue, filterValue);
     result->setFilterOperations(filterResult);
 

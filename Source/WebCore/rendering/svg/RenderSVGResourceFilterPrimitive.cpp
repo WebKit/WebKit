@@ -60,7 +60,7 @@ void RenderSVGResourceFilterPrimitive::styleDidChange(StyleDifference diff, cons
     if (diff == StyleDifferenceEqual || !oldStyle)
         return;
 
-    const SVGRenderStyle* newStyle = this->style()->svgStyle();
+    const SVGRenderStyle* newStyle = style().svgStyle();
     if (filterPrimitiveElement().hasTagName(SVGNames::feFloodTag)) {
         if (newStyle->floodColor() != oldStyle->svgStyle()->floodColor())
             toRenderSVGResourceFilter(filter)->primitiveAttributeChanged(this, SVGNames::flood_colorAttr);

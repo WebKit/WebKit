@@ -81,7 +81,7 @@ void RenderReplaced::styleDidChange(StyleDifference diff, const RenderStyle* old
 
     bool hadStyle = (oldStyle != 0);
     float oldZoom = hadStyle ? oldStyle->effectiveZoom() : RenderStyle::initialZoom();
-    if (style() && style()->effectiveZoom() != oldZoom)
+    if (style().effectiveZoom() != oldZoom)
         intrinsicSizeChanged();
 }
 
@@ -108,8 +108,8 @@ void RenderReplaced::layout()
 
 void RenderReplaced::intrinsicSizeChanged()
 {
-    int scaledWidth = static_cast<int>(cDefaultWidth * style()->effectiveZoom());
-    int scaledHeight = static_cast<int>(cDefaultHeight * style()->effectiveZoom());
+    int scaledWidth = static_cast<int>(cDefaultWidth * style().effectiveZoom());
+    int scaledHeight = static_cast<int>(cDefaultHeight * style().effectiveZoom());
     m_intrinsicSize = IntSize(scaledWidth, scaledHeight);
     setNeedsLayoutAndPrefWidthsRecalc();
 }
@@ -130,7 +130,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     }
 
     LayoutRect paintRect = LayoutRect(adjustedPaintOffset, size());
-    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
+    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style().outlineWidth())
         paintOutline(paintInfo, paintRect);
     
     if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection && !canHaveChildren())
@@ -147,7 +147,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     }
 
     bool completelyClippedOut = false;
-    if (style()->hasBorderRadius()) {
+    if (style().hasBorderRadius()) {
         LayoutRect borderRect = LayoutRect(adjustedPaintOffset, size());
 
         if (borderRect.isEmpty())
@@ -155,7 +155,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         else {
             // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
             paintInfo.context->save();
-            RoundedRect roundedInnerRect = style()->getRoundedInnerBorderFor(paintRect,
+            RoundedRect roundedInnerRect = style().getRoundedInnerBorderFor(paintRect,
                 paddingTop() + borderTop(), paddingBottom() + borderBottom(), paddingLeft() + borderLeft(), paddingRight() + borderRight(), true, true);
             clipRoundedInnerRect(paintInfo.context, paintRect, roundedInnerRect);
         }
@@ -164,7 +164,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (!completelyClippedOut) {
         paintReplaced(paintInfo, adjustedPaintOffset);
 
-        if (style()->hasBorderRadius())
+        if (style().hasBorderRadius())
             paintInfo.context->restore();
     }
         
@@ -173,7 +173,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (drawSelectionTint) {
         LayoutRect selectionPaintingRect = localSelectionRect();
         selectionPaintingRect.moveBy(adjustedPaintOffset);
-        paintInfo.context->fillRect(pixelSnappedIntRect(selectionPaintingRect), selectionBackgroundColor(), style()->colorSpace());
+        paintInfo.context->fillRect(pixelSnappedIntRect(selectionPaintingRect), selectionBackgroundColor(), style().colorSpace());
     }
 }
 
@@ -187,7 +187,7 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
         return false;
         
     // if we're invisible or haven't received a layout yet, then just bail.
-    if (style()->visibility() != VISIBLE)
+    if (style().visibility() != VISIBLE)
         return false;
 
     LayoutPoint adjustedPaintOffset = paintOffset + location();
@@ -224,7 +224,7 @@ static inline RenderBlock* firstContainingBlockWithLogicalWidth(const RenderRepl
         return 0;
 
     for (; !containingBlock->isRenderView() && !containingBlock->isBody(); containingBlock = containingBlock->containingBlock()) {
-        if (containingBlock->style()->logicalWidth().isSpecified())
+        if (containingBlock->style().logicalWidth().isSpecified())
             return containingBlock;
     }
 
@@ -233,10 +233,10 @@ static inline RenderBlock* firstContainingBlockWithLogicalWidth(const RenderRepl
 
 bool RenderReplaced::hasReplacedLogicalWidth() const
 {
-    if (style()->logicalWidth().isSpecified())
+    if (style().logicalWidth().isSpecified())
         return true;
 
-    if (style()->logicalWidth().isAuto())
+    if (style().logicalWidth().isAuto())
         return false;
 
     return firstContainingBlockWithLogicalWidth(this);
@@ -244,10 +244,10 @@ bool RenderReplaced::hasReplacedLogicalWidth() const
 
 bool RenderReplaced::hasReplacedLogicalHeight() const
 {
-    if (style()->logicalHeight().isAuto())
+    if (style().logicalHeight().isAuto())
         return false;
 
-    if (style()->logicalHeight().isSpecified()) {
+    if (style().logicalHeight().isSpecified()) {
         if (hasAutoHeightOrContainingBlockWithAutoHeight())
             return false;
         return true;
@@ -266,7 +266,7 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
 
         // Handle zoom & vertical writing modes here, as the embedded document doesn't know about them.
         if (!isPercentageIntrinsicSize)
-            intrinsicSize.scale(style()->effectiveZoom());
+            intrinsicSize.scale(style().effectiveZoom());
 
         if (hasAspectRatio() && isPercentageIntrinsicSize)
             intrinsicRatio = 1;
@@ -298,7 +298,7 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
     // FIXME: In the long term, it might be better to just return this code more to the way it used to be before this
     // function was added, since all it has done is make the code more unclear.
     constrainedSize = intrinsicSize;
-    if (intrinsicRatio && !isPercentageIntrinsicSize && !intrinsicSize.isEmpty() && style()->logicalWidth().isAuto() && style()->logicalHeight().isAuto()) {
+    if (intrinsicRatio && !isPercentageIntrinsicSize && !intrinsicSize.isEmpty() && style().logicalWidth().isAuto() && style().logicalHeight().isAuto()) {
         // We can't multiply or divide by 'intrinsicRatio' here, it breaks tests, like fast/images/zoomed-img-size.html, which
         // can only be fixed once subpixel precision is available for things like intrinsicWidth/Height - which include zoom!
         constrainedSize.setWidth(RenderBox::computeReplacedLogicalHeight() * intrinsicSize.width() / intrinsicSize.height());
@@ -309,7 +309,7 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
 LayoutRect RenderReplaced::replacedContentRect(const LayoutSize& intrinsicSize) const
 {
     LayoutRect contentRect = contentBoxRect();
-    ObjectFit objectFit = style()->objectFit();
+    ObjectFit objectFit = style().objectFit();
     if (objectFit == ObjectFitFill)
         return contentRect;
 
@@ -357,8 +357,8 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
 
 LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
 {
-    if (style()->logicalWidth().isSpecified() || style()->logicalWidth().isIntrinsic())
-        return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(style()->logicalWidth()), shouldComputePreferred);
+    if (style().logicalWidth().isSpecified() || style().logicalWidth().isIntrinsic())
+        return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(style().logicalWidth()), shouldComputePreferred);
 
     RenderBox* contentRenderer = embeddedContentBox();
 
@@ -368,8 +368,8 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
     FloatSize constrainedSize;
     computeAspectRatioInformationForRenderBox(contentRenderer, constrainedSize, intrinsicRatio, isPercentageIntrinsicSize);
 
-    if (style()->logicalWidth().isAuto()) {
-        bool heightIsAuto = style()->logicalHeight().isAuto();
+    if (style().logicalWidth().isAuto()) {
+        bool heightIsAuto = style().logicalHeight().isAuto();
         bool hasIntrinsicWidth = !isPercentageIntrinsicSize && constrainedSize.width() > 0;
 
         // If 'height' and 'width' both have computed values of 'auto' and the element also has an intrinsic width, then that intrinsic width is the used value of 'width'.
@@ -394,13 +394,13 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
                 // 'margin-left' + 'border-left-width' + 'padding-left' + 'width' + 'padding-right' + 'border-right-width' + 'margin-right' = width of containing block
                 LayoutUnit logicalWidth;
                 if (RenderBlock* blockWithWidth = firstContainingBlockWithLogicalWidth(this))
-                    logicalWidth = blockWithWidth->computeReplacedLogicalWidthRespectingMinMaxWidth(blockWithWidth->computeReplacedLogicalWidthUsing(blockWithWidth->style()->logicalWidth()), shouldComputePreferred);
+                    logicalWidth = blockWithWidth->computeReplacedLogicalWidthRespectingMinMaxWidth(blockWithWidth->computeReplacedLogicalWidthUsing(blockWithWidth->style().logicalWidth()), shouldComputePreferred);
                 else
                     logicalWidth = containingBlock()->availableLogicalWidth();
 
                 // This solves above equation for 'width' (== logicalWidth).
-                LayoutUnit marginStart = minimumValueForLength(style()->marginStart(), logicalWidth);
-                LayoutUnit marginEnd = minimumValueForLength(style()->marginEnd(), logicalWidth);
+                LayoutUnit marginStart = minimumValueForLength(style().marginStart(), logicalWidth);
+                LayoutUnit marginEnd = minimumValueForLength(style().marginEnd(), logicalWidth);
                 logicalWidth = max<LayoutUnit>(0, logicalWidth - (marginStart + marginEnd + (width() - clientWidth())));
                 if (isPercentageIntrinsicSize)
                     logicalWidth = logicalWidth * constrainedSize.width() / 100;
@@ -426,7 +426,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeight() const
 {
     // 10.5 Content height: the 'height' property: http://www.w3.org/TR/CSS21/visudet.html#propdef-height
     if (hasReplacedLogicalHeight())
-        return computeReplacedLogicalHeightRespectingMinMaxHeight(computeReplacedLogicalHeightUsing(style()->logicalHeight()));
+        return computeReplacedLogicalHeightRespectingMinMaxHeight(computeReplacedLogicalHeightUsing(style().logicalHeight()));
 
     RenderBox* contentRenderer = embeddedContentBox();
 
@@ -436,7 +436,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeight() const
     FloatSize constrainedSize;
     computeAspectRatioInformationForRenderBox(contentRenderer, constrainedSize, intrinsicRatio, isPercentageIntrinsicSize);
 
-    bool widthIsAuto = style()->logicalWidth().isAuto();
+    bool widthIsAuto = style().logicalWidth().isAuto();
     bool hasIntrinsicHeight = !isPercentageIntrinsicSize && constrainedSize.height() > 0;
 
     // If 'height' and 'width' both have computed values of 'auto' and the element also has an intrinsic height, then that intrinsic height is the used value of 'height'.
@@ -468,23 +468,23 @@ void RenderReplaced::computePreferredLogicalWidths()
 
     // We cannot resolve any percent logical width here as the available logical
     // width may not be set on our containing block.
-    if (style()->logicalWidth().isPercent())
+    if (style().logicalWidth().isPercent())
         computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
     else
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = computeReplacedLogicalWidth(ComputePreferred);
 
-    RenderStyle* styleToUse = style();
-    if (styleToUse->logicalWidth().isPercent() || styleToUse->logicalMaxWidth().isPercent() || hasRelativeIntrinsicLogicalWidth())
+    const RenderStyle& styleToUse = style();
+    if (styleToUse.logicalWidth().isPercent() || styleToUse.logicalMaxWidth().isPercent() || hasRelativeIntrinsicLogicalWidth())
         m_minPreferredLogicalWidth = 0;
 
-    if (styleToUse->logicalMinWidth().isFixed() && styleToUse->logicalMinWidth().value() > 0) {
-        m_maxPreferredLogicalWidth = max(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse->logicalMinWidth().value()));
-        m_minPreferredLogicalWidth = max(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse->logicalMinWidth().value()));
+    if (styleToUse.logicalMinWidth().isFixed() && styleToUse.logicalMinWidth().value() > 0) {
+        m_maxPreferredLogicalWidth = max(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalMinWidth().value()));
+        m_minPreferredLogicalWidth = max(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalMinWidth().value()));
     }
     
-    if (styleToUse->logicalMaxWidth().isFixed()) {
-        m_maxPreferredLogicalWidth = min(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse->logicalMaxWidth().value()));
-        m_minPreferredLogicalWidth = min(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse->logicalMaxWidth().value()));
+    if (styleToUse.logicalMaxWidth().isFixed()) {
+        m_maxPreferredLogicalWidth = min(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalMaxWidth().value()));
+        m_minPreferredLogicalWidth = min(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse.logicalMaxWidth().value()));
     }
 
     LayoutUnit borderAndPadding = borderAndPaddingLogicalWidth();
@@ -547,8 +547,8 @@ LayoutRect RenderReplaced::localSelectionRect(bool checkWhetherSelected) const
         return LayoutRect(LayoutPoint(), size());
     
     const RootInlineBox& rootBox = m_inlineBoxWrapper->root();
-    LayoutUnit newLogicalTop = rootBox.blockFlow().style()->isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - rootBox.selectionBottom() : rootBox.selectionTop() - m_inlineBoxWrapper->logicalTop();
-    if (rootBox.blockFlow().style()->isHorizontalWritingMode())
+    LayoutUnit newLogicalTop = rootBox.blockFlow().style().isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - rootBox.selectionBottom() : rootBox.selectionTop() - m_inlineBoxWrapper->logicalTop();
+    if (rootBox.blockFlow().style().isHorizontalWritingMode())
         return LayoutRect(0, newLogicalTop, width(), rootBox.selectionHeight());
     return LayoutRect(newLogicalTop, 0, rootBox.selectionHeight(), height());
 }
@@ -587,7 +587,7 @@ bool RenderReplaced::isSelected() const
 
 LayoutRect RenderReplaced::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
 {
-    if (style()->visibility() != VISIBLE && !enclosingLayer()->hasVisibleContent())
+    if (style().visibility() != VISIBLE && !enclosingLayer()->hasVisibleContent())
         return LayoutRect();
 
     // The selectionRect can project outside of the overflowRect, so take their union
@@ -598,8 +598,7 @@ LayoutRect RenderReplaced::clippedOverflowRectForRepaint(const RenderLayerModelO
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
     r.move(view().layoutDelta());
 
-    if (style())
-        r.inflate(style()->outlineSize());
+    r.inflate(style().outlineSize());
 
     computeRectForRepaint(repaintContainer, r);
     return r;

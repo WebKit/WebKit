@@ -50,20 +50,20 @@ RenderLineBreak::~RenderLineBreak()
 LayoutUnit RenderLineBreak::lineHeight(bool firstLine, LineDirectionMode /*direction*/, LinePositionMode /*linePositionMode*/) const
 {
     if (firstLine && document().styleSheetCollection().usesFirstLineRules()) {
-        const RenderStyle& firstLineStyle = *this->firstLineStyle();
-        if (&firstLineStyle != style())
+        const RenderStyle& firstLineStyle = this->firstLineStyle();
+        if (&firstLineStyle != &style())
             return firstLineStyle.computedLineHeight(&view());
     }
 
     if (m_cachedLineHeight == invalidLineHeight)
-        m_cachedLineHeight = style()->computedLineHeight(&view());
+        m_cachedLineHeight = style().computedLineHeight(&view());
     
     return m_cachedLineHeight;
 }
 
 int RenderLineBreak::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
-    const RenderStyle& style = firstLine ? *firstLineStyle() : *this->style();
+    const RenderStyle& style = firstLine ? firstLineStyle() : this->style();
     const FontMetrics& fontMetrics = style.fontMetrics();
     return fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2;
 }
@@ -155,7 +155,7 @@ IntRect RenderLineBreak::linesBoundingBox() const
     float logicalLeftSide = m_inlineBoxWrapper->logicalLeft();
     float logicalRightSide = m_inlineBoxWrapper->logicalRight();
 
-    bool isHorizontal = style()->isHorizontalWritingMode();
+    bool isHorizontal = style().isHorizontalWritingMode();
 
     float x = isHorizontal ? logicalLeftSide : m_inlineBoxWrapper->x();
     float y = isHorizontal ? m_inlineBoxWrapper->y() : logicalLeftSide;

@@ -58,7 +58,7 @@ void TapHighlightController::highlight(Node* node)
     ASSERT(node);
 
     m_path = GestureTapHighlighter::pathForNodeHighlight(node);
-    m_color = node->renderer()->style()->tapHighlightColor();
+    m_color = node->renderer()->style().tapHighlightColor();
 
     if (!m_overlay) {
         RefPtr<PageOverlay> overlay = PageOverlay::create(this);

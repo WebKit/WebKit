@@ -111,10 +111,9 @@ static bool planCounter(RenderElement* object, const AtomicString& identifier, b
     if (!generatingElement)
         return false;
 
-    RenderStyle* style = object->style();
-    ASSERT(style);
+    const RenderStyle& style = object->style();
 
-    switch (style->styleType()) {
+    switch (style.styleType()) {
     case NOPSEUDO:
         // Sometimes elements have more then one renderer. Only the first one gets the counter
         // LayoutTests/http/tests/css/counter-crash.html
@@ -128,7 +127,7 @@ static bool planCounter(RenderElement* object, const AtomicString& identifier, b
         return false; // Counters are forbidden from all other pseudo elements.
     }
 
-    const CounterDirectives directives = style->getCounterDirectives(identifier);
+    const CounterDirectives directives = style.getCounterDirectives(identifier);
     if (directives.isDefined()) {
         value = directives.combinedValue();
         isReset = directives.isReset();
@@ -395,7 +394,7 @@ String RenderCounter::originalText() const
                 return String();
             if (!beforeAfterContainer->isAnonymous() && !beforeAfterContainer->isPseudoElement())
                 return String(); // RenderCounters are restricted to before and after pseudo elements
-            PseudoId containerStyle = beforeAfterContainer->style()->styleType();
+            PseudoId containerStyle = beforeAfterContainer->style().styleType();
             if ((containerStyle == BEFORE) || (containerStyle == AFTER))
                 break;
             beforeAfterContainer = beforeAfterContainer->parent();
@@ -519,8 +518,7 @@ void RenderCounter::rendererRemovedFromTree(RenderObject& renderer)
 
 static void updateCounters(RenderObject* renderer)
 {
-    ASSERT(renderer->style());
-    const CounterDirectiveMap* directiveMap = renderer->style()->counterDirectives();
+    const CounterDirectiveMap* directiveMap = renderer->style().counterDirectives();
     if (!directiveMap)
         return;
     CounterDirectiveMap::const_iterator end = directiveMap->end();

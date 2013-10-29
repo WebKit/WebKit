@@ -40,7 +40,7 @@
 namespace WebCore {
 bool ShapeOutsideInfo::isEnabledFor(const RenderBox* box)
 {
-    ShapeValue* shapeValue = box->style()->shapeOutside();
+    ShapeValue* shapeValue = box->style().shapeOutside();
     if (!box->isFloating() || !shapeValue)
         return false;
 
@@ -92,7 +92,7 @@ void ShapeOutsideInfo::updateDeltasForContainingBlockLine(const RenderBlockFlow*
 
 ShapeValue* ShapeOutsideInfo::shapeValue() const
 {
-    return m_renderer->style()->shapeOutside();
+    return m_renderer->style().shapeOutside();
 }
 
 }

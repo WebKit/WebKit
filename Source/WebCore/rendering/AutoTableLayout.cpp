@@ -65,7 +65,7 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                 if (current.inColSpan || !cell)
                     continue;
 
-                bool cellHasContent = cell->firstChild() || cell->style()->hasBorder() || cell->style()->hasPadding();
+                bool cellHasContent = cell->firstChild() || cell->style().hasBorder() || cell->style().hasPadding();
                 if (cellHasContent)
                     columnLayout.emptyCellsOnly = false;
 
@@ -154,9 +154,9 @@ void AutoTableLayout::fullRecalc()
     unsigned currentColumn = 0;
     for (RenderTableCol* column = m_table->firstColumn(); column; column = column->nextColumn()) {
         if (column->isTableColumnGroupWithColumnChildren())
-            groupLogicalWidth = column->style()->logicalWidth();
+            groupLogicalWidth = column->style().logicalWidth();
         else {
-            Length colLogicalWidth = column->style()->logicalWidth();
+            Length colLogicalWidth = column->style().logicalWidth();
             if (colLogicalWidth.isAuto())
                 colLogicalWidth = groupLogicalWidth;
             if ((colLogicalWidth.isFixed() || colLogicalWidth.isPercent()) && colLogicalWidth.isZero())
@@ -187,18 +187,18 @@ static bool shouldScaleColumns(RenderTable* table)
     // a cell, then don't bloat the maxwidth by examining percentage growth.
     bool scale = true;
     while (table) {
-        Length tw = table->style()->width();
+        Length tw = table->style().width();
         if ((tw.isAuto() || tw.isPercent()) && !table->isOutOfFlowPositioned()) {
             RenderBlock* cb = table->containingBlock();
             while (cb && !cb->isRenderView() && !cb->isTableCell() &&
-                cb->style()->width().isAuto() && !cb->isOutOfFlowPositioned())
+                cb->style().width().isAuto() && !cb->isOutOfFlowPositioned())
                 cb = cb->containingBlock();
 
             table = 0;
             if (cb && cb->isTableCell() &&
-                (cb->style()->width().isAuto() || cb->style()->width().isPercent())) {
+                (cb->style().width().isAuto() || cb->style().width().isPercent())) {
                 RenderTableCell* cell = toRenderTableCell(cb);
-                if (cell->colSpan() > 1 || cell->table()->style()->width().isAuto())
+                if (cell->colSpan() > 1 || cell->table()->style().width().isAuto())
                     scale = false;
                 else
                     table = cell->table();
@@ -251,7 +251,7 @@ void AutoTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, Layout
 
 void AutoTableLayout::applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, LayoutUnit& maxWidth) const
 {
-    Length tableLogicalWidth = m_table->style()->logicalWidth();
+    Length tableLogicalWidth = m_table->style().logicalWidth();
     if (tableLogicalWidth.isFixed() && tableLogicalWidth.isPositive())
         minWidth = maxWidth = max<int>(minWidth, tableLogicalWidth.value());
 }

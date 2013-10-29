@@ -240,12 +240,11 @@ void SVGTextLayoutEngine::layoutInlineTextBox(SVGInlineTextBox* textBox)
     ASSERT(text.parent()->element());
     ASSERT(text.parent()->element()->isSVGElement());
 
-    const RenderStyle* style = text.style();
-    ASSERT(style);
+    const RenderStyle& style = text.style();
 
     textBox->clearTextFragments();
-    m_isVerticalText = style->svgStyle()->isVerticalWritingMode();
-    layoutTextOnLineOrPath(textBox, &text, style);
+    m_isVerticalText = style.svgStyle()->isVerticalWritingMode();
+    layoutTextOnLineOrPath(textBox, &text, &style);
 
     if (m_inPathLayout) {
         m_pathLayoutBoxes.append(textBox);

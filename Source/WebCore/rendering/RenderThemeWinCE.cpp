@@ -163,7 +163,7 @@ unsigned RenderThemeWinCE::determineClassicState(RenderObject* o)
 ThemeData RenderThemeWinCE::getThemeData(RenderObject* o)
 {
     ThemeData result;
-    switch (o->style()->appearance()) {
+    switch (o->style().appearance()) {
     case PushButtonPart:
     case ButtonPart:
         result.m_part = BP_BUTTON;

@@ -748,7 +748,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, CompositingChangeR
 
     // If a fixed position layer gained/lost a backing or the reason not compositing it changed,
     // the scrolling coordinator needs to recalculate whether it can do fast scrolling.
-    if (layer.renderer().style()->position() == FixedPosition) {
+    if (layer.renderer().style().position() == FixedPosition) {
         if (layer.viewportConstrainedNotCompositedReason() != viewportConstrainedNotCompositedReason) {
             layer.setViewportConstrainedNotCompositedReason(viewportConstrainedNotCompositedReason);
             layerChanged = true;
@@ -1816,7 +1816,7 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer& layer, R
         || requiresCompositingForCanvas(*renderer)
         || requiresCompositingForPlugin(*renderer)
         || requiresCompositingForFrame(*renderer)
-        || (canRender3DTransforms() && renderer->style()->backfaceVisibility() == BackfaceVisibilityHidden)
+        || (canRender3DTransforms() && renderer->style().backfaceVisibility() == BackfaceVisibilityHidden)
         || clipsCompositingDescendants(*renderer->layer())
         || requiresCompositingForAnimation(*renderer)
         || requiresCompositingForFilters(*renderer)
@@ -1858,7 +1858,7 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, co
         || requiresCompositingForCanvas(renderer)
         || requiresCompositingForPlugin(renderer)
         || requiresCompositingForFrame(renderer)
-        || (canRender3DTransforms() && renderer.style()->backfaceVisibility() == BackfaceVisibilityHidden)
+        || (canRender3DTransforms() && renderer.style().backfaceVisibility() == BackfaceVisibilityHidden)
         || requiresCompositingForAnimation(renderer)
         || requiresCompositingForFilters(renderer)
         || requiresCompositingForBlending(renderer)
@@ -1909,7 +1909,7 @@ CompositingReasons RenderLayerCompositor::reasonsForCompositing(const RenderLaye
     else if (requiresCompositingForFrame(*renderer))
         reasons |= CompositingReasonIFrame;
     
-    if ((canRender3DTransforms() && renderer->style()->backfaceVisibility() == BackfaceVisibilityHidden))
+    if ((canRender3DTransforms() && renderer->style().backfaceVisibility() == BackfaceVisibilityHidden))
         reasons |= CompositingReasonBackfaceVisibilityHidden;
 
     if (clipsCompositingDescendants(*renderer->layer()))
@@ -1922,7 +1922,7 @@ CompositingReasons RenderLayerCompositor::reasonsForCompositing(const RenderLaye
         reasons |= CompositingReasonFilters;
 
     if (requiresCompositingForPosition(*renderer, *renderer->layer()))
-        reasons |= renderer->style()->position() == FixedPosition ? CompositingReasonPositionFixed : CompositingReasonPositionSticky;
+        reasons |= renderer->style().position() == FixedPosition ? CompositingReasonPositionFixed : CompositingReasonPositionSticky;
 
     if (requiresCompositingForOverflowScrolling(*renderer->layer()))
         reasons |= CompositingReasonOverflowScrollingTouch;
@@ -2101,10 +2101,9 @@ bool RenderLayerCompositor::requiresCompositingForTransform(RenderLayerModelObje
     if (!(m_compositingTriggers & ChromeClient::ThreeDTransformTrigger))
         return false;
 
-    RenderStyle* style = renderer.style();
     // Note that we ask the renderer if it has a transform, because the style may have transforms,
     // but the renderer may be an inline that doesn't suppport them.
-    return renderer.hasTransform() && style->transform().has3DOperation();
+    return renderer.hasTransform() && renderer.style().transform().has3DOperation();
 }
 
 bool RenderLayerCompositor::requiresCompositingForVideo(RenderLayerModelObject& renderer) const
@@ -2229,12 +2228,12 @@ bool RenderLayerCompositor::requiresCompositingForIndirectReason(RenderLayerMode
     // A layer with preserve-3d or perspective only needs to be composited if there are descendant layers that
     // will be affected by the preserve-3d or perspective.
     if (has3DTransformedDescendants) {
-        if (renderer.style()->transformStyle3D() == TransformStyle3DPreserve3D) {
+        if (renderer.style().transformStyle3D() == TransformStyle3DPreserve3D) {
             reason = RenderLayer::IndirectCompositingForPreserve3D;
             return true;
         }
     
-        if (renderer.style()->hasPerspective()) {
+        if (renderer.style().hasPerspective()) {
             reason = RenderLayer::IndirectCompositingForPerspective;
             return true;
         }
@@ -2272,11 +2271,11 @@ static bool isViewportConstrainedFixedOrStickyLayer(const RenderLayer& layer)
     if (layer.renderer().isStickyPositioned())
         return !layer.enclosingOverflowClipLayer(ExcludeSelf);
 
-    if (layer.renderer().style()->position() != FixedPosition)
+    if (layer.renderer().style().position() != FixedPosition)
         return false;
 
     for (RenderLayer* stackingContainer = layer.stackingContainer(); stackingContainer; stackingContainer = stackingContainer->stackingContainer()) {
-        if (stackingContainer->isComposited() && stackingContainer->renderer().style()->position() == FixedPosition)
+        if (stackingContainer->isComposited() && stackingContainer->renderer().style().position() == FixedPosition)
             return false;
     }
 
@@ -2291,7 +2290,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
     if (!renderer.isPositioned())
         return false;
     
-    EPosition position = renderer.style()->position();
+    EPosition position = renderer.style().position();
     bool isFixed = renderer.isOutOfFlowPositioned() && position == FixedPosition;
     if (isFixed && !layer.isStackingContainer())
         return false;
@@ -3043,12 +3042,9 @@ void RenderLayerCompositor::notifyIFramesOfCompositingChange()
 
 bool RenderLayerCompositor::layerHas3DContent(const RenderLayer& layer) const
 {
-    const RenderStyle* style = layer.renderer().style();
+    const RenderStyle& style = layer.renderer().style();
 
-    if (style && 
-        (style->transformStyle3D() == TransformStyle3DPreserve3D ||
-         style->hasPerspective() ||
-         style->transform().has3DOperation()))
+    if (style.transformStyle3D() == TransformStyle3DPreserve3D || style.hasPerspective() || style.transform().has3DOperation())
         return true;
 
     const_cast<RenderLayer&>(layer).updateLayerListsIfNeeded();
@@ -3131,25 +3127,25 @@ FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewportCons
     constraints.setLayerPositionAtLastLayout(graphicsLayer->position());
     constraints.setViewportRectAtLastLayout(viewportRect);
 
-    RenderStyle* style = layer.renderer().style();
-    if (!style->left().isAuto())
+    const RenderStyle& style = layer.renderer().style();
+    if (!style.left().isAuto())
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeLeft);
 
-    if (!style->right().isAuto())
+    if (!style.right().isAuto())
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeRight);
 
-    if (!style->top().isAuto())
+    if (!style.top().isAuto())
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeTop);
 
-    if (!style->bottom().isAuto())
+    if (!style.bottom().isAuto())
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeBottom);
 
     // If left and right are auto, use left.
-    if (style->left().isAuto() && style->right().isAuto())
+    if (style.left().isAuto() && style.right().isAuto())
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeLeft);
 
     // If top and bottom are auto, use top.
-    if (style->top().isAuto() && style->bottom().isAuto())
+    if (style.top().isAuto() && style.bottom().isAuto())
         constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeTop);
         
     return constraints;

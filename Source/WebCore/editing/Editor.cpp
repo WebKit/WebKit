@@ -590,8 +590,7 @@ bool Editor::hasBidiSelection() const
     if (!renderer)
         return false;
 
-    RenderStyle* style = renderer->style();
-    if (!style->isLeftToRightDirection())
+    if (!renderer->style().isLeftToRightDirection())
         return true;
 
     return toRenderBlockFlow(renderer)->containsNonZeroBidiLevel();
@@ -1449,11 +1448,7 @@ WritingDirection Editor::baseWritingDirectionForSelectionStart() const
             return result;
     }
 
-    RenderStyle* style = renderer->style();
-    if (!style)
-        return result;
-
-    switch (style->direction()) {
+    switch (renderer->style().direction()) {
     case LTR:
         return LeftToRightWritingDirection;
     case RTL:

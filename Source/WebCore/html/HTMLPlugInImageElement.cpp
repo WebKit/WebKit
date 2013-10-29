@@ -663,8 +663,8 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const URL& url)
     }
 
     RenderBox* renderEmbeddedObject = toRenderBox(renderer());
-    Length styleWidth = renderEmbeddedObject->style()->width();
-    Length styleHeight = renderEmbeddedObject->style()->height();
+    Length styleWidth = renderEmbeddedObject->style().width();
+    Length styleHeight = renderEmbeddedObject->style().height();
     LayoutRect contentBoxRect = renderEmbeddedObject->contentBoxRect();
     int contentWidth = contentBoxRect.width();
     int contentHeight = contentBoxRect.height();

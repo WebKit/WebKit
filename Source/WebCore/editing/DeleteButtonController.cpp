@@ -112,20 +112,18 @@ static bool isDeletableElement(const Node* node)
         return true;
 
     if (box->isRenderBlock() && !box->isTableCell()) {
-        RenderStyle* style = box->style();
-        if (!style)
-            return false;
+        const RenderStyle& style = box->style();
 
         // Allow blocks that have background images
-        if (style->hasBackgroundImage()) {
-            for (const FillLayer* background = style->backgroundLayers(); background; background = background->next()) {
+        if (style.hasBackgroundImage()) {
+            for (const FillLayer* background = style.backgroundLayers(); background; background = background->next()) {
                 if (background->image() && background->image()->canRender(box, 1))
                     return true;
             }
         }
 
         // Allow blocks with a minimum number of non-transparent borders
-        unsigned visibleBorders = style->borderTop().isVisible() + style->borderBottom().isVisible() + style->borderLeft().isVisible() + style->borderRight().isVisible();
+        unsigned visibleBorders = style.borderTop().isVisible() + style.borderBottom().isVisible() + style.borderLeft().isVisible() + style.borderRight().isVisible();
         if (visibleBorders >= minimumVisibleBorders)
             return true;
 
@@ -138,11 +136,9 @@ static bool isDeletableElement(const Node* node)
         if (!parentRenderer)
             return false;
 
-        RenderStyle* parentStyle = parentRenderer->style();
-        if (!parentStyle)
-            return false;
+        const RenderStyle& parentStyle = parentRenderer->style();
 
-        if (box->hasBackground() && (!parentRenderer->hasBackground() || style->visitedDependentColor(CSSPropertyBackgroundColor) != parentStyle->visitedDependentColor(CSSPropertyBackgroundColor)))
+        if (box->hasBackground() && (!parentRenderer->hasBackground() || style.visitedDependentColor(CSSPropertyBackgroundColor) != parentStyle.visitedDependentColor(CSSPropertyBackgroundColor)))
             return true;
     }
 
@@ -310,12 +306,12 @@ void DeleteButtonController::show(HTMLElement* element)
         return;
     }
 
-    if (m_target->renderer()->style()->position() == StaticPosition) {
+    if (m_target->renderer()->style().position() == StaticPosition) {
         m_target->setInlineStyleProperty(CSSPropertyPosition, CSSValueRelative);
         m_wasStaticPositioned = true;
     }
 
-    if (m_target->renderer()->style()->hasAutoZIndex()) {
+    if (m_target->renderer()->style().hasAutoZIndex()) {
         m_target->setInlineStyleProperty(CSSPropertyZIndex, ASCIILiteral("0"));
         m_wasAutoZIndex = true;
     }

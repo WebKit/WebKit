@@ -83,7 +83,7 @@ RenderBox* OrderIterator::next()
             m_orderIndex = 0;
 
         m_currentChild = m_containerBox.firstChildBox();
-    } while (!m_currentChild || m_currentChild->style()->order() != m_orderValues[m_orderIndex]);
+    } while (!m_currentChild || m_currentChild->style().order() != m_orderValues[m_orderIndex]);
 
     return m_currentChild;
 }

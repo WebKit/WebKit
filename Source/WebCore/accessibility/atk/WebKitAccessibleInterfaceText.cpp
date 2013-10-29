@@ -129,7 +129,7 @@ static gchar* textForRenderer(RenderObject* renderer)
     // Insert the text of the marker for list item in the right place, if present
     if (renderer->isListItem()) {
         String markerText = toRenderListItem(renderer)->markerTextWithSuffix();
-        if (renderer->style()->direction() == LTR)
+        if (renderer->style().direction() == LTR)
             g_string_prepend(resultText, markerText.utf8().data());
         else
             g_string_append(resultText, markerText.utf8().data());
@@ -171,8 +171,8 @@ static int baselinePositionForRenderObject(RenderObject* renderObject)
     // FIXME: This implementation of baselinePosition originates from RenderObject.cpp and was
     // removed in r70072. The implementation looks incorrect though, because this is not the
     // baseline of the underlying RenderObject, but of the AccessibilityRenderObject.
-    const FontMetrics& fontMetrics = renderObject->firstLineStyle()->fontMetrics();
-    return fontMetrics.ascent() + (renderObject->firstLineStyle()->computedLineHeight() - fontMetrics.height()) / 2;
+    const FontMetrics& fontMetrics = renderObject->firstLineStyle().fontMetrics();
+    return fontMetrics.ascent() + (renderObject->firstLineStyle().computedLineHeight() - fontMetrics.height()) / 2;
 }
 
 static AtkAttributeSet* getAttributeSetForAccessibilityObject(const AccessibilityObject* object)
@@ -181,7 +181,7 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
         return 0;
 
     RenderObject* renderer = object->renderer();
-    RenderStyle* style = renderer->style();
+    RenderStyle* style = &renderer->style();
 
     AtkAttributeSet* result = 0;
     GOwnPtr<gchar> buffer(g_strdup_printf("%i", style->fontSize()));
@@ -460,7 +460,7 @@ static int offsetAdjustmentForListItem(const AccessibilityObject* object)
     // We need to adjust the offsets for the list item marker in
     // Left-To-Right text, since we expose it together with the text.
     RenderObject* renderer = object->renderer();
-    if (renderer && renderer->isListItem() && renderer->style()->direction() == LTR)
+    if (renderer && renderer->isListItem() && renderer->style().direction() == LTR)
         return toRenderListItem(renderer)->markerTextWithSuffix().length();
 
     return 0;
@@ -602,7 +602,7 @@ static gchar* webkitAccessibleTextGetText(AtkText* text, gint startOffset, gint 
         RenderObject* objRenderer = coreObject->renderer();
         if (objRenderer && objRenderer->isListItem()) {
             String markerText = toRenderListItem(objRenderer)->markerTextWithSuffix();
-            ret = objRenderer->style()->direction() == LTR ? markerText + ret : ret + markerText;
+            ret = objRenderer->style().direction() == LTR ? markerText + ret : ret + markerText;
             if (endOffset == -1)
                 actualEndOffset = ret.length() + markerText.length();
         }
@@ -1045,11 +1045,11 @@ static char* webkitAccessibleTextLineForBoundary(AtkText* text, int offset, AtkT
     RenderObject* renderer = coreObject->renderer();
     if (renderer->isListItem()) {
         // For Left-to-Right, the list item marker is at the beginning of the exposed text.
-        if (renderer->style()->direction() == LTR && isFirstVisiblePositionInNode(selectedLine.visibleStart(), node))
+        if (renderer->style().direction() == LTR && isFirstVisiblePositionInNode(selectedLine.visibleStart(), node))
             *startOffset = 0;
 
         // For Right-to-Left, the list item marker is at the end of the exposed text.
-        if (renderer->style()->direction() == RTL && isLastVisiblePositionInNode(selectedLine.visibleEnd(), node))
+        if (renderer->style().direction() == RTL && isLastVisiblePositionInNode(selectedLine.visibleEnd(), node))
             *endOffset = accessibilityObjectLength(coreObject);
     }
 

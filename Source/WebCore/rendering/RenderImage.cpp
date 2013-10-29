@@ -121,7 +121,7 @@ IntSize RenderImage::imageSizeForError(CachedImage* newImage) const
 
     // imageSize() returns 0 for the error image. We need the true size of the
     // error image, so we have to get it by grabbing image() directly.
-    return IntSize(paddingWidth + imageSize.width() * style()->effectiveZoom(), paddingHeight + imageSize.height() * style()->effectiveZoom());
+    return IntSize(paddingWidth + imageSize.width() * style().effectiveZoom(), paddingHeight + imageSize.height() * style().effectiveZoom());
 }
 
 // Sets the image height and width to fit the alt text.  Returns true if the
@@ -140,8 +140,8 @@ bool RenderImage::setImageSizeForAltText(CachedImage* newImage /* = 0 */)
     if (!m_altText.isEmpty()) {
         FontCachePurgePreventer fontCachePurgePreventer;
 
-        const Font& font = style()->font();
-        IntSize paddedTextSize(paddingWidth + min(ceilf(font.width(RenderBlock::constructTextRun(this, font, m_altText, *style()))), maxAltTextWidth), paddingHeight + min(font.fontMetrics().height(), maxAltTextHeight));
+        const Font& font = style().font();
+        IntSize paddedTextSize(paddingWidth + min(ceilf(font.width(RenderBlock::constructTextRun(this, font, m_altText, style()))), maxAltTextWidth), paddingHeight + min(font.fontMetrics().height(), maxAltTextHeight));
         imageSize = imageSize.expandedTo(paddedTextSize);
     }
 
@@ -161,15 +161,15 @@ void RenderImage::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
         m_needsToSetSizeForAltText = false;
     }
 #if ENABLE(CSS_IMAGE_ORIENTATION)
-    if (diff == StyleDifferenceLayout && oldStyle->imageOrientation() != style()->imageOrientation())
+    if (diff == StyleDifferenceLayout && oldStyle->imageOrientation() != style().imageOrientation())
         return imageDimensionsChanged(true /* imageSizeChanged */);
 #endif
 
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     if (diff == StyleDifferenceLayout
-        && (oldStyle->imageResolution() != style()->imageResolution()
-            || oldStyle->imageResolutionSnap() != style()->imageResolutionSnap()
-            || oldStyle->imageResolutionSource() != style()->imageResolutionSource()))
+        && (oldStyle->imageResolution() != style().imageResolution()
+            || oldStyle->imageResolutionSnap() != style().imageResolutionSnap()
+            || oldStyle->imageResolutionSource() != style().imageResolutionSource()))
         imageDimensionsChanged(true /* imageSizeChanged */);
 #endif
 }
@@ -237,14 +237,14 @@ void RenderImage::updateInnerContentRect()
 void RenderImage::imageDimensionsChanged(bool imageSizeChanged, const IntRect* rect)
 {
 #if ENABLE(CSS_IMAGE_RESOLUTION)
-    double scale = style()->imageResolution();
-    if (style()->imageResolutionSnap() == ImageResolutionSnapPixels)
+    double scale = style().imageResolution();
+    if (style().imageResolutionSnap() == ImageResolutionSnapPixels)
         scale = roundForImpreciseConversion<int>(scale);
     if (scale <= 0)
         scale = 1;
-    bool intrinsicSizeChanged = updateIntrinsicSizeIfNeeded(m_imageResource->intrinsicSize(style()->effectiveZoom() / scale), imageSizeChanged);
+    bool intrinsicSizeChanged = updateIntrinsicSizeIfNeeded(m_imageResource->intrinsicSize(style().effectiveZoom() / scale), imageSizeChanged);
 #else
-    bool intrinsicSizeChanged = updateIntrinsicSizeIfNeeded(m_imageResource->intrinsicSize(style()->effectiveZoom()), imageSizeChanged);
+    bool intrinsicSizeChanged = updateIntrinsicSizeIfNeeded(m_imageResource->intrinsicSize(style().effectiveZoom()), imageSizeChanged);
 #endif
 
     // In the case of generated image content using :before/:after/content, we might not be
@@ -274,9 +274,9 @@ void RenderImage::imageDimensionsChanged(bool imageSizeChanged, const IntRect* r
         // if the containing block's size depends on the image's size (i.e., the container uses shrink-to-fit sizing).
         // There's no easy way to detect that shrink-to-fit is needed, always force a layout.
         bool containingBlockNeedsToRecomputePreferredSize =
-            style()->logicalWidth().isPercent()
-            || style()->logicalMaxWidth().isPercent()
-            || style()->logicalMinWidth().isPercent();
+            style().logicalWidth().isPercent()
+            || style().logicalMaxWidth().isPercent()
+            || style().logicalMinWidth().isPercent();
 
         if (imageSizeChanged || hasOverrideSize || containingBlockNeedsToRecomputePreferredSize) {
             shouldRepaint = false;
@@ -362,8 +362,8 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
             // Draw an outline rect where the image should be.
             context->setStrokeStyle(SolidStroke);
-            context->setStrokeColor(Color::lightGray, style()->colorSpace());
-            context->setFillColor(Color::transparent, style()->colorSpace());
+            context->setStrokeColor(Color::lightGray, style().colorSpace());
+            context->setFillColor(Color::transparent, style().colorSpace());
             context->drawRect(pixelSnappedIntRect(LayoutRect(paintOffset.x() + leftBorder + leftPad, paintOffset.y() + topBorder + topPad, cWidth, cHeight)));
 
             bool errorPictureDrawn = false;
@@ -393,17 +393,17 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
                 ImageOrientationDescription orientationDescription;
 #if ENABLE(CSS_IMAGE_ORIENTATION)
-                orientationDescription.setImageOrientationEnum(style()->imageOrientation());
+                orientationDescription.setImageOrientationEnum(style().imageOrientation());
                 orientationDescription.setRespectImageOrientation(shouldRespectImageOrientation());
 #endif
-                context->drawImage(image.get(), style()->colorSpace(), pixelSnappedIntRect(LayoutRect(paintOffset + imageOffset, imageSize)), CompositeSourceOver, orientationDescription);
+                context->drawImage(image.get(), style().colorSpace(), pixelSnappedIntRect(LayoutRect(paintOffset + imageOffset, imageSize)), CompositeSourceOver, orientationDescription);
                 errorPictureDrawn = true;
             }
 
             if (!m_altText.isEmpty()) {
                 String text = document().displayStringModifiedByEncoding(m_altText);
-                context->setFillColor(style()->visitedDependentColor(CSSPropertyColor), style()->colorSpace());
-                const Font& font = style()->font();
+                context->setFillColor(style().visitedDependentColor(CSSPropertyColor), style().colorSpace());
+                const Font& font = style().font();
                 const FontMetrics& fontMetrics = font.fontMetrics();
                 LayoutUnit ascent = fontMetrics.ascent();
                 LayoutPoint altTextOffset = paintOffset;
@@ -411,7 +411,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
                 // Only draw the alt text if it'll fit within the content box,
                 // and only if it fits above the error image.
-                TextRun textRun = RenderBlock::constructTextRun(this, font, text, *style());
+                TextRun textRun = RenderBlock::constructTextRun(this, font, text, style());
                 LayoutUnit textWidth = font.width(textRun);
                 if (errorPictureDrawn) {
                     if (usableWidth >= textWidth && fontMetrics.height() <= imageOffset.height())
@@ -429,8 +429,8 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         }
 
 #if PLATFORM(MAC)
-        if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
-            paintCustomHighlight(toPoint(paintOffset - location()), style()->highlight(), true);
+        if (style().highlight() != nullAtom && !paintInfo.context->paintingDisabled())
+            paintCustomHighlight(toPoint(paintOffset - location()), style().highlight(), true);
 #endif
 
         LayoutRect contentRect = contentBoxRect();
@@ -525,10 +525,10 @@ void RenderImage::paintIntoRect(GraphicsContext* context, const LayoutRect& rect
     bool useLowQualityScaling = shouldPaintAtLowQuality(context, image, image, alignedRect.size());
     ImageOrientationDescription orientationDescription;
 #if ENABLE(CSS_IMAGE_ORIENTATION)
-    orientationDescription.setImageOrientationEnum(style()->imageOrientation());
+    orientationDescription.setImageOrientationEnum(style().imageOrientation());
     orientationDescription.setRespectImageOrientation(shouldRespectImageOrientation());
 #endif
-    context->drawImage(m_imageResource->image(alignedRect.width(), alignedRect.height()).get(), style()->colorSpace(), alignedRect, compositeOperator, orientationDescription, useLowQualityScaling);
+    context->drawImage(m_imageResource->image(alignedRect.width(), alignedRect.height()).get(), style().colorSpace(), alignedRect, compositeOperator, orientationDescription, useLowQualityScaling);
 }
 
 bool RenderImage::boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox*) const
@@ -548,15 +548,15 @@ bool RenderImage::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect,
         return false;
     if (!contentBoxRect().contains(localRect))
         return false;
-    EFillBox backgroundClip = style()->backgroundClip();
+    EFillBox backgroundClip = style().backgroundClip();
     // Background paints under borders.
-    if (backgroundClip == BorderFillBox && style()->hasBorder() && !borderObscuresBackground())
+    if (backgroundClip == BorderFillBox && style().hasBorder() && !borderObscuresBackground())
         return false;
     // Background shows in padding area.
-    if ((backgroundClip == BorderFillBox || backgroundClip == PaddingFillBox) && style()->hasPadding())
+    if ((backgroundClip == BorderFillBox || backgroundClip == PaddingFillBox) && style().hasPadding())
         return false;
     // Object-fit may leave parts of the content box empty.
-    ObjectFit objectFit = style()->objectFit();
+    ObjectFit objectFit = style().objectFit();
     if (objectFit != ObjectFitFill && objectFit != ObjectFitCover)
         return false;
     // Check for image with alpha.
@@ -593,7 +593,7 @@ bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     if (tempResult.innerNode() && element()) {
         if (HTMLMapElement* map = imageMap()) {
             LayoutRect contentBox = contentBoxRect();
-            float scaleFactor = 1 / style()->effectiveZoom();
+            float scaleFactor = 1 / style().effectiveZoom();
             LayoutPoint mapLocation = locationInContainer.point() - toLayoutSize(accumulatedOffset) - locationOffset() - toLayoutSize(contentBox.location());
             mapLocation.scale(scaleFactor, scaleFactor);
 

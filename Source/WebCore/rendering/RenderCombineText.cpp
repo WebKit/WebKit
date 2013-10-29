@@ -39,7 +39,7 @@ RenderCombineText::RenderCombineText(Text& textNode, PassRefPtr<StringImpl> stri
 void RenderCombineText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     // FIXME: This is pretty hackish.
-    m_combineFontStyle = RenderStyle::clone(style());
+    m_combineFontStyle = RenderStyle::clone(&style());
 
     RenderText::styleDidChange(diff, oldStyle);
 
@@ -72,7 +72,7 @@ float RenderCombineText::width(unsigned from, unsigned length, const Font& font,
 void RenderCombineText::adjustTextOrigin(FloatPoint& textOrigin, const FloatRect& boxRect) const
 {
     if (m_isCombined)
-        textOrigin.move(boxRect.height() / 2 - ceilf(m_combinedTextWidth) / 2, style()->font().pixelSize());
+        textOrigin.move(boxRect.height() / 2 - ceilf(m_combinedTextWidth) / 2, style().font().pixelSize());
 }
 
 void RenderCombineText::getStringToRender(int start, String& string, int& length) const
@@ -97,10 +97,10 @@ void RenderCombineText::combineText()
     m_needsFontUpdate = false;
 
     // CSS3 spec says text-combine works only in vertical writing mode.
-    if (style()->isHorizontalWritingMode())
+    if (style().isHorizontalWritingMode())
         return;
 
-    TextRun run = RenderBlock::constructTextRun(this, originalFont(), this, *style());
+    TextRun run = RenderBlock::constructTextRun(this, originalFont(), this, style());
     FontDescription description = originalFont().fontDescription();
     float emWidth = description.computedSize() * textCombineMargin;
     bool shouldUpdateFont = false;
@@ -109,7 +109,7 @@ void RenderCombineText::combineText()
     m_combinedTextWidth = originalFont().width(run);
     m_isCombined = m_combinedTextWidth <= emWidth;
 
-    FontSelector* fontSelector = style()->font().fontSelector();
+    FontSelector* fontSelector = style().font().fontSelector();
 
     if (m_isCombined)
         shouldUpdateFont = m_combineFontStyle->setFontDescription(description); // Need to change font orientation to horizontal.
@@ -118,7 +118,7 @@ void RenderCombineText::combineText()
         static const FontWidthVariant widthVariants[] = { HalfWidth, ThirdWidth, QuarterWidth };
         for (size_t i = 0 ; i < WTF_ARRAY_LENGTH(widthVariants) ; ++i) {
             description.setWidthVariant(widthVariants[i]);
-            Font compressedFont = Font(description, style()->font().letterSpacing(), style()->font().wordSpacing());
+            Font compressedFont = Font(description, style().font().letterSpacing(), style().font().wordSpacing());
             compressedFont.update(fontSelector);
             float runWidth = compressedFont.width(run);
             if (runWidth <= emWidth) {

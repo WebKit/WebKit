@@ -52,7 +52,7 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
     RenderText& textRenderer = toRenderText(*flow.firstChild());
     ASSERT(!textRenderer.firstTextBox());
 
-    RenderStyle& style = *flow.style();
+    RenderStyle& style = flow.style();
     const Font& font = style.font();
 
     GraphicsContext& context = *paintInfo.context;
@@ -77,7 +77,7 @@ bool hitTestFlow(const RenderBlockFlow& flow, const Layout& layout, const HitTes
     if (layout.runs.isEmpty())
         return false;
 
-    RenderStyle& style = *flow.style();
+    RenderStyle& style = flow.style();
     if (style.visibility() != VISIBLE || style.pointerEvents() == PE_NONE)
         return false;
 

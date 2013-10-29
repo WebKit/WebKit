@@ -85,37 +85,37 @@ RenderBoxModelObject* RenderMathMLScripts::base() const
 
 void RenderMathMLScripts::fixAnonymousStyleForSubSupPair(RenderObject* subSupPair, bool isPostScript)
 {
-    ASSERT(subSupPair && subSupPair->style()->refCount() == 1);
-    RenderStyle* scriptsStyle = subSupPair->style();
+    ASSERT(subSupPair && subSupPair->style().refCount() == 1);
+    RenderStyle& scriptsStyle = subSupPair->style();
 
     // subSup pairs are drawn in column from bottom (subscript) to top (superscript).
-    scriptsStyle->setFlexDirection(FlowColumnReverse);
+    scriptsStyle.setFlexDirection(FlowColumnReverse);
 
     // The MathML specification does not specify horizontal alignment of
     // scripts. We align the bottom (respectively top) edge of the subscript
     // (respectively superscript) with the bottom (respectively top) edge of
     // the flex container. Note that for valid <msub> and <msup> elements, the
     // subSupPair should actually have only one script.
-    scriptsStyle->setJustifyContent(m_kind == Sub ? JustifyFlexStart : m_kind == Super ? JustifyFlexEnd : JustifySpaceBetween);
+    scriptsStyle.setJustifyContent(m_kind == Sub ? JustifyFlexStart : m_kind == Super ? JustifyFlexEnd : JustifySpaceBetween);
 
     // The MathML specification does not specify vertical alignment of scripts.
     // Let's right align prescripts and left align postscripts.
     // See http://lists.w3.org/Archives/Public/www-math/2012Aug/0006.html
-    scriptsStyle->setAlignItems(isPostScript ? AlignFlexStart : AlignFlexEnd);
+    scriptsStyle.setAlignItems(isPostScript ? AlignFlexStart : AlignFlexEnd);
 
     // We set the order property so that the prescripts are drawn before the base.
-    scriptsStyle->setOrder(isPostScript ? 0 : -1);
+    scriptsStyle.setOrder(isPostScript ? 0 : -1);
 
     // We set this wrapper's font-size for its line-height.
-    LayoutUnit scriptSize = static_cast<int>(0.75 * style()->fontSize());
-    scriptsStyle->setFontSize(scriptSize);
+    LayoutUnit scriptSize = static_cast<int>(0.75 * style().fontSize());
+    scriptsStyle.setFontSize(scriptSize);
 }
 
 void RenderMathMLScripts::fixAnonymousStyles()
 {
     // We set the base wrapper's style so that baseHeight in layout() will be an unstretched height.
-    ASSERT(m_baseWrapper && m_baseWrapper->style()->hasOneRef());
-    m_baseWrapper->style()->setAlignSelf(AlignFlexStart);
+    ASSERT(m_baseWrapper && m_baseWrapper->style().hasOneRef());
+    m_baseWrapper->style().setAlignSelf(AlignFlexStart);
 
     // This sets the style for postscript pairs.
     RenderObject* subSupPair = m_baseWrapper;
@@ -131,13 +131,13 @@ void RenderMathMLScripts::fixAnonymousStyles()
     // This resets style for extra subSup pairs.
     for (; subSupPair; subSupPair = subSupPair->nextSibling()) {
         if (!isPrescript(subSupPair)) {
-            ASSERT(subSupPair && subSupPair->style()->refCount() == 1);
-            RenderStyle* scriptsStyle = subSupPair->style();
-            scriptsStyle->setFlexDirection(FlowRow);
-            scriptsStyle->setJustifyContent(JustifyFlexStart);
-            scriptsStyle->setAlignItems(AlignCenter);
-            scriptsStyle->setOrder(0);
-            scriptsStyle->setFontSize(style()->fontSize());
+            ASSERT(subSupPair && subSupPair->style().refCount() == 1);
+            RenderStyle& scriptsStyle = subSupPair->style();
+            scriptsStyle.setFlexDirection(FlowRow);
+            scriptsStyle.setJustifyContent(JustifyFlexStart);
+            scriptsStyle.setAlignItems(AlignCenter);
+            scriptsStyle.setOrder(0);
+            scriptsStyle.setFontSize(style().fontSize());
         }
     }
 }
@@ -282,10 +282,10 @@ void RenderMathMLScripts::layout()
     LayoutUnit baseBaseline = base->firstLineBaseline();
     if (baseBaseline == -1)
         baseBaseline = baseHeight;
-    LayoutUnit axis = style()->fontMetrics().xHeight() / 2;
-    int fontSize = style()->fontSize();
+    LayoutUnit axis = style().fontMetrics().xHeight() / 2;
+    int fontSize = style().fontSize();
 
-    ASSERT(m_baseWrapper->style()->hasOneRef());
+    ASSERT(m_baseWrapper->style().hasOneRef());
     bool needsSecondLayout = false;
 
     LayoutUnit topPadding = 0;
@@ -295,9 +295,9 @@ void RenderMathMLScripts::layout()
     LayoutUnit superscriptShiftValue = 0;
     LayoutUnit subscriptShiftValue = 0;
     if (m_kind == Sub || m_kind == SubSup || m_kind == Multiscripts)
-        parseMathMLLength(scriptElement->fastGetAttribute(MathMLNames::subscriptshiftAttr), subscriptShiftValue, style(), false);
+        parseMathMLLength(scriptElement->fastGetAttribute(MathMLNames::subscriptshiftAttr), subscriptShiftValue, &style(), false);
     if (m_kind == Super || m_kind == SubSup || m_kind == Multiscripts)
-        parseMathMLLength(scriptElement->fastGetAttribute(MathMLNames::superscriptshiftAttr), superscriptShiftValue, style(), false);
+        parseMathMLLength(scriptElement->fastGetAttribute(MathMLNames::superscriptshiftAttr), superscriptShiftValue, &style(), false);
 
     bool isPostScript = true;
     RenderMathMLBlock* subSupPair = toRenderMathMLBlock(m_baseWrapper->nextSibling());
@@ -335,14 +335,14 @@ void RenderMathMLScripts::layout()
     }
 
     Length newPadding(topPadding, Fixed);
-    if (newPadding != m_baseWrapper->style()->paddingTop()) {
-        m_baseWrapper->style()->setPaddingTop(newPadding);
+    if (newPadding != m_baseWrapper->style().paddingTop()) {
+        m_baseWrapper->style().setPaddingTop(newPadding);
         needsSecondLayout = true;
     }
 
     newPadding = Length(bottomPadding, Fixed);
-    if (newPadding != m_baseWrapper->style()->paddingBottom()) {
-        m_baseWrapper->style()->setPaddingBottom(newPadding);
+    if (newPadding != m_baseWrapper->style().paddingBottom()) {
+        m_baseWrapper->style().setPaddingBottom(newPadding);
         needsSecondLayout = true;
     }
 
@@ -367,7 +367,7 @@ int RenderMathMLScripts::firstLineBaseline() const
 
 RenderMathMLScriptsWrapper* RenderMathMLScriptsWrapper::createAnonymousWrapper(RenderMathMLScripts* renderObject, WrapperType type)
 {
-    RenderMathMLScriptsWrapper* newBlock = new RenderMathMLScriptsWrapper(renderObject->document(), RenderStyle::createAnonymousStyleWithDisplay(renderObject->style(), FLEX), type);
+    RenderMathMLScriptsWrapper* newBlock = new RenderMathMLScriptsWrapper(renderObject->document(), RenderStyle::createAnonymousStyleWithDisplay(&renderObject->style(), FLEX), type);
     newBlock->initializeStyle();
     return newBlock;
 }

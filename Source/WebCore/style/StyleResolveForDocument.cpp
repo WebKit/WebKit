@@ -84,13 +84,13 @@ PassRef<RenderStyle> resolveForDocument(const Document& document)
         // If there is no body, then use the document element.
         RenderObject* bodyRenderer = document.body() ? document.body()->renderer() : 0;
         if (bodyRenderer && !document.writingModeSetOnDocumentElement())
-            documentStyle.get().setWritingMode(bodyRenderer->style()->writingMode());
+            documentStyle.get().setWritingMode(bodyRenderer->style().writingMode());
         else
-            documentStyle.get().setWritingMode(docElementRenderer->style()->writingMode());
+            documentStyle.get().setWritingMode(docElementRenderer->style().writingMode());
         if (bodyRenderer && !document.directionSetOnDocumentElement())
-            documentStyle.get().setDirection(bodyRenderer->style()->direction());
+            documentStyle.get().setDirection(bodyRenderer->style().direction());
         else
-            documentStyle.get().setDirection(docElementRenderer->style()->direction());
+            documentStyle.get().setDirection(docElementRenderer->style().direction());
     }
 
     const Pagination& pagination = renderView.frameView().pagination();

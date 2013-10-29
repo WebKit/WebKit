@@ -566,7 +566,7 @@ IntRect AccessibilityObject::boundingBoxForQuads(RenderObject* obj, const Vector
     for (size_t i = 0; i < count; ++i) {
         IntRect r = quads[i].enclosingBoundingBox();
         if (!r.isEmpty()) {
-            if (obj->style()->hasAppearance())
+            if (obj->style().hasAppearance())
                 obj->theme()->adjustRepaintRect(obj, r);
             result.unite(r);
         }
@@ -772,7 +772,7 @@ static VisiblePosition startOfStyleRange(const VisiblePosition& visiblePos)
 {
     RenderObject* renderer = visiblePos.deepEquivalent().deprecatedNode()->renderer();
     RenderObject* startRenderer = renderer;
-    RenderStyle* style = renderer->style();
+    RenderStyle* style = &renderer->style();
 
     // traverse backward by renderer to look for style change
     for (RenderObject* r = renderer->previousInPreOrder(); r; r = r->previousInPreOrder()) {
@@ -781,7 +781,7 @@ static VisiblePosition startOfStyleRange(const VisiblePosition& visiblePos)
             continue;
 
         // stop at style change
-        if (r->style() != style)
+        if (&r->style() != style)
             break;
 
         // remember match
@@ -795,7 +795,7 @@ static VisiblePosition endOfStyleRange(const VisiblePosition& visiblePos)
 {
     RenderObject* renderer = visiblePos.deepEquivalent().deprecatedNode()->renderer();
     RenderObject* endRenderer = renderer;
-    RenderStyle* style = renderer->style();
+    const RenderStyle& style = renderer->style();
 
     // traverse forward by renderer to look for style change
     for (RenderObject* r = renderer->nextInPreOrder(); r; r = r->nextInPreOrder()) {
@@ -804,7 +804,7 @@ static VisiblePosition endOfStyleRange(const VisiblePosition& visiblePos)
             continue;
 
         // stop at style change
-        if (r->style() != style)
+        if (&r->style() != &style)
             break;
 
         // remember match
@@ -2073,8 +2073,8 @@ bool AccessibilityObject::isDOMHidden() const
     if (!renderer)
         return true;
     
-    RenderStyle* style = renderer->style();
-    return style->display() == NONE || style->visibility() != VISIBLE;
+    const RenderStyle& style = renderer->style();
+    return style.display() == NONE || style.visibility() != VISIBLE;
 }
 
 AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const

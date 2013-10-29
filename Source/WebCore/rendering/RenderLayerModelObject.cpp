@@ -77,7 +77,7 @@ bool RenderLayerModelObject::hasSelfPaintingLayer() const
 void RenderLayerModelObject::willBeDestroyed()
 {
     if (isPositioned()) {
-        if (style()->hasViewportConstrainedPosition())
+        if (style().hasViewportConstrainedPosition())
             view().frameView().removeViewportConstrainedObject(this);
     }
 
@@ -95,7 +95,7 @@ void RenderLayerModelObject::styleWillChange(StyleDifference diff, const RenderS
 
     // If our z-index changes value or our visibility changes,
     // we need to dirty our stacking context's z-order list.
-    RenderStyle* oldStyle = hasInitializedStyle() ? style() : nullptr;
+    const RenderStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
     if (oldStyle) {
         if (parent()) {
             // Do a repaint with the old style first, e.g., for example if we go from
@@ -168,7 +168,7 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
             setChildNeedsLayout();
     }
 
-    bool newStyleIsViewportConstained = style()->hasViewportConstrainedPosition();
+    bool newStyleIsViewportConstained = style().hasViewportConstrainedPosition();
     bool oldStyleIsViewportConstrained = oldStyle && oldStyle->hasViewportConstrainedPosition();
     if (newStyleIsViewportConstained != oldStyleIsViewportConstrained) {
         if (newStyleIsViewportConstained && layer())

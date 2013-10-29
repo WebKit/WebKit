@@ -118,7 +118,7 @@ static RenderStyle* styleForSelectionStart(Frame* frame, Node *&nodeToRemove)
 
     RefPtr<EditingStyle> typingStyle = frame->selection().typingStyle();
     if (!typingStyle || !typingStyle->style())
-        return position.deprecatedNode()->renderer()->style();
+        return &position.deprecatedNode()->renderer()->style();
 
     RefPtr<Element> styleElement = frame->document()->createElement(spanTag, false);
 
@@ -130,7 +130,7 @@ static RenderStyle* styleForSelectionStart(Frame* frame, Node *&nodeToRemove)
     position.deprecatedNode()->parentNode()->appendChild(styleElement, ASSERT_NO_EXCEPTION);
 
     nodeToRemove = styleElement.get();
-    return styleElement->renderer() ? styleElement->renderer()->style() : 0;
+    return styleElement->renderer() ? &styleElement->renderer()->style() : 0;
 }
 
 const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
@@ -163,7 +163,7 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
             if (!renderer)
                 continue;
             // FIXME: Are there any node types that have renderers, but that we should be skipping?
-            const SimpleFontData* primaryFont = renderer->style()->font().primaryFont();
+            const SimpleFontData* primaryFont = renderer->style().font().primaryFont();
             if (!font)
                 font = primaryFont;
             else if (font != primaryFont) {

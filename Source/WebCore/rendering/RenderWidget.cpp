@@ -188,8 +188,7 @@ void RenderWidget::setWidget(PassRefPtr<Widget> widget)
         widgetRendererMap().add(m_widget.get(), this);
         view().frameView().didAddWidgetToRenderTree(*m_widget);
         // If we've already received a layout, apply the calculated space to the
-        // widget immediately, but we have to have really been fully constructed (with a non-null
-        // style pointer).
+        // widget immediately, but we have to have really been fully constructed.
         if (hasInitializedStyle()) {
             if (!needsLayout()) {
                 WeakPtr<RenderWidget> weakThis = createWeakPtr();
@@ -198,7 +197,7 @@ void RenderWidget::setWidget(PassRefPtr<Widget> widget)
                     return;
             }
 
-            if (style()->visibility() != VISIBLE)
+            if (style().visibility() != VISIBLE)
                 m_widget->hide();
             else {
                 m_widget->show();
@@ -224,7 +223,7 @@ void RenderWidget::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 {
     RenderReplaced::styleDidChange(diff, oldStyle);
     if (m_widget) {
-        if (style()->visibility() != VISIBLE)
+        if (style().visibility() != VISIBLE)
             m_widget->hide();
         else
             m_widget->show();
@@ -292,11 +291,11 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         return;
 
 #if PLATFORM(MAC)
-    if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
-        paintCustomHighlight(paintOffset, style()->highlight(), true);
+    if (style().highlight() != nullAtom && !paintInfo.context->paintingDisabled())
+        paintCustomHighlight(paintOffset, style().highlight(), true);
 #endif
 
-    if (style()->hasBorderRadius()) {
+    if (style().hasBorderRadius()) {
         LayoutRect borderRect = LayoutRect(adjustedPaintOffset, size());
 
         if (borderRect.isEmpty())
@@ -304,7 +303,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
         // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
         paintInfo.context->save();
-        RoundedRect roundedInnerRect = style()->getRoundedInnerBorderFor(borderRect,
+        RoundedRect roundedInnerRect = style().getRoundedInnerBorderFor(borderRect,
             paddingTop() + borderTop(), paddingBottom() + borderBottom(), paddingLeft() + borderLeft(), paddingRight() + borderRight(), true, true);
         clipRoundedInnerRect(paintInfo.context, borderRect, roundedInnerRect);
     }
@@ -312,13 +311,13 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (m_widget)
         paintContents(paintInfo, paintOffset);
 
-    if (style()->hasBorderRadius())
+    if (style().hasBorderRadius())
         paintInfo.context->restore();
 
     // Paint a partially transparent wash over selected widgets.
     if (isSelected() && !document().printing()) {
         // FIXME: selectionRect() is in absolute, not painting coordinates.
-        paintInfo.context->fillRect(pixelSnappedIntRect(selectionRect()), selectionBackgroundColor(), style()->colorSpace());
+        paintInfo.context->fillRect(pixelSnappedIntRect(selectionRect()), selectionBackgroundColor(), style().colorSpace());
     }
 
     if (hasLayer() && layer()->canResize())

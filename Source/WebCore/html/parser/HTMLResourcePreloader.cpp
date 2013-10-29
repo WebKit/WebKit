@@ -81,8 +81,7 @@ void HTMLResourcePreloader::preload(OwnPtr<PreloadRequest> preload)
 {
     ASSERT(m_document.frame());
     ASSERT(m_document.renderView());
-    ASSERT(m_document.renderView()->style());
-    if (!preload->media().isEmpty() && !mediaAttributeMatches(m_document.frame(), m_document.renderView()->style(), preload->media()))
+    if (!preload->media().isEmpty() && !mediaAttributeMatches(m_document.frame(), &m_document.renderView()->style(), preload->media()))
         return;
 
     CachedResourceRequest request = preload->resourceRequest(m_document);

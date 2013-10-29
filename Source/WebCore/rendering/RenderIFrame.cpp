@@ -91,7 +91,7 @@ bool RenderIFrame::isSeamless() const
 
 bool RenderIFrame::requiresLayer() const
 {
-    return RenderFrameBase::requiresLayer() || style()->resize() != RESIZE_NONE;
+    return RenderFrameBase::requiresLayer() || style().resize() != RESIZE_NONE;
 }
 
 RenderView* RenderIFrame::contentRootRenderer() const
@@ -114,11 +114,11 @@ bool RenderIFrame::flattenFrame() const
     if (!enabled || !frame->page())
         return false;
 
-    if (style()->width().isFixed() && style()->height().isFixed()) {
+    if (style().width().isFixed() && style().height().isFixed()) {
         // Do not flatten iframes with scrolling="no".
         if (iframeElement().scrollingMode() == ScrollbarAlwaysOff)
             return false;
-        if (style()->width().value() <= 0 || style()->height().value() <= 0)
+        if (style().width().value() <= 0 || style().height().value() <= 0)
             return false;
     }
 
@@ -166,7 +166,7 @@ void RenderIFrame::layout()
         updateLogicalHeight();
 
         if (flattenFrame())
-            layoutWithFlattening(style()->width().isFixed(), style()->height().isFixed());
+            layoutWithFlattening(style().width().isFixed(), style().height().isFixed());
     }
 
     clearOverflow();

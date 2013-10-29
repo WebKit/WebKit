@@ -90,7 +90,7 @@ bool RenderSVGResourceClipper::applyResource(RenderElement& renderer, RenderStyl
 bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext* context, const AffineTransform& animatedLocalTransform, const FloatRect& objectBoundingBox)
 {
     // If the current clip-path gets clipped itself, we have to fallback to masking.
-    if (!style()->svgStyle()->clipperResource().isEmpty())
+    if (!style().svgStyle()->clipperResource().isEmpty())
         return false;
     WindRule clipRule = RULE_NONZERO;
     Path clipPath = Path();
@@ -110,10 +110,10 @@ bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext* context, const 
         if (!childNode->isSVGElement() || !toSVGElement(childNode)->isSVGGraphicsElement())
             continue;
         SVGGraphicsElement* styled = toSVGGraphicsElement(childNode);
-        RenderStyle* style = renderer->style();
-        if (!style || style->display() == NONE || style->visibility() != VISIBLE)
+        const RenderStyle& style = renderer->style();
+        if (style.display() == NONE || style.visibility() != VISIBLE)
              continue;
-        const SVGRenderStyle* svgStyle = style->svgStyle();
+        const SVGRenderStyle* svgStyle = style.svgStyle();
         // Current shape in clip-path gets clipped too. Fallback to masking.
         if (!svgStyle->clipperResource().isEmpty())
             return false;
@@ -230,11 +230,11 @@ bool RenderSVGResourceClipper::drawContentIntoMaskImage(ClipperData* clipperData
             view().frameView().setPaintBehavior(oldBehavior);
             return false;
         }
-        RenderStyle* style = renderer->style();
-        if (!style || style->display() == NONE || style->visibility() != VISIBLE)
+        const RenderStyle& style = renderer->style();
+        if (style.display() == NONE || style.visibility() != VISIBLE)
             continue;
 
-        WindRule newClipRule = style->svgStyle()->clipRule();
+        WindRule newClipRule = style.svgStyle()->clipRule();
         bool isUseElement = child.hasTagName(SVGNames::useTag);
         if (isUseElement) {
             SVGUseElement& useElement = toSVGUseElement(child);
@@ -242,7 +242,7 @@ bool RenderSVGResourceClipper::drawContentIntoMaskImage(ClipperData* clipperData
             if (!renderer)
                 continue;
             if (!useElement.hasAttribute(SVGNames::clip_ruleAttr))
-                newClipRule = renderer->style()->svgStyle()->clipRule();
+                newClipRule = renderer->style().svgStyle()->clipRule();
         }
 
         // Only shapes, paths and texts are allowed for clipping.
@@ -270,8 +270,8 @@ void RenderSVGResourceClipper::calculateClipContentRepaintRect()
             continue;
         if (!renderer->isSVGShape() && !renderer->isSVGText() && !childNode->hasTagName(SVGNames::useTag))
             continue;
-        RenderStyle* style = renderer->style();
-        if (!style || style->display() == NONE || style->visibility() != VISIBLE)
+        const RenderStyle& style = renderer->style();
+        if (style.display() == NONE || style.visibility() != VISIBLE)
              continue;
         m_clipBoundaries.unite(renderer->localToParentTransform().mapRect(renderer->repaintRectInLocalCoordinates()));
     }

@@ -87,7 +87,7 @@ bool canUseFor(const RenderBlockFlow& flow)
         if (flow.view().layoutState()->m_columnInfo)
             return false;
     }
-    const RenderStyle& style = *flow.style();
+    const RenderStyle& style = flow.style();
     if (style.textAlign() == JUSTIFY)
         return false;
     // Non-visible overflow should be pretty easy to support.
@@ -126,7 +126,7 @@ bool canUseFor(const RenderBlockFlow& flow)
     if (style.resolvedShapeInside())
         return true;
 #endif
-    if (style.textOverflow() || (flow.isAnonymousBlock() && flow.parent()->style()->textOverflow()))
+    if (style.textOverflow() || (flow.isAnonymousBlock() && flow.parent()->style().textOverflow()))
         return false;
     if (style.hasPseudoStyle(FIRST_LINE) || style.hasPseudoStyle(FIRST_LETTER))
         return false;
@@ -238,7 +238,7 @@ std::unique_ptr<Layout> create(RenderBlockFlow& flow)
     RenderText& textRenderer = toRenderText(*flow.firstChild());
     ASSERT(!textRenderer.firstTextBox());
 
-    const RenderStyle& style = *flow.style();
+    const RenderStyle& style = flow.style();
     const unsigned textLength = textRenderer.textLength();
 
     ETextAlign textAlign = style.textAlign();

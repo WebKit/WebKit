@@ -211,7 +211,7 @@ static inline RenderStyle* renderStyleForLengthResolving(const SVGElement* conte
     const ContainerNode* currentContext = context;
     while (currentContext) {
         if (currentContext->renderer())
-            return currentContext->renderer()->style();
+            return &currentContext->renderer()->style();
         currentContext = currentContext->parentNode();
     }
 

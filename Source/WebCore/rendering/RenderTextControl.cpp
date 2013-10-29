@@ -67,9 +67,9 @@ void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* 
     if (innerTextRenderer) {
         // We may have set the width and the height in the old style in layout().
         // Reset them now to avoid getting a spurious layout hint.
-        innerTextRenderer->style()->setHeight(Length());
-        innerTextRenderer->style()->setWidth(Length());
-        innerTextRenderer->setStyle(createInnerTextStyle(style()));
+        innerTextRenderer->style().setHeight(Length());
+        innerTextRenderer->style().setWidth(Length());
+        innerTextRenderer->setStyle(createInnerTextStyle(&style()));
         innerText->setNeedsStyleRecalc();
     }
     textFormControlElement().updatePlaceholderVisibility(false);
@@ -88,8 +88,8 @@ void RenderTextControl::adjustInnerTextStyle(const RenderStyle* startStyle, Rend
 {
     // The inner block, if present, always has its direction set to LTR,
     // so we need to inherit the direction and unicode-bidi style from the element.
-    textBlockStyle->setDirection(style()->direction());
-    textBlockStyle->setUnicodeBidi(style()->unicodeBidi());
+    textBlockStyle->setDirection(style().direction());
+    textBlockStyle->setUnicodeBidi(style().unicodeBidi());
 
     bool disabled = updateUserModifyProperty(textFormControlElement(), textBlockStyle);
     if (disabled)
@@ -117,7 +117,7 @@ void RenderTextControl::updateFromElement()
 {
     TextControlInnerTextElement* innerText = innerTextElement();
     if (innerText && innerText->renderer())
-        updateUserModifyProperty(textFormControlElement(), innerText->renderer()->style());
+        updateUserModifyProperty(textFormControlElement(), &innerText->renderer()->style());
 }
 
 int RenderTextControl::scrollbarThickness() const
@@ -135,8 +135,8 @@ void RenderTextControl::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUni
         logicalHeight = computeControlLogicalHeight(innerTextBox->lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes), nonContentHeight) + borderAndPaddingHeight();
 
         // We are able to have a horizontal scrollbar if the overflow style is scroll, or if its auto and there's no word wrap.
-        if ((isHorizontalWritingMode() && (style()->overflowX() == OSCROLL ||  (style()->overflowX() == OAUTO && innerText->renderer()->style()->overflowWrap() == NormalOverflowWrap)))
-            || (!isHorizontalWritingMode() && (style()->overflowY() == OSCROLL ||  (style()->overflowY() == OAUTO && innerText->renderer()->style()->overflowWrap() == NormalOverflowWrap))))
+        if ((isHorizontalWritingMode() && (style().overflowX() == OSCROLL ||  (style().overflowX() == OAUTO && innerText->renderer()->style().overflowWrap() == NormalOverflowWrap)))
+            || (!isHorizontalWritingMode() && (style().overflowY() == OSCROLL ||  (style().overflowY() == OAUTO && innerText->renderer()->style().overflowWrap() == NormalOverflowWrap))))
             logicalHeight += scrollbarThickness();
     }
 
@@ -226,12 +226,12 @@ bool RenderTextControl::hasValidAvgCharWidth(AtomicString family)
 float RenderTextControl::getAvgCharWidth(AtomicString family)
 {
     if (hasValidAvgCharWidth(family))
-        return roundf(style()->font().primaryFont()->avgCharWidth());
+        return roundf(style().font().primaryFont()->avgCharWidth());
 
     const UChar ch = '0';
     const String str = String(&ch, 1);
-    const Font& font = style()->font();
-    TextRun textRun = constructTextRun(this, font, str, *style(), TextRun::AllowTrailingExpansion);
+    const Font& font = style().font();
+    TextRun textRun = constructTextRun(this, font, str, style(), TextRun::AllowTrailingExpansion);
     textRun.disableRoundingHacks();
     return font.width(textRun);
 }
@@ -240,17 +240,17 @@ float RenderTextControl::scaleEmToUnits(int x) const
 {
     // This matches the unitsPerEm value for MS Shell Dlg and Courier New from the "head" font table.
     float unitsPerEm = 2048.0f;
-    return roundf(style()->font().size() * x / unitsPerEm);
+    return roundf(style().font().size() * x / unitsPerEm);
 }
 
 void RenderTextControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
     // Use average character width. Matches IE.
-    const AtomicString& family = style()->font().firstFamily();
+    const AtomicString& family = style().font().firstFamily();
     maxLogicalWidth = preferredContentLogicalWidth(const_cast<RenderTextControl*>(this)->getAvgCharWidth(family));
     if (RenderBox* innerTextRenderBox = innerTextElement()->renderBox())
         maxLogicalWidth += innerTextRenderBox->paddingStart() + innerTextRenderBox->paddingEnd();
-    if (!style()->logicalWidth().isPercent())
+    if (!style().logicalWidth().isPercent())
         minLogicalWidth = maxLogicalWidth;
 }
 
@@ -261,19 +261,19 @@ void RenderTextControl::computePreferredLogicalWidths()
     m_minPreferredLogicalWidth = 0;
     m_maxPreferredLogicalWidth = 0;
 
-    if (style()->logicalWidth().isFixed() && style()->logicalWidth().value() >= 0)
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style()->logicalWidth().value());
+    if (style().logicalWidth().isFixed() && style().logicalWidth().value() >= 0)
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(style().logicalWidth().value());
     else
         computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
 
-    if (style()->logicalMinWidth().isFixed() && style()->logicalMinWidth().value() > 0) {
-        m_maxPreferredLogicalWidth = max(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style()->logicalMinWidth().value()));
-        m_minPreferredLogicalWidth = max(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style()->logicalMinWidth().value()));
+    if (style().logicalMinWidth().isFixed() && style().logicalMinWidth().value() > 0) {
+        m_maxPreferredLogicalWidth = max(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style().logicalMinWidth().value()));
+        m_minPreferredLogicalWidth = max(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style().logicalMinWidth().value()));
     }
 
-    if (style()->logicalMaxWidth().isFixed()) {
-        m_maxPreferredLogicalWidth = min(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style()->logicalMaxWidth().value()));
-        m_minPreferredLogicalWidth = min(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style()->logicalMaxWidth().value()));
+    if (style().logicalMaxWidth().isFixed()) {
+        m_maxPreferredLogicalWidth = min(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style().logicalMaxWidth().value()));
+        m_minPreferredLogicalWidth = min(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style().logicalMaxWidth().value()));
     }
 
     LayoutUnit toAdd = borderAndPaddingLogicalWidth();

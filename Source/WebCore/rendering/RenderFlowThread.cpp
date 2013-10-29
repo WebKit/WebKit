@@ -90,7 +90,7 @@ void RenderFlowThread::styleDidChange(StyleDifference diff, const RenderStyle* o
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
 
-    if (oldStyle && oldStyle->writingMode() != style()->writingMode())
+    if (oldStyle && oldStyle->writingMode() != style().writingMode())
         invalidateRegions();
 }
 
@@ -376,7 +376,7 @@ void RenderFlowThread::updateLogicalWidth()
     for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
         LayoutUnit regionLogicalWidth = region->pageLogicalWidth();
-        LayoutUnit logicalLeft = style()->direction() == LTR ? LayoutUnit() : logicalWidth - regionLogicalWidth;
+        LayoutUnit logicalLeft = style().direction() == LTR ? LayoutUnit() : logicalWidth - regionLogicalWidth;
         region->setRenderBoxRegionInfo(this, logicalLeft, regionLogicalWidth, false);
     }
 }
@@ -403,7 +403,7 @@ void RenderFlowThread::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop, L
 LayoutRect RenderFlowThread::computeRegionClippingRect(const LayoutPoint& offset, const LayoutRect& flowThreadPortionRect, const LayoutRect& flowThreadPortionOverflowRect) const
 {
     LayoutRect regionClippingRect(offset + (flowThreadPortionOverflowRect.location() - flowThreadPortionRect.location()), flowThreadPortionOverflowRect.size());
-    if (style()->isFlippedBlocksWritingMode())
+    if (style().isFlippedBlocksWritingMode())
         regionClippingRect.move(flowThreadPortionRect.size() - flowThreadPortionOverflowRect.size());
     return regionClippingRect;
 }
@@ -423,7 +423,7 @@ void RenderFlowThread::paintFlowThreadPortionInRegion(PaintInfo& paintInfo, Rend
     // layout code that attempted to pixel snap would be incorrect.
     IntPoint adjustedPaintOffset;
     LayoutPoint portionLocation;
-    if (style()->isFlippedBlocksWritingMode()) {
+    if (style().isFlippedBlocksWritingMode()) {
         LayoutRect flippedFlowThreadPortionRect(flowThreadPortionRect);
         flipForWritingMode(flippedFlowThreadPortionRect);
         portionLocation = flippedFlowThreadPortionRect.location();
@@ -474,7 +474,7 @@ bool RenderFlowThread::hitTestFlowThreadPortionInRegion(RenderRegion* region, co
         return false;
 
     LayoutSize renderFlowThreadOffset;
-    if (style()->isFlippedBlocksWritingMode()) {
+    if (style().isFlippedBlocksWritingMode()) {
         LayoutRect flippedFlowThreadPortionRect(flowThreadPortionRect);
         flipForWritingMode(flippedFlowThreadPortionRect);
         renderFlowThreadOffset = accumulatedOffset - flippedFlowThreadPortionRect.location();
@@ -1046,7 +1046,7 @@ void RenderFlowThread::updateRegionsFlowThreadPortionRect(const RenderRegion* la
         LayoutUnit regionLogicalWidth = region->pageLogicalWidth();
         LayoutUnit regionLogicalHeight = std::min<LayoutUnit>(RenderFlowThread::maxLogicalHeight() - logicalHeight, region->logicalHeightOfAllFlowThreadContent());
 
-        LayoutRect regionRect(style()->direction() == LTR ? LayoutUnit() : logicalWidth() - regionLogicalWidth, logicalHeight, regionLogicalWidth, regionLogicalHeight);
+        LayoutRect regionRect(style().direction() == LTR ? LayoutUnit() : logicalWidth() - regionLogicalWidth, logicalHeight, regionLogicalWidth, regionLogicalHeight);
 
         region->setFlowThreadPortionRect(isHorizontalWritingMode() ? regionRect : regionRect.transposedRect());
 
@@ -1264,10 +1264,10 @@ LayoutUnit RenderFlowThread::offsetFromLogicalTopOfFirstRegion(const RenderBlock
             return 0;
         LayoutPoint currentBlockLocation = currentBlock->location();
 
-        if (containerBlock->style()->writingMode() != currentBlock->style()->writingMode()) {
+        if (containerBlock->style().writingMode() != currentBlock->style().writingMode()) {
             // We have to put the block rect in container coordinates
             // and we have to take into account both the container and current block flipping modes
-            if (containerBlock->style()->isFlippedBlocksWritingMode()) {
+            if (containerBlock->style().isFlippedBlocksWritingMode()) {
                 if (containerBlock->isHorizontalWritingMode())
                     blockRect.setY(currentBlock->height() - blockRect.maxY());
                 else
@@ -1312,8 +1312,8 @@ LayoutRect RenderFlowThread::mapFromLocalToFlowThread(const RenderBox* box, cons
             return LayoutRect();
         LayoutPoint currentBoxLocation = box->location();
 
-        if (containerBlock->style()->writingMode() != box->style()->writingMode()) {
-            if (containerBlock->style()->isFlippedBlocksWritingMode()) {
+        if (containerBlock->style().writingMode() != box->style().writingMode()) {
+            if (containerBlock->style().isFlippedBlocksWritingMode()) {
                 if (containerBlock->isHorizontalWritingMode())
                     boxRect.setY(box->height() - boxRect.maxY());
                 else
@@ -1344,8 +1344,8 @@ LayoutRect RenderFlowThread::mapFromFlowThreadToLocal(const RenderBox* box, cons
     LayoutPoint currentBoxLocation = box->location();
     localRect.moveBy(-currentBoxLocation);
 
-    if (containerBlock->style()->writingMode() != box->style()->writingMode()) {
-        if (containerBlock->style()->isFlippedBlocksWritingMode()) {
+    if (containerBlock->style().writingMode() != box->style().writingMode()) {
+        if (containerBlock->style().isFlippedBlocksWritingMode()) {
             if (containerBlock->isHorizontalWritingMode())
                 localRect.setY(box->height() - localRect.maxY());
             else

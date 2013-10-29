@@ -124,8 +124,8 @@ void RenderSnapshottedPlugIn::paintSnapshot(PaintInfo& paintInfo, const LayoutPo
 
     GraphicsContext* context = paintInfo.context;
 #if PLATFORM(MAC)
-    if (style()->highlight() != nullAtom && !context->paintingDisabled())
-        paintCustomHighlight(toPoint(paintOffset - location()), style()->highlight(), true);
+    if (style().highlight() != nullAtom && !context->paintingDisabled())
+        paintCustomHighlight(toPoint(paintOffset - location()), style().highlight(), true);
 #endif
 
     LayoutSize contentSize(cWidth, cHeight);
@@ -141,9 +141,9 @@ void RenderSnapshottedPlugIn::paintSnapshot(PaintInfo& paintInfo, const LayoutPo
 
     ImageOrientationDescription orientationDescription(shouldRespectImageOrientation());
 #if ENABLE(CSS_IMAGE_ORIENTATION)
-    orientationDescription.setImageOrientationEnum(style()->imageOrientation());
+    orientationDescription.setImageOrientationEnum(style().imageOrientation());
 #endif
-    context->drawImage(image, style()->colorSpace(), alignedRect, CompositeSourceOver, orientationDescription, useLowQualityScaling);
+    context->drawImage(image, style().colorSpace(), alignedRect, CompositeSourceOver, orientationDescription, useLowQualityScaling);
 }
 
 CursorDirective RenderSnapshottedPlugIn::getCursor(const LayoutPoint& point, Cursor& overrideCursor) const

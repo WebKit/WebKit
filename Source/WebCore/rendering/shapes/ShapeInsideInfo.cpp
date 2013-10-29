@@ -45,7 +45,7 @@ LineSegmentRange::LineSegmentRange(const InlineIterator& start, const InlineIter
 
 bool ShapeInsideInfo::isEnabledFor(const RenderBlock* renderer)
 {
-    ShapeValue* shapeValue = renderer->style()->resolvedShapeInside();
+    ShapeValue* shapeValue = renderer->style().resolvedShapeInside();
     if (!shapeValue)
         return false;
 
@@ -103,7 +103,7 @@ bool ShapeInsideInfo::adjustLogicalLineTop(float minSegmentWidth)
 
 ShapeValue* ShapeInsideInfo::shapeValue() const
 {
-    return m_renderer->style()->resolvedShapeInside();
+    return m_renderer->style().resolvedShapeInside();
 }
 
 LayoutUnit ShapeInsideInfo::computeFirstFitPositionForFloat(const LayoutSize floatSize) const

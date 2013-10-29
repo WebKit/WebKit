@@ -74,7 +74,7 @@ public:
     {
         LayoutSize newLogicalSize(logicalWidth, logicalHeight);
 
-        if (m_renderer->style()->boxSizing() == CONTENT_BOX)
+        if (m_renderer->style().boxSizing() == CONTENT_BOX)
             newLogicalSize -= LayoutSize(m_renderer->borderAndPaddingLogicalWidth(), m_renderer->borderAndPaddingLogicalHeight());
 
         if (m_shapeLogicalSize == newLogicalSize)
@@ -96,7 +96,7 @@ public:
     LayoutUnit logicalLineBottom() const { return m_shapeLineTop + m_lineHeight + logicalTopOffset(); }
     LayoutUnit logicalLineBottom(LayoutUnit lineHeight) const { return m_shapeLineTop + lineHeight + logicalTopOffset(); }
 
-    LayoutUnit shapeContainingBlockLogicalHeight() const { return (m_renderer->style()->boxSizing() == CONTENT_BOX) ? (m_shapeLogicalSize.height() + m_renderer->borderAndPaddingLogicalHeight()) : m_shapeLogicalSize.height(); }
+    LayoutUnit shapeContainingBlockLogicalHeight() const { return (m_renderer->style().boxSizing() == CONTENT_BOX) ? (m_shapeLogicalSize.height() + m_renderer->borderAndPaddingLogicalHeight()) : m_shapeLogicalSize.height(); }
 
     virtual bool lineOverlapsShapeBounds() const = 0;
 
@@ -114,8 +114,8 @@ protected:
     virtual ShapeValue* shapeValue() const = 0;
     virtual void getIntervals(LayoutUnit, LayoutUnit, SegmentList&) const = 0;
 
-    LayoutUnit logicalTopOffset() const { return m_renderer->style()->boxSizing() == CONTENT_BOX ? m_renderer->borderAndPaddingBefore() : LayoutUnit(); };
-    LayoutUnit logicalLeftOffset() const { return (m_renderer->style()->boxSizing() == CONTENT_BOX && !m_renderer->isRenderRegion()) ? m_renderer->borderAndPaddingStart() : LayoutUnit(); }
+    LayoutUnit logicalTopOffset() const { return m_renderer->style().boxSizing() == CONTENT_BOX ? m_renderer->borderAndPaddingBefore() : LayoutUnit(); };
+    LayoutUnit logicalLeftOffset() const { return (m_renderer->style().boxSizing() == CONTENT_BOX && !m_renderer->isRenderRegion()) ? m_renderer->borderAndPaddingStart() : LayoutUnit(); }
 
     LayoutUnit m_shapeLineTop;
     LayoutUnit m_lineHeight;

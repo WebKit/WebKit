@@ -78,14 +78,14 @@ RenderMathMLRoot::RenderMathMLRoot(Element& element, PassRef<RenderStyle> style)
 LayoutUnit RenderMathMLRoot::paddingTop() const
 {
     LayoutUnit result = computedCSSPaddingTop();
-    switch (style()->writingMode()) {
+    switch (style().writingMode()) {
     case TopToBottomWritingMode:
         return result + m_intrinsicPaddingBefore;
     case BottomToTopWritingMode:
         return result + m_intrinsicPaddingAfter;
     case LeftToRightWritingMode:
     case RightToLeftWritingMode:
-        return result + (style()->isLeftToRightDirection() ? m_intrinsicPaddingStart : m_intrinsicPaddingEnd);
+        return result + (style().isLeftToRightDirection() ? m_intrinsicPaddingStart : m_intrinsicPaddingEnd);
     }
     ASSERT_NOT_REACHED();
     return result;
@@ -94,14 +94,14 @@ LayoutUnit RenderMathMLRoot::paddingTop() const
 LayoutUnit RenderMathMLRoot::paddingBottom() const
 {
     LayoutUnit result = computedCSSPaddingBottom();
-    switch (style()->writingMode()) {
+    switch (style().writingMode()) {
     case TopToBottomWritingMode:
         return result + m_intrinsicPaddingAfter;
     case BottomToTopWritingMode:
         return result + m_intrinsicPaddingBefore;
     case LeftToRightWritingMode:
     case RightToLeftWritingMode:
-        return result + (style()->isLeftToRightDirection() ? m_intrinsicPaddingEnd : m_intrinsicPaddingStart);
+        return result + (style().isLeftToRightDirection() ? m_intrinsicPaddingEnd : m_intrinsicPaddingStart);
     }
     ASSERT_NOT_REACHED();
     return result;
@@ -110,14 +110,14 @@ LayoutUnit RenderMathMLRoot::paddingBottom() const
 LayoutUnit RenderMathMLRoot::paddingLeft() const
 {
     LayoutUnit result = computedCSSPaddingLeft();
-    switch (style()->writingMode()) {
+    switch (style().writingMode()) {
     case LeftToRightWritingMode:
         return result + m_intrinsicPaddingBefore;
     case RightToLeftWritingMode:
         return result + m_intrinsicPaddingAfter;
     case TopToBottomWritingMode:
     case BottomToTopWritingMode:
-        return result + (style()->isLeftToRightDirection() ? m_intrinsicPaddingStart : m_intrinsicPaddingEnd);
+        return result + (style().isLeftToRightDirection() ? m_intrinsicPaddingStart : m_intrinsicPaddingEnd);
     }
     ASSERT_NOT_REACHED();
     return result;
@@ -126,14 +126,14 @@ LayoutUnit RenderMathMLRoot::paddingLeft() const
 LayoutUnit RenderMathMLRoot::paddingRight() const
 {
     LayoutUnit result = computedCSSPaddingRight();
-    switch (style()->writingMode()) {
+    switch (style().writingMode()) {
     case RightToLeftWritingMode:
         return result + m_intrinsicPaddingBefore;
     case LeftToRightWritingMode:
         return result + m_intrinsicPaddingAfter;
     case TopToBottomWritingMode:
     case BottomToTopWritingMode:
-        return result + (style()->isLeftToRightDirection() ? m_intrinsicPaddingEnd : m_intrinsicPaddingStart);
+        return result + (style().isLeftToRightDirection() ? m_intrinsicPaddingEnd : m_intrinsicPaddingStart);
     }
     ASSERT_NOT_REACHED();
     return result;
@@ -167,7 +167,7 @@ void RenderMathMLRoot::addChild(RenderObject* newChild, RenderObject* beforeChil
         RenderMathMLBlock::addChild(RenderMathMLRow::createAnonymousWithParentRenderer(this));
     
     // An <mroot>'s index has { position: absolute }.
-    if (newChild->style()->position() == AbsolutePosition)
+    if (newChild->style().position() == AbsolutePosition)
         RenderMathMLBlock::addChild(newChild);
     else
         toRenderElement(firstChild())->addChild(newChild, beforeChild && beforeChild->parent() == firstChild() ? beforeChild : 0);
@@ -191,21 +191,21 @@ void RenderMathMLRoot::layout()
         toRenderBox(child)->layoutIfNeeded();
     }
 
-    int baseHeight = firstChild() && firstChild()->isBox() ? roundToInt(toRenderBox(firstChild())->logicalHeight()) : style()->fontSize();
-    int frontWidth = lroundf(gFrontWidthEms * style()->fontSize());
+    int baseHeight = firstChild() && firstChild()->isBox() ? roundToInt(toRenderBox(firstChild())->logicalHeight()) : style().fontSize();
+    int frontWidth = lroundf(gFrontWidthEms * style().fontSize());
     
     // Base height above which the shape of the root changes
-    float thresholdHeight = gThresholdBaseHeightEms * style()->fontSize();
+    float thresholdHeight = gThresholdBaseHeightEms * style().fontSize();
     if (baseHeight > thresholdHeight && thresholdHeight) {
         float shift = min<float>((baseHeight - thresholdHeight) / thresholdHeight, 1.0f);
         m_overbarLeftPointShift = static_cast<int>(shift * gRadicalBottomPointXFront * frontWidth);
-        m_intrinsicPaddingAfter = lroundf(gBigRootBottomPaddingEms * style()->fontSize());
+        m_intrinsicPaddingAfter = lroundf(gBigRootBottomPaddingEms * style().fontSize());
     } else {
         m_overbarLeftPointShift = 0;
         m_intrinsicPaddingAfter = 0;
     }
     
-    int rootPad = lroundf(gSpaceAboveEms * style()->fontSize());
+    int rootPad = lroundf(gSpaceAboveEms * style().fontSize());
     m_intrinsicPaddingBefore = rootPad;
     m_indexTop = 0;
     if (RenderBox* index = this->index()) {
@@ -237,17 +237,17 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     RenderMathMLBlock::paint(info, paintOffset);
     
-    if (info.context->paintingDisabled() || style()->visibility() != VISIBLE)
+    if (info.context->paintingDisabled() || style().visibility() != VISIBLE)
         return;
     
     IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location() + contentBoxRect().location());
     
     int startX = adjustedPaintOffset.x();
-    int frontWidth = lroundf(gFrontWidthEms * style()->fontSize());
+    int frontWidth = lroundf(gFrontWidthEms * style().fontSize());
     int overbarWidth = roundToInt(contentLogicalWidth()) + m_overbarLeftPointShift;
     
     int baseHeight = roundToInt(contentLogicalHeight());
-    int rootPad = lroundf(gSpaceAboveEms * style()->fontSize());
+    int rootPad = lroundf(gSpaceAboveEms * style().fontSize());
     adjustedPaintOffset.setY(adjustedPaintOffset.y() - rootPad);
     
     float radicalDipLeftPointYPos = (index() ? gRootRadicalDipLeftPointYPos : gSqrtRadicalDipLeftPointYPos) * baseHeight;
@@ -255,15 +255,15 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     FloatPoint overbarLeftPoint(startX - m_overbarLeftPointShift, adjustedPaintOffset.y());
     FloatPoint bottomPoint(startX - gRadicalBottomPointXFront * frontWidth, adjustedPaintOffset.y() + baseHeight + gRadicalBottomPointLower);
     FloatPoint dipLeftPoint(startX - gRadicalDipLeftPointXFront * frontWidth, adjustedPaintOffset.y() + radicalDipLeftPointYPos);
-    FloatPoint leftEnd(startX - frontWidth, dipLeftPoint.y() + gRadicalLeftEndYShiftEms * style()->fontSize());
+    FloatPoint leftEnd(startX - frontWidth, dipLeftPoint.y() + gRadicalLeftEndYShiftEms * style().fontSize());
     
     GraphicsContextStateSaver stateSaver(*info.context);
     
-    info.context->setStrokeThickness(gRadicalLineThicknessEms * style()->fontSize());
+    info.context->setStrokeThickness(gRadicalLineThicknessEms * style().fontSize());
     info.context->setStrokeStyle(SolidStroke);
-    info.context->setStrokeColor(style()->visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
+    info.context->setStrokeColor(style().visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
     info.context->setLineJoin(MiterJoin);
-    info.context->setMiterLimit(style()->fontSize());
+    info.context->setMiterLimit(style().fontSize());
     
     Path root;
     
@@ -292,7 +292,7 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     info.context->clip(mask);
     
     // Draw the thick part of the root.
-    info.context->setStrokeThickness(gRadicalThickLineThicknessEms * style()->fontSize());
+    info.context->setStrokeThickness(gRadicalThickLineThicknessEms * style().fontSize());
     info.context->setLineCap(SquareCap);
     
     Path line;

@@ -264,7 +264,7 @@ LayoutSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float
         return IntSize();
 
     ImageOrientationDescription orientationDescription(renderer->shouldRespectImageOrientation());
-    orientationDescription.setImageOrientationEnum(renderer->style()->imageOrientation());
+    orientationDescription.setImageOrientationEnum(renderer->style().imageOrientation());
 
     if (m_image->isBitmapImage()
         && (orientationDescription.respectImageOrientation() == RespectImageOrientation && orientationDescription.imageOrientation() != DefaultImageOrientation))

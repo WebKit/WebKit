@@ -548,7 +548,7 @@ bool RenderThemeMac::isControlStyled(const RenderStyle* style, const BorderData&
 
 void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
 {
-    ControlPart part = o->style()->appearance();
+    ControlPart part = o->style().appearance();
 
 #if USE(NEW_THEME)
     switch (part) {
@@ -565,7 +565,7 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
     }
 #endif
 
-    float zoomLevel = o->style()->effectiveZoom();
+    float zoomLevel = o->style().effectiveZoom();
 
     if (part == MenulistPart) {
         setPopupButtonCellState(o, r);
@@ -643,7 +643,7 @@ void RenderThemeMac::updateEnabledState(NSCell* cell, const RenderObject* o)
 void RenderThemeMac::updateFocusedState(NSCell* cell, const RenderObject* o)
 {
     bool oldFocused = [cell showsFirstResponder];
-    bool focused = isFocused(o) && o->style()->outlineStyleIsAuto();
+    bool focused = isFocused(o) && o->style().outlineStyleIsAuto();
     if (focused != oldFocused)
         [cell setShowsFirstResponder:focused];
 }
@@ -667,7 +667,7 @@ bool RenderThemeMac::controlSupportsTints(const RenderObject* o) const
         return false;
 
     // Checkboxes only have tint when checked.
-    if (o->style()->appearance() == CheckboxPart)
+    if (o->style().appearance() == CheckboxPart)
         return isChecked(o);
 
     // For now assume other controls have tint if enabled.
@@ -760,9 +760,9 @@ bool RenderThemeMac::paintTextField(RenderObject* o, const PaintInfo& paintInfo,
     LocalCurrentGraphicsContext localContext(paintInfo.context);
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
-    bool useNSTextFieldCell = o->style()->hasAppearance()
-        && o->style()->visitedDependentColor(CSSPropertyBackgroundColor) == Color::white
-        && !o->style()->hasBackgroundImage();
+    bool useNSTextFieldCell = o->style().hasAppearance()
+        && o->style().visitedDependentColor(CSSPropertyBackgroundColor) == Color::white
+        && !o->style().hasBackgroundImage();
 
     // We do not use NSTextFieldCell to draw styled text fields on Lion and SnowLeopard because
     // there are a number of bugs on those platforms that require NSTextFieldCell to be in charge
@@ -847,14 +847,14 @@ bool RenderThemeMac::paintMenuList(RenderObject* o, const PaintInfo& paintInfo, 
 
     NSPopUpButtonCell* popupButton = this->popupButton();
 
-    float zoomLevel = o->style()->effectiveZoom();
+    float zoomLevel = o->style().effectiveZoom();
     IntSize size = popupButtonSizes()[[popupButton controlSize]];
     size.setHeight(size.height() * zoomLevel);
     size.setWidth(r.width());
 
     // Now inflate it to account for the shadow.
     IntRect inflatedRect = r;
-    if (r.width() >= minimumMenuListSize(o->style()))
+    if (r.width() >= minimumMenuListSize(&o->style()))
         inflatedRect = inflateRect(inflatedRect, size, popupButtonMargins(), zoomLevel);
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
@@ -873,7 +873,7 @@ bool RenderThemeMac::paintMenuList(RenderObject* o, const PaintInfo& paintInfo, 
     NSView *view = documentViewFor(o);
     [popupButton drawWithFrame:inflatedRect inView:view];
 #if !BUTTON_CELL_DRAW_WITH_FRAME_DRAWS_FOCUS_RING
-    if (isFocused(o) && o->style()->outlineStyleIsAuto())
+    if (isFocused(o) && o->style().outlineStyleIsAuto())
         [popupButton _web_drawFocusRingWithFrame:inflatedRect inView:view];
 #endif
     [popupButton setControlView:nil];
@@ -885,7 +885,7 @@ bool RenderThemeMac::paintMenuList(RenderObject* o, const PaintInfo& paintInfo, 
 
 IntSize RenderThemeMac::meterSizeForBounds(const RenderMeter* renderMeter, const IntRect& bounds) const
 {
-    if (NoControlPart == renderMeter->style()->appearance())
+    if (NoControlPart == renderMeter->style().appearance())
         return bounds.size();
 
     NSLevelIndicatorCell* cell = levelIndicatorFor(renderMeter);
@@ -943,8 +943,8 @@ NSLevelIndicatorStyle RenderThemeMac::levelIndicatorStyleFor(ControlPart part) c
 
 NSLevelIndicatorCell* RenderThemeMac::levelIndicatorFor(const RenderMeter* renderMeter) const
 {
-    RenderStyle* style = renderMeter->style();
-    ASSERT(style->appearance() != NoControlPart);
+    const RenderStyle& style = renderMeter->style();
+    ASSERT(style.appearance() != NoControlPart);
 
     if (!m_levelIndicator)
         m_levelIndicator = adoptNS([[NSLevelIndicatorCell alloc] initWithLevelIndicatorStyle:NSContinuousCapacityLevelIndicatorStyle]);
@@ -973,8 +973,8 @@ NSLevelIndicatorCell* RenderThemeMac::levelIndicatorFor(const RenderMeter* rende
         break;
     }
 
-    [cell setLevelIndicatorStyle:levelIndicatorStyleFor(style->appearance())];
-    [cell setBaseWritingDirection:style->isLeftToRightDirection() ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft];
+    [cell setLevelIndicatorStyle:levelIndicatorStyleFor(style.appearance())];
+    [cell setBaseWritingDirection:style.isLeftToRightDirection() ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft];
     [cell setMinValue:element->min()];
     [cell setMaxValue:element->max()];
     RetainPtr<NSNumber> valueObject = [NSNumber numberWithDouble:value];
@@ -1005,18 +1005,18 @@ const int* RenderThemeMac::progressBarMargins(NSControlSize controlSize) const
 
 IntRect RenderThemeMac::progressBarRectForBounds(const RenderObject* renderObject, const IntRect& bounds) const
 {
-    if (NoControlPart == renderObject->style()->appearance())
+    if (NoControlPart == renderObject->style().appearance())
         return bounds;
 
-    float zoomLevel = renderObject->style()->effectiveZoom();
-    int controlSize = controlSizeForFont(renderObject->style());
+    float zoomLevel = renderObject->style().effectiveZoom();
+    int controlSize = controlSizeForFont(&renderObject->style());
     IntSize size = progressBarSizes()[controlSize];
     size.setHeight(size.height() * zoomLevel);
     size.setWidth(bounds.width());
 
     // Now inflate it to account for the shadow.
     IntRect inflatedRect = bounds;
-    if (bounds.height() <= minimumProgressBarHeight(renderObject->style()))
+    if (bounds.height() <= minimumProgressBarHeight(&renderObject->style()))
         inflatedRect = inflateRect(inflatedRect, size, progressBarMargins(controlSize), zoomLevel);
 
     return inflatedRect;
@@ -1047,7 +1047,7 @@ bool RenderThemeMac::paintProgressBar(RenderObject* renderObject, const PaintInf
         return true;
 
     IntRect inflatedRect = progressBarRectForBounds(renderObject, rect);
-    int controlSize = controlSizeForFont(renderObject->style());
+    int controlSize = controlSizeForFont(&renderObject->style());
 
     RenderProgress* renderProgress = toRenderProgress(renderObject);
     HIThemeTrackDrawInfo trackInfo;
@@ -1081,7 +1081,7 @@ bool RenderThemeMac::paintProgressBar(RenderObject* renderObject, const PaintInf
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
-    if (!renderProgress->style()->isLeftToRightDirection()) {
+    if (!renderProgress->style().isLeftToRightDirection()) {
         paintInfo.context->translate(2 * inflatedRect.x() + inflatedRect.width(), 0);
         paintInfo.context->scale(FloatSize(-1, 1));
     }
@@ -1153,7 +1153,7 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
-    RoundedRect border = o->style()->getRoundedBorderFor(r, &o->view());
+    RoundedRect border = o->style().getRoundedBorderFor(r, &o->view());
     int radius = border.radii().topLeft().width();
 
     CGColorSpaceRef cspace = deviceRGBColorSpaceRef();
@@ -1212,27 +1212,27 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
 
 bool RenderThemeMac::paintMenuListButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    IntRect bounds = IntRect(r.x() + o->style()->borderLeftWidth(),
-                             r.y() + o->style()->borderTopWidth(),
-                             r.width() - o->style()->borderLeftWidth() - o->style()->borderRightWidth(),
-                             r.height() - o->style()->borderTopWidth() - o->style()->borderBottomWidth());
+    IntRect bounds = IntRect(r.x() + o->style().borderLeftWidth(),
+                             r.y() + o->style().borderTopWidth(),
+                             r.width() - o->style().borderLeftWidth() - o->style().borderRightWidth(),
+                             r.height() - o->style().borderTopWidth() - o->style().borderBottomWidth());
     // Draw the gradients to give the styled popup menu a button appearance
     paintMenuListButtonGradients(o, paintInfo, bounds);
 
     // Since we actually know the size of the control here, we restrict the font scale to make sure the arrows will fit vertically in the bounds
-    float fontScale = min(o->style()->fontSize() / baseFontSize, bounds.height() / (baseArrowHeight * 2 + baseSpaceBetweenArrows));
+    float fontScale = min(o->style().fontSize() / baseFontSize, bounds.height() / (baseArrowHeight * 2 + baseSpaceBetweenArrows));
     float centerY = bounds.y() + bounds.height() / 2.0f;
     float arrowHeight = baseArrowHeight * fontScale;
     float arrowWidth = baseArrowWidth * fontScale;
-    float leftEdge = bounds.maxX() - arrowPaddingRight * o->style()->effectiveZoom() - arrowWidth;
+    float leftEdge = bounds.maxX() - arrowPaddingRight * o->style().effectiveZoom() - arrowWidth;
     float spaceBetweenArrows = baseSpaceBetweenArrows * fontScale;
 
-    if (bounds.width() < arrowWidth + arrowPaddingLeft * o->style()->effectiveZoom())
+    if (bounds.width() < arrowWidth + arrowPaddingLeft * o->style().effectiveZoom())
         return false;
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
-    paintInfo.context->setFillColor(o->style()->visitedDependentColor(CSSPropertyColor), o->style()->colorSpace());
+    paintInfo.context->setFillColor(o->style().visitedDependentColor(CSSPropertyColor), o->style().colorSpace());
     paintInfo.context->setStrokeStyle(NoStroke);
 
     FloatPoint arrow1[3];
@@ -1256,7 +1256,7 @@ bool RenderThemeMac::paintMenuListButton(RenderObject* o, const PaintInfo& paint
 
     // FIXME: Should the separator thickness and space be scaled up by fontScale?
     int separatorSpace = 2; // Deliberately ignores zoom since it looks nicer if it stays thin.
-    int leftEdgeOfSeparator = static_cast<int>(leftEdge - arrowPaddingLeft * o->style()->effectiveZoom()); // FIXME: Round?
+    int leftEdgeOfSeparator = static_cast<int>(leftEdge - arrowPaddingLeft * o->style().effectiveZoom()); // FIXME: Round?
 
     // Draw the separator to the left of the arrows
     paintInfo.context->setStrokeThickness(1.0f); // Deliberately ignores zoom since it looks nicer if it stays thin.
@@ -1362,7 +1362,7 @@ void RenderThemeMac::setPopupButtonCellState(const RenderObject* o, const IntRec
     NSPopUpButtonCell* popupButton = this->popupButton();
 
     // Set the control size based off the rectangle we're painting into.
-    setControlSize(popupButton, popupButtonSizes(), r.size(), o->style()->effectiveZoom());
+    setControlSize(popupButton, popupButtonSizes(), r.size(), o->style().effectiveZoom());
 
     // Update the various states we respond to.
     updateActiveState(popupButton, o);
@@ -1396,13 +1396,13 @@ void RenderThemeMac::adjustSliderTrackStyle(StyleResolver*, RenderStyle* style, 
 bool RenderThemeMac::paintSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     IntRect bounds = r;
-    float zoomLevel = o->style()->effectiveZoom();
+    float zoomLevel = o->style().effectiveZoom();
     float zoomedTrackWidth = trackWidth * zoomLevel;
 
-    if (o->style()->appearance() ==  SliderHorizontalPart || o->style()->appearance() ==  MediaSliderPart) {
+    if (o->style().appearance() ==  SliderHorizontalPart || o->style().appearance() ==  MediaSliderPart) {
         bounds.setHeight(zoomedTrackWidth);
         bounds.setY(r.y() + r.height() / 2 - zoomedTrackWidth / 2);
-    } else if (o->style()->appearance() == SliderVerticalPart) {
+    } else if (o->style().appearance() == SliderVerticalPart) {
         bounds.setWidth(zoomedTrackWidth);
         bounds.setX(r.x() + r.width() / 2 - zoomedTrackWidth / 2);
     }
@@ -1421,7 +1421,7 @@ bool RenderThemeMac::paintSliderTrack(RenderObject* o, const PaintInfo& paintInf
     struct CGFunctionCallbacks mainCallbacks = { 0, TrackGradientInterpolate, NULL };
     RetainPtr<CGFunctionRef> mainFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks));
     RetainPtr<CGShadingRef> mainShading;
-    if (o->style()->appearance() == SliderVerticalPart)
+    if (o->style().appearance() == SliderVerticalPart)
         mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.maxY()), CGPointMake(bounds.maxX(), bounds.maxY()), mainFunction.get(), false, false));
     else
         mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.y()), CGPointMake(bounds.x(), bounds.maxY()), mainFunction.get(), false, false));
@@ -1444,7 +1444,7 @@ const float verticalSliderHeightPadding = 0.1f;
 
 bool RenderThemeMac::paintSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    NSSliderCell* sliderThumbCell = o->style()->appearance() == SliderThumbVerticalPart
+    NSSliderCell* sliderThumbCell = o->style().appearance() == SliderThumbVerticalPart
         ? sliderThumbVertical()
         : sliderThumbHorizontal();
 
@@ -1458,14 +1458,14 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const PaintInfo& paintInf
 
     // Update the pressed state using the NSCell tracking methods, since that's how NSSliderCell keeps track of it.
     bool oldPressed;
-    if (o->style()->appearance() == SliderThumbVerticalPart)
+    if (o->style().appearance() == SliderThumbVerticalPart)
         oldPressed = m_isSliderThumbVerticalPressed;
     else
         oldPressed = m_isSliderThumbHorizontalPressed;
 
     bool pressed = isPressed(o);
 
-    if (o->style()->appearance() == SliderThumbVerticalPart)
+    if (o->style().appearance() == SliderThumbVerticalPart)
         m_isSliderThumbVerticalPressed = pressed;
     else
         m_isSliderThumbHorizontalPressed = pressed;
@@ -1479,11 +1479,11 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const PaintInfo& paintInf
 
     FloatRect bounds = r;
     // Make the height of the vertical slider slightly larger so NSSliderCell will draw a vertical slider.
-    if (o->style()->appearance() == SliderThumbVerticalPart)
-        bounds.setHeight(bounds.height() + verticalSliderHeightPadding * o->style()->effectiveZoom());
+    if (o->style().appearance() == SliderThumbVerticalPart)
+        bounds.setHeight(bounds.height() + verticalSliderHeightPadding * o->style().effectiveZoom());
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
-    float zoomLevel = o->style()->effectiveZoom();
+    float zoomLevel = o->style().effectiveZoom();
 
     FloatRect unzoomedRect = bounds;
     if (zoomLevel != 1.0f) {
@@ -1509,7 +1509,7 @@ bool RenderThemeMac::paintSearchField(RenderObject* o, const PaintInfo& paintInf
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
-    float zoomLevel = o->style()->effectiveZoom();
+    float zoomLevel = o->style().effectiveZoom();
 
     IntRect unzoomedRect = r;
 
@@ -1536,7 +1536,7 @@ void RenderThemeMac::setSearchCellState(RenderObject* o, const IntRect&)
 {
     NSSearchFieldCell* search = this->search();
 
-    [search setControlSize:controlSizeForFont(o->style())];
+    [search setControlSize:controlSizeForFont(&o->style())];
 
     // Update the various states we respond to.
     updateActiveState(search, o);
@@ -1614,7 +1614,7 @@ bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const PaintIn
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
-    float zoomLevel = o->style()->effectiveZoom();
+    float zoomLevel = o->style().effectiveZoom();
 
     FloatRect localBounds = [search cancelButtonRectForBounds:NSRect(input->renderBox()->pixelSnappedBorderBoxRect())];
 
@@ -1739,7 +1739,7 @@ bool RenderThemeMac::paintSearchFieldResultsButton(RenderObject* o, const PaintI
         [search setSearchMenuTemplate:searchMenuTemplate()];
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
-    float zoomLevel = o->style()->effectiveZoom();
+    float zoomLevel = o->style().effectiveZoom();
 
     FloatRect localBounds = [search searchButtonRectForBounds:NSRect(input->renderBox()->pixelSnappedBorderBoxRect())];
     localBounds = convertToPaintingRect(input->renderer(), o, localBounds, r);
@@ -1832,7 +1832,7 @@ bool RenderThemeMac::paintSnapshottedPluginOverlay(RenderObject* o, const PaintI
     if (alignedPluginRect.width() <= 0 || alignedPluginRect.height() <= 0)
         return true;
 
-    context->drawImage(snapshot, plugInRenderer->style()->colorSpace(), alignedPluginRect, CompositeSourceOver);
+    context->drawImage(snapshot, plugInRenderer->style().colorSpace(), alignedPluginRect, CompositeSourceOver);
     return false;
 }
 

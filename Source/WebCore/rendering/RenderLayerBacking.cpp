@@ -318,13 +318,13 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     }
 #endif    
     
-    updateOpacity(renderer().style());
-    updateTransform(renderer().style());
+    updateOpacity(&renderer().style());
+    updateTransform(&renderer().style());
 #if ENABLE(CSS_FILTERS)
-    updateFilters(renderer().style());
+    updateFilters(&renderer().style());
 #endif
 #if ENABLE(CSS_COMPOSITING)
-    updateLayerBlendMode(renderer().style());
+    updateLayerBlendMode(&renderer().style());
 #endif
 }
 
@@ -384,9 +384,9 @@ void RenderLayerBacking::updateLayerBlendMode(const RenderStyle*)
 
 static bool hasNonZeroTransformOrigin(const RenderObject& renderer)
 {
-    RenderStyle* style = renderer.style();
-    return (style->transformOriginX().type() == Fixed && style->transformOriginX().value())
-        || (style->transformOriginY().type() == Fixed && style->transformOriginY().value());
+    const RenderStyle& style = renderer.style();
+    return (style.transformOriginX().type() == Fixed && style.transformOriginX().value())
+        || (style.transformOriginY().type() == Fixed && style.transformOriginY().value());
 }
 
 static bool layerOrAncestorIsTransformedOrUsingCompositedScrolling(RenderLayer& layer)
@@ -429,7 +429,7 @@ void RenderLayerBacking::updateCompositedBounds()
         RenderLayer* rootLayer = view.layer();
 
         LayoutRect clippingBounds;
-        if (renderer().style()->position() == FixedPosition && renderer().container() == &view)
+        if (renderer().style().position() == FixedPosition && renderer().container() == &view)
             clippingBounds = view.frameView().viewportConstrainedVisibleContentRect();
         else
             clippingBounds = view.unscaledDocumentRect();
@@ -600,18 +600,18 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     // Set transform property, if it is not animating. We have to do this here because the transform
     // is affected by the layer dimensions.
     if (!renderer().animation().isRunningAcceleratedAnimationOnRenderer(&renderer(), CSSPropertyWebkitTransform))
-        updateTransform(renderer().style());
+        updateTransform(&renderer().style());
 
     // Set opacity, if it is not animating.
     if (!renderer().animation().isRunningAcceleratedAnimationOnRenderer(&renderer(), CSSPropertyOpacity))
-        updateOpacity(renderer().style());
+        updateOpacity(&renderer().style());
         
 #if ENABLE(CSS_FILTERS)
-    updateFilters(renderer().style());
+    updateFilters(&renderer().style());
 #endif
 
 #if ENABLE(CSS_COMPOSITING)
-    updateLayerBlendMode(renderer().style());
+    updateLayerBlendMode(&renderer().style());
 #endif
 
     bool isSimpleContainer = isSimpleContainerCompositingLayer();
@@ -623,11 +623,11 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     // non-compositing visible layers.
     m_graphicsLayer->setContentsVisible(m_owningLayer.hasVisibleContent() || hasVisibleNonCompositingDescendantLayers());
 
-    RenderStyle* style = renderer().style();
+    const RenderStyle& style = renderer().style();
     // FIXME: reflections should force transform-style to be flat in the style: https://bugs.webkit.org/show_bug.cgi?id=106959
-    bool preserves3D = style->transformStyle3D() == TransformStyle3DPreserve3D && !renderer().hasReflection();
+    bool preserves3D = style.transformStyle3D() == TransformStyle3DPreserve3D && !renderer().hasReflection();
     m_graphicsLayer->setPreserves3D(preserves3D);
-    m_graphicsLayer->setBackfaceVisibility(style->backfaceVisibility() == BackfaceVisibilityVisible);
+    m_graphicsLayer->setBackfaceVisibility(style.backfaceVisibility() == BackfaceVisibilityVisible);
 
     RenderLayer* compAncestor = m_owningLayer.ancestorCompositingLayer();
     
@@ -739,9 +739,9 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         else
             m_graphicsLayer->setAnchorPoint(anchor);
 
-        RenderStyle* style = renderer().style();
+        const RenderStyle& style = renderer().style();
         GraphicsLayer* clipLayer = clippingLayer();
-        if (style->hasPerspective()) {
+        if (style.hasPerspective()) {
             TransformationMatrix t = owningLayer().perspectiveTransform();
             
             if (clipLayer) {
@@ -1338,9 +1338,9 @@ void RenderLayerBacking::attachToScrollingCoordinatorWithParent(RenderLayerBacki
     // FIXME: When we support overflow areas, we will have to refine this for overflow areas that are also
     // positon:fixed.
     ScrollingNodeType nodeType;
-    if (renderer().style()->position() == FixedPosition)
+    if (renderer().style().position() == FixedPosition)
         nodeType = FixedNode;
-    else if (renderer().style()->position() == StickyPosition)
+    else if (renderer().style().position() == StickyPosition)
         nodeType = StickyNode;
     else
         nodeType = ScrollingNode;
@@ -1431,7 +1431,7 @@ Color RenderLayerBacking::rendererBackgroundColor() const
     if (backgroundRenderer->isRoot())
         backgroundRenderer = backgroundRenderer->rendererForRootBackground();
 
-    return backgroundRenderer->style()->visitedDependentColor(CSSPropertyBackgroundColor);
+    return backgroundRenderer->style().visitedDependentColor(CSSPropertyBackgroundColor);
 }
 
 void RenderLayerBacking::updateDirectlyCompositedBackgroundColor(bool isSimpleContainer, bool& didUpdateContentsRect)
@@ -1491,9 +1491,9 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(bool isSimpleCo
     if (isDirectlyCompositedImage())
         return;
 
-    const RenderStyle* style = renderer().style();
+    const RenderStyle& style = renderer().style();
 
-    if (!isSimpleContainer || !style->hasBackgroundImage()) {
+    if (!isSimpleContainer || !style.hasBackgroundImage()) {
         m_graphicsLayer->setContentsToImage(0);
         return;
     }
@@ -1502,7 +1502,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(bool isSimpleCo
     IntPoint phase;
     IntSize tileSize;
 
-    RefPtr<Image> image = style->backgroundLayers()->image()->cachedImage()->image();
+    RefPtr<Image> image = style.backgroundLayers()->image()->cachedImage()->image();
     toRenderBox(renderer()).getGeometryForBackgroundImage(&m_owningLayer.renderer(), destRect, phase, tileSize);
     m_graphicsLayer->setContentsTileSize(tileSize);
     m_graphicsLayer->setContentsTilePhase(phase);
@@ -1540,7 +1540,7 @@ static bool supportsDirectBoxDecorationsComposition(const RenderObject& renderer
     if (renderer.hasClip())
         return false;
 
-    if (hasBoxDecorationsOrBackgroundImage(renderer.style()))
+    if (hasBoxDecorationsOrBackgroundImage(&renderer.style()))
         return false;
 
     // FIXME: We can't create a directly composited background if this
@@ -1548,14 +1548,14 @@ static bool supportsDirectBoxDecorationsComposition(const RenderObject& renderer
     // A better solution might be to introduce a flattening layer if
     // we do direct box decoration composition.
     // https://bugs.webkit.org/show_bug.cgi?id=119461
-    if (hasPerspectiveOrPreserves3D(renderer.style()))
+    if (hasPerspectiveOrPreserves3D(&renderer.style()))
         return false;
 
     // FIXME: we should be able to allow backgroundComposite; However since this is not a common use case it has been deferred for now.
-    if (renderer.style()->backgroundComposite() != CompositeSourceOver)
+    if (renderer.style().backgroundComposite() != CompositeSourceOver)
         return false;
 
-    if (renderer.style()->backgroundClip() == TextFillBox)
+    if (renderer.style().backgroundClip() == TextFillBox)
         return false;
 
     return true;
@@ -1623,7 +1623,7 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
         if (!rootObject)
             return false;
         
-        RenderStyle* style = rootObject->style();
+        RenderStyle* style = &rootObject->style();
         
         // Reject anything that has a border, a border-radius or outline,
         // or is not a simple background (no background, or solid color).
@@ -1636,7 +1636,7 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
         if (!bodyObject)
             return false;
         
-        style = bodyObject->style();
+        style = &bodyObject->style();
         
         if (hasBoxDecorationsOrBackgroundImage(style))
             return false;
@@ -1754,7 +1754,7 @@ void RenderLayerBacking::contentChanged(ContentChangeType changeType)
         return;
     }
 
-    if ((changeType == BackgroundImageChanged) && canCreateTiledImage(renderer().style()))
+    if ((changeType == BackgroundImageChanged) && canCreateTiledImage(&renderer().style()))
         updateGraphicsLayerGeometry();
 
     if ((changeType == MaskImageChanged) && m_maskLayer) {
@@ -1807,26 +1807,26 @@ void RenderLayerBacking::updateImageContents()
 
 FloatPoint3D RenderLayerBacking::computeTransformOrigin(const IntRect& borderBox) const
 {
-    RenderStyle* style = renderer().style();
+    const RenderStyle& style = renderer().style();
 
     FloatPoint3D origin;
-    origin.setX(floatValueForLength(style->transformOriginX(), borderBox.width()));
-    origin.setY(floatValueForLength(style->transformOriginY(), borderBox.height()));
-    origin.setZ(style->transformOriginZ());
+    origin.setX(floatValueForLength(style.transformOriginX(), borderBox.width()));
+    origin.setY(floatValueForLength(style.transformOriginY(), borderBox.height()));
+    origin.setZ(style.transformOriginZ());
 
     return origin;
 }
 
 FloatPoint RenderLayerBacking::computePerspectiveOrigin(const IntRect& borderBox) const
 {
-    RenderStyle* style = renderer().style();
+    const RenderStyle& style = renderer().style();
 
     float boxWidth = borderBox.width();
     float boxHeight = borderBox.height();
 
     FloatPoint origin;
-    origin.setX(floatValueForLength(style->perspectiveOriginX(), boxWidth));
-    origin.setY(floatValueForLength(style->perspectiveOriginY(), boxHeight));
+    origin.setX(floatValueForLength(style.perspectiveOriginX(), boxWidth));
+    origin.setY(floatValueForLength(style.perspectiveOriginY(), boxHeight));
 
     return origin;
 }
@@ -1861,7 +1861,7 @@ LayoutRect RenderLayerBacking::contentsBox() const
 
 static LayoutRect backgroundRectForBox(const RenderBox& box)
 {
-    switch (box.style()->backgroundClip()) {
+    switch (box.style().backgroundClip()) {
     case BorderFillBox:
         return box.borderBoxRect();
     case PaddingFillBox:

@@ -752,8 +752,8 @@ PassRefPtr<RenderStyle> SVGElement::customStyleForRenderer()
 
     RenderStyle* style = 0;
     if (Element* parent = parentOrShadowHostElement()) {
-        if (RenderObject* renderer = parent->renderer())
-            style = renderer->style();
+        if (auto renderer = parent->renderer())
+            style = &renderer->style();
     }
 
     return document().ensureStyleResolver().styleForElement(correspondingElement(), style, DisallowStyleSharing);
@@ -784,8 +784,8 @@ RenderStyle* SVGElement::computedStyle(PseudoId pseudoElementSpecifier)
 
     RenderStyle* parentStyle = 0;
     if (Element* parent = parentOrShadowHostElement()) {
-        if (RenderObject* renderer = parent->renderer())
-            parentStyle = renderer->style();
+        if (auto renderer = parent->renderer())
+            parentStyle = &renderer->style();
     }
 
     return m_svgRareData->overrideComputedStyle(this, parentStyle);

@@ -163,7 +163,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
     // FIXME: Much of this method is boiler plate that matches RenderBox::layoutBlock and Render*FlexibleBox::layoutBlock.
     // It would be nice to refactor some of the duplicate code.
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
-    LayoutStateMaintainer statePusher(&view(), this, locationOffset(), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
+    LayoutStateMaintainer statePusher(&view(), this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
 
     prepareShapesAndPaginationBeforeBlockLayout(relayoutChildren);
 
@@ -353,7 +353,7 @@ LayoutUnit RenderGrid::computeUsedBreadthOfSpecifiedLength(TrackSizingDirection 
 {
     // FIXME: We still need to support calc() here (https://webkit.org/b/103761).
     ASSERT(trackLength.isFixed() || trackLength.isPercent() || trackLength.isViewportPercentage());
-    return valueForLength(trackLength, direction == ForColumns ? logicalWidth() : computeContentLogicalHeight(style()->logicalHeight()));
+    return valueForLength(trackLength, direction == ForColumns ? logicalWidth() : computeContentLogicalHeight(style().logicalHeight()));
 }
 
 double RenderGrid::computeNormalizedFractionBreadth(Vector<GridTrack>& tracks, TrackSizingDirection direction, LayoutUnit availableLogicalSpace) const
@@ -406,21 +406,21 @@ double RenderGrid::computeNormalizedFractionBreadth(Vector<GridTrack>& tracks, T
 
 const GridTrackSize& RenderGrid::gridTrackSize(TrackSizingDirection direction, size_t i) const
 {
-    const Vector<GridTrackSize>& trackStyles = (direction == ForColumns) ? style()->gridColumns() : style()->gridRows();
+    const Vector<GridTrackSize>& trackStyles = (direction == ForColumns) ? style().gridColumns() : style().gridRows();
     if (i >= trackStyles.size())
-        return (direction == ForColumns) ? style()->gridAutoColumns() : style()->gridAutoRows();
+        return (direction == ForColumns) ? style().gridAutoColumns() : style().gridAutoRows();
 
     return trackStyles[i];
 }
 
 size_t RenderGrid::explicitGridColumnCount() const
 {
-    return style()->gridColumns().size();
+    return style().gridColumns().size();
 }
 
 size_t RenderGrid::explicitGridRowCount() const
 {
-    return style()->gridRows().size();
+    return style().gridRows().size();
 }
 
 size_t RenderGrid::explicitGridSizeForSide(GridPositionSide side) const
@@ -612,7 +612,7 @@ void RenderGrid::placeItemsOnGrid()
 
     Vector<RenderBox*> autoMajorAxisAutoGridItems;
     Vector<RenderBox*> specifiedMajorAxisAutoGridItems;
-    GridAutoFlow autoFlow = style()->gridAutoFlow();
+    GridAutoFlow autoFlow = style().gridAutoFlow();
     for (RenderBox* child = m_orderIterator.first(); child; child = m_orderIterator.next()) {
         // FIXME: We never re-resolve positions if the grid is grown during auto-placement which may lead auto / <integer>
         // positions to not match the author's intent. The specification is unclear on what should be done in this case.
@@ -629,8 +629,8 @@ void RenderGrid::placeItemsOnGrid()
         insertItemIntoGrid(child, GridCoordinate(*rowPositions, *columnPositions));
     }
 
-    ASSERT(gridRowCount() >= style()->gridRows().size());
-    ASSERT(gridColumnCount() >= style()->gridColumns().size());
+    ASSERT(gridRowCount() >= style().gridRows().size());
+    ASSERT(gridColumnCount() >= style().gridColumns().size());
 
     if (autoFlow == AutoFlowNone) {
         // If we did collect some grid items, they won't be placed thus never laid out.
@@ -653,7 +653,7 @@ void RenderGrid::populateExplicitGridAndOrderIterator()
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         // Avoid growing the vector for the common-case default value of 0. This optimizes the most common case which is
         // one or a few values with the default order 0
-        int order = child->style()->order();
+        int order = child->style().order();
         if (orderValues.isEmpty() || orderValues.last() != order)
             orderValues.append(order);
 
@@ -731,14 +731,14 @@ void RenderGrid::placeAutoMajorAxisItemOnGrid(RenderBox* gridItem)
 
 RenderGrid::TrackSizingDirection RenderGrid::autoPlacementMajorAxisDirection() const
 {
-    GridAutoFlow flow = style()->gridAutoFlow();
+    GridAutoFlow flow = style().gridAutoFlow();
     ASSERT(flow != AutoFlowNone);
     return (flow == AutoFlowColumn) ? ForColumns : ForRows;
 }
 
 RenderGrid::TrackSizingDirection RenderGrid::autoPlacementMinorAxisDirection() const
 {
-    GridAutoFlow flow = style()->gridAutoFlow();
+    GridAutoFlow flow = style().gridAutoFlow();
     ASSERT(flow != AutoFlowNone);
     return (flow == AutoFlowColumn) ? ForRows : ForColumns;
 }
@@ -819,16 +819,16 @@ GridSpan RenderGrid::resolveGridPositionsFromAutoPlacementPosition(const RenderB
 
 PassOwnPtr<GridSpan> RenderGrid::resolveGridPositionsFromStyle(const RenderBox* gridItem, TrackSizingDirection direction) const
 {
-    const GridPosition& initialPosition = (direction == ForColumns) ? gridItem->style()->gridItemColumnStart() : gridItem->style()->gridItemRowStart();
+    const GridPosition& initialPosition = (direction == ForColumns) ? gridItem->style().gridItemColumnStart() : gridItem->style().gridItemRowStart();
     const GridPositionSide initialPositionSide = (direction == ForColumns) ? ColumnStartSide : RowStartSide;
-    const GridPosition& finalPosition = (direction == ForColumns) ? gridItem->style()->gridItemColumnEnd() : gridItem->style()->gridItemRowEnd();
+    const GridPosition& finalPosition = (direction == ForColumns) ? gridItem->style().gridItemColumnEnd() : gridItem->style().gridItemRowEnd();
     const GridPositionSide finalPositionSide = (direction == ForColumns) ? ColumnEndSide : RowEndSide;
 
     // We should NEVER see both spans as they should have been handled during style resolve.
     ASSERT(!initialPosition.isSpan() || !finalPosition.isSpan());
 
     if (initialPosition.shouldBeResolvedAgainstOppositePosition() && finalPosition.shouldBeResolvedAgainstOppositePosition()) {
-        if (style()->gridAutoFlow() == AutoFlowNone)
+        if (style().gridAutoFlow() == AutoFlowNone)
             return adoptPtr(new GridSpan(0, 0));
 
         // We can't get our grid positions without running the auto placement algorithm.
@@ -875,7 +875,7 @@ size_t RenderGrid::resolveNamedGridLinePositionFromStyle(const GridPosition& pos
 {
     ASSERT(!position.namedGridLine().isNull());
 
-    const NamedGridLinesMap& gridLinesNames = (side == ColumnStartSide || side == ColumnEndSide) ? style()->namedGridColumnLines() : style()->namedGridRowLines();
+    const NamedGridLinesMap& gridLinesNames = (side == ColumnStartSide || side == ColumnEndSide) ? style().namedGridColumnLines() : style().namedGridRowLines();
     NamedGridLinesMap::const_iterator it = gridLinesNames.find(position.namedGridLine());
     if (it == gridLinesNames.end()) {
         if (position.isPositive())
@@ -959,7 +959,7 @@ PassOwnPtr<GridSpan> RenderGrid::resolveNamedGridLinePositionAgainstOppositePosi
     // Negative positions are not allowed per the specification and should have been handled during parsing.
     ASSERT(position.spanPosition() > 0);
 
-    const NamedGridLinesMap& gridLinesNames = (side == ColumnStartSide || side == ColumnEndSide) ? style()->namedGridColumnLines() : style()->namedGridRowLines();
+    const NamedGridLinesMap& gridLinesNames = (side == ColumnStartSide || side == ColumnEndSide) ? style().namedGridColumnLines() : style().namedGridRowLines();
     NamedGridLinesMap::const_iterator it = gridLinesNames.find(position.namedGridLine());
 
     // If there is no named grid line of that name, we resolve the position to 'auto' (which is equivalent to 'span 1' in this case).

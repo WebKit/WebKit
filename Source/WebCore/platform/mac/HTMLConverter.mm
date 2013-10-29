@@ -2487,21 +2487,21 @@ static NSInteger _colCompare(id block1, id block2, void *)
         ASSERT(renderer);
         if (!renderer)
             continue;
-        RenderStyle* style = renderer->style();
-        if (style->textDecorationsInEffect() & TextDecorationUnderline)
+        const RenderStyle& style = renderer->style();
+        if (style.textDecorationsInEffect() & TextDecorationUnderline)
             [attrs.get() setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
-        if (style->textDecorationsInEffect() & TextDecorationLineThrough)
+        if (style.textDecorationsInEffect() & TextDecorationLineThrough)
             [attrs.get() setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
-        if (NSFont *font = style->font().primaryFont()->getNSFont())
+        if (NSFont *font = style.font().primaryFont()->getNSFont())
             [attrs.get() setObject:font forKey:NSFontAttributeName];
         else
-            [attrs.get() setObject:[fontManager convertFont:WebDefaultFont() toSize:style->font().primaryFont()->platformData().size()] forKey:NSFontAttributeName];
-        if (style->visitedDependentColor(CSSPropertyColor).alpha())
-            [attrs.get() setObject:nsColor(style->visitedDependentColor(CSSPropertyColor)) forKey:NSForegroundColorAttributeName];
+            [attrs.get() setObject:[fontManager convertFont:WebDefaultFont() toSize:style.font().primaryFont()->platformData().size()] forKey:NSFontAttributeName];
+        if (style.visitedDependentColor(CSSPropertyColor).alpha())
+            [attrs.get() setObject:nsColor(style.visitedDependentColor(CSSPropertyColor)) forKey:NSForegroundColorAttributeName];
         else
             [attrs.get() removeObjectForKey:NSForegroundColorAttributeName];
-        if (style->visitedDependentColor(CSSPropertyBackgroundColor).alpha())
-            [attrs.get() setObject:nsColor(style->visitedDependentColor(CSSPropertyBackgroundColor)) forKey:NSBackgroundColorAttributeName];
+        if (style.visitedDependentColor(CSSPropertyBackgroundColor).alpha())
+            [attrs.get() setObject:nsColor(style.visitedDependentColor(CSSPropertyBackgroundColor)) forKey:NSBackgroundColorAttributeName];
         else
             [attrs.get() removeObjectForKey:NSBackgroundColorAttributeName];
 

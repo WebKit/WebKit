@@ -748,7 +748,7 @@ static bool contextPreservesNewline(const Range& context)
     if (!container || !container->renderer())
         return false;
 
-    return container->renderer()->style()->preserveNewline();
+    return container->renderer()->style().preserveNewline();
 }
 
 PassRefPtr<DocumentFragment> createFragmentFromText(Range& context, const String& text)

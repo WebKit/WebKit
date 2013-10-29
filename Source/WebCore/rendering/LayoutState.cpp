@@ -47,7 +47,7 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
 {
     ASSERT(m_next);
 
-    bool fixed = renderer->isOutOfFlowPositioned() && renderer->style()->position() == FixedPosition;
+    bool fixed = renderer->isOutOfFlowPositioned() && renderer->style().position() == FixedPosition;
     if (fixed) {
         // FIXME: This doesn't work correctly with transforms.
         FloatPoint fixedOffset = renderer->view().localToAbsolute(FloatPoint(), IsFixed);
@@ -87,7 +87,7 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
     // We can compare this later on to figure out what part of the page we're actually on,
     if (pageLogicalHeight || m_columnInfo || renderer->isRenderFlowThread()) {
         m_pageLogicalHeight = pageLogicalHeight;
-        bool isFlipped = renderer->style()->isFlippedBlocksWritingMode();
+        bool isFlipped = renderer->style().isFlippedBlocksWritingMode();
         m_pageOffset = LayoutSize(m_layoutOffset.width() + (!isFlipped ? renderer->borderLeft() + renderer->paddingLeft() : renderer->borderRight() + renderer->paddingRight()),
                                m_layoutOffset.height() + (!isFlipped ? renderer->borderTop() + renderer->paddingTop() : renderer->borderBottom() + renderer->paddingBottom()));
         m_pageLogicalHeightChanged = pageLogicalHeightChanged;
@@ -126,11 +126,11 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
     
     m_isPaginated = m_pageLogicalHeight || m_columnInfo || renderer->isRenderFlowThread();
 
-    if (lineGrid() && renderer->hasColumns() && renderer->style()->hasInlineColumnAxis())
+    if (lineGrid() && renderer->hasColumns() && renderer->style().hasInlineColumnAxis())
         computeLineGridPaginationOrigin(renderer);
 
     // If we have a new grid to track, then add it to our set.
-    if (renderer->style()->lineGrid() != RenderStyle::initialLineGrid() && renderer->isRenderBlockFlow())
+    if (renderer->style().lineGrid() != RenderStyle::initialLineGrid() && renderer->isRenderBlockFlow())
         establishLineGrid(toRenderBlockFlow(renderer));
 
     // FIXME: <http://bugs.webkit.org/show_bug.cgi?id=13443> Apply control clip if present.
@@ -202,7 +202,7 @@ void LayoutState::establishLineGrid(RenderBlockFlow* block)
 {
     // First check to see if this grid has been established already.
     if (m_lineGrid) {
-        if (m_lineGrid->style()->lineGrid() == block->style()->lineGrid())
+        if (m_lineGrid->style().lineGrid() == block->style().lineGrid())
             return;
         RenderBlockFlow* currentGrid = m_lineGrid;
         for (LayoutState* currentState = m_next.get(); currentState; currentState = currentState->m_next.get()) {
@@ -211,7 +211,7 @@ void LayoutState::establishLineGrid(RenderBlockFlow* block)
             currentGrid = currentState->m_lineGrid;
             if (!currentGrid)
                 break;
-            if (currentGrid->style()->lineGrid() == block->style()->lineGrid()) {
+            if (currentGrid->style().lineGrid() == block->style().lineGrid()) {
                 m_lineGrid = currentGrid;
                 m_lineGridOffset = currentState->m_lineGridOffset;
                 return;
@@ -229,7 +229,7 @@ void LayoutState::computeLineGridPaginationOrigin(RenderBox* renderer)
     // We need to cache a line grid pagination origin so that we understand how to reset the line grid
     // at the top of each column.
     // Get the current line grid and offset.
-    if (!lineGrid() || lineGrid()->style()->writingMode() != renderer->style()->writingMode())
+    if (!lineGrid() || lineGrid()->style().writingMode() != renderer->style().writingMode())
         return;
 
     // Get the hypothetical line box used to establish the grid.

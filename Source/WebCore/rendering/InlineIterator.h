@@ -124,8 +124,8 @@ static inline void notifyObserverEnteredObject(Observer* observer, RenderObject*
     if (!observer || !object || !object->isRenderInline())
         return;
 
-    RenderStyle* style = object->style();
-    EUnicodeBidi unicodeBidi = style->unicodeBidi();
+    const RenderStyle& style = object->style();
+    EUnicodeBidi unicodeBidi = style.unicodeBidi();
     if (unicodeBidi == UBNormal) {
         // http://dev.w3.org/csswg/css3-writing-modes/#unicode-bidi
         // "The element does not open an additional level of embedding with respect to the bidirectional algorithm."
@@ -142,7 +142,7 @@ static inline void notifyObserverEnteredObject(Observer* observer, RenderObject*
     }
 
     if (!observer->inIsolate())
-        observer->embed(embedCharFromDirection(style->direction(), unicodeBidi), FromStyleOrDOM);
+        observer->embed(embedCharFromDirection(style.direction(), unicodeBidi), FromStyleOrDOM);
 }
 
 template <class Observer>
@@ -151,7 +151,7 @@ static inline void notifyObserverWillExitObject(Observer* observer, RenderObject
     if (!observer || !object || !object->isRenderInline())
         return;
 
-    EUnicodeBidi unicodeBidi = object->style()->unicodeBidi();
+    EUnicodeBidi unicodeBidi = object->style().unicodeBidi();
     if (unicodeBidi == UBNormal)
         return; // Nothing to do for unicode-bidi: normal
     if (isIsolated(unicodeBidi)) {
@@ -399,7 +399,7 @@ ALWAYS_INLINE UCharDirection InlineIterator::direction() const
         return u_charDirection(character);
 
     if (m_obj && m_obj->isListMarker())
-        return m_obj->style()->isLeftToRightDirection() ? U_LEFT_TO_RIGHT : U_RIGHT_TO_LEFT;
+        return m_obj->style().isLeftToRightDirection() ? U_LEFT_TO_RIGHT : U_RIGHT_TO_LEFT;
 
     return U_OTHER_NEUTRAL;
 }
@@ -413,7 +413,7 @@ inline void InlineBidiResolver::increment()
 static inline bool isIsolatedInline(RenderObject* object)
 {
     ASSERT(object);
-    return object->isRenderInline() && isIsolated(object->style()->unicodeBidi());
+    return object->isRenderInline() && isIsolated(object->style().unicodeBidi());
 }
 
 static inline RenderObject* containingIsolate(RenderObject* object, RenderObject* root)

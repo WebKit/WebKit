@@ -79,10 +79,10 @@ bool RenderNamedFlowFragment::shouldHaveAutoLogicalHeight() const
 {
     ASSERT(parent());
 
-    RenderStyle* styleToUse = parent()->style();
-    bool hasSpecifiedEndpointsForHeight = styleToUse->logicalTop().isSpecified() && styleToUse->logicalBottom().isSpecified();
+    const RenderStyle& styleToUse = parent()->style();
+    bool hasSpecifiedEndpointsForHeight = styleToUse.logicalTop().isSpecified() && styleToUse.logicalBottom().isSpecified();
     bool hasAnchoredEndpointsForHeight = parent()->isOutOfFlowPositioned() && hasSpecifiedEndpointsForHeight;
-    return styleToUse->logicalHeight().isAuto() && !hasAnchoredEndpointsForHeight;
+    return styleToUse.logicalHeight().isAuto() && !hasAnchoredEndpointsForHeight;
 }
 
 LayoutUnit RenderNamedFlowFragment::maxPageLogicalHeight() const
@@ -92,8 +92,8 @@ LayoutUnit RenderNamedFlowFragment::maxPageLogicalHeight() const
     ASSERT(isAnonymous());
     ASSERT(parent());
 
-    RenderStyle* styleToUse = parent()->style();
-    return styleToUse->logicalMaxHeight().isUndefined() ? RenderFlowThread::maxLogicalHeight() : toRenderBlock(parent())->computeReplacedLogicalHeightUsing(styleToUse->logicalMaxHeight());    
+    const RenderStyle& styleToUse = parent()->style();
+    return styleToUse.logicalMaxHeight().isUndefined() ? RenderFlowThread::maxLogicalHeight() : toRenderBlock(parent())->computeReplacedLogicalHeightUsing(styleToUse.logicalMaxHeight());
 }
 
 } // namespace WebCore

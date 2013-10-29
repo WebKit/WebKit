@@ -57,7 +57,7 @@ HTMLMeterElement* MeterShadowElement::meterElement() const
 bool MeterShadowElement::rendererIsNeeded(const RenderStyle& style)
 {
     auto render = meterElement()->renderer();
-    return render && !render->theme()->supportsMeter(render->style()->appearance()) && HTMLDivElement::rendererIsNeeded(style);
+    return render && !render->theme()->supportsMeter(render->style().appearance()) && HTMLDivElement::rendererIsNeeded(style);
 }
 
 MeterInnerElement::MeterInnerElement(Document& document)
@@ -73,7 +73,7 @@ bool MeterInnerElement::rendererIsNeeded(const RenderStyle& style)
         return HTMLDivElement::rendererIsNeeded(style);
 
     auto render = meterElement()->renderer();
-    return render && !render->theme()->supportsMeter(render->style()->appearance()) && HTMLDivElement::rendererIsNeeded(style);
+    return render && !render->theme()->supportsMeter(render->style().appearance()) && HTMLDivElement::rendererIsNeeded(style);
 }
 
 RenderElement* MeterInnerElement::createRenderer(PassRef<RenderStyle> style)

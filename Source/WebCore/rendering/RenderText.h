@@ -47,8 +47,8 @@ public:
 
     virtual bool isTextFragment() const;
 
-    RenderStyle* style() const;
-    RenderStyle* firstLineStyle() const;
+    RenderStyle& style() const;
+    RenderStyle& firstLineStyle() const;
 
     virtual String originalText() const;
 
@@ -111,8 +111,8 @@ public:
     virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) OVERRIDE;
     virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0) OVERRIDE;
 
-    LayoutUnit marginLeft() const { return minimumValueForLength(style()->marginLeft(), 0); }
-    LayoutUnit marginRight() const { return minimumValueForLength(style()->marginRight(), 0); }
+    LayoutUnit marginLeft() const { return minimumValueForLength(style().marginLeft(), 0); }
+    LayoutUnit marginRight() const { return minimumValueForLength(style().marginRight(), 0); }
 
     virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const OVERRIDE FINAL;
 
@@ -132,7 +132,7 @@ public:
 
     bool containsReversedText() const { return m_containsReversedText; }
 
-    bool isSecure() const { return style()->textSecurity() != TSNONE; }
+    bool isSecure() const { return style().textSecurity() != TSNONE; }
     void momentarilyRevealLastTypedCharacter(unsigned lastTypedCharacterOffset);
 
     InlineTextBox* findNextInlineTextBox(int offset, int& pos) const { return m_lineBoxes.findNext(offset, pos); }
@@ -218,12 +218,12 @@ private:
 
 RENDER_OBJECT_TYPE_CASTS(RenderText, isText())
 
-inline RenderStyle* RenderText::style() const
+inline RenderStyle& RenderText::style() const
 {
     return parent()->style();
 }
 
-inline RenderStyle* RenderText::firstLineStyle() const
+inline RenderStyle& RenderText::firstLineStyle() const
 {
     return parent()->firstLineStyle();
 }

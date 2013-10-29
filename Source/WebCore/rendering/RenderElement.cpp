@@ -197,7 +197,7 @@ enum StyleCacheState {
 
 static PassRefPtr<RenderStyle> firstLineStyleForCachedUncachedType(StyleCacheState type, const RenderElement& renderer, RenderStyle* style)
 {
-    const RenderElement& rendererForFirstLineStyle = renderer.isBeforeOrAfterContent() ? *renderer.parent() : renderer;
+    RenderElement& rendererForFirstLineStyle = renderer.isBeforeOrAfterContent() ? *renderer.parent() : const_cast<RenderElement&>(renderer);
 
     if (rendererForFirstLineStyle.isRenderBlockFlow() || rendererForFirstLineStyle.isRenderButton()) {
         if (RenderBlock* firstLineBlock = rendererForFirstLineStyle.firstLineBlock()) {
@@ -206,14 +206,14 @@ static PassRefPtr<RenderStyle> firstLineStyleForCachedUncachedType(StyleCacheSta
             return firstLineBlock->getUncachedPseudoStyle(PseudoStyleRequest(FIRST_LINE), style, firstLineBlock == &renderer ? style : nullptr);
         }
     } else if (!rendererForFirstLineStyle.isAnonymous() && rendererForFirstLineStyle.isRenderInline()) {
-        RenderStyle* parentStyle = rendererForFirstLineStyle.parent()->firstLineStyle();
-        if (parentStyle != rendererForFirstLineStyle.parent()->style()) {
+        RenderStyle& parentStyle = rendererForFirstLineStyle.parent()->firstLineStyle();
+        if (&parentStyle != &rendererForFirstLineStyle.parent()->style()) {
             if (type == Cached) {
                 // A first-line style is in effect. Cache a first-line style for ourselves.
-                rendererForFirstLineStyle.style()->setHasPseudoStyle(FIRST_LINE_INHERITED);
-                return rendererForFirstLineStyle.getCachedPseudoStyle(FIRST_LINE_INHERITED, parentStyle);
+                rendererForFirstLineStyle.style().setHasPseudoStyle(FIRST_LINE_INHERITED);
+                return rendererForFirstLineStyle.getCachedPseudoStyle(FIRST_LINE_INHERITED, &parentStyle);
             }
-            return rendererForFirstLineStyle.getUncachedPseudoStyle(PseudoStyleRequest(FIRST_LINE_INHERITED), parentStyle, style);
+            return rendererForFirstLineStyle.getUncachedPseudoStyle(PseudoStyleRequest(FIRST_LINE_INHERITED), &parentStyle, style);
         }
     }
     return nullptr;
@@ -231,11 +231,11 @@ RenderStyle* RenderElement::cachedFirstLineStyle() const
 {
     ASSERT(document().styleSheetCollection().usesFirstLineRules());
 
-    RenderStyle* style = this->style();
-    if (RefPtr<RenderStyle> firstLineStyle = firstLineStyleForCachedUncachedType(Cached, *this, style))
+    RenderStyle& style = this->style();
+    if (RefPtr<RenderStyle> firstLineStyle = firstLineStyleForCachedUncachedType(Cached, *this, &style))
         return firstLineStyle.get();
 
-    return style;
+    return &style;
 }
 
 StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsigned contextSensitiveProperties) const
@@ -281,7 +281,7 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsig
     // The answer to requiresLayer() for plugins, iframes, and canvas can change without the actual
     // style changing, since it depends on whether we decide to composite these elements. When the
     // layer status of one of these elements changes, we need to force a layout.
-    if (diff == StyleDifferenceEqual && style() && isRenderLayerModelObject()) {
+    if (diff == StyleDifferenceEqual && isRenderLayerModelObject()) {
         if (hasLayer() != toRenderLayerModelObject(this)->requiresLayer())
             diff = StyleDifferenceLayout;
     }
@@ -301,7 +301,7 @@ inline bool RenderElement::hasImmediateNonWhitespaceTextChildOrBorderOrOutline()
     for (const RenderObject* renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
         if (renderer->isText() && !toRenderText(renderer)->isAllCollapsibleWhitespace())
             return true;
-        if (renderer->style()->hasOutline() || renderer->style()->hasBorder())
+        if (renderer->style().hasOutline() || renderer->style().hasBorder())
             return true;
     }
     return false;
@@ -358,7 +358,7 @@ void RenderElement::initializeStyle()
     }
 #endif
 
-    styleWillChange(StyleDifferenceEqual, *style());
+    styleWillChange(StyleDifferenceEqual, style());
 
     m_hasInitializedStyle = true;
 
@@ -531,7 +531,7 @@ void RenderElement::removeChild(RenderObject& oldChild)
 void RenderElement::destroyLeftoverChildren()
 {
     while (m_firstChild) {
-        if (m_firstChild->isListMarker() || (m_firstChild->style()->styleType() == FIRST_LETTER && !m_firstChild->isText()))
+        if (m_firstChild->isListMarker() || (m_firstChild->style().styleType() == FIRST_LETTER && !m_firstChild->isText()))
             m_firstChild->removeFromParent(); // List markers are owned by their enclosing list and so don't get destroyed by this container. Similarly, first letters are destroyed by their remaining text fragment.
         else if (m_firstChild->isRunIn() && m_firstChild->node()) {
             m_firstChild->node()->setRenderer(0);
@@ -783,7 +783,7 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
         if (child->isText())
             continue;
         RenderElement& elementChild = toRenderElement(*child);
-        if (!elementChild.isAnonymous() || elementChild.style()->styleType() != NOPSEUDO)
+        if (!elementChild.isAnonymous() || elementChild.style().styleType() != NOPSEUDO)
             continue;
 
         if (propagationType == PropagateToBlockChildrenOnly && !elementChild.isRenderBlock())
@@ -798,18 +798,18 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
         if (elementChild.isRenderFlowThread())
             continue;
 
-        auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), elementChild.style()->display());
-        if (style()->specifiesColumns()) {
-            if (elementChild.style()->specifiesColumns())
-                newStyle.get().inheritColumnPropertiesFrom(style());
-            if (elementChild.style()->columnSpan())
+        auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(&style(), elementChild.style().display());
+        if (style().specifiesColumns()) {
+            if (elementChild.style().specifiesColumns())
+                newStyle.get().inheritColumnPropertiesFrom(&style());
+            if (elementChild.style().columnSpan())
                 newStyle.get().setColumnSpan(ColumnSpanAll);
         }
 
         // Preserve the position style of anonymous block continuations as they can have relative or sticky position when
         // they contain block descendants of relative or sticky positioned inlines.
         if (elementChild.isInFlowPositioned() && toRenderBlock(elementChild).isAnonymousBlockContinuation())
-            newStyle.get().setPosition(elementChild.style()->position());
+            newStyle.get().setPosition(elementChild.style().position());
 
         elementChild.setStyle(std::move(newStyle));
     }
@@ -835,7 +835,7 @@ static inline bool rendererHasBackground(const RenderElement* renderer)
 
 void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
-    RenderStyle* oldStyle = hasInitializedStyle() ? style() : nullptr;
+    RenderStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
     if (oldStyle) {
         // If our z-index changes value or our visibility changes,
         // we need to dirty our stacking context's z-order list.
@@ -856,7 +856,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
             if (RenderLayer* layer = enclosingLayer()) {
                 if (newStyle.visibility() == VISIBLE)
                     layer->setHasVisibleContent();
-                else if (layer->hasVisibleContent() && (this == &layer->renderer() || layer->renderer().style()->visibility() != VISIBLE)) {
+                else if (layer->hasVisibleContent() && (this == &layer->renderer() || layer->renderer().style().visibility() != VISIBLE)) {
                     layer->dirtyVisibleContentStatus();
                     if (diff > StyleDifferenceRepaintLayer)
                         repaint();
@@ -972,7 +972,7 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
     // Don't check for repaint here; we need to wait until the layer has been
     // updated by subclasses before we know if we have to repaint (in setStyle()).
 
-    if (oldStyle && !areCursorsEqual(oldStyle, style()))
+    if (oldStyle && !areCursorsEqual(oldStyle, &style()))
         frame().eventHandler().scheduleCursorUpdate();
 }
 
@@ -990,7 +990,7 @@ void RenderElement::insertedIntoTree()
 
     // If |this| is visible but this object was not, tell the layer it has some visible content
     // that needs to be drawn and layer visibility optimization can't be used
-    if (parent()->style()->visibility() != VISIBLE && style()->visibility() == VISIBLE && !hasLayer()) {
+    if (parent()->style().visibility() != VISIBLE && style().visibility() == VISIBLE && !hasLayer()) {
         if (!layer)
             layer = parent()->enclosingLayer();
         if (layer)
@@ -1002,7 +1002,7 @@ void RenderElement::willBeRemovedFromTree()
 {
     // If we remove a visible child from an invisible parent, we don't know the layer visibility any more.
     RenderLayer* layer = nullptr;
-    if (parent()->style()->visibility() != VISIBLE && style()->visibility() == VISIBLE && !hasLayer()) {
+    if (parent()->style().visibility() != VISIBLE && style().visibility() == VISIBLE && !hasLayer()) {
         if ((layer = parent()->enclosingLayer()))
             layer->dirtyVisibleContentStatus();
     }
@@ -1040,7 +1040,7 @@ void RenderElement::setNeedsPositionedMovementLayout(const RenderStyle* oldStyle
     setNeedsPositionedMovementLayoutBit(true);
     markContainingBlocksForLayout();
     if (hasLayer()) {
-        if (oldStyle && style()->diffRequiresRepaint(oldStyle))
+        if (oldStyle && style().diffRequiresRepaint(oldStyle))
             setLayerNeedsFullRepaint();
         else
             setLayerNeedsFullRepaintForPositionedMovementLayout();

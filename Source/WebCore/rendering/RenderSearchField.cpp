@@ -176,19 +176,19 @@ void RenderSearchField::updateCancelButtonVisibility() const
     if (!cancelButtonRenderer)
         return;
 
-    const RenderStyle* curStyle = cancelButtonRenderer->style();
+    const RenderStyle& curStyle = cancelButtonRenderer->style();
     EVisibility buttonVisibility = visibilityForCancelButton();
-    if (curStyle->visibility() == buttonVisibility)
+    if (curStyle.visibility() == buttonVisibility)
         return;
 
-    auto cancelButtonStyle = RenderStyle::clone(curStyle);
+    auto cancelButtonStyle = RenderStyle::clone(&curStyle);
     cancelButtonStyle.get().setVisibility(buttonVisibility);
     cancelButtonRenderer->setStyle(std::move(cancelButtonStyle));
 }
 
 EVisibility RenderSearchField::visibilityForCancelButton() const
 {
-    return (style()->visibility() == HIDDEN || inputElement().value().isEmpty()) ? HIDDEN : VISIBLE;
+    return (style().visibility() == HIDDEN || inputElement().value().isEmpty()) ? HIDDEN : VISIBLE;
 }
 
 const AtomicString& RenderSearchField::autosaveName() const
@@ -258,8 +258,8 @@ PopupMenuStyle RenderSearchField::itemStyle(unsigned) const
 
 PopupMenuStyle RenderSearchField::menuStyle() const
 {
-    return PopupMenuStyle(style()->visitedDependentColor(CSSPropertyColor), style()->visitedDependentColor(CSSPropertyBackgroundColor), style()->font(), style()->visibility() == VISIBLE,
-        style()->display() == NONE, style()->textIndent(), style()->direction(), isOverride(style()->unicodeBidi()), PopupMenuStyle::CustomBackgroundColor);
+    return PopupMenuStyle(style().visitedDependentColor(CSSPropertyColor), style().visitedDependentColor(CSSPropertyBackgroundColor), style().font(), style().visibility() == VISIBLE,
+        style().display() == NONE, style().textIndent(), style().direction(), isOverride(style().unicodeBidi()), PopupMenuStyle::CustomBackgroundColor);
 }
 
 int RenderSearchField::clientInsetLeft() const
@@ -348,7 +348,7 @@ HostWindow* RenderSearchField::hostWindow() const
 PassRefPtr<Scrollbar> RenderSearchField::createScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
 {
     RefPtr<Scrollbar> widget;
-    bool hasCustomScrollbarStyle = style()->hasPseudoStyle(SCROLLBAR);
+    bool hasCustomScrollbarStyle = style().hasPseudoStyle(SCROLLBAR);
     if (hasCustomScrollbarStyle)
         widget = RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, &inputElement());
     else

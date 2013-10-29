@@ -97,15 +97,14 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
         m_renderingFlags |= RestoreGraphicsContext;
     }
 
-    RenderStyle* style = m_renderer->style();
-    ASSERT(style);
+    RenderStyle& style = m_renderer->style();
 
-    const SVGRenderStyle* svgStyle = style->svgStyle();
+    const SVGRenderStyle* svgStyle = style.svgStyle();
     ASSERT(svgStyle);
 
     // Setup transparency layers before setting up SVG resources!
     bool isRenderingMask = isRenderingMaskImage(*m_renderer);
-    float opacity = isRenderingMask ? 1 : style->opacity();
+    float opacity = isRenderingMask ? 1 : style.opacity();
     const ShadowData* shadow = svgStyle->shadow();
     if (opacity < 1 || shadow) {
         FloatRect repaintRect = m_renderer->repaintRectInLocalCoordinates();
@@ -118,13 +117,13 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
 
         if (shadow) {
             m_paintInfo->context->clip(repaintRect);
-            m_paintInfo->context->setShadow(IntSize(roundToInt(shadow->x()), roundToInt(shadow->y())), shadow->radius(), shadow->color(), style->colorSpace());
+            m_paintInfo->context->setShadow(IntSize(roundToInt(shadow->x()), roundToInt(shadow->y())), shadow->radius(), shadow->color(), style.colorSpace());
             m_paintInfo->context->beginTransparencyLayer(1);
             m_renderingFlags |= EndShadowLayer;
         }
     }
 
-    ClipPathOperation* clipPathOperation = style->clipPath();
+    ClipPathOperation* clipPathOperation = style.clipPath();
     if (clipPathOperation && clipPathOperation->type() == ClipPathOperation::SHAPE) {
         ShapeClipPathOperation* clipPath = static_cast<ShapeClipPathOperation*>(clipPathOperation);
         m_paintInfo->context->clipPath(clipPath->path(renderer.objectBoundingBox()), clipPath->windRule());
@@ -142,14 +141,14 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
 
     if (!isRenderingMask) {
         if (RenderSVGResourceMasker* masker = resources->masker()) {
-            if (!masker->applyResource(*m_renderer, style, m_paintInfo->context, ApplyToDefaultMode))
+            if (!masker->applyResource(*m_renderer, &style, m_paintInfo->context, ApplyToDefaultMode))
                 return;
         }
     }
 
     RenderSVGResourceClipper* clipper = resources->clipper();
     if (!clipPathOperation && clipper) {
-        if (!clipper->applyResource(*m_renderer, style, m_paintInfo->context, ApplyToDefaultMode))
+        if (!clipper->applyResource(*m_renderer, &style, m_paintInfo->context, ApplyToDefaultMode))
             return;
     }
 
@@ -162,7 +161,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
             // Return with false here may mean that we don't need to draw the content
             // (because it was either drawn before or empty) but we still need to apply the filter.
             m_renderingFlags |= EndFilterLayer;
-            if (!m_filter->applyResource(*m_renderer, style, m_paintInfo->context, ApplyToDefaultMode))
+            if (!m_filter->applyResource(*m_renderer, &style, m_paintInfo->context, ApplyToDefaultMode))
                 return;
 
             // Since we're caching the resulting bitmap and do not invalidate it on repaint rect

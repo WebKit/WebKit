@@ -53,7 +53,7 @@ static inline void adjustForCurrentColor(SVGElement* targetElement, Color& color
     ASSERT(targetElement);
 
     if (RenderElement* targetRenderer = targetElement->renderer())
-        color = targetRenderer->style()->visitedDependentColor(CSSPropertyColor);
+        color = targetRenderer->style().visitedDependentColor(CSSPropertyColor);
     else
         color = Color();
 }

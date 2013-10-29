@@ -148,11 +148,11 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(ShouldComputePreferred sho
     if (!m_containerSize.isEmpty())
         return m_containerSize.width();
 
-    if (style()->logicalWidth().isSpecified() || style()->logicalMaxWidth().isSpecified())
+    if (style().logicalWidth().isSpecified() || style().logicalMaxWidth().isSpecified())
         return RenderReplaced::computeReplacedLogicalWidth(shouldComputePreferred);
 
     if (svgSVGElement().widthAttributeEstablishesViewport())
-        return resolveLengthAttributeForSVG(svgSVGElement().intrinsicWidth(SVGSVGElement::IgnoreCSSProperties), style()->effectiveZoom(), containingBlock()->availableLogicalWidth(), &view());
+        return resolveLengthAttributeForSVG(svgSVGElement().intrinsicWidth(SVGSVGElement::IgnoreCSSProperties), style().effectiveZoom(), containingBlock()->availableLogicalWidth(), &view());
 
     // SVG embedded through object/embed/iframe.
     if (isEmbeddedThroughFrameContainingSVGDocument())
@@ -168,7 +168,7 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight() const
     if (!m_containerSize.isEmpty())
         return m_containerSize.height();
 
-    if (style()->logicalHeight().isSpecified() || style()->logicalMaxHeight().isSpecified())
+    if (style().logicalHeight().isSpecified() || style().logicalMaxHeight().isSpecified())
         return RenderReplaced::computeReplacedLogicalHeight();
 
     if (svgSVGElement().heightAttributeEstablishesViewport()) {
@@ -183,7 +183,7 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight() const
         } else
             RenderBlock::removePercentHeightDescendant(const_cast<RenderSVGRoot&>(*this));
 
-        return resolveLengthAttributeForSVG(height, style()->effectiveZoom(), containingBlock()->availableLogicalHeight(IncludeMarginBorderPadding), &view());
+        return resolveLengthAttributeForSVG(height, style().effectiveZoom(), containingBlock()->availableLogicalHeight(IncludeMarginBorderPadding), &view());
     }
 
     // SVG embedded through object/embed/iframe.
@@ -318,13 +318,13 @@ void RenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldS
     if (diff == StyleDifferenceLayout)
         setNeedsBoundariesUpdate();
     RenderReplaced::styleDidChange(diff, oldStyle);
-    SVGResourcesCache::clientStyleChanged(*this, diff, *style());
+    SVGResourcesCache::clientStyleChanged(*this, diff, style());
 }
 
 void RenderSVGRoot::addChild(RenderObject* child, RenderObject* beforeChild)
 {
     RenderReplaced::addChild(child, beforeChild);
-    SVGResourcesCache::clientWasAddedToTree(child, child->style());
+    SVGResourcesCache::clientWasAddedToTree(child, &child->style());
 }
 
 void RenderSVGRoot::removeChild(RenderObject& child)
@@ -337,7 +337,7 @@ void RenderSVGRoot::removeChild(RenderObject& child)
 // relative to our borderBox origin.  This method gives us exactly that.
 void RenderSVGRoot::buildLocalToBorderBoxTransform()
 {
-    float scale = style()->effectiveZoom();
+    float scale = style().effectiveZoom();
     SVGPoint translate = svgSVGElement().currentTranslate();
     LayoutSize borderAndPadding(borderLeft() + paddingLeft(), borderTop() + paddingTop());
     m_localToBorderBoxTransform = svgSVGElement().viewBoxToViewTransform(contentWidth() / scale, contentHeight() / scale);
@@ -368,7 +368,7 @@ void RenderSVGRoot::computeFloatRectForRepaint(const RenderLayerModelObject* rep
     // and then call RenderBox's method to handle all the normal CSS Box model bits
     repaintRect = m_localToBorderBoxTransform.mapRect(repaintRect);
 
-    const SVGRenderStyle* svgStyle = style()->svgStyle();
+    const SVGRenderStyle* svgStyle = style().svgStyle();
     if (const ShadowData* shadow = svgStyle->shadow())
         shadow->adjustRectForShadow(repaintRect);
 

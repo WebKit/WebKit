@@ -159,8 +159,8 @@ inline Resolver::Resolver(const RenderBlockFlow& flow, const Layout& layout)
     , m_string(toRenderText(*flow.firstChild()).text())
     , m_lineHeight(lineHeightFromFlow(flow))
     , m_baseline(baselineFromFlow(flow))
-    , m_ascent(flow.style()->font().fontMetrics().ascent())
-    , m_descent(flow.style()->font().fontMetrics().descent())
+    , m_ascent(flow.style().font().fontMetrics().ascent())
+    , m_descent(flow.style().font().fontMetrics().descent())
     , m_contentOffset(flow.borderLeft() + flow.paddingLeft(), flow.borderTop() + flow.paddingTop())
 {
 }

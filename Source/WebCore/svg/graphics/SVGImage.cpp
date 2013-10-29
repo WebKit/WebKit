@@ -119,7 +119,7 @@ IntSize SVGImage::containerSize() const
         return containerSize;
 
     // Assure that a container size is always given for a non-identity zoom level.
-    ASSERT(renderer->style()->effectiveZoom() == 1);
+    ASSERT(renderer->style().effectiveZoom() == 1);
 
     FloatSize currentSize;
     if (rootElement->intrinsicWidth().isFixed() && rootElement->intrinsicHeight().isFixed())

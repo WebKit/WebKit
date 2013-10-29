@@ -47,7 +47,7 @@ static inline bool isAnonymousRubyInlineBlock(const RenderObject* object)
         || !object->parent()->isRuby()
         || object->isRubyRun()
         || (object->isInline() && (object->isBeforeContent() || object->isAfterContent()))
-        || (object->isAnonymous() && object->isRenderBlock() && object->style()->display() == INLINE_BLOCK));
+        || (object->isAnonymous() && object->isRenderBlock() && object->style().display() == INLINE_BLOCK));
 
     return object
         && object->parent()->isRuby()
@@ -60,7 +60,7 @@ static inline bool isRubyBeforeBlock(const RenderObject* object)
     return isAnonymousRubyInlineBlock(object)
         && !object->previousSibling()
         && object->firstChildSlow()
-        && object->firstChildSlow()->style()->styleType() == BEFORE;
+        && object->firstChildSlow()->style().styleType() == BEFORE;
 }
 
 static inline bool isRubyAfterBlock(const RenderObject* object)
@@ -68,7 +68,7 @@ static inline bool isRubyAfterBlock(const RenderObject* object)
     return isAnonymousRubyInlineBlock(object)
         && !object->nextSibling()
         && object->firstChildSlow()
-        && object->firstChildSlow()->style()->styleType() == AFTER;
+        && object->firstChildSlow()->style().styleType() == AFTER;
 }
 
 static inline RenderBlock* rubyBeforeBlock(const RenderElement* ruby)
@@ -85,7 +85,7 @@ static inline RenderBlock* rubyAfterBlock(const RenderElement* ruby)
 
 static RenderBlock* createAnonymousRubyInlineBlock(RenderObject& ruby)
 {
-    RenderBlock* newBlock = new RenderBlockFlow(ruby.document(), RenderStyle::createAnonymousStyleWithDisplay(ruby.style(), INLINE_BLOCK));
+    RenderBlock* newBlock = new RenderBlockFlow(ruby.document(), RenderStyle::createAnonymousStyleWithDisplay(&ruby.style(), INLINE_BLOCK));
     newBlock->initializeStyle();
     return newBlock;
 }

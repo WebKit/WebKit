@@ -207,7 +207,7 @@ void KeyframeAnimation::getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle)
         return;
 
     if (!animatedStyle)
-        animatedStyle = RenderStyle::clone(m_object->style());
+        animatedStyle = RenderStyle::clone(&m_object->style());
 
     HashSet<CSSPropertyID>::const_iterator endProperties = m_keyframes.endProperties();
     for (HashSet<CSSPropertyID>::const_iterator it = m_keyframes.beginProperties(); it != endProperties; ++it) {

@@ -44,7 +44,7 @@ void RenderMediaVolumeSliderContainer::layout()
 {
     RenderBlockFlow::layout();
 
-    if (style()->display() == NONE || !nextSibling() || !nextSibling()->isBox())
+    if (style().display() == NONE || !nextSibling() || !nextSibling()->isBox())
         return;
 
     RenderBox* buttonBox = toRenderBox(nextSibling());
@@ -89,7 +89,7 @@ RenderTextTrackContainerElement::RenderTextTrackContainerElement(Element& elemen
 void RenderTextTrackContainerElement::layout()
 {
     RenderBlockFlow::layout();
-    if (style()->display() == NONE)
+    if (style().display() == NONE)
         return;
 
     ASSERT(mediaControlElementType(element()) == MediaTextTrackDisplayContainer);

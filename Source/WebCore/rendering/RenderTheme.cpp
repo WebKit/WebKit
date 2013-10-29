@@ -270,7 +270,7 @@ bool RenderTheme::paint(RenderObject* o, const PaintInfo& paintInfo, const IntRe
     if (paintInfo.context->paintingDisabled())
         return false;
 
-    ControlPart part = o->style()->appearance();
+    ControlPart part = o->style().appearance();
 
 #if USE(NEW_THEME)
     switch (part) {
@@ -281,7 +281,7 @@ bool RenderTheme::paint(RenderObject* o, const PaintInfo& paintInfo, const IntRe
     case DefaultButtonPart:
     case ButtonPart:
     case InnerSpinButtonPart:
-        m_theme->paint(part, controlStatesForRenderer(o), const_cast<GraphicsContext*>(paintInfo.context), r, o->style()->effectiveZoom(), &o->view().frameView());
+        m_theme->paint(part, controlStatesForRenderer(o), const_cast<GraphicsContext*>(paintInfo.context), r, o->style().effectiveZoom(), &o->view().frameView());
         return false;
     default:
         break;
@@ -398,7 +398,7 @@ bool RenderTheme::paintBorderOnly(RenderObject* o, const PaintInfo& paintInfo, c
         return false;
 
     // Call the appropriate paint method based off the appearance value.
-    switch (o->style()->appearance()) {
+    switch (o->style().appearance()) {
     case TextFieldPart:
         return paintTextField(o, paintInfo, r);
     case ListboxPart:
@@ -448,7 +448,7 @@ bool RenderTheme::paintDecorations(RenderObject* o, const PaintInfo& paintInfo, 
         return false;
 
     // Call the appropriate paint method based off the appearance value.
-    switch (o->style()->appearance()) {
+    switch (o->style().appearance()) {
     case MenulistButtonPart:
         return paintMenuListButton(o, paintInfo, r);
     case TextFieldPart:
@@ -640,7 +640,7 @@ int RenderTheme::baselinePosition(const RenderObject* o) const
     const RenderBox* box = toRenderBox(o);
 
 #if USE(NEW_THEME)
-    return box->height() + box->marginTop() + m_theme->baselinePositionAdjustment(o->style()->appearance()) * o->style()->effectiveZoom();
+    return box->height() + box->marginTop() + m_theme->baselinePositionAdjustment(o->style().appearance()) * o->style().effectiveZoom();
 #else
     return box->height() + box->marginTop();
 #endif
@@ -683,7 +683,7 @@ bool RenderTheme::isControlStyled(const RenderStyle* style, const BorderData& bo
 void RenderTheme::adjustRepaintRect(const RenderObject* o, IntRect& r)
 {
 #if USE(NEW_THEME)
-    m_theme->inflateControlPaintRect(o->style()->appearance(), controlStatesForRenderer(o), r, o->style()->effectiveZoom());
+    m_theme->inflateControlPaintRect(o->style().appearance(), controlStatesForRenderer(o), r, o->style().effectiveZoom());
 #else
     UNUSED_PARAM(o);
     UNUSED_PARAM(r);
@@ -698,7 +698,7 @@ bool RenderTheme::supportsFocusRing(const RenderStyle* style) const
 bool RenderTheme::stateChanged(RenderObject* o, ControlState state) const
 {
     // Default implementation assumes the controls don't respond to changes in :hover state
-    if (state == HoverState && !supportsHover(o->style()))
+    if (state == HoverState && !supportsHover(&o->style()))
         return false;
 
     // Assume pressed state is only responded to if the control is enabled.
@@ -723,7 +723,7 @@ ControlStates RenderTheme::controlStatesForRenderer(const RenderObject* o) const
         if (isSpinUpButtonPartPressed(o))
             result |= SpinUpState;
     }
-    if (isFocused(o) && o->style()->outlineStyleIsAuto())
+    if (isFocused(o) && o->style().outlineStyleIsAuto())
         result |= FocusState;
     if (isEnabled(o))
         result |= EnabledState;
@@ -856,7 +856,7 @@ bool RenderTheme::isDefault(const RenderObject* o) const
     if (!o->frame().settings().applicationChromeMode())
         return false;
     
-    return o->style()->appearance() == DefaultButtonPart;
+    return o->style().appearance() == DefaultButtonPart;
 }
 
 #if !USE(NEW_THEME)
@@ -977,7 +977,7 @@ void RenderTheme::paintSliderTicks(RenderObject* o, const PaintInfo& paintInfo, 
 
     double min = input->minimum();
     double max = input->maximum();
-    ControlPart part = o->style()->appearance();
+    ControlPart part = o->style().appearance();
     // We don't support ticks on alternate sliders like MediaVolumeSliders.
     if (part !=  SliderHorizontalPart && part != SliderVerticalPart)
         return;
@@ -986,15 +986,15 @@ void RenderTheme::paintSliderTicks(RenderObject* o, const PaintInfo& paintInfo, 
     IntSize thumbSize;
     RenderObject* thumbRenderer = input->sliderThumbElement()->renderer();
     if (thumbRenderer) {
-        RenderStyle* thumbStyle = thumbRenderer->style();
-        int thumbWidth = thumbStyle->width().intValue();
-        int thumbHeight = thumbStyle->height().intValue();
+        const RenderStyle& thumbStyle = thumbRenderer->style();
+        int thumbWidth = thumbStyle.width().intValue();
+        int thumbHeight = thumbStyle.height().intValue();
         thumbSize.setWidth(isHorizontal ? thumbWidth : thumbHeight);
         thumbSize.setHeight(isHorizontal ? thumbHeight : thumbWidth);
     }
 
     IntSize tickSize = sliderTickSize();
-    float zoomFactor = o->style()->effectiveZoom();
+    float zoomFactor = o->style().effectiveZoom();
     FloatRect tickRect;
     int tickRegionSideMargin = 0;
     int tickRegionWidth = 0;
@@ -1024,7 +1024,7 @@ void RenderTheme::paintSliderTicks(RenderObject* o, const PaintInfo& paintInfo, 
     }
     RefPtr<HTMLCollection> options = dataList->options();
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
-    paintInfo.context->setFillColor(o->style()->visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
+    paintInfo.context->setFillColor(o->style().visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
     for (unsigned i = 0; Node* node = options->item(i); i++) {
         ASSERT(isHTMLOptionElement(node));
         HTMLOptionElement* optionElement = toHTMLOptionElement(node);
@@ -1033,7 +1033,7 @@ void RenderTheme::paintSliderTicks(RenderObject* o, const PaintInfo& paintInfo, 
             continue;
         double parsedValue = parseToDoubleForNumberType(input->sanitizeValue(value));
         double tickFraction = (parsedValue - min) / (max - min);
-        double tickRatio = isHorizontal && o->style()->isLeftToRightDirection() ? tickFraction : 1.0 - tickFraction;
+        double tickRatio = isHorizontal && o->style().isLeftToRightDirection() ? tickFraction : 1.0 - tickFraction;
         double tickPosition = round(tickRegionSideMargin + tickRegionWidth * tickRatio);
         if (isHorizontal)
             tickRect.setX(tickPosition);

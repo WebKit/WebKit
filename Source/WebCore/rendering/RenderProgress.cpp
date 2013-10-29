@@ -101,7 +101,7 @@ void RenderProgress::updateAnimationState()
     m_animationDuration = theme()->animationDurationForProgressBar(this);
     m_animationRepeatInterval = theme()->animationRepeatIntervalForProgressBar(this);
 
-    bool animating = style()->hasAppearance() && m_animationDuration > 0;
+    bool animating = style().hasAppearance() && m_animationDuration > 0;
     if (animating == m_animating)
         return;
 

@@ -49,7 +49,7 @@ RenderMathMLRow::RenderMathMLRow(Document& document, PassRef<RenderStyle> style)
 // FIXME: Change all these createAnonymous... routines to return a PassOwnPtr<>.
 RenderMathMLRow* RenderMathMLRow::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
-    RenderMathMLRow* newMRow = new RenderMathMLRow(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(parent->style(), FLEX));
+    RenderMathMLRow* newMRow = new RenderMathMLRow(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(&parent->style(), FLEX));
     newMRow->initializeStyle();
     return newMRow;
 }
@@ -67,7 +67,7 @@ void RenderMathMLRow::layout()
             stretchLogicalHeight = std::max<int>(stretchLogicalHeight, roundToInt(toRenderBox(child)->logicalHeight()));
     }
     if (!stretchLogicalHeight)
-        stretchLogicalHeight = style()->fontSize();
+        stretchLogicalHeight = style().fontSize();
     
     // Set the sizes of (possibly embellished) stretchy operator children.
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {

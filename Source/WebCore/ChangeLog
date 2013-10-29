@@ -1,3 +1,17 @@
+2013-10-28  Andreas Kling  <akling@apple.com>
+
+        RenderElement::style() should return a reference.
+        <https://webkit.org/b/123414>
+
+        Now that renderers always have style, go ahead and make style()
+        return a RenderStyle&.
+
+        There are countless opportunities for further cleanup enabled by
+        this change. I'm simply passing &style() in many cases where we
+        can really do something nicer instead.
+
+        Reviewed by Anders Carlsson.
+
 2013-10-28  Tim Horton  <timothy_horton@apple.com>
 
         Make TileController create the appropriate PlatformCALayer subclasses

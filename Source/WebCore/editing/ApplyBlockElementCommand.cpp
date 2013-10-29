@@ -182,7 +182,7 @@ RenderStyle* ApplyBlockElementCommand::renderStyleOfEnclosingTextNode(const Posi
     if (!renderer)
         return 0;
 
-    return renderer->style();
+    return &renderer->style();
 }
 
 void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const VisiblePosition& endOfCurrentParagraph, Position& start, Position& end)

@@ -205,12 +205,11 @@ PassRefPtr<TypeBuilder::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectFo
     // FIXME: RenderView is now really anonymous but don't tell about it to the frontend before making sure it can handle it.
     if (isAnonymous && !renderer->isRenderView()) {
         layerObject->setIsAnonymous(true);
-        if (RenderStyle* style = renderer->style()) {
-            if (style->styleType() == FIRST_LETTER)
-                layerObject->setPseudoElement("first-letter");
-            else if (style->styleType() == FIRST_LINE)
-                layerObject->setPseudoElement("first-line");
-        }
+        const RenderStyle& style = renderer->style();
+        if (style.styleType() == FIRST_LETTER)
+            layerObject->setPseudoElement("first-letter");
+        else if (style.styleType() == FIRST_LINE)
+            layerObject->setPseudoElement("first-line");
     }
 
     return layerObject;

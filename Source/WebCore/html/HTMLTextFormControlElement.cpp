@@ -153,7 +153,7 @@ bool HTMLTextFormControlElement::placeholderShouldBeVisible() const
         && isEmptySuggestedValue()
         && !isPlaceholderEmpty()
         && (document().focusedElement() != this || (renderer() && renderer()->theme()->shouldShowPlaceholderWhenFocused()))
-        && (!renderer() || renderer()->style()->visibility() == VISIBLE);
+        && (!renderer() || renderer()->style().visibility() == VISIBLE);
 }
 
 void HTMLTextFormControlElement::updatePlaceholderVisibility(bool placeholderValueChanged)
@@ -206,7 +206,7 @@ void HTMLTextFormControlElement::dispatchFormControlChangeEvent()
 
 static inline bool hasVisibleTextArea(RenderElement& textControl, TextControlInnerTextElement* innerText)
 {
-    return textControl.style()->visibility() != HIDDEN && innerText && innerText->renderer() && innerText->renderBox()->height();
+    return textControl.style().visibility() != HIDDEN && innerText && innerText->renderer() && innerText->renderBox()->height();
 }
 
 void HTMLTextFormControlElement::setRangeText(const String& replacement, ExceptionCode& ec)
