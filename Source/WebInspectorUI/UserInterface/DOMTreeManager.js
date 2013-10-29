@@ -535,13 +535,17 @@ WebInspector.DOMTreeManager.prototype = {
 
     _createContentFlowFromPayload: function(flowPayload)
     {
-        // FIXME: Collect the content and regions from the payload.
-        return new WebInspector.ContentFlow(flowPayload.documentNodeId, flowPayload.name, flowPayload.overset);
+        // FIXME: Collect the regions from the payload.
+        return new WebInspector.ContentFlow(flowPayload.documentNodeId, flowPayload.name, flowPayload.overset, flowPayload.content.map(this.nodeForId.bind(this)));
     },
 
     _updateContentFlowFromPayload: function(contentFlow, flowPayload)
     {
-        // FIXME: Collect the content and regions from the payload.
+        console.assert(contentFlow.contentNodes.length === flowPayload.content.length);
+        for (var i = 0; i < contentFlow.contentNodes.length; ++i)
+            console.assert(contentFlow.contentNodes[i].id === flowPayload.content[i]);
+
+        // FIXME: Collect the regions from the payload.
         contentFlow.overset = flowPayload.overset;
     },
 
@@ -604,6 +608,27 @@ WebInspector.DOMTreeManager.prototype = {
     regionOversetChanged: function(flowPayload)
     {
         this._sendNamedFlowUpdateEvents(flowPayload);
+    },
+
+    registeredNamedFlowContentElement: function(documentNodeIdentifier, flowName, contentNodeId, nextContentElementNodeId)
+    {
+        var flowKey = WebInspector.DOMTreeManager._flowPayloadHashKey({documentNodeId: documentNodeIdentifier, name: flowName});
+        console.assert(this._flows.hasOwnProperty(flowKey));
+
+        var flow = this._flows[flowKey];
+        var contentNode = this.nodeForId(contentNodeId);
+
+        if (nextContentElementNodeId)
+            flow.insertContentNodeBefore(contentNode, this.nodeForId(nextContentElementNodeId));
+        else
+            flow.appendContentNode(contentNode);
+    },
+
+    unregisteredNamedFlowContentElement: function(documentNodeIdentifier, flowName, contentNodeId)
+    {
+        var flowKey = WebInspector.DOMTreeManager._flowPayloadHashKey({documentNodeId: documentNodeIdentifier, name: flowName});
+        console.assert(this._flows.hasOwnProperty(flowKey));
+        this._flows[flowKey].removeContentNode(this.nodeForId(contentNodeId));
     }
 }
 

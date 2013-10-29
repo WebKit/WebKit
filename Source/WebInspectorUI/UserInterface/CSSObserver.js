@@ -71,6 +71,16 @@ WebInspector.CSSObserver.prototype = {
     regionOversetChanged: function(namedFlow)
     {
         WebInspector.domTreeManager.regionOversetChanged(namedFlow);
+    },
+
+    registeredNamedFlowContentElement: function(documentNodeId, flowName, contentNodeId, nextContentElementNodeId)
+    {
+        WebInspector.domTreeManager.registeredNamedFlowContentElement(documentNodeId, flowName, contentNodeId, nextContentElementNodeId);
+    },
+
+    unregisteredNamedFlowContentElement: function(documentNodeId, flowName, contentNodeId)
+    {
+        WebInspector.domTreeManager.unregisteredNamedFlowContentElement(documentNodeId, flowName, contentNodeId);
     }
 };
 

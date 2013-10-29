@@ -132,6 +132,8 @@ public:
     static void willRemoveNamedFlow(Document*, WebKitNamedFlow*);
     static void didUpdateRegionLayout(Document*, WebKitNamedFlow*);
     static void didChangeRegionOverset(Document*, WebKitNamedFlow*);
+    static void didRegisterNamedFlowContentElement(Document*, WebKitNamedFlow*, Node* contentElement, Node* nextContentElement = nullptr);
+    static void didUnregisterNamedFlowContentElement(Document*, WebKitNamedFlow*, Node* contentElement);
 
     static void mouseDidMoveOverElement(Page*, const HitTestResult&, unsigned modifierFlags);
     static bool handleMousePress(Page*);
@@ -337,6 +339,8 @@ private:
     static void willRemoveNamedFlowImpl(InstrumentingAgents*, Document*, WebKitNamedFlow*);
     static void didUpdateRegionLayoutImpl(InstrumentingAgents*, Document*, WebKitNamedFlow*);
     static void didChangeRegionOversetImpl(InstrumentingAgents*, Document*, WebKitNamedFlow*);
+    static void didRegisterNamedFlowContentElementImpl(InstrumentingAgents*, Document*, WebKitNamedFlow*, Node* contentElement, Node* nextContentElement = nullptr);
+    static void didUnregisterNamedFlowContentElementImpl(InstrumentingAgents*, Document*, WebKitNamedFlow*, Node* contentElement);
 
     static void mouseDidMoveOverElementImpl(InstrumentingAgents*, const HitTestResult&, unsigned modifierFlags);
     static bool handleTouchEventImpl(InstrumentingAgents*, Node*);
@@ -715,6 +719,33 @@ inline void InspectorInstrumentation::didChangeRegionOverset(Document* document,
 #else
     UNUSED_PARAM(document);
     UNUSED_PARAM(namedFlow);
+#endif
+}
+
+inline void InspectorInstrumentation::didRegisterNamedFlowContentElement(Document* document, WebKitNamedFlow* namedFlow, Node* contentElement, Node* nextContentElement)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
+        didRegisterNamedFlowContentElementImpl(instrumentingAgents, document, namedFlow, contentElement, nextContentElement);
+#else
+    UNUSED_PARAM(document);
+    UNUSED_PARAM(namedFlow);
+    UNUSED_PARAM(contentElement);
+    UNUSED_PARAM(nextContentElement);
+#endif
+}
+
+inline void InspectorInstrumentation::didUnregisterNamedFlowContentElement(Document* document, WebKitNamedFlow* namedFlow, Node* contentElement)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
+        didUnregisterNamedFlowContentElementImpl(instrumentingAgents, document, namedFlow, contentElement);
+#else
+    UNUSED_PARAM(document);
+    UNUSED_PARAM(namedFlow);
+    UNUSED_PARAM(contentElement);
 #endif
 }
 

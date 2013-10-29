@@ -242,6 +242,8 @@ InspectorBackend.registerEvent("CSS.namedFlowCreated", ["namedFlow"]);
 InspectorBackend.registerEvent("CSS.namedFlowRemoved", ["documentNodeId", "flowName"]);
 InspectorBackend.registerEvent("CSS.regionLayoutUpdated", ["namedFlow"]);
 InspectorBackend.registerEvent("CSS.regionOversetChanged", ["namedFlow"]);
+InspectorBackend.registerEvent("CSS.registeredNamedFlowContentElement", ["documentNodeId", "flowName", "contentNodeId", "nextContentNodeId"]);
+InspectorBackend.registerEvent("CSS.unregisteredNamedFlowContentElement", ["documentNodeId", "flowName", "contentNodeId"]);
 InspectorBackend.registerCommand("CSS.enable", [], []);
 InspectorBackend.registerCommand("CSS.disable", [], []);
 InspectorBackend.registerCommand("CSS.getMatchedStylesForNode", [{"name": "nodeId", "type": "number", "optional": false}, {"name": "includePseudo", "type": "boolean", "optional": true}, {"name": "includeInherited", "type": "boolean", "optional": true}], ["matchedCSSRules", "pseudoElements", "inherited"]);

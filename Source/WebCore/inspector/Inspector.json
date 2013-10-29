@@ -2560,6 +2560,25 @@
                     { "name": "namedFlow", "$ref": "NamedFlow", "description": "The Named Flow containing the regions whose regionOverset values changed." }
                 ],
                 "description": "Fires if any of the regionOverset values changed in a Named Flow's region chain."
+            },
+            {
+                "name": "registeredNamedFlowContentElement",
+                "parameters": [
+                    { "name": "documentNodeId", "$ref": "DOM.NodeId", "description": "The document node id." },
+                    { "name": "flowName", "type": "string", "description": "Named Flow identifier for which the new content element was registered." },
+                    { "name": "contentNodeId", "$ref": "DOM.NodeId", "description": "The node id of the registered content node." },
+                    { "name": "nextContentNodeId", "$ref": "DOM.NodeId", "description": "The node id of the element following the registered content node." }
+                ],
+                "description": "Fires when a Named Flow's has been registered with a new content node."
+            },
+            {
+                "name": "unregisteredNamedFlowContentElement",
+                "parameters": [
+                    { "name": "documentNodeId", "$ref": "DOM.NodeId", "description": "The document node id." },
+                    { "name": "flowName", "type": "string", "description": "Named Flow identifier for which the new content element was unregistered." },
+                    { "name": "contentNodeId", "$ref": "DOM.NodeId", "description": "The node id of the unregistered content node." }
+                ],
+                "description": "Fires when a Named Flow's has been registered with a new content node."
             }
         ]
     },

@@ -27,17 +27,20 @@
  * SUCH DAMAGE.
  */
 
-WebInspector.ContentFlow = function(documentNodeIdentifier, name, overset)
+WebInspector.ContentFlow = function(documentNodeIdentifier, name, overset, contentNodes)
 {
     WebInspector.Object.call(this);
 
     this._documentNodeIdentifier = documentNodeIdentifier;
     this._name = name;
     this._overset = overset;
+    this._contentNodes = contentNodes;
 };
 
 WebInspector.ContentFlow.Event = {
-    OversetWasChanged: "content-flow-overset-was-changed"
+    OversetWasChanged: "content-flow-overset-was-changed",
+    ContentNodeWasAdded: "content-flow-content-node-was-added",
+    ContentNodeWasRemoved: "content-flow-content-node-was-removed"
 };
 
 WebInspector.ContentFlow.prototype = {
@@ -73,8 +76,34 @@ WebInspector.ContentFlow.prototype = {
             return;
         this._overset = overset;
         this.dispatchEventToListeners(WebInspector.ContentFlow.Event.FlowOversetWasChanged);
-    }
+    },
 
+    get contentNodes()
+    {
+        return this._contentNodes;
+    },
+
+    insertContentNodeBefore: function(contentNode, referenceNode)
+    {
+        var index = this._contentNodes.indexOf(referenceNode);
+        console.assert(index !== -1);
+        this._contentNodes.splice(index, 0, contentNode);
+        this.dispatchEventToListeners(WebInspector.ContentFlow.Event.ContentNodeWasAdded, {node: contentNode, before: referenceNode});
+    },
+
+    appendContentNode: function(contentNode)
+    {
+        this._contentNodes.push(contentNode);
+        this.dispatchEventToListeners(WebInspector.ContentFlow.Event.ContentNodeWasAdded, {node: contentNode});
+    },
+
+    removeContentNode: function(contentNode)
+    {
+        var index = this._contentNodes.indexOf(contentNode);
+        console.assert(index !== -1);
+        this._contentNodes.splice(index, 1);
+        this.dispatchEventToListeners(WebInspector.ContentFlow.Event.ContentNodeWasRemoved, {node: contentNode});
+    }
 };
 
 

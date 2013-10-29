@@ -1,0 +1,13 @@
+Testing that the ContentFlows events are correctly dispatched when nodes are attached to/detached from a flow.
+
+PASS: ContentFlow was added.
+PASS: ContentFlow.contentNodes has a length of 2.
+PASS: ContentFlow.contentNodes[0].id is "#contentStatic".
+PASS: ContentFlow.contentNodes[1].id is "#contentRemoved".
+PASS: "#contentAddedAtTheTop" was added before "#contentStatic".
+PASS: "#contentAddedAtTheTop" is first in the contentNodes list.
+PASS: "#contentAddedAtTheBottom" was added last.
+PASS: "#contentAddedAtTheBottom" is last in the contentNodes list.
+PASS: "#contentRemoved" was removed.
+PASS: "#contentRemoved" cannot be found in the contentNodes list.
+
