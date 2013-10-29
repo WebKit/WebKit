@@ -1,3 +1,12 @@
+2013-10-29  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Re-enable simple line layout for EFL
+        https://bugs.webkit.org/show_bug.cgi?id=123402
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/FeatureDefines.h: Enable 8-bit TextRun support for EFL port.
+
 2013-10-28  Anders Carlsson  <andersca@apple.com>
 
         RunLoop::dispatch should take an std::function

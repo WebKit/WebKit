@@ -288,6 +288,10 @@
 #define ENABLE_SUBPIXEL_LAYOUT 1
 #endif
 
+#if !defined(ENABLE_8BIT_TEXTRUN)
+#define ENABLE_8BIT_TEXTRUN 1
+#endif
+
 #endif /* PLATFORM(EFL) */
 
 /* --------- Gtk port (Unix, Windows, Mac) --------- */
