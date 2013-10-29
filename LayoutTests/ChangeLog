@@ -1,3 +1,16 @@
+2013-10-28  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r157830
+
+    2013-10-22  Geoffrey Garen  <ggaren@apple.com>
+
+            REGRESSION: `if (false === (true && undefined)) console.log("wrong!");` logs "wrong!", shouldn't!
+            https://bugs.webkit.org/show_bug.cgi?id=123179
+
+            Reviewed by Mark Hahnenberg.
+
+            * js/dom/branch-fold-correctness.html: Added a test for this case.
+
 2013-10-28  Mark Lam  <mark.lam@apple.com>
 
         Merge r155471.

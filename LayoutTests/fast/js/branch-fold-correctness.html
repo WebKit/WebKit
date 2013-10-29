@@ -187,6 +187,10 @@ function log(s)
     } else
         fail();
 
+    ++count;
+    if (false === (true && undefined))
+        fail();
+
     log("tests completed: " + count);
 })();
 </script>

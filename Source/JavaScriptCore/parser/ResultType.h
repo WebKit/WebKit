@@ -120,7 +120,20 @@ namespace JSC {
                 return stringType();
             return stringOrNumberType();
         }
-        
+
+        // Unlike in C, a logical op produces the value of the
+        // last expression evaluated (and not true or false).
+        static ResultType forLogicalOp(ResultType op1, ResultType op2)
+        {
+            if (op1.definitelyIsBoolean() && op2.definitelyIsBoolean())
+                return booleanType();
+            if (op1.definitelyIsNumber() && op2.definitelyIsNumber())
+                return numberType();
+            if (op1.definitelyIsString() && op2.definitelyIsString())
+                return stringType();
+            return unknownType();
+        }
+
         static ResultType forBitOp()
         {
             return numberTypeIsInt32();
