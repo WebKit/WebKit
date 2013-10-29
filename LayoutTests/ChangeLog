@@ -1,5 +1,11 @@
 2013-10-28  Simon Fraser  <simon.fraser@apple.com>
 
+        Last few Mavericks WK2 failures.
+
+        * platform/mac-wk2/TestExpectations:
+
+2013-10-28  Simon Fraser  <simon.fraser@apple.com>
+
         Mark some more Mavericks/WK2 tests as failing.
         
         We have no way currently to land new results for just
