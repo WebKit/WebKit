@@ -61,6 +61,7 @@ td.LastBuild {
 
 td.LastBuild a {
     font-weight: bold;
+    text-decoration: none;
 }
 
 /* Chromium Specific styles */
