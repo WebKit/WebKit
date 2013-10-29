@@ -1,3 +1,45 @@
+2013-10-29  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Display anonymous regions in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=122963
+
+        Reviewed by Alexandru Chiculita.
+
+        After https://bugs.webkit.org/show_bug.cgi?id=119135, css regions are modelled using an anonymous
+        RenderNamedFlowFragment object inside the block having a valid -webkit-flow-from.
+        This patch changes the way elements | pseudo-elements with -webkit-flow-from are displayed
+        in test dumps.
+
+        Before:
+            RenderRegion {DIV} at (200,200) size 52x52 [border: (1px solid #000000)]
+        After:
+            RenderBlock (positioned) {DIV} at (200,200) size 52x52 [border: (1px solid #000000)]
+                RenderNamedFlowFragment at (1,1) size 50x50
+
+        Before:
+            Flow Threads
+                Thread with flow-name 'article'
+                Regions for flow 'article'
+                    RenderRegion {DIV} #region_1
+                    RenderRegion {DIV} #region_2
+        After:
+            Named flows
+                Named flow 'article'
+                Regions for named flow 'article'
+                    RenderNamedFlowFragment (anonymous child of {DIV::before} #region_1)
+                    RenderNamedFlowFragment (anonymous child of {DIV} #region_2)
+
+        Changed existing tests based on the new dumps.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::renderName):
+        * rendering/RenderNamedFlowFragment.h: Add a comment explaining the purpose of the class.
+        * rendering/RenderRegion.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        (WebCore::writeRenderRegionList): Adjust function to display info for anonymous regions too.
+        (WebCore::writeRenderNamedFlowThreads): Separate dump of valid and invalid regions for a named flow.
+
 2013-10-29  Zan Dobersek  <zdobersek@igalia.com>
 
         Move writeIndent, overloaded << operators from RenderTreeAsText to TextStream

@@ -566,12 +566,10 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
         }
 
     } else {
-        if (!toRenderElement(o).isRenderNamedFlowFragmentContainer()) {
-            for (RenderObject* child = toRenderElement(o).firstChild(); child; child = child->nextSibling()) {
-                if (child->hasLayer())
-                    continue;
-                write(ts, *child, indent + 1, behavior);
-            }
+        for (RenderObject* child = toRenderElement(o).firstChild(); child; child = child->nextSibling()) {
+            if (child->hasLayer())
+                continue;
+            write(ts, *child, indent + 1, behavior);
         }
     }
 
@@ -657,28 +655,48 @@ static void write(TextStream& ts, RenderLayer& l,
 static void writeRenderRegionList(const RenderRegionList& flowThreadRegionList, TextStream& ts, int indent)
 {
     for (RenderRegionList::const_iterator itRR = flowThreadRegionList.begin(); itRR != flowThreadRegionList.end(); ++itRR) {
-        RenderRegion* renderRegion = *itRR;
-        writeIndent(ts, indent + 2);
-        ts << "RenderRegion";
-        if (renderRegion->generatingElement()) {
-            String tagName = getTagName(renderRegion->generatingElement());
-            if (!tagName.isEmpty())
-                ts << " {" << tagName << "}";
-            if (renderRegion->generatingElement()->hasID())
-                ts << " #" << renderRegion->generatingElement()->idForStyleResolution();
+        RenderRegion* renderRegion = (*itRR);
+
+        writeIndent(ts, indent);
+        ts << static_cast<const RenderObject*>(renderRegion)->renderName();
+
+        Element* generatingElement = renderRegion->generatingElement();
+        if (generatingElement) {
             if (renderRegion->hasCustomRegionStyle())
                 ts << " region style: 1";
             if (renderRegion->hasAutoLogicalHeight())
                 ts << " hasAutoLogicalHeight";
+
+            bool isRenderNamedFlowFragment = renderRegion->isRenderNamedFlowFragment();
+            if (isRenderNamedFlowFragment)
+                ts << " (anonymous child of";
+
+            StringBuilder tagName;
+            tagName.append(generatingElement->nodeName());
+
+            RenderElement* renderElementForRegion = isRenderNamedFlowFragment ? renderRegion->parent() : renderRegion;
+            if (renderElementForRegion->isPseudoElement()) {
+                if (renderElementForRegion->element()->isBeforePseudoElement())
+                    tagName.append("::before");
+                else if (renderElementForRegion->element()->isAfterPseudoElement())
+                    tagName.append("::after");
+            }
+
+            ts << " {" << tagName.toString() << "}";
+
+            if (generatingElement->hasID())
+                ts << " #" << generatingElement->idForStyleResolution();
+
+            if (isRenderNamedFlowFragment)
+                ts << ")";
         }
-        if (!renderRegion->isValid())
-            ts << " invalid";
+
         ts << "\n";
     }
 }
 
 static void writeRenderNamedFlowThreads(TextStream& ts, RenderView& renderView, const RenderLayer* rootLayer,
-                        const LayoutRect& paintRect, int indent, RenderAsTextBehavior behavior)
+    const LayoutRect& paintRect, int indent, RenderAsTextBehavior behavior)
 {
     if (!renderView.hasRenderNamedFlowThreads())
         return;
@@ -686,13 +704,13 @@ static void writeRenderNamedFlowThreads(TextStream& ts, RenderView& renderView, 
     const RenderNamedFlowThreadList* list = renderView.flowThreadController().renderNamedFlowThreadList();
 
     writeIndent(ts, indent);
-    ts << "Flow Threads\n";
+    ts << "Named flows\n";
 
     for (RenderNamedFlowThreadList::const_iterator iter = list->begin(); iter != list->end(); ++iter) {
         const RenderNamedFlowThread* renderFlowThread = *iter;
 
         writeIndent(ts, indent + 1);
-        ts << "Thread with flow-name '" << renderFlowThread->flowThreadName() << "'\n";
+        ts << "Named flow '" << renderFlowThread->flowThreadName() << "'\n";
 
         RenderLayer* layer = renderFlowThread->layer();
         writeLayers(ts, rootLayer, layer, paintRect, indent + 2, behavior);
@@ -700,11 +718,15 @@ static void writeRenderNamedFlowThreads(TextStream& ts, RenderView& renderView, 
         // Display the valid and invalid render regions attached to this flow thread.
         const RenderRegionList& validRegionsList = renderFlowThread->renderRegionList();
         const RenderRegionList& invalidRegionsList = renderFlowThread->invalidRenderRegionList();
-        if (!validRegionsList.isEmpty() || !invalidRegionsList.isEmpty()) {
-            writeIndent(ts, indent + 1);
-            ts << "Regions for flow '"<< renderFlowThread->flowThreadName() << "'\n";
-            writeRenderRegionList(validRegionsList, ts, indent);
-            writeRenderRegionList(invalidRegionsList, ts, indent);
+        if (!validRegionsList.isEmpty()) {
+            writeIndent(ts, indent + 2);
+            ts << "Regions for named flow '" << renderFlowThread->flowThreadName() << "'\n";
+            writeRenderRegionList(validRegionsList, ts, indent + 3);
+        }
+        if (!invalidRegionsList.isEmpty()) {
+            writeIndent(ts, indent + 2);
+            ts << "Invalid regions for named flow '" << renderFlowThread->flowThreadName() << "'\n";
+            writeRenderRegionList(invalidRegionsList, ts, indent + 3);
         }
     }
 }

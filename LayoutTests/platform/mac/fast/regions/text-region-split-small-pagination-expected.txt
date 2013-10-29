@@ -4,15 +4,19 @@ layer at (0,0) size 800x276
   RenderBlock {HTML} at (0,0) size 800x276
     RenderBody {BODY} at (8,16) size 784x244
 layer at (8,16) size 204x34
-  RenderRegion {DIV} at (0,0) size 204x34 [border: (2px solid #000000)]
+  RenderBlock {DIV} at (0,0) size 204x34 [border: (2px solid #000000)]
+    RenderNamedFlowFragment at (2,2) size 200x30
 layer at (8,66) size 204x54
-  RenderRegion {DIV} at (0,50) size 204x54 [border: (2px solid #000000)]
+  RenderBlock {DIV} at (0,50) size 204x54 [border: (2px solid #000000)]
+    RenderNamedFlowFragment at (2,2) size 200x50
 layer at (8,136) size 204x54
-  RenderRegion {DIV} at (0,120) size 204x54 [border: (2px solid #000000)]
+  RenderBlock {DIV} at (0,120) size 204x54 [border: (2px solid #000000)]
+    RenderNamedFlowFragment at (2,2) size 200x50
 layer at (8,206) size 204x54
-  RenderRegion {DIV} at (0,190) size 204x54 [border: (2px solid #000000)]
-Flow Threads
-  Thread with flow-name 'flow'
+  RenderBlock {DIV} at (0,190) size 204x54 [border: (2px solid #000000)]
+    RenderNamedFlowFragment at (2,2) size 200x50
+Named flows
+  Named flow 'flow'
     layer at (0,0) size 200x180
       RenderNamedFlowThread at (0,0) size 200x180
         RenderBlock {DIV} at (0,30) size 200x118
@@ -34,8 +38,8 @@ Flow Threads
                 text run at (138,50) width 41: "There"
                 text run at (0,68) width 166: "should be nothing in this"
                 text run at (0,100) width 139: "region after this line."
-  Regions for flow 'flow'
-    RenderRegion {DIV} #region1
-    RenderRegion {DIV} #region2
-    RenderRegion {DIV} #region3
-    RenderRegion {DIV} #region4
+    Regions for named flow 'flow'
+      RenderNamedFlowFragment (anonymous child of {DIV} #region1)
+      RenderNamedFlowFragment (anonymous child of {DIV} #region2)
+      RenderNamedFlowFragment (anonymous child of {DIV} #region3)
+      RenderNamedFlowFragment (anonymous child of {DIV} #region4)

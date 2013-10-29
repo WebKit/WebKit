@@ -1,3 +1,62 @@
+2013-10-29  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Display anonymous regions in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=122963
+
+        Reviewed by Alexandru Chiculita.
+
+        After https://bugs.webkit.org/show_bug.cgi?id=119135, css regions are modelled using an anonymous
+        RenderNamedFlowFragment object inside the block having a valid -webkit-flow-from.
+        This patch changes the way elements | pseudo-elements with -webkit-flow-from are displayed
+        in test dumps.
+
+        Changed expected files for mac port, removed expectations for gtk | efl and added [Missing]
+        in TestExpectations for these platforms. Results need to be generated again for the [Missing] lines.
+ 
+        * fast/regions/auto-size/autoheight-regions-mark-expected.txt: Removed.
+        * fast/regions/flows-dependency-dynamic-remove-expected.txt: Removed.
+        * fast/regions/flows-dependency-same-flow-expected.txt: Removed.
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.txt: Removed.
+        * platform/efl/fast/regions/region-dynamic-after-before-expected.txt: Removed.
+        * platform/efl/fast/regions/region-generated-content-before-after-expected.txt: Removed.
+        * platform/efl/fast/regions/text-region-split-small-pagination-expected.txt: Removed.
+        * platform/efl/fast/regions/top-overflow-out-of-second-region-expected.txt: Removed.
+        * platform/efl/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt: Removed.
+        * platform/efl/fast/repaint/line-flow-with-floats-in-regions-expected.png: Removed.
+        * platform/efl/fast/repaint/line-flow-with-floats-in-regions-expected.txt: Removed.
+        * platform/efl/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.png: Removed.
+        * platform/efl/fast/repaint/region-painting-invalidation-expected.txt: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/regions/flows-dependency-same-flow-expected.png: Removed.
+        * platform/gtk/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.txt: Removed.
+        * platform/gtk/fast/regions/region-dynamic-after-before-expected.txt: Removed.
+        * platform/gtk/fast/regions/region-generated-content-before-after-expected.txt: Removed.
+        * platform/gtk/fast/regions/text-region-split-small-pagination-expected.txt: Removed.
+        * platform/gtk/fast/regions/top-overflow-out-of-second-region-expected.txt: Removed.
+        * platform/gtk/fast/repaint/line-flow-with-floats-in-regions-expected.png: Removed.
+        * platform/gtk/fast/repaint/line-flow-with-floats-in-regions-expected.txt: Removed.
+        * platform/gtk/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.png: Removed.
+        * platform/mac/fast/regions/auto-size/autoheight-regions-mark-expected.png: Copied from LayoutTests/fast/regions/flows-dependency-same-flow-expected.png.
+        * platform/mac/fast/regions/auto-size/autoheight-regions-mark-expected.txt: Added.
+        * platform/mac/fast/regions/autoheight-regions-mark-expected.png: Removed.
+        * platform/mac/fast/regions/flows-dependency-dynamic-remove-expected.txt: Added.
+        * platform/mac/fast/regions/flows-dependency-same-flow-expected.png: Copied from LayoutTests/fast/regions/flows-dependency-same-flow-expected.png.
+        * platform/mac/fast/regions/flows-dependency-same-flow-expected.txt: Added.
+        * platform/mac/fast/regions/iframe-html-collected-expected.png: Renamed from LayoutTests/fast/regions/flows-dependency-same-flow-expected.png.
+        * platform/mac/fast/regions/iframe-html-collected-expected.txt: Renamed from LayoutTests/fast/regions/iframe-html-collected-expected.txt.
+        * platform/mac/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.txt:
+        * platform/mac/fast/regions/region-dynamic-after-before-expected.txt:
+        * platform/mac/fast/regions/region-generated-content-before-after-expected.txt:
+        * platform/mac/fast/regions/text-region-split-small-pagination-expected.txt:
+        * platform/mac/fast/regions/top-overflow-out-of-second-region-expected.txt:
+        * platform/mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Added.
+        * platform/mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-in-regions-expected.txt:
+        * platform/mac/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.txt: Renamed from LayoutTests/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.txt.
+        * platform/mac/fast/repaint/region-painting-invalidation-expected.txt:
+        * platform/mac/fast/repaint/region-painting-via-layout-expected.txt: Renamed from LayoutTests/fast/repaint/region-painting-via-layout-expected.txt.
+
 2013-10-28  Simon Fraser  <simon.fraser@apple.com>
 
         Fix path for xss-DENIED-xsl-document-redirect test, and mark

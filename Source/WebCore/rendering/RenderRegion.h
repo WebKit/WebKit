@@ -35,9 +35,10 @@
 
 namespace WebCore {
 
-class Element;
 struct LayerFragment;
 typedef Vector<LayerFragment, 1> LayerFragments;
+
+class Element;
 class RenderBox;
 class RenderBoxRegionInfo;
 class RenderFlowThread;

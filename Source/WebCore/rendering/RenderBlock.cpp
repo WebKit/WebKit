@@ -5255,8 +5255,6 @@ const char* RenderBlock::renderName() const
     if (isBody())
         return "RenderBody"; // FIXME: Temporary hack until we know that the regression tests pass.
 
-    if (isRenderNamedFlowFragmentContainer())
-        return "RenderRegion";
     if (isFloating())
         return "RenderBlock (floating)";
     if (isOutOfFlowPositioned())
