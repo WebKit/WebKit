@@ -149,7 +149,30 @@ bool RemoteLayerBackingStore::display()
     }
 
     context->scale(FloatSize(m_scale, m_scale));
-    drawLayerContents(context->platformContext(), m_layer, rectsToPaint);
+
+    switch (layer()->layerType()) {
+        case PlatformCALayer::LayerTypeSimpleLayer:
+        case PlatformCALayer::LayerTypeTiledBackingTileLayer:
+            if (rectsToPaint.isEmpty())
+                rectsToPaint.append(layerBounds);
+            for (const auto& rect : rectsToPaint)
+                m_layer->owner()->platformCALayerPaintContents(m_layer, *context, enclosingIntRect(rect));
+            break;
+        case PlatformCALayer::LayerTypeWebLayer:
+            drawLayerContents(context->platformContext(), m_layer, rectsToPaint);
+            break;
+        case PlatformCALayer::LayerTypeLayer:
+        case PlatformCALayer::LayerTypeTransformLayer:
+        case PlatformCALayer::LayerTypeWebTiledLayer:
+        case PlatformCALayer::LayerTypeTiledBackingLayer:
+        case PlatformCALayer::LayerTypePageTiledBackingLayer:
+        case PlatformCALayer::LayerTypeRootLayer:
+        case PlatformCALayer::LayerTypeAVPlayerLayer:
+        case PlatformCALayer::LayerTypeCustom:
+            ASSERT_NOT_REACHED();
+            break;
+    };
+
     m_dirtyRegion = Region();
 
     m_frontBuffer = m_backBuffer;

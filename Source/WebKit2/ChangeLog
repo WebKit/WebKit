@@ -1,3 +1,91 @@
+2013-10-29  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Support tiled drawing and use it for the main frame
+        https://bugs.webkit.org/show_bug.cgi?id=123422
+
+        Reviewed by Simon Fraser.
+
+        Add a PlatformCALayerRemote subclass that behaves similarly to
+        WebTiledBackingLayer, forwarding relevant things (setNeedsDisplay, etc.)
+        to the TileController which it owns.
+
+        Teach the remote layer tree code enough to proxy these layers across,
+        and paint them in a manner similar to WebSimpleLayer (just calling
+        straight back to the TileController to paint).
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        (WebKit::dumpChangedLayers):
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::commit):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::setEdgeAntialiasingMask):
+        Add support for adjusting/encoding/decoding/dumping/applying edgeAntialiasingMask.
+
+        (WebKit::RemoteLayerTreeTransaction::dump):
+        Drive-by fix dumping of created layers to have one layer per line.
+
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        Create CALayers for Simple, TiledBacking, PageTiledBacking, and TiledBackingTile layers.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add PlatformCALayerRemoteTiledBacking.{h, cpp}.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::create):
+        Create a PlatformCALayerRemoteTiledBacking for TiledBacking and PageTiledBacking layers.
+
+        (PlatformCALayerRemote::removeAllSublayers):
+        Fix removeAllSublayers to make a copy of the PlatformCALayerList before
+        mutating it, to avoid crashes when iterating a mutated list.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        Definalize PlatformCALayerRemote so we can have PlatformCALayerRemoteTiledBacking.
+        Note that we will use a tiled backing layer in some cases.
+        Make the constructor protected, not private, so our subclass can use it.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.cpp: Added.
+        (PlatformCALayerRemoteTiledBacking::PlatformCALayerRemoteTiledBacking):
+        (PlatformCALayerRemoteTiledBacking::~PlatformCALayerRemoteTiledBacking):
+        (PlatformCALayerRemoteTiledBacking::setNeedsDisplay):
+        (PlatformCALayerRemoteTiledBacking::customSublayers):
+        (PlatformCALayerRemoteTiledBacking::setBounds):
+        (PlatformCALayerRemoteTiledBacking::isOpaque):
+        (PlatformCALayerRemoteTiledBacking::setOpaque):
+        (PlatformCALayerRemoteTiledBacking::acceleratesDrawing):
+        (PlatformCALayerRemoteTiledBacking::setAcceleratesDrawing):
+        (PlatformCALayerRemoteTiledBacking::setContentsScale):
+        (PlatformCALayerRemoteTiledBacking::setBorderWidth):
+        (PlatformCALayerRemoteTiledBacking::setBorderColor):
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.h: Added.
+        Add a subclass of PlatformCALayerRemote which forwards operations
+        to TileController, very similar to what WebTiledBackingLayer does.
+        It also owns the TileController, and overrides customSublayers() and
+        tiledBacking() to return the right thing.
+
+        * WebProcess/WebPage/mac/RemoteLayerBackingStore.mm:
+        (RemoteLayerBackingStore::display):
+        Teach RemoteLayerBackingStore about how to paint different kinds of layers.
+        Simple layers and Tile layers will call paintContents directly,
+        WebLayers will do what WebLayer does and use drawLayerContents.
+        Other kinds of layers won't paint at all right now.
+        I would like to centralize this behavior (and get rid of our CALayer
+        subclasses entirely, moving all that behavior to be shared between Mac,
+        Windows, and the remote layer tree), but that is a patch for another day.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        (WebKit::RemoteLayerTreeDrawingArea::shouldUseTiledBackingForFrameView):
+        Force accelerated compositing on always when using the remote layer tree.
+        Use a TiledBacking for the main frame.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        Drive-by OVERRIDE.
+
 2013-10-29  Brady Eidson  <beidson@apple.com>
 
         Get IDBTransactionBackendLevelDBOperations *almost* ready to go cross platform.

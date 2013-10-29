@@ -84,7 +84,7 @@ private:
 
     virtual void dispatchAfterEnsuringUpdatedScrollPosition(const Function<void ()>&) OVERRIDE;
 
-    virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*);
+    virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) OVERRIDE;
 
     // WebCore::GraphicsLayerClient
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) OVERRIDE;

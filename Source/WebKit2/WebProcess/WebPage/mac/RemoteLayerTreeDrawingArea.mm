@@ -29,6 +29,9 @@
 #import "DrawingAreaProxyMessages.h"
 #import "RemoteLayerTreeContext.h"
 #import "WebPage.h"
+#import <WebCore/Frame.h>
+#import <WebCore/FrameView.h>
+#import <WebCore/Settings.h>
 
 using namespace WebCore;
 
@@ -38,6 +41,7 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage* webPage, const W
     : DrawingArea(DrawingAreaTypeRemoteLayerTree, webPage)
     , m_remoteLayerTreeContext(std::make_unique<RemoteLayerTreeContext>(webPage))
 {
+    webPage->corePage()->settings().setForceCompositingMode(true);
 }
 
 RemoteLayerTreeDrawingArea::~RemoteLayerTreeDrawingArea()
@@ -77,6 +81,11 @@ void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, const I
     scheduleCompositingLayerFlush();
 
     m_webPage->send(Messages::DrawingAreaProxy::DidUpdateGeometry());
+}
+
+bool RemoteLayerTreeDrawingArea::shouldUseTiledBackingForFrameView(const FrameView* frameView)
+{
+    return frameView && frameView->frame().isMainFrame();
 }
 
 } // namespace WebKit

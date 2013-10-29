@@ -695,7 +695,7 @@
 		1A98956B0AA78F80005EF5EF /* URLCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A98956A0AA78F80005EF5EF /* URLCF.cpp */; };
 		1AA21250163F0DA80000E63F /* AtomicStringCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA2124F163F0DA80000E63F /* AtomicStringCF.cpp */; };
 		1AA7160A149BC4DB0016EC19 /* TileController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA71608149BC4DA0016EC19 /* TileController.mm */; };
-		1AA7160B149BC4DB0016EC19 /* TileController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA71609149BC4DB0016EC19 /* TileController.h */; };
+		1AA7160B149BC4DB0016EC19 /* TileController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA71609149BC4DB0016EC19 /* TileController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AA84F04143BA7BD0051D153 /* ScrollElasticityController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA84F02143BA7BD0051D153 /* ScrollElasticityController.mm */; };
 		1AA84F05143BA7BD0051D153 /* ScrollElasticityController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA84F03143BA7BD0051D153 /* ScrollElasticityController.h */; };
 		1AA8799011CBE846003C664F /* PluginStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA8798F11CBE846003C664F /* PluginStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };

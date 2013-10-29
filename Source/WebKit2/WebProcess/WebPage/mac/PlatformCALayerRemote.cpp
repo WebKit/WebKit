@@ -29,6 +29,7 @@
 
 #import "PlatformCALayerRemote.h"
 
+#import "PlatformCALayerRemoteTiledBacking.h"
 #import "RemoteLayerBackingStore.h"
 #import "RemoteLayerTreeContext.h"
 #import <WebCore/AnimationUtilities.h>
@@ -58,6 +59,9 @@ static PlatformCALayerRemote* toPlatformCALayerRemote(PlatformCALayer* layer)
 
 PassRefPtr<PlatformCALayer> PlatformCALayerRemote::create(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext* context)
 {
+    if (layerType == LayerTypeTiledBackingLayer ||  layerType == LayerTypePageTiledBackingLayer)
+        return adoptRef(new PlatformCALayerRemoteTiledBacking(layerType, owner, context));
+
     return adoptRef(new PlatformCALayerRemote(layerType, owner, context));
 }
 
@@ -171,9 +175,10 @@ void PlatformCALayerRemote::setSublayers(const PlatformCALayerList& list)
 
 void PlatformCALayerRemote::removeAllSublayers()
 {
-    for (const auto& layer : m_children)
+    PlatformCALayerList layersToRemove = m_children;
+    for (const auto& layer : layersToRemove)
         layer->removeFromSuperlayer();
-    m_children.clear();
+    ASSERT(m_children.isEmpty());
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ChildrenChanged);
 }
 
@@ -462,14 +467,10 @@ void PlatformCALayerRemote::setContentsScale(float value)
     ensureBackingStore();
 }
 
-void PlatformCALayerRemote::setEdgeAntialiasingMask(unsigned)
+void PlatformCALayerRemote::setEdgeAntialiasingMask(unsigned value)
 {
-    ASSERT_NOT_REACHED();
-}
-
-TiledBacking* PlatformCALayerRemote::tiledBacking()
-{
-    return nullptr;
+    m_properties.edgeAntialiasingMask = value;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::EdgeAntialiasingMaskChanged);
 }
 
 AVPlayerLayer* PlatformCALayerRemote::playerLayer() const

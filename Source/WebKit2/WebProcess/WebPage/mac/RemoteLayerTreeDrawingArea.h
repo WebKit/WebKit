@@ -48,6 +48,8 @@ private:
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) OVERRIDE;
     virtual void scheduleCompositingLayerFlush() OVERRIDE;
 
+    virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) OVERRIDE;
+
     std::unique_ptr<RemoteLayerTreeContext> m_remoteLayerTreeContext;
 };
 

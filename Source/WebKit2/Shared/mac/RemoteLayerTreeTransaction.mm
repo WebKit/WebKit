@@ -143,6 +143,9 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(CoreIPC::ArgumentEncode
 
     if (changedProperties & FiltersChanged)
         encoder << filters;
+
+    if (changedProperties & EdgeAntialiasingMaskChanged)
+        encoder << edgeAntialiasingMask;
 }
 
 bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecoder& decoder, LayerProperties& result)
@@ -277,6 +280,11 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecode
 
     if (result.changedProperties & FiltersChanged) {
         if (!decoder.decode(result.filters))
+            return false;
+    }
+
+    if (result.changedProperties & EdgeAntialiasingMaskChanged) {
+        if (!decoder.decode(result.edgeAntialiasingMask))
             return false;
     }
 
@@ -619,6 +627,9 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const HashMap<Remot
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::FiltersChanged)
             dumpProperty<FilterOperations>(ts, "filters", layerProperties.filters);
 
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::EdgeAntialiasingMaskChanged)
+            dumpProperty<unsigned>(ts, "edgeAntialiasingMask", layerProperties.edgeAntialiasingMask);
+
         ts << ")";
 
         ts.decreaseIndent();
@@ -639,9 +650,10 @@ void RemoteLayerTreeTransaction::dump() const
     if (!m_createdLayers.isEmpty()) {
         ts << "\n";
         ts.writeIndent();
-        ts << "(created-layers\n";
+        ts << "(created-layers";
         ts.increaseIndent();
         for (const auto& createdLayer : m_createdLayers) {
+            ts << "\n";
             ts.writeIndent();
             ts << "(";
             switch (createdLayer.type) {

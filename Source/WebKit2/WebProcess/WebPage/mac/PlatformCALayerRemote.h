@@ -31,22 +31,23 @@
 #include "RemoteLayerTreeTransaction.h"
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/PlatformLayer.h>
+#include <WebCore/TileController.h>
 
 namespace WebKit {
 
 class RemoteLayerTreeContext;
 
-class PlatformCALayerRemote FINAL : public WebCore::PlatformCALayer {
+class PlatformCALayerRemote : public WebCore::PlatformCALayer {
 public:
     static PassRefPtr<PlatformCALayer> create(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext*);
 
-    ~PlatformCALayerRemote();
+    virtual ~PlatformCALayerRemote();
 
     RemoteLayerTreeTransaction::LayerID layerID() { return m_layerID; }
 
     virtual bool isRemote() const OVERRIDE { return true; }
 
-    virtual bool usesTiledBackingLayer() const OVERRIDE { return false; }
+    virtual bool usesTiledBackingLayer() const OVERRIDE { return layerType() == LayerTypePageTiledBackingLayer || layerType() == LayerTypeTiledBackingLayer; }
 
     virtual PlatformLayer* platformLayer() const OVERRIDE { return nullptr; }
 
@@ -116,7 +117,6 @@ public:
     virtual void setBackgroundColor(const WebCore::Color&) OVERRIDE;
 
     virtual void setBorderWidth(float) OVERRIDE;
-
     virtual void setBorderColor(const WebCore::Color&) OVERRIDE;
 
     virtual float opacity() const OVERRIDE;
@@ -139,15 +139,16 @@ public:
 
     virtual void setEdgeAntialiasingMask(unsigned) OVERRIDE;
 
-    virtual WebCore::TiledBacking* tiledBacking() OVERRIDE;
+    virtual WebCore::TiledBacking* tiledBacking() OVERRIDE { return nullptr; }
 
     virtual PassRefPtr<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const OVERRIDE;
 
     virtual PassRefPtr<PlatformCALayer> createCompatibleLayer(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient*) const OVERRIDE;
 
-private:
+protected:
     PlatformCALayerRemote(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext* context);
 
+private:
     virtual AVPlayerLayer *playerLayer() const OVERRIDE;
 
     void ensureBackingStore();
