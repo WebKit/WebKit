@@ -26,7 +26,7 @@
 #ifndef SessionState_h
 #define SessionState_h
 
-#include "WebBackForwardList.h"
+#include "WebBackForwardListItem.h"
 
 namespace CoreIPC {
     class ArgumentDecoder;

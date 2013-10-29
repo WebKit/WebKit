@@ -75,6 +75,8 @@ private:
     Vector<uint8_t> m_backForwardData;
 };
 
+typedef Vector<RefPtr<WebBackForwardListItem>> BackForwardListItemVector;
+
 } // namespace WebKit
 
 #endif // WebBackForwardListItem_h

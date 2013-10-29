@@ -27,10 +27,15 @@
 #define WebPageCreationParameters_h
 
 #include "DrawingAreaInfo.h"
+#include "LayerTreeContext.h"
 #include "SessionState.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebPageGroupData.h"
 #include "WebPreferencesStore.h"
+#include <WebCore/Color.h>
 #include <WebCore/IntSize.h>
+#include <WebCore/Pagination.h>
+#include <WebCore/ScrollTypes.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)

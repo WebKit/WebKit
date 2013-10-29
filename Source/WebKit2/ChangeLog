@@ -1,3 +1,29 @@
+2013-10-29  Gavin Barraclough  <barraclough@apple.com>
+
+        SessionState.h should not include WebBackForwardList.h
+        https://bugs.webkit.org/show_bug.cgi?id=123454
+
+        Reviewed by Geoff Garen.
+
+        WebBackForwardList is a UIProcess type, SessionState is in shared code.
+        Also, WebBackForwardListItemVector should be in WebBackForwardListItem.h, not WebBackForwardList.h
+        (the vector type is used in the WebProcess, the item header is shared but the list type is in the UIProcess).
+
+        * Shared/SessionState.cpp:
+            - fixed includes
+        * Shared/SessionState.h:
+            - WebBackForwardList.h -> WebBackForwardListItem.h
+        * Shared/WebBackForwardListItem.h:
+            - Moved WebBackForwardListVector from WebBackForwardList.h
+        * Shared/WebPageCreationParameters.h:
+            - fixed includes
+        * UIProcess/WebBackForwardList.h:
+            - Moved WebBackForwardListVector to WebBackForwardListItem.h
+        * WebProcess/WebPage/DrawingArea.cpp:
+            - fixed includes
+        * WebProcess/WebPage/WebPage.cpp:
+            - fixed includes
+
 2013-10-29  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed Mac debug build fix after r158183.

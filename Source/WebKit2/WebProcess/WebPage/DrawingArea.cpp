@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "DrawingArea.h"
+#include <wtf/Functional.h>
 
 // Subclasses
 #if PLATFORM(MAC)

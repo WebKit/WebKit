@@ -39,8 +39,6 @@
 
 namespace WebKit {
 
-typedef Vector<RefPtr<WebBackForwardListItem>> BackForwardListItemVector;
-
 /*
  *          Current
  *   |---------*--------------| Entries

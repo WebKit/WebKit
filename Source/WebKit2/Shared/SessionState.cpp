@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "SessionState.h"
+#include "WebCoreArgumentCoders.h"
 
 namespace CoreIPC {
 
