@@ -1,5 +1,11 @@
 2013-10-29  Simon Fraser  <simon.fraser@apple.com>
 
+        xss-DENIED-xsl-document-redirect.xml is an XML file, not html.
+
+        * platform/mac-wk2/TestExpectations:
+
+2013-10-29  Simon Fraser  <simon.fraser@apple.com>
+
         fast/forms/form-associated-element-removal.html can crash because of an underlying
         media bug.
         

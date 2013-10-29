@@ -436,7 +436,7 @@ webkit.org/b/123431 [ Mavericks ] http/tests/local/link-stylesheet-load-order-pr
 webkit.org/b/123431 [ Mavericks ] http/tests/local/link-stylesheet-load-order.html [ Failure ]
 
 # passes but has different logging
-[ Mavericks ] http/tests/security/xss-DENIED-xsl-document-redirect.html [ Failure ]
+[ Mavericks ] http/tests/security/xss-DENIED-xsl-document-redirect.xml [ Failure ]
 
 [ Mavericks ] editing/selection/5057506-2.html [ ImageOnlyFailure ]
 
