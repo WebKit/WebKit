@@ -1,3 +1,19 @@
+2013-10-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove old Inspector.json version files and generators
+        https://bugs.webkit.org/show_bug.cgi?id=123426
+
+        Reviewed by Timothy Hatcher.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/Inspector-0.1.json: Removed.
+        * inspector/Inspector-1.0.json: Removed.
+        * inspector/generate-inspector-protocol-version: Removed.
+
 2013-10-29  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] DOM bindings documentation errors

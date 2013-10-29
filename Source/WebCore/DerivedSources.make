@@ -1055,11 +1055,6 @@ JS%.h : %.idl $(JS_BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(WINDOW_CONSTRUCTOR
 
 # Inspector interfaces generator
 
-all : InspectorProtocolVersion.h
-
-InspectorProtocolVersion.h : Inspector.json inspector/generate-inspector-protocol-version
-	python $(WebCore)/inspector/generate-inspector-protocol-version -o InspectorProtocolVersion.h $(WebCore)/inspector/Inspector.json
-
 all : InspectorFrontend.h
 
 INSPECTOR_GENERATOR_SCRIPTS = inspector/CodeGeneratorInspector.py
