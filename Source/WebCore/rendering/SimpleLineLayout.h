@@ -43,6 +43,7 @@ namespace SimpleLineLayout {
 bool canUseFor(const RenderBlockFlow&);
 
 struct Run {
+    Run() { }
     Run(unsigned textOffset, float left)
         : textOffset(textOffset)
         , textLength(0)
