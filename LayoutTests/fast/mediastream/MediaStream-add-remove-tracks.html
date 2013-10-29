@@ -109,14 +109,16 @@ function gotStream2(s) {
     shouldBe('stream1.getAudioTracks().length', '2');
     shouldBe('stream1.getVideoTracks().length', '2');
 
-    debug("<br>*** after all tracks have been removed, stream.ended should return true");
+    debug("<br>*** remove all tracks, stream.ended should return true");
     tryRemoveTrack(stream2, stream2.getAudioTracks()[0]);
     tryRemoveTrack(stream2, stream2.getVideoTracks()[0]);
+    shouldBe('stream2.getAudioTracks().length', '0');
+    shouldBe('stream2.getVideoTracks().length', '0');
     shouldBeTrue('stream2.ended');
 
     debug("<br>*** it should be impossible to add a track after the stream has ended");
-    shouldThrow('stream1.addTrack(audioTrack)', '"Error: InvalidStateError: DOM Exception 11"');
-    shouldThrow('stream1.removeTrack(audioTrack)', '"Error: InvalidStateError: DOM Exception 11"');
+    shouldThrow('stream2.addTrack(audioTrack)', '"Error: InvalidStateError: DOM Exception 11"');
+    shouldThrow('stream2.removeTrack(audioTrack)', '"Error: InvalidStateError: DOM Exception 11"');
 
     setTimeout(finishJSTest, 0);
 }

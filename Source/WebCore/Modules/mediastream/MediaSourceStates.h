@@ -39,24 +39,21 @@ class MediaSourceStates : public RefCounted<MediaSourceStates>, public ScriptWra
 public:
     static RefPtr<MediaSourceStates> create(const MediaStreamSourceStates&);
 
-    static const AtomicString& sourceType(MediaStreamSourceStates::SourceType);
-    static const AtomicString& facingMode(MediaStreamSourceStates::VideoFacingMode);
-    
     const AtomicString& sourceType() const;
-    const AtomicString& sourceId() const { return m_SourceStates.sourceId; }
-    unsigned long width() const { return m_SourceStates.width; }
-    unsigned long height() const { return m_SourceStates.height; }
-    float frameRate() const { return m_SourceStates.frameRate; }
-    float aspectRatio() const { return m_SourceStates.aspectRatio; }
+    const AtomicString& sourceId() const { return m_sourceStates.sourceId(); }
+    unsigned long width() const { return m_sourceStates.width(); }
+    unsigned long height() const { return m_sourceStates.height(); }
+    float frameRate() const { return m_sourceStates.frameRate(); }
+    float aspectRatio() const { return m_sourceStates.aspectRatio(); }
     const AtomicString& facingMode() const;
-    unsigned long volume() const { return m_SourceStates.volume; }
+    unsigned long volume() const { return m_sourceStates.volume(); }
     
-    bool hasVideoSource() const { return m_SourceStates.sourceType == MediaStreamSourceStates::Camera; }
+    bool hasVideoSource() const { return m_sourceStates.sourceType() == MediaStreamSourceStates::Camera; }
 
 private:
     explicit MediaSourceStates(const MediaStreamSourceStates&);
 
-    MediaStreamSourceStates m_SourceStates;
+    MediaStreamSourceStates m_sourceStates;
 };
 
 } // namespace WebCore

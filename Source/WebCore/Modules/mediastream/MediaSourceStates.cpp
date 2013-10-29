@@ -39,59 +39,18 @@ RefPtr<MediaSourceStates> MediaSourceStates::create(const MediaStreamSourceState
 }
 
 MediaSourceStates::MediaSourceStates(const MediaStreamSourceStates& states)
-    : m_SourceStates(states)
+    : m_sourceStates(states)
 {
-}
-
-const AtomicString& MediaSourceStates::facingMode(MediaStreamSourceStates::VideoFacingMode mode)
-{
-    static NeverDestroyed<AtomicString> userFacing("user", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> environmentFacing("environment", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> leftFacing("left", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> rightFacing("right", AtomicString::ConstructFromLiteral);
-    
-    switch (mode) {
-    case MediaStreamSourceStates::User:
-        return userFacing;
-    case MediaStreamSourceStates::Environment:
-        return environmentFacing;
-    case MediaStreamSourceStates::Left:
-        return leftFacing;
-    case MediaStreamSourceStates::Right:
-        return rightFacing;
-    }
-
-    ASSERT_NOT_REACHED();
-    return emptyAtom;
-}
-
-const AtomicString& MediaSourceStates::sourceType(MediaStreamSourceStates::SourceType sourceType)
-{
-    static NeverDestroyed<AtomicString> none("none", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> camera("camera", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> microphone("microphone", AtomicString::ConstructFromLiteral);
-
-    switch (sourceType) {
-    case MediaStreamSourceStates::None:
-        return none;
-    case MediaStreamSourceStates::Camera:
-        return camera;
-    case MediaStreamSourceStates::Microphone:
-        return microphone;
-    }
-
-    ASSERT_NOT_REACHED();
-    return emptyAtom;
 }
 
 const AtomicString& MediaSourceStates::sourceType() const
 {
-    return MediaSourceStates::sourceType(m_SourceStates.sourceType);
+    return MediaStreamSourceStates::sourceType(m_sourceStates.sourceType());
 }
 
 const AtomicString& MediaSourceStates::facingMode() const
 {
-    return MediaSourceStates::facingMode(m_SourceStates.facingMode);
+    return MediaStreamSourceStates::facingMode(m_sourceStates.facingMode());
 }
 
 

@@ -35,18 +35,24 @@
 
 namespace WebCore {
 
+class MediaSourceStates;
+class MediaStreamSourceCapabilities;
+
 class MediaStreamTrackPrivateClient {
 public:
+    virtual ~MediaStreamTrackPrivateClient() { }
+
     virtual void trackReadyStateChanged() = 0;
     virtual void trackMutedChanged() = 0;
+    virtual void trackEnabledChanged() = 0;
 };
 
-class MediaStreamTrackPrivate : public RefCounted<MediaStreamTrackPrivate> {
+class MediaStreamTrackPrivate : public RefCounted<MediaStreamTrackPrivate>, public MediaStreamSource::Observer {
 public:
     static PassRefPtr<MediaStreamTrackPrivate> create(PassRefPtr<MediaStreamSource>);
-    virtual ~MediaStreamTrackPrivate() { }
 
-    const AtomicString& kind() const;
+    virtual ~MediaStreamTrackPrivate();
+
     const String& id() const;
     const String& label() const;
 
@@ -67,29 +73,47 @@ public:
     RefPtr<MediaStreamTrackPrivate> clone();
 
     MediaStreamSource* source() const { return m_source.get(); }
-    void setSource(MediaStreamSource*);
+    void setSource(PassRefPtr<MediaStreamSource>);
 
-    void stop() { m_stopped = true; }
+    enum StopBehavior { StopTrackAndStopSource, StopTrackOnly };
+    void stop(StopBehavior);
     bool stopped() const { return m_stopped; }
-
-    MediaStreamSource::Type type() const { return m_type; }
-
+    
     void setClient(MediaStreamTrackPrivateClient* client) { m_client = client; }
+
+    MediaStreamSource::Type type() const;
+
+    const MediaStreamSourceStates& states() const;
+    RefPtr<MediaStreamSourceCapabilities> capabilities() const;
+
+    RefPtr<MediaConstraints> constraints() const;
+    void applyConstraints(PassRefPtr<MediaConstraints>);
+
+    void configureTrackRendering();
+
 protected:
-    explicit MediaStreamTrackPrivate(MediaStreamTrackPrivate*);
-    MediaStreamTrackPrivate(MediaStreamSource*);
+    explicit MediaStreamTrackPrivate(const MediaStreamTrackPrivate&);
+    MediaStreamTrackPrivate(PassRefPtr<MediaStreamSource>);
 
 private:
-    bool shouldFireTrackReadyStateChanged(MediaStreamSource::ReadyState);
+    MediaStreamTrackPrivateClient* client() const { return m_client; }
+
+    // MediaStreamSourceObserver
+    virtual void sourceReadyStateChanged() OVERRIDE FINAL;
+    virtual void sourceMutedChanged() OVERRIDE FINAL;
+    virtual void sourceEnabledChanged() OVERRIDE FINAL;
+    virtual bool observerIsEnabled() OVERRIDE FINAL;
+    
     RefPtr<MediaStreamSource> m_source;
+    MediaStreamTrackPrivateClient* m_client;
+    RefPtr<MediaConstraints> m_constraints;
     MediaStreamSource::ReadyState m_readyState;
     mutable String m_id;
 
     bool m_muted;
     bool m_enabled;
     bool m_stopped;
-    MediaStreamSource::Type m_type;
-    MediaStreamTrackPrivateClient* m_client;
+    bool m_ignoreMutations;
 };
 
 } // namespace WebCore

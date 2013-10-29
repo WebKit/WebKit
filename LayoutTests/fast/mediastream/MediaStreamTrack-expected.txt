@@ -26,8 +26,8 @@ checking track.capabilities()
    max : 60
    supported : true
   aspectRatio
-   min : 1.3333333730697632
-   max : 1.7777777910232544
+   min : 1.33
+   max : 1.78
    supported : true
   facingMode
     0 : user
@@ -35,11 +35,14 @@ checking track.capabilities()
 checking track.states()
 PASS states.sourceId is capabilities.sourceId[0]
 PASS states.sourceType is "camera"
-  width : 1920
-  height : 1080
-  frameRate : 30
-  aspectRatio : 1.7777777910232544
-  facingMode : user
+  states.volume = undefined
+  states.width = 1920
+  states.sourceId = 239c24b0-2b15-11e3-8224-0800200c9a66
+  states.height = 1080
+  states.sourceType = camera
+  states.facingMode = user
+  states.frameRate = 30
+  states.aspectRatio = 1.78
 
 audioTrack = mediaStream.getAudioTracks()[0]
 PASS track.readyState is "live"
@@ -53,7 +56,14 @@ checking track.capabilities()
 checking track.states()
 PASS states.sourceId is capabilities.sourceId[0]
 PASS states.sourceType is "microphone"
-  volume : 50
+  states.volume = 50
+  states.width = undefined
+  states.sourceId = 239c24b1-2b15-11e3-8224-0800200c9a66
+  states.height = undefined
+  states.sourceType = microphone
+  states.facingMode = undefined
+  states.frameRate = undefined
+  states.aspectRatio = undefined
 
 videoTrack2 = videoTrack.clone()
 PASS track.readyState is "live"
@@ -76,8 +86,8 @@ checking track.capabilities()
    max : 60
    supported : true
   aspectRatio
-   min : 1.3333333730697632
-   max : 1.7777777910232544
+   min : 1.33
+   max : 1.78
    supported : true
   facingMode
     0 : user
@@ -85,11 +95,14 @@ checking track.capabilities()
 checking track.states()
 PASS states.sourceId is capabilities.sourceId[0]
 PASS states.sourceType is "camera"
-  width : 1920
-  height : 1080
-  frameRate : 30
-  aspectRatio : 1.7777777910232544
-  facingMode : user
+  states.volume = undefined
+  states.width = 1920
+  states.sourceId = 239c24b0-2b15-11e3-8224-0800200c9a66
+  states.height = 1080
+  states.sourceType = camera
+  states.facingMode = user
+  states.frameRate = 30
+  states.aspectRatio = 1.78
 PASS videoTrack.id is not videoTrack2.id
 PASS videoTrack.kind is videoTrack2.kind
 PASS videoTrack.label is videoTrack2.label
@@ -97,9 +110,12 @@ PASS videoTrack.muted is videoTrack2.muted
 PASS videoTrack.enabled is videoTrack2.enabled
 PASS videoTrack.readyState is videoTrack2.readyState
 
-videoTrack.stop()
+track.stop() should not fire 'ended' on the track it is called on, but it should end all tracks using the same source
+videoTrack2.stop()
 PASS Track onended callback succeeded.
+PASS videoTrack is event.target
 PASS videoTrack.readyState is "ended"
+PASS videoTrack2.readyState is "ended"
 
 PASS successfullyParsed is true
 

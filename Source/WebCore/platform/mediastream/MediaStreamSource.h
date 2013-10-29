@@ -47,58 +47,64 @@ namespace WebCore {
 class AudioBus;
 class MediaConstraints;
 class MediaStreamDescriptor;
-struct MediaStreamSourceStates;
+class MediaStreamSourceStates;
 
 class MediaStreamSource : public RefCounted<MediaStreamSource> {
 public:
     class Observer {
     public:
         virtual ~Observer() { }
-        virtual void sourceStateChanged() = 0;
+        
+        // Source state changes.
+        virtual void sourceReadyStateChanged() = 0;
         virtual void sourceMutedChanged() = 0;
         virtual void sourceEnabledChanged() = 0;
-        virtual bool stopped() = 0;
-    };
 
-    enum Type { Audio, Video };
-    enum ReadyState { New = 0, Live = 1, Ended = 2 };
+        // Observer state queries.
+        virtual bool observerIsEnabled() = 0;
+    };
 
     virtual ~MediaStreamSource() { }
 
     bool isAudioStreamSource() const { return type() == Audio; }
     virtual bool useIDForTrackID() const { return false; }
 
-    void reset();
-
     const String& id() const { return m_id; }
+
+    enum Type { None, Audio, Video };
     Type type() const { return m_type; }
-    const String& name() const { return m_name; }
+
+    virtual const String& name() const { return m_name; }
+    virtual void setName(const String& name) { m_name = name; }
 
     virtual RefPtr<MediaStreamSourceCapabilities> capabilities() const = 0;
     virtual const MediaStreamSourceStates& states() = 0;
     
-    void setReadyState(ReadyState);
-    ReadyState readyState() const { return m_readyState; }
+    enum ReadyState { New = 0, Live = 1, Ended = 2 };
+    virtual ReadyState readyState() const { return m_readyState; }
+    virtual void setReadyState(ReadyState);
+
+    virtual bool enabled() const { return m_enabled; }
+    virtual void setEnabled(bool);
+
+    virtual bool muted() const { return m_muted; }
+    virtual void setMuted(bool);
+
+    virtual bool readonly() const;
+    virtual void setReadonly(bool readonly) { m_readonly = readonly; }
+
+    virtual bool remote() const { return m_remote; }
+    virtual void setRemote(bool remote) { m_remote = remote; }
 
     void addObserver(Observer*);
     void removeObserver(Observer*);
-
-    void setConstraints(PassRefPtr<MediaConstraints>);
-    MediaConstraints* constraints() const;
-
-    bool enabled() const { return m_enabled; }
-    void setEnabled(bool);
-
-    bool muted() const { return m_muted; }
-    void setMuted(bool);
-
-    bool readonly() const;
-    void setReadonly(bool readonly) { m_readonly = readonly; }
-
-    bool remote() const { return m_remote; }
-    void setRemote(bool remote) { m_remote = remote; }
+    
+    virtual void startProducingData() { }
+    virtual void stopProducingData() { }
 
     void stop();
+
+    void reset();
 
 protected:
     MediaStreamSource(const String& id, Type, const String& name);
@@ -109,8 +115,6 @@ private:
     String m_name;
     ReadyState m_readyState;
     Vector<Observer*> m_observers;
-    RefPtr<MediaConstraints> m_constraints;
-    MediaStreamSourceStates m_states;
 
     bool m_enabled;
     bool m_muted;

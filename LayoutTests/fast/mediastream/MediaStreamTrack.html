@@ -23,11 +23,13 @@
                     finishJSTest();
                 }
             }
-            
+
             function onTrackEnded()
             {
                 testPassed('Track onended callback succeeded.');
+                shouldBe('videoTrack', 'event.target');
                 shouldBeEqualToString('videoTrack.readyState', 'ended');
+                shouldBeEqualToString('videoTrack2.readyState', 'ended');
                 debug("");
                 finishJSTest();
             }
@@ -56,12 +58,19 @@
                 testPassed('Track onmute callback succeeded.');
                 shouldBeEqual('videoTrack.muted', true);
             }
+            
+            function limitPrecision(value, precision)
+            {
+                if (typeof value === "number" && value % 1 != 0)
+                    return value.toFixed(precision);
+                return value;
+            }
 
             function logCapabilityRange(name, range)
             {
                 debug("  " + name);
-                debug("   min : " + range.min);
-                debug("   max : " + range.max);
+                debug("   min : " + limitPrecision(range.min, 2));
+                debug("   max : " + limitPrecision(range.max, 2));
                 debug("   supported : " + range.supported);
             }
 
@@ -69,7 +78,7 @@
             {
                 debug("  " + name);
                 for (i = 0; i < list.length; i++)
-                debug("    " + i + " : " + list[i]);
+                    debug("    " + i + " : " + list[i]);
             }
 
             function checkCapabilities(track)
@@ -94,16 +103,13 @@
                 capabilities = track.capabilities();
                 states = track.states();
                 shouldBe('states.sourceId', 'capabilities.sourceId[0]');
-                if (track.kind == "video") {
+                if (track.kind == "video")
                     shouldBeEqualToString('states.sourceType', 'camera');
-                    debug("  width : " + states.width);
-                    debug("  height : " + states.height);
-                    debug("  frameRate : " + states.frameRate);
-                    debug("  aspectRatio : " + states.aspectRatio);
-                    debug("  facingMode : " + states.facingMode);
-                } else {
+                else
                     shouldBeEqualToString('states.sourceType', 'microphone');
-                    debug("  volume : " + states.volume);
+                for (var property in states) {
+                    if (states.hasOwnProperty(property))
+                        debug("  states." + property + " = " + limitPrecision(states[property], 2));
                 }
             }
             
@@ -136,6 +142,7 @@
             
                 debug("");
                 evalAndLog("videoTrack2 = videoTrack.clone()");
+                videoTrack2.onended = onTrackEnded;
                 checkTrack(videoTrack2);
                 shouldNotBe('videoTrack.id', 'videoTrack2.id');
                 shouldBe('videoTrack.kind', 'videoTrack2.kind');
@@ -145,7 +152,8 @@
                 shouldBe('videoTrack.readyState', 'videoTrack2.readyState');
 
                 debug("");
-                evalAndLog("videoTrack.stop()");
+                debug("track.stop() should not fire 'ended' on the track it is called on, but it should end all tracks using the same source");
+                evalAndLog("videoTrack2.stop()");
             }
 
             function start()

@@ -63,7 +63,7 @@ Vector<String> MediaStreamCapabilities::sourceType() const
     capabilities.reserveCapacity(count);
     
     for (size_t i = 0; i < count; ++i)
-        capabilities.append(MediaSourceStates::sourceType(sourceTypes[i]));
+        capabilities.append(MediaStreamSourceStates::sourceType(sourceTypes[i]));
     
     return capabilities;
 }
@@ -97,7 +97,7 @@ Vector<String> MediaStreamCapabilities::facingMode() const
     capabilities.reserveCapacity(count);
     
     for (size_t i = 0; i < count; ++i)
-        capabilities.append(MediaSourceStates::facingMode(facingModes[i]));
+        capabilities.append(MediaStreamSourceStates::facingMode(facingModes[i]));
     
     return capabilities;
 }

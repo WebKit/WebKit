@@ -60,6 +60,9 @@ void MediaStreamDescriptor::addSource(PassRefPtr<MediaStreamSource> source)
         if (m_videoStreamSources.find(source) == notFound)
             m_videoStreamSources.append(source);
         break;
+    case MediaStreamSource::None:
+        ASSERT_NOT_REACHED();
+        break;
     }
 }
 
@@ -78,6 +81,9 @@ void MediaStreamDescriptor::removeSource(PassRefPtr<MediaStreamSource> source)
         if (pos == notFound)
             return;
         m_videoStreamSources.remove(pos);
+        break;
+    case MediaStreamSource::None:
+        ASSERT_NOT_REACHED();
         break;
     }
 }
@@ -105,13 +111,15 @@ MediaStreamDescriptor::MediaStreamDescriptor(const String& id, const MediaStream
 {
     ASSERT(m_id.length());
     for (size_t i = 0; i < audioSources.size(); i++) {
-        m_audioStreamSources.append(audioSources[i]);
-        m_audioTrackDescriptors.append(MediaStreamTrackPrivate::create(audioSources[i]));
+        RefPtr<MediaStreamSource> source = audioSources[i];
+        m_audioStreamSources.append(source);
+        m_audioTrackDescriptors.append(MediaStreamTrackPrivate::create(source));
     }
 
     for (size_t i = 0; i < videoSources.size(); i++) {
-        m_videoStreamSources.append(videoSources[i]);
-        m_videoTrackDescriptors.append(MediaStreamTrackPrivate::create(videoSources[i]));
+        RefPtr<MediaStreamSource> source = videoSources[i];
+        m_videoStreamSources.append(source);
+        m_videoTrackDescriptors.append(MediaStreamTrackPrivate::create(source));
     }
 }
 

@@ -122,7 +122,7 @@ MediaStream::MediaStream(ScriptExecutionContext* context, PassRefPtr<MediaStream
     size_t numberOfAudioTracks = m_descriptor->numberOfAudioTracks();
     m_audioTracks.reserveCapacity(numberOfAudioTracks);
     for (size_t i = 0; i < numberOfAudioTracks; i++) {
-        track = AudioStreamTrack::create(context, m_descriptor->audioTracks(i));
+        track = AudioStreamTrack::create(context, *m_descriptor->audioTracks(i));
         track->addObserver(this);
         m_audioTracks.append(track.release());
     }
@@ -130,7 +130,7 @@ MediaStream::MediaStream(ScriptExecutionContext* context, PassRefPtr<MediaStream
     size_t numberOfVideoTracks = m_descriptor->numberOfVideoTracks();
     m_videoTracks.reserveCapacity(numberOfVideoTracks);
     for (size_t i = 0; i < numberOfVideoTracks; i++) {
-        track = VideoStreamTrack::create(context, m_descriptor->videoTracks(i));
+        track = VideoStreamTrack::create(context, *m_descriptor->videoTracks(i));
         track->addObserver(this);
         m_videoTracks.append(track.release());
     }
@@ -191,6 +191,9 @@ void MediaStream::addTrack(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCode&
     case MediaStreamSource::Video:
         m_videoTracks.append(track);
         break;
+    case MediaStreamSource::None:
+        ASSERT_NOT_REACHED();
+        break;
     }
 
     track->addObserver(this);
@@ -222,6 +225,9 @@ void MediaStream::removeTrack(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionCo
         pos = m_videoTracks.find(track);
         if (pos != notFound)
             m_videoTracks.remove(pos);
+        break;
+    case MediaStreamSource::None:
+        ASSERT_NOT_REACHED();
         break;
     }
 
@@ -308,12 +314,15 @@ void MediaStream::addRemoteSource(MediaStreamSource* source)
     RefPtr<MediaStreamTrack> track;
     switch (source->type()) {
     case MediaStreamSource::Audio:
-        track = AudioStreamTrack::create(scriptExecutionContext(), MediaStreamTrackPrivate::create(source));
+        track = AudioStreamTrack::create(scriptExecutionContext(), *MediaStreamTrackPrivate::create(source));
         m_audioTracks.append(track);
         break;
     case MediaStreamSource::Video:
-        track = VideoStreamTrack::create(scriptExecutionContext(), MediaStreamTrackPrivate::create(source));
+        track = VideoStreamTrack::create(scriptExecutionContext(), *MediaStreamTrackPrivate::create(source));
         m_videoTracks.append(track);
+        break;
+    case MediaStreamSource::None:
+        ASSERT_NOT_REACHED();
         break;
     }
     track->addObserver(this);
@@ -334,6 +343,9 @@ void MediaStream::removeRemoteSource(MediaStreamSource* source)
         break;
     case MediaStreamSource::Video:
         tracks = &m_videoTracks;
+        break;
+    case MediaStreamSource::None:
+        ASSERT_NOT_REACHED();
         break;
     }
 

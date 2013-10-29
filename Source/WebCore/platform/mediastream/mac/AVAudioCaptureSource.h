@@ -23,70 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef AVAudioCaptureSource_h
+#define AVAudioCaptureSource_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
-#include "JSMediaSourceStates.h"
+#include "AVMediaCaptureSource.h"
 
-#include "MediaSourceStates.h"
-
-using namespace JSC;
+typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
 
 namespace WebCore {
-
-JSValue JSMediaSourceStates::width(ExecState*) const
-{
-    if (!impl().hasVideoSource())
-        return jsUndefined();
-
-    return jsNumber(impl().width());
-}
-
-JSValue JSMediaSourceStates::height(ExecState*) const
-{
-    if (!impl().hasVideoSource())
-        return jsUndefined();
     
-    return jsNumber(impl().height());
-}
-
-JSValue JSMediaSourceStates::frameRate(ExecState*) const
-{
-    if (!impl().hasVideoSource())
-        return jsUndefined();
+class AVAudioCaptureSource : public AVMediaCaptureSource {
+public:
+    static RefPtr<AVMediaCaptureSource> create(AVCaptureDevice*, const AtomicString&, PassRefPtr<MediaConstraints>);
     
-    return jsNumber(impl().frameRate());
-}
-
-JSValue JSMediaSourceStates::aspectRatio(ExecState*) const
-{
-    if (!impl().hasVideoSource())
-        return jsUndefined();
+private:
+    AVAudioCaptureSource(AVCaptureDevice*, const AtomicString&, PassRefPtr<MediaConstraints>);
+    virtual ~AVAudioCaptureSource();
     
-    return jsNumber(impl().aspectRatio());
-}
-
-JSValue JSMediaSourceStates::facingMode(ExecState* exec) const
-{
-    if (!impl().hasVideoSource())
-        return jsUndefined();
-
-    const AtomicString& mode = impl().facingMode();
-    if (mode.isEmpty())
-        return jsUndefined();
+    virtual RefPtr<MediaStreamSourceCapabilities> capabilities() const OVERRIDE;
+    virtual void captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef, AVCaptureConnection*) OVERRIDE;
     
-    return jsStringWithCache(exec, impl().facingMode());
-}
-
-JSValue JSMediaSourceStates::volume(ExecState*) const
-{
-    if (impl().hasVideoSource())
-        return jsUndefined();
-    
-    return jsNumber(impl().volume());
-}
+    virtual void setupCaptureSession() OVERRIDE;
+    virtual void updateStates() OVERRIDE;
+        
+    RetainPtr<AVCaptureConnection> m_audioConnection;
+    RetainPtr<CMFormatDescriptionRef> m_audioFormatDescription;
+};
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(MEDIA_STREAM)
+
+#endif // AVVideoCaptureSource_h

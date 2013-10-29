@@ -42,12 +42,8 @@ namespace WebCore {
 
 class MediaConstraints;
 class MediaStreamCreationClient;
-class MediaStreamCreationClient;
-class MediaStreamDescriptor;
-class MediaStreamSourceCapabilities;
+class MediaStreamSourceStates;
 class MediaStreamTrackSourcesRequestClient;
-
-struct MediaStreamSourceStates;
 
 class MediaStreamCenter {
 public:
@@ -65,7 +61,6 @@ public:
 protected:
     MediaStreamCenter();
 
-    void endLocalMediaStream(MediaStreamDescriptor*);
     static MediaStreamCenter& platformCenter();
 };
 

@@ -34,10 +34,10 @@
 
 #include "MediaStreamCenterMac.h"
 
+#include "AVCaptureDeviceManager.h"
 #include "MediaStreamCreationClient.h"
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamTrackSourcesRequestClient.h"
-#include "NotImplemented.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -57,20 +57,81 @@ MediaStreamCenterMac::~MediaStreamCenterMac()
 {
 }
 
-void MediaStreamCenterMac::validateRequestConstraints(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints>, PassRefPtr<MediaConstraints>)
+void MediaStreamCenterMac::validateRequestConstraints(PassRefPtr<MediaStreamCreationClient> prpQueryClient, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints)
 {
-    notImplemented();
+    RefPtr<MediaStreamCreationClient> client = prpQueryClient;
+    
+    ASSERT(client);
+
+    if (audioConstraints) {
+        String invalidConstraint;
+        AVCaptureDeviceManager::shared().verifyConstraintsForMediaType(MediaStreamSource::Audio, audioConstraints.get(), invalidConstraint);
+        if (!invalidConstraint.isEmpty()) {
+            client->constraintsInvalid(invalidConstraint);
+            return;
+        }
+    }
+
+    if (videoConstraints) {
+        String invalidConstraint;
+        AVCaptureDeviceManager::shared().verifyConstraintsForMediaType(MediaStreamSource::Video, videoConstraints.get(), invalidConstraint);
+        if (!invalidConstraint.isEmpty()) {
+            client->constraintsInvalid(invalidConstraint);
+            return;
+        }
+    }
+
+    client->constraintsValidated();
 }
     
-void MediaStreamCenterMac::createMediaStream(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints>, PassRefPtr<MediaConstraints>)
+void MediaStreamCenterMac::createMediaStream(PassRefPtr<MediaStreamCreationClient> prpQueryClient, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints)
 {
-    notImplemented();
+    RefPtr<MediaStreamCreationClient> client = prpQueryClient;
+    
+    ASSERT(client);
+    
+    Vector<RefPtr<MediaStreamSource>> audioSources;
+    Vector<RefPtr<MediaStreamSource>> videoSources;
+    
+    if (audioConstraints) {
+        String invalidConstraint;
+        AVCaptureDeviceManager::shared().verifyConstraintsForMediaType(MediaStreamSource::Audio, audioConstraints.get(), invalidConstraint);
+        if (!invalidConstraint.isEmpty()) {
+            client->failedToCreateStreamWithConstraintsError(invalidConstraint);
+            return;
+        }
+        
+        RefPtr<MediaStreamSource> audioSource = AVCaptureDeviceManager::shared().bestSourceForTypeAndConstraints(MediaStreamSource::Audio, audioConstraints.get());
+        ASSERT(audioSource);
+        
+        audioSources.append(audioSource.release());
+    }
+    
+    if (videoConstraints) {
+        String invalidConstraint;
+        AVCaptureDeviceManager::shared().verifyConstraintsForMediaType(MediaStreamSource::Video, videoConstraints.get(), invalidConstraint);
+        if (!invalidConstraint.isEmpty()) {
+            client->failedToCreateStreamWithConstraintsError(invalidConstraint);
+            return;
+        }
+        
+        RefPtr<MediaStreamSource> videoSource = AVCaptureDeviceManager::shared().bestSourceForTypeAndConstraints(MediaStreamSource::Video, videoConstraints.get());
+        ASSERT(videoSource);
+        
+        videoSources.append(videoSource.release());
+    }
+    
+    client->didCreateStream(MediaStreamDescriptor::create(audioSources, videoSources, MediaStreamDescriptor::IsNotEnded));
 }
 
-bool MediaStreamCenterMac::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>)
+bool MediaStreamCenterMac::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient> prpClient)
 {
-    notImplemented();
-    return false;
+    RefPtr<MediaStreamTrackSourcesRequestClient> requestClient = prpClient;
+
+    Vector<RefPtr<TrackSourceInfo>> sources = AVCaptureDeviceManager::shared().getSourcesInfo(requestClient->requestOrigin());
+
+    requestClient->didCompleteRequest(sources);
+    return true;
 }
 
 } // namespace WebCore

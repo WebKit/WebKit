@@ -34,11 +34,11 @@ enum VideoFacingModeEnum { "user", "environment", "left", "right" };
     readonly attribute SourceTypeEnum sourceType;
     readonly attribute DOMString sourceId;
 
-    [CustomGetter] readonly attribute unsigned long width;
-    [CustomGetter] readonly attribute unsigned long height;
-    [CustomGetter] readonly attribute float frameRate;
-    [CustomGetter] readonly attribute float aspectRatio;
-    [CustomGetter] readonly attribute VideoFacingModeEnum facingMode;
-    [CustomGetter] readonly attribute unsigned long volume;
+    [CustomGetter] readonly attribute unsigned long? width;
+    [CustomGetter] readonly attribute unsigned long? height;
+    [CustomGetter] readonly attribute float? frameRate;
+    [CustomGetter] readonly attribute float? aspectRatio;
+    [CustomGetter] readonly attribute VideoFacingModeEnum? facingMode;
+    [CustomGetter] readonly attribute unsigned long? volume;
 };
 

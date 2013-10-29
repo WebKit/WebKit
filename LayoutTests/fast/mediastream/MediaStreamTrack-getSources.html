@@ -31,7 +31,7 @@
                     primeTimeout("Timeout waiting for webkitGetUserMedia()");
                     constraints = _constraints;
                     callback = _callback;
-                debug("<br>*** calling navigator.webkitGetUserMedia() ***");
+                    debug("<br>*** calling navigator.webkitGetUserMedia() ***");
                     shouldNotThrow("navigator.webkitGetUserMedia(constraints, callback, error)");
                 } catch (e) {
                     testFailed('webkitGetUserMedia threw exception :' + e);

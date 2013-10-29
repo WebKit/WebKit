@@ -23,70 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef AVVideoCaptureSource_h
+#define AVVideoCaptureSource_h
 
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
-#include "JSMediaSourceStates.h"
+#include "AVMediaCaptureSource.h"
 
-#include "MediaSourceStates.h"
-
-using namespace JSC;
+typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
 
 namespace WebCore {
 
-JSValue JSMediaSourceStates::width(ExecState*) const
-{
-    if (!impl().hasVideoSource())
-        return jsUndefined();
+class AVVideoCaptureSource : public AVMediaCaptureSource {
+public:
+    static RefPtr<AVMediaCaptureSource> create(AVCaptureDevice*, const AtomicString&, PassRefPtr<MediaConstraints>);
 
-    return jsNumber(impl().width());
-}
+    virtual RefPtr<MediaStreamSourceCapabilities> capabilities() const OVERRIDE;
+    virtual void captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef, AVCaptureConnection*) OVERRIDE;
 
-JSValue JSMediaSourceStates::height(ExecState*) const
-{
-    if (!impl().hasVideoSource())
-        return jsUndefined();
-    
-    return jsNumber(impl().height());
-}
+private:
+    AVVideoCaptureSource(AVCaptureDevice*, const AtomicString&, PassRefPtr<MediaConstraints>);
+    virtual ~AVVideoCaptureSource();
 
-JSValue JSMediaSourceStates::frameRate(ExecState*) const
-{
-    if (!impl().hasVideoSource())
-        return jsUndefined();
-    
-    return jsNumber(impl().frameRate());
-}
+    virtual void setupCaptureSession() OVERRIDE;
+    virtual void updateStates() OVERRIDE;
 
-JSValue JSMediaSourceStates::aspectRatio(ExecState*) const
-{
-    if (!impl().hasVideoSource())
-        return jsUndefined();
-    
-    return jsNumber(impl().aspectRatio());
-}
+    bool applyConstraints(MediaConstraints*);
+    bool setFrameRateConstraint(float minFrameRate, float maxFrameRate);
 
-JSValue JSMediaSourceStates::facingMode(ExecState* exec) const
-{
-    if (!impl().hasVideoSource())
-        return jsUndefined();
+    void calculateFramerate(CMSampleBufferRef);
 
-    const AtomicString& mode = impl().facingMode();
-    if (mode.isEmpty())
-        return jsUndefined();
-    
-    return jsStringWithCache(exec, impl().facingMode());
-}
-
-JSValue JSMediaSourceStates::volume(ExecState*) const
-{
-    if (impl().hasVideoSource())
-        return jsUndefined();
-    
-    return jsNumber(impl().volume());
-}
+    RetainPtr<AVCaptureConnection> m_videoConnection;
+    RetainPtr<CMFormatDescriptionRef> m_videoFormatDescription;
+    Vector<Float64> m_videoFrameTimeStamps;
+    Float64 m_frameRate;
+    int32_t m_width;
+    int32_t m_height;
+};
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(MEDIA_STREAM)
+
+#endif // AVVideoCaptureSource_h

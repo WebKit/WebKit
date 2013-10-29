@@ -28,39 +28,12 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "MediaStreamSourceStates.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
-
-struct MediaStreamSourceStates {
-public:
-    enum SourceType { None, Camera, Microphone };
-    enum VideoFacingMode { User, Environment, Left, Right };
-
-    MediaStreamSourceStates()
-        : sourceType(None)
-        , facingMode(User)
-        , width(0)
-        , height(0)
-        , frameRate(0)
-        , aspectRatio(0)
-        , volume(0)
-    {
-    }
-
-    SourceType sourceType;
-    AtomicString sourceId;
-    VideoFacingMode facingMode;
-    unsigned long width;
-    unsigned long height;
-    float frameRate;
-    float aspectRatio;
-    unsigned long volume;
-    
-    bool hasVideoSource;
-};
 
 class MediaStreamSourceCapabilityRange {
 public:
@@ -118,6 +91,7 @@ public:
     ~MediaStreamSourceCapabilities() { }
 
     const Vector<MediaStreamSourceStates::SourceType>& sourceTypes() { return m_sourceType; }
+    void setSourceType(MediaStreamSourceStates::SourceType sourceType) { m_sourceType.resizeToFit(1); addSourceType(sourceType); }
     void addSourceType(MediaStreamSourceStates::SourceType sourceType)
     {
         if (sourceType == MediaStreamSourceStates::Camera)

@@ -1,3 +1,137 @@
+2013-10-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac MediaStream] implement AVFoundation backed MediaStreamSource
+        https://bugs.webkit.org/show_bug.cgi?id=123316
+
+        Reviewed by Jer Noble
+
+        No new tests, existing tests updated.
+
+        * CMakeLists.txt: Add MediaStreamSourceStates.cpp.
+
+        * Modules/mediastream/MediaSourceStates.cpp:
+        (WebCore::MediaSourceStates::MediaSourceStates): m_SourceStates -> m_sourceStates.
+        (WebCore::MediaSourceStates::sourceType): Ditto.
+        (WebCore::MediaSourceStates::facingMode): Ditto.
+        * Modules/mediastream/MediaSourceStates.h: Ditto.
+        * Modules/mediastream/MediaSourceStates.idl: Mark some attributes as optional.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::addTrack):
+        (WebCore::MediaStream::removeTrack):
+        (WebCore::MediaStream::addRemoteSource):
+        (WebCore::MediaStream::removeRemoteSource):
+
+        * Modules/mediastream/MediaStreamCapabilities.cpp:
+        (WebCore::MediaStreamCapabilities::sourceType): MediaSourceStates -> MediaStreamSourceStates
+        (WebCore::MediaStreamCapabilities::facingMode): Ditto.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::MediaStreamTrack): Don't observe source changes directly, let the
+            private track do that. Change private track parameter to ref because it can't be NULL.
+        (WebCore::MediaStreamTrack::~MediaStreamTrack): Ditto.
+        (WebCore::MediaStreamTrack::setSource): Pass through to private track.
+        (WebCore::MediaStreamTrack::stopped): Ditto.
+        (WebCore::MediaStreamTrack::states): Ditto.
+        (WebCore::MediaStreamTrack::capabilities): Ditto.
+        (WebCore::MediaStreamTrack::applyConstraints): Ditto.
+        (WebCore::MediaStreamTrack::stopProducingData): Ditto.
+        (WebCore::MediaStreamTrack::trackReadyStateChanged): Renamed from sourceStateChanged. Don't
+            schedule an 'ended' event if called as a side effect of the stop() method having been
+            called as per spec.
+        (WebCore::MediaStreamTrack::trackMutedChanged): Renamed from sourceMutedChanged.
+        (WebCore::MediaStreamTrack::trackEnabledChanged): Renamed from sourceEnabledChanged.
+        (WebCore::MediaStreamTrack::stop): Pass through to private track.
+        * Modules/mediastream/MediaStreamTrack.h:
+        (WebCore::MediaStreamTrack::Observer::~Observer): Add virtual destructor.
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::callSuccessHandler): Set track, not source, constraints.
+
+        * WebCore.xcodeproj/project.pbxproj: Add new files.
+
+        * bindings/js/JSMediaSourceStatesCustom.cpp:
+        (WebCore::JSMediaSourceStates::facingMode): Return jsUndefined when the facing mode
+            is Unknown.
+
+        * platform/mediastream/MediaStreamCenter.h: Remove unused class forward defines and
+            undefined method prototype.
+
+        * platform/mediastream/MediaStreamDescriptor.cpp:
+        (WebCore::MediaStreamDescriptor::addSource): ASSERT if source is kind None.
+        (WebCore::MediaStreamDescriptor::removeSource): Ditto.
+        (WebCore::MediaStreamDescriptor::MediaStreamDescriptor):
+
+        * platform/mediastream/MediaStreamSource.cpp:
+        (WebCore::MediaStreamSource::setReadyState): Call startProducingData when readyState changes
+            to Live, stopProducingData when it changes to Ended.
+        (WebCore::MediaStreamSource::removeObserver): Call stop() when there are no more observers.
+        (WebCore::MediaStreamSource::setEnabled): If passed false, do nothing unless all observers
+            are disabled. Call startProducingData/stopProducingData when becoming enabled/disabled.
+        (WebCore::MediaStreamSource::stop): Don't bother checking to see if other observers have
+            stopped, the spec says that track.stop() should permanently stop the track's source.
+        * platform/mediastream/MediaStreamSource.h:
+        (WebCore::MediaStreamSource::name): Make virtual so derived classes can override.
+        (WebCore::MediaStreamSource::setName): Ditto.
+        (WebCore::MediaStreamSource::readyState): Ditto.
+        (WebCore::MediaStreamSource::enabled): Ditto.
+        (WebCore::MediaStreamSource::muted): Ditto.
+        (WebCore::MediaStreamSource::setReadonly): Ditto.
+        (WebCore::MediaStreamSource::remote): Ditto.
+        (WebCore::MediaStreamSource::setRemote): Ditto.
+        (WebCore::MediaStreamSource::startProducingData): Added.
+        (WebCore::MediaStreamSource::stopProducingData): Added.
+
+        * platform/mediastream/MediaStreamSourceCapabilities.h: Move MediaStreamSourceStates to
+            its own file.
+
+        * platform/mediastream/MediaStreamSourceStates.cpp: Added.
+        (WebCore::MediaStreamSourceStates::facingMode): Moved here from MediaSourceStates so the 
+            strings are available to platform code.
+        (WebCore::MediaStreamSourceStates::sourceType): Ditto.
+        * platform/mediastream/MediaStreamSourceStates.h: Added, moved from MediaStreamSourceCapabilities.h.
+
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::create): Pass private track to constructor as PassRefPtr.
+        (WebCore::MediaStreamTrackPrivate::MediaStreamTrackPrivate): Initialize member variables.
+        (WebCore::MediaStreamTrackPrivate::~MediaStreamTrackPrivate): Unregister as source observer.
+        (WebCore::MediaStreamTrackPrivate::setSource): Unregister/register as source observer.
+        (WebCore::MediaStreamTrackPrivate::setEnabled): Enable/disable source, call client.
+        (WebCore::MediaStreamTrackPrivate::stop): New. Set readyState to Ended, optionally stop source.
+        (WebCore::MediaStreamTrackPrivate::setReadyState): Inline the logic from shouldFireTrackReadyStateChanged.
+        (WebCore::MediaStreamTrackPrivate::constraints): New, passthrough to the source.
+        (WebCore::MediaStreamTrackPrivate::states): Ditto.
+        (WebCore::MediaStreamTrackPrivate::type): Ditto.
+        (WebCore::MediaStreamTrackPrivate::capabilities): Ditto.
+        (WebCore::MediaStreamTrackPrivate::applyConstraints): Ditto.
+        (WebCore::MediaStreamTrackPrivate::sourceReadyStateChanged): React to source changes.
+        (WebCore::MediaStreamTrackPrivate::sourceMutedChanged): Ditto.
+        (WebCore::MediaStreamTrackPrivate::sourceEnabledChanged): Ditto.
+        (WebCore::MediaStreamTrackPrivate::observerIsEnabled): Respond to source query.
+        (WebCore::MediaStreamTrackPrivate::observerIsStopped): Ditto.
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+
+        * platform/mediastream/mac/AVAudioCaptureSource.h: Added.
+        * platform/mediastream/mac/AVAudioCaptureSource.mm: Added.
+
+        * platform/mediastream/mac/AVCaptureDeviceManager.h: Added.
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm: Added.
+
+        * platform/mediastream/mac/AVMediaCaptureSource.h: Added.
+        * platform/mediastream/mac/AVMediaCaptureSource.mm: Added.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.h: Added.
+        * platform/mediastream/mac/AVVideoCaptureSource.mm: Added.
+
+        * platform/mediastream/mac/MediaStreamCenterMac.cpp:
+        (WebCore::MediaStreamCenterMac::validateRequestConstraints): Implement.
+        (WebCore::MediaStreamCenterMac::createMediaStream): Ditto.
+        (WebCore::MediaStreamCenterMac::getMediaStreamTrackSources): Ditto.
+
+        * platform/mock/MockMediaStreamCenter.cpp:
+        (WebCore::initializeMockSources): Update for MediaStreamSourceStates changes.
+        (WebCore::MockMediaStreamCenter::createMediaStream):
+
 2013-10-29  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Regions][CSS Shapes] Layout error when the shape has negative top coordinate and it's applied on the second region

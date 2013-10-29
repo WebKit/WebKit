@@ -84,6 +84,8 @@ function testConstructor(s) {
     verifyStream("new webkitMediaStream([stream.getVideoTracks()[0]])", 0, 1);
     verifyStream("new webkitMediaStream([stream.getAudioTracks()[0], stream.getVideoTracks()[0]])", 1, 1);
     verifyStream("new webkitMediaStream([stream.getVideoTracks()[0], stream.getAudioTracks()[0], stream.getVideoTracks()[0]])", 1, 1);
+
+    finishJSTest();
 }
 
 function verifyStream(script, numAudioTracks, numVideoTracks) {

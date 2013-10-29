@@ -1,3 +1,18 @@
+2013-10-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac MediaStream] implement AVFoundation backed MediaStreamSource
+        https://bugs.webkit.org/show_bug.cgi?id=123316
+
+        Reviewed by Jer Noble.
+
+        * fast/mediastream/MediaStream-add-remove-tracks-expected.txt: Updated.
+        * fast/mediastream/MediaStream-add-remove-tracks.html: Ditto.
+        * fast/mediastream/MediaStreamConstructor-expected.txt: Ditto.
+        * fast/mediastream/MediaStreamConstructor.html: Ditto.
+        * fast/mediastream/MediaStreamTrack-getSources.html: Remove typo.
+        * fast/mediastream/MediaStreamTrack-expected.txt: Updated results.
+        * fast/mediastream/MediaStreamTrack.html: Update to test track.stop() behavior.
+
 2013-10-29  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Regions][CSS Shapes] Layout error when the shape has negative top coordinate and it's applied on the second region
