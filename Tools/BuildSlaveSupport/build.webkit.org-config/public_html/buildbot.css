@@ -1,37 +1,15 @@
+body {
+	margin-bottom:50px;
+}
+
 body, td {
-	font-family: HelveticaNeue, sans-serif;
-	font-size: 11px;
-}
-
-body.interface {
-    margin-top: 8px;
-}
-
-.auth {
-    right: 10px;
-    top: auto;
-    bottom: 5px;
-}
-
-.header {
-    float: left;
-    margin-bottom: 10px;
-}
-
-div.content h1 {
-    display: none !important;
-}
-
-a {
-	text-decoration: none;
-}
-
-a:link,a:active {
-	color: #444;
+	font-family: Verdana, Cursor;
+	font-size: 10px;
+	font-weight: bold;
 }
 
 a:link,a:visited,a:active {
-    color: #557;
+	color: #444;
 }
 
 a:hover {
@@ -55,11 +33,6 @@ table td {
 	padding: 0 0 0 4px;
 }
 
-td.LastBuild {
-	min-width: 9em;
-	font-weight: bold;
-}
-
 .LastBuild, .Activity, .Builder, .BuildStep {
         width: 155px;
         max-width: 155px;
@@ -69,7 +42,6 @@ td.Time {
 	color: #000;
 	border-bottom: 1px solid #aaa;
 	background-color: #eee;
-	font-weight: bold;
 }
 
 td.Activity, td.Change, td.Builder {
@@ -96,7 +68,6 @@ td.Activity {
 	-moz-border-radius-topleft: 10px;
 	min-height: 20px;
 	padding: 2px 0 2px 0;
-	font-size: 9px;
 }
 
 td.idle, td.waiting, td.offline, td.building {
@@ -348,7 +319,7 @@ div.BuildWaterfall {
         border-color: #C29D46;
 }
 
-.exception, td.offline, .retry {
+.exception, td.offline {
 	color: #FFFFFF;
 	background-color: #e0b0ff;
         border-color: #ACA0B3;

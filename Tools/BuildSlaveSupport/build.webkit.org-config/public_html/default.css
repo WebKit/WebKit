@@ -2,11 +2,10 @@ body > hr { display: none; }
 div.content h1 { display: none; }
 
 body.interface {
-    margin-top: 20px;
+    margin-top: 8px;
     background: url(bg_gradient.jpg) repeat-x;
-    font-family: Verdana, Cursor;
-    font-size: 10px;
-    font-weight: bold;
+    font-family: HelveticaNeue, sans-serif;
+    font-size: 11px;
     background-color: #fff;
     color: #333;
 }
@@ -17,8 +16,8 @@ small {
 
 .auth {
     position: absolute;
-    top: 5px;
-    right: 40px;
+    bottom: 5px;
+    right: 10px;
 }
 
 a:link,a:visited,a:active {
@@ -43,6 +42,11 @@ table td {
 
 .LastBuild,.Activity {
     padding: 0 0 0 4px;
+}
+
+td.LastBuild {
+    min-width: 9em;
+    font-weight: bold;
 }
 
 /* Chromium Specific styles */
@@ -84,6 +88,7 @@ td.Time {
     color: #000;
     border-bottom: 1px solid #aaa;
     background-color: #eee;
+    font-weight: bold;
 }
 
 td.Activity,td.Change,td.Builder {
@@ -111,6 +116,7 @@ td.Activity {
     -moz-border-radius-topleft: 10px;
     min-height: 20px;
     padding: 2px 0 2px 0;
+    font-size: 9px;
 }
 
 td.idle,td.waiting,td.offline,td.building {
@@ -373,7 +379,7 @@ div.BuildWaterfall {
     border-color: #C5C56D;
 }
 
-.offline,td.offline {
+.offline,td.offline,.retry {
     color: #FFFFFF;
     background-color: #E0B0FF;
     border-color: #dddddd;

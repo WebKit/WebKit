@@ -1,5 +1,24 @@
 2013-10-28  Simon Fraser  <simon.fraser@apple.com>
 
+        Apply changes to default.css, revert buildbot.css which seems to be unused.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/buildbot.css:
+        (body):
+        (body, td):
+        (a:link,a:visited,a:active):
+        (td.Time):
+        (td.Activity):
+        (.exception, td.offline):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/default.css:
+        (body.interface):
+        (.auth):
+        (td.LastBuild):
+        (td.Time):
+        (td.Activity):
+        (.offline,td.offline,.retry):
+
+2013-10-28  Simon Fraser  <simon.fraser@apple.com>
+
         Prettify the waterfall page, and make it a little more space-efficient.
         
         * BuildSlaveSupport/build.webkit.org-config/public_html/buildbot.css:
