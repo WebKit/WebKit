@@ -1,3 +1,19 @@
+2013-10-29  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: elements with explicit tabindex should expose AXFocused as writable, since mouse clicks can focus it
+        https://bugs.webkit.org/show_bug.cgi?id=121335
+
+        Reviewed by Mario Sanchez Prada.
+
+        Re-order logic that determines if a <span> should appear as an accessible element. 
+        The change is that if an element canSetFocus() it should always be in the AX tree.
+
+        Test: accessibility/tabindex-elements-are-accessible.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+
 2013-10-29  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] enable media-stream in build-webkit

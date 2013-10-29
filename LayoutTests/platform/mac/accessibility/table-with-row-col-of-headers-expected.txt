@@ -13,8 +13,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS accessibilityController.focusedElement.role is 'AXRole: AXTable'
 PASS accessibilityController.focusedElement.role is 'AXRole: AXTable'
-PASS accessibilityController.focusedElement.role is 'AXRole: AXWebArea'
-PASS accessibilityController.focusedElement.role is 'AXRole: AXWebArea'
+PASS accessibilityController.focusedElement.role is 'AXRole: AXGroup'
+PASS accessibilityController.focusedElement.role is 'AXRole: AXGroup'
 PASS successfullyParsed is true
 
 TEST COMPLETE
