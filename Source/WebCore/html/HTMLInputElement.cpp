@@ -454,7 +454,7 @@ void HTMLInputElement::setType(const String& type)
 
 void HTMLInputElement::updateType()
 {
-    OwnPtr<InputType> newType = InputType::create(*this, fastGetAttribute(typeAttr));
+    auto newType = InputType::create(*this, fastGetAttribute(typeAttr));
     bool hadType = m_hasType;
     m_hasType = true;
     if (m_inputType->formControlType() == newType->formControlType())
@@ -479,7 +479,7 @@ void HTMLInputElement::updateType()
     if (wasAttached)
         Style::detachRenderTree(*this);
 
-    m_inputType = newType.release();
+    m_inputType = std::move(newType);
     m_inputType->createShadowSubtree();
 
 #if ENABLE(TOUCH_EVENTS)

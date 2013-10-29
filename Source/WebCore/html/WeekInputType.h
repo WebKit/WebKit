@@ -38,10 +38,9 @@ namespace WebCore {
 
 class WeekInputType : public BaseChooserOnlyDateAndTimeInputType {
 public:
-    static OwnPtr<InputType> create(HTMLInputElement&);
+    explicit WeekInputType(HTMLInputElement& element) : BaseChooserOnlyDateAndTimeInputType(element) { }
 
 private:
-    explicit WeekInputType(HTMLInputElement& element) : BaseChooserOnlyDateAndTimeInputType(element) { }
     virtual void attach() OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual DateComponents::Type dateType() const OVERRIDE;

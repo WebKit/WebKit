@@ -36,7 +36,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -45,11 +44,6 @@ using namespace HTMLNames;
 static const int dateTimeLocalDefaultStep = 60;
 static const int dateTimeLocalDefaultStepBase = 0;
 static const int dateTimeLocalStepScaleFactor = 1000;
-
-OwnPtr<InputType> DateTimeLocalInputType::create(HTMLInputElement& element)
-{
-    return adoptPtr(new DateTimeLocalInputType(element));
-}
 
 void DateTimeLocalInputType::attach()
 {

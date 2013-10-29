@@ -1,3 +1,94 @@
+2013-10-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        HTML input type objects should be managed through std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=123160
+
+        Reviewed by Darin Adler.
+
+        Make the constructors of the InputType subclasses public. This makes it possible to use std::make_unique on these classes
+        and makes the T::create() helpers redundant. New instances of these classes are now managed through std::unique_ptr.
+
+        InputType::create() now uses a NeverDestroyed InputTypeFactoryMap that maps type names to InputTypeFactoryFunctions and
+        gets populated when the method is first called and the map is still empty. Certain types are not added to the factory map
+        if they're disabled at runtime.
+
+        The factory is used to create the new InputType object if the requested type was found in the map, and TextInputType is used otherwise.
+
+        * html/ButtonInputType.cpp:
+        * html/ButtonInputType.h:
+        (WebCore::ButtonInputType::ButtonInputType):
+        * html/CheckboxInputType.cpp:
+        * html/CheckboxInputType.h:
+        (WebCore::CheckboxInputType::CheckboxInputType):
+        * html/ColorInputType.cpp:
+        * html/ColorInputType.h:
+        (WebCore::ColorInputType::ColorInputType):
+        * html/DateInputType.cpp:
+        * html/DateInputType.h:
+        * html/DateTimeInputType.cpp:
+        * html/DateTimeInputType.h:
+        (WebCore::DateTimeInputType::DateTimeInputType):
+        * html/DateTimeLocalInputType.cpp:
+        * html/DateTimeLocalInputType.h:
+        (WebCore::DateTimeLocalInputType::DateTimeLocalInputType):
+        * html/EmailInputType.cpp:
+        * html/EmailInputType.h:
+        (WebCore::EmailInputType::EmailInputType):
+        * html/FileInputType.cpp:
+        * html/FileInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType):
+        * html/HTMLInputElement.h:
+        * html/HiddenInputType.cpp:
+        * html/HiddenInputType.h:
+        (WebCore::HiddenInputType::HiddenInputType):
+        * html/ImageInputType.cpp:
+        (WebCore::ImageInputType::ImageInputType):
+        * html/ImageInputType.h:
+        * html/InputType.cpp:
+        (WebCore::createInputType): A templated helper that constructs a new InputType subclass object through std::make_unique.
+        (WebCore::populateInputTypeFactoryMap): Populates the passed-in map with type-createInputType<T> pairs.
+        (WebCore::InputType::create): Get the InputTypeFactoryFunction for the specified type, or fall back to TextInputType.
+        (WebCore::InputType::createText):
+        * html/InputType.h:
+        * html/MonthInputType.cpp:
+        * html/MonthInputType.h:
+        (WebCore::MonthInputType::MonthInputType):
+        * html/NumberInputType.cpp:
+        * html/NumberInputType.h:
+        (WebCore::NumberInputType::NumberInputType):
+        * html/PasswordInputType.cpp:
+        * html/PasswordInputType.h:
+        (WebCore::PasswordInputType::PasswordInputType):
+        * html/RadioInputType.cpp:
+        * html/RadioInputType.h:
+        (WebCore::RadioInputType::RadioInputType):
+        * html/RangeInputType.cpp:
+        * html/RangeInputType.h:
+        * html/ResetInputType.cpp:
+        * html/ResetInputType.h:
+        (WebCore::ResetInputType::ResetInputType):
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::SearchInputType):
+        * html/SearchInputType.h:
+        * html/SubmitInputType.cpp:
+        * html/SubmitInputType.h:
+        (WebCore::SubmitInputType::SubmitInputType):
+        * html/TelephoneInputType.cpp:
+        * html/TelephoneInputType.h:
+        (WebCore::TelephoneInputType::TelephoneInputType):
+        * html/TextInputType.cpp:
+        * html/TextInputType.h:
+        (WebCore::TextInputType::TextInputType):
+        * html/TimeInputType.cpp:
+        * html/TimeInputType.h:
+        * html/URLInputType.cpp:
+        * html/URLInputType.h:
+        (WebCore::URLInputType::URLInputType):
+        * html/WeekInputType.cpp:
+        * html/WeekInputType.h:
+        (WebCore::WeekInputType::WeekInputType):
+
 2013-10-28  Brady Eidson  <beidson@apple.com>
 
         Refactor IDB factory creation.

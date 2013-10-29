@@ -33,16 +33,10 @@
 
 #include "HTMLInputElement.h"
 #include "InputTypeNames.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
-
-OwnPtr<InputType> TextInputType::create(HTMLInputElement& element)
-{
-    return adoptPtr(new TextInputType(element));
-}
 
 void TextInputType::attach()
 {

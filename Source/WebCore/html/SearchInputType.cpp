@@ -38,23 +38,17 @@
 #include "RenderSearchField.h"
 #include "ShadowRoot.h"
 #include "TextControlInnerElements.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-inline SearchInputType::SearchInputType(HTMLInputElement& element)
+SearchInputType::SearchInputType(HTMLInputElement& element)
     : BaseTextInputType(element)
     , m_resultsButton(0)
     , m_cancelButton(0)
     , m_searchEventTimer(this, &SearchInputType::searchEventTimerFired)
 {
-}
-
-OwnPtr<InputType> SearchInputType::create(HTMLInputElement& element)
-{
-    return adoptPtr(new SearchInputType(element));
 }
 
 void SearchInputType::attach()

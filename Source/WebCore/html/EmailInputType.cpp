@@ -29,7 +29,6 @@
 #include "InputTypeNames.h"
 #include "LocalizedStrings.h"
 #include "RegularExpression.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -51,11 +50,6 @@ static bool isValidEmailAddress(const String& address)
     int matchOffset = regExp.match(address, 0, &matchLength);
 
     return !matchOffset && matchLength == addressLength;
-}
-
-OwnPtr<InputType> EmailInputType::create(HTMLInputElement& element)
-{
-    return adoptPtr(new EmailInputType(element));
 }
 
 void EmailInputType::attach()

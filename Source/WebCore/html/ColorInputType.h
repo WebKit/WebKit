@@ -39,7 +39,7 @@ namespace WebCore {
 
 class ColorInputType : public BaseClickableWithKeyInputType, public ColorChooserClient {
 public:
-    static OwnPtr<InputType> create(HTMLInputElement&);
+    explicit ColorInputType(HTMLInputElement& element) : BaseClickableWithKeyInputType(element) { }
     virtual ~ColorInputType();
 
     // ColorChooserClient implementation.
@@ -51,7 +51,6 @@ public:
     virtual Vector<Color> suggestions() const OVERRIDE;
 
 private:
-    explicit ColorInputType(HTMLInputElement& element) : BaseClickableWithKeyInputType(element) { }
     virtual void attach() OVERRIDE;
     virtual bool isColorControl() const OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;

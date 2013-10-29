@@ -37,14 +37,8 @@
 #include "HTMLInputElement.h"
 #include "InputTypeNames.h"
 #include "LocalizedStrings.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
-
-OwnPtr<InputType> ResetInputType::create(HTMLInputElement& element)
-{
-    return adoptPtr(new ResetInputType(element));
-}
 
 const AtomicString& ResetInputType::formControlType() const
 {

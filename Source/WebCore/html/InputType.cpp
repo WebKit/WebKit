@@ -83,74 +83,86 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-typedef OwnPtr<InputType> (*InputTypeFactoryFunction)(HTMLInputElement&);
+typedef bool (RuntimeEnabledFeatures::*InputTypeConditionalFunction)();
+typedef const AtomicString& (*InputTypeNameFunction)();
+typedef std::unique_ptr<InputType> (*InputTypeFactoryFunction)(HTMLInputElement&);
 typedef HashMap<AtomicString, InputTypeFactoryFunction, CaseFoldingHash> InputTypeFactoryMap;
 
-static OwnPtr<InputTypeFactoryMap> createInputTypeFactoryMap()
+template<class T>
+static std::unique_ptr<InputType> createInputType(HTMLInputElement& element)
 {
-    OwnPtr<InputTypeFactoryMap> map = adoptPtr(new InputTypeFactoryMap);
+    return std::make_unique<T>(element);
+}
 
-    // FIXME: Remove unnecessary '&'s from the following map.add operations
-    // once we switch to a non-broken Visual Studio compiler.  https://bugs.webkit.org/show_bug.cgi?id=121235
-    map->add(InputTypeNames::button(), &ButtonInputType::create);
-    map->add(InputTypeNames::checkbox(), &CheckboxInputType::create);
+static void populateInputTypeFactoryMap(InputTypeFactoryMap& map)
+{
+    static const struct InputTypes {
+        InputTypeConditionalFunction conditionalFunction;
+        InputTypeNameFunction nameFunction;
+        InputTypeFactoryFunction factoryFunction;
+    } inputTypes[] = {
+        { nullptr, &InputTypeNames::button, &createInputType<ButtonInputType> },
+        { nullptr, &InputTypeNames::checkbox, &createInputType<CheckboxInputType> },
 #if ENABLE(INPUT_TYPE_COLOR)
-    map->add(InputTypeNames::color(), &ColorInputType::create);
+        { nullptr, &InputTypeNames::color, &createInputType<ColorInputType> },
 #endif
 #if ENABLE(INPUT_TYPE_DATE)
-    if (RuntimeEnabledFeatures::sharedFeatures().inputTypeDateEnabled())
-        map->add(InputTypeNames::date(), &DateInputType::create);
+        { &RuntimeEnabledFeatures::inputTypeDateEnabled, &InputTypeNames::date, &createInputType<DateInputType> },
 #endif
 #if ENABLE(INPUT_TYPE_DATETIME_INCOMPLETE)
-    if (RuntimeEnabledFeatures::sharedFeatures().inputTypeDateTimeEnabled())
-        map->add(InputTypeNames::datetime(), &DateTimeInputType::create);
+        { &RuntimeEnabledFeatures::inputTypeDateTimeEnabled, &InputTypeNames::datetime, &createInputType<DateTimeInputType> },
 #endif
 #if ENABLE(INPUT_TYPE_DATETIMELOCAL)
-    if (RuntimeEnabledFeatures::sharedFeatures().inputTypeDateTimeLocalEnabled())
-        map->add(InputTypeNames::datetimelocal(), &DateTimeLocalInputType::create);
+        { &RuntimeEnabledFeatures::inputTypeDateTimeLocalEnabled, &InputTypeNames::datetimelocal, &createInputType<DateTimeLocalInputType> },
 #endif
-    map->add(InputTypeNames::email(), &EmailInputType::create);
-    map->add(InputTypeNames::file(), &FileInputType::create);
-    map->add(InputTypeNames::hidden(), &HiddenInputType::create);
-    map->add(InputTypeNames::image(), &ImageInputType::create);
+        { nullptr, &InputTypeNames::email, &createInputType<EmailInputType> },
+        { nullptr, &InputTypeNames::file, &createInputType<FileInputType> },
+        { nullptr, &InputTypeNames::hidden, &createInputType<HiddenInputType> },
+        { nullptr, &InputTypeNames::image, &createInputType<ImageInputType> },
 #if ENABLE(INPUT_TYPE_MONTH)
-    if (RuntimeEnabledFeatures::sharedFeatures().inputTypeMonthEnabled())
-        map->add(InputTypeNames::month(), &MonthInputType::create);
+        { &RuntimeEnabledFeatures::inputTypeMonthEnabled, &InputTypeNames::month, &createInputType<MonthInputType> },
 #endif
-    map->add(InputTypeNames::number(), &NumberInputType::create);
-    map->add(InputTypeNames::password(), &PasswordInputType::create);
-    map->add(InputTypeNames::radio(), &RadioInputType::create);
-    map->add(InputTypeNames::range(), &RangeInputType::create);
-    map->add(InputTypeNames::reset(), &ResetInputType::create);
-    map->add(InputTypeNames::search(), &SearchInputType::create);
-    map->add(InputTypeNames::submit(), &SubmitInputType::create);
-    map->add(InputTypeNames::telephone(), &TelephoneInputType::create);
+        { nullptr, &InputTypeNames::number, &createInputType<NumberInputType> },
+        { nullptr, &InputTypeNames::password, &createInputType<PasswordInputType> },
+        { nullptr, &InputTypeNames::radio, &createInputType<RadioInputType> },
+        { nullptr, &InputTypeNames::range, &createInputType<RangeInputType> },
+        { nullptr, &InputTypeNames::reset, &createInputType<ResetInputType> },
+        { nullptr, &InputTypeNames::search, &createInputType<SearchInputType> },
+        { nullptr, &InputTypeNames::submit, &createInputType<SubmitInputType> },
+        { nullptr, &InputTypeNames::telephone, &createInputType<TelephoneInputType> },
 #if ENABLE(INPUT_TYPE_TIME)
-    if (RuntimeEnabledFeatures::sharedFeatures().inputTypeTimeEnabled())
-        map->add(InputTypeNames::time(), &TimeInputType::create);
+        { &RuntimeEnabledFeatures::inputTypeTimeEnabled, &InputTypeNames::time, &createInputType<TimeInputType> },
 #endif
-    map->add(InputTypeNames::url(), &URLInputType::create);
+        { nullptr, &InputTypeNames::url, &createInputType<URLInputType> },
 #if ENABLE(INPUT_TYPE_WEEK)
-    if (RuntimeEnabledFeatures::sharedFeatures().inputTypeWeekEnabled())
-        map->add(InputTypeNames::week(), &WeekInputType::create);
+        { &RuntimeEnabledFeatures::inputTypeWeekEnabled, &InputTypeNames::week, &createInputType<WeekInputType> },
 #endif
-    // No need to register "text" because it is the default type.
+        // No need to register "text" because it is the default type.
+    };
 
-    return map;
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(inputTypes); ++i) {
+        auto conditionalFunction = inputTypes[i].conditionalFunction;
+        if (!conditionalFunction || (RuntimeEnabledFeatures::sharedFeatures().*conditionalFunction)())
+            map.add(inputTypes[i].nameFunction(), inputTypes[i].factoryFunction);
+    }
 }
 
-OwnPtr<InputType> InputType::create(HTMLInputElement& element, const AtomicString& typeName)
+std::unique_ptr<InputType> InputType::create(HTMLInputElement& element, const AtomicString& typeName)
 {
-    static const InputTypeFactoryMap* factoryMap = createInputTypeFactoryMap().leakPtr();
-    OwnPtr<InputType> (*factory)(HTMLInputElement&) = typeName.isEmpty() ? 0 : factoryMap->get(typeName);
-    if (!factory)
-        factory = TextInputType::create;
-    return factory(element);
+    static NeverDestroyed<InputTypeFactoryMap> factoryMap;
+    if (factoryMap.get().isEmpty())
+        populateInputTypeFactoryMap(factoryMap);
+
+    if (!typeName.isEmpty()) {
+        if (auto factory = factoryMap.get().get(typeName))
+            return factory(element);
+    }
+    return std::make_unique<TextInputType>(element);
 }
 
-OwnPtr<InputType> InputType::createText(HTMLInputElement& element)
+std::unique_ptr<InputType> InputType::createText(HTMLInputElement& element)
 {
-    return TextInputType::create(element);
+    return std::make_unique<TextInputType>(element);
 }
 
 InputType::~InputType()

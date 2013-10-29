@@ -36,7 +36,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -49,11 +48,6 @@ static const int dateStepScaleFactor = 86400000;
 inline DateInputType::DateInputType(HTMLInputElement& element)
     : BaseChooserOnlyDateAndTimeInputType(element)
 {
-}
-
-OwnPtr<InputType> DateInputType::create(HTMLInputElement& element)
-{
-    return adoptPtr(new DateInputType(element));
 }
 
 void DateInputType::attach()

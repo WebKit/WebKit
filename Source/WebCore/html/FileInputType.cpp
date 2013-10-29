@@ -39,7 +39,6 @@
 #include "RenderFileUploadControl.h"
 #include "ScriptController.h"
 #include "ShadowRoot.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
@@ -83,11 +82,6 @@ const AtomicString& UploadButtonElement::shadowPseudoId() const
 {
     DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-file-upload-button", AtomicString::ConstructFromLiteral));
     return pseudoId;
-}
-
-OwnPtr<InputType> FileInputType::create(HTMLInputElement& element)
-{
-    return adoptPtr(new FileInputType(element));
 }
 
 FileInputType::FileInputType(HTMLInputElement& element)

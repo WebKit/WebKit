@@ -37,10 +37,9 @@ namespace WebCore {
 
 class HiddenInputType : public InputType {
 public:
-    static OwnPtr<InputType> create(HTMLInputElement&);
+    explicit HiddenInputType(HTMLInputElement& element) : InputType(element) { }
 
 private:
-    explicit HiddenInputType(HTMLInputElement& element) : InputType(element) { }
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual FormControlState saveFormControlState() const OVERRIDE;
     virtual void restoreFormControlState(const FormControlState&) OVERRIDE;

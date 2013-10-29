@@ -32,14 +32,8 @@
 #include "ButtonInputType.h"
 
 #include "InputTypeNames.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
-
-OwnPtr<InputType> ButtonInputType::create(HTMLInputElement& element)
-{
-    return adoptPtr(new ButtonInputType(element));
-}
 
 const AtomicString& ButtonInputType::formControlType() const
 {

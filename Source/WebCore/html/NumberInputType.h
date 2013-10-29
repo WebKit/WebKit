@@ -37,10 +37,9 @@ namespace WebCore {
 
 class NumberInputType : public TextFieldInputType {
 public:
-    static OwnPtr<InputType> create(HTMLInputElement&);
+    explicit NumberInputType(HTMLInputElement& element) : TextFieldInputType(element) { }
 
 private:
-    NumberInputType(HTMLInputElement& element) : TextFieldInputType(element) { }
     virtual void attach() OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;

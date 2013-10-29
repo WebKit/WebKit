@@ -44,7 +44,6 @@
 #include <limits>
 #include <wtf/ASCIICType.h>
 #include <wtf/MathExtras.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -91,11 +90,6 @@ static RealNumberRenderSize calculateRenderSize(const Decimal& value)
     const unsigned sizeOfZero = 1;
     const unsigned numberOfZeroAfterDecimalPoint = -sizeBeforeDecimalPoint;
     return RealNumberRenderSize(sizeOfSign + sizeOfZero , numberOfZeroAfterDecimalPoint + sizeOfDigits);
-}
-
-OwnPtr<InputType> NumberInputType::create(HTMLInputElement& element)
-{
-    return adoptPtr(new NumberInputType(element));
 }
 
 void NumberInputType::attach()

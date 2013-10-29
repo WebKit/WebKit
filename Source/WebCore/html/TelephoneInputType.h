@@ -37,10 +37,9 @@ namespace WebCore {
 
 class TelephoneInputType : public BaseTextInputType {
 public:
-    static OwnPtr<InputType> create(HTMLInputElement&);
+    explicit TelephoneInputType(HTMLInputElement& element) : BaseTextInputType(element) { }
 
 private:
-    explicit TelephoneInputType(HTMLInputElement& element) : BaseTextInputType(element) { }
     virtual void attach() OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual bool shouldRespectSpeechAttribute() OVERRIDE;

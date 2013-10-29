@@ -37,10 +37,9 @@ namespace WebCore {
 
 class SubmitInputType : public BaseButtonInputType {
 public:
-    static OwnPtr<InputType> create(HTMLInputElement&);
+    explicit SubmitInputType(HTMLInputElement& element) : BaseButtonInputType(element) { }
 
 private:
-    explicit SubmitInputType(HTMLInputElement& element) : BaseButtonInputType(element) { }
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual bool appendFormData(FormDataList&, bool) const OVERRIDE;
     virtual bool supportsRequired() const OVERRIDE;

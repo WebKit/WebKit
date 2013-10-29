@@ -36,14 +36,8 @@
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
-
-OwnPtr<InputType> CheckboxInputType::create(HTMLInputElement& element)
-{
-    return adoptPtr(new CheckboxInputType(element));
-}
 
 const AtomicString& CheckboxInputType::formControlType() const
 {

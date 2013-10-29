@@ -74,8 +74,8 @@ class InputType {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    static OwnPtr<InputType> create(HTMLInputElement&, const AtomicString&);
-    static OwnPtr<InputType> createText(HTMLInputElement&);
+    static std::unique_ptr<InputType> create(HTMLInputElement&, const AtomicString&);
+    static std::unique_ptr<InputType> createText(HTMLInputElement&);
     virtual ~InputType();
 
     static bool themeSupportsDataListUI(InputType*);

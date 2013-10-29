@@ -33,16 +33,10 @@
 #include "NodeTraversal.h"
 #include "Settings.h"
 #include "SpatialNavigation.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
-
-OwnPtr<InputType> RadioInputType::create(HTMLInputElement& element)
-{
-    return adoptPtr(new RadioInputType(element));
-}
 
 const AtomicString& RadioInputType::formControlType() const
 {

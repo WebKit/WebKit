@@ -39,7 +39,6 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -52,11 +51,6 @@ static const int timeStepScaleFactor = 1000;
 TimeInputType::TimeInputType(HTMLInputElement& element)
     : BaseTimeInputType(element)
 {
-}
-
-OwnPtr<InputType> TimeInputType::create(HTMLInputElement& element)
-{
-    return adoptPtr(new TimeInputType(element));
 }
 
 void TimeInputType::attach()

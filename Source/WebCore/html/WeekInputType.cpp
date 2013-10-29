@@ -36,7 +36,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -45,11 +44,6 @@ using namespace HTMLNames;
 static const int weekDefaultStepBase = -259200000; // The first day of 1970-W01.
 static const int weekDefaultStep = 1;
 static const int weekStepScaleFactor = 604800000;
-
-OwnPtr<InputType> WeekInputType::create(HTMLInputElement& element)
-{
-    return adoptPtr(new WeekInputType(element));
-}
 
 void WeekInputType::attach()
 {

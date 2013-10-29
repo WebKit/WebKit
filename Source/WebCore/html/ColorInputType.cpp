@@ -45,7 +45,6 @@
 #include "RenderView.h"
 #include "ScriptController.h"
 #include "ShadowRoot.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -64,11 +63,6 @@ static bool isValidColorString(const String& value)
         return false;
     Color color(value);
     return color.isValid() && !color.hasAlpha();
-}
-
-OwnPtr<InputType> ColorInputType::create(HTMLInputElement& element)
-{
-    return adoptPtr(new ColorInputType(element));
 }
 
 ColorInputType::~ColorInputType()
