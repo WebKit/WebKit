@@ -43,7 +43,7 @@ BaseObject.addConstructorFunctions(Buildbot);
 Buildbot.Platform = {
     MacOSXMavericks: { name: "mac-os-x-mavericks", readableName: "OS X Mavericks", order: 10 },
     MacOSXMountainLion: { name: "mac-os-x-mountain-lion", readableName: "OS X Mountain Lion", order: 20 },
-    MacOSXLion: { name : "mac-os-x-lion", readableName: "Mac OS X MountainLion", order: 30 },
+    MacOSXLion: { name : "mac-os-x-lion", readableName: "Mac OS X Lion", order: 30 },
     Windows8: { name: "windows-8", readableName: "Windows 8", order: 40 },
     Windows7: { name: "windows-7", readableName: "Windows 7", order: 50 },
     WindowsXP: { name: "windows-xp", readableName: "Windows XP", order: 60 },
