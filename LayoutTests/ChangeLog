@@ -1,3 +1,17 @@
+2013-10-29  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Regions][CSS Shapes] Layout error when the shape has negative top coordinate and it's applied on the second region
+        <http://webkit.org/b/123346>
+
+        Reviewed by David Hyatt.
+
+        We have a layout error when there is a shape applied on the second region, and it has a negative 'top' coordinate.
+        Since shapeInsideInfo::shapeLogicalTop() can return negative numbers, we need to check for it, when we're positioning
+        the first line in the region.
+
+        * fast/regions/shape-inside/shape-inside-on-multiple-regions-with-negative-shape-top-expected.html: Added.
+        * fast/regions/shape-inside/shape-inside-on-multiple-regions-with-negative-shape-top.html: Added.
+
 2013-10-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a failing test expectation on editing/execCommand/insert-list-xml.xhtml

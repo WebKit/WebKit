@@ -1443,7 +1443,8 @@ void RenderBlockFlow::updateShapeAndSegmentsForCurrentLineInFlowThread(ShapeInsi
     // We position the first line to the top of the shape in the region or to the previously adjusted position in the shape
     if (isFirstLineInRegion || isFirstLineAdjusted) {
         LayoutUnit shapeTopOffset = layoutState.adjustedLogicalLineTop();
-        if (!shapeTopOffset)
+
+        if (!shapeTopOffset && (shapeInsideInfo->shapeLogicalTop() > 0))
             shapeTopOffset = shapeInsideInfo->shapeLogicalTop();
 
         LayoutUnit shapePositionInFlowThread = currentRegion->logicalTopForFlowThreadContent() + shapeTopOffset;
