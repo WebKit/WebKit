@@ -1,3 +1,12 @@
+2013-10-29  Andreas Kling  <akling@apple.com>
+
+        StringImpl::adopt() should return PassRef.
+        <https://webkit.org/b/123456>
+
+        Make the StringImpl::adopt() functions return a PassRef<StringImpl>.
+
+        Reviewed by Anders Carlsson.
+
 2013-10-29  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Re-enable simple line layout for EFL

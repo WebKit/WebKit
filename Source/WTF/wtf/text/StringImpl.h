@@ -435,19 +435,19 @@ public:
     static unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
 
     template<typename CharType, size_t inlineCapacity, typename OverflowHandler>
-    static PassRefPtr<StringImpl> adopt(Vector<CharType, inlineCapacity, OverflowHandler>& vector)
+    static PassRef<StringImpl> adopt(Vector<CharType, inlineCapacity, OverflowHandler>& vector)
     {
         if (size_t size = vector.size()) {
             ASSERT(vector.data());
             if (size > std::numeric_limits<unsigned>::max())
                 CRASH();
-            return adoptRef(new StringImpl(vector.releaseBuffer(), size));
+            return adoptRef(*new StringImpl(vector.releaseBuffer(), size));
         }
-        return empty();
+        return *empty();
     }
 
-    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> adopt(StringBuffer<UChar>&);
-    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> adopt(StringBuffer<LChar>&);
+    WTF_EXPORT_STRING_API static PassRef<StringImpl> adopt(StringBuffer<UChar>&);
+    WTF_EXPORT_STRING_API static PassRef<StringImpl> adopt(StringBuffer<LChar>&);
 
     unsigned length() const { return m_length; }
     bool is8Bit() const { return m_hashAndFlags & s_hashFlag8BitBuffer; }
