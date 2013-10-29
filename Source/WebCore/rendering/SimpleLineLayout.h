@@ -48,14 +48,14 @@ struct Run {
         , textLength(0)
         , isEndOfLine(false)
         , left(left)
-        , width(0)
+        , right(left)
     { }
 
     unsigned textOffset;
     unsigned textLength : 31;
     unsigned isEndOfLine : 1;
     float left;
-    float width;
+    float right;
 };
 
 struct Layout {

@@ -131,7 +131,7 @@ inline LayoutRect RunResolver::Run::rect() const
     auto& run = m_iterator.simpleRun();
 
     LayoutPoint linePosition(run.left, resolver.m_lineHeight * m_iterator.lineIndex() + resolver.m_baseline - resolver.m_ascent);
-    LayoutSize lineSize(run.width, resolver.m_ascent + resolver.m_descent);
+    LayoutSize lineSize(run.right - run.left, resolver.m_ascent + resolver.m_descent);
     return LayoutRect(linePosition + resolver.m_contentOffset, lineSize);
 }
 

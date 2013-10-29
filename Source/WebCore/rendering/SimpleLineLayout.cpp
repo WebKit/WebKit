@@ -227,10 +227,8 @@ static void adjustRunOffsets(Vector<Run, 4>& lineRuns, ETextAlign textAlign, flo
 {
     float lineLeft = computeLineLeft(textAlign, availableWidth - lineWidth);
     for (unsigned i = 0; i < lineRuns.size(); ++i) {
-        float adjustedLeft = floor(lineLeft + lineRuns[i].left);
-        float adjustedRight = ceil(lineLeft + lineRuns[i].left + lineRuns[i].width);
-        lineRuns[i].left = adjustedLeft;
-        lineRuns[i].width = adjustedRight - adjustedLeft;
+        lineRuns[i].left = floor(lineLeft + lineRuns[i].left);
+        lineRuns[i].right = ceil(lineLeft + lineRuns[i].right);
     }
 }
 
@@ -293,15 +291,14 @@ std::unique_ptr<Layout> create(RenderBlockFlow& flow)
                 ASSERT(previousWasSpaceBetweenWords);
                 // Include space to the end of the previous run.
                 lineRuns.last().textLength++;
-                lineRuns.last().width += wordTrailingSpaceWidth;
+                lineRuns.last().right += wordTrailingSpaceWidth;
                 // Start a new run on the same line.
-                float previousRight = lineRuns.last().left + lineRuns.last().width;
-                lineRuns.append(Run(wordStartOffset + 1, previousRight));
+                lineRuns.append(Run(wordStartOffset + 1, lineRuns.last().right));
             }
 
             lineWidth.commit();
 
-            lineRuns.last().width = lineWidth.committedWidth() - lineRuns.last().left;
+            lineRuns.last().right = lineWidth.committedWidth();
             lineRuns.last().textLength = wordEndOffset - lineRuns.last().textOffset;
 
             lineEndOffset = wordEndOffset;
