@@ -32,6 +32,7 @@
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseError.h"
+#include "IDBOperation.h"
 #include "IDBTransactionBackendInterface.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
@@ -53,24 +54,18 @@ public:
     virtual void abort() OVERRIDE FINAL;
     virtual void abort(PassRefPtr<IDBDatabaseError>) OVERRIDE FINAL;
 
-    class Operation {
-    public:
-        virtual ~Operation() { }
-        virtual void perform() = 0;
-    };
-
     virtual void run() OVERRIDE;
     virtual IndexedDB::TransactionMode mode() const OVERRIDE FINAL { return m_mode; }
     const HashSet<int64_t>& scope() const OVERRIDE { return m_objectStoreIds; }
-    void scheduleTask(PassOwnPtr<Operation> task, PassOwnPtr<Operation> abortTask = nullptr) { scheduleTask(IDBDatabaseBackendInterface::NormalTask, task, abortTask); }
-    void scheduleTask(IDBDatabaseBackendInterface::TaskType, PassOwnPtr<Operation>, PassOwnPtr<Operation> abortTask = nullptr);
+    void scheduleTask(PassOwnPtr<IDBOperation> task, PassOwnPtr<IDBOperation> abortTask = nullptr) { scheduleTask(IDBDatabaseBackendInterface::NormalTask, task, abortTask); }
+    void scheduleTask(IDBDatabaseBackendInterface::TaskType, PassOwnPtr<IDBOperation>, PassOwnPtr<IDBOperation> abortTask = nullptr);
     void registerOpenCursor(IDBCursorBackendLevelDB*);
     void unregisterOpenCursor(IDBCursorBackendLevelDB*);
-    void addPreemptiveEvent() { m_pendingPreemptiveEvents++; }
-    void didCompletePreemptiveEvent() { m_pendingPreemptiveEvents--; ASSERT(m_pendingPreemptiveEvents >= 0); }
+    virtual void addPreemptiveEvent() OVERRIDE { m_pendingPreemptiveEvents++; }
+    virtual void didCompletePreemptiveEvent() OVERRIDE { m_pendingPreemptiveEvents--; ASSERT(m_pendingPreemptiveEvents >= 0); }
     virtual IDBBackingStoreInterface::Transaction* backingStoreTransaction() { return &m_transaction; }
 
-    IDBDatabaseBackendImpl* database() const { return m_database.get(); }
+    virtual IDBDatabaseBackendInterface& database() const OVERRIDE { return *m_database; }
 
     virtual void scheduleCreateObjectStoreOperation(const IDBObjectStoreMetadata&) OVERRIDE FINAL;
     virtual void scheduleDeleteObjectStoreOperation(const IDBObjectStoreMetadata&) OVERRIDE FINAL;
@@ -84,7 +79,9 @@ public:
     virtual void scheduleCountOperation(int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>) OVERRIDE FINAL;
     virtual void scheduleDeleteRangeOperation(int64_t objectStoreId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>) OVERRIDE FINAL;
     virtual void scheduleClearOperation(int64_t objectStoreId, PassRefPtr<IDBCallbacks>) OVERRIDE FINAL;
-    
+
+    virtual PassRefPtr<IDBCursorBackendInterface> createCursorBackend(IDBBackingStoreInterface::Cursor&, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, int64_t objectStoreId) OVERRIDE;
+
 private:
     IDBTransactionBackendLevelDB(IDBDatabaseBackendImpl*, int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
 
@@ -111,7 +108,7 @@ private:
     RefPtr<IDBDatabaseCallbacks> m_callbacks;
     RefPtr<IDBDatabaseBackendImpl> m_database;
 
-    typedef Deque<OwnPtr<Operation>> TaskQueue;
+    typedef Deque<OwnPtr<IDBOperation>> TaskQueue;
     TaskQueue m_taskQueue;
     TaskQueue m_preemptiveTaskQueue;
     TaskQueue m_abortTaskQueue;

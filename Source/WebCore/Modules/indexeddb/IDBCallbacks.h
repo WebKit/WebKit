@@ -29,7 +29,6 @@
 #ifndef IDBCallbacks_h
 #define IDBCallbacks_h
 
-#include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseError.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
@@ -41,6 +40,9 @@
 namespace WebCore {
 class DOMStringList;
 class IDBCursorBackendInterface;
+class IDBDatabaseBackendInterface;
+
+struct IDBDatabaseMetadata;
 
 class IDBCallbacks : public RefCounted<IDBCallbacks> {
 public:

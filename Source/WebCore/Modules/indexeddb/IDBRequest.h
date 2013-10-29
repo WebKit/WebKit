@@ -42,6 +42,8 @@
 #include "IDBAny.h"
 #include "IDBCallbacks.h"
 #include "IDBCursor.h"
+#include "IDBDatabaseBackendInterface.h"
+#include "IDBDatabaseCallbacks.h"
 #include "ScriptWrappable.h"
 
 namespace WebCore {

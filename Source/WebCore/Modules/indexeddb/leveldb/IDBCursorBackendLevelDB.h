@@ -62,9 +62,10 @@ public:
     virtual void prefetchReset(int usedPrefetches, int unusedPrefetches);
     virtual void postSuccessHandlerCallback() { }
 
-    PassRefPtr<IDBKey> key() const { return m_cursor->key(); }
-    PassRefPtr<IDBKey> primaryKey() const { return m_cursor->primaryKey(); }
-    PassRefPtr<SharedBuffer> value() const { return (m_cursorType == IndexedDB::CursorKeyOnly) ? 0 : m_cursor->value(); }
+    virtual IDBKey* key() const OVERRIDE { return m_cursor->key().get(); }
+    virtual IDBKey* primaryKey() const OVERRIDE { return m_cursor->primaryKey().get(); }
+    virtual SharedBuffer* value() const OVERRIDE { return (m_cursorType == IndexedDB::CursorKeyOnly) ? 0 : m_cursor->value().get(); }
+
     void close();
 
 private:
@@ -76,7 +77,7 @@ private:
 
     IDBDatabaseBackendInterface::TaskType m_taskType;
     IndexedDB::CursorType m_cursorType;
-    const RefPtr<IDBDatabaseBackendImpl> m_database;
+    const RefPtr<IDBDatabaseBackendInterface> m_database;
     RefPtr<IDBTransactionBackendLevelDB> m_transaction;
     const int64_t m_objectStoreId;
 

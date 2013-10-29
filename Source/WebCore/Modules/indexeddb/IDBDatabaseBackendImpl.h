@@ -26,8 +26,7 @@
 #ifndef IDBDatabaseBackendImpl_h
 #define IDBDatabaseBackendImpl_h
 
-#include "IDBCallbacks.h"
-#include "IDBDatabaseCallbacks.h"
+#include "IDBDatabaseBackendInterface.h"
 #include "IDBMetadata.h"
 #include <stdint.h>
 #include <wtf/Deque.h>
@@ -49,18 +48,17 @@ public:
     static PassRefPtr<IDBDatabaseBackendImpl> create(const String& name, IDBBackingStoreInterface*, IDBFactoryBackendInterface*, const String& uniqueIdentifier);
     virtual ~IDBDatabaseBackendImpl();
 
-    IDBBackingStoreInterface* backingStore() const;
+    virtual IDBBackingStoreInterface* backingStore() const OVERRIDE;
 
     static const int64_t InvalidId = 0;
-    int64_t id() const { return m_metadata.id; }
-    void addObjectStore(const IDBObjectStoreMetadata&, int64_t newMaxObjectStoreId);
-    void removeObjectStore(int64_t objectStoreId);
-    void addIndex(int64_t objectStoreId, const IDBIndexMetadata&, int64_t newMaxIndexId);
-    void removeIndex(int64_t objectStoreId, int64_t indexId);
+    virtual int64_t id() const OVERRIDE { return m_metadata.id; }
+    virtual void addObjectStore(const IDBObjectStoreMetadata&, int64_t newMaxObjectStoreId) OVERRIDE;
+    virtual void removeObjectStore(int64_t objectStoreId) OVERRIDE;
+    virtual void addIndex(int64_t objectStoreId, const IDBIndexMetadata&, int64_t newMaxIndexId) OVERRIDE;
+    virtual void removeIndex(int64_t objectStoreId, int64_t indexId) OVERRIDE;
 
     void openConnection(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, int64_t version);
     void deleteDatabase(PassRefPtr<IDBCallbacks>);
-    const IDBDatabaseMetadata& metadata() const { return m_metadata; }
 
     // IDBDatabaseBackendInterface
     virtual void createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement);
@@ -90,7 +88,13 @@ public:
     virtual void deleteRange(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>) OVERRIDE;
     virtual void clear(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBCallbacks>) OVERRIDE;
 
+    virtual const IDBDatabaseMetadata& metadata() const OVERRIDE { return m_metadata; }
+    virtual void setCurrentVersion(uint64_t version) OVERRIDE { m_metadata.version = version; }
+
     virtual bool isIDBDatabaseBackendImpl() OVERRIDE { return true; }
+
+    virtual bool hasPendingSecondHalfOpen() OVERRIDE { return m_pendingSecondHalfOpen; }
+    virtual void setPendingSecondHalfOpen(PassOwnPtr<IDBPendingOpenCall> pendingOpenCall) OVERRIDE { m_pendingSecondHalfOpen = pendingOpenCall; }
 
     class VersionChangeOperation;
     class VersionChangeAbortOperation;
@@ -119,33 +123,8 @@ private:
     typedef HashMap<int64_t, IDBTransactionBackendInterface*> TransactionMap;
     TransactionMap m_transactions;
 
-    class PendingOpenCall {
-    public:
-        static PassOwnPtr<PendingOpenCall> create(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, int64_t transactionId, int64_t version)
-        {
-            return adoptPtr(new PendingOpenCall(callbacks, databaseCallbacks, transactionId, version));
-        }
-        IDBCallbacks* callbacks() { return m_callbacks.get(); }
-        IDBDatabaseCallbacks* databaseCallbacks() { return m_databaseCallbacks.get(); }
-        int64_t version() { return m_version; }
-        int64_t transactionId() const { return m_transactionId; }
-
-    private:
-        PendingOpenCall(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, int64_t transactionId, int64_t version)
-            : m_callbacks(callbacks)
-            , m_databaseCallbacks(databaseCallbacks)
-            , m_version(version)
-            , m_transactionId(transactionId)
-        {
-        }
-        RefPtr<IDBCallbacks> m_callbacks;
-        RefPtr<IDBDatabaseCallbacks> m_databaseCallbacks;
-        int64_t m_version;
-        const int64_t m_transactionId;
-    };
-
-    Deque<OwnPtr<PendingOpenCall>> m_pendingOpenCalls;
-    OwnPtr<PendingOpenCall> m_pendingSecondHalfOpen;
+    Deque<OwnPtr<IDBPendingOpenCall>> m_pendingOpenCalls;
+    OwnPtr<IDBPendingOpenCall> m_pendingSecondHalfOpen;
 
     class PendingDeleteCall {
     public:

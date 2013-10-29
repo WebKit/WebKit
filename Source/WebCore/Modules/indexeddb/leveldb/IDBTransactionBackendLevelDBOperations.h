@@ -26,61 +26,63 @@
 #ifndef IDBTransactionBackendLevelDBOperations_h
 #define IDBTransactionBackendLevelDBOperations_h
 
-#include "IDBTransactionBackendLevelDB.h"
+#include "IDBDatabaseBackendImpl.h"
+#include "IDBOperation.h"
+#include "IDBTransactionBackendInterface.h"
 
 #if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
 namespace WebCore {
 
-class CreateObjectStoreOperation : public IDBTransactionBackendLevelDB::Operation {
+class CreateObjectStoreOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, const IDBObjectStoreMetadata& objectStoreMetadata)
+    static PassOwnPtr<IDBOperation> create(IDBTransactionBackendInterface* transaction, IDBBackingStoreInterface* backingStore, const IDBObjectStoreMetadata& objectStoreMetadata)
     {
         return adoptPtr(new CreateObjectStoreOperation(transaction, backingStore, objectStoreMetadata));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    CreateObjectStoreOperation(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, const IDBObjectStoreMetadata& objectStoreMetadata)
+    CreateObjectStoreOperation(IDBTransactionBackendInterface* transaction, IDBBackingStoreInterface* backingStore, const IDBObjectStoreMetadata& objectStoreMetadata)
         : m_transaction(transaction)
         , m_backingStore(backingStore)
         , m_objectStoreMetadata(objectStoreMetadata)
     {
     }
     
-    RefPtr<IDBTransactionBackendLevelDB> m_transaction;
+    RefPtr<IDBTransactionBackendInterface> m_transaction;
     const RefPtr<IDBBackingStoreInterface> m_backingStore;
     const IDBObjectStoreMetadata m_objectStoreMetadata;
 };
 
-class DeleteObjectStoreOperation : public IDBTransactionBackendLevelDB::Operation {
+class DeleteObjectStoreOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, const IDBObjectStoreMetadata& objectStoreMetadata)
+    static PassOwnPtr<IDBOperation> create(IDBTransactionBackendInterface* transaction, IDBBackingStoreInterface* backingStore, const IDBObjectStoreMetadata& objectStoreMetadata)
     {
         return adoptPtr(new DeleteObjectStoreOperation(transaction, backingStore, objectStoreMetadata));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    DeleteObjectStoreOperation(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, const IDBObjectStoreMetadata& objectStoreMetadata)
+    DeleteObjectStoreOperation(IDBTransactionBackendInterface* transaction, IDBBackingStoreInterface* backingStore, const IDBObjectStoreMetadata& objectStoreMetadata)
         : m_transaction(transaction)
         , m_backingStore(backingStore)
         , m_objectStoreMetadata(objectStoreMetadata)
     {
     }
 
-    RefPtr<IDBTransactionBackendLevelDB> m_transaction;
+    RefPtr<IDBTransactionBackendInterface> m_transaction;
     const RefPtr<IDBBackingStoreInterface> m_backingStore;
     const IDBObjectStoreMetadata m_objectStoreMetadata;
 };
 
-class IDBDatabaseBackendImpl::VersionChangeOperation : public IDBTransactionBackendLevelDB::Operation {
+class IDBDatabaseBackendImpl::VersionChangeOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, int64_t transactionId, int64_t version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
+    static PassOwnPtr<IDBOperation> create(IDBTransactionBackendInterface* transaction, int64_t transactionId, int64_t version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
     {
         return adoptPtr(new VersionChangeOperation(transaction, transactionId, version, callbacks, databaseCallbacks));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    VersionChangeOperation(IDBTransactionBackendLevelDB* transaction, int64_t transactionId, int64_t version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
+    VersionChangeOperation(IDBTransactionBackendInterface* transaction, int64_t transactionId, int64_t version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
         : m_transaction(transaction)
         , m_transactionId(transactionId)
         , m_version(version)
@@ -89,78 +91,78 @@ private:
     {
     }
 
-    RefPtr<IDBTransactionBackendLevelDB> m_transaction;
+    RefPtr<IDBTransactionBackendInterface> m_transaction;
     int64_t m_transactionId;
     int64_t m_version;
     RefPtr<IDBCallbacks> m_callbacks;
     RefPtr<IDBDatabaseCallbacks> m_databaseCallbacks;
 };
 
-class CreateObjectStoreAbortOperation : public IDBTransactionBackendLevelDB::Operation {
+class CreateObjectStoreAbortOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, int64_t objectStoreId)
+    static PassOwnPtr<IDBOperation> create(IDBTransactionBackendInterface* transaction, int64_t objectStoreId)
     {
         return adoptPtr(new CreateObjectStoreAbortOperation(transaction, objectStoreId));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    CreateObjectStoreAbortOperation(IDBTransactionBackendLevelDB* transaction, int64_t objectStoreId)
+    CreateObjectStoreAbortOperation(IDBTransactionBackendInterface* transaction, int64_t objectStoreId)
         : m_transaction(transaction)
         , m_objectStoreId(objectStoreId)
     {
     }
 
-    RefPtr<IDBTransactionBackendLevelDB> m_transaction;
+    RefPtr<IDBTransactionBackendInterface> m_transaction;
     const int64_t m_objectStoreId;
 };
 
-class DeleteObjectStoreAbortOperation : public IDBTransactionBackendLevelDB::Operation {
+class DeleteObjectStoreAbortOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, const IDBObjectStoreMetadata& objectStore)
+    static PassOwnPtr<IDBOperation> create(IDBTransactionBackendInterface* transaction, const IDBObjectStoreMetadata& objectStore)
     {
         return adoptPtr(new DeleteObjectStoreAbortOperation(transaction, objectStore));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    DeleteObjectStoreAbortOperation(IDBTransactionBackendLevelDB* transaction, const IDBObjectStoreMetadata& objectStoreMetadata)
+    DeleteObjectStoreAbortOperation(IDBTransactionBackendInterface* transaction, const IDBObjectStoreMetadata& objectStoreMetadata)
         : m_transaction(transaction)
         , m_objectStoreMetadata(objectStoreMetadata)
     {
     }
 
-    RefPtr<IDBTransactionBackendLevelDB> m_transaction;
+    RefPtr<IDBTransactionBackendInterface> m_transaction;
     IDBObjectStoreMetadata m_objectStoreMetadata;
 };
 
-class IDBDatabaseBackendImpl::VersionChangeAbortOperation : public IDBTransactionBackendLevelDB::Operation {
+class IDBDatabaseBackendImpl::VersionChangeAbortOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, const String& previousVersion, int64_t previousIntVersion)
+    static PassOwnPtr<IDBOperation> create(IDBTransactionBackendInterface* transaction, const String& previousVersion, int64_t previousIntVersion)
     {
         return adoptPtr(new VersionChangeAbortOperation(transaction, previousVersion, previousIntVersion));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    VersionChangeAbortOperation(IDBTransactionBackendLevelDB* transaction, const String& previousVersion, int64_t previousIntVersion)
+    VersionChangeAbortOperation(IDBTransactionBackendInterface* transaction, const String& previousVersion, int64_t previousIntVersion)
         : m_transaction(transaction)
         , m_previousVersion(previousVersion)
         , m_previousIntVersion(previousIntVersion)
     {
     }
 
-    RefPtr<IDBTransactionBackendLevelDB> m_transaction;
+    RefPtr<IDBTransactionBackendInterface> m_transaction;
     String m_previousVersion;
     int64_t m_previousIntVersion;
 };
 
-class CreateIndexOperation : public IDBTransactionBackendLevelDB::Operation {
+class CreateIndexOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
+    static PassOwnPtr<IDBOperation> create(IDBTransactionBackendInterface* transaction, IDBBackingStoreInterface* backingStore, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
     {
         return adoptPtr(new CreateIndexOperation(transaction, backingStore, objectStoreId, indexMetadata));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    CreateIndexOperation(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
+    CreateIndexOperation(IDBTransactionBackendInterface* transaction, IDBBackingStoreInterface* backingStore, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
         : m_transaction(transaction)
         , m_backingStore(backingStore)
         , m_objectStoreId(objectStoreId)
@@ -168,41 +170,41 @@ private:
     {
     }
 
-    RefPtr<IDBTransactionBackendLevelDB> m_transaction;
+    RefPtr<IDBTransactionBackendInterface> m_transaction;
     const RefPtr<IDBBackingStoreInterface> m_backingStore;
     const int64_t m_objectStoreId;
     const IDBIndexMetadata m_indexMetadata;
 };
 
-class CreateIndexAbortOperation : public IDBTransactionBackendLevelDB::Operation {
+class CreateIndexAbortOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, int64_t objectStoreId, int64_t indexId)
+    static PassOwnPtr<IDBOperation> create(IDBTransactionBackendInterface* transaction, int64_t objectStoreId, int64_t indexId)
     {
         return adoptPtr(new CreateIndexAbortOperation(transaction, objectStoreId, indexId));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    CreateIndexAbortOperation(IDBTransactionBackendLevelDB* transaction, int64_t objectStoreId, int64_t indexId)
+    CreateIndexAbortOperation(IDBTransactionBackendInterface* transaction, int64_t objectStoreId, int64_t indexId)
         : m_transaction(transaction)
         , m_objectStoreId(objectStoreId)
         , m_indexId(indexId)
     {
     }
 
-    const RefPtr<IDBTransactionBackendLevelDB> m_transaction;
+    const RefPtr<IDBTransactionBackendInterface> m_transaction;
     const int64_t m_objectStoreId;
     const int64_t m_indexId;
 };
 
-class DeleteIndexOperation : public IDBTransactionBackendLevelDB::Operation {
+class DeleteIndexOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
+    static PassOwnPtr<IDBOperation> create(IDBTransactionBackendInterface* transaction, IDBBackingStoreInterface* backingStore, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
     {
         return adoptPtr(new DeleteIndexOperation(transaction, backingStore, objectStoreId, indexMetadata));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    DeleteIndexOperation(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
+    DeleteIndexOperation(IDBTransactionBackendInterface* transaction, IDBBackingStoreInterface* backingStore, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
         : m_transaction(transaction)
         , m_backingStore(backingStore)
         , m_objectStoreId(objectStoreId)
@@ -210,41 +212,41 @@ private:
     {
     }
 
-    RefPtr<IDBTransactionBackendLevelDB> m_transaction;
+    RefPtr<IDBTransactionBackendInterface> m_transaction;
     const RefPtr<IDBBackingStoreInterface> m_backingStore;
     const int64_t m_objectStoreId;
     const IDBIndexMetadata m_indexMetadata;
 };
 
-class DeleteIndexAbortOperation : public IDBTransactionBackendLevelDB::Operation {
+class DeleteIndexAbortOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
+    static PassOwnPtr<IDBOperation> create(IDBTransactionBackendInterface* transaction, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
     {
         return adoptPtr(new DeleteIndexAbortOperation(transaction, objectStoreId, indexMetadata));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    DeleteIndexAbortOperation(IDBTransactionBackendLevelDB* transaction, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
+    DeleteIndexAbortOperation(IDBTransactionBackendInterface* transaction, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
         : m_transaction(transaction)
         , m_objectStoreId(objectStoreId)
         , m_indexMetadata(indexMetadata)
     {
     }
 
-    RefPtr<IDBTransactionBackendLevelDB> m_transaction;
+    RefPtr<IDBTransactionBackendInterface> m_transaction;
     const int64_t m_objectStoreId;
     const IDBIndexMetadata m_indexMetadata;
 };
 
-class GetOperation : public IDBTransactionBackendLevelDB::Operation {
+class GetOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, const IDBDatabaseMetadata& metadata, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorType cursorType, PassRefPtr<IDBCallbacks> callbacks)
+    static PassOwnPtr<IDBOperation> create(IDBTransactionBackendInterface* transaction, IDBBackingStoreInterface* backingStore, const IDBDatabaseMetadata& metadata, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorType cursorType, PassRefPtr<IDBCallbacks> callbacks)
     {
         return adoptPtr(new GetOperation(transaction, backingStore, metadata, objectStoreId, indexId, keyRange, cursorType, callbacks));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    GetOperation(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, const IDBDatabaseMetadata& metadata, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorType cursorType, PassRefPtr<IDBCallbacks> callbacks)
+    GetOperation(IDBTransactionBackendInterface* transaction, IDBBackingStoreInterface* backingStore, const IDBDatabaseMetadata& metadata, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorType cursorType, PassRefPtr<IDBCallbacks> callbacks)
         : m_transaction(transaction)
         , m_backingStore(backingStore)
         , m_databaseId(metadata.id)
@@ -260,7 +262,7 @@ private:
         ASSERT(metadata.objectStores.get(objectStoreId).id == objectStoreId);
     }
 
-    RefPtr<IDBTransactionBackendLevelDB> m_transaction;
+    RefPtr<IDBTransactionBackendInterface> m_transaction;
     const RefPtr<IDBBackingStoreInterface> m_backingStore;
     const int64_t m_databaseId;
     const int64_t m_objectStoreId;
@@ -272,15 +274,15 @@ private:
     const RefPtr<IDBCallbacks> m_callbacks;
 };
 
-class PutOperation : public IDBTransactionBackendLevelDB::Operation {
+class PutOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
+    static PassOwnPtr<IDBOperation> create(IDBTransactionBackendInterface* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
     {
         return adoptPtr(new PutOperation(transaction, backingStore, databaseId, objectStore, value, key, putMode, callbacks, indexIds, indexKeys));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    PutOperation(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, PassRefPtr<SharedBuffer>& value, PassRefPtr<IDBKey> key, IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
+    PutOperation(IDBTransactionBackendInterface* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, PassRefPtr<SharedBuffer>& value, PassRefPtr<IDBKey> key, IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
         : m_transaction(transaction)
         , m_backingStore(backingStore)
         , m_databaseId(databaseId)
@@ -294,7 +296,7 @@ private:
     {
     }
 
-    RefPtr<IDBTransactionBackendLevelDB> m_transaction;
+    RefPtr<IDBTransactionBackendInterface> m_transaction;
     const RefPtr<IDBBackingStoreInterface> m_backingStore;
     const int64_t m_databaseId;
     const IDBObjectStoreMetadata m_objectStore;
@@ -306,33 +308,33 @@ private:
     const Vector<IndexKeys> m_indexKeys;
 };
 
-class SetIndexesReadyOperation : public IDBTransactionBackendLevelDB::Operation {
+class SetIndexesReadyOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, size_t indexCount)
+    static PassOwnPtr<IDBOperation> create(IDBTransactionBackendInterface* transaction, size_t indexCount)
     {
         return adoptPtr(new SetIndexesReadyOperation(transaction, indexCount));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    SetIndexesReadyOperation(IDBTransactionBackendLevelDB* transaction, size_t indexCount)
+    SetIndexesReadyOperation(IDBTransactionBackendInterface* transaction, size_t indexCount)
         : m_transaction(transaction)
         , m_indexCount(indexCount)
     {
     }
 
-    RefPtr<IDBTransactionBackendLevelDB> m_transaction;
+    RefPtr<IDBTransactionBackendInterface> m_transaction;
     const size_t m_indexCount;
 };
 
-class OpenCursorOperation : public IDBTransactionBackendLevelDB::Operation {
+class OpenCursorOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorDirection direction, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, PassRefPtr<IDBCallbacks> callbacks)
+    static PassOwnPtr<IDBOperation> create(IDBTransactionBackendInterface* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorDirection direction, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, PassRefPtr<IDBCallbacks> callbacks)
     {
         return adoptPtr(new OpenCursorOperation(transaction, backingStore, databaseId, objectStoreId, indexId, keyRange, direction, cursorType, taskType, callbacks));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    OpenCursorOperation(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorDirection direction, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, PassRefPtr<IDBCallbacks> callbacks)
+    OpenCursorOperation(IDBTransactionBackendInterface* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorDirection direction, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, PassRefPtr<IDBCallbacks> callbacks)
         : m_transaction(transaction)
         , m_backingStore(backingStore)
         , m_databaseId(databaseId)
@@ -346,7 +348,7 @@ private:
     {
     }
 
-    RefPtr<IDBTransactionBackendLevelDB> m_transaction;
+    RefPtr<IDBTransactionBackendInterface> m_transaction;
     const RefPtr<IDBBackingStoreInterface> m_backingStore;
     const int64_t m_databaseId;
     const int64_t m_objectStoreId;
@@ -358,15 +360,15 @@ private:
     const RefPtr<IDBCallbacks> m_callbacks;
 };
 
-class CountOperation : public IDBTransactionBackendLevelDB::Operation {
+class CountOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
+    static PassOwnPtr<IDBOperation> create(IDBTransactionBackendInterface* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
     {
         return adoptPtr(new CountOperation(transaction, backingStore, databaseId, objectStoreId, indexId, keyRange, callbacks));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    CountOperation(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
+    CountOperation(IDBTransactionBackendInterface* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
         : m_transaction(transaction)
         , m_backingStore(backingStore)
         , m_databaseId(databaseId)
@@ -377,7 +379,7 @@ private:
     {
     }
 
-    RefPtr<IDBTransactionBackendLevelDB> m_transaction;
+    RefPtr<IDBTransactionBackendInterface> m_transaction;
     const RefPtr<IDBBackingStoreInterface> m_backingStore;
     const int64_t m_databaseId;
     const int64_t m_objectStoreId;
@@ -386,15 +388,15 @@ private:
     const RefPtr<IDBCallbacks> m_callbacks;
 };
 
-class DeleteRangeOperation : public IDBTransactionBackendLevelDB::Operation {
+class DeleteRangeOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, int64_t objectStoreId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
+    static PassOwnPtr<IDBOperation> create(IDBTransactionBackendInterface* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, int64_t objectStoreId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
     {
         return adoptPtr(new DeleteRangeOperation(transaction, backingStore, databaseId, objectStoreId, keyRange, callbacks));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    DeleteRangeOperation(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, int64_t objectStoreId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
+    DeleteRangeOperation(IDBTransactionBackendInterface* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, int64_t objectStoreId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
         : m_transaction(transaction)
         , m_backingStore(backingStore)
         , m_databaseId(databaseId)
@@ -404,7 +406,7 @@ private:
     {
     }
 
-    RefPtr<IDBTransactionBackendLevelDB> m_transaction;
+    RefPtr<IDBTransactionBackendInterface> m_transaction;
     const RefPtr<IDBBackingStoreInterface> m_backingStore;
     const int64_t m_databaseId;
     const int64_t m_objectStoreId;
@@ -412,15 +414,15 @@ private:
     const RefPtr<IDBCallbacks> m_callbacks;
 };
 
-class ClearOperation : public IDBTransactionBackendLevelDB::Operation {
+class ClearOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, int64_t objectStoreId, PassRefPtr<IDBCallbacks> callbacks)
+    static PassOwnPtr<IDBOperation> create(IDBTransactionBackendInterface* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, int64_t objectStoreId, PassRefPtr<IDBCallbacks> callbacks)
     {
         return adoptPtr(new ClearOperation(transaction, backingStore, databaseId, objectStoreId, callbacks));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    ClearOperation(IDBTransactionBackendLevelDB* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, int64_t objectStoreId, PassRefPtr<IDBCallbacks> callbacks)
+    ClearOperation(IDBTransactionBackendInterface* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, int64_t objectStoreId, PassRefPtr<IDBCallbacks> callbacks)
         : m_transaction(transaction)
         , m_backingStore(backingStore)
         , m_databaseId(databaseId)
@@ -429,7 +431,7 @@ private:
     {
     }
 
-    RefPtr<IDBTransactionBackendLevelDB> m_transaction;
+    RefPtr<IDBTransactionBackendInterface> m_transaction;
     const RefPtr<IDBBackingStoreInterface> m_backingStore;
     const int64_t m_databaseId;
     const int64_t m_objectStoreId;

@@ -47,6 +47,8 @@ public:
 
     virtual ~WebProcessIDBDatabaseBackend();
 
+    virtual WebCore::IDBBackingStoreInterface* backingStore() const OVERRIDE;
+
     virtual void createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const WebCore::IDBKeyPath&, bool autoIncrement) OVERRIDE;
     virtual void deleteObjectStore(int64_t transactionId, int64_t objectStoreId) OVERRIDE;
     virtual void createTransaction(int64_t transactionId, PassRefPtr<WebCore::IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, unsigned short mode) OVERRIDE;
@@ -69,6 +71,18 @@ public:
     virtual void count(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<WebCore::IDBKeyRange>, PassRefPtr<WebCore::IDBCallbacks>) OVERRIDE;
     virtual void deleteRange(int64_t transactionId, int64_t objectStoreId, PassRefPtr<WebCore::IDBKeyRange>, PassRefPtr<WebCore::IDBCallbacks>) OVERRIDE;
     virtual void clear(int64_t transactionId, int64_t objectStoreId, PassRefPtr<WebCore::IDBCallbacks>) OVERRIDE;
+
+    virtual int64_t id() const OVERRIDE;
+    virtual void addObjectStore(const WebCore::IDBObjectStoreMetadata&, int64_t newMaxObjectStoreId) OVERRIDE;
+    virtual void removeObjectStore(int64_t objectStoreId) OVERRIDE;
+    virtual void addIndex(int64_t objectStoreId, const WebCore::IDBIndexMetadata&, int64_t newMaxIndexId) OVERRIDE;
+    virtual void removeIndex(int64_t objectStoreId, int64_t indexId) OVERRIDE;
+
+    virtual const WebCore::IDBDatabaseMetadata& metadata() const OVERRIDE;
+    virtual void setCurrentVersion(uint64_t) OVERRIDE;
+
+    virtual bool hasPendingSecondHalfOpen() OVERRIDE;
+    virtual void setPendingSecondHalfOpen(PassOwnPtr<WebCore::IDBPendingOpenCall>) OVERRIDE;
 
     void openConnection(PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::IDBDatabaseCallbacks>, int64_t transactionId, int64_t version);
 

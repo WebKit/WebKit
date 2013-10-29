@@ -40,7 +40,7 @@ namespace WebCore {
 void CreateObjectStoreOperation::perform()
 {
     LOG(StorageAPI, "CreateObjectStoreOperation");
-    if (!m_backingStore->createObjectStore(m_transaction->backingStoreTransaction(), m_transaction->database()->id(), m_objectStoreMetadata.id, m_objectStoreMetadata.name, m_objectStoreMetadata.keyPath, m_objectStoreMetadata.autoIncrement)) {
+    if (!m_backingStore->createObjectStore(m_transaction->backingStoreTransaction(), m_transaction->database().id(), m_objectStoreMetadata.id, m_objectStoreMetadata.name, m_objectStoreMetadata.keyPath, m_objectStoreMetadata.autoIncrement)) {
         RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error creating object store '%s'.", m_objectStoreMetadata.name.utf8().data()));
         m_transaction->abort(error.release());
         return;
@@ -50,7 +50,7 @@ void CreateObjectStoreOperation::perform()
 void CreateIndexOperation::perform()
 {
     LOG(StorageAPI, "CreateIndexOperation");
-    if (!m_backingStore->createIndex(m_transaction->backingStoreTransaction(), m_transaction->database()->id(), m_objectStoreId, m_indexMetadata.id, m_indexMetadata.name, m_indexMetadata.keyPath, m_indexMetadata.unique, m_indexMetadata.multiEntry)) {
+    if (!m_backingStore->createIndex(m_transaction->backingStoreTransaction(), m_transaction->database().id(), m_objectStoreId, m_indexMetadata.id, m_indexMetadata.name, m_indexMetadata.keyPath, m_indexMetadata.unique, m_indexMetadata.multiEntry)) {
         m_transaction->abort(IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error when trying to create index '%s'.", m_indexMetadata.name.utf8().data())));
         return;
     }
@@ -59,13 +59,13 @@ void CreateIndexOperation::perform()
 void CreateIndexAbortOperation::perform()
 {
     LOG(StorageAPI, "CreateIndexAbortOperation");
-    m_transaction->database()->removeIndex(m_objectStoreId, m_indexId);
+    m_transaction->database().removeIndex(m_objectStoreId, m_indexId);
 }
 
 void DeleteIndexOperation::perform()
 {
     LOG(StorageAPI, "DeleteIndexOperation");
-    bool ok = m_backingStore->deleteIndex(m_transaction->backingStoreTransaction(), m_transaction->database()->id(), m_objectStoreId, m_indexMetadata.id);
+    bool ok = m_backingStore->deleteIndex(m_transaction->backingStoreTransaction(), m_transaction->database().id(), m_objectStoreId, m_indexMetadata.id);
     if (!ok) {
         RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error deleting index '%s'.", m_indexMetadata.name.utf8().data()));
         m_transaction->abort(error);
@@ -75,7 +75,7 @@ void DeleteIndexOperation::perform()
 void DeleteIndexAbortOperation::perform()
 {
     LOG(StorageAPI, "DeleteIndexAbortOperation");
-    m_transaction->database()->addIndex(m_objectStoreId, m_indexMetadata, IDBIndexMetadata::InvalidId);
+    m_transaction->database().addIndex(m_objectStoreId, m_indexMetadata, IDBIndexMetadata::InvalidId);
 }
 
 void GetOperation::perform()
@@ -278,7 +278,8 @@ void OpenCursorOperation::perform()
     }
 
     IDBDatabaseBackendInterface::TaskType taskType(static_cast<IDBDatabaseBackendInterface::TaskType>(m_taskType));
-    RefPtr<IDBCursorBackendLevelDB> cursor = IDBCursorBackendLevelDB::create(backingStoreCursor.get(), m_cursorType, taskType, m_transaction.get(), m_objectStoreId);
+
+    RefPtr<IDBCursorBackendInterface> cursor = m_transaction->createCursorBackend(*backingStoreCursor, m_cursorType, taskType, m_objectStoreId);
     m_callbacks->onSuccess(cursor, cursor->key(), cursor->primaryKey(), cursor->value());
 }
 
@@ -333,7 +334,7 @@ void ClearOperation::perform()
 void DeleteObjectStoreOperation::perform()
 {
     LOG(StorageAPI, "DeleteObjectStoreOperation");
-    bool ok = m_backingStore->deleteObjectStore(m_transaction->backingStoreTransaction(), m_transaction->database()->id(), m_objectStoreMetadata.id);
+    bool ok = m_backingStore->deleteObjectStore(m_transaction->backingStoreTransaction(), m_transaction->database().id(), m_objectStoreMetadata.id);
     if (!ok) {
         RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error deleting object store '%s'.", m_objectStoreMetadata.name.utf8().data()));
         m_transaction->abort(error);
@@ -343,40 +344,40 @@ void DeleteObjectStoreOperation::perform()
 void IDBDatabaseBackendImpl::VersionChangeOperation::perform()
 {
     LOG(StorageAPI, "VersionChangeOperation");
-    IDBDatabaseBackendImpl* database = m_transaction->database();
-    int64_t databaseId = database->id();
-    uint64_t oldVersion = database->m_metadata.version;
+    IDBDatabaseBackendInterface& database = m_transaction->database();
+    int64_t databaseId = database.id();
+    uint64_t oldVersion = database.metadata().version;
 
     // FIXME: Database versions are now of type uint64_t, but this code expected int64_t.
     ASSERT(m_version > (int64_t)oldVersion);
-    database->m_metadata.version = m_version;
-    if (!database->m_backingStore->updateIDBDatabaseIntVersion(m_transaction->backingStoreTransaction(), databaseId, database->m_metadata.version)) {
+    database.setCurrentVersion(m_version);
+    if (!database.backingStore()->updateIDBDatabaseIntVersion(m_transaction->backingStoreTransaction(), databaseId, database.metadata().version)) {
         RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Error writing data to stable storage when updating version.");
         m_callbacks->onError(error);
         m_transaction->abort(error);
         return;
     }
-    ASSERT(!database->m_pendingSecondHalfOpen);
-    database->m_pendingSecondHalfOpen = PendingOpenCall::create(m_callbacks, m_databaseCallbacks, m_transactionId, m_version);
-    m_callbacks->onUpgradeNeeded(oldVersion, database, database->metadata());
+    ASSERT(!database.hasPendingSecondHalfOpen());
+    database.setPendingSecondHalfOpen(IDBPendingOpenCall::create(*m_callbacks, *m_databaseCallbacks, m_transactionId, m_version));
+    m_callbacks->onUpgradeNeeded(oldVersion, &database, database.metadata());
 }
 
 void CreateObjectStoreAbortOperation::perform()
 {
     LOG(StorageAPI, "CreateObjectStoreAbortOperation");
-    m_transaction->database()->removeObjectStore(m_objectStoreId);
+    m_transaction->database().removeObjectStore(m_objectStoreId);
 }
 
 void DeleteObjectStoreAbortOperation::perform()
 {
     LOG(StorageAPI, "DeleteObjectStoreAbortOperation");
-    m_transaction->database()->addObjectStore(m_objectStoreMetadata, IDBObjectStoreMetadata::InvalidId);
+    m_transaction->database().addObjectStore(m_objectStoreMetadata, IDBObjectStoreMetadata::InvalidId);
 }
 
 void IDBDatabaseBackendImpl::VersionChangeAbortOperation::perform()
 {
     LOG(StorageAPI, "VersionChangeAbortOperation");
-    m_transaction->database()->m_metadata.version = m_previousIntVersion;
+    m_transaction->database().setCurrentVersion(m_previousIntVersion);
 }
 
 } // namespace WebCore

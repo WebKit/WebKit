@@ -26,8 +26,12 @@
 #ifndef IDBDatabaseBackendInterface_h
 #define IDBDatabaseBackendInterface_h
 
+#include "IDBCallbacks.h"
+#include "IDBDatabaseCallbacks.h"
 #include "IDBDatabaseError.h"
+#include "IDBPendingOpenCall.h"
 #include "IndexedDB.h"
+#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -37,13 +41,14 @@
 namespace WebCore {
 
 class IDBBackingStoreInterface;
-class IDBCallbacks;
-class IDBDatabaseCallbacks;
 class IDBKey;
 class IDBKeyPath;
 class IDBKeyRange;
-struct IDBDatabaseMetadata;
 class SharedBuffer;
+
+struct IDBDatabaseMetadata;
+struct IDBIndexMetadata;
+struct IDBObjectStoreMetadata;
 
 typedef Vector<RefPtr<IDBKey>> IndexKeys;
 typedef int ExceptionCode;
@@ -54,6 +59,8 @@ typedef int ExceptionCode;
 class IDBDatabaseBackendInterface : public RefCounted<IDBDatabaseBackendInterface> {
 public:
     virtual ~IDBDatabaseBackendInterface() { }
+
+    virtual IDBBackingStoreInterface* backingStore() const = 0;
 
     virtual void createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement) = 0;
     virtual void deleteObjectStore(int64_t transactionId, int64_t objectStoreId) = 0;
@@ -90,6 +97,18 @@ public:
     virtual void count(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>) = 0;
     virtual void deleteRange(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>) = 0;
     virtual void clear(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBCallbacks>) = 0;
+
+    virtual int64_t id() const = 0;
+    virtual void addObjectStore(const IDBObjectStoreMetadata&, int64_t newMaxObjectStoreId) = 0;
+    virtual void removeObjectStore(int64_t objectStoreId) = 0;
+    virtual void addIndex(int64_t objectStoreId, const IDBIndexMetadata&, int64_t newMaxIndexId) = 0;
+    virtual void removeIndex(int64_t objectStoreId, int64_t indexId) = 0;
+
+    virtual const IDBDatabaseMetadata& metadata() const = 0;
+    virtual void setCurrentVersion(uint64_t) = 0;
+
+    virtual bool hasPendingSecondHalfOpen() = 0;
+    virtual void setPendingSecondHalfOpen(PassOwnPtr<IDBPendingOpenCall>) = 0;
 
     virtual bool isIDBDatabaseBackendImpl() { return false; }
 };

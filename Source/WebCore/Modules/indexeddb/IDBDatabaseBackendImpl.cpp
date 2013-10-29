@@ -250,7 +250,7 @@ void IDBDatabaseBackendImpl::setIndexKeys(int64_t transactionId, int64_t objectS
     ASSERT(transaction->mode() == IndexedDB::TransactionVersionChange);
 
     RefPtr<IDBKey> primaryKey = prpPrimaryKey;
-    RefPtr<IDBBackingStoreInterface> store = backingStore();
+    RefPtr<IDBBackingStoreInterface> store = m_backingStore;
     // FIXME: This method could be asynchronous, but we need to evaluate if it's worth the extra complexity.
     RefPtr<IDBRecordIdentifier> recordIdentifier;
     bool ok = store->keyExistsInObjectStore(transaction->backingStoreTransaction(), m_metadata.id, objectStoreId, *primaryKey, recordIdentifier);
@@ -419,10 +419,12 @@ void IDBDatabaseBackendImpl::processPendingCalls()
         return;
 
     // Open calls can be requeued if an open call started a version change transaction.
-    Deque<OwnPtr<PendingOpenCall>> pendingOpenCalls;
+    Deque<OwnPtr<IDBPendingOpenCall>> pendingOpenCalls;
     m_pendingOpenCalls.swap(pendingOpenCalls);
+
+    auto pendingOpenCalls = std::move(m_pendingOpenCalls);
     while (!pendingOpenCalls.isEmpty()) {
-        OwnPtr<PendingOpenCall> pendingOpenCall = pendingOpenCalls.takeFirst();
+        OwnPtr<IDBPendingOpenCall> pendingOpenCall = pendingOpenCalls.takeFirst();
         openConnection(pendingOpenCall->callbacks(), pendingOpenCall->databaseCallbacks(), pendingOpenCall->transactionId(), pendingOpenCall->version());
     }
 }
@@ -445,7 +447,7 @@ void IDBDatabaseBackendImpl::openConnection(PassRefPtr<IDBCallbacks> prpCallback
     RefPtr<IDBDatabaseCallbacks> databaseCallbacks = prpDatabaseCallbacks;
 
     if (!m_pendingDeleteCalls.isEmpty() || m_runningVersionChangeTransaction) {
-        m_pendingOpenCalls.append(PendingOpenCall::create(callbacks, databaseCallbacks, transactionId, version));
+        m_pendingOpenCalls.append(IDBPendingOpenCall::create(*callbacks, *databaseCallbacks, transactionId, version));
         return;
     }
 
@@ -526,7 +528,7 @@ void IDBDatabaseBackendImpl::runIntVersionChangeTransaction(PassRefPtr<IDBCallba
         callbacks->onBlocked(m_metadata.version);
     // FIXME: Add test for m_runningVersionChangeTransaction.
     if (m_runningVersionChangeTransaction || connectionCount()) {
-        m_pendingOpenCalls.append(PendingOpenCall::create(callbacks, databaseCallbacks, transactionId, requestedVersion));
+        m_pendingOpenCalls.append(IDBPendingOpenCall::create(*callbacks, *databaseCallbacks, transactionId, requestedVersion));
         return;
     }
 

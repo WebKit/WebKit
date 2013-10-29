@@ -1,3 +1,25 @@
+2013-10-29  Brady Eidson  <beidson@apple.com>
+
+        Get IDBTransactionBackendLevelDBOperations *almost* ready to go cross platform.
+        https://bugs.webkit.org/show_bug.cgi?id=123451
+
+        Reviewed by Andreas Kling.
+
+        Stub out more pure virtual methods.
+
+        * WebProcess/Databases/IndexedDB/WebProcessIDBDatabaseBackend.cpp:
+        (WebKit::WebProcessIDBDatabaseBackend::backingStore):
+        (WebKit::WebProcessIDBDatabaseBackend::id):
+        (WebKit::WebProcessIDBDatabaseBackend::addObjectStore):
+        (WebKit::WebProcessIDBDatabaseBackend::removeObjectStore):
+        (WebKit::WebProcessIDBDatabaseBackend::addIndex):
+        (WebKit::WebProcessIDBDatabaseBackend::removeIndex):
+        (WebKit::WebProcessIDBDatabaseBackend::metadata):
+        (WebKit::WebProcessIDBDatabaseBackend::setCurrentVersion):
+        (WebKit::WebProcessIDBDatabaseBackend::hasPendingSecondHalfOpen):
+        (WebKit::WebProcessIDBDatabaseBackend::setPendingSecondHalfOpen):
+        * WebProcess/Databases/IndexedDB/WebProcessIDBDatabaseBackend.h:
+
 2013-10-29  Gavin Barraclough  <barraclough@apple.com>
 
         SessionState.h should not include WebBackForwardList.h

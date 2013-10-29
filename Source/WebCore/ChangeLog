@@ -1,3 +1,113 @@
+2013-10-29  Brady Eidson  <beidson@apple.com>
+
+        Get IDBTransactionBackendLevelDBOperations *almost* ready to go cross platform.
+        https://bugs.webkit.org/show_bug.cgi?id=123451
+
+        Reviewed by Andreas Kling.
+
+        This involves:
+        - Splitting out IDBTransactionBackendLevelDB::Operation into its own header
+        - Splitting out IDBDatabaseBackendImpl::PendingOpenCall into its own header
+        - Reworking the LevelDB Operations to handle the base class IDBTransactionBackendInterface
+        - Adding virtual methods in a few of the *Interface classes to support the above
+
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/indexeddb/IDBCallbacks.h:
+
+        * Modules/indexeddb/IDBCursorBackendInterface.h:
+
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::setIndexKeys):
+        (WebCore::IDBDatabaseBackendImpl::processPendingCalls):
+        (WebCore::IDBDatabaseBackendImpl::openConnection):
+        (WebCore::IDBDatabaseBackendImpl::runIntVersionChangeTransaction):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h:
+        * Modules/indexeddb/IDBDatabaseBackendInterface.h:
+
+        * Modules/indexeddb/IDBOperation.h: Added.
+        (WebCore::IDBOperation::~IDBOperation):
+
+        * Modules/indexeddb/IDBPendingOpenCall.h: Added.
+        (WebCore::IDBPendingOpenCall::create):
+        (WebCore::IDBPendingOpenCall::callbacks):
+        (WebCore::IDBPendingOpenCall::databaseCallbacks):
+        (WebCore::IDBPendingOpenCall::version):
+        (WebCore::IDBPendingOpenCall::transactionId):
+        (WebCore::IDBPendingOpenCall::IDBPendingOpenCall):
+
+        * Modules/indexeddb/IDBRequest.h:
+
+        * Modules/indexeddb/IDBTransactionBackendInterface.h:
+
+        * Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.cpp:
+        (WebCore::IDBCursorBackendLevelDB::CursorIterationOperation::create):
+        (WebCore::IDBCursorBackendLevelDB::CursorAdvanceOperation::create):
+        (WebCore::IDBCursorBackendLevelDB::CursorPrefetchIterationOperation::create):
+        (WebCore::IDBCursorBackendLevelDB::IDBCursorBackendLevelDB):
+        * Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.cpp:
+        (WebCore::IDBTransactionBackendLevelDB::scheduleTask):
+        (WebCore::IDBTransactionBackendLevelDB::abort):
+        (WebCore::IDBTransactionBackendLevelDB::taskTimerFired):
+        (WebCore::IDBTransactionBackendLevelDB::schedulePutOperation):
+        (WebCore::IDBTransactionBackendLevelDB::scheduleOpenCursorOperation):
+        (WebCore::IDBTransactionBackendLevelDB::scheduleCountOperation):
+        (WebCore::IDBTransactionBackendLevelDB::scheduleDeleteRangeOperation):
+        (WebCore::IDBTransactionBackendLevelDB::scheduleClearOperation):
+        (WebCore::IDBTransactionBackendLevelDB::createCursorBackend):
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDBOperations.cpp:
+        (WebCore::CreateObjectStoreOperation::perform):
+        (WebCore::CreateIndexOperation::perform):
+        (WebCore::CreateIndexAbortOperation::perform):
+        (WebCore::DeleteIndexOperation::perform):
+        (WebCore::DeleteIndexAbortOperation::perform):
+        (WebCore::OpenCursorOperation::perform):
+        (WebCore::DeleteObjectStoreOperation::perform):
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeOperation::perform):
+        (WebCore::CreateObjectStoreAbortOperation::perform):
+        (WebCore::DeleteObjectStoreAbortOperation::perform):
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeAbortOperation::perform):
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDBOperations.h:
+        (WebCore::CreateObjectStoreOperation::create):
+        (WebCore::CreateObjectStoreOperation::CreateObjectStoreOperation):
+        (WebCore::DeleteObjectStoreOperation::create):
+        (WebCore::DeleteObjectStoreOperation::DeleteObjectStoreOperation):
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeOperation::create):
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeOperation::VersionChangeOperation):
+        (WebCore::CreateObjectStoreAbortOperation::create):
+        (WebCore::CreateObjectStoreAbortOperation::CreateObjectStoreAbortOperation):
+        (WebCore::DeleteObjectStoreAbortOperation::create):
+        (WebCore::DeleteObjectStoreAbortOperation::DeleteObjectStoreAbortOperation):
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeAbortOperation::create):
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeAbortOperation::VersionChangeAbortOperation):
+        (WebCore::CreateIndexOperation::create):
+        (WebCore::CreateIndexOperation::CreateIndexOperation):
+        (WebCore::CreateIndexAbortOperation::create):
+        (WebCore::CreateIndexAbortOperation::CreateIndexAbortOperation):
+        (WebCore::DeleteIndexOperation::create):
+        (WebCore::DeleteIndexOperation::DeleteIndexOperation):
+        (WebCore::DeleteIndexAbortOperation::create):
+        (WebCore::DeleteIndexAbortOperation::DeleteIndexAbortOperation):
+        (WebCore::GetOperation::create):
+        (WebCore::GetOperation::GetOperation):
+        (WebCore::PutOperation::create):
+        (WebCore::PutOperation::PutOperation):
+        (WebCore::SetIndexesReadyOperation::create):
+        (WebCore::SetIndexesReadyOperation::SetIndexesReadyOperation):
+        (WebCore::OpenCursorOperation::create):
+        (WebCore::OpenCursorOperation::OpenCursorOperation):
+        (WebCore::CountOperation::create):
+        (WebCore::CountOperation::CountOperation):
+        (WebCore::DeleteRangeOperation::create):
+        (WebCore::DeleteRangeOperation::DeleteRangeOperation):
+        (WebCore::ClearOperation::create):
+        (WebCore::ClearOperation::ClearOperation):
+
 2013-10-29  Antti Koivisto  <antti@apple.com>
 
         Make SimpleLineLayout::Layout a variable size object

@@ -35,15 +35,16 @@
 #include "IDBDatabaseError.h"
 #include "IDBDatabaseException.h"
 #include "IDBKeyRange.h"
+#include "IDBOperation.h"
 #include "IDBTransactionBackendLevelDB.h"
 #include "Logging.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
 
-class IDBCursorBackendLevelDB::CursorIterationOperation : public IDBTransactionBackendLevelDB::Operation {
+class IDBCursorBackendLevelDB::CursorIterationOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(PassRefPtr<IDBCursorBackendLevelDB> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
+    static PassOwnPtr<IDBOperation> create(PassRefPtr<IDBCursorBackendLevelDB> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
     {
         return adoptPtr(new CursorIterationOperation(cursor, key, callbacks));
     }
@@ -61,9 +62,9 @@ private:
     RefPtr<IDBCallbacks> m_callbacks;
 };
 
-class IDBCursorBackendLevelDB::CursorAdvanceOperation : public IDBTransactionBackendLevelDB::Operation {
+class IDBCursorBackendLevelDB::CursorAdvanceOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(PassRefPtr<IDBCursorBackendLevelDB> cursor, unsigned long count, PassRefPtr<IDBCallbacks> callbacks)
+    static PassOwnPtr<IDBOperation> create(PassRefPtr<IDBCursorBackendLevelDB> cursor, unsigned long count, PassRefPtr<IDBCallbacks> callbacks)
     {
         return adoptPtr(new CursorAdvanceOperation(cursor, count, callbacks));
     }
@@ -81,9 +82,9 @@ private:
     RefPtr<IDBCallbacks> m_callbacks;
 };
 
-class IDBCursorBackendLevelDB::CursorPrefetchIterationOperation : public IDBTransactionBackendLevelDB::Operation {
+class IDBCursorBackendLevelDB::CursorPrefetchIterationOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBTransactionBackendLevelDB::Operation> create(PassRefPtr<IDBCursorBackendLevelDB> cursor, int numberToFetch, PassRefPtr<IDBCallbacks> callbacks)
+    static PassOwnPtr<IDBOperation> create(PassRefPtr<IDBCursorBackendLevelDB> cursor, int numberToFetch, PassRefPtr<IDBCallbacks> callbacks)
     {
         return adoptPtr(new CursorPrefetchIterationOperation(cursor, numberToFetch, callbacks));
     }
@@ -104,7 +105,7 @@ private:
 IDBCursorBackendLevelDB::IDBCursorBackendLevelDB(PassRefPtr<IDBBackingStoreInterface::Cursor> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackendLevelDB* transaction, int64_t objectStoreId)
     : m_taskType(taskType)
     , m_cursorType(cursorType)
-    , m_database(transaction->database())
+    , m_database(&(transaction->database()))
     , m_transaction(transaction)
     , m_objectStoreId(objectStoreId)
     , m_cursor(cursor)

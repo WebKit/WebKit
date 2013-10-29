@@ -29,6 +29,7 @@
 #include "IDBBackingStoreInterface.h"
 #include "IDBDatabaseBackendInterface.h"
 #include "IndexedDB.h"
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -71,7 +72,13 @@ public:
     virtual void scheduleDeleteRangeOperation(int64_t objectStoreId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>) = 0;
     virtual void scheduleClearOperation(int64_t objectStoreId, PassRefPtr<IDBCallbacks>) = 0;
 
+    virtual void addPreemptiveEvent() = 0;
+    virtual void didCompletePreemptiveEvent() = 0;
+
     virtual IDBBackingStoreInterface::Transaction* backingStoreTransaction() = 0;
+    virtual IDBDatabaseBackendInterface& database() const = 0;
+
+    virtual PassRefPtr<IDBCursorBackendInterface> createCursorBackend(IDBBackingStoreInterface::Cursor&, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, int64_t objectStoreId) = 0;
 
     int64_t id() const { return m_id; }
 
