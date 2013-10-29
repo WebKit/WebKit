@@ -1,5 +1,23 @@
 2013-10-28  Simon Fraser  <simon.fraser@apple.com>
 
+        Prettify the waterfall page, and make it a little more space-efficient.
+        
+        * BuildSlaveSupport/build.webkit.org-config/public_html/buildbot.css:
+        (body, td):
+        (body.interface):
+        (.auth):
+        (.header):
+        (div.content h1):
+        (a):
+        (a:link,a:active):
+        (a:link,a:visited,a:active):
+        (td.LastBuild):
+        (td.Time):
+        (td.Activity):
+        (.exception, td.offline, .retry):
+
+2013-10-28  Simon Fraser  <simon.fraser@apple.com>
+
         Fix Lion readableName (spotted by Dan Bernstein).
 
         * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js:
