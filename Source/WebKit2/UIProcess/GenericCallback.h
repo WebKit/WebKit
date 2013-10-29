@@ -79,7 +79,8 @@ public:
 
     void performCallback()
     {
-        ASSERT(m_callback);
+        if (!m_callback)
+            return;
 
         m_callback(0, context());
 
@@ -88,7 +89,8 @@ public:
     
     void invalidate()
     {
-        ASSERT(m_callback);
+        if (!m_callback)
+            return;
 
         RefPtr<WebError> error = WebError::create();
         m_callback(toAPI(error.get()), context());
