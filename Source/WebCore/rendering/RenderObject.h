@@ -722,8 +722,7 @@ public:
 
     // Anonymous blocks that are part of of a continuation chain will return their inline continuation's outline style instead.
     // This is typically only relevant when repainting.
-    // FIXME: Return a reference.
-    virtual RenderStyle* outlineStyleForRepaint() const { return &const_cast<RenderStyle&>(style()); }
+    virtual const RenderStyle& outlineStyleForRepaint() const { return style(); }
     
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
 

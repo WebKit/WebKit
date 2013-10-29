@@ -4984,9 +4984,9 @@ void RenderBlock::updateDragState(bool dragOn)
         continuation->updateDragState(dragOn);
 }
 
-RenderStyle* RenderBlock::outlineStyleForRepaint() const
+const RenderStyle& RenderBlock::outlineStyleForRepaint() const
 {
-    return isAnonymousBlockContinuation() ? &continuation()->style() : &style();
+    return isAnonymousBlockContinuation() ? continuation()->style() : style();
 }
 
 void RenderBlock::childBecameNonInline(RenderObject*)

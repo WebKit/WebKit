@@ -1,5 +1,14 @@
 2013-10-29  Andreas Kling  <akling@apple.com>
 
+        RenderObject::outlineStyleForRepaint() should return a reference.
+        <https://webkit.org/b/123453>
+
+        Kill a FIXME and make outlineStyleForRepaint() return a RenderStyle&.
+
+        Reviewed by Antti Koivisto.
+
+2013-10-29  Andreas Kling  <akling@apple.com>
+
         Move more of SVG resources cache to using RenderElement.
         <https://webkit.org/b/123452>
 
