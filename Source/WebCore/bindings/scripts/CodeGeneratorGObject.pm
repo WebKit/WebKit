@@ -976,10 +976,12 @@ sub GenerateFunction {
     }
     push(@hBody, " * \@error: #GError\n") if $raisesException;
     push(@hBody, " *\n");
-    if (IsGDOMClassType($function->signature->type)) {
-        push(@hBody, " * Returns: (transfer none):\n");
+    my $returnTypeName = $returnType;
+    $returnTypeName =~ s/\*$//;
+    if ($returnValueIsGDOMType) {
+        push(@hBody, " * Returns: (transfer none): A #${returnTypeName}\n");
     } elsif ($returnType ne "void") {
-        push(@hBody, " * Returns:\n");
+        push(@hBody, " * Returns: A #${returnTypeName}\n");
     }
     if ($deprecationVersion) {
         push(@hBody, " *\n");

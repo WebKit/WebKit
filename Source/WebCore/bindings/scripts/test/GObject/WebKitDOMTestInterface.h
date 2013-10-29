@@ -64,7 +64,7 @@ webkit_dom_test_interface_implements_method1(WebKitDOMTestInterface* self);
  * @objArg: A #WebKitDOMTestObj
  * @error: #GError
  *
- * Returns: (transfer none):
+ * Returns: (transfer none): A #WebKitDOMTestObj
 **/
 WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_interface_implements_method2(WebKitDOMTestInterface* self, const gchar* strArg, WebKitDOMTestObj* objArg, GError** error);
@@ -92,7 +92,7 @@ webkit_dom_test_interface_supplemental_method1(WebKitDOMTestInterface* self);
  * @objArg: A #WebKitDOMTestObj
  * @error: #GError
  *
- * Returns: (transfer none):
+ * Returns: (transfer none): A #WebKitDOMTestObj
 **/
 WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_interface_supplemental_method2(WebKitDOMTestInterface* self, const gchar* strArg, WebKitDOMTestObj* objArg, GError** error);
@@ -109,7 +109,7 @@ webkit_dom_test_interface_supplemental_method4(WebKitDOMTestInterface* self);
  * webkit_dom_test_interface_get_implements_str1:
  * @self: A #WebKitDOMTestInterface
  *
- * Returns:
+ * Returns: A #gchar
 **/
 WEBKIT_API gchar*
 webkit_dom_test_interface_get_implements_str1(WebKitDOMTestInterface* self);
@@ -118,7 +118,7 @@ webkit_dom_test_interface_get_implements_str1(WebKitDOMTestInterface* self);
  * webkit_dom_test_interface_get_implements_str2:
  * @self: A #WebKitDOMTestInterface
  *
- * Returns:
+ * Returns: A #gchar
 **/
 WEBKIT_API gchar*
 webkit_dom_test_interface_get_implements_str2(WebKitDOMTestInterface* self);
@@ -136,7 +136,7 @@ webkit_dom_test_interface_set_implements_str2(WebKitDOMTestInterface* self, cons
  * webkit_dom_test_interface_get_implements_node:
  * @self: A #WebKitDOMTestInterface
  *
- * Returns: (transfer none):
+ * Returns: (transfer none): A #WebKitDOMNode
 **/
 WEBKIT_API WebKitDOMNode*
 webkit_dom_test_interface_get_implements_node(WebKitDOMTestInterface* self);
@@ -146,7 +146,6 @@ webkit_dom_test_interface_get_implements_node(WebKitDOMTestInterface* self);
  * @self: A #WebKitDOMTestInterface
  * @value: A #WebKitDOMNode
  *
- * Returns: (transfer none):
 **/
 WEBKIT_API void
 webkit_dom_test_interface_set_implements_node(WebKitDOMTestInterface* self, WebKitDOMNode* value);
@@ -155,7 +154,7 @@ webkit_dom_test_interface_set_implements_node(WebKitDOMTestInterface* self, WebK
  * webkit_dom_test_interface_get_supplemental_str1:
  * @self: A #WebKitDOMTestInterface
  *
- * Returns:
+ * Returns: A #gchar
 **/
 WEBKIT_API gchar*
 webkit_dom_test_interface_get_supplemental_str1(WebKitDOMTestInterface* self);
@@ -164,7 +163,7 @@ webkit_dom_test_interface_get_supplemental_str1(WebKitDOMTestInterface* self);
  * webkit_dom_test_interface_get_supplemental_str2:
  * @self: A #WebKitDOMTestInterface
  *
- * Returns:
+ * Returns: A #gchar
 **/
 WEBKIT_API gchar*
 webkit_dom_test_interface_get_supplemental_str2(WebKitDOMTestInterface* self);
@@ -182,7 +181,7 @@ webkit_dom_test_interface_set_supplemental_str2(WebKitDOMTestInterface* self, co
  * webkit_dom_test_interface_get_supplemental_node:
  * @self: A #WebKitDOMTestInterface
  *
- * Returns: (transfer none):
+ * Returns: (transfer none): A #WebKitDOMNode
 **/
 WEBKIT_API WebKitDOMNode*
 webkit_dom_test_interface_get_supplemental_node(WebKitDOMTestInterface* self);
@@ -192,7 +191,6 @@ webkit_dom_test_interface_get_supplemental_node(WebKitDOMTestInterface* self);
  * @self: A #WebKitDOMTestInterface
  * @value: A #WebKitDOMNode
  *
- * Returns: (transfer none):
 **/
 WEBKIT_API void
 webkit_dom_test_interface_set_supplemental_node(WebKitDOMTestInterface* self, WebKitDOMNode* value);

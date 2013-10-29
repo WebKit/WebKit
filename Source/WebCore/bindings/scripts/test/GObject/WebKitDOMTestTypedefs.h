@@ -84,7 +84,7 @@ webkit_dom_test_typedefs_nullable_array_arg(WebKitDOMTestTypedefs* self, WebKitD
  * webkit_dom_test_typedefs_immutable_point_function:
  * @self: A #WebKitDOMTestTypedefs
  *
- * Returns: (transfer none):
+ * Returns: (transfer none): A #WebKitDOMSVGPoint
 **/
 WEBKIT_API WebKitDOMSVGPoint*
 webkit_dom_test_typedefs_immutable_point_function(WebKitDOMTestTypedefs* self);
@@ -95,7 +95,7 @@ webkit_dom_test_typedefs_immutable_point_function(WebKitDOMTestTypedefs* self);
  * @values: A #WebKitDOMDOMString[]
  * @error: #GError
  *
- * Returns: (transfer none):
+ * Returns: (transfer none): A #WebKitDOMDOMString[]
 **/
 WEBKIT_API WebKitDOMDOMString[]*
 webkit_dom_test_typedefs_string_array_function(WebKitDOMTestTypedefs* self, WebKitDOMDOMString[]* values, GError** error);
@@ -106,7 +106,7 @@ webkit_dom_test_typedefs_string_array_function(WebKitDOMTestTypedefs* self, WebK
  * @values: A #WebKitDOMDOMString[]
  * @error: #GError
  *
- * Returns: (transfer none):
+ * Returns: (transfer none): A #WebKitDOMDOMString[]
 **/
 WEBKIT_API WebKitDOMDOMString[]*
 webkit_dom_test_typedefs_string_array_function2(WebKitDOMTestTypedefs* self, WebKitDOMDOMString[]* values, GError** error);
@@ -124,7 +124,7 @@ webkit_dom_test_typedefs_method_with_exception(WebKitDOMTestTypedefs* self, GErr
  * webkit_dom_test_typedefs_get_unsigned_long_long_attr:
  * @self: A #WebKitDOMTestTypedefs
  *
- * Returns:
+ * Returns: A #guint64
 **/
 WEBKIT_API guint64
 webkit_dom_test_typedefs_get_unsigned_long_long_attr(WebKitDOMTestTypedefs* self);
@@ -142,7 +142,7 @@ webkit_dom_test_typedefs_set_unsigned_long_long_attr(WebKitDOMTestTypedefs* self
  * webkit_dom_test_typedefs_get_immutable_serialized_script_value:
  * @self: A #WebKitDOMTestTypedefs
  *
- * Returns: (transfer none):
+ * Returns: (transfer none): A #WebKitDOMSerializedScriptValue
 **/
 WEBKIT_API WebKitDOMSerializedScriptValue*
 webkit_dom_test_typedefs_get_immutable_serialized_script_value(WebKitDOMTestTypedefs* self);
@@ -152,7 +152,6 @@ webkit_dom_test_typedefs_get_immutable_serialized_script_value(WebKitDOMTestType
  * @self: A #WebKitDOMTestTypedefs
  * @value: A #WebKitDOMSerializedScriptValue
  *
- * Returns: (transfer none):
 **/
 WEBKIT_API void
 webkit_dom_test_typedefs_set_immutable_serialized_script_value(WebKitDOMTestTypedefs* self, WebKitDOMSerializedScriptValue* value);
@@ -162,7 +161,7 @@ webkit_dom_test_typedefs_set_immutable_serialized_script_value(WebKitDOMTestType
  * @self: A #WebKitDOMTestTypedefs
  * @error: #GError
  *
- * Returns:
+ * Returns: A #glong
 **/
 WEBKIT_API glong
 webkit_dom_test_typedefs_get_attr_with_getter_exception(WebKitDOMTestTypedefs* self, GError** error);
@@ -180,7 +179,7 @@ webkit_dom_test_typedefs_set_attr_with_getter_exception(WebKitDOMTestTypedefs* s
  * webkit_dom_test_typedefs_get_attr_with_setter_exception:
  * @self: A #WebKitDOMTestTypedefs
  *
- * Returns:
+ * Returns: A #glong
 **/
 WEBKIT_API glong
 webkit_dom_test_typedefs_get_attr_with_setter_exception(WebKitDOMTestTypedefs* self);
@@ -200,7 +199,7 @@ webkit_dom_test_typedefs_set_attr_with_setter_exception(WebKitDOMTestTypedefs* s
  * @self: A #WebKitDOMTestTypedefs
  * @error: #GError
  *
- * Returns:
+ * Returns: A #gchar
 **/
 WEBKIT_API gchar*
 webkit_dom_test_typedefs_get_string_attr_with_getter_exception(WebKitDOMTestTypedefs* self, GError** error);
@@ -218,7 +217,7 @@ webkit_dom_test_typedefs_set_string_attr_with_getter_exception(WebKitDOMTestType
  * webkit_dom_test_typedefs_get_string_attr_with_setter_exception:
  * @self: A #WebKitDOMTestTypedefs
  *
- * Returns:
+ * Returns: A #gchar
 **/
 WEBKIT_API gchar*
 webkit_dom_test_typedefs_get_string_attr_with_setter_exception(WebKitDOMTestTypedefs* self);

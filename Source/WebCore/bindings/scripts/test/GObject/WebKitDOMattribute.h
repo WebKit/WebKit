@@ -55,7 +55,7 @@ webkit_dom_attribute_get_type (void);
  * webkit_dom_attribute_get_readonly:
  * @self: A #WebKitDOMattribute
  *
- * Returns:
+ * Returns: A #gchar
 **/
 WEBKIT_API gchar*
 webkit_dom_attribute_get_readonly(WebKitDOMattribute* self);

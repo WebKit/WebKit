@@ -71,7 +71,7 @@ webkit_dom_test_active_dom_object_post_message(WebKitDOMTestActiveDOMObject* sel
  * webkit_dom_test_active_dom_object_get_exciting_attr:
  * @self: A #WebKitDOMTestActiveDOMObject
  *
- * Returns:
+ * Returns: A #glong
 **/
 WEBKIT_API glong
 webkit_dom_test_active_dom_object_get_exciting_attr(WebKitDOMTestActiveDOMObject* self);

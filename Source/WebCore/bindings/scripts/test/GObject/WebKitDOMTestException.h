@@ -53,7 +53,7 @@ webkit_dom_test_exception_get_type (void);
  * webkit_dom_test_exception_get_name:
  * @self: A #WebKitDOMTestException
  *
- * Returns:
+ * Returns: A #gchar
 **/
 WEBKIT_API gchar*
 webkit_dom_test_exception_get_name(WebKitDOMTestException* self);

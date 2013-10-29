@@ -54,7 +54,7 @@ webkit_dom_test_event_target_get_type (void);
  * @self: A #WebKitDOMTestEventTarget
  * @index: A #gulong
  *
- * Returns: (transfer none):
+ * Returns: (transfer none): A #WebKitDOMNode
 **/
 WEBKIT_API WebKitDOMNode*
 webkit_dom_test_event_target_item(WebKitDOMTestEventTarget* self, gulong index);
@@ -65,7 +65,7 @@ webkit_dom_test_event_target_item(WebKitDOMTestEventTarget* self, gulong index);
  * @evt: A #WebKitDOMEvent
  * @error: #GError
  *
- * Returns:
+ * Returns: A #gboolean
  *
  * Deprecated: 2.4: Use webkit_dom_event_target_dispatch_event() instead.
 **/
