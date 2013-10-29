@@ -39,7 +39,7 @@ namespace WebCore {
 using namespace MathMLNames;
     
 MathMLElement::MathMLElement(const QualifiedName& tagName, Document& document)
-    : StyledElement(tagName, document, CreateStyledElement)
+    : StyledElement(tagName, document, CreateMathMLElement)
 {
 }
     
@@ -111,6 +111,12 @@ void MathMLElement::collectStyleForPresentationAttribute(const QualifiedName& na
         StyledElement::collectStyleForPresentationAttribute(name, value
         , style);
     }
+}
+
+bool MathMLElement::childShouldCreateRenderer(const Node* child) const
+{
+    // Only create renderers for MathML elements or text. MathML prohibits non-MathML markup inside a <math> element.
+    return child->isTextNode() || child->isMathMLElement();
 }
 
 }

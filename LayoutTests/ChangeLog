@@ -1,3 +1,16 @@
+2013-10-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [MathML] invalid cast in WebCore::toRenderMathMLBlock
+        https://bugs.webkit.org/show_bug.cgi?id=121728
+
+        Reviewed by Dean Jackson.
+
+        * mathml/arbitrary-markup-expected.txt: Added.
+        * mathml/arbitrary-markup.html: Added.
+        * mathml/mfenced-root-layer.html: Modified to avoid invalid
+        use of arbitrary markup inside mfenced element.
+        * mathml/mfenced-root-layer-expected.txt: Rebaselined.
+
 2013-10-29  Chris Fleizach  <cfleizach@apple.com>
 
         AX: elements with explicit tabindex should expose AXFocused as writable, since mouse clicks can focus it

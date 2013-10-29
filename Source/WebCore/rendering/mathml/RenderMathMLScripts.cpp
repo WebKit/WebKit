@@ -153,9 +153,12 @@ void RenderMathMLScripts::addChildInternal(bool doNotRestructure, RenderObject* 
         // beforeChild may be a grandchild, so we call the addChild function of the corresponding wrapper instead.
         RenderObject* parent = beforeChild->parent();
         if (parent != this) {
-            RenderMathMLScriptsWrapper* wrapper = toRenderMathMLScriptsWrapper(parent);
-            wrapper->addChildInternal(false, child, beforeChild);
-            return;
+            RenderMathMLBlock* parentBlock = toRenderMathMLBlock(parent);
+            if (parentBlock->isRenderMathMLScriptsWrapper()) {
+                RenderMathMLScriptsWrapper* wrapper = toRenderMathMLScriptsWrapper(parentBlock);
+                wrapper->addChildInternal(false, child, beforeChild);
+                return;
+            }
         }
     }
 

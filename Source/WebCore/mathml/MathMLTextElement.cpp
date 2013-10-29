@@ -73,6 +73,11 @@ RenderElement* MathMLTextElement::createRenderer(PassRef<RenderStyle> style)
     return MathMLElement::createRenderer(std::move(style));
 }
 
+bool MathMLTextElement::childShouldCreateRenderer(const Node* child) const
+{
+    return child->isTextNode();
+}
+
 }
 
 #endif // ENABLE(MATHML)

@@ -224,6 +224,7 @@ public:
     bool isTextNode() const { return getFlag(IsTextFlag); }
     bool isHTMLElement() const { return getFlag(IsHTMLFlag); }
     bool isSVGElement() const { return getFlag(IsSVGFlag); }
+    bool isMathMLElement() const { return getFlag(IsMathMLFlag); }
 
     bool isPseudoElement() const { return pseudoId() != NOPSEUDO; }
     bool isBeforePseudoElement() const { return pseudoId() == BEFORE; }
@@ -596,6 +597,7 @@ private:
         HasEventTargetDataFlag = 1 << 21,
         NeedsNodeRenderingTraversalSlowPathFlag = 1 << 22,
         IsInShadowTreeFlag = 1 << 23,
+        IsMathMLFlag = 1 << 24,
 
         DefaultNodeFlags = IsParsingChildrenFinishedFlag
     };
@@ -622,6 +624,7 @@ protected:
         CreateDocument = CreateContainer | InDocumentFlag,
         CreateInsertionPoint = CreateHTMLElement | NeedsNodeRenderingTraversalSlowPathFlag,
         CreateEditingText = CreateText | IsEditingTextFlag,
+        CreateMathMLElement = CreateStyledElement | IsMathMLFlag,
     };
     Node(Document*, ConstructionType);
 

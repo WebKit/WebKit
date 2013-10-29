@@ -452,12 +452,6 @@ public:
 
     DOMStringMap* dataset();
 
-#if ENABLE(MATHML)
-    virtual bool isMathMLElement() const { return false; }
-#else
-    static bool isMathMLElement() { return false; }
-#endif
-
 #if ENABLE(VIDEO)
     virtual bool isMediaElement() const { return false; }
 #endif
@@ -486,8 +480,10 @@ public:
     virtual bool isDisabledFormControl() const { return false; }
 
 
-#if ENABLE(SVG)
+#if ENABLE(SVG) || ENABLE(MATHML)
     virtual bool childShouldCreateRenderer(const Node*) const OVERRIDE;
+#endif
+#if ENABLE(SVG)
     bool hasPendingResources() const;
     void setHasPendingResources();
     void clearHasPendingResources();
