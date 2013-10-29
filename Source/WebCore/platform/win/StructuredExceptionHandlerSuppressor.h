@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StructuredExceptionHandlerSupressor_h
-#define StructuredExceptionHandlerSupressor_h
+#ifndef StructuredExceptionHandlerSuppressor_h
+#define StructuredExceptionHandlerSuppressor_h
 
 namespace WebCore {
 
 #pragma warning(push)
 #pragma warning(disable: 4733) // Disable "not registered as safe handler" warning
 
-class StructuredExceptionHandlerSupressor {
-    WTF_MAKE_NONCOPYABLE(StructuredExceptionHandlerSupressor);
+class StructuredExceptionHandlerSuppressor {
+    WTF_MAKE_NONCOPYABLE(StructuredExceptionHandlerSuppressor);
 public:
-    StructuredExceptionHandlerSupressor()
+    StructuredExceptionHandlerSuppressor()
     {
         // Windows puts an __try/__except block around some calls, such as hooks.
         // The exception handler then ignores system exceptions like invalid addresses
@@ -58,7 +58,7 @@ public:
         m_savedExceptionRegistration = registration;
     }
 
-    ~StructuredExceptionHandlerSupressor()
+    ~StructuredExceptionHandlerSuppressor()
     {
         // Restore the exception handler
         __asm mov eax, [m_savedExceptionRegistration]
@@ -73,4 +73,4 @@ private:
 
 } // namespace WebCore
 
-#endif // StructuredExceptionHandlerSupressor_h
+#endif // StructuredExceptionHandlerSuppressor_h
