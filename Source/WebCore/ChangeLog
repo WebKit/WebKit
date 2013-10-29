@@ -1,3 +1,29 @@
+2013-10-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        Clean up ScopedEventQueue
+        https://bugs.webkit.org/show_bug.cgi?id=123408
+
+        Reviewed by Darin Adler.
+
+        Clean up the ScopedEventQueue implementation. ScopedEventQueue::instance() should return a reference to a
+        NeverDestroyed<ScopedEventQueue> object. The static ScopedEventQueue::s_instance pointer is removed.
+
+        The ScopedEventQueue destructor, the dispatchAllEvents method and the scope level incrementation/decrementation
+        methods are made private. NeverDestroyed<ScopedEventQueue> and EventQueueScope are made friends of the
+        ScopedEventQueue class so they can access the constructor and the incrementation/decrementation methods, respectively.
+
+        ScopedEventQueue method definitions are reordered to follow the order of their declarations in the header file.
+        ScopedEventQueue::dispatchAllEvents() now uses std::move to efficiently dispatch and clear all currently queued events.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchScopedEvent):
+        * dom/ScopedEventQueue.cpp:
+        (WebCore::ScopedEventQueue::instance):
+        (WebCore::ScopedEventQueue::dispatchAllEvents):
+        * dom/ScopedEventQueue.h:
+        (WebCore::EventQueueScope::EventQueueScope):
+        (WebCore::EventQueueScope::~EventQueueScope):
+
 2013-10-28  Andreas Kling  <akling@apple.com>
 
         applyTextTransform() should take a const RenderStyle&.

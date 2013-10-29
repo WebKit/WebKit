@@ -34,12 +34,9 @@
 #include "Event.h"
 #include "EventDispatcher.h"
 #include "EventTarget.h"
-#include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-
-ScopedEventQueue* ScopedEventQueue::s_instance = 0;
 
 ScopedEventQueue::ScopedEventQueue()
     : m_scopingLevel(0)
@@ -52,11 +49,10 @@ ScopedEventQueue::~ScopedEventQueue()
     ASSERT(!m_queuedEvents.size());
 }
 
-void ScopedEventQueue::initialize()
+ScopedEventQueue& ScopedEventQueue::instance()
 {
-    ASSERT(!s_instance);
-    OwnPtr<ScopedEventQueue> instance = adoptPtr(new ScopedEventQueue);
-    s_instance = instance.leakPtr();
+    static NeverDestroyed<ScopedEventQueue> scopedEventQueue;
+    return scopedEventQueue;
 }
 
 void ScopedEventQueue::enqueueEvent(PassRefPtr<Event> event)
@@ -67,15 +63,6 @@ void ScopedEventQueue::enqueueEvent(PassRefPtr<Event> event)
         dispatchEvent(event);
 }
 
-void ScopedEventQueue::dispatchAllEvents()
-{
-    Vector<RefPtr<Event>> queuedEvents;
-    queuedEvents.swap(m_queuedEvents);
-
-    for (size_t i = 0; i < queuedEvents.size(); i++)
-        dispatchEvent(queuedEvents[i].release());
-}
-
 void ScopedEventQueue::dispatchEvent(PassRefPtr<Event> event) const
 {
     ASSERT(event->target());
@@ -84,12 +71,11 @@ void ScopedEventQueue::dispatchEvent(PassRefPtr<Event> event) const
     EventDispatcher::dispatchEvent(node, event);
 }
 
-ScopedEventQueue* ScopedEventQueue::instance()
+void ScopedEventQueue::dispatchAllEvents()
 {
-    if (!s_instance)
-        initialize();
-
-    return s_instance;
+    Vector<RefPtr<Event>> queuedEvents = std::move(m_queuedEvents);
+    for (size_t i = 0; i < queuedEvents.size(); i++)
+        dispatchEvent(queuedEvents[i].release());
 }
 
 void ScopedEventQueue::incrementScopingLevel()

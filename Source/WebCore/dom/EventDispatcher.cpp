@@ -207,7 +207,7 @@ void EventDispatcher::dispatchScopedEvent(Node& node, PassRefPtr<Event> event)
 {
     // We need to set the target here because it can go away by the time we actually fire the event.
     event->setTarget(&eventTargetRespectingTargetRules(node));
-    ScopedEventQueue::instance()->enqueueEvent(event);
+    ScopedEventQueue::instance().enqueueEvent(event);
 }
 
 void EventDispatcher::dispatchSimulatedClick(Element* element, Event* underlyingEvent, SimulatedClickMouseEventOptions mouseEventOptions, SimulatedClickVisualOptions visualOptions)
