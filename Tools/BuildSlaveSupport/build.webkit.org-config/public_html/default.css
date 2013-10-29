@@ -18,6 +18,7 @@ div.content h1 {
 
 body > .header {
     float: left;
+    margin-bottom: 16px;
 }
 
 small {
@@ -56,6 +57,9 @@ table td {
 
 td.LastBuild {
     min-width: 9em;
+}
+
+td.LastBuild a {
     font-weight: bold;
 }
 
@@ -106,7 +110,7 @@ td.Activity,td.Change,td.Builder {
     background-color: #CCCCCC;
 }
 
-td.Activity a,td.Change a,td.Builder a {
+td.LastBuild,td.Activity a,td.Change a,td.Builder a {
     text-decoration: none;
 }
 

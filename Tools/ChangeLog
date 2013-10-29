@@ -3,6 +3,16 @@
         More waterfall tweaking.
 
         * BuildSlaveSupport/build.webkit.org-config/public_html/default.css:
+        (body > .header):
+        (td.LastBuild):
+        (td.LastBuild a):
+        (td.LastBuild,td.Activity a,td.Change a,td.Builder a):
+
+2013-10-28  Simon Fraser  <simon.fraser@apple.com>
+
+        More waterfall tweaking.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/default.css:
         (body.interface):
         (body > hr):
         (div.content h1):
