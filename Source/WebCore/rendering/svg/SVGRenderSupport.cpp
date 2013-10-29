@@ -417,18 +417,16 @@ bool SVGRenderSupport::pointInClippingArea(RenderObject* object, const FloatPoin
     return true;
 }
 
-void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext* context, const RenderStyle* style, const RenderObject* object)
+void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext* context, const RenderStyle& style, const RenderElement& renderer)
 {
     ASSERT(context);
-    ASSERT(style);
-    ASSERT(object);
-    ASSERT(object->node());
-    ASSERT(object->node()->isSVGElement());
+    ASSERT(renderer.element());
+    ASSERT(renderer.element()->isSVGElement());
 
-    const SVGRenderStyle* svgStyle = style->svgStyle();
+    const SVGRenderStyle* svgStyle = style.svgStyle();
     ASSERT(svgStyle);
 
-    SVGLengthContext lengthContext(toSVGElement(object->node()));
+    SVGLengthContext lengthContext(toSVGElement(renderer.element()));
     context->setStrokeThickness(svgStyle->strokeWidth().value(lengthContext));
     context->setLineCap(svgStyle->capStyle());
     context->setLineJoin(svgStyle->joinStyle());
@@ -440,9 +438,9 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext* context, const
         context->setStrokeStyle(SolidStroke);
     else {
         DashArray dashArray;
-        const Vector<SVGLength>::const_iterator end = dashes.end();
-        for (Vector<SVGLength>::const_iterator it = dashes.begin(); it != end; ++it)
-            dashArray.append((*it).value(lengthContext));
+        dashArray.reserveInitialCapacity(dashes.size());
+        for (unsigned i = 0, size = dashes.size(); i < size; ++i)
+            dashArray.uncheckedAppend(dashes[i].value(lengthContext));
 
         context->setLineDash(dashArray, svgStyle->strokeDashOffset().value(lengthContext));
     }

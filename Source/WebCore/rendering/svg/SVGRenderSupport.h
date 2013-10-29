@@ -74,7 +74,7 @@ public:
     static bool checkForSVGRepaintDuringLayout(RenderObject*);
 
     // Shared between SVG renderers and resources.
-    static void applyStrokeStyleToContext(GraphicsContext*, const RenderStyle*, const RenderObject*);
+    static void applyStrokeStyleToContext(GraphicsContext*, const RenderStyle&, const RenderElement&);
 
     // Determines if any ancestor's transform has changed.
     static bool transformToRootChanged(RenderObject*);

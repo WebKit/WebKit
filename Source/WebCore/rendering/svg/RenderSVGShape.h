@@ -32,7 +32,6 @@
 #include "RenderSVGModelObject.h"
 #include "SVGGraphicsElement.h"
 #include "SVGMarkerData.h"
-#include "StrokeStyleApplier.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 
@@ -44,26 +43,6 @@ class RenderSVGContainer;
 class RenderSVGPath;
 class RenderSVGResource;
 class SVGGraphicsElement;
-
-class BoundingRectStrokeStyleApplier : public StrokeStyleApplier {
-public:
-    BoundingRectStrokeStyleApplier(const RenderObject* object, RenderStyle* style)
-        : m_object(object)
-        , m_style(style)
-    {
-        ASSERT(style);
-        ASSERT(object);
-    }
-
-    virtual void strokeStyle(GraphicsContext* context) OVERRIDE
-    {
-        SVGRenderSupport::applyStrokeStyleToContext(context, m_style, m_object);
-    }
-
-private:
-    const RenderObject* m_object;
-    RenderStyle* m_style;
-};
 
 class RenderSVGShape : public RenderSVGModelObject {
 public:

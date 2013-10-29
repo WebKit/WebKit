@@ -52,6 +52,22 @@
 
 namespace WebCore {
 
+class BoundingRectStrokeStyleApplier FINAL : public StrokeStyleApplier {
+public:
+    BoundingRectStrokeStyleApplier(const RenderSVGShape& renderer)
+        : m_renderer(renderer)
+    {
+    }
+
+    virtual void strokeStyle(GraphicsContext* context) OVERRIDE
+    {
+        SVGRenderSupport::applyStrokeStyleToContext(context, m_renderer.style(), m_renderer);
+    }
+
+private:
+    const RenderSVGShape& m_renderer;
+};
+
 RenderSVGShape::RenderSVGShape(SVGGraphicsElement& element, PassRef<RenderStyle> style)
     : RenderSVGModelObject(element, std::move(style))
     , m_needsBoundariesUpdate(false) // Default is false, the cached rects are empty from the beginning.
@@ -101,7 +117,7 @@ void RenderSVGShape::strokeShape(GraphicsContext* context) const
 bool RenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point)
 {
     ASSERT(m_path);
-    BoundingRectStrokeStyleApplier applier(this, &style());
+    BoundingRectStrokeStyleApplier applier(*this);
 
     if (hasNonScalingStroke()) {
         AffineTransform nonScalingTransform = nonScalingStrokeTransform();
@@ -382,7 +398,7 @@ FloatRect RenderSVGShape::calculateStrokeBoundingBox() const
 
     const SVGRenderStyle* svgStyle = style().svgStyle();
     if (svgStyle->hasStroke()) {
-        BoundingRectStrokeStyleApplier strokeStyle(this, &style());
+        BoundingRectStrokeStyleApplier strokeStyle(*this);
         if (hasNonScalingStroke()) {
             AffineTransform nonScalingTransform = nonScalingStrokeTransform();
             if (nonScalingTransform.isInvertible()) {
