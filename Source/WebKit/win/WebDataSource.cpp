@@ -189,7 +189,7 @@ HRESULT WebDataSource::representation(/* [retval][out] */ IWebDocumentRepresenta
 {
     HRESULT hr = S_OK;
     if (!m_representation) {
-        WebHTMLRepresentation* htmlRep = WebHTMLRepresentation::createInstance(static_cast<WebFrameLoaderClient&>(m_loader->frameLoader()->client()).webFrame());
+        WebHTMLRepresentation* htmlRep = WebHTMLRepresentation::createInstance(static_cast<WebFrameLoaderClient*>(m_loader->frameLoader()->client())->webFrame());
         hr = htmlRep->QueryInterface(IID_IWebDocumentRepresentation, (void**) &m_representation);
         htmlRep->Release();
     }
@@ -199,7 +199,7 @@ HRESULT WebDataSource::representation(/* [retval][out] */ IWebDocumentRepresenta
 
 HRESULT WebDataSource::webFrame(/* [retval][out] */ IWebFrame** frame)
 {
-    *frame = static_cast<WebFrameLoaderClient&>(m_loader->frameLoader()->client()).webFrame();
+    *frame = static_cast<WebFrameLoaderClient*>(m_loader->frameLoader()->client())->webFrame();
     (*frame)->AddRef();
     return S_OK;
 }

@@ -49,6 +49,7 @@
 #endif
 
 #if PLATFORM(WIN)
+#include <CoreGraphics/CGContextPrivate.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 
@@ -830,6 +831,13 @@ void GraphicsContext::clip(const FloatRect& rect)
     CGContextClipToRect(platformContext(), rect);
     m_data->clip(rect);
 }
+
+#if PLATFORM(WIN)
+static bool wkCGContextIsPDFContext(CGContextRef context)
+{
+    return CGContextGetType(context) == kCGContextTypePDF;
+}
+#endif
 
 void GraphicsContext::clipOut(const IntRect& rect)
 {
