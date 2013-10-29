@@ -1,3 +1,30 @@
+2013-10-29  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        Adding Nix files in Source/Platform to trunk
+        https://bugs.webkit.org/show_bug.cgi?id=118331
+
+        Reviewed by Benjamin Poulain.
+
+        Add files part of Nix public API used to implement
+        backends for some WebKit subsystems on Application side.
+
+        * nix/public/AudioDevice.h: Added.
+        * nix/public/Canvas.h: Added.
+        * nix/public/Color.h: Added.
+        * nix/public/Common.h: Added.
+        * nix/public/FFTFrame.h: Added.
+        * nix/public/Gamepad.h: Added.
+        * nix/public/Gamepads.h: Added.
+        * nix/public/MediaPlayer.h: Added.
+        * nix/public/MultiChannelPCMData.h: Added.
+        * nix/public/Platform.h: Added.
+        * nix/public/Rect.h: Added.
+        * nix/public/Size.h: Added.
+        * nix/public/ThemeEngine.h: Added.
+        * nix/src/DefaultWebThemeEngine.cpp: Added.
+        * nix/src/DefaultWebThemeEngine.h: Added.
+        * nix/src/Platform.cpp: Added.
+
 2013-06-14  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix.

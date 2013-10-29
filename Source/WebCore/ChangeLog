@@ -1,3 +1,19 @@
+2013-10-29  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        Adding Nix files in Source/Platform to trunk
+        https://bugs.webkit.org/show_bug.cgi?id=118331
+
+        Reviewed by Benjamin Poulain.
+
+        Add Nix WebAudio implementation that just forward some calls to our API.
+        This patch is part of the upstream process, tests will be landed by other patches.
+
+        * platform/audio/nix/AudioBusNix.cpp: Added.
+        * platform/audio/nix/AudioDestinationNix.cpp: Added.
+        * platform/audio/nix/AudioDestinationNix.h: Added.
+        * platform/audio/nix/FFTFrameNix.cpp: Added.
+        * platform/nix/support/MultiChannelPCMData.cpp: Added.
+
 2013-10-29  Brady Eidson  <beidson@apple.com>
 
         Move IDBTransactionBackendLevelDB to generic IDBBackingStoreInterface::Transaction.

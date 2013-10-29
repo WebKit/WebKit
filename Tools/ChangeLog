@@ -1,3 +1,14 @@
+2013-10-29  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        Adding Nix files in Source/Platform to trunk
+        https://bugs.webkit.org/show_bug.cgi?id=118331
+
+        Reviewed by Benjamin Poulain.
+
+        Add a special rule for Nix API files located at Source/Platform/nix.
+
+        * Scripts/webkitpy/style/checker.py:
+
  2013-10-29  Nadav Rotem  <nrotem@apple.com>
  
          Add myself as a comitter.
