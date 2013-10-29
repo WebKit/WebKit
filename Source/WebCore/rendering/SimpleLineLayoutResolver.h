@@ -210,7 +210,7 @@ inline RunResolver::Iterator RunResolver::begin() const
 
 inline RunResolver::Iterator RunResolver::end() const
 {
-    return Iterator(*this, m_layout.runs.size());
+    return Iterator(*this, m_layout.runCount);
 }
 
 inline LineResolver::Iterator::Iterator(RunResolver::Iterator runIterator)

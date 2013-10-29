@@ -70,34 +70,34 @@ inline LayoutUnit computeFlowHeight(const RenderBlockFlow& flow, const Layout& l
 
 inline LayoutUnit computeFlowFirstLineBaseline(const RenderBlockFlow& flow, const Layout& layout)
 {
-    ASSERT_UNUSED(layout, !layout.runs.isEmpty());
+    ASSERT_UNUSED(layout, layout.runCount);
     return flow.borderAndPaddingBefore() + baselineFromFlow(flow);
 }
 
 inline LayoutUnit computeFlowLastLineBaseline(const RenderBlockFlow& flow, const Layout& layout)
 {
-    ASSERT(!layout.runs.isEmpty());
-    return flow.borderAndPaddingBefore() + lineHeightFromFlow(flow) * (layout.runs.size() - 1) + baselineFromFlow(flow);
+    ASSERT(layout.runCount);
+    return flow.borderAndPaddingBefore() + lineHeightFromFlow(flow) * (layout.runCount - 1) + baselineFromFlow(flow);
 }
 
 inline unsigned findTextCaretMinimumOffset(const RenderText&, const Layout& layout)
 {
-    if (layout.runs.isEmpty())
+    if (!layout.runCount)
         return 0;
     return layout.runs[0].textOffset;
 }
 
 inline unsigned findTextCaretMaximumOffset(const RenderText& renderer, const Layout& layout)
 {
-    if (layout.runs.isEmpty())
+    if (!layout.runCount)
         return renderer.textLength();
-    auto& last = layout.runs[layout.runs.size() - 1];
+    auto& last = layout.runs[layout.runCount - 1];
     return last.textOffset + last.textLength;
 }
 
 inline bool containsTextCaretOffset(const RenderText&, const Layout& layout, unsigned offset)
 {
-    for (unsigned i = 0; i < layout.runs.size(); ++i) {
+    for (unsigned i = 0; i < layout.runCount; ++i) {
         auto& line = layout.runs[i];
         if (offset < line.textOffset)
             return false;
@@ -109,7 +109,7 @@ inline bool containsTextCaretOffset(const RenderText&, const Layout& layout, uns
 
 inline bool isTextRendered(const RenderText&, const Layout& layout)
 {
-    for (unsigned i = 0; i < layout.runs.size(); ++i) {
+    for (unsigned i = 0; i < layout.runCount; ++i) {
         if (layout.runs[i].textLength)
             return true;
     }

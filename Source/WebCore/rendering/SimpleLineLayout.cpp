@@ -236,8 +236,6 @@ static void adjustRunOffsets(Vector<Run, 4>& lineRuns, ETextAlign textAlign, flo
 
 std::unique_ptr<Layout> create(RenderBlockFlow& flow)
 {
-    auto layout = std::make_unique<Layout>();
-
     RenderText& textRenderer = toRenderText(*flow.firstChild());
     ASSERT(!textRenderer.firstTextBox());
 
@@ -249,6 +247,9 @@ std::unique_ptr<Layout> create(RenderBlockFlow& flow)
 
     LazyLineBreakIterator lineBreakIterator(textRenderer.text(), style.locale());
     int nextBreakable = -1;
+
+    Layout::RunVector runs;
+    unsigned lineCount = 0;
 
     unsigned lineEndOffset = 0;
     while (lineEndOffset < textLength) {
@@ -318,16 +319,28 @@ std::unique_ptr<Layout> create(RenderBlockFlow& flow)
         adjustRunOffsets(lineRuns, textAlign, lineWidth.committedWidth(), lineWidth.availableWidth());
 
         for (unsigned i = 0; i < lineRuns.size(); ++i)
-            layout->runs.append(lineRuns[i]);
+            runs.append(lineRuns[i]);
 
-        layout->runs.last().isEndOfLine = true;
-        layout->lineCount++;
+        runs.last().isEndOfLine = true;
+        ++lineCount;
     }
 
     textRenderer.clearNeedsLayout();
 
-    layout->runs.shrinkToFit();
-    return layout;
+    return Layout::create(runs, lineCount);
+}
+
+std::unique_ptr<Layout> Layout::create(const RunVector& runVector, unsigned lineCount)
+{
+    void* slot = WTF::fastMalloc(sizeof(Layout) + sizeof(Run) * runVector.size());
+    return std::unique_ptr<Layout>(new (NotNull, slot) Layout(runVector, lineCount));
+}
+
+Layout::Layout(const RunVector& runVector, unsigned lineCount)
+    : runCount(runVector.size())
+    , lineCount(lineCount)
+{
+    memcpy(runs, runVector.data(), runCount * sizeof(Run));
 }
 
 }

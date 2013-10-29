@@ -74,7 +74,7 @@ bool hitTestFlow(const RenderBlockFlow& flow, const Layout& layout, const HitTes
     if (hitTestAction != HitTestForeground)
         return false;
 
-    if (layout.runs.isEmpty())
+    if (!layout.runCount)
         return false;
 
     RenderStyle& style = flow.style();

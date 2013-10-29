@@ -1,3 +1,30 @@
+2013-10-29  Antti Koivisto  <antti@apple.com>
+
+        Make SimpleLineLayout::Layout a variable size object
+        https://bugs.webkit.org/show_bug.cgi?id=123459
+
+        Reviewed by Andreas Kling.
+
+        Less memory, less indirection.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+        (WebCore::SimpleLineLayout::create):
+        (WebCore::SimpleLineLayout::Layout::create):
+        (WebCore::SimpleLineLayout::Layout::Layout):
+        * rendering/SimpleLineLayout.h:
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::hitTestFlow):
+        * rendering/SimpleLineLayoutFunctions.h:
+        (WebCore::SimpleLineLayout::computeFlowFirstLineBaseline):
+        (WebCore::SimpleLineLayout::computeFlowLastLineBaseline):
+        (WebCore::SimpleLineLayout::findTextCaretMinimumOffset):
+        (WebCore::SimpleLineLayout::findTextCaretMaximumOffset):
+        (WebCore::SimpleLineLayout::containsTextCaretOffset):
+        (WebCore::SimpleLineLayout::isTextRendered):
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::end):
+
 2013-10-29  Andreas Kling  <akling@apple.com>
 
         RenderObject::outlineStyleForRepaint() should return a reference.
