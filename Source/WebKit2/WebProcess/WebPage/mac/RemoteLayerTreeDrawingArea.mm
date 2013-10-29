@@ -31,6 +31,7 @@
 #import "WebPage.h"
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/MainFrame.h>
 #import <WebCore/Settings.h>
 
 using namespace WebCore;

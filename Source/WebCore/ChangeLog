@@ -1,3 +1,11 @@
+2013-10-29  Tim Horton  <timothy_horton@apple.com>
+
+        More correct build fix after 158223.
+
+        Only fails in release because it's inline.
+
+        * WebCore.exp.in:
+
 2013-10-29  Antti Koivisto  <antti@apple.com>
 
         Use left/right instead of left/width for simple text runs
