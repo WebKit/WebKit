@@ -1,3 +1,15 @@
+2013-10-28  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Webkit does not expose AXRequired on input type=file
+        https://bugs.webkit.org/show_bug.cgi?id=123376
+
+        Reviewed by Mario Sanchez Prada.
+
+        Modify existing test case to test for file upload buttons.
+
+        * accessibility/html5-required-attribute-expected.txt:
+        * accessibility/html5-required-attribute.html:
+
 2013-10-29  Santosh Mahto  <santosh.ma@samsung.com>
 
         Text selected with double-click gets unselected after DOM modification

@@ -7,6 +7,7 @@
 
 
 <input type="text" id="text1" required>
+<input type="file" id="file" required>
 
 <p id="description"></p>
 <div id="console"></div>
@@ -23,6 +24,8 @@
         document.getElementById("text1").removeAttribute("required");
         shouldBeFalse("accessibilityController.focusedElement.isRequired");
 
+        var fileUpload = accessibilityController.accessibleElementById("file");
+        shouldBeTrue("fileUpload.isRequired");
     }
 
 </script>

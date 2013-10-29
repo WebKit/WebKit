@@ -1,3 +1,16 @@
+2013-10-28  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Webkit does not expose AXRequired on input type=file
+        https://bugs.webkit.org/show_bug.cgi?id=123376
+
+        Reviewed by Mario Sanchez Prada.
+
+        File upload buttons should expose AXRequired, since they take an input state.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::supportsRequiredAttribute):
+        (WebCore::AccessibilityNodeObject::alternativeText):
+
 2013-10-29  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Re-enable simple line layout for EFL
