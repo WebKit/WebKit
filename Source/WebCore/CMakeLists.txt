@@ -2182,6 +2182,7 @@ set(WebCore_SOURCES
     rendering/SimpleLineLayoutFunctions.cpp
     rendering/TextAutosizer.cpp
     rendering/TextPaintStyle.cpp
+    rendering/TextPainter.cpp
     rendering/break_lines.cpp
 
     rendering/mathml/RenderMathMLBlock.cpp

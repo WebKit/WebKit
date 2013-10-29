@@ -120,5 +120,6 @@
 #include "RenderWidget.cpp"
 #include "RootInlineBox.cpp"
 #include "ScrollBehavior.cpp"
+#include "TextPainter.cpp"
 #include "break_lines.cpp"
 

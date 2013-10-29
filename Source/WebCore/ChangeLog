@@ -1,3 +1,40 @@
+2013-10-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Move InlineTextBox's text painting to it's own class
+        https://bugs.webkit.org/show_bug.cgi?id=123355
+
+        Reviewed by Dean Jackson.
+
+        Implementing text-decoration-skip: ink requires drawing text
+        twice (once regularly, and once with a thick outline into a mask).
+        This patch pulls out the relevant text drawing code from
+        InlineTextBox into a new class, called TextPainter, which can be re-used
+        to draw text multiple times.
+
+        Because there should be no observable difference, no tests need to be updated.
+
+        * CMakeLists.txt: Adding new TextPainter class
+        * GNUmakefile.list.am: Adding new TextPainter class
+        * WebCore.vcxproj/WebCore.vcxproj: Adding new TextPainter class
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Adding new TextPainter
+        class
+        * WebCore.xcodeproj/project.pbxproj: Adding new TextPainter class
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint): Moving text drawing code from
+        this function
+        * rendering/RenderingAllInOne.cpp: Adding new TextPainter class
+        * rendering/TextPainter.cpp: Added.
+        (WebCore::TextPainter::TextPainter):
+        (WebCore::drawTextOrEmphasisMarks):
+        (WebCore::paintTextWithShadows):
+        (WebCore::rotation):
+        (WebCore::TextPainter::paintText): New location for text drawing
+        code
+        (WebCore::TextPainter::paintTextInContext):
+        * rendering/TextPainter.h: Added.
+        (WebCore::SavedDrawingStateForMask::SavedDrawingStateForMask):
+        (WebCore::TextPainter::boxRect):
+
 2013-10-29  Jer Noble  <jer.noble@apple.com>
 
         [MSE] [Mac] Enable MediaSource on the Mac

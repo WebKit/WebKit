@@ -4494,6 +4494,8 @@ webcore_sources += \
 	Source/WebCore/rendering/TextAutosizer.cpp \
 	Source/WebCore/rendering/TextAutosizer.h \
 	Source/WebCore/rendering/TextPaintStyle.cpp \
+	Source/WebCore/rendering/TextPainter.cpp \
+	Source/WebCore/rendering/TextPainter.h \
 	Source/WebCore/rendering/TextPaintStyle.h \
 	Source/WebCore/rendering/VerticalPositionCache.h \
 	Source/WebCore/rendering/mathml/RenderMathMLBlock.cpp \
