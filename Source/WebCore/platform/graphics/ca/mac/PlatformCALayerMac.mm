@@ -729,4 +729,9 @@ AVPlayerLayer *PlatformCALayerMac::playerLayer() const
     return (AVPlayerLayer *)m_layer.get();
 }
 
+PassRefPtr<PlatformCALayer> PlatformCALayerMac::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
+{
+    return PlatformCALayerMac::create(layerType, client);
+}
+
 #endif // USE(ACCELERATED_COMPOSITING)

@@ -140,6 +140,8 @@ public:
 
     virtual PassRefPtr<PlatformCALayer> clone(PlatformCALayerClient* owner) const OVERRIDE;
 
+    virtual PassRefPtr<PlatformCALayer> createCompatibleLayer(PlatformCALayer::LayerType, PlatformCALayerClient*) const OVERRIDE;
+
 private:
     PlatformCALayerWin(LayerType, PlatformLayer*, PlatformCALayerClient* owner);
 

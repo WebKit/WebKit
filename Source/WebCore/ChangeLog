@@ -1,3 +1,30 @@
+2013-10-28  Tim Horton  <timothy_horton@apple.com>
+
+        Make TileController create the appropriate PlatformCALayer subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=123418
+
+        Reviewed by Simon Fraser.
+
+        Add PlatformCALayer::createCompatibleLayer, which is overridden in
+        each of the subclasses to create a PlatformCALayer instance of the same
+        subclass. This is used in TileController to make bare PlatformCALayers
+        of the correct type (Mac, Win, or Remote).
+
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::createCompatibleLayer):
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayerWin::createCompatibleLayer):
+        * platform/graphics/ca/win/PlatformCALayerWin.h:
+        Add createCompatibleLayer and implement it in the subclasses.
+
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::TileController):
+        (WebCore::TileController::tiledScrollingIndicatorLayer):
+        (WebCore::TileController::createTileLayer):
+        Make use of createCompatibleLayer when creating PlatformCALayers.
+
 2013-10-28  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: CSS Regions: Add protocol API to expose content nodes addition/removal

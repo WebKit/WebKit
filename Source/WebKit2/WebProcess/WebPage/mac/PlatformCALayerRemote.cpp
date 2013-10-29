@@ -477,4 +477,9 @@ AVPlayerLayer* PlatformCALayerRemote::playerLayer() const
     return nullptr;
 }
 
+PassRefPtr<PlatformCALayer> PlatformCALayerRemote::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
+{
+    return PlatformCALayerRemote::create(layerType, client, m_context);
+}
+
 #endif // USE(ACCELERATED_COMPOSITING)

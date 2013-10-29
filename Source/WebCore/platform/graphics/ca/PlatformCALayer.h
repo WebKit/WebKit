@@ -198,6 +198,8 @@ public:
 #endif // NDEBUG
 #endif // PLATFORM(WIN)
 
+    virtual PassRefPtr<PlatformCALayer> createCompatibleLayer(LayerType, PlatformCALayerClient*) const = 0;
+
 protected:
     PlatformCALayer(LayerType layerType, PlatformCALayerClient* owner)
         : m_layerType(layerType)

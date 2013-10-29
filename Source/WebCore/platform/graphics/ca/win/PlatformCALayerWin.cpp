@@ -670,4 +670,9 @@ void PlatformCALayerWin::printTree() const
 }
 #endif // #ifndef NDEBUG
 
+PassRefPtr<PlatformCALayer> PlatformCALayerWin::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const
+{
+    return PlatformCALayerWin::create(layerType, client);
+}
+
 #endif // USE(ACCELERATED_COMPOSITING)

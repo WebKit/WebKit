@@ -28,7 +28,6 @@
 
 #import "IntRect.h"
 #import "PlatformCALayer.h"
-#import "PlatformCALayerMac.h"
 #import "Region.h"
 #import "LayerPool.h"
 #import "WebLayer.h"
@@ -70,7 +69,7 @@ TileController::TileController(PlatformCALayer* rootPlatformLayer)
     , m_tileDebugBorderWidth(0)
     , m_indicatorMode(ThreadedScrollingIndication)
 {
-    m_tileContainerLayer = PlatformCALayerMac::create(PlatformCALayer::LayerTypeLayer, nullptr);
+    m_tileContainerLayer = m_tileCacheLayer->createCompatibleLayer(PlatformCALayer::LayerTypeLayer, nullptr);
 #ifndef NDEBUG
     m_tileContainerLayer->setName("TileController Container Layer");
 #endif
@@ -894,14 +893,14 @@ IntRect TileController::tileCoverageRect() const
 PlatformCALayer* TileController::tiledScrollingIndicatorLayer()
 {
     if (!m_tiledScrollingIndicatorLayer) {
-        m_tiledScrollingIndicatorLayer = PlatformCALayerMac::create(PlatformCALayer::LayerTypeSimpleLayer, this);
+        m_tiledScrollingIndicatorLayer = m_tileCacheLayer->createCompatibleLayer(PlatformCALayer::LayerTypeSimpleLayer, this);
         m_tiledScrollingIndicatorLayer->setOpacity(0.75);
         m_tiledScrollingIndicatorLayer->setAnchorPoint(FloatPoint3D());
         m_tiledScrollingIndicatorLayer->setBorderColor(Color::black);
         m_tiledScrollingIndicatorLayer->setBorderWidth(1);
         m_tiledScrollingIndicatorLayer->setPosition(FloatPoint(2, 2));
 
-        m_visibleRectIndicatorLayer = PlatformCALayerMac::create(PlatformCALayer::LayerTypeLayer, nullptr);
+        m_visibleRectIndicatorLayer = m_tileCacheLayer->createCompatibleLayer(PlatformCALayer::LayerTypeLayer, nullptr);
         m_visibleRectIndicatorLayer->setBorderWidth(2);
         m_visibleRectIndicatorLayer->setAnchorPoint(FloatPoint3D());
         m_visibleRectIndicatorLayer->setBorderColor(Color(255, 0, 0));
@@ -933,7 +932,7 @@ RefPtr<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect)
         m_tileRepaintCounts.remove(layer.get());
         layer->setOwner(this);
     } else
-        layer = PlatformCALayerMac::create(PlatformCALayer::LayerTypeTiledBackingTileLayer, this);
+        layer = m_tileCacheLayer->createCompatibleLayer(PlatformCALayer::LayerTypeTiledBackingTileLayer, this);
 
     layer->setAnchorPoint(FloatPoint3D());
     layer->setBounds(FloatRect(FloatPoint(), tileRect.size()));
