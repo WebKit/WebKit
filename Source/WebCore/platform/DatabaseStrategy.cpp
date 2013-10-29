@@ -43,12 +43,13 @@ AbstractDatabaseServer* DatabaseStrategy::getDatabaseServer()
 #endif // ENABLE(SQL_DATABASE)
 
 #if ENABLE(INDEXED_DATABASE)
-PassRefPtr<IDBFactoryBackendInterface> DatabaseStrategy::createIDBFactoryBackend()
+PassRefPtr<IDBFactoryBackendInterface> DatabaseStrategy::createIDBFactoryBackend(const String& databaseDirectoryIdentifier)
 {
     // FIXME: Need a better platform abstraction here, but this stop gap will work for now.
 #if USE(LEVELDB)
-    return IDBFactoryBackendLevelDB::create();
+    return IDBFactoryBackendLevelDB::create(databaseDirectoryIdentifier);
 #else
+    UNUSED_PARAM(databaseDirectoryIdentifier);
     return 0;
 #endif
 }

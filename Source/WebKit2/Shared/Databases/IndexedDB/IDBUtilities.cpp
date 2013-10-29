@@ -33,9 +33,9 @@
 
 namespace WebKit {
 
-String uniqueDatabaseIdentifier(const String& databaseName, WebCore::SecurityOrigin* securityOrigin)
+String uniqueDatabaseIdentifier(const String& databaseName, const WebCore::SecurityOrigin& securityOrigin)
 {
-    return securityOrigin->databaseIdentifier() + databaseName;
+    return securityOrigin.databaseIdentifier() + databaseName;
 }
 
 } // namespace WebKit

@@ -1,3 +1,55 @@
+2013-10-28  Brady Eidson  <beidson@apple.com>
+
+        Refactor IDB factory creation.
+        https://bugs.webkit.org/show_bug.cgi?id=123347
+
+        Reviewed by Andreas Kling.
+
+        - Rework how database directory location is passed around.
+        - Make (some) SecurityOrigin arguments be references instead of pointers.
+        - Add two SecurityOrigin arguments to opening databases for future use.
+
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::openInternal):
+
+        * Modules/indexeddb/IDBFactoryBackendInterface.cpp:
+        (WebCore::IDBFactoryBackendInterface::create):
+        * Modules/indexeddb/IDBFactoryBackendInterface.h:
+
+        * Modules/indexeddb/PageGroupIndexedDatabase.cpp:
+        (WebCore::PageGroupIndexedDatabase::PageGroupIndexedDatabase):
+        (WebCore::PageGroupIndexedDatabase::from):
+        (WebCore::PageGroupIndexedDatabase::factoryBackend):
+        * Modules/indexeddb/PageGroupIndexedDatabase.h:
+
+        * Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp:
+        (WebCore::WorkerGlobalScopeIndexedDatabase::WorkerGlobalScopeIndexedDatabase):
+        (WebCore::WorkerGlobalScopeIndexedDatabase::from):
+        (WebCore::WorkerGlobalScopeIndexedDatabase::indexedDB):
+        * Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.h:
+
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        (WebCore::IDBBackingStoreLevelDB::open):
+        (WebCore::IDBBackingStoreLevelDB::openInMemory):
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp:
+        (WebCore::computeFileIdentifier):
+        (WebCore::computeUniqueIdentifier):
+        (WebCore::IDBFactoryBackendLevelDB::IDBFactoryBackendLevelDB):
+        (WebCore::IDBFactoryBackendLevelDB::getDatabaseNames):
+        (WebCore::IDBFactoryBackendLevelDB::deleteDatabase):
+        (WebCore::IDBFactoryBackendLevelDB::openBackingStore):
+        (WebCore::IDBFactoryBackendLevelDB::open):
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.h:
+        (WebCore::IDBFactoryBackendLevelDB::create):
+
+        * WebCore.exp.in:
+
+        * platform/DatabaseStrategy.cpp:
+        (WebCore::DatabaseStrategy::createIDBFactoryBackend):
+        * platform/DatabaseStrategy.h:
+
 2013-10-28  Andreas Kling  <akling@apple.com>
 
         RenderElement::style() should return a reference.

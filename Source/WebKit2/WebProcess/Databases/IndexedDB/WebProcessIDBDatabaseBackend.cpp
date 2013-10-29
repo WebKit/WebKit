@@ -29,8 +29,10 @@
 
 #include "DatabaseProcessIDBDatabaseBackendMessages.h"
 #include "DatabaseToWebProcessConnectionMessages.h"
+#include "WebIDBFactoryBackend.h"
 #include "WebProcess.h"
 #include "WebToDatabaseProcessConnection.h"
+#include <WebCore/IDBMetadata.h>
 #include <WebCore/SecurityOrigin.h>
 
 #if ENABLE(INDEXED_DATABASE)
@@ -46,10 +48,10 @@ static uint64_t generateBackendIdentifier()
     return identifier++;
 }
 
-WebProcessIDBDatabaseBackend::WebProcessIDBDatabaseBackend(const String& name, WebCore::SecurityOrigin* origin)
+WebProcessIDBDatabaseBackend::WebProcessIDBDatabaseBackend(WebIDBFactoryBackend& factory, const String& name)
     : m_databaseName(name)
-    , m_securityOrigin(origin)
     , m_backendIdentifier(generateBackendIdentifier())
+    , m_factory(&factory)
 {
 }
 

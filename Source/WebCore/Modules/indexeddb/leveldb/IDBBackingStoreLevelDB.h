@@ -61,10 +61,10 @@ public:
     class Transaction;
 
     virtual ~IDBBackingStoreLevelDB();
-    static PassRefPtr<IDBBackingStoreLevelDB> open(SecurityOrigin*, const String& pathBase, const String& fileIdentifier);
-    static PassRefPtr<IDBBackingStoreLevelDB> open(SecurityOrigin*, const String& pathBase, const String& fileIdentifier, LevelDBFactory*);
-    static PassRefPtr<IDBBackingStoreLevelDB> openInMemory(SecurityOrigin*, const String& identifier);
-    static PassRefPtr<IDBBackingStoreLevelDB> openInMemory(SecurityOrigin*, const String& identifier, LevelDBFactory*);
+    static PassRefPtr<IDBBackingStoreLevelDB> open(const SecurityOrigin&, const String& pathBase, const String& fileIdentifier);
+    static PassRefPtr<IDBBackingStoreLevelDB> open(const SecurityOrigin&, const String& pathBase, const String& fileIdentifier, LevelDBFactory*);
+    static PassRefPtr<IDBBackingStoreLevelDB> openInMemory(const String& identifier);
+    static PassRefPtr<IDBBackingStoreLevelDB> openInMemory(const String& identifier, LevelDBFactory*);
     WeakPtr<IDBBackingStoreLevelDB> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
 
     virtual Vector<String> getDatabaseNames();

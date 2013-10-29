@@ -147,7 +147,7 @@ PassRefPtr<IDBOpenDBRequest> IDBFactory::openInternal(ScriptExecutionContext* co
     RefPtr<IDBDatabaseCallbacks> databaseCallbacks = IDBDatabaseCallbacksImpl::create();
     int64_t transactionId = IDBDatabase::nextTransactionId();
     RefPtr<IDBOpenDBRequest> request = IDBOpenDBRequest::create(context, databaseCallbacks, transactionId, version, versionNullness);
-    m_backend->open(name, version, transactionId, request, databaseCallbacks, context->securityOrigin(), context, getIndexedDBDatabasePath(context));
+    m_backend->open(name, version, transactionId, request, databaseCallbacks, *(context->securityOrigin()), *(context->topOrigin()));
     return request;
 }
 

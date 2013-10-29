@@ -367,13 +367,13 @@ enum IDBLevelDBBackingStoreOpenResult {
     IDBLevelDBBackingStoreOpenMax,
 };
 
-PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::open(SecurityOrigin* securityOrigin, const String& pathBaseArg, const String& fileIdentifier)
+PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::open(const SecurityOrigin& securityOrigin, const String& pathBaseArg, const String& fileIdentifier)
 {
     DefaultLevelDBFactory levelDBFactory;
     return IDBBackingStoreLevelDB::open(securityOrigin, pathBaseArg, fileIdentifier, &levelDBFactory);
 }
 
-PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::open(SecurityOrigin* securityOrigin, const String& pathBaseArg, const String& fileIdentifier, LevelDBFactory* levelDBFactory)
+PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::open(const SecurityOrigin& securityOrigin, const String& pathBaseArg, const String& fileIdentifier, LevelDBFactory* levelDBFactory)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::open");
     ASSERT(!pathBaseArg.isEmpty());
@@ -390,7 +390,7 @@ PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::open(SecurityOrigin* 
         return PassRefPtr<IDBBackingStoreLevelDB>();
     }
 
-    String path = pathByAppendingComponent(pathBase, securityOrigin->databaseIdentifier() + ".indexeddb.leveldb");
+    String path = pathByAppendingComponent(pathBase, securityOrigin.databaseIdentifier() + ".indexeddb.leveldb");
 
     db = levelDBFactory->openLevelDB(path, comparator.get());
     if (db) {
@@ -437,13 +437,13 @@ PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::open(SecurityOrigin* 
     return create(fileIdentifier, db.release(), comparator.release());
 }
 
-PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::openInMemory(SecurityOrigin* securityOrigin, const String& identifier)
+PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::openInMemory(const String& identifier)
 {
     DefaultLevelDBFactory levelDBFactory;
-    return IDBBackingStoreLevelDB::openInMemory(securityOrigin, identifier, &levelDBFactory);
+    return IDBBackingStoreLevelDB::openInMemory(identifier, &levelDBFactory);
 }
 
-PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::openInMemory(SecurityOrigin*, const String& identifier, LevelDBFactory*)
+PassRefPtr<IDBBackingStoreLevelDB> IDBBackingStoreLevelDB::openInMemory(const String& identifier, LevelDBFactory*)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::openInMemory");
 

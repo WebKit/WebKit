@@ -30,6 +30,7 @@
 #if ENABLE(WORKERS) && ENABLE(INDEXED_DATABASE)
 
 #include "Supplementable.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -45,11 +46,12 @@ public:
     static IDBFactory* indexedDB(ScriptExecutionContext*);
 
 private:
-    WorkerGlobalScopeIndexedDatabase();
+    explicit WorkerGlobalScopeIndexedDatabase(const String& databaseDirectoryIdentifier);
 
     IDBFactory* indexedDB();
     static const char* supplementName();
 
+    String m_databaseDirectoryIdentifier;
     RefPtr<IDBFactoryBackendInterface> m_factoryBackend;
     RefPtr<IDBFactory> m_idbFactory;
 };

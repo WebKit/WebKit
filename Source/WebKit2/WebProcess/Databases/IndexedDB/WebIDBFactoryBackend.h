@@ -35,12 +35,12 @@ namespace WebKit {
 
 class WebIDBFactoryBackend : public WebCore::IDBFactoryBackendInterface {
 public:
-    static PassRefPtr<WebIDBFactoryBackend> create() { return adoptRef(new WebIDBFactoryBackend); }
+    static PassRefPtr<WebIDBFactoryBackend> create(const String& databaseDirectoryIdentifier) { return adoptRef(new WebIDBFactoryBackend(databaseDirectoryIdentifier)); }
 
     virtual ~WebIDBFactoryBackend();
 
     virtual void getDatabaseNames(PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::ScriptExecutionContext*, const String& dataDir) OVERRIDE FINAL;
-    virtual void open(const String& name, int64_t version, int64_t transactionId, PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::IDBDatabaseCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::ScriptExecutionContext*, const String& dataDir) OVERRIDE FINAL;
+    virtual void open(const String& name, int64_t version, int64_t transactionId, PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::IDBDatabaseCallbacks>, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin) OVERRIDE FINAL;
     virtual void deleteDatabase(const String& name, PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::ScriptExecutionContext*, const String& dataDir) OVERRIDE FINAL;
 
     virtual void removeIDBDatabaseBackend(const String& uniqueIdentifier) OVERRIDE FINAL;
@@ -48,7 +48,7 @@ public:
     virtual PassRefPtr<WebCore::IDBTransactionBackendInterface> maybeCreateTransactionBackend(WebCore::IDBDatabaseBackendInterface*, int64_t transactionId, PassRefPtr<WebCore::IDBDatabaseCallbacks>, const Vector<int64_t>&, WebCore::IndexedDB::TransactionMode);
 
 private:
-    WebIDBFactoryBackend();
+    explicit WebIDBFactoryBackend(const String& databaseDirectoryIdentifier);
 };
 
 } // namespace WebKit

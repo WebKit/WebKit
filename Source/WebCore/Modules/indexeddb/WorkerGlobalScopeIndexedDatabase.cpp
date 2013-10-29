@@ -38,7 +38,8 @@
 
 namespace WebCore {
 
-WorkerGlobalScopeIndexedDatabase::WorkerGlobalScopeIndexedDatabase()
+WorkerGlobalScopeIndexedDatabase::WorkerGlobalScopeIndexedDatabase(const String& databaseDirectoryIdentifier)
+    : m_databaseDirectoryIdentifier(databaseDirectoryIdentifier)
 {
 }
 
@@ -55,7 +56,13 @@ WorkerGlobalScopeIndexedDatabase* WorkerGlobalScopeIndexedDatabase::from(ScriptE
 {
     WorkerGlobalScopeIndexedDatabase* supplement = static_cast<WorkerGlobalScopeIndexedDatabase*>(Supplement<ScriptExecutionContext>::from(context, supplementName()));
     if (!supplement) {
-        supplement = new WorkerGlobalScopeIndexedDatabase();
+        String databaseDirectoryIdentifier;
+        WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(context);
+        const GroupSettings* groupSettings = workerGlobalScope->groupSettings();
+        if (groupSettings)
+            databaseDirectoryIdentifier = groupSettings->indexedDBDatabasePath();
+
+        supplement = new WorkerGlobalScopeIndexedDatabase(databaseDirectoryIdentifier);
         provideTo(context, supplementName(), adoptPtr(supplement));
     }
     return supplement;
@@ -69,7 +76,7 @@ IDBFactory* WorkerGlobalScopeIndexedDatabase::indexedDB(ScriptExecutionContext* 
 IDBFactory* WorkerGlobalScopeIndexedDatabase::indexedDB()
 {
     if (!m_factoryBackend)
-        m_factoryBackend = IDBFactoryBackendInterface::create();
+        m_factoryBackend = IDBFactoryBackendInterface::create(m_databaseDirectoryIdentifier);
     if (!m_idbFactory)
         m_idbFactory = IDBFactory::create(m_factoryBackend.get());
     return m_idbFactory.get();

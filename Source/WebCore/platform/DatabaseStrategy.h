@@ -27,6 +27,8 @@
 #define DatabaseStrategy_h
 
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 class AbstractDatabaseServer;
@@ -39,7 +41,7 @@ public:
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-    virtual PassRefPtr<IDBFactoryBackendInterface> createIDBFactoryBackend();
+    virtual PassRefPtr<IDBFactoryBackendInterface> createIDBFactoryBackend(const String& databaseDirectoryIdentifier);
 #endif
 
 protected:
