@@ -1,3 +1,10 @@
+2013-10-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a failing test expectation on editing/execCommand/insert-list-xml.xhtml
+        after r158198. The failure is tracked by the bug 123460.
+
+        * TestExpectations:
+
 2013-10-29  Simon Fraser  <simon.fraser@apple.com>
 
         Mark some colorspace-sensitive tests as possibly passing.
