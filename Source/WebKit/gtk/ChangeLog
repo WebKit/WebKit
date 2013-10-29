@@ -1,3 +1,9 @@
+2013-10-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.3.1 release.
+
+        * NEWS: Added release notes for 2.3.1.
+
 2013-10-28  Bastien Nocera <hadess@hadess.net>
 
         Name all the GLib timeout sources

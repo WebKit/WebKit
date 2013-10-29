@@ -1,3 +1,9 @@
+2013-10-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.3.1 release.
+
+        * Source/autotools/Versions.m4: Bump version numbers.
+
 2013-10-24  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Build break with latest EFL 1.8 libraries.

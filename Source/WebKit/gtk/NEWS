@@ -1,4 +1,27 @@
 =================
+WebKitGTK+  2.3.1
+=================
+
+What's new in WebKitGTK+ 2.3.1?
+
+  - Add WebKit2 API for TLS errors.
+  - Make EventTarget interface introspectable in GObject DOM bindings.
+  - Expose WheelEvent in the GObject DOM bindings API.
+  - Generate API documentation for GObject DOM bindings.
+  - Respect image orientation by default.
+  - Enable text edition undo/redo operations support in WebKit2.
+  - Add suppport for blob URLs to GStreamer media backend.
+  - Add support for subtitles.
+  - Allow running the web process with an arbitrary prefix command in
+    debug builds.
+  - Expose image links properly to accessibility.
+  - Expose title and alternative text for links in image maps to
+    accessibility.
+  - Cancel the current active WebKitAuthenticationRequest on load
+    fail.
+  - Fix several memory leaks.
+
+=================
 WebKitGTK+  2.1.4
 =================
 
