@@ -975,6 +975,9 @@ public:
     WebCore::Element* fullScreenElement() const { return m_fullScreenElement.get(); }
 #endif
 
+    bool canShowMIMEType(const String& mimeType);
+    bool canShowMIMETypeAsHTML(const String& mimeType);
+
     // Used by TextInputController in DumpRenderTree
 
     HRESULT STDMETHODCALLTYPE setCompositionForTesting(
