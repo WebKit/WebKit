@@ -115,6 +115,7 @@ function documentReady()
 
         var ringImage = document.createElement("img");
         ringImage.classList.add("ring");
+        ringImage.title = platform.readableName;
         cell.appendChild(ringImage);
 
         var logoImage = document.createElement("img");
