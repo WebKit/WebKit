@@ -42,10 +42,10 @@ public:
     static SVGResources* cachedResourcesForRenderObject(const RenderObject*);
 
     // Called from all SVG renderers addChild() methods.
-    static void clientWasAddedToTree(RenderObject*, const RenderStyle* newStyle);
+    static void clientWasAddedToTree(RenderObject&);
 
     // Called from all SVG renderers removeChild() methods.
-    static void clientWillBeRemovedFromTree(RenderObject*);
+    static void clientWillBeRemovedFromTree(RenderObject&);
 
     // Called from all SVG renderers destroy() methods - except for RenderSVGResourceContainer.
     static void clientDestroyed(RenderElement&);
@@ -57,11 +57,11 @@ public:
     static void clientStyleChanged(RenderElement&, StyleDifference, const RenderStyle& newStyle);
 
     // Called from RenderSVGResourceContainer::willBeDestroyed().
-    static void resourceDestroyed(RenderSVGResourceContainer*);
+    static void resourceDestroyed(RenderSVGResourceContainer&);
 
 private:
-    void addResourcesFromRenderObject(RenderObject*, const RenderStyle*);
-    void removeResourcesFromRenderObject(RenderObject*);
+    void addResourcesFromRenderer(RenderElement&, const RenderStyle&);
+    void removeResourcesFromRenderer(RenderElement&);
 
     typedef HashMap<const RenderObject*, OwnPtr<SVGResources>> CacheMap;
     CacheMap m_cache;

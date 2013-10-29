@@ -64,7 +64,7 @@ void RenderSVGResourceContainer::layout()
 
 void RenderSVGResourceContainer::willBeDestroyed()
 {
-    SVGResourcesCache::resourceDestroyed(this);
+    SVGResourcesCache::resourceDestroyed(*this);
     RenderSVGHiddenContainer::willBeDestroyed();
 }
 

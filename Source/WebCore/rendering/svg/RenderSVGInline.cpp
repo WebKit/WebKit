@@ -117,7 +117,7 @@ void RenderSVGInline::styleDidChange(StyleDifference diff, const RenderStyle* ol
 void RenderSVGInline::addChild(RenderObject* child, RenderObject* beforeChild)
 {
     RenderInline::addChild(child, beforeChild);
-    SVGResourcesCache::clientWasAddedToTree(child, &child->style());
+    SVGResourcesCache::clientWasAddedToTree(*child);
 
     if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(this))
         textRenderer->subtreeChildWasAdded(child);
@@ -125,7 +125,7 @@ void RenderSVGInline::addChild(RenderObject* child, RenderObject* beforeChild)
 
 void RenderSVGInline::removeChild(RenderObject& child)
 {
-    SVGResourcesCache::clientWillBeRemovedFromTree(&child);
+    SVGResourcesCache::clientWillBeRemovedFromTree(child);
 
     RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(this);
     if (!textRenderer) {

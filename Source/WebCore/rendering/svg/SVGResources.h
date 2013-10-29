@@ -72,7 +72,7 @@ public:
 
     // Methods operating on all cached resources
     void removeClientFromCache(RenderObject*, bool markForInvalidation = true) const;
-    void resourceDestroyed(RenderSVGResourceContainer*);
+    void resourceDestroyed(RenderSVGResourceContainer&);
 
 #ifndef NDEBUG
     void dump(const RenderObject*);

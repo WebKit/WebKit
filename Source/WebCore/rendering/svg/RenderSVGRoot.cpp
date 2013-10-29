@@ -324,12 +324,12 @@ void RenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldS
 void RenderSVGRoot::addChild(RenderObject* child, RenderObject* beforeChild)
 {
     RenderReplaced::addChild(child, beforeChild);
-    SVGResourcesCache::clientWasAddedToTree(child, &child->style());
+    SVGResourcesCache::clientWasAddedToTree(*child);
 }
 
 void RenderSVGRoot::removeChild(RenderObject& child)
 {
-    SVGResourcesCache::clientWillBeRemovedFromTree(&child);
+    SVGResourcesCache::clientWillBeRemovedFromTree(child);
     RenderReplaced::removeChild(child);
 }
 

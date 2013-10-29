@@ -325,13 +325,12 @@ void SVGResources::removeClientFromCache(RenderObject* object, bool markForInval
     }
 }
 
-void SVGResources::resourceDestroyed(RenderSVGResourceContainer* resource)
+void SVGResources::resourceDestroyed(RenderSVGResourceContainer& resource)
 {
-    ASSERT(resource);
     if (!m_clipperFilterMaskerData && !m_markerData && !m_fillStrokeData && !m_linkedResource)
         return;
 
-    if (m_linkedResource == resource) {
+    if (m_linkedResource == &resource) {
         ASSERT(!m_clipperFilterMaskerData);
         ASSERT(!m_markerData);
         ASSERT(!m_fillStrokeData);
@@ -340,11 +339,11 @@ void SVGResources::resourceDestroyed(RenderSVGResourceContainer* resource)
         return;
     }
 
-    switch (resource->resourceType()) {
+    switch (resource.resourceType()) {
     case MaskerResourceType:
         if (!m_clipperFilterMaskerData)
             break;
-        if (m_clipperFilterMaskerData->masker == resource) {
+        if (m_clipperFilterMaskerData->masker == &resource) {
             m_clipperFilterMaskerData->masker->removeAllClientsFromCache();
             m_clipperFilterMaskerData->masker = 0;
         }
@@ -352,15 +351,15 @@ void SVGResources::resourceDestroyed(RenderSVGResourceContainer* resource)
     case MarkerResourceType:
         if (!m_markerData)
             break;
-        if (m_markerData->markerStart == resource) {
+        if (m_markerData->markerStart == &resource) {
             m_markerData->markerStart->removeAllClientsFromCache();
             m_markerData->markerStart = 0;
         }
-        if (m_markerData->markerMid == resource) {
+        if (m_markerData->markerMid == &resource) {
             m_markerData->markerMid->removeAllClientsFromCache();
             m_markerData->markerMid = 0;
         }
-        if (m_markerData->markerEnd == resource) {
+        if (m_markerData->markerEnd == &resource) {
             m_markerData->markerEnd->removeAllClientsFromCache();
             m_markerData->markerEnd = 0;
         }
@@ -370,11 +369,11 @@ void SVGResources::resourceDestroyed(RenderSVGResourceContainer* resource)
     case RadialGradientResourceType:
         if (!m_fillStrokeData)
             break;
-        if (m_fillStrokeData->fill == resource) {
+        if (m_fillStrokeData->fill == &resource) {
             m_fillStrokeData->fill->removeAllClientsFromCache();
             m_fillStrokeData->fill = 0;
         }
-        if (m_fillStrokeData->stroke == resource) {
+        if (m_fillStrokeData->stroke == &resource) {
             m_fillStrokeData->stroke->removeAllClientsFromCache();
             m_fillStrokeData->stroke = 0;
         }
@@ -383,7 +382,7 @@ void SVGResources::resourceDestroyed(RenderSVGResourceContainer* resource)
 #if ENABLE(FILTERS)
         if (!m_clipperFilterMaskerData)
             break;
-        if (m_clipperFilterMaskerData->filter == resource) {
+        if (m_clipperFilterMaskerData->filter == &resource) {
             m_clipperFilterMaskerData->filter->removeAllClientsFromCache();
             m_clipperFilterMaskerData->filter = 0;
         }
@@ -394,7 +393,7 @@ void SVGResources::resourceDestroyed(RenderSVGResourceContainer* resource)
     case ClipperResourceType:
         if (!m_clipperFilterMaskerData)
             break; 
-        if (m_clipperFilterMaskerData->clipper == resource) {
+        if (m_clipperFilterMaskerData->clipper == &resource) {
             m_clipperFilterMaskerData->clipper->removeAllClientsFromCache();
             m_clipperFilterMaskerData->clipper = 0;
         }

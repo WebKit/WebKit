@@ -1,3 +1,15 @@
+2013-10-29  Andreas Kling  <akling@apple.com>
+
+        Move more of SVG resources cache to using RenderElement.
+        <https://webkit.org/b/123452>
+
+        Make some more RenderSVGResourcesCache methods take RenderElement&
+        instead of RenderObject*.
+
+        Also removed a double hash lookup in removeResourcesFromRenderer().
+
+        Reviewed by Antti Koivisto.
+
 2013-10-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove old Inspector.json version files and generators
