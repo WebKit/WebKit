@@ -126,12 +126,6 @@ void ScrollingStateNode::willBeRemovedFromStateTree()
         m_children->at(i)->willBeRemovedFromStateTree();
 }
 
-void ScrollingStateNode::writeIndent(TextStream& ts, int indent)
-{
-    for (int i = 0; i != indent; ++i)
-        ts << "  ";
-}
-
 void ScrollingStateNode::dump(TextStream& ts, int indent) const
 {
     writeIndent(ts, indent);

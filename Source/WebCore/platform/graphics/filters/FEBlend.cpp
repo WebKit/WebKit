@@ -30,7 +30,6 @@
 #include "Filter.h"
 #include "FloatPoint.h"
 #include "GraphicsContext.h"
-#include "RenderTreeAsText.h"
 #include "TextStream.h"
 
 #include <runtime/Uint8ClampedArray.h>

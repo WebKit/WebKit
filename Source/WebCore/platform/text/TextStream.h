@@ -32,6 +32,13 @@
 
 namespace WebCore {
 
+class IntPoint;
+class IntRect;
+class FloatPoint;
+class FloatSize;
+class LayoutPoint;
+class LayoutRect;
+
 class TextStream {
 public:
     struct FormatNumberRespectingIntegers {
@@ -53,11 +60,35 @@ public:
     TextStream& operator<<(const String&);
     TextStream& operator<<(const FormatNumberRespectingIntegers&);
 
+    TextStream& operator<<(const IntPoint&);
+    TextStream& operator<<(const IntRect&);
+    TextStream& operator<<(const FloatPoint&);
+    TextStream& operator<<(const FloatSize&);
+    TextStream& operator<<(const LayoutPoint&);
+    TextStream& operator<<(const LayoutRect&);
+
+    template<typename Item>
+    TextStream& operator<<(const Vector<Item>& vector)
+    {
+        *this << "[";
+
+        unsigned size = vector.size();
+        for (unsigned i = 0; i < size; ++i) {
+            *this << vector[i];
+            if (i < size - 1)
+                *this << ", ";
+        }
+
+        return *this << "]";
+    }
+
     String release();
 
 private:
     StringBuilder m_text;
 };
+
+void writeIndent(TextStream&, int indent);
 
 }
 

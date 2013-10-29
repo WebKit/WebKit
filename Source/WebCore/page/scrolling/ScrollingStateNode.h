@@ -92,7 +92,6 @@ public:
 
 protected:
     ScrollingStateNode(const ScrollingStateNode&);
-    static void writeIndent(TextStream&, int indent);
 
     ScrollingStateTree* m_scrollingStateTree;
 

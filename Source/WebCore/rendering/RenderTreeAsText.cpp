@@ -77,49 +77,6 @@ using namespace HTMLNames;
 
 static void writeLayers(TextStream&, const RenderLayer* rootLayer, RenderLayer*, const LayoutRect& paintDirtyRect, int indent = 0, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
 
-TextStream& operator<<(TextStream& ts, const IntRect& r)
-{
-    return ts << "at (" << r.x() << "," << r.y() << ") size " << r.width() << "x" << r.height();
-}
-
-TextStream& operator<<(TextStream& ts, const IntPoint& p)
-{
-    return ts << "(" << p.x() << "," << p.y() << ")";
-}
-
-TextStream& operator<<(TextStream& ts, const LayoutRect& r)
-{
-    // FIXME: These should be printed as floats. Keeping them ints for consistency with previous test expectations.
-    return ts << pixelSnappedIntRect(r);
-}
-
-TextStream& operator<<(TextStream& ts, const LayoutPoint& p)
-{
-    // FIXME: These should be printed as floats. Keeping them ints for consistency with previous test expectations.
-    return ts << "(" << p.x().toInt() << "," << p.y().toInt() << ")";
-}
-
-TextStream& operator<<(TextStream& ts, const FloatPoint& p)
-{
-    ts << "(" << TextStream::FormatNumberRespectingIntegers(p.x());
-    ts << "," << TextStream::FormatNumberRespectingIntegers(p.y());
-    ts << ")";
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, const FloatSize& s)
-{
-    ts << "width=" << TextStream::FormatNumberRespectingIntegers(s.width());
-    ts << " height=" << TextStream::FormatNumberRespectingIntegers(s.height());
-    return ts;
-}
-
-void writeIndent(TextStream& ts, int indent)
-{
-    for (int i = 0; i != indent; ++i)
-        ts << "  ";
-}
-
 static void printBorderStyle(TextStream& ts, const EBorderStyle borderStyle)
 {
     switch (borderStyle) {

@@ -517,8 +517,6 @@ protected:
 
     GraphicsLayer(GraphicsLayerClient*);
 
-    static void writeIndent(TextStream&, int indent);
-
     void dumpProperties(TextStream&, int indent, LayerTreeAsTextBehavior) const;
     virtual void dumpAdditionalProperties(TextStream&, int /*indent*/, LayerTreeAsTextBehavior) const { }
 

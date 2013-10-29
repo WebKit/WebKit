@@ -33,7 +33,7 @@
 #if ENABLE(FILTERS)
 #include "DistantLightSource.h"
 
-#include "RenderTreeAsText.h"
+#include "TextStream.h"
 
 namespace WebCore {
 

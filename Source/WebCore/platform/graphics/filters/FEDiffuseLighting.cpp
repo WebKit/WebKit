@@ -25,7 +25,6 @@
 #include "FEDiffuseLighting.h"
 
 #include "LightSource.h"
-#include "RenderTreeAsText.h"
 #include "TextStream.h"
 
 namespace WebCore {

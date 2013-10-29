@@ -571,12 +571,6 @@ void GraphicsLayer::addRepaintRect(const FloatRect& repaintRect)
     }
 }
 
-void GraphicsLayer::writeIndent(TextStream& ts, int indent)
-{
-    for (int i = 0; i != indent; ++i)
-        ts << "  ";
-}
-
 void GraphicsLayer::dumpLayer(TextStream& ts, int indent, LayerTreeAsTextBehavior behavior) const
 {
     writeIndent(ts, indent);

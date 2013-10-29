@@ -38,7 +38,6 @@
 #include "CustomFilterValidatedProgram.h"
 #include "Extensions3D.h"
 #include "GraphicsContext3D.h"
-#include "RenderTreeAsText.h"
 #include "TextStream.h"
 
 #include <runtime/Uint8ClampedArray.h>

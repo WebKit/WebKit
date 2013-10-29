@@ -24,7 +24,6 @@
 
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include "RenderTreeAsText.h"
 #include "TextStream.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>

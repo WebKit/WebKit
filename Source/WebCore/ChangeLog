@@ -1,3 +1,52 @@
+2013-10-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move writeIndent, overloaded << operators from RenderTreeAsText to TextStream
+        https://bugs.webkit.org/show_bug.cgi?id=116012
+
+        Reviewed by Simon Fraser.
+
+        The writeIndent method and overloaded << operators for writing out vectors and points and rectangles
+        of various types are not specific to the render tree nor do they depend on any rendering-specific interface.
+
+        * page/scrolling/ScrollingStateNode.cpp:
+        * page/scrolling/ScrollingStateNode.h:
+        (ScrollingStateNode): Remove the writeIndent declaration, it's functionally the same as the TextStream method.
+        * platform/graphics/GraphicsLayer.cpp:
+        * platform/graphics/GraphicsLayer.h:
+        (GraphicsLayer): Ditto.
+        * platform/graphics/filters/DistantLightSource.cpp: Remove the RenderTreeAsText.h inclusion or replace it with
+        the inclusion of the TextStream.h header where required. The writeIndent method is now declared there.
+        * platform/graphics/filters/FEBlend.cpp: Ditto.
+        * platform/graphics/filters/FEColorMatrix.cpp: Ditto.
+        * platform/graphics/filters/FEComponentTransfer.cpp: Ditto.
+        * platform/graphics/filters/FEComposite.cpp: Ditto.
+        * platform/graphics/filters/FEConvolveMatrix.cpp: Ditto.
+        * platform/graphics/filters/FECustomFilter.cpp: Ditto.
+        * platform/graphics/filters/FEDiffuseLighting.cpp: Ditto.
+        * platform/graphics/filters/FEDisplacementMap.cpp: Ditto.
+        * platform/graphics/filters/FEDropShadow.cpp: Ditto.
+        * platform/graphics/filters/FEFlood.cpp: Ditto.
+        * platform/graphics/filters/FEGaussianBlur.cpp: Ditto.
+        * platform/graphics/filters/FEMerge.cpp: Ditto.
+        * platform/graphics/filters/FEMorphology.cpp: Ditto.
+        * platform/graphics/filters/FEOffset.cpp: Ditto.
+        * platform/graphics/filters/FESpecularLighting.cpp: Ditto.
+        * platform/graphics/filters/FETurbulence.cpp: Ditto.
+        * platform/graphics/filters/SourceAlpha.cpp: Ditto.
+        * platform/graphics/filters/SourceGraphic.cpp: Ditto.
+        * platform/text/TextStream.cpp: Move the writeIndent and operators' definitions here.
+        (WebCore::operator<<):
+        (WebCore):
+        (WebCore::writeIndent):
+        * platform/text/TextStream.h: Move the writeIndent and operators' declarations here.
+        (WebCore):
+        (TextStream):
+        (WebCore::TextStream::operator<<):
+        * rendering/RenderTreeAsText.cpp: Move the writeIndent and operators' definitions into TextStream.
+        (WebCore):
+        * rendering/RenderTreeAsText.h: Move the writeIndent and operators' declarations into TextStream.
+        (WebCore):
+
 2013-10-28  Zan Dobersek  <zdobersek@igalia.com>
 
         Clean up ScopedEventQueue
