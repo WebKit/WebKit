@@ -40,7 +40,7 @@ IDBIndexWriter::IDBIndexWriter(const IDBIndexMetadata& metadata, const IndexKeys
 {
 }
 
-void IDBIndexWriter::writeIndexKeys(const IDBRecordIdentifier* recordIdentifier, IDBBackingStoreInterface& backingStore, IDBBackingStoreInterface::Transaction* transaction, int64_t databaseId, int64_t objectStoreId) const
+void IDBIndexWriter::writeIndexKeys(const IDBRecordIdentifier* recordIdentifier, IDBBackingStoreInterface& backingStore, IDBBackingStoreInterface::Transaction& transaction, int64_t databaseId, int64_t objectStoreId) const
 {
     ASSERT(recordIdentifier);
     int64_t indexId = m_indexMetadata.id;
@@ -51,7 +51,7 @@ void IDBIndexWriter::writeIndexKeys(const IDBRecordIdentifier* recordIdentifier,
     }
 }
 
-bool IDBIndexWriter::verifyIndexKeys(IDBBackingStoreInterface& backingStore, IDBBackingStoreInterface::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey, String* errorMessage) const
+bool IDBIndexWriter::verifyIndexKeys(IDBBackingStoreInterface& backingStore, IDBBackingStoreInterface::Transaction& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey, String* errorMessage) const
 {
     canAddKeys = false;
     for (size_t i = 0; i < m_indexKeys.size(); ++i) {
@@ -68,7 +68,7 @@ bool IDBIndexWriter::verifyIndexKeys(IDBBackingStoreInterface& backingStore, IDB
     return true;
 }
 
-bool IDBIndexWriter::addingKeyAllowed(IDBBackingStoreInterface& backingStore, IDBBackingStoreInterface::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const
+bool IDBIndexWriter::addingKeyAllowed(IDBBackingStoreInterface& backingStore, IDBBackingStoreInterface::Transaction& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const
 {
     allowed = false;
     if (!m_indexMetadata.unique) {

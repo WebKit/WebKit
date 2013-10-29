@@ -57,7 +57,7 @@ IDBTransactionBackendLevelDB::IDBTransactionBackendLevelDB(IDBDatabaseBackendImp
     , m_commitPending(false)
     , m_callbacks(callbacks)
     , m_database(databaseBackend)
-    , m_transaction(databaseBackend->backingStore())
+    , m_backingStoreTransaction(databaseBackend->backingStore()->createBackingStoreTransaction())
     , m_taskTimer(this, &IDBTransactionBackendLevelDB::taskTimerFired)
     , m_pendingPreemptiveEvents(0)
     , m_backingStore(databaseBackend->backingStore())
@@ -115,7 +115,7 @@ void IDBTransactionBackendLevelDB::abort(PassRefPtr<IDBDatabaseError> error)
     m_taskTimer.stop();
 
     if (wasRunning)
-        m_transaction.rollback();
+        m_backingStoreTransaction->rollback();
 
     // Run the abort tasks, if any.
     while (!m_abortTaskQueue.isEmpty()) {
@@ -127,7 +127,7 @@ void IDBTransactionBackendLevelDB::abort(PassRefPtr<IDBDatabaseError> error)
     // are fired, as the script callbacks may release references and allow the backing store
     // itself to be released, and order is critical.
     closeOpenCursors();
-    m_transaction.reset();
+    m_backingStoreTransaction->resetTransaction();
 
     // Transactions must also be marked as completed before the front-end is notified, as
     // the transaction completion unblocks operations like closing connections.
@@ -207,13 +207,13 @@ void IDBTransactionBackendLevelDB::commit()
     bool unused = m_state == Unused;
     m_state = Finished;
 
-    bool committed = unused || m_transaction.commit();
+    bool committed = unused || m_backingStoreTransaction->commit();
 
     // Backing store resources (held via cursors) must be released before script callbacks
     // are fired, as the script callbacks may release references and allow the backing store
     // itself to be released, and order is critical.
     closeOpenCursors();
-    m_transaction.reset();
+    m_backingStoreTransaction->resetTransaction();
 
     // Transactions must also be marked as completed before the front-end is notified, as
     // the transaction completion unblocks operations like closing connections.
@@ -238,7 +238,7 @@ void IDBTransactionBackendLevelDB::taskTimerFired(Timer<IDBTransactionBackendLev
     ASSERT(!isTaskQueueEmpty());
 
     if (m_state == StartPending) {
-        m_transaction.begin();
+        m_backingStoreTransaction->begin();
         m_state = Running;
     }
 

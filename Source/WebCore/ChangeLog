@@ -1,3 +1,54 @@
+2013-10-29  Brady Eidson  <beidson@apple.com>
+
+        Move IDBTransactionBackendLevelDB to generic IDBBackingStoreInterface::Transaction.
+        https://bugs.webkit.org/show_bug.cgi?id=123475
+
+        Reviewed by Tim Horton.
+
+        Currently it's using IDBBackingStoreLevelDB::Transaction, which hinders the goal of:
+        https://bugs.webkit.org/show_bug.cgi?id=123449 - IDBTransactionBackend should be cross platform
+
+        * Modules/indexeddb/IDBBackingStoreInterface.h:
+
+        * Modules/indexeddb/IDBIndexWriter.cpp:
+        (WebCore::IDBIndexWriter::writeIndexKeys):
+        (WebCore::IDBIndexWriter::verifyIndexKeys):
+        (WebCore::IDBIndexWriter::addingKeyAllowed):
+        * Modules/indexeddb/IDBIndexWriter.h:
+
+        * Modules/indexeddb/IDBTransactionBackendInterface.h:
+
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        (WebCore::IDBBackingStoreLevelDB::updateIDBDatabaseIntVersion):
+        (WebCore::IDBBackingStoreLevelDB::updateIDBDatabaseMetaData):
+        (WebCore::IDBBackingStoreLevelDB::createObjectStore):
+        (WebCore::IDBBackingStoreLevelDB::deleteObjectStore):
+        (WebCore::IDBBackingStoreLevelDB::getRecord):
+        (WebCore::IDBBackingStoreLevelDB::putRecord):
+        (WebCore::IDBBackingStoreLevelDB::clearObjectStore):
+        (WebCore::IDBBackingStoreLevelDB::deleteRecord):
+        (WebCore::IDBBackingStoreLevelDB::getKeyGeneratorCurrentNumber):
+        (WebCore::IDBBackingStoreLevelDB::maybeUpdateKeyGeneratorCurrentNumber):
+        (WebCore::IDBBackingStoreLevelDB::keyExistsInObjectStore):
+        (WebCore::IDBBackingStoreLevelDB::createIndex):
+        (WebCore::IDBBackingStoreLevelDB::deleteIndex):
+        (WebCore::IDBBackingStoreLevelDB::putIndexDataForRecord):
+        (WebCore::IDBBackingStoreLevelDB::findKeyInIndex):
+        (WebCore::IDBBackingStoreLevelDB::getPrimaryKeyViaIndex):
+        (WebCore::IDBBackingStoreLevelDB::keyExistsInIndex):
+        (WebCore::IDBBackingStoreLevelDB::openObjectStoreCursor):
+        (WebCore::IDBBackingStoreLevelDB::openObjectStoreKeyCursor):
+        (WebCore::IDBBackingStoreLevelDB::openIndexKeyCursor):
+        (WebCore::IDBBackingStoreLevelDB::openIndexCursor):
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.cpp:
+        (WebCore::IDBTransactionBackendLevelDB::IDBTransactionBackendLevelDB):
+        (WebCore::IDBTransactionBackendLevelDB::abort):
+        (WebCore::IDBTransactionBackendLevelDB::commit):
+        (WebCore::IDBTransactionBackendLevelDB::taskTimerFired):
+        * Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.h:
+
 2013-10-29  Dean Jackson  <dino@apple.com>
 
         Move InlineTextBox's text painting to it's own class

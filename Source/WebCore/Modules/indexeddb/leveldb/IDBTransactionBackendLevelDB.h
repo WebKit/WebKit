@@ -63,7 +63,7 @@ public:
     void unregisterOpenCursor(IDBCursorBackendLevelDB*);
     virtual void addPreemptiveEvent() OVERRIDE { m_pendingPreemptiveEvents++; }
     virtual void didCompletePreemptiveEvent() OVERRIDE { m_pendingPreemptiveEvents--; ASSERT(m_pendingPreemptiveEvents >= 0); }
-    virtual IDBBackingStoreInterface::Transaction* backingStoreTransaction() { return &m_transaction; }
+    virtual IDBBackingStoreInterface::Transaction& backingStoreTransaction() { return *m_backingStoreTransaction; }
 
     virtual IDBDatabaseBackendInterface& database() const OVERRIDE { return *m_database; }
 
@@ -113,7 +113,7 @@ private:
     TaskQueue m_preemptiveTaskQueue;
     TaskQueue m_abortTaskQueue;
 
-    IDBBackingStoreLevelDB::Transaction m_transaction;
+    std::unique_ptr<IDBBackingStoreInterface::Transaction> m_backingStoreTransaction;
 
     // FIXME: delete the timer once we have threads instead.
     Timer<IDBTransactionBackendLevelDB> m_taskTimer;

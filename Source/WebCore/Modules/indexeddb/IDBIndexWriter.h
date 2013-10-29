@@ -45,14 +45,14 @@ public:
         return adoptRef(new IDBIndexWriter(indexMetadata, indexKeys));
     }
 
-    bool verifyIndexKeys(IDBBackingStoreInterface&, IDBBackingStoreInterface::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey = 0, String* errorMessage = 0) const WARN_UNUSED_RETURN;
+    bool verifyIndexKeys(IDBBackingStoreInterface&, IDBBackingStoreInterface::Transaction&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey = 0, String* errorMessage = 0) const WARN_UNUSED_RETURN;
 
-    void writeIndexKeys(const IDBRecordIdentifier*, IDBBackingStoreInterface&, IDBBackingStoreInterface::Transaction*, int64_t databaseId, int64_t objectStoreId) const;
+    void writeIndexKeys(const IDBRecordIdentifier*, IDBBackingStoreInterface&, IDBBackingStoreInterface::Transaction&, int64_t databaseId, int64_t objectStoreId) const;
 
 private:
     IDBIndexWriter(const IDBIndexMetadata&, const IndexKeys&);
 
-    bool addingKeyAllowed(IDBBackingStoreInterface&, IDBBackingStoreInterface::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const WARN_UNUSED_RETURN;
+    bool addingKeyAllowed(IDBBackingStoreInterface&, IDBBackingStoreInterface::Transaction&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const WARN_UNUSED_RETURN;
 
     const IDBIndexMetadata m_indexMetadata;
     IndexKeys m_indexKeys;
