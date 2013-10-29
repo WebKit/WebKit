@@ -427,8 +427,8 @@ LLINT_SLOW_PATH_DECL(stack_check)
     dataLogF("Num vars = %u.\n", exec->codeBlock()->m_numVars);
     dataLogF("Current end is at %p.\n", exec->vm().interpreter->stack().end());
 #endif
-    ASSERT(!exec->vm().interpreter->stack().containsAddress(&exec->registers()[-exec->codeBlock()->m_numCalleeRegisters]));
-    if (UNLIKELY(!vm.interpreter->stack().grow(&exec->registers()[-exec->codeBlock()->m_numCalleeRegisters]))) {
+    ASSERT(!exec->vm().interpreter->stack().containsAddress(&exec->registers()[virtualRegisterForLocal(exec->codeBlock()->m_numCalleeRegisters).offset()]));
+    if (UNLIKELY(!vm.interpreter->stack().grow(&exec->registers()[virtualRegisterForLocal(exec->codeBlock()->m_numCalleeRegisters).offset()]))) {
         exec = exec->callerFrame();
         CommonSlowPaths::interpreterThrowInCaller(exec, createStackOverflowError(exec));
         pc = returnToThrowForThrownException(exec);

@@ -499,7 +499,7 @@ MacroAssemblerCodeRef arityFixup(VM* vm)
     jit.pop(JSInterfaceJIT::regT4);
 #  endif
     jit.neg64(JSInterfaceJIT::regT0);
-    jit.addPtr(JSInterfaceJIT::TrustedImm32(8), JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::regT3);
+    jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::regT3);
     jit.load32(JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, JSStack::ArgumentCount * 8), JSInterfaceJIT::regT2);
     jit.add32(JSInterfaceJIT::TrustedImm32(JSStack::CallFrameHeaderSize), JSInterfaceJIT::regT2);
 
@@ -531,7 +531,7 @@ MacroAssemblerCodeRef arityFixup(VM* vm)
     jit.pop(JSInterfaceJIT::regT4);
 #  endif
     jit.neg32(JSInterfaceJIT::regT0);
-    jit.addPtr(JSInterfaceJIT::TrustedImm32(8), JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::regT3);
+    jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::regT3);
     jit.load32(JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister, JSStack::ArgumentCount * 8), JSInterfaceJIT::regT2);
     jit.add32(JSInterfaceJIT::TrustedImm32(JSStack::CallFrameHeaderSize), JSInterfaceJIT::regT2);
 

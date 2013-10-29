@@ -154,7 +154,7 @@ CallFrame* loadVarargs(CallFrame* callFrame, JSStack* stack, JSValue thisValue, 
 {
     if (!arguments) { // f.apply(x, arguments), with arguments unmodified.
         unsigned argumentCountIncludingThis = callFrame->argumentCountIncludingThis();
-        CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + firstFreeRegister - argumentCountIncludingThis - JSStack::CallFrameHeaderSize);
+        CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + firstFreeRegister - argumentCountIncludingThis - JSStack::CallFrameHeaderSize - 1);
         if (argumentCountIncludingThis > Arguments::MaxArguments + 1 || !stack->grow(newCallFrame->registers())) {
             callFrame->vm().throwException(callFrame, createStackOverflowError(callFrame));
             return 0;
@@ -168,7 +168,7 @@ CallFrame* loadVarargs(CallFrame* callFrame, JSStack* stack, JSValue thisValue, 
     }
 
     if (arguments.isUndefinedOrNull()) {
-        CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + firstFreeRegister - 1 - JSStack::CallFrameHeaderSize);
+        CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + firstFreeRegister - 1 - JSStack::CallFrameHeaderSize - 1);
         if (!stack->grow(newCallFrame->registers())) {
             callFrame->vm().throwException(callFrame, createStackOverflowError(callFrame));
             return 0;
@@ -295,7 +295,7 @@ public:
         unsigned unusedColumn = 0;
         visitor->computeLineAndColumn(line, unusedColumn);
         dataLogF("[ReturnVPC]                | %10p | %d (line %d)\n", m_it, visitor->bytecodeOffset(), line);
-        ++m_it;
+        --m_it;
         return StackVisitor::Done;
     }
 
@@ -315,14 +315,14 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     const Register* it;
     const Register* end;
 
-    it = callFrame->registers() + JSStack::CallFrameHeaderSize + callFrame->argumentCountIncludingThis();
-    end = callFrame->registers() + JSStack::CallFrameHeaderSize;
+    it = callFrame->registers() + JSStack::ThisArgument + callFrame->argumentCount();
+    end = callFrame->registers() + JSStack::ThisArgument - 1;
     while (it > end) {
         JSValue v = it->jsValue();
         int registerNumber = it - callFrame->registers();
         String name = codeBlock->nameForRegister(VirtualRegister(registerNumber));
         dataLogF("[r% 3d %14s]      | %10p | %-16s 0x%lld \n", registerNumber, name.ascii().data(), it, toCString(v).data(), (long long)JSValue::encode(v));
-        it++;
+        --it;
     }
     
     dataLogF("-----------------------------------------------------------------------------\n");
@@ -347,8 +347,6 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     --it;
     dataLogF("-----------------------------------------------------------------------------\n");
 
-    int registerCount = 0;
-
     end = it - codeBlock->m_numVars;
     if (it != end) {
         do {
@@ -357,18 +355,17 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
             String name = codeBlock->nameForRegister(VirtualRegister(registerNumber));
             dataLogF("[r% 3d %14s]      | %10p | %-16s 0x%lld \n", registerNumber, name.ascii().data(), it, toCString(v).data(), (long long)JSValue::encode(v));
             --it;
-            --registerCount;
         } while (it != end);
     }
     dataLogF("-----------------------------------------------------------------------------\n");
 
-    end = it + codeBlock->m_numCalleeRegisters - codeBlock->m_numVars;
+    end = it - codeBlock->m_numCalleeRegisters + codeBlock->m_numVars;
     if (it != end) {
         do {
             JSValue v = (*it).jsValue();
-            dataLogF("[r% 3d]                     | %10p | %-16s 0x%lld \n", registerCount, it, toCString(v).data(), (long long)JSValue::encode(v));
-            ++it;
-            ++registerCount;
+            int registerNumber = it - callFrame->registers();
+            dataLogF("[r% 3d]                     | %10p | %-16s 0x%lld \n", registerNumber, it, toCString(v).data(), (long long)JSValue::encode(v));
+            --it;
         } while (it != end);
     }
     dataLogF("-----------------------------------------------------------------------------\n");

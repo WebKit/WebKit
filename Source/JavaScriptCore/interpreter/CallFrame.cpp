@@ -119,7 +119,7 @@ Register* CallFrame::frameExtentInternal()
 {
     CodeBlock* codeBlock = this->codeBlock();
     ASSERT(codeBlock);
-    return registers() - codeBlock->m_numCalleeRegisters;
+    return registers() + virtualRegisterForLocal(codeBlock->m_numCalleeRegisters).offset();
 }
 
 } // namespace JSC

@@ -53,13 +53,14 @@ namespace JSC {
     public:
         enum CallFrameHeaderEntry {
             CallFrameHeaderSize = 6,
-
-            ArgumentCount = 6,
-            CallerFrame = 5,
-            Callee = 4,
-            ScopeChain = 3,
-            ReturnPC = 2, // This is either an Instruction* or a pointer into JIT generated code stored as an Instruction*.
-            CodeBlock = 1,
+            FirstArgument = 7,
+            ThisArgument = 6,
+            ArgumentCount = 5,
+            CallerFrame = 4,
+            Callee = 3,
+            ScopeChain = 2,
+            ReturnPC = 1, // This is either an Instruction* or a pointer into JIT generated code stored as an Instruction*.
+            CodeBlock = 0,
         };
 
         static const size_t defaultCapacity = 512 * 1024;

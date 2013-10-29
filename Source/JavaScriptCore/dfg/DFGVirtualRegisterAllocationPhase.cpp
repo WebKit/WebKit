@@ -128,7 +128,7 @@ public:
         for (InlineCallFrameSet::iterator iter = m_graph.m_inlineCallFrames->begin(); !!iter; ++iter) {
             InlineCallFrame* inlineCallFrame = *iter;
             CodeBlock* codeBlock = baselineCodeBlockForInlineCallFrame(inlineCallFrame);
-            unsigned requiredCalleeRegisters = VirtualRegister(inlineCallFrame->stackOffset).toLocal() + codeBlock->m_numCalleeRegisters;
+            unsigned requiredCalleeRegisters = VirtualRegister(inlineCallFrame->stackOffset).toLocal() + 1 + codeBlock->m_numCalleeRegisters;
             if (requiredCalleeRegisters > calleeRegisters)
                 calleeRegisters = requiredCalleeRegisters;
         }

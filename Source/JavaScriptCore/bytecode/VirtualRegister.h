@@ -35,12 +35,12 @@ namespace JSC {
 
 inline bool operandIsLocal(int operand)
 {
-    return operand <= 0;
+    return operand < 0;
 }
 
 inline bool operandIsArgument(int operand)
 {
-    return operand > 0;
+    return operand >= 0;
 }
 
 
@@ -73,8 +73,8 @@ private:
     static const int s_invalidVirtualRegister = 0x3fffffff;
     static const int s_firstConstantRegisterIndex = 0x40000000;
 
-    static int localToOperand(int local) { return -local; }
-    static int operandToLocal(int operand) { return -operand; }
+    static int localToOperand(int local) { return -1 - local; }
+    static int operandToLocal(int operand) { return -1 - operand; }
     static int operandToArgument(int operand) { return operand - CallFrame::thisArgumentOffset(); }
     static int argumentToOperand(int argument) { return argument + CallFrame::thisArgumentOffset(); }
 

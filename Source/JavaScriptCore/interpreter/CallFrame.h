@@ -179,12 +179,12 @@ namespace JSC  {
         Register* frameExtent()
         {
             if (!codeBlock())
-                return registers();
+                return registers() - 1;
             return frameExtentInternal();
         }
     
         Register* frameExtentInternal();
-    
+
 #if USE(JSVALUE32_64)
         Instruction* currentVPC() const
         {
@@ -224,8 +224,8 @@ namespace JSC  {
         // Access to arguments as passed. (After capture, arguments may move to a different location.)
         size_t argumentCount() const { return argumentCountIncludingThis() - 1; }
         size_t argumentCountIncludingThis() const { return this[JSStack::ArgumentCount].payload(); }
-        static int argumentOffset(int argument) { return (s_firstArgumentOffset + argument); }
-        static int argumentOffsetIncludingThis(int argument) { return (s_thisArgumentOffset + argument); }
+        static int argumentOffset(int argument) { return (JSStack::FirstArgument + argument); }
+        static int argumentOffsetIncludingThis(int argument) { return (JSStack::ThisArgument + argument); }
 
         // In the following (argument() and setArgument()), the 'argument'
         // parameter is the index of the arguments of the target function of
@@ -258,7 +258,7 @@ namespace JSC  {
 
         JSValue argumentAfterCapture(size_t argument);
 
-        static int offsetFor(size_t argumentCountIncludingThis) { return argumentCountIncludingThis + JSStack::CallFrameHeaderSize; }
+        static int offsetFor(size_t argumentCountIncludingThis) { return argumentCountIncludingThis + JSStack::ThisArgument - 1; }
 
         // FIXME: Remove these.
         int hostThisRegister() { return thisArgumentOffset(); }
@@ -288,8 +288,6 @@ namespace JSC  {
 
     private:
         static const intptr_t HostCallFrameFlag = 1;
-        static const int s_thisArgumentOffset = JSStack::CallFrameHeaderSize + 1;
-        static const int s_firstArgumentOffset = s_thisArgumentOffset + 1;
 
 #ifndef NDEBUG
         JSStack* stack();
@@ -310,10 +308,10 @@ namespace JSC  {
             int offset = reg - this->registers();
 
             // The offset is defined (based on argumentOffset()) to be:
-            //       offset = s_firstArgumentOffset - argIndex;
+            //       offset = JSStack::FirstArgument - argIndex;
             // Hence:
-            //       argIndex = s_firstArgumentOffset - offset;
-            size_t argIndex = offset - s_firstArgumentOffset;
+            //       argIndex = JSStack::FirstArgument - offset;
+            size_t argIndex = offset - JSStack::FirstArgument;
             return argIndex;
         }
 

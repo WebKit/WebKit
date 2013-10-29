@@ -33,14 +33,14 @@ end
 # These declarations must match interpreter/JSStack.h.
 const CallFrameHeaderSize = 48
 const CallFrameHeaderSlots = 6
-const ArgumentCount = 48
-const CallerFrame = 40
-const Callee = 32
-const ScopeChain = 24
-const ReturnPC = 16
-const CodeBlock = 8
+const ArgumentCount = 40
+const CallerFrame = 32
+const Callee = 24
+const ScopeChain = 16
+const ReturnPC = 8
+const CodeBlock = 0
 
-const ThisArgumentOffset = CallFrameHeaderSize + 8
+const ThisArgumentOffset = ArgumentCount + 8
 
 # Some value representation constants.
 if JSVALUE64
@@ -372,6 +372,7 @@ macro functionInitialization(profileArgSkip)
         
     # Check stack height.
     loadi CodeBlock::m_numCalleeRegisters[t1], t0
+    addi 1, t0 # Account that local0 goes at slot -1
     loadp CodeBlock::m_vm[t1], t2
     loadp VM::interpreter[t2], t2
     lshiftp 3, t0
