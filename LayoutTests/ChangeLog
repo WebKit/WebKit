@@ -1,3 +1,10 @@
+2013-10-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix path for xss-DENIED-xsl-document-redirect test, and mark
+        editing/selection/5057506-2.html as image-only failure.
+
+        * platform/mac-wk2/TestExpectations:
+
 2013-10-28  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: CSS Regions: Add protocol API to expose content nodes addition/removal
