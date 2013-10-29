@@ -1,5 +1,14 @@
 2013-10-28  Andreas Kling  <akling@apple.com>
 
+        applyTextTransform() should take a const RenderStyle&.
+        <https://webkit.org/b/123434>
+
+        This function is always called with an existing RenderStyle object.
+
+        Reviewed by Anders Carlsson.
+
+2013-10-28  Andreas Kling  <akling@apple.com>
+
         RenderSVGResource::applyResource() should take a const RenderStyle&.
         <https://webkit.org/b/123433>
 

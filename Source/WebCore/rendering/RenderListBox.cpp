@@ -128,7 +128,7 @@ void RenderListBox::updateFromElement()
             }
 
             if (!text.isEmpty()) {
-                applyTextTransform(&style(), text, ' ');
+                applyTextTransform(style(), text, ' ');
                 // FIXME: Why is this always LTR? Can't text direction affect the width?
                 TextRun textRun = constructTextRun(this, itemFont, text, style(), TextRun::AllowTrailingExpansion);
                 textRun.disableRoundingHacks();
@@ -396,7 +396,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
         itemText = toHTMLOptionElement(listItemElement)->textIndentedToRespectGroupLabel();
     else if (isHTMLOptGroupElement(listItemElement))
         itemText = toHTMLOptGroupElement(listItemElement)->groupLabelText();
-    applyTextTransform(&style(), itemText, ' ');
+    applyTextTransform(style(), itemText, ' ');
 
     Color textColor = listItemElement->renderStyle() ? listItemElement->renderStyle()->visitedDependentColor(CSSPropertyColor) : style().visitedDependentColor(CSSPropertyColor);
     if (isOptionElement && toHTMLOptionElement(listItemElement)->selected()) {

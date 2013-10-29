@@ -228,7 +228,7 @@ inline RenderStyle& RenderText::firstLineStyle() const
     return parent()->firstLineStyle();
 }
 
-void applyTextTransform(const RenderStyle*, String&, UChar);
+void applyTextTransform(const RenderStyle&, String&, UChar);
 
 inline RenderText* Text::renderer() const
 {

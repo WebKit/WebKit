@@ -915,22 +915,19 @@ UChar RenderText::previousCharacter() const
     return prev;
 }
 
-void applyTextTransform(const RenderStyle* style, String& text, UChar previousCharacter)
+void applyTextTransform(const RenderStyle& style, String& text, UChar previousCharacter)
 {
-    if (!style)
-        return;
-
-    switch (style->textTransform()) {
+    switch (style.textTransform()) {
     case TTNONE:
         break;
     case CAPITALIZE:
         makeCapitalized(&text, previousCharacter);
         break;
     case UPPERCASE:
-        text = text.upper(style->locale());
+        text = text.upper(style.locale());
         break;
     case LOWERCASE:
-        text = text.lower(style->locale());
+        text = text.lower(style.locale());
         break;
     }
 }
@@ -945,7 +942,7 @@ void RenderText::setTextInternal(const String& text)
 
     ASSERT(m_text);
 
-    applyTextTransform(&style(), m_text, previousCharacter());
+    applyTextTransform(style(), m_text, previousCharacter());
 
     // We use the same characters here as for list markers.
     // See the listMarkerText function in RenderListMarker.cpp.
@@ -1014,7 +1011,7 @@ String RenderText::textWithoutConvertingBackslashToYenSymbol() const
         return text();
 
     String text = originalText();
-    applyTextTransform(&style(), text, previousCharacter());
+    applyTextTransform(style(), text, previousCharacter());
     return text;
 }
 
