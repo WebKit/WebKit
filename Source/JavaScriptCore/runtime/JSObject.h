@@ -1348,7 +1348,7 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
 inline void JSObject::setStructure(VM& vm, Structure* structure, Butterfly* butterfly)
 {
     JSCell::setStructure(vm, structure);
-    ASSERT_UNUSED(butterfly, !butterfly == !(structure->outOfLineCapacity() || structure->hasIndexingHeader(this)));
+    ASSERT_UNUSED(butterfly, !butterfly == !(structure->outOfLineCapacity() || hasIndexingHeader(structure->indexingType())));
 }
 
 inline void JSObject::setStructureAndReallocateStorageIfNecessary(VM& vm, unsigned oldCapacity, Structure* newStructure)

@@ -1,3 +1,11 @@
+2013-10-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Debug build correction after r158124.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::setStructure): Use external hasIndexingHeader function since
+        the member function did not exist at the time of this branch.
+
 2013-10-28  Lucas Forschler  <lforschler@apple.com>
 
         Merge r156302
