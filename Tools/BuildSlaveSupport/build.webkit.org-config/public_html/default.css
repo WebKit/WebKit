@@ -1,13 +1,23 @@
-body > hr { display: none; }
-div.content h1 { display: none; }
-
 body.interface {
+    position: relative;
     margin-top: 8px;
-    background: url(bg_gradient.jpg) repeat-x;
+    background: url('bg_gradient.jpg') repeat-x;
     font-family: HelveticaNeue, sans-serif;
     font-size: 11px;
     background-color: #fff;
     color: #333;
+}
+
+body > hr {
+    display: none;
+}
+
+div.content h1 {
+    display: none !important;
+}
+
+body > .header {
+    float: left;
 }
 
 small {
@@ -94,6 +104,15 @@ td.Time {
 td.Activity,td.Change,td.Builder {
     color: #333333;
     background-color: #CCCCCC;
+}
+
+td.Activity a,td.Change a,td.Builder a {
+    text-decoration: none;
+}
+
+td.Builder {
+    vertical-align: top;
+    line-height: 120%;
 }
 
 td.Change {
