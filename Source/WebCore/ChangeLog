@@ -1,5 +1,15 @@
 2013-10-28  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Remove unused "externs" files and generators
+        https://bugs.webkit.org/show_bug.cgi?id=123427
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScriptExterns.js: Removed.
+        * inspector/generate_protocol_externs.py: Removed.
+
+2013-10-28  Joseph Pecoraro  <pecoraro@apple.com>
+
         Upstream remaining PLATFORM(IOS) and ENABLE(REMOTE_INSPECTOR) pieces
         https://bugs.webkit.org/show_bug.cgi?id=123411
 
