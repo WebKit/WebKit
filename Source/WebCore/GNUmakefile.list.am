@@ -5395,6 +5395,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/mediastream/MediaStreamSource.cpp \
 	Source/WebCore/platform/mediastream/MediaStreamSource.h \
 	Source/WebCore/platform/mediastream/MediaStreamSourceCapabilities.h \
+	Source/WebCore/platform/mediastream/MediaStreamTrackPrivate.cpp \
+	Source/WebCore/platform/mediastream/MediaStreamTrackPrivate.h \
 	Source/WebCore/platform/mediastream/MediaStreamTrackSourcesRequestClient.h \
 	Source/WebCore/platform/mediastream/RTCConfiguration.h \
 	Source/WebCore/platform/mediastream/RTCDTMFSenderHandler.h \
@@ -5421,6 +5423,12 @@ webcore_platform_sources += \
 	Source/WebCore/platform/mock/GeolocationClientMock.h \
 	Source/WebCore/platform/mock/MockMediaStreamCenter.cpp \
 	Source/WebCore/platform/mock/MockMediaStreamCenter.h \
+	Source/WebCore/platform/mock/RTCDataChannelHandlerMock.cpp \
+	Source/WebCore/platform/mock/RTCDataChannelHandlerMock.h \
+	Source/WebCore/platform/mock/RTCNotifiersMock.cpp \
+	Source/WebCore/platform/mock/RTCNotifiersMock.h \
+	Source/WebCore/platform/mock/RTCPeerConnectionHandlerMock.cpp \
+	Source/WebCore/platform/mock/RTCPeerConnectionHandlerMock.h \
 	Source/WebCore/platform/mock/ScrollbarThemeMock.cpp \
 	Source/WebCore/platform/mock/ScrollbarThemeMock.h \
 	Source/WebCore/platform/network/BlobData.cpp \
