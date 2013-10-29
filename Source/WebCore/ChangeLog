@@ -1,7 +1,7 @@
 2013-10-28  Andreas Kling  <akling@apple.com>
 
         Remove unused RenderTextControl::textBaseStyle().
-        <https://webkit.org/b/123423>
+        <https://webkit.org/b/123432>
 
         Reviewed by Anders Carlsson.
 
