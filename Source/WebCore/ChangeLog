@@ -1,3 +1,27 @@
+2013-10-29  Santosh Mahto  <santosh.ma@samsung.com>
+
+        Text selected with double-click gets unselected after DOM modification
+        https://bugs.webkit.org/show_bug.cgi?id=114227
+
+        Reviewed by Ryosuke Niwa.
+
+        Before this patch when selection is done by double-click (start and base remain
+        same) and DOM is modified then selection gets vanished. This does not
+        happen when selection is done by dragging mouse. This happens because
+        on double-click base and extent remain the same and on DOM
+        modification we update the selection with base and extent, so we loose
+        the selection. Since in double-click case start/end contain the
+        correct selection, same should be used after dom modification to
+        update selection.
+
+        Test: editing/selection/double-click-selection-with-dom-mutation.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::textWasReplaced): use start/end to update
+        selection in case double click selection. Added a check for base !=
+        extent, if base != extent use base/extent to update the selection
+        otherwise use start/end with directionality check.
+
 2013-10-29  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Display anonymous regions in DRT
