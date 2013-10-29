@@ -117,9 +117,6 @@ namespace JSC {
         static const RegisterID firstArgumentRegister = ARMRegisters::r0;
         static const RegisterID secondArgumentRegister = ARMRegisters::r1;
 
-#if ENABLE(VALUE_PROFILER)
-#endif
-
         static const RegisterID regT0 = ARMRegisters::r0;
         static const RegisterID regT1 = ARMRegisters::r1;
         static const RegisterID regT2 = ARMRegisters::r2;

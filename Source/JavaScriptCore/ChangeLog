@@ -1,5 +1,31 @@
 2013-10-29  Julien Brianceau  <jbriance@cisco.com>
 
+        [arm] Fix lots of crashes because of 4th argument register trampling.
+        https://bugs.webkit.org/show_bug.cgi?id=123421
+
+        Reviewed by Michael Saboff.
+
+        r3 register is the 4th argument register for ARM and also a scratch
+        register in the baseline JIT for this architecture. We can use r6
+        instead, as this used to be the timeoutCheckRegister and it is no
+        longer used since r148119.
+
+        * assembler/ARMAssembler.h: Temp register is now r6 instead of r3 for ARM.
+        * assembler/MacroAssemblerARMv7.h: Temp register is now r6 instead of r3 for ARMv7.
+        * jit/GPRInfo.h: Add r3 properly in GPRInfo for ARM.
+        (JSC::GPRInfo::toRegister):
+        (JSC::GPRInfo::toIndex):
+        * jit/JITStubsARM.h:
+        (JSC::ctiTrampoline): Remove obsolete timeoutCheckRegister init.
+        * jit/JITStubsARMv7.h:
+        (JSC::ctiTrampoline): Remove obsolete timeoutCheckRegister init.
+        * jit/JSInterfaceJIT.h: Remove useless stuff.
+        * yarr/YarrJIT.cpp: Use r3 and not the new scratch register r6.
+        (JSC::Yarr::YarrGenerator::generateEnter): r8 register doesn't need to be saved.
+        (JSC::Yarr::YarrGenerator::generateReturn):
+
+2013-10-29  Julien Brianceau  <jbriance@cisco.com>
+
         Fix CPU(ARM_TRADITIONAL) build after r157690.
         https://bugs.webkit.org/show_bug.cgi?id=123247
 

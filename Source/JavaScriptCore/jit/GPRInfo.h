@@ -428,7 +428,7 @@ private:
 class GPRInfo {
 public:
     typedef GPRReg RegisterType;
-    static const unsigned numberOfRegisters = 8;
+    static const unsigned numberOfRegisters = 9;
     static const unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
     // Temporary registers.
@@ -440,6 +440,7 @@ public:
     static const GPRReg regT5 = ARMRegisters::r9;
     static const GPRReg regT6 = ARMRegisters::r10;
     static const GPRReg regT7 = ARMRegisters::r11;
+    static const GPRReg regT8 = ARMRegisters::r3;
     // These registers match the baseline JIT.
     static const GPRReg cachedResultRegister = regT0;
     static const GPRReg cachedResultRegister2 = regT1;
@@ -448,11 +449,7 @@ public:
     static const GPRReg argumentGPR0 = ARMRegisters::r0; // regT0
     static const GPRReg argumentGPR1 = ARMRegisters::r1; // regT1
     static const GPRReg argumentGPR2 = ARMRegisters::r2; // regT2
-    // FIXME: r3 is currently used be the MacroAssembler as a temporary - it seems
-    // This could threoretically be a problem if this is used in code generation
-    // between the arguments being set up, and the call being made. That said,
-    // any change introducing a problem here is likely to be immediately apparent!
-    static const GPRReg argumentGPR3 = ARMRegisters::r3; // FIXME!
+    static const GPRReg argumentGPR3 = ARMRegisters::r3; // regT8
     static const GPRReg nonArgGPR0 = ARMRegisters::r4; // regT3
     static const GPRReg nonArgGPR1 = ARMRegisters::r8; // regT4
     static const GPRReg nonArgGPR2 = ARMRegisters::r9; // regT5
@@ -463,7 +460,7 @@ public:
     static GPRReg toRegister(unsigned index)
     {
         ASSERT(index < numberOfRegisters);
-        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6, regT7 };
+        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6, regT7, regT8 };
         return registerForIndex[index];
     }
 
@@ -471,7 +468,7 @@ public:
     {
         ASSERT(static_cast<unsigned>(reg) != InvalidGPRReg);
         ASSERT(static_cast<unsigned>(reg) < 16);
-        static const unsigned indexForRegister[16] = { 0, 1, 2, InvalidIndex, 3, InvalidIndex, InvalidIndex, InvalidIndex, 4, 5, 6, 7, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
+        static const unsigned indexForRegister[16] = { 0, 1, 2, 8, 3, InvalidIndex, InvalidIndex, InvalidIndex, 4, 5, 6, 7, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
         unsigned result = indexForRegister[reg];
         ASSERT(result != InvalidIndex);
         return result;

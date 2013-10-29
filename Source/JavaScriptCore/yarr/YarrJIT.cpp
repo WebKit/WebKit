@@ -46,10 +46,10 @@ class YarrGenerator : private MacroAssembler {
     static const RegisterID input = ARMRegisters::r0;
     static const RegisterID index = ARMRegisters::r1;
     static const RegisterID length = ARMRegisters::r2;
-    static const RegisterID output = ARMRegisters::r4;
+    static const RegisterID output = ARMRegisters::r3;
 
-    static const RegisterID regT0 = ARMRegisters::r5;
-    static const RegisterID regT1 = ARMRegisters::r6;
+    static const RegisterID regT0 = ARMRegisters::r4;
+    static const RegisterID regT1 = ARMRegisters::r5;
 
     static const RegisterID returnRegister = ARMRegisters::r0;
     static const RegisterID returnRegister2 = ARMRegisters::r1;
@@ -2578,11 +2578,6 @@ class YarrGenerator : private MacroAssembler {
         push(ARMRegisters::r4);
         push(ARMRegisters::r5);
         push(ARMRegisters::r6);
-#if CPU(ARM_TRADITIONAL)
-        push(ARMRegisters::r8); // scratch register
-#endif
-        if (compileMode == IncludeSubpatterns)
-            move(ARMRegisters::r3, output);
 #elif CPU(SH4)
         push(SH4Registers::r11);
         push(SH4Registers::r13);
@@ -2608,9 +2603,6 @@ class YarrGenerator : private MacroAssembler {
         pop(X86Registers::ebx);
         pop(X86Registers::ebp);
 #elif CPU(ARM)
-#if CPU(ARM_TRADITIONAL)
-        pop(ARMRegisters::r8); // scratch register
-#endif
         pop(ARMRegisters::r6);
         pop(ARMRegisters::r5);
         pop(ARMRegisters::r4);
