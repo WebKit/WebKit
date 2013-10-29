@@ -39,12 +39,6 @@ namespace WebCore {
 
 class CryptoAlgorithmDescriptionBuilder;
 
-ENUM_CLASS(CryptoKeyType) {
-    Secret,
-    Public,
-    Private
-};
-
 class CryptoKey : public RefCounted<CryptoKey> {
 public:
     CryptoKey(CryptoAlgorithmIdentifier, CryptoKeyType, bool extractable, CryptoKeyUsage);

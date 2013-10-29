@@ -3,6 +3,15 @@
         Beef up CryptoKey
         https://bugs.webkit.org/show_bug.cgi?id=123462
 
+        Fix a mismerge, remove duplicate CryptoKeyType declaration.
+
+        * crypto/CryptoKey.h:
+
+2013-10-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Beef up CryptoKey
+        https://bugs.webkit.org/show_bug.cgi?id=123462
+
         Reviewed by Sam Weinig.
 
         * WebCore.xcodeproj/project.pbxproj: Added new files.
