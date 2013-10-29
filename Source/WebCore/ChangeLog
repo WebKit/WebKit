@@ -1,3 +1,10 @@
+2013-10-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed, follow-up to r158185. Export the required symbol.
+        This should fix the Mac debug build.
+
+        * WebCore.exp.in:
+
 2013-10-29  Santosh Mahto  <santosh.ma@samsung.com>
 
         Text selected with double-click gets unselected after DOM modification
