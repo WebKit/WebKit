@@ -94,11 +94,6 @@ PassRef<RenderStyle> RenderTextControlMultiLine::createInnerTextStyle(const Rend
     return textBlockStyle;
 }
 
-RenderStyle* RenderTextControlMultiLine::textBaseStyle() const
-{
-    return &style();
-}
-
 RenderObject* RenderTextControlMultiLine::layoutSpecialExcludedChild(bool relayoutChildren)
 {
     RenderObject* placeholderRenderer = RenderTextControl::layoutSpecialExcludedChild(relayoutChildren);

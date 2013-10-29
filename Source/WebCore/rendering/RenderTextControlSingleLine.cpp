@@ -67,12 +67,6 @@ inline HTMLElement* RenderTextControlSingleLine::innerSpinButtonElement() const
     return inputElement().innerSpinButtonElement();
 }
 
-RenderStyle* RenderTextControlSingleLine::textBaseStyle() const
-{
-    HTMLElement* innerBlock = innerBlockElement();
-    return innerBlock ? &innerBlock->renderer()->style() : &style();
-}
-
 void RenderTextControlSingleLine::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     RenderTextControl::paint(paintInfo, paintOffset);
