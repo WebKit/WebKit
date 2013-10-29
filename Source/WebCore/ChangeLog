@@ -1,5 +1,14 @@
 2013-10-28  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Remove unused inspector/inline-javascript-imports.py
+        https://bugs.webkit.org/show_bug.cgi?id=123425
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/inline-javascript-imports.py: Removed.
+
+2013-10-28  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Remove unused "externs" files and generators
         https://bugs.webkit.org/show_bug.cgi?id=123427
 
