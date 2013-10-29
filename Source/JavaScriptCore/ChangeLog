@@ -1,3 +1,23 @@
+2013-10-29  Julien Brianceau  <jbriance@cisco.com>
+
+        Fix CPU(ARM_TRADITIONAL) build after r157690.
+        https://bugs.webkit.org/show_bug.cgi?id=123247
+
+        Reviewed by Michael Saboff.
+
+        Since r157690, the executableCopy function has been removed from AssemblerBuffer.h
+        and the copy of executable code occurs in the linkCode function (in LinkBuffer.cpp).
+        As the constant pool for jumps is updated in the executableCopy function of ARM_TRADITIONAL,
+        this part of code still needs to be called and absolute jumps must be corrected to anticipate
+        the copy of the executable code through memcpy.
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::prepareExecutableCopy): Rename executableCopy to prepareExecutableCopy
+        and correct absolute jump values using the delta between the source and destination buffers.
+        * assembler/ARMAssembler.h:
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::linkCode): Call prepareExecutableCopy just before the memcpy.
+
 2013-10-28  Filip Pizlo  <fpizlo@apple.com>
 
         OSRExit::m_watchpointIndex should be in OSRExitCompilationInfo

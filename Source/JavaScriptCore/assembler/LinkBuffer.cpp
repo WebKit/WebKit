@@ -147,6 +147,9 @@ void LinkBuffer::linkCode(void* ownerUID, JITCompilationEffort effort)
     if (!m_didAllocate)
         return;
     ASSERT(m_code);
+#if CPU(ARM_TRADITIONAL)
+    m_assembler->m_assembler.prepareExecutableCopy(m_code);
+#endif
     memcpy(m_code, buffer.data(), buffer.codeSize());
 #elif CPU(ARM_THUMB2)
     copyCompactAndLinkCode<uint16_t>(ownerUID, effort);

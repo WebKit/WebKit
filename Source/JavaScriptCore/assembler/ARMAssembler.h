@@ -808,7 +808,7 @@ namespace JSC {
             return loadBranchTarget(ARMRegisters::pc, cc, useConstantPool);
         }
 
-        PassRefPtr<ExecutableMemoryHandle> executableCopy(VM&, void* ownerUID, JITCompilationEffort);
+        void prepareExecutableCopy(void* to);
 
         unsigned debugOffset() { return m_buffer.debugOffset(); }
 
