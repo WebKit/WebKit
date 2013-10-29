@@ -1,3 +1,11 @@
+2013-10-29  Lucas Forschler  <lforschler@apple.com>
+
+        Move the SEO bots from testers to archivers.
+        
+        Unreviewed.
+        
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2013-10-29  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         Adding Nix files in Source/Platform to trunk
