@@ -202,7 +202,7 @@ bool TileController::platformCALayerShowRepaintCounter(PlatformCALayer*) const
     return owningGraphicsLayer()->platformCALayerShowRepaintCounter(0);
 }
 
-void TileController::setScale(CGFloat scale)
+void TileController::setScale(float scale)
 {
     ASSERT(owningGraphicsLayer()->isCommittingChanges());
 

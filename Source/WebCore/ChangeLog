@@ -1,3 +1,16 @@
+2013-10-29  Tim Horton  <timothy_horton@apple.com>
+
+        Build fix after 158223; make TileController use float for scales.
+
+        This matches what we do in other places, and fixes the constant
+        issue with exporting symbols that include CGFloat.
+
+        * WebCore.exp.in:
+        * platform/graphics/ca/mac/TileController.h:
+        (WebCore::TileController::scale):
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::setScale):
+
 2013-10-29  Antti Koivisto  <antti@apple.com>
 
         Try to keep MSVC happy.

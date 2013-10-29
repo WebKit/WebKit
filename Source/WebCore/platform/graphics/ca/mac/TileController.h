@@ -59,8 +59,8 @@ public:
     void setNeedsDisplay();
     void setNeedsDisplayInRect(const IntRect&);
 
-    void setScale(CGFloat);
-    CGFloat scale() const { return m_scale; }
+    void setScale(float);
+    float scale() const { return m_scale; }
 
     bool acceleratesDrawing() const { return m_acceleratesDrawing; }
     void setAcceleratesDrawing(bool);
@@ -216,8 +216,8 @@ private:
     
     IntRect m_primaryTileCoverageRect; // In tile coords.
 
-    CGFloat m_scale;
-    CGFloat m_deviceScaleFactor;
+    float m_scale;
+    float m_deviceScaleFactor;
 
     TileCoverage m_tileCoverage;
     bool m_isInWindow;
