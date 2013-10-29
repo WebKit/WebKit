@@ -42,22 +42,21 @@ void InjectedBundle::platformInitialize(WKTypeRef)
     static const int NoFontSmoothing = 0;
     static const int BlueTintedAppearance = 1;
 
-    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithInteger:4], @"AppleAntiAliasingThreshold",
-        [NSNumber numberWithInteger:NoFontSmoothing], @"AppleFontSmoothing",
-        [NSNumber numberWithInteger:BlueTintedAppearance], @"AppleAquaColorVariant",
-        @"0.709800 0.835300 1.000000", @"AppleHighlightColor",
-        @"0.500000 0.500000 0.500000", @"AppleOtherHighlightColor",
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
-        [NSNumber numberWithBool:NO], @"NSScrollAnimationEnabled",
-#else
-        [NSNumber numberWithBool:NO], @"AppleScrollAnimationEnabled",
-#endif
-        [NSNumber numberWithBool:NO], @"NSOverlayScrollersEnabled",
-        @"Always", @"AppleShowScrollBars",
-        [NSArray arrayWithObject:@"en"], @"AppleLanguages",
-        [NSDictionary dictionaryWithObjectsAndKeys:@"notational", @"notationl", nil], @"NSTestCorrectionDictionary",
-        nil];
+    NSDictionary *dict = @{
+        @"AppleAntiAliasingThreshold": @4,
+        @"AppleFontSmoothing": @(NoFontSmoothing),
+        @"AppleAquaColorVariant": @(BlueTintedAppearance),
+        @"AppleHighlightColor": @"0.709800 0.835300 1.000000",
+        @"AppleOtherHighlightColor": @"0.500000 0.500000 0.500000",
+        @"NSScrollAnimationEnabled": @NO,
+        @"NSOverlayScrollersEnabled": @NO,
+        @"AppleShowScrollBars": @"Always",
+        @"AppleLanguages": @[ @"en" ],
+        // FIXME: Why does this dictionary not match the one in DumpRenderTree?
+        @"NSTestCorrectionDictionary": @{
+            @"notationl": @"notational"
+        }
+    };
 
     [[NSUserDefaults standardUserDefaults] setVolatileDomain:dict forName:NSArgumentDomain];
 

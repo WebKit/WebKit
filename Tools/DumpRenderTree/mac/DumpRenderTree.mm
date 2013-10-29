@@ -597,60 +597,8 @@ static NSString *libraryPathForDumpRenderTree()
 }
 
 // Called before each test.
-static void resetDefaultsToConsistentValues()
+static void resetWebPreferencesToConsistentValues()
 {
-    static const int NoFontSmoothing = 0;
-    static const int BlueTintedAppearance = 1;
-
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setInteger:4 forKey:@"AppleAntiAliasingThreshold"]; // smallest font size to CG should perform antialiasing on
-    [defaults setInteger:NoFontSmoothing forKey:@"AppleFontSmoothing"];
-    [defaults setInteger:BlueTintedAppearance forKey:@"AppleAquaColorVariant"];
-    [defaults setObject:@"0.709800 0.835300 1.000000" forKey:@"AppleHighlightColor"];
-    [defaults setObject:@"0.500000 0.500000 0.500000" forKey:@"AppleOtherHighlightColor"];
-    [defaults setObject:[NSArray arrayWithObject:@"en"] forKey:@"AppleLanguages"];
-    [defaults setBool:YES forKey:WebKitEnableFullDocumentTeardownPreferenceKey];
-    [defaults setBool:YES forKey:WebKitFullScreenEnabledPreferenceKey];
-    [defaults setBool:YES forKey:@"UseWebKitWebInspector"];
-
-    [defaults setObject:[NSDictionary dictionaryWithObjectsAndKeys:
-        @"notational", @"notationl",
-        @"message", @"mesage",
-        @"would", @"wouldn",
-        @"welcome", @"wellcome",
-        @"hello\nworld", @"hellolfworld",
-        nil] forKey:@"NSTestCorrectionDictionary"];
-
-    // Scrollbars are drawn either using AppKit (which uses NSUserDefaults) or using HIToolbox (which uses CFPreferences / kCFPreferencesAnyApplication / kCFPreferencesCurrentUser / kCFPreferencesAnyHost)
-    [defaults setObject:@"DoubleMax" forKey:@"AppleScrollBarVariant"];
-    RetainPtr<CFTypeRef> initialValue = CFPreferencesCopyValue(CFSTR("AppleScrollBarVariant"), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
-    CFPreferencesSetValue(CFSTR("AppleScrollBarVariant"), CFSTR("DoubleMax"), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
-#ifndef __LP64__
-    // See <rdar://problem/6347388>.
-    ThemeScrollBarArrowStyle style;
-    GetThemeScrollBarArrowStyle(&style); // Force HIToolbox to read from CFPreferences
-#endif
-
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
-    [defaults setBool:NO forKey:@"NSScrollAnimationEnabled"];
-#else
-    [defaults setBool:NO forKey:@"AppleScrollAnimationEnabled"];
-#endif
-
-    [defaults setBool:NO forKey:@"NSOverlayScrollersEnabled"];
-    [defaults setObject:@"Always" forKey:@"AppleShowScrollBars"];
-
-    if (initialValue)
-        CFPreferencesSetValue(CFSTR("AppleScrollBarVariant"), initialValue.get(), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
-
-    NSString *path = libraryPathForDumpRenderTree();
-    [defaults setObject:[path stringByAppendingPathComponent:@"Databases"] forKey:WebDatabaseDirectoryDefaultsKey];
-    [defaults setObject:[path stringByAppendingPathComponent:@"LocalStorage"] forKey:WebStorageDirectoryDefaultsKey];
-    [defaults setObject:[path stringByAppendingPathComponent:@"LocalCache"] forKey:WebKitLocalCacheDefaultsKey];
-
-    [defaults setBool:NO forKey:@"WebKitKerningAndLigaturesEnabledByDefault"];
-
     WebPreferences *preferences = [WebPreferences standardPreferences];
 
     [preferences setAllowUniversalAccessFromFileURLs:YES];
@@ -723,10 +671,6 @@ static void resetDefaultsToConsistentValues()
     [preferences setScreenFontSubstitutionEnabled:YES];
 
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
-    
-    TestRunner::setSerializeHTTPLoads(false);
-
-    setlocale(LC_ALL, "");
 }
 
 // Called once on DumpRenderTree startup.
@@ -735,13 +679,49 @@ static void setDefaultsToConsistentValuesForTesting()
     // FIXME: We'd like to start with a clean state for every test, but this function can't be used more than once yet.
     [WebPreferences _switchNetworkLoaderToNewTestingSession];
 
-    resetDefaultsToConsistentValues();
+    static const int NoFontSmoothing = 0;
+    static const int BlueTintedAppearance = 1;
 
-    NSString *path = libraryPathForDumpRenderTree();
+    NSString *libraryPath = libraryPathForDumpRenderTree();
+
+    NSDictionary *dict = @{
+        @"AppleMagnifiedMode": @YES,
+        @"AppleAntiAliasingThreshold": @4,
+        @"AppleFontSmoothing": @(NoFontSmoothing),
+        @"AppleAquaColorVariant": @(BlueTintedAppearance),
+        @"AppleHighlightColor": @"0.709800 0.835300 1.000000",
+        @"AppleOtherHighlightColor":@"0.500000 0.500000 0.500000",
+        @"AppleLanguages": @[ @"en" ],
+        WebKitEnableFullDocumentTeardownPreferenceKey: @YES,
+        WebKitFullScreenEnabledPreferenceKey: @YES,
+        @"UseWebKitWebInspector": @YES,
+        @"NSTestCorrectionDictionary": @{
+            @"notationl": @"notational",
+            @"mesage": @"message",
+            @"wouldn": @"would",
+            @"wellcome": @"welcome",
+            @"hellolfworld": @"hello\nworld"
+        },
+        @"WebKitKerningAndLigaturesEnabledByDefault": @NO,
+        @"AppleScrollBarVariant": @"DoubleMax",
+        @"NSScrollAnimationEnabled": @NO,
+        @"NSOverlayScrollersEnabled": @NO,
+        @"AppleShowScrollBars": @"Always",
+        WebDatabaseDirectoryDefaultsKey: [libraryPath stringByAppendingPathComponent:@"Databases"],
+        WebStorageDirectoryDefaultsKey: [libraryPath stringByAppendingPathComponent:@"LocalStorage"],
+        WebKitLocalCacheDefaultsKey: [libraryPath stringByAppendingPathComponent:@"LocalCache"]
+    };
+
+    [[NSUserDefaults standardUserDefaults] setVolatileDomain:dict forName:NSArgumentDomain];
+
+    // Underlying frameworks have already read AppleAntiAliasingThreshold default before we changed it.
+    // A distributed notification is delivered to all applications, but it should be harmless, and it's the only way to update all underlying frameworks anyway.
+    [[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"AppleAquaAntiAliasingChanged" object:nil userInfo:nil deliverImmediately:YES];
+
     NSURLCache *sharedCache =
         [[NSURLCache alloc] initWithMemoryCapacity:1024 * 1024
                                       diskCapacity:0
-                                          diskPath:[path stringByAppendingPathComponent:@"URLCache"]];
+                                          diskPath:[libraryPath stringByAppendingPathComponent:@"URLCache"]];
     [NSURLCache setSharedURLCache:sharedCache];
     [sharedCache release];
 }
@@ -950,11 +930,7 @@ int main(int argc, const char *argv[])
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [DumpRenderTreeApplication sharedApplication]; // Force AppKit to init itself
-    
-    NSDictionary *defaults = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], @"AppleMagnifiedMode", nil];
-    [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
-    [defaults release];
-    
+
     dumpRenderTree(argc, argv);
     [WebCoreStatistics garbageCollectJavaScriptObjects];
     [WebCoreStatistics emptyCache]; // Otherwise SVGImages trigger false positives for Frame/Node counts
@@ -1305,7 +1281,11 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [[webView window] setAutodisplay:NO];
     [webView setTracksRepaints:NO];
     
-    resetDefaultsToConsistentValues();
+    resetWebPreferencesToConsistentValues();
+
+    TestRunner::setSerializeHTTPLoads(false);
+
+    setlocale(LC_ALL, "");
 
     if (gTestRunner) {
         WebCoreTestSupport::resetInternalsObject([mainFrame globalContext]);

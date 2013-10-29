@@ -1,3 +1,32 @@
+2013-10-29  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Rationalize user defaults override code
+        https://bugs.webkit.org/show_bug.cgi?id=123436
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues): Renamed from resetDefaultsToConsistentValues,
+        because this function only resets WebPreferences now.
+        (setDefaultsToConsistentValuesForTesting): Moved code for setting the defaults
+        here, because tests never change them, and they only need to be set once, not
+        before each test. Removed long obsolete workaround for HIToolbox preferences.
+        Don't call resetWebPreferencesToConsistentValues, because it will be called before
+        the first test anyway.
+        (main): Don't set AppleMagnifiedMode here, moved that to setDefaultsToConsistentValuesForTesting.
+        (resetWebViewToConsistentStateBeforeTesting): Moved TestRunner::setSerializeHTTPLoads
+        and setlocale calls out of resetWebPreferencesToConsistentValues().
+        Added AppleAquaAntiAliasingChanged notification that we had in WK2, because it's
+        also needed in WK1.
+
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WTR::InjectedBundle::platformInitialize): Use literal syntax for defaults
+        dictionary.
+
+        * WebKitTestRunner/mac/main.mm:
+        (setDefaultsToConsistentValuesForTesting): Factored out of main(), and changed to
+        use NSArgumentDomain for everything.
+
 2013-10-29  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] enable media-stream in build-webkit
