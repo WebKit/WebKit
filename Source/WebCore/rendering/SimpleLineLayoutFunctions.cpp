@@ -85,8 +85,7 @@ bool hitTestFlow(const RenderBlockFlow& flow, const Layout& layout, const HitTes
 
     auto resolver = lineResolver(flow, layout);
     for (auto it = resolver.begin(), end = resolver.end(); it != end; ++it) {
-        auto line = *it;
-        auto lineRect = line.rect();
+        auto lineRect = *it;
         lineRect.moveBy(accumulatedOffset);
         if (!locationInContainer.intersects(lineRect))
             continue;
@@ -102,8 +101,7 @@ void collectFlowOverflow(RenderBlockFlow& flow, const Layout& layout)
 {
     auto resolver = lineResolver(flow, layout);
     for (auto it = resolver.begin(), end = resolver.end(); it != end; ++it) {
-        auto line = *it;
-        auto rect = line.rect();
+        auto rect = *it;
         flow.addLayoutOverflow(rect);
         flow.addVisualOverflow(rect);
     }
@@ -116,21 +114,23 @@ IntRect computeTextBoundingBox(const RenderText& textRenderer, const Layout& lay
     auto end = resolver.end();
     if (it == end)
         return IntRect();
-    auto firstLineRect = (*it).rect();
+    auto firstLineRect = *it;
     float left = firstLineRect.x();
     float right = firstLineRect.maxX();
+    float bottom = firstLineRect.maxY();
     for (++it; it != end; ++it) {
-        auto line = *it;
-        auto rect = line.rect();
+        auto rect = *it;
         if (rect.x() < left)
             left = rect.x();
         if (rect.maxX() > right)
             right = rect.maxX();
+        if (rect.maxY() > bottom)
+            bottom = rect.maxY();
     }
     float x = firstLineRect.x();
     float y = firstLineRect.y();
     float width = right - left;
-    float height = (*resolver.last()).rect().maxY() - y;
+    float height = bottom - y;
     return enclosingIntRect(FloatRect(x, y, width, height));
 }
 

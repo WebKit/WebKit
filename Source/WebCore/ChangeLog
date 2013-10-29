@@ -1,3 +1,70 @@
+2013-10-29  Antti Koivisto  <antti@apple.com>
+
+        Multiple runs per line on simple line path
+        https://bugs.webkit.org/show_bug.cgi?id=123446
+
+        Reviewed by Andreas Kling.
+
+        By allowing multiple runs per line we can support text flows with consecutive whitespaces in the middle.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+        
+            Remove space test.
+            The improved test coverage found a few more cases that we need to disallow.
+
+        (WebCore::SimpleLineLayout::adjustRunOffsets):
+            
+            Round the run positions and widths so they match line boxes.
+            Adjust for text-align.
+
+        (WebCore::SimpleLineLayout::create):
+        
+            Split lines with consecutive spaces into runs.
+
+        * rendering/SimpleLineLayout.h:
+        (WebCore::SimpleLineLayout::Run::Run):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::hitTestFlow):
+        (WebCore::SimpleLineLayout::collectFlowOverflow):
+        (WebCore::SimpleLineLayout::computeTextBoundingBox):
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::resolver):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::lineIndex):
+        (WebCore::SimpleLineLayout::RunResolver::Run::Run):
+        (WebCore::SimpleLineLayout::RunResolver::Run::rect):
+        (WebCore::SimpleLineLayout::RunResolver::Run::baseline):
+        (WebCore::SimpleLineLayout::RunResolver::Run::text):
+        (WebCore::SimpleLineLayout::RunResolver::Run::lineIndex):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::Iterator):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::operator++):
+        
+            Removed unnecessary operators.
+
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::operator==):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::operator!=):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::operator*):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::simpleRun):
+        (WebCore::SimpleLineLayout::RunResolver::RunResolver):
+        (WebCore::SimpleLineLayout::RunResolver::begin):
+        (WebCore::SimpleLineLayout::RunResolver::end):
+        
+            Resolver -> RunResolver
+
+        (WebCore::SimpleLineLayout::LineResolver::Iterator::Iterator):
+        (WebCore::SimpleLineLayout::LineResolver::Iterator::operator++):
+        (WebCore::SimpleLineLayout::LineResolver::Iterator::operator==):
+        (WebCore::SimpleLineLayout::LineResolver::Iterator::operator!=):
+        (WebCore::SimpleLineLayout::LineResolver::Iterator::operator*):
+        (WebCore::SimpleLineLayout::LineResolver::LineResolver):
+        (WebCore::SimpleLineLayout::LineResolver::begin):
+        (WebCore::SimpleLineLayout::LineResolver::end):
+        
+            Add LineResolver around RunResolver. It resolves the line rectangles.
+
+        (WebCore::SimpleLineLayout::runResolver):
+        (WebCore::SimpleLineLayout::lineResolver):
+
 2013-10-29  Chris Fleizach  <cfleizach@apple.com>
 
         AX: elements with explicit tabindex should expose AXFocused as writable, since mouse clicks can focus it

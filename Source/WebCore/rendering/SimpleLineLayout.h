@@ -38,8 +38,17 @@ namespace SimpleLineLayout {
 bool canUseFor(const RenderBlockFlow&);
 
 struct Run {
+    Run(unsigned textOffset, float left)
+        : textOffset(textOffset)
+        , textLength(0)
+        , isEndOfLine(false)
+        , left(left)
+        , width(0)
+    { }
+
     unsigned textOffset;
-    unsigned textLength;
+    unsigned textLength : 31;
+    unsigned isEndOfLine : 1;
     float left;
     float width;
 };

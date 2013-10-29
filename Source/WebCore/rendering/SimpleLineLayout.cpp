@@ -78,6 +78,8 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     if (flow.isRubyText() || flow.isRubyBase())
         return false;
+    if (flow.parent()->isDeprecatedFlexibleBox())
+        return false;
     // These tests only works during layout. Outside layout this function may give false positives.
     if (flow.view().layoutState()) {
 #if ENABLE(CSS_SHAPES)
@@ -154,18 +156,10 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
 
     unsigned length = textRenderer.textLength();
-    unsigned consecutiveSpaceCount = 0;
     for (unsigned i = 0; i < length; ++i) {
-        // This rejects anything with more than one consecutive whitespace, except at the beginning or end.
-        // This is because we don't currently do subruns within lines. Fixing this would improve coverage significantly.
         UChar character = textRenderer.characterAt(i);
-        if (isWhitespace(character)) {
-            ++consecutiveSpaceCount;
+        if (character == ' ')
             continue;
-        }
-        if (consecutiveSpaceCount != i && consecutiveSpaceCount > 1)
-            return false;
-        consecutiveSpaceCount = 0;
 
         // These would be easy to support.
         if (character == noBreakSpace)
@@ -173,14 +167,12 @@ bool canUseFor(const RenderBlockFlow& flow)
         if (character == softHyphen)
             return false;
 
-        static const UChar lowestRTLCharacter = 0x590;
-        if (character >= lowestRTLCharacter) {
-            UCharDirection direction = u_charDirection(character);
-            if (direction == U_RIGHT_TO_LEFT || direction == U_RIGHT_TO_LEFT_ARABIC
-                || direction == U_RIGHT_TO_LEFT_EMBEDDING || direction == U_RIGHT_TO_LEFT_OVERRIDE
-                || direction == U_LEFT_TO_RIGHT_EMBEDDING || direction == U_LEFT_TO_RIGHT_OVERRIDE)
-                return false;
-        }
+        UCharDirection direction = u_charDirection(character);
+        if (direction == U_RIGHT_TO_LEFT || direction == U_RIGHT_TO_LEFT_ARABIC
+            || direction == U_RIGHT_TO_LEFT_EMBEDDING || direction == U_RIGHT_TO_LEFT_OVERRIDE
+            || direction == U_LEFT_TO_RIGHT_EMBEDDING || direction == U_LEFT_TO_RIGHT_OVERRIDE
+            || direction == U_POP_DIRECTIONAL_FORMAT || direction == U_BOUNDARY_NEUTRAL)
+            return false;
 
         if (!primaryFontData.glyphForCharacter(character))
             return false;
@@ -231,6 +223,17 @@ static float computeLineLeft(ETextAlign textAlign, float remainingWidth)
     return 0;
 }
 
+static void adjustRunOffsets(Vector<Run, 4>& lineRuns, ETextAlign textAlign, float lineWidth, float availableWidth)
+{
+    float lineLeft = computeLineLeft(textAlign, availableWidth - lineWidth);
+    for (unsigned i = 0; i < lineRuns.size(); ++i) {
+        float adjustedLeft = floor(lineLeft + lineRuns[i].left);
+        float adjustedRight = ceil(lineLeft + lineRuns[i].left + lineRuns[i].width);
+        lineRuns[i].left = adjustedLeft;
+        lineRuns[i].width = adjustedRight - adjustedLeft;
+    }
+}
+
 std::unique_ptr<Layout> create(RenderBlockFlow& flow)
 {
     auto layout = std::make_unique<Layout>();
@@ -251,54 +254,73 @@ std::unique_ptr<Layout> create(RenderBlockFlow& flow)
     while (lineEndOffset < textLength) {
         lineEndOffset = skipWhitespaces(textRenderer, lineEndOffset, textLength);
         unsigned lineStartOffset = lineEndOffset;
-        unsigned runEndOffset = lineEndOffset;
+        unsigned wordEndOffset = lineEndOffset;
         LineWidth lineWidth(flow, false, DoNotIndentText);
-        while (runEndOffset < textLength) {
-            ASSERT(!isWhitespace(textRenderer.characterAt(runEndOffset)));
 
-            bool previousWasSpaceBetweenRuns = runEndOffset > lineStartOffset && isWhitespace(textRenderer.characterAt(runEndOffset - 1));
-            unsigned runStartOffset = previousWasSpaceBetweenRuns ? runEndOffset - 1 : runEndOffset;
+        Vector<Run, 4> lineRuns;
+        lineRuns.uncheckedAppend(Run(lineStartOffset, 0));
 
-            ++runEndOffset;
-            while (runEndOffset < textLength) {
-                if (runEndOffset > lineStartOffset && isBreakable(lineBreakIterator, runEndOffset, nextBreakable, false))
+        while (wordEndOffset < textLength) {
+            ASSERT(!isWhitespace(textRenderer.characterAt(wordEndOffset)));
+
+            bool previousWasSpaceBetweenWords = wordEndOffset > lineStartOffset && isWhitespace(textRenderer.characterAt(wordEndOffset - 1));
+            unsigned wordStartOffset = previousWasSpaceBetweenWords ? wordEndOffset - 1 : wordEndOffset;
+
+            ++wordEndOffset;
+            while (wordEndOffset < textLength) {
+                if (wordEndOffset > lineStartOffset && isBreakable(lineBreakIterator, wordEndOffset, nextBreakable, false))
                     break;
-                ++runEndOffset;
+                ++wordEndOffset;
             }
 
-            unsigned runLength = runEndOffset - runStartOffset;
-            bool includeEndSpace = runEndOffset < textLength && textRenderer.characterAt(runEndOffset) == ' ';
+            unsigned wordLength = wordEndOffset - wordStartOffset;
+            bool includeEndSpace = wordEndOffset < textLength && textRenderer.characterAt(wordEndOffset) == ' ';
             float wordWidth;
             if (includeEndSpace)
-                wordWidth = textWidth(textRenderer, runStartOffset, runLength + 1, lineWidth.committedWidth(), style) - wordTrailingSpaceWidth;
+                wordWidth = textWidth(textRenderer, wordStartOffset, wordLength + 1, lineWidth.committedWidth(), style) - wordTrailingSpaceWidth;
             else
-                wordWidth = textWidth(textRenderer, runStartOffset, runLength, lineWidth.committedWidth(), style);
+                wordWidth = textWidth(textRenderer, wordStartOffset, wordLength, lineWidth.committedWidth(), style);
 
             lineWidth.addUncommittedWidth(wordWidth);
+
+            // Move to the next line if the current one is full and we have something on it.
+            if (!lineWidth.fitsOnLine() && lineWidth.committedWidth())
+                break;
+
+            if (wordStartOffset > lineEndOffset) {
+                // There were more than one consecutive whitespace.
+                ASSERT(previousWasSpaceBetweenWords);
+                // Include space to the end of the previous run.
+                lineRuns.last().textLength++;
+                lineRuns.last().width += wordTrailingSpaceWidth;
+                // Start a new run on the same line.
+                float previousRight = lineRuns.last().left + lineRuns.last().width;
+                lineRuns.append(Run(wordStartOffset + 1, previousRight));
+            }
+
+            lineWidth.commit();
+
+            lineRuns.last().width = lineWidth.committedWidth() - lineRuns.last().left;
+            lineRuns.last().textLength = wordEndOffset - lineRuns.last().textOffset;
+
+            lineEndOffset = wordEndOffset;
+            wordEndOffset = skipWhitespaces(textRenderer, wordEndOffset, textLength);
+
             if (!lineWidth.fitsOnLine()) {
-                if (!lineWidth.committedWidth()) {
-                    lineWidth.commit();
-                    lineEndOffset = runEndOffset;
-                }
+                // The first run on the line overflows.
+                ASSERT(lineRuns.size() == 1);
                 break;
             }
-            lineWidth.commit();
-            lineEndOffset = runEndOffset;
-            runEndOffset = skipWhitespaces(textRenderer, runEndOffset, textLength);
         }
         if (lineStartOffset == lineEndOffset)
             continue;
 
-        float alignedLeft = computeLineLeft(textAlign, lineWidth.availableWidth() - lineWidth.committedWidth());
-        float alignedRight = alignedLeft + lineWidth.committedWidth();
+        adjustRunOffsets(lineRuns, textAlign, lineWidth.committedWidth(), lineWidth.availableWidth());
 
-        Run run;
-        run.textOffset = lineStartOffset;
-        run.textLength = lineEndOffset - lineStartOffset;
-        run.left = floor(alignedLeft);
-        run.width = ceil(alignedRight) - run.left;
+        for (unsigned i = 0; i < lineRuns.size(); ++i)
+            layout->runs.append(lineRuns[i]);
 
-        layout->runs.append(run);
+        layout->runs.last().isEndOfLine = true;
         layout->lineCount++;
     }
 
