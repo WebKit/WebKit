@@ -53,7 +53,6 @@ public:
     ~InspectorIndexedDBAgent();
 
     virtual void clearFrontend();
-    virtual void restore();
 
     // Called from the front-end.
     virtual void enable(ErrorString*);

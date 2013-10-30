@@ -129,12 +129,6 @@ void InspectorWorkerAgent::setFrontend(InspectorFrontend* frontend)
     m_inspectorFrontend = frontend;
 }
 
-void InspectorWorkerAgent::restore()
-{
-    if (m_state->getBoolean(WorkerAgentState::workerInspectionEnabled))
-        createWorkerFrontendChannelsForExistingWorkers();
-}
-
 void InspectorWorkerAgent::clearFrontend()
 {
     m_state->setBoolean(WorkerAgentState::autoconnectToWorkers, false);

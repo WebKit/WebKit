@@ -257,11 +257,6 @@ void InspectorDatabaseAgent::disable(ErrorString*)
     m_state->setBoolean(DatabaseAgentState::databaseAgentEnabled, m_enabled);
 }
 
-void InspectorDatabaseAgent::restore()
-{
-    m_enabled = m_state->getBoolean(DatabaseAgentState::databaseAgentEnabled);
-}
-
 void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString* error, const String& databaseId, RefPtr<TypeBuilder::Array<String>>& names)
 {
     if (!m_enabled) {

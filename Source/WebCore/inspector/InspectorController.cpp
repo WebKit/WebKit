@@ -284,14 +284,6 @@ void InspectorController::close()
     m_inspectorClient->closeInspectorFrontend();
 }
 
-void InspectorController::reconnectFrontend(InspectorFrontendChannel* frontendChannel, const String& inspectorStateCookie)
-{
-    ASSERT(!m_inspectorFrontend);
-    connectFrontend(frontendChannel);
-    m_state->loadFromCookie(inspectorStateCookie);
-    m_agents.restore();
-}
-
 void InspectorController::setProcessId(long processId)
 {
     IdentifiersFactory::setProcessId(processId);

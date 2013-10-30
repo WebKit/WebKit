@@ -86,17 +86,6 @@ void InspectorTimelineAgent::clearFrontend()
     m_frontend = 0;
 }
 
-void InspectorTimelineAgent::restore()
-{
-    if (m_state->getBoolean(TimelineAgentState::timelineAgentEnabled)) {
-        m_maxCallStackDepth = m_state->getLong(TimelineAgentState::timelineMaxCallStackDepth);
-        ErrorString error;
-        bool includeDomCounters = m_state->getBoolean(TimelineAgentState::includeDomCounters);
-        bool includeNativeMemoryStatistics = m_state->getBoolean(TimelineAgentState::includeNativeMemoryStatistics);
-        start(&error, &m_maxCallStackDepth, &includeDomCounters, &includeNativeMemoryStatistics);
-    }
-}
-
 void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth, const bool* includeDomCounters, const bool* includeNativeMemoryStatistics)
 {
     if (!m_frontend)

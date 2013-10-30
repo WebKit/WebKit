@@ -61,7 +61,6 @@ public:
     // InspectorBaseAgent
     virtual void setFrontend(InspectorFrontend*);
     virtual void clearFrontend();
-    virtual void restore();
 
     // InspectorInstrumentation API
     void updateApplicationCacheStatus(Frame*);

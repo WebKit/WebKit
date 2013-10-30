@@ -657,18 +657,6 @@ void InspectorCSSAgent::discardAgent()
     m_domAgent = 0;
 }
 
-void InspectorCSSAgent::restore()
-{
-    if (m_state->getBoolean(CSSAgentState::cssAgentEnabled)) {
-        ErrorString error;
-        enable(&error);
-    }
-    if (m_state->getBoolean(CSSAgentState::isSelectorProfiling)) {
-        String errorString;
-        startSelectorProfiler(&errorString);
-    }
-}
-
 void InspectorCSSAgent::reset()
 {
     m_idToInspectorStyleSheet.clear();

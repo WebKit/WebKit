@@ -93,7 +93,6 @@ public:
 
     virtual void setFrontend(InspectorFrontend*);
     virtual void clearFrontend();
-    virtual void restore();
 
     virtual void takeHeapSnapshot(ErrorString*, const bool* reportProgress);
     void toggleRecordButton(bool isProfiling);

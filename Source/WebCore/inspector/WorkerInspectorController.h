@@ -63,7 +63,6 @@ public:
     bool hasFrontend() const { return m_frontend; }
     void connectFrontend();
     void disconnectFrontend();
-    void restoreInspectorStateFromCookie(const String& inspectorCookie);
     void dispatchMessageFromFrontend(const String&);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void resume();

@@ -73,7 +73,6 @@ public:
 
     virtual void setFrontend(InspectorFrontend*);
     virtual void clearFrontend();
-    virtual void restore();
 
     bool isPaused();
     bool runningNestedMessageLoop();

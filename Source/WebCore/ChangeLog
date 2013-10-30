@@ -1,3 +1,51 @@
+2013-10-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove InspectorAgent::restore functionality
+        https://bugs.webkit.org/show_bug.cgi?id=123525
+
+        Reviewed by Timothy Hatcher.
+
+        Remove unused InspectorAgent restore functionality.
+
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorBaseAgent.cpp:
+        * inspector/InspectorBaseAgent.h:
+        * inspector/InspectorCSSAgent.cpp:
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorCanvasAgent.cpp:
+        * inspector/InspectorCanvasAgent.h:
+        * inspector/InspectorConsoleAgent.cpp:
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorHeapProfilerAgent.cpp:
+        * inspector/InspectorHeapProfilerAgent.h:
+        * inspector/InspectorIndexedDBAgent.cpp:
+        * inspector/InspectorIndexedDBAgent.h:
+        * inspector/InspectorLayerTreeAgent.cpp:
+        * inspector/InspectorLayerTreeAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/InspectorWorkerAgent.cpp:
+        * inspector/InspectorWorkerAgent.h:
+        * inspector/PageRuntimeAgent.cpp:
+        * inspector/PageRuntimeAgent.h:
+        * inspector/WorkerInspectorController.cpp:
+        * inspector/WorkerInspectorController.h:
+
 2013-10-30  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r158288): media/media-can-play-mpeg4-video.html fails

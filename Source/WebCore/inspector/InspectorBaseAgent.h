@@ -51,7 +51,6 @@ public:
 
     virtual void setFrontend(InspectorFrontend*) { }
     virtual void clearFrontend() { }
-    virtual void restore() { }
     virtual void registerInDispatcher(InspectorBackendDispatcher*) = 0;
     virtual void discardAgent() { }
 
@@ -71,7 +70,6 @@ public:
 
     void setFrontend(InspectorFrontend*);
     void clearFrontend();
-    void restore();
     void registerInDispatcher(InspectorBackendDispatcher*);
     void discardAgents();
 

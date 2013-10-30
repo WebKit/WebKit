@@ -75,12 +75,6 @@ void InspectorLayerTreeAgent::clearFrontend()
     disable(0);
 }
 
-void InspectorLayerTreeAgent::restore()
-{
-    if (m_state->getBoolean(LayerTreeAgentState::layerTreeAgentEnabled))
-        enable(0);
-}
-
 void InspectorLayerTreeAgent::reset()
 {
     m_documentLayerToIdMap.clear();

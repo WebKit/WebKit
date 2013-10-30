@@ -99,7 +99,6 @@ public:
     virtual void setFrontend(InspectorFrontend*);
     virtual void clearFrontend();
     virtual void discardAgent();
-    virtual void restore();
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
     void reset();

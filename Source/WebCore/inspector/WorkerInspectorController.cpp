@@ -160,15 +160,6 @@ void WorkerInspectorController::disconnectFrontend()
     m_frontendChannel.clear();
 }
 
-void WorkerInspectorController::restoreInspectorStateFromCookie(const String& inspectorCookie)
-{
-    ASSERT(!m_frontend);
-    connectFrontend();
-    m_state->loadFromCookie(inspectorCookie);
-
-    m_agents.restore();
-}
-
 void WorkerInspectorController::dispatchMessageFromFrontend(const String& message)
 {
     if (m_backendDispatcher)

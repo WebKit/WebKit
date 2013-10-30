@@ -131,15 +131,6 @@ void InspectorConsoleAgent::reset()
     m_counts.clear();
 }
 
-void InspectorConsoleAgent::restore()
-{
-    if (m_state->getBoolean(ConsoleAgentState::consoleMessagesEnabled)) {
-        m_frontend->messagesCleared();
-        ErrorString error;
-        enable(&error);
-    }
-}
-
 void InspectorConsoleAgent::setFrontend(InspectorFrontend* frontend)
 {
     m_frontend = frontend->console();

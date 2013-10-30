@@ -91,14 +91,6 @@ void InspectorCanvasAgent::clearFrontend()
     disable(0);
 }
 
-void InspectorCanvasAgent::restore()
-{
-    if (m_state->getBoolean(CanvasAgentState::canvasAgentEnabled)) {
-        ErrorString error;
-        enable(&error);
-    }
-}
-
 void InspectorCanvasAgent::enable(ErrorString*)
 {
     if (m_enabled)

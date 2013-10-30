@@ -67,14 +67,6 @@ void InspectorApplicationCacheAgent::clearFrontend()
     m_frontend = 0;
 }
 
-void InspectorApplicationCacheAgent::restore()
-{
-    if (m_state->getBoolean(ApplicationCacheAgentState::applicationCacheAgentEnabled)) {
-        ErrorString error;
-        enable(&error);
-    }
-}
-
 void InspectorApplicationCacheAgent::enable(ErrorString*)
 {
     m_state->setBoolean(ApplicationCacheAgentState::applicationCacheAgentEnabled, true);

@@ -267,13 +267,6 @@ void InspectorDOMAgent::clearFrontend()
     reset();
 }
 
-void InspectorDOMAgent::restore()
-{
-    // Reset document to avoid early return from setDocument.
-    m_document = 0;
-    setDocument(m_pageAgent->mainFrame()->document());
-}
-
 Vector<Document*> InspectorDOMAgent::documents()
 {
     Vector<Document*> result;

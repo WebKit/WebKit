@@ -351,23 +351,6 @@ void InspectorProfilerAgent::clearFrontend()
     disable(&error);
 }
 
-void InspectorProfilerAgent::restore()
-{
-    // Need to restore enablement state here as in setFrontend m_state wasn't loaded yet.
-    restoreEnablement();
-    resetFrontendProfiles();
-    if (m_state->getBoolean(ProfilerAgentState::userInitiatedProfiling))
-        start();
-}
-
-void InspectorProfilerAgent::restoreEnablement()
-{
-    if (m_state->getBoolean(ProfilerAgentState::profilerEnabled)) {
-        ErrorString error;
-        enable(&error);
-    }
-}
-
 void InspectorProfilerAgent::start(ErrorString*)
 {
     if (m_recordingCPUProfile)

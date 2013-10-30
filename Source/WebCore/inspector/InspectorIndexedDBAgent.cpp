@@ -577,14 +577,6 @@ void InspectorIndexedDBAgent::clearFrontend()
     disable(0);
 }
 
-void InspectorIndexedDBAgent::restore()
-{
-    if (m_state->getBoolean(IndexedDBAgentState::indexedDBAgentEnabled)) {
-        ErrorString error;
-        enable(&error);
-    }
-}
-
 void InspectorIndexedDBAgent::enable(ErrorString*)
 {
     m_state->setBoolean(IndexedDBAgentState::indexedDBAgentEnabled, true);

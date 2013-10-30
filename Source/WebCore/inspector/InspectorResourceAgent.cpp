@@ -96,12 +96,6 @@ void InspectorResourceAgent::clearFrontend()
     disable(&error);
 }
 
-void InspectorResourceAgent::restore()
-{
-    if (m_state->getBoolean(ResourceAgentState::resourceAgentEnabled))
-        enable();
-}
-
 static PassRefPtr<InspectorObject> buildObjectForHeaders(const HTTPHeaderMap& headers)
 {
     RefPtr<InspectorObject> headersObject = InspectorObject::create();

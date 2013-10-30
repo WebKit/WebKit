@@ -165,7 +165,6 @@ public:
     // Inspector Controller API
     virtual void setFrontend(InspectorFrontend*);
     virtual void clearFrontend();
-    virtual void restore();
 
     void webViewResized(const IntSize&);
 

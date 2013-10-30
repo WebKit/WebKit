@@ -53,7 +53,6 @@ public:
     virtual ~PageRuntimeAgent();
     virtual void setFrontend(InspectorFrontend*);
     virtual void clearFrontend();
-    virtual void restore();
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
 

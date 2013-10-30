@@ -147,17 +147,6 @@ void InspectorDebuggerAgent::disable(ErrorString*)
     m_state->setBoolean(DebuggerAgentState::debuggerEnabled, false);
 }
 
-void InspectorDebuggerAgent::restore()
-{
-    if (enabled()) {
-        m_frontend->globalObjectCleared();
-        enable();
-        long pauseState = m_state->getLong(DebuggerAgentState::pauseOnExceptionsState);
-        String error;
-        setPauseOnExceptionsImpl(&error, pauseState);
-    }
-}
-
 void InspectorDebuggerAgent::setFrontend(InspectorFrontend* frontend)
 {
     m_frontend = frontend->debugger();

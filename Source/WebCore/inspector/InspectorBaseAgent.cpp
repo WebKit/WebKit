@@ -66,12 +66,6 @@ void InspectorAgentRegistry::clearFrontend()
         m_agents[i]->clearFrontend();
 }
 
-void InspectorAgentRegistry::restore()
-{
-    for (size_t i = 0; i < m_agents.size(); i++)
-        m_agents[i]->restore();
-}
-
 void InspectorAgentRegistry::registerInDispatcher(InspectorBackendDispatcher* dispatcher)
 {
     for (size_t i = 0; i < m_agents.size(); i++)

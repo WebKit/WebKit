@@ -81,14 +81,6 @@ void PageRuntimeAgent::clearFrontend()
     disable(&errorString);
 }
 
-void PageRuntimeAgent::restore()
-{
-    if (m_state->getBoolean(PageRuntimeAgentState::runtimeEnabled)) {
-        String error;
-        enable(&error);
-    }
-}
-
 void PageRuntimeAgent::enable(ErrorString* errorString)
 {
     if (m_enabled)

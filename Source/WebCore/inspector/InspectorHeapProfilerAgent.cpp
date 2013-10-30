@@ -96,11 +96,6 @@ void InspectorHeapProfilerAgent::clearFrontend()
     m_frontend = 0;
 }
 
-void InspectorHeapProfilerAgent::restore()
-{
-    resetFrontendProfiles();
-}
-
 void InspectorHeapProfilerAgent::collectGarbage(WebCore::ErrorString*)
 {
     ScriptProfiler::collectGarbage();

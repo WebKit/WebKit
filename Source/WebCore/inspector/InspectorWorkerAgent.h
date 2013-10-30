@@ -53,7 +53,6 @@ public:
     ~InspectorWorkerAgent();
 
     virtual void setFrontend(InspectorFrontend*);
-    virtual void restore();
     virtual void clearFrontend();
 
     // Called from InspectorInstrumentation
