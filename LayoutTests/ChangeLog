@@ -1,3 +1,14 @@
+2013-10-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add more test expectations for the bug 121452.
+
+        fast/frames/lots-of-objects.html is failing on Mavericks WebKit2 builders in addition to Debug builders.
+
+        fast/frames/lots-of-iframes.html is also failing on the exactly same set of builders.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2013-10-30  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed. Removed some grid layout tests that are passing now.
