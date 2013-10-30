@@ -237,16 +237,13 @@ Page::~Page()
 #endif
 }
 
-ArenaSize Page::renderTreeSize() const
+uint64_t Page::renderTreeSize() const
 {
-    ArenaSize total(0, 0);
+    uint64_t total = 0;
     for (const Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (!frame->document())
+        if (!frame->document() || !frame->document()->renderView())
             continue;
-        if (RenderArena* arena = frame->document()->renderArena()) {
-            total.treeSize += arena->totalRenderArenaSize();
-            total.allocated += arena->totalRenderArenaAllocatedBytes();
-        }
+        total += frame->document()->renderView()->rendererCount();
     }
     return total;
 }

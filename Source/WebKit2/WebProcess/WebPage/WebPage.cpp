@@ -631,7 +631,7 @@ uint64_t WebPage::renderTreeSize() const
 {
     if (!m_page)
         return 0;
-    return m_page->renderTreeSize().treeSize;
+    return m_page->renderTreeSize();
 }
 
 void WebPage::setTracksRepaints(bool trackRepaints)

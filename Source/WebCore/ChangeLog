@@ -1,3 +1,18 @@
+2013-10-30  Andreas Kling  <akling@apple.com>
+
+        Let Page::renderTreeSize() be the number of renderers.
+        <https://webkit.org/b/123518>
+        <rdar://problem/15348679>
+
+        The old metric was "number of bytes allocated in RenderArena" and
+        that was heading towards obsolescence, fast.
+
+        Instead, keep a count of RenderObjects instantiated on RenderView.
+        While a bit ugly, this lets us move forward with rendering memory
+        model improvements without breaking features.
+
+        Reviewed by Beth Dakin.
+
 2013-10-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         WebKit/win/WebKitGraphics.h:void WebDrawText(WebTextRenderInfo*); is never called

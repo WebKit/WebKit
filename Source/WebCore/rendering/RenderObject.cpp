@@ -113,6 +113,8 @@ RenderObject::RenderObject(Node& node)
 #endif
     , m_bitfields(node)
 {
+    if (!node.isDocumentNode())
+        view().didCreateRenderer();
 #ifndef NDEBUG
     renderObjectCounter.increment();
 #endif
@@ -124,6 +126,7 @@ RenderObject::~RenderObject()
     ASSERT(!m_hasAXObject);
     renderObjectCounter.decrement();
 #endif
+    view().didDestroyRenderer();
 }
 
 RenderTheme* RenderObject::theme() const

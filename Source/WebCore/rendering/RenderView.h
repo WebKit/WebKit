@@ -230,6 +230,10 @@ public:
     bool hasSoftwareFilters() const { return m_hasSoftwareFilters; }
 #endif
 
+    uint64_t rendererCount() const { return m_rendererCount; }
+    void didCreateRenderer() { ++m_rendererCount; }
+    void didDestroyRenderer() { --m_rendererCount; }
+
 protected:
     virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags = ApplyContainerFlip, bool* wasFixed = 0) const OVERRIDE;
     virtual const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const OVERRIDE;
@@ -296,6 +300,8 @@ private:
     RenderObject* m_selectionEnd;
     int m_selectionStartPos;
     int m_selectionEndPos;
+
+    uint64_t m_rendererCount;
 
     // FIXME: Only used by embedded WebViews inside AppKit NSViews.  Find a way to remove.
     struct LegacyPrinting {
