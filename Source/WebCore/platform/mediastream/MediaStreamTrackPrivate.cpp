@@ -43,7 +43,8 @@ PassRefPtr<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(PassRefPtr<M
 }
 
 MediaStreamTrackPrivate::MediaStreamTrackPrivate(const MediaStreamTrackPrivate& other)
-    : m_client(nullptr)
+    : RefCounted()
+    , m_client(nullptr)
 {
     m_ignoreMutations = true;
     m_id = createCanonicalUUIDString();
