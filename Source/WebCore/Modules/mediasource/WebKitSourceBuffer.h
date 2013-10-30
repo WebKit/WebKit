@@ -47,7 +47,7 @@ class WebKitMediaSource;
 
 class WebKitSourceBuffer : public RefCounted<WebKitSourceBuffer>, public ScriptWrappable {
 public:
-    static PassRefPtr<WebKitSourceBuffer> create(PassOwnPtr<SourceBufferPrivate>, PassRefPtr<WebKitMediaSource>);
+    static PassRef<WebKitSourceBuffer> create(PassRef<SourceBufferPrivate>, PassRef<WebKitMediaSource>);
 
     virtual ~WebKitSourceBuffer();
 
@@ -61,11 +61,11 @@ public:
     void removedFromMediaSource();
 
 private:
-    WebKitSourceBuffer(PassOwnPtr<SourceBufferPrivate>, PassRefPtr<WebKitMediaSource>);
+    WebKitSourceBuffer(PassRef<SourceBufferPrivate>, PassRef<WebKitMediaSource>);
 
     bool isRemoved() const;
 
-    OwnPtr<SourceBufferPrivate> m_private;
+    RefPtr<SourceBufferPrivate> m_private;
     RefPtr<WebKitMediaSource> m_source;
 
     double m_timestampOffset;

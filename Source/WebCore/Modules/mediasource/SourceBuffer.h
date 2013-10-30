@@ -51,7 +51,7 @@ class TimeRanges;
 
 class SourceBuffer FINAL : public RefCounted<SourceBuffer>, public ActiveDOMObject, public EventTargetWithInlineData, public ScriptWrappable {
 public:
-    static PassRefPtr<SourceBuffer> create(PassOwnPtr<SourceBufferPrivate>, MediaSource*);
+    static PassRef<SourceBuffer> create(PassRef<SourceBufferPrivate>, MediaSource*);
 
     virtual ~SourceBuffer();
 
@@ -84,7 +84,7 @@ protected:
     virtual void derefEventTarget() OVERRIDE { deref(); }
 
 private:
-    SourceBuffer(PassOwnPtr<SourceBufferPrivate>, MediaSource*);
+    SourceBuffer(PassRef<SourceBufferPrivate>, MediaSource*);
 
     bool isRemoved() const;
     void scheduleEvent(const AtomicString& eventName);
@@ -92,7 +92,7 @@ private:
     void appendBufferInternal(unsigned char*, unsigned, ExceptionCode&);
     void appendBufferTimerFired(Timer<SourceBuffer>*);
 
-    OwnPtr<SourceBufferPrivate> m_private;
+    RefPtr<SourceBufferPrivate> m_private;
     MediaSource* m_source;
     GenericEventQueue m_asyncEventQueue;
 

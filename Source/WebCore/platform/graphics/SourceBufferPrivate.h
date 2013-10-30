@@ -33,12 +33,12 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "TimeRanges.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class SourceBufferPrivate {
+class SourceBufferPrivate : public RefCounted<SourceBufferPrivate> {
 public:
-    SourceBufferPrivate() { }
     virtual ~SourceBufferPrivate() { }
 
     virtual PassRefPtr<TimeRanges> buffered() = 0;

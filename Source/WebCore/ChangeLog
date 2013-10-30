@@ -1,3 +1,36 @@
+2013-10-30  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Make MediaSourcePrivate, SourceBufferPrivate classes RefCounted.
+        https://bugs.webkit.org/show_bug.cgi?id=123350
+
+        Reviewed by Darin Adler.
+
+        Make the MediaSourcePrivate and SourceBufferPrivate classes RefCounted so that
+        they can be referenced both by MediaSource/SourceBuffer, and by the MediaPlayerPrivate
+        which creates them.
+
+        Change OwnPtr -> RefPtr everywhere:
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::addSourceBuffer):
+        * Modules/mediasource/MediaSourceBase.cpp:
+        (WebCore::MediaSourceBase::setPrivateAndOpen):
+        (WebCore::MediaSourceBase::createSourceBufferPrivate):
+        * Modules/mediasource/MediaSourceBase.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::create):
+        (WebCore::SourceBuffer::SourceBuffer):
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediasource/WebKitMediaSource.cpp:
+        (WebCore::WebKitMediaSource::addSourceBuffer):
+        * Modules/mediasource/WebKitSourceBuffer.cpp:
+        (WebCore::WebKitSourceBuffer::create):
+        (WebCore::WebKitSourceBuffer::WebKitSourceBuffer):
+        * Modules/mediasource/WebKitSourceBuffer.h:
+        * html/HTMLMediaSource.h:
+        * platform/graphics/MediaSourcePrivate.h:
+        * platform/graphics/SourceBufferPrivate.h:
+        (WebCore::SourceBufferPrivate::SourceBufferPrivate):
+
 2013-10-30  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Remove unused runtime enabled

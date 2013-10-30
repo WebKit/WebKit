@@ -53,7 +53,7 @@ public:
     // 'closed' state, and returns true to indicate attachment success.
     // Reattachment allowed by first calling close() (even if already in 'closed').
     virtual bool attachToElement() = 0;
-    virtual void setPrivateAndOpen(PassOwnPtr<MediaSourcePrivate>) = 0;
+    virtual void setPrivateAndOpen(PassRef<MediaSourcePrivate>) = 0;
     virtual void close() = 0;
     virtual bool isClosed() const = 0;
     virtual double duration() const = 0;

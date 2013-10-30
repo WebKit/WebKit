@@ -40,14 +40,14 @@
 
 namespace WebCore {
 
-PassRefPtr<WebKitSourceBuffer> WebKitSourceBuffer::create(PassOwnPtr<SourceBufferPrivate> sourceBufferPrivate, PassRefPtr<WebKitMediaSource> source)
+PassRef<WebKitSourceBuffer> WebKitSourceBuffer::create(PassRef<SourceBufferPrivate> sourceBufferPrivate, PassRef<WebKitMediaSource> source)
 {
-    return adoptRef(new WebKitSourceBuffer(sourceBufferPrivate, source));
+    return adoptRef(*new WebKitSourceBuffer(std::move(sourceBufferPrivate), std::move(source)));
 }
 
-WebKitSourceBuffer::WebKitSourceBuffer(PassOwnPtr<SourceBufferPrivate> sourceBufferPrivate, PassRefPtr<WebKitMediaSource> source)
-    : m_private(sourceBufferPrivate)
-    , m_source(source)
+WebKitSourceBuffer::WebKitSourceBuffer(PassRef<SourceBufferPrivate> sourceBufferPrivate, PassRef<WebKitMediaSource> source)
+    : m_private(std::move(sourceBufferPrivate))
+    , m_source(std::move(source))
     , m_timestampOffset(0)
 {
     ASSERT(m_private);

@@ -42,16 +42,16 @@
 
 namespace WebCore {
 
-PassRefPtr<SourceBuffer> SourceBuffer::create(PassOwnPtr<SourceBufferPrivate> sourceBufferPrivate, MediaSource* source)
+PassRef<SourceBuffer> SourceBuffer::create(PassRef<SourceBufferPrivate> sourceBufferPrivate, MediaSource* source)
 {
-    RefPtr<SourceBuffer> sourceBuffer(adoptRef(new SourceBuffer(sourceBufferPrivate, source)));
+    RefPtr<SourceBuffer> sourceBuffer(adoptRef(new SourceBuffer(std::move(sourceBufferPrivate), source)));
     sourceBuffer->suspendIfNeeded();
-    return sourceBuffer.release();
+    return sourceBuffer.releaseNonNull();
 }
 
-SourceBuffer::SourceBuffer(PassOwnPtr<SourceBufferPrivate> sourceBufferPrivate, MediaSource* source)
+SourceBuffer::SourceBuffer(PassRef<SourceBufferPrivate> sourceBufferPrivate, MediaSource* source)
     : ActiveDOMObject(source->scriptExecutionContext())
-    , m_private(sourceBufferPrivate)
+    , m_private(std::move(sourceBufferPrivate))
     , m_source(source)
     , m_asyncEventQueue(*this)
     , m_updating(false)

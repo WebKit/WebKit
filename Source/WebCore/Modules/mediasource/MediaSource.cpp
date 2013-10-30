@@ -96,7 +96,7 @@ SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec
     // 5. Create a new SourceBuffer object and associated resources.
     ContentType contentType(type);
     Vector<String> codecs = contentType.codecs();
-    OwnPtr<SourceBufferPrivate> sourceBufferPrivate = createSourceBufferPrivate(contentType.type(), codecs, ec);
+    RefPtr<SourceBufferPrivate> sourceBufferPrivate = createSourceBufferPrivate(contentType, ec);
 
     if (!sourceBufferPrivate) {
         ASSERT(ec == NOT_SUPPORTED_ERR || ec == QUOTA_EXCEEDED_ERR);
@@ -105,7 +105,7 @@ SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec
         return 0;
     }
 
-    RefPtr<SourceBuffer> buffer = SourceBuffer::create(sourceBufferPrivate.release(), this);
+    RefPtr<SourceBuffer> buffer = SourceBuffer::create(sourceBufferPrivate.releaseNonNull(), this);
     // 6. Add the new object to sourceBuffers and fire a addsourcebuffer on that object.
     m_sourceBuffers->add(buffer);
     m_activeSourceBuffers->add(buffer);

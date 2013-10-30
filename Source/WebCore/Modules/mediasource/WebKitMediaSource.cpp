@@ -47,7 +47,7 @@ PassRefPtr<WebKitMediaSource> WebKitMediaSource::create(ScriptExecutionContext* 
 {
     RefPtr<WebKitMediaSource> mediaSource(adoptRef(new WebKitMediaSource(context)));
     mediaSource->suspendIfNeeded();
-    return mediaSource.release();
+    return mediaSource.releaseNonNull();
 }
 
 WebKitMediaSource::WebKitMediaSource(ScriptExecutionContext* context)
@@ -96,11 +96,11 @@ WebKitSourceBuffer* WebKitMediaSource::addSourceBuffer(const String& type, Excep
     // 5. Create a new SourceBuffer object and associated resources.
     ContentType contentType(type);
     Vector<String> codecs = contentType.codecs();
-    OwnPtr<SourceBufferPrivate> sourceBufferPrivate = createSourceBufferPrivate(contentType.type(), codecs, ec);
+    RefPtr<SourceBufferPrivate> sourceBufferPrivate = createSourceBufferPrivate(contentType, ec);
     if (!sourceBufferPrivate)
         return 0;
 
-    RefPtr<WebKitSourceBuffer> buffer = WebKitSourceBuffer::create(sourceBufferPrivate.release(), this);
+    RefPtr<WebKitSourceBuffer> buffer = WebKitSourceBuffer::create(sourceBufferPrivate.releaseNonNull(), *this);
     // 6. Add the new object to sourceBuffers and fire a addsourcebuffer on that object.
     m_sourceBuffers->add(buffer);
     m_activeSourceBuffers->add(buffer);
