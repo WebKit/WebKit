@@ -60,6 +60,8 @@ struct Run {
 };
 
 struct Layout {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     typedef Vector<Run, 10> RunVector;
     static std::unique_ptr<Layout> create(const RunVector&, unsigned lineCount);
 
