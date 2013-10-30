@@ -1,3 +1,16 @@
+2013-10-30  Samuel White  <samuel_white@apple.com>
+
+        AX: Add samuel_white@apple.com to accessibility watchlist cc rules
+        https://bugs.webkit.org/show_bug.cgi?id=123515
+
+        Reviewed by Chris Fleizach.
+
+        Adding myself and jcraig@apple.com (per his request) to the accessibility watchlist. Also
+        updating contributors.json with permission from bweinstein@apple.com to make this possible.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-10-30  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Add executable entry points to DRT and WinLauncher
