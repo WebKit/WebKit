@@ -1,3 +1,9 @@
+2013-10-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK+ build fix attempt after r158220.
+
+        * GNUmakefile.list.am:
+
 2013-10-29  Brady Eidson  <beidson@apple.com>
 
         Move IDBTransactionBackendLevelDB to generic IDBBackingStoreInterface
