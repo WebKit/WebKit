@@ -1,3 +1,26 @@
+2013-10-29  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r158198): editing/execCommand/insert-list-xml.xhtml fails
+        https://bugs.webkit.org/show_bug.cgi?id=123460
+
+        Reviewed by Ryosuke Niwa.
+
+        The original version of this test used a MathML document root,
+        and attempted to add HTML content to prove that a bad cast would
+        not be encountered when manipulating the MathML document via
+        JavaScript.
+
+        r158198 broke the test, because it enforced the requirements that
+        MathML nodes not generate renderers for non-MathML children.
+
+        This patch revises the test to use an SVG document, which does
+        permit child HTML nodes.
+
+        * TestExpectations: Remove temporary exclusion landed in
+          r158216.
+        * editing/execCommand/insert-list-xml-expected.txt:
+        * editing/execCommand/insert-list-xml.xhtml:
+
 2013-10-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mountain Lion rebaseline after r158231.
