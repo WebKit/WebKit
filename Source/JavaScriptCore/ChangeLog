@@ -1,3 +1,10 @@
+2013-10-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix Windows.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addFrequentExitSite):
+
 2013-10-29  Filip Pizlo  <fpizlo@apple.com>
 
         Add InvalidationPoints to the DFG and use them for all watchpoints

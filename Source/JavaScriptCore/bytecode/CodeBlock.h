@@ -585,7 +585,12 @@ public:
     {
         return m_lazyOperandValueProfiles;
     }
-#endif
+#else // ENABLE(DFG_JIT)
+    bool addFrequentExitSite(const DFG::FrequentExitSite&)
+    {
+        return false;
+    }
+#endif // ENABLE(DFG_JIT)
 
     // Constant Pool
 #if ENABLE(DFG_JIT)
