@@ -1,3 +1,40 @@
+2013-10-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Underline bounds cannot be queried before underline itself is drawn
+        https://bugs.webkit.org/show_bug.cgi?id=123310
+
+        Reviewed by Simon Fraser
+
+        GraphicsContext's drawLineForText function is used to draw underlines,
+        strikethroughs, and overlines. Before drawing the line, this function
+        modifies the bounds given to it in order to make underlines crisp. However,  
+        this means that it is impossible to know where an underline will be drawn
+        before drawing it. This patch pulls out this adjustment computation into 
+        InlineTextBox, then passes the result to drawLineForText.
+
+        Because there should be no observable difference, no tests need to be updated.
+
+        * platform/graphics/GraphicsContext.h: Changing the signature of drawLineForText
+        so it can accept bounds from our helper function
+        * platform/graphics/blackberry/PathBlackBerry.cpp:
+        (WebCore::GraphicsContext::drawLineForText): Update to work with new
+        signature of drawLineForText
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLineForText): Ditto
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawLineForText): Ditto
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::drawLineForText): Ditto
+        * platform/win/WebCoreTextRenderer.cpp:
+        (WebCore::doDrawTextAtPoint): Update the last call site of drawLineForText
+        * rendering/InlineTextBox.cpp:
+        (WebCore::computeBoundsForUnderline): Pure function that computes the adjusted
+        bounds of the underline about to be drawn
+        (WebCore::drawLineForText): calls computeBoundsForUnderline and then
+        GraphicsContext::drawLineForText
+        (WebCore::InlineTextBox::paintDecoration): Use new drawLineForText function
+        (WebCore::InlineTextBox::paintCompositionUnderline): Ditto
+
 2013-10-29  Alexey Proskuryakov  <ap@apple.com>
 
         Beef up CryptoKey

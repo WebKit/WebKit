@@ -1235,53 +1235,16 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMo
     return FloatRect(roundedOrigin, roundedLowerRight - roundedOrigin);
 }
 
-void GraphicsContext::drawLineForText(const FloatPoint& point, float width, bool printing)
+void GraphicsContext::drawLineForText(const FloatRect& bounds, bool)
 {
     if (paintingDisabled())
         return;
 
-    if (width <= 0)
-        return;
-
-    float x = point.x();
-    float y = point.y();
-    float lineLength = width;
-
-    // Use a minimum thickness of 0.5 in user space.
-    // See http://bugs.webkit.org/show_bug.cgi?id=4255 for details of why 0.5 is the right minimum thickness to use.
-    float thickness = max(strokeThickness(), 0.5f);
-
-    bool restoreAntialiasMode = false;
-
-    if (!printing && getCTM(GraphicsContext::DefinitelyIncludeDeviceScale).preservesAxisAlignment()) {
-        // On screen, use a minimum thickness of 1.0 in user space (later rounded to an integral number in device space).
-        float adjustedThickness = max(thickness, 1.0f);
-
-        // FIXME: This should be done a better way.
-        // We try to round all parameters to integer boundaries in device space. If rounding pixels in device space
-        // makes our thickness more than double, then there must be a shrinking-scale factor and rounding to pixels
-        // in device space will make the underlines too thick.
-        CGRect lineRect = roundToDevicePixels(FloatRect(x, y, lineLength, adjustedThickness), RoundAllSides);
-        if (lineRect.size.height < thickness * 2.0) {
-            x = lineRect.origin.x;
-            y = lineRect.origin.y;
-            lineLength = lineRect.size.width;
-            thickness = lineRect.size.height;
-            if (shouldAntialias()) {
-                CGContextSetShouldAntialias(platformContext(), false);
-                restoreAntialiasMode = true;
-            }
-        }
-    }
-
     if (fillColor() != strokeColor())
         setCGFillColor(platformContext(), strokeColor(), strokeColorSpace());
-    CGContextFillRect(platformContext(), CGRectMake(x, y, lineLength, thickness));
+    CGContextFillRect(platformContext(), CGRectMake(bounds.location().x(), bounds.location().y(), bounds.width(), bounds.height()));
     if (fillColor() != strokeColor())
         setCGFillColor(platformContext(), fillColor(), fillColorSpace());
-
-    if (restoreAntialiasMode)
-        CGContextSetShouldAntialias(platformContext(), true);
 }
 
 void GraphicsContext::setURLForRect(const URL& link, const IntRect& destRect)
