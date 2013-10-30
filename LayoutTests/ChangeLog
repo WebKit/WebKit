@@ -1,5 +1,15 @@
 2013-10-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add a failing test expectation on media/media-can-play-mpeg4-video.html after r158288.
+        The failure is tracked by the bug 123530.
+
+        Also rebaseline Mountain Lion results.
+
+        * TestExpectations:
+        * platform/mac-mountainlion/js/dom/global-constructors-attributes-expected.txt:
+
+2013-10-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add a flaky test expectation to media/track/track-in-band-legacy-api.html
         The failure is tracked by the bug 123522.
 
