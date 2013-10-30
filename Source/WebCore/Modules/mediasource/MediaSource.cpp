@@ -38,6 +38,7 @@
 #include "GenericEventQueue.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
+#include "MediaPlayer.h"
 #include "MediaSourceRegistry.h"
 #include "SourceBufferPrivate.h"
 #include "TimeRanges.h"
@@ -95,7 +96,6 @@ SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec
 
     // 5. Create a new SourceBuffer object and associated resources.
     ContentType contentType(type);
-    Vector<String> codecs = contentType.codecs();
     RefPtr<SourceBufferPrivate> sourceBufferPrivate = createSourceBufferPrivate(contentType, ec);
 
     if (!sourceBufferPrivate) {
@@ -204,7 +204,11 @@ bool MediaSource::isTypeSupported(const String& type)
     // 4. If type contains at a codec that the MediaSource does not support, then return false.
     // 5. If the MediaSource does not support the specified combination of media type, media subtype, and codecs then return false.
     // 6. Return true.
-    return MIMETypeRegistry::isSupportedMediaSourceMIMEType(contentType.type(), codecs);
+    MediaEngineSupportParameters parameters = { };
+    parameters.type = contentType.type();
+    parameters.codecs = codecs;
+    parameters.isMediaSource = true;
+    return MediaPlayer::supportsType(parameters, 0) != MediaPlayer::IsNotSupported;
 }
 
 EventTargetInterface MediaSource::eventTargetInterface() const

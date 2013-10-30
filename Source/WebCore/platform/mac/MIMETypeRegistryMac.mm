@@ -73,11 +73,4 @@ bool MIMETypeRegistry::isApplicationPluginMIMEType(const String& MIMEType)
     return false;
 }
 
-#if ENABLE(MEDIA_SOURCE)
-bool MIMETypeRegistry::isSupportedMediaSourceMIMEType(const String&, const String&)
-{
-    return false;
-}
-#endif
-
 }

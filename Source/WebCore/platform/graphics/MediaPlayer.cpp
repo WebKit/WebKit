@@ -379,11 +379,11 @@ bool MediaPlayer::load(const URL& url, const ContentType& contentType, const Str
 }
 
 #if ENABLE(MEDIA_SOURCE)
-bool MediaPlayer::load(const URL& url, PassRefPtr<HTMLMediaSource> mediaSource)
+bool MediaPlayer::load(const URL& url, const ContentType& contentType, PassRefPtr<HTMLMediaSource> mediaSource)
 {
     m_mediaSource = mediaSource;
-    m_contentMIMEType = "";
-    m_contentTypeCodecs = "";
+    m_contentMIMEType = contentType.type().lower();
+    m_contentTypeCodecs = contentType.parameter(codecs());
     m_url = url;
     m_keySystem = "";
     m_contentMIMETypeWasInferredFromExtension = false;
@@ -741,23 +741,8 @@ bool MediaPlayer::copyVideoTextureToPlatformTexture(GraphicsContext3D* context, 
     return m_private->copyVideoTextureToPlatformTexture(context, texture, level, type, internalFormat, premultiplyAlpha, flipY);
 }
 
-MediaPlayer::SupportsType MediaPlayer::supportsType(const ContentType& contentType, const String& keySystem, const URL& url, const MediaPlayerSupportsTypeClient* client)
+MediaPlayer::SupportsType MediaPlayer::supportsType(const MediaEngineSupportParameters& parameters, const MediaPlayerSupportsTypeClient* client)
 {
-    MediaEngineSupportParameters parameters;
-    parameters.type = contentType.type().lower();
-    // The codecs string is not lower-cased because MP4 values are case sensitive
-    // per http://tools.ietf.org/html/rfc4281#page-7.
-    parameters.codecs = contentType.parameter(codecs());
-    parameters.url = url;
-#if ENABLE(ENCRYPTED_MEDIA)
-    parameters.keySystem = keySystem.lower();
-#else
-    UNUSED_PARAM(keySystem);
-#endif
-#if ENABLE(MEDIA_SOURCE)
-    parameters.isMediaSource = false;
-#endif
-
     // 4.8.10.3 MIME types - The canPlayType(type) method must return the empty string if type is a type that the 
     // user agent knows it cannot render or is the type "application/octet-stream"
     if (parameters.type == applicationOctetStream())
@@ -777,7 +762,7 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(const ContentType& contentTy
     if (client && client->mediaPlayerNeedsSiteSpecificHacks()) {
         String host = client->mediaPlayerDocumentHost();
         if ((host.endsWith(".youtube.com", false) || equalIgnoringCase("youtube.com", host))
-            && (contentType.type().startsWith("video/webm", false) || contentType.type().startsWith("video/x-flv", false)))
+            && (parameters.type.startsWith("video/webm", false) || parameters.type.startsWith("video/x-flv", false)))
             return IsNotSupported;
     }
 #else

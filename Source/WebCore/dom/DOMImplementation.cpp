@@ -356,7 +356,10 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
      // Check to see if the type can be played by our MediaPlayer, if so create a MediaDocument
     // Key system is not applicable here.
     DOMImplementationSupportsTypeClient client(frame && frame->settings().needsSiteSpecificQuirks(), url.host());
-    if (MediaPlayer::supportsType(ContentType(type), String(), url, &client))
+    MediaEngineSupportParameters parameters = { };
+    parameters.type = type;
+    parameters.url = url;
+    if (MediaPlayer::supportsType(parameters, &client))
          return MediaDocument::create(frame, url);
 #endif
 

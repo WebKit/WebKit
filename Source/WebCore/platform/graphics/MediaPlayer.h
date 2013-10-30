@@ -102,6 +102,18 @@ struct PlatformMedia {
     } media;
 };
 
+struct MediaEngineSupportParameters {
+    String type;
+    String codecs;
+    URL url;
+#if ENABLE(ENCRYPTED_MEDIA)
+    String keySystem;
+#endif
+#if ENABLE(MEDIA_SOURCE)
+    bool isMediaSource;
+#endif
+};
+
 extern const PlatformMedia NoPlatformMedia;
 
 class CachedResourceLoader;
@@ -253,7 +265,7 @@ public:
 
     // Media engine support.
     enum SupportsType { IsNotSupported, IsSupported, MayBeSupported };
-    static MediaPlayer::SupportsType supportsType(const ContentType&, const String& keySystem, const URL&, const MediaPlayerSupportsTypeClient*);
+    static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&, const MediaPlayerSupportsTypeClient*);
     static void getSupportedTypes(HashSet<String>&);
     static bool isAvailable();
     static void getSitesInMediaCache(Vector<String>&);
@@ -282,7 +294,7 @@ public:
 
     bool load(const URL&, const ContentType&, const String& keySystem);
 #if ENABLE(MEDIA_SOURCE)
-    bool load(const URL&, PassRefPtr<HTMLMediaSource>);
+    bool load(const URL&, const ContentType&, PassRefPtr<HTMLMediaSource>);
 #endif
     void cancelLoad();
 
@@ -521,18 +533,6 @@ private:
 
 #if ENABLE(MEDIA_SOURCE)
     RefPtr<HTMLMediaSource> m_mediaSource;
-#endif
-};
-
-struct MediaEngineSupportParameters {
-    String type;
-    String codecs;
-    URL url;
-#if ENABLE(ENCRYPTED_MEDIA)
-    String keySystem;
-#endif
-#if ENABLE(MEDIA_SOURCE)
-    bool isMediaSource;
 #endif
 };
 
