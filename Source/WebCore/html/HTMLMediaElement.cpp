@@ -769,6 +769,8 @@ String HTMLMediaElement::canPlayType(const String& mimeType, const String& keySy
     parameters.url = url;
 #if ENABLE(ENCRYPTED_MEDIA)
     parameters.keySystem = keySystem;
+#else
+    UNUSED_PARAM(keySystem);
 #endif
     MediaPlayer::SupportsType support = MediaPlayer::supportsType(parameters, this);
     String canPlay;
