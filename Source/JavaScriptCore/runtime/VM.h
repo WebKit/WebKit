@@ -420,6 +420,7 @@ namespace JSC {
         ThreadIdentifier exclusiveThread;
 
         CachedTranscendentalFunction<std::sin> cachedSin;
+        CachedTranscendentalFunction<std::cos> cachedCos;
 
         JS_EXPORT_PRIVATE void resetDateCache();
 

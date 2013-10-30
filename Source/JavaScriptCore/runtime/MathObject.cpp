@@ -136,7 +136,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncCeil(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncCos(ExecState* exec)
 {
-    return JSValue::encode(jsDoubleNumber(cos(exec->argument(0).toNumber(exec))));
+    return JSValue::encode(exec->vm().cachedCos(exec->argument(0).toNumber(exec)));
 }
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncExp(ExecState* exec)
