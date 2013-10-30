@@ -1,3 +1,9 @@
+2013-10-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mountain Lion rebaseline after r158231.
+
+        * platform/mac-mountainlion/js/dom/global-constructors-attributes-expected.txt:
+
 2013-10-29  Jer Noble  <jer.noble@apple.com>
 
         [MSE] [Mac] Enable MediaSource on the Mac
