@@ -542,7 +542,7 @@ bool isListElement(Node *n)
 
 bool isListItem(const Node *n)
 {
-    return n && n->renderer() && n->renderer()->isListItem();
+    return n && (isListElement(n->parentNode()) || (n->renderer() && n->renderer()->isListItem()));
 }
 
 Node* enclosingNodeWithTag(const Position& p, const QualifiedName& tagName)

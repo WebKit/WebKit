@@ -1,3 +1,27 @@
+2013-10-30  Santosh Mahto  <santosh.ma@samsung.com>
+
+        contentEditable deleting lists when list items are block level
+        https://bugs.webkit.org/show_bug.cgi?id=122602
+
+        Reviewed by Ryosuke Niwa.
+
+        When listitems are styled with display:block/float then inserting paragraph
+        twice at end of listitem delete entire list. Generally when listitem is empty
+        then we delete the listitem on inserting paragraph. In this issue, on inserting
+        first paragraph one empty listitem is created, and on inserting second paragraph
+        we try to delete that empty listitem. but it misbehave becasue of incomplete 
+        definition of htmlediting::isLisItem() and entire list is deleted.
+
+        htmlediting::isListItem() check only render object to decide whether it is 
+        list or not, so if any LI element is block level then isListItem return false.
+        Now after this patch if parent of current node is list element then node is
+        treated as listItem.
+
+        Test: editing/execCommand/hit-enter-twice-atendof-block-styled-listitem.html
+
+        * editing/htmlediting.cpp:
+        (WebCore::isListItem): Modified condition to check if parent node is list;
+
 2013-10-30  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed EFL build fix; give MediaEngineSupportParameters struct a default constructor.

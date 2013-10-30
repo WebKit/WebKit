@@ -1,3 +1,21 @@
+2013-10-30  Santosh Mahto  <santosh.ma@samsung.com>
+
+        contentEditable deleting lists when list items are block level
+        https://bugs.webkit.org/show_bug.cgi?id=122602
+
+        Reviewed by Ryosuke Niwa.
+
+        Testcase: When listitem is styled with display:block then inserting
+        paragraph twice at the end of listitem should not remove entire list.
+
+        * editing/execCommand/hit-enter-twice-atendof-block-styled-listitem-expected.txt: Added.
+        * editing/execCommand/hit-enter-twice-atendof-block-styled-listitem.html: Added.
+
+        TestCase: When listitem is made of custom tag(<item>) and css(display:list-item) 
+        then inserting paragraph twice at the end of listitem should not remove entire list.
+
+        * editing/execCommand/hit-enter-twice-atendof-custom-listitem-expected.txt: Added.
+        * editing/execCommand/hit-enter-twice-atendof-custom-listitem.html: Added.
 2013-10-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a failing test expectation on media/media-can-play-mpeg4-video.html after r158288.
