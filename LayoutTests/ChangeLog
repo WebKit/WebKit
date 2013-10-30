@@ -1,3 +1,11 @@
+2013-10-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Delete the expected results for Lion.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * platform/mac-lion: Removed.
+
 2013-10-30  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r158288): media/media-can-play-mpeg4-video.html fails
