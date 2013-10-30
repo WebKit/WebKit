@@ -76,8 +76,7 @@ static void doDrawTextAtPoint(GraphicsContext& context, const String& text, cons
         underlinePoint.move(beforeWidth, 1);
 
         context.setStrokeColor(color, ColorSpaceDeviceRGB);
-        FloatRect bounds(underlinePoint, FloatSize(underlinedWidth, context.strokeThickness()));
-        context.drawLineForText(bounds, false);
+        context.drawLineForText(underlinePoint, underlinedWidth, false);
     }
 }
 

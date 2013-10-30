@@ -950,14 +950,14 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
     DrawFocusRect(dc, &rect);
 }
 
-void GraphicsContext::drawLineForText(const FloatRect& bounds, bool)
+void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, bool printing)
 {
     if (paintingDisabled())
         return;
 
     StrokeStyle oldStyle = strokeStyle();
     setStrokeStyle(SolidStroke);
-    drawLine(roundedIntPoint(bounds.location()), roundedIntPoint(bounds.location() + FloatSize(bounds.width(), 0)));
+    drawLine(roundedIntPoint(origin), roundedIntPoint(origin + FloatSize(width, 0)));
     setStrokeStyle(oldStyle);
 }
 

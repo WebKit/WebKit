@@ -330,7 +330,7 @@ namespace WebCore {
         };
         FloatRect roundToDevicePixels(const FloatRect&, RoundingMode = RoundAllSides);
 
-        void drawLineForText(const FloatRect& bounds, bool printing);
+        void drawLineForText(const FloatPoint&, float width, bool printing);
         enum DocumentMarkerLineStyle {
             DocumentMarkerSpellingLineStyle,
             DocumentMarkerGrammarLineStyle,
