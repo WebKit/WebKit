@@ -113,7 +113,7 @@ EGLConfig EGLConfigSelector::createConfig(EGLint expectedSurfaceType)
 #if USE(OPENGL_ES_2)
     EGLint expectedRenderType = EGL_OPENGL_ES2_BIT;
 #else
-    EGLint expectedRenderType = EGL_OPENGL_BIT,
+    EGLint expectedRenderType = EGL_OPENGL_BIT;
 #endif
 
     for (int i = 0; i < numConfigs; i++) {
