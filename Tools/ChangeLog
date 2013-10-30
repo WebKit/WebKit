@@ -1,3 +1,10 @@
+2013-10-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Mavericks builders to the old flakiness dashboard.
+
+        * TestResultServer/static-dashboards/builders.jsonp:
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+
 2013-10-29  Seokju Kwon  <seokju@webkit.org>
 
         Fix memory leak in Tools/DumpRenderTree/TestNetscapePlugIn/main.cpp

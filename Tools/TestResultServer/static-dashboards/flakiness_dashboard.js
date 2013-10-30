@@ -56,6 +56,12 @@ var PLATFORMS = {
                             'WK2': { fallbackPlatforms: ['APPLE_MAC_MOUNTAINLION', 'APPLE_MAC', 'WK2'], expectationsDirectory: 'mac-wk2'}
                         }
                     },
+                    'MAVERICKS': {
+                        subPlatforms: {
+                            'WK1': { fallbackPlatforms: ['APPLE_MAC_MAVERICKS', 'APPLE_MAC'] },
+                            'WK2': { fallbackPlatforms: ['APPLE_MAC_MAVERICKS', 'APPLE_MAC', 'WK2'], expectationsDirectory: 'mac-wk2'}
+                        }
+                    },
                 }
             },
             'WIN': {
@@ -345,11 +351,13 @@ function determineWKPlatform(builderName, basePlatform)
 
 function determineBuilderPlatform(builderNameUpperCase)
 {
-    if (string.contains(builderNameUpperCase, 'WINDOWS 7'))
+    if (string.contains(builderNameUpperCase, 'WIN 7'))
         return 'APPLE_WIN_WIN7';
-    if (string.contains(builderNameUpperCase, 'WINDOWS XP'))
+    if (string.contains(builderNameUpperCase, 'WIN XP'))
         return 'APPLE_WIN_XP';
 
+    if (string.contains(builderNameUpperCase, 'MAVERICKS'))
+        return determineWKPlatform(builderNameUpperCase, 'APPLE_MAVERICKS');
     if (string.contains(builderNameUpperCase, 'MOUNTAINLION'))
         return determineWKPlatform(builderNameUpperCase, 'APPLE_MAC_MOUNTAINLION');
     if (string.contains(builderNameUpperCase, 'LION'))

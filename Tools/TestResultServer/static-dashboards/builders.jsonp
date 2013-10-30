@@ -6,15 +6,15 @@ LOAD_BUILDBOT_DATA([
         "tests": {
             "layout-tests": {
                 "builders": [
-                    "Apple Lion Debug WK1 (Tests)", 
-                    "Apple Lion Debug WK2 (Tests)", 
-                    "Apple Lion Release WK1 (Tests)", 
-                    "Apple Lion Release WK2 (Tests)", 
-                    "Apple MountainLion (Leaks)", 
+                    "Apple MountainLion (Leaks)",
                     "Apple MountainLion Debug WK1 (Tests)", 
                     "Apple MountainLion Debug WK2 (Tests)", 
                     "Apple MountainLion Release WK1 (Tests)", 
                     "Apple MountainLion Release WK2 (Tests)", 
+                    "Apple Mavericks Debug WK1 (Tests)",
+                    "Apple Mavericks Debug WK2 (Tests)",
+                    "Apple Mavericks Release WK1 (Tests)",
+                    "Apple Mavericks Release WK2 (Tests)",
                     "Apple Win 7 Debug (Tests)", 
                     "Apple Win 7 Release (Tests)", 
                     "EFL Linux 64-bit Debug WK2", 
