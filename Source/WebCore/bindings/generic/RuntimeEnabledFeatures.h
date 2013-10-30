@@ -66,14 +66,6 @@ public:
     bool webkitIndexedDBEnabled() const { return m_isIndexedDBEnabled; }
     bool indexedDBEnabled() const { return m_isIndexedDBEnabled; }
 
-#if ENABLE(CANVAS_PATH)
-    void setCanvasPathEnabled(bool isEnabled) { m_isCanvasPathEnabled = isEnabled; }
-    bool canvasPathEnabled() const { return m_isCanvasPathEnabled; }
-#else
-    void setCanvasPathEnabled(bool) { }
-    bool canvasPathEnabled() const { return false; }
-#endif
-
 #if ENABLE(CSS_EXCLUSIONS)
     void setCSSExclusionsEnabled(bool isEnabled) { m_isCSSExclusionsEnabled = isEnabled; }
     bool cssExclusionsEnabled() const { return m_isCSSExclusionsEnabled; }
@@ -109,23 +101,6 @@ public:
     bool fontLoadEventsEnabled() { return false; }
 #endif
 
-#if ENABLE(FULLSCREEN_API)
-    // Mozilla version
-    bool webkitFullScreenAPIEnabled() const { return m_isFullScreenAPIEnabled; }
-    void setWebkitFullScreenAPIEnabled(bool isEnabled) { m_isFullScreenAPIEnabled = isEnabled; }
-    bool webkitRequestFullScreenEnabled() const { return m_isFullScreenAPIEnabled; }
-    bool webkitIsFullScreenEnabled() const { return m_isFullScreenAPIEnabled; }
-    bool webkitFullScreenKeyboardInputAllowedEnabled() const { return m_isFullScreenAPIEnabled; }
-    bool webkitCurrentFullScreenElementEnabled() const { return m_isFullScreenAPIEnabled; }
-    bool webkitCancelFullScreenEnabled() const { return m_isFullScreenAPIEnabled; }
-
-    // W3C version
-    bool webkitFullscreenEnabledEnabled() const { return m_isFullScreenAPIEnabled; }
-    bool webkitFullscreenElementEnabled() const { return m_isFullScreenAPIEnabled; }
-    bool webkitExitFullscreenEnabled() const { return m_isFullScreenAPIEnabled; }
-    bool webkitRequestFullscreenEnabled() const { return m_isFullScreenAPIEnabled; }
-#endif
-
 #if ENABLE(VIDEO)
     bool audioEnabled() const;
     bool htmlMediaElementEnabled() const;
@@ -143,11 +118,6 @@ public:
 
 #if ENABLE(WEB_SOCKETS)
     bool webSocketEnabled() const;
-#endif
-
-#if ENABLE(SQL_DATABASE)
-    bool openDatabaseEnabled() const;
-    bool openDatabaseSyncEnabled() const;
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -199,26 +169,6 @@ public:
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
     void setLegacyCSSVendorPrefixesEnabled(bool isEnabled) { m_isLegacyCSSVendorPrefixesEnabled = isEnabled; }
     bool legacyCSSVendorPrefixesEnabled() const { return m_isLegacyCSSVendorPrefixesEnabled; }
-#endif
-
-#if ENABLE(GAMEPAD)
-    void setWebkitGetGamepadsEnabled(bool isEnabled) { m_isGamepadEnabled = isEnabled; }
-    bool webkitGetGamepadsEnabled() const { return m_isGamepadEnabled; }
-#endif
-
-#if ENABLE(QUOTA)
-    bool quotaEnabled() const { return m_isQuotaEnabled; }
-    void setQuotaEnabled(bool isEnabled) { m_isQuotaEnabled = isEnabled; }
-#endif
-
-#if ENABLE(MEDIA_SOURCE)
-    bool mediaSourceEnabled() const { return m_isMediaSourceEnabled; }
-    void setMediaSourceEnabled(bool isEnabled) { m_isMediaSourceEnabled = isEnabled; }
-#endif
-
-#if ENABLE(ENCRYPTED_MEDIA)
-    bool encryptedMediaEnabled() const { return m_isEncryptedMediaEnabled; }
-    void setEncryptedMediaEnabled(bool isEnabled) { m_isEncryptedMediaEnabled = isEnabled; }
 #endif
 
 #if ENABLE(VIDEO_TRACK)
@@ -295,7 +245,6 @@ private:
     bool m_isDeviceMotionEnabled;
     bool m_isDeviceOrientationEnabled;
     bool m_isSpeechInputEnabled;
-    bool m_isCanvasPathEnabled;
     bool m_isCSSExclusionsEnabled;
     bool m_isCSSShapesEnabled;
     bool m_isCSSRegionsEnabled;
@@ -314,28 +263,8 @@ private:
     bool m_isPeerConnectionEnabled;
 #endif
 
-#if ENABLE(GAMEPAD)
-    bool m_isGamepadEnabled;
-#endif
-
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
     bool m_isLegacyCSSVendorPrefixesEnabled;
-#endif
-
-#if ENABLE(QUOTA)
-    bool m_isQuotaEnabled;
-#endif
-
-#if ENABLE(FULLSCREEN_API)
-    bool m_isFullScreenAPIEnabled;
-#endif
-
-#if ENABLE(MEDIA_SOURCE)
-    bool m_isMediaSourceEnabled;
-#endif
-
-#if ENABLE(ENCRYPTED_MEDIA)
-    bool m_isEncryptedMediaEnabled;
 #endif
 
 #if ENABLE(VIDEO_TRACK)

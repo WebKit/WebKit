@@ -52,7 +52,6 @@ RuntimeEnabledFeatures::RuntimeEnabledFeatures()
     , m_isDeviceMotionEnabled(true)
     , m_isDeviceOrientationEnabled(true)
     , m_isSpeechInputEnabled(true)
-    , m_isCanvasPathEnabled(false)
     , m_isCSSExclusionsEnabled(true)
     , m_isCSSShapesEnabled(true)
     , m_isCSSRegionsEnabled(false)
@@ -68,23 +67,8 @@ RuntimeEnabledFeatures::RuntimeEnabledFeatures()
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
     , m_isLegacyCSSVendorPrefixesEnabled(false)
 #endif
-#if ENABLE(GAMEPAD)
-    , m_isGamepadEnabled(false)
-#endif
 #if ENABLE(JAVASCRIPT_I18N_API)
     , m_isJavaScriptI18NAPIEnabled(false)
-#endif
-#if ENABLE(QUOTA)
-    , m_isQuotaEnabled(false)
-#endif
-#if ENABLE(FULLSCREEN_API)
-    , m_isFullScreenAPIEnabled(true)
-#endif
-#if ENABLE(MEDIA_SOURCE)
-    , m_isMediaSourceEnabled(false)
-#endif
-#if ENABLE(ENCRYPTED_MEDIA)
-    , m_isEncryptedMediaEnabled(false)
 #endif
 #if ENABLE(VIDEO_TRACK)
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(BLACKBERRY) || PLATFORM(WIN)
@@ -194,18 +178,6 @@ bool RuntimeEnabledFeatures::sharedWorkerEnabled() const
 bool RuntimeEnabledFeatures::webSocketEnabled() const
 {
     return WebSocket::isAvailable();
-}
-#endif
-
-#if ENABLE(SQL_DATABASE)
-bool RuntimeEnabledFeatures::openDatabaseEnabled() const
-{
-    return DatabaseManager::manager().isAvailable();
-}
-
-bool RuntimeEnabledFeatures::openDatabaseSyncEnabled() const
-{
-    return DatabaseManager::manager().isAvailable();
 }
 #endif
 
