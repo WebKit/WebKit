@@ -3148,7 +3148,7 @@ bool RenderBlockFlow::hasLines() const
     ASSERT(childrenInline());
 
     if (m_simpleLineLayout)
-        return m_simpleLineLayout->lineCount;
+        return m_simpleLineLayout->lineCount();
 
     return lineBoxes().firstLineBox();
 }

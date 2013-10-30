@@ -59,18 +59,23 @@ struct Run {
     float right;
 };
 
-struct Layout {
+class Layout {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef Vector<Run, 10> RunVector;
     static std::unique_ptr<Layout> create(const RunVector&, unsigned lineCount);
 
-    unsigned runCount;
-    unsigned lineCount;
-    Run runs[0];
+    unsigned lineCount() const { return m_lineCount; }
+
+    unsigned runCount() const { return m_runCount; }
+    const Run& runAt(unsigned i) const { return m_runs[i]; }
 
 private:
     Layout(const RunVector&, unsigned lineCount);
+
+    unsigned m_lineCount;
+    unsigned m_runCount;
+    Run m_runs[0];
 };
 
 std::unique_ptr<Layout> create(RenderBlockFlow&);

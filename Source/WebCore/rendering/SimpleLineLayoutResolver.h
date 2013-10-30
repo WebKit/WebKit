@@ -189,7 +189,7 @@ inline RunResolver::Run RunResolver::Iterator::operator*() const
 
 inline const SimpleLineLayout::Run& RunResolver::Iterator::simpleRun() const
 {
-    return m_resolver.m_layout.runs[m_runIndex];
+    return m_resolver.m_layout.runAt(m_runIndex);
 }
 
 inline RunResolver::RunResolver(const RenderBlockFlow& flow, const Layout& layout)
@@ -210,7 +210,7 @@ inline RunResolver::Iterator RunResolver::begin() const
 
 inline RunResolver::Iterator RunResolver::end() const
 {
-    return Iterator(*this, m_layout.runCount);
+    return Iterator(*this, m_layout.runCount());
 }
 
 inline LineResolver::Iterator::Iterator(RunResolver::Iterator runIterator)

@@ -65,43 +65,43 @@ namespace SimpleLineLayout {
 
 inline LayoutUnit computeFlowHeight(const RenderBlockFlow& flow, const Layout& layout)
 {
-    return lineHeightFromFlow(flow) * layout.lineCount;
+    return lineHeightFromFlow(flow) * layout.lineCount();
 }
 
 inline LayoutUnit computeFlowFirstLineBaseline(const RenderBlockFlow& flow, const Layout& layout)
 {
-    ASSERT_UNUSED(layout, layout.runCount);
+    ASSERT_UNUSED(layout, layout.runCount());
     return flow.borderAndPaddingBefore() + baselineFromFlow(flow);
 }
 
 inline LayoutUnit computeFlowLastLineBaseline(const RenderBlockFlow& flow, const Layout& layout)
 {
-    ASSERT(layout.runCount);
-    return flow.borderAndPaddingBefore() + lineHeightFromFlow(flow) * (layout.runCount - 1) + baselineFromFlow(flow);
+    ASSERT(layout.runCount());
+    return flow.borderAndPaddingBefore() + lineHeightFromFlow(flow) * (layout.runCount() - 1) + baselineFromFlow(flow);
 }
 
 inline unsigned findTextCaretMinimumOffset(const RenderText&, const Layout& layout)
 {
-    if (!layout.runCount)
+    if (!layout.runCount())
         return 0;
-    return layout.runs[0].textOffset;
+    return layout.runAt(0).textOffset;
 }
 
 inline unsigned findTextCaretMaximumOffset(const RenderText& renderer, const Layout& layout)
 {
-    if (!layout.runCount)
+    if (!layout.runCount())
         return renderer.textLength();
-    auto& last = layout.runs[layout.runCount - 1];
+    auto& last = layout.runAt(layout.runCount() - 1);
     return last.textOffset + last.textLength;
 }
 
 inline bool containsTextCaretOffset(const RenderText&, const Layout& layout, unsigned offset)
 {
-    for (unsigned i = 0; i < layout.runCount; ++i) {
-        auto& line = layout.runs[i];
-        if (offset < line.textOffset)
+    for (unsigned i = 0; i < layout.runCount(); ++i) {
+        auto& run = layout.runAt(i);
+        if (offset < run.textOffset)
             return false;
-        if (offset <= line.textOffset + line.textLength)
+        if (offset <= run.textOffset + run.textLength)
             return true;
     }
     return false;
@@ -109,8 +109,8 @@ inline bool containsTextCaretOffset(const RenderText&, const Layout& layout, uns
 
 inline bool isTextRendered(const RenderText&, const Layout& layout)
 {
-    for (unsigned i = 0; i < layout.runCount; ++i) {
-        if (layout.runs[i].textLength)
+    for (unsigned i = 0; i < layout.runCount(); ++i) {
+        if (layout.runAt(i).textLength)
             return true;
     }
     return false;

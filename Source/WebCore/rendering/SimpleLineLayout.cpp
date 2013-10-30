@@ -334,10 +334,10 @@ std::unique_ptr<Layout> Layout::create(const RunVector& runVector, unsigned line
 }
 
 Layout::Layout(const RunVector& runVector, unsigned lineCount)
-    : runCount(runVector.size())
-    , lineCount(lineCount)
+    : m_lineCount(lineCount)
+    , m_runCount(runVector.size())
 {
-    memcpy(runs, runVector.data(), runCount * sizeof(Run));
+    memcpy(m_runs, runVector.data(), m_runCount * sizeof(Run));
 }
 
 }
