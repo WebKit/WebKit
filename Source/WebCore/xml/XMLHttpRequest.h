@@ -232,11 +232,11 @@ private:
     RefPtr<TextResourceDecoder> m_decoder;
 
     StringBuilder m_responseBuilder;
-    mutable bool m_createdDocument;
-    mutable RefPtr<Document> m_responseDocument;
+    bool m_createdDocument;
+    RefPtr<Document> m_responseDocument;
     
     RefPtr<SharedBuffer> m_binaryResponseBuilder;
-    mutable RefPtr<JSC::ArrayBuffer> m_responseArrayBuffer;
+    RefPtr<JSC::ArrayBuffer> m_responseArrayBuffer;
 
     bool m_error;
 

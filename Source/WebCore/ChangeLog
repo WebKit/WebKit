@@ -1,3 +1,14 @@
+2013-10-29  Seokju Kwon  <seokju@webkit.org>
+
+        Remove mutable keyword from member variables of XMLHttpRequest
+        https://bugs.webkit.org/show_bug.cgi?id=123481
+
+        Reviewed by Andreas Kling.
+
+        No new tests, no change in functionality.
+
+        * xml/XMLHttpRequest.h: Remove mutable keyword as these are no longer used in const functions.
+
 2013-10-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Underline bounds cannot be queried before underline itself is drawn
