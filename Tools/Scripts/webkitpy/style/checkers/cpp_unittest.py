@@ -1647,6 +1647,10 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('char (*p)[sizeof(foo)] = &foo', '')
         self.assert_lint('char (&ref)[sizeof(foo)] = &foo', '')
         self.assert_lint('const char32 (*table[])[6];', '')
+        self.assert_lint('@interface Foo (Category)', '')
+        self.assert_lint('@interface Foo ()', '')
+        self.assert_lint('@implementation Foo (Category)', '')
+        self.assert_lint('@implementation Foo ()', '')
 
     def test_spacing_before_braces(self):
         self.assert_lint('if (foo){', 'Missing space before {'
@@ -4197,6 +4201,18 @@ class WebKitStyleTest(CppStyleTestBase):
             'case foo: return;\n'
             '}\n',
             'This { should be at the end of the previous line  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
+            'typedef NS_ENUM(NSInteger, type)\n'
+            '{\n'
+            '    0,\n'
+            '    1\n'
+            '};',
+            'This { should be at the end of the previous line  [whitespace/braces] [4]')
+        self.assert_multi_line_lint(
+            'typedef NS_ENUM(NSInteger, type) {\n'
+            '    0,\n'
+            '    1\n'
+            '};', '')
 
         # 3. One-line control clauses should not use braces unless
         #    comments are included or a single statement spans multiple
