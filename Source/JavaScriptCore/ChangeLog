@@ -1,3 +1,12 @@
+2013-10-30  Mark Lam  <mark.lam@apple.com>
+
+        Unreviewed, fix C Loop LLINT build.
+
+        * bytecode/CodeBlockJettisoningWatchpoint.cpp:
+        (JSC::CodeBlockJettisoningWatchpoint::fireInternal):
+        * bytecode/ProfiledCodeBlockJettisoningWatchpoint.cpp:
+        (JSC::ProfiledCodeBlockJettisoningWatchpoint::fireInternal):
+
 2013-10-30  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix FTL build.

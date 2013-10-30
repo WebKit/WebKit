@@ -44,7 +44,9 @@ void ProfiledCodeBlockJettisoningWatchpoint::fireInternal()
         m_codeOrigin, m_codeBlock->baselineVersion())->addFrequentExitSite(
             DFG::FrequentExitSite(m_codeOrigin.bytecodeIndex, m_exitKind));
     
+#if ENABLE(JIT)
     m_codeBlock->jettison(CountReoptimization);
+#endif
 
     if (isOnList())
         remove();

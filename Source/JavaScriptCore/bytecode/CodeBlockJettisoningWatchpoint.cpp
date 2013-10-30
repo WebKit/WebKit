@@ -36,7 +36,9 @@ void CodeBlockJettisoningWatchpoint::fireInternal()
     if (DFG::shouldShowDisassembly())
         dataLog("Firing watchpoint ", RawPointer(this), " on ", *m_codeBlock, "\n");
 
+#if ENABLE(JIT)
     m_codeBlock->jettison(CountReoptimization);
+#endif
 
     if (isOnList())
         remove();
