@@ -450,7 +450,7 @@ void createCrashReport(EXCEPTION_POINTERS* exceptionPointers)
     }
 }
 
-extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE, HINSTANCE, LPTSTR, int nCmdShow)
+int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int nCmdShow)
 {
 #ifdef _CRTDBG_MAP_ALLOC
     _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
@@ -1004,4 +1004,9 @@ static void loadURL(BSTR passedURL)
         return;
 
     SetFocus(gViewWindow);
+}
+
+extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpstrCmdLine, int nCmdShow)
+{
+    return wWinMain(hInstance, hPrevInstance, lpstrCmdLine, nCmdShow);
 }

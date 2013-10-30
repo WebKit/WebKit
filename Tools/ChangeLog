@@ -1,3 +1,19 @@
+2013-10-30  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Add executable entry points to DRT and WinLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=121837
+
+        Reviewed by Brent Fulgham.
+
+        This allows to compile and run the executables without DLLLauncher.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main):
+        (dllLauncherEntryPoint):
+        * WinLauncher/WinLauncher.cpp:
+        (wWinMain):
+        (dllLauncherEntryPoint):
+
 2013-10-30  Filip Pizlo  <fpizlo@apple.com>
 
         run-jsc-stress-tests should handle ".." in paths and "slow!" in cmd's
