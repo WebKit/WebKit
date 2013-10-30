@@ -23,18 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKBackForwardList.h"
+#import "WKFoundation.h"
 
 #if WK_API_ENABLED
 
 #import "WKObject.h"
-#import "WebBackForwardList.h"
 
-namespace WebKit {
-inline WKBackForwardList *wrapper(WebBackForwardList& list) { ASSERT([list.wrapper() isKindOfClass:[WKBackForwardList class]]); return (WKBackForwardList *)list.wrapper(); }
-}
-
-@interface WKBackForwardList () <WKObject>
+@interface WKNSString : WKObject <NSCopying>
 @end
 
 #endif // WK_API_ENABLED

@@ -23,18 +23,64 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKBackForwardList.h"
+#import "config.h"
+#import "APIObject.h"
 
-#if WK_API_ENABLED
-
-#import "WKObject.h"
-#import "WebBackForwardList.h"
+#import "WKBackForwardListInternal.h"
+#import "WKBackForwardListItemInternal.h"
+#import "WKNSArray.h"
+#import "WKNSString.h"
+#import "WKNSURL.h"
 
 namespace WebKit {
-inline WKBackForwardList *wrapper(WebBackForwardList& list) { ASSERT([list.wrapper() isKindOfClass:[WKBackForwardList class]]); return (WKBackForwardList *)list.wrapper(); }
+
+void APIObject::ref()
+{
+    [wrapper() retain];
 }
 
-@interface WKBackForwardList () <WKObject>
-@end
+void APIObject::deref()
+{
+    [wrapper() release];
+}
 
-#endif // WK_API_ENABLED
+void* APIObject::newObject(size_t size, Type type)
+{
+    NSObject <WKObject> *wrapper;
+
+    // Wrappers that inherit from WKObject store the APIObject in their extra bytes, so they are
+    // allocated using NSAllocatedObject. The other wrapper classes contain inline storage for the
+    // APIObject, so they are allocated using +alloc.
+
+    switch (type) {
+    case TypeArray:
+        wrapper = [WKNSArray alloc];
+        break;
+
+    case TypeBackForwardList:
+        wrapper = [WKBackForwardList alloc];
+        break;
+
+    case TypeBackForwardListItem:
+        wrapper = [WKBackForwardListItem alloc];
+        break;
+
+    case TypeString:
+        wrapper = NSAllocateObject([WKNSString class], size, nullptr);
+        break;
+
+    case TypeURL:
+        wrapper = NSAllocateObject([WKNSURL class], size, nullptr);
+        break;
+
+    default:
+        wrapper = NSAllocateObject([WKObject class], size, nullptr);
+        break;
+    }
+
+    APIObject* object = &wrapper._apiObject;
+    object->m_wrapper = wrapper;
+    return object;
+}
+
+} // namespace WebKit

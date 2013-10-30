@@ -28,45 +28,43 @@
 
 #if WK_API_ENABLED
 
-#import "ImmutableArray.h"
-#import "WKNSObjectExtras.h"
-
 using namespace WebKit;
 
 @implementation WKNSArray {
-    RefPtr<ImmutableArray> _array;
+    std::aligned_storage<sizeof(ImmutableArray), std::alignment_of<ImmutableArray>::value>::type _array;
 }
 
-+ (id)web_arrayWithImmutableArray:(WebKit::ImmutableArray&)array
+- (void)dealloc
 {
-    return [[[[self class] alloc] web_initWithImmutableArray:array] autorelease];
+    reinterpret_cast<ImmutableArray*>(&_array)->~ImmutableArray();
+
+    [super dealloc];
 }
 
-- (id)web_initWithImmutableArray:(ImmutableArray&)array
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _array = &array;
-
-    return self;
-}
+#pragma mark NSArray primitive methods
 
 - (NSUInteger)count
 {
-    return _array->size();
+    return reinterpret_cast<ImmutableArray*>(&_array)->size();
 }
 
 - (id)objectAtIndex:(NSUInteger)i
 {
-    return [NSObject _web_objectWithAPIObject:_array->at(i)];
+    return reinterpret_cast<ImmutableArray*>(&_array)->at(i)->wrapper();
 }
 
-#pragma mark - NSCopying protocol implementation
+#pragma mark NSCopying protocol implementation
 
 - (id)copyWithZone:(NSZone *)zone
 {
     return [self retain];
+}
+
+#pragma mark WKObject protocol implementation
+
+- (APIObject&)_apiObject
+{
+    return *reinterpret_cast<APIObject*>(&_array);
 }
 
 @end

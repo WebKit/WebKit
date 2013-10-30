@@ -37,10 +37,8 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class WebColorPickerResultListenerProxy : public APIObject {
+class WebColorPickerResultListenerProxy : public TypedAPIObject<APIObject::TypeColorPickerResultListener> {
 public:
-    static const Type APIType = TypeColorPickerResultListener;
-
     static PassRefPtr<WebColorPickerResultListenerProxy> create(WebPageProxy* page)
     {
         return adoptRef(new WebColorPickerResultListenerProxy(page));
@@ -53,8 +51,6 @@ public:
 
 private:
     explicit WebColorPickerResultListenerProxy(WebPageProxy*);
-
-    virtual Type type() const { return APIType; }
 
     RefPtr<WebPageProxy> m_page;
 };

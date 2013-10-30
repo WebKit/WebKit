@@ -28,9 +28,23 @@
 
 #include <wtf/RefCounted.h>
 
+#if PLATFORM(MAC)
+#include "WKFoundation.h"
+#endif
+
+#define DELEGATE_REF_COUNTING_TO_COCOA (PLATFORM(MAC) && WK_API_ENABLED)
+
+#if DELEGATE_REF_COUNTING_TO_COCOA
+OBJC_CLASS NSObject;
+#endif
+
 namespace WebKit {
 
-class APIObject : public ThreadSafeRefCounted<APIObject> {
+class APIObject
+#if !DELEGATE_REF_COUNTING_TO_COCOA
+    : public ThreadSafeRefCounted<APIObject>
+#endif
+{
 public:
     enum Type {
         // Base types
@@ -151,8 +165,25 @@ public:
 
     virtual Type type() const = 0;
 
+#if DELEGATE_REF_COUNTING_TO_COCOA
+    NSObject *wrapper() { return m_wrapper; }
+
+    void ref();
+    void deref();
+#endif // DELEGATE_REF_COUNTING_TO_COCOA
+
 protected:
     APIObject();
+
+#if DELEGATE_REF_COUNTING_TO_COCOA
+    static void* newObject(size_t, Type);
+
+private:
+    // Derived classes must override operator new and call newObject().
+    void* operator new(size_t) = delete;
+
+    NSObject *m_wrapper;
+#endif // DELEGATE_REF_COUNTING_TO_COCOA
 };
 
 template <APIObject::Type ArgumentType>
@@ -170,8 +201,14 @@ protected:
     }
 
     virtual Type type() const OVERRIDE { return APIType; }
+
+#if DELEGATE_REF_COUNTING_TO_COCOA
+    void* operator new(size_t size) { return newObject(size, APIType); }
+#endif
 };
 
 } // namespace WebKit
+
+#undef DELEGATE_REF_COUNTING_TO_COCOA
 
 #endif // APIObject_h

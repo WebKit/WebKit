@@ -30,12 +30,18 @@
 
 #import "WKBackForwardListItemInternal.h"
 #import "WKNSArray.h"
-#import "WebBackForwardList.h"
 
 using namespace WebKit;
 
 @implementation WKBackForwardList {
-    RefPtr<WebBackForwardList> _list;
+    std::aligned_storage<sizeof(WebBackForwardList), std::alignment_of<WebBackForwardList>::value>::type _list;
+}
+
+- (void)dealloc
+{
+    reinterpret_cast<WebBackForwardList*>(&_list)->~WebBackForwardList();
+
+    [super dealloc];
 }
 
 static WKBackForwardListItem *toWKBackForwardListItem(WebBackForwardListItem* item)
@@ -43,71 +49,62 @@ static WKBackForwardListItem *toWKBackForwardListItem(WebBackForwardListItem* it
     if (!item)
         return nil;
 
-    return [[[WKBackForwardListItem alloc] _initWithItem:*item] autorelease];
+    return wrapper(*item);
 }
 
 - (WKBackForwardListItem *)currentItem
 {
-    return toWKBackForwardListItem(_list->currentItem());
+    return toWKBackForwardListItem(reinterpret_cast<WebBackForwardList*>(&_list)->currentItem());
 }
 
 - (WKBackForwardListItem *)backItem
 {
-    return toWKBackForwardListItem(_list->backItem());
+    return toWKBackForwardListItem(reinterpret_cast<WebBackForwardList*>(&_list)->backItem());
 }
 
 - (WKBackForwardListItem *)forwardItem
 {
-    return toWKBackForwardListItem(_list->forwardItem());
+    return toWKBackForwardListItem(reinterpret_cast<WebBackForwardList*>(&_list)->forwardItem());
 }
 
 - (WKBackForwardListItem *)itemAtIndex:(NSInteger)index
 {
-    return toWKBackForwardListItem(_list->itemAtIndex(index));
+    return toWKBackForwardListItem(reinterpret_cast<WebBackForwardList*>(&_list)->itemAtIndex(index));
 }
 
 - (NSUInteger)backListCount
 {
-    return _list->backListCount();
+    return reinterpret_cast<WebBackForwardList*>(&_list)->backListCount();
 }
 
 - (NSUInteger)forwardListCount
 {
-    return _list->forwardListCount();
+    return reinterpret_cast<WebBackForwardList*>(&_list)->forwardListCount();
 }
 
 - (NSArray *)backListWithLimit:(NSUInteger)limit
 {
-    RefPtr<ImmutableArray> list = _list->backListAsImmutableArrayWithLimit(limit);
+    RefPtr<ImmutableArray> list = reinterpret_cast<WebBackForwardList*>(&_list)->backListAsImmutableArrayWithLimit(limit);
     if (!list)
         return nil;
 
-    return [WKNSArray web_arrayWithImmutableArray:*list];
+    return [wrapper(*list.release().leakRef()) autorelease];
 }
 
 - (NSArray *)forwardListWithLimit:(NSUInteger)limit
 {
-    RefPtr<ImmutableArray> list = _list->forwardListAsImmutableArrayWithLimit(limit);
+    RefPtr<ImmutableArray> list = reinterpret_cast<WebBackForwardList*>(&_list)->forwardListAsImmutableArrayWithLimit(limit);
     if (!list)
         return nil;
 
-    return [WKNSArray web_arrayWithImmutableArray:*list];
+    return [wrapper(*list.release().leakRef()) autorelease];
 }
 
-@end
+#pragma mark WKObject protocol implementation
 
-#pragma mark -
-
-@implementation WKBackForwardList (Internal)
-
-- (id)_initWithList:(WebBackForwardList&)list
+- (APIObject &)_apiObject
 {
-    if (!(self = [super init]))
-        return nil;
-
-    _list = &list;
-
-    return self;
+    return *reinterpret_cast<APIObject*>(&_list);
 }
 
 @end

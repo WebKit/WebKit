@@ -24,74 +24,28 @@
  */
 
 #import "config.h"
-#import "WKNSObjectExtras.h"
+#import "WKNSURL.h"
 
 #if WK_API_ENABLED
 
-#import "WKBackForwardListItemInternal.h"
-#import "WebBackForwardListItem.h"
-#import <wtf/RefPtr.h>
+#import "WKAPICast.h"
+#import "WKURLCF.h"
+#import "WebURL.h"
 
 using namespace WebKit;
 
-@interface WKObject : NSObject
+@implementation WKNSURL
 
-- (id)initWithAPIObject:(WebKit::APIObject&)object;
-
-@end
-
-@implementation WKObject {
-    RefPtr<APIObject> _object;
+- (NSObject *)_web_createTarget
+{
+    return (NSURL *)CFMakeCollectable(WKURLCopyCFURL(kCFAllocatorDefault, toAPI(reinterpret_cast<WebURL*>(&self._apiObject))));
 }
 
-- (id)initWithAPIObject:(APIObject&)object
+#pragma mark NSCopying protocol implementation
+
+- (id)copyWithZone:(NSZone *)zone
 {
-    if (!(self = [super init]))
-        return nil;
-
-    _object = &object;
-
-    return self;
-}
-
-#pragma mark - NSObject protocol implementation
-
-- (BOOL)isEqual:(id)object
-{
-    if ([object class] != [self class])
-        return NO;
-
-    return _object == ((WKObject *)object)->_object;
-}
-
-- (NSUInteger)hash
-{
-    return (NSUInteger)_object.get();
-}
-
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"<%@: %p; object = %p; type = %d>", NSStringFromClass([self class]), self, _object.get(), _object->type()];
-}
-
-@end
-
-#pragma mark -
-
-@implementation NSObject (WKExtras)
-
-+ (id)_web_objectWithAPIObject:(APIObject*)object
-{
-    if (!object)
-        return nil;
-
-    switch (object->type()) {
-    case APIObject::TypeBackForwardListItem:
-        return [[[WKBackForwardListItem alloc] _initWithItem:*static_cast<WebBackForwardListItem*>(object)] autorelease];
-
-    default:
-        return [[[WKObject alloc] initWithAPIObject:*object] autorelease];
-    }
+    return [self retain];
 }
 
 @end

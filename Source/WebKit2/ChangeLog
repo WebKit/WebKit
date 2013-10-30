@@ -1,3 +1,123 @@
+2013-10-30  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Make all API objects have Cocoa wrappers, and delegate refcounting to those wrappers
+        https://bugs.webkit.org/show_bug.cgi?id=123394
+
+        Reviewed by Darin Adler.
+
+        All wrappers conform to a new WKObject protocol and contain the wrapped object inline.
+        APIObject-derived classes override operator new to call newObject, which allocates the
+        wrapper and returns a pointer to the inline API object.
+
+        There are three kinds of wrapper classes: (a) classes that inherit directly from NSObject
+        and implement their API by calling the wrapped object (example: WKBackForwardList),
+        (b) internal classes that inherit from a class cluster, and implement the primitive methods
+        of the class cluster by calling the wrapped object (example: WKNSArray), and (c) internal
+        classes that inerit from the new WKObject class, and proxy to an object of some public type,
+        which is created from the wrapped object (example: WKNSURL).
+
+        * Shared/APIObject.h:
+        (WebKit::APIObject::wrapper): Added this getter.
+        (WebKit::TypedAPIObject::operator new): Added override that calls newObject.
+        * Shared/Cocoa/APIObject.mm: Added.
+        (WebKit::APIObject::ref): Retains the wrapper.
+        (WebKit::APIObject::deref): Releases the wrapper. When the wrapper is deallocated, it calls
+        the API object destructor.
+        (WebKit::APIObject::newObject): Allocates the wrapper and returns a pointer to the API
+        object inside the wrapper.
+
+        * Shared/Cocoa/WKNSArray.h:
+        (WebKit::wrapper): Added. Returns an ImmutableArray’s wrapper as an NSArray.
+        Replaced the RefPtr<ImmutableArray> ivar with space for an ImmutableArray to live inside
+        the wrapper.
+        (-[WKNSArray dealloc]): Calls the ImmutableArray destructor.
+        (-[WKNSArray count]): Updated for ivar change.
+        (-[WKNSArray objectAtIndex:]): Ditto.
+        (-[WKNSArray _apiObject]): Returns the wrapped ImmutableArray.
+
+        * Shared/Cocoa/WKNSObjectExtras.h: Removed.
+        * Shared/Cocoa/WKNSObjectExtras.mm: Removed.
+
+        * Shared/Cocoa/WKNSString.h: Added.
+        * Shared/Cocoa/WKNSString.mm: Added.
+        (-[WKNSString _web_createTarget]): Override this WKObject method to create an NSString from
+        the WebString.
+        (-[WKNSString copyWithZone:]): Retains self.
+
+        * Shared/Cocoa/WKNSURL.h: Added.
+        * Shared/Cocoa/WKNSURL.mm: Added.
+        (-[WKNSURL _web_createTarget]): Override this WKObject method to create an NSURL from
+        the WebURL.
+        (-[WKNSURL copyWithZone:]): Retains self.
+
+        * Shared/Cocoa/WKObject.h: Added.
+        * Shared/Cocoa/WKObject.mm: Added.
+        (-[WKObject dealloc]): Calls the destructor of the wrapped object and releases the target
+        object.
+        (initializeTargetIfNeeded): Helper function. Tries to create the target exactly once.
+        (-[WKObject isEqual:]): NSObject override that creates and compares to the target
+        object if necessary.
+        (-[WKObject hash]): NSObject override that creates and hashes the target object if
+        there is one.
+        (-[WKObject isKindOfClass:]): NSObject override that delegates to the target object.
+        (-[WKObject isMemberOfClass:]): Ditto.
+        (-[WKObject respondsToSelector:]): NSObject override that creates the target object if
+        necessary and returns whether it or self responds to the selector.
+        (-[WKObject conformsToProtocol:]): Similarly for protocols.
+        (-[WKObject forwardingTargetForSelector:]): NSObject override that creates the target object
+        if necessary and returns it as the target.
+        (-[WKObject description]): NSObject override that creates the target object if necessary and
+        forwards to it.
+        (-[WKObject _web_createTarget]): Added. The base implementation returns nil.
+        (-[WKObject _apiObject]): Returns the wrapped object.
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController backForwardList]): Changed to return the existing wrapper.
+        (didChangeBackForwardList): Changed to use existing wrappers.
+
+        Replaced the RefPtr<WebBackForwardList> ivar with space for a WebBackForwardList to live
+        inside the wrapper.
+        (-[WKBackForwardList dealloc]): Call the WebBackForwardList destructor.
+        (toWKBackForwardListItem): Changed to us the existing wrapper.
+        (-[WKBackForwardList currentItem]): Updated for ivar change.
+        (-[WKBackForwardList backItem]): Ditto.
+        (-[WKBackForwardList forwardItem]): Ditto.
+        (-[WKBackForwardList itemAtIndex:]): Ditto.
+        (-[WKBackForwardList backListCount]): Ditto.
+        (-[WKBackForwardList forwardListCount]): Ditto,
+        (-[WKBackForwardList backListWithLimit:]): Ditto, and also changed to use the
+        ImmutableArray’s existing wrapper.
+        (-[WKBackForwardList forwardListWithLimit:]): Ditto.
+        (-[WKBackForwardList _apiObject]): Returns the WebBackForwardListItem.
+        * UIProcess/Cocoa/WKBackForwardListInternal.h:
+        (WebKit::wrapper): Added. Returns a WebBackForwardList’s wrapper as a WKBackForwardList.
+
+        * UIProcess/Cocoa/WKBackForwardListItem.mm:
+        Replaced the RefPtr<WebBackForwardListItem> ivar with space for a WebBackForwardListItem to
+        live inside the wrapper.
+        (-[WKBackForwardListItem dealloc]): Call the WebBackForwardListItem destructor.
+        (-[WKBackForwardListItem URL]): Updated for ivar change, and changed to make an NSURL
+        directly instead of going through a wrapper.
+        (-[WKBackForwardListItem title]): Updated for ivar change, and changed to use
+        String’s operator NSString*.
+        (-[WKBackForwardListItem originalURL]): Updated for ivar change, and changed to make an
+        NSURL directly instead of going through a wrapper.
+        (-[WKBackForwardListItem _apiObject]): Returns the WebBackForwardListItem.
+        (-[WKBackForwardListItem _item]): Ditto.
+        * UIProcess/Cocoa/WKBackForwardListItemInternal.h:
+        (WebKit::wrapper): Added. Returns a WebBackForwardListItem’s wrapper as a
+        WKBackForwardListItem.
+
+        * UIProcess/WebColorPickerResultListenerProxy.h: Changed into a TypedAPIObject.
+
+        * UIProcess/WebFormSubmissionListenerProxy.h:
+        (WebKit::WebFormSubmissionListenerProxy::operator new): Override to call newObject.
+
+        * UIProcess/WebFramePolicyListenerProxy.h:
+        (WebKit::WebFramePolicyListenerProxy::operator new): Ditto.
+
+        * WebKit2.xcodeproj/project.pbxproj: Updated for file additions and removals.
+
 2013-10-30  Anders Carlsson  <andersca@apple.com>
 
         Begin fleshing out an API test for WKRemoteObjectRegistry

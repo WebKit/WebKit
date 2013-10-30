@@ -23,17 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKFoundation.h"
+#import "config.h"
+#import "WKNSString.h"
 
 #if WK_API_ENABLED
 
-namespace WebKit {
-class APIObject;
+#import "WebString.h"
+#import <wtf/RetainPtr.h>
+
+using namespace WebKit;
+
+@implementation WKNSString
+
+- (NSObject *)_web_createTarget
+{
+    const String& string = static_cast<WebString*>(&self._apiObject)->string();
+    return (NSString *)CFMakeCollectable(string.createCFString().leakRef());
 }
 
-@interface NSObject (WKExtras)
+#pragma mark NSCopying protocol implementation
 
-+ (id)_web_objectWithAPIObject:(WebKit::APIObject*)object;
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
+}
 
 @end
 

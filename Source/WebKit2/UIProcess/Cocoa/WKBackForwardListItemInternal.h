@@ -27,13 +27,17 @@
 
 #if WK_API_ENABLED
 
+#import "WKObject.h"
+#import "WebBackForwardListItem.h"
+
 namespace WebKit {
-class WebBackForwardListItem;
+inline WKBackForwardListItem *wrapper(WebBackForwardListItem& item) { ASSERT([item.wrapper() isKindOfClass:[WKBackForwardListItem class]]); return (WKBackForwardListItem *)item.wrapper(); }
 }
 
-@interface WKBackForwardListItem (Internal)
+@interface WKBackForwardListItem () <WKObject>
+@end
 
-- (id)_initWithItem:(WebKit::WebBackForwardListItem&)item;
+@interface WKBackForwardListItem (Internal)
 
 @property (readonly) WebKit::WebBackForwardListItem& _item;
 

@@ -267,7 +267,7 @@ static void releaseNSData(unsigned char*, const void* data)
     if (!list)
         return nil;
 
-    return [[[WKBackForwardList alloc] _initWithList:*list] autorelease];
+    return wrapper(*list);
 }
 #endif // WK_API_ENABLED
 
@@ -502,11 +502,9 @@ static void didChangeBackForwardList(WKPageRef page, WKBackForwardListItemRef ad
     if (![browsingContext.loadDelegate respondsToSelector:@selector(browsingContextControllerDidChangeBackForwardList:addedItem:removedItems:)])
         return;
 
-    WKBackForwardListItem *added = addedItem ? [[WKBackForwardListItem alloc] _initWithItem:*toImpl(addedItem)] : nil;
-    NSArray *removed = removedItems ? [[WKNSArray alloc] web_initWithImmutableArray:*toImpl(removedItems)] : nil;
+    WKBackForwardListItem *added = addedItem ? wrapper(*toImpl(addedItem)) : nil;
+    NSArray *removed = removedItems ? wrapper(*toImpl(removedItems)) : nil;
     [browsingContext.loadDelegate browsingContextControllerDidChangeBackForwardList:browsingContext addedItem:added removedItems:removed];
-    [added release];
-    [removed release];
 }
 #endif // WK_API_ENABLED
 

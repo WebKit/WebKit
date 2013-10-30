@@ -28,76 +28,59 @@
 
 #if WK_API_ENABLED
 
-#import "WebBackForwardListItem.h"
-#import "WKRetainPtr.h"
-#import "WKSharedAPICast.h"
-#import "WKStringCF.h"
-#import "WKURLCF.h"
+#import "WebString.h"
 
 using namespace WebKit;
 
 @implementation WKBackForwardListItem {
-    RefPtr<WebBackForwardListItem> _item;
+    std::aligned_storage<sizeof(WebBackForwardListItem), std::alignment_of<WebBackForwardListItem>::value>::type _item;
+}
+
+- (void)dealloc
+{
+    reinterpret_cast<WebBackForwardListItem*>(&_item)->~WebBackForwardListItem();
+
+    [super dealloc];
 }
 
 - (NSURL *)URL
 {
-    if (!_item->url())
+    if (!reinterpret_cast<WebBackForwardListItem*>(&_item)->url())
         return nil;
 
-    return CFBridgingRelease(WKURLCopyCFURL(kCFAllocatorDefault, adoptWK(toCopiedURLAPI(_item->url())).get()));
+    return [NSURL URLWithString:reinterpret_cast<WebBackForwardListItem*>(&_item)->url()];
 }
 
 - (NSString *)title
 {
-    if (!_item->title())
+    if (!reinterpret_cast<WebBackForwardListItem*>(&_item)->title())
         return nil;
 
-    return CFBridgingRelease(WKStringCopyCFString(kCFAllocatorDefault, adoptWK(toCopiedAPI(_item->title())).get()));
+    return reinterpret_cast<WebBackForwardListItem*>(&_item)->title();
 }
 
 - (NSURL *)originalURL
 {
-    if (!_item->originalURL())
+    if (!reinterpret_cast<WebBackForwardListItem*>(&_item)->originalURL())
         return nil;
 
-    return CFBridgingRelease(WKURLCopyCFURL(kCFAllocatorDefault, adoptWK(toCopiedURLAPI(_item->originalURL())).get()));
+    return [NSURL URLWithString:reinterpret_cast<WebBackForwardListItem*>(&_item)->originalURL()];
 }
 
-#pragma mark - NSObject protocol implementation
+#pragma mark WKObject protocol implementation
 
-- (BOOL)isEqual:(id)object
+- (APIObject&)_apiObject
 {
-    if ([object class] != [self class])
-        return NO;
-
-    return _item == ((WKBackForwardListItem *)object)->_item;
-}
-
-- (NSUInteger)hash
-{
-    return (NSUInteger)_item.get();
+    return *reinterpret_cast<APIObject*>(&_item);
 }
 
 @end
 
-#pragma mark -
-
 @implementation WKBackForwardListItem (Internal)
-
-- (id)_initWithItem:(WebBackForwardListItem&)item
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _item = &item;
-
-    return self;
-}
 
 - (WebKit::WebBackForwardListItem&)_item
 {
-    return *_item;
+    return *reinterpret_cast<WebBackForwardListItem*>(&_item);
 }
 
 @end
