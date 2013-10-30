@@ -1,3 +1,70 @@
+2013-10-29  Andy Estes  <aestes@apple.com>
+
+        [iOS] Upstream Source/WebKit/ios/
+        https://bugs.webkit.org/show_bug.cgi?id=123470
+
+        Reviewed by Sam Weinig.
+
+        * DefaultDelegates/WebDefaultFormDelegate.h: Added.
+        * DefaultDelegates/WebDefaultFormDelegate.m: Added.
+        * DefaultDelegates/WebDefaultFrameLoadDelegate.h: Added.
+        * DefaultDelegates/WebDefaultFrameLoadDelegate.m: Added.
+        * DefaultDelegates/WebDefaultResourceLoadDelegate.h: Added.
+        * DefaultDelegates/WebDefaultResourceLoadDelegate.m: Added.
+        * DefaultDelegates/WebDefaultUIKitDelegate.h: Added.
+        * DefaultDelegates/WebDefaultUIKitDelegate.m: Added.
+        * Misc/EmojiFallbackFontSelector.cpp: Added.
+        * Misc/EmojiFallbackFontSelector.h: Added.
+        * Misc/MemoryMeasure.h: Added.
+        * Misc/MemoryMeasure.mm: Added.
+        * Misc/WebGeolocationCoreLocationProvider.h: Added.
+        * Misc/WebGeolocationCoreLocationProvider.mm: Added.
+        * Misc/WebGeolocationProviderIOS.h: Added.
+        * Misc/WebGeolocationProviderIOS.mm: Added.
+        * Misc/WebNSStringDrawing.h: Added.
+        * Misc/WebNSStringDrawing.mm: Added.
+        * Misc/WebNSStringExtrasIOS.h: Added.
+        * Misc/WebNSStringExtrasIOS.m: Added.
+        * Misc/WebNSStringExtrasIPhone.h: Added.
+        * Misc/WebUIKitSupport.h: Added.
+        * Misc/WebUIKitSupport.mm: Added.
+        * Storage/WebSQLiteDatabaseTrackerClient.h: Added.
+        * Storage/WebSQLiteDatabaseTrackerClient.mm: Added.
+        * WebCoreSupport/PopupMenuIOS.h: Added.
+        * WebCoreSupport/PopupMenuIOS.mm: Added.
+        * WebCoreSupport/SearchPopupMenuIOS.cpp: Added.
+        * WebCoreSupport/SearchPopupMenuIOS.h: Added.
+        * WebCoreSupport/WebCaretChangeListener.h: Added.
+        * WebCoreSupport/WebChromeClientIOS.h: Added.
+        * WebCoreSupport/WebChromeClientIOS.mm: Added.
+        * WebCoreSupport/WebFixedPositionContent.h: Added.
+        * WebCoreSupport/WebFixedPositionContent.mm: Added.
+        * WebCoreSupport/WebFixedPositionContentInternal.h: Added.
+        * WebCoreSupport/WebFrameIOS.h: Added.
+        * WebCoreSupport/WebFrameIOS.mm: Added.
+        * WebCoreSupport/WebFrameIPhone.h: Added.
+        * WebCoreSupport/WebGeolocation.mm: Added.
+        * WebCoreSupport/WebGeolocationInternal.h: Added.
+        * WebCoreSupport/WebGeolocationPrivate.h: Added.
+        * WebCoreSupport/WebMIMETypeRegistry.h: Added.
+        * WebCoreSupport/WebMIMETypeRegistry.mm: Added.
+        * WebCoreSupport/WebSelectionRect.h: Added.
+        * WebCoreSupport/WebSelectionRect.m: Added.
+        * WebCoreSupport/WebVisiblePosition.h: Added.
+        * WebCoreSupport/WebVisiblePosition.mm: Added.
+        * WebCoreSupport/WebVisiblePositionInternal.h: Added.
+        * WebKit.iOS.exp: Added.
+        * WebView/WebFrameViewWAKCompatibility.m: Added.
+        * WebView/WebMailDelegate.h: Added.
+        * WebView/WebPDFViewIOS.h: Added.
+        * WebView/WebPDFViewIOS.mm: Added.
+        * WebView/WebPDFViewIPhone.h: Added.
+        * WebView/WebPDFViewPlaceholder.h: Added.
+        * WebView/WebPDFViewPlaceholder.mm: Added.
+        * WebView/WebPlainWhiteView.h: Added.
+        * WebView/WebPlainWhiteView.mm: Added.
+        * WebView/WebUIKitDelegate.h: Added.
+
 2013-10-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Upstream ENABLE(REMOTE_INSPECTOR) and enable on iOS and Mac
