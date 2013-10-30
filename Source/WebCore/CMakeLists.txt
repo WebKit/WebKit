@@ -183,9 +183,6 @@ set(WebCore_IDL_FILES
     Modules/mediasource/MediaSource.idl
     Modules/mediasource/SourceBuffer.idl
     Modules/mediasource/SourceBufferList.idl
-    Modules/mediasource/WebKitMediaSource.idl
-    Modules/mediasource/WebKitSourceBuffer.idl
-    Modules/mediasource/WebKitSourceBufferList.idl
 
     Modules/mediastream/AllAudioCapabilities.idl
     Modules/mediastream/AllVideoCapabilities.idl

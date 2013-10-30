@@ -249,9 +249,6 @@
 #include "JSMediaList.cpp"
 #include "JSMediaQueryList.cpp"
 #include "JSMediaQueryListListener.cpp"
-#if ENABLE(MEDIA_SOURCE)
-#include "JSWebKitMediaSource.cpp"
-#endif
 #include "JSMessageChannel.cpp"
 #include "JSMessageEvent.cpp"
 #include "JSMessagePort.cpp"
@@ -291,10 +288,6 @@
 #include "JSShadowRoot.cpp"
 #include "JSSharedWorker.cpp"
 #include "JSSharedWorkerGlobalScope.cpp"
-#if ENABLE(MEDIA_SOURCE)
-#include "JSWebKitSourceBuffer.cpp"
-#include "JSWebKitSourceBufferList.cpp"
-#endif
 #include "JSSQLError.cpp"
 #include "JSSQLException.cpp"
 #include "JSSQLResultSet.cpp"

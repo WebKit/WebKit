@@ -38,9 +38,7 @@ TextTrack conditional=VIDEO_TRACK
 TextTrackCue conditional=VIDEO_TRACK
 TextTrackList conditional=VIDEO_TRACK
 VideoTrackList conditional=VIDEO_TRACK
-WebKitMediaSource conditional=MEDIA_SOURCE
 WebKitNamedFlow
-WebKitSourceBufferList conditional=MEDIA_SOURCE
 WebSocket conditional=WEB_SOCKETS
 Worker conditional=WORKERS
 XMLHttpRequest

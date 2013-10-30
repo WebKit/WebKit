@@ -465,8 +465,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMediaList.h \
 	DerivedSources/WebCore/JSMediaSource.cpp \
 	DerivedSources/WebCore/JSMediaSource.h \
-	DerivedSources/WebCore/JSWebKitMediaSource.cpp \
-	DerivedSources/WebCore/JSWebKitMediaSource.h \
 	DerivedSources/WebCore/JSMediaSourceStates.cpp \
 	DerivedSources/WebCore/JSMediaSourceStates.h \
 	DerivedSources/WebCore/JSMediaStream.cpp \
@@ -643,10 +641,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSourceBufferList.h \
 	DerivedSources/WebCore/JSSourceInfo.cpp \
 	DerivedSources/WebCore/JSSourceInfo.h \
-	DerivedSources/WebCore/JSWebKitSourceBuffer.cpp \
-	DerivedSources/WebCore/JSWebKitSourceBuffer.h \
-	DerivedSources/WebCore/JSWebKitSourceBufferList.cpp \
-	DerivedSources/WebCore/JSWebKitSourceBufferList.h \
 	DerivedSources/WebCore/JSSpeechInputEvent.cpp \
 	DerivedSources/WebCore/JSSpeechInputEvent.h \
 	DerivedSources/WebCore/JSSpeechInputResult.cpp \
@@ -1200,9 +1194,6 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediasource/MediaSource.idl \
 	$(WebCore)/Modules/mediasource/SourceBuffer.idl \
 	$(WebCore)/Modules/mediasource/SourceBufferList.idl \
-	$(WebCore)/Modules/mediasource/WebKitMediaSource.idl \
-	$(WebCore)/Modules/mediasource/WebKitSourceBuffer.idl \
-	$(WebCore)/Modules/mediasource/WebKitSourceBufferList.idl \
 	$(WebCore)/Modules/mediastream/AllVideoCapabilities.idl \
 	$(WebCore)/Modules/mediastream/AllAudioCapabilities.idl \
 	$(WebCore)/Modules/mediastream/AudioStreamTrack.idl \
@@ -1874,12 +1865,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediasource/SourceBufferList.h \
 	Source/WebCore/Modules/mediasource/DOMURLMediaSource.cpp \
 	Source/WebCore/Modules/mediasource/DOMURLMediaSource.h \
-	Source/WebCore/Modules/mediasource/WebKitMediaSource.cpp \
-	Source/WebCore/Modules/mediasource/WebKitMediaSource.h \
-	Source/WebCore/Modules/mediasource/WebKitSourceBuffer.cpp \
-	Source/WebCore/Modules/mediasource/WebKitSourceBuffer.h \
-	Source/WebCore/Modules/mediasource/WebKitSourceBufferList.cpp \
-	Source/WebCore/Modules/mediasource/WebKitSourceBufferList.h \
 	Source/WebCore/Modules/mediastream/AllAudioCapabilities.h \
 	Source/WebCore/Modules/mediastream/AllVideoCapabilities.h \
 	Source/WebCore/Modules/mediastream/AudioStreamTrack.cpp \

@@ -1,3 +1,31 @@
+2013-10-29  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Remove legacy Media Source APIs (WebKitMediaSource, WebKitSourceBuffer, WebKitSourceBufferList)
+        https://bugs.webkit.org/show_bug.cgi?id=123463
+
+        Reviewed by Eric Carlson.
+
+        No new tests; updated test results.
+
+        Remove all reference to WebKitMediaSource, WebKitSourceBuffer, and WebKitSourceBufferList.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * Modules/mediasource/DOMURLMediaSource.idl:
+        * Modules/mediasource/WebKitMediaSource.cpp: Removed.
+        * Modules/mediasource/WebKitMediaSource.h: Removed.
+        * Modules/mediasource/WebKitMediaSource.idl: Removed.
+        * Modules/mediasource/WebKitSourceBuffer.cpp: Removed.
+        * Modules/mediasource/WebKitSourceBuffer.h: Removed.
+        * Modules/mediasource/WebKitSourceBuffer.idl: Removed.
+        * Modules/mediasource/WebKitSourceBufferList.cpp: Removed.
+        * Modules/mediasource/WebKitSourceBufferList.h: Removed.
+        * Modules/mediasource/WebKitSourceBufferList.idl: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventTargetFactory.in:
+
 2013-10-30  Antti Koivisto  <antti@apple.com>
 
         Unbreak the release build.
