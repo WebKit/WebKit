@@ -1,3 +1,24 @@
+2013-10-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Mavericks: 128 tests are failing due to pixel differences
+        https://bugs.webkit.org/show_bug.cgi?id=123488
+
+        Reviewed by Simon Fraser.
+
+        Apple font preferences cannot be fully reset after they've been read, so we
+        need to set them using CFPreferences before initializing NSApplication.
+
+        In theory, this should be an issue on WebKit2 as well, but somehow it doesn't
+        appear to be. I guess we can figure out the reasons for this difference when/if
+        any observable problems start to occur.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setDefaultsToConsistentValuesForTesting): Only set defaults here, move other work
+        to prepareConsistentTestingEnvironment().
+        (main): Call setDefaultsToConsistentValuesForTesting before [NSApplication sharedApplication]
+        (which is unnecessary anyway since NSUserDefaults will implicitly call it, but seems
+        useful to keep in case we change out approach to defaults again).
+
 2013-10-29  Andy Estes  <aestes@apple.com>
 
         Teach the style checker how to handle Objective-C categories and NS_ENUM

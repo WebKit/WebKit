@@ -676,11 +676,14 @@ static void resetWebPreferencesToConsistentValues()
 // Called once on DumpRenderTree startup.
 static void setDefaultsToConsistentValuesForTesting()
 {
-    // FIXME: We'd like to start with a clean state for every test, but this function can't be used more than once yet.
-    [WebPreferences _switchNetworkLoaderToNewTestingSession];
-
     static const int NoFontSmoothing = 0;
     static const int BlueTintedAppearance = 1;
+
+    // These defaults are read at NSApplication initialization time, and there is no way to fully reset them afterwards.
+    // We have to use CFPreferences, because [NSUserDefaults standardUserDefaults] indirectly initializes NSApplication.
+    CFPreferencesSetAppValue(CFSTR("AppleFontSmoothing"), (CFNumberRef)@(NoFontSmoothing), kCFPreferencesCurrentApplication);
+    CFPreferencesSetAppValue(CFSTR("AppleAntiAliasingThreshold"), (CFNumberRef)@4, kCFPreferencesCurrentApplication);
+    CFPreferencesSetAppValue(CFSTR("AppleLanguages"), (CFArrayRef)@[ @"en" ], kCFPreferencesCurrentApplication);
 
     NSString *libraryPath = libraryPathForDumpRenderTree();
 
@@ -714,17 +717,6 @@ static void setDefaultsToConsistentValuesForTesting()
     };
 
     [[NSUserDefaults standardUserDefaults] setVolatileDomain:dict forName:NSArgumentDomain];
-
-    // Underlying frameworks have already read AppleAntiAliasingThreshold default before we changed it.
-    // A distributed notification is delivered to all applications, but it should be harmless, and it's the only way to update all underlying frameworks anyway.
-    [[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"AppleAquaAntiAliasingChanged" object:nil userInfo:nil deliverImmediately:YES];
-
-    NSURLCache *sharedCache =
-        [[NSURLCache alloc] initWithMemoryCapacity:1024 * 1024
-                                      diskCapacity:0
-                                          diskPath:[libraryPath stringByAppendingPathComponent:@"URLCache"]];
-    [NSURLCache setSharedURLCache:sharedCache];
-    [sharedCache release];
 }
 
 static void runThread(void* arg)
@@ -848,7 +840,16 @@ static void prepareConsistentTestingEnvironment()
     poseAsClass("DumpRenderTreePasteboard", "NSPasteboard");
     poseAsClass("DumpRenderTreeEvent", "NSEvent");
 
-    setDefaultsToConsistentValuesForTesting();
+    // FIXME: We'd like to start with a clean state for every test, but this function can't be used more than once yet.
+    [WebPreferences _switchNetworkLoaderToNewTestingSession];
+
+    NSURLCache *sharedCache =
+        [[NSURLCache alloc] initWithMemoryCapacity:1024 * 1024
+                                      diskCapacity:0
+                                          diskPath:[libraryPathForDumpRenderTree() stringByAppendingPathComponent:@"URLCache"]];
+    [NSURLCache setSharedURLCache:sharedCache];
+    [sharedCache release];
+
     adjustFonts();
     registerMockScrollbars();
     
@@ -930,6 +931,9 @@ void dumpRenderTree(int argc, const char *argv[])
 int main(int argc, const char *argv[])
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    setDefaultsToConsistentValuesForTesting(); // Must be called before NSApplication initialization.
+
     [DumpRenderTreeApplication sharedApplication]; // Force AppKit to init itself
 
     dumpRenderTree(argc, argv);
