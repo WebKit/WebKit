@@ -1,3 +1,22 @@
+2013-10-30  Antti Koivisto  <antti@apple.com>
+
+        Add debug settings for simple line layout
+        https://bugs.webkit.org/show_bug.cgi?id=123514
+
+        Reviewed by Andreas Kling.
+        
+        Expose debug settings.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetSimpleLineLayoutEnabled):
+        (WKPreferencesGetSimpleLineLayoutEnabled):
+        (WKPreferencesSetSimpleLineLayoutDebugBordersEnabled):
+        (WKPreferencesGetSimpleLineLayoutDebugBordersEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2013-10-30  Anders Carlsson  <andersca@apple.com>
 
         Add stubbed out WKRemoteObjectRegistry class

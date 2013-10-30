@@ -27,6 +27,7 @@
 #include "SimpleLineLayoutFunctions.h"
 
 #include "FontCache.h"
+#include "Frame.h"
 #include "GraphicsContext.h"
 #include "HitTestLocation.h"
 #include "HitTestRequest.h"
@@ -37,6 +38,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderStyle.h"
 #include "RenderText.h"
+#include "Settings.h"
 #include "SimpleLineLayoutResolver.h"
 #include "Text.h"
 #include "TextPaintStyle.h"
@@ -45,12 +47,24 @@
 namespace WebCore {
 namespace SimpleLineLayout {
 
+static void paintDebugBorders(GraphicsContext& context, const LayoutRect& borderRect, const LayoutPoint& paintOffset)
+{
+    GraphicsContextStateSaver stateSaver(context);
+    context.setStrokeColor(Color(0, 255, 0), ColorSpaceDeviceRGB);
+    context.setFillColor(Color::transparent, ColorSpaceDeviceRGB);
+    IntRect rect(pixelSnappedIntRect(borderRect));
+    rect.moveBy(flooredIntPoint(paintOffset));
+    context.drawRect(rect);
+}
+
 void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (paintInfo.phase != PaintPhaseForeground)
         return;
     RenderText& textRenderer = toRenderText(*flow.firstChild());
     ASSERT(!textRenderer.firstTextBox());
+
+    bool debugBordersEnabled = flow.frame().settings().simpleLineLayoutDebugBordersEnabled();
 
     RenderStyle& style = flow.style();
     const Font& font = style.font();
@@ -66,6 +80,8 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
     for (auto it = resolver.begin(), end = resolver.end(); it != end; ++it) {
         auto run = *it;
         context.drawText(font, TextRun(run.text()), run.baseline() + paintOffset);
+        if (debugBordersEnabled)
+            paintDebugBorders(context, run.rect(), paintOffset);
     }
 }
 

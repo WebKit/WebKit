@@ -1175,3 +1175,23 @@ bool WKPreferencesGetThreadedScrollingEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->threadedScrollingEnabled();
 }
+
+void WKPreferencesSetSimpleLineLayoutEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setSimpleLineLayoutEnabled(flag);
+}
+
+bool WKPreferencesGetSimpleLineLayoutEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->simpleLineLayoutEnabled();
+}
+
+void WKPreferencesSetSimpleLineLayoutDebugBordersEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setSimpleLineLayoutDebugBordersEnabled(flag);
+}
+
+bool WKPreferencesGetSimpleLineLayoutDebugBordersEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->simpleLineLayoutDebugBordersEnabled();
+}

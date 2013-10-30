@@ -27,6 +27,7 @@
 #include "SimpleLineLayout.h"
 
 #include "FontCache.h"
+#include "Frame.h"
 #include "GraphicsContext.h"
 #include "HitTestLocation.h"
 #include "HitTestRequest.h"
@@ -38,6 +39,7 @@
 #include "RenderStyle.h"
 #include "RenderText.h"
 #include "RenderView.h"
+#include "Settings.h"
 #include "SimpleLineLayoutResolver.h"
 #include "Text.h"
 #include "TextPaintStyle.h"
@@ -59,6 +61,8 @@ bool canUseFor(const RenderBlockFlow& flow)
     // https://bugs.webkit.org/show_bug.cgi?id=123338
     return false;
 #endif
+    if (!flow.frame().settings().simpleLineLayoutEnabled())
+        return false;
     if (!flow.firstChild())
         return false;
     // This currently covers <blockflow>#text</blockflow> case.
