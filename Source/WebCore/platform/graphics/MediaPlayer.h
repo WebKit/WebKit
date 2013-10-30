@@ -112,6 +112,13 @@ struct MediaEngineSupportParameters {
 #if ENABLE(MEDIA_SOURCE)
     bool isMediaSource;
 #endif
+
+    MediaEngineSupportParameters()
+#if ENABLE(MEDIA_SOURCE)
+        : isMediaSource(false)
+#endif
+    {
+    }
 };
 
 extern const PlatformMedia NoPlatformMedia;

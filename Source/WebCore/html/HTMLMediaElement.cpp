@@ -762,7 +762,7 @@ HTMLMediaElement::NetworkState HTMLMediaElement::networkState() const
 
 String HTMLMediaElement::canPlayType(const String& mimeType, const String& keySystem, const URL& url) const
 {
-    MediaEngineSupportParameters parameters = { };
+    MediaEngineSupportParameters parameters;
     ContentType contentType(mimeType);
     parameters.type = contentType.type();
     parameters.codecs = contentType.parameter(ASCIILiteral("codecs"));
@@ -3531,7 +3531,7 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
             if (shouldLog)
                 LOG(Media, "HTMLMediaElement::selectNextSourceChild - 'type' is '%s' - key system is '%s'", type.utf8().data(), system.utf8().data());
 #endif
-            MediaEngineSupportParameters parameters = { };
+            MediaEngineSupportParameters parameters;
             ContentType contentType(type);
             parameters.type = contentType.type();
             parameters.codecs = contentType.parameter(ASCIILiteral("codecs"));

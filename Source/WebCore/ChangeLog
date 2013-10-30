@@ -1,3 +1,17 @@
+2013-10-30  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed EFL build fix; give MediaEngineSupportParameters struct a default constructor.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::isTypeSupported):
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canPlayType):
+        (WebCore::HTMLMediaElement::selectNextSourceChild):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaEngineSupportParameters::MediaEngineSupportParameters):
+
 2013-10-30  Andreas Kling  <akling@apple.com>
 
         Let Page::renderTreeSize() be the number of renderers.
