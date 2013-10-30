@@ -1,3 +1,11 @@
+2013-10-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove unnecessary touch
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * Scripts/run-jsc-stress-tests:
+
 2013-10-30  Samuel White  <samuel_white@apple.com>
 
         AX: Add samuel_white@apple.com to accessibility watchlist cc rules

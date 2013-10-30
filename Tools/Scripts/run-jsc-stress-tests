@@ -794,7 +794,6 @@ File.open(parallelDir + "Makefile", "w") {
         plan = $runlist[index]
         outp.puts "test_done_#{index}:"
         outp.puts "\tsh test_script_#{plan.index}"
-        outp.puts "\ttouch test_done_#{index}"
     }
 }
 
