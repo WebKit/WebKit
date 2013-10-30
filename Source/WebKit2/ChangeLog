@@ -1,3 +1,23 @@
+2013-10-30  Anders Carlsson  <andersca@apple.com>
+
+        Add stubbed out WKRemoteObjectRegistry class
+        https://bugs.webkit.org/show_bug.cgi?id=123512
+
+        Reviewed by Andreas Kling.
+
+        Also add a WKRemoteObjectInterface class that represents a remote object interface.
+
+        * Shared/API/Cocoa/WKRemoteObjectInterface.h: Added.
+        * Shared/API/Cocoa/WKRemoteObjectInterface.mm: Added.
+        (-[WKRemoteObjectInterface initWithProtocol:identifier:]):
+        (+[WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:]):
+        * Shared/API/Cocoa/WKRemoteObjectRegistry.h: Added.
+        * Shared/API/Cocoa/WKRemoteObjectRegistry.mm: Added.
+        (-[WKRemoteObjectRegistry registerExportedObject:interface:]):
+        (-[WKRemoteObjectRegistry unregisterExportedObject:interface:]):
+        (-[WKRemoteObjectRegistry remoteObjectProxyWithInterface:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-10-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] webkit_web_context_allow_tls_certificate_for_host doc is missing Since tag
