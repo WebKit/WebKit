@@ -63,7 +63,6 @@ struct WebTextRenderInfo
     CGColorRef shadowColor;
 };
 
-void WebDrawText(WebTextRenderInfo*);
 float TextFloatWidth(LPCTSTR text, int length, const WebFontDescription&);
 void FontMetrics(const WebFontDescription&, int* ascent, int* descent, int* lineSpacing);
 

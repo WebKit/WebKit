@@ -1,3 +1,18 @@
+2013-10-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        WebKit/win/WebKitGraphics.h:void WebDrawText(WebTextRenderInfo*); is never called
+        https://bugs.webkit.org/show_bug.cgi?id=123485
+
+        Reviewed by Brent Fulgham.
+
+        WebDrawText is the only caller of WebCoreDrawTextAtPoint, so we can
+        delete that as well.
+
+        Because there is no behavior difference, no new tests are necessary.
+
+        * platform/win/WebCoreTextRenderer.cpp:
+        * platform/win/WebCoreTextRenderer.h:
+
 2013-10-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r158289.

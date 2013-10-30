@@ -80,15 +80,6 @@ static void doDrawTextAtPoint(GraphicsContext& context, const String& text, cons
     }
 }
 
-void WebCoreDrawTextAtPoint(GraphicsContext& context, const String& text, const IntPoint& point, const Font& font, const Color& color, int underlinedIndex)
-{
-    context.save();
-
-    doDrawTextAtPoint(context, text, point, font, color, underlinedIndex);
-
-    context.restore();
-}
-
 void WebCoreDrawDoubledTextAtPoint(GraphicsContext& context, const String& text, const IntPoint& point, const Font& font, const Color& topColor, const Color& bottomColor, int underlinedIndex)
 {
     context.save();

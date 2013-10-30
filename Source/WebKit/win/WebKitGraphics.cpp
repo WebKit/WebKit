@@ -87,38 +87,6 @@ struct WebTextRenderInfoWithoutShadow
     int overrideSmoothingLevel; // pass in -1 if caller does not want to override smoothing level
 };
 
-void WebDrawText(WebTextRenderInfo* info)
-{
-    if (!info || info->structSize < sizeof(WebTextRenderInfoWithoutShadow) || !info->cgContext || !info->description)
-        return;
-
-    int oldFontSmoothingLevel = -1;
-    if (info->overrideSmoothingLevel >= 0) {
-        oldFontSmoothingLevel = wkGetFontSmoothingLevel();
-        wkSetFontSmoothingLevel(info->overrideSmoothingLevel);
-    }
-
-    {
-        GraphicsContext context(info->cgContext);
-        String drawString(info->text, info->length);
-        if (info->drawAsPassword)
-            drawString.fill(WTF::Unicode::bullet);
-
-        context.save();
-
-        // Set shadow setting
-        if (info->structSize == sizeof(WebTextRenderInfo) &&
-            (info->shadowOffset.cx || info->shadowOffset.cy || info->shadowBlur || info->shadowColor))
-            context.setShadow(FloatSize(info->shadowOffset.cx, info->shadowOffset.cy), info->shadowBlur, info->shadowColor, ColorSpaceDeviceRGB);
-
-        WebCoreDrawTextAtPoint(context, drawString, info->pt, makeFont(*(info->description)), info->color, info->underlinedIndex);
-        context.restore();
-    }
-
-    if (info->overrideSmoothingLevel >= 0)
-        wkSetFontSmoothingLevel(oldFontSmoothingLevel);
-}
-
 float TextFloatWidth(LPCTSTR text, int length, const WebFontDescription& description)
 {
     return WebCoreTextFloatWidth(String(text, length), makeFont(description));

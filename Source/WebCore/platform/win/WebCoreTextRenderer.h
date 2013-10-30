@@ -35,7 +35,6 @@ namespace WebCore {
     class GraphicsContext;
     class IntPoint;
 
-    void WebCoreDrawTextAtPoint(GraphicsContext&, const String&, const IntPoint&, const Font&, const Color&, int underlinedIndex = -1);
     void WebCoreDrawDoubledTextAtPoint(GraphicsContext&, const String&, const IntPoint&, const Font&, const Color& topColor, const Color& bottomColor, int underlinedIndex = -1);
     float WebCoreTextFloatWidth(const String&, const Font&);
 
