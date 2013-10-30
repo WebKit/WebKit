@@ -1,3 +1,13 @@
+2013-10-30  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl][Win] Suggested filename of download is not url decoded.
+        https://bugs.webkit.org/show_bug.cgi?id=123511
+
+        Reviewed by Brent Fulgham.
+
+        * WebDownloadCurl.cpp:
+        (WebDownload::didReceiveResponse): Url decode suggested filename.
+
 2013-10-28  Tim Horton  <timothy_horton@apple.com>
 
         Make TileController manipulate PlatformCALayers instead of CALayers
