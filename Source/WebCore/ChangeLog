@@ -1,3 +1,18 @@
+2013-10-30  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Cookies are sometimes not set in download request.
+        https://bugs.webkit.org/show_bug.cgi?id=123445
+
+        Reviewed by Brent Fulgham.
+
+        Sometimes cookies are not set in the download request because the cookie file cannot be opened,
+        it's already been opened by the ResourceHandleManager for writing.
+        This can be fixed by getting the cookie list from the share handle in ResourceHandleManager instead.
+        This will also improve performance, as there is no need to read and parse the cookie file for each download.
+
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::init): Use share handle to get cookie list.
+
 2013-10-30  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Unguard Element::childShouldCreateRenderer

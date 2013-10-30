@@ -28,6 +28,7 @@
 
 #include "HTTPParsers.h"
 #include "MainThreadTask.h"
+#include "ResourceHandleManager.h"
 #include "ResourceRequest.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
@@ -274,9 +275,9 @@ void CurlDownload::init(CurlDownloadListener* listener, const URL& url)
     if (certPath)
         curl_easy_setopt(m_curlHandle, CURLOPT_CAINFO, certPath);
 
-    const char* cookieJarPath = getenv("CURL_COOKIE_JAR_PATH");
-    if (cookieJarPath)
-        curl_easy_setopt(m_curlHandle, CURLOPT_COOKIEFILE, cookieJarPath);
+    CURLSH* curlsh = ResourceHandleManager::sharedInstance()->getCurlShareHandle();
+    if (curlsh)
+        curl_easy_setopt(m_curlHandle, CURLOPT_SHARE, curlsh);
 
     m_listener = listener;
 }
