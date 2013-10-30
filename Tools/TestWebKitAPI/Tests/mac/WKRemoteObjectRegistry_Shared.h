@@ -23,59 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKRemoteObjectRegistry.h"
-#import "WKRemoteObjectRegistryPrivate.h"
+@protocol BundleInterface <NSObject>
 
-#import "Connection.h"
-#import "WKConnectionRef.h"
-#import "WebConnection.h"
-#import "WKSharedAPICast.h"
-
-#if WK_API_ENABLED
-
-using namespace WebKit;
-
-@implementation WKRemoteObjectRegistry {
-    RefPtr<WebConnection> _connection;
-}
-
-- (void)registerExportedObject:(id)object interface:(WKRemoteObjectInterface *)interface
-{
-    // FIXME: Implement.
-}
-
-- (void)unregisterExportedObject:(id)object interface:(WKRemoteObjectInterface *)interface
-{
-    // FIXME: Implement.
-}
-
-- (id)remoteObjectProxyWithInterface:(WKRemoteObjectInterface *)interface
-{
-    // FIXME: Implement.
-    return nil;
-}
+- (void)sayHello;
 
 @end
-
-@implementation WKRemoteObjectRegistry (WKPrivate)
-
-- (id)_initWithConnectionRef:(WKConnectionRef)connectionRef
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _connection = toImpl(connectionRef);
-
-    return self;
-}
-
-- (BOOL)_handleMessageWithName:(WKStringRef)name body:(WKTypeRef)body
-{
-    // FIXME: Implement.
-    return NO;
-}
-
-@end
-
-#endif // WK_API_ENABLED

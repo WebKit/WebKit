@@ -27,6 +27,7 @@
 
 #if WK_API_ENABLED
 
+WK_API_CLASS
 @interface WKRemoteObjectInterface : NSObject
 
 @property (readonly) Protocol *protocol;

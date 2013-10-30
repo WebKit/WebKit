@@ -1,3 +1,17 @@
+2013-10-30  Anders Carlsson  <andersca@apple.com>
+
+        Begin fleshing out an API test for WKRemoteObjectRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=123531
+
+        Reviewed by Andreas Kling.
+
+        Add a very simple test that doesn't really test anything for now.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2ObjC/WKRemoteObjectRegistry.mm: Added.
+        * TestWebKitAPI/Tests/mac/WKRemoteObjectRegistry_Bundle.mm: Added.
+        * TestWebKitAPI/Tests/mac/WKRemoteObjectRegistry_Shared.h: Added.
+
 2013-10-30  Filip Pizlo  <fpizlo@apple.com>
 
         Remove unnecessary touch

@@ -29,6 +29,7 @@
 
 @class WKRemoteObjectInterface;
 
+WK_API_CLASS
 @interface WKRemoteObjectRegistry : NSObject
 
 - (void)registerExportedObject:(id)object interface:(WKRemoteObjectInterface *)interface;

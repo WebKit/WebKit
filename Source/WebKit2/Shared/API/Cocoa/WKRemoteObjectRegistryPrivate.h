@@ -23,59 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKRemoteObjectRegistry.h"
-#import "WKRemoteObjectRegistryPrivate.h"
+#import <WebKit2/WKFoundation.h>
+#import <WebKit2/WKRemoteObjectRegistry.h>
 
-#import "Connection.h"
-#import "WKConnectionRef.h"
-#import "WebConnection.h"
-#import "WKSharedAPICast.h"
+#import <WebKit2/WKBase.h>
 
 #if WK_API_ENABLED
 
-using namespace WebKit;
+@interface WKRemoteObjectRegistry (WKPrivate)
 
-@implementation WKRemoteObjectRegistry {
-    RefPtr<WebConnection> _connection;
-}
-
-- (void)registerExportedObject:(id)object interface:(WKRemoteObjectInterface *)interface
-{
-    // FIXME: Implement.
-}
-
-- (void)unregisterExportedObject:(id)object interface:(WKRemoteObjectInterface *)interface
-{
-    // FIXME: Implement.
-}
-
-- (id)remoteObjectProxyWithInterface:(WKRemoteObjectInterface *)interface
-{
-    // FIXME: Implement.
-    return nil;
-}
+- (id)_initWithConnectionRef:(WKConnectionRef)connectionRef;
+- (BOOL)_handleMessageWithName:(WKStringRef)name body:(WKTypeRef)body;
 
 @end
 
-@implementation WKRemoteObjectRegistry (WKPrivate)
-
-- (id)_initWithConnectionRef:(WKConnectionRef)connectionRef
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _connection = toImpl(connectionRef);
-
-    return self;
-}
-
-- (BOOL)_handleMessageWithName:(WKStringRef)name body:(WKTypeRef)body
-{
-    // FIXME: Implement.
-    return NO;
-}
-
-@end
-
-#endif // WK_API_ENABLED
+#endif

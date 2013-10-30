@@ -23,59 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKRemoteObjectRegistry.h"
-#import "WKRemoteObjectRegistryPrivate.h"
+#include "config.h"
+#include "InjectedBundleTest.h"
+#include "PlatformUtilities.h"
+#include <WebKit2/WKRetainPtr.h>
 
-#import "Connection.h"
-#import "WKConnectionRef.h"
-#import "WebConnection.h"
-#import "WKSharedAPICast.h"
+namespace TestWebKitAPI {
 
-#if WK_API_ENABLED
-
-using namespace WebKit;
-
-@implementation WKRemoteObjectRegistry {
-    RefPtr<WebConnection> _connection;
-}
-
-- (void)registerExportedObject:(id)object interface:(WKRemoteObjectInterface *)interface
+/* WKConnectionClient */
+static void connectionDidReceiveMessage(WKConnectionRef connection, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo)
 {
-    // FIXME: Implement.
+    // FIXME: Implement this.
 }
 
-- (void)unregisterExportedObject:(id)object interface:(WKRemoteObjectInterface *)interface
-{
-    // FIXME: Implement.
-}
+class WKRemoteObjectRegistryTest : public InjectedBundleTest {
+public:
+    WKRemoteObjectRegistryTest(const std::string& identifier)
+        : InjectedBundleTest(identifier)
+    {
+    }
 
-- (id)remoteObjectProxyWithInterface:(WKRemoteObjectInterface *)interface
-{
-    // FIXME: Implement.
-    return nil;
-}
+    virtual void initialize(WKBundleRef bundle, WKTypeRef)
+    {
+        WKConnectionClient connectionClient;
+        memset(&connectionClient, 0, sizeof(connectionClient));
+        connectionClient.version = WKConnectionClientCurrentVersion;
+        connectionClient.clientInfo = 0;
+        connectionClient.didReceiveMessage = connectionDidReceiveMessage;
+        WKConnectionSetConnectionClient(WKBundleGetApplicationConnection(bundle), &connectionClient);
+    }
+};
 
-@end
+static InjectedBundleTest::Register<WKRemoteObjectRegistryTest> registrar("WKRemoteObjectRegistry");
 
-@implementation WKRemoteObjectRegistry (WKPrivate)
-
-- (id)_initWithConnectionRef:(WKConnectionRef)connectionRef
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _connection = toImpl(connectionRef);
-
-    return self;
-}
-
-- (BOOL)_handleMessageWithName:(WKStringRef)name body:(WKTypeRef)body
-{
-    // FIXME: Implement.
-    return NO;
-}
-
-@end
-
-#endif // WK_API_ENABLED
+} // namespace TestWebKitAPI

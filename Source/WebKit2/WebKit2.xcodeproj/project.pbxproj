@@ -200,10 +200,11 @@
 		1A91010B1268C8CA001842F5 /* FindIndicatorWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9101091268C8CA001842F5 /* FindIndicatorWindow.mm */; };
 		1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */; };
 		1A92DC1312F8BAB90017AF65 /* LayerTreeContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A92DC1212F8BAB90017AF65 /* LayerTreeContextMac.mm */; };
-		1A9E32891821636900F5D04C /* WKRemoteObjectRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9E32871821636900F5D04C /* WKRemoteObjectRegistry.h */; };
+		1A9E32891821636900F5D04C /* WKRemoteObjectRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9E32871821636900F5D04C /* WKRemoteObjectRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A9E328A1821636900F5D04C /* WKRemoteObjectRegistry.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9E32881821636900F5D04C /* WKRemoteObjectRegistry.mm */; };
-		1A9E328D182165A900F5D04C /* WKRemoteObjectInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9E328B182165A900F5D04C /* WKRemoteObjectInterface.h */; };
+		1A9E328D182165A900F5D04C /* WKRemoteObjectInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9E328B182165A900F5D04C /* WKRemoteObjectInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A9E328E182165A900F5D04C /* WKRemoteObjectInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9E328C182165A900F5D04C /* WKRemoteObjectInterface.mm */; };
+		1A9E329718219BEA00F5D04C /* WKRemoteObjectRegistryPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9E329618219BEA00F5D04C /* WKRemoteObjectRegistryPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A9FBA8D13FF04E600DEED67 /* PluginComplexTextInputState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9FBA8C13FF04E600DEED67 /* PluginComplexTextInputState.h */; };
 		1AA2E51D12E4C05E00BC4966 /* CGUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA2E51B12E4C05E00BC4966 /* CGUtilities.h */; };
 		1AA2E51E12E4C05E00BC4966 /* CGUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA2E51C12E4C05E00BC4966 /* CGUtilities.cpp */; };
@@ -1653,6 +1654,7 @@
 		1A9E32881821636900F5D04C /* WKRemoteObjectRegistry.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKRemoteObjectRegistry.mm; sourceTree = "<group>"; };
 		1A9E328B182165A900F5D04C /* WKRemoteObjectInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRemoteObjectInterface.h; sourceTree = "<group>"; };
 		1A9E328C182165A900F5D04C /* WKRemoteObjectInterface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKRemoteObjectInterface.mm; sourceTree = "<group>"; };
+		1A9E329618219BEA00F5D04C /* WKRemoteObjectRegistryPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRemoteObjectRegistryPrivate.h; sourceTree = "<group>"; };
 		1A9FBA8C13FF04E600DEED67 /* PluginComplexTextInputState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginComplexTextInputState.h; sourceTree = "<group>"; };
 		1AA1C79A100E7FC50078DEBC /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3674,10 +3676,11 @@
 			isa = PBXGroup;
 			children = (
 				37DFA6FF1810BB92001F4A9F /* WKFoundation.h */,
-				1A9E32871821636900F5D04C /* WKRemoteObjectRegistry.h */,
-				1A9E32881821636900F5D04C /* WKRemoteObjectRegistry.mm */,
 				1A9E328B182165A900F5D04C /* WKRemoteObjectInterface.h */,
 				1A9E328C182165A900F5D04C /* WKRemoteObjectInterface.mm */,
+				1A9E32871821636900F5D04C /* WKRemoteObjectRegistry.h */,
+				1A9E32881821636900F5D04C /* WKRemoteObjectRegistry.mm */,
+				1A9E329618219BEA00F5D04C /* WKRemoteObjectRegistryPrivate.h */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
@@ -5662,6 +5665,7 @@
 				33AA1067131F060000D4A575 /* WebCookieManagerProxyClient.h in Headers */,
 				3309344A1315B9220097A7BC /* WebCookieManagerProxyMessages.h in Headers */,
 				BC1DD7B2114DC396005ADAF3 /* WebCoreArgumentCoders.h in Headers */,
+				1A9E329718219BEA00F5D04C /* WKRemoteObjectRegistryPrivate.h in Headers */,
 				512F589B12A8838800629530 /* WebCredential.h in Headers */,
 				51578B831209ECEF00A37C4A /* WebData.h in Headers */,
 				F6A25FDD12ADC6CC00DC40CC /* WebDatabaseManager.h in Headers */,

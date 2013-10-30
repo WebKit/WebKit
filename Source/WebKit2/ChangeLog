@@ -1,3 +1,31 @@
+2013-10-30  Anders Carlsson  <andersca@apple.com>
+
+        Begin fleshing out an API test for WKRemoteObjectRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=123531
+
+        Reviewed by Andreas Kling.
+
+        * Shared/API/Cocoa/WKRemoteObjectInterface.h:
+        Add WK_API_CLASS annotation.
+
+        * Shared/API/Cocoa/WKRemoteObjectRegistry.h:
+        Add WK_API_CLASS annotation.
+
+        * Shared/API/Cocoa/WKRemoteObjectRegistry.mm:
+        Add a WebConnection ivar.
+
+        (-[WKRemoteObjectRegistry _initWithConnectionRef:]):
+        Add SPI to create an WKRemoteObjectRegistry object with an existing WKConnectionRef.
+
+        (-[WKRemoteObjectRegistry _handleMessageWithName:body:]):
+        Add SPI that will be used to process incoming messages from an existing WKConnectionRef.
+
+        * Shared/API/Cocoa/WKRemoteObjectRegistryPrivate.h: Added.
+        Add SPI header.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
 2013-10-30  Tim Horton  <timothy_horton@apple.com>
 
         Remote Layer Tree: Lots of ASSERT(m_children.isEmpty()); on Poster Circle
