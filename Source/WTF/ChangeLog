@@ -1,3 +1,13 @@
+2013-10-30  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Remove PCRE workaround.
+        https://bugs.webkit.org/show_bug.cgi?id=123265
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/text/StringStatics.cpp:
+        (WTF::StringImpl::empty):
+
 2013-10-30  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] Compile errors when enabling DFG JIT.
