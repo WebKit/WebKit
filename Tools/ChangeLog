@@ -1,3 +1,25 @@
+2013-10-29  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be possible to specify extra tests to run-javascriptcore-tests
+        https://bugs.webkit.org/show_bug.cgi?id=123495
+
+        Reviewed by Oliver Hunt.
+        
+        This adds two ways to specify additional tests: the option --extra-tests=<blah>, and
+        the environment variable EXTRA_JSC_TESTS.
+        
+        Those two values (the command-line option and the environment variable) are passed
+        as extra arguments to run-jsc-stress-tests.
+        
+        To make this extra super useful, run-jsc-stress-tests now allows yaml configuration
+        files to be recursive: if a "- collection:" line is found, the string is handled
+        just as if it was a command-line argument. This allows you to use --extra-tests=file
+        where file contains a bunch of "- collection:" lines, and this is equivalent to each
+        of those lines being a command-line argument.
+
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/run-jsc-stress-tests:
+
 2013-10-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add Mavericks builders to the old flakiness dashboard.

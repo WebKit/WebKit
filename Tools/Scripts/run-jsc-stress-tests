@@ -577,7 +577,7 @@ def uniqueifyName(names, name)
     result
 end
 
-def simplifyCollectionName(collectionNames, collectionPath)
+def simplifyCollectionName(collectionPath)
     outerDir = collectionPath.dirname
     name = collectionPath.basename
     lastName = name
@@ -588,7 +588,7 @@ def simplifyCollectionName(collectionNames, collectionPath)
             outerDir = outerDir.dirname
         end
     end
-    uniqueifyName(collectionNames, name)
+    uniqueifyName($collectionNames, name)
 end
 
 def prepareCollection(name)
@@ -600,59 +600,85 @@ def prepareCollection(name)
     }
 end
 
-collectionNames = {}
+$collectionNames = {}
+
+def handleCollectionFile(collection)
+    collectionName = simplifyCollectionName(collection)
+    
+    paths = {}
+    subCollections = []
+    YAML::load(IO::read(collection)).each {
+        | entry |
+        if entry["collection"]
+            subCollections << entry["collection"]
+            next
+        end
+        
+        if paths[entry["path"]]
+            raise "Duplicate path: " + entry["path"] + " in #{collection}"
+        end
+        
+        subCollection = collection.dirname + entry["path"]
+        
+        if subCollection.file?
+            subCollectionName = Pathname.new(entry["path"]).dirname
+        else
+            subCollectionName = entry["path"]
+        end
+        
+        $collection = subCollection
+        $collectionName = (Pathname.new(collectionName) + subCollectionName).to_s
+        
+        prepareCollection($collectionName)
+        
+        allJSFiles(subCollection).each {
+            | path |
+            
+            path = path.realpath
+            
+            $benchmark = path.basename
+            $benchmarkDirectory = path.dirname
+            
+            eval entry["cmd"]
+        }
+    }
+    
+    subCollections.each {
+        | subCollection |
+        handleCollection(collection.dirname + subCollection)
+    }
+end
+
+def handleCollectionDirectory(collection)
+    collectionName = simplifyCollectionName(collection)
+    
+    prepareCollection(collectionName)
+    
+    $collection = collection
+    $collectionName = collectionName
+    $benchmarkDirectory = $collection
+    allJSFiles($collection).each {
+        | path |
+        
+        $benchmark = path.basename
+        
+        defaultRun unless parseRunCommands
+    }
+end
+
+def handleCollection(collection)
+    collection = Pathname.new(collection)
+    
+    if collection.file?
+        handleCollectionFile(collection)
+    else
+        handleCollectionDirectory(collection)
+    end
+end
 
 ARGV.each {
     | collection |
-    collection = Pathname.new(collection)
-    collectionName = simplifyCollectionName(collectionNames, collection)
-    
-    if collection.file?
-        paths = {}
-        YAML::load(IO::read(collection)).each {
-            | entry |
-            if paths[entry["path"]]
-                raise "Duplicate path: " + entry["path"] + " in #{collection}"
-            end
-            
-            subCollection = collection.dirname + entry["path"]
-            
-            if subCollection.file?
-                subCollectionName = Pathname.new(entry["path"]).dirname
-            else
-                subCollectionName = entry["path"]
-            end
-            
-            $collection = subCollection
-            $collectionName = (Pathname.new(collectionName) + subCollectionName).to_s
-            
-            prepareCollection($collectionName)
-            
-            allJSFiles(subCollection).each {
-                | path |
-                
-                path = path.realpath
-                
-                $benchmark = path.basename
-                $benchmarkDirectory = path.dirname
-                
-                eval entry["cmd"]
-            }
-        }
-    else
-        prepareCollection(collectionName)
-        
-        $collection = collection
-        $collectionName = collectionName
-        $benchmarkDirectory = $collection
-        allJSFiles($collection).each {
-            | path |
-            
-            $benchmark = path.basename
-            
-            defaultRun unless parseRunCommands
-        }
-    end
+    handleCollection(collection)
 }
 
 def appendFailure(plan)

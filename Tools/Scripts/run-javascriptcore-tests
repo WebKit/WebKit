@@ -65,6 +65,7 @@ my $jsDriverArgs = "-L " . join(" ", @testsToSkip);
 # These variables are intentionally left undefined.
 my $root;
 my $showHelp;
+my $extraTests;
 
 my $buildJSC = 1;
 
@@ -88,6 +89,7 @@ Usage: $programName [options] [options to pass to build system]
   --help                        Show this help message
   --jsDriver-args=              A string of arguments to pass to jsDriver.pl
   --root=                       Path to pre-built root containing jsc
+  --extra-tests=                Path to a file containing extra tests
   --[no-]ftl-jit                Turn the FTL JIT on or off
   --[no-]build                  Check (or don't check) to see if the jsc build is up-to-date (default: $buildJSCDefault)
   --[no-]testapi                Run (or don't run) testapi (default: $testapiDefault)
@@ -97,6 +99,7 @@ EOF
 GetOptions(
     'j|jsDriver-args=s' => \$jsDriverArgs,
     'root=s' => \$root,
+    'extra-tests=s' => \$extraTests,
     'build!' => \$buildJSC,
     'ftl-jit!' => \$enableFTL,
     'testapi!' => \$runTestAPI,
@@ -235,6 +238,12 @@ if ($runJSCStress) {
     );
     if ($enableFTL) {
         push(@jscStressDriverCmd, "--ftl-jit");
+    }
+    if (defined($extraTests)) {
+        push(@jscStressDriverCmd, $extraTests);
+    }
+    if (defined($ENV{"EXTRA_JSC_TESTS"})) {
+        push(@jscStressDriverCmd, $ENV{"EXTRA_JSC_TESTS"});
     }
     print "Running: " . join(" ", @jscStressDriverCmd) . "\n";
     my $result = system(@jscStressDriverCmd);
