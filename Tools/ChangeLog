@@ -1,5 +1,22 @@
 2013-10-30  Robert Plociennik  <r.plociennik@samsung.com>
 
+        [EFL] accessibility/textarea-selected-text-range.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=112016
+
+        Reviewed by Mario Sanchez Prada.
+
+        Provided implementation for AccessibilityUIElement::selectedTextRange() and
+        AccessibilityUIElement::setSelectedTextRange().
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::selectedTextRange): Implemented.
+        (AccessibilityUIElement::setSelectedTextRange): Implemented
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::selectedTextRange): Implemented.
+        (WTR::AccessibilityUIElement::setSelectedTextRange): Implemented.
+
+2013-10-30  Robert Plociennik  <r.plociennik@samsung.com>
+
         [GTK] accessibility/svg-remote-element.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=101185
 
