@@ -1764,7 +1764,7 @@
 		51D719BE181106E00016DC51 /* IDBCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71974181106DF0016DC51 /* IDBCallbacks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D719BF181106E00016DC51 /* IDBCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D71975181106DF0016DC51 /* IDBCursor.cpp */; };
 		51D719C0181106E00016DC51 /* IDBCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71976181106DF0016DC51 /* IDBCursor.h */; };
-		51D719C2181106E00016DC51 /* IDBCursorBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71978181106DF0016DC51 /* IDBCursorBackendInterface.h */; };
+		51D719C2181106E00016DC51 /* IDBCursorBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71978181106DF0016DC51 /* IDBCursorBackendInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D719C3181106E00016DC51 /* IDBCursorWithValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D71979181106DF0016DC51 /* IDBCursorWithValue.cpp */; };
 		51D719C4181106E00016DC51 /* IDBCursorWithValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7197A181106DF0016DC51 /* IDBCursorWithValue.h */; };
 		51D719C6181106E00016DC51 /* IDBDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D7197C181106DF0016DC51 /* IDBDatabase.cpp */; };

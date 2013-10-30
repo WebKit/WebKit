@@ -28,7 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
-#include "IDBBackingStoreLevelDB.h"
+#include "IDBBackingStoreInterface.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseError.h"
@@ -41,8 +41,6 @@
 
 namespace WebCore {
 
-class IDBBackingStoreLevelDB;
-class IDBCursorBackendLevelDB;
 class IDBDatabaseCallbacks;
 
 class IDBTransactionBackendLevelDB FINAL : public IDBTransactionBackendInterface {
@@ -57,10 +55,13 @@ public:
     virtual void run() OVERRIDE;
     virtual IndexedDB::TransactionMode mode() const OVERRIDE FINAL { return m_mode; }
     const HashSet<int64_t>& scope() const OVERRIDE { return m_objectStoreIds; }
-    void scheduleTask(PassOwnPtr<IDBOperation> task, PassOwnPtr<IDBOperation> abortTask = nullptr) { scheduleTask(IDBDatabaseBackendInterface::NormalTask, task, abortTask); }
-    void scheduleTask(IDBDatabaseBackendInterface::TaskType, PassOwnPtr<IDBOperation>, PassOwnPtr<IDBOperation> abortTask = nullptr);
-    void registerOpenCursor(IDBCursorBackendLevelDB*);
-    void unregisterOpenCursor(IDBCursorBackendLevelDB*);
+
+    virtual void scheduleTask(PassOwnPtr<IDBOperation> task, PassOwnPtr<IDBOperation> abortTask = nullptr) { scheduleTask(IDBDatabaseBackendInterface::NormalTask, task, abortTask); }
+    virtual void scheduleTask(IDBDatabaseBackendInterface::TaskType, PassOwnPtr<IDBOperation>, PassOwnPtr<IDBOperation> abortTask = nullptr) OVERRIDE;
+
+    virtual void registerOpenCursor(IDBCursorBackendInterface*) OVERRIDE;
+    virtual void unregisterOpenCursor(IDBCursorBackendInterface*) OVERRIDE;
+
     virtual void addPreemptiveEvent() OVERRIDE { m_pendingPreemptiveEvents++; }
     virtual void didCompletePreemptiveEvent() OVERRIDE { m_pendingPreemptiveEvents--; ASSERT(m_pendingPreemptiveEvents >= 0); }
     virtual IDBBackingStoreInterface::Transaction& backingStoreTransaction() { return *m_backingStoreTransaction; }
@@ -119,7 +120,7 @@ private:
     Timer<IDBTransactionBackendLevelDB> m_taskTimer;
     int m_pendingPreemptiveEvents;
 
-    HashSet<IDBCursorBackendLevelDB*> m_openCursors;
+    HashSet<IDBCursorBackendInterface*> m_openCursors;
     
     RefPtr<IDBBackingStoreInterface> m_backingStore;
 };

@@ -31,6 +31,7 @@
 
 #include "DOMStringList.h"
 #include "IDBBackingStoreLevelDB.h"
+#include "IDBCursorBackendLevelDB.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseException.h"
 #include "IDBTransactionBackendLevelDB.h"
@@ -195,6 +196,12 @@ PassRefPtr<IDBTransactionBackendInterface> IDBFactoryBackendLevelDB::maybeCreate
 
     return IDBTransactionBackendLevelDB::create(static_cast<IDBDatabaseBackendImpl*>(backend), transactionId, databaseCallbacks, objectStoreIds, mode);
 }
+
+PassRefPtr<IDBCursorBackendInterface> IDBFactoryBackendLevelDB::createCursorBackend(IDBTransactionBackendInterface& transactionBackend, IDBBackingStoreInterface::Cursor& backingStoreCursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, int64_t objectStoreId)
+{
+    return IDBCursorBackendLevelDB::create(&backingStoreCursor, cursorType, taskType, &transactionBackend, objectStoreId);
+}
+
 
 } // namespace WebCore
 

@@ -215,6 +215,12 @@ void WebProcessIDBDatabaseBackend::setPendingSecondHalfOpen(PassOwnPtr<IDBPendin
     ASSERT_NOT_REACHED();
 }
 
+IDBFactoryBackendInterface& WebProcessIDBDatabaseBackend::factoryBackend()
+{
+    ASSERT_NOT_REACHED();
+    return *((IDBFactoryBackendInterface*)0);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(DATABASE_PROCESS)

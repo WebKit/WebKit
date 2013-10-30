@@ -42,6 +42,7 @@ class IDBDatabaseCallbacks;
 class IDBDatabaseError;
 class IDBKey;
 class IDBKeyRange;
+class IDBOperation;
 
 struct IDBDatabaseMetadata;
 struct IDBIndexMetadata;
@@ -58,6 +59,12 @@ public:
     virtual void abort() = 0;
     virtual void abort(PassRefPtr<IDBDatabaseError>) = 0;
     virtual const HashSet<int64_t>& scope() const = 0;
+
+    virtual void scheduleTask(PassOwnPtr<IDBOperation>, PassOwnPtr<IDBOperation> abortTask = nullptr) = 0;
+    virtual void scheduleTask(IDBDatabaseBackendInterface::TaskType, PassOwnPtr<IDBOperation>, PassOwnPtr<IDBOperation> abortTask = nullptr) = 0;
+
+    virtual void registerOpenCursor(IDBCursorBackendInterface*) = 0;
+    virtual void unregisterOpenCursor(IDBCursorBackendInterface*) = 0;
 
     virtual void scheduleCreateObjectStoreOperation(const IDBObjectStoreMetadata&) = 0;
     virtual void scheduleDeleteObjectStoreOperation(const IDBObjectStoreMetadata&) = 0;

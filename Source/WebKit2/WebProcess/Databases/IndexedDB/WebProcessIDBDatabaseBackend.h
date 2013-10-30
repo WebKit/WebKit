@@ -84,6 +84,8 @@ public:
     virtual bool hasPendingSecondHalfOpen() OVERRIDE;
     virtual void setPendingSecondHalfOpen(PassOwnPtr<WebCore::IDBPendingOpenCall>) OVERRIDE;
 
+    virtual WebCore::IDBFactoryBackendInterface& factoryBackend() OVERRIDE;
+
     void openConnection(PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::IDBDatabaseCallbacks>, int64_t transactionId, int64_t version);
 
     void establishDatabaseProcessBackend();

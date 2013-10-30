@@ -41,6 +41,7 @@
 namespace WebCore {
 
 class IDBBackingStoreInterface;
+class IDBFactoryBackendInterface;
 class IDBKey;
 class IDBKeyPath;
 class IDBKeyRange;
@@ -111,6 +112,8 @@ public:
     virtual void setPendingSecondHalfOpen(PassOwnPtr<IDBPendingOpenCall>) = 0;
 
     virtual bool isIDBDatabaseBackendImpl() { return false; }
+
+    virtual IDBFactoryBackendInterface& factoryBackend() = 0;
 };
 
 } // namespace WebCore

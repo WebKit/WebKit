@@ -53,6 +53,8 @@ public:
     virtual IDBKey* key() const = 0;
     virtual IDBKey* primaryKey() const = 0;
     virtual SharedBuffer* value() const = 0;
+
+    virtual void close() = 0;
 };
 
 } // namespace WebCore

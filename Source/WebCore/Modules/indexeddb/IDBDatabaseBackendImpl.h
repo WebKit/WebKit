@@ -96,6 +96,8 @@ public:
     virtual bool hasPendingSecondHalfOpen() OVERRIDE { return m_pendingSecondHalfOpen; }
     virtual void setPendingSecondHalfOpen(PassOwnPtr<IDBPendingOpenCall> pendingOpenCall) OVERRIDE { m_pendingSecondHalfOpen = pendingOpenCall; }
 
+    virtual IDBFactoryBackendInterface& factoryBackend() OVERRIDE { return *m_factory; }
+
     class VersionChangeOperation;
     class VersionChangeAbortOperation;
 

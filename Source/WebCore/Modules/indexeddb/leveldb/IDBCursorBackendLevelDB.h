@@ -44,11 +44,11 @@ class IDBKeyRange;
 
 class IDBCursorBackendLevelDB : public IDBCursorBackendInterface {
 public:
-    static PassRefPtr<IDBCursorBackendLevelDB> create(PassRefPtr<IDBBackingStoreInterface::Cursor> cursor, IndexedDB::CursorType cursorType, IDBTransactionBackendLevelDB* transaction, int64_t objectStoreId)
+    static PassRefPtr<IDBCursorBackendLevelDB> create(PassRefPtr<IDBBackingStoreInterface::Cursor> cursor, IndexedDB::CursorType cursorType, IDBTransactionBackendInterface* transaction, int64_t objectStoreId)
     {
         return adoptRef(new IDBCursorBackendLevelDB(cursor, cursorType, IDBDatabaseBackendInterface::NormalTask, transaction, objectStoreId));
     }
-    static PassRefPtr<IDBCursorBackendLevelDB> create(PassRefPtr<IDBBackingStoreInterface::Cursor> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackendLevelDB* transaction, int64_t objectStoreId)
+    static PassRefPtr<IDBCursorBackendLevelDB> create(PassRefPtr<IDBBackingStoreInterface::Cursor> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackendInterface* transaction, int64_t objectStoreId)
     {
         return adoptRef(new IDBCursorBackendLevelDB(cursor, cursorType, taskType, transaction, objectStoreId));
     }
@@ -66,10 +66,10 @@ public:
     virtual IDBKey* primaryKey() const OVERRIDE { return m_cursor->primaryKey().get(); }
     virtual SharedBuffer* value() const OVERRIDE { return (m_cursorType == IndexedDB::CursorKeyOnly) ? 0 : m_cursor->value().get(); }
 
-    void close();
+    virtual void close() OVERRIDE;
 
 private:
-    IDBCursorBackendLevelDB(PassRefPtr<IDBBackingStoreInterface::Cursor>, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, IDBTransactionBackendLevelDB*, int64_t objectStoreId);
+    IDBCursorBackendLevelDB(PassRefPtr<IDBBackingStoreInterface::Cursor>, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, IDBTransactionBackendInterface*, int64_t objectStoreId);
 
     class CursorIterationOperation;
     class CursorAdvanceOperation;
@@ -78,7 +78,7 @@ private:
     IDBDatabaseBackendInterface::TaskType m_taskType;
     IndexedDB::CursorType m_cursorType;
     const RefPtr<IDBDatabaseBackendInterface> m_database;
-    RefPtr<IDBTransactionBackendLevelDB> m_transaction;
+    RefPtr<IDBTransactionBackendInterface> m_transaction;
     const int64_t m_objectStoreId;
 
     RefPtr<IDBBackingStoreInterface::Cursor> m_cursor; // Must be destroyed before m_transaction.

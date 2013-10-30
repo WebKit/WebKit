@@ -28,11 +28,11 @@
 
 #if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
 
-#include "IDBBackingStoreLevelDB.h"
-#include "IDBCursorBackendLevelDB.h"
+#include "IDBCursorBackendInterface.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseCallbacks.h"
 #include "IDBDatabaseException.h"
+#include "IDBFactoryBackendInterface.h"
 #include "IDBKeyRange.h"
 #include "IDBTransactionBackendLevelDBOperations.h"
 #include "IDBTransactionCoordinator.h"
@@ -153,12 +153,12 @@ bool IDBTransactionBackendLevelDB::hasPendingTasks() const
     return m_pendingPreemptiveEvents || !isTaskQueueEmpty();
 }
 
-void IDBTransactionBackendLevelDB::registerOpenCursor(IDBCursorBackendLevelDB* cursor)
+void IDBTransactionBackendLevelDB::registerOpenCursor(IDBCursorBackendInterface* cursor)
 {
     m_openCursors.add(cursor);
 }
 
-void IDBTransactionBackendLevelDB::unregisterOpenCursor(IDBCursorBackendLevelDB* cursor)
+void IDBTransactionBackendLevelDB::unregisterOpenCursor(IDBCursorBackendInterface* cursor)
 {
     m_openCursors.remove(cursor);
 }
@@ -265,7 +265,7 @@ void IDBTransactionBackendLevelDB::taskTimerFired(Timer<IDBTransactionBackendLev
 
 void IDBTransactionBackendLevelDB::closeOpenCursors()
 {
-    for (HashSet<IDBCursorBackendLevelDB*>::iterator i = m_openCursors.begin(); i != m_openCursors.end(); ++i)
+    for (HashSet<IDBCursorBackendInterface*>::iterator i = m_openCursors.begin(); i != m_openCursors.end(); ++i)
         (*i)->close();
     m_openCursors.clear();
 }
@@ -332,7 +332,7 @@ void IDBTransactionBackendLevelDB::scheduleClearOperation(int64_t objectStoreId,
 
 PassRefPtr<IDBCursorBackendInterface> IDBTransactionBackendLevelDB::createCursorBackend(IDBBackingStoreInterface::Cursor& cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, int64_t objectStoreId)
 {
-    return IDBCursorBackendLevelDB::create(&cursor, cursorType, taskType, this, objectStoreId);
+    return m_database->factoryBackend().createCursorBackend(*this, cursor, cursorType, taskType, objectStoreId);
 }
 
 };
