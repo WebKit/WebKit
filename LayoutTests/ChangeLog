@@ -1,5 +1,16 @@
 2013-10-30  Robert Plociennik  <r.plociennik@samsung.com>
 
+        [EFL] accessibility/svg-remote-element.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=112013
+
+        Unreviewed EFL gardening. Passes after r158267.
+
+        * platform/efl-wk1/TestExpectations: The test is no longer failing.
+        * platform/efl-wk2/TestExpectations: The test is no longer failing.
+        * platform/efl/accessibility/svg-remote-element-expected.txt: Added.
+
+2013-10-30  Robert Plociennik  <r.plociennik@samsung.com>
+
         [GTK] accessibility/svg-remote-element.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=101185
 
