@@ -894,6 +894,279 @@
     <ClCompile Include="..\llint\LLIntEntrypoint.cpp">
       <Filter>llint</Filter>
     </ClCompile>
+    <ClCompile Include="..\dfg\DFGAbstractHeap.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGAbstractValue.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGArgumentsSimplificationPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGArrayMode.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGAtTailAbstractState.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGBackwardsPropagationPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGBasicBlock.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGBinarySwitch.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGBlockInsertionSet.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGByteCodeParser.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGCapabilities.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGCFAPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGCFGSimplificationPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGClobberize.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGClobberSet.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGCommon.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGCommonData.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGConstantFoldingPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGCPSRethreadingPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGCriticalEdgeBreakingPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGCSEPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGDCEPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGDesiredIdentifiers.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGDesiredStructureChains.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGDesiredTransitions.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGDesiredWatchpoints.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGDesiredWeakReferences.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGDesiredWriteBarriers.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGDisassembler.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGDominators.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGEdge.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGFailedFinalizer.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGFinalizer.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGFixupPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGFlushedAt.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGFlushFormat.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGFlushLivenessAnalysisPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGGraph.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGInPlaceAbstractState.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGJITCode.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGJITCompiler.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGJITFinalizer.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGLazyJSValue.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGLICMPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGLivenessAnalysisPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGLongLivedState.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGLoopPreHeaderCreationPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGMinifiedNode.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGNaturalLoops.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGNode.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGNodeFlags.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGOperations.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGOSRAvailabilityAnalysisPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGOSREntry.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGOSREntrypointCreationPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGOSRExit.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGOSRExitBase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGOSRExitCompiler.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGOSRExitCompiler32_64.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGOSRExitCompiler64.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGOSRExitCompilerCommon.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGOSRExitJumpPlaceholder.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGOSRExitPreparation.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGPlan.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGPredictionInjectionPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGPredictionPropagationPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGSpeculativeJIT.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGSpeculativeJIT32_64.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGSpeculativeJIT64.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGSSAConversionPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGStackLayoutPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGThunks.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGTierUpCheckInjectionPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGToFTLDeferredCompilationCallback.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGToFTLForOSREntryDeferredCompilationCallback.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGTypeCheckHoistingPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGUnificationPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGUseKind.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGValidate.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGValueSource.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGVariableAccessDataDump.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGVariableEvent.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGVariableEventStream.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGVirtualRegisterAllocationPhase.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dfg\DFGWorklist.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bytecode\DFGExitProfile.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bytecode\PreciseJumpTargets.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\DumpContext.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\FunctionExecutableDump.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\CompilationResult.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\ArrayIteratorConstructor.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -2326,6 +2599,375 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\SetConstructor.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGAbstractHeap.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGAbstractInterpreter.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGAbstractInterpreterInlines.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGAbstractValue.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGAdjacencyList.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGAllocator.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGAnalysis.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGArgumentPosition.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGArgumentsSimplificationPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGArrayifySlowPathGenerator.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGArrayMode.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGAtTailAbstractState.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGBackwardsPropagationPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGBasicBlock.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGBasicBlockInlines.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGBinarySwitch.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGBlockInsertionSet.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGBranchDirection.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGByteCodeParser.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGCallArrayAllocatorSlowPathGenerator.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGCapabilities.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGCCallHelpers.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGCFAPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGCFGSimplificationPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGClobberize.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGClobberSet.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGCommon.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGCommonData.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGConstantFoldingPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGCPSRethreadingPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGCriticalEdgeBreakingPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGCSEPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGDCEPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGDesiredIdentifiers.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGDesiredStructureChains.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGDesiredTransitions.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGDesiredWatchpoints.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGDesiredWeakReferences.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGDesiredWriteBarriers.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGDisassembler.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGDominators.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGDoubleFormatState.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGEdge.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGEdgeDominates.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGEdgeUsesStructure.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGFailedFinalizer.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGFiltrationResult.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGFinalizer.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGFixupPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGFlushedAt.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGFlushFormat.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGFlushLivenessAnalysisPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGFPRInfo.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGGenerationInfo.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGGPRInfo.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGGraph.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGInPlaceAbstractState.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGInsertionSet.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGJITCode.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGJITCompiler.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGJITFinalizer.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGLazyJSValue.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGLICMPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGLivenessAnalysisPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGLongLivedState.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGLoopPreHeaderCreationPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGMergeMode.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGMinifiedGraph.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGMinifiedID.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGMinifiedNode.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGNaturalLoops.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGNode.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGNodeAllocator.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGNodeFlags.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGNodeType.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGOperations.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGOSRAvailabilityAnalysisPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGOSREntrypointCreationPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGOSRExit.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGOSRExitBase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGOSRExitCompilationInfo.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGOSRExitCompiler.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGOSRExitCompilerCommon.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGOSRExitJumpPlaceholder.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGOSRExitPreparation.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGPlan.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGPredictionInjectionPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGPredictionPropagationPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGRegisterBank.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGRegisterSet.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGSafeToExecute.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGSaneStringGetByValSlowPathGenerator.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGScoreBoard.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGScratchRegisterAllocator.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGSilentRegisterSavePlan.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGSlowPathGenerator.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGSpeculativeJIT.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGSSAConversionPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGStackLayoutPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGStructureAbstractValue.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGThunks.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGTierUpCheckInjectionPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGToFTLDeferredCompilationCallback.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGToFTLForOSREntryDeferredCompilationCallback.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGTypeCheckHoistingPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGUnificationPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGUseKind.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGValidate.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGValueRecoveryOverride.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGValueSource.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGVariableAccessData.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGVariableAccessDataDump.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGVariableEvent.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGVariableEventStream.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGVariadicFunction.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGVirtualRegisterAllocationPhase.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGWorklist.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\DFGExitProfile.h">
+      <Filter>bytecode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\PreciseJumpTargets.h">
+      <Filter>bytecode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\DumpContext.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\FunctionExecutableDump.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\CompilationResult.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\ArrayIteratorPrototype.h">

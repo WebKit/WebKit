@@ -326,6 +326,48 @@ namespace JSC {
 #define _J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(function)  FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 0, SH4_SCRATCH_REGISTER)
 #define _V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJJI(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 8, SH4_SCRATCH_REGISTER)
 
+#elif COMPILER(MSVC) && CPU(X86)
+
+#define _J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(function) \
+__declspec(naked) EncodedJSValue JIT_OPERATION function(ExecState*, EncodedJSValue, StringImpl*) \
+{ \
+    __asm { \
+        __asm mov eax, [esp] \
+        __asm mov [esp + 20], eax \
+        __asm jmp function##WithReturnAddress \
+    } \
+}
+
+#define _J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function) \
+__declspec(naked) EncodedJSValue JIT_OPERATION function(ExecState*, JSCell*, StringImpl*) \
+{ \
+    __asm { \
+        __asm mov eax, [esp] \
+        __asm mov [esp + 16], eax \
+        __asm jmp function##WithReturnAddress \
+    } \
+}
+
+#define _V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) \
+__declspec(naked) void JIT_OPERATION function(ExecState*, EncodedJSValue, JSCell*, StringImpl*) \
+{ \
+    __asm { \
+        __asm mov eax, [esp] \
+        __asm mov [esp + 24], eax \
+        __asm jmp function##WithReturnAddress \
+    } \
+}
+
+#define _V_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJJI(function) \
+__declspec(naked) void JIT_OPERATION function(ExecState*, EncodedJSValue, EncodedJSValue, StringImpl*) \
+{ \
+    __asm { \
+        __asm mov eax, [esp] \
+        __asm mov [esp + 28], eax \
+        __asm jmp function##WithReturnAddress \
+    } \
+}
+
 #elif COMPILER(MSVC)
 
 #define _P_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function) \

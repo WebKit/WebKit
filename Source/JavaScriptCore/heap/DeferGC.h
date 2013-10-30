@@ -91,7 +91,6 @@ public:
         WTF::threadSpecificKeyCreate(&s_isGCDisallowedOnCurrentThread, 0);
     }
 
-private:
     JS_EXPORT_PRIVATE static WTF::ThreadSpecificKey s_isGCDisallowedOnCurrentThread;
 };
 #endif // NDEBUG

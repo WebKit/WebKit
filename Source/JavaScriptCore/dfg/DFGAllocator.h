@@ -77,8 +77,8 @@ private:
         Region* m_next;
     };
     
-    void freeRegionsStartingAt(Allocator::Region*);
-    void startBumpingIn(Allocator::Region*);
+    void freeRegionsStartingAt(Region*);
+    void startBumpingIn(Region*);
     
     Region* m_regionHead;
     void** m_freeListHead;

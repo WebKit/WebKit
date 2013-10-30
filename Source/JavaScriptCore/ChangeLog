@@ -1,3 +1,18 @@
+2013-10-30  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win] Compile errors when enabling DFG JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=120998
+
+        Reviewed by Brent Fulgham.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: Added files.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Ditto.
+        * dfg/DFGAllocator.h: Removed scope.
+        * dfg/DFGWorklist.cpp: Use new ThreadingOnce class instead of pthread_once.
+        (JSC::DFG::globalWorklist):
+        * heap/DeferGC.h: Link fix, member needs to be public.
+        * jit/JITOperationWrappers.h: Added required assembler macros.
+
 2013-10-30  Iago Toral Quiroga  <itoral@igalia.com>
 
         Add result caching for Math.cos

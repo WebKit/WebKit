@@ -32,6 +32,8 @@
 #include "DeferGC.h"
 #include "DFGLongLivedState.h"
 
+#include <wtf/ThreadingOnce.h>
+
 namespace JSC { namespace DFG {
 
 Worklist::Worklist()
@@ -260,7 +262,6 @@ void Worklist::threadFunction(void* argument)
     static_cast<Worklist*>(argument)->runThread();
 }
 
-static pthread_once_t initializeGlobalWorklistKeyOnce = PTHREAD_ONCE_INIT;
 static Worklist* theGlobalWorklist;
 
 static void initializeGlobalWorklistOnce()
@@ -277,7 +278,8 @@ static void initializeGlobalWorklistOnce()
 
 Worklist* globalWorklist()
 {
-    pthread_once(&initializeGlobalWorklistKeyOnce, initializeGlobalWorklistOnce);
+    static WTF::ThreadingOnce initializeGlobalWorklistKeyOnce;
+    initializeGlobalWorklistKeyOnce.callOnce(initializeGlobalWorklistOnce);
     return theGlobalWorklist;
 }
 
