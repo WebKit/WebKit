@@ -1,3 +1,17 @@
+2013-10-30  Robert Plociennik  <r.plociennik@samsung.com>
+
+        [GTK] accessibility/svg-remote-element.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=101185
+
+        Reviewed by Chris Fleizach.
+
+        Provided new test expectations since resulting discrepancies are believed to be
+        platform related.
+
+        * platform/gtk-wk2/TestExpectations: The test is no longer failing.
+        * platform/gtk/accessibility/svg-remote-element-expected.txt: Added.
+        * platform/gtk/TestExpectations: The test is no longer failing.
+
 2013-10-30  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Remove efl/accessibility/image-map1-expected.txt after r158104

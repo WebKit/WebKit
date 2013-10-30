@@ -1,3 +1,20 @@
+2013-10-30  Robert Plociennik  <r.plociennik@samsung.com>
+
+        [GTK] accessibility/svg-remote-element.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=101185
+
+        Reviewed by Chris Fleizach.
+
+        Implemented missing methods by mimicing existing functionality in
+        AccessibilityObject::clickPoint() using available ATK API.
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::clickPointX): Implemented.
+        (AccessibilityUIElement::clickPointY): Implemented.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::clickPointX): Implemented.
+        (WTR::AccessibilityUIElement::clickPointY): Implemented.
+
 2013-10-30  Tamas Gergely  <gertom@inf.u-szeged.hu>
 
         Removed Windows platform configurations from WebKitTestRunner.

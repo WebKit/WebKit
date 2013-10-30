@@ -743,14 +743,30 @@ double AccessibilityUIElement::height()
 
 double AccessibilityUIElement::clickPointX()
 {
-    // Note: This is not something we have in ATK.
-    return 0;
+    if (!ATK_IS_COMPONENT(m_element))
+        return 0;
+
+    int x, y;
+    atk_component_get_position(ATK_COMPONENT(m_element), &x, &y, ATK_XY_WINDOW);
+
+    int width, height;
+    atk_component_get_size(ATK_COMPONENT(m_element), &width, &height);
+
+    return x + width / 2.0;
 }
 
 double AccessibilityUIElement::clickPointY()
 {
-    // Note: This is not something we have in ATK.
-    return 0;
+    if (!ATK_IS_COMPONENT(m_element))
+        return 0;
+
+    int x, y;
+    atk_component_get_position(ATK_COMPONENT(m_element), &x, &y, ATK_XY_WINDOW);
+
+    int width, height;
+    atk_component_get_size(ATK_COMPONENT(m_element), &width, &height);
+
+    return y + height / 2.0;
 }
 
 JSStringRef AccessibilityUIElement::orientation() const
