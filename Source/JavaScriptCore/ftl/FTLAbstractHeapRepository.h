@@ -41,6 +41,7 @@ namespace JSC { namespace FTL {
 #define FOR_EACH_ABSTRACT_FIELD(macro) \
     macro(Butterfly_publicLength, Butterfly::offsetOfPublicLength()) \
     macro(Butterfly_vectorLength, Butterfly::offsetOfVectorLength()) \
+    macro(CallFrame_callerFrame, CallFrame::callerFrameOffset()) \
     macro(JSArrayBufferView_length, JSArrayBufferView::offsetOfLength()) \
     macro(JSArrayBufferView_mode, JSArrayBufferView::offsetOfMode()) \
     macro(JSArrayBufferView_vector, JSArrayBufferView::offsetOfVector()) \

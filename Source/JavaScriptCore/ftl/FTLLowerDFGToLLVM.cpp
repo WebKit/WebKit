@@ -1927,7 +1927,7 @@ private:
         m_out.store32(
             m_out.constInt32(numPassedArgs + dummyThisArgument),
             payloadFor(calleeFrame, JSStack::ArgumentCount));
-        m_out.store64(m_callFrame, addressFor(calleeFrame, JSStack::CallerFrame));
+        m_out.store64(m_callFrame, calleeFrame, m_heaps.CallFrame_callerFrame);
         m_out.store64(
             lowJSValue(m_graph.varArgChild(m_node, 0)),
             addressFor(calleeFrame, JSStack::Callee));
