@@ -50,7 +50,7 @@ public:
     void remove(InlineTextBox&);
 
     void removeAllFromParent(RenderText&);
-    void deleteAll(RenderText&);
+    void deleteAll();
 
     void dirtyAll();
     bool dirtyRange(RenderText&, unsigned start, unsigned end, int lengthDelta);

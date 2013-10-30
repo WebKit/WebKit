@@ -443,7 +443,7 @@ void RenderSVGText::layout()
 
 RootInlineBox* RenderSVGText::createRootInlineBox() 
 {
-    RootInlineBox* box = new (renderArena()) SVGRootInlineBox(*this);
+    RootInlineBox* box = new SVGRootInlineBox(*this);
     box->setHasVirtualLogicalHeight();
     return box;
 }

@@ -1,3 +1,21 @@
+2013-10-30  Andreas Kling  <akling@apple.com>
+
+        Take line boxes out of the arena.
+        <https://webkit.org/b/123533>
+
+        Stop arena-allocating line boxes so we can move forward on improving
+        render tree memory management. This will also allow more rendering
+        code to take advantage of malloc optimizations.
+
+        This will likely regress performance on some micro-benchmarks, but
+        it's something we want to do sooner rather than later so we have time
+        to restabilize it. All improvements to the simple line layout's
+        coverage will help with recouping whatever is regressed.
+
+        BiDi runs are the only remaining user of the arena now.
+
+        Reviewed by Antti Koivisto
+
 2013-10-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove InspectorAgent::restore functionality

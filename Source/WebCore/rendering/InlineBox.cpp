@@ -53,10 +53,6 @@ struct SameSizeAsInlineBox {
 COMPILE_ASSERT(sizeof(InlineBox) == sizeof(SameSizeAsInlineBox), InlineBox_size_guard);
 
 #if !ASSERT_DISABLED
-static bool inInlineBoxDetach;
-#endif
-
-#if !ASSERT_DISABLED
 InlineBox::~InlineBox()
 {
     if (!m_hasBadParent && m_parent)
@@ -70,30 +66,9 @@ void InlineBox::removeFromParent()
         parent()->removeChild(this);
 }
 
-void InlineBox::destroy(RenderArena& renderArena)
+void InlineBox::destroy()
 {
-#if !ASSERT_DISABLED
-    inInlineBoxDetach = true;
-#endif
     delete this;
-#if !ASSERT_DISABLED
-    inInlineBoxDetach = false;
-#endif
-
-    // Recover the size left there for us by operator delete and free the memory.
-    renderArena.free(*(size_t *)this, this);
-}
-
-void* InlineBox::operator new(size_t sz, RenderArena& renderArena)
-{
-    return renderArena.allocate(sz);
-}
-
-void InlineBox::operator delete(void* ptr, size_t sz)
-{
-    ASSERT(inInlineBoxDetach);
-    // Stash size where destroy can find it.
-    *(size_t *)ptr = sz;
 }
 
 #ifndef NDEBUG
@@ -187,7 +162,7 @@ void InlineBox::dirtyLineBoxes()
         curr->markDirty();
 }
 
-void InlineBox::deleteLine(RenderArena& arena)
+void InlineBox::deleteLine()
 {
     if (!m_bitfields.extracted()) {
         if (m_renderer.isBox())
@@ -195,7 +170,7 @@ void InlineBox::deleteLine(RenderArena& arena)
         else if (renderer().isLineBreak())
             toRenderLineBreak(renderer()).setInlineBoxWrapper(0);
     }
-    destroy(arena);
+    destroy();
 }
 
 void InlineBox::extractLine()

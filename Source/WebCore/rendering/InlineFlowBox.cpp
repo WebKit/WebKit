@@ -202,7 +202,7 @@ void InlineFlowBox::removeChild(InlineBox* child)
     checkConsistency();
 }
 
-void InlineFlowBox::deleteLine(RenderArena& arena)
+void InlineFlowBox::deleteLine()
 {
     InlineBox* child = firstChild();
     InlineBox* next = 0;
@@ -212,7 +212,7 @@ void InlineFlowBox::deleteLine(RenderArena& arena)
 #ifndef NDEBUG
         child->setParent(0);
 #endif
-        child->deleteLine(arena);
+        child->deleteLine();
         child = next;
     }
 #ifndef NDEBUG
@@ -221,7 +221,7 @@ void InlineFlowBox::deleteLine(RenderArena& arena)
 #endif
 
     removeLineBoxFromRenderObject();
-    destroy(arena);
+    destroy();
 }
 
 void InlineFlowBox::removeLineBoxFromRenderObject()

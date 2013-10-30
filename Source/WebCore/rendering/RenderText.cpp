@@ -254,7 +254,7 @@ void RenderText::removeAndDestroyTextBoxes()
 {
     if (!documentBeingDestroyed())
         m_lineBoxes.removeAllFromParent(*this);
-    m_lineBoxes.deleteAll(*this);
+    m_lineBoxes.deleteAll();
 }
 
 void RenderText::willBeDestroyed()
@@ -268,7 +268,7 @@ void RenderText::willBeDestroyed()
 
 void RenderText::deleteLineBoxesBeforeSimpleLineLayout()
 {
-    m_lineBoxes.deleteAll(*this);
+    m_lineBoxes.deleteAll();
 }
 
 String RenderText::originalText() const
@@ -1018,7 +1018,7 @@ String RenderText::textWithoutConvertingBackslashToYenSymbol() const
 void RenderText::dirtyLineBoxes(bool fullLayout)
 {
     if (fullLayout)
-        m_lineBoxes.deleteAll(*this);
+        m_lineBoxes.deleteAll();
     else if (!m_linesDirty)
         m_lineBoxes.dirtyAll();
     m_linesDirty = false;
@@ -1026,7 +1026,7 @@ void RenderText::dirtyLineBoxes(bool fullLayout)
 
 InlineTextBox* RenderText::createTextBox()
 {
-    return new (renderArena()) InlineTextBox(*this);
+    return new InlineTextBox(*this);
 }
 
 void RenderText::positionLineBox(InlineBox* box)
@@ -1038,7 +1038,7 @@ void RenderText::positionLineBox(InlineBox* box)
         // We want the box to be destroyed.
         textBox->removeFromParent();
         m_lineBoxes.remove(*textBox);
-        textBox->destroy(renderArena());
+        textBox->destroy();
         return;
     }
 

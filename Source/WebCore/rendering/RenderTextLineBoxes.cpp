@@ -116,15 +116,14 @@ void RenderTextLineBoxes::removeAllFromParent(RenderText& renderer)
         box->removeFromParent();
 }
 
-void RenderTextLineBoxes::deleteAll(RenderText& renderer)
+void RenderTextLineBoxes::deleteAll()
 {
     if (!m_first)
         return;
-    auto& arena = renderer.renderArena();
     InlineTextBox* next;
     for (auto current = m_first; current; current = next) {
         next = current->nextTextBox();
-        current->destroy(arena);
+        current->destroy();
     }
     m_first = nullptr;
     m_last = nullptr;

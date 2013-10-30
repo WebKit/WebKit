@@ -114,7 +114,7 @@ void RenderBlockFlow::willBeDestroyed()
     m_beingDestroyed = true;
 
     if (lineGridBox())
-        lineGridBox()->destroy(renderArena());
+        lineGridBox()->destroy();
 
     if (renderNamedFlowFragment())
         setRenderNamedFlowFragment(0);
@@ -159,7 +159,7 @@ void RenderBlockFlow::willBeDestroyed()
             parent()->dirtyLinesFromChangedChild(this);
     }
 
-    m_lineBoxes.deleteLineBoxes(renderArena());
+    m_lineBoxes.deleteLineBoxes();
 
     removeFromDelayedUpdateScrollInfoSet();
 
@@ -1706,7 +1706,7 @@ void RenderBlockFlow::layoutLineGridBox()
     
     setLineGridBox(0);
 
-    RootInlineBox* lineGridBox = new (renderArena()) RootInlineBox(*this);
+    RootInlineBox* lineGridBox = new RootInlineBox(*this);
     lineGridBox->setHasTextChildren(); // Needed to make the line ascent/descent actually be honored in quirks mode.
     lineGridBox->setConstructed();
     GlyphOverflowAndFallbackFontsMap textBoxDataMap;
@@ -1788,7 +1788,7 @@ void RenderBlockFlow::deleteLines()
         ASSERT(!m_lineBoxes.firstLineBox());
         m_simpleLineLayout = nullptr;
     } else
-        m_lineBoxes.deleteLineBoxTree(renderArena());
+        m_lineBoxes.deleteLineBoxTree();
 
     RenderBlock::deleteLines();
 }
@@ -3171,7 +3171,7 @@ void RenderBlockFlow::layoutSimpleLines(LayoutUnit& repaintLogicalTop, LayoutUni
 void RenderBlockFlow::deleteLineBoxesBeforeSimpleLineLayout()
 {
     ASSERT(m_lineLayoutPath == SimpleLinesPath);
-    lineBoxes().deleteLineBoxes(renderArena());
+    lineBoxes().deleteLineBoxes();
     toRenderText(firstChild())->deleteLineBoxesBeforeSimpleLineLayout();
 }
 

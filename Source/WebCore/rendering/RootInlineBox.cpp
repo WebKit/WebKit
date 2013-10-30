@@ -65,18 +65,18 @@ RootInlineBox::RootInlineBox(RenderBlockFlow& block)
 }
 
 
-void RootInlineBox::destroy(RenderArena& arena)
+void RootInlineBox::destroy()
 {
-    detachEllipsisBox(arena);
-    InlineFlowBox::destroy(arena);
+    detachEllipsisBox();
+    InlineFlowBox::destroy();
 }
 
-void RootInlineBox::detachEllipsisBox(RenderArena& arena)
+void RootInlineBox::detachEllipsisBox()
 {
     if (hasEllipsisBox()) {
         EllipsisBox* box = gEllipsisBoxMap->take(this);
         box->setParent(0);
-        box->destroy(arena);
+        box->destroy();
         setHasEllipsisBox(false);
     }
 }
@@ -89,7 +89,7 @@ RenderLineBoxList& RootInlineBox::rendererLineBoxes() const
 void RootInlineBox::clearTruncation()
 {
     if (hasEllipsisBox()) {
-        detachEllipsisBox(renderer().renderArena());
+        detachEllipsisBox();
         InlineFlowBox::clearTruncation();
     }
 }
@@ -131,7 +131,7 @@ bool RootInlineBox::lineCanAccommodateEllipsis(bool ltr, int blockEdge, int line
 float RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr,  bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, InlineBox* markupBox)
 {
     // Create an ellipsis box.
-    EllipsisBox* ellipsisBox = new (renderer().renderArena()) EllipsisBox(blockFlow(), ellipsisStr, this, ellipsisWidth - (markupBox ? markupBox->logicalWidth() : 0), logicalHeight(), y(), !prevRootBox(), isHorizontal(), markupBox);
+    EllipsisBox* ellipsisBox = new EllipsisBox(blockFlow(), ellipsisStr, this, ellipsisWidth - (markupBox ? markupBox->logicalWidth() : 0), logicalHeight(), y(), !prevRootBox(), isHorizontal(), markupBox);
 
     if (!gEllipsisBoxMap)
         gEllipsisBoxMap = new EllipsisBoxMap();

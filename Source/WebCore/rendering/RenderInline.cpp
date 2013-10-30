@@ -114,7 +114,7 @@ void RenderInline::willBeDestroyed()
             parent()->dirtyLinesFromChangedChild(this);
     }
 
-    m_lineBoxes.deleteLineBoxes(renderArena());
+    m_lineBoxes.deleteLineBoxes();
 
     RenderBoxModelObject::willBeDestroyed();
 }
@@ -1306,7 +1306,7 @@ void RenderInline::updateHitTestResult(HitTestResult& result, const LayoutPoint&
 void RenderInline::dirtyLineBoxes(bool fullLayout)
 {
     if (fullLayout) {
-        m_lineBoxes.deleteLineBoxes(renderArena());
+        m_lineBoxes.deleteLineBoxes();
         return;
     }
 
@@ -1341,12 +1341,12 @@ void RenderInline::dirtyLineBoxes(bool fullLayout)
 
 void RenderInline::deleteLines()
 {
-    m_lineBoxes.deleteLineBoxTree(renderArena());
+    m_lineBoxes.deleteLineBoxTree();
 }
 
 InlineFlowBox* RenderInline::createInlineFlowBox() 
 {
-    return new (renderArena()) InlineFlowBox(*this);
+    return new InlineFlowBox(*this);
 }
 
 InlineFlowBox* RenderInline::createAndAppendInlineFlowBox()

@@ -286,7 +286,7 @@ void RenderBlockFlow::appendRunsForObject(BidiRunList<BidiRun>& runs, int start,
 
 RootInlineBox* RenderBlockFlow::createRootInlineBox()
 {
-    return new (renderArena()) RootInlineBox(*this);
+    return new RootInlineBox(*this);
 }
 
 RootInlineBox* RenderBlockFlow::createAndAppendRootInlineBox()
@@ -1250,15 +1250,15 @@ RootInlineBox* RenderBlockFlow::createLineBoxesFromBidiRuns(BidiRunList<BidiRun>
     return lineBox;
 }
 
-static void deleteLineRange(LineLayoutState& layoutState, RenderArena& arena, RootInlineBox* startLine, RootInlineBox* stopLine = 0)
+static void deleteLineRange(LineLayoutState& layoutState, RootInlineBox* startLine, RootInlineBox* stopLine = 0)
 {
     RootInlineBox* boxToDelete = startLine;
     while (boxToDelete && boxToDelete != stopLine) {
         layoutState.updateRepaintRangeFromBox(boxToDelete);
-        // Note: deleteLineRange(renderArena(), firstRootBox()) is not identical to deleteLineBoxTree().
+        // Note: deleteLineRange(firstRootBox()) is not identical to deleteLineBoxTree().
         // deleteLineBoxTree uses nextLineBox() instead of nextRootBox() when traversing.
         RootInlineBox* next = boxToDelete->nextRootBox();
-        boxToDelete->deleteLine(arena);
+        boxToDelete->deleteLine();
         boxToDelete = next;
     }
 }
@@ -1302,7 +1302,7 @@ void RenderBlockFlow::layoutRunsAndFloats(LineLayoutState& layoutState, bool has
     if (startLine) {
         if (!layoutState.usesRepaintBounds())
             layoutState.setRepaintRange(logicalHeight());
-        deleteLineRange(layoutState, renderArena(), startLine);
+        deleteLineRange(layoutState, startLine);
     }
 
     if (!layoutState.isFullLayout() && lastRootBox() && lastRootBox()->endsWithBreak()) {
@@ -1638,7 +1638,7 @@ void RenderBlockFlow::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, I
 
                         if (availableLogicalWidthForLine(oldLogicalHeight + adjustment, layoutState.lineInfo().isFirstLine()) != oldLineWidth) {
                             // We have to delete this line, remove all floats that got added, and let line layout re-run.
-                            lineBox->deleteLine(renderArena());
+                            lineBox->deleteLine();
                             end = restartLayoutRunsAndFloatsInRange(oldLogicalHeight, oldLogicalHeight + adjustment, lastFloatFromPreviousLine, resolver, oldEnd);
                             continue;
                         }
@@ -1782,7 +1782,7 @@ void RenderBlockFlow::linkToEndLineIfNeeded(LineLayoutState& layoutState)
             setLogicalHeight(lastRootBox()->lineBottomWithLeading());
         } else {
             // Delete all the remaining lines.
-            deleteLineRange(layoutState, renderArena(), layoutState.endLine());
+            deleteLineRange(layoutState, layoutState.endLine());
         }
     }
     
@@ -1793,7 +1793,7 @@ void RenderBlockFlow::linkToEndLineIfNeeded(LineLayoutState& layoutState)
         if (layoutState.checkForFloatsFromLastLine()) {
             LayoutUnit bottomVisualOverflow = lastRootBox()->logicalBottomVisualOverflow();
             LayoutUnit bottomLayoutOverflow = lastRootBox()->logicalBottomLayoutOverflow();
-            TrailingFloatsRootInlineBox* trailingFloatsLineBox = new (renderArena()) TrailingFloatsRootInlineBox(*this);
+            TrailingFloatsRootInlineBox* trailingFloatsLineBox = new TrailingFloatsRootInlineBox(*this);
             m_lineBoxes.appendLineBox(trailingFloatsLineBox);
             trailingFloatsLineBox->setConstructed();
             GlyphOverflowAndFallbackFontsMap textBoxDataMap;
@@ -1858,7 +1858,7 @@ void RenderBlockFlow::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaint
     LineLayoutState layoutState(isFullLayout, repaintLogicalTop, repaintLogicalBottom, flowThread);
 
     if (isFullLayout)
-        lineBoxes().deleteLineBoxes(renderArena());
+        lineBoxes().deleteLineBoxes();
 
     // Text truncation kicks in in two cases:
     //     1) If your overflow isn't visible and your text-overflow-mode isn't clip.
@@ -2024,7 +2024,7 @@ RootInlineBox* RenderBlockFlow::determineStartPosition(LineLayoutState& layoutSt
     }
 
     if (layoutState.isFullLayout()) {
-        m_lineBoxes.deleteLineBoxTree(renderArena());
+        m_lineBoxes.deleteLineBoxTree();
         curr = 0;
 
         ASSERT(!firstLineBox() && !lastLineBox());
@@ -2214,7 +2214,7 @@ bool RenderBlockFlow::matchedEndLine(LineLayoutState& layoutState, const InlineB
             }
 
             // Now delete the lines that we failed to sync.
-            deleteLineRange(layoutState, renderArena(), originalEndLine, result);
+            deleteLineRange(layoutState, originalEndLine, result);
             return matched;
         }
     }

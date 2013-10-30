@@ -40,7 +40,7 @@ RenderSVGInline::RenderSVGInline(SVGGraphicsElement& element, PassRef<RenderStyl
 
 InlineFlowBox* RenderSVGInline::createInlineFlowBox()
 {
-    InlineFlowBox* box = new (renderArena()) SVGInlineFlowBox(*this);
+    InlineFlowBox* box = new SVGInlineFlowBox(*this);
     box->setHasVirtualLogicalHeight();
     return box;
 }
