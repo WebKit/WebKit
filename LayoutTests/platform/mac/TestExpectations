@@ -876,12 +876,6 @@ webkit.org/b/84772 ietestcenter/css3/multicolumn/column-width-applies-to-010.htm
 webkit.org/b/84773 ietestcenter/css3/multicolumn/column-width-applies-to-012.htm [ ImageOnlyFailure ]
 webkit.org/b/84777 ietestcenter/css3/multicolumn/column-width-applies-to-015.htm [ ImageOnlyFailure ]
 
-webkit.org/b/60731 ietestcenter/css3/grid/grid-column-001.htm [ ImageOnlyFailure ]
-webkit.org/b/60731 ietestcenter/css3/grid/grid-column-003.htm [ ImageOnlyFailure ]
-webkit.org/b/60731 ietestcenter/css3/grid/grid-items-002.htm [ ImageOnlyFailure ]
-webkit.org/b/60731 ietestcenter/css3/grid/grid-items-003.htm [ ImageOnlyFailure ]
-webkit.org/b/60731 [ MountainLion Release ] ietestcenter/css3/grid/grid-items-003.htm [ Pass ImageOnlyFailure ]
-
 webkit.org/b/85404 fast/loader/javascript-url-in-embed.html [ Failure Pass ]
 
 webkit.org/b/85408 svg/batik/text/longTextOnPath.svg [ Failure Pass ]

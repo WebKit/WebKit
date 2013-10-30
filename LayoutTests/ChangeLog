@@ -1,3 +1,11 @@
+2013-10-30  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed. Removed some grid layout tests that are passing now.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2013-10-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         More Mavericks specific test expectation updates.
