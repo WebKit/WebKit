@@ -1,3 +1,10 @@
+2013-10-29  Brady Eidson  <beidson@apple.com>
+
+        Attempted build-fix after http://trac.webkit.org/changeset/158234
+
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        (WebCore::IDBBackingStoreLevelDB::createBackingStoreTransaction): Implement this!
+
 2013-10-29  Andreas Kling  <akling@apple.com>
 
         ElementData construction helpers should return PassRef.

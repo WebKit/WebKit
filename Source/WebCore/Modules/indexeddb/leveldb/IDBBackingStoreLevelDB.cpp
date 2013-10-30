@@ -2021,6 +2021,11 @@ PassRefPtr<IDBBackingStoreInterface::Cursor> IDBBackingStoreLevelDB::openIndexCu
     return cursor.release();
 }
 
+std::unique_ptr<IDBBackingStoreInterface::Transaction> IDBBackingStoreLevelDB::createBackingStoreTransaction()
+{
+    return std::unique_ptr<IDBBackingStoreInterface::Transaction>(new IDBBackingStoreLevelDB::Transaction(this));
+}
+
 IDBBackingStoreLevelDB::Transaction::Transaction(IDBBackingStoreInterface* backingStore)
     : m_backingStore(backingStore)
 {
