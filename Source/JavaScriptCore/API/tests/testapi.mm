@@ -52,6 +52,7 @@ extern "C" void testObjectiveCAPI(void);
 @end
 
 @protocol TestObject <JSExport>
+- (id)init;
 @property int variable;
 @property (readonly) int six;
 @property CGPoint point;
@@ -103,6 +104,7 @@ JSExportAs(testArgumentTypes,
 bool testXYZTested = false;
 
 @protocol TextXYZ <JSExport>
+- (id)initWithString:(NSString*)string;
 @property int x;
 @property (readonly) int y;
 @property (assign) JSValue *onclick;
@@ -124,6 +126,16 @@ bool testXYZTested = false;
 @synthesize x;
 @synthesize y;
 @synthesize z;
+- (id)initWithString:(NSString*)string
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    NSLog(@"%@", string);
+
+    return self;
+}
 - (void)test:(NSString *)message
 {
     testXYZTested = [message isEqual:@"test"] && x == 13 & y == 4 && z == 5;
@@ -284,6 +296,104 @@ static JSVirtualMachine *sharedInstance = nil;
 }
 @end
 
+@protocol InitA <JSExport>
+- (id)initWithA:(int)a;
+@end
+
+@protocol InitB <JSExport>
+- (id)initWithA:(int)a b:(int)b;
+@end
+
+@interface ClassA : NSObject<InitA>
+@end
+
+@interface ClassB : ClassA<InitB>
+@end
+
+@interface ClassC : ClassB<InitA, InitB>
+@end
+
+@interface ClassD : NSObject<InitA>
+- (id)initWithA:(int)a;
+@end
+
+@interface ClassE : ClassD
+- (id)initWithA:(int)a;
+@end
+
+@implementation ClassA {
+    int _a;
+}
+- (id)initWithA:(int)a
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _a = a;
+
+    return self;
+}
+@end
+
+@implementation ClassB {
+    int _b;
+}
+- (id)initWithA:(int)a b:(int)b
+{
+    self = [super initWithA:a];
+    if (!self)
+        return nil;
+
+    _b = b;
+
+    return self;
+}
+@end
+
+@implementation ClassC {
+    int _c;
+}
+- (id)initWithA:(int)a
+{
+    return [self initWithA:a b:0];
+}
+- (id)initWithA:(int)a b:(int)b
+{
+    self = [super initWithA:a b:b];
+    if (!self)
+        return nil;
+
+    _c = a + b;
+
+    return self;
+}
+@end
+
+@implementation ClassD
+
+- (id)initWithA:(int)a
+{
+    self = nil;
+    return [[ClassE alloc] initWithA:a];
+}
+@end
+
+@implementation ClassE {
+    int _a;
+}
+
+- (id)initWithA:(int)a
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _a = a;
+
+    return self;
+}
+@end
 static void checkResult(NSString *description, bool passed)
 {
     NSLog(@"TEST: \"%@\": %@", description, passed ? @"PASSED" : @"FAILED");
@@ -576,7 +686,7 @@ void testObjectiveCAPI()
         JSContext *context = [[JSContext alloc] init];
         context[@"TestObject"] = [TestObject class];
         JSValue *result = [context evaluateScript:@"String(TestObject)"];
-        checkResult(@"String(TestObject)", [result isEqualToObject:@"[object TestObjectConstructor]"]);
+        checkResult(@"String(TestObject)", [result isEqualToObject:@"function TestObject() {\n    [native code]\n}"]);
     }
 
     @autoreleasepool {
@@ -965,6 +1075,49 @@ void testObjectiveCAPI()
     @autoreleasepool {
         checkResult(@"[JSContext currentThis] == nil outside of callback", ![JSContext currentThis]);
         checkResult(@"[JSContext currentArguments] == nil outside of callback", ![JSContext currentArguments]);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        context[@"TestObject"] = [TestObject class];
+        JSValue *testObject = [context evaluateScript:@"(new TestObject())"];
+        checkResult(@"testObject instanceof TestObject", [testObject isInstanceOf:context[@"TestObject"]]);
+
+        context[@"TextXYZ"] = [TextXYZ class];
+        JSValue *textObject = [context evaluateScript:@"(new TextXYZ(\"Called TextXYZ constructor!\"))"];
+        checkResult(@"textObject instanceof TextXYZ", [textObject isInstanceOf:context[@"TextXYZ"]]);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        context[@"ClassA"] = [ClassA class];
+        context[@"ClassB"] = [ClassB class];
+        context[@"ClassC"] = [ClassC class]; // Should print error message about too many inits found.
+
+        JSValue *a = [context evaluateScript:@"(new ClassA(42))"];
+        checkResult(@"a instanceof ClassA", [a isInstanceOf:context[@"ClassA"]]);
+
+        JSValue *b = [context evaluateScript:@"(new ClassB(42, 53))"];
+        checkResult(@"b instanceof ClassB", [b isInstanceOf:context[@"ClassB"]]);
+
+        JSValue *canConstructClassC = [context evaluateScript:@"(function() { \
+            try { \
+                (new ClassC(1, 2)); \
+                return true; \
+            } catch(e) { \
+                return false; \
+            } \
+        })()"];
+        checkResult(@"shouldn't be able to construct ClassC", ![canConstructClassC toBool]);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        context[@"ClassD"] = [ClassD class];
+        context[@"ClassE"] = [ClassE class];
+       
+        JSValue *d = [context evaluateScript:@"(new ClassD())"];
+        checkResult(@"Returning instance of ClassE from ClassD's init has correct class", [d isInstanceOf:context[@"ClassE"]]);
     }
 
     currentThisInsideBlockGetterTest();

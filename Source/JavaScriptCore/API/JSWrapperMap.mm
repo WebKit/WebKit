@@ -40,6 +40,13 @@
 #import "WeakGCMap.h"
 #import <wtf/TCSpinLock.h>
 #import <wtf/Vector.h>
+#import <wtf/HashSet.h>
+
+#if OS(DARWIN)
+#include <mach-o/dyld.h>
+
+static const int32_t webkitFirstVersionWithInitConstructorSupport = 0x21A0400; // 538.4.0
+#endif
 
 @class JSObjCClassInfo;
 
@@ -163,6 +170,11 @@ static void copyMethodsToObject(JSContext *context, Class objcClass, Protocol *p
     forEachMethodInProtocol(protocol, YES, isInstanceMethod, ^(SEL sel, const char* types){
         const char* nameCStr = sel_getName(sel);
         NSString *name = @(nameCStr);
+        // Don't copy over init family methods because we handle those specially 
+        // for the purposes of hooking up the constructor correctly.
+        if ([name hasPrefix:@"init"])
+            return;
+
         if (accessorMethods && accessorMethods[name]) {
             JSObjectRef method = objCCallbackFunctionForMethod(context, objcClass, protocol, isInstanceMethod, sel, types);
             if (!method)
@@ -329,6 +341,59 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
     [super dealloc];
 }
 
+static JSValue *allocateConstructorForCustomClass(JSContext *context, const char* className, Class cls)
+{
+#if OS(DARWIN)
+    if (NSVersionOfLinkTimeLibrary("JavaScriptCore") < webkitFirstVersionWithInitConstructorSupport)
+        return objectWithCustomBrand(context, [NSString stringWithFormat:@"%sConstructor", className], cls);
+#endif
+    // For each protocol that the class implements, gather all of the init family methods into a hash table.
+    __block HashMap<String, Protocol *> initTable;
+    Protocol *exportProtocol = getJSExportProtocol();
+    for (Class currentClass = cls; currentClass; currentClass = class_getSuperclass(currentClass)) {
+        forEachProtocolImplementingProtocol(currentClass, exportProtocol, ^(Protocol *protocol) {
+            forEachMethodInProtocol(protocol, YES, YES, ^(SEL selector, const char*) {
+                const char* name = sel_getName(selector);
+                if (![@(name) hasPrefix:@"init"])
+                    return;
+                initTable.set(name, protocol);
+            });
+        });
+    }
+
+    for (Class currentClass = cls; currentClass; currentClass = class_getSuperclass(currentClass)) {
+        __block unsigned numberOfInitsFound = 0;
+        __block SEL initMethod = 0;
+        __block Protocol *initProtocol = 0;
+        __block const char* types = 0;
+        forEachMethodInClass(currentClass, ^(Method method) {
+            SEL selector = method_getName(method);
+            const char* name = sel_getName(selector);
+            auto iter = initTable.find(name);
+
+            if (iter == initTable.end())
+                return;
+
+            numberOfInitsFound++;
+            initMethod = selector;
+            initProtocol = iter->value;
+            types = method_getTypeEncoding(method);
+        });
+
+        if (!numberOfInitsFound)
+            continue;
+
+        if (numberOfInitsFound > 1) {
+            NSLog(@"ERROR: Class %@ exported more than one init family method via JSExport. Class %@ will not have a callable JavaScript constructor function.", cls, cls);
+            break;
+        }
+
+        JSObjectRef method = objCCallbackFunctionForInit(context, cls, initProtocol, initMethod, types);
+        return [JSValue valueWithJSValueRef:method inContext:context];
+    }
+    return objectWithCustomBrand(context, [NSString stringWithFormat:@"%sConstructor", className], cls);
+}
+
 - (void)allocateConstructorAndPrototypeWithSuperClassInfo:(JSObjCClassInfo*)superClassInfo
 {
     ASSERT(!m_constructor || !m_prototype);
@@ -357,7 +422,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
         if (m_constructor)
             constructor = [JSValue valueWithJSValueRef:toRef(m_constructor.get()) inContext:m_context];
         else
-            constructor = objectWithCustomBrand(m_context, [NSString stringWithFormat:@"%sConstructor", className], m_class);
+            constructor = allocateConstructorForCustomClass(m_context, className, m_class);
 
         JSContextRef cContext = [m_context JSGlobalContextRef];
         m_prototype = toJS(JSValueToObject(cContext, valueInternalValue(prototype), 0));
@@ -506,7 +571,7 @@ id tryUnwrapObjcObject(JSGlobalContextRef context, JSValueRef value)
     ASSERT(!exception);
     if (toJS(object)->inherits(JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::info()))
         return (id)JSC::jsCast<JSC::JSAPIWrapperObject*>(toJS(object))->wrappedObject();
-    if (id target = tryUnwrapBlock(object))
+    if (id target = tryUnwrapConstructor(object))
         return target;
     return nil;
 }

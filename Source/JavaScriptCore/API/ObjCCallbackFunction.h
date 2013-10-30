@@ -34,8 +34,9 @@
 #if defined(__OBJC__)
 JSObjectRef objCCallbackFunctionForMethod(JSContext *, Class, Protocol *, BOOL isInstanceMethod, SEL, const char* types);
 JSObjectRef objCCallbackFunctionForBlock(JSContext *, id);
+JSObjectRef objCCallbackFunctionForInit(JSContext *, Class, Protocol *, SEL, const char* types);
 
-id tryUnwrapBlock(JSObjectRef);
+id tryUnwrapConstructor(JSObjectRef);
 #endif
 
 namespace JSC {
@@ -58,7 +59,7 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    ObjCCallbackFunctionImpl* impl() { return m_impl.get(); }
+    ObjCCallbackFunctionImpl* impl() const { return m_impl.get(); }
 
 protected:
     ObjCCallbackFunction(VM&, JSGlobalObject*, JSObjectCallAsFunctionCallback, JSObjectCallAsConstructorCallback, PassOwnPtr<ObjCCallbackFunctionImpl>);

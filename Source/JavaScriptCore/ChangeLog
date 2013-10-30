@@ -1,3 +1,46 @@
+2013-10-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSExport doesn't support constructors
+        https://bugs.webkit.org/show_bug.cgi?id=123380
+
+        Reviewed by Geoffrey Garen.
+
+        Support for constructor-style callbacks for the Objective-C API to JSC is currently limited to 
+        Objective-C blocks. Any clients who try to call the constructor of a JSExport-ed Objective-C class 
+        are met with a type error stating that it cannot be called as a constructor.
+
+        It would be nice to expand JSExport's functionality to support this idiom. It is a natural 
+        extension to JSExport and would increase the expressiveness and simplicity in both Objective-C and 
+        JavaScript client code.
+
+        The way we'll do this is to expand the capabilities of ObjCCallbackFunction and associated classes. 
+        Instead of constructing a normal C API object for the constructor, we'll instead allocate a full-blown 
+        ObjCCallbackFunction object which can already properly handle being invoked as a constructor.
+
+        * API/JSWrapperMap.mm:
+        (copyMethodsToObject):
+        (allocateConstructorForCustomClass):
+        (-[JSObjCClassInfo allocateConstructorAndPrototypeWithSuperClassInfo:]):
+        (tryUnwrapObjcObject):
+        * API/ObjCCallbackFunction.h:
+        (JSC::ObjCCallbackFunction::impl):
+        * API/ObjCCallbackFunction.mm:
+        (JSC::ObjCCallbackFunctionImpl::ObjCCallbackFunctionImpl):
+        (JSC::ObjCCallbackFunctionImpl::wrappedConstructor):
+        (JSC::ObjCCallbackFunctionImpl::isConstructible):
+        (JSC::ObjCCallbackFunction::getConstructData):
+        (JSC::ObjCCallbackFunctionImpl::name):
+        (JSC::ObjCCallbackFunctionImpl::call):
+        (objCCallbackFunctionForInvocation):
+        (objCCallbackFunctionForInit):
+        (tryUnwrapConstructor):
+        * API/tests/testapi.mm:
+        (-[TextXYZ initWithString:]):
+        (-[ClassA initWithA:]):
+        (-[ClassB initWithA:b:]):
+        (-[ClassC initWithA:]):
+        (-[ClassC initWithA:b:]):
+
 2013-10-30  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] Compile errors when enabling DFG JIT.

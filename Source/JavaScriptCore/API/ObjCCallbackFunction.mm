@@ -385,6 +385,7 @@ public:
 };
 
 enum CallbackType {
+    CallbackInitMethod,
     CallbackInstanceMethod,
     CallbackClassMethod,
     CallbackBlock
@@ -401,7 +402,7 @@ public:
         , m_arguments(arguments)
         , m_result(result)
     {
-        ASSERT(type != CallbackInstanceMethod || instanceClass);
+        ASSERT((type != CallbackInstanceMethod && type != CallbackInitMethod) || instanceClass);
     }
 
     ~ObjCCallbackFunctionImpl()
@@ -415,6 +416,25 @@ public:
     {
         return m_type == CallbackBlock ? [m_invocation target] : nil;
     }
+
+    id wrappedConstructor()
+    {
+        switch (m_type) {
+        case CallbackBlock:
+            return [m_invocation target];
+        case CallbackInitMethod:
+            return m_instanceClass;
+        default:
+            return nil;
+        }
+    }
+
+    bool isConstructible()
+    {
+        return !!wrappedBlock() || m_type == CallbackInitMethod;
+    }
+
+    String name();
 
 private:
     CallbackType m_type;
@@ -499,6 +519,7 @@ void ObjCCallbackFunction::destroy(JSCell* cell)
     static_cast<ObjCCallbackFunction*>(cell)->ObjCCallbackFunction::~ObjCCallbackFunction();
 }
 
+
 CallType ObjCCallbackFunction::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = APICallbackFunction::call<ObjCCallbackFunction>;
@@ -508,27 +529,47 @@ CallType ObjCCallbackFunction::getCallData(JSCell*, CallData& callData)
 ConstructType ObjCCallbackFunction::getConstructData(JSCell* cell, ConstructData& constructData)
 {
     ObjCCallbackFunction* callback = jsCast<ObjCCallbackFunction*>(cell);
-    if (!callback->impl()->wrappedBlock())
+    if (!callback->impl()->isConstructible())
         return Base::getConstructData(cell, constructData);
     constructData.native.function = APICallbackFunction::construct<ObjCCallbackFunction>;
     return ConstructTypeHost;
+}
+
+String ObjCCallbackFunctionImpl::name()
+{
+    if (m_type == CallbackInitMethod)
+        return class_getName(m_instanceClass);
+    return "";
 }
 
 JSValueRef ObjCCallbackFunctionImpl::call(JSContext *context, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     JSGlobalContextRef contextRef = [context JSGlobalContextRef];
 
+    id target;
     size_t firstArgument;
     switch (m_type) {
-    case CallbackInstanceMethod: {
-        id target = tryUnwrapObjcObject(contextRef, thisObject);
+    case CallbackInitMethod: {
+        RELEASE_ASSERT(!thisObject);
+        target = [m_instanceClass alloc];
         if (!target || ![target isKindOfClass:m_instanceClass]) {
             *exception = toRef(JSC::createTypeError(toJS(contextRef), "self type check failed for Objective-C instance method"));
             return JSValueMakeUndefined(contextRef);
         }
         [m_invocation setTarget:target];
+        firstArgument = 2;
+        break;
     }
-    // fallthrough - firstArgument for CallbackInstanceMethod is also 2!
+    case CallbackInstanceMethod: {
+        target = tryUnwrapObjcObject(contextRef, thisObject);
+        if (!target || ![target isKindOfClass:m_instanceClass]) {
+            *exception = toRef(JSC::createTypeError(toJS(contextRef), "self type check failed for Objective-C instance method"));
+            return JSValueMakeUndefined(contextRef);
+        }
+        [m_invocation setTarget:target];
+        firstArgument = 2;
+        break;
+    }
     case CallbackClassMethod:
         firstArgument = 2;
         break;
@@ -547,7 +588,18 @@ JSValueRef ObjCCallbackFunctionImpl::call(JSContext *context, JSObjectRef thisOb
 
     [m_invocation invoke];
 
-    return m_result->get(m_invocation.get(), context, exception);
+    JSValueRef result = m_result->get(m_invocation.get(), context, exception);
+
+    // Balance our call to -alloc with a call to -autorelease. We have to do this after calling -init
+    // because init family methods are allowed to release the allocated object and return something 
+    // else in its place.
+    if (m_type == CallbackInitMethod) {
+        id objcResult = tryUnwrapObjcObject(contextRef, result);
+        if (objcResult)
+            [objcResult autorelease];
+    }
+
+    return result;
 }
 
 } // namespace JSC
@@ -578,6 +630,7 @@ static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvoc
         return nil;
 
     switch (type) {
+    case CallbackInitMethod:
     case CallbackInstanceMethod:
     case CallbackClassMethod:
         // Methods are passed two implicit arguments - (id)self, and the selector.
@@ -611,7 +664,14 @@ static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvoc
     JSC::APIEntryShim shim(exec);
     OwnPtr<JSC::ObjCCallbackFunctionImpl> impl = adoptPtr(new JSC::ObjCCallbackFunctionImpl(invocation, type, instanceClass, arguments.release(), result.release()));
     // FIXME: Maybe we could support having the selector as the name of the function to make it a bit more user-friendly from the JS side?
-    return toRef(JSC::ObjCCallbackFunction::create(exec->vm(), exec->lexicalGlobalObject(), "", impl.release()));
+    return toRef(JSC::ObjCCallbackFunction::create(exec->vm(), exec->lexicalGlobalObject(), impl->name(), impl.release()));
+}
+
+JSObjectRef objCCallbackFunctionForInit(JSContext *context, Class cls, Protocol *protocol, SEL sel, const char* types)
+{
+    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[NSMethodSignature signatureWithObjCTypes:types]];
+    [invocation setSelector:sel];
+    return objCCallbackFunctionForInvocation(context, invocation, CallbackInitMethod, cls, _protocol_getMethodTypeEncoding(protocol, sel, YES, YES));
 }
 
 JSObjectRef objCCallbackFunctionForMethod(JSContext *context, Class cls, Protocol *protocol, BOOL isInstanceMethod, SEL sel, const char* types)
@@ -636,11 +696,14 @@ JSObjectRef objCCallbackFunctionForBlock(JSContext *context, id target)
     return objCCallbackFunctionForInvocation(context, invocation, CallbackBlock, nil, signature);
 }
 
-id tryUnwrapBlock(JSObjectRef object)
+id tryUnwrapConstructor(JSObjectRef object)
 {
     if (!toJS(object)->inherits(JSC::ObjCCallbackFunction::info()))
         return nil;
-    return static_cast<JSC::ObjCCallbackFunction*>(toJS(object))->impl()->wrappedBlock();
+    JSC::ObjCCallbackFunctionImpl* impl = static_cast<JSC::ObjCCallbackFunction*>(toJS(object))->impl();
+    if (!impl->isConstructible())
+        return nil;
+    return impl->wrappedConstructor();
 }
 
 #endif
