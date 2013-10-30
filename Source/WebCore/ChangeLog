@@ -1,3 +1,19 @@
+2013-10-30  Liangjun Zeng  <lizeng@blackberry.com>
+
+        Fix memory leaks in platform/image-encoders/JPEGImageEncoder.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=118781
+
+        Reviewed by Brent Fulgham.
+
+        We can find the function "jpeg_finish_compress" call the function "jpeg_abort" at the end.
+        And the comments of "jpeg_abort" is "Abort processing of a JPEG compression operation,
+        but don't destroy the object itself". (We can find these in the "jcapimin.c" of jpeg)
+        So the compression object destroy need be called.
+        No new tests because this doesn't change functionality.
+
+        * platform/image-encoders/JPEGImageEncoder.cpp:
+        (WebCore::compressRGBABigEndianToJPEG):
+
 2013-10-30  Antti Koivisto  <antti@apple.com>
 
         Add debug settings for simple line layout

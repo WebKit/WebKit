@@ -111,8 +111,10 @@ bool compressRGBABigEndianToJPEG(unsigned char* rgbaBigEndianData, const IntSize
     // rowBuffer must be defined here so that its destructor is always called even when "setjmp" catches an error.
     Vector<JSAMPLE, 600 * 3> rowBuffer;
 
-    if (setjmp(err.m_setjmpBuffer))
+    if (setjmp(err.m_setjmpBuffer)) {
+        jpeg_destroy_compress(&compressData);
         return false;
+    }
 
     jpeg_start_compress(&compressData, TRUE);
     rowBuffer.resize(compressData.image_width * 3);
@@ -132,6 +134,7 @@ bool compressRGBABigEndianToJPEG(unsigned char* rgbaBigEndianData, const IntSize
     }
 
     jpeg_finish_compress(&compressData);
+    jpeg_destroy_compress(&compressData);
     return true;
 }
 
