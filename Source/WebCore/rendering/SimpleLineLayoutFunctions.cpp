@@ -38,6 +38,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderStyle.h"
 #include "RenderText.h"
+#include "RenderView.h"
 #include "Settings.h"
 #include "SimpleLineLayoutResolver.h"
 #include "Text.h"

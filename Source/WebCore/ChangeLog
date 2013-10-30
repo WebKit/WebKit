@@ -1,3 +1,9 @@
+2013-10-30  Antti Koivisto  <antti@apple.com>
+
+        Unbreak the release build.
+
+        * rendering/SimpleLineLayoutFunctions.cpp:
+
 2013-10-30  Liangjun Zeng  <lizeng@blackberry.com>
 
         Fix memory leaks in platform/image-encoders/JPEGImageEncoder.cpp
