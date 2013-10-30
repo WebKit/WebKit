@@ -1,3 +1,19 @@
+2013-10-30  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Unguard Element::childShouldCreateRenderer
+        https://bugs.webkit.org/show_bug.cgi?id=123496
+
+        Reviewed by Andreas Kling.
+
+        Make Element::childShouldCreateRenderer normally accessible. Guarding it with flags
+        just leaves potential build issues.
+
+        No new tests since no functionality changed.
+
+        * dom/Element.cpp:
+        (WebCore::Element::childShouldCreateRenderer):
+        * dom/Element.h:
+
 2013-10-30  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Make MediaSourcePrivate, SourceBufferPrivate classes RefCounted.
