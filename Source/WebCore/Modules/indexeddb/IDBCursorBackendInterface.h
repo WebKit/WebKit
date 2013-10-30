@@ -36,6 +36,7 @@ namespace WebCore {
 class IDBCallbacks;
 class IDBKey;
 class IDBRequest;
+class SharedBuffer;
 
 typedef int ExceptionCode;
 

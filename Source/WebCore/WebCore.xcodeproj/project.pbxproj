@@ -1728,6 +1728,8 @@
 		514C767E0CE923A1007EF3CD /* ResourceResponseBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76690CE923A1007EF3CD /* ResourceResponseBase.cpp */; };
 		514C767F0CE923A1007EF3CD /* ResourceResponseBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C766A0CE923A1007EF3CD /* ResourceResponseBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		515788C11207852C00A37C4A /* VisitedLinkStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 515788C01207852C00A37C4A /* VisitedLinkStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		515C321518216A5B00A6DAA9 /* IDBCursorBackendImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515C321318216A5B00A6DAA9 /* IDBCursorBackendImpl.cpp */; };
+		515C321618216A5B00A6DAA9 /* IDBCursorBackendImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 515C321418216A5B00A6DAA9 /* IDBCursorBackendImpl.h */; };
 		5160300B0CC4251200C8AC25 /* FileSystemPOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5160300A0CC4251200C8AC25 /* FileSystemPOSIX.cpp */; };
 		5160306C0CC4362300C8AC25 /* FileSystemCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5160306B0CC4362300C8AC25 /* FileSystemCF.cpp */; };
 		5160F4980B0AA75F00C1D2AF /* HistoryItemMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160F4970B0AA75F00C1D2AF /* HistoryItemMac.mm */; };
@@ -8332,6 +8334,8 @@
 		514C76690CE923A1007EF3CD /* ResourceResponseBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceResponseBase.cpp; sourceTree = "<group>"; };
 		514C766A0CE923A1007EF3CD /* ResourceResponseBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceResponseBase.h; sourceTree = "<group>"; };
 		515788C01207852C00A37C4A /* VisitedLinkStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkStrategy.h; sourceTree = "<group>"; };
+		515C321318216A5B00A6DAA9 /* IDBCursorBackendImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBCursorBackendImpl.cpp; sourceTree = "<group>"; };
+		515C321418216A5B00A6DAA9 /* IDBCursorBackendImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursorBackendImpl.h; sourceTree = "<group>"; };
 		5160300A0CC4251200C8AC25 /* FileSystemPOSIX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystemPOSIX.cpp; sourceTree = "<group>"; };
 		5160306B0CC4362300C8AC25 /* FileSystemCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystemCF.cpp; sourceTree = "<group>"; };
 		5160F4970B0AA75F00C1D2AF /* HistoryItemMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HistoryItemMac.mm; path = mac/HistoryItemMac.mm; sourceTree = "<group>"; };
@@ -16771,6 +16775,8 @@
 				51D71975181106DF0016DC51 /* IDBCursor.cpp */,
 				51D71976181106DF0016DC51 /* IDBCursor.h */,
 				51D71977181106DF0016DC51 /* IDBCursor.idl */,
+				515C321318216A5B00A6DAA9 /* IDBCursorBackendImpl.cpp */,
+				515C321418216A5B00A6DAA9 /* IDBCursorBackendImpl.h */,
 				51D71978181106DF0016DC51 /* IDBCursorBackendInterface.h */,
 				51D71979181106DF0016DC51 /* IDBCursorWithValue.cpp */,
 				51D7197A181106DF0016DC51 /* IDBCursorWithValue.h */,
@@ -22599,6 +22605,7 @@
 				9746AF2514F4DDE6003E7A71 /* GeolocationClient.h in Headers */,
 				9746AF2714F4DDE6003E7A70 /* GeolocationController.h in Headers */,
 				9746AF2814F4DDE6003E7A70 /* GeolocationError.h in Headers */,
+				515C321618216A5B00A6DAA9 /* IDBCursorBackendImpl.h in Headers */,
 				078E091A17D14D1C00420AA1 /* NavigatorMediaStream.h in Headers */,
 				9746AF2914F4DDE6003E7A70 /* GeolocationPosition.h in Headers */,
 				9746AF2A14F4DDE6003E7A70 /* Geoposition.h in Headers */,
@@ -26077,6 +26084,7 @@
 				82AB1773125C826700C5069D /* InspectorStyleSheet.cpp in Sources */,
 				82889B4C13C62392009A6156 /* InspectorStyleTextEditor.cpp in Sources */,
 				07277E4E17D018CC0015534D /* JSMediaStreamAudioDestinationNode.cpp in Sources */,
+				515C321518216A5B00A6DAA9 /* IDBCursorBackendImpl.cpp in Sources */,
 				754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */,
 				573D134714CE39FF0057ABCA /* InspectorTypeBuilder.cpp in Sources */,
 				4F3289B511A42AAB005ABE7E /* InspectorValues.cpp in Sources */,

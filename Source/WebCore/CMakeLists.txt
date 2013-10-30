@@ -761,6 +761,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/DOMWindowIndexedDatabase.cpp
     Modules/indexeddb/IDBAny.cpp
     Modules/indexeddb/IDBCursor.cpp
+    Modules/indexeddb/IDBCursorBackendLevelDB.cpp
     Modules/indexeddb/IDBCursorWithValue.cpp
     Modules/indexeddb/IDBDatabase.cpp
     Modules/indexeddb/IDBDatabaseBackendImpl.cpp
@@ -786,7 +787,6 @@ set(WebCore_SOURCES
     Modules/indexeddb/PageGroupIndexedDatabase.cpp
     Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp
     Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp
-    Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.cpp
     Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp
     Modules/indexeddb/leveldb/IDBLevelDBCoding.cpp
 

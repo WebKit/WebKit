@@ -1,3 +1,24 @@
+2013-10-30  Brady Eidson  <beidson@apple.com>
+
+        IDBCursorBackendLevelDB should be made cross-platform
+        https://bugs.webkit.org/show_bug.cgi?id=123513
+
+        Rubberstamped by Andreas Kling.
+
+        Because of all the already-done refactoring, this is basically a file-move and global rename.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCore.vcxproj/WebCore.vcxproj:
+
+        * Modules/indexeddb/IDBCursorBackendImpl.cpp: Renamed from Source/WebCore/Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.cpp.
+        * Modules/indexeddb/IDBCursorBackendImpl.h: Renamed from Source/WebCore/Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.h.
+
+        * Modules/indexeddb/IDBCursorBackendInterface.h:
+
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp:
+
 2013-10-29  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Remove legacy Media Source APIs (WebKitMediaSource, WebKitSourceBuffer, WebKitSourceBufferList)

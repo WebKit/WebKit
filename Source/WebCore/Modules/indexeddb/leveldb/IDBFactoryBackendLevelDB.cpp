@@ -31,7 +31,7 @@
 
 #include "DOMStringList.h"
 #include "IDBBackingStoreLevelDB.h"
-#include "IDBCursorBackendLevelDB.h"
+#include "IDBCursorBackendImpl.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseException.h"
 #include "IDBTransactionBackendImpl.h"
