@@ -1,3 +1,12 @@
+2013-10-30  Filip Pizlo  <fpizlo@apple.com>
+
+        run-jsc-stress-tests should handle ".." in paths and "slow!" in cmd's
+        https://bugs.webkit.org/show_bug.cgi?id=123521
+
+        Reviewed by Mark Hahnenberg.
+
+        * Scripts/run-jsc-stress-tests:
+
 2013-10-30  Alexey Proskuryakov  <ap@apple.com>
 
         Mavericks: 128 tests are failing due to pixel differences
