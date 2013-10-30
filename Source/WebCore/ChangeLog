@@ -1,3 +1,13 @@
+2013-10-30  peavo@outlook.com  <peavo@outlook.com>
+
+        Favicons are flipped in vertical direction in WinCairo builds.
+        https://bugs.webkit.org/show_bug.cgi?id=102077
+
+        Reviewed by Brent Fulgham.
+
+        * platform/graphics/win/ImageCairoWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+
 2013-10-30  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Add MediaSource compatable loading functions to MediaPlayer
