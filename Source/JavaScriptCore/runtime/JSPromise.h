@@ -43,12 +43,12 @@ public:
     static JSPromise* create(VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    static JSPromise* createWithResolver(VM&, JSGlobalObject*);
+    JS_EXPORT_PRIVATE static JSPromise* createWithResolver(VM&, JSGlobalObject*);
 
     DECLARE_INFO;
 
     void setResolver(VM&, JSPromiseResolver*);
-    JSPromiseResolver* resolver() const;
+    JS_EXPORT_PRIVATE JSPromiseResolver* resolver() const;
 
     enum State {
         Pending,

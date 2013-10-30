@@ -55,6 +55,7 @@
 #include "JSDOMMimeTypeArrayCustom.cpp"
 #include "JSDOMPluginArrayCustom.cpp"
 #include "JSDOMPluginCustom.cpp"
+#include "JSDOMPromise.cpp"
 #include "JSDOMStringListCustom.cpp"
 #include "JSDOMStringMapCustom.cpp"
 #include "JSDOMWindowBase.cpp"

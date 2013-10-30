@@ -1,3 +1,28 @@
+2013-10-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Add a way to fulfill promises from DOM code
+        https://bugs.webkit.org/show_bug.cgi?id=123466
+
+        Reviewed by Sam Weinig.
+
+        This is not perfect, as it strongly ties DOM code to JavaScript. In the future, we
+        can make it better e.g. by subclassing, so that only a base interface would be exposed.
+
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * WebCore.xcodeproj/project.pbxproj:
+        Added JSDOMPromise.
+
+        * bindings/js/JSDOMPromise.cpp: Added.
+
+        * bindings/js/JSDOMPromise.h: Added.
+        (WebCore::PromiseWrapper::create):
+        (WebCore::PromiseWrapper::fulfill): A random set of specializations that I needed
+        in WebCrypto code so far.
+        (WebCore::PromiseWrapper::reject): Ditto.
+
 2013-10-30  Santosh Mahto  <santosh.ma@samsung.com>
 
         contentEditable deleting lists when list items are block level

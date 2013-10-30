@@ -4365,6 +4365,9 @@
     <ClCompile Include="..\bindings\js\JSDOMPluginCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
+    <ClCompile Include="..\bindings\js\JSDOMPromise.cpp">
+      <Filter>bindings\js</Filter>
+    </ClCompile>
     <ClCompile Include="..\bindings\js\JSDOMStringListCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
@@ -11387,6 +11390,9 @@
       <Filter>bindings\js</Filter>
     </ClInclude>
     <ClInclude Include="..\bindings\js\JSDOMGlobalObjectTask.h">
+      <Filter>bindings\js</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bindings\js\JSDOMPromise.h">
       <Filter>bindings\js</Filter>
     </ClInclude>
     <ClInclude Include="..\bindings\js\JSErrorHandler.h">

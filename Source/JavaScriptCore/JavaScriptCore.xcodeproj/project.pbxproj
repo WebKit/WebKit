@@ -735,13 +735,13 @@
 		7C15F65D17C199CE00794D40 /* JSPromiseCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C15F65B17C199CE00794D40 /* JSPromiseCallback.cpp */; };
 		7C15F65E17C199CE00794D40 /* JSPromiseCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C15F65C17C199CE00794D40 /* JSPromiseCallback.h */; };
 		7C184E1A17BEDBD3007CB63A /* JSPromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C184E1817BEDBD3007CB63A /* JSPromise.cpp */; };
-		7C184E1B17BEDBD3007CB63A /* JSPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C184E1917BEDBD3007CB63A /* JSPromise.h */; };
+		7C184E1B17BEDBD3007CB63A /* JSPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C184E1917BEDBD3007CB63A /* JSPromise.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C184E1E17BEE22E007CB63A /* JSPromisePrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C184E1C17BEE22E007CB63A /* JSPromisePrototype.cpp */; };
 		7C184E1F17BEE22E007CB63A /* JSPromisePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C184E1D17BEE22E007CB63A /* JSPromisePrototype.h */; };
 		7C184E2217BEE240007CB63A /* JSPromiseConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C184E2017BEE240007CB63A /* JSPromiseConstructor.cpp */; };
 		7C184E2317BEE240007CB63A /* JSPromiseConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C184E2117BEE240007CB63A /* JSPromiseConstructor.h */; };
 		7C3BA29417C039560072DDC9 /* JSPromiseResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BA28E17C039560072DDC9 /* JSPromiseResolver.cpp */; };
-		7C3BA29517C039560072DDC9 /* JSPromiseResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3BA28F17C039560072DDC9 /* JSPromiseResolver.h */; };
+		7C3BA29517C039560072DDC9 /* JSPromiseResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3BA28F17C039560072DDC9 /* JSPromiseResolver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C3BA29617C039560072DDC9 /* JSPromiseResolverConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BA29017C039560072DDC9 /* JSPromiseResolverConstructor.cpp */; };
 		7C3BA29717C039560072DDC9 /* JSPromiseResolverConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3BA29117C039560072DDC9 /* JSPromiseResolverConstructor.h */; };
 		7C3BA29817C039560072DDC9 /* JSPromiseResolverPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3BA29217C039560072DDC9 /* JSPromiseResolverPrototype.cpp */; };

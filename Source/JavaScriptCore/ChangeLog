@@ -1,3 +1,17 @@
+2013-10-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Add a way to fulfill promises from DOM code
+        https://bugs.webkit.org/show_bug.cgi?id=123466
+
+        Reviewed by Sam Weinig.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Make JSPromise.h and JSPromiseResolver.h
+        private headers for WebCore to use.
+
+        * runtime/JSPromise.h:
+        * runtime/JSPromiseResolver.h:
+        Export functions that JSDOMPromise will use.
+
 2013-10-30  Mark Lam  <mark.lam@apple.com>
 
         Adjust CallFrameHeader's ReturnPC and CallFrame locations to match the native ABI .

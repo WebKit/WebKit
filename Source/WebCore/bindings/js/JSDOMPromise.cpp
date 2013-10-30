@@ -23,56 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSPromiseResolver_h
-#define JSPromiseResolver_h
+#include "config.h"
+#include "JSDOMPromise.h"
 
-#if ENABLE(PROMISES)
+namespace WebCore {
 
-#include "JSObject.h"
+PromiseWrapper::PromiseWrapper(JSDOMGlobalObject* globalObject, JSC::JSPromise* promise)
+    : m_globalObject(globalObject->vm(), globalObject)
+    , m_promise(globalObject->vm(), promise)
+{
+}
 
-namespace JSC {
-
-class JSPromise;
-
-class JSPromiseResolver : public JSNonFinalObject {
-public:
-    typedef JSNonFinalObject Base;
-
-    static JSPromiseResolver* create(VM&, Structure*, JSPromise*);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-
-    DECLARE_INFO;
-
-    JSPromise* promise() const;
-
-    JS_EXPORT_PRIVATE void fulfillIfNotResolved(ExecState*, JSValue);
-    void resolveIfNotResolved(ExecState*, JSValue);
-    JS_EXPORT_PRIVATE void rejectIfNotResolved(ExecState*, JSValue);
-
-    enum ResolverMode {
-        ResolveSynchronously,
-        ResolveAsynchronously,
-    };
-
-    void fulfill(ExecState*, JSValue, ResolverMode = ResolveAsynchronously);
-    void resolve(ExecState*, JSValue, ResolverMode = ResolveAsynchronously);
-    void reject(ExecState*, JSValue, ResolverMode = ResolveAsynchronously);
-
-protected:
-    void finishCreation(VM&, JSPromise*);
-    static const unsigned StructureFlags = OverridesVisitChildren | JSObject::StructureFlags;
-
-private:
-    JSPromiseResolver(VM&, Structure*);
-
-    static void visitChildren(JSCell*, SlotVisitor&);
-
-    WriteBarrier<JSPromise> m_promise;
-    bool m_isResolved;
-};
-
-} // namespace JSC
-
-#endif // ENABLE(PROMISES)
-
-#endif // JSPromiseResolver_h
+}
