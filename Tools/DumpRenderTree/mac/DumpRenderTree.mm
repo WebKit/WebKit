@@ -685,6 +685,7 @@ static void setDefaultsToConsistentValuesForTesting()
     NSString *libraryPath = libraryPathForDumpRenderTree();
 
     NSDictionary *dict = @{
+        @"AppleKeyboardUIMode": @1,
         @"AppleMagnifiedMode": @YES,
         @"AppleAntiAliasingThreshold": @4,
         @"AppleFontSmoothing": @(NoFontSmoothing),

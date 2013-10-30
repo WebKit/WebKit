@@ -383,7 +383,6 @@ macro(yankAndSelect) \
 
 #define KeyboardUIModeDidChangeNotification @"com.apple.KeyboardUIModeDidChange"
 #define AppleKeyboardUIMode CFSTR("AppleKeyboardUIMode")
-#define UniversalAccessDomain CFSTR("com.apple.universalaccess")
 
 static BOOL s_didSetCacheModel;
 static WebCacheModel s_cacheModel = WebCacheModelDocumentViewer;
@@ -6533,16 +6532,16 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
 
 - (void)_retrieveKeyboardUIModeFromPreferences:(NSNotification *)notification
 {
-    CFPreferencesAppSynchronize(UniversalAccessDomain);
+    CFPreferencesAppSynchronize(kCFPreferencesAnyApplication);
 
     Boolean keyExistsAndHasValidFormat;
-    int mode = CFPreferencesGetAppIntegerValue(AppleKeyboardUIMode, UniversalAccessDomain, &keyExistsAndHasValidFormat);
-    
-    // The keyboard access mode is reported by two bits:
-    // Bit 0 is set if feature is on
-    // Bit 1 is set if full keyboard access works for any control, not just text boxes and lists
+    int mode = CFPreferencesGetAppIntegerValue(AppleKeyboardUIMode, kCFPreferencesAnyApplication, &keyExistsAndHasValidFormat);
+
+    // The keyboard access mode has two bits:
+    // Bit 0 is set if user can set the focus to menus, the dock, and various windows using the keyboard.
+    // Bit 1 is set if controls other than text fields are included in the tab order (WebKit also always includes lists).
     _private->_keyboardUIMode = (mode & 0x2) ? KeyboardAccessFull : KeyboardAccessDefault;
-    
+
     // check for tabbing to links
     if ([_private->preferences tabsToLinks])
         _private->_keyboardUIMode = (KeyboardUIMode)(_private->_keyboardUIMode | KeyboardAccessTabsToLinks);

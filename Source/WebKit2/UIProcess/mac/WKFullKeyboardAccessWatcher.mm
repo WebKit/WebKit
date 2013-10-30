@@ -30,7 +30,6 @@
 
 NSString * const KeyboardUIModeDidChangeNotification = @"com.apple.KeyboardUIModeDidChange";
 const CFStringRef AppleKeyboardUIMode = CFSTR("AppleKeyboardUIMode");
-const CFStringRef UniversalAccessDomain = CFSTR("com.apple.universalaccess");
 
 using namespace WebKit;
 
@@ -47,14 +46,14 @@ using namespace WebKit;
 {
     BOOL oldValue = fullKeyboardAccessEnabled;
 
-    CFPreferencesAppSynchronize(UniversalAccessDomain);
+    CFPreferencesAppSynchronize(kCFPreferencesAnyApplication);
 
     Boolean keyExistsAndHasValidFormat;
-    int mode = CFPreferencesGetAppIntegerValue(AppleKeyboardUIMode, UniversalAccessDomain, &keyExistsAndHasValidFormat);
+    int mode = CFPreferencesGetAppIntegerValue(AppleKeyboardUIMode, kCFPreferencesAnyApplication, &keyExistsAndHasValidFormat);
     if (keyExistsAndHasValidFormat) {
-        // The keyboard access mode is reported by two bits:
-        // Bit 0 is set if feature is on
-        // Bit 1 is set if full keyboard access works for any control, not just text boxes and lists.
+        // The keyboard access mode has two bits:
+        // Bit 0 is set if user can set the focus to menus, the dock, and various windows using the keyboard.
+        // Bit 1 is set if controls other than text fields are included in the tab order (WebKit also always includes lists).
         fullKeyboardAccessEnabled = (mode & 0x2);
     }
 

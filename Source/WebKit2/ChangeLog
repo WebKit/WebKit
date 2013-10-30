@@ -1,3 +1,15 @@
+2013-10-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Result of focus-option-control-on-page.html depends on system preferences
+        https://bugs.webkit.org/show_bug.cgi?id=123304
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/mac/WKFullKeyboardAccessWatcher.mm:
+        (-[WKFullKeyboardAccessWatcher retrieveKeyboardUIModeFromPreferences:]):
+        Read the preference from its correct domain. This doesn't affect behavior in practice
+        and isn't part of the fix, but it's a good opportunity to correct this code.
+
 2013-10-29  Brady Eidson  <beidson@apple.com>
 
         Move IDBTransactionBackendLevelDB to generic IDBBackingStoreInterface
