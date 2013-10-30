@@ -782,6 +782,8 @@ set(WebCore_SOURCES
     Modules/indexeddb/IDBPendingTransactionMonitor.cpp
     Modules/indexeddb/IDBRequest.cpp
     Modules/indexeddb/IDBTransaction.cpp
+    Modules/indexeddb/IDBTransactionBackendImpl.cpp
+    Modules/indexeddb/IDBTransactionBackendOperations.cpp
     Modules/indexeddb/IDBTransactionCoordinator.cpp
     Modules/indexeddb/IDBVersionChangeEvent.cpp
     Modules/indexeddb/PageGroupIndexedDatabase.cpp
@@ -790,8 +792,6 @@ set(WebCore_SOURCES
     Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.cpp
     Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp
     Modules/indexeddb/leveldb/IDBLevelDBCoding.cpp
-    Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.cpp
-    Modules/indexeddb/leveldb/IDBTransactionBackendLevelDBOperations.cpp
 
     Modules/mediasource/MediaSource.cpp
     Modules/mediasource/MediaSourceRegistry.cpp

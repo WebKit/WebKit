@@ -32,7 +32,7 @@
 #include "IDBBackingStoreLevelDB.h"
 #include "IDBCursorBackendInterface.h"
 #include "IDBDatabaseBackendImpl.h"
-#include "IDBTransactionBackendLevelDB.h"
+#include "IDBTransactionBackendImpl.h"
 #include "SharedBuffer.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>

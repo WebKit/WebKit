@@ -24,16 +24,17 @@
  */
 
 #include "config.h"
-#include "IDBTransactionBackendLevelDBOperations.h"
+#include "IDBTransactionBackendOperations.h"
 
-#include "IDBCursorBackendLevelDB.h"
+#include "IDBCursorBackendInterface.h"
 #include "IDBDatabaseCallbacks.h"
 #include "IDBIndexWriter.h"
 #include "IDBKeyRange.h"
+#include "IDBRecordIdentifier.h"
 #include "Logging.h"
 #include <wtf/text/CString.h>
 
-#if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
+#if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
@@ -382,4 +383,4 @@ void IDBDatabaseBackendImpl::VersionChangeAbortOperation::perform()
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
+#endif // ENABLE(INDEXED_DATABASE)

@@ -1,3 +1,28 @@
+2013-10-29  Brady Eidson  <beidson@apple.com>
+
+        IDBTransactionBackend should be cross platform
+        https://bugs.webkit.org/show_bug.cgi?id=123449
+
+        Reviewed by Beth Dakin.
+
+        - Rename IDBTransactionBackendLevelDB to IDBTransactionBackendImpl
+        - Rename IDBTransactionBackendLevelDBOperations to IDBTransactionBackendOperations
+        - Move their files from the leveldb subdirectory to the indexeddb directory
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp: Renamed from Source/WebCore/Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.cpp.
+        * Modules/indexeddb/IDBTransactionBackendImpl.h: Renamed from Source/WebCore/Modules/indexeddb/leveldb/IDBTransactionBackendLevelDB.h.
+        * Modules/indexeddb/IDBTransactionBackendOperations.cpp: Renamed from Source/WebCore/Modules/indexeddb/leveldb/IDBTransactionBackendLevelDBOperations.cpp.
+        * Modules/indexeddb/IDBTransactionBackendOperations.h: Renamed from Source/WebCore/Modules/indexeddb/leveldb/IDBTransactionBackendLevelDBOperations.h.
+
+        * Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.cpp:
+        * Modules/indexeddb/leveldb/IDBCursorBackendLevelDB.h:
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp:
+        (WebCore::IDBFactoryBackendLevelDB::maybeCreateTransactionBackend):
+
 2013-10-29  Sam Weinig  <sam@webkit.org>
 
         Modernize DatasetDOMStringMap and ClassList a bit

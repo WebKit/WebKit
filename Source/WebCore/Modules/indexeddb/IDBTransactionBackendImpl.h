@@ -23,10 +23,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBTransactionBackendLevelDB_h
-#define IDBTransactionBackendLevelDB_h
+#ifndef IDBTransactionBackendImpl_h
+#define IDBTransactionBackendImpl_h
 
-#if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
+#if ENABLE(INDEXED_DATABASE)
 
 #include "IDBBackingStoreInterface.h"
 #include "IDBDatabaseBackendImpl.h"
@@ -43,10 +43,10 @@ namespace WebCore {
 
 class IDBDatabaseCallbacks;
 
-class IDBTransactionBackendLevelDB FINAL : public IDBTransactionBackendInterface {
+class IDBTransactionBackendImpl FINAL : public IDBTransactionBackendInterface {
 public:
-    static PassRefPtr<IDBTransactionBackendLevelDB> create(IDBDatabaseBackendImpl*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
-    virtual ~IDBTransactionBackendLevelDB();
+    static PassRefPtr<IDBTransactionBackendImpl> create(IDBDatabaseBackendImpl*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
+    virtual ~IDBTransactionBackendImpl();
 
     virtual void commit() OVERRIDE FINAL;
     virtual void abort() OVERRIDE FINAL;
@@ -84,7 +84,7 @@ public:
     virtual PassRefPtr<IDBCursorBackendInterface> createCursorBackend(IDBBackingStoreInterface::Cursor&, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, int64_t objectStoreId) OVERRIDE;
 
 private:
-    IDBTransactionBackendLevelDB(IDBDatabaseBackendImpl*, int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
+    IDBTransactionBackendImpl(IDBDatabaseBackendImpl*, int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
 
     enum State {
         Unused, // Created, but no tasks yet.
@@ -98,7 +98,7 @@ private:
     bool isTaskQueueEmpty() const;
     bool hasPendingTasks() const;
 
-    void taskTimerFired(Timer<IDBTransactionBackendLevelDB>*);
+    void taskTimerFired(Timer<IDBTransactionBackendImpl>*);
     void closeOpenCursors();
 
     const HashSet<int64_t> m_objectStoreIds;
@@ -117,7 +117,7 @@ private:
     std::unique_ptr<IDBBackingStoreInterface::Transaction> m_backingStoreTransaction;
 
     // FIXME: delete the timer once we have threads instead.
-    Timer<IDBTransactionBackendLevelDB> m_taskTimer;
+    Timer<IDBTransactionBackendImpl> m_taskTimer;
     int m_pendingPreemptiveEvents;
 
     HashSet<IDBCursorBackendInterface*> m_openCursors;
@@ -127,6 +127,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
+#endif // ENABLE(INDEXED_DATABASE)
 
-#endif // IDBTransactionBackendLevelDB_h
+#endif // IDBTransactionBackendImpl_h

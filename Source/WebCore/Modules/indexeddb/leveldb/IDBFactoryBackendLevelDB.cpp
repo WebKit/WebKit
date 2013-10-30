@@ -34,7 +34,7 @@
 #include "IDBCursorBackendLevelDB.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseException.h"
-#include "IDBTransactionBackendLevelDB.h"
+#include "IDBTransactionBackendImpl.h"
 #include "IDBTransactionCoordinator.h"
 #include "Logging.h"
 #include "SecurityOrigin.h"
@@ -194,7 +194,7 @@ PassRefPtr<IDBTransactionBackendInterface> IDBFactoryBackendLevelDB::maybeCreate
     if (!backend->isIDBDatabaseBackendImpl())
         return 0;
 
-    return IDBTransactionBackendLevelDB::create(static_cast<IDBDatabaseBackendImpl*>(backend), transactionId, databaseCallbacks, objectStoreIds, mode);
+    return IDBTransactionBackendImpl::create(static_cast<IDBDatabaseBackendImpl*>(backend), transactionId, databaseCallbacks, objectStoreIds, mode);
 }
 
 PassRefPtr<IDBCursorBackendInterface> IDBFactoryBackendLevelDB::createCursorBackend(IDBTransactionBackendInterface& transactionBackend, IDBBackingStoreInterface::Cursor& backingStoreCursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, int64_t objectStoreId)

@@ -36,7 +36,6 @@
 #include "IDBDatabaseException.h"
 #include "IDBKeyRange.h"
 #include "IDBOperation.h"
-#include "IDBTransactionBackendLevelDB.h"
 #include "Logging.h"
 #include "SharedBuffer.h"
 

@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBTransactionBackendLevelDBOperations_h
-#define IDBTransactionBackendLevelDBOperations_h
+#ifndef IDBTransactionBackendOperations_h
+#define IDBTransactionBackendOperations_h
 
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBOperation.h"
 #include "IDBTransactionBackendInterface.h"
 
-#if ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
+#if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
@@ -440,5 +440,5 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE) && USE(LEVELDB)
-#endif // IDBTransactionBackendLevelDBOperations_h
+#endif // ENABLE(INDEXED_DATABASE)
+#endif // IDBTransactionBackendOperations_h
