@@ -67,11 +67,7 @@ MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(VM* vm)
     jit.preserveReturnAddressAfterCall(GPRInfo::nonPreservedNonReturnGPR);
 
     // The CallFrame register points to the (failed) callee frame, so we need to pop back one frame.
-    jit.loadPtr(
-        CCallHelpers::Address(
-            GPRInfo::callFrameRegister,
-            static_cast<ptrdiff_t>(sizeof(Register)) * JSStack::CallerFrame),
-        GPRInfo::callFrameRegister);
+    jit.emitGetCallerFrameFromCallFrameHeaderPtr(GPRInfo::callFrameRegister);
 
     jit.setupArgumentsExecState();
     jit.move(CCallHelpers::TrustedImmPtr(bitwise_cast<void*>(lookupExceptionHandler)), GPRInfo::nonArgGPR0);
@@ -88,11 +84,7 @@ static void slowPathFor(
 {
     jit.preserveReturnAddressAfterCall(GPRInfo::nonArgGPR2);
     emitPointerValidation(jit, GPRInfo::nonArgGPR2);
-    jit.storePtr(
-        GPRInfo::nonArgGPR2,
-        CCallHelpers::Address(
-            GPRInfo::callFrameRegister,
-            static_cast<ptrdiff_t>(sizeof(Register)) * JSStack::ReturnPC));
+    jit.emitPutReturnPCToCallFrameHeader(GPRInfo::nonArgGPR2);
     jit.storePtr(GPRInfo::callFrameRegister, &vm->topCallFrame);
     jit.setupArgumentsExecState();
     jit.move(CCallHelpers::TrustedImmPtr(bitwise_cast<void*>(slowPathFunction)), GPRInfo::nonArgGPR0);
@@ -103,16 +95,8 @@ static void slowPathFor(
     // 1) Exception throwing thunk.
     // 2) Host call return value returner thingy.
     // 3) The function to call.
-    jit.loadPtr(
-        CCallHelpers::Address(
-            GPRInfo::callFrameRegister,
-            static_cast<ptrdiff_t>(sizeof(Register)) * JSStack::ReturnPC),
-        GPRInfo::nonPreservedNonReturnGPR);
-    jit.storePtr(
-        CCallHelpers::TrustedImmPtr(0),
-        CCallHelpers::Address(
-            GPRInfo::callFrameRegister,
-            static_cast<ptrdiff_t>(sizeof(Register)) * JSStack::ReturnPC));
+    jit.emitGetReturnPCFromCallFrameHeaderPtr(GPRInfo::nonPreservedNonReturnGPR);
+    jit.emitPutReturnPCToCallFrameHeader(CCallHelpers::TrustedImmPtr(0));
     emitPointerValidation(jit, GPRInfo::nonPreservedNonReturnGPR);
     jit.restoreReturnAddressBeforeReturn(GPRInfo::nonPreservedNonReturnGPR);
     emitPointerValidation(jit, GPRInfo::returnValueGPR);
@@ -272,12 +256,12 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
 #if CPU(X86)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
-    jit.emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, JSInterfaceJIT::regT0);
+    jit.emitGetCallerFrameFromCallFrameHeaderPtr(JSInterfaceJIT::regT0);
     jit.emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, JSInterfaceJIT::regT1, JSInterfaceJIT::regT0);
     jit.emitPutCellToCallFrameHeader(JSInterfaceJIT::regT1, JSStack::ScopeChain);
 
     jit.peek(JSInterfaceJIT::regT1);
-    jit.emitPutToCallFrameHeader(JSInterfaceJIT::regT1, JSStack::ReturnPC);
+    jit.emitPutReturnPCToCallFrameHeader(JSInterfaceJIT::regT1);
 
     // Calling convention:      f(ecx, edx, ...);
     // Host function signature: f(ExecState*);
@@ -296,12 +280,12 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
 #elif CPU(X86_64)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
-    jit.emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, JSInterfaceJIT::regT0);
+    jit.emitGetCallerFrameFromCallFrameHeaderPtr(JSInterfaceJIT::regT0);
     jit.emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, JSInterfaceJIT::regT1, JSInterfaceJIT::regT0);
     jit.emitPutCellToCallFrameHeader(JSInterfaceJIT::regT1, JSStack::ScopeChain);
 
     jit.peek(JSInterfaceJIT::regT1);
-    jit.emitPutToCallFrameHeader(JSInterfaceJIT::regT1, JSStack::ReturnPC);
+    jit.emitPutReturnPCToCallFrameHeader(JSInterfaceJIT::regT1);
 
 #if !OS(WINDOWS)
     // Calling convention:      f(edi, esi, edx, ecx, ...);
@@ -341,12 +325,12 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
 
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
-    jit.emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, ARM64Registers::x3);
+    jit.emitGetCallerFrameFromCallFrameHeaderPtr(ARM64Registers::x3);
     jit.emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, JSInterfaceJIT::regT1, ARM64Registers::x3);
     jit.emitPutCellToCallFrameHeader(JSInterfaceJIT::regT1, JSStack::ScopeChain);
 
     jit.preserveReturnAddressAfterCall(JSInterfaceJIT::regT3); // Callee preserved
-    jit.emitPutToCallFrameHeader(ARM64Registers::lr, JSStack::ReturnPC);
+    jit.emitPutReturnPCToCallFrameHeader(ARM64Registers::lr);
 
     // Host function signature: f(ExecState*);
     jit.move(JSInterfaceJIT::callFrameRegister, ARM64Registers::x0);
@@ -361,12 +345,12 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
 #elif CPU(ARM)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
-    jit.emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, JSInterfaceJIT::regT2);
+    jit.emitGetCallerFrameFromCallFrameHeaderPtr(JSInterfaceJIT::regT2);
     jit.emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, JSInterfaceJIT::regT1, JSInterfaceJIT::regT2);
     jit.emitPutCellToCallFrameHeader(JSInterfaceJIT::regT1, JSStack::ScopeChain);
 
     jit.preserveReturnAddressAfterCall(JSInterfaceJIT::regT3); // Callee preserved
-    jit.emitPutToCallFrameHeader(JSInterfaceJIT::regT3, JSStack::ReturnPC);
+    jit.emitPutReturnPCToCallFrameHeader(JSInterfaceJIT::regT3);
 
     // Calling convention:      f(r0 == regT0, r1 == regT1, ...);
     // Host function signature: f(ExecState*);
@@ -382,12 +366,12 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
 #elif CPU(SH4)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
-    jit.emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, JSInterfaceJIT::regT2);
+    jit.emitGetCallerFrameFromCallFrameHeaderPtr(JSInterfaceJIT::regT2);
     jit.emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, JSInterfaceJIT::regT1, JSInterfaceJIT::regT2);
     jit.emitPutCellToCallFrameHeader(JSInterfaceJIT::regT1, JSStack::ScopeChain);
 
     jit.preserveReturnAddressAfterCall(JSInterfaceJIT::regT3); // Callee preserved
-    jit.emitPutToCallFrameHeader(JSInterfaceJIT::regT3, JSStack::ReturnPC);
+    jit.emitPutReturnPCToCallFrameHeader(JSInterfaceJIT::regT3);
 
     // Calling convention: f(r0 == regT4, r1 == regT5, ...);
     // Host function signature: f(ExecState*);
@@ -403,12 +387,12 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
 #elif CPU(MIPS)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
-    jit.emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, JSInterfaceJIT::regT0);
+    jit.emitGetCallerFrameFromCallFrameHeaderPtr(JSInterfaceJIT::regT0);
     jit.emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, JSInterfaceJIT::regT1, JSInterfaceJIT::regT0);
     jit.emitPutCellToCallFrameHeader(JSInterfaceJIT::regT1, JSStack::ScopeChain);
 
     jit.preserveReturnAddressAfterCall(JSInterfaceJIT::regT3); // Callee preserved
-    jit.emitPutToCallFrameHeader(JSInterfaceJIT::regT3, JSStack::ReturnPC);
+    jit.emitPutReturnPCToCallFrameHeader(JSInterfaceJIT::regT3);
 
     // Calling convention:      f(a0, a1, a2, a3);
     // Host function signature: f(ExecState*);

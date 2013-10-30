@@ -142,6 +142,9 @@ struct InlineCallFrame {
     
     CodeBlock* baselineCodeBlock() const;
     
+    ptrdiff_t callerFrameOffset() const { return stackOffset * sizeof(Register) + CallFrame::callerFrameOffset(); }
+    ptrdiff_t returnPCOffset() const { return stackOffset * sizeof(Register) + CallFrame::returnPCOffset(); }
+
     void dumpBriefFunctionInformation(PrintStream&) const;
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;

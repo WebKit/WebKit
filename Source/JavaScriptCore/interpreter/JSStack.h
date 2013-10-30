@@ -48,19 +48,27 @@ namespace JSC {
     class VM;
     class LLIntOffsetsExtractor;
 
+    struct Instruction;
+    typedef ExecState CallFrame;
+
+    struct CallerFrameAndPC {
+        CallFrame* callerFrame;
+        Instruction* pc;
+    };
+
     class JSStack {
         WTF_MAKE_NONCOPYABLE(JSStack);
     public:
         enum CallFrameHeaderEntry {
-            CallFrameHeaderSize = 6,
-            FirstArgument = 7,
-            ThisArgument = 6,
-            ArgumentCount = 5,
-            CallerFrame = 4,
-            Callee = 3,
-            ScopeChain = 2,
-            ReturnPC = 1, // This is either an Instruction* or a pointer into JIT generated code stored as an Instruction*.
-            CodeBlock = 0,
+            CodeBlock = sizeof(CallerFrameAndPC) / sizeof(Register),
+            ScopeChain,
+            Callee,
+            ArgumentCount,
+            CallFrameHeaderSize,
+
+            // The following entries are not part of the CallFrameHeader but are provided here as a convenience:
+            ThisArgument = CallFrameHeaderSize,
+            FirstArgument,
         };
 
         static const size_t defaultCapacity = 512 * 1024;

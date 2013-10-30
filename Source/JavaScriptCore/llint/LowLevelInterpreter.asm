@@ -31,16 +31,24 @@ if ARMv7s
 end
 
 # These declarations must match interpreter/JSStack.h.
-const CallFrameHeaderSize = 48
-const CallFrameHeaderSlots = 6
-const ArgumentCount = 40
-const CallerFrame = 32
-const Callee = 24
-const ScopeChain = 16
-const ReturnPC = 8
-const CodeBlock = 0
 
-const ThisArgumentOffset = ArgumentCount + 8
+if JSVALUE64
+const PtrSize = 8
+const CallFrameHeaderSlots = 6
+else
+const PtrSize = 4
+const CallFrameHeaderSlots = 5
+end
+const SlotSize = 8
+
+const CallerFrame = 0
+const ReturnPC = CallerFrame + PtrSize
+const CodeBlock = ReturnPC + PtrSize
+const ScopeChain = CodeBlock + SlotSize
+const Callee = ScopeChain + SlotSize
+const ArgumentCount = Callee + SlotSize
+const ThisArgumentOffset = ArgumentCount + SlotSize
+const CallFrameHeaderSize = ThisArgumentOffset
 
 # Some value representation constants.
 if JSVALUE64

@@ -54,12 +54,12 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
 #if CPU(X86)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
-    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, regT0);
+    emitGetCallerFrameFromCallFrameHeaderPtr(regT0);
     emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT1, regT0);
     emitPutCellToCallFrameHeader(regT1, JSStack::ScopeChain);
 
     peek(regT1);
-    emitPutToCallFrameHeader(regT1, JSStack::ReturnPC);
+    emitPutReturnPCToCallFrameHeader(regT1);
 
     // Calling convention:      f(ecx, edx, ...);
     // Host function signature: f(ExecState*);
@@ -77,12 +77,12 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
 #elif CPU(ARM)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
-    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, regT2);
+    emitGetCallerFrameFromCallFrameHeaderPtr(regT2);
     emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT1, regT2);
     emitPutCellToCallFrameHeader(regT1, JSStack::ScopeChain);
 
     preserveReturnAddressAfterCall(regT3); // Callee preserved
-    emitPutToCallFrameHeader(regT3, JSStack::ReturnPC);
+    emitPutReturnPCToCallFrameHeader(regT3);
 
     // Calling convention:      f(r0 == regT0, r1 == regT1, ...);
     // Host function signature: f(ExecState*);
@@ -100,12 +100,12 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
 #elif CPU(MIPS)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
-    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, regT0);
+    emitGetCallerFrameFromCallFrameHeaderPtr(regT0);
     emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT1, regT0);
     emitPutCellToCallFrameHeader(regT1, JSStack::ScopeChain);
 
     preserveReturnAddressAfterCall(regT3); // Callee preserved
-    emitPutToCallFrameHeader(regT3, JSStack::ReturnPC);
+    emitPutReturnPCToCallFrameHeader(regT3);
 
     // Calling convention:      f(a0, a1, a2, a3);
     // Host function signature: f(ExecState*);
@@ -132,12 +132,12 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
 #elif CPU(SH4)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
-    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, regT2);
+    emitGetCallerFrameFromCallFrameHeaderPtr(regT2);
     emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT1, regT2);
     emitPutCellToCallFrameHeader(regT1, JSStack::ScopeChain);
 
     preserveReturnAddressAfterCall(regT3); // Callee preserved
-    emitPutToCallFrameHeader(regT3, JSStack::ReturnPC);
+    emitPutReturnPCToCallFrameHeader(regT3);
 
     // Calling convention: f(r0 == regT4, r1 == regT5, ...);
     // Host function signature: f(ExecState*);
@@ -212,7 +212,7 @@ void JIT::emit_op_end(Instruction* currentInstruction)
 {
     ASSERT(returnValueRegister != callFrameRegister);
     emitLoad(currentInstruction[1].u.operand, regT1, regT0);
-    restoreReturnAddressBeforeReturn(Address(callFrameRegister, JSStack::ReturnPC * static_cast<int>(sizeof(Register))));
+    restoreReturnAddressBeforeReturn(Address(callFrameRegister, CallFrame::returnPCOffset()));
     ret();
 }
 

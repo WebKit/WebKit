@@ -731,35 +731,40 @@ public:
     }
     
     // Access to our fixed callee CallFrame.
-    MacroAssembler::Address callFrameSlot(int numArgs, int slot)
+    MacroAssembler::Address calleeFrameSlot(int numArgs, int slot)
     {
         return MacroAssembler::Address(GPRInfo::callFrameRegister, calleeFrameOffset(numArgs) + sizeof(Register) * slot);
     }
 
     // Access to our fixed callee CallFrame.
-    MacroAssembler::Address argumentSlot(int numArgs, int argument)
+    MacroAssembler::Address calleeArgumentSlot(int numArgs, int argument)
     {
-        return callFrameSlot(numArgs, virtualRegisterForArgument(argument).offset());
+        return calleeFrameSlot(numArgs, virtualRegisterForArgument(argument).offset());
     }
 
-    MacroAssembler::Address callFrameTagSlot(int numArgs, int slot)
+    MacroAssembler::Address calleeFrameTagSlot(int numArgs, int slot)
     {
-        return callFrameSlot(numArgs, slot).withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+        return calleeFrameSlot(numArgs, slot).withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
     }
 
-    MacroAssembler::Address callFramePayloadSlot(int numArgs, int slot)
+    MacroAssembler::Address calleeFramePayloadSlot(int numArgs, int slot)
     {
-        return callFrameSlot(numArgs, slot).withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+        return calleeFrameSlot(numArgs, slot).withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     }
 
-    MacroAssembler::Address argumentTagSlot(int numArgs, int argument)
+    MacroAssembler::Address calleeArgumentTagSlot(int numArgs, int argument)
     {
-        return argumentSlot(numArgs, argument).withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+        return calleeArgumentSlot(numArgs, argument).withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
     }
 
-    MacroAssembler::Address argumentPayloadSlot(int numArgs, int argument)
+    MacroAssembler::Address calleeArgumentPayloadSlot(int numArgs, int argument)
     {
-        return argumentSlot(numArgs, argument).withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+        return calleeArgumentSlot(numArgs, argument).withOffset(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+    }
+
+    MacroAssembler::Address calleeFrameCallerFrame(int numArgs)
+    {
+        return calleeFrameSlot(numArgs, 0).withOffset(CallFrame::callerFrameOffset());
     }
 
     void emitCall(Node*);

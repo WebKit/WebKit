@@ -131,7 +131,7 @@ void JIT::compileCallEval(Instruction* instruction)
 {
     callOperationWithCallFrameRollbackOnException(operationCallEval);
     addSlowCase(branch64(Equal, regT0, TrustedImm64(JSValue::encode(JSValue()))));
-    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, callFrameRegister);
+    emitGetCallerFrameFromCallFrameHeaderPtr(callFrameRegister);
 
     sampleCodeBlock(m_codeBlock);
     
@@ -191,7 +191,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     store32(TrustedImm32(locationBits), Address(callFrameRegister, JSStack::ArgumentCount * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
     emitGetVirtualRegister(callee, regT0); // regT0 holds callee.
 
-    store64(callFrameRegister, Address(regT1, JSStack::CallerFrame * static_cast<int>(sizeof(Register))));
+    store64(callFrameRegister, Address(regT1, CallFrame::callerFrameOffset()));
     store64(regT0, Address(regT1, JSStack::Callee * static_cast<int>(sizeof(Register))));
     move(regT1, callFrameRegister);
 

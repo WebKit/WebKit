@@ -83,7 +83,7 @@ JIT::JIT(VM* vm, CodeBlock* codeBlock)
 #if USE(JSVALUE32_64)
     , m_jumpTargetIndex(0)
     , m_mappedBytecodeOffset((unsigned)-1)
-    , m_mappedVirtualRegisterIndex(JSStack::ReturnPC)
+    , m_mappedVirtualRegisterIndex(UINT_MAX)
     , m_mappedTag((RegisterID)-1)
     , m_mappedPayload((RegisterID)-1)
 #else
@@ -547,7 +547,7 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         nop();
 
     preserveReturnAddressAfterCall(regT2);
-    emitPutToCallFrameHeader(regT2, JSStack::ReturnPC);
+    emitPutReturnPCToCallFrameHeader(regT2);
     emitPutImmediateToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
 
     Label beginLabel(this);
@@ -612,7 +612,7 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         arityCheck = label();
         store8(TrustedImm32(0), &m_codeBlock->m_shouldAlwaysBeInlined);
         preserveReturnAddressAfterCall(regT2);
-        emitPutToCallFrameHeader(regT2, JSStack::ReturnPC);
+        emitPutReturnPCToCallFrameHeader(regT2);
         emitPutImmediateToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
 
         load32(payloadFor(JSStack::ArgumentCount), regT1);
@@ -802,7 +802,7 @@ void JIT::privateCompileExceptionHandlers()
     if (!m_exceptionChecksWithCallFrameRollback.empty()) {
         // Remove hostCallFlag from caller
         m_exceptionChecksWithCallFrameRollback.link(this);
-        emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, GPRInfo::argumentGPR0);
+        emitGetCallerFrameFromCallFrameHeaderPtr(GPRInfo::argumentGPR0);
         andPtr(TrustedImm32(safeCast<int32_t>(~CallFrame::hostCallFrameFlag())), GPRInfo::argumentGPR0);
         doLookup = jump();
     }

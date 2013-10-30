@@ -133,16 +133,34 @@ public:
     }
     void emitPutToCallFrameHeader(GPRReg from, JSStack::CallFrameHeaderEntry entry)
     {
-#if USE(JSVALUE64)
-        store64(from, Address(GPRInfo::callFrameRegister, entry * sizeof(Register)));
-#else
-        store32(from, Address(GPRInfo::callFrameRegister, entry * sizeof(Register)));
-#endif
+        storePtr(from, Address(GPRInfo::callFrameRegister, entry * sizeof(Register)));
     }
 
     void emitPutImmediateToCallFrameHeader(void* value, JSStack::CallFrameHeaderEntry entry)
     {
         storePtr(TrustedImmPtr(value), Address(GPRInfo::callFrameRegister, entry * sizeof(Register)));
+    }
+
+    void emitGetCallerFrameFromCallFrameHeaderPtr(RegisterID to)
+    {
+        loadPtr(Address(GPRInfo::callFrameRegister, CallFrame::callerFrameOffset()), to);
+    }
+    void emitPutCallerFrameToCallFrameHeader(RegisterID from)
+    {
+        storePtr(from, Address(GPRInfo::callFrameRegister, CallFrame::callerFrameOffset()));
+    }
+
+    void emitGetReturnPCFromCallFrameHeaderPtr(RegisterID to)
+    {
+        loadPtr(Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()), to);
+    }
+    void emitPutReturnPCToCallFrameHeader(RegisterID from)
+    {
+        storePtr(from, Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()));
+    }
+    void emitPutReturnPCToCallFrameHeader(TrustedImmPtr from)
+    {
+        storePtr(from, Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()));
     }
 
     Jump branchIfNotCell(GPRReg reg)
@@ -154,6 +172,10 @@ public:
 #endif
     }
     
+    static Address addressForByteOffset(ptrdiff_t byteOffset)
+    {
+        return Address(GPRInfo::callFrameRegister, byteOffset);
+    }
     static Address addressFor(VirtualRegister virtualRegister)
     {
         ASSERT(virtualRegister.isValid());

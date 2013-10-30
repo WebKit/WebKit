@@ -112,12 +112,13 @@ namespace JSC  {
 
         CallFrame& operator=(const Register& r) { *static_cast<Register*>(this) = r; return *this; }
 
-        CallFrame* callerFrame() const { return this[JSStack::CallerFrame].callFrame(); }
-#if ENABLE(JIT) || ENABLE(LLINT)
-        ReturnAddressPtr returnPC() const { return ReturnAddressPtr(this[JSStack::ReturnPC].vPC()); }
-        bool hasReturnPC() const { return !!this[JSStack::ReturnPC].vPC(); }
-        void clearReturnPC() { registers()[JSStack::ReturnPC] = static_cast<Instruction*>(0); }
-#endif
+        CallFrame* callerFrame() const { return callerFrameAndPC().callerFrame; }
+        static ptrdiff_t callerFrameOffset() { return OBJECT_OFFSETOF(CallerFrameAndPC, callerFrame); }
+
+        ReturnAddressPtr returnPC() const { return ReturnAddressPtr(callerFrameAndPC().pc); }
+        bool hasReturnPC() const { return !!callerFrameAndPC().pc; }
+        void clearReturnPC() { callerFrameAndPC().pc = 0; }
+        static ptrdiff_t returnPCOffset() { return OBJECT_OFFSETOF(CallerFrameAndPC, pc); }
         AbstractPC abstractReturnPC(VM& vm) { return AbstractPC(vm, this); }
 
         class Location {
@@ -199,7 +200,7 @@ namespace JSC  {
         void setCurrentVPC(Instruction* vpc);
 #endif
 
-        void setCallerFrame(CallFrame* callerFrame) { static_cast<Register*>(this)[JSStack::CallerFrame] = callerFrame; }
+        void setCallerFrame(CallFrame* frame) { callerFrameAndPC().callerFrame = frame; }
         void setScope(JSScope* scope) { static_cast<Register*>(this)[JSStack::ScopeChain] = scope; }
 
         ALWAYS_INLINE void init(CodeBlock* codeBlock, Instruction* vPC, JSScope* scope,
@@ -274,8 +275,8 @@ namespace JSC  {
         void setArgumentCountIncludingThis(int count) { static_cast<Register*>(this)[JSStack::ArgumentCount].payload() = count; }
         void setCallee(JSObject* callee) { static_cast<Register*>(this)[JSStack::Callee] = Register::withCallee(callee); }
         void setCodeBlock(CodeBlock* codeBlock) { static_cast<Register*>(this)[JSStack::CodeBlock] = codeBlock; }
-        void setReturnPC(void* value) { static_cast<Register*>(this)[JSStack::ReturnPC] = (Instruction*)value; }
-        
+        void setReturnPC(void* value) { callerFrameAndPC().pc = reinterpret_cast<Instruction*>(value); }
+
         CallFrame* callerFrameNoFlags() { return callerFrame()->removeHostCallFrameFlag(); }
 
         // CallFrame::iterate() expects a Functor that implements the following method:
@@ -323,6 +324,9 @@ namespace JSC  {
             // he/she is doing when calling this method.
             return this[argumentOffset(argIndex)].jsValue();
         }
+
+        CallerFrameAndPC& callerFrameAndPC() { return *reinterpret_cast<CallerFrameAndPC*>(this); }
+        const CallerFrameAndPC& callerFrameAndPC() const { return *reinterpret_cast<const CallerFrameAndPC*>(this); }
 
         friend class JSStack;
         friend class VMInspector;

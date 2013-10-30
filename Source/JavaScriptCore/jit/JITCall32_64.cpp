@@ -61,8 +61,8 @@ void JIT::emit_op_ret(Instruction* currentInstruction)
     unsigned dst = currentInstruction[1].u.operand;
 
     emitLoad(dst, regT1, regT0);
-    emitGetFromCallFrameHeaderPtr(JSStack::ReturnPC, regT2);
-    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, callFrameRegister);
+    emitGetReturnPCFromCallFrameHeaderPtr(regT2);
+    emitGetCallerFrameFromCallFrameHeaderPtr(callFrameRegister);
 
     restoreReturnAddressBeforeReturn(regT2);
     ret();
@@ -78,8 +78,8 @@ void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
     loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
     Jump notObject = emitJumpIfNotObject(regT2);
 
-    emitGetFromCallFrameHeaderPtr(JSStack::ReturnPC, regT2);
-    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, callFrameRegister);
+    emitGetReturnPCFromCallFrameHeaderPtr(regT2);
+    emitGetCallerFrameFromCallFrameHeaderPtr(callFrameRegister);
 
     restoreReturnAddressBeforeReturn(regT2);
     ret();
@@ -88,8 +88,8 @@ void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
     notObject.link(this);
     emitLoad(thisReg, regT1, regT0);
 
-    emitGetFromCallFrameHeaderPtr(JSStack::ReturnPC, regT2);
-    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, callFrameRegister);
+    emitGetReturnPCFromCallFrameHeaderPtr(regT2);
+    emitGetCallerFrameFromCallFrameHeaderPtr(callFrameRegister);
 
     restoreReturnAddressBeforeReturn(regT2);
     ret();
@@ -202,7 +202,7 @@ void JIT::compileCallEval(Instruction* instruction)
 {
     callOperationWithCallFrameRollbackOnException(operationCallEval);
     addSlowCase(branch32(Equal, regT1, TrustedImm32(JSValue::EmptyValueTag)));
-    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, callFrameRegister);
+    emitGetCallerFrameFromCallFrameHeaderPtr(callFrameRegister);
 
     sampleCodeBlock(m_codeBlock);
     
@@ -262,7 +262,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     store32(TrustedImm32(locationBits), tagFor(JSStack::ArgumentCount, callFrameRegister));
     emitLoad(callee, regT1, regT0); // regT1, regT0 holds callee.
 
-    storePtr(callFrameRegister, Address(regT3, JSStack::CallerFrame * static_cast<int>(sizeof(Register))));
+    storePtr(callFrameRegister, Address(GPRInfo::regT3, CallFrame::callerFrameOffset()));
     emitStore(JSStack::Callee, regT1, regT0, regT3);
     move(regT3, callFrameRegister);
 

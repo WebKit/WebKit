@@ -992,7 +992,7 @@ inline void JIT::unmap(RegisterID registerID)
 inline void JIT::unmap()
 {
     m_mappedBytecodeOffset = (unsigned)-1;
-    m_mappedVirtualRegisterIndex = JSStack::ReturnPC;
+    m_mappedVirtualRegisterIndex = UINT_MAX;
     m_mappedTag = (RegisterID)-1;
     m_mappedPayload = (RegisterID)-1;
 }

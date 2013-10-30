@@ -659,10 +659,10 @@ void SpeculativeJIT::emitCall(Node* node)
     
     int numArgs = numPassedArgs + dummyThisArgument;
 
-    m_jit.store32(MacroAssembler::TrustedImm32(numArgs), callFramePayloadSlot(numArgs, JSStack::ArgumentCount));
-    m_jit.storePtr(GPRInfo::callFrameRegister, callFramePayloadSlot(numArgs, JSStack::CallerFrame));
-    m_jit.store32(calleePayloadGPR, callFramePayloadSlot(numArgs, JSStack::Callee));
-    m_jit.store32(calleeTagGPR, callFrameTagSlot(numArgs, JSStack::Callee));
+    m_jit.store32(MacroAssembler::TrustedImm32(numArgs), calleeFramePayloadSlot(numArgs, JSStack::ArgumentCount));
+    m_jit.storePtr(GPRInfo::callFrameRegister, calleeFrameCallerFrame(numArgs));
+    m_jit.store32(calleePayloadGPR, calleeFramePayloadSlot(numArgs, JSStack::Callee));
+    m_jit.store32(calleeTagGPR, calleeFrameTagSlot(numArgs, JSStack::Callee));
 
     for (int i = 0; i < numPassedArgs; i++) {
         Edge argEdge = m_jit.graph().m_varArgChildren[node->firstChild() + 1 + i];
@@ -671,8 +671,8 @@ void SpeculativeJIT::emitCall(Node* node)
         GPRReg argPayloadGPR = arg.payloadGPR();
         use(argEdge);
 
-        m_jit.store32(argTagGPR, argumentTagSlot(numArgs, i + dummyThisArgument));
-        m_jit.store32(argPayloadGPR, argumentPayloadSlot(numArgs, i + dummyThisArgument));
+        m_jit.store32(argTagGPR, calleeArgumentTagSlot(numArgs, i + dummyThisArgument));
+        m_jit.store32(argPayloadGPR, calleeArgumentPayloadSlot(numArgs, i + dummyThisArgument));
     }
 
     flushRegisters();
@@ -3093,9 +3093,9 @@ void SpeculativeJIT::compile(Node* node)
         }
 
         // Grab the return address.
-        m_jit.emitGetFromCallFrameHeaderPtr(JSStack::ReturnPC, GPRInfo::regT2);
+        m_jit.emitGetReturnPCFromCallFrameHeaderPtr(GPRInfo::regT2);
         // Restore our caller's "r".
-        m_jit.emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, GPRInfo::callFrameRegister);
+        m_jit.emitGetCallerFrameFromCallFrameHeaderPtr(GPRInfo::callFrameRegister);
         // Return.
         m_jit.restoreReturnAddressBeforeReturn(GPRInfo::regT2);
         m_jit.ret();

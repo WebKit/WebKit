@@ -1,3 +1,112 @@
+2013-10-30  Mark Lam  <mark.lam@apple.com>
+
+        Adjust CallFrameHeader's ReturnPC and CallFrame locations to match the native ABI .
+        https://bugs.webkit.org/show_bug.cgi?id=123444.
+
+        Reviewed by Geoffrey Garen.
+
+        - Introduced an explicit CallerFrameAndPC struct.
+        - A CallFrame is expected to start with a CallerFrameAndPC struct. 
+        - The Register class no longer supports CallFrame* and Instruction*.
+
+          These hides the differences between JSVALUE32_64 and JSVALUE64 in
+          terms of managing the callerFrame() and returnPC() values.
+
+        - Convert all uses of JSStack::CallerFrame and JSStack::ReturnPC to
+          go through CallFrame to access the appropriate values and offsets.
+          CallFrame, in turn, will access the callerFrame and returnPC via
+          the CallerFrameAndPC struct.
+
+        - InlineCallFrame will provide offsets for its callerFrame and
+          returnPC. It will make use of CallFrame::callerFrameOffset() and
+          CallerFrame::returnPCOffset() to compute these.
+
+        * bytecode/CodeOrigin.h:
+        (JSC::InlineCallFrame::callerFrameOffset):
+        (JSC::InlineCallFrame::returnPCOffset):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileEntry):
+        (JSC::DFG::JITCompiler::compileExceptionHandlers):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::calleeFrameSlot):
+        (JSC::DFG::SpeculativeJIT::calleeArgumentSlot):
+        (JSC::DFG::SpeculativeJIT::calleeFrameTagSlot):
+        (JSC::DFG::SpeculativeJIT::calleeFramePayloadSlot):
+        (JSC::DFG::SpeculativeJIT::calleeArgumentTagSlot):
+        (JSC::DFG::SpeculativeJIT::calleeArgumentPayloadSlot):
+        - Prefixed all the above with callee since they apply to the callee frame.
+        (JSC::DFG::SpeculativeJIT::calleeFrameCallerFrame):
+        - Added to set the callerFrame pointer in the callee frame.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::compileEntry):
+        (JSC::FTL::link):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::callerFrame):
+        (JSC::ExecState::callerFrameOffset):
+        (JSC::ExecState::returnPC):
+        (JSC::ExecState::hasReturnPC):
+        (JSC::ExecState::clearReturnPC):
+        (JSC::ExecState::returnPCOffset):
+        (JSC::ExecState::setCallerFrame):
+        (JSC::ExecState::setReturnPC):
+        (JSC::ExecState::callerFrameAndPC):
+        * interpreter/JSStack.h:
+        * interpreter/Register.h:
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitPutToCallFrameHeader):
+        - Convert to using storePtr() here and simplify the code.
+        (JSC::AssemblyHelpers::emitGetCallerFrameFromCallFrameHeaderPtr):
+        (JSC::AssemblyHelpers::emitPutCallerFrameToCallFrameHeader):
+        (JSC::AssemblyHelpers::emitGetReturnPCFromCallFrameHeaderPtr):
+        (JSC::AssemblyHelpers::emitPutReturnPCToCallFrameHeader):
+        - Helpers to emit gets/puts of the callerFrame and returnPC.
+        (JSC::AssemblyHelpers::addressForByteOffset):
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::emit_op_ret_object_or_this):
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileOpCall):
+        * jit/JITInlines.h:
+        (JSC::JIT::unmap):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_end):
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::emit_op_ret_object_or_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        (JSC::JIT::emit_op_end):
+        * jit/JITOperations.cpp:
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::returnJSValue):
+        (JSC::SpecializedThunkJIT::returnDouble):
+        (JSC::SpecializedThunkJIT::returnInt32):
+        (JSC::SpecializedThunkJIT::returnJSCell):
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromCallSlowPathGenerator):
+        (JSC::slowPathFor):
+        (JSC::nativeForGenerator):
+
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        - Updated offsets and asserts to match the new CallFrame layout.
+
 2013-10-30  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix Mac.

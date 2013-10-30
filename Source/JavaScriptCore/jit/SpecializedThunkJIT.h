@@ -97,7 +97,7 @@ namespace JSC {
         {
             if (src != regT0)
                 move(src, regT0);
-            loadPtr(payloadFor(JSStack::CallerFrame, callFrameRegister), callFrameRegister);
+            loadPtr(Address(callFrameRegister, CallFrame::callerFrameOffset()), callFrameRegister);
             ret();
         }
 #else
@@ -105,7 +105,7 @@ namespace JSC {
         {
             ASSERT_UNUSED(payload, payload == regT0);
             ASSERT_UNUSED(tag, tag == regT1);
-            loadPtr(payloadFor(JSStack::CallerFrame, callFrameRegister), callFrameRegister);
+            loadPtr(Address(callFrameRegister, CallFrame::callerFrameOffset()), callFrameRegister);
             ret();
         }
 #endif
@@ -131,7 +131,7 @@ namespace JSC {
             lowNonZero.link(this);
             highNonZero.link(this);
 #endif
-            loadPtr(payloadFor(JSStack::CallerFrame, callFrameRegister), callFrameRegister);
+            loadPtr(Address(callFrameRegister, CallFrame::callerFrameOffset()), callFrameRegister);
             ret();
         }
 
@@ -140,7 +140,7 @@ namespace JSC {
             if (src != regT0)
                 move(src, regT0);
             tagReturnAsInt32();
-            loadPtr(payloadFor(JSStack::CallerFrame, callFrameRegister), callFrameRegister);
+            loadPtr(Address(callFrameRegister, CallFrame::callerFrameOffset()), callFrameRegister);
             ret();
         }
 
@@ -149,7 +149,7 @@ namespace JSC {
             if (src != regT0)
                 move(src, regT0);
             tagReturnAsJSCell();
-            loadPtr(payloadFor(JSStack::CallerFrame, callFrameRegister), callFrameRegister);
+            loadPtr(Address(callFrameRegister, CallFrame::callerFrameOffset()), callFrameRegister);
             ret();
         }
         

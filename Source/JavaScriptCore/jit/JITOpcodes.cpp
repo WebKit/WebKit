@@ -85,7 +85,7 @@ void JIT::emit_op_end(Instruction* currentInstruction)
 {
     RELEASE_ASSERT(returnValueRegister != callFrameRegister);
     emitGetVirtualRegister(currentInstruction[1].u.operand, returnValueRegister);
-    restoreReturnAddressBeforeReturn(Address(callFrameRegister, JSStack::ReturnPC * static_cast<int>(sizeof(Register))));
+    restoreReturnAddressBeforeReturn(Address(callFrameRegister, CallFrame::returnPCOffset()));
     ret();
 }
 
@@ -275,10 +275,10 @@ void JIT::emit_op_ret(Instruction* currentInstruction)
     emitGetVirtualRegister(currentInstruction[1].u.operand, returnValueRegister);
 
     // Grab the return address.
-    emitGetFromCallFrameHeaderPtr(JSStack::ReturnPC, regT1);
+    emitGetReturnPCFromCallFrameHeaderPtr(regT1);
 
     // Restore our caller's "r".
-    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, callFrameRegister);
+    emitGetCallerFrameFromCallFrameHeaderPtr(callFrameRegister);
 
     // Return.
     restoreReturnAddressBeforeReturn(regT1);
@@ -298,10 +298,10 @@ void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
     Jump notObject = emitJumpIfNotObject(regT2);
 
     // Grab the return address.
-    emitGetFromCallFrameHeaderPtr(JSStack::ReturnPC, regT1);
+    emitGetReturnPCFromCallFrameHeaderPtr(regT1);
 
     // Restore our caller's "r".
-    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, callFrameRegister);
+    emitGetCallerFrameFromCallFrameHeaderPtr(callFrameRegister);
 
     // Return.
     restoreReturnAddressBeforeReturn(regT1);
@@ -313,10 +313,10 @@ void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
     emitGetVirtualRegister(currentInstruction[2].u.operand, returnValueRegister);
 
     // Grab the return address.
-    emitGetFromCallFrameHeaderPtr(JSStack::ReturnPC, regT1);
+    emitGetReturnPCFromCallFrameHeaderPtr(regT1);
 
     // Restore our caller's "r".
-    emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, callFrameRegister);
+    emitGetCallerFrameFromCallFrameHeaderPtr(callFrameRegister);
 
     // Return.
     restoreReturnAddressBeforeReturn(regT1);

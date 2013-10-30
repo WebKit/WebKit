@@ -99,7 +99,7 @@ void JITCompiler::compileEntry()
     // check) which will be dependent on stack layout. (We'd need to account for this in
     // both normal return code and when jumping to an exception handler).
     preserveReturnAddressAfterCall(GPRInfo::regT2);
-    emitPutToCallFrameHeader(GPRInfo::regT2, JSStack::ReturnPC);
+    emitPutReturnPCToCallFrameHeader(GPRInfo::regT2);
     emitPutImmediateToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
 }
 
@@ -127,7 +127,7 @@ void JITCompiler::compileExceptionHandlers()
     if (!m_exceptionChecksWithCallFrameRollback.empty()) {
         // Remove hostCallFrameFlag from caller.
         m_exceptionChecksWithCallFrameRollback.link(this);
-        emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, GPRInfo::argumentGPR0);
+        emitGetCallerFrameFromCallFrameHeaderPtr(GPRInfo::argumentGPR0);
         andPtr(TrustedImm32(safeCast<int32_t>(~CallFrame::hostCallFrameFlag())), GPRInfo::argumentGPR0);
         doLookup = jump();
     }

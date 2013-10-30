@@ -42,8 +42,6 @@ namespace JSC {
     class JSPropertyNameIterator;
     class JSScope;
 
-    struct Instruction;
-
     typedef ExecState CallFrame;
 
     class Register {
@@ -56,19 +54,15 @@ namespace JSC {
         JSValue jsValue() const;
         EncodedJSValue encodedJSValue() const;
         
-        Register& operator=(CallFrame*);
         Register& operator=(CodeBlock*);
         Register& operator=(JSScope*);
-        Register& operator=(Instruction*);
 
         int32_t i() const;
         JSActivation* activation() const;
-        CallFrame* callFrame() const;
         CodeBlock* codeBlock() const;
         JSObject* function() const;
         JSPropertyNameIterator* propertyNameIterator() const;
         JSScope* scope() const;
-        Instruction* vPC() const;
         int32_t unboxedInt32() const;
         int64_t unboxedInt52() const;
         int64_t unboxedStrictInt52() const;
@@ -91,9 +85,7 @@ namespace JSC {
     private:
         union {
             EncodedJSValue value;
-            CallFrame* callFrame;
             CodeBlock* codeBlock;
-            Instruction* vPC;
             EncodedValueDescriptor encodedValue;
             double number;
             int64_t integer;
@@ -130,21 +122,9 @@ namespace JSC {
 
     // Interpreter functions
 
-    ALWAYS_INLINE Register& Register::operator=(CallFrame* callFrame)
-    {
-        u.callFrame = callFrame;
-        return *this;
-    }
-
     ALWAYS_INLINE Register& Register::operator=(CodeBlock* codeBlock)
     {
         u.codeBlock = codeBlock;
-        return *this;
-    }
-
-    ALWAYS_INLINE Register& Register::operator=(Instruction* vPC)
-    {
-        u.vPC = vPC;
         return *this;
     }
 
@@ -153,19 +133,9 @@ namespace JSC {
         return jsValue().asInt32();
     }
 
-    ALWAYS_INLINE CallFrame* Register::callFrame() const
-    {
-        return u.callFrame;
-    }
-    
     ALWAYS_INLINE CodeBlock* Register::codeBlock() const
     {
         return u.codeBlock;
-    }
-
-    ALWAYS_INLINE Instruction* Register::vPC() const
-    {
-        return u.vPC;
     }
 
     ALWAYS_INLINE int32_t Register::unboxedInt32() const
