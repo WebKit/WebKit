@@ -90,7 +90,9 @@ public:
 private:
     ULONG m_refCount;
     COMPtr<IPropertyBag> m_userInfo;
+#if USE(CFNETWORK)
     RetainPtr<CFDictionaryRef> m_cfErrorUserInfoDict;
+#endif
     WebCore::ResourceError m_error;
 };
 
