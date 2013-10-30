@@ -1288,5 +1288,8 @@ webkit.org/b/123369 [ Mavericks ] svg/repaint/buffered-rendering-static-image.ht
 
 webkit.org/b/123489 [ Mavericks ] inspector-protocol/debugger/call-frame-this-strict.html [ Pass Failure ]
 webkit.org/b/123489 [ Mavericks ] inspector-protocol/debugger/setBreakpoint-column.html [ Pass Failure ]
+webkit.org/b/123489 [ Mavericks ] inspector-protocol/debugger/setBreakpoint-options-exception.html [ Pass Failure ]
 
 webkit.org/b/123490 [ Mavericks ] webaudio/oscillator-sawtooth.html [ Failure ]
+
+webkit.org/b/123498 [ Mavericks ] media/track/track-in-band-cues-added-once.html [ Failure ]

@@ -1,3 +1,9 @@
+2013-10-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        More Mavericks specific test expectation updates.
+
+        * platform/mac/TestExpectations:
+
 2013-10-29  Alexey Proskuryakov  <ap@apple.com>
 
         Result of focus-option-control-on-page.html depends on system preferences
