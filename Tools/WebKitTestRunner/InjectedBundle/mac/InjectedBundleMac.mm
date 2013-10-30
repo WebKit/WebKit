@@ -44,6 +44,9 @@ void InjectedBundle::platformInitialize(WKTypeRef)
 
     NSDictionary *dict = @{
         @"AppleAntiAliasingThreshold": @4,
+        // FIXME: Setting AppleFontSmoothing is likely unnecessary and ineffective. WebKit2 has its own preference for font smoothing, which is
+        // applied to each context via CGContextSetShouldSmoothFonts, presumably overriding the default. And it's too late to do this here,
+        // see <https://bugs.webkit.org/show_bug.cgi?id=123488>
         @"AppleFontSmoothing": @(NoFontSmoothing),
         @"AppleAquaColorVariant": @(BlueTintedAppearance),
         @"AppleHighlightColor": @"0.709800 0.835300 1.000000",
@@ -51,6 +54,8 @@ void InjectedBundle::platformInitialize(WKTypeRef)
         @"NSScrollAnimationEnabled": @NO,
         @"NSOverlayScrollersEnabled": @NO,
         @"AppleShowScrollBars": @"Always",
+        // FIXME (<rdar://problem/13396515>): It is too late to set AppleLanguages here, as loaded frameworks localizations cannot be changed.
+        // This breaks some accessibility tests on machines with non-English user language.
         @"AppleLanguages": @[ @"en" ],
         // FIXME: Why does this dictionary not match the one in DumpRenderTree?
         @"NSTestCorrectionDictionary": @{

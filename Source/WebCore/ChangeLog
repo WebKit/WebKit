@@ -1,3 +1,16 @@
+2013-10-30  Alexey Proskuryakov  <ap@apple.com>
+
+        85 inspector tests asserting in DrawingAreaProxyImpl::updateAcceleratedCompositingMode()
+        when there is a stale WebKitTestRunner preference
+        https://bugs.webkit.org/show_bug.cgi?id=115115
+
+        Reviewed by Darin Adler.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::setMockScrollbarsEnabled):
+        (WebCore::Settings::setUsesOverlayScrollbars):
+        Added FIXMEs.
+
 2013-10-30  Andreas Kling  <akling@apple.com>
 
         Take line boxes out of the arena.

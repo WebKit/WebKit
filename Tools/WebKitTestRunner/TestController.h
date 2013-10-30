@@ -93,6 +93,7 @@ public:
     void setVisibilityState(WKPageVisibilityState, bool isInitialState);
 
     bool resetStateToConsistentValues();
+    void resetPreferencesToConsistentValues();
 
     WorkQueueManager& workQueueManager() { return m_workQueueManager; }
 

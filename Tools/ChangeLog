@@ -1,3 +1,27 @@
+2013-10-30  Alexey Proskuryakov  <ap@apple.com>
+
+        85 inspector tests asserting in DrawingAreaProxyImpl::updateAcceleratedCompositingMode()
+        when there is a stale WebKitTestRunner preference
+        https://bugs.webkit.org/show_bug.cgi?id=115115
+
+        Reviewed by Darin Adler.
+
+        Delete stale preferences on launch.
+
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize): Now that we don't have preferences stored from
+        the previous run, we need th reinstate them before creating a WKView. Not all preferences
+        can be applied to an existing view retroactively.
+        (WTR::TestController::resetPreferencesToConsistentValues): Split out of resetStateToConsistentValues,
+        because there is no injected bundle yet when calling this function from initialize().
+
+        * WebKitTestRunner/mac/main.mm: (setDefaultsToConsistentValuesForTesting): Delete
+        the preferences.
+
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm: (WTR::InjectedBundle::platformInitialize):
+        Added some FIXMEs.
+
 2013-10-30  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the 32-bit build.

@@ -395,6 +395,9 @@ void TestController::initialize(int argc, const char* argv[])
     if (testPluginDirectory())
         WKContextSetAdditionalPluginsDirectory(m_context.get(), testPluginDirectory());
 
+    // Some preferences (notably mock scroll bars setting) currently cannot be re-applied to an existing view, so we need to set them now.
+    resetPreferencesToConsistentValues();
+
     createWebViewWithOptions(0);
 }
 
@@ -523,30 +526,8 @@ void TestController::ensureViewSupportsOptions(WKDictionaryRef options)
     }
 }
 
-bool TestController::resetStateToConsistentValues()
+void TestController::resetPreferencesToConsistentValues()
 {
-    m_state = Resetting;
-
-    m_beforeUnloadReturnValue = true;
-
-    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("Reset"));
-    WKRetainPtr<WKMutableDictionaryRef> resetMessageBody = adoptWK(WKMutableDictionaryCreate());
-
-    WKRetainPtr<WKStringRef> shouldGCKey = adoptWK(WKStringCreateWithUTF8CString("ShouldGC"));
-    WKRetainPtr<WKBooleanRef> shouldGCValue = adoptWK(WKBooleanCreate(m_gcBetweenTests));
-    WKDictionaryAddItem(resetMessageBody.get(), shouldGCKey.get(), shouldGCValue.get());
-
-    WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), resetMessageBody.get());
-
-    WKContextSetShouldUseFontSmoothing(TestController::shared().context(), false);
-
-    WKContextSetCacheModel(TestController::shared().context(), kWKCacheModelDocumentBrowser);
-
-    // FIXME: This function should also ensure that there is only one page open.
-
-    // Reset the EventSender for each test.
-    m_eventSenderProxy = adoptPtr(new EventSenderProxy(this));
-
     // Reset preferences
     WKPreferencesRef preferences = WKPageGroupGetPreferences(m_pageGroup.get());
     WKPreferencesResetTestRunnerOverrides(preferences);
@@ -589,6 +570,36 @@ bool TestController::resetStateToConsistentValues()
     WKPreferencesSetSerifFontFamily(preferences, serifFontFamily);
     WKPreferencesSetScreenFontSubstitutionEnabled(preferences, true);
     WKPreferencesSetAsynchronousSpellCheckingEnabled(preferences, false);
+}
+
+bool TestController::resetStateToConsistentValues()
+{
+    m_state = Resetting;
+
+    m_beforeUnloadReturnValue = true;
+
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("Reset"));
+    WKRetainPtr<WKMutableDictionaryRef> resetMessageBody = adoptWK(WKMutableDictionaryCreate());
+
+    WKRetainPtr<WKStringRef> shouldGCKey = adoptWK(WKStringCreateWithUTF8CString("ShouldGC"));
+    WKRetainPtr<WKBooleanRef> shouldGCValue = adoptWK(WKBooleanCreate(m_gcBetweenTests));
+    WKDictionaryAddItem(resetMessageBody.get(), shouldGCKey.get(), shouldGCValue.get());
+
+    WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), resetMessageBody.get());
+
+    WKContextSetShouldUseFontSmoothing(TestController::shared().context(), false);
+
+    WKContextSetCacheModel(TestController::shared().context(), kWKCacheModelDocumentBrowser);
+
+    // FIXME: This function should also ensure that there is only one page open.
+
+    // Reset the EventSender for each test.
+    m_eventSenderProxy = adoptPtr(new EventSenderProxy(this));
+
+    // FIXME: Is this needed? Nothing in TestController changes preferences during tests, and if there is
+    // some other code doing this, it should probably be responsible for cleanup too.
+    resetPreferencesToConsistentValues();
+
 #if !PLATFORM(MAC)
     WKTextCheckerContinuousSpellCheckingEnabledStateChanged(true);
 #endif

@@ -595,6 +595,7 @@ void Settings::setAggressiveTileRetentionEnabled(bool enabled)
 void Settings::setMockScrollbarsEnabled(bool flag)
 {
     gMockScrollbarsEnabled = flag;
+    // FIXME: This should update scroll bars in existing pages.
 }
 
 bool Settings::mockScrollbarsEnabled()
@@ -605,6 +606,7 @@ bool Settings::mockScrollbarsEnabled()
 void Settings::setUsesOverlayScrollbars(bool flag)
 {
     gUsesOverlayScrollbars = flag;
+    // FIXME: This should update scroll bars in existing pages.
 }
 
 bool Settings::usesOverlayScrollbars()

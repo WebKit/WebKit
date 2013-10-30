@@ -29,6 +29,8 @@
 
 static void setDefaultsToConsistentValuesForTesting()
 {
+    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:@"WebKitTestRunner"];
+
     NSDictionary *dict = @{
         @"AppleKeyboardUIMode": @1,
         @"AppleMagnifiedMode": @YES,
