@@ -1,3 +1,10 @@
+2013-10-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a flaky test expectation to media/track/track-in-band-legacy-api.html
+        The failure is tracked by the bug 123522.
+
+        * platform/mac/TestExpectations:
+
 2013-10-29  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Remove legacy Media Source APIs (WebKitMediaSource, WebKitSourceBuffer, WebKitSourceBufferList)
