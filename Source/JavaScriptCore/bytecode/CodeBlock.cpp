@@ -2775,16 +2775,6 @@ const SlowArgument* CodeBlock::machineSlowArguments()
 }
 
 #if ENABLE(JIT)
-void CodeBlock::reoptimize()
-{
-    ASSERT(replacement() != this);
-    ASSERT(replacement()->alternative() == this);
-    if (DFG::shouldShowDisassembly())
-        dataLog(*replacement(), " will be jettisoned due to reoptimization of ", *this, ".\n");
-    replacement()->jettison();
-    countReoptimization();
-}
-
 CodeBlock* ProgramCodeBlock::replacement()
 {
     return jsCast<ProgramExecutable*>(ownerExecutable())->codeBlock();
@@ -2817,16 +2807,53 @@ DFG::CapabilityLevel FunctionCodeBlock::capabilityLevelInternal()
     return DFG::functionForCallCapabilityLevel(this);
 }
 
-void CodeBlock::jettison()
+void CodeBlock::jettison(ReoptimizationMode mode)
 {
+    if (DFG::shouldShowDisassembly()) {
+        dataLog("Jettisoning ", *this);
+        if (mode == CountReoptimization)
+            dataLog(" and counting reoptimization");
+        dataLog(".\n");
+    }
+    
     DeferGC deferGC(*m_heap);
-    ASSERT(JITCode::isOptimizingJIT(jitType()));
-    ASSERT(this == replacement());
+    RELEASE_ASSERT(JITCode::isOptimizingJIT(jitType()));
+    
+    // We want to accomplish two things here:
+    // 1) Make sure that if this CodeBlock is on the stack right now, then if we return to it
+    //    we should OSR exit at the top of the next bytecode instruction after the return.
+    // 2) Make sure that if we call the owner executable, then we shouldn't call this CodeBlock.
+    
+    // This accomplishes the OSR-exit-on-return part, and does its own book-keeping about
+    // whether the invalidation has already happened.
+    if (!jitCode()->dfgCommon()->invalidate()) {
+        // Nothing to do since we've already been invalidated. That means that we cannot be
+        // the optimized replacement.
+        RELEASE_ASSERT(this != replacement());
+        return;
+    }
+    
+    if (DFG::shouldShowDisassembly())
+        dataLog("    Did invalidate ", *this, "\n");
+    
+    // Count the reoptimization if that's what the user wanted.
+    if (mode == CountReoptimization) {
+        baselineVersion()->countReoptimization();
+        if (DFG::shouldShowDisassembly())
+            dataLog("    Did count reoptimization for ", *this, "\n");
+    }
+    
+    // Now take care of the entrypoint.
+    if (this != replacement()) {
+        // This means that we were never the entrypoint. This can happen for OSR entry code
+        // blocks.
+        return;
+    }
     alternative()->optimizeAfterWarmUp();
     tallyFrequentExitSites();
-    if (DFG::shouldShowDisassembly())
-        dataLog("Jettisoning ", *this, ".\n");
     alternative()->install();
+    if (DFG::shouldShowDisassembly())
+        dataLog("    Did install baseline version of ", *this, "\n");
 }
 #endif
 

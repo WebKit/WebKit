@@ -24,55 +24,31 @@
  */
 
 #include "config.h"
-#include "DFGCommonData.h"
-
-#if ENABLE(DFG_JIT)
+#include "ProfiledCodeBlockJettisoningWatchpoint.h"
 
 #include "CodeBlock.h"
-#include "DFGNode.h"
-#include "DFGPlan.h"
-#include "Operations.h"
-#include "VM.h"
+#include "DFGCommon.h"
+#include "DFGExitProfile.h"
 
-namespace JSC { namespace DFG {
+namespace JSC {
 
-void CommonData::notifyCompilingStructureTransition(Plan& plan, CodeBlock* codeBlock, Node* node)
+void ProfiledCodeBlockJettisoningWatchpoint::fireInternal()
 {
-    plan.transitions.addLazily(
-        codeBlock,
-        node->codeOrigin.codeOriginOwner(),
-        node->structureTransitionData().previousStructure,
-        node->structureTransitionData().newStructure);
+    if (DFG::shouldShowDisassembly()) {
+        dataLog(
+            "Firing profiled watchpoint ", RawPointer(this), " on ", *m_codeBlock, " due to ",
+            m_exitKind, " at ", m_codeOrigin, "\n");
+    }
+    
+    baselineCodeBlockForOriginAndBaselineCodeBlock(
+        m_codeOrigin, m_codeBlock->baselineVersion())->addFrequentExitSite(
+            DFG::FrequentExitSite(m_codeOrigin.bytecodeIndex, m_exitKind));
+    
+    m_codeBlock->jettison(CountReoptimization);
+
+    if (isOnList())
+        remove();
 }
 
-unsigned CommonData::addCodeOrigin(CodeOrigin codeOrigin)
-{
-    if (codeOrigins.isEmpty()
-        || codeOrigins.last() != codeOrigin)
-        codeOrigins.append(codeOrigin);
-    unsigned index = codeOrigins.size() - 1;
-    ASSERT(codeOrigins[index] == codeOrigin);
-    return index;
-}
-
-void CommonData::shrinkToFit()
-{
-    codeOrigins.shrinkToFit();
-    weakReferences.shrinkToFit();
-    transitions.shrinkToFit();
-}
-
-bool CommonData::invalidate()
-{
-    if (!isStillValid)
-        return false;
-    for (unsigned i = jumpReplacements.size(); i--;)
-        jumpReplacements[i].fire();
-    isStillValid = false;
-    return true;
-}
-
-} } // namespace JSC::DFG
-
-#endif // ENABLE(DFG_JIT)
+} // namespace JSC
 

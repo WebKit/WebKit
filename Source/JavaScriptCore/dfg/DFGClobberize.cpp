@@ -40,6 +40,14 @@ bool doesWrites(Graph& graph, Node* node)
     return addWrite.result();
 }
 
+bool writesOverlap(Graph& graph, Node* node, AbstractHeap heap)
+{
+    NoOpClobberize addRead;
+    AbstractHeapOverlaps addWrite(heap);
+    clobberize(graph, node, addRead, addWrite);
+    return addWrite.result();
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

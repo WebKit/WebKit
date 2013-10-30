@@ -1097,7 +1097,7 @@ extern "C" void JIT_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock)
         return;
     }
 
-    codeBlock->reoptimize();
+    optimizedCodeBlock->jettison(CountReoptimization);
 }
 
 #if ENABLE(FTL_JIT)

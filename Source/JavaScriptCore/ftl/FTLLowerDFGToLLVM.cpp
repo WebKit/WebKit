@@ -447,6 +447,9 @@ private:
         case ForceOSRExit:
             compileForceOSRExit();
             break;
+        case InvalidationPoint:
+            compileInvalidationPoint();
+            break;
         case ValueToInt32:
             compileValueToInt32();
             break;
@@ -1139,10 +1142,6 @@ private:
     void compileStructureTransitionWatchpoint()
     {
         addWeakReference(m_node->structure());
-        
-        // FIXME: Implement structure transition watchpoints.
-        // https://bugs.webkit.org/show_bug.cgi?id=113647
-        
         speculateCell(m_node->child1());
     }
     
@@ -1325,11 +1324,6 @@ private:
             
         case Array::Double: {
             if (m_node->arrayMode().isInBounds()) {
-                if (m_node->arrayMode().isSaneChain()) {
-                    // FIXME: Implement structure transition watchpoints.
-                    // https://bugs.webkit.org/show_bug.cgi?id=113647
-                }
-            
                 speculate(
                     OutOfBounds, noValue(), 0,
                     m_out.aboveOrEqual(
@@ -1695,8 +1689,8 @@ private:
     
     void compileGlobalVarWatchpoint()
     {
-        // FIXME: Implement watchpoints.
-        // https://bugs.webkit.org/show_bug.cgi?id=113647
+        // FIXME: In debug mode we could emit some assertion code here.
+        // https://bugs.webkit.org/show_bug.cgi?id=123471
     }
     
     void compileGetMyScope()
@@ -1745,7 +1739,6 @@ private:
     void compileCompareEqConstant()
     {
         ASSERT(m_graph.valueOfJSConstant(m_node->child2().node()).isNull());
-        masqueradesAsUndefinedWatchpointIfIsStillValid();
         setBoolean(
             equalNullOrUndefined(
                 m_node->child1(), AllCellsAreFalse, EqualNullOrUndefined));
@@ -1774,7 +1767,6 @@ private:
         }
         
         if (m_node->isBinaryUseKind(ObjectUse)) {
-            masqueradesAsUndefinedWatchpointIfIsStillValid();
             setBoolean(
                 m_out.equal(
                     lowNonNullObject(m_node->child1()),
@@ -1790,7 +1782,7 @@ private:
         JSValue constant = m_graph.valueOfJSConstant(m_node->child2().node());
 
         if (constant.isUndefinedOrNull()
-            && !masqueradesAsUndefinedWatchpointIfIsStillValid()) {
+            && !masqueradesAsUndefinedWatchpointIsStillValid()) {
             if (constant.isNull()) {
                 setBoolean(equalNullOrUndefined(m_node->child1(), AllCellsAreFalse, EqualNull));
                 return;
@@ -2116,6 +2108,12 @@ private:
         terminate(InadequateCoverage);
     }
     
+    void compileInvalidationPoint()
+    {
+        // FIXME: Implement invalidation points in terms of llvm.stackmap.
+        // https://bugs.webkit.org/show_bug.cgi?id=113647
+    }
+    
     LValue boolify(Edge edge)
     {
         switch (edge.useKind()) {
@@ -2155,7 +2153,7 @@ private:
         Edge edge, StringOrObjectMode cellMode, EqualNullOrUndefinedMode primitiveMode,
         OperandSpeculationMode operandMode = AutomaticOperandSpeculation)
     {
-        bool validWatchpoint = masqueradesAsUndefinedWatchpointIfIsStillValid();
+        bool validWatchpoint = masqueradesAsUndefinedWatchpointIsStillValid();
         
         LValue value = lowJSValue(edge, operandMode);
         
@@ -3077,7 +3075,7 @@ private:
         FTL_TYPE_CHECK(
             jsValueValue(cell), edge, SpecObject, 
             m_out.equal(structure, m_out.constIntPtr(vm().stringStructure.get())));
-        if (masqueradesAsUndefinedWatchpointIfIsStillValid())
+        if (masqueradesAsUndefinedWatchpointIsStillValid())
             return;
         
         speculate(
@@ -3125,16 +3123,6 @@ private:
     bool masqueradesAsUndefinedWatchpointIsStillValid()
     {
         return m_graph.masqueradesAsUndefinedWatchpointIsStillValid(m_node->codeOrigin);
-    }
-    
-    bool masqueradesAsUndefinedWatchpointIfIsStillValid()
-    {
-        if (!masqueradesAsUndefinedWatchpointIsStillValid())
-            return false;
-        
-        // FIXME: Implement masquerades-as-undefined watchpoints.
-        // https://bugs.webkit.org/show_bug.cgi?id=113647
-        return true;
     }
     
     enum ExceptionCheckMode { NoExceptions, CheckExceptions };

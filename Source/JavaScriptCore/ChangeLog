@@ -1,3 +1,171 @@
+2013-10-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Add InvalidationPoints to the DFG and use them for all watchpoints
+        https://bugs.webkit.org/show_bug.cgi?id=123472
+
+        Reviewed by Mark Hahnenberg.
+        
+        This makes a fundamental change to how watchpoints work in the DFG.
+        
+        Previously, a watchpoint was an instruction whose execution semantics were something
+        like:
+        
+            if (watchpoint->invalidated)
+                exit
+        
+        We would implement this without any branch by using jump replacement.
+        
+        This is a very good optimization. But it's a bit awkward once you get a lot of
+        watchpoints: semantically we will have lots of these branches in the code, which the
+        compiler needs to reason about even though they don't actually result in any emitted
+        code.
+        
+        Separately, we also had a mechanism for jettisoning a CodeBlock. This mechanism would
+        be invoked if a CodeBlock exited a lot. It would ensure that a CodeBlock wouldn't be
+        called into again, but it would do nothing for CodeBlocks that were already on the
+        stack.
+        
+        This change flips jettisoning and watchpoint invalidation on their heads. Now, the jump
+        replacement has nothing to do with watchpoints; instead it's something that happens if
+        you ever jettison a CodeBlock. Jump replacement is now an all-or-nothing operation over
+        all of the potential call-return safe-exit-points in a CodeBlock. We call these
+        "InvalidationPoint"s. A watchpoint instruction is now "lowered" by having the DFG
+        collect all of the watchpoint sets that the CodeBlock cares about, and then registering
+        a CodeBlockJettisoningWatchpoint with all of them. That is, if the watchpoint fires, it
+        jettisons the CodeBlock, which in turn ensures that the CodeBlock can't be called into
+        (because the entrypoint now points to baseline code) and can't be returned into
+        (because returning exits to baseline before the next bytecode instruction).
+        
+        This will allow for a sensible lowering of watchpoints to LLVM IR. It will also allow
+        for jettison() to be used effectively for things like breakpointing and single-stepping
+        in the debugger.
+        
+        Well, basically, this mechanism just takes us into the HotSpot-style world where anyone
+        can, at any time and for any reason, request that an optimized CodeBlock is rendered
+        immediately invalid. You can use this for many cool things, I'm sure.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::jettison):
+        * bytecode/CodeBlock.h:
+        * bytecode/CodeBlockJettisoningWatchpoint.cpp: Added.
+        (JSC::CodeBlockJettisoningWatchpoint::fireInternal):
+        * bytecode/CodeBlockJettisoningWatchpoint.h: Added.
+        (JSC::CodeBlockJettisoningWatchpoint::CodeBlockJettisoningWatchpoint):
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        * bytecode/ExitKind.h:
+        * bytecode/ProfiledCodeBlockJettisoningWatchpoint.cpp: Added.
+        (JSC::ProfiledCodeBlockJettisoningWatchpoint::fireInternal):
+        * bytecode/ProfiledCodeBlockJettisoningWatchpoint.h: Added.
+        (JSC::ProfiledCodeBlockJettisoningWatchpoint::ProfiledCodeBlockJettisoningWatchpoint):
+        * dfg/DFGAbstractHeap.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGClobberize.cpp:
+        (JSC::DFG::writesOverlap):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        (JSC::DFG::AbstractHeapOverlaps::AbstractHeapOverlaps):
+        (JSC::DFG::AbstractHeapOverlaps::operator()):
+        (JSC::DFG::AbstractHeapOverlaps::result):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::invalidate):
+        * dfg/DFGCommonData.h:
+        (JSC::DFG::CommonData::CommonData):
+        * dfg/DFGDesiredWatchpoints.cpp:
+        (JSC::DFG::DesiredWatchpoints::addLazily):
+        (JSC::DFG::DesiredWatchpoints::reallyAdd):
+        * dfg/DFGDesiredWatchpoints.h:
+        (JSC::DFG::WatchpointForGenericWatchpointSet::WatchpointForGenericWatchpointSet):
+        (JSC::DFG::GenericDesiredWatchpoints::addLazily):
+        (JSC::DFG::GenericDesiredWatchpoints::reallyAdd):
+        (JSC::DFG::GenericDesiredWatchpoints::areStillValid):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGInvalidationPointInjectionPhase.cpp: Added.
+        (JSC::DFG::InvalidationPointInjectionPhase::InvalidationPointInjectionPhase):
+        (JSC::DFG::InvalidationPointInjectionPhase::run):
+        (JSC::DFG::InvalidationPointInjectionPhase::handle):
+        (JSC::DFG::InvalidationPointInjectionPhase::insertInvalidationCheck):
+        (JSC::DFG::performInvalidationPointInjection):
+        * dfg/DFGInvalidationPointInjectionPhase.h: Added.
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        * dfg/DFGJumpReplacement.cpp: Added.
+        (JSC::DFG::JumpReplacement::fire):
+        * dfg/DFGJumpReplacement.h: Added.
+        (JSC::DFG::JumpReplacement::JumpReplacement):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRExitCompilationInfo.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        (JSC::DFG::Plan::reallyAdd):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitInvalidationPoint):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::masqueradesAsUndefinedWatchpointIsStillValid):
+        (JSC::DFG::SpeculativeJIT::speculateStringObjectForStructure):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGWatchpointCollectionPhase.cpp: Added.
+        (JSC::DFG::WatchpointCollectionPhase::WatchpointCollectionPhase):
+        (JSC::DFG::WatchpointCollectionPhase::run):
+        (JSC::DFG::WatchpointCollectionPhase::handle):
+        (JSC::DFG::WatchpointCollectionPhase::handleEdge):
+        (JSC::DFG::WatchpointCollectionPhase::handleMasqueradesAsUndefined):
+        (JSC::DFG::WatchpointCollectionPhase::handleStringGetByVal):
+        (JSC::DFG::WatchpointCollectionPhase::addLazily):
+        (JSC::DFG::WatchpointCollectionPhase::globalObject):
+        (JSC::DFG::performWatchpointCollection):
+        * dfg/DFGWatchpointCollectionPhase.h: Added.
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileStructureTransitionWatchpoint):
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+        (JSC::FTL::LowerDFGToLLVM::compileGlobalVarWatchpoint):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareEqConstant):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareStrictEq):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareStrictEqConstant):
+        (JSC::FTL::LowerDFGToLLVM::compileInvalidationPoint):
+        (JSC::FTL::LowerDFGToLLVM::equalNullOrUndefined):
+        (JSC::FTL::LowerDFGToLLVM::speculateNonNullObject):
+        * jit/JITOperations.cpp:
+        * jit/JumpReplacementWatchpoint.cpp: Removed.
+        * jit/JumpReplacementWatchpoint.h: Removed.
+
 2013-10-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSExport doesn't support constructors

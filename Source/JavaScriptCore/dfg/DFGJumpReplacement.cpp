@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,36 +24,23 @@
  */
 
 #include "config.h"
-#include "JumpReplacementWatchpoint.h"
+#include "DFGJumpReplacement.h"
 
-#if ENABLE(JIT)
+#if ENABLE(DFG_JIT)
 
-#include "LinkBuffer.h"
+#include "MacroAssembler.h"
 #include "Options.h"
 
-namespace JSC {
+namespace JSC { namespace DFG {
 
-void JumpReplacementWatchpoint::correctLabels(LinkBuffer& linkBuffer)
+void JumpReplacement::fire()
 {
-    MacroAssembler::Label label;
-    label.m_label.m_offset = m_source;
-    m_source = bitwise_cast<uintptr_t>(linkBuffer.locationOf(label).dataLocation());
-    label.m_label.m_offset = m_destination;
-    m_destination = bitwise_cast<uintptr_t>(linkBuffer.locationOf(label).dataLocation());
-}
-
-void JumpReplacementWatchpoint::fireInternal()
-{
-    void* source = bitwise_cast<void*>(m_source);
-    void* destination = bitwise_cast<void*>(m_destination);
     if (Options::showDisassembly())
-        dataLogF("Firing jump replacement watchpoint from %p, to %p.\n", source, destination);
-    MacroAssembler::replaceWithJump(CodeLocationLabel(source), CodeLocationLabel(destination));
-    if (isOnList())
-        remove();
+        dataLogF("Firing jump replacement watchpoint from %p, to %p.\n", m_source.dataLocation(), m_destination.dataLocation());
+    MacroAssembler::replaceWithJump(m_source, m_destination);
 }
 
-} // namespace JSC
+} } // namespace JSC::DFG
 
-#endif // ENABLE(JIT)
+#endif // ENABLE(DFG_JIT)
 

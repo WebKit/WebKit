@@ -61,7 +61,6 @@
 #include "JITCode.h"
 #include "JITWriteBarrier.h"
 #include "JSGlobalObject.h"
-#include "JumpReplacementWatchpoint.h"
 #include "JumpTable.h"
 #include "LLIntCallLinkInfo.h"
 #include "LazyOperandValueProfile.h"
@@ -91,6 +90,8 @@ class RepatchBuffer;
 inline VirtualRegister unmodifiedArgumentsRegister(VirtualRegister argumentsRegister) { return VirtualRegister(argumentsRegister.offset() + 1); }
 
 static ALWAYS_INLINE int missingThisObjectMarker() { return std::numeric_limits<int>::max(); }
+
+enum ReoptimizationMode { DontCountReoptimization, CountReoptimization };
 
 class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFinalizer, public WeakReferenceHarvester {
     WTF_MAKE_FAST_ALLOCATED;
@@ -277,7 +278,8 @@ public:
     {
         return jitType() == JITCode::BaselineJIT;
     }
-    void jettison();
+    
+    void jettison(ReoptimizationMode = DontCountReoptimization);
     
     virtual CodeBlock* replacement() = 0;
 
@@ -853,10 +855,6 @@ public:
     void updateAllValueProfilePredictions() { }
     void updateAllArrayPredictions() { }
     void updateAllPredictions() { }
-#endif
-
-#if ENABLE(JIT)
-    void reoptimize();
 #endif
 
 #if ENABLE(VERBOSE_VALUE_PROFILE)

@@ -23,56 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGCommonData.h"
+#ifndef DFGInvalidationPointInjectionPhase_h
+#define DFGInvalidationPointInjectionPhase_h
+
+#include <wtf/Platform.h>
 
 #if ENABLE(DFG_JIT)
 
-#include "CodeBlock.h"
-#include "DFGNode.h"
-#include "DFGPlan.h"
-#include "Operations.h"
-#include "VM.h"
-
 namespace JSC { namespace DFG {
 
-void CommonData::notifyCompilingStructureTransition(Plan& plan, CodeBlock* codeBlock, Node* node)
-{
-    plan.transitions.addLazily(
-        codeBlock,
-        node->codeOrigin.codeOriginOwner(),
-        node->structureTransitionData().previousStructure,
-        node->structureTransitionData().newStructure);
-}
+class Graph;
 
-unsigned CommonData::addCodeOrigin(CodeOrigin codeOrigin)
-{
-    if (codeOrigins.isEmpty()
-        || codeOrigins.last() != codeOrigin)
-        codeOrigins.append(codeOrigin);
-    unsigned index = codeOrigins.size() - 1;
-    ASSERT(codeOrigins[index] == codeOrigin);
-    return index;
-}
+// Inserts an invalidation check at the beginning of any CodeOrigin that follows a CodeOrigin
+// that had a call (clobbered World).
 
-void CommonData::shrinkToFit()
-{
-    codeOrigins.shrinkToFit();
-    weakReferences.shrinkToFit();
-    transitions.shrinkToFit();
-}
-
-bool CommonData::invalidate()
-{
-    if (!isStillValid)
-        return false;
-    for (unsigned i = jumpReplacements.size(); i--;)
-        jumpReplacements[i].fire();
-    isStillValid = false;
-    return true;
-}
+bool performInvalidationPointInjection(Graph&);
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGInvalidationPointInjectionPhase_h
 

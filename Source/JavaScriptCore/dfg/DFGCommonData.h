@@ -30,8 +30,11 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "CodeBlockJettisoningWatchpoint.h"
+#include "DFGJumpReplacement.h"
 #include "InlineCallFrameSet.h"
 #include "JSCell.h"
+#include "ProfiledCodeBlockJettisoningWatchpoint.h"
 #include "ProfilerCompilation.h"
 #include "SymbolTable.h"
 #include <wtf/Noncopyable.h>
@@ -69,13 +72,16 @@ class CommonData {
     WTF_MAKE_NONCOPYABLE(CommonData);
 public:
     CommonData()
-        : machineCaptureStart(std::numeric_limits<int>::max())
+        : isStillValid(true)
+        , machineCaptureStart(std::numeric_limits<int>::max())
     { }
     
     void notifyCompilingStructureTransition(Plan&, CodeBlock*, Node*);
     unsigned addCodeOrigin(CodeOrigin codeOrigin);
     
     void shrinkToFit();
+    
+    bool invalidate(); // Returns true if we did invalidate, or false if the code block was already invalidated.
 
     OwnPtr<InlineCallFrameSet> inlineCallFrames;
     Vector<CodeOrigin, 0, UnsafeVectorOverflow> codeOrigins;
@@ -83,10 +89,14 @@ public:
     Vector<Identifier> dfgIdentifiers;
     Vector<WeakReferenceTransition> transitions;
     Vector<WriteBarrier<JSCell>> weakReferences;
+    SegmentedVector<CodeBlockJettisoningWatchpoint, 1, 0> watchpoints;
+    SegmentedVector<ProfiledCodeBlockJettisoningWatchpoint, 1, 0> profiledWatchpoints;
+    Vector<JumpReplacement> jumpReplacements;
     
     RefPtr<Profiler::Compilation> compilation;
     bool livenessHasBeenProved; // Initialized and used on every GC.
     bool allTransitionsHaveBeenMarked; // Initialized and used on every GC.
+    bool isStillValid;
     
     int machineCaptureStart;
     std::unique_ptr<SlowArgument[]> slowArguments;

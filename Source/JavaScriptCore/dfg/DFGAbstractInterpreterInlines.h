@@ -1535,6 +1535,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         node->setCanExit(true);
         m_state.setIsValid(false);
         break;
+        
+    case InvalidationPoint:
+        node->setCanExit(true);
+        break;
             
     case CheckWatchdogTimer:
         node->setCanExit(true);

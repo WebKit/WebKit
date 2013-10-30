@@ -512,7 +512,8 @@ private:
         case ZombieHint:
         case CheckTierUpInLoop:
         case CheckTierUpAtReturn:
-        case CheckTierUpAndOSREnter: {
+        case CheckTierUpAndOSREnter:
+        case InvalidationPoint: {
             // This node should never be visible at this stage of compilation. It is
             // inserted by fixup(), which follows this phase.
             RELEASE_ASSERT_NOT_REACHED();

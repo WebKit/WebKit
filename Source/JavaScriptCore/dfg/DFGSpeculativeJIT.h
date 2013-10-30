@@ -284,19 +284,9 @@ public:
     {
         return m_jit.graph().masqueradesAsUndefinedWatchpointIsStillValid(codeOrigin);
     }
-    void speculationWatchpointForMasqueradesAsUndefined(const CodeOrigin& codeOrigin)
-    {
-        m_jit.addLazily(
-            speculationWatchpoint(),
-            m_jit.graph().globalObjectFor(codeOrigin)->masqueradesAsUndefinedWatchpoint());
-    }
     bool masqueradesAsUndefinedWatchpointIsStillValid()
     {
         return masqueradesAsUndefinedWatchpointIsStillValid(m_currentNode->codeOrigin);
-    }
-    void speculationWatchpointForMasqueradesAsUndefined()
-    {
-        speculationWatchpointForMasqueradesAsUndefined(m_currentNode->codeOrigin);
     }
 
     void writeBarrier(GPRReg ownerGPR, GPRReg valueGPR, Edge valueUse, WriteBarrierUseKind, GPRReg scratchGPR1 = InvalidGPRReg, GPRReg scratchGPR2 = InvalidGPRReg);
@@ -2131,16 +2121,8 @@ public:
     // Add a speculation check with additional recovery.
     void backwardSpeculationCheck(ExitKind, JSValueSource, Node*, MacroAssembler::Jump jumpToFail, const SpeculationRecovery&);
     void backwardSpeculationCheck(ExitKind, JSValueSource, Edge, MacroAssembler::Jump jumpToFail, const SpeculationRecovery&);
-    // Use this like you would use speculationCheck(), except that you don't pass it a jump
-    // (because you don't have to execute a branch; that's kind of the whole point), and you
-    // must register the returned Watchpoint with something relevant. In general, this should
-    // be used with extreme care. Use speculationCheck() unless you've got an amazing reason
-    // not to.
-    JumpReplacementWatchpoint* speculationWatchpoint(ExitKind, JSValueSource, Node*);
-    // The default for speculation watchpoints is that they're uncounted, because the
-    // act of firing a watchpoint invalidates it. So, future recompilations will not
-    // attempt to set this watchpoint again.
-    JumpReplacementWatchpoint* speculationWatchpoint(ExitKind = UncountableWatchpoint);
+    
+    void emitInvalidationPoint(Node*);
     
     // It is generally a good idea to not use this directly.
     void convertLastOSRExitToForward(const ValueRecovery& = ValueRecovery());
@@ -3022,18 +3004,13 @@ void SpeculativeJIT::speculateStringObjectForStructure(Edge edge, StructureLocat
 {
     Structure* stringObjectStructure =
         m_jit.globalObjectFor(m_currentNode->codeOrigin)->stringObjectStructure();
-    Structure* stringPrototypeStructure = stringObjectStructure->storedPrototype().asCell()->structure();
-    ASSERT(m_jit.graph().watchpoints().isValidOrMixed(stringPrototypeStructure->transitionWatchpointSet()));
     
-    if (!m_state.forNode(edge).m_currentKnownStructure.isSubsetOf(StructureSet(m_jit.globalObjectFor(m_currentNode->codeOrigin)->stringObjectStructure()))) {
+    if (!m_state.forNode(edge).m_currentKnownStructure.isSubsetOf(StructureSet(stringObjectStructure))) {
         speculationCheck(
             NotStringObject, JSValueRegs(), 0,
             m_jit.branchPtr(
                 JITCompiler::NotEqual, structureLocation, TrustedImmPtr(stringObjectStructure)));
     }
-    m_jit.addLazily(
-        speculationWatchpoint(NotStringObject),
-        stringPrototypeStructure->transitionWatchpointSet());
 }
 
 #define DFG_TYPE_CHECK(source, edge, typesPassedThrough, jumpToFail) do { \

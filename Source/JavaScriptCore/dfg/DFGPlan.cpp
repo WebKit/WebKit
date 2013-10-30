@@ -41,6 +41,7 @@
 #include "DFGFailedFinalizer.h"
 #include "DFGFlushLivenessAnalysisPhase.h"
 #include "DFGFixupPhase.h"
+#include "DFGInvalidationPointInjectionPhase.h"
 #include "DFGJITCompiler.h"
 #include "DFGLICMPhase.h"
 #include "DFGLivenessAnalysisPhase.h"
@@ -56,6 +57,7 @@
 #include "DFGUnificationPhase.h"
 #include "DFGValidate.h"
 #include "DFGVirtualRegisterAllocationPhase.h"
+#include "DFGWatchpointCollectionPhase.h"
 #include "OperandsInlines.h"
 #include "Operations.h"
 #include <wtf/CurrentTime.h>
@@ -187,6 +189,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     performBackwardsPropagation(dfg);
     performPredictionPropagation(dfg);
     performFixup(dfg);
+    performInvalidationPointInjection(dfg);
     performTypeCheckHoisting(dfg);
     
     unsigned count = 1;
@@ -228,7 +231,24 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     switch (mode) {
     case DFGMode: {
         performTierUpCheckInjection(dfg);
-        break;
+
+        performCPSRethreading(dfg);
+        performDCE(dfg);
+        performStackLayout(dfg);
+        performVirtualRegisterAllocation(dfg);
+        performWatchpointCollection(dfg);
+        dumpAndVerifyGraph(dfg, "Graph after optimization:");
+        
+        JITCompiler dataFlowJIT(dfg);
+        if (codeBlock->codeType() == FunctionCode) {
+            dataFlowJIT.compileFunction();
+            dataFlowJIT.linkFunction();
+        } else {
+            dataFlowJIT.compile();
+            dataFlowJIT.link();
+        }
+        
+        return DFGPath;
     }
     
     case FTLMode:
@@ -253,6 +273,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performLivenessAnalysis(dfg);
         performFlushLivenessAnalysis(dfg);
         performOSRAvailabilityAnalysis(dfg);
+        performWatchpointCollection(dfg);
         
         dumpAndVerifyGraph(dfg, "Graph just before FTL lowering:");
         
@@ -280,31 +301,14 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         return FTLPath;
 #else
         RELEASE_ASSERT_NOT_REACHED();
-        break;
+        return FailPath;
 #endif // ENABLE(FTL_JIT)
     }
         
     default:
         RELEASE_ASSERT_NOT_REACHED();
-        break;
+        return FailPath;
     }
-    
-    performCPSRethreading(dfg);
-    performDCE(dfg);
-    performStackLayout(dfg);
-    performVirtualRegisterAllocation(dfg);
-    dumpAndVerifyGraph(dfg, "Graph after optimization:");
-
-    JITCompiler dataFlowJIT(dfg);
-    if (codeBlock->codeType() == FunctionCode) {
-        dataFlowJIT.compileFunction();
-        dataFlowJIT.linkFunction();
-    } else {
-        dataFlowJIT.compile();
-        dataFlowJIT.link();
-    }
-    
-    return DFGPath;
 }
 
 bool Plan::isStillValid()
@@ -315,7 +319,7 @@ bool Plan::isStillValid()
 
 void Plan::reallyAdd(CommonData* commonData)
 {
-    watchpoints.reallyAdd();
+    watchpoints.reallyAdd(codeBlock.get(), *commonData);
     identifiers.reallyAdd(vm, commonData);
     weakReferences.reallyAdd(vm, commonData);
     transitions.reallyAdd(vm, commonData);

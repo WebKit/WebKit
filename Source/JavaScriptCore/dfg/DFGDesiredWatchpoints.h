@@ -30,8 +30,11 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "CodeOrigin.h"
+#include "DFGCommonData.h"
 #include "Watchpoint.h"
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
@@ -40,23 +43,23 @@ namespace JSC { namespace DFG {
 template<typename WatchpointSetType>
 struct WatchpointForGenericWatchpointSet {
     WatchpointForGenericWatchpointSet()
-        : m_watchpoint(0)
+        : m_exitKind(ExitKindUnset)
         , m_set(0)
     {
     }
     
-    WatchpointForGenericWatchpointSet(Watchpoint* watchpoint, WatchpointSetType* set)
-        : m_watchpoint(watchpoint)
+    WatchpointForGenericWatchpointSet(
+        CodeOrigin codeOrigin, ExitKind exitKind, WatchpointSetType* set)
+        : m_codeOrigin(codeOrigin)
+        , m_exitKind(exitKind)
         , m_set(set)
     {
     }
     
-    Watchpoint* m_watchpoint;
+    CodeOrigin m_codeOrigin;
+    ExitKind m_exitKind;
     WatchpointSetType* m_set;
 };
-
-typedef WatchpointForGenericWatchpointSet<WatchpointSet> WatchpointForWatchpointSet;
-typedef WatchpointForGenericWatchpointSet<InlineWatchpointSet> WatchpointForInlineWatchpointSet;
 
 template<typename WatchpointSetType>
 class GenericDesiredWatchpoints {
@@ -70,25 +73,53 @@ public:
     {
     }
     
-    void addLazily(const WatchpointForGenericWatchpointSet<WatchpointSetType>& watchpoint)
+    void addLazily(WatchpointSetType* set)
     {
-        m_watchpoints.append(watchpoint);
+        m_sets.add(set);
     }
     
-    void reallyAdd()
+    void addLazily(CodeOrigin codeOrigin, ExitKind exitKind, WatchpointSetType* set)
+    {
+        m_profiledWatchpoints.append(
+            WatchpointForGenericWatchpointSet<WatchpointSetType>(codeOrigin, exitKind, set));
+    }
+    
+    void reallyAdd(CodeBlock* codeBlock, CommonData& common)
     {
         RELEASE_ASSERT(!m_reallyAdded);
-        for (unsigned i = m_watchpoints.size(); i--;)
-            m_watchpoints[i].m_set->add(m_watchpoints[i].m_watchpoint);
+        
+        typename HashSet<WatchpointSetType*>::iterator iter = m_sets.begin();
+        typename HashSet<WatchpointSetType*>::iterator end = m_sets.end();
+        for (; iter != end; ++iter) {
+            common.watchpoints.append(CodeBlockJettisoningWatchpoint(codeBlock));
+            (*iter)->add(&common.watchpoints.last());
+        }
+        
+        for (unsigned i = m_profiledWatchpoints.size(); i--;) {
+            WatchpointForGenericWatchpointSet<WatchpointSetType> watchpoint =
+                m_profiledWatchpoints[i];
+            common.profiledWatchpoints.append(
+                ProfiledCodeBlockJettisoningWatchpoint(watchpoint.m_codeOrigin, watchpoint.m_exitKind, codeBlock));
+            watchpoint.m_set->add(&common.profiledWatchpoints.last());
+        }
+        
         m_reallyAdded = true;
     }
     
     bool areStillValid() const
     {
-        for (unsigned i = m_watchpoints.size(); i--;) {
-            if (m_watchpoints[i].m_set->hasBeenInvalidated())
+        typename HashSet<WatchpointSetType*>::iterator iter = m_sets.begin();
+        typename HashSet<WatchpointSetType*>::iterator end = m_sets.end();
+        for (; iter != end; ++iter) {
+            if ((*iter)->hasBeenInvalidated())
                 return false;
         }
+        
+        for (unsigned i = m_profiledWatchpoints.size(); i--;) {
+            if (m_profiledWatchpoints[i].m_set->hasBeenInvalidated())
+                return false;
+        }
+        
         return true;
     }
     
@@ -126,7 +157,8 @@ public:
     }
 
 private:
-    Vector<WatchpointForGenericWatchpointSet<WatchpointSetType>> m_watchpoints;
+    Vector<WatchpointForGenericWatchpointSet<WatchpointSetType>> m_profiledWatchpoints;
+    HashSet<WatchpointSetType*> m_sets;
 #if !ASSERT_DISABLED
     StateMap m_firstKnownState;
 #endif
@@ -138,10 +170,12 @@ public:
     DesiredWatchpoints();
     ~DesiredWatchpoints();
     
-    void addLazily(Watchpoint*, WatchpointSet*);
-    void addLazily(Watchpoint*, InlineWatchpointSet&);
+    void addLazily(WatchpointSet*);
+    void addLazily(InlineWatchpointSet&);
+    void addLazily(CodeOrigin, ExitKind, WatchpointSet*);
+    void addLazily(CodeOrigin, ExitKind, InlineWatchpointSet&);
     
-    void reallyAdd();
+    void reallyAdd(CodeBlock*, CommonData&);
     
     bool areStillValid() const;
     

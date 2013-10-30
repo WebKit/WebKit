@@ -33,20 +33,30 @@ namespace JSC { namespace DFG {
 DesiredWatchpoints::DesiredWatchpoints() { }
 DesiredWatchpoints::~DesiredWatchpoints() { }
 
-void DesiredWatchpoints::addLazily(Watchpoint* watchpoint, WatchpointSet* set)
+void DesiredWatchpoints::addLazily(WatchpointSet* set)
 {
-    m_sets.addLazily(WatchpointForWatchpointSet(watchpoint, set));
+    m_sets.addLazily(set);
 }
 
-void DesiredWatchpoints::addLazily(Watchpoint* watchpoint, InlineWatchpointSet& set)
+void DesiredWatchpoints::addLazily(InlineWatchpointSet& set)
 {
-    m_inlineSets.addLazily(WatchpointForInlineWatchpointSet(watchpoint, &set));
+    m_inlineSets.addLazily(&set);
 }
 
-void DesiredWatchpoints::reallyAdd()
+void DesiredWatchpoints::addLazily(CodeOrigin codeOrigin, ExitKind exitKind, WatchpointSet* set)
 {
-    m_sets.reallyAdd();
-    m_inlineSets.reallyAdd();
+    m_sets.addLazily(codeOrigin, exitKind, set);
+}
+
+void DesiredWatchpoints::addLazily(CodeOrigin codeOrigin, ExitKind exitKind, InlineWatchpointSet& set)
+{
+    m_inlineSets.addLazily(codeOrigin, exitKind, &set);
+}
+
+void DesiredWatchpoints::reallyAdd(CodeBlock* codeBlock, CommonData& commonData)
+{
+    m_sets.reallyAdd(codeBlock, commonData);
+    m_inlineSets.reallyAdd(codeBlock, commonData);
 }
 
 bool DesiredWatchpoints::areStillValid() const

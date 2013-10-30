@@ -239,6 +239,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case LoopHint:
     case Int52ToDouble:
     case Int52ToValue:
+    case InvalidationPoint:
         return true;
         
     case GetByVal:

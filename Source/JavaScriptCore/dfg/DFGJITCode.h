@@ -38,7 +38,6 @@
 #include "DFGVariableEventStream.h"
 #include "ExecutionCounter.h"
 #include "JITCode.h"
-#include "JumpReplacementWatchpoint.h"
 #include <wtf/SegmentedVector.h>
 
 namespace JSC { namespace DFG {
@@ -88,13 +87,6 @@ public:
         return result;
     }
     
-    unsigned appendWatchpoint(const JumpReplacementWatchpoint& watchpoint)
-    {
-        unsigned result = watchpoints.size();
-        watchpoints.append(watchpoint);
-        return result;
-    }
-    
     void reconstruct(
         CodeBlock*, CodeOrigin, unsigned streamIndex, Operands<ValueRecovery>& result);
     
@@ -127,7 +119,6 @@ public:
     Vector<DFG::OSREntryData> osrEntry;
     SegmentedVector<DFG::OSRExit, 8> osrExit;
     Vector<DFG::SpeculationRecovery> speculationRecovery;
-    SegmentedVector<JumpReplacementWatchpoint, 1, 0> watchpoints;
     DFG::VariableEventStream variableEventStream;
     DFG::MinifiedGraph minifiedDFG;
 #if ENABLE(FTL_JIT)

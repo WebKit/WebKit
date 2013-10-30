@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,58 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JumpReplacementWatchpoint_h
-#define JumpReplacementWatchpoint_h
+#ifndef CodeBlockJettisoningWatchpoint_h
+#define CodeBlockJettisoningWatchpoint_h
 
 #include "Watchpoint.h"
-#include <wtf/Platform.h>
-
-#if ENABLE(JIT)
-
-#include "CodeLocation.h"
-#include "MacroAssembler.h"
 
 namespace JSC {
 
-class JumpReplacementWatchpoint : public Watchpoint {
-public:
-    JumpReplacementWatchpoint()
-        : m_source(std::numeric_limits<uintptr_t>::max())
-        , m_destination(std::numeric_limits<uintptr_t>::max())
-    {
-    }
-    
-    JumpReplacementWatchpoint(MacroAssembler::Label source)
-        : m_source(source.m_label.m_offset)
-        , m_destination(std::numeric_limits<uintptr_t>::max())
-    {
-    }
-    
-    MacroAssembler::Label sourceLabel() const
-    {
-        MacroAssembler::Label label;
-        label.m_label.m_offset = m_source;
-        return label;
-    }
-    
-    void setDestination(MacroAssembler::Label destination)
-    {
-        m_destination = destination.m_label.m_offset;
-    }
-    
-    void correctLabels(LinkBuffer&);
+class CodeBlock;
 
+class CodeBlockJettisoningWatchpoint : public Watchpoint {
+public:
+    CodeBlockJettisoningWatchpoint()
+        : m_codeBlock(0)
+    {
+    }
+    
+    CodeBlockJettisoningWatchpoint(CodeBlock* codeBlock)
+        : m_codeBlock(codeBlock)
+    {
+    }
+    
 protected:
     virtual void fireInternal() OVERRIDE;
 
 private:
-    uintptr_t m_source;
-    uintptr_t m_destination;
+    CodeBlock* m_codeBlock;
 };
 
 } // namespace JSC
 
-#endif // ENABLE(JIT)
-
-#endif // JumpReplacementWatchpoint_h
+#endif // CodeBlockJettisoningWatchpoint_h
 

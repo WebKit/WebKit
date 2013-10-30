@@ -112,6 +112,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/CodeBlock.h \
 	Source/JavaScriptCore/bytecode/CodeBlockHash.cpp \
 	Source/JavaScriptCore/bytecode/CodeBlockHash.h \
+	Source/JavaScriptCore/bytecode/CodeBlockJettisoningWatchpoint.cpp \
+	Source/JavaScriptCore/bytecode/CodeBlockJettisoningWatchpoint.h \
 	Source/JavaScriptCore/bytecode/CodeBlockWithJITType.h \
 	Source/JavaScriptCore/bytecode/CodeOrigin.cpp \
 	Source/JavaScriptCore/bytecode/CodeOrigin.h \
@@ -150,6 +152,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/PolymorphicPutByIdList.h \
 	Source/JavaScriptCore/bytecode/PreciseJumpTargets.cpp \
 	Source/JavaScriptCore/bytecode/PreciseJumpTargets.h \
+	Source/JavaScriptCore/bytecode/ProfiledCodeBlockJettisoningWatchpoint.cpp \
+	Source/JavaScriptCore/bytecode/ProfiledCodeBlockJettisoningWatchpoint.h \
 	Source/JavaScriptCore/bytecode/SpeculatedType.cpp \
 	Source/JavaScriptCore/bytecode/SpeculatedType.h \
 	Source/JavaScriptCore/bytecode/PutByIdStatus.cpp \
@@ -284,6 +288,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGInPlaceAbstractState.h \
 	Source/JavaScriptCore/dfg/DFGInlineCacheWrapper.h \
 	Source/JavaScriptCore/dfg/DFGInlineCacheWrapperInlines.h \
+	Source/JavaScriptCore/dfg/DFGInvalidationPointInjectionPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGInvalidationPointInjectionPhase.h \
 	Source/JavaScriptCore/dfg/DFGInsertionSet.h \
 	Source/JavaScriptCore/dfg/DFGJITCode.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCode.h \
@@ -291,6 +297,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.h \
 	Source/JavaScriptCore/dfg/DFGJITFinalizer.cpp \
 	Source/JavaScriptCore/dfg/DFGJITFinalizer.h \
+	Source/JavaScriptCore/dfg/DFGJumpReplacement.cpp \
+	Source/JavaScriptCore/dfg/DFGJumpReplacement.h \
 	Source/JavaScriptCore/dfg/DFGLICMPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGLICMPhase.h \
 	Source/JavaScriptCore/dfg/DFGLazyJSValue.cpp \
@@ -389,6 +397,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGVariadicFunction.h \
 	Source/JavaScriptCore/dfg/DFGVirtualRegisterAllocationPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGVirtualRegisterAllocationPhase.h \
+	Source/JavaScriptCore/dfg/DFGWatchpointCollectionPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGWatchpointCollectionPhase.h \
 	Source/JavaScriptCore/dfg/DFGWorklist.cpp \
 	Source/JavaScriptCore/dfg/DFGWorklist.h \
 	Source/JavaScriptCore/disassembler/ARM64/A64DOpcode.cpp \
@@ -665,8 +675,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/JITToDFGDeferredCompilationCallback.h \
 	Source/JavaScriptCore/jit/JITWriteBarrier.h \
 	Source/JavaScriptCore/jit/JSInterfaceJIT.h \
-	Source/JavaScriptCore/jit/JumpReplacementWatchpoint.cpp \
-	Source/JavaScriptCore/jit/JumpReplacementWatchpoint.h \
 	Source/JavaScriptCore/jit/RegisterSet.cpp \
 	Source/JavaScriptCore/jit/RegisterSet.h \
 	Source/JavaScriptCore/jit/Repatch.cpp \

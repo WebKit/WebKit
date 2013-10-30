@@ -885,6 +885,7 @@ private:
         case CheckTierUpAndOSREnter:
         case Int52ToDouble:
         case Int52ToValue:
+        case InvalidationPoint:
             RELEASE_ASSERT_NOT_REACHED();
             break;
 

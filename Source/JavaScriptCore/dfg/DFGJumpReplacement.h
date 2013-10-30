@@ -23,56 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGCommonData.h"
+#ifndef DFGJumpReplacement_h
+#define DFGJumpReplacement_h
 
 #if ENABLE(DFG_JIT)
 
-#include "CodeBlock.h"
-#include "DFGNode.h"
-#include "DFGPlan.h"
-#include "Operations.h"
-#include "VM.h"
+#include "CodeLocation.h"
 
 namespace JSC { namespace DFG {
 
-void CommonData::notifyCompilingStructureTransition(Plan& plan, CodeBlock* codeBlock, Node* node)
-{
-    plan.transitions.addLazily(
-        codeBlock,
-        node->codeOrigin.codeOriginOwner(),
-        node->structureTransitionData().previousStructure,
-        node->structureTransitionData().newStructure);
-}
+class JumpReplacement {
+public:
+    JumpReplacement(CodeLocationLabel source, CodeLocationLabel destination)
+        : m_source(source)
+        , m_destination(destination)
+    {
+    }
+    
+    void fire();
 
-unsigned CommonData::addCodeOrigin(CodeOrigin codeOrigin)
-{
-    if (codeOrigins.isEmpty()
-        || codeOrigins.last() != codeOrigin)
-        codeOrigins.append(codeOrigin);
-    unsigned index = codeOrigins.size() - 1;
-    ASSERT(codeOrigins[index] == codeOrigin);
-    return index;
-}
-
-void CommonData::shrinkToFit()
-{
-    codeOrigins.shrinkToFit();
-    weakReferences.shrinkToFit();
-    transitions.shrinkToFit();
-}
-
-bool CommonData::invalidate()
-{
-    if (!isStillValid)
-        return false;
-    for (unsigned i = jumpReplacements.size(); i--;)
-        jumpReplacements[i].fire();
-    isStillValid = false;
-    return true;
-}
+private:
+    CodeLocationLabel m_source;
+    CodeLocationLabel m_destination;
+};
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGJumpReplacement_h
 

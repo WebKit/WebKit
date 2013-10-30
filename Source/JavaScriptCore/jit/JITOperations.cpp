@@ -1105,7 +1105,7 @@ char* JIT_OPERATION operationOptimize(ExecState* exec, int32_t bytecodeIndex)
                     "Triggering reoptimization of ", *codeBlock,
                     "(", *codeBlock->replacement(), ") (in loop).\n");
             }
-            codeBlock->reoptimize();
+            codeBlock->replacement()->jettison(CountReoptimization);
             return 0;
         }
     } else {
@@ -1190,7 +1190,7 @@ char* JIT_OPERATION operationOptimize(ExecState* exec, int32_t bytecodeIndex)
                 "Triggering reoptimization of ", *codeBlock, " -> ",
                 *codeBlock->replacement(), " (after OSR fail).\n");
         }
-        codeBlock->reoptimize();
+        optimizedCodeBlock->jettison(CountReoptimization);
         return 0;
     }
 

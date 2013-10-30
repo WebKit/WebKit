@@ -71,6 +71,8 @@ namespace JSC { namespace DFG {
     macro(RegExpState) \
     macro(InternalState) \
     macro(Absolute) \
+    /* Use this for writes only, to indicate that this may fire watchpoints. Usually this is never directly written but instead we test to see if a node clobbers this; it just so happens that you have to write world to clobber it. */\
+    macro(Watchpoint_fire) \
     /* Use this for reads only, just to indicate that if the world got clobbered, then this operation will not work. */\
     macro(MiscFields) \
     /* Use this for writes only, just to indicate that hoisting the node is invalid. This works because we don't hoist anything that has any side effects at all. */\

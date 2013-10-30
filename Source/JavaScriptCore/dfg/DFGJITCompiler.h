@@ -116,15 +116,6 @@ public:
     // Accessors for properties.
     Graph& graph() { return m_graph; }
     
-    void addLazily(Watchpoint* watchpoint, WatchpointSet* set)
-    {
-        m_graph.watchpoints().addLazily(watchpoint, set);
-    }
-    void addLazily(Watchpoint* watchpoint, InlineWatchpointSet& set)
-    {
-        m_graph.watchpoints().addLazily(watchpoint, set);
-    }
-    
     // Methods to set labels for the disassembler.
     void setStartOfCode()
     {

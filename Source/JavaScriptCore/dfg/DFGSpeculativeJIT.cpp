@@ -200,26 +200,20 @@ void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource
     speculationCheck(kind, jsValueSource, edge.node(), jumpToFail, recovery);
 }
 
-JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpoint(ExitKind kind, JSValueSource jsValueSource, Node* node)
+void SpeculativeJIT::emitInvalidationPoint(Node* node)
 {
     if (!m_compileOkay)
-        return 0;
-    ASSERT(m_isCheckingArgumentTypes || m_canExit);
+        return;
+    ASSERT(m_canExit);
+    ASSERT(m_speculationDirection == BackwardSpeculation);
     OSRExitCompilationInfo& info = m_jit.appendExitInfo(JITCompiler::JumpList());
     m_jit.jitCode()->appendOSRExit(OSRExit(
-        kind, jsValueSource,
+        UncountableInvalidation, JSValueSource(),
         m_jit.graph().methodOfGettingAValueProfileFor(node),
         this, m_stream->size()));
-    info.m_watchpointIndex = m_jit.jitCode()->appendWatchpoint(
-        JumpReplacementWatchpoint(m_jit.watchpointLabel()));
-    if (m_speculationDirection == ForwardSpeculation)
-        convertLastOSRExitToForward();
-    return &m_jit.jitCode()->watchpoints[info.m_watchpointIndex];
-}
-
-JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpoint(ExitKind kind)
-{
-    return speculationWatchpoint(kind, JSValueSource(), 0);
+    info.m_replacementSource = m_jit.watchpointLabel();
+    ASSERT(info.m_replacementSource.isSet());
+    noResult(node);
 }
 
 void SpeculativeJIT::convertLastOSRExitToForward(const ValueRecovery& valueRecovery)
@@ -1353,8 +1347,6 @@ void SpeculativeJIT::compilePeepHoleObjectEquality(Node* node, Node* branchNode)
     GPRReg op2GPR = op2.gpr();
     
     if (masqueradesAsUndefinedWatchpointIsStillValid()) {
-        speculationWatchpointForMasqueradesAsUndefined();
-
         if (m_state.forNode(node->child1()).m_type & ~SpecObject) {
             speculationCheck(
                 BadType, JSValueSource::unboxedCell(op1GPR), node->child1(), 
@@ -2003,18 +1995,6 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
         resultTagReg = resultTag.gpr();
     }
 #endif
-
-    if (node->arrayMode().isOutOfBounds()) {
-        JSGlobalObject* globalObject = m_jit.globalObjectFor(node->codeOrigin);
-        if (globalObject->stringPrototypeChainIsSane()) {
-            m_jit.addLazily(
-                speculationWatchpoint(),
-                globalObject->stringPrototype()->structure()->transitionWatchpointSet());
-            m_jit.addLazily(
-                speculationWatchpoint(),
-                globalObject->objectPrototype()->structure()->transitionWatchpointSet());
-        }
-    }
 
     ASSERT(ArrayMode(Array::String).alreadyChecked(m_jit.graph(), node, m_state.forNode(node->child1())));
 

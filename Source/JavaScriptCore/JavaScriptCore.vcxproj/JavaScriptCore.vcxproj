@@ -300,6 +300,7 @@
     <ClCompile Include="..\bytecode\CallLinkStatus.cpp" />
     <ClCompile Include="..\bytecode\CodeBlock.cpp" />
     <ClCompile Include="..\bytecode\CodeBlockHash.cpp" />
+    <ClCompile Include="..\bytecode\CodeBlockJettisoningWatchpoint.cpp" />
     <ClCompile Include="..\bytecode\CodeOrigin.cpp" />
     <ClCompile Include="..\bytecode\CodeType.cpp" />
     <ClCompile Include="..\bytecode\DeferredCompilationCallback.cpp" />
@@ -313,6 +314,7 @@
     <ClCompile Include="..\bytecode\MethodOfGettingAValueProfile.cpp" />
     <ClCompile Include="..\bytecode\Opcode.cpp" />
     <ClCompile Include="..\bytecode\PolymorphicPutByIdList.cpp" />
+    <ClCompile Include="..\bytecode\ProfiledCodeBlockJettisoningWatchpoint.cpp" />
     <ClCompile Include="..\bytecode\PreciseJumpTargets.cpp" />
     <ClCompile Include="..\bytecode\PutByIdStatus.cpp" />
     <ClCompile Include="..\bytecode\ReduceWhitespace.cpp" />
@@ -476,7 +478,6 @@
     <ClCompile Include="..\jit\JITStubs.cpp" />
     <ClCompile Include="..\jit\JITThunks.cpp" />
     <ClCompile Include="..\jit\JITToDFGDeferredCompilationCallback.cpp" />
-    <ClCompile Include="..\jit\JumpReplacementWatchpoint.cpp" />
     <ClCompile Include="..\jit\Repatch.cpp" />
     <ClCompile Include="..\jit\ThunkGenerators.cpp" />
     <ClCompile Include="..\llint\LLIntCLoop.cpp" />
@@ -736,6 +737,7 @@
     <ClInclude Include="..\bytecode\CallReturnOffsetToBytecodeOffset.h" />
     <ClInclude Include="..\bytecode\CodeBlock.h" />
     <ClInclude Include="..\bytecode\CodeBlockHash.h" />
+    <ClInclude Include="..\bytecode\CodeBlockJettisoningWatchpoint.h" />
     <ClInclude Include="..\bytecode\CodeBlockWithJITType.h" />
     <ClInclude Include="..\bytecode\CodeOrigin.h" />
     <ClInclude Include="..\bytecode\CodeType.h" />
@@ -759,6 +761,7 @@
     <ClInclude Include="..\bytecode\Opcode.h" />
     <ClInclude Include="..\bytecode\Operands.h" />
     <ClInclude Include="..\bytecode\PolymorphicPutByIdList.h" />
+    <ClInclude Include="..\bytecode\ProfiledCodeBlockJettisoningWatchpoint.h" />
     <ClInclude Include="..\bytecode\PreciseJumpTargets.h" />
     <ClInclude Include="..\bytecode\PutByIdStatus.h" />
     <ClInclude Include="..\bytecode\PutKind.h" />
@@ -1000,7 +1003,6 @@
     <ClInclude Include="..\jit\JITToDFGDeferredCompilationCallback.h" />
     <ClInclude Include="..\jit\JITWriteBarrier.h" />
     <ClInclude Include="..\jit\JSInterfaceJIT.h" />
-    <ClInclude Include="..\jit\JumpReplacementWatchpoint.h" />
     <ClCompile Include="..\jit\RegisterSet.cpp" />
     <ClInclude Include="..\jit\RegisterSet.h" />
     <ClInclude Include="..\jit\Repatch.h" />

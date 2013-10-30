@@ -76,6 +76,8 @@ const char* exitKindToString(ExitKind kind)
         return "Uncountable";
     case UncountableWatchpoint:
         return "UncountableWatchpoint";
+    case UncountableInvalidation:
+        return "UncountableInvalidation";
     case WatchdogTimerFired:
         return "WatchdogTimerFired";
     }
