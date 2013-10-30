@@ -1,5 +1,11 @@
 2013-10-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Revert r158259 for Mac. They're definitely failing on Mac.
+
+        * platform/mac/TestExpectations:
+
+2013-10-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add more test expectations for the bug 121452.
 
         fast/frames/lots-of-objects.html is failing on Mavericks WebKit2 builders in addition to Debug builders.
