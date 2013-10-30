@@ -457,3 +457,5 @@ EXPORTS
         symbolWithPointer(?fixedFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z, ?fixedFontFamily@Settings@WebCore@@QEBAAEBVAtomicString@WTF@@W4UScriptCode@@@Z)
         symbolWithPointer(?fantasyFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z, ?fantasyFontFamily@Settings@WebCore@@QEBAAEBVAtomicString@WTF@@W4UScriptCode@@@Z)
         symbolWithPointer(?cursiveFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z, ?cursiveFontFamily@Settings@WebCore@@QEBAAEBVAtomicString@WTF@@W4UScriptCode@@@Z)
+        symbolWithPointer(?setSimpleLineLayoutEnabled@Settings@WebCore@@QAEX_N@Z, ?setSimpleLineLayoutEnabled@Settings@WebCore@@QEAAX_N@Z)
+        symbolWithPointer(?setSimpleLineLayoutDebugBordersEnabled@Settings@WebCore@@QAEX_N@Z, ?setSimpleLineLayoutDebugBordersEnabled@Settings@WebCore@@QEAAX_N@Z)
