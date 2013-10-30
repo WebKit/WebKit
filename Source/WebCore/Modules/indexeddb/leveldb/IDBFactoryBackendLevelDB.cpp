@@ -199,7 +199,7 @@ PassRefPtr<IDBTransactionBackendInterface> IDBFactoryBackendLevelDB::maybeCreate
 
 PassRefPtr<IDBCursorBackendInterface> IDBFactoryBackendLevelDB::createCursorBackend(IDBTransactionBackendInterface& transactionBackend, IDBBackingStoreInterface::Cursor& backingStoreCursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, int64_t objectStoreId)
 {
-    return IDBCursorBackendLevelDB::create(&backingStoreCursor, cursorType, taskType, &transactionBackend, objectStoreId);
+    return IDBCursorBackendImpl::create(&backingStoreCursor, cursorType, taskType, &transactionBackend, objectStoreId);
 }
 
 

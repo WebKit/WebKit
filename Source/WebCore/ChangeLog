@@ -1,3 +1,11 @@
+2013-10-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r158289.
+
+        * CMakeLists.txt:
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp:
+        (WebCore::IDBFactoryBackendLevelDB::createCursorBackend):
+
 2013-10-30  Dong-Gwan Kim  <donggwan.kim@samsung.com>
 
         Build fails with EGLConfigSelector.cpp when OpenGL ES is not used
