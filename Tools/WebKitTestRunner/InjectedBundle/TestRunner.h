@@ -37,8 +37,6 @@
 #include <wtf/RetainPtr.h>
 #include <CoreFoundation/CFRunLoop.h>
 typedef RetainPtr<CFRunLoopTimerRef> PlatformTimerRef;
-#elif PLATFORM(WIN)
-typedef UINT_PTR PlatformTimerRef;
 #elif PLATFORM(GTK)
 typedef unsigned int PlatformTimerRef;
 #elif PLATFORM(EFL)

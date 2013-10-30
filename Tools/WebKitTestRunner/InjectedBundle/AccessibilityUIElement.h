@@ -41,14 +41,6 @@ typedef id PlatformUIElement;
 #else
 typedef struct objc_object* PlatformUIElement;
 #endif
-#elif PLATFORM(WIN)
-#undef _WINSOCKAPI_
-#define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
-
-#include <WebCore/COMPtr.h>
-#include <oleacc.h>
-
-typedef COMPtr<IAccessible> PlatformUIElement;
 #elif PLATFORM(GTK) || (PLATFORM(EFL) && HAVE(ACCESSIBILITY))
 #include "AccessibilityNotificationHandlerAtk.h"
 #include <atk/atk.h>

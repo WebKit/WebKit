@@ -30,9 +30,6 @@
 #include "JSWrappable.h"
 #include <JavaScriptCore/JSObjectRef.h>
 #include <wtf/Platform.h>
-#if PLATFORM(WIN)
-#include <windows.h>
-#endif
 #if PLATFORM(GTK) || (PLATFORM(EFL) && HAVE(ACCESSIBILITY))
 #include "AccessibilityNotificationHandlerAtk.h"
 #endif

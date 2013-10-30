@@ -64,28 +64,18 @@ JSClassRef AccessibilityController::wrapperClass()
 #if !PLATFORM(GTK) && !PLATFORM(EFL)
 PassRefPtr<AccessibilityUIElement> AccessibilityController::rootElement()
 {
-    // FIXME: Make this work on Windows.
-#if PLATFORM(WIN)
-    return 0;
-#else
     WKBundlePageRef page = InjectedBundle::shared().page()->page();
     void* root = WKAccessibilityRootObject(page);
     
     return AccessibilityUIElement::create(static_cast<PlatformUIElement>(root));    
-#endif
 }
 
 PassRefPtr<AccessibilityUIElement> AccessibilityController::focusedElement()
 {
-    // FIXME: Make this work on Windows.
-#if PLATFORM(WIN)
-    return 0;
-#else    
     WKBundlePageRef page = InjectedBundle::shared().page()->page();
     void* root = WKAccessibilityFocusedObject(page);
     
     return AccessibilityUIElement::create(static_cast<PlatformUIElement>(root));    
-#endif
 }
 #endif
 

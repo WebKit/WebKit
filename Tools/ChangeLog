@@ -1,3 +1,69 @@
+2013-10-30  Tamas Gergely  <gertom@inf.u-szeged.hu>
+
+        Removed Windows platform configurations from WebKitTestRunner.
+        https://bugs.webkit.org/show_bug.cgi?id=123152
+
+        Reviewed by Csaba Osztrogonác.
+
+        Removed Windows specific parts from the source files, Windows specific
+        subdirectory (win) and Visual Studio property files from the WebKitTestRunner,
+        as the platform is no longer supported by this tool.
+
+        * WebKitTestRunner/Configurations/InjectedBundleCFLite.vsprops: Removed.
+        * WebKitTestRunner/Configurations/InjectedBundleCommon.vsprops: Removed.
+        * WebKitTestRunner/Configurations/InjectedBundleCoreFoundation.vsprops: Removed.
+        * WebKitTestRunner/Configurations/WebKitTestRunnerCFLite.vsprops: Removed.
+        * WebKitTestRunner/Configurations/WebKitTestRunnerCommon.vsprops: Removed.
+        * WebKitTestRunner/Configurations/WebKitTestRunnerCoreFoundation.vsprops: Removed.
+        * WebKitTestRunner/Configurations/WebKitTestRunnerCoreGraphics.vsprops: Removed.
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AccessibilityController::rootElement):
+        (WTR::AccessibilityController::focusedElement):
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/InjectedBundleMain.cpp:
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::createWKURL):
+        * WebKitTestRunner/cg/TestInvocationCG.cpp:
+        * WebKitTestRunner/config.h:
+        * WebKitTestRunner/win/InjectedBundle.vcproj: Removed.
+        * WebKitTestRunner/win/InjectedBundleDebug.vsprops: Removed.
+        * WebKitTestRunner/win/InjectedBundleDebugAll.vsprops: Removed.
+        * WebKitTestRunner/win/InjectedBundleDebugCairoCFLite.vsprops: Removed.
+        * WebKitTestRunner/win/InjectedBundleGenerated.vcproj: Removed.
+        * WebKitTestRunner/win/InjectedBundleGeneratedCommon.vsprops: Removed.
+        * WebKitTestRunner/win/InjectedBundlePostBuild.cmd: Removed.
+        * WebKitTestRunner/win/InjectedBundlePreBuild.cmd: Removed.
+        * WebKitTestRunner/win/InjectedBundleProduction.vsprops: Removed.
+        * WebKitTestRunner/win/InjectedBundleRelease.vsprops: Removed.
+        * WebKitTestRunner/win/InjectedBundleReleaseCairoCFLite.vsprops: Removed.
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp: Removed.
+        * WebKitTestRunner/win/TestControllerWin.cpp: Removed.
+        * WebKitTestRunner/win/TestInvocationWin.cpp: Removed.
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj: Removed.
+        * WebKitTestRunner/win/WebKitTestRunnerDebug.vsprops: Removed.
+        * WebKitTestRunner/win/WebKitTestRunnerDebugAll.vsprops: Removed.
+        * WebKitTestRunner/win/WebKitTestRunnerDebugCairoCFLite.vsprops: Removed.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncher.vcproj: Removed.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherCommon.vsprops: Removed.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherDebug.vsprops: Removed.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherDebugAll.vsprops: Removed.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherDebugCairoCFLite.vsprops: Removed.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherProduction.vsprops: Removed.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherRelease.vsprops: Removed.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherReleaseCairoCFLite.vsprops: Removed.
+        * WebKitTestRunner/win/WebKitTestRunnerPostBuild.cmd: Removed.
+        * WebKitTestRunner/win/WebKitTestRunnerPreBuild.cmd: Removed.
+        * WebKitTestRunner/win/WebKitTestRunnerProduction.vsprops: Removed.
+        * WebKitTestRunner/win/WebKitTestRunnerRelease.vsprops: Removed.
+        * WebKitTestRunner/win/WebKitTestRunnerReleaseCairoCFLite.vsprops: Removed.
+        * WebKitTestRunner/win/build-generated-files.sh: Removed.
+        * WebKitTestRunner/win/main.cpp: Removed.
+
 2013-10-29  Alexey Proskuryakov  <ap@apple.com>
 
         Result of focus-option-control-on-page.html depends on system preferences

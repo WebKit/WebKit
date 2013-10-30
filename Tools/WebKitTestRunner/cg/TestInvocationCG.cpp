@@ -39,10 +39,6 @@
 #include <LaunchServices/UTCoreTypes.h>
 #endif
 
-#if PLATFORM(WIN)
-static const CFStringRef kUTTypePNG = CFSTR("public.png");
-#endif
-
 namespace WTR {
 
 enum FlipGraphicsContextOrNot {

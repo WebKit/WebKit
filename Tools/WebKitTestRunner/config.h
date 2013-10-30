@@ -35,15 +35,4 @@
 
 #include <WebKit2/WebKit2_C.h>
 
-#if PLATFORM(WIN)
-#define WTF_USE_CF 1 
-#if defined(WIN_CAIRO)
-#define WTF_USE_CAIRO 1
-#define WTF_USE_CURL 1
-#else
-#define WTF_USE_CG 1
-#define WTF_USE_CFNETWORK 1
-#endif
-#endif
-
 #endif

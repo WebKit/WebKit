@@ -38,9 +38,6 @@ class WebKitTestRunnerWindow;
 #endif
 typedef WKView* PlatformWKView;
 typedef WebKitTestRunnerWindow* PlatformWindow;
-#elif defined(WIN32) || defined(_WIN32)
-typedef WKViewRef PlatformWKView;
-typedef HWND PlatformWindow;
 #elif defined(BUILDING_GTK__)
 typedef struct _GtkWidget GtkWidget;
 typedef WKViewRef PlatformWKView;

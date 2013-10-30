@@ -46,13 +46,7 @@
 #include <WebKit2/WKPagePrivateMac.h>
 #endif
 
-#if OS(WINDOWS)
-#include <direct.h> // For _getcwd.
-#define getcwd _getcwd // MSDN says getcwd is deprecated.
-#define PATH_MAX _MAX_PATH
-#else
 #include <unistd.h> // For getcwd.
-#endif
 
 using namespace WebKit;
 using namespace std;
@@ -69,16 +63,9 @@ static WKURLRef createWKURL(const char* pathOrURL)
     if (!length)
         return 0;
 
-#if OS(WINDOWS)
-    const char separator = '\\';
-    bool isAbsolutePath = length >= 3 && pathOrURL[1] == ':' && pathOrURL[2] == separator;
-    // FIXME: Remove the "localhost/" suffix once <http://webkit.org/b/55683> is fixed.
-    const char* filePrefix = "file://localhost/";
-#else
     const char separator = '/';
     bool isAbsolutePath = pathOrURL[0] == separator;
     const char* filePrefix = "file://";
-#endif
     static const size_t prefixLength = strlen(filePrefix);
 
     std::unique_ptr<char[]> buffer;

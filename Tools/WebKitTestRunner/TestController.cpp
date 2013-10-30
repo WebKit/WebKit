@@ -364,11 +364,7 @@ void TestController::initialize(int argc, const char* argv[])
 
         // WebCore::pathByAppendingComponent is not used here because of the namespace,
         // which leads us to this ugly #ifdef and file path concatenation.
-#if OS(WINDOWS)
-        const char separator = '\\';
-#else
         const char separator = '/';
-#endif
 
         WKContextSetApplicationCacheDirectory(m_context.get(), toWK(temporaryFolder + separator + "ApplicationCache").get());
         WKContextSetDatabaseDirectory(m_context.get(), toWK(temporaryFolder + separator + "Databases").get());
