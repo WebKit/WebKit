@@ -1,3 +1,13 @@
+2013-10-30  Alex Christensen  <achristensen@webkit.org>
+
+        Disabled JIT on Win64.
+        https://bugs.webkit.org/show_bug.cgi?id=122472
+
+        Reviewed by Geoffrey Garen.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        Added missing 64-bit linker symbol.
+
 2013-10-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Upstream remaining PLATFORM(IOS) and ENABLE(REMOTE_INSPECTOR) pieces
