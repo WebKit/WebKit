@@ -764,7 +764,7 @@ String HTMLMediaElement::canPlayType(const String& mimeType, const String& keySy
 {
     MediaEngineSupportParameters parameters;
     ContentType contentType(mimeType);
-    parameters.type = contentType.type();
+    parameters.type = contentType.type().lower();
     parameters.codecs = contentType.parameter(ASCIILiteral("codecs"));
     parameters.url = url;
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -3533,7 +3533,7 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
 #endif
             MediaEngineSupportParameters parameters;
             ContentType contentType(type);
-            parameters.type = contentType.type();
+            parameters.type = contentType.type().lower();
             parameters.codecs = contentType.parameter(ASCIILiteral("codecs"));
             parameters.url = mediaURL;
 #if ENABLE(ENCRYPTED_MEDIA)

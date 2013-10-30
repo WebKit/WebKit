@@ -1,3 +1,12 @@
+2013-10-30  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r158288): media/media-can-play-mpeg4-video.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=123530
+
+        Reviewed by Eric Carlson.
+
+        * TestExpectations:
+
 2013-10-30  Santosh Mahto  <santosh.ma@samsung.com>
 
         contentEditable deleting lists when list items are block level
