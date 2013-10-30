@@ -26,6 +26,8 @@
 #import "config.h"
 #import "APIObject.h"
 
+#if WK_API_ENABLED
+
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKNSArray.h"
@@ -84,3 +86,5 @@ void* APIObject::newObject(size_t size, Type type)
 }
 
 } // namespace WebKit
+
+#endif // WK_API_ENABLED

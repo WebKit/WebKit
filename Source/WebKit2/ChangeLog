@@ -1,5 +1,11 @@
 2013-10-30  Dan Bernstein  <mitz@apple.com>
 
+        Try to fix the !WK_API_ENABLED Mac build.
+
+        * Shared/Cocoa/APIObject.mm:
+
+2013-10-30  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Make all API objects have Cocoa wrappers, and delegate refcounting to those wrappers
         https://bugs.webkit.org/show_bug.cgi?id=123394
 
