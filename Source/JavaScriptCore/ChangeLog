@@ -1,5 +1,13 @@
 2013-10-30  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix Mac.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::RegisterAllocationOffset::checkOffsets):
+        (JSC::AbstractMacroAssembler::checkRegisterAllocationAgainstBranchRange):
+
+2013-10-30  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix Windows.
 
         * bytecode/CodeBlock.cpp:
