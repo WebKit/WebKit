@@ -324,7 +324,10 @@ NPError NPP_Destroy(NPP instance, NPSavedData **save)
 
         if (obj->onPaintEvent)
             free(obj->onPaintEvent);
-        
+
+        if (obj->evaluateScriptOnMouseDownOrKeyDown)
+            free(obj->evaluateScriptOnMouseDownOrKeyDown);
+
         if (obj->logDestroy)
             pluginLog(instance, "NPP_Destroy");
 

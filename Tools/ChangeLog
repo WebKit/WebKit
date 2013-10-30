@@ -1,3 +1,13 @@
+2013-10-29  Seokju Kwon  <seokju@webkit.org>
+
+        Fix memory leak in Tools/DumpRenderTree/TestNetscapePlugIn/main.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=123478
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_Destroy): Add a missing free() for 'obj->evaluateScriptOnMouseDownOrKeyDown'.
+
 2013-10-29  Lucas Forschler  <lforschler@apple.com>
 
         Move the SEO bots from testers to archivers.
