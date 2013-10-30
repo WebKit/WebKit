@@ -161,20 +161,20 @@ PassRefPtr<StringImpl> StringImpl::createFromLiteral(const char* characters)
     return createFromLiteral(characters, strlen(characters));
 }
 
-PassRefPtr<StringImpl> StringImpl::createWithoutCopying(const UChar* characters, unsigned length)
+PassRef<StringImpl> StringImpl::createWithoutCopying(const UChar* characters, unsigned length)
 {
     if (!length)
-        return empty();
+        return *empty();
 
-    return adoptRef(new StringImpl(characters, length, ConstructWithoutCopying));
+    return adoptRef(*new StringImpl(characters, length, ConstructWithoutCopying));
 }
 
-PassRefPtr<StringImpl> StringImpl::createWithoutCopying(const LChar* characters, unsigned length)
+PassRef<StringImpl> StringImpl::createWithoutCopying(const LChar* characters, unsigned length)
 {
     if (!length)
-        return empty();
+        return *empty();
 
-    return adoptRef(new StringImpl(characters, length, ConstructWithoutCopying));
+    return adoptRef(*new StringImpl(characters, length, ConstructWithoutCopying));
 }
 
 template <typename CharType>

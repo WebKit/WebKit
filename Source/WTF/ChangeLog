@@ -1,3 +1,12 @@
+2013-10-29  Andreas Kling  <akling@apple.com>
+
+        StringImpl::isolatedCopy() should return PassRef.
+        <https://webkit.org/b/123484>
+
+        Make isolatedCopy() return a PassRef<StringImpl>.
+
+        Reviewed by Anders Carlsson.
+
 2013-10-29  Jer Noble  <jer.noble@apple.com>
 
         [MSE] [Mac] Enable MediaSource on the Mac
