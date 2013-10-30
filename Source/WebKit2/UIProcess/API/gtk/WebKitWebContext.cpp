@@ -816,6 +816,8 @@ void webkit_web_context_prefetch_dns(WebKitWebContext* context, const char* host
  * @host: the host for which a certificate is to be allowed
  *
  * Ignore further TLS errors on the @host for the certificate present in @info.
+ *
+ * Since: 2.4
  */
 void webkit_web_context_allow_tls_certificate_for_host(WebKitWebContext* context, WebKitCertificateInfo* info, const gchar* host)
 {
