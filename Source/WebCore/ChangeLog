@@ -1,3 +1,18 @@
+2013-10-29  Sam Weinig  <sam@webkit.org>
+
+        Modernize DatasetDOMStringMap and ClassList a bit
+        https://bugs.webkit.org/show_bug.cgi?id=123491
+
+        Reviewed by Andreas Kling.
+
+        * dom/DatasetDOMStringMap.cpp:
+        * dom/DatasetDOMStringMap.h:
+        * dom/Element.cpp:
+        * dom/ElementRareData.h:
+        * html/ClassList.cpp:
+        * html/ClassList.h:
+        Pass the owner Element by reference and store in a std::unique_ptr.
+
 2013-10-29  Brady Eidson  <beidson@apple.com>
 
         Attempted build-fix after http://trac.webkit.org/changeset/158234

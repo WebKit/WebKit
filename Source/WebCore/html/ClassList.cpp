@@ -32,24 +32,19 @@
 
 namespace WebCore {
 
-OwnPtr<ClassList> ClassList::create(Element* element)
-{
-    return adoptPtr(new ClassList(element));
-}
-
 void ClassList::ref()
 {
-    m_element->ref();
+    m_element.ref();
 }
 
 void ClassList::deref()
 {
-    m_element->deref();
+    m_element.deref();
 }
 
 unsigned ClassList::length() const
 {
-    return m_element->hasClass() ? classNames().size() : 0;
+    return m_element.hasClass() ? classNames().size() : 0;
 }
 
 const AtomicString ClassList::item(unsigned index) const
@@ -61,33 +56,33 @@ const AtomicString ClassList::item(unsigned index) const
 
 Element* ClassList::element() const
 {
-    return m_element;
+    return &m_element;
 }
 
 bool ClassList::containsInternal(const AtomicString& token) const
 {
-    return m_element->hasClass() && classNames().contains(token);
+    return m_element.hasClass() && classNames().contains(token);
 }
 
 AtomicString ClassList::value() const
 {
-    return m_element->getAttribute(HTMLNames::classAttr);
+    return m_element.getAttribute(HTMLNames::classAttr);
 }
 
 void ClassList::setValue(const AtomicString& value)
 {
-    m_element->setAttribute(HTMLNames::classAttr, value);
+    m_element.setAttribute(HTMLNames::classAttr, value);
 }
 
 const SpaceSplitString& ClassList::classNames() const
 {
-    ASSERT(m_element->hasClass());
-    if (m_element->document().inQuirksMode()) {
+    ASSERT(m_element.hasClass());
+    if (m_element.document().inQuirksMode()) {
         if (m_classNamesForQuirksMode.isEmpty())
             m_classNamesForQuirksMode.set(value(), false);
         return m_classNamesForQuirksMode;
     }
-    return m_element->elementData()->classNames();
+    return m_element.elementData()->classNames();
 }
 
 } // namespace WebCore

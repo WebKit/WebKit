@@ -33,33 +33,31 @@ namespace WebCore {
 
 class Element;
 
-class ClassList : public DOMTokenList {
+class ClassList FINAL : public DOMTokenList {
 public:
-    static OwnPtr<ClassList> create(Element*);
-
-    virtual void ref() OVERRIDE FINAL;
-    virtual void deref() OVERRIDE FINAL;
-
-    virtual unsigned length() const OVERRIDE FINAL;
-    virtual const AtomicString item(unsigned index) const OVERRIDE FINAL;
-
-    virtual Element* element() const OVERRIDE FINAL;
-
-    void clearValueForQuirksMode() { m_classNamesForQuirksMode.clear(); }
-
-private:
-    ClassList(Element* element)
+    ClassList(Element& element)
         : m_element(element)
     {
     }
 
-    virtual bool containsInternal(const AtomicString&) const OVERRIDE FINAL;
-    virtual AtomicString value() const OVERRIDE FINAL;
-    virtual void setValue(const AtomicString&) OVERRIDE FINAL;
+    virtual void ref() OVERRIDE;
+    virtual void deref() OVERRIDE;
+
+    virtual unsigned length() const OVERRIDE;
+    virtual const AtomicString item(unsigned index) const OVERRIDE;
+
+    virtual Element* element() const OVERRIDE;
+
+    void clearValueForQuirksMode() { m_classNamesForQuirksMode.clear(); }
+
+private:
+    virtual bool containsInternal(const AtomicString&) const OVERRIDE;
+    virtual AtomicString value() const OVERRIDE;
+    virtual void setValue(const AtomicString&) OVERRIDE;
 
     const SpaceSplitString& classNames() const;
 
-    Element* m_element;
+    Element& m_element;
     mutable SpaceSplitString m_classNamesForQuirksMode;
 };
 

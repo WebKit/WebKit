@@ -2550,7 +2550,7 @@ DOMTokenList* Element::classList()
 {
     ElementRareData& data = ensureElementRareData();
     if (!data.classList())
-        data.setClassList(ClassList::create(this));
+        data.setClassList(std::make_unique<ClassList>(*this));
     return data.classList();
 }
 
@@ -2558,7 +2558,7 @@ DOMStringMap* Element::dataset()
 {
     ElementRareData& data = ensureElementRareData();
     if (!data.dataset())
-        data.setDataset(DatasetDOMStringMap::create(this));
+        data.setDataset(std::make_unique<DatasetDOMStringMap>(*this));
     return data.dataset();
 }
 

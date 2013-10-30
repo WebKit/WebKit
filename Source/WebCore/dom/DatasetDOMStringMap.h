@@ -27,17 +27,16 @@
 #define DatasetDOMStringMap_h
 
 #include "DOMStringMap.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 class Element;
 
-class DatasetDOMStringMap : public DOMStringMap {
+class DatasetDOMStringMap FINAL : public DOMStringMap {
 public:
-    static PassOwnPtr<DatasetDOMStringMap> create(Element* element)
+    explicit DatasetDOMStringMap(Element& element)
+        : m_element(element)
     {
-        return adoptPtr(new DatasetDOMStringMap(element));
     }
 
     virtual void ref() OVERRIDE;
@@ -49,15 +48,10 @@ public:
     virtual void setItem(const String& name, const String& value, ExceptionCode&) OVERRIDE;
     virtual void deleteItem(const String& name, ExceptionCode&) OVERRIDE;
 
-    virtual Element* element() OVERRIDE { return m_element; }
+    virtual Element* element() OVERRIDE { return &m_element; }
 
 private:
-    explicit DatasetDOMStringMap(Element* element)
-        : m_element(element)
-    {
-    }
-
-    Element* m_element;
+    Element& m_element;
 };
 
 } // namespace WebCore

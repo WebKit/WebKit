@@ -126,22 +126,22 @@ static String convertPropertyNameToAttributeName(const String& name)
 
 void DatasetDOMStringMap::ref()
 {
-    m_element->ref();
+    m_element.ref();
 }
 
 void DatasetDOMStringMap::deref()
 {
-    m_element->deref();
+    m_element.deref();
 }
 
 void DatasetDOMStringMap::getNames(Vector<String>& names)
 {
-    if (!m_element->hasAttributes())
+    if (!m_element.hasAttributes())
         return;
 
-    unsigned length = m_element->attributeCount();
+    unsigned length = m_element.attributeCount();
     for (unsigned i = 0; i < length; i++) {
-        const Attribute& attribute = m_element->attributeAt(i);
+        const Attribute& attribute = m_element.attributeAt(i);
         if (isValidAttributeName(attribute.localName()))
             names.append(convertAttributeNameToPropertyName(attribute.localName()));
     }
@@ -149,12 +149,12 @@ void DatasetDOMStringMap::getNames(Vector<String>& names)
 
 String DatasetDOMStringMap::item(const String& name)
 {
-    if (!m_element->hasAttributes())
+    if (!m_element.hasAttributes())
         return String();
 
-    unsigned length = m_element->attributeCount();
+    unsigned length = m_element.attributeCount();
     for (unsigned i = 0; i < length; i++) {
-        const Attribute& attribute = m_element->attributeAt(i);
+        const Attribute& attribute = m_element.attributeAt(i);
         if (propertyNameMatchesAttributeName(name, attribute.localName()))
             return attribute.value();
     }
@@ -164,12 +164,12 @@ String DatasetDOMStringMap::item(const String& name)
 
 bool DatasetDOMStringMap::contains(const String& name)
 {
-    if (!m_element->hasAttributes())
+    if (!m_element.hasAttributes())
         return false;
 
-    unsigned length = m_element->attributeCount();
+    unsigned length = m_element.attributeCount();
     for (unsigned i = 0; i < length; i++) {
-        const Attribute& attribute = m_element->attributeAt(i);
+        const Attribute& attribute = m_element.attributeAt(i);
         if (propertyNameMatchesAttributeName(name, attribute.localName()))
             return true;
     }
@@ -184,7 +184,7 @@ void DatasetDOMStringMap::setItem(const String& name, const String& value, Excep
         return;
     }
 
-    m_element->setAttribute(convertPropertyNameToAttributeName(name), value, ec);
+    m_element.setAttribute(convertPropertyNameToAttributeName(name), value, ec);
 }
 
 void DatasetDOMStringMap::deleteItem(const String& name, ExceptionCode& ec)
@@ -194,7 +194,7 @@ void DatasetDOMStringMap::deleteItem(const String& name, ExceptionCode& ec)
         return;
     }
 
-    m_element->removeAttribute(convertPropertyNameToAttributeName(name));
+    m_element.removeAttribute(convertPropertyNameToAttributeName(name));
 }
 
 } // namespace WebCore
