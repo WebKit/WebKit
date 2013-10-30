@@ -33,6 +33,8 @@
 #import <WebKit2/WKRemoteObjectInterface.h>
 #import <WebKit2/WKRemoteObjectRegistryPrivate.h>
 
+#if WK_API_ENABLED
+
 namespace TestWebKitAPI {
 
 static bool connectionEstablished;
@@ -98,3 +100,6 @@ TEST(WebKit2, WKRemoteObjectRegistryTest)
 }
 
 } // namespace TestWebKitAPI
+
+#endif // WK_API_ENABLED
+

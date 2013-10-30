@@ -28,6 +28,8 @@
 #include "PlatformUtilities.h"
 #include <WebKit2/WKRetainPtr.h>
 
+#if WK_API_ENABLED
+
 namespace TestWebKitAPI {
 
 /* WKConnectionClient */
@@ -57,3 +59,5 @@ public:
 static InjectedBundleTest::Register<WKRemoteObjectRegistryTest> registrar("WKRemoteObjectRegistry");
 
 } // namespace TestWebKitAPI
+
+#endif // WK_API_ENABLED
