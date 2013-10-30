@@ -251,8 +251,6 @@ static int adjustForZoom(int value, Frame& frame)
 
 int HTMLBodyElement::scrollLeft()
 {
-    if (!document().inQuirksMode())
-        return 0;
     document().updateLayoutIgnorePendingStylesheets();
     Frame* frame = document().frame();
     if (!frame)
@@ -265,9 +263,6 @@ int HTMLBodyElement::scrollLeft()
 
 void HTMLBodyElement::setScrollLeft(int scrollLeft)
 {
-    if (!document().inQuirksMode())
-        return;
-
     document().updateLayoutIgnorePendingStylesheets();
     Frame* frame = document().frame();
     if (!frame)
@@ -280,8 +275,6 @@ void HTMLBodyElement::setScrollLeft(int scrollLeft)
 
 int HTMLBodyElement::scrollTop()
 {
-    if (!document().inQuirksMode())
-        return 0;
     document().updateLayoutIgnorePendingStylesheets();
     Frame* frame = document().frame();
     if (!frame)
@@ -294,9 +287,6 @@ int HTMLBodyElement::scrollTop()
 
 void HTMLBodyElement::setScrollTop(int scrollTop)
 {
-    if (!document().inQuirksMode())
-        return;
-
     document().updateLayoutIgnorePendingStylesheets();
     Frame* frame = document().frame();
     if (!frame)

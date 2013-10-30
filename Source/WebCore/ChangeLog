@@ -1,3 +1,19 @@
+2013-10-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r154614): Opening and closing a picture on Facebook resets scroll position
+        https://bugs.webkit.org/show_bug.cgi?id=122882
+
+        Reviewed by Anders Carlsson.
+
+        scrollLeft and scrollTop have to continue to function in the strict mode for the Web compatiblity.
+        In particular, www.facebook.com and build.webkit.org depend on this behavior as of October 29th, 2013.
+
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::scrollLeft):
+        (WebCore::HTMLBodyElement::setScrollLeft):
+        (WebCore::HTMLBodyElement::scrollTop):
+        (WebCore::HTMLBodyElement::setScrollTop):
+
 2013-10-29  Brady Eidson  <beidson@apple.com>
 
         IDBTransactionBackend should be cross platform

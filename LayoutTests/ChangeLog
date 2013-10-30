@@ -1,5 +1,21 @@
 2013-10-29  Ryosuke Niwa  <rniwa@webkit.org>
 
+        REGRESSION(r154614): Opening and closing a picture on Facebook resets scroll position
+        https://bugs.webkit.org/show_bug.cgi?id=122882
+
+        Reviewed by Anders Carlsson.
+
+        * fast/dom/Element/body-scrollLeft-expected.txt:
+        * fast/dom/Element/body-scrollLeft.html:
+        * fast/dom/Element/body-scrollTop-expected.txt:
+        * fast/dom/Element/body-scrollTop.html:
+        * fast/dom/Element/scrollLeft-expected.txt:
+        * fast/dom/Element/scrollLeft.html:
+        * fast/dom/Element/scrollTop-expected.txt:
+        * fast/dom/Element/scrollTop.html:
+
+2013-10-29  Ryosuke Niwa  <rniwa@webkit.org>
+
         Update Mavericks test expectation, tracked by bugs 123489 and 123490.
 
         * platform/mac/TestExpectations:
