@@ -1,3 +1,18 @@
+2013-10-29  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Store video-sink in a bin
+        https://bugs.webkit.org/show_bug.cgi?id=122831
+
+        Reviewed by Gustavo Noronha Silva.
+
+        For the upcoming mediastream playback support the player will
+        handle a non-playbin-based pipeline that will require a slightly
+        different video rendering chain. This patch generalizes the
+        encapsulation of the video sink in a bin, just like the audio sink
+        case.
+
+        No new tests, no change in functionality.
+
 2013-10-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r154614): Opening and closing a picture on Facebook resets scroll position

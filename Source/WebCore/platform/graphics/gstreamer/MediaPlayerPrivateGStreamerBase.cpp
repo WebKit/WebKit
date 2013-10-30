@@ -520,12 +520,10 @@ GRefPtr<GstCaps> MediaPlayerPrivateGStreamerBase::currentVideoSinkCaps() const
     return currentCaps;
 }
 
-// This function creates and initializes some internal variables, and returns a
-// pointer to the element that should receive the data flow first
-GstElement* MediaPlayerPrivateGStreamerBase::createVideoSink(GstElement* pipeline)
+void MediaPlayerPrivateGStreamerBase::createVideoSink(GstElement* pipeline)
 {
     if (!initializeGStreamer())
-        return 0;
+        return;
 
 #if USE(NATIVE_FULLSCREEN_VIDEO)
     m_gstGWorld = GStreamerGWorld::createGWorld(pipeline);
@@ -537,29 +535,29 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSink(GstElement* pipelin
 
     m_repaintHandler = g_signal_connect(m_webkitVideoSink.get(), "repaint-requested", G_CALLBACK(mediaPlayerPrivateRepaintCallback), this);
 
+    m_videoSinkBin = gst_bin_new(nullptr);
+
 #if USE(NATIVE_FULLSCREEN_VIDEO)
     // Build a new video sink consisting of a bin containing a tee
     // (meant to distribute data to multiple video sinks) and our
     // internal video sink. For fullscreen we create an autovideosink
     // and initially block the data flow towards it and configure it
 
-    m_videoSinkBin = gst_bin_new("video-sink");
-
     GstElement* videoTee = gst_element_factory_make("tee", "videoTee");
-    GstElement* queue = gst_element_factory_make("queue", 0);
+    GstElement* queue = gst_element_factory_make("queue", nullptr);
 
 #ifdef GST_API_VERSION_1
     GRefPtr<GstPad> sinkPad = adoptGRef(gst_element_get_static_pad(videoTee, "sink"));
     GST_OBJECT_FLAG_SET(GST_OBJECT(sinkPad.get()), GST_PAD_FLAG_PROXY_ALLOCATION);
 #endif
 
-    gst_bin_add_many(GST_BIN(m_videoSinkBin.get()), videoTee, queue, NULL);
+    gst_bin_add_many(GST_BIN(m_videoSinkBin.get()), videoTee, queue, nullptr);
 
     // Link a new src pad from tee to queue1.
-    gst_element_link_pads_full(videoTee, 0, queue, "sink", GST_PAD_LINK_CHECK_NOTHING);
+    gst_element_link_pads_full(videoTee, nullptr, queue, "sink", GST_PAD_LINK_CHECK_NOTHING);
 #endif
 
-    GstElement* actualVideoSink = 0;
+    GstElement* videoSink = nullptr;
     m_fpsSink = gst_element_factory_make("fpsdisplaysink", "sink");
     if (m_fpsSink) {
         // The verbose property has been added in -bad 0.10.22. Making
@@ -567,51 +565,43 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSink(GstElement* pipelin
         // fpsdiplaysink to spit data on stdout.
         GstElementFactory* factory = GST_ELEMENT_FACTORY(GST_ELEMENT_GET_CLASS(m_fpsSink)->elementfactory);
         if (gst_plugin_feature_check_version(GST_PLUGIN_FEATURE(factory), 0, 10, 22)) {
-            g_object_set(m_fpsSink, "silent", TRUE , NULL);
+            g_object_set(m_fpsSink, "silent", TRUE , nullptr);
 
             // Turn off text overlay unless logging is enabled.
 #if LOG_DISABLED
-            g_object_set(m_fpsSink, "text-overlay", FALSE , NULL);
+            g_object_set(m_fpsSink, "text-overlay", FALSE , nullptr);
 #else
             WTFLogChannel* channel = logChannelByName("Media");
             if (channel->state != WTFLogChannelOn)
-                g_object_set(m_fpsSink, "text-overlay", FALSE , NULL);
+                g_object_set(m_fpsSink, "text-overlay", FALSE , nullptr);
 #endif // LOG_DISABLED
 
             if (g_object_class_find_property(G_OBJECT_GET_CLASS(m_fpsSink), "video-sink")) {
-                g_object_set(m_fpsSink, "video-sink", m_webkitVideoSink.get(), NULL);
-#if USE(NATIVE_FULLSCREEN_VIDEO)
+                g_object_set(m_fpsSink, "video-sink", m_webkitVideoSink.get(), nullptr);
                 gst_bin_add(GST_BIN(m_videoSinkBin.get()), m_fpsSink);
-#endif
-                actualVideoSink = m_fpsSink;
+                videoSink = m_fpsSink;
             } else
-                m_fpsSink = 0;
+                m_fpsSink = nullptr;
         } else
-            m_fpsSink = 0;
+            m_fpsSink = nullptr;
     }
 
     if (!m_fpsSink) {
-#if USE(NATIVE_FULLSCREEN_VIDEO)
         gst_bin_add(GST_BIN(m_videoSinkBin.get()), m_webkitVideoSink.get());
-#endif
-        actualVideoSink = m_webkitVideoSink.get();
+        videoSink = m_webkitVideoSink.get();
     }
 
-    ASSERT(actualVideoSink);
+    ASSERT(videoSink);
 
+    GstElement* firstChild = videoSink;
 #if USE(NATIVE_FULLSCREEN_VIDEO)
     // Faster elements linking.
-    gst_element_link_pads_full(queue, "src", actualVideoSink, "sink", GST_PAD_LINK_CHECK_NOTHING);
+    gst_element_link_pads_full(queue, "src", videoSink, "sink", GST_PAD_LINK_CHECK_NOTHING);
 
-    // Add a ghostpad to the bin so it can proxy to tee.
-    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(videoTee, "sink"));
-    gst_element_add_pad(m_videoSinkBin.get(), gst_ghost_pad_new("sink", pad.get()));
-
-    // Set the bin as video sink of playbin.
-    return m_videoSinkBin.get();
-#else
-    return actualVideoSink;
+    firstChild = videoTee;
 #endif
+    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(firstChild, "sink"));
+    gst_element_add_pad(m_videoSinkBin.get(), gst_ghost_pad_new("sink", pad.get()));
 }
 
 void MediaPlayerPrivateGStreamerBase::setStreamVolumeElement(GstStreamVolume* volume)
