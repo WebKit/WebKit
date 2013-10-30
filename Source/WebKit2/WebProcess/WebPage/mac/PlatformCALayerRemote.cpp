@@ -167,8 +167,10 @@ void PlatformCALayerRemote::setSublayers(const PlatformCALayerList& list)
     removeAllSublayers();
     m_children = list;
 
-    for (const auto& layer : list)
+    for (const auto& layer : list) {
+        layer->removeFromSuperlayer();
         toPlatformCALayerRemote(layer.get())->m_superlayer = this;
+    }
 
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ChildrenChanged);
 }
