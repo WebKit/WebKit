@@ -76,7 +76,7 @@
     var modePicker = document.getElementById("mode");
     if (updatePicker) {
         for (var i = 0; i < modePicker.options.length; ++i) {
-            if (modePicker.options[i]) {
+            if (modePicker.options[i].value === mode) {
                 modePicker.options[i].selected = true;
                 break;
             }

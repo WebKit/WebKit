@@ -1,3 +1,11 @@
+2013-10-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Fix PrettyPrinting Tool Load from Saved URL
+
+        Reviewed by Timothy Hatcher.
+
+        * Tools/PrettyPrinting/index.html:
+
 2013-10-28  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: CSS Regions: Add protocol API to expose content nodes addition/removal
