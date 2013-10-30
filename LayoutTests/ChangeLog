@@ -1,3 +1,12 @@
+2013-10-30  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Remove efl/accessibility/image-map1-expected.txt after r158104
+        https://bugs.webkit.org/show_bug.cgi?id=123504
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/accessibility/image-map1-expected.txt: Removed.
+
 2013-10-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Revert r158259 for EFL and GTK+. They're still failing everywhere according to the flakiness dashboard.
