@@ -2,6 +2,13 @@
 
         Unreviewed, fix Windows.
 
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::jettison):
+
+2013-10-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix Windows.
+
         * bytecode/CodeBlock.h:
         (JSC::CodeBlock::addFrequentExitSite):
 

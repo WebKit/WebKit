@@ -2809,6 +2809,7 @@ DFG::CapabilityLevel FunctionCodeBlock::capabilityLevelInternal()
 
 void CodeBlock::jettison(ReoptimizationMode mode)
 {
+#if ENABLE(DFG_JIT)
     if (DFG::shouldShowDisassembly()) {
         dataLog("Jettisoning ", *this);
         if (mode == CountReoptimization)
@@ -2854,6 +2855,9 @@ void CodeBlock::jettison(ReoptimizationMode mode)
     alternative()->install();
     if (DFG::shouldShowDisassembly())
         dataLog("    Did install baseline version of ", *this, "\n");
+#else // ENABLE(DFG_JIT)
+    UNREACHABLE_FOR_PLATFORM();
+#endif // ENABLE(DFG_JIT)
 }
 #endif
 
