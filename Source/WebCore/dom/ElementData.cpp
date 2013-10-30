@@ -75,15 +75,15 @@ static size_t sizeForShareableElementDataWithAttributeCount(unsigned count)
     return sizeof(ShareableElementData) + sizeof(Attribute) * count;
 }
 
-PassRefPtr<ShareableElementData> ShareableElementData::createWithAttributes(const Vector<Attribute>& attributes)
+PassRef<ShareableElementData> ShareableElementData::createWithAttributes(const Vector<Attribute>& attributes)
 {
     void* slot = WTF::fastMalloc(sizeForShareableElementDataWithAttributeCount(attributes.size()));
-    return adoptRef(new (NotNull, slot) ShareableElementData(attributes));
+    return adoptRef(*new (NotNull, slot) ShareableElementData(attributes));
 }
 
-PassRefPtr<UniqueElementData> UniqueElementData::create()
+PassRef<UniqueElementData> UniqueElementData::create()
 {
-    return adoptRef(new UniqueElementData);
+    return adoptRef(*new UniqueElementData);
 }
 
 ShareableElementData::ShareableElementData(const Vector<Attribute>& attributes)
@@ -153,17 +153,17 @@ UniqueElementData::UniqueElementData(const ShareableElementData& other)
         m_attributeVector.uncheckedAppend(other.m_attributeArray[i]);
 }
 
-PassRefPtr<UniqueElementData> ElementData::makeUniqueCopy() const
+PassRef<UniqueElementData> ElementData::makeUniqueCopy() const
 {
     if (isUnique())
-        return adoptRef(new UniqueElementData(static_cast<const UniqueElementData&>(*this)));
-    return adoptRef(new UniqueElementData(static_cast<const ShareableElementData&>(*this)));
+        return adoptRef(*new UniqueElementData(static_cast<const UniqueElementData&>(*this)));
+    return adoptRef(*new UniqueElementData(static_cast<const ShareableElementData&>(*this)));
 }
 
-PassRefPtr<ShareableElementData> UniqueElementData::makeShareableCopy() const
+PassRef<ShareableElementData> UniqueElementData::makeShareableCopy() const
 {
     void* slot = WTF::fastMalloc(sizeForShareableElementDataWithAttributeCount(m_attributeVector.size()));
-    return adoptRef(new (NotNull, slot) ShareableElementData(*this));
+    return adoptRef(*new (NotNull, slot) ShareableElementData(*this));
 }
 
 bool ElementData::isEquivalent(const ElementData* other) const

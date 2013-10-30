@@ -42,7 +42,7 @@ public:
     static PassOwnPtr<DocumentSharedObjectPool> create() { return adoptPtr(new DocumentSharedObjectPool); }
     ~DocumentSharedObjectPool();
 
-    PassRefPtr<ShareableElementData> cachedShareableElementDataWithAttributes(const Vector<Attribute>&);
+    PassRef<ShareableElementData> cachedShareableElementDataWithAttributes(const Vector<Attribute>&);
 
 private:
     DocumentSharedObjectPool();

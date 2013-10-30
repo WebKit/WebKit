@@ -106,7 +106,7 @@ private:
     const Attribute* findAttributeByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
     unsigned findAttributeIndexByNameSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
 
-    PassRefPtr<UniqueElementData> makeUniqueCopy() const;
+    PassRef<UniqueElementData> makeUniqueCopy() const;
 };
 
 #if COMPILER(MSVC)
@@ -116,7 +116,7 @@ private:
 
 class ShareableElementData : public ElementData {
 public:
-    static PassRefPtr<ShareableElementData> createWithAttributes(const Vector<Attribute>&);
+    static PassRef<ShareableElementData> createWithAttributes(const Vector<Attribute>&);
 
     explicit ShareableElementData(const Vector<Attribute>&);
     explicit ShareableElementData(const UniqueElementData&);
@@ -131,8 +131,8 @@ public:
 
 class UniqueElementData : public ElementData {
 public:
-    static PassRefPtr<UniqueElementData> create();
-    PassRefPtr<ShareableElementData> makeShareableCopy() const;
+    static PassRef<UniqueElementData> create();
+    PassRef<ShareableElementData> makeShareableCopy() const;
 
     // These functions do no error/duplicate checking.
     void addAttribute(const QualifiedName&, const AtomicString&);

@@ -1,3 +1,13 @@
+2013-10-29  Andreas Kling  <akling@apple.com>
+
+        ElementData construction helpers should return PassRef.
+        <https://webkit.org/b/123487>
+
+        Make functions that create new ElementData objects return appropriate
+        PassRef pointers instead of PassRefPtr.
+
+        Reviewed by Anders Carlsson.
+
 2013-10-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         GTK+ build fix attempt after r158220.

@@ -57,16 +57,16 @@ private:
 
 class ShareableElementDataCacheEntry {
 public:
-    ShareableElementDataCacheEntry(const ShareableElementDataCacheKey& k, PassRefPtr<ShareableElementData> v)
+    ShareableElementDataCacheEntry(const ShareableElementDataCacheKey& k, ShareableElementData& v)
         : key(k)
         , value(v)
     { }
 
     ShareableElementDataCacheKey key;
-    RefPtr<ShareableElementData> value;
+    Ref<ShareableElementData> value;
 };
 
-PassRefPtr<ShareableElementData> DocumentSharedObjectPool::cachedShareableElementDataWithAttributes(const Vector<Attribute>& attributes)
+PassRef<ShareableElementData> DocumentSharedObjectPool::cachedShareableElementDataWithAttributes(const Vector<Attribute>& attributes)
 {
     ASSERT(!attributes.isEmpty());
 
@@ -79,16 +79,16 @@ PassRefPtr<ShareableElementData> DocumentSharedObjectPool::cachedShareableElemen
 
     RefPtr<ShareableElementData> elementData;
     if (cacheHash && cacheIterator->value)
-        elementData = cacheIterator->value->value;
+        elementData = &cacheIterator->value->value.get();
     else
         elementData = ShareableElementData::createWithAttributes(attributes);
 
     if (!cacheHash || cacheIterator->value)
-        return elementData.release();
+        return elementData.releaseNonNull();
 
-    cacheIterator->value = adoptPtr(new ShareableElementDataCacheEntry(ShareableElementDataCacheKey(elementData->m_attributeArray, elementData->length()), elementData));
+    cacheIterator->value = adoptPtr(new ShareableElementDataCacheEntry(ShareableElementDataCacheKey(elementData->m_attributeArray, elementData->length()), *elementData));
 
-    return elementData.release();
+    return elementData.releaseNonNull();
 }
 
 DocumentSharedObjectPool::DocumentSharedObjectPool()
