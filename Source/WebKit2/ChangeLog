@@ -1,3 +1,18 @@
+2013-10-30  Brady Eidson  <beidson@apple.com>
+
+        IDB Database versions are uint64_t, not int64_t
+        https://bugs.webkit.org/show_bug.cgi?id=123556
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.cpp:
+        (WebKit::WebIDBFactoryBackend::open):
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.h:
+
+        * WebProcess/Databases/IndexedDB/WebProcessIDBDatabaseBackend.cpp:
+        (WebKit::WebProcessIDBDatabaseBackend::openConnection):
+        * WebProcess/Databases/IndexedDB/WebProcessIDBDatabaseBackend.h:
+
 2013-10-30  Dan Bernstein  <mitz@apple.com>
 
         Fixed a potential race condition around the initializtion of WKObject’s target.

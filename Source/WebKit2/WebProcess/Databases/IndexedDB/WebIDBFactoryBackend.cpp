@@ -70,7 +70,7 @@ void WebIDBFactoryBackend::getDatabaseNames(PassRefPtr<IDBCallbacks>, PassRefPtr
     notImplemented();
 }
 
-void WebIDBFactoryBackend::open(const String& databaseName, int64_t version, int64_t transactionId, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, const SecurityOrigin& securityOrigin, const SecurityOrigin&)
+void WebIDBFactoryBackend::open(const String& databaseName, uint64_t version, int64_t transactionId, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, const SecurityOrigin& securityOrigin, const SecurityOrigin&)
 {
     ASSERT(isMainThread());
     LOG(StorageAPI, "WebIDBFactoryBackend::open");

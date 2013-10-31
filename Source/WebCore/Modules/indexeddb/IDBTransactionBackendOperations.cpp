@@ -352,7 +352,7 @@ void IDBDatabaseBackendImpl::VersionChangeOperation::perform()
     // FIXME: Database versions are now of type uint64_t, but this code expected int64_t.
     ASSERT(m_version > (int64_t)oldVersion);
     database.setCurrentVersion(m_version);
-    if (!database.backingStore()->updateIDBDatabaseIntVersion(m_transaction->backingStoreTransaction(), databaseId, database.metadata().version)) {
+    if (!database.backingStore()->updateIDBDatabaseVersion(m_transaction->backingStoreTransaction(), databaseId, database.metadata().version)) {
         RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Error writing data to stable storage when updating version.");
         m_callbacks->onError(error);
         m_transaction->abort(error);

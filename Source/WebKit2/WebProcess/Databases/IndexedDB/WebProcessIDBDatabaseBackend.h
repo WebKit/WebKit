@@ -86,7 +86,7 @@ public:
 
     virtual WebCore::IDBFactoryBackendInterface& factoryBackend() OVERRIDE;
 
-    void openConnection(PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::IDBDatabaseCallbacks>, int64_t transactionId, int64_t version);
+    void openConnection(PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::IDBDatabaseCallbacks>, int64_t transactionId, uint64_t version);
 
     void establishDatabaseProcessBackend();
 

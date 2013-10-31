@@ -59,7 +59,7 @@ WebProcessIDBDatabaseBackend::~WebProcessIDBDatabaseBackend()
 {
 }
 
-void WebProcessIDBDatabaseBackend::openConnection(PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> prpDatabaseCallbacks, int64_t transactionId, int64_t version)
+void WebProcessIDBDatabaseBackend::openConnection(PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> prpDatabaseCallbacks, int64_t transactionId, uint64_t version)
 {
     // FIXME: Make this message include necessary arguments, and save off these callbacks and arguments for later use.
 

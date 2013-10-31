@@ -1,3 +1,35 @@
+2013-10-30  Brady Eidson  <beidson@apple.com>
+
+        IDB Database versions are uint64_t, not int64_t
+        https://bugs.webkit.org/show_bug.cgi?id=123556
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Modules/indexeddb/IDBBackingStoreInterface.h:
+
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::processPendingCalls):
+        (WebCore::IDBDatabaseBackendImpl::openConnection):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h:
+
+        * Modules/indexeddb/IDBFactoryBackendInterface.h:
+
+        * Modules/indexeddb/IDBPendingOpenCall.h:
+        (WebCore::IDBPendingOpenCall::create):
+        (WebCore::IDBPendingOpenCall::version):
+        (WebCore::IDBPendingOpenCall::IDBPendingOpenCall):
+
+        * Modules/indexeddb/IDBTransactionBackendOperations.cpp:
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeOperation::perform):
+
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        (WebCore::IDBBackingStoreLevelDB::updateIDBDatabaseVersion):
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp:
+        (WebCore::IDBFactoryBackendLevelDB::open):
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.h:
+
 2013-10-30  Brendan Long  <b.long@cablelabs.com>
 
         [Gtk] Build is failing after r158317

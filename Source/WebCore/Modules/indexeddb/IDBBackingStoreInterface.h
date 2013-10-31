@@ -90,7 +90,7 @@ public:
     virtual bool keyExistsInIndex(IDBBackingStoreInterface::Transaction&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&, RefPtr<IDBKey>& foundPrimaryKey, bool& exists) = 0;
 
     virtual bool deleteDatabase(const String& name) = 0;
-    virtual bool updateIDBDatabaseIntVersion(IDBBackingStoreInterface::Transaction&, int64_t rowId, int64_t intVersion) = 0;
+    virtual bool updateIDBDatabaseVersion(IDBBackingStoreInterface::Transaction&, int64_t rowId, uint64_t version) = 0;
 
     virtual bool getRecord(IDBBackingStoreInterface::Transaction&, int64_t databaseId, int64_t objectStoreId, const IDBKey&, Vector<char>& record) = 0;
     virtual bool putRecord(IDBBackingStoreInterface::Transaction&, int64_t databaseId, int64_t objectStoreId, const IDBKey&, PassRefPtr<SharedBuffer> value, IDBRecordIdentifier*) = 0;

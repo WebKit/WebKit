@@ -57,7 +57,7 @@ public:
     virtual void addIndex(int64_t objectStoreId, const IDBIndexMetadata&, int64_t newMaxIndexId) OVERRIDE;
     virtual void removeIndex(int64_t objectStoreId, int64_t indexId) OVERRIDE;
 
-    void openConnection(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, int64_t version);
+    void openConnection(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, uint64_t version);
     void deleteDatabase(PassRefPtr<IDBCallbacks>);
 
     // IDBDatabaseBackendInterface

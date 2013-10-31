@@ -73,7 +73,7 @@ public:
     virtual bool getIDBDatabaseMetaData(const String& name, IDBDatabaseMetadata*, bool& success) OVERRIDE WARN_UNUSED_RETURN;
     virtual bool createIDBDatabaseMetaData(const String& name, const String& version, int64_t intVersion, int64_t& rowId) OVERRIDE;
     virtual bool updateIDBDatabaseMetaData(IDBBackingStoreInterface::Transaction&, int64_t rowId, const String& version);
-    virtual bool updateIDBDatabaseIntVersion(IDBBackingStoreInterface::Transaction&, int64_t rowId, int64_t intVersion) OVERRIDE;
+    virtual bool updateIDBDatabaseVersion(IDBBackingStoreInterface::Transaction&, int64_t rowId, uint64_t version) OVERRIDE;
     virtual bool deleteDatabase(const String& name) OVERRIDE;
 
     virtual bool getObjectStores(int64_t databaseId, IDBDatabaseMetadata::ObjectStoreMap*) OVERRIDE WARN_UNUSED_RETURN;

@@ -592,12 +592,12 @@ bool IDBBackingStoreLevelDB::createIDBDatabaseMetaData(const String& name, const
     return true;
 }
 
-bool IDBBackingStoreLevelDB::updateIDBDatabaseIntVersion(IDBBackingStoreInterface::Transaction& transaction, int64_t rowId, int64_t intVersion)
+bool IDBBackingStoreLevelDB::updateIDBDatabaseVersion(IDBBackingStoreInterface::Transaction& transaction, int64_t rowId, uint64_t version)
 {
-    if (intVersion == IDBDatabaseMetadata::NoIntVersion)
-        intVersion = IDBDatabaseMetadata::DefaultIntVersion;
-    ASSERT_WITH_MESSAGE(intVersion >= 0, "intVersion was %lld", static_cast<long long>(intVersion));
-    putVarInt(Transaction::levelDBTransactionFrom(transaction), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserIntVersion), intVersion);
+    if (version == IDBDatabaseMetadata::NoIntVersion)
+        version = IDBDatabaseMetadata::DefaultIntVersion;
+    ASSERT_WITH_MESSAGE(version >= 0, "version was %llu", static_cast<unsigned long long>(version));
+    putVarInt(Transaction::levelDBTransactionFrom(transaction), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserIntVersion), version);
     return true;
 }
 

@@ -38,17 +38,17 @@ class IDBDatabaseCallbacks;
 
 class IDBPendingOpenCall {
 public:
-    static PassOwnPtr<IDBPendingOpenCall> create(IDBCallbacks& callbacks, IDBDatabaseCallbacks& databaseCallbacks, int64_t transactionId, int64_t version)
+    static PassOwnPtr<IDBPendingOpenCall> create(IDBCallbacks& callbacks, IDBDatabaseCallbacks& databaseCallbacks, int64_t transactionId, uint64_t version)
     {
         return adoptPtr(new IDBPendingOpenCall(callbacks, databaseCallbacks, transactionId, version));
     }
     IDBCallbacks* callbacks() { return m_callbacks.get(); }
     IDBDatabaseCallbacks* databaseCallbacks() { return m_databaseCallbacks.get(); }
-    int64_t version() { return m_version; }
+    uint64_t version() { return m_version; }
     int64_t transactionId() const { return m_transactionId; }
 
 private:
-    IDBPendingOpenCall(IDBCallbacks& callbacks, IDBDatabaseCallbacks& databaseCallbacks, int64_t transactionId, int64_t version)
+    IDBPendingOpenCall(IDBCallbacks& callbacks, IDBDatabaseCallbacks& databaseCallbacks, int64_t transactionId, uint64_t version)
         : m_callbacks(&callbacks)
         , m_databaseCallbacks(&databaseCallbacks)
         , m_version(version)
@@ -57,7 +57,7 @@ private:
     }
     RefPtr<IDBCallbacks> m_callbacks;
     RefPtr<IDBDatabaseCallbacks> m_databaseCallbacks;
-    int64_t m_version;
+    uint64_t m_version;
     const int64_t m_transactionId;
 };
 
