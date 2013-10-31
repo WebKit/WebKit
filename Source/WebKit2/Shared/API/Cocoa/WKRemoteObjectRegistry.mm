@@ -29,8 +29,10 @@
 
 #import "Connection.h"
 #import "WKConnectionRef.h"
-#import "WebConnection.h"
+#import "WKRemoteObjectInterface.h"
+#import "WKRemoteObject.h"
 #import "WKSharedAPICast.h"
+#import "WebConnection.h"
 
 #if WK_API_ENABLED
 
@@ -38,6 +40,7 @@ using namespace WebKit;
 
 @implementation WKRemoteObjectRegistry {
     RefPtr<WebConnection> _connection;
+    RetainPtr<NSMapTable> _remoteObjectProxies;
 }
 
 - (void)registerExportedObject:(id)object interface:(WKRemoteObjectInterface *)interface
@@ -52,8 +55,17 @@ using namespace WebKit;
 
 - (id)remoteObjectProxyWithInterface:(WKRemoteObjectInterface *)interface
 {
-    // FIXME: Implement.
-    return nil;
+    if (!_remoteObjectProxies)
+        _remoteObjectProxies = [NSMapTable strongToWeakObjectsMapTable];
+
+    if (id remoteObjectProxy = [_remoteObjectProxies objectForKey:interface.identifier])
+        return remoteObjectProxy;
+
+    RetainPtr<NSString> identifier = adoptNS([interface.identifier copy]);
+    RetainPtr<WKRemoteObject> remoteObject = adoptNS([[WKRemoteObject alloc] _initWithObjectRegistry:self interface:interface]);
+    [_remoteObjectProxies setObject:remoteObject.get() forKey:identifier.get()];
+
+    return [remoteObject.leakRef() autorelease];
 }
 
 @end

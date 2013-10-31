@@ -23,28 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKRemoteObjectInterface.h"
+#import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-@implementation WKRemoteObjectInterface
+@class WKRemoteObjectInterface;
+@class WKRemoteObjectRegistry;
 
-- (id)initWithProtocol:(Protocol *)protocol identifier:(NSString *)identifier
-{
-    if (!(self = [super init]))
-        return nil;
+@interface WKRemoteObject : NSObject
 
-    _protocol = protocol;
-    _identifier = [identifier copy];
-
-    return self;
-}
-
-+ (instancetype)remoteObjectInterfaceWithProtocol:(Protocol *)protocol
-{
-    return [[[self alloc] initWithProtocol:protocol identifier:NSStringFromProtocol(protocol)] autorelease];
-}
+- (instancetype)_initWithObjectRegistry:(WKRemoteObjectRegistry *)objectRegistry interface:(WKRemoteObjectInterface *)interface;
 
 @end
 

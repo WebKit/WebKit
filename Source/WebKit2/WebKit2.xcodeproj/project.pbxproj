@@ -205,6 +205,8 @@
 		1A9E328D182165A900F5D04C /* WKRemoteObjectInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9E328B182165A900F5D04C /* WKRemoteObjectInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A9E328E182165A900F5D04C /* WKRemoteObjectInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9E328C182165A900F5D04C /* WKRemoteObjectInterface.mm */; };
 		1A9E329718219BEA00F5D04C /* WKRemoteObjectRegistryPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9E329618219BEA00F5D04C /* WKRemoteObjectRegistryPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A9E329A1822E1CC00F5D04C /* WKRemoteObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9E32981822E1CC00F5D04C /* WKRemoteObject.mm */; };
+		1A9E329B1822E1CC00F5D04C /* WKRemoteObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9E32991822E1CC00F5D04C /* WKRemoteObject.h */; };
 		1A9FBA8D13FF04E600DEED67 /* PluginComplexTextInputState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9FBA8C13FF04E600DEED67 /* PluginComplexTextInputState.h */; };
 		1AA2E51D12E4C05E00BC4966 /* CGUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA2E51B12E4C05E00BC4966 /* CGUtilities.h */; };
 		1AA2E51E12E4C05E00BC4966 /* CGUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA2E51C12E4C05E00BC4966 /* CGUtilities.cpp */; };
@@ -1660,6 +1662,8 @@
 		1A9E328B182165A900F5D04C /* WKRemoteObjectInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRemoteObjectInterface.h; sourceTree = "<group>"; };
 		1A9E328C182165A900F5D04C /* WKRemoteObjectInterface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKRemoteObjectInterface.mm; sourceTree = "<group>"; };
 		1A9E329618219BEA00F5D04C /* WKRemoteObjectRegistryPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRemoteObjectRegistryPrivate.h; sourceTree = "<group>"; };
+		1A9E32981822E1CC00F5D04C /* WKRemoteObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKRemoteObject.mm; sourceTree = "<group>"; };
+		1A9E32991822E1CC00F5D04C /* WKRemoteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRemoteObject.h; sourceTree = "<group>"; };
 		1A9FBA8C13FF04E600DEED67 /* PluginComplexTextInputState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginComplexTextInputState.h; sourceTree = "<group>"; };
 		1AA1C79A100E7FC50078DEBC /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3691,6 +3695,8 @@
 			isa = PBXGroup;
 			children = (
 				37DFA6FF1810BB92001F4A9F /* WKFoundation.h */,
+				1A9E32991822E1CC00F5D04C /* WKRemoteObject.h */,
+				1A9E32981822E1CC00F5D04C /* WKRemoteObject.mm */,
 				1A9E328B182165A900F5D04C /* WKRemoteObjectInterface.h */,
 				1A9E328C182165A900F5D04C /* WKRemoteObjectInterface.mm */,
 				1A9E32871821636900F5D04C /* WKRemoteObjectRegistry.h */,
@@ -5575,6 +5581,7 @@
 				1A8EF4CB1252403700F7067F /* PluginControllerProxy.h in Headers */,
 				1A8EF96F1252AF6B00F7067F /* PluginControllerProxyMessages.h in Headers */,
 				1A179780137EE82C00F97D45 /* PluginCreationParameters.h in Headers */,
+				1A9E329B1822E1CC00F5D04C /* WKRemoteObject.h in Headers */,
 				7C3F8C91173AF52D007B7F39 /* PluginInformation.h in Headers */,
 				1AEFCC1211D01F96008219D3 /* PluginInfoStore.h in Headers */,
 				1A3D610213A7CC2A00F95D4E /* PluginModuleInfo.h in Headers */,
@@ -6984,6 +6991,7 @@
 				51ACBBA1127A8F2C00D203B9 /* WebContextMenuProxyMac.mm in Sources */,
 				BCEE7D0D12846F69009827DA /* WebContextMessageReceiver.cpp in Sources */,
 				3309344F1315B94D0097A7BC /* WebCookieManager.cpp in Sources */,
+				1A9E329A1822E1CC00F5D04C /* WKRemoteObject.mm in Sources */,
 				51E35210180F63FB00E53BE9 /* DatabaseProcessIDBDatabaseBackendMessageReceiver.cpp in Sources */,
 				F6A90813133C20510082C3F4 /* WebCookieManagerMac.mm in Sources */,
 				330934471315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp in Sources */,

@@ -96,6 +96,8 @@ TEST(WebKit2, WKRemoteObjectRegistryTest)
     WKRemoteObjectInterface *bundleInterface = [WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(BundleInterface)];
 
     id <BundleInterface> remoteObjectProxy = [remoteObjectRegistry remoteObjectProxyWithInterface:bundleInterface];
+    EXPECT_TRUE([remoteObjectProxy conformsToProtocol:@protocol(BundleInterface)]);
+
     [remoteObjectProxy sayHello];
 }
 
