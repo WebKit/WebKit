@@ -1,3 +1,10 @@
+2013-10-31  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, MediaStream build fix after r158365.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::clone):
+
 2013-10-31  Sam Weinig  <sam@webkit.org>
 
         Pass an Element by reference to the PseudoElement constructor

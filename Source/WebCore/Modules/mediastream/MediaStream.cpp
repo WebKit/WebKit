@@ -131,7 +131,7 @@ PassRefPtr<MediaStream> MediaStream::clone()
 
     cloneMediaStreamTrackVector(trackSet, getAudioTracks());
     cloneMediaStreamTrackVector(trackSet, getVideoTracks());
-    return MediaStream::create(scriptExecutionContext(), trackSet);
+    return MediaStream::create(*scriptExecutionContext(), trackSet);
 }
 
 void MediaStream::cloneMediaStreamTrackVector(MediaStreamTrackVector& destination, const MediaStreamTrackVector& origin)
