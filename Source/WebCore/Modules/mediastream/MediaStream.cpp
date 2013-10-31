@@ -41,12 +41,12 @@
 
 namespace WebCore {
 
-PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context)
+PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context)
 {
     return MediaStream::create(context, MediaStreamDescriptor::create(MediaStreamSourceVector(), MediaStreamSourceVector()));
 }
 
-PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, PassRefPtr<MediaStream> stream)
+PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context, PassRefPtr<MediaStream> stream)
 {
     ASSERT(stream);
 
@@ -62,7 +62,7 @@ PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, Pas
     return MediaStream::create(context, MediaStreamDescriptor::create(audioTracks, videoTracks));
 }
 
-PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, const MediaStreamTrackVector& tracks)
+PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context, const MediaStreamTrackVector& tracks)
 {
     Vector<RefPtr<MediaStreamTrackPrivate>> audioTracks;
     Vector<RefPtr<MediaStreamTrackPrivate>> videoTracks;
@@ -77,13 +77,13 @@ PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, con
     return MediaStream::create(context, MediaStreamDescriptor::create(audioTracks, videoTracks));
 }
 
-PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, PassRefPtr<MediaStreamDescriptor> streamDescriptor)
+PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context, PassRefPtr<MediaStreamDescriptor> streamDescriptor)
 {
     return adoptRef(new MediaStream(context, streamDescriptor));
 }
 
-MediaStream::MediaStream(ScriptExecutionContext* context, PassRefPtr<MediaStreamDescriptor> streamDescriptor)
-    : ContextDestructionObserver(context)
+MediaStream::MediaStream(ScriptExecutionContext& context, PassRefPtr<MediaStreamDescriptor> streamDescriptor)
+    : ContextDestructionObserver(&context)
     , m_descriptor(streamDescriptor)
     , m_scheduledEventTimer(this, &MediaStream::scheduledEventTimerFired)
 {
@@ -286,11 +286,11 @@ void MediaStream::addRemoteSource(MediaStreamSource* source)
     RefPtr<MediaStreamTrack> track;
     switch (source->type()) {
     case MediaStreamSource::Audio:
-        track = AudioStreamTrack::create(scriptExecutionContext(), *MediaStreamTrackPrivate::create(source));
+        track = AudioStreamTrack::create(*scriptExecutionContext(), *MediaStreamTrackPrivate::create(source));
         m_audioTracks.append(track);
         break;
     case MediaStreamSource::Video:
-        track = VideoStreamTrack::create(scriptExecutionContext(), *MediaStreamTrackPrivate::create(source));
+        track = VideoStreamTrack::create(*scriptExecutionContext(), *MediaStreamTrackPrivate::create(source));
         m_videoTracks.append(track);
         break;
     case MediaStreamSource::None:

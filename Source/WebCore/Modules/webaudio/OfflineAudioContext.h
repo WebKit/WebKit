@@ -31,12 +31,12 @@ namespace WebCore {
 
 class OfflineAudioContext : public AudioContext {
 public:
-    static PassRefPtr<OfflineAudioContext> create(ScriptExecutionContext*, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode&);
+    static PassRefPtr<OfflineAudioContext> create(ScriptExecutionContext&, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode&);
 
     virtual ~OfflineAudioContext();
 
 private:
-    OfflineAudioContext(Document*, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
+    OfflineAudioContext(Document&, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
 };
 
 } // namespace WebCore

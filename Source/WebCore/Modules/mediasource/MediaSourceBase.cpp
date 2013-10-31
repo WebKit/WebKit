@@ -45,8 +45,8 @@
 
 namespace WebCore {
 
-MediaSourceBase::MediaSourceBase(ScriptExecutionContext* context)
-    : ActiveDOMObject(context)
+MediaSourceBase::MediaSourceBase(ScriptExecutionContext& context)
+    : ActiveDOMObject(&context)
     , m_readyState(closedKeyword())
     , m_asyncEventQueue(*this)
     , m_attached(false)

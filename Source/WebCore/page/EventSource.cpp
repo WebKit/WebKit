@@ -59,8 +59,8 @@ namespace WebCore {
 
 const unsigned long long EventSource::defaultReconnectDelay = 3000;
 
-inline EventSource::EventSource(ScriptExecutionContext* context, const URL& url, const Dictionary& eventSourceInit)
-    : ActiveDOMObject(context)
+inline EventSource::EventSource(ScriptExecutionContext& context, const URL& url, const Dictionary& eventSourceInit)
+    : ActiveDOMObject(&context)
     , m_url(url)
     , m_withCredentials(false)
     , m_state(CONNECTING)
@@ -73,14 +73,14 @@ inline EventSource::EventSource(ScriptExecutionContext* context, const URL& url,
     eventSourceInit.get("withCredentials", m_withCredentials);
 }
 
-PassRefPtr<EventSource> EventSource::create(ScriptExecutionContext* context, const String& url, const Dictionary& eventSourceInit, ExceptionCode& ec)
+PassRefPtr<EventSource> EventSource::create(ScriptExecutionContext& context, const String& url, const Dictionary& eventSourceInit, ExceptionCode& ec)
 {
     if (url.isEmpty()) {
         ec = SYNTAX_ERR;
         return 0;
     }
 
-    URL fullURL = context->completeURL(url);
+    URL fullURL = context.completeURL(url);
     if (!fullURL.isValid()) {
         ec = SYNTAX_ERR;
         return 0;
@@ -88,11 +88,11 @@ PassRefPtr<EventSource> EventSource::create(ScriptExecutionContext* context, con
 
     // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
     bool shouldBypassMainWorldContentSecurityPolicy = false;
-    if (context->isDocument()) {
-        Document* document = toDocument(context);
-        shouldBypassMainWorldContentSecurityPolicy = document->frame()->script().shouldBypassMainWorldContentSecurityPolicy();
+    if (context.isDocument()) {
+        Document& document = toDocument(context);
+        shouldBypassMainWorldContentSecurityPolicy = document.frame()->script().shouldBypassMainWorldContentSecurityPolicy();
     }
-    if (!shouldBypassMainWorldContentSecurityPolicy && !context->contentSecurityPolicy()->allowConnectToSource(fullURL)) {
+    if (!shouldBypassMainWorldContentSecurityPolicy && !context.contentSecurityPolicy()->allowConnectToSource(fullURL)) {
         // FIXME: Should this be throwing an exception?
         ec = SECURITY_ERR;
         return 0;

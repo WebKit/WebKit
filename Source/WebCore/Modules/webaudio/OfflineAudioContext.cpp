@@ -34,15 +34,15 @@
 
 namespace WebCore {
 
-PassRefPtr<OfflineAudioContext> OfflineAudioContext::create(ScriptExecutionContext* context, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode& ec)
+PassRefPtr<OfflineAudioContext> OfflineAudioContext::create(ScriptExecutionContext& context, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode& ec)
 {
     // FIXME: add support for workers.
-    if (!context || !context->isDocument()) {
+    if (!context.isDocument()) {
         ec = NOT_SUPPORTED_ERR;
         return 0;
     }
 
-    Document* document = toDocument(context);
+    Document& document = toDocument(context);
 
     if (numberOfChannels > 10 || !isSampleRateRangeGood(sampleRate)) {
         ec = SYNTAX_ERR;
@@ -54,7 +54,7 @@ PassRefPtr<OfflineAudioContext> OfflineAudioContext::create(ScriptExecutionConte
     return audioContext.release();
 }
 
-OfflineAudioContext::OfflineAudioContext(Document* document, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
+OfflineAudioContext::OfflineAudioContext(Document& document, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
     : AudioContext(document, numberOfChannels, numberOfFrames, sampleRate)
 {
 }

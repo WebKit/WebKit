@@ -54,7 +54,7 @@ class ThreadableLoader;
 class XMLHttpRequest FINAL : public ScriptWrappable, public RefCounted<XMLHttpRequest>, public EventTargetWithInlineData, private ThreadableLoaderClient, public ActiveDOMObject {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<XMLHttpRequest> create(ScriptExecutionContext*);
+    static PassRefPtr<XMLHttpRequest> create(ScriptExecutionContext&);
     ~XMLHttpRequest();
 
     // These exact numeric values are important because JS expects them.
@@ -158,7 +158,7 @@ public:
     using RefCounted<XMLHttpRequest>::deref;
 
 private:
-    explicit XMLHttpRequest(ScriptExecutionContext*);
+    explicit XMLHttpRequest(ScriptExecutionContext&);
 
     // ActiveDOMObject
     virtual void contextDestroyed() OVERRIDE;

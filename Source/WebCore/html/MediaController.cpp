@@ -38,12 +38,12 @@
 
 using namespace WebCore;
 
-PassRefPtr<MediaController> MediaController::create(ScriptExecutionContext* context)
+PassRefPtr<MediaController> MediaController::create(ScriptExecutionContext& context)
 {
     return adoptRef(new MediaController(context));
 }
 
-MediaController::MediaController(ScriptExecutionContext* context)
+MediaController::MediaController(ScriptExecutionContext& context)
     : m_paused(false)
     , m_defaultPlaybackRate(1)
     , m_volume(1)

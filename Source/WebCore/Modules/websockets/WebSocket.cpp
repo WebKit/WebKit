@@ -141,8 +141,8 @@ const char* WebSocket::subProtocolSeperator()
     return ", ";
 }
 
-WebSocket::WebSocket(ScriptExecutionContext* context)
-    : ActiveDOMObject(context)
+WebSocket::WebSocket(ScriptExecutionContext& context)
+    : ActiveDOMObject(&context)
     , m_state(CONNECTING)
     , m_bufferedAmount(0)
     , m_bufferedAmountAfterClose(0)
@@ -158,20 +158,20 @@ WebSocket::~WebSocket()
         m_channel->disconnect();
 }
 
-PassRefPtr<WebSocket> WebSocket::create(ScriptExecutionContext* context)
+PassRefPtr<WebSocket> WebSocket::create(ScriptExecutionContext& context)
 {
     RefPtr<WebSocket> webSocket(adoptRef(new WebSocket(context)));
     webSocket->suspendIfNeeded();
     return webSocket.release();
 }
 
-PassRefPtr<WebSocket> WebSocket::create(ScriptExecutionContext* context, const String& url, ExceptionCode& ec)
+PassRefPtr<WebSocket> WebSocket::create(ScriptExecutionContext& context, const String& url, ExceptionCode& ec)
 {
     Vector<String> protocols;
     return WebSocket::create(context, url, protocols, ec);
 }
 
-PassRefPtr<WebSocket> WebSocket::create(ScriptExecutionContext* context, const String& url, const Vector<String>& protocols, ExceptionCode& ec)
+PassRefPtr<WebSocket> WebSocket::create(ScriptExecutionContext& context, const String& url, const Vector<String>& protocols, ExceptionCode& ec)
 {
     if (url.isNull()) {
         ec = SYNTAX_ERR;
@@ -181,14 +181,14 @@ PassRefPtr<WebSocket> WebSocket::create(ScriptExecutionContext* context, const S
     RefPtr<WebSocket> webSocket(adoptRef(new WebSocket(context)));
     webSocket->suspendIfNeeded();
 
-    webSocket->connect(context->completeURL(url), protocols, ec);
+    webSocket->connect(context.completeURL(url), protocols, ec);
     if (ec)
         return 0;
 
     return webSocket.release();
 }
 
-PassRefPtr<WebSocket> WebSocket::create(ScriptExecutionContext* context, const String& url, const String& protocol, ExceptionCode& ec)
+PassRefPtr<WebSocket> WebSocket::create(ScriptExecutionContext& context, const String& url, const String& protocol, ExceptionCode& ec)
 {
     Vector<String> protocols;
     protocols.append(protocol);

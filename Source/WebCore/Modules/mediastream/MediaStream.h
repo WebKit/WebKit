@@ -46,10 +46,10 @@ class MediaStreamCenter;
 
 class MediaStream FINAL : public RefCounted<MediaStream>, public URLRegistrable, public ScriptWrappable, public MediaStreamDescriptorClient, public EventTargetWithInlineData, public ContextDestructionObserver {
 public:
-    static PassRefPtr<MediaStream> create(ScriptExecutionContext*);
-    static PassRefPtr<MediaStream> create(ScriptExecutionContext*, PassRefPtr<MediaStream>);
-    static PassRefPtr<MediaStream> create(ScriptExecutionContext*, const MediaStreamTrackVector&);
-    static PassRefPtr<MediaStream> create(ScriptExecutionContext*, PassRefPtr<MediaStreamDescriptor>);
+    static PassRefPtr<MediaStream> create(ScriptExecutionContext&);
+    static PassRefPtr<MediaStream> create(ScriptExecutionContext&, PassRefPtr<MediaStream>);
+    static PassRefPtr<MediaStream> create(ScriptExecutionContext&, const MediaStreamTrackVector&);
+    static PassRefPtr<MediaStream> create(ScriptExecutionContext&, PassRefPtr<MediaStreamDescriptor>);
     virtual ~MediaStream();
 
     String id() const { return m_descriptor->id(); }
@@ -82,7 +82,7 @@ public:
     virtual URLRegistry& registry() const OVERRIDE;
 
 protected:
-    MediaStream(ScriptExecutionContext*, PassRefPtr<MediaStreamDescriptor>);
+    MediaStream(ScriptExecutionContext&, PassRefPtr<MediaStreamDescriptor>);
 
     // ContextDestructionObserver
     virtual void contextDestroyed() OVERRIDE FINAL;

@@ -105,8 +105,8 @@ public:
     using RefCounted<MediaStreamTrack>::deref;
 
 protected:
-    explicit MediaStreamTrack(MediaStreamTrack*);
-    MediaStreamTrack(ScriptExecutionContext*, MediaStreamTrackPrivate&, const Dictionary*);
+    explicit MediaStreamTrack(MediaStreamTrack&);
+    MediaStreamTrack(ScriptExecutionContext&, MediaStreamTrackPrivate&, const Dictionary*);
 
     void setSource(PassRefPtr<MediaStreamSource>);
 

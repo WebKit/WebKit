@@ -593,7 +593,7 @@ void InspectorResourceAgent::getResponseBody(ErrorString* errorString, const Str
 
 void InspectorResourceAgent::replayXHR(ErrorString*, const String& requestId)
 {
-    RefPtr<XMLHttpRequest> xhr = XMLHttpRequest::create(m_pageAgent->mainFrame()->document());
+    RefPtr<XMLHttpRequest> xhr = XMLHttpRequest::create(*m_pageAgent->mainFrame()->document());
     String actualRequestId = requestId;
 
     XHRReplayData* xhrReplayData = m_resourcesData->xhrReplayData(requestId);

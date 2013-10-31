@@ -64,7 +64,7 @@ PassRefPtr<SharedWorker> SharedWorker::create(ScriptExecutionContext& context, c
 
     RefPtr<SharedWorker> worker = adoptRef(new SharedWorker(context));
 
-    RefPtr<MessageChannel> channel = MessageChannel::create(&context);
+    RefPtr<MessageChannel> channel = MessageChannel::create(context);
     worker->m_port = channel->port1();
     OwnPtr<MessagePortChannel> remotePort = channel->port2()->disentangle();
     ASSERT(remotePort);

@@ -147,7 +147,7 @@ EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::constructJSTestInterfac
     ScriptExecutionContext* context = castedThis->scriptExecutionContext();
     if (!context)
         return throwVMError(exec, createReferenceError(exec, "TestInterface constructor associated document is unavailable"));
-    RefPtr<TestInterface> object = TestInterface::create(context, str1, str2, ec);
+    RefPtr<TestInterface> object = TestInterface::create(*context, str1, str2, ec);
     if (ec) {
         setDOMException(exec, ec);
         return JSValue::encode(JSValue());

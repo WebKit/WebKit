@@ -4936,7 +4936,7 @@ void HTMLMediaElement::setMediaGroup(const String& group)
     }
 
     // Otherwise, let controller be a newly created MediaController.
-    setController(MediaController::create(Node::scriptExecutionContext()));
+    setController(MediaController::create(document()));
 }
 
 MediaController* HTMLMediaElement::controller() const

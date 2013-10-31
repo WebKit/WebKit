@@ -32,9 +32,9 @@
 
 namespace WebCore {
 
-MessageChannel::MessageChannel(ScriptExecutionContext* context)
-    : m_port1(MessagePort::create(*context))
-    , m_port2(MessagePort::create(*context))
+MessageChannel::MessageChannel(ScriptExecutionContext& context)
+    : m_port1(MessagePort::create(context))
+    , m_port2(MessagePort::create(context))
 {
     MessagePortChannel::createChannel(m_port1.get(), m_port2.get());
 }

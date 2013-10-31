@@ -55,7 +55,7 @@ EncodedJSValue JSC_HOST_CALL JSAudioContextConstructor::constructJSAudioContext(
     if (!scriptExecutionContext->isDocument())
         return throwVMError(exec, createReferenceError(exec, "AudioContext constructor called in a script execution context which is not a document"));
 
-    Document* document = toDocument(scriptExecutionContext);
+    Document& document = toDocument(*scriptExecutionContext);
 
     RefPtr<AudioContext> audioContext;
     
@@ -73,7 +73,7 @@ EncodedJSValue JSC_HOST_CALL JSAudioContextConstructor::constructJSAudioContext(
 #if ENABLE(LEGACY_WEB_AUDIO)
         // Constructor for offline (render-target) AudioContext which renders into an AudioBuffer.
         // new AudioContext(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
-        document->addConsoleMessage(JSMessageSource, WarningMessageLevel,
+        document.addConsoleMessage(JSMessageSource, WarningMessageLevel,
             "Deprecated AudioContext constructor: use OfflineAudioContext instead");
 
         if (exec->argumentCount() < 3)

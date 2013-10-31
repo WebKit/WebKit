@@ -73,7 +73,7 @@ protected:
 
 class TextTrackCue : public RefCounted<TextTrackCue>, public EventTargetWithInlineData {
 public:
-    static PassRefPtr<TextTrackCue> create(ScriptExecutionContext* context, double start, double end, const String& content)
+    static PassRefPtr<TextTrackCue> create(ScriptExecutionContext& context, double start, double end, const String& content)
     {
         return adoptRef(new TextTrackCue(context, start, end, content));
     }
@@ -154,7 +154,7 @@ public:
     std::pair<double, double> getPositionCoordinates() const;
 
     virtual EventTargetInterface eventTargetInterface() const OVERRIDE FINAL { return TextTrackCueEventTargetInterfaceType; }
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return m_scriptExecutionContext; }
+    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE FINAL { return &m_scriptExecutionContext; }
 
     std::pair<double, double> getCSSPosition() const;
 
@@ -203,9 +203,9 @@ public:
     using RefCounted<TextTrackCue>::deref;
 
 protected:
-    TextTrackCue(ScriptExecutionContext*, double start, double end, const String& content);
+    TextTrackCue(ScriptExecutionContext&, double start, double end, const String& content);
 
-    Document& ownerDocument() { return *toDocument(m_scriptExecutionContext); }
+    Document& ownerDocument() { return toDocument(m_scriptExecutionContext); }
 
     virtual PassRefPtr<TextTrackCueBox> createDisplayTree();
     TextTrackCueBox* displayTreeInternal();
@@ -254,7 +254,7 @@ private:
     RefPtr<DocumentFragment> m_webVTTNodeTree;
     TextTrack* m_track;
 
-    ScriptExecutionContext* m_scriptExecutionContext;
+    ScriptExecutionContext& m_scriptExecutionContext;
 
     bool m_isActive;
     bool m_pauseOnExit;

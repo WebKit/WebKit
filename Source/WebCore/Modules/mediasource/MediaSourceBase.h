@@ -92,7 +92,7 @@ public:
     using RefCounted<MediaSourceBase>::deref;
 
 protected:
-    explicit MediaSourceBase(ScriptExecutionContext*);
+    explicit MediaSourceBase(ScriptExecutionContext&);
 
     virtual void onReadyStateChange(const AtomicString& oldState, const AtomicString& newState) = 0;
     virtual Vector<RefPtr<TimeRanges>> activeRanges() const = 0;

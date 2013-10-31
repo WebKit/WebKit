@@ -71,7 +71,7 @@ public:
     static PassRefPtr<Notification> create(const String& title, const String& body, const String& iconURI, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter> provider);
 #endif
 #if ENABLE(NOTIFICATIONS)
-    static PassRefPtr<Notification> create(ScriptExecutionContext*, const String& title, const Dictionary& options);
+    static PassRefPtr<Notification> create(ScriptExecutionContext&, const String& title, const Dictionary& options);
 #endif
     
     virtual ~Notification();
@@ -143,7 +143,7 @@ private:
     Notification(const String& title, const String& body, const String& iconURI, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter>);
 #endif
 #if ENABLE(NOTIFICATIONS)
-    Notification(ScriptExecutionContext*, const String& title);
+    Notification(ScriptExecutionContext&, const String& title);
 #endif
 
     void setBody(const String& body) { m_body = body; }

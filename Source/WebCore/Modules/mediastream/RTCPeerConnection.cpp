@@ -114,7 +114,7 @@ PassRefPtr<RTCConfiguration> RTCPeerConnection::parseConfiguration(const Diction
     return rtcConfiguration.release();
 }
 
-PassRefPtr<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext* context, const Dictionary& rtcConfiguration, const Dictionary& mediaConstraints, ExceptionCode& ec)
+PassRefPtr<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext& context, const Dictionary& rtcConfiguration, const Dictionary& mediaConstraints, ExceptionCode& ec)
 {
     RefPtr<RTCConfiguration> configuration = parseConfiguration(rtcConfiguration, ec);
     if (ec)
@@ -132,17 +132,17 @@ PassRefPtr<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext* 
     return peerConnection.release();
 }
 
-RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext* context, PassRefPtr<RTCConfiguration> configuration, PassRefPtr<MediaConstraints> constraints, ExceptionCode& ec)
-    : ActiveDOMObject(context)
+RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext& context, PassRefPtr<RTCConfiguration> configuration, PassRefPtr<MediaConstraints> constraints, ExceptionCode& ec)
+    : ActiveDOMObject(&context)
     , m_signalingState(SignalingStateStable)
     , m_iceGatheringState(IceGatheringStateNew)
     , m_iceConnectionState(IceConnectionStateNew)
     , m_scheduledEventTimer(this, &RTCPeerConnection::scheduledEventTimerFired)
     , m_stopped(false)
 {
-    Document* document = toDocument(m_scriptExecutionContext);
+    Document& document = toDocument(context);
 
-    if (!document->frame()) {
+    if (!document.frame()) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
@@ -153,7 +153,7 @@ RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext* context, PassRefPtr
         return;
     }
 
-    document->frame()->loader().client().dispatchWillStartUsingPeerConnectionHandler(m_peerHandler.get());
+    document.frame()->loader().client().dispatchWillStartUsingPeerConnectionHandler(m_peerHandler.get());
 
     if (!m_peerHandler->initialize(configuration, constraints)) {
         ec = NOT_SUPPORTED_ERR;

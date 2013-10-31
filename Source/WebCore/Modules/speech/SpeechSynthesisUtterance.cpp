@@ -30,13 +30,13 @@
 
 namespace WebCore {
     
-PassRefPtr<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExecutionContext* context, const String& text)
+PassRefPtr<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExecutionContext& context, const String& text)
 {
     return adoptRef(new SpeechSynthesisUtterance(context, text));
 }
 
-SpeechSynthesisUtterance::SpeechSynthesisUtterance(ScriptExecutionContext* context, const String& text)
-    : ContextDestructionObserver(context)
+SpeechSynthesisUtterance::SpeechSynthesisUtterance(ScriptExecutionContext& context, const String& text)
+    : ContextDestructionObserver(&context)
     , m_platformUtterance(PlatformSpeechSynthesisUtterance::create(this))
 {
     m_platformUtterance->setText(text);

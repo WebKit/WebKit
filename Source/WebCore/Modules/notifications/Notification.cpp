@@ -80,13 +80,13 @@ Notification::Notification(const String& title, const String& body, const String
 #endif
 
 #if ENABLE(NOTIFICATIONS)
-Notification::Notification(ScriptExecutionContext* context, const String& title)
-    : ActiveDOMObject(context)
+Notification::Notification(ScriptExecutionContext& context, const String& title)
+    : ActiveDOMObject(&context)
     , m_title(title)
     , m_state(Idle)
     , m_taskTimer(adoptPtr(new Timer<Notification>(this, &Notification::taskTimerFired)))
 {
-    m_notificationCenter = DOMWindowNotifications::webkitNotifications(toDocument(context)->domWindow());
+    m_notificationCenter = DOMWindowNotifications::webkitNotifications(toDocument(context).domWindow());
     
     ASSERT(m_notificationCenter->client());
     m_taskTimer->startOneShot(0);
@@ -107,7 +107,7 @@ PassRefPtr<Notification> Notification::create(const String& title, const String&
 #endif
 
 #if ENABLE(NOTIFICATIONS)
-PassRefPtr<Notification> Notification::create(ScriptExecutionContext* context, const String& title, const Dictionary& options)
+PassRefPtr<Notification> Notification::create(ScriptExecutionContext& context, const String& title, const Dictionary& options)
 {
     RefPtr<Notification> notification(adoptRef(new Notification(context, title)));
     String argument;
@@ -120,7 +120,7 @@ PassRefPtr<Notification> Notification::create(ScriptExecutionContext* context, c
     if (options.get("dir", argument))
         notification->setDir(argument);
     if (options.get("icon", argument)) {
-        URL iconURI = argument.isEmpty() ? URL() : context->completeURL(argument);
+        URL iconURI = argument.isEmpty() ? URL() : context.completeURL(argument);
         if (!iconURI.isEmpty() && iconURI.isValid())
             notification->setIconURL(iconURI);
     }

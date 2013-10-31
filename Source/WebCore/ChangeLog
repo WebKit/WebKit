@@ -1,3 +1,13 @@
+2013-10-31  Sam Weinig  <sam@webkit.org>
+
+        Pass ScriptExecutionContext by reference to from the bindings constructors
+        https://bugs.webkit.org/show_bug.cgi?id=123575
+
+        Reviewed by Andreas Kling.
+
+        Since we null check the ScriptExecutionContext before creating the c++ class,
+        we should be passing by reference.
+
 2013-10-31  Zhuang Zhigang  <zhuangzg@cn.fujitsu.com>
 
         Paint the input tag of range type on WinCE port.

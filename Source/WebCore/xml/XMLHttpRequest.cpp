@@ -165,7 +165,7 @@ static void logConsoleError(ScriptExecutionContext* context, const String& messa
     context->addConsoleMessage(JSMessageSource, ErrorMessageLevel, message);
 }
 
-PassRefPtr<XMLHttpRequest> XMLHttpRequest::create(ScriptExecutionContext* context)
+PassRefPtr<XMLHttpRequest> XMLHttpRequest::create(ScriptExecutionContext& context)
 {
     RefPtr<XMLHttpRequest> xmlHttpRequest(adoptRef(new XMLHttpRequest(context)));
     xmlHttpRequest->suspendIfNeeded();
@@ -173,8 +173,8 @@ PassRefPtr<XMLHttpRequest> XMLHttpRequest::create(ScriptExecutionContext* contex
     return xmlHttpRequest.release();
 }
 
-XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context)
-    : ActiveDOMObject(context)
+XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext& context)
+    : ActiveDOMObject(&context)
     , m_async(true)
     , m_includeCredentials(false)
 #if ENABLE(XHR_TIMEOUT)

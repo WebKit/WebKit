@@ -51,7 +51,7 @@ class ThreadableLoader;
 class EventSource FINAL : public RefCounted<EventSource>, public EventTargetWithInlineData, private ThreadableLoaderClient, public ActiveDOMObject {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<EventSource> create(ScriptExecutionContext*, const String& url, const Dictionary&, ExceptionCode&);
+    static PassRefPtr<EventSource> create(ScriptExecutionContext&, const String& url, const Dictionary&, ExceptionCode&);
     virtual ~EventSource();
 
     static const unsigned long long defaultReconnectDelay;
@@ -79,7 +79,7 @@ public:
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return ActiveDOMObject::scriptExecutionContext(); }
 
 private:
-    EventSource(ScriptExecutionContext*, const URL&, const Dictionary&);
+    EventSource(ScriptExecutionContext&, const URL&, const Dictionary&);
 
     virtual void refEventTarget() OVERRIDE { ref(); }
     virtual void derefEventTarget() OVERRIDE { deref(); }

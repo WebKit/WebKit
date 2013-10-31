@@ -109,7 +109,7 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
     setInlineStyleProperty(CSSPropertyWordBreak, CSSValueNormal);
 }
 
-TextTrackCueGeneric::TextTrackCueGeneric(ScriptExecutionContext* context, double start, double end, const String& content)
+TextTrackCueGeneric::TextTrackCueGeneric(ScriptExecutionContext& context, double start, double end, const String& content)
     : TextTrackCue(context, start, end, content)
     , m_baseFontSizeRelativeToVideoHeight(0)
     , m_fontSizeMultiplier(0)

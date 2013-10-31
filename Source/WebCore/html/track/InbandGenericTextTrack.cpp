@@ -150,7 +150,7 @@ void InbandGenericTextTrack::addGenericCue(InbandTextTrackPrivate* trackPrivate,
     if (m_cueMap.find(cueData.get()))
         return;
 
-    RefPtr<TextTrackCueGeneric> cue = TextTrackCueGeneric::create(scriptExecutionContext(), cueData->startTime(), cueData->endTime(), cueData->content());
+    RefPtr<TextTrackCueGeneric> cue = TextTrackCueGeneric::create(*scriptExecutionContext(), cueData->startTime(), cueData->endTime(), cueData->content());
     updateCueFromCueData(cue.get(), cueData.get());
     if (hasCue(cue.get(), TextTrackCue::IgnoreDuration)) {
         LOG(Media, "InbandGenericTextTrack::addGenericCue ignoring already added cue: start=%.2f, end=%.2f, content=\"%s\"\n", cueData->startTime(), cueData->endTime(), cueData->content().utf8().data());

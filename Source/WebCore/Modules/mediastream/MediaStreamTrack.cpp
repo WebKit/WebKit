@@ -51,8 +51,8 @@
 
 namespace WebCore {
 
-MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext* context, MediaStreamTrackPrivate& privateTrack, const Dictionary* constraints)
-    : ActiveDOMObject(context)
+MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, MediaStreamTrackPrivate& privateTrack, const Dictionary* constraints)
+    : ActiveDOMObject(&context)
     , m_privateTrack(privateTrack)
     , m_eventDispatchScheduled(false)
     , m_stoppingTrack(false)
@@ -65,9 +65,9 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext* context, MediaStreamT
         applyConstraints(*constraints);
 }
 
-MediaStreamTrack::MediaStreamTrack(MediaStreamTrack* other)
-    : ActiveDOMObject(other->scriptExecutionContext())
-    , m_privateTrack(*other->privateTrack().clone())
+MediaStreamTrack::MediaStreamTrack(MediaStreamTrack& other)
+    : ActiveDOMObject(other.scriptExecutionContext())
+    , m_privateTrack(*other.privateTrack().clone())
     , m_eventDispatchScheduled(false)
     , m_stoppingTrack(false)
 {
@@ -192,9 +192,9 @@ void MediaStreamTrack::applyConstraints(PassRefPtr<MediaConstraints>)
 RefPtr<MediaStreamTrack> MediaStreamTrack::clone()
 {
     if (m_privateTrack->type() == MediaStreamSource::Audio)
-        return AudioStreamTrack::create(this);
+        return AudioStreamTrack::create(*this);
 
-    return VideoStreamTrack::create(this);
+    return VideoStreamTrack::create(*this);
 }
 
 void MediaStreamTrack::stopProducingData()

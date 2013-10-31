@@ -47,14 +47,14 @@
 
 namespace WebCore {
 
-PassRefPtr<MediaSource> MediaSource::create(ScriptExecutionContext* context)
+PassRefPtr<MediaSource> MediaSource::create(ScriptExecutionContext& context)
 {
     RefPtr<MediaSource> mediaSource(adoptRef(new MediaSource(context)));
     mediaSource->suspendIfNeeded();
     return mediaSource.release();
 }
 
-MediaSource::MediaSource(ScriptExecutionContext* context)
+MediaSource::MediaSource(ScriptExecutionContext& context)
     : MediaSourceBase(context)
 {
     LOG(Media, "MediaSource::MediaSource %p", this);

@@ -76,7 +76,7 @@ class PeriodicWave;
 class AudioContext : public ActiveDOMObject, public ThreadSafeRefCounted<AudioContext>, public EventTargetWithInlineData, public MediaCanStartListener {
 public:
     // Create an AudioContext for rendering to the audio hardware.
-    static PassRefPtr<AudioContext> create(Document*, ExceptionCode&);
+    static PassRefPtr<AudioContext> create(Document&, ExceptionCode&);
 
     // Create an AudioContext for offline (non-realtime) rendering.
     static PassRefPtr<AudioContext> createOfflineContext(Document*, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode&);
@@ -265,8 +265,8 @@ public:
     void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }
 
 protected:
-    explicit AudioContext(Document*);
-    AudioContext(Document*, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
+    explicit AudioContext(Document&);
+    AudioContext(Document&, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
     
     static bool isSampleRateRangeGood(float sampleRate);
     

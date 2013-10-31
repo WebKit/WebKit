@@ -1618,6 +1618,18 @@ inline ScriptExecutionContext* Node::scriptExecutionContext() const
 
 Element* eventTargetElementForDocument(Document*);
 
+inline Document& toDocument(ScriptExecutionContext& scriptExecutionContext)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(scriptExecutionContext.isDocument());
+    return static_cast<Document&>(scriptExecutionContext);
+}
+
+inline const Document& toDocument(const ScriptExecutionContext& scriptExecutionContext)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(scriptExecutionContext.isDocument());
+    return static_cast<const Document&>(scriptExecutionContext);
+}
+
 inline Document* toDocument(ScriptExecutionContext* scriptExecutionContext)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!scriptExecutionContext || scriptExecutionContext->isDocument());

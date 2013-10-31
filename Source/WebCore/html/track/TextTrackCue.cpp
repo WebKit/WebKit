@@ -183,7 +183,7 @@ RenderElement* TextTrackCueBox::createRenderer(PassRef<RenderStyle> style)
 
 // ----------------------------
 
-TextTrackCue::TextTrackCue(ScriptExecutionContext* context, double start, double end, const String& content)
+TextTrackCue::TextTrackCue(ScriptExecutionContext& context, double start, double end, const String& content)
     : m_startTime(start)
     , m_endTime(end)
     , m_content(content)
@@ -201,11 +201,11 @@ TextTrackCue::TextTrackCue(ScriptExecutionContext* context, double start, double
     , m_isActive(false)
     , m_pauseOnExit(false)
     , m_snapToLines(true)
-    , m_cueBackgroundBox(HTMLSpanElement::create(spanTag, *toDocument(context)))
+    , m_cueBackgroundBox(HTMLSpanElement::create(spanTag, toDocument(context)))
     , m_displayTreeShouldChange(true)
     , m_displayDirection(CSSValueLtr)
 {
-    ASSERT(m_scriptExecutionContext->isDocument());
+    ASSERT(m_scriptExecutionContext.isDocument());
 
     // 4. If the text track cue writing direction is horizontal, then let
     // writing-mode be 'horizontal-tb'. Otherwise, if the text track cue writing
@@ -500,7 +500,7 @@ void TextTrackCue::invalidateCueIndex()
 void TextTrackCue::createWebVTTNodeTree()
 {
     if (!m_webVTTNodeTree)
-        m_webVTTNodeTree = WebVTTParser::create(0, m_scriptExecutionContext)->createDocumentFragmentFromCueText(m_content);
+        m_webVTTNodeTree = WebVTTParser::create(0, &m_scriptExecutionContext)->createDocumentFragmentFromCueText(m_content);
 }
 
 void TextTrackCue::copyWebVTTNodeToDOMTree(ContainerNode* webVTTNode, ContainerNode* parent)
@@ -764,7 +764,7 @@ void TextTrackCue::markFutureAndPastNodes(ContainerNode* root, double previousTi
         if (child->nodeName() == timestampTag) {
             unsigned position = 0;
             String timestamp = child->nodeValue();
-            double currentTimestamp = WebVTTParser::create(0, m_scriptExecutionContext)->collectTimeStamp(timestamp, &position);
+            double currentTimestamp = WebVTTParser::create(0, &m_scriptExecutionContext)->collectTimeStamp(timestamp, &position);
             ASSERT(currentTimestamp != -1);
             
             if (currentTimestamp > movieTime)

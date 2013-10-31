@@ -39,7 +39,7 @@ namespace WebCore {
 
 class SpeechSynthesisUtterance FINAL : public PlatformSpeechSynthesisUtteranceClient, public RefCounted<SpeechSynthesisUtterance>, public ContextDestructionObserver, public EventTargetWithInlineData {
 public:
-    static PassRefPtr<SpeechSynthesisUtterance> create(ScriptExecutionContext*, const String&);
+    static PassRefPtr<SpeechSynthesisUtterance> create(ScriptExecutionContext&, const String&);
     
     ~SpeechSynthesisUtterance();
 
@@ -80,7 +80,7 @@ public:
     PlatformSpeechSynthesisUtterance* platformUtterance() const { return m_platformUtterance.get(); }
 
 private:
-    SpeechSynthesisUtterance(ScriptExecutionContext*, const String&);
+    SpeechSynthesisUtterance(ScriptExecutionContext&, const String&);
     RefPtr<PlatformSpeechSynthesisUtterance> m_platformUtterance;
     RefPtr<SpeechSynthesisVoice> m_voice;
 

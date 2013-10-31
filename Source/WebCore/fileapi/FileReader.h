@@ -55,7 +55,7 @@ typedef int ExceptionCode;
 
 class FileReader FINAL : public RefCounted<FileReader>, public ActiveDOMObject, public EventTargetWithInlineData, public FileReaderLoaderClient {
 public:
-    static PassRefPtr<FileReader> create(ScriptExecutionContext*);
+    static PassRefPtr<FileReader> create(ScriptExecutionContext&);
 
     virtual ~FileReader();
 
@@ -101,7 +101,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(loadend);
 
 private:
-    explicit FileReader(ScriptExecutionContext*);
+    explicit FileReader(ScriptExecutionContext&);
 
     // ActiveDOMObject
     virtual bool canSuspend() const OVERRIDE;

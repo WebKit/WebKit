@@ -64,7 +64,7 @@ void InbandWebVTTTextTrack::newCuesParsed()
     m_webVTTParser->getNewCues(cues);
     for (size_t i = 0; i < cues.size(); ++i) {
         RefPtr<WebVTTCueData> cueData = cues[i];
-        RefPtr<TextTrackCue> cue = TextTrackCue::create(scriptExecutionContext(), cueData->startTime(), cueData->endTime(), cueData->content());
+        RefPtr<TextTrackCue> cue = TextTrackCue::create(*scriptExecutionContext(), cueData->startTime(), cueData->endTime(), cueData->content());
         cue->setId(cueData->id());
         cue->setCueSettings(cueData->settings());
 
