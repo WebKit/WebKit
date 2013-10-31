@@ -1,5 +1,12 @@
 2013-10-31  Csaba Osztrogonác  <ossy@webkit.org>
 
+        One more speculative buildfix after r158365.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::didAddRemoteStream):
+
+2013-10-31  Csaba Osztrogonác  <ossy@webkit.org>
+
         Speculative buildfix after r158365.
 
         * Modules/mediastream/VideoStreamTrack.cpp:

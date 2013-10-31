@@ -548,7 +548,7 @@ void RTCPeerConnection::didAddRemoteStream(PassRefPtr<MediaStreamDescriptor> str
     if (m_signalingState == SignalingStateClosed)
         return;
 
-    RefPtr<MediaStream> stream = MediaStream::create(scriptExecutionContext(), streamDescriptor);
+    RefPtr<MediaStream> stream = MediaStream::create(*scriptExecutionContext(), streamDescriptor);
     m_remoteStreams.append(stream);
 
     scheduleDispatchEvent(MediaStreamEvent::create(eventNames().addstreamEvent, false, false, stream.release()));
