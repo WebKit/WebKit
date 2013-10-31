@@ -102,14 +102,14 @@ def main():
         for task in tasksToKillMac:
             os.system("killall -9 -v -m " + task)
         # Kill all instances of python executing run-webkit-tests
-        os.system("ps aux | grep -E '.+/Python .+(run_webkit_tests|run-webkit-tests)' | grep -v grep | awk '{print $2}' | xargs kill")
+        os.system("ps aux | grep -E '.+/Python .+(run_webkit_tests|run-webkit-tests|mod_pywebsocket)' | grep -v grep | awk '{print $2}' | xargs kill")
     elif sys.platform == 'cygwin' or sys.platform == 'win32':
         for task in tasksToKillWin:
             os.system("taskkill /t /f /im " + task)
     elif sys.platform.startswith('linux'):
         for task in taskToKillUnix:
             os.system("killall -9 -v " + task)
-        os.system("ps aux | grep -P '.+/python .+(run_webkit_tests|run-webkit-tests)' | grep -v grep | awk '{print $2}' | xargs kill")
+        os.system("ps aux | grep -P '.+/python .+(run_webkit_tests|run-webkit-tests|mod_pywebsocket)' | grep -v grep | awk '{print $2}' | xargs kill")
     else:
         sys.exit()
         # FIXME: Should we return an exit code based on how the kills went?
