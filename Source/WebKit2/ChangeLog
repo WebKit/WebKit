@@ -1,3 +1,47 @@
+2013-10-30  Gavin Barraclough  <barraclough@apple.com>
+
+        WebPageCreationParameters should be consistent in Window.open
+        https://bugs.webkit.org/show_bug.cgi?id=123557
+
+        Reviewed by Sam Weinig.
+
+        When Window.open in called in WebKit2 the WebProcess sends a synchronous request to open
+        a page (WebPageProxy::createNewPage). The UIProcess creates a WebpageProxy, and responds
+        with instructions to the WebProcess to create the WebPage. The initial creation state of
+        the WebPage is communicated to the WebProcess via two routes (firstly an asynchronous
+        WebProcess::CreateWebPage message, and secondly in the synchronous response from
+        WebPageProxy::createNewPage). Unfortunately these responses are inconsistent with each
+        other. The creationParameters() for the page are calculated twice, and since the WKView
+        will be added to a window between the async message being sent and the synchronous reply
+        being returned the visibility state of the page can change.
+
+        To fix the inconsistency we can set the creation parameters at the point that the
+        WebPageProxy is instantiated. This will result in a functional change that is web
+        visible, since the page will initially be opened in a hidden/blurred state, and may
+        later become visible/focussed. This change is consistent with the direction we want to
+        evolve in. Whilst we will still probably require a synchronous message from the
+        WebProcess to the UIProcess on Window.open, we'll probably make this return much earlier
+        – having just created the WebPageProxy, but avoiding blocking the WebProcess over the
+        client delegate callback that opens the new window.
+
+        This fix results in a layout test result change, due to the change in behavior (page is
+        created blurred, and becomes focussed, resulting in a focus event being fired – rather
+        than the window opening directly into a focussed state). This is reported as a
+        progression (test is broken in WebKit1, fixed in WebKit2 after this change). In reality
+        the test is actually slightly broken in DRT/test-runner – the test runs differently than
+        in browser, since there is is no visible main window. In-browser this patch results in
+        no change in behavior on dom/Window/mozilla-focus-blur.html (the affected test).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+            - call initializeCreationParameters
+        (WebKit::WebPageProxy::initializeCreationParameters):
+            - calculate m_creationParameters
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::creationParameters):
+            - Added m_creationParameters, initializeCreationParameters,
+              creationParameters returns m_creationParameters
+
 2013-10-31  Philippe Normand  <pnormand@igalia.com>
 
         [WK2][GTK] enable-media-stream Setting
