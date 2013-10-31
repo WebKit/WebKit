@@ -1,5 +1,11 @@
 2013-10-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add two crash expectations per bug 123555.
+
+        * TestExpectations:
+
+2013-10-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         REGRESSION(r158333): http/tests/xmlhttprequest/response-encoding.html and
         xmlhttprequest-overridemimetype-content-type-header.html are failing
         https://bugs.webkit.org/show_bug.cgi?id=123548
