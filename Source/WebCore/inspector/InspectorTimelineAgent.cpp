@@ -57,13 +57,6 @@
 
 namespace WebCore {
 
-namespace TimelineAgentState {
-static const char timelineAgentEnabled[] = "timelineAgentEnabled";
-static const char timelineMaxCallStackDepth[] = "timelineMaxCallStackDepth";
-static const char includeDomCounters[] = "includeDomCounters";
-static const char includeNativeMemoryStatistics[] = "includeNativeMemoryStatistics";
-}
-
 void TimelineTimeConverter::reset()
 {
     m_startOffset = monotonicallyIncreasingTime() - currentTime();
@@ -95,18 +88,21 @@ void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth, c
         m_maxCallStackDepth = *maxCallStackDepth;
     else
         m_maxCallStackDepth = 5;
-    m_state->setLong(TimelineAgentState::timelineMaxCallStackDepth, m_maxCallStackDepth);
-    m_state->setBoolean(TimelineAgentState::includeDomCounters, includeDomCounters && *includeDomCounters);
-    m_state->setBoolean(TimelineAgentState::includeNativeMemoryStatistics, includeNativeMemoryStatistics && *includeNativeMemoryStatistics);
+
+    if (includeDomCounters)
+        m_includeDOMCounters = *includeDomCounters;
+
+    UNUSED_PARAM(includeNativeMemoryStatistics);
+
     m_timeConverter.reset();
 
     m_instrumentingAgents->setInspectorTimelineAgent(this);
-    m_state->setBoolean(TimelineAgentState::timelineAgentEnabled, true);
+    m_enabled = true;
 }
 
 void InspectorTimelineAgent::stop(ErrorString*)
 {
-    if (!m_state->getBoolean(TimelineAgentState::timelineAgentEnabled))
+    if (!m_enabled)
         return;
 
     m_weakFactory.revokeAll();
@@ -114,7 +110,7 @@ void InspectorTimelineAgent::stop(ErrorString*)
 
     clearRecordStack();
 
-    m_state->setBoolean(TimelineAgentState::timelineAgentEnabled, false);
+    m_enabled = false;
 }
 
 void InspectorTimelineAgent::canMonitorMainThread(ErrorString*, bool* result)
@@ -540,7 +536,7 @@ void InspectorTimelineAgent::setDOMCounters(TypeBuilder::Timeline::TimelineEvent
 {
     record->setUsedHeapSize(usedHeapSize());
 
-    if (m_state->getBoolean(TimelineAgentState::includeDomCounters)) {
+    if (m_includeDOMCounters) {
         int documentCount = 0;
         int nodeCount = 0;
         if (m_inspectorType == PageInspector) {
@@ -594,6 +590,8 @@ InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentin
     , m_inspectorType(type)
     , m_client(client)
     , m_weakFactory(this)
+    , m_enabled(false)
+    , m_includeDOMCounters(false)
 {
 }
 

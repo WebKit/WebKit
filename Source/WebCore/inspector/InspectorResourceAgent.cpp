@@ -78,10 +78,7 @@
 namespace WebCore {
 
 namespace ResourceAgentState {
-static const char resourceAgentEnabled[] = "resourceAgentEnabled";
 static const char extraRequestHeaders[] = "extraRequestHeaders";
-static const char cacheDisabled[] = "cacheDisabled";
-static const char userAgentOverride[] = "userAgentOverride";
 }
 
 void InspectorResourceAgent::setFrontend(InspectorFrontend* frontend)
@@ -178,7 +175,7 @@ static PassRefPtr<TypeBuilder::Network::CachedResource> buildObjectForCachedReso
 
 InspectorResourceAgent::~InspectorResourceAgent()
 {
-    if (m_state->getBoolean(ResourceAgentState::resourceAgentEnabled)) {
+    if (m_enabled) {
         ErrorString error;
         disable(&error);
     }
@@ -215,7 +212,7 @@ void InspectorResourceAgent::willSendRequest(unsigned long identifier, DocumentL
     request.setReportLoadTiming(true);
     request.setReportRawHeaders(true);
 
-    if (m_state->getBoolean(ResourceAgentState::cacheDisabled)) {
+    if (m_cacheDisabled) {
         request.setHTTPHeaderField("Pragma", "no-cache");
         request.setCachePolicy(ReloadIgnoringCacheData);
         request.setHTTPHeaderField("Cache-Control", "no-cache");
@@ -424,9 +421,8 @@ void InspectorResourceAgent::willDestroyCachedResource(CachedResource* cachedRes
 
 void InspectorResourceAgent::applyUserAgentOverride(String* userAgent)
 {
-    String userAgentOverride = m_state->getString(ResourceAgentState::userAgentOverride);
-    if (!userAgentOverride.isEmpty())
-        *userAgent = userAgentOverride;
+    if (!m_userAgentOverride.isNull())
+        *userAgent = m_userAgentOverride;
 }
 
 void InspectorResourceAgent::willRecalculateStyle()
@@ -540,21 +536,21 @@ void InspectorResourceAgent::enable()
 {
     if (!m_frontend)
         return;
-    m_state->setBoolean(ResourceAgentState::resourceAgentEnabled, true);
+    m_enabled = true;
     m_instrumentingAgents->setInspectorResourceAgent(this);
 }
 
 void InspectorResourceAgent::disable(ErrorString*)
 {
-    m_state->setBoolean(ResourceAgentState::resourceAgentEnabled, false);
-    m_state->setString(ResourceAgentState::userAgentOverride, "");
+    m_enabled = false;
+    m_userAgentOverride = String();
     m_instrumentingAgents->setInspectorResourceAgent(0);
     m_resourcesData->clear();
 }
 
 void InspectorResourceAgent::setUserAgentOverride(ErrorString*, const String& userAgent)
 {
-    m_state->setString(ResourceAgentState::userAgentOverride, userAgent);
+    m_userAgentOverride = userAgent;
 }
 
 void InspectorResourceAgent::setExtraHTTPHeaders(ErrorString*, const RefPtr<InspectorObject>& headers)
@@ -641,14 +637,14 @@ void InspectorResourceAgent::clearBrowserCookies(ErrorString*)
 
 void InspectorResourceAgent::setCacheDisabled(ErrorString*, bool cacheDisabled)
 {
-    m_state->setBoolean(ResourceAgentState::cacheDisabled, cacheDisabled);
+    m_cacheDisabled = cacheDisabled;
     if (cacheDisabled)
         memoryCache()->evictResources();
 }
 
 void InspectorResourceAgent::mainFrameNavigated(DocumentLoader* loader)
 {
-    if (m_state->getBoolean(ResourceAgentState::cacheDisabled))
+    if (m_cacheDisabled)
         memoryCache()->evictResources();
 
     m_resourcesData->clear(m_pageAgent->loaderId(loader));
@@ -660,6 +656,8 @@ InspectorResourceAgent::InspectorResourceAgent(InstrumentingAgents* instrumentin
     , m_client(client)
     , m_frontend(0)
     , m_resourcesData(adoptPtr(new NetworkResourcesData()))
+    , m_enabled(false)
+    , m_cacheDisabled(false)
     , m_loadingXHRSynchronously(false)
     , m_isRecalculatingStyle(false)
 {

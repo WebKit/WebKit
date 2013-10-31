@@ -42,10 +42,6 @@
 
 namespace WebCore {
 
-namespace HeapProfilerAgentState {
-static const char profileHeadersRequested[] = "profileHeadersRequested";
-}
-
 static const char* const UserInitiatedProfileNameHeap = "org.webkit.profiles.user-initiated";
 
 PassOwnPtr<InspectorHeapProfilerAgent> InspectorHeapProfilerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* inspectorState, InjectedScriptManager* injectedScriptManager)
@@ -58,6 +54,7 @@ InspectorHeapProfilerAgent::InspectorHeapProfilerAgent(InstrumentingAgents* inst
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
     , m_nextUserInitiatedHeapSnapshotNumber(1)
+    , m_profileHeadersRequested(false)
 {
     m_instrumentingAgents->setInspectorHeapProfilerAgent(this);
 }
@@ -79,7 +76,7 @@ void InspectorHeapProfilerAgent::resetFrontendProfiles()
 {
     if (!m_frontend)
         return;
-    if (!m_state->getBoolean(HeapProfilerAgentState::profileHeadersRequested))
+    if (!m_profileHeadersRequested)
         return;
     if (m_snapshots.isEmpty())
         m_frontend->resetProfiles();
@@ -92,7 +89,7 @@ void InspectorHeapProfilerAgent::setFrontend(InspectorFrontend* frontend)
 
 void InspectorHeapProfilerAgent::clearFrontend()
 {
-    m_state->setBoolean(HeapProfilerAgentState::profileHeadersRequested, false);
+    m_profileHeadersRequested = false;
     m_frontend = 0;
 }
 
@@ -117,7 +114,7 @@ void InspectorHeapProfilerAgent::hasHeapProfiler(ErrorString*, bool* result)
 
 void InspectorHeapProfilerAgent::getProfileHeaders(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::HeapProfiler::ProfileHeader>>& headers)
 {
-    m_state->setBoolean(HeapProfilerAgentState::profileHeadersRequested, true);
+    m_profileHeadersRequested = true;
     headers = TypeBuilder::Array<TypeBuilder::HeapProfiler::ProfileHeader>::create();
 
     IdToHeapSnapshotMap::iterator snapshotsEnd = m_snapshots.end();

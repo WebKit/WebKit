@@ -46,11 +46,6 @@
 
 namespace WebCore {
 
-namespace WorkerAgentState {
-static const char workerInspectionEnabled[] = "workerInspectionEnabled";
-static const char autoconnectToWorkers[] = "autoconnectToWorkers";
-};
-
 class InspectorWorkerAgent::WorkerFrontendChannel : public WorkerGlobalScopeProxy::PageInspector {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -115,6 +110,8 @@ PassOwnPtr<InspectorWorkerAgent> InspectorWorkerAgent::create(InstrumentingAgent
 InspectorWorkerAgent::InspectorWorkerAgent(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* inspectorState)
     : InspectorBaseAgent<InspectorWorkerAgent>("Worker", instrumentingAgents, inspectorState)
     , m_inspectorFrontend(0)
+    , m_enabled(false)
+    , m_shouldPauseDedicatedWorkerOnStart(false)
 {
     m_instrumentingAgents->setInspectorWorkerAgent(this);
 }
@@ -131,14 +128,14 @@ void InspectorWorkerAgent::setFrontend(InspectorFrontend* frontend)
 
 void InspectorWorkerAgent::clearFrontend()
 {
-    m_state->setBoolean(WorkerAgentState::autoconnectToWorkers, false);
+    m_shouldPauseDedicatedWorkerOnStart = false;
     disable(0);
     m_inspectorFrontend = 0;
 }
 
 void InspectorWorkerAgent::enable(ErrorString*)
 {
-    m_state->setBoolean(WorkerAgentState::workerInspectionEnabled, true);
+    m_enabled = true;
     if (!m_inspectorFrontend)
         return;
     createWorkerFrontendChannelsForExistingWorkers();
@@ -146,7 +143,7 @@ void InspectorWorkerAgent::enable(ErrorString*)
 
 void InspectorWorkerAgent::disable(ErrorString*)
 {
-    m_state->setBoolean(WorkerAgentState::workerInspectionEnabled, false);
+    m_enabled = false;
     if (!m_inspectorFrontend)
         return;
     destroyWorkerFrontendChannels();
@@ -190,18 +187,18 @@ void InspectorWorkerAgent::sendMessageToWorker(ErrorString* error, int workerId,
 
 void InspectorWorkerAgent::setAutoconnectToWorkers(ErrorString*, bool value)
 {
-    m_state->setBoolean(WorkerAgentState::autoconnectToWorkers, value);
+    m_shouldPauseDedicatedWorkerOnStart = value;
 }
 
-bool InspectorWorkerAgent::shouldPauseDedicatedWorkerOnStart()
+bool InspectorWorkerAgent::shouldPauseDedicatedWorkerOnStart() const
 {
-    return m_state->getBoolean(WorkerAgentState::autoconnectToWorkers);
+    return m_shouldPauseDedicatedWorkerOnStart;
 }
 
 void InspectorWorkerAgent::didStartWorkerGlobalScope(WorkerGlobalScopeProxy* workerGlobalScopeProxy, const URL& url)
 {
     m_dedicatedWorkers.set(workerGlobalScopeProxy, url.string());
-    if (m_inspectorFrontend && m_state->getBoolean(WorkerAgentState::workerInspectionEnabled))
+    if (m_inspectorFrontend && m_enabled)
         createWorkerFrontendChannel(workerGlobalScopeProxy, url.string());
 }
 
@@ -239,10 +236,9 @@ void InspectorWorkerAgent::createWorkerFrontendChannel(WorkerGlobalScopeProxy* w
     m_idToChannel.set(channel->id(), channel);
 
     ASSERT(m_inspectorFrontend);
-    bool autoconnectToWorkers = m_state->getBoolean(WorkerAgentState::autoconnectToWorkers);
-    if (autoconnectToWorkers)
+    if (m_shouldPauseDedicatedWorkerOnStart)
         channel->connectToWorkerGlobalScope();
-    m_inspectorFrontend->worker()->workerCreated(channel->id(), url, autoconnectToWorkers);
+    m_inspectorFrontend->worker()->workerCreated(channel->id(), url, m_shouldPauseDedicatedWorkerOnStart);
 }
 
 } // namespace WebCore

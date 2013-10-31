@@ -174,6 +174,7 @@ private:
     String m_continueToLocationBreakpointId;
     InspectorFrontend::Debugger::Reason::Enum m_breakReason;
     RefPtr<InspectorObject> m_breakAuxData;
+    bool m_enabled;
     bool m_javaScriptPauseScheduled;
     Listener* m_listener;
 };

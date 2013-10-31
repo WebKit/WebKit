@@ -66,11 +66,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 
-namespace CSSAgentState {
-static const char cssAgentEnabled[] = "cssAgentEnabled";
-static const char isSelectorProfiling[] = "isSelectorProfiling";
-}
-
 namespace WebCore {
 
 enum ForcePseudoClassFlags {
@@ -678,14 +673,12 @@ void InspectorCSSAgent::resetNonPersistentData()
 
 void InspectorCSSAgent::enable(ErrorString*)
 {
-    m_state->setBoolean(CSSAgentState::cssAgentEnabled, true);
     m_instrumentingAgents->setInspectorCSSAgent(this);
 }
 
 void InspectorCSSAgent::disable(ErrorString*)
 {
     m_instrumentingAgents->setInspectorCSSAgent(0);
-    m_state->setBoolean(CSSAgentState::cssAgentEnabled, false);
 }
 
 void InspectorCSSAgent::mediaQueryResultChanged()
@@ -1088,7 +1081,6 @@ void InspectorCSSAgent::getNamedFlowCollection(ErrorString* errorString, int doc
 void InspectorCSSAgent::startSelectorProfiler(ErrorString*)
 {
     m_currentSelectorProfile = adoptPtr(new SelectorProfile());
-    m_state->setBoolean(CSSAgentState::isSelectorProfiling, true);
 }
 
 void InspectorCSSAgent::stopSelectorProfiler(ErrorString* errorString, RefPtr<TypeBuilder::CSS::SelectorProfile>& result)
@@ -1098,9 +1090,8 @@ void InspectorCSSAgent::stopSelectorProfiler(ErrorString* errorString, RefPtr<Ty
 
 PassRefPtr<TypeBuilder::CSS::SelectorProfile> InspectorCSSAgent::stopSelectorProfilerImpl(ErrorString*, bool needProfile)
 {
-    if (!m_state->getBoolean(CSSAgentState::isSelectorProfiling))
+    if (!m_currentSelectorProfile)
         return 0;
-    m_state->setBoolean(CSSAgentState::isSelectorProfiling, false);
     RefPtr<TypeBuilder::CSS::SelectorProfile> result;
     if (m_frontend && needProfile)
         result = m_currentSelectorProfile->toInspectorObject();

@@ -99,6 +99,8 @@ private:
     Vector<pair<long, String>> m_pendingEvaluateTestCommands;
     pair<RefPtr<TypeBuilder::Runtime::RemoteObject>, RefPtr<InspectorObject>> m_pendingInspectData;
     HashMap<String, String> m_injectedScriptForOrigin;
+
+    bool m_enabled;
 };
 
 } // namespace WebCore

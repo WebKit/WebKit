@@ -79,11 +79,11 @@ private:
 
     InspectorDOMStorageAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorCompositeState*);
 
-    bool isEnabled() const;
     PassRefPtr<StorageArea> findStorageArea(ErrorString*, const RefPtr<InspectorObject>&, Frame*&);
 
     InspectorPageAgent* m_pageAgent;
     InspectorFrontend* m_frontend;
+    bool m_enabled;
 };
 
 } // namespace WebCore

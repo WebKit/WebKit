@@ -107,6 +107,7 @@ private:
     InspectorDebuggerAgent* m_debuggerAgent;
     HashMap<Node*, uint32_t> m_domBreakpoints;
     bool m_pauseInNextEventListener;
+    bool m_pauseOnAllXHRsEnabled;
 };
 
 } // namespace WebCore

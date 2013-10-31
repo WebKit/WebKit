@@ -86,6 +86,7 @@ private:
     InspectorFrontend::HeapProfiler* m_frontend;
     unsigned m_nextUserInitiatedHeapSnapshotNumber;
     IdToHeapSnapshotMap m_snapshots;
+    bool m_profileHeadersRequested;
 };
 
 } // namespace WebCore

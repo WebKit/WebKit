@@ -107,10 +107,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-namespace DOMAgentState {
-static const char documentRequested[] = "documentRequested";
-};
-
 static const size_t maxTextSize = 10000;
 static const UChar ellipsisUChar[] = { 0x2026, 0 };
 
@@ -227,6 +223,7 @@ InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, I
     , m_lastBackendNodeId(-1)
     , m_searchingForNode(false)
     , m_suppressAttributeModifiedEvent(false)
+    , m_documentRequested(false)
 {
 }
 
@@ -263,7 +260,7 @@ void InspectorDOMAgent::clearFrontend()
 
     m_frontend = 0;
     m_instrumentingAgents->setInspectorDOMAgent(0);
-    m_state->setBoolean(DOMAgentState::documentRequested, false);
+    m_documentRequested = false;
     reset();
 }
 
@@ -304,7 +301,7 @@ void InspectorDOMAgent::setDocument(Document* doc)
 
     m_document = doc;
 
-    if (!m_state->getBoolean(DOMAgentState::documentRequested))
+    if (!m_documentRequested)
         return;
 
     // Immediately communicate 0 document or document that has finished loading.
@@ -427,7 +424,7 @@ Element* InspectorDOMAgent::assertEditableElement(ErrorString* errorString, int 
 
 void InspectorDOMAgent::getDocument(ErrorString* errorString, RefPtr<TypeBuilder::DOM::Node>& root)
 {
-    m_state->setBoolean(DOMAgentState::documentRequested, true);
+    m_documentRequested = true;
 
     if (!m_document) {
         *errorString = "Document is not available";
@@ -1578,7 +1575,7 @@ void InspectorDOMAgent::mainFrameDOMContentLoaded()
 {
     // Re-push document once it is loaded.
     discardBindings();
-    if (m_state->getBoolean(DOMAgentState::documentRequested))
+    if (m_documentRequested)
         m_frontend->documentUpdated();
 }
 

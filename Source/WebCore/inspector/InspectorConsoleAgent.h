@@ -109,6 +109,7 @@ protected:
     HashMap<String, unsigned> m_counts;
     HashMap<String, double> m_times;
     bool m_enabled;
+    bool m_monitoringXHREnabled;
 private:
     static int s_enabledAgentCount;
 };

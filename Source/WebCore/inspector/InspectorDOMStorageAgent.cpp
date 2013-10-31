@@ -56,14 +56,11 @@
 
 namespace WebCore {
 
-namespace DOMStorageAgentState {
-static const char domStorageAgentEnabled[] = "domStorageAgentEnabled";
-};
-
 InspectorDOMStorageAgent::InspectorDOMStorageAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorCompositeState* state)
     : InspectorBaseAgent<InspectorDOMStorageAgent>("DOMStorage", instrumentingAgents, state)
     , m_pageAgent(pageAgent)
     , m_frontend(0)
+    , m_enabled(false)
 {
     m_instrumentingAgents->setInspectorDOMStorageAgent(this);
 }
@@ -85,19 +82,14 @@ void InspectorDOMStorageAgent::clearFrontend()
     disable(0);
 }
 
-bool InspectorDOMStorageAgent::isEnabled() const
-{
-    return m_state->getBoolean(DOMStorageAgentState::domStorageAgentEnabled);
-}
-
 void InspectorDOMStorageAgent::enable(ErrorString*)
 {
-    m_state->setBoolean(DOMStorageAgentState::domStorageAgentEnabled, true);
+    m_enabled = true;
 }
 
 void InspectorDOMStorageAgent::disable(ErrorString*)
 {
-    m_state->setBoolean(DOMStorageAgentState::domStorageAgentEnabled, false);
+    m_enabled = false;
 }
 
 void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString* errorString, const RefPtr<InspectorObject>& storageId, RefPtr<TypeBuilder::Array<TypeBuilder::Array<String>>>& items)
@@ -173,7 +165,7 @@ PassRefPtr<TypeBuilder::DOMStorage::StorageId> InspectorDOMStorageAgent::storage
 
 void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin, Page*)
 {
-    if (!m_frontend || !isEnabled())
+    if (!m_frontend || !m_enabled)
         return;
 
     RefPtr<TypeBuilder::DOMStorage::StorageId> id = storageId(securityOrigin, storageType == LocalStorage);

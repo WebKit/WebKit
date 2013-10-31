@@ -57,12 +57,6 @@
 
 namespace WebCore {
 
-namespace ProfilerAgentState {
-static const char userInitiatedProfiling[] = "userInitiatedProfiling";
-static const char profilerEnabled[] = "profilerEnabled";
-static const char profileHeadersRequested[] = "profileHeadersRequested";
-}
-
 static const char* const UserInitiatedProfileName = "org.webkit.profiles.user-initiated";
 static const char* const CPUProfileType = "CPU";
 static const char* const HeapProfileType = "HEAP";
@@ -133,6 +127,7 @@ InspectorProfilerAgent::InspectorProfilerAgent(InstrumentingAgents* instrumentin
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
     , m_enabled(false)
+    , m_profileHeadersRequested(false)
     , m_recordingCPUProfile(false)
     , m_currentUserInitiatedProfileNumber(-1)
     , m_nextUserInitiatedProfileNumber(1)
@@ -151,7 +146,7 @@ void InspectorProfilerAgent::addProfile(PassRefPtr<ScriptProfile> prpProfile, un
 {
     RefPtr<ScriptProfile> profile = prpProfile;
     m_profiles.add(profile->uid(), profile);
-    if (m_frontend && m_state->getBoolean(ProfilerAgentState::profileHeadersRequested))
+    if (m_frontend && m_profileHeadersRequested)
         m_frontend->addProfileHeader(createProfileHeader(*profile));
     addProfileFinishedMessageToConsole(profile, lineNumber, columnNumber, sourceURL);
 }
@@ -215,13 +210,11 @@ void InspectorProfilerAgent::enable(ErrorString*)
 {
     if (enabled())
         return;
-    m_state->setBoolean(ProfilerAgentState::profilerEnabled, true);
     enable(false);
 }
 
 void InspectorProfilerAgent::disable(ErrorString*)
 {
-    m_state->setBoolean(ProfilerAgentState::profilerEnabled, false);
     disable();
 }
 
@@ -230,7 +223,7 @@ void InspectorProfilerAgent::disable()
     if (!m_enabled)
         return;
     m_enabled = false;
-    m_state->setBoolean(ProfilerAgentState::profileHeadersRequested, false);
+    m_profileHeadersRequested = false;
     recompileScript();
 }
 
@@ -253,7 +246,7 @@ String InspectorProfilerAgent::getCurrentUserInitiatedProfileName(bool increment
 
 void InspectorProfilerAgent::getProfileHeaders(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::Profiler::ProfileHeader>>& headers)
 {
-    m_state->setBoolean(ProfilerAgentState::profileHeadersRequested, true);
+    m_profileHeadersRequested = true;
     headers = TypeBuilder::Array<TypeBuilder::Profiler::ProfileHeader>::create();
 
     ProfilesMap::iterator profilesEnd = m_profiles.end();
@@ -332,7 +325,7 @@ void InspectorProfilerAgent::resetFrontendProfiles()
 {
     if (!m_frontend)
         return;
-    if (!m_state->getBoolean(ProfilerAgentState::profileHeadersRequested))
+    if (!m_profileHeadersRequested)
         return;
     if (m_profiles.isEmpty() && m_snapshots.isEmpty())
         m_frontend->resetProfiles();
@@ -364,7 +357,6 @@ void InspectorProfilerAgent::start(ErrorString*)
     startProfiling(title);
     addStartProfilingMessageToConsole(title, 0, 0, String());
     toggleRecordButton(true);
-    m_state->setBoolean(ProfilerAgentState::userInitiatedProfiling, true);
 }
 
 void InspectorProfilerAgent::stop(ErrorString*)
@@ -377,7 +369,6 @@ void InspectorProfilerAgent::stop(ErrorString*)
     if (profile)
         addProfile(profile, 0, 0, String());
     toggleRecordButton(false);
-    m_state->setBoolean(ProfilerAgentState::userInitiatedProfiling, false);
 }
 
 namespace {

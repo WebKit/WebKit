@@ -1,3 +1,191 @@
+2013-10-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove basic uses of InspectorState from agents
+        https://bugs.webkit.org/show_bug.cgi?id=123534
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::enable):
+        (WebCore::InspectorAgent::disable):
+        (WebCore::InspectorAgent::evaluateForTestInFrontend):
+        (WebCore::InspectorAgent::inspect):
+        InspectorAgentState::inspectorAgentEnabled -> m_enabled.
+
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::enable):
+        Remove unused state.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::enable):
+        (WebCore::InspectorCSSAgent::disable):
+        (WebCore::InspectorCSSAgent::startSelectorProfiler):
+        (WebCore::InspectorCSSAgent::stopSelectorProfilerImpl):
+        Remove unused states. Make CSSAgentState::isSelectorProfiling check profile object exists or not.
+
+        * inspector/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::enable):
+        (WebCore::InspectorCanvasAgent::disable):
+        Remove unused state, member variable already existed.
+
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::InspectorConsoleAgent):
+        (WebCore::InspectorConsoleAgent::~InspectorConsoleAgent):
+        (WebCore::InspectorConsoleAgent::enable):
+        (WebCore::InspectorConsoleAgent::disable):
+        (WebCore::InspectorConsoleAgent::didFinishXHRLoading):
+        (WebCore::InspectorConsoleAgent::setMonitoringXHREnabled):
+        ConsoleAgentState::consoleMessagesEnabled already had m_enabled.
+        ConsoleAgentState::monitoringXHR -> m_monitoringXHREnabled.
+        
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::clearFrontend):
+        (WebCore::InspectorDOMAgent::setDocument):
+        (WebCore::InspectorDOMAgent::getDocument):
+        (WebCore::InspectorDOMAgent::mainFrameDOMContentLoaded):
+        DOMAgentState::documentRequested -> m_documentRequested.
+
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent):
+        (WebCore::InspectorDOMDebuggerAgent::setXHRBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::removeXHRBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::willSendXMLHttpRequest):
+        DOMDebuggerAgentState::pauseOnAllXHRs -> m_pauseOnAllXHRsEnabled.
+
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::InspectorDOMStorageAgent):
+        (WebCore::InspectorDOMStorageAgent::enable):
+        (WebCore::InspectorDOMStorageAgent::disable):
+        (WebCore::InspectorDOMStorageAgent::didDispatchDOMStorageEvent):
+        DOMStorageAgentState::domStorageAgentEnabled -> m_enabled.
+
+        * inspector/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::enable):
+        (WebCore::InspectorDatabaseAgent::disable):
+        Remove unused state, m_enabled already existed.
+
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::enable):
+        (WebCore::InspectorDebuggerAgent::disable):
+        (WebCore::InspectorDebuggerAgent::enabled):
+        (WebCore::InspectorDebuggerAgent::clearFrontend):
+        (WebCore::InspectorDebuggerAgent::setPauseOnExceptionsImpl):
+        DebuggerAgentState::pauseOnExceptionsState removed, never read.
+        DebuggerAgentState::debuggerEnabled -> m_enabled.
+
+        * inspector/InspectorHeapProfilerAgent.h:
+        * inspector/InspectorHeapProfilerAgent.cpp:
+        (WebCore::InspectorHeapProfilerAgent::InspectorHeapProfilerAgent):
+        (WebCore::InspectorHeapProfilerAgent::resetFrontendProfiles):
+        (WebCore::InspectorHeapProfilerAgent::clearFrontend):
+        (WebCore::InspectorHeapProfilerAgent::getProfileHeaders):
+        HeapProfilerAgentState::profileHeadersRequested -> m_profileHeadersRequested.
+
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore::InspectorIndexedDBAgent::enable):
+        (WebCore::InspectorIndexedDBAgent::disable):
+        Remove unused state, never read.
+
+        * inspector/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::enable):
+        (WebCore::InspectorLayerTreeAgent::disable):
+        Remove unused state, did not need to be read.
+
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::InspectorPageAgent):
+        (WebCore::InspectorPageAgent::webViewResized):
+        (WebCore::InspectorPageAgent::enable):
+        (WebCore::InspectorPageAgent::disable):
+        (WebCore::InspectorPageAgent::setDeviceMetricsOverride):
+        (WebCore::InspectorPageAgent::deviceMetricsChanged):
+        (WebCore::InspectorPageAgent::setShowPaintRects):
+        (WebCore::InspectorPageAgent::setShowDebugBorders):
+        (WebCore::InspectorPageAgent::setShowFPSCounter):
+        (WebCore::InspectorPageAgent::setContinuousPaintingEnabled):
+        (WebCore::InspectorPageAgent::setScriptExecutionDisabled):
+        (WebCore::InspectorPageAgent::applyScreenWidthOverride):
+        (WebCore::InspectorPageAgent::applyScreenHeightOverride):
+        (WebCore::InspectorPageAgent::didPaint):
+        (WebCore::InspectorPageAgent::didLayout):
+        (WebCore::InspectorPageAgent::updateTouchEventEmulationInPage):
+        (WebCore::InspectorPageAgent::setTouchEmulationEnabled):
+        (WebCore::InspectorPageAgent::setEmulatedMedia):
+        (WebCore::InspectorPageAgent::applyEmulatedMedia):
+        PageAgentState::pageAgentScreenWidthOverride -> m_screenWidthOverride.
+        PageAgentState::pageAgentScreenHeightOverride -> m_screenHeightOverride.
+        PageAgentState::pageAgentFontScaleFactorOverride -> m_fontScaleFactorOverride.
+        PageAgentState::pageAgentFitWindow -> m_fitWindowOverride.
+        PageAgentState::pageAgentShowPaintRects -> m_showPaintRects.
+        PageAgentState::pageAgentEmulatedMedia -> m_emulatedMedia.
+        Remove other unused states.
+
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::InspectorProfilerAgent):
+        (WebCore::InspectorProfilerAgent::addProfile):
+        (WebCore::InspectorProfilerAgent::enable):
+        (WebCore::InspectorProfilerAgent::disable):
+        (WebCore::InspectorProfilerAgent::getProfileHeaders):
+        (WebCore::InspectorProfilerAgent::resetFrontendProfiles):
+        (WebCore::InspectorProfilerAgent::start):
+        (WebCore::InspectorProfilerAgent::stop):
+        (WebCore::InspectorProfilerAgent::enabled):
+        ProfilerAgentState::profileHeadersRequested -> m_profileHeadersRequested.
+        Remove other unused states.
+
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::~InspectorResourceAgent):
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        (WebCore::InspectorResourceAgent::applyUserAgentOverride):
+        (WebCore::InspectorResourceAgent::enable):
+        (WebCore::InspectorResourceAgent::disable):
+        (WebCore::InspectorResourceAgent::setUserAgentOverride):
+        (WebCore::InspectorResourceAgent::setCacheDisabled):
+        (WebCore::InspectorResourceAgent::mainFrameNavigated):
+        (WebCore::InspectorResourceAgent::InspectorResourceAgent):
+        ResourceAgentState::resourceAgentEnabled -> m_enabled.
+        ResourceAgentState::cacheDisabled -> m_cacheDisabled.
+        ResourceAgentState::userAgentOverride -> m_userAgentOverride (this already existed and was unused).
+
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::start):
+        (WebCore::InspectorTimelineAgent::stop):
+        (WebCore::InspectorTimelineAgent::setDOMCounters):
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        TimelineAgentState::timelineAgentEnabled -> m_enabled.
+        TimelineAgentState::includeDomCounters -> m_includeDOMCounters.
+        Remove other unused states.
+
+        * inspector/InspectorWorkerAgent.h:
+        * inspector/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::InspectorWorkerAgent):
+        (WebCore::InspectorWorkerAgent::clearFrontend):
+        (WebCore::InspectorWorkerAgent::enable):
+        (WebCore::InspectorWorkerAgent::disable):
+        (WebCore::InspectorWorkerAgent::setAutoconnectToWorkers):
+        (WebCore::InspectorWorkerAgent::shouldPauseDedicatedWorkerOnStart):
+        (WebCore::InspectorWorkerAgent::didStartWorkerGlobalScope):
+        (WebCore::InspectorWorkerAgent::createWorkerFrontendChannel):
+        WorkerAgentState::workerInspectionEnabled -> m_enabled.
+        WorkerAgentState::autoconnectToWorkers -> m_shouldPauseDedicatedWorkerOnStart.
+
+        * inspector/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::enable):
+        (WebCore::PageRuntimeAgent::disable):
+        Remove unused state, not read.
+
 2013-10-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove code for Mac Lion

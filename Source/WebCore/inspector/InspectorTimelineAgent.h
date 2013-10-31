@@ -271,6 +271,9 @@ private:
     InspectorType m_inspectorType;
     InspectorClient* m_client;
     WeakPtrFactory<InspectorTimelineAgent> m_weakFactory;
+
+    bool m_enabled;
+    bool m_includeDOMCounters;
 };
 
 } // namespace WebCore
