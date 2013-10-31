@@ -456,6 +456,9 @@ webkit.org/b/107194 http/tests/security/no-indexeddb-from-sandbox.html [ Skip ]
 # Needs to update the gtk databaseQuotaExceeded() test function to handle quota expansion requests.
 storage/websql/open-database-expand-quota.html [ Failure ]
 
+# crypto.subtle is not yet enabled
+crypto/subtle [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -29,6 +29,7 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include <runtime/ObjectConstructor.h>
+#include <runtime/Operations.h>
 
 using namespace JSC;
 

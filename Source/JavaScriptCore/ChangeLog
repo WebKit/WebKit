@@ -1,3 +1,12 @@
+2013-10-31  Alexey Proskuryakov  <ap@apple.com>
+
+        Enable WebCrypto on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=123587
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/FeatureDefines.xcconfig: Do it.
+
 2013-10-31  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, really remove CachedTranscendentalFunction.h.

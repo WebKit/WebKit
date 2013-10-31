@@ -1,3 +1,20 @@
+2013-10-31  Alexey Proskuryakov  <ap@apple.com>
+
+        Enable WebCrypto on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=123587
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/FeatureDefines.xcconfig: Enable it.
+
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp: Build fix.
+
+        * crypto/CryptoAlgorithmRegistry.cpp: (WebCore::CryptoAlgorithmRegistry::getIdentifierForName):
+        Special case empty keys to avoid upsetting HashMap.
+
+        * crypto/algorithms/CryptoAlgorithmSHA1.cpp: (WebCore::CryptoAlgorithmSHA1::create):
+        Build fix. Can't use make_unique, because constructor is private.
+
 2013-10-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Underline bounds cannot be queried before underline itself is drawn

@@ -2850,3 +2850,6 @@ webkit.org/b/?????? http/tests/loading/promote-img-preload-priority.html [ Failu
 
 # No concept of secure text input
 editing/secure-input [ Failure ]
+
+# crypto.subtle is not yet enabled
+crypto/subtle [ Skip ]

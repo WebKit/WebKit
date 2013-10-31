@@ -1,3 +1,60 @@
+2013-10-31  Alexey Proskuryakov  <ap@apple.com>
+
+        Enable WebCrypto on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=123587
+
+        Reviewed by Anders Carlsson.
+
+        * TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        Only skipping on specific platforms now.
+
+        * crypto: Added.
+        * crypto/crypto-gc-expected.txt: Copied from LayoutTests/security/crypto-gc-expected.txt.
+        * crypto/crypto-gc.html: Copied from LayoutTests/security/crypto-gc.html.
+        * crypto/crypto-random-values-expected.txt: Copied from LayoutTests/security/crypto-random-values-expected.txt.
+        * crypto/crypto-random-values-limits-expected.txt: Copied from LayoutTests/security/crypto-random-values-limits-expected.txt.
+        * crypto/crypto-random-values-limits.html: Copied from LayoutTests/security/crypto-random-values-limits.html.
+        * crypto/crypto-random-values-types-expected.txt: Copied from LayoutTests/security/crypto-random-values-types-expected.txt.
+        * crypto/crypto-random-values-types.html: Copied from LayoutTests/security/crypto-random-values-types.html.
+        * crypto/crypto-random-values.html: Copied from LayoutTests/security/crypto-random-values.html.
+        * crypto/subtle: Added.
+        * crypto/subtle/argument-conversion-expected.txt: Copied from LayoutTests/security/crypto-subtle-arguments-expected.txt.
+        * crypto/subtle/argument-conversion.html: Copied from LayoutTests/security/crypto-subtle-arguments.html.
+        * crypto/subtle/gc-2-expected.txt: Copied from LayoutTests/security/crypto-subtle-gc-2-expected.txt.
+        * crypto/subtle/gc-2.html: Copied from LayoutTests/security/crypto-subtle-gc-2.html.
+        * crypto/subtle/gc-3-expected.txt: Copied from LayoutTests/security/crypto-subtle-gc-3-expected.txt.
+        * crypto/subtle/gc-3.html: Copied from LayoutTests/security/crypto-subtle-gc-3.html.
+        * crypto/subtle/gc-expected.txt: Copied from LayoutTests/security/crypto-subtle-gc-expected.txt.
+        * crypto/subtle/gc.html: Copied from LayoutTests/security/crypto-subtle-gc.html.
+        * crypto/subtle/resources: Added.
+        * crypto/subtle/resources/common.js: Copied from LayoutTests/security/resources/common.js.
+        * crypto/subtle/sha-1-expected.txt: Copied from LayoutTests/security/crypto-subtle-sha1-expected.txt.
+        * crypto/subtle/sha-1.html: Copied from LayoutTests/security/crypto-subtle-sha1.html.
+        * security/crypto-gc-expected.txt: Removed.
+        * security/crypto-gc.html: Removed.
+        * security/crypto-random-values-expected.txt: Removed.
+        * security/crypto-random-values-limits-expected.txt: Removed.
+        * security/crypto-random-values-limits.html: Removed.
+        * security/crypto-random-values-types-expected.txt: Removed.
+        * security/crypto-random-values-types.html: Removed.
+        * security/crypto-random-values.html: Removed.
+        * security/crypto-subtle-arguments-expected.txt: Removed.
+        * security/crypto-subtle-arguments.html: Removed.
+        * security/crypto-subtle-gc-2-expected.txt: Removed.
+        * security/crypto-subtle-gc-2.html: Removed.
+        * security/crypto-subtle-gc-3-expected.txt: Removed.
+        * security/crypto-subtle-gc-3.html: Removed.
+        * security/crypto-subtle-gc-expected.txt: Removed.
+        * security/crypto-subtle-gc.html: Removed.
+        * security/crypto-subtle-sha1-expected.txt: Removed.
+        * security/crypto-subtle-sha1.html: Removed.
+        * security/resources/common.js: Removed.
+        Moved tests from security/ to crypto/.
+
 2013-10-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Move CSS3 text decoration implementation behind ENABLE(CSS3_TEXT_DECORATION)

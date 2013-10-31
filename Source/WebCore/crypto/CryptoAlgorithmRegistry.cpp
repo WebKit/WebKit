@@ -47,6 +47,9 @@ CryptoAlgorithmRegistry::CryptoAlgorithmRegistry()
 
 bool CryptoAlgorithmRegistry::getIdentifierForName(const String& name, CryptoAlgorithmIdentifier& result)
 {
+    if (name.isEmpty())
+        return false;
+
     auto iter = m_nameToIdentifierMap.find(name.lower());
     if (iter == m_nameToIdentifierMap.end())
         return false;

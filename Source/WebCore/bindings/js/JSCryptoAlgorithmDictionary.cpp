@@ -28,7 +28,6 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmHMAC.h"
 #include "CryptoAlgorithmHmacKeyParams.h"
 #include "CryptoAlgorithmHmacParams.h"
 #include "CryptoAlgorithmRegistry.h"
@@ -149,7 +148,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> createHmacKeyParams(JSC::ExecS
     return std::move(result);
 }
 
-std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForEncrypt(JSC::ExecState* exec, CryptoAlgorithmIdentifier, JSC::JSValue)
+std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForEncrypt(JSC::ExecState* exec, CryptoAlgorithmIdentifier algorithm, JSC::JSValue)
 {
     switch (algorithm) {
     case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
@@ -178,7 +177,7 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     }
 }
 
-std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForDecrypt(JSC::ExecState* exec, CryptoAlgorithmIdentifier, JSC::JSValue)
+std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForDecrypt(JSC::ExecState* exec, CryptoAlgorithmIdentifier algorithm, JSC::JSValue)
 {
     switch (algorithm) {
     case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
@@ -303,7 +302,7 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     }
 }
 
-std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForGenerateKey(JSC::ExecState* exec, CryptoAlgorithmIdentifier, JSC::JSValue)
+std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForGenerateKey(JSC::ExecState* exec, CryptoAlgorithmIdentifier algorithm, JSC::JSValue)
 {
     switch (algorithm) {
     case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
@@ -332,7 +331,7 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     }
 }
 
-std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForDeriveKey(JSC::ExecState* exec, CryptoAlgorithmIdentifier, JSC::JSValue)
+std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForDeriveKey(JSC::ExecState* exec, CryptoAlgorithmIdentifier algorithm, JSC::JSValue)
 {
     switch (algorithm) {
     case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
@@ -361,7 +360,7 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     }
 }
 
-std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForDeriveBits(JSC::ExecState* exec, CryptoAlgorithmIdentifier, JSC::JSValue)
+std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForDeriveBits(JSC::ExecState* exec, CryptoAlgorithmIdentifier algorithm, JSC::JSValue)
 {
     switch (algorithm) {
     case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
@@ -422,7 +421,7 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     }
 }
 
-std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForExportKey(JSC::ExecState* exec, CryptoAlgorithmIdentifier, JSC::JSValue)
+std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForExportKey(JSC::ExecState* exec, CryptoAlgorithmIdentifier algorithm, JSC::JSValue)
 {
     switch (algorithm) {
     case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
@@ -451,7 +450,7 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     }
 }
 
-std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForWrapKey(JSC::ExecState* exec, CryptoAlgorithmIdentifier, JSC::JSValue)
+std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForWrapKey(JSC::ExecState* exec, CryptoAlgorithmIdentifier algorithm, JSC::JSValue)
 {
     switch (algorithm) {
     case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
@@ -480,7 +479,7 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     }
 }
 
-std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForUnwrapKey(JSC::ExecState* exec, CryptoAlgorithmIdentifier, JSC::JSValue)
+std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForUnwrapKey(JSC::ExecState* exec, CryptoAlgorithmIdentifier algorithm, JSC::JSValue)
 {
     switch (algorithm) {
     case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
