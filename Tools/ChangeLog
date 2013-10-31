@@ -1,3 +1,11 @@
+2013-10-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Added Mark Lam as a reviewer.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-10-30  Alexey Proskuryakov  <ap@apple.com>
 
         Teach the style checker about ENUM_CLASS
