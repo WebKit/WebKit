@@ -97,6 +97,8 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case ArithMin:
     case ArithMax:
     case ArithSqrt:
+    case ArithSin:
+    case ArithCos:
     case GetScope:
     case SkipScope:
     case CheckFunction:

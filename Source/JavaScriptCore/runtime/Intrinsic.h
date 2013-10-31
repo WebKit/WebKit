@@ -34,6 +34,8 @@ enum Intrinsic {
     MinIntrinsic,
     MaxIntrinsic,
     SqrtIntrinsic,
+    SinIntrinsic,
+    CosIntrinsic,
     ArrayPushIntrinsic,
     ArrayPopIntrinsic,
     CharCodeAtIntrinsic,

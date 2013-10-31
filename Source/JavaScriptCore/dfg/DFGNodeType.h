@@ -129,6 +129,8 @@ namespace JSC { namespace DFG {
     macro(ArithMin, NodeResultNumber | NodeMustGenerate) \
     macro(ArithMax, NodeResultNumber | NodeMustGenerate) \
     macro(ArithSqrt, NodeResultNumber | NodeMustGenerate) \
+    macro(ArithSin, NodeResultNumber | NodeMustGenerate) \
+    macro(ArithCos, NodeResultNumber | NodeMustGenerate) \
     \
     /* Add of values may either be arithmetic, or result in string concatenation. */\
     macro(ValueAdd, NodeResultJS | NodeMustGenerate | NodeMightClobber) \

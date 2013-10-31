@@ -278,7 +278,9 @@ private:
             break;
         }
             
-        case ArithSqrt: {
+        case ArithSqrt:
+        case ArithSin:
+        case ArithCos: {
             fixEdge<NumberUse>(node->child1());
             break;
         }

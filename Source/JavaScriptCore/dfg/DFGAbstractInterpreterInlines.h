@@ -547,7 +547,27 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ArithSqrt: {
         JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()) {
-            setConstant(node, JSValue(sqrt(child.asNumber())));
+            setConstant(node, jsNumber(sqrt(child.asNumber())));
+            break;
+        }
+        forNode(node).setType(SpecDouble);
+        break;
+    }
+        
+    case ArithSin: {
+        JSValue child = forNode(node->child1()).value();
+        if (child && child.isNumber()) {
+            setConstant(node, jsNumber(sin(child.asNumber())));
+            break;
+        }
+        forNode(node).setType(SpecDouble);
+        break;
+    }
+    
+    case ArithCos: {
+        JSValue child = forNode(node->child1()).value();
+        if (child && child.isNumber()) {
+            setConstant(node, jsNumber(cos(child.asNumber())));
             break;
         }
         forNode(node).setType(SpecDouble);

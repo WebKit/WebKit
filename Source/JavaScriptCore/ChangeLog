@@ -1,3 +1,54 @@
+2013-10-31  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove CachedTranscendentalFunction because caching math functions is an ugly idea
+        https://bugs.webkit.org/show_bug.cgi?id=123574
+
+        Reviewed by Mark Hahnenberg.
+        
+        This is performance-neutral because I also make Math.cos/sin intrinsic. This means that
+        we gain the "overhead" of actually computing sin and cos but we lose the overhead of
+        going through the native call thunks.
+        
+        Caching transcendental functions is a really ugly idea. It works for SunSpider because
+        that benchmark makes very predictable calls into Math.sin. But I don't believe that this
+        is representative of any kind of reality, and so for sensible uses of Math.sin/cos all
+        that this was doing was adding more call overhead and some hashing overhead.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        (JSC::DFG::PredictionPropagationPhase::doDoubleVoting):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITOperations.h:
+        * runtime/CachedTranscendentalFunction.h: Removed.
+        * runtime/DateInstanceCache.h:
+        * runtime/Intrinsic.h:
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::finishCreation):
+        (JSC::mathProtoFuncCos):
+        (JSC::mathProtoFuncSin):
+        * runtime/VM.h:
+
 2013-10-30  Filip Pizlo  <fpizlo@apple.com>
 
         Assertion failure in js/dom/global-constructors-attributes-dedicated-worker.html

@@ -85,7 +85,7 @@ void MathObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "atan"), 1, mathProtoFuncATan, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "atan2"), 2, mathProtoFuncATan2, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "ceil"), 1, mathProtoFuncCeil, CeilIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "cos"), 1, mathProtoFuncCos, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "cos"), 1, mathProtoFuncCos, CosIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "exp"), 1, mathProtoFuncExp, ExpIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "floor"), 1, mathProtoFuncFloor, FloorIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "log"), 1, mathProtoFuncLog, LogIntrinsic, DontEnum | Function);
@@ -94,7 +94,7 @@ void MathObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "pow"), 2, mathProtoFuncPow, PowIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "random"), 0, mathProtoFuncRandom, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "round"), 1, mathProtoFuncRound, RoundIntrinsic, DontEnum | Function);
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "sin"), 1, mathProtoFuncSin, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "sin"), 1, mathProtoFuncSin, SinIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "sqrt"), 1, mathProtoFuncSqrt, SqrtIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "tan"), 1, mathProtoFuncTan, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "imul"), 1, mathProtoFuncIMul, IMulIntrinsic, DontEnum | Function);
@@ -136,7 +136,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncCeil(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncCos(ExecState* exec)
 {
-    return JSValue::encode(exec->vm().cachedCos(exec->argument(0).toNumber(exec)));
+    return JSValue::encode(jsDoubleNumber(cos(exec->argument(0).toNumber(exec))));
 }
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncExp(ExecState* exec)
@@ -251,7 +251,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncRound(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncSin(ExecState* exec)
 {
-    return JSValue::encode(exec->vm().cachedSin(exec->argument(0).toNumber(exec)));
+    return JSValue::encode(jsDoubleNumber(sin(exec->argument(0).toNumber(exec))));
 }
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncSqrt(ExecState* exec)

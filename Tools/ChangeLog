@@ -1,3 +1,14 @@
+2013-10-31  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove CachedTranscendentalFunction because caching math functions is an ugly idea
+        https://bugs.webkit.org/show_bug.cgi?id=123574
+
+        Reviewed by Mark Hahnenberg.
+
+        Make it easier to see that a test doesn't have an -expected file.
+
+        * Scripts/run-jsc-stress-tests:
+
 2013-10-31  Tamas Gergely  <gertom@inf.u-szeged.hu>
 
         Run tests as if they are expected to pass when --force is given.

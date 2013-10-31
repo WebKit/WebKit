@@ -29,7 +29,6 @@
 #ifndef VM_h
 #define VM_h
 
-#include "CachedTranscendentalFunction.h"
 #include "DateInstanceCache.h"
 #include "ExecutableAllocator.h"
 #include "Heap.h"
@@ -418,9 +417,6 @@ namespace JSC {
 #endif
 
         ThreadIdentifier exclusiveThread;
-
-        CachedTranscendentalFunction<std::sin> cachedSin;
-        CachedTranscendentalFunction<std::cos> cachedCos;
 
         JS_EXPORT_PRIVATE void resetDateCache();
 

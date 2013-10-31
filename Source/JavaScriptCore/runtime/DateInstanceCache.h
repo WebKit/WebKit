@@ -26,6 +26,7 @@
 #ifndef DateInstanceCache_h
 #define DateInstanceCache_h
 
+#include "JSCJSValue.h"
 #include "JSDateMath.h"
 #include <wtf/FixedArray.h>
 #include <wtf/HashFunctions.h>

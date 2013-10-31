@@ -120,6 +120,7 @@ typedef JSCell* JIT_OPERATION (*C_JITOperation_EO)(ExecState*, JSObject*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EOZ)(ExecState*, JSObject*, int32_t);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_ESt)(ExecState*, Structure*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EZ)(ExecState*, int32_t);
+typedef double JIT_OPERATION (*D_JITOperation_D)(double);
 typedef double JIT_OPERATION (*D_JITOperation_DD)(double, double);
 typedef double JIT_OPERATION (*D_JITOperation_ZZ)(int32_t, int32_t);
 typedef double JIT_OPERATION (*D_JITOperation_EJ)(ExecState*, EncodedJSValue);

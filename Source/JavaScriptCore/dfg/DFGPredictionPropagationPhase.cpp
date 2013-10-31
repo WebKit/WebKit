@@ -329,7 +329,9 @@ private:
             break;
         }
             
-        case ArithSqrt: {
+        case ArithSqrt:
+        case ArithSin:
+        case ArithCos: {
             changed |= setPrediction(SpecDouble);
             break;
         }
@@ -714,6 +716,8 @@ private:
             break;
                 
         case ArithSqrt:
+        case ArithCos:
+        case ArithSin:
             m_graph.voteNode(node->child1(), VoteDouble);
             break;
                 

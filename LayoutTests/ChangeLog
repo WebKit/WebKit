@@ -1,3 +1,19 @@
+2013-10-31  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove CachedTranscendentalFunction because caching math functions is an ugly idea
+        https://bugs.webkit.org/show_bug.cgi?id=123574
+
+        Reviewed by Mark Hahnenberg.
+
+        * js/dfg-cos-constant-expected.txt: Added.
+        * js/dfg-cos-constant.html: Added.
+        * js/dfg-sin-constant-expected.txt: Added.
+        * js/dfg-sin-constant.html: Added.
+        * js/script-tests/dfg-cos-constant.js: Added.
+        (foo):
+        * js/script-tests/dfg-sin-constant.js: Added.
+        (foo):
+
 2013-10-30  Gavin Barraclough  <barraclough@apple.com>
 
         WebPageCreationParameters should be consistent in Window.open

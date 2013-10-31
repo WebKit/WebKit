@@ -186,7 +186,8 @@ def diffErrorHandler(expectedFilename)
         outp.puts "then"
         outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + prefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
-        outp.puts "else"
+        outp.puts "elif test -e #{Shellwords.shellescape(expectedFilename)}"
+        outp.puts "then"
         outp.puts "    diff -u #{Shellwords.shellescape(expectedFilename)} #{outputFilename} > #{diffFilename}"
         outp.puts "    if [ $? -eq 0 ]"
         outp.puts "    then"
@@ -195,6 +196,9 @@ def diffErrorHandler(expectedFilename)
         outp.puts "        (echo \"DIFF FAILURE!\" && cat #{diffFilename}) | " + prefixCommand(plan.name)
         outp.puts "        " + plan.failCommand
         outp.puts "    fi"
+        outp.puts "else"
+        outp.puts "    (echo \"NO EXPECTATION!\" && cat #{outputFilename}) | " + prefixCommand(plan.name)
+        outp.puts "    " + plan.failCommand
         outp.puts "fi"
     }
 end

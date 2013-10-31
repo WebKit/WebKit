@@ -1059,6 +1059,8 @@ private:
         case ArithMin:
         case ArithMax:
         case ArithSqrt:
+        case ArithSin:
+        case ArithCos:
         case StringCharAt:
         case StringCharCodeAt:
         case IsUndefined:
