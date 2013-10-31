@@ -55,9 +55,9 @@ String PseudoElement::pseudoElementNameForEvents(PseudoId pseudoId)
     }
 }
 
-PseudoElement::PseudoElement(Element* host, PseudoId pseudoId)
-    : Element(pseudoElementTagName(), host->document(), CreatePseudoElement)
-    , m_hostElement(host)
+PseudoElement::PseudoElement(Element& host, PseudoId pseudoId)
+    : Element(pseudoElementTagName(), host.document(), CreatePseudoElement)
+    , m_hostElement(&host)
     , m_pseudoId(pseudoId)
 {
     ASSERT(pseudoId == BEFORE || pseudoId == AFTER);

@@ -36,7 +36,7 @@ namespace WebCore {
 
 class PseudoElement FINAL : public Element {
 public:
-    static PassRefPtr<PseudoElement> create(Element* host, PseudoId pseudoId)
+    static PassRefPtr<PseudoElement> create(Element& host, PseudoId pseudoId)
     {
         return adoptRef(new PseudoElement(host, pseudoId));
     }
@@ -61,7 +61,7 @@ public:
     static String pseudoElementNameForEvents(PseudoId);
 
 private:
-    PseudoElement(Element*, PseudoId);
+    PseudoElement(Element&, PseudoId);
 
     virtual void didRecalcStyle(Style::Change) OVERRIDE;
     virtual PseudoId customPseudoId() const OVERRIDE { return m_pseudoId; }
