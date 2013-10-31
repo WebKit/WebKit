@@ -79,7 +79,7 @@ void InspectorTimelineAgent::clearFrontend()
     m_frontend = 0;
 }
 
-void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth, const bool* includeDomCounters, const bool* includeNativeMemoryStatistics)
+void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth, const bool* includeDomCounters)
 {
     if (!m_frontend)
         return;
@@ -91,8 +91,6 @@ void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth, c
 
     if (includeDomCounters)
         m_includeDOMCounters = *includeDomCounters;
-
-    UNUSED_PARAM(includeNativeMemoryStatistics);
 
     m_timeConverter.reset();
 

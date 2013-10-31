@@ -1,3 +1,12 @@
+2013-10-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove stale optional native memory instrumentation protocol params
+        https://bugs.webkit.org/show_bug.cgi?id=123552
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/InspectorBackendCommands.js:
+
 2013-10-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Fix PrettyPrinting Tool Load from Saved URL

@@ -1,3 +1,15 @@
+2013-10-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove stale optional native memory instrumentation protocol params
+        https://bugs.webkit.org/show_bug.cgi?id=123552
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::start):
+        * inspector/InspectorTimelineAgent.h:
+
 2013-10-31  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Undefined references to RenderObject::style() when disabling video support
