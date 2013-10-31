@@ -1,3 +1,18 @@
+2013-10-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Decorated text sometimes does not draw its decorations
+        https://bugs.webkit.org/show_bug.cgi?id=123539
+
+        Reviewed by Antti Koivisto.
+
+        Decorated text should opt-out of the simple line layout, because
+        SimpleLineLayout::paintFlow doesn't draw decorations
+
+        Fixes fast/css3-text/css3-text-decoration/text-decoration-color.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+
 2013-10-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove last member variable uses of InspectorState from Agents

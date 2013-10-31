@@ -94,6 +94,8 @@ bool canUseFor(const RenderBlockFlow& flow)
             return false;
     }
     const RenderStyle& style = flow.style();
+    if (style.textDecorationsInEffect() != TextDecorationNone)
+        return false;
     if (style.textAlign() == JUSTIFY)
         return false;
     // Non-visible overflow should be pretty easy to support.
