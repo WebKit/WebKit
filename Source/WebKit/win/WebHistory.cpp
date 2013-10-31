@@ -27,7 +27,6 @@
 #include "WebKitDLL.h"
 #include "WebHistory.h"
 
-#include "CFDictionaryPropertyBag.h"
 #include "MemoryStream.h"
 #include "WebKit.h"
 #include "MarshallingHelpers.h"
@@ -35,7 +34,6 @@
 #include "WebKit.h"
 #include "WebNotificationCenter.h"
 #include "WebPreferences.h"
-#include <CoreFoundation/CoreFoundation.h>
 #include <WebCore/BString.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/URL.h>
@@ -46,6 +44,13 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
+#if USE(CF)
+#include "CFDictionaryPropertyBag.h"
+#include <CoreFoundation/CoreFoundation.h>
+#else
+#include "COMPropertyBag.h"
+#endif
+
 using namespace WebCore;
 using namespace std;
 
@@ -55,25 +60,36 @@ static bool areEqualOrClose(double d1, double d2)
     return (diff < .000001 && diff > -.000001);
 }
 
-static COMPtr<CFDictionaryPropertyBag> createUserInfoFromArray(BSTR notificationStr, CFArrayRef arrayItem)
+static COMPtr<IPropertyBag> createUserInfoFromArray(BSTR notificationStr, IWebHistoryItem** data, size_t size)
 {
+#if USE(CF)
+    RetainPtr<CFArrayRef> arrayItem = adoptCF(CFArrayCreate(kCFAllocatorDefault, (const void**)data, size, &MarshallingHelpers::kIUnknownArrayCallBacks));
+
     RetainPtr<CFMutableDictionaryRef> dictionary = adoptCF(
         CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     RetainPtr<CFStringRef> key = adoptCF(MarshallingHelpers::BSTRToCFStringRef(notificationStr));
-    CFDictionaryAddValue(dictionary.get(), key.get(), arrayItem);
+    CFDictionaryAddValue(dictionary.get(), key.get(), arrayItem.get());
 
     COMPtr<CFDictionaryPropertyBag> result = CFDictionaryPropertyBag::createInstance();
     result->setDictionary(dictionary.get());
-    return result;
+    return COMPtr<IPropertyBag>(AdoptCOM, result.leakRef());
+#else
+    Vector<COMPtr<IWebHistoryItem>, 1> arrayItem;
+    arrayItem.reserveInitialCapacity(size);
+    for (size_t i = 0; i < size; ++i)
+        arrayItem[i] = data[i];
+
+    HashMap<String, Vector<COMPtr<IWebHistoryItem>>> dictionary;
+    String key(notificationStr, ::SysStringLen(notificationStr));
+    dictionary.set(key, std::move(arrayItem));
+    return COMPtr<IPropertyBag>(AdoptCOM, COMPropertyBag<Vector<COMPtr<IWebHistoryItem>>>::adopt(dictionary));
+#endif
 }
 
-static COMPtr<CFDictionaryPropertyBag> createUserInfoFromHistoryItem(BSTR notificationStr, IWebHistoryItem* item)
+static inline COMPtr<IPropertyBag> createUserInfoFromHistoryItem(BSTR notificationStr, IWebHistoryItem* item)
 {
-    // reference counting of item added to the array is managed by the CFArray value callbacks
-    RetainPtr<CFArrayRef> itemList = adoptCF(CFArrayCreate(0, (const void**) &item, 1, &MarshallingHelpers::kIUnknownArrayCallBacks));
-    COMPtr<CFDictionaryPropertyBag> info = createUserInfoFromArray(notificationStr, itemList.get());
-    return info;
+    return createUserInfoFromArray(notificationStr, &item, 1);
 }
 
 static inline void addDayToSystemTime(SYSTEMTIME& systemTime)
@@ -306,13 +322,12 @@ HRESULT STDMETHODCALLTYPE WebHistory::removeAllItems( void)
     itemsVector.reserveInitialCapacity(m_entriesByURL.size());
     for (auto it = m_entriesByURL.begin(); it != m_entriesByURL.end(); ++it)
         itemsVector.append(it->value.get());
-    RetainPtr<CFArrayRef> allItems = adoptCF(CFArrayCreate(kCFAllocatorDefault, (const void**)itemsVector.data(), itemsVector.size(), &MarshallingHelpers::kIUnknownArrayCallBacks));
+    COMPtr<IPropertyBag> userInfo = createUserInfoFromArray(getNotificationString(kWebHistoryAllItemsRemovedNotification), itemsVector.data(), itemsVector.size());
 
     m_entriesByURL.clear();
 
     PageGroup::removeAllVisitedLinks();
 
-    COMPtr<CFDictionaryPropertyBag> userInfo = createUserInfoFromArray(getNotificationString(kWebHistoryAllItemsRemovedNotification), allItems.get());
     return postNotification(kWebHistoryAllItemsRemovedNotification, userInfo.get());
 }
 
@@ -472,7 +487,7 @@ HRESULT WebHistory::removeItem(IWebHistoryItem* entry)
     if (FAILED(hr))
         return hr;
 
-    COMPtr<CFDictionaryPropertyBag> userInfo = createUserInfoFromHistoryItem(
+    COMPtr<IPropertyBag> userInfo = createUserInfoFromHistoryItem(
         getNotificationString(kWebHistoryItemsRemovedNotification), entry);
     hr = postNotification(kWebHistoryItemsRemovedNotification, userInfo.get());
 
@@ -520,7 +535,7 @@ HRESULT WebHistory::addItem(IWebHistoryItem* entry, bool discardDuplicate, bool*
 
     m_entriesByURL.set(urlString, entry);
 
-    COMPtr<CFDictionaryPropertyBag> userInfo = createUserInfoFromHistoryItem(
+    COMPtr<IPropertyBag> userInfo = createUserInfoFromHistoryItem(
         getNotificationString(kWebHistoryItemsAddedNotification), entry);
     hr = postNotification(kWebHistoryItemsAddedNotification, userInfo.get());
 
@@ -576,7 +591,7 @@ void WebHistory::visitedURL(const URL& url, const String& title, const String& h
     COMPtr<WebHistoryItem> item(Query, entry);
     item->historyItem()->setRedirectURLs(nullptr);
 
-    COMPtr<CFDictionaryPropertyBag> userInfo = createUserInfoFromHistoryItem(
+    COMPtr<IPropertyBag> userInfo = createUserInfoFromHistoryItem(
         getNotificationString(kWebHistoryItemsAddedNotification), entry);
     postNotification(kWebHistoryItemsAddedNotification, userInfo.get());
 }

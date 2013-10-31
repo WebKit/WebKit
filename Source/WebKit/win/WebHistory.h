@@ -27,11 +27,9 @@
 #define WebHistory_H
 
 #include "WebKit.h"
-#include <CoreFoundation/CoreFoundation.h>
 #include <WebCore/COMPtr.h>
 #include <memory>
 #include <wtf/Forward.h>
-#include <wtf/RetainPtr.h>
 
 namespace WebCore {
     class URL;
