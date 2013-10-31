@@ -1,3 +1,29 @@
+2013-10-31  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r153087
+
+    2013-07-24  Antoine Quint  <graouts@apple.com>
+
+            Web Inspector: support click-and-drag editing of CSS numeric values
+            https://bugs.webkit.org/show_bug.cgi?id=118896
+
+            Reviewed by Timothy Hatcher.
+
+            Add support for adjustment of numeric values in the various CodeMirror editors
+            by holding the option key and dragging the mouse. By default, dragging one pixel
+            changes the value by 1, but key modifiers allow to customize that behavior by using
+            the control key to change the value to 0.1 and the shift key to change the value to 10.
+
+            * UserInterface/CodeMirrorAdditions.js:
+            Split adjustNumber() into two methods such that we may use its logic from the
+            CodeMirrorDragToAlterNumberController. The new method, CodeMirror.prototype.alterNumberInRange()
+            allow to set begin and end CodeMirror positions such that the existing alterNumber()
+            can use information based on the current cursor position, and CodeMirrorDragToAlterNumberController
+            can use information based on the hovered token.
+            
+            Portions of this change were not merged, I've removed them from the ChangeLog.
+
+
 2013-07-22  Lucas Forschler  <lforschler@apple.com>
 
         Merge r152651
