@@ -668,12 +668,7 @@ ScrollAnimatorMac::~ScrollAnimatorMac()
 
 static bool scrollAnimationEnabledForSystem()
 {
-    NSString* scrollAnimationDefaultsKey = 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
-        @"AppleScrollAnimationEnabled";
-#else
-        @"NSScrollAnimationEnabled";
-#endif
+    NSString* scrollAnimationDefaultsKey = @"NSScrollAnimationEnabled";
     static bool enabled = [[NSUserDefaults standardUserDefaults] boolForKey:scrollAnimationDefaultsKey];
     return enabled;
 }

@@ -102,17 +102,7 @@ static CFDictionaryRef imageSourceOptions(ImageSource::ShouldSkipMetadata skipMe
 
     if (!options) {
         const unsigned numOptions = 3;
-
-#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
-        // Lion and Snow Leopard only return Orientation when kCGImageSourceSkipMetadata is false,
-        // and incorrectly return cached metadata if an image is queried once with kCGImageSourceSkipMetadata true
-        // and then subsequently with kCGImageSourceSkipMetadata false.
-        // <rdar://problem/11148192>
-        UNUSED_PARAM(skipMetadata);
-        const CFBooleanRef imageSourceSkipMetadata = kCFBooleanFalse;
-#else
         const CFBooleanRef imageSourceSkipMetadata = (skipMetadata == ImageSource::SkipMetadata) ? kCFBooleanTrue : kCFBooleanFalse;
-#endif
         const void* keys[numOptions] = { kCGImageSourceShouldCache, kCGImageSourceShouldPreferRGB32, kCGImageSourceSkipMetadata };
         const void* values[numOptions] = { kCFBooleanTrue, kCFBooleanTrue, imageSourceSkipMetadata };
         options = CFDictionaryCreate(NULL, keys, values, numOptions, 

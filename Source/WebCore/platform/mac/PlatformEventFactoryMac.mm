@@ -446,12 +446,7 @@ public:
         m_phase                             = phaseForEvent(event);
         m_momentumPhase                     = momentumPhaseForEvent(event);
         m_hasPreciseScrollingDeltas         = continuous;
-
-#if HAVE(INVERTED_WHEEL_EVENTS)
         m_directionInvertedFromDevice       = [event isDirectionInvertedFromDevice];
-#else
-        m_directionInvertedFromDevice       = false;
-#endif
     }
 };
 

@@ -172,14 +172,6 @@ static void updateStates(NSCell* cell, ControlStates states)
     bool enabled = states & EnabledState;
     if (enabled != oldEnabled)
         [cell setEnabled:enabled];
-    
-#if BUTTON_CELL_DRAW_WITH_FRAME_DRAWS_FOCUS_RING
-    // Focused state
-    bool oldFocused = [cell showsFirstResponder];
-    bool focused = states & FocusState;
-    if (focused != oldFocused)
-        [cell setShowsFirstResponder:focused];
-#endif
 
     // Checked and Indeterminate
     bool oldIndeterminate = [cell state] == NSMixedState;
@@ -302,10 +294,8 @@ static void paintCheckbox(ControlStates states, GraphicsContext* context, const 
     LocalCurrentGraphicsContext localContext(context);
     NSView *view = ThemeMac::ensuredView(scrollView);
     [checkboxCell drawWithFrame:NSRect(inflatedRect) inView:view];
-#if !BUTTON_CELL_DRAW_WITH_FRAME_DRAWS_FOCUS_RING
     if (states & FocusState)
         [checkboxCell _web_drawFocusRingWithFrame:NSRect(inflatedRect) inView:view];
-#endif
     [checkboxCell setControlView:nil];
     
     END_BLOCK_OBJC_EXCEPTIONS
@@ -383,10 +373,8 @@ static void paintRadio(ControlStates states, GraphicsContext* context, const Int
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     NSView *view = ThemeMac::ensuredView(scrollView);
     [radioCell drawWithFrame:NSRect(inflatedRect) inView:view];
-#if !BUTTON_CELL_DRAW_WITH_FRAME_DRAWS_FOCUS_RING
     if (states & FocusState)
         [radioCell _web_drawFocusRingWithFrame:NSRect(inflatedRect) inView:view];
-#endif
     [radioCell setControlView:nil];
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -498,10 +486,8 @@ static void paintButton(ControlPart part, ControlStates states, GraphicsContext*
         [window setDefaultButtonCell:nil];
 
     [buttonCell drawWithFrame:NSRect(inflatedRect) inView:view];
-#if !BUTTON_CELL_DRAW_WITH_FRAME_DRAWS_FOCUS_RING
     if (states & FocusState)
         [buttonCell _web_drawFocusRingWithFrame:NSRect(inflatedRect) inView:view];
-#endif
     [buttonCell setControlView:nil];
 
     if (![previousDefaultButtonCell isEqual:buttonCell])

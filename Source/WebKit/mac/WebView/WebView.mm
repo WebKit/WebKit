@@ -5122,19 +5122,6 @@ static BOOL findString(NSView <WebDocumentSearching> *searchView, NSString *stri
     return kit(_private->page->rangeOfString(string, core(previousRange), coreOptions(options)).get());
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
-// FIXME: Remove once WebKit no longer needs to support versions of Safari that call this.
-- (void)setHoverFeedbackSuspended:(BOOL)newValue
-{
-}
-
-// FIXME: Remove once WebKit no longer needs to support versions of Safari that call this.
-- (BOOL)isHoverFeedbackSuspended
-{
-    return NO;
-}
-#endif
-
 - (void)setMainFrameDocumentReady:(BOOL)mainFrameDocumentReady
 {
     // by setting this to NO, calls to mainFrameDocument are forced to return nil

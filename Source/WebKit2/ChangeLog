@@ -1,3 +1,16 @@
+2013-10-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove code for Mac Lion
+        https://bugs.webkit.org/show_bug.cgi?id=123542
+
+        Reviewed by Anders Carlsson.
+
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewWillMoveToWindow:]):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2013-10-30  Dan Bernstein  <mitz@apple.com>
 
         Try to fix the !WK_API_ENABLED Mac build.

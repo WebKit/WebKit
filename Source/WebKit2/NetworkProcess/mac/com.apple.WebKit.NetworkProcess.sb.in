@@ -14,24 +14,6 @@
 (define (home-literal home-relative-literal)
     (literal (string-append (param "HOME_DIR") home-relative-literal)))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
-;; Low level networking. Defined in system.sb on newer OS versions.
-(define (system-network)
-  (allow file-read*
-         (literal "/Library/Preferences/com.apple.networkd.plist"))
-  (allow mach-lookup
-         (global-name "com.apple.SystemConfiguration.PPPController")
-         (global-name "com.apple.SystemConfiguration.SCNetworkReachability")
-         (global-name "com.apple.networkd"))
-  (allow network-outbound
-         (control-name "com.apple.netsrc")
-         (control-name "com.apple.network.statistics"))
-  (allow system-socket
-         (require-all (socket-domain AF_SYSTEM)
-                      (socket-protocol 2)) ; SYSPROTO_CONTROL
-         (socket-domain AF_ROUTE)))
-#endif
-
 ;; Read-only preferences and data
 (allow file-read*
     ;; Basic system paths

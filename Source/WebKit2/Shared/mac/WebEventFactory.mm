@@ -382,13 +382,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
     }
 
     WebWheelEvent::Granularity granularity  = WebWheelEvent::ScrollByPixelWheelEvent;
-
-#if HAVE(INVERTED_WHEEL_EVENTS)
     bool directionInvertedFromDevice        = [event isDirectionInvertedFromDevice];
-#else
-    bool directionInvertedFromDevice        = false;
-#endif
-
     WebWheelEvent::Phase phase              = phaseForEvent(event);
     WebWheelEvent::Phase momentumPhase      = momentumPhaseForEvent(event);
     bool hasPreciseScrollingDeltas          = continuous;

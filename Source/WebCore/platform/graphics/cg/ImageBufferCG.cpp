@@ -50,10 +50,6 @@
 #include <IOSurface/IOSurface.h>
 #endif
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
-#include <wtf/CurrentTime.h>
-#endif
-
 using namespace std;
 
 namespace WebCore {
@@ -180,9 +176,6 @@ ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace 
     m_context->scale(FloatSize(1, -1));
     m_context->translate(0, -size.height());
     m_context->setIsAcceleratedContext(accelerateRendering);
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
-    m_data.m_lastFlushTime = monotonicallyIncreasingTimeMS();
-#endif
     success = true;
 }
 
@@ -192,32 +185,12 @@ ImageBuffer::~ImageBuffer()
 
 GraphicsContext* ImageBuffer::context() const
 {
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
-    flushContextIfNecessary();
-#endif
     return m_context.get();
-}
-
-void ImageBuffer::flushContextIfNecessary() const
-{
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
-    // Force a flush if last flush was more than 20ms ago
-    if (m_context->isAcceleratedContext()) {
-        double elapsedTime = monotonicallyIncreasingTimeMS() - m_data.m_lastFlushTime;
-        double maxFlushInterval = 20; // in ms
-
-        if (elapsedTime > maxFlushInterval)
-            flushContext();
-    }
-#endif
 }
 
 void ImageBuffer::flushContext() const
 {
     CGContextFlush(m_context->platformContext());
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
-    m_data.m_lastFlushTime = monotonicallyIncreasingTimeMS();
-#endif
 }
 
 PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBehavior scaleBehavior) const
@@ -264,12 +237,8 @@ RetainPtr<CGImageRef> ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior
         }
     }
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    else {
+    else
         image = wkIOSurfaceContextCreateImage(context()->platformContext());
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
-        m_data.m_lastFlushTime = monotonicallyIncreasingTimeMS();
-#endif
-    }
 #endif
 
     return adoptCF(image);

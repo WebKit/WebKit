@@ -5431,13 +5431,8 @@ static BOOL writingDirectionKeyBindingsEnabled()
     if ([[self _webView] _postsAcceleratedCompositingNotifications])
         [[NSNotificationCenter defaultCenter] postNotificationName:_WebViewDidStartAcceleratedCompositingNotification object:[self _webView] userInfo:nil];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
-    // Do geometry flipping here, which flips all the compositing layers so they are top-down.
-    [viewLayer setGeometryFlipped:YES];
-#else
     if (WKExecutableWasLinkedOnOrBeforeLion())
         [viewLayer setGeometryFlipped:YES];
-#endif
 }
 
 - (void)detachRootLayer

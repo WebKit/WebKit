@@ -1,3 +1,14 @@
+2013-10-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove code for Mac Lion
+        https://bugs.webkit.org/show_bug.cgi?id=123542
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView attachRootLayer:]):
+        * WebView/WebView.mm:
+
 2013-10-29  Andy Estes  <aestes@apple.com>
 
         [iOS] Upstream Source/WebKit/ios/

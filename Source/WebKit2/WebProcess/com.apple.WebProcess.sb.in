@@ -1,9 +1,6 @@
 (version 1)
 (deny default (with partial-symbolication))
 (allow system-audit file-read-metadata)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
-(allow ipc-posix-shm)
-#endif
 
 (import "system.sb")
 
@@ -22,37 +19,6 @@
         (begin
             (allow file-read* (subpath path))
             (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") (subpath path))))))
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
-;; Low level networking. Defined in system.sb on newer OS versions.
-(define (system-network)
-  (allow file-read*
-         (literal "/Library/Preferences/com.apple.networkd.plist"))
-  (allow mach-lookup
-         (global-name "com.apple.SystemConfiguration.PPPController")
-         (global-name "com.apple.SystemConfiguration.SCNetworkReachability")
-         (global-name "com.apple.networkd"))
-  (allow network-outbound
-         (control-name "com.apple.netsrc")
-         (control-name "com.apple.network.statistics"))
-  (allow system-socket
-         (require-all (socket-domain AF_SYSTEM)
-                      (socket-protocol 2)) ; SYSPROTO_CONTROL
-         (socket-domain AF_ROUTE)))
-
-;; Low level graphics. Defined in system.sb on newer OS versions.
-(define (system-graphics)
-    (allow mach-lookup (global-name "com.apple.cvmsServ"))
-    (allow iokit-open
-        (iokit-connection "IOAccelerator")
-        (iokit-user-client-class "IOAccelerationUserClient")
-        (iokit-user-client-class "IOSurfaceRootUserClient")
-        (iokit-user-client-class "IOSurfaceSendRight")
-        (iokit-user-client-class "IOFramebufferSharedUserClient")
-        (iokit-user-client-class "AppleSNBFBUserClient")
-        (iokit-user-client-class "AGPMClient")
-        (iokit-user-client-class "AppleGraphicsControlClient")))
-#endif
 
 ;; Read-only preferences and data
 (allow file-read*
@@ -278,10 +244,6 @@
        (home-subpath "/Library/Caches/com.apple.WebProcess") ;; <rdar://problem/12656814>
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
-       (subpath (string-append (param "DARWIN_USER_CACHE_DIR") "/com.nvidia.OpenGL")) ;; <rdar://problem/13402976>
-#endif
-
        ;; FIXME: Should be removed after <rdar://problem/10463881> is fixed.
        (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2")
        (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2-journal"))
@@ -291,12 +253,7 @@
 (deny file-read* (with no-log)
        (home-literal "/Library/Preferences/com.apple.speech.recognition.AppleSpeechRecognition.prefs.plist")
        (subpath "/Library/InputManagers")
-       (home-subpath "/Library/InputManagers")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
-       (literal (string-append (param "DARWIN_USER_CACHE_DIR") "/com.apple.IntlDataCache.le"))
-       (literal (string-append (param "DARWIN_USER_CACHE_DIR") "/com.apple.IntlDataCache.le.kbdx"))
-#endif
-       )
+       (home-subpath "/Library/InputManagers"))
 (deny mach-lookup (with no-log)
        (global-name "com.apple.coreservices.appleevents")
        (global-name "com.apple.pasteboard.1")
@@ -309,7 +266,3 @@
        (home-subpath "/Library/Components")
        (home-subpath "/Library/Keyboard Layouts")
        (home-subpath "/Library/Input Methods"))
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
-(deny mach-lookup (with no-log) (global-name "com.apple.tsm.uiserver")) ;; <rdar://problem/13902706>
-#endif
