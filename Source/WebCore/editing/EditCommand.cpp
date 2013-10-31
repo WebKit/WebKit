@@ -32,9 +32,7 @@
 #include "Element.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "FrameSelection.h"
 #include "NodeTraversal.h"
-#include "VisiblePosition.h"
 #include "htmlediting.h"
 
 namespace WebCore {

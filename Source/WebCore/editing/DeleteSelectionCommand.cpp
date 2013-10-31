@@ -28,7 +28,6 @@
 
 #include "Document.h"
 #include "DocumentMarkerController.h"
-#include "EditingBoundary.h"
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Element.h"

@@ -28,10 +28,8 @@
 
 #include "DeleteButtonController.h"
 #include "Document.h"
-#include "Editor.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "Frame.h"
 #include "HTMLNames.h"
 
 namespace WebCore {

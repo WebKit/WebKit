@@ -28,8 +28,6 @@
 #include "RemoveFormatCommand.h"
 
 #include "ApplyStyleCommand.h"
-#include "CSSValueKeywords.h"
-#include "EditingStyle.h"
 #include "Element.h"
 #include "Frame.h"
 #include "FrameSelection.h"

@@ -28,7 +28,6 @@
 
 #include "ApplyStyleCommand.h"
 #include "ExceptionCodePlaceholder.h"
-#include "HTMLElement.h"
 
 namespace WebCore {
 

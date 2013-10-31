@@ -31,7 +31,6 @@
 #include "NodeTraversal.h"
 #include "RenderListItem.h"
 #include "Text.h"
-#include "VisiblePosition.h"
 #include "htmlediting.h"
 
 namespace WebCore {

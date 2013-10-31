@@ -28,7 +28,6 @@
 
 #include "markup.h"
 #include <wtf/HashMap.h>
-#include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

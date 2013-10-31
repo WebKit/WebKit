@@ -32,9 +32,7 @@
 #include "SurroundingText.h"
 
 #include "Document.h"
-#include "Range.h"
 #include "TextIterator.h"
-#include "VisiblePosition.h"
 #include "VisibleSelection.h"
 #include "VisibleUnits.h"
 

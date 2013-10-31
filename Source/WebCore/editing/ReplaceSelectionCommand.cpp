@@ -30,9 +30,7 @@
 #include "ApplyStyleCommand.h"
 #include "BeforeTextInsertedEvent.h"
 #include "BreakBlockquoteCommand.h"
-#include "CSSPropertyNames.h"
 #include "CSSStyleDeclaration.h"
-#include "CSSValueKeywords.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Element.h"
@@ -41,14 +39,11 @@
 #include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
 #include "FrameSelection.h"
-#include "HTMLElement.h"
 #include "HTMLInputElement.h"
-#include "HTMLInterchange.h"
 #include "HTMLNames.h"
 #include "HTMLTitleElement.h"
 #include "NodeList.h"
 #include "NodeRenderStyle.h"
-#include "NodeTraversal.h"
 #include "RenderInline.h"
 #include "RenderObject.h"
 #include "RenderText.h"
@@ -61,7 +56,6 @@
 #include "htmlediting.h"
 #include "markup.h"
 #include <wtf/StdLibExtras.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

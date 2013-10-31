@@ -29,8 +29,6 @@
 #include "Editor.h"
 
 #include "CSSComputedStyleDeclaration.h"
-#include "CSSPropertyNames.h"
-#include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "Chrome.h"
 #include "CreateLinkCommand.h"

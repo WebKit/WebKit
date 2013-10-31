@@ -27,17 +27,14 @@
 #include "InsertLineBreakCommand.h"
 
 #include "Document.h"
-#include "EditingStyle.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
-#include "Range.h"
 #include "RenderElement.h"
 #include "RenderText.h"
 #include "Text.h"
-#include "VisiblePosition.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"
 

@@ -28,9 +28,7 @@
 
 #include "Document.h"
 #include "Element.h"
-#include "Range.h"
 #include "TextIterator.h"
-#include "VisiblePosition.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"
 #include <stdio.h>

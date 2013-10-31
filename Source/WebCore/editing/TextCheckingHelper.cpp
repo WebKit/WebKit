@@ -30,7 +30,6 @@
 #include "Document.h"
 #include "DocumentMarkerController.h"
 #include "Frame.h"
-#include "Range.h"
 #include "Settings.h"
 #include "TextBreakIterator.h"
 #include "TextCheckerClient.h"

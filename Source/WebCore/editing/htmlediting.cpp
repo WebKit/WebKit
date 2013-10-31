@@ -45,13 +45,9 @@
 #include "HTMLUListElement.h"
 #include "NodeTraversal.h"
 #include "PositionIterator.h"
-#include "Range.h"
 #include "RenderElement.h"
 #include "ShadowRoot.h"
 #include "Text.h"
-#include "TextIterator.h"
-#include "VisiblePosition.h"
-#include "VisibleSelection.h"
 #include "VisibleUnits.h"
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>

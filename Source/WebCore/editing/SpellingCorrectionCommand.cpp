@@ -33,7 +33,6 @@
 #include "Frame.h"
 #include "ReplaceSelectionCommand.h"
 #include "SetSelectionCommand.h"
-#include "TextIterator.h"
 #include "markup.h"
 
 namespace WebCore {

@@ -1,3 +1,42 @@
+2013-10-30  Santosh Mahto  <santosh.ma@samsung.com>
+
+        [webcore/editing] remove extra header includes from cpp files.
+        https://bugs.webkit.org/show_bug.cgi?id=123524
+
+        Reviewed by Ryosuke Niwa.
+
+        Removing redundant header files.
+
+        * editing/AlternativeTextController.cpp:
+        * editing/ApplyBlockElementCommand.cpp:
+        * editing/ApplyStyleCommand.cpp:
+        * editing/BreakBlockquoteCommand.cpp:
+        * editing/DeleteButton.cpp:
+        * editing/DeleteButtonController.cpp:
+        * editing/DeleteSelectionCommand.cpp:
+        * editing/DictationCommand.cpp:
+        * editing/EditCommand.cpp:
+        * editing/EditingStyle.cpp:
+        * editing/EditorCommand.cpp:
+        * editing/FrameSelection.cpp:
+        * editing/IndentOutdentCommand.cpp:
+        * editing/InsertLineBreakCommand.cpp:
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        * editing/MarkupAccumulator.h:
+        * editing/RemoveFormatCommand.cpp:
+        * editing/RenderedPosition.cpp:
+        * editing/ReplaceSelectionCommand.cpp:
+        * editing/SpellChecker.cpp:
+        * editing/SpellingCorrectionCommand.cpp:
+        * editing/SurroundingText.cpp:
+        * editing/TextCheckingHelper.cpp:
+        * editing/TextIterator.cpp:
+        * editing/TypingCommand.cpp:
+        * editing/VisibleSelection.cpp:
+        * editing/VisibleUnits.cpp:
+        * editing/WrapContentsInDummySpanCommand.cpp:
+        * editing/htmlediting.cpp:
+
 2013-10-30  Brady Eidson  <beidson@apple.com>
 
         IDB Database versions are uint64_t, not int64_t
