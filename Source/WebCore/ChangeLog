@@ -1,3 +1,24 @@
+2013-10-31  Beth Dakin  <bdakin@apple.com>
+
+        Repro scrolling crash with scrollbars that use setPresentationValue on the 
+        scrolling thread
+        https://bugs.webkit.org/show_bug.cgi?id=123549
+        -and corresponding-
+        <rdar://problem/15246606>
+
+        Reviewed by Brady Eidson.
+
+        Here's another speculative fix. If a scrollbar was removed, we would not properly 
+        inform the scrolling thread. Instead of checking supportsUpdateOnSecondaryThread() 
+        before calling setScrollbarPaintersFromScrollbars(), check it from within 
+        setScrollbarPaintersFromScrollbars(), and this will allow the ScrollbarPainter to 
+        be properly updated.
+
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::frameViewLayoutUpdated):
+        * page/scrolling/mac/ScrollingStateScrollingNodeMac.mm:
+        (WebCore::ScrollingStateScrollingNode::setScrollbarPaintersFromScrollbars):
+
 2013-10-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed typo fix after 158386. (buildfix after r158365)

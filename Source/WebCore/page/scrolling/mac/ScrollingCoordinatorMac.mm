@@ -133,9 +133,7 @@ void ScrollingCoordinatorMac::frameViewLayoutUpdated(FrameView* frameView)
 
     Scrollbar* verticalScrollbar = frameView->verticalScrollbar();
     Scrollbar* horizontalScrollbar = frameView->horizontalScrollbar();
-    if ((verticalScrollbar && verticalScrollbar->supportsUpdateOnSecondaryThread())
-        || (horizontalScrollbar && horizontalScrollbar->supportsUpdateOnSecondaryThread()))
-        setScrollbarPaintersFromScrollbarsForNode(verticalScrollbar, horizontalScrollbar, node);
+    setScrollbarPaintersFromScrollbarsForNode(verticalScrollbar, horizontalScrollbar, node);
 
     ScrollParameters scrollParameters;
     scrollParameters.horizontalScrollElasticity = frameView->horizontalScrollElasticity();
