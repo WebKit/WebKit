@@ -518,7 +518,7 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
 
     // Early return with proper values if the selection falls entirely out of the object.
     if (!selectionBelongsToObject(coreObject, selection)) {
-        startOffset = comparePositions(selection.start(), firstValidPosition) < 0 ? 0 : accessibilityObjectLength(coreObject);
+        startOffset = comparePositions(selection.start(), firstValidPosition) <= 0 ? 0 : accessibilityObjectLength(coreObject);
         endOffset = startOffset;
         return;
     }
