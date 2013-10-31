@@ -1,3 +1,17 @@
+2013-10-30  Samuel White  <samuel_white@apple.com>
+
+        AX: AXFocused not exposed on ARIA menuitems
+        https://bugs.webkit.org/show_bug.cgi?id=123494
+
+        Reviewed by Chris Fleizach.
+
+        ARIA menuitems should expose AXFocused accessibility attribute.
+
+        Test: platform/mac/accessibility/aria-menuitem-focus.html
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeNames]):
+
 2013-10-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove basic uses of InspectorState from agents

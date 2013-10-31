@@ -1249,6 +1249,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
         [tempArray addObject:(NSString*)kAXMenuItemMarkCharAttribute];
         [tempArray addObject:(NSString*)kAXMenuItemPrimaryUIElementAttribute];
         [tempArray addObject:NSAccessibilityServesAsTitleForUIElementsAttribute];
+        [tempArray addObject:NSAccessibilityFocusedAttribute];
         menuItemAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
