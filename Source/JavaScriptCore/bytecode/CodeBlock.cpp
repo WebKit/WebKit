@@ -2817,7 +2817,7 @@ void CodeBlock::jettison(ReoptimizationMode mode)
         dataLog(".\n");
     }
     
-    DeferGC deferGC(*m_heap);
+    DeferGCForAWhile deferGC(*m_heap);
     RELEASE_ASSERT(JITCode::isOptimizingJIT(jitType()));
     
     // We want to accomplish two things here:

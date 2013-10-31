@@ -46,10 +46,12 @@ WatchpointSet::WatchpointSet(InitialWatchpointSetMode mode)
 
 WatchpointSet::~WatchpointSet()
 {
-    // Fire all watchpoints. This is necessary because it is possible, say with
-    // structure watchpoints, for the watchpoint set owner to die while the
-    // watchpoint owners are still live.
-    fireAllWatchpoints();
+    // Remove all watchpoints, so that they don't try to remove themselves. Note that we
+    // don't fire watchpoints on deletion. We assume that any code that is interested in
+    // watchpoints already also separately has a mechanism to make sure that the code is
+    // either keeping the watchpoint set's owner alive, or does some weak reference thing.
+    while (!m_set.isEmpty())
+        m_set.begin()->remove();
 }
 
 void WatchpointSet::add(Watchpoint* watchpoint)

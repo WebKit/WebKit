@@ -53,7 +53,7 @@ class WatchpointSet : public ThreadSafeRefCounted<WatchpointSet> {
     friend class LLIntOffsetsExtractor;
 public:
     WatchpointSet(InitialWatchpointSetMode);
-    ~WatchpointSet();
+    ~WatchpointSet(); // Note that this will not fire any of the watchpoints; if you need to know when a WatchpointSet dies then you need a separate mechanism for this.
     
     // It is safe to call this from another thread.  It may return true
     // even if the set actually had been invalidated, but that ought to happen

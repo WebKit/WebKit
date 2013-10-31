@@ -1,3 +1,44 @@
+2013-10-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Assertion failure in js/dom/global-constructors-attributes-dedicated-worker.html
+        https://bugs.webkit.org/show_bug.cgi?id=123551
+        <rdar://problem/15356238>
+
+        Reviewed by Mark Hahnenberg.
+        
+        WatchpointSets have always had this "fire everything on deletion" policy because it
+        seemed like a good fail-safe at the time I first implemented WatchpointSets. But
+        it's actually causing bugs rather than providing safety:
+        
+        - Everyone who registers Watchpoints with WatchpointSets have separate mechanisms
+          for either keeping the WatchpointSets alive or noticing when they are collected.
+          So this wasn't actually providing any safety.
+          
+          One example of this is Structures, where:
+          
+          - CodeBlocks that register Watchpoints on Structure's WatchpointSet will also
+            register weak references to the Structure, and the GC will jettison a CodeBlock
+            if the Structure(s) it cares about dies.
+          
+          - StructureStubInfos that register Watchpoints on Structure's WatchpointSet will
+            also be cleared by GC if the Structures die.
+        
+        - The WatchpointSet destructor would get invoked from finalization/destruction.
+          This would then cause CodeBlock::jettison() to be called on a CodeBlock, but that
+          method requires doing things that access heap objects. This would usually cause
+          problems on VM destruction, since then the CodeBlocks would still be alive but the
+          whole heap would be destroyed.
+        
+        This also ensures that CodeBlock::jettison() cannot cause a GC. This is safe since
+        that method doesn't really allocate objects, and it is likely necessary because
+        jettison() may be called from deep in the stack.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::jettison):
+        * bytecode/Watchpoint.cpp:
+        (JSC::WatchpointSet::~WatchpointSet):
+        * bytecode/Watchpoint.h:
+
 2013-10-30  Mark Lam  <mark.lam@apple.com>
 
         Unreviewed, fix C Loop LLINT build.
