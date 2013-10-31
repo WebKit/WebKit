@@ -1,3 +1,13 @@
+2013-10-31  Andreas Kling  <akling@apple.com>
+
+        Manage line-grid RootInlineBox with unique_ptr.
+        <https://webkit.org/b/123583>
+
+        Use smart pointers for the RenderBlockFlow's optional line-grid box
+        instead of manual new/delete.
+
+        Reviewed by Antti Koivisto.
+
 2013-10-31  Alexey Proskuryakov  <ap@apple.com>
 
         Enable WebCrypto on Mac

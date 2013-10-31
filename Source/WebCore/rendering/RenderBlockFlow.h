@@ -98,7 +98,6 @@ public:
         RenderBlockFlowRareData(const RenderBlockFlow& block)
             : m_margins(positiveMarginBeforeDefault(block), negativeMarginBeforeDefault(block), positiveMarginAfterDefault(block), negativeMarginAfterDefault(block))
             , m_lineBreakToAvoidWidow(-1)
-            , m_lineGridBox(nullptr)
             , m_renderNamedFlowFragment(nullptr)
             , m_discardMarginBefore(false)
             , m_discardMarginAfter(false)
@@ -125,7 +124,7 @@ public:
         
         MarginValues m_margins;
         int m_lineBreakToAvoidWidow;
-        RootInlineBox* m_lineGridBox;
+        std::unique_ptr<RootInlineBox> m_lineGridBox;
         RenderNamedFlowFragment* m_renderNamedFlowFragment;
 
         bool m_discardMarginBefore : 1;
@@ -237,13 +236,12 @@ public:
 
     virtual bool canHaveGeneratedChildren() const OVERRIDE;
 
-    RootInlineBox* lineGridBox() const { return m_rareData ? m_rareData->m_lineGridBox : 0; }
-    void setLineGridBox(RootInlineBox* box)
+    RootInlineBox* lineGridBox() const { return m_rareData ? m_rareData->m_lineGridBox.get() : nullptr; }
+    void setLineGridBox(std::unique_ptr<RootInlineBox> box)
     {
         if (!m_rareData)
             m_rareData = adoptPtr(new RenderBlockFlowRareData(*this));
-        delete m_rareData->m_lineGridBox;
-        m_rareData->m_lineGridBox = box;
+        m_rareData->m_lineGridBox = std::move(box);
     }
     void layoutLineGridBox();
 
