@@ -1,3 +1,10 @@
+2013-10-31  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed typo fix after 158386. (buildfix after r158365)
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::callSuccessHandler):
+
 2013-10-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Move CSS3 text decoration implementation behind ENABLE(CSS3_TEXT_DECORATION)
