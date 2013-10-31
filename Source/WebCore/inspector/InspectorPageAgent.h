@@ -219,6 +219,7 @@ private:
     bool m_ignoreScriptsEnabledNotification;
     bool m_showPaintRects;
     String m_emulatedMedia;
+    RefPtr<InspectorObject> m_scriptsToEvaluateOnLoad;
     RefPtr<GeolocationPosition> m_geolocationPosition;
     RefPtr<GeolocationPosition> m_platformGeolocationPosition;
     RefPtr<DeviceOrientationData> m_deviceOrientation;

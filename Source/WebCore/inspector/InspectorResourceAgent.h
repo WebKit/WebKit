@@ -163,6 +163,7 @@ private:
     bool m_enabled;
     bool m_cacheDisabled;
     bool m_loadingXHRSynchronously;
+    RefPtr<InspectorObject> m_extraRequestHeaders;
 
     typedef HashMap<ThreadableLoaderClient*, RefPtr<XHRReplayData>> PendingXHRReplayDataMap;
     PendingXHRReplayDataMap m_pendingXHRReplayData;

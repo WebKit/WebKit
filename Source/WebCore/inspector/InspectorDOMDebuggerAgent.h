@@ -106,6 +106,8 @@ private:
     InspectorDOMAgent* m_domAgent;
     InspectorDebuggerAgent* m_debuggerAgent;
     HashMap<Node*, uint32_t> m_domBreakpoints;
+    RefPtr<InspectorObject> m_eventListenerBreakpoints;
+    RefPtr<InspectorObject> m_xhrBreakpoints;
     bool m_pauseInNextEventListener;
     bool m_pauseOnAllXHRsEnabled;
 };

@@ -90,10 +90,6 @@
 
 namespace WebCore {
 
-namespace PageAgentState {
-static const char pageAgentScriptsToEvaluateOnLoad[] = "pageAgentScriptsToEvaluateOnLoad";
-}
-
 static bool decodeBuffer(const char* buffer, unsigned size, const String& textEncodingName, String* result)
 {
     if (buffer) {
@@ -406,7 +402,7 @@ void InspectorPageAgent::enable(ErrorString*)
 void InspectorPageAgent::disable(ErrorString*)
 {
     m_enabled = false;
-    m_state->remove(PageAgentState::pageAgentScriptsToEvaluateOnLoad);
+    m_scriptsToEvaluateOnLoad.clear();
     m_instrumentingAgents->setInspectorPageAgent(0);
 
     setScriptExecutionDisabled(0, m_originalScriptExecutionDisabled);
@@ -429,27 +425,26 @@ void InspectorPageAgent::disable(ErrorString*)
 
 void InspectorPageAgent::addScriptToEvaluateOnLoad(ErrorString*, const String& source, String* identifier)
 {
-    RefPtr<InspectorObject> scripts = m_state->getObject(PageAgentState::pageAgentScriptsToEvaluateOnLoad);
-    if (!scripts) {
-        scripts = InspectorObject::create();
-        m_state->setObject(PageAgentState::pageAgentScriptsToEvaluateOnLoad, scripts);
-    }
+    if (!m_scriptsToEvaluateOnLoad)
+        m_scriptsToEvaluateOnLoad = InspectorObject::create();
+
     // Assure we don't override existing ids -- m_lastScriptIdentifier could get out of sync WRT actual
     // scripts once we restored the scripts from the cookie during navigation.
     do {
         *identifier = String::number(++m_lastScriptIdentifier);
-    } while (scripts->find(*identifier) != scripts->end());
-    scripts->setString(*identifier, source);
+    } while (m_scriptsToEvaluateOnLoad->find(*identifier) != m_scriptsToEvaluateOnLoad->end());
+
+    m_scriptsToEvaluateOnLoad->setString(*identifier, source);
 }
 
 void InspectorPageAgent::removeScriptToEvaluateOnLoad(ErrorString* error, const String& identifier)
 {
-    RefPtr<InspectorObject> scripts = m_state->getObject(PageAgentState::pageAgentScriptsToEvaluateOnLoad);
-    if (!scripts || scripts->find(identifier) == scripts->end()) {
+    if (!m_scriptsToEvaluateOnLoad || m_scriptsToEvaluateOnLoad->find(identifier) == m_scriptsToEvaluateOnLoad->end()) {
         *error = "Script not found";
         return;
     }
-    scripts->remove(identifier);
+
+    m_scriptsToEvaluateOnLoad->remove(identifier);
 }
 
 void InspectorPageAgent::reload(ErrorString*, const bool* const optionalIgnoreCache, const String* optionalScriptToEvaluateOnLoad, const String* optionalScriptPreprocessor)
@@ -828,15 +823,15 @@ void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWor
     if (!m_frontend)
         return;
 
-    RefPtr<InspectorObject> scripts = m_state->getObject(PageAgentState::pageAgentScriptsToEvaluateOnLoad);
-    if (scripts) {
-        InspectorObject::const_iterator end = scripts->end();
-        for (InspectorObject::const_iterator it = scripts->begin(); it != end; ++it) {
+    if (m_scriptsToEvaluateOnLoad) {
+        InspectorObject::const_iterator end = m_scriptsToEvaluateOnLoad->end();
+        for (InspectorObject::const_iterator it = m_scriptsToEvaluateOnLoad->begin(); it != end; ++it) {
             String scriptText;
             if (it->value->asString(&scriptText))
                 frame->script().executeScript(scriptText);
         }
     }
+
     if (!m_scriptToEvaluateOnLoadOnce.isEmpty())
         frame->script().executeScript(m_scriptToEvaluateOnLoadOnce);
 }

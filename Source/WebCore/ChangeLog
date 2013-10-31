@@ -1,3 +1,48 @@
+2013-10-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove last member variable uses of InspectorState from Agents
+        https://bugs.webkit.org/show_bug.cgi?id=123540
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent):
+        (WebCore::InspectorDOMDebuggerAgent::setBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::removeBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded):
+        (WebCore::InspectorDOMDebuggerAgent::setXHRBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::removeXHRBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::willSendXMLHttpRequest):
+        DOMDebuggerAgentState::eventListenerBreakpoints -> m_eventListenerBreakpoints.
+        DOMDebuggerAgentState::xhrBreakpoints -> m_xhrBreakpoints.
+
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::disable):
+        (WebCore::InspectorDebuggerAgent::setBreakpointByUrl):
+        (WebCore::InspectorDebuggerAgent::removeBreakpoint):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        DebuggerAgentState::javaScriptBreakpoints -> m_javaScriptBreakpoints.
+
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::disable):
+        (WebCore::InspectorPageAgent::addScriptToEvaluateOnLoad):
+        (WebCore::InspectorPageAgent::removeScriptToEvaluateOnLoad):
+        (WebCore::InspectorPageAgent::didClearWindowObjectInWorld):
+        PageAgentState::pageAgentScriptsToEvaluateOnLoad -> m_scriptsToEvaluateOnLoad.
+        This is a lazily created InspectorObject member variable.
+
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        (WebCore::InspectorResourceAgent::disable):
+        (WebCore::InspectorResourceAgent::setExtraHTTPHeaders):
+        ResourceAgentState::extraRequestHeaders -> m_extraRequestHeaders.
+        This is a lazily created InspectorObject member variable.
+
 2013-10-31  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, one more build fix after r158365.

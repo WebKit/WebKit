@@ -77,10 +77,6 @@
 
 namespace WebCore {
 
-namespace ResourceAgentState {
-static const char extraRequestHeaders[] = "extraRequestHeaders";
-}
-
 void InspectorResourceAgent::setFrontend(InspectorFrontend* frontend)
 {
     m_frontend = frontend->network();
@@ -200,9 +196,9 @@ void InspectorResourceAgent::willSendRequest(unsigned long identifier, DocumentL
 
     m_resourcesData->setResourceType(requestId, type);
 
-    if (RefPtr<InspectorObject> headers = m_state->getObject(ResourceAgentState::extraRequestHeaders)) {
-        InspectorObject::const_iterator end = headers->end();
-        for (InspectorObject::const_iterator it = headers->begin(); it != end; ++it) {
+    if (m_extraRequestHeaders) {
+        InspectorObject::const_iterator end = m_extraRequestHeaders->end();
+        for (InspectorObject::const_iterator it = m_extraRequestHeaders->begin(); it != end; ++it) {
             String value;
             if (it->value->asString(&value))
                 request.setHTTPHeaderField(it->key, value);
@@ -546,6 +542,7 @@ void InspectorResourceAgent::disable(ErrorString*)
     m_userAgentOverride = String();
     m_instrumentingAgents->setInspectorResourceAgent(0);
     m_resourcesData->clear();
+    m_extraRequestHeaders.clear();
 }
 
 void InspectorResourceAgent::setUserAgentOverride(ErrorString*, const String& userAgent)
@@ -555,7 +552,7 @@ void InspectorResourceAgent::setUserAgentOverride(ErrorString*, const String& us
 
 void InspectorResourceAgent::setExtraHTTPHeaders(ErrorString*, const RefPtr<InspectorObject>& headers)
 {
-    m_state->setObject(ResourceAgentState::extraRequestHeaders, headers);
+    m_extraRequestHeaders = headers;
 }
 
 void InspectorResourceAgent::getResponseBody(ErrorString* errorString, const String& requestId, String* content, bool* base64Encoded)
