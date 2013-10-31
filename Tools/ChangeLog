@@ -1,3 +1,29 @@
+2013-10-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        build.webkit.org should have a clean build button
+        https://bugs.webkit.org/show_bug.cgi?id=123559
+
+        Reviewed by Darin Adler.
+
+        Add a new "clean" forced scheduler. When a build was created by this scheduler, CleanBuildIfScheduled
+        step executes clean-build script that removes the WebKitBuild directory.
+
+        Also added make-passwords-json.py which creates a fake passwords.json from config.json for testing purposes.
+
+        * BuildSlaveSupport/build.webkit.org-config/make-passwords-json.py: Added.
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (CleanBuildIfScheduled): Added.
+        (CleanBuildIfScheduled.start): Added. Don't do a clean build if if this build wasn't schecueld by
+        the clean build scheduler.
+        (DeleteStaleBuildFiles): Added.
+        (DeleteStaleBuildFiles.start): Added. Don't delete stale build files if this build was scheduled by
+        the clean build scheduler since everything in the WebKitBuild directory had already been removed.
+        (Factory.__init__): Always add CleanBuildIfScheduled.  The step itself checks whether to run
+        clean-build script or hide itself.
+        (loadBuilderConfig): Added the new clean build scheduler. Also make ForceScheduler future proof; in newer
+        versions of buildbot, builderNames needs to be a list of regular strings.
+        * BuildSlaveSupport/clean-build: Added.
+
 2013-10-31  Filip Pizlo  <fpizlo@apple.com>
 
         Remove CachedTranscendentalFunction because caching math functions is an ugly idea
