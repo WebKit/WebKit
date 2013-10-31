@@ -49,7 +49,7 @@ struct SameSizeAsRootInlineBox : public InlineFlowBox {
 
 COMPILE_ASSERT(sizeof(RootInlineBox) == sizeof(SameSizeAsRootInlineBox), RootInlineBox_should_stay_small);
 
-typedef WTF::HashMap<const RootInlineBox*, EllipsisBox*> EllipsisBoxMap;
+typedef WTF::HashMap<const RootInlineBox*, std::unique_ptr<EllipsisBox>> EllipsisBoxMap;
 static EllipsisBoxMap* gEllipsisBoxMap = 0;
 
 RootInlineBox::RootInlineBox(RenderBlockFlow& block)
@@ -73,9 +73,8 @@ RootInlineBox::~RootInlineBox()
 void RootInlineBox::detachEllipsisBox()
 {
     if (hasEllipsisBox()) {
-        EllipsisBox* box = gEllipsisBoxMap->take(this);
-        box->setParent(0);
-        delete box;
+        auto box = gEllipsisBoxMap->take(this);
+        box->setParent(nullptr);
         setHasEllipsisBox(false);
     }
 }
@@ -129,12 +128,14 @@ bool RootInlineBox::lineCanAccommodateEllipsis(bool ltr, int blockEdge, int line
 
 float RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr,  bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, InlineBox* markupBox)
 {
-    // Create an ellipsis box.
-    EllipsisBox* ellipsisBox = new EllipsisBox(blockFlow(), ellipsisStr, this, ellipsisWidth - (markupBox ? markupBox->logicalWidth() : 0), logicalHeight(), y(), !prevRootBox(), isHorizontal(), markupBox);
-
     if (!gEllipsisBoxMap)
         gEllipsisBoxMap = new EllipsisBoxMap();
-    gEllipsisBoxMap->add(this, ellipsisBox);
+
+    // Create an ellipsis box.
+    auto newEllipsisBox = std::make_unique<EllipsisBox>(blockFlow(), ellipsisStr, this, ellipsisWidth - (markupBox ? markupBox->logicalWidth() : 0), logicalHeight(), y(), !prevRootBox(), isHorizontal(), markupBox);
+    auto ellipsisBox = newEllipsisBox.get();
+
+    gEllipsisBoxMap->add(this, std::move(newEllipsisBox));
     setHasEllipsisBox(true);
 
     // FIXME: Do we need an RTL version of this?

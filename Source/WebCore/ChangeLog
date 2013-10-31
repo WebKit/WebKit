@@ -1,3 +1,12 @@
+2013-10-30  Andreas Kling  <akling@apple.com>
+
+        Manage EllipsisBox objects with unique_ptr.
+        <https://webkit.org/b/123554>
+
+        Use smart pointers to store ellipsis boxes instead of new/delete.
+
+        Reviewed by Anders Carlsson.
+
 2013-10-30  Alexey Proskuryakov  <ap@apple.com>
 
         [Gtk] Build is failing after r158317
