@@ -28,10 +28,10 @@
 
 #include "JSCryptoKey.h"
 #include "JSDOMBinding.h"
-#include <JavaScriptCore/JSGlobalObject.h>
-#include <JavaScriptCore/JSPromise.h>
-#include <JavaScriptCore/JSPromiseResolver.h>
-#include <JavaScriptCore/StrongInlines.h>
+#include <runtime/JSGlobalObject.h>
+#include <runtime/JSPromise.h>
+#include <runtime/JSPromiseResolver.h>
+#include <heap/StrongInlines.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
