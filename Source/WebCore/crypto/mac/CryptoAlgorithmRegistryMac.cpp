@@ -29,14 +29,14 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 //#include "CryptoAlgorithmHMAC.h"
-//#include "CryptoAlgorithmSHA1.h"
+#include "CryptoAlgorithmSHA1.h"
 
 namespace WebCore {
 
 void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
 {
-//    registerAlgorithm(CryptoAlgorithmHMAC::m_name, CryptoAlgorithmHMAC::m_identifier, CryptoAlgorithmHMAC::create);
-//    registerAlgorithm(CryptoAlgorithmSHA1::m_name, CryptoAlgorithmSHA1::m_identifier, CryptoAlgorithmSHA1::create);
+//    registerAlgorithm(CryptoAlgorithmHMAC::s_name, CryptoAlgorithmHMAC::s_identifier, CryptoAlgorithmHMAC::create);
+    registerAlgorithm(CryptoAlgorithmSHA1::s_name, CryptoAlgorithmSHA1::s_identifier, CryptoAlgorithmSHA1::create);
 }
 
 }

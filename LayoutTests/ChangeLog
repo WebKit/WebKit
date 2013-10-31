@@ -1,3 +1,27 @@
+2013-10-31  Alexey Proskuryakov  <ap@apple.com>
+
+        [WebCrypto] Add SHA-1
+        https://bugs.webkit.org/show_bug.cgi?id=123582
+
+        Reviewed by Anders Carlsson.
+
+        * security/resources/common.js: Added from Blink.
+        (importTestKeys):
+        (asciiToArrayBuffer):
+        (printRejectedResult):
+        (printAcceptedResult):
+        (failAndFinishJSTest):
+
+        * security/crypto-subtle-arguments-expected.txt: Added.
+        * security/crypto-subtle-arguments.html: Added.
+        Added tests for how bindings treat crazy arguments. Heavily based on a test from Blink.
+
+        * security/crypto-subtle-sha1-expected.txt: Added.
+        * security/crypto-subtle-sha1.html: Added.
+        Test that SHA-1 works.
+
+        * TestExpectations: Skip these tests everywhere for now.
+
 2013-10-31  Filip Pizlo  <fpizlo@apple.com>
 
         Remove CachedTranscendentalFunction because caching math functions is an ugly idea

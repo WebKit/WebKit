@@ -23,12 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=SUBTLE_CRYPTO,
-    InterfaceName=WebKitSubtleCrypto,
-    GenerateIsReachable=ImplDocument,
-    NoInterfaceObject,
-    OperationsNotDeletable
-] interface SubtleCrypto {
-    [Custom] Promise digest(AlgorithmIdentifier algorithm, sequence<CryptoOperationData> data);
-};
+#include "config.h"
+#include "CryptoAlgorithmSHA1.h"
+
+#if ENABLE(SUBTLE_CRYPTO)
+
+namespace WebCore {
+
+const char* const CryptoAlgorithmSHA1::s_name = "sha-1";
+
+CryptoAlgorithmSHA1::CryptoAlgorithmSHA1()
+{
+}
+
+CryptoAlgorithmSHA1::~CryptoAlgorithmSHA1()
+{
+}
+
+std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmSHA1::create()
+{
+    return std::make_unique<CryptoAlgorithmSHA1>();
+}
+
+CryptoAlgorithmIdentifier CryptoAlgorithmSHA1::identifier() const
+{
+    return s_identifier;
+}
+
+}
+
+#endif // ENABLE(SUBTLE_CRYPTO)

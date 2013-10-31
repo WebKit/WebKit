@@ -1,3 +1,34 @@
+2013-10-31  Alexey Proskuryakov  <ap@apple.com>
+
+        [WebCrypto] Add SHA-1
+        https://bugs.webkit.org/show_bug.cgi?id=123582
+
+        Reviewed by Anders Carlsson.
+
+        Tests: security/crypto-subtle-arguments.html
+               security/crypto-subtle-sha1.html
+
+        * WebCore.xcodeproj/project.pbxproj: Added new files.
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::createAlgorithmFromJSValue):
+        (WebCore::sequenceOfCryptoOperationDataFromJSValue):
+        (WebCore::JSSubtleCrypto::digest):
+        * crypto/SubtleCrypto.idl:
+        Added bindings for crypto.digest.
+
+        * crypto/algorithms: Added.
+        * crypto/algorithms/CryptoAlgorithmSHA1.cpp: Added.
+        * crypto/algorithms/CryptoAlgorithmSHA1.h: Added.
+        * crypto/mac/CryptoAlgorithmRegistryMac.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms): Register SHA-1.
+
+        * crypto/mac/CryptoAlgorithmSHA1Mac.cpp: Added.
+        (WebCore::CryptoAlgorithmSHA1::digest): Performs the work synchronously, because
+        otherwise we'd have to copy the data first, which is crazy for something as simple
+        as hashing. We can change to a dispatch queue later if we find that it's actually
+        better to copy and do the work asynchronously.
+
 2013-10-31  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         REGRESSION(r158348): Breaks Debug build
