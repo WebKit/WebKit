@@ -150,6 +150,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSCSSValue.h \
 	DerivedSources/WebCore/JSCSSValueList.cpp \
 	DerivedSources/WebCore/JSCSSValueList.h \
+	DerivedSources/WebCore/JSCryptoKey.cpp \
+	DerivedSources/WebCore/JSCryptoKey.h \
 	DerivedSources/WebCore/JSCustomEvent.cpp \
 	DerivedSources/WebCore/JSCustomEvent.h \
 	DerivedSources/WebCore/JSDatabase.cpp \
