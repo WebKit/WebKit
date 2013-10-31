@@ -44,16 +44,31 @@ JSCryptoAlgorithmBuilder::~JSCryptoAlgorithmBuilder()
 {
 }
 
-void JSCryptoAlgorithmBuilder::add(const char* key, unsigned long value)
+std::unique_ptr<CryptoAlgorithmDescriptionBuilder> JSCryptoAlgorithmBuilder::createEmptyClone() const
 {
-    Identifier identifier(m_exec, key);
-    m_dictionary->putDirect(m_exec->vm(), identifier, jsNumber(value));
+    return std::make_unique<JSCryptoAlgorithmBuilder>(m_exec);
+}
+
+void JSCryptoAlgorithmBuilder::add(const char* key, unsigned value)
+{
+    VM& vm = m_exec->vm();
+    Identifier identifier(&vm, key);
+    m_dictionary->putDirect(vm, identifier, jsNumber(value));
 }
 
 void JSCryptoAlgorithmBuilder::add(const char* key, const String& value)
 {
-    Identifier identifier(m_exec, key);
-    m_dictionary->putDirect(m_exec->vm(), identifier, jsString(m_exec, value));
+    VM& vm = m_exec->vm();
+    Identifier identifier(&vm, key);
+    m_dictionary->putDirect(vm, identifier, jsString(m_exec, value));
+}
+
+void JSCryptoAlgorithmBuilder::add(const char* key, const CryptoAlgorithmDescriptionBuilder& nestedBuilder)
+{
+    VM& vm = m_exec->vm();
+    Identifier identifier(&vm, key);
+    const JSCryptoAlgorithmBuilder& jsBuilder = static_cast<const JSCryptoAlgorithmBuilder&>(nestedBuilder);
+    m_dictionary->putDirect(vm, identifier, jsBuilder.result());
 }
 
 } // namespace WebCore

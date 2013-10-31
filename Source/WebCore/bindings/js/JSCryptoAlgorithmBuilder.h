@@ -42,10 +42,13 @@ public:
     JSCryptoAlgorithmBuilder(JSC::ExecState*);
     virtual ~JSCryptoAlgorithmBuilder();
 
-    JSC::JSObject* result() { return m_dictionary; }
+    JSC::JSObject* result() const { return m_dictionary; }
 
-    virtual void add(const char*, unsigned long) OVERRIDE;
+    virtual std::unique_ptr<CryptoAlgorithmDescriptionBuilder> createEmptyClone() const OVERRIDE;
+
+    virtual void add(const char*, unsigned) OVERRIDE;
     virtual void add(const char*, const String&) OVERRIDE;
+    virtual void add(const char*, const CryptoAlgorithmDescriptionBuilder&) OVERRIDE;
 
 private:
     JSC::ExecState* m_exec;
