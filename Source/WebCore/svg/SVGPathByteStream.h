@@ -22,7 +22,6 @@
 
 #if ENABLE(SVG)
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -46,18 +45,16 @@ typedef union {
 class SVGPathByteStream {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<SVGPathByteStream> create()
-    {
-        return adoptPtr(new SVGPathByteStream);
-    }
-
-    PassOwnPtr<SVGPathByteStream> copy()
-    {
-        return adoptPtr(new SVGPathByteStream(m_data));
-    }
-
     typedef Vector<unsigned char> Data;
     typedef Data::const_iterator DataIterator;
+
+    SVGPathByteStream() { }
+    SVGPathByteStream(const Data& data) : m_data(data) { }
+
+    std::unique_ptr<SVGPathByteStream> copy() const
+    {
+        return std::make_unique<SVGPathByteStream>(m_data);
+    }
 
     DataIterator begin() { return m_data.begin(); }
     DataIterator end() { return m_data.end(); }
@@ -75,12 +72,6 @@ public:
     void resize(unsigned) { }
 
 private:
-    SVGPathByteStream() { }
-    SVGPathByteStream(Data& data)
-        : m_data(data)
-    {
-    }
-
     Data m_data;
 };
 

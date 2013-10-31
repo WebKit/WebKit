@@ -1,3 +1,32 @@
+2013-10-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        Manage SVGPathByteStream through std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=123467
+
+        Reviewed by Anders Carlsson.
+
+        Manage SVGPathByteStream objects through std::unique_ptr. Constructors for the class are made public
+        so std::make_unique can be used with the class.
+
+        * svg/SVGAnimatedPath.cpp:
+        (WebCore::SVGAnimatedPathAnimator::constructFromString):
+        (WebCore::SVGAnimatedPathAnimator::startAnimValAnimation):
+        (WebCore::SVGAnimatedPathAnimator::calculateAnimatedValue):
+        * svg/SVGAnimatedType.cpp:
+        (WebCore::SVGAnimatedType::createPath):
+        * svg/SVGAnimatedType.h:
+        * svg/SVGPathByteStream.h:
+        (WebCore::SVGPathByteStream::SVGPathByteStream): Takes a const Data object that's then copied.
+        (WebCore::SVGPathByteStream::copy): Made const.
+        * svg/SVGPathByteStreamBuilder.cpp: Remove an unnecessary include.
+        * svg/SVGPathByteStreamBuilder.h: Ditto.
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::SVGPathElement):
+        * svg/SVGPathElement.h:
+        * svg/SVGPathUtilities.cpp:
+        (WebCore::appendSVGPathByteStreamFromSVGPathSeg):
+        (WebCore::addToSVGPathByteStream):
+
 2013-10-31  Marcin Bychawski  <m.bychawski@samsung.com>
 
         Removing m_maxDeadCapacity condition in fast path in MemoryCache::prune().

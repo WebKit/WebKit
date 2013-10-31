@@ -180,11 +180,11 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createNumberOptionalNumber(pair<flo
     return animatedType.release();
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createPath(PassOwnPtr<SVGPathByteStream> path)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedType::createPath(std::unique_ptr<SVGPathByteStream> path)
 {
     ASSERT(path);
     OwnPtr<SVGAnimatedType> animatedType = adoptPtr(new SVGAnimatedType(AnimatedPath));
-    animatedType->m_data.path = path.leakPtr();
+    animatedType->m_data.path = path.release();
     return animatedType.release();
 }
 

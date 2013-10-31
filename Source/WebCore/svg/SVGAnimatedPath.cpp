@@ -35,9 +35,9 @@ SVGAnimatedPathAnimator::SVGAnimatedPathAnimator(SVGAnimationElement* animationE
 
 PassOwnPtr<SVGAnimatedType> SVGAnimatedPathAnimator::constructFromString(const String& string)
 {
-    OwnPtr<SVGPathByteStream> byteStream = SVGPathByteStream::create();
+    auto byteStream = std::make_unique<SVGPathByteStream>();
     buildSVGPathByteStreamFromString(string, byteStream.get(), UnalteredParsing);
-    return SVGAnimatedType::createPath(byteStream.release());
+    return SVGAnimatedType::createPath(std::move(byteStream));
 }
 
 PassOwnPtr<SVGAnimatedType> SVGAnimatedPathAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
@@ -47,7 +47,7 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedPathAnimator::startAnimValAnimation(const
     const SVGPathSegList& baseValue = property->currentBaseValue();
 
     // Build initial path byte stream.
-    OwnPtr<SVGPathByteStream> byteStream = SVGPathByteStream::create();
+    auto byteStream = std::make_unique<SVGPathByteStream>();
     buildSVGPathByteStreamFromSVGPathSegList(baseValue, byteStream.get(), UnalteredParsing);
 
     Vector<RefPtr<SVGAnimatedPathSegListPropertyTearOff>> result;
@@ -62,7 +62,7 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedPathAnimator::startAnimValAnimation(const
     for (size_t i = 0; i < resultSize; ++i)
         result[i]->animationStarted(byteStream.get(), &baseValue);
 
-    return SVGAnimatedType::createPath(byteStream.release());
+    return SVGAnimatedType::createPath(std::move(byteStream));
 }
 
 void SVGAnimatedPathAnimator::stopAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
@@ -112,7 +112,7 @@ void SVGAnimatedPathAnimator::calculateAnimatedValue(float percentage, unsigned 
     SVGPathByteStream* toAtEndOfDurationPath = toAtEndOfDuration->path();
     SVGPathByteStream* animatedPath = animated->path();
 
-    OwnPtr<SVGPathByteStream> underlyingPath;
+    std::unique_ptr<SVGPathByteStream> underlyingPath;
     bool isToAnimation = m_animationElement->animationMode() == ToAnimation;
     if (isToAnimation) {
         underlyingPath = animatedPath->copy();
@@ -120,7 +120,7 @@ void SVGAnimatedPathAnimator::calculateAnimatedValue(float percentage, unsigned 
     }
 
     // Cache the current animated value before the buildAnimatedSVGPathByteStream() clears animatedPath.
-    OwnPtr<SVGPathByteStream> lastAnimatedPath;
+    std::unique_ptr<SVGPathByteStream> lastAnimatedPath;
     if (!fromPath->size() || (m_animationElement->isAdditive() && !isToAnimation))
         lastAnimatedPath = animatedPath->copy();
 

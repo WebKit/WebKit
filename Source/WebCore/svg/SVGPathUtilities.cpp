@@ -148,7 +148,7 @@ bool appendSVGPathByteStreamFromSVGPathSeg(PassRefPtr<SVGPathSeg> pathSeg, SVGPa
 
     SVGPathSegList appendedItemList(PathSegUnalteredRole);
     appendedItemList.append(pathSeg);
-    OwnPtr<SVGPathByteStream> appendedByteStream = SVGPathByteStream::create();
+    auto appendedByteStream = std::make_unique<SVGPathByteStream>();
 
     SVGPathByteStreamBuilder* builder = globalSVGPathByteStreamBuilder(appendedByteStream.get());
     OwnPtr<SVGPathSegListSource> source = SVGPathSegListSource::create(appendedItemList);
@@ -270,7 +270,7 @@ bool addToSVGPathByteStream(SVGPathByteStream* fromStream, SVGPathByteStream* by
 
     SVGPathByteStreamBuilder* builder = globalSVGPathByteStreamBuilder(fromStream);
 
-    OwnPtr<SVGPathByteStream> fromStreamCopy = fromStream->copy();
+    auto fromStreamCopy = fromStream->copy();
     fromStream->clear();
 
     OwnPtr<SVGPathByteStreamSource> fromSource = SVGPathByteStreamSource::create(fromStreamCopy.get());

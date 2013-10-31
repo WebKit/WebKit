@@ -25,7 +25,6 @@
 #include "SVGPathParser.h"
 #include "SVGPathSeg.h"
 #include "SVGPathStringSource.h"
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 

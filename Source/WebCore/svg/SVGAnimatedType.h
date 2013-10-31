@@ -52,7 +52,7 @@ public:
     static PassOwnPtr<SVGAnimatedType> createNumber(float*);
     static PassOwnPtr<SVGAnimatedType> createNumberList(SVGNumberList*);
     static PassOwnPtr<SVGAnimatedType> createNumberOptionalNumber(std::pair<float, float>*);
-    static PassOwnPtr<SVGAnimatedType> createPath(PassOwnPtr<SVGPathByteStream>);
+    static PassOwnPtr<SVGAnimatedType> createPath(std::unique_ptr<SVGPathByteStream>);
     static PassOwnPtr<SVGAnimatedType> createPointList(SVGPointList*);
     static PassOwnPtr<SVGAnimatedType> createPreserveAspectRatio(SVGPreserveAspectRatio*);
     static PassOwnPtr<SVGAnimatedType> createRect(FloatRect*);

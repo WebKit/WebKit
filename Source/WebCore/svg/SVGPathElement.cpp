@@ -84,7 +84,7 @@ END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document)
-    , m_pathByteStream(SVGPathByteStream::create())
+    , m_pathByteStream(std::make_unique<SVGPathByteStream>())
     , m_pathSegList(PathSegUnalteredRole)
     , m_isAnimValObserved(false)
 {

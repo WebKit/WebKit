@@ -126,7 +126,7 @@ private:
     void invalidateMPathDependencies();
 
 private:
-    OwnPtr<SVGPathByteStream> m_pathByteStream;
+    std::unique_ptr<SVGPathByteStream> m_pathByteStream;
     mutable SVGSynchronizableAnimatedProperty<SVGPathSegList> m_pathSegList;
     bool m_isAnimValObserved;
 };

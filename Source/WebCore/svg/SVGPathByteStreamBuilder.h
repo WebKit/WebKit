@@ -24,7 +24,6 @@
 #include "FloatPoint.h"
 #include "SVGPathByteStream.h"
 #include "SVGPathConsumer.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
