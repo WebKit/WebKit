@@ -1,3 +1,17 @@
+2013-10-31  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        REGRESSION(r158348): Breaks Debug build
+        https://bugs.webkit.org/show_bug.cgi?id=123562
+
+        Reviewed by Brady Eidson.
+
+        Remove an unnecessary check that cause compilation failure.
+
+        No new tests since this just fixes the build failure.
+
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        (WebCore::IDBBackingStoreLevelDB::updateIDBDatabaseVersion):
+
 2013-10-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         One more speculative buildfix after r158365.

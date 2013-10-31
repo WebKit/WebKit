@@ -596,7 +596,6 @@ bool IDBBackingStoreLevelDB::updateIDBDatabaseVersion(IDBBackingStoreInterface::
 {
     if (version == IDBDatabaseMetadata::NoIntVersion)
         version = IDBDatabaseMetadata::DefaultIntVersion;
-    ASSERT_WITH_MESSAGE(version >= 0, "version was %llu", static_cast<unsigned long long>(version));
     putVarInt(Transaction::levelDBTransactionFrom(transaction), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserIntVersion), version);
     return true;
 }
