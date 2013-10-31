@@ -391,15 +391,7 @@ void TiledCoreAnimationDrawingArea::resumePainting()
     if (m_webPage->windowIsVisible()) {
         m_webPage->corePage()->resumeScriptedAnimations();
 
-        Frame* frame = m_webPage->corePage()->mainFrame();
-        if (!frame)
-            return;
-
-        FrameView* frameView = frame->view();
-        if (!frameView)
-            return;
-
-        frameView->resumeAnimatingImages();
+        m_webPage->corePage()->resumeAnimatingImages();
     }
 }
 

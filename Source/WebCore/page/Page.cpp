@@ -24,6 +24,7 @@
 #include "AnimationController.h"
 #include "BackForwardController.h"
 #include "BackForwardList.h"
+#include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ClientRectList.h"
@@ -948,6 +949,9 @@ void Page::setIsInWindow(bool isInWindow)
         if (FrameView* frameView = frame->view())
             frameView->setIsInWindow(isInWindow);
     }
+
+    if (isInWindow)
+        resumeAnimatingImages();
 }
 
 void Page::windowScreenDidChange(PlatformDisplayID displayID)
@@ -1283,6 +1287,15 @@ void Page::unthrottleTimers()
 #endif
 }
 
+void Page::resumeAnimatingImages()
+{
+    // Drawing models which cache painted content while out-of-window (WebKit2's composited drawing areas, etc.)
+    // require that we repaint animated images to kickstart the animation loop.
+
+    for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree()->traverseNext())
+        CachedImage::resumeAnimatingImagesForLoader(frame->document()->cachedResourceLoader());
+}
+
 #if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
 void Page::setVisibilityState(PageVisibilityState visibilityState, bool isInitialState)
 {
@@ -1306,6 +1319,7 @@ void Page::setVisibilityState(PageVisibilityState visibilityState, bool isInitia
         unthrottleTimers();
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
             mainFrame()->animation()->resumeAnimations();
+        resumeAnimatingImages();
     }
 #if !ENABLE(PAGE_VISIBILITY_API)
     UNUSED_PARAM(isInitialState);
@@ -1501,6 +1515,8 @@ void Page::resumeActiveDOMObjectsAndAnimations()
 {
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
         frame->resumeActiveDOMObjectsAndAnimations();
+
+    resumeAnimatingImages();
 }
 
 bool Page::hasSeenAnyPlugin() const

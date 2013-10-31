@@ -435,8 +435,6 @@ public:
     bool visualUpdatesAllowedByClient() const { return m_visualUpdatesAllowedByClient; }
     void setVisualUpdatesAllowedByClient(bool);
 
-    void resumeAnimatingImages();
-    
     void setScrollPinningBehavior(ScrollPinningBehavior);
 
 protected:

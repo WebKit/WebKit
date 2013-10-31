@@ -354,6 +354,7 @@ public:
 #if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
     void setVisibilityState(PageVisibilityState, bool);
 #endif
+    void resumeAnimatingImages();
 
     PlatformDisplayID displayID() const { return m_displayID; }
 
