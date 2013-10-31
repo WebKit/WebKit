@@ -11,9 +11,9 @@ Test that XMLHttpRequest.response returns an empty ArrayBuffer when received sta
 PASS request.status is 200
 PASS Object.prototype.toString.call(request.response) is '[object ArrayBuffer]'
 PASS request.response.byteLength is 68
-FAIL request2.status should be 304. Was 200.
+PASS request2.status is 304
 PASS Object.prototype.toString.call(request2.response) is '[object ArrayBuffer]'
-FAIL request2.response.byteLength should be 0. Was 68.
+PASS request2.response.byteLength is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

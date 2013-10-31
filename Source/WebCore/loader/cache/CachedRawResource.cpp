@@ -203,8 +203,6 @@ static bool shouldIgnoreHeaderForCacheReuse(AtomicString headerName)
     if (m_headers.isEmpty()) {
         m_headers.add("Accept");
         m_headers.add("Cache-Control");
-        m_headers.add("If-Modified-Since");
-        m_headers.add("If-None-Match");
         m_headers.add("Origin");
         m_headers.add("Pragma");
         m_headers.add("Purpose");

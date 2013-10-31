@@ -1,3 +1,16 @@
+2013-10-31  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION(r158333): http/tests/xmlhttprequest/response-encoding.html and xmlhttprequest-overridemimetype-content-type-header.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=123548
+
+        Reviewed by Brady Eidson.
+
+        * TestExpectations: Unskip tests that used to be affected by response-empty-arraybuffer.html
+
+        * http/tests/xmlhttprequest/response-empty-arraybuffer-expected.txt:
+        * http/tests/xmlhttprequest/response-empty-arraybuffer.html:
+        Fix a stupid typo. This test actually fully passes.
+
 2013-10-31  Krzysztof Wolanski  <k.wolanski@samsung.com>
 
         [EFL] Rebaselining after r158186

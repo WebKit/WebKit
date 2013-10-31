@@ -1,3 +1,25 @@
+2013-10-31  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION(r158333): http/tests/xmlhttprequest/response-encoding.html and xmlhttprequest-overridemimetype-content-type-header.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=123548
+
+        Reviewed by Brady Eidson.
+
+        We had code that made sure that cached 200 responses weren't used for conditional
+        requests. But it didn't work the other way - cached 304 responses got reused for
+        subsequent unconditional requests!
+
+        Adding the test uncovered this bug.
+
+        * loader/cache/CachedRawResource.cpp: (WebCore::shouldIgnoreHeaderForCacheReuse):
+        Should never ignore conditional headers. Code in determineRevalidationPolicy
+        was already undoing this for conditional requests, but we also shouldn't use
+        WebCore cache if it holds a 304 response to conditional request.
+
+        * loader/cache/CachedResourceLoader.cpp: (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+        Even though the changed code is only for raw resources, I think that we can never
+        get a conditional request here any more.
+
 2013-10-30  Alexey Proskuryakov  <ap@apple.com>
 
         CryptoAlgorithmDescriptionBuilder should support producing nested algorithms

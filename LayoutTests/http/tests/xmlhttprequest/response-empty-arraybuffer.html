@@ -58,7 +58,7 @@ function notModifiedTest()
             if (req2.readyState != 4)
                 return;
 
-            request2 = req;
+            request2 = req2;
 
             shouldBe("request2.status", "304");
             shouldBe("Object.prototype.toString.call(request2.response)", "'[object ArrayBuffer]'");

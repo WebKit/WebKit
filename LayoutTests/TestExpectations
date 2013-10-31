@@ -76,8 +76,5 @@ webkit.org/b/122679 security/crypto-subtle-gc.html [ Skip ]
 webkit.org/b/122679 security/crypto-subtle-gc-2.html [ Skip ]
 webkit.org/b/122679 security/crypto-subtle-gc-3.html [ Skip ]
 
-webkit.org/b/123548 http/tests/xmlhttprequest/response-encoding.html [ Failure ]
-webkit.org/b/123548 http/tests/xmlhttprequest/xmlhttprequest-overridemimetype-content-type-header.html [ Failure ]
-
 webkit.org/b/123555 [ Debug ] media/media-fragments/TC0054.html [ Crash ]
 webkit.org/b/123555 [ Debug ] media/media-fragments/TC0061.html [ Crash ]
