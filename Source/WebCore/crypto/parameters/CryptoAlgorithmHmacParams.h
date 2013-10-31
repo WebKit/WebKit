@@ -23,47 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmRegistry_h
-#define CryptoAlgorithmRegistry_h
+#ifndef CryptoAlgorithmHmacParams_h
+#define CryptoAlgorithmHmacParams_h
 
 #include "CryptoAlgorithmIdentifier.h"
-#include <wtf/Forward.h>
-#include <wtf/HashMap.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/text/StringHash.h>
+#include "CryptoAlgorithmParameters.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-typedef int ExceptionCode;
-
-class CryptoAlgorithm;
-
-class CryptoAlgorithmRegistry {
-    WTF_MAKE_NONCOPYABLE(CryptoAlgorithmRegistry);
-
+class CryptoAlgorithmHmacParams FINAL : public CryptoAlgorithmParameters {
 public:
-    static CryptoAlgorithmRegistry& shared();
-
-    bool getIdentifierForName(const String&, CryptoAlgorithmIdentifier&);
-    String nameForIdentifier(CryptoAlgorithmIdentifier);
-
-    std::unique_ptr<CryptoAlgorithm> create(CryptoAlgorithmIdentifier);
-
-private:
-    CryptoAlgorithmRegistry();
-    void platformRegisterAlgorithms();
-
-    typedef std::unique_ptr<CryptoAlgorithm> (*CryptoAlgorithmConstructor)();
-
-    void registerAlgorithm(const String& name, CryptoAlgorithmIdentifier, CryptoAlgorithmConstructor);
-    HashMap<String, CryptoAlgorithmIdentifier> m_nameToIdentifierMap;
-    HashMap<unsigned, String> m_identifierToNameMap;
-    HashMap<unsigned, CryptoAlgorithmConstructor> m_identifierToConstructorMap;
+    // The inner hash function to use.
+    CryptoAlgorithmIdentifier hash;
 };
 
 }
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoAlgorithmRegistry_h
+#endif // CryptoAlgorithmHmacParams_h
