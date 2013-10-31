@@ -166,10 +166,10 @@ public:
     // to FTLSaveRestore convention, this loads the value into the given register.
     // The code that this generates isn't exactly super fast. This assumes that FP
     // and SP contain the same values that they would have contained in the original
-    // frame. If we did push things onto the stack then probably we'll have to change
-    // the signature of this method to take a stack offset for stack-relative
-    // indirects.
-    void restoreInto(MacroAssembler&, char* savedRegisters, GPRReg result) const;
+    // frame, or that you've done one or more canonically formed calls (i.e. can
+    // restore the FP by following the call frame linked list numFramesToPop times,
+    // and SP can be recovered by popping FP numFramesToPop-1 times and adding 16).
+    void restoreInto(MacroAssembler&, char* savedRegisters, GPRReg result, unsigned numFramesToPop = 0) const;
     
 private:
     Kind m_kind;

@@ -1,3 +1,18 @@
+2013-10-31  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL::Location::restoreInto() doesn't handle stack-related registers correctly if you're using it after pushing a new stack frame
+        https://bugs.webkit.org/show_bug.cgi?id=123591
+
+        Reviewed by Mark Hahnenberg.
+        
+        This gets us to pass more tests with ftlUsesStackmaps.
+
+        * ftl/FTLLocation.cpp:
+        (JSC::FTL::Location::restoreInto):
+        * ftl/FTLLocation.h:
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::osrExitGenerationWithStackMapThunkGenerator):
+
 2013-10-31  Alexey Proskuryakov  <ap@apple.com>
 
         Enable WebCrypto on Mac

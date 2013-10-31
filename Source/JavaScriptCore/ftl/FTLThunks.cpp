@@ -113,7 +113,7 @@ MacroAssemblerCodeRef osrExitGenerationWithStackMapThunkGenerator(
     jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->activeLengthPtr()), GPRInfo::nonArgGPR1);
     jit.storePtr(MacroAssembler::TrustedImmPtr(requiredScratchMemorySizeInBytes()), GPRInfo::nonArgGPR1);
 
-    location.restoreInto(jit, buffer, GPRInfo::argumentGPR0);
+    location.restoreInto(jit, buffer, GPRInfo::argumentGPR0, 1);
     jit.peek(GPRInfo::argumentGPR1, 3);
     MacroAssembler::Call functionCall = jit.call();
     
