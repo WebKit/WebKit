@@ -1,3 +1,14 @@
+2013-10-30  Dan Bernstein  <mitz@apple.com>
+
+        Fixed a potential race condition around the initializtion of WKObject’s target.
+
+        Reviewed by Mark Rowe.
+
+        * Shared/Cocoa/WKObject.mm:
+        (initializeTargetIfNeeded): Removed the early return if _target is non-nil. As Mark pointed
+        out, when stores are reordered relative to other stores, it is possible for the early return
+        to occur while the object _target is pointing to is not yet valid.
+
 2013-10-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove code for Mac Lion

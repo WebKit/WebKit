@@ -47,9 +47,6 @@ using namespace WebKit;
 
 static inline void initializeTargetIfNeeded(WKObject *self)
 {
-    if (self->_target)
-        return;
-
     dispatch_once(&self->_targetInitializationToken, ^{
         self->_target = [self _web_createTarget];
     });
