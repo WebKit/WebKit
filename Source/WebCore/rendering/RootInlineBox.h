@@ -38,8 +38,7 @@ struct GapRects;
 class RootInlineBox : public InlineFlowBox {
 public:
     explicit RootInlineBox(RenderBlockFlow&);
-
-    virtual void destroy() OVERRIDE FINAL;
+    virtual ~RootInlineBox();
 
     virtual bool isRootInlineBox() const OVERRIDE FINAL { return true; }
     RenderBlockFlow& blockFlow() const;

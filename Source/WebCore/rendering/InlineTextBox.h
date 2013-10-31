@@ -54,10 +54,10 @@ public:
         setBehavesLikeText(true);
     }
 
+    virtual ~InlineTextBox();
+
     RenderText& renderer() const { return toRenderText(InlineBox::renderer()); }
     const RenderStyle& lineStyle() const { return isFirstLine() ? renderer().firstLineStyle() : renderer().style(); }
-
-    virtual void destroy() OVERRIDE FINAL;
 
     InlineTextBox* prevTextBox() const { return m_prevTextBox; }
     InlineTextBox* nextTextBox() const { return m_nextTextBox; }

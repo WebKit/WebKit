@@ -65,10 +65,9 @@ RootInlineBox::RootInlineBox(RenderBlockFlow& block)
 }
 
 
-void RootInlineBox::destroy()
+RootInlineBox::~RootInlineBox()
 {
     detachEllipsisBox();
-    InlineFlowBox::destroy();
 }
 
 void RootInlineBox::detachEllipsisBox()
@@ -76,7 +75,7 @@ void RootInlineBox::detachEllipsisBox()
     if (hasEllipsisBox()) {
         EllipsisBox* box = gEllipsisBoxMap->take(this);
         box->setParent(0);
-        box->destroy();
+        delete box;
         setHasEllipsisBox(false);
     }
 }

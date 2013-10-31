@@ -221,7 +221,7 @@ void InlineFlowBox::deleteLine()
 #endif
 
     removeLineBoxFromRenderObject();
-    destroy();
+    delete this;
 }
 
 void InlineFlowBox::removeLineBoxFromRenderObject()

@@ -66,11 +66,6 @@ void InlineBox::removeFromParent()
         parent()->removeChild(this);
 }
 
-void InlineBox::destroy()
-{
-    delete this;
-}
-
 #ifndef NDEBUG
 const char* InlineBox::boxName() const
 {
@@ -170,7 +165,7 @@ void InlineBox::deleteLine()
         else if (renderer().isLineBreak())
             toRenderLineBreak(renderer()).setInlineBoxWrapper(0);
     }
-    destroy();
+    delete this;
 }
 
 void InlineBox::extractLine()

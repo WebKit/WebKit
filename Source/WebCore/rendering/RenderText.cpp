@@ -1038,7 +1038,7 @@ void RenderText::positionLineBox(InlineBox* box)
         // We want the box to be destroyed.
         textBox->removeFromParent();
         m_lineBoxes.remove(*textBox);
-        textBox->destroy();
+        delete textBox;
         return;
     }
 

@@ -123,7 +123,7 @@ void RenderTextLineBoxes::deleteAll()
     InlineTextBox* next;
     for (auto current = m_first; current; current = next) {
         next = current->nextTextBox();
-        current->destroy();
+        delete current;
     }
     m_first = nullptr;
     m_last = nullptr;

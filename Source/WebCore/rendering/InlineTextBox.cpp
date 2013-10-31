@@ -67,11 +67,10 @@ COMPILE_ASSERT(sizeof(InlineTextBox) == sizeof(SameSizeAsInlineTextBox), InlineT
 typedef WTF::HashMap<const InlineTextBox*, LayoutRect> InlineTextBoxOverflowMap;
 static InlineTextBoxOverflowMap* gTextBoxesWithOverflow;
 
-void InlineTextBox::destroy()
+InlineTextBox::~InlineTextBox()
 {
     if (!knownToHaveNoOverflow() && gTextBoxesWithOverflow)
         gTextBoxesWithOverflow->remove(this);
-    InlineBox::destroy();
 }
 
 void InlineTextBox::markDirty(bool dirty)
@@ -245,7 +244,7 @@ LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos) const
 void InlineTextBox::deleteLine()
 {
     renderer().removeTextBox(*this);
-    destroy();
+    delete this;
 }
 
 void InlineTextBox::extractLine()

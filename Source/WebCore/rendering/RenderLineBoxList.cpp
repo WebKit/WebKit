@@ -135,7 +135,7 @@ void RenderLineBoxList::deleteLineBoxes()
         InlineFlowBox* next;
         for (InlineFlowBox* curr = m_firstLineBox; curr; curr = next) {
             next = curr->nextLineBox();
-            curr->destroy();
+            delete curr;
         }
         m_firstLineBox = 0;
         m_lastLineBox = 0;

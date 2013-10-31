@@ -242,8 +242,7 @@ public:
     {
         if (!m_rareData)
             m_rareData = adoptPtr(new RenderBlockFlowRareData(*this));
-        if (m_rareData->m_lineGridBox)
-            m_rareData->m_lineGridBox->destroy();
+        delete m_rareData->m_lineGridBox;
         m_rareData->m_lineGridBox = box;
     }
     void layoutLineGridBox();

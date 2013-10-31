@@ -1,3 +1,13 @@
+2013-10-30  Andreas Kling  <akling@apple.com>
+
+        Replace InlineBox::destroy() with regular virtual destruction.
+        <https://webkit.org/b/123550>
+
+        Move logic out of destroy() and its overloads into good ol' virtual
+        destructors instead.
+
+        Reviewed by Anders Carlsson.
+
 2013-10-30  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Simplifying MediaStream and MediStreamDescriptor creation

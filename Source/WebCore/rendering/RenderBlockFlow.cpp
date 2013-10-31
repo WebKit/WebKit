@@ -113,8 +113,7 @@ void RenderBlockFlow::willBeDestroyed()
     // Mark as being destroyed to avoid trouble with merges in removeChild().
     m_beingDestroyed = true;
 
-    if (lineGridBox())
-        lineGridBox()->destroy();
+    delete lineGridBox();
 
     if (renderNamedFlowFragment())
         setRenderNamedFlowFragment(0);

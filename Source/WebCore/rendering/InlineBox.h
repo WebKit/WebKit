@@ -63,8 +63,6 @@ public:
 
     virtual ~InlineBox();
 
-    virtual void destroy();
-
     virtual void deleteLine();
     virtual void extractLine();
     virtual void attachLine();
