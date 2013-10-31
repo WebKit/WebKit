@@ -1,3 +1,32 @@
+2013-10-30  Oliver Hunt  <oliver@apple.com>
+
+        Implement basic ES6 Math functions
+        https://bugs.webkit.org/show_bug.cgi?id=123536
+
+        Reviewed by Michael Saboff.
+
+        Fairly trivial patch to implement the core ES6 Math functions.
+
+        This doesn't implement Math.hypot as it is not a trivial function.
+        I've also skipped Math.sign as I am yet to be convinced the spec
+        behaviour is good.  Everything else is trivial.
+
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::finishCreation):
+        (JSC::mathProtoFuncACosh):
+        (JSC::mathProtoFuncASinh):
+        (JSC::mathProtoFuncATanh):
+        (JSC::mathProtoFuncCbrt):
+        (JSC::mathProtoFuncCosh):
+        (JSC::mathProtoFuncExpm1):
+        (JSC::mathProtoFuncFround):
+        (JSC::mathProtoFuncLog1p):
+        (JSC::mathProtoFuncLog10):
+        (JSC::mathProtoFuncLog2):
+        (JSC::mathProtoFuncSinh):
+        (JSC::mathProtoFuncTanh):
+        (JSC::mathProtoFuncTrunc):
+
 2013-10-31  Filip Pizlo  <fpizlo@apple.com>
 
         FTL::Location::restoreInto() doesn't handle stack-related registers correctly if you're using it after pushing a new stack frame

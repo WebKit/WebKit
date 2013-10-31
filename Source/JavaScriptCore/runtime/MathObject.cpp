@@ -36,22 +36,35 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(MathObject);
 
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncAbs(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncACos(ExecState*);
+static EncodedJSValue JSC_HOST_CALL mathProtoFuncACosh(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncASin(ExecState*);
+static EncodedJSValue JSC_HOST_CALL mathProtoFuncASinh(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncATan(ExecState*);
+static EncodedJSValue JSC_HOST_CALL mathProtoFuncATanh(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncATan2(ExecState*);
+static EncodedJSValue JSC_HOST_CALL mathProtoFuncCbrt(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncCeil(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncCos(ExecState*);
+static EncodedJSValue JSC_HOST_CALL mathProtoFuncCosh(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncExp(ExecState*);
+static EncodedJSValue JSC_HOST_CALL mathProtoFuncExpm1(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncFloor(ExecState*);
+static EncodedJSValue JSC_HOST_CALL mathProtoFuncFround(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncLog(ExecState*);
+static EncodedJSValue JSC_HOST_CALL mathProtoFuncLog1p(ExecState*);
+static EncodedJSValue JSC_HOST_CALL mathProtoFuncLog10(ExecState*);
+static EncodedJSValue JSC_HOST_CALL mathProtoFuncLog2(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncMax(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncMin(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncPow(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncRandom(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncRound(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncSin(ExecState*);
+static EncodedJSValue JSC_HOST_CALL mathProtoFuncSinh(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncSqrt(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncTan(ExecState*);
+static EncodedJSValue JSC_HOST_CALL mathProtoFuncTanh(ExecState*);
+static EncodedJSValue JSC_HOST_CALL mathProtoFuncTrunc(ExecState*);
 static EncodedJSValue JSC_HOST_CALL mathProtoFuncIMul(ExecState*);
 
 }
@@ -83,20 +96,33 @@ void MathObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "acos"), 1, mathProtoFuncACos, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "asin"), 1, mathProtoFuncASin, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "atan"), 1, mathProtoFuncATan, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "acosh"), 1, mathProtoFuncACosh, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "asinh"), 1, mathProtoFuncASinh, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "atanh"), 1, mathProtoFuncATanh, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "atan2"), 2, mathProtoFuncATan2, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "cbrt"), 1, mathProtoFuncCbrt, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "ceil"), 1, mathProtoFuncCeil, CeilIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "cos"), 1, mathProtoFuncCos, CosIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "cosh"), 1, mathProtoFuncCosh, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "exp"), 1, mathProtoFuncExp, ExpIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "expm1"), 1, mathProtoFuncExpm1, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "floor"), 1, mathProtoFuncFloor, FloorIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "fround"), 1, mathProtoFuncFround, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "log"), 1, mathProtoFuncLog, LogIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "log10"), 1, mathProtoFuncLog10, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "log1p"), 1, mathProtoFuncLog1p, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "log2"), 1, mathProtoFuncLog2, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "max"), 2, mathProtoFuncMax, MaxIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "min"), 2, mathProtoFuncMin, MinIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "pow"), 2, mathProtoFuncPow, PowIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "random"), 0, mathProtoFuncRandom, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "round"), 1, mathProtoFuncRound, RoundIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "sin"), 1, mathProtoFuncSin, SinIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "sinh"), 1, mathProtoFuncSinh, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "sqrt"), 1, mathProtoFuncSqrt, SqrtIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "tan"), 1, mathProtoFuncTan, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "tanh"), 1, mathProtoFuncTanh, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "trunc"), 1, mathProtoFuncTrunc, NoIntrinsic, DontEnum | Function);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier(&vm, "imul"), 1, mathProtoFuncIMul, IMulIntrinsic, DontEnum | Function);
 }
 
@@ -272,6 +298,75 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncIMul(ExecState* exec)
     int32_t right = exec->argument(1).toInt32(exec);
     return JSValue::encode(jsNumber(left * right));
 }
+
+EncodedJSValue JSC_HOST_CALL mathProtoFuncACosh(ExecState* exec)
+{
+    return JSValue::encode(jsDoubleNumber(acosh(exec->argument(0).toNumber(exec))));
+}
+
+EncodedJSValue JSC_HOST_CALL mathProtoFuncASinh(ExecState* exec)
+{
+    return JSValue::encode(jsDoubleNumber(asinh(exec->argument(0).toNumber(exec))));
+}
+
+EncodedJSValue JSC_HOST_CALL mathProtoFuncATanh(ExecState* exec)
+{
+    return JSValue::encode(jsDoubleNumber(atanh(exec->argument(0).toNumber(exec))));
+}
+
+EncodedJSValue JSC_HOST_CALL mathProtoFuncCbrt(ExecState* exec)
+{
+    return JSValue::encode(jsDoubleNumber(cbrt(exec->argument(0).toNumber(exec))));
+}
+
+EncodedJSValue JSC_HOST_CALL mathProtoFuncCosh(ExecState* exec)
+{
+    return JSValue::encode(jsDoubleNumber(cosh(exec->argument(0).toNumber(exec))));
+}
+
+EncodedJSValue JSC_HOST_CALL mathProtoFuncExpm1(ExecState* exec)
+{
+    return JSValue::encode(jsDoubleNumber(expm1(exec->argument(0).toNumber(exec))));
+}
+
+EncodedJSValue JSC_HOST_CALL mathProtoFuncFround(ExecState* exec)
+{
+    return JSValue::encode(jsDoubleNumber(static_cast<float>(exec->argument(0).toNumber(exec))));
+}
+
+EncodedJSValue JSC_HOST_CALL mathProtoFuncLog1p(ExecState* exec)
+{
+    double value = exec->argument(0).toNumber(exec);
+    if (value == 0)
+        return JSValue::encode(jsDoubleNumber(value));
+    return JSValue::encode(jsDoubleNumber(log1p(value)));
+}
+
+EncodedJSValue JSC_HOST_CALL mathProtoFuncLog10(ExecState* exec)
+{
+    return JSValue::encode(jsDoubleNumber(log10(exec->argument(0).toNumber(exec))));
+}
+
+EncodedJSValue JSC_HOST_CALL mathProtoFuncLog2(ExecState* exec)
+{
+    return JSValue::encode(jsDoubleNumber(log2(exec->argument(0).toNumber(exec))));
+}
+
+EncodedJSValue JSC_HOST_CALL mathProtoFuncSinh(ExecState* exec)
+{
+    return JSValue::encode(jsDoubleNumber(sinh(exec->argument(0).toNumber(exec))));
+}
+
+EncodedJSValue JSC_HOST_CALL mathProtoFuncTanh(ExecState* exec)
+{
+    return JSValue::encode(jsDoubleNumber(tanh(exec->argument(0).toNumber(exec))));
+}
+
+EncodedJSValue JSC_HOST_CALL mathProtoFuncTrunc(ExecState*exec)
+{
+    return JSValue::encode(jsNumber(exec->argument(0).toIntegerPreserveNaN(exec)));
+}
+
 
 #if PLATFORM(IOS) && CPU(ARM_THUMB2)
 
