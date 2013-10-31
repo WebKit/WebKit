@@ -29,7 +29,6 @@
 #include "TextureMapperBackingStore.h"
 #include "TextureMapperGL.h"
 #include "TextureMapperLayer.h"
-#include <OpenGLShims.h>
 #include <wtf/Atomics.h>
 #include <wtf/MainThread.h>
 

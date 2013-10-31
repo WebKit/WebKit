@@ -2814,16 +2814,20 @@ endif ()
 
 if (WTF_USE_3D_GRAPHICS)
     list(APPEND WebCore_INCLUDE_DIRECTORIES
-        ${OPENGL_INCLUDE_DIR}
         "${THIRDPARTY_DIR}/ANGLE/src"
         "${THIRDPARTY_DIR}/ANGLE/include"
         "${THIRDPARTY_DIR}/ANGLE/include/KHR"
         "${THIRDPARTY_DIR}/ANGLE/include/GLSLANG"
         "${WEBCORE_DIR}/platform/graphics/gpu"
     )
-    list(APPEND WebCore_LIBRARIES
-        ${OPENGL_gl_LIBRARY}
-    )
+    if (OPENGL_FOUND)
+        list(APPEND WebCore_INCLUDE_DIRECTORIES
+            ${OPENGL_INCLUDE_DIR}
+        )
+        list(APPEND WebCore_LIBRARIES
+            ${OPENGL_gl_LIBRARY}
+        )
+    endif ()
 
     list(APPEND ANGLESupport_SOURCES
         ${DERIVED_SOURCES_WEBCORE_DIR}/glslang.cpp

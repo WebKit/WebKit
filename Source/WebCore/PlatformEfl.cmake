@@ -280,9 +280,6 @@ if (ENABLE_VIDEO)
 endif ()
 
 if (WTF_USE_3D_GRAPHICS)
-    set(WTF_USE_OPENGL 1)
-    add_definitions(-DWTF_USE_OPENGL=1)
-
     list(APPEND WebCore_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/graphics/opengl"
         "${WEBCORE_DIR}/platform/graphics/surfaces"
@@ -351,12 +348,16 @@ if (WTF_USE_3D_GRAPHICS)
 
     list(APPEND WebCore_LIBRARIES
         ${X11_X11_LIB}
-        ${X11_Xcomposite_LIB}
-        ${X11_Xrender_LIB}
     )
+
     if (WTF_USE_EGL)
         list(APPEND WebCore_LIBRARIES
             ${EGL_LIBRARY}
+        )
+    elseif (X11_Xcomposite_FOUND AND X11_Xrender_FOUND)
+        list(APPEND WebCore_LIBRARIES
+            ${X11_Xcomposite_LIB}
+            ${X11_Xrender_LIB}
         )
     endif ()
 endif ()

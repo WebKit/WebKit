@@ -1,3 +1,23 @@
+2013-10-31  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][GLES] OpenGL should be optional
+        https://bugs.webkit.org/show_bug.cgi?id=123399
+
+        Reviewed by Noam Rosenthal.
+
+        * CMakeLists.txt: Make OpenGL dependencies as optional.
+        * PlatformEfl.cmake:
+        Move OpenGL macro to OptionsEfl.cmake and make Xcomposite and XRender as optional.
+        * platform/graphics/OpenGLESShims.h:
+        Removed GL_COLOR_ATTACHMENT0_EXT because it was added to gl2ext.h since r153064
+        * platform/graphics/surfaces/GraphicsSurfaceToken.h:
+        Removed wrong GLX guard.
+        (WebCore::GraphicsSurfaceToken::GraphicsSurfaceToken):
+        (WebCore::GraphicsSurfaceToken::operator!=):
+        (WebCore::GraphicsSurfaceToken::isValid):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.cpp:
+        Removed unnecessary OpenGLShims.h
+
 2013-10-30  Santosh Mahto  <santosh.ma@samsung.com>
 
         [webcore/editing] remove extra header includes from cpp files.

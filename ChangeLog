@@ -1,3 +1,13 @@
+2013-10-31  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][GLES] OpenGL should be an optional
+        https://bugs.webkit.org/show_bug.cgi?id=123399
+
+        Reviewed by Noam Rosenthal.
+
+        * Source/cmake/OptionsEfl.cmake:
+        Refactor the check routine of GL dependencies to use OpenGL as optional.
+
 2013-10-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update NEWS and Versions.m4 for 2.3.1 release.

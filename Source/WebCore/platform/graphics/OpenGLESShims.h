@@ -44,7 +44,6 @@
 #define glIsRenderbufferEXT glIsRenderbuffer
 #define glIsFramebufferEXT glIsFramebuffer
 #define glGenerateMipmapEXT glGenerateMipmap
-#define GL_COLOR_ATTACHMENT0_EXT GL_COLOR_ATTACHMENT0
 #define GL_DEPTH_ATTACHMENT_EXT GL_DEPTH_ATTACHMENT
 #define GL_FRAMEBUFFER_COMPLETE_EXT GL_FRAMEBUFFER_COMPLETE
 #define GL_FRAMEBUFFER_EXT GL_FRAMEBUFFER

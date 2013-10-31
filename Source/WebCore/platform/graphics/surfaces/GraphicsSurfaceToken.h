@@ -41,23 +41,6 @@ struct GraphicsSurfaceToken {
     typedef HANDLE BufferHandle;
 #endif
 
-#if USE(GLX)
-    GraphicsSurfaceToken(uint32_t windowID = 0)
-        : frontBufferHandle(windowID)
-    { }
-
-    bool operator!=(const GraphicsSurfaceToken &rhs) const
-    {
-        return frontBufferHandle != rhs.frontBufferHandle;
-    }
-
-    bool isValid() const
-    {
-        return frontBufferHandle;
-    }
-
-#endif
-
 #if OS(DARWIN) || OS(WINDOWS)
     GraphicsSurfaceToken(BufferHandle frontBuffer = 0, BufferHandle backBuffer = 0)
         : frontBufferHandle(frontBuffer)
@@ -75,6 +58,20 @@ struct GraphicsSurfaceToken {
     }
 
     BufferHandle backBufferHandle;
+#else
+    GraphicsSurfaceToken(uint32_t windowID = 0)
+        : frontBufferHandle(windowID)
+    { }
+
+    bool operator!=(const GraphicsSurfaceToken &rhs) const
+    {
+        return frontBufferHandle != rhs.frontBufferHandle;
+    }
+
+    bool isValid() const
+    {
+        return frontBufferHandle;
+    }
 #endif
 
     BufferHandle frontBufferHandle;
