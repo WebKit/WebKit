@@ -1162,6 +1162,7 @@ AVFWrapper::AVFWrapper(MediaPlayerPrivateAVFoundationCF* owner)
     , m_currentTrack(0)
 {
     ASSERT(isMainThread());
+    ASSERT(dispatch_get_main_queue() == dispatch_get_current_queue());
     LOG(Media, "AVFWrapper::AVFWrapper(%p)", this);
 
     m_notificationQueue = dispatch_queue_create("MediaPlayerPrivateAVFoundationCF.notificationQueue", 0);
@@ -1171,6 +1172,7 @@ AVFWrapper::AVFWrapper(MediaPlayerPrivateAVFoundationCF* owner)
 AVFWrapper::~AVFWrapper()
 {
     ASSERT(isMainThread());
+    ASSERT(dispatch_get_main_queue() == dispatch_get_current_queue());
     LOG(Media, "AVFWrapper::~AVFWrapper(%p %d)", this, m_objectID);
 
     destroyVideoLayer();
@@ -1251,6 +1253,8 @@ void AVFWrapper::scheduleDisconnectAndDelete()
 
 static void destroyAVFWrapper(void* context)
 {
+    ASSERT(isMainThread());
+    ASSERT(dispatch_get_main_queue() == dispatch_get_current_queue());
     AVFWrapper* avfWrapper = static_cast<AVFWrapper*>(context);
     if (!avfWrapper)
         return;
@@ -1306,6 +1310,8 @@ void AVFWrapper::createAssetForURL(const String& url)
 
 void AVFWrapper::createPlayer(IDirect3DDevice9* d3dDevice)
 {
+    ASSERT(isMainThread());
+    ASSERT(dispatch_get_main_queue() == dispatch_get_current_queue());
     ASSERT(!avPlayer() && avPlayerItem());
 
     RetainPtr<CFMutableDictionaryRef> optionsRef = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
@@ -1347,6 +1353,8 @@ void AVFWrapper::createPlayer(IDirect3DDevice9* d3dDevice)
 
 void AVFWrapper::createPlayerItem()
 {
+    ASSERT(isMainThread());
+    ASSERT(dispatch_get_main_queue() == dispatch_get_current_queue());
     ASSERT(!avPlayerItem() && avAsset());
 
     // Create the player item so we begin loading media data.
@@ -1382,7 +1390,7 @@ void AVFWrapper::createPlayerItem()
     callbackInfo.context = callbackContext();
     callbackInfo.legibleOutputCallback = AVFWrapper::legibleOutputCallback;
 
-    AVCFPlayerItemLegibleOutputSetCallbacks(m_legibleOutput.get(), &callbackInfo, dispatch_get_main_queue());
+    AVCFPlayerItemLegibleOutputSetCallbacks(m_legibleOutput.get(), &callbackInfo, dispatchQueue());
     AVCFPlayerItemLegibleOutputSetAdvanceIntervalForCallbackInvocation(m_legibleOutput.get(), legibleOutputAdvanceInterval);
     AVCFPlayerItemLegibleOutputSetTextStylingResolution(m_legibleOutput.get(), AVCFPlayerItemLegibleOutputTextStylingResolutionSourceAndRulesOnly);
     AVCFPlayerItemAddOutput(m_avPlayerItem.get(), m_legibleOutput.get());
@@ -1608,6 +1616,8 @@ PlatformLayer* AVFWrapper::platformLayer()
 
 void AVFWrapper::createAVCFVideoLayer()
 {
+    ASSERT(isMainThread());
+    ASSERT(dispatch_get_main_queue() == dispatch_get_current_queue());
     if (!avPlayer() || m_avCFVideoLayer)
         return;
 
@@ -1618,6 +1628,8 @@ void AVFWrapper::createAVCFVideoLayer()
 
 void AVFWrapper::destroyVideoLayer()
 {
+    ASSERT(isMainThread());
+    ASSERT(dispatch_get_main_queue() == dispatch_get_current_queue());
     LOG(Media, "AVFWrapper::destroyVideoLayer(%p)", this);
     m_layerClient = nullptr;
     m_caVideoLayer = 0;
@@ -1643,6 +1655,8 @@ void AVFWrapper::setVideoLayerHidden(bool value)
 
 void AVFWrapper::createImageGenerator()
 {
+    ASSERT(isMainThread());
+    ASSERT(dispatch_get_main_queue() == dispatch_get_current_queue());
     if (!avAsset() || m_imageGenerator)
         return;
 
@@ -1658,6 +1672,8 @@ void AVFWrapper::createImageGenerator()
 
 void AVFWrapper::destroyImageGenerator()
 {
+    ASSERT(isMainThread());
+    ASSERT(dispatch_get_main_queue() == dispatch_get_current_queue());
     LOG(Media, "AVFWrapper::destroyImageGenerator(%p)", this);
     m_imageGenerator = 0;
 }

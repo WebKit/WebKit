@@ -1,3 +1,27 @@
+2013-10-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Legible Output callbacks should happen on notification queue
+        https://bugs.webkit.org/show_bug.cgi?id=123545
+
+        Reviewed by Eric Carlson.
+
+        Modify the callback creation for Legible Output items so that they
+        are made on our notification queue. The use of the main queue was a
+        holdover from some temporary code used during earlier development.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::AVFWrapper::AVFWrapper): Assert this happens on the main thread.
+        (WebCore::AVFWrapper::~AVFWrapper): Ditto.
+        (WebCore::destroyAVFWrapper): Ditto.
+        (WebCore::AVFWrapper::createPlayer): Ditto.
+        (WebCore::AVFWrapper::createPlayerItem): Ditto.
+        Also, instruct LegibleOutput callbacks to happen on our notification
+        queue, rather than the main thread.
+        (WebCore::AVFWrapper::createAVCFVideoLayer): Assert this happens on the main thread.
+        (WebCore::AVFWrapper::destroyVideoLayer): Ditto.
+        (WebCore::AVFWrapper::createImageGenerator): Ditto.
+        (WebCore::AVFWrapper::destroyImageGenerator): Ditto.
+
 2013-10-30  Alexey Proskuryakov  <ap@apple.com>
 
         XHR.response is null when requesting empty file as arraybuffer
