@@ -1,3 +1,14 @@
+2013-10-30  Alexey Proskuryakov  <ap@apple.com>
+
+        XHR.response is null when requesting empty file as arraybuffer
+        https://bugs.webkit.org/show_bug.cgi?id=123457
+
+        Reviewed by Sam Weinig.
+
+        Test: http/tests/xmlhttprequest/response-empty-arraybuffer.html
+
+        * xml/XMLHttpRequest.cpp: (WebCore::XMLHttpRequest::responseArrayBuffer): Don't do this.
+
 2013-10-30  Samuel White  <samuel_white@apple.com>
 
         AX: AXFocused not exposed on ARIA menuitems

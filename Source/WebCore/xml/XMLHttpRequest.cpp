@@ -325,8 +325,11 @@ ArrayBuffer* XMLHttpRequest::responseArrayBuffer()
     if (m_state != DONE)
         return 0;
 
-    if (!m_responseArrayBuffer.get() && m_binaryResponseBuilder.get() && m_binaryResponseBuilder->size() > 0) {
-        m_responseArrayBuffer = ArrayBuffer::create(const_cast<char*>(m_binaryResponseBuilder->data()), static_cast<unsigned>(m_binaryResponseBuilder->size()));
+    if (!m_responseArrayBuffer) {
+        if (m_binaryResponseBuilder)
+            m_responseArrayBuffer = ArrayBuffer::create(const_cast<char*>(m_binaryResponseBuilder->data()), static_cast<unsigned>(m_binaryResponseBuilder->size()));
+        else
+            m_responseArrayBuffer = ArrayBuffer::create(nullptr, 0);
         m_binaryResponseBuilder.clear();
     }
 
