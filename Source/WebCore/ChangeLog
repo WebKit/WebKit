@@ -1,5 +1,34 @@
 2013-10-31  Alexey Proskuryakov  <ap@apple.com>
 
+        Add a crypto algorithm abstraction
+        https://bugs.webkit.org/show_bug.cgi?id=123474
+
+        Reviewed by Sam Weinig.
+
+        This works slightly differently than WebCrypto implies. We have separate classes
+        for algorithm and its parameters, while WebCrypto puts them in the same dictionary.
+
+        * WebCore.xcodeproj/project.pbxproj: Added new files.
+
+        * crypto/CryptoAlgorithm.cpp: Added. As most algorithms don't implement most
+        operations, default implementations just raise an exception.
+        * crypto/CryptoAlgorithm.h: Added.
+
+        * crypto/CryptoAlgorithmParameters.h: Added. Base class for numerous future parameter
+        dictionaries, such as HmacParams or HmacKeyParams.
+
+        * crypto/CryptoAlgorithmRegistry.cpp: Added.
+        * crypto/CryptoAlgorithmRegistry.h: Added.
+        The registry decouples universal bindings code from algorithms that may or may not
+        be implemented on each platform.
+
+        * crypto/mac: Added.
+        * crypto/mac/CryptoAlgorithmRegistryMac.cpp: Added.
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms): Algorithms implemented
+        on Mac will be registered by this function.
+
+2013-10-31  Alexey Proskuryakov  <ap@apple.com>
+
         REGRESSION(r158333): http/tests/xmlhttprequest/response-encoding.html and xmlhttprequest-overridemimetype-content-type-header.html are failing
         https://bugs.webkit.org/show_bug.cgi?id=123548
 
