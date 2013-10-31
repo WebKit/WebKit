@@ -1,3 +1,10 @@
+2013-10-31  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, one more build fix after r158365.
+
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode):
+
 2013-10-31  Beth Dakin  <bdakin@apple.com>
 
         Repro scrolling crash with scrollbars that use setPresentationValue on the 
