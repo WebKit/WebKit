@@ -791,7 +791,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/BooleanPrototype.h \
 	Source/JavaScriptCore/runtime/ButterflyInlines.h \
 	Source/JavaScriptCore/runtime/Butterfly.h \
-	Source/JavaScriptCore/runtime/CachedTranscendentalFunction.h \
 	Source/JavaScriptCore/runtime/CallData.cpp \
 	Source/JavaScriptCore/runtime/CallData.h \
 	Source/JavaScriptCore/runtime/ClassInfo.h \

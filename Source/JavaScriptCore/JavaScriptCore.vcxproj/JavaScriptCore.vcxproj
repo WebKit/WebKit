@@ -1073,7 +1073,6 @@
     <ClInclude Include="..\runtime\BooleanPrototype.h" />
     <ClInclude Include="..\runtime\Butterfly.h" />
     <ClInclude Include="..\runtime\ButterflyInlines.h" />
-    <ClInclude Include="..\runtime\CachedTranscendentalFunction.h" />
     <ClInclude Include="..\runtime\CallData.h" />
     <ClInclude Include="..\runtime\ClassInfo.h" />
     <ClInclude Include="..\runtime\CodeCache.h" />
