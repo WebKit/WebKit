@@ -1581,3 +1581,10 @@ webkit.org/b/122963 fast/repaint/line-flow-with-floats-in-regions.html [ Missing
 webkit.org/b/122963 fast/repaint/overflow-flipped-writing-mode-block-in-regions.html [ Missing ]
 webkit.org/b/122963 fast/repaint/region-painting-invalidation.html [ Missing ]
 webkit.org/b/122963 fast/repaint/region-painting-via-layout.html [ Missing ]
+
+# EFL port doesn't fully support printing
+webkit.org/b/123561 printing/media-queries-print.html [ Missing ]
+webkit.org/b/123561 printing/setPrinting.html [ Missing ]
+webkit.org/b/123561 printing/simultaneous-position-float-change.html [ Missing ]
+webkit.org/b/123561 printing/single-line-must-not-be-split-into-two-pages.html [ Missing ]
+webkit.org/b/123561 printing/width-overflow.html [ Missing ]

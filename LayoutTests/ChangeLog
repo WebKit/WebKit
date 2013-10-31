@@ -1,3 +1,10 @@
+2013-10-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed EFL gardening. Add 5 printing tests to EFL TestExpectations.
+        EFL port doesn't fully support printing functionality yet.
+
+        * platform/efl/TestExpectations:
+
 2013-10-31  Robert Plociennik  <r.plociennik@samsung.com>
 
         [EFL] accessibility/textbox-role-reports-selection.html is failing
