@@ -1,3 +1,23 @@
+2013-10-31  Youenn Fablet  <youennf@gmail.com>
+
+        Correct the elapsedTime calculation in SVG animations
+        https://bugs.webkit.org/show_bug.cgi?id=119289
+
+        Reviewed by Brent Fulgham.
+
+        Merged from Blink: https://chromium.googlesource.com/chromium/blink/+/338f9badca7fb7880abdb0cecd5f02493c1f7d2e
+
+        Test: svg/animations/getCurrentTime-pause-unpause.html
+
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::SMILTimeContainer):
+        (WebCore::SMILTimeContainer::elapsed):
+        (WebCore::SMILTimeContainer::begin):
+        (WebCore::SMILTimeContainer::pause):
+        (WebCore::SMILTimeContainer::resume):
+        (WebCore::SMILTimeContainer::setElapsed):
+        * svg/animation/SMILTimeContainer.h:
+
 2013-10-31  Andreas Kling  <akling@apple.com>
 
         Manage line-grid RootInlineBox with unique_ptr.

@@ -78,7 +78,8 @@ private:
 
     double m_beginTime;
     double m_pauseTime;
-    double m_accumulatedPauseTime;
+    double m_accumulatedActiveTime;
+    double m_resumeTime;
     double m_presetStartTime;
 
     bool m_documentOrderIndexesDirty;
