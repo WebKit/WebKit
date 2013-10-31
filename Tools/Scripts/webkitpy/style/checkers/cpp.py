@@ -1193,7 +1193,7 @@ class _EnumState(object):
         expr_all_uppercase = r'\s*[A-Z0-9_]+\s*(?:=\s*[a-zA-Z0-9]+\s*)?,?\s*$'
         expr_starts_lowercase = r'\s*[a-z]'
         expr_enum_end = r'}\s*(?:[a-zA-Z0-9]+\s*(?:=\s*[a-zA-Z0-9]+)?)?\s*;\s*'
-        expr_enum_start = r'\s*enum(?:\s+[a-zA-Z0-9]+)?\s*\{?\s*'
+        expr_enum_start = r'\s*(?:enum(?:\s+[a-zA-Z0-9]+)?|ENUM_CLASS\s*\([a-zA-Z0-9]+\))\s*\{?\s*'
         if self.in_enum_decl:
             if match(r'\s*' + expr_enum_end + r'$', line):
                 self.in_enum_decl = False
@@ -2291,13 +2291,13 @@ def check_braces(clean_lines, line_number, error):
         # We also allow '#' for #endif and '=' for array initialization.
         previous_line = get_previous_non_blank_line(clean_lines, line_number)[0]
         if ((not search(r'[;:}{)=]\s*$|\)\s*((const|OVERRIDE)\s*)*\s*$', previous_line)
-             or search(r'\b(if|for|foreach|while|switch|else|NS_ENUM)\b', previous_line))
+             or search(r'\b(if|for|foreach|while|switch|else|NS_ENUM|ENUM_CLASS)\b', previous_line))
             and previous_line.find('#') < 0):
             error(line_number, 'whitespace/braces', 4,
                   'This { should be at the end of the previous line')
     elif (search(r'\)\s*(((const|OVERRIDE)\s*)*\s*)?{\s*$', line)
           and line.count('(') == line.count(')')
-          and not search(r'\b(if|for|foreach|while|switch|NS_ENUM)\b', line)
+          and not search(r'\b(if|for|foreach|while|switch|NS_ENUM|ENUM_CLASS)\b', line)
           and not match(r'\s+[A-Z_][A-Z_0-9]+\b', line)):
         error(line_number, 'whitespace/braces', 4,
               'Place brace on its own line for function definitions.')
@@ -2341,7 +2341,7 @@ def check_braces(clean_lines, line_number, error):
             break
     if (search(r'{.*}\s*;', line)
         and line.count('{') == line.count('}')
-        and not search(r'struct|class|enum|\s*=\s*{', line)):
+        and not search(r'struct|class|enum|ENUM_CLASS|\s*=\s*{', line)):
         error(line_number, 'readability/braces', 4,
               "You don't need a ; after a }")
 

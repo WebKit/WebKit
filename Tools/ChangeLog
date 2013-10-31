@@ -1,3 +1,21 @@
+2013-10-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Teach the style checker about ENUM_CLASS
+        https://bugs.webkit.org/show_bug.cgi?id=123528
+
+        Reviewed by Andy Estes.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_EnumState.process_clean_line): Make content of an ENUM_CLASS declaration
+        equivalent to enum content for checking.
+        (check_braces): Allow semicolon at the end.
+
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (NoNonVirtualDestructorsTest.test_enum_casing):
+        (NoNonVirtualDestructorsTest.test_enum_trailing_semicolon):
+        (WebKitStyleTest.test_braces):
+        Test it.
+
 2013-10-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         kill-old-processes should kill Web Socket script
