@@ -135,7 +135,8 @@ enum {
     PROP_USER_AGENT,
     PROP_ENABLE_SMOOTH_SCROLLING,
     PROP_ENABLE_ACCELERATED_2D_CANVAS,
-    PROP_ENABLE_WRITE_CONSOLE_MESSAGES_TO_STDOUT
+    PROP_ENABLE_WRITE_CONSOLE_MESSAGES_TO_STDOUT,
+    PROP_ENABLE_MEDIA_STREAM
 };
 
 static void webKitSettingsConstructed(GObject* object)
@@ -297,6 +298,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
     case PROP_ENABLE_WRITE_CONSOLE_MESSAGES_TO_STDOUT:
         webkit_settings_set_enable_write_console_messages_to_stdout(settings, g_value_get_boolean(value));
         break;
+    case PROP_ENABLE_MEDIA_STREAM:
+        webkit_settings_set_enable_media_stream(settings, g_value_get_boolean(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
@@ -442,6 +446,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_ENABLE_WRITE_CONSOLE_MESSAGES_TO_STDOUT:
         g_value_set_boolean(value, webkit_settings_get_enable_write_console_messages_to_stdout(settings));
+        break;
+    case PROP_ENABLE_MEDIA_STREAM:
+        g_value_set_boolean(value, webkit_settings_get_enable_media_stream(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -1132,6 +1139,25 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
         g_param_spec_boolean("enable-write-console-messages-to-stdout",
             _("Write console messages on stdout"),
             _("Whether to write console messages on stdout"),
+            FALSE,
+            readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:enable-media-stream:
+     *
+     * Enable or disable support for MediaStream on pages. MediaStream
+     * is an experimental proposal for allowing web pages to access
+     * audio and video devices for capture.
+     *
+     * See also http://dev.w3.org/2011/webrtc/editor/getusermedia.html
+     *
+     * Since: 2.4
+     */
+    g_object_class_install_property(gObjectClass,
+        PROP_ENABLE_MEDIA_STREAM,
+        g_param_spec_boolean("enable-media-stream",
+            _("Enable MediaStream"),
+            _("Whether MediaStream content should be handled"),
             FALSE,
             readWriteConstructParamFlags));
 
@@ -2797,4 +2823,43 @@ void webkit_settings_set_enable_write_console_messages_to_stdout(WebKitSettings*
 
     priv->preferences->setLogsPageMessagesToSystemConsoleEnabled(enabled);
     g_object_notify(G_OBJECT(settings), "enable-write-console-messages-to-stdout");
+}
+
+/**
+ * webkit_settings_get_enable_media_stream:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:enable-media-stream property.
+ *
+ * Returns: %TRUE If mediastream support is enabled or %FALSE otherwise.
+ *
+ * Since: 2.4
+ */
+gboolean webkit_settings_get_enable_media_stream(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return settings->priv->preferences->mediaStreamEnabled();
+}
+
+/**
+ * webkit_settings_set_enable_media_stream:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:enable-media-stream property.
+ *
+ * Since: 2.4
+ */
+void webkit_settings_set_enable_media_stream(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = priv->preferences->mediaStreamEnabled();
+    if (currentValue == enabled)
+        return;
+
+    priv->preferences->setMediaStreamEnabled(enabled);
+    g_object_notify(G_OBJECT(settings), "enable-media-stream");
 }

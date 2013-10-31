@@ -1195,3 +1195,13 @@ bool WKPreferencesGetSimpleLineLayoutDebugBordersEnabled(WKPreferencesRef prefer
 {
     return toImpl(preferencesRef)->simpleLineLayoutDebugBordersEnabled();
 }
+
+void WKPreferencesSetMediaStreamEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setMediaStreamEnabled(enabled);
+}
+
+bool WKPreferencesGetMediaStreamEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->mediaStreamEnabled();
+}

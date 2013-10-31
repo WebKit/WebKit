@@ -1,3 +1,35 @@
+2013-10-31  Philippe Normand  <pnormand@igalia.com>
+
+        [WK2][GTK] enable-media-stream Setting
+        https://bugs.webkit.org/show_bug.cgi?id=123145
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebPreferencesStore.h: New MediaStreamEnabled boolean preference.
+        * UIProcess/API/C/WKPreferences.cpp: MediaStreamEnabled getter and
+        setter functions.
+        (WKPreferencesSetMediaStreamEnabled):
+        (WKPreferencesGetMediaStreamEnabled):
+        * UIProcess/API/C/WKPreferences.h:
+        * UIProcess/API/gtk/WebKitSettings.cpp: Add a enable-media-stream
+        property to the GTK WebKitSettings class. It will act as a facade
+        to the MediaStreamEnabled preference.
+        (webKitSettingsSetProperty):
+        (webKitSettingsGetProperty):
+        (webkit_settings_class_init):
+        (webkit_settings_get_enable_media_stream):
+        (webkit_settings_set_enable_media_stream):
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettings): Test enable-media-stream websetting.
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        Allow WKTR to override the MediaStreamEnabled preference.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Update MediaStreamEnabled
+        along with the other settings.
+
 2013-10-30  Brady Eidson  <beidson@apple.com>
 
         IDB Database versions are uint64_t, not int64_t

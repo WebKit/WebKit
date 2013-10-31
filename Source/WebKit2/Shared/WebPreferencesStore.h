@@ -167,6 +167,7 @@ namespace WebKit {
     macro(ThreadedScrollingEnabled, threadedScrollingEnabled, Bool, bool, true) \
     macro(SimpleLineLayoutEnabled, simpleLineLayoutEnabled, Bool, bool, true) \
     macro(SimpleLineLayoutDebugBordersEnabled, simpleLineLayoutDebugBordersEnabled, Bool, bool, false) \
+    macro(MediaStreamEnabled, mediaStreamEnabled, Bool, bool, false) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
