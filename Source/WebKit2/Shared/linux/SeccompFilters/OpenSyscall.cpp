@@ -44,9 +44,9 @@ COMPILE_ASSERT(!O_RDONLY, O_RDONLY);
 COMPILE_ASSERT(O_WRONLY == 1, O_WRONLY);
 COMPILE_ASSERT(O_RDWR == 2, O_RDWR);
 
-PassOwnPtr<Syscall> OpenSyscall::createFromOpenatContext(mcontext_t* context)
+std::unique_ptr<Syscall> OpenSyscall::createFromOpenatContext(mcontext_t* context)
 {
-    OwnPtr<OpenSyscall> open = adoptPtr(new OpenSyscall(0));
+    auto open = std::make_unique<OpenSyscall>(nullptr);
 
     open->setFlags(context->gregs[REG_ARG2]);
     open->setMode(context->gregs[REG_ARG3]);
@@ -57,7 +57,7 @@ PassOwnPtr<Syscall> OpenSyscall::createFromOpenatContext(mcontext_t* context)
 
     if (path[0] == '/') {
         open->setPath(path);
-        return open.release();
+        return std::move(open);
     }
 
     struct stat pathStat;
@@ -90,19 +90,19 @@ PassOwnPtr<Syscall> OpenSyscall::createFromOpenatContext(mcontext_t* context)
     sprintf(&fdPath[size], "/%s", path);
     open->setPath(fdPath);
 
-    return open.release();
+    return std::move(open);
 }
 
-PassOwnPtr<Syscall> OpenSyscall::createFromCreatContext(mcontext_t* context)
+std::unique_ptr<Syscall> OpenSyscall::createFromCreatContext(mcontext_t* context)
 {
-    OpenSyscall* open = new OpenSyscall(0);
+    auto open = std::make_unique<OpenSyscall>(nullptr);
 
     open->setPath(CString(reinterpret_cast<char*>(context->gregs[REG_ARG0])));
     open->setFlags(O_CREAT | O_WRONLY | O_TRUNC);
     open->setMode(context->gregs[REG_ARG1]);
     open->setContext(context);
 
-    return adoptPtr(open);
+    return std::move(open);
 }
 
 OpenSyscall::OpenSyscall(mcontext_t* context)
@@ -130,7 +130,7 @@ void OpenSyscall::setResult(const SyscallResult* result)
         context()->gregs[REG_SYSCALL] = -openResult->errorNumber();
 }
 
-PassOwnPtr<SyscallResult> OpenSyscall::execute(const SyscallPolicy& policy)
+std::unique_ptr<SyscallResult> OpenSyscall::execute(const SyscallPolicy& policy)
 {
     if (!strncmp("/proc/self/", m_path.data(), 11)) {
         String resolvedSelfPath = ASCIILiteral("/proc/") + String::number(getppid()) + &m_path.data()[10];
@@ -150,7 +150,7 @@ PassOwnPtr<SyscallResult> OpenSyscall::execute(const SyscallPolicy& policy)
         permission = static_cast<SyscallPolicy::Permission>(permission | SyscallPolicy::Write);
 
     if (!policy.hasPermissionForPath(m_path.data(), permission))
-        return adoptPtr(new OpenSyscallResult(-1, EACCES));
+        return std::make_unique<OpenSyscallResult>(-1, EACCES);
 
     // Permission granted, execute the syscall. The syscall might still
     // fail because of hard permissions enforced by the filesystem and
@@ -158,7 +158,7 @@ PassOwnPtr<SyscallResult> OpenSyscall::execute(const SyscallPolicy& policy)
     int fd = open(m_path.data(), m_flags, m_mode);
     int errorNumber = fd == -1 ? errno : 0;
 
-    return adoptPtr(new OpenSyscallResult(fd, errorNumber));
+    return std::make_unique<OpenSyscallResult>(fd, errorNumber);
 }
 
 void OpenSyscall::encode(CoreIPC::ArgumentEncoder& encoder) const

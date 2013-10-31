@@ -34,7 +34,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <wtf/OwnPtr.h>
 
 namespace WebKit {
 

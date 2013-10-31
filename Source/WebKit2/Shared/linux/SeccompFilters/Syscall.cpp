@@ -36,13 +36,13 @@
 
 namespace WebKit {
 
-PassOwnPtr<Syscall> Syscall::createFromContext(ucontext_t* ucontext)
+std::unique_ptr<Syscall> Syscall::createFromContext(ucontext_t* ucontext)
 {
     mcontext_t* mcontext = &ucontext->uc_mcontext;
 
     switch (mcontext->gregs[REG_SYSCALL]) {
     case __NR_open:
-        return adoptPtr(new OpenSyscall(mcontext));
+        return std::make_unique<OpenSyscall>(mcontext);
     case __NR_openat:
         return OpenSyscall::createFromOpenatContext(mcontext);
     case __NR_creat:
@@ -60,20 +60,20 @@ PassOwnPtr<Syscall> Syscall::createFromContext(ucontext_t* ucontext)
     return nullptr;
 }
 
-PassOwnPtr<Syscall> Syscall::createFromDecoder(CoreIPC::ArgumentDecoder* decoder)
+std::unique_ptr<Syscall> Syscall::createFromDecoder(CoreIPC::ArgumentDecoder* decoder)
 {
     int type;
     if (!decoder->decode(type))
         return nullptr;
 
-    OwnPtr<Syscall> syscall;
+    std::unique_ptr<Syscall> syscall;
     if (type == __NR_open)
-        syscall = adoptPtr(new OpenSyscall(0));
+        syscall = std::make_unique<OpenSyscall>(nullptr);
 
     if (!syscall->decode(decoder))
         return nullptr;
 
-    return syscall.release();
+    return syscall;
 }
 
 Syscall::Syscall(int type, mcontext_t* context)
@@ -82,20 +82,20 @@ Syscall::Syscall(int type, mcontext_t* context)
 {
 }
 
-PassOwnPtr<SyscallResult> SyscallResult::createFromDecoder(CoreIPC::ArgumentDecoder* decoder, int fd)
+std::unique_ptr<SyscallResult> SyscallResult::createFromDecoder(CoreIPC::ArgumentDecoder* decoder, int fd)
 {
     int type;
     if (!decoder->decode(type))
         return nullptr;
 
-    OwnPtr<SyscallResult> result;
+    std::unique_ptr<SyscallResult> result;
     if (type == __NR_open)
-        result = adoptPtr(new OpenSyscallResult(-1, 0));
+        result = std::make_unique<OpenSyscallResult>(-1, 0);
 
     if (!result->decode(decoder, fd))
         return nullptr;
 
-    return result.release();
+    return result;
 }
 
 SyscallResult::SyscallResult(int type)

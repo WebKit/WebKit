@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-PassOwnPtr<Syscall> SigprocmaskSyscall::createFromContext(ucontext_t* ucontext)
+std::unique_ptr<Syscall> SigprocmaskSyscall::createFromContext(ucontext_t* ucontext)
 {
     // This syscall is never proxied to the broker process and resolved locally.
     // What we do here is silently remove SIGSYS from the signal set so no

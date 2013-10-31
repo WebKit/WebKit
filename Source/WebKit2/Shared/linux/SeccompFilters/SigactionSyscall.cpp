@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-PassOwnPtr<Syscall> SigactionSyscall::createFromContext(mcontext_t* context)
+std::unique_ptr<Syscall> SigactionSyscall::createFromContext(mcontext_t* context)
 {
     // We just ignore any attempt of installing a handler for SIGSYS since this
     // signal is necessary for the sandbox to work.

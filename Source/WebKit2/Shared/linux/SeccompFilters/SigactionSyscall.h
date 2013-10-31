@@ -33,7 +33,7 @@
 namespace WebKit {
 
 struct SigactionSyscall {
-    static PassOwnPtr<Syscall> createFromContext(mcontext_t*);
+    static std::unique_ptr<Syscall> createFromContext(mcontext_t*);
 };
 
 } // namespace WebKit

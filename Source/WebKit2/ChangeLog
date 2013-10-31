@@ -1,3 +1,32 @@
+2013-10-31  Sergio Correia  <sergio.correia@openbossa.org>
+
+        [WK2] Convert SeccompFilters to using unique_ptr instead of OwnPtr/PassOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=122883
+
+        Reviewed by Darin Adler.
+
+        * Shared/linux/SeccompFilters/OpenSyscall.cpp:
+        (WebKit::OpenSyscall::createFromOpenatContext):
+        (WebKit::OpenSyscall::createFromCreatContext):
+        (WebKit::OpenSyscall::execute):
+        * Shared/linux/SeccompFilters/OpenSyscall.h:
+        * Shared/linux/SeccompFilters/SeccompBroker.cpp:
+        (WebKit::SIGSYSHandler):
+        (WebKit::SeccompBrokerClient::dispatch):
+        (WebKit::SeccompBroker::runLoop):
+        * Shared/linux/SeccompFilters/SigactionSyscall.cpp:
+        (WebKit::SigactionSyscall::createFromContext):
+        * Shared/linux/SeccompFilters/SigactionSyscall.h:
+        * Shared/linux/SeccompFilters/SigprocmaskSyscall.cpp:
+        (WebKit::SigprocmaskSyscall::createFromContext):
+        * Shared/linux/SeccompFilters/SigprocmaskSyscall.h:
+        * Shared/linux/SeccompFilters/Syscall.cpp:
+        (WebKit::Syscall::createFromContext):
+        (WebKit::Syscall::createFromDecoder):
+        (WebKit::SyscallResult::createFromDecoder):
+        * Shared/linux/SeccompFilters/Syscall.h:
+        * Shared/linux/SeccompFilters/SyscallPolicy.cpp:
+
 2013-10-31  Gavin Barraclough  <barraclough@apple.com>
 
         Change WebPage, WebPageProxy, WebPageCreationParameters to use ViewState

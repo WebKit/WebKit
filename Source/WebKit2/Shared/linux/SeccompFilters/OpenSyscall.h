@@ -40,8 +40,8 @@ namespace WebKit {
 
 class OpenSyscall : public Syscall {
 public:
-    static PassOwnPtr<Syscall> createFromOpenatContext(mcontext_t*);
-    static PassOwnPtr<Syscall> createFromCreatContext(mcontext_t*);
+    static std::unique_ptr<Syscall> createFromOpenatContext(mcontext_t*);
+    static std::unique_ptr<Syscall> createFromCreatContext(mcontext_t*);
 
     explicit OpenSyscall(mcontext_t*);
 
@@ -51,7 +51,7 @@ public:
 
     // Syscall implementation.
     virtual void setResult(const SyscallResult*);
-    virtual PassOwnPtr<SyscallResult> execute(const SyscallPolicy&);
+    virtual std::unique_ptr<SyscallResult> execute(const SyscallPolicy&);
     virtual void encode(CoreIPC::ArgumentEncoder&) const;
     virtual bool decode(CoreIPC::ArgumentDecoder*);
 
