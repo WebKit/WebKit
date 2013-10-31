@@ -42,7 +42,7 @@ class VideoStreamTrack FINAL : public MediaStreamTrack {
 public:
     static RefPtr<VideoStreamTrack> create(ScriptExecutionContext&, const Dictionary&);
     static RefPtr<VideoStreamTrack> create(ScriptExecutionContext&, MediaStreamTrackPrivate&);
-    static RefPtr<VideoStreamTrack> create(MediaStreamTrack*);
+    static RefPtr<VideoStreamTrack> create(MediaStreamTrack&);
 
     virtual ~VideoStreamTrack() { }
 
@@ -50,7 +50,7 @@ public:
 
 private:
     VideoStreamTrack(ScriptExecutionContext&, MediaStreamTrackPrivate&, const Dictionary*);
-    explicit VideoStreamTrack(MediaStreamTrack*);
+    explicit VideoStreamTrack(MediaStreamTrack&);
 };
 
 } // namespace WebCore

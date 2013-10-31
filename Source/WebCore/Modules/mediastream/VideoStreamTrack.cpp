@@ -45,7 +45,7 @@ RefPtr<VideoStreamTrack> VideoStreamTrack::create(ScriptExecutionContext& contex
     return adoptRef(new VideoStreamTrack(context, privateTrack, 0));
 }
 
-RefPtr<VideoStreamTrack> VideoStreamTrack::create(MediaStreamTrack* track)
+RefPtr<VideoStreamTrack> VideoStreamTrack::create(MediaStreamTrack& track)
 {
     return adoptRef(new VideoStreamTrack(track));
 }
@@ -55,7 +55,7 @@ VideoStreamTrack::VideoStreamTrack(ScriptExecutionContext& context, MediaStreamT
 {
 }
 
-VideoStreamTrack::VideoStreamTrack(MediaStreamTrack* track)
+VideoStreamTrack::VideoStreamTrack(MediaStreamTrack& track)
     : MediaStreamTrack(track)
 {
 }
