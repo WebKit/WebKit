@@ -950,6 +950,11 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
     DrawFocusRect(dc, &rect);
 }
 
+FloatRect GraphicsContext::computeLineBoundsForText(const FloatPoint& origin, float width, bool printing)
+{
+    return FloatRect(origin, FloatSize(width, strokeThickness()));
+}
+
 void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, bool printing)
 {
     if (paintingDisabled())

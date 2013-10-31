@@ -263,6 +263,11 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& pt, float widt
     platformContext()->addDrawLineForDocumentMarker(pt, width, (BlackBerry::Platform::Graphics::DocumentMarkerLineStyle)style);
 }
 
+FloatRect GraphicsContext::computeLineBoundsForText(const FloatPoint& pt, float width, bool printing)
+{
+    return FloatRect(pt, FloatSize(width, strokeThickness()));
+}
+
 void GraphicsContext::drawLineForText(const FloatPoint& pt, float width, bool printing)
 {
     if (paintingDisabled())

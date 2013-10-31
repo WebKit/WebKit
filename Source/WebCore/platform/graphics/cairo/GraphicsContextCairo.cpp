@@ -614,7 +614,12 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
     cairo_restore(cr);
 }
 
-void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, bool)
+FloatRect GraphicsContext::computeLineBoundsForText(const FloatPoint& origin, float width, bool)
+{
+    return FloatRect(origin, FloatSize(width, strokeThickness()));
+}
+
+void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, bool printing)
 {
     if (paintingDisabled())
         return;
@@ -624,7 +629,7 @@ void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, boo
 
     // This bumping of <1 stroke thicknesses matches the one in drawLineOnCairoContext.
     FloatPoint endPoint(origin + IntSize(width, 0));
-    FloatRect lineExtents(origin, FloatSize(width, strokeThickness()));
+    FloatRect lineExtents = computeLineBoundsForText(origin, width, printing);
 
     ShadowBlur& shadow = platformContext()->shadowBlur();
     if (GraphicsContext* shadowContext = shadow.beginShadowLayer(this, lineExtents)) {
