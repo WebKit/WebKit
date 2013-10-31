@@ -1,3 +1,14 @@
+2013-10-31  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Add baselines for spelling tests added in r157900.
+
+        Unreviewed gardening.
+
+        * platform/efl/editing/spelling/centering-misspelling-dots-expected.png: Added.
+        * platform/efl/editing/spelling/centering-misspelling-dots-expected.txt: Added.
+        * platform/efl/editing/spelling/misspelling-dots-dont-extend-beyond-words-expected.png: Added.
+        * platform/efl/editing/spelling/misspelling-dots-dont-extend-beyond-words-expected.txt: Added.
+
 2013-10-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed EFL gardening. Add 5 printing tests to EFL TestExpectations.
