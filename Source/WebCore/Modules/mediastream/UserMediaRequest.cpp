@@ -163,7 +163,7 @@ void UserMediaRequest::callSuccessHandler(PassRefPtr<MediaStreamDescriptor> stre
     // 4 - Create the MediaStream and pass it to the success callback.
     ASSERT(m_successCallback);
 
-    RefPtr<MediaStream> stream = MediaStream::create(m_scriptExecutionContext, streamDescriptor);
+    RefPtr<MediaStream> stream = MediaStream::create(&m_scriptExecutionContext, streamDescriptor);
 
     MediaStreamTrackVector tracks = stream->getAudioTracks();
     for (MediaStreamTrackVector::iterator iter = tracks.begin(); iter != tracks.end(); ++iter)
