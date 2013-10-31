@@ -38,7 +38,7 @@
 #include "HTMLNames.h"
 #include "MediaControlElements.h"
 #include "PaintInfo.h"
-#include "RenderObject.h"
+#include "RenderElement.h"
 #include "TextDirection.h"
 #include "UserAgentStyleSheets.h"
 #include "WidgetRenderingContext.h"

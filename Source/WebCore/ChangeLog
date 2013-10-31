@@ -1,3 +1,15 @@
+2013-10-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Undefined references to RenderObject::style() when disabling video support
+        https://bugs.webkit.org/show_bug.cgi?id=123492
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/RenderThemeGtk2.cpp: Disabling video support removes indirect inclusion of the RenderElement.h
+        header, causing undefined references to RenderObject::style(). The RenderElement.h header should be included
+        instead of RenderObject.h as the former defines the RenderObject::style() inline and also includes the latter.
+        * platform/gtk/RenderThemeGtk3.cpp: Ditto.
+
 2013-10-31  Robert Plociennik  <r.plociennik@samsung.com>
 
         [EFL] accessibility/textbox-role-reports-selection.html is failing

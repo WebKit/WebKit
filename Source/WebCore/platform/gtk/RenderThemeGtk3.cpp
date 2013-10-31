@@ -35,7 +35,7 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "PlatformContextCairo.h"
-#include "RenderObject.h"
+#include "RenderElement.h"
 #include "TextDirection.h"
 #include "UserAgentStyleSheets.h"
 #include <cmath>
