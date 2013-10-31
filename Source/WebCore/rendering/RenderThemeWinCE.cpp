@@ -509,7 +509,7 @@ bool RenderThemeWinCE::paintSliderTrack(RenderObject* o, const PaintInfo& i, con
     i.context->setStrokeColor(Color::black, ColorSpaceDeviceRGB);
     i.context->drawLine(left, IntPoint(r.maxX() - 2, left.y()));
     i.context->restore();
-    return rc;
+    return false;
 }
 
 bool RenderThemeWinCE::paintSliderThumb(RenderObject* o, const PaintInfo& i, const IntRect& r)
@@ -518,6 +518,7 @@ bool RenderThemeWinCE::paintSliderThumb(RenderObject* o, const PaintInfo& i, con
     i.context->save();
     i.context->setStrokeColor(Color::black, ColorSpaceDeviceRGB);
     i.context->setFillColor(Color::black, ColorSpaceDeviceRGB);
+    i.context->fillRect(r);
 #if ENABLE(VIDEO)
     HTMLMediaElement* mediaElement = mediaElementParent(o->node());
     if (mediaElement) {
@@ -529,7 +530,7 @@ bool RenderThemeWinCE::paintSliderThumb(RenderObject* o, const PaintInfo& i, con
     }
 #endif
     i.context->restore();
-    return rc;
+    return false;
 }
 
 void RenderThemeWinCE::adjustSearchFieldStyle(StyleResolver*, RenderStyle* style, Element*) const
