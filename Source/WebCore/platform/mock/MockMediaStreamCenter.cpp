@@ -229,7 +229,7 @@ void MockMediaStreamCenter::createMediaStream(PassRefPtr<MediaStreamCreationClie
         videoSources.append(videoSource.release());
     }
     
-    client->didCreateStream(MediaStreamDescriptor::create(audioSources, videoSources, MediaStreamDescriptor::IsNotEnded));
+    client->didCreateStream(MediaStreamDescriptor::create(audioSources, videoSources));
 }
 
 bool MockMediaStreamCenter::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient> prpClient)

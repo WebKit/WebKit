@@ -36,6 +36,7 @@
 
 #include "MediaStreamSource.h"
 #include "MediaStreamTrack.h"
+#include "MediaStreamTrackPrivate.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -54,9 +55,8 @@ public:
 
 class MediaStreamDescriptor : public RefCounted<MediaStreamDescriptor> {
 public:
-    enum EndedAtCreationFlag { IsNotEnded, IsEnded };
-
-    static PassRefPtr<MediaStreamDescriptor> create(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources, EndedAtCreationFlag);
+    static PassRefPtr<MediaStreamDescriptor> create(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
+    static PassRefPtr<MediaStreamDescriptor> create(const Vector<RefPtr<MediaStreamTrackPrivate>>& audioPrivateTracks, const Vector<RefPtr<MediaStreamTrackPrivate>>& videoPrivateTracks);
 
     virtual ~MediaStreamDescriptor() { }
 
@@ -71,11 +71,11 @@ public:
     unsigned numberOfVideoSources() const { return m_videoStreamSources.size(); }
     MediaStreamSource* videoSources(unsigned index) const { return m_videoStreamSources[index].get(); }
 
-    unsigned numberOfAudioTracks() const { return m_audioTrackDescriptors.size(); }
-    MediaStreamTrackPrivate* audioTracks(unsigned index) const { return m_audioTrackDescriptors[index].get(); }
+    unsigned numberOfAudioTracks() const { return m_audioPrivateTracks.size(); }
+    MediaStreamTrackPrivate* audioTracks(unsigned index) const { return m_audioPrivateTracks[index].get(); }
 
-    unsigned numberOfVideoTracks() const { return m_videoTrackDescriptors.size(); }
-    MediaStreamTrackPrivate* videoTracks(unsigned index) const { return m_videoTrackDescriptors[index].get(); }
+    unsigned numberOfVideoTracks() const { return m_videoPrivateTracks.size(); }
+    MediaStreamTrackPrivate* videoTracks(unsigned index) const { return m_videoPrivateTracks[index].get(); }
 
     void addSource(PassRefPtr<MediaStreamSource>);
     void removeSource(PassRefPtr<MediaStreamSource>);
@@ -90,15 +90,16 @@ public:
     void removeTrack(PassRefPtr<MediaStreamTrackPrivate>);
 
 private:
-    MediaStreamDescriptor(const String& id, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources, bool ended);
+    MediaStreamDescriptor(const String& id, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
+    MediaStreamDescriptor(const String& id, const Vector<RefPtr<MediaStreamTrackPrivate>>& audioPrivateTracks, const Vector<RefPtr<MediaStreamTrackPrivate>>& videoPrivateTracks);
 
     MediaStreamDescriptorClient* m_client;
     String m_id;
-    Vector<RefPtr<MediaStreamSource>> m_audioStreamSources;
-    Vector<RefPtr<MediaStreamSource>> m_videoStreamSources;
+    MediaStreamSourceVector m_audioStreamSources;
+    MediaStreamSourceVector m_videoStreamSources;
 
-    Vector<RefPtr<MediaStreamTrackPrivate>> m_audioTrackDescriptors;
-    Vector<RefPtr<MediaStreamTrackPrivate>> m_videoTrackDescriptors;
+    Vector<RefPtr<MediaStreamTrackPrivate>> m_audioPrivateTracks;
+    Vector<RefPtr<MediaStreamTrackPrivate>> m_videoPrivateTracks;
     bool m_ended;
 };
 

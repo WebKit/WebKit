@@ -1,3 +1,44 @@
+2013-10-30  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Simplifying MediaStream and MediStreamDescriptor creation
+        https://bugs.webkit.org/show_bug.cgi?id=123443
+
+        Reviewed by Eric Carlson.
+
+        The internal process of creating a MediaStream and MediaStreamDescriptor was quite confusing and spread.
+        We can take advantage of the platform implementation of MediaStreamTrack (aka MediaStreamTrackPrivate)
+        and simplify the whole process.
+        A new constructor that receives vectors of MediaStreamTrackPrivate objects were added, then the check
+        if a source already exists or if the tracks are all ended are now made in MediaStreamDescriptor.
+
+        No new tests needed.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::create): Removed unnecessary variables in one create method and using new
+        MediaStreamDescriptor::create method that receives vector of MediaStreamTrackPrivate objects as parameter.
+
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode): Removed passing flag to
+        MediaStreamDescriptor create.
+
+        * platform/mediastream/MediaStreamDescriptor.cpp:
+        (WebCore::MediaStreamDescriptor::create): Removed EndedAtCreationFlag parameter, because this is being
+        handled inside constructor by analyzing the tracks or sources passed.
+        (WebCore::MediaStreamDescriptor::MediaStreamDescriptor): Adding new constructor that receives vector of
+        MediaStreamTrackPrivate as parameter.
+
+        (WebCore::MediaStreamDescriptor::addTrack): Changed to store the track's source in the object.
+
+        (WebCore::MediaStreamDescriptor::removeTrack):
+        * platform/mediastream/MediaStreamDescriptor.h:
+        (WebCore::MediaStreamDescriptor::numberOfAudioTracks):
+        (WebCore::MediaStreamDescriptor::audioTracks):
+        (WebCore::MediaStreamDescriptor::numberOfVideoTracks):
+        (WebCore::MediaStreamDescriptor::videoTracks):
+        * platform/mock/MockMediaStreamCenter.cpp:
+        (WebCore::MockMediaStreamCenter::createMediaStream): Removing flag that is being passed to
+        MediaStreamDescriptor's create method.
+
 2013-10-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Legible Output callbacks should happen on notification queue

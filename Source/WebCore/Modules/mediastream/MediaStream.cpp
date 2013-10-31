@@ -41,68 +41,40 @@
 
 namespace WebCore {
 
-static bool containsSource(MediaStreamSourceVector& sourceVector, MediaStreamSource* source)
-{
-    for (size_t i = 0; i < sourceVector.size(); ++i) {
-        if (source->id() == sourceVector[i]->id())
-            return true;
-    }
-    return false;
-}
-
-static void processTrack(MediaStreamTrack* track, MediaStreamSourceVector& sourceVector)
-{
-    if (track->ended())
-        return;
-
-    MediaStreamSource* source = track->source();
-    if (!containsSource(sourceVector, source))
-        sourceVector.append(source);
-}
-
-static PassRefPtr<MediaStream> createFromSourceVectors(ScriptExecutionContext* context, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources, bool ended)
-{
-    MediaStreamDescriptor::EndedAtCreationFlag flag = ended ? MediaStreamDescriptor::IsEnded : MediaStreamDescriptor::IsNotEnded;
-    RefPtr<MediaStreamDescriptor> descriptor = MediaStreamDescriptor::create(audioSources, videoSources, flag);
-    return MediaStream::create(context, descriptor.release());
-}
-
 PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context)
 {
-    MediaStreamSourceVector audioSources;
-    MediaStreamSourceVector videoSources;
-
-    return createFromSourceVectors(context, audioSources, videoSources, false);
+    return MediaStream::create(context, MediaStreamDescriptor::create(MediaStreamSourceVector(), MediaStreamSourceVector()));
 }
 
 PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, PassRefPtr<MediaStream> stream)
 {
     ASSERT(stream);
 
-    MediaStreamSourceVector audioSources;
-    MediaStreamSourceVector videoSources;
+    Vector<RefPtr<MediaStreamTrackPrivate>> audioTracks;
+    Vector<RefPtr<MediaStreamTrackPrivate>> videoTracks;
 
     for (size_t i = 0; i < stream->m_audioTracks.size(); ++i)
-        processTrack(stream->m_audioTracks[i].get(), audioSources);
+        audioTracks.append(&stream->m_audioTracks[i]->privateTrack());
 
     for (size_t i = 0; i < stream->m_videoTracks.size(); ++i)
-        processTrack(stream->m_videoTracks[i].get(), videoSources);
+        videoTracks.append(&stream->m_videoTracks[i]->privateTrack());
 
-    return createFromSourceVectors(context, audioSources, videoSources, stream->ended());
+    return MediaStream::create(context, MediaStreamDescriptor::create(audioTracks, videoTracks));
 }
 
 PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, const MediaStreamTrackVector& tracks)
 {
-    MediaStreamSourceVector audioSources;
-    MediaStreamSourceVector videoSources;
+    Vector<RefPtr<MediaStreamTrackPrivate>> audioTracks;
+    Vector<RefPtr<MediaStreamTrackPrivate>> videoTracks;
 
-    bool allEnded = true;
     for (size_t i = 0; i < tracks.size(); ++i) {
-        allEnded &= tracks[i]->ended();
-        processTrack(tracks[i].get(), tracks[i]->kind() == "audio" ? audioSources : videoSources);
+        if (tracks[i]->kind() == "audio")
+            audioTracks.append(&tracks[i]->privateTrack());
+        else
+            videoTracks.append(&tracks[i]->privateTrack());
     }
 
-    return createFromSourceVectors(context, audioSources, videoSources, allEnded);
+    return MediaStream::create(context, MediaStreamDescriptor::create(audioTracks, videoTracks));
 }
 
 PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext* context, PassRefPtr<MediaStreamDescriptor> streamDescriptor)
