@@ -744,7 +744,7 @@ static StrokeStyle textDecorationStyleToStrokeStyle(TextDecorationStyle decorati
     case TextDecorationStyleSolid:
         strokeStyle = SolidStroke;
         break;
-#if ENABLE(CSS3_TEXT)
+#if ENABLE(CSS3_TEXT_DECORATION)
     case TextDecorationStyleDouble:
         strokeStyle = DoubleStroke;
         break;
@@ -757,13 +757,13 @@ static StrokeStyle textDecorationStyleToStrokeStyle(TextDecorationStyle decorati
     case TextDecorationStyleWavy:
         strokeStyle = WavyStroke;
         break;
-#endif // CSS3_TEXT
+#endif // CSS3_TEXT_DECORATION
     }
 
     return strokeStyle;
 }
 
-#if ENABLE(CSS3_TEXT)
+#if ENABLE(CSS3_TEXT_DECORATION)
 static int computeUnderlineOffset(const TextUnderlinePosition underlinePosition, const FontMetrics& fontMetrics, const InlineTextBox* inlineTextBox, const int textDecorationThickness)
 {
     // Compute the gap between the font and the underline. Use at least one
@@ -788,9 +788,7 @@ static int computeUnderlineOffset(const TextUnderlinePosition underlinePosition,
     ASSERT_NOT_REACHED();
     return fontMetrics.ascent() + gap;
 }
-#endif // CSS3_TEXT
 
-#if ENABLE(CSS3_TEXT)
 static void adjustStepToDecorationLength(float& step, float& controlPointDistance, float length)
 {
     ASSERT(step > 0);
@@ -912,7 +910,7 @@ static void strokeWavyTextDecoration(GraphicsContext* context, FloatPoint& p1, F
     context->setShouldAntialias(true);
     context->strokePath(path);
 }
-#endif // CSS3_TEXT
+#endif // CSS3_TEXT_DECORATION
 
 void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& boxOrigin, TextDecoration deco, TextDecorationStyle decorationStyle, const ShadowData* shadow)
 {
@@ -984,14 +982,14 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
             shadow = shadow->next();
         }
 
-#if ENABLE(CSS3_TEXT)
+#if ENABLE(CSS3_TEXT_DECORATION)
         // Offset between lines - always non-zero, so lines never cross each other.
         float doubleOffset = textDecorationThickness + 1.f;
-#endif // CSS3_TEXT
+#endif // CSS3_TEXT_DECORATION
         context->setStrokeStyle(textDecorationStyleToStrokeStyle(decorationStyle));
         if (deco & TextDecorationUnderline) {
             context->setStrokeColor(underline, colorSpace);
-#if ENABLE(CSS3_TEXT)
+#if ENABLE(CSS3_TEXT_DECORATION)
             TextUnderlinePosition underlinePosition = lineStyle.textUnderlinePosition();
             const int underlineOffset = computeUnderlineOffset(underlinePosition, lineStyle.fontMetrics(), this, textDecorationThickness);
 
@@ -1011,11 +1009,11 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
 #else
             // Leave one pixel of white between the baseline and the underline.
             context->drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + baseline + 1), width, isPrinting);
-#endif // CSS3_TEXT
+#endif // CSS3_TEXT_DECORATION
         }
         if (deco & TextDecorationOverline) {
             context->setStrokeColor(overline, colorSpace);
-#if ENABLE(CSS3_TEXT)
+#if ENABLE(CSS3_TEXT_DECORATION)
             switch (decorationStyle) {
             case TextDecorationStyleWavy: {
                 FloatPoint start(localOrigin.x(), localOrigin.y() - doubleOffset);
@@ -1024,17 +1022,17 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
                 break;
             }
             default:
-#endif // CSS3_TEXT
+#endif // CSS3_TEXT_DECORATION
                 context->drawLineForText(localOrigin, width, isPrinting);
-#if ENABLE(CSS3_TEXT)
+#if ENABLE(CSS3_TEXT_DECORATION)
                 if (decorationStyle == TextDecorationStyleDouble)
                     context->drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() - doubleOffset), width, isPrinting);
             }
-#endif // CSS3_TEXT
+#endif // CSS3_TEXT_DECORATION
         }
         if (deco & TextDecorationLineThrough) {
             context->setStrokeColor(linethrough, colorSpace);
-#if ENABLE(CSS3_TEXT)
+#if ENABLE(CSS3_TEXT_DECORATION)
             switch (decorationStyle) {
             case TextDecorationStyleWavy: {
                 FloatPoint start(localOrigin.x(), localOrigin.y() + 2 * baseline / 3);
@@ -1043,13 +1041,13 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
                 break;
             }
             default:
-#endif // CSS3_TEXT
+#endif // CSS3_TEXT_DECORATION
                 context->drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + 2 * baseline / 3), width, isPrinting);
-#if ENABLE(CSS3_TEXT)
+#if ENABLE(CSS3_TEXT_DECORATION)
                 if (decorationStyle == TextDecorationStyleDouble)
                     context->drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + doubleOffset + 2 * baseline / 3), width, isPrinting);
             }
-#endif // CSS3_TEXT
+#endif // CSS3_TEXT_DECORATION
         }
     } while (shadow);
 

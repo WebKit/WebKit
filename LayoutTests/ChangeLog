@@ -1,3 +1,13 @@
+2013-10-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Move CSS3 text decoration implementation behind ENABLE(CSS3_TEXT_DECORATION)
+        https://bugs.webkit.org/show_bug.cgi?id=123541
+
+        Reviewed by Tim Horton.
+
+        * platform/mac/TestExpectations: Enable CSS3 text decoration tests
+        (since CSS3_TEXT_DECORATION is enabled by default)
+
 2013-10-31  Alexey Proskuryakov  <ap@apple.com>
 
         [WebCrypto] Add SHA-1

@@ -281,11 +281,9 @@ public:
 
     void addTextDecorationProperty(CSSPropertyID, PassRefPtr<CSSValue>, bool important);
     bool parseTextDecoration(CSSPropertyID propId, bool important);
-#if ENABLE(CSS3_TEXT)
-    bool parseTextUnderlinePosition(bool important);
-#endif
 #if ENABLE(CSS3_TEXT_DECORATION)
     bool parseTextDecorationSkip(bool important);
+    bool parseTextUnderlinePosition(bool important);
 #endif
 
     PassRefPtr<CSSValue> parseTextIndent();

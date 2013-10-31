@@ -124,10 +124,10 @@ public:
 #if ENABLE(CSS3_TEXT)
     unsigned m_textAlignLast : 3; // TextAlignLast
     unsigned m_textJustify : 3; // TextJustify
-    unsigned m_textUnderlinePosition : 3; // TextUnderlinePosition
 #endif // CSS3_TEXT
 #if ENABLE(CSS3_TEXT_DECORATION)
     unsigned m_textDecorationSkip : 5; // TextDecorationSkip
+    unsigned m_textUnderlinePosition : 3; // TextUnderlinePosition
 #endif
     unsigned m_rubyPosition : 1; // RubyPosition
 

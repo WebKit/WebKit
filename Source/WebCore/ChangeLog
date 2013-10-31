@@ -1,3 +1,67 @@
+2013-10-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Move CSS3 text decoration implementation behind ENABLE(CSS3_TEXT_DECORATION)
+        https://bugs.webkit.org/show_bug.cgi?id=123541
+
+        Reviewed by Tim Horton.
+
+        Enabled CSS3 text decoration tests
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::renderTextDecorationStyleFlagsToCSSValue): Mapping internal
+        representation to a CSSValue
+        (WebCore::ComputedStyleExtractor::propertyValue): Ditto
+        * css/CSSParser.cpp: Moving parsing functions behind new flag
+        (WebCore::isColorPropertyID):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::addTextDecorationProperty):
+        (WebCore::CSSParser::parseTextDecorationSkip):
+        (WebCore::CSSParser::parseTextUnderlinePosition):
+        * css/CSSParser.h:
+        * css/CSSPrimitiveValueMappings.h:
+        * css/CSSPropertyNames.in: Marking the new properties behind new flag
+        * css/CSSValueKeywords.in: Marking new values behind new flag
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::shorthandForProperty): Move text decoration shorthand
+        (WebCore::matchingShorthandsForLonghand):
+        * css/StylePropertyShorthand.h:
+        * css/StyleResolver.cpp:
+        (WebCore::isValidVisitedLinkProperty):
+        (WebCore::StyleResolver::applyProperty):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::setPlatformStrokeStyle):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawLine):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::createPen):
+        * rendering/InlineFlowBox.cpp:
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::textDecorationStyleToStrokeStyle):
+        (WebCore::computeUnderlineOffset):
+        (WebCore::InlineTextBox::paintDecoration):
+        * rendering/RenderObject.cpp:
+        (WebCore::decorationColor):
+        * rendering/RootInlineBox.cpp:
+        * rendering/RootInlineBox.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline):
+        (WebCore::RenderStyle::colorIncludingFallback):
+        (WebCore::RenderStyle::visitedDependentColor):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2013-10-31  Alexey Proskuryakov  <ap@apple.com>
 
         [WebCrypto] Add SHA-1

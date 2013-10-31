@@ -467,10 +467,8 @@ static
 thick
 thin
 underline
-#if defined(ENABLE_CSS3_TEXT) && ENABLE_CSS3_TEXT
-wavy
-#endif
 #if defined(ENABLE_CSS3_TEXT_DECORATION) && ENABLE_CSS3_TEXT_DECORATION
+wavy
 ink
 #endif
 -webkit-nowrap

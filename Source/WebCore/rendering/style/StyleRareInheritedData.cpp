@@ -113,10 +113,10 @@ StyleRareInheritedData::StyleRareInheritedData()
 #if ENABLE(CSS3_TEXT)
     , m_textAlignLast(RenderStyle::initialTextAlignLast())
     , m_textJustify(RenderStyle::initialTextJustify())
-    , m_textUnderlinePosition(RenderStyle::initialTextUnderlinePosition())
 #endif // CSS3_TEXT
 #if ENABLE(CSS3_TEXT_DECORATION)
     , m_textDecorationSkip(RenderStyle::initialTextDecorationSkip())
+    , m_textUnderlinePosition(RenderStyle::initialTextUnderlinePosition())
 #endif
     , m_rubyPosition(RenderStyle::initialRubyPosition())
 #if PLATFORM(IOS)
@@ -197,10 +197,10 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
 #if ENABLE(CSS3_TEXT)
     , m_textAlignLast(o.m_textAlignLast)
     , m_textJustify(o.m_textJustify)
-    , m_textUnderlinePosition(o.m_textUnderlinePosition)
 #endif // CSS3_TEXT
 #if ENABLE(CSS3_TEXT_DECORATION)
     , m_textDecorationSkip(o.m_textDecorationSkip)
+    , m_textUnderlinePosition(o.m_textUnderlinePosition)
 #endif
     , m_rubyPosition(o.m_rubyPosition)
 #if PLATFORM(IOS)
@@ -322,10 +322,10 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
 #if ENABLE(CSS3_TEXT)
         && m_textAlignLast == o.m_textAlignLast
         && m_textJustify == o.m_textJustify
-        && m_textUnderlinePosition == o.m_textUnderlinePosition
 #endif // CSS3_TEXT
 #if ENABLE(CSS3_TEXT_DECORATION)
         && m_textDecorationSkip == o.m_textDecorationSkip
+        && m_textUnderlinePosition == o.m_textUnderlinePosition
 #endif
         && m_rubyPosition == o.m_rubyPosition
         && m_lineSnap == o.m_lineSnap
