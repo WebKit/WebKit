@@ -326,11 +326,11 @@ public:
 
     enum class WantsReplyOrNot { DoesNotWantReply, DoesWantReply };
     void viewStateDidChange(ViewState::Flags mayHaveChanged, WantsReplyOrNot = WantsReplyOrNot::DoesNotWantReply);
-    bool isInWindow() const { return m_isInWindow; }
+    bool isInWindow() const { return m_viewState & ViewState::IsInWindow; }
     void waitForDidUpdateInWindowState();
 
     WebCore::IntSize viewSize() const;
-    bool isViewVisible() const { return m_isVisible; }
+    bool isViewVisible() const { return m_viewState & ViewState::IsVisible; }
     bool isViewWindowActive() const;
 
     void executeEditCommand(const String& commandName);
@@ -756,6 +756,8 @@ private:
     void platformInitialize();
     void initializeCreationParameters();
 
+    void updateViewState(ViewState::Flags flagsToUpdate = ViewState::AllFlags);
+
     void resetState();
     void resetStateAfterProcessExited();
 
@@ -1088,11 +1090,7 @@ private:
 
     double m_estimatedProgress;
 
-    // Whether the web page is contained in a top-level window.
-    bool m_isInWindow;
-
-    // Whether the page is visible; if the backing view is visible and inserted into a window.
-    bool m_isVisible;
+    ViewState::Flags m_viewState;
 
     bool m_canGoBack;
     bool m_canGoForward;

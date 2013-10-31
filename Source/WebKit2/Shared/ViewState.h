@@ -36,7 +36,11 @@ struct ViewState {
         IsInWindow = 1 << 3,
         WindowIsVisible = 1 << 4
     };
+
     typedef unsigned Flags;
+
+    static const Flags NoFlags = 0;
+    static const Flags AllFlags = WindowIsActive | IsFocused | IsVisible | IsInWindow | WindowIsVisible;
 };
 
 } // namespace WebKit

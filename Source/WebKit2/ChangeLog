@@ -1,3 +1,66 @@
+2013-10-31  Gavin Barraclough  <barraclough@apple.com>
+
+        Change WebPage, WebPageProxy, WebPageCreationParameters to use ViewState
+        https://bugs.webkit.org/show_bug.cgi?id=123379
+
+        Reviewed by Darin Adler.
+
+        Visibility state of the Page should be stored and communicated consistently.
+
+        Remove individual visibility flags from WebPageProxy, WebPageCreationParameters,
+        and replace them with a ViewState, and add a ViewState member to WebPage.
+        Merge together all messages that convey and individual aspect of the ViewState.
+
+        Restructure WebPageProxy::viewStateDidChange to break the operation down into
+        three steps: 1) update m_viewState, 2) send the new ViewState to the WebProcess,
+        and 3) perform any further work necessary in the UIProcess.
+
+        This patch fixes a problem that if the web process crashes m_isVisible &
+        m_isInWindow in WebPageProxy were not updated, and could have held stale values
+        on reattach.
+
+        In WebPage, add a new message to update the entire ViewState - diff the prior
+        value against the new one to detect changes, call existing methods accordingly.
+
+        * Shared/ViewState.h:
+            - Add constants 'Reset', 'AllFlags'
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+            - Removed boolean visibility flags, added viewState.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+            - Constructor calls updateViewState to initialize m_viewState.
+        (WebKit::WebPageProxy::reattachToWebProcess):
+            - ViewStaet is not updated while detatched; recalculate.
+        (WebKit::WebPageProxy::initializeWebPage):
+            - m_isVisible -> isViewVisible()
+        (WebKit::WebPageProxy::updateViewState):
+            - Added, update m_viewState by querying the page client.
+        (WebKit::WebPageProxy::viewStateDidChange):
+            - Restructured to use m_viewState, reordered to combine messages.
+        (WebKit::WebPageProxy::creationParameters):
+            - Removed boolean visibility flags, added viewState.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isInWindow):
+        (WebKit::WebPageProxy::isViewVisible):
+            - Removed boolean visibility flags, added viewState.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+            - initial state now passed as a ViewState.
+        (WebKit::WebPage::setIsInWindow):
+            - Remove code to send reply (this is handled by setViewState).
+        (WebKit::WebPage::setViewState):
+            - Set m_viewState - diff from prior & call methods to update.
+        * WebProcess/WebPage/WebPage.h:
+            - Added setViewState, m_viewState.
+        * WebProcess/WebPage/WebPage.messages.in:
+            - Add SetViewState, remove individual messages.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+            - initial state now passed as a ViewState.
+
 2013-10-30  Gavin Barraclough  <barraclough@apple.com>
 
         WebPageCreationParameters should be consistent in Window.open

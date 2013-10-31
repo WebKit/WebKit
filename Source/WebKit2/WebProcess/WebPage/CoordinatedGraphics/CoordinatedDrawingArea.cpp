@@ -60,7 +60,7 @@ CoordinatedDrawingArea::CoordinatedDrawingArea(WebPage* webPage, const WebPageCr
     , m_compositingAccordingToProxyMessages(false)
     , m_layerTreeStateIsFrozen(false)
     , m_wantsToExitAcceleratedCompositingMode(false)
-    , m_isPaintingSuspended(!parameters.isVisible)
+    , m_isPaintingSuspended(!(parameters.viewState & ViewState::IsVisible))
     , m_displayTimer(RunLoop::main(), this, &CoordinatedDrawingArea::displayTimerFired)
     , m_exitCompositingTimer(RunLoop::main(), this, &CoordinatedDrawingArea::exitAcceleratedCompositingMode)
 {

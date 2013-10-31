@@ -64,7 +64,7 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
     : DrawingArea(DrawingAreaTypeTiledCoreAnimation, webPage)
     , m_layerTreeStateIsFrozen(false)
     , m_layerFlushScheduler(this)
-    , m_isPaintingSuspended(!parameters.isVisible)
+    , m_isPaintingSuspended(!(parameters.viewState & ViewState::IsVisible))
     , m_clipsToExposedRect(false)
     , m_updateIntrinsicContentSizeTimer(this, &TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeTimerFired)
 {

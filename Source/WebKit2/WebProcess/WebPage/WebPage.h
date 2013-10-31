@@ -49,6 +49,7 @@
 #include "Plugin.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
+#include "ViewState.h"
 #include "WebUndoStep.h"
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DragData.h>
@@ -683,7 +684,8 @@ private:
     void setWindowIsVisible(bool);
     void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&);
     void setWindowResizerSize(const WebCore::IntSize&);
-    void setIsInWindow(bool isInWindow, bool wantsDidUpdateViewInWindowState = false);
+    void setIsInWindow(bool);
+    void setViewState(ViewState::Flags, bool wantsDidUpdateInWindowState);
     void validateCommand(const String&, uint64_t);
     void executeEditCommand(const String&);
 
@@ -991,6 +993,8 @@ private:
     WebCore::ScrollPinningBehavior m_scrollPinningBehavior;
 
     bool m_useThreadedScrolling;
+
+    ViewState::Flags m_viewState;
 };
 
 } // namespace WebKit

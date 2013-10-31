@@ -29,6 +29,7 @@
 #include "DrawingAreaInfo.h"
 #include "LayerTreeContext.h"
 #include "SessionState.h"
+#include "ViewState.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPageGroupData.h"
 #include "WebPreferencesStore.h"
@@ -55,10 +56,7 @@ struct WebPageCreationParameters {
 
     WebCore::IntSize viewSize;
 
-    bool isActive;
-    bool isFocused;
-    bool isVisible;
-    bool isInWindow;
+    ViewState::Flags viewState;
     
     WebPreferencesStore store;
     DrawingAreaType drawingAreaType;

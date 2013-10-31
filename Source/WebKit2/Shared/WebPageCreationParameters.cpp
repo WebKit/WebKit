@@ -33,10 +33,7 @@ namespace WebKit {
 void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     encoder << viewSize;
-    encoder << isActive;
-    encoder << isFocused;
-    encoder << isVisible;
-    encoder << isInWindow;
+    encoder << viewState;
 
     encoder << store;
     encoder.encodeEnum(drawingAreaType);
@@ -73,13 +70,7 @@ bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder, WebPag
 {
     if (!decoder.decode(parameters.viewSize))
         return false;
-    if (!decoder.decode(parameters.isActive))
-        return false;
-    if (!decoder.decode(parameters.isFocused))
-        return false;
-    if (!decoder.decode(parameters.isVisible))
-        return false;
-    if (!decoder.decode(parameters.isInWindow))
+    if (!decoder.decode(parameters.viewState))
         return false;
     if (!decoder.decode(parameters.store))
         return false;

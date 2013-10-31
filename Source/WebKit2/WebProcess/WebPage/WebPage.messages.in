@@ -21,11 +21,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebPage LegacyReceiver {
-    SetActive(bool active)
-    SetFocused(bool focused)
-    SetViewIsVisible(bool visible)
     SetInitialFocus(bool forward, bool isKeyboardEventValid, WebKit::WebKeyboardEvent event)
-    SetIsInWindow(bool isInWindow, bool wantsDidUpdateViewInWindowState)
+    SetViewState(unsigned viewState, bool wantsDidUpdateInWindowState)
 
     SetDrawsBackground(bool drawsBackground)
     SetDrawsTransparentBackground(bool drawsTransparentBackground)
@@ -244,8 +241,6 @@ messages -> WebPage LegacyReceiver {
     ConfirmComposition(WTF::String text, int64_t selectionStart, int64_t selectionLength)
     CancelComposition()
 #endif
-
-    SetWindowIsVisible(bool windowIsVisible)
 
 #if PLATFORM(MAC)
     # Complex text input support for plug-ins.
