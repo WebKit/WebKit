@@ -1,3 +1,14 @@
+2013-10-31  Krzysztof Wolanski  <k.wolanski@samsung.com>
+
+        [EFL] Rebaselining after r158186
+        https://bugs.webkit.org/show_bug.cgi?id=123571
+
+        Unreviewed gardening.
+
+        * platform/efl/editing/deleting/smart-delete-003-expected.txt: Rebaselining after r158186.
+        * platform/efl/editing/deleting/smart-delete-004-expected.txt: Rebaselining after r158186.
+        * platform/efl/editing/selection/after-line-wrap-expected.txt: Rebaselining after r157851.
+
 2013-10-31  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] Add baselines for spelling tests added in r157900.
