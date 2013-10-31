@@ -1,3 +1,23 @@
+2013-10-31  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should implement InvalidationPoint in terms of llvm.stackmap
+        https://bugs.webkit.org/show_bug.cgi?id=113647
+
+        Reviewed by Mark Hahnenberg.
+        
+        This is pretty straightforward now that InvalidationPoint has exactly the semantics
+        that agree with llvm.stackmap.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::fixFunctionBasedOnStackMaps):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileInvalidationPoint):
+        (JSC::FTL::LowerDFGToLLVM::emitOSRExitCall):
+        (JSC::FTL::LowerDFGToLLVM::buildExitArguments):
+        (JSC::FTL::LowerDFGToLLVM::callStackmap):
+        * ftl/FTLOSRExitCompilationInfo.h:
+        (JSC::FTL::OSRExitCompilationInfo::OSRExitCompilationInfo):
+
 2013-10-30  Oliver Hunt  <oliver@apple.com>
 
         Implement basic ES6 Math functions

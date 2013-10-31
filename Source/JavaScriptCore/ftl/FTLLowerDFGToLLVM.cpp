@@ -2110,8 +2110,30 @@ private:
     
     void compileInvalidationPoint()
     {
-        // FIXME: Implement invalidation points in terms of llvm.stackmap.
-        // https://bugs.webkit.org/show_bug.cgi?id=113647
+        if (!Options::ftlUsesStackmaps()) {
+            // We silently don't implement invalidation points if we don't have stackmaps.
+            // This is fine since the long-term plan is to require stackmaps.
+            return;
+        }
+        
+        if (verboseCompilationEnabled())
+            dataLog("    Invalidation point with value sources: ", m_valueSources, "\n");
+        
+        m_ftlState.jitCode->osrExit.append(OSRExit(
+            UncountableInvalidation, InvalidValueFormat, MethodOfGettingAValueProfile(),
+            m_codeOriginForExitTarget, m_codeOriginForExitProfile, m_lastSetOperand.offset(),
+            m_valueSources.numberOfArguments(), m_valueSources.numberOfLocals()));
+        m_ftlState.finalizer->osrExit.append(OSRExitCompilationInfo());
+        
+        OSRExit& exit = m_ftlState.jitCode->osrExit.last();
+        OSRExitCompilationInfo& info = m_ftlState.finalizer->osrExit.last();
+        
+        ExitArgumentList arguments;
+        
+        buildExitArguments(exit, arguments, FormattedValue());
+        callStackmap(exit, arguments);
+        
+        info.m_isInvalidationPoint = true;
     }
     
     LValue boolify(Edge edge)
@@ -3336,6 +3358,39 @@ private:
             arguments.append(m_out.constInt32(index));
         }
         
+        buildExitArguments(exit, arguments, lowValue);
+        
+        if (direction == ForwardSpeculation) {
+            ASSERT(m_node);
+            exit.convertToForward(m_highBlock, m_node, m_nodeIndex, recovery, arguments);
+        }
+        
+        if (Options::useLLVMOSRExitIntrinsic()) {
+            m_out.call(m_out.osrExitIntrinsic(), arguments);
+            return;
+        }
+        
+        if (Options::ftlUsesStackmaps()) {
+            callStackmap(exit, arguments);
+            return;
+        }
+        
+        // So, the really lame thing here is that we have to build an LLVM function type.
+        // Booo.
+        Vector<LType, 16> argumentTypes;
+        for (unsigned i = 0; i < arguments.size(); ++i)
+            argumentTypes.append(typeOf(arguments[i]));
+        
+        m_out.call(
+            m_out.intToPtr(
+                m_out.get(info.m_thunkAddressValue),
+                pointerType(functionType(m_out.voidType, argumentTypes))),
+            arguments);
+    }
+    
+    void buildExitArguments(
+        OSRExit& exit, ExitArgumentList& arguments, FormattedValue lowValue)
+    {
         arguments.append(m_callFrame);
         if (!!lowValue)
             arguments.append(lowValue.value());
@@ -3370,37 +3425,15 @@ private:
         
         if (verboseCompilationEnabled())
             dataLog("        Exit values: ", exit.m_values, "\n");
+    }
+    
+    void callStackmap(OSRExit& exit, ExitArgumentList& arguments)
+    {
+        exit.m_stackmapID = m_stackmapIDs++;
+        arguments.insert(0, m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
+        arguments.insert(0, m_out.constInt32(exit.m_stackmapID));
         
-        if (direction == ForwardSpeculation) {
-            ASSERT(m_node);
-            exit.convertToForward(m_highBlock, m_node, m_nodeIndex, recovery, arguments);
-        }
-        
-        // So, the really lame thing here is that we have to build an LLVM function type.
-        // Booo.
-        Vector<LType, 16> argumentTypes;
-        for (unsigned i = 0; i < arguments.size(); ++i)
-            argumentTypes.append(typeOf(arguments[i]));
-        
-        if (Options::useLLVMOSRExitIntrinsic()) {
-            m_out.call(m_out.osrExitIntrinsic(), arguments);
-            return;
-        }
-        
-        if (Options::ftlUsesStackmaps()) {
-            exit.m_stackmapID = m_stackmapIDs++;
-            arguments.insert(0, m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
-            arguments.insert(0, m_out.constInt32(exit.m_stackmapID));
-        
-            m_out.call(m_out.webkitStackmapIntrinsic(), arguments);
-            return;
-        }
-        
-        m_out.call(
-            m_out.intToPtr(
-                m_out.get(info.m_thunkAddressValue),
-                pointerType(functionType(m_out.voidType, argumentTypes))),
-            arguments);
+        m_out.call(m_out.webkitStackmapIntrinsic(), arguments);
     }
     
     void addExitArgumentForNode(

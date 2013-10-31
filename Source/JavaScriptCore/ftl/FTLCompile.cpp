@@ -227,10 +227,15 @@ static void fixFunctionBasedOnStackMaps(
         
         StackMaps::Record& record = iter->value;
         
-        repatchBuffer.replaceWithJump(
-            CodeLocationLabel(
-                bitwise_cast<char*>(generatedFunction) + record.instructionOffset),
-            info.m_thunkAddress);
+        CodeLocationLabel source = CodeLocationLabel(
+            bitwise_cast<char*>(generatedFunction) + record.instructionOffset);
+        
+        if (info.m_isInvalidationPoint) {
+            jitCode->common.jumpReplacements.append(JumpReplacement(source, info.m_thunkAddress));
+            continue;
+        }
+        
+        repatchBuffer.replaceWithJump(source, info.m_thunkAddress);
     }
 }
 
