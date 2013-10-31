@@ -85,8 +85,8 @@ private:
     RetainPtr<CALayer> m_counterScrollingLayer;
     RetainPtr<CALayer> m_headerLayer;
     RetainPtr<CALayer> m_footerLayer;
-    ScrollbarPainter m_verticalScrollbarPainter;
-    ScrollbarPainter m_horizontalScrollbarPainter;
+    RetainPtr<ScrollbarPainter> m_verticalScrollbarPainter;
+    RetainPtr<ScrollbarPainter> m_horizontalScrollbarPainter;
     IntPoint m_probableMainThreadScrollPosition;
     bool m_lastScrollHadUnfilledPixels;
 };
