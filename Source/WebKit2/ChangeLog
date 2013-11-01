@@ -1,5 +1,11 @@
 2013-10-31  Tim Horton  <timothy_horton@apple.com>
 
+        Fix a typo/review comment from Dan, in http://trac.webkit.org/changeset/158413
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+
+2013-10-31  Tim Horton  <timothy_horton@apple.com>
+
         Remote Layer Tree: Vend layer contents via IOSurfaces
         https://bugs.webkit.org/show_bug.cgi?id=123600
 

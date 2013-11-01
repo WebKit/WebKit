@@ -54,7 +54,7 @@
     return self;
 }
 
-#if ASSERT_DISABLED
+#if !ASSERT_DISABLED
 - (void)dealloc
 {
     ASSERT(_currentDictionary == _rootDictionary);
