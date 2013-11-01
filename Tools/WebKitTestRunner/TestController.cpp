@@ -143,19 +143,6 @@ static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKF
     return TestController::shared().beforeUnloadReturnValue();
 }
 
-static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef, WKStringRef, unsigned long long, unsigned long long, unsigned long long, unsigned long long expectedUsage, const void*)
-{
-    static const unsigned long long defaultQuota = 5 * 1024 * 1024;
-    static const unsigned long long maxQuota = 10 * 1024 * 1024;
-    unsigned long long newQuota = defaultQuota;
-    if (defaultQuota < expectedUsage && expectedUsage <= maxQuota) {
-        newQuota = expectedUsage;
-        printf("UI DELEGATE DATABASE CALLBACK: increased quota to %llu\n", newQuota);
-    }
-    return newQuota;
-}
-
-
 void TestController::runModal(WKPageRef page, const void* clientInfo)
 {
     PlatformWebView* view = static_cast<PlatformWebView*>(const_cast<void*>(clientInfo));
@@ -233,7 +220,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
         runBeforeUnloadConfirmPanel,
         0, // didDraw
         0, // pageDidScroll
-        exceededDatabaseQuota,
+        0, // exceededDatabaseQuota
         0, // runOpenPanel
         decidePolicyForGeolocationPermissionRequest,
         0, // headerHeight
@@ -434,7 +421,7 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         runBeforeUnloadConfirmPanel,
         0, // didDraw
         0, // pageDidScroll
-        exceededDatabaseQuota,
+        0, // exceededDatabaseQuota,
         0, // runOpenPanel
         decidePolicyForGeolocationPermissionRequest,
         0, // headerHeight

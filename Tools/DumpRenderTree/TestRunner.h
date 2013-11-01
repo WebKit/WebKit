@@ -277,6 +277,12 @@ public:
     bool globalFlag() const { return m_globalFlag; }
     void setGlobalFlag(bool globalFlag) { m_globalFlag = globalFlag; }
     
+    double databaseDefaultQuota() const { return m_databaseDefaultQuota; }
+    void setDatabaseDefaultQuota(double quota) { m_databaseDefaultQuota = quota; }
+
+    double databaseMaxQuota() const { return m_databaseMaxQuota; }
+    void setDatabaseMaxQuota(double quota) { m_databaseMaxQuota = quota; }
+
     bool deferMainResourceDataLoad() const { return m_deferMainResourceDataLoad; }
     void setDeferMainResourceDataLoad(bool flag) { m_deferMainResourceDataLoad = flag; }
 
@@ -410,6 +416,9 @@ private:
     bool m_areLegacyWebNotificationPermissionRequestsIgnored;
     bool m_customFullScreenBehavior;
     bool m_hasPendingWebNotificationClick;
+
+    double m_databaseDefaultQuota;
+    double m_databaseMaxQuota;
 
     std::string m_authenticationUsername;
     std::string m_authenticationPassword; 

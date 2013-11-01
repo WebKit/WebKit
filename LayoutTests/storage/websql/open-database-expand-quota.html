@@ -5,6 +5,8 @@ function runTest() {
     if (window.testRunner) {
         testRunner.dumpAsText();
         testRunner.clearAllDatabases();
+        testRunner.databaseDefaultQuota = 5 * 1024 * 1024;
+        testRunner.databaseMaxQuota = 10 * 1024 * 1024;
     }
 
     try {

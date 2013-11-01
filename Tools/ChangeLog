@@ -1,3 +1,49 @@
+2013-10-31  Mark Lam  <mark.lam@apple.com>
+
+        REGRESSION: Crashes in -[UIDelegate webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:].
+        https://bugs.webkit.org/show_bug.cgi?id=123383.
+
+        Reviewed by Geoffrey Garen.
+
+        Removed an inappropriate assertion in DumpRenderTree/mac/UIDelegate.mm and
+        added 2 attributes (databaseDefaultQuota and databaseMaxQuota) to allow
+        tests to set appropriate quota settings to exercise quota expansion tests
+        when needed.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::TestRunner):
+        (getDatabaseDefaultQuotaCallback):
+        (getDatabaseMaxQuotaCallback):
+        (setDatabaseDefaultQuotaCallback):
+        (setDatabaseMaxQuotaCallback):
+        (TestRunner::staticValues):
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner::databaseDefaultQuota):
+        (TestRunner::setDatabaseDefaultQuota):
+        (TestRunner::databaseMaxQuota):
+        (TestRunner::setDatabaseMaxQuota):
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        (BlackBerry::WebKit::DumpRenderTree::exceededDatabaseQuota):
+        * DumpRenderTree/efl/DumpRenderTreeView.cpp:
+        (onExceededDatabaseQuota):
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:]):
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::exceededDatabaseQuota):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didExceedDatabaseQuota):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::TestRunner):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::databaseDefaultQuota):
+        (WTR::TestRunner::setDatabaseDefaultQuota):
+        (WTR::TestRunner::databaseMaxQuota):
+        (WTR::TestRunner::setDatabaseMaxQuota):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::createWebViewWithOptions):
+
 2013-10-31  Anders Carlsson  <andersca@apple.com>
 
         Add a WKRemoteObject class

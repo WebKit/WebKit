@@ -110,6 +110,8 @@ TestRunner::TestRunner(const std::string& testPathOrURL, const std::string& expe
     , m_areLegacyWebNotificationPermissionRequestsIgnored(false)
     , m_customFullScreenBehavior(false) 
     , m_hasPendingWebNotificationClick(false)
+    , m_databaseDefaultQuota(-1)
+    , m_databaseMaxQuota(-1)
     , m_testPathOrURL(testPathOrURL)
     , m_expectedPixelHash(expectedPixelHash)
     , m_titleTextDirection("ltr")
@@ -1839,6 +1841,18 @@ static JSValueRef getGlobalFlagCallback(JSContextRef context, JSObjectRef thisOb
     return JSValueMakeBoolean(context, controller->globalFlag());
 }
 
+static JSValueRef getDatabaseDefaultQuotaCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
+    return JSValueMakeNumber(context, controller->databaseDefaultQuota());
+}
+
+static JSValueRef getDatabaseMaxQuotaCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
+    return JSValueMakeNumber(context, controller->databaseMaxQuota());
+}
+
 static JSValueRef getWebHistoryItemCountCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
@@ -1876,6 +1890,22 @@ static bool setGlobalFlagCallback(JSContextRef context, JSObjectRef thisObject, 
 {
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setGlobalFlag(JSValueToBoolean(context, value));
+    return true;
+}
+
+static bool setDatabaseDefaultQuotaCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
+{
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
+    controller->setDatabaseDefaultQuota(JSValueToNumber(context, value, exception));
+    ASSERT(!*exception);
+    return true;
+}
+
+static bool setDatabaseMaxQuotaCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
+{
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
+    controller->setDatabaseMaxQuota(JSValueToNumber(context, value, exception));
+    ASSERT(!*exception);
     return true;
 }
 
@@ -2050,6 +2080,8 @@ JSStaticValue* TestRunner::staticValues()
 #endif
         { "secureEventInputIsEnabled", getSecureEventInputIsEnabledCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "titleTextDirection", getTitleTextDirectionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "databaseDefaultQuota", getDatabaseDefaultQuotaCallback, setDatabaseDefaultQuotaCallback, kJSPropertyAttributeNone },
+        { "databaseMaxQuota", getDatabaseMaxQuotaCallback, setDatabaseMaxQuotaCallback, kJSPropertyAttributeNone },
         { 0, 0, 0, 0 }
     };
     return staticValues;

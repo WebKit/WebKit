@@ -785,12 +785,19 @@ void DumpRenderTree::exceededDatabaseQuota(WebCore::SecurityOrigin* origin, cons
 
     WebCore::DatabaseManager& manager = WebCore::DatabaseManager::manager(); 
     WebCore::DatabaseDetails details = detailsForNameAndOrigin(name, origin);
-    static const unsigned long long defaultQuota = 5 * 1024 * 1024;
-    static const unsigned long long maxQuota = 10 * 1024 * 1024;
+    unsigned long long defaultQuota = 5 * 1024 * 1024;
+    double testDefaultQuota = gTestRunner->databaseDefaultQuota();
+    if (testDefaultQuota >= 0)
+        defaultQuota = testDefaultQuota;
+
     unsigned long long newQuota = defaultQuota;
-    if (defaultQuota < expectedSize && expectedSize <= maxQuota) {
-        newQuota = expectedSize;
-        printf("UI DELEGATE DATABASE CALLBACK: increased quota to %llu\n", newQuota);
+
+    double maxQuota = gTestRunner->databaseMaxQuota();
+    if (maxQuota >= 0) {
+        if (defaultQuota < expectedSize && expectedSize <= maxQuota) {
+            newQuota = expectedSize;
+            printf("UI DELEGATE DATABASE CALLBACK: increased quota to %llu\n", newQuota);
+        }
     }
     manager.setQuota(origin, newQuota);
 }

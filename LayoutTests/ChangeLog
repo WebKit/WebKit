@@ -1,3 +1,21 @@
+2013-10-31  Mark Lam  <mark.lam@apple.com>
+
+        REGRESSION: Crashes in -[UIDelegate webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:].
+        https://bugs.webkit.org/show_bug.cgi?id=123383.
+
+        Reviewed by Geoffrey Garen.
+
+        Removed an inappropriate assertion in DumpRenderTree/mac/UIDelegate.mm and
+        added 2 attributes (databaseDefaultQuota and databaseMaxQuota) to allow
+        tests to set appropriate quota settings to exercise quota expansion tests
+        when needed.
+        
+        * storage/websql/open-database-expand-quota.html:
+        - Set databaseDefaultQuota and databaseMaxQuota as needed for this test.
+        * storage/websql/open-database-over-quota-expected.txt:
+        * storage/websql/open-database-over-quota.html:
+        - Revert the change from r157874 which is no longer needed for this test.
+
 2013-11-01  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [css shapes] Pull in upstream fixes to shape-outside margin and clipping tests

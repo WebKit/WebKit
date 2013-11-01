@@ -1448,17 +1448,24 @@ uint64_t InjectedBundlePage::didExceedDatabaseQuota(WKSecurityOriginRef origin, 
         InjectedBundle::shared().outputText(stringBuilder.toString());
     }
 
-    static const uint64_t defaultQuota = 5 * 1024 * 1024;
-    static const uint64_t maxQuota = 10 * 1024 * 1024;
-    uint64_t newQuota = defaultQuota;
-    if (defaultQuota < expectedUsageBytes && expectedUsageBytes <= maxQuota) {
-        newQuota = expectedUsageBytes;
+    uint64_t defaultQuota = 5 * 1024 * 1024;
+    double testDefaultQuota = InjectedBundle::shared().testRunner()->databaseDefaultQuota();
+    if (testDefaultQuota >= 0)
+        defaultQuota = testDefaultQuota;
 
-        StringBuilder stringBuilder;
-        stringBuilder.appendLiteral("UI DELEGATE DATABASE CALLBACK: increased quota to ");
-        stringBuilder.appendNumber(newQuota);
-        stringBuilder.append('\n');
-        InjectedBundle::shared().outputText(stringBuilder.toString());
+    unsigned long long newQuota = defaultQuota;
+
+    double maxQuota = InjectedBundle::shared().testRunner()->databaseMaxQuota();
+    if (maxQuota >= 0) {
+        if (defaultQuota < expectedUsageBytes && expectedUsageBytes <= maxQuota) {
+            newQuota = expectedUsageBytes;
+
+            StringBuilder stringBuilder;
+            stringBuilder.appendLiteral("UI DELEGATE DATABASE CALLBACK: increased quota to ");
+            stringBuilder.appendNumber(newQuota);
+            stringBuilder.append('\n');
+            InjectedBundle::shared().outputText(stringBuilder.toString());
+        }
     }
     return newQuota;
 }
