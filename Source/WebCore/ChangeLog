@@ -1,3 +1,54 @@
+2013-11-01  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Avoid explicit traversal of text controls and the render tree in AtkText implementation
+        https://bugs.webkit.org/show_bug.cgi?id=123153
+
+        Reviewed by Chris Fleizach.
+
+        Remove functions from the AtkText implementation that manually
+        walk the render tree to compose the text for a exposed objects in
+        certain cases (e.g. anonymous blocks, text controls).
+
+        The reason for this change is that the current implementation
+        follows an error-prone approach, since by doing things like
+        manually walking the render tree from here we are not properly
+        considering all the possible scenarios that might happen when
+        traversing text. This, however, is a task that is better suited
+        for the TextIterator, which is already written to consider all
+        those cases and to emit the proper character in every single
+        situation: text nodes, replaced objects and so on.
+
+        So, by removing all that too specific code (textForObject() and
+        textForRenderer() mainly) from WebKitAccessibleInterfaceText.cpp
+        and relying in AccessibilityObject::textUnderElement(), which it
+        ends up using the TextIterator for certain cases, we have a much
+        better and robust method of retrieving the text associated with an
+        instance of AtkObject implementing the AtkText interface.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (webkitAccessibleTextGetText): Removed call to textForObject(), now that
+        we have just removed that function, together with textForRenderer().
+
+        Make AccessibilityRenderObject::textUnderElement() able to deal with
+        anonymous blocks directly, by creating a range based in the boundaries
+        defined by the first and last child renderers for that block. This will
+        make possible to treat an anonymous block as a whole instead of having
+        to rely in the concatenation of each of its children, as it does now.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::textUnderElement): Added a new code
+        path to deal with anonymous blocks for text renderers, or when including
+        all the children is explicitly requested.
+
+        Modified TextIterator so text for children of replaced objects are
+        ignored if we are emmiting the special character for those objects.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleReplacedElement): Make sure no children are
+        handled a replaced object if m_emitsObjectReplacementCharacters is set.
+        * editing/TextIterator.h: Updated m_emitsObjectReplacementCharacters
+        description to reflect the new behavior.
+
 2013-11-01  Alexey Proskuryakov  <ap@apple.com>
 
         Add a Mac WebCrypto implementation of HMAC importKey/sign/verify

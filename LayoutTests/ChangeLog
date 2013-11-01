@@ -1,3 +1,27 @@
+2013-11-01  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Avoid explicit traversal of text controls and the render tree in AtkText implementation
+        https://bugs.webkit.org/show_bug.cgi?id=123153
+
+        Reviewed by Chris Fleizach.
+
+        Updated test expectations to properly reflect the new reality when it
+        comes to exposing replaced objects and anymous blocks.
+
+        * platform/gtk/accessibility/table-with-rules-expected.txt: Updated to
+        print <\n> explicitly for the two instances of <BR> that are present in the
+        test, that will be included as part of an anonymous block.
+        * platform/efl/accessibility/table-with-rules-expected.txt: Ditto.
+        * platform/efl-wk2/accessibility/table-with-rules-expected.txt: Ditto.
+
+        * platform/efl/accessibility/deleting-iframe-destroys-axcache-expected.txt: Updated
+        expectations not to expect the text of a button to be shown.
+        * platform/gtk/accessibility/deleting-iframe-destroys-axcache-expected.txt: Ditto.
+        * platform/gtk/accessibility/replaced-objects-in-anonymous-blocks-expected.txt: Ditto.
+
+        * platform/gtk/TestExpectations: Removed replaced-objects-in-anonymous-blocks.html
+        from the list of expected failures, as it's now being properly exposed.
+
 2013-11-01  Alexey Proskuryakov  <ap@apple.com>
 
         Add a Mac WebCrypto implementation of HMAC importKey/sign/verify

@@ -84,7 +84,7 @@ AXPosition: { 8.000000, 116.000000 }
 AXSize: { 765.000000, 36.000000 }
 AXTitle: 
 AXDescription: 
-AXValue: ------------------------------------
+AXValue: <\n>------------------------------------<\n>
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0

@@ -69,103 +69,6 @@ static AccessibilityObject* core(AtkText* text)
     return webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(text));
 }
 
-static gchar* textForRenderer(RenderObject* renderer)
-{
-    GString* resultText = g_string_new(0);
-
-    if (!renderer)
-        return g_string_free(resultText, FALSE);
-
-    // For RenderBlocks, piece together the text from the RenderText objects they contain.
-    for (RenderObject* object = renderer->firstChildSlow(); object; object = object->nextSibling()) {
-        if (object->isBR()) {
-            g_string_append(resultText, "\n");
-            continue;
-        }
-
-        RenderText* renderText;
-        if (object->isText())
-            renderText = toRenderText(object);
-        else {
-            // List item's markers will be treated in an special way
-            // later on this function, so ignore them here.
-            if (object->isReplaced() && !object->isListMarker())
-                g_string_append_unichar(resultText, objectReplacementCharacter);
-
-            // We need to check children, if any, to consider when
-            // current object is not a text object but some of its
-            // children are, in order not to miss those portions of
-            // text by not properly handling those situations
-            if (object->firstChildSlow()) {
-                GOwnPtr<char> objectText(textForRenderer(object));
-                g_string_append(resultText, objectText.get());
-            }
-            continue;
-        }
-
-        InlineTextBox* box = renderText ? renderText->firstTextBox() : 0;
-        while (box) {
-            // WebCore introduces line breaks in the text that do not reflect
-            // the layout you see on the screen, replace them with spaces.
-            String text = String(renderText->characters(), renderText->textLength()).replace("\n", " ");
-            g_string_append(resultText, text.substring(box->start(), box->end() - box->start() + 1).utf8().data());
-
-            // Newline chars in the source result in separate text boxes, so check
-            // before adding a newline in the layout. See bug 25415 comment #78.
-            // If the next sibling is a BR, we'll add the newline when we examine that child.
-            if (!box->nextOnLineExists() && !(object->nextSibling() && object->nextSibling()->isBR())) {
-                // If there was a '\n' in the last position of the
-                // current text box, it would have been converted to a
-                // space in String::replace(), so remove it first.
-                if (renderText->characters()[box->end()] == '\n')
-                    g_string_erase(resultText, resultText->len - 1, -1);
-
-                g_string_append(resultText, "\n");
-            }
-            box = box->nextTextBox();
-        }
-    }
-
-    // Insert the text of the marker for list item in the right place, if present
-    if (renderer->isListItem()) {
-        String markerText = toRenderListItem(renderer)->markerTextWithSuffix();
-        if (renderer->style().direction() == LTR)
-            g_string_prepend(resultText, markerText.utf8().data());
-        else
-            g_string_append(resultText, markerText.utf8().data());
-    }
-
-    return g_string_free(resultText, FALSE);
-}
-
-static gchar* textForObject(const AccessibilityObject* coreObject)
-{
-    GString* str = g_string_new(0);
-
-    // For text controls, we can get the text line by line.
-    if (coreObject->isTextControl()) {
-        unsigned textLength = coreObject->textLength();
-        int lineNumber = 0;
-        PlainTextRange range = coreObject->doAXRangeForLine(lineNumber);
-        while (range.length) {
-            String lineText = coreObject->doAXStringForRange(range);
-            g_string_append(str, lineText.utf8().data());
-
-            // When a line of text wraps in a text area, the final space
-            // after each non-final line must be replaced with a line break.
-            if (range.start + range.length < textLength)
-                g_string_overwrite_len(str, str->len - 1, "\n", 1);
-
-            range = coreObject->doAXRangeForLine(++lineNumber);
-        }
-    } else if (coreObject->isAccessibilityRenderObject()) {
-        GOwnPtr<gchar> rendererText(textForRenderer(coreObject->renderer()));
-        g_string_append(str, rendererText.get());
-    }
-
-    return g_string_free(str, FALSE);
-}
-
 static int baselinePositionForRenderObject(RenderObject* renderObject)
 {
     // FIXME: This implementation of baselinePosition originates from RenderObject.cpp and was
@@ -586,14 +489,6 @@ static gchar* webkitAccessibleTextGetText(AtkText* text, gint startOffset, gint 
         ret = coreObject->stringValue();
         if (!ret)
             ret = coreObject->textUnderElement(AccessibilityTextUnderElementMode(AccessibilityTextUnderElementMode::TextUnderElementModeIncludeAllChildren));
-    }
-
-    if (!ret.length()) {
-        // This can happen at least with anonymous RenderBlocks (e.g. body text amongst paragraphs)
-        // In such instances, there may also be embedded objects. The object replacement character
-        // is something ATs want included and we have to account for the fact that it is multibyte.
-        GOwnPtr<char> objectText(textForObject(coreObject));
-        ret = String::fromUTF8(objectText.get());
     }
 
     // Prefix a item number/bullet if needed

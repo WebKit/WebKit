@@ -722,6 +722,9 @@ bool TextIterator::handleReplacedElement()
 
     if (m_emitsObjectReplacementCharacters && renderer && renderer->isReplaced()) {
         emitCharacter(objectReplacementCharacter, m_node->parentNode(), m_node, 0, 1);
+        // Don't process subtrees for embedded objects. If the text there is required,
+        // it must be explicitly asked by specifying a range falling inside its boundaries.
+        m_handledChildren = true;
         return true;
     }
 

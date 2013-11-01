@@ -652,13 +652,37 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
     if (m_renderer->isText() || mode.childrenInclusion == AccessibilityTextUnderElementMode::TextUnderElementModeIncludeAllChildren) {
         // If possible, use a text iterator to get the text, so that whitespace
         // is handled consistently.
-        if (Node* node = this->node()) {
-            if (Frame* frame = node->document().frame()) {
-                // catch stale WebCoreAXObject (see <rdar://problem/3960196>)
-                if (frame->document() != &node->document())
-                    return String();
+        Document* nodeDocument = 0;
+        RefPtr<Range> textRange;
+        if (Node* node = m_renderer->node()) {
+            nodeDocument = &node->document();
+            textRange = rangeOfContents(*node);
+        } else {
+            // For anonymous blocks, we work around not having a direct node to create a range from
+            // defining one based in the two external positions defining the boundaries of the subtree.
+            RenderObject* firstChildRenderer = m_renderer->firstChildSlow();
+            RenderObject* lastChildRenderer = m_renderer->lastChildSlow();
+            if (firstChildRenderer && lastChildRenderer) {
+                ASSERT(firstChildRenderer->node());
+                ASSERT(lastChildRenderer->node());
 
-                return plainText(rangeOfContents(*node).get(), textIteratorBehaviorForTextRange());
+                // We define the start and end positions for the range as the ones right before and after
+                // the first and the last nodes in the DOM tree that is wrapped inside the anonymous block.
+                Node* firstNodeInBlock = firstChildRenderer->node();
+                Position startPosition = positionInParentBeforeNode(firstNodeInBlock);
+                Position endPosition = positionInParentAfterNode(lastChildRenderer->node());
+
+                nodeDocument = &firstNodeInBlock->document();
+                textRange = Range::create(*nodeDocument, startPosition, endPosition);
+            }
+        }
+
+        if (nodeDocument && textRange) {
+            if (Frame* frame = nodeDocument->frame()) {
+                // catch stale WebCoreAXObject (see <rdar://problem/3960196>)
+                if (frame->document() != nodeDocument)
+                    return String();
+                return plainText(textRange.get(), textIteratorBehaviorForTextRange());
             }
         }
     
