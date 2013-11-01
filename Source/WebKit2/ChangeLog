@@ -1,3 +1,29 @@
+2013-11-01  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Vend layer contents via IOSurfaces
+        https://bugs.webkit.org/show_bug.cgi?id=123600
+
+        Reviewed by Anders Carlsson.
+
+        Address some review comments from Darin (and subsequently Anders).
+
+        * WebProcess/WebPage/mac/RemoteLayerBackingStore.h:
+        (WebKit::RemoteLayerBackingStore::surface):
+        No need for .get() here.
+
+        * WebProcess/WebPage/mac/RemoteLayerBackingStore.mm:
+        (RemoteLayerBackingStore::ensureBackingStore):
+        All on one line for readability.
+
+        (createIOSurfaceContext):
+        This 'if' is meaningless.
+
+        (createIOSurface):
+        No need for a RetainPtr here, the dictionary is autoreleased.
+
+        (RemoteLayerBackingStore::display):
+        Snuggle 'context' up next to the other declarations.
+
 2013-11-01  Anders Carlsson  <andersca@apple.com>
 
         Don't use the C API in WKRemoteObjectCoder

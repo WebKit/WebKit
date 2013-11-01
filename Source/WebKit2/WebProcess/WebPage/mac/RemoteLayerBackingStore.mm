@@ -57,10 +57,7 @@ RemoteLayerBackingStore::RemoteLayerBackingStore()
 
 void RemoteLayerBackingStore::ensureBackingStore(PlatformCALayerRemote* layer, IntSize size, float scale, bool acceleratesDrawing)
 {
-    if (m_layer == layer
-        && m_size == size
-        && m_scale == scale
-        && m_acceleratesDrawing == acceleratesDrawing)
+    if (m_layer == layer && m_size == size && m_scale == scale && m_acceleratesDrawing == acceleratesDrawing)
         return;
 
     m_layer = layer;
@@ -142,11 +139,7 @@ static RetainPtr<CGContextRef> createIOSurfaceContext(IOSurfaceRef surface, IntS
     CGBitmapInfo bitmapInfo = kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host;
     size_t bitsPerComponent = 8;
     size_t bitsPerPixel = 32;
-    RetainPtr<CGContextRef> ctx = adoptCF(CGIOSurfaceContextCreate(surface, size.width(), size.height(), bitsPerComponent, bitsPerPixel, colorSpace, bitmapInfo));
-    if (!ctx)
-        return nullptr;
-
-    return ctx;
+    return adoptCF(CGIOSurfaceContextCreate(surface, size.width(), size.height(), bitsPerComponent, bitsPerPixel, colorSpace, bitmapInfo));
 }
 
 static RetainPtr<IOSurfaceRef> createIOSurface(IntSize size)
@@ -162,7 +155,7 @@ static RetainPtr<IOSurfaceRef> createIOSurface(IntSize size)
     unsigned long allocSize = IOSurfaceAlignProperty(kIOSurfaceAllocSize, height * bytesPerRow);
     ASSERT(allocSize);
 
-    RetainPtr<NSDictionary> dict = @{
+    NSDictionary *dict = @{
         (id)kIOSurfaceWidth: @(width),
         (id)kIOSurfaceHeight: @(height),
         (id)kIOSurfacePixelFormat: @(pixelFormat),
@@ -171,7 +164,7 @@ static RetainPtr<IOSurfaceRef> createIOSurface(IntSize size)
         (id)kIOSurfaceAllocSize: @(allocSize)
     };
 
-    return adoptCF(IOSurfaceCreate((CFDictionaryRef)dict.get()));
+    return adoptCF(IOSurfaceCreate((CFDictionaryRef)dict));
 }
 
 RetainPtr<CGImageRef> RemoteLayerBackingStore::image() const
@@ -210,12 +203,11 @@ bool RemoteLayerBackingStore::display()
         m_dirtyRegion.unite(indicatorRect);
     }
 
-    std::unique_ptr<GraphicsContext> context;
-
     FloatSize scaledSize = m_size;
     scaledSize.scale(m_scale);
     IntSize expandedScaledSize = expandedIntSize(scaledSize);
 
+    std::unique_ptr<GraphicsContext> context;
     RefPtr<ShareableBitmap> backBuffer;
     RetainPtr<IOSurfaceRef> backSurface;
 

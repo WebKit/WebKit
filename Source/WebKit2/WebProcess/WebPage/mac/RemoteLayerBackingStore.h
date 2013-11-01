@@ -48,7 +48,7 @@ public:
     bool display();
 
     RetainPtr<CGImageRef> image() const;
-    RetainPtr<IOSurfaceRef> surface() const { return m_frontSurface.get(); }
+    RetainPtr<IOSurfaceRef> surface() const { return m_frontSurface; }
     WebCore::IntSize size() const { return m_size; }
     float scale() const { return m_scale; }
     bool acceleratesDrawing() const { return m_acceleratesDrawing; }
