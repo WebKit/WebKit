@@ -32,7 +32,6 @@
 #include "LineInfo.h"
 #include "LineLayoutState.h"
 #include "Logging.h"
-#include "RenderArena.h"
 #include "RenderBlockFlow.h"
 #include "RenderCombineText.h"
 #include "RenderCounter.h"

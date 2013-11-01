@@ -125,7 +125,6 @@ class PlatformMouseEvent;
 class ProcessingInstruction;
 class Range;
 class RegisteredEventListener;
-class RenderArena;
 class RenderView;
 class RenderFullScreen;
 class ScriptableDocumentParser;
@@ -549,7 +548,6 @@ public:
     virtual void suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) OVERRIDE;
     virtual void resumeActiveDOMObjects(ActiveDOMObject::ReasonForSuspension) OVERRIDE;
 
-    RenderArena* renderArena() { return m_renderArena.get(); }
     RenderView* renderView() const { return m_renderView; }
 
     bool renderTreeBeingDestroyed() const { return m_renderTreeBeingDestroyed; }
@@ -1373,8 +1371,6 @@ private:
     StringWithDirection m_rawTitle;
     bool m_titleSetExplicitly;
     RefPtr<Element> m_titleElement;
-
-    std::unique_ptr<RenderArena> m_renderArena;
 
     OwnPtr<AXObjectCache> m_axObjectCache;
     const OwnPtr<DocumentMarkerController> m_markers;

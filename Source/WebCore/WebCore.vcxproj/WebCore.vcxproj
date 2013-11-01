@@ -7159,7 +7159,6 @@
     <ClCompile Include="..\loader\cache\CachedTextTrack.cpp" />
     <ClCompile Include="..\loader\cache\CachedXSLStyleSheet.cpp" />
     <ClCompile Include="..\loader\cache\MemoryCache.cpp" />
-    <ClCompile Include="..\platform\Arena.cpp" />
     <ClCompile Include="..\platform\CalculationValue.cpp" />
     <ClCompile Include="..\platform\Clock.cpp" />
     <ClCompile Include="..\platform\ClockGeneric.cpp" />
@@ -9541,20 +9540,6 @@
     <ClCompile Include="..\rendering\LineWidth.cpp" />
     <ClCompile Include="..\rendering\OrderIterator.cpp" />
     <ClCompile Include="..\rendering\PointerEventsHitRules.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\rendering\RenderArena.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
@@ -18766,7 +18751,6 @@
     <ClInclude Include="..\loader\cache\CachedXSLStyleSheet.h" />
     <ClInclude Include="..\loader\cache\CachePolicy.h" />
     <ClInclude Include="..\loader\cache\MemoryCache.h" />
-    <ClInclude Include="..\platform\Arena.h" />
     <ClInclude Include="..\platform\CalculationValue.h" />
     <ClInclude Include="..\platform\Clock.h" />
     <ClInclude Include="..\platform\ClockGeneric.h" />
@@ -19590,7 +19574,6 @@
     <ClInclude Include="..\rendering\PaintInfo.h" />
     <ClInclude Include="..\rendering\PaintPhase.h" />
     <ClInclude Include="..\rendering\PointerEventsHitRules.h" />
-    <ClInclude Include="..\rendering\RenderArena.h" />
     <ClInclude Include="..\rendering\RenderBlock.h" />
     <ClInclude Include="..\rendering\RenderBox.h" />
     <ClInclude Include="..\rendering\RenderBoxModelObject.h" />

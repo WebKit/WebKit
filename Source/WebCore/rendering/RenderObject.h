@@ -287,8 +287,6 @@ public:
 #endif
 
 public:
-    RenderArena& renderArena() const { return *document().renderArena(); }
-
     bool isPseudoElement() const { return node() && node()->isPseudoElement(); }
 
     bool isRenderElement() const { return !isText(); }

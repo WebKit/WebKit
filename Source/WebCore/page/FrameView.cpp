@@ -57,7 +57,6 @@
 #include "MainFrame.h"
 #include "OverflowEvent.h"
 #include "ProgressTracker.h"
-#include "RenderArena.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderFullScreen.h"
 #include "RenderIFrame.h"

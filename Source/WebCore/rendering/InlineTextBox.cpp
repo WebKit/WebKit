@@ -36,7 +36,6 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderedDocumentMarker.h"
-#include "RenderArena.h"
 #include "RenderBlock.h"
 #include "RenderCombineText.h"
 #include "RenderLineBreak.h"

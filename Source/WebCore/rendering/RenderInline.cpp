@@ -29,7 +29,6 @@
 #include "HitTestResult.h"
 #include "InlineTextBox.h"
 #include "Page.h"
-#include "RenderArena.h"
 #include "RenderBlock.h"
 #include "RenderFlowThread.h"
 #include "RenderFullScreen.h"

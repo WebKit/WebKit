@@ -66,7 +66,6 @@
 #include "PluginView.h"
 #include "PointerLockController.h"
 #include "ProgressTracker.h"
-#include "RenderArena.h"
 #include "RenderLayerCompositor.h"
 #include "RenderTheme.h"
 #include "RenderView.h"

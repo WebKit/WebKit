@@ -4294,8 +4294,6 @@ webcore_sources += \
 	Source/WebCore/rendering/PointerEventsHitRules.cpp \
 	Source/WebCore/rendering/PointerEventsHitRules.h \
 	Source/WebCore/rendering/RegionOversetState.h \
-	Source/WebCore/rendering/RenderArena.cpp \
-	Source/WebCore/rendering/RenderArena.h \
 	Source/WebCore/rendering/RenderBlock.cpp \
 	Source/WebCore/rendering/RenderBlock.h \
     Source/WebCore/rendering/RenderBlockFlow.cpp \
@@ -5942,8 +5940,6 @@ platform_sources += \
 	Source/WebCore/platform/text/UnicodeRange.cpp \
 	Source/WebCore/platform/text/UnicodeRange.h \
 	Source/WebCore/platform/text/WritingMode.h \
-	Source/WebCore/platform/Arena.cpp \
-	Source/WebCore/platform/Arena.h \
 	Source/WebCore/platform/Clock.cpp \
 	Source/WebCore/platform/Clock.h \
 	Source/WebCore/platform/ClockGeneric.cpp \

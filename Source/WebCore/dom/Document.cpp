@@ -127,7 +127,6 @@
 #include "PopStateEvent.h"
 #include "ProcessingInstruction.h"
 #include "QualifiedName.h"
-#include "RenderArena.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "ResourceLoader.h"
@@ -581,8 +580,6 @@ Document::~Document()
     // if the DocumentParser outlives the Document it won't cause badness.
     ASSERT(!m_parser || m_parser->refCount() == 1);
     detachParser();
-
-    m_renderArena = nullptr;
 
     if (this == topDocument())
         clearAXObjectCache();
@@ -1943,9 +1940,6 @@ void Document::createRenderTree()
     ASSERT(!attached());
     ASSERT(!m_inPageCache);
     ASSERT(!m_axObjectCache || this != topDocument());
-    ASSERT(!m_renderArena);
-
-    m_renderArena = std::make_unique<RenderArena>();
 
     // FIXME: It would be better if we could pass the resolved document style directly here.
     setRenderView(new RenderView(*this, RenderStyle::create()));
@@ -2052,8 +2046,6 @@ void Document::destroyRenderTree()
     // Do this before the arena is cleared, which is needed to deref the RenderStyle on TextAutoSizingKey.
     m_textAutoSizedNodes.clear();
 #endif
-
-    m_renderArena = nullptr;
 }
 
 void Document::prepareForDestruction()
@@ -3957,7 +3949,6 @@ void Document::setInPageCache(bool flag)
         m_styleRecalcTimer.stop();
     } else {
         ASSERT(!renderView() || renderView() == m_savedRenderView);
-        ASSERT(m_renderArena);
         setRenderView(m_savedRenderView);
         m_savedRenderView = nullptr;
 

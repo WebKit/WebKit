@@ -78,7 +78,6 @@
 #include "OverlapTestRequestClient.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
-#include "RenderArena.h"
 #include "RenderFlowThread.h"
 #include "RenderGeometryMap.h"
 #include "RenderInline.h"

@@ -32,7 +32,6 @@
 #include "LogicalSelectionOffsetCaches.h"
 #include "Page.h"
 #include "PaintInfo.h"
-#include "RenderArena.h"
 #include "RenderFlowThread.h"
 #include "RenderView.h"
 #include "VerticalPositionCache.h"

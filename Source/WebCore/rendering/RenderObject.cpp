@@ -45,7 +45,6 @@
 #include "LogicalSelectionOffsetCaches.h"
 #include "Page.h"
 #include "PseudoElement.h"
-#include "RenderArena.h"
 #include "RenderCounter.h"
 #include "RenderFlowThread.h"
 #include "RenderGeometryMap.h"

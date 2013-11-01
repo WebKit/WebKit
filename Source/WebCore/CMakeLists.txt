@@ -1753,7 +1753,6 @@ set(WebCore_SOURCES
     page/scrolling/coordinatedgraphics/ScrollingStateNodeCoordinatedGraphics.cpp
     page/scrolling/coordinatedgraphics/ScrollingStateScrollingNodeCoordinatedGraphics.cpp
 
-    platform/Arena.cpp
     platform/CalculationValue.cpp
     platform/Clock.cpp
     platform/ClockGeneric.cpp
@@ -2086,7 +2085,6 @@ set(WebCore_SOURCES
     rendering/LineWidth.cpp
     rendering/OrderIterator.cpp
     rendering/PointerEventsHitRules.cpp
-    rendering/RenderArena.cpp
     rendering/RenderBlock.cpp
     rendering/RenderBlockFlow.cpp
     rendering/RenderBlockLineLayout.cpp

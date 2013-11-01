@@ -1011,9 +1011,6 @@
     <ClCompile Include="..\loader\cache\MemoryCache.cpp">
       <Filter>loader\cache</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\Arena.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\CalculationValue.cpp">
       <Filter>platform</Filter>
     </ClCompile>
@@ -2410,9 +2407,6 @@
       <Filter>rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\PointerEventsHitRules.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rendering\RenderArena.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\RenderBlock.cpp">
@@ -7918,9 +7912,6 @@
     <ClInclude Include="..\loader\cache\MemoryCache.h">
       <Filter>loader\cache</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\Arena.h">
-      <Filter>platform</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\CalculationValue.h">
       <Filter>platform</Filter>
     </ClInclude>
@@ -9293,9 +9284,6 @@
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\PointerEventsHitRules.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\RenderArena.h">
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\RenderBlock.h">

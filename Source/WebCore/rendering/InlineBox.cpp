@@ -26,7 +26,6 @@
 #include "InlineFlowBox.h"
 #include "Page.h"
 #include "PaintInfo.h"
-#include "RenderArena.h"
 #include "RenderBlockFlow.h"
 #include "RenderLineBreak.h"
 #include "RootInlineBox.h"

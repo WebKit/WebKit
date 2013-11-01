@@ -33,7 +33,6 @@
 #include "Hyphenation.h"
 #include "InlineTextBox.h"
 #include "Range.h"
-#include "RenderArena.h"
 #include "RenderBlock.h"
 #include "RenderCombineText.h"
 #include "RenderLayer.h"

@@ -32,7 +32,6 @@
 #include "HitTestResult.h"
 #include "InlineTextBox.h"
 #include "PaintInfo.h"
-#include "RenderArena.h"
 #include "RenderBlockFlow.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"

@@ -30,7 +30,6 @@
 #include "FontSelector.h"
 #include "Pagination.h"
 #include "QuotesData.h"
-#include "RenderArena.h"
 #include "RenderObject.h"
 #include "ScaleTransformOperation.h"
 #include "ShadowData.h"

@@ -57,7 +57,6 @@ class Icon;
 class KeyboardEvent;
 class MouseEvent;
 class Node;
-class RenderArena;
 class RenderStyle;
 class TouchEvent;
 class TextControlInnerTextElement;

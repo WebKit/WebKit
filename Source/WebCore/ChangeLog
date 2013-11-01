@@ -1,3 +1,12 @@
+2013-11-01  Andreas Kling  <akling@apple.com>
+
+        Kill RenderArena.
+        <https://webkit.org/b/123634>
+
+        There are no remaining users of the RenderArena allocator.
+
+        Reviewed by Geoffrey Garen.
+
 2013-11-01  James Craig  <jcraig@apple.com>
 
         AX: Regression: media controls are no longer accessible
