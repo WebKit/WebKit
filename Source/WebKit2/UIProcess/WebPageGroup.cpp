@@ -66,7 +66,7 @@ WebPageGroup::WebPageGroup(const String& identifier, bool visibleToInjectedBundl
 {
     m_data.pageGroupID = generatePageGroupID();
 
-    if (!identifier.isNull())
+    if (!identifier.isEmpty())
         m_data.identifer = identifier;
     else
         m_data.identifer = m_data.identifer = makeString("__uniquePageGroupID-", String::number(m_data.pageGroupID));

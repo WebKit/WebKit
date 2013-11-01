@@ -1,3 +1,17 @@
+2013-11-01  Benjamin Poulain  <benjamin@webkit.org>
+
+        [WK2] Create a unique identifier for WebPageGroup if the input name is empty
+        https://bugs.webkit.org/show_bug.cgi?id=123606
+
+        Reviewed by Andreas Kling.
+
+        Strengthen the "public" API of page group.
+        If someone uses WKBrowsingContextGroup with a nil or empty string, the related WKString
+        would be empty, and all the WKBrowsingContextGroup end up with the same identifier.
+
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::WebPageGroup):
+
 2013-11-01  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Avoid some double-wrapping of strings and URLs
