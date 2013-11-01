@@ -42,8 +42,7 @@
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GlibUtilities.h>
 
-#if OS(LINUX)
-#include <sys/prctl.h>
+#if OS(UNIX)
 #include <sys/socket.h>
 #endif
 
