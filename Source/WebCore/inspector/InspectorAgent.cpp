@@ -42,7 +42,6 @@
 #include "InspectorController.h"
 #include "InspectorFrontend.h"
 #include "InspectorInstrumentation.h"
-#include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "MainFrame.h"
@@ -58,8 +57,8 @@
 
 namespace WebCore {
 
-InspectorAgent::InspectorAgent(Page* page, InjectedScriptManager* injectedScriptManager, InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state)
-    : InspectorBaseAgent<InspectorAgent>("Inspector", instrumentingAgents, state)
+InspectorAgent::InspectorAgent(Page* page, InjectedScriptManager* injectedScriptManager, InstrumentingAgents* instrumentingAgents)
+    : InspectorBaseAgent<InspectorAgent>("Inspector", instrumentingAgents)
     , m_inspectedPage(page)
     , m_frontend(0)
     , m_injectedScriptManager(injectedScriptManager)

@@ -64,7 +64,6 @@ class InspectorOverlay;
 class InspectorPageAgent;
 class HitTestResult;
 class HTMLElement;
-class InspectorState;
 class InstrumentingAgents;
 class NameNodeMap;
 class Node;
@@ -104,9 +103,9 @@ public:
         virtual void didModifyDOMAttr(Element*) = 0;
     };
 
-    static PassOwnPtr<InspectorDOMAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorCompositeState* inspectorState, InjectedScriptManager* injectedScriptManager, InspectorOverlay* overlay, InspectorClient* client)
+    static PassOwnPtr<InspectorDOMAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InjectedScriptManager* injectedScriptManager, InspectorOverlay* overlay, InspectorClient* client)
     {
-        return adoptPtr(new InspectorDOMAgent(instrumentingAgents, pageAgent, inspectorState, injectedScriptManager, overlay, client));
+        return adoptPtr(new InspectorDOMAgent(instrumentingAgents, pageAgent, injectedScriptManager, overlay, client));
     }
 
     static String toErrorString(const ExceptionCode&);
@@ -211,7 +210,7 @@ public:
     InspectorPageAgent* pageAgent() { return m_pageAgent; }
 
 private:
-    InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorCompositeState*, InjectedScriptManager*, InspectorOverlay*, InspectorClient*);
+    InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, InjectedScriptManager*, InspectorOverlay*, InspectorClient*);
 
     void setSearchingForNode(ErrorString*, bool enabled, InspectorObject* highlightConfig);
     PassOwnPtr<HighlightConfig> highlightConfigFromInspectorObject(ErrorString*, InspectorObject* highlightInspectorObject);

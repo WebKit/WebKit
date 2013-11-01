@@ -41,7 +41,6 @@
 #include "Frame.h"
 #include "InspectorFrontend.h"
 #include "InspectorPageAgent.h"
-#include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "Page.h"
@@ -56,8 +55,8 @@
 
 namespace WebCore {
 
-InspectorDOMStorageAgent::InspectorDOMStorageAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorCompositeState* state)
-    : InspectorBaseAgent<InspectorDOMStorageAgent>("DOMStorage", instrumentingAgents, state)
+InspectorDOMStorageAgent::InspectorDOMStorageAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent)
+    : InspectorBaseAgent<InspectorDOMStorageAgent>("DOMStorage", instrumentingAgents)
     , m_pageAgent(pageAgent)
     , m_frontend(0)
     , m_enabled(false)

@@ -37,7 +37,7 @@
 #include "ExceptionCodePlaceholder.h"
 #include "InspectorDatabaseResource.h"
 #include "InspectorFrontend.h"
-#include "InspectorState.h"
+
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "SQLError.h"
@@ -210,8 +210,8 @@ void InspectorDatabaseAgent::clearResources()
     m_resources.clear();
 }
 
-InspectorDatabaseAgent::InspectorDatabaseAgent(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state)
-    : InspectorBaseAgent<InspectorDatabaseAgent>("Database", instrumentingAgents, state)
+InspectorDatabaseAgent::InspectorDatabaseAgent(InstrumentingAgents* instrumentingAgents)
+    : InspectorBaseAgent<InspectorDatabaseAgent>("Database", instrumentingAgents)
     , m_enabled(false)
 {
     m_instrumentingAgents->setInspectorDatabaseAgent(this);

@@ -34,13 +34,10 @@
 
 #include "InspectorBaseAgent.h"
 
-#include "InspectorState.h"
-
 namespace WebCore {
 
-InspectorBaseAgentInterface::InspectorBaseAgentInterface(const String& name, InstrumentingAgents* instrumentingAgents, InspectorCompositeState* inspectorState)
+InspectorBaseAgentInterface::InspectorBaseAgentInterface(const String& name, InstrumentingAgents* instrumentingAgents)
     : m_instrumentingAgents(instrumentingAgents)
-    , m_state(inspectorState->createAgentState(name))
     , m_name(name)
 {
 }

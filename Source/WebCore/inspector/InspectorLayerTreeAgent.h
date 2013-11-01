@@ -42,16 +42,15 @@
 
 namespace WebCore {
 
-class InspectorState;
 class InstrumentingAgents;
 
 typedef String ErrorString;
 
 class InspectorLayerTreeAgent : public InspectorBaseAgent<InspectorLayerTreeAgent>, public InspectorBackendDispatcher::LayerTreeCommandHandler {
 public:
-    static PassOwnPtr<InspectorLayerTreeAgent> create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state)
+    static PassOwnPtr<InspectorLayerTreeAgent> create(InstrumentingAgents* instrumentingAgents)
     {
-        return adoptPtr(new InspectorLayerTreeAgent(instrumentingAgents, state));
+        return adoptPtr(new InspectorLayerTreeAgent(instrumentingAgents));
     }
     ~InspectorLayerTreeAgent();
 
@@ -70,7 +69,7 @@ public:
     virtual void reasonsForCompositingLayer(ErrorString*, const String& layerId, RefPtr<TypeBuilder::LayerTree::CompositingReasons>&);
 
 private:
-    InspectorLayerTreeAgent(InstrumentingAgents*, InspectorCompositeState*);
+    InspectorLayerTreeAgent(InstrumentingAgents*);
 
     // RenderLayer-related methods.
     String bind(const RenderLayer*);

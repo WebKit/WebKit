@@ -36,7 +36,6 @@
 
 #include "InspectorFrontend.h"
 #include "InspectorFrontendChannel.h"
-#include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "URL.h"
@@ -102,13 +101,13 @@ private:
 
 int InspectorWorkerAgent::WorkerFrontendChannel::s_nextId = 1;
 
-PassOwnPtr<InspectorWorkerAgent> InspectorWorkerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* inspectorState)
+PassOwnPtr<InspectorWorkerAgent> InspectorWorkerAgent::create(InstrumentingAgents* instrumentingAgents)
 {
-    return adoptPtr(new InspectorWorkerAgent(instrumentingAgents, inspectorState));
+    return adoptPtr(new InspectorWorkerAgent(instrumentingAgents));
 }
 
-InspectorWorkerAgent::InspectorWorkerAgent(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* inspectorState)
-    : InspectorBaseAgent<InspectorWorkerAgent>("Worker", instrumentingAgents, inspectorState)
+InspectorWorkerAgent::InspectorWorkerAgent(InstrumentingAgents* instrumentingAgents)
+    : InspectorBaseAgent<InspectorWorkerAgent>("Worker", instrumentingAgents)
     , m_inspectorFrontend(0)
     , m_enabled(false)
     , m_shouldPauseDedicatedWorkerOnStart(false)

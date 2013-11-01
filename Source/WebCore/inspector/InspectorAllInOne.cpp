@@ -65,7 +65,6 @@
 #include "InspectorProfilerAgent.cpp"
 #include "InspectorResourceAgent.cpp"
 #include "InspectorRuntimeAgent.cpp"
-#include "InspectorState.cpp"
 #include "InspectorStyleSheet.cpp"
 #include "InspectorStyleTextEditor.cpp"
 #include "InspectorTimelineAgent.cpp"

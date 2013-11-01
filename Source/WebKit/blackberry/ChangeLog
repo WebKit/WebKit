@@ -1,3 +1,13 @@
+2013-10-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove InspectorState
+        https://bugs.webkit.org/show_bug.cgi?id=123547
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCoreSupport/InspectorClientBlackBerry.cpp:
+        * WebCoreSupport/InspectorClientBlackBerry.h:
+
 2013-10-17  Jacky Jiang  <zhajiang@blackberry.com>
 
         [BlackBerry] Improve the viewport of some websites like mobilesyrup.com/2013/08/25/moto-x-review/

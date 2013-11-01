@@ -41,7 +41,6 @@
 namespace WebCore {
 
 class InspectorDOMStorageAgent;
-class InspectorState;
 class InstrumentingAgents;
 
 typedef String ErrorString;
@@ -51,7 +50,7 @@ class InspectorMemoryAgent : public InspectorBaseAgent<InspectorMemoryAgent>, pu
 public:
     typedef Vector<OwnPtr<InspectorBaseAgentInterface>> InspectorAgents;
 
-    static PassOwnPtr<InspectorMemoryAgent> create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state);
+    static PassOwnPtr<InspectorMemoryAgent> create(InstrumentingAgents* instrumentingAgents);
     virtual ~InspectorMemoryAgent();
 
     virtual void getDOMCounters(ErrorString*, int* documents, int* nodes, int* jsEventListeners);
@@ -60,7 +59,7 @@ public:
     virtual void clearFrontend();
 
 private:
-    InspectorMemoryAgent(InstrumentingAgents*, InspectorCompositeState*);
+    InspectorMemoryAgent(InstrumentingAgents*);
 
     InspectorFrontend::Memory* m_frontend;
 };

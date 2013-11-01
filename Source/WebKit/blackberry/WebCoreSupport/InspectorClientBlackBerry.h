@@ -59,8 +59,6 @@ public:
     virtual void overrideDeviceMetrics(int, int, float, bool);
     virtual bool supportsFrameInstrumentation();
 
-    virtual void updateInspectorStateCookie(const String&);
-
 private:
     BlackBerry::WebKit::WebPagePrivate* m_webPagePrivate;
     typedef HashMap<String, String> SettingsMap;

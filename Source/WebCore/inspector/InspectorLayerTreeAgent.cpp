@@ -38,7 +38,6 @@
 #include "IdentifiersFactory.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorFrontend.h"
-#include "InspectorState.h"
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
 #include "PseudoElement.h"
@@ -49,8 +48,8 @@
 
 namespace WebCore {
 
-InspectorLayerTreeAgent::InspectorLayerTreeAgent(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state)
-    : InspectorBaseAgent<InspectorLayerTreeAgent>("LayerTree", instrumentingAgents, state)
+InspectorLayerTreeAgent::InspectorLayerTreeAgent(InstrumentingAgents* instrumentingAgents)
+    : InspectorBaseAgent<InspectorLayerTreeAgent>("LayerTree", instrumentingAgents)
     , m_frontend(0)
 {
 }

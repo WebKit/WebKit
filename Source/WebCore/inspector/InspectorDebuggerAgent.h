@@ -52,7 +52,6 @@ class InjectedScriptManager;
 class InspectorFrontend;
 class InspectorArray;
 class InspectorObject;
-class InspectorState;
 class InspectorValue;
 class InstrumentingAgents;
 class ScriptDebugServer;
@@ -130,7 +129,7 @@ public:
     virtual ScriptDebugServer& scriptDebugServer() = 0;
 
 protected:
-    InspectorDebuggerAgent(InstrumentingAgents*, InspectorCompositeState*, InjectedScriptManager*);
+    InspectorDebuggerAgent(InstrumentingAgents*, InjectedScriptManager*);
 
     virtual void startListeningScriptDebugServer() = 0;
     virtual void stopListeningScriptDebugServer() = 0;

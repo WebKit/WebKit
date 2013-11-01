@@ -48,7 +48,6 @@ class Frame;
 class InjectedScriptCanvasModule;
 class InjectedScriptManager;
 class InspectorPageAgent;
-class InspectorState;
 class InstrumentingAgents;
 class ScriptObject;
 
@@ -56,9 +55,9 @@ typedef String ErrorString;
 
 class InspectorCanvasAgent : public InspectorBaseAgent<InspectorCanvasAgent>, public InspectorBackendDispatcher::CanvasCommandHandler {
 public:
-    static PassOwnPtr<InspectorCanvasAgent> create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state, InspectorPageAgent* pageAgent, InjectedScriptManager* injectedScriptManager)
+    static PassOwnPtr<InspectorCanvasAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InjectedScriptManager* injectedScriptManager)
     {
-        return adoptPtr(new InspectorCanvasAgent(instrumentingAgents, state, pageAgent, injectedScriptManager));
+        return adoptPtr(new InspectorCanvasAgent(instrumentingAgents, pageAgent, injectedScriptManager));
     }
     ~InspectorCanvasAgent();
 
@@ -89,7 +88,7 @@ public:
     virtual void getResourceState(ErrorString*, const TypeBuilder::Canvas::TraceLogId&, const TypeBuilder::Canvas::ResourceId&, RefPtr<TypeBuilder::Canvas::ResourceState>&);
 
 private:
-    InspectorCanvasAgent(InstrumentingAgents*, InspectorCompositeState*, InspectorPageAgent*, InjectedScriptManager*);
+    InspectorCanvasAgent(InstrumentingAgents*, InspectorPageAgent*, InjectedScriptManager*);
 
     InjectedScriptCanvasModule injectedScriptCanvasModule(ErrorString*, JSC::ExecState*);
     InjectedScriptCanvasModule injectedScriptCanvasModule(ErrorString*, const ScriptObject&);

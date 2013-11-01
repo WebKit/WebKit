@@ -103,12 +103,6 @@ bool InspectorClientBlackBerry::supportsFrameInstrumentation()
     return true;
 }
 
-void InspectorClientBlackBerry::updateInspectorStateCookie(const String&)
-{
-    // If this is implemented, we should override and return true in InspectorStateClient::supportsInspectorStateUpdates().
-    notImplemented();
-};
-
 void InspectorClientBlackBerry::paintInspectorOverlay(GraphicsContext& gc)
 {
     InspectorController* inspectorController = m_webPagePrivate->m_page->inspectorController();

@@ -43,7 +43,6 @@
 #include "HTMLStyleElement.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorHistory.h"
-#include "InspectorState.h"
 #include "InspectorTypeBuilder.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
@@ -616,8 +615,8 @@ CSSStyleRule* InspectorCSSAgent::asCSSStyleRule(CSSRule* rule)
     return static_cast<CSSStyleRule*>(rule);
 }
 
-InspectorCSSAgent::InspectorCSSAgent(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state, InspectorDOMAgent* domAgent)
-    : InspectorBaseAgent<InspectorCSSAgent>("CSS", instrumentingAgents, state)
+InspectorCSSAgent::InspectorCSSAgent(InstrumentingAgents* instrumentingAgents, InspectorDOMAgent* domAgent)
+    : InspectorBaseAgent<InspectorCSSAgent>("CSS", instrumentingAgents)
     , m_frontend(0)
     , m_domAgent(domAgent)
     , m_lastStyleSheetId(1)

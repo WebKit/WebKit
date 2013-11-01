@@ -51,8 +51,8 @@
 
 namespace WebCore {
 
-InspectorInputAgent::InspectorInputAgent(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* inspectorState, Page* page)
-    : InspectorBaseAgent<InspectorInputAgent>("Input", instrumentingAgents, inspectorState)
+InspectorInputAgent::InspectorInputAgent(InstrumentingAgents* instrumentingAgents, Page* page)
+    : InspectorBaseAgent<InspectorInputAgent>("Input", instrumentingAgents)
     , m_page(page)
 {
 }

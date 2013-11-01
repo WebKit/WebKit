@@ -58,7 +58,6 @@ class InspectorClient;
 class InspectorFrontend;
 class InspectorObject;
 class InspectorPageAgent;
-class InspectorState;
 class InstrumentingAgents;
 class URL;
 class NetworkResourcesData;
@@ -80,15 +79,15 @@ typedef String ErrorString;
 
 class InspectorResourceAgent : public InspectorBaseAgent<InspectorResourceAgent>, public InspectorBackendDispatcher::NetworkCommandHandler {
 public:
-    static PassOwnPtr<InspectorResourceAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client, InspectorCompositeState* state)
+    static PassOwnPtr<InspectorResourceAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client)
     {
-        return adoptPtr(new InspectorResourceAgent(instrumentingAgents, pageAgent, client, state));
+        return adoptPtr(new InspectorResourceAgent(instrumentingAgents, pageAgent, client));
     }
 
     virtual void setFrontend(InspectorFrontend*);
     virtual void clearFrontend();
 
-    static PassRefPtr<InspectorResourceAgent> restore(Page*, InspectorCompositeState*, InspectorFrontend*);
+    static PassRefPtr<InspectorResourceAgent> restore(Page*, InspectorFrontend*);
 
     ~InspectorResourceAgent();
 
@@ -151,7 +150,7 @@ public:
     virtual void setCacheDisabled(ErrorString*, bool cacheDisabled);
 
 private:
-    InspectorResourceAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorClient*, InspectorCompositeState*);
+    InspectorResourceAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorClient*);
 
     void enable();
 

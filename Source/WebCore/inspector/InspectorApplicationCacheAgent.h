@@ -42,7 +42,6 @@ class InspectorFrontend;
 class InspectorObject;
 class InspectorPageAgent;
 class InspectorValue;
-class InspectorState;
 class InstrumentingAgents;
 class Page;
 class ResourceResponse;
@@ -52,9 +51,9 @@ typedef String ErrorString;
 class InspectorApplicationCacheAgent : public InspectorBaseAgent<InspectorApplicationCacheAgent>, public InspectorBackendDispatcher::ApplicationCacheCommandHandler {
     WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<InspectorApplicationCacheAgent> create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state, InspectorPageAgent* pageAgent)
+    static PassOwnPtr<InspectorApplicationCacheAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent)
     {
-        return adoptPtr(new InspectorApplicationCacheAgent(instrumentingAgents, state, pageAgent));
+        return adoptPtr(new InspectorApplicationCacheAgent(instrumentingAgents, pageAgent));
     }
     ~InspectorApplicationCacheAgent() { }
 
@@ -73,7 +72,7 @@ public:
     virtual void getApplicationCacheForFrame(ErrorString*, const String& frameId, RefPtr<TypeBuilder::ApplicationCache::ApplicationCache>&);
 
 private:
-    InspectorApplicationCacheAgent(InstrumentingAgents*, InspectorCompositeState*, InspectorPageAgent*);
+    InspectorApplicationCacheAgent(InstrumentingAgents*, InspectorPageAgent*);
     PassRefPtr<TypeBuilder::ApplicationCache::ApplicationCache> buildObjectForApplicationCache(const ApplicationCacheHost::ResourceInfoList&, const ApplicationCacheHost::CacheInfo&);
     PassRefPtr<TypeBuilder::Array<TypeBuilder::ApplicationCache::ApplicationCacheResource>> buildArrayForApplicationCacheResources(const ApplicationCacheHost::ResourceInfoList&);
     PassRefPtr<TypeBuilder::ApplicationCache::ApplicationCacheResource> buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo&);

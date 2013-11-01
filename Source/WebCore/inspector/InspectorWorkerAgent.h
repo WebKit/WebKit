@@ -40,7 +40,6 @@
 namespace WebCore {
 class InspectorFrontend;
 class InspectorObject;
-class InspectorState;
 class InstrumentingAgents;
 class URL;
 class WorkerGlobalScopeProxy;
@@ -49,7 +48,7 @@ typedef String ErrorString;
 
 class InspectorWorkerAgent : public InspectorBaseAgent<InspectorWorkerAgent>, public InspectorBackendDispatcher::WorkerCommandHandler {
 public:
-    static PassOwnPtr<InspectorWorkerAgent> create(InstrumentingAgents*, InspectorCompositeState*);
+    static PassOwnPtr<InspectorWorkerAgent> create(InstrumentingAgents*);
     ~InspectorWorkerAgent();
 
     virtual void setFrontend(InspectorFrontend*);
@@ -70,7 +69,7 @@ public:
     virtual void setAutoconnectToWorkers(ErrorString*, bool value);
 
 private:
-    InspectorWorkerAgent(InstrumentingAgents*, InspectorCompositeState*);
+    InspectorWorkerAgent(InstrumentingAgents*);
     void createWorkerFrontendChannelsForExistingWorkers();
     void createWorkerFrontendChannel(WorkerGlobalScopeProxy*, const String& url);
     void destroyWorkerFrontendChannels();

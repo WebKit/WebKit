@@ -48,7 +48,6 @@ class InspectorDOMAgent;
 class InspectorDebuggerAgent;
 class InspectorFrontend;
 class InspectorObject;
-class InspectorState;
 class InstrumentingAgents;
 class Node;
 
@@ -57,7 +56,7 @@ typedef String ErrorString;
 class InspectorDOMDebuggerAgent : public InspectorBaseAgent<InspectorDOMDebuggerAgent>, public InspectorDebuggerAgent::Listener, public InspectorBackendDispatcher::DOMDebuggerCommandHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDOMDebuggerAgent);
 public:
-    static PassOwnPtr<InspectorDOMDebuggerAgent> create(InstrumentingAgents*, InspectorCompositeState*, InspectorDOMAgent*, InspectorDebuggerAgent*, InspectorAgent*);
+    static PassOwnPtr<InspectorDOMDebuggerAgent> create(InstrumentingAgents*, InspectorDOMAgent*, InspectorDebuggerAgent*, InspectorAgent*);
 
     virtual ~InspectorDOMDebuggerAgent();
 
@@ -85,7 +84,7 @@ public:
     virtual void discardAgent();
 
 private:
-    InspectorDOMDebuggerAgent(InstrumentingAgents*, InspectorCompositeState*, InspectorDOMAgent*, InspectorDebuggerAgent*, InspectorAgent*);
+    InspectorDOMDebuggerAgent(InstrumentingAgents*, InspectorDOMAgent*, InspectorDebuggerAgent*, InspectorAgent*);
 
     // InspectorDebuggerAgent::Listener implementation.
     virtual void debuggerWasEnabled();

@@ -87,7 +87,6 @@ public:
     virtual void postConsoleMessageToWorkerObject(MessageSource, MessageLevel, const String& message, int lineNumber, int columnNumber, const String& sourceURL);
 #if ENABLE(INSPECTOR)
     virtual void postMessageToPageInspector(const String&);
-    virtual void updateInspectorStateCookie(const String&);
 #endif
     virtual void workerGlobalScopeClosed();
     virtual void workerGlobalScopeDestroyed();
@@ -204,11 +203,6 @@ void SharedWorkerProxy::postConsoleMessageToWorkerObject(MessageSource source, M
 
 #if ENABLE(INSPECTOR)
 void SharedWorkerProxy::postMessageToPageInspector(const String&)
-{
-    notImplemented();
-}
-
-void SharedWorkerProxy::updateInspectorStateCookie(const String&)
 {
     notImplemented();
 }

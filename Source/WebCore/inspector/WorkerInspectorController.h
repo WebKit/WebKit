@@ -48,8 +48,6 @@ class InspectorFrontend;
 class InspectorFrontendChannel;
 class InspectorInstrumentation;
 class InspectorRuntimeAgent;
-class InspectorState;
-class InspectorStateClient;
 class InstrumentingAgents;
 class WorkerGlobalScope;
 
@@ -72,8 +70,6 @@ private:
     friend InstrumentingAgents* instrumentationForWorkerGlobalScope(WorkerGlobalScope*);
 
     WorkerGlobalScope* m_workerGlobalScope;
-    OwnPtr<InspectorStateClient> m_stateClient;
-    OwnPtr<InspectorCompositeState> m_state;
     RefPtr<InstrumentingAgents> m_instrumentingAgents;
     OwnPtr<InjectedScriptManager> m_injectedScriptManager;
     InspectorRuntimeAgent* m_runtimeAgent;

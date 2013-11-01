@@ -48,7 +48,6 @@
 #include "InspectorClient.h"
 #include "InspectorFrontend.h"
 #include "InspectorPageAgent.h"
-#include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "URL.h"
@@ -647,8 +646,8 @@ void InspectorResourceAgent::mainFrameNavigated(DocumentLoader* loader)
     m_resourcesData->clear(m_pageAgent->loaderId(loader));
 }
 
-InspectorResourceAgent::InspectorResourceAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client, InspectorCompositeState* state)
-    : InspectorBaseAgent<InspectorResourceAgent>("Network", instrumentingAgents, state)
+InspectorResourceAgent::InspectorResourceAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client)
+    : InspectorBaseAgent<InspectorResourceAgent>("Network", instrumentingAgents)
     , m_pageAgent(pageAgent)
     , m_client(client)
     , m_frontend(0)
