@@ -1,3 +1,12 @@
+2013-11-01  Andy Estes  <aestes@apple.com>
+
+        [iOS] Make some headers Private
+        https://bugs.webkit.org/show_bug.cgi?id=123626
+
+        Reviewed by Andreas Kling.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2013-11-01  Afonso R. Costa Jr.  <afonso.costa@samsung.com>
 
         Expose setApplicationCacheOriginQuota via window.internals
