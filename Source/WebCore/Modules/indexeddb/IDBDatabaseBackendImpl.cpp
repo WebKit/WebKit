@@ -407,7 +407,7 @@ void IDBDatabaseBackendImpl::processPendingCalls()
     if (!m_pendingDeleteCalls.isEmpty() && isDeleteDatabaseBlocked())
         return;
     while (!m_pendingDeleteCalls.isEmpty()) {
-        OwnPtr<PendingDeleteCall> pendingDeleteCall = m_pendingDeleteCalls.takeFirst();
+        OwnPtr<IDBPendingDeleteCall> pendingDeleteCall = m_pendingDeleteCalls.takeFirst();
         deleteDatabaseFinal(pendingDeleteCall->callbacks());
     }
     // deleteDatabaseFinal should never re-queue calls.
@@ -549,7 +549,7 @@ void IDBDatabaseBackendImpl::deleteDatabase(PassRefPtr<IDBCallbacks> prpCallback
         // VersionChangeEvents are received, not just set up to fire.
         // https://bugs.webkit.org/show_bug.cgi?id=71130
         callbacks->onBlocked(m_metadata.version);
-        m_pendingDeleteCalls.append(PendingDeleteCall::create(callbacks.release()));
+        m_pendingDeleteCalls.append(IDBPendingDeleteCall::create(callbacks.release()));
         return;
     }
     deleteDatabaseFinal(callbacks.release());

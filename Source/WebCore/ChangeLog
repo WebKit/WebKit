@@ -1,3 +1,23 @@
+2013-10-31  Brady Eidson  <beidson@apple.com>
+
+        Split PendingDeleteCall into its own header
+        https://bugs.webkit.org/show_bug.cgi?id=123597
+
+        Reviewed by Beth “Okay I guess so, bro” Dakin.
+
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::processPendingCalls):
+        (WebCore::IDBDatabaseBackendImpl::deleteDatabase):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h:
+
+        * Modules/indexeddb/IDBPendingDeleteCall.h: Added.
+        (WebCore::IDBPendingDeleteCall::create):
+        (WebCore::IDBPendingDeleteCall::callbacks):
+        (WebCore::IDBPendingDeleteCall::IDBPendingDeleteCall):
+
 2013-10-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Convert some InspectorObject member variables to HashSet/HashMap

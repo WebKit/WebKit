@@ -1833,6 +1833,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/IDBOpenDBRequest.cpp \
 	Source/WebCore/Modules/indexeddb/IDBOpenDBRequest.h \
 	Source/WebCore/Modules/indexeddb/IDBOperation.h \
+	Source/WebCore/Modules/indexeddb/IDBPendingDeleteCall.h \
 	Source/WebCore/Modules/indexeddb/IDBPendingOpenCall.h \
 	Source/WebCore/Modules/indexeddb/IDBPendingTransactionMonitor.cpp \
 	Source/WebCore/Modules/indexeddb/IDBPendingTransactionMonitor.h \

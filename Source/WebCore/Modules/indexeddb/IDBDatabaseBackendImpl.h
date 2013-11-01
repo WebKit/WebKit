@@ -28,6 +28,7 @@
 
 #include "IDBDatabaseBackendInterface.h"
 #include "IDBMetadata.h"
+#include "IDBPendingDeleteCall.h"
 #include <stdint.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
@@ -128,23 +129,7 @@ private:
     Deque<OwnPtr<IDBPendingOpenCall>> m_pendingOpenCalls;
     OwnPtr<IDBPendingOpenCall> m_pendingSecondHalfOpen;
 
-    class PendingDeleteCall {
-    public:
-        static PassOwnPtr<PendingDeleteCall> create(PassRefPtr<IDBCallbacks> callbacks)
-        {
-            return adoptPtr(new PendingDeleteCall(callbacks));
-        }
-        IDBCallbacks* callbacks() { return m_callbacks.get(); }
-
-    private:
-        PendingDeleteCall(PassRefPtr<IDBCallbacks> callbacks)
-            : m_callbacks(callbacks)
-        {
-        }
-        RefPtr<IDBCallbacks> m_callbacks;
-    };
-
-    Deque<OwnPtr<PendingDeleteCall>> m_pendingDeleteCalls;
+    Deque<OwnPtr<IDBPendingDeleteCall>> m_pendingDeleteCalls;
 
     typedef ListHashSet<RefPtr<IDBDatabaseCallbacks>> DatabaseCallbacksSet;
     DatabaseCallbacksSet m_databaseCallbacksSet;
