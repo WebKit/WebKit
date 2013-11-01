@@ -1,3 +1,67 @@
+2013-11-01  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [css shapes] Pull in upstream fixes to shape-outside margin and clipping tests
+        https://bugs.webkit.org/show_bug.cgi?id=123588
+
+        Reviewed by Alexandru Chiculita.
+
+        Fix some typos in the tests, add better explanation, and generally
+        make the tests clearer.
+
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/resources/w3c-import.log:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-003-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-003.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-004.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-005.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-006.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-000-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-000.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-001-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-001.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-002-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-002.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-003-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-003.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-004-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-004.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-005-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-005.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-006-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-006.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-007-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-007.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-008-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-008.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-009-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-009.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-010-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-010.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-011-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-011.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-012-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-012.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-013-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-013.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-014-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-014.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-015-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-015.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-016-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-016.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-017-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-017.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-018-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-018.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-019-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-019.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-020-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-020.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-021-expected.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-021.html:
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/w3c-import.log:
+
 2013-11-01  Brendan Long  <b.long@cablelabs.com>
 
         [GStreamer] Support audio and video tracks

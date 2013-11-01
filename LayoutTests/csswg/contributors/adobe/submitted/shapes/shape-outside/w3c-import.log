@@ -8,7 +8,7 @@ Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport
 Do NOT modify or remove this file
 
 ------------------------------------------------------------------------
-Last Import: 2013-10-21 12:29
+Last Import: 2013-10-31 13:25
 W3C Mercurial changeset: Not Available
 Test status at time of import: unknown
 ------------------------------------------------------------------------
@@ -24,8 +24,6 @@ List of files:
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-circle-001.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-000-expected.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-000.html
-/LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001-ref-expected.html
-/LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001-ref.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001-expected.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-001.html
 /LayoutTests/csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-clipped-002-expected.html

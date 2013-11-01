@@ -2,7 +2,8 @@
 <title>CSS Test: shape-outside on floats with a positive margin</title>
 <link rel="author" title="Adobe" href="http://html.adobe.com/">
 <link rel="author" title="Bem Jones-Bey" href="mailto:bjonesbe@adobe.com">
-<link rel="help" href="http://dev.w3.org/csswg/css-shapes-1/#shape-margin-property">
+<link rel="help" href="http://dev.w3.org/csswg/css-shapes-1/#relation-to-box-model-and-float-behavior">
+<meta name="assert" content="This tests if a positive margin on the opposite logical side as the float direction (eg: right margin on left float) is properly ignored in the case of a zero extent shape.">
 <link rel="match" href="shape-outside-floats-margin-000-ref.html">
 <meta name="flags" content="ahem">
 <head>
@@ -35,7 +36,7 @@
 </style>
 
 <body>
-    <p>This should display two green bars, with white squares on opposite sides.</p>
+    <p>This should display two horizontal green bars, with white squares on opposite sides.</p>
     <div class="container" style="text-align: right">
         <div id="float-right">
         </div>
