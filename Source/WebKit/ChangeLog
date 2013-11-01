@@ -1,5 +1,11 @@
 2013-11-01  Andy Estes  <aestes@apple.com>
 
+        Reverted r158443. It broke the build.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2013-11-01  Andy Estes  <aestes@apple.com>
+
         [iOS] Make some headers Private
         https://bugs.webkit.org/show_bug.cgi?id=123626
 
