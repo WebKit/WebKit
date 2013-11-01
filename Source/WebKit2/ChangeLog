@@ -1,5 +1,13 @@
 2013-10-31  Anders Carlsson  <andersca@apple.com>
 
+        Address review comments.
+
+        * Shared/API/Cocoa/WKRemoteObject.h:
+        * Shared/API/Cocoa/WKRemoteObject.mm:
+        (-[WKRemoteObject conformsToProtocol:]):
+
+2013-10-31  Anders Carlsson  <andersca@apple.com>
+
         Add a WKRemoteObject class
         https://bugs.webkit.org/show_bug.cgi?id=123586
 

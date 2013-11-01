@@ -26,11 +26,11 @@
 #import "config.h"
 #import "WKRemoteObject.h"
 
+#if WK_API_ENABLED
+
 #import "WKRemoteObjectInterface.h"
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
-
-#if WK_API_ENABLED
 
 @implementation WKRemoteObject {
     RetainPtr<WKRemoteObjectRegistry> _objectRegistry;
@@ -50,10 +50,7 @@
 
 - (BOOL)conformsToProtocol:(Protocol *)protocol
 {
-    if ([super conformsToProtocol:protocol])
-        return true;
-
-    return protocol_conformsToProtocol([_interface protocol], protocol);
+    return [super conformsToProtocol:protocol] || protocol_conformsToProtocol([_interface protocol], protocol);
 }
 
 static const char* methodArgumentTypeEncodingForSelector(Protocol *protocol, SEL selector)
