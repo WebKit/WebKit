@@ -107,7 +107,7 @@ function polygonLineIntercepts(polygon, y, lineHeight) {
 // with the the polygon's bounds minimum Y value, and each line of characters fills the interior
 // of the polygon.
 
-function generatePolygonContentString(polygon, lineheight) {
+function generatePolygonContentString(polygon, lineHeight) {
     var result = "";
 
     for (var y = polygon.minY; y < polygon.maxY; y += lineHeight) {

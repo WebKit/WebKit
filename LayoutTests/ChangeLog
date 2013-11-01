@@ -1,3 +1,13 @@
+2013-11-01  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Fix typo in simple-polygon.js LayoutTest helper
+        https://bugs.webkit.org/show_bug.cgi?id=123595
+
+        Reviewed by Darin Adler.
+
+        * fast/shapes/resources/simple-polygon.js:
+        (generatePolygonContentString): Fixed a typo: the lineHeight parameter generatePolygonContentString() is now lineHeight.
+
 2013-11-01  James Craig  <jcraig@apple.com>
 
         AX: Regression: media controls are no longer accessible
