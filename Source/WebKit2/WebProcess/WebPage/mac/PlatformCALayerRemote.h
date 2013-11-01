@@ -158,6 +158,7 @@ private:
     RemoteLayerTreeTransaction::LayerProperties m_properties;
     WebCore::PlatformCALayerList m_children;
     PlatformCALayerRemote* m_superlayer;
+    bool m_acceleratesDrawing;
 
     RemoteLayerTreeContext* m_context;
 };

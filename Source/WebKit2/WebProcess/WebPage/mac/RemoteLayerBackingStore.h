@@ -39,16 +39,19 @@ class PlatformCALayerRemote;
 class RemoteLayerBackingStore {
 public:
     RemoteLayerBackingStore();
-    RemoteLayerBackingStore(PlatformCALayerRemote*, WebCore::IntSize, float scale);
+
+    void ensureBackingStore(PlatformCALayerRemote*, WebCore::IntSize, float scale, bool acceleratesDrawing);
 
     void setNeedsDisplay(const WebCore::IntRect);
     void setNeedsDisplay();
 
     bool display();
 
-    ShareableBitmap* bitmap() const { return m_frontBuffer.get(); }
+    RetainPtr<CGImageRef> image() const;
+    RetainPtr<IOSurfaceRef> surface() const { return m_frontSurface.get(); }
     WebCore::IntSize size() const { return m_size; }
     float scale() const { return m_scale; }
+    bool acceleratesDrawing() const { return m_acceleratesDrawing; }
 
     PlatformCALayerRemote* layer() const { return m_layer; }
 
@@ -58,6 +61,11 @@ public:
 private:
     WebCore::IntRect mapToContentCoordinates(const WebCore::IntRect) const;
 
+    bool hasFrontBuffer() { return m_acceleratesDrawing ? !!m_frontSurface : !!m_frontBuffer; }
+
+    std::unique_ptr<WebCore::GraphicsContext> createBackingStore();
+    void drawInContext(WebCore::GraphicsContext&);
+
     PlatformCALayerRemote* m_layer;
 
     WebCore::IntSize m_size;
@@ -66,7 +74,9 @@ private:
     WebCore::Region m_dirtyRegion;
 
     RefPtr<ShareableBitmap> m_frontBuffer;
-    RefPtr<ShareableBitmap> m_backBuffer;
+    RetainPtr<IOSurfaceRef> m_frontSurface;
+
+    bool m_acceleratesDrawing;
 };
 
 } // namespace WebKit

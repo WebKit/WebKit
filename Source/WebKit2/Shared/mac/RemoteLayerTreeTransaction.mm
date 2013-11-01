@@ -622,7 +622,7 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const HashMap<Remot
             dumpProperty<double>(ts, "timeOffset", layerProperties.timeOffset);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged)
-            dumpProperty<ShareableBitmap*>(ts, "backingStore", layerProperties.backingStore.bitmap());
+            dumpProperty<IntSize>(ts, "backingStore", layerProperties.backingStore.size());
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::FiltersChanged)
             dumpProperty<FilterOperations>(ts, "filters", layerProperties.filters);

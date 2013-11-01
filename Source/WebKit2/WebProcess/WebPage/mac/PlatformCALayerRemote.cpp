@@ -69,8 +69,12 @@ PlatformCALayerRemote::PlatformCALayerRemote(LayerType layerType, PlatformCALaye
     : PlatformCALayer(layerType, owner)
     , m_layerID(generateLayerID())
     , m_superlayer(nullptr)
+    , m_acceleratesDrawing(false)
     , m_context(context)
 {
+    // FIXME: match all default values from CA.
+    setContentsScale(1);
+
     m_context->layerWasCreated(this, layerType);
 }
 
@@ -115,12 +119,7 @@ void PlatformCALayerRemote::animationStarted(CFTimeInterval beginTime)
 
 void PlatformCALayerRemote::ensureBackingStore()
 {
-    if (m_properties.backingStore.layer() == this
-        && m_properties.backingStore.size() == m_properties.size
-        && m_properties.backingStore.scale() == m_properties.contentsScale)
-        return;
-
-    m_properties.backingStore = RemoteLayerBackingStore(this, expandedIntSize(m_properties.size), m_properties.contentsScale);
+    m_properties.backingStore.ensureBackingStore(this, expandedIntSize(m_properties.size), m_properties.contentsScale, m_acceleratesDrawing);
 }
 
 void PlatformCALayerRemote::setNeedsDisplay(const FloatRect* rect)
@@ -352,11 +351,13 @@ void PlatformCALayerRemote::setMasksToBounds(bool value)
 
 bool PlatformCALayerRemote::acceleratesDrawing() const
 {
-    return false;
+    return m_acceleratesDrawing;
 }
 
 void PlatformCALayerRemote::setAcceleratesDrawing(bool acceleratesDrawing)
 {
+    m_acceleratesDrawing = acceleratesDrawing;
+    ensureBackingStore();
 }
 
 CFTypeRef PlatformCALayerRemote::contents() const

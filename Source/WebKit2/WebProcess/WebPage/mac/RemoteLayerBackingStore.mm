@@ -28,50 +28,89 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#import "PlatformCALayerRemote.h"
 #import "ArgumentCoders.h"
+#import "MachPort.h"
+#import "PlatformCALayerRemote.h"
 #import "ShareableBitmap.h"
 #import "WebCoreArgumentCoders.h"
+#import <WebCore/GraphicsContextCG.h>
 #import <WebCore/WebLayer.h>
+
+#ifdef __has_include
+#if __has_include(<ApplicationServices/ApplicationServicesPriv.h>)
+#import <ApplicationServices/ApplicationServicesPriv.h>
+#endif
+#endif
+
+extern "C" {
+CGContextRef CGIOSurfaceContextCreate(IOSurfaceRef, size_t, size_t, size_t, size_t, CGColorSpaceRef, CGBitmapInfo);
+CGImageRef CGIOSurfaceContextCreateImage(CGContextRef);
+}
 
 using namespace WebCore;
 using namespace WebKit;
-
-RemoteLayerBackingStore::RemoteLayerBackingStore(PlatformCALayerRemote* layer, IntSize size, float scale)
-    : m_layer(layer)
-    , m_size(size)
-    , m_scale(scale)
-{
-    ASSERT(layer);
-}
 
 RemoteLayerBackingStore::RemoteLayerBackingStore()
     : m_layer(nullptr)
 {
 }
 
+void RemoteLayerBackingStore::ensureBackingStore(PlatformCALayerRemote* layer, IntSize size, float scale, bool acceleratesDrawing)
+{
+    if (m_layer == layer
+        && m_size == size
+        && m_scale == scale
+        && m_acceleratesDrawing == acceleratesDrawing)
+        return;
+
+    m_layer = layer;
+    m_size = size;
+    m_scale = scale;
+    m_acceleratesDrawing = acceleratesDrawing;
+
+    m_frontSurface = nullptr;
+    m_frontBuffer = nullptr;
+}
+
 void RemoteLayerBackingStore::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    ShareableBitmap::Handle handle;
-    m_frontBuffer->createHandle(handle);
-
-    encoder << handle;
     encoder << m_size;
     encoder << m_scale;
+    encoder << m_acceleratesDrawing;
+
+    if (m_acceleratesDrawing) {
+        mach_port_t port = IOSurfaceCreateMachPort(m_frontSurface.get());
+        encoder << CoreIPC::MachPort(port, MACH_MSG_TYPE_MOVE_SEND);
+    } else {
+        ShareableBitmap::Handle handle;
+        m_frontBuffer->createHandle(handle);
+        encoder << handle;
+    }
 }
 
 bool RemoteLayerBackingStore::decode(CoreIPC::ArgumentDecoder& decoder, RemoteLayerBackingStore& result)
 {
-    ShareableBitmap::Handle handle;
-    if (!decoder.decode(handle))
-        return false;
-    result.m_frontBuffer = ShareableBitmap::create(handle);
-
     if (!decoder.decode(result.m_size))
         return false;
 
     if (!decoder.decode(result.m_scale))
         return false;
+
+    if (!decoder.decode(result.m_acceleratesDrawing))
+        return false;
+
+    if (result.m_acceleratesDrawing) {
+        CoreIPC::MachPort machPort;
+        if (!decoder.decode(machPort))
+            return false;
+        result.m_frontSurface = adoptCF(IOSurfaceLookupFromMachPort(machPort.port()));
+        mach_port_deallocate(mach_task_self(), machPort.port());
+    } else {
+        ShareableBitmap::Handle handle;
+        if (!decoder.decode(handle))
+            return false;
+        result.m_frontBuffer = ShareableBitmap::create(handle);
+    }
 
     return true;
 }
@@ -95,6 +134,55 @@ void RemoteLayerBackingStore::setNeedsDisplay()
     setNeedsDisplay(IntRect(IntPoint(), m_size));
 }
 
+static RetainPtr<CGContextRef> createIOSurfaceContext(IOSurfaceRef surface, IntSize size, CGColorSpaceRef colorSpace)
+{
+    if (!surface)
+        return nullptr;
+
+    CGBitmapInfo bitmapInfo = kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host;
+    size_t bitsPerComponent = 8;
+    size_t bitsPerPixel = 32;
+    RetainPtr<CGContextRef> ctx = adoptCF(CGIOSurfaceContextCreate(surface, size.width(), size.height(), bitsPerComponent, bitsPerPixel, colorSpace, bitmapInfo));
+    if (!ctx)
+        return nullptr;
+
+    return ctx;
+}
+
+static RetainPtr<IOSurfaceRef> createIOSurface(IntSize size)
+{
+    unsigned pixelFormat = 'BGRA';
+    unsigned bytesPerElement = 4;
+    int width = size.width();
+    int height = size.height();
+
+    unsigned long bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * bytesPerElement);
+    ASSERT(bytesPerRow);
+
+    unsigned long allocSize = IOSurfaceAlignProperty(kIOSurfaceAllocSize, height * bytesPerRow);
+    ASSERT(allocSize);
+
+    RetainPtr<NSDictionary> dict = @{
+        (id)kIOSurfaceWidth: @(width),
+        (id)kIOSurfaceHeight: @(height),
+        (id)kIOSurfacePixelFormat: @(pixelFormat),
+        (id)kIOSurfaceBytesPerElement: @(bytesPerElement),
+        (id)kIOSurfaceBytesPerRow: @(bytesPerRow),
+        (id)kIOSurfaceAllocSize: @(allocSize)
+    };
+
+    return adoptCF(IOSurfaceCreate((CFDictionaryRef)dict.get()));
+}
+
+RetainPtr<CGImageRef> RemoteLayerBackingStore::image() const
+{
+    if (!m_frontBuffer || m_acceleratesDrawing)
+        return nullptr;
+
+    // FIXME: Do we need Copy?
+    return m_frontBuffer->makeCGImageCopy();
+}
+
 bool RemoteLayerBackingStore::display()
 {
     if (!m_layer)
@@ -102,45 +190,85 @@ bool RemoteLayerBackingStore::display()
 
     // If we previously were drawsContent=YES, and now are not, we need
     // to note that our backing store has been cleared.
-    if (!m_layer->owner()->platformCALayerDrawsContent())
-        return m_frontBuffer;
+    if (!m_layer->owner() || !m_layer->owner()->platformCALayerDrawsContent()) {
+        bool previouslyDrewContents = hasFrontBuffer();
 
-    if (m_dirtyRegion.isEmpty())
+        m_frontBuffer = nullptr;
+        m_frontSurface = nullptr;
+
+        return previouslyDrewContents;
+    }
+
+    if (!hasFrontBuffer())
+        m_dirtyRegion.unite(IntRect(IntPoint(), m_size));
+
+    if (m_dirtyRegion.isEmpty() || m_size.isEmpty())
         return false;
-
-    FloatSize scaledSize = m_size;
-    scaledSize.scale(m_scale);
-
-    IntRect layerBounds(IntPoint(), m_size);
-
-    m_backBuffer = ShareableBitmap::createShareable(expandedIntSize(scaledSize), ShareableBitmap::SupportsAlpha);
-    if (!m_frontBuffer)
-        m_dirtyRegion.unite(layerBounds);
 
     if (m_layer->owner()->platformCALayerShowRepaintCounter(m_layer)) {
         IntRect indicatorRect = mapToContentCoordinates(IntRect(0, 0, 52, 27));
         m_dirtyRegion.unite(indicatorRect);
     }
 
-    std::unique_ptr<GraphicsContext> context = m_backBuffer->createGraphicsContext();
+    std::unique_ptr<GraphicsContext> context;
+
+    FloatSize scaledSize = m_size;
+    scaledSize.scale(m_scale);
+    IntSize expandedScaledSize = expandedIntSize(scaledSize);
+
+    RefPtr<ShareableBitmap> backBuffer;
+    RetainPtr<IOSurfaceRef> backSurface;
+
+    if (m_acceleratesDrawing) {
+        backSurface = createIOSurface(expandedScaledSize);
+        RetainPtr<CGContextRef> cgContext = createIOSurfaceContext(backSurface.get(), expandedScaledSize, sRGBColorSpaceRef());
+        context = std::make_unique<GraphicsContext>(cgContext.get());
+        CGContextClearRect(cgContext.get(), CGRectMake(0, 0, expandedScaledSize.width(), expandedScaledSize.height()));
+        context->scale(FloatSize(1, -1));
+        context->translate(0, -expandedScaledSize.height());
+    } else {
+        backBuffer = ShareableBitmap::createShareable(expandedIntSize(scaledSize), ShareableBitmap::SupportsAlpha);
+        context = backBuffer->createGraphicsContext();
+    }
+
+    drawInContext(*context);
+
+    if (m_acceleratesDrawing)
+        m_frontSurface = backSurface;
+    else
+        m_frontBuffer = backBuffer;
+
+    return true;
+}
+
+void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
+{
+    RetainPtr<CGImageRef> frontImage;
+    RetainPtr<CGContextRef> frontContext;
+
+    if (m_acceleratesDrawing) {
+        frontContext = createIOSurfaceContext(m_frontSurface.get(), expandedIntSize(m_size * m_scale), sRGBColorSpaceRef());
+        frontImage = adoptCF(CGIOSurfaceContextCreateImage(frontContext.get()));
+    } else
+        frontImage = image();
 
     Vector<IntRect> dirtyRects = m_dirtyRegion.rects();
 
     // If we have less than webLayerMaxRectsToPaint rects to paint and they cover less
     // than webLayerWastedSpaceThreshold of the area, we'll do a partial repaint.
-    Vector<FloatRect, webLayerMaxRectsToPaint> rectsToPaint;
-    if (dirtyRects.size() <= webLayerMaxRectsToPaint && m_dirtyRegion.totalArea() <= webLayerWastedSpaceThreshold * layerBounds.width() * layerBounds.height()) {
-        // Copy over the parts of the front buffer that we're not going to repaint.
-        if (m_frontBuffer) {
-            Region cleanRegion(layerBounds);
-            cleanRegion.subtract(m_dirtyRegion);
 
-            RetainPtr<CGImageRef> frontImage = m_frontBuffer->makeCGImage();
+    Vector<FloatRect, webLayerMaxRectsToPaint> rectsToPaint;
+    if (dirtyRects.size() <= webLayerMaxRectsToPaint && m_dirtyRegion.totalArea() <= webLayerWastedSpaceThreshold * m_size.width() * m_size.height()) {
+        // Copy over the parts of the front buffer that we're not going to repaint.
+        if (frontImage) {
+            Region cleanRegion(IntRect(IntPoint(), m_size));
+            cleanRegion.subtract(m_dirtyRegion);
 
             for (const auto& rect : cleanRegion.rects()) {
                 FloatRect scaledRect = rect;
                 scaledRect.scale(m_scale);
-                context->drawNativeImage(frontImage.get(), m_frontBuffer->size(), ColorSpaceDeviceRGB, scaledRect, scaledRect);
+                FloatSize imageSize(CGImageGetWidth(frontImage.get()), CGImageGetHeight(frontImage.get()));
+                context.drawNativeImage(frontImage.get(), imageSize, ColorSpaceDeviceRGB, scaledRect, scaledRect);
             }
         }
 
@@ -148,18 +276,18 @@ bool RemoteLayerBackingStore::display()
             rectsToPaint.append(rect);
     }
 
-    context->scale(FloatSize(m_scale, m_scale));
+    context.scale(FloatSize(m_scale, m_scale));
 
-    switch (layer()->layerType()) {
+    switch (m_layer->layerType()) {
         case PlatformCALayer::LayerTypeSimpleLayer:
         case PlatformCALayer::LayerTypeTiledBackingTileLayer:
             if (rectsToPaint.isEmpty())
-                rectsToPaint.append(layerBounds);
+                rectsToPaint.append(IntRect(IntPoint(), m_size));
             for (const auto& rect : rectsToPaint)
-                m_layer->owner()->platformCALayerPaintContents(m_layer, *context, enclosingIntRect(rect));
+                m_layer->owner()->platformCALayerPaintContents(m_layer, context, enclosingIntRect(rect));
             break;
         case PlatformCALayer::LayerTypeWebLayer:
-            drawLayerContents(context->platformContext(), m_layer, rectsToPaint);
+            drawLayerContents(context.platformContext(), m_layer, rectsToPaint);
             break;
         case PlatformCALayer::LayerTypeLayer:
         case PlatformCALayer::LayerTypeTransformLayer:
@@ -169,16 +297,18 @@ bool RemoteLayerBackingStore::display()
         case PlatformCALayer::LayerTypeRootLayer:
         case PlatformCALayer::LayerTypeAVPlayerLayer:
         case PlatformCALayer::LayerTypeCustom:
-            ASSERT_NOT_REACHED();
             break;
     };
 
     m_dirtyRegion = Region();
 
-    m_frontBuffer = m_backBuffer;
-    m_backBuffer = nullptr;
+    CGContextFlush(context.platformContext());
 
-    return true;
+    // If our frontImage is derived from an IOSurface, we need to
+    // destroy the image before the CGContext it's derived from,
+    // so that the context doesn't make a CPU copy of the surface data.
+    frontImage = nullptr;
+    frontContext = nullptr;
 }
 
 #endif // USE(ACCELERATED_COMPOSITING)

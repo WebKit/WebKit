@@ -200,9 +200,10 @@ void RemoteLayerTreeHost::commit(const RemoteLayerTreeTransaction& transaction)
             layer.timeOffset = properties.timeOffset;
 
         if (properties.changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged) {
-            // FIXME: Do we need Copy?
-            RetainPtr<CGImageRef> image = properties.backingStore.bitmap()->makeCGImageCopy();
-            layer.contents = (id)image.get();
+            if (properties.backingStore.acceleratesDrawing())
+                layer.contents = (id)properties.backingStore.surface().get();
+            else
+                layer.contents = (id)properties.backingStore.image().get();
         }
 
         if (properties.changedProperties & RemoteLayerTreeTransaction::FiltersChanged)

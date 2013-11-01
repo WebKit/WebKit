@@ -1,3 +1,80 @@
+2013-10-31  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Vend layer contents via IOSurfaces
+        https://bugs.webkit.org/show_bug.cgi?id=123600
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/WebKit2.xcconfig:
+        Link WebKit2 against IOSurface.
+
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::dumpChangedLayers):
+        Dump the size of the backing store instead of the pointer of its
+        SharedBitmap, because that's slightly more useful.
+
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::commit):
+        If a layer's backing store uses accelerated drawing, hand the IOSurface
+        to the CALayer for display.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::PlatformCALayerRemote):
+        Initialize contentsScale to 1 to match CA. Other properties will follow.
+
+        (PlatformCALayerRemote::ensureBackingStore):
+        Instead of replacing the RemoteLayerBackingStore when its properties
+        change, allow it to update them on the fly. Replacing them caused
+        us to throw away repaint rects when the accelerated drawing
+        flag was flipped.
+
+        (PlatformCALayerRemote::acceleratesDrawing):
+        (PlatformCALayerRemote::setAcceleratesDrawing):
+        Store the accelerated drawing flag and mark it dirty when it changes.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/mac/RemoteLayerBackingStore.h:
+        (WebKit::RemoteLayerBackingStore::image):
+        Rename bitmap() to image() and have it create a CGImageRef from
+        the ShareableBitmap, ready for direct application to a CALayer.
+
+        (WebKit::RemoteLayerBackingStore::surface):
+        Return a IOSurface ready for direct application to a CALayer.
+
+        (WebKit::RemoteLayerBackingStore::acceleratesDrawing):
+        (WebKit::RemoteLayerBackingStore::hasFrontBuffer):
+        Return whether or not we have a front buffer/surface.
+
+        * WebProcess/WebPage/mac/RemoteLayerBackingStore.mm:
+        Forward-declare some CGIOSurface SPI.
+
+        (RemoteLayerBackingStore::RemoteLayerBackingStore):
+        (RemoteLayerBackingStore::ensureBackingStore):
+        Throw away our front image and reset flags if needed.
+
+        (RemoteLayerBackingStore::encode):
+        (RemoteLayerBackingStore::decode):
+        En/decode the front surface instead of the ShareableBitmap if needed,
+        using CoreIPC::MachPort. Destroy the port on receipt.
+
+        (createIOSurfaceContext):
+        Create a CGIOSurfaceContext from an IOSurface.
+
+        (createIOSurface):
+        Create an IOSurface of the given size.
+
+        (RemoteLayerBackingStore::image):
+        Return a CGImageRef, if we're not using accelerated drawing.
+        Moved from the header.
+
+        (RemoteLayerBackingStore::display):
+        (RemoteLayerBackingStore::drawInContext):
+        If using accelerated drawing, create and paint into an IOSurface.
+        Reorganize some code to make the copying-from-the-front-image code
+        work for both software and IOSurfaces.
+        Flush the context when completed, to ensure that any asynchronous
+        painting is complete before we vend the surface to the UI process.
+
 2013-10-31  Anders Carlsson  <andersca@apple.com>
 
         Begin stubbing out the WKRemoteObjectCoder NSCoder subclass
