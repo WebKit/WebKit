@@ -136,6 +136,7 @@ public:
         return specializationFromIsConstruct(m_isConstructor);
     }
     
+    CodeBlock* baselineAlternative();
     CodeBlock* baselineVersion();
 
     void visitAggregate(SlotVisitor&);
@@ -279,8 +280,6 @@ public:
         return jitType() == JITCode::BaselineJIT;
     }
     
-    void jettison(ReoptimizationMode = DontCountReoptimization);
-    
     virtual CodeBlock* replacement() = 0;
 
     virtual DFG::CapabilityLevel capabilityLevelInternal() = 0;
@@ -296,6 +295,8 @@ public:
     bool hasOptimizedReplacement(); // the typeToReplace is my JITType
 #endif
 
+    void jettison(ReoptimizationMode = DontCountReoptimization);
+    
     ScriptExecutable* ownerExecutable() const { return m_ownerExecutable.get(); }
 
     void setVM(VM* vm) { m_vm = vm; }

@@ -46,7 +46,7 @@ public:
     AssemblyHelpers(VM* vm, CodeBlock* codeBlock)
         : m_vm(vm)
         , m_codeBlock(codeBlock)
-        , m_baselineCodeBlock(codeBlock ? codeBlock->baselineVersion() : 0)
+        , m_baselineCodeBlock(codeBlock ? codeBlock->baselineAlternative() : 0)
     {
         if (m_codeBlock) {
             ASSERT(m_baselineCodeBlock);

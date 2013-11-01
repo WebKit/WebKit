@@ -510,11 +510,7 @@ FunctionCodeBlock* FunctionExecutable::baselineCodeBlockFor(CodeSpecializationKi
     }
     if (!result)
         return 0;
-    while (result->alternative())
-        result = static_cast<FunctionCodeBlock*>(result->alternative());
-    RELEASE_ASSERT(result);
-    ASSERT(JITCode::isBaselineCode(result->jitType()));
-    return result;
+    return static_cast<FunctionCodeBlock*>(result->baselineAlternative());
 }
 
 void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)

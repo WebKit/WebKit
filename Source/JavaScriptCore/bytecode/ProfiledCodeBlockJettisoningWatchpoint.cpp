@@ -40,14 +40,18 @@ void ProfiledCodeBlockJettisoningWatchpoint::fireInternal()
             m_exitKind, " at ", m_codeOrigin, "\n");
     }
     
-    baselineCodeBlockForOriginAndBaselineCodeBlock(
-        m_codeOrigin, m_codeBlock->baselineVersion())->addFrequentExitSite(
-            DFG::FrequentExitSite(m_codeOrigin.bytecodeIndex, m_exitKind));
+    CodeBlock* machineBaselineCodeBlock = m_codeBlock->baselineAlternative();
+    CodeBlock* sourceBaselineCodeBlock =
+        baselineCodeBlockForOriginAndBaselineCodeBlock(
+            m_codeOrigin, machineBaselineCodeBlock);
     
-#if ENABLE(JIT)
+    if (sourceBaselineCodeBlock) {
+        sourceBaselineCodeBlock->addFrequentExitSite(
+            DFG::FrequentExitSite(m_codeOrigin.bytecodeIndex, m_exitKind));
+    }
+    
     m_codeBlock->jettison(CountReoptimization);
-#endif
-
+    
     if (isOnList())
         remove();
 }

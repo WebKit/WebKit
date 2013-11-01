@@ -37,8 +37,12 @@ namespace JSC { namespace DFG {
 
 bool OSRExitBase::considerAddingAsFrequentExitSiteSlow(CodeBlock* profiledCodeBlock)
 {
-    return baselineCodeBlockForOriginAndBaselineCodeBlock(
-        m_codeOriginForExitProfile, profiledCodeBlock)->addFrequentExitSite(
+    CodeBlock* sourceProfiledCodeBlock =
+        baselineCodeBlockForOriginAndBaselineCodeBlock(
+            m_codeOriginForExitProfile, profiledCodeBlock);
+    if (!sourceProfiledCodeBlock)
+        return false;
+    return sourceProfiledCodeBlock->addFrequentExitSite(
             FrequentExitSite(m_codeOriginForExitProfile.bytecodeIndex, m_kind));
 }
 
