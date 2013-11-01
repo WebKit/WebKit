@@ -29,6 +29,7 @@
 #if WK_API_ENABLED
 
 #import "WKRemoteObjectInterface.h"
+#import "WKRemoteObjectRegistryInternal.h"
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
 
@@ -86,7 +87,7 @@ static const char* methodArgumentTypeEncodingForSelector(Protocol *protocol, SEL
 
 - (void)forwardInvocation:(NSInvocation *)invocation
 {
-    // FIXME: Implement.
+    [_objectRegistry _sendInvocation:invocation interface:_interface.get()];
 }
 
 @end

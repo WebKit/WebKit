@@ -24,13 +24,13 @@
  */
 
 #import "config.h"
-#import "WKRemoteObjectRegistry.h"
-#import "WKRemoteObjectRegistryPrivate.h"
+#import "WKRemoteObjectRegistryInternal.h"
 
 #import "Connection.h"
 #import "WKConnectionRef.h"
-#import "WKRemoteObjectInterface.h"
 #import "WKRemoteObject.h"
+#import "WKRemoteObjectCoder.h"
+#import "WKRemoteObjectInterface.h"
 #import "WKSharedAPICast.h"
 #import "WebConnection.h"
 
@@ -66,6 +66,14 @@ using namespace WebKit;
     [_remoteObjectProxies setObject:remoteObject.get() forKey:identifier.get()];
 
     return [remoteObject.leakRef() autorelease];
+}
+
+- (void)_sendInvocation:(NSInvocation *)invocation interface:(WKRemoteObjectInterface *)interface
+{
+    RetainPtr<WKRemoteObjectEncoder> encoder = adoptNS([[WKRemoteObjectEncoder alloc] init]);
+
+    [encoder encodeObject:interface.identifier forKey:@"interfaceIdentifier"];
+    [encoder encodeObject:invocation forKey:@"invocation"];
 }
 
 @end

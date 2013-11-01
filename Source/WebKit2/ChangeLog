@@ -1,5 +1,49 @@
 2013-10-31  Anders Carlsson  <andersca@apple.com>
 
+        Begin stubbing out the WKRemoteObjectCoder NSCoder subclass
+        https://bugs.webkit.org/show_bug.cgi?id=123596
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/Cocoa/WKRemoteObject.mm:
+        (-[WKRemoteObject forwardInvocation:]):
+        Call through to the WKRemoteObjectRegistry.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.h: Added.
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm: Added.
+        (-[WKRemoteObjectEncoder init]):
+        Create a root WKDictionary.
+
+        (-[WKRemoteObjectEncoder dealloc]):
+        Assert that the current dictionary is the root dictionary; that we're back where we started.
+
+        (-[WKRemoteObjectEncoder allowsKeyedCoding]):
+        Return YES.
+
+        (-[WKRemoteObjectEncoder encodeObject:forKey:]):
+        Check that the object is valid and then encode it.
+
+        (-[WKRemoteObjectEncoder _encodeInvocation:forKey:]):
+        Encode the method type string and invocation selector.
+
+        (-[WKRemoteObjectEncoder encodeBytes:length:forKey:]):
+        Create a WKDataRef and add it to the dictionary.
+
+        (-[WKRemoteObjectEncoder _encodeObjectForKey:usingBlock:]):
+        Create a new dictionary and call the block.
+
+        * Shared/API/Cocoa/WKRemoteObjectRegistry.mm:
+        (-[WKRemoteObjectRegistry _sendInvocation:interface:]):
+        Create an encoder and encode the invocation and interface.
+
+        * Shared/API/Cocoa/WKRemoteObjectRegistryInternal.h: Added.
+        Add IPI header.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+2013-10-31  Anders Carlsson  <andersca@apple.com>
+
         Address review comments.
 
         * Shared/API/Cocoa/WKRemoteObject.h:
