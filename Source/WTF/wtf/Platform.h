@@ -68,6 +68,7 @@
 /* CPU(HPPA) - HP PA-RISC */
 #if defined(__hppa__) || defined(__hppa64__)
 #define WTF_CPU_HPPA 1
+#define WTF_CPU_BIG_ENDIAN 1
 #endif
 
 /* CPU(IA64) - Itanium / IA-64 */
