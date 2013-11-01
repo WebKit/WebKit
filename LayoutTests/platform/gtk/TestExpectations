@@ -887,7 +887,6 @@ webkit.org/b/98372 accessibility/onclick-handlers.html [ Failure ]
 webkit.org/b/98375 accessibility/secure-textfield-title-ui.html [ Failure ]
 webkit.org/b/98377 accessibility/textarea-insertion-point-line-number.html [ Failure ]
 webkit.org/b/98378 accessibility/textarea-line-for-index.html [ Failure ]
-webkit.org/b/98379 accessibility/textarea-selected-text-range.html [ Failure ]
 webkit.org/b/98380 accessibility/th-as-title-ui.html [ Failure ]
 webkit.org/b/98382 accessibility/visible-elements.html [ Failure ]
 
@@ -1092,8 +1091,6 @@ webkit.org/b/58845 fast/dom/title-directionality-removeChild.html [ Failure ]
 webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
 
 webkit.org/b/61630 fast/events/dropzone-005.html [ Failure ]
-
-webkit.org/b/67713 accessibility/textbox-role-reports-selection.html [ Failure ]
 
 webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Failure ]
 
