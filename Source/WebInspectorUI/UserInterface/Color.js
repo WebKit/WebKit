@@ -241,12 +241,14 @@ WebInspector.Color.prototype = {
             case WebInspector.Color.Format.RGB:
                 return "rgb(" + this.rgb.join(", ") + ")";
             case WebInspector.Color.Format.RGBA:
-                return "rgba(" + this.rgba.join(", ") + ")";
+                return "rgba(" + (this.rgba ? this.rgba : this.rgb.concat(1)).join(", ") + ")";
             case WebInspector.Color.Format.HSL:
                 var hsl = this.hsl;
                 return "hsl(" + hsl[0] + ", " + hsl[1] + "%, " + hsl[2] + "%)";
             case WebInspector.Color.Format.HSLA:
                 var hsla = this.hsla;
+                if (!hsla)
+                    return "hsla(" + hsl[0] + ", " + hsl[1] + "%, " + hsl[2] + "%, 1)";
                 return "hsla(" + hsla[0] + ", " + hsla[1] + "%, " + hsla[2] + "%, " + hsla[3] + ")";
             case WebInspector.Color.Format.HEX:
                 return "#" + this.hex;

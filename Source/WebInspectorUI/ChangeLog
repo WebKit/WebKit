@@ -1,5 +1,18 @@
 2013-11-01  Antoine Quint  <graouts@apple.com>
 
+        Error trying to serialize a color created without an alpha component to RGBA or HSLA
+        https://bugs.webkit.org/show_bug.cgi?id=123623
+
+        Reviewed by Joseph Pecoraro.
+
+        Check whether we have .rgba and .hsla ivars before trying to retrieve them to serialize
+        the color to RGBA or HSLA format.
+
+        * UserInterface/Color.js:
+        (WebInspector.Color.prototype.toString):
+
+2013-11-01  Antoine Quint  <graouts@apple.com>
+
         Remove custom Element.prototype.remove() in favor of native version
         https://bugs.webkit.org/show_bug.cgi?id=123607
 
