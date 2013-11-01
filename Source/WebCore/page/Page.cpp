@@ -1036,15 +1036,6 @@ void Page::visitedStateChanged(PageGroup* group, LinkHash linkHash)
     }
 }
 
-void Page::setDebuggerForAllPages(JSC::Debugger* debugger)
-{
-    ASSERT(allPages);
-
-    HashSet<Page*>::iterator end = allPages->end();
-    for (HashSet<Page*>::iterator it = allPages->begin(); it != end; ++it)
-        (*it)->setDebugger(debugger);
-}
-
 void Page::setDebugger(JSC::Debugger* debugger)
 {
     if (m_debugger == debugger)

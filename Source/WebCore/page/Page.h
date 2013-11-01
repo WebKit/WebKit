@@ -302,7 +302,6 @@ public:
     void storageBlockingStateChanged();
     void privateBrowsingStateChanged();
 
-    static void setDebuggerForAllPages(JSC::Debugger*);
     void setDebugger(JSC::Debugger*);
     JSC::Debugger* debugger() const { return m_debugger; }
 
