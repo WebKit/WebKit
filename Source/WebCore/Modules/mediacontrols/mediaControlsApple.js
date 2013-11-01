@@ -77,6 +77,39 @@ Controller.prototype = {
         volumeBox: 'volume-box',
     },
 
+    // Localized string accessor
+    UIString: function(s){
+        if (this.localizedStrings[s])
+            return this.localizedStrings[s];
+        else
+            return s; // FIXME: log something if string not localized.
+    },
+    localizedStrings: {
+        // FIXME: Move localization to ext strings file <http://webkit.org/b/120956>
+        'Aborted': 'Aborted',
+        'Audio Playback': 'Audio Playback',
+        'Display Full Screen': 'Display Full Screen',
+        'Duration': 'Duration',
+        'Error': 'Error',
+        'Fast Forward': 'Fast Forward',
+        'Loading': 'Loading',
+        'Maximum Volume': 'Maximum Volume',
+        'Minimum Volume': 'Minimum Volume',
+        'Mute': 'Mute',
+        'Play': 'Play',
+        'Pause': 'Pause',
+        'Rewind': 'Rewind',
+        'Rewind %%sec%% Seconds': 'Rewind %%sec%% Seconds',
+        'Show Captions': 'Show Captions',
+        'Stalled': 'Stalled',
+        'Suspended': 'Suspended',
+        'Elapsed': 'Elapsed',
+        'Remaining': 'Remaining',
+        'Video Playback': 'Video Playback',
+        'Volume': 'Volume',
+        'Waiting': 'Waiting'
+    },
+
     listenFor: function(element, eventName, handler, useCapture)
     {
         if (typeof useCapture === 'undefined')
@@ -197,6 +230,8 @@ Controller.prototype = {
     {
         var panel = this.controls.panel = document.createElement('div');
         panel.setAttribute('pseudo', '-webkit-media-controls-panel');
+        panel.setAttribute('aria-label', (this.isAudio() ? this.UIString('Audio Playback') : this.UIString('Video Playback')));
+        panel.setAttribute('role', 'toolbar');
         this.listenFor(panel, 'mousedown', this.handlePanelMouseDown);
         this.listenFor(panel, 'transitionend', this.handlePanelTransitionEnd);
         this.listenFor(panel, 'click', this.handlePanelClick);
@@ -204,20 +239,24 @@ Controller.prototype = {
 
         var rewindButton = this.controls.rewindButton = document.createElement('button');
         rewindButton.setAttribute('pseudo', '-webkit-media-controls-rewind-button');
+        rewindButton.setAttribute('aria-label', this.UIString('Rewind %%sec%% Seconds').replace('%%sec%%', this.RewindAmount));
         this.listenFor(rewindButton, 'click', this.handleRewindButtonClicked);
 
         var seekBackButton = this.controls.seekBackButton = document.createElement('button');
         seekBackButton.setAttribute('pseudo', '-webkit-media-controls-seek-back-button');
+        seekBackButton.setAttribute('aria-label', this.UIString('Rewind'));
         this.listenFor(seekBackButton, 'mousedown', this.handleSeekBackMouseDown);
         this.listenFor(seekBackButton, 'mouseup', this.handleSeekBackMouseUp);
 
         var seekForwardButton = this.controls.seekForwardButton = document.createElement('button');
         seekForwardButton.setAttribute('pseudo', '-webkit-media-controls-seek-forward-button');
+        seekForwardButton.setAttribute('aria-label', this.UIString('Fast Forward'));
         this.listenFor(seekForwardButton, 'mousedown', this.handleSeekForwardMouseDown);
         this.listenFor(seekForwardButton, 'mouseup', this.handleSeekForwardMouseUp);
 
         var playButton = this.controls.playButton = document.createElement('button');
         playButton.setAttribute('pseudo', '-webkit-media-controls-play-button');
+        playButton.setAttribute('aria-label', this.UIString('Play'));
         this.listenFor(playButton, 'click', this.handlePlayButtonClicked);
 
         var statusDisplay = this.controls.statusDisplay = document.createElement('div');
@@ -229,9 +268,12 @@ Controller.prototype = {
 
         var currentTime = this.controls.currentTime = document.createElement('div');
         currentTime.setAttribute('pseudo', '-webkit-media-controls-current-time-display');
+        currentTime.setAttribute('aria-label', this.UIString('Elapsed'));
+        currentTime.setAttribute('role', 'timer');
 
         var timeline = this.controls.timeline = document.createElement('input');
         timeline.setAttribute('pseudo', '-webkit-media-controls-timeline');
+        timeline.setAttribute('aria-label', this.UIString('Duration'));
         timeline.type = 'range';
         this.listenFor(timeline, 'change', this.handleTimelineChange);
         this.listenFor(timeline, 'mouseover', this.handleTimelineMouseOver);
@@ -250,20 +292,27 @@ Controller.prototype = {
 
         var remainingTime = this.controls.remainingTime = document.createElement('div');
         remainingTime.setAttribute('pseudo', '-webkit-media-controls-time-remaining-display');
+        remainingTime.setAttribute('aria-label', this.UIString('Remaining'));
+        remainingTime.setAttribute('role', 'timer');
 
         var muteBox = this.controls.muteBox = document.createElement('div');
         muteBox.classList.add(this.ClassNames.muteBox);
 
         var muteButton = this.controls.muteButton = document.createElement('button');
         muteButton.setAttribute('pseudo', '-webkit-media-controls-mute-button');
+        muteButton.setAttribute('aria-label', this.UIString('Mute'));
+        muteButton.setAttribute('role', 'checkbox');
+        muteButton.setAttribute('aria-checked', 'false');
         this.listenFor(muteButton, 'click', this.handleMuteButtonClicked);
 
         var minButton = this.controls.minButton = document.createElement('button');
         minButton.setAttribute('pseudo', '-webkit-media-controls-volume-min-button');
+        minButton.setAttribute('aria-label', this.UIString('Minimum Volume'));
         this.listenFor(minButton, 'click', this.handleMinButtonClicked);
 
         var maxButton = this.controls.maxButton = document.createElement('button');
         maxButton.setAttribute('pseudo', '-webkit-media-controls-volume-max-button');
+        maxButton.setAttribute('aria-label', this.UIString('Maximum Volume'));
         this.listenFor(maxButton, 'click', this.handleMaxButtonClicked);
 
         var volumeBox = this.controls.volumeBox = document.createElement('div');
@@ -271,6 +320,7 @@ Controller.prototype = {
 
         var volume = this.controls.volume = document.createElement('input');
         volume.setAttribute('pseudo', '-webkit-media-controls-volume-slider');
+        volume.setAttribute('aria-label', this.UIString('Volume'));
         volume.type = 'range';
         volume.min = 0;
         volume.max = 1;
@@ -279,10 +329,16 @@ Controller.prototype = {
 
         var captionButton = this.controls.captionButton = document.createElement('button');
         captionButton.setAttribute('pseudo', '-webkit-media-controls-toggle-closed-captions-button');
+        captionButton.setAttribute('aria-label', this.UIString('Show Captions'));
+        captionButton.setAttribute('role', 'checkbox');
+        captionButton.setAttribute('aria-checked', 'false');
         this.listenFor(captionButton, 'click', this.handleCaptionButtonClicked);
 
         var fullscreenButton = this.controls.fullscreenButton = document.createElement('button');
         fullscreenButton.setAttribute('pseudo', '-webkit-media-controls-fullscreen-button');
+        fullscreenButton.setAttribute('aria-label', this.UIString('Display Full Screen'));
+        fullscreenButton.setAttribute('role', 'checkbox');
+        fullscreenButton.setAttribute('aria-checked', 'false');
         this.listenFor(fullscreenButton, 'click', this.handleFullscreenButtonClicked);
     },
 
@@ -359,38 +415,32 @@ Controller.prototype = {
 
     handleLoadStart: function(event)
     {
-        // FIXME: Needs localization <http://webkit.org/b/120956>
-        this.controls.statusDisplay.innerText = 'Loading';
+        this.controls.statusDisplay.innerText = this.UIString('Loading');
     },
 
     handleError: function(event)
     {
-        // FIXME: Needs localization <http://webkit.org/b/120956>
-        this.controls.statusDisplay.innerText = 'Error';
+        this.controls.statusDisplay.innerText = this.UIString('Error');
     },
 
     handleAbort: function(event)
     {
-        // FIXME: Needs localization <http://webkit.org/b/120956>
-        this.controls.statusDisplay.innerText = 'Aborted';
+        this.controls.statusDisplay.innerText = this.UIString('Aborted');
     },
 
     handleSuspend: function(event)
     {
-        // FIXME: Needs localization <http://webkit.org/b/120956>
-        this.controls.statusDisplay.innerText = 'Suspended';
+        this.controls.statusDisplay.innerText = this.UIString('Suspended');
     },
 
     handleStalled: function(event)
     {
-        // FIXME: Needs localization <http://webkit.org/b/120956>
-        this.controls.statusDisplay.innerText = 'Stalled';
+        this.controls.statusDisplay.innerText = this.UIString('Stalled');
     },
 
     handleWaiting: function(event)
     {
-        // FIXME: Needs localization <http://webkit.org/b/120956>
-        this.controls.statusDisplay.innerText = 'Waiting';
+        this.controls.statusDisplay.innerText = this.UIString('Waiting');
     },
 
     handleReadyStateChange: function(event)
@@ -469,9 +519,11 @@ Controller.prototype = {
 
         if (this.isFullScreen()) {
             this.controls.fullscreenButton.classList.add(this.ClassNames.exit);
+            this.controls.fullscreenButton.setAttribute('aria-checked', 'true');
             this.setControlsType(Controller.FullScreenControls);
         } else {
             this.controls.fullscreenButton.classList.remove(this.ClassNames.exit);
+            this.controls.fullscreenButton.setAttribute('aria-checked', 'false');
             this.setControlsType(Controller.InlineControls);
         }
     },
@@ -615,26 +667,34 @@ Controller.prototype = {
     handleMuteButtonClicked: function(event)
     {
         this.video.muted = !this.video.muted;
+        if (this.video.muted)
+            this.controls.muteButton.setAttribute('aria-checked', 'true');
     },
 
     handleMinButtonClicked: function(event)
     {
-        if (this.video.muted)
+        if (this.video.muted) {
             this.video.muted = false;
+            this.controls.muteButton.setAttribute('aria-checked', 'false');
+        }
         this.video.volume = 0;
     },
 
     handleMaxButtonClicked: function(event)
     {
-        if (this.video.muted)
+        if (this.video.muted) {
             this.video.muted = false;
+            this.controls.muteButton.setAttribute('aria-checked', 'false');
+        }
         this.video.volume = 1;
     },
 
     handleVolumeSliderChange: function(event)
     {
-        if (this.video.muted)
+        if (this.video.muted) {
             this.video.muted = false;
+            this.controls.muteButton.setAttribute('aria-checked', 'false');
+        }
         this.video.volume = this.controls.volume.value;
     },
 
@@ -743,9 +803,11 @@ Controller.prototype = {
         if (this.canPlay()) {
             this.controls.panel.classList.add(this.ClassNames.paused);
             this.controls.playButton.classList.add(this.ClassNames.paused);
+            this.controls.playButton.setAttribute('aria-label', this.UIString('Play'));
         } else {
             this.controls.panel.classList.remove(this.ClassNames.paused);
             this.controls.playButton.classList.remove(this.ClassNames.paused);
+            this.controls.playButton.setAttribute('aria-label', this.UIString('Pause'));
 
             this.controls.panel.classList.remove(this.ClassNames.show);
             if (this.hideTimer)

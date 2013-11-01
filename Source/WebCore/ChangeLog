@@ -1,3 +1,30 @@
+2013-11-01  James Craig  <jcraig@apple.com>
+
+        AX: Regression: media controls are no longer accessible
+        https://bugs.webkit.org/show_bug.cgi?id=121990
+
+        Reviewed by Jer Noble.
+
+        Updated existing test coverage.
+        Added ARIA roles, attrs, and labels to the new media controls shadow DOM.
+        Localization will be handled in http://webkit.org/b/120956
+
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.UIString):
+        (Controller.prototype.createControls):
+        (Controller.prototype.handleLoadStart):
+        (Controller.prototype.handleError):
+        (Controller.prototype.handleAbort):
+        (Controller.prototype.handleSuspend):
+        (Controller.prototype.handleStalled):
+        (Controller.prototype.handleWaiting):
+        (Controller.prototype.handleFullscreenChange):
+        (Controller.prototype.handleMuteButtonClicked):
+        (Controller.prototype.handleMinButtonClicked):
+        (Controller.prototype.handleMaxButtonClicked):
+        (Controller.prototype.handleVolumeSliderChange):
+        (Controller.prototype.updatePlaying):
+
 2013-11-01  Andreas Kling  <akling@apple.com>
 
         Take BidiRuns out of the arena.

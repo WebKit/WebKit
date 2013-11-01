@@ -4,59 +4,62 @@ Dump <video> element controller accessibility object tree at 'canplaythrough' ev
 
 State at 'canplaythrough' event:
 
-    description: AXDescription: video playback
-    role: AXRole: AXToolbar
+    description: AXDescription: 
+    role: AXRole: AXGroup
 
 
-        description: AXDescription: back 30 seconds
-        role: AXRole: AXButton
+        description: AXDescription: Video Playback
+        role: AXRole: AXToolbar
 
 
-        description: AXDescription: play
-        role: AXRole: AXButton
+            description: AXDescription: Rewind 30 Seconds
+            role: AXRole: AXButton
 
 
-        description: AXDescription: elapsed time
-        role: AXRole: AXGroup
-        subrole: AXSubrole: AXApplicationTimer
+            description: AXDescription: Play
+            role: AXRole: AXButton
 
 
-            description: AXDescription: 
+            description: AXDescription: Elapsed
             role: AXRole: AXGroup
+            subrole: AXSubrole: AXApplicationTimer
 
 
                 description: AXDescription: 
-                role: AXRole: AXStaticText
+                role: AXRole: AXGroup
 
 
-        description: AXDescription: 
-        role: AXRole: AXSlider
-        subrole: AXSubrole: AXTimeline
+                    description: AXDescription: 
+                    role: AXRole: AXStaticText
 
 
-            description: AXDescription: 
-            role: AXRole: AXValueIndicator
-
-
-        description: AXDescription: remaining time
-        role: AXRole: AXGroup
-        subrole: AXSubrole: AXApplicationTimer
-
-
-            description: AXDescription: 
-            role: AXRole: AXGroup
+            description: AXDescription: Duration
+            role: AXRole: AXSlider
 
 
                 description: AXDescription: 
-                role: AXRole: AXStaticText
+                role: AXRole: AXValueIndicator
 
 
-        description: AXDescription: enter fullscreen
-        role: AXRole: AXButton
+            description: AXDescription: Remaining
+            role: AXRole: AXGroup
+            subrole: AXSubrole: AXApplicationTimer
 
 
-        description: AXDescription: mute
-        role: AXRole: AXButton
+                description: AXDescription: 
+                role: AXRole: AXGroup
+
+
+                    description: AXDescription: 
+                    role: AXRole: AXStaticText
+
+
+            description: AXDescription: Mute
+            role: AXRole: AXCheckBox
+
+
+            description: AXDescription: Display Full Screen
+            role: AXRole: AXCheckBox
 
 
 

@@ -1,3 +1,15 @@
+2013-11-01  James Craig  <jcraig@apple.com>
+
+        AX: Regression: media controls are no longer accessible
+        https://bugs.webkit.org/show_bug.cgi?id=121990
+
+        Reviewed by Jer Noble.
+
+        Removed failure expectation and updated expected render dump output. 
+
+        * platform/mac/TestExpectations:
+        * platform/mac/accessibility/media-element-expected.txt:
+
 2013-11-01  Afonso R. Costa Jr.  <afonso.costa@samsung.com>
 
         Expose setApplicationCacheOriginQuota via window.internals
