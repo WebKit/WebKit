@@ -1091,14 +1091,40 @@ private:
     
     void compileInt32ToDouble()
     {
-        // This node is tricky to compile in the DFG backend because it tries to
-        // avoid converting child1 to a double in-place, as that would make subsequent
-        // int uses of of child1 fail. But the FTL needs no such special magic, since
-        // unlike the DFG backend, the FTL allows each node to have multiple
-        // contemporaneous low-level representations. So, this gives child1 a double
-        // representation and then forwards that representation to m_node.
+        if (!m_interpreter.needsTypeCheck(m_node->child1(), SpecFullNumber)
+            || m_node->speculationDirection() == BackwardSpeculation) {
+            setDouble(lowDouble(m_node->child1()));
+            return;
+        }
         
-        setDouble(lowDouble(m_node->child1()));
+        LValue boxedValue = lowJSValue(m_node->child1(), ManualOperandSpeculation);
+        
+        LBasicBlock intCase = FTL_NEW_BLOCK(m_out, ("Double unboxing int case"));
+        LBasicBlock doubleCase = FTL_NEW_BLOCK(m_out, ("Double unboxing double case"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Double unboxing continuation"));
+        
+        m_out.branch(isNotInt32(boxedValue), doubleCase, intCase);
+        
+        LBasicBlock lastNext = m_out.appendTo(intCase, doubleCase);
+        
+        ValueFromBlock intToDouble = m_out.anchor(
+            m_out.intToDouble(unboxInt32(boxedValue)));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(doubleCase, continuation);
+
+        forwardTypeCheck(
+            jsValueValue(boxedValue), m_node->child1(), SpecFullNumber,
+            isCellOrMisc(boxedValue), jsValueValue(boxedValue));
+        
+        ValueFromBlock unboxedDouble = m_out.anchor(unboxDouble(boxedValue));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        
+        LValue result = m_out.phi(m_out.doubleType, intToDouble, unboxedDouble);
+        
+        setDouble(result);
     }
     
     void compileCheckStructure()
@@ -2411,11 +2437,11 @@ private:
     
     void forwardTypeCheck(
         FormattedValue lowValue, Edge highValue, SpeculatedType typesPassedThrough,
-        LValue failCondition)
+        LValue failCondition, const FormattedValue& recovery)
     {
         appendTypeCheck(
             lowValue, highValue, typesPassedThrough, failCondition, ForwardSpeculation,
-            FormattedValue());
+            recovery);
     }
     
     void typeCheck(

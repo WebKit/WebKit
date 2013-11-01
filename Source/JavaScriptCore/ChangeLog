@@ -1,5 +1,21 @@
 2013-10-31  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL Int32ToDouble should handle the forward type check case where you need a recovery
+        https://bugs.webkit.org/show_bug.cgi?id=123605
+
+        Reviewed by Mark Hahnenberg.
+        
+        If you have a Int32ToDouble that needs to do a type check and it's required to do a
+        forward exit, then it needs to manually pass in a value recovery for itself in the
+        OSR exit - since this is one of those forward-exiting nodes that doesn't have a
+        preceding MovHint.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileInt32ToDouble):
+        (JSC::FTL::LowerDFGToLLVM::forwardTypeCheck):
+
+2013-10-31  Filip Pizlo  <fpizlo@apple.com>
+
         FTL should implement InvalidationPoint in terms of llvm.stackmap
         https://bugs.webkit.org/show_bug.cgi?id=113647
 
