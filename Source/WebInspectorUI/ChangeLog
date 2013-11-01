@@ -1,5 +1,14 @@
 2013-11-01  Antoine Quint  <graouts@apple.com>
 
+        Remove custom Function.prototype.bind() in favor of native version
+        https://bugs.webkit.org/show_bug.cgi?id=123608
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Utilities.js:
+
+2013-11-01  Antoine Quint  <graouts@apple.com>
+
         Error trying to serialize a color created without an alpha component to RGBA or HSLA
         https://bugs.webkit.org/show_bug.cgi?id=123623
 
