@@ -110,7 +110,7 @@ public:
     void evaluateForTestInFrontend(long callId, const String& script);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    bool profilerEnabled();
+    bool profilerEnabled() const;
     void setProfilerEnabled(bool);
 
     void resume();

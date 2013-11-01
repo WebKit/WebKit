@@ -103,11 +103,6 @@ void InspectorDebuggerAgent::disable()
     m_enabled = false;
 }
 
-bool InspectorDebuggerAgent::enabled()
-{
-    return m_enabled;
-}
-
 void InspectorDebuggerAgent::causesRecompilation(ErrorString*, bool* result)
 {
     *result = scriptDebugServer().causesRecompilation();

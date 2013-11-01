@@ -26,15 +26,16 @@
 #include "config.h"
 
 #if ENABLE(INSPECTOR)
+
 #include "InspectorConsoleAgent.h"
 
-#include "InstrumentingAgents.h"
 #include "Console.h"
 #include "ConsoleMessage.h"
 #include "DOMWindow.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptManager.h"
 #include "InspectorFrontend.h"
+#include "InstrumentingAgents.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"
 #include "ScriptArguments.h"

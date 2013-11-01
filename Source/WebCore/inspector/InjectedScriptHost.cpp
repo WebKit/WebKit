@@ -168,7 +168,6 @@ ScriptDebugServer& InjectedScriptHost::scriptDebugServer()
 }
 #endif
 
-
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

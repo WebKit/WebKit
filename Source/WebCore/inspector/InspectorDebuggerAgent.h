@@ -145,7 +145,7 @@ protected:
     void reset();
 
 private:
-    bool enabled();
+    bool enabled() const { return m_enabled; };
 
     PassRefPtr<TypeBuilder::Array<TypeBuilder::Debugger::CallFrame>> currentCallFrames();
 

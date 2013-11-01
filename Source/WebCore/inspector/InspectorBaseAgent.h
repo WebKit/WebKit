@@ -52,7 +52,7 @@ public:
     virtual void registerInDispatcher(InspectorBackendDispatcher*) = 0;
     virtual void discardAgent() { }
 
-    String name() { return m_name; }
+    String name() const { return m_name; }
 
 protected:
     InstrumentingAgents* m_instrumentingAgents;

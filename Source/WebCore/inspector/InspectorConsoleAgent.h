@@ -62,7 +62,7 @@ public:
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
     virtual void clearMessages(ErrorString*);
-    bool enabled() { return m_enabled; }
+    bool enabled() const { return m_enabled; }
     void reset();
 
     virtual void setFrontend(InspectorFrontend*);

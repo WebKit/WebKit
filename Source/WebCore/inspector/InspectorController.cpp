@@ -355,7 +355,7 @@ Node* InspectorController::highlightedNode() const
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-bool InspectorController::profilerEnabled()
+bool InspectorController::profilerEnabled() const
 {
     return m_profilerAgent->enabled();
 }
