@@ -1,3 +1,16 @@
+2013-11-01  Brian Holt  <brian.holt@samsung.com>
+
+        [GTK] [WK2] Crash in webkitWebViewLoadFailedWithTLSErrors
+        https://bugs.webkit.org/show_bug.cgi?id=123618
+
+        Reviewed by Mario Sanchez Prada.
+
+        The GOwnPtrSoup header was not included which meant that the
+        specialization for GOwnPtr<SoupURI> was not used and instead the
+        default freeOwnedGPtr which calls g_free is used and crashes.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+
 2013-10-31  Tim Horton  <timothy_horton@apple.com>
 
         Fix a typo/review comment from Dan, in http://trac.webkit.org/changeset/158413

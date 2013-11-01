@@ -62,6 +62,7 @@
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/DragIcon.h>
 #include <WebCore/GOwnPtrGtk.h>
+#include <WebCore/GOwnPtrSoup.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/RefPtrCairo.h>
 #include <glib/gi18n-lib.h>
