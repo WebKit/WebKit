@@ -1199,8 +1199,8 @@ webkit.org/b/114280 svg/animations/smil-leak-element-instances.svg [ Pass Failur
 webkit.org/b/114280 svg/animations/smil-leak-elements.svg [ Pass Failure ]
 
 webkit.org/b/90363 [ Debug ] fast/overflow/lots-of-sibling-inline-boxes.html [ Failure Pass Timeout ]
-webkit.org/b/121452 [ Debug ] fast/frames/lots-of-objects.html [ Failure Pass Timeout ]
-webkit.org/b/121452 [ Debug ] fast/frames/lots-of-iframes.html [ Failure Pass Timeout ]
+webkit.org/b/121452 fast/frames/lots-of-objects.html [ Pass Timeout ]
+webkit.org/b/121452 fast/frames/lots-of-iframes.html [ Pass Timeout ]
 
 webkit.org/b/117427 compositing/reflections/load-video-in-reflection.html [ Pass Failure Crash Timeout ]
 

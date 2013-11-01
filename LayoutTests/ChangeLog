@@ -1,5 +1,14 @@
 2013-10-31  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Update the test expectations for the bug 121452.
+
+        fast/frames/lots-of-objects.html and lots-of-iframes.html are timing out everywhere on Mac.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2013-10-31  Ryosuke Niwa  <rniwa@webkit.org>
+
         Update the Mac test expectation for the mac-future.
 
         * platform/mac/TestExpectations:
