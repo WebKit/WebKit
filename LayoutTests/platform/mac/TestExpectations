@@ -1016,7 +1016,7 @@ webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-cues-added-once.h
 webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-style.html
 webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-legacy-api.html
 # Always times out on Mavericks https://bugs.webkit.org/show_bug.cgi?id=123412
-webkit.org/b/103663 [ MountainLion Mavericks ] media/track/track-forced-subtitles-in-band.html
+webkit.org/b/103663 media/track/track-forced-subtitles-in-band.html
 webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-mode.html
 
 # These two tests often timeout
@@ -1279,8 +1279,10 @@ webkit.org/b/123370 [ Mavericks ] css3/filters/custom/custom-filter-clamp-css-co
 webkit.org/b/123370 [ Mavericks ] css3/filters/custom/custom-filter-composite-fractional-source-alpha.html [ Pass ImageOnlyFailure ]
 webkit.org/b/123370 [ Mavericks ] css3/filters/custom/effect-custom-transform-parameters.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/123369 [ Mavericks ] svg/css/parent-shadow-offscreen.svg [ ImageOnlyFailure ]
-webkit.org/b/123369 [ Mavericks ] svg/css/root-shadow-offscreen.svg [ ImageOnlyFailure ]
+webkit.org/b/123369 svg/css/parent-shadow-offscreen.svg [ ImageOnlyFailure ]
+webkit.org/b/123369 [ MountainLion ] svg/css/parent-shadow-offscreen.svg [ Pass ]
+webkit.org/b/123369 svg/css/root-shadow-offscreen.svg [ ImageOnlyFailure ]
+webkit.org/b/123369 [ MountainLion ] svg/css/root-shadow-offscreen.svg [ Pass ]
 webkit.org/b/123369 [ Mavericks ] svg/filters/feSpecularLight-premultiplied.svg [ ImageOnlyFailure ]
 webkit.org/b/123369 [ Mavericks ] svg/masking/mask-type-luminance.svg [ ImageOnlyFailure ]
 webkit.org/b/123369 [ Mavericks ] svg/masking/mask-type-not-set.svg [ ImageOnlyFailure ]

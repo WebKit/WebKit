@@ -1,3 +1,9 @@
+2013-10-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update the Mac test expectation for the mac-future.
+
+        * platform/mac/TestExpectations:
+
 2013-10-31  Youenn Fablet  <youennf@gmail.com>
 
         Correct the elapsedTime calculation in SVG animations
