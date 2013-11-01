@@ -685,7 +685,7 @@ private:
     void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&);
     void setWindowResizerSize(const WebCore::IntSize&);
     void setIsInWindow(bool);
-    void setViewState(ViewState::Flags, bool wantsDidUpdateInWindowState);
+    void setViewState(ViewState::Flags, bool wantsDidUpdateViewState);
     void validateCommand(const String&, uint64_t);
     void executeEditCommand(const String&);
 
@@ -803,7 +803,7 @@ private:
 
     void changeSelectedIndex(int32_t index);
     void setCanStartMediaTimerFired();
-    void didUpdateInWindowStateTimerFired();
+    void didUpdateViewStateTimerFired();
 
     bool canHandleUserEvents() const;
 
@@ -902,7 +902,7 @@ private:
     RefPtr<PageBanner> m_footerBanner;
 
     WebCore::RunLoop::Timer<WebPage> m_setCanStartMediaTimer;
-    WebCore::RunLoop::Timer<WebPage> m_sendDidUpdateInWindowStateTimer;
+    WebCore::RunLoop::Timer<WebPage> m_sendDidUpdateViewStateTimer;
     bool m_mayStartMediaWhenInWindow;
 
     HashMap<uint64_t, RefPtr<WebUndoStep>> m_undoStepMap;

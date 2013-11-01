@@ -307,7 +307,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_autoSizingShouldExpandToViewHeight(false)
     , m_mediaVolume(1)
     , m_mayStartMediaWhenInWindow(true)
-    , m_waitingForDidUpdateInWindowState(false)
+    , m_waitingForDidUpdateViewState(false)
 #if PLATFORM(MAC)
     , m_exposedRectChangedTimer(this, &WebPageProxy::exposedRectChangedTimerFired)
     , m_clipsToExposedRect(false)
@@ -1036,20 +1036,20 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, WantsRepl
     updateBackingStoreDiscardableState();
 }
 
-void WebPageProxy::waitForDidUpdateInWindowState()
+void WebPageProxy::waitForDidUpdateViewState()
 {
     // If we have previously timed out with no response from the WebProcess, don't block the UIProcess again until it starts responding.
-    if (m_waitingForDidUpdateInWindowState)
+    if (m_waitingForDidUpdateViewState)
         return;
 
     if (!isValid())
         return;
 
-    m_waitingForDidUpdateInWindowState = true;
+    m_waitingForDidUpdateViewState = true;
 
     if (!m_process->isLaunching()) {
-        const double inWindowStateUpdateTimeout = 0.25;
-        m_process->connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DidUpdateInWindowState>(m_pageID, inWindowStateUpdateTimeout);
+        const double viewStateUpdateTimeout = 0.25;
+        m_process->connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DidUpdateViewState>(m_pageID, viewStateUpdateTimeout);
     }
 }
 
@@ -3778,7 +3778,7 @@ void WebPageProxy::resetStateAfterProcessExited()
 
     m_isValid = false;
     m_isPageSuspended = false;
-    m_waitingForDidUpdateInWindowState = false;
+    m_waitingForDidUpdateViewState = false;
 
     if (m_mainFrame) {
         m_urlAtProcessExit = m_mainFrame->url();

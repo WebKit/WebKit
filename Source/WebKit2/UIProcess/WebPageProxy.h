@@ -327,7 +327,7 @@ public:
     enum class WantsReplyOrNot { DoesNotWantReply, DoesWantReply };
     void viewStateDidChange(ViewState::Flags mayHaveChanged, WantsReplyOrNot = WantsReplyOrNot::DoesNotWantReply);
     bool isInWindow() const { return m_viewState & ViewState::IsInWindow; }
-    void waitForDidUpdateInWindowState();
+    void waitForDidUpdateViewState();
 
     WebCore::IntSize viewSize() const;
     bool isViewVisible() const { return m_viewState & ViewState::IsVisible; }
@@ -465,7 +465,7 @@ public:
     void listenForLayoutMilestones(WebCore::LayoutMilestones);
 
     void setVisibilityState(WebCore::PageVisibilityState, bool isInitialState);
-    void didUpdateInWindowState() { m_waitingForDidUpdateInWindowState = false; }
+    void didUpdateViewState() { m_waitingForDidUpdateViewState = false; }
 
     bool hasHorizontalScrollbar() const { return m_mainFrameHasHorizontalScrollbar; }
     bool hasVerticalScrollbar() const { return m_mainFrameHasVerticalScrollbar; }
@@ -1229,7 +1229,7 @@ private:
     float m_mediaVolume;
     bool m_mayStartMediaWhenInWindow;
 
-    bool m_waitingForDidUpdateInWindowState;
+    bool m_waitingForDidUpdateViewState;
 
 #if PLATFORM(MAC)
     WebCore::Timer<WebPageProxy> m_exposedRectChangedTimer;

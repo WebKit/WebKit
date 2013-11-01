@@ -954,10 +954,10 @@ void WebPage::drawPagesToPDFFromPDFDocument(CGContextRef context, PDFDocument *p
     }
 }
 
-void WebPage::didUpdateInWindowStateTimerFired()
+void WebPage::didUpdateViewStateTimerFired()
 {
     [CATransaction flush];
-    send(Messages::WebPageProxy::DidUpdateInWindowState());
+    send(Messages::WebPageProxy::DidUpdateViewState());
 }
 
 } // namespace WebKit

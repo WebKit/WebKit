@@ -3171,7 +3171,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     }
 
     if (hasPendingViewInWindowChange)
-        _data->_page->waitForDidUpdateInWindowState();
+        _data->_page->waitForDidUpdateViewState();
 }
 
 - (BOOL)isDeferringViewInWindowChanges
