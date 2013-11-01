@@ -1,3 +1,13 @@
+2013-11-01  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] WKObject seems to be initializing its target in a thread-safe manner, but really is not
+        https://bugs.webkit.org/show_bug.cgi?id=123640
+
+        Reviewed by Darin Adler.
+
+        * Shared/Cocoa/WKObject.mm:
+        (initializeTargetIfNeeded): Removed misleading incorrect code.
+
 2013-11-01  Benjamin Poulain  <benjamin@webkit.org>
 
         [WK2] Create a unique identifier for WebPageGroup if the input name is empty

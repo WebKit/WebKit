@@ -33,7 +33,7 @@
 using namespace WebKit;
 
 @implementation WKObject {
-    dispatch_once_t _targetInitializationToken;
+    BOOL _hasInitializedTarget;
     NSObject *_target;
 }
 
@@ -47,9 +47,11 @@ using namespace WebKit;
 
 static inline void initializeTargetIfNeeded(WKObject *self)
 {
-    dispatch_once(&self->_targetInitializationToken, ^{
-        self->_target = [self _web_createTarget];
-    });
+    if (self->_hasInitializedTarget)
+        return;
+
+    self->_hasInitializedTarget = YES;
+    self->_target = [self _web_createTarget];
 }
 
 - (BOOL)isEqual:(id)object
