@@ -52,7 +52,8 @@
 namespace WebCore {
 
 MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, MediaStreamTrackPrivate& privateTrack, const Dictionary* constraints)
-    : ActiveDOMObject(&context)
+    : RefCounted()
+    , ActiveDOMObject(&context)
     , m_privateTrack(privateTrack)
     , m_eventDispatchScheduled(false)
     , m_stoppingTrack(false)
