@@ -99,6 +99,7 @@ TEST(WebKit2, WKRemoteObjectRegistryTest)
     EXPECT_TRUE([remoteObjectProxy conformsToProtocol:@protocol(BundleInterface)]);
 
     [remoteObjectProxy sayHello];
+    [remoteObjectProxy testMethodWithString:@"Hello" double:123.456 integer:789];
 }
 
 } // namespace TestWebKitAPI

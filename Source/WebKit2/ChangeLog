@@ -1,3 +1,25 @@
+2013-11-01  Anders Carlsson  <andersca@apple.com>
+
+        Begin work on encoding argument types
+        https://bugs.webkit.org/show_bug.cgi?id=123631
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (-[WKRemoteObjectEncoder _encodeInvocation:forKey:]):
+        Encode argument types in an array.
+
+        (-[WKRemoteObjectEncoder _encodedObjectUsingBlock:]):
+        Add new helper method that encodes an object and returns the dictionary.
+
+        (-[WKRemoteObjectEncoder _encodeObjectForKey:usingBlock:]):
+        Implement this in terms of _encodedObjectUsingBlock:.
+
+        * Shared/MutableArray.cpp:
+        (WebKit::MutableArray::append):
+        * Shared/MutableArray.h:
+        Change append to take a PassRefPtr.
+
 2013-10-31  Gavin Barraclough  <barraclough@apple.com>
 
         Rename InWindowState -> ViewState

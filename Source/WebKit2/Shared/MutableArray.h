@@ -27,6 +27,7 @@
 #define MutableArray_h
 
 #include "ImmutableArray.h"
+#include <wtf/Forward.h>
 
 namespace WebKit {
 
@@ -41,7 +42,7 @@ public:
 
     ~MutableArray();
 
-    void append(APIObject*);
+    void append(PassRefPtr<APIObject>);
     void reserveCapacity(unsigned);
     void removeItemAtIndex(unsigned);
 

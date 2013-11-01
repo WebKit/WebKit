@@ -36,7 +36,7 @@ MutableArray::~MutableArray()
 {
 }
 
-void MutableArray::append(APIObject* item)
+void MutableArray::append(PassRefPtr<APIObject> item)
 {
     m_entries.append(item);
 }

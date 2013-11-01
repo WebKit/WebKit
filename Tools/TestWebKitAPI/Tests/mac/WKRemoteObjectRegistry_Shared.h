@@ -26,5 +26,6 @@
 @protocol BundleInterface <NSObject>
 
 - (void)sayHello;
+- (void)testMethodWithString:(NSString *)string double:(double)d integer:(int)i;
 
 @end

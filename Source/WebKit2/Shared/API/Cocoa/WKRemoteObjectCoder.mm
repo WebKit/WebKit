@@ -26,8 +26,10 @@
 #import "config.h"
 #import "WKRemoteObjectCoder.h"
 
+#import "MutableArray.h"
 #import "MutableDictionary.h"
 #import "WebData.h"
+#import "WebNumber.h"
 #import <wtf/TemporaryChange.h>
 
 #if WK_API_ENABLED
@@ -91,7 +93,53 @@ using namespace WebKit;
         [self encodeObject:methodSignature._typeString forKey:@"typeString"];
         [self encodeObject:NSStringFromSelector(invocation.selector) forKey:@"selector"];
 
-        // FIXME: Encode arguments as well.
+        NSUInteger argumentCount = methodSignature.numberOfArguments;
+
+        // The invocation should always have have self and _cmd arguments.
+        ASSERT(argumentCount >= 2);
+
+        RefPtr<MutableArray> arguments = MutableArray::create();
+
+        // We ignore self and _cmd.
+        for (NSUInteger i = 2; i < argumentCount; ++i) {
+            const char* type = [methodSignature getArgumentTypeAtIndex:i];
+
+            switch (*type) {
+            // double
+            case 'i': {
+                int value;
+                [invocation getArgument:&value atIndex:i];
+
+                arguments->append(WebUInt64::create(value));
+                break;
+            }
+
+            // int
+            case 'd': {
+                double value;
+                [invocation getArgument:&value atIndex:i];
+
+                arguments->append(WebDouble::create(value));
+                break;
+            }
+
+            // Objective-C object
+            case '@': {
+                id value;
+                [invocation getArgument:&value atIndex:i];
+
+                arguments->append([self _encodedObjectUsingBlock:^{
+                    [value encodeWithCoder:self];
+                }]);
+                break;
+            }
+
+            default:
+                [NSException raise:NSInvalidArgumentException format:@"Unsupported invocation argument type '%s'", type];
+            }
+        }
+
+        _currentDictionary->set("arguments", arguments.release());
     }];
 }
 
@@ -100,13 +148,19 @@ using namespace WebKit;
     _currentDictionary->set(key, WebData::create(bytes, length));
 }
 
-- (void)_encodeObjectForKey:(NSString *)key usingBlock:(void (^)())block
+- (RefPtr<MutableDictionary>)_encodedObjectUsingBlock:(void (^)())block
 {
     RefPtr<MutableDictionary> dictionary = MutableDictionary::create();
-    TemporaryChange<MutableDictionary*> dictionaryChange(_currentDictionary, dictionary.get());
 
-    dictionary->set(key, dictionary.release());
+    TemporaryChange<MutableDictionary*> dictionaryChange(_currentDictionary, dictionary.get());
     block();
+
+    return dictionary;
+}
+
+- (void)_encodeObjectForKey:(NSString *)key usingBlock:(void (^)())block
+{
+    _currentDictionary->set(key, [self _encodedObjectUsingBlock:block]);
 }
 
 @end
