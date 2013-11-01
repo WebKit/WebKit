@@ -1,3 +1,10 @@
+2013-11-01  Patrick Gansterer  <paroga@webkit.org>
+
+        Buildfix for !ENABLE(INSPECTOR) after 157288.
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willDispatchEvent):
+
 2013-11-01  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Avoid explicit traversal of text controls and the render tree in AtkText implementation

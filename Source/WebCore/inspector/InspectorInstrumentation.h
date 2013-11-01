@@ -921,8 +921,7 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEven
 #else
     UNUSED_PARAM(document);
     UNUSED_PARAM(event);
-    UNUSED_PARAM(window);
-    UNUSED_PARAM(node);
+    UNUSED_PARAM(hasEventListeners);
 #endif
     return InspectorInstrumentationCookie();
 }
