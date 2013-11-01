@@ -90,7 +90,6 @@ public:
     void setAllowUniversalAccessFromFileURLs(bool);
     void setAllowFileAccessFromFileURLs(bool);
     void setAppCacheMaximumSize(unsigned long long quota);
-    void setApplicationCacheOriginQuota(unsigned long long);
     void setAuthorAndUserStylesEnabled(bool);
     void setCacheModel(int);
     void setCustomPolicyDelegate(bool setDelegate, bool permissive);

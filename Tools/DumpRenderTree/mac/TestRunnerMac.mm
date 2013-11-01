@@ -394,13 +394,6 @@ void TestRunner::setAppCacheMaximumSize(unsigned long long size)
     [WebApplicationCache setMaximumSize:size];
 }
 
-void TestRunner::setApplicationCacheOriginQuota(unsigned long long quota)
-{
-    WebSecurityOrigin *origin = [[WebSecurityOrigin alloc] initWithURL:[NSURL URLWithString:@"http://127.0.0.1:8000"]];
-    [[origin applicationCacheQuotaManager] setQuota:quota];
-    [origin release];
-}
-
 void TestRunner::setAuthorAndUserStylesEnabled(bool flag)
 {
     [[[mainFrame webView] preferences] setAuthorAndUserStylesEnabled:flag];

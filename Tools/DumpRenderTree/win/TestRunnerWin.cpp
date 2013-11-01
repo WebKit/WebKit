@@ -790,11 +790,6 @@ void TestRunner::clearApplicationCacheForOrigin(JSStringRef origin)
     // FIXME: Implement to support deleting all application cache for an origin.
 }
 
-void TestRunner::setApplicationCacheOriginQuota(unsigned long long quota)
-{
-    // FIXME: Implement to support application cache quotas.
-}
-
 JSValueRef TestRunner::originsWithApplicationCache(JSContextRef context)
 {
     // FIXME: Implement to get origins that have application caches.

@@ -501,11 +501,6 @@ void TestRunner::clearAllApplicationCaches()
     notImplemented();
 }
 
-void TestRunner::setApplicationCacheOriginQuota(unsigned long long)
-{
-    notImplemented();
-}
-
 void TestRunner::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
 {
     DumpRenderTreeSupport::setMockDeviceOrientation(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page(), canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma);

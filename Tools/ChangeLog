@@ -1,3 +1,23 @@
+2013-11-01  Afonso R. Costa Jr.  <afonso.costa@samsung.com>
+
+        Expose setApplicationCacheOriginQuota via window.internals
+        https://bugs.webkit.org/show_bug.cgi?id=87838
+
+        Reviewed by Joseph Pecoraro.
+
+        * DumpRenderTree/TestRunner.cpp: Move setApplicationCacheOriginQuota
+        to window.internals
+        (TestRunner::staticFunctions):
+        * DumpRenderTree/TestRunner.h: Ditto.
+        * DumpRenderTree/blackberry/TestRunnerBlackBerry.cpp: Remove setApplicationCacheOriginQuota.
+        * DumpRenderTree/efl/TestRunnerEfl.cpp: Ditto.
+        * DumpRenderTree/gtk/TestRunnerGtk.cpp: Ditto.
+        * DumpRenderTree/mac/TestRunnerMac.mm: Ditto.
+        * DumpRenderTree/win/TestRunnerWin.cpp: Ditto.
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl: Ditto.
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp: Ditto.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h: Ditto.
+
 2013-10-31  Mark Lam  <mark.lam@apple.com>
 
         REGRESSION: Crashes in -[UIDelegate webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:].

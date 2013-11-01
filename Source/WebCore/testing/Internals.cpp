@@ -28,6 +28,7 @@
 #include "Internals.h"
 
 #include "AnimationController.h"
+#include "ApplicationCacheStorage.h"
 #include "BackForwardController.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
@@ -273,6 +274,7 @@ void Internals::resetToConsistentState(Page* page)
         page->mainFrame().editor().toggleContinuousSpellChecking();
     if (page->mainFrame().editor().isOverwriteModeEnabled())
         page->mainFrame().editor().toggleOverwriteModeEnabled();
+    cacheStorage().setDefaultOriginQuota(ApplicationCacheStorage::noQuota());
 }
 
 Internals::Internals(Document* document)
@@ -1809,6 +1811,14 @@ void Internals::webkitDidExitFullScreenForElement(Element* element)
     document->webkitDidExitFullScreenForElement(element);
 }
 #endif
+
+void Internals::setApplicationCacheOriginQuota(unsigned long long quota)
+{
+    Document* document = contextDocument();
+    if (!document)
+        return;
+    cacheStorage().storeUpdatedQuotaForOrigin(document->securityOrigin(), quota);
+}
 
 void Internals::registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme)
 {

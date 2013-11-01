@@ -457,3 +457,6 @@ EXPORTS
         symbolWithPointer(?cursiveFontFamily@Settings@WebCore@@QBEABVAtomicString@WTF@@W4UScriptCode@@@Z, ?cursiveFontFamily@Settings@WebCore@@QEBAAEBVAtomicString@WTF@@W4UScriptCode@@@Z)
         symbolWithPointer(?setSimpleLineLayoutEnabled@Settings@WebCore@@QAEX_N@Z, ?setSimpleLineLayoutEnabled@Settings@WebCore@@QEAAX_N@Z)
         symbolWithPointer(?setSimpleLineLayoutDebugBordersEnabled@Settings@WebCore@@QAEX_N@Z, ?setSimpleLineLayoutDebugBordersEnabled@Settings@WebCore@@QEAAX_N@Z)
+        symbolWithPointer(?storeUpdatedQuotaForOrigin@ApplicationCacheStorage@WebCore@@QAE_NPBVSecurityOrigin@2@_J@Z, ?setApplicationCacheOriginQuota@Internals@WebCore@@QAEX_K@Z)
+        symbolWithPointer(?cacheStorage@WebCore@@YAAAVApplicationCacheStorage@1@XZ, ?setApplicationCacheOriginQuota@Internals@WebCore@@QAEX_K@Z)
+        symbolWithPointer(?setDefaultOriginQuota@ApplicationCacheStorage@WebCore@@QAEX_J@Z, ?resetToConsistentState@Internals@WebCore@@SAXPAVPage@2@@Z)

@@ -15,7 +15,8 @@ function startTest() {
         testRunner.clearAllApplicationCaches();
         testRunner.dumpApplicationCacheDelegateCallbacks();
         testRunner.disallowIncreaseForApplicationCacheQuota();
-        testRunner.setApplicationCacheOriginQuota(20*1024);
+        if (window.internals)
+            internals.setApplicationCacheOriginQuota(20*1024);
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
     }
@@ -49,7 +50,8 @@ function addSecondIFrame() {
     // Expected to fail, then increase the quota.
     addIFrameWithContinuation("resources/quota-origin-iframe-2.html", function(event) {
         log(event.data);
-        testRunner.setApplicationCacheOriginQuota(100*1024);
+        if (window.internals)
+            internals.setApplicationCacheOriginQuota(100*1024);
         addThirdIFrame();
     });
 }

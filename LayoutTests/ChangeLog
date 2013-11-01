@@ -1,3 +1,15 @@
+2013-11-01  Afonso R. Costa Jr.  <afonso.costa@samsung.com>
+
+        Expose setApplicationCacheOriginQuota via window.internals
+        https://bugs.webkit.org/show_bug.cgi?id=87838
+
+        Reviewed by Joseph Pecoraro.
+
+        * http/tests/appcache/origin-quota-continued-download-multiple-manifests.html: Updated
+        to use setApplicationCacheOriginQuota from window.internals
+        * http/tests/appcache/origin-quota-continued-download.html: Ditto.
+        * http/tests/appcache/origin-quota.html: Ditto.
+
 2013-10-31  Mark Lam  <mark.lam@apple.com>
 
         REGRESSION: Crashes in -[UIDelegate webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:].

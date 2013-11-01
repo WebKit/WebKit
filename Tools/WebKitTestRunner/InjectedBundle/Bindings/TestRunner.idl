@@ -111,7 +111,6 @@ interface TestRunner {
     void setAppCacheMaximumSize(unsigned long long size);
     long long applicationCacheDiskUsageForOrigin(DOMString origin);
     void clearApplicationCacheForOrigin(DOMString name);
-    void setApplicationCacheOriginQuota(unsigned long long bytes);
     void disallowIncreaseForApplicationCacheQuota();
     object originsWithApplicationCache();
 

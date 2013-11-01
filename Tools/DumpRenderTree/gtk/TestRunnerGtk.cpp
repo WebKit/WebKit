@@ -575,11 +575,6 @@ void TestRunner::clearAllApplicationCaches()
     // FIXME: Implement to support application cache quotas.
 }
 
-void TestRunner::setApplicationCacheOriginQuota(unsigned long long quota)
-{
-    // FIXME: Implement to support application cache quotas.
-}
-
 void TestRunner::clearApplicationCacheForOrigin(OpaqueJSString*)
 {
     // FIXME: Implement to support deleting all application caches for an origin.

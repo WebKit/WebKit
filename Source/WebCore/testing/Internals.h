@@ -262,6 +262,8 @@ public:
     void webkitDidExitFullScreenForElement(Element*);
 #endif
 
+    void setApplicationCacheOriginQuota(unsigned long long);
+
     void registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme);
     void removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const String& scheme);
 

@@ -14,7 +14,8 @@ function startTest() {
     if (window.testRunner) {
         testRunner.clearAllApplicationCaches();
         testRunner.dumpApplicationCacheDelegateCallbacks();
-        testRunner.setApplicationCacheOriginQuota(1024);
+        if (window.internals)
+            internals.setApplicationCacheOriginQuota(1024);
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
     }
