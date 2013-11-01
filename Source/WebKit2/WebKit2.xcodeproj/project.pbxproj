@@ -850,9 +850,9 @@
 		BC40760C124FF0270068F20A /* WKURLRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4075F0124FF0270068F20A /* WKURLRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC40760D124FF0270068F20A /* WKURLResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4075F1124FF0270068F20A /* WKURLResponse.cpp */; };
 		BC40760E124FF0270068F20A /* WKURLResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4075F2124FF0270068F20A /* WKURLResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC407619124FF0370068F20A /* WKStringCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC407611124FF0370068F20A /* WKStringCF.cpp */; };
+		BC407619124FF0370068F20A /* WKStringCF.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC407611124FF0370068F20A /* WKStringCF.mm */; };
 		BC40761A124FF0370068F20A /* WKStringCF.h in Headers */ = {isa = PBXBuildFile; fileRef = BC407612124FF0370068F20A /* WKStringCF.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC40761B124FF0370068F20A /* WKURLCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC407613124FF0370068F20A /* WKURLCF.cpp */; };
+		BC40761B124FF0370068F20A /* WKURLCF.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC407613124FF0370068F20A /* WKURLCF.mm */; };
 		BC40761C124FF0370068F20A /* WKURLCF.h in Headers */ = {isa = PBXBuildFile; fileRef = BC407614124FF0370068F20A /* WKURLCF.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC407627124FF0400068F20A /* WKCertificateInfoMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BC407621124FF0400068F20A /* WKCertificateInfoMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC407628124FF0400068F20A /* WKCertificateInfoMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC407622124FF0400068F20A /* WKCertificateInfoMac.mm */; };
@@ -2388,9 +2388,9 @@
 		BC4075F0124FF0270068F20A /* WKURLRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKURLRequest.h; sourceTree = "<group>"; };
 		BC4075F1124FF0270068F20A /* WKURLResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKURLResponse.cpp; sourceTree = "<group>"; };
 		BC4075F2124FF0270068F20A /* WKURLResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKURLResponse.h; sourceTree = "<group>"; };
-		BC407611124FF0370068F20A /* WKStringCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKStringCF.cpp; sourceTree = "<group>"; };
+		BC407611124FF0370068F20A /* WKStringCF.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKStringCF.mm; sourceTree = "<group>"; };
 		BC407612124FF0370068F20A /* WKStringCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKStringCF.h; sourceTree = "<group>"; };
-		BC407613124FF0370068F20A /* WKURLCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKURLCF.cpp; sourceTree = "<group>"; };
+		BC407613124FF0370068F20A /* WKURLCF.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKURLCF.mm; sourceTree = "<group>"; };
 		BC407614124FF0370068F20A /* WKURLCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKURLCF.h; sourceTree = "<group>"; };
 		BC407621124FF0400068F20A /* WKCertificateInfoMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKCertificateInfoMac.h; sourceTree = "<group>"; };
 		BC407622124FF0400068F20A /* WKCertificateInfoMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKCertificateInfoMac.mm; sourceTree = "<group>"; };
@@ -4759,9 +4759,9 @@
 			children = (
 				BCFD5489132D82680055D816 /* WKErrorCF.cpp */,
 				BCFD548A132D82680055D816 /* WKErrorCF.h */,
-				BC407611124FF0370068F20A /* WKStringCF.cpp */,
+				BC407611124FF0370068F20A /* WKStringCF.mm */,
 				BC407612124FF0370068F20A /* WKStringCF.h */,
-				BC407613124FF0370068F20A /* WKURLCF.cpp */,
+				BC407613124FF0370068F20A /* WKURLCF.mm */,
 				BC407614124FF0370068F20A /* WKURLCF.h */,
 			);
 			path = cf;
@@ -7252,12 +7252,12 @@
 				F634445C12A885E9000612D8 /* WKSecurityOrigin.cpp in Sources */,
 				BC407603124FF0270068F20A /* WKSerializedScriptValue.cpp in Sources */,
 				BC407605124FF0270068F20A /* WKString.cpp in Sources */,
-				BC407619124FF0370068F20A /* WKStringCF.cpp in Sources */,
+				BC407619124FF0370068F20A /* WKStringCF.mm in Sources */,
 				1A4A9AA912B7E796008FE984 /* WKTextInputWindowController.mm in Sources */,
 				BC407607124FF0270068F20A /* WKType.cpp in Sources */,
 				7CD5EBBE1746B04C000C1C45 /* WKTypeRefWrapper.mm in Sources */,
 				BC407609124FF0270068F20A /* WKURL.cpp in Sources */,
-				BC40761B124FF0370068F20A /* WKURLCF.cpp in Sources */,
+				BC40761B124FF0370068F20A /* WKURLCF.mm in Sources */,
 				BC40760B124FF0270068F20A /* WKURLRequest.cpp in Sources */,
 				BC40762A124FF0400068F20A /* WKURLRequestNS.mm in Sources */,
 				512A9760180E031D0039A149 /* DatabaseProcessMessageReceiver.cpp in Sources */,

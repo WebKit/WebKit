@@ -23,23 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKURLCF.h"
+#import "config.h"
+#import "WKURLCF.h"
 
-#include "WKAPICast.h"
-#include <WebCore/CFURLExtras.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
+#import "WKAPICast.h"
+#import "WKNSURL.h"
+#import <WebCore/CFURLExtras.h>
+#import <objc/runtime.h>
+#import <wtf/PassRefPtr.h>
+#import <wtf/RefPtr.h>
+#import <wtf/text/CString.h>
+#import <wtf/text/WTFString.h>
 
 using namespace WebCore;
 using namespace WebKit;
+
+#if WK_API_ENABLED
+static inline Class wkNSURLClass()
+{
+    static dispatch_once_t once;
+    static Class wkNSURLClass;
+    dispatch_once(&once, ^{
+        wkNSURLClass = [WKNSURL class];
+    });
+    return wkNSURLClass;
+}
+#endif // WK_API_ENABLED
 
 WKURLRef WKURLCreateWithCFURL(CFURLRef cfURL)
 {
     if (!cfURL)
         return 0;
+
+#if WK_API_ENABLED
+    // Since WKNSURL is an internal class with no subclasses, we can do a simple equality check.
+    if (object_getClass((NSURL *)cfURL) == wkNSURLClass()) {
+        return toAPI(static_cast<WebURL*>(&[(WKNSURL *)cfURL retain]._apiObject));
+    }
+#endif
 
     CString urlBytes;
     getURLBytes(cfURL, urlBytes);

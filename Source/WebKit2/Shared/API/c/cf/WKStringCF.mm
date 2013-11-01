@@ -23,17 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKStringCF.h"
+#import "config.h"
+#import "WKStringCF.h"
 
-#include "WKAPICast.h"
-#include <wtf/text/WTFString.h>
+#import "WKAPICast.h"
+#import "WKNSString.h"
+#import <objc/runtime.h>
+#import <wtf/text/WTFString.h>
 
 using namespace WebCore;
 using namespace WebKit;
 
+#if WK_API_ENABLED
+static inline Class wkNSStringClass()
+{
+    static dispatch_once_t once;
+    static Class wkNSStringClass;
+    dispatch_once(&once, ^{
+        wkNSStringClass = [WKNSString class];
+    });
+    return wkNSStringClass;
+}
+#endif // WK_API_ENABLED
+
 WKStringRef WKStringCreateWithCFString(CFStringRef cfString)
 {
+#if WK_API_ENABLED
+    // Since WKNSString is an internal class with no subclasses, we can do a simple equality check.
+    if (object_getClass((NSString *)cfString) == wkNSStringClass()) {
+        return toAPI(static_cast<WebString*>(&[(WKNSString *)cfString retain]._apiObject));
+    }
+#endif
     String string(cfString);
     return toCopiedAPI(string);
 }

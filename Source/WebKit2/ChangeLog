@@ -1,3 +1,22 @@
+2013-11-01  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Avoid some double-wrapping of strings and URLs
+        https://bugs.webkit.org/show_bug.cgi?id=123632
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/c/cf/WKStringCF.cpp: Removed.
+        * Shared/API/c/cf/WKStringCF.mm: Copied from Source/WebKit2/Shared/API/c/cf/WKStringCF.cpp.
+        (wkNSStringClass): Added this helper.
+        (WKStringCreateWithCFString): If the passed-in CFString is already wrapping a WebString,
+        then retain it and return it.
+        * Shared/API/c/cf/WKURLCF.cpp: Removed.
+        * Shared/API/c/cf/WKURLCF.mm: Copied from Source/WebKit2/Shared/API/c/cf/WKURLCF.cpp.
+        (wkNSURLClass): Added this helper.
+        (WKURLCreateWithCFURL): If the passed-in CFURL is already wrapping a WebURL, then retain it
+        and return it.
+        * WebKit2.xcodeproj/project.pbxproj: Updated for renames.
+
 2013-11-01  Anders Carlsson  <andersca@apple.com>
 
         Begin work on encoding argument types
