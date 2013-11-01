@@ -1,3 +1,15 @@
+2013-11-01  Andreas Kling  <akling@apple.com>
+
+        Take BidiRuns out of the arena.
+        <https://webkit.org/b/123630>
+
+        Stop arena-allocating BidiRun objects and use regular new/delete.
+
+        With this, there are no remaining clients of RenderArena.
+        It will be removed in a subsequent patch.
+
+        Reviewed by Anders Carlsson.
+
 2013-11-01  Afonso R. Costa Jr.  <afonso.costa@samsung.com>
 
         Expose setApplicationCacheOriginQuota via window.internals

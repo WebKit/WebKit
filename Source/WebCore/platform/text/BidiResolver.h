@@ -135,8 +135,6 @@ struct BidiCharacterRun {
         }
     }
 
-    void destroy() { delete this; }
-
     int start() const { return m_start; }
     int stop() const { return m_stop; }
     unsigned char level() const { return m_level; }

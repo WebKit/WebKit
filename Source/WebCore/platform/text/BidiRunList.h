@@ -167,7 +167,7 @@ void BidiRunList<Run>::replaceRunWithRuns(Run* toReplace, BidiRunList<Run>& newR
         m_logicallyLastRun = newRuns.logicallyLastRun();
     m_runCount += newRuns.runCount() - 1; // We added the new runs and removed toReplace.
 
-    toReplace->destroy();
+    delete toReplace;
     newRuns.clearWithoutDestroyingRuns();
 }
 
@@ -189,7 +189,7 @@ void BidiRunList<Run>::deleteRuns()
     Run* curr = m_firstRun;
     while (curr) {
         Run* s = curr->next();
-        curr->destroy();
+        delete curr;
         curr = s;
     }
 

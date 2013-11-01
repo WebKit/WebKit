@@ -451,7 +451,7 @@ static inline unsigned numberOfIsolateAncestors(const InlineIterator& iter)
 static inline void addPlaceholderRunForIsolatedInline(InlineBidiResolver& resolver, RenderObject* obj, unsigned pos)
 {
     ASSERT(obj);
-    BidiRun* isolatedRun = new (obj->renderArena()) BidiRun(pos, 0, obj, resolver.context(), resolver.dir());
+    BidiRun* isolatedRun = new BidiRun(pos, 0, obj, resolver.context(), resolver.dir());
     resolver.runs().addRun(isolatedRun);
     // FIXME: isolatedRuns() could be a hash of object->run and then we could cheaply
     // ASSERT here that we didn't create multiple objects for the same inline.

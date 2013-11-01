@@ -34,33 +34,11 @@ class BidiContext;
 class InlineBox;
 
 struct BidiRun : BidiCharacterRun {
-    BidiRun(int start, int stop, RenderObject* object, BidiContext* context, UCharDirection dir)
-        : BidiCharacterRun(start, stop, context, dir)
-        , m_object(object)
-        , m_box(0)
-    {
-        ASSERT(!object->isText() || static_cast<unsigned>(stop) <= toRenderText(object)->textLength());
-        // Stored in base class to save space.
-        m_hasHyphen = false;
-#if ENABLE(CSS_SHAPES)
-        m_startsSegment = false;
-#endif
-    }
-
-    void destroy();
-
-    // Overloaded new operator.
-    void* operator new(size_t, RenderArena&);
-
-    // Overridden to prevent the normal delete from being called.
-    void operator delete(void*, size_t);
+    BidiRun(int start, int stop, RenderObject*, BidiContext*, UCharDirection);
+    ~BidiRun();
 
     BidiRun* next() { return static_cast<BidiRun*>(m_next); }
     RenderObject* object() { return m_object; }
-
-private:
-    // The normal operator new is disallowed.
-    void* operator new(size_t) throw();
 
 public:
     RenderObject* m_object;
