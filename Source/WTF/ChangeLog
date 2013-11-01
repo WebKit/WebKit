@@ -1,3 +1,10 @@
+2013-11-01  Patrick Gansterer  <paroga@webkit.org>
+
+        Buildfix for !USE(ICU_UNICODE) after 156968.
+
+        * wtf/unicode/CollatorDefault.cpp:
+        (WTF::Collator::userDefault):
+
 2013-10-30  Oliver Hunt  <oliver@apple.com>
 
         Implement basic ES6 Math functions
