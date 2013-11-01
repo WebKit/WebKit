@@ -1,3 +1,17 @@
+2013-10-31  Oliver Hunt  <oliver@apple.com>
+
+        JavaScript parser bug
+        https://bugs.webkit.org/show_bug.cgi?id=123506
+
+        Reviewed by Mark Lam.
+
+        Update and add tests
+
+        * js/dom/assign-expected.txt:
+        * js/function-toString-parentheses-expected.txt:
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/parser-syntax-check.js:
+
 2013-10-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update the test expectations for the bug 121452.

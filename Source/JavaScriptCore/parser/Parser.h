@@ -759,7 +759,6 @@ private:
         return !m_errorMessage.isNull();
     }
 
-    
     struct SavePoint {
         int startOffset;
         unsigned oldLineStartOffset;
@@ -784,7 +783,31 @@ private:
         m_lexer->setLastLineNumber(savePoint.oldLastLineNumber);
         m_lexer->setLineNumber(savePoint.oldLineNumber);
     }
+
+    struct ParserState {
+        int assignmentCount;
+        int nonLHSCount;
+        int nonTrivialExpressionCount;
+    };
+
+    ALWAYS_INLINE ParserState saveState()
+    {
+        ParserState result;
+        result.assignmentCount = m_assignmentCount;
+        result.nonLHSCount = m_nonLHSCount;
+        result.nonTrivialExpressionCount = m_nonTrivialExpressionCount;
+        return result;
+    }
     
+    ALWAYS_INLINE void restoreState(const ParserState& state)
+    {
+        m_assignmentCount = state.assignmentCount;
+        m_nonLHSCount = state.nonLHSCount;
+        m_nonTrivialExpressionCount = state.nonTrivialExpressionCount;
+        
+    }
+    
+
     VM* m_vm;
     const SourceCode* m_source;
     ParserArena* m_arena;

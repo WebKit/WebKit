@@ -688,6 +688,10 @@ PASS Invalid: "({set [x](){}})"
 PASS Invalid: "function f() { ({set [x](){}}) }"
 PASS Invalid: "({[...x]: 1})"
 PASS Invalid: "function f() { ({[...x]: 1}) }"
+PASS Valid:   "( function(){ return this || eval('this'); }().x = 'y' )"
+PASS Valid:   "function f() { ( function(){ return this || eval('this'); }().x = 'y' ) }"
+PASS Invalid: "function(){ return this || eval('this'); }().x = 'y'"
+PASS Invalid: "function f() { function(){ return this || eval('this'); }().x = 'y' }"
 PASS e.line is 1
 PASS foo is 'PASS'
 PASS bar is 'PASS'

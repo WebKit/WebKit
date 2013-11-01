@@ -1,3 +1,22 @@
+2013-10-31  Oliver Hunt  <oliver@apple.com>
+
+        JavaScript parser bug
+        https://bugs.webkit.org/show_bug.cgi?id=123506
+
+        Reviewed by Mark Lam.
+
+        Add ParserState as an abstraction and use that to save and restore
+        the parser state around nested functions (We'll need to use this in
+        more places in future).  Also fix a minor error typo this testcases
+        hit.
+
+        * parser/Parser.cpp:
+        (JSC::::parseFunctionInfo):
+        (JSC::::parseAssignmentExpression):
+        * parser/Parser.h:
+        (JSC::Parser::saveState):
+        (JSC::Parser::restoreState):
+
 2013-10-31  Filip Pizlo  <fpizlo@apple.com>
 
         FTL Int32ToDouble should handle the forward type check case where you need a recovery

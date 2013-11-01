@@ -1105,7 +1105,9 @@ template <FunctionRequirements requirements, FunctionParseMode mode, bool nameIs
         return true;
     }
     m_lastFunctionName = lastFunctionName;
+    ParserState oldState = saveState();
     body = parseFunctionBody(context);
+    restoreState(oldState);
     failIfFalse(body, "Cannot parse the body of this ", stringForFunctionMode(mode));
     if (functionScope->strictMode() && name) {
         RELEASE_ASSERT(mode == FunctionMode);
@@ -1370,7 +1372,7 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
     failIfFalse(lhs, "Cannot parse expression");
     if (initialNonLHSCount != m_nonLHSCount) {
         if (m_token.m_type >= EQUAL && m_token.m_type <= OREQUAL)
-            semanticFail("Left hand sign of operator '", getToken(), "' must be a reference");
+            semanticFail("Left hand side of operator '", getToken(), "' must be a reference");
 
         return lhs;
     }
@@ -1411,7 +1413,7 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
         failIfFalse(lhs, "Cannot parse the right hand side of an assignment expression");
         if (initialNonLHSCount != m_nonLHSCount) {
             if (m_token.m_type >= EQUAL && m_token.m_type <= OREQUAL)
-                semanticFail("Left hand sign of operator '", getToken(), "' must be a reference");
+                semanticFail("Left hand side of operator '", getToken(), "' must be a reference");
             break;
         }
     }

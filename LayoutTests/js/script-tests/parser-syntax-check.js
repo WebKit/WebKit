@@ -427,6 +427,8 @@ valid("({[x]: 1})")
 invalid("({get [x](){}})")
 invalid("({set [x](){}})")
 invalid("({[...x]: 1})")
+valid("( function(){ return this || eval('this'); }().x = 'y' )");
+invalid("function(){ return this || eval('this'); }().x = 'y'");
 
 
 
