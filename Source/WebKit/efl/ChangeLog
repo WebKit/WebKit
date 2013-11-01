@@ -1,3 +1,18 @@
+2013-11-01  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK1] Rendering is broken when scrolled ewk_view_single repeatedly
+        https://bugs.webkit.org/show_bug.cgi?id=123609
+
+        Reviewed by Gyuyoung Kim.
+
+        ewk_view_single adds wrong updateRects except last one in scrolls_process,
+        because previous updateRects are not considered accumulated scrollOffsets.
+
+        * ewk/ewk_view_single.cpp:
+        (_ewk_view_single_smart_scrolls_process):
+        Merged scrollOffsets to calculate updateRects once.
+        It will also reduce unnecessary memory copy operations.
+
 2013-10-16  Jochen Eisinger  <jochen@chromium.org>
 
         A page should exit fullscreen mode if it opens a new popup

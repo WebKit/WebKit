@@ -192,13 +192,23 @@ static inline void _ewk_view_single_scroll_process_single(Ewk_View_Smart_Data* s
 static Eina_Bool _ewk_view_single_smart_scrolls_process(Ewk_View_Smart_Data* smartData)
 {
     Evas_Coord imageWidth, imageHeight;
-    void* pixels = evas_object_image_data_get(smartData->backing_store, 1);
     evas_object_image_size_get(smartData->backing_store, &imageWidth, &imageHeight);
 
-    const WTF::Vector<WebCore::IntSize>& scrollOffset = ewk_view_scroll_offsets_get(smartData->_priv);
+    const WTF::Vector<WebCore::IntSize>& scrollOffsets = ewk_view_scroll_offsets_get(smartData->_priv);
     const WTF::Vector<WebCore::IntRect>& rectsToScroll = ewk_view_scroll_rects_get(smartData->_priv);
-    for (size_t i = 0; i < scrollOffset.size(); ++i)
-        _ewk_view_single_scroll_process_single(smartData, pixels, imageWidth, imageHeight, scrollOffset[i], rectsToScroll[i]);
+
+    WebCore::IntRect rectToScroll(0, 0, imageWidth, imageHeight);
+    WebCore::IntSize scrollOffset;
+    for (size_t i = 0; i < scrollOffsets.size(); ++i) {
+        rectToScroll.intersect(rectsToScroll[i]);
+        scrollOffset += scrollOffsets[i];
+    }
+
+    if (scrollOffset.isZero())
+        return true;
+
+    void* pixels = evas_object_image_data_get(smartData->backing_store, 1);
+    _ewk_view_single_scroll_process_single(smartData, pixels, imageWidth, imageHeight, scrollOffset, rectToScroll);
 
     evas_object_image_data_set(smartData->backing_store, pixels);
 
