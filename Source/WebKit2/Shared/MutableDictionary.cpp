@@ -36,13 +36,13 @@ MutableDictionary::~MutableDictionary()
 {
 }
 
-bool MutableDictionary::add(const String& key, APIObject* item)
+bool MutableDictionary::add(const String& key, PassRefPtr<APIObject> item)
 {
     MapType::AddResult result = m_map.add(key, item);
     return result.isNewEntry;
 }
 
-bool MutableDictionary::set(const String& key, APIObject* item)
+bool MutableDictionary::set(const String& key, PassRefPtr<APIObject> item)
 {
     MapType::AddResult result = m_map.set(key, item);
     return result.isNewEntry;

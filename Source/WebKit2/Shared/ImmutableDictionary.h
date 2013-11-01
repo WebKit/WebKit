@@ -81,7 +81,7 @@ public:
 
 protected:
     ImmutableDictionary();
-    ImmutableDictionary(MapType& map);
+    explicit ImmutableDictionary(MapType&);
 
     MapType m_map;
 };

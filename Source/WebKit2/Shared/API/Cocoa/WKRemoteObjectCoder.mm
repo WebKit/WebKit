@@ -26,21 +26,21 @@
 #import "config.h"
 #import "WKRemoteObjectCoder.h"
 
-#import "WKData.h"
-#import "WKMutableDictionary.h"
-#import "WKNumber.h"
-#import "WKRetainPtr.h"
-#import "WKStringCF.h"
+#import "MutableDictionary.h"
+#import "WebData.h"
+#import <wtf/TemporaryChange.h>
 
 #if WK_API_ENABLED
+
+using namespace WebKit;
 
 @interface NSMethodSignature (Details)
 - (NSString *)_typeString;
 @end
 
 @implementation WKRemoteObjectEncoder {
-    WKRetainPtr<WKMutableDictionaryRef> _rootDictionary;
-    WKMutableDictionaryRef _currentDictionary;
+    RefPtr<MutableDictionary> _rootDictionary;
+    MutableDictionary* _currentDictionary;
 }
 
 - (id)init
@@ -48,7 +48,7 @@
     if (!(self = [super init]))
         return nil;
 
-    _rootDictionary = adoptWK(WKMutableDictionaryCreate());
+    _rootDictionary = MutableDictionary::create();
     _currentDictionary = _rootDictionary.get();
 
     return self;
@@ -97,22 +97,16 @@
 
 - (void)encodeBytes:(const uint8_t *)bytes length:(NSUInteger)length forKey:(NSString *)key
 {
-    auto data = adoptWK(WKDataCreate(bytes, length));
-    auto keyString = adoptWK(WKStringCreateWithCFString((CFStringRef)key));
-
-    WKDictionarySetItem(_currentDictionary, keyString.get(), data.get());
+    _currentDictionary->set(key, WebData::create(bytes, length));
 }
 
 - (void)_encodeObjectForKey:(NSString *)key usingBlock:(void (^)())block
 {
-    auto dictionary = adoptWK(WKMutableDictionaryCreate());
-    auto keyString = adoptWK(WKStringCreateWithCFString((CFStringRef)key));
+    RefPtr<MutableDictionary> dictionary = MutableDictionary::create();
+    TemporaryChange<MutableDictionary*> dictionaryChange(_currentDictionary, dictionary.get());
 
-    WKDictionarySetItem(_currentDictionary, keyString.get(), dictionary.get());
-
-    WKMutableDictionaryRef previousDictionary = _currentDictionary;
+    dictionary->set(key, dictionary.release());
     block();
-    _currentDictionary = previousDictionary;
 }
 
 @end

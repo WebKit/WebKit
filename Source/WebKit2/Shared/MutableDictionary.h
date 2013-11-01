@@ -41,8 +41,8 @@ public:
 
     ~MutableDictionary();
 
-    bool add(const String& key, APIObject*);
-    bool set(const String& key, APIObject*);
+    bool add(const String& key, PassRefPtr<APIObject>);
+    bool set(const String& key, PassRefPtr<APIObject>);
     void remove(const String& key);
 
     virtual bool isMutable() { return true; }
