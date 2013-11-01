@@ -1,5 +1,11 @@
 2013-11-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed, EFL gardening. Skip webgl tests because EFL port doesn't fully support webgl yet. 
+
+        * platform/efl/TestExpectations:
+
+2013-11-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Unreviewed, EFL gardening. css3 text tests are failing since r158389
 
         * platform/efl/TestExpectations: Add failure tests.
