@@ -1,3 +1,12 @@
+2013-11-01  Antoine Quint  <graouts@apple.com>
+
+        Remove custom Element.prototype.remove() in favor of native version
+        https://bugs.webkit.org/show_bug.cgi?id=123607
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Utilities.js:
+
 2013-10-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Breakpoints in auto-formatted JavaScript editors are not working

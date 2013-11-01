@@ -357,17 +357,6 @@ Object.defineProperty(Node.prototype, "rangeOfWord",
     }
 });
 
-if (!("remove" in Element.prototype)) {
-    Object.defineProperty(Element.prototype, "remove",
-    {
-        value: function()
-        {
-            if (this.parentNode)
-                this.parentNode.removeChild(this);
-        }
-    });
-}
-
 Object.defineProperty(Element.prototype, "totalOffsetLeft",
 {
     get: function()
