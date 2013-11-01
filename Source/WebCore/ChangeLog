@@ -1,3 +1,30 @@
+2013-10-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Convert some InspectorObject member variables to HashSet/HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=123579
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent):
+        (WebCore::InspectorDOMDebuggerAgent::setBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::removeBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded):
+        (WebCore::InspectorDOMDebuggerAgent::setXHRBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::removeXHRBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::willSendXMLHttpRequest):
+        Make m_eventListenerBreakpoints and m_xhrBreakpoints HashSet.
+
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::disable):
+        (WebCore::InspectorDebuggerAgent::setBreakpointByUrl):
+        (WebCore::InspectorDebuggerAgent::removeBreakpoint):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        Make m_javaScriptBreakpoints a HashMap.
+
 2013-10-31  Youenn Fablet  <youennf@gmail.com>
 
         Correct the elapsedTime calculation in SVG animations

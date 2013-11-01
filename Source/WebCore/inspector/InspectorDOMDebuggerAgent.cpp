@@ -73,8 +73,6 @@ InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(InstrumentingAgents* instru
     : InspectorBaseAgent<InspectorDOMDebuggerAgent>("DOMDebugger", instrumentingAgents, inspectorState)
     , m_domAgent(domAgent)
     , m_debuggerAgent(debuggerAgent)
-    , m_eventListenerBreakpoints(InspectorObject::create())
-    , m_xhrBreakpoints(InspectorObject::create())
     , m_pauseInNextEventListener(false)
     , m_pauseOnAllXHRsEnabled(false)
 {
@@ -147,7 +145,7 @@ void InspectorDOMDebuggerAgent::setBreakpoint(ErrorString* error, const String& 
         return;
     }
 
-    m_eventListenerBreakpoints->setBoolean(eventName, true);
+    m_eventListenerBreakpoints.add(eventName);
 }
 
 void InspectorDOMDebuggerAgent::removeEventListenerBreakpoint(ErrorString* error, const String& eventName)
@@ -167,7 +165,7 @@ void InspectorDOMDebuggerAgent::removeBreakpoint(ErrorString* error, const Strin
         return;
     }
 
-    m_eventListenerBreakpoints->remove(eventName);
+    m_eventListenerBreakpoints.remove(eventName);
 }
 
 void InspectorDOMDebuggerAgent::didInvalidateStyleAttr(Node* node)
@@ -365,7 +363,7 @@ void InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded(bool isDOMEvent, cons
     if (m_pauseInNextEventListener)
         m_pauseInNextEventListener = false;
     else {
-        if (m_eventListenerBreakpoints->find(fullEventName) == m_eventListenerBreakpoints->end())
+        if (!m_eventListenerBreakpoints.contains(fullEventName))
             return;
     }
 
@@ -384,7 +382,7 @@ void InspectorDOMDebuggerAgent::setXHRBreakpoint(ErrorString*, const String& url
         return;
     }
 
-    m_xhrBreakpoints->setBoolean(url, true);
+    m_xhrBreakpoints.add(url);
 }
 
 void InspectorDOMDebuggerAgent::removeXHRBreakpoint(ErrorString*, const String& url)
@@ -394,7 +392,7 @@ void InspectorDOMDebuggerAgent::removeXHRBreakpoint(ErrorString*, const String& 
         return;
     }
 
-    m_xhrBreakpoints->remove(url);
+    m_xhrBreakpoints.remove(url);
 }
 
 void InspectorDOMDebuggerAgent::willSendXMLHttpRequest(const String& url)
@@ -403,9 +401,9 @@ void InspectorDOMDebuggerAgent::willSendXMLHttpRequest(const String& url)
     if (m_pauseOnAllXHRsEnabled)
         breakpointURL = "";
     else {
-        for (InspectorObject::iterator it = m_xhrBreakpoints->begin(); it != m_xhrBreakpoints->end(); ++it) {
-            if (url.contains(it->key)) {
-                breakpointURL = it->key;
+        for (auto it = m_xhrBreakpoints.begin(), end = m_xhrBreakpoints.end(); it != end; ++it) {
+            if (url.contains(*it)) {
+                breakpointURL = *it;
                 break;
             }
         }

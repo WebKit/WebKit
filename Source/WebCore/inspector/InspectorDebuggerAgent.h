@@ -164,6 +164,7 @@ private:
 
     typedef HashMap<String, Script> ScriptsMap;
     typedef HashMap<String, Vector<String>> BreakpointIdToDebugServerBreakpointIdsMap;
+    typedef HashMap<String, RefPtr<InspectorObject>> BreakpointIdToBreakpointMap;
 
     InjectedScriptManager* m_injectedScriptManager;
     InspectorFrontend::Debugger* m_frontend;
@@ -171,10 +172,10 @@ private:
     ScriptValue m_currentCallStack;
     ScriptsMap m_scripts;
     BreakpointIdToDebugServerBreakpointIdsMap m_breakpointIdToDebugServerBreakpointIds;
+    BreakpointIdToBreakpointMap m_javaScriptBreakpoints;
     String m_continueToLocationBreakpointId;
     InspectorFrontend::Debugger::Reason::Enum m_breakReason;
     RefPtr<InspectorObject> m_breakAuxData;
-    RefPtr<InspectorObject> m_javaScriptBreakpoints;
     bool m_enabled;
     bool m_javaScriptPauseScheduled;
     Listener* m_listener;
