@@ -1,11 +1,53 @@
-function testAttribute(uri, attribute, values)
+function testTrackListContainsTrack(listStr, trackStr)
+{
+    var list = eval(listStr);
+    var track = eval(trackStr);
+    var found = false;
+    for (var i = 0; i < list.length; ++i) {
+        if (list[i] == track) {
+            found = true;
+            break;
+        }
+    }
+    reportExpected(found, listStr, " contains ", trackStr, list);
+}
+
+function compareTracks(track1, track2)
+{
+    var equal = (eval(track1) == eval(track2));
+    reportExpected(equal, track1, "==", track2, track1);
+}
+
+function testAddTrack(uri, type)
+{
+    var addtrackEventCount = 0;
+
+    function trackAdded(event)
+    {
+        consoleWrite("EVENT(" + event.type + ")");
+        ++addtrackEventCount;
+
+        /* Don't make assumptions about the order of track events. If you know
+         * the expected order, it should be tested separately. */
+        testTrackListContainsTrack("video." + type + "Tracks", "event.track");
+        consoleWrite("");
+    }
+
+    findMediaElement();
+    var tracks = eval("video." + type + "Tracks");
+    tracks.addEventListener("addtrack", trackAdded);
+    video.src = uri;
+    waitForEventAndEnd('canplaythrough');
+}
+
+function testAttribute(uri, type, attribute, values)
 {
     function canplaythrough()
     {
         consoleWrite("<br><i>** Check in-band kind attributes</i>");
-        testExpected("video.textTracks.length", values.length);
+        testExpected("video." + type +"Tracks.length", values.length);
         for (var i = 0; i < values.length; ++i)
-            testExpected("video.textTracks[" + i + "]." + attribute, values[i]);
+            testExpected("video." + type +"Tracks[" + i + "]." + attribute, values[i]);
 
         consoleWrite("");
         endTest();
@@ -79,7 +121,7 @@ function testCuesAddedOnce(uri, kind)
     waitForEvent('canplaythrough', canplaythrough);
 }
 
-function testMode(uri, kind)
+function testTextTrackMode(uri, kind)
 {
     function seeked()
     {
@@ -118,7 +160,7 @@ function testMode(uri, kind)
     waitForEvent('canplaythrough', canplaythrough);
 }
 
-function testStyle(uri)
+function testCueStyle(uri)
 {
     function seeked()
     {
@@ -155,7 +197,8 @@ function testStyle(uri)
     waitForEvent('canplaythrough', canplaythrough);
 }
 
-function testTrackOrder(uri, numInBandTracks) {
+function testTextTrackOrder(uri, numInBandTracks)
+{
     function compareTracks(track1, track2)
     {
         var equal = (eval(track1) == eval(track2));

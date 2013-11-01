@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../../media-file.js></script>
+        <script src=../../video-test.js></script>
+        <script>
+
+            function canplaythrough()
+            {
+                testExpected("video.audioTracks.length", 2);
+                run("track1 = video.audioTracks[0]");
+                run("track2 = video.audioTracks[1]");
+
+                consoleWrite("<br><i>** Checking initial state</i>");
+                testExpected("track1.enabled", true);
+                testExpected("track2.enabled", false);
+                
+                consoleWrite("<br><i>** Ensuring we can have two enabled tracks</i>");
+                run("track2.enabled = true");
+                testExpected("track1.enabled", true);
+                testExpected("track2.enabled", true);
+                
+                consoleWrite("<br><i>** Ensuring we can have zero enabled tracks</i>");
+                run("track1.enabled = false");
+                run("track2.enabled = false");
+                testExpected("track1.enabled", false);
+                testExpected("track2.enabled", false);
+            }
+
+            function setup()
+            {
+                findMediaElement();
+                video.src = '../../content/two-audio-and-video-tracks.mkv';
+                waitForEventAndEnd('canplaythrough', canplaythrough);
+            }
+
+        </script>
+    </head>
+    <body onload="setup()">
+        <video controls></video>
+        <p>Test audio track enabled attributes.</p>
+    </body>
+</html>

@@ -1441,9 +1441,12 @@ void HTMLMediaElement::textTrackReadyStateChanged(TextTrack* track)
     }
 }
 
-void HTMLMediaElement::audioTrackEnabledChanged(AudioTrack*)
+void HTMLMediaElement::audioTrackEnabledChanged(AudioTrack* track)
 {
-    // We will want to change the media controls here once they exist
+    if (!RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled())
+        return;
+    ASSERT_UNUSED(track, m_audioTracks->contains(track));
+    m_audioTracks->scheduleChangeEvent();
 }
 
 void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
@@ -1479,9 +1482,12 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
     configureTextTrackDisplay(AssumeTextTrackVisibilityChanged);
 }
 
-void HTMLMediaElement::videoTrackSelectedChanged(VideoTrack*)
+void HTMLMediaElement::videoTrackSelectedChanged(VideoTrack* track)
 {
-    // We will want to change the media controls here once they exist
+    if (!RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled())
+        return;
+    ASSERT_UNUSED(track, m_videoTracks->contains(track));
+    m_videoTracks->scheduleChangeEvent();
 }
 
 void HTMLMediaElement::textTrackKindChanged(TextTrack* track)

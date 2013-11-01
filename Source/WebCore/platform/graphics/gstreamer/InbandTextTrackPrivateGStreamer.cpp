@@ -81,6 +81,7 @@ InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(gint index, GRe
     , m_streamTimerHandler(0)
     , m_tagTimerHandler(0)
 {
+    ASSERT(m_pad);
     m_eventProbe = gst_pad_add_probe(m_pad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM,
         reinterpret_cast<GstPadProbeCallback>(textTrackPrivateEventCallback), this, 0);
 
@@ -187,24 +188,26 @@ void InbandTextTrackPrivateGStreamer::notifyTrackOfStreamChanged()
 void InbandTextTrackPrivateGStreamer::notifyTrackOfTagsChanged()
 {
     m_tagTimerHandler = 0;
-
-    GRefPtr<GstEvent> event = adoptGRef(gst_pad_get_sticky_event(m_pad.get(), GST_EVENT_TAG, 0));
-    GstTagList* tags = 0;
-    if (event)
-        gst_event_parse_tag(event.get(), &tags);
+    if (!m_pad)
+        return;
 
     String label;
     String language;
-    if (tags) {
+    GRefPtr<GstEvent> event;
+    for (guint i = 0; (event = adoptGRef(gst_pad_get_sticky_event(m_pad.get(), GST_EVENT_TAG, i))); ++i) {
+        GstTagList* tags = 0;
+        gst_event_parse_tag(event.get(), &tags);
+        ASSERT(tags);
+
         gchar* tagValue;
         if (gst_tag_list_get_string(tags, GST_TAG_TITLE, &tagValue)) {
-            INFO_MEDIA_MESSAGE("Track %d got title %s.", m_index, tagValue);
+            INFO_MEDIA_MESSAGE("Text track %d got title %s.", m_index, tagValue);
             label = tagValue;
             g_free(tagValue);
         }
 
         if (gst_tag_list_get_string(tags, GST_TAG_LANGUAGE_CODE, &tagValue)) {
-            INFO_MEDIA_MESSAGE("Track %d got language %s.", m_index, tagValue);
+            INFO_MEDIA_MESSAGE("Text track %d got language %s.", m_index, tagValue);
             language = tagValue;
             g_free(tagValue);
         }

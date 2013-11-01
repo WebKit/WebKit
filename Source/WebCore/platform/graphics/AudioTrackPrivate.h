@@ -40,6 +40,9 @@ class AudioTrackPrivate;
 class AudioTrackPrivateClient {
 public:
     virtual ~AudioTrackPrivateClient() { }
+    virtual void enabledChanged(AudioTrackPrivate*, bool) = 0;
+    virtual void labelChanged(AudioTrackPrivate*, const String&) = 0;
+    virtual void languageChanged(AudioTrackPrivate*, const String&) = 0;
     virtual void willRemoveAudioTrackPrivate(AudioTrackPrivate*) = 0;
 };
 
@@ -55,7 +58,14 @@ public:
     void setClient(AudioTrackPrivateClient* client) { m_client = client; }
     AudioTrackPrivateClient* client() { return m_client; }
 
-    virtual void setEnabled(bool enabled) { m_enabled = enabled; };
+    virtual void setEnabled(bool enabled)
+    {
+        if (m_enabled == enabled)
+            return;
+        m_enabled = enabled;
+        if (m_client)
+            m_client->enabledChanged(this, enabled);
+    };
     virtual bool enabled() const { return m_enabled; }
 
     enum Kind { Alternative, Description, Main, MainDesc, Translation, Commentary, None };

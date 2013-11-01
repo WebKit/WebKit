@@ -40,6 +40,9 @@ class VideoTrackPrivate;
 class VideoTrackPrivateClient {
 public:
     virtual ~VideoTrackPrivateClient() { }
+    virtual void selectedChanged(VideoTrackPrivate*, bool) = 0;
+    virtual void labelChanged(VideoTrackPrivate*, const String&) = 0;
+    virtual void languageChanged(VideoTrackPrivate*, const String&) = 0;
     virtual void willRemoveVideoTrackPrivate(VideoTrackPrivate*) = 0;
 };
 
@@ -55,7 +58,14 @@ public:
     void setClient(VideoTrackPrivateClient* client) { m_client = client; }
     VideoTrackPrivateClient* client() { return m_client; }
 
-    virtual void setSelected(bool selected) { m_selected = selected; };
+    virtual void setSelected(bool selected)
+    {
+        if (m_selected == selected)
+            return;
+        m_selected = selected;
+        if (m_client)
+            m_client->selectedChanged(this, m_selected);
+    };
     virtual bool selected() const { return m_selected; }
 
     enum Kind { Alternative, Captions, Main, Sign, Subtitles, Commentary, None };

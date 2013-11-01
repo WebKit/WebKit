@@ -7,8 +7,8 @@
         <script src=../../video-test.js></script>
         <script src=../../in-band-tracks.js></script>
     </head>
-    <body onload="testTextTrackOrder('../../content/counting-subtitled-kate.ogv', 2)">
+    <body onload="testAttribute('../../content/two-audio-and-video-tracks.mkv', 'video', 'language', ['ru', 'zh'])">
         <video controls></video>
-        <p>Test track order when using in-band and out-of-band text tracks.</p>
+        <p>Check video tracks' language attributes.</p>
     </body>
 </html>

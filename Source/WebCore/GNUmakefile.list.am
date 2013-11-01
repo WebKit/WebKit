@@ -6282,19 +6282,24 @@ endif # END USE_GLES2
 
 if USE_GSTREAMER
 platform_sources += \
+	Source/WebCore/platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp \
+	Source/WebCore/platform/graphics/gstreamer/AudioTrackPrivateGStreamer.h \
 	Source/WebCore/platform/graphics/gstreamer/GRefPtrGStreamer.cpp \
 	Source/WebCore/platform/graphics/gstreamer/GRefPtrGStreamer.h \
 	Source/WebCore/platform/graphics/gstreamer/GStreamerUtilities.cpp \
 	Source/WebCore/platform/graphics/gstreamer/GStreamerUtilities.h \
 	Source/WebCore/platform/graphics/gstreamer/GStreamerVersioning.cpp \
 	Source/WebCore/platform/graphics/gstreamer/GStreamerVersioning.h \
+	Source/WebCore/platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp \
+	Source/WebCore/platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.h \
 	Source/WebCore/platform/graphics/gstreamer/TextCombinerGStreamer.cpp \
 	Source/WebCore/platform/graphics/gstreamer/TextCombinerGStreamer.h \
 	Source/WebCore/platform/graphics/gstreamer/TextSinkGStreamer.cpp \
-	Source/WebCore/platform/graphics/gstreamer/TextSinkGStreamer.h
-webcore_platform_sources += \
-	Source/WebCore/platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp \
-	Source/WebCore/platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.h
+	Source/WebCore/platform/graphics/gstreamer/TextSinkGStreamer.h \
+	Source/WebCore/platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp \
+	Source/WebCore/platform/graphics/gstreamer/TrackPrivateBaseGStreamer.h \
+	Source/WebCore/platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp \
+	Source/WebCore/platform/graphics/gstreamer/VideoTrackPrivateGStreamer.h
 endif
 
 # ---

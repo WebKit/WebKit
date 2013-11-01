@@ -203,6 +203,25 @@ template<> void derefGPtr<GstSample>(GstSample* ptr)
     if (ptr)
         gst_sample_unref(ptr);
 }
+
+template<> GRefPtr<GstTagList> adoptGRef(GstTagList* ptr)
+{
+    return GRefPtr<GstTagList>(ptr, GRefPtrAdopt);
+}
+
+template<> GstTagList* refGPtr<GstTagList>(GstTagList* ptr)
+{
+    if (ptr)
+        gst_tag_list_ref(ptr);
+
+    return ptr;
+}
+
+template<> void derefGPtr<GstTagList>(GstTagList* ptr)
+{
+    if (ptr)
+        gst_tag_list_unref(ptr);
+}
 #endif
 
 template<> GRefPtr<GstEvent> adoptGRef(GstEvent* ptr)

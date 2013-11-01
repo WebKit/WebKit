@@ -78,6 +78,10 @@ protected:
 
 private:
     virtual bool isValidKind(const AtomicString&) const OVERRIDE;
+
+    virtual void enabledChanged(AudioTrackPrivate*, bool) OVERRIDE;
+    virtual void labelChanged(AudioTrackPrivate*, const String&) OVERRIDE;
+    virtual void languageChanged(AudioTrackPrivate*, const String&) OVERRIDE;
     virtual void willRemoveAudioTrackPrivate(AudioTrackPrivate*) OVERRIDE;
 
     AtomicString m_id;

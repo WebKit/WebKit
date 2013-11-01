@@ -1,3 +1,63 @@
+2013-11-01  Brendan Long  <b.long@cablelabs.com>
+
+        [GStreamer] Support audio and video tracks
+        https://bugs.webkit.org/show_bug.cgi?id=117039
+
+        Reviewed by Philippe Normand.
+
+        Tests: media/track/audio/audio-track-mkv-vorbis-addtrack.html
+               media/track/audio/audio-track-mkv-vorbis-enabled.html
+               media/track/audio/audio-track-mkv-vorbis-language.html
+               media/track/in-band/track-in-band-kate-ogg-addtrack.html
+               media/track/in-band/track-in-band-srt-mkv-addtrack.html
+               media/track/video/video-track-mkv-theora-addtrack.html
+               media/track/video/video-track-mkv-theora-language.html
+               media/track/video/video-track-mkv-theora-selected.html
+
+        * GNUmakefile.list.am: Add audio and video track files.
+        * PlatformEfl.cmake: Same.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::audioTrackEnabledChanged): Schedule "change" event.
+        (WebCore::HTMLMediaElement::videoTrackSelectedChanged): Same.
+        * html/track/AudioTrack.cpp:
+        (WebCore::AudioTrack::setEnabled): Call m_private->setEnabled
+        (WebCore::AudioTrack::enabledChanged): Added callback.
+        (WebCore::AudioTrack::labelChanged): Same.
+        (WebCore::AudioTrack::languageChanged): Same.
+        (WebCore::AudioTrack::willRemoveAudioTrackPrivate): Use ASSERT_UNUSED for consistence.
+        * html/track/AudioTrack.h: Add new enabled, label and language callbacks.
+        * html/track/VideoTrack.cpp:
+        (WebCore::VideoTrack::setSelected): Call m_private->setEnabled
+        (WebCore::VideoTrack::selectedChanged): Added callback.
+        (WebCore::VideoTrack::labelChanged): Same.
+        (WebCore::VideoTrack::languageChanged): Same.
+        (WebCore::VideoTrack::willRemoveVideoTrackPrivate): Use ASSERT_UNUSED for consistence.
+        * html/track/VideoTrack.h: Add new selected, label and language callbacks.
+        * platform/graphics/AudioTrackPrivate.h:
+        (WebCore::AudioTrackPrivate::setEnabled): Call m_client->enabledChanged
+        * platform/graphics/VideoTrackPrivate.h:
+        (WebCore::VideoTrackPrivate::setSelected): Call m_client->selectedChanged
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp:
+        (WebCore::InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer): Add ASSERT(m_pad)
+        (WebCore::InbandTextTrackPrivateGStreamer::notifyTrackOfTagsChanged): Look at all tag events instead of just the first one.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateVideoSinkCapsChangedCallback): Separated callback when caps change from callback when number of videos change.
+        (WebCore::mediaPlayerPrivateVideoCapsChangeTimeoutCallback): Same.
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer): Initialize m_videoCapsTimerHandler.
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer): Disconnect audio and video tracks and remove callbacks.
+        (WebCore::MediaPlayerPrivateGStreamer::videoCapsChanged): Separated callback when caps change from callback when number of videos change.
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideo): Create video tracks for each stream.
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideoCaps): Separated callback when caps change from callback when number of videos change.
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfAudio): Create audio tracks for each stream.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h: Add audio and video tracks, and a pointer to keep track of the default audio stream.
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp: Added.
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.h: Added.
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp: Add GRefPtr<GstTagList>
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp: Added, handles tags and "active" property of audio and video tracks.
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.h: Added.
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp: Added.
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.h: Added.
+
 2013-11-01  Patrick Gansterer  <paroga@webkit.org>
 
         Buildfix for !ENABLE(INSPECTOR) after 157288.

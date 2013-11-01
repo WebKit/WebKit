@@ -33,6 +33,7 @@ typedef struct _GstElementFactory GstElementFactory;
 typedef struct _GstBuffer GstBuffer;
 #ifdef GST_API_VERSION_1
 typedef struct _GstSample GstSample;
+typedef struct _GstTagList GstTagList;
 #endif
 typedef struct _GstEvent GstEvent;
 typedef struct _GstToc GstToc;
@@ -72,9 +73,15 @@ template<> GstBuffer* refGPtr<GstBuffer>(GstBuffer* ptr);
 template<> void derefGPtr<GstBuffer>(GstBuffer* ptr);
 
 #ifdef GST_API_VERSION_1
+/* GstSample was added in GStreamer 1.0 */
 template<> GRefPtr<GstSample> adoptGRef(GstSample* ptr);
 template<> GstSample* refGPtr<GstSample>(GstSample* ptr);
 template<> void derefGPtr<GstSample>(GstSample* ptr);
+
+/* GstTagList isn't refcounted in GStreamer 0.10 */
+template<> GRefPtr<GstTagList> adoptGRef(GstTagList* ptr);
+template<> GstTagList* refGPtr<GstTagList>(GstTagList* ptr);
+template<> void derefGPtr<GstTagList>(GstTagList* ptr);
 #endif
 
 template<> GRefPtr<GstEvent> adoptGRef(GstEvent* ptr);

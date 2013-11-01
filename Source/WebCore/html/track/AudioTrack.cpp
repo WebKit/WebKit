@@ -145,7 +145,6 @@ void AudioTrack::setEnabled(const bool enabled)
         return;
 
     m_enabled = enabled;
-
     m_private->setEnabled(enabled);
 
     if (m_client)
@@ -158,10 +157,27 @@ size_t AudioTrack::inbandTrackIndex()
     return m_private->audioTrackIndex();
 }
 
+void AudioTrack::enabledChanged(AudioTrackPrivate* trackPrivate, bool enabled)
+{
+    ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
+    setEnabled(enabled);
+}
+
+void AudioTrack::labelChanged(AudioTrackPrivate* trackPrivate, const String& label)
+{
+    ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
+    setLabel(label);
+}
+
+void AudioTrack::languageChanged(AudioTrackPrivate* trackPrivate, const String& language)
+{
+    ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
+    setLanguage(language);
+}
+
 void AudioTrack::willRemoveAudioTrackPrivate(AudioTrackPrivate* trackPrivate)
 {
-    UNUSED_PARAM(trackPrivate);
-    ASSERT(trackPrivate == m_private);
+    ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     mediaElement()->removeAudioTrack(this);
 }
 
