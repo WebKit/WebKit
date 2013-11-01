@@ -33,6 +33,7 @@
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
+#include "ImageBuffer.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderedDocumentMarker.h"
@@ -580,7 +581,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         updateGraphicsContext(*context, textPaintStyle);
         if (combinedText)
             context->concatCTM(rotation(boxRect, Clockwise));
-        paintDecoration(context, boxOrigin, textDecorations, lineStyle.textDecorationStyle(), textShadow);
+        paintDecoration(*context, boxOrigin, textDecorations, lineStyle.textDecorationStyle(), textShadow, textPainter);
         if (combinedText)
             context->concatCTM(rotation(boxRect, Counterclockwise));
     }
@@ -778,9 +779,7 @@ static int computeUnderlineOffset(const TextUnderlinePosition underlinePosition,
     case TextUnderlinePositionUnder: {
         // Position underline relative to the under edge of the lowest element's content box.
         const float offset = inlineTextBox->root().maxLogicalTop() - inlineTextBox->logicalTop();
-        if (offset > 0)
-            return inlineTextBox->logicalHeight() + gap + offset;
-        return inlineTextBox->logicalHeight() + gap;
+        return inlineTextBox->logicalHeight() + gap + std::max<float>(offset, 0);
     }
     }
 
@@ -804,6 +803,21 @@ static void adjustStepToDecorationLength(float& step, float& controlPointDistanc
     float adjustment = uncoveredLength / stepCount;
     step += adjustment;
     controlPointDistance += adjustment;
+}
+
+static void getWavyStrokeParameters(float strokeThickness, float& controlPointDistance, float& step)
+{
+    // Distance between decoration's axis and Bezier curve's control points.
+    // The height of the curve is based on this distance. Use a minimum of 6 pixels distance since
+    // the actual curve passes approximately at half of that distance, that is 3 pixels.
+    // The minimum height of the curve is also approximately 3 pixels. Increases the curve's height
+    // as strockThickness increases to make the curve looks better.
+    controlPointDistance = 3 * std::max<float>(2, strokeThickness);
+
+    // Increment used to form the diamond shape between start point (p1), control
+    // points and end point (p2) along the axis of the decoration. Makes the
+    // curve wider as strockThickness increases to make the curve looks better.
+    step = 2 * std::max<float>(2, strokeThickness);
 }
 
 /*
@@ -833,24 +847,16 @@ static void adjustStepToDecorationLength(float& step, float& controlPointDistanc
  *             |-----------|
  *                 step
  */
-static void strokeWavyTextDecoration(GraphicsContext* context, FloatPoint& p1, FloatPoint& p2, float strokeThickness)
+static void strokeWavyTextDecoration(GraphicsContext& context, FloatPoint& p1, FloatPoint& p2, float strokeThickness)
 {
-    context->adjustLineToPixelBoundaries(p1, p2, strokeThickness, context->strokeStyle());
+    context.adjustLineToPixelBoundaries(p1, p2, strokeThickness, context.strokeStyle());
 
     Path path;
     path.moveTo(p1);
 
-    // Distance between decoration's axis and Bezier curve's control points.
-    // The height of the curve is based on this distance. Use a minimum of 6 pixels distance since
-    // the actual curve passes approximately at half of that distance, that is 3 pixels.
-    // The minimum height of the curve is also approximately 3 pixels. Increases the curve's height
-    // as strockThickness increases to make the curve looks better.
-    float controlPointDistance = 3 * max<float>(2, strokeThickness);
-
-    // Increment used to form the diamond shape between start point (p1), control
-    // points and end point (p2) along the axis of the decoration. Makes the
-    // curve wider as strockThickness increases to make the curve looks better.
-    float step = 2 * max<float>(2, strokeThickness);
+    float controlPointDistance;
+    float step;
+    getWavyStrokeParameters(strokeThickness, controlPointDistance, step);
 
     bool isVerticalLine = (p1.x() == p2.x());
 
@@ -906,13 +912,66 @@ static void strokeWavyTextDecoration(GraphicsContext* context, FloatPoint& p1, F
         }
     }
 
-    context->setShouldAntialias(true);
-    context->strokePath(path);
+    context.setShouldAntialias(true);
+    context.strokePath(path);
+}
+
+// Because finding the bounding box of an underline is structurally similar to finding
+// the bounding box of a strikethrough, we can pull out the computation and parameterize
+// by the location of the decoration (yOffset, underlineOffset, and doubleOffset).
+static FloatRect boundingBoxForSingleDecoration(GraphicsContext& context, float textDecorationThickness,
+    float width, FloatPoint localOrigin, TextDecorationStyle decorationStyle,
+    bool isPrinting, float yOffset, float underlineOffset, float doubleOffset)
+{
+    FloatRect boundingBox;
+
+    switch (decorationStyle) {
+    case TextDecorationStyleWavy: {
+        FloatPoint start(localOrigin.x(), localOrigin.y() + yOffset);
+        FloatPoint end = start + FloatSize(width, 0);
+        context.adjustLineToPixelBoundaries(start, end, textDecorationThickness, context.strokeStyle());
+
+        float controlPointDistance;
+        float step;
+        getWavyStrokeParameters(textDecorationThickness, controlPointDistance, step);
+
+        adjustStepToDecorationLength(step, controlPointDistance, width);
+
+        controlPointDistance += textDecorationThickness;
+        FloatPoint boundingBoxOrigin = start - FloatSize(0, controlPointDistance);
+        FloatSize boundingBoxSize = FloatSize(width, 2 * controlPointDistance);
+        boundingBox = FloatRect(boundingBoxOrigin, boundingBoxSize);
+        break;
+    }
+    default:
+        boundingBox = context.computeLineBoundsForText(localOrigin + FloatSize(0, underlineOffset), width, isPrinting);
+        if (decorationStyle == TextDecorationStyleDouble)
+            boundingBox.unite(context.computeLineBoundsForText(localOrigin + FloatSize(0, doubleOffset), width, isPrinting));
+    }
+    return boundingBox;
+}
+
+static FloatRect boundingBoxForAllActiveDecorations(InlineTextBox& inlineTextBox, GraphicsContext& context, TextDecoration decoration, float textDecorationThickness, float width, float doubleOffset, TextDecorationStyle decorationStyle, const FloatPoint localOrigin, const RenderStyle& lineStyle, bool isPrinting, int baseline)
+{
+    FloatRect boundingBox;
+    if (decoration & TextDecorationUnderline) {
+        int underlineOffset = computeUnderlineOffset(lineStyle.textUnderlinePosition(), lineStyle.fontMetrics(), &inlineTextBox, textDecorationThickness);
+        
+        boundingBox.unite(boundingBoxForSingleDecoration(context, textDecorationThickness, width, localOrigin, decorationStyle, isPrinting, underlineOffset + doubleOffset, underlineOffset, baseline + 1));
+    }
+    if (decoration & TextDecorationOverline)
+        boundingBox.unite(boundingBoxForSingleDecoration(context, textDecorationThickness, width, localOrigin, decorationStyle, isPrinting, -doubleOffset, 0, -doubleOffset));
+    if (decoration & TextDecorationLineThrough)
+        boundingBox.unite(boundingBoxForSingleDecoration(context, textDecorationThickness, width, localOrigin, decorationStyle, isPrinting, 2 * baseline / 3, 2 * baseline / 3, doubleOffset + 2 * baseline / 3));
+    return boundingBox;
 }
 #endif // CSS3_TEXT_DECORATION
 
-void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& boxOrigin, TextDecoration deco, TextDecorationStyle decorationStyle, const ShadowData* shadow)
+void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& boxOrigin, TextDecoration decoration, TextDecorationStyle decorationStyle, const ShadowData* shadow, TextPainter& textPainter)
 {
+#if !ENABLE(CSS3_TEXT_DECORATION)
+    UNUSED_PARAM(textPainter);
+#endif
     // FIXME: We should improve this rule and not always just assume 1.
     const float textDecorationThickness = 1.f;
 
@@ -930,15 +989,15 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
     
     // Get the text decoration colors.
     Color underline, overline, linethrough;
-    renderer().getTextDecorationColors(deco, underline, overline, linethrough, true);
+    renderer().getTextDecorationColors(decoration, underline, overline, linethrough, true);
     if (isFirstLine())
-        renderer().getTextDecorationColors(deco, underline, overline, linethrough, true, true);
+        renderer().getTextDecorationColors(decoration, underline, overline, linethrough, true, true);
     
     // Use a special function for underlines to get the positioning exactly right.
     bool isPrinting = renderer().document().printing();
-    context->setStrokeThickness(textDecorationThickness);
+    context.setStrokeThickness(textDecorationThickness);
 
-    bool linesAreOpaque = !isPrinting && (!(deco & TextDecorationUnderline) || underline.alpha() == 255) && (!(deco & TextDecorationOverline) || overline.alpha() == 255) && (!(deco & TextDecorationLineThrough) || linethrough.alpha() == 255);
+    bool linesAreOpaque = !isPrinting && (!(decoration & TextDecorationUnderline) || underline.alpha() == 255) && (!(decoration & TextDecorationOverline) || overline.alpha() == 255) && (!(decoration & TextDecorationLineThrough) || linethrough.alpha() == 255);
 
     const RenderStyle& lineStyle = this->lineStyle();
     int baseline = lineStyle.fontMetrics().ascent();
@@ -957,8 +1016,8 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
             clipRect.unite(shadowRect);
             extraOffset = max(extraOffset, max(0, shadowY) + shadowExtent);
         }
-        context->save();
-        context->clip(clipRect);
+        context.save();
+        context.clip(clipRect);
         extraOffset += baseline + 2;
         localOrigin.move(0, extraOffset);
         setClip = true;
@@ -976,18 +1035,46 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
             }
             int shadowX = isHorizontal() ? shadow->x() : shadow->y();
             int shadowY = isHorizontal() ? shadow->y() : -shadow->x();
-            context->setShadow(FloatSize(shadowX, shadowY - extraOffset), shadow->radius(), shadow->color(), colorSpace);
+            context.setShadow(FloatSize(shadowX, shadowY - extraOffset), shadow->radius(), shadow->color(), colorSpace);
             setShadow = true;
             shadow = shadow->next();
         }
 
 #if ENABLE(CSS3_TEXT_DECORATION)
         // Offset between lines - always non-zero, so lines never cross each other.
-        float doubleOffset = textDecorationThickness + 1.f;
+        float doubleOffset = textDecorationThickness + 1;
+        
+        bool clipDecorationToMask = lineStyle.textDecorationSkip() == TextDecorationSkipInk;
+        
+        GraphicsContextStateSaver stateSaver(context, false);
+        
+        if (clipDecorationToMask) {
+            const float skipInkGapWidth = 1;
+
+            stateSaver.save();
+
+            FloatRect underlineRect = boundingBoxForAllActiveDecorations(*this, context, decoration, textDecorationThickness, width, doubleOffset, decorationStyle, localOrigin, lineStyle, isPrinting, baseline);
+            IntRect enclosingDeviceRect = enclosingIntRect(underlineRect);
+            OwnPtr<ImageBuffer> imageBuffer = context.createCompatibleBuffer(enclosingDeviceRect.size());
+
+            if (imageBuffer.get()) {
+                GraphicsContext& maskContext = *imageBuffer->context();
+                maskContext.setFillColor(Color::black, ColorSpaceDeviceRGB);
+                maskContext.setLineJoin(RoundJoin);
+                maskContext.translate(FloatPoint() - enclosingDeviceRect.location());
+
+                maskContext.fillRect(enclosingDeviceRect);
+                maskContext.setCompositeOperation(CompositeClear);
+    
+                textPainter.paintTextInContext(maskContext, skipInkGapWidth);
+
+                context.clipToImageBuffer(imageBuffer.get(), enclosingDeviceRect);
+            }
+        }
 #endif // CSS3_TEXT_DECORATION
-        context->setStrokeStyle(textDecorationStyleToStrokeStyle(decorationStyle));
-        if (deco & TextDecorationUnderline) {
-            context->setStrokeColor(underline, colorSpace);
+        context.setStrokeStyle(textDecorationStyleToStrokeStyle(decorationStyle));
+        if (decoration & TextDecorationUnderline) {
+            context.setStrokeColor(underline, colorSpace);
 #if ENABLE(CSS3_TEXT_DECORATION)
             TextUnderlinePosition underlinePosition = lineStyle.textUnderlinePosition();
             const int underlineOffset = computeUnderlineOffset(underlinePosition, lineStyle.fontMetrics(), this, textDecorationThickness);
@@ -1000,18 +1087,18 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
                 break;
             }
             default:
-                context->drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + underlineOffset), width, isPrinting);
+                context.drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + underlineOffset), width, isPrinting);
 
                 if (decorationStyle == TextDecorationStyleDouble)
-                    context->drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + underlineOffset + doubleOffset), width, isPrinting);
+                    context.drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + underlineOffset + doubleOffset), width, isPrinting);
             }
 #else
             // Leave one pixel of white between the baseline and the underline.
-            context->drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + baseline + 1), width, isPrinting);
+            context.drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + baseline + 1), width, isPrinting);
 #endif // CSS3_TEXT_DECORATION
         }
-        if (deco & TextDecorationOverline) {
-            context->setStrokeColor(overline, colorSpace);
+        if (decoration & TextDecorationOverline) {
+            context.setStrokeColor(overline, colorSpace);
 #if ENABLE(CSS3_TEXT_DECORATION)
             switch (decorationStyle) {
             case TextDecorationStyleWavy: {
@@ -1022,15 +1109,19 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
             }
             default:
 #endif // CSS3_TEXT_DECORATION
-                context->drawLineForText(localOrigin, width, isPrinting);
+                context.drawLineForText(localOrigin, width, isPrinting);
 #if ENABLE(CSS3_TEXT_DECORATION)
                 if (decorationStyle == TextDecorationStyleDouble)
-                    context->drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() - doubleOffset), width, isPrinting);
+                    context.drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() - doubleOffset), width, isPrinting);
             }
 #endif // CSS3_TEXT_DECORATION
         }
-        if (deco & TextDecorationLineThrough) {
-            context->setStrokeColor(linethrough, colorSpace);
+#if ENABLE(CSS3_TEXT_DECORATION)
+        if (clipDecorationToMask)
+            stateSaver.restore();
+#endif
+        if (decoration & TextDecorationLineThrough) {
+            context.setStrokeColor(linethrough, colorSpace);
 #if ENABLE(CSS3_TEXT_DECORATION)
             switch (decorationStyle) {
             case TextDecorationStyleWavy: {
@@ -1041,19 +1132,19 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
             }
             default:
 #endif // CSS3_TEXT_DECORATION
-                context->drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + 2 * baseline / 3), width, isPrinting);
+                context.drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + 2 * baseline / 3), width, isPrinting);
 #if ENABLE(CSS3_TEXT_DECORATION)
                 if (decorationStyle == TextDecorationStyleDouble)
-                    context->drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + doubleOffset + 2 * baseline / 3), width, isPrinting);
+                    context.drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + doubleOffset + 2 * baseline / 3), width, isPrinting);
             }
 #endif // CSS3_TEXT_DECORATION
         }
     } while (shadow);
 
     if (setClip)
-        context->restore();
+        context.restore();
     else if (setShadow)
-        context->clearShadow();
+        context.clearShadow();
 }
 
 static GraphicsContext::DocumentMarkerLineStyle lineStyleForMarkerType(DocumentMarker::MarkerType markerType)

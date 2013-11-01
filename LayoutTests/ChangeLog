@@ -1,3 +1,18 @@
+2013-11-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Initial implementation of text-decoration-skip ink
+        https://bugs.webkit.org/show_bug.cgi?id=121806
+
+        Reviewed by Darin Adler.
+
+        Adding a test which draws a very large "p" with text-decoration-skip:ink. The
+        viewport is restricted to be just hugging the place where an underline would
+        intersect the descender of the "p". This should look the same as if there was
+        no underline at all (because of the skipping underline).
+
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html: Added.
+
 2013-11-01  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Fix typo in simple-polygon.js LayoutTest helper

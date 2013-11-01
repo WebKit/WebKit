@@ -1,3 +1,38 @@
+2013-11-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Initial implementation of text-decoration-skip ink
+        https://bugs.webkit.org/show_bug.cgi?id=121806
+
+        Reviewed by Darin Adler.
+
+        text-decoration-skip: ink is implemented by the following steps:
+        1. Before drawing any decorations, figure out the bounding box for the decorations that will be drawn
+        2. Create an ImageBuffer with these dimensions
+        3. Draw text into this ImageBuffer with a thicker stroke
+        4. Apply the ImageBuffer as a mask to the context
+        5. Draw decorations like normal
+        6. Clean up
+
+        Test: fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::computeLineBoundsAndAntialiasingModeForText): Don't call GraphicsContext::roundToDevicePixels
+        when painting is disabled
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint): Pass the TextPainter to paintDecoration
+        (WebCore::computeUnderlineOffset): Small cleanup
+        (WebCore::getWavyStrokeControlPointDistance): Pulling out of strokeWavyTextDecoration()
+        (WebCore::getWavyStrokeStep): Ditto
+        (WebCore::strokeWavyTextDecoration): Use the previous 2 functions
+        (WebCore::getSingleDecorationBoundingBox): Pulling out repeated code into a function
+        (WebCore::getDecorationBoundingBox): Compute the bounding box for an underline which
+        hasn't been drawn yet
+        (WebCore::InlineTextBox::paintDecoration): Construct a mask and apply it to the GraphicsContext
+        * rendering/InlineTextBox.h: paintDecoration needs the TextPainter
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline): Redraw the underline when
+        text-decoration-skip changes
+
 2013-11-01  Andreas Kling  <akling@apple.com>
 
         CSS 'initial' and 'inherit' value constructors should return PassRef.

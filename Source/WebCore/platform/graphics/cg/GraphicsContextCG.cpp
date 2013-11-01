@@ -1246,7 +1246,7 @@ static FloatRect computeLineBoundsAndAntialiasingModeForText(GraphicsContext& co
     // See http://bugs.webkit.org/show_bug.cgi?id=4255 for details of why 0.5 is the right minimum thickness to use.
     FloatRect initialBounds(point, FloatSize(width, max(context.strokeThickness(), 0.5f)));
 
-    if (printing || !context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale).preservesAxisAlignment())
+    if (printing || context.paintingDisabled() || !context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale).preservesAxisAlignment())
         return initialBounds;
 
     // On screen, use a minimum thickness of 1.0 in user space (later rounded to an integral number in device space).
