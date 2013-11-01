@@ -1,3 +1,34 @@
+2013-11-01  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Adding addRemoteTrack and removeRemoteTrack functions to MediaStreamDescriptor and MediaStream
+        https://bugs.webkit.org/show_bug.cgi?id=123477
+
+        Reviewed by Eric Carlson.
+
+        When the backend report that a remote track has been added or removed by a remote peer, we must be able to add
+        it to its MediaStream
+
+        No new tests needed.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::addTrack): Splitted in two parts that can be used by old addTrack and new addRemoteTrack.
+        (WebCore::MediaStream::removeTrack): Splitted in two parts that can be used by old removeTrack and new
+        removeRemoteTrack.
+        (WebCore::MediaStream::addRemoteSource): Reusing code in new addTrack method.
+        (WebCore::MediaStream::removeRemoteSource): Refactored.
+        (WebCore::MediaStream::addRemoteTrack): Added.
+        (WebCore::MediaStream::removeRemoteTrack): Added.
+        (WebCore::MediaStream::getTrackVectorForType): Helper method that returns a vector of tracks according to
+        track's type (Audio or Video).
+
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::MediaStreamTrack):
+        * platform/mediastream/MediaStreamDescriptor.cpp:
+        (WebCore::MediaStreamDescriptor::addRemoteTrack): Added.
+        (WebCore::MediaStreamDescriptor::removeRemoteTrack): Added.
+        * platform/mediastream/MediaStreamDescriptor.h:
+
 2013-11-01  Brendan Long  <b.long@cablelabs.com>
 
         [GStreamer] Support audio and video tracks

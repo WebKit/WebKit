@@ -66,7 +66,8 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, MediaStreamT
 }
 
 MediaStreamTrack::MediaStreamTrack(MediaStreamTrack& other)
-    : ActiveDOMObject(other.scriptExecutionContext())
+    : RefCounted()
+    , ActiveDOMObject(other.scriptExecutionContext())
     , m_privateTrack(*other.privateTrack().clone())
     , m_eventDispatchScheduled(false)
     , m_stoppingTrack(false)

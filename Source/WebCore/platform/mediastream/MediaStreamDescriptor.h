@@ -51,6 +51,8 @@ public:
     virtual void streamDidEnd() = 0;
     virtual void addRemoteSource(MediaStreamSource*) = 0;
     virtual void removeRemoteSource(MediaStreamSource*) = 0;
+    virtual void addRemoteTrack(MediaStreamTrackPrivate*) = 0;
+    virtual void removeRemoteTrack(MediaStreamTrackPrivate*) = 0;
 };
 
 class MediaStreamDescriptor : public RefCounted<MediaStreamDescriptor> {
@@ -88,6 +90,9 @@ public:
 
     void addTrack(PassRefPtr<MediaStreamTrackPrivate>);
     void removeTrack(PassRefPtr<MediaStreamTrackPrivate>);
+
+    void addRemoteTrack(MediaStreamTrackPrivate*);
+    void removeRemoteTrack(MediaStreamTrackPrivate*);
 
 private:
     MediaStreamDescriptor(const String& id, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);

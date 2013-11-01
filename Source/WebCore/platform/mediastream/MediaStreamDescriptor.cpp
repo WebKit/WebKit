@@ -107,6 +107,22 @@ void MediaStreamDescriptor::removeRemoteSource(MediaStreamSource* source)
         removeSource(source);
 }
 
+void MediaStreamDescriptor::addRemoteTrack(MediaStreamTrackPrivate* track)
+{
+    if (m_client)
+        m_client->addRemoteTrack(track);
+    else
+        addTrack(track);
+}
+
+void MediaStreamDescriptor::removeRemoteTrack(MediaStreamTrackPrivate* track)
+{
+    if (m_client)
+        m_client->removeRemoteTrack(track);
+    else
+        removeTrack(track);
+}
+
 MediaStreamDescriptor::MediaStreamDescriptor(const String& id, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
     : m_client(0)
     , m_id(id)
