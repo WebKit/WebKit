@@ -1,3 +1,13 @@
+2013-11-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Add a Mac WebCrypto implementation of HMAC importKey/sign/verify
+        https://bugs.webkit.org/show_bug.cgi?id=123598
+
+        Reviewed by Anders Carlsson.
+
+        * crypto/subtle/hmac-sign-verify-expected.txt: Added.
+        * crypto/subtle/hmac-sign-verify.html: Added.
+
 2013-10-31  Oliver Hunt  <oliver@apple.com>
 
         JavaScript parser bug

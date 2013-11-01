@@ -24,21 +24,38 @@
  */
 
 #include "config.h"
-#include "CryptoAlgorithmRegistry.h"
+#include "CryptoKeyHMAC.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmHMAC.h"
-#include "CryptoAlgorithmSHA1.h"
+#include "CryptoAlgorithmDescriptionBuilder.h"
+#include "CryptoAlgorithmRegistry.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
+CryptoKeyHMAC::CryptoKeyHMAC(const Vector<char>& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage usage)
+    : CryptoKey(CryptoAlgorithmIdentifier::HMAC, CryptoKeyType::Secret, extractable, usage)
+    , m_hash(hash)
+    , m_key(key)
 {
-    registerAlgorithm(CryptoAlgorithmHMAC::s_name, CryptoAlgorithmHMAC::s_identifier, CryptoAlgorithmHMAC::create);
-    registerAlgorithm(CryptoAlgorithmSHA1::s_name, CryptoAlgorithmSHA1::s_identifier, CryptoAlgorithmSHA1::create);
 }
 
+CryptoKeyHMAC::~CryptoKeyHMAC()
+{
 }
+
+void CryptoKeyHMAC::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& builder) const
+{
+    CryptoKey::buildAlgorithmDescription(builder);
+
+    auto hashDescriptionBuilder = builder.createEmptyClone();
+    hashDescriptionBuilder->add("name", CryptoAlgorithmRegistry::shared().nameForIdentifier(m_hash));
+    builder.add("hash", *hashDescriptionBuilder);
+
+    builder.add("length", m_key.size());
+}
+
+} // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)

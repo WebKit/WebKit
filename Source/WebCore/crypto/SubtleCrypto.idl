@@ -30,5 +30,8 @@
     NoInterfaceObject,
     OperationsNotDeletable
 ] interface SubtleCrypto {
+    [Custom] Promise sign(AlgorithmIdentifier algorithm, Key key, sequence<CryptoOperationData> data);
+    [Custom] Promise verify(AlgorithmIdentifier algorithm, Key key, CryptoOperationData signature, sequence<CryptoOperationData> data);
     [Custom] Promise digest(AlgorithmIdentifier algorithm, sequence<CryptoOperationData> data);
+    [Custom] Promise importKey(KeyFormat format, CryptoOperationData keyData, AlgorithmIdentifier? algorithm, optional boolean extractable, optional KeyUsage[] keyUsages);
 };

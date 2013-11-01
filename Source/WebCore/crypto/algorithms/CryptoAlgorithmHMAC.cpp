@@ -24,19 +24,54 @@
  */
 
 #include "config.h"
-#include "CryptoAlgorithmRegistry.h"
+#include "CryptoAlgorithmHMAC.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmHMAC.h"
-#include "CryptoAlgorithmSHA1.h"
+#include "CryptoAlgorithmHmacParams.h"
+#include "CryptoKeyHMAC.h"
+#include "ExceptionCode.h"
+#include "JSDOMPromise.h"
 
 namespace WebCore {
 
-void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
+const char* const CryptoAlgorithmHMAC::s_name = "hmac";
+
+CryptoAlgorithmHMAC::CryptoAlgorithmHMAC()
 {
-    registerAlgorithm(CryptoAlgorithmHMAC::s_name, CryptoAlgorithmHMAC::s_identifier, CryptoAlgorithmHMAC::create);
-    registerAlgorithm(CryptoAlgorithmSHA1::s_name, CryptoAlgorithmSHA1::s_identifier, CryptoAlgorithmSHA1::create);
+}
+
+CryptoAlgorithmHMAC::~CryptoAlgorithmHMAC()
+{
+}
+
+std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmHMAC::create()
+{
+    return std::unique_ptr<CryptoAlgorithm>(new CryptoAlgorithmHMAC);
+}
+
+CryptoAlgorithmIdentifier CryptoAlgorithmHMAC::identifier() const
+{
+    return s_identifier;
+}
+
+void CryptoAlgorithmHMAC::importKey(const CryptoAlgorithmParameters& parameters, CryptoKeyFormat format, const CryptoOperationData& data, bool extractable, CryptoKeyUsage usage, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
+{
+    if (format != CryptoKeyFormat::Raw) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+    const CryptoAlgorithmHmacParams& hmacParameters = static_cast<const CryptoAlgorithmHmacParams&>(parameters);
+    Vector<char> keyData;
+    keyData.append(data.first, data.second);
+    RefPtr<CryptoKeyHMAC> result = CryptoKeyHMAC::create(keyData, hmacParameters.hash, extractable, usage);
+    promise->fulfill(result.release());
+}
+
+void CryptoAlgorithmHMAC::exportKey(const CryptoAlgorithmParameters&, CryptoKeyFormat, const CryptoKey&, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
+{
+    // Not implemented yet.
+    ec = NOT_SUPPORTED_ERR;
 }
 
 }

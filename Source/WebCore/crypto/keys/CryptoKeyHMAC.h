@@ -23,22 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CryptoAlgorithmRegistry.h"
+#ifndef CryptoKeyHMAC_h
+#define CryptoKeyHMAC_h
+
+#include "CryptoKey.h"
+#include <wtf/Ref.h>
+#include <wtf/Vector.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmHMAC.h"
-#include "CryptoAlgorithmSHA1.h"
-
 namespace WebCore {
 
-void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
-{
-    registerAlgorithm(CryptoAlgorithmHMAC::s_name, CryptoAlgorithmHMAC::s_identifier, CryptoAlgorithmHMAC::create);
-    registerAlgorithm(CryptoAlgorithmSHA1::s_name, CryptoAlgorithmSHA1::s_identifier, CryptoAlgorithmSHA1::create);
-}
+class CryptoKeyHMAC FINAL : public CryptoKey {
+public:
+    static PassRefPtr<CryptoKeyHMAC> create(const Vector<char>& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage usage)
+    {
+        return adoptRef(new CryptoKeyHMAC(key, hash, extractable, usage));
+    }
+    virtual ~CryptoKeyHMAC();
 
-}
+    const Vector<char>& key() const { return m_key; }
+
+    virtual void buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder&) const OVERRIDE;
+
+private:
+    CryptoKeyHMAC(const Vector<char>& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage);
+
+    CryptoAlgorithmIdentifier m_hash;
+    Vector<char> m_key;
+};
+
+} // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
+#endif // CryptoKeyHMAC_h

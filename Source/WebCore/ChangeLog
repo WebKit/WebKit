@@ -1,3 +1,46 @@
+2013-11-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Add a Mac WebCrypto implementation of HMAC importKey/sign/verify
+        https://bugs.webkit.org/show_bug.cgi?id=123598
+
+        Reviewed by Anders Carlsson.
+
+        Test: crypto/subtle/hmac-sign-verify.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSubtleCryptoCustom.cpp: Added property svn:eol-style.
+        (WebCore::createAlgorithmFromJSValue):
+        (WebCore::cryptoOperationDataFromJSValue):
+        (WebCore::cryptoKeyFormatFromJSValue):
+        (WebCore::cryptoKeyUsagesFromJSValue):
+        (WebCore::JSSubtleCrypto::sign):
+        (WebCore::JSSubtleCrypto::verify):
+        (WebCore::JSSubtleCrypto::digest):
+        (WebCore::JSSubtleCrypto::importKey):
+        * crypto/SubtleCrypto.idl:
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp: Added.
+        (WebCore::CryptoAlgorithmHMAC::CryptoAlgorithmHMAC):
+        (WebCore::CryptoAlgorithmHMAC::~CryptoAlgorithmHMAC):
+        (WebCore::CryptoAlgorithmHMAC::create):
+        (WebCore::CryptoAlgorithmHMAC::identifier):
+        (WebCore::CryptoAlgorithmHMAC::importKey):
+        (WebCore::CryptoAlgorithmHMAC::exportKey):
+        * crypto/algorithms/CryptoAlgorithmHMAC.h: Added.
+        * crypto/keys: Added.
+        * crypto/keys/CryptoKeyHMAC.cpp: Added.
+        (WebCore::CryptoKeyHMAC::CryptoKeyHMAC):
+        (WebCore::CryptoKeyHMAC::~CryptoKeyHMAC):
+        (WebCore::CryptoKeyHMAC::buildAlgorithmDescription):
+        * crypto/keys/CryptoKeyHMAC.h: Added.
+        * crypto/mac/CryptoAlgorithmHMACMac.cpp: Added.
+        (WebCore::getCommonCryptoAlgorithm):
+        (WebCore::calculateSignature):
+        (WebCore::CryptoAlgorithmHMAC::sign):
+        (WebCore::CryptoAlgorithmHMAC::verify):
+        (WebCore::CryptoAlgorithmHMAC::generateKey):
+        * crypto/mac/CryptoAlgorithmRegistryMac.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms):
+
 2013-10-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Clean up a few Inspector interfaces

@@ -5504,6 +5504,11 @@
 		E125F82B1822CFEC00D84CD9 /* CryptoAlgorithmSHA1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F8291822CFEC00D84CD9 /* CryptoAlgorithmSHA1.cpp */; };
 		E125F82C1822CFEC00D84CD9 /* CryptoAlgorithmSHA1.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F82A1822CFEC00D84CD9 /* CryptoAlgorithmSHA1.h */; };
 		E125F82E1822CFFF00D84CD9 /* CryptoAlgorithmSHA1Mac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F82D1822CFFF00D84CD9 /* CryptoAlgorithmSHA1Mac.cpp */; };
+		E125F8311822F11B00D84CD9 /* CryptoAlgorithmHMAC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F82F1822F11B00D84CD9 /* CryptoAlgorithmHMAC.cpp */; };
+		E125F8321822F11B00D84CD9 /* CryptoAlgorithmHMAC.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F8301822F11B00D84CD9 /* CryptoAlgorithmHMAC.h */; };
+		E125F8351822F18A00D84CD9 /* CryptoKeyHMAC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F8331822F18A00D84CD9 /* CryptoKeyHMAC.cpp */; };
+		E125F8361822F18A00D84CD9 /* CryptoKeyHMAC.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F8341822F18A00D84CD9 /* CryptoKeyHMAC.h */; };
+		E125F8381822F1EB00D84CD9 /* CryptoAlgorithmHMACMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F8371822F1EB00D84CD9 /* CryptoAlgorithmHMACMac.cpp */; };
 		E12719C70EEEC16800F61213 /* NavigatorBase.h in Headers */ = {isa = PBXBuildFile; fileRef = E12719C60EEEC16800F61213 /* NavigatorBase.h */; };
 		E12719CA0EEEC21300F61213 /* NavigatorBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E12719C90EEEC21300F61213 /* NavigatorBase.cpp */; };
 		E1271A0B0EEEC77A00F61213 /* WorkerNavigator.h in Headers */ = {isa = PBXBuildFile; fileRef = E1271A0A0EEEC77A00F61213 /* WorkerNavigator.h */; };
@@ -12509,6 +12514,11 @@
 		E125F8291822CFEC00D84CD9 /* CryptoAlgorithmSHA1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmSHA1.cpp; sourceTree = "<group>"; };
 		E125F82A1822CFEC00D84CD9 /* CryptoAlgorithmSHA1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmSHA1.h; sourceTree = "<group>"; };
 		E125F82D1822CFFF00D84CD9 /* CryptoAlgorithmSHA1Mac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoAlgorithmSHA1Mac.cpp; path = mac/CryptoAlgorithmSHA1Mac.cpp; sourceTree = "<group>"; };
+		E125F82F1822F11B00D84CD9 /* CryptoAlgorithmHMAC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmHMAC.cpp; sourceTree = "<group>"; };
+		E125F8301822F11B00D84CD9 /* CryptoAlgorithmHMAC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmHMAC.h; sourceTree = "<group>"; };
+		E125F8331822F18A00D84CD9 /* CryptoKeyHMAC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoKeyHMAC.cpp; path = keys/CryptoKeyHMAC.cpp; sourceTree = "<group>"; };
+		E125F8341822F18A00D84CD9 /* CryptoKeyHMAC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CryptoKeyHMAC.h; path = keys/CryptoKeyHMAC.h; sourceTree = "<group>"; };
+		E125F8371822F1EB00D84CD9 /* CryptoAlgorithmHMACMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoAlgorithmHMACMac.cpp; path = mac/CryptoAlgorithmHMACMac.cpp; sourceTree = "<group>"; };
 		E12719C60EEEC16800F61213 /* NavigatorBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorBase.h; sourceTree = "<group>"; };
 		E12719C90EEEC21300F61213 /* NavigatorBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorBase.cpp; sourceTree = "<group>"; };
 		E1271A0A0EEEC77A00F61213 /* WorkerNavigator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerNavigator.h; sourceTree = "<group>"; };
@@ -20131,6 +20141,7 @@
 		E172AF71180F343400FBADB9 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				E125F8371822F1EB00D84CD9 /* CryptoAlgorithmHMACMac.cpp */,
 				E1BB84AC1822CA7400525043 /* CryptoAlgorithmRegistryMac.cpp */,
 				E125F82D1822CFFF00D84CD9 /* CryptoAlgorithmSHA1Mac.cpp */,
 			);
@@ -20140,6 +20151,8 @@
 		E172AF7C180F3B0D00FBADB9 /* algorithms */ = {
 			isa = PBXGroup;
 			children = (
+				E125F82F1822F11B00D84CD9 /* CryptoAlgorithmHMAC.cpp */,
+				E125F8301822F11B00D84CD9 /* CryptoAlgorithmHMAC.h */,
 				E125F8291822CFEC00D84CD9 /* CryptoAlgorithmSHA1.cpp */,
 				E125F82A1822CFEC00D84CD9 /* CryptoAlgorithmSHA1.h */,
 			);
@@ -20149,6 +20162,8 @@
 		E19DA29D181995CE00088BC8 /* keys */ = {
 			isa = PBXGroup;
 			children = (
+				E125F8331822F18A00D84CD9 /* CryptoKeyHMAC.cpp */,
+				E125F8341822F18A00D84CD9 /* CryptoKeyHMAC.h */,
 			);
 			name = keys;
 			sourceTree = "<group>";
@@ -22145,6 +22160,7 @@
 				85D389B20A991A7F00282145 /* DOMAttr.h in Headers */,
 				85E7118D0AC5D5350053270F /* DOMAttrInternal.h in Headers */,
 				BC946EEF107FDBAC00857193 /* DOMBeforeLoadEvent.h in Headers */,
+				E125F8361822F18A00D84CD9 /* CryptoKeyHMAC.h in Headers */,
 				2E2D99E710E2BC1C00496337 /* DOMBlob.h in Headers */,
 				2E2D99EA10E2BC3800496337 /* DOMBlobInternal.h in Headers */,
 				85089CD70A98C42800A275AA /* DOMCDATASection.h in Headers */,
@@ -24391,6 +24407,7 @@
 				B2227A2A0D00BF220071B782 /* SVGGradientElement.h in Headers */,
 				B2227AB60D00BF220071B782 /* SVGGraphicsElement.h in Headers */,
 				650FBF2B0D9AF047008FC292 /* SVGHKernElement.h in Headers */,
+				E125F8321822F11B00D84CD9 /* CryptoAlgorithmHMAC.h in Headers */,
 				51D719BA181106E00016DC51 /* IDBAny.h in Headers */,
 				B25599A40D00D8BA00BB825C /* SVGImage.h in Headers */,
 				E4AE7C1617D1BB950009FB31 /* ElementIterator.h in Headers */,
@@ -25489,6 +25506,7 @@
 				A29532CF15DD5E1700469EBC /* CustomFilterValidatedProgram.cpp in Sources */,
 				97BC6A201505F081001B74AC /* Database.cpp in Sources */,
 				97BC6A231505F081001B74AC /* DatabaseAuthorizer.cpp in Sources */,
+				E125F8351822F18A00D84CD9 /* CryptoKeyHMAC.cpp in Sources */,
 				511EF2C517F0FD3500E4FA16 /* JSIDBIndex.cpp in Sources */,
 				FE16CFD3169D1DED00D3A0C7 /* DatabaseBackend.cpp in Sources */,
 				97BC69DA1505F076001B74AC /* DatabaseBackendBase.cpp in Sources */,
@@ -25630,6 +25648,7 @@
 				F5C041E40FFCA96D00839D4A /* DOMHTMLDataListElement.mm in Sources */,
 				E157A8E818184C67009F821D /* JSCryptoKeyCustom.cpp in Sources */,
 				0705852317FDC140005F2BCB /* MediaTrackConstraints.cpp in Sources */,
+				E125F8311822F11B00D84CD9 /* CryptoAlgorithmHMAC.cpp in Sources */,
 				D359D792129CA3C00006E5D2 /* DOMHTMLDetailsElement.mm in Sources */,
 				85BA4D0C0AA688680088052D /* DOMHTMLDirectoryElement.mm in Sources */,
 				85BA4D0E0AA688680088052D /* DOMHTMLDivElement.mm in Sources */,
@@ -26069,6 +26088,7 @@
 				9B7E78BD16F16CC600126914 /* HTMLTreeBuilderSimulator.cpp in Sources */,
 				A8EA79F30A1916DF00A8EF5F /* HTMLUListElement.cpp in Sources */,
 				E44613AA0CD6331000FADA75 /* HTMLVideoElement.cpp in Sources */,
+				E125F8381822F1EB00D84CD9 /* CryptoAlgorithmHMACMac.cpp in Sources */,
 				BCCD74E50A4C8DDF005FDA6D /* HTMLViewSourceDocument.cpp in Sources */,
 				977B3879122883E900B81FF8 /* HTMLViewSourceParser.cpp in Sources */,
 				0B8C56D40F28627F000502E1 /* HTTPHeaderMap.cpp in Sources */,
