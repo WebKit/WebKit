@@ -93,7 +93,7 @@ static WebDataSource* getWebDataSource(DocumentLoader* loader)
 class WebFrameLoaderClient::WebFramePolicyListenerPrivate {
 public:
     WebFramePolicyListenerPrivate() 
-        : m_policyFunction(0)
+        : m_policyFunction(nullptr)
     { 
     }
 
@@ -1347,7 +1347,7 @@ void WebFrameLoaderClient::cancelPolicyCheck()
         m_policyListenerPrivate->m_policyListener = 0;
     }
 
-    m_policyListenerPrivate->m_policyFunction = 0;
+    m_policyListenerPrivate->m_policyFunction = nullptr;
 }
 
 COMPtr<WebFramePolicyListener> WebFrameLoaderClient::setUpPolicyListener(WebCore::FramePolicyFunction function)
@@ -1374,7 +1374,7 @@ void WebFrameLoaderClient::receivedPolicyDecision(PolicyAction action)
     FramePolicyFunction function = m_policyListenerPrivate->m_policyFunction;
 
     m_policyListenerPrivate->m_policyListener = 0;
-    m_policyListenerPrivate->m_policyFunction = 0;
+    m_policyListenerPrivate->m_policyFunction = nullptr;
 
     Frame* coreFrame = core(m_webFrame);
     ASSERT(coreFrame);

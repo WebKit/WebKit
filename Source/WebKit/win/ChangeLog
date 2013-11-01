@@ -1,3 +1,16 @@
+2013-10-31  Alex Christensen  <achristensen@webkit.org>
+
+        Compile fix for VS2012.
+        https://bugs.webkit.org/show_bug.cgi?id=123599
+
+        Reviewed by Brent Fulgham.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::WebFramePolicyListenerPrivate::WebFramePolicyListenerPrivate):
+        (WebFrameLoaderClient::cancelPolicyCheck):
+        (WebFrameLoaderClient::receivedPolicyDecision):
+        Use nullptr instead of 0 for m_policyFunction, which is a std::function.
+
 2013-10-31  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Make WebHistory compile without USE(CF)
