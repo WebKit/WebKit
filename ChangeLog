@@ -1,3 +1,15 @@
+2013-11-02  Patrick Gansterer  <paroga@webkit.org>
+
+        [WINCE] Disable export macros
+        https://bugs.webkit.org/show_bug.cgi?id=123679
+
+        Reviewed by Darin Adler.
+
+        Avoid useless exports by turning of the export macros
+        since the WinCE port works as a static library only.
+
+        * Source/cmake/OptionsWinCE.cmake:
+
 2013-10-31  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][GLES] OpenGL should be an optional
