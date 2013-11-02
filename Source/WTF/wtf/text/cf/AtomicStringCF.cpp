@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "AtomicString.h"
+#include <wtf/text/AtomicString.h>
 
 #if USE(CF)
 

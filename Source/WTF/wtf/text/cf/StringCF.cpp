@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "WTFString.h"
+#include <wtf/text/WTFString.h>
 
 #if USE(CF)
 

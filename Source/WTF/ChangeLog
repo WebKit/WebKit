@@ -1,5 +1,13 @@
 2013-11-01  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Unreviewed extended attempt at Windows build fix after r158471.
+
+        * wtf/text/cf/AtomicStringCF.cpp:
+        * wtf/text/cf/StringCF.cpp:
+        * wtf/text/cf/StringImplCF.cpp:
+
+2013-11-01  Joseph Pecoraro  <pecoraro@apple.com>
+
         Unreviewed attempt at Windows build fix after r158471.
 
         * wtf/text/cf/AtomicStringCF.cpp:
