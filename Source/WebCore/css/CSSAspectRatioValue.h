@@ -36,9 +36,9 @@ namespace WebCore {
 
 class CSSAspectRatioValue : public CSSValue {
 public:
-    static PassRefPtr<CSSAspectRatioValue> create(float numeratorValue, float denominatorValue)
+    static PassRef<CSSAspectRatioValue> create(float numeratorValue, float denominatorValue)
     {
-        return adoptRef(new CSSAspectRatioValue(numeratorValue, denominatorValue));
+        return adoptRef(*new CSSAspectRatioValue(numeratorValue, denominatorValue));
     }
 
     String customCSSText() const;
