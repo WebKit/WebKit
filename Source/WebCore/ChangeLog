@@ -1,3 +1,13 @@
+2013-11-01  Andreas Kling  <akling@apple.com>
+
+        CSSCanvasValue construction helper should return PassRef.
+        <https://webkit.org/b/123650>
+
+        Return PassRef instead of PassRefPtr from functions that return
+        ownership-passing pointers that are known to be non-null.
+
+        Reviewed by Anders Carlsson.
+
 2013-11-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Move CF/Mac WTF String implementations down into WTF
