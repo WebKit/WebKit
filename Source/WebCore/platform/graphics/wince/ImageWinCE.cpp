@@ -59,7 +59,7 @@ bool FrameData::clear(bool clearMetaData)
     return false;
 }
 
-bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, LPSIZE size)
+bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
 {
     if (!bmp)
         return false;
@@ -78,9 +78,9 @@ bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, LPSIZE size)
 
         IntSize imageSize = BitmapImage::size();
         if (size)
-            drawFrameMatchingSourceSize(&gc, FloatRect(0, 0, bmpInfo.bmWidth, bmpInfo.bmHeight), IntSize(*size), ColorSpaceDeviceRGB, CompositeCopy);
+            drawFrameMatchingSourceSize(&gc, FloatRect(0, 0, bmpInfo.bmWidth, bmpInfo.bmHeight), *size, ColorSpaceDeviceRGB, CompositeCopy);
         else
-            draw(&gc, FloatRect(0, 0, bmpInfo.bmWidth, bmpInfo.bmHeight), FloatRect(0, 0, imageSize.width(), imageSize.height()), ColorSpaceDeviceRGB, CompositeCopy, BlendModeNormal);
+            draw(&gc, FloatRect(0, 0, bmpInfo.bmWidth, bmpInfo.bmHeight), FloatRect(0, 0, imageSize.width(), imageSize.height()), ColorSpaceDeviceRGB, CompositeCopy, BlendModeNormal, ImageOrientationDescription());
     }
 
     SelectObject(hdc.get(), hOldBmp);
@@ -98,14 +98,14 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext* ctxt, const Float
 
         size_t currentFrame = m_currentFrame;
         m_currentFrame = i;
-        draw(ctxt, dstRect, FloatRect(0, 0, srcSize.width(), srcSize.height()), styleColorSpace, compositeOp, BlendModeNormal);
+        draw(ctxt, dstRect, FloatRect(0, 0, srcSize.width(), srcSize.height()), styleColorSpace, compositeOp, BlendModeNormal, ImageOrientationDescription());
         m_currentFrame = currentFrame;
         return;
     }
 
     // No image of the correct size was found, fallback to drawing the current frame
     IntSize imageSize = BitmapImage::size();
-    draw(ctxt, dstRect, FloatRect(0, 0, imageSize.width(), imageSize.height()), styleColorSpace, compositeOp, BlendModeNormal);
+    draw(ctxt, dstRect, FloatRect(0, 0, imageSize.width(), imageSize.height()), styleColorSpace, compositeOp, BlendModeNormal, ImageOrientationDescription());
 }
 
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRectIn, ColorSpace styleColorSpace, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription)

@@ -1,3 +1,11 @@
+2013-11-02  Patrick Gansterer  <paroga@webkit.org>
+
+        Various small WinCE build fixes
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::transitionToCommittedForNewPage):
+        * WebView.cpp:
+
 2013-10-03  Sam Weinig  <sam@webkit.org>
 
         Remove shouldRubberBandInDirection from the WKBundlePageUIClient

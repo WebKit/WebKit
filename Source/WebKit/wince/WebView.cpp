@@ -42,6 +42,7 @@
 #include "InitializeThreading.h"
 #include "InspectorClientWinCE.h"
 #include "IntSize.h"
+#include "MainFrame.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"

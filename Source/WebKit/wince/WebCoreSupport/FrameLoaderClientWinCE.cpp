@@ -32,6 +32,7 @@
 #include "FrameView.h"
 #include "HTMLFormElement.h"
 #include "MIMETypeRegistry.h"
+#include "MainFrame.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PluginDatabase.h"
@@ -607,9 +608,9 @@ void FrameLoaderClientWinCE::transitionToCommittedForNewPage()
     if (isMainFrame) {
         RECT rect;
         m_webView->frameRect(&rect);
-        frameView = FrameView::create(m_frame, IntRect(rect).size());
+        frameView = FrameView::create(*m_frame, IntRect(rect).size());
     } else
-        frameView = FrameView::create(m_frame);
+        frameView = FrameView::create(*m_frame);
 
     m_frame->setView(frameView);
 

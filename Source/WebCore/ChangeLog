@@ -1,3 +1,18 @@
+2013-11-02  Patrick Gansterer  <paroga@webkit.org>
+
+        Various small WinCE build fixes
+
+        * editing/TextIterator.cpp:
+        (WebCore::SearchBuffer::append):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/wince/ImageWinCE.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize):
+        * platform/graphics/wince/PlatformPathWinCE.h:
+        * platform/win/PopupMenuWin.h:
+        * rendering/RenderThemeWinCE.cpp:
+        (WebCore::RenderThemeWinCE::adjustMenuListButtonStyle):
+
 2013-11-01  Alexey Proskuryakov  <ap@apple.com>
 
         Add WebCrypto AES-CBC

@@ -1,5 +1,12 @@
 2013-11-02  Patrick Gansterer  <paroga@webkit.org>
 
+        Various small WinCE build fixes
+
+        * jsc.cpp:
+        (main):
+
+2013-11-02  Patrick Gansterer  <paroga@webkit.org>
+
         Fix MSVC ARM build after r157581.
 
         * jit/JITStubsARM.h:

@@ -454,7 +454,7 @@ void RenderThemeWinCE::adjustMenuListButtonStyle(StyleResolver*, RenderStyle* st
 
     // Calculate our min-height
     int minHeight = style->fontMetrics().height();
-    minHeight = max(minHeight, dropDownBoxMinHeight);
+    minHeight = std::max(minHeight, dropDownBoxMinHeight);
 
     style->setMinHeight(Length(minHeight, Fixed));
 

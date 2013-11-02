@@ -23,6 +23,7 @@
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "Path.h"
+#include <windows.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
