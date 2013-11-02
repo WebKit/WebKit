@@ -35,18 +35,17 @@ class ContextMenuClientWinCE : public WebCore::ContextMenuClient {
 public:
     ContextMenuClientWinCE(WebView*);
 
-    virtual void contextMenuDestroyed();
+    virtual void contextMenuDestroyed() OVERRIDE;
 
-    virtual PassOwnPtr<WebCore::ContextMenu> customizeMenu(PassOwnPtr<WebCore::ContextMenu>);
-    virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*);
+    virtual PassOwnPtr<WebCore::ContextMenu> customizeMenu(PassOwnPtr<WebCore::ContextMenu>) OVERRIDE;
+    virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*) OVERRIDE;
 
-    virtual void downloadURL(const WebCore::URL&);
-    virtual void copyImageToClipboard(const WebCore::HitTestResult&);
-    virtual void searchWithGoogle(const WebCore::Frame*);
-    virtual void lookUpInDictionary(WebCore::Frame*);
-    virtual void speak(const WTF::String&);
-    virtual void stopSpeaking();
-    virtual bool isSpeaking();
+    virtual void downloadURL(const WebCore::URL&) OVERRIDE;
+    virtual void searchWithGoogle(const WebCore::Frame*) OVERRIDE;
+    virtual void lookUpInDictionary(WebCore::Frame*) OVERRIDE;
+    virtual void speak(const WTF::String&) OVERRIDE;
+    virtual void stopSpeaking() OVERRIDE;
+    virtual bool isSpeaking() OVERRIDE;
 
 private:
     WebView* m_webView;

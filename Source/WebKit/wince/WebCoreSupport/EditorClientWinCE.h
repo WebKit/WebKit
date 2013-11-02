@@ -37,75 +37,76 @@ public:
     EditorClientWinCE(WebView*);
     ~EditorClientWinCE();
 
-    virtual void pageDestroyed();
+    virtual void pageDestroyed() OVERRIDE;
 
-    virtual bool shouldDeleteRange(WebCore::Range*);
-    virtual bool smartInsertDeleteEnabled();
-    virtual bool isSelectTrailingWhitespaceEnabled();
-    virtual bool isContinuousSpellCheckingEnabled();
-    virtual void toggleContinuousSpellChecking();
-    virtual bool isGrammarCheckingEnabled();
-    virtual void toggleGrammarChecking();
-    virtual int spellCheckerDocumentTag();
+    virtual bool shouldDeleteRange(WebCore::Range*) OVERRIDE;
+    virtual bool smartInsertDeleteEnabled() OVERRIDE;
+    virtual bool isSelectTrailingWhitespaceEnabled() OVERRIDE;
+    virtual bool isContinuousSpellCheckingEnabled() OVERRIDE;
+    virtual void toggleContinuousSpellChecking() OVERRIDE;
+    virtual bool isGrammarCheckingEnabled() OVERRIDE;
+    virtual void toggleGrammarChecking() OVERRIDE;
+    virtual int spellCheckerDocumentTag() OVERRIDE;
 
-    virtual bool shouldBeginEditing(WebCore::Range*);
-    virtual bool shouldEndEditing(WebCore::Range*);
-    virtual bool shouldInsertNode(WebCore::Node*, WebCore::Range*, WebCore::EditorInsertAction);
-    virtual bool shouldInsertText(const WTF::String&, WebCore::Range*, WebCore::EditorInsertAction);
-    virtual bool shouldChangeSelectedRange(WebCore::Range*, WebCore::Range*, WebCore::EAffinity, bool);
+    virtual bool shouldBeginEditing(WebCore::Range*) OVERRIDE;
+    virtual bool shouldEndEditing(WebCore::Range*) OVERRIDE;
+    virtual bool shouldInsertNode(WebCore::Node*, WebCore::Range*, WebCore::EditorInsertAction) OVERRIDE;
+    virtual bool shouldInsertText(const WTF::String&, WebCore::Range*, WebCore::EditorInsertAction) OVERRIDE;
+    virtual bool shouldChangeSelectedRange(WebCore::Range*, WebCore::Range*, WebCore::EAffinity, bool) OVERRIDE;
 
-    virtual bool shouldApplyStyle(WebCore::StylePropertySet*, WebCore::Range*);
-    virtual bool shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*);
+    virtual bool shouldApplyStyle(WebCore::StylePropertySet*, WebCore::Range*) OVERRIDE;
+    virtual bool shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*) OVERRIDE;
 
-    virtual void didBeginEditing();
-    virtual void respondToChangedContents();
-    virtual void respondToChangedSelection(WebCore::Frame*);
-    virtual void didEndEditing();
-    virtual void willWriteSelectionToPasteboard(WebCore::Range*);
-    virtual void didWriteSelectionToPasteboard();
-    virtual void getClientPasteboardDataForRange(WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer> >& pasteboardData);
+    virtual void didBeginEditing() OVERRIDE;
+    virtual void respondToChangedContents() OVERRIDE;
+    virtual void respondToChangedSelection(WebCore::Frame*) OVERRIDE;
+    virtual void didEndEditing() OVERRIDE;
+    virtual void willWriteSelectionToPasteboard(WebCore::Range*) OVERRIDE;
+    virtual void didWriteSelectionToPasteboard() OVERRIDE;
+    virtual void getClientPasteboardDataForRange(WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer> >& pasteboardData) OVERRIDE;
 
-    virtual void registerUndoStep(WTF::PassRefPtr<WebCore::UndoStep>);
-    virtual void registerRedoStep(WTF::PassRefPtr<WebCore::UndoStep>);
-    virtual void clearUndoRedoOperations();
+    virtual void registerUndoStep(WTF::PassRefPtr<WebCore::UndoStep>) OVERRIDE;
+    virtual void registerRedoStep(WTF::PassRefPtr<WebCore::UndoStep>) OVERRIDE;
+    virtual void clearUndoRedoOperations() OVERRIDE;
 
-    virtual bool canCopyCut(WebCore::Frame*, bool defaultValue) const;
-    virtual bool canPaste(WebCore::Frame*, bool defaultValue) const;
-    virtual bool canUndo() const;
-    virtual bool canRedo() const;
+    virtual bool canCopyCut(WebCore::Frame*, bool defaultValue) const OVERRIDE;
+    virtual bool canPaste(WebCore::Frame*, bool defaultValue) const OVERRIDE;
+    virtual bool canUndo() const OVERRIDE;
+    virtual bool canRedo() const OVERRIDE;
 
-    virtual void undo();
-    virtual void redo();
+    virtual void undo() OVERRIDE;
+    virtual void redo() OVERRIDE;
 
-    virtual const char* interpretKeyEvent(const WebCore::KeyboardEvent*);
-    virtual bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*);
-    virtual void handleKeyboardEvent(WebCore::KeyboardEvent*);
-    virtual void handleInputMethodKeydown(WebCore::KeyboardEvent*);
+    virtual void handleKeyboardEvent(WebCore::KeyboardEvent*) OVERRIDE;
+    virtual void handleInputMethodKeydown(WebCore::KeyboardEvent*) OVERRIDE;
 
-    virtual void textFieldDidBeginEditing(WebCore::Element*);
-    virtual void textFieldDidEndEditing(WebCore::Element*);
-    virtual void textDidChangeInTextField(WebCore::Element*);
-    virtual bool doTextFieldCommandFromEvent(WebCore::Element*, WebCore::KeyboardEvent*);
-    virtual void textWillBeDeletedInTextField(WebCore::Element*);
-    virtual void textDidChangeInTextArea(WebCore::Element*);
+    virtual void textFieldDidBeginEditing(WebCore::Element*) OVERRIDE;
+    virtual void textFieldDidEndEditing(WebCore::Element*) OVERRIDE;
+    virtual void textDidChangeInTextField(WebCore::Element*) OVERRIDE;
+    virtual bool doTextFieldCommandFromEvent(WebCore::Element*, WebCore::KeyboardEvent*) OVERRIDE;
+    virtual void textWillBeDeletedInTextField(WebCore::Element*) OVERRIDE;
+    virtual void textDidChangeInTextArea(WebCore::Element*) OVERRIDE;
 
-    virtual bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const;
-    virtual void ignoreWordInSpellDocument(const WTF::String&);
-    virtual void learnWord(const WTF::String&);
-    virtual void checkSpellingOfString(const UChar*, int, int*, int*);
-    virtual WTF::String getAutoCorrectSuggestionForMisspelledWord(const WTF::String&);
-    virtual void checkGrammarOfString(const UChar*, int, WTF::Vector<WebCore::GrammarDetail>&, int*, int*);
-    virtual void updateSpellingUIWithGrammarString(const WTF::String&, const WebCore::GrammarDetail&);
-    virtual void updateSpellingUIWithMisspelledWord(const WTF::String&);
-    virtual void showSpellingUI(bool);
-    virtual bool spellingUIIsShowing();
-    virtual void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses);
-    virtual void willSetInputMethodState();
-    virtual void setInputMethodState(bool);
-    virtual void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>) { }
-    virtual WebCore::TextCheckerClient* textChecker() { return this; }
+    virtual bool shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType) const OVERRIDE;
+    virtual void ignoreWordInSpellDocument(const WTF::String&) OVERRIDE;
+    virtual void learnWord(const WTF::String&) OVERRIDE;
+    virtual void checkSpellingOfString(const UChar*, int, int*, int*) OVERRIDE;
+    virtual WTF::String getAutoCorrectSuggestionForMisspelledWord(const WTF::String&) OVERRIDE;
+    virtual void checkGrammarOfString(const UChar*, int, WTF::Vector<WebCore::GrammarDetail>&, int*, int*) OVERRIDE;
+    virtual void updateSpellingUIWithGrammarString(const WTF::String&, const WebCore::GrammarDetail&) OVERRIDE;
+    virtual void updateSpellingUIWithMisspelledWord(const WTF::String&) OVERRIDE;
+    virtual void showSpellingUI(bool) OVERRIDE;
+    virtual bool spellingUIIsShowing() OVERRIDE;
+    virtual void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses) OVERRIDE;
+    virtual void willSetInputMethodState() OVERRIDE;
+    virtual void setInputMethodState(bool) OVERRIDE;
+    virtual void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>) OVERRIDE { }
+    virtual WebCore::TextCheckerClient* textChecker() OVERRIDE { return this; }
 
 private:
+    const char* interpretKeyEvent(const WebCore::KeyboardEvent*);
+    bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*);
+
     WebView* m_webView;
 };
 

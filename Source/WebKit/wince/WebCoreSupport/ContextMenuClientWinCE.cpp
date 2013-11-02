@@ -57,11 +57,6 @@ void ContextMenuClientWinCE::downloadURL(const URL& url)
     notImplemented();
 }
 
-void ContextMenuClientWinCE::copyImageToClipboard(const HitTestResult&)
-{
-    notImplemented();
-}
-
 void ContextMenuClientWinCE::searchWithGoogle(const Frame*)
 {
     notImplemented();

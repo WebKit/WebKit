@@ -31,17 +31,17 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void DragClientWinCE::willPerformDragDestinationAction(DragDestinationAction, DragData*)
+void DragClientWinCE::willPerformDragDestinationAction(DragDestinationAction, DragData&)
 {
     notImplemented();
 }
 
-void DragClientWinCE::willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard*)
+void DragClientWinCE::willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard&)
 {
     notImplemented();
 }
 
-DragDestinationAction DragClientWinCE::actionMaskForDrag(DragData*)
+DragDestinationAction DragClientWinCE::actionMaskForDrag(DragData&)
 {
     notImplemented();
     return DragDestinationActionAny;
@@ -53,7 +53,7 @@ DragSourceAction DragClientWinCE::dragSourceActionMaskForPoint(const IntPoint&)
     return DragSourceActionAny;
 }
 
-void DragClientWinCE::startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard*, Frame*, bool)
+void DragClientWinCE::startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard&, Frame&, bool)
 {
     notImplemented();
 }

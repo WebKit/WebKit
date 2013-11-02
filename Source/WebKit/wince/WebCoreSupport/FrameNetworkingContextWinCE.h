@@ -36,9 +36,9 @@ public:
         return adoptRef(new FrameNetworkingContextWinCE(frame, userAgent));
     }
 
-    virtual WTF::String userAgent() const;
-    virtual WTF::String referrer() const;
-    virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const;
+    virtual WTF::String userAgent() const OVERRIDE;
+    virtual WTF::String referrer() const OVERRIDE;
+    virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const OVERRIDE;
 
 private:
     FrameNetworkingContextWinCE(WebCore::Frame* frame, const WTF::String& userAgent);

@@ -1,5 +1,37 @@
 2013-11-02  Patrick Gansterer  <paroga@webkit.org>
 
+        Add OVERRIDE keyword to WebCoreSupport classes
+        https://bugs.webkit.org/show_bug.cgi?id=123672
+
+        Reviewed by Darin Adler.
+
+        Also align the function parameters with the base classes
+        and remove useless functions.
+
+        * WebCoreSupport/ChromeClientWinCE.cpp:
+        * WebCoreSupport/ChromeClientWinCE.h:
+        * WebCoreSupport/ContextMenuClientWinCE.cpp:
+        * WebCoreSupport/ContextMenuClientWinCE.h:
+        * WebCoreSupport/DragClientWinCE.cpp:
+        (WebKit::DragClientWinCE::willPerformDragDestinationAction):
+        (WebKit::DragClientWinCE::willPerformDragSourceAction):
+        (WebKit::DragClientWinCE::actionMaskForDrag):
+        (WebKit::DragClientWinCE::startDrag):
+        * WebCoreSupport/DragClientWinCE.h:
+        * WebCoreSupport/EditorClientWinCE.h:
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::dispatchDecidePolicyForResponse):
+        (WebKit::FrameLoaderClientWinCE::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::FrameLoaderClientWinCE::dispatchDecidePolicyForNavigationAction):
+        (WebKit::FrameLoaderClientWinCE::dispatchWillSubmitForm):
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+        * WebCoreSupport/FrameNetworkingContextWinCE.h:
+        * WebCoreSupport/InspectorClientWinCE.cpp:
+        * WebCoreSupport/InspectorClientWinCE.h:
+        * WebCoreSupport/PlatformStrategiesWinCE.h:
+
+2013-11-02  Patrick Gansterer  <paroga@webkit.org>
+
         Various small WinCE build fixes
 
         * WebCoreSupport/FrameLoaderClientWinCE.cpp:

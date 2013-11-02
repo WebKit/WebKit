@@ -61,27 +61,12 @@ void InspectorClientWinCE::bringFrontendToFront()
     notImplemented();
 }
 
-void InspectorClientWinCE::releaseFrontendPage()
-{
-    notImplemented();
-}
-
 void InspectorClientWinCE::highlight()
 {
     notImplemented();
 }
 
 void InspectorClientWinCE::hideHighlight()
-{
-    notImplemented();
-}
-
-void InspectorClientWinCE::populateSetting(const String& key, String* value)
-{
-    notImplemented();
-}
-
-void InspectorClientWinCE::storeSetting(const String& key, const String& value)
 {
     notImplemented();
 }
