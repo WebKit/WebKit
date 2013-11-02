@@ -23,8 +23,8 @@
 
 #if USE(CF)
 
-#include "RetainPtr.h"
 #include <CoreFoundation/CoreFoundation.h>
+#include <wtf/RetainPtr.h>
 
 namespace WTF {
 

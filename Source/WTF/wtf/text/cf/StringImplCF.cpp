@@ -23,11 +23,11 @@
 
 #if USE(CF)
 
-#include "MainThread.h"
-#include "PassRefPtr.h"
-#include "RetainPtr.h"
-#include "Threading.h"
 #include <CoreFoundation/CoreFoundation.h>
+#include <wtf/MainThread.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/Threading.h>
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
 #include <objc/objc-auto.h>
