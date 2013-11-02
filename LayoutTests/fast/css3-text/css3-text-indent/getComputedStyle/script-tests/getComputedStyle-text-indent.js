@@ -11,11 +11,11 @@ function testComputedStyle(propertyJS, propertyCSS, value)
     shouldBe("computedStyle.getPropertyValue('" + propertyCSS + "')", "'" + value + "'");
 }
 
-function valueSettingTest(value, computedValue)
+function valueSettingTest(value, expectedValue, computedValue)
 {
     debug("Value '" + value + "':");
     e.style.textIndent = value;
-    testElementStyle("textIndent", "text-indent", value);
+    testElementStyle("textIndent", "text-indent", expectedValue);
     testComputedStyle("textIndent", "text-indent", computedValue);
     debug('');
 }
@@ -29,7 +29,7 @@ function invalidValueSettingTest(value, defaultValue)
     debug('');
 }
 
-description("This tests check that text-indent parses properly the properties from CSS3 Text.");
+description("This test checks that text-indent parses properly the properties from CSS3 Text.");
 
 e = document.getElementById('test');
 
@@ -37,38 +37,38 @@ debug("Test the initial value:");
 testComputedStyle("textIndent", "text-indent", '0px');
 debug('');
 
-valueSettingTest('10em', '100px');
-valueSettingTest('20ex', '200px');
-valueSettingTest('50%', '50%');
-valueSettingTest('calc(10px + 20px)', '30px');
-valueSettingTest('10em -webkit-each-line', '100px -webkit-each-line');
-valueSettingTest('-webkit-each-line 10em', '100px -webkit-each-line');
-valueSettingTest('20ex -webkit-each-line', '200px -webkit-each-line');
-valueSettingTest('-webkit-each-line 20ex', '200px -webkit-each-line');
-valueSettingTest('30% -webkit-each-line', '30% -webkit-each-line');
-valueSettingTest('-webkit-each-line 30%', '30% -webkit-each-line');
-valueSettingTest('calc(10px + 20px) -webkit-each-line', '30px -webkit-each-line');
-valueSettingTest('-webkit-each-line calc(10px + 20px)', '30px -webkit-each-line');
-valueSettingTest('10em -webkit-hanging', '100px -webkit-hanging');
-valueSettingTest('-webkit-hanging 10em', '100px -webkit-hanging');
-valueSettingTest('20ex -webkit-hanging', '200px -webkit-hanging');
-valueSettingTest('-webkit-hanging 20ex', '200px -webkit-hanging');
-valueSettingTest('30% -webkit-hanging', '30% -webkit-hanging');
-valueSettingTest('-webkit-hanging 30%', '30% -webkit-hanging');
-valueSettingTest('calc(10px + 20px) -webkit-hanging', '30px -webkit-hanging');
-valueSettingTest('-webkit-hanging calc(10px + 20px)', '30px -webkit-hanging');
-valueSettingTest('10em -webkit-each-line -webkit-hanging', '100px -webkit-each-line -webkit-hanging');
-valueSettingTest('-webkit-each-line 10em -webkit-hanging', '100px -webkit-each-line -webkit-hanging');
-valueSettingTest('-webkit-each-line -webkit-hanging 10em', '100px -webkit-each-line -webkit-hanging');
-valueSettingTest('10em -webkit-hanging -webkit-each-line', '100px -webkit-each-line -webkit-hanging');
-valueSettingTest('-webkit-hanging 10em -webkit-each-line', '100px -webkit-each-line -webkit-hanging');
-valueSettingTest('-webkit-hanging -webkit-each-line 10em', '100px -webkit-each-line -webkit-hanging');
-valueSettingTest('30% -webkit-each-line -webkit-hanging', '30% -webkit-each-line -webkit-hanging');
-valueSettingTest('-webkit-each-line 30% -webkit-hanging', '30% -webkit-each-line -webkit-hanging');
-valueSettingTest('-webkit-each-line -webkit-hanging 30%', '30% -webkit-each-line -webkit-hanging');
-valueSettingTest('30% -webkit-hanging -webkit-each-line', '30% -webkit-each-line -webkit-hanging');
-valueSettingTest('-webkit-hanging 30% -webkit-each-line', '30% -webkit-each-line -webkit-hanging');
-valueSettingTest('-webkit-hanging -webkit-each-line 30%', '30% -webkit-each-line -webkit-hanging');
+valueSettingTest('10em', '10em', '100px');
+valueSettingTest('20ex', '20ex', '200px');
+valueSettingTest('50%', '50%', '50%');
+valueSettingTest('calc(10px + 20px)', 'calc(30px)', '30px');
+valueSettingTest('10em -webkit-each-line', '10em -webkit-each-line', '100px -webkit-each-line');
+valueSettingTest('-webkit-each-line 10em', '-webkit-each-line 10em', '100px -webkit-each-line');
+valueSettingTest('20ex -webkit-each-line', '20ex -webkit-each-line', '200px -webkit-each-line');
+valueSettingTest('-webkit-each-line 20ex', '-webkit-each-line 20ex', '200px -webkit-each-line');
+valueSettingTest('30% -webkit-each-line', '30% -webkit-each-line', '30% -webkit-each-line');
+valueSettingTest('-webkit-each-line 30%', '-webkit-each-line 30%', '30% -webkit-each-line');
+valueSettingTest('calc(10px + 20px) -webkit-each-line', 'calc(30px) -webkit-each-line', '30px -webkit-each-line');
+valueSettingTest('-webkit-each-line calc(10px + 20px)', '-webkit-each-line calc(30px)', '30px -webkit-each-line');
+valueSettingTest('10em -webkit-hanging', '10em -webkit-hanging', '100px -webkit-hanging');
+valueSettingTest('-webkit-hanging 10em', '-webkit-hanging 10em', '100px -webkit-hanging');
+valueSettingTest('20ex -webkit-hanging', '20ex -webkit-hanging', '200px -webkit-hanging');
+valueSettingTest('-webkit-hanging 20ex', '-webkit-hanging 20ex', '200px -webkit-hanging');
+valueSettingTest('30% -webkit-hanging', '30% -webkit-hanging', '30% -webkit-hanging');
+valueSettingTest('-webkit-hanging 30%', '-webkit-hanging 30%', '30% -webkit-hanging');
+valueSettingTest('calc(10px + 20px) -webkit-hanging', 'calc(30px) -webkit-hanging', '30px -webkit-hanging');
+valueSettingTest('-webkit-hanging calc(10px + 20px)', '-webkit-hanging calc(30px)', '30px -webkit-hanging');
+valueSettingTest('10em -webkit-each-line -webkit-hanging', '10em -webkit-each-line -webkit-hanging', '100px -webkit-each-line -webkit-hanging');
+valueSettingTest('-webkit-each-line 10em -webkit-hanging', '-webkit-each-line 10em -webkit-hanging', '100px -webkit-each-line -webkit-hanging');
+valueSettingTest('-webkit-each-line -webkit-hanging 10em', '-webkit-each-line -webkit-hanging 10em', '100px -webkit-each-line -webkit-hanging');
+valueSettingTest('10em -webkit-hanging -webkit-each-line', '10em -webkit-hanging -webkit-each-line', '100px -webkit-each-line -webkit-hanging');
+valueSettingTest('-webkit-hanging 10em -webkit-each-line', '-webkit-hanging 10em -webkit-each-line', '100px -webkit-each-line -webkit-hanging');
+valueSettingTest('-webkit-hanging -webkit-each-line 10em', '-webkit-hanging -webkit-each-line 10em', '100px -webkit-each-line -webkit-hanging');
+valueSettingTest('30% -webkit-each-line -webkit-hanging', '30% -webkit-each-line -webkit-hanging', '30% -webkit-each-line -webkit-hanging');
+valueSettingTest('-webkit-each-line 30% -webkit-hanging', '-webkit-each-line 30% -webkit-hanging', '30% -webkit-each-line -webkit-hanging');
+valueSettingTest('-webkit-each-line -webkit-hanging 30%', '-webkit-each-line -webkit-hanging 30%', '30% -webkit-each-line -webkit-hanging');
+valueSettingTest('30% -webkit-hanging -webkit-each-line', '30% -webkit-hanging -webkit-each-line', '30% -webkit-each-line -webkit-hanging');
+valueSettingTest('-webkit-hanging 30% -webkit-each-line', '-webkit-hanging 30% -webkit-each-line', '30% -webkit-each-line -webkit-hanging');
+valueSettingTest('-webkit-hanging -webkit-each-line 30%', '-webkit-hanging -webkit-each-line 30%', '30% -webkit-each-line -webkit-hanging');
 debug('');
 
 defaultValue = '0px'

@@ -1,3 +1,18 @@
+2013-11-01  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Update layout test results after CSS calc() simplification
+        https://bugs.webkit.org/show_bug.cgi?id=123654
+
+        Reviewed by Andreas Kling.
+
+        r156586 simplified CSS calc expressions.
+        Update layout test results for calc().
+
+        * fast/css3-text/css3-text-indent/getComputedStyle/getComputedStyle-text-indent-expected.txt:
+        * fast/css3-text/css3-text-indent/getComputedStyle/script-tests/getComputedStyle-text-indent.js:
+        (valueSettingTest):
+        * platform/efl/TestExpectations: gardening
+
 2013-11-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Initial implementation of text-decoration-skip ink
