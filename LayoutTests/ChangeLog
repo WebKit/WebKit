@@ -1,3 +1,19 @@
+2013-11-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Implement remaining SHA variations for WebCrypto
+        https://bugs.webkit.org/show_bug.cgi?id=123659
+
+        Reviewed by Anders Carlsson.
+
+        * crypto/subtle/sha-224-expected.txt: Added.
+        * crypto/subtle/sha-224.html: Added.
+        * crypto/subtle/sha-256-expected.txt: Added.
+        * crypto/subtle/sha-256.html: Added.
+        * crypto/subtle/sha-384-expected.txt: Added.
+        * crypto/subtle/sha-384.html: Added.
+        * crypto/subtle/sha-512-expected.txt: Added.
+        * crypto/subtle/sha-512.html: Added.
+
 2013-11-01  Alexey Proskuryakov  <ap@apple.com>
 
         Add WebCrypto AES-CBC

@@ -1,0 +1,17 @@
+Test crypto.subtle.digest.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+SHA384 of []
+    = [38 b0 60 a7 51 ac 96 38 4c d9 32 7e b1 b1 e3 6a 21 fd b7 11 14 be 07 43 4c 0c c7 bf 63 f6 e1 da 27 4e de bf e7 6f 65 fb d5 1a d2 f1 48 98 b9 5b]
+SHA384 of [0x0]
+    = [be c0 21 b4 f3 68 e3 06 91 34 e0 12 c2 b4 30 70 83 d3 a9 bd d2 06 e2 4e 5f 0d 86 e1 3d 66 36 65 59 33 ec 2b 41 34 65 96 68 17 a9 c2 08 a1 17 17]
+SHA384 of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    = [89 bf cf 56 9a e4 af 71 85 10 da 78 c6 74 14 10 9f 57 39 bb 5c 40 d5 1c 9c 8c 50 e2 b2 ce e8 6f 2f 80 c8 b9 d6 8f 7c 01 20 1a 07 14 57 2f e6 02]
+SHA384 of [new Uint8Array([0, 1, 2, 3, 4]), new Uint8Array(5, 6, 7, 8, 9, 10])]
+    = [89 bf cf 56 9a e4 af 71 85 10 da 78 c6 74 14 10 9f 57 39 bb 5c 40 d5 1c 9c 8c 50 e2 b2 ce e8 6f 2f 80 c8 b9 d6 8f 7c 01 20 1a 07 14 57 2f e6 02]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

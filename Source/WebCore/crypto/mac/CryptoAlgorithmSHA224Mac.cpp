@@ -24,29 +24,28 @@
  */
 
 #include "config.h"
-#include "CryptoAlgorithmRegistry.h"
+#include "CryptoAlgorithmSHA224.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmAES_CBC.h"
-#include "CryptoAlgorithmHMAC.h"
-#include "CryptoAlgorithmSHA1.h"
-#include "CryptoAlgorithmSHA224.h"
-#include "CryptoAlgorithmSHA256.h"
-#include "CryptoAlgorithmSHA384.h"
-#include "CryptoAlgorithmSHA512.h"
+#include "JSDOMPromise.h"
+#include <CommonCrypto/CommonCrypto.h>
 
 namespace WebCore {
 
-void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
+void CryptoAlgorithmSHA224::digest(const CryptoAlgorithmParameters&, const Vector<CryptoOperationData>& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode&)
 {
-    registerAlgorithm(CryptoAlgorithmAES_CBC::s_name, CryptoAlgorithmAES_CBC::s_identifier, CryptoAlgorithmAES_CBC::create);
-    registerAlgorithm(CryptoAlgorithmHMAC::s_name, CryptoAlgorithmHMAC::s_identifier, CryptoAlgorithmHMAC::create);
-    registerAlgorithm(CryptoAlgorithmSHA1::s_name, CryptoAlgorithmSHA1::s_identifier, CryptoAlgorithmSHA1::create);
-    registerAlgorithm(CryptoAlgorithmSHA224::s_name, CryptoAlgorithmSHA224::s_identifier, CryptoAlgorithmSHA224::create);
-    registerAlgorithm(CryptoAlgorithmSHA256::s_name, CryptoAlgorithmSHA256::s_identifier, CryptoAlgorithmSHA256::create);
-    registerAlgorithm(CryptoAlgorithmSHA384::s_name, CryptoAlgorithmSHA384::s_identifier, CryptoAlgorithmSHA384::create);
-    registerAlgorithm(CryptoAlgorithmSHA512::s_name, CryptoAlgorithmSHA512::s_identifier, CryptoAlgorithmSHA512::create);
+    Vector<unsigned char> result(CC_SHA224_DIGEST_LENGTH);
+
+    CC_SHA256_CTX context; // Same context struct is used for SHA224 and SHA256.
+    CC_SHA224_Init(&context);
+
+    for (size_t i = 0, size = data.size(); i < size; ++i)
+        CC_SHA224_Update(&context, data[i].first, data[i].second);
+
+    CC_SHA224_Final(result.data(), &context);
+
+    promise->fulfill(result);
 }
 
 }

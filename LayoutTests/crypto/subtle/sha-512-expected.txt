@@ -1,0 +1,17 @@
+Test crypto.subtle.digest.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+SHA512 of []
+    = [cf 83 e1 35 7e ef b8 bd f1 54 28 50 d6 6d 80 07 d6 20 e4 05 0b 57 15 dc 83 f4 a9 21 d3 6c e9 ce 47 d0 d1 3c 5d 85 f2 b0 ff 83 18 d2 87 7e ec 2f 63 b9 31 bd 47 41 7a 81 a5 38 32 7a f9 27 da 3e]
+SHA512 of [0x0]
+    = [b8 24 4d 02 89 81 d6 93 af 7b 45 6a f8 ef a4 ca d6 3d 28 2e 19 ff 14 94 2c 24 6e 50 d9 35 1d 22 70 4a 80 2a 71 c3 58 0b 63 70 de 4c eb 29 3c 32 4a 84 23 34 25 57 d4 e5 c3 84 38 f0 e3 69 10 ee]
+SHA512 of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    = [8f fa ee 0c cc c1 62 85 1f af 05 1a e3 86 67 ee fd 42 3c 01 64 c5 00 55 f8 ad e0 0a fc 37 05 e3 cd eb 99 00 00 4b 0e 42 6c a6 6a b6 3a a3 b9 9b 07 52 73 f4 4f d3 7c 22 a3 55 5c 6f d1 f3 7c cb]
+SHA512 of [new Uint8Array([0, 1, 2, 3, 4]), new Uint8Array(5, 6, 7, 8, 9, 10])]
+    = [8f fa ee 0c cc c1 62 85 1f af 05 1a e3 86 67 ee fd 42 3c 01 64 c5 00 55 f8 ad e0 0a fc 37 05 e3 cd eb 99 00 00 4b 0e 42 6c a6 6a b6 3a a3 b9 9b 07 52 73 f4 4f d3 7c 22 a3 55 5c 6f d1 f3 7c cb]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

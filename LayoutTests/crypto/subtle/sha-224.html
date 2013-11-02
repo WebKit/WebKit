@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test crypto.subtle.digest.");
+
+jsTestIsAsync = true;
+
+if (!window.subtle)
+    window.crypto.subtle = window.crypto.webkitSubtle;
+
+Promise.fulfill(null).then(function() {
+    debug("SHA224 of []");
+    return crypto.subtle.digest('sha-224', [new Uint8Array([])]);
+}).then(function(result) {
+    printAcceptedResult(result);
+
+    debug("SHA224 of [0x0]")
+    return crypto.subtle.digest({name: 'sha-224'}, [new Uint8Array([0])]);
+}).then(function(result) {
+    printAcceptedResult(result);
+
+    debug("SHA224 of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]");
+    var data = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    return crypto.subtle.digest({name: 'sha-224'}, [data]);
+}).then(function(result) {
+    printAcceptedResult(result);
+
+    debug("SHA224 of [new Uint8Array([0, 1, 2, 3, 4]), new Uint8Array(5, 6, 7, 8, 9, 10])]");
+    return crypto.subtle.digest({name: 'sha-224'}, [new Uint8Array([0, 1, 2, 3, 4]), new Uint8Array([5, 6, 7, 8, 9, 10])]);
+}).then(function(result) {
+    printAcceptedResult(result);
+    finishJSTest();
+});
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

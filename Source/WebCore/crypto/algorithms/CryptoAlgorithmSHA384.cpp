@@ -24,29 +24,30 @@
  */
 
 #include "config.h"
-#include "CryptoAlgorithmRegistry.h"
+#include "CryptoAlgorithmSHA384.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmAES_CBC.h"
-#include "CryptoAlgorithmHMAC.h"
-#include "CryptoAlgorithmSHA1.h"
-#include "CryptoAlgorithmSHA224.h"
-#include "CryptoAlgorithmSHA256.h"
-#include "CryptoAlgorithmSHA384.h"
-#include "CryptoAlgorithmSHA512.h"
-
 namespace WebCore {
 
-void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
+const char* const CryptoAlgorithmSHA384::s_name = "sha-384";
+
+CryptoAlgorithmSHA384::CryptoAlgorithmSHA384()
 {
-    registerAlgorithm(CryptoAlgorithmAES_CBC::s_name, CryptoAlgorithmAES_CBC::s_identifier, CryptoAlgorithmAES_CBC::create);
-    registerAlgorithm(CryptoAlgorithmHMAC::s_name, CryptoAlgorithmHMAC::s_identifier, CryptoAlgorithmHMAC::create);
-    registerAlgorithm(CryptoAlgorithmSHA1::s_name, CryptoAlgorithmSHA1::s_identifier, CryptoAlgorithmSHA1::create);
-    registerAlgorithm(CryptoAlgorithmSHA224::s_name, CryptoAlgorithmSHA224::s_identifier, CryptoAlgorithmSHA224::create);
-    registerAlgorithm(CryptoAlgorithmSHA256::s_name, CryptoAlgorithmSHA256::s_identifier, CryptoAlgorithmSHA256::create);
-    registerAlgorithm(CryptoAlgorithmSHA384::s_name, CryptoAlgorithmSHA384::s_identifier, CryptoAlgorithmSHA384::create);
-    registerAlgorithm(CryptoAlgorithmSHA512::s_name, CryptoAlgorithmSHA512::s_identifier, CryptoAlgorithmSHA512::create);
+}
+
+CryptoAlgorithmSHA384::~CryptoAlgorithmSHA384()
+{
+}
+
+std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmSHA384::create()
+{
+    return std::unique_ptr<CryptoAlgorithm>(new CryptoAlgorithmSHA384);
+}
+
+CryptoAlgorithmIdentifier CryptoAlgorithmSHA384::identifier() const
+{
+    return s_identifier;
 }
 
 }

@@ -23,32 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CryptoAlgorithmRegistry.h"
+#ifndef CryptoAlgorithmSHA224_h
+#define CryptoAlgorithmSHA224_h
+
+#include "CryptoAlgorithm.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmAES_CBC.h"
-#include "CryptoAlgorithmHMAC.h"
-#include "CryptoAlgorithmSHA1.h"
-#include "CryptoAlgorithmSHA224.h"
-#include "CryptoAlgorithmSHA256.h"
-#include "CryptoAlgorithmSHA384.h"
-#include "CryptoAlgorithmSHA512.h"
-
 namespace WebCore {
 
-void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
-{
-    registerAlgorithm(CryptoAlgorithmAES_CBC::s_name, CryptoAlgorithmAES_CBC::s_identifier, CryptoAlgorithmAES_CBC::create);
-    registerAlgorithm(CryptoAlgorithmHMAC::s_name, CryptoAlgorithmHMAC::s_identifier, CryptoAlgorithmHMAC::create);
-    registerAlgorithm(CryptoAlgorithmSHA1::s_name, CryptoAlgorithmSHA1::s_identifier, CryptoAlgorithmSHA1::create);
-    registerAlgorithm(CryptoAlgorithmSHA224::s_name, CryptoAlgorithmSHA224::s_identifier, CryptoAlgorithmSHA224::create);
-    registerAlgorithm(CryptoAlgorithmSHA256::s_name, CryptoAlgorithmSHA256::s_identifier, CryptoAlgorithmSHA256::create);
-    registerAlgorithm(CryptoAlgorithmSHA384::s_name, CryptoAlgorithmSHA384::s_identifier, CryptoAlgorithmSHA384::create);
-    registerAlgorithm(CryptoAlgorithmSHA512::s_name, CryptoAlgorithmSHA512::s_identifier, CryptoAlgorithmSHA512::create);
-}
+class CryptoAlgorithmSHA224 FINAL : public CryptoAlgorithm {
+public:
+    static const char* const s_name;
+    static const CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::SHA_224;
+
+    static std::unique_ptr<CryptoAlgorithm> create();
+
+    virtual CryptoAlgorithmIdentifier identifier() const OVERRIDE;
+
+    virtual void digest(const CryptoAlgorithmParameters&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
+
+private:
+    CryptoAlgorithmSHA224();
+    virtual ~CryptoAlgorithmSHA224();
+};
 
 }
 
 #endif // ENABLE(SUBTLE_CRYPTO)
+#endif // CryptoAlgorithmSHA224_h

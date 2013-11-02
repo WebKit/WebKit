@@ -1,3 +1,51 @@
+2013-11-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Implement remaining SHA variations for WebCrypto
+        https://bugs.webkit.org/show_bug.cgi?id=123659
+
+        Reviewed by Anders Carlsson.
+
+        Tests: crypto/subtle/sha-224.html
+               crypto/subtle/sha-256.html
+               crypto/subtle/sha-384.html
+               crypto/subtle/sha-512.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * crypto/algorithms/CryptoAlgorithmSHA224.cpp: Added.
+        (WebCore::CryptoAlgorithmSHA224::CryptoAlgorithmSHA224):
+        (WebCore::CryptoAlgorithmSHA224::~CryptoAlgorithmSHA224):
+        (WebCore::CryptoAlgorithmSHA224::create):
+        (WebCore::CryptoAlgorithmSHA224::identifier):
+        * crypto/algorithms/CryptoAlgorithmSHA224.h: Added.
+        * crypto/algorithms/CryptoAlgorithmSHA256.cpp: Added.
+        (WebCore::CryptoAlgorithmSHA256::CryptoAlgorithmSHA256):
+        (WebCore::CryptoAlgorithmSHA256::~CryptoAlgorithmSHA256):
+        (WebCore::CryptoAlgorithmSHA256::create):
+        (WebCore::CryptoAlgorithmSHA256::identifier):
+        * crypto/algorithms/CryptoAlgorithmSHA256.h: Added.
+        * crypto/algorithms/CryptoAlgorithmSHA384.cpp: Added.
+        (WebCore::CryptoAlgorithmSHA384::CryptoAlgorithmSHA384):
+        (WebCore::CryptoAlgorithmSHA384::~CryptoAlgorithmSHA384):
+        (WebCore::CryptoAlgorithmSHA384::create):
+        (WebCore::CryptoAlgorithmSHA384::identifier):
+        * crypto/algorithms/CryptoAlgorithmSHA384.h: Added.
+        * crypto/algorithms/CryptoAlgorithmSHA512.cpp: Added.
+        (WebCore::CryptoAlgorithmSHA512::CryptoAlgorithmSHA512):
+        (WebCore::CryptoAlgorithmSHA512::~CryptoAlgorithmSHA512):
+        (WebCore::CryptoAlgorithmSHA512::create):
+        (WebCore::CryptoAlgorithmSHA512::identifier):
+        * crypto/algorithms/CryptoAlgorithmSHA512.h: Added.
+        * crypto/mac/CryptoAlgorithmRegistryMac.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms):
+        * crypto/mac/CryptoAlgorithmSHA224Mac.cpp: Added.
+        (WebCore::CryptoAlgorithmSHA224::digest):
+        * crypto/mac/CryptoAlgorithmSHA256Mac.cpp: Added.
+        (WebCore::CryptoAlgorithmSHA256::digest):
+        * crypto/mac/CryptoAlgorithmSHA384Mac.cpp: Added.
+        (WebCore::CryptoAlgorithmSHA384::digest):
+        * crypto/mac/CryptoAlgorithmSHA512Mac.cpp: Added.
+        (WebCore::CryptoAlgorithmSHA512::digest):
+
 2013-11-02  Patrick Gansterer  <paroga@webkit.org>
 
         Various small WinCE build fixes
