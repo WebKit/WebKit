@@ -186,17 +186,16 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
         context->setTextDrawingMode(resourceMode & ApplyToFillMode ? TextModeFill : TextModeStroke);
     }
 
-    const SVGRenderStyle* svgStyle = style.svgStyle();
-    ASSERT(svgStyle);
+    const SVGRenderStyle& svgStyle = style.svgStyle();
 
     if (resourceMode & ApplyToFillMode) {
-        context->setAlpha(svgStyle->fillOpacity());
+        context->setAlpha(svgStyle.fillOpacity());
         context->setFillGradient(gradientData->gradient);
-        context->setFillRule(svgStyle->fillRule());
+        context->setFillRule(svgStyle.fillRule());
     } else if (resourceMode & ApplyToStrokeMode) {
-        if (svgStyle->vectorEffect() == VE_NON_SCALING_STROKE)
+        if (svgStyle.vectorEffect() == VE_NON_SCALING_STROKE)
             gradientData->gradient->setGradientSpaceTransform(transformOnNonScalingStroke(&renderer, gradientData->userspaceTransform));
-        context->setAlpha(svgStyle->strokeOpacity());
+        context->setAlpha(svgStyle.strokeOpacity());
         context->setStrokeGradient(gradientData->gradient);
         SVGRenderSupport::applyStrokeStyleToContext(context, style, renderer);
     }

@@ -84,9 +84,8 @@ bool RenderSVGResourceMasker::applyResource(RenderElement& renderer, const Rende
     FloatRect repaintRect = renderer.repaintRectInLocalCoordinates();
 
     if (!maskerData->maskImage && !repaintRect.isEmpty()) {
-        const SVGRenderStyle* svgStyle = style().svgStyle();
-        ASSERT(svgStyle);
-        ColorSpace colorSpace = svgStyle->colorInterpolation() == CI_LINEARRGB ? ColorSpaceLinearRGB : ColorSpaceDeviceRGB;
+        const SVGRenderStyle& svgStyle = style().svgStyle();
+        ColorSpace colorSpace = svgStyle.colorInterpolation() == CI_LINEARRGB ? ColorSpaceLinearRGB : ColorSpaceDeviceRGB;
         if (!SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, maskerData->maskImage, colorSpace, Unaccelerated))
             return false;
 
@@ -137,9 +136,8 @@ bool RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, C
     UNUSED_PARAM(colorSpace);
 #endif
 
-    ASSERT(style().svgStyle());
     // Create the luminance mask.
-    if (style().svgStyle()->maskType() == MT_LUMINANCE)
+    if (style().svgStyle().maskType() == MT_LUMINANCE)
         maskerData->maskImage->convertToLuminanceMask();
 
     return true;

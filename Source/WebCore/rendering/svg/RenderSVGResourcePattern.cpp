@@ -155,17 +155,16 @@ bool RenderSVGResourcePattern::applyResource(RenderElement& renderer, const Rend
     // Draw pattern
     context->save();
 
-    const SVGRenderStyle* svgStyle = style.svgStyle();
-    ASSERT(svgStyle);
+    const SVGRenderStyle& svgStyle = style.svgStyle();
 
     if (resourceMode & ApplyToFillMode) {
-        context->setAlpha(svgStyle->fillOpacity());
+        context->setAlpha(svgStyle.fillOpacity());
         context->setFillPattern(patternData->pattern);
-        context->setFillRule(svgStyle->fillRule());
+        context->setFillRule(svgStyle.fillRule());
     } else if (resourceMode & ApplyToStrokeMode) {
-        if (svgStyle->vectorEffect() == VE_NON_SCALING_STROKE)
+        if (svgStyle.vectorEffect() == VE_NON_SCALING_STROKE)
             patternData->pattern->setPatternSpaceTransform(transformOnNonScalingStroke(&renderer, patternData->transform));
-        context->setAlpha(svgStyle->strokeOpacity());
+        context->setAlpha(svgStyle.strokeOpacity());
         context->setStrokePattern(patternData->pattern);
         SVGRenderSupport::applyStrokeStyleToContext(context, style, renderer);
     }

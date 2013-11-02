@@ -368,8 +368,8 @@ void RenderSVGRoot::computeFloatRectForRepaint(const RenderLayerModelObject* rep
     // and then call RenderBox's method to handle all the normal CSS Box model bits
     repaintRect = m_localToBorderBoxTransform.mapRect(repaintRect);
 
-    const SVGRenderStyle* svgStyle = style().svgStyle();
-    if (const ShadowData* shadow = svgStyle->shadow())
+    const SVGRenderStyle& svgStyle = style().svgStyle();
+    if (const ShadowData* shadow = svgStyle.shadow())
         shadow->adjustRectForShadow(repaintRect);
 
     // Apply initial viewport clip - not affected by overflow settings

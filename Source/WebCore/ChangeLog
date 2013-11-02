@@ -1,3 +1,15 @@
+2013-11-01  Andreas Kling  <akling@apple.com>
+
+        SVGRenderStyle accessors should return references.
+        <https://webkit.org/b/123656>
+
+        RenderStyle::svgStyle() and accessSVGStyle() never return null,
+        so make them return references instead.
+        
+        This flushed out a myriad of pointless null checks and assertions.
+
+        Reviewed by Anders Carlsson.
+
 2013-11-01  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Removing MediaStreamTrackVector and MediaStreamSourceVector typedefs

@@ -45,8 +45,8 @@ static inline bool inheritColorFromParentStyleIfNeeded(RenderElement& object, bo
         return true;
     if (!object.parent())
         return false;
-    const SVGRenderStyle* parentSVGStyle = object.parent()->style().svgStyle();
-    color = applyToFill ? parentSVGStyle->fillPaintColor() : parentSVGStyle->strokePaintColor();
+    const SVGRenderStyle& parentSVGStyle = object.parent()->style().svgStyle();
+    color = applyToFill ? parentSVGStyle.fillPaintColor() : parentSVGStyle.strokePaintColor();
     return true;
 }
 
@@ -55,9 +55,7 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
     ASSERT(style);
 
     // If we have no style at all, ignore it.
-    const SVGRenderStyle* svgStyle = style->svgStyle();
-    if (!svgStyle)
-        return 0;
+    const SVGRenderStyle& svgStyle = style->svgStyle();
 
     bool isRenderingMask = object.view().frameView().paintBehavior() & PaintBehaviorRenderingSVGMask;
 
@@ -70,15 +68,15 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
             return colorResource;
         }
 
-        if (!svgStyle->hasFill())
+        if (!svgStyle.hasFill())
             return 0;
     } else {
-        if (!svgStyle->hasStroke() || isRenderingMask)
+        if (!svgStyle.hasStroke() || isRenderingMask)
             return 0;
     }
 
     bool applyToFill = mode == ApplyToFillMode;
-    SVGPaint::SVGPaintType paintType = applyToFill ? svgStyle->fillPaintType() : svgStyle->strokePaintType();
+    SVGPaint::SVGPaintType paintType = applyToFill ? svgStyle.fillPaintType() : svgStyle.strokePaintType();
     if (paintType == SVGPaint::SVG_PAINTTYPE_NONE)
         return 0;
 
@@ -90,18 +88,18 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
     case SVGPaint::SVG_PAINTTYPE_URI_CURRENTCOLOR:
     case SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR:
     case SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR:
-        color = applyToFill ? svgStyle->fillPaintColor() : svgStyle->strokePaintColor();
+        color = applyToFill ? svgStyle.fillPaintColor() : svgStyle.strokePaintColor();
     default:
         break;
     }
 
     if (style->insideLink() == InsideVisitedLink) {
         // FIXME: This code doesn't support the uri component of the visited link paint, https://bugs.webkit.org/show_bug.cgi?id=70006
-        SVGPaint::SVGPaintType visitedPaintType = applyToFill ? svgStyle->visitedLinkFillPaintType() : svgStyle->visitedLinkStrokePaintType();
+        SVGPaint::SVGPaintType visitedPaintType = applyToFill ? svgStyle.visitedLinkFillPaintType() : svgStyle.visitedLinkStrokePaintType();
 
         // For SVG_PAINTTYPE_CURRENTCOLOR, 'color' already contains the 'visitedColor'.
         if (visitedPaintType < SVGPaint::SVG_PAINTTYPE_URI_NONE && visitedPaintType != SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR) {
-            const Color& visitedColor = applyToFill ? svgStyle->visitedLinkFillPaintColor() : svgStyle->visitedLinkStrokePaintColor();
+            const Color& visitedColor = applyToFill ? svgStyle.visitedLinkFillPaintColor() : svgStyle.visitedLinkStrokePaintColor();
             if (visitedColor.isValid())
                 color = Color(visitedColor.red(), visitedColor.green(), visitedColor.blue(), color.alpha());
         }

@@ -65,10 +65,9 @@ EAlignmentBaseline SVGTextLayoutEngineBaseline::dominantBaselineToAlignmentBasel
     ASSERT(textRenderer);
     ASSERT(textRenderer->parent());
 
-    const SVGRenderStyle* style = textRenderer->style().svgStyle();
-    ASSERT(style);
+    const SVGRenderStyle& svgStyle = textRenderer->style().svgStyle();
 
-    EDominantBaseline baseline = style->dominantBaseline();
+    EDominantBaseline baseline = svgStyle.dominantBaseline();
     if (baseline == DB_AUTO) {
         if (isVerticalText)
             baseline = DB_CENTRAL;
@@ -109,13 +108,12 @@ EAlignmentBaseline SVGTextLayoutEngineBaseline::dominantBaselineToAlignmentBasel
 float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVerticalText, const RenderObject* textRenderer) const
 {
     ASSERT(textRenderer);
-    ASSERT(textRenderer->style().svgStyle());
     ASSERT(textRenderer->parent());
 
     const RenderObject* textRendererParent = textRenderer->parent();
     ASSERT(textRendererParent);
 
-    EAlignmentBaseline baseline = textRenderer->style().svgStyle()->alignmentBaseline();
+    EAlignmentBaseline baseline = textRenderer->style().svgStyle().alignmentBaseline();
     if (baseline == AB_AUTO) {
         baseline = dominantBaselineToAlignmentBaseline(isVerticalText, textRendererParent);
         ASSERT(baseline != AB_AUTO);

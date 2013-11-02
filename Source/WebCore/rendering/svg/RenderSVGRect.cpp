@@ -78,7 +78,7 @@ void RenderSVGRect::updateShapeFromElement()
     m_innerStrokeRect = m_fillBoundingBox;
     m_outerStrokeRect = m_fillBoundingBox;
 
-    if (style().svgStyle()->hasStroke()) {
+    if (style().svgStyle().hasStroke()) {
         float strokeWidth = this->strokeWidth();
         m_innerStrokeRect.inflate(-strokeWidth / 2);
         m_outerStrokeRect.inflate(strokeWidth / 2);
@@ -88,7 +88,7 @@ void RenderSVGRect::updateShapeFromElement()
 
 #if USE(CG)
     // CoreGraphics can inflate the stroke by 1px when drawing a rectangle with antialiasing disabled at non-integer coordinates, we need to compensate.
-    if (style().svgStyle()->shapeRendering() == SR_CRISPEDGES)
+    if (style().svgStyle().shapeRendering() == SR_CRISPEDGES)
         m_strokeBoundingBox.inflate(1);
 #endif
 }
@@ -118,7 +118,7 @@ void RenderSVGRect::fillShape(GraphicsContext* context) const
 
 void RenderSVGRect::strokeShape(GraphicsContext* context) const
 {
-    if (!style().svgStyle()->hasVisibleStroke())
+    if (!style().svgStyle().hasVisibleStroke())
         return;
 
     if (m_usePathFallback) {

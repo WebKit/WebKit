@@ -76,7 +76,7 @@ protected:
     float strokeWidth() const;
     bool hasSmoothStroke() const;
 
-    bool hasNonScalingStroke() const { return style().svgStyle()->vectorEffect() == VE_NON_SCALING_STROKE; }
+    bool hasNonScalingStroke() const { return style().svgStyle().vectorEffect() == VE_NON_SCALING_STROKE; }
     AffineTransform nonScalingStrokeTransform() const;
     Path* nonScalingStrokePath(const Path*, const AffineTransform&) const;
 

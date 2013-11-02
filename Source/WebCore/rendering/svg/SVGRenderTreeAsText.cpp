@@ -266,7 +266,7 @@ static void writeSVGPaintingResource(TextStream& ts, RenderSVGResource* resource
 static void writeStyle(TextStream& ts, const RenderObject& object)
 {
     const RenderStyle& style = object.style();
-    const SVGRenderStyle* svgStyle = style.svgStyle();
+    const SVGRenderStyle& svgStyle = style.svgStyle();
 
     if (!object.localTransform().isIdentity())
         writeNameValuePair(ts, "transform", object.localTransform());
@@ -282,20 +282,20 @@ static void writeStyle(TextStream& ts, const RenderObject& object)
             writeSVGPaintingResource(ts, strokePaintingResource);
 
             SVGLengthContext lengthContext(&shape.graphicsElement());
-            double dashOffset = svgStyle->strokeDashOffset().value(lengthContext);
-            double strokeWidth = svgStyle->strokeWidth().value(lengthContext);
-            const Vector<SVGLength>& dashes = svgStyle->strokeDashArray();
+            double dashOffset = svgStyle.strokeDashOffset().value(lengthContext);
+            double strokeWidth = svgStyle.strokeWidth().value(lengthContext);
+            const Vector<SVGLength>& dashes = svgStyle.strokeDashArray();
 
             DashArray dashArray;
             const Vector<SVGLength>::const_iterator end = dashes.end();
             for (Vector<SVGLength>::const_iterator it = dashes.begin(); it != end; ++it)
                 dashArray.append((*it).value(lengthContext));
 
-            writeIfNotDefault(ts, "opacity", svgStyle->strokeOpacity(), 1.0f);
+            writeIfNotDefault(ts, "opacity", svgStyle.strokeOpacity(), 1.0f);
             writeIfNotDefault(ts, "stroke width", strokeWidth, 1.0);
-            writeIfNotDefault(ts, "miter limit", svgStyle->strokeMiterLimit(), 4.0f);
-            writeIfNotDefault(ts, "line cap", svgStyle->capStyle(), ButtCap);
-            writeIfNotDefault(ts, "line join", svgStyle->joinStyle(), MiterJoin);
+            writeIfNotDefault(ts, "miter limit", svgStyle.strokeMiterLimit(), 4.0f);
+            writeIfNotDefault(ts, "line cap", svgStyle.capStyle(), ButtCap);
+            writeIfNotDefault(ts, "line join", svgStyle.joinStyle(), MiterJoin);
             writeIfNotDefault(ts, "dash offset", dashOffset, 0.0);
             if (!dashArray.isEmpty())
                 writeNameValuePair(ts, "dash array", dashArray);
@@ -308,16 +308,16 @@ static void writeStyle(TextStream& ts, const RenderObject& object)
             ts << " [fill={" << s;
             writeSVGPaintingResource(ts, fillPaintingResource);
 
-            writeIfNotDefault(ts, "opacity", svgStyle->fillOpacity(), 1.0f);
-            writeIfNotDefault(ts, "fill rule", svgStyle->fillRule(), RULE_NONZERO);
+            writeIfNotDefault(ts, "opacity", svgStyle.fillOpacity(), 1.0f);
+            writeIfNotDefault(ts, "fill rule", svgStyle.fillRule(), RULE_NONZERO);
             ts << "}]";
         }
-        writeIfNotDefault(ts, "clip rule", svgStyle->clipRule(), RULE_NONZERO);
+        writeIfNotDefault(ts, "clip rule", svgStyle.clipRule(), RULE_NONZERO);
     }
 
-    writeIfNotEmpty(ts, "start marker", svgStyle->markerStartResource());
-    writeIfNotEmpty(ts, "middle marker", svgStyle->markerMidResource());
-    writeIfNotEmpty(ts, "end marker", svgStyle->markerEndResource());
+    writeIfNotEmpty(ts, "start marker", svgStyle.markerStartResource());
+    writeIfNotEmpty(ts, "middle marker", svgStyle.markerMidResource());
+    writeIfNotEmpty(ts, "end marker", svgStyle.markerEndResource());
 }
 
 static TextStream& writePositionAndStyle(TextStream& ts, const RenderObject& object)
@@ -397,7 +397,7 @@ static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textB
     if (fragments.isEmpty())
         return;
 
-    const SVGRenderStyle* svgStyle = textBox->renderer().style().svgStyle();
+    const SVGRenderStyle& svgStyle = textBox->renderer().style().svgStyle();
     String text = textBox->renderer().text();
 
     unsigned fragmentsSize = fragments.size();
@@ -410,8 +410,8 @@ static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textB
 
         // FIXME: Remove this hack, once the new text layout engine is completly landed. We want to preserve the old layout test results for now.
         ts << "chunk 1 ";
-        ETextAnchor anchor = svgStyle->textAnchor();
-        bool isVerticalText = svgStyle->isVerticalWritingMode();
+        ETextAnchor anchor = svgStyle.textAnchor();
+        bool isVerticalText = svgStyle.isVerticalWritingMode();
         if (anchor == TA_MIDDLE) {
             ts << "(middle anchor";
             if (isVerticalText)
@@ -633,37 +633,37 @@ void writeSVGGradientStop(TextStream& ts, const RenderSVGGradientStop& stop, int
 void writeResources(TextStream& ts, const RenderObject& object, int indent)
 {
     const RenderStyle& style = object.style();
-    const SVGRenderStyle* svgStyle = style.svgStyle();
+    const SVGRenderStyle& svgStyle = style.svgStyle();
 
     // FIXME: We want to use SVGResourcesCache to determine which resources are present, instead of quering the resource <-> id cache.
     // For now leave the DRT output as is, but later on we should change this so cycles are properly ignored in the DRT output.
     RenderObject& renderer = const_cast<RenderObject&>(object);
-    if (!svgStyle->maskerResource().isEmpty()) {
-        if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(object.document(), svgStyle->maskerResource())) {
+    if (!svgStyle.maskerResource().isEmpty()) {
+        if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(object.document(), svgStyle.maskerResource())) {
             writeIndent(ts, indent);
             ts << " ";
-            writeNameAndQuotedValue(ts, "masker", svgStyle->maskerResource());
+            writeNameAndQuotedValue(ts, "masker", svgStyle.maskerResource());
             ts << " ";
             writeStandardPrefix(ts, *masker, 0);
             ts << " " << masker->resourceBoundingBox(renderer) << "\n";
         }
     }
-    if (!svgStyle->clipperResource().isEmpty()) {
-        if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(object.document(), svgStyle->clipperResource())) {
+    if (!svgStyle.clipperResource().isEmpty()) {
+        if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(object.document(), svgStyle.clipperResource())) {
             writeIndent(ts, indent);
             ts << " ";
-            writeNameAndQuotedValue(ts, "clipPath", svgStyle->clipperResource());
+            writeNameAndQuotedValue(ts, "clipPath", svgStyle.clipperResource());
             ts << " ";
             writeStandardPrefix(ts, *clipper, 0);
             ts << " " << clipper->resourceBoundingBox(renderer) << "\n";
         }
     }
 #if ENABLE(FILTERS)
-    if (!svgStyle->filterResource().isEmpty()) {
-        if (RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(object.document(), svgStyle->filterResource())) {
+    if (!svgStyle.filterResource().isEmpty()) {
+        if (RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(object.document(), svgStyle.filterResource())) {
             writeIndent(ts, indent);
             ts << " ";
-            writeNameAndQuotedValue(ts, "filter", svgStyle->filterResource());
+            writeNameAndQuotedValue(ts, "filter", svgStyle.filterResource());
             ts << " ";
             writeStandardPrefix(ts, *filter, 0);
             ts << " " << filter->resourceBoundingBox(renderer) << "\n";

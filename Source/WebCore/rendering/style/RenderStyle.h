@@ -1469,43 +1469,43 @@ public:
     void setTextSecurity(ETextSecurity aTextSecurity) { SET_VAR(rareInheritedData, textSecurity, aTextSecurity); }
 
 #if ENABLE(SVG)
-    const SVGRenderStyle* svgStyle() const { return m_svgStyle.get(); }
-    SVGRenderStyle* accessSVGStyle() { return m_svgStyle.access(); }
+    const SVGRenderStyle& svgStyle() const { return *m_svgStyle; }
+    SVGRenderStyle& accessSVGStyle() { return *m_svgStyle.access(); }
 
-    const SVGPaint::SVGPaintType& fillPaintType() const { return svgStyle()->fillPaintType(); }
-    Color fillPaintColor() const { return svgStyle()->fillPaintColor(); }
-    void setFillPaintColor(const Color& c) { accessSVGStyle()->setFillPaint(SVGPaint::SVG_PAINTTYPE_RGBCOLOR, c, ""); }
-    float fillOpacity() const { return svgStyle()->fillOpacity(); }
-    void setFillOpacity(float f) { accessSVGStyle()->setFillOpacity(f); }
+    const SVGPaint::SVGPaintType& fillPaintType() const { return svgStyle().fillPaintType(); }
+    Color fillPaintColor() const { return svgStyle().fillPaintColor(); }
+    void setFillPaintColor(const Color& c) { accessSVGStyle().setFillPaint(SVGPaint::SVG_PAINTTYPE_RGBCOLOR, c, ""); }
+    float fillOpacity() const { return svgStyle().fillOpacity(); }
+    void setFillOpacity(float f) { accessSVGStyle().setFillOpacity(f); }
 
-    const SVGPaint::SVGPaintType& strokePaintType() const { return svgStyle()->strokePaintType(); }
-    Color strokePaintColor() const { return svgStyle()->strokePaintColor(); }
-    void setStrokePaintColor(const Color& c) { accessSVGStyle()->setStrokePaint(SVGPaint::SVG_PAINTTYPE_RGBCOLOR, c, ""); }
-    float strokeOpacity() const { return svgStyle()->strokeOpacity(); }
-    void setStrokeOpacity(float f) { accessSVGStyle()->setStrokeOpacity(f); }
-    SVGLength strokeWidth() const { return svgStyle()->strokeWidth(); }
-    void setStrokeWidth(SVGLength w) { accessSVGStyle()->setStrokeWidth(w); }
-    Vector<SVGLength> strokeDashArray() const { return svgStyle()->strokeDashArray(); }
-    void setStrokeDashArray(Vector<SVGLength> array) { accessSVGStyle()->setStrokeDashArray(array); }
-    SVGLength strokeDashOffset() const { return svgStyle()->strokeDashOffset(); }
-    void setStrokeDashOffset(SVGLength d) { accessSVGStyle()->setStrokeDashOffset(d); }
-    float strokeMiterLimit() const { return svgStyle()->strokeMiterLimit(); }
-    void setStrokeMiterLimit(float f) { accessSVGStyle()->setStrokeMiterLimit(f); }
+    const SVGPaint::SVGPaintType& strokePaintType() const { return svgStyle().strokePaintType(); }
+    Color strokePaintColor() const { return svgStyle().strokePaintColor(); }
+    void setStrokePaintColor(const Color& c) { accessSVGStyle().setStrokePaint(SVGPaint::SVG_PAINTTYPE_RGBCOLOR, c, ""); }
+    float strokeOpacity() const { return svgStyle().strokeOpacity(); }
+    void setStrokeOpacity(float f) { accessSVGStyle().setStrokeOpacity(f); }
+    SVGLength strokeWidth() const { return svgStyle().strokeWidth(); }
+    void setStrokeWidth(SVGLength w) { accessSVGStyle().setStrokeWidth(w); }
+    Vector<SVGLength> strokeDashArray() const { return svgStyle().strokeDashArray(); }
+    void setStrokeDashArray(Vector<SVGLength> array) { accessSVGStyle().setStrokeDashArray(array); }
+    SVGLength strokeDashOffset() const { return svgStyle().strokeDashOffset(); }
+    void setStrokeDashOffset(SVGLength d) { accessSVGStyle().setStrokeDashOffset(d); }
+    float strokeMiterLimit() const { return svgStyle().strokeMiterLimit(); }
+    void setStrokeMiterLimit(float f) { accessSVGStyle().setStrokeMiterLimit(f); }
 
-    float floodOpacity() const { return svgStyle()->floodOpacity(); }
-    void setFloodOpacity(float f) { accessSVGStyle()->setFloodOpacity(f); }
+    float floodOpacity() const { return svgStyle().floodOpacity(); }
+    void setFloodOpacity(float f) { accessSVGStyle().setFloodOpacity(f); }
 
-    float stopOpacity() const { return svgStyle()->stopOpacity(); }
-    void setStopOpacity(float f) { accessSVGStyle()->setStopOpacity(f); }
+    float stopOpacity() const { return svgStyle().stopOpacity(); }
+    void setStopOpacity(float f) { accessSVGStyle().setStopOpacity(f); }
 
-    void setStopColor(const Color& c) { accessSVGStyle()->setStopColor(c); }
-    void setFloodColor(const Color& c) { accessSVGStyle()->setFloodColor(c); }
-    void setLightingColor(const Color& c) { accessSVGStyle()->setLightingColor(c); }
+    void setStopColor(const Color& c) { accessSVGStyle().setStopColor(c); }
+    void setFloodColor(const Color& c) { accessSVGStyle().setFloodColor(c); }
+    void setLightingColor(const Color& c) { accessSVGStyle().setLightingColor(c); }
 
-    SVGLength baselineShiftValue() const { return svgStyle()->baselineShiftValue(); }
-    void setBaselineShiftValue(SVGLength s) { accessSVGStyle()->setBaselineShiftValue(s); }
-    SVGLength kerning() const { return svgStyle()->kerning(); }
-    void setKerning(SVGLength k) { accessSVGStyle()->setKerning(k); }
+    SVGLength baselineShiftValue() const { return svgStyle().baselineShiftValue(); }
+    void setBaselineShiftValue(SVGLength s) { accessSVGStyle().setBaselineShiftValue(s); }
+    SVGLength kerning() const { return svgStyle().kerning(); }
+    void setKerning(SVGLength k) { accessSVGStyle().setKerning(k); }
 #endif
 
 #if ENABLE(CSS_SHAPES)
@@ -1915,9 +1915,9 @@ private:
     Color colorIncludingFallback(int colorProperty, bool visitedLink) const;
 
 #if ENABLE(SVG)
-    Color stopColor() const { return svgStyle()->stopColor(); }
-    Color floodColor() const { return svgStyle()->floodColor(); }
-    Color lightingColor() const { return svgStyle()->lightingColor(); }
+    Color stopColor() const { return svgStyle().stopColor(); }
+    Color floodColor() const { return svgStyle().floodColor(); }
+    Color lightingColor() const { return svgStyle().lightingColor(); }
 #endif
 
     void appendContent(std::unique_ptr<ContentData>);

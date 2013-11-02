@@ -95,8 +95,7 @@ void SVGTextChunkBuilder::addTextChunk(Vector<SVGInlineTextBox*>& lineLayoutBoxe
 
     const RenderStyle& style = textBox->renderer().style();
 
-    const SVGRenderStyle* svgStyle = style.svgStyle();
-    ASSERT(svgStyle);
+    const SVGRenderStyle& svgStyle = style.svgStyle();
 
     // Build chunk style flags.
     unsigned chunkStyle = SVGTextChunk::DefaultStyle;
@@ -106,11 +105,11 @@ void SVGTextChunkBuilder::addTextChunk(Vector<SVGInlineTextBox*>& lineLayoutBoxe
         chunkStyle |= SVGTextChunk::RightToLeftText;
 
     // Handle 'writing-mode' property.
-    if (svgStyle->isVerticalWritingMode())
+    if (svgStyle.isVerticalWritingMode())
         chunkStyle |= SVGTextChunk::VerticalText;
 
     // Handle 'text-anchor' property.
-    switch (svgStyle->textAnchor()) {
+    switch (svgStyle.textAnchor()) {
     case TA_START:
         break;
     case TA_MIDDLE:

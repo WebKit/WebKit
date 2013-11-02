@@ -99,13 +99,12 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
 
     RenderStyle& style = m_renderer->style();
 
-    const SVGRenderStyle* svgStyle = style.svgStyle();
-    ASSERT(svgStyle);
+    const SVGRenderStyle& svgStyle = style.svgStyle();
 
     // Setup transparency layers before setting up SVG resources!
     bool isRenderingMask = isRenderingMaskImage(*m_renderer);
     float opacity = isRenderingMask ? 1 : style.opacity();
-    const ShadowData* shadow = svgStyle->shadow();
+    const ShadowData* shadow = svgStyle.shadow();
     if (opacity < 1 || shadow) {
         FloatRect repaintRect = m_renderer->repaintRectInLocalCoordinates();
 
@@ -132,7 +131,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
     SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(m_renderer);
     if (!resources) {
 #if ENABLE(FILTERS)
-        if (svgStyle->hasFilter())
+        if (svgStyle.hasFilter())
             return;
 #endif
         m_renderingFlags |= RenderingPrepared;

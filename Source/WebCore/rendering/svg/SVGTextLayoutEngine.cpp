@@ -243,7 +243,7 @@ void SVGTextLayoutEngine::layoutInlineTextBox(SVGInlineTextBox* textBox)
     const RenderStyle& style = text.style();
 
     textBox->clearTextFragments();
-    m_isVerticalText = style.svgStyle()->isVerticalWritingMode();
+    m_isVerticalText = style.svgStyle().isVerticalWritingMode();
     layoutTextOnLineOrPath(textBox, &text, &style);
 
     if (m_inPathLayout) {
@@ -431,8 +431,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, Rend
     RenderObject* textParent = text->parent();
     bool definesTextLength = textParent ? parentDefinesTextLength(textParent) : false;
 
-    const SVGRenderStyle* svgStyle = style->svgStyle();
-    ASSERT(svgStyle);
+    const SVGRenderStyle& svgStyle = style->svgStyle();
 
     m_visualMetricsListOffset = 0;
     m_visualCharacterOffset = 0;
@@ -450,7 +449,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, Rend
     bool applySpacingToNextCharacter = false;
 
     float lastAngle = 0;
-    float baselineShift = baselineLayout.calculateBaselineShift(svgStyle, lengthContext);
+    float baselineShift = baselineLayout.calculateBaselineShift(&svgStyle, lengthContext);
     baselineShift -= baselineLayout.calculateAlignmentBaselineShift(m_isVerticalText, text);
 
     // Main layout algorithm.
@@ -492,7 +491,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, Rend
 
         // Calculate glyph orientation angle.
         const UChar* currentCharacter = characters + m_visualCharacterOffset;
-        float orientationAngle = baselineLayout.calculateGlyphOrientationAngle(m_isVerticalText, svgStyle, *currentCharacter);
+        float orientationAngle = baselineLayout.calculateGlyphOrientationAngle(m_isVerticalText, &svgStyle, *currentCharacter);
 
         // Calculate glyph advance & x/y orientation shifts.
         float xOrientationShift = 0;
@@ -509,7 +508,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, Rend
         float kerning = spacingLayout.calculateSVGKerning(m_isVerticalText, visualMetrics.glyph());
 
         // Calculate CSS 'kerning', 'letter-spacing' and 'word-spacing' for next character, if needed.
-        float spacing = spacingLayout.calculateCSSKerningAndSpacing(svgStyle, lengthContext, currentCharacter);
+        float spacing = spacingLayout.calculateCSSKerningAndSpacing(&svgStyle, lengthContext, currentCharacter);
 
         float textPathOffset = 0;
         if (m_inPathLayout) {

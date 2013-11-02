@@ -158,10 +158,10 @@ PassRefPtr<FilterEffect> SVGFEDropShadowElement::build(SVGFilterBuilder* filterB
     if (stdDeviationX() < 0 || stdDeviationY() < 0)
         return 0;
 
-    const SVGRenderStyle* svgStyle = renderer->style().svgStyle();
+    const SVGRenderStyle& svgStyle = renderer->style().svgStyle();
     
-    Color color = svgStyle->floodColor();
-    float opacity = svgStyle->floodOpacity();
+    Color color = svgStyle.floodColor();
+    float opacity = svgStyle.floodOpacity();
 
     FilterEffect* input1 = filterBuilder->getEffectById(in1());
     if (!input1)

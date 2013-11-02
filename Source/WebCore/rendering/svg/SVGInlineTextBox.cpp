@@ -259,23 +259,21 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUni
 
     RenderStyle& style = parentRenderer.style();
 
-    const SVGRenderStyle* svgStyle = style.svgStyle();
-    ASSERT(svgStyle);
+    const SVGRenderStyle& svgStyle = style.svgStyle();
 
-    bool hasFill = svgStyle->hasFill();
-    bool hasVisibleStroke = svgStyle->hasVisibleStroke();
+    bool hasFill = svgStyle.hasFill();
+    bool hasVisibleStroke = svgStyle.hasVisibleStroke();
 
     RenderStyle* selectionStyle = &style;
     if (hasSelection) {
         selectionStyle = parentRenderer.getCachedPseudoStyle(SELECTION);
         if (selectionStyle) {
-            const SVGRenderStyle* svgSelectionStyle = selectionStyle->svgStyle();
-            ASSERT(svgSelectionStyle);
+            const SVGRenderStyle& svgSelectionStyle = selectionStyle->svgStyle();
 
             if (!hasFill)
-                hasFill = svgSelectionStyle->hasFill();
+                hasFill = svgSelectionStyle.hasFill();
             if (!hasVisibleStroke)
-                hasVisibleStroke = svgSelectionStyle->hasVisibleStroke();
+                hasVisibleStroke = svgSelectionStyle.hasVisibleStroke();
         } else
             selectionStyle = &style;
     }
@@ -501,11 +499,10 @@ void SVGInlineTextBox::paintDecoration(GraphicsContext* context, TextDecoration 
     if (decorationStyle.visibility() == HIDDEN)
         return;
 
-    const SVGRenderStyle* svgDecorationStyle = decorationStyle.svgStyle();
-    ASSERT(svgDecorationStyle);
+    const SVGRenderStyle& svgDecorationStyle = decorationStyle.svgStyle();
 
-    bool hasDecorationFill = svgDecorationStyle->hasFill();
-    bool hasVisibleDecorationStroke = svgDecorationStyle->hasVisibleStroke();
+    bool hasDecorationFill = svgDecorationStyle.hasFill();
+    bool hasVisibleDecorationStroke = svgDecorationStyle.hasVisibleStroke();
 
     if (hasDecorationFill) {
         m_paintingResourceMode = ApplyToFillMode;
@@ -673,8 +670,8 @@ bool SVGInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult&
     PointerEventsHitRules hitRules(PointerEventsHitRules::SVG_TEXT_HITTESTING, request, renderer().style().pointerEvents());
     bool isVisible = renderer().style().visibility() == VISIBLE;
     if (isVisible || !hitRules.requireVisible) {
-        if ((hitRules.canHitStroke && (renderer().style().svgStyle()->hasStroke() || !hitRules.requireStroke))
-            || (hitRules.canHitFill && (renderer().style().svgStyle()->hasFill() || !hitRules.requireFill))) {
+        if ((hitRules.canHitStroke && (renderer().style().svgStyle().hasStroke() || !hitRules.requireStroke))
+            || (hitRules.canHitFill && (renderer().style().svgStyle().hasFill() || !hitRules.requireFill))) {
             FloatPoint boxOrigin(x(), y());
             boxOrigin.moveBy(accumulatedOffset);
             FloatRect rect(boxOrigin, size());
