@@ -1,3 +1,15 @@
+2013-11-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Add WebCrypto AES-CBC
+        https://bugs.webkit.org/show_bug.cgi?id=123647
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/FixedArray.h: (WTF::FixedArray::data): Added a const version of the function.
+
+        * wtf/Vector.h: Added a comment to Vector constructor about how it is different
+        from std::vector.
+
 2013-11-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed extended attempt at Windows build fix after r158471.

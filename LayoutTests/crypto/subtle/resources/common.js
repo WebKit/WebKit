@@ -45,6 +45,16 @@ function asciiToArrayBuffer(str)
     return new Uint8Array(chars);
 }
 
+function hexToArrayBuffer(str)
+{
+    if (str.length % 2)
+        throw "Hex string lenght must be even";
+    var chars = [];
+    for (var i = 0; i < str.length; i += 2)
+        chars.push(parseInt(str.substr(i, 2), 16));
+    return new Uint8Array(chars);
+}
+
 function printRejectedResult(value)
 {
     debug("    rejected with value of " + value);

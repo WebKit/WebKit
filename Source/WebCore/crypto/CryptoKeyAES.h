@@ -23,24 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CryptoAlgorithmRegistry.h"
+#ifndef CryptoKeyAES_h
+#define CryptoKeyAES_h
+
+#include "CryptoAlgorithmIdentifier.h"
+#include "CryptoKey.h"
+#include <wtf/Vector.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmAES_CBC.h"
-#include "CryptoAlgorithmHMAC.h"
-#include "CryptoAlgorithmSHA1.h"
-
 namespace WebCore {
 
-void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
+class CryptoKeyAES FINAL : public CryptoKey {
+public:
+    static PassRefPtr<CryptoKeyAES> create(CryptoAlgorithmIdentifier algorithm, const Vector<char>& key, bool extractable, CryptoKeyUsage usage)
+    {
+        return adoptRef(new CryptoKeyAES(algorithm, key, extractable, usage));
+    }
+    virtual ~CryptoKeyAES();
+
+    virtual CryptoKeyClass keyClass() const OVERRIDE { return CryptoKeyClass::AES; }
+
+    const Vector<char>& key() const { return m_key; }
+
+    virtual void buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder&) const OVERRIDE;
+
+private:
+    CryptoKeyAES(CryptoAlgorithmIdentifier, const Vector<char>& key, bool extractable, CryptoKeyUsage);
+
+    Vector<char> m_key;
+};
+
+inline const CryptoKeyAES* asCryptoKeyAES(const CryptoKey& key)
 {
-    registerAlgorithm(CryptoAlgorithmAES_CBC::s_name, CryptoAlgorithmAES_CBC::s_identifier, CryptoAlgorithmAES_CBC::create);
-    registerAlgorithm(CryptoAlgorithmHMAC::s_name, CryptoAlgorithmHMAC::s_identifier, CryptoAlgorithmHMAC::create);
-    registerAlgorithm(CryptoAlgorithmSHA1::s_name, CryptoAlgorithmSHA1::s_identifier, CryptoAlgorithmSHA1::create);
+    if (key.keyClass() != CryptoKeyClass::AES)
+        return nullptr;
+    return static_cast<const CryptoKeyAES*>(&key);
 }
 
+inline CryptoKeyAES* asCryptoKeyAES(CryptoKey& key)
+{
+    if (key.keyClass() != CryptoKeyClass::AES)
+        return nullptr;
+    return static_cast<CryptoKeyAES*>(&key);
 }
+
+} // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
+
+
+#endif // CryptoKeyAES_h

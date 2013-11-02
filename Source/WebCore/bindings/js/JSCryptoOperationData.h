@@ -23,24 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CryptoAlgorithmRegistry.h"
+#ifndef JSCryptoOperationData_h
+#define JSCryptoOperationData_h
+
+#include <wtf/Vector.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmAES_CBC.h"
-#include "CryptoAlgorithmHMAC.h"
-#include "CryptoAlgorithmSHA1.h"
+namespace JSC {
+class ExecState;
+class JSValue;
+}
 
 namespace WebCore {
 
-void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
-{
-    registerAlgorithm(CryptoAlgorithmAES_CBC::s_name, CryptoAlgorithmAES_CBC::s_identifier, CryptoAlgorithmAES_CBC::create);
-    registerAlgorithm(CryptoAlgorithmHMAC::s_name, CryptoAlgorithmHMAC::s_identifier, CryptoAlgorithmHMAC::create);
-    registerAlgorithm(CryptoAlgorithmSHA1::s_name, CryptoAlgorithmSHA1::s_identifier, CryptoAlgorithmSHA1::create);
-}
+typedef std::pair<const char*, size_t> CryptoOperationData;
 
-}
+bool sequenceOfCryptoOperationDataFromJSValue(JSC::ExecState*, JSC::JSValue, Vector<CryptoOperationData>&);
+bool cryptoOperationDataFromJSValue(JSC::ExecState*, JSC::JSValue, CryptoOperationData&);
+
+} // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
+#endif // JSCryptoOperationData_h

@@ -24,21 +24,53 @@
  */
 
 #include "config.h"
-#include "CryptoAlgorithmRegistry.h"
+#include "CryptoAlgorithmAES_CBC.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmAES_CBC.h"
-#include "CryptoAlgorithmHMAC.h"
-#include "CryptoAlgorithmSHA1.h"
+#include "CryptoAlgorithmAesCbcParams.h"
+#include "CryptoKeyAES.h"
+#include "ExceptionCode.h"
+#include "JSDOMPromise.h"
 
 namespace WebCore {
 
-void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
+const char* const CryptoAlgorithmAES_CBC::s_name = "aes-cbc";
+
+CryptoAlgorithmAES_CBC::CryptoAlgorithmAES_CBC()
 {
-    registerAlgorithm(CryptoAlgorithmAES_CBC::s_name, CryptoAlgorithmAES_CBC::s_identifier, CryptoAlgorithmAES_CBC::create);
-    registerAlgorithm(CryptoAlgorithmHMAC::s_name, CryptoAlgorithmHMAC::s_identifier, CryptoAlgorithmHMAC::create);
-    registerAlgorithm(CryptoAlgorithmSHA1::s_name, CryptoAlgorithmSHA1::s_identifier, CryptoAlgorithmSHA1::create);
+}
+
+CryptoAlgorithmAES_CBC::~CryptoAlgorithmAES_CBC()
+{
+}
+
+std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmAES_CBC::create()
+{
+    return std::unique_ptr<CryptoAlgorithm>(new CryptoAlgorithmAES_CBC);
+}
+
+CryptoAlgorithmIdentifier CryptoAlgorithmAES_CBC::identifier() const
+{
+    return s_identifier;
+}
+
+void CryptoAlgorithmAES_CBC::importKey(const CryptoAlgorithmParameters&, CryptoKeyFormat format, const CryptoOperationData& data, bool extractable, CryptoKeyUsage usage, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
+{
+    if (format != CryptoKeyFormat::Raw) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+    Vector<char> keyData;
+    keyData.append(data.first, data.second);
+    RefPtr<CryptoKeyAES> result = CryptoKeyAES::create(CryptoAlgorithmIdentifier::AES_CBC, keyData, extractable, usage);
+    promise->fulfill(result.release());
+}
+
+void CryptoAlgorithmAES_CBC::exportKey(const CryptoAlgorithmParameters&, CryptoKeyFormat, const CryptoKey&, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
+{
+    // Not implemented yet.
+    ec = NOT_SUPPORTED_ERR;
 }
 
 }

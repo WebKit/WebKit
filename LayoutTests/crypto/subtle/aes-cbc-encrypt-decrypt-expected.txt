@@ -1,0 +1,24 @@
+Test AES-CBC encrypt and decrypt functions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Importing a raw AES key from string literal...
+PASS key.type is 'secret'
+PASS key.extractable is true
+PASS key.algorithm.name is 'aes-cbc'
+PASS key.algorithm.length is 128
+PASS key.usages is ['encrypt', 'decrypt']
+Using the key to encrypt plaintext...
+PASS byteArrayToHexString(new Uint8Array(encryptionResult)) is '[76 49 ab ac 81 19 b2 46 ce e9 8e 9b 12 e9 19 7d 50 86 cb 9b 50 72 19 ee 95 db 11 3a 91 76 78 b2 73 be d6 b8 e3 c1 74 3b 71 16 e6 9e 22 22 95 16 3f f1 ca a1 68 1f ac 09 12 0e ca 30 75 86 e1 a7 8c b8 28 07 23 0e 13 21 d3 fa e0 0d 18 cc 20 12]'
+Decrypting it back...
+PASS new Uint8Array(decryptionResult) is plaintext
+Testing initialization vector bindings...
+PASS crypto.subtle.encrypt({name: 'AES-CBC', iv: null}, key, [plaintext]) threw exception TypeError: Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData.
+PASS crypto.subtle.encrypt({name: 'AES-CBC'}, key, [plaintext]) threw exception TypeError: Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData.
+PASS crypto.subtle.encrypt({name: 'AES-CBC', iv: 3}, key, [plaintext]) threw exception TypeError: Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData.
+PASS crypto.subtle.encrypt({name: 'AES-CBC', iv: new Uint8Array([0])}, key, [plaintext]) threw exception Error: AES-CBC initialization data must be 16 bytes.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

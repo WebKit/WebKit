@@ -34,6 +34,7 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "JSCryptoAlgorithmDictionary.h"
+#include "JSCryptoOperationData.h"
 #include "JSDOMPromise.h"
 #include <runtime/Error.h>
 
@@ -53,42 +54,6 @@ static std::unique_ptr<CryptoAlgorithm> createAlgorithmFromJSValue(ExecState* ex
     if (!result)
         setDOMException(exec, NOT_SUPPORTED_ERR);
     return result;
-}
-
-static bool sequenceOfCryptoOperationDataFromJSValue(ExecState* exec, JSValue value, Vector<CryptoOperationData>& result)
-{
-    unsigned sequenceLength;
-    JSObject* sequence = toJSSequence(exec, value, sequenceLength);
-    if (!sequence) {
-        ASSERT(exec->hadException());
-        return false;
-    }
-
-    for (unsigned i = 0; i < sequenceLength; ++i) {
-        JSValue item = sequence->get(exec, i);
-        if (ArrayBuffer* buffer = toArrayBuffer(item))
-            result.append(std::make_pair(static_cast<char*>(buffer->data()), buffer->byteLength()));
-        else if (RefPtr<ArrayBufferView> bufferView = toArrayBufferView(item))
-            result.append(std::make_pair(static_cast<char*>(bufferView->baseAddress()), bufferView->byteLength()));
-        else {
-            throwTypeError(exec, "Only ArrayBuffer and ArrayBufferView objects can be part of CryptoOperationData sequence");
-            return false;
-        }
-    }
-    return true;
-}
-
-static bool cryptoOperationDataFromJSValue(ExecState* exec, JSValue value, CryptoOperationData& result)
-{
-    if (ArrayBuffer* buffer = toArrayBuffer(value))
-        result = std::make_pair(static_cast<char*>(buffer->data()), buffer->byteLength());
-    else if (RefPtr<ArrayBufferView> bufferView = toArrayBufferView(value))
-        result = std::make_pair(static_cast<char*>(bufferView->baseAddress()), bufferView->byteLength());
-    else {
-        throwTypeError(exec, "Only ArrayBuffer and ArrayBufferView objects can be part of CryptoOperationData sequence");
-        return false;
-    }
-    return true;
 }
 
 static bool cryptoKeyFormatFromJSValue(ExecState* exec, JSValue value, CryptoKeyFormat& result)
@@ -146,6 +111,98 @@ static bool cryptoKeyUsagesFromJSValue(ExecState* exec, JSValue value, CryptoKey
     return true;
 }
 
+JSValue JSSubtleCrypto::encrypt(ExecState* exec)
+{
+    if (exec->argumentCount() < 3)
+        return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
+
+    auto algorithm = createAlgorithmFromJSValue(exec, exec->uncheckedArgument(0));
+    if (!algorithm) {
+        ASSERT(exec->hadException());
+        return jsUndefined();
+    }
+
+    auto parameters = JSCryptoAlgorithmDictionary::createParametersForEncrypt(exec, algorithm->identifier(), exec->uncheckedArgument(0));
+    if (!parameters) {
+        ASSERT(exec->hadException());
+        return jsUndefined();
+    }
+
+    RefPtr<CryptoKey> key = toCryptoKey(exec->uncheckedArgument(1));
+    if (!key)
+        return throwTypeError(exec);
+
+    if (!key->allows(CryptoKeyUsageEncrypt)) {
+        m_impl->document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "Key usages does not include 'encrypt'");
+        setDOMException(exec, NOT_SUPPORTED_ERR);
+        return jsUndefined();
+    }
+
+    Vector<CryptoOperationData> data;
+    if (!sequenceOfCryptoOperationDataFromJSValue(exec, exec->uncheckedArgument(2), data)) {
+        ASSERT(exec->hadException());
+        return jsUndefined();
+    }
+
+    JSPromise* promise = JSPromise::createWithResolver(exec->vm(), globalObject());
+    auto promiseWrapper = PromiseWrapper::create(globalObject(), promise);
+
+    ExceptionCode ec = 0;
+    algorithm->encrypt(*parameters, *key, data, std::move(promiseWrapper), ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
+
+    return promise;
+}
+
+JSValue JSSubtleCrypto::decrypt(ExecState* exec)
+{
+    if (exec->argumentCount() < 3)
+        return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
+
+    auto algorithm = createAlgorithmFromJSValue(exec, exec->uncheckedArgument(0));
+    if (!algorithm) {
+        ASSERT(exec->hadException());
+        return jsUndefined();
+    }
+
+    auto parameters = JSCryptoAlgorithmDictionary::createParametersForDecrypt(exec, algorithm->identifier(), exec->uncheckedArgument(0));
+    if (!parameters) {
+        ASSERT(exec->hadException());
+        return jsUndefined();
+    }
+
+    RefPtr<CryptoKey> key = toCryptoKey(exec->uncheckedArgument(1));
+    if (!key)
+        return throwTypeError(exec);
+
+    if (!key->allows(CryptoKeyUsageDecrypt)) {
+        m_impl->document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "Key usages does not include 'decrypt'");
+        setDOMException(exec, NOT_SUPPORTED_ERR);
+        return jsUndefined();
+    }
+
+    Vector<CryptoOperationData> data;
+    if (!sequenceOfCryptoOperationDataFromJSValue(exec, exec->uncheckedArgument(2), data)) {
+        ASSERT(exec->hadException());
+        return jsUndefined();
+    }
+
+    JSPromise* promise = JSPromise::createWithResolver(exec->vm(), globalObject());
+    auto promiseWrapper = PromiseWrapper::create(globalObject(), promise);
+
+    ExceptionCode ec = 0;
+    algorithm->decrypt(*parameters, *key, data, std::move(promiseWrapper), ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
+
+    return promise;
+}
+
 JSValue JSSubtleCrypto::sign(ExecState* exec)
 {
     if (exec->argumentCount() < 3)
@@ -183,7 +240,7 @@ JSValue JSSubtleCrypto::sign(ExecState* exec)
     auto promiseWrapper = PromiseWrapper::create(globalObject(), promise);
 
     ExceptionCode ec = 0;
-    algorithm->sign(*parameters, *key.get(), data, std::move(promiseWrapper), ec);
+    algorithm->sign(*parameters, *key, data, std::move(promiseWrapper), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();

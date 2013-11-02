@@ -73,6 +73,13 @@ inline void PromiseWrapper::reject(const RejectResultType& result)
 }
 
 template<>
+inline void PromiseWrapper::reject(const std::nullptr_t&)
+{
+    JSC::ExecState* exec = m_globalObject->globalExec();
+    m_promise->resolver()->rejectIfNotResolved(exec, JSC::jsNull());
+}
+
+template<>
 inline void PromiseWrapper::fulfill<String>(const String& result)
 {
     JSC::ExecState* exec = m_globalObject->globalExec();

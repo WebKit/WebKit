@@ -1,0 +1,19 @@
+Test AES-CBC encrypt and decrypt functions with a 256 bit key.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Importing a raw AES key from string literal...
+PASS key.type is 'secret'
+PASS key.extractable is true
+PASS key.algorithm.name is 'aes-cbc'
+PASS key.algorithm.length is 192
+PASS key.usages is ['encrypt', 'decrypt']
+Using the key to encrypt plaintext...
+PASS byteArrayToHexString(new Uint8Array(encryptionResult)) is '[4f 02 1d b2 43 bc 63 3d 71 78 18 3a 9f a0 71 e8 b4 d9 ad a9 ad 7d ed f4 e5 e7 38 76 3f 69 14 5a 57 1b 24 20 12 fb 7a e0 7f a9 ba ac 3d f1 02 e0 08 b0 e2 79 88 59 88 81 d9 20 a9 e6 4f 56 15 cd 61 2c cd 79 22 4b 35 09 35 d4 5d d6 a9 8f 81 76]'
+Decrypting it back...
+PASS new Uint8Array(decryptionResult) is plaintext
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

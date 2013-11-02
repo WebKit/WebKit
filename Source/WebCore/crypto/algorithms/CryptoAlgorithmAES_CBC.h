@@ -23,52 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoKeyHMAC_h
-#define CryptoKeyHMAC_h
+#ifndef CryptoAlgorithmAES_CBC_h
+#define CryptoAlgorithmAES_CBC_h
 
-#include "CryptoKey.h"
-#include <wtf/Vector.h>
+#include "CryptoAlgorithm.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-class CryptoKeyHMAC FINAL : public CryptoKey {
+class CryptoAlgorithmAES_CBC FINAL : public CryptoAlgorithm {
 public:
-    static PassRefPtr<CryptoKeyHMAC> create(const Vector<char>& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage usage)
-    {
-        return adoptRef(new CryptoKeyHMAC(key, hash, extractable, usage));
-    }
-    virtual ~CryptoKeyHMAC();
+    static const char* const s_name;
+    static const CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_CBC;
 
-    virtual CryptoKeyClass keyClass() const OVERRIDE { return CryptoKeyClass::HMAC; }
+    static std::unique_ptr<CryptoAlgorithm> create();
 
-    const Vector<char>& key() const { return m_key; }
+    virtual CryptoAlgorithmIdentifier identifier() const OVERRIDE;
 
-    virtual void buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder&) const OVERRIDE;
+    virtual void encrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
+    virtual void decrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
+    virtual void generateKey(const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
+    virtual void importKey(const CryptoAlgorithmParameters&, CryptoKeyFormat, const CryptoOperationData&, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
+    virtual void exportKey(const CryptoAlgorithmParameters&, CryptoKeyFormat, const CryptoKey&, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
 
 private:
-    CryptoKeyHMAC(const Vector<char>& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage);
-
-    CryptoAlgorithmIdentifier m_hash;
-    Vector<char> m_key;
+    CryptoAlgorithmAES_CBC();
+    virtual ~CryptoAlgorithmAES_CBC();
 };
 
-inline const CryptoKeyHMAC* asCryptoKeyHMAC(const CryptoKey& key)
-{
-    if (key.keyClass() != CryptoKeyClass::HMAC)
-        return nullptr;
-    return static_cast<const CryptoKeyHMAC*>(&key);
 }
-
-inline CryptoKeyHMAC* asCryptoKeyHMAC(CryptoKey& key)
-{
-    if (key.keyClass() != CryptoKeyClass::HMAC)
-        return nullptr;
-    return static_cast<CryptoKeyHMAC*>(&key);
-}
-
-} // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoKeyHMAC_h
+
+#endif // CryptoAlgorithmAES_CBC_h

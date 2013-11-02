@@ -23,24 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CryptoAlgorithmRegistry.h"
+#ifndef CryptoAlgorithmAesCbcParams_h
+#define CryptoAlgorithmAesCbcParams_h
+
+#include "CryptoAlgorithmParameters.h"
+#include <wtf/FixedArray.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmAES_CBC.h"
-#include "CryptoAlgorithmHMAC.h"
-#include "CryptoAlgorithmSHA1.h"
-
 namespace WebCore {
 
-void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
-{
-    registerAlgorithm(CryptoAlgorithmAES_CBC::s_name, CryptoAlgorithmAES_CBC::s_identifier, CryptoAlgorithmAES_CBC::create);
-    registerAlgorithm(CryptoAlgorithmHMAC::s_name, CryptoAlgorithmHMAC::s_identifier, CryptoAlgorithmHMAC::create);
-    registerAlgorithm(CryptoAlgorithmSHA1::s_name, CryptoAlgorithmSHA1::s_identifier, CryptoAlgorithmSHA1::create);
-}
+class CryptoAlgorithmAesCbcParams FINAL : public CryptoAlgorithmParameters {
+public:
+    // The initialization vector. MUST be 16 bytes.
+    FixedArray<char, 16> iv;
+};
 
 }
 
 #endif // ENABLE(SUBTLE_CRYPTO)
+#endif // CryptoAlgorithmAesCbcParams_h

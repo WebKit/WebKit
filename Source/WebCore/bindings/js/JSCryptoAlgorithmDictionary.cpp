@@ -28,10 +28,12 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#include "CryptoAlgorithmAesCbcParams.h"
 #include "CryptoAlgorithmHmacKeyParams.h"
 #include "CryptoAlgorithmHmacParams.h"
 #include "CryptoAlgorithmRegistry.h"
 #include "ExceptionCode.h"
+#include "JSCryptoOperationData.h"
 #include "JSDOMBinding.h"
 #include "JSDictionary.h"
 
@@ -80,6 +82,17 @@ bool JSCryptoAlgorithmDictionary::getAlgorithmIdentifier(ExecState* exec, JSValu
     return true;
 }
 
+static JSValue getProperty(ExecState* exec, JSObject* object, const char* name)
+{
+    Identifier identifier(exec, name);
+    PropertySlot slot(object);
+
+    if (object->getPropertySlot(exec, identifier, slot))
+        return slot.getValue(exec, identifier);
+
+    return jsUndefined();
+}
+
 static bool getHashAlgorithm(JSDictionary& dictionary, CryptoAlgorithmIdentifier& result)
 {
     // FXIME: Teach JSDictionary how to return JSValues, and use that to get hash element value.
@@ -90,15 +103,9 @@ static bool getHashAlgorithm(JSDictionary& dictionary, CryptoAlgorithmIdentifier
     Identifier identifier(exec, "hash");
     PropertySlot slot(object);
 
-    JSValue hash = jsUndefined();
-    if (object->getPropertySlot(exec, identifier, slot)) {
-        if (exec->hadException())
-            return false;
-
-        hash = slot.getValue(exec, identifier);
-        if (exec->hadException())
-            return false;
-    }
+    JSValue hash = getProperty(exec, object, "hash");
+    if (exec->hadException())
+        return false;
 
     if (hash.isUndefinedOrNull()) {
         setDOMException(exec, NOT_SUPPORTED_ERR);
@@ -106,6 +113,35 @@ static bool getHashAlgorithm(JSDictionary& dictionary, CryptoAlgorithmIdentifier
     }
 
     return JSCryptoAlgorithmDictionary::getAlgorithmIdentifier(exec, hash, result);
+}
+
+static std::unique_ptr<CryptoAlgorithmParameters> createAesCbcParams(JSC::ExecState* exec, JSC::JSValue value)
+{
+    if (!value.isObject()) {
+        throwTypeError(exec);
+        return nullptr;
+    }
+
+    JSValue iv = getProperty(exec, value.getObject(), "iv");
+    if (exec->hadException())
+        return nullptr;
+
+    std::unique_ptr<CryptoAlgorithmAesCbcParams> result = std::make_unique<CryptoAlgorithmAesCbcParams>();
+
+    CryptoOperationData ivData;
+    if (!cryptoOperationDataFromJSValue(exec, iv, ivData)) {
+        ASSERT(exec->hadException());
+        return nullptr;
+    }
+
+    if (ivData.second != 16) {
+        exec->vm().throwException(exec, createError(exec, "AES-CBC initialization data must be 16 bytes"));
+        return nullptr;
+    }
+
+    memcpy(result->iv.data(), ivData.first, ivData.second);
+
+    return std::move(result);
 }
 
 static std::unique_ptr<CryptoAlgorithmParameters> createHmacParams(JSC::ExecState* exec, JSC::JSValue value)
@@ -148,7 +184,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> createHmacKeyParams(JSC::ExecS
     return std::move(result);
 }
 
-std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForEncrypt(JSC::ExecState* exec, CryptoAlgorithmIdentifier algorithm, JSC::JSValue)
+std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForEncrypt(JSC::ExecState* exec, CryptoAlgorithmIdentifier algorithm, JSC::JSValue value)
 {
     switch (algorithm) {
     case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
@@ -158,7 +194,10 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     case CryptoAlgorithmIdentifier::ECDSA:
     case CryptoAlgorithmIdentifier::ECDH:
     case CryptoAlgorithmIdentifier::AES_CTR:
+        setDOMException(exec, NOT_SUPPORTED_ERR);
+        return nullptr;
     case CryptoAlgorithmIdentifier::AES_CBC:
+        return createAesCbcParams(exec, value);
     case CryptoAlgorithmIdentifier::AES_CMAC:
     case CryptoAlgorithmIdentifier::AES_GCM:
     case CryptoAlgorithmIdentifier::AES_CFB:
@@ -177,7 +216,7 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     }
 }
 
-std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForDecrypt(JSC::ExecState* exec, CryptoAlgorithmIdentifier algorithm, JSC::JSValue)
+std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForDecrypt(JSC::ExecState* exec, CryptoAlgorithmIdentifier algorithm, JSC::JSValue value)
 {
     switch (algorithm) {
     case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
@@ -187,7 +226,10 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     case CryptoAlgorithmIdentifier::ECDSA:
     case CryptoAlgorithmIdentifier::ECDH:
     case CryptoAlgorithmIdentifier::AES_CTR:
+        setDOMException(exec, NOT_SUPPORTED_ERR);
+        return nullptr;
     case CryptoAlgorithmIdentifier::AES_CBC:
+        return createAesCbcParams(exec, value);
     case CryptoAlgorithmIdentifier::AES_CMAC:
     case CryptoAlgorithmIdentifier::AES_GCM:
     case CryptoAlgorithmIdentifier::AES_CFB:
@@ -403,11 +445,11 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     case CryptoAlgorithmIdentifier::AES_CMAC:
     case CryptoAlgorithmIdentifier::AES_GCM:
     case CryptoAlgorithmIdentifier::AES_CFB:
-        setDOMException(exec, NOT_SUPPORTED_ERR);
-        return nullptr;
+        return std::make_unique<CryptoAlgorithmParameters>();
     case CryptoAlgorithmIdentifier::HMAC:
         return createHmacKeyParams(exec, value);
     case CryptoAlgorithmIdentifier::DH:
+        return std::make_unique<CryptoAlgorithmParameters>();
     case CryptoAlgorithmIdentifier::SHA_1:
     case CryptoAlgorithmIdentifier::SHA_224:
     case CryptoAlgorithmIdentifier::SHA_256:
@@ -437,6 +479,7 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     case CryptoAlgorithmIdentifier::AES_CFB:
     case CryptoAlgorithmIdentifier::HMAC:
     case CryptoAlgorithmIdentifier::DH:
+        return std::make_unique<CryptoAlgorithmParameters>();
     case CryptoAlgorithmIdentifier::SHA_1:
     case CryptoAlgorithmIdentifier::SHA_224:
     case CryptoAlgorithmIdentifier::SHA_256:

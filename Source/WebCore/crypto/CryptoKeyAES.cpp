@@ -24,23 +24,37 @@
  */
 
 #include "config.h"
-#include "CryptoAlgorithmRegistry.h"
+#include "CryptoKeyAES.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmAES_CBC.h"
-#include "CryptoAlgorithmHMAC.h"
-#include "CryptoAlgorithmSHA1.h"
+#include "CryptoAlgorithmDescriptionBuilder.h"
+#include "CryptoAlgorithmRegistry.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
+CryptoKeyAES::CryptoKeyAES(CryptoAlgorithmIdentifier algorithm, const Vector<char>& key, bool extractable, CryptoKeyUsage usage)
+    : CryptoKey(algorithm, CryptoKeyType::Secret, extractable, usage)
+    , m_key(key)
 {
-    registerAlgorithm(CryptoAlgorithmAES_CBC::s_name, CryptoAlgorithmAES_CBC::s_identifier, CryptoAlgorithmAES_CBC::create);
-    registerAlgorithm(CryptoAlgorithmHMAC::s_name, CryptoAlgorithmHMAC::s_identifier, CryptoAlgorithmHMAC::create);
-    registerAlgorithm(CryptoAlgorithmSHA1::s_name, CryptoAlgorithmSHA1::s_identifier, CryptoAlgorithmSHA1::create);
+    ASSERT(algorithm == CryptoAlgorithmIdentifier::AES_CTR
+        || algorithm == CryptoAlgorithmIdentifier::AES_CBC
+        || algorithm == CryptoAlgorithmIdentifier::AES_CMAC
+        || algorithm == CryptoAlgorithmIdentifier::AES_GCM
+        || algorithm == CryptoAlgorithmIdentifier::AES_CFB);
 }
 
+CryptoKeyAES::~CryptoKeyAES()
+{
 }
+
+void CryptoKeyAES::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& builder) const
+{
+    CryptoKey::buildAlgorithmDescription(builder);
+    builder.add("length", m_key.size() * 8);
+}
+
+} // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)

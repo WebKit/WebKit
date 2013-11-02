@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test AES-CBC encrypt and decrypt functions with a 256 bit key.");
+
+jsTestIsAsync = true;
+
+if (!window.subtle)
+    window.crypto.subtle = window.crypto.webkitSubtle;
+
+var keyData = hexToArrayBuffer("8e73b0f7da0e6452c810f32b809079e562f8ead2522c6b7b");
+var iv = hexToArrayBuffer("000102030405060708090a0b0c0d0e0f");
+var plaintext = hexToArrayBuffer("6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3710");
+var extractable = true;
+
+debug("Importing a raw AES key from string literal...");
+crypto.subtle.importKey("raw", keyData, "aes-cbc", extractable, ["encrypt", "decrypt"]).then(function(result) {
+    key = result;
+    shouldBe("key.type", "'secret'");
+    shouldBe("key.extractable", "true");
+    shouldBe("key.algorithm.name", "'aes-cbc'");
+    shouldBe("key.algorithm.length", "192");
+    shouldBe("key.usages", "['encrypt', 'decrypt']");
+
+    debug("Using the key to encrypt plaintext...");
+    return crypto.subtle.encrypt({name: "aes-cbc", iv: iv}, key, [plaintext]);
+}).then(function(result) {
+    encryptionResult = result;
+    shouldBe("byteArrayToHexString(new Uint8Array(encryptionResult))", "'[4f 02 1d b2 43 bc 63 3d 71 78 18 3a 9f a0 71 e8 b4 d9 ad a9 ad 7d ed f4 e5 e7 38 76 3f 69 14 5a 57 1b 24 20 12 fb 7a e0 7f a9 ba ac 3d f1 02 e0 08 b0 e2 79 88 59 88 81 d9 20 a9 e6 4f 56 15 cd 61 2c cd 79 22 4b 35 09 35 d4 5d d6 a9 8f 81 76]'");
+
+    debug("Decrypting it back...");
+    return crypto.subtle.decrypt({name: "aes-cbc", iv: iv}, key, [result]);
+}).then(function(result) {
+    decryptionResult = result;
+    shouldBe("new Uint8Array(decryptionResult)", "plaintext");
+
+    finishJSTest();
+});
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

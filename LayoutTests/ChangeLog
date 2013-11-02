@@ -1,3 +1,31 @@
+2013-11-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Add WebCrypto AES-CBC
+        https://bugs.webkit.org/show_bug.cgi?id=123647
+
+        Reviewed by Anders Carlsson.
+
+        Part of aes-cbc-encrypt-decrypt.html test was taken from Blink.
+
+        * crypto/subtle/aes-cbc-192-encrypt-decrypt-expected.txt: Added.
+        * crypto/subtle/aes-cbc-192-encrypt-decrypt.html: Added.
+        * crypto/subtle/aes-cbc-256-encrypt-decrypt-expected.txt: Added.
+        * crypto/subtle/aes-cbc-256-encrypt-decrypt.html: Added.
+        * crypto/subtle/aes-cbc-encrypt-decrypt-expected.txt: Added.
+        * crypto/subtle/aes-cbc-encrypt-decrypt-with-padding-expected.txt: Added.
+        * crypto/subtle/aes-cbc-encrypt-decrypt-with-padding.html: Added.
+        * crypto/subtle/aes-cbc-encrypt-decrypt.html: Added.
+        * crypto/subtle/aes-cbc-invalid-length-expected.txt: Added.
+        * crypto/subtle/aes-cbc-invalid-length.html: Added.
+        * crypto/subtle/aes-cbc-wrong-key-class-expected.txt: Added.
+        * crypto/subtle/aes-cbc-wrong-key-class.html: Added.
+
+        * crypto/subtle/hmac-sign-verify-expected.txt:
+        * crypto/subtle/hmac-sign-verify.html:
+        Corrected a description.
+
+        * crypto/subtle/resources/common.js: (hexToArrayBuffer): Added a helper.
+
 2013-11-01  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Update layout test results after CSS calc() simplification

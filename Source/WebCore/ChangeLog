@@ -1,3 +1,85 @@
+2013-11-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Add WebCrypto AES-CBC
+        https://bugs.webkit.org/show_bug.cgi?id=123647
+
+        Reviewed by Anders Carlsson.
+
+        Tests: crypto/subtle/aes-cbc-192-encrypt-decrypt.html
+               crypto/subtle/aes-cbc-256-encrypt-decrypt.html
+               crypto/subtle/aes-cbc-encrypt-decrypt-with-padding.html
+               crypto/subtle/aes-cbc-encrypt-decrypt.html
+               crypto/subtle/aes-cbc-invalid-length.html
+               crypto/subtle/aes-cbc-wrong-key-class.html
+
+        * WebCore.xcodeproj/project.pbxproj: Added new files.
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::getProperty): Factored out a function to get a property as JSValue.
+        (WebCore::getHashAlgorithm): Use it.
+        (WebCore::createAesCbcParams): Added converter for AesCbcParams.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForEncrypt): Support AES_CBC.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDecrypt): Ditto.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForImportKey): Support all
+        algorithms, all the new ones just have trivial dictionaries.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForExportKey): Ditto.
+
+        * bindings/js/JSCryptoOperationData.cpp: Added.
+        (WebCore::sequenceOfCryptoOperationDataFromJSValue):
+        (WebCore::cryptoOperationDataFromJSValue):
+        * bindings/js/JSCryptoOperationData.h: Added.
+        Moved CryptoOperationData bindings out of JSSubtleCryptoCustom.cpp, so that we
+        could use them in JSCryptoAlgorithmDictionary.cpp.
+
+        * bindings/js/JSDOMPromise.h: (WebCore::PromiseWrapper::reject): Added a specialization
+        to reject with null result. The spec doesn't actually say how algorithms fail.
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::JSSubtleCrypto::encrypt): Added.
+        (WebCore::JSSubtleCrypto::decrypt): Ditto.
+        (WebCore::JSSubtleCrypto::sign): Style fix.
+
+        * crypto/CryptoAlgorithmAesCbcParams.h: Added.
+
+        * crypto/CryptoKey.h:
+        (WebCore::CryptoKeyClass):
+        * crypto/keys/CryptoKeyHMAC.h:
+        (WebCore::asCryptoKeyHMAC):
+        Added poor man's RTTI, so that we can safely upcast Keys passed fro JavaScript code.
+
+        * crypto/CryptoKeyAES.cpp: Added.
+        (WebCore::CryptoKeyAES::CryptoKeyAES):
+        (WebCore::CryptoKeyAES::~CryptoKeyAES):
+        (WebCore::CryptoKeyAES::buildAlgorithmDescription):
+        * crypto/CryptoKeyAES.h: Added.
+        (WebCore::asCryptoKeyAES):
+        AES keys are the same for all algorithms, but they still need to remember the algorithm.
+
+        * crypto/SubtleCrypto.idl: Added encrypt/decrypt.
+
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp: Added.
+        (WebCore::CryptoAlgorithmAES_CBC::CryptoAlgorithmAES_CBC):
+        (WebCore::CryptoAlgorithmAES_CBC::~CryptoAlgorithmAES_CBC):
+        (WebCore::CryptoAlgorithmAES_CBC::create):
+        (WebCore::CryptoAlgorithmAES_CBC::identifier):
+        (WebCore::CryptoAlgorithmAES_CBC::importKey):
+        (WebCore::CryptoAlgorithmAES_CBC::exportKey):
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.h: Added.
+        * crypto/mac/CryptoAlgorithmAES_CBCMac.cpp: Added.
+        (WebCore::transformAES_CBC):
+        (WebCore::CryptoAlgorithmAES_CBC::encrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::decrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::generateKey):
+        Added.
+
+        * crypto/mac/CryptoAlgorithmHMACMac.cpp:
+        (WebCore::CryptoAlgorithmHMAC::sign):
+        (WebCore::CryptoAlgorithmHMAC::verify):
+        Check key class before casting it to CryptoKeyHMAC.
+
+        * crypto/mac/CryptoAlgorithmRegistryMac.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms): Register AES-CBC
+        on Mac, so that it can be used.
+
 2013-11-01  Andreas Kling  <akling@apple.com>
 
         SVGRenderStyle accessors should return references.

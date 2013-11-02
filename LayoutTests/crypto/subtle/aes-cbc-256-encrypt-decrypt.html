@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test AES-CBC encrypt and decrypt functions with a 256 bit key.");
+
+jsTestIsAsync = true;
+
+if (!window.subtle)
+    window.crypto.subtle = window.crypto.webkitSubtle;
+
+var keyData = hexToArrayBuffer("603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4");
+var iv = hexToArrayBuffer("000102030405060708090a0b0c0d0e0f");
+var plaintext = hexToArrayBuffer("6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3710");
+var extractable = true;
+
+debug("Importing a raw AES key from string literal...");
+crypto.subtle.importKey("raw", keyData, "aes-cbc", extractable, ["encrypt", "decrypt"]).then(function(result) {
+    key = result;
+    shouldBe("key.type", "'secret'");
+    shouldBe("key.extractable", "true");
+    shouldBe("key.algorithm.name", "'aes-cbc'");
+    shouldBe("key.algorithm.length", "256");
+    shouldBe("key.usages", "['encrypt', 'decrypt']");
+
+    debug("Using the key to encrypt plaintext...");
+    return crypto.subtle.encrypt({name: "aes-cbc", iv: iv}, key, [plaintext]);
+}).then(function(result) {
+    encryptionResult = result;
+    shouldBe("byteArrayToHexString(new Uint8Array(encryptionResult))", "'[f5 8c 4c 04 d6 e5 f1 ba 77 9e ab fb 5f 7b fb d6 9c fc 4e 96 7e db 80 8d 67 9f 77 7b c6 70 2c 7d 39 f2 33 69 a9 d9 ba cf a5 30 e2 63 04 23 14 61 b2 eb 05 e2 c3 9b e9 fc da 6c 19 07 8c 6a 9d 1b 3f 46 17 96 d6 b0 d6 b2 e0 c2 a7 2b 4d 80 e6 44]'");
+
+    debug("Decrypting it back...");
+    return crypto.subtle.decrypt({name: "aes-cbc", iv: iv}, key, [result]);
+}).then(function(result) {
+    decryptionResult = result;
+    shouldBe("new Uint8Array(decryptionResult)", "plaintext");
+
+    finishJSTest();
+});
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

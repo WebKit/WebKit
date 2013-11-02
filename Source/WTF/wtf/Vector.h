@@ -532,7 +532,8 @@ public:
     Vector()
     {
     }
-    
+
+    // Unlike in std::vector, this constructor does not initialize POD types.
     explicit Vector(size_t size)
         : Base(size, size)
     {

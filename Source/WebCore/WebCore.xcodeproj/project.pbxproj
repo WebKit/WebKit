@@ -5500,6 +5500,14 @@
 		E125F8351822F18A00D84CD9 /* CryptoKeyHMAC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F8331822F18A00D84CD9 /* CryptoKeyHMAC.cpp */; };
 		E125F8361822F18A00D84CD9 /* CryptoKeyHMAC.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F8341822F18A00D84CD9 /* CryptoKeyHMAC.h */; };
 		E125F8381822F1EB00D84CD9 /* CryptoAlgorithmHMACMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F8371822F1EB00D84CD9 /* CryptoAlgorithmHMACMac.cpp */; };
+		E125F83A1824104800D84CD9 /* CryptoAlgorithmAesCbcParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F8391824104800D84CD9 /* CryptoAlgorithmAesCbcParams.h */; };
+		E125F83D182411E700D84CD9 /* JSCryptoOperationData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F83B182411E700D84CD9 /* JSCryptoOperationData.cpp */; };
+		E125F83E182411E700D84CD9 /* JSCryptoOperationData.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F83C182411E700D84CD9 /* JSCryptoOperationData.h */; };
+		E125F8411824253A00D84CD9 /* CryptoAlgorithmAES_CBC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F83F1824253A00D84CD9 /* CryptoAlgorithmAES_CBC.cpp */; };
+		E125F8421824253A00D84CD9 /* CryptoAlgorithmAES_CBC.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F8401824253A00D84CD9 /* CryptoAlgorithmAES_CBC.h */; };
+		E125F845182425C900D84CD9 /* CryptoAlgorithmAES_CBCMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F843182425C900D84CD9 /* CryptoAlgorithmAES_CBCMac.cpp */; };
+		E125F84D1824289D00D84CD9 /* CryptoKeyAES.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F84B1824289D00D84CD9 /* CryptoKeyAES.cpp */; };
+		E125F84E1824289D00D84CD9 /* CryptoKeyAES.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F84C1824289D00D84CD9 /* CryptoKeyAES.h */; };
 		E12719C70EEEC16800F61213 /* NavigatorBase.h in Headers */ = {isa = PBXBuildFile; fileRef = E12719C60EEEC16800F61213 /* NavigatorBase.h */; };
 		E12719CA0EEEC21300F61213 /* NavigatorBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E12719C90EEEC21300F61213 /* NavigatorBase.cpp */; };
 		E1271A0B0EEEC77A00F61213 /* WorkerNavigator.h in Headers */ = {isa = PBXBuildFile; fileRef = E1271A0A0EEEC77A00F61213 /* WorkerNavigator.h */; };
@@ -12501,6 +12509,14 @@
 		E125F8331822F18A00D84CD9 /* CryptoKeyHMAC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoKeyHMAC.cpp; path = keys/CryptoKeyHMAC.cpp; sourceTree = "<group>"; };
 		E125F8341822F18A00D84CD9 /* CryptoKeyHMAC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CryptoKeyHMAC.h; path = keys/CryptoKeyHMAC.h; sourceTree = "<group>"; };
 		E125F8371822F1EB00D84CD9 /* CryptoAlgorithmHMACMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoAlgorithmHMACMac.cpp; path = mac/CryptoAlgorithmHMACMac.cpp; sourceTree = "<group>"; };
+		E125F8391824104800D84CD9 /* CryptoAlgorithmAesCbcParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAesCbcParams.h; sourceTree = "<group>"; };
+		E125F83B182411E700D84CD9 /* JSCryptoOperationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoOperationData.cpp; sourceTree = "<group>"; };
+		E125F83C182411E700D84CD9 /* JSCryptoOperationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCryptoOperationData.h; sourceTree = "<group>"; };
+		E125F83F1824253A00D84CD9 /* CryptoAlgorithmAES_CBC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmAES_CBC.cpp; sourceTree = "<group>"; };
+		E125F8401824253A00D84CD9 /* CryptoAlgorithmAES_CBC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAES_CBC.h; sourceTree = "<group>"; };
+		E125F843182425C900D84CD9 /* CryptoAlgorithmAES_CBCMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoAlgorithmAES_CBCMac.cpp; path = mac/CryptoAlgorithmAES_CBCMac.cpp; sourceTree = "<group>"; };
+		E125F84B1824289D00D84CD9 /* CryptoKeyAES.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoKeyAES.cpp; sourceTree = "<group>"; };
+		E125F84C1824289D00D84CD9 /* CryptoKeyAES.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyAES.h; sourceTree = "<group>"; };
 		E12719C60EEEC16800F61213 /* NavigatorBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorBase.h; sourceTree = "<group>"; };
 		E12719C90EEEC21300F61213 /* NavigatorBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorBase.cpp; sourceTree = "<group>"; };
 		E1271A0A0EEEC77A00F61213 /* WorkerNavigator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerNavigator.h; sourceTree = "<group>"; };
@@ -19283,6 +19299,8 @@
 				1C81BA040E97348300266E07 /* JavaScriptCallFrame.h */,
 				E157A8EE18185425009F821D /* JSCryptoAlgorithmBuilder.cpp */,
 				E157A8EF18185425009F821D /* JSCryptoAlgorithmBuilder.h */,
+				E125F83B182411E700D84CD9 /* JSCryptoOperationData.cpp */,
+				E125F83C182411E700D84CD9 /* JSCryptoOperationData.h */,
 				E1C657101815F9DD00256CDD /* JSCryptoAlgorithmDictionary.cpp */,
 				E1C657111815F9DD00256CDD /* JSCryptoAlgorithmDictionary.h */,
 				BCE438A1140C0DBF005E437E /* JSDictionary.cpp */,
@@ -20116,6 +20134,7 @@
 		E172AF71180F343400FBADB9 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				E125F843182425C900D84CD9 /* CryptoAlgorithmAES_CBCMac.cpp */,
 				E125F8371822F1EB00D84CD9 /* CryptoAlgorithmHMACMac.cpp */,
 				E1BB84AC1822CA7400525043 /* CryptoAlgorithmRegistryMac.cpp */,
 				E125F82D1822CFFF00D84CD9 /* CryptoAlgorithmSHA1Mac.cpp */,
@@ -20126,6 +20145,8 @@
 		E172AF7C180F3B0D00FBADB9 /* algorithms */ = {
 			isa = PBXGroup;
 			children = (
+				E125F83F1824253A00D84CD9 /* CryptoAlgorithmAES_CBC.cpp */,
+				E125F8401824253A00D84CD9 /* CryptoAlgorithmAES_CBC.h */,
 				E125F82F1822F11B00D84CD9 /* CryptoAlgorithmHMAC.cpp */,
 				E125F8301822F11B00D84CD9 /* CryptoAlgorithmHMAC.h */,
 				E125F8291822CFEC00D84CD9 /* CryptoAlgorithmSHA1.cpp */,
@@ -20137,6 +20158,8 @@
 		E19DA29D181995CE00088BC8 /* keys */ = {
 			isa = PBXGroup;
 			children = (
+				E125F84B1824289D00D84CD9 /* CryptoKeyAES.cpp */,
+				E125F84C1824289D00D84CD9 /* CryptoKeyAES.h */,
 				E125F8331822F18A00D84CD9 /* CryptoKeyHMAC.cpp */,
 				E125F8341822F18A00D84CD9 /* CryptoKeyHMAC.h */,
 			);
@@ -20146,6 +20169,7 @@
 		E1C657141816015F00256CDD /* parameters */ = {
 			isa = PBXGroup;
 			children = (
+				E125F8391824104800D84CD9 /* CryptoAlgorithmAesCbcParams.h */,
 				E19DA29B18189ADD00088BC8 /* CryptoAlgorithmHmacKeyParams.h */,
 				E1C6571E1816E50300256CDD /* CryptoAlgorithmHmacParams.h */,
 			);
@@ -23715,6 +23739,7 @@
 				9B50B1DE17CD4C0F0087F63C /* FormNamedItem.h in Headers */,
 				1477E7770BF4134A00152872 /* PageCache.h in Headers */,
 				DAED203116F244480070EC0F /* PageConsole.h in Headers */,
+				E125F83E182411E700D84CD9 /* JSCryptoOperationData.h in Headers */,
 				F3820893147D35F90010BC06 /* PageConsoleAgent.h in Headers */,
 				F34742DD134362F000531BC2 /* PageDebuggerAgent.h in Headers */,
 				9302B0BF0D79F82C00C7EE83 /* PageGroup.h in Headers */,
@@ -23821,6 +23846,7 @@
 				514C76750CE923A1007EF3CD /* ProtectionSpace.h in Headers */,
 				51A052561058874000CC9E95 /* ProtectionSpaceHash.h in Headers */,
 				1AF8E11A1256592600230FF7 /* ProxyServer.h in Headers */,
+				E125F84E1824289D00D84CD9 /* CryptoKeyAES.h in Headers */,
 				FF945ECC161F7F3600971BC8 /* PseudoElement.h in Headers */,
 				0081FF0016B0A2D3008AAA7A /* PublicSuffix.h in Headers */,
 				10FB084B14E15C7E00A3DB98 /* PublicURLManager.h in Headers */,
@@ -23830,6 +23856,7 @@
 				379E371713736A6600B9E919 /* QuotedPrintable.h in Headers */,
 				5A574F29131DB96D00471B88 /* QuotesData.h in Headers */,
 				B22279720D00BF220071B782 /* RadialGradientAttributes.h in Headers */,
+				E125F8421824253A00D84CD9 /* CryptoAlgorithmAES_CBC.h in Headers */,
 				F55B3DCC1251F12D003EF269 /* RadioInputType.h in Headers */,
 				B658FFA61522EFAA00DD5595 /* RadioNodeList.h in Headers */,
 				93F1991808245E59001E9ABC /* Range.h in Headers */,
@@ -24794,6 +24821,7 @@
 				14476AA815DC4BB100305DB2 /* WritingMode.h in Headers */,
 				6565820209D1508D000E61D7 /* XLinkNames.h in Headers */,
 				00B9318813BA8DBA0035A948 /* XMLDocumentParser.h in Headers */,
+				E125F83A1824104800D84CD9 /* CryptoAlgorithmAesCbcParams.h in Headers */,
 				00B9318C13BA8DCC0035A948 /* XMLDocumentParserScope.h in Headers */,
 				59C28046138DC2410079B7E2 /* XMLErrors.h in Headers */,
 				BC772C470C4EB2C60083285F /* XMLHttpRequest.h in Headers */,
@@ -25610,6 +25638,7 @@
 				07C59B6817F784BA000FBCBB /* MediaSourceStates.cpp in Sources */,
 				859A9C4A0AA5E3BD00B694B2 /* DOMHTMLBodyElement.mm in Sources */,
 				85183B430AA6926100F19FA3 /* DOMHTMLBRElement.mm in Sources */,
+				E125F84D1824289D00D84CD9 /* CryptoKeyAES.cpp in Sources */,
 				85BA4CDE0AA6861B0088052D /* DOMHTMLButtonElement.mm in Sources */,
 				93F9B6570BA0F35E00854064 /* DOMHTMLCanvasElement.mm in Sources */,
 				85DF2F8F0AA3C88100AD64C5 /* DOMHTMLCollection.mm in Sources */,
@@ -26330,6 +26359,7 @@
 				511EF2C717F0FD3500E4FA16 /* JSIDBObjectStore.cpp in Sources */,
 				BC94D14E0C275C68006BC617 /* JSHistory.cpp in Sources */,
 				BCE7B1930D4E86960075A539 /* JSHistoryCustom.cpp in Sources */,
+				E125F83D182411E700D84CD9 /* JSCryptoOperationData.cpp in Sources */,
 				BC97E412109154FA0010D361 /* JSHTMLAllCollection.cpp in Sources */,
 				BC97E42C10915B060010D361 /* JSHTMLAllCollectionCustom.cpp in Sources */,
 				1A4A2DEF0A1B852A00C807F8 /* JSHTMLAnchorElement.cpp in Sources */,
@@ -27647,6 +27677,7 @@
 				97BC84831236FD93000C6161 /* TextDocumentParser.cpp in Sources */,
 				B2C3DA460D006C1D00EF6F26 /* TextEncoding.cpp in Sources */,
 				C105DA620F3AA68F001DD44F /* TextEncodingDetectorICU.cpp in Sources */,
+				E125F8411824253A00D84CD9 /* CryptoAlgorithmAES_CBC.cpp in Sources */,
 				B2C3DA480D006C1D00EF6F26 /* TextEncodingRegistry.cpp in Sources */,
 				933A142E0B7D188600A53FFD /* TextEvent.cpp in Sources */,
 				F55B3DD71251F12D003EF269 /* TextFieldInputType.cpp in Sources */,
@@ -27719,6 +27750,7 @@
 				FD3160AE12B026F700C1A359 /* VectorMath.cpp in Sources */,
 				BE88E0DE1715D2A200658D98 /* VideoTrack.cpp in Sources */,
 				BE88E0E11715D2A200658D98 /* VideoTrackList.cpp in Sources */,
+				E125F845182425C900D84CD9 /* CryptoAlgorithmAES_CBCMac.cpp in Sources */,
 				CEF418CE1179678C009D112C /* ViewportArguments.cpp in Sources */,
 				3FFFF9AD159D9B060020BBD5 /* ViewportStyleResolver.cpp in Sources */,
 				93309E1F099E64920056E581 /* VisiblePosition.cpp in Sources */,
