@@ -1,3 +1,13 @@
+2013-11-02  Andreas Kling  <akling@apple.com>
+
+        StringImpl::upper() should return PassRef.
+        <https://webkit.org/b/123655>
+
+        Make upper() return PassRef<StringImpl>. Spotted and removed some
+        ref churning in implementations.
+
+        Reviewed by Darin Adler.
+
 2013-11-01  Alexey Proskuryakov  <ap@apple.com>
 
         Add WebCrypto AES-CBC

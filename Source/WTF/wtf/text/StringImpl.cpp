@@ -468,7 +468,7 @@ SlowPath8bitLower:
     return newImpl.releaseNonNull();
 }
 
-PassRefPtr<StringImpl> StringImpl::upper()
+PassRef<StringImpl> StringImpl::upper()
 {
     // This function could be optimized for no-op cases the way lower() is,
     // but in empirical testing, few actual calls to upper() are no-ops, so
@@ -497,7 +497,7 @@ PassRefPtr<StringImpl> StringImpl::upper()
 #endif
         }
         if (!(ored & ~0x7F))
-            return newImpl.release();
+            return newImpl.releaseNonNull();
 
         // Do a slower implementation for cases that include non-ASCII Latin-1 characters.
         int numberSharpSCharacters = 0;
@@ -519,7 +519,7 @@ PassRefPtr<StringImpl> StringImpl::upper()
         }
 
         if (!numberSharpSCharacters)
-            return newImpl.release();
+            return newImpl.releaseNonNull();
 
         // We have numberSSCharacters sharp-s characters, but none of the other special characters.
         newImpl = createUninitialized(m_length + numberSharpSCharacters, data8);
@@ -537,7 +537,7 @@ PassRefPtr<StringImpl> StringImpl::upper()
             }
         }
 
-        return newImpl.release();
+        return newImpl.releaseNonNull();
     }
 
 upconvert:
@@ -554,19 +554,19 @@ upconvert:
         data16[i] = toASCIIUpper(c);
     }
     if (!(ored & ~0x7F))
-        return newImpl.release();
+        return newImpl.releaseNonNull();
 
     // Do a slower implementation for cases that include non-ASCII characters.
     UErrorCode status = U_ZERO_ERROR;
     int32_t realLength = u_strToUpper(data16, length, source16, m_length, "", &status);
     if (U_SUCCESS(status) && realLength == length)
-        return newImpl;
+        return newImpl.releaseNonNull();
     newImpl = createUninitialized(realLength, data16);
     status = U_ZERO_ERROR;
     u_strToUpper(data16, realLength, source16, m_length, "", &status);
     if (U_FAILURE(status))
-        return this;
-    return newImpl.release();
+        return *this;
+    return newImpl.releaseNonNull();
 }
 
 static inline bool needsTurkishCasingRules(const AtomicString& localeIdentifier)
@@ -614,7 +614,7 @@ PassRef<StringImpl> StringImpl::lower(const AtomicString& localeIdentifier)
     return newString.releaseNonNull();
 }
 
-RefPtr<StringImpl> StringImpl::upper(const AtomicString& localeIdentifier)
+PassRef<StringImpl> StringImpl::upper(const AtomicString& localeIdentifier)
 {
     // Use the more-optimized code path most of the time.
     // Assuming here that the only locale-specific lowercasing is the Turkish casing rules,
@@ -635,13 +635,13 @@ RefPtr<StringImpl> StringImpl::upper(const AtomicString& localeIdentifier)
     UErrorCode status = U_ZERO_ERROR;
     int realLength = u_strToUpper(data16, length, source16, length, "tr", &status);
     if (U_SUCCESS(status) && realLength == length)
-        return newString;
+        return newString.releaseNonNull();
     newString = createUninitialized(realLength, data16);
     status = U_ZERO_ERROR;
     u_strToUpper(data16, realLength, source16, length, "tr", &status);
     if (U_FAILURE(status))
-        return this;
-    return newString.release();
+        return *this;
+    return newString.releaseNonNull();
 }
 
 PassRefPtr<StringImpl> StringImpl::fill(UChar character)
