@@ -121,7 +121,7 @@ void MediaStreamCenterMac::createMediaStream(PassRefPtr<MediaStreamCreationClien
         videoSources.append(videoSource.release());
     }
     
-    client->didCreateStream(MediaStreamDescriptor::create(audioSources, videoSources, MediaStreamDescriptor::IsNotEnded));
+    client->didCreateStream(MediaStreamDescriptor::create(audioSources, videoSources));
 }
 
 bool MediaStreamCenterMac::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient> prpClient)

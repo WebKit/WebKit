@@ -1,3 +1,15 @@
+2013-11-01  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Fixing mac code to use new MediaStreamDescriptor create method
+        https://bugs.webkit.org/show_bug.cgi?id=123653
+
+        Reviewed by Eric Carlson.
+
+        No new tests needed.
+
+        * platform/mediastream/mac/MediaStreamCenterMac.cpp:
+        (WebCore::MediaStreamCenterMac::createMediaStream):
+
 2013-11-01  Andreas Kling  <akling@apple.com>
 
         Re-use existing RenderStyle local in textWidth().
