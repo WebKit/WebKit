@@ -192,11 +192,11 @@ bool RemoteLayerBackingStore::display()
         return previouslyDrewContents;
     }
 
-    if (!hasFrontBuffer())
-        m_dirtyRegion.unite(IntRect(IntPoint(), m_size));
-
     if (m_dirtyRegion.isEmpty() || m_size.isEmpty())
         return false;
+
+    if (!hasFrontBuffer())
+        m_dirtyRegion.unite(IntRect(IntPoint(), m_size));
 
     if (m_layer->owner()->platformCALayerShowRepaintCounter(m_layer)) {
         IntRect indicatorRect = mapToContentCoordinates(IntRect(0, 0, 52, 27));
@@ -289,6 +289,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
         case PlatformCALayer::LayerTypeRootLayer:
         case PlatformCALayer::LayerTypeAVPlayerLayer:
         case PlatformCALayer::LayerTypeCustom:
+            ASSERT_NOT_REACHED();
             break;
     };
 
