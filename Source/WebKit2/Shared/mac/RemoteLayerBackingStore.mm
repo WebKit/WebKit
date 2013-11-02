@@ -36,10 +36,8 @@
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/WebLayer.h>
 
-#ifdef __has_include
-#if __has_include(<ApplicationServices/ApplicationServicesPriv.h>)
+#if defined(__has_include) && __has_include(<ApplicationServices/ApplicationServicesPriv.h>)
 #import <ApplicationServices/ApplicationServicesPriv.h>
-#endif
 #endif
 
 extern "C" {
@@ -149,10 +147,10 @@ static RetainPtr<IOSurfaceRef> createIOSurface(IntSize size)
     int width = size.width();
     int height = size.height();
 
-    unsigned long bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * bytesPerElement);
+    size_t bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * bytesPerElement);
     ASSERT(bytesPerRow);
 
-    unsigned long allocSize = IOSurfaceAlignProperty(kIOSurfaceAllocSize, height * bytesPerRow);
+    size_t allocSize = IOSurfaceAlignProperty(kIOSurfaceAllocSize, height * bytesPerRow);
     ASSERT(allocSize);
 
     NSDictionary *dict = @{
@@ -207,43 +205,43 @@ bool RemoteLayerBackingStore::display()
     scaledSize.scale(m_scale);
     IntSize expandedScaledSize = expandedIntSize(scaledSize);
 
-    std::unique_ptr<GraphicsContext> context;
-    RefPtr<ShareableBitmap> backBuffer;
-    RetainPtr<IOSurfaceRef> backSurface;
-
     if (m_acceleratesDrawing) {
-        backSurface = createIOSurface(expandedScaledSize);
+        RetainPtr<IOSurfaceRef> backSurface = createIOSurface(expandedScaledSize);
         RetainPtr<CGContextRef> cgContext = createIOSurfaceContext(backSurface.get(), expandedScaledSize, sRGBColorSpaceRef());
-        context = std::make_unique<GraphicsContext>(cgContext.get());
-        CGContextClearRect(cgContext.get(), CGRectMake(0, 0, expandedScaledSize.width(), expandedScaledSize.height()));
-        context->scale(FloatSize(1, -1));
-        context->translate(0, -expandedScaledSize.height());
-    } else {
-        backBuffer = ShareableBitmap::createShareable(expandedIntSize(scaledSize), ShareableBitmap::SupportsAlpha);
-        context = backBuffer->createGraphicsContext();
-    }
+        GraphicsContext context(cgContext.get());
+        context.clearRect(FloatRect(FloatPoint(), expandedScaledSize));
+        context.scale(FloatSize(1, -1));
+        context.translate(0, -expandedScaledSize.height());
 
-    drawInContext(*context);
+        RetainPtr<CGContextRef> frontContext;
+        RetainPtr<CGImageRef> frontImage;
+        if (m_frontSurface) {
+            frontContext = createIOSurfaceContext(m_frontSurface.get(), expandedIntSize(m_size * m_scale), sRGBColorSpaceRef());
+            frontImage = adoptCF(CGIOSurfaceContextCreateImage(frontContext.get()));
+        }
 
-    if (m_acceleratesDrawing)
+        drawInContext(context, frontImage.get());
         m_frontSurface = backSurface;
-    else
-        m_frontBuffer = backBuffer;
+
+        // If our frontImage is derived from an IOSurface, we need to
+        // destroy the image before the CGContext it's derived from,
+        // so that the context doesn't make a CPU copy of the surface data.
+        if (frontImage) {
+            frontImage = nullptr;
+            ASSERT(frontContext);
+        }
+    } else {
+        RetainPtr<CGImageRef> frontImage = image();
+        m_frontBuffer = ShareableBitmap::createShareable(expandedIntSize(scaledSize), ShareableBitmap::SupportsAlpha);
+        std::unique_ptr<GraphicsContext> context = m_frontBuffer->createGraphicsContext();
+        drawInContext(*context, frontImage.get());
+    }
 
     return true;
 }
 
-void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
+void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef frontImage)
 {
-    RetainPtr<CGImageRef> frontImage;
-    RetainPtr<CGContextRef> frontContext;
-
-    if (m_acceleratesDrawing) {
-        frontContext = createIOSurfaceContext(m_frontSurface.get(), expandedIntSize(m_size * m_scale), sRGBColorSpaceRef());
-        frontImage = adoptCF(CGIOSurfaceContextCreateImage(frontContext.get()));
-    } else
-        frontImage = image();
-
     Vector<IntRect> dirtyRects = m_dirtyRegion.rects();
 
     // If we have less than webLayerMaxRectsToPaint rects to paint and they cover less
@@ -259,8 +257,8 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
             for (const auto& rect : cleanRegion.rects()) {
                 FloatRect scaledRect = rect;
                 scaledRect.scale(m_scale);
-                FloatSize imageSize(CGImageGetWidth(frontImage.get()), CGImageGetHeight(frontImage.get()));
-                context.drawNativeImage(frontImage.get(), imageSize, ColorSpaceDeviceRGB, scaledRect, scaledRect);
+                FloatSize imageSize(CGImageGetWidth(frontImage), CGImageGetHeight(frontImage));
+                context.drawNativeImage(frontImage, imageSize, ColorSpaceDeviceRGB, scaledRect, scaledRect);
             }
         }
 
@@ -296,12 +294,6 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
     m_dirtyRegion = Region();
 
     CGContextFlush(context.platformContext());
-
-    // If our frontImage is derived from an IOSurface, we need to
-    // destroy the image before the CGContext it's derived from,
-    // so that the context doesn't make a CPU copy of the surface data.
-    frontImage = nullptr;
-    frontContext = nullptr;
 }
 
 #endif // USE(ACCELERATED_COMPOSITING)

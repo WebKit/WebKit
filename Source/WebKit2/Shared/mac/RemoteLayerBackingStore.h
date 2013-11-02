@@ -64,7 +64,7 @@ private:
     bool hasFrontBuffer() { return m_acceleratesDrawing ? !!m_frontSurface : !!m_frontBuffer; }
 
     std::unique_ptr<WebCore::GraphicsContext> createBackingStore();
-    void drawInContext(WebCore::GraphicsContext&);
+    void drawInContext(WebCore::GraphicsContext&, CGImageRef frontImage);
 
     PlatformCALayerRemote* m_layer;
 

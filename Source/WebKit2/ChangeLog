@@ -1,3 +1,33 @@
+2013-11-02  Tim Horton  <timothy_horton@apple.com>
+
+        Address some review comments noted in r158463
+        https://bugs.webkit.org/show_bug.cgi?id=123646
+
+        Reviewed by Darin Adler.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        Put our __has_include ifs all on one line.
+
+        (createIOSurface):
+        IOSurfaceAlignProperty returns size_t, not unsigned long.
+
+        (RemoteLayerBackingStore::display):
+        (RemoteLayerBackingStore::drawInContext):
+        Create the frontImage in display() and hand it to drawInContext().
+
+        Use the GraphicsContext API instead of CG itself for clearRect().
+
+        When using ShareableBitmap, replace m_frontBuffer instead of
+        having a backBuffer local; the CGImageRef will retain the
+        ShareableBitmap it references.
+
+        Duplicate our drawInContext() calls so we don't have to allocate
+        a GraphicsContext on the heap in the IOSurface case.
+
+        Don't bother clearing frontContext; it'll happen for us at
+        the appropriate time. Instead, assert that it's still alive after
+        we drop our reference to the frontImage created from it.
+
 2013-11-02  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] invalid use of incomplete type 'class WTF::PassOwnPtr<WTF::Vector<unsigned char> >'
