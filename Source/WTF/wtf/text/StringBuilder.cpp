@@ -55,9 +55,10 @@ void StringBuilder::reifyString() const
 
     // Must be valid in the buffer, take a substring (unless string fills the buffer).
     ASSERT(m_buffer && m_length <= m_buffer->length());
-    m_string = (m_length == m_buffer->length())
-        ? m_buffer.get()
-        : StringImpl::create(m_buffer, 0, m_length);
+    if (m_length == m_buffer->length())
+        m_string = m_buffer.get();
+    else
+        m_string = StringImpl::create(m_buffer, 0, m_length);
 
     if (m_buffer->has16BitShadow() && m_valid16BitShadowLength < m_length)
         m_buffer->upconvertCharacters(m_valid16BitShadowLength, m_length);

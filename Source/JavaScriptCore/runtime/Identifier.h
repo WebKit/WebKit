@@ -169,11 +169,11 @@ namespace JSC {
         static void translate(StringImpl*& location, const CharBuffer<T>& buf, unsigned hash)
         {
             T* d;
-            StringImpl* r = StringImpl::createUninitialized(buf.length, d).leakRef();
+            StringImpl& r = StringImpl::createUninitialized(buf.length, d).leakRef();
             for (unsigned i = 0; i != buf.length; i++)
                 d[i] = buf.s[i];
-            r->setHash(hash);
-            location = r; 
+            r.setHash(hash);
+            location = &r;
         }
     };
 

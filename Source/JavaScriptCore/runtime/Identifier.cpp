@@ -81,10 +81,10 @@ struct IdentifierLCharFromUCharTranslator {
     static void translate(StringImpl*& location, const CharBuffer<UChar>& buf, unsigned hash)
     {
         LChar* d;
-        StringImpl* r = StringImpl::createUninitialized(buf.length, d).leakRef();
+        StringImpl& r = StringImpl::createUninitialized(buf.length, d).leakRef();
         WTF::copyLCharsFromUCharSource(d, buf.s, buf.length);
-        r->setHash(hash);
-        location = r; 
+        r.setHash(hash);
+        location = &r;
     }
 };
 

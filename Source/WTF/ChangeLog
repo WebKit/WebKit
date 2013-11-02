@@ -1,5 +1,16 @@
 2013-11-02  Andreas Kling  <akling@apple.com>
 
+        Make remaining StringImpl functions return PassRef.
+        <https://webkit.org/b/123683>
+
+        Okay, this seems to work well! Let's go all in and convert the
+        remaining StringImpl functions to return PassRef<StringImpl> instead
+        of PassRefPtr where we know that null is never returned.
+
+        Reviewed by Anders Carlsson.
+
+2013-11-02  Andreas Kling  <akling@apple.com>
+
         StringImpl::upper() should return PassRef.
         <https://webkit.org/b/123655>
 
