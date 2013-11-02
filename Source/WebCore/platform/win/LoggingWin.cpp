@@ -38,6 +38,9 @@ static char * const loggingEnvironmentVariable = "WebCoreLogging";
 
 String logLevelString()
 {
+#if OS(WINCE)
+    return emptyString();
+#else
     DWORD length = GetEnvironmentVariableA(loggingEnvironmentVariable, 0, 0);
     if (!length)
         return emptyString();
@@ -48,6 +51,7 @@ String logLevelString()
         return emptyString();
 
     return String(buffer.get());
+#endif
 }
 
 } // namespace WebCore

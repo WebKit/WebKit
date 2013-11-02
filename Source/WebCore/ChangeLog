@@ -1,5 +1,19 @@
 2013-11-02  Patrick Gansterer  <paroga@webkit.org>
 
+        Port LoggingWin.cpp to WinCE
+        https://bugs.webkit.org/show_bug.cgi?id=123678
+
+        Reviewed by Darin Adler.
+
+        This makes it easier to use a common list of files
+        for the different Windows ports later.
+
+        * PlatformWin.cmake:
+        * platform/win/LoggingWin.cpp:
+        (WebCore::logLevelString):
+
+2013-11-02  Patrick Gansterer  <paroga@webkit.org>
+
         Fix UnicodeWchar after r157330.
         https://bugs.webkit.org/show_bug.cgi?id=123668
 
