@@ -348,9 +348,9 @@ public:
     }
     WTF_EXPORT_STRING_API static PassRef<StringImpl> create8BitIfPossible(const UChar*);
 
-    ALWAYS_INLINE static PassRefPtr<StringImpl> create(const char* s, unsigned length) { return create(reinterpret_cast<const LChar*>(s), length); }
-    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> create(const LChar*);
-    ALWAYS_INLINE static PassRefPtr<StringImpl> create(const char* s) { return create(reinterpret_cast<const LChar*>(s)); }
+    ALWAYS_INLINE static PassRef<StringImpl> create(const char* s, unsigned length) { return create(reinterpret_cast<const LChar*>(s), length); }
+    WTF_EXPORT_STRING_API static PassRef<StringImpl> create(const LChar*);
+    ALWAYS_INLINE static PassRef<StringImpl> create(const char* s) { return create(reinterpret_cast<const LChar*>(s)); }
 
     static ALWAYS_INLINE PassRefPtr<StringImpl> create8(PassRefPtr<StringImpl> rep, unsigned offset, unsigned length)
     {
@@ -380,7 +380,7 @@ public:
     }
 
     template<unsigned charactersCount>
-    ALWAYS_INLINE static PassRefPtr<StringImpl> createFromLiteral(const char (&characters)[charactersCount])
+    ALWAYS_INLINE static PassRef<StringImpl> createFromLiteral(const char (&characters)[charactersCount])
     {
         COMPILE_ASSERT(charactersCount > 1, StringImplFromLiteralNotEmpty);
         COMPILE_ASSERT((charactersCount - 1 <= ((unsigned(~0) - sizeof(StringImpl)) / sizeof(LChar))), StringImplFromLiteralCannotOverflow);
@@ -389,8 +389,8 @@ public:
     }
 
     // FIXME: Transition off of these functions to createWithoutCopying instead.
-    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> createFromLiteral(const char* characters, unsigned length);
-    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> createFromLiteral(const char* characters);
+    WTF_EXPORT_STRING_API static PassRef<StringImpl> createFromLiteral(const char* characters, unsigned length);
+    WTF_EXPORT_STRING_API static PassRef<StringImpl> createFromLiteral(const char* characters);
 
     WTF_EXPORT_STRING_API static PassRef<StringImpl> createWithoutCopying(const UChar* characters, unsigned length);
     WTF_EXPORT_STRING_API static PassRef<StringImpl> createWithoutCopying(const LChar* characters, unsigned length);

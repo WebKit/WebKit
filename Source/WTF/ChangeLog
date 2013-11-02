@@ -1,5 +1,15 @@
 2013-11-01  Andreas Kling  <akling@apple.com>
 
+        Make more StringImpl construction helpers return PassRef.
+        <https://webkit.org/b/123652>
+
+        Tweak another handful of StringImpl constructor functions to return
+        PassRef<StringImpl> instead of PassRefPtr.
+
+        Reviewed by Anders Carlsson.
+
+2013-11-01  Andreas Kling  <akling@apple.com>
+
         Neuter WTF_MAKE_FAST_ALLOCATED in GLOBAL_FASTMALLOC_NEW builds.
         <https://webkit.org/b/123639>
 

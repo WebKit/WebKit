@@ -75,13 +75,15 @@ String::String(const char* characters, unsigned length)
 
 // Construct a string with latin1 data, from a null-terminated source.
 String::String(const LChar* characters)
-    : m_impl(characters ? StringImpl::create(characters) : 0)
 {
+    if (characters)
+        m_impl = StringImpl::create(characters);
 }
 
 String::String(const char* characters)
-    : m_impl(characters ? StringImpl::create(reinterpret_cast<const LChar*>(characters)) : 0)
 {
+    if (characters)
+        m_impl = StringImpl::create(reinterpret_cast<const LChar*>(characters));
 }
 
 String::String(ASCIILiteral characters)

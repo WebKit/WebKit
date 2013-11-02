@@ -149,14 +149,14 @@ void StringImpl::destroy(StringImpl* stringImpl)
     fastFree(stringImpl);
 }
 
-PassRefPtr<StringImpl> StringImpl::createFromLiteral(const char* characters, unsigned length)
+PassRef<StringImpl> StringImpl::createFromLiteral(const char* characters, unsigned length)
 {
     ASSERT_WITH_MESSAGE(length, "Use StringImpl::empty() to create an empty string");
     ASSERT(charactersAreAllASCII<LChar>(reinterpret_cast<const LChar*>(characters), length));
-    return adoptRef(new StringImpl(reinterpret_cast<const LChar*>(characters), length, ConstructWithoutCopying));
+    return adoptRef(*new StringImpl(reinterpret_cast<const LChar*>(characters), length, ConstructWithoutCopying));
 }
 
-PassRefPtr<StringImpl> StringImpl::createFromLiteral(const char* characters)
+PassRef<StringImpl> StringImpl::createFromLiteral(const char* characters)
 {
     return createFromLiteral(characters, strlen(characters));
 }
@@ -292,10 +292,10 @@ PassRef<StringImpl> StringImpl::create8BitIfPossible(const UChar* string)
     return StringImpl::create8BitIfPossible(string, lengthOfNullTerminatedString(string));
 }
 
-PassRefPtr<StringImpl> StringImpl::create(const LChar* string)
+PassRef<StringImpl> StringImpl::create(const LChar* string)
 {
     if (!string)
-        return empty();
+        return *empty();
     size_t length = strlen(reinterpret_cast<const char*>(string));
     if (length > numeric_limits<unsigned>::max())
         CRASH();
