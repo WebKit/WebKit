@@ -1,3 +1,19 @@
+2013-11-01  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Removing unnecessary early returns in addTrack, removeTrack and removeRemoteSource methods
+        https://bugs.webkit.org/show_bug.cgi?id=123644
+
+        Reviewed by Eric Carlson.
+
+        No new tests needed.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::addTrack):
+        (WebCore::MediaStream::removeTrack):
+        (WebCore::MediaStream::removeRemoteSource):
+        (WebCore::MediaStream::trackVectorForType):
+        * Modules/mediastream/MediaStream.h:
+
 2013-11-01  Andreas Kling  <akling@apple.com>
 
         CSSAspectRatioValue construction helper should return PassRef.

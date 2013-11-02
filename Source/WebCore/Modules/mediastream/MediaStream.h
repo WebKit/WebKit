@@ -110,7 +110,7 @@ private:
 
     void cloneMediaStreamTrackVector(MediaStreamTrackVector&, const MediaStreamTrackVector&);
 
-    MediaStreamTrackVector* getTrackVectorForType(MediaStreamSource::Type);
+    MediaStreamTrackVector* trackVectorForType(MediaStreamSource::Type);
 
     RefPtr<MediaStreamDescriptor> m_descriptor;
     MediaStreamTrackVector m_audioTracks;

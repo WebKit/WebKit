@@ -163,10 +163,7 @@ bool MediaStream::addTrack(PassRefPtr<MediaStreamTrack> prpTrack)
     if (getTrackById(track->id()))
         return false;
 
-    MediaStreamTrackVector* tracks = getTrackVectorForType(track->source()->type());
-
-    if (!tracks)
-        return false;
+    MediaStreamTrackVector* tracks = trackVectorForType(track->source()->type());
 
     tracks->append(track);
     track->addObserver(this);
@@ -194,10 +191,7 @@ bool MediaStream::removeTrack(PassRefPtr<MediaStreamTrack> prpTrack)
     // This is a common part used by removeTrack called by JavaScript
     // and removeRemoteTrack and only removeRemoteTrack must fire removetrack event
     RefPtr<MediaStreamTrack> track = prpTrack;
-    MediaStreamTrackVector* tracks = getTrackVectorForType(track->source()->type());
-
-    if (!tracks)
-        return false;
+    MediaStreamTrackVector* tracks = trackVectorForType(track->source()->type());
 
     size_t pos = tracks->find(track);
     if (pos == notFound)
@@ -290,10 +284,7 @@ void MediaStream::removeRemoteSource(MediaStreamSource* source)
     if (ended())
         return;
 
-    Vector<RefPtr<MediaStreamTrack>>* tracks = getTrackVectorForType(source->type());
-
-    if (!tracks)
-        return;
+    Vector<RefPtr<MediaStreamTrack>>* tracks = trackVectorForType(source->type());
 
     for (int i = tracks->size() - 1; i >= 0; --i) {
         if ((*tracks)[i]->source() != source)
@@ -371,21 +362,17 @@ URLRegistry& MediaStream::registry() const
     return MediaStreamRegistry::registry();
 }
 
-MediaStreamTrackVector* MediaStream::getTrackVectorForType(MediaStreamSource::Type type)
+MediaStreamTrackVector* MediaStream::trackVectorForType(MediaStreamSource::Type type)
 {
-    MediaStreamTrackVector* tracks = nullptr;
     switch (type) {
     case MediaStreamSource::Audio:
-        tracks = &m_audioTracks;
-        break;
+        return &m_audioTracks;
     case MediaStreamSource::Video:
-        tracks = &m_videoTracks;
-        break;
+        return &m_videoTracks;
     case MediaStreamSource::None:
         ASSERT_NOT_REACHED();
-        break;
     }
-    return tracks;
+    return nullptr;
 }
 
 } // namespace WebCore
