@@ -30,6 +30,7 @@
 
 #include "NetscapePlugin.h"
 #include <utility>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 using namespace WebCore;
