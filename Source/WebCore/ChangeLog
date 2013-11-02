@@ -1,3 +1,16 @@
+2013-11-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        Manage FileReaderLoader through std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=123666
+
+        Reviewed by Anders Carlsson.
+
+        Construct FileReaderLoader objects through std::make_unique and store them in std::unique_ptr.
+
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::readInternal):
+        * fileapi/FileReader.h:
+
 2013-11-02  Andreas Kling  <akling@apple.com>
 
         Add a child renderer iterator.

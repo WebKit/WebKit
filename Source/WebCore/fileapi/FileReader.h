@@ -121,7 +121,7 @@ private:
     RefPtr<Blob> m_blob;
     FileReaderLoader::ReadType m_readType;
     String m_encoding;
-    OwnPtr<FileReaderLoader> m_loader;
+    std::unique_ptr<FileReaderLoader> m_loader;
     RefPtr<FileError> m_error;
     double m_lastProgressNotificationTimeMS;
 };
