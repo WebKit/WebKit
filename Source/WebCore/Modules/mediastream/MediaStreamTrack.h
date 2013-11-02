@@ -142,8 +142,6 @@ private:
     bool m_stoppingTrack;
 };
 
-typedef Vector<RefPtr<MediaStreamTrack>> MediaStreamTrackVector;
-
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

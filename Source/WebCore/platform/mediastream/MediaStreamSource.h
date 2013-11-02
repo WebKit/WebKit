@@ -122,8 +122,6 @@ private:
     bool m_remote;
 };
 
-typedef Vector<RefPtr<MediaStreamSource>> MediaStreamSourceVector;
-
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

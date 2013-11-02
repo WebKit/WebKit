@@ -1,3 +1,35 @@
+2013-11-01  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Removing MediaStreamTrackVector and MediaStreamSourceVector typedefs
+        https://bugs.webkit.org/show_bug.cgi?id=123648
+
+        Reviewed by Eric Carlson.
+
+        No new tests needed.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::create):
+        (WebCore::MediaStream::clone):
+        (WebCore::MediaStream::cloneMediaStreamTrackVector):
+        (WebCore::MediaStream::addTrack):
+        (WebCore::MediaStream::removeTrack):
+        (WebCore::MediaStream::haveTrackWithSource):
+        (WebCore::MediaStream::getTrackById):
+        (WebCore::MediaStream::trackVectorForType):
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::callSuccessHandler):
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createMediaStreamSource):
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode):
+        * platform/mediastream/MediaStreamDescriptor.cpp:
+        (WebCore::MediaStreamDescriptor::create):
+        (WebCore::MediaStreamDescriptor::MediaStreamDescriptor):
+        * platform/mediastream/MediaStreamDescriptor.h:
+        * platform/mediastream/MediaStreamSource.h:
+
 2013-11-01  Andreas Kling  <akling@apple.com>
 
         createFontFaceValue() should be smarter about overgrown cache.

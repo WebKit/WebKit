@@ -416,7 +416,7 @@ PassRefPtr<MediaStreamAudioSourceNode> AudioContext::createMediaStreamSource(Med
 
     AudioSourceProvider* provider = 0;
 
-    MediaStreamTrackVector audioTracks = mediaStream->getAudioTracks();
+    Vector<RefPtr<MediaStreamTrack>> audioTracks = mediaStream->getAudioTracks();
     // FIXME: get a provider for non-local MediaStreams (like from a remote peer).
     for (size_t i = 0; i < audioTracks.size(); ++i) {
         RefPtr<MediaStreamTrack> localAudio = audioTracks[i];

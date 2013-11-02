@@ -57,7 +57,7 @@ public:
 
 class MediaStreamDescriptor : public RefCounted<MediaStreamDescriptor> {
 public:
-    static PassRefPtr<MediaStreamDescriptor> create(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
+    static PassRefPtr<MediaStreamDescriptor> create(const Vector<RefPtr<MediaStreamSource>>& audioSources, const Vector<RefPtr<MediaStreamSource>>& videoSources);
     static PassRefPtr<MediaStreamDescriptor> create(const Vector<RefPtr<MediaStreamTrackPrivate>>& audioPrivateTracks, const Vector<RefPtr<MediaStreamTrackPrivate>>& videoPrivateTracks);
 
     virtual ~MediaStreamDescriptor() { }
@@ -95,13 +95,13 @@ public:
     void removeRemoteTrack(MediaStreamTrackPrivate*);
 
 private:
-    MediaStreamDescriptor(const String& id, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources);
+    MediaStreamDescriptor(const String& id, const Vector<RefPtr<MediaStreamSource>>& audioSources, const Vector<RefPtr<MediaStreamSource>>& videoSources);
     MediaStreamDescriptor(const String& id, const Vector<RefPtr<MediaStreamTrackPrivate>>& audioPrivateTracks, const Vector<RefPtr<MediaStreamTrackPrivate>>& videoPrivateTracks);
 
     MediaStreamDescriptorClient* m_client;
     String m_id;
-    MediaStreamSourceVector m_audioStreamSources;
-    MediaStreamSourceVector m_videoStreamSources;
+    Vector<RefPtr<MediaStreamSource>> m_audioStreamSources;
+    Vector<RefPtr<MediaStreamSource>> m_videoStreamSources;
 
     Vector<RefPtr<MediaStreamTrackPrivate>> m_audioPrivateTracks;
     Vector<RefPtr<MediaStreamTrackPrivate>> m_videoPrivateTracks;

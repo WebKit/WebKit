@@ -42,7 +42,7 @@ public:
     ~UserMediaClientImpl();
 
     void pageDestroyed();
-    void requestUserMedia(PassRefPtr<WebCore::UserMediaRequest>, const WebCore::MediaStreamSourceVector& audioSources, const WebCore::MediaStreamSourceVector& videoSources);
+    void requestUserMedia(PassRefPtr<WebCore::UserMediaRequest>, const Vector<RefPtr<WebCore::MediaStreamSource>>& audioSources, const Vector<RefPtr<WebCore::MediaStreamSource>>& videoSources);
     void cancelUserMediaRequest(WebCore::UserMediaRequest*);
 
 private:

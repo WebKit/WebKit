@@ -49,9 +49,9 @@ MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode(AudioContext* c
     setNodeType(NodeTypeMediaStreamAudioDestination);
 
     m_source = MediaStreamAudioSource::create();
-    MediaStreamSourceVector audioSources;
+    Vector<RefPtr<MediaStreamSource>> audioSources;
     audioSources.append(m_source);
-    m_stream = MediaStream::create(*context->scriptExecutionContext(), MediaStreamDescriptor::create(audioSources, MediaStreamSourceVector()));
+    m_stream = MediaStream::create(*context->scriptExecutionContext(), MediaStreamDescriptor::create(audioSources, Vector<RefPtr<MediaStreamSource>>()));
 
     m_source->setAudioFormat(numberOfChannels, context->sampleRate());
 

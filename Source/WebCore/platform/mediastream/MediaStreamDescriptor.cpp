@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-PassRefPtr<MediaStreamDescriptor> MediaStreamDescriptor::create(const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
+PassRefPtr<MediaStreamDescriptor> MediaStreamDescriptor::create(const Vector<RefPtr<MediaStreamSource>>& audioSources, const Vector<RefPtr<MediaStreamSource>>& videoSources)
 {
     return adoptRef(new MediaStreamDescriptor(createCanonicalUUIDString(), audioSources, videoSources));
 }
@@ -123,7 +123,7 @@ void MediaStreamDescriptor::removeRemoteTrack(MediaStreamTrackPrivate* track)
         removeTrack(track);
 }
 
-MediaStreamDescriptor::MediaStreamDescriptor(const String& id, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
+MediaStreamDescriptor::MediaStreamDescriptor(const String& id, const Vector<RefPtr<MediaStreamSource>>& audioSources, const Vector<RefPtr<MediaStreamSource>>& videoSources)
     : m_client(0)
     , m_id(id)
     , m_ended(false)

@@ -55,13 +55,13 @@ static PassRefPtr<MediaStreamSource> toMediaStreamSource(const WebMediaStreamSou
 
 static PassRefPtr<MediaStreamDescriptor> toMediaStreamDescriptor(const WebMediaStreamDescriptor& d)
 {
-    MediaStreamSourceVector audioSources;
+    Vector<RefPtr<MediaStreamSource>> audioSources;
     for (size_t i = 0; i < d.audios().size(); i++) {
         RefPtr<MediaStreamSource> src = toMediaStreamSource(d.audios()[i]);
         audioSources.append(src.release());
     }
 
-    MediaStreamSourceVector videoSources;
+    Vector<RefPtr<MediaStreamSource>> videoSources;
     for (size_t i = 0; i < d.videos().size(); i++) {
         RefPtr<MediaStreamSource> src = toMediaStreamSource(d.videos()[i]);
         videoSources.append(src.release());
@@ -113,7 +113,7 @@ void UserMediaClientImpl::pageDestroyed()
     delete this;
 }
 
-void UserMediaClientImpl::requestUserMedia(PassRefPtr<UserMediaRequest> prpRequest, const MediaStreamSourceVector&, const MediaStreamSourceVector&)
+void UserMediaClientImpl::requestUserMedia(PassRefPtr<UserMediaRequest> prpRequest, const Vector<RefPtr<MediaStreamSource>>&, const Vector<RefPtr<MediaStreamSource>>&)
 {
     UserMediaRequest* request = prpRequest.get();
     OwnPtr<WebUserMediaRequestClientImpl> requestClient = adoptPtr(new WebUserMediaRequestClientImpl(prpRequest));
