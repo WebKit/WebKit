@@ -32,6 +32,7 @@
 
 #include "GraphicsContext.h"
 #include "PaintInfo.h"
+#include "RenderIterator.h"
 #include "RenderMathMLRow.h"
 
 using namespace std;
@@ -185,11 +186,9 @@ RenderBox* RenderMathMLRoot::index() const
 
 void RenderMathMLRoot::layout()
 {
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (!child->isBox())
-            continue;
-        toRenderBox(child)->layoutIfNeeded();
-    }
+    auto boxChildren = childrenOfType<RenderBox>(*this);
+    for (auto box = boxChildren.begin(), end = boxChildren.end(); box != end; ++box)
+        box->layoutIfNeeded();
 
     int baseHeight = firstChild() && firstChild()->isBox() ? roundToInt(toRenderBox(firstChild())->logicalHeight()) : style().fontSize();
     int frontWidth = lroundf(gFrontWidthEms * style().fontSize());

@@ -1,3 +1,14 @@
+2013-11-02  Andreas Kling  <akling@apple.com>
+
+        Use RenderChildIterator in a couple of places.
+        <https://webkit.org/b/123684>
+
+        Added isRendererOfType() for RenderBox and RenderBlock and switch
+        some loops over to using childrenOfType<>. Also sprinkled const
+        and references on touched code.
+
+        Reviewed by Antti Koivisto.
+
 2013-11-02  Zan Dobersek  <zdobersek@igalia.com>
 
         Manage FileReaderLoader through std::unique_ptr

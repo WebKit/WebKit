@@ -671,10 +671,9 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     info.phase = paintPhase;
     info.updateSubtreePaintRootForChildren(this);
 
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (!child->isBox())
-            continue;
-        RenderBox& box = toRenderBox(*child);
+    auto boxChildren = childrenOfType<RenderBox>(*this);
+    for (auto child = boxChildren.begin(), end = boxChildren.end(); child != end; ++child) {
+        RenderBox& box = *child;
         if (!box.hasSelfPaintingLayer() && (box.isTableSection() || box.isTableCaption())) {
             LayoutPoint childPoint = flipForWritingModeForChild(&box, paintOffset);
             box.paint(info, childPoint);

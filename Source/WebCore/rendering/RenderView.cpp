@@ -37,6 +37,7 @@
 #include "ImageQualityController.h"
 #include "Page.h"
 #include "RenderGeometryMap.h"
+#include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderNamedFlowThread.h"
@@ -303,10 +304,10 @@ void RenderView::layout()
     bool relayoutChildren = !shouldUsePrintingLayout() && (width() != viewWidth() || height() != viewHeight());
     if (relayoutChildren) {
         setChildNeedsLayout(MarkOnlyThis);
-        for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-            if (!child->isBox())
-                continue;
-            RenderBox& box = toRenderBox(*child);
+
+        auto boxChildren = childrenOfType<RenderBox>(*this);
+        for (auto child = boxChildren.begin(), end = boxChildren.end(); child != end; ++child) {
+            RenderBox& box = *child;
             if (box.hasRelativeLogicalHeight()
                 || box.hasViewportPercentageLogicalHeight()
                 || box.style().logicalHeight().isPercent()

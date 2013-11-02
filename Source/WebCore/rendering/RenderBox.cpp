@@ -45,6 +45,7 @@
 #include "RenderFlowThread.h"
 #include "RenderGeometryMap.h"
 #include "RenderInline.h"
+#include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderRegion.h"
 #include "RenderTableCell.h"
@@ -1280,10 +1281,10 @@ bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) c
     return backgroundRect.contains(localRect);
 }
 
-static bool isCandidateForOpaquenessTest(RenderBox* childBox)
+static bool isCandidateForOpaquenessTest(const RenderBox& childBox)
 {
-    const RenderStyle& childStyle = childBox->style();
-    if (childStyle.position() != StaticPosition && childBox->containingBlock() != childBox->parent())
+    const RenderStyle& childStyle = childBox.style();
+    if (childStyle.position() != StaticPosition && childBox.containingBlock() != childBox.parent())
         return false;
     if (childStyle.visibility() != VISIBLE)
         return false;
@@ -1291,9 +1292,9 @@ static bool isCandidateForOpaquenessTest(RenderBox* childBox)
     if (childStyle.shapeOutside())
         return false;
 #endif
-    if (!childBox->width() || !childBox->height())
+    if (!childBox.width() || !childBox.height())
         return false;
-    if (RenderLayer* childLayer = childBox->layer()) {
+    if (RenderLayer* childLayer = childBox.layer()) {
 #if USE(ACCELERATED_COMPOSITING)
         if (childLayer->isComposited())
             return false;
@@ -1311,28 +1312,27 @@ bool RenderBox::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, u
 {
     if (!maxDepthToTest)
         return false;
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (!child->isBox())
-            continue;
-        RenderBox* childBox = toRenderBox(child);
+    auto boxChildren = childrenOfType<RenderBox>(*this);
+    for (auto child = boxChildren.begin(), end = boxChildren.end(); child != end; ++child) {
+        const RenderBox& childBox = *child;
         if (!isCandidateForOpaquenessTest(childBox))
             continue;
-        LayoutPoint childLocation = childBox->location();
-        if (childBox->isRelPositioned())
-            childLocation.move(childBox->relativePositionOffset());
+        LayoutPoint childLocation = childBox.location();
+        if (childBox.isRelPositioned())
+            childLocation.move(childBox.relativePositionOffset());
         LayoutRect childLocalRect = localRect;
         childLocalRect.moveBy(-childLocation);
         if (childLocalRect.y() < 0 || childLocalRect.x() < 0) {
             // If there is unobscured area above/left of a static positioned box then the rect is probably not covered.
-            if (childBox->style().position() == StaticPosition)
+            if (childBox.style().position() == StaticPosition)
                 return false;
             continue;
         }
-        if (childLocalRect.maxY() > childBox->height() || childLocalRect.maxX() > childBox->width())
+        if (childLocalRect.maxY() > childBox.height() || childLocalRect.maxX() > childBox.width())
             continue;
-        if (childBox->backgroundIsKnownToBeOpaqueInRect(childLocalRect))
+        if (childBox.backgroundIsKnownToBeOpaqueInRect(childLocalRect))
             return true;
-        if (childBox->foregroundIsKnownToBeOpaqueInRect(childLocalRect, maxDepthToTest - 1))
+        if (childBox.foregroundIsKnownToBeOpaqueInRect(childLocalRect, maxDepthToTest - 1))
             return true;
     }
     return false;

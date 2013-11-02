@@ -50,6 +50,7 @@
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
 #include "RenderInline.h"
+#include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderMarquee.h"
 #include "RenderNamedFlowThread.h"
@@ -1386,12 +1387,10 @@ void RenderBlock::markShapeInsideDescendantsForLayout()
         setNeedsLayout();
         return;
     }
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (!child->isRenderBlock())
-            continue;
-        RenderBlock* childBlock = toRenderBlock(child);
+
+    auto blockChildren = childrenOfType<RenderBlock>(*this);
+    for (auto childBlock = blockChildren.begin(), end = blockChildren.end(); childBlock != end; ++childBlock)
         childBlock->markShapeInsideDescendantsForLayout();
-    }
 }
 
 ShapeInsideInfo* RenderBlock::layoutShapeInsideInfo() const
