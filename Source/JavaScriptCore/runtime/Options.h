@@ -131,6 +131,7 @@ typedef OptionRange optionRange;
     v(bool, dumpLLVMIR, false) \
     v(bool, llvmAlwaysFailsBeforeCompile, false) \
     v(bool, llvmAlwaysFailsBeforeLink, false) \
+    v(bool, llvmSimpleOpt, true) \
     v(unsigned, llvmBackendOptimizationLevel, 2) \
     v(unsigned, llvmOptimizationLevel, 2) \
     v(unsigned, llvmSizeLevel, 0) \
