@@ -35,6 +35,7 @@
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
 #include "LayoutRepainter.h"
+#include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderTableCaption.h"
 #include "RenderTableCell.h"
@@ -449,18 +450,19 @@ void RenderTable::layout()
 
     bool collapsing = collapseBorders();
 
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+    auto children = childrenOfType<RenderElement>(*this);
+    for (auto child = children.begin(), end = children.end(); child != end; ++child) {
         if (child->isTableSection()) {
-            RenderTableSection* section = toRenderTableSection(child);
+            RenderTableSection& section = toRenderTableSection(*child);
             if (m_columnLogicalWidthChanged)
-                section->setChildNeedsLayout(MarkOnlyThis);
-            section->layoutIfNeeded();
-            totalSectionLogicalHeight += section->calcRowLogicalHeight();
+                section.setChildNeedsLayout(MarkOnlyThis);
+            section.layoutIfNeeded();
+            totalSectionLogicalHeight += section.calcRowLogicalHeight();
             if (collapsing)
-                section->recalcOuterBorder();
-            ASSERT(!section->needsLayout());
+                section.recalcOuterBorder();
+            ASSERT(!section.needsLayout());
         } else if (child->isRenderTableCol()) {
-            toRenderTableCol(child)->layoutIfNeeded();
+            toRenderTableCol(*child).layoutIfNeeded();
             ASSERT(!child->needsLayout());
         }
     }
@@ -585,10 +587,10 @@ void RenderTable::recalcCollapsedBorders()
         return;
     m_collapsedBordersValid = true;
     m_collapsedBorders.clear();
-    for (RenderObject* section = firstChild(); section; section = section->nextSibling()) {
-        if (!section->isTableSection())
-            continue;
-        for (RenderTableRow* row = toRenderTableSection(section)->firstRow(); row; row = row->nextRow()) {
+
+    auto sections = childrenOfType<RenderTableSection>(*this);
+    for (auto section = sections.begin(), end = sections.end(); section != end; ++section) {
+        for (RenderTableRow* row = section->firstRow(); row; row = row->nextRow()) {
             for (RenderTableCell* cell = row->firstCell(); cell; cell = cell->nextCell()) {
                 ASSERT(cell->table() == this);
                 cell->collectBorderValues(m_collapsedBorders);
@@ -809,11 +811,8 @@ void RenderTable::splitColumn(unsigned position, unsigned firstSpan)
 
     // Propagate the change in our columns representation to the sections that don't need
     // cell recalc. If they do, they will be synced up directly with m_columns later.
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (!child->isTableSection())
-            continue;
-
-        RenderTableSection* section = toRenderTableSection(child);
+    auto sections = childrenOfType<RenderTableSection>(*this);
+    for (auto section = sections.begin(), end = sections.end(); section != end; ++section) {
         if (section->needsCellRecalc())
             continue;
 
@@ -830,11 +829,8 @@ void RenderTable::appendColumn(unsigned span)
 
     // Propagate the change in our columns representation to the sections that don't need
     // cell recalc. If they do, they will be synced up directly with m_columns later.
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (!child->isTableSection())
-            continue;
-
-        RenderTableSection* section = toRenderTableSection(child);
+    auto sections = childrenOfType<RenderTableSection>(*this);
+    for (auto section = sections.begin(), end = sections.end(); section != end; ++section) {
         if (section->needsCellRecalc())
             continue;
 
@@ -951,13 +947,11 @@ void RenderTable::recalcSections() const
 
     // repair column count (addChild can grow it too much, because it always adds elements to the last row of a section)
     unsigned maxCols = 0;
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isTableSection()) {
-            RenderTableSection* section = toRenderTableSection(child);
-            unsigned sectionCols = section->numColumns();
-            if (sectionCols > maxCols)
-                maxCols = sectionCols;
-        }
+    auto sections = childrenOfType<RenderTableSection>(*this);
+    for (auto section = sections.begin(), end = sections.end(); section != end; ++section) {
+        unsigned sectionCols = section->numColumns();
+        if (sectionCols > maxCols)
+            maxCols = sectionCols;
     }
     
     m_columns.resize(maxCols);

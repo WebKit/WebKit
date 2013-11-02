@@ -1057,6 +1057,9 @@ private:
     void setEverHadLayout(bool b) { m_bitfields.setEverHadLayout(b); }
 };
 
+template <typename Type> bool isRendererOfType(const RenderObject&);
+template <> inline bool isRendererOfType<const RenderObject>(const RenderObject&) { return true; }
+
 inline bool RenderObject::documentBeingDestroyed() const
 {
     return document().renderTreeBeingDestroyed();

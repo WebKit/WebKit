@@ -39,6 +39,7 @@
 #include "RenderGrid.h"
 #include "RenderImage.h"
 #include "RenderImageResourceStyleImage.h"
+#include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
@@ -298,10 +299,11 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsig
 
 inline bool RenderElement::hasImmediateNonWhitespaceTextChildOrBorderOrOutline() const
 {
-    for (const RenderObject* renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
-        if (renderer->isText() && !toRenderText(renderer)->isAllCollapsibleWhitespace())
+    auto children = childrenOfType<RenderObject>(*this);
+    for (auto child = children.begin(), end = children.end(); child != end; ++child) {
+        if (child->isText() && !toRenderText(*child).isAllCollapsibleWhitespace())
             return true;
-        if (renderer->style().hasOutline() || renderer->style().hasBorder())
+        if (child->style().hasOutline() || child->style().hasBorder())
             return true;
     }
     return false;
@@ -382,8 +384,8 @@ void RenderElement::initializeStyle()
 
 #if !ASSERT_DISABLED
     // We shouldn't have any text children that would need styleDidChange at this point.
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling())
-        ASSERT(!child->isText());
+    auto textChildren = childrenOfType<RenderText>(*this);
+    ASSERT(textChildren.begin() == textChildren.end());
 #endif
 
     // It would be nice to assert that !parent() here, but some RenderLayer subrenderers
@@ -434,10 +436,9 @@ void RenderElement::setStyle(PassRef<RenderStyle> style)
     styleDidChange(diff, &oldStyle.get());
 
     // Text renderers use their parent style. Notify them about the change.
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isText())
-            toRenderText(child)->styleDidChange(diff, &oldStyle.get());
-    }
+    auto textChildren = childrenOfType<RenderText>(*this);
+    for (auto child = textChildren.begin(), end = textChildren.end(); child != end; ++child)
+        child->styleDidChange(diff, &oldStyle.get());
 
     // FIXME: |this| might be destroyed here. This can currently happen for a RenderTextFragment when
     // its first-letter block gets an update in RenderTextFragment::styleDidChange. For RenderTextFragment(s),
@@ -660,9 +661,9 @@ void RenderElement::removeChildInternal(RenderObject& oldChild, NotifyChildrenTy
         cache->childrenChanged(this);
 }
 
-static void addLayers(RenderElement* obj, RenderLayer* parentLayer, RenderElement*& newObject, RenderLayer*& beforeChild)
+static void addLayers(RenderElement& renderer, RenderLayer* parentLayer, RenderElement*& newObject, RenderLayer*& beforeChild)
 {
-    if (obj->hasLayer()) {
+    if (renderer.hasLayer()) {
         if (!beforeChild && newObject) {
             // We need to figure out the layer that follows newObject. We only do
             // this the first time we find a child layer, and then we update the
@@ -670,14 +671,13 @@ static void addLayers(RenderElement* obj, RenderLayer* parentLayer, RenderElemen
             beforeChild = newObject->parent()->findNextLayer(parentLayer, newObject);
             newObject = nullptr;
         }
-        parentLayer->addChild(toRenderLayerModelObject(obj)->layer(), beforeChild);
+        parentLayer->addChild(toRenderLayerModelObject(renderer).layer(), beforeChild);
         return;
     }
 
-    for (RenderObject* current = obj->firstChild(); current; current = current->nextSibling()) {
-        if (current->isRenderElement())
-            addLayers(toRenderElement(current), parentLayer, newObject, beforeChild);
-    }
+    auto children = childrenOfType<RenderElement>(renderer);
+    for (auto child = children.begin(), end = children.end(); child != end; ++child)
+        addLayers(*child, parentLayer, newObject, beforeChild);
 }
 
 void RenderElement::addLayers(RenderLayer* parentLayer)
@@ -687,7 +687,7 @@ void RenderElement::addLayers(RenderLayer* parentLayer)
 
     RenderElement* renderer = this;
     RenderLayer* beforeChild = nullptr;
-    WebCore::addLayers(this, parentLayer, renderer, beforeChild);
+    WebCore::addLayers(*this, parentLayer, renderer, beforeChild);
 }
 
 void RenderElement::removeLayers(RenderLayer* parentLayer)
@@ -700,10 +700,9 @@ void RenderElement::removeLayers(RenderLayer* parentLayer)
         return;
     }
 
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isRenderElement())
-            toRenderElement(child)->removeLayers(parentLayer);
-    }
+    auto children = childrenOfType<RenderElement>(*this);
+    for (auto child = children.begin(), end = children.end(); child != end; ++child)
+        child->removeLayers(parentLayer);
 }
 
 void RenderElement::moveLayers(RenderLayer* oldParent, RenderLayer* newParent)
@@ -720,10 +719,9 @@ void RenderElement::moveLayers(RenderLayer* oldParent, RenderLayer* newParent)
         return;
     }
 
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isRenderElement())
-            toRenderElement(child)->moveLayers(oldParent, newParent);
-    }
+    auto children = childrenOfType<RenderElement>(*this);
+    for (auto child = children.begin(), end = children.end(); child != end; ++child)
+        child->moveLayers(oldParent, newParent);
 }
 
 RenderLayer* RenderElement::findNextLayer(RenderLayer* parentLayer, RenderObject* startPoint, bool checkParent)
@@ -779,10 +777,9 @@ bool RenderElement::layerCreationAllowedForSubtree() const
 void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propagationType)
 {
     // FIXME: We could save this call when the change only affected non-inherited properties.
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isText())
-            continue;
-        RenderElement& elementChild = toRenderElement(*child);
+    auto children = childrenOfType<RenderElement>(*this);
+    for (auto child = children.begin(), end = children.end(); child != end; ++child) {
+        RenderElement& elementChild = *child;
         if (!elementChild.isAnonymous() || elementChild.style().styleType() != NOPSEUDO)
             continue;
 

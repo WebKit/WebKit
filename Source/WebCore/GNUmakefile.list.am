@@ -4306,6 +4306,7 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderBoxModelObject.h \
 	Source/WebCore/rendering/RenderButton.cpp \
 	Source/WebCore/rendering/RenderButton.h \
+	Source/WebCore/rendering/RenderChildIterator.h \
 	Source/WebCore/rendering/RenderCombineText.cpp \
 	Source/WebCore/rendering/RenderCombineText.h \
 	Source/WebCore/rendering/RenderCounter.cpp \
@@ -4352,6 +4353,7 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderInline.h \
 	Source/WebCore/rendering/RenderInputSpeech.cpp \
 	Source/WebCore/rendering/RenderInputSpeech.h \
+	Source/WebCore/rendering/RenderIterator.h \
 	Source/WebCore/rendering/RenderLayerBacking.h \
 	Source/WebCore/rendering/RenderLayer.cpp \
 	Source/WebCore/rendering/RenderLayer.h \

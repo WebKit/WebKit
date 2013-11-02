@@ -19575,6 +19575,7 @@
     <ClInclude Include="..\rendering\RenderBox.h" />
     <ClInclude Include="..\rendering\RenderBoxModelObject.h" />
     <ClInclude Include="..\rendering\RenderButton.h" />
+    <ClInclude Include="..\rendering\RenderChildIterator.h" />
     <ClInclude Include="..\rendering\RenderCombineText.h" />
     <ClInclude Include="..\rendering\RenderCounter.h" />
     <ClInclude Include="..\rendering\RenderDeprecatedFlexibleBox.h" />
@@ -19597,6 +19598,7 @@
     <ClInclude Include="..\rendering\RenderImageResource.h" />
     <ClInclude Include="..\rendering\RenderImageResourceStyleImage.h" />
     <ClInclude Include="..\rendering\RenderInline.h" />
+    <ClInclude Include="..\rendering\RenderIterator.h" />
     <ClInclude Include="..\rendering\RenderLayer.h" />
     <ClInclude Include="..\rendering\RenderLayerBacking.h" />
     <ClInclude Include="..\rendering\RenderLayerCompositor.h" />

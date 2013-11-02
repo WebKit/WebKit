@@ -309,6 +309,7 @@ private:
     HashMap<pair<const RenderTableCell*, int>, CollapsedBorderValue > m_cellsCollapsedBorders;
 };
 
+template<> inline bool isRendererOfType<const RenderTableSection>(const RenderObject& renderer) { return renderer.isTableSection(); }
 RENDER_OBJECT_TYPE_CASTS(RenderTableSection, isTableSection())
 
 } // namespace WebCore

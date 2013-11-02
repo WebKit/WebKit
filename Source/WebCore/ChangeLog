@@ -1,3 +1,25 @@
+2013-11-02  Andreas Kling  <akling@apple.com>
+
+        Add a child renderer iterator.
+        <https://webkit.org/b/123662>
+
+        Introduce an ElementIterator-style iterator for renderers and put
+        it to use in a childrenOfType() implementation.
+
+        It's used just like the Element iterators:
+
+        auto sections = childrenOfType<RenderTableSection>(*this);
+        for (auto section = sections.begin(), section = sections.end(); section != sections.end(); ++section)
+            section->thisOrThat();
+
+        Just like the DOM counterpart, it relies on a templatized helper:
+
+            bool isRendererOfType<T>(const RenderObject&)
+
+        This patch puts the iterator to use in a couple of random places.
+
+        Reviewed by Antti Koivisto.
+
 2013-11-02  Alexey Proskuryakov  <ap@apple.com>
 
         Implement remaining SHA variations for WebCrypto

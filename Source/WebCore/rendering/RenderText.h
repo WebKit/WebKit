@@ -216,6 +216,7 @@ private:
     RenderTextLineBoxes m_lineBoxes;
 };
 
+template <> inline bool isRendererOfType<const RenderText>(const RenderObject& renderer) { return renderer.isText(); }
 RENDER_OBJECT_TYPE_CASTS(RenderText, isText())
 
 inline RenderStyle& RenderText::style() const

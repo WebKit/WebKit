@@ -178,6 +178,8 @@ private:
     static bool s_noLongerAffectsParentBlock;
 };
 
+template <> inline bool isRendererOfType<const RenderElement>(const RenderObject& renderer) { return renderer.isRenderElement(); }
+
 inline RenderStyle& RenderElement::firstLineStyle() const
 {
     return document().styleSheetCollection().usesFirstLineRules() ? *cachedFirstLineStyle() : style();
