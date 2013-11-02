@@ -1,3 +1,23 @@
+2013-11-02  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Add WKNSDictionary
+        https://bugs.webkit.org/show_bug.cgi?id=123660
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/Cocoa/APIObject.mm:
+        (WebKit::APIObject::newObject): Allocate a WKNSDictionary if the APIObject is a dictionary.
+        * Shared/Cocoa/WKNSDictionary.h: Added.
+        (WebKit::wrapper):  Added. Returns an ImmutableDictionary’s wrapper as an NSDictionary.
+        * Shared/Cocoa/WKNSDictionary.mm: Added.
+        (-[WKNSDictionary dealloc]): Calls the ImmutableDictionary destructor.
+        (-[WKNSDictionary count]): Added.
+        (-[WKNSDictionary objectForKey:]): Added.
+        (-[WKNSDictionary keyEnumerator]): Added.
+        (-[WKNSDictionary copyWithZone:]): Retains self.
+        (-[WKNSDictionary _apiObject]): Returns the wrapped ImmutableDictionary.
+        * WebKit2.xcodeproj/project.pbxproj: Added references to new files.
+
 2013-11-02  Tim Horton  <timothy_horton@apple.com>
 
         Address some review comments noted in r158463

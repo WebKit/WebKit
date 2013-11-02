@@ -24,72 +24,68 @@
  */
 
 #import "config.h"
-#import "APIObject.h"
+#import "WKNSDictionary.h"
 
 #if WK_API_ENABLED
 
-#import "WKBackForwardListInternal.h"
-#import "WKBackForwardListItemInternal.h"
 #import "WKNSArray.h"
-#import "WKNSDictionary.h"
-#import "WKNSString.h"
-#import "WKNSURL.h"
 
-namespace WebKit {
+using namespace WebKit;
 
-void APIObject::ref()
-{
-    [wrapper() retain];
+@implementation WKNSDictionary {
+    std::aligned_storage<sizeof(ImmutableDictionary), std::alignment_of<ImmutableDictionary>::value>::type _dictionary;
 }
 
-void APIObject::deref()
+- (void)dealloc
 {
-    [wrapper() release];
+    reinterpret_cast<ImmutableDictionary*>(&_dictionary)->~ImmutableDictionary();
+
+    [super dealloc];
 }
 
-void* APIObject::newObject(size_t size, Type type)
+#pragma mark NSDictionary primitive methods
+
+- (instancetype)initWithObjects:(const id [])objects forKeys:(const id <NSCopying> [])keys count:(NSUInteger)count
 {
-    NSObject <WKObject> *wrapper;
-
-    // Wrappers that inherit from WKObject store the APIObject in their extra bytes, so they are
-    // allocated using NSAllocatedObject. The other wrapper classes contain inline storage for the
-    // APIObject, so they are allocated using +alloc.
-
-    switch (type) {
-    case TypeArray:
-        wrapper = [WKNSArray alloc];
-        break;
-
-    case TypeBackForwardList:
-        wrapper = [WKBackForwardList alloc];
-        break;
-
-    case TypeBackForwardListItem:
-        wrapper = [WKBackForwardListItem alloc];
-        break;
-
-    case TypeDictionary:
-        wrapper = [WKNSDictionary alloc];
-        break;
-
-    case TypeString:
-        wrapper = NSAllocateObject([WKNSString class], size, nullptr);
-        break;
-
-    case TypeURL:
-        wrapper = NSAllocateObject([WKNSURL class], size, nullptr);
-        break;
-
-    default:
-        wrapper = NSAllocateObject([WKObject class], size, nullptr);
-        break;
-    }
-
-    APIObject* object = &wrapper._apiObject;
-    object->m_wrapper = wrapper;
-    return object;
+    ASSERT_NOT_REACHED();
+    [super initWithObjects:objects forKeys:keys count:count];
 }
 
-} // namespace WebKit
+- (NSUInteger)count
+{
+    return reinterpret_cast<ImmutableDictionary*>(&_dictionary)->size();
+}
+
+- (id)objectForKey:(id)key
+{
+    if (![key isKindOfClass:[NSString class]])
+        return nil;
+
+    if (APIObject* value = reinterpret_cast<ImmutableDictionary*>(&_dictionary)->get((NSString *)key))
+        return value->wrapper();
+
+    return nil;
+}
+
+- (NSEnumerator *)keyEnumerator
+{
+    return [wrapper(*reinterpret_cast<ImmutableDictionary*>(&_dictionary)->keys()) objectEnumerator];
+}
+
+#pragma mark NSCopying protocol implementation
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
+}
+
+#pragma mark WKObject protocol implementation
+
+- (APIObject&)_apiObject
+{
+    return *reinterpret_cast<APIObject*>(&_dictionary);
+}
+
+@end
 
 #endif // WK_API_ENABLED
