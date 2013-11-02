@@ -1,3 +1,12 @@
+2013-11-02  Vitaly Katunin  <vkatunin@luxoft.com>
+
+        [GTK] invalid application of 'sizeof' to incomplete type
+        https://bugs.webkit.org/show_bug.cgi?id=123502
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+
 2013-11-01  Tim Horton  <timothy_horton@apple.com>
 
         Remote Layer Tree: Crashes allocating incredibly large backing store for tiled backing layers

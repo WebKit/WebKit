@@ -48,6 +48,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/TextCheckerClient.h>
+#include <WebCore/TransformationMatrix.h>
 #include <WebCore/URL.h>
 #include <WebCore/UserScript.h>
 #include <WebCore/UserStyleSheet.h>
