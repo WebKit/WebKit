@@ -1,3 +1,20 @@
+2013-11-02  Patrick Gansterer  <paroga@webkit.org>
+
+        Fix UnicodeWchar after r157330.
+        https://bugs.webkit.org/show_bug.cgi?id=123668
+
+        Reviewed by Darin Adler.
+
+        * wtf/unicode/wchar/UnicodeWchar.cpp:
+        (unorm_normalize):
+        (u_strFoldCase):
+        (u_strToLower):
+        (u_strToUpper):
+        * wtf/unicode/wchar/UnicodeWchar.h:
+        (u_foldCase):
+        (u_isprint):
+        (u_isspace):
+
 2013-11-02  Andreas Kling  <akling@apple.com>
 
         Make remaining StringImpl functions return PassRef.

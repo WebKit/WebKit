@@ -30,6 +30,7 @@
 int unorm_normalize(const UChar*, int32_t, UNormalizationMode, int32_t, UChar*, int32_t, UErrorCode*)
 {
     ASSERT_NOT_REACHED();
+    return 0;
 }
 
 UCharDirection u_charDirection(UChar32)
@@ -82,7 +83,7 @@ int u_memcasecmp(const UChar* a, const UChar* b, int length, unsigned options)
     return 0;
 }
 
-template<UChar Function(UChar)>
+template<wint_t Function(wint_t)>
 static inline int convertWithFunction(UChar* result, int resultLength, const UChar* source, int sourceLength, UErrorCode& status)
 {
     UChar* resultIterator = result;
@@ -100,15 +101,15 @@ static inline int convertWithFunction(UChar* result, int resultLength, const UCh
 int u_strFoldCase(UChar* result, int resultLength, const UChar* source, int sourceLength, unsigned options, UErrorCode* status)
 {
     ASSERT_UNUSED(options, options == U_FOLD_CASE_DEFAULT);
-    return convertWithFunction<u_foldCase>(result, resultLength, source, sourceLength, *status);
+    return convertWithFunction<towlower>(result, resultLength, source, sourceLength, *status);
 }
 
 int u_strToLower(UChar* result, int resultLength, const UChar* source, int sourceLength, const char*, UErrorCode* status)
 {
-    return convertWithFunction<u_tolower>(result, resultLength, source, sourceLength, *status);
+    return convertWithFunction<towlower>(result, resultLength, source, sourceLength, *status);
 }
 
 int u_strToUpper(UChar* result, int resultLength, const UChar* source, int sourceLength, const char*, UErrorCode* status)
 {
-    return convertWithFunction<u_toupper>(result, resultLength, source, sourceLength, *status);
+    return convertWithFunction<towupper>(result, resultLength, source, sourceLength, *status);
 }

@@ -1623,7 +1623,7 @@ void GraphicsContext::drawText(const SimpleFontData* fontData, const GlyphBuffer
                 offset += (*advance++).width();
                 int offsetInt = stableRound(offset);
                 if (isCharVisible(*srcChar)) {
-                    if (!drawOneByOne && WTF::Unicode::direction(*srcChar) == WTF::Unicode::RightToLeft)
+                    if (!drawOneByOne && u_charDirection(*srcChar) == U_RIGHT_TO_LEFT)
                         drawOneByOne = true;
                     *curChar++ = *srcChar;
                     *curSpace++ = offsetInt - lastOffset;
@@ -1635,7 +1635,7 @@ void GraphicsContext::drawText(const SimpleFontData* fontData, const GlyphBuffer
                 offset += (*advance++).width() * scaleX;
                 int offsetInt = stableRound(offset);
                 if (isCharVisible(*srcChar)) {
-                    if (!drawOneByOne && WTF::Unicode::direction(*srcChar) == WTF::Unicode::RightToLeft)
+                    if (!drawOneByOne && u_charDirection(*srcChar) == U_RIGHT_TO_LEFT)
                         drawOneByOne = true;
                     *curChar++ = *srcChar;
                     *curSpace++ = offsetInt - lastOffset;

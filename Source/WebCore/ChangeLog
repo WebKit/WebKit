@@ -1,3 +1,23 @@
+2013-11-02  Patrick Gansterer  <paroga@webkit.org>
+
+        Fix UnicodeWchar after r157330.
+        https://bugs.webkit.org/show_bug.cgi?id=123668
+
+        Reviewed by Darin Adler.
+
+        * editing/TextIterator.cpp:
+        (WebCore::SearchBuffer::append):
+        * platform/graphics/wince/FontWinCE.cpp:
+        (WebCore::generateComponents):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::drawText):
+        * platform/text/wchar/TextBreakIteratorWchar.cpp:
+        (WebCore::isCharStop):
+        (WebCore::isLineStop):
+        (WebCore::isSentenceStop):
+        (WebCore::WordBreakIterator::next):
+        (WebCore::WordBreakIterator::previous):
+
 2013-11-02  Andreas Kling  <akling@apple.com>
 
         Use RenderChildIterator in a couple of places.

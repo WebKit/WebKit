@@ -140,7 +140,7 @@ static int generateComponents(TextRunComponents* components, const Font &font, c
             UChar ch = run[i];
             if (U16_IS_LEAD(ch) && U16_IS_TRAIL(run[i-1]))
                 ch = U16_GET_SUPPLEMENTARY(ch, run[i-1]);
-            if (U16_IS_TRAIL(ch) || category(ch) == Mark_NonSpacing)
+            if (U16_IS_TRAIL(ch) || U_GET_GC_MASK(ch) & U_GC_MN_MASK)
                 continue;
             if (Font::treatAsSpace(run[i])) {
                 int add = 0;

@@ -2350,7 +2350,7 @@ inline size_t SearchBuffer::append(const UChar* characters, size_t length)
     ASSERT(U_SUCCESS(status));
     ASSERT(numFoldedCharacters);
     ASSERT(numFoldedCharacters <= maxFoldedCharacters);
-    if (!error && numFoldedCharacters) {
+    if (U_SUCCESS(status) && numFoldedCharacters) {
         numFoldedCharacters = std::min(numFoldedCharacters, maxFoldedCharacters);
         append(foldedCharacters[0], true);
         for (int i = 1; i < numFoldedCharacters; ++i)

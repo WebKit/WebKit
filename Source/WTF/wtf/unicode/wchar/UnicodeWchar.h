@@ -63,7 +63,7 @@ enum UCharDirection {
     U_BOUNDARY_NEUTRAL
 };
 
-enum UDecompositionType { U_DT_NONE, U_DT_COMPAT, U_DT_FONT }
+enum UDecompositionType { U_DT_NONE, U_DT_COMPAT, U_DT_FONT };
 
 enum UErrorCode { U_ZERO_ERROR = 0, U_ERROR };
 
@@ -79,6 +79,7 @@ enum { UNORM_UNICODE_3_2 };
 // is implemented, that's not really worth the time.
 
 #define U_GC_CC_MASK 0
+#define U_GC_CS_MASK 0
 #define U_GC_CF_MASK 0
 #define U_GC_CN_MASK 0
 #define U_GC_LL_MASK 0
@@ -114,12 +115,14 @@ inline UBlockCode ublock_getCode(UChar32 character) { return (character & ~0xFF)
 WTF_EXPORT_PRIVATE int unorm_normalize(const UChar* source, int32_t sourceLength, UNormalizationMode mode, int32_t options, UChar* result, int32_t resultLength, UErrorCode* status);
 WTF_EXPORT_PRIVATE UCharDirection u_charDirection(UChar32);
 WTF_EXPORT_PRIVATE UChar32 u_charMirror(UChar32);
-WTF_EXPORT_PRIVATE UCharCategory u_charType(UChar32);
-inline UChar32 u_foldCase(UChar32 character, unsigned option) { ASSERT_UNUSED(options, options == U_FOLD_CASE_DEFAULT); return towlower(character); }
+WTF_EXPORT_PRIVATE int8_t u_charType(UChar32);
+inline UChar32 u_foldCase(UChar32 character, unsigned options) { ASSERT_UNUSED(options, options == U_FOLD_CASE_DEFAULT); return towlower(character); }
 WTF_EXPORT_PRIVATE uint8_t u_getCombiningClass(UChar32);
 WTF_EXPORT_PRIVATE int u_getIntPropertyValue(UChar32, UProperty);
 inline bool u_isalnum(UChar32 character) { return iswalnum(character); }
+inline bool u_isprint(UChar32 character) { return iswprint(character); }
 inline bool u_ispunct(UChar32 character) { return iswpunct(character); }
+inline bool u_isspace(UChar32 character) { return iswspace(character); }
 WTF_EXPORT_PRIVATE int u_memcasecmp(const UChar*, const UChar*, int sourceLength, unsigned options);
 inline bool u_print(UChar32 character) { return iswprint(character); }
 WTF_EXPORT_PRIVATE int u_strFoldCase(UChar* result, int resultLength, const UChar* source, int sourceLength, unsigned options, UErrorCode*);
