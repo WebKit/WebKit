@@ -1,3 +1,13 @@
+2013-11-01  Andreas Kling  <akling@apple.com>
+
+        createFontFaceValue() should be smarter about overgrown cache.
+        <https://webkit.org/b/123643>
+
+        Instead of clearing the whole font-face value cache when it passes
+        128 entries, just delete one entry at random.
+
+        Reviewed by Geoffrey Garen.
+
 2013-11-01  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Fixing mac code to use new MediaStreamDescriptor create method
