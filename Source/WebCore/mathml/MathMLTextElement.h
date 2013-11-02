@@ -35,11 +35,13 @@ namespace WebCore {
 class MathMLTextElement : public MathMLElement {
 public:
     static PassRefPtr<MathMLTextElement> create(const QualifiedName& tagName, Document*);
+    virtual void attach(const AttachContext& = AttachContext()) OVERRIDE;
 
 private:
     MathMLTextElement(const QualifiedName& tagName, Document*);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0) OVERRIDE;
 };
     
 }

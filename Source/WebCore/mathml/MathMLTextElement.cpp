@@ -40,6 +40,7 @@ using namespace MathMLNames;
 inline MathMLTextElement::MathMLTextElement(const QualifiedName& tagName, Document* document)
     : MathMLElement(tagName, document)
 {
+    setHasCustomStyleCallbacks();
 }
 
 PassRefPtr<MathMLTextElement> MathMLTextElement::create(const QualifiedName& tagName, Document* document)
@@ -53,6 +54,20 @@ RenderObject* MathMLTextElement::createRenderer(RenderArena* arena, RenderStyle*
         return new (arena) RenderMathMLOperator(this);
 
     return MathMLElement::createRenderer(arena, style);
+}
+
+void MathMLTextElement::attach(const AttachContext& context)
+{
+    MathMLElement::attach(context);
+    if (renderer())
+        renderer()->updateFromElement();
+}
+
+void MathMLTextElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+{
+    MathMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    if (renderer())
+        renderer()->updateFromElement();
 }
 
 }

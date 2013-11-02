@@ -65,17 +65,6 @@ public:
     // https://bugs.webkit.org/show_bug.cgi?id=78617.
     virtual RenderMathMLOperator* unembellishedOperator() { return 0; }
     
-    // A MathML element's preferred logical widths often depend on its children's preferred heights, not just their widths.
-    // This is due to operator stretching and other layout fine tuning. We define an element's preferred height to be its
-    // actual height after layout inside a very wide parent.
-    bool isPreferredLogicalHeightDirty() const { return preferredLogicalWidthsDirty() || m_preferredLogicalHeight < 0; }
-    // The caller must ensure !isPreferredLogicalHeightDirty().
-    LayoutUnit preferredLogicalHeight() const { ASSERT(!isPreferredLogicalHeightDirty()); return m_preferredLogicalHeight; }
-    static const int preferredLogicalHeightUnset = -1;
-    void setPreferredLogicalHeight(LayoutUnit logicalHeight) { m_preferredLogicalHeight = logicalHeight; }
-    // computePreferredLogicalWidths() in derived classes must ensure m_preferredLogicalHeight is set to < 0 or its correct value.
-    virtual void computePreferredLogicalWidths() OVERRIDE;
-    
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE;
     
 #if ENABLE(DEBUG_MATH_LAYOUT)
@@ -91,15 +80,6 @@ public:
 private:
     virtual const char* renderName() const OVERRIDE;
     bool m_ignoreInAccessibilityTree;
-    
-protected:
-    // Set our logical width to a large value, and compute our children's preferred logical heights.
-    void computeChildrenPreferredLogicalHeights();
-    // This can only be called after children have been sized by computeChildrenPreferredLogicalHeights().
-    static LayoutUnit preferredLogicalHeightAfterSizing(RenderObject* child);
-    
-    // m_preferredLogicalHeight is dirty if it's < 0 or preferredLogicalWidthsDirty().
-    LayoutUnit m_preferredLogicalHeight;
 };
 
 inline RenderMathMLBlock* toRenderMathMLBlock(RenderObject* object)

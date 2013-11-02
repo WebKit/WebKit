@@ -2,7 +2,6 @@
 
 math {
     -webkit-line-box-contain: glyphs replaced;
-    line-height: 0;
     text-indent: 0;
 }
 mtext {

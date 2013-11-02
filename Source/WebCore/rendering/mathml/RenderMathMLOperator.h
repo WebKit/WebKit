@@ -42,32 +42,59 @@ public:
     
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
     virtual void updateFromElement() OVERRIDE;
+    virtual void computePreferredLogicalWidths() OVERRIDE;
+    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
     
     virtual RenderMathMLOperator* unembellishedOperator() OVERRIDE { return this; }
     void stretchToHeight(int pixelHeight);
+    int stretchHeight() const { return m_stretchHeight; }
+    float expandedStretchHeight() const;
     
     virtual int firstLineBoxBaseline() const OVERRIDE;
     
     enum OperatorType { Default, Separator, Fence };
     void setOperatorType(OperatorType type) { m_operatorType = type; }
     OperatorType operatorType() const { return m_operatorType; }
-    
-protected:
-    virtual void computePreferredLogicalWidths() OVERRIDE;
-    PassRefPtr<RenderStyle> createStackableStyle(int maxHeightForRenderer);
-    RenderBlock* createGlyph(UChar glyph, int maxHeightForRenderer, int charRelative);
-    
+  
+    void updateStyle();
+
+    void paint(PaintInfo&, const LayoutPoint&);
+
+    struct StretchyCharacter {
+        UChar character;
+        UChar topGlyph;
+        UChar extensionGlyph;
+        UChar bottomGlyph;
+        UChar middleGlyph;
+    };
+
 private:
     virtual const char* renderName() const { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
-
-    int glyphHeightForCharacter(UChar);
-
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
+    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) OVERRIDE;
+
+    bool shouldAllowStretching(UChar& characterForStretching);
+    StretchyCharacter* findAcceptableStretchyCharacter(UChar);
+
+    FloatRect glyphBoundsForCharacter(UChar);
+    float glyphHeightForCharacter(UChar);
+    float advanceForCharacter(UChar);
+
+    enum CharacterPaintTrimming {
+        TrimTop,
+        TrimBottom,
+        TrimTopAndBottom,
+    };
+
+    LayoutRect paintCharacter(PaintInfo&, UChar, const LayoutPoint& origin, CharacterPaintTrimming);
+    void fillWithExtensionGlyph(PaintInfo&, const LayoutPoint& from, const LayoutPoint& to);
 
     int m_stretchHeight;
-    bool m_isStacked;
+    bool m_isStretched;
+
     UChar m_operator;
     OperatorType m_operatorType;
+    StretchyCharacter* m_stretchyCharacter;
 };
 
 inline RenderMathMLOperator* toRenderMathMLOperator(RenderMathMLBlock* block)

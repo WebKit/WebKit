@@ -2735,7 +2735,7 @@ webkit.org/b/116564 transitions/svg-text-shadow-transition.html
 webkit.org/b/116559 storage/websql
 
 # Exclude mathml, which does not work properly under windows
-webkit.org/b/117200 mathml
+#webkit.org/b/117200 mathml
 
 # After switching to NRWT, we find that some of the new image tests do not pass.
 webkit.org/b/117322 css2.1/20110323/word-spacing-remove-space-003.htm [ ImageOnlyFailure ]

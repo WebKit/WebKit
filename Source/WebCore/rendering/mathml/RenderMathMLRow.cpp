@@ -51,25 +51,16 @@ RenderMathMLRow* RenderMathMLRow::createAnonymousWithParentRenderer(const Render
     return newMRow;
 }
 
-void RenderMathMLRow::computePreferredLogicalWidths()
+void RenderMathMLRow::layout()
 {
-    ASSERT(preferredLogicalWidthsDirty() && needsLayout());
-
-#ifndef NDEBUG
-    // FIXME: Remove this once mathml stops modifying the render tree here.
-    SetLayoutNeededForbiddenScope layoutForbiddenScope(this, false);
-#endif
-
-    computeChildrenPreferredLogicalHeights();
     int stretchLogicalHeight = 0;
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isRenderMathMLBlock()) {
-            RenderMathMLOperator* renderMo = toRenderMathMLBlock(child)->unembellishedOperator();
-            // FIXME: Only skip renderMo if it is stretchy.
-            if (renderMo)
-                continue;
-        }
-        stretchLogicalHeight = max<int>(stretchLogicalHeight, roundToInt(preferredLogicalHeightAfterSizing(child)));
+        child->layoutIfNeeded();
+        // FIXME: Only skip renderMo if it is stretchy.
+        if (child->isRenderMathMLBlock() && toRenderMathMLBlock(child)->unembellishedOperator())
+            continue;
+        if (child->isBox())
+            stretchLogicalHeight = std::max<int>(stretchLogicalHeight, roundToInt(toRenderBox(child)->logicalHeight()));
     }
     if (!stretchLogicalHeight)
         stretchLogicalHeight = style()->fontSize();
@@ -77,26 +68,13 @@ void RenderMathMLRow::computePreferredLogicalWidths()
     // Set the sizes of (possibly embellished) stretchy operator children.
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isRenderMathMLBlock()) {
-            RenderMathMLOperator* renderMo = toRenderMathMLBlock(child)->unembellishedOperator();
-            if (renderMo)
-                renderMo->stretchToHeight(stretchLogicalHeight);
+            if (RenderMathMLOperator* renderMo = toRenderMathMLBlock(child)->unembellishedOperator()) {
+                if (renderMo->stretchHeight() != stretchLogicalHeight)
+                    renderMo->stretchToHeight(stretchLogicalHeight);
+            }
         }
     }
 
-    RenderMathMLBlock::computePreferredLogicalWidths();
-    
-    // Shrink our logical width to its probable value now without triggering unnecessary relayout of our children.
-    ASSERT(needsLayout() && logicalWidth() >= maxPreferredLogicalWidth());
-    setLogicalWidth(maxPreferredLogicalWidth());
-}
-
-void RenderMathMLRow::layout()
-{
-    // Our computePreferredLogicalWidths() may change our logical width and then layout our children, which
-    // RenderBlock::layout()'s relayoutChildren logic isn't expecting.
-    if (preferredLogicalWidthsDirty())
-        computePreferredLogicalWidths();
-    
     RenderMathMLBlock::layout();
 }
 

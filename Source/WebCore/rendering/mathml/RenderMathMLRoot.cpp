@@ -173,29 +173,25 @@ void RenderMathMLRoot::addChild(RenderObject* newChild, RenderObject* beforeChil
         firstChild()->addChild(newChild, beforeChild && beforeChild->parent() == firstChild() ? beforeChild : 0);
 }
 
-RenderBoxModelObject* RenderMathMLRoot::index() const
+RenderBox* RenderMathMLRoot::index() const
 {
     if (!firstChild())
         return 0;
     RenderObject* index = firstChild()->nextSibling();
-    if (!index || !index->isBoxModelObject())
+    if (!index || !index->isBox())
         return 0;
-    return toRenderBoxModelObject(index);
+    return toRenderBox(index);
 }
 
-void RenderMathMLRoot::computePreferredLogicalWidths()
+void RenderMathMLRoot::layout()
 {
-    ASSERT(preferredLogicalWidthsDirty() && needsLayout());
-    
-#ifndef NDEBUG
-    // FIXME: Remove this once mathml stops modifying the render tree here.
-    SetLayoutNeededForbiddenScope layoutForbiddenScope(this, false);
-#endif
-    
-    computeChildrenPreferredLogicalHeights();
-    
-    int baseHeight = firstChild() ? roundToInt(preferredLogicalHeightAfterSizing(firstChild())) : style()->fontSize();
-    
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (!child->isBox())
+            continue;
+        toRenderBox(child)->layoutIfNeeded();
+    }
+
+    int baseHeight = firstChild() && firstChild()->isBox() ? roundToInt(toRenderBox(firstChild())->logicalHeight()) : style()->fontSize();
     int frontWidth = lroundf(gFrontWidthEms * style()->fontSize());
     
     // Base height above which the shape of the root changes
@@ -212,10 +208,10 @@ void RenderMathMLRoot::computePreferredLogicalWidths()
     int rootPad = lroundf(gSpaceAboveEms * style()->fontSize());
     m_intrinsicPaddingBefore = rootPad;
     m_indexTop = 0;
-    if (RenderBoxModelObject* index = this->index()) {
+    if (RenderBox* index = this->index()) {
         m_intrinsicPaddingStart = roundToInt(index->maxPreferredLogicalWidth()) + m_overbarLeftPointShift;
-        
-        int indexHeight = roundToInt(preferredLogicalHeightAfterSizing(index));
+
+        int indexHeight = roundToInt(index->logicalHeight());
         int partDipHeight = lroundf((1 - gRootRadicalDipLeftPointYPos) * baseHeight);
         int rootExtraTop = partDipHeight + indexHeight - (baseHeight + rootPad);
         if (rootExtraTop > 0)
@@ -225,33 +221,23 @@ void RenderMathMLRoot::computePreferredLogicalWidths()
     } else
         m_intrinsicPaddingStart = frontWidth;
 
-    RenderMathMLBlock::computePreferredLogicalWidths();
-    
-    // Shrink our logical width to its probable value now without triggering unnecessary relayout of our children.
-    ASSERT(needsLayout() && logicalWidth() >= maxPreferredLogicalWidth());
-    setLogicalWidth(maxPreferredLogicalWidth());
-}
+    // FIXME: We should rewrite RenderMathMLRoot to rewrite -webkit-flex-order to get rid of the need
+    // for intrinsic padding. See https://bugs.webkit.org/show_bug.cgi?id=107151#c2.
+    // FIXME: We should make it so that the preferred width of RenderMathMLRoots doesn't change during layout.
+    // Technically, we currently only need to set the dirty bit here if one of the member variables above changes.
+    setPreferredLogicalWidthsDirty(true);
 
-void RenderMathMLRoot::layout()
-{
-    // Our computePreferredLogicalWidths() may change our logical width and then layout our children, which
-    // RenderBlock::layout()'s relayoutChildren logic isn't expecting.
-    if (preferredLogicalWidthsDirty())
-        computePreferredLogicalWidths();
-    
     RenderMathMLBlock::layout();
     
-    RenderBoxModelObject* index = this->index();
-    // If |index|, it should be a RenderBlock here, unless the user has overriden its { position: absolute }.
-    if (index && index->isBox())
-        toRenderBox(index)->setLogicalTop(m_indexTop);
+    if (RenderBox* index = this->index())
+        index->setLogicalTop(m_indexTop);
 }
 
 void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     RenderMathMLBlock::paint(info, paintOffset);
     
-    if (info.context->paintingDisabled())
+    if (info.context->paintingDisabled() || style()->visibility() != VISIBLE)
         return;
     
     IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location() + contentBoxRect().location());
