@@ -1,3 +1,17 @@
+2013-11-01  Andreas Kling  <akling@apple.com>
+
+        Neuter WTF_MAKE_FAST_ALLOCATED in GLOBAL_FASTMALLOC_NEW builds.
+        <https://webkit.org/b/123639>
+
+        When building with GLOBAL_FASTMALLOC_NEW, we don't need to expand
+        operator new/delete overrides in every class.
+
+        This change makes allocations group up nicely in Instruments,
+        instead of being split between "WTF::fastMalloc" and "operator new"
+        depending on whether the class had WTF_MAKE_FAST_ALLOCATED.
+
+        Reviewed by Anders Carlsson.
+
 2013-11-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Move CF/Mac WTF String implementations down into WTF

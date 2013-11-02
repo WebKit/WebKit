@@ -278,7 +278,7 @@ WTF_PRIVATE_INLINE void operator delete[](void* p, const std::nothrow_t&) throw(
 #endif // ENABLE(GLOBAL_FASTMALLOC_NEW)
 #endif // !defined(_CRTDBG_MAP_ALLOC) && !(defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC)
 
-#define WTF_MAKE_FAST_ALLOCATED \
+#define WTF_FASTMALLOC_OPERATORS \
 public: \
     void* operator new(size_t, void* p) { return p; } \
     void* operator new[](size_t, void* p) { return p; } \
@@ -315,5 +315,12 @@ public: \
     } \
 private: \
 typedef int __thisIsHereToForceASemicolonAfterThisMacro
+
+#if ENABLE(GLOBAL_FASTMALLOC_NEW)
+#define WTF_MAKE_FAST_ALLOCATED
+#else
+#define WTF_MAKE_FAST_ALLOCATED WTF_FASTMALLOC_OPERATORS
+#endif
+
 
 #endif /* WTF_FastMalloc_h */

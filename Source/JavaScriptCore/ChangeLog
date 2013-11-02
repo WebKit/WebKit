@@ -1,3 +1,14 @@
+2013-11-01  Andreas Kling  <akling@apple.com>
+
+        Neuter WTF_MAKE_FAST_ALLOCATED in GLOBAL_FASTMALLOC_NEW builds.
+        <https://webkit.org/b/123639>
+
+        JSC::ParserArenaRefCounted really needed to have the new/delete
+        operators overridden, in order for JSC::ScopeNode to be able to
+        choose that "operator new" out of the two it inherits.
+
+        Reviewed by Anders Carlsson.
+
 2013-11-01  Filip Pizlo  <fpizlo@apple.com>
 
         OSR exit profiling should be robust against all code being cleared

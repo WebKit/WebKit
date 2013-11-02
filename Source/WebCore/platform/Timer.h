@@ -37,7 +37,8 @@ namespace WebCore {
 class TimerHeapElement;
 
 class TimerBase {
-    WTF_MAKE_NONCOPYABLE(TimerBase); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(TimerBase);
+    WTF_FASTMALLOC_OPERATORS;
 public:
     TimerBase();
     virtual ~TimerBase();
