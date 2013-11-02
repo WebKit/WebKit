@@ -1,3 +1,14 @@
+2013-11-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Move CF/Mac WTF String implementations down into WTF
+        https://bugs.webkit.org/show_bug.cgi?id=123635
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2013-11-01  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Removing unnecessary early returns in addTrack, removeTrack and removeRemoteSource methods

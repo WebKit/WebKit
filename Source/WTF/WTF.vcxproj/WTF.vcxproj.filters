@@ -75,6 +75,15 @@
     <ClCompile Include="..\wtf\text\WTFString.cpp">
       <Filter>text</Filter>
     </ClCompile>
+    <ClCompile Include="..\wtf\text\cf\AtomicStringCF.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\text\cf\StringCF.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\text\cf\StringImpleCF.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
     <ClCompile Include="..\wtf\win\MainThreadWin.cpp">
       <Filter>win</Filter>
     </ClCompile>

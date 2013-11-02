@@ -402,14 +402,14 @@ public:
     operator UnspecifiedBoolTypeB() const;
 
 #if USE(CF)
-    String(CFStringRef);
-    RetainPtr<CFStringRef> createCFString() const;
+    WTF_EXPORT_STRING_API String(CFStringRef);
+    WTF_EXPORT_STRING_API RetainPtr<CFStringRef> createCFString() const;
 #endif
 
 #ifdef __OBJC__
-    String(NSString*);
+    WTF_EXPORT_STRING_API String(NSString*);
     
-    // This conversion maps NULL to "", which loses the meaning of NULL, but we 
+    // This conversion maps NULL to "", which loses the meaning of NULL, but we
     // need this mapping because AppKit crashes when passed nil NSStrings.
     operator NSString*() const { if (!m_impl) return @""; return *m_impl; }
 #endif

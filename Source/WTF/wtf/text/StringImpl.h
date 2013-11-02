@@ -751,7 +751,7 @@ public:
     RetainPtr<CFStringRef> createCFString();
 #endif
 #ifdef __OBJC__
-    operator NSString*();
+    WTF_EXPORT_STRING_API operator NSString*();
 #endif
 
 #ifdef STRING_STATS

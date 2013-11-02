@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2006, 2012 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -19,12 +19,12 @@
  */
 
 #include "config.h"
-
-#include <wtf/text/WTFString.h>
+#include "WTFString.h"
 
 #if USE(CF)
+
+#include "RetainPtr.h"
 #include <CoreFoundation/CoreFoundation.h>
-#include <wtf/RetainPtr.h>
 
 namespace WTF {
 

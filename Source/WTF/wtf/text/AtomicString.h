@@ -192,7 +192,7 @@ private:
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> addFromLiteralData(const char* characters, unsigned length);
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> addSlowCase(StringImpl*);
 #if USE(CF)
-    static PassRefPtr<StringImpl> add(CFStringRef);
+    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> add(CFStringRef);
 #endif
 
     WTF_EXPORT_STRING_API static AtomicString fromUTF8Internal(const char*, const char*);

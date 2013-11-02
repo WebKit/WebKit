@@ -19,10 +19,10 @@
  */
 
 #import "config.h"
-#import <wtf/text/StringImpl.h>
+#import "StringImpl.h"
 
-#import <wtf/ObjcRuntimeExtras.h>
-#import <wtf/RetainPtr.h>
+#import "ObjcRuntimeExtras.h"
+#import "RetainPtr.h"
 
 namespace WTF {
 

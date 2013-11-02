@@ -2025,16 +2025,7 @@
     <ClCompile Include="..\platform\graphics\WidthIterator.cpp">
       <Filter>platform\text</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\text\cf\AtomicStringCF.cpp">
-      <Filter>platform\text\cf</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\text\cf\HyphenationCF.cpp">
-      <Filter>platform\text\cf</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\text\cf\StringCF.cpp">
-      <Filter>platform\text\cf</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\text\cf\StringImplCF.cpp">
       <Filter>platform\text\cf</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\text\win\TextBreakIteratorInternalICUWin.cpp">

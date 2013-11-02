@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -19,13 +19,13 @@
  */
 
 #include "config.h"
-#include <wtf/text/WTFString.h>
+#include "WTFString.h"
 
 #include <CoreFoundation/CFString.h>
 
 namespace WTF {
 
-String::String(NSString* str)
+String::String(NSString *str)
 {
     if (!str)
         return;

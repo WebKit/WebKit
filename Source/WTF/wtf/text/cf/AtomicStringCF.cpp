@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include <wtf/text/AtomicString.h>
+#include "AtomicString.h"
 
 #if USE(CF)
 
+#include "CString.h"
 #include <CoreFoundation/CoreFoundation.h>
-#include <wtf/text/CString.h>
 
 namespace WTF {
 
