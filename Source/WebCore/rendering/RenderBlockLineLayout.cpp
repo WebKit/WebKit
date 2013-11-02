@@ -2400,7 +2400,7 @@ static ALWAYS_INLINE float textWidth(RenderText* text, unsigned from, unsigned l
     ASSERT(run.charactersLength() >= run.length());
 
     run.setCharacterScanForCodePath(!text->canUseSimpleFontCodePath());
-    run.setTabSize(!collapseWhiteSpace, text->style().tabSize());
+    run.setTabSize(!collapseWhiteSpace, style.tabSize());
     run.setXPos(xPos);
     return font.width(run, &fallbackFonts, &glyphOverflow);
 }

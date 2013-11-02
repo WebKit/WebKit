@@ -1,5 +1,15 @@
 2013-11-01  Andreas Kling  <akling@apple.com>
 
+        Re-use existing RenderStyle local in textWidth().
+        <https://webkit.org/b/123392>
+
+        We already have the RenderStyle cached in a local here, so avoid
+        getting it from RenderText since that has to go via the parent.
+
+        Reviewed by Antti Koivisto.
+
+2013-11-01  Andreas Kling  <akling@apple.com>
+
         Neuter WTF_MAKE_FAST_ALLOCATED in GLOBAL_FASTMALLOC_NEW builds.
         <https://webkit.org/b/123639>
 
