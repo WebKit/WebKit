@@ -50,7 +50,8 @@ using namespace WebKit;
 
 - (id)objectAtIndex:(NSUInteger)i
 {
-    return reinterpret_cast<ImmutableArray*>(&_array)->at(i)->wrapper();
+    APIObject* object = reinterpret_cast<ImmutableArray*>(&_array)->at(i);
+    return object ? object->wrapper() : [NSNull null];
 }
 
 #pragma mark NSCopying protocol implementation

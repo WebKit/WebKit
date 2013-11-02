@@ -1,5 +1,19 @@
 2013-11-02  Dan Bernstein  <mitz@apple.com>
 
+        [Cocoa] Wrappers mishandle NULL values in arrays and dictionaries
+        https://bugs.webkit.org/show_bug.cgi?id=123671
+
+        Reviewed by Darin Adler.
+
+        * Shared/Cocoa/WKNSArray.mm:
+        (-[WKNSArray objectAtIndex:]): Represent a NULL object as NSNull.
+        * Shared/Cocoa/WKNSDictionary.mm:
+        (-[WKNSDictionary objectForKey:]): Represent a NULL value as NSNull.
+        * Shared/ImmutableDictionary.h:
+        (WebKit::ImmutableDictionary::get): Added this overload that returns whether the key exists.
+
+2013-11-02  Dan Bernstein  <mitz@apple.com>
+
         Fixed release builds.
 
         * Shared/Cocoa/WKNSDictionary.mm:

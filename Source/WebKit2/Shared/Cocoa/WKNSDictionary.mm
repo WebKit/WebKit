@@ -61,10 +61,12 @@ using namespace WebKit;
     if (![key isKindOfClass:[NSString class]])
         return nil;
 
-    if (APIObject* value = reinterpret_cast<ImmutableDictionary*>(&_dictionary)->get((NSString *)key))
-        return value->wrapper();
+    bool exists;
+    APIObject* value = reinterpret_cast<ImmutableDictionary*>(&_dictionary)->get((NSString *)key, exists);
+    if (!exists)
+        return nil;
 
-    return nil;
+    return value ? value->wrapper() : [NSNull null];
 }
 
 - (NSEnumerator *)keyEnumerator

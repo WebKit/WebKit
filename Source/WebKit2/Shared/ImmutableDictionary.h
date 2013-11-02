@@ -73,6 +73,13 @@ public:
         return m_map.get(key);
     }
 
+    APIObject* get(const String& key, bool& exists)
+    {
+        const auto& it = m_map.find(key);
+        exists = it != m_map.end();
+        return it->value.get();
+    }
+
     PassRefPtr<ImmutableArray> keys() const;
 
     size_t size() { return m_map.size(); }
