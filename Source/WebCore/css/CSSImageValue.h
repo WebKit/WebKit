@@ -35,8 +35,8 @@ struct ResourceLoaderOptions;
 
 class CSSImageValue : public CSSValue {
 public:
-    static PassRefPtr<CSSImageValue> create(const String& url) { return adoptRef(new CSSImageValue(url)); }
-    static PassRefPtr<CSSImageValue> create(const String& url, StyleImage* image) { return adoptRef(new CSSImageValue(url, image)); }
+    static PassRef<CSSImageValue> create(const String& url) { return adoptRef(*new CSSImageValue(url)); }
+    static PassRef<CSSImageValue> create(const String& url, StyleImage* image) { return adoptRef(*new CSSImageValue(url, image)); }
     ~CSSImageValue();
 
     StyleCachedImage* cachedImage(CachedResourceLoader*, const ResourceLoaderOptions&);
