@@ -1,5 +1,19 @@
 2013-11-02  Patrick Gansterer  <paroga@webkit.org>
 
+        Fix compilation of SynchronousLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=123676
+
+        Reviewed by Darin Adler.
+
+        Assign a ResourceRequest varibale an empty ResourceRequest instead of 0.
+        The current solution only works for ports which can create a
+        ResourceRequest from a pointer, which might not be true for all ports.
+
+        * platform/network/SynchronousLoaderClient.cpp:
+        (WebCore::SynchronousLoaderClient::willSendRequest):
+
+2013-11-02  Patrick Gansterer  <paroga@webkit.org>
+
         Port LoggingWin.cpp to WinCE
         https://bugs.webkit.org/show_bug.cgi?id=123678
 
