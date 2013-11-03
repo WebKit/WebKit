@@ -57,7 +57,8 @@ private:
 };
 
 bool getEOTHeader(SharedBuffer* fontData, EOTHeader& eotHeader, size_t& overlayDst, size_t& overlaySrc, size_t& overlayLength);
-HANDLE renameAndActivateFont(SharedBuffer*, const String&);
+bool renameFont(const SharedBuffer&, const String&, Vector<char>&);
+HANDLE renameAndActivateFont(const SharedBuffer&, const String&);
 
 } // namespace WebCore
 

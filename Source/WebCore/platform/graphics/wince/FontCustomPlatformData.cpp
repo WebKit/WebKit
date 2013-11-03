@@ -24,6 +24,7 @@
 
 #include "CachedFont.h"
 #include "FontPlatformData.h"
+#include "OpenTypeUtilities.h"
 #include "SharedBuffer.h"
 #include <wtf/RandomNumber.h>
 #include <wtf/text/Base64.h>
@@ -31,8 +32,6 @@
 namespace WebCore {
 
 static CustomFontCache* g_customFontCache = 0;
-
-bool renameFont(SharedBuffer* fontData, const String& fontName);
 
 void setCustomFontCache(CustomFontCache* cache)
 {
@@ -72,13 +71,19 @@ static String createUniqueFontName()
 
 std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(const SharedBuffer* buffer)
 {
-    if (g_customFontCache) {
-        String fontName = createUniqueFontName();
-        RefPtr<SharedBuffer> localBuffer = SharedBuffer::create(buffer->data(), buffer->size());
-        if (renameFont(localBuffer.get(), fontName) && g_customFontCache->registerFont(fontName, localBuffer.get()))
-            return std::make_unique<FontCustomPlatformData>(fontName);
-    }
-    return nullptr;
+    ASSERT_ARG(buffer, buffer);
+
+    String fontName = createUniqueFontName();
+
+    Vector<char> rewrittenFontData;
+    if (!renameFont(*buffer, fontName, rewrittenFontData))
+        return nullptr;
+
+    RefPtr<SharedBuffer> localBuffer = SharedBuffer::adoptVector(rewrittenFontData);
+    if (!g_customFontCache || !g_customFontCache->registerFont(fontName, localBuffer.get()))
+        return nullptr;
+
+    return std::make_unique<FontCustomPlatformData>(fontName);
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

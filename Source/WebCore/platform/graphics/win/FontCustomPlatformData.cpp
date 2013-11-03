@@ -97,7 +97,7 @@ std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffe
 
     String fontName = createUniqueFontName();
     HANDLE fontReference;
-    fontReference = renameAndActivateFont(buffer, fontName);
+    fontReference = renameAndActivateFont(*buffer, fontName);
     if (!fontReference)
         return nullptr;
     return std::make_unique<FontCustomPlatformData>(fontReference, fontName);
