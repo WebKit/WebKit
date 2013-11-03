@@ -1,3 +1,13 @@
+2013-11-03  Andreas Kling  <akling@apple.com>
+
+        CSSLineBoxContainValue constructor should return PassRef.
+        <https://webkit.org/b/123710>
+
+        Make CSSLineBoxContainValue::create() return a PassRef since it
+        will never return null.
+
+        Reviewed by Sam Weinig.
+
 2013-11-03  Antti Koivisto  <antti@apple.com>
 
         LiveNodeLists should have non-null ContainerNode as root
