@@ -1,5 +1,78 @@
 2013-11-03  Andreas Kling  <akling@apple.com>
 
+        Optimize baselines: fast/text
+
+        Unreviewed; run "webkit-patch optimize-baselines fast/text"
+
+        * fast/text/decorations-transformed-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/decorations-transformed-expected.txt.
+        * fast/text/fixed-pitch-control-characters-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/fixed-pitch-control-characters-expected.txt.
+        * fast/text/international/001-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/international/001-expected.txt.
+        * fast/text/international/vertical-text-glyph-test-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/international/vertical-text-glyph-test-expected.txt.
+        * fast/text/international/vertical-text-metrics-test-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/international/vertical-text-metrics-test-expected.txt.
+        * fast/text/international/wrap-CJK-001-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/international/wrap-CJK-001-expected.txt.
+        * fast/text/justify-ideograph-complex-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/justify-ideograph-complex-expected.txt.
+        * fast/text/justify-ideograph-simple-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/justify-ideograph-simple-expected.txt.
+        * fast/text/justify-ideograph-vertical-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/justify-ideograph-vertical-expected.txt.
+        * fast/text/selection-painted-separately-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/selection-painted-separately-expected.txt.
+        * fast/text/soft-hyphen-2-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/soft-hyphen-2-expected.txt.
+        * fast/text/soft-hyphen-3-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/soft-hyphen-3-expected.txt.
+        * fast/text/stripNullFromText-expected.png: Renamed from LayoutTests/platform/efl/fast/text/stripNullFromText-expected.png.
+        * fast/text/updateNewFont-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/updateNewFont-expected.txt.
+        * fast/text/whitespace/001-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/whitespace/001-expected.txt.
+        * fast/text/whitespace/013-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/whitespace/013-expected.txt.
+        * fast/text/whitespace/014-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/whitespace/014-expected.txt.
+        * fast/text/whitespace/017-expected.png: Renamed from LayoutTests/platform/efl/fast/text/whitespace/017-expected.png.
+        * fast/text/whitespace/017-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/whitespace/017-expected.txt.
+        * fast/text/whitespace/029-expected.png: Renamed from LayoutTests/platform/efl/fast/text/whitespace/029-expected.png.
+        * fast/text/whitespace/029-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/whitespace/029-expected.txt.
+        * fast/text/whitespace/pre-newline-box-test-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/whitespace/pre-newline-box-test-expected.txt.
+        * fast/text/whitespace/tab-character-basics-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/whitespace/tab-character-basics-expected.txt.
+        * platform/efl-wk1/fast/text/complex-text-opacity-expected.png: Renamed from LayoutTests/platform/efl/fast/text/complex-text-opacity-expected.png.
+        * platform/efl-wk1/fast/text/complex-text-opacity-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/complex-text-opacity-expected.txt.
+        * platform/efl-wk1/fast/text/international/bidi-layout-across-linebreak-expected.png: Renamed from LayoutTests/platform/efl/fast/text/international/bidi-layout-across-linebreak-expected.png.
+        * platform/efl-wk1/fast/text/international/bidi-layout-across-linebreak-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/international/bidi-layout-across-linebreak-expected.txt.
+        * platform/efl-wk2/fast/text/atsui-pointtooffset-calls-cg-expected.png: Renamed from LayoutTests/platform/efl/fast/text/atsui-pointtooffset-calls-cg-expected.png.
+        * platform/efl-wk2/fast/text/atsui-rtl-override-selection-expected.png: Renamed from LayoutTests/platform/efl/fast/text/atsui-rtl-override-selection-expected.png.
+        * platform/efl-wk2/fast/text/atsui-small-caps-punctuation-size-expected.png: Renamed from LayoutTests/platform/efl/fast/text/atsui-small-caps-punctuation-size-expected.png.
+        * platform/efl-wk2/fast/text/hyphenate-character-expected.png: Renamed from LayoutTests/platform/efl/fast/text/hyphenate-character-expected.png.
+        * platform/efl-wk2/fast/text/hyphenate-first-word-expected.png: Renamed from LayoutTests/platform/efl/fast/text/hyphenate-first-word-expected.png.
+        * platform/efl-wk2/fast/text/hyphenate-limit-before-after-expected.png: Renamed from LayoutTests/platform/efl/fast/text/hyphenate-limit-before-after-expected.png.
+        * platform/efl-wk2/fast/text/hyphenate-limit-lines-expected.png: Renamed from LayoutTests/platform/efl/fast/text/hyphenate-limit-lines-expected.png.
+        * platform/efl-wk2/fast/text/hyphens-expected.png: Renamed from LayoutTests/platform/efl/fast/text/hyphens-expected.png.
+        * platform/efl-wk2/fast/text/midword-break-before-surrogate-pair-2-expected.png: Renamed from LayoutTests/platform/efl/fast/text/midword-break-before-surrogate-pair-2-expected.png.
+        * platform/gtk/fast/text/decorations-transformed-expected.txt: Removed.
+        * platform/gtk/fast/text/fixed-pitch-control-characters-expected.txt: Removed.
+        * platform/gtk/fast/text/international/001-expected.txt: Removed.
+        * platform/gtk/fast/text/international/vertical-text-glyph-test-expected.txt: Removed.
+        * platform/gtk/fast/text/international/vertical-text-metrics-test-expected.txt: Removed.
+        * platform/gtk/fast/text/international/wrap-CJK-001-expected.txt: Removed.
+        * platform/gtk/fast/text/justify-ideograph-complex-expected.txt: Removed.
+        * platform/gtk/fast/text/justify-ideograph-simple-expected.txt: Removed.
+        * platform/gtk/fast/text/justify-ideograph-vertical-expected.txt: Removed.
+        * platform/gtk/fast/text/selection-painted-separately-expected.txt: Removed.
+        * platform/gtk/fast/text/soft-hyphen-2-expected.txt: Removed.
+        * platform/gtk/fast/text/soft-hyphen-3-expected.txt: Removed.
+        * platform/gtk/fast/text/stripNullFromText-expected.png: Removed.
+        * platform/gtk/fast/text/updateNewFont-expected.txt: Removed.
+        * platform/gtk/fast/text/whitespace/001-expected.txt: Removed.
+        * platform/gtk/fast/text/whitespace/017-expected.png: Removed.
+        * platform/gtk/fast/text/whitespace/017-expected.txt: Removed.
+        * platform/gtk/fast/text/whitespace/029-expected.png: Removed.
+        * platform/gtk/fast/text/whitespace/029-expected.txt: Removed.
+        * platform/gtk/fast/text/whitespace/pre-newline-box-test-expected.txt: Removed.
+        * platform/gtk/fast/text/whitespace/tab-character-basics-expected.txt: Removed.
+        * platform/mac/fast/text/decorations-transformed-expected.txt: Removed.
+        * platform/mac/fast/text/fixed-pitch-control-characters-expected.txt: Removed.
+        * platform/mac/fast/text/selection-painted-separately-expected.txt: Removed.
+        * platform/mac/fast/text/soft-hyphen-2-expected.txt: Removed.
+        * platform/mac/fast/text/soft-hyphen-3-expected.txt: Removed.
+        * platform/mac/fast/text/whitespace/001-expected.txt: Removed.
+        * platform/mac/fast/text/whitespace/013-expected.txt: Removed.
+        * platform/mac/fast/text/whitespace/014-expected.txt: Removed.
+        * platform/mac/fast/text/whitespace/017-expected.txt: Removed.
+
+2013-11-03  Andreas Kling  <akling@apple.com>
+
         Optimize baselines: fast/canvas
 
         Unreviewed; run "webkit-patch optimize-baselines fast/canvas"
