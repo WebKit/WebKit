@@ -1,3 +1,56 @@
+2013-11-03  Andreas Kling  <akling@apple.com>
+
+        Optimize baselines: fast/table
+
+        Unreviewed; run "webkit-patch optimize-baselines fast/table"
+
+        * fast/table/022-expected.txt: Renamed from LayoutTests/platform/efl/fast/table/022-expected.txt.
+        * fast/table/024-expected.png: Renamed from LayoutTests/platform/efl/fast/table/024-expected.png.
+        * fast/table/031-expected.png: Renamed from LayoutTests/platform/efl/fast/table/031-expected.png.
+        * fast/table/032-expected.png: Renamed from LayoutTests/platform/efl/fast/table/032-expected.png.
+        * fast/table/034-expected.txt: Renamed from LayoutTests/platform/efl/fast/table/034-expected.txt.
+        * fast/table/auto-100-percent-width-expected.png: Renamed from LayoutTests/platform/efl/fast/table/auto-100-percent-width-expected.png.
+        * fast/table/border-collapsing/cached-change-cell-sl-border-color-expected.png: Renamed from LayoutTests/platform/efl/fast/table/border-collapsing/cached-change-cell-sl-border-color-expected.png.
+        * fast/table/div-as-col-span-expected.png: Renamed from LayoutTests/platform/efl/fast/table/div-as-col-span-expected.png.
+        * fast/table/fixed-table-with-percent-width-inside-extra-large-div-expected.txt: Renamed from LayoutTests/platform/efl/fast/table/fixed-table-with-percent-width-inside-extra-large-div-expected.txt.
+        * fast/table/giantCellspacing-expected.png: Renamed from LayoutTests/platform/efl/fast/table/giantCellspacing-expected.png.
+        * fast/table/giantCellspacing-expected.txt: Renamed from LayoutTests/platform/efl/fast/table/giantCellspacing-expected.txt.
+        * fast/table/giantRowspan-expected.txt: Renamed from LayoutTests/platform/efl/fast/table/giantRowspan-expected.txt.
+        * fast/table/giantRowspan2-expected.txt: Renamed from LayoutTests/platform/mac/fast/table/giantRowspan2-expected.txt.
+        * fast/table/percent-widths-stretch-vertical-expected.png: Renamed from LayoutTests/platform/efl/fast/table/percent-widths-stretch-vertical-expected.png.
+        * fast/table/table-before-child-style-update-expected.png: Renamed from LayoutTests/platform/efl/fast/table/table-before-child-style-update-expected.png.
+        * fast/table/table-row-before-child-style-update-expected.png: Renamed from LayoutTests/platform/efl/fast/table/table-row-before-child-style-update-expected.png.
+        * fast/table/table-row-style-not-updated-expected.png: Renamed from LayoutTests/platform/efl/fast/table/table-row-style-not-updated-expected.png.
+        * fast/table/table-row-style-not-updated-with-after-content-expected.png: Renamed from LayoutTests/platform/efl/fast/table/table-row-style-not-updated-with-after-content-expected.png.
+        * fast/table/table-row-style-not-updated-with-before-content-expected.png: Renamed from LayoutTests/platform/efl/fast/table/table-row-style-not-updated-with-before-content-expected.png.
+        * fast/table/table-style-not-updated-expected.png: Renamed from LayoutTests/platform/efl/fast/table/table-style-not-updated-expected.png.
+        * fast/table/vertical-align-baseline-readjust-expected.png: Renamed from LayoutTests/platform/efl/fast/table/vertical-align-baseline-readjust-expected.png.
+        * platform/gtk/fast/table/022-expected.txt: Removed.
+        * platform/gtk/fast/table/024-expected.png: Removed.
+        * platform/gtk/fast/table/031-expected.png: Removed.
+        * platform/gtk/fast/table/032-expected.png: Removed.
+        * platform/gtk/fast/table/034-expected.txt: Removed.
+        * platform/gtk/fast/table/auto-100-percent-width-expected.png: Removed.
+        * platform/gtk/fast/table/border-collapsing/cached-change-cell-sl-border-color-expected.png: Removed.
+        * platform/gtk/fast/table/div-as-col-span-expected.png: Removed.
+        * platform/gtk/fast/table/fixed-table-with-percent-width-inside-extra-large-div-expected.txt: Removed.
+        * platform/gtk/fast/table/giantCellspacing-expected.png: Removed.
+        * platform/gtk/fast/table/giantCellspacing-expected.txt: Removed.
+        * platform/gtk/fast/table/giantRowspan-expected.txt: Removed.
+        * platform/gtk/fast/table/percent-widths-stretch-vertical-expected.png: Removed.
+        * platform/gtk/fast/table/table-before-child-style-update-expected.png: Removed.
+        * platform/gtk/fast/table/table-row-before-child-style-update-expected.png: Removed.
+        * platform/gtk/fast/table/table-row-style-not-updated-expected.png: Removed.
+        * platform/gtk/fast/table/table-row-style-not-updated-with-after-content-expected.png: Removed.
+        * platform/gtk/fast/table/table-row-style-not-updated-with-before-content-expected.png: Removed.
+        * platform/gtk/fast/table/table-style-not-updated-expected.png: Removed.
+        * platform/gtk/fast/table/vertical-align-baseline-readjust-expected.png: Removed.
+        * platform/mac/fast/table/022-expected.txt: Removed.
+        * platform/mac/fast/table/giantCellspacing-expected.txt: Removed.
+        * platform/mac/fast/table/giantRowspan-expected.txt: Removed.
+        * platform/win/fast/table/giantRowspan-expected.txt: Removed.
+        * platform/win/fast/table/giantRowspan2-expected.txt: Removed.
+
 2013-11-03  Sun-woo Nam  <sunny.nam@samsung.com>
 
         [EFL][WK1] Some tests of editing/selection fail to render properly
