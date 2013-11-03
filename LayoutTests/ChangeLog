@@ -1,5 +1,87 @@
 2013-11-02  Andreas Kling  <akling@apple.com>
 
+        Optimize baselines: css3
+
+        Unreviewed; run "webkit-patch optimize-baselines css3"
+
+        * css3/images/cross-fade-background-size-expected.txt: Renamed from LayoutTests/platform/efl/css3/images/cross-fade-background-size-expected.txt.
+        * css3/images/cross-fade-blending-expected.png: Renamed from LayoutTests/platform/efl/css3/images/cross-fade-blending-expected.png.
+        * css3/images/cross-fade-blending-expected.txt: Renamed from LayoutTests/platform/efl/css3/images/cross-fade-blending-expected.txt.
+        * css3/images/cross-fade-invalidation-expected.txt: Renamed from LayoutTests/platform/efl/css3/images/cross-fade-invalidation-expected.txt.
+        * css3/images/cross-fade-simple-expected.txt: Renamed from LayoutTests/platform/efl/css3/images/cross-fade-simple-expected.txt.
+        * css3/images/cross-fade-sizing-expected.txt: Renamed from LayoutTests/platform/efl/css3/images/cross-fade-sizing-expected.txt.
+        * css3/images/cross-fade-tiled-expected.txt: Renamed from LayoutTests/platform/efl/css3/images/cross-fade-tiled-expected.txt.
+        * css3/selectors3/html/css3-modsel-17-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/html/css3-modsel-17-expected.png.
+        * css3/selectors3/html/css3-modsel-177a-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/html/css3-modsel-177a-expected.png.
+        * css3/selectors3/html/css3-modsel-18c-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/html/css3-modsel-18c-expected.png.
+        * css3/selectors3/html/css3-modsel-27a-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/html/css3-modsel-27a-expected.png.
+        * css3/selectors3/html/css3-modsel-27b-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/html/css3-modsel-27b-expected.png.
+        * css3/selectors3/html/css3-modsel-61-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/html/css3-modsel-61-expected.png.
+        * css3/selectors3/xhtml/css3-modsel-123b-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/xhtml/css3-modsel-123b-expected.png.
+        * css3/selectors3/xhtml/css3-modsel-17-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/xhtml/css3-modsel-17-expected.png.
+        * css3/selectors3/xhtml/css3-modsel-177a-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/xhtml/css3-modsel-177a-expected.png.
+        * css3/selectors3/xhtml/css3-modsel-18c-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/xhtml/css3-modsel-18c-expected.png.
+        * css3/selectors3/xhtml/css3-modsel-27a-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/xhtml/css3-modsel-27a-expected.png.
+        * css3/selectors3/xhtml/css3-modsel-27b-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/xhtml/css3-modsel-27b-expected.png.
+        * css3/selectors3/xhtml/css3-modsel-61-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/xhtml/css3-modsel-61-expected.png.
+        * css3/selectors3/xhtml/css3-modsel-91-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/xhtml/css3-modsel-91-expected.png.
+        * css3/selectors3/xhtml/css3-modsel-92-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/xhtml/css3-modsel-92-expected.png.
+        * css3/selectors3/xml/css3-modsel-123b-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/xml/css3-modsel-123b-expected.png.
+        * css3/selectors3/xml/css3-modsel-167-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/xml/css3-modsel-167-expected.png.
+        * css3/selectors3/xml/css3-modsel-167a-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/xml/css3-modsel-167a-expected.png.
+        * css3/selectors3/xml/css3-modsel-17-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/xml/css3-modsel-17-expected.png.
+        * css3/selectors3/xml/css3-modsel-177a-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/xml/css3-modsel-177a-expected.png.
+        * css3/selectors3/xml/css3-modsel-18c-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/xml/css3-modsel-18c-expected.png.
+        * css3/selectors3/xml/css3-modsel-27a-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/xml/css3-modsel-27a-expected.png.
+        * css3/selectors3/xml/css3-modsel-27b-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/xml/css3-modsel-27b-expected.png.
+        * css3/selectors3/xml/css3-modsel-61-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/xml/css3-modsel-61-expected.png.
+        * css3/selectors3/xml/css3-modsel-91-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/xml/css3-modsel-91-expected.png.
+        * css3/selectors3/xml/css3-modsel-92-expected.png: Renamed from LayoutTests/platform/efl/css3/selectors3/xml/css3-modsel-92-expected.png.
+        * platform/efl-wk1/css3/flexbox/flexbox-baseline-expected.png: Renamed from LayoutTests/platform/efl/css3/flexbox/flexbox-baseline-expected.png.
+        * platform/efl-wk1/css3/flexbox/flexbox-baseline-expected.txt: Renamed from LayoutTests/platform/efl/css3/flexbox/flexbox-baseline-expected.txt.
+        * platform/gtk/css3/images/cross-fade-blending-expected.png: Removed.
+        * platform/gtk/css3/images/cross-fade-blending-expected.txt: Removed.
+        * platform/gtk/css3/images/cross-fade-invalidation-expected.txt: Removed.
+        * platform/gtk/css3/images/cross-fade-simple-expected.txt: Removed.
+        * platform/gtk/css3/images/cross-fade-sizing-expected.txt: Removed.
+        * platform/gtk/css3/images/cross-fade-tiled-expected.txt: Removed.
+        * platform/gtk/css3/selectors3/html/css3-modsel-17-expected.png: Removed.
+        * platform/gtk/css3/selectors3/html/css3-modsel-177a-expected.png: Removed.
+        * platform/gtk/css3/selectors3/html/css3-modsel-18c-expected.png: Removed.
+        * platform/gtk/css3/selectors3/html/css3-modsel-27a-expected.png: Removed.
+        * platform/gtk/css3/selectors3/html/css3-modsel-27b-expected.png: Removed.
+        * platform/gtk/css3/selectors3/html/css3-modsel-61-expected.png: Removed.
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-123b-expected.png: Removed.
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-17-expected.png: Removed.
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-177a-expected.png: Removed.
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-18c-expected.png: Removed.
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-27a-expected.png: Removed.
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-27b-expected.png: Removed.
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-61-expected.png: Removed.
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-91-expected.png: Removed.
+        * platform/gtk/css3/selectors3/xhtml/css3-modsel-92-expected.png: Removed.
+        * platform/gtk/css3/selectors3/xml/css3-modsel-123b-expected.png: Removed.
+        * platform/gtk/css3/selectors3/xml/css3-modsel-167-expected.png: Removed.
+        * platform/gtk/css3/selectors3/xml/css3-modsel-167a-expected.png: Removed.
+        * platform/gtk/css3/selectors3/xml/css3-modsel-17-expected.png: Removed.
+        * platform/gtk/css3/selectors3/xml/css3-modsel-177a-expected.png: Removed.
+        * platform/gtk/css3/selectors3/xml/css3-modsel-18c-expected.png: Removed.
+        * platform/gtk/css3/selectors3/xml/css3-modsel-27a-expected.png: Removed.
+        * platform/gtk/css3/selectors3/xml/css3-modsel-27b-expected.png: Removed.
+        * platform/gtk/css3/selectors3/xml/css3-modsel-61-expected.png: Removed.
+        * platform/gtk/css3/selectors3/xml/css3-modsel-91-expected.png: Removed.
+        * platform/gtk/css3/selectors3/xml/css3-modsel-92-expected.png: Removed.
+        * platform/mac/css3/images/cross-fade-background-size-expected.txt: Removed.
+        * platform/mac/css3/images/cross-fade-blending-expected.txt: Removed.
+        * platform/mac/css3/images/cross-fade-invalidation-expected.txt: Removed.
+        * platform/mac/css3/images/cross-fade-simple-expected.txt: Removed.
+        * platform/mac/css3/images/cross-fade-sizing-expected.txt: Removed.
+        * platform/mac/css3/images/cross-fade-tiled-expected.txt: Removed.
+        * platform/win/css3/filters/effect-reference-expected.txt: Removed.
+        * platform/win/css3/filters/effect-reference-hw-expected.txt: Removed.
+
+2013-11-02  Andreas Kling  <akling@apple.com>
+
         Optimize baselines: css2.1
 
         Unreviewed; run "webkit-patch optimize-baselines css2.1"
