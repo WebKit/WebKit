@@ -46,7 +46,7 @@ void SVGResourcesCache::addResourcesFromRenderer(RenderElement& renderer, const 
 
     // Build a list of all resources associated with the passed RenderObject
     OwnPtr<SVGResources> newResources = adoptPtr(new SVGResources);
-    if (!newResources->buildCachedResources(&renderer, &svgStyle))
+    if (!newResources->buildCachedResources(renderer, svgStyle))
         return;
 
     // Put object in cache.

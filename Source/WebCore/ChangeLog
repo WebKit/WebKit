@@ -1,5 +1,16 @@
 2013-11-02  Andreas Kling  <akling@apple.com>
 
+        Tighten typing in SVGResources::buildCachedResources().
+        <https://webkit.org/b/123690>
+
+        Make this function take a RenderElement&/SVGRenderStyle& pair instead
+        of a RenderObject*/SVGRenderStyle* pair. Also tweaked the code a bit,
+        removing ampersands and asserts as appropriate.
+
+        Reviewed by Anders Carlsson.
+
+2013-11-02  Andreas Kling  <akling@apple.com>
+
         CSSImageValue constructors should return PassRef.
         <https://webkit.org/b/123688>
 

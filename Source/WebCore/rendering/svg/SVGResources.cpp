@@ -140,21 +140,21 @@ static HashSet<AtomicString>& chainableResourceTags()
     return s_tagList;
 }
 
-static inline String targetReferenceFromResource(SVGElement* element)
+static inline String targetReferenceFromResource(SVGElement& element)
 {
     String target;
-    if (element->hasTagName(SVGNames::patternTag))
-        target = toSVGPatternElement(element)->href();
-    else if (element->hasTagName(SVGNames::linearGradientTag) || element->hasTagName(SVGNames::radialGradientTag))
-        target = toSVGGradientElement(element)->href();
+    if (isSVGPatternElement(element))
+        target = toSVGPatternElement(element).href();
+    else if (isSVGGradientElement(element))
+        target = toSVGGradientElement(element).href();
 #if ENABLE(FILTERS)
-    else if (element->hasTagName(SVGNames::filterTag))
-        target = toSVGFilterElement(element)->href();
+    else if (isSVGFilterElement(element))
+        target = toSVGFilterElement(element).href();
 #endif
     else
         ASSERT_NOT_REACHED();
 
-    return SVGURIReference::fragmentIdentifierFromIRIString(target, element->document());
+    return SVGURIReference::fragmentIdentifierFromIRIString(target, element.document());
 }
 
 static inline RenderSVGResourceContainer* paintingResourceFromSVGPaint(Document& document, const SVGPaint::SVGPaintType& paintType, const String& paintUri, AtomicString& id, bool& hasPendingResource)
@@ -176,38 +176,34 @@ static inline RenderSVGResourceContainer* paintingResourceFromSVGPaint(Document&
     return container;
 }
 
-static inline void registerPendingResource(SVGDocumentExtensions* extensions, const AtomicString& id, SVGElement* element)
+static inline void registerPendingResource(SVGDocumentExtensions* extensions, const AtomicString& id, SVGElement& element)
 {
-    ASSERT(element);
-    extensions->addPendingResource(id, element);
+    extensions->addPendingResource(id, &element);
 }
 
-bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRenderStyle* style)
+bool SVGResources::buildCachedResources(const RenderElement& renderer, const SVGRenderStyle& svgStyle)
 {
-    ASSERT(object);
-    ASSERT(style);
+    ASSERT(renderer.element());
+    ASSERT_WITH_SECURITY_IMPLICATION(renderer.element()->isSVGElement());
 
-    Node* node = object->node();
-    ASSERT(node);
-    ASSERT_WITH_SECURITY_IMPLICATION(node->isSVGElement());
-
-    SVGElement* element = toSVGElement(node);
-    if (!element)
+    if (!renderer.element())
         return false;
 
-    Document& document = object->document();
+    auto& element = toSVGElement(*renderer.element());
+
+    Document& document = element.document();
 
     SVGDocumentExtensions* extensions = document.accessSVGExtensions();
     ASSERT(extensions);
 
-    const AtomicString& tagName = element->localName();
+    const AtomicString& tagName = element.localName();
     if (tagName.isNull())
         return false;
 
     bool foundResources = false;
     if (clipperFilterMaskerTags().contains(tagName)) {
-        if (style->hasClipper()) {
-            AtomicString id(style->clipperResource());
+        if (svgStyle.hasClipper()) {
+            AtomicString id(svgStyle.clipperResource());
             if (setClipper(getRenderSVGResourceById<RenderSVGResourceClipper>(document, id)))
                 foundResources = true;
             else
@@ -215,8 +211,8 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
         }
 
 #if ENABLE(FILTERS)
-        if (style->hasFilter()) {
-            AtomicString id(style->filterResource());
+        if (svgStyle.hasFilter()) {
+            AtomicString id(svgStyle.filterResource());
             if (setFilter(getRenderSVGResourceById<RenderSVGResourceFilter>(document, id)))
                 foundResources = true;
             else
@@ -224,8 +220,8 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
         }
 #endif
 
-        if (style->hasMasker()) {
-            AtomicString id(style->maskerResource());
+        if (svgStyle.hasMasker()) {
+            AtomicString id(svgStyle.maskerResource());
             if (setMasker(getRenderSVGResourceById<RenderSVGResourceMasker>(document, id)))
                 foundResources = true;
             else
@@ -233,20 +229,20 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
         }
     }
 
-    if (markerTags().contains(tagName) && style->hasMarkers()) {
-        AtomicString markerStartId(style->markerStartResource());
+    if (markerTags().contains(tagName) && svgStyle.hasMarkers()) {
+        AtomicString markerStartId(svgStyle.markerStartResource());
         if (setMarkerStart(getRenderSVGResourceById<RenderSVGResourceMarker>(document, markerStartId)))
             foundResources = true;
         else
             registerPendingResource(extensions, markerStartId, element);
 
-        AtomicString markerMidId(style->markerMidResource());
+        AtomicString markerMidId(svgStyle.markerMidResource());
         if (setMarkerMid(getRenderSVGResourceById<RenderSVGResourceMarker>(document, markerMidId)))
             foundResources = true;
         else
             registerPendingResource(extensions, markerMidId, element);
 
-        AtomicString markerEndId(style->markerEndResource());
+        AtomicString markerEndId(svgStyle.markerEndResource());
         if (setMarkerEnd(getRenderSVGResourceById<RenderSVGResourceMarker>(document, markerEndId)))
             foundResources = true;
         else
@@ -254,19 +250,19 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
     }
 
     if (fillAndStrokeTags().contains(tagName)) {
-        if (style->hasFill()) {
+        if (svgStyle.hasFill()) {
             bool hasPendingResource = false;
             AtomicString id;
-            if (setFill(paintingResourceFromSVGPaint(document, style->fillPaintType(), style->fillPaintUri(), id, hasPendingResource)))
+            if (setFill(paintingResourceFromSVGPaint(document, svgStyle.fillPaintType(), svgStyle.fillPaintUri(), id, hasPendingResource)))
                 foundResources = true;
             else if (hasPendingResource)
                 registerPendingResource(extensions, id, element);
         }
 
-        if (style->hasStroke()) {
+        if (svgStyle.hasStroke()) {
             bool hasPendingResource = false;
             AtomicString id;
-            if (setStroke(paintingResourceFromSVGPaint(document, style->strokePaintType(), style->strokePaintUri(), id, hasPendingResource)))
+            if (setStroke(paintingResourceFromSVGPaint(document, svgStyle.strokePaintType(), svgStyle.strokePaintUri(), id, hasPendingResource)))
                 foundResources = true;
             else if (hasPendingResource)
                 registerPendingResource(extensions, id, element);
