@@ -1,5 +1,15 @@
 2013-11-02  Andreas Kling  <akling@apple.com>
 
+        CSSFontFeatureValue constructor should return PassRef.
+        <https://webkit.org/b/123691>
+
+        Make CSSFontFeatureValue::create() return PassRef, since it never
+        returns null. Tweak one call site to be slightly more efficient.
+
+        Reviewed by Anders Carlsson.
+
+2013-11-02  Andreas Kling  <akling@apple.com>
+
         Tighten typing in SVGResources::buildCachedResources().
         <https://webkit.org/b/123690>
 

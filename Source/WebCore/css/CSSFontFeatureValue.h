@@ -33,9 +33,9 @@ namespace WebCore {
 
 class CSSFontFeatureValue : public CSSValue {
 public:
-    static PassRefPtr<CSSFontFeatureValue> create(const String& tag, int value)
+    static PassRef<CSSFontFeatureValue> create(const String& tag, int value)
     {
-        return adoptRef(new CSSFontFeatureValue(tag, value));
+        return adoptRef(*new CSSFontFeatureValue(tag, value));
     }
 
     const String& tag() const { return m_tag; }
