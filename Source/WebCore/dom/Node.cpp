@@ -426,7 +426,9 @@ void Node::setNodeValue(const String& /*nodeValue*/, ExceptionCode& ec)
 
 PassRefPtr<NodeList> Node::childNodes()
 {
-    return ensureRareData().ensureNodeLists().ensureChildNodeList(*this);
+    if (isContainerNode())
+        return ensureRareData().ensureNodeLists().ensureChildNodeList(toContainerNode(*this));
+    return ensureRareData().ensureNodeLists().ensureEmptyChildNodeList(*this);
 }
 
 Node *Node::lastDescendant() const

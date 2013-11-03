@@ -24,25 +24,67 @@
 #ifndef ChildNodeList_h
 #define ChildNodeList_h
 
-#include "LiveNodeList.h"
-#include <wtf/PassRefPtr.h>
+#include "NodeList.h"
+#include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-    class ChildNodeList : public LiveNodeList {
-    public:
-        static PassRefPtr<ChildNodeList> create(Node& rootNode)
-        {
-            return adoptRef(new ChildNodeList(rootNode));
-        }
+class ContainerNode;
 
-        virtual ~ChildNodeList();
+class EmptyNodeList FINAL : public NodeList {
+public:
+    static PassRefPtr<EmptyNodeList> create(Node& owner)
+    {
+        return adoptRef(new EmptyNodeList(owner));
+    }
+    virtual ~EmptyNodeList();
 
-    protected:
-        explicit ChildNodeList(Node& rootNode);
+    Node& ownerNode() { return m_owner.get(); }
 
-        virtual bool nodeMatches(Element*) const OVERRIDE;
-    };
+private:
+    explicit EmptyNodeList(Node& owner) : m_owner(owner) { }
+
+    virtual unsigned length() const OVERRIDE { return 0; }
+    virtual Node* item(unsigned) const OVERRIDE { return nullptr; }
+    virtual Node* namedItem(const AtomicString&) const OVERRIDE { return nullptr; }
+
+    virtual bool isEmptyNodeList() const OVERRIDE { return true; }
+
+    Ref<Node> m_owner;
+};
+
+class ChildNodeList FINAL : public NodeList {
+public:
+    static PassRefPtr<ChildNodeList> create(ContainerNode& parent)
+    {
+        return adoptRef(new ChildNodeList(parent));
+    }
+
+    virtual ~ChildNodeList();
+
+    ContainerNode& ownerNode() { return m_parent.get(); }
+
+    void invalidateCache();
+
+private:
+    explicit ChildNodeList(ContainerNode& parent);
+
+    virtual unsigned length() const OVERRIDE;
+    virtual Node* item(unsigned index) const OVERRIDE;
+    virtual Node* namedItem(const AtomicString&) const OVERRIDE;
+
+    virtual bool isChildNodeList() const OVERRIDE { return true; }
+
+    Node* nodeBeforeCached(unsigned) const;
+    Node* nodeAfterCached(unsigned) const;
+
+    Ref<ContainerNode> m_parent;
+    mutable unsigned m_cachedLength : 31;
+    mutable unsigned m_cachedLengthValid : 1;
+    mutable unsigned m_cachedCurrentPosition;
+    mutable Node* m_cachedCurrentNode;
+};
 
 } // namespace WebCore
 

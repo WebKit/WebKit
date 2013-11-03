@@ -55,8 +55,9 @@ public:
             m_childNodeList->invalidateCache();
     }
 
-    PassRefPtr<ChildNodeList> ensureChildNodeList(Node& node)
+    PassRefPtr<ChildNodeList> ensureChildNodeList(ContainerNode& node)
     {
+        ASSERT(!m_emptyChildNodeList);
         if (m_childNodeList)
             return m_childNodeList;
         RefPtr<ChildNodeList> list = ChildNodeList::create(node);
@@ -66,10 +67,28 @@ public:
 
     void removeChildNodeList(ChildNodeList* list)
     {
-        ASSERT(m_childNodeList = list);
+        ASSERT(m_childNodeList == list);
         if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(list->ownerNode()))
             return;
-        m_childNodeList = 0;
+        m_childNodeList = nullptr;
+    }
+
+    PassRefPtr<EmptyNodeList> ensureEmptyChildNodeList(Node& node)
+    {
+        ASSERT(!m_childNodeList);
+        if (m_emptyChildNodeList)
+            return m_emptyChildNodeList;
+        RefPtr<EmptyNodeList> list = EmptyNodeList::create(node);
+        m_emptyChildNodeList = list.get();
+        return list.release();
+    }
+
+    void removeEmptyChildNodeList(EmptyNodeList* list)
+    {
+        ASSERT(m_emptyChildNodeList == list);
+        if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(list->ownerNode()))
+            return;
+        m_emptyChildNodeList = nullptr;
     }
 
     template <typename StringType>
@@ -213,7 +232,8 @@ public:
 
 private:
     NodeListsNodeData()
-        : m_childNodeList(0)
+        : m_childNodeList(nullptr)
+        , m_emptyChildNodeList(nullptr)
     { }
 
     std::pair<unsigned char, AtomicString> namedNodeListKey(CollectionType type, const AtomicString& name)
@@ -228,9 +248,10 @@ private:
 
     bool deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(Node&);
 
-    // FIXME: m_childNodeList should be merged into m_atomicNameCaches or at least be shared with HTMLCollection returned by Element::children
-    // but it's tricky because invalidateCaches shouldn't invalidate this cache and adoptTreeScope shouldn't call registerNodeList or unregisterNodeList.
+    // These two are currently mutually exclusive and could be unioned. Not very important as this class is large anyway.
     ChildNodeList* m_childNodeList;
+    EmptyNodeList* m_emptyChildNodeList;
+
     NodeListAtomicNameCacheMap m_atomicNameCaches;
     NodeListNameCacheMap m_nameCaches;
     TagNodeListCacheNS m_tagNodeListCacheNS;
@@ -298,7 +319,7 @@ private:
 inline bool NodeListsNodeData::deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(Node& ownerNode)
 {
     ASSERT(ownerNode.nodeLists() == this);
-    if ((m_childNodeList ? 1 : 0) + m_atomicNameCaches.size() + m_nameCaches.size() + m_tagNodeListCacheNS.size() != 1)
+    if ((m_childNodeList ? 1 : 0) + (m_emptyChildNodeList ? 1 : 0) + m_atomicNameCaches.size() + m_nameCaches.size() + m_tagNodeListCacheNS.size() != 1)
         return false;
     ownerNode.clearNodeLists();
     return true;

@@ -71,6 +71,7 @@ void LiveNodeListBase::invalidateIdNameCacheMaps() const
 
 Node* LiveNodeList::namedItem(const AtomicString& elementId) const
 {
+    // FIXME: Why doesn't this look into the name attribute like HTMLCollection::namedItem does?
     Node& rootNode = this->rootNode();
 
     if (rootNode.inDocument()) {

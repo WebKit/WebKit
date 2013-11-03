@@ -1,3 +1,86 @@
+2013-11-03  Antti Koivisto  <antti@apple.com>
+
+        ChildNodeList should not be LiveNodeList
+        https://bugs.webkit.org/show_bug.cgi?id=123708
+
+        Reviewed by Sam Weinig.
+
+        ChildNodeList is a poor fit to be a LiveNodeList. It is heavily special-cased. It is also
+        the only subtype that returns non-Elements thus preventing tightening.
+
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::JSNodeListOwner::isReachableFromOpaqueRoots):
+        
+            Support new types.
+
+        * dom/ChildNodeList.cpp:
+        (WebCore::EmptyNodeList::~EmptyNodeList):
+        (WebCore::ChildNodeList::ChildNodeList):
+        (WebCore::ChildNodeList::~ChildNodeList):
+        (WebCore::ChildNodeList::length):
+        (WebCore::childFromFirst):
+        (WebCore::childFromLast):
+        (WebCore::ChildNodeList::nodeBeforeCached):
+        (WebCore::ChildNodeList::nodeAfterCached):
+        (WebCore::ChildNodeList::item):
+        (WebCore::ChildNodeList::namedItem):
+        (WebCore::ChildNodeList::invalidateCache):
+        
+            Implement the same caching optimizations as LiveNodeList with tighter, less generic code.
+
+        * dom/ChildNodeList.h:
+        
+            Inherit ChildNodeList directly from NodeList.
+
+            Add new EmptyNodeList type. This is only ever used if NodeList is requested for a non-container node.
+            It allows tighter typing in ChildNodeList.
+
+        * dom/LiveNodeList.cpp:
+        (WebCore::LiveNodeList::namedItem):
+        * dom/LiveNodeList.h:
+        (WebCore::LiveNodeListBase::LiveNodeListBase):
+        (WebCore::LiveNodeListBase::~LiveNodeListBase):
+        (WebCore::LiveNodeList::LiveNodeList):
+        
+            Remove ChildNodeList specific code and branches.
+
+        * dom/Node.cpp:
+        (WebCore::Node::childNodes):
+        
+            Return EmptyNodeList for non-containers.
+
+        * dom/NodeList.h:
+        (WebCore::NodeList::~NodeList):
+        (WebCore::NodeList::isLiveNodeList):
+        (WebCore::NodeList::isChildNodeList):
+        (WebCore::NodeList::isEmptyNodeList):
+        
+            For isReachableFromOpaqueRoots.
+
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::ensureChildNodeList):
+        (WebCore::NodeListsNodeData::removeChildNodeList):
+        (WebCore::NodeListsNodeData::ensureEmptyChildNodeList):
+        (WebCore::NodeListsNodeData::removeEmptyChildNodeList):
+        (WebCore::NodeListsNodeData::NodeListsNodeData):
+        (WebCore::NodeListsNodeData::deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList):
+        
+            EmptyNodeList support.
+
+        * html/CollectionType.h:
+        * html/HTMLCollection.cpp:
+        (WebCore::shouldOnlyIncludeDirectChildren):
+        (WebCore::rootTypeFromCollectionType):
+        (WebCore::invalidationTypeExcludingIdAndNameAttributes):
+        (WebCore::isMatchingElement):
+        (WebCore::LiveNodeListBase::itemBefore):
+        (WebCore::LiveNodeListBase::traverseLiveNodeListFirstElement):
+        (WebCore::LiveNodeListBase::traverseLiveNodeListForwardToOffset):
+        (WebCore::LiveNodeListBase::item):
+        (WebCore::LiveNodeListBase::itemBeforeOrAfterCachedItem):
+        
+            Remove ChildNodeList specific code and branches.
+
 2013-11-03  Patrick Gansterer  <paroga@webkit.org>
 
         [WINCE] Replace OwnPtr with GDIObject

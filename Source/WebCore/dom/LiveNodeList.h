@@ -67,14 +67,12 @@ public:
         ASSERT(m_collectionType == static_cast<unsigned>(collectionType));
         ASSERT(!m_overridesItemAfter || !isNodeList(collectionType));
 
-        if (collectionType != ChildNodeListType)
-            document().registerNodeList(this);
+        document().registerNodeList(this);
     }
 
     virtual ~LiveNodeListBase()
     {
-        if (type() != ChildNodeListType)
-            document().unregisterNodeList(this);
+        document().unregisterNodeList(this);
     }
 
     // DOM API
@@ -136,7 +134,6 @@ protected:
 
 private:
     Node* itemBeforeOrAfterCachedItem(unsigned offset, ContainerNode* root) const;
-    Node* traverseChildNodeListForwardToOffset(unsigned offset, Node* currentNode, unsigned& currentOffset) const;
     Element* traverseLiveNodeListFirstElement(ContainerNode* root) const;
     Element* traverseLiveNodeListForwardToOffset(unsigned offset, Element* currentElement, unsigned& currentOffset, ContainerNode* root) const;
     bool isLastItemCloserThanLastOrCachedItem(unsigned offset) const;
@@ -188,8 +185,7 @@ ALWAYS_INLINE bool LiveNodeListBase::shouldInvalidateTypeOnAttributeChange(NodeL
 class LiveNodeList : public LiveNodeListBase {
 public:
     LiveNodeList(Node& ownerNode, CollectionType collectionType, NodeListInvalidationType invalidationType, NodeListRootType rootType = NodeListIsRootedAtNode)
-        : LiveNodeListBase(ownerNode, rootType, invalidationType, collectionType == ChildNodeListType,
-        collectionType, DoesNotOverrideItemAfter)
+        : LiveNodeListBase(ownerNode, rootType, invalidationType, /*shouldOnlyIncludeDirectChildren*/ false, collectionType, DoesNotOverrideItemAfter)
     { }
 
     virtual Node* namedItem(const AtomicString&) const OVERRIDE;

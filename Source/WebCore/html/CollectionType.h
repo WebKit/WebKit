@@ -53,7 +53,6 @@ enum CollectionType {
     FormControls,
 
     // Live NodeList.
-    ChildNodeListType,
     ClassNodeListType,
     NameNodeListType,
     TagNodeListType,
@@ -62,7 +61,7 @@ enum CollectionType {
     LabelsNodeListType,
 };
 
-static const CollectionType FirstNodeListType = ChildNodeListType;
+static const CollectionType FirstNodeListType = ClassNodeListType;
 
 inline bool isNodeList(CollectionType type)
 {
