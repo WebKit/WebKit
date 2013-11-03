@@ -480,7 +480,7 @@ unsigned HTMLFormElement::formElementIndex(FormAssociatedElement* associatedElem
         HTMLElement& element = *it;
         if (&element == &associatedHTMLElement)
             return i;
-        if (!element.isFormControlElement() && !element.hasTagName(objectTag))
+        if (!isHTMLFormControlElement(element) && !isHTMLObjectElement(element))
             continue;
         if (element.form() != this)
             continue;

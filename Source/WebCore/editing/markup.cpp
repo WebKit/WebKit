@@ -902,15 +902,32 @@ PassRefPtr<DocumentFragment> createFragmentForTransformToFragment(const String& 
     return fragment.release();
 }
 
-static inline void removeElementPreservingChildren(PassRefPtr<DocumentFragment> fragment, HTMLElement* element)
+static Vector<Ref<HTMLElement>> collectElementsToRemoveFromFragment(ContainerNode& container)
+{
+    Vector<Ref<HTMLElement>> toRemove;
+    auto children = childrenOfType<HTMLElement>(container);
+    for (auto it = children.begin(), end = children.end(); it != end; ++it) {
+        HTMLElement& element = *it;
+        if (isHTMLHtmlElement(element)) {
+            toRemove.append(element);
+            collectElementsToRemoveFromFragment(element);
+            continue;
+        }
+        if (isHTMLHeadElement(element) || isHTMLBodyElement(element))
+            toRemove.append(element);
+    }
+    return toRemove;
+}
+
+static void removeElementFromFragmentPreservingChildren(DocumentFragment& fragment, HTMLElement& element)
 {
     RefPtr<Node> nextChild;
-    for (RefPtr<Node> child = element->firstChild(); child; child = nextChild) {
+    for (RefPtr<Node> child = element.firstChild(); child; child = nextChild) {
         nextChild = child->nextSibling();
-        element->removeChild(child.get(), ASSERT_NO_EXCEPTION);
-        fragment->insertBefore(child, element, ASSERT_NO_EXCEPTION);
+        element.removeChild(child.get(), ASSERT_NO_EXCEPTION);
+        fragment.insertBefore(child, &element, ASSERT_NO_EXCEPTION);
     }
-    fragment->removeChild(element, ASSERT_NO_EXCEPTION);
+    fragment.removeChild(&element, ASSERT_NO_EXCEPTION);
 }
 
 PassRefPtr<DocumentFragment> createContextualFragment(const String& markup, HTMLElement* element, ParserContentPolicy parserContentPolicy, ExceptionCode& ec)
@@ -934,16 +951,10 @@ PassRefPtr<DocumentFragment> createContextualFragment(const String& markup, HTML
     // We need to pop <html> and <body> elements and remove <head> to
     // accommodate folks passing complete HTML documents to make the
     // child of an element.
+    auto toRemove = collectElementsToRemoveFromFragment(*fragment);
+    for (unsigned i = 0; i < toRemove.size(); ++i)
+        removeElementFromFragmentPreservingChildren(*fragment, toRemove[i].get());
 
-    RefPtr<HTMLElement> nextElement;
-    for (RefPtr<HTMLElement> element = Traversal<HTMLElement>::firstWithin(fragment.get()); element; element = nextElement) {
-        nextElement = Traversal<HTMLElement>::nextSibling(element.get());
-        if (element->hasTagName(htmlTag) || element->hasTagName(headTag) || element->hasTagName(bodyTag)) {
-            if (HTMLElement* firstChild = Traversal<HTMLElement>::firstChild(element.get()))
-                nextElement = firstChild;
-            removeElementPreservingChildren(fragment, element.get());
-        }
-    }
     return fragment.release();
 }
 

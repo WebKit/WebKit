@@ -61,7 +61,7 @@ head generateTypeHelpers
 header interfaceName=HTMLElement
 hgroup interfaceName=HTMLElement
 hr interfaceName=HTMLHRElement
-html
+html generateTypeHelpers
 i interfaceName=HTMLElement
 iframe interfaceName=HTMLIFrameElement, generateTypeHelpers
 image interfaceName=HTMLElement

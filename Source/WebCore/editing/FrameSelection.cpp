@@ -1959,10 +1959,13 @@ static HTMLFormElement* scanForForm(Element* start)
         HTMLElement& element = *it;
         if (isHTMLFormElement(&element))
             return toHTMLFormElement(&element);
-        if (element.isFormControlElement())
-            return static_cast<HTMLFormControlElement&>(element).form();
-        if (element.hasTagName(frameTag) || element.hasTagName(iframeTag)) {
-            if (HTMLFormElement* frameResult = scanForForm(toHTMLFrameElementBase(element).contentDocument()->documentElement()))
+        if (isHTMLFormControlElement(element))
+            return toHTMLFormControlElement(element).form();
+        if (isHTMLFrameElementBase(element)) {
+            Document* contentDocument = toHTMLFrameElementBase(element).contentDocument();
+            if (!contentDocument)
+                continue;
+            if (HTMLFormElement* frameResult = scanForForm(contentDocument->documentElement()))
                 return frameResult;
         }
     }
