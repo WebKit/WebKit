@@ -1,3 +1,14 @@
+2013-11-03  Andreas Kling  <akling@apple.com>
+
+        Inline RenderStyle functions for getting/setting pseudo style bits.
+        <https://webkit.org/b/123702>
+
+        hasPseudoStyle() actually shows up on html5-full-render.html,
+        and it's pretty crazy to eat the cost of a function call just
+        to do some basic bit twiddling.
+
+        Reviewed by Antti Koivisto.
+
 2013-11-03  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Remove HTMLMediaElement.initialTime
