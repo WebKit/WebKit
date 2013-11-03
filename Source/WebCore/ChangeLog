@@ -1,3 +1,42 @@
+2013-11-03  Patrick Gansterer  <paroga@webkit.org>
+
+        [WINCE] Replace OwnPtr with GDIObject
+        https://bugs.webkit.org/show_bug.cgi?id=123670
+
+        Reviewed by Anders Carlsson.
+
+        * page/win/FrameGdiWin.cpp:
+        (WebCore::imageFromRect):
+        * platform/graphics/wince/FontPlatformData.cpp:
+        (WebCore::FixedSizeFontData::create):
+        (WebCore::FontPlatformData::hfont):
+        (WebCore::FontPlatformData::getScaledFontHandle):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::createPen):
+        (WebCore::createBrush):
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::drawRoundCorner):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::drawText):
+        * platform/graphics/wince/ImageWinCE.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        * platform/graphics/wince/SharedBitmap.cpp:
+        (WebCore::SharedBitmap::createHandle):
+        (WebCore::SharedBitmap::draw):
+        (WebCore::SharedBitmap::clipBitmap):
+        (WebCore::drawPatternSimple):
+        (WebCore::SharedBitmap::drawPattern):
+        (WebCore::SharedBitmap::DCProvider::getDC):
+        * platform/graphics/wince/SharedBitmap.h:
+
 2013-11-03  Antti Koivisto  <antti@apple.com>
 
         Add helpers for partial descendant traversal to element iterators

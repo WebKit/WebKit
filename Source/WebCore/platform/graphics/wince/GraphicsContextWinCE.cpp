@@ -345,7 +345,7 @@ public:
     Vector<GraphicsContextPlatformPrivateData> m_backupData;
 };
 
-static PassOwnPtr<HPEN> createPen(const Color& col, double fWidth, StrokeStyle style)
+static GDIObject<HPEN> createPen(const Color& col, double fWidth, StrokeStyle style)
 {
     int width = stableRound(fWidth);
     if (width < 1)
@@ -369,12 +369,12 @@ static PassOwnPtr<HPEN> createPen(const Color& col, double fWidth, StrokeStyle s
             break;
     }
 
-    return adoptPtr(CreatePen(penStyle, width, RGB(col.red(), col.green(), col.blue())));
+    return adoptGDIObject(::CreatePen(penStyle, width, RGB(col.red(), col.green(), col.blue())));
 }
 
-static inline PassOwnPtr<HBRUSH> createBrush(const Color& col)
+static inline GDIObject<HBRUSH> createBrush(const Color& col)
 {
-    return adoptPtr(CreateSolidBrush(RGB(col.red(), col.green(), col.blue())));
+    return adoptGDIObject(::CreateSolidBrush(RGB(col.red(), col.green(), col.blue())));
 }
 
 template <typename PixelType, bool Is16bit> static void _rotateBitmap(SharedBitmap* destBmp, const SharedBitmap* sourceBmp, const RotationTransform& transform)
@@ -642,7 +642,7 @@ void GraphicsContext::drawRect(const IntRect& rect)
         return;
     trRect.move(transparentDC.toShift());
 
-    OwnPtr<HBRUSH> brush;
+    GDIObject<HBRUSH> brush;
     HGDIOBJ oldBrush;
     if (fillColor().alpha()) {
         brush = createBrush(fillColor());
@@ -650,7 +650,7 @@ void GraphicsContext::drawRect(const IntRect& rect)
     } else
         oldBrush = SelectObject(dc, GetStockObject(NULL_BRUSH));
 
-    OwnPtr<HPEN> pen;
+    GDIObject<HPEN> pen;
     HGDIOBJ oldPen;
     if (strokeStyle() != NoStroke) {
         pen = createPen(strokeColor(), strokeThickness(), strokeStyle());
@@ -692,7 +692,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     trPoint1 += transparentDC.toShift();
     trPoint2 += transparentDC.toShift();
 
-    OwnPtr<HPEN> pen = createPen(strokeColor(), strokeThickness(), strokeStyle());
+    auto pen = createPen(strokeColor(), strokeThickness(), strokeStyle());
     HGDIOBJ oldPen = SelectObject(dc, pen.get());
 
     MoveToEx(dc, trPoint1.x(), trPoint1.y(), 0);
@@ -717,7 +717,7 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
         return;
     trRect.move(transparentDC.toShift());
 
-    OwnPtr<HBRUSH> brush;
+    GDIObject<HBRUSH> brush;
     HGDIOBJ oldBrush;
     if (fillColor().alpha()) {
         brush = createBrush(fillColor());
@@ -725,7 +725,7 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
     } else
         oldBrush = SelectObject(dc, GetStockObject(NULL_BRUSH));
 
-    OwnPtr<HPEN> pen;
+    GDIObject<HPEN> pen;
     HGDIOBJ oldPen = 0;
     if (strokeStyle() != NoStroke) {
         pen = createPen(strokeColor(), strokeThickness(), strokeStyle());
@@ -824,7 +824,7 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
         winPoints[i].y += transparentDC.toShift().height();
     }
 
-    OwnPtr<HBRUSH> brush;
+    GDIObject<HBRUSH> brush;
     HGDIOBJ oldBrush;
     if (fillColor().alpha()) {
         brush = createBrush(fillColor());
@@ -832,7 +832,7 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
     } else
         oldBrush = SelectObject(dc, GetStockObject(NULL_BRUSH));
 
-    OwnPtr<HPEN> pen;
+    GDIObject<HPEN> pen;
     HGDIOBJ oldPen;
     if (strokeStyle() != NoStroke) {
         pen = createPen(strokeColor(), strokeThickness(), strokeStyle());
@@ -877,7 +877,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
     if (!transparentDC.hdc())
         return;
 
-    OwnPtr<HBRUSH> hbrush = adoptPtr(CreateSolidBrush(RGB(color.red(), color.green(), color.blue())));
+    auto hbrush = adoptGDIObject(::CreateSolidBrush(RGB(color.red(), color.green(), color.blue())));
     FillRect(transparentDC.hdc(), &transparentDC.rect(), hbrush.get());
 }
 
@@ -891,11 +891,11 @@ void GraphicsContext::clip(const FloatRect& rect)
 
     IntRect trRect = enclosingIntRect(m_data->mapRect(rect));
 
-    OwnPtr<HRGN> clipRgn = adoptPtr(CreateRectRgn(0, 0, 0, 0));
+    auto clipRgn = adoptGDIObject(::CreateRectRgn(0, 0, 0, 0));
     if (GetClipRgn(m_data->m_dc, clipRgn.get()) > 0)
         IntersectClipRect(m_data->m_dc, trRect.x(), trRect.y(), trRect.maxX(), trRect.maxY());
     else {
-        clipRgn = adoptPtr(CreateRectRgn(trRect.x(), trRect.y(), trRect.maxX(), trRect.maxY()));
+        clipRgn = adoptGDIObject(::CreateRectRgn(trRect.x(), trRect.y(), trRect.maxX(), trRect.maxY()));
         SelectClipRgn(m_data->m_dc, clipRgn.get());
     }
 }
@@ -1027,7 +1027,7 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float width)
         return;
     trRect.move(transparentDC.toShift());
 
-    OwnPtr<HPEN> pen = createPen(strokeColor(), strokeThickness(), strokeStyle());
+    auto pen = createPen(strokeColor(), strokeThickness(), strokeStyle());
     HGDIOBJ oldPen = SelectObject(dc, pen.get());
 
     int right = trRect.maxX() - 1;
@@ -1179,7 +1179,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& fillRect, const IntSize& to
 
     RECT rectWin = dstRect;
 
-    OwnPtr<HBRUSH> brush = createBrush(shadowColor);
+    auto brush = createBrush(shadowColor);
     HGDIOBJ oldBrush = SelectObject(dc, brush.get());
 
     SelectObject(dc, GetStockObject(NULL_PEN));
@@ -1190,9 +1190,9 @@ void GraphicsContext::fillRoundedRect(const IntRect& fillRect, const IntSize& to
     clipRect.right = centerPoint.x();
     clipRect.bottom = centerPoint.y();
 
-    OwnPtr<HRGN> clipRgn = adoptPtr(CreateRectRgn(0, 0, 0, 0));
+    auto clipRgn = adoptGDIObject(::CreateRectRgn(0, 0, 0, 0));
     bool needsNewClip = (GetClipRgn(dc, clipRgn.get()) <= 0);
-    
+
     drawRoundCorner(needsNewClip, clipRect, rectWin, dc, stableRound(newTopLeft.width() * 2), stableRound(newTopLeft.height() * 2));
 
     // Draw top right
@@ -1225,9 +1225,9 @@ void GraphicsContext::drawRoundCorner(bool needsNewClip, RECT clipRect, RECT rec
     if (!dc)
         return;
 
-    OwnPtr<HRGN> clipRgn = adoptPtr(CreateRectRgn(0, 0, 0, 0));
+    auto clipRgn = adoptGDIObject(::CreateRectRgn(0, 0, 0, 0));
     if (needsNewClip) {
-        clipRgn = adoptPtr(CreateRectRgn(clipRect.left, clipRect.top, clipRect.right, clipRect.bottom));
+        clipRgn = adoptGDIObject(::CreateRectRgn(clipRect.left, clipRect.top, clipRect.right, clipRect.bottom));
         SelectClipRgn(dc, clipRgn.get());
     } else
         IntersectClipRect(dc, clipRect.left, clipRect.top, clipRect.right, clipRect.bottom);
@@ -1277,7 +1277,7 @@ void GraphicsContext::fillPath(const Path& path)
     if (!m_data->m_dc)
         return;
 
-    OwnPtr<HBRUSH> brush = createBrush(c);
+    auto brush = createBrush(c);
 
     if (m_data->m_opacity < 1.0f || m_data->hasAlpha()) {
         IntRect trRect = enclosingIntRect(m_data->mapRect(path.boundingRect()));
@@ -1312,7 +1312,7 @@ void GraphicsContext::strokePath(const Path& path)
     if (!m_data->m_dc)
         return;
 
-    OwnPtr<HPEN> pen = createPen(strokeColor(), strokeThickness(), strokeStyle());
+    auto pen = createPen(strokeColor(), strokeThickness(), strokeStyle());
 
     if (m_data->m_opacity < 1.0f || m_data->hasAlpha()) {
         IntRect trRect = enclosingIntRect(m_data->mapRect(path.boundingRect()));
@@ -1566,7 +1566,7 @@ void GraphicsContext::drawText(const SimpleFontData* fontData, const GlyphBuffer
 
         offset += width;
 
-        OwnPtr<HPEN> hPen = adoptPtr(CreatePen(PS_DASH, 1, fontColor));
+        auto hPen = adoptGDIObject(::CreatePen(PS_DASH, 1, fontColor));
         HGDIOBJ oldPen = SelectObject(m_data->m_dc, hPen.get());
 
         MoveToEx(m_data->m_dc, stableRound(trPoint.x()), y, 0);

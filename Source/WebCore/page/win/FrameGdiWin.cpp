@@ -30,13 +30,13 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include <windows.h>
+#include <wtf/win/GDIObject.h>
 
 namespace WebCore {
 
 extern HDC g_screenDC;
 
-PassOwnPtr<HBITMAP> imageFromRect(Frame* frame, IntRect& ir)
+GDIObject<HBITMAP> imageFromRect(Frame* frame, IntRect& ir)
 {
     int w;
     int h;
@@ -51,21 +51,21 @@ PassOwnPtr<HBITMAP> imageFromRect(Frame* frame, IntRect& ir)
         h = ir.height();
     }
 
-    OwnPtr<HDC> bmpDC = adoptPtr(CreateCompatibleDC(g_screenDC));
-    OwnPtr<HBITMAP> hBmp = adoptPtr(CreateCompatibleBitmap(g_screenDC, w, h));
+    auto bmpDC = adoptGDIObject(::CreateCompatibleDC(g_screenDC));
+    auto hBmp = adoptGDIObject(::CreateCompatibleBitmap(g_screenDC, w, h));
     if (!hBmp)
         return nullptr;
 
-    HGDIOBJ hbmpOld = SelectObject(bmpDC.get(), hBmp.get());
+    HGDIOBJ hbmpOld = ::SelectObject(bmpDC.get(), hBmp.get());
 
     {
         GraphicsContext gc(bmpDC.get());
         view->paint(&gc, ir);
     }
 
-    SelectObject(bmpDC.get(), hbmpOld);
+    ::SelectObject(bmpDC.get(), hbmpOld);
 
-    return hBmp.release();
+    return hBmp;
 }
 
 } // namespace WebCore

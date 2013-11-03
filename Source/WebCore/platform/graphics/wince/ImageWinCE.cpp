@@ -34,10 +34,8 @@
 #include "SharedBuffer.h"
 #include "TransformationMatrix.h"
 #include "WinceGraphicsExtras.h"
-#include <wtf/OwnPtr.h>
 #include <wtf/text/WTFString.h>
-
-#include <windows.h>
+#include <wtf/win/GDIObject.h>
 
 namespace WebCore {
 
@@ -70,7 +68,7 @@ bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
     ASSERT(bmpInfo.bmBitsPixel == 32);
     int bufferSize = bmpInfo.bmWidthBytes * bmpInfo.bmHeight;
 
-    OwnPtr<HDC> hdc = adoptPtr(CreateCompatibleDC(0));
+    auto hdc = adoptGDIObject(::CreateCompatibleDC(0));
     HGDIOBJ hOldBmp = SelectObject(hdc.get(), bmp);
 
     {

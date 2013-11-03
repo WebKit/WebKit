@@ -186,7 +186,7 @@ bool SharedBitmap::freeMemory()
     return false;
 }
 
-PassOwnPtr<HBITMAP> SharedBitmap::createHandle(void** pixels, BitmapInfo* bmpInfo, int height, bool use16bit) const
+GDIObject<HBITMAP> SharedBitmap::createHandle(void** pixels, BitmapInfo* bmpInfo, int height, bool use16bit) const
 {
     if (!m_pixels)
         return nullptr;
@@ -195,19 +195,19 @@ PassOwnPtr<HBITMAP> SharedBitmap::createHandle(void** pixels, BitmapInfo* bmpInf
         height = this->height();
     *bmpInfo = BitmapInfo::createBottomUp(IntSize(width(), height), (use16bit || is16bit()) ? BitmapInfo::BitCount16 : BitmapInfo::BitCount32);
 
-    OwnPtr<HBITMAP> hbmp = adoptPtr(CreateDIBSection(0, bmpInfo, DIB_RGB_COLORS, pixels, 0, 0));
+    auto hbmp = adoptGDIObject(::CreateDIBSection(0, bmpInfo, DIB_RGB_COLORS, pixels, 0, 0));
 
     if (!hbmp)
         return nullptr;
 
-    OwnPtr<HDC> bmpDC = adoptPtr(CreateCompatibleDC(0));
+    auto bmpDC = adoptGDIObject(::CreateCompatibleDC(0));
     HGDIOBJ hOldBmp = SelectObject(bmpDC.get(), hbmp.get());
 
     StretchDIBits(bmpDC.get(), 0, 0, width(), height, 0, 0, width(), height, m_pixels, &m_bmpInfo, DIB_RGB_COLORS, SRCCOPY);
 
     SelectObject(bmpDC.get(), hOldBmp);
 
-    return hbmp.release();
+    return hbmp;
 }
 
 bool SharedBitmap::ensureHandle()
@@ -251,7 +251,7 @@ void SharedBitmap::draw(HDC hdc, const IntRect& dstRect, const IntRect& srcRect,
         return;
 
     HBITMAP hbitmap = 0;
-    OwnPtr<HBITMAP> hTempBitmap;
+    GDIObject<HBITMAP> hTempBitmap;
     bool usingHandle = compositeOp == CompositeSourceOver && (hasAlpha() && hasAlphaBlendSupport() || usesTransparentColor());
 
     if (usingHandle) {
@@ -276,7 +276,7 @@ void SharedBitmap::draw(HDC hdc, const IntRect& dstRect, const IntRect& srcRect,
         return;
     }
 
-    OwnPtr<HDC> hmemdc = adoptPtr(CreateCompatibleDC(hdc));
+    auto hmemdc = adoptGDIObject(::CreateCompatibleDC(hdc));
     HGDIOBJ hOldBmp = SelectObject(hmemdc.get(), hbitmap);
 
     if (!usesTransparentColor() && hasAlphaBlendSupport()) {
@@ -292,7 +292,7 @@ void SharedBitmap::draw(HDC hdc, const IntRect& dstRect, const IntRect& srcRect,
     SelectObject(hmemdc.get(), hOldBmp);
 }
 
-PassOwnPtr<HBITMAP> SharedBitmap::clipBitmap(const IntRect& rect, bool useAlpha, BitmapInfo& bmpInfo, void*& pixels)
+GDIObject<HBITMAP> SharedBitmap::clipBitmap(const IntRect& rect, bool useAlpha, BitmapInfo& bmpInfo, void*& pixels)
 {
     if (!bytes())
         return nullptr;
@@ -305,19 +305,19 @@ PassOwnPtr<HBITMAP> SharedBitmap::clipBitmap(const IntRect& rect, bool useAlpha,
         return nullptr;
 
     bmpInfo = BitmapInfo::createBottomUp(IntSize(copyWidth, copyHeight), (useAlpha && is32bit()) ? BitmapInfo::BitCount32 : BitmapInfo::BitCount16);
-    OwnPtr<HBITMAP> newBmp = adoptPtr(CreateDIBSection(0, &bmpInfo, DIB_RGB_COLORS, &pixels, 0, 0));
+    auto newBmp = adoptGDIObject(::CreateDIBSection(0, &bmpInfo, DIB_RGB_COLORS, &pixels, 0, 0));
 
     if (!newBmp)
         return nullptr;
 
-    OwnPtr<HDC> dcNew = adoptPtr(CreateCompatibleDC(0));
+    auto dcNew = adoptGDIObject(::CreateCompatibleDC(0));
     HGDIOBJ tmpNew = SelectObject(dcNew.get(), newBmp.get());
 
     StretchDIBits(dcNew.get(), 0, 0, copyWidth, copyHeight, rect.x(), rect.y(), copyWidth, copyHeight,
         bytes(), &bitmapInfo(), DIB_RGB_COLORS, SRCCOPY);
 
     SelectObject(dcNew.get(), tmpNew);
-    return newBmp.release();
+    return newBmp;
 }
 
 PassRefPtr<SharedBitmap> SharedBitmap::clipBitmap(const IntRect& rect, bool useAlpha)
@@ -344,7 +344,7 @@ PassRefPtr<SharedBitmap> SharedBitmap::clipBitmap(const IntRect& rect, bool useA
 
 static void drawPatternSimple(HDC hdc, const RECT& destRect, HBITMAP hbmp, const POINT& phase)
 {
-    OwnPtr<HBRUSH> hBrush = adoptPtr(CreatePatternBrush(hbmp));
+    auto hBrush = adoptGDIObject(::CreatePatternBrush(hbmp));
     if (!hBrush)
         return;
 
@@ -431,7 +431,7 @@ void SharedBitmap::drawPattern(HDC hdc, const AffineTransform& transform, const 
         tileRect.setHeight(temp);
     }
 
-    OwnPtr<HBITMAP> clippedBmp;
+    GDIObject<HBITMAP> clippedBmp;
 
     if (tileRect.x() || tileRect.y() || tileRect.width() != bmpWidth || tileRect.height() != bmpHeight) {
         BitmapInfo patternBmpInfo;
@@ -453,7 +453,7 @@ void SharedBitmap::drawPattern(HDC hdc, const AffineTransform& transform, const 
     if (clipType == SIMPLEREGION)
         trRect.intersect(FloatRect(clipBox.left, clipBox.top, clipBox.right - clipBox.left, clipBox.bottom - clipBox.top));
     else if (clipType == COMPLEXREGION) {
-        OwnPtr<HRGN> clipRgn = adoptPtr(CreateRectRgn(0, 0, 0, 0));
+        auto clipRgn = adoptGDIObject(::CreateRectRgn(0, 0, 0, 0));
         if (GetClipRgn(hdc, clipRgn.get()) > 0) {
             DWORD regionDataSize = GetRegionData(clipRgn.get(), sizeof(RGNDATA), 0);
             if (regionDataSize) {
@@ -504,12 +504,12 @@ void SharedBitmap::drawPattern(HDC hdc, const AffineTransform& transform, const 
 
     BitmapInfo bmpInfo = BitmapInfo::createBottomUp(IntSize(srcRectWin.right, srcRectWin.bottom), useAlpha ? BitmapInfo::BitCount32 : BitmapInfo::BitCount16);
     void* pixels;
-    OwnPtr<HBITMAP> hbmpTemp = adoptPtr(CreateDIBSection(0, &bmpInfo, DIB_RGB_COLORS, &pixels, 0, 0));
+    auto hbmpTemp = adoptGDIObject(::CreateDIBSection(0, &bmpInfo, DIB_RGB_COLORS, &pixels, 0, 0));
 
     if (!hbmpTemp)
         return;
 
-    OwnPtr<HDC> hmemdc = adoptPtr(CreateCompatibleDC(hdc));
+    auto hmemdc = adoptGDIObject(::CreateCompatibleDC(hdc));
     HGDIOBJ oldBmp = SelectObject(hmemdc.get(), hbmpTemp.get());
     if (clippedBmp)
         drawPatternSimple(hmemdc.get(), srcRectWin, clippedBmp.get(), phaseWin);
@@ -520,7 +520,7 @@ void SharedBitmap::drawPattern(HDC hdc, const AffineTransform& transform, const 
     else {
         void* pixels;
         BitmapInfo bmpInfo;
-        OwnPtr<HBITMAP> hbmp = createHandle(&pixels, &bmpInfo, -1, false);
+        auto hbmp = createHandle(&pixels, &bmpInfo, -1, false);
         if (hbmp)
             drawPatternSimple(hmemdc.get(), srcRectWin, hbmp.get(), phaseWin);
         else {
@@ -564,7 +564,7 @@ HDC SharedBitmap::DCProvider::getDC(SharedBitmap* bmp, unsigned* key)
 
     *key = reinterpret_cast<unsigned>(SelectObject(hdc, bmp->getHandle()));
     RECT rect = { 0, 0, bmp->width(), bmp->height() };
-    OwnPtr<HRGN> clipRgn = adoptPtr(CreateRectRgnIndirect(&rect));
+    auto clipRgn = adoptGDIObject(::CreateRectRgnIndirect(&rect));
     SelectClipRgn(hdc, clipRgn.get());
 
     return hdc;

@@ -30,7 +30,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
-#include <wingdi.h>
+#include <wtf/win/GDIObject.h>
 
 namespace WebCore {
 
@@ -67,7 +67,7 @@ public:
     void setHasAlpha(bool alpha) { m_hasAlpha = alpha; }
     bool ensureHandle();
     HBITMAP getHandle() { return m_hbitmap.get(); }
-    PassOwnPtr<HBITMAP> createHandle(void** pixels, BitmapInfo* bmpInfo, int h = -1, bool use16bit = true) const;
+    GDIObject<HBITMAP> createHandle(void** pixels, BitmapInfo* bmpInfo, int h = -1, bool use16bit = true) const;
     bool usesTransparentColor() const { return m_usesTransparentColor; }
     COLORREF transparentColor() const { return m_transparentColor; }
     void setTransparentColor(COLORREF c)
@@ -77,7 +77,7 @@ public:
     }
     bool canUseDIBits() const { return !hasAlpha() && !usesTransparentColor(); }
 
-    PassOwnPtr<HBITMAP> clipBitmap(const IntRect& rect, bool useAlpha, BitmapInfo& bmpInfo, void*& pixels);
+    GDIObject<HBITMAP> clipBitmap(const IntRect&, bool useAlpha, BitmapInfo&, void*& pixels);
 
     PassRefPtr<SharedBitmap> clipBitmap(const IntRect& rect, bool useAlpha);
 
@@ -130,7 +130,7 @@ public:
 private:
     SharedBitmap(const IntSize&, BitmapInfo::BitCount, bool initPixels);
     BitmapInfo m_bmpInfo;
-    OwnPtr<HBITMAP> m_hbitmap;
+    GDIObject<HBITMAP> m_hbitmap;
     void* m_pixels;
     std::unique_ptr<unsigned[]> m_pixelData;
     COLORREF m_transparentColor;

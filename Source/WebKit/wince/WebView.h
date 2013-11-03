@@ -27,8 +27,8 @@
 
 #include "IntRect.h"
 #include <windows.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/win/GDIObject.h>
 
 namespace WTF {
 class String;
@@ -94,8 +94,8 @@ private:
     HWND m_parentWindowHandle;
     HWND m_windowHandle;
     bool m_enableDoubleBuffer;
-    OwnPtr<HDC> m_doubleBufferDC;
-    OwnPtr<HBITMAP> m_doubleBufferBitmap;
+    GDIObject<HDC> m_doubleBufferDC;
+    GDIObject<HBITMAP> m_doubleBufferBitmap;
 };
 
 #endif // WebView_h

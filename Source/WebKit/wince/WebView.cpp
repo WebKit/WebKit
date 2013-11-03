@@ -240,7 +240,7 @@ void WebView::paint(HDC hDC, const IntRect& clipRect)
     if (!frameView)
         return;
 
-    OwnPtr<HRGN> clipRgn = adoptPtr(CreateRectRgn(clipRect.x(), clipRect.y(), clipRect.maxX(), clipRect.maxY()));
+    auto clipRgn = adoptGDIObject(::CreateRectRgn(clipRect.x(), clipRect.y(), clipRect.maxX(), clipRect.maxY()));
     SelectClipRgn(hDC, clipRgn.get());
 
     frameView->updateLayoutAndStyleIfNeededRecursive();
@@ -265,8 +265,8 @@ bool WebView::handlePaint(HWND hWnd)
             RECT rcClient;
             GetClientRect(m_windowHandle, &rcClient);
 
-            m_doubleBufferDC = adoptPtr(CreateCompatibleDC(hDC));
-            m_doubleBufferBitmap = adoptPtr(CreateCompatibleBitmap(hDC, rcClient.right, rcClient.bottom));
+            m_doubleBufferDC = adoptGDIObject(::CreateCompatibleDC(hDC));
+            m_doubleBufferBitmap = adoptGDIObject(::CreateCompatibleBitmap(hDC, rcClient.right, rcClient.bottom));
             SelectObject(m_doubleBufferDC.get(), m_doubleBufferBitmap.get());
         }
 
