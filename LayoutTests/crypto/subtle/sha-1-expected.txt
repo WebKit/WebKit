@@ -11,7 +11,7 @@ SHA1 of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     = [2c 7e 7c 38 4f 78 29 69 42 82 b1 e3 a6 21 6d ef 80 82 d0 55]
 SHA1 of [new Uint8Array([0, 1, 2, 3, 4]), new Uint8Array(5, 6, 7, 8, 9, 10])]
     = [2c 7e 7c 38 4f 78 29 69 42 82 b1 e3 a6 21 6d ef 80 82 d0 55]
-PASS crypto.subtle.generateKey('sha-1') threw exception TypeError: undefined is not a function (evaluating 'crypto.subtle.generateKey('sha-1')').
+PASS crypto.subtle.generateKey('sha-1') threw exception Error: NotSupportedError: DOM Exception 9.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -115,12 +115,6 @@ void CryptoAlgorithmAES_CBC::decrypt(const CryptoAlgorithmParameters& parameters
     transformAES_CBC(kCCDecrypt, aesCBCParameters, *aesKey, data, std::move(promise));
 }
 
-void CryptoAlgorithmAES_CBC::generateKey(const CryptoAlgorithmParameters&, bool /*extractable*/, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
-{
-    // Not yet implemented.
-    ec = NOT_SUPPORTED_ERR;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)

@@ -1,3 +1,52 @@
+2013-11-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Implement generateKey for HMAC and AES-CBC
+        https://bugs.webkit.org/show_bug.cgi?id=123669
+
+        Reviewed by Dan Bernstein.
+
+        Tests: crypto/subtle/aes-cbc-generate-key.html
+               crypto/subtle/hmac-generate-key.html
+
+        * WebCore.xcodeproj/project.pbxproj: Added new files.
+
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::createAesKeyGenParams): Added bindings for AesKeyGenParams.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForGenerateKey): Handle
+        algorithms that generate AES and HMAC keys.
+
+        * bindings/js/JSSubtleCryptoCustom.cpp: (WebCore::JSSubtleCrypto::generateKey): Added.
+
+        * crypto/CryptoAlgorithmAesKeyGenParams.h: Added.
+
+        * crypto/CryptoKey.cpp: (WebCore::CryptoKey::randomData):
+        * crypto/CryptoKey.h:
+        * crypto/CryptoKeyMac.cpp: Added
+        Expose a function that produces random data for symmetric crypto keys. Cross-platform
+        implementation uses ARC4 code from WTF, while Mac uses a system function that
+        provides a FIPS validated random number generator.
+
+        * crypto/CryptoKeyAES.cpp: (WebCore::CryptoKeyAES::generate):
+        * crypto/CryptoKeyAES.h:
+        Added a function that creates AES keys.
+
+        * crypto/SubtleCrypto.idl: Added generateKey.
+
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::generateKey): Added.
+
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        (WebCore::CryptoAlgorithmHMAC::generateKey): Added.
+
+        * crypto/keys/CryptoKeyHMAC.cpp: (WebCore::CryptoKeyHMAC::generate):
+        * crypto/keys/CryptoKeyHMAC.h:
+        Added a function that creates HMAC keys.
+
+        * crypto/mac/CryptoAlgorithmAES_CBCMac.cpp: Removed generateKey stub, the implementation
+        ended up in cross-platform file.
+
+        * crypto/mac/CryptoAlgorithmHMACMac.cpp: Ditto.
+
 2013-11-02  Christophe Dumez  <ch.dumez@samsung.com>
 
         EnforceRange doesn't enforce range of a short

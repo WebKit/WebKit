@@ -30,6 +30,7 @@
 
 #include "CryptoAlgorithmDescriptionBuilder.h"
 #include "CryptoAlgorithmRegistry.h"
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -87,6 +88,14 @@ Vector<String> CryptoKey::usages() const
     return result;
 }
 
+#if !PLATFORM(MAC)
+Vector<char> CryptoKey::randomData(size_t size)
+{
+    Vector<char> result(size);
+    cryptographicallyRandomValues(result.data(), result.size());
+    return result;
+}
+#endif
 } // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)

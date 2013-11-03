@@ -23,18 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=SUBTLE_CRYPTO,
-    InterfaceName=WebKitSubtleCrypto,
-    GenerateIsReachable=ImplDocument,
-    NoInterfaceObject,
-    OperationsNotDeletable
-] interface SubtleCrypto {
-    [Custom] Promise encrypt(AlgorithmIdentifier algorithm, Key key, sequence<CryptoOperationData> data);
-    [Custom] Promise decrypt(AlgorithmIdentifier algorithm, Key key, sequence<CryptoOperationData> data);
-    [Custom] Promise sign(AlgorithmIdentifier algorithm, Key key, sequence<CryptoOperationData> data);
-    [Custom] Promise verify(AlgorithmIdentifier algorithm, Key key, CryptoOperationData signature, sequence<CryptoOperationData> data);
-    [Custom] Promise digest(AlgorithmIdentifier algorithm, sequence<CryptoOperationData> data);
-    [Custom] Promise generateKey(AlgorithmIdentifier algorithm, optional boolean extractable, optional KeyUsage[] keyUsages);
-    [Custom] Promise importKey(KeyFormat format, CryptoOperationData keyData, AlgorithmIdentifier? algorithm, optional boolean extractable, optional KeyUsage[] keyUsages);
+#ifndef CryptoAlgorithmAesKeyGenParams_h
+#define CryptoAlgorithmAesKeyGenParams_h
+
+#include "CryptoAlgorithmParameters.h"
+
+#if ENABLE(SUBTLE_CRYPTO)
+
+namespace WebCore {
+
+class CryptoAlgorithmAesKeyGenParams FINAL : public CryptoAlgorithmParameters {
+public:
+    // The length, in bits, of the key.
+    unsigned length;
 };
+
+}
+
+#endif // ENABLE(SUBTLE_CRYPTO)
+#endif // CryptoAlgorithmAesKeyGenParams_h

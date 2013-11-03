@@ -28,7 +28,7 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmAesCbcParams.h"
+#include "CryptoAlgorithmAesKeyGenParams.h"
 #include "CryptoKeyAES.h"
 #include "ExceptionCode.h"
 #include "JSDOMPromise.h"
@@ -53,6 +53,19 @@ std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmAES_CBC::create()
 CryptoAlgorithmIdentifier CryptoAlgorithmAES_CBC::identifier() const
 {
     return s_identifier;
+}
+
+void CryptoAlgorithmAES_CBC::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, std::unique_ptr<PromiseWrapper> promise, ExceptionCode&)
+{
+    const CryptoAlgorithmAesKeyGenParams& aesParameters = static_cast<const CryptoAlgorithmAesKeyGenParams&>(parameters);
+
+    RefPtr<CryptoKeyAES> result = CryptoKeyAES::generate(CryptoAlgorithmIdentifier::AES_CBC, aesParameters.length, extractable, usages);
+    if (!result) {
+        promise->reject(nullptr);
+        return;
+    }
+
+    promise->fulfill(result.release());
 }
 
 void CryptoAlgorithmAES_CBC::importKey(const CryptoAlgorithmParameters&, CryptoKeyFormat format, const CryptoOperationData& data, bool extractable, CryptoKeyUsage usage, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)

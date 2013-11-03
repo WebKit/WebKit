@@ -337,6 +337,51 @@ JSValue JSSubtleCrypto::digest(ExecState* exec)
     return promise;
 }
 
+JSValue JSSubtleCrypto::generateKey(JSC::ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
+
+    auto algorithm = createAlgorithmFromJSValue(exec, exec->uncheckedArgument(0));
+    if (!algorithm) {
+        ASSERT(exec->hadException());
+        return jsUndefined();
+    }
+
+    auto parameters = JSCryptoAlgorithmDictionary::createParametersForGenerateKey(exec, algorithm->identifier(), exec->uncheckedArgument(0));
+    if (!parameters) {
+        ASSERT(exec->hadException());
+        return jsUndefined();
+    }
+
+    bool extractable = false;
+    if (exec->argumentCount() >= 2) {
+        extractable = exec->uncheckedArgument(1).toBoolean(exec);
+        if (exec->hadException())
+            return jsUndefined();
+    }
+
+    CryptoKeyUsage keyUsages = 0;
+    if (exec->argumentCount() >= 3) {
+        if (!cryptoKeyUsagesFromJSValue(exec, exec->argument(2), keyUsages)) {
+            ASSERT(exec->hadException());
+            return jsUndefined();
+        }
+    }
+
+    JSPromise* promise = JSPromise::createWithResolver(exec->vm(), globalObject());
+    auto promiseWrapper = PromiseWrapper::create(globalObject(), promise);
+
+    ExceptionCode ec = 0;
+    algorithm->generateKey(*parameters, extractable, keyUsages, std::move(promiseWrapper), ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
+
+    return promise;
+}
+
 JSValue JSSubtleCrypto::importKey(JSC::ExecState* exec)
 {
     if (exec->argumentCount() < 3)

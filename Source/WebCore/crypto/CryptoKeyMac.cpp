@@ -23,18 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=SUBTLE_CRYPTO,
-    InterfaceName=WebKitSubtleCrypto,
-    GenerateIsReachable=ImplDocument,
-    NoInterfaceObject,
-    OperationsNotDeletable
-] interface SubtleCrypto {
-    [Custom] Promise encrypt(AlgorithmIdentifier algorithm, Key key, sequence<CryptoOperationData> data);
-    [Custom] Promise decrypt(AlgorithmIdentifier algorithm, Key key, sequence<CryptoOperationData> data);
-    [Custom] Promise sign(AlgorithmIdentifier algorithm, Key key, sequence<CryptoOperationData> data);
-    [Custom] Promise verify(AlgorithmIdentifier algorithm, Key key, CryptoOperationData signature, sequence<CryptoOperationData> data);
-    [Custom] Promise digest(AlgorithmIdentifier algorithm, sequence<CryptoOperationData> data);
-    [Custom] Promise generateKey(AlgorithmIdentifier algorithm, optional boolean extractable, optional KeyUsage[] keyUsages);
-    [Custom] Promise importKey(KeyFormat format, CryptoOperationData keyData, AlgorithmIdentifier? algorithm, optional boolean extractable, optional KeyUsage[] keyUsages);
-};
+#include "config.h"
+#include "CryptoKey.h"
+
+#if ENABLE(SUBTLE_CRYPTO)
+
+#ifdef __has_include
+#if __has_include(<CommonCrypto/CommonRandomSPI.h>)
+#include <CommonCrypto/CommonRandomSPI.h>
+#endif
+#endif
+
+typedef struct __CCRandom *CCRandomRef;
+extern const CCRandomRef kCCRandomDefault;
+extern "C" int CCRandomCopyBytes(CCRandomRef rnd, void *bytes, size_t count);
+
+namespace WebCore {
+
+Vector<char> CryptoKey::randomData(size_t size)
+{
+    Vector<char> result(size);
+    CCRandomCopyBytes(kCCRandomDefault, result.data(), result.size());
+    return result;
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(SUBTLE_CRYPTO)

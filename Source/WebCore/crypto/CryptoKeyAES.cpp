@@ -49,6 +49,13 @@ CryptoKeyAES::~CryptoKeyAES()
 {
 }
 
+PassRefPtr<CryptoKeyAES> CryptoKeyAES::generate(CryptoAlgorithmIdentifier algorithm, size_t lengthBits, bool extractable, CryptoKeyUsage usages)
+{
+    if (lengthBits % 8)
+        return nullptr;
+    return adoptRef(new CryptoKeyAES(algorithm, randomData(lengthBits / 8), extractable, usages));
+}
+
 void CryptoKeyAES::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& builder) const
 {
     CryptoKey::buildAlgorithmDescription(builder);
