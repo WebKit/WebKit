@@ -32,7 +32,7 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Element.h"
-#include "ElementTraversal.h"
+#include "ElementIterator.h"
 #include "EventHandler.h"
 #include "ExceptionCode.h"
 #include "FloatQuad.h"
@@ -1949,39 +1949,40 @@ void FrameSelection::getClippedVisibleTextRectangles(Vector<FloatRect>& rectangl
 }
 
 // Scans logically forward from "start", including any child frames.
-static HTMLFormElement* scanForForm(Node* start)
+static HTMLFormElement* scanForForm(Element* start)
 {
     if (!start)
-        return 0;
-    HTMLElement* element = start->isHTMLElement() ? toHTMLElement(start) : Traversal<HTMLElement>::next(start);
-    for (; element; element = Traversal<HTMLElement>::next(element)) {
-        if (isHTMLFormElement(element))
-            return toHTMLFormElement(element);
-        if (element->isFormControlElement())
-            return static_cast<HTMLFormControlElement*>(element)->form();
-        if (element->hasTagName(frameTag) || element->hasTagName(iframeTag))
-            if (HTMLFormElement* frameResult = scanForForm(toHTMLFrameElementBase(element)->contentDocument()))
+        return nullptr;
+
+    auto descendants = descendantsOfType<HTMLElement>(start->document());
+    for (auto it = descendants.from(*start), end = descendants.end(); it != end; ++it) {
+        HTMLElement& element = *it;
+        if (isHTMLFormElement(&element))
+            return toHTMLFormElement(&element);
+        if (element.isFormControlElement())
+            return static_cast<HTMLFormControlElement&>(element).form();
+        if (element.hasTagName(frameTag) || element.hasTagName(iframeTag)) {
+            if (HTMLFormElement* frameResult = scanForForm(toHTMLFrameElementBase(element).contentDocument()->documentElement()))
                 return frameResult;
+        }
     }
-    return 0;
+    return nullptr;
 }
 
 // We look for either the form containing the current focus, or for one immediately after it
 HTMLFormElement* FrameSelection::currentForm() const
 {
     // Start looking either at the active (first responder) node, or where the selection is.
-    Node* start = m_frame->document()->focusedElement();
+    Element* start = m_frame->document()->focusedElement();
     if (!start)
-        start = this->start().deprecatedNode();
+        start = this->start().element();
+    if (!start)
+        return nullptr;
 
-    // Try walking up the node tree to find a form element.
-    Node* node;
-    for (node = start; node; node = node->parentNode()) {
-        if (isHTMLFormElement(node))
-            return toHTMLFormElement(node);
-        if (node->isHTMLElement() && toHTMLElement(node)->isFormControlElement())
-            return static_cast<HTMLFormControlElement*>(node)->form();
-    }
+    if (auto form = lineageOfType<HTMLFormElement>(*start).first())
+        return form;
+    if (auto formControl = lineageOfType<HTMLFormControlElement>(*start).first())
+        return formControl->form();
 
     // Try walking forward in the node tree to find a form element.
     return scanForForm(start);

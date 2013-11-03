@@ -1,3 +1,30 @@
+2013-11-03  Antti Koivisto  <antti@apple.com>
+
+        Add helpers for partial descendant traversal to element iterators
+        https://bugs.webkit.org/show_bug.cgi?id=123703
+
+        Reviewed by Andreas Kling.
+
+        * dom/ElementAncestorIterator.h:
+        (WebCore::lineageOfType):
+        
+            lineageOfType definition didn't match the declaration.
+
+        * dom/ElementDescendantIterator.h:
+        (WebCore::::find):
+        (WebCore::::from):
+        
+            Add find and from for getting begin iterator for partial traversals.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::scanForForm):
+        (WebCore::FrameSelection::currentForm):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formElementIndex):
+        (WebCore::HTMLFormElement::findClosestFormAncestor):
+        
+            Use them in a few places.
+
 2013-11-03  Andreas Kling  <akling@apple.com>
 
         Inline RenderStyle functions for getting/setting pseudo style bits.

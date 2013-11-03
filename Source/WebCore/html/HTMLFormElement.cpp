@@ -27,7 +27,7 @@
 
 #include "Attribute.h"
 #include "Document.h"
-#include "ElementTraversal.h"
+#include "ElementIterator.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FormController.h"
@@ -462,25 +462,31 @@ unsigned HTMLFormElement::formElementIndex(FormAssociatedElement* associatedElem
             return HTMLFormElement::formElementIndexWithFormAttribute(&associatedHTMLElement, m_associatedElementsAfterIndex, m_associatedElements.size());
     }
 
+    unsigned currentAssociatedElementsAfterIndex = m_associatedElementsAfterIndex;
+    ++m_associatedElementsAfterIndex;
+
     // Check for the special case where this element is the very last thing in
     // the form's tree of children; we don't want to walk the entire tree in that
     // common case that occurs during parsing; instead we'll just return a value
     // that says "add this form element to the end of the array".
-    if (ElementTraversal::next(&associatedHTMLElement, this)) {
-        unsigned i = m_associatedElementsBeforeIndex;
-        for (Element* element = this; element; element = ElementTraversal::next(element, this)) {
-            if (element == &associatedHTMLElement) {
-                ++m_associatedElementsAfterIndex;
-                return i;
-            }
-            if (!element->isFormControlElement() && !element->hasTagName(objectTag))
-                continue;
-            if (!element->isHTMLElement() || toHTMLElement(element)->form() != this)
-                continue;
-            ++i;
-        }
+    auto descendants = descendantsOfType<HTMLElement>(*this);
+    auto it = descendants.find(associatedHTMLElement);
+    auto end = descendants.end();
+    if (it == end || ++it == end)
+        return currentAssociatedElementsAfterIndex;
+
+    unsigned i = m_associatedElementsBeforeIndex;
+    for (auto it = descendants.begin(); it != end; ++it) {
+        HTMLElement& element = *it;
+        if (&element == &associatedHTMLElement)
+            return i;
+        if (!element.isFormControlElement() && !element.hasTagName(objectTag))
+            continue;
+        if (element.form() != this)
+            continue;
+        ++i;
     }
-    return m_associatedElementsAfterIndex++;
+    return currentAssociatedElementsAfterIndex;
 }
 
 void HTMLFormElement::registerFormElement(FormAssociatedElement* e)
@@ -727,11 +733,7 @@ void HTMLFormElement::copyNonAttributePropertiesFromElement(const Element& sourc
 
 HTMLFormElement* HTMLFormElement::findClosestFormAncestor(const Element& startElement)
 {
-    for (Element* element = startElement.parentElement(); element; element = element->parentElement()) {
-        if (isHTMLFormElement(element))
-            return toHTMLFormElement(element);
-    }
-    return 0;
+    return const_cast<HTMLFormElement*>(ancestorsOfType<HTMLFormElement>(startElement).first());
 }
 
 } // namespace

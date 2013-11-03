@@ -182,15 +182,19 @@ inline ElementAncestorConstIteratorAdapter<Element> elementAncestors(const Eleme
 }
 
 template <typename ElementType>
-inline ElementAncestorIteratorAdapter<ElementType> lineageOfType(ElementType& first)
+inline ElementAncestorIteratorAdapter<ElementType> lineageOfType(Element& first)
 {
-    return ElementAncestorIteratorAdapter<ElementType>(&first);
+    if (isElementOfType<const ElementType>(first))
+        return ElementAncestorIteratorAdapter<ElementType>(static_cast<ElementType*>(&first));
+    return ancestorsOfType<ElementType>(first);
 }
 
 template <typename ElementType>
-inline ElementAncestorConstIteratorAdapter<ElementType> lineageOfType(const ElementType& first)
+inline ElementAncestorConstIteratorAdapter<ElementType> lineageOfType(const Element& first)
 {
-    return ElementAncestorConstIteratorAdapter<ElementType>(&first);
+    if (isElementOfType<const ElementType>(first))
+        return ElementAncestorConstIteratorAdapter<ElementType>(static_cast<const ElementType*>(&first));
+    return ancestorsOfType<ElementType>(first);
 }
 
 template <typename ElementType>
