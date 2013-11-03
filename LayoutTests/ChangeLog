@@ -1,3 +1,70 @@
+2013-11-02  Andreas Kling  <akling@apple.com>
+
+        Optimize baselines: fast/css
+
+        Unreviewed; run "webkit-patch optimize-baselines fast/css"
+
+        * fast/css/background-image-with-baseurl-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/background-image-with-baseurl-expected.txt.
+        * fast/css/caption-width-absolute-position-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/caption-width-absolute-position-expected.txt.
+        * fast/css/caption-width-absolute-position-offset-top-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/caption-width-absolute-position-offset-top-expected.txt.
+        * fast/css/caption-width-fixed-position-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/caption-width-fixed-position-expected.txt.
+        * fast/css/caption-width-fixed-position-offset-top-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/caption-width-fixed-position-offset-top-expected.txt.
+        * fast/css/caption-width-relative-position-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/caption-width-relative-position-expected.txt.
+        * fast/css/caption-width-relative-position-offset-top-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/caption-width-relative-position-offset-top-expected.txt.
+        * fast/css/font-face-default-font-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/font-face-default-font-expected.txt.
+        * fast/css/font-face-in-media-rule-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/font-face-in-media-rule-expected.txt.
+        * fast/css/font-size-negative-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/font-size-negative-expected.txt.
+        * fast/css/imageTileOpacity-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/imageTileOpacity-expected.txt.
+        * fast/css/import_with_baseurl-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/import_with_baseurl-expected.txt.
+        * fast/css/line-height-determined-by-primary-font-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/line-height-determined-by-primary-font-expected.txt.
+        * fast/css/line-height-font-order-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/line-height-font-order-expected.txt.
+        * fast/css/line-height-negative-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/line-height-negative-expected.txt.
+        * fast/css/max-height-none-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/max-height-none-expected.txt.
+        * fast/css/min-width-with-spanned-cell-expected.png: Renamed from LayoutTests/platform/efl/fast/css/min-width-with-spanned-cell-expected.png.
+        * fast/css/min-width-with-spanned-cell-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/min-width-with-spanned-cell-expected.txt.
+        * fast/css/min-width-with-spanned-cell-fixed-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/min-width-with-spanned-cell-fixed-expected.txt.
+        * fast/css/pseudo-first-line-border-width-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/pseudo-first-line-border-width-expected.txt.
+        * fast/css/replaced-element-implicit-size-expected.png: Renamed from LayoutTests/platform/efl/fast/css/replaced-element-implicit-size-expected.png.
+        * fast/css/vertical-align-lengths-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/vertical-align-lengths-expected.txt.
+        * fast/css/visibility-hit-test-expected.txt: Renamed from LayoutTests/platform/efl/fast/css/visibility-hit-test-expected.txt.
+        * platform/efl-wk2/fast/css/font-smoothing-expected.png: Renamed from LayoutTests/platform/efl/fast/css/font-smoothing-expected.png.
+        * platform/efl-wk2/fast/css/font-weight-1-expected.png: Renamed from LayoutTests/platform/efl/fast/css/font-weight-1-expected.png.
+        * platform/efl-wk2/fast/css/input-search-padding-expected.png: Renamed from LayoutTests/platform/efl/fast/css/input-search-padding-expected.png.
+        * platform/gtk/fast/css/background-image-with-baseurl-expected.txt: Removed.
+        * platform/gtk/fast/css/caption-width-absolute-position-expected.txt: Removed.
+        * platform/gtk/fast/css/caption-width-absolute-position-offset-top-expected.txt: Removed.
+        * platform/gtk/fast/css/caption-width-fixed-position-expected.txt: Removed.
+        * platform/gtk/fast/css/caption-width-fixed-position-offset-top-expected.txt: Removed.
+        * platform/gtk/fast/css/caption-width-relative-position-expected.txt: Removed.
+        * platform/gtk/fast/css/caption-width-relative-position-offset-top-expected.txt: Removed.
+        * platform/gtk/fast/css/font-face-in-media-rule-expected.txt: Removed.
+        * platform/gtk/fast/css/font-size-negative-expected.txt: Removed.
+        * platform/gtk/fast/css/imageTileOpacity-expected.txt: Removed.
+        * platform/gtk/fast/css/import_with_baseurl-expected.txt: Removed.
+        * platform/gtk/fast/css/line-height-determined-by-primary-font-expected.txt: Removed.
+        * platform/gtk/fast/css/line-height-font-order-expected.txt: Removed.
+        * platform/gtk/fast/css/line-height-negative-expected.txt: Removed.
+        * platform/gtk/fast/css/max-height-none-expected.txt: Removed.
+        * platform/gtk/fast/css/min-width-with-spanned-cell-expected.png: Removed.
+        * platform/gtk/fast/css/min-width-with-spanned-cell-expected.txt: Removed.
+        * platform/gtk/fast/css/min-width-with-spanned-cell-fixed-expected.txt: Removed.
+        * platform/gtk/fast/css/pseudo-first-line-border-width-expected.txt: Removed.
+        * platform/gtk/fast/css/replaced-element-implicit-size-expected.png: Removed.
+        * platform/gtk/fast/css/vertical-align-lengths-expected.txt: Removed.
+        * platform/gtk/fast/css/visibility-hit-test-expected.txt: Removed.
+        * platform/mac/fast/css/caption-width-absolute-position-expected.txt: Removed.
+        * platform/mac/fast/css/caption-width-absolute-position-offset-top-expected.txt: Removed.
+        * platform/mac/fast/css/caption-width-fixed-position-expected.txt: Removed.
+        * platform/mac/fast/css/caption-width-fixed-position-offset-top-expected.txt: Removed.
+        * platform/mac/fast/css/caption-width-relative-position-expected.txt: Removed.
+        * platform/mac/fast/css/caption-width-relative-position-offset-top-expected.txt: Removed.
+        * platform/mac/fast/css/font-face-default-font-expected.txt: Removed.
+        * platform/mac/fast/css/font-face-in-media-rule-expected.txt: Removed.
+        * platform/mac/fast/css/min-width-with-spanned-cell-expected.txt: Removed.
+        * platform/mac/fast/css/min-width-with-spanned-cell-fixed-expected.txt: Removed.
+        * platform/mac/fast/css/pseudo-first-line-border-width-expected.txt: Removed.
+        * platform/win/fast/css/zoom-body-scroll-expected.txt: Removed.
+
 2013-11-02  Alexey Proskuryakov  <ap@apple.com>
 
         Implement remaining SHA variations for WebCrypto
