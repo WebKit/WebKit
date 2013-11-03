@@ -25,9 +25,35 @@
 
 #include "config_llvm.h"
 
+#include "LLVMTrapCallback.h"
+
 #if HAVE(LLVM)
 
 extern "C" int __cxa_atexit();
 extern "C" int __cxa_atexit() { return 0; }
+
+void (*g_llvmTrapCallback)(const char* message, ...);
+
+// If LLVM tries to raise signals, abort, or fail an assertion, then let
+// WebKit handle it instead of trapping.
+extern "C" int raise(int signal);
+extern "C" void __assert_rtn(const char* function, const char* filename, int lineNumber, const char* expression);
+extern "C" void abort(void);
+
+extern "C" int raise(int signal)
+{
+    g_llvmTrapCallback("raise(%d) called.", signal);
+    return 0;
+}
+extern "C" void __assert_rtn(const char* function, const char* filename, int lineNumber, const char* expression)
+{
+    if (function)
+        g_llvmTrapCallback("Assertion failed: (%s), function %s, file %s, line %d.", expression, function, filename, lineNumber);
+    g_llvmTrapCallback("Assertion failed: (%s), file %s, line %d.", expression, filename, lineNumber);
+}
+extern "C" void abort(void)
+{
+    g_llvmTrapCallback("abort() called.");
+}
 
 #endif // HAVE(LLVM)

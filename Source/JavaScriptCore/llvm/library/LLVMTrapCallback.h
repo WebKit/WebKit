@@ -23,31 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "InitializeLLVMPOSIX.h"
+#ifndef LLVMTrapCallback_h
+#define LLVMTrapCallback_h
 
-#if HAVE(LLVM)
+extern void (*g_llvmTrapCallback)(const char* message, ...);
 
-#include "LLVMAPI.h"
-#include <dlfcn.h>
-
-namespace JSC {
-
-typedef LLVMAPI* (*InitializerFunction)(void (*)(const char*, ...));
-
-void initializeLLVMPOSIX(const char* libraryName)
-{
-    void* library = dlopen(libraryName, RTLD_NOW);
-    ASSERT_WITH_MESSAGE(library, "%s", dlerror());
-    
-    InitializerFunction initializer = bitwise_cast<InitializerFunction>(
-        dlsym(library, "initializeAndGetJSCLLVMAPI"));
-    ASSERT_WITH_MESSAGE(initializer, "%s", dlerror());
-    
-    llvm = initializer(WTFLogAlwaysAndCrash);
-}
-
-} // namespace JSC
-
-#endif // HAVE(LLVM)
+#endif // LLVMTrapCallback_h
 

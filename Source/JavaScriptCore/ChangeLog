@@ -1,5 +1,33 @@
 2013-11-02  Filip Pizlo  <fpizlo@apple.com>
 
+        LLVM assertion failures should funnel into WTF's crash handling
+        https://bugs.webkit.org/show_bug.cgi?id=123682
+
+        Reviewed by Geoffrey Garen.
+        
+        Inside llvmForJSC, we override assertion-related functions and funnel them
+        into g_llvmTrapCallback(). We also now register a fatal error handler inside
+        the library and funnel that into g_llvmTrapCallback, and have
+        initializeAndGetJSCLLVMAPI() take such a callback as an argument.
+        
+        Inside JSC, we no longer call LLVMInstallFatalErrorHandler() but instead we
+        pass WTFLogAlwaysAndCrash() as the trap callback for llvmForJSC.
+
+        * llvm/InitializeLLVM.cpp:
+        (JSC::initializeLLVM):
+        * llvm/InitializeLLVMPOSIX.cpp:
+        (JSC::initializeLLVMPOSIX):
+        * llvm/library/LLVMExports.cpp:
+        (llvmCrash):
+        (initializeAndGetJSCLLVMAPI):
+        * llvm/library/LLVMOverrides.cpp:
+        (raise):
+        (__assert_rtn):
+        (abort):
+        * llvm/library/LLVMTrapCallback.h: Added.
+
+2013-11-02  Filip Pizlo  <fpizlo@apple.com>
+
         CodeBlock::jettison() shouldn't call baselineVersion()
         https://bugs.webkit.org/show_bug.cgi?id=123675
 

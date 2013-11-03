@@ -1,3 +1,14 @@
+2013-11-02  Filip Pizlo  <fpizlo@apple.com>
+
+        LLVM assertion failures should funnel into WTF's crash handling
+        https://bugs.webkit.org/show_bug.cgi?id=123682
+
+        Reviewed by Geoffrey Garen.
+        
+        Need to disable LLVM's crash overrides so that we can do our own crash overrides.
+
+        * Scripts/configure-llvm:
+
 2013-11-01  Andy Estes  <aestes@apple.com>
 
         Teach check-for-webkit-framework-include-consistency to ignore stale iOS Private headers that might exist in build directories due to r158443

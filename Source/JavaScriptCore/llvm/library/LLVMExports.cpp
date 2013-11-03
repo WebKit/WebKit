@@ -28,11 +28,20 @@
 #if HAVE(LLVM)
 
 #include "LLVMAPI.h"
+#include "LLVMTrapCallback.h"
 
-extern "C" WTF_EXPORT_PRIVATE JSC::LLVMAPI* initializeAndGetJSCLLVMAPI();
+extern "C" WTF_EXPORT_PRIVATE JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(void (*)(const char*, ...));
 
-extern "C" JSC::LLVMAPI* initializeAndGetJSCLLVMAPI()
+static void llvmCrash(const char* reason)
 {
+    g_llvmTrapCallback("LLVM fatal error: %s", reason);
+}
+
+extern "C" JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(void (*callback)(const char*, ...))
+{
+    g_llvmTrapCallback = callback;
+    
+    LLVMInstallFatalErrorHandler(llvmCrash);
     LLVMLinkInMCJIT();
     LLVMInitializeNativeTarget();
     LLVMInitializeX86AsmPrinter();

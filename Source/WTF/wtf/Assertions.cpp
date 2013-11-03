@@ -41,7 +41,6 @@
 #include <wtf/text/WTFString.h>
 
 #include <stdio.h>
-#include <stdarg.h>
 #include <string.h>
 
 #if HAVE(SIGNAL_H)
@@ -428,12 +427,26 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
     printCallSite(file, line, function);
 }
 
+void WTFLogAlwaysV(const char* format, va_list args)
+{
+    vprintf_stderr_with_trailing_newline(format, args);
+}
+
 void WTFLogAlways(const char* format, ...)
 {
     va_list args;
     va_start(args, format);
-    vprintf_stderr_with_trailing_newline(format, args);
+    WTFLogAlwaysV(format, args);
     va_end(args);
+}
+
+void WTFLogAlwaysAndCrash(const char* format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    WTFLogAlwaysV(format, args);
+    va_end(args);
+    WTFCrash();
 }
 
 WTFLogChannel* WTFLogChannelByName(WTFLogChannel* channels[], size_t count, const char* name)
