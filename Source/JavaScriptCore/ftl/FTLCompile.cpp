@@ -78,7 +78,7 @@ static uint8_t* mmAllocateDataSection(
     RefCountedArray<LSectionWord> section(
         (size + sizeof(LSectionWord) - 1) / sizeof(LSectionWord));
     
-    if (!strcmp(sectionName, "__js_stackmaps"))
+    if (!strcmp(sectionName, "__llvm_stackmaps"))
         state.stackmapsSection = section;
     else {
         state.jitCode->addDataSection(section);

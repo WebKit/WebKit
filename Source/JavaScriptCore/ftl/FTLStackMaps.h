@@ -52,6 +52,7 @@ struct StackMaps {
         enum Kind {
             Unprocessed,
             Register,
+            Direct,
             Indirect,
             Constant,
             ConstantIndex

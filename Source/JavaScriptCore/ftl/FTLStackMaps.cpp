@@ -55,17 +55,10 @@ void StackMaps::Constant::dump(PrintStream& out) const
 
 void StackMaps::Location::parse(DataView* view, unsigned& offset)
 {
-    uint16_t taggedReg = view->read<uint16_t>(offset, true);
-    if (static_cast<int16_t>(taggedReg) < 0) {
-        dataLog(
-            "Detected a negative tagged register ", static_cast<int16_t>(taggedReg),
-            " at offset ", offset, "\n");
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-    dwarfRegNum = taggedReg & ((1 << 12) - 1);
-    kind = static_cast<Kind>(taggedReg >> 12);
-
-    this->offset = view->read<int16_t>(offset, true);
+    kind = static_cast<Kind>(view->read<uint8_t>(offset, true));
+    view->read<uint8_t>(offset, true); // reserved
+    dwarfRegNum = view->read<uint16_t>(offset, true);
+    this->offset = view->read<int32_t>(offset, true);
 }
 
 void StackMaps::Location::dump(PrintStream& out) const
@@ -110,6 +103,8 @@ void StackMaps::Record::dump(PrintStream& out) const
 bool StackMaps::parse(DataView* view)
 {
     unsigned offset = 0;
+    
+    view->read<uint32_t>(offset, true); // Reserved (header)
     
     uint32_t numConstants = view->read<uint32_t>(offset, true);
     while (numConstants--)
@@ -163,6 +158,9 @@ void printInternal(PrintStream& out, StackMaps::Location::Kind kind)
         return;
     case StackMaps::Location::Register:
         out.print("Register");
+        return;
+    case StackMaps::Location::Direct:
+        out.print("Direct");
         return;
     case StackMaps::Location::Indirect:
         out.print("Indirect");

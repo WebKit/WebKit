@@ -1,3 +1,64 @@
+2013-11-02  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should use LLVM intrinsics for OSR exit, watchpoints, inline caches, and stack layout
+        https://bugs.webkit.org/show_bug.cgi?id=122318
+
+        Reviewed by Geoffrey Garen.
+        
+        This all now works. This patch just updates our implementation to work with LLVM trunk,
+        and removes all of the old code that tried to do OSR exits and heap accesses without
+        the benefit of those intrinsics.
+        
+        In particular:
+        
+        - StackMaps parsing now uses the new, less compact, but more future-proof, format.
+        
+        - Remove the ftlUsesStackmaps() option and hard-code ftlUsesStackmaps = true. Remove
+          all code for ftlUsesStackmaps = false, since that was only there for back when we
+          didn't have the intrinsics.
+        
+        - Remove the other experimental OSR options (useLLVMOSRExitIntrinsic,
+          ftlTrapsOnOSRExit, and FTLOSRExitOmitsMarshalling).
+        
+        - Remove LowerDFGToLLVM's use of the ExitThunkGenerator since we don't need to generate
+          the exit thunks until after we parse the stackmaps.
+        
+        - Remove all of the exit thunk and compiler code for the no-stackmaps case.
+
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLExitThunkGenerator.cpp:
+        (JSC::FTL::ExitThunkGenerator::emitThunk):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLocation.cpp:
+        (JSC::FTL::Location::forStackmaps):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        (JSC::FTL::LowerDFGToLLVM::compileGetById):
+        (JSC::FTL::LowerDFGToLLVM::compileInvalidationPoint):
+        (JSC::FTL::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::LowerDFGToLLVM::emitOSRExitCall):
+        (JSC::FTL::LowerDFGToLLVM::callStackmap):
+        (JSC::FTL::LowerDFGToLLVM::addExitArgumentForNode):
+        * ftl/FTLOSRExitCompilationInfo.h:
+        (JSC::FTL::OSRExitCompilationInfo::OSRExitCompilationInfo):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        (JSC::FTL::compileFTLOSRExit):
+        * ftl/FTLStackMaps.cpp:
+        (JSC::FTL::StackMaps::Location::parse):
+        (JSC::FTL::StackMaps::parse):
+        (WTF::printInternal):
+        * ftl/FTLStackMaps.h:
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::osrExitGenerationThunkGenerator):
+        * ftl/FTLThunks.h:
+        (JSC::FTL::Thunks::getOSRExitGenerationThunk):
+        * runtime/Options.h:
+
 2013-11-02  Patrick Gansterer  <paroga@webkit.org>
 
         Add missing getHostCallReturnValue() for MSVC ARM

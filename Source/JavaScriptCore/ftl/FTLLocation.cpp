@@ -39,9 +39,11 @@ Location Location::forStackmaps(const StackMaps& stackmaps, const StackMaps::Loc
 {
     switch (location.kind) {
     case StackMaps::Location::Unprocessed:
-        return Location();
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
         
     case StackMaps::Location::Register:
+    case StackMaps::Location::Direct:
         return forRegister(location.dwarfRegNum, location.offset);
         
     case StackMaps::Location::Indirect:

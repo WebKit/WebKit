@@ -41,9 +41,7 @@ class VM;
 
 namespace FTL {
 
-MacroAssemblerCodeRef osrExitGenerationWithoutStackMapThunkGenerator(VM*);
-
-MacroAssemblerCodeRef osrExitGenerationWithStackMapThunkGenerator(VM&, const Location&);
+MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM&, const Location&);
 MacroAssemblerCodeRef slowPathCallThunkGenerator(VM&, const SlowPathCallKey&);
 
 template<typename MapType, typename KeyType, typename GeneratorType>
@@ -64,7 +62,7 @@ public:
     MacroAssemblerCodeRef getOSRExitGenerationThunk(VM& vm, const Location& location)
     {
         return generateIfNecessary(
-            vm, m_osrExitThunks, location, osrExitGenerationWithStackMapThunkGenerator);
+            vm, m_osrExitThunks, location, osrExitGenerationThunkGenerator);
     }
     
     MacroAssemblerCodeRef getSlowPathCallThunk(VM& vm, const SlowPathCallKey& key)

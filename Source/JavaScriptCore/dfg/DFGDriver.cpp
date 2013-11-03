@@ -85,9 +85,6 @@ static CompilationResult compileImpl(
     vm.getCTIStub(linkClosureCallThunkGenerator);
     vm.getCTIStub(virtualCallThunkGenerator);
     vm.getCTIStub(virtualConstructThunkGenerator);
-#if ENABLE(FTL_JIT)
-    vm.getCTIStub(FTL::osrExitGenerationWithoutStackMapThunkGenerator);
-#endif
     
     RefPtr<Plan> plan = adoptRef(
         new Plan(codeBlock, mode, osrEntryBytecodeIndex, mustHandleValues));

@@ -32,7 +32,6 @@
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGInPlaceAbstractState.h"
 #include "FTLAbstractHeapRepository.h"
-#include "FTLExitThunkGenerator.h"
 #include "FTLForOSREntryJITCode.h"
 #include "FTLFormattedValue.h"
 #include "FTLInlineCacheSize.h"
@@ -52,11 +51,6 @@ namespace JSC { namespace FTL {
 using namespace DFG;
 
 static int compileCounter;
-
-static bool generateExitThunks()
-{
-    return !Options::useLLVMOSRExitIntrinsic() && !Options::ftlUsesStackmaps();
-}
 
 // Using this instead of typeCheck() helps to reduce the load on LLVM, by creating
 // significantly less dead code.
@@ -78,7 +72,6 @@ public:
         , m_out(state.context)
         , m_valueSources(OperandsLike, state.graph.block(0)->variablesAtHead)
         , m_lastSetOperand(VirtualRegister())
-        , m_exitThunkGenerator(state)
         , m_state(state.graph)
         , m_interpreter(state.graph, m_state)
         , m_stackmapIDs(0)
@@ -110,8 +103,6 @@ public:
         m_out.appendTo(m_prologue);
         createPhiVariables();
         
-        m_initialization = appendBasicBlock(m_ftlState.context, m_ftlState.function);
-
         m_callFrame = m_out.param(0);
         m_tagTypeNumber = m_out.constInt64(TagTypeNumber);
         m_tagMask = m_out.constInt64(TagMask);
@@ -123,14 +114,14 @@ public:
             m_blocks.add(m_highBlock, FTL_NEW_BLOCK(m_out, ("Block ", *m_highBlock)));
         }
         
+        m_out.appendTo(m_prologue);
+        m_out.jump(lowBlock(m_graph.block(0)));
+        
         Vector<BasicBlock*> depthFirst;
         m_graph.getBlocksInDepthFirstOrder(depthFirst);
         for (unsigned i = 0; i < depthFirst.size(); ++i)
             compileBlock(depthFirst[i]);
         
-        // And now complete the initialization block.
-        linkOSRExitsAndCompleteInitializationBlocks();
-
         if (Options::dumpLLVMIR())
             dumpModule(m_ftlState.module);
         
@@ -1258,15 +1249,10 @@ private:
         LValue base = lowCell(m_node->child1());
         StringImpl* uid = m_graph.identifiers()[m_node->identifierNumber()];
 
-        if (!Options::ftlUsesStackmaps()) {
-            setJSValue(vmCall(m_out.operation(operationGetById), m_callFrame, m_out.intPtrZero, base, m_out.constIntPtr(uid)));
-            return;
-        }
-
         // Arguments: id, bytes, target, numArgs, args...
         unsigned stackmapID = m_stackmapIDs++;
         setJSValue(m_out.call(
-            m_out.webkitPatchpointInt64Intrinsic(),
+            m_out.patchpointInt64Intrinsic(),
             m_out.constInt32(stackmapID), m_out.constInt32(sizeOfGetById()),
             constNull(m_out.ref8), m_out.constInt32(2), m_callFrame, base));
         
@@ -2136,12 +2122,6 @@ private:
     
     void compileInvalidationPoint()
     {
-        if (!Options::ftlUsesStackmaps()) {
-            // We silently don't implement invalidation points if we don't have stackmaps.
-            // This is fine since the long-term plan is to require stackmaps.
-            return;
-        }
-        
         if (verboseCompilationEnabled())
             dataLog("    Invalidation point with value sources: ", m_valueSources, "\n");
         
@@ -3309,25 +3289,10 @@ private:
         ExitKind kind, FormattedValue lowValue, Node* highValue, LValue failCondition,
         SpeculationDirection direction, FormattedValue recovery)
     {
-        if (Options::ftlTrapsOnOSRExit()) {
-            LBasicBlock failCase = FTL_NEW_BLOCK(m_out, ("OSR exit failCase for ", m_node));
-            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("OSR exit continuation for ", m_node));
-            
-            m_out.branch(failCondition, failCase, continuation);
-            
-            LBasicBlock lastNext = m_out.appendTo(failCase, continuation);
-            m_out.trap();
-            m_out.unreachable();
-            
-            m_out.appendTo(continuation, lastNext);
-            return;
-        }
-        
         if (verboseCompilationEnabled())
             dataLog("    OSR exit with value sources: ", m_valueSources, "\n");
         
         ASSERT(m_ftlState.jitCode->osrExit.size() == m_ftlState.finalizer->osrExit.size());
-        unsigned index = m_ftlState.finalizer->osrExit.size();
         
         m_ftlState.jitCode->osrExit.append(OSRExit(
             kind, lowValue.format(), m_graph.methodOfGettingAValueProfileFor(highValue),
@@ -3336,53 +3301,29 @@ private:
         m_ftlState.finalizer->osrExit.append(OSRExitCompilationInfo());
         
         OSRExit& exit = m_ftlState.jitCode->osrExit.last();
-        OSRExitCompilationInfo& info = m_ftlState.finalizer->osrExit.last();
 
         LBasicBlock lastNext = 0;
         LBasicBlock continuation = 0;
         
-        if (!Options::useLLVMOSRExitIntrinsic()) {
-            LBasicBlock failCase = FTL_NEW_BLOCK(m_out, ("OSR exit failCase for ", m_node));
-            continuation = FTL_NEW_BLOCK(m_out, ("OSR exit continuation for ", m_node));
-            
-            m_out.branch(failCondition, failCase, continuation);
-
-            if (generateExitThunks()) {
-                m_out.appendTo(m_prologue);
-                info.m_thunkAddressValue = buildAlloca(m_out.m_builder, m_out.intPtr);
-            }
+        LBasicBlock failCase = FTL_NEW_BLOCK(m_out, ("OSR exit failCase for ", m_node));
+        continuation = FTL_NEW_BLOCK(m_out, ("OSR exit continuation for ", m_node));
         
-            lastNext = m_out.appendTo(failCase, continuation);
-        }
+        m_out.branch(failCondition, failCase, continuation);
         
-        if (Options::ftlOSRExitOmitsMarshalling()) {
-            m_out.call(
-                m_out.intToPtr(
-                    m_out.get(info.m_thunkAddressValue),
-                    pointerType(functionType(m_out.voidType))));
-        } else
-            emitOSRExitCall(failCondition, index, exit, info, lowValue, direction, recovery);
+        lastNext = m_out.appendTo(failCase, continuation);
         
-        if (!Options::useLLVMOSRExitIntrinsic()) {
-            m_out.unreachable();
-            
-            m_out.appendTo(continuation, lastNext);
+        emitOSRExitCall(exit, lowValue, direction, recovery);
         
-            if (generateExitThunks())
-                m_exitThunkGenerator.emitThunk(index);
-        }
+        m_out.unreachable();
+        
+        m_out.appendTo(continuation, lastNext);
     }
     
     void emitOSRExitCall(
-        LValue failCondition, unsigned index, OSRExit& exit, OSRExitCompilationInfo& info,
-        FormattedValue lowValue, SpeculationDirection direction, FormattedValue recovery)
+        OSRExit& exit, FormattedValue lowValue, SpeculationDirection direction,
+        FormattedValue recovery)
     {
         ExitArgumentList arguments;
-        
-        if (Options::useLLVMOSRExitIntrinsic()) {
-            arguments.append(failCondition);
-            arguments.append(m_out.constInt32(index));
-        }
         
         buildExitArguments(exit, arguments, lowValue);
         
@@ -3391,27 +3332,7 @@ private:
             exit.convertToForward(m_highBlock, m_node, m_nodeIndex, recovery, arguments);
         }
         
-        if (Options::useLLVMOSRExitIntrinsic()) {
-            m_out.call(m_out.osrExitIntrinsic(), arguments);
-            return;
-        }
-        
-        if (Options::ftlUsesStackmaps()) {
-            callStackmap(exit, arguments);
-            return;
-        }
-        
-        // So, the really lame thing here is that we have to build an LLVM function type.
-        // Booo.
-        Vector<LType, 16> argumentTypes;
-        for (unsigned i = 0; i < arguments.size(); ++i)
-            argumentTypes.append(typeOf(arguments[i]));
-        
-        m_out.call(
-            m_out.intToPtr(
-                m_out.get(info.m_thunkAddressValue),
-                pointerType(functionType(m_out.voidType, argumentTypes))),
-            arguments);
+        callStackmap(exit, arguments);
     }
     
     void buildExitArguments(
@@ -3459,7 +3380,7 @@ private:
         arguments.insert(0, m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
         arguments.insert(0, m_out.constInt32(exit.m_stackmapID));
         
-        m_out.call(m_out.webkitStackmapIntrinsic(), arguments);
+        m_out.call(m_out.stackmapIntrinsic(), arguments);
     }
     
     void addExitArgumentForNode(
@@ -3538,11 +3459,7 @@ private:
         
         value = m_booleanValues.get(node);
         if (isValid(value)) {
-            LValue valueToPass;
-            if (Options::ftlUsesStackmaps())
-                valueToPass = m_out.zeroExt(value.value(), m_out.int32);
-            else
-                valueToPass = value.value();
+            LValue valueToPass = m_out.zeroExt(value.value(), m_out.int32);
             addExitArgument(exit, arguments, index, ValueFormatBoolean, valueToPass);
             return;
         }
@@ -3589,44 +3506,6 @@ private:
     {
         exit.m_values[index] = ExitValue::exitArgument(ExitArgument(format, arguments.size()));
         arguments.append(value);
-    }
-    
-    void linkOSRExitsAndCompleteInitializationBlocks()
-    {
-        MacroAssemblerCodeRef osrExitThunk =
-            vm().getCTIStub(osrExitGenerationWithoutStackMapThunkGenerator);
-        CodeLocationLabel target = CodeLocationLabel(osrExitThunk.code());
-        
-        m_out.appendTo(m_prologue);
-        m_out.jump(m_initialization);
-        
-        m_out.appendTo(m_initialization);
-        
-        if (m_exitThunkGenerator.didThings()) {
-            OwnPtr<LinkBuffer> linkBuffer = adoptPtr(new LinkBuffer(
-                vm(), &m_exitThunkGenerator, m_ftlState.graph.m_codeBlock,
-                JITCompilationMustSucceed));
-        
-            ASSERT(m_ftlState.finalizer->osrExit.size() == m_ftlState.jitCode->osrExit.size());
-        
-            for (unsigned i = 0; i < m_ftlState.finalizer->osrExit.size(); ++i) {
-                OSRExitCompilationInfo& info = m_ftlState.finalizer->osrExit[i];
-                OSRExit& exit = m_ftlState.jitCode->osrExit[i];
-            
-                linkBuffer->link(info.m_thunkJump, target);
-            
-                m_out.set(
-                    m_out.constIntPtr(
-                        linkBuffer->locationOf(info.m_thunkLabel).executableAddress()),
-                    info.m_thunkAddressValue);
-            
-                exit.m_patchableCodeOffset = linkBuffer->offsetOf(info.m_thunkJump);
-            }
-        
-            m_ftlState.finalizer->exitThunksLinkBuffer = linkBuffer.release();
-        }
-
-        m_out.jump(lowBlock(m_graph.block(0)));
     }
     
     void observeMovHint(Node* node)
@@ -3782,7 +3661,6 @@ private:
     Output m_out;
     
     LBasicBlock m_prologue;
-    LBasicBlock m_initialization;
     HashMap<BasicBlock*, LBasicBlock> m_blocks;
     
     LValue m_callFrame;
@@ -3802,7 +3680,6 @@ private:
     
     Operands<ValueSource> m_valueSources;
     VirtualRegister m_lastSetOperand;
-    ExitThunkGenerator m_exitThunkGenerator;
     
     InPlaceAbstractState m_state;
     AbstractInterpreter<InPlaceAbstractState> m_interpreter;
