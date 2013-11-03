@@ -2363,12 +2363,12 @@ private:
         Vector<ValueFromBlock, 2> results;
         
         m_out.branch(
-            m_out.greaterThanOrEqual(doubleValue, m_out.constDouble(low)),
+            m_out.doubleGreaterThanOrEqual(doubleValue, m_out.constDouble(low)),
             greatEnough, slowPath);
         
         LBasicBlock lastNext = m_out.appendTo(greatEnough, withinRange);
         m_out.branch(
-            m_out.lessThanOrEqual(doubleValue, m_out.constDouble(high)),
+            m_out.doubleLessThanOrEqual(doubleValue, m_out.constDouble(high)),
             withinRange, slowPath);
         
         m_out.appendTo(withinRange, slowPath);
