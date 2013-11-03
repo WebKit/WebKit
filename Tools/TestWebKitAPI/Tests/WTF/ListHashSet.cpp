@@ -49,6 +49,25 @@ TEST(WTF_ListHashSet, RemoveFirst)
     ASSERT_TRUE(list.isEmpty());
 }
 
+TEST(WTF_ListHashSet, RemoveLast)
+{
+    ListHashSet<int> list;
+    list.add(1);
+    list.add(2);
+    list.add(3);
+
+    ASSERT_EQ(3, list.last());
+
+    list.removeLast();
+    ASSERT_EQ(2, list.last());
+
+    list.removeLast();
+    ASSERT_EQ(1, list.last());
+
+    list.removeLast();
+    ASSERT_TRUE(list.isEmpty());
+}
+
 TEST(WTF_ListHashSet, AppendOrMoveToLastNewItems)
 {
     ListHashSet<int> list;
