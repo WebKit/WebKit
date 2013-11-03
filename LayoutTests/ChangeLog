@@ -1,5 +1,22 @@
 2013-11-03  Andreas Kling  <akling@apple.com>
 
+        Optimize baselines: fast/frames
+
+        Unreviewed; run "webkit-patch optimize-baselines fast/frames"
+
+        * fast/frames/002-expected.png: Renamed from LayoutTests/platform/efl/fast/frames/002-expected.png.
+        * fast/frames/empty-cols-attribute-expected.png: Renamed from LayoutTests/platform/efl/fast/frames/empty-cols-attribute-expected.png.
+        * fast/frames/flattening/frameset-flattening-subframesets-expected.txt: Renamed from LayoutTests/platform/efl/fast/frames/flattening/frameset-flattening-subframesets-expected.txt.
+        * fast/frames/frame-set-whitespace-attributes-expected.png: Renamed from LayoutTests/platform/efl/fast/frames/frame-set-whitespace-attributes-expected.png.
+        * fast/frames/no-frame-borders-expected.png: Renamed from LayoutTests/platform/efl/fast/frames/no-frame-borders-expected.png.
+        * platform/gtk/fast/frames/002-expected.png: Removed.
+        * platform/gtk/fast/frames/empty-cols-attribute-expected.png: Removed.
+        * platform/gtk/fast/frames/flattening/frameset-flattening-subframesets-expected.txt: Removed.
+        * platform/gtk/fast/frames/frame-set-whitespace-attributes-expected.png: Removed.
+        * platform/gtk/fast/frames/no-frame-borders-expected.png: Removed.
+
+2013-11-03  Andreas Kling  <akling@apple.com>
+
         Optimize baselines: fast/table
 
         Unreviewed; run "webkit-patch optimize-baselines fast/table"
