@@ -1,3 +1,20 @@
+2013-11-02  Mark Lam  <mark.lam@apple.com>
+
+        Assertion failure in non-JIT'ed LLInt on ARM Thumb.
+        https://bugs.webkit.org/show_bug.cgi?id=97569.
+
+        Reviewed by Geoffrey Garen.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        - Thumb2 alignment assertions do not apply to the C Loop LLINT because
+          the arguments passed to those assertions are actually OpcodeIDs
+          masquerading as addresses.
+        * llint/LLIntOfflineAsmConfig.h:
+        - Some of the #defines belong in the !ENABLE(LLINT_C_LOOP) section.
+          Moving them there.
+        * llint/LowLevelInterpreter.cpp:
+        - Keep the compiler happy from some unreferenced C Loop labels.
+
 2013-11-02  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should use LLVM intrinsics for OSR exit, watchpoints, inline caches, and stack layout

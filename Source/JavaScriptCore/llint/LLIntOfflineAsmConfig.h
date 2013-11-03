@@ -38,6 +38,7 @@
 #define OFFLINE_ASM_ARM 0
 #define OFFLINE_ASM_ARMv7 0
 #define OFFLINE_ASM_ARMv7_TRADITIONAL 0
+#define OFFLINE_ASM_ARM64 0
 #define OFFLINE_ASM_X86_64 0
 #define OFFLINE_ASM_ARMv7s 0
 #define OFFLINE_ASM_MIPS 0
@@ -96,13 +97,26 @@
 #define OFFLINE_ASM_SH4 0
 #endif
 
-#endif // !ENABLE(LLINT_C_LOOP)
-
 #if CPU(ARM64)
 #define OFFLINE_ASM_ARM64 1
 #else
 #define OFFLINE_ASM_ARM64 0
 #endif
+
+#if CPU(MIPS)
+#ifdef WTF_MIPS_PIC
+#define S(x) #x
+#define SX(x) S(x)
+#define OFFLINE_ASM_CPLOAD(reg) \
+    ".set noreorder\n" \
+    ".cpload " SX(reg) "\n" \
+    ".set reorder\n"
+#else
+#define OFFLINE_ASM_CPLOAD(reg)
+#endif
+#endif
+
+#endif // !ENABLE(LLINT_C_LOOP)
 
 #if USE(JSVALUE64)
 #define OFFLINE_ASM_JSVALUE64 1
@@ -144,19 +158,6 @@
 #define OFFLINE_ASM_VALUE_PROFILER 1
 #else
 #define OFFLINE_ASM_VALUE_PROFILER 0
-#endif
-
-#if CPU(MIPS)
-#ifdef WTF_MIPS_PIC
-#define S(x) #x
-#define SX(x) S(x)
-#define OFFLINE_ASM_CPLOAD(reg) \
-    ".set noreorder\n" \
-    ".cpload " SX(reg) "\n" \
-    ".set reorder\n"
-#else
-#define OFFLINE_ASM_CPLOAD(reg)
-#endif
 #endif
 
 #endif // LLIntOfflineAsmConfig_h

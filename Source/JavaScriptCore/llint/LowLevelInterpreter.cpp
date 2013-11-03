@@ -90,18 +90,22 @@ using namespace JSC::LLInt;
 #define OFFLINE_ASM_BEGIN
 #define OFFLINE_ASM_END
 
+// To keep compilers happy in case of unused labels, force usage of the label:
+#define USE_LABEL(label) \
+    do { \
+        if (false) \
+            goto label; \
+    } while (false)
 
-#define OFFLINE_ASM_OPCODE_LABEL(opcode) DEFINE_OPCODE(opcode)
+#define OFFLINE_ASM_OPCODE_LABEL(opcode) DEFINE_OPCODE(opcode) USE_LABEL(opcode);
+
 #if ENABLE(COMPUTED_GOTO_OPCODES)
-    #define OFFLINE_ASM_GLUE_LABEL(label)  label:
+#define OFFLINE_ASM_GLUE_LABEL(label)  label: USE_LABEL(label);
 #else
-    #define OFFLINE_ASM_GLUE_LABEL(label)  case label: label:
+#define OFFLINE_ASM_GLUE_LABEL(label)  case label: label: USE_LABEL(label);
 #endif
 
-#define OFFLINE_ASM_LOCAL_LABEL(label) \
-    label: \
-        if (false) \
-            goto label;
+#define OFFLINE_ASM_LOCAL_LABEL(label) label: USE_LABEL(label);
 
 
 //============================================================================
