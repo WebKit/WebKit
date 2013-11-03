@@ -2851,7 +2851,9 @@ void CodeBlock::jettison(ReoptimizationMode mode)
     
     // Count the reoptimization if that's what the user wanted.
     if (mode == CountReoptimization) {
-        baselineVersion()->countReoptimization();
+        // FIXME: Maybe this should call alternative().
+        // https://bugs.webkit.org/show_bug.cgi?id=123677
+        baselineAlternative()->countReoptimization();
         if (DFG::shouldShowDisassembly())
             dataLog("    Did count reoptimization for ", *this, "\n");
     }

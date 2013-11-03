@@ -40,6 +40,8 @@ void ProfiledCodeBlockJettisoningWatchpoint::fireInternal()
             m_exitKind, " at ", m_codeOrigin, "\n");
     }
     
+    // FIXME: Maybe this should call alternative().
+    // https://bugs.webkit.org/show_bug.cgi?id=123677
     CodeBlock* machineBaselineCodeBlock = m_codeBlock->baselineAlternative();
     CodeBlock* sourceBaselineCodeBlock =
         baselineCodeBlockForOriginAndBaselineCodeBlock(

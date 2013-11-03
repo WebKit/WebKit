@@ -1,5 +1,20 @@
 2013-11-02  Filip Pizlo  <fpizlo@apple.com>
 
+        CodeBlock::jettison() shouldn't call baselineVersion()
+        https://bugs.webkit.org/show_bug.cgi?id=123675
+
+        Reviewed by Geoffrey Garen.
+        
+        Fix more uses of baselineVersion().
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::jettison):
+        * bytecode/CodeBlock.h:
+        * bytecode/ProfiledCodeBlockJettisoningWatchpoint.cpp:
+        (JSC::ProfiledCodeBlockJettisoningWatchpoint::fireInternal):
+
+2013-11-02  Filip Pizlo  <fpizlo@apple.com>
+
         LLVM asserts in internal-js-tests.yaml/Octane/stress-tests/mandreel.js
         https://bugs.webkit.org/show_bug.cgi?id=123535
 
