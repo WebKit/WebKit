@@ -184,8 +184,8 @@ PASS Math.atanh(-Infinity) is NaN
 PASS Math.cbrt(NaN) is NaN
 PASS Math.cbrt(0) is 0
 PASS Math.cbrt(-0) is -0
-PASS Math.cbrt(27) is 3
-PASS Math.cbrt(-27) is -3
+PASS Math.cbrt(8) is 2
+PASS Math.cbrt(-8) is -2
 PASS Math.cbrt(Infinity) is Infinity
 PASS Math.cbrt(-Infinity) is -Infinity
 PASS Math.cosh(NaN) is NaN

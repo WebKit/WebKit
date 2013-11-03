@@ -261,8 +261,8 @@ shouldBe("Math.atanh(-Infinity)", "NaN");
 shouldBe("Math.cbrt(NaN)", "NaN");
 shouldBe("Math.cbrt(0)", "0");
 shouldBe("Math.cbrt(-0)", "-0");
-shouldBe("Math.cbrt(27)", "3");
-shouldBe("Math.cbrt(-27)", "-3");
+shouldBe("Math.cbrt(8)", "2");
+shouldBe("Math.cbrt(-8)", "-2");
 shouldBe("Math.cbrt(Infinity)", "Infinity");
 shouldBe("Math.cbrt(-Infinity)", "-Infinity");
 

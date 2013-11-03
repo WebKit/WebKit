@@ -1,3 +1,16 @@
+2013-11-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        Precision errors in Math.cbrt() on GTK, EFL
+        https://bugs.webkit.org/show_bug.cgi?id=123624
+
+        Reviewed by Csaba Osztrogonác.
+
+        Calculate cube roots of 8 and -8, expecting 2 and -2, respectively. Cube roots of those two
+        numbers don't contain precision errors on the GTK and EFL ports as is the case with 27 and -27.
+
+        * js/math-expected.txt:
+        * js/script-tests/math.js:
+
 2013-11-03  Andreas Kling  <akling@apple.com>
 
         Optimize baselines: fast/frames
