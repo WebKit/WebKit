@@ -1,5 +1,85 @@
 2013-11-03  Andreas Kling  <akling@apple.com>
 
+        Optimize baselines: editing
+
+        Unreviewed; run "webkit-patch optimize-baselines editing"
+
+        * editing/deleting/delete-3775172-fix-expected.png: Renamed from LayoutTests/platform/efl/editing/deleting/delete-3775172-fix-expected.png.
+        * editing/deleting/delete-after-span-ws-001-expected.txt: Renamed from LayoutTests/platform/efl/editing/deleting/delete-after-span-ws-001-expected.txt.
+        * editing/deleting/delete-after-span-ws-002-expected.txt: Renamed from LayoutTests/platform/efl/editing/deleting/delete-after-span-ws-002-expected.txt.
+        * editing/deleting/delete-after-span-ws-003-expected.txt: Renamed from LayoutTests/platform/efl/editing/deleting/delete-after-span-ws-003-expected.txt.
+        * editing/deleting/delete-at-start-or-end-expected.txt: Renamed from LayoutTests/platform/efl/editing/deleting/delete-at-start-or-end-expected.txt.
+        * editing/deleting/delete-br-002-expected.txt: Renamed from LayoutTests/platform/mac/editing/deleting/delete-br-002-expected.txt.
+        * editing/deleting/delete-br-004-expected.txt: Renamed from LayoutTests/platform/mac/editing/deleting/delete-br-004-expected.txt.
+        * editing/deleting/delete-br-005-expected.txt: Renamed from LayoutTests/platform/mac/editing/deleting/delete-br-005-expected.txt.
+        * editing/deleting/delete-br-006-expected.txt: Renamed from LayoutTests/platform/mac/editing/deleting/delete-br-006-expected.txt.
+        * editing/deleting/delete-line-end-ws-001-expected.txt: Renamed from LayoutTests/platform/efl/editing/deleting/delete-line-end-ws-001-expected.txt.
+        * editing/deleting/delete-line-end-ws-002-expected.txt: Renamed from LayoutTests/platform/efl/editing/deleting/delete-line-end-ws-002-expected.txt.
+        * editing/input/scroll-to-edge-if-line-break-at-end-of-document-contenteditable-expected.txt:
+        * editing/inserting/insert-3851164-fix-expected.png: Renamed from LayoutTests/platform/efl/editing/inserting/insert-3851164-fix-expected.png.
+        * editing/selection/5195166-1-expected.txt: Renamed from LayoutTests/platform/efl/editing/selection/5195166-1-expected.txt.
+        * editing/selection/editable-links-expected.txt: Renamed from LayoutTests/platform/efl/editing/selection/editable-links-expected.txt.
+        * editing/selection/focus-body-expected.txt: Renamed from LayoutTests/platform/efl/editing/selection/focus-body-expected.txt.
+        * editing/selection/select-all-001-expected.txt: Renamed from LayoutTests/platform/efl/editing/selection/select-all-001-expected.txt.
+        * editing/selection/select-all-002-expected.txt: Renamed from LayoutTests/platform/efl/editing/selection/select-all-002-expected.txt.
+        * editing/selection/select-all-003-expected.txt: Renamed from LayoutTests/platform/efl/editing/selection/select-all-003-expected.txt.
+        * editing/selection/select-all-004-expected.txt: Renamed from LayoutTests/platform/efl/editing/selection/select-all-004-expected.txt.
+        * editing/selection/unrendered-001-expected.txt: Renamed from LayoutTests/platform/efl/editing/selection/unrendered-001-expected.txt.
+        * editing/selection/unrendered-002-expected.txt: Renamed from LayoutTests/platform/efl/editing/selection/unrendered-002-expected.txt.
+        * editing/selection/unrendered-003-expected.txt: Renamed from LayoutTests/platform/efl/editing/selection/unrendered-003-expected.txt.
+        * editing/selection/unrendered-004-expected.txt: Renamed from LayoutTests/platform/efl/editing/selection/unrendered-004-expected.txt.
+        * editing/selection/unrendered-005-expected.txt: Renamed from LayoutTests/platform/efl/editing/selection/unrendered-005-expected.txt.
+        * editing/undo/5378473-expected.txt: Renamed from LayoutTests/platform/efl/editing/undo/5378473-expected.txt.
+        * editing/undo/undo-misspellings-expected.txt: Renamed from LayoutTests/platform/efl/editing/undo/undo-misspellings-expected.txt.
+        * editing/unsupported-content/table-delete-001-expected.txt: Renamed from LayoutTests/platform/efl/editing/unsupported-content/table-delete-001-expected.txt.
+        * editing/unsupported-content/table-delete-003-expected.png: Renamed from LayoutTests/platform/efl/editing/unsupported-content/table-delete-003-expected.png.
+        * editing/unsupported-content/table-delete-003-expected.txt: Renamed from LayoutTests/platform/efl/editing/unsupported-content/table-delete-003-expected.txt.
+        * platform/efl-wk2/editing/input/reveal-caret-of-multiline-contenteditable-expected.txt: Renamed from LayoutTests/platform/efl/editing/input/reveal-caret-of-multiline-contenteditable-expected.txt.
+        * platform/efl/editing/caret/caret-color-expected.txt: Renamed from LayoutTests/editing/caret/caret-color-expected.txt.
+        * platform/efl/editing/input/scroll-to-edge-if-line-break-at-end-of-document-contenteditable-expected.txt: Removed.
+        * platform/gtk/editing/deleting/delete-3775172-fix-expected.png: Removed.
+        * platform/gtk/editing/deleting/delete-after-span-ws-001-expected.txt: Removed.
+        * platform/gtk/editing/deleting/delete-after-span-ws-002-expected.txt: Removed.
+        * platform/gtk/editing/deleting/delete-after-span-ws-003-expected.txt: Removed.
+        * platform/gtk/editing/deleting/delete-line-end-ws-001-expected.txt: Removed.
+        * platform/gtk/editing/deleting/delete-line-end-ws-002-expected.txt: Removed.
+        * platform/gtk/editing/input/scroll-to-edge-if-line-break-at-end-of-document-contenteditable-expected.txt: Removed.
+        * platform/gtk/editing/inserting/insert-3851164-fix-expected.png: Removed.
+        * platform/gtk/editing/selection/editable-links-expected.txt: Removed.
+        * platform/gtk/editing/selection/focus-body-expected.txt: Removed.
+        * platform/gtk/editing/selection/select-all-001-expected.txt: Removed.
+        * platform/gtk/editing/selection/select-all-002-expected.txt: Removed.
+        * platform/gtk/editing/selection/select-all-003-expected.txt: Removed.
+        * platform/gtk/editing/selection/select-all-004-expected.txt: Removed.
+        * platform/gtk/editing/selection/unrendered-001-expected.txt: Removed.
+        * platform/gtk/editing/selection/unrendered-002-expected.txt: Removed.
+        * platform/gtk/editing/selection/unrendered-003-expected.txt: Removed.
+        * platform/gtk/editing/selection/unrendered-004-expected.txt: Removed.
+        * platform/gtk/editing/selection/unrendered-005-expected.txt: Removed.
+        * platform/mac/editing/deleting/delete-at-start-or-end-expected.txt: Removed.
+        * platform/mac/editing/input/scroll-to-edge-if-line-break-at-end-of-document-contenteditable-expected.txt: Removed.
+        * platform/mac/editing/inserting/insert-div-010-expected.txt: Renamed from LayoutTests/editing/inserting/insert-div-010-expected.txt.
+        * platform/mac/editing/selection/5195166-1-expected.txt: Removed.
+        * platform/mac/editing/style/unbold-in-bold-expected.txt: Renamed from LayoutTests/editing/style/unbold-in-bold-expected.txt.
+        * platform/mac/editing/undo/5378473-expected.txt: Removed.
+        * platform/mac/editing/undo/undo-misspellings-expected.txt: Removed.
+        * platform/mac/editing/unsupported-content/table-delete-001-expected.txt: Removed.
+        * platform/mac/editing/unsupported-content/table-delete-003-expected.png: Removed.
+        * platform/mac/editing/unsupported-content/table-delete-003-expected.txt: Removed.
+        * platform/win-7sp0/editing/selection/collapse-selection-in-bidi-expected.txt: Renamed from LayoutTests/platform/win/editing/selection/collapse-selection-in-bidi-expected.txt.
+        * platform/win-7sp0/editing/selection/drag-text-delay-expected.txt: Renamed from LayoutTests/platform/win/editing/selection/drag-text-delay-expected.txt.
+        * platform/win-7sp0/editing/selection/extend-selection-home-end-expected.txt: Renamed from LayoutTests/platform/win/editing/selection/extend-selection-home-end-expected.txt.
+        * platform/win/editing/deleting/delete-br-002-expected.txt: Removed.
+        * platform/win/editing/deleting/delete-br-004-expected.txt: Removed.
+        * platform/win/editing/deleting/delete-br-005-expected.txt: Removed.
+        * platform/win/editing/deleting/delete-br-006-expected.txt: Removed.
+        * platform/win/editing/deleting/delete-br-009-expected.txt: Removed.
+        * platform/win/editing/inserting/insert-3800346-fix-expected.txt: Removed.
+        * platform/win/editing/selection/anchor-focus2-expected.txt: Removed.
+        * platform/win/editing/selection/anchor-focus3-expected.txt: Removed.
+
+2013-11-03  Andreas Kling  <akling@apple.com>
+
         Optimize baselines: tables
 
         Unreviewed; run "webkit-patch optimize-baselines tables"
