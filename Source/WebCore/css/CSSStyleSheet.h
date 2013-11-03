@@ -111,7 +111,7 @@ public:
     void clearChildRuleCSSOMWrappers();
     void reattachChildRuleCSSOMWrappers();
 
-    StyleSheetContents* contents() { return &m_contents.get(); }
+    StyleSheetContents& contents() { return m_contents.get(); }
 
     void detachFromDocument() { m_ownerNode = nullptr; }
 

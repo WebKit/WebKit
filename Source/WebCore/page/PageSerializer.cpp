@@ -281,7 +281,7 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const URL
 
     if (url.isValid() && !m_resourceURLs.contains(url)) {
         // FIXME: We should check whether a charset has been specified and if none was found add one.
-        TextEncoding textEncoding(styleSheet->contents()->charset());
+        TextEncoding textEncoding(styleSheet->contents().charset());
         ASSERT(textEncoding.isValid());
         String textString = cssText.toString();
         CString text = textEncoding.encode(textString.characters(), textString.length(), EntitiesForUnencodables);

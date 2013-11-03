@@ -148,12 +148,12 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
     m_sheet = CSSStyleSheet::createInline(element, URL(), document.inputEncoding());
     m_sheet->setMediaQueries(mediaQueries.release());
     m_sheet->setTitle(element.title());
-    m_sheet->contents()->parseStringAtLine(text, m_startLineNumber.zeroBasedInt(), m_isParsingChildren);
+    m_sheet->contents().parseStringAtLine(text, m_startLineNumber.zeroBasedInt(), m_isParsingChildren);
 
     m_loading = false;
 
     if (m_sheet)
-        m_sheet->contents()->checkLoaded();
+        m_sheet->contents().checkLoaded();
 }
 
 bool InlineStyleSheetOwner::isLoading() const

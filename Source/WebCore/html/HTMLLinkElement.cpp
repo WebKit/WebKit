@@ -339,7 +339,7 @@ bool HTMLLinkElement::styleSheetIsLoading() const
         return true;
     if (!m_sheet)
         return false;
-    return m_sheet->contents()->isLoading();
+    return m_sheet->contents().isLoading();
 }
 
 void HTMLLinkElement::linkLoaded()
@@ -442,7 +442,7 @@ void HTMLLinkElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
     
     // Walk the URLs linked by the linked-to stylesheet.
     if (CSSStyleSheet* styleSheet = const_cast<HTMLLinkElement*>(this)->sheet())
-        styleSheet->contents()->addSubresourceStyleURLs(urls);
+        styleSheet->contents().addSubresourceStyleURLs(urls);
 }
 
 void HTMLLinkElement::addPendingSheet(PendingSheetType type)

@@ -1,5 +1,15 @@
 2013-11-02  Andreas Kling  <akling@apple.com>
 
+        CSSStyleSheet::contents() should return a reference.
+        <https://webkit.org/b/123689>
+
+        Make CSSStyleSheet::contents() return a StyleSheetContents& instead
+        of a pointer. The object was already stored in a Ref.
+
+        Reviewed by Anders Carlsson.
+
+2013-11-02  Andreas Kling  <akling@apple.com>
+
         CSSReflectValue constructor should return PassRef.
         <https://webkit.org/b/123963>
 

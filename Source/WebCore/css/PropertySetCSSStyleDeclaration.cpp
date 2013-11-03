@@ -285,7 +285,7 @@ CSSValue* PropertySetCSSStyleDeclaration::cloneAndCacheForCSSOM(CSSValue* intern
 StyleSheetContents* PropertySetCSSStyleDeclaration::contextStyleSheet() const
 { 
     CSSStyleSheet* cssStyleSheet = parentStyleSheet();
-    return cssStyleSheet ? cssStyleSheet->contents() : 0;
+    return cssStyleSheet ? &cssStyleSheet->contents() : 0;
 }
 
 PassRef<MutableStylePropertySet> PropertySetCSSStyleDeclaration::copyProperties() const

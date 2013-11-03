@@ -1721,7 +1721,7 @@ void Document::recalcStyle(Style::Change change)
 
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRecalculateStyle(this);
 
-    if (m_elementSheet && m_elementSheet->contents()->usesRemUnits())
+    if (m_elementSheet && m_elementSheet->contents().usesRemUnits())
         m_styleSheetCollection.setUsesRemUnit(true);
 
     m_inStyleRecalc = true;
@@ -2586,11 +2586,11 @@ void Document::updateBaseURL()
 
     if (m_elementSheet) {
         // Element sheet is silly. It never contains anything.
-        ASSERT(!m_elementSheet->contents()->ruleCount());
-        bool usesRemUnits = m_elementSheet->contents()->usesRemUnits();
+        ASSERT(!m_elementSheet->contents().ruleCount());
+        bool usesRemUnits = m_elementSheet->contents().usesRemUnits();
         m_elementSheet = CSSStyleSheet::createInline(*this, m_baseURL);
         // FIXME: So we are not really the parser. The right fix is to eliminate the element sheet completely.
-        m_elementSheet->contents()->parserSetUsesRemUnits(usesRemUnits);
+        m_elementSheet->contents().parserSetUsesRemUnits(usesRemUnits);
     }
 
     if (!equalIgnoringFragmentIdentifier(oldBaseURL, m_baseURL)) {

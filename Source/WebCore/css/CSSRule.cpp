@@ -53,7 +53,7 @@ void CSSRule::setCssText(const String& /*cssText*/, ExceptionCode& /*ec*/)
 const CSSParserContext& CSSRule::parserContext() const
 {
     CSSStyleSheet* styleSheet = parentStyleSheet();
-    return styleSheet ? styleSheet->contents()->parserContext() : strictCSSParserContext();
+    return styleSheet ? styleSheet->contents().parserContext() : strictCSSParserContext();
 }
 
 } // namespace WebCore

@@ -50,7 +50,7 @@ void DocumentRuleSets::initUserStyle(DocumentStyleSheetCollection& styleSheetCol
 {
     OwnPtr<RuleSet> tempUserStyle = RuleSet::create();
     if (CSSStyleSheet* pageUserSheet = styleSheetCollection.pageUserSheet())
-        tempUserStyle->addRulesFromSheet(pageUserSheet->contents(), medium, &resolver);
+        tempUserStyle->addRulesFromSheet(&pageUserSheet->contents(), medium, &resolver);
     collectRulesFromUserStyleSheets(styleSheetCollection.injectedUserStyleSheets(), *tempUserStyle, medium, resolver);
     collectRulesFromUserStyleSheets(styleSheetCollection.documentUserStyleSheets(), *tempUserStyle, medium, resolver);
     if (tempUserStyle->ruleCount() > 0 || tempUserStyle->pageRules().size() > 0)
@@ -60,8 +60,8 @@ void DocumentRuleSets::initUserStyle(DocumentStyleSheetCollection& styleSheetCol
 void DocumentRuleSets::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& userSheets, RuleSet& userStyle, const MediaQueryEvaluator& medium, StyleResolver& resolver)
 {
     for (unsigned i = 0; i < userSheets.size(); ++i) {
-        ASSERT(userSheets[i]->contents()->isUserStyleSheet());
-        userStyle.addRulesFromSheet(userSheets[i]->contents(), medium, &resolver);
+        ASSERT(userSheets[i]->contents().isUserStyleSheet());
+        userStyle.addRulesFromSheet(&userSheets[i]->contents(), medium, &resolver);
     }
 }
 
@@ -93,17 +93,17 @@ void DocumentRuleSets::appendAuthorStyleSheets(unsigned firstNew, const Vector<R
         ASSERT(!cssSheet->disabled());
         if (cssSheet->mediaQueries() && !medium->eval(cssSheet->mediaQueries(), resolver))
             continue;
-        StyleSheetContents* sheet = cssSheet->contents();
+        StyleSheetContents& sheet = cssSheet->contents();
 #if ENABLE(SHADOW_DOM)
         if (const ContainerNode* scope = StyleScopeResolver::scopeFor(cssSheet)) {
             // FIXME: Remove a dependency to calling a StyleResolver's member function.
             // If we can avoid calling resolver->ensureScopeResolver() here, we don't have to include "StyleResolver.h".
             // https://bugs.webkit.org/show_bug.cgi?id=108890
-            resolver->ensureScopeResolver()->ensureRuleSetFor(scope)->addRulesFromSheet(sheet, *medium, resolver, scope);
+            resolver->ensureScopeResolver()->ensureRuleSetFor(scope)->addRulesFromSheet(&sheet, *medium, resolver, scope);
             continue;
         }
 #endif
-        m_authorStyle->addRulesFromSheet(sheet, *medium, resolver);
+        m_authorStyle->addRulesFromSheet(&sheet, *medium, resolver);
         inspectorCSSOMWrappers.collectFromStyleSheetIfNeeded(cssSheet);
     }
     m_authorStyle->shrinkToFit();
