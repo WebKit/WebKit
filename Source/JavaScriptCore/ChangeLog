@@ -1,3 +1,16 @@
+2013-11-02  Patrick Gansterer  <paroga@webkit.org>
+
+        Fix MSVC warning about unary minus operator
+        https://bugs.webkit.org/show_bug.cgi?id=123674
+
+        Reviewed by Darin Adler.
+
+        Change some static_cast<> to silence the following warning of Microsoft compiler:
+        warning C4146: unary minus operator applied to unsigned type, result still unsigned
+
+        * jit/Repatch.cpp:
+        (JSC::emitPutTransitionStub):
+
 2013-11-02  Filip Pizlo  <fpizlo@apple.com>
 
         Disable LLVM's pretty stack traces, which involve intercepting fatal signals
