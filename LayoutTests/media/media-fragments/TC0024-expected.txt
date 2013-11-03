@@ -4,7 +4,6 @@ Fragment: 't=npt:3,7'
 Comment: equivalent to #t=3,7
 EVENT(canplaythrough)
 EXPECTED (video.currentTime == '3') OK
-EXPECTED (video.initialTime == '3') OK
 RUN(video.play())
 EVENT(pause)
 EXPECTED (video.currentTime - fragmentEndTime <= '0.5') OK

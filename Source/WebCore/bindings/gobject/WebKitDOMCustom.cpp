@@ -557,3 +557,9 @@ gdouble webkit_dom_html_media_element_get_start_time(WebKitDOMHTMLMediaElement*)
     g_warning("%s: the HTMLMediaElement:start-time property has been removed from WebKit, this function does nothing.", __func__);
     return 0;
 }
+
+gdouble webkit_dom_html_media_element_get_initial_time(WebKitDOMHTMLMediaElement*)
+{
+    g_warning("%s: the HTMLMediaElement:initial-time property has been removed from WebKit, this function does nothing.", __func__);
+    return 0;
+}

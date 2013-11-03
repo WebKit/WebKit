@@ -99,7 +99,6 @@
         // Don't use "testExpected()" so we won't log the actual duration as the floating point result may differ with different engines.
         var startString = info.start == "duration" ? "duration" : start;
         reportExpected(video.currentTime.toFixed(2) == start, "video.currentTime", "==", startString, video.currentTime);
-        reportExpected(video.initialTime.toFixed(2) == start, "video.initialTime", "==", startString, video.initialTime);
 
         if (info.valid) {
             video.currentTime = (fragmentEndTime - 0.5);

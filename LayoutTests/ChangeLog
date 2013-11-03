@@ -1,3 +1,88 @@
+2013-11-03  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Remove HTMLMediaElement.initialTime
+        https://bugs.webkit.org/show_bug.cgi?id=123572
+
+        Reviewed by Eric Carlson.
+
+        Patch by: philipj@opera.com
+        Blink review URL: https://codereview.chromium.org/35033002
+
+        Removed presence of initialTime in the tests.
+
+        * media/media-fragments/TC0001-expected.txt:
+        * media/media-fragments/TC0002-expected.txt:
+        * media/media-fragments/TC0003-expected.txt:
+        * media/media-fragments/TC0004-expected.txt:
+        * media/media-fragments/TC0005-expected.txt:
+        * media/media-fragments/TC0006-expected.txt:
+        * media/media-fragments/TC0009-expected.txt:
+        * media/media-fragments/TC0011-expected.txt:
+        * media/media-fragments/TC0012-expected.txt:
+        * media/media-fragments/TC0014-expected.txt:
+        * media/media-fragments/TC0015-expected.txt:
+        * media/media-fragments/TC0017-expected.txt:
+        * media/media-fragments/TC0024-expected.txt:
+        * media/media-fragments/TC0027-expected.txt:
+        * media/media-fragments/TC0028-expected.txt:
+        * media/media-fragments/TC0029-expected.txt:
+        * media/media-fragments/TC0030-expected.txt:
+        * media/media-fragments/TC0031-expected.txt:
+        * media/media-fragments/TC0032-expected.txt:
+        * media/media-fragments/TC0033-expected.txt:
+        * media/media-fragments/TC0034-expected.txt:
+        * media/media-fragments/TC0035-expected.txt:
+        * media/media-fragments/TC0036-expected.txt:
+        * media/media-fragments/TC0037-expected.txt:
+        * media/media-fragments/TC0038-expected.txt:
+        * media/media-fragments/TC0039-expected.txt:
+        * media/media-fragments/TC0044-expected.txt:
+        * media/media-fragments/TC0051-expected.txt:
+        * media/media-fragments/TC0052-expected.txt:
+        * media/media-fragments/TC0053-expected.txt:
+        * media/media-fragments/TC0054-expected.txt:
+        * media/media-fragments/TC0055-expected.txt:
+        * media/media-fragments/TC0058-expected.txt:
+        * media/media-fragments/TC0059-expected.txt:
+        * media/media-fragments/TC0061-expected.txt:
+        * media/media-fragments/TC0062-expected.txt:
+        * media/media-fragments/TC0063-expected.txt:
+        * media/media-fragments/TC0064-expected.txt:
+        * media/media-fragments/TC0065-expected.txt:
+        * media/media-fragments/TC0066-expected.txt:
+        * media/media-fragments/TC0067-expected.txt:
+        * media/media-fragments/TC0068-expected.txt:
+        * media/media-fragments/TC0069-expected.txt:
+        * media/media-fragments/TC0070-expected.txt:
+        * media/media-fragments/TC0071-expected.txt:
+        * media/media-fragments/TC0072-expected.txt:
+        * media/media-fragments/TC0073-expected.txt:
+        * media/media-fragments/TC0074-expected.txt:
+        * media/media-fragments/TC0075-expected.txt:
+        * media/media-fragments/TC0076-expected.txt:
+        * media/media-fragments/TC0077-expected.txt:
+        * media/media-fragments/TC0078-expected.txt:
+        * media/media-fragments/TC0079-expected.txt:
+        * media/media-fragments/TC0080-expected.txt:
+        * media/media-fragments/TC0081-expected.txt:
+        * media/media-fragments/TC0082-expected.txt:
+        * media/media-fragments/TC0083-expected.txt:
+        * media/media-fragments/TC0084-expected.txt:
+        * media/media-fragments/TC0085-expected.txt:
+        * media/media-fragments/TC0086-expected.txt:
+        * media/media-fragments/TC0087-expected.txt:
+        * media/media-fragments/TC0088-expected.txt:
+        * media/media-fragments/TC0089-expected.txt:
+        * media/media-fragments/TC0090-expected.txt:
+        * media/media-fragments/TC0091-expected.txt:
+        * media/media-fragments/TC0092-expected.txt:
+        * media/media-fragments/TC0093-expected.txt:
+        * media/media-fragments/TC0094-expected.txt:
+        * media/media-fragments/media-fragments.js:
+        (canplaythrough): Removed check for initialTime
+        * media/media-initialTime-expected.txt: Removed.
+        * media/media-initialTime.html: Removed.
+
 2013-11-02  Alexey Proskuryakov  <ap@apple.com>
 
         Implement generateKey for HMAC and AES-CBC

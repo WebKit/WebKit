@@ -65,7 +65,6 @@ readonly attribute boolean seeking;
 
 // playback state
 [SetterRaisesException] attribute double currentTime;
-readonly attribute double initialTime;
 readonly attribute double duration;
 readonly attribute boolean paused;
 attribute double defaultPlaybackRate;

@@ -2367,17 +2367,6 @@ void HTMLMediaElement::setCurrentTime(double time, ExceptionCode& ec)
     seek(time, ec);
 }
 
-double HTMLMediaElement::initialTime() const
-{
-    if (m_fragmentStartTime != MediaPlayer::invalidTime())
-        return m_fragmentStartTime;
-
-    if (!m_player)
-        return 0;
-
-    return m_player->initialTime();
-}
-
 double HTMLMediaElement::duration() const
 {
     if (m_player && m_readyState >= HAVE_METADATA)

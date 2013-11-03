@@ -1,3 +1,23 @@
+2013-11-03  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Remove HTMLMediaElement.initialTime
+        https://bugs.webkit.org/show_bug.cgi?id=123572
+
+        Reviewed by Eric Carlson.
+
+        Patch based on one by: philipj@opera.com
+        Blink review URL: https://codereview.chromium.org/35033002
+
+        initialTime has been removed from the HTMLMediaElement.
+
+        * bindings/gobject/WebKitDOMCustom.cpp:
+        (webkit_dom_html_media_element_get_initial_time):
+        * bindings/gobject/WebKitDOMCustom.h:
+        * bindings/gobject/WebKitDOMCustom.symbols: Added phony function.
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl: Removed HTMLMediaElement::initialTime.
+
 2013-11-02  Alexey Proskuryakov  <ap@apple.com>
 
         Implement generateKey for HMAC and AES-CBC
