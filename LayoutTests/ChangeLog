@@ -1,3 +1,151 @@
+2013-11-03  Andreas Kling  <akling@apple.com>
+
+        Optimize baselines: tables
+
+        Unreviewed; run "webkit-patch optimize-baselines tables"
+
+        * platform/gtk/tables/mozilla/bugs/adforce_imgis_com-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug102145-1-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug102145-2-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug102145-3-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug102145-4-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug10269-1-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug10296-2-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug103533-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug11321-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug12908-2-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug13105-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug14159-3-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug149275-2-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug1818-6-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug196870-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug222336-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug222467-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug23072-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug23151-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug23994-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug26553-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug269566-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug27038-3-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug275625-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug277062-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug2886-2-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug28933-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug3037-1-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug3037-2-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug32447-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug34538-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug56405-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug641-2-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug75250-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug8032-2-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug8361-expected.png: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug9024-expected.png: Removed.
+        * platform/gtk/tables/mozilla/core/col_widths_fix_autoFixPer-expected.png: Removed.
+        * platform/gtk/tables/mozilla/marvin/table_overflow_hidden_td-expected.txt: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug128876-expected.png: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug178855-expected.png: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug3517-expected.png: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow-expected.png: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_hidden_table-expected.txt: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.txt: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.txt: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell_sibling-expected.txt: Removed.
+        * platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug120107-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug1271-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug12908-2-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug12910-2-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug131020-2-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug13169-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug137388-1-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug137388-2-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug137388-3-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug157890-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug1818-3-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug1818-6-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug196870-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug222336-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug222467-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug269566-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug277062-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug28933-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug29314-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug2954-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug50695-2-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug56201-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug8032-2-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug9024-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug92647-2-expected.txt: Removed.
+        * platform/mac-mountainlion/tables/mozilla/core/col_widths_fix_autoFixPer-expected.txt: Removed.
+        * platform/mac/tables/mozilla/bugs/bug27038-3-expected.txt: Removed.
+        * platform/mac/tables/mozilla/core/row_span-expected.txt: Removed.
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug131020-3-expected.txt: Removed.
+        * platform/win-future/tables/mozilla/core/bloomberg-expected.txt: Renamed from LayoutTests/tables/mozilla/core/bloomberg-expected.txt.
+        * platform/win-future/tables/mozilla_expected_failures/collapsing_borders/bug41262-1-expected.txt: Renamed from LayoutTests/tables/mozilla_expected_failures/collapsing_borders/bug41262-1-expected.txt.
+        * platform/win/tables/mozilla/bugs/bug133756-1-expected.txt: Removed.
+        * platform/win/tables/mozilla/bugs/bug133756-2-expected.txt: Removed.
+        * platform/win/tables/mozilla/bugs/bug220536-expected.txt: Removed.
+        * platform/win/tables/mozilla/bugs/bug8858-expected.txt: Removed.
+        * platform/win/tables/mozilla/core/row_span-expected.txt: Removed.
+        * platform/win/tables/mozilla_expected_failures/bugs/bug131020-3-expected.txt: Removed.
+        * platform/win/tables/mozilla_expected_failures/bugs/bug65372-expected.txt: Removed.
+        * tables/mozilla/bugs/adforce_imgis_com-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/adforce_imgis_com-expected.txt.
+        * tables/mozilla/bugs/bug102145-1-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug102145-1-expected.png.
+        * tables/mozilla/bugs/bug102145-2-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug102145-2-expected.png.
+        * tables/mozilla/bugs/bug102145-3-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug102145-3-expected.png.
+        * tables/mozilla/bugs/bug102145-4-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug102145-4-expected.png.
+        * tables/mozilla/bugs/bug10269-1-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug10269-1-expected.png.
+        * tables/mozilla/bugs/bug10296-2-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug10296-2-expected.png.
+        * tables/mozilla/bugs/bug103533-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug103533-expected.png.
+        * tables/mozilla/bugs/bug11321-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug11321-expected.png.
+        * tables/mozilla/bugs/bug12908-2-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug12908-2-expected.png.
+        * tables/mozilla/bugs/bug13105-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug13105-expected.png.
+        * tables/mozilla/bugs/bug133756-1-expected.txt: Renamed from LayoutTests/platform/mac/tables/mozilla/bugs/bug133756-1-expected.txt.
+        * tables/mozilla/bugs/bug133756-2-expected.txt: Renamed from LayoutTests/platform/mac/tables/mozilla/bugs/bug133756-2-expected.txt.
+        * tables/mozilla/bugs/bug14159-3-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug14159-3-expected.png.
+        * tables/mozilla/bugs/bug149275-2-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug149275-2-expected.txt.
+        * tables/mozilla/bugs/bug1818-6-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug1818-6-expected.png.
+        * tables/mozilla/bugs/bug196870-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug196870-expected.png.
+        * tables/mozilla/bugs/bug220536-expected.txt: Renamed from LayoutTests/platform/mac/tables/mozilla/bugs/bug220536-expected.txt.
+        * tables/mozilla/bugs/bug222336-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug222336-expected.png.
+        * tables/mozilla/bugs/bug222467-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug222467-expected.png.
+        * tables/mozilla/bugs/bug23072-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug23072-expected.png.
+        * tables/mozilla/bugs/bug23151-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug23151-expected.txt.
+        * tables/mozilla/bugs/bug23994-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug23994-expected.png.
+        * tables/mozilla/bugs/bug26553-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug26553-expected.txt.
+        * tables/mozilla/bugs/bug269566-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug269566-expected.png.
+        * tables/mozilla/bugs/bug27038-3-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug27038-3-expected.txt.
+        * tables/mozilla/bugs/bug275625-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug275625-expected.png.
+        * tables/mozilla/bugs/bug277062-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug277062-expected.png.
+        * tables/mozilla/bugs/bug2886-2-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug2886-2-expected.txt.
+        * tables/mozilla/bugs/bug28933-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug28933-expected.png.
+        * tables/mozilla/bugs/bug3037-1-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug3037-1-expected.png.
+        * tables/mozilla/bugs/bug3037-2-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug3037-2-expected.png.
+        * tables/mozilla/bugs/bug32447-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug32447-expected.png.
+        * tables/mozilla/bugs/bug34538-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug34538-expected.png.
+        * tables/mozilla/bugs/bug56405-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug56405-expected.png.
+        * tables/mozilla/bugs/bug641-2-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug641-2-expected.png.
+        * tables/mozilla/bugs/bug75250-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug75250-expected.png.
+        * tables/mozilla/bugs/bug8032-2-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug8032-2-expected.png.
+        * tables/mozilla/bugs/bug8361-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug8361-expected.png.
+        * tables/mozilla/bugs/bug8858-expected.txt: Renamed from LayoutTests/platform/mac/tables/mozilla/bugs/bug8858-expected.txt.
+        * tables/mozilla/bugs/bug9024-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/bugs/bug9024-expected.png.
+        * tables/mozilla/core/col_widths_fix_autoFixPer-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla/core/col_widths_fix_autoFixPer-expected.png.
+        * tables/mozilla/core/row_span-expected.txt:
+        * tables/mozilla/marvin/table_overflow_hidden_td-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla/marvin/table_overflow_hidden_td-expected.txt.
+        * tables/mozilla_expected_failures/bugs/bug128876-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla_expected_failures/bugs/bug128876-expected.png.
+        * tables/mozilla_expected_failures/bugs/bug131020-3-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug178855-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla_expected_failures/bugs/bug178855-expected.png.
+        * tables/mozilla_expected_failures/bugs/bug3517-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla_expected_failures/bugs/bug3517-expected.png.
+        * tables/mozilla_expected_failures/bugs/bug65372-expected.txt: Renamed from LayoutTests/platform/mac/tables/mozilla_expected_failures/bugs/bug65372-expected.txt.
+        * tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow-expected.png: Renamed from LayoutTests/platform/efl/tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow-expected.png.
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_table-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla_expected_failures/marvin/table_overflow_hidden_table-expected.txt.
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.txt.
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.txt.
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell_sibling-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell_sibling-expected.txt.
+        * tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row-expected.txt: Renamed from LayoutTests/platform/efl/tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row-expected.txt.
+
 2013-11-03  Zan Dobersek  <zdobersek@igalia.com>
 
         Precision errors in Math.cbrt() on GTK, EFL
