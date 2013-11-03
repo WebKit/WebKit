@@ -155,13 +155,13 @@ static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(Col
     return DoNotInvalidateOnAttributeChanges;
 }
 
-HTMLCollection::HTMLCollection(Node& ownerNode, CollectionType type, ItemAfterOverrideType itemAfterOverrideType)
+HTMLCollection::HTMLCollection(ContainerNode& ownerNode, CollectionType type, ItemAfterOverrideType itemAfterOverrideType)
     : LiveNodeListBase(ownerNode, rootTypeFromCollectionType(type), invalidationTypeExcludingIdAndNameAttributes(type),
         WebCore::shouldOnlyIncludeDirectChildren(type), type, itemAfterOverrideType)
 {
 }
 
-PassRefPtr<HTMLCollection> HTMLCollection::create(Node& base, CollectionType type)
+PassRefPtr<HTMLCollection> HTMLCollection::create(ContainerNode& base, CollectionType type)
 {
     return adoptRef(new HTMLCollection(base, type, DoesNotOverrideItemAfter));
 }
@@ -390,12 +390,7 @@ Node* LiveNodeListBase::item(unsigned offset) const
     if (isLengthCacheValid() && cachedLength() <= offset)
         return 0;
 
-    ContainerNode* root = rootContainerNode();
-    if (!root) {
-        // FIMXE: In someTextNode.childNodes case the root is Text. We shouldn't even make a LiveNodeList for that.
-        setLengthCache(0);
-        return 0;
-    }
+    ContainerNode& root = rootNode();
 
     if (isLengthCacheValid() && !overridesItemAfter() && isLastItemCloserThanLastOrCachedItem(offset)) {
         Node* lastItem = itemBefore(0);
@@ -405,9 +400,9 @@ Node* LiveNodeListBase::item(unsigned offset) const
         unsigned offsetInArray = 0;
         Node* firstItem;
         if (isNodeList(type()))
-            firstItem = traverseLiveNodeListFirstElement(root);
+            firstItem = traverseLiveNodeListFirstElement(&root);
         else
-            firstItem = static_cast<const HTMLCollection*>(this)->traverseFirstElement(offsetInArray, root);
+            firstItem = static_cast<const HTMLCollection*>(this)->traverseFirstElement(offsetInArray, &root);
 
         if (!firstItem) {
             setLengthCache(0);
@@ -420,7 +415,7 @@ Node* LiveNodeListBase::item(unsigned offset) const
     if (cachedItemOffset() == offset)
         return cachedItem();
 
-    return itemBeforeOrAfterCachedItem(offset, root);
+    return itemBeforeOrAfterCachedItem(offset, &root);
 }
 
 inline Node* LiveNodeListBase::itemBeforeOrAfterCachedItem(unsigned offset, ContainerNode* root) const
@@ -543,12 +538,12 @@ Node* HTMLCollection::namedItem(const AtomicString& name) const
     // object with a matching name attribute, but only on those elements
     // that are allowed a name attribute.
 
-    ContainerNode* root = rootContainerNode();
-    if (name.isEmpty() || !root)
+    if (name.isEmpty())
         return 0;
 
-    if (!overridesItemAfter() && root->isInTreeScope()) {
-        TreeScope& treeScope = root->treeScope();
+    ContainerNode& root = rootNode();
+    if (!overridesItemAfter() && root.isInTreeScope()) {
+        TreeScope& treeScope = root.treeScope();
         Element* candidate = 0;
         if (treeScope.hasElementWithId(*name.impl())) {
             if (!treeScope.containsMultipleElementsWithId(name))
@@ -564,7 +559,7 @@ Node* HTMLCollection::namedItem(const AtomicString& name) const
 
         if (candidate
             && isMatchingElement(this, candidate)
-            && (shouldOnlyIncludeDirectChildren() ? candidate->parentNode() == root : candidate->isDescendantOf(root)))
+            && (shouldOnlyIncludeDirectChildren() ? candidate->parentNode() == &root : candidate->isDescendantOf(&root)))
             return candidate;
     }
 
@@ -589,12 +584,10 @@ void HTMLCollection::updateNameCache() const
     if (hasNameCache())
         return;
 
-    ContainerNode* root = rootContainerNode();
-    if (!root)
-        return;
+    ContainerNode& root = rootNode();
 
     unsigned arrayOffset = 0;
-    for (Element* element = traverseFirstElement(arrayOffset, root); element; element = traverseNextElement(arrayOffset, element, root)) {
+    for (Element* element = traverseFirstElement(arrayOffset, &root); element; element = traverseNextElement(arrayOffset, element, &root)) {
         const AtomicString& idAttrVal = element->getIdAttribute();
         if (!idAttrVal.isEmpty())
             appendIdCache(idAttrVal, element);

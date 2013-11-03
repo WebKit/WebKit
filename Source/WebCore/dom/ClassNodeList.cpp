@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-ClassNodeList::ClassNodeList(Node& rootNode, const String& classNames)
+ClassNodeList::ClassNodeList(ContainerNode& rootNode, const String& classNames)
     : LiveNodeList(rootNode, ClassNodeListType, InvalidateOnClassAttrChange)
     , m_classNames(classNames, document().inQuirksMode())
     , m_originalClassNames(classNames)

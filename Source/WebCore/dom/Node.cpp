@@ -39,7 +39,6 @@
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "ChildNodeList.h"
-#include "ClassNodeList.h"
 #include "ContainerNodeAlgorithms.h"
 #include "ContextMenuController.h"
 #include "DOMImplementation.h"
@@ -69,12 +68,9 @@
 #include "InsertionPoint.h"
 #include "InspectorCounters.h"
 #include "KeyboardEvent.h"
-#include "LabelsNodeList.h"
-#include "LiveNodeList.h"
 #include "Logging.h"
 #include "MouseEvent.h"
 #include "MutationEvent.h"
-#include "NameNodeList.h"
 #include "NamedNodeMap.h"
 #include "NodeRareData.h"
 #include "NodeTraversal.h"
@@ -83,7 +79,6 @@
 #include "PlatformWheelEvent.h"
 #include "ProcessingInstruction.h"
 #include "ProgressEvent.h"
-#include "RadioNodeList.h"
 #include "RegisteredEventListener.h"
 #include "RenderBlock.h"
 #include "RenderBox.h"
@@ -94,7 +89,6 @@
 #include "ShadowRoot.h"
 #include "StorageEvent.h"
 #include "StyleResolver.h"
-#include "TagNodeList.h"
 #include "TemplateContentDocumentFragment.h"
 #include "Text.h"
 #include "TextEvent.h"
@@ -1054,43 +1048,6 @@ Element* Node::rootEditableElement() const
 }
 
 // FIXME: End of obviously misplaced HTML editing functions.  Try to move these out of Node.
-
-PassRefPtr<NodeList> Node::getElementsByTagName(const AtomicString& localName)
-{
-    if (localName.isNull())
-        return 0;
-
-    if (document().isHTMLDocument())
-        return ensureRareData().ensureNodeLists().addCacheWithAtomicName<HTMLTagNodeList>(*this, HTMLTagNodeListType, localName);
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<TagNodeList>(*this, TagNodeListType, localName);
-}
-
-PassRefPtr<NodeList> Node::getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName)
-{
-    if (localName.isNull())
-        return 0;
-
-    if (namespaceURI == starAtom)
-        return getElementsByTagName(localName);
-
-    return ensureRareData().ensureNodeLists().addCacheWithQualifiedName(*this, namespaceURI.isEmpty() ? nullAtom : namespaceURI, localName);
-}
-
-PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
-{
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<NameNodeList>(*this, NameNodeListType, elementName);
-}
-
-PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
-{
-    return ensureRareData().ensureNodeLists().addCacheWithName<ClassNodeList>(*this, ClassNodeListType, classNames);
-}
-
-PassRefPtr<RadioNodeList> Node::radioNodeList(const AtomicString& name)
-{
-    ASSERT(hasTagName(formTag) || hasTagName(fieldsetTag));
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<RadioNodeList>(*this, RadioNodeListType, name);
-}
 
 Document* Node::ownerDocument() const
 {

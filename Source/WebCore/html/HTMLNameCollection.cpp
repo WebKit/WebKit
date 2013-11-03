@@ -36,7 +36,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLNameCollection::HTMLNameCollection(Node& document, CollectionType type, const AtomicString& name)
+HTMLNameCollection::HTMLNameCollection(ContainerNode& document, CollectionType type, const AtomicString& name)
     : HTMLCollection(document, type, DoesNotOverrideItemAfter)
     , m_name(name)
 {

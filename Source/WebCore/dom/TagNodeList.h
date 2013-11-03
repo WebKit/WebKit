@@ -33,13 +33,13 @@ namespace WebCore {
 // NodeList that limits to a particular tag.
 class TagNodeList : public LiveNodeList {
 public:
-    static PassRefPtr<TagNodeList> create(Node& rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
+    static PassRefPtr<TagNodeList> create(ContainerNode& rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
     {
         ASSERT(namespaceURI != starAtom);
         return adoptRef(new TagNodeList(rootNode, TagNodeListType, namespaceURI, localName));
     }
 
-    static PassRefPtr<TagNodeList> create(Node& rootNode, CollectionType type, const AtomicString& localName)
+    static PassRefPtr<TagNodeList> create(ContainerNode& rootNode, CollectionType type, const AtomicString& localName)
     {
         ASSERT_UNUSED(type, type == TagNodeListType);
         return adoptRef(new TagNodeList(rootNode, TagNodeListType, starAtom, localName));
@@ -48,7 +48,7 @@ public:
     virtual ~TagNodeList();
 
 protected:
-    TagNodeList(Node& rootNode, CollectionType, const AtomicString& namespaceURI, const AtomicString& localName);
+    TagNodeList(ContainerNode& rootNode, CollectionType, const AtomicString& namespaceURI, const AtomicString& localName);
 
     virtual bool nodeMatches(Element*) const OVERRIDE;
 
@@ -58,7 +58,7 @@ protected:
 
 class HTMLTagNodeList : public TagNodeList {
 public:
-    static PassRefPtr<HTMLTagNodeList> create(Node& rootNode, CollectionType type, const AtomicString& localName)
+    static PassRefPtr<HTMLTagNodeList> create(ContainerNode& rootNode, CollectionType type, const AtomicString& localName)
     {
         ASSERT_UNUSED(type, type == HTMLTagNodeListType);
         return adoptRef(new HTMLTagNodeList(rootNode, localName));
@@ -67,7 +67,7 @@ public:
     bool nodeMatchesInlined(Element*) const;
 
 private:
-    HTMLTagNodeList(Node& rootNode, const AtomicString& localName);
+    HTMLTagNodeList(ContainerNode& rootNode, const AtomicString& localName);
 
     virtual bool nodeMatches(Element*) const OVERRIDE;
 

@@ -132,6 +132,12 @@ public:
     Element* querySelector(const AtomicString& selectors, ExceptionCode&);
     RefPtr<NodeList> querySelectorAll(const AtomicString& selectors, ExceptionCode&);
 
+    PassRefPtr<NodeList> getElementsByTagName(const AtomicString&);
+    PassRefPtr<NodeList> getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName);
+    PassRefPtr<NodeList> getElementsByName(const String& elementName);
+    PassRefPtr<NodeList> getElementsByClassName(const String& classNames);
+    PassRefPtr<RadioNodeList> radioNodeList(const AtomicString&);
+
 protected:
     explicit ContainerNode(Document*, ConstructionType = CreateContainer);
 

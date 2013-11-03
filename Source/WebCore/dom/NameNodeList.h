@@ -33,7 +33,7 @@ namespace WebCore {
 // NodeList which lists all Nodes in a Element with a given "name" attribute
 class NameNodeList : public LiveNodeList {
 public:
-    static PassRefPtr<NameNodeList> create(Node& rootNode, CollectionType type, const AtomicString& name)
+    static PassRefPtr<NameNodeList> create(ContainerNode& rootNode, CollectionType type, const AtomicString& name)
     {
         ASSERT_UNUSED(type, type == NameNodeListType);
         return adoptRef(new NameNodeList(rootNode, name));
@@ -42,7 +42,7 @@ public:
     virtual ~NameNodeList();
 
 private:
-    NameNodeList(Node& rootNode, const AtomicString& name);
+    NameNodeList(ContainerNode& rootNode, const AtomicString& name);
 
     virtual bool nodeMatches(Element*) const;
 

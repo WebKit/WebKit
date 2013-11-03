@@ -27,13 +27,13 @@
 
 namespace WebCore {
 
-HTMLOptionsCollection::HTMLOptionsCollection(Node& select)
+HTMLOptionsCollection::HTMLOptionsCollection(ContainerNode& select)
     : HTMLCollection(select, SelectOptions, DoesNotOverrideItemAfter)
 {
     ASSERT(isHTMLSelectElement(select));
 }
 
-PassRefPtr<HTMLOptionsCollection> HTMLOptionsCollection::create(Node& select, CollectionType)
+PassRefPtr<HTMLOptionsCollection> HTMLOptionsCollection::create(ContainerNode& select, CollectionType)
 {
     return adoptRef(new HTMLOptionsCollection(select));
 }

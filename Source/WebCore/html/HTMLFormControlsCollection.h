@@ -37,14 +37,14 @@ class QualifiedName;
 
 class HTMLFormControlsCollection : public HTMLCollection {
 public:
-    static PassRefPtr<HTMLFormControlsCollection> create(Node&, CollectionType);
+    static PassRefPtr<HTMLFormControlsCollection> create(ContainerNode&, CollectionType);
 
     virtual ~HTMLFormControlsCollection();
 
     virtual Node* namedItem(const AtomicString& name) const;
 
 private:
-    explicit HTMLFormControlsCollection(Node&);
+    explicit HTMLFormControlsCollection(ContainerNode&);
 
     virtual void updateNameCache() const;
 

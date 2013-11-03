@@ -1,5 +1,23 @@
 2013-11-03  Antti Koivisto  <antti@apple.com>
 
+        LiveNodeLists should have non-null ContainerNode as root
+        https://bugs.webkit.org/show_bug.cgi?id=123709
+
+        Reviewed by Andreas Kling.
+
+        After moving ChildNodeList off from LiveNodeList the root is now always at least a ContainerNode.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getElementsByTagName):
+        (WebCore::ContainerNode::getElementsByTagNameNS):
+        (WebCore::ContainerNode::getElementsByName):
+        (WebCore::ContainerNode::getElementsByClassName):
+        (WebCore::ContainerNode::radioNodeList):
+        
+            Also these move from Node to ContainerNode to make tighter typing work.
+
+2013-11-03  Antti Koivisto  <antti@apple.com>
+
         Switch createContextualFragment to element iterator
         https://bugs.webkit.org/show_bug.cgi?id=123704
 
