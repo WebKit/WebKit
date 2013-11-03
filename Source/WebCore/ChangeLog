@@ -1,5 +1,16 @@
 2013-11-02  Andreas Kling  <akling@apple.com>
 
+        CSSFontFaceSrcValue constructors should return PassRef.
+        <https://webkit.org/b/123692>
+
+        Make functions that return non-null CSSFontFaceSrcValues return
+        PassRef instead of PassRefPtr. Tweak some call sites to be
+        slightly more efficient.
+
+        Reviewed by Anders Carlsson.
+
+2013-11-02  Andreas Kling  <akling@apple.com>
+
         CSSStyleSheet::contents() should return a reference.
         <https://webkit.org/b/123689>
 

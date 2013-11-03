@@ -54,12 +54,12 @@ SVGFontFaceUriElement::~SVGFontFaceUriElement()
         m_cachedFont->removeClient(this);
 }
 
-PassRefPtr<CSSFontFaceSrcValue> SVGFontFaceUriElement::srcValue() const
+PassRef<CSSFontFaceSrcValue> SVGFontFaceUriElement::srcValue() const
 {
-    RefPtr<CSSFontFaceSrcValue> src = CSSFontFaceSrcValue::create(getAttribute(XLinkNames::hrefAttr));
+    auto src = CSSFontFaceSrcValue::create(getAttribute(XLinkNames::hrefAttr));
     AtomicString value(fastGetAttribute(formatAttr));
-    src->setFormat(value.isEmpty() ? "svg" : value); // Default format
-    return src.release();
+    src.get().setFormat(value.isEmpty() ? "svg" : value); // Default format
+    return src;
 }
 
 void SVGFontFaceUriElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
