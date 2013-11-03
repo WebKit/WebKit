@@ -1,5 +1,157 @@
 2013-11-02  Andreas Kling  <akling@apple.com>
 
+        Optimize baselines: css2.1
+
+        Unreviewed; run "webkit-patch optimize-baselines css2.1"
+
+        * css2.1/20110323/absolute-replaced-height-036-expected.png: Renamed from LayoutTests/platform/efl/css2.1/20110323/absolute-replaced-height-036-expected.png.
+        * css2.1/20110323/block-non-replaced-height-011-expected.png: Renamed from LayoutTests/platform/efl/css2.1/20110323/block-non-replaced-height-011-expected.png.
+        * css2.1/20110323/block-non-replaced-height-013-expected.png: Renamed from LayoutTests/platform/efl/css2.1/20110323/block-non-replaced-height-013-expected.png.
+        * css2.1/20110323/empty-inline-001-expected.png: Renamed from LayoutTests/platform/efl/css2.1/20110323/empty-inline-001-expected.png.
+        * css2.1/20110323/replaced-intrinsic-002-expected.png: Renamed from LayoutTests/platform/efl/css2.1/20110323/replaced-intrinsic-002-expected.png.
+        * css2.1/20110323/replaced-intrinsic-002-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/20110323/replaced-intrinsic-002-expected.txt.
+        * css2.1/20110323/replaced-intrinsic-ratio-001-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/20110323/replaced-intrinsic-ratio-001-expected.txt.
+        * css2.1/t040105-atkeyw-00-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t040105-atkeyw-00-b-expected.png.
+        * css2.1/t040105-atkeyw-01-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t040105-atkeyw-01-b-expected.png.
+        * css2.1/t040105-atkeyw-02-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t040105-atkeyw-02-b-expected.png.
+        * css2.1/t040105-atrule-00-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t040105-atrule-00-b-expected.png.
+        * css2.1/t040105-atrule-01-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t040105-atrule-01-b-expected.png.
+        * css2.1/t040105-atrule-02-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t040105-atrule-02-b-expected.png.
+        * css2.1/t040105-atrule-03-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t040105-atrule-03-b-expected.png.
+        * css2.1/t040105-atrule-04-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t040105-atrule-04-b-expected.png.
+        * css2.1/t040105-import-00-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t040105-import-00-b-expected.png.
+        * css2.1/t040105-import-01-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t040105-import-01-b-expected.png.
+        * css2.1/t040105-import-10-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t040105-import-10-b-expected.png.
+        * css2.1/t0402-syntax-01-f-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t0402-syntax-01-f-expected.png.
+        * css2.1/t0402-syntax-02-f-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t0402-syntax-02-f-expected.png.
+        * css2.1/t0402-syntax-03-f-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t0402-syntax-03-f-expected.png.
+        * css2.1/t0402-syntax-04-f-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t0402-syntax-04-f-expected.png.
+        * css2.1/t0402-syntax-05-f-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t0402-syntax-05-f-expected.png.
+        * css2.1/t0402-syntax-06-f-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t0402-syntax-06-f-expected.png.
+        * css2.1/t040307-syntax-01-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t040307-syntax-01-b-expected.png.
+        * css2.1/t0505-c16-descendant-02-e-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t0505-c16-descendant-02-e-expected.png.
+        * css2.1/t0509-id-sel-syntax-01-f-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t0509-id-sel-syntax-01-f-expected.png.
+        * css2.1/t0509-id-sel-syntax-02-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t0509-id-sel-syntax-02-b-expected.png.
+        * css2.1/t0511-c21-pseud-link-00-e-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t0511-c21-pseud-link-00-e-expected.png.
+        * css2.1/t0511-c21-pseud-link-01-e-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t0511-c21-pseud-link-01-e-expected.png.
+        * css2.1/t0511-c21-pseud-link-02-e-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t0511-c21-pseud-link-02-e-expected.png.
+        * css2.1/t0511-c21-pseud-link-03-e-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t0511-c21-pseud-link-03-e-expected.png.
+        * css2.1/t051103-c21-focus-ln-00-e-i-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t051103-c21-focus-ln-00-e-i-expected.png.
+        * css2.1/t051103-c21-hover-ln-00-e-i-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t051103-c21-hover-ln-00-e-i-expected.png.
+        * css2.1/t0803-c5504-mrgn-l-02-c-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t0803-c5504-mrgn-l-02-c-expected.png.
+        * css2.1/t0805-c5511-brdr-tw-02-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t0805-c5511-brdr-tw-02-b-expected.png.
+        * css2.1/t0805-c5512-brdr-rw-02-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t0805-c5512-brdr-rw-02-b-expected.png.
+        * css2.1/t0805-c5513-brdr-bw-02-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t0805-c5513-brdr-bw-02-b-expected.png.
+        * css2.1/t0805-c5514-brdr-lw-02-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t0805-c5514-brdr-lw-02-b-expected.png.
+        * css2.1/t0805-c5515-brdr-w-02-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t0805-c5515-brdr-w-02-b-expected.png.
+        * css2.1/t1001-abs-pos-cb-01-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t1001-abs-pos-cb-01-b-expected.png.
+        * css2.1/t1001-abs-pos-cb-01-b-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t1001-abs-pos-cb-01-b-expected.txt.
+        * css2.1/t1001-abs-pos-cb-02-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t1001-abs-pos-cb-02-b-expected.png.
+        * css2.1/t1001-abs-pos-cb-02-b-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t1001-abs-pos-cb-02-b-expected.txt.
+        * css2.1/t1001-abs-pos-cb-03-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t1001-abs-pos-cb-03-b-expected.png.
+        * css2.1/t1001-abs-pos-cb-03-b-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t1001-abs-pos-cb-03-b-expected.txt.
+        * css2.1/t1001-abs-pos-cb-04-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t1001-abs-pos-cb-04-b-expected.png.
+        * css2.1/t1001-abs-pos-cb-04-b-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t1001-abs-pos-cb-04-b-expected.txt.
+        * css2.1/t1001-abs-pos-cb-05-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t1001-abs-pos-cb-05-b-expected.png.
+        * css2.1/t1001-abs-pos-cb-05-b-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t1001-abs-pos-cb-05-b-expected.txt.
+        * css2.1/t1001-abs-pos-cb-06-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t1001-abs-pos-cb-06-b-expected.png.
+        * css2.1/t1001-abs-pos-cb-06-b-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t1001-abs-pos-cb-06-b-expected.txt.
+        * css2.1/t1001-abs-pos-cb-07-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t1001-abs-pos-cb-07-b-expected.png.
+        * css2.1/t1001-abs-pos-cb-07-b-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t1001-abs-pos-cb-07-b-expected.txt.
+        * css2.1/t1001-abs-pos-cb-08-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t1001-abs-pos-cb-08-b-expected.png.
+        * css2.1/t1001-abs-pos-cb-08-b-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t1001-abs-pos-cb-08-b-expected.txt.
+        * css2.1/t1001-abs-pos-cb-09-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t1001-abs-pos-cb-09-b-expected.png.
+        * css2.1/t1001-abs-pos-cb-09-b-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t1001-abs-pos-cb-09-b-expected.txt.
+        * css2.1/t1205-c566-list-stl-01-c-g-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t1205-c566-list-stl-01-c-g-expected.txt.
+        * css2.1/t140201-c532-bgcolor-01-b-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t140201-c532-bgcolor-01-b-expected.png.
+        * css2.1/t140201-c533-bgimage-01-b-g-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t140201-c533-bgimage-01-b-g-expected.png.
+        * css2.1/t140201-c536-bgpos-01-b-ag-expected.png: Renamed from LayoutTests/platform/efl/css2.1/t140201-c536-bgpos-01-b-ag-expected.png.
+        * css2.1/t1508-c527-font-00-b-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t1508-c527-font-00-b-expected.txt.
+        * css2.1/t1508-c527-font-01-b-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t1508-c527-font-01-b-expected.txt.
+        * css2.1/t1508-c527-font-02-b-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t1508-c527-font-02-b-expected.txt.
+        * css2.1/t1508-c527-font-03-b-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t1508-c527-font-03-b-expected.txt.
+        * css2.1/t1508-c527-font-04-b-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t1508-c527-font-04-b-expected.txt.
+        * css2.1/t1508-c527-font-05-b-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t1508-c527-font-05-b-expected.txt.
+        * css2.1/t1508-c527-font-07-b-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t1508-c527-font-07-b-expected.txt.
+        * css2.1/t1508-c527-font-08-b-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t1508-c527-font-08-b-expected.txt.
+        * css2.1/t1508-c527-font-09-b-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t1508-c527-font-09-b-expected.txt.
+        * css2.1/t1508-c527-font-10-c-expected.txt: Renamed from LayoutTests/platform/efl/css2.1/t1508-c527-font-10-c-expected.txt.
+        * platform/gtk/css2.1/20110323/absolute-replaced-height-036-expected.png: Removed.
+        * platform/gtk/css2.1/20110323/block-non-replaced-height-011-expected.png: Removed.
+        * platform/gtk/css2.1/20110323/block-non-replaced-height-013-expected.png: Removed.
+        * platform/gtk/css2.1/20110323/empty-inline-001-expected.png: Removed.
+        * platform/gtk/css2.1/20110323/replaced-intrinsic-002-expected.png: Removed.
+        * platform/gtk/css2.1/20110323/replaced-intrinsic-002-expected.txt: Removed.
+        * platform/gtk/css2.1/20110323/replaced-intrinsic-ratio-001-expected.txt: Removed.
+        * platform/gtk/css2.1/t040105-atkeyw-00-b-expected.png: Removed.
+        * platform/gtk/css2.1/t040105-atkeyw-01-b-expected.png: Removed.
+        * platform/gtk/css2.1/t040105-atkeyw-02-b-expected.png: Removed.
+        * platform/gtk/css2.1/t040105-atrule-00-b-expected.png: Removed.
+        * platform/gtk/css2.1/t040105-atrule-01-b-expected.png: Removed.
+        * platform/gtk/css2.1/t040105-atrule-02-b-expected.png: Removed.
+        * platform/gtk/css2.1/t040105-atrule-03-b-expected.png: Removed.
+        * platform/gtk/css2.1/t040105-atrule-04-b-expected.png: Removed.
+        * platform/gtk/css2.1/t040105-import-00-b-expected.png: Removed.
+        * platform/gtk/css2.1/t040105-import-01-b-expected.png: Removed.
+        * platform/gtk/css2.1/t040105-import-10-b-expected.png: Removed.
+        * platform/gtk/css2.1/t0402-syntax-01-f-expected.png: Removed.
+        * platform/gtk/css2.1/t0402-syntax-02-f-expected.png: Removed.
+        * platform/gtk/css2.1/t0402-syntax-03-f-expected.png: Removed.
+        * platform/gtk/css2.1/t0402-syntax-04-f-expected.png: Removed.
+        * platform/gtk/css2.1/t0402-syntax-05-f-expected.png: Removed.
+        * platform/gtk/css2.1/t0402-syntax-06-f-expected.png: Removed.
+        * platform/gtk/css2.1/t040307-syntax-01-b-expected.png: Removed.
+        * platform/gtk/css2.1/t0505-c16-descendant-02-e-expected.png: Removed.
+        * platform/gtk/css2.1/t0509-id-sel-syntax-01-f-expected.png: Removed.
+        * platform/gtk/css2.1/t0509-id-sel-syntax-02-b-expected.png: Removed.
+        * platform/gtk/css2.1/t0511-c21-pseud-link-00-e-expected.png: Removed.
+        * platform/gtk/css2.1/t0511-c21-pseud-link-01-e-expected.png: Removed.
+        * platform/gtk/css2.1/t0511-c21-pseud-link-02-e-expected.png: Removed.
+        * platform/gtk/css2.1/t0511-c21-pseud-link-03-e-expected.png: Removed.
+        * platform/gtk/css2.1/t051103-c21-focus-ln-00-e-i-expected.png: Removed.
+        * platform/gtk/css2.1/t051103-c21-hover-ln-00-e-i-expected.png: Removed.
+        * platform/gtk/css2.1/t0803-c5504-mrgn-l-02-c-expected.png: Removed.
+        * platform/gtk/css2.1/t0805-c5511-brdr-tw-02-b-expected.png: Removed.
+        * platform/gtk/css2.1/t0805-c5512-brdr-rw-02-b-expected.png: Removed.
+        * platform/gtk/css2.1/t0805-c5513-brdr-bw-02-b-expected.png: Removed.
+        * platform/gtk/css2.1/t0805-c5514-brdr-lw-02-b-expected.png: Removed.
+        * platform/gtk/css2.1/t0805-c5515-brdr-w-02-b-expected.png: Removed.
+        * platform/gtk/css2.1/t1001-abs-pos-cb-01-b-expected.png: Removed.
+        * platform/gtk/css2.1/t1001-abs-pos-cb-01-b-expected.txt: Removed.
+        * platform/gtk/css2.1/t1001-abs-pos-cb-02-b-expected.png: Removed.
+        * platform/gtk/css2.1/t1001-abs-pos-cb-02-b-expected.txt: Removed.
+        * platform/gtk/css2.1/t1001-abs-pos-cb-03-b-expected.png: Removed.
+        * platform/gtk/css2.1/t1001-abs-pos-cb-03-b-expected.txt: Removed.
+        * platform/gtk/css2.1/t1001-abs-pos-cb-04-b-expected.png: Removed.
+        * platform/gtk/css2.1/t1001-abs-pos-cb-04-b-expected.txt: Removed.
+        * platform/gtk/css2.1/t1001-abs-pos-cb-05-b-expected.png: Removed.
+        * platform/gtk/css2.1/t1001-abs-pos-cb-05-b-expected.txt: Removed.
+        * platform/gtk/css2.1/t1001-abs-pos-cb-06-b-expected.png: Removed.
+        * platform/gtk/css2.1/t1001-abs-pos-cb-06-b-expected.txt: Removed.
+        * platform/gtk/css2.1/t1001-abs-pos-cb-07-b-expected.png: Removed.
+        * platform/gtk/css2.1/t1001-abs-pos-cb-07-b-expected.txt: Removed.
+        * platform/gtk/css2.1/t1001-abs-pos-cb-08-b-expected.png: Removed.
+        * platform/gtk/css2.1/t1001-abs-pos-cb-08-b-expected.txt: Removed.
+        * platform/gtk/css2.1/t1001-abs-pos-cb-09-b-expected.png: Removed.
+        * platform/gtk/css2.1/t1001-abs-pos-cb-09-b-expected.txt: Removed.
+        * platform/gtk/css2.1/t1205-c566-list-stl-01-c-g-expected.txt: Removed.
+        * platform/gtk/css2.1/t140201-c532-bgcolor-01-b-expected.png: Removed.
+        * platform/gtk/css2.1/t140201-c533-bgimage-01-b-g-expected.png: Removed.
+        * platform/gtk/css2.1/t140201-c536-bgpos-01-b-ag-expected.png: Removed.
+        * platform/gtk/css2.1/t1508-c527-font-00-b-expected.txt: Removed.
+        * platform/gtk/css2.1/t1508-c527-font-01-b-expected.txt: Removed.
+        * platform/gtk/css2.1/t1508-c527-font-02-b-expected.txt: Removed.
+        * platform/gtk/css2.1/t1508-c527-font-03-b-expected.txt: Removed.
+        * platform/gtk/css2.1/t1508-c527-font-04-b-expected.txt: Removed.
+        * platform/gtk/css2.1/t1508-c527-font-05-b-expected.txt: Removed.
+        * platform/gtk/css2.1/t1508-c527-font-07-b-expected.txt: Removed.
+        * platform/gtk/css2.1/t1508-c527-font-08-b-expected.txt: Removed.
+        * platform/gtk/css2.1/t1508-c527-font-09-b-expected.txt: Removed.
+        * platform/gtk/css2.1/t1508-c527-font-10-c-expected.txt: Removed.
+        * platform/mac/css2.1/t1508-c527-font-00-b-expected.txt: Removed.
+
+2013-11-02  Andreas Kling  <akling@apple.com>
+
         Optimize baselines: fast/dom
 
         Unreviewed; run "webkit-patch optimize-baselines fast/dom"
