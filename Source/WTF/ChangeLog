@@ -1,3 +1,14 @@
+2013-11-02  Patrick Gansterer  <paroga@webkit.org>
+
+        Fix compilation of DateMath.cpp with MSVC
+        https://bugs.webkit.org/show_bug.cgi?id=123680
+
+        Reviewed by Darin Adler.
+
+        * wtf/DateMath.cpp:
+        (WTF::appendTwoDigitNumber): Help the compiler finding the
+        correct overload by casting the characters to LChar.
+
 2013-11-02  Filip Pizlo  <fpizlo@apple.com>
 
         LLVM assertion failures should funnel into WTF's crash handling

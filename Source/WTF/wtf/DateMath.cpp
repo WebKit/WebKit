@@ -183,8 +183,8 @@ static void appendTwoDigitNumber(StringBuilder& builder, int number)
 {
     ASSERT(number >= 0);
     ASSERT(number < 100);
-    builder.append('0' + number / 10);
-    builder.append('0' + number % 10);
+    builder.append(static_cast<LChar>('0' + number / 10));
+    builder.append(static_cast<LChar>('0' + number % 10));
 }
 
 int msToYear(double ms)
