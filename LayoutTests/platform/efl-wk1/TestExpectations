@@ -497,3 +497,22 @@ Bug(EFL) fast/text/offsetForPosition-complex-fallback.html [ Failure ]
 
 # shader errors, fails to render.
 webkit.org/b/105031 fast/canvas/webgl/drawingbuffer-test.html [ Failure ]
+
+# Need to have new baselines since upgrading new base OS(Ubuntu 12.04 -> 13.04)
+webkit.org/b/123696 accessibility/fieldset-element.html [ Missing ]
+webkit.org/b/123696 accessibility/negative-tabindex-does-not-expose-label.html [ Missing ]
+webkit.org/b/123696 css3/masking/mask-luminance-png.html [ Missing ]
+webkit.org/b/123696 editing/input/caret-at-the-edge-of-contenteditable.html [ Missing ]
+webkit.org/b/123696 editing/selection/5825350-1.html [ Missing ]
+webkit.org/b/123696 editing/selection/5825350-2.html [ Missing ]
+webkit.org/b/123696 editing/selection/caret-and-focus-ring.html [ Missing ]
+webkit.org/b/123696 editing/selection/mixed-editability-10.html [ Missing ]
+webkit.org/b/123696 fast/css/color-correction-untagged-images.html [ Missing ]
+webkit.org/b/123696 fast/regions/iframe-html-collected.html [ Missing ]
+webkit.org/b/123696 fast/repaint/hover-pseudo-borders.html [ Missing ]
+webkit.org/b/123696 fast/table/overflowHidden.html [ Missing ]
+webkit.org/b/123696 http/tests/misc/slow-loading-mask.html [ Missing ]
+webkit.org/b/123696 printing/media-queries-print.html [ Missing ]
+webkit.org/b/123696 printing/setPrinting.html [ Missing ]
+webkit.org/b/123696 printing/simultaneous-position-float-change.html [ Missing ]
+webkit.org/b/123696 printing/width-overflow.html [ Missing ]

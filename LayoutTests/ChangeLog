@@ -1,3 +1,9 @@
+2013-11-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL gardening. Add missing baselines to EFL wk1 TestExpectation.
+
+        * platform/efl-wk1/TestExpectations: Need to add new baseline since upgrading base OS.
+
 2013-11-02  Christophe Dumez  <ch.dumez@samsung.com>
 
         EnforceRange doesn't enforce range of a short
