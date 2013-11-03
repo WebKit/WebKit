@@ -1,3 +1,36 @@
+2013-11-02  Andreas Kling  <akling@apple.com>
+
+        Optimize baselines: fast/dom
+
+        Unreviewed; run "webkit-patch optimize-baselines fast/dom"
+
+        * fast/dom/HTMLHeadElement/textInHead1-expected.txt: Renamed from LayoutTests/platform/efl/fast/dom/HTMLHeadElement/textInHead1-expected.txt.
+        * fast/dom/HTMLHeadElement/textInHead2-expected.txt: Renamed from LayoutTests/platform/efl/fast/dom/HTMLHeadElement/textInHead2-expected.txt.
+        * fast/dom/HTMLHeadElement/textInHead3-expected.txt: Renamed from LayoutTests/platform/efl/fast/dom/HTMLHeadElement/textInHead3-expected.txt.
+        * fast/dom/HTMLHeadElement/textInHead4-expected.txt: Renamed from LayoutTests/platform/efl/fast/dom/HTMLHeadElement/textInHead4-expected.txt.
+        * fast/dom/HTMLHeadElement/textInHead5-expected.txt: Renamed from LayoutTests/platform/efl/fast/dom/HTMLHeadElement/textInHead5-expected.txt.
+        * fast/dom/HTMLMeterElement/meter-element-expected.txt: Renamed from LayoutTests/platform/efl/fast/dom/HTMLMeterElement/meter-element-expected.txt.
+        * fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt: Renamed from LayoutTests/platform/efl/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt.
+        * fast/dom/anchor-text-expected.txt: Renamed from LayoutTests/platform/efl/fast/dom/anchor-text-expected.txt.
+        * fast/dom/comment-not-documentElement-expected.txt: Renamed from LayoutTests/platform/efl/fast/dom/comment-not-documentElement-expected.txt.
+        * fast/dom/delete-contents-expected.png: Renamed from LayoutTests/platform/efl/fast/dom/delete-contents-expected.png.
+        * fast/dom/scroll-reveal-left-overflow-expected.txt: Renamed from LayoutTests/platform/efl/fast/dom/scroll-reveal-left-overflow-expected.txt.
+        * fast/dom/scroll-reveal-top-overflow-expected.txt: Renamed from LayoutTests/platform/efl/fast/dom/scroll-reveal-top-overflow-expected.txt.
+        * platform/gtk/fast/dom/HTMLHeadElement/textInHead1-expected.txt: Removed.
+        * platform/gtk/fast/dom/HTMLHeadElement/textInHead2-expected.txt: Removed.
+        * platform/gtk/fast/dom/HTMLHeadElement/textInHead3-expected.txt: Removed.
+        * platform/gtk/fast/dom/HTMLHeadElement/textInHead4-expected.txt: Removed.
+        * platform/gtk/fast/dom/HTMLHeadElement/textInHead5-expected.txt: Removed.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-expected.txt: Removed.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt: Removed.
+        * platform/gtk/fast/dom/anchor-text-expected.txt: Removed.
+        * platform/gtk/fast/dom/comment-not-documentElement-expected.txt: Removed.
+        * platform/gtk/fast/dom/delete-contents-expected.png: Removed.
+        * platform/gtk/fast/dom/scroll-reveal-left-overflow-expected.txt: Removed.
+        * platform/gtk/fast/dom/scroll-reveal-top-overflow-expected.txt: Removed.
+        * platform/win-7sp0/fast/dom/horizontal-scrollbar-in-rtl-expected.txt: Renamed from LayoutTests/platform/win/fast/dom/horizontal-scrollbar-in-rtl-expected.txt.
+        * platform/win-7sp0/fast/dom/vertical-scrollbar-in-rtl-expected.txt: Renamed from LayoutTests/platform/win/fast/dom/vertical-scrollbar-in-rtl-expected.txt.
+
 2013-11-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL gardening. Add missing baselines to EFL wk1 TestExpectation.
