@@ -3239,10 +3239,10 @@ my %nativeType = (
     "boolean" => "bool",
     "double" => "double",
     "float" => "float",
-    "short" => "short",
+    "short" => "int16_t",
     "long" => "int",
     "unsigned long" => "unsigned",
-    "unsigned short" => "unsigned short",
+    "unsigned short" => "uint16_t",
     "long long" => "long long",
     "unsigned long long" => "unsigned long long",
     "byte" => "int8_t",
@@ -3353,8 +3353,10 @@ sub JSValueToNative
     my $intConversion = $signature->extendedAttributes->{"EnforceRange"} ? "EnforceRange" : "NormalConversion";
     return "toInt8(exec, $value, $intConversion)" if $type eq "byte";
     return "toUInt8(exec, $value, $intConversion)" if $type eq "octet";
-    return "toInt32(exec, $value, $intConversion)" if $type eq "long" or $type eq "short";
-    return "toUInt32(exec, $value, $intConversion)" if $type eq "unsigned long" or $type eq "unsigned short";
+    return "toInt16(exec, $value, $intConversion)" if $type eq "short";
+    return "toUInt16(exec, $value, $intConversion)" if $type eq "unsigned short";
+    return "toInt32(exec, $value, $intConversion)" if $type eq "long";
+    return "toUInt32(exec, $value, $intConversion)" if $type eq "unsigned long";
     return "toInt64(exec, $value, $intConversion)" if $type eq "long long";
     return "toUInt64(exec, $value, $intConversion)" if $type eq "unsigned long long";
 

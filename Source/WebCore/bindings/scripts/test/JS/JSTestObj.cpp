@@ -1181,7 +1181,7 @@ void setJSTestObjShortAttr(ExecState* exec, JSObject* thisObject, JSValue value)
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj& impl = castedThis->impl();
-    short nativeValue(toInt32(exec, value, NormalConversion));
+    int16_t nativeValue(toInt16(exec, value, NormalConversion));
     if (exec->hadException())
         return;
     impl.setShortAttr(nativeValue);
@@ -1193,7 +1193,7 @@ void setJSTestObjUnsignedShortAttr(ExecState* exec, JSObject* thisObject, JSValu
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj& impl = castedThis->impl();
-    unsigned short nativeValue(toUInt32(exec, value, NormalConversion));
+    uint16_t nativeValue(toUInt16(exec, value, NormalConversion));
     if (exec->hadException())
         return;
     impl.setUnsignedShortAttr(nativeValue);

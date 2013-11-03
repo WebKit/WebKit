@@ -1,3 +1,46 @@
+2013-11-02  Christophe Dumez  <ch.dumez@samsung.com>
+
+        EnforceRange doesn't enforce range of a short
+        https://bugs.webkit.org/show_bug.cgi?id=123661
+
+        Reviewed by Alexey Proskuryakov.
+
+        Handle Web IDL short / unsigned short types as per the
+        specification:
+        - http://www.w3.org/TR/WebIDL/#es-short
+        - http://www.w3.org/TR/WebIDL/#es-unsigned-short
+
+        Specifically, we used to treat short / unsigned short as 32bit
+        integers, which was wrong. We now properly handle them as 16bit
+        integers.
+
+        No new tests, added test cases to js/dom/webidl-type-mapping.html.
+
+        * WebCore.exp.in:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::toSmallerInt):
+        (WebCore::toSmallerUInt):
+        (WebCore::toInt8):
+        (WebCore::toUInt8):
+        (WebCore::toInt16):
+        (WebCore::toUInt16):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (JSValueToNative):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjShortAttr):
+        (WebCore::setJSTestObjUnsignedShortAttr):
+        * testing/TypeConversions.h:
+        (WebCore::TypeConversions::testShort):
+        (WebCore::TypeConversions::setTestShort):
+        (WebCore::TypeConversions::testEnforceRangeShort):
+        (WebCore::TypeConversions::setTestEnforceRangeShort):
+        (WebCore::TypeConversions::testUnsignedShort):
+        (WebCore::TypeConversions::setTestUnsignedShort):
+        (WebCore::TypeConversions::testEnforceRangeUnsignedShort):
+        (WebCore::TypeConversions::setTestEnforceRangeUnsignedShort):
+        * testing/TypeConversions.idl:
+
 2013-11-02  Patrick Gansterer  <paroga@webkit.org>
 
         Cleanup OpenTypeUtilities

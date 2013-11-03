@@ -430,6 +430,8 @@ EXPORTS
         symbolWithPointer(?initGroup@Page@WebCore@@AAEXXZ, ?initGroup@Page@WebCore@@AEAAXXZ)
         symbolWithPointer(?toInt8@WebCore@@YACPAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z, ?toInt8@WebCore@@YACPEAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z)
         symbolWithPointer(?toUInt8@WebCore@@YAEPAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z, ?toUInt8@WebCore@@YAEPEAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z)
+        symbolWithPointer(?toInt16@WebCore@@YAFPAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z, ?toInt16@WebCore@@YAFPAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z)
+        symbolWithPointer(?toUInt16@WebCore@@YAGPAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z, ?toUInt16@WebCore@@YAGPAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z)
         symbolWithPointer(?toInt32EnforceRange@WebCore@@YAHPAVExecState@JSC@@VJSValue@3@@Z, ?toInt32EnforceRange@WebCore@@YAHPEAVExecState@JSC@@VJSValue@3@@Z)
         symbolWithPointer(?toInt64@WebCore@@YA_JPAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z, ?toInt64@WebCore@@YA_JPEAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z)
         symbolWithPointer(?toUInt32EnforceRange@WebCore@@YAIPAVExecState@JSC@@VJSValue@3@@Z, ?toUInt32EnforceRange@WebCore@@YAIPEAVExecState@JSC@@VJSValue@3@@Z)

@@ -1,3 +1,14 @@
+2013-11-02  Christophe Dumez  <ch.dumez@samsung.com>
+
+        EnforceRange doesn't enforce range of a short
+        https://bugs.webkit.org/show_bug.cgi?id=123661
+
+        Reviewed by Alexey Proskuryakov.
+
+        Export symbols to fix Windows build.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-11-01  Andy Estes  <aestes@apple.com>
 
         [iOS] Make some headers Private

@@ -41,4 +41,9 @@
     [EnforceRange] attribute byte testEnforceRangeByte;
     attribute octet testOctet;
     [EnforceRange] attribute octet testEnforceRangeOctet;
+
+    attribute short testShort;
+    [EnforceRange] attribute short testEnforceRangeShort;
+    attribute unsigned short testUnsignedShort;
+    [EnforceRange] attribute unsigned short testEnforceRangeUnsignedShort;
 };
