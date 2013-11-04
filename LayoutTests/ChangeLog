@@ -1,3 +1,19 @@
+2013-11-04  Dean Jackson  <dino@apple.com>
+
+        <rdar://problem/15292359>
+        Merge r157299
+
+    2013-10-10  Dean Jackson  <dino@apple.com>
+
+            Use after free in WebCore::DisplayRefreshMonitorClient::fireDisplayRefreshIfNeeded
+            http://webkit.org/b/121033
+
+            Update test to indicate it no longer crashes.
+
+            * TestExpectations: Mark test as passing.
+            * fast/animation/request-animation-frame-remove-client-expected.txt:
+            * fast/animation/request-animation-frame-remove-client.html:
+
 2013-11-04  Lucas Forschler  <lforschler@apple.com>
 
         Merge r157436
