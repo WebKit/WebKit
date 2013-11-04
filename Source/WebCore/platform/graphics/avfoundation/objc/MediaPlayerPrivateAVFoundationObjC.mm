@@ -904,6 +904,11 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsType(const
     // 2. Return "maybe" or "probably" as appropriate per the existing specification of canPlayType().
 #endif
 
+#if ENABLE(MEDIA_SOURCE)
+    if (parameters.isMediaSource)
+        return MediaPlayer::IsNotSupported;
+#endif
+
     if (!mimeTypeCache().contains(parameters.type))
         return MediaPlayer::IsNotSupported;
 

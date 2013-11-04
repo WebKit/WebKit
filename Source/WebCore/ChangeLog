@@ -1,3 +1,23 @@
+2013-10-31  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] [Mac] Disclaim support for MSE in AVFoundation and QTKit engines
+        https://bugs.webkit.org/show_bug.cgi?id=123593
+
+        Reviewed by Eric Carlson.
+
+        Immediately fail if asked to load a Media Source in engines which do not support
+        them.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::load):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsType):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::load):
+        (WebCore::MediaPlayerPrivateQTKit::supportsType):
+
 2013-11-04  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] image valued shape element margin can cause an ASSERT fail

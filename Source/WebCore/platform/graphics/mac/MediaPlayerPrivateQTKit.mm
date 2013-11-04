@@ -669,6 +669,15 @@ void MediaPlayerPrivateQTKit::loadInternal(const String& url)
     [m_objcObserver.get() setDelayCallbacks:NO];
 }
 
+#if ENABLE(MEDIA_SOURCE)
+void MediaPlayerPrivateQTKit::load(const String&, PassRefPtr<HTMLMediaSource>)
+{
+    m_networkState = MediaPlayer::FormatError;
+    m_player->networkStateChanged();
+}
+#endif
+
+
 void MediaPlayerPrivateQTKit::prepareToPlay()
 {
     LOG(Media, "MediaPlayerPrivateQTKit::prepareToPlay(%p)", this);
@@ -1463,6 +1472,11 @@ MediaPlayer::SupportsType MediaPlayerPrivateQTKit::supportsType(const MediaEngin
 #if ENABLE(ENCRYPTED_MEDIA)
     // QTKit does not support any encrytped media, so return IsNotSupported if the keySystem is non-NULL:
     if (!parameters.keySystem.isNull() && !parameters.keySystem.isEmpty())
+        return MediaPlayer::IsNotSupported;
+#endif
+
+#if ENABLE(MEDIA_SOURCE)
+    if (parameters.isMediaSource)
         return MediaPlayer::IsNotSupported;
 #endif
 

@@ -197,6 +197,15 @@ void MediaPlayerPrivateAVFoundation::load(const String& url)
     setPreload(m_preload);
 }
 
+#if ENABLE(MEDIA_SOURCE)
+void MediaPlayerPrivateAVFoundation::load(const String&, PassRefPtr<HTMLMediaSource>)
+{
+    m_networkState = MediaPlayer::FormatError;
+    m_player->networkStateChanged();
+}
+#endif
+
+
 void MediaPlayerPrivateAVFoundation::playabilityKnown()
 {
     LOG(Media, "MediaPlayerPrivateAVFoundation::playabilityKnown(%p)", this);

@@ -130,7 +130,7 @@ protected:
     // MediaPlayerPrivatePrivateInterface overrides.
     virtual void load(const String& url) OVERRIDE;
 #if ENABLE(MEDIA_SOURCE)
-    virtual void load(const String&, PassRefPtr<HTMLMediaSource>) { };
+    virtual void load(const String&, PassRefPtr<HTMLMediaSource>);
 #endif
     virtual void cancelLoad() = 0;
 

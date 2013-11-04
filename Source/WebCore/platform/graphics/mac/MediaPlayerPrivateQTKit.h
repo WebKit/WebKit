@@ -95,7 +95,7 @@ private:
     
     void load(const String& url);
 #if ENABLE(MEDIA_SOURCE)
-    virtual void load(const String&, PassRefPtr<HTMLMediaSource>) { };
+    virtual void load(const String&, PassRefPtr<HTMLMediaSource>);
 #endif
     void cancelLoad();
     void loadInternal(const String& url);
