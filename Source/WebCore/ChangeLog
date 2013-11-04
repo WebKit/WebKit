@@ -1,5 +1,16 @@
 2013-11-03  Andreas Kling  <akling@apple.com>
 
+        HTMLOptionsCollection is always rooted at a HTMLSelectElement.
+        <https://webkit.org/b/123719>
+
+        Tighten up HTMLOptionsCollection by making the constructor take
+        a HTMLSelectElement& and adding a HTMLSelectElement& getter instead
+        of casting all over the place. Removed now-pointless assertions.
+
+        Reviewed by Sam Weinig.
+
+2013-11-03  Andreas Kling  <akling@apple.com>
+
         RenderTextFragment: Tighten first-letter logic.
         <https://webkit.org/b/123714>
 

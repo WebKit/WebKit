@@ -28,13 +28,13 @@
 
 #include "Event.h"
 #include "HTMLFormControlElementWithState.h"
-#include "HTMLOptionsCollection.h"
 #include "TypeAhead.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class HTMLOptionElement;
+class HTMLOptionsCollection;
 
 class HTMLSelectElement : public HTMLFormControlElementWithState, public TypeAheadDataSource {
 public:

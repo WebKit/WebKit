@@ -27,15 +27,14 @@
 
 namespace WebCore {
 
-HTMLOptionsCollection::HTMLOptionsCollection(ContainerNode& select)
+HTMLOptionsCollection::HTMLOptionsCollection(HTMLSelectElement& select)
     : HTMLCollection(select, SelectOptions, DoesNotOverrideItemAfter)
 {
-    ASSERT(isHTMLSelectElement(select));
 }
 
-PassRefPtr<HTMLOptionsCollection> HTMLOptionsCollection::create(ContainerNode& select, CollectionType)
+PassRef<HTMLOptionsCollection> HTMLOptionsCollection::create(HTMLSelectElement& select, CollectionType)
 {
-    return adoptRef(new HTMLOptionsCollection(select));
+    return adoptRef(*new HTMLOptionsCollection(select));
 }
 
 void HTMLOptionsCollection::add(PassRefPtr<HTMLOptionElement> element, ExceptionCode& ec)
@@ -58,39 +57,38 @@ void HTMLOptionsCollection::add(PassRefPtr<HTMLOptionElement> element, int index
     }
 
     ec = 0;
-    HTMLSelectElement& select = toHTMLSelectElement(ownerNode());
 
     if (index == -1 || unsigned(index) >= length())
-        select.add(newOption, 0, ec);
+        selectElement().add(newOption, 0, ec);
     else
-        select.add(newOption, toHTMLOptionElement(item(index)), ec);
+        selectElement().add(newOption, toHTMLOptionElement(item(index)), ec);
 
     ASSERT(!ec);
 }
 
 void HTMLOptionsCollection::remove(int index)
 {
-    toHTMLSelectElement(ownerNode()).removeByIndex(index);
+    selectElement().removeByIndex(index);
 }
 
 void HTMLOptionsCollection::remove(HTMLOptionElement* option)
 {
-    toHTMLSelectElement(ownerNode()).remove(option);
+    selectElement().remove(option);
 }
 
 int HTMLOptionsCollection::selectedIndex() const
 {
-    return toHTMLSelectElement(ownerNode()).selectedIndex();
+    return selectElement().selectedIndex();
 }
 
 void HTMLOptionsCollection::setSelectedIndex(int index)
 {
-    toHTMLSelectElement(ownerNode()).setSelectedIndex(index);
+    selectElement().setSelectedIndex(index);
 }
 
 void HTMLOptionsCollection::setLength(unsigned length, ExceptionCode& ec)
 {
-    toHTMLSelectElement(ownerNode()).setLength(length, ec);
+    selectElement().setLength(length, ec);
 }
 
 } //namespace

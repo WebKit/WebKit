@@ -118,14 +118,14 @@ public:
     }
 
     // FIXME: This function should be renamed since it doesn't have an atomic name.
-    template<typename T>
-    PassRefPtr<T> addCacheWithAtomicName(ContainerNode& node, CollectionType collectionType)
+    template<typename T, typename ContainerType>
+    PassRefPtr<T> addCacheWithAtomicName(ContainerType& container, CollectionType collectionType)
     {
         NodeListAtomicNameCacheMap::AddResult result = m_atomicNameCaches.add(namedNodeListKey(collectionType, starAtom), nullptr);
         if (!result.isNewEntry)
             return static_cast<T*>(result.iterator->value);
 
-        RefPtr<T> list = T::create(node, collectionType);
+        RefPtr<T> list = T::create(container, collectionType);
         result.iterator->value = list.get();
         return list.release();
     }
