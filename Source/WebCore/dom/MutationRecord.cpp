@@ -32,11 +32,7 @@
 #include "MutationRecord.h"
 
 #include "CharacterData.h"
-#include "Element.h"
-#include "NodeList.h"
-#include "QualifiedName.h"
 #include "StaticNodeList.h"
-#include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

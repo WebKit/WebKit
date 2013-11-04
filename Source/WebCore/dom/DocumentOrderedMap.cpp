@@ -31,14 +31,11 @@
 #include "config.h"
 #include "DocumentOrderedMap.h"
 
-#include "Element.h"
 #include "ElementTraversal.h"
 #include "HTMLImageElement.h"
 #include "HTMLLabelElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNameCollection.h"
-#include "HTMLNames.h"
-#include "TreeScope.h"
 
 namespace WebCore {
 

@@ -27,8 +27,6 @@
 #include "SelectorQuery.h"
 
 #include "CSSParser.h"
-#include "CSSSelectorList.h"
-#include "Document.h"
 #include "ElementIterator.h"
 #include "SelectorChecker.h"
 #include "SelectorCheckerFastPath.h"

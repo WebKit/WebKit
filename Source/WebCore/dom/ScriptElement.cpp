@@ -30,14 +30,11 @@
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
 #include "CurrentScriptIncrementer.h"
-#include "Document.h"
-#include "DocumentParser.h"
 #include "Event.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "HTMLScriptElement.h"
 #include "IgnoreDestructiveWriteCountIncrementer.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
@@ -49,12 +46,10 @@
 #include "ScriptableDocumentParser.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
-#include "Text.h"
 #include "TextNodeTraversal.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
-#include <wtf/text/TextPosition.h>
 
 #if ENABLE(SVG)
 #include "SVGNames.h"

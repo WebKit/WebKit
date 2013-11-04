@@ -23,7 +23,6 @@
 #include "config.h"
 #include "MouseRelatedEvent.h"
 
-#include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"

@@ -27,7 +27,6 @@
 #include "config.h"
 #include "DocumentMarkerController.h"
 
-#include "Node.h"
 #include "NodeTraversal.h"
 #include "Range.h"
 #include "RenderObject.h"

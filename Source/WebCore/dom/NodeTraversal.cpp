@@ -25,7 +25,6 @@
 #include "config.h"
 #include "NodeTraversal.h"
 
-#include "ContainerNode.h"
 #include "PseudoElement.h"
 
 namespace WebCore {

@@ -27,11 +27,8 @@
 #include "config.h"
 #include "TreeScope.h"
 
-#include "ContainerNode.h"
 #include "DOMSelection.h"
 #include "DOMWindow.h"
-#include "Document.h"
-#include "Element.h"
 #include "ElementIterator.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -40,7 +37,6 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLLabelElement.h"
 #include "HTMLMapElement.h"
-#include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "IdTargetObserverRegistry.h"
 #include "Page.h"
@@ -48,8 +44,6 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ShadowRoot.h"
 #include "TreeScopeAdopter.h"
-#include <wtf/Vector.h>
-#include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

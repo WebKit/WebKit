@@ -26,7 +26,6 @@
 #include "config.h"
 #include "DatasetDOMStringMap.h"
 
-#include "Attribute.h"
 #include "Element.h"
 #include "ExceptionCode.h"
 #include <wtf/ASCIICType.h>

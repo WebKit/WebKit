@@ -28,7 +28,6 @@
 #include "CachedResourceRequest.h"
 #include "CachedXSLStyleSheet.h"
 #include "Document.h"
-#include "DocumentStyleSheetCollection.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"

@@ -27,12 +27,8 @@
 #include "TreeScopeAdopter.h"
 
 #include "Attr.h"
-#include "Document.h"
 #include "ElementRareData.h"
-#include "NodeRareData.h"
 #include "NodeTraversal.h"
-#include "RenderStyle.h"
-#include "ShadowRoot.h"
 
 namespace WebCore {
 

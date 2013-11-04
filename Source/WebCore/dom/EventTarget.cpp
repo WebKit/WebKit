@@ -32,7 +32,6 @@
 #include "config.h"
 #include "EventTarget.h"
 
-#include "Event.h"
 #include "EventException.h"
 #include "InspectorInstrumentation.h"
 #include "ScriptController.h"

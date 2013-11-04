@@ -22,8 +22,6 @@
 #include "config.h"
 #include "Text.h"
 
-#include "ExceptionCode.h"
-#include "ExceptionCodePlaceholder.h"
 #include "RenderCombineText.h"
 #include "RenderText.h"
 #include "ScopedEventQueue.h"

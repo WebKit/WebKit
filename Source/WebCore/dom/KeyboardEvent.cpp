@@ -24,9 +24,7 @@
 #include "KeyboardEvent.h"
 
 #include "Document.h"
-#include "DOMWindow.h"
 #include "EventDispatcher.h"
-#include "EventNames.h"
 #include "EventHandler.h"
 #include "Frame.h"
 #include "PlatformKeyboardEvent.h"

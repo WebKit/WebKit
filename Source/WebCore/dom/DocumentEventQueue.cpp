@@ -31,7 +31,6 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Event.h"
-#include "EventNames.h"
 #include "SuspendableTimer.h"
 #include <wtf/Ref.h>
 

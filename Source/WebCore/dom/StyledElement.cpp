@@ -24,18 +24,12 @@
 #include "config.h"
 #include "StyledElement.h"
 
-#include "Attribute.h"
 #include "CSSImageValue.h"
 #include "CSSParser.h"
-#include "CSSPropertyNames.h"
 #include "CSSStyleSheet.h"
-#include "CSSValueKeywords.h"
 #include "CSSValuePool.h"
-#include "Color.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMTokenList.h"
-#include "Document.h"
-#include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "InspectorInstrumentation.h"
 #include "PropertySetCSSStyleDeclaration.h"
@@ -43,7 +37,6 @@
 #include "StylePropertySet.h"
 #include "StyleResolver.h"
 #include <wtf/HashFunctions.h>
-#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 

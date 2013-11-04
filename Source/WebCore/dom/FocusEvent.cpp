@@ -26,8 +26,6 @@
 #include "config.h"
 #include "FocusEvent.h"
 
-#include "Event.h"
-#include "EventNames.h"
 #include "Node.h"
 
 namespace WebCore {

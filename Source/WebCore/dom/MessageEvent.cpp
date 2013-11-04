@@ -28,8 +28,6 @@
 #include "config.h"
 #include "MessageEvent.h"
 
-#include "DOMWindow.h"
-#include "EventNames.h"
 
 namespace WebCore {
 

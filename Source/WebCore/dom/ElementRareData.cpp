@@ -30,8 +30,6 @@
 
 #include "config.h"
 #include "ElementRareData.h"
-#include "RegionOversetState.h"
-#include "RenderStyle.h"
 
 namespace WebCore {
 

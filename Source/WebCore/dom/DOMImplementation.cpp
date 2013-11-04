@@ -35,13 +35,11 @@
 #include "FrameLoaderClient.h"
 #include "FTPDirectoryDocument.h"
 #include "HTMLDocument.h"
-#include "HTMLNames.h"
 #include "HTMLViewSourceDocument.h"
 #include "Image.h"
 #include "ImageDocument.h"
 #include "MediaDocument.h"
 #include "MediaList.h"
-#include "MediaPlayer.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "PluginData.h"
@@ -51,7 +49,6 @@
 #include "StyleSheetContents.h"
 #include "SubframeLoader.h"
 #include "TextDocument.h"
-#include "ThreadGlobalData.h"
 #include "XMLNames.h"
 #include <wtf/StdLibExtras.h>
 

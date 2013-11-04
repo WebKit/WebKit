@@ -27,10 +27,7 @@
 
 #include "ExceptionCode.h"
 #include "ContainerNode.h"
-#include "NodeFilter.h"
 #include "NodeTraversal.h"
-#include "ScriptState.h"
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

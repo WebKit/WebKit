@@ -27,7 +27,6 @@
 #include "ScriptRunner.h"
 
 #include "CachedScript.h"
-#include "Document.h"
 #include "Element.h"
 #include "PendingScript.h"
 #include "ScriptElement.h"

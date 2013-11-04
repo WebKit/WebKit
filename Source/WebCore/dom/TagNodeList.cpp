@@ -24,9 +24,7 @@
 #include "config.h"
 #include "TagNodeList.h"
 
-#include "Element.h"
 #include "NodeRareData.h"
-#include <wtf/Assertions.h>
 
 namespace WebCore {
 

@@ -29,11 +29,9 @@
 #include "DocumentStyleSheetCollection.h"
 
 #include "CSSStyleSheet.h"
-#include "Document.h"
 #include "Element.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLLinkElement.h"
-#include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "Page.h"
 #include "PageGroup.h"

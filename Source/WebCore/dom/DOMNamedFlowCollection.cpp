@@ -29,8 +29,6 @@
 #include "config.h"
 #include "DOMNamedFlowCollection.h"
 
-#include "NamedFlowCollection.h"
-#include "WebKitNamedFlow.h"
 
 namespace WebCore {
 

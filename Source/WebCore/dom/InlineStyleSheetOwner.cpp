@@ -21,10 +21,7 @@
 #include "config.h"
 #include "InlineStyleSheetOwner.h"
 
-#include "Attribute.h"
 #include "ContentSecurityPolicy.h"
-#include "Document.h"
-#include "DocumentStyleSheetCollection.h"
 #include "Element.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
@@ -32,7 +29,6 @@
 #include "StyleSheetContents.h"
 #include "TextNodeTraversal.h"
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 

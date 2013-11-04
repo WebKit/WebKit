@@ -22,9 +22,7 @@
 #include "config.h"
 #include "CharacterData.h"
 
-#include "Document.h"
 #include "ElementTraversal.h"
-#include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FrameSelection.h"
 #include "InspectorInstrumentation.h"
@@ -34,7 +32,6 @@
 #include "ProcessingInstruction.h"
 #include "RenderText.h"
 #include "StyleInheritedData.h"
-#include "Text.h"
 #include "TextBreakIterator.h"
 #include <wtf/Ref.h>
 

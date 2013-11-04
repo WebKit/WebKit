@@ -23,7 +23,6 @@
 #include "config.h"
 #include "LiveNodeList.h"
 
-#include "Document.h"
 #include "Element.h"
 #include "HTMLCollection.h"
 

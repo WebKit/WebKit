@@ -26,10 +26,8 @@
 #include "NamedNodeMap.h"
 
 #include "Attr.h"
-#include "Document.h"
 #include "Element.h"
 #include "ExceptionCode.h"
-#include "HTMLNames.h"
 
 namespace WebCore {
 

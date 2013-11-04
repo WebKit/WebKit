@@ -38,11 +38,8 @@
 #include "MutationCallback.h"
 #include "MutationObserverRegistration.h"
 #include "MutationRecord.h"
-#include "Node.h"
 #include <algorithm>
-#include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

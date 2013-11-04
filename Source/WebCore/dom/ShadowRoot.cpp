@@ -27,13 +27,11 @@
 #include "config.h"
 #include "ShadowRoot.h"
 
-#include "ContentDistributor.h"
 #include "ElementTraversal.h"
 #include "HistogramSupport.h"
 #include "InsertionPoint.h"
 #include "RuntimeEnabledFeatures.h"
 #include "StyleResolver.h"
-#include "Text.h"
 #include "markup.h"
 
 namespace WebCore {

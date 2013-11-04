@@ -24,7 +24,6 @@
 #include "UIEvent.h"
 
 #include "Console.h"
-#include "DOMWindow.h"
 #include "Node.h"
 
 namespace WebCore {

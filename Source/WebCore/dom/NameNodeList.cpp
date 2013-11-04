@@ -23,10 +23,7 @@
 #include "config.h"
 #include "NameNodeList.h"
 
-#include "Element.h"
-#include "HTMLNames.h"
 #include "NodeRareData.h"
-#include <wtf/Assertions.h>
 
 namespace WebCore {
 

@@ -28,7 +28,6 @@
 #include "config.h"
 #include "UserActionElementSet.h"
 
-#include "Document.h"
 #include "Element.h"
 
 namespace WebCore {

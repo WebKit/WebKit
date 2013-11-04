@@ -32,7 +32,6 @@
 #include "ElementTraversal.h"
 #include "Frame.h"
 #include "HTMLAnchorElement.h"
-#include "HTMLNames.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformStrategies.h"

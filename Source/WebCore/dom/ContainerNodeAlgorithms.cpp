@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ContainerNodeAlgorithms.h"
 
-#include "Element.h"
-#include "HTMLFrameOwnerElement.h"
 
 namespace WebCore {
 

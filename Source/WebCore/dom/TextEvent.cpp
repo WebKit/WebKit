@@ -28,7 +28,6 @@
 #include "TextEvent.h"
 
 #include "DocumentFragment.h"
-#include "EventNames.h"
 
 namespace WebCore {
 

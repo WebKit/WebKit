@@ -23,7 +23,6 @@
 #include "config.h"
 #include "ChildNodeList.h"
 
-#include "Element.h"
 #include "ElementIterator.h"
 #include "NodeRareData.h"
 

@@ -23,7 +23,6 @@
 #include "config.h"
 #include "MutationEvent.h"
 
-#include "EventNames.h"
 
 namespace WebCore {
 

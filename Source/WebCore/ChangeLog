@@ -1,3 +1,73 @@
+2013-11-04  Santosh Mahto  <santosh.ma@samsung.com>
+
+        [webcore/dom] Remove extra header includes from cpp files.
+        https://bugs.webkit.org/show_bug.cgi?id=123720
+
+        Reviewed by Andreas Kling.
+
+        Removing redundant headers from dom related cpp files.
+
+        * dom/Attr.cpp:
+        * dom/CharacterData.cpp:
+        * dom/ChildListMutationScope.cpp:
+        * dom/ChildNodeList.cpp:
+        * dom/ContainerNode.cpp:
+        * dom/ContainerNodeAlgorithms.cpp:
+        * dom/DOMNamedFlowCollection.cpp:
+        * dom/DatasetDOMStringMap.cpp:
+        * dom/Document.cpp:
+        * dom/DocumentEventQueue.cpp:
+        * dom/DocumentMarkerController.cpp:
+        * dom/DocumentOrderedMap.cpp:
+        * dom/DocumentStyleSheetCollection.cpp:
+        * dom/Element.cpp:
+        * dom/ElementRareData.cpp:
+        * dom/Event.cpp:
+        * dom/EventContext.cpp:
+        * dom/EventDispatcher.cpp:
+        * dom/EventTarget.cpp:
+        * dom/ExceptionBase.cpp:
+        * dom/FocusEvent.cpp:
+        * dom/InlineStyleSheetOwner.cpp:
+        * dom/KeyboardEvent.cpp:
+        * dom/LiveNodeList.cpp:
+        * dom/MessageEvent.cpp:
+        * dom/MessagePort.cpp:
+        * dom/MouseRelatedEvent.cpp:
+        * dom/MutationEvent.cpp:
+        * dom/MutationObserver.cpp:
+        * dom/MutationObserverInterestGroup.cpp:
+        * dom/MutationObserverRegistration.cpp:
+        * dom/MutationRecord.cpp:
+        * dom/NameNodeList.cpp:
+        * dom/NamedFlowCollection.cpp:
+        * dom/NamedNodeMap.cpp:
+        * dom/Node.cpp:
+        * dom/NodeIterator.cpp:
+        * dom/NodeTraversal.cpp:
+        * dom/PositionIterator.cpp:
+        * dom/ProcessingInstruction.cpp:
+        * dom/Range.cpp:
+        * dom/RegisteredEventListener.cpp:
+        * dom/ScopedEventQueue.cpp:
+        * dom/ScriptElement.cpp:
+        * dom/ScriptRunner.cpp:
+        * dom/SelectorQuery.cpp:
+        * dom/ShadowRoot.cpp:
+        * dom/StyledElement.cpp:
+        * dom/TagNodeList.cpp:
+        * dom/Text.cpp:
+        * dom/TextEvent.cpp:
+        * dom/TouchEvent.cpp:
+        * dom/TreeScope.cpp:
+        * dom/TreeScopeAdopter.cpp:
+        * dom/TreeWalker.cpp:
+        * dom/UIEvent.cpp:
+        * dom/UserActionElementSet.cpp:
+        * dom/UserTypingGestureIndicator.cpp:
+        * dom/VisitedLinkState.cpp:
+        * dom/WebKitNamedFlow.cpp:
+
 2013-11-04  Andreas Kling  <akling@apple.com>
 
         HTMLAllCollection is always rooted at a Document.

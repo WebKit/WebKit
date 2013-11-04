@@ -26,7 +26,6 @@
 #include "config.h"
 #include "UserTypingGestureIndicator.h"
 
-#include "Document.h"
 #include "Element.h"
 #include "Frame.h"
 #include <wtf/NeverDestroyed.h>

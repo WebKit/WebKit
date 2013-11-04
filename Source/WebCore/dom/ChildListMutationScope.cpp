@@ -33,13 +33,9 @@
 #include "ChildListMutationScope.h"
 
 #include "DocumentFragment.h"
-#include "Element.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
-#include "Node.h"
 #include "StaticNodeList.h"
-#include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

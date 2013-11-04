@@ -30,7 +30,6 @@
 #include "config.h"
 #include "ClassNodeList.h"
 
-#include "Document.h"
 #include "NodeRareData.h"
 #include "StyledElement.h"
 

@@ -27,9 +27,7 @@
 
 #include "Document.h"
 #include "ExceptionCode.h"
-#include "NodeFilter.h"
 #include "NodeTraversal.h"
-#include "ScriptState.h"
 
 namespace WebCore {
 

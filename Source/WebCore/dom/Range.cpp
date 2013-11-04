@@ -28,13 +28,10 @@
 #include "ClientRect.h"
 #include "ClientRectList.h"
 #include "DocumentFragment.h"
-#include "ExceptionCode.h"
-#include "FloatQuad.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
-#include "Node.h"
 #include "NodeTraversal.h"
 #include "NodeWithIndex.h"
 #include "Page.h"
@@ -43,7 +40,6 @@
 #include "RenderBoxModelObject.h"
 #include "RenderText.h"
 #include "ScopedEventQueue.h"
-#include "Text.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
 #include "VisibleUnits.h"
@@ -51,7 +47,6 @@
 #include "markup.h"
 #include <stdio.h>
 #include <wtf/RefCountedLeakCounter.h>
-#include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
