@@ -60,8 +60,8 @@ private:
     Vector<RefPtr<Event>> m_queuedEvents;
     unsigned m_scopingLevel;
 
-    friend NeverDestroyed<ScopedEventQueue>;
-    friend EventQueueScope;
+    friend class WTF::NeverDestroyed<WebCore::ScopedEventQueue>;
+    friend class EventQueueScope;
 };
 
 class EventQueueScope {

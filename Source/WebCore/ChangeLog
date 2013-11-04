@@ -1,3 +1,14 @@
+2013-11-04  Jozsef Berta  <jberta@inf.u-szeged.hu>
+
+        Buildfix after r158182 for GCC 4.6
+        https://bugs.webkit.org/show_bug.cgi?id=123442
+
+        Reviewed by Csaba Osztrogonác.
+
+        Added explicit "friend class", because  GCC 4.6 doesn't support extended friend declaration (c++11)
+
+        * dom/ScopedEventQueue.h:
+
 2013-11-04  Andreas Kling  <akling@apple.com>
 
         HTMLTableRowsCollection is always rooted at a HTMLTableElement.
