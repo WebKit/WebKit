@@ -103,17 +103,21 @@ Node* nextAncestorSibling(const Node* current, const Node* stayWithin)
     return 0;
 }
 
-Node* previous(const Node* current, const Node* stayWithin)
+Node* last(const ContainerNode* current)
 {
-    if (current == stayWithin)
-        return 0;
-    if (current->previousSibling()) {
-        Node* previous = current->previousSibling();
-        while (previous->lastChild())
-            previous = previous->lastChild();
-        return previous;
-    }
-    return current->parentNode();
+    Node* node = current->lastChild();
+    if (!node)
+        return nullptr;
+    while (node->lastChild())
+        node = node->lastChild();
+    return node;
+}
+
+Node* deepLastChild(Node* node)
+{
+    while (node->lastChild())
+        node = node->lastChild();
+    return node;
 }
 
 Node* previousSkippingChildren(const Node* current, const Node* stayWithin)

@@ -38,9 +38,9 @@ ContainerNode& LiveNodeListBase::rootNode() const
 
 void LiveNodeListBase::invalidateCache() const
 {
-    m_cachedItem = 0;
+    m_cachedElement = nullptr;
     m_isLengthCacheValid = false;
-    m_isItemCacheValid = false;
+    m_isElementCacheValid = false;
     m_isNameCacheValid = false;
     m_isItemRefElementsCacheValid = false;
     if (isNodeList(type()))

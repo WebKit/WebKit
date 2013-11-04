@@ -2475,12 +2475,12 @@ void Element::clearAfterPseudoElement()
 // ElementTraversal API
 Element* Element::firstElementChild() const
 {
-    return ElementTraversal::firstWithin(this);
+    return ElementTraversal::firstChild(this);
 }
 
 Element* Element::lastElementChild() const
 {
-    return ElementTraversal::lastWithin(this);
+    return ElementTraversal::lastChild(this);
 }
 
 Element* Element::previousElementSibling() const

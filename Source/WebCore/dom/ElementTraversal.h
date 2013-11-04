@@ -39,7 +39,7 @@ public:
     static ElementType* lastChild(const Node*);
     static ElementType* lastChild(const ContainerNode*);
 
-    // First or last ElementType descendant of the node. For Elements this is always the same as first/last child.
+    // First or last ElementType descendant of the node. For Elements firstWithin is always the same as first child.
     static ElementType* firstWithin(const Node*);
     static ElementType* firstWithin(const ContainerNode*);
     static ElementType* lastWithin(const Node*);
@@ -106,7 +106,10 @@ template <>
 template <typename CurrentType>
 inline Element* Traversal<Element>::lastWithinTemplate(CurrentType* current)
 {
-    return lastChildTemplate(current);
+    Node* node = NodeTraversal::last(current);
+    while (node && !node->isElementNode())
+        node = NodeTraversal::previous(node, current);
+    return static_cast<Element*>(node);
 }
 
 template <>
@@ -135,7 +138,7 @@ inline Element* Traversal<Element>::previousTemplate(CurrentType* current)
 {
     Node* node = NodeTraversal::previous(current);
     while (node && !node->isElementNode())
-        node = NodeTraversal::previousSkippingChildren(node);
+        node = NodeTraversal::previous(node);
     return static_cast<Element*>(node);
 }
 
@@ -145,7 +148,7 @@ inline Element* Traversal<Element>::previousTemplate(CurrentType* current, const
 {
     Node* node = NodeTraversal::previous(current, stayWithin);
     while (node && !node->isElementNode())
-        node = NodeTraversal::previousSkippingChildren(node, stayWithin);
+        node = NodeTraversal::previous(node, stayWithin);
     return static_cast<Element*>(node);
 }
 

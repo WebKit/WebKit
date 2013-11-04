@@ -25,7 +25,7 @@
 #ifndef NodeTraversal_h
 #define NodeTraversal_h
 
-#include "Node.h"
+#include "ContainerNode.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -49,6 +49,7 @@ Node* nextSkippingChildren(const ContainerNode*);
 Node* nextSkippingChildren(const ContainerNode*, const Node* stayWithin);
 
 // Does a reverse pre-order traversal to find the node that comes before the current one in document order
+Node* last(const ContainerNode*);
 Node* previous(const Node*, const Node* stayWithin = 0);
 
 // Like previous, but skips children and starts with the next sibling.
@@ -72,6 +73,7 @@ namespace NodeTraversal {
 
 Node* nextAncestorSibling(const Node*);
 Node* nextAncestorSibling(const Node*, const Node* stayWithin);
+Node* deepLastChild(Node*);
 
 template <class NodeType>
 inline Node* traverseNextTemplate(NodeType* current)
@@ -123,6 +125,15 @@ inline Node* nextSkippingChildren(const ContainerNode* current, const Node* stay
 
 inline Node* next(const Text* current) { return traverseNextSkippingChildrenTemplate(current); }
 inline Node* next(const Text* current, const Node* stayWithin) { return traverseNextSkippingChildrenTemplate(current, stayWithin); }
+
+inline Node* previous(const Node* current, const Node* stayWithin)
+{
+    if (Node* previous = current->previousSibling())
+        return deepLastChild(previous);
+    if (current->parentNode() == stayWithin)
+        return nullptr;
+    return current->parentNode();
+}
 
 }
 }

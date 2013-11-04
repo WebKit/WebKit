@@ -251,42 +251,42 @@ template <> inline bool isMatchingElement(const ClassNodeList* nodeList, Element
     return nodeList->nodeMatchesInlined(element);
 }
 
-static Node* previousNode(Node& base, Node* previous, bool onlyIncludeDirectChildren)
+static Element* previousElement(ContainerNode& base, Element* previous, bool onlyIncludeDirectChildren)
 {
-    return onlyIncludeDirectChildren ? previous->previousSibling() : NodeTraversal::previous(previous, &base);
+    return onlyIncludeDirectChildren ? ElementTraversal::previousSibling(previous) : ElementTraversal::previous(previous, &base);
 }
 
-static Node* lastNode(Node& rootNode, bool onlyIncludeDirectChildren)
+static Element* lastElement(ContainerNode& rootNode, bool onlyIncludeDirectChildren)
 {
-    return onlyIncludeDirectChildren ? rootNode.lastChild() : rootNode.lastDescendant();
+    return onlyIncludeDirectChildren ? ElementTraversal::lastChild(&rootNode) : ElementTraversal::lastWithin(&rootNode);
 }
 
-ALWAYS_INLINE Node* LiveNodeListBase::iterateForPreviousNode(Node* current) const
+ALWAYS_INLINE Element* LiveNodeListBase::iterateForPreviousElement(Element* current) const
 {
     bool onlyIncludeDirectChildren = shouldOnlyIncludeDirectChildren();
     CollectionType collectionType = type();
-    Node& rootNode = this->rootNode();
-    for (; current; current = previousNode(rootNode, current, onlyIncludeDirectChildren)) {
+    ContainerNode& rootNode = this->rootNode();
+    for (; current; current = previousElement(rootNode, current, onlyIncludeDirectChildren)) {
         if (isNodeList(collectionType)) {
-            if (current->isElementNode() && isMatchingElement(static_cast<const LiveNodeList*>(this), toElement(current)))
-                return toElement(current);
+            if (isMatchingElement(static_cast<const LiveNodeList*>(this), current))
+                return current;
         } else {
-            if (current->isElementNode() && isMatchingElement(static_cast<const HTMLCollection*>(this), toElement(current)))
-                return toElement(current);
+            if (isMatchingElement(static_cast<const HTMLCollection*>(this), current))
+                return current;
         }
     }
     return 0;
 }
 
-ALWAYS_INLINE Node* LiveNodeListBase::itemBefore(Node* previous) const
+ALWAYS_INLINE Element* LiveNodeListBase::itemBefore(Element* previous) const
 {
-    Node* current;
+    Element* current;
     if (LIKELY(!!previous)) // Without this LIKELY, length() and item() can be 10% slower.
-        current = previousNode(rootNode(), previous, shouldOnlyIncludeDirectChildren());
+        current = previousElement(rootNode(), previous, shouldOnlyIncludeDirectChildren());
     else
-        current = lastNode(rootNode(), shouldOnlyIncludeDirectChildren());
+        current = lastElement(rootNode(), shouldOnlyIncludeDirectChildren());
 
-    return iterateForPreviousNode(current);
+    return iterateForPreviousElement(current);
 }
 
 template <class NodeListType>
@@ -344,30 +344,29 @@ bool ALWAYS_INLINE LiveNodeListBase::isLastItemCloserThanLastOrCachedItem(unsign
 {
     ASSERT(isLengthCacheValid());
     unsigned distanceFromLastItem = cachedLength() - offset;
-    if (!isItemCacheValid())
+    if (!isElementCacheValid())
         return distanceFromLastItem < offset;
 
-    return cachedItemOffset() < offset && distanceFromLastItem < offset - cachedItemOffset();
+    return cachedElementOffset() < offset && distanceFromLastItem < offset - cachedElementOffset();
 }
     
 bool ALWAYS_INLINE LiveNodeListBase::isFirstItemCloserThanCachedItem(unsigned offset) const
 {
-    ASSERT(isItemCacheValid());
-    if (cachedItemOffset() < offset)
+    ASSERT(isElementCacheValid());
+    if (cachedElementOffset() < offset)
         return false;
 
-    unsigned distanceFromCachedItem = cachedItemOffset() - offset;
+    unsigned distanceFromCachedItem = cachedElementOffset() - offset;
     return offset < distanceFromCachedItem;
 }
 
-ALWAYS_INLINE void LiveNodeListBase::setItemCache(Node* item, unsigned offset, unsigned elementsArrayOffset) const
+ALWAYS_INLINE void LiveNodeListBase::setCachedElement(Element& element, unsigned offset, unsigned elementsArrayOffset) const
 {
-    setItemCache(item, offset);
-    if (overridesItemAfter()) {
-        ASSERT_WITH_SECURITY_IMPLICATION(item->isElementNode());
+    setCachedElement(element, offset);
+    if (overridesItemAfter())
         static_cast<const HTMLCollection*>(this)->m_cachedElementsArrayOffset = elementsArrayOffset;
-    } else
-        ASSERT(!elementsArrayOffset);
+
+    ASSERT(overridesItemAfter() || !elementsArrayOffset);
 }
 
 unsigned LiveNodeListBase::length() const
@@ -384,8 +383,8 @@ unsigned LiveNodeListBase::length() const
 // FIXME: It is silly that these functions are in HTMLCollection.cpp.
 Node* LiveNodeListBase::item(unsigned offset) const
 {
-    if (isItemCacheValid() && cachedItemOffset() == offset)
-        return cachedItem();
+    if (isElementCacheValid() && cachedElementOffset() == offset)
+        return cachedElement();
 
     if (isLengthCacheValid() && cachedLength() <= offset)
         return 0;
@@ -393,12 +392,12 @@ Node* LiveNodeListBase::item(unsigned offset) const
     ContainerNode& root = rootNode();
 
     if (isLengthCacheValid() && !overridesItemAfter() && isLastItemCloserThanLastOrCachedItem(offset)) {
-        Node* lastItem = itemBefore(0);
+        Element* lastItem = itemBefore(0);
         ASSERT(lastItem);
-        setItemCache(lastItem, cachedLength() - 1, 0);
-    } else if (!isItemCacheValid() || isFirstItemCloserThanCachedItem(offset) || (overridesItemAfter() && offset < cachedItemOffset())) {
+        setCachedElement(*lastItem, cachedLength() - 1, 0);
+    } else if (!isElementCacheValid() || isFirstItemCloserThanCachedItem(offset) || (overridesItemAfter() && offset < cachedElementOffset())) {
         unsigned offsetInArray = 0;
-        Node* firstItem;
+        Element* firstItem;
         if (isNodeList(type()))
             firstItem = traverseLiveNodeListFirstElement(&root);
         else
@@ -408,30 +407,30 @@ Node* LiveNodeListBase::item(unsigned offset) const
             setLengthCache(0);
             return 0;
         }
-        setItemCache(firstItem, 0, offsetInArray);
-        ASSERT(!cachedItemOffset());
+        setCachedElement(*firstItem, 0, offsetInArray);
+        ASSERT(!cachedElementOffset());
     }
 
-    if (cachedItemOffset() == offset)
-        return cachedItem();
+    if (cachedElementOffset() == offset)
+        return cachedElement();
 
-    return itemBeforeOrAfterCachedItem(offset, &root);
+    return elementBeforeOrAfterCachedElement(offset, &root);
 }
 
-inline Node* LiveNodeListBase::itemBeforeOrAfterCachedItem(unsigned offset, ContainerNode* root) const
+inline Element* LiveNodeListBase::elementBeforeOrAfterCachedElement(unsigned offset, ContainerNode* root) const
 {
-    unsigned currentOffset = cachedItemOffset();
-    Node* currentItem = cachedItem();
+    unsigned currentOffset = cachedElementOffset();
+    Element* currentItem = cachedElement();
     ASSERT(currentItem);
     ASSERT(currentOffset != offset);
 
-    if (offset < cachedItemOffset()) {
+    if (offset < cachedElementOffset()) {
         ASSERT(!overridesItemAfter());
         while ((currentItem = itemBefore(currentItem))) {
             ASSERT(currentOffset);
             currentOffset--;
             if (currentOffset == offset) {
-                setItemCache(currentItem, currentOffset, 0);
+                setCachedElement(*currentItem, currentOffset, 0);
                 return currentItem;
             }
         }
@@ -441,16 +440,16 @@ inline Node* LiveNodeListBase::itemBeforeOrAfterCachedItem(unsigned offset, Cont
 
     unsigned offsetInArray = 0;
     if (isNodeList(type()))
-        currentItem = traverseLiveNodeListForwardToOffset(offset, toElement(currentItem), currentOffset, root);
+        currentItem = traverseLiveNodeListForwardToOffset(offset, currentItem, currentOffset, root);
     else
-        currentItem = static_cast<const HTMLCollection*>(this)->traverseForwardToOffset(offset, toElement(currentItem), currentOffset, offsetInArray, root);
+        currentItem = static_cast<const HTMLCollection*>(this)->traverseForwardToOffset(offset, currentItem, currentOffset, offsetInArray, root);
 
     if (!currentItem) {
         // Did not find the item. On plus side, we now know the length.
         setLengthCache(currentOffset + 1);
         return 0;
     }
-    setItemCache(currentItem, currentOffset, offsetInArray);
+    setCachedElement(*currentItem, currentOffset, offsetInArray);
     return currentItem;
 }
 

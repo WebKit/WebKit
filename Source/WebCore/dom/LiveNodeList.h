@@ -51,9 +51,9 @@ public:
     LiveNodeListBase(ContainerNode& ownerNode, NodeListRootType rootType, NodeListInvalidationType invalidationType,
         bool shouldOnlyIncludeDirectChildren, CollectionType collectionType, ItemAfterOverrideType itemAfterOverrideType)
         : m_ownerNode(ownerNode)
-        , m_cachedItem(0)
+        , m_cachedElement(nullptr)
         , m_isLengthCacheValid(false)
-        , m_isItemCacheValid(false)
+        , m_isElementCacheValid(false)
         , m_rootType(rootType)
         , m_invalidationType(invalidationType)
         , m_shouldOnlyIncludeDirectChildren(shouldOnlyIncludeDirectChildren)
@@ -101,9 +101,9 @@ protected:
     ContainerNode& rootNode() const;
     bool overridesItemAfter() const { return m_overridesItemAfter; }
 
-    ALWAYS_INLINE bool isItemCacheValid() const { return m_isItemCacheValid; }
-    ALWAYS_INLINE Node* cachedItem() const { return m_cachedItem; }
-    ALWAYS_INLINE unsigned cachedItemOffset() const { return m_cachedItemOffset; }
+    ALWAYS_INLINE bool isElementCacheValid() const { return m_isElementCacheValid; }
+    ALWAYS_INLINE Element* cachedElement() const { return m_cachedElement; }
+    ALWAYS_INLINE unsigned cachedElementOffset() const { return m_cachedElementOffset; }
 
     ALWAYS_INLINE bool isLengthCacheValid() const { return m_isLengthCacheValid; }
     ALWAYS_INLINE unsigned cachedLength() const { return m_cachedLength; }
@@ -112,14 +112,13 @@ protected:
         m_cachedLength = length;
         m_isLengthCacheValid = true;
     }
-    ALWAYS_INLINE void setItemCache(Node* item, unsigned offset) const
+    ALWAYS_INLINE void setCachedElement(Element& element, unsigned offset) const
     {
-        ASSERT(item);
-        m_cachedItem = item;
-        m_cachedItemOffset = offset;
-        m_isItemCacheValid = true;
+        m_cachedElement = &element;
+        m_cachedElementOffset = offset;
+        m_isElementCacheValid = true;
     }
-    void setItemCache(Node* item, unsigned offset, unsigned elementsArrayOffset) const;
+    void setCachedElement(Element&, unsigned offset, unsigned elementsArrayOffset) const;
 
     ALWAYS_INLINE bool isItemRefElementsCacheValid() const { return m_isItemRefElementsCacheValid; }
     ALWAYS_INLINE void setItemRefElementsCacheValid() const { m_isItemRefElementsCacheValid = true; }
@@ -132,20 +131,20 @@ protected:
     bool shouldOnlyIncludeDirectChildren() const { return m_shouldOnlyIncludeDirectChildren; }
 
 private:
-    Node* itemBeforeOrAfterCachedItem(unsigned offset, ContainerNode* root) const;
+    Element* elementBeforeOrAfterCachedElement(unsigned offset, ContainerNode* root) const;
     Element* traverseLiveNodeListFirstElement(ContainerNode* root) const;
     Element* traverseLiveNodeListForwardToOffset(unsigned offset, Element* currentElement, unsigned& currentOffset, ContainerNode* root) const;
     bool isLastItemCloserThanLastOrCachedItem(unsigned offset) const;
     bool isFirstItemCloserThanCachedItem(unsigned offset) const;
-    Node* iterateForPreviousNode(Node* current) const;
-    Node* itemBefore(Node* previousItem) const;
+    Element* iterateForPreviousElement(Element* current) const;
+    Element* itemBefore(Element* previousItem) const;
 
     Ref<ContainerNode> m_ownerNode;
-    mutable Node* m_cachedItem;
+    mutable Element* m_cachedElement;
     mutable unsigned m_cachedLength;
-    mutable unsigned m_cachedItemOffset;
+    mutable unsigned m_cachedElementOffset;
     mutable unsigned m_isLengthCacheValid : 1;
-    mutable unsigned m_isItemCacheValid : 1;
+    mutable unsigned m_isElementCacheValid : 1;
     const unsigned m_rootType : 2;
     const unsigned m_invalidationType : 4;
     const unsigned m_shouldOnlyIncludeDirectChildren : 1;

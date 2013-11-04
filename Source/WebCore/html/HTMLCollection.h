@@ -48,16 +48,16 @@ public:
     {
         if (isLengthCacheValid())
             return !cachedLength();
-        if (isItemCacheValid())
-            return !cachedItem();
+        if (isElementCacheValid())
+            return !cachedElement();
         return !item(0);
     }
     bool hasExactlyOneItem() const
     {
         if (isLengthCacheValid())
             return cachedLength() == 1;
-        if (isItemCacheValid())
-            return cachedItem() && !cachedItemOffset() && !item(1);
+        if (isElementCacheValid())
+            return cachedElement() && !cachedElementOffset() && !item(1);
         return item(0) && !item(1);
     }
 

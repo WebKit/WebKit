@@ -1,3 +1,69 @@
+2013-11-04  Antti Koivisto  <antti@apple.com>
+
+        Make LiveNodeListBase use Elements instead of Nodes
+        https://bugs.webkit.org/show_bug.cgi?id=123745
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in:
+        * dom/Element.cpp:
+        (WebCore::Element::firstElementChild):
+        (WebCore::Element::lastElementChild):
+        
+            Switch to correct calls. ElementTraversal::previous and previousChild are no longer equivalent.
+
+        * dom/ElementTraversal.h:
+        (WebCore::::lastWithinTemplate):
+        (WebCore::::previousTemplate):
+        
+            Fix ElementTraversal::lastWithin and previous. They had no real clients and didn't work correctly.
+            With LiveNodeListBase starting to use these they get excellent test coverage.
+
+        * dom/LiveNodeList.cpp:
+        (WebCore::LiveNodeListBase::invalidateCache):
+        * dom/LiveNodeList.h:
+        (WebCore::LiveNodeListBase::LiveNodeListBase):
+        (WebCore::LiveNodeListBase::isElementCacheValid):
+        (WebCore::LiveNodeListBase::cachedElement):
+        (WebCore::LiveNodeListBase::cachedElementOffset):
+        (WebCore::LiveNodeListBase::setCachedElement):
+        
+            Make the cache Element based.
+            Switch to Elements in all helpers.
+            Rename item -> element for clarity.
+
+        * dom/NodeIterator.cpp:
+        (WebCore::NodeIterator::NodePointer::moveToPrevious):
+        (WebCore::NodeIterator::updateForNodeRemoval):
+        
+            This code expected the old inconsistent NodeTraversal::previous behavior where the traversal includes
+            the root as the last item. Drop the stayWithin parameter and handle the one case where it is needed here.
+
+        * dom/NodeTraversal.cpp:
+        (WebCore::NodeTraversal::last):
+        (WebCore::NodeTraversal::deepLastChild):
+        * dom/NodeTraversal.h:
+        
+            Support ElementTraversal::previous/lastWithin.
+
+        (WebCore::NodeTraversal::previous):
+        
+            This was slightly wrong too.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::previousElement):
+        (WebCore::lastElement):
+        (WebCore::LiveNodeListBase::iterateForPreviousElement):
+        (WebCore::LiveNodeListBase::itemBefore):
+        (WebCore::LiveNodeListBase::isLastItemCloserThanLastOrCachedItem):
+        (WebCore::LiveNodeListBase::isFirstItemCloserThanCachedItem):
+        (WebCore::LiveNodeListBase::setCachedElement):
+        (WebCore::LiveNodeListBase::item):
+        (WebCore::LiveNodeListBase::elementBeforeOrAfterCachedElement):
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollection::isEmpty):
+        (WebCore::HTMLCollection::hasExactlyOneItem):
+
 2013-11-04  Michael Saboff  <msaboff@apple.com>
 
         Eliminate HostCall bit from JSC Stack CallerFrame
