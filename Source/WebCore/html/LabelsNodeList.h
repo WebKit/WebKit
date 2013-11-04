@@ -25,24 +25,24 @@
 #ifndef LabelsNodeList_h
 #define LabelsNodeList_h
 
+#include "LabelableElement.h"
 #include "LiveNodeList.h"
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-class LabelsNodeList : public LiveNodeList {
+class LabelsNodeList FINAL : public LiveNodeList {
 public:
-    static PassRefPtr<LabelsNodeList> create(ContainerNode& forNode, CollectionType type, const AtomicString&)
+    static PassRef<LabelsNodeList> create(LabelableElement& forNode, CollectionType type, const AtomicString&)
     {
         ASSERT_UNUSED(type, type == LabelsNodeListType);
-        return adoptRef(new LabelsNodeList(forNode));
+        return adoptRef(*new LabelsNodeList(forNode));
     }
     ~LabelsNodeList();
 
 protected:
-    explicit LabelsNodeList(ContainerNode& forNode);
+    explicit LabelsNodeList(LabelableElement& forNode);
 
-    virtual bool nodeMatches(Element*) const;
+    virtual bool nodeMatches(Element*) const OVERRIDE;
 };
 
 } // namespace WebCore
