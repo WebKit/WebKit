@@ -65,27 +65,26 @@ PassRef<CSSPrimitiveValue> CSSValuePool::createIdentifierValue(CSSPropertyID ide
     return CSSPrimitiveValue::createIdentifier(ident);
 }
 
-PassRefPtr<CSSPrimitiveValue> CSSValuePool::createColorValue(unsigned rgbValue)
+PassRef<CSSPrimitiveValue> CSSValuePool::createColorValue(unsigned rgbValue)
 {
     // These are the empty and deleted values of the hash table.
     if (rgbValue == Color::transparent)
-        return m_colorTransparent;
+        return m_colorTransparent.get();
     if (rgbValue == Color::white)
-        return m_colorWhite;
+        return m_colorWhite.get();
     // Just because it is common.
     if (rgbValue == Color::black)
-        return m_colorBlack;
+        return m_colorBlack.get();
 
-    // Just wipe out the cache and start rebuilding if it gets too big.
+    // Remove one entry at random if the cache grows too large.
     const int maximumColorCacheSize = 512;
-    if (m_colorValueCache.size() > maximumColorCacheSize)
-        m_colorValueCache.clear();
+    if (m_colorValueCache.size() >= maximumColorCacheSize)
+        m_colorValueCache.remove(m_colorValueCache.begin());
 
-    RefPtr<CSSPrimitiveValue> dummyValue;
-    ColorValueCache::AddResult entry = m_colorValueCache.add(rgbValue, dummyValue);
+    ColorValueCache::AddResult entry = m_colorValueCache.add(rgbValue, nullptr);
     if (entry.isNewEntry)
         entry.iterator->value = CSSPrimitiveValue::createColor(rgbValue);
-    return entry.iterator->value;
+    return *entry.iterator->value;
 }
 
 PassRefPtr<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSPrimitiveValue::UnitTypes type)

@@ -49,7 +49,7 @@ public:
     PassRef<CSSInitialValue> createExplicitInitialValue() { return m_explicitInitialValue.get(); }
     PassRef<CSSPrimitiveValue> createIdentifierValue(CSSValueID identifier);
     PassRef<CSSPrimitiveValue> createIdentifierValue(CSSPropertyID identifier);
-    PassRefPtr<CSSPrimitiveValue> createColorValue(unsigned rgbValue);
+    PassRef<CSSPrimitiveValue> createColorValue(unsigned rgbValue);
     PassRefPtr<CSSPrimitiveValue> createValue(double value, CSSPrimitiveValue::UnitTypes);
     PassRefPtr<CSSPrimitiveValue> createValue(const String& value, CSSPrimitiveValue::UnitTypes type) { return CSSPrimitiveValue::create(value, type); }
     PassRefPtr<CSSPrimitiveValue> createValue(const Length& value, const RenderStyle* style) { return CSSPrimitiveValue::create(value, style); }
@@ -68,9 +68,9 @@ private:
 
     typedef HashMap<unsigned, RefPtr<CSSPrimitiveValue>> ColorValueCache;
     ColorValueCache m_colorValueCache;
-    RefPtr<CSSPrimitiveValue> m_colorTransparent;
-    RefPtr<CSSPrimitiveValue> m_colorWhite;
-    RefPtr<CSSPrimitiveValue> m_colorBlack;
+    Ref<CSSPrimitiveValue> m_colorTransparent;
+    Ref<CSSPrimitiveValue> m_colorWhite;
+    Ref<CSSPrimitiveValue> m_colorBlack;
 
     static const int maximumCacheableIntegerValue = 255;
 

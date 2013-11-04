@@ -215,7 +215,7 @@ public:
     static PassRef<CSSPrimitiveValue> createIdentifier(CSSPropertyID propertyID) { return adoptRef(*new CSSPrimitiveValue(propertyID)); }
     static PassRefPtr<CSSPrimitiveValue> createParserOperator(int parserOperator) { return adoptRef(new CSSPrimitiveValue(parserOperator)); }
 
-    static PassRefPtr<CSSPrimitiveValue> createColor(unsigned rgbValue) { return adoptRef(new CSSPrimitiveValue(rgbValue)); }
+    static PassRef<CSSPrimitiveValue> createColor(unsigned rgbValue) { return adoptRef(*new CSSPrimitiveValue(rgbValue)); }
     static PassRefPtr<CSSPrimitiveValue> create(double value, UnitTypes type) { return adoptRef(new CSSPrimitiveValue(value, type)); }
     static PassRefPtr<CSSPrimitiveValue> create(const String& value, UnitTypes type) { return adoptRef(new CSSPrimitiveValue(value, type)); }
     static PassRefPtr<CSSPrimitiveValue> create(const Length& value, const RenderStyle* style) { return adoptRef(new CSSPrimitiveValue(value, style)); }
