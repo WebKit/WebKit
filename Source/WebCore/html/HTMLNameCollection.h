@@ -35,17 +35,19 @@ class HTMLNameCollection : public HTMLCollection {
 public:
     ~HTMLNameCollection();
 
+    Document& document() { return toDocument(ownerNode()); }
+
 protected:
-    HTMLNameCollection(ContainerNode&, CollectionType, const AtomicString& name);
+    HTMLNameCollection(Document&, CollectionType, const AtomicString& name);
 
     AtomicString m_name;
 };
 
-class WindowNameCollection : public HTMLNameCollection {
+class WindowNameCollection FINAL : public HTMLNameCollection {
 public:
-    static PassRefPtr<WindowNameCollection> create(ContainerNode& document, CollectionType type, const AtomicString& name)
+    static PassRef<WindowNameCollection> create(Document& document, CollectionType type, const AtomicString& name)
     {
-        return adoptRef(new WindowNameCollection(document, type, name));
+        return adoptRef(*new WindowNameCollection(document, type, name));
     }
 
     bool nodeMatches(Element* element) const { return nodeMatches(element, m_name.impl()); }
@@ -55,18 +57,18 @@ public:
     static bool nodeMatches(Element*, const AtomicStringImpl*);
 
 private:
-    WindowNameCollection(ContainerNode& document, CollectionType type, const AtomicString& name)
+    WindowNameCollection(Document& document, CollectionType type, const AtomicString& name)
         : HTMLNameCollection(document, type, name)
     {
         ASSERT(type == WindowNamedItems);
     }
 };
 
-class DocumentNameCollection : public HTMLNameCollection {
+class DocumentNameCollection FINAL : public HTMLNameCollection {
 public:
-    static PassRefPtr<DocumentNameCollection> create(ContainerNode& document, CollectionType type, const AtomicString& name)
+    static PassRef<DocumentNameCollection> create(Document& document, CollectionType type, const AtomicString& name)
     {
-        return adoptRef(new DocumentNameCollection(document, type, name));
+        return adoptRef(*new DocumentNameCollection(document, type, name));
     }
 
     static bool nodeMatchesIfIdAttributeMatch(Element*);
@@ -76,7 +78,7 @@ public:
     static bool nodeMatches(Element*, const AtomicStringImpl*);
 
 private:
-    DocumentNameCollection(ContainerNode& document, CollectionType type, const AtomicString& name)
+    DocumentNameCollection(Document& document, CollectionType type, const AtomicString& name)
         : HTMLNameCollection(document, type, name)
     {
         ASSERT(type == DocumentNamedItems);

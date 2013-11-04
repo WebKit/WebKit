@@ -105,14 +105,14 @@ public:
     typedef HashMap<std::pair<unsigned char, String>, LiveNodeListBase*, NodeListCacheMapEntryHash<String>> NodeListNameCacheMap;
     typedef HashMap<QualifiedName, TagNodeList*> TagNodeListCacheNS;
 
-    template<typename T>
-    PassRefPtr<T> addCacheWithAtomicName(ContainerNode& node, CollectionType collectionType, const AtomicString& name)
+    template<typename T, typename ContainerType>
+    PassRefPtr<T> addCacheWithAtomicName(ContainerType& container, CollectionType collectionType, const AtomicString& name)
     {
         NodeListAtomicNameCacheMap::AddResult result = m_atomicNameCaches.add(namedNodeListKey(collectionType, name), nullptr);
         if (!result.isNewEntry)
             return static_cast<T*>(result.iterator->value);
 
-        RefPtr<T> list = T::create(node, collectionType, name);
+        RefPtr<T> list = T::create(container, collectionType, name);
         result.iterator->value = list.get();
         return list.release();
     }

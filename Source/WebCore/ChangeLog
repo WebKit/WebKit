@@ -1,5 +1,19 @@
 2013-11-04  Andreas Kling  <akling@apple.com>
 
+        HTMLNameCollection and friends are always rooted at a Document.
+        <https://webkit.org/b/123722>
+
+        Tighten WindowNameCollection and DocumentNameCollection by making
+        their constructors take a Document&, and add a slightly better
+        document() than the one we inherit from LiveNodeListBase.
+
+        Also marked the classes FINAL and made create() helpers return
+        PassRef instead of PassRefPtr.
+
+        Reviewed by Antti Koivisto.
+
+2013-11-04  Andreas Kling  <akling@apple.com>
+
         Add an ancestor renderer iterator.
         <https://webkit.org/b/123718>
 
