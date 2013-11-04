@@ -1,5 +1,15 @@
 2013-11-03  Andreas Kling  <akling@apple.com>
 
+        CSSPrimitiveValue identifier constructors should return PassRef.
+        <https://webkit.org/b/123712>
+
+        Make CSSPrimitiveValue::createIdentifier() and the corresponding
+        CSSValuePool helper return PassRef<CSSPrimitiveValue>.
+
+        Reviewed by Antti Koivisto.
+
+2013-11-03  Andreas Kling  <akling@apple.com>
+
         Use RenderChildIterator in two more loops.
         <https://webkit.org/b/123713>
 

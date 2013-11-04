@@ -49,7 +49,7 @@ CSSValuePool::CSSValuePool()
 {
 }
 
-PassRefPtr<CSSPrimitiveValue> CSSValuePool::createIdentifierValue(CSSValueID ident)
+PassRef<CSSPrimitiveValue> CSSValuePool::createIdentifierValue(CSSValueID ident)
 {
     if (!ident)
         return CSSPrimitiveValue::createIdentifier(ident);
@@ -57,10 +57,10 @@ PassRefPtr<CSSPrimitiveValue> CSSValuePool::createIdentifierValue(CSSValueID ide
     RELEASE_ASSERT(ident > 0 && ident < numCSSValueKeywords);
     if (!m_identifierValueCache[ident])
         m_identifierValueCache[ident] = CSSPrimitiveValue::createIdentifier(ident);
-    return m_identifierValueCache[ident];
+    return *m_identifierValueCache[ident];
 }
 
-PassRefPtr<CSSPrimitiveValue> CSSValuePool::createIdentifierValue(CSSPropertyID ident)
+PassRef<CSSPrimitiveValue> CSSValuePool::createIdentifierValue(CSSPropertyID ident)
 {
     return CSSPrimitiveValue::createIdentifier(ident);
 }

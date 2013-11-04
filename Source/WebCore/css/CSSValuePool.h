@@ -47,8 +47,8 @@ public:
     PassRef<CSSInheritedValue> createInheritedValue() { return m_inheritedValue.get(); }
     PassRef<CSSInitialValue> createImplicitInitialValue() { return m_implicitInitialValue.get(); }
     PassRef<CSSInitialValue> createExplicitInitialValue() { return m_explicitInitialValue.get(); }
-    PassRefPtr<CSSPrimitiveValue> createIdentifierValue(CSSValueID identifier);
-    PassRefPtr<CSSPrimitiveValue> createIdentifierValue(CSSPropertyID identifier);
+    PassRef<CSSPrimitiveValue> createIdentifierValue(CSSValueID identifier);
+    PassRef<CSSPrimitiveValue> createIdentifierValue(CSSPropertyID identifier);
     PassRefPtr<CSSPrimitiveValue> createColorValue(unsigned rgbValue);
     PassRefPtr<CSSPrimitiveValue> createValue(double value, CSSPrimitiveValue::UnitTypes);
     PassRefPtr<CSSPrimitiveValue> createValue(const String& value, CSSPrimitiveValue::UnitTypes type) { return CSSPrimitiveValue::create(value, type); }

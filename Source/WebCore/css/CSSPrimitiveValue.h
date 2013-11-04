@@ -211,8 +211,8 @@ public:
     bool isValueID() const { return m_primitiveUnitType == CSS_VALUE_ID; }
     bool isFlex() const { return primitiveType() == CSS_FR; }
 
-    static PassRefPtr<CSSPrimitiveValue> createIdentifier(CSSValueID valueID) { return adoptRef(new CSSPrimitiveValue(valueID)); }
-    static PassRefPtr<CSSPrimitiveValue> createIdentifier(CSSPropertyID propertyID) { return adoptRef(new CSSPrimitiveValue(propertyID)); }
+    static PassRef<CSSPrimitiveValue> createIdentifier(CSSValueID valueID) { return adoptRef(*new CSSPrimitiveValue(valueID)); }
+    static PassRef<CSSPrimitiveValue> createIdentifier(CSSPropertyID propertyID) { return adoptRef(*new CSSPrimitiveValue(propertyID)); }
     static PassRefPtr<CSSPrimitiveValue> createParserOperator(int parserOperator) { return adoptRef(new CSSPrimitiveValue(parserOperator)); }
 
     static PassRefPtr<CSSPrimitiveValue> createColor(unsigned rgbValue) { return adoptRef(new CSSPrimitiveValue(rgbValue)); }
