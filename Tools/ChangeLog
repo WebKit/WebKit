@@ -1,3 +1,14 @@
+2013-11-04  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Change ATK version to 2.10.0
+        https://bugs.webkit.org/show_bug.cgi?id=123727
+
+        Reviewed by Mario Sanchez Prada.
+
+        Provided new API to retrieve text at a given offset.
+
+        * efl/jhbuild.modules:
+
 2013-11-04  Robert Plociennik  <r.plociennik@samsung.com>
 
         [EFL] accessibility/textarea-line-for-index.html is failing
