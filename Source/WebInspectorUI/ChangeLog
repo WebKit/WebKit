@@ -1,5 +1,12 @@
 2013-11-04  Lucas Forschler  <lforschler@apple.com>
 
+        Merge fixes for <rdar://problem/15168240>
+        
+        * UserInterface/External/CodeMirror/codemirror.js:
+        (window.CodeMirror):
+
+2013-11-04  Lucas Forschler  <lforschler@apple.com>
+
         Merge r158404
 
     2013-10-31  Joseph Pecoraro  <pecoraro@apple.com>
