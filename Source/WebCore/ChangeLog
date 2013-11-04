@@ -1,3 +1,21 @@
+2013-11-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        PingLoader objects unnecessarily pass through OwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=122942
+
+        Reviewed by Darin Adler.
+
+        There's no need to store new PingLoader objects into an OwnPtr just to leak them out a few lines later
+        into an unused variable. New objects are created through a new helper method and then left unmanaged as
+        they're guaranteed to destroy themselves when they receive a response of any kind.
+
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage): Call the new createPingLoader method to spawn the PingLoader.
+        (WebCore::PingLoader::sendPing): Ditto.
+        (WebCore::PingLoader::sendViolationReport): Ditto.
+        (WebCore::PingLoader::createPingLoader): A helper method that creates a new PingLoader object
+        * loader/PingLoader.h: Declare the new PingLoader::createPingLoader method.
+
 2013-11-03  Andreas Kling  <akling@apple.com>
 
         HTMLOptionsCollection is always rooted at a HTMLSelectElement.

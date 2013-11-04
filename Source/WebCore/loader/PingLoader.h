@@ -61,6 +61,7 @@ public:
     virtual ~PingLoader();
 
 private:
+    static void createPingLoader(Frame*, ResourceRequest&);
     PingLoader(Frame*, ResourceRequest&);
 
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) OVERRIDE { delete this; }

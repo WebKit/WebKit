@@ -45,7 +45,6 @@
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
-#include <wtf/OwnPtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -66,11 +65,8 @@ void PingLoader::loadImage(Frame* frame, const URL& url)
     if (!referrer.isEmpty())
         request.setHTTPReferrer(referrer);
     frame->loader().addExtraFieldsToSubresourceRequest(request);
-    OwnPtr<PingLoader> pingLoader = adoptPtr(new PingLoader(frame, request));
 
-    // Leak the ping loader, since it will kill itself as soon as it receives a response.
-    PingLoader* leakedPingLoader = pingLoader.leakPtr();
-    UNUSED_PARAM(leakedPingLoader);
+    createPingLoader(frame, request);
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/links.html#hyperlink-auditing
@@ -98,11 +94,8 @@ void PingLoader::sendPing(Frame* frame, const URL& pingURL, const URL& destinati
                 request.setHTTPReferrer(referrer);
         }
     }
-    OwnPtr<PingLoader> pingLoader = adoptPtr(new PingLoader(frame, request));
 
-    // Leak the ping loader, since it will kill itself as soon as it receives a response.
-    PingLoader* leakedPingLoader = pingLoader.leakPtr();
-    UNUSED_PARAM(leakedPingLoader);
+    createPingLoader(frame, request);
 }
 
 void PingLoader::sendViolationReport(Frame* frame, const URL& reportURL, PassRefPtr<FormData> report)
@@ -119,11 +112,14 @@ void PingLoader::sendViolationReport(Frame* frame, const URL& reportURL, PassRef
     String referrer = SecurityPolicy::generateReferrerHeader(frame->document()->referrerPolicy(), reportURL, frame->loader().outgoingReferrer());
     if (!referrer.isEmpty())
         request.setHTTPReferrer(referrer);
-    OwnPtr<PingLoader> pingLoader = adoptPtr(new PingLoader(frame, request));
 
-    // Leak the ping loader, since it will kill itself as soon as it receives a response.
-    PingLoader* leakedPingLoader = pingLoader.leakPtr();
-    UNUSED_PARAM(leakedPingLoader);
+    createPingLoader(frame, request);
+}
+
+void PingLoader::createPingLoader(Frame* frame, ResourceRequest& request)
+{
+    // No need to free the PingLoader object or manage it via a smart pointer - it will kill itself as soon as it receives a response.
+    new PingLoader(frame, request);
 }
 
 PingLoader::PingLoader(Frame* frame, ResourceRequest& request)
