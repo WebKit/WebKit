@@ -1,5 +1,26 @@
 2013-11-04  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r154897
+
+    2013-08-29  Timothy Hatcher  <timothy@apple.com>
+
+            Only modify numbers if they are identified by CodeMirror as a number.
+
+            https://bugs.webkit.org/show_bug.cgi?id=120484
+
+            <rdar://problem/13877085> REGRESSION: Alt-up and Alt-down don't work when cursor is in unit
+            <rdar://problem/13058697> PARITY: Option-Up arrow in "translate3d" should not modify number to make" translate4d"
+
+            Reviewed by Joseph Pecoraro.
+
+            * UserInterface/CodeMirrorAdditions.js:
+            (CodeMirror.prototype.alterNumberInRange): Correctly preserve the selection, even if it differs from
+            the range passed in.
+            (alterNumber): Find number tokens and pass those to alterNumberInRange.
+            (alterNumber.findNumberToken): Added. Helper.
+
+2013-11-04  Lucas Forschler  <lforschler@apple.com>
+
         Merge r154851
 
     2013-08-29  Timothy Hatcher  <timothy@apple.com>

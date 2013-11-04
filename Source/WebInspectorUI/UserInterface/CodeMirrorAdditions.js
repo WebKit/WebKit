@@ -281,10 +281,16 @@
         return true;
     });
 
-    CodeMirror.defineExtension("alterNumberInRange", function(amount, startPosition, endPosition, affectsSelection) {
+    CodeMirror.defineExtension("alterNumberInRange", function(amount, startPosition, endPosition, updateSelection) {
         // We don't try if the range is multiline, pass to another key handler.
         if (startPosition.line !== endPosition.line)
             return false;
+
+        if (updateSelection) {
+            // Remember the cursor position/selection.
+            var selectionStart = this.getCursor("start");
+            var selectionEnd = this.getCursor("end");
+        }
 
         var line = this.getLine(startPosition.line);
 
@@ -349,17 +355,20 @@
 
         this.replaceRange(alteredNumberString, from, to);
 
-        if (affectsSelection) {
-            var newTo = {line: startPosition.line, ch: from.ch + alteredNumberString.length};
+        if (updateSelection) {
+            var previousLength = to.ch - from.ch;
+            var newLength = alteredNumberString.length;
 
             // Fix up the selection so it follows the increase or decrease in the replacement length.
-            if (endPosition.ch >= to.ch)
-                endPosition = newTo;
+            if (previousLength != newLength) {
+                if (selectionStart.line === from.line && selectionStart.ch > from.ch)
+                    selectionStart.ch += newLength - previousLength;
 
-            if (startPosition.ch >= to.ch)
-                startPosition = newTo;
+                if (selectionEnd.line === from.line && selectionEnd.ch > from.ch)
+                    selectionEnd.ch += newLength - previousLength;
+            }
 
-            this.setSelection(startPosition, endPosition);
+            this.setSelection(selectionStart, selectionEnd);
         }
 
         return true;
@@ -367,10 +376,30 @@
 
     function alterNumber(amount, codeMirror)
     {
-        var startPosition = codeMirror.getCursor("anchor");
-        var endPosition = codeMirror.getCursor("head");
+        function findNumberToken(position)
+        {
+            // CodeMirror includes the unit in the number token, so searching for
+            // number tokens is the best way to get both the number and unit.
+            var token = codeMirror.getTokenAt(position);
+            if (token && token.type && /\bnumber\b/.test(token.type))
+                return token;
+            return null;
+        }
 
-        var foundNumber = codeMirror.alterNumberInRange(amount, startPosition, endPosition, true);
+        var position = codeMirror.getCursor("head");
+        var token = findNumberToken(position);
+
+        if (!token) {
+            // If the cursor is at the outside beginning of the token, the previous
+            // findNumberToken wont find it. So check the next column for a number too.
+            position.ch += 1;
+            token = findNumberToken(position);
+        }
+
+        if (!token)
+            return CodeMirror.Pass;
+
+        var foundNumber = codeMirror.alterNumberInRange(amount, {ch: token.start, line: position.line}, {ch: token.end, line: position.line}, true);
         if (!foundNumber)
             return CodeMirror.Pass;
     }
