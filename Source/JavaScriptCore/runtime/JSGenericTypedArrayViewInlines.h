@@ -441,7 +441,8 @@ void JSGenericTypedArrayView<Adaptor>::visitChildren(JSCell* cell, SlotVisitor& 
     
     switch (thisObject->m_mode) {
     case FastTypedArray: {
-        visitor.copyLater(thisObject, TypedArrayVectorCopyToken, thisObject->m_vector, thisObject->byteSize());
+        if (thisObject->m_vector)
+            visitor.copyLater(thisObject, TypedArrayVectorCopyToken, thisObject->m_vector, thisObject->byteSize());
         break;
     }
         
@@ -469,6 +470,7 @@ void JSGenericTypedArrayView<Adaptor>::copyBackingStore(
     
     if (token == TypedArrayVectorCopyToken
         && visitor.checkIfShouldCopy(thisObject->m_vector)) {
+        ASSERT(thisObject->m_vector);
         void* oldVector = thisObject->m_vector;
         void* newVector = visitor.allocateNewSpace(thisObject->byteSize());
         memcpy(newVector, oldVector, thisObject->byteSize());
@@ -505,6 +507,7 @@ ArrayBuffer* JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBuf
     
     if (thisObject->m_mode == FastTypedArray
         && !thisObject->m_butterfly && size >= sizeof(IndexingHeader)) {
+        ASSERT(thisObject->m_vector);
         // Reuse already allocated memory if at all possible.
         thisObject->m_butterfly =
             static_cast<IndexingHeader*>(thisObject->m_vector)->butterfly();

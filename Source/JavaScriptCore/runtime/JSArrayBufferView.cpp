@@ -45,9 +45,10 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
 {
     if (length <= fastSizeLimit) {
         // Attempt GC allocation.
-        void* temp;
+        void* temp = 0;
         size_t size = sizeOf(length, elementSize);
-        if (!vm.heap.tryAllocateStorage(0, size, &temp))
+        // CopiedSpace only allows non-zero size allocations.
+        if (size && !vm.heap.tryAllocateStorage(0, size, &temp))
             return;
 
         m_structure = structure;

@@ -160,6 +160,7 @@ PassRefPtr<ArrayBuffer> ArrayBuffer::create(const void* source, unsigned byteLen
     if (!contents.m_data)
         return 0;
     RefPtr<ArrayBuffer> buffer = adoptRef(new ArrayBuffer(contents));
+    ASSERT(!byteLength || source);
     memcpy(buffer->data(), source, byteLength);
     return buffer.release();
 }

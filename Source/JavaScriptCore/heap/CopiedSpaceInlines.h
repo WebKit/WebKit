@@ -150,6 +150,7 @@ inline void CopiedSpace::allocateBlock()
 inline CheckedBoolean CopiedSpace::tryAllocate(size_t bytes, void** outPtr)
 {
     ASSERT(!m_heap->vm()->isInitializingObject());
+    ASSERT(bytes);
 
     if (!m_allocator.tryAllocate(bytes, outPtr))
         return tryAllocateSlowCase(bytes, outPtr);

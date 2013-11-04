@@ -2052,7 +2052,15 @@ public:
     MacroAssembler::Jump emitAllocateBasicStorage(SizeType size, GPRReg resultGPR)
     {
         CopiedAllocator* copiedAllocator = &m_jit.vm()->heap.storageAllocator();
-        
+
+        // It's invalid to allocate zero bytes in CopiedSpace. 
+#ifndef NDEBUG
+        m_jit.move(size, resultGPR);
+        MacroAssembler::Jump nonZeroSize = m_jit.branchTest32(MacroAssembler::NonZero, resultGPR);
+        m_jit.breakpoint();
+        nonZeroSize.link(&m_jit);
+#endif
+
         m_jit.loadPtr(&copiedAllocator->m_currentRemaining, resultGPR);
         MacroAssembler::Jump slowPath = m_jit.branchSubPtr(JITCompiler::Signed, size, resultGPR);
         m_jit.storePtr(resultGPR, &copiedAllocator->m_currentRemaining);

@@ -1,3 +1,36 @@
+2013-11-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSArrayBufferViews of length 0 allocate 0 CopiedSpace bytes, which is invalid
+        https://bugs.webkit.org/show_bug.cgi?id=123746
+
+        Reviewed by Geoffrey Garen.
+
+        This patch disallows clients from allocating 0 bytes in CopiedSpace. We enforce this invariant 
+        with an ASSERT in C++ code and a breakpoint in JIT code. Clients who care about 0-byte 
+        allocations (like JSArrayBufferViews) must handle that case themselves, but we don't punish 
+        anybody else for the rare case that somebody decides to allocate a 0-length typed array. 
+        It also makes the allocation and copying cases consistent for CopiedSpace: no 0-byte allocations, 
+        no 0-byte copying.
+ 
+        Also added a check so that JSArrayBufferViews don't try to copy their m_vector backing store when 
+        their length is 0. Also sprinkled several ASSERTs throughout the JSArrayBufferView code to make sure that 
+        when length is 0 m_vector is null.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArray):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateBasicStorage):
+        * heap/CopiedSpaceInlines.h:
+        (JSC::CopiedSpace::tryAllocate):
+        * runtime/ArrayBuffer.h:
+        (JSC::ArrayBuffer::create):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::ConstructionContext::ConstructionContext):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::::visitChildren):
+        (JSC::::copyBackingStore):
+        (JSC::::slowDownAndWasteMemory):
+
 2013-11-04  Julien Brianceau  <jbriance@cisco.com>
 
         [sh4] Refactor jumps in baseline JIT to return label after the jump.
