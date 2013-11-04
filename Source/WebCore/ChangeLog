@@ -1,3 +1,59 @@
+2013-11-01  Jer Noble  <jer.noble@apple.com>
+
+        [PluginProxy] Add a setting to disable video plugin proxy support in HTMLMediaElement.
+        https://bugs.webkit.org/show_bug.cgi?id=123621
+
+        Reviewed by Eric Carlson.
+
+        Add a new Setting which will disable the video plugin proxy. Enable support for AVFoundation
+        in iOS (which requries fixing a few compile errors resulting from classes and methods which
+        are not available on iOS.
+
+        * WebCore.exp.in: Export wkAVAssetResolvedURL.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::canShareStyleWithElement): Make conditional upon
+            new isVideoPluginProxyEnabled() setting.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute): Ditto.
+        * html/HTMLMediaElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::createRenderer): Ditto.
+        (WebCore::HTMLVideoElement::attach): Ditto.
+        (WebCore::HTMLVideoElement::parseAttribute): Ditto.
+        (HTMLVideoElement::setDisplayMode): Ditto.
+        * html/HTMLVideoElement.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::setVideoPluginProxyEnabled): Simple setter.
+        * page/Settings.h:
+        (WebCore::Settings::isVideoPluginProxyEnabled): Simple getter.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::installedMediaEngines): Conditionally add MediaPlayerPrivateIOS and always add
+            MediaPlayerPriateAVFoundationObjC.
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::deliverNotification): Add default implementation.
+        (WebCore::MediaPlayerPrivateInterface::setMediaPlayerProxy): Ditto.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC): Use new
+            HAS_ and USE_ macros instead of __MAC_OS_MIN_VERNSION_REQUIRED.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::hasContextRenderer): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createContextVideoRenderer): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyContextVideoRenderer): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paint): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer): Use cachedCGColor instead
+            of CGColorGetConstantColor.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoOutput): Use CVPixelBuffer pixel
+            format constant instead of QuickDraw constant.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createPixelBuffer): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput): Draw to intermediary
+            CGImage on iOS.
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.h:
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        * platform/ios/WebCoreSystemInterfaceIOS.mm:
+        * platform/mac/WebCoreSystemInterface.h:
+
 2013-11-04  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r158561): fast/block/float/float-append-child-crash.html asserting.

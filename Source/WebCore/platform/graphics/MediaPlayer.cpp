@@ -204,9 +204,14 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines(RequeryEngineOptions r
     if (!enginesQueried) {
         enginesQueried = true;
 
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    if (Settings::isVideoPluginProxyEnabled())
+        MediaPlayerPrivateIOS::registerMediaEngine(addMediaEngine);
+#endif
+
 #if USE(AVFOUNDATION)
         if (Settings::isAVFoundationEnabled()) {
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(IOS)
             MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(addMediaEngine);
 #elif PLATFORM(WIN)
             MediaPlayerPrivateAVFoundationCF::registerMediaEngine(addMediaEngine);

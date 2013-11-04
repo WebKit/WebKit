@@ -383,6 +383,10 @@ public:
 
     void enteredOrExitedFullscreen() { configureMediaControls(); }
 
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    bool shouldUseVideoPluginProxy() const;
+#endif
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool);
     virtual ~HTMLMediaElement();
@@ -427,6 +431,8 @@ protected:
     void endIgnoringTrackDisplayUpdateRequests();
 #endif
 
+    virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
+
 private:
     void createMediaPlayer();
 
@@ -437,7 +443,6 @@ private:
     virtual bool supportsFocus() const OVERRIDE;
     virtual bool isMouseFocusable() const OVERRIDE;
     virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
-    virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
     virtual bool childShouldCreateRenderer(const Node*) const OVERRIDE;
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
     virtual void removedFrom(ContainerNode&) OVERRIDE;

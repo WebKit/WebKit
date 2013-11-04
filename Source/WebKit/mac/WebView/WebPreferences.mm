@@ -425,6 +425,9 @@ public:
         [NSNumber numberWithBool:NO], WebKitHiddenPageDOMTimerThrottlingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO], WebKitHiddenPageCSSAnimationSuspensionEnabledPreferenceKey,
         [NSNumber numberWithBool:NO], WebKitLowPowerVideoAudioBufferSizeEnabledPreferenceKey,
+#if !PLATFORM(IOS)
+        [NSNumber numberWithBool:NO],   WebKitVideoPluginProxyEnabledKey,
+#endif
         nil];
 
 
@@ -1665,6 +1668,16 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)isQTKitEnabled
 {
     return [self _boolValueForKey:WebKitQTKitEnabledPreferenceKey];
+}
+
+- (void)setVideoPluginProxyEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitVideoPluginProxyEnabledKey];
+}
+
+- (BOOL)isVideoPluginProxyEnabled
+{
+    return [self _boolValueForKey:WebKitVideoPluginProxyEnabledKey];
 }
 
 - (void)setHixie76WebSocketProtocolEnabled:(BOOL)flag

@@ -1719,6 +1719,10 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setDiagnosticLoggingEnabled([preferences diagnosticLoggingEnabled]);
     settings.setLowPowerVideoAudioBufferSizeEnabled([preferences lowPowerVideoAudioBufferSizeEnabled]);
 
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    settings->setVideoPluginProxyEnabled([preferences isVideoPluginProxyEnabled]);
+#endif
+
     switch ([preferences storageBlockingPolicy]) {
     case WebAllowAllStorage:
         settings.setStorageBlockingPolicy(SecurityOrigin::AllowAllStorage);

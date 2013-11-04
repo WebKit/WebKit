@@ -64,6 +64,12 @@ namespace WebKit {
 #define DEFAULT_PDFPLUGIN_ENABLED false
 #endif
 
+#if PLATFORM(IOS)
+#define DEFAULT_VIDEO_PLUGIN_PROXY_ENABLED true
+#else
+#define DEFAULT_VIDEO_PLUGIN_PROXY_ENABLED false
+#endif
+
 #define FOR_EACH_WEBKIT_BOOL_PREFERENCE(macro) \
     macro(JavaScriptEnabled, javaScriptEnabled, Bool, bool, true) \
     macro(JavaScriptMarkupEnabled, javaScriptMarkupEnabled, Bool, bool, true) \
@@ -168,6 +174,7 @@ namespace WebKit {
     macro(SimpleLineLayoutEnabled, simpleLineLayoutEnabled, Bool, bool, true) \
     macro(SimpleLineLayoutDebugBordersEnabled, simpleLineLayoutDebugBordersEnabled, Bool, bool, false) \
     macro(MediaStreamEnabled, mediaStreamEnabled, Bool, bool, false) \
+    macro(VideoPluginProxyEnabled, isVideoPluginProxyEnabled, Bool, bool, DEFAULT_VIDEO_PLUGIN_PROXY_ENABLED) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

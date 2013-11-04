@@ -267,6 +267,11 @@ public:
     static bool lowPowerVideoAudioBufferSizeEnabled() { return gLowPowerVideoAudioBufferSizeEnabled; }
     static void setLowPowerVideoAudioBufferSizeEnabled(bool);
 
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    static void setVideoPluginProxyEnabled(bool flag);
+    static bool isVideoPluginProxyEnabled() { return gVideoPluginProxyEnabled; }
+#endif
+
 private:
     explicit Settings(Page*);
 
@@ -353,6 +358,10 @@ private:
     static double gHiddenPageDOMTimerAlignmentInterval;
 
     static bool gLowPowerVideoAudioBufferSizeEnabled;
+
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    static bool gVideoPluginProxyEnabled;
+#endif
 };
 
 } // namespace WebCore

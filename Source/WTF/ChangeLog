@@ -1,3 +1,16 @@
+2013-11-01  Jer Noble  <jer.noble@apple.com>
+
+        [PluginProxy] Add a setting to disable video plugin proxy support in HTMLMediaElement.
+        https://bugs.webkit.org/show_bug.cgi?id=123621
+
+        Reviewed by Eric Carlson.
+
+        Enable WTF_USE_AVFOUNDATION and add some HAVE_AVFOUNDATION_* defines
+        to replace the existing __MAC_OS_X_VERSION_MIN_REQUIRED macros in
+        MediaPlayerPrivateAVFoundationObjC.mm.
+
+        * wtf/Platform.h:
+
 2013-11-02  Patrick Gansterer  <paroga@webkit.org>
 
         Fix compilation of DateMath.cpp with MSVC

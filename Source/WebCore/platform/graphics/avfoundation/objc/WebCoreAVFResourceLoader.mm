@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebCoreAVFResourceLoader.h"
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if ENABLE(VIDEO) && USE(AVFOUNDATION) && HAVE(AVFOUNDATION_LOADER_DELEGATE)
 
 #import "CachedRawResource.h"
 #import "CachedResourceLoader.h"

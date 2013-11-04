@@ -26,7 +26,7 @@
 #ifndef WebCoreAVFResourceLoader_h
 #define WebCoreAVFResourceLoader_h
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if ENABLE(VIDEO) && USE(AVFOUNDATION) && HAVE(AVFOUNDATION_LOADER_DELEGATE)
 
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"

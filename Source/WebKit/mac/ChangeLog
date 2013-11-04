@@ -1,3 +1,20 @@
+2013-11-01  Jer Noble  <jer.noble@apple.com>
+
+        [PluginProxy] Add a setting to disable video plugin proxy support in HTMLMediaElement.
+        https://bugs.webkit.org/show_bug.cgi?id=123621
+
+        Reviewed by Eric Carlson.
+
+        Add a new isVideoPluginProxyEnabled setting.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Set isVideoPluginProxyEnabled preference.
+        (-[WebPreferences isVideoPluginProxyEnabled]): Pass through to Settings.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): Set isVideoPluginProxyEnabled preference.
+
 2013-11-01  Andy Estes  <aestes@apple.com>
 
         [iOS] Make some headers Private

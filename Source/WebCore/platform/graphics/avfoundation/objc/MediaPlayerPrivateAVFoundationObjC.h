@@ -46,7 +46,7 @@ OBJC_CLASS WebCoreAVFMovieObserver;
 
 typedef struct objc_object* id;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE)
 OBJC_CLASS WebCoreAVFLoaderDelegate;
 OBJC_CLASS AVAssetResourceLoadingRequest;
 #endif
@@ -77,7 +77,7 @@ public:
     void flushCues();
 #endif
     
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     bool shouldWaitForLoadingOfResource(AVAssetResourceLoadingRequest*);
     void didCancelLoadingRequest(AVAssetResourceLoadingRequest*);
     void didStopLoadingRequest(AVAssetResourceLoadingRequest *);
@@ -156,7 +156,7 @@ private:
     RetainPtr<CGImageRef> createImageForTimeInRect(float, const IntRect&);
     void paintWithImageGenerator(GraphicsContext*, const IntRect&);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     void createVideoOutput();
     void destroyVideoOutput();
     RetainPtr<CVPixelBufferRef> createPixelBuffer();
@@ -200,14 +200,16 @@ private:
     bool m_haveCheckedPlayability;
 
     RetainPtr<AVAssetImageGenerator> m_imageGenerator;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     RetainPtr<AVPlayerItemVideoOutput> m_videoOutput;
     RetainPtr<CVPixelBufferRef> m_lastImage;
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if USE(VIDEOTOOLBOX)
     RetainPtr<VTPixelTransferSessionRef> m_pixelTransferSession;
+#endif
 
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     friend class WebCoreAVFResourceLoader;
     HashMap<RetainPtr<AVAssetResourceLoadingRequest>, RefPtr<WebCoreAVFResourceLoader>> m_resourceLoaderMap;
     RetainPtr<WebCoreAVFLoaderDelegate> m_loaderDelegate;

@@ -61,17 +61,19 @@
 
 #import <AVFoundation/AVFoundation.h>
 #import <CoreMedia/CoreMedia.h>
+#import <QuartzCore/CoreImage.h>
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if USE(VIDEOTOOLBOX)
 #import <CoreVideo/CoreVideo.h>
 #import <VideoToolbox/VideoToolbox.h>
 #endif
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+SOFT_LINK_FRAMEWORK_OPTIONAL(CoreImage)
 SOFT_LINK_FRAMEWORK_OPTIONAL(CoreVideo)
+
+#if USE(VIDEOTOOLBOX)
 SOFT_LINK_FRAMEWORK_OPTIONAL(VideoToolbox)
 #endif
 
@@ -80,9 +82,9 @@ SOFT_LINK(CoreMedia, CMTimeMakeWithSeconds, CMTime, (Float64 seconds, int32_t pr
 SOFT_LINK(CoreMedia, CMTimeGetSeconds, Float64, (CMTime time), (time))
 SOFT_LINK(CoreMedia, CMTimeRangeGetEnd, CMTime, (CMTimeRange range), (range))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 SOFT_LINK(CoreVideo, CVPixelBufferGetWidth, size_t, (CVPixelBufferRef pixelBuffer), (pixelBuffer))
 SOFT_LINK(CoreVideo, CVPixelBufferGetHeight, size_t, (CVPixelBufferRef pixelBuffer), (pixelBuffer))
+#if USE(VIDEOTOOLBOX)
 SOFT_LINK(VideoToolbox, VTPixelTransferSessionCreate, OSStatus, (CFAllocatorRef allocator, VTPixelTransferSessionRef *pixelTransferSessionOut), (allocator, pixelTransferSessionOut))
 SOFT_LINK(VideoToolbox, VTPixelTransferSessionTransferImage, OSStatus, (VTPixelTransferSessionRef session, CVPixelBufferRef sourceBuffer, CVPixelBufferRef destinationBuffer), (session, sourceBuffer, destinationBuffer))
 #endif
@@ -93,6 +95,8 @@ SOFT_LINK_CLASS(AVFoundation, AVPlayerItemVideoOutput)
 SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
 SOFT_LINK_CLASS(AVFoundation, AVURLAsset)
 SOFT_LINK_CLASS(AVFoundation, AVAssetImageGenerator)
+SOFT_LINK_CLASS(CoreImage, CIContext)
+SOFT_LINK_CLASS(CoreImage, CIImage)
 
 SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicVisual, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicAudible, NSString *)
@@ -104,6 +108,7 @@ SOFT_LINK_POINTER(AVFoundation, AVAssetImageGeneratorApertureModeCleanAperture, 
 SOFT_LINK_POINTER(AVFoundation, AVURLAssetReferenceRestrictionsKey, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVLayerVideoGravityResizeAspect, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVLayerVideoGravityResize, NSString *)
+SOFT_LINK_POINTER(CoreVideo, kCVPixelBufferPixelFormatTypeKey, NSString *)
 
 SOFT_LINK_CONSTANT(CoreMedia, kCMTimeZero, CMTime)
 
@@ -124,6 +129,7 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeZero, CMTime)
 #define AVURLAssetReferenceRestrictionsKey getAVURLAssetReferenceRestrictionsKey()
 #define AVLayerVideoGravityResizeAspect getAVLayerVideoGravityResizeAspect()
 #define AVLayerVideoGravityResize getAVLayerVideoGravityResize()
+#define kCVPixelBufferPixelFormatTypeKey getkCVPixelBufferPixelFormatTypeKey()
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
 typedef AVMediaSelectionGroup AVMediaSelectionGroupType;
@@ -179,7 +185,7 @@ enum MediaPlayerAVFoundationObservationContext {
 #endif
 @end
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE)
 @interface WebCoreAVFLoaderDelegate : NSObject<AVAssetResourceLoaderDelegate> {
     MediaPlayerPrivateAVFoundationObjC* m_callback;
 }
@@ -210,7 +216,7 @@ static PlayerToPrivateMapType& playerToPrivateMap()
 };
 #endif
 
-#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE)
 static dispatch_queue_t globalLoaderDelegateQueue()
 {
     static dispatch_queue_t globalQueue;
@@ -238,7 +244,7 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     , m_objcObserver(adoptNS([[WebCoreAVFMovieObserver alloc] initWithCallback:this]))
     , m_videoFrameHasDrawn(false)
     , m_haveCheckedPlayability(false)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     , m_loaderDelegate(adoptNS([[WebCoreAVFLoaderDelegate alloc] initWithCallback:this]))
 #endif
     , m_currentTrack(0)
@@ -253,7 +259,7 @@ MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     playerToPrivateMap().remove(player());
 #endif
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     [m_loaderDelegate.get() setCallback:0];
     [[m_avAsset.get() resourceLoader] setDelegate:nil queue:0];
 #endif
@@ -308,7 +314,7 @@ bool MediaPlayerPrivateAVFoundationObjC::hasLayerRenderer() const
 
 bool MediaPlayerPrivateAVFoundationObjC::hasContextRenderer() const
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     if (m_videoOutput)
         return true;
 #endif
@@ -317,7 +323,7 @@ bool MediaPlayerPrivateAVFoundationObjC::hasContextRenderer() const
 
 void MediaPlayerPrivateAVFoundationObjC::createContextVideoRenderer()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     createVideoOutput();
 #else
     createImageGenerator();
@@ -343,7 +349,7 @@ void MediaPlayerPrivateAVFoundationObjC::createImageGenerator()
 
 void MediaPlayerPrivateAVFoundationObjC::destroyContextVideoRenderer()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     destroyVideoOutput();
 #endif
     destroyImageGenerator();
@@ -367,7 +373,7 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
     if (!m_videoLayer) {
         m_videoLayer = adoptNS([[AVPlayerLayer alloc] init]);
         [m_videoLayer.get() setPlayer:m_avPlayer.get()];
-        [m_videoLayer.get() setBackgroundColor:CGColorGetConstantColor(kCGColorBlack)];
+        [m_videoLayer.get() setBackgroundColor:cachedCGColor(Color::black, ColorSpaceDeviceRGB)];
 #ifndef NDEBUG
         [m_videoLayer.get() setName:@"Video layer"];
 #endif
@@ -427,7 +433,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
     NSURL *cocoaURL = URL(ParsedURLString, url);
     m_avAsset = adoptNS([[AVURLAsset alloc] initWithURL:cocoaURL options:options.get()]);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     [[m_avAsset.get() resourceLoader] setDelegate:m_loaderDelegate.get() queue:globalLoaderDelegateQueue()];
 #endif
 
@@ -793,7 +799,7 @@ void MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext(GraphicsCont
     setDelayCallbacks(true);
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     if (videoOutputHasAvailableFrame())
         paintWithVideoOutput(context, rect);
     else
@@ -921,7 +927,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsType(const
     return [AVURLAsset isPlayableExtendedMIMEType:typeString] ? MediaPlayer::IsSupported : MediaPlayer::MayBeSupported;;
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE)
 bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetResourceLoadingRequest* avRequest)
 {
     String scheme = [[[avRequest request] URL] scheme];
@@ -1177,7 +1183,7 @@ bool MediaPlayerPrivateAVFoundationObjC::hasSingleSecurityOrigin() const
     return resolvedOrigin->isSameSchemeHostPort(requestedOrigin.get());
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
 void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
 {
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createVideoOutput(%p)", this);
@@ -1185,10 +1191,10 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
     if (!m_avPlayerItem || m_videoOutput)
         return;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if USE(VIDEOTOOLBOX)
     NSDictionary* attributes = @{ (NSString*)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_422YpCbCr8) };
 #else
-    NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInt:k32BGRAPixelFormat], kCVPixelBufferPixelFormatTypeKey,
+    NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInt:kCVPixelFormatType_32BGRA], kCVPixelBufferPixelFormatTypeKey,
                                 nil];
 #endif
     m_videoOutput = adoptNS([[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:attributes]);
@@ -1230,7 +1236,7 @@ RetainPtr<CVPixelBufferRef> MediaPlayerPrivateAVFoundationObjC::createPixelBuffe
     if (!buffer)
         return 0;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if USE(VIDEOTOOLBOX)
     // Create a VTPixelTransferSession, if necessary, as we cannot guarantee timely delivery of ARGB pixels.
     if (!m_pixelTransferSession) {
         VTPixelTransferSessionRef session = 0;
@@ -1239,7 +1245,7 @@ RetainPtr<CVPixelBufferRef> MediaPlayerPrivateAVFoundationObjC::createPixelBuffe
     }
 
     CVPixelBufferRef outputBuffer;
-    CVPixelBufferCreate(kCFAllocatorDefault, CVPixelBufferGetWidth(buffer.get()), CVPixelBufferGetHeight(buffer.get()), k32BGRAPixelFormat, 0, &outputBuffer);
+    CVPixelBufferCreate(kCFAllocatorDefault, CVPixelBufferGetWidth(buffer.get()), CVPixelBufferGetHeight(buffer.get()), kCVPixelFormatType_32BGRA, 0, &outputBuffer);
     VTPixelTransferSessionTransferImage(m_pixelTransferSession.get(), buffer.get(), outputBuffer);
     buffer = adoptCF(outputBuffer);
 #endif
@@ -1280,14 +1286,24 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext* c
         GraphicsContextStateSaver stateSaver(*context);
         context->translate(rect.x(), rect.y() + rect.height());
         context->scale(FloatSize(1.0f, -1.0f));
-        RetainPtr<CIImage> image = adoptNS([[CIImage alloc] initWithCVImageBuffer:m_lastImage.get() options:@{ kCIImageColorSpace: (id)deviceRGBColorSpaceRef() }]);
+
+        CGRect outputRect = { CGPointZero, rect.size() };
+        CGRect imageRect = CGRectMake(0, 0, CVPixelBufferGetWidth(m_lastImage.get()), CVPixelBufferGetHeight(m_lastImage.get()));
+#if PLATFORM(IOS)
+        // ciContext does not use a RetainPtr for results of contextWithCGContext:, as the returned value
+        // is autoreleased, and there is no non-autoreleased version of that function.
+        CIContext* ciContext = [getCIContextClass() contextWithOptions:nil];
+        RetainPtr<CIImage> image = adoptNS([[getCIImageClass() alloc] initWithCVPixelBuffer:m_lastImage.get()]);
+        RetainPtr<CGImage> cgImage = adoptCF([ciContext createCGImage:image.get() fromRect:imageRect]);
+        context->drawNativeImage(cgImage.get(), FloatSize(imageRect.size), ColorSpaceDeviceRGB, FloatRect(outputRect), FloatRect(imageRect), 1);
+#else
 
         // ciContext does not use a RetainPtr for results of contextWithCGContext:, as the returned value
         // is autoreleased, and there is no non-autoreleased version of that function.
         CIContext* ciContext = [CIContext contextWithCGContext:context->platformContext() options:nil];
-        CGRect outputRect = { CGPointZero, rect.size() };
-        CGRect imageRect = CGRectMake(0, 0, CVPixelBufferGetWidth(m_lastImage.get()), CVPixelBufferGetHeight(m_lastImage.get()));
+        RetainPtr<CIImage> image = adoptNS([[CIImage alloc] initWithCVImageBuffer:m_lastImage.get() options:@{ kCIImageColorSpace: (id)deviceRGBColorSpaceRef() }]);
         [ciContext drawImage:image.get() inRect:outputRect fromRect:imageRect];
+#endif
 
         // If we have created an AVAssetImageGenerator in the past due to m_videoOutput not having an available
         // video frame, destroy it now that it is no longer needed.
@@ -1776,7 +1792,7 @@ NSArray* itemKVOProperties()
 
 @end
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE)
 @implementation WebCoreAVFLoaderDelegate
 
 - (id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC*)callback

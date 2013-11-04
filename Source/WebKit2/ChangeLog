@@ -1,3 +1,20 @@
+2013-11-01  Jer Noble  <jer.noble@apple.com>
+
+        [PluginProxy] Add a setting to disable video plugin proxy support in HTMLMediaElement.
+        https://bugs.webkit.org/show_bug.cgi?id=123621
+
+        Reviewed by Eric Carlson.
+
+        Add WebKit2 functions for setting then new isVideoPluginProxyEnabled preference.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetVideoPluginProxyEnabled):
+        (WKPreferencesGetVideoPluginProxyEnabled):
+        * UIProcess/API/C/WKPreferences.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2013-11-04  Anders Carlsson  <andersca@apple.com>
 
         More WKRemoteObjectRegistry work
