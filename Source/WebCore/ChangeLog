@@ -1,3 +1,11 @@
+2013-11-04  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r158561): fast/block/float/float-append-child-crash.html asserting.
+
+        The non-const ancestor iterator was walking siblings, not ancestors.
+
+        Rubber-stamped by Antti Koivisto.
+
 2013-10-31  Jer Noble  <jer.noble@apple.com>
 
         [MSE] [Mac] Disclaim support for MSE in AVFoundation and QTKit engines
