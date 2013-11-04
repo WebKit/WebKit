@@ -28,7 +28,6 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmHmacKeyParams.h"
 #include "CryptoAlgorithmHmacParams.h"
 #include "CryptoKeyHMAC.h"
 #include "ExceptionCode.h"
@@ -54,19 +53,6 @@ std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmHMAC::create()
 CryptoAlgorithmIdentifier CryptoAlgorithmHMAC::identifier() const
 {
     return s_identifier;
-}
-
-void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, std::unique_ptr<PromiseWrapper> promise, ExceptionCode&)
-{
-    const CryptoAlgorithmHmacKeyParams& hmacParameters = static_cast<const CryptoAlgorithmHmacKeyParams&>(parameters);
-
-    RefPtr<CryptoKeyHMAC> result = CryptoKeyHMAC::generate(hmacParameters.hasLength ? hmacParameters.length : 0, hmacParameters.hash, extractable, usages);
-    if (!result) {
-        promise->reject(nullptr);
-        return;
-    }
-
-    promise->fulfill(result.release());
 }
 
 void CryptoAlgorithmHMAC::importKey(const CryptoAlgorithmParameters& parameters, CryptoKeyFormat format, const CryptoOperationData& data, bool extractable, CryptoKeyUsage usage, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)

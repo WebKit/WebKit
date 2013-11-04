@@ -1,3 +1,34 @@
+2013-11-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r158526.
+        http://trac.webkit.org/changeset/158526
+        https://bugs.webkit.org/show_bug.cgi?id=123744
+
+        it broke the build (Requested by jessieberlin on #webkit).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::createAesCbcParams):
+        (WebCore::createHmacParams):
+        (WebCore::createHmacKeyParams):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForGenerateKey):
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        * crypto/CryptoAlgorithmAesKeyGenParams.h: Removed.
+        * crypto/CryptoKey.cpp:
+        * crypto/CryptoKey.h:
+        * crypto/CryptoKeyAES.cpp:
+        * crypto/CryptoKeyAES.h:
+        * crypto/CryptoKeyMac.cpp: Removed.
+        * crypto/SubtleCrypto.idl:
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        * crypto/keys/CryptoKeyHMAC.cpp:
+        * crypto/keys/CryptoKeyHMAC.h:
+        * crypto/mac/CryptoAlgorithmAES_CBCMac.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::generateKey):
+        * crypto/mac/CryptoAlgorithmHMACMac.cpp:
+        (WebCore::CryptoAlgorithmHMAC::generateKey):
+
 2013-11-04  Przemyslaw Szymanski  <p.szymanski3@samsung.com>
 
         [Texmap] Remove redundant calls in CoordinatedGraphicsScene

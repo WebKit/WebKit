@@ -58,8 +58,6 @@ public:
 
     bool allows(CryptoKeyUsage usage) const { return usage == (m_usages & usage); }
 
-    static Vector<char> randomData(size_t);
-
 private:
     CryptoAlgorithmIdentifier m_algorithm;
     CryptoKeyType m_type;

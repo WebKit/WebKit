@@ -29,7 +29,6 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoAlgorithmAesCbcParams.h"
-#include "CryptoAlgorithmAesKeyGenParams.h"
 #include "CryptoAlgorithmHmacKeyParams.h"
 #include "CryptoAlgorithmHmacParams.h"
 #include "CryptoAlgorithmRegistry.h"
@@ -127,7 +126,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> createAesCbcParams(JSC::ExecSt
     if (exec->hadException())
         return nullptr;
 
-    auto result = std::make_unique<CryptoAlgorithmAesCbcParams>();
+    std::unique_ptr<CryptoAlgorithmAesCbcParams> result = std::make_unique<CryptoAlgorithmAesCbcParams>();
 
     CryptoOperationData ivData;
     if (!cryptoOperationDataFromJSValue(exec, iv, ivData)) {
@@ -145,24 +144,6 @@ static std::unique_ptr<CryptoAlgorithmParameters> createAesCbcParams(JSC::ExecSt
     return std::move(result);
 }
 
-static std::unique_ptr<CryptoAlgorithmParameters> createAesKeyGenParams(JSC::ExecState* exec, JSC::JSValue value)
-{
-    if (!value.isObject()) {
-        throwTypeError(exec);
-        return nullptr;
-    }
-
-    auto result = std::make_unique<CryptoAlgorithmAesKeyGenParams>();
-
-    JSValue lengthValue = getProperty(exec, value.getObject(), "length");
-    if (exec->hadException())
-        return nullptr;
-
-    result->length = toUInt16(exec, lengthValue, EnforceRange);
-
-    return std::move(result);
-}
-
 static std::unique_ptr<CryptoAlgorithmParameters> createHmacParams(JSC::ExecState* exec, JSC::JSValue value)
 {
     if (!value.isObject()) {
@@ -171,7 +152,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> createHmacParams(JSC::ExecStat
     }
 
     JSDictionary jsDictionary(exec, value.getObject());
-    auto result = std::make_unique<CryptoAlgorithmHmacParams>();
+    std::unique_ptr<CryptoAlgorithmHmacParams> result = std::make_unique<CryptoAlgorithmHmacParams>();
 
     if (!getHashAlgorithm(jsDictionary, result->hash)) {
         ASSERT(exec->hadException());
@@ -189,7 +170,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> createHmacKeyParams(JSC::ExecS
     }
 
     JSDictionary jsDictionary(exec, value.getObject());
-    auto result = std::make_unique<CryptoAlgorithmHmacKeyParams>();
+    std::unique_ptr<CryptoAlgorithmHmacKeyParams> result = std::make_unique<CryptoAlgorithmHmacKeyParams>();
 
     if (!getHashAlgorithm(jsDictionary, result->hash)) {
         ASSERT(exec->hadException());
@@ -363,7 +344,7 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     }
 }
 
-std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForGenerateKey(JSC::ExecState* exec, CryptoAlgorithmIdentifier algorithm, JSC::JSValue value)
+std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForGenerateKey(JSC::ExecState* exec, CryptoAlgorithmIdentifier algorithm, JSC::JSValue)
 {
     switch (algorithm) {
     case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
@@ -372,16 +353,12 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     case CryptoAlgorithmIdentifier::RSA_OAEP:
     case CryptoAlgorithmIdentifier::ECDSA:
     case CryptoAlgorithmIdentifier::ECDH:
-        setDOMException(exec, NOT_SUPPORTED_ERR);
-        return nullptr;
     case CryptoAlgorithmIdentifier::AES_CTR:
     case CryptoAlgorithmIdentifier::AES_CBC:
     case CryptoAlgorithmIdentifier::AES_CMAC:
     case CryptoAlgorithmIdentifier::AES_GCM:
     case CryptoAlgorithmIdentifier::AES_CFB:
-        return createAesKeyGenParams(exec, value);
     case CryptoAlgorithmIdentifier::HMAC:
-        return createHmacKeyParams(exec, value);
     case CryptoAlgorithmIdentifier::DH:
     case CryptoAlgorithmIdentifier::SHA_1:
     case CryptoAlgorithmIdentifier::SHA_224:

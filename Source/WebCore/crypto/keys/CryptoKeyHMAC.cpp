@@ -45,27 +45,6 @@ CryptoKeyHMAC::~CryptoKeyHMAC()
 {
 }
 
-PassRefPtr<CryptoKeyHMAC> CryptoKeyHMAC::generate(size_t lengthBytes, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage usages)
-{
-    if (!lengthBytes) {
-        switch (hash) {
-        case CryptoAlgorithmIdentifier::SHA_1:
-        case CryptoAlgorithmIdentifier::SHA_224:
-        case CryptoAlgorithmIdentifier::SHA_256:
-            lengthBytes = 64;
-            break;
-        case CryptoAlgorithmIdentifier::SHA_384:
-        case CryptoAlgorithmIdentifier::SHA_512:
-            lengthBytes = 128;
-            break;
-        default:
-            return nullptr;
-        }
-    }
-
-    return adoptRef(new CryptoKeyHMAC(randomData(lengthBytes), hash, extractable, usages));
-}
-
 void CryptoKeyHMAC::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& builder) const
 {
     CryptoKey::buildAlgorithmDescription(builder);

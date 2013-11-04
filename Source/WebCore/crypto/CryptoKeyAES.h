@@ -42,8 +42,6 @@ public:
     }
     virtual ~CryptoKeyAES();
 
-    static PassRefPtr<CryptoKeyAES> generate(CryptoAlgorithmIdentifier, size_t lengthBits, bool extractable, CryptoKeyUsage);
-
     virtual CryptoKeyClass keyClass() const OVERRIDE { return CryptoKeyClass::AES; }
 
     const Vector<char>& key() const { return m_key; }

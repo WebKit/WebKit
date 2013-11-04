@@ -136,6 +136,13 @@ void CryptoAlgorithmHMAC::verify(const CryptoAlgorithmParameters& parameters, co
     promise->fulfill(result);
 }
 
+void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParameters&, bool /*extractable*/, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
+{
+    // Not yet implemented.
+    ec = NOT_SUPPORTED_ERR;
+}
+
+
 }
 
 #endif // ENABLE(SUBTLE_CRYPTO)
