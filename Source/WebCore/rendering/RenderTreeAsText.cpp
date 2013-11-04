@@ -37,9 +37,11 @@
 #include "PrintContext.h"
 #include "PseudoElement.h"
 #include "RenderBlockFlow.h"
+#include "RenderCounter.h"
 #include "RenderDetailsMarker.h"
 #include "RenderFileUploadControl.h"
 #include "RenderInline.h"
+#include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
@@ -910,18 +912,17 @@ String externalRepresentation(Element* element, RenderAsTextBehavior behavior)
     return externalRepresentation(toRenderBox(renderer), behavior | RenderAsTextShowAllLayers);
 }
 
-static void writeCounterValuesFromChildren(TextStream& stream, RenderElement* parent, bool& isFirstCounter)
+static void writeCounterValuesFromChildren(TextStream& stream, const RenderElement* parent, bool& isFirstCounter)
 {
     if (!parent)
         return;
-    for (RenderObject* child = parent->firstChild(); child; child = child->nextSibling()) {
-        if (child->isCounter()) {
-            if (!isFirstCounter)
-                stream << " ";
-            isFirstCounter = false;
-            String str(toRenderText(child)->text());
-            stream << str;
-        }
+    auto counters = childrenOfType<RenderCounter>(*parent);
+    for (auto counter = counters.begin(), end = counters.end(); counter != end; ++counter) {
+        if (!isFirstCounter)
+            stream << " ";
+        isFirstCounter = false;
+        String str(counter->text());
+        stream << str;
     }
 }
 

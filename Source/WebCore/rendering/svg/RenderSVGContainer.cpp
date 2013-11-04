@@ -28,6 +28,7 @@
 
 #include "GraphicsContext.h"
 #include "LayoutRepainter.h"
+#include "RenderIterator.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderView.h"
@@ -139,11 +140,9 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)
 
         if (continueRendering) {
             childPaintInfo.updateSubtreePaintRootForChildren(this);
-            for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-                if (!child->isRenderElement())
-                    continue;
-                toRenderElement(child)->paint(childPaintInfo, IntPoint());
-            }
+            auto children = childrenOfType<RenderElement>(*this);
+            for (auto child = children.begin(), end = children.end(); child != end; ++child)
+                child->paint(childPaintInfo, IntPoint());
         }
     }
     

@@ -1,5 +1,14 @@
 2013-11-03  Andreas Kling  <akling@apple.com>
 
+        Use RenderChildIterator in two more loops.
+        <https://webkit.org/b/123713>
+
+        Switch two more renderer child traversal loops to childrenOfType.
+
+        Reviewed by Antti Koivisto.
+
+2013-11-03  Andreas Kling  <akling@apple.com>
+
         CSSShadowValue constructor should return PassRef.
         <https://webkit.org/b/123711>
 
