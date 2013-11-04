@@ -1,3 +1,18 @@
+2013-11-04  Andreas Kling  <akling@apple.com>
+
+        REGRESSION: RenderStyle is leaked when not creating renderer for display:none
+        <https://webkit.org/b/123726>
+
+        Explicitly drop the RenderStyle reference in RenderElement::createFor
+        if we decide to not create any renderer.
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/css/renderstyle-leak-with-display-none.html
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::createFor):
+
 2013-11-04  Santosh Mahto  <santosh.ma@samsung.com>
 
         [webcore/dom] Remove extra header includes from cpp files.

@@ -149,7 +149,8 @@ RenderElement* RenderElement::createFor(Element& element, PassRef<RenderStyle> s
         return new RenderRubyText(element, std::move(style));
     switch (style.get().display()) {
     case NONE:
-        return 0;
+        style.dropRef();
+        return nullptr;
     case INLINE:
         return new RenderInline(element, std::move(style));
     case BLOCK:
