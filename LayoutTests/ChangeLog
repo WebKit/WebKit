@@ -1,5 +1,148 @@
 2013-11-03  Andreas Kling  <akling@apple.com>
 
+        Optimize baselines: fast/repaint
+
+        Unreviewed; run "webkit-patch optimize-baselines fast/repaint"
+
+        * fast/repaint/4774354-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/4774354-expected.txt.
+        * fast/repaint/absolute-position-changed-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/absolute-position-changed-expected.png.
+        * fast/repaint/block-selection-gap-stale-cache-2-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/block-selection-gap-stale-cache-2-expected.png.
+        * fast/repaint/block-selection-gap-stale-cache-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/block-selection-gap-stale-cache-expected.png.
+        * fast/repaint/box-shadow-inset-repaint-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/box-shadow-inset-repaint-expected.txt.
+        * fast/repaint/button-spurious-layout-hint-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/button-spurious-layout-hint-expected.png.
+        * fast/repaint/canvas-putImageData-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/canvas-putImageData-expected.png.
+        * fast/repaint/clip-with-layout-delta-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/clip-with-layout-delta-expected.txt.
+        * fast/repaint/content-into-overflow-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/content-into-overflow-expected.png.
+        * fast/repaint/erase-overflow-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/erase-overflow-expected.png.
+        * fast/repaint/fixed-after-scroll-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/fixed-after-scroll-expected.png.
+        * fast/repaint/fixed-and-absolute-position-scrolled-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/fixed-and-absolute-position-scrolled-expected.png.
+        * fast/repaint/fixed-position-transparency-with-overflow-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/fixed-position-transparency-with-overflow-expected.png.
+        * fast/repaint/fixed-scale-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/fixed-scale-expected.png.
+        * fast/repaint/fixed-scroll-simple-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/fixed-scroll-simple-expected.png.
+        * fast/repaint/fixed-table-cell-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/fixed-table-cell-expected.png.
+        * fast/repaint/fixed-table-overflow-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/fixed-table-overflow-expected.png.
+        * fast/repaint/fixed-table-overflow-zindex-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/fixed-table-overflow-zindex-expected.png.
+        * fast/repaint/fixed-tranformed-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/fixed-tranformed-expected.png.
+        * fast/repaint/float-in-new-block-with-layout-delta-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/float-in-new-block-with-layout-delta-expected.png.
+        * fast/repaint/float-overflow-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/float-overflow-expected.txt.
+        * fast/repaint/float-overflow-right-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/float-overflow-right-expected.txt.
+        * fast/repaint/inline-block-resize-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/inline-block-resize-expected.png.
+        * fast/repaint/inline-horizontal-bt-overflow-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/inline-horizontal-bt-overflow-expected.txt.
+        * fast/repaint/inline-vertical-lr-overflow-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/inline-vertical-lr-overflow-expected.png.
+        * fast/repaint/inline-vertical-lr-overflow-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/inline-vertical-lr-overflow-expected.txt.
+        * fast/repaint/inline-vertical-rl-overflow-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/inline-vertical-rl-overflow-expected.png.
+        * fast/repaint/inline-vertical-rl-overflow-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/inline-vertical-rl-overflow-expected.txt.
+        * fast/repaint/intermediate-layout-position-clip-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/intermediate-layout-position-clip-expected.png.
+        * fast/repaint/japanese-rl-selection-clear-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/japanese-rl-selection-clear-expected.txt.
+        * fast/repaint/japanese-rl-selection-repaint-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/japanese-rl-selection-repaint-expected.txt.
+        * fast/repaint/layer-hide-when-needs-layout-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/layer-hide-when-needs-layout-expected.png.
+        * fast/repaint/layer-visibility-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/layer-visibility-expected.png.
+        * fast/repaint/line-in-scrolled-clipped-block-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/line-in-scrolled-clipped-block-expected.txt.
+        * fast/repaint/moving-shadow-on-path-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/moving-shadow-on-path-expected.txt.
+        * fast/repaint/overflow-auto-in-overflow-auto-scrolled-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/overflow-auto-in-overflow-auto-scrolled-expected.png.
+        * fast/repaint/overflow-clip-subtree-layout-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/overflow-clip-subtree-layout-expected.png.
+        * fast/repaint/overflow-into-content-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/overflow-into-content-expected.png.
+        * fast/repaint/overflow-scroll-in-overflow-scroll-scrolled-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/overflow-scroll-in-overflow-scroll-scrolled-expected.png.
+        * fast/repaint/reflection-repaint-test-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/reflection-repaint-test-expected.txt.
+        * fast/repaint/repaint-across-writing-mode-boundary-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/repaint-across-writing-mode-boundary-expected.txt.
+        * fast/repaint/repaint-during-scroll-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/repaint-during-scroll-expected.png.
+        * fast/repaint/repaint-during-scroll-with-zoom-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/repaint-during-scroll-with-zoom-expected.txt.
+        * fast/repaint/scroll-absolute-layer-with-reflection-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/scroll-absolute-layer-with-reflection-expected.png.
+        * fast/repaint/scroll-fixed-layer-with-no-visible-content-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/scroll-fixed-layer-with-no-visible-content-expected.png.
+        * fast/repaint/scroll-fixed-layer-with-reflection-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/scroll-fixed-layer-with-reflection-expected.png.
+        * fast/repaint/scroll-fixed-reflected-layer-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/scroll-fixed-reflected-layer-expected.png.
+        * fast/repaint/scroll-in-clipped-layer-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/scroll-in-clipped-layer-expected.png.
+        * fast/repaint/scroll-in-fixed-layer-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/scroll-in-fixed-layer-expected.png.
+        * fast/repaint/subtree-root-clip-2-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/subtree-root-clip-2-expected.png.
+        * fast/repaint/subtree-root-clip-3-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/subtree-root-clip-3-expected.png.
+        * fast/repaint/subtree-root-clip-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/subtree-root-clip-expected.png.
+        * fast/repaint/table-cell-vertical-overflow-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/table-cell-vertical-overflow-expected.txt.
+        * fast/repaint/table-col-background-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/table-col-background-expected.png.
+        * fast/repaint/table-outer-border-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/table-outer-border-expected.png.
+        * fast/repaint/table-overflow-auto-in-overflow-auto-scrolled-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/table-overflow-auto-in-overflow-auto-scrolled-expected.png.
+        * fast/repaint/table-overflow-hidden-in-overflow-hidden-scrolled-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/table-overflow-hidden-in-overflow-hidden-scrolled-expected.png.
+        * fast/repaint/table-overflow-scroll-in-overflow-scroll-scrolled-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/table-overflow-scroll-in-overflow-scroll-scrolled-expected.png.
+        * fast/repaint/table-row-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/table-row-expected.png.
+        * fast/repaint/table-section-overflow-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/table-section-overflow-expected.png.
+        * fast/repaint/transform-layout-repaint-expected.txt: Renamed from LayoutTests/platform/efl/fast/repaint/transform-layout-repaint-expected.txt.
+        * fast/repaint/view-background-from-body-1-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/view-background-from-body-1-expected.png.
+        * fast/repaint/view-background-from-body-2-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/view-background-from-body-2-expected.png.
+        * platform/efl-wk2/fast/repaint/selection-after-delete-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/selection-after-delete-expected.png.
+        * platform/efl-wk2/fast/repaint/selection-after-remove-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/selection-after-remove-expected.png.
+        * platform/efl-wk2/fast/repaint/selection-gap-overflow-scroll-2-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/selection-gap-overflow-scroll-2-expected.png.
+        * platform/gtk/fast/repaint/4774354-expected.txt: Removed.
+        * platform/gtk/fast/repaint/absolute-position-changed-expected.png: Removed.
+        * platform/gtk/fast/repaint/block-selection-gap-stale-cache-2-expected.png: Removed.
+        * platform/gtk/fast/repaint/block-selection-gap-stale-cache-expected.png: Removed.
+        * platform/gtk/fast/repaint/box-shadow-inset-repaint-expected.txt: Removed.
+        * platform/gtk/fast/repaint/button-spurious-layout-hint-expected.png: Removed.
+        * platform/gtk/fast/repaint/canvas-putImageData-expected.png: Removed.
+        * platform/gtk/fast/repaint/clip-with-layout-delta-expected.txt: Removed.
+        * platform/gtk/fast/repaint/content-into-overflow-expected.png: Removed.
+        * platform/gtk/fast/repaint/erase-overflow-expected.png: Removed.
+        * platform/gtk/fast/repaint/fixed-after-scroll-expected.png: Removed.
+        * platform/gtk/fast/repaint/fixed-and-absolute-position-scrolled-expected.png: Removed.
+        * platform/gtk/fast/repaint/fixed-position-transparency-with-overflow-expected.png: Removed.
+        * platform/gtk/fast/repaint/fixed-scale-expected.png: Removed.
+        * platform/gtk/fast/repaint/fixed-scroll-simple-expected.png: Removed.
+        * platform/gtk/fast/repaint/fixed-table-cell-expected.png: Removed.
+        * platform/gtk/fast/repaint/fixed-table-overflow-expected.png: Removed.
+        * platform/gtk/fast/repaint/fixed-table-overflow-zindex-expected.png: Removed.
+        * platform/gtk/fast/repaint/fixed-tranformed-expected.png: Removed.
+        * platform/gtk/fast/repaint/float-in-new-block-with-layout-delta-expected.png: Removed.
+        * platform/gtk/fast/repaint/inline-block-resize-expected.png: Removed.
+        * platform/gtk/fast/repaint/inline-horizontal-bt-overflow-expected.txt: Removed.
+        * platform/gtk/fast/repaint/inline-vertical-lr-overflow-expected.png: Removed.
+        * platform/gtk/fast/repaint/inline-vertical-lr-overflow-expected.txt: Removed.
+        * platform/gtk/fast/repaint/inline-vertical-rl-overflow-expected.png: Removed.
+        * platform/gtk/fast/repaint/inline-vertical-rl-overflow-expected.txt: Removed.
+        * platform/gtk/fast/repaint/intermediate-layout-position-clip-expected.png: Removed.
+        * platform/gtk/fast/repaint/japanese-rl-selection-clear-expected.txt: Removed.
+        * platform/gtk/fast/repaint/japanese-rl-selection-repaint-expected.txt: Removed.
+        * platform/gtk/fast/repaint/layer-hide-when-needs-layout-expected.png: Removed.
+        * platform/gtk/fast/repaint/layer-visibility-expected.png: Removed.
+        * platform/gtk/fast/repaint/line-in-scrolled-clipped-block-expected.txt: Removed.
+        * platform/gtk/fast/repaint/moving-shadow-on-path-expected.txt: Removed.
+        * platform/gtk/fast/repaint/overflow-auto-in-overflow-auto-scrolled-expected.png: Removed.
+        * platform/gtk/fast/repaint/overflow-clip-subtree-layout-expected.png: Removed.
+        * platform/gtk/fast/repaint/overflow-into-content-expected.png: Removed.
+        * platform/gtk/fast/repaint/overflow-scroll-in-overflow-scroll-scrolled-expected.png: Removed.
+        * platform/gtk/fast/repaint/reflection-repaint-test-expected.txt: Removed.
+        * platform/gtk/fast/repaint/repaint-across-writing-mode-boundary-expected.txt: Removed.
+        * platform/gtk/fast/repaint/repaint-during-scroll-expected.png: Removed.
+        * platform/gtk/fast/repaint/repaint-during-scroll-with-zoom-expected.txt: Removed.
+        * platform/gtk/fast/repaint/scroll-absolute-layer-with-reflection-expected.png: Removed.
+        * platform/gtk/fast/repaint/scroll-fixed-layer-with-no-visible-content-expected.png: Removed.
+        * platform/gtk/fast/repaint/scroll-fixed-layer-with-reflection-expected.png: Removed.
+        * platform/gtk/fast/repaint/scroll-fixed-reflected-layer-expected.png: Removed.
+        * platform/gtk/fast/repaint/scroll-in-clipped-layer-expected.png: Removed.
+        * platform/gtk/fast/repaint/scroll-in-fixed-layer-expected.png: Removed.
+        * platform/gtk/fast/repaint/subtree-root-clip-2-expected.png: Removed.
+        * platform/gtk/fast/repaint/subtree-root-clip-3-expected.png: Removed.
+        * platform/gtk/fast/repaint/subtree-root-clip-expected.png: Removed.
+        * platform/gtk/fast/repaint/table-cell-vertical-overflow-expected.txt: Removed.
+        * platform/gtk/fast/repaint/table-col-background-expected.png: Removed.
+        * platform/gtk/fast/repaint/table-outer-border-expected.png: Removed.
+        * platform/gtk/fast/repaint/table-overflow-auto-in-overflow-auto-scrolled-expected.png: Removed.
+        * platform/gtk/fast/repaint/table-overflow-hidden-in-overflow-hidden-scrolled-expected.png: Removed.
+        * platform/gtk/fast/repaint/table-overflow-scroll-in-overflow-scroll-scrolled-expected.png: Removed.
+        * platform/gtk/fast/repaint/table-row-expected.png: Removed.
+        * platform/gtk/fast/repaint/table-section-overflow-expected.png: Removed.
+        * platform/gtk/fast/repaint/transform-layout-repaint-expected.txt: Removed.
+        * platform/gtk/fast/repaint/view-background-from-body-1-expected.png: Removed.
+        * platform/gtk/fast/repaint/view-background-from-body-2-expected.png: Removed.
+        * platform/mac-wk2/fast/repaint/table-cell-collapsed-border-scroll-expected.txt: Removed.
+        * platform/mac/fast/repaint/box-shadow-inset-repaint-expected.txt: Removed.
+        * platform/mac/fast/repaint/float-overflow-expected.txt: Removed.
+        * platform/mac/fast/repaint/float-overflow-right-expected.txt: Removed.
+        * platform/mac/fast/repaint/inline-horizontal-bt-overflow-expected.txt: Removed.
+        * platform/mac/fast/repaint/inline-vertical-lr-overflow-expected.txt: Removed.
+        * platform/mac/fast/repaint/inline-vertical-rl-overflow-expected.txt: Removed.
+        * platform/mac/fast/repaint/table-cell-vertical-overflow-expected.txt: Removed.
+        * platform/win/fast/repaint/table-cell-collapsed-border-scroll-expected.txt: Removed.
+
+2013-11-03  Andreas Kling  <akling@apple.com>
+
         Optimize baselines: fast/forms
 
         Unreviewed; run "webkit-patch optimize-baselines fast/forms"
