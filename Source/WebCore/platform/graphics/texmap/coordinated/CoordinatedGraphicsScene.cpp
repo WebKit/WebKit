@@ -83,13 +83,8 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
     if (!currentRootLayer)
         return;
 
-    TextureMapperLayer* layer = currentRootLayer;
-
-    if (!layer)
-        return;
-
-    layer->setTextureMapper(m_textureMapper.get());
-    layer->applyAnimationsRecursively();
+    currentRootLayer->setTextureMapper(m_textureMapper.get());
+    currentRootLayer->applyAnimationsRecursively();
     m_textureMapper->beginPainting(PaintFlags);
     m_textureMapper->beginClip(TransformationMatrix(), clipRect);
 
@@ -105,12 +100,12 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
         currentRootLayer->setTransform(matrix);
     }
 
-    layer->paint();
+    currentRootLayer->paint();
     m_fpsCounter.updateFPSAndDisplay(m_textureMapper.get(), clipRect.location(), matrix);
     m_textureMapper->endClip();
     m_textureMapper->endPainting();
 
-    if (layer->descendantsOrSelfHaveRunningAnimations())
+    if (currentRootLayer->descendantsOrSelfHaveRunningAnimations())
         dispatchOnMainThread(bind(&CoordinatedGraphicsScene::updateViewport, this));
 }
 
