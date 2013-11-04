@@ -65,6 +65,8 @@ public:
 
     virtual bool isMutable() { return false; }
 
+    const Vector<RefPtr<APIObject>>& entries() { return m_entries; }
+
 protected:
     ImmutableArray();
     ImmutableArray(AdoptTag, APIObject** entries, size_t);

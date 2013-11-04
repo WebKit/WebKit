@@ -78,7 +78,11 @@ using namespace WebKit;
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [self retain];
+    if (!reinterpret_cast<ImmutableDictionary*>(&_dictionary)->isMutable())
+        return [self retain];
+
+    auto map = reinterpret_cast<ImmutableDictionary*>(&_dictionary)->map();
+    return ImmutableDictionary::adopt(map).leakRef()->wrapper();
 }
 
 #pragma mark WKObject protocol implementation
