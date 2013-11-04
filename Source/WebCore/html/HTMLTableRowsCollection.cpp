@@ -152,16 +152,16 @@ HTMLTableRowsCollection::HTMLTableRowsCollection(HTMLTableElement& table)
 {
 }
 
-PassRefPtr<HTMLTableRowsCollection> HTMLTableRowsCollection::create(Node& table, CollectionType type)
+PassRef<HTMLTableRowsCollection> HTMLTableRowsCollection::create(HTMLTableElement& table, CollectionType type)
 {
     ASSERT_UNUSED(type, type == TableRows);
-    return adoptRef(new HTMLTableRowsCollection(toHTMLTableElement(table)));
+    return adoptRef(*new HTMLTableRowsCollection(table));
 }
 
 Element* HTMLTableRowsCollection::virtualItemAfter(unsigned& offsetInArray, Element* previous) const
 {
     ASSERT_UNUSED(offsetInArray, !offsetInArray);
-    return rowAfter(&toHTMLTableElement(ownerNode()), toHTMLTableRowElement(previous));
+    return rowAfter(const_cast<HTMLTableElement*>(&tableElement()), toHTMLTableRowElement(previous));
 }
 
 }

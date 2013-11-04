@@ -30,15 +30,18 @@
 #define HTMLTableRowsCollection_h
 
 #include "HTMLCollection.h"
+#include "HTMLTableElement.h"
 
 namespace WebCore {
 
-class HTMLTableElement;
 class HTMLTableRowElement;
 
 class HTMLTableRowsCollection FINAL : public HTMLCollection {
 public:
-    static PassRefPtr<HTMLTableRowsCollection> create(Node&, CollectionType);
+    static PassRef<HTMLTableRowsCollection> create(HTMLTableElement&, CollectionType);
+
+    HTMLTableElement& tableElement() { return toHTMLTableElement(ownerNode()); }
+    const HTMLTableElement& tableElement() const { return toHTMLTableElement(ownerNode()); }
 
     static HTMLTableRowElement* rowAfter(HTMLTableElement*, HTMLTableRowElement*);
     static HTMLTableRowElement* lastRow(HTMLTableElement*);

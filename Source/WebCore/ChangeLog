@@ -1,5 +1,15 @@
 2013-11-04  Andreas Kling  <akling@apple.com>
 
+        HTMLTableRowsCollection is always rooted at a HTMLTableElement.
+        <https://webkit.org/b/123721>
+
+        Tighten up HTMLTableRowsCollection by making the create() helper
+        take a HTMLTableElement& and adding a HTMLSelectElement& getter.
+
+        Reviewed by Antti Koivisto.
+
+2013-11-04  Andreas Kling  <akling@apple.com>
+
         HTMLNameCollection and friends are always rooted at a Document.
         <https://webkit.org/b/123722>
 

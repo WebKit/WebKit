@@ -2966,8 +2966,7 @@ PassRefPtr<HTMLCollection> Element::ensureCachedHTMLCollection(CollectionType ty
 
     RefPtr<HTMLCollection> collection;
     if (type == TableRows) {
-        ASSERT(hasTagName(tableTag));
-        return ensureRareData().ensureNodeLists().addCacheWithAtomicName<HTMLTableRowsCollection>(*this, type);
+        return ensureRareData().ensureNodeLists().addCacheWithAtomicName<HTMLTableRowsCollection>(toHTMLTableElement(*this), type);
     } else if (type == SelectOptions) {
         return ensureRareData().ensureNodeLists().addCacheWithAtomicName<HTMLOptionsCollection>(toHTMLSelectElement(*this), type);
     } else if (type == FormControls) {
