@@ -138,6 +138,12 @@ PlatformCALayer::~PlatformCALayer()
     PlatformCALayerWinInternal* layerIntern = intern(this);
     CACFLayerSetUserData(m_layer.get(), 0);
 
+    // Clear the owner, which also clears it in the delegate to prevent attempts 
+    // to use the GraphicsLayerCA after it has been destroyed.
+    setOwner(0);
+
+    CACFLayerRemoveFromSuperlayer(m_layer.get());
+
     delete layerIntern;
 }
 
