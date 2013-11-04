@@ -13,5 +13,6 @@ xcopy /y /d "%CONFIGURATIONBUILDDIR%\include\WebCore\nptypes.h" "%CONFIGURATIONB
 
 mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\bin32\WebKit.resources"
 xcopy /y /d "%PROJECTDIR%..\..\WebKit.resources\*" "%CONFIGURATIONBUILDDIR%\bin32\WebKit.resources"
+if exist "%WEBKIT_LIBRARIES%\tools\VersionStamper\VersionStamper.exe" "%WEBKIT_LIBRARIES%\tools\VersionStamper\VersionStamper.exe" --verbose "%TARGETPATH%"
 
 if exist "%CONFIGURATIONBUILDDIR%\buildfailed" del "%CONFIGURATIONBUILDDIR%\buildfailed"
