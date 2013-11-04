@@ -1,3 +1,22 @@
+2013-11-04  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] image valued shape element margin can cause an ASSERT fail
+        https://bugs.webkit.org/show_bug.cgi?id=123743
+
+        Reviewed by Andreas Kling.
+
+        When margin-top is specified for a shape's element, the Y coordinates passed
+        to RasterShapeIntervals::getExcludedIntervals() may be negative. This is
+        because the incoming logical coordinates are relative to the content or
+        padding box, depending on the box-sizing property. The RasterShape::getExcludedIntervals()
+        method now clips the incoming Y coordinates to the shape's bounds before
+        accessing the shape's intervals.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-floats-margin-crash.html
+
+        * rendering/shapes/RasterShape.cpp:
+        (WebCore::RasterShapeIntervals::getExcludedIntervals):
+
 2013-11-04  Antti Koivisto  <antti@apple.com>
 
         Make LiveNodeListBase use Elements instead of Nodes
