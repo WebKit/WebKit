@@ -33,6 +33,7 @@
 #include "RenderFlowThread.h"
 #include "RenderFullScreen.h"
 #include "RenderGeometryMap.h"
+#include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLineBreak.h"
 #include "RenderTheme.h"
@@ -1073,10 +1074,9 @@ LayoutRect RenderInline::clippedOverflowRectForRepaint(const RenderLayerModelObj
     cb->computeRectForRepaint(repaintContainer, repaintRect);
 
     if (outlineSize) {
-        for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
-            if (!curr->isText())
-                repaintRect.unite(curr->rectWithOutlineForRepaint(repaintContainer, outlineSize));
-        }
+        auto children = childrenOfType<RenderElement>(*this);
+        for (auto child = children.begin(), end = children.end(); child != end; ++child)
+            repaintRect.unite(child->rectWithOutlineForRepaint(repaintContainer, outlineSize));
 
         if (RenderBoxModelObject* continuation = this->continuation()) {
             if (!continuation->isInline() && continuation->parent())
@@ -1090,10 +1090,9 @@ LayoutRect RenderInline::clippedOverflowRectForRepaint(const RenderLayerModelObj
 LayoutRect RenderInline::rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const
 {
     LayoutRect r(RenderBoxModelObject::rectWithOutlineForRepaint(repaintContainer, outlineWidth));
-    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
-        if (!curr->isText())
-            r.unite(curr->rectWithOutlineForRepaint(repaintContainer, outlineWidth));
-    }
+    auto children = childrenOfType<RenderElement>(*this);
+    for (auto child = children.begin(), end = children.end(); child != end; ++child)
+        r.unite(child->rectWithOutlineForRepaint(repaintContainer, outlineWidth));
     return r;
 }
 
@@ -1428,16 +1427,17 @@ void RenderInline::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint& 
     AbsoluteRectsGeneratorContext context(rects, additionalOffset);
     generateLineBoxRects(context);
 
-    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
-        if (!curr->isText() && !curr->isListMarker()) {
-            FloatPoint pos(additionalOffset);
-            // FIXME: This doesn't work correctly with transforms.
-            if (curr->hasLayer()) 
-                pos = curr->localToContainerPoint(FloatPoint(), paintContainer);
-            else if (curr->isBox())
-                pos.move(toRenderBox(curr)->locationOffset());
-            curr->addFocusRingRects(rects, flooredIntPoint(pos), paintContainer);
-        }
+    auto children = childrenOfType<RenderElement>(*this);
+    for (auto child = children.begin(), end = children.end(); child != end; ++child) {
+        if (child->isListMarker())
+            continue;
+        FloatPoint pos(additionalOffset);
+        // FIXME: This doesn't work correctly with transforms.
+        if (child->hasLayer())
+            pos = child->localToContainerPoint(FloatPoint(), paintContainer);
+        else if (child->isBox())
+            pos.move(toRenderBox(*child).locationOffset());
+        child->addFocusRingRects(rects, flooredIntPoint(pos), paintContainer);
     }
 
     if (RenderBoxModelObject* continuation = this->continuation()) {

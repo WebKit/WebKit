@@ -1,5 +1,15 @@
 2013-11-04  Andreas Kling  <akling@apple.com>
 
+        Some more RenderChildIterator deployment.
+        <https://webkit.org/b/123735>
+
+        Convert another handful of loops to use childrenOfType<RenderFoo>
+        iterators, mostly for skipping over uninteresting text renderers.
+
+        Reviewed by Antti Koivisto.
+
+2013-11-04  Andreas Kling  <akling@apple.com>
+
         LabelsNodeList always is always rooted at a LabelableElement.
         <https://webkit.org/b/123730>
 

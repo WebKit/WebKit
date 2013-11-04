@@ -33,6 +33,7 @@
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
 #include "Page.h"
+#include "RenderIterator.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceContainer.h"
@@ -293,12 +294,9 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paint
 
         if (continueRendering) {
             childPaintInfo.updateSubtreePaintRootForChildren(this);
-            for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-                // FIXME: Can this ever have RenderText children?
-                if (!child->isRenderElement())
-                    continue;
-                toRenderElement(child)->paint(childPaintInfo, location());
-            }
+            auto children = childrenOfType<RenderElement>(*this);
+            for (auto child = children.begin(), end = children.end(); child != end; ++child)
+                child->paint(childPaintInfo, location());
         }
     }
 
