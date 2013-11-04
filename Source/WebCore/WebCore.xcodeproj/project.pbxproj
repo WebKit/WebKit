@@ -4660,6 +4660,7 @@
 		B59DD6A611902A62007E9684 /* JSSQLStatementCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B59DD6A411902A62007E9684 /* JSSQLStatementCallback.cpp */; };
 		B59DD6A911902A71007E9684 /* JSSQLStatementErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B59DD6A711902A71007E9684 /* JSSQLStatementErrorCallback.h */; };
 		B59DD6AA11902A71007E9684 /* JSSQLStatementErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B59DD6A811902A71007E9684 /* JSSQLStatementErrorCallback.cpp */; };
+		B59ED23B18272679006D564C /* RenderAncestorIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = B59ED23A18272679006D564C /* RenderAncestorIterator.h */; };
 		B5A684220FFABE9800D24689 /* SQLiteFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B5A684210FFABE9800D24689 /* SQLiteFileSystem.h */; };
 		B5A684240FFABEAA00D24689 /* SQLiteFileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5A684230FFABEAA00D24689 /* SQLiteFileSystem.cpp */; };
 		B5B7A17017C10AA800E4AA0A /* ElementData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5B7A16F17C1080600E4AA0A /* ElementData.cpp */; };
@@ -5581,8 +5582,6 @@
 		E187056316E54A0D00585E97 /* MainThreadTask.h in Headers */ = {isa = PBXBuildFile; fileRef = E187056216E54A0D00585E97 /* MainThreadTask.h */; };
 		E18772F1126E2629003DD586 /* Language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18772F0126E2629003DD586 /* Language.cpp */; };
 		E19727161820549E00592D51 /* CryptoKeyType.h in Headers */ = {isa = PBXBuildFile; fileRef = E19727151820549E00592D51 /* CryptoKeyType.h */; };
-		E19AC3F71824E5D100349426 /* CryptoAlgorithmAesKeyGenParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E19AC3F61824E5D100349426 /* CryptoAlgorithmAesKeyGenParams.h */; };
-		E19AC3F9182566F700349426 /* CryptoKeyMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E19AC3F8182566F700349426 /* CryptoKeyMac.cpp */; };
 		E19AC3E21824DC6900349426 /* CryptoAlgorithmSHA224Mac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E19AC3DE1824DC6900349426 /* CryptoAlgorithmSHA224Mac.cpp */; };
 		E19AC3E31824DC6900349426 /* CryptoAlgorithmSHA256Mac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E19AC3DF1824DC6900349426 /* CryptoAlgorithmSHA256Mac.cpp */; };
 		E19AC3E41824DC6900349426 /* CryptoAlgorithmSHA384Mac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E19AC3E01824DC6900349426 /* CryptoAlgorithmSHA384Mac.cpp */; };
@@ -5595,6 +5594,8 @@
 		E19AC3F31824DC7900349426 /* CryptoAlgorithmSHA384.h in Headers */ = {isa = PBXBuildFile; fileRef = E19AC3EB1824DC7900349426 /* CryptoAlgorithmSHA384.h */; };
 		E19AC3F41824DC7900349426 /* CryptoAlgorithmSHA512.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E19AC3EC1824DC7900349426 /* CryptoAlgorithmSHA512.cpp */; };
 		E19AC3F51824DC7900349426 /* CryptoAlgorithmSHA512.h in Headers */ = {isa = PBXBuildFile; fileRef = E19AC3ED1824DC7900349426 /* CryptoAlgorithmSHA512.h */; };
+		E19AC3F71824E5D100349426 /* CryptoAlgorithmAesKeyGenParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E19AC3F61824E5D100349426 /* CryptoAlgorithmAesKeyGenParams.h */; };
+		E19AC3F9182566F700349426 /* CryptoKeyMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E19AC3F8182566F700349426 /* CryptoKeyMac.cpp */; };
 		E19DA29C18189ADD00088BC8 /* CryptoAlgorithmHmacKeyParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E19DA29B18189ADD00088BC8 /* CryptoAlgorithmHmacKeyParams.h */; };
 		E1A1470811102B1500EEC0F3 /* ContainerNodeAlgorithms.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A1470711102B1500EEC0F3 /* ContainerNodeAlgorithms.h */; };
 		E1A3162D134BC32D007C9A4F /* WebNSAttributedStringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A3162B134BC32D007C9A4F /* WebNSAttributedStringExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11584,6 +11585,7 @@
 		B59DD6A411902A62007E9684 /* JSSQLStatementCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLStatementCallback.cpp; sourceTree = "<group>"; };
 		B59DD6A711902A71007E9684 /* JSSQLStatementErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLStatementErrorCallback.h; sourceTree = "<group>"; };
 		B59DD6A811902A71007E9684 /* JSSQLStatementErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLStatementErrorCallback.cpp; sourceTree = "<group>"; };
+		B59ED23A18272679006D564C /* RenderAncestorIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderAncestorIterator.h; sourceTree = "<group>"; };
 		B5A684210FFABE9800D24689 /* SQLiteFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLiteFileSystem.h; path = sql/SQLiteFileSystem.h; sourceTree = "<group>"; };
 		B5A684230FFABEAA00D24689 /* SQLiteFileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLiteFileSystem.cpp; path = sql/SQLiteFileSystem.cpp; sourceTree = "<group>"; };
 		B5B7A16E17C1048000E4AA0A /* ElementData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ElementData.h; sourceTree = "<group>"; };
@@ -12612,8 +12614,6 @@
 		E187056216E54A0D00585E97 /* MainThreadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainThreadTask.h; sourceTree = "<group>"; };
 		E18772F0126E2629003DD586 /* Language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Language.cpp; sourceTree = "<group>"; };
 		E19727151820549E00592D51 /* CryptoKeyType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyType.h; sourceTree = "<group>"; };
-		E19AC3F61824E5D100349426 /* CryptoAlgorithmAesKeyGenParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAesKeyGenParams.h; sourceTree = "<group>"; };
-		E19AC3F8182566F700349426 /* CryptoKeyMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoKeyMac.cpp; sourceTree = "<group>"; };
 		E19AC3DE1824DC6900349426 /* CryptoAlgorithmSHA224Mac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoAlgorithmSHA224Mac.cpp; path = mac/CryptoAlgorithmSHA224Mac.cpp; sourceTree = "<group>"; };
 		E19AC3DF1824DC6900349426 /* CryptoAlgorithmSHA256Mac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoAlgorithmSHA256Mac.cpp; path = mac/CryptoAlgorithmSHA256Mac.cpp; sourceTree = "<group>"; };
 		E19AC3E01824DC6900349426 /* CryptoAlgorithmSHA384Mac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoAlgorithmSHA384Mac.cpp; path = mac/CryptoAlgorithmSHA384Mac.cpp; sourceTree = "<group>"; };
@@ -12626,6 +12626,8 @@
 		E19AC3EB1824DC7900349426 /* CryptoAlgorithmSHA384.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmSHA384.h; sourceTree = "<group>"; };
 		E19AC3EC1824DC7900349426 /* CryptoAlgorithmSHA512.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmSHA512.cpp; sourceTree = "<group>"; };
 		E19AC3ED1824DC7900349426 /* CryptoAlgorithmSHA512.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmSHA512.h; sourceTree = "<group>"; };
+		E19AC3F61824E5D100349426 /* CryptoAlgorithmAesKeyGenParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAesKeyGenParams.h; sourceTree = "<group>"; };
+		E19AC3F8182566F700349426 /* CryptoKeyMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoKeyMac.cpp; sourceTree = "<group>"; };
 		E19DA29B18189ADD00088BC8 /* CryptoAlgorithmHmacKeyParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CryptoAlgorithmHmacKeyParams.h; path = parameters/CryptoAlgorithmHmacKeyParams.h; sourceTree = "<group>"; };
 		E1A1470711102B1500EEC0F3 /* ContainerNodeAlgorithms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContainerNodeAlgorithms.h; sourceTree = "<group>"; };
 		E1A3162B134BC32D007C9A4F /* WebNSAttributedStringExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNSAttributedStringExtras.h; sourceTree = "<group>"; };
@@ -20760,6 +20762,7 @@
 				B2B1F7140D00CAA8004AEA64 /* PointerEventsHitRules.cpp */,
 				B2B1F7150D00CAA8004AEA64 /* PointerEventsHitRules.h */,
 				6C70A81417707C49009A446E /* RegionOversetState.h */,
+				B59ED23A18272679006D564C /* RenderAncestorIterator.h */,
 				BCEA4820097D93020094C9E4 /* RenderBlock.cpp */,
 				BCEA4821097D93020094C9E4 /* RenderBlock.h */,
 				BCFB45F417D8E49400444446 /* RenderBlockFlow.cpp */,
@@ -22873,6 +22876,7 @@
 				A8EA7CB50A192B9C00A8EF5F /* HTMLParagraphElement.h in Headers */,
 				A871D4580A127CBC00B12A68 /* HTMLParamElement.h in Headers */,
 				BC588AF00BFA6CF900EE679E /* HTMLParserErrorCodes.h in Headers */,
+				B59ED23B18272679006D564C /* RenderAncestorIterator.h in Headers */,
 				93E2A307123E9DC0009FE12A /* HTMLParserIdioms.h in Headers */,
 				973F418A169B95FF0006BF60 /* HTMLParserOptions.h in Headers */,
 				449B19F50FA72ECE0015CA4A /* HTMLParserQuirks.h in Headers */,

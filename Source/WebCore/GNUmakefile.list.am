@@ -4294,6 +4294,7 @@ webcore_sources += \
 	Source/WebCore/rendering/PointerEventsHitRules.cpp \
 	Source/WebCore/rendering/PointerEventsHitRules.h \
 	Source/WebCore/rendering/RegionOversetState.h \
+	Source/WebCore/rendering/RenderAncestorIterator.h \
 	Source/WebCore/rendering/RenderBlock.cpp \
 	Source/WebCore/rendering/RenderBlock.h \
     Source/WebCore/rendering/RenderBlockFlow.cpp \

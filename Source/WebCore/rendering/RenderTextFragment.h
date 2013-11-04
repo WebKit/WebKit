@@ -61,7 +61,7 @@ private:
     virtual void willBeDestroyed() OVERRIDE;
 
     virtual UChar previousCharacter() const OVERRIDE;
-    RenderBlock* blockForAccompanyingFirstLetter() const;
+    RenderBlock* blockForAccompanyingFirstLetter();
 
     unsigned m_start;
     unsigned m_end;

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2013 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,6 +37,7 @@
 #include "MouseEvent.h"
 #include "PaintInfo.h"
 #include "RenderFrame.h"
+#include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "Settings.h"
@@ -708,10 +709,9 @@ bool RenderFrameSet::userResize(MouseEvent* evt)
 void RenderFrameSet::setIsResizing(bool isResizing)
 {
     m_isResizing = isResizing;
-    for (auto ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
-        if (ancestor->isFrameSet())
-            toRenderFrameSet(ancestor)->m_isChildResizing = isResizing;
-    }
+    auto ancestors = ancestorsOfType<RenderFrameSet>(*this);
+    for (auto ancestor = ancestors.begin(), end = ancestors.end(); ancestor != end; ++ancestor)
+        ancestor->m_isChildResizing = isResizing;
     frame().eventHandler().setResizingFrameSet(isResizing ? &frameSetElement() : 0);
 }
 

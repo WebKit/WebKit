@@ -24,6 +24,7 @@
 #include "RenderTextFragment.h"
 
 #include "RenderBlock.h"
+#include "RenderIterator.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -121,15 +122,16 @@ UChar RenderTextFragment::previousCharacter() const
     return RenderText::previousCharacter();
 }
 
-RenderBlock* RenderTextFragment::blockForAccompanyingFirstLetter() const
+RenderBlock* RenderTextFragment::blockForAccompanyingFirstLetter()
 {
     if (!m_firstLetter)
-        return 0;
-    for (RenderObject* block = m_firstLetter->parent(); block; block = block->parent()) {
-        if (block->style().hasPseudoStyle(FIRST_LETTER) && block->canHaveChildren() && block->isRenderBlock())
-            return toRenderBlock(block);
+        return nullptr;
+    auto ancestorBlocks = ancestorsOfType<RenderBlock>(*m_firstLetter);
+    for (auto block = ancestorBlocks.begin(), end = ancestorBlocks.end(); block != end; ++block) {
+        if (block->style().hasPseudoStyle(FIRST_LETTER) && block->canHaveChildren())
+            return &*block;
     }
-    return 0;
+    return nullptr;
 }
 
 } // namespace WebCore

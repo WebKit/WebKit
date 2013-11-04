@@ -1,3 +1,25 @@
+2013-11-04  Andreas Kling  <akling@apple.com>
+
+        Add an ancestor renderer iterator.
+        <https://webkit.org/b/123718>
+
+        Add ancestor iterators for renderers, analogous to element ancestor
+        iterators. They walk the chain of parent renderers, stopping at each
+        ancestor of a certain type.
+
+        Just like child renderer iterators, this requires isRendererOfType()
+        to be implemented for the targeted renderer class.
+
+        You use them like this:
+
+        auto frameSets = ancestorsOfType<RenderFrameSet>(*this);
+        for (auto frameSet = frameSets.begin(), end = frameSets.end(); frameSet != end; ++frameSet)
+            frameSet->thisOrThat();
+
+        To complete the patch, I put them to use in a couple of random places.
+
+        Reviewed by Antti Koivisto.
+
 2013-11-04  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Use auto keyword to clean-up for loops

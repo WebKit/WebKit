@@ -235,13 +235,13 @@ void RenderBox::willBeDestroyed()
 RenderBlockFlow* RenderBox::outermostBlockContainingFloatingObject()
 {
     ASSERT(isFloating());
-    RenderBlockFlow* parentBlock = 0;
-    for (auto curr = parent(); curr && !curr->isRenderView(); curr = curr->parent()) {
-        if (curr->isRenderBlockFlow()) {
-            RenderBlockFlow* currBlock = toRenderBlockFlow(curr);
-            if (!parentBlock || currBlock->containsFloat(*this))
-                parentBlock = currBlock;
-        }
+    RenderBlockFlow* parentBlock = nullptr;
+    auto ancestors = ancestorsOfType<RenderBlockFlow>(*this);
+    for (auto ancestor = ancestors.begin(), end = ancestors.end(); ancestor != end; ++ancestor) {
+        if (ancestor->isRenderView())
+            break;
+        if (!parentBlock || ancestor->containsFloat(*this))
+            parentBlock = &*ancestor;
     }
     return parentBlock;
 }

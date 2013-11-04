@@ -419,6 +419,8 @@ public:
 
     virtual void updateHitTestResult(HitTestResult&, const LayoutPoint&) OVERRIDE;
 
+    virtual bool canHaveChildren() const OVERRIDE { return true; }
+
 protected:
     virtual void willBeDestroyed() OVERRIDE;
 
@@ -525,7 +527,6 @@ private:
     virtual const char* renderName() const OVERRIDE;
 
     virtual bool isInlineBlockOrInlineTable() const OVERRIDE FINAL { return isInline() && isReplaced(); }
-    virtual bool canHaveChildren() const OVERRIDE { return true; }
 
     void makeChildrenNonInline(RenderObject* insertionPoint = nullptr);
     virtual void removeLeftoverAnonymousBlock(RenderBlock* child);

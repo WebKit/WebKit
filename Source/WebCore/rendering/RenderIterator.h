@@ -44,6 +44,7 @@ public:
 
     RenderIterator& traverseNextSibling();
     RenderIterator& traversePreviousSibling();
+    RenderIterator& traverseAncestor();
 
 private:
     const RenderElement* m_root;
@@ -64,6 +65,7 @@ public:
 
     RenderConstIterator& traverseNextSibling();
     RenderConstIterator& traversePreviousSibling();
+    RenderConstIterator& traverseAncestor();
 
 private:
     const RenderElement* m_root;
@@ -110,6 +112,16 @@ inline T* previousSibling(U& current)
     return static_cast<T*>(object);
 }
 
+template <typename T>
+inline T* findAncestorOfType(const RenderObject& current)
+{
+    for (auto ancestor = current.parent(); ancestor; ancestor = ancestor->parent()) {
+        if (isRendererOfType<const T>(*ancestor))
+            return static_cast<T*>(ancestor);
+    }
+    return nullptr;
+}
+
 } // namespace WebCore::RenderTraversal
 
 // RenderIterator
@@ -141,6 +153,15 @@ inline RenderIterator<T>& RenderIterator<T>::traversePreviousSibling()
 {
     ASSERT(m_current);
     m_current = RenderTraversal::previousSibling<T>(*m_current);
+    return *this;
+}
+
+template <typename T>
+inline RenderIterator<T>& RenderIterator<T>::traverseAncestor()
+{
+    ASSERT(m_current);
+    ASSERT(m_current != m_root);
+    m_current = RenderTraversal::findAncestorOfType<T>(*m_current);
     return *this;
 }
 
@@ -203,6 +224,16 @@ inline RenderConstIterator<T>& RenderConstIterator<T>::traversePreviousSibling()
     return *this;
 }
 
+
+template <typename T>
+inline RenderConstIterator<T>& RenderConstIterator<T>::traverseAncestor()
+{
+    ASSERT(m_current);
+    ASSERT(m_current != m_root);
+    m_current = RenderTraversal::findAncestorOfType<const T>(*m_current);
+    return *this;
+}
+
 template <typename T>
 inline const T& RenderConstIterator<T>::operator*() const
 {
@@ -232,6 +263,7 @@ inline bool RenderConstIterator<T>::operator!=(const RenderConstIterator& other)
 
 }
 
+#include "RenderAncestorIterator.h"
 #include "RenderChildIterator.h"
 
 #endif

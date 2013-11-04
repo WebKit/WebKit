@@ -31,6 +31,7 @@
 #include "InlineTextBox.h"
 #include "LayoutRepainter.h"
 #include "RenderFlowThread.h"
+#include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderNamedFlowFragment.h"
 #include "RenderText.h"
@@ -1734,19 +1735,17 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
     if (diff == StyleDifferenceLayout && s_canPropagateFloatIntoSibling && !canPropagateFloatIntoSibling && hasOverhangingFloats()) {
         RenderBlockFlow* parentBlock = this;
         const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-        auto end = floatingObjectSet.end();
 
-        for (auto curr = parent(); curr && !curr->isRenderView(); curr = curr->parent()) {
-            if (curr->isRenderBlockFlow()) {
-                RenderBlockFlow* currBlock = toRenderBlockFlow(curr);
-
-                if (currBlock->hasOverhangingFloats()) {
-                    for (auto it = floatingObjectSet.begin(); it != end; ++it) {
-                        RenderBox& renderer = (*it)->renderer();
-                        if (currBlock->hasOverhangingFloat(renderer)) {
-                            parentBlock = currBlock;
-                            break;
-                        }
+        auto ancestors = ancestorsOfType<RenderBlockFlow>(*this);
+        for (auto ancestor = ancestors.begin(), end = ancestors.end(); ancestor != end; ++ancestor) {
+            if (ancestor->isRenderView())
+                break;
+            if (ancestor->hasOverhangingFloats()) {
+                for (auto it = floatingObjectSet.begin(), end = floatingObjectSet.end(); it != end; ++it) {
+                    RenderBox& renderer = (*it)->renderer();
+                    if (ancestor->hasOverhangingFloat(renderer)) {
+                        parentBlock = &*ancestor;
+                        break;
                     }
                 }
             }
