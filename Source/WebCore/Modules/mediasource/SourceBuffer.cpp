@@ -35,6 +35,7 @@
 
 #include "Event.h"
 #include "GenericEventQueue.h"
+#include "HTMLMediaElement.h"
 #include "Logging.h"
 #include "MediaSource.h"
 #include "SourceBufferPrivate.h"
@@ -60,11 +61,15 @@ SourceBuffer::SourceBuffer(PassRef<SourceBufferPrivate> sourceBufferPrivate, Med
 {
     ASSERT(m_private);
     ASSERT(m_source);
+
+    m_private->setClient(this);
 }
 
 SourceBuffer::~SourceBuffer()
 {
     ASSERT(isRemoved());
+
+    m_private->setClient(0);
 }
 
 PassRefPtr<TimeRanges> SourceBuffer::buffered(ExceptionCode& ec) const
@@ -280,6 +285,29 @@ void SourceBuffer::appendBufferTimerFired(Timer<SourceBuffer>*)
 
     // 5. Queue a task to fire a simple event named updateend at this SourceBuffer object.
     scheduleEvent(eventNames().updateendEvent);
+}
+
+void SourceBuffer::sourceBufferPrivateDidEndStream(SourceBufferPrivate*, const WTF::AtomicString& error)
+{
+    m_source->endOfStream(error, IgnorableExceptionCode());
+}
+
+void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBufferPrivate*, const InitializationSegment&)
+{
+}
+
+void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, PassRefPtr<MediaSample>)
+{
+}
+
+bool SourceBuffer::sourceBufferPrivateHasAudio(const SourceBufferPrivate*) const
+{
+    return false;
+}
+
+bool SourceBuffer::sourceBufferPrivateHasVideo(const SourceBufferPrivate*) const
+{
+    return false;
 }
 
 } // namespace WebCore

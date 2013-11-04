@@ -37,10 +37,14 @@
 
 namespace WebCore {
 
+class SourceBufferPrivateClient;
+class TimeRanges;
+
 class SourceBufferPrivate : public RefCounted<SourceBufferPrivate> {
 public:
     virtual ~SourceBufferPrivate() { }
 
+    virtual void setClient(SourceBufferPrivateClient*) = 0;
     virtual PassRefPtr<TimeRanges> buffered() = 0;
     virtual void append(const unsigned char* data, unsigned length) = 0;
     virtual void abort() = 0;

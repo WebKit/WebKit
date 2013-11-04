@@ -38,6 +38,7 @@
 #include "ExceptionCode.h"
 #include "GenericEventQueue.h"
 #include "ScriptWrappable.h"
+#include "SourceBufferPrivateClient.h"
 #include "Timer.h"
 #include <runtime/ArrayBufferView.h>
 #include <wtf/PassRefPtr.h>
@@ -49,7 +50,7 @@ class MediaSource;
 class SourceBufferPrivate;
 class TimeRanges;
 
-class SourceBuffer FINAL : public RefCounted<SourceBuffer>, public ActiveDOMObject, public EventTargetWithInlineData, public ScriptWrappable {
+class SourceBuffer FINAL : public RefCounted<SourceBuffer>, public ActiveDOMObject, public EventTargetWithInlineData, public ScriptWrappable, public SourceBufferPrivateClient {
 public:
     static PassRef<SourceBuffer> create(PassRef<SourceBufferPrivate>, MediaSource*);
 
@@ -85,6 +86,13 @@ protected:
 
 private:
     SourceBuffer(PassRef<SourceBufferPrivate>, MediaSource*);
+
+    // SourceBufferPrivateClient
+    virtual void sourceBufferPrivateDidEndStream(SourceBufferPrivate*, const WTF::AtomicString&);
+    virtual void sourceBufferPrivateDidReceiveInitializationSegment(SourceBufferPrivate*, const InitializationSegment&) OVERRIDE;
+    virtual void sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, PassRefPtr<MediaSample>) OVERRIDE;
+    virtual bool sourceBufferPrivateHasAudio(const SourceBufferPrivate*) const OVERRIDE;
+    virtual bool sourceBufferPrivateHasVideo(const SourceBufferPrivate*) const OVERRIDE;
 
     bool isRemoved() const;
     void scheduleEvent(const AtomicString& eventName);

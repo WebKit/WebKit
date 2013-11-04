@@ -1,3 +1,28 @@
+2013-10-25  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Add a SourceBufferPrivateClient interface for platform -> html communication.
+        https://bugs.webkit.org/show_bug.cgi?id=123373
+
+        Reviewed by Eric Carlson.
+
+        To enable communication between SourceBuffer and SourceBufferPrivate without introducing
+        layering violations, add a new interface class SourceBufferPrivateInterface from which
+        SourceBuffer will inherit.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::SourceBuffer): Set the private's client.
+        (WebCore::SourceBuffer::~SourceBuffer): Clear the private's client.
+        (WebCore::SourceBuffer::sourceBufferPrivateDidEndStream): Added stub.
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment): Hinno.
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample): Ditto.
+        (WebCore::SourceBuffer::sourceBufferPrivateHasAudio): Ditto.
+        (WebCore::SourceBuffer::sourceBufferPrivateHasVideo): Ditto.
+        * Modules/mediasource/SourceBuffer.h:
+        * WebCore.xcodeproj/project.pbxproj: Add new files to project.
+        * platform/graphics/SourceBufferPrivate.h:
+        * platform/graphics/SourceBufferPrivateClient.h: Added.
+        (WebCore::SourceBufferPrivateClient::~SourceBufferPrivateClient): Empty destructor.
+
 2013-11-01  Jer Noble  <jer.noble@apple.com>
 
         [PluginProxy] Add a setting to disable video plugin proxy support in HTMLMediaElement.
