@@ -3608,6 +3608,10 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     coreSettings.setCSSCustomFilterEnabled(settingsPrivate->enableCSSShaders);
 #endif
 
+#if ENABLE(CSS_REGIONS)
+    WebCore::RuntimeEnabledFeatures::sharedFeatures().setCSSRegionsEnabled(true);
+#endif
+
     // Use mock scrollbars if in DumpRenderTree mode (i.e. testing layout tests).
     coreSettings.setMockScrollbarsEnabled(DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled());
 
