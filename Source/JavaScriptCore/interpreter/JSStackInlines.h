@@ -46,7 +46,7 @@ inline Register* JSStack::getTopOfStack()
 
 inline Register* JSStack::getStartOfFrame(CallFrame* frame)
 {
-    CallFrame* callerFrame = frame->callerFrameNoFlags();
+    CallFrame* callerFrame = frame->callerFrameSkippingVMEntrySentinel();
     return getTopOfFrame(callerFrame);
 }
 
@@ -64,7 +64,7 @@ inline CallFrame* JSStack::pushFrame(CallFrame* callerFrame,
             paddedArgsCount = numParameters;
     }
 
-    Register* newCallFrameSlot = oldEnd - paddedArgsCount - JSStack::CallFrameHeaderSize;
+    Register* newCallFrameSlot = oldEnd - paddedArgsCount - (2 * JSStack::CallFrameHeaderSize);
 
 #if ENABLE(DEBUG_JSSTACK)
     newCallFrameSlot -= JSStack::FenceSize;
@@ -78,6 +78,10 @@ inline CallFrame* JSStack::pushFrame(CallFrame* callerFrame,
     if (!grow(newEnd))
         return 0;
 
+    // Compute the address of the new VM sentinal frame for this invocation:
+    CallFrame* newVMEntrySentinalFrame = CallFrame::create(newCallFrameSlot + paddedArgsCount + JSStack::CallFrameHeaderSize);
+    ASSERT(!!newVMEntrySentinalFrame);
+
     // Compute the address of the new frame for this invocation:
     CallFrame* newCallFrame = CallFrame::create(newCallFrameSlot);
     ASSERT(!!newCallFrame);
@@ -87,9 +91,11 @@ inline CallFrame* JSStack::pushFrame(CallFrame* callerFrame,
     // the top frame on the stack.
     callerFrame = m_topCallFrame;
 
-    // Initialize the frame header:
-    newCallFrame->init(codeBlock, 0, scope,
-        callerFrame->addHostCallFrameFlag(), argsCount, callee);
+    // Initialize the VM sentinal frame header:
+    newVMEntrySentinalFrame->initializeVMEntrySentinelFrame(callerFrame);
+
+    // Initialize the callee frame header:
+    newCallFrame->init(codeBlock, 0, scope, newVMEntrySentinalFrame, argsCount, callee);
 
     ASSERT(!!newCallFrame->scope());
 
@@ -112,7 +118,9 @@ inline CallFrame* JSStack::pushFrame(CallFrame* callerFrame,
 inline void JSStack::popFrame(CallFrame* frame)
 {
     validateFence(frame, __FUNCTION__, __LINE__);
-    CallFrame* callerFrame = frame->callerFrameNoFlags();
+
+    // Pop off the callee frame and the sentinal frame.
+    CallFrame* callerFrame = frame->callerFrame()->vmEntrySentinelCallerFrame();
 
     // Pop to the caller:
     m_topCallFrame = callerFrame;
@@ -150,6 +158,8 @@ inline JSValue JSStack::generateFenceValue(size_t argIndex)
 //                     | Locals of previous frame             |
 //                     |--------------------------------------|
 //                     | *** the Fence ***                    |
+//                     |--------------------------------------|
+//                     | VM entry sentinal frame header       |
 //                     |--------------------------------------|
 //                     | Args of new frame                    |
 //                     |--------------------------------------|

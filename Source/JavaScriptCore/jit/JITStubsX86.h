@@ -51,6 +51,7 @@ asm (
 HIDE_SYMBOL(ctiTrampoline) "\n"
 SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "pushl %ebp" "\n"
+    "movl %ebp, %eax" "\n" // Save previous frame pointer
     "movl %esp, %ebp" "\n"
     "pushl %esi" "\n"
     "pushl %edi" "\n"
@@ -62,6 +63,8 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     // by 0x1c bytes.
     "subl $0x1c, %esp" "\n"
     "movl 0x38(%esp), %edi" "\n"
+    "movl (%edi), %ebx" "\n" // Put the previous frame pointer in the VM entry sentinal frame above us
+    "movl %eax, (%ebx)" "\n"
     "call *0x30(%esp)" "\n"
     "addl $0x1c, %esp" "\n"
 
@@ -247,6 +250,7 @@ extern "C" {
     {
         __asm {
             push ebp;
+            mov eax, ebp;
             mov ebp, esp;
             push esi;
             push edi;
@@ -254,6 +258,8 @@ extern "C" {
             sub esp, 0x1c;
             mov ecx, esp;
             mov edi, [esp + 0x38];
+            mov ebx, [edi];
+            mov [ebx], eax;
             call [esp + 0x30];
             add esp, 0x1c;
             pop ebx;

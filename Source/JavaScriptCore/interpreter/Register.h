@@ -54,11 +54,13 @@ namespace JSC {
         JSValue jsValue() const;
         EncodedJSValue encodedJSValue() const;
         
+        Register& operator=(CallFrame*);
         Register& operator=(CodeBlock*);
         Register& operator=(JSScope*);
 
         int32_t i() const;
         JSActivation* activation() const;
+        CallFrame* callFrame() const;
         CodeBlock* codeBlock() const;
         JSObject* function() const;
         JSPropertyNameIterator* propertyNameIterator() const;
@@ -85,6 +87,7 @@ namespace JSC {
     private:
         union {
             EncodedJSValue value;
+            CallFrame* callFrame;
             CodeBlock* codeBlock;
             EncodedValueDescriptor encodedValue;
             double number;
@@ -122,6 +125,12 @@ namespace JSC {
 
     // Interpreter functions
 
+    ALWAYS_INLINE Register& Register::operator=(CallFrame* callFrame)
+    {
+        u.callFrame = callFrame;
+        return *this;
+    }
+
     ALWAYS_INLINE Register& Register::operator=(CodeBlock* codeBlock)
     {
         u.codeBlock = codeBlock;
@@ -133,6 +142,11 @@ namespace JSC {
         return jsValue().asInt32();
     }
 
+    ALWAYS_INLINE CallFrame* Register::callFrame() const
+    {
+        return u.callFrame;
+    }
+    
     ALWAYS_INLINE CodeBlock* Register::codeBlock() const
     {
         return u.codeBlock;

@@ -69,7 +69,7 @@ PassRefPtr<DebuggerCallFrame> DebuggerCallFrame::callerFrame()
     if (m_caller)
         return m_caller;
 
-    CallFrame* callerFrame = m_callFrame->callerFrameNoFlags();
+    CallFrame* callerFrame = m_callFrame->callerFrameSkippingVMEntrySentinel();
     if (!callerFrame)
         return 0;
 

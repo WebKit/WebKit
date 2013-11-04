@@ -449,7 +449,7 @@ JSValue CLoop::execute(CallFrame* callFrame, OpcodeID bootstrapOpcodeId,
 
     doReturnHelper: {
         ASSERT(!!callFrame);
-        if (callFrame->hasHostCallFrameFlag()) {
+        if (callFrame->isVMEntrySentinel()) {
 #if USE(JSVALUE32_64)
             return JSValue(t1.i, t0.i); // returning JSValue(tag, payload);
 #else

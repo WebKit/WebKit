@@ -472,7 +472,7 @@ ScriptValue ScriptController::executeScriptInWorld(DOMWrapperWorld& world, const
 bool ScriptController::shouldBypassMainWorldContentSecurityPolicy()
 {
     CallFrame* callFrame = JSDOMWindow::commonVM()->topCallFrame;
-    if (!callFrame || callFrame == CallFrame::noCaller()) 
+    if (callFrame == CallFrame::noCaller()) 
         return false;
     DOMWrapperWorld& domWrapperWorld = currentWorld(callFrame);
     if (domWrapperWorld.isNormal())

@@ -311,7 +311,7 @@ void ScriptDebugServer::stepOutOfFunction()
     if (!m_paused)
         return;
 
-    m_pauseOnCallFrame = m_currentCallFrame ? m_currentCallFrame->callerFrameNoFlags() : 0;
+    m_pauseOnCallFrame = m_currentCallFrame ? m_currentCallFrame->callerFrameSkippingVMEntrySentinel() : 0;
     m_doneProcessingDebuggerEvents = true;
 }
 
@@ -567,9 +567,9 @@ void ScriptDebugServer::returnEvent(CallFrame* callFrame)
 
     // Treat stepping over a return statement like stepping out.
     if (m_currentCallFrame == m_pauseOnCallFrame)
-        m_pauseOnCallFrame = m_currentCallFrame->callerFrameNoFlags();
+        m_pauseOnCallFrame = m_currentCallFrame->callerFrameSkippingVMEntrySentinel();
 
-    m_currentCallFrame = m_currentCallFrame->callerFrameNoFlags();
+    m_currentCallFrame = m_currentCallFrame->callerFrameSkippingVMEntrySentinel();
 }
 
 void ScriptDebugServer::exception(CallFrame* callFrame, JSValue, bool hasHandler)
@@ -602,11 +602,11 @@ void ScriptDebugServer::didExecuteProgram(CallFrame* callFrame)
     if (!m_currentCallFrame)
         return;
     if (m_currentCallFrame == m_pauseOnCallFrame) {
-        m_pauseOnCallFrame = m_currentCallFrame->callerFrameNoFlags();
+        m_pauseOnCallFrame = m_currentCallFrame->callerFrameSkippingVMEntrySentinel();
         if (!m_currentCallFrame)
             return;
     }
-    m_currentCallFrame = m_currentCallFrame->callerFrameNoFlags();
+    m_currentCallFrame = m_currentCallFrame->callerFrameSkippingVMEntrySentinel();
 }
 
 void ScriptDebugServer::didReachBreakpoint(CallFrame* callFrame)

@@ -426,8 +426,11 @@ static bool unwindCallFrame(StackVisitor& visitor)
     }
 
     CallFrame* callerFrame = callFrame->callerFrame();
-    callFrame->vm().topCallFrame = callerFrame->removeHostCallFrameFlag();
-    return !callerFrame->hasHostCallFrameFlag();
+    if (callerFrame->isVMEntrySentinel()) {
+        callFrame->vm().topCallFrame = callerFrame->vmEntrySentinelCallerFrame();
+        return false;
+    }
+    return true;
 }
 
 static StackFrameCodeType getStackFrameCodeType(StackVisitor& visitor)
@@ -544,7 +547,7 @@ private:
 void Interpreter::getStackTrace(Vector<StackFrame>& results, size_t maxStackSize)
 {
     VM& vm = m_vm;
-    ASSERT(!vm.topCallFrame->hasHostCallFrameFlag());
+    ASSERT(!vm.topCallFrame->isVMEntrySentinel());
     CallFrame* callFrame = vm.topCallFrame;
     if (!callFrame)
         return;

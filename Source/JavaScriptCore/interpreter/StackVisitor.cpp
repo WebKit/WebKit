@@ -56,7 +56,7 @@ void StackVisitor::gotoNextFrame()
 
 void StackVisitor::readFrame(CallFrame* callFrame)
 {
-    ASSERT(!callFrame->hasHostCallFrameFlag());
+    ASSERT(!callFrame->isVMEntrySentinel());
     if (!callFrame) {
         m_frame.setToEnd();
         return;
@@ -104,7 +104,7 @@ void StackVisitor::readNonInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOri
 {
     m_frame.m_callFrame = callFrame;
     m_frame.m_argumentCountIncludingThis = callFrame->argumentCountIncludingThis();
-    m_frame.m_callerFrame = callFrame->callerFrame()->removeHostCallFrameFlag();
+    m_frame.m_callerFrame = callFrame->callerFrameSkippingVMEntrySentinel();
     m_frame.m_callee = callFrame->callee();
     m_frame.m_scope = callFrame->scope();
     m_frame.m_codeBlock = callFrame->codeBlock();
@@ -127,7 +127,7 @@ static int inlinedFrameOffset(CodeOrigin* codeOrigin)
 void StackVisitor::readInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigin)
 {
     ASSERT(codeOrigin);
-    ASSERT(!callFrame->hasHostCallFrameFlag());
+    ASSERT(!callFrame->isVMEntrySentinel());
 
     int frameOffset = inlinedFrameOffset(codeOrigin);
     bool isInlined = !!frameOffset;
@@ -380,7 +380,7 @@ void StackVisitor::Frame::print(int indentLevel)
 
     printif(i, "   name '%s'\n", functionName().utf8().data());
     printif(i, "   sourceURL '%s'\n", sourceURL().utf8().data());
-    printif(i, "   hostFlag %d\n", callerFrame->hasHostCallFrameFlag());
+    printif(i, "   isVMEntrySentinel %d\n", callerFrame->isVMEntrySentinel());
 
 #if ENABLE(DFG_JIT)
     printif(i, "   isInlinedFrame %d\n", isInlinedFrame());
@@ -390,7 +390,7 @@ void StackVisitor::Frame::print(int indentLevel)
 
     printif(i, "   callee %p\n", callee());
     printif(i, "   returnPC %p\n", returnPC);
-    printif(i, "   callerFrame %p\n", callerFrame->removeHostCallFrameFlag());
+    printif(i, "   callerFrame %p\n", callerFrame);
     unsigned locationRawBits = callFrame->locationAsRawBits();
     printif(i, "   rawLocationBits %u 0x%x\n", locationRawBits, locationRawBits);
     printif(i, "   codeBlock %p\n", codeBlock);

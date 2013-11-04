@@ -74,8 +74,8 @@ void JIT_OPERATION operationStackCheck(ExecState* exec, CodeBlock* codeBlock)
 {
     // We pass in our own code block, because the callframe hasn't been populated.
     VM* vm = codeBlock->vm();
-    CallFrame* callerFrame = exec->callerFrame();
-    NativeCallFrameTracer tracer(vm, callerFrame->removeHostCallFrameFlag());
+    CallFrame* callerFrame = exec->callerFrameSkippingVMEntrySentinel();
+    NativeCallFrameTracer tracer(vm, callerFrame);
 
     JSStack& stack = vm->interpreter->stack();
 
@@ -86,8 +86,8 @@ void JIT_OPERATION operationStackCheck(ExecState* exec, CodeBlock* codeBlock)
 int32_t JIT_OPERATION operationCallArityCheck(ExecState* exec)
 {
     VM* vm = &exec->vm();
-    CallFrame* callerFrame = exec->callerFrame();
-    NativeCallFrameTracer tracer(vm, callerFrame->removeHostCallFrameFlag());
+    CallFrame* callerFrame = exec->callerFrameSkippingVMEntrySentinel();
+    NativeCallFrameTracer tracer(vm, callerFrame);
 
     JSStack& stack = vm->interpreter->stack();
 
@@ -101,8 +101,8 @@ int32_t JIT_OPERATION operationCallArityCheck(ExecState* exec)
 int32_t JIT_OPERATION operationConstructArityCheck(ExecState* exec)
 {
     VM* vm = &exec->vm();
-    CallFrame* callerFrame = exec->callerFrame();
-    NativeCallFrameTracer tracer(vm, callerFrame->removeHostCallFrameFlag());
+    CallFrame* callerFrame = exec->callerFrameSkippingVMEntrySentinel();
+    NativeCallFrameTracer tracer(vm, callerFrame);
 
     JSStack& stack = vm->interpreter->stack();
 
@@ -1696,7 +1696,7 @@ void JIT_OPERATION operationVMHandleException(ExecState* exec)
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
 
-    ASSERT(!exec->hasHostCallFrameFlag());
+    ASSERT(!exec->isVMEntrySentinel());
     genericUnwind(vm, exec, vm->exception());
 }
 

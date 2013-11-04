@@ -161,6 +161,8 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "stmdb sp!, {r4-r6, r8-r11, lr}" "\n"
     "sub sp, sp, #" STRINGIZE_VALUE_OF(PRESERVEDR4_OFFSET) "\n"
     "mov r5, r2" "\n"
+    "ldr r4, [r5]" "\n"
+    "str r11, [r4]" "\n"
     // r0 contains the code
     "blx r0" "\n"
     "add sp, sp, #" STRINGIZE_VALUE_OF(PRESERVEDR4_OFFSET) "\n"
@@ -356,6 +358,8 @@ __asm EncodedJSValue ctiTrampoline(void*, JSStack*, CallFrame*, void* /*unused1*
     stmdb sp!, {r4-r6, r8-r11, lr}
     sub sp, sp, # PRESERVEDR4_OFFSET
     mov r5, r2
+    ldr r4, [r5]
+    str r11, [r4]
     mov lr, pc
     bx r0
     add sp, sp, # PRESERVEDR4_OFFSET
@@ -422,6 +426,8 @@ MSVC_BEGIN(    stmdb sp!, {r1-r3})
 MSVC_BEGIN(    stmdb sp!, {r4-r6, r8-r11, lr})
 MSVC_BEGIN(    sub sp, sp, #68 ; sync with PRESERVEDR4_OFFSET)
 MSVC_BEGIN(    mov r5, r2)
+MSVC_BEGIN(    ldr r4, [r5])
+MSVC_BEGIN(    str r11, [r4])
 MSVC_BEGIN(    ; r0 contains the code)
 MSVC_BEGIN(    mov lr, pc)
 MSVC_BEGIN(    bx r0)

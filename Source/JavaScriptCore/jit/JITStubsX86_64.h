@@ -51,6 +51,7 @@ asm (
 HIDE_SYMBOL(ctiTrampoline) "\n"
 SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "pushq %rbp" "\n"
+    "movq %rbp, %rax" "\n" // Save previous frame pointer
     "movq %rsp, %rbp" "\n"
     "pushq %r12" "\n"
     "pushq %r13" "\n"
@@ -66,6 +67,8 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "movq $0xFFFF000000000000, %r14" "\n"
     "movq $0xFFFF000000000002, %r15" "\n"
     "movq %rdx, %r13" "\n"
+    "movq (%r13), %r11" "\n" // Put the previous frame pointer in the VM entry sentinal frame above us
+    "movq %rax, (%r11)" "\n"
     "call *%rdi" "\n"
     "addq $0x8, %rsp" "\n"
     "popq %rbx" "\n"

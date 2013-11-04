@@ -2925,7 +2925,7 @@ void CodeBlock::noticeIncomingCall(ExecState* callerFrame)
     
     ExecState* frame = callerFrame;
     for (unsigned i = Options::maximumInliningDepth(); i--; frame = frame->callerFrame()) {
-        if (frame->hasHostCallFrameFlag())
+        if (frame->isVMEntrySentinel())
             break;
         if (frame->codeBlock() == this) {
             // Recursive calls won't be inlined.

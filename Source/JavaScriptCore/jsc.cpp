@@ -306,7 +306,7 @@ EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)
 #ifndef NDEBUG
 EncodedJSValue JSC_HOST_CALL functionDumpCallFrame(ExecState* exec)
 {
-    if (!exec->callerFrame()->hasHostCallFrameFlag())
+    if (!exec->callerFrame()->isVMEntrySentinel())
         exec->vm().interpreter->dumpCallFrame(exec->callerFrame());
     return JSValue::encode(jsUndefined());
 }

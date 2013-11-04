@@ -156,13 +156,13 @@ namespace JSC {
             : vm(currentVM)
             , oldCallFrame(currentVM.topCallFrame) 
         {
-            ASSERT(!callFrame->hasHostCallFrameFlag());
+            ASSERT(!callFrame->isVMEntrySentinel());
             currentVM.topCallFrame = callFrame;
         }
         
         ~TopCallFrameSetter() 
         {
-            ASSERT(!oldCallFrame->hasHostCallFrameFlag());
+            ASSERT(!oldCallFrame->isVMEntrySentinel());
             vm.topCallFrame = oldCallFrame;
         }
     private:
@@ -176,7 +176,7 @@ namespace JSC {
         {
             ASSERT(vm);
             ASSERT(callFrame);
-            ASSERT(!callFrame->hasHostCallFrameFlag());
+            ASSERT(!callFrame->isVMEntrySentinel());
             vm->topCallFrame = callFrame;
         }
     };

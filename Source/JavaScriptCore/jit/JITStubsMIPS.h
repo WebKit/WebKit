@@ -72,6 +72,8 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
 #if WTF_MIPS_PIC
     "sw    $28," STRINGIZE_VALUE_OF(PRESERVED_GP_OFFSET) "($29)" "\n"
 #endif
+    "lw    $18, ($6)    # get caller's frame" "\n"
+    "sw    $30, ($18)   # store previous frame pointer in VM entry sentinal frame" "\n"
     "move  $16,$6       # set callFrameRegister" "\n"
     "li    $17,512      # set timeoutCheckRegister" "\n"
     "move  $25,$4       # move executableAddress to t9" "\n"

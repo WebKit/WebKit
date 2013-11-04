@@ -800,10 +800,8 @@ void JIT::privateCompileExceptionHandlers()
     Jump doLookup;
 
     if (!m_exceptionChecksWithCallFrameRollback.empty()) {
-        // Remove hostCallFlag from caller
         m_exceptionChecksWithCallFrameRollback.link(this);
         emitGetCallerFrameFromCallFrameHeaderPtr(GPRInfo::argumentGPR0);
-        andPtr(TrustedImm32(safeCast<int32_t>(~CallFrame::hostCallFrameFlag())), GPRInfo::argumentGPR0);
         doLookup = jump();
     }
 

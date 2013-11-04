@@ -1,3 +1,85 @@
+2013-11-04  Michael Saboff  <msaboff@apple.com>
+
+        Eliminate HostCall bit from JSC Stack CallerFrame
+        https://bugs.webkit.org/show_bug.cgi?id=123642
+
+        Reviewed by Geoffrey Garen.
+
+        Replace the HostCallFrame bit or'ed to the CallerFrame value in a CallFrame with
+        a VM entry sentinel CallFrame.  Logically, the VM entry sentinel call frame is
+        pushed on the stack before the callee frame when calling from native to JavaScript
+        code.  The callee frame's CallerFrame points at the VM entry sentinel call frame
+        and the VM entry sentinel call frame's CallerFrame points to the real caller.
+        The VM entry sentinel call frame has a sentinel (1) in the CodeBlock to indicate
+        its a VM entry sentinel call frame.  It's ScopeChain has vm.topCallFrame at the
+        time of the call.  This allows for a complete stack walk as well as walking just
+        the contiguous JS frames.
+
+        The VM entry sentinel call frame and callee frame are currently allocated and
+        initialized in ExecState::init(), but this initialization will be moved to
+        ctiTrampoline when we actually move onto the native stack.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::noticeIncomingCall):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::callerFrame):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileExceptionHandlers):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::frameExtent):
+        (JSC::ExecState::currentVPC):
+        (JSC::ExecState::setCurrentVPC):
+        (JSC::ExecState::init):
+        (JSC::ExecState::noCaller):
+        (JSC::ExecState::isVMEntrySentinel):
+        (JSC::ExecState::vmEntrySentinelCallerFrame):
+        (JSC::ExecState::initializeVMEntrySentinelFrame):
+        (JSC::ExecState::callerFrameSkippingVMEntrySentinel):
+        (JSC::ExecState::vmEntrySentinelCodeBlock):
+        * interpreter/Interpreter.cpp:
+        (JSC::unwindCallFrame):
+        (JSC::Interpreter::getStackTrace):
+        * interpreter/Interpreter.h:
+        (JSC::TopCallFrameSetter::TopCallFrameSetter):
+        (JSC::TopCallFrameSetter::~TopCallFrameSetter):
+        (JSC::NativeCallFrameTracer::NativeCallFrameTracer):
+        * interpreter/JSStack.cpp:
+        (JSC::JSStack::~JSStack):
+        * interpreter/JSStackInlines.h:
+        (JSC::JSStack::getStartOfFrame):
+        (JSC::JSStack::pushFrame):
+        (JSC::JSStack::popFrame):
+        * interpreter/Register.h:
+        (JSC::Register::operator=):
+        (JSC::Register::callFrame):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::readFrame):
+        (JSC::StackVisitor::readNonInlinedFrame):
+        (JSC::StackVisitor::readInlinedFrame):
+        (JSC::StackVisitor::Frame::print):
+        * interpreter/VMInspector.cpp:
+        (JSC::VMInspector::countFrames):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JITOperations.cpp:
+        * jit/JITStubsARM.h:
+        (JSC::ctiTrampoline):
+        * jit/JITStubsARM64.h:
+        * jit/JITStubsARMv7.h:
+        (JSC::ctiTrampoline):
+        * jit/JITStubsMIPS.h:
+        * jit/JITStubsMSVC64.asm:
+        * jit/JITStubsSH4.h:
+        * jit/JITStubsX86.h:
+        * jit/JITStubsX86_64.h:
+        * jsc.cpp:
+        (functionDumpCallFrame):
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::throwException):
+
 2013-11-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSArrayBufferViews of length 0 allocate 0 CopiedSpace bytes, which is invalid

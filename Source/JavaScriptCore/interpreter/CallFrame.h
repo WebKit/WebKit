@@ -179,7 +179,7 @@ namespace JSC  {
 
         Register* frameExtent()
         {
-            if (!codeBlock())
+            if (isVMEntrySentinel() || !codeBlock())
                 return registers() - 1;
             return frameExtentInternal();
         }
@@ -189,10 +189,12 @@ namespace JSC  {
 #if USE(JSVALUE32_64)
         Instruction* currentVPC() const
         {
+            ASSERT(!isVMEntrySentinel());
             return bitwise_cast<Instruction*>(this[JSStack::ArgumentCount].tag());
         }
         void setCurrentVPC(Instruction* vpc)
         {
+            ASSERT(!isVMEntrySentinel());
             this[JSStack::ArgumentCount].tag() = bitwise_cast<int32_t>(vpc);
         }
 #else
@@ -206,8 +208,7 @@ namespace JSC  {
         ALWAYS_INLINE void init(CodeBlock* codeBlock, Instruction* vPC, JSScope* scope,
             CallFrame* callerFrame, int argc, JSObject* callee)
         {
-            ASSERT(callerFrame); // Use noCaller() rather than 0 for the outer host call frame caller.
-            ASSERT(callerFrame == noCaller() || callerFrame->removeHostCallFrameFlag()->stack()->containsAddress(this));
+            ASSERT(callerFrame == noCaller() || callerFrame->isVMEntrySentinel() || callerFrame->stack()->containsAddress(this));
 
             setCodeBlock(codeBlock);
             setScope(scope);
@@ -265,19 +266,41 @@ namespace JSC  {
         int hostThisRegister() { return thisArgumentOffset(); }
         JSValue hostThisValue() { return thisValue(); }
 
-        static CallFrame* noCaller() { return reinterpret_cast<CallFrame*>(HostCallFrameFlag); }
+        static CallFrame* noCaller() { return 0; }
 
-        bool hasHostCallFrameFlag() const { return reinterpret_cast<intptr_t>(this) & HostCallFrameFlag; }
-        CallFrame* addHostCallFrameFlag() const { return reinterpret_cast<CallFrame*>(reinterpret_cast<intptr_t>(this) | HostCallFrameFlag); }
-        CallFrame* removeHostCallFrameFlag() { return reinterpret_cast<CallFrame*>(reinterpret_cast<intptr_t>(this) & ~HostCallFrameFlag); }
-        static intptr_t hostCallFrameFlag() { return HostCallFrameFlag; }
+        bool isVMEntrySentinel() const
+        {
+            return !!this && codeBlock() == vmEntrySentinelCodeBlock();
+        }
+
+        CallFrame* vmEntrySentinelCallerFrame() const
+        {
+            ASSERT(isVMEntrySentinel());
+            return this[JSStack::ScopeChain].callFrame();
+        }
+
+        void initializeVMEntrySentinelFrame(CallFrame* callFrame)
+        {
+            setCallerFrame(noCaller());
+            setReturnPC(0);
+            setCodeBlock(vmEntrySentinelCodeBlock());
+            static_cast<Register*>(this)[JSStack::ScopeChain] = callFrame;
+            setCallee(0);
+            setArgumentCountIncludingThis(0);
+        }
+
+        CallFrame* callerFrameSkippingVMEntrySentinel()
+        {
+            CallFrame* caller = callerFrame();
+            if (caller->isVMEntrySentinel())
+                return caller->vmEntrySentinelCallerFrame();
+            return caller;
+        }
 
         void setArgumentCountIncludingThis(int count) { static_cast<Register*>(this)[JSStack::ArgumentCount].payload() = count; }
         void setCallee(JSObject* callee) { static_cast<Register*>(this)[JSStack::Callee] = Register::withCallee(callee); }
         void setCodeBlock(CodeBlock* codeBlock) { static_cast<Register*>(this)[JSStack::CodeBlock] = codeBlock; }
         void setReturnPC(void* value) { callerFrameAndPC().pc = reinterpret_cast<Instruction*>(value); }
-
-        CallFrame* callerFrameNoFlags() { return callerFrame()->removeHostCallFrameFlag(); }
 
         // CallFrame::iterate() expects a Functor that implements the following method:
         //     StackVisitor::Status operator()(StackVisitor&);
@@ -288,7 +311,7 @@ namespace JSC  {
         }
 
     private:
-        static const intptr_t HostCallFrameFlag = 1;
+        static const intptr_t s_VMEntrySentinel = 1;
 
 #ifndef NDEBUG
         JSStack* stack();
@@ -327,6 +350,8 @@ namespace JSC  {
 
         CallerFrameAndPC& callerFrameAndPC() { return *reinterpret_cast<CallerFrameAndPC*>(this); }
         const CallerFrameAndPC& callerFrameAndPC() const { return *reinterpret_cast<const CallerFrameAndPC*>(this); }
+
+        static CodeBlock* vmEntrySentinelCodeBlock() { return reinterpret_cast<CodeBlock*>(s_VMEntrySentinel); }
 
         friend class JSStack;
         friend class VMInspector;

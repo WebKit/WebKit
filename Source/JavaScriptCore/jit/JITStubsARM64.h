@@ -81,6 +81,8 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "str x2, [sp, #" STRINGIZE_VALUE_OF(CALLFRAME_OFFSET) "]" "\n"
     "str x4, [sp, #" STRINGIZE_VALUE_OF(PROFILER_REFERENCE_OFFSET) "]" "\n"
     "str x5, [sp, #" STRINGIZE_VALUE_OF(VM_OFFSET) "]" "\n"
+    "ldr x19, [x2]" "\n" // Store the previous frame pointer in the VM entry sentinal frame above us
+    "str x29, [x19]" "\n"
     "mov x25, x2" "\n" // callFrameRegister = ARM64Registers::x25
     "mov x26, #512" "\n" // timeoutCheckRegister = ARM64Registers::x26
     "mov x27, #0xFFFF000000000000" "\n" // tagTypeNumberRegister = ARM64Registers::x27
