@@ -164,7 +164,7 @@ void RenderFlowThread::validateRegions()
             LayoutUnit previousRegionLogicalHeight = 0;
             bool firstRegionVisited = false;
             
-            for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+            for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
                 RenderRegion* region = *iter;
                 ASSERT(!region->needsLayout() || region->isRenderRegionSet());
 
@@ -253,7 +253,7 @@ void RenderFlowThread::layout()
 #if USE(ACCELERATED_COMPOSITING)
 bool RenderFlowThread::hasCompositingRegionDescendant() const
 {
-    for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter)
+    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter)
         if (RenderLayerModelObject* layerOwner = toRenderNamedFlowFragment(*iter)->layerOwner())
             if (layerOwner->hasLayer() && layerOwner->layer()->hasCompositingDescendant())
                 return true;
@@ -266,7 +266,7 @@ const RenderLayerList* RenderFlowThread::getLayerListForRegion(RenderNamedFlowFr
     if (!m_regionToLayerListMap)
         return 0;
     updateAllLayerToRegionMappingsIfNeeded();
-    RegionToLayerListMap::const_iterator iterator = m_regionToLayerListMap->find(region);
+    auto iterator = m_regionToLayerListMap->find(region);
     return iterator == m_regionToLayerListMap->end() ? 0 : &iterator->value;
 }
 
@@ -309,7 +309,7 @@ void RenderFlowThread::updateLayerToRegionMappings(RenderLayer& layer, LayerToRe
 
     layerToRegionMap.set(&layer, region);
 
-    RegionToLayerListMap::iterator iterator = regionToLayerListMap.find(region);
+    auto iterator = regionToLayerListMap.find(region);
     RenderLayerList& list = iterator == regionToLayerListMap.end() ? regionToLayerListMap.set(region, RenderLayerList()).iterator->value : iterator->value;
     ASSERT(!list.contains(&layer));
     list.append(&layer);
@@ -365,7 +365,7 @@ bool RenderFlowThread::collectsGraphicsLayersUnderRegions() const
 void RenderFlowThread::updateLogicalWidth()
 {
     LayoutUnit logicalWidth = initialLogicalWidth();
-    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
         ASSERT(!region->needsLayout() || region->isRenderRegionSet());
         logicalWidth = std::max(region->pageLogicalWidth(), logicalWidth);
@@ -373,7 +373,7 @@ void RenderFlowThread::updateLogicalWidth()
     setLogicalWidth(logicalWidth);
 
     // If the regions have non-uniform logical widths, then insert inset information for the RenderFlowThread.
-    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
         LayoutUnit regionLogicalWidth = region->pageLogicalWidth();
         LayoutUnit logicalLeft = style().direction() == LTR ? LayoutUnit() : logicalWidth - regionLogicalWidth;
@@ -387,7 +387,7 @@ void RenderFlowThread::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop, L
     computedValues.m_extent = 0;
 
     const LayoutUnit maxFlowSize = RenderFlowThread::maxLogicalHeight();
-    for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
         ASSERT(!region->needsLayout() || region->isRenderRegionSet());
 
@@ -514,7 +514,7 @@ void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, 
     // Let each region figure out the proper enclosing flow thread.
     CurrentRenderFlowThreadDisabler disabler(&view());
     
-    for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
 
         region->repaintFlowThreadContent(repaintRect, immediate);
@@ -709,7 +709,7 @@ void RenderFlowThread::removeRenderBoxRegionInfo(RenderBox* box)
     RenderRegion* endRegion;
     getRegionRangeForBox(box, startRegion, endRegion);
 
-    for (RenderRegionList::iterator iter = m_regionList.find(startRegion); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.find(startRegion), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
         region->removeRenderBoxRegionInfo(box);
         if (region == endRegion)
@@ -718,7 +718,7 @@ void RenderFlowThread::removeRenderBoxRegionInfo(RenderBox* box)
 
 #ifndef NDEBUG
     // We have to make sure we did not leave any RenderBoxRegionInfo attached.
-    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
         ASSERT(!region->renderBoxRegionInfo(box));
     }
@@ -732,7 +732,7 @@ void RenderFlowThread::logicalWidthChangedInRegionsForBlock(const RenderBlock* b
     if (!hasValidRegionInfo())
         return;
 
-    RenderRegionRangeMap::iterator it = m_regionRangeMap.find(block);
+    auto it = m_regionRangeMap.find(block);
     if (it == m_regionRangeMap.end())
         return;
 
@@ -756,7 +756,7 @@ void RenderFlowThread::logicalWidthChangedInRegionsForBlock(const RenderBlock* b
         return;
     }
 
-    for (RenderRegionList::iterator iter = m_regionList.find(startRegion); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.find(startRegion), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
         ASSERT(!region->needsLayout() || region->isRenderRegionSet());
 
@@ -821,7 +821,7 @@ void RenderFlowThread::clearRenderObjectCustomStyle(const RenderObject* object)
 {
     // Clear the styles for the object in the regions.
     // FIXME: Region styling is not computed only for the region range of the object so this is why we need to walk the whole chain.
-    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
         region->clearObjectStyleInRegion(object);
     }
@@ -835,7 +835,7 @@ void RenderFlowThread::clearRenderBoxRegionInfoAndCustomStyle(const RenderBox* b
 
     bool insideOldRegionRange = false;
     bool insideNewRegionRange = false;
-    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
 
         if (oldStartRegion == region)
@@ -861,7 +861,7 @@ void RenderFlowThread::setRegionRangeForBox(const RenderBox* box, RenderRegion* 
     ASSERT(hasRegions());
     ASSERT(startRegion && endRegion);
 
-    RenderRegionRangeMap::iterator it = m_regionRangeMap.find(box);
+    auto it = m_regionRangeMap.find(box);
     if (it == m_regionRangeMap.end()) {
         m_regionRangeMap.set(box, RenderRegionRange(startRegion, endRegion));
         return;
@@ -880,7 +880,7 @@ void RenderFlowThread::getRegionRangeForBox(const RenderBox* box, RenderRegion*&
 {
     startRegion = 0;
     endRegion = 0;
-    RenderRegionRangeMap::const_iterator it = m_regionRangeMap.find(box);
+    auto it = m_regionRangeMap.find(box);
     if (it == m_regionRangeMap.end())
         return;
 
@@ -901,7 +901,7 @@ bool RenderFlowThread::regionInRange(const RenderRegion* targetRegion, const Ren
 {
     ASSERT(targetRegion);
 
-    for (RenderRegionList::const_iterator it = m_regionList.find(const_cast<RenderRegion*>(startRegion)); it != m_regionList.end(); ++it) {
+    for (auto it = m_regionList.find(const_cast<RenderRegion*>(startRegion)), end = m_regionList.end(); it != end; ++it) {
         const RenderRegion* currRegion = *it;
         if (targetRegion == currRegion)
             return true;
@@ -916,7 +916,7 @@ bool RenderFlowThread::regionInRange(const RenderRegion* targetRegion, const Ren
 void RenderFlowThread::checkRegionsWithStyling()
 {
     bool hasRegionsWithStyling = false;
-    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
         if (region->hasCustomRegionStyle()) {
             hasRegionsWithStyling = true;
@@ -958,7 +958,7 @@ bool RenderFlowThread::objectInFlowRegion(const RenderObject* object, const Rend
     if (region == lastRegion()) {
         // If the object does not intersect any of the enclosing box regions
         // then the object is in last region.
-        for (RenderRegionList::const_iterator it = m_regionList.find(enclosingBoxStartRegion); it != m_regionList.end(); ++it) {
+        for (auto it = m_regionList.find(enclosingBoxStartRegion), end = m_regionList.end(); it != end; ++it) {
             const RenderRegion* currRegion = *it;
             if (currRegion == region)
                 break;
@@ -975,7 +975,7 @@ bool RenderFlowThread::objectInFlowRegion(const RenderObject* object, const Rend
 bool RenderFlowThread::isAutoLogicalHeightRegionsCountConsistent() const
 {
     unsigned autoLogicalHeightRegions = 0;
-    for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
         const RenderRegion* region = *iter;
         if (region->hasAutoLogicalHeight())
             autoLogicalHeightRegions++;
@@ -994,8 +994,8 @@ void RenderFlowThread::initializeRegionsComputedAutoHeight(RenderRegion* startRe
     if (!hasAutoLogicalHeightRegions())
         return;
 
-    RenderRegionList::iterator regionIter = startRegion ? m_regionList.find(startRegion) : m_regionList.begin();
-    for (; regionIter != m_regionList.end(); ++regionIter) {
+    for (auto regionIter = startRegion ? m_regionList.find(startRegion) : m_regionList.begin(),
+        end = m_regionList.end(); regionIter != end; ++regionIter) {
         RenderRegion* region = *regionIter;
         if (region->hasAutoLogicalHeight())
             region->setComputedAutoHeight(region->maxPageLogicalHeight());
@@ -1006,7 +1006,7 @@ void RenderFlowThread::markAutoLogicalHeightRegionsForLayout()
 {
     ASSERT(hasAutoLogicalHeightRegions());
 
-    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
         if (!region->hasAutoLogicalHeight())
             continue;
@@ -1022,7 +1022,7 @@ void RenderFlowThread::markRegionsForOverflowLayoutIfNeeded()
     if (!hasRegions())
         return;
 
-    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
         region->setNeedsSimplifiedNormalFlowLayout();
     }
@@ -1036,7 +1036,7 @@ void RenderFlowThread::updateRegionsFlowThreadPortionRect(const RenderRegion* la
     // FIXME: Optimize not to clear the interval all the time. This implies manually managing the tree nodes lifecycle.
     m_regionIntervalTree.clear();
     m_regionIntervalTree.initIfNeeded();
-    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
 
         // If we find an empty auto-height region, clear the computedAutoHeight value.
@@ -1065,7 +1065,7 @@ void RenderFlowThread::updateRegionsFlowThreadPortionRect(const RenderRegion* la
 // Even if we require the break to occur at offsetBreakInFlowThread, because regions may have min/max-height values,
 // it is possible that the break will occur at a different offset than the original one required.
 // offsetBreakAdjustment measures the different between the requested break offset and the current break offset.
-bool RenderFlowThread::addForcedRegionBreak(const RenderBlock* block, LayoutUnit offsetBreakInFlowThread, RenderObject* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment)
+bool RenderFlowThread::addForcedRegionBreak(const RenderBlock* block, LayoutUnit offsetBreakInFlowThread, RenderBox* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment)
 {
     // We take breaks into account for height computation for auto logical height regions
     // only in the layout phase in which we lay out the flows threads unconstrained
@@ -1077,10 +1077,10 @@ bool RenderFlowThread::addForcedRegionBreak(const RenderBlock* block, LayoutUnit
     // Breaks can come before or after some objects. We need to track these objects, so that if we get
     // multiple breaks for the same object (for example because of multiple layouts on the same object),
     // we need to invalidate every other region after the old one and start computing from fresh.
-    RenderObjectToRegionMap& mapToUse = isBefore ? m_breakBeforeToRegionMap : m_breakAfterToRegionMap;
-    RenderObjectToRegionMap::iterator iter = mapToUse.find(breakChild);
+    RenderBoxToRegionMap& mapToUse = isBefore ? m_breakBeforeToRegionMap : m_breakAfterToRegionMap;
+    auto iter = mapToUse.find(breakChild);
     if (iter != mapToUse.end()) {
-        RenderRegionList::iterator regionIter = m_regionList.find(iter->value);
+        auto regionIter = m_regionList.find(iter->value);
         ASSERT(regionIter != m_regionList.end());
         ASSERT((*regionIter)->hasAutoLogicalHeight());
         initializeRegionsComputedAutoHeight(*regionIter);
@@ -1156,7 +1156,7 @@ void RenderFlowThread::collectLayerFragments(LayerFragments& layerFragments, con
 {
     ASSERT(!m_regionsInvalidated);
     
-    for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
         region->collectLayerFragments(layerFragments, layerBoundingBox, dirtyRect);
     }
@@ -1167,7 +1167,7 @@ LayoutRect RenderFlowThread::fragmentsBoundingBox(const LayoutRect& layerBoundin
     ASSERT(!m_regionsInvalidated);
     
     LayoutRect result;
-    for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
         LayerFragments fragments;
         region->collectLayerFragments(fragments, layerBoundingBox, PaintInfo::infiniteRect());
@@ -1363,7 +1363,7 @@ void RenderFlowThread::addRegionsVisualEffectOverflow(const RenderBox* box)
     RenderRegion* endRegion = 0;
     getRegionRangeForBox(box, startRegion, endRegion);
 
-    for (RenderRegionList::iterator iter = m_regionList.find(startRegion); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.find(startRegion), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
 
         LayoutRect borderBox = box->borderBoxRectInRegion(region);
@@ -1382,7 +1382,7 @@ void RenderFlowThread::addRegionsVisualOverflowFromTheme(const RenderBlock* bloc
     RenderRegion* endRegion = 0;
     getRegionRangeForBox(block, startRegion, endRegion);
 
-    for (RenderRegionList::iterator iter = m_regionList.find(startRegion); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.find(startRegion), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
 
         LayoutRect borderBox = block->borderBoxRectInRegion(region);
@@ -1407,7 +1407,7 @@ void RenderFlowThread::addRegionsOverflowFromChild(const RenderBox* box, const R
     RenderRegion* containerEndRegion = 0;
     getRegionRangeForBox(box, containerStartRegion, containerEndRegion);
 
-    for (RenderRegionList::iterator iter = m_regionList.find(startRegion); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.find(startRegion), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
         if (!regionInRange(region, containerStartRegion, containerEndRegion))
             continue;
@@ -1433,7 +1433,7 @@ void RenderFlowThread::addRegionsLayoutOverflow(const RenderBox* box, const Layo
     RenderRegion* endRegion = 0;
     getRegionRangeForBox(box, startRegion, endRegion);
 
-    for (RenderRegionList::iterator iter = m_regionList.find(startRegion); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.find(startRegion), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
         LayoutRect layoutOverflowInRegion = region->rectFlowPortionForBox(box, layoutOverflow);
 
@@ -1450,7 +1450,7 @@ void RenderFlowThread::clearRegionsOverflow(const RenderBox* box)
     RenderRegion* endRegion = 0;
     getRegionRangeForBox(box, startRegion, endRegion);
 
-    for (RenderRegionList::iterator iter = m_regionList.find(startRegion); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.find(startRegion), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
         RenderBoxRegionInfo* boxInfo = region->renderBoxRegionInfo(box);
         if (boxInfo && boxInfo->overflow())

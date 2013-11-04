@@ -100,10 +100,7 @@ void RenderNamedFlowThread::updateWritingMode()
 
 RenderObject* RenderNamedFlowThread::nextRendererForNode(Node* node) const
 {
-    FlowThreadChildList::const_iterator it = m_flowThreadChildList->begin();
-    FlowThreadChildList::const_iterator end = m_flowThreadChildList->end();
-
-    for (; it != end; ++it) {
+    for (auto it = m_flowThreadChildList->begin(), end = m_flowThreadChildList->end(); it != end; ++it) {
         RenderObject* child = *it;
         ASSERT(child->node());
         unsigned short position = node->compareDocumentPosition(child->node());
@@ -119,9 +116,9 @@ RenderObject* RenderNamedFlowThread::previousRendererForNode(Node* node) const
     if (m_flowThreadChildList->isEmpty())
         return 0;
 
-    FlowThreadChildList::const_iterator begin = m_flowThreadChildList->begin();
-    FlowThreadChildList::const_iterator end = m_flowThreadChildList->end();
-    FlowThreadChildList::const_iterator it = end;
+    auto begin = m_flowThreadChildList->begin();
+    auto end = m_flowThreadChildList->end();
+    auto it = end;
 
     do {
         --it;
@@ -166,9 +163,7 @@ bool RenderNamedFlowThread::dependsOn(RenderNamedFlowThread* otherRenderFlowThre
         return true;
 
     // Recursively traverse the m_layoutBeforeThreadsSet.
-    RenderNamedFlowThreadCountedSet::const_iterator iterator = m_layoutBeforeThreadsSet.begin();
-    RenderNamedFlowThreadCountedSet::const_iterator end = m_layoutBeforeThreadsSet.end();
-    for (; iterator != end; ++iterator) {
+    for (auto iterator = m_layoutBeforeThreadsSet.begin(), end = m_layoutBeforeThreadsSet.end(); iterator != end; ++iterator) {
         const RenderNamedFlowThread* beforeFlowThread = (*iterator).key;
         if (beforeFlowThread->dependsOn(otherRenderFlowThread))
             return true;
@@ -235,7 +230,7 @@ static void addRegionToList(RenderRegionList& regionList, RenderRegion* renderRe
         regionList.add(renderRegion);
     else {
         // Find the first region "greater" than renderRegion.
-        RenderRegionList::iterator it = regionList.begin();
+        auto it = regionList.begin();
         while (it != regionList.end() && !compareRenderRegions(renderRegion, *it))
             ++it;
         regionList.insertBefore(it, renderRegion);
@@ -329,7 +324,7 @@ void RenderNamedFlowThread::computeOversetStateForRegions(LayoutUnit oldClientAf
         height = isHorizontalWritingMode() ? visualOverflowRect().maxY() : visualOverflowRect().maxX();
 
     RenderRegion* lastReg = lastRegion();
-    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
         LayoutUnit flowMin = height - (isHorizontalWritingMode() ? region->flowThreadPortionRect().y() : region->flowThreadPortionRect().x());
         LayoutUnit flowMax = height - (isHorizontalWritingMode() ? region->flowThreadPortionRect().maxY() : region->flowThreadPortionRect().maxX());
@@ -366,7 +361,7 @@ void RenderNamedFlowThread::computeOversetStateForRegions(LayoutUnit oldClientAf
 void RenderNamedFlowThread::checkInvalidRegions()
 {
     Vector<RenderRegion*> newValidRegions;
-    for (RenderRegionList::iterator iter = m_invalidRegionList.begin(); iter != m_invalidRegionList.end(); ++iter) {
+    for (auto iter = m_invalidRegionList.begin(), end = m_invalidRegionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
         // The only reason a region would be invalid is because it has a parent flow thread.
         ASSERT(!region->isValid() && region->parentNamedFlowThread());
@@ -376,7 +371,7 @@ void RenderNamedFlowThread::checkInvalidRegions()
         newValidRegions.append(region);
     }
 
-    for (Vector<RenderRegion*>::iterator iter = newValidRegions.begin(); iter != newValidRegions.end(); ++iter) {
+    for (auto iter = newValidRegions.begin(), end = newValidRegions.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
         m_invalidRegionList.remove(region);
         region->parentNamedFlowThread()->m_observerThreadsSet.remove(this);
@@ -421,7 +416,7 @@ void RenderNamedFlowThread::removeDependencyOnFlowThread(RenderNamedFlowThread* 
 
 void RenderNamedFlowThread::pushDependencies(RenderNamedFlowThreadList& list)
 {
-    for (RenderNamedFlowThreadCountedSet::iterator iter = m_layoutBeforeThreadsSet.begin(); iter != m_layoutBeforeThreadsSet.end(); ++iter) {
+    for (auto iter = m_layoutBeforeThreadsSet.begin(), end = m_layoutBeforeThreadsSet.end(); iter != end; ++iter) {
         RenderNamedFlowThread* flowThread = (*iter).key;
         if (list.contains(flowThread))
             continue;

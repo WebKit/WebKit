@@ -101,7 +101,7 @@ int WebKitNamedFlow::firstEmptyRegionIndex() const
         return -1;
 
     int countNonPseudoRegions = -1;
-    RenderRegionList::const_iterator iter = regionList.begin();
+    auto iter = regionList.begin();
     for (int index = 0; iter != regionList.end(); ++index, ++iter) {
         // FIXME: Pseudo-elements are not included in the list.
         // They will be included when we will properly support the Region interface

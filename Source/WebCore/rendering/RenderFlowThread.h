@@ -149,7 +149,7 @@ public:
     void markAutoLogicalHeightRegionsForLayout();
     void markRegionsForOverflowLayoutIfNeeded();
 
-    bool addForcedRegionBreak(const RenderBlock*, LayoutUnit, RenderObject* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0);
+    bool addForcedRegionBreak(const RenderBlock*, LayoutUnit, RenderBox* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0);
     void applyBreakAfterContent(LayoutUnit);
 
     bool pageLogicalSizeChanged() const { return m_pageLogicalSizeChanged; }
@@ -326,16 +326,18 @@ protected:
     OwnPtr<RegionToLayerListMap> m_regionToLayerListMap;
 #endif
 
-    // A maps from RenderBox
+    // Map a box to the list of regions in which the box is rendered.
     typedef HashMap<const RenderBox*, RenderRegionRange> RenderRegionRangeMap;
     RenderRegionRangeMap m_regionRangeMap;
 
-    typedef HashMap<RenderObject*, RenderRegion*> RenderObjectToRegionMap;
-    RenderObjectToRegionMap m_breakBeforeToRegionMap;
-    RenderObjectToRegionMap m_breakAfterToRegionMap;
+    // Map a box with a region break to the auto height region affected by that break. 
+    typedef HashMap<RenderBox*, RenderRegion*> RenderBoxToRegionMap;
+    RenderBoxToRegionMap m_breakBeforeToRegionMap;
+    RenderBoxToRegionMap m_breakAfterToRegionMap;
 
     typedef ListHashSet<const RenderObject*> RenderObjectStack;
     RenderObjectStack m_activeObjectsStack;
+
     typedef HashMap<const RenderBox*, LayoutUnit> RenderBoxToOffsetMap;
     RenderBoxToOffsetMap m_boxesToOffsetMap;
 

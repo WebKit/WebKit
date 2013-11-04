@@ -513,7 +513,7 @@ void RenderRegion::setRegionObjectsRegionStyle()
             continue;
 
         // If the object has style in region, use that instead of computing a new one.
-        RenderObjectRegionStyleMap::iterator it = m_renderObjectRegionStyle.find(object);
+        auto it = m_renderObjectRegionStyle.find(object);
         RefPtr<RenderStyle> objectStyleInRegion;
         bool objectRegionStyleCached = false;
         if (it != m_renderObjectRegionStyle.end()) {
@@ -535,7 +535,7 @@ void RenderRegion::restoreRegionObjectsOriginalStyle()
         return;
 
     RenderObjectRegionStyleMap temp;
-    for (RenderObjectRegionStyleMap::iterator iter = m_renderObjectRegionStyle.begin(), end = m_renderObjectRegionStyle.end(); iter != end; ++iter) {
+    for (auto iter = m_renderObjectRegionStyle.begin(), end = m_renderObjectRegionStyle.end(); iter != end; ++iter) {
         RenderObject* object = const_cast<RenderObject*>(iter->key);
         RefPtr<RenderStyle> objectRegionStyle = &object->style();
         RefPtr<RenderStyle> objectOriginalStyle = iter->value.style;
@@ -592,7 +592,7 @@ void RenderRegion::computeChildrenStyleInRegion(const RenderElement* object)
 {
     for (RenderObject* child = object->firstChild(); child; child = child->nextSibling()) {
 
-        RenderObjectRegionStyleMap::iterator it = m_renderObjectRegionStyle.find(child);
+        auto it = m_renderObjectRegionStyle.find(child);
 
         RefPtr<RenderStyle> childStyleInRegion;
         bool objectRegionStyleCached = false;
