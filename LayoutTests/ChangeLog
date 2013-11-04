@@ -1,3 +1,15 @@
+2013-11-04  Robert Plociennik  <r.plociennik@samsung.com>
+
+        [EFL] accessibility/textarea-line-for-index.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=112015
+
+        Reviewed by Mario Sanchez Prada.
+
+        Removed failure expectations.
+
+        * platform/efl-wk1/TestExpectations: The test is no longer failing.
+        * platform/efl-wk2/TestExpectations: The test is no longer failing.
+
 2013-11-04  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] accessibility/button-press-action.html
