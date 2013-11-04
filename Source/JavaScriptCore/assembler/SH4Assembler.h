@@ -1251,19 +1251,19 @@ public:
     {
         RegisterID scr = claimScratch();
         m_buffer.ensureSpace(maxInstructionSize + 4, sizeof(uint32_t));
-        AssemblerLabel label = m_buffer.label();
         loadConstantUnReusable(0x0, scr);
         branch(BRAF_OPCODE, scr);
         nop();
         releaseScratch(scr);
-        return label;
+        return m_buffer.label();
     }
 
-    void extraInstrForBranch(RegisterID dst)
+    AssemblerLabel extraInstrForBranch(RegisterID dst)
     {
         loadConstantUnReusable(0x0, dst);
+        branch(BRAF_OPCODE, dst);
         nop();
-        nop();
+        return m_buffer.label();
     }
 
     AssemblerLabel jmp(RegisterID dst)
@@ -1281,23 +1281,20 @@ public:
 
     AssemblerLabel jne()
     {
-        AssemblerLabel label = m_buffer.label();
         branch(BF_OPCODE, 0);
-        return label;
+        return m_buffer.label();
     }
 
     AssemblerLabel je()
     {
-        AssemblerLabel label = m_buffer.label();
         branch(BT_OPCODE, 0);
-        return label;
+        return m_buffer.label();
     }
 
     AssemblerLabel bra()
     {
-        AssemblerLabel label = m_buffer.label();
         branch(BRA_OPCODE, 0);
-        return label;
+        return m_buffer.label();
     }
 
     void ret()
@@ -1371,33 +1368,16 @@ public:
     {
         ASSERT(from.isSet());
 
-        uint16_t* instructionPtr = getInstructionPtr(code, from.m_offset);
-        uint16_t instruction = *instructionPtr;
+        uint16_t* instructionPtr = getInstructionPtr(code, from.m_offset) - 3;
         int offsetBits = (reinterpret_cast<uint32_t>(to) - reinterpret_cast<uint32_t>(code)) - from.m_offset;
 
-        if (((instruction & 0xff00) == BT_OPCODE) || ((instruction & 0xff00) == BF_OPCODE)) {
-            /* BT label ==> BF 2
-               nop          LDR reg
-               nop          braf @reg
-               nop          nop
-            */
-            offsetBits -= 8;
-            instruction ^= 0x0202;
-            *instructionPtr++ = instruction;
-            changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, offsetBits);
-            instruction = (BRAF_OPCODE | (*instructionPtr++ & 0xf00));
-            *instructionPtr = instruction;
-            printBlockInstr(instructionPtr - 2, from.m_offset, 3);
-            return;
-        }
-
-         /* MOV #imm, reg => LDR reg
-            braf @reg        braf @reg
-            nop              nop
-         */
+        /* MOV #imm, reg => LDR reg
+           braf @reg        braf @reg
+           nop              nop
+        */
         ASSERT((instructionPtr[0] & 0xf000) == MOVL_READ_OFFPC_OPCODE);
         ASSERT((instructionPtr[1] & 0xf0ff) == BRAF_OPCODE);
-        changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, offsetBits - 6);
+        changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, offsetBits);
         printInstr(*instructionPtr, from.m_offset + 2);
     }
 
@@ -1500,24 +1480,10 @@ public:
     static void relinkJump(void* from, void* to)
     {
         uint16_t* instructionPtr = reinterpret_cast<uint16_t*> (from);
-        uint16_t instruction = *instructionPtr;
-        int32_t offsetBits = (reinterpret_cast<uint32_t>(to) - reinterpret_cast<uint32_t>(from));
-
-        if (((*instructionPtr & 0xff00) == BT_OPCODE) || ((*instructionPtr & 0xff00) == BF_OPCODE)) {
-            offsetBits -= 8;
-            instructionPtr++;
-            ASSERT((instructionPtr[0] & 0xf000) == MOVL_READ_OFFPC_OPCODE);
-            changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, offsetBits);
-            instruction = (BRAF_OPCODE | (*instructionPtr++ & 0xf00));
-            *instructionPtr = instruction;
-            printBlockInstr(instructionPtr, reinterpret_cast<uint32_t>(from) + 1, 3);
-            cacheFlush(instructionPtr, sizeof(SH4Word));
-            return;
-        }
-
+        instructionPtr -= 3;
+        ASSERT((instructionPtr[0] & 0xf000) == MOVL_READ_OFFPC_OPCODE);
         ASSERT((instructionPtr[1] & 0xf0ff) == BRAF_OPCODE);
-        changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, offsetBits - 6);
-        printInstr(*instructionPtr, reinterpret_cast<uint32_t>(from));
+        changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, reinterpret_cast<uint32_t>(to) - reinterpret_cast<uint32_t>(from));
     }
 
     // Linking & patching
@@ -1569,12 +1535,12 @@ public:
         ASSERT(to.isSet());
         ASSERT(from.isSet());
 
-        uint16_t* instructionPtr = getInstructionPtr(data(), from.m_offset);
-        uint16_t instruction = *instructionPtr;
-        int offsetBits;
+        uint16_t* instructionPtr = getInstructionPtr(data(), from.m_offset) - 1;
+        int offsetBits = (to.m_offset - from.m_offset);
 
         if (type == JumpNear) {
-            int offset = (codeSize() - from.m_offset) - 4;
+            uint16_t instruction = instructionPtr[0];
+            int offset = (offsetBits - 2);
             ASSERT((((instruction == BT_OPCODE) || (instruction == BF_OPCODE)) && (offset >= -256) && (offset <= 254))
                 || ((instruction == BRA_OPCODE) && (offset >= -4096) && (offset <= 4094)));
             *instructionPtr++ = instruction | (offset >> 1);
@@ -1582,35 +1548,14 @@ public:
             return;
         }
 
-        if (((instruction & 0xff00) == BT_OPCODE) || ((instruction & 0xff00) == BF_OPCODE)) {
-            /* BT label => BF 2
-               nop        LDR reg
-               nop        braf @reg
-               nop        nop
-            */
-            offsetBits = (to.m_offset - from.m_offset) - 8;
-            instruction ^= 0x0202;
-            *instructionPtr++ = instruction;
-            if ((*instructionPtr & 0xf000) == MOVIMM_OPCODE) {
-                uint32_t* addr = getLdrImmAddressOnPool(instructionPtr, m_buffer.poolAddress());
-                *addr = offsetBits;
-            } else
-                changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, offsetBits);
-            instruction = (BRAF_OPCODE | (*instructionPtr++ & 0xf00));
-            *instructionPtr = instruction;
-            printBlockInstr(instructionPtr - 2, from.m_offset, 3);
-            return;
-        }
-
         /* MOV # imm, reg => LDR reg
            braf @reg         braf @reg
            nop               nop
         */
-        ASSERT((*(instructionPtr + 1) & BRAF_OPCODE) == BRAF_OPCODE);
-        offsetBits = (to.m_offset - from.m_offset) - 6;
+        instructionPtr -= 2;
+        ASSERT((instructionPtr[1] & 0xf0ff) == BRAF_OPCODE);
 
-        instruction = *instructionPtr;
-        if ((instruction & 0xf000) == MOVIMM_OPCODE) {
+        if ((instructionPtr[0] & 0xf000) == MOVIMM_OPCODE) {
             uint32_t* addr = getLdrImmAddressOnPool(instructionPtr, m_buffer.poolAddress());
             *addr = offsetBits;
             printInstr(*instructionPtr, from.m_offset + 2);
