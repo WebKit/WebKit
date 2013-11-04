@@ -1,5 +1,38 @@
 2013-11-03  Andreas Kling  <akling@apple.com>
 
+        Optimize baselines: fast/forms
+
+        Unreviewed; run "webkit-patch optimize-baselines fast/forms"
+
+        * fast/forms/fieldset-legend-padding-unclipped-fieldset-border-expected.txt:
+        * fast/forms/fieldset-with-float-expected.txt: Renamed from LayoutTests/platform/efl/fast/forms/fieldset-with-float-expected.txt.
+        * fast/forms/input-no-renderer-expected.txt: Renamed from LayoutTests/platform/efl/fast/forms/input-no-renderer-expected.txt.
+        * fast/forms/label/labelable-elements-expected.txt: Renamed from LayoutTests/platform/gtk/fast/forms/label/labelable-elements-expected.txt.
+        * fast/forms/range/slider-thumb-stylability-expected.png: Renamed from LayoutTests/platform/efl/fast/forms/range/slider-thumb-stylability-expected.png.
+        * fast/forms/select-listbox-multiple-no-focusring-expected.txt: Renamed from LayoutTests/platform/efl/fast/forms/select-listbox-multiple-no-focusring-expected.txt.
+        * fast/forms/select-overflow-scroll-expected.txt: Renamed from LayoutTests/platform/efl/fast/forms/select-overflow-scroll-expected.txt.
+        * fast/forms/select-overflow-scroll-inherited-expected.txt: Renamed from LayoutTests/platform/efl/fast/forms/select-overflow-scroll-inherited-expected.txt.
+        * fast/forms/textfield-overflow-by-value-update-expected.png: Renamed from LayoutTests/platform/efl/fast/forms/textfield-overflow-by-value-update-expected.png.
+        * fast/forms/textfield-overflow-by-value-update-expected.txt: Renamed from LayoutTests/platform/efl/fast/forms/textfield-overflow-by-value-update-expected.txt.
+        * platform/efl-wk2/fast/forms/validation-message-appearance-expected.png: Renamed from LayoutTests/platform/efl/fast/forms/validation-message-appearance-expected.png.
+        * platform/gtk/fast/forms/fieldset-with-float-expected.txt: Removed.
+        * platform/gtk/fast/forms/input-no-renderer-expected.txt: Removed.
+        * platform/gtk/fast/forms/range/slider-thumb-stylability-expected.png: Removed.
+        * platform/gtk/fast/forms/select-listbox-multiple-no-focusring-expected.txt: Removed.
+        * platform/gtk/fast/forms/select-overflow-scroll-expected.txt: Removed.
+        * platform/gtk/fast/forms/select-overflow-scroll-inherited-expected.txt: Removed.
+        * platform/gtk/fast/forms/textfield-overflow-by-value-update-expected.png: Removed.
+        * platform/mac/fast/forms/fieldset-legend-padding-unclipped-fieldset-border-expected.txt: Removed.
+        * platform/mac/fast/forms/label/labelable-elements-expected.txt: Removed.
+        * platform/mac/fast/forms/textfield-overflow-by-value-update-expected.txt: Removed.
+        * platform/win-7sp0/fast/forms/cursor-at-editable-content-boundary-expected.txt: Renamed from LayoutTests/platform/win/fast/forms/cursor-at-editable-content-boundary-expected.txt.
+        * platform/win-7sp0/fast/forms/implicit-submission-expected.txt: Renamed from LayoutTests/platform/win/fast/forms/implicit-submission-expected.txt.
+        * platform/win-7sp0/fast/forms/range/slider-mouse-events-expected.txt: Renamed from LayoutTests/platform/win/fast/forms/range/slider-mouse-events-expected.txt.
+        * platform/win-7sp0/fast/forms/select-popup-pagekeys-expected.txt: Renamed from LayoutTests/platform/win/fast/forms/select-popup-pagekeys-expected.txt.
+        * platform/win/fast/forms/fieldset-legend-padding-unclipped-fieldset-border-expected.txt: Removed.
+
+2013-11-03  Andreas Kling  <akling@apple.com>
+
         Optimize baselines: editing
 
         Unreviewed; run "webkit-patch optimize-baselines editing"
