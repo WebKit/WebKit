@@ -1,3 +1,36 @@
+2013-11-04  Andreas Kling  <akling@apple.com>
+
+        Optimize baselines: fast/images
+
+        Unreviewed; run "webkit-patch optimize-baselines fast/images"
+
+        * fast/images/crossfade-client-not-removed-crash-expected.txt:
+        * fast/images/embed-image-expected.png: Renamed from LayoutTests/platform/efl/fast/images/embed-image-expected.png.
+        * fast/images/exif-orientation-css-expected.txt: Renamed from LayoutTests/platform/efl/fast/images/exif-orientation-css-expected.txt.
+        * fast/images/exif-orientation-expected.txt: Renamed from LayoutTests/platform/efl/fast/images/exif-orientation-expected.txt.
+        * fast/images/icon-decoding-expected.txt: Renamed from LayoutTests/platform/efl/fast/images/icon-decoding-expected.txt.
+        * fast/images/image-in-map-expected.png: Renamed from LayoutTests/platform/efl/fast/images/image-in-map-expected.png.
+        * fast/images/image-in-map-expected.txt: Renamed from LayoutTests/platform/efl/fast/images/image-in-map-expected.txt.
+        * fast/images/imagemap-focus-ring-zoom-expected.txt: Renamed from LayoutTests/platform/efl/fast/images/imagemap-focus-ring-zoom-expected.txt.
+        * fast/images/support-broken-image-delegate-expected.txt: Renamed from LayoutTests/platform/gtk/fast/images/support-broken-image-delegate-expected.txt.
+        * platform/efl-wk2/fast/images/imagemap-circle-focus-ring-expected.png: Renamed from LayoutTests/platform/efl/fast/images/imagemap-circle-focus-ring-expected.png.
+        * platform/efl-wk2/fast/images/imagemap-focus-ring-outline-color-expected.png: Renamed from LayoutTests/platform/efl/fast/images/imagemap-focus-ring-outline-color-expected.png.
+        * platform/efl-wk2/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.png: Renamed from LayoutTests/platform/efl/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.png.
+        * platform/efl-wk2/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.png: Renamed from LayoutTests/platform/efl/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.png.
+        * platform/efl-wk2/fast/images/imagemap-polygon-focus-ring-expected.png: Renamed from LayoutTests/platform/efl/fast/images/imagemap-polygon-focus-ring-expected.png.
+        * platform/efl/fast/images/crossfade-client-not-removed-crash-expected.txt: Removed.
+        * platform/gtk/fast/images/crossfade-client-not-removed-crash-expected.txt: Removed.
+        * platform/gtk/fast/images/embed-image-expected.png: Removed.
+        * platform/gtk/fast/images/exif-orientation-css-expected.txt: Removed.
+        * platform/gtk/fast/images/icon-decoding-expected.txt: Removed.
+        * platform/gtk/fast/images/image-in-map-expected.png: Removed.
+        * platform/gtk/fast/images/image-in-map-expected.txt: Removed.
+        * platform/gtk/fast/images/imagemap-focus-ring-zoom-expected.txt: Removed.
+        * platform/mac/fast/images/crossfade-client-not-removed-crash-expected.txt: Removed.
+        * platform/mac/fast/images/exif-orientation-css-expected.txt: Removed.
+        * platform/mac/fast/images/exif-orientation-expected.txt: Removed.
+        * platform/win-7sp0/fast/images/support-broken-image-delegate-expected.txt: Renamed from LayoutTests/platform/win/fast/images/support-broken-image-delegate-expected.txt.
+
 2013-11-03  Filip Pizlo  <fpizlo@apple.com>
 
         Generated color wheel displays incorrectly (regressed in r155567)
