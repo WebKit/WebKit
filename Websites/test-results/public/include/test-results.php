@@ -105,7 +105,7 @@ function format_result($result) {
         'modifiers' => $result['modifiers']);
 }
 
-abstract class ResultsJSONWriter {
+class ResultsJSONWriter {
     private $fp;
     private $emitted_results;
 
@@ -122,8 +122,8 @@ abstract class ResultsJSONWriter {
         fwrite($this->fp, "}}, \"totalGenerationTime\": $total_time}");
     }
 
-    public function add_results_for_test_if_matches($current_test, $current_results) {
-        if (!count($current_results) || $this->pass_for_failure_type($current_results))
+    public function add_results_for_test($current_test, $current_results) {
+        if (!count($current_results))
             return;
         // FIXME: Why do we need to check the count?
 
@@ -133,53 +133,11 @@ abstract class ResultsJSONWriter {
 
         $this->emitted_results = TRUE;
     }
-
-    abstract protected function pass_for_failure_type(&$results);
-}
-
-class FlakyResultsJSONWriter extends ResultsJSONWriter {
-    public function __construct($fp) { parent::__construct($fp); }
-    protected function pass_for_failure_type(&$results) {
-        $last_index = count($results) - 1;
-        for ($i = 1; $i < $last_index; $i++) {
-            $previous_actual = $results[$i - 1]['actual'];
-            $next_actual = $results[$i + 1]['actual'];
-            if ($previous_actual == $next_actual && $results[$i]['actual'] != $previous_actual) {
-                $results[$i]['oneOffChange'] = TRUE;
-                return FALSE;
-            }
-        }
-        return TRUE;
-    }
-}
-
-class WrongExpectationsResultsJSONWriter extends ResultsJSONWriter {
-    public function __construct($fp) { parent::__construct($fp); }
-    protected function pass_for_failure_type(&$results) {
-        $latest_expected_result = $results[0]['expected'];
-        $latest_actual_result = $results[0]['actual'];
-
-        if ($latest_expected_result == $latest_actual_result)
-            return TRUE;
-
-        $tokens = explode(' ', $latest_expected_result);
-        return array_search($latest_actual_result, $tokens) !== FALSE
-            || (($latest_actual_result == 'TEXT' || $latest_actual_result == 'TEXT+IMAGE') && array_search('FAIL', $tokens) !== FALSE);
-    }
-}
-
-class FailingResultsJSONWriter extends WrongExpectationsResultsJSONWriter {
-    public function __construct($fp) { parent::__construct($fp); }
-    protected function pass_for_failure_type(&$results) {
-        return $results[0]['actual'] == 'PASS' || parent::pass_for_failure_type($results);
-    }
 }
 
 class ResultsJSONGenerator {
     private $db;
     private $builder_id;
-
-    const MAXIMUM_NUMBER_OF_DAYS = 30;
 
     public function __construct($db, $builder_id)
     {
@@ -187,48 +145,72 @@ class ResultsJSONGenerator {
         $this->builder_id = $builder_id;
     }
 
-    public function generate()
+    public function generate($failure_type)
     {
         $start_time = microtime(true);
 
         if (!$this->builder_id)
             return FALSE;
 
-        $number_of_days = self::MAXIMUM_NUMBER_OF_DAYS;
+        switch ($failure_type) {
+        case 'flaky':
+            $test_rows = $this->db->query_and_fetch_all("SELECT DISTINCT(results.test) FROM results,
+                (SELECT builds.id FROM builds WHERE builds.builder = $1 GROUP BY builds.id LIMIT 500) as builds
+                WHERE results.build = builds.id AND results.is_flaky is TRUE",
+                array($this->builder_id));
+            break;
+        case 'wrongexpectations':
+            // FIXME: three replace here shouldn't be necessary. Do it in webkitpy or report.php at latest.
+            $test_rows = $this->db->query_and_fetch_all("SELECT results.test FROM results WHERE results.build = $1
+                AND NOT string_to_array(expected, ' ') >=
+                    string_to_array(replace(replace(replace(actual, 'TEXT', 'FAIL'), 'AUDIO', 'FAIL'), 'IMAGE+TEXT', 'FAIL'), ' ')",
+                array($this->latest_build()));
+            break;
+        default:
+            return FALSE;
+        }
+
+        if (!$test_rows)
+            return FALSE;
+
+        $comma_separated_test_ids = '';
+        foreach ($test_rows as $row) {
+            if ($comma_separated_test_ids)
+                $comma_separated_test_ids .= ', ';
+            $comma_separated_test_ids .= intval($row['test']);
+        }
+
         $all_results = $this->db->query(
         "SELECT results.*, builds.* FROM results
             JOIN (SELECT builds.*, array_agg((build_revisions.repository, build_revisions.value, build_revisions.time)) AS revisions,
                     max(build_revisions.time) AS latest_revision_time
                     FROM builds, build_revisions
-                    WHERE build_revisions.build = builds.id AND builds.builder = $1 AND builds.start_time > now() - interval '$number_of_days days'
-                    GROUP BY builds.id) as builds ON results.build = builds.id
+                    WHERE build_revisions.build = builds.id AND builds.builder = $1
+                    GROUP BY builds.id LIMIT 500) as builds ON results.build = builds.id
+            WHERE results.test in ($comma_separated_test_ids)
             ORDER BY results.test, latest_revision_time DESC", array($this->builder_id));
         if (!$all_results)
             return FALSE;
 
-        $failing_json_fp = $this->open_json_for_failure_type('failing');
+        $json_fp = $this->open_json_for_failure_type($failure_type);
         try {
-            $flaky_json_fp = $this->open_json_for_failure_type('flaky');
-            try {
-                $wrongexpectations_json_fp = $this->open_json_for_failure_type('wrongexpectations');
-                try {
-                    return $this->write_jsons($all_results, array(
-                        new FailingResultsJSONWriter($failing_json_fp),
-                        new FlakyResultsJSONWriter($flaky_json_fp),
-                        new WrongExpectationsResultsJSONWriter($wrongexpectations_json_fp)), $start_time);
-                } catch (Exception $exception) {
-                    fclose($wrongexpectations_json_fp);
-                    throw $exception;
-                }
-            } catch (Exception $exception) {
-                fclose($flaky_json_fp);
-                throw $exception;
-            }
+            return $this->write_jsons($all_results, new ResultsJSONWriter($json_fp), $start_time);
         } catch (Exception $exception) {
-            fclose($failing_json_fp);
+            fclose($json_fp);
             throw $exception;
         }
         return FALSE;
+    }
+
+    private function latest_build() {
+        $results = $this->db->query_and_fetch_all('SELECT builds.id, max(build_revisions.time) AS latest_revision_time
+            FROM builds, build_revisions
+            WHERE build_revisions.build = builds.id AND builds.builder = $1
+            GROUP BY builds.id
+            ORDER BY latest_revision_time DESC LIMIT 1', array($this->builder_id));
+        if (!$results)
+            return NULL;
+        return $results[0]['id'];
     }
 
     private function open_json_for_failure_type($failure_type) {
@@ -241,29 +223,61 @@ class ResultsJSONGenerator {
         return $fp;
     }
 
-    private function write_jsons($all_results, $writers, $start_time) {
-        foreach ($writers as $writer)
-            $writer->start($this->builder_id);
+    private function write_jsons($all_results, $writer, $start_time) {
+        $writer->start($this->builder_id);
         $current_test = NULL;
         $current_results = array();
         while ($result = $this->db->fetch_next_row($all_results)) {
             if ($result['test'] != $current_test) {
-                if ($current_test) {
-                    foreach ($writers as $writer)
-                        $writer->add_results_for_test_if_matches($current_test, $current_results);
-                }
+                if ($current_test)
+                    $writer->add_results_for_test($current_test, $current_results);
                 $current_results = array();
                 $current_test = $result['test'];
             }
             array_push($current_results, format_result($result));
         }
-
-        $total_time = microtime(true) - $start_time;
-        foreach ($writers as $writer)
-            $writer->end($total_time);
-
+        $writer->end(microtime(true) - $start_time);
         return TRUE;
     }
+}
+
+function update_flakiness_for_build($db, $preceeding_build, $current_build, $succeeding_build) {
+    return $db->query_and_get_affected_rows("UPDATE results
+        SET is_flaky = preceeding_results.actual = succeeding_results.actual AND preceeding_results.actual != results.actual
+        FROM results preceeding_results, results succeeding_results
+        WHERE preceeding_results.build = $1 AND results.build = $2 AND succeeding_results.build = $3
+            AND preceeding_results.test = results.test AND succeeding_results.test = results.test",
+            array($preceeding_build['id'], $current_build['id'], $succeeding_build['id']));
+}
+
+function update_flakiness_after_inserting_build($db, $build_id) {
+    // FIXME: In theory, it's possible for new builds to be inserted between the time this select query is ran and quries are executed by update_flakiness_for_build.
+    $ordered_builds = $db->query_and_fetch_all("SELECT builds.id, max(build_revisions.time) AS latest_revision_time
+        FROM builds, build_revisions
+        WHERE build_revisions.build = builds.id AND builds.builder = (SELECT builds.builder FROM builds WHERE id = $1)
+        GROUP BY builds.id ORDER BY latest_revision_time, builds.start_time DESC", array($build_id));
+
+    $current_build = NULL;
+    for ($i = 0; $i < count($ordered_builds); $i++) {
+        if ($ordered_builds[$i]['id'] == $build_id) {
+            $current_build = $i;
+            break;
+        }
+    }
+    if ($current_build === NULL)
+        return NULL;
+
+    $affected_rows = 0;
+    if ($current_build >= 2)
+        $affected_rows += update_flakiness_for_build($db, $ordered_builds[$current_build - 2], $ordered_builds[$current_build - 1], $ordered_builds[$current_build]);
+
+    if ($current_build >= 1 && $current_build + 1 < count($ordered_builds))
+        $affected_rows += update_flakiness_for_build($db, $ordered_builds[$current_build - 1], $ordered_builds[$current_build], $ordered_builds[$current_build + 1]);
+
+    if ($current_build + 2 < count($ordered_builds))
+        $affected_rows += update_flakiness_for_build($db, $ordered_builds[$current_build], $ordered_builds[$current_build + 1], $ordered_builds[$current_build + 2]);
+
+    return $affected_rows;
 }
 
 ?>

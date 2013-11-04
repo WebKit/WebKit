@@ -1,3 +1,51 @@
+2013-11-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix JSON generations on new flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=123723
+
+        Reviewed by Andreas Kling.
+
+        Add is_flaky column on results table so that this column can be used to find flaky tests on a given builder
+        efficiently without having to through results for all tests in PHP. This column is updated in report.php
+        when a new build is added. Because is_flaky depends on the preceding and succeeding results, we must update
+        is_flaky flag on results for builds immediately before and after the new build as well.
+
+        To see why, suppose we had two consecutive results [PASS] [PASS]. If we were to insert [FAIL] result between
+        the two, those two results may also turn into flaky results if they were surrounded by [FAIL]. Similarly,
+        if we had [PASS] [FAIL] and the second result was marked flaky, inserting new [FAIL] must unmark it.
+
+
+        * init-database.sql: Added is_flaky column to results table with an index. Also added an index on
+        build_revisions.time as many queries filter results by this quantity. Also set the work_mem to 50MB avoid
+        disk thrashing while sorting results in various queries.
+
+        * public/api/failing-tests.php: Handle builder ids as well as names. Call generate() with failure types.
+        No longer generates *-failing.json since it's a subset of *-wrongexpectations.json to save time.
+
+        * public/api/report.php: Rewritten. Calls update_flakiness_after_inserting_build to update is_flaky flags
+        on the newly added results.
+        (store_results): Added.
+        (main): Added.
+
+        * public/include/test-results.php:
+        (ResultsJSONWriter):
+        (ResultsJSONWriter::add_results_for_test): Renamed from add_results_for_test_if_matches.
+        (ResultsJSONGenerator::generate): Takes the failure type. Instead of generating JSONs for all failure types
+        at once, generate one JSON for the specified type. We generate the list of test ids based on the failure type
+        and query results based on that. This dramatically cuts down the time spent in PHP.
+        (ResultsJSONGenerator::latest_build): Added.
+        (ResultsJSONGenerator::write_jsons): Takes single writer now.
+        (update_flakiness_for_build): Added.
+        (update_flakiness_after_inserting_build): Added.
+
+        * public/index.html:
+        (TestResultsView._populateBuilderPane): Emulate *-failing.json upon *-wrongexpectations.json.
+        (TestResultsView.fetchFailingTestsForBuilder): Ditto.
+
+        * public/main.css: Minor style tweaks.
+        (.testResults): Extend the border that wraps the test results as needed.
+        (.tooltip): Don't wrap text inside tooltips.
+
 2013-10-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make new bug link in flakiness dashboard configurable

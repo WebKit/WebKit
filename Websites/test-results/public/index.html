@@ -19,9 +19,7 @@
 </ul>
 </header>
 
-<form onsubmit="TestResultsView.fetchTest(this['testName'].value);
-    TestResultsView.updateLocationHash();
-    return false;">
+<form>
 <input id="testName" type="text" size="150" onpaste="pasteHelper(this, event)"
     placeholder="Type in a test name, or copy and paste test names on results.html or NRWT stdout (including junks)"></form>
 <div id="testView"></div>
@@ -399,7 +397,7 @@ TestResultsView._populateBuilderPane = function(builderName, failureType, result
     var self = this;
     this._sortObjectsByName(tests).forEach(function (test) {
         var results = resultsByTests[test.id];
-        if (!results.length)
+        if (!results.length || (failureType == 'failing' && results[0].actual == 'PASS'))
             return;
         self._createBuildsAndComputeSlownessOfResults(builderId, results);
         var externalTestLink = element('a', {'class': 'externalTestLink',
@@ -431,7 +429,7 @@ TestResultsView.fetchFailingTestsForBuilder = function (builderName, numberOfDay
     var self = this;
     var xhr = new XMLHttpRequest();
     var builderId = this._builderByName[builderName].id;
-    xhr.open('GET', 'data/' + builderId + '-' + failureType + '.json', true);  
+    xhr.open('GET', 'data/' + builderId + '-' + (failureType == 'failing' ? 'wrongexpectations' : failureType) + '.json', true);  
     xhr.onload = function(event) {
         if (xhr.status != 200) {
             section.appendChild(text('Failed to load results for ' + builderName + ': ' + xhr.status));

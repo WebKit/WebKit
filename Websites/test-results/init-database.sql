@@ -41,6 +41,7 @@ CREATE TABLE build_revisions (
     PRIMARY KEY (repository, build));
 CREATE INDEX revision_build_index ON build_revisions(build);
 CREATE INDEX revision_repository_index ON build_revisions(repository);
+CREATE INDEX revision_time_index ON build_revisions(time);
 
 CREATE TABLE tests (
     id serial PRIMARY KEY,
@@ -55,6 +56,10 @@ CREATE TABLE results (
     expected varchar(64) NOT NULL,
     actual varchar(64) NOT NULL,
     modifiers varchar(64) NOT NULL,
-    time integer);
+    time integer,
+    is_flaky boolean);
 CREATE INDEX results_test ON results(test);
 CREATE INDEX results_build ON results(build);
+CREATE INDEX results_is_flaky ON results(is_flaky);
+
+SET work_mem='50MB';
