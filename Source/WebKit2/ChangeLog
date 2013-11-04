@@ -1,3 +1,28 @@
+2013-11-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2] Update WebGeolocationManager to support multiple WebContent processes
+        https://bugs.webkit.org/show_bug.cgi?id=123658
+
+        Reviewed by Anders Carlsson.
+
+        Change WebGeolocationManagerProxy to track which WebProcessProxy needs geolocation.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::disconnectProcess):
+        WebContext::disconnectProcess does not handle ContextSupplement yet when using multiple
+        WebContent processes. Add an explicit call for WebGeolocationManagerProxy as a temporary
+        solution.
+
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        (WebKit::WebGeolocationManagerProxy::WebGeolocationManagerProxy):
+        (WebKit::WebGeolocationManagerProxy::contextDestroyed):
+        (WebKit::WebGeolocationManagerProxy::processDidClose):
+        (WebKit::WebGeolocationManagerProxy::startUpdating):
+        (WebKit::WebGeolocationManagerProxy::stopUpdating):
+        (WebKit::WebGeolocationManagerProxy::removeRequester):
+        * UIProcess/WebGeolocationManagerProxy.h:
+        * UIProcess/WebGeolocationManagerProxy.messages.in:
+
 2013-11-01  Jer Noble  <jer.noble@apple.com>
 
         [PluginProxy] Add a setting to disable video plugin proxy support in HTMLMediaElement.

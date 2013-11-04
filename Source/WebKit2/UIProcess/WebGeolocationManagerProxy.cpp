@@ -44,13 +44,8 @@ PassRefPtr<WebGeolocationManagerProxy> WebGeolocationManagerProxy::create(WebCon
 
 WebGeolocationManagerProxy::WebGeolocationManagerProxy(WebContext* context)
     : WebContextSupplement(context)
-    , m_isUpdating(false)
 {
     WebContextSupplement::context()->addMessageReceiver(Messages::WebGeolocationManagerProxy::messageReceiverName(), this);
-}
-
-WebGeolocationManagerProxy::~WebGeolocationManagerProxy()
-{
 }
 
 void WebGeolocationManagerProxy::initializeProvider(const WKGeolocationProvider* provider)
@@ -62,12 +57,13 @@ void WebGeolocationManagerProxy::initializeProvider(const WKGeolocationProvider*
 
 void WebGeolocationManagerProxy::contextDestroyed()
 {
-    stopUpdating();
+    m_updateRequesters.clear();
+    m_provider.stopUpdating(this);
 }
 
-void WebGeolocationManagerProxy::processDidClose(WebProcessProxy*)
+void WebGeolocationManagerProxy::processDidClose(WebProcessProxy* webProcessProxy)
 {
-    stopUpdating();
+    removeRequester(webProcessProxy);
 }
 
 void WebGeolocationManagerProxy::refWebContextSupplement()
@@ -96,22 +92,25 @@ void WebGeolocationManagerProxy::providerDidFailToDeterminePosition(const String
     context()->sendToAllProcesses(Messages::WebGeolocationManager::DidFailToDeterminePosition(errorMessage));
 }
 
-void WebGeolocationManagerProxy::startUpdating()
+void WebGeolocationManagerProxy::startUpdating(CoreIPC::Connection* connection)
 {
-    if (m_isUpdating)
-        return;
-
-    m_provider.startUpdating(this);
-    m_isUpdating = true;
+    bool wasUpdating = !m_updateRequesters.isEmpty();
+    m_updateRequesters.add(connection->client());
+    if (!wasUpdating)
+        m_provider.startUpdating(this);
 }
 
-void WebGeolocationManagerProxy::stopUpdating()
+void WebGeolocationManagerProxy::stopUpdating(CoreIPC::Connection* connection)
 {
-    if (!m_isUpdating)
-        return;
+    removeRequester(connection->client());
+}
 
-    m_provider.stopUpdating(this);
-    m_isUpdating = false;
+void WebGeolocationManagerProxy::removeRequester(const CoreIPC::Connection::Client* client)
+{
+    bool wasUpdating = !m_updateRequesters.isEmpty();
+    m_updateRequesters.remove(client);
+    if (wasUpdating && m_updateRequesters.isEmpty())
+        m_provider.stopUpdating(this);
 }
 
 } // namespace WebKit
