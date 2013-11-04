@@ -1,5 +1,35 @@
 2013-11-04  Andreas Kling  <akling@apple.com>
 
+        Optimize baselines: svg/zoom
+
+        Unreviewed; run "webkit-patch optimize-baselines svg/zoom"
+
+        * platform/gtk/svg/zoom/page/zoom-background-images-expected.txt: Removed.
+        * platform/gtk/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt: Removed.
+        * platform/gtk/svg/zoom/page/zoom-hixie-rendering-model-004-expected.txt: Removed.
+        * platform/gtk/svg/zoom/page/zoom-mask-with-percentages-expected.txt: Removed.
+        * platform/gtk/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt: Removed.
+        * platform/gtk/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.txt: Removed.
+        * platform/gtk/svg/zoom/page/zoom-svg-as-image-expected.png: Removed.
+        * platform/gtk/svg/zoom/page/zoom-svg-float-border-padding-expected.txt: Removed.
+        * platform/gtk/svg/zoom/text/zoom-coords-viewattr-01-b-expected.txt: Removed.
+        * platform/gtk/svg/zoom/text/zoom-hixie-rendering-model-004-expected.txt: Removed.
+        * platform/gtk/svg/zoom/text/zoom-svg-float-border-padding-expected.txt: Removed.
+        * svg/zoom/page/zoom-background-images-expected.txt: Renamed from LayoutTests/platform/efl/svg/zoom/page/zoom-background-images-expected.txt.
+        * svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt: Renamed from LayoutTests/platform/efl/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt.
+        * svg/zoom/page/zoom-hixie-rendering-model-004-expected.txt: Renamed from LayoutTests/platform/efl/svg/zoom/page/zoom-hixie-rendering-model-004-expected.txt.
+        * svg/zoom/page/zoom-mask-with-percentages-expected.txt: Renamed from LayoutTests/platform/efl/svg/zoom/page/zoom-mask-with-percentages-expected.txt.
+        * svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt: Renamed from LayoutTests/platform/efl/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt.
+        * svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.txt: Renamed from LayoutTests/platform/efl/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.txt.
+        * svg/zoom/page/zoom-svg-as-image-expected.png: Renamed from LayoutTests/platform/efl/svg/zoom/page/zoom-svg-as-image-expected.png.
+        * svg/zoom/page/zoom-svg-float-border-padding-expected.txt: Renamed from LayoutTests/platform/efl/svg/zoom/page/zoom-svg-float-border-padding-expected.txt.
+        * svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Removed.
+        * svg/zoom/text/zoom-coords-viewattr-01-b-expected.txt: Renamed from LayoutTests/platform/efl/svg/zoom/text/zoom-coords-viewattr-01-b-expected.txt.
+        * svg/zoom/text/zoom-hixie-rendering-model-004-expected.txt: Renamed from LayoutTests/platform/efl/svg/zoom/text/zoom-hixie-rendering-model-004-expected.txt.
+        * svg/zoom/text/zoom-svg-float-border-padding-expected.txt: Renamed from LayoutTests/platform/efl/svg/zoom/text/zoom-svg-float-border-padding-expected.txt.
+
+2013-11-04  Andreas Kling  <akling@apple.com>
+
         Optimize baselines: fast/images
 
         Unreviewed; run "webkit-patch optimize-baselines fast/images"
