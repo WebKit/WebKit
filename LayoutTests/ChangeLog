@@ -1,3 +1,15 @@
+2013-11-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Generated color wheel displays incorrectly (regressed in r155567)
+        https://bugs.webkit.org/show_bug.cgi?id=123664
+
+        Reviewed by Andreas Kling.
+        
+        * js/dfg-mod-1-expected.txt: Added.
+        * js/dfg-mod-1.html: Added.
+        * js/script-tests/dfg-mod-1.js: Added.
+        (foo):
+
 2013-11-03  Andreas Kling  <akling@apple.com>
 
         Optimize baselines: fast/repaint

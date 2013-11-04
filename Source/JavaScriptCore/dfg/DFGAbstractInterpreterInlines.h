@@ -482,10 +482,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ArithMod: {
         JSValue left = forNode(node->child1()).value();
         JSValue right = forNode(node->child2()).value();
-        if (node->op() == ArithMod && right && right.isNumber() && right.asNumber() == 1) {
-            setConstant(node, JSValue(0));
-            break;
-        }
         if (left && right && left.isNumber() && right.isNumber()) {
             double a = left.asNumber();
             double b = right.asNumber();

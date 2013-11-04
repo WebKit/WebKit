@@ -1,5 +1,20 @@
 2013-11-03  Filip Pizlo  <fpizlo@apple.com>
 
+        Generated color wheel displays incorrectly (regressed in r155567)
+        https://bugs.webkit.org/show_bug.cgi?id=123664
+
+        Reviewed by Andreas Kling.
+
+        Interestingly, r155567 just "un-broke" the attempt to constant-fold ArithMod, but
+        that constant folding was just wrong to begin with. There is no evidence that this
+        constant folding rule is profitable. I'm removing it instead of trying to think
+        about what it means for it to be correct.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+
+2013-11-03  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, it is no longer necessary to call DisablePrettyStackTrace.
 
         * llvm/library/LLVMExports.cpp:
