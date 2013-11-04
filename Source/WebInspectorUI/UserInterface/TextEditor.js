@@ -62,6 +62,7 @@ WebInspector.TextEditor = function(element, mimeType, delegate)
     this._searchQuery = null;
     this._searchResults = [];
     this._currentSearchResultIndex = -1;
+    this._ignoreCodeMirrorContentDidChangeEvent = 0;
 
     this._formatted = false
     this._formatterSourceMap = null;
@@ -135,9 +136,10 @@ WebInspector.TextEditor.prototype = {
             this._revealPendingPositionIfPossible();
         }
 
-        this._ignoreCodeMirrorContentDidChangeEvent = true;
+        this._ignoreCodeMirrorContentDidChangeEvent++;
         this._codeMirror.operation(update.bind(this));
-        delete this._ignoreCodeMirrorContentDidChangeEvent;
+        this._ignoreCodeMirrorContentDidChangeEvent--;
+        console.assert(this._ignoreCodeMirrorContentDidChangeEvent >= 0);
     },
 
     get readOnly()
@@ -165,9 +167,10 @@ WebInspector.TextEditor.prototype = {
         if (formatted && !this.canBeFormatted())
             return;
 
-        this._ignoreCodeMirrorContentDidChangeEvent = true;
+        this._ignoreCodeMirrorContentDidChangeEvent++;
         this._prettyPrint(formatted);
-        delete this._ignoreCodeMirrorContentDidChangeEvent;
+        this._ignoreCodeMirrorContentDidChangeEvent--;
+        console.assert(this._ignoreCodeMirrorContentDidChangeEvent >= 0);
 
         this._formatted = formatted;
         this._updateCodeMirrorReadOnly();
@@ -585,7 +588,7 @@ WebInspector.TextEditor.prototype = {
 
     _contentChanged: function(codeMirror, change)
     {
-        if (this._ignoreCodeMirrorContentDidChangeEvent)
+        if (this._ignoreCodeMirrorContentDidChangeEvent > 0)
             return;
         this.dispatchEventToListeners(WebInspector.TextEditor.Event.ContentDidChange);
     },

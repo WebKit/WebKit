@@ -1,5 +1,26 @@
 2013-11-04  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r158404
+
+    2013-10-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Breakpoints in auto-formatted JavaScript editors are not working
+            https://bugs.webkit.org/show_bug.cgi?id=123589
+
+            Reviewed by Timothy Hatcher.
+
+            The internal this._ignoreCodeMirrorContentDidChangeEvent flag was being used
+            in two places that could be nested, meaning the flag was deleted while it
+            was still expected to be set. Change it instead to a counter, to handle nesting.
+
+            * UserInterface/TextEditor.js:
+            (WebInspector.TextEditor):
+            (WebInspector.TextEditor.prototype.set string):
+            (WebInspector.TextEditor.prototype.set formatted):
+            (WebInspector.TextEditor.prototype._contentChanged):
+
+2013-11-04  Lucas Forschler  <lforschler@apple.com>
+
         Merge r158061
 
     2013-10-25  Joseph Pecoraro  <pecoraro@apple.com>
