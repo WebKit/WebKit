@@ -171,7 +171,7 @@ class ResultsJSONGenerator {
         }
 
         if (!$test_rows)
-            return FALSE;
+            return TRUE;
 
         $comma_separated_test_ids = '';
         foreach ($test_rows as $row) {

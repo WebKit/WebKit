@@ -34,7 +34,7 @@ function store_results($db, $master, $builder_name, $build_number, $start_time, 
     if (!store_test_results($db, $test_results, $build_id, $start_time, $end_time, $slave_id))
         exit_with_error('FailedToStoreResults', array('buildId' => $build_id));
 
-    return $build_id;
+    return array('build_id' => $build_id, 'builder_id' => $builder_id);
 }
 
 function main() {
@@ -66,7 +66,7 @@ function main() {
     $json_path = $_FILES['file']['tmp_name'];
 
     $db = connect();
-    $build_id = store_results($db, $master, $builder_name, $build_number, $start_time, $end_time, $revisions, $json_path);
+    $builder_and_build = store_results($db, $master, $builder_name, $build_number, $start_time, $end_time, $revisions, $json_path);
     @ob_end_clean();
     ignore_user_abort();
     ob_start();
@@ -81,7 +81,11 @@ function main() {
     if (function_exists('fastcgi_finish_request'))
         fastcgi_finish_request();
 
-    update_flakiness_after_inserting_build($build_id);
+    update_flakiness_after_inserting_build($db, $builder_and_build['build_id']);
+
+    $generator = new ResultsJSONGenerator($db, $builder_and_build['builder_id']);
+    $generator->generate('wrongexpectations');
+    $generator->generate('flaky');
 }
 
 main();
