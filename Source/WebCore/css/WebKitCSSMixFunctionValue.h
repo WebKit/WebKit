@@ -39,9 +39,9 @@ namespace WebCore {
 
 class WebKitCSSMixFunctionValue : public CSSValueList {
 public:
-    static PassRefPtr<WebKitCSSMixFunctionValue> create()
+    static PassRef<WebKitCSSMixFunctionValue> create()
     {
-        return adoptRef(new WebKitCSSMixFunctionValue());
+        return adoptRef(*new WebKitCSSMixFunctionValue());
     }
 
     String customCSSText() const;

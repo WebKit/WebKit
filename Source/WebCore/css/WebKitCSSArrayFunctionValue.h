@@ -39,9 +39,9 @@ namespace WebCore {
 
 class WebKitCSSArrayFunctionValue : public CSSValueList {
 public:
-    static PassRefPtr<WebKitCSSArrayFunctionValue> create()
+    static PassRef<WebKitCSSArrayFunctionValue> create()
     {
-        return adoptRef(new WebKitCSSArrayFunctionValue());
+        return adoptRef(*new WebKitCSSArrayFunctionValue());
     }
 
     String customCSSText() const;

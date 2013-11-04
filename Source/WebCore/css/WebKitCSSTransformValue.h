@@ -60,9 +60,9 @@ public:
         Matrix3DTransformOperation
     };
 
-    static PassRefPtr<WebKitCSSTransformValue> create(TransformOperationType type)
+    static PassRef<WebKitCSSTransformValue> create(TransformOperationType type)
     {
-        return adoptRef(new WebKitCSSTransformValue(type));
+        return adoptRef(*new WebKitCSSTransformValue(type));
     }
 
     String customCSSText() const;

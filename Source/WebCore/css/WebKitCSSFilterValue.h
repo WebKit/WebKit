@@ -57,9 +57,9 @@ public:
 
     static bool typeUsesSpaceSeparator(FilterOperationType);
 
-    static PassRefPtr<WebKitCSSFilterValue> create(FilterOperationType type)
+    static PassRef<WebKitCSSFilterValue> create(FilterOperationType type)
     {
-        return adoptRef(new WebKitCSSFilterValue(type));
+        return adoptRef(*new WebKitCSSFilterValue(type));
     }
 
     String customCSSText() const;

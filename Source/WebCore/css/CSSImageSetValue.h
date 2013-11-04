@@ -40,9 +40,9 @@ class StyleImage;
 class CSSImageSetValue : public CSSValueList {
 public:
 
-    static PassRefPtr<CSSImageSetValue> create()
+    static PassRef<CSSImageSetValue> create()
     {
-        return adoptRef(new CSSImageSetValue());
+        return adoptRef(*new CSSImageSetValue());
     }
     ~CSSImageSetValue();
 
