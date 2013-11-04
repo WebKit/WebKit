@@ -41,7 +41,6 @@ extern "C" JSC::LLVMAPI* initializeAndGetJSCLLVMAPI(void (*callback)(const char*
 {
     g_llvmTrapCallback = callback;
     
-    LLVMDisablePrettyStackTrace();
     LLVMInstallFatalErrorHandler(llvmCrash);
     LLVMLinkInMCJIT();
     LLVMInitializeNativeTarget();
