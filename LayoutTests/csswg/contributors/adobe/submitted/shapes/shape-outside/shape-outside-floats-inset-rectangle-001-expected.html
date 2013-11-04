@@ -13,22 +13,22 @@
 }
 
 .rounded-rect {
+    z-index: -1;
     width: 320px;
     height: 160px;
     border-radius: 60px;
-    border: 1px solid blue;
+    background-color: blue;
+    overflow: hidden;
 }
 
 #left-rounded-rect-outline {
     position: absolute;
-    z-index: -1;
     top: 20px;
     left: 0px;
 }
 
 #right-rounded-rect-outline {
     position: absolute;
-    z-index: -1;
     top: 20px;
     right: 0px;
 }
@@ -81,7 +81,7 @@ X
 <script src="resources/subpixel-utils.js"></script>
 <script>
 genLeftRightRoundedRectFloatShapeOutsideRefTest({
-    roundedRect: {x: 0, y: 20, width: 321, height: 160, rx: 60, ry: 60},
+    roundedRect: {x: 0, y: 20, width: 320, height: 160, rx: 60, ry: 60},
     containerWidth: 500, 
     containerHeight: 200,
     lineHeight: 20,

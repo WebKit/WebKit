@@ -19,7 +19,8 @@
     left: 0px;
     width: 80px;
     height: 80px;
-    border: 1px solid blue;
+    background-color: blue;
+    overflow: hidden;
     border-radius: 50%;
 }
 .left-rounded-rect-float-line {
@@ -61,7 +62,7 @@
     <script src="resources/subpixel-utils.js"></script>
     <script>
     genLeftRoundedRectFloatShapeOutsideRefTest({
-        roundedRect: {x: 0, y: 0, width: 81, height: 80, rx: 40, ry: 40},
+        roundedRect: {x: 0, y: 0, width: 80, height: 80, rx: 40, ry: 40},
         containerWidth: 160,
         containerHeight: 80,
         lineHeight: 20,
@@ -69,7 +70,7 @@
         insertElementIdSuffix: "fixed-units"
     });
     genLeftRoundedRectFloatShapeOutsideRefTest({
-        roundedRect: {x: 0, y: 0, width: 81, height: 80, rx: 40, ry: 40},
+        roundedRect: {x: 0, y: 0, width: 80, height: 80, rx: 40, ry: 40},
         containerWidth: 160,
         containerHeight: 80,
         lineHeight: 20,
@@ -77,7 +78,7 @@
         insertElementIdSuffix: "relative-units"
     });
     genLeftRoundedRectFloatShapeOutsideRefTest({
-        roundedRect: {x: 0, y: 0, width: 81, height: 80, rx: 40, ry: 40},
+        roundedRect: {x: 0, y: 0, width: 80, height: 80, rx: 40, ry: 40},
         containerWidth: 160,
         containerHeight: 80,
         lineHeight: 20,
@@ -85,7 +86,7 @@
         insertElementIdSuffix: "different-units"
     });
     genLeftRoundedRectFloatShapeOutsideRefTest({
-        roundedRect: {x: 0, y: 0, width: 81, height: 80, rx: 40, ry: 40},
+        roundedRect: {x: 0, y: 0, width: 80, height: 80, rx: 40, ry: 40},
         containerWidth: 160,
         containerHeight: 80,
         lineHeight: 20,

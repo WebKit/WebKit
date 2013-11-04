@@ -13,22 +13,22 @@
 }
 
 .ellipse {
+    z-index: -1;
     width: 320px;
     height: 160px;
     border-radius: 160px / 80px;
-    border: 1px solid blue;
+    background-color: blue;
+    overflow: hidden;
 }
 
 #left-ellipse-outline {
     position: absolute;
-    z-index: -1;
     top: 20px;
     left: 0px;
 }
 
 #right-ellipse-outline {
     position: absolute;
-    z-index: -1;
     top: 20px;
     right: 0px;
 }
@@ -83,10 +83,8 @@ X
 <script src="resources/rounded-rectangle.js"></script>
 <script src="resources/subpixel-utils.js"></script>
 <script>
-// Note that the border must be added into the width to account for its
-// affect on float positioning.
 genLeftRightRoundedRectFloatShapeOutsideRefTest({
-    roundedRect: {x: 0, y: 20, width: 321, height: 160, rx: 160, ry: 80},
+    roundedRect: {x: 0, y: 20, width: 320, height: 160, rx: 160, ry: 80},
     containerWidth: 500, 
     containerHeight: 200,
     lineHeight: 20,

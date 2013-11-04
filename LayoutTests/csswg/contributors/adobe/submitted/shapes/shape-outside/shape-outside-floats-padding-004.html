@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<title>CSS Test: shape-outside on floats with a positive bottom padding</title>
+<title>CSS Test: shape-outside on floats with padding, vertical writing mode</title>
 <link rel="author" title="Adobe" href="http://html.adobe.com/">
 <link rel="author" title="Bem Jones-Bey" href="mailto:bjonesbe@adobe.com">
-<link rel="help" href="http://dev.w3.org/csswg/css-shapes-1/#shape-padding-property">
+<link rel="help" href="http://dev.w3.org/csswg/css-shapes-1/#relation-to-box-model-and-float-behavior">
+<meta name="assert" content="This tests if padding on the logical top of the float is properly ignored if the shape does not extend into the padding.">
 <link rel="match" href="shape-outside-floats-padding-004-ref.html">
 <meta name="flags" content="ahem">
 <head>
@@ -24,7 +25,6 @@
     height: 100px;
     -webkit-shape-outside: rectangle(0, 0, 100%, 100%);
     padding-right: 20px;
-    background-color: green;
 }
 
 #float-right {
@@ -33,7 +33,6 @@
     height: 100px;
     -webkit-shape-outside: rectangle(0, 0, 100%, 100%);
     padding-right: 20px;
-    background-color: green;
 }
 </style>
 
@@ -42,12 +41,14 @@
     <div class="container">
         XXXXX 
         <div id="float-left">
+            XXXXX
         </div>
         XXXXX
     </div>
     <div class="container">
         XXXXX 
         <div id="float-right">
+            XXXXX
         </div>
         XXXXX
     </div>

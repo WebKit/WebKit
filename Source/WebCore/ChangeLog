@@ -1,3 +1,19 @@
+2013-11-04  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [css shapes] Fix support for shape-outside on a float with padding
+        https://bugs.webkit.org/show_bug.cgi?id=123590
+
+        Reviewed by Alexandru Chiculita.
+
+        The line top was being improperly converted to the coordinates of the
+        shape, causing the shape to be positioned incorrectly when the float
+        had padding. This fixes that problem.
+
+        No new tests, covered by updates to existing ones.
+
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::updateDeltasForContainingBlockLine):
+
 2013-11-04  Alexey Proskuryakov  <ap@apple.com>
 
         Implement generateKey for HMAC and AES-CBC

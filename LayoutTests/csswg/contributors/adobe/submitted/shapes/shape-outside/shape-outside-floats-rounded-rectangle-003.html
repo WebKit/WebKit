@@ -8,7 +8,6 @@
 <style>
 .container {
     font: 20px/1 Ahem, sans-serif;
-    line-height: 20px;
     width: 500px;
     height: 200px; 
     border: 1px solid black;
@@ -17,7 +16,8 @@
 .rounded-rect-ellipse {
     width: 320px;
     height: 160px;
-    border: 1px solid blue;
+    background-color: blue;
+    overflow: hidden;
     border-radius: 160px / 80px;
     -webkit-shape-outside: rectangle(0px, 0px, 320px, 160px, 160px, 80px); /* x,y,width,height,rx,ry */
 }
