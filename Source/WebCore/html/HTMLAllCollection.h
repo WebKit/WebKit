@@ -30,15 +30,15 @@
 
 namespace WebCore {
 
-class HTMLAllCollection : public HTMLCollection {
+class HTMLAllCollection FINAL : public HTMLCollection {
 public:
-    static PassRefPtr<HTMLAllCollection> create(ContainerNode&, CollectionType);
+    static PassRef<HTMLAllCollection> create(Document&, CollectionType);
     virtual ~HTMLAllCollection();
 
     Node* namedItemWithIndex(const AtomicString& name, unsigned index) const;
 
 private:
-    HTMLAllCollection(ContainerNode&, CollectionType);
+    HTMLAllCollection(Document&, CollectionType);
 };
 
 } // namespace WebCore
