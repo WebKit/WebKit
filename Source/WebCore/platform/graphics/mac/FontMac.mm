@@ -186,11 +186,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     }
     CGContextSetTextMatrix(cgContext, matrix);
 
-#if PLATFORM(MAC)
     wkSetCGFontRenderingMode(cgContext, drawFont, context->shouldSubpixelQuantizeFonts());
-#else
-    wkSetCGFontRenderingMode(cgContext, drawFont);
-#endif
     if (drawFont)
         CGContextSetFontSize(cgContext, 1.0f);
     else
