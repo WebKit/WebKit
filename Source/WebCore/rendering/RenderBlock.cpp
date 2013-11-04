@@ -4755,7 +4755,7 @@ void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderO
         if (RenderTextFragment* remainingText = toRenderBoxModelObject(firstLetter)->firstLetterRemainingText()) {
             ASSERT(remainingText->isAnonymous() || remainingText->textNode()->renderer() == remainingText);
             // Replace the old renderer with the new one.
-            remainingText->setFirstLetter(newFirstLetter);
+            remainingText->setFirstLetter(*newFirstLetter);
             newFirstLetter->setFirstLetterRemainingText(remainingText);
         }
         // To prevent removal of single anonymous block in RenderBlock::removeChild and causing
@@ -4821,7 +4821,7 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
 
         firstLetterContainer->addChild(remainingText, currentTextChild);
         firstLetterContainer->removeChild(*currentTextChild);
-        remainingText->setFirstLetter(firstLetter);
+        remainingText->setFirstLetter(*firstLetter);
         firstLetter->setFirstLetterRemainingText(remainingText);
         
         // construct text fragment for the first letter

@@ -140,13 +140,13 @@ inline RenderChildIterator<T> RenderChildIteratorAdapter<T>::end()
 template <typename T>
 inline T* RenderChildIteratorAdapter<T>::first()
 {
-    return RenderTraversal::firstChild<T>(&m_parent);
+    return RenderTraversal::firstChild<T>(m_parent);
 }
 
 template <typename T>
 inline T* RenderChildIteratorAdapter<T>::last()
 {
-    return RenderTraversal::lastChild<T>(&m_parent);
+    return RenderTraversal::lastChild<T>(m_parent);
 }
 
 // RenderChildConstIteratorAdapter

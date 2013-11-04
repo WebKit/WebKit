@@ -46,8 +46,8 @@ public:
     unsigned start() const { return m_start; }
     unsigned end() const { return m_end; }
 
-    RenderObject* firstLetter() const { return m_firstLetter; }
-    void setFirstLetter(RenderObject* firstLetter) { m_firstLetter = firstLetter; }
+    RenderBoxModelObject* firstLetter() const { return m_firstLetter; }
+    void setFirstLetter(RenderBoxModelObject& firstLetter) { m_firstLetter = &firstLetter; }
 
     StringImpl* contentString() const { return m_contentString.impl(); }
     virtual String originalText() const OVERRIDE;
@@ -66,7 +66,7 @@ private:
     unsigned m_start;
     unsigned m_end;
     String m_contentString;
-    RenderObject* m_firstLetter;
+    RenderBoxModelObject* m_firstLetter;
 };
 
 inline RenderTextFragment* toRenderTextFragment(RenderObject* object)

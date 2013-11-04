@@ -1,5 +1,35 @@
 2013-11-03  Andreas Kling  <akling@apple.com>
 
+        RenderTextFragment: Tighten first-letter logic.
+        <https://webkit.org/b/123714>
+
+        Reviewed by Antti Koivisto.
+
+        * editing/TextIterator.cpp:
+        (WebCore::firstRenderTextInFirstLetter):
+
+            Use iterator helper to find first RenderText child.
+
+        (WebCore::TextIterator::handleTextNodeFirstLetter):
+
+            Tightening through type inference.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetterStyle):
+        (WebCore::RenderBlock::createFirstLetterRenderer):
+        * rendering/RenderTextFragment.h:
+
+            The first letter renderer is always a RenderBoxModelObject,
+            so make the code deal in that instead of RenderObject.
+
+        * rendering/RenderChildIterator.h:
+        (WebCore::RenderChildIteratorAdapter::first):
+        (WebCore::RenderChildIteratorAdapter::last):
+
+            Remove excess ampersands that were keeping this from building.
+
+2013-11-03  Andreas Kling  <akling@apple.com>
+
         CSSPrimitiveValue identifier constructors should return PassRef.
         <https://webkit.org/b/123712>
 
