@@ -857,8 +857,10 @@ int AccessibilityUIElement::insertionPointLineNumber()
 
 bool AccessibilityUIElement::isPressActionSupported()
 {
-    // FIXME: implement
-    return false;
+    if (!ATK_IS_ACTION(m_element))
+        return false;
+
+    return equalIgnoringCase(atk_action_get_name(ATK_ACTION(m_element), 0), String("press"));
 }
 
 bool AccessibilityUIElement::isIncrementActionSupported()
