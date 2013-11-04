@@ -65,6 +65,11 @@ using namespace WebKit;
 }
 #endif
 
+- (ImmutableDictionary*)rootObjectDictionary
+{
+    return _rootDictionary.get();
+}
+
 - (BOOL)allowsKeyedCoding
 {
     return YES;

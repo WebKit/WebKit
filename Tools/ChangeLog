@@ -1,3 +1,20 @@
+2013-11-04  Anders Carlsson  <andersca@apple.com>
+
+        More WKRemoteObjectRegistry work
+        https://bugs.webkit.org/show_bug.cgi?id=123754
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/Tests/WebKit2ObjC/WKRemoteObjectRegistry.mm:
+        (TestWebKitAPI::TEST):
+        Use the correct bundle test name. Call Util::run.
+
+        * TestWebKitAPI/Tests/mac/WKRemoteObjectRegistry_Bundle.mm:
+        (-[BundleObject sayHello]):
+        (-[BundleObject testMethodWithString:double:integer:]):
+        Add BundleObject implementation. Register the bundle object with
+        the remote object registry. Call _handleMessageWithName:body: on the incoming message.
+
 2013-11-04  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Change ATK version to 2.10.0

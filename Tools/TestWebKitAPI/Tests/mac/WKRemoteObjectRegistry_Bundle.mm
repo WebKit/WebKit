@@ -23,20 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "InjectedBundleTest.h"
-#include "PlatformUtilities.h"
-#include <WebKit2/WKRetainPtr.h>
+#import "config.h"
+#import "InjectedBundleTest.h"
+
+#import "PlatformUtilities.h"
+#import "WKRemoteObjectRegistry_Shared.h"
+#import <WebKit2/WKRemoteObjectRegistryPrivate.h>
+#import <WebKit2/WKRemoteObjectInterface.h>
+#import <WebKit2/WKRetainPtr.h>
+#import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
 
-namespace TestWebKitAPI {
+@interface BundleObject : NSObject <BundleInterface>
+@end
 
-/* WKConnectionClient */
-static void connectionDidReceiveMessage(WKConnectionRef connection, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo)
+@implementation BundleObject
+
+- (void)sayHello
 {
-    // FIXME: Implement this.
+    // FIXME: Implement.
 }
+
+- (void)testMethodWithString:(NSString *)string double:(double)d integer:(int)i
+{
+    // FIXME: Implement.
+}
+
+@end
+
+namespace TestWebKitAPI {
 
 class WKRemoteObjectRegistryTest : public InjectedBundleTest {
 public:
@@ -45,15 +61,30 @@ public:
     {
     }
 
-    virtual void initialize(WKBundleRef bundle, WKTypeRef)
+    virtual void initialize(WKBundleRef bundle, WKTypeRef) override
     {
+        m_objectRegistry = adoptNS([[WKRemoteObjectRegistry alloc] _initWithConnectionRef:WKBundleGetApplicationConnection(bundle)]);
+
+        WKRemoteObjectInterface *bundleInterface = [WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(BundleInterface)];
+
+        BundleObject *bundleObject = [[BundleObject alloc] init];
+        [m_objectRegistry registerExportedObject:bundleObject interface:bundleInterface];
+
         WKConnectionClient connectionClient;
         memset(&connectionClient, 0, sizeof(connectionClient));
         connectionClient.version = WKConnectionClientCurrentVersion;
-        connectionClient.clientInfo = 0;
-        connectionClient.didReceiveMessage = connectionDidReceiveMessage;
+        connectionClient.clientInfo = this;
+        connectionClient.didReceiveMessage = [](WKConnectionRef connection, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo) {
+            const WKRemoteObjectRegistryTest* test = static_cast<const WKRemoteObjectRegistryTest*>(clientInfo);
+
+            [test->m_objectRegistry.get() _handleMessageWithName:messageName body:messageBody];
+        };
+
         WKConnectionSetConnectionClient(WKBundleGetApplicationConnection(bundle), &connectionClient);
     }
+
+private:
+    RetainPtr<WKRemoteObjectRegistry> m_objectRegistry;
 };
 
 static InjectedBundleTest::Register<WKRemoteObjectRegistryTest> registrar("WKRemoteObjectRegistry");

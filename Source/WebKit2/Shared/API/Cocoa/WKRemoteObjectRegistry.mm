@@ -27,6 +27,7 @@
 #import "WKRemoteObjectRegistryInternal.h"
 
 #import "Connection.h"
+#import "ImmutableDictionary.h"
 #import "WKConnectionRef.h"
 #import "WKRemoteObject.h"
 #import "WKRemoteObjectCoder.h"
@@ -35,6 +36,8 @@
 #import "WebConnection.h"
 
 #if WK_API_ENABLED
+
+const char* const messageName = "WKRemoteObjectRegistryMessage";
 
 using namespace WebKit;
 
@@ -74,6 +77,13 @@ using namespace WebKit;
 
     [encoder encodeObject:interface.identifier forKey:@"interfaceIdentifier"];
     [encoder encodeObject:invocation forKey:@"invocation"];
+
+    [self _sendMessageWithBody:[encoder rootObjectDictionary]];
+}
+
+- (void)_sendMessageWithBody:(PassRefPtr<ImmutableDictionary>)body
+{
+    _connection->postMessage(messageName, body.get());
 }
 
 @end
