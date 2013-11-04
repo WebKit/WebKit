@@ -187,7 +187,7 @@
         var style = this._token(stream, state);
 
         if (style) {
-            if (style === "variable-2" && stream.current() === "url") {
+            if (style === "string-2" && stream.current() === "url") {
                 // If the current text is "url" then we should expect the next string token to be a link.
                 state._expectLink = true;
             } else if (state._expectLink && style === "string") {
