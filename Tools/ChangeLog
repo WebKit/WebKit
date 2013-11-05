@@ -1,3 +1,24 @@
+2013-11-04  Alexey Proskuryakov  <ap@apple.com>
+
+        DumpRenderTree should reset its preferences file on launch
+        https://bugs.webkit.org/show_bug.cgi?id=29751
+
+        Reviewed by Dan Bernstein.
+
+        Using NSArgumentDomain was not a good idea. While it works with NSUserDefaults
+        and CFPreferencesCopyAppValue family of functions, it doesn't work with
+        CFPreferencesCopyValue(..., kCFPreferencesCurrentApplication, ...).
+
+        So, now we'll just set defaults in the current application.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm: (setDefaultsToConsistentValuesForTesting):
+        - Delete the defaults.
+        - Removed CFPreferencesSetAppValue calls, as -setValuesForKeysWithDictionary: does the same.
+        - The comment about [NSUserDefaults standardUserDefaults] indirectly initializing NSApplication was incorrect.
+
+        * WebKitTestRunner/mac/main.mm: (setDefaultsToConsistentValuesForTesting):
+        Switched to -setValuesForKeysWithDictionary for consistency.
+
 2013-11-04  Filip Pizlo  <fpizlo@apple.com>
 
         Running FTL tests shouldn't reduce coverage on DFG tests

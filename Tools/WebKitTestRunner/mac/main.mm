@@ -40,7 +40,7 @@ static void setDefaultsToConsistentValuesForTesting()
         @"WebAutomaticDashSubstitutionEnabled": @NO
     };
 
-    [[NSUserDefaults standardUserDefaults] setVolatileDomain:dict forName:NSArgumentDomain];
+    [[NSUserDefaults standardUserDefaults] setValuesForKeysWithDictionary:dict];
 }
 
 int main(int argc, const char* argv[])

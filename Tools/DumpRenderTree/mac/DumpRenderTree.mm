@@ -679,11 +679,7 @@ static void setDefaultsToConsistentValuesForTesting()
     static const int NoFontSmoothing = 0;
     static const int BlueTintedAppearance = 1;
 
-    // These defaults are read at NSApplication initialization time, and there is no way to fully reset them afterwards.
-    // We have to use CFPreferences, because [NSUserDefaults standardUserDefaults] indirectly initializes NSApplication.
-    CFPreferencesSetAppValue(CFSTR("AppleFontSmoothing"), (CFNumberRef)@(NoFontSmoothing), kCFPreferencesCurrentApplication);
-    CFPreferencesSetAppValue(CFSTR("AppleAntiAliasingThreshold"), (CFNumberRef)@4, kCFPreferencesCurrentApplication);
-    CFPreferencesSetAppValue(CFSTR("AppleLanguages"), (CFArrayRef)@[ @"en" ], kCFPreferencesCurrentApplication);
+    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:@"DumpRenderTree"];
 
     NSString *libraryPath = libraryPathForDumpRenderTree();
 
@@ -716,7 +712,7 @@ static void setDefaultsToConsistentValuesForTesting()
         WebKitLocalCacheDefaultsKey: [libraryPath stringByAppendingPathComponent:@"LocalCache"]
     };
 
-    [[NSUserDefaults standardUserDefaults] setVolatileDomain:dict forName:NSArgumentDomain];
+    [[NSUserDefaults standardUserDefaults] setValuesForKeysWithDictionary:dict];
 }
 
 static void runThread(void* arg)

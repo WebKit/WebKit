@@ -6523,10 +6523,10 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
 
 - (void)_retrieveKeyboardUIModeFromPreferences:(NSNotification *)notification
 {
-    CFPreferencesAppSynchronize(kCFPreferencesAnyApplication);
+    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication);
 
     Boolean keyExistsAndHasValidFormat;
-    int mode = CFPreferencesGetAppIntegerValue(AppleKeyboardUIMode, kCFPreferencesAnyApplication, &keyExistsAndHasValidFormat);
+    int mode = CFPreferencesGetAppIntegerValue(AppleKeyboardUIMode, kCFPreferencesCurrentApplication, &keyExistsAndHasValidFormat);
 
     // The keyboard access mode has two bits:
     // Bit 0 is set if user can set the focus to menus, the dock, and various windows using the keyboard.

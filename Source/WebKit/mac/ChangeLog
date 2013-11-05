@@ -1,3 +1,16 @@
+2013-11-04  Alexey Proskuryakov  <ap@apple.com>
+
+        DumpRenderTree should reset its preferences file on launch
+        https://bugs.webkit.org/show_bug.cgi?id=29751
+
+        Reviewed by Dan Bernstein.
+
+        * WebView/WebView.mm:
+        (-[WebView _retrieveKeyboardUIModeFromPreferences:]):
+        Further fix reading of AppleKeyboardUIMode - reading it from kCFPreferencesAnyApplication
+        domain meant that current application's domain was explcitly ignored, and the only
+        way to override the setting in DRT was through argument domain.
+
 2013-11-01  Jer Noble  <jer.noble@apple.com>
 
         [PluginProxy] Add a setting to disable video plugin proxy support in HTMLMediaElement.
