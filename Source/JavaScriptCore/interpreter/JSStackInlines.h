@@ -64,7 +64,7 @@ inline CallFrame* JSStack::pushFrame(CallFrame* callerFrame,
             paddedArgsCount = numParameters;
     }
 
-    Register* newCallFrameSlot = oldEnd - paddedArgsCount - (2 * JSStack::CallFrameHeaderSize);
+    Register* newCallFrameSlot = oldEnd - paddedArgsCount - (2 * JSStack::CallFrameHeaderSize) + 1;
 
 #if ENABLE(DEBUG_JSSTACK)
     newCallFrameSlot -= JSStack::FenceSize;

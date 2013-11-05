@@ -1,3 +1,15 @@
+2013-11-04  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r158586): plugins/refcount-leaks.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=123765
+
+        Reviewed by Filip Pizlo.
+
+        Reverted the test expectation changes after fixing the underlying issue.
+
+        * TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2013-11-04  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Regions][CSS Shapes] Content in region doesn't respect shape-outside after initial layout pass

@@ -1,3 +1,17 @@
+2013-11-04  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r158586): plugins/refcount-leaks.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=123765
+
+        We were leaving a hole of one slot above a new frame when pushing the new frame on
+        the stack with pushFrame().  This unused slot can contain residual values that will
+        be marked during GC.
+
+        Reviewed by Filip Pizlo.
+
+        * interpreter/JSStackInlines.h:
+        (JSC::JSStack::pushFrame):
+
 2013-11-04  Filip Pizlo  <fpizlo@apple.com>
 
         internal-js-tests.yaml/Octane/stress-tests/pdfjs.js.default: ASSERTION FAILED: m_state.forNode(child).m_futurePossibleStructure.isSubsetOf(StructureSet(structure)) at DFGConstantFoldingPhase.cpp:249
