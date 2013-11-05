@@ -99,6 +99,7 @@ inline CapabilityLevel canCompile(Node* node)
         // These are OK.
         break;
     case GetById:
+    case PutById:
         if (node->child1().useKind() == CellUse)
             break;
         return CannotCompile;

@@ -58,6 +58,7 @@ public:
     GeneratedFunction generatedFunction;
     JITFinalizer* finalizer;
     SegmentedVector<GetByIdDescriptor> getByIds;
+    SegmentedVector<PutByIdDescriptor> putByIds;
     Vector<CString> codeSectionNames;
     Vector<CString> dataSectionNames;
     RefCountedArray<LSectionWord> stackmapsSection;

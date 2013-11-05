@@ -383,6 +383,7 @@ public:
     bool usesArguments() const { return m_features & ArgumentsFeature; }
     bool needsActivation() const { return m_hasCapturedVariables || m_features & (EvalFeature | WithFeature | CatchFeature); }
     bool isStrictMode() const { return m_features & StrictModeFeature; }
+    ECMAMode ecmaMode() const { return isStrictMode() ? StrictMode : NotStrictMode; }
         
     void setNeverInline(bool value) { m_neverInline = value; }
     bool neverInline() const { return m_neverInline; }

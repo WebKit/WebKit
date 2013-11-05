@@ -100,7 +100,8 @@ public:
     
     ~CallContext()
     {
-        m_jit.move(GPRInfo::returnValueGPR, m_returnRegister);
+        if (m_returnRegister != InvalidGPRReg)
+            m_jit.move(GPRInfo::returnValueGPR, m_returnRegister);
         
         for (unsigned i = std::min(NUMBER_OF_ARGUMENT_REGISTERS, m_numArgs); i--;) {
             if (!m_usedRegisters.get(GPRInfo::toArgumentRegister(i)))
@@ -157,6 +158,20 @@ MacroAssembler::Call callOperation(
     CallContext context(state, usedRegisters, jit, 4, result);
     jit.setupArguments(
         callFrameRegister, CCallHelpers::TrustedImmPtr(stubInfo), object,
+        CCallHelpers::TrustedImmPtr(uid));
+    return context.makeCall(bitwise_cast<void*>(operation));
+    // FIXME: FTL should support exceptions.
+    // https://bugs.webkit.org/show_bug.cgi?id=113622
+}
+
+MacroAssembler::Call callOperation(
+    State& state, const RegisterSet& usedRegisters, CCallHelpers& jit, 
+    V_JITOperation_ESsiJJI operation, GPRReg callFrameRegister,
+    StructureStubInfo* stubInfo, GPRReg value, GPRReg object, StringImpl* uid)
+{
+    CallContext context(state, usedRegisters, jit, 5, InvalidGPRReg);
+    jit.setupArguments(
+        callFrameRegister, CCallHelpers::TrustedImmPtr(stubInfo), value, object,
         CCallHelpers::TrustedImmPtr(uid));
     return context.makeCall(bitwise_cast<void*>(operation));
     // FIXME: FTL should support exceptions.

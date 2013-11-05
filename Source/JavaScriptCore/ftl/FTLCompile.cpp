@@ -106,6 +106,42 @@ static void dumpDataSection(RefCountedArray<LSectionWord> section, const char* p
     }
 }
 
+template<typename DescriptorType>
+void generateICFastPath(
+    State& state, CodeBlock* codeBlock, GeneratedFunction generatedFunction,
+    StackMaps::RecordMap& recordMap, DescriptorType& ic, size_t sizeOfIC)
+{
+    VM& vm = state.graph.m_vm;
+
+    StackMaps::RecordMap::iterator iter = recordMap.find(ic.stackmapID());
+    if (iter == recordMap.end()) {
+        // It was optimized out.
+        return;
+    }
+    
+    StackMaps::Record& record = iter->value;
+
+    CCallHelpers fastPathJIT(&vm, codeBlock);
+    ic.m_generator.generateFastPath(fastPathJIT);
+
+    char* startOfIC =
+        bitwise_cast<char*>(generatedFunction) + record.instructionOffset;
+            
+    LinkBuffer linkBuffer(vm, &fastPathJIT, startOfIC, sizeOfIC);
+    // Note: we could handle the !isValid() case. We just don't appear to have a
+    // reason to do so, yet.
+    RELEASE_ASSERT(linkBuffer.isValid());
+    
+    state.finalizer->sideCodeLinkBuffer->link(
+        ic.m_slowPathDone, CodeLocationLabel(startOfIC + sizeOfIC));
+            
+    linkBuffer.link(
+        ic.m_generator.slowPathJump(),
+        state.finalizer->sideCodeLinkBuffer->locationOf(ic.m_generator.slowPathBegin()));
+            
+    ic.m_generator.finalize(linkBuffer, *state.finalizer->sideCodeLinkBuffer);
+}
+
 static void fixFunctionBasedOnStackMaps(
     State& state, CodeBlock* codeBlock, JITCode* jitCode, GeneratedFunction generatedFunction,
     StackMaps::RecordMap& recordMap)
@@ -138,7 +174,7 @@ static void fixFunctionBasedOnStackMaps(
         state.finalizer->exitThunksLinkBuffer = linkBuffer.release();
     }
 
-    if (!state.getByIds.isEmpty()) {
+    if (!state.getByIds.isEmpty() || !state.putByIds.isEmpty()) {
         CCallHelpers slowPathJIT(&vm, codeBlock);
         
         for (unsigned i = state.getByIds.size(); i--;) {
@@ -177,40 +213,55 @@ static void fixFunctionBasedOnStackMaps(
             getById.m_generator = gen;
         }
         
-        state.finalizer->sideCodeLinkBuffer = adoptPtr(
-            new LinkBuffer(vm, &slowPathJIT, codeBlock, JITCompilationMustSucceed));
-        
-        for (unsigned i = state.getByIds.size(); i--;) {
-            GetByIdDescriptor& getById = state.getByIds[i];
+        for (unsigned i = state.putByIds.size(); i--;) {
+            PutByIdDescriptor& putById = state.putByIds[i];
             
-            StackMaps::RecordMap::iterator iter = recordMap.find(getById.stackmapID());
+            StackMaps::RecordMap::iterator iter = recordMap.find(putById.stackmapID());
             if (iter == recordMap.end()) {
                 // It was optimized out.
                 continue;
             }
             
             StackMaps::Record& record = iter->value;
+            
+            UNUSED_PARAM(record); // FIXME: use AnyRegs.
 
-            CCallHelpers fastPathJIT(&vm, codeBlock);
-            getById.m_generator.generateFastPath(fastPathJIT);
-
-            char* startOfIC =
-                bitwise_cast<char*>(generatedFunction) + record.instructionOffset;
-            size_t sizeOfIC = sizeOfGetById();
+            // FIXME: LLVM should tell us which registers are live.
+            RegisterSet usedRegisters = RegisterSet::allRegisters();
             
-            LinkBuffer linkBuffer(vm, &fastPathJIT, startOfIC, sizeOfIC);
-            // Note: we could handle the !isValid() case. We just don't appear to have a
-            // reason to do so, yet.
-            RELEASE_ASSERT(linkBuffer.isValid());
+            GPRReg callFrameRegister = GPRInfo::argumentGPR0;
+            GPRReg base = GPRInfo::argumentGPR1;
+            GPRReg value = GPRInfo::argumentGPR2;
             
-            state.finalizer->sideCodeLinkBuffer->link(
-                getById.m_slowPathDone, CodeLocationLabel(startOfIC + sizeOfIC));
+            JITPutByIdGenerator gen(
+                codeBlock, putById.codeOrigin(), usedRegisters, JSValueRegs(base),
+                JSValueRegs(value), GPRInfo::argumentGPR3, false, putById.ecmaMode(),
+                putById.putKind());
             
-            linkBuffer.link(
-                getById.m_generator.slowPathJump(),
-                state.finalizer->sideCodeLinkBuffer->locationOf(getById.m_generator.slowPathBegin()));
+            MacroAssembler::Label begin = slowPathJIT.label();
             
-            getById.m_generator.finalize(linkBuffer, *state.finalizer->sideCodeLinkBuffer);
+            MacroAssembler::Call call = callOperation(
+                state, usedRegisters, slowPathJIT, gen.slowPathFunction(), callFrameRegister,
+                gen.stubInfo(), value, base, putById.uid());
+            
+            gen.reportSlowPathCall(begin, call);
+            
+            putById.m_slowPathDone = slowPathJIT.jump();
+            putById.m_generator = gen;
+        }
+        
+        state.finalizer->sideCodeLinkBuffer = adoptPtr(
+            new LinkBuffer(vm, &slowPathJIT, codeBlock, JITCompilationMustSucceed));
+        
+        for (unsigned i = state.getByIds.size(); i--;) {
+            generateICFastPath(
+                state, codeBlock, generatedFunction, recordMap, state.getByIds[i],
+                sizeOfGetById());
+        }
+        for (unsigned i = state.putByIds.size(); i--;) {
+            generateICFastPath(
+                state, codeBlock, generatedFunction, recordMap, state.putByIds[i],
+                sizeOfPutById());
         }
     }
     

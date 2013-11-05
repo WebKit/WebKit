@@ -39,14 +39,7 @@ class InlineCacheDescriptor {
 public:
     InlineCacheDescriptor() { }
     
-    MacroAssembler::Jump m_slowPathDone;
-};
-
-class GetByIdDescriptor : public InlineCacheDescriptor {
-public:
-    GetByIdDescriptor() { }
-    
-    GetByIdDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, StringImpl* uid)
+    InlineCacheDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, StringImpl* uid)
         : m_stackmapID(stackmapID)
         , m_codeOrigin(codeOrigin)
         , m_uid(uid)
@@ -61,9 +54,44 @@ private:
     unsigned m_stackmapID;
     CodeOrigin m_codeOrigin;
     StringImpl* m_uid;
-
+    
 public:
+    MacroAssembler::Jump m_slowPathDone;
+};
+
+class GetByIdDescriptor : public InlineCacheDescriptor {
+public:
+    GetByIdDescriptor() { }
+    
+    GetByIdDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, StringImpl* uid)
+        : InlineCacheDescriptor(stackmapID, codeOrigin, uid)
+    {
+    }
+    
     JITGetByIdGenerator m_generator;
+};
+
+class PutByIdDescriptor : public InlineCacheDescriptor {
+public:
+    PutByIdDescriptor() { }
+    
+    PutByIdDescriptor(
+        unsigned stackmapID, CodeOrigin codeOrigin, StringImpl* uid,
+        ECMAMode ecmaMode, PutKind putKind)
+        : InlineCacheDescriptor(stackmapID, codeOrigin, uid)
+        , m_ecmaMode(ecmaMode)
+        , m_putKind(putKind)
+    {
+    }
+    
+    JITPutByIdGenerator m_generator;
+    
+    ECMAMode ecmaMode() const { return m_ecmaMode; }
+    PutKind putKind() const { return m_putKind; }
+
+private:
+    ECMAMode m_ecmaMode;
+    PutKind m_putKind;
 };
 
 } } // namespace JSC::FTL

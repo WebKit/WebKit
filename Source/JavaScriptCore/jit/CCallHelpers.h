@@ -913,6 +913,13 @@ public:
         move(arg4, GPRInfo::argumentGPR3);
     }
     
+    ALWAYS_INLINE void setupArguments(GPRReg arg1, TrustedImmPtr arg2, GPRReg arg3, GPRReg arg4, TrustedImmPtr arg5)
+    {
+        setupThreeStubArgsGPR<GPRInfo::argumentGPR0, GPRInfo::argumentGPR2, GPRInfo::argumentGPR3>(arg1, arg3, arg4);
+        move(arg2, GPRInfo::argumentGPR1);
+        move(arg5, GPRInfo::argumentGPR4);
+    }
+    
     ALWAYS_INLINE void setupArguments(TrustedImmPtr arg1)
     {
         move(arg1, GPRInfo::argumentGPR0);

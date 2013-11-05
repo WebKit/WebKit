@@ -1,5 +1,40 @@
 2013-11-04  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL should support PutById
+        https://bugs.webkit.org/show_bug.cgi?id=123784
+
+        Reviewed by Geoffrey Garen.
+
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::buildCall):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::generateICFastPath):
+        (JSC::FTL::fixFunctionBasedOnStackMaps):
+        * ftl/FTLInlineCacheDescriptor.h:
+        (JSC::FTL::InlineCacheDescriptor::InlineCacheDescriptor):
+        (JSC::FTL::GetByIdDescriptor::GetByIdDescriptor):
+        (JSC::FTL::PutByIdDescriptor::PutByIdDescriptor):
+        (JSC::FTL::PutByIdDescriptor::ecmaMode):
+        (JSC::FTL::PutByIdDescriptor::putKind):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compilePutById):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::call):
+        * ftl/FTLSlowPathCall.cpp:
+        (JSC::FTL::callOperation):
+        * ftl/FTLSlowPathCall.h:
+        * ftl/FTLState.h:
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArguments):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::ecmaMode):
+
+2013-11-04  Filip Pizlo  <fpizlo@apple.com>
+
         GetById->GetByOffset and PutById->PutByOffset folding should mark haveStructures since it may result in structure transition watchpoints
         https://bugs.webkit.org/show_bug.cgi?id=123788
 

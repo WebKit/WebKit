@@ -259,6 +259,16 @@ static inline LValue buildCall(LBuilder builder, LValue function, LValue arg1, L
     LValue args[] = { arg1, arg2, arg3, arg4, arg5, arg6 };
     return buildCall(builder, function, args, 6);
 }
+static inline LValue buildCall(LBuilder builder, LValue function, LValue arg1, LValue arg2, LValue arg3, LValue arg4, LValue arg5, LValue arg6, LValue arg7)
+{
+    LValue args[] = { arg1, arg2, arg3, arg4, arg5, arg6, arg7 };
+    return buildCall(builder, function, args, 7);
+}
+static inline LValue buildCall(LBuilder builder, LValue function, LValue arg1, LValue arg2, LValue arg3, LValue arg4, LValue arg5, LValue arg6, LValue arg7, LValue arg8)
+{
+    LValue args[] = { arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8 };
+    return buildCall(builder, function, args, 8);
+}
 enum TailCallMode { IsNotTailCall, IsTailCall };
 static inline void setTailCall(LValue call, TailCallMode mode) { llvm->SetTailCall(call, mode == IsTailCall); }
 static inline LValue buildExtractValue(LBuilder builder, LValue aggVal, unsigned index) { return llvm->BuildExtractValue(builder, aggVal, index, ""); }

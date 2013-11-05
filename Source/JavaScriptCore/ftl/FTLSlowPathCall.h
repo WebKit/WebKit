@@ -59,6 +59,10 @@ MacroAssembler::Call callOperation(
     State&, const RegisterSet&, CCallHelpers&, J_JITOperation_ESsiJI,
     GPRReg result, GPRReg callFrameRegister, StructureStubInfo*, GPRReg object,
     StringImpl* uid);
+MacroAssembler::Call callOperation(
+    State&, const RegisterSet&, CCallHelpers&, V_JITOperation_ESsiJJI,
+    GPRReg callFrameRegister, StructureStubInfo*, GPRReg value, GPRReg object,
+    StringImpl* uid);
 
 } } // namespace JSC::FTL
 

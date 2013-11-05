@@ -343,6 +343,9 @@ private:
         case GetById:
             compileGetById();
             break;
+        case PutById:
+            compilePutById();
+            break;
         case GetButterfly:
             compileGetButterfly();
             break;
@@ -1257,6 +1260,28 @@ private:
             constNull(m_out.ref8), m_out.constInt32(2), m_callFrame, base));
         
         m_ftlState.getByIds.append(GetByIdDescriptor(stackmapID, m_node->codeOrigin, uid));
+    }
+    
+    void compilePutById()
+    {
+        // See above; CellUse is easier so we do only that for now.
+        ASSERT(m_node->child1().useKind() == CellUse);
+
+        LValue base = lowCell(m_node->child1());
+        LValue value = lowJSValue(m_node->child2());
+        StringImpl* uid = m_graph.identifiers()[m_node->identifierNumber()];
+
+        // Arguments: id, bytes, target, numArgs, args...
+        unsigned stackmapID = m_stackmapIDs++;
+        m_out.call(
+            m_out.patchpointVoidIntrinsic(),
+            m_out.constInt32(stackmapID), m_out.constInt32(sizeOfPutById()),
+            constNull(m_out.ref8), m_out.constInt32(3), m_callFrame, base, value);
+        
+        m_ftlState.putByIds.append(PutByIdDescriptor(
+            stackmapID, m_node->codeOrigin, uid,
+            m_graph.executableFor(m_node->codeOrigin)->ecmaMode(),
+            m_node->op() == PutByIdDirect ? Direct : NotDirect));
     }
     
     void compileGetButterfly()
