@@ -323,8 +323,10 @@ void WebProcessProxy::getPlugins(bool refresh, Vector<PluginInfo>& plugins, Vect
     if (!m_context->omitPDFSupport()) {
 #if ENABLE(PDFKIT_PLUGIN)
         // Add built-in PDF last, so that it's not used when a real plug-in is installed.
+        plugins.append(PDFPlugin::pluginInfo());
         applicationPlugins.append(PDFPlugin::pluginInfo());
 #endif
+        plugins.append(SimplePDFPlugin::pluginInfo());
         applicationPlugins.append(SimplePDFPlugin::pluginInfo());
     }
 #endif
