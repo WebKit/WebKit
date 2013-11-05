@@ -110,7 +110,6 @@ void WebGeolocationManagerProxy::stopUpdating(CoreIPC::Connection* connection)
 void WebGeolocationManagerProxy::removeRequester(const CoreIPC::Connection::Client* client)
 {
     bool wasUpdating = isUpdating();
-    ASSERT(wasUpdating);
     bool highAccuracyWasEnabled = isHighAccuracyEnabled();
 
     m_highAccuracyRequesters.remove(client);

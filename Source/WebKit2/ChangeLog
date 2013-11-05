@@ -1,3 +1,18 @@
+2013-11-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix Mountain Lion Debug bot after r158689
+
+        Unreviewed.
+
+        It looks like WebGeolocationManagerProxy::stopUpdating() and WebGeolocationManagerProxy::processDidClose()
+        are racing in some cases, causing the assertion to fail.
+
+        That case is handled properly in the last if() branch of WebGeolocationManagerProxy::removeRequester().
+        This patch remove the overzealous assertion.
+
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        (WebKit::WebGeolocationManagerProxy::removeRequester):
+
 2013-11-05  Tim Horton  <timothy_horton@apple.com>
 
         Remote Layer Tree: Apply layer changes to LayerTypeCustom layers to the custom layer in the Web process, not to the CALayerHost
