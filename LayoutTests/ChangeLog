@@ -1,3 +1,12 @@
+2013-11-05  Artur Moryc  <a.moryc@samsung.com>
+
+        [EFL] accessibility/tabindex-elements-are-accessible.html is failing after r158195
+        https://bugs.webkit.org/show_bug.cgi?id=123741
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations: adding failing test
+
 2013-11-04  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r158586): plugins/refcount-leaks.html fails

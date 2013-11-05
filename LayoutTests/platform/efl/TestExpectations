@@ -1413,6 +1413,9 @@ webkit.org/b/115659 accessibility/meter-element.html [ Missing ]
 webkit.org/b/121684 accessibility/aria-describedby-on-input.html [ Failure ]
 webkit.org/b/121593 accessibility/radio-button-title-label.html [ Failure ]
 
+# New accessibility test added in r158195 that is failing for EFL.
+webkit.org/b/123738 accessibility/tabindex-elements-are-accessible.html [ Failure ]
+
 # Newly added test at r139111 is failing.
 webkit.org/b/106439 editing/pasteboard/paste-noplugin.html [ Failure ]
 
