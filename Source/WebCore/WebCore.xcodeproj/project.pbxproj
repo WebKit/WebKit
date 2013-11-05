@@ -1732,6 +1732,12 @@
 		5160F4980B0AA75F00C1D2AF /* HistoryItemMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160F4970B0AA75F00C1D2AF /* HistoryItemMac.mm */; };
 		5162C7F411F77EFB00612EFE /* SchemeRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5162C7F211F77EFA00612EFE /* SchemeRegistry.cpp */; };
 		5162C7F511F77EFB00612EFE /* SchemeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 5162C7F311F77EFB00612EFE /* SchemeRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51660AB61828BB8200074CAD /* IDBBackingStoreLevelDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51660AB01828BB8200074CAD /* IDBBackingStoreLevelDB.cpp */; };
+		51660AB71828BB8200074CAD /* IDBBackingStoreLevelDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 51660AB11828BB8200074CAD /* IDBBackingStoreLevelDB.h */; };
+		51660AB81828BB8200074CAD /* IDBFactoryBackendLevelDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51660AB21828BB8200074CAD /* IDBFactoryBackendLevelDB.cpp */; };
+		51660AB91828BB8200074CAD /* IDBFactoryBackendLevelDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 51660AB31828BB8200074CAD /* IDBFactoryBackendLevelDB.h */; };
+		51660ABA1828BB8200074CAD /* IDBLevelDBCoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51660AB41828BB8200074CAD /* IDBLevelDBCoding.cpp */; };
+		51660ABB1828BB8200074CAD /* IDBLevelDBCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 51660AB51828BB8200074CAD /* IDBLevelDBCoding.h */; };
 		516953971329A3C800B92D04 /* IconDatabaseBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516953951329A3C800B92D04 /* IconDatabaseBase.cpp */; };
 		516953981329A3C800B92D04 /* IconDatabaseBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 516953961329A3C800B92D04 /* IconDatabaseBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		516BB7940CE91E6800512F79 /* JSTreeWalkerCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */; };
@@ -5585,8 +5591,6 @@
 		E187056316E54A0D00585E97 /* MainThreadTask.h in Headers */ = {isa = PBXBuildFile; fileRef = E187056216E54A0D00585E97 /* MainThreadTask.h */; };
 		E18772F1126E2629003DD586 /* Language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18772F0126E2629003DD586 /* Language.cpp */; };
 		E19727161820549E00592D51 /* CryptoKeyType.h in Headers */ = {isa = PBXBuildFile; fileRef = E19727151820549E00592D51 /* CryptoKeyType.h */; };
-		E19AC3F71824E5D100349426 /* CryptoAlgorithmAesKeyGenParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E19AC3F61824E5D100349426 /* CryptoAlgorithmAesKeyGenParams.h */; };
-		E19AC3F9182566F700349426 /* CryptoKeyMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E19AC3F8182566F700349426 /* CryptoKeyMac.cpp */; };
 		E19AC3E21824DC6900349426 /* CryptoAlgorithmSHA224Mac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E19AC3DE1824DC6900349426 /* CryptoAlgorithmSHA224Mac.cpp */; };
 		E19AC3E31824DC6900349426 /* CryptoAlgorithmSHA256Mac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E19AC3DF1824DC6900349426 /* CryptoAlgorithmSHA256Mac.cpp */; };
 		E19AC3E41824DC6900349426 /* CryptoAlgorithmSHA384Mac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E19AC3E01824DC6900349426 /* CryptoAlgorithmSHA384Mac.cpp */; };
@@ -8377,6 +8381,12 @@
 		5160F4970B0AA75F00C1D2AF /* HistoryItemMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HistoryItemMac.mm; path = mac/HistoryItemMac.mm; sourceTree = "<group>"; };
 		5162C7F211F77EFA00612EFE /* SchemeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SchemeRegistry.cpp; sourceTree = "<group>"; };
 		5162C7F311F77EFB00612EFE /* SchemeRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchemeRegistry.h; sourceTree = "<group>"; };
+		51660AB01828BB8200074CAD /* IDBBackingStoreLevelDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBBackingStoreLevelDB.cpp; sourceTree = "<group>"; };
+		51660AB11828BB8200074CAD /* IDBBackingStoreLevelDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBBackingStoreLevelDB.h; sourceTree = "<group>"; };
+		51660AB21828BB8200074CAD /* IDBFactoryBackendLevelDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBFactoryBackendLevelDB.cpp; sourceTree = "<group>"; };
+		51660AB31828BB8200074CAD /* IDBFactoryBackendLevelDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBFactoryBackendLevelDB.h; sourceTree = "<group>"; };
+		51660AB41828BB8200074CAD /* IDBLevelDBCoding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBLevelDBCoding.cpp; sourceTree = "<group>"; };
+		51660AB51828BB8200074CAD /* IDBLevelDBCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBLevelDBCoding.h; sourceTree = "<group>"; };
 		516953951329A3C800B92D04 /* IconDatabaseBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconDatabaseBase.cpp; sourceTree = "<group>"; };
 		516953961329A3C800B92D04 /* IconDatabaseBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconDatabaseBase.h; sourceTree = "<group>"; };
 		516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTreeWalkerCustom.cpp; sourceTree = "<group>"; };
@@ -12623,8 +12633,6 @@
 		E187056216E54A0D00585E97 /* MainThreadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainThreadTask.h; sourceTree = "<group>"; };
 		E18772F0126E2629003DD586 /* Language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Language.cpp; sourceTree = "<group>"; };
 		E19727151820549E00592D51 /* CryptoKeyType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyType.h; sourceTree = "<group>"; };
-		E19AC3F61824E5D100349426 /* CryptoAlgorithmAesKeyGenParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAesKeyGenParams.h; sourceTree = "<group>"; };
-		E19AC3F8182566F700349426 /* CryptoKeyMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoKeyMac.cpp; sourceTree = "<group>"; };
 		E19AC3DE1824DC6900349426 /* CryptoAlgorithmSHA224Mac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoAlgorithmSHA224Mac.cpp; path = mac/CryptoAlgorithmSHA224Mac.cpp; sourceTree = "<group>"; };
 		E19AC3DF1824DC6900349426 /* CryptoAlgorithmSHA256Mac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoAlgorithmSHA256Mac.cpp; path = mac/CryptoAlgorithmSHA256Mac.cpp; sourceTree = "<group>"; };
 		E19AC3E01824DC6900349426 /* CryptoAlgorithmSHA384Mac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoAlgorithmSHA384Mac.cpp; path = mac/CryptoAlgorithmSHA384Mac.cpp; sourceTree = "<group>"; };
@@ -15026,6 +15034,19 @@
 			name = mac;
 			sourceTree = "<group>";
 		};
+		51660AAF1828BB8200074CAD /* leveldb */ = {
+			isa = PBXGroup;
+			children = (
+				51660AB01828BB8200074CAD /* IDBBackingStoreLevelDB.cpp */,
+				51660AB11828BB8200074CAD /* IDBBackingStoreLevelDB.h */,
+				51660AB21828BB8200074CAD /* IDBFactoryBackendLevelDB.cpp */,
+				51660AB31828BB8200074CAD /* IDBFactoryBackendLevelDB.h */,
+				51660AB41828BB8200074CAD /* IDBLevelDBCoding.cpp */,
+				51660AB51828BB8200074CAD /* IDBLevelDBCoding.h */,
+			);
+			path = leveldb;
+			sourceTree = "<group>";
+		};
 		51741D080B07257000ED442C /* history */ = {
 			isa = PBXGroup;
 			children = (
@@ -16840,6 +16861,7 @@
 		9712A55315004E3C0048AF10 /* indexeddb */ = {
 			isa = PBXGroup;
 			children = (
+				51660AAF1828BB8200074CAD /* leveldb */,
 				51D7196C181106DF0016DC51 /* DOMWindowIndexedDatabase.cpp */,
 				51D7196D181106DF0016DC51 /* DOMWindowIndexedDatabase.h */,
 				51D7196E181106DF0016DC51 /* DOMWindowIndexedDatabase.idl */,
@@ -23491,6 +23513,7 @@
 				B2FA3DCF0AB75A6F000E5AC4 /* JSSVGPathSegLinetoAbs.h in Headers */,
 				B2FA3DD10AB75A6F000E5AC4 /* JSSVGPathSegLinetoHorizontalAbs.h in Headers */,
 				B2FA3DD30AB75A6F000E5AC4 /* JSSVGPathSegLinetoHorizontalRel.h in Headers */,
+				51660AB91828BB8200074CAD /* IDBFactoryBackendLevelDB.h in Headers */,
 				B2FA3DD50AB75A6F000E5AC4 /* JSSVGPathSegLinetoRel.h in Headers */,
 				B2FA3DD70AB75A6F000E5AC4 /* JSSVGPathSegLinetoVerticalAbs.h in Headers */,
 				B2FA3DD90AB75A6F000E5AC4 /* JSSVGPathSegLinetoVerticalRel.h in Headers */,
@@ -24305,6 +24328,7 @@
 				C50D0E830FF4272900AC2644 /* StorageNamespace.h in Headers */,
 				C55E38BF10040D5D00A56BDB /* StorageNamespaceImpl.h in Headers */,
 				1AB09DB516AF5F6C008538E7 /* StorageStrategy.h in Headers */,
+				51660AB71828BB8200074CAD /* IDBBackingStoreLevelDB.h in Headers */,
 				C5102D940FD9AA2D00FAFF04 /* StorageSyncManager.h in Headers */,
 				511F231A0DC160DA004F0032 /* StorageThread.h in Headers */,
 				3AB02D2A12D4F91600FBB694 /* StorageTracker.h in Headers */,
@@ -24793,6 +24817,7 @@
 				01D3CF8514BD0A3000FE9970 /* WebGLContextObject.h in Headers */,
 				A0EE0DF6144F825500F80B0D /* WebGLDebugRendererInfo.h in Headers */,
 				A0EE0DF8144F825500F80B0D /* WebGLDebugShaders.h in Headers */,
+				51660ABB1828BB8200074CAD /* IDBLevelDBCoding.h in Headers */,
 				6E3FAE8F14733FDB00E42307 /* WebGLDepthTexture.h in Headers */,
 				070363E2181A1CDC00C074A5 /* AVCaptureDeviceManager.h in Headers */,
 				6EBF0E5512A8929800DB1709 /* WebGLExtension.h in Headers */,
@@ -25458,6 +25483,7 @@
 				078E090517D14CEE00420AA1 /* RTCDataChannel.cpp in Sources */,
 				93F19AFF08245E59001E9ABC /* ClipboardMac.mm in Sources */,
 				CDEA76351460B71A008B31F1 /* Clock.cpp in Sources */,
+				51660AB61828BB8200074CAD /* IDBBackingStoreLevelDB.cpp in Sources */,
 				CDEA76341460B56F008B31F1 /* ClockGeneric.cpp in Sources */,
 				B27535660B053814002CE64F /* Color.cpp in Sources */,
 				0FCF33240F2B9715004B6795 /* ColorCG.cpp in Sources */,
@@ -26604,6 +26630,7 @@
 				7E46F6FA1627A2CA00062223 /* JSOESElementIndexUint.cpp in Sources */,
 				9001788012E0370700648462 /* JSOESStandardDerivatives.cpp in Sources */,
 				6EBF0E7612A9868800DB1709 /* JSOESTextureFloat.cpp in Sources */,
+				51660ABA1828BB8200074CAD /* IDBLevelDBCoding.cpp in Sources */,
 				0705853A17FE0770005F2BCB /* MediaTrackConstraint.cpp in Sources */,
 				A31C4E5216E02B08002F7957 /* JSOESTextureHalfFloat.cpp in Sources */,
 				77A17AA612F28B2A004E02F6 /* JSOESVertexArrayObject.cpp in Sources */,
@@ -27264,6 +27291,7 @@
 				1479FAF1109AE37500DED655 /* RenderRubyRun.cpp in Sources */,
 				1479FAF3109AE37500DED655 /* RenderRubyText.cpp in Sources */,
 				BC3BE9930E9C1C7C00835588 /* RenderScrollbar.cpp in Sources */,
+				51660AB81828BB8200074CAD /* IDBFactoryBackendLevelDB.cpp in Sources */,
 				07C59B5317F4AC15000FBCBB /* AudioStreamTrack.cpp in Sources */,
 				BC3BE9AB0E9C242000835588 /* RenderScrollbarPart.cpp in Sources */,
 				BC3BE9A50E9C239600835588 /* RenderScrollbarTheme.cpp in Sources */,

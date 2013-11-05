@@ -1,5 +1,18 @@
 2013-11-04  Brady Eidson  <beidson@apple.com>
 
+        Add Modules/indexeddb/leveldb to the WebCore.xcodeproj
+
+        Rubberstamped by Andreas Kling.
+
+        This will make hacking on IDB much easier for Mac developers as they won’t have
+        to constantly add and then subtract the leveldb subdirectory.
+
+        The USE(LEVELDB) flag is still disabled so these files won’t actually build by default.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2013-11-04  Brady Eidson  <beidson@apple.com>
+
         Address review feedback I forgot to commit in r158641
 
         * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
