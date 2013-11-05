@@ -1,3 +1,14 @@
+2013-11-05  Julien Brianceau  <jbriance@cisco.com>
+
+        Fix build for architectures with 4 argument registers (broken since r158681).
+        https://bugs.webkit.org/show_bug.cgi?id=123826
+
+        Reviewed by Michael Saboff.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        (JSC::CCallHelpers::setupArguments):
+
 2013-11-05  Filip Pizlo  <fpizlo@apple.com>
 
         Fix register allocation inside control flow in GetByVal String
