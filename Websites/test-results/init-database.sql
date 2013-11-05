@@ -57,7 +57,8 @@ CREATE TABLE results (
     actual varchar(64) NOT NULL,
     modifiers varchar(64) NOT NULL,
     time integer,
-    is_flaky boolean);
+    is_flaky boolean,
+    CONSTRAINT results_test_build_must_be_unique UNIQUE(test, build));
 CREATE INDEX results_test ON results(test);
 CREATE INDEX results_build ON results(build);
 CREATE INDEX results_is_flaky ON results(is_flaky);

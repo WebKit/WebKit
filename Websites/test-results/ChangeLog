@@ -1,5 +1,20 @@
 2013-11-04  Ryosuke Niwa  <rniwa@webkit.org>
 
+        JSON generation on new flakiness dashboard is still too slow
+        https://bugs.webkit.org/show_bug.cgi?id=123776
+
+        Reviewed by Mark Rowe.
+
+        * init-database.sql: Added a constraint that result is unique for each (build, test) pair.
+
+        * public/include/test-results.php:
+        (ResultsJSONGenerator::generate): Don't sort results by latest_revision_time since that's done
+        in the client side anyway.
+        (update_flakiness_for_build): Don't update is_flaky flag if it's already set to the right value.
+
+
+2013-11-04  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fixes. In particular, we were missing the code to generate JSONs in report.php :(
 
         * public/api/report.php:

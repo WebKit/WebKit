@@ -182,13 +182,12 @@ class ResultsJSONGenerator {
 
         $all_results = $this->db->query(
         "SELECT results.*, builds.* FROM results
-            JOIN (SELECT builds.*, array_agg((build_revisions.repository, build_revisions.value, build_revisions.time)) AS revisions,
-                    max(build_revisions.time) AS latest_revision_time
+            JOIN (SELECT builds.*, array_agg((build_revisions.repository, build_revisions.value, build_revisions.time)) AS revisions
                     FROM builds, build_revisions
                     WHERE build_revisions.build = builds.id AND builds.builder = $1
                     GROUP BY builds.id LIMIT 500) as builds ON results.build = builds.id
             WHERE results.test in ($comma_separated_test_ids)
-            ORDER BY results.test, latest_revision_time DESC", array($this->builder_id));
+            ORDER BY results.test DESC", array($this->builder_id));
         if (!$all_results)
             return FALSE;
 
@@ -246,7 +245,8 @@ function update_flakiness_for_build($db, $preceeding_build, $current_build, $suc
         SET is_flaky = preceeding_results.actual = succeeding_results.actual AND preceeding_results.actual != results.actual
         FROM results preceeding_results, results succeeding_results
         WHERE preceeding_results.build = $1 AND results.build = $2 AND succeeding_results.build = $3
-            AND preceeding_results.test = results.test AND succeeding_results.test = results.test",
+            AND preceeding_results.test = results.test AND succeeding_results.test = results.test
+            AND results.is_flaky != (preceeding_results.actual = succeeding_results.actual AND preceeding_results.actual != results.actual)",
             array($preceeding_build['id'], $current_build['id'], $succeeding_build['id']));
 }
 
