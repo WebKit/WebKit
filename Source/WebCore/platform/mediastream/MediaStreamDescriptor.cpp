@@ -52,8 +52,9 @@ PassRefPtr<MediaStreamDescriptor> MediaStreamDescriptor::create(const Vector<Ref
     return adoptRef(new MediaStreamDescriptor(createCanonicalUUIDString(), audioPrivateTracks, videoPrivateTracks));
 }
 
-void MediaStreamDescriptor::addSource(PassRefPtr<MediaStreamSource> source)
+void MediaStreamDescriptor::addSource(PassRefPtr<MediaStreamSource> prpSource)
 {
+    RefPtr<MediaStreamSource> source = prpSource;
     switch (source->type()) {
     case MediaStreamSource::Audio:
         if (m_audioStreamSources.find(source) == notFound)
@@ -171,8 +172,9 @@ void MediaStreamDescriptor::setEnded()
     m_ended = true;
 }
 
-void MediaStreamDescriptor::addTrack(PassRefPtr<MediaStreamTrackPrivate> track)
+void MediaStreamDescriptor::addTrack(PassRefPtr<MediaStreamTrackPrivate> prpTrack)
 {
+    RefPtr<MediaStreamTrackPrivate> track = prpTrack;
     if (track->ended())
         return;
 

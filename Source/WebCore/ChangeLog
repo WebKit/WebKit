@@ -1,3 +1,19 @@
+2013-11-04  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Fixing MediaStreamDescriptor addSource and addTrack methods
+        https://bugs.webkit.org/show_bug.cgi?id=123755
+
+        Reviewed by Eric Carlson.
+
+        We must store the track and source that is passed as parameter in a RefPtr,
+        otherwise we will refer to a null pointer.
+
+        No new tests needed.
+
+        * platform/mediastream/MediaStreamDescriptor.cpp:
+        (WebCore::MediaStreamDescriptor::addSource):
+        (WebCore::MediaStreamDescriptor::addTrack):
+
 2013-11-04  Tim Horton  <timothy_horton@apple.com>
 
         Remove PlatformCALayer::playerLayer
