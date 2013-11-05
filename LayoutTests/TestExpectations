@@ -73,3 +73,5 @@ fast/mediastream/MediaStream-onended.html [ Skip ]
 
 webkit.org/b/123555 [ Debug ] media/media-fragments/TC0054.html [ Crash ]
 webkit.org/b/123555 [ Debug ] media/media-fragments/TC0061.html [ Crash ]
+
+webkit.org/b/123765 plugins/refcount-leaks.html [ Failure ]
