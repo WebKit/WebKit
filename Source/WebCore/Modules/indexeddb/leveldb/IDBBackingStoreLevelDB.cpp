@@ -543,6 +543,64 @@ bool IDBBackingStoreLevelDB::getIDBDatabaseMetaData(const String& name, IDBDatab
     return true;
 }
 
+void IDBBackingStoreLevelDB::getOrEstablishIDBDatabaseMetadata(const String& name, GetIDBDatabaseMetadataFunction metadataFunction)
+{
+    const Vector<char> key = DatabaseNameKey::encode(m_identifier, name);
+    bool found = false;
+
+    IDBDatabaseMetadata resultMetadata;
+    
+    bool ok = getInt(m_db.get(), key, resultMetadata.id, found);
+    if (!ok) {
+        INTERNAL_READ_ERROR(GetIDBDatabaseMetaData);
+        metadataFunction(resultMetadata, false);
+        return;
+    }
+
+    if (!found) {
+        resultMetadata.name = name;
+        resultMetadata.version = IDBDatabaseMetadata::DefaultIntVersion;
+
+        metadataFunction(resultMetadata, createIDBDatabaseMetaData(resultMetadata));
+        return;
+    }
+
+    int64_t version;
+    ok = getVarInt(m_db.get(), DatabaseMetaDataKey::encode(resultMetadata.id, DatabaseMetaDataKey::UserIntVersion), version, found);
+    if (!ok) {
+        INTERNAL_READ_ERROR(GetIDBDatabaseMetaData);
+        metadataFunction(resultMetadata, false);
+        return;
+    }
+    if (!found) {
+        INTERNAL_CONSISTENCY_ERROR(GetIDBDatabaseMetaData);
+        metadataFunction(resultMetadata, false);
+        return;
+    }
+
+    // FIXME: The versioning semantics have changed since this original code was written, and what was once a negative number
+    // stored in the database is no longer a valid version.
+    if (version < 0)
+        version = 0;
+    resultMetadata.version = version;
+
+    ok = getMaxObjectStoreId(m_db.get(), resultMetadata.id, resultMetadata.maxObjectStoreId);
+    if (!ok) {
+        INTERNAL_READ_ERROR(GetIDBDatabaseMetaData);
+        metadataFunction(resultMetadata, false);
+        return;
+    }
+
+    ok = getObjectStores(resultMetadata.id, &resultMetadata.objectStores);
+    if (!ok) {
+        INTERNAL_READ_ERROR(GetIDBDatabaseMetaData);
+        metadataFunction(resultMetadata, false);
+        return;
+    }
+
+    metadataFunction(resultMetadata, true);
+}
+
 WARN_UNUSED_RETURN static bool getNewDatabaseId(LevelDBDatabase* db, int64_t& newId)
 {
     RefPtr<LevelDBTransaction> transaction = LevelDBTransaction::create(db);
@@ -570,21 +628,17 @@ WARN_UNUSED_RETURN static bool getNewDatabaseId(LevelDBDatabase* db, int64_t& ne
     return true;
 }
 
-// FIXME: The version semantics have changed. String versions no longer exist, and the integer version is now a uint64_t
-bool IDBBackingStoreLevelDB::createIDBDatabaseMetaData(const String& name, const String& version, int64_t intVersion, int64_t& rowId)
+// FIXME: LevelDB needs to support uint64_t as the version type.
+bool IDBBackingStoreLevelDB::createIDBDatabaseMetaData(IDBDatabaseMetadata& metadata)
 {
-    bool ok = getNewDatabaseId(m_db.get(), rowId);
+    bool ok = getNewDatabaseId(m_db.get(), metadata.id);
     if (!ok)
         return false;
-    ASSERT(rowId >= 0);
-
-    if (intVersion == IDBDatabaseMetadata::NoIntVersion)
-        intVersion = IDBDatabaseMetadata::DefaultIntVersion;
+    ASSERT(metadata.id >= 0);
 
     RefPtr<LevelDBTransaction> transaction = LevelDBTransaction::create(m_db.get());
-    putInt(transaction.get(), DatabaseNameKey::encode(m_identifier, name), rowId);
-    putString(transaction.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserVersion), version);
-    putVarInt(transaction.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserIntVersion), intVersion);
+    putInt(transaction.get(), DatabaseNameKey::encode(m_identifier, metadata.name), metadata.id);
+    putVarInt(transaction.get(), DatabaseMetaDataKey::encode(metadata.id, DatabaseMetaDataKey::UserIntVersion), metadata.version);
     if (!transaction->commit()) {
         INTERNAL_WRITE_ERROR(CreateIDBDatabaseMetaData);
         return false;
@@ -597,12 +651,6 @@ bool IDBBackingStoreLevelDB::updateIDBDatabaseVersion(IDBBackingStoreInterface::
     if (version == IDBDatabaseMetadata::NoIntVersion)
         version = IDBDatabaseMetadata::DefaultIntVersion;
     putVarInt(Transaction::levelDBTransactionFrom(transaction), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserIntVersion), version);
-    return true;
-}
-
-bool IDBBackingStoreLevelDB::updateIDBDatabaseMetaData(IDBBackingStoreInterface::Transaction& transaction, int64_t rowId, const String& version)
-{
-    putString(Transaction::levelDBTransactionFrom(transaction), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserVersion), version);
     return true;
 }
 

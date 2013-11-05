@@ -30,6 +30,7 @@
 #include "IDBMetadata.h"
 #include "IndexedDB.h"
 
+#include <functional>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -81,9 +82,9 @@ public:
 
     virtual std::unique_ptr<Transaction> createBackingStoreTransaction() = 0;
 
-    virtual bool getIDBDatabaseMetaData(const String& name, IDBDatabaseMetadata*, bool& found) = 0;
-    virtual bool getObjectStores(int64_t databaseId, IDBDatabaseMetadata::ObjectStoreMap* objectStores) = 0;
-    virtual bool createIDBDatabaseMetaData(const String& name, const String& version, int64_t intVersion, int64_t& rowId) = 0;
+    typedef std::function<void (const IDBDatabaseMetadata&, bool success)> GetIDBDatabaseMetadataFunction;
+    virtual void getOrEstablishIDBDatabaseMetadata(const String& name, GetIDBDatabaseMetadataFunction) = 0;
+
     virtual bool keyExistsInObjectStore(IDBBackingStoreInterface::Transaction&, int64_t databaseId, int64_t objectStoreId, const IDBKey&, RefPtr<IDBRecordIdentifier>& foundIDBRecordIdentifier) = 0;
 
     virtual bool putIndexDataForRecord(IDBBackingStoreInterface::Transaction&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&, const IDBRecordIdentifier*) = 0;
