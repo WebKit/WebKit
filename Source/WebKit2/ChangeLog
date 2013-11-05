@@ -1,3 +1,53 @@
+2013-11-05  Anders Carlsson  <andersca@apple.com>
+
+        Add support for decoding NSStrings
+        https://bugs.webkit.org/show_bug.cgi?id=123829
+
+        Reviewed by Andreas Kling.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeObject):
+        (-[WKRemoteObjectDecoder allowsKeyedCoding]):
+        Always return YES.
+
+        (-[WKRemoteObjectDecoder containsValueForKey:]):
+        Look up the key in the current dictionary.
+
+        (-[WKRemoteObjectDecoder decodeBytesForKey:returnedLength:]):
+        Try to get the WebData object and return its data + size.
+
+        (-[WKRemoteObjectDecoder requiresSecureCoding]):
+        Return YES.
+
+        (checkIfClassIsAllowed):
+        Check if the class or any of its superclasses are are allowed.
+
+        (validateClass):
+        Call checkIfClassIsAllowed and validate that the class conforms to NSSecureCoding.
+
+        (decodeObject):
+        Get the class name, verify that the class exists and is allowed. 
+        Allocate and initialize an object using initWithCoder:.
+
+        (-[WKRemoteObjectDecoder decodeObjectOfClasses:forKey:]):
+        Set the allowed classes, look up the object in _currentDictionary and call decodeObject.
+
+        (-[WKRemoteObjectDecoder allowedClasses]):
+        Return _allowedClasses.
+
+        * Shared/API/Cocoa/WKRemoteObjectRegistry.mm:
+        (-[WKRemoteObjectRegistry _sendInvocation:interface:]):
+        Declare interfaceIdentifier as a constant.
+
+        (-[WKRemoteObjectRegistry _invokeMessageWithBody:]):
+        Decode the interface identifier.
+
+        * Shared/ImmutableDictionary.h:
+        (WebKit::ImmutableDictionary::get):
+        (WebKit::ImmutableDictionary::size):
+        (WebKit::ImmutableDictionary::map):
+        Make member functions const.
+
 2013-11-05  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix Mountain Lion Debug bot after r158689

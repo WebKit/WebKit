@@ -39,6 +39,8 @@
 
 const char* const messageName = "WKRemoteObjectRegistryMessage";
 
+NSString * const interfaceIdentifierKey = @"interfaceIdentifier";
+
 using namespace WebKit;
 
 @implementation WKRemoteObjectRegistry {
@@ -75,7 +77,7 @@ using namespace WebKit;
 {
     RetainPtr<WKRemoteObjectEncoder> encoder = adoptNS([[WKRemoteObjectEncoder alloc] init]);
 
-    [encoder encodeObject:interface.identifier forKey:@"interfaceIdentifier"];
+    [encoder encodeObject:interface.identifier forKey:interfaceIdentifierKey];
     [encoder encodeObject:invocation forKey:@"invocation"];
 
     [self _sendMessageWithBody:[encoder rootObjectDictionary]];
@@ -116,7 +118,16 @@ using namespace WebKit;
 {
     RetainPtr<WKRemoteObjectDecoder> decoder = adoptNS([[WKRemoteObjectDecoder alloc] initWithRootObjectDictionary:body]);
 
-    // FIXME: Actually decode the invocation.
+    NSString *interfaceIdentifier = nil;
+
+    // FIXME: Decode the invocation.
+    @try {
+        interfaceIdentifier = [decoder decodeObjectOfClass:[NSString class] forKey:interfaceIdentifierKey];
+    } @catch (NSException *exception) {
+        NSLog(@"Exception caught during decoding of message: %@", exception);
+    }
+
+    // FIXME: Invoke the invocation.
 }
 
 @end

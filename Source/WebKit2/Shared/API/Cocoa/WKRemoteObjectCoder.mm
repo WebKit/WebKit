@@ -32,7 +32,9 @@
 #import "WebNumber.h"
 #import "WebString.h"
 #import <objc/runtime.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/TemporaryChange.h>
+#import <wtf/text/CString.h>
 
 #if WK_API_ENABLED
 
@@ -45,6 +47,10 @@ static PassRefPtr<ImmutableDictionary> createEncodedObject(WKRemoteObjectEncoder
 
 @interface NSMethodSignature (Details)
 - (NSString *)_typeString;
+@end
+
+@interface NSCoder (Details)
+- (void)validateClassSupportsSecureCoding:(Class)objectClass;
 @end
 
 @implementation WKRemoteObjectEncoder {
@@ -176,11 +182,11 @@ static void encodeObject(WKRemoteObjectEncoder *encoder, id object)
     if (class_isMetaClass(object_getClass(object)))
         [NSException raise:NSInvalidArgumentException format:@"Class objects may not be encoded"];
 
-    Class cls = [object classForCoder];
-    if (!cls)
+    Class objectClass = [object classForCoder];
+    if (!objectClass)
         [NSException raise:NSInvalidArgumentException format:@"-classForCoder returned nil for %@", object];
 
-    encoder->_currentDictionary->set(classNameKey, WebString::create(class_getName(cls)));
+    encoder->_currentDictionary->set(classNameKey, WebString::create(class_getName(objectClass)));
     [object encodeWithCoder:encoder];
 }
 
@@ -258,6 +264,8 @@ static NSString *escapeKey(NSString *key)
 @implementation WKRemoteObjectDecoder {
     RefPtr<ImmutableDictionary> _rootDictionary;
     const ImmutableDictionary* _currentDictionary;
+
+    NSSet *_allowedClasses;
 }
 
 - (id)initWithRootObjectDictionary:(ImmutableDictionary*)rootObjectDictionary
@@ -269,6 +277,108 @@ static NSString *escapeKey(NSString *key)
     _currentDictionary = _rootDictionary.get();
 
     return self;
+}
+
+- (BOOL)allowsKeyedCoding
+{
+    return YES;
+}
+
+- (BOOL)containsValueForKey:(NSString *)key
+{
+    return _currentDictionary->map().contains(escapeKey(key));
+}
+
+- (const uint8_t *)decodeBytesForKey:(NSString *)key returnedLength:(NSUInteger *)length
+{
+    WebData* data = _currentDictionary->get<WebData>(escapeKey(key));
+    if (!data || !data->size())
+        return nullptr;
+
+    *length = data->size();
+    return data->bytes();
+}
+
+- (BOOL)requiresSecureCoding
+{
+    return YES;
+}
+
+static void checkIfClassIsAllowed(WKRemoteObjectDecoder *decoder, Class objectClass)
+{
+    NSSet *allowedClasses = decoder->_allowedClasses;
+
+    // Check if the class or any of its superclasses are in the allowed classes set.
+    for (Class cls = objectClass; cls; cls = class_getSuperclass(cls)) {
+        if ([allowedClasses containsObject:cls])
+            return;
+    }
+
+    [NSException raise:NSInvalidUnarchiveOperationException format:@"Object of class \"%@\" is not allowed. Allowed classes are \"%@\"", objectClass, allowedClasses];
+}
+
+static void validateClass(WKRemoteObjectDecoder *decoder, Class objectClass)
+{
+    ASSERT(objectClass);
+
+    checkIfClassIsAllowed(decoder, objectClass);
+
+    // NSInvocation doesn't support NSSecureCoding, but we allow it anyway.
+    if (objectClass == [NSInvocation class])
+        return;
+
+    [decoder validateClassSupportsSecureCoding:objectClass];
+}
+
+static id decodeObject(WKRemoteObjectDecoder *decoder)
+{
+    WebString* classNameString = decoder->_currentDictionary->get<WebString>(classNameKey);
+    if (!classNameString)
+        [NSException raise:NSInvalidUnarchiveOperationException format:@"Class name missing"];
+
+    CString className = classNameString->string().utf8();
+
+    Class objectClass = objc_lookUpClass(className.data());
+    if (!objectClass)
+        [NSException raise:NSInvalidUnarchiveOperationException format:@"Class \"%s\" does not exist", className.data()];
+
+    validateClass(decoder, objectClass);
+
+    RetainPtr<id> result = [objectClass alloc];
+    if (!result)
+        [NSException raise:NSInvalidUnarchiveOperationException format:@"Class \"%s\" returned nil from +alloc while being decoded", className.data()];
+
+    result = [result initWithCoder:decoder];
+    if (!result)
+        [NSException raise:NSInvalidUnarchiveOperationException format:@"Object of class \"%s\" returned nil from -initWithCoder: while being decoded", className.data()];
+
+    result = [result awakeAfterUsingCoder:decoder];
+    if (!result)
+        [NSException raise:NSInvalidUnarchiveOperationException format:@"Object of class \"%s\" returned nil from -awakeAfterUsingCoder: while being decoded", className.data()];
+
+    return [result.leakRef() autorelease];
+}
+
+static id decodeObject(WKRemoteObjectDecoder *decoder, const ImmutableDictionary* dictionary)
+{
+    if (!dictionary)
+        return nil;
+
+    TemporaryChange<const ImmutableDictionary*> dictionaryChange(decoder->_currentDictionary, dictionary);
+
+    return decodeObject(decoder);
+}
+
+- (id)decodeObjectOfClasses:(NSSet *)classes forKey:(NSString *)key
+{
+    TemporaryChange<NSSet *> allowedClassesChange(_allowedClasses, classes);
+
+    return decodeObject(self, _currentDictionary->get<ImmutableDictionary>(escapeKey(key)));
+}
+
+- (NSSet *)allowedClasses
+{
+    return _allowedClasses;
 }
 
 @end
