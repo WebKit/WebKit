@@ -31,6 +31,7 @@
 
 #import "LayerHostingContext.h"
 #import "RemoteLayerTreeContext.h"
+#import "RemoteLayerTreePropertyApplier.h"
 #import "WebProcess.h"
 #import <WebCore/GraphicsLayerCA.h>
 #import <WebCore/PlatformCALayerMac.h>
@@ -57,6 +58,7 @@ PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(PlatformLayer* customLa
     m_layerHostingContext->setRootLayer(customLayer);
 
     m_platformLayer = customLayer;
+    RemoteLayerTreePropertyApplier::disableActionsForLayer(customLayer);
 }
 
 PlatformCALayerRemoteCustom::~PlatformCALayerRemoteCustom()

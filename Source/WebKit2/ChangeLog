@@ -1,3 +1,45 @@
+2013-11-05  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Apply layer changes to LayerTypeCustom layers to the custom layer in the Web process, not to the CALayerHost
+        https://bugs.webkit.org/show_bug.cgi?id=123818
+
+        Reviewed by Anders Carlsson.
+
+        Changes to the properties of a PlatformCALayer of type LayerTypeCustom are intended
+        to affect the custom CALayer; however, we were bundling them up with the transaction
+        and applying them to the CALayerHost, leading to important properties being lost.
+
+        Instead, apply them to the Web-process-side CALayer when building the transaction.
+
+        * Shared/mac/RemoteLayerTreePropertyApplier.h: Added.
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm: Added.
+        (WebKit::cgColorFromColor):
+        (WebKit::toCAFilterType):
+        (WebKit::RemoteLayerTreePropertyApplier::applyPropertiesToLayer):
+        (WebKit::RemoteLayerTreePropertyApplier::disableActionsForLayer):
+        Move code to apply LayerProperties to a CALayer from RemoteLayerTreeHost.
+        Move code to disable actions on a CALayer from RemoteLayerTreeHost.
+
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::commit):
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        Use RemoteLayerTreePropertyApplier.
+        Hand it a map of LayerID->CALayer so that it can look up related layers
+        for children and mask layers.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add RemoteLayerTreePropertyApplier.{h,mm}
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::recursiveBuildTransaction):
+        Upon commit, apply changes to LayerTypeCustom layers to the platform layer.
+        Setting children or maskLayer won't work, since we don't know about other raw CALayers.
+        This is OK, since nothing uses those properties on custom layers.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.cpp:
+        (PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom):
+        Disable actions on the root custom layer.
+
 2013-11-05  Anders Carlsson  <andersca@apple.com>
 
         Begin work on a WKRemoteObjectDecoder object

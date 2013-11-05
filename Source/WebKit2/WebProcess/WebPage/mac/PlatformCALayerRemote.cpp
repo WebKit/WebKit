@@ -33,6 +33,7 @@
 #import "PlatformCALayerRemoteTiledBacking.h"
 #import "RemoteLayerBackingStore.h"
 #import "RemoteLayerTreeContext.h"
+#import "RemoteLayerTreePropertyApplier.h"
 #import <WebCore/AnimationUtilities.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/GraphicsLayerCA.h>
@@ -114,6 +115,12 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeTransaction
             m_properties.children.clear();
             for (auto layer : m_children)
                 m_properties.children.append(toPlatformCALayerRemote(layer.get())->layerID());
+        }
+
+        if (m_layerType == LayerTypeCustom) {
+            RemoteLayerTreePropertyApplier::applyPropertiesToLayer(platformLayer(), m_properties, RemoteLayerTreePropertyApplier::RelatedLayerMap());
+            m_properties.changedProperties = RemoteLayerTreeTransaction::NoChange;
+            return;
         }
 
         transaction.layerPropertiesChanged(this, m_properties);
