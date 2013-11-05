@@ -1,7 +1,7 @@
 /*
    Copyright (C) 2000-2001 Dawit Alemayehu <adawit@kde.org>
    Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
-   Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+   Copyright (C) 2007, 2008, 2013 Apple Inc. All rights reserved.
    Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
 
    This program is free software; you can redistribute it and/or modify
@@ -60,14 +60,37 @@ static const char base64DecMap[128] = {
     0x31, 0x32, 0x33, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-String base64Encode(const char* data, unsigned length, Base64EncodePolicy policy)
-{
-    Vector<char> result;
-    base64Encode(data, length, result, policy);
-    return String(result.data(), result.size());
-}
+static const char base64URLEncMap[64] = {
+    0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+    0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50,
+    0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58,
+    0x59, 0x5A, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66,
+    0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0x6D, 0x6E,
+    0x6F, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76,
+    0x77, 0x78, 0x79, 0x7A, 0x30, 0x31, 0x32, 0x33,
+    0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x2D, 0x5F
+};
 
-void base64Encode(const char* data, unsigned len, Vector<char>& out, Base64EncodePolicy policy)
+static const char base64URLDecMap[128] = {
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x3E, 0x00, 0x00,
+    0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B,
+    0x3C, 0x3D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06,
+    0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E,
+    0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
+    0x17, 0x18, 0x19, 0x00, 0x00, 0x00, 0x00, 0x3F,
+    0x00, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,
+    0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+    0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30,
+    0x31, 0x32, 0x33, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+inline void base64EncodeInternal(const char* data, unsigned len, Vector<char>& out, Base64EncodePolicy policy, const char* encodeMap)
 {
     out.clear();
     if (!len)
@@ -101,10 +124,10 @@ void base64Encode(const char* data, unsigned len, Vector<char>& out, Base64Encod
                     out[didx++] = '\n';
                 count += 4;
             }
-            out[didx++] = base64EncMap[(data[sidx] >> 2) & 077];
-            out[didx++] = base64EncMap[((data[sidx + 1] >> 4) & 017) | ((data[sidx] << 4) & 077)];
-            out[didx++] = base64EncMap[((data[sidx + 2] >> 6) & 003) | ((data[sidx + 1] << 2) & 077)];
-            out[didx++] = base64EncMap[data[sidx + 2] & 077];
+            out[didx++] = encodeMap[(data[sidx] >> 2) & 077];
+            out[didx++] = encodeMap[((data[sidx + 1] >> 4) & 017) | ((data[sidx] << 4) & 077)];
+            out[didx++] = encodeMap[((data[sidx + 2] >> 6) & 003) | ((data[sidx + 1] << 2) & 077)];
+            out[didx++] = encodeMap[data[sidx + 2] & 077];
             sidx += 3;
         }
     }
@@ -113,12 +136,12 @@ void base64Encode(const char* data, unsigned len, Vector<char>& out, Base64Encod
         if (insertLFs && (count > 0) && !(count % 76))
            out[didx++] = '\n';
 
-        out[didx++] = base64EncMap[(data[sidx] >> 2) & 077];
+        out[didx++] = encodeMap[(data[sidx] >> 2) & 077];
         if (sidx < len - 1) {
-            out[didx++] = base64EncMap[((data[sidx + 1] >> 4) & 017) | ((data[sidx] << 4) & 077)];
-            out[didx++] = base64EncMap[(data[sidx + 1] << 2) & 077];
+            out[didx++] = encodeMap[((data[sidx + 1] >> 4) & 017) | ((data[sidx] << 4) & 077)];
+            out[didx++] = encodeMap[(data[sidx + 1] << 2) & 077];
         } else
-            out[didx++] = base64EncMap[(data[sidx] << 4) & 077];
+            out[didx++] = encodeMap[(data[sidx] << 4) & 077];
     }
 
     // Add padding
@@ -128,19 +151,32 @@ void base64Encode(const char* data, unsigned len, Vector<char>& out, Base64Encod
     }
 }
 
-bool base64Decode(const Vector<char>& in, Vector<char>& out, Base64DecodePolicy policy)
+String base64Encode(const char* data, unsigned length, Base64EncodePolicy policy)
 {
-    out.clear();
+    Vector<char> result;
+    base64EncodeInternal(data, length, result, policy, base64EncMap);
+    return String(result.data(), result.size());
+}
 
-    // If the input string is pathologically large, just return nothing.
-    if (in.size() > UINT_MAX)
-        return false;
+void base64Encode(const char* data, unsigned len, Vector<char>& out, Base64EncodePolicy policy)
+{
+    base64EncodeInternal(data, len, out, policy, base64EncMap);
+}
 
-    return base64Decode(in.data(), in.size(), out, policy);
+String base64URLEncode(const char* data, unsigned length, Base64EncodePolicy policy)
+{
+    Vector<char> result;
+    base64EncodeInternal(data, length, result, policy, base64URLEncMap);
+    return String(result.data(), result.size());
+}
+
+void base64URLEncode(const char* data, unsigned len, Vector<char>& out, Base64EncodePolicy policy)
+{
+    base64EncodeInternal(data, len, out, policy, base64URLEncMap);
 }
 
 template<typename T>
-static inline bool base64DecodeInternal(const T* data, unsigned length, Vector<char>& out, Base64DecodePolicy policy)
+static inline bool base64DecodeInternal(const T* data, unsigned length, Vector<char>& out, Base64DecodePolicy policy, const char* decodeMap)
 {
     out.clear();
     if (!length)
@@ -161,7 +197,7 @@ static inline bool base64DecodeInternal(const T* data, unsigned length, Vector<c
         } else if (('0' <= ch && ch <= '9') || ('A' <= ch && ch <= 'Z') || ('a' <= ch && ch <= 'z') || ch == '+' || ch == '/') {
             if (equalsSignCount)
                 return false;
-            out[outLength] = base64DecMap[ch];
+            out[outLength] = decodeMap[ch];
             ++outLength;
         } else if (policy == Base64FailOnInvalidCharacterOrExcessPadding || policy == Base64FailOnInvalidCharacter || (policy == Base64IgnoreWhitespace && !isSpaceOrNewline(ch)))
             return false;
@@ -203,14 +239,46 @@ static inline bool base64DecodeInternal(const T* data, unsigned length, Vector<c
     return true;
 }
 
-bool base64Decode(const char* data, unsigned len, Vector<char>& out, Base64DecodePolicy policy)
-{
-    return base64DecodeInternal<char>(data, len, out, policy);
-}
-
 bool base64Decode(const String& in, Vector<char>& out, Base64DecodePolicy policy)
 {
-    return base64DecodeInternal<UChar>(in.characters(), in.length(), out, policy);
+    return base64DecodeInternal<UChar>(in.characters(), in.length(), out, policy, base64DecMap);
+}
+
+bool base64Decode(const Vector<char>& in, Vector<char>& out, Base64DecodePolicy policy)
+{
+    out.clear();
+
+    // If the input string is pathologically large, just return nothing.
+    if (in.size() > UINT_MAX)
+        return false;
+
+    return base64DecodeInternal<char>(in.data(), in.size(), out, policy, base64DecMap);
+}
+
+bool base64Decode(const char* data, unsigned len, Vector<char>& out, Base64DecodePolicy policy)
+{
+    return base64DecodeInternal<char>(data, len, out, policy, base64DecMap);
+}
+
+bool base64URLDecode(const String& in, Vector<char>& out, Base64DecodePolicy policy)
+{
+    return base64DecodeInternal<UChar>(in.characters(), in.length(), out, policy, base64URLDecMap);
+}
+
+bool base64URLDecode(const Vector<char>& in, Vector<char>& out, Base64DecodePolicy policy)
+{
+    out.clear();
+
+    // If the input string is pathologically large, just return nothing.
+    if (in.size() > UINT_MAX)
+        return false;
+
+    return base64DecodeInternal<char>(in.data(), in.size(), out, policy, base64URLDecMap);
+}
+
+bool base64URLDecode(const char* data, unsigned len, Vector<char>& out, Base64DecodePolicy policy)
+{
+    return base64DecodeInternal<char>(data, len, out, policy, base64URLDecMap);
 }
 
 } // namespace WTF

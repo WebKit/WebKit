@@ -76,6 +76,42 @@ inline String base64Encode(const CString& in, Base64EncodePolicy policy)
     return base64Encode(in.data(), in.length(), policy);
 }
 
+// ======================================================================================
+// All the same functions modified for base64url, as defined in RFC 4648.
+// This format uses '-' and '_' instead of '+' and '/' respectively.
+// ======================================================================================
+
+WTF_EXPORT_PRIVATE void base64URLEncode(const char*, unsigned, Vector<char>&, Base64EncodePolicy = Base64DoNotInsertLFs);
+WTF_EXPORT_PRIVATE void base64URLEncode(const Vector<char>&, Vector<char>&, Base64EncodePolicy = Base64DoNotInsertLFs);
+WTF_EXPORT_PRIVATE void base64URLEncode(const CString&, Vector<char>&, Base64EncodePolicy = Base64DoNotInsertLFs);
+WTF_EXPORT_PRIVATE String base64URLEncode(const char*, unsigned, Base64EncodePolicy = Base64DoNotInsertLFs);
+WTF_EXPORT_PRIVATE String base64URLEncode(const Vector<char>&, Base64EncodePolicy = Base64DoNotInsertLFs);
+WTF_EXPORT_PRIVATE String base64URLEncode(const CString&, Base64EncodePolicy = Base64DoNotInsertLFs);
+
+WTF_EXPORT_PRIVATE bool base64URLDecode(const String&, Vector<char>&, Base64DecodePolicy = Base64FailOnInvalidCharacter);
+WTF_EXPORT_PRIVATE bool base64URLDecode(const Vector<char>&, Vector<char>&, Base64DecodePolicy = Base64FailOnInvalidCharacter);
+WTF_EXPORT_PRIVATE bool base64URLDecode(const char*, unsigned, Vector<char>&, Base64DecodePolicy = Base64FailOnInvalidCharacter);
+
+inline void base64URLEncode(const Vector<char>& in, Vector<char>& out, Base64EncodePolicy policy)
+{
+    base64URLEncode(in.data(), in.size(), out, policy);
+}
+
+inline void base64URLEncode(const CString& in, Vector<char>& out, Base64EncodePolicy policy)
+{
+    base64URLEncode(in.data(), in.length(), out, policy);
+}
+
+inline String base64URLEncode(const Vector<char>& in, Base64EncodePolicy policy)
+{
+    return base64URLEncode(in.data(), in.size(), policy);
+}
+
+inline String base64URLEncode(const CString& in, Base64EncodePolicy policy)
+{
+    return base64URLEncode(in.data(), in.length(), policy);
+}
+
 } // namespace WTF
 
 using WTF::Base64EncodePolicy;
@@ -88,5 +124,6 @@ using WTF::Base64IgnoreWhitespace;
 using WTF::Base64IgnoreInvalidCharacters;
 using WTF::base64Encode;
 using WTF::base64Decode;
+using WTF::base64URLDecode;
 
 #endif // Base64_h
