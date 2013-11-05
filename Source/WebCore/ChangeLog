@@ -1,3 +1,44 @@
+2013-11-05  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] Remove NATIVE_FULLSCREEN_VIDEO support
+        https://bugs.webkit.org/show_bug.cgi?id=123437
+
+        Reviewed by Philippe Normand.
+
+        Removed some dead code as no GStreamer port is using the native
+        fullscreen video support.
+
+        * GNUmakefile.list.am:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake: Removed compilation of deleted files.
+        * platform/graphics/MediaPlayer.h: Removed structures related to
+        GStreamer and NATIVE_FULLSCREEN_VIDEO.
+        * platform/graphics/gstreamer/FullscreenVideoControllerGStreamer.cpp: Removed.
+        * platform/graphics/gstreamer/FullscreenVideoControllerGStreamer.h: Removed.
+        * platform/graphics/gstreamer/GStreamerGWorld.cpp: Removed.
+        * platform/graphics/gstreamer/GStreamerGWorld.h: Removed.
+        * platform/graphics/gstreamer/ImageGStreamerCairo.cpp: Removed
+        gst/video/video.h include.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::platformMedia):
+        (WebCore::MediaPlayerPrivateGStreamerBase::createVideoSink):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        Removed code related to GStreamer and NATIVE_FULLSCREEN_VIDEO.
+        * platform/graphics/gstreamer/PlatformVideoWindow.h: Removed.
+        * platform/graphics/gstreamer/PlatformVideoWindowEfl.cpp: Removed.
+        * platform/graphics/gstreamer/PlatformVideoWindowGtk.cpp: Removed.
+        * platform/graphics/gstreamer/PlatformVideoWindowMac.mm: Removed.
+        * platform/graphics/gstreamer/PlatformVideoWindowNix.cpp: Removed.
+        * platform/graphics/gstreamer/PlatformVideoWindowPrivate.h: Removed.
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (webkitVideoSinkRender):
+        (webkitVideoSinkNew):
+        * platform/graphics/gstreamer/VideoSinkGStreamer.h: Removed code
+        related to GStreamer and NATIVE_FULLSCREEN_VIDEO.
+        * platform/graphics/gtk/FullscreenVideoControllerGtk.cpp: Removed.
+        * platform/graphics/gtk/FullscreenVideoControllerGtk.h: Removed.
+
 2013-11-05  Andreas Kling  <akling@apple.com>
 
         Remove RenderWidget::viewCleared().

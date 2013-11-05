@@ -43,11 +43,9 @@ typedef struct _WebKitVideoSink WebKitVideoSink;
 
 namespace WebCore {
 
-class FullscreenVideoControllerGStreamer;
 class GraphicsContext;
 class IntSize;
 class IntRect;
-class GStreamerGWorld;
 
 class MediaPlayerPrivateGStreamerBase : public MediaPlayerPrivateInterface
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
@@ -83,12 +81,6 @@ public:
 
     virtual bool hasSingleSecurityOrigin() const { return true; }
     virtual float maxTimeLoaded() const { return 0.0; }
-
-#if USE(NATIVE_FULLSCREEN_VIDEO)
-    void enterFullscreen();
-    void exitFullscreen();
-    bool canEnterFullscreen() const { return true; }
-#endif
 
     bool supportsFullscreen() const;
     PlatformMedia platformMedia() const;
@@ -126,10 +118,6 @@ protected:
     IntSize m_size;
     GMutex* m_bufferMutex;
     GstBuffer* m_buffer;
-#if USE(NATIVE_FULLSCREEN_VIDEO)
-    RefPtr<GStreamerGWorld> m_gstGWorld;
-    OwnPtr<FullscreenVideoControllerGStreamer> m_fullscreenVideoController;
-#endif
     unsigned long m_volumeTimerHandler;
     unsigned long m_muteTimerHandler;
     unsigned long m_repaintHandler;

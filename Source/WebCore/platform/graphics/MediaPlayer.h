@@ -66,7 +66,6 @@ namespace WebCore {
 
 class AudioSourceProvider;
 class Document;
-class GStreamerGWorld;
 #if ENABLE(MEDIA_SOURCE)
 class HTMLMediaSource;
 #endif
@@ -83,7 +82,6 @@ struct PlatformMedia {
         QTMovieType,
         QTMovieGWorldType,
         QTMovieVisualContextType,
-        GStreamerGWorldType,
         ChromiumMediaPlayerType,
         QtMediaPlayerType,
         AVFoundationMediaPlayerType,
@@ -94,7 +92,6 @@ struct PlatformMedia {
         QTMovie* qtMovie;
         QTMovieGWorld* qtMovieGWorld;
         QTMovieVisualContext* qtMovieVisualContext;
-        GStreamerGWorld* gstreamerGWorld;
         MediaPlayerPrivateInterface* chromiumMediaPlayer;
         MediaPlayerPrivateInterface* qtMediaPlayer;
         AVPlayer* avfMediaPlayer;

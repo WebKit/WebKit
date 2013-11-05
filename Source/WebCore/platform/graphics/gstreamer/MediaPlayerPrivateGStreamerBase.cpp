@@ -27,8 +27,6 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "ColorSpace.h"
-#include "FullscreenVideoControllerGStreamer.h"
-#include "GStreamerGWorld.h"
 #include "GStreamerUtilities.h"
 #include "GStreamerVersioning.h"
 #include "GraphicsContext.h"
@@ -41,7 +39,6 @@
 #include "VideoSinkGStreamer.h"
 #include "WebKitWebSourceGStreamer.h"
 #include <gst/gst.h>
-#include <gst/video/video.h>
 #include <wtf/text/CString.h>
 
 #ifdef GST_API_VERSION_1
@@ -156,11 +153,6 @@ MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
         g_signal_handler_disconnect(m_volumeElement.get(), m_muteSignalHandler);
         m_muteSignalHandler = 0;
     }
-
-#if USE(NATIVE_FULLSCREEN_VIDEO)
-    if (m_fullscreenVideoController)
-        exitFullscreen();
-#endif
 }
 
 // Returns the size of the video
@@ -464,24 +456,6 @@ void MediaPlayerPrivateGStreamerBase::paintToTextureMapper(TextureMapper* textur
 }
 #endif
 
-#if USE(NATIVE_FULLSCREEN_VIDEO)
-void MediaPlayerPrivateGStreamerBase::enterFullscreen()
-{
-    ASSERT(!m_fullscreenVideoController);
-    m_fullscreenVideoController = FullscreenVideoControllerGStreamer::create(this);
-    if (m_fullscreenVideoController)
-        m_fullscreenVideoController->enterFullscreen();
-}
-
-void MediaPlayerPrivateGStreamerBase::exitFullscreen()
-{
-    if (!m_fullscreenVideoController)
-        return;
-    m_fullscreenVideoController->exitFullscreen();
-    m_fullscreenVideoController.release();
-}
-#endif
-
 bool MediaPlayerPrivateGStreamerBase::supportsFullscreen() const
 {
     return true;
@@ -489,14 +463,7 @@ bool MediaPlayerPrivateGStreamerBase::supportsFullscreen() const
 
 PlatformMedia MediaPlayerPrivateGStreamerBase::platformMedia() const
 {
-#if USE(NATIVE_FULLSCREEN_VIDEO)
-    PlatformMedia p;
-    p.type = PlatformMedia::GStreamerGWorldType;
-    p.media.gstreamerGWorld = m_gstGWorld.get();
-    return p;
-#else
     return NoPlatformMedia;
-#endif
 }
 
 MediaPlayer::MovieLoadType MediaPlayerPrivateGStreamerBase::movieLoadType() const
@@ -525,37 +492,12 @@ void MediaPlayerPrivateGStreamerBase::createVideoSink(GstElement* pipeline)
     if (!initializeGStreamer())
         return;
 
-#if USE(NATIVE_FULLSCREEN_VIDEO)
-    m_gstGWorld = GStreamerGWorld::createGWorld(pipeline);
-    m_webkitVideoSink = webkitVideoSinkNew(m_gstGWorld.get());
-#else
     UNUSED_PARAM(pipeline);
     m_webkitVideoSink = webkitVideoSinkNew();
-#endif
 
     m_repaintHandler = g_signal_connect(m_webkitVideoSink.get(), "repaint-requested", G_CALLBACK(mediaPlayerPrivateRepaintCallback), this);
 
     m_videoSinkBin = gst_bin_new(nullptr);
-
-#if USE(NATIVE_FULLSCREEN_VIDEO)
-    // Build a new video sink consisting of a bin containing a tee
-    // (meant to distribute data to multiple video sinks) and our
-    // internal video sink. For fullscreen we create an autovideosink
-    // and initially block the data flow towards it and configure it
-
-    GstElement* videoTee = gst_element_factory_make("tee", "videoTee");
-    GstElement* queue = gst_element_factory_make("queue", nullptr);
-
-#ifdef GST_API_VERSION_1
-    GRefPtr<GstPad> sinkPad = adoptGRef(gst_element_get_static_pad(videoTee, "sink"));
-    GST_OBJECT_FLAG_SET(GST_OBJECT(sinkPad.get()), GST_PAD_FLAG_PROXY_ALLOCATION);
-#endif
-
-    gst_bin_add_many(GST_BIN(m_videoSinkBin.get()), videoTee, queue, nullptr);
-
-    // Link a new src pad from tee to queue1.
-    gst_element_link_pads_full(videoTee, nullptr, queue, "sink", GST_PAD_LINK_CHECK_NOTHING);
-#endif
 
     GstElement* videoSink = nullptr;
     m_fpsSink = gst_element_factory_make("fpsdisplaysink", "sink");
@@ -594,12 +536,6 @@ void MediaPlayerPrivateGStreamerBase::createVideoSink(GstElement* pipeline)
     ASSERT(videoSink);
 
     GstElement* firstChild = videoSink;
-#if USE(NATIVE_FULLSCREEN_VIDEO)
-    // Faster elements linking.
-    gst_element_link_pads_full(queue, "src", videoSink, "sink", GST_PAD_LINK_CHECK_NOTHING);
-
-    firstChild = videoTee;
-#endif
     GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(firstChild, "sink"));
     gst_element_add_pad(m_videoSinkBin.get(), gst_ghost_pad_new("sink", pad.get()));
 }

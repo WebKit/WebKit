@@ -24,7 +24,6 @@
 
 #include <cairo.h>
 #include <gst/gst.h>
-#include <gst/video/video.h>
 #include <wtf/gobject/GOwnPtr.h>
 
 #ifdef GST_API_VERSION_1
