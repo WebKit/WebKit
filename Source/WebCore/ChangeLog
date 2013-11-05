@@ -1,3 +1,13 @@
+2013-11-04  Andreas Kling  <akling@apple.com>
+
+        CTTE: RenderFrameBase's widget is always a FrameView.
+        <https://webkit.org/b/123771>
+
+        Delete widget() from RenderFrameBase and supplant a childView()
+        that returns FrameView*. Strip away unnecessary casts and asserts.
+
+        Reviewed by Antti Koivisto.
+
 2013-11-04  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Regions][CSS Shapes] Content in region doesn't respect shape-outside after initial layout pass

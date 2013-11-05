@@ -26,6 +26,7 @@
 #ifndef RenderFrameBase_h
 #define RenderFrameBase_h
 
+#include "FrameView.h"
 #include "RenderWidget.h"
 
 namespace WebCore {
@@ -38,7 +39,12 @@ protected:
     RenderFrameBase(HTMLFrameElementBase&, PassRef<RenderStyle>);
 
 public:
+    FrameView* childView() const { return toFrameView(RenderWidget::widget()); }
+
     void layoutWithFlattening(bool fixedWidth, bool fixedHeight);
+
+private:
+    void widget() const WTF_DELETED_FUNCTION;
 };
 
 } // namespace WebCore

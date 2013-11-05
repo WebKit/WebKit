@@ -96,9 +96,7 @@ bool RenderIFrame::requiresLayer() const
 
 RenderView* RenderIFrame::contentRootRenderer() const
 {
-    // FIXME: Is this always a valid cast? What about plugins?
-    ASSERT(!widget() || widget()->isFrameView());
-    FrameView* childFrameView = toFrameView(widget());
+    FrameView* childFrameView = childView();
     return childFrameView ? childFrameView->frame().contentRenderer() : 0;
 }
 
@@ -139,7 +137,7 @@ void RenderIFrame::layoutSeamlessly()
     // Laying out our kids is normally responsible for adjusting our height, so we set it here.
     // Replaced elements normally do not respect padding, but seamless elements should: we'll add
     // both padding and border to the child's logical height here.
-    FrameView* childFrameView = toFrameView(widget());
+    FrameView* childFrameView = childView();
     if (childFrameView) // Widget should never be null during layout(), but just in case.
         setLogicalHeight(childFrameView->contentsHeight() + borderTop() + borderBottom() + paddingTop() + paddingBottom());
     updateLogicalHeight();

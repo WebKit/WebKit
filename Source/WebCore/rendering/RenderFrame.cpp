@@ -53,18 +53,16 @@ void RenderFrame::updateFromElement()
 
 void RenderFrame::viewCleared()
 {
-    if (!widget() || !widget()->isFrameView())
+    if (!childView())
         return;
-
-    FrameView* view = toFrameView(widget());
 
     int marginWidth = frameElement().marginWidth();
     int marginHeight = frameElement().marginHeight();
 
     if (marginWidth != -1)
-        view->setMarginWidth(marginWidth);
+        childView()->setMarginWidth(marginWidth);
     if (marginHeight != -1)
-        view->setMarginHeight(marginHeight);
+        childView()->setMarginHeight(marginHeight);
 }
 
 } // namespace WebCore
