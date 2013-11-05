@@ -2737,6 +2737,7 @@ webcore_sources += \
 	Source/WebCore/dom/ClipboardEvent.cpp \
 	Source/WebCore/dom/ClipboardEvent.h \
 	Source/WebCore/dom/Clipboard.h \
+	Source/WebCore/dom/CollectionIndexCache.h \
 	Source/WebCore/dom/Comment.cpp \
 	Source/WebCore/dom/Comment.h \
 	Source/WebCore/dom/CompositionEvent.cpp \

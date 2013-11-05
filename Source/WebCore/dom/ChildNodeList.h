@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2007, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,6 +24,7 @@
 #ifndef ChildNodeList_h
 #define ChildNodeList_h
 
+#include "CollectionIndexCache.h"
 #include "NodeList.h"
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
@@ -67,6 +68,12 @@ public:
 
     void invalidateCache();
 
+    // For CollectionIndexCache
+    Node* collectionFirst() const;
+    Node* collectionLast() const;
+    Node* collectionTraverseForward(Node&, unsigned count, unsigned& traversedCount) const;
+    Node* collectionTraverseBackward(Node&, unsigned count) const;
+
 private:
     explicit ChildNodeList(ContainerNode& parent);
 
@@ -76,14 +83,8 @@ private:
 
     virtual bool isChildNodeList() const OVERRIDE { return true; }
 
-    Node* nodeBeforeCached(unsigned) const;
-    Node* nodeAfterCached(unsigned) const;
-
     Ref<ContainerNode> m_parent;
-    mutable unsigned m_cachedLength : 31;
-    mutable unsigned m_cachedLengthValid : 1;
-    mutable unsigned m_cachedCurrentPosition;
-    mutable Node* m_cachedCurrentNode;
+    mutable CollectionIndexCache<ChildNodeList, Node> m_indexCache;
 };
 
 } // namespace WebCore

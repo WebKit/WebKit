@@ -1,3 +1,59 @@
+2013-11-05  Antti Koivisto  <antti@apple.com>
+
+        Factor index cache for NodeLists and HTMLCollections to a class
+        https://bugs.webkit.org/show_bug.cgi?id=123823
+
+        Reviewed by Ryosuke Niwa.
+
+        Implement index cache class that can used by NodeLists and HTMLCollections that currently
+        each have implementations of their own.
+        
+        This patch also implements ChildNodeList and LiveNodeList using CollectionIndexCache.
+        HTMLCollection is will be transitioned later.
+
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::ChildNodeList):
+        (WebCore::ChildNodeList::length):
+        (WebCore::ChildNodeList::item):
+        
+            The client calls to cache to for indexed and size access.
+
+        (WebCore::ChildNodeList::collectionFirst):
+        (WebCore::ChildNodeList::collectionLast):
+        (WebCore::ChildNodeList::collectionTraverseForward):
+        (WebCore::ChildNodeList::collectionTraverseBackward):
+        
+            Cache calls back to these as needed to do the actual traversal.
+
+        (WebCore::ChildNodeList::invalidateCache):
+        * dom/ChildNodeList.h:
+        * dom/CollectionIndexCache.h: Added.
+        
+            Templated cache class itself.
+
+        (WebCore::::CollectionIndexCache):
+        (WebCore::::nodeCount):
+        (WebCore::::nodeBeforeCached):
+        (WebCore::::nodeAfterCached):
+        (WebCore::::nodeAt):
+        (WebCore::::invalidate):
+        * dom/LiveNodeList.cpp:
+        (WebCore::firstMatchingElement):
+        (WebCore::nextMatchingElement):
+        (WebCore::traverseMatchingElementsForward):
+        (WebCore::LiveNodeList::collectionFirst):
+        (WebCore::LiveNodeList::collectionLast):
+        (WebCore::LiveNodeList::collectionTraverseForward):
+        (WebCore::LiveNodeList::collectionTraverseBackward):
+        (WebCore::LiveNodeList::length):
+        (WebCore::LiveNodeList::item):
+        (WebCore::LiveNodeList::invalidateCache):
+        * dom/LiveNodeList.h:
+        (WebCore::LiveNodeList::LiveNodeList):
+
 2013-11-05  Enrica Casucci  <enrica@apple.com>
 
         Full width semicolon is wrong in vertical text.

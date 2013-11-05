@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="DebugSuffix|Win32">
@@ -19840,6 +19840,7 @@
     <ClInclude Include="..\dom\Clipboard.h" />
     <ClInclude Include="..\dom\ClipboardAccessPolicy.h" />
     <ClInclude Include="..\dom\ClipboardEvent.h" />
+    <ClInclude Include="..\dom\CollectionIndexCache.h" />
     <ClInclude Include="..\dom\Comment.h" />
     <ClInclude Include="..\dom\CompositionEvent.h" />
     <ClInclude Include="..\dom\ContainerNode.h" />

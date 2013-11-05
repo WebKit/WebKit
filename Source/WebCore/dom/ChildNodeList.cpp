@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2007, 2008, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,10 +35,6 @@ EmptyNodeList::~EmptyNodeList()
 
 ChildNodeList::ChildNodeList(ContainerNode& parent)
     : m_parent(parent)
-    , m_cachedLength(0)
-    , m_cachedLengthValid(false)
-    , m_cachedCurrentPosition(0)
-    , m_cachedCurrentNode(nullptr)
 {
 }
 
@@ -49,84 +45,43 @@ ChildNodeList::~ChildNodeList()
 
 unsigned ChildNodeList::length() const
 {
-    if (!m_cachedLengthValid) {
-        m_cachedLength = m_parent->childNodeCount();
-        m_cachedLengthValid = true;
-    }
-    return m_cachedLength;
-}
-
-static Node* childFromFirst(const ContainerNode& parent, unsigned delta)
-{
-    Node* child = parent.firstChild();
-    for (; delta && child; --delta)
-        child = child->nextSibling();
-    return child;
-}
-
-static Node* childFromLast(const ContainerNode& parent, unsigned delta)
-{
-    Node* child = parent.lastChild();
-    for (; delta; --delta)
-        child = child->previousSibling();
-    ASSERT(child);
-    return child;
-}
-
-Node* ChildNodeList::nodeBeforeCached(unsigned index) const
-{
-    ASSERT(m_cachedCurrentNode);
-    ASSERT(index < m_cachedCurrentPosition);
-    if (index < m_cachedCurrentPosition - index) {
-        m_cachedCurrentNode = childFromFirst(m_parent.get(), index);
-        m_cachedCurrentPosition = index;
-        return m_cachedCurrentNode;
-    }
-    while (m_cachedCurrentNode && m_cachedCurrentPosition > index) {
-        m_cachedCurrentNode = m_cachedCurrentNode->previousSibling();
-        --m_cachedCurrentPosition;
-    }
-    return m_cachedCurrentNode;
-}
-
-Node* ChildNodeList::nodeAfterCached(unsigned index) const
-{
-    ASSERT(m_cachedCurrentNode);
-    ASSERT(index > m_cachedCurrentPosition);
-    ASSERT(!m_cachedLengthValid || index < m_cachedLength);
-    if (m_cachedLengthValid && m_cachedLength - index < index - m_cachedCurrentPosition) {
-        m_cachedCurrentNode = childFromLast(m_parent.get(), m_cachedLength - index - 1);
-        m_cachedCurrentPosition = index;
-        return m_cachedCurrentNode;
-    }
-    while (m_cachedCurrentNode && m_cachedCurrentPosition < index) {
-        m_cachedCurrentNode = m_cachedCurrentNode->nextSibling();
-        ++m_cachedCurrentPosition;
-    }
-    if (!m_cachedCurrentNode && !m_cachedLengthValid) {
-        m_cachedLength = m_cachedCurrentPosition;
-        m_cachedLengthValid = true;
-    }
-    return m_cachedCurrentNode;
+    return m_indexCache.nodeCount(*this);
 }
 
 Node* ChildNodeList::item(unsigned index) const
 {
-    if (m_cachedLengthValid && index >= m_cachedLength)
-        return nullptr;
-    if (m_cachedCurrentNode) {
-        if (index > m_cachedCurrentPosition)
-            return nodeAfterCached(index);
-        if (index < m_cachedCurrentPosition)
-            return nodeBeforeCached(index);
-        return m_cachedCurrentNode;
+    return m_indexCache.nodeAt(*this, index);
+}
+
+Node* ChildNodeList::collectionFirst() const
+{
+    return m_parent->firstChild();
+}
+
+Node* ChildNodeList::collectionLast() const
+{
+    return m_parent->lastChild();
+}
+
+Node* ChildNodeList::collectionTraverseForward(Node& current, unsigned count, unsigned& traversedCount) const
+{
+    ASSERT(count);
+    Node* child = &current;
+    for (traversedCount = 0; traversedCount < count; ++traversedCount) {
+        child = child->nextSibling();
+        if (!child)
+            return nullptr;
     }
-    if (m_cachedLengthValid && m_cachedLength - index < index)
-        m_cachedCurrentNode = childFromLast(m_parent.get(), m_cachedLength - index - 1);
-    else
-        m_cachedCurrentNode = childFromFirst(m_parent.get(), index);
-    m_cachedCurrentPosition = index;
-    return m_cachedCurrentNode;
+    return child;
+}
+
+Node* ChildNodeList::collectionTraverseBackward(Node& current, unsigned count) const
+{
+    ASSERT(count);
+    Node* child = &current;
+    for (; count && child ; --count)
+        child = child->previousSibling();
+    return child;
 }
 
 Node* ChildNodeList::namedItem(const AtomicString& name) const
@@ -150,8 +105,7 @@ Node* ChildNodeList::namedItem(const AtomicString& name) const
 
 void ChildNodeList::invalidateCache()
 {
-    m_cachedCurrentNode = nullptr;
-    m_cachedLengthValid = false;
+    m_indexCache.invalidate();
 }
 
 } // namespace WebCore

@@ -5689,6 +5689,7 @@
 		E1FF8F6C180DB5BE00132674 /* CryptoAlgorithmRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF8F6A180DB5BE00132674 /* CryptoAlgorithmRegistry.cpp */; };
 		E1FF8F6D180DB5BE00132674 /* CryptoAlgorithmRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FF8F6B180DB5BE00132674 /* CryptoAlgorithmRegistry.h */; };
 		E401C27517CE53EC00C41A35 /* ElementIteratorAssertions.h in Headers */ = {isa = PBXBuildFile; fileRef = E401C27417CE53EC00C41A35 /* ElementIteratorAssertions.h */; };
+		E425A49A18292B840020CFCF /* CollectionIndexCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E425A49918292B840020CFCF /* CollectionIndexCache.h */; };
 		E4295FA412B0614E00D1ACE0 /* ResourceLoadPriority.h in Headers */ = {isa = PBXBuildFile; fileRef = E4295FA312B0614E00D1ACE0 /* ResourceLoadPriority.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E43105B816750F0C00DB2FB8 /* NodeTraversal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E43105B716750F0C00DB2FB8 /* NodeTraversal.cpp */; };
 		E43105BB16750F1600DB2FB8 /* NodeTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = E43105BA16750F1600DB2FB8 /* NodeTraversal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12749,6 +12750,7 @@
 		E406F3FB1198307D009D59D6 /* ColorData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorData.cpp; sourceTree = "<group>"; };
 		E41EA038119836DB00710BC5 /* CSSPropertyNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPropertyNames.cpp; sourceTree = "<group>"; };
 		E41EA0391198374900710BC5 /* CSSValueKeywords.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueKeywords.cpp; sourceTree = "<group>"; };
+		E425A49918292B840020CFCF /* CollectionIndexCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionIndexCache.h; sourceTree = "<group>"; };
 		E4295FA312B0614E00D1ACE0 /* ResourceLoadPriority.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadPriority.h; sourceTree = "<group>"; };
 		E43105B716750F0C00DB2FB8 /* NodeTraversal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeTraversal.cpp; sourceTree = "<group>"; };
 		E43105BA16750F1600DB2FB8 /* NodeTraversal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeTraversal.h; sourceTree = "<group>"; };
@@ -21057,6 +21059,7 @@
 				85031B290A44EFC700F992E0 /* ClipboardEvent.cpp */,
 				85031B2A0A44EFC700F992E0 /* ClipboardEvent.h */,
 				2D90660C0665D937006B6F1A /* ClipboardMac.mm */,
+				E425A49918292B840020CFCF /* CollectionIndexCache.h */,
 				6550B697099DF0270090D781 /* Comment.cpp */,
 				6550B698099DF0270090D781 /* Comment.h */,
 				85089CC70A98C22600A275AA /* Comment.idl */,
@@ -23306,6 +23309,7 @@
 				9752D38E1413104B003305BD /* JSHTMLSpanElement.h in Headers */,
 				A80E7B0E0A19D606007FB8C5 /* JSHTMLStyleElement.h in Headers */,
 				BCA169A30BFD55B40019CA76 /* JSHTMLTableCaptionElement.h in Headers */,
+				E425A49A18292B840020CFCF /* CollectionIndexCache.h in Headers */,
 				BC06EDE40BFD6D0D00856E9D /* JSHTMLTableCellElement.h in Headers */,
 				BC06ED9E0BFD660600856E9D /* JSHTMLTableColElement.h in Headers */,
 				BC06EE050BFD71AA00856E9D /* JSHTMLTableElement.h in Headers */,

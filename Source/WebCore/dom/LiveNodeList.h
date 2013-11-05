@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,6 +24,7 @@
 #ifndef LiveNodeList_h
 #define LiveNodeList_h
 
+#include "CollectionIndexCache.h"
 #include "CollectionType.h"
 #include "Document.h"
 #include "HTMLNames.h"
@@ -55,9 +56,6 @@ public:
 
     LiveNodeList(ContainerNode& ownerNode, Type type, NodeListInvalidationType invalidationType, NodeListRootType rootType = NodeListIsRootedAtNode)
         : m_ownerNode(ownerNode)
-        , m_cachedElement(nullptr)
-        , m_isLengthCacheValid(false)
-        , m_isElementCacheValid(false)
         , m_rootType(rootType)
         , m_invalidationType(invalidationType)
         , m_type(type)
@@ -91,47 +89,27 @@ public:
     }
     void invalidateCache() const;
 
+    // For CollectionIndexCache
+    Element* collectionFirst() const;
+    Element* collectionLast() const;
+    Element* collectionTraverseForward(Element&, unsigned count, unsigned& traversedCount) const;
+    Element* collectionTraverseBackward(Element&, unsigned count) const;
+
 protected:
     Document& document() const { return m_ownerNode->document(); }
     ContainerNode& rootNode() const;
-
-    ALWAYS_INLINE bool isElementCacheValid() const { return m_isElementCacheValid; }
-    ALWAYS_INLINE Element* cachedElement() const { return m_cachedElement; }
-    ALWAYS_INLINE unsigned cachedElementOffset() const { return m_cachedElementOffset; }
-
-    ALWAYS_INLINE bool isLengthCacheValid() const { return m_isLengthCacheValid; }
-    ALWAYS_INLINE unsigned cachedLength() const { return m_cachedLength; }
-    ALWAYS_INLINE void setLengthCache(unsigned length) const
-    {
-        m_cachedLength = length;
-        m_isLengthCacheValid = true;
-    }
-    ALWAYS_INLINE void setCachedElement(Element& element, unsigned offset) const
-    {
-        m_cachedElement = &element;
-        m_cachedElementOffset = offset;
-        m_isElementCacheValid = true;
-    }
 
     ALWAYS_INLINE NodeListRootType rootType() const { return static_cast<NodeListRootType>(m_rootType); }
 
 private:
     virtual bool isLiveNodeList() const OVERRIDE { return true; }
 
-    Element* elementBeforeOrAfterCachedElement(unsigned offset, ContainerNode* root) const;
-    Element* traverseLiveNodeListFirstElement(ContainerNode* root) const;
-    Element* traverseLiveNodeListForwardToOffset(unsigned offset, Element* currentElement, unsigned& currentOffset, ContainerNode* root) const;
-    bool isLastItemCloserThanLastOrCachedItem(unsigned offset) const;
-    bool isFirstItemCloserThanCachedItem(unsigned offset) const;
     Element* iterateForPreviousElement(Element* current) const;
-    Element* itemBefore(Element* previousItem) const;
 
     Ref<ContainerNode> m_ownerNode;
-    mutable Element* m_cachedElement;
-    mutable unsigned m_cachedLength;
-    mutable unsigned m_cachedElementOffset;
-    mutable unsigned m_isLengthCacheValid : 1;
-    mutable unsigned m_isElementCacheValid : 1;
+
+    mutable CollectionIndexCache<LiveNodeList, Element> m_indexCache;
+
     const unsigned m_rootType : 2;
     const unsigned m_invalidationType : 4;
     const unsigned m_type : 5;
