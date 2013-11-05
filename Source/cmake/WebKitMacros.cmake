@@ -196,18 +196,6 @@ macro(WEBKIT_WRAP_SOURCELIST)
             string(REGEX REPLACE "/" "\\\\\\\\" _sourcegroup "${_path}")
             source_group("${_sourcegroup}" FILES ${_file})
         endif ()
-
-        if (WTF_PLATFORM_QT)
-            set(_moc_filename ${DERIVED_SOURCES_WEBCORE_DIR}/${_basename}.moc)
-
-            file(READ ${_file} _contents)
-
-            string(REGEX MATCHALL "#include[ ]+\"${_basename}\\.moc\"" _match "${_contents}")
-            if (_match)
-                QT4_GENERATE_MOC(${_file} ${_moc_filename})
-                ADD_SOURCE_DEPENDENCIES(${_file} ${_moc_filename})
-            endif ()
-        endif ()
     endforeach ()
 
     source_group("DerivedSources" REGULAR_EXPRESSION "${DERIVED_SOURCES_WEBCORE_DIR}")
