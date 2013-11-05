@@ -246,7 +246,8 @@ function update_flakiness_for_build($db, $preceeding_build, $current_build, $suc
         FROM results preceeding_results, results succeeding_results
         WHERE preceeding_results.build = $1 AND results.build = $2 AND succeeding_results.build = $3
             AND preceeding_results.test = results.test AND succeeding_results.test = results.test
-            AND results.is_flaky != (preceeding_results.actual = succeeding_results.actual AND preceeding_results.actual != results.actual)",
+            AND (results.is_flaky IS NULL OR results.is_flaky !=
+                    (preceeding_results.actual = succeeding_results.actual AND preceeding_results.actual != results.actual))",
             array($preceeding_build['id'], $current_build['id'], $succeeding_build['id']));
 }
 
