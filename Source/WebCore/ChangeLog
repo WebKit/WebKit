@@ -1,3 +1,28 @@
+2013-11-04  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Regions][CSS Shapes] Content in region doesn't respect shape-outside after initial layout pass
+        <https://webkit.org/b/114829>
+
+        Although we set the size of a shape for shape-outside in RenderBlockFlow::insertFloatingObject based on the
+        float's size, the actual height of the float is not always resolved at that point. (Look at cases when the shape
+        has percentage based height or percentage based radius.) ShapeInfo::setShapeSize triggers a layout for 0 height
+        value, which will be overriden later, when RenderBlockFlow::positionNewFloats sets the actual size of the float (shape).
+        Thus it doesn't make sense to set the shape's size in insertFloatingObject and run those extra unnecessary layout passes,
+        since it'll be overriden anyways. I moved the shape size setting logic into RenderBlockFlow::positionNewFloats.
+
+        The problem showed up when we had a shape-outside ellipse with percentage based radius, and we inserted the content
+        with JavaScript into a region flow. The content has been layed out based on the 0 border radius, and relayout hasn't been
+        triggered when it flew into the flow. This change sets the shape size only when we already have the height of the float,
+        so the radius(es) can be resolved correctly, thus no unnecessary layout passes will happen and the layout will be correct as well.
+
+        Reviewed by David Hyatt.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-floats-layout-after-initial-layout-pass.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::insertFloatingObject): Remove setting the size of the shape.
+        (WebCore::RenderBlockFlow::positionNewFloats): Set the size of the shape here.
+
 2013-11-04  Samuel White  <samuel_white@apple.com>
 
         AX: AXShowMenu doesn't always work.

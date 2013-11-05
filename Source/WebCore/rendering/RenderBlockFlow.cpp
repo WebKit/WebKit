@@ -1973,11 +1973,6 @@ FloatingObject* RenderBlockFlow::insertFloatingObject(RenderBox& floatBox)
 
     setLogicalWidthForFloat(floatingObject.get(), logicalWidthForChild(floatBox) + marginStartForChild(floatBox) + marginEndForChild(floatBox));
 
-#if ENABLE(CSS_SHAPES)
-    if (ShapeOutsideInfo* shapeOutside = floatBox.shapeOutsideInfo())
-        shapeOutside->setShapeSize(logicalWidthForChild(floatBox), logicalHeightForChild(floatBox));
-#endif
-
     return m_floatingObjects->add(std::move(floatingObject));
 }
 
@@ -2217,6 +2212,10 @@ bool RenderBlockFlow::positionNewFloats()
 
         m_floatingObjects->addPlacedObject(floatingObject);
 
+#if ENABLE(CSS_SHAPES)
+        if (ShapeOutsideInfo* shapeOutside = childBox.shapeOutsideInfo())
+            shapeOutside->setShapeSize(logicalWidthForChild(childBox), logicalHeightForChild(childBox));
+#endif
         // If the child moved, we have to repaint it.
         if (childBox.checkForRepaintDuringLayout())
             childBox.repaintDuringLayoutIfMoved(oldRect);

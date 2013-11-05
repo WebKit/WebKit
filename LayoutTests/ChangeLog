@@ -1,3 +1,13 @@
+2013-11-04  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Regions][CSS Shapes] Content in region doesn't respect shape-outside after initial layout pass
+        <https://webkit.org/b/114829>
+
+        Reviewed by David Hyatt.
+
+        * fast/shapes/shape-outside-floats/shape-outside-floats-layout-after-initial-layout-pass-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-layout-after-initial-layout-pass.html: Added.
+
 2013-11-04  Jeffrey Pfau  <jpfau@apple.com>
 
         SMIL timers can still fire after the containing document has been torn down
