@@ -1,3 +1,24 @@
+2013-11-05  Martin Robinson  <mrobinson@igalia.com>
+
+        [MathML] Poor spacing around delimiters in MathML Torture Test 14
+        https://bugs.webkit.org/show_bug.cgi?id=122837
+
+        Reviewed by Brent Fulgham.
+
+        Instead of stretching the vertical bar with the stretchable version, just repeat
+        the normal vertical bar. This follows what Gecko does when rendering tall vertical
+        bars and also works around an issue with STIX fonts leading to poor spacing in
+        formulas.
+
+        * mathml/presentation/mo-stretch.html: Reworked this test to show
+        stretching of all stretchable characters, which reveals a bug with
+        the double vertical bar (covered by http://wkbug.com/123543).
+        * platform/gtk/TestExpectations:
+        * platform/gtk/mathml/presentation/mo-stretch-expected.png:
+        * platform/gtk/mathml/presentation/mo-stretch-expected.txt:
+        * platform/mac/mathml/presentation/mo-stretch-expected.png:
+        * platform/mac/mathml/presentation/mo-stretch-expected.txt:
+
 2013-11-05  Daniel Bates  <dabates@apple.com>
 
         XSSAuditor should catch reflected srcdoc properties even without a <frame> tag injection
