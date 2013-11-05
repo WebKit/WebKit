@@ -69,7 +69,8 @@ public:
 
     void frameRect(RECT* rect) const;
 
-    PassRefPtr<WebCore::Frame> createFrame(const WebCore::URL&, const WTF::String&, WebCore::HTMLFrameOwnerElement*, const WTF::String&, bool, int, int);
+    PassRefPtr<WebCore::Frame> createFrame(const WebCore::URL&, const WTF::String& name, WebCore::HTMLFrameOwnerElement*, 
+        const WTF::String& referrer, bool allowScrolling, int marginWidth, int marginHeight, WebCore::Frame* parentFrame);
 
     // JavaScript Dialog
     void runJavaScriptAlert(const WTF::String& message);

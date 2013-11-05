@@ -157,15 +157,13 @@ void WebView::cleanup()
 }
 
 PassRefPtr<Frame> WebView::createFrame(const URL& url, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer,
-                                       bool /*allowsScrolling*/, int /*marginWidth*/, int /*marginHeight*/)
+    bool /*allowsScrolling*/, int /*marginWidth*/, int /*marginHeight*/, Frame* parentFrame)
 {
-    Frame* coreFrame = m_frame;
-
     WebKit::FrameLoaderClientWinCE *loaderClient = new WebKit::FrameLoaderClientWinCE(this);
     RefPtr<Frame> childFrame = Frame::create(m_page, ownerElement, loaderClient);
     loaderClient->setFrame(childFrame.get());
 
-    coreFrame->tree().appendChild(childFrame);
+    parentFrame->tree().appendChild(childFrame);
     childFrame->tree().setName(name);
     childFrame->init();
 
@@ -173,7 +171,7 @@ PassRefPtr<Frame> WebView::createFrame(const URL& url, const String& name, HTMLF
     if (!childFrame->page())
         return 0;
 
-    coreFrame->loader().loadURLIntoChildFrame(url, referrer, childFrame.get());
+    parentFrame->loader().loadURLIntoChildFrame(url, referrer, childFrame.get());
 
     // The frame's onload handler may have removed it from the document.
     if (!childFrame->tree().parent())

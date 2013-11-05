@@ -171,7 +171,7 @@ PassRefPtr<Widget> FrameLoaderClientWinCE::createPlugin(const IntSize&, HTMLPlug
 PassRefPtr<Frame> FrameLoaderClientWinCE::createFrame(const URL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
                                                  const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight)
 {
-    return m_webView->createFrame(url, name, ownerElement, referrer, allowsScrolling, marginWidth, marginHeight);
+    return m_webView->createFrame(url, name, ownerElement, referrer, allowsScrolling, marginWidth, marginHeight, m_frame);
 }
 
 void FrameLoaderClientWinCE::redirectDataToPlugin(Widget* pluginWidget)
