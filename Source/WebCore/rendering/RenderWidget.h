@@ -70,8 +70,6 @@ public:
     void updateWidgetPosition();
     IntRect windowClipRect() const;
 
-    void notifyWidget(WidgetNotification);
-
 #if USE(ACCELERATED_COMPOSITING)
     bool requiresAcceleratedCompositing() const;
 #endif

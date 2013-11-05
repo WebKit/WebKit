@@ -1,3 +1,9 @@
+2013-11-05  Andreas Kling  <akling@apple.com>
+
+        Remove unused RenderWidget::notifyWidget().
+
+        Rubber-stamped by Anders Carlsson.
+
 2013-11-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r158678.

@@ -219,12 +219,6 @@ void RenderWidget::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     }
 }
 
-void RenderWidget::notifyWidget(WidgetNotification notification)
-{
-    if (m_widget)
-        m_widget->notifyWidget(notification);
-}
-
 void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     LayoutPoint adjustedPaintOffset = paintOffset + location();
