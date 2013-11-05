@@ -1477,11 +1477,8 @@ void Document::setTitle(const String& title)
     // The DOM API has no method of specifying direction, so assume LTR.
     updateTitle(StringWithDirection(title, LTR));
 
-    if (m_titleElement) {
-        ASSERT(isHTMLTitleElement(m_titleElement.get()));
-        if (isHTMLTitleElement(m_titleElement.get()))
-            toHTMLTitleElement(m_titleElement.get())->setText(title);
-    }
+    if (m_titleElement && isHTMLTitleElement(m_titleElement.get()))
+        toHTMLTitleElement(m_titleElement.get())->setText(title);
 }
 
 void Document::setTitleElement(const StringWithDirection& title, Element* titleElement)

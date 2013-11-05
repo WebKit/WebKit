@@ -43,6 +43,7 @@ Node::InsertionNotificationRequest SVGTitleElement::insertedInto(ContainerNode& 
     SVGElement::insertedInto(rootParent);
     if (!rootParent.inDocument())
         return InsertionDone;
+    // FIXME: It's possible to register SVGTitleElement to an HTMLDocument.
     if (firstChild())
         // FIXME: does SVG have a title text direction?
         document().setTitleElement(StringWithDirection(textContent(), LTR), this);
