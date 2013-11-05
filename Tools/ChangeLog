@@ -1,3 +1,18 @@
+2013-11-05  Anders Carlsson  <andersca@apple.com>
+
+        Implement more NSCoder methods
+        https://bugs.webkit.org/show_bug.cgi?id=123815
+
+        Reviewed by Dan Bernstein.
+
+        Add a method that takes an NSArray, an NSDictionary and an NSURLRequest.
+
+        * TestWebKitAPI/Tests/WebKit2ObjC/WKRemoteObjectRegistry.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/WKRemoteObjectRegistry_Bundle.mm:
+        (-[BundleObject testMethodWithArray:dictionary:request:]):
+        * TestWebKitAPI/Tests/mac/WKRemoteObjectRegistry_Shared.h:
+
 2013-11-05  Filip Pizlo  <fpizlo@apple.com>
 
         Update ReducedFTL

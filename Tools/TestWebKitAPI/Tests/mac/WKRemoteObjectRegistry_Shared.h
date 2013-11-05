@@ -27,5 +27,6 @@
 
 - (void)sayHello;
 - (void)testMethodWithString:(NSString *)string double:(double)d integer:(int)i;
+- (void)testMethodWithArray:(NSArray *)array dictionary:(NSDictionary *)dictinoary request:(NSURLRequest *)request;
 
 @end

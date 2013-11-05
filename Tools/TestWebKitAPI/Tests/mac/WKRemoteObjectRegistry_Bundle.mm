@@ -50,6 +50,11 @@
     // FIXME: Implement.
 }
 
+- (void)testMethodWithArray:(NSArray *)array dictionary:(NSDictionary *)dictinoary request:(NSURLRequest *)request
+{
+    // FIXME: Implement.
+}
+
 @end
 
 namespace TestWebKitAPI {

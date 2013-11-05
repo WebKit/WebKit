@@ -1,5 +1,27 @@
 2013-11-05  Anders Carlsson  <andersca@apple.com>
 
+        Implement more NSCoder methods
+        https://bugs.webkit.org/show_bug.cgi?id=123815
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeObject):
+        Assert that object is not nil.
+
+        (createEncodedObject):
+        Handle nil objects.
+
+        (-[WKRemoteObjectEncoder encodeValueOfObjCType:at:]):
+        Call the right object stream encoding function based on the object type.
+
+        (-[WKRemoteObjectEncoder encodeBool:forKey:]):
+        (-[WKRemoteObjectEncoder encodeInt64:forKey:]):
+        (-[WKRemoteObjectEncoder encodeDouble:forKey:]):
+        Create APIObjects and add them to the current dictionary.
+
+2013-11-05  Anders Carlsson  <andersca@apple.com>
+
         Encode the class name
         https://bugs.webkit.org/show_bug.cgi?id=123813
 

@@ -162,6 +162,8 @@ static void encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invoc
 
 static void encodeObject(WKRemoteObjectEncoder *encoder, id object)
 {
+    ASSERT(object);
+    
     if ([object isKindOfClass:[NSInvocation class]]) {
         // We have to special case NSInvocation since we don't want to encode the target.
         encodeInvocation(encoder, object);
@@ -184,12 +186,33 @@ static void encodeObject(WKRemoteObjectEncoder *encoder, id object)
 
 static PassRefPtr<ImmutableDictionary> createEncodedObject(WKRemoteObjectEncoder *encoder, id object)
 {
+    if (!object)
+        return nil;
+
     RefPtr<MutableDictionary> dictionary = MutableDictionary::create();
     TemporaryChange<MutableDictionary*> dictionaryChange(encoder->_currentDictionary, dictionary.get());
 
     encodeObject(encoder, object);
 
     return dictionary;
+}
+
+- (void)encodeValueOfObjCType:(const char *)type at:(const void *)address
+{
+    switch (*type) {
+    // int
+    case 'i':
+        encodeToObjectStream(self, *static_cast<const int*>(address));
+        break;
+
+    // Objective-C object.
+    case '@':
+        encodeToObjectStream(self, *static_cast<const id*>(address));
+        break;
+
+    default:
+        [NSException raise:NSInvalidArgumentException format:@"Unsupported type '%s'", type];
+    }
 }
 
 - (BOOL)allowsKeyedCoding
@@ -213,6 +236,21 @@ static NSString *escapeKey(NSString *key)
 - (void)encodeBytes:(const uint8_t *)bytes length:(NSUInteger)length forKey:(NSString *)key
 {
     _currentDictionary->set(escapeKey(key), WebData::create(bytes, length));
+}
+
+- (void)encodeBool:(BOOL)value forKey:(NSString *)key
+{
+    _currentDictionary->set(escapeKey(key), WebBoolean::create(value));
+}
+
+- (void)encodeInt64:(int64_t)value forKey:(NSString *)key
+{
+    _currentDictionary->set(escapeKey(key), WebUInt64::create(value));
+}
+
+- (void)encodeDouble:(double)value forKey:(NSString *)key
+{
+    _currentDictionary->set(escapeKey(key), WebDouble::create(value));
 }
 
 @end
