@@ -121,12 +121,23 @@ static PlatformCAAnimation::ValueFunctionType fromCACFValueFunctionType(CFString
     return PlatformCAAnimation::NoValueFunction;
 }
 
-static RetainPtr<CACFTimingFunctionRef> toCACFTimingFunction(const TimingFunction* timingFunction)
+static RetainPtr<CACFTimingFunctionRef> toCACFTimingFunction(const TimingFunction* timingFunction, bool reverse)
 {
     ASSERT(timingFunction);
     if (timingFunction->isCubicBezierTimingFunction()) {
+        RefPtr<CubicBezierTimingFunction> reversed;
         const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(timingFunction);
-        return adoptCF(CACFTimingFunctionCreate(static_cast<float>(ctf->x1()), static_cast<float>(ctf->y1()), static_cast<float>(ctf->x2()), static_cast<float>(ctf->y2())));
+
+        if (reverse) {
+            reversed = ctf->createReversed();
+            ctf = reversed.get();
+        }
+
+        float x1 = static_cast<float>(ctf->x1());
+        float y1 = static_cast<float>(ctf->y1());
+        float x2 = static_cast<float>(ctf->x2());
+        float y2 = static_cast<float>(ctf->y2());
+        return adoptCF(CACFTimingFunctionCreate(x1, y1, x2, y2));
     }
     
     return CACFTimingFunctionGetFunctionWithName(kCACFTimingFunctionLinear);
@@ -289,7 +300,7 @@ void PlatformCAAnimation::setFillMode(FillModeType value)
 void PlatformCAAnimation::setTimingFunction(const TimingFunction* value, bool reverse)
 {
     UNUSED_PARAM(reverse);
-    CACFAnimationSetTimingFunction(m_animation.get(), toCACFTimingFunction(value).get());
+    CACFAnimationSetTimingFunction(m_animation.get(), toCACFTimingFunction(value, reverse).get());
 }
 
 void PlatformCAAnimation::copyTimingFunctionFrom(const PlatformCAAnimation* value)
@@ -543,7 +554,7 @@ void PlatformCAAnimation::setTimingFunctions(const Vector<const TimingFunction*>
     RetainPtr<CFMutableArrayRef> array = adoptCF(CFArrayCreateMutable(0, value.size(), &kCFTypeArrayCallBacks));
     for (size_t i = 0; i < value.size(); ++i) {
         RetainPtr<CFNumberRef> v = adoptCF(CFNumberCreate(0, kCFNumberFloatType, &value[i]));
-        CFArrayAppendValue(array.get(), toCACFTimingFunction(value[i]).get());
+        CFArrayAppendValue(array.get(), toCACFTimingFunction(value[i], reverse).get());
     }
 
     CACFAnimationSetTimingFunctions(m_animation.get(), array.get());
