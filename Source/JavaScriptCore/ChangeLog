@@ -1,5 +1,26 @@
 2013-11-04  Filip Pizlo  <fpizlo@apple.com>
 
+        internal-js-tests.yaml/Octane/stress-tests/pdfjs.js.default: ASSERTION FAILED: m_state.forNode(child).m_futurePossibleStructure.isSubsetOf(StructureSet(structure)) at DFGConstantFoldingPhase.cpp:249
+        https://bugs.webkit.org/show_bug.cgi?id=123778
+
+        Reviewed by Geoffrey Garen.
+        
+        This assertion was just wrong: ee do an execute() above the assertion. The assertion
+        is asserting that if we need a watchpoint (i.e. the best proven structure was not the
+        current structure) then it must be the future possible structure.  But while that may
+        have been true before execute(), it won't be true after if the PutById was a
+        transition. Of course, this can only happen in the concurrent JIT in which case the
+        code would be invalidated anyway since we would only transform the code in a way that
+        leveraged the lack of a transition if we inserted a watchpoint, in which case we
+        would realize that the watchpoint had been fired during compilation.
+        
+        Since this requires concurrent JIT awesomeness, I don't know how to test it.
+
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+
+2013-11-04  Filip Pizlo  <fpizlo@apple.com>
+
         DFG CheckArray(String) should just be a Phantom(String:)
         https://bugs.webkit.org/show_bug.cgi?id=123779
 

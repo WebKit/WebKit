@@ -246,7 +246,6 @@ private:
                 eliminated = true;
                 
                 if (needsWatchpoint) {
-                    ASSERT(m_state.forNode(child).m_futurePossibleStructure.isSubsetOf(StructureSet(structure)));
                     m_insertionSet.insertNode(
                         indexInBlock, SpecNone, StructureTransitionWatchpoint, codeOrigin,
                         OpInfo(structure), childEdge);
