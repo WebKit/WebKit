@@ -1254,12 +1254,12 @@ AccessibilityTextMarker AccessibilityUIElement::textMarkerForIndex(int)
 
 AccessibilityTextMarker AccessibilityUIElement::startTextMarker()
 {
-    return 0;
+    return nullptr;
 }
 
 AccessibilityTextMarker AccessibilityUIElement::endTextMarker()
 {
-    return 0;
+    return nullptr;
 }
 
 #endif

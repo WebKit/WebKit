@@ -89,7 +89,7 @@ static id findAccessibleObjectById(id obj, NSString *idAttribute)
     }
     END_AX_OBJC_EXCEPTIONS
 
-    return 0;
+    return nullptr;
 }
 
 AccessibilityUIElement AccessibilityController::accessibleElementById(JSStringRef idAttributeRef)
@@ -100,7 +100,7 @@ AccessibilityUIElement AccessibilityController::accessibleElementById(JSStringRe
     if (result)
         return AccessibilityUIElement(result);
 
-    return 0;
+    return nullptr;
 }
 
 void AccessibilityController::setLogFocusEvents(bool)

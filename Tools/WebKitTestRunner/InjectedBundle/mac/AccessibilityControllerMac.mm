@@ -94,7 +94,7 @@ static id findAccessibleObjectById(id obj, NSString *idAttribute)
             return result;
     }
 
-    return 0;
+    return nullptr;
 }
 
 PassRefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef idAttribute)
@@ -106,7 +106,7 @@ PassRefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementByI
     if (result)
         return AccessibilityUIElement::create(result);
 
-    return 0;
+    return nullptr;
 }
 
 } // namespace WTR

@@ -93,7 +93,7 @@ bool AccessibilityController::removeNotificationListener() { return false; }
 #endif
 
 #if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(EFL)
-PassRefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef attribute) { return 0; }
+PassRefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef attribute) { return nullptr; }
 #endif
 
 #if !PLATFORM(GTK) && !PLATFORM(EFL) && !PLATFORM(MAC)
