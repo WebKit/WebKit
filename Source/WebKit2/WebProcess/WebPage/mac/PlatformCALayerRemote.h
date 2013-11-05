@@ -40,6 +40,7 @@ class RemoteLayerTreeContext;
 class PlatformCALayerRemote : public WebCore::PlatformCALayer {
 public:
     static PassRefPtr<PlatformCALayer> create(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext*);
+    static PassRefPtr<PlatformCALayer> create(PlatformLayer *, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext*);
 
     virtual ~PlatformCALayerRemote();
 
@@ -144,6 +145,8 @@ public:
     virtual PassRefPtr<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const OVERRIDE;
 
     virtual PassRefPtr<PlatformCALayer> createCompatibleLayer(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient*) const OVERRIDE;
+
+    virtual uint32_t hostingContextID();
 
 protected:
     PlatformCALayerRemote(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext* context);

@@ -87,6 +87,8 @@ public:
 
         LayerID layerID;
         WebCore::PlatformCALayer::LayerType type;
+
+        uint32_t hostingContextID;
     };
 
     struct LayerProperties {

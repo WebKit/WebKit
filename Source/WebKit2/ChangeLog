@@ -1,5 +1,62 @@
 2013-11-04  Tim Horton  <timothy_horton@apple.com>
 
+        Remote Layer Tree: Make LayerTypeCustom remote-host CALayers from the Web process
+        https://bugs.webkit.org/show_bug.cgi?id=123766
+
+        Reviewed by Anders Carlsson.
+
+        Put each LayerTypeCustom layer into a CAContext, so that we can
+        host small CALayer trees (for video, plugins, etc.) from the Web process
+        to the UI process without proxying their (more complex) content.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::decode):
+        (WebKit::RemoteLayerTreeTransaction::dump):
+        Store, encode, and dump the CAContext ID of custom layers.
+
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        Create a CALayerHost with the CAContext ID from the Web process.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add PlatformCALayerRemoteCustom.
+
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.cpp:
+        (WebKit::GraphicsLayerCARemote::createPlatformCALayer):
+        Call the newly-added custom-layer constructor.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::create):
+        (PlatformCALayerRemote::PlatformCALayerRemote):
+        Move the call to layerWasCreated() out to ::create(), so that all of
+        the constructors for this class and all subclasses have completed
+        before we call it (so that layerWasCreated() can store the context ID
+        in the created layer properties object).
+
+        (WebKit::PlatformCALayerRemote::hostingContextID):
+        Should never be reached on the base class, only PlatformCALayerRemoteCustom.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.cpp: Added.
+        (PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom):
+        (PlatformCALayerRemoteCustom::~PlatformCALayerRemoteCustom):
+        (PlatformCALayerRemoteCustom::hostingContextID):
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.h: Added.
+        Add PlatformCALayerRemoteCustom, which owns a LayerHostingContext
+        which it will use to share a custom CALayer tree with the UI process.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.cpp:
+        Drive-by remove an unnecessary include.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::layerWasCreated):
+        Store the CAContext ID with the layer creation properties so it can
+        be used to create a CALayerHost upon commit in the UI process.
+
+2013-11-04  Tim Horton  <timothy_horton@apple.com>
+
         Remove PlatformCALayer::playerLayer
         https://bugs.webkit.org/show_bug.cgi?id=123764
 

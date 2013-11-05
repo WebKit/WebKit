@@ -33,7 +33,6 @@
 #import <WebCore/GraphicsLayerCA.h>
 #import <WebCore/PlatformCALayerMac.h>
 #import <WebCore/TiledBacking.h>
-#import <wtf/CurrentTime.h>
 #import <wtf/RetainPtr.h>
 
 using namespace WebCore;

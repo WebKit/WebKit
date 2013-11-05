@@ -47,6 +47,9 @@ void RemoteLayerTreeTransaction::LayerCreationProperties::encode(CoreIPC::Argume
 {
     encoder << layerID;
     encoder.encodeEnum(type);
+
+    if (type == PlatformCALayer::LayerTypeCustom)
+        encoder << hostingContextID;
 }
 
 bool RemoteLayerTreeTransaction::LayerCreationProperties::decode(CoreIPC::ArgumentDecoder& decoder, LayerCreationProperties& result)
@@ -56,6 +59,11 @@ bool RemoteLayerTreeTransaction::LayerCreationProperties::decode(CoreIPC::Argume
 
     if (!decoder.decodeEnum(result.type))
         return false;
+
+    if (result.type == PlatformCALayer::LayerTypeCustom) {
+        if (!decoder.decode(result.hostingContextID))
+            return false;
+    }
 
     return true;
 }
@@ -684,7 +692,7 @@ void RemoteLayerTreeTransaction::dump() const
                 ts << "av-player-layer";
                 break;
             case PlatformCALayer::LayerTypeCustom:
-                ts << "custom-layer";
+                ts << "custom-layer (context-id " << createdLayer.hostingContextID << ")";
                 break;
             }
             ts << " " << createdLayer.layerID << ")";

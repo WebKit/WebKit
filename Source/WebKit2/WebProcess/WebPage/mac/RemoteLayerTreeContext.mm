@@ -65,6 +65,10 @@ void RemoteLayerTreeContext::layerWasCreated(PlatformCALayerRemote* layer, Platf
     RemoteLayerTreeTransaction::LayerCreationProperties creationProperties;
     creationProperties.layerID = layer->layerID();
     creationProperties.type = type;
+
+    if (type == PlatformCALayer::LayerTypeCustom)
+        creationProperties.hostingContextID = layer->hostingContextID();
+
     m_createdLayers.append(creationProperties);
 }
 

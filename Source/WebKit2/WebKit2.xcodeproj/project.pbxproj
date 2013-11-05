@@ -325,6 +325,8 @@
 		2D47B56C1810714E003A3AEE /* RemoteLayerBackingStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */; };
 		2D47B56D1810714E003A3AEE /* RemoteLayerBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */; };
 		2D870D1016234FFE000A3F20 /* PDFPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D870D0E1622B7F9000A3F20 /* PDFPlugin.mm */; };
+		2D8710161828415D0018FA01 /* PlatformCALayerRemoteCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D8710141828415D0018FA01 /* PlatformCALayerRemoteCustom.cpp */; };
+		2D8710171828415D0018FA01 /* PlatformCALayerRemoteCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8710151828415D0018FA01 /* PlatformCALayerRemoteCustom.h */; };
 		2D8949F0182044F600E898AA /* PlatformCALayerRemoteTiledBacking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D8949EE182044F600E898AA /* PlatformCALayerRemoteTiledBacking.cpp */; };
 		2D8949F1182044F600E898AA /* PlatformCALayerRemoteTiledBacking.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8949EF182044F600E898AA /* PlatformCALayerRemoteTiledBacking.h */; };
 		2DA049B3180CCCD300AAFA9E /* PlatformCALayerRemote.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA049B1180CCCD300AAFA9E /* PlatformCALayerRemote.cpp */; };
@@ -1810,6 +1812,8 @@
 		2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerBackingStore.h; sourceTree = "<group>"; };
 		2D870D0D1622B7F9000A3F20 /* PDFPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPlugin.h; path = PDF/PDFPlugin.h; sourceTree = "<group>"; };
 		2D870D0E1622B7F9000A3F20 /* PDFPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPlugin.mm; path = PDF/PDFPlugin.mm; sourceTree = "<group>"; };
+		2D8710141828415D0018FA01 /* PlatformCALayerRemoteCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformCALayerRemoteCustom.cpp; sourceTree = "<group>"; };
+		2D8710151828415D0018FA01 /* PlatformCALayerRemoteCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCALayerRemoteCustom.h; sourceTree = "<group>"; };
 		2D8949EE182044F600E898AA /* PlatformCALayerRemoteTiledBacking.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformCALayerRemoteTiledBacking.cpp; sourceTree = "<group>"; };
 		2D8949EF182044F600E898AA /* PlatformCALayerRemoteTiledBacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCALayerRemoteTiledBacking.h; sourceTree = "<group>"; };
 		2DA049B1180CCCD300AAFA9E /* PlatformCALayerRemote.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformCALayerRemote.cpp; sourceTree = "<group>"; };
@@ -4940,6 +4944,8 @@
 				2DA049B6180CCD0A00AAFA9E /* GraphicsLayerCARemote.h */,
 				2DA049B1180CCCD300AAFA9E /* PlatformCALayerRemote.cpp */,
 				2DA049B2180CCCD300AAFA9E /* PlatformCALayerRemote.h */,
+				2D8710141828415D0018FA01 /* PlatformCALayerRemoteCustom.cpp */,
+				2D8710151828415D0018FA01 /* PlatformCALayerRemoteCustom.h */,
 				2D8949EE182044F600E898AA /* PlatformCALayerRemoteTiledBacking.cpp */,
 				2D8949EF182044F600E898AA /* PlatformCALayerRemoteTiledBacking.h */,
 				1AB16AE8164B3A8800290D62 /* RemoteLayerTreeContext.h */,
@@ -5722,6 +5728,7 @@
 				BC032DB910F4380F0058C15A /* WebEvent.h in Headers */,
 				BC032DBB10F4380F0058C15A /* WebEventConversion.h in Headers */,
 				BC111B5D112F629800337BAB /* WebEventFactory.h in Headers */,
+				2D8710171828415D0018FA01 /* PlatformCALayerRemoteCustom.h in Headers */,
 				1A3DD202125E5A1F004515E6 /* WebFindClient.h in Headers */,
 				1A90C1EE1264FD50003E44D4 /* WebFindOptions.h in Headers */,
 				BCE469541214E6CB000B98EB /* WebFormClient.h in Headers */,
@@ -7193,6 +7200,7 @@
 				F036978515F4BE6B00C3A80E /* WKColorPickerResultListener.cpp in Sources */,
 				BCA284D61492F2C7001F9042 /* WKConnection.mm in Sources */,
 				BC4A6296147313A0006C681A /* WKConnectionRef.cpp in Sources */,
+				2D8710161828415D0018FA01 /* PlatformCALayerRemoteCustom.cpp in Sources */,
 				BCB9E24C1120E15C00A137E0 /* WKContext.cpp in Sources */,
 				51A555F5128C6C47009ABCEC /* WKContextMenuItem.cpp in Sources */,
 				9FB5F394169E6A80002C25BF /* WKContextPrivateMac.mm in Sources */,

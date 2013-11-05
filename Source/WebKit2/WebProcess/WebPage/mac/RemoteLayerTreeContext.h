@@ -26,7 +26,9 @@
 #ifndef RemoteLayerTreeContext_h
 #define RemoteLayerTreeContext_h
 
+#include "LayerTreeContext.h"
 #include "RemoteLayerTreeTransaction.h"
+#include "WebPage.h"
 #include <WebCore/GraphicsLayerFactory.h>
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/Timer.h>
@@ -48,6 +50,8 @@ public:
 
     void layerWasCreated(PlatformCALayerRemote*, WebCore::PlatformCALayer::LayerType);
     void layerWillBeDestroyed(PlatformCALayerRemote*);
+
+    LayerHostingMode layerHostingMode() const { return m_webPage->layerHostingMode(); }
 
 private:
     // WebCore::GraphicsLayerFactory

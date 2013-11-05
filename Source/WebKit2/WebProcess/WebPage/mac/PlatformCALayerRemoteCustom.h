@@ -23,38 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef PlatformCALayerRemoteCustom_h
+#define PlatformCALayerRemoteCustom_h
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "GraphicsLayerCARemote.h"
 #include "PlatformCALayerRemote.h"
-
-using namespace WebCore;
 
 namespace WebKit {
 
-GraphicsLayerCARemote::~GraphicsLayerCARemote()
-{
-}
+class LayerHostingContext;
 
-#if ENABLE(CSS_FILTERS)
-bool GraphicsLayerCARemote::filtersCanBeComposited(const FilterOperations& filters)
-{
-    return PlatformCALayerRemote::filtersCanBeComposited(filters);
-}
-#endif
+class PlatformCALayerRemoteCustom FINAL : public PlatformCALayerRemote {
+    friend class PlatformCALayerRemote;
+public:
+    virtual ~PlatformCALayerRemoteCustom();
 
-PassRefPtr<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* owner)
-{
-    return PlatformCALayerRemote::create(layerType, owner, m_context);
-}
+    virtual PlatformLayer* platformLayer() const OVERRIDE { return m_platformLayer.get(); }
 
-PassRefPtr<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformLayer* platformLayer, PlatformCALayerClient* owner)
-{
-    return PlatformCALayerRemote::create(platformLayer, owner, m_context);
-}
+    virtual uint32_t hostingContextID() OVERRIDE;
 
-}
+private:
+    PlatformCALayerRemoteCustom(PlatformLayer*, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext*);
+
+    std::unique_ptr<LayerHostingContext> m_layerHostingContext;
+    RetainPtr<PlatformLayer> m_platformLayer;
+};
+
+} // namespace WebKit
 
 #endif // USE(ACCELERATED_COMPOSITING)
+
+#endif // PlatformCALayerRemoteCustom_h

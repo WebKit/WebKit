@@ -33,6 +33,7 @@
 #import "WebProcessProxy.h"
 #import <WebCore/PlatformCAFilters.h>
 #import <WebCore/PlatformLayer.h>
+#import <WebKitSystemInterface.h>
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -240,6 +241,9 @@ CALayer *RemoteLayerTreeHost::createLayer(RemoteLayerTreeTransaction::LayerCreat
         break;
     case PlatformCALayer::LayerTypeTransformLayer:
         layer = adoptNS([[CATransformLayer alloc] init]);
+        break;
+    case PlatformCALayer::LayerTypeCustom:
+        layer = WKMakeRenderLayer(properties.hostingContextID);
         break;
     default:
         ASSERT_NOT_REACHED();

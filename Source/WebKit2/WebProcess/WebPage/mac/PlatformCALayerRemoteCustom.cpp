@@ -27,34 +27,45 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "GraphicsLayerCARemote.h"
-#include "PlatformCALayerRemote.h"
+#import "PlatformCALayerRemoteCustom.h"
+
+#import "LayerHostingContext.h"
+#import "RemoteLayerTreeContext.h"
+#import "WebProcess.h"
+#import <WebCore/GraphicsLayerCA.h>
+#import <WebCore/PlatformCALayerMac.h>
+#import <WebCore/SoftLinking.h>
+#import <wtf/RetainPtr.h>
 
 using namespace WebCore;
+using namespace WebKit;
 
-namespace WebKit {
-
-GraphicsLayerCARemote::~GraphicsLayerCARemote()
+PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(PlatformLayer* customLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext* context)
+    : PlatformCALayerRemote(LayerTypeCustom, owner, context)
 {
-}
-
-#if ENABLE(CSS_FILTERS)
-bool GraphicsLayerCARemote::filtersCanBeComposited(const FilterOperations& filters)
-{
-    return PlatformCALayerRemote::filtersCanBeComposited(filters);
-}
+    switch (context->layerHostingMode()) {
+    case LayerHostingModeDefault:
+        m_layerHostingContext = LayerHostingContext::createForPort(WebProcess::shared().compositingRenderServerPort());
+        break;
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+    case LayerHostingModeInWindowServer:
+        m_layerHostingContext = LayerHostingContext::createForWindowServer();
+        break;
 #endif
+    }
 
-PassRefPtr<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* owner)
-{
-    return PlatformCALayerRemote::create(layerType, owner, m_context);
+    m_layerHostingContext->setRootLayer(customLayer);
+
+    m_platformLayer = customLayer;
 }
 
-PassRefPtr<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformLayer* platformLayer, PlatformCALayerClient* owner)
+PlatformCALayerRemoteCustom::~PlatformCALayerRemoteCustom()
 {
-    return PlatformCALayerRemote::create(platformLayer, owner, m_context);
 }
 
+uint32_t PlatformCALayerRemoteCustom::hostingContextID()
+{
+    return m_layerHostingContext->contextID();
 }
 
 #endif // USE(ACCELERATED_COMPOSITING)
