@@ -447,7 +447,6 @@ void IDBDatabaseBackendImpl::processPendingOpenCalls(bool success)
             openConnectionInternal(pendingOpenCall->callbacks(), pendingOpenCall->databaseCallbacks(), pendingOpenCall->transactionId(), pendingOpenCall->version());
         } else {
             String message;
-            RefPtr<IDBDatabaseError> error;
             if (pendingOpenCall->version() == IDBDatabaseMetadata::NoIntVersion)
                 message = "Internal error opening database with no version specified.";
             else
