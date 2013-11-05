@@ -1,3 +1,20 @@
+2013-11-05  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r158678.
+        http://trac.webkit.org/changeset/158678
+        https://bugs.webkit.org/show_bug.cgi?id=123820
+
+        Causes a new debug assertion failure on the Mavericks test
+        system. (Requested by bfulgham on #webkit).
+
+        * TestExpectations:
+        * mathml/presentation/mo-stretch.html:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/mathml/presentation/mo-stretch-expected.png:
+        * platform/gtk/mathml/presentation/mo-stretch-expected.txt:
+        * platform/mac/mathml/presentation/mo-stretch-expected.png:
+        * platform/mac/mathml/presentation/mo-stretch-expected.txt:
+
 2013-11-05  Renata Hodovan  <reni@webkit.org>
 
         ASSERTION FAILED: isHTMLTitleElement(m_titleElement.get()) in WebCore::Document::setTitle
