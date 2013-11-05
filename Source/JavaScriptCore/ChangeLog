@@ -1,5 +1,26 @@
 2013-11-04  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG CheckArray(String) should just be a Phantom(String:)
+        https://bugs.webkit.org/show_bug.cgi?id=123779
+
+        Reviewed by Geoffrey Garen.
+        
+        This should be a speed-up since Phantom(String:) is smart enough to use the string
+        structure. It should also be a simplification since CheckArray(String) was totally
+        redundant.
+        
+        Also FixupPhase was assuming that it may see CheckArray's. That's wrong. It can
+        create CheckArray's but it won't see them as input since no previous phase can
+        create them.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::checkArray):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArray):
+
+2013-11-04  Filip Pizlo  <fpizlo@apple.com>
+
         DFG NewArray/NewArrayBuffer shouldn't be constructing with negative indexing
         https://bugs.webkit.org/show_bug.cgi?id=123760
         <rdar://problem/15356705>
