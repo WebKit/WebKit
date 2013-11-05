@@ -599,9 +599,9 @@ public:
     static const GPRReg regT0 = MIPSRegisters::v0;
     static const GPRReg regT1 = MIPSRegisters::v1;
     static const GPRReg regT2 = MIPSRegisters::t4;
-    static const GPRReg regT3 = MIPSRegisters::t5;
-    static const GPRReg regT4 = MIPSRegisters::t6;
-    static const GPRReg regT5 = MIPSRegisters::t7;
+    static const GPRReg regT3 = MIPSRegisters::s2;
+    static const GPRReg regT4 = MIPSRegisters::t5;
+    static const GPRReg regT5 = MIPSRegisters::t6;
     // These registers match the baseline JIT.
     static const GPRReg cachedResultRegister = regT0;
     static const GPRReg cachedResultRegister2 = regT1;
@@ -628,8 +628,12 @@ public:
     static unsigned toIndex(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
-        ASSERT(reg < 16);
-        static const unsigned indexForRegister[16] = { InvalidIndex, InvalidIndex, 0, 1, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, 2, 3, 4, 5 };
+        ASSERT(reg < 24);
+        static const unsigned indexForRegister[24] = {
+            InvalidIndex, InvalidIndex, 0, 1, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex,
+            InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, 2, 4, 5, InvalidIndex,
+            InvalidIndex, InvalidIndex, 3, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex
+        };
         unsigned result = indexForRegister[reg];
         ASSERT(result != InvalidIndex);
         return result;

@@ -176,8 +176,8 @@ namespace JSC {
         // regT3 must be saved in the callee, so use an S register.
         static const RegisterID regT3 = MIPSRegisters::s2;
         
-        static const RegisterID regT4 = MIPSRegisters::s3;
-        static const RegisterID regT5 = MIPSRegisters::s4;
+        static const RegisterID regT4 = MIPSRegisters::t5;
+        static const RegisterID regT5 = MIPSRegisters::t6;
 
         static const RegisterID callFrameRegister = MIPSRegisters::s0;
         
