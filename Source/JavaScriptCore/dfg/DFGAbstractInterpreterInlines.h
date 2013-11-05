@@ -1282,6 +1282,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     filter(node->child1(), status.structureSet());
                     
                     m_state.setFoundConstants(true);
+                    m_state.setHaveStructures(true);
                     break;
                 }
             }
@@ -1479,6 +1480,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (status.isSimpleReplace()) {
                 filter(node->child1(), structure);
                 m_state.setFoundConstants(true);
+                m_state.setHaveStructures(true);
                 break;
             }
             if (status.isSimpleTransition()) {

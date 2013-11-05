@@ -1,3 +1,21 @@
+2013-11-04  Filip Pizlo  <fpizlo@apple.com>
+
+        GetById->GetByOffset and PutById->PutByOffset folding should mark haveStructures since it may result in structure transition watchpoints
+        https://bugs.webkit.org/show_bug.cgi?id=123788
+
+        Reviewed by Geoffrey Garen.
+        
+        haveStructures is true if there are any currentlyKnownStructures that have
+        interesting values, since that's the only time when clobbering needs to do things.
+        It's a really important compile-time optimization. But that also means that anytime
+        we might cause currentlyKnownStructures to get set - like when we might insert some
+        structure transition watchpoints - we need to set haveStructures. We were forgetting
+        to do that for GetById->GetByOffset and PutById->PutByOffset because, I guess, we
+        forgot that those might insert structure transition watchpoints.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+
 2013-11-05  Julien Brianceau  <jbriance@cisco.com>
 
         [mips] Make regTx registers match between JSInterfaceJIT and GPRInfo.
