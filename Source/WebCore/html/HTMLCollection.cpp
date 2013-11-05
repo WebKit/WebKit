@@ -172,7 +172,7 @@ ContainerNode& HTMLCollection::rootNode() const
     return ownerNode();
 }
 
-template inline bool isMatchingElement(const HTMLCollection* htmlCollection, Element* element)
+inline bool isMatchingElement(const HTMLCollection* htmlCollection, Element* element)
 {
     CollectionType type = htmlCollection->type();
     if (!element->isHTMLElement() && !(type == DocAll || type == NodeChildren || type == WindowNamedItems))
