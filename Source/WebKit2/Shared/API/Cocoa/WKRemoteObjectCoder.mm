@@ -255,4 +255,22 @@ static NSString *escapeKey(NSString *key)
 
 @end
 
+@implementation WKRemoteObjectDecoder {
+    RefPtr<ImmutableDictionary> _rootDictionary;
+    const ImmutableDictionary* _currentDictionary;
+}
+
+- (id)initWithRootObjectDictionary:(ImmutableDictionary*)rootObjectDictionary
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _rootDictionary = rootObjectDictionary;
+    _currentDictionary = _rootDictionary.get();
+
+    return self;
+}
+
+@end
+
 #endif // WK_API_ENABLED

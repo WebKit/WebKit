@@ -37,4 +37,10 @@ class ImmutableDictionary;
 
 @end
 
+@interface WKRemoteObjectDecoder : NSCoder
+
+- (id)initWithRootObjectDictionary:(WebKit::ImmutableDictionary*)rootObjectDictionary;
+
+@end
+
 #endif // WK_API_ENABLED

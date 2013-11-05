@@ -102,8 +102,21 @@ using namespace WebKit;
 
 - (BOOL)_handleMessageWithName:(WKStringRef)name body:(WKTypeRef)body
 {
-    // FIXME: Implement.
-    return NO;
+    if (toImpl(name)->string() != messageName)
+        return NO;
+
+    if (!toImpl(body) || toImpl(body)->type() != APIObject::TypeDictionary)
+        return NO;
+
+    [self _invokeMessageWithBody:toImpl((WKDictionaryRef)body)];
+    return YES;
+}
+
+- (void)_invokeMessageWithBody:(ImmutableDictionary*)body
+{
+    RetainPtr<WKRemoteObjectDecoder> decoder = adoptNS([[WKRemoteObjectDecoder alloc] initWithRootObjectDictionary:body]);
+
+    // FIXME: Actually decode the invocation.
 }
 
 @end
