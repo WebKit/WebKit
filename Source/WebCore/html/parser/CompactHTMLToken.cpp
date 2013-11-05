@@ -30,8 +30,6 @@
 #include "CompactHTMLToken.h"
 
 #include "HTMLParserIdioms.h"
-#include "HTMLToken.h"
-#include "QualifiedName.h"
 #include "XSSAuditorDelegate.h"
 
 namespace WebCore {

@@ -45,7 +45,6 @@
 #include "RenderView.h"
 #include "ScriptController.h"
 #include "ShadowRoot.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

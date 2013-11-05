@@ -30,12 +30,8 @@
 #include "HTMLTreeBuilderSimulator.h"
 
 #include "HTMLDocumentParser.h"
-#include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "HTMLTokenizer.h"
 #include "HTMLTreeBuilder.h"
-#include "MathMLNames.h"
-#include "SVGNames.h"
 
 namespace WebCore {
 

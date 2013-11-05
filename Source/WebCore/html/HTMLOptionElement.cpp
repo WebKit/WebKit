@@ -43,8 +43,6 @@
 #include "StyleResolver.h"
 #include "Text.h"
 #include <wtf/Ref.h>
-#include <wtf/Vector.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

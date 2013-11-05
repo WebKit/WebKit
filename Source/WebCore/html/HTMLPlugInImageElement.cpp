@@ -30,7 +30,6 @@
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
 #include "HTMLImageLoader.h"
-#include "Image.h"
 #include "JSDocumentFragment.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"

@@ -34,7 +34,6 @@
 #include "InbandTextTrack.h"
 #include "InbandTextTrackPrivate.h"
 #include "LoadableTextTrack.h"
-#include "TextTrack.h"
 
 using namespace WebCore;
 

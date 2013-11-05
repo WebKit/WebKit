@@ -33,7 +33,6 @@
 #include "ActiveDOMObject.h"
 #include "Blob.h"
 #include "BlobURL.h"
-#include "URL.h"
 #include "MemoryCache.h"
 #include "PublicURLManager.h"
 #include "ResourceRequest.h"

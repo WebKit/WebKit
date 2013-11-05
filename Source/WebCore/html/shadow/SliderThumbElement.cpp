@@ -44,7 +44,6 @@
 #include "RenderSlider.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
-#include "StepRange.h"
 
 namespace WebCore {
 

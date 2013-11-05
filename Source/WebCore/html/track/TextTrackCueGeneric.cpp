@@ -36,7 +36,6 @@
 #include "InbandTextTrackPrivateClient.h"
 #include "Logging.h"
 #include "RenderObject.h"
-#include "RenderTextTrackCue.h"
 #include "ScriptExecutionContext.h"
 #include "TextTrackCue.h"
 

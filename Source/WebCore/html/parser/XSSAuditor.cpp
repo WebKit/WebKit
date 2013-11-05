@@ -38,12 +38,9 @@
 #include "HTMLParamElement.h"
 #include "HTMLParserIdioms.h"
 #include "InspectorValues.h"
-#include "URL.h"
 #include "Settings.h"
-#include "TextEncoding.h"
 #include "TextResourceDecoder.h"
 #include "XLinkNames.h"
-#include "XSSAuditorDelegate.h"
 
 #if ENABLE(SVG)
 #include "SVGNames.h"

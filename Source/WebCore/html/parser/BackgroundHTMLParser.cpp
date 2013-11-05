@@ -31,10 +31,7 @@
 
 #include "HTMLDocumentParser.h"
 #include "HTMLParserThread.h"
-#include "HTMLTokenizer.h"
-#include "XSSAuditor.h"
 #include <wtf/MainThread.h>
-#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 

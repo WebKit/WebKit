@@ -27,7 +27,6 @@
 
 #include "ElementIterator.h"
 #include "HTMLFieldSetElement.h"
-#include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
 
 namespace WebCore {

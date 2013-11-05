@@ -29,7 +29,6 @@
 
 #include "ElementTraversal.h"
 #include "InsertionPoint.h"
-#include "ShadowRoot.h"
 
 namespace WebCore {
 

@@ -26,27 +26,18 @@
 #include "config.h"
 #include "HTMLDocumentParser.h"
 
-#include "AtomicHTMLToken.h"
 #include "BackgroundHTMLParser.h"
-#include "CompactHTMLToken.h"
 #include "ContentSecurityPolicy.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
-#include "Element.h"
 #include "Frame.h"
-#include "HTMLIdentifier.h"
-#include "HTMLNames.h"
 #include "HTMLParserScheduler.h"
 #include "HTMLParserThread.h"
-#include "HTMLTokenizer.h"
-#include "HTMLPreloadScanner.h"
 #include "HTMLScriptRunner.h"
 #include "HTMLTreeBuilder.h"
 #include "HTMLDocument.h"
 #include "InspectorInstrumentation.h"
-#include "NestingLevelIncrementer.h"
 #include "Settings.h"
-#include <wtf/Functional.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {

@@ -33,7 +33,6 @@
 #include "LocalizedStrings.h"
 #include "Logging.h"
 #include "FTPDirectoryParser.h"
-#include "SegmentedString.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "Text.h"
@@ -41,7 +40,6 @@
 #include <wtf/GregorianDateTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {

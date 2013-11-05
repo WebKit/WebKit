@@ -51,7 +51,6 @@
 #include "TextEvent.h"
 #include "TextIterator.h"
 #include "WheelEvent.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

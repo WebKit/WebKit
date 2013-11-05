@@ -71,7 +71,6 @@
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentation.h"
-#include "URL.h"
 #include "Page.h"
 #include "ScriptController.h"
 #include "Settings.h"

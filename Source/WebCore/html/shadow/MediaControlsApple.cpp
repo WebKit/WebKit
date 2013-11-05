@@ -30,20 +30,9 @@
 #include "MediaControlsApple.h"
 
 #include "CSSValueKeywords.h"
-#include "Chrome.h"
 #include "ExceptionCodePlaceholder.h"
-#include "HTMLMediaElement.h"
 #include "HTMLNames.h"
-#include "MediaControlElements.h"
-#include "MouseEvent.h"
-#include "Page.h"
-#include "RenderTheme.h"
-#include "Text.h"
 #include "WheelEvent.h"
-
-#if ENABLE(VIDEO_TRACK)
-#include "TextTrackCue.h"
-#endif
 
 namespace WebCore {
 

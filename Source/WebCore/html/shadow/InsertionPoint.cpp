@@ -31,9 +31,7 @@
 #include "config.h"
 #include "InsertionPoint.h"
 
-#include "HTMLNames.h"
 #include "QualifiedName.h"
-#include "ShadowRoot.h"
 #include "StaticNodeList.h"
 #include "Text.h"
 

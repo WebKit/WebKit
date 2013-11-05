@@ -32,7 +32,6 @@
 #if ENABLE(INPUT_TYPE_DATETIME_INCOMPLETE)
 #include "DateTimeInputType.h"
 
-#include "DateComponents.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"

@@ -1,3 +1,91 @@
+2013-11-04  Santosh Mahto  <santosh.ma@samsung.com>
+
+        [webcore/html] remove extra header includes from cpp files.
+        https://bugs.webkit.org/show_bug.cgi?id=123740
+
+        Reviewed by Darin Adler.
+
+        Removing redundant headers.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        * html/ColorInputType.cpp:
+        * html/DOMFormData.cpp:
+        * html/DOMURL.cpp:
+        * html/DateInputType.cpp:
+        * html/DateTimeInputType.cpp:
+        * html/DateTimeLocalInputType.cpp:
+        * html/FTPDirectoryDocument.cpp:
+        * html/FileInputType.cpp:
+        * html/FormController.cpp:
+        * html/HTMLAnchorElement.cpp:
+        * html/HTMLAreaElement.cpp:
+        * html/HTMLCanvasElement.cpp:
+        * html/HTMLCollection.cpp:
+        * html/HTMLDetailsElement.cpp:
+        * html/HTMLDocument.cpp:
+        * html/HTMLElement.cpp:
+        * html/HTMLFormControlsCollection.cpp:
+        * html/HTMLFormElement.cpp:
+        * html/HTMLImageElement.cpp:
+        * html/HTMLInputElement.cpp:
+        * html/HTMLLegendElement.cpp:
+        * html/HTMLMapElement.cpp:
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLOptionElement.cpp:
+        * html/HTMLOptionsCollection.cpp:
+        * html/HTMLPlugInImageElement.cpp:
+        * html/HTMLProgressElement.cpp:
+        * html/HTMLSummaryElement.cpp:
+        * html/HTMLTemplateElement.cpp:
+        * html/HTMLVideoElement.cpp:
+        * html/HTMLViewSourceDocument.cpp:
+        * html/MediaController.cpp:
+        * html/MediaKeyEvent.cpp:
+        * html/MonthInputType.cpp:
+        * html/RangeInputType.cpp:
+        * html/StepRange.cpp:
+        * html/TextFieldInputType.cpp:
+        * html/TimeInputType.cpp:
+        * html/WeekInputType.cpp:
+        * html/canvas/CanvasRenderingContext.cpp:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * html/canvas/CanvasStyle.cpp:
+        * html/canvas/OESVertexArrayObject.cpp:
+        * html/parser/BackgroundHTMLParser.cpp:
+        * html/parser/CSSPreloadScanner.cpp:
+        * html/parser/CompactHTMLToken.cpp:
+        * html/parser/HTMLConstructionSite.cpp:
+        * html/parser/HTMLDocumentParser.cpp:
+        * html/parser/HTMLElementStack.cpp:
+        * html/parser/HTMLFormattingElementList.cpp:
+        * html/parser/HTMLMetaCharsetParser.cpp:
+        * html/parser/HTMLParserIdioms.cpp:
+        * html/parser/HTMLPreloadScanner.cpp:
+        * html/parser/HTMLTokenizer.cpp:
+        * html/parser/HTMLTreeBuilder.cpp:
+        * html/parser/HTMLTreeBuilderSimulator.cpp:
+        * html/parser/HTMLViewSourceParser.cpp:
+        * html/parser/TextDocumentParser.cpp:
+        * html/parser/XSSAuditor.cpp:
+        * html/shadow/ContentDistributor.cpp:
+        * html/shadow/InsertionPoint.cpp:
+        * html/shadow/MediaControlElements.cpp:
+        * html/shadow/MediaControlsApple.cpp:
+        * html/shadow/MediaControlsBlackBerry.cpp:
+        * html/shadow/MediaControlsGtk.cpp:
+        * html/shadow/SliderThumbElement.cpp:
+        * html/track/AudioTrack.cpp:
+        * html/track/InbandGenericTextTrack.cpp:
+        * html/track/InbandTextTrack.cpp:
+        * html/track/InbandWebVTTTextTrack.cpp:
+        * html/track/TextTrack.cpp:
+        * html/track/TextTrackCueGeneric.cpp:
+        * html/track/TextTrackList.cpp:
+        * html/track/TextTrackRegion.cpp:
+        * html/track/TrackListBase.cpp:
+        * html/track/VideoTrack.cpp:
+        * html/track/WebVTTParser.cpp:
+
 2013-11-04  Brady Eidson  <beidson@apple.com>
 
         IDB: deleteDatabase() interface should be asynchronous

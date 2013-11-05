@@ -32,7 +32,6 @@
 #include "EventNames.h"
 #include "HTMLMediaElement.h"
 #include "ScriptExecutionContext.h"
-#include "TrackBase.h"
 #include "TrackEvent.h"
 
 using namespace WebCore;

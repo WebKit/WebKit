@@ -32,7 +32,6 @@
 #if ENABLE(VIDEO)
 #include "MediaControlElements.h"
 
-#include "CaptionUserPreferences.h"
 #include "DOMTokenList.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -44,19 +43,15 @@
 #include "Language.h"
 #include "LocalizedStrings.h"
 #include "MediaControls.h"
-#include "MouseEvent.h"
-#include "Page.h"
 #include "PageGroup.h"
 #include "RenderLayer.h"
 #include "RenderMediaControlElements.h"
 #include "RenderSlider.h"
-#include "RenderTheme.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #if ENABLE(VIDEO_TRACK)
-#include "TextTrack.h"
 #include "TextTrackList.h"
 #endif
 

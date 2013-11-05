@@ -28,8 +28,6 @@
 
 #include "HTMLDocumentParser.h"
 #include "HTMLNames.h"
-#include "HTMLParserOptions.h"
-#include "HTMLViewSourceDocument.h"
 
 namespace WebCore {
 

@@ -26,8 +26,6 @@
 #include "TextDocumentParser.h"
 
 #include "HTMLDocument.h"
-#include "HTMLNames.h"
-#include "HTMLTokenizer.h"
 #include "HTMLTreeBuilder.h"
 
 namespace WebCore {

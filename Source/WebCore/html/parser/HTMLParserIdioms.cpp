@@ -26,9 +26,7 @@
 #include "HTMLParserIdioms.h"
 
 #include "Decimal.h"
-#include "HTMLIdentifier.h"
 #include "URL.h"
-#include "QualifiedName.h"
 #include <limits>
 #include <wtf/MathExtras.h>
 #include <wtf/text/AtomicString.h>

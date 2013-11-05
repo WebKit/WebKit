@@ -22,13 +22,11 @@
 #include "HTMLDetailsElement.h"
 
 #if ENABLE(DETAILS_ELEMENT)
-#include "HTMLNames.h"
 #include "HTMLSummaryElement.h"
 #include "InsertionPoint.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "RenderBlockFlow.h"
-#include "ShadowRoot.h"
 #include "Text.h"
 
 namespace WebCore {

@@ -31,7 +31,6 @@
 
 #include "InbandTextTrackPrivate.h"
 #include "Logging.h"
-#include "WebVTTParser.h"
 #include <wtf/text/CString.h>
 
 namespace WebCore {

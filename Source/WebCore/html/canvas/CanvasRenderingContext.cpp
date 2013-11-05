@@ -28,7 +28,6 @@
 
 #include "CachedImage.h"
 #include "CanvasPattern.h"
-#include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
 #include "Image.h"

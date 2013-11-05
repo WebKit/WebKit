@@ -29,7 +29,6 @@
 #include "HTMLCanvasElement.h"
 
 #include "Attribute.h"
-#include "CanvasContextAttributes.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
@@ -39,7 +38,6 @@
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
-#include "ImageBuffer.h"
 #include "ImageData.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"

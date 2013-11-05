@@ -33,7 +33,6 @@
 #include "HTMLMediaElement.h"
 #include "InbandTextTrackPrivate.h"
 #include "Logging.h"
-#include "TextTrackCueGeneric.h"
 #include <math.h>
 #include <wtf/text/CString.h>
 

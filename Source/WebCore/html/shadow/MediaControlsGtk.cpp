@@ -31,9 +31,6 @@
 #if ENABLE(VIDEO)
 #include "MediaControlsGtk.h"
 
-#include "Chrome.h"
-#include "MouseEvent.h"
-
 namespace WebCore {
 
 class MediaControlsGtkEventListener : public EventListener {

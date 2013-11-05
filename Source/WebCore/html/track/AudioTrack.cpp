@@ -37,9 +37,7 @@
 
 #include "AudioTrackList.h"
 #include "Event.h"
-#include "ExceptionCode.h"
 #include "HTMLMediaElement.h"
-#include "TrackBase.h"
 
 namespace WebCore {
 

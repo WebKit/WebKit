@@ -28,7 +28,6 @@
 #include "HTMLAreaElement.h"
 #include "HTMLCollection.h"
 #include "HTMLImageElement.h"
-#include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "IntSize.h"
 

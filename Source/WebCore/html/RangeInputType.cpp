@@ -34,9 +34,7 @@
 
 #include "AXObjectCache.h"
 #include "ExceptionCodePlaceholder.h"
-#include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
-#include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
@@ -46,7 +44,6 @@
 #include "ScopedEventQueue.h"
 #include "ShadowRoot.h"
 #include "SliderThumbElement.h"
-#include "StepRange.h"
 #include <limits>
 #include <wtf/MathExtras.h>
 

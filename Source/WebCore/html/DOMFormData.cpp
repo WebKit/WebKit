@@ -31,11 +31,8 @@
 #include "config.h"
 #include "DOMFormData.h"
 
-#include "Blob.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
-#include "TextEncoding.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

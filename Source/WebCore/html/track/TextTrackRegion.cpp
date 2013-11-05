@@ -38,7 +38,6 @@
 #include "Logging.h"
 #include "WebVTTParser.h"
 #include <wtf/MathExtras.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

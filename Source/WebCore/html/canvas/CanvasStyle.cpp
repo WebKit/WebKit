@@ -36,8 +36,6 @@
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "StylePropertySet.h"
-#include <wtf/Assertions.h>
-#include <wtf/PassRefPtr.h>
 
 #if USE(CG)
 #include <CoreGraphics/CGContext.h>

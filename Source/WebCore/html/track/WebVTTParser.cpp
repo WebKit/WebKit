@@ -35,12 +35,9 @@
 
 #include "WebVTTParser.h"
 
-#include "HTMLElement.h"
 #include "ProcessingInstruction.h"
-#include "SegmentedString.h"
 #include "Text.h"
 #include "WebVTTElement.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

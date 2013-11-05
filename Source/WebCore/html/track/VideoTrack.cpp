@@ -36,9 +36,7 @@
 #include "VideoTrack.h"
 
 #include "Event.h"
-#include "ExceptionCode.h"
 #include "HTMLMediaElement.h"
-#include "TrackBase.h"
 #include "VideoTrackList.h"
 
 namespace WebCore {

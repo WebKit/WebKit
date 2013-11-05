@@ -24,14 +24,12 @@
 #if ENABLE(DETAILS_ELEMENT)
 #include "DetailsMarkerControl.h"
 #include "HTMLDetailsElement.h"
-#include "HTMLNames.h"
 #include "InsertionPoint.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "NodeRenderingTraversal.h"
 #include "PlatformMouseEvent.h"
 #include "RenderBlockFlow.h"
-#include "ShadowRoot.h"
 
 namespace WebCore {
 

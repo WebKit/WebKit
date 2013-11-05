@@ -32,7 +32,6 @@
 #include "HTMLAnchorElement.h"
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
-#include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "Page.h"
 #include "RenderImage.h"

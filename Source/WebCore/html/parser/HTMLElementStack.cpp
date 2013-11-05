@@ -28,14 +28,9 @@
 #include "HTMLElementStack.h"
 
 #include "DocumentFragment.h"
-#include "Element.h"
-#include "HTMLNames.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLTableElement.h"
-#include "MathMLNames.h"
-#include "SVGNames.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 

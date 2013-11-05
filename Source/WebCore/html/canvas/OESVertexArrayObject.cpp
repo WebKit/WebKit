@@ -30,8 +30,6 @@
 #include "OESVertexArrayObject.h"
 
 #include "Extensions3D.h"
-#include "WebGLRenderingContext.h"
-#include "WebGLVertexArrayObjectOES.h"
 
 namespace WebCore {
 

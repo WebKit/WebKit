@@ -26,7 +26,6 @@
 #include "config.h"
 #include "HTMLFormattingElementList.h"
 
-#include "Element.h"
 #include "NotImplemented.h"
 
 #ifndef NDEBUG

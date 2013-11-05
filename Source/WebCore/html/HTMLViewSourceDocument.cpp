@@ -25,7 +25,6 @@
 #include "config.h"
 #include "HTMLViewSourceDocument.h"
 
-#include "Attribute.h"
 #include "DOMImplementation.h"
 #include "DocumentStyleSheetCollection.h"
 #include "HTMLAnchorElement.h"
@@ -34,14 +33,10 @@
 #include "HTMLBodyElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLHtmlElement.h"
-#include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
 #include "HTMLTableElement.h"
 #include "HTMLTableRowElement.h"
 #include "HTMLTableSectionElement.h"
-#include "HTMLToken.h"
-#include "HTMLViewSourceParser.h"
-#include "SegmentedString.h"
 #include "Text.h"
 #include "TextViewSourceParser.h"
 

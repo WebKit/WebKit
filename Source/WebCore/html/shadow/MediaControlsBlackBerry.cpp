@@ -30,24 +30,13 @@
 #if ENABLE(VIDEO)
 #include "MediaControlsBlackBerry.h"
 
-#include "Chrome.h"
 #include "DOMTokenList.h"
 #include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
-#include "HTMLMediaElement.h"
 #include "HTMLNames.h"
-#include "MediaControlElements.h"
-#include "MouseEvent.h"
-#include "Page.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderSlider.h"
-#include "RenderTheme.h"
 #include "Settings.h"
-#include "Text.h"
-
-#if ENABLE(VIDEO_TRACK)
-#include "TextTrackCue.h"
-#endif
 
 using namespace std;
 

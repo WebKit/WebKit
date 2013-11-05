@@ -33,7 +33,6 @@
 #include "config.h"
 #include "CanvasRenderingContext2D.h"
 
-#include "AffineTransform.h"
 #include "CSSFontSelector.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
@@ -41,14 +40,11 @@
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "DOMPath.h"
-#include "ExceptionCode.h"
 #include "ExceptionCodePlaceholder.h"
 #include "FloatQuad.h"
 #include "FontCache.h"
 #include "GraphicsContext.h"
-#include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
-#include "HTMLMediaElement.h"
 #include "HTMLVideoElement.h"
 #include "ImageData.h"
 #include "RenderElement.h"
@@ -63,11 +59,8 @@
 #include "RenderLayer.h"
 #endif
 
-#include <runtime/Uint8ClampedArray.h>
-
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/text/StringBuilder.h>
 
 #if USE(CG)
