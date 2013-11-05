@@ -66,14 +66,14 @@ public:
         ASSERT(m_invalidationType == static_cast<unsigned>(invalidationType));
         ASSERT(m_type == static_cast<unsigned>(type));
 
-        document().registerNodeList(this);
+        document().registerNodeList(*this);
     }
     virtual Node* namedItem(const AtomicString&) const OVERRIDE;
     virtual bool nodeMatches(Element*) const = 0;
 
     virtual ~LiveNodeList()
     {
-        document().unregisterNodeList(this);
+        document().unregisterNodeList(*this);
     }
 
     // DOM API

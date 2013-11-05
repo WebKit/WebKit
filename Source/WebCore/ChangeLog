@@ -1,5 +1,18 @@
 2013-11-05  Antti Koivisto  <antti@apple.com>
 
+        Make it compile.
+
+        * dom/LiveNodeList.h:
+        (WebCore::LiveNodeList::LiveNodeList):
+        (WebCore::LiveNodeList::~LiveNodeList):
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::adoptDocument):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::HTMLCollection::~HTMLCollection):
+
+2013-11-05  Antti Koivisto  <antti@apple.com>
+
         HTMLCollection should not be NodeList
         https://bugs.webkit.org/show_bug.cgi?id=123794
 

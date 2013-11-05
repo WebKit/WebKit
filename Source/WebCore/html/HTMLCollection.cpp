@@ -148,7 +148,7 @@ HTMLCollection::HTMLCollection(ContainerNode& ownerNode, CollectionType type, It
     ASSERT(m_invalidationType == static_cast<unsigned>(invalidationTypeExcludingIdAndNameAttributes(type)));
     ASSERT(m_collectionType == static_cast<unsigned>(type));
 
-    document().registerCollection(this);
+    document().registerCollection(*this);
 }
 
 PassRefPtr<HTMLCollection> HTMLCollection::create(ContainerNode& base, CollectionType type)
@@ -158,7 +158,7 @@ PassRefPtr<HTMLCollection> HTMLCollection::create(ContainerNode& base, Collectio
 
 HTMLCollection::~HTMLCollection()
 {
-    document().unregisterCollection(this);
+    document().unregisterCollection(*this);
     // HTMLNameCollection removes cache by itself.
     if (type() != WindowNamedItems && type() != DocumentNamedItems)
         ownerNode().nodeLists()->removeCachedCollection(this);
