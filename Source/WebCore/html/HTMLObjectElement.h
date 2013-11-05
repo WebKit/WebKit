@@ -63,6 +63,8 @@ public:
 
     virtual bool canContainRangeEndPoint() const { return useFallbackContent(); }
 
+    bool hasFallbackContent() const;
+
 private:
     HTMLObjectElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
 
@@ -87,8 +89,6 @@ private:
     virtual void updateWidget(PluginCreationOption);
     void updateDocNamedItem();
 
-    bool hasFallbackContent() const;
-    
     // FIXME: This function should not deal with url or serviceType
     // so that we can better share code between <object> and <embed>.
     void parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues, String& url, String& serviceType);

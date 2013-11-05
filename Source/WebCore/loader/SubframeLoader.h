@@ -62,7 +62,7 @@ public:
     void clear();
 
     bool requestFrame(HTMLFrameOwnerElement*, const String& url, const AtomicString& frameName, bool lockHistory = true, bool lockBackForwardList = true);    
-    bool requestObject(HTMLPlugInImageElement*, const String& url, const AtomicString& frameName,
+    bool requestObject(HTMLPlugInImageElement&, const String& url, const AtomicString& frameName,
         const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues);
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)

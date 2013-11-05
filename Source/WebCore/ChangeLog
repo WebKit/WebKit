@@ -1,3 +1,17 @@
+2013-11-05  Andreas Kling  <akling@apple.com>
+
+        RenderEmbeddedObject shouldn't know about fallback content.
+        <https://webkit.org/b/123781>
+
+        Stop caching the presence of fallback (DOM) content in a flag on
+        RenderEmbeddedObject and have SubframeLoader fetch it directly from
+        HTMLObjectElement instead.
+
+        Also made SubframeLoader::requestObject() take the owner element
+        by reference since we don't support owner-less embedded objects.
+
+        Reviewed by Antti Koivisto.
+
 2013-11-05  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Remove NATIVE_FULLSCREEN_VIDEO support

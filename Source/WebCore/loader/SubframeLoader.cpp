@@ -43,7 +43,7 @@
 #include "HTMLAppletElement.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
-#include "HTMLPlugInImageElement.h"
+#include "HTMLObjectElement.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "PluginData.h"
@@ -208,24 +208,20 @@ static void logPluginRequest(Page* page, const String& mimeType, const String& u
     page->sawPlugin(description);
 }
 
-bool SubframeLoader::requestObject(HTMLPlugInImageElement* ownerElement, const String& url, const AtomicString& frameName, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
+bool SubframeLoader::requestObject(HTMLPlugInImageElement& ownerElement, const String& url, const AtomicString& frameName, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     if (url.isEmpty() && mimeType.isEmpty())
-        return false;
-
-    // FIXME: None of this code should use renderers!
-    RenderEmbeddedObject* renderer = ownerElement->renderEmbeddedObject();
-    ASSERT(renderer);
-    if (!renderer)
         return false;
 
     URL completedURL;
     if (!url.isEmpty())
         completedURL = completeURL(url);
 
+    bool hasFallbackContent = isHTMLObjectElement(ownerElement) && toHTMLObjectElement(ownerElement).hasFallbackContent();
+
     bool useFallback;
-    if (shouldUsePlugin(completedURL, mimeType, ownerElement->shouldPreferPlugInsForImages(), renderer->hasFallbackContent(), useFallback)) {
-        bool success = requestPlugin(ownerElement, completedURL, mimeType, paramNames, paramValues, useFallback);
+    if (shouldUsePlugin(completedURL, mimeType, ownerElement.shouldPreferPlugInsForImages(), hasFallbackContent, useFallback)) {
+        bool success = requestPlugin(&ownerElement, completedURL, mimeType, paramNames, paramValues, useFallback);
         logPluginRequest(document()->page(), mimeType, completedURL, success);
         return success;
     }
@@ -233,7 +229,7 @@ bool SubframeLoader::requestObject(HTMLPlugInImageElement* ownerElement, const S
     // If the plug-in element already contains a subframe, loadOrRedirectSubframe will re-use it. Otherwise,
     // it will create a new frame and set it as the RenderWidget's Widget, causing what was previously 
     // in the widget to be torn down.
-    return loadOrRedirectSubframe(ownerElement, completedURL, frameName, true, true);
+    return loadOrRedirectSubframe(&ownerElement, completedURL, frameName, true, true);
 }
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)

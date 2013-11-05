@@ -54,10 +54,6 @@ public:
 
     void setUnavailablePluginIndicatorIsHidden(bool);
 
-    // FIXME: This belongs on HTMLObjectElement.
-    bool hasFallbackContent() const { return m_hasFallbackContent; }
-    void setHasFallbackContent(bool hasFallbackContent) { m_hasFallbackContent = hasFallbackContent; }
-
     void handleUnavailablePluginIndicatorEvent(Event*);
 
     bool isReplacementObscured() const;
@@ -99,8 +95,6 @@ private:
 
     virtual bool canHaveChildren() const OVERRIDE FINAL;
     virtual bool canHaveWidget() const { return true; }
-
-    bool m_hasFallbackContent; // FIXME: This belongs on HTMLObjectElement.
 
     bool m_isPluginUnavailable;
     bool m_isUnavailablePluginIndicatorHidden;

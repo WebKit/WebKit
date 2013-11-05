@@ -102,7 +102,6 @@ static const Color& unavailablePluginBorderColor()
 
 RenderEmbeddedObject::RenderEmbeddedObject(HTMLFrameOwnerElement& element, PassRef<RenderStyle> style)
     : RenderWidget(element, std::move(style))
-    , m_hasFallbackContent(false)
     , m_isPluginUnavailable(false)
     , m_isUnavailablePluginIndicatorHidden(false)
     , m_unavailablePluginIndicatorIsPressed(false)
