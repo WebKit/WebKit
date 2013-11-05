@@ -112,6 +112,8 @@ inline const RenderMathMLOperator* toRenderMathMLOperator(const RenderMathMLBloc
 // This will catch anyone doing an unnecessary cast.
 void toRenderMathMLOperator(const RenderMathMLOperator*);
 
+template<> inline bool isRendererOfType<const RenderMathMLOperator>(const RenderObject& renderer) { return renderer.isRenderMathMLBlock() && toRenderMathMLBlock(&renderer)->isRenderMathMLOperator(); }
+
 inline UChar convertHyphenMinusToMinusSign(UChar glyph)
 {
     // When rendered as a mathematical operator, minus glyph should be larger.

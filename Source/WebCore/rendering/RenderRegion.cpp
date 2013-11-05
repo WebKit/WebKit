@@ -38,6 +38,7 @@
 #include "PaintInfo.h"
 #include "Range.h"
 #include "RenderBoxRegionInfo.h"
+#include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderView.h"
@@ -393,18 +394,19 @@ void RenderRegion::installFlowThread()
     // By now the flow thread should already be added to the rendering tree,
     // so we go up the rendering parents and check that this region is not part of the same
     // flow that it actually needs to display. It would create a circular reference.
-    RenderObject* parentObject = parent();
-    m_parentNamedFlowThread = 0;
-    for ( ; parentObject; parentObject = parentObject->parent()) {
-        if (parentObject->isRenderNamedFlowThread()) {
-            m_parentNamedFlowThread = toRenderNamedFlowThread(parentObject);
-            // Do not take into account a region that links a flow with itself. The dependency
-            // cannot change, so it is not worth adding it to the list.
-            if (m_flowThread == m_parentNamedFlowThread)
-                m_flowThread = 0;
-            break;
-        }
+
+    auto closestFlowThreadAncestor = ancestorsOfType<RenderNamedFlowThread>(*this).first();
+    if (!closestFlowThreadAncestor) {
+        m_parentNamedFlowThread = nullptr;
+        return;
     }
+
+    m_parentNamedFlowThread = &*closestFlowThreadAncestor;
+
+    // Do not take into account a region that links a flow with itself. The dependency
+    // cannot change, so it is not worth adding it to the list.
+    if (m_flowThread == m_parentNamedFlowThread)
+        m_flowThread = nullptr;
 }
 
 void RenderRegion::attachRegion()

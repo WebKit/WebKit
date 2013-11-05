@@ -138,6 +138,7 @@ private:
     Timer<RenderNamedFlowThread> m_regionOversetChangeEventTimer;
 };
 
+template<> inline bool isRendererOfType<const RenderNamedFlowThread>(const RenderObject& renderer) { return renderer.isRenderNamedFlowThread(); }
 RENDER_OBJECT_TYPE_CASTS(RenderNamedFlowThread, isRenderNamedFlowThread())
 
 } // namespace WebCore

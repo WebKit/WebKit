@@ -71,6 +71,7 @@
 #include "RenderHTMLCanvas.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
+#include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLineBreak.h"
 #include "RenderListBox.h"
@@ -79,6 +80,7 @@
 #include "RenderMathMLFraction.h"
 #include "RenderMathMLOperator.h"
 #include "RenderMenuList.h"
+#include "RenderSVGRoot.h"
 #include "RenderSVGShape.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
@@ -640,10 +642,8 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
     // Math operators create RenderText nodes on the fly that are not tied into the DOM in a reasonable way,
     // so rangeOfContents does not work for them (nor does regular text selection).
     if (m_renderer->isText() && isMathElement()) {
-        for (RenderObject* parent = m_renderer->parent(); parent; parent = parent->parent()) {
-            if (parent->isRenderMathMLBlock() && toRenderMathMLBlock(parent)->isRenderMathMLOperator())
-                return toRenderText(m_renderer)->text();
-        }
+        if (ancestorsOfType<RenderMathMLOperator>(*m_renderer).first())
+            return toRenderText(*m_renderer).text();
     }
 #endif
 
@@ -873,12 +873,9 @@ Path AccessibilityRenderObject::elementPath() const
         Path path = toRenderSVGShape(m_renderer)->path();
         
         // The SVG path is in terms of the parent's bounding box. The path needs to be offset to frame coordinates.
-        for (RenderObject* parent = m_renderer->parent(); parent; parent = parent->parent()) {
-            if (parent->isSVGRoot()) {
-                LayoutPoint parentOffset = axObjectCache()->getOrCreate(parent)->elementRect().location();
-                path.transform(AffineTransform().translate(parentOffset.x(), parentOffset.y()));
-                break;
-            }
+        if (auto svgRoot = ancestorsOfType<RenderSVGRoot>(*m_renderer).first()) {
+            LayoutPoint parentOffset = axObjectCache()->getOrCreate(&*svgRoot)->elementRect().location();
+            path.transform(AffineTransform().translate(parentOffset.x(), parentOffset.y()));
         }
         
         return path;
@@ -1169,10 +1166,8 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
         return accessibilityIgnoreAttachment();
     
     // ignore popup menu items because AppKit does
-    for (RenderObject* parent = m_renderer->parent(); parent; parent = parent->parent()) {
-        if (parent->isBoxModelObject() && toRenderBoxModelObject(parent)->isMenuList())
-            return true;
-    }
+    if (ancestorsOfType<RenderMenuList>(*m_renderer).first())
+        return true;
 
     // find out if this element is inside of a label element.
     // if so, it may be ignored because it's the label for a checkbox or radio button

@@ -1,3 +1,26 @@
+2013-11-04  Andreas Kling  <akling@apple.com>
+
+        Use RenderAncestorIterator in a couple of places.
+        <https://webkit.org/b/123725>
+
+        Take the ancestorsOfType<RenderMoo>() thingy out for a spin.
+
+        Found a bunch of parent chain walking loops that were really just
+        looking for the first ancestor renderer of a certain type.
+        They were a perfect fit for this pattern:
+
+            if (auto svgRoot = ancestorsOfType<RenderSVGRoot>(renderer).first())
+                svgRoot->shakeMoneyMaker();
+
+        Quite a bit clearer than the previous:
+
+            for (auto ancestor = renderer.parent(); ancestor; ancestor = ancestor->parent()) {
+                if (ancestor->isSVGRoot())
+                    toRenderSVGRoot(ancestor)->makeMoneyShaker();
+            }
+
+        Reviewed by Antti Koivisto.
+
 2013-10-25  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Add a SourceBufferPrivateClient interface for platform -> html communication.

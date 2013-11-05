@@ -149,6 +149,7 @@ private:
     bool m_popupIsVisible;
 };
 
+template<> inline bool isRendererOfType<const RenderMenuList>(const RenderObject& renderer) { return renderer.isMenuList(); }
 RENDER_OBJECT_TYPE_CASTS(RenderMenuList, isMenuList())
 
 }
