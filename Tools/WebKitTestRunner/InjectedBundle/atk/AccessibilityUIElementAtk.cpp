@@ -491,7 +491,7 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::elementAtPoint(int x,
         return 0;
 
     GRefPtr<AtkObject> objectAtPoint = adoptGRef(atk_component_ref_accessible_at_point(ATK_COMPONENT(m_element.get()), x, y, ATK_XY_WINDOW));
-    return objectAtPoint ? AccessibilityUIElement::create(objectAtPoint.get()) : 0;
+    return AccessibilityUIElement::create(objectAtPoint ? objectAtPoint.get() : m_element.get());
 }
 
 unsigned AccessibilityUIElement::indexOfChild(AccessibilityUIElement* element)

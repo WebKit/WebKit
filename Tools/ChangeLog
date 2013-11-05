@@ -1,3 +1,24 @@
+2013-11-05  Robert Plociennik  <r.plociennik@samsung.com>
+
+        [EFL] accessibility/svg-group-element-with-title.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=114151
+
+        Reviewed by Mario Sanchez Prada.
+
+        atk_component_ref_accessible_at_point(), utilized in
+        AccessibilityUIElement::elementAtPoint(), is expected to 'get a reference to the
+        accessible child, if one exists, at the coordinate point specified' and not
+        explicitly return self in case of lack of child elements. This contradicts with
+        expected behavior of elementAtPoint(). Therefore, elementAtPoint() is
+        changed to return self regardless of coordinates specified, provided no child
+        element could be retrieved, effectively mimicing the behaviour of equivalent
+        Mac implementation in accessibilityHitTest().
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::elementAtPoint): Fixed.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::elementAtPoint): Fixed.
+
 2013-11-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CSS] Enable css-image-orientation on EFL and GTK ports.

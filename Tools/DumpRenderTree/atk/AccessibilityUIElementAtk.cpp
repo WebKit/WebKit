@@ -511,7 +511,8 @@ AccessibilityUIElement AccessibilityUIElement::elementAtPoint(int x, int y)
     if (!ATK_IS_COMPONENT(m_element))
         return 0;
 
-    return AccessibilityUIElement(atk_component_ref_accessible_at_point(ATK_COMPONENT(m_element), x, y, ATK_XY_WINDOW));
+    GRefPtr<AtkObject> objectAtPoint = adoptGRef(atk_component_ref_accessible_at_point(ATK_COMPONENT(m_element), x, y, ATK_XY_WINDOW));
+    return AccessibilityUIElement(objectAtPoint ? objectAtPoint.get() : m_element);
 }
 
 AccessibilityUIElement AccessibilityUIElement::linkedUIElementAtIndex(unsigned index)
