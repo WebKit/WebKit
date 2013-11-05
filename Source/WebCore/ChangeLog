@@ -1,3 +1,21 @@
+2013-11-05  Éva Balázsfalvi  <balazsfalvi.eva@stud.u-szeged.hu>
+
+        Delete maketokenizer.
+        https://bugs.webkit.org/show_bug.cgi?id=115155
+
+        Reviewed by Zoltan Herczeg.
+
+        This script was used to generate the old flex based CSS tokenizer. It
+        was replaced by a custom tokenizer in r106217 but the script wasn't
+        removed. Since there is no mention of it in the original bug nor any
+        reference to maketokenizer in our build files, it's probably an
+        oversight.
+
+        Merge from blink:
+        https://chromium.googlesource.com/chromium/blink/+/2a1c8aaf867f707ccdcd8893446e907e2aa2e1c2
+
+        * css/maketokenizer: Removed.
+
 2013-11-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Unbreaking GCC builds.
