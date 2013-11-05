@@ -1,3 +1,15 @@
+2013-11-05  Daniel Bates  <dabates@apple.com>
+
+        XSSAuditor should catch reflected srcdoc properties even without a <frame> tag injection
+
+        From Blink r160615 by <tsepez@chromium.org>
+        https://src.chromium.org/viewvc/blink?view=rev&revision=160615
+
+        Test: http/tests/security/xssAuditor/iframe-srcdoc-property-blocked.html
+
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::filterIframeToken):
+
 2013-11-05  Éva Balázsfalvi  <balazsfalvi.eva@stud.u-szeged.hu>
 
         Delete maketokenizer.

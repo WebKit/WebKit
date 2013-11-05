@@ -1,3 +1,14 @@
+2013-11-05  Daniel Bates  <dabates@apple.com>
+
+        XSSAuditor should catch reflected srcdoc properties even without a <frame> tag injection
+
+        From Blink r160615 by <tsepez@chromium.org>
+        https://src.chromium.org/viewvc/blink?view=rev&revision=160615
+
+        * http/tests/security/xssAuditor/iframe-srcdoc-property-blocked-expected.txt: Added.
+        * http/tests/security/xssAuditor/iframe-srcdoc-property-blocked.html: Added.
+        * http/tests/security/xssAuditor/resources/echo-frame-src.pl: Added.
+
 2013-11-05  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening
