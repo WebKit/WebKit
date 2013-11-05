@@ -151,6 +151,9 @@ void LinkBuffer::linkCode(void* ownerUID, JITCompilationEffort effort)
     m_assembler->m_assembler.prepareExecutableCopy(m_code);
 #endif
     memcpy(m_code, buffer.data(), buffer.codeSize());
+#if CPU(MIPS)
+    m_assembler->m_assembler.relocateJumps(buffer.data(), m_code);
+#endif
 #elif CPU(ARM_THUMB2)
     copyCompactAndLinkCode<uint16_t>(ownerUID, effort);
 #elif CPU(ARM64)

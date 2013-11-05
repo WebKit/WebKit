@@ -151,11 +151,19 @@ public:
     typedef MIPSRegisters::FPRegisterID FPRegisterID;
     typedef SegmentedVector<AssemblerLabel, 64> Jumps;
 
+    static RegisterID firstRegister() { return MIPSRegisters::r0; }
+    static RegisterID lastRegister() { return MIPSRegisters::r31; }
+
+    static FPRegisterID firstFPRegister() { return MIPSRegisters::f0; }
+    static FPRegisterID lastFPRegister() { return MIPSRegisters::f31; }
+
     MIPSAssembler()
         : m_indexOfLastWatchpoint(INT_MIN)
         , m_indexOfTailOfLastWatchpoint(INT_MIN)
     {
     }
+
+    AssemblerBuffer& buffer() { return m_buffer; }
 
     // MIPS instruction opcode field position
     enum {
@@ -676,16 +684,6 @@ public:
         return m_buffer.codeSize();
     }
 
-    PassRefPtr<ExecutableMemoryHandle> executableCopy(VM& vm, void* ownerUID, JITCompilationEffort effort)
-    {
-        RefPtr<ExecutableMemoryHandle> result = m_buffer.executableCopy(vm, ownerUID, effort);
-        if (!result)
-            return 0;
-
-        relocateJumps(m_buffer.data(), result->start());
-        return result.release();
-    }
-
     unsigned debugOffset() { return m_buffer.debugOffset(); }
 
     // Assembly helpers for moving data between fp and registers.
@@ -945,7 +943,6 @@ public:
         cacheFlush(insn, 4);
     }
 
-private:
     /* Update each jump in the buffer of newBase.  */
     void relocateJumps(void* oldBase, void* newBase)
     {
@@ -988,6 +985,7 @@ private:
         }
     }
 
+private:
     static int linkWithOffset(MIPSWord* insn, void* to)
     {
         ASSERT((*insn & 0xfc000000) == 0x10000000 // beq

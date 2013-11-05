@@ -1,3 +1,21 @@
+2013-11-05  Julien Brianceau  <jbriance@cisco.com>
+
+        [mips] Fix build for MIPS platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=123796
+
+        Reviewed by Michael Saboff.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::linkCode): Add specific MIPS call to relocateJumps.
+        * assembler/MIPSAssembler.h: Remove executableCopy (because of r157690) and set relocateJumps function public.
+        (JSC::MIPSAssembler::firstRegister):
+        (JSC::MIPSAssembler::lastRegister):
+        (JSC::MIPSAssembler::firstFPRegister):
+        (JSC::MIPSAssembler::lastFPRegister):
+        (JSC::MIPSAssembler::buffer): Needed since r157690.
+        * assembler/MacroAssemblerMIPS.h: Add framePointerRegister.
+        (JSC::MacroAssemblerMIPS::revertJumpReplacementToPatchableBranchPtrWithPatch): Remove unused parameter warning.
+
 2013-11-04  Filip Pizlo  <fpizlo@apple.com>
 
         internal-js-tests.yaml/Octane/stress-tests/pdfjs.js.default: ASSERTION FAILED: m_state.forNode(child).m_futurePossibleStructure.isSubsetOf(StructureSet(structure)) at DFGConstantFoldingPhase.cpp:249
