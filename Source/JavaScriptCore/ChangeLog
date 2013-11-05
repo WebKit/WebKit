@@ -1,5 +1,18 @@
 2013-11-05  Julien Brianceau  <jbriance@cisco.com>
 
+        REGRESSION(r158315): Fix register mixup in JIT::compileOpCall.
+        https://bugs.webkit.org/show_bug.cgi?id=123799
+
+        Reviewed by Mark Lam.
+
+        Changeset r158315 is crashing architectures where JSInterfaceJIT::regT3 is
+        different from GPRInfo::regT3. This is the case for MIPS architecture.
+
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+
+2013-11-05  Julien Brianceau  <jbriance@cisco.com>
+
         [mips] Fix build for MIPS platforms.
         https://bugs.webkit.org/show_bug.cgi?id=123796
 

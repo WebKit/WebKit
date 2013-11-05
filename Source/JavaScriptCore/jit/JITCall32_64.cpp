@@ -262,7 +262,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     store32(TrustedImm32(locationBits), tagFor(JSStack::ArgumentCount, callFrameRegister));
     emitLoad(callee, regT1, regT0); // regT1, regT0 holds callee.
 
-    storePtr(callFrameRegister, Address(GPRInfo::regT3, CallFrame::callerFrameOffset()));
+    storePtr(callFrameRegister, Address(regT3, CallFrame::callerFrameOffset()));
     emitStore(JSStack::Callee, regT1, regT0, regT3);
     move(regT3, callFrameRegister);
 
