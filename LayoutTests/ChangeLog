@@ -1,3 +1,16 @@
+2013-11-04  Jeffrey Pfau  <jpfau@apple.com>
+
+        SMIL timers can still fire after the containing document has been torn down
+        <https://webkit.org/b/123291>
+
+        Reviewed by Darin Adler.
+
+        Add a test that triggers the crash; unfortunately it triggers it after
+        the test is done, causing the next test to time out or crash.
+
+        * svg/animations/smil-timers-not-disabled-crash-expected.txt: Added.
+        * svg/animations/smil-timers-not-disabled-crash.html: Added.
+
 2013-11-04  Eric Carlson  <eric.carlson@apple.com>
 
         REGRESSION(r158311): media/media-fragments/TC0054.html and TC0061.html hit assertions

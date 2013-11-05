@@ -627,6 +627,16 @@ void Document::dropChildren()
 
     m_cssCanvasElements.clear();
 
+    commonTeardown();
+}
+
+void Document::commonTeardown()
+{
+#if ENABLE(SVG)
+    if (svgExtensions())
+        accessSVGExtensions()->pauseAnimations();
+#endif
+
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     clearScriptedAnimationController();
 #endif
@@ -2051,9 +2061,7 @@ void Document::prepareForDestruction()
     m_fullScreenErrorEventTargetQueue.clear();
 #endif
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    clearScriptedAnimationController();
-#endif
+    commonTeardown();
 
 #if ENABLE(SHARED_WORKERS)
     SharedWorkerRepository::documentDetached(this);

@@ -1,3 +1,20 @@
+2013-11-04  Jeffrey Pfau  <jpfau@apple.com>
+
+        SMIL timers can still fire after the containing document has been torn down
+        <https://webkit.org/b/123291>
+
+        Reviewed by Darin Adler.
+
+        Ensure that the timers get paused when the document is preparing to be torn down.
+
+        Test: svg/animations/smil-timers-not-disabled-crash.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::dropChildren):
+        (WebCore::Document::commonTeardown):
+        (WebCore::Document::prepareForDestruction):
+        * dom/Document.h:
+
 2013-11-04  Brendan Long  <b.long@cablelabs.com>
 
         Move duplicate code in TrackPrivate classes to a common base class

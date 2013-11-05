@@ -1190,6 +1190,8 @@ private:
     friend class Node;
     friend class IgnoreDestructiveWriteCountIncrementer;
 
+    void commonTeardown();
+
     RenderObject* renderer() const WTF_DELETED_FUNCTION;
     void setRenderer(RenderObject*) WTF_DELETED_FUNCTION;
     void setRenderView(RenderView*);
