@@ -1,3 +1,15 @@
+2013-11-05  Sun-woo Nam  <sunny.nam@samsung.com>
+
+        [EFL] Update a test expected result.
+        https://bugs.webkit.org/show_bug.cgi?id=123792
+
+        Reviewed by Gyuyoung Kim.
+
+        Need to update some length properties in this expected file.
+        The test expected reseult is mismatched with return-values of eval() method in LayoutTests/resources/js-test-pre.js. 
+
+        * platform/efl/js/dom/constructor-length-expected.txt:
+
 2013-11-05  Artur Moryc  <a.moryc@samsung.com>
 
         [EFL] accessibility/tabindex-elements-are-accessible.html is failing after r158195
