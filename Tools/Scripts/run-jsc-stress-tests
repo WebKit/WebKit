@@ -449,12 +449,11 @@ def defaultRun
 end
 
 def defaultQuickRun
+    runDefault
+    runNoCJIT
     if $enableFTL
         runDefaultFTL
         runFTLNoCJIT
-    else
-        runDefault
-        runNoCJIT
     end
 end
 
