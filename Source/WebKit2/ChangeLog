@@ -1,3 +1,14 @@
+2013-11-04  Tim Horton  <timothy_horton@apple.com>
+
+        Remove PlatformCALayer::playerLayer
+        https://bugs.webkit.org/show_bug.cgi?id=123764
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        Remove playerLayer().
+
 2013-11-04  Anders Carlsson  <andersca@apple.com>
 
         WKRemoteObjectEncoder should escape keys

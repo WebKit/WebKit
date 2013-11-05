@@ -269,8 +269,11 @@ PassRefPtr<PlatformCALayer> PlatformCALayerMac::clone(PlatformCALayerClient* own
 #endif
 
     if (type == LayerTypeAVPlayerLayer) {
-        AVPlayerLayer* destinationPlayerLayer = newLayer->playerLayer();
-        AVPlayerLayer* sourcePlayerLayer = playerLayer();
+        ASSERT([newLayer->platformLayer() isKindOfClass:getAVPlayerLayerClass()]);
+        ASSERT([platformLayer() isKindOfClass:getAVPlayerLayerClass()]);
+
+        AVPlayerLayer* destinationPlayerLayer = static_cast<AVPlayerLayer *>(newLayer->platformLayer());
+        AVPlayerLayer* sourcePlayerLayer = static_cast<AVPlayerLayer *>(platformLayer());
         dispatch_async(dispatch_get_main_queue(), ^{
             [destinationPlayerLayer setPlayer:[sourcePlayerLayer player]];
         });
@@ -721,12 +724,6 @@ TiledBacking* PlatformCALayerMac::tiledBacking()
 
     WebTiledBackingLayer *tiledBackingLayer = static_cast<WebTiledBackingLayer *>(m_layer.get());
     return [tiledBackingLayer tiledBacking];
-}
-
-AVPlayerLayer *PlatformCALayerMac::playerLayer() const
-{
-    ASSERT([m_layer.get() isKindOfClass:getAVPlayerLayerClass()]);
-    return (AVPlayerLayer *)m_layer.get();
 }
 
 PassRefPtr<PlatformCALayer> PlatformCALayerMac::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client) const

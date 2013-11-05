@@ -149,8 +149,6 @@ protected:
     PlatformCALayerRemote(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext* context);
 
 private:
-    virtual AVPlayerLayer *playerLayer() const OVERRIDE;
-
     void ensureBackingStore();
     void removeSublayer(PlatformCALayerRemote*);
 

@@ -208,10 +208,6 @@ protected:
 
     }
 
-#if PLATFORM(MAC)
-    virtual AVPlayerLayer* playerLayer() const = 0;
-#endif
-
     LayerType m_layerType;
     RetainPtr<PlatformLayer> m_layer;
     PlatformCALayerClient* m_owner;

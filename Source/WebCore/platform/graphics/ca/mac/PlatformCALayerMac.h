@@ -144,8 +144,6 @@ public:
 private:
     PlatformCALayerMac(LayerType, PlatformLayer*, PlatformCALayerClient* owner);
 
-    virtual AVPlayerLayer *playerLayer() const OVERRIDE;
-
     RetainPtr<NSObject> m_delegate;
     OwnPtr<PlatformCALayerList> m_customSublayers;
 };
