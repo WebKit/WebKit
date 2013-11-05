@@ -154,7 +154,7 @@ void VideoTrack::setSelected(const bool selected)
 size_t VideoTrack::inbandTrackIndex()
 {
     ASSERT(m_private);
-    return m_private->videoTrackIndex();
+    return m_private->trackIndex();
 }
 
 void VideoTrack::selectedChanged(VideoTrackPrivate* trackPrivate, bool selected)
@@ -163,19 +163,19 @@ void VideoTrack::selectedChanged(VideoTrackPrivate* trackPrivate, bool selected)
     setSelected(selected);
 }
 
-void VideoTrack::labelChanged(VideoTrackPrivate* trackPrivate, const String& label)
+void VideoTrack::labelChanged(TrackPrivateBase* trackPrivate, const String& label)
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     setLabel(label);
 }
 
-void VideoTrack::languageChanged(VideoTrackPrivate* trackPrivate, const String& language)
+void VideoTrack::languageChanged(TrackPrivateBase* trackPrivate, const String& language)
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     setLanguage(language);
 }
 
-void VideoTrack::willRemoveVideoTrackPrivate(VideoTrackPrivate* trackPrivate)
+void VideoTrack::willRemove(TrackPrivateBase* trackPrivate)
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     mediaElement()->removeVideoTrack(this);

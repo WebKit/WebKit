@@ -5818,6 +5818,7 @@ platform_sources += \
 	Source/WebCore/platform/graphics/TextTrackRepresentation.cpp \
 	Source/WebCore/platform/graphics/TextTrackRepresentation.h \
 	Source/WebCore/platform/graphics/TiledBacking.h \
+	Source/WebCore/platform/graphics/TrackBasePrivate.h \
 	Source/WebCore/platform/graphics/TypesettingFeatures.h \
 	Source/WebCore/platform/graphics/UnitBezier.h \
 	Source/WebCore/platform/graphics/VideoTrackPrivate.h \

@@ -29,20 +29,15 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "InbandTextTrackPrivateClient.h"
-#include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
-class InbandTextTrackPrivate : public RefCounted<InbandTextTrackPrivate> {
-    WTF_MAKE_NONCOPYABLE(InbandTextTrackPrivate); WTF_MAKE_FAST_ALLOCATED;
+class InbandTextTrackPrivate : public TrackPrivateBase {
 public:
     virtual ~InbandTextTrackPrivate() { }
 
     void setClient(InbandTextTrackPrivateClient* client) { m_client = client; }
-    InbandTextTrackPrivateClient* client() { return m_client; }
+    virtual InbandTextTrackPrivateClient* client() const OVERRIDE { return m_client; }
 
     enum Mode {
         Disabled,
@@ -67,24 +62,13 @@ public:
     virtual bool containsOnlyForcedSubtitles() const { return false; }
     virtual bool isMainProgramContent() const { return true; }
     virtual bool isEasyToRead() const { return false; }
-
-    virtual AtomicString label() const { return emptyAtom; }
-    virtual AtomicString language() const { return emptyAtom; }
     virtual bool isDefault() const { return false; }
-
-    virtual int textTrackIndex() const { return 0; }
 
     enum CueFormat {
         Generic,
         WebVTT
     };
     CueFormat cueFormat() const { return m_format; }
-
-    void willBeRemoved()
-    {
-        if (m_client)
-            m_client->willRemoveTextTrackPrivate(this);
-    }
 
 protected:
     InbandTextTrackPrivate(CueFormat format)

@@ -44,7 +44,7 @@ public:
     virtual void setSelected(bool) OVERRIDE;
     virtual void setActive(bool enabled) OVERRIDE { setSelected(enabled); }
 
-    virtual int videoTrackIndex() const OVERRIDE { return m_index; }
+    virtual int trackIndex() const OVERRIDE { return m_index; }
     virtual void labelChanged(const String&) OVERRIDE;
     virtual void languageChanged(const String&) OVERRIDE;
 

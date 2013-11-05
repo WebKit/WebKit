@@ -5202,6 +5202,7 @@
 		BE8EF04B171C9014009B48C3 /* JSVideoTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = BE8EF047171C9014009B48C3 /* JSVideoTrack.h */; };
 		BE8EF04C171C9014009B48C3 /* JSVideoTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE8EF048171C9014009B48C3 /* JSVideoTrackList.cpp */; };
 		BE8EF04D171C9014009B48C3 /* JSVideoTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = BE8EF049171C9014009B48C3 /* JSVideoTrackList.h */; };
+		BE913D80181EF92400DCB09E /* TrackPrivateBase.h in Headers */ = {isa = PBXBuildFile; fileRef = BE913D7F181EF8E500DCB09E /* TrackPrivateBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BEF29EEB1715DD0900C4B4C9 /* AudioTrackPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF29EE91715DD0900C4B4C9 /* AudioTrackPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BEF29EEC1715DD0900C4B4C9 /* VideoTrackPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF29EEA1715DD0900C4B4C9 /* VideoTrackPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C046E1AC1208A9FE00BA2CF7 /* LocalizedStrings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C046E1AB1208A9FE00BA2CF7 /* LocalizedStrings.cpp */; };
@@ -12173,6 +12174,7 @@
 		BE8EF047171C9014009B48C3 /* JSVideoTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVideoTrack.h; sourceTree = "<group>"; };
 		BE8EF048171C9014009B48C3 /* JSVideoTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVideoTrackList.cpp; sourceTree = "<group>"; };
 		BE8EF049171C9014009B48C3 /* JSVideoTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSVideoTrackList.h; sourceTree = "<group>"; };
+		BE913D7F181EF8E500DCB09E /* TrackPrivateBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackPrivateBase.h; sourceTree = "<group>"; };
 		BE91FC8B06133666005E3790 /* Position.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Position.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE91FC8C06133666005E3790 /* Position.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Position.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE983D95052A2E0A00892D85 /* WebCoreKeyboardUIMode.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreKeyboardUIMode.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -19140,6 +19142,7 @@
 				CD1E7346167BC78E009A885D /* TextTrackRepresentation.cpp */,
 				CDD1E525167BA56400CE820B /* TextTrackRepresentation.h */,
 				1AF89A411518FDEA00E547B5 /* TiledBacking.h */,
+				BE913D7F181EF8E500DCB09E /* TrackPrivateBase.h */,
 				37C28A6710F659CC008C7813 /* TypesettingFeatures.h */,
 				E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */,
 				BEF29EEA1715DD0900C4B4C9 /* VideoTrackPrivate.h */,
@@ -24963,6 +24966,7 @@
 				CD3E252418046BCD00E27F56 /* CSSGridTemplateValue.h in Headers */,
 				CDEF4FD717E85C8F00AEE24B /* GridLength.h in Headers */,
 				CDE7FC45181904B1002BBB77 /* OrderIterator.h in Headers */,
+				BE913D80181EF92400DCB09E /* TrackPrivateBase.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

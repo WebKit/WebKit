@@ -47,7 +47,7 @@ public:
 
     virtual void setMode(InbandTextTrackPrivate::Mode) OVERRIDE;
 
-    virtual int textTrackIndex() const OVERRIDE { return m_index; }
+    virtual int trackIndex() const OVERRIDE { return m_index; }
     void setTextTrackIndex(int index) { m_index = index; }
 
     virtual void disconnect();

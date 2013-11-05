@@ -55,10 +55,9 @@ protected:
 
 private:
 
-    virtual void willRemoveTextTrackPrivate(InbandTextTrackPrivate*) OVERRIDE;
-
-    virtual void labelChanged(InbandTextTrackPrivate*, const String& label) OVERRIDE;
-    virtual void languageChanged(InbandTextTrackPrivate*, const String& language) OVERRIDE;
+    virtual void labelChanged(TrackPrivateBase*, const String&) OVERRIDE;
+    virtual void languageChanged(TrackPrivateBase*, const String&) OVERRIDE;
+    virtual void willRemove(TrackPrivateBase*) OVERRIDE;
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)
     virtual InbandTextTrackPrivate* privateTrack() OVERRIDE { return m_private.get(); }

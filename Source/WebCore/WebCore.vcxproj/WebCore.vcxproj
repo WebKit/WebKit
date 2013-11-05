@@ -18841,6 +18841,7 @@
     <ClInclude Include="..\platform\graphics\TiledBackingStore.h" />
     <ClInclude Include="..\platform\graphics\TiledBackingStoreBackend.h" />
     <ClInclude Include="..\platform\graphics\TiledBackingStoreClient.h" />
+    <ClInclude Include="..\platform\graphics\TrackBasePrivate.h" />
     <ClInclude Include="..\platform\graphics\VideoTrackPrivate.h" />
     <ClInclude Include="..\platform\graphics\win\SharedGDIObject.h" />
     <ClInclude Include="..\platform\HistogramSupport.h" />

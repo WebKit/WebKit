@@ -53,7 +53,7 @@ public:
     virtual AtomicString language() const OVERRIDE { return m_language; }
 
     void setIndex(int index) { m_index =  index; }
-    virtual int textTrackIndex() const OVERRIDE { return m_index; }
+    virtual int trackIndex() const OVERRIDE { return m_index; }
     String streamId() const { return m_streamId; }
 
     void handleSample(GRefPtr<GstSample>);

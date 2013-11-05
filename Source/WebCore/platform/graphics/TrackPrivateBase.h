@@ -1,9 +1,11 @@
 /*
  * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Cable Television Labs, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
+ *
  * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
@@ -23,55 +25,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VideoTrackPrivate_h
-#define VideoTrackPrivate_h
+#ifndef TrackPrivateBase_h
+#define TrackPrivateBase_h
 
-#include "TrackPrivateBase.h"
+#include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
+#include <wtf/text/AtomicString.h>
 
 #if ENABLE(VIDEO_TRACK)
 
 namespace WebCore {
 
-class VideoTrackPrivate;
+class TrackPrivateBase;
 
-class VideoTrackPrivateClient : public TrackPrivateBaseClient {
+class TrackPrivateBaseClient {
 public:
-    virtual void selectedChanged(VideoTrackPrivate*, bool) = 0;
+    virtual ~TrackPrivateBaseClient() { }
+    virtual void labelChanged(TrackPrivateBase*, const String&) = 0;
+    virtual void languageChanged(TrackPrivateBase*, const String&) = 0;
+    virtual void willRemove(TrackPrivateBase*) = 0;
 };
 
-class VideoTrackPrivate : public TrackPrivateBase {
+class TrackPrivateBase : public RefCounted<TrackPrivateBase> {
+    WTF_MAKE_NONCOPYABLE(TrackPrivateBase); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<VideoTrackPrivate> create()
+    virtual ~TrackPrivateBase() { }
+
+    virtual TrackPrivateBaseClient* client() const = 0;
+
+    virtual AtomicString id() const { return emptyAtom; }
+    virtual AtomicString label() const { return emptyAtom; }
+    virtual AtomicString language() const { return emptyAtom; }
+
+    virtual int trackIndex() const { return 0; }
+
+    void willBeRemoved()
     {
-        return adoptRef(new VideoTrackPrivate());
+        if (TrackPrivateBaseClient* client = this->client())
+            client->willRemove(this);
     }
-
-    void setClient(VideoTrackPrivateClient* client) { m_client = client; }
-    virtual VideoTrackPrivateClient* client() const OVERRIDE { return m_client; }
-
-    virtual void setSelected(bool selected)
-    {
-        if (m_selected == selected)
-            return;
-        m_selected = selected;
-        if (m_client)
-            m_client->selectedChanged(this, m_selected);
-    };
-    virtual bool selected() const { return m_selected; }
-
-    enum Kind { Alternative, Captions, Main, Sign, Subtitles, Commentary, None };
-    virtual Kind kind() const { return None; }
 
 protected:
-    VideoTrackPrivate()
-        : m_client(0)
-        , m_selected(false)
-    {
-    }
-
-private:
-    VideoTrackPrivateClient* m_client;
-    bool m_selected;
+    TrackPrivateBase() { }
 };
 
 } // namespace WebCore
