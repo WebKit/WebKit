@@ -119,7 +119,7 @@ void Attr::setValue(const AtomicString& value)
     createTextChild();
     m_ignoreChildrenChanged--;
 
-    invalidateNodeListCachesInAncestors(&m_name, m_element);
+    invalidateNodeListAndCollectionCachesInAncestors(&m_name, m_element);
 }
 
 void Attr::setValue(const AtomicString& value, ExceptionCode&)
@@ -162,7 +162,7 @@ void Attr::childrenChanged(const ChildChange&)
     if (m_ignoreChildrenChanged > 0)
         return;
 
-    invalidateNodeListCachesInAncestors(&qualifiedName(), m_element);
+    invalidateNodeListAndCollectionCachesInAncestors(&qualifiedName(), m_element);
 
     StringBuilder valueBuilder;
     TextNodeTraversal::appendContents(this, valueBuilder);

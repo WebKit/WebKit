@@ -1,3 +1,187 @@
+2013-11-05  Antti Koivisto  <antti@apple.com>
+
+        HTMLCollection should not be NodeList
+        https://bugs.webkit.org/show_bug.cgi?id=123794
+
+        Reviewed by Andreas Kling.
+
+        HTMLCollection and NodeList are unrelated types in DOM yet our HTMLCollection inherits NodeList
+        for code sharing reasons. While some code does get shared the types are sufficiently different 
+        that this results in lots of unnecessary branches, complexity and general awkwardness. Code sharing 
+        can be better achieved by means other than inheritance.
+        
+        This patch splits HTMLCollection from NodeList by copy-pasting and eliminating resulting redundancies. 
+        Sharing comes later.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::setValue):
+        (WebCore::Attr::childrenChanged):
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::~ClassNodeList):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::childrenChanged):
+        (WebCore::ContainerNode::getElementsByTagName):
+        (WebCore::ContainerNode::getElementsByName):
+        (WebCore::ContainerNode::getElementsByClassName):
+        (WebCore::ContainerNode::radioNodeList):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::registerNodeList):
+        (WebCore::Document::unregisterNodeList):
+        (WebCore::Document::registerCollection):
+        (WebCore::Document::unregisterCollection):
+        (WebCore::Document::ensureCachedCollection):
+        
+            Add separate functions and map for registering HTMLCollections.
+
+        (WebCore::Document::all):
+        (WebCore::Document::windowNamedItems):
+        (WebCore::Document::documentNamedItems):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+        (WebCore::Element::ensureCachedHTMLCollection):
+        (WebCore::Element::cachedHTMLCollection):
+        * dom/LiveNodeList.cpp:
+        (WebCore::LiveNodeList::rootNode):
+        (WebCore::isMatchingElement):
+        (WebCore::LiveNodeList::iterateForPreviousElement):
+        (WebCore::LiveNodeList::itemBefore):
+        (WebCore::firstMatchingElement):
+        (WebCore::nextMatchingElement):
+        (WebCore::traverseMatchingElementsForwardToOffset):
+        (WebCore::LiveNodeList::traverseLiveNodeListFirstElement):
+        (WebCore::LiveNodeList::traverseLiveNodeListForwardToOffset):
+        (WebCore::LiveNodeList::isLastItemCloserThanLastOrCachedItem):
+        (WebCore::LiveNodeList::isFirstItemCloserThanCachedItem):
+        (WebCore::LiveNodeList::length):
+        (WebCore::LiveNodeList::item):
+        (WebCore::LiveNodeList::elementBeforeOrAfterCachedElement):
+        
+            This code used to live in HTMLCollection.cpp. Copy-paste here and remove all branches not needed for NodeLists.
+
+        (WebCore::LiveNodeList::invalidateCache):
+        
+            NodeLists have no name caches.
+
+        * dom/LiveNodeList.h:
+        (WebCore::LiveNodeList::LiveNodeList):
+        (WebCore::LiveNodeList::~LiveNodeList):
+        (WebCore::LiveNodeList::isRootedAtDocument):
+        (WebCore::LiveNodeList::type):
+        (WebCore::LiveNodeList::invalidateCache):
+        (WebCore::LiveNodeList::setCachedElement):
+        
+            Merge LiveNodeListBase and LiveNodeList.
+            Remove fields and code supporting HTMLCollection.
+
+        (WebCore::shouldInvalidateTypeOnAttributeChange):
+        
+            Move to global scope. This function is used both HTMLCollections and LiveNodeLists.
+
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::~NameNodeList):
+        * dom/NameNodeList.h:
+        (WebCore::NameNodeList::create):
+        * dom/Node.cpp:
+        (WebCore::shouldInvalidateNodeListCachesForAttr):
+        (WebCore::Document::shouldInvalidateNodeListAndCollectionCaches):
+        (WebCore::Document::invalidateNodeListAndCollectionCaches):
+        (WebCore::Node::invalidateNodeListAndCollectionCachesInAncestors):
+        (WebCore::NodeListsNodeData::invalidateCaches):
+        * dom/Node.h:
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::addCacheWithAtomicName):
+        (WebCore::NodeListsNodeData::addCacheWithName):
+        (WebCore::NodeListsNodeData::addCacheWithQualifiedName):
+        (WebCore::NodeListsNodeData::addCachedCollection):
+        (WebCore::NodeListsNodeData::cachedCollection):
+        (WebCore::NodeListsNodeData::removeCacheWithAtomicName):
+        (WebCore::NodeListsNodeData::removeCacheWithName):
+        (WebCore::NodeListsNodeData::removeCachedCollection):
+        (WebCore::NodeListsNodeData::isEmpty):
+        (WebCore::NodeListsNodeData::adoptDocument):
+        (WebCore::NodeListsNodeData::namedCollectionKey):
+        (WebCore::NodeListsNodeData::namedNodeListKey):
+        (WebCore::NodeListsNodeData::deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList):
+        
+            Add separate cache for HTMLCollections.
+
+        * dom/TagNodeList.cpp:
+        (WebCore::TagNodeList::TagNodeList):
+        (WebCore::TagNodeList::~TagNodeList):
+        * dom/TagNodeList.h:
+        (WebCore::TagNodeList::create):
+        (WebCore::HTMLTagNodeList::create):
+        * html/CollectionType.h:
+        
+            Remove NodeList types.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::shouldOnlyIncludeDirectChildren):
+        (WebCore::rootTypeFromCollectionType):
+        (WebCore::invalidationTypeExcludingIdAndNameAttributes):
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::HTMLCollection::~HTMLCollection):
+        (WebCore::HTMLCollection::rootNode):
+        (WebCore::isMatchingElement):
+        (WebCore::HTMLCollection::iterateForPreviousElement):
+        (WebCore::HTMLCollection::itemBefore):
+        (WebCore::firstMatchingElement):
+        (WebCore::nextMatchingElement):
+        (WebCore::traverseMatchingElementsForwardToOffset):
+        (WebCore::HTMLCollection::isLastItemCloserThanLastOrCachedItem):
+        (WebCore::HTMLCollection::isFirstItemCloserThanCachedItem):
+        (WebCore::HTMLCollection::setCachedElement):
+        (WebCore::HTMLCollection::length):
+        (WebCore::HTMLCollection::item):
+        (WebCore::HTMLCollection::elementBeforeOrAfterCachedElement):
+        (WebCore::HTMLCollection::traverseFirstElement):
+        (WebCore::HTMLCollection::traverseNextElement):
+        (WebCore::HTMLCollection::traverseForwardToOffset):
+        (WebCore::HTMLCollection::invalidateCache):
+        (WebCore::HTMLCollection::invalidateIdNameCacheMaps):
+        (WebCore::HTMLCollection::namedItem):
+        
+            Remove NodeList specific branches and functions.
+            LiveNodeListBase functions are now HTMLCollection functions.
+
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollection::isRootedAtDocument):
+        (WebCore::HTMLCollection::invalidationType):
+        (WebCore::HTMLCollection::type):
+        (WebCore::HTMLCollection::ownerNode):
+        (WebCore::HTMLCollection::invalidateCache):
+        (WebCore::HTMLCollection::document):
+        (WebCore::HTMLCollection::overridesItemAfter):
+        (WebCore::HTMLCollection::isElementCacheValid):
+        (WebCore::HTMLCollection::cachedElement):
+        (WebCore::HTMLCollection::cachedElementOffset):
+        (WebCore::HTMLCollection::isLengthCacheValid):
+        (WebCore::HTMLCollection::cachedLength):
+        (WebCore::HTMLCollection::setLengthCache):
+        (WebCore::HTMLCollection::setCachedElement):
+        (WebCore::HTMLCollection::isItemRefElementsCacheValid):
+        (WebCore::HTMLCollection::setItemRefElementsCacheValid):
+        (WebCore::HTMLCollection::rootType):
+        (WebCore::HTMLCollection::hasNameCache):
+        (WebCore::HTMLCollection::setHasNameCache):
+        
+            Copy-paste functions and fields from former LiveNodeListBase.
+
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::~HTMLNameCollection):
+        * html/LabelableElement.cpp:
+        (WebCore::LabelableElement::labels):
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::~LabelsNodeList):
+        * html/LabelsNodeList.h:
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::~RadioNodeList):
+        * html/RadioNodeList.h:
+        (WebCore::RadioNodeList::create):
+
 2013-11-05  Emilio Pozuelo Monfort  <pochu27@gmail.com>
 
         [GTK] Add stubs for missing symbols in dom bindings

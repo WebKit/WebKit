@@ -46,7 +46,7 @@ HTMLNameCollection::~HTMLNameCollection()
 {
     ASSERT(type() == WindowNamedItems || type() == DocumentNamedItems);
 
-    document().nodeLists()->removeCacheWithAtomicName(this, type(), m_name);
+    document().nodeLists()->removeCachedCollection(this, m_name);
 }
 
 bool WindowNameCollection::nodeMatchesIfNameAttributeMatch(Element* element)

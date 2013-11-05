@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-TagNodeList::TagNodeList(ContainerNode& rootNode, CollectionType type, const AtomicString& namespaceURI, const AtomicString& localName)
+TagNodeList::TagNodeList(ContainerNode& rootNode, Type type, const AtomicString& namespaceURI, const AtomicString& localName)
     : LiveNodeList(rootNode, type, DoNotInvalidateOnAttributeChanges)
     , m_namespaceURI(namespaceURI)
     , m_localName(localName)
@@ -39,7 +39,7 @@ TagNodeList::TagNodeList(ContainerNode& rootNode, CollectionType type, const Ato
 TagNodeList::~TagNodeList()
 {
     if (m_namespaceURI == starAtom)
-        ownerNode().nodeLists()->removeCacheWithAtomicName(this, type(), m_localName);
+        ownerNode().nodeLists()->removeCacheWithAtomicName(this, m_localName);
     else
         ownerNode().nodeLists()->removeCacheWithQualifiedName(this, m_namespaceURI, m_localName);
 }

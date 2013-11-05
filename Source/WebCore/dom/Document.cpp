@@ -499,8 +499,8 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses)
     initSecurityContext();
     initDNSPrefetch();
 
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(m_nodeListCounts); i++)
-        m_nodeListCounts[i] = 0;
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(m_nodeListAndCollectionCounts); ++i)
+        m_nodeListAndCollectionCounts[i] = 0;
 
     InspectorCounters::incrementCounter(InspectorCounters::DocumentCounter);
 }
@@ -587,9 +587,10 @@ Document::~Document()
         clearRareData();
 
     ASSERT(!m_listsInvalidatedAtDocument.size());
+    ASSERT(!m_collectionsInvalidatedAtDocument.size());
 
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(m_nodeListCounts); i++)
-        ASSERT(!m_nodeListCounts[i]);
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(m_nodeListAndCollectionCounts); ++i)
+        ASSERT(!m_nodeListAndCollectionCounts[i]);
 
     clearDocumentScope();
 
@@ -3357,23 +3358,37 @@ void Document::setCSSTarget(Element* n)
         n->didAffectSelector(AffectedSelectorTarget);
 }
 
-void Document::registerNodeList(LiveNodeListBase* list)
+void Document::registerNodeList(LiveNodeList& list)
 {
-    if (list->hasIdNameCache())
-        m_nodeListCounts[InvalidateOnIdNameAttrChange]++;
-    m_nodeListCounts[list->invalidationType()]++;
-    if (list->isRootedAtDocument())
-        m_listsInvalidatedAtDocument.add(list);
+    m_nodeListAndCollectionCounts[list.invalidationType()]++;
+    if (list.isRootedAtDocument())
+        m_listsInvalidatedAtDocument.add(&list);
 }
 
-void Document::unregisterNodeList(LiveNodeListBase* list)
+void Document::unregisterNodeList(LiveNodeList& list)
 {
-    if (list->hasIdNameCache())
-        m_nodeListCounts[InvalidateOnIdNameAttrChange]--;
-    m_nodeListCounts[list->invalidationType()]--;
-    if (list->isRootedAtDocument()) {
-        ASSERT(m_listsInvalidatedAtDocument.contains(list));
-        m_listsInvalidatedAtDocument.remove(list);
+    m_nodeListAndCollectionCounts[list.invalidationType()]--;
+    if (list.isRootedAtDocument()) {
+        ASSERT(m_listsInvalidatedAtDocument.contains(&list));
+        m_listsInvalidatedAtDocument.remove(&list);
+    }
+}
+
+void Document::registerCollection(HTMLCollection& collection)
+{
+    m_nodeListAndCollectionCounts[InvalidateOnIdNameAttrChange]++;
+    m_nodeListAndCollectionCounts[collection.invalidationType()]++;
+    if (collection.isRootedAtDocument())
+        m_collectionsInvalidatedAtDocument.add(&collection);
+}
+
+void Document::unregisterCollection(HTMLCollection& collection)
+{
+    m_nodeListAndCollectionCounts[InvalidateOnIdNameAttrChange]--;
+    m_nodeListAndCollectionCounts[collection.invalidationType()]--;
+    if (collection.isRootedAtDocument()) {
+        ASSERT(m_collectionsInvalidatedAtDocument.contains(&collection));
+        m_collectionsInvalidatedAtDocument.remove(&collection);
     }
 }
 
@@ -4264,7 +4279,7 @@ bool Document::hasSVGRootNode() const
 
 PassRefPtr<HTMLCollection> Document::ensureCachedCollection(CollectionType type)
 {
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<HTMLCollection>(*this, type);
+    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLCollection>(*this, type);
 }
 
 PassRefPtr<HTMLCollection> Document::images()
@@ -4310,17 +4325,17 @@ PassRefPtr<HTMLCollection> Document::anchors()
 
 PassRefPtr<HTMLCollection> Document::all()
 {
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<HTMLAllCollection>(*this, DocAll);
+    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLAllCollection>(*this, DocAll);
 }
 
 PassRefPtr<HTMLCollection> Document::windowNamedItems(const AtomicString& name)
 {
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<WindowNameCollection>(*this, WindowNamedItems, name);
+    return ensureRareData().ensureNodeLists().addCachedCollection<WindowNameCollection>(*this, WindowNamedItems, name);
 }
 
 PassRefPtr<HTMLCollection> Document::documentNamedItems(const AtomicString& name)
 {
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<DocumentNameCollection>(*this, DocumentNamedItems, name);
+    return ensureRareData().ensureNodeLists().addCachedCollection<DocumentNameCollection>(*this, DocumentNamedItems, name);
 }
 
 void Document::finishedParsing()

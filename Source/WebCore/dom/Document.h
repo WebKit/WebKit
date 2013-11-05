@@ -110,7 +110,7 @@ class HitTestResult;
 class IntPoint;
 class LayoutPoint;
 class LayoutRect;
-class LiveNodeListBase;
+class LiveNodeList;
 class JSNode;
 class Locale;
 class MediaCanStartListener;
@@ -697,10 +697,12 @@ public:
     void styleRecalcTimerFired(Timer<Document>*);
     void optimizedStyleSheetUpdateTimerFired(Timer<Document>*);
 
-    void registerNodeList(LiveNodeListBase*);
-    void unregisterNodeList(LiveNodeListBase*);
-    bool shouldInvalidateNodeListCaches(const QualifiedName* attrName = 0) const;
-    void invalidateNodeListCaches(const QualifiedName* attrName);
+    void registerNodeList(LiveNodeList&);
+    void unregisterNodeList(LiveNodeList&);
+    void registerCollection(HTMLCollection&);
+    void unregisterCollection(HTMLCollection&);
+    bool shouldInvalidateNodeListAndCollectionCaches(const QualifiedName* attrName = nullptr) const;
+    void invalidateNodeListAndCollectionCaches(const QualifiedName* attrName);
 
     void attachNodeIterator(NodeIterator*);
     void detachNodeIterator(NodeIterator*);
@@ -1415,8 +1417,10 @@ private:
 
     InheritedBool m_designMode;
 
-    HashSet<LiveNodeListBase*> m_listsInvalidatedAtDocument;
-    unsigned m_nodeListCounts[numNodeListInvalidationTypes];
+    HashSet<LiveNodeList*> m_listsInvalidatedAtDocument;
+    HashSet<HTMLCollection*> m_collectionsInvalidatedAtDocument;
+
+    unsigned m_nodeListAndCollectionCounts[numNodeListInvalidationTypes];
 
     RefPtr<XPathEvaluator> m_xpathEvaluator;
 

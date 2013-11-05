@@ -836,7 +836,7 @@ void ContainerNode::childrenChanged(const ChildChange& change)
     document().incDOMTreeVersion();
     if (change.source == ChildChangeSourceAPI && change.type != TextChanged)
         document().updateRangesAfterChildrenChanged(*this);
-    invalidateNodeListCachesInAncestors();
+    invalidateNodeListAndCollectionCachesInAncestors();
 }
 
 inline static void cloneChildNodesAvoidingDeleteButton(ContainerNode* parent, ContainerNode* clonedParent, HTMLElement* deleteButtonContainerElement)
@@ -1127,8 +1127,8 @@ PassRefPtr<NodeList> ContainerNode::getElementsByTagName(const AtomicString& loc
         return 0;
 
     if (document().isHTMLDocument())
-        return ensureRareData().ensureNodeLists().addCacheWithAtomicName<HTMLTagNodeList>(*this, HTMLTagNodeListType, localName);
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<TagNodeList>(*this, TagNodeListType, localName);
+        return ensureRareData().ensureNodeLists().addCacheWithAtomicName<HTMLTagNodeList>(*this, LiveNodeList::HTMLTagNodeListType, localName);
+    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<TagNodeList>(*this, LiveNodeList::TagNodeListType, localName);
 }
 
 PassRefPtr<NodeList> ContainerNode::getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName)
@@ -1144,18 +1144,18 @@ PassRefPtr<NodeList> ContainerNode::getElementsByTagNameNS(const AtomicString& n
 
 PassRefPtr<NodeList> ContainerNode::getElementsByName(const String& elementName)
 {
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<NameNodeList>(*this, NameNodeListType, elementName);
+    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<NameNodeList>(*this, LiveNodeList::NameNodeListType, elementName);
 }
 
 PassRefPtr<NodeList> ContainerNode::getElementsByClassName(const String& classNames)
 {
-    return ensureRareData().ensureNodeLists().addCacheWithName<ClassNodeList>(*this, ClassNodeListType, classNames);
+    return ensureRareData().ensureNodeLists().addCacheWithName<ClassNodeList>(*this, LiveNodeList::ClassNodeListType, classNames);
 }
 
 PassRefPtr<RadioNodeList> ContainerNode::radioNodeList(const AtomicString& name)
 {
     ASSERT(hasTagName(HTMLNames::formTag) || hasTagName(HTMLNames::fieldsetTag));
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<RadioNodeList>(*this, RadioNodeListType, name);
+    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<RadioNodeList>(*this, LiveNodeList::RadioNodeListType, name);
 }
 
 } // namespace WebCore

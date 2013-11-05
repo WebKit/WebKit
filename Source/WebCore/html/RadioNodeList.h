@@ -34,7 +34,7 @@ namespace WebCore {
 
 class RadioNodeList : public LiveNodeList {
 public:
-    static PassRefPtr<RadioNodeList> create(ContainerNode& rootNode, CollectionType type, const AtomicString& name)
+    static PassRefPtr<RadioNodeList> create(ContainerNode& rootNode, Type type, const AtomicString& name)
     {
         ASSERT_UNUSED(type, type == RadioNodeListType);
         return adoptRef(new RadioNodeList(rootNode, name));

@@ -50,23 +50,8 @@ enum CollectionType {
     SelectedOptions,
     DataListOptions,
     MapAreas,
-    FormControls,
-
-    // Live NodeList.
-    ClassNodeListType,
-    NameNodeListType,
-    TagNodeListType,
-    HTMLTagNodeListType,
-    RadioNodeListType,
-    LabelsNodeListType,
+    FormControls
 };
-
-static const CollectionType FirstNodeListType = ClassNodeListType;
-
-inline bool isNodeList(CollectionType type)
-{
-    return type >= FirstNodeListType;
-}
 
 } // namespace
 

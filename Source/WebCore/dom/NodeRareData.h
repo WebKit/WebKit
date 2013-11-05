@@ -23,7 +23,9 @@
 #define NodeRareData_h
 
 #include "ChildNodeList.h"
+#include "ClassNodeList.h"
 #include "DOMSettableTokenList.h"
+#include "HTMLCollection.h"
 #include "HTMLNames.h"
 #include "LiveNodeList.h"
 #include "MutationObserver.h"
@@ -101,45 +103,27 @@ public:
         static const bool safeToCompareToEmptyOrDeleted = DefaultHash<StringType>::Hash::safeToCompareToEmptyOrDeleted;
     };
 
-    typedef HashMap<std::pair<unsigned char, AtomicString>, LiveNodeListBase*, NodeListCacheMapEntryHash<AtomicString>> NodeListAtomicNameCacheMap;
-    typedef HashMap<std::pair<unsigned char, String>, LiveNodeListBase*, NodeListCacheMapEntryHash<String>> NodeListNameCacheMap;
+    typedef HashMap<std::pair<unsigned char, AtomicString>, LiveNodeList*, NodeListCacheMapEntryHash<AtomicString>> NodeListAtomicNameCacheMap;
+    typedef HashMap<std::pair<unsigned char, String>, LiveNodeList*, NodeListCacheMapEntryHash<String>> NodeListNameCacheMap;
+    typedef HashMap<std::pair<unsigned char, AtomicString>, HTMLCollection*, NodeListCacheMapEntryHash<AtomicString>> CollectionCacheMap;
     typedef HashMap<QualifiedName, TagNodeList*> TagNodeListCacheNS;
 
     template<typename T, typename ContainerType>
-    PassRefPtr<T> addCacheWithAtomicName(ContainerType& container, CollectionType collectionType, const AtomicString& name)
+    PassRefPtr<T> addCacheWithAtomicName(ContainerType& container, LiveNodeList::Type type, const AtomicString& name)
     {
-        NodeListAtomicNameCacheMap::AddResult result = m_atomicNameCaches.add(namedNodeListKey(collectionType, name), nullptr);
+        NodeListAtomicNameCacheMap::AddResult result = m_atomicNameCaches.add(namedNodeListKey(type, name), nullptr);
         if (!result.isNewEntry)
             return static_cast<T*>(result.iterator->value);
 
-        RefPtr<T> list = T::create(container, collectionType, name);
-        result.iterator->value = list.get();
-        return list.release();
-    }
-
-    // FIXME: This function should be renamed since it doesn't have an atomic name.
-    template<typename T, typename ContainerType>
-    PassRefPtr<T> addCacheWithAtomicName(ContainerType& container, CollectionType collectionType)
-    {
-        NodeListAtomicNameCacheMap::AddResult result = m_atomicNameCaches.add(namedNodeListKey(collectionType, starAtom), nullptr);
-        if (!result.isNewEntry)
-            return static_cast<T*>(result.iterator->value);
-
-        RefPtr<T> list = T::create(container, collectionType);
+        RefPtr<T> list = T::create(container, type, name);
         result.iterator->value = list.get();
         return list.release();
     }
 
     template<typename T>
-    T* cacheWithAtomicName(CollectionType collectionType)
+    PassRefPtr<T> addCacheWithName(ContainerNode& node, LiveNodeList::Type type, const String& name)
     {
-        return static_cast<T*>(m_atomicNameCaches.get(namedNodeListKey(collectionType, starAtom)));
-    }
-
-    template<typename T>
-    PassRefPtr<T> addCacheWithName(ContainerNode& node, CollectionType collectionType, const String& name)
-    {
-        NodeListNameCacheMap::AddResult result = m_nameCaches.add(namedNodeListKey(collectionType, name), nullptr);
+        NodeListNameCacheMap::AddResult result = m_nameCaches.add(namedNodeListKey(type, name), nullptr);
         if (!result.isNewEntry)
             return static_cast<T*>(result.iterator->value);
 
@@ -160,20 +144,50 @@ public:
         return list.release();
     }
 
-    void removeCacheWithAtomicName(LiveNodeListBase* list, CollectionType collectionType, const AtomicString& name = starAtom)
+    template<typename T, typename ContainerType>
+    PassRefPtr<T> addCachedCollection(ContainerType& container, CollectionType collectionType, const AtomicString& name)
     {
-        ASSERT(list == m_atomicNameCaches.get(namedNodeListKey(collectionType, name)));
-        if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(list->ownerNode()))
-            return;
-        m_atomicNameCaches.remove(namedNodeListKey(collectionType, name));
+        CollectionCacheMap::AddResult result = m_cachedCollections.add(namedCollectionKey(collectionType, name), nullptr);
+        if (!result.isNewEntry)
+            return static_cast<T*>(result.iterator->value);
+
+        RefPtr<T> list = T::create(container, collectionType, name);
+        result.iterator->value = list.get();
+        return list.release();
     }
 
-    void removeCacheWithName(LiveNodeListBase* list, CollectionType collectionType, const String& name)
+    template<typename T, typename ContainerType>
+    PassRefPtr<T> addCachedCollection(ContainerType& container, CollectionType collectionType)
     {
-        ASSERT(list == m_nameCaches.get(namedNodeListKey(collectionType, name)));
+        CollectionCacheMap::AddResult result = m_cachedCollections.add(namedCollectionKey(collectionType, starAtom), nullptr);
+        if (!result.isNewEntry)
+            return static_cast<T*>(result.iterator->value);
+
+        RefPtr<T> list = T::create(container, collectionType);
+        result.iterator->value = list.get();
+        return list.release();
+    }
+
+    template<typename T>
+    T* cachedCollection(CollectionType collectionType)
+    {
+        return static_cast<T*>(m_cachedCollections.get(namedCollectionKey(collectionType, starAtom)));
+    }
+
+    void removeCacheWithAtomicName(LiveNodeList* list, const AtomicString& name = starAtom)
+    {
+        ASSERT(list == m_atomicNameCaches.get(namedNodeListKey(list->type(), name)));
         if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(list->ownerNode()))
             return;
-        m_nameCaches.remove(namedNodeListKey(collectionType, name));
+        m_atomicNameCaches.remove(namedNodeListKey(list->type(), name));
+    }
+
+    void removeCacheWithName(LiveNodeList* list, const String& name)
+    {
+        ASSERT(list == m_nameCaches.get(namedNodeListKey(list->type(), name)));
+        if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(list->ownerNode()))
+            return;
+        m_nameCaches.remove(namedNodeListKey(list->type(), name));
     }
 
     void removeCacheWithQualifiedName(LiveNodeList* list, const AtomicString& namespaceURI, const AtomicString& localName)
@@ -185,6 +199,14 @@ public:
         m_tagNodeListCacheNS.remove(name);
     }
 
+    void removeCachedCollection(HTMLCollection* collection, const AtomicString& name = starAtom)
+    {
+        ASSERT(collection == m_cachedCollections.get(namedCollectionKey(collection->type(), name)));
+        if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(collection->ownerNode()))
+            return;
+        m_cachedCollections.remove(namedCollectionKey(collection->type(), name));
+    }
+
     static PassOwnPtr<NodeListsNodeData> create()
     {
         return adoptPtr(new NodeListsNodeData);
@@ -193,7 +215,7 @@ public:
     void invalidateCaches(const QualifiedName* attrName = 0);
     bool isEmpty() const
     {
-        return m_atomicNameCaches.isEmpty() && m_nameCaches.isEmpty() && m_tagNodeListCacheNS.isEmpty();
+        return m_atomicNameCaches.isEmpty() && m_nameCaches.isEmpty() && m_cachedCollections.isEmpty() && m_tagNodeListCacheNS.isEmpty();
     }
 
     void adoptTreeScope()
@@ -206,26 +228,29 @@ public:
         invalidateCaches();
 
         if (oldDocument != newDocument) {
-            NodeListAtomicNameCacheMap::const_iterator atomicNameCacheEnd = m_atomicNameCaches.end();
-            for (NodeListAtomicNameCacheMap::const_iterator it = m_atomicNameCaches.begin(); it != atomicNameCacheEnd; ++it) {
-                LiveNodeListBase* list = it->value;
+            for (auto it = m_atomicNameCaches.begin(), end = m_atomicNameCaches.end(); it != end; ++it) {
+                LiveNodeList* list = it->value;
                 oldDocument->unregisterNodeList(list);
                 newDocument->registerNodeList(list);
             }
 
-            NodeListNameCacheMap::const_iterator nameCacheEnd = m_nameCaches.end();
-            for (NodeListNameCacheMap::const_iterator it = m_nameCaches.begin(); it != nameCacheEnd; ++it) {
-                LiveNodeListBase* list = it->value;
+            for (auto it = m_nameCaches.begin(), end = m_nameCaches.end(); it != end; ++it) {
+                LiveNodeList* list = it->value;
                 oldDocument->unregisterNodeList(list);
                 newDocument->registerNodeList(list);
             }
 
-            TagNodeListCacheNS::const_iterator tagEnd = m_tagNodeListCacheNS.end();
-            for (TagNodeListCacheNS::const_iterator it = m_tagNodeListCacheNS.begin(); it != tagEnd; ++it) {
-                LiveNodeListBase* list = it->value;
+            for (auto it = m_tagNodeListCacheNS.begin(), end = m_tagNodeListCacheNS.end(); it != end; ++it) {
+                LiveNodeList* list = it->value;
                 ASSERT(!list->isRootedAtDocument());
                 oldDocument->unregisterNodeList(list);
                 newDocument->registerNodeList(list);
+            }
+
+            for (auto it = m_cachedCollections.begin(), end = m_cachedCollections.end(); it != end; ++it) {
+                HTMLCollection* collection = it->value;
+                oldDocument->unregisterCollection(collection);
+                newDocument->registerCollection(collection);
             }
         }
     }
@@ -236,12 +261,12 @@ private:
         , m_emptyChildNodeList(nullptr)
     { }
 
-    std::pair<unsigned char, AtomicString> namedNodeListKey(CollectionType type, const AtomicString& name)
+    std::pair<unsigned char, AtomicString> namedCollectionKey(CollectionType type, const AtomicString& name)
     {
         return std::pair<unsigned char, AtomicString>(type, name);
     }
 
-    std::pair<unsigned char, String> namedNodeListKey(CollectionType type, const String& name)
+    std::pair<unsigned char, String> namedNodeListKey(LiveNodeList::Type type, const String& name)
     {
         return std::pair<unsigned char, String>(type, name);
     }
@@ -255,6 +280,7 @@ private:
     NodeListAtomicNameCacheMap m_atomicNameCaches;
     NodeListNameCacheMap m_nameCaches;
     TagNodeListCacheNS m_tagNodeListCacheNS;
+    CollectionCacheMap m_cachedCollections;
 };
 
 class NodeMutationObserverData {
@@ -319,7 +345,8 @@ private:
 inline bool NodeListsNodeData::deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(Node& ownerNode)
 {
     ASSERT(ownerNode.nodeLists() == this);
-    if ((m_childNodeList ? 1 : 0) + (m_emptyChildNodeList ? 1 : 0) + m_atomicNameCaches.size() + m_nameCaches.size() + m_tagNodeListCacheNS.size() != 1)
+    if ((m_childNodeList ? 1 : 0) + (m_emptyChildNodeList ? 1 : 0) + m_atomicNameCaches.size() + m_nameCaches.size()
+        + m_tagNodeListCacheNS.size() + m_cachedCollections.size() != 1)
         return false;
     ownerNode.clearNodeLists();
     return true;
