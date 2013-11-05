@@ -1,3 +1,12 @@
+2013-11-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove FTL::LowerDFGToLLVM::compileJSConstant()
+        https://bugs.webkit.org/show_bug.cgi?id=123817
+
+        Reviewed by Geoffrey Garen.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+
 2013-11-04  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should support PutById

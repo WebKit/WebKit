@@ -533,15 +533,6 @@ private:
         }
     }
     
-    void compileJSConstant()
-    {
-        JSValue value = m_graph.valueOfJSConstant(m_node);
-        if (value.isDouble())
-            setDouble(m_out.constDouble(value.asDouble()));
-        else
-            setJSValue(m_out.constInt64(JSValue::encode(value)));
-    }
-    
     void compileWeakJSConstant()
     {
         setJSValue(weakPointer(m_node->weakConstant()));
