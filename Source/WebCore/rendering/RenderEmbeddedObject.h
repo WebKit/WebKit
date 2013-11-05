@@ -86,8 +86,6 @@ private:
     virtual bool requiresLayer() const OVERRIDE FINAL;
 #endif
 
-    virtual void viewCleared() OVERRIDE FINAL;
-
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE FINAL;
 
     virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier, Element** stopElement) OVERRIDE FINAL;

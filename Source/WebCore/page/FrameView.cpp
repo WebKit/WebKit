@@ -396,9 +396,6 @@ void FrameView::clear()
     
     reset();
 
-    if (RenderWidget* renderer = frame().ownerRenderer())
-        renderer->viewCleared();
-
     setScrollbarsSuppressed(true);
 }
 

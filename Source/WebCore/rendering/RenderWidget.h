@@ -78,8 +78,6 @@ public:
 
     WeakPtr<RenderWidget> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
-    virtual void viewCleared() { }
-
 protected:
     RenderWidget(HTMLFrameOwnerElement&, PassRef<RenderStyle>);
 

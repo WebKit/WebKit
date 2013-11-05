@@ -198,9 +198,6 @@ void RenderWidget::setWidget(PassRefPtr<Widget> widget)
         }
         moveWidgetToParentSoon(m_widget.get(), &view().frameView());
     }
-    // make sure the scrollbars are set correctly for restore
-    // ### find better fix
-    viewCleared();
 }
 
 void RenderWidget::layout()

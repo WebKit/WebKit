@@ -526,25 +526,6 @@ void RenderEmbeddedObject::layout()
     statePusher.pop();
 }
 
-void RenderEmbeddedObject::viewCleared()
-{
-    // This is required for <object> elements whose contents are rendered by WebCore (e.g. src="foo.html").
-    if (widget() && widget()->isFrameView()) {
-        FrameView* view = toFrameView(widget());
-        int marginWidth = -1;
-        int marginHeight = -1;
-        if (isHTMLIFrameElement(frameOwnerElement())) {
-            HTMLIFrameElement& iframe = toHTMLIFrameElement(frameOwnerElement());
-            marginWidth = iframe.marginWidth();
-            marginHeight = iframe.marginHeight();
-        }
-        if (marginWidth != -1)
-            view->setMarginWidth(marginWidth);
-        if (marginHeight != -1)
-            view->setMarginHeight(marginHeight);
-    }
-}
-
 bool RenderEmbeddedObject::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     if (!RenderWidget::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction))

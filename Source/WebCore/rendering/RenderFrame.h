@@ -44,7 +44,6 @@ private:
     virtual bool isFrame() const OVERRIDE { return true; }
 
     virtual void updateFromElement() OVERRIDE;
-    virtual void viewCleared() OVERRIDE;
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderFrame, isFrame())
