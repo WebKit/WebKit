@@ -1,3 +1,20 @@
+2013-11-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        ObjCCallbackFunctionImpl's NSInvocation shouldn't retain its target or arguments
+        https://bugs.webkit.org/show_bug.cgi?id=123822
+
+        Reviewed by Geoffrey Garen.
+
+        Using -retainArguments on ObjCCallbackFunctionImpl's NSInvocation leads to memory leaks.
+        We should handle retaining/releasing the target ourselves, and we should never retain the arguments.
+
+        * API/ObjCCallbackFunction.mm:
+        (JSC::ObjCCallbackFunctionImpl::~ObjCCallbackFunctionImpl):
+        (JSC::ObjCCallbackFunctionImpl::name):
+        (objCCallbackFunctionForInvocation):
+        (objCCallbackFunctionForMethod):
+        (objCCallbackFunctionForBlock):
+
 2013-11-05  Julien Brianceau  <jbriance@cisco.com>
 
         Fix build for architectures with 4 argument registers (broken since r158681).
