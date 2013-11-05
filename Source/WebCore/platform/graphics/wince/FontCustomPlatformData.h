@@ -56,7 +56,7 @@ namespace WebCore {
         String m_name;
     };
 
-    std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(const SharedBuffer*);
+    std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&);
     void setCustomFontCache(CustomFontCache*);
 }
 

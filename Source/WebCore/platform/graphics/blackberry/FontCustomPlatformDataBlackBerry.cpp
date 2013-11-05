@@ -21,7 +21,6 @@
 
 #include "FontPlatformData.h"
 #include "ITypeUtils.h"
-#include "OpenTypeSanitizer.h"
 #include "SharedBuffer.h"
 
 #include <BlackBerryPlatformGraphicsContext.h>
@@ -29,9 +28,9 @@
 
 namespace WebCore {
 
-FontCustomPlatformData::FontCustomPlatformData(FILECHAR* fontName, PassRefPtr<SharedBuffer> buffer)
+FontCustomPlatformData::FontCustomPlatformData(FILECHAR* fontName, SharedBuffer& buffer)
     : m_fontName(strdup(fontName))
-    , m_buffer(buffer)
+    , m_buffer(&buffer)
 {
 }
 
@@ -56,21 +55,11 @@ bool FontCustomPlatformData::supportsFormat(const String& format)
     return isSupported;
 }
 
-std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer* buffer)
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer)
 {
-    ASSERT_ARG(buffer, buffer);
-
-#if USE(OPENTYPE_SANITIZER)
-    OpenTypeSanitizer sanitizer(buffer);
-    RefPtr<SharedBuffer> transcodeBuffer = sanitizer.sanitize();
-    if (!transcodeBuffer)
-        return nullptr; // validation failed.
-    buffer = transcodeBuffer.get();
-#endif
-
     FILECHAR name[MAX_FONT_NAME_LEN+1];
     memset(name, 0, MAX_FONT_NAME_LEN+1);
-    if (FS_load_font(BlackBerry::Platform::Graphics::getIType(), 0, const_cast<FS_BYTE*>(reinterpret_cast<const FS_BYTE*>(buffer->data())), 0, MAX_FONT_NAME_LEN, name) != SUCCESS)
+    if (FS_load_font(BlackBerry::Platform::Graphics::getIType(), 0, const_cast<FS_BYTE*>(reinterpret_cast<const FS_BYTE*>(buffer.data())), 0, MAX_FONT_NAME_LEN, name) != SUCCESS)
         return nullptr;
 
     return std::make_unique<FontCustomPlatformData>(name, buffer);

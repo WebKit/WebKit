@@ -24,7 +24,6 @@
 
 #include "FontPlatformData.h"
 #include "SharedBuffer.h"
-#include "WOFFFileFormat.h"
 #include <cairo-ft.h>
 #include <cairo.h>
 
@@ -35,15 +34,15 @@ static void releaseCustomFontData(void* data)
     static_cast<SharedBuffer*>(data)->deref();
 }
 
-FontCustomPlatformData::FontCustomPlatformData(FT_Face freeTypeFace, SharedBuffer* buffer)
+FontCustomPlatformData::FontCustomPlatformData(FT_Face freeTypeFace, SharedBuffer& buffer)
     : m_freeTypeFace(freeTypeFace)
     , m_fontFace(cairo_ft_font_face_create_for_ft_face(freeTypeFace, 0))
 {
     // FIXME Should we be setting some hinting options here?
 
-    buffer->ref(); // This is balanced by the buffer->deref() in releaseCustomFontData.
+    buffer.ref(); // This is balanced by the buffer->deref() in releaseCustomFontData.
     static cairo_user_data_key_t bufferKey;
-    cairo_font_face_set_user_data(m_fontFace, &bufferKey, buffer,
+    cairo_font_face_set_user_data(m_fontFace, &bufferKey, &buffer,
          static_cast<cairo_destroy_func_t>(releaseCustomFontData));
 
     // Cairo doesn't do FreeType reference counting, so we need to ensure that when
@@ -64,20 +63,8 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
     return FontPlatformData(m_fontFace, size, bold, italic);
 }
 
-std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer* buffer)
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer)
 {
-    ASSERT_ARG(buffer, buffer);
-
-    RefPtr<SharedBuffer> sfntBuffer;
-    if (isWOFF(buffer)) {
-        Vector<char> sfnt;
-        if (!convertWOFFToSfnt(buffer, sfnt))
-            return nullptr;
-
-        sfntBuffer = SharedBuffer::adoptVector(sfnt);
-        buffer = sfntBuffer.get();
-    }
-
     static FT_Library library;
     if (!library && FT_Init_FreeType(&library)) {
         library = nullptr;
@@ -85,7 +72,7 @@ std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffe
     }
 
     FT_Face freeTypeFace;
-    if (FT_New_Memory_Face(library, reinterpret_cast<const FT_Byte*>(buffer->data()), buffer->size(), 0, &freeTypeFace))
+    if (FT_New_Memory_Face(library, reinterpret_cast<const FT_Byte*>(buffer.data()), buffer.size(), 0, &freeTypeFace))
         return nullptr;
     return std::make_unique<FontCustomPlatformData>(freeTypeFace, buffer);
 }

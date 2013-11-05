@@ -36,7 +36,7 @@ class SharedBuffer;
 struct FontCustomPlatformData {
     WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
 public:
-    FontCustomPlatformData(FILECHAR* fontName, PassRefPtr<SharedBuffer>);
+    FontCustomPlatformData(FILECHAR* fontName, SharedBuffer&);
     ~FontCustomPlatformData();
 
     FontPlatformData fontPlatformData(int size, bool syntheticBold, bool syntheticItalic, FontOrientation = Horizontal,
@@ -48,7 +48,7 @@ public:
     RefPtr<SharedBuffer> m_buffer;
 };
 
-std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer*);
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&);
 
 } // namespace WebCore
 

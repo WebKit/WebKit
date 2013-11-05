@@ -39,7 +39,7 @@ class SharedBuffer;
 struct FontCustomPlatformData {
     WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
 public:
-    FontCustomPlatformData(FT_Face, SharedBuffer*);
+    FontCustomPlatformData(FT_Face, SharedBuffer&);
     ~FontCustomPlatformData();
     FontPlatformData fontPlatformData(int size, bool bold, bool italic, FontOrientation = Horizontal, FontWidthVariant = RegularWidth, FontRenderingMode = NormalRenderingMode);
     static bool supportsFormat(const String&);
@@ -49,7 +49,7 @@ private:
     cairo_font_face_t* m_fontFace;
 };
 
-std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer*);
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&);
 
 }
 

@@ -69,14 +69,12 @@ static String createUniqueFontName()
     return fontName.replace('/', '_');
 }
 
-std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(const SharedBuffer* buffer)
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer)
 {
-    ASSERT_ARG(buffer, buffer);
-
     String fontName = createUniqueFontName();
 
     Vector<char> rewrittenFontData;
-    if (!renameFont(*buffer, fontName, rewrittenFontData))
+    if (!renameFont(buffer, fontName, rewrittenFontData))
         return nullptr;
 
     RefPtr<SharedBuffer> localBuffer = SharedBuffer::adoptVector(rewrittenFontData);

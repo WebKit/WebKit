@@ -33,8 +33,11 @@
 #include "FontCustomPlatformData.h"
 #include "FontPlatformData.h"
 #include "MemoryCache.h"
+#include "OpenTypeSanitizer.h"
 #include "ResourceBuffer.h"
+#include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
+#include "WOFFFileFormat.h"
 #include <wtf/Vector.h>
 
 #if ENABLE(SVG_FONTS)
@@ -92,7 +95,26 @@ void CachedFont::beginLoadIfNeeded(CachedResourceLoader* dl)
 bool CachedFont::ensureCustomFontData()
 {
     if (!m_fontData && !errorOccurred() && !isLoading() && m_data) {
-        m_fontData = createFontCustomPlatformData(m_data.get()->sharedBuffer());
+        SharedBuffer* buffer = m_data.get()->sharedBuffer();
+        ASSERT(buffer);
+
+#if USE(OPENTYPE_SANITIZER)
+        OpenTypeSanitizer sanitizer(buffer);
+        RefPtr<SharedBuffer> transcodeBuffer = sanitizer.sanitize();
+        buffer = transcodeBuffer.get();
+#else
+        RefPtr<SharedBuffer> sfntBuffer;
+        if (isWOFF(buffer)) {
+            Vector<char> sfnt;
+            if (convertWOFFToSfnt(buffer, sfnt)) {
+                sfntBuffer = SharedBuffer::adoptVector(sfnt);
+                buffer = sfntBuffer.get();
+            } else
+                buffer = nullptr;
+        }
+#endif
+
+        m_fontData = buffer ? createFontCustomPlatformData(*buffer) : nullptr;
         if (m_fontData)
             m_hasCreatedFontData = true;
         else

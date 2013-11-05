@@ -57,7 +57,7 @@ public:
     RetainPtr<CGFontRef> m_cgFont;
 };
 
-std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer*);
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&);
 
 }
 

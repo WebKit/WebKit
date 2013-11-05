@@ -22,9 +22,7 @@
 #include "FontCustomPlatformData.h"
 
 #include "FontPlatformData.h"
-#include "OpenTypeSanitizer.h"
 #include "SharedBuffer.h"
-#include "WOFFFileFormat.h"
 #include <ApplicationServices/ApplicationServices.h>
 
 namespace WebCore {
@@ -38,31 +36,11 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
     return FontPlatformData(m_cgFont.get(), size, bold, italic, orientation, widthVariant);
 }
 
-std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer* buffer)
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer)
 {
-    ASSERT_ARG(buffer, buffer);
-
-#if USE(OPENTYPE_SANITIZER)
-    OpenTypeSanitizer sanitizer(buffer);
-    RefPtr<SharedBuffer> transcodeBuffer = sanitizer.sanitize();
-    if (!transcodeBuffer)
-        return nullptr; // validation failed.
-    buffer = transcodeBuffer.get();
-#else
-    RefPtr<SharedBuffer> sfntBuffer;
-    if (isWOFF(buffer)) {
-        Vector<char> sfnt;
-        if (!convertWOFFToSfnt(buffer, sfnt))
-            return nullptr;
-
-        sfntBuffer = SharedBuffer::adoptVector(sfnt);
-        buffer = sfntBuffer.get();
-    }
-#endif
-
     ATSFontContainerRef containerRef = 0;
 
-    RetainPtr<CFDataRef> bufferData = buffer->createCFData();
+    RetainPtr<CFDataRef> bufferData = buffer.createCFData();
     RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateWithCFData(bufferData.get()));
 
     RetainPtr<CGFontRef> cgFontRef = adoptCF(CGFontCreateWithDataProvider(dataProvider.get()));
