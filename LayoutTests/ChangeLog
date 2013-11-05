@@ -1,3 +1,17 @@
+2013-11-05  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Add baselines for tests marked as missing.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/css3/masking/mask-luminance-png-expected.txt: Added.
+        * platform/efl/fast/css/color-correction-untagged-images-expected.png: Added.
+        * platform/efl/fast/css/color-correction-untagged-images-expected.txt: Added.
+        * platform/efl/fast/regions/iframe-html-collected-expected.txt: Added.
+        * platform/efl/fast/repaint/hover-pseudo-borders-expected.png: Added.
+        * platform/efl/fast/repaint/hover-pseudo-borders-expected.txt: Added.
+
 2013-11-05  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] Move cssom related tests into fast/regions/cssom
