@@ -291,8 +291,6 @@ def parse_args(args):
             help=("The name of the buildslave used. e.g. apple-macpro-6.")),
         optparse.make_option("--build-number", default="DUMMY_BUILD_NUMBER",
             help=("The build number of the builder running this script.")),
-        optparse.make_option("--got-revision", default="",
-            help=("The revision number. e.g. 12345")),
         optparse.make_option("--test-results-server", default="",
             help=("If specified, upload results json files to this appengine server.")),
         optparse.make_option("--results-server-host", default="",
