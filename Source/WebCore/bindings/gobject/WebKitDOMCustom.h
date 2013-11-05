@@ -480,6 +480,49 @@ WEBKIT_API gdouble webkit_dom_html_media_element_get_start_time(WebKitDOMHTMLMed
 **/
 WEBKIT_API gdouble webkit_dom_html_media_element_get_initial_time(WebKitDOMHTMLMediaElement* self);
 
+/**
+ * webkit_dom_html_head_element_get_profile:
+ * @self: A #WebKitDOMHTMLHeadElement
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: A string
+ *
+**/
+WEBKIT_API gchar* webkit_dom_html_head_element_get_profile(WebKitDOMHTMLHeadElement* self);
+
+/**
+ * webkit_dom_html_head_element_set_profile:
+ * @self: A #WebKitDOMHTMLHeadElement
+ * @value: A #gchar
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+**/
+WEBKIT_API void webkit_dom_html_head_element_set_profile(WebKitDOMHTMLHeadElement* self, const gchar* value);
+
+/**
+ * webkit_dom_processing_instruction_get_data:
+ * @self: A #WebKitDOMProcessingInstruction
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: A string
+ *
+**/
+WEBKIT_API gchar* webkit_dom_processing_instruction_get_data(WebKitDOMProcessingInstruction* self);
+
+/**
+ * webkit_dom_processing_instruction_set_data:
+ * @self: A #WebKitDOMProcessingInstruction
+ * @value: A #gchar
+ * @error: #GError
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+**/
+WEBKIT_API void webkit_dom_processing_instruction_set_data(WebKitDOMProcessingInstruction* self, const gchar* value, GError** error);
+
 G_END_DECLS
 
 #endif

@@ -1,3 +1,18 @@
+2013-11-05  Emilio Pozuelo Monfort  <pochu27@gmail.com>
+
+        [GTK] Add stubs for missing symbols in dom bindings
+        https://bugs.webkit.org/show_bug.cgi?id=123663
+
+        Reviewed by Carlos Garcia Campos.
+
+        * bindings/gobject/WebKitDOMCustom.cpp:
+        (webkit_dom_html_head_element_get_profile):
+        (webkit_dom_html_head_element_set_profile):
+        (webkit_dom_processing_instruction_get_data):
+        (webkit_dom_processing_instruction_set_data):
+        * bindings/gobject/WebKitDOMCustom.h:
+        * bindings/gobject/WebKitDOMCustom.symbols:
+
 2013-11-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Main thread tasks in ThreadableBlobRegistry should use std::unique_ptr
