@@ -28,6 +28,7 @@
 
 #import "Connection.h"
 #import "ImmutableDictionary.h"
+#import "MutableDictionary.h"
 #import "WKConnectionRef.h"
 #import "WKRemoteObject.h"
 #import "WKRemoteObjectCoder.h"
@@ -39,23 +40,31 @@
 
 const char* const messageName = "WKRemoteObjectRegistryMessage";
 
-NSString * const interfaceIdentifierKey = @"interfaceIdentifier";
+const char* const encodedInvocationKey = "encodedInvocation";
+const char* const interfaceIdentifierKey = "interfaceIdentifier";
+
+NSString * const invocationKey = @"invocation";
 
 using namespace WebKit;
 
 @implementation WKRemoteObjectRegistry {
     RefPtr<WebConnection> _connection;
     RetainPtr<NSMapTable> _remoteObjectProxies;
+    HashMap<String, std::pair<RetainPtr<id>, RetainPtr<WKRemoteObjectInterface>>> _exportedObjects;
 }
 
 - (void)registerExportedObject:(id)object interface:(WKRemoteObjectInterface *)interface
 {
-    // FIXME: Implement.
+    ASSERT(!_exportedObjects.contains(interface.identifier));
+    _exportedObjects.add(interface.identifier, std::make_pair<RetainPtr<id>, RetainPtr<WKRemoteObjectInterface>>(object, interface));
 }
 
 - (void)unregisterExportedObject:(id)object interface:(WKRemoteObjectInterface *)interface
 {
-    // FIXME: Implement.
+    ASSERT(_exportedObjects.get(interface.identifier).first == object);
+    ASSERT(_exportedObjects.get(interface.identifier).second == interface);
+
+    _exportedObjects.remove(interface.identifier);
 }
 
 - (id)remoteObjectProxyWithInterface:(WKRemoteObjectInterface *)interface
@@ -76,11 +85,13 @@ using namespace WebKit;
 - (void)_sendInvocation:(NSInvocation *)invocation interface:(WKRemoteObjectInterface *)interface
 {
     RetainPtr<WKRemoteObjectEncoder> encoder = adoptNS([[WKRemoteObjectEncoder alloc] init]);
+    [encoder encodeObject:invocation forKey:invocationKey];
 
-    [encoder encodeObject:interface.identifier forKey:interfaceIdentifierKey];
-    [encoder encodeObject:invocation forKey:@"invocation"];
+    RefPtr<MutableDictionary> body = MutableDictionary::create();
+    body->set(interfaceIdentifierKey, WebString::create(interface.identifier));
+    body->set(encodedInvocationKey, [encoder rootObjectDictionary]);
 
-    [self _sendMessageWithBody:[encoder rootObjectDictionary]];
+    [self _sendMessageWithBody:body.release()];
 }
 
 - (void)_sendMessageWithBody:(PassRefPtr<ImmutableDictionary>)body
@@ -110,19 +121,32 @@ using namespace WebKit;
     if (!toImpl(body) || toImpl(body)->type() != APIObject::TypeDictionary)
         return NO;
 
-    [self _invokeMessageWithBody:toImpl((WKDictionaryRef)body)];
+    const ImmutableDictionary* dictionary = toImpl(static_cast<WKDictionaryRef>(body));
+
+    WebString* interfaceIdentifier = dictionary->get<WebString>(interfaceIdentifierKey);
+    if (!interfaceIdentifier)
+        return NO;
+
+    const ImmutableDictionary* encodedInvocation = dictionary->get<ImmutableDictionary>(encodedInvocationKey);
+    if (!encodedInvocationKey)
+        return NO;
+
+    [self _invokeMessageWithInterfaceIdentifier:interfaceIdentifier->string() encodedInvocation:encodedInvocation];
     return YES;
 }
 
-- (void)_invokeMessageWithBody:(ImmutableDictionary*)body
+- (void)_invokeMessageWithInterfaceIdentifier:(const String&)interfaceIdentifier encodedInvocation:(const ImmutableDictionary*)encodedInvocation
 {
-    RetainPtr<WKRemoteObjectDecoder> decoder = adoptNS([[WKRemoteObjectDecoder alloc] initWithRootObjectDictionary:body]);
+    auto interfaceAndObject = _exportedObjects.get(interfaceIdentifier);
+    if (!interfaceAndObject.second) {
+        NSLog(@"Did not find a registered object for the interface \"%@\"", (NSString *)interfaceIdentifier);
+        return;
+    }
 
-    NSString *interfaceIdentifier = nil;
+    RetainPtr<WKRemoteObjectDecoder> decoder = adoptNS([[WKRemoteObjectDecoder alloc] initWithInterface:interfaceAndObject.first.get() rootObjectDictionary:encodedInvocation]);
 
-    // FIXME: Decode the invocation.
     @try {
-        interfaceIdentifier = [decoder decodeObjectOfClass:[NSString class] forKey:interfaceIdentifierKey];
+        // FIXME: Decode the invocation.
     } @catch (NSException *exception) {
         NSLog(@"Exception caught during decoding of message: %@", exception);
     }

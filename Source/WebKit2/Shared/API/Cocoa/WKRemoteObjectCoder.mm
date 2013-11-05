@@ -262,19 +262,23 @@ static NSString *escapeKey(NSString *key)
 @end
 
 @implementation WKRemoteObjectDecoder {
-    RefPtr<ImmutableDictionary> _rootDictionary;
+    RetainPtr<WKRemoteObjectInterface> _interface;
+
+    const ImmutableDictionary* _rootDictionary;
     const ImmutableDictionary* _currentDictionary;
 
     NSSet *_allowedClasses;
 }
 
-- (id)initWithRootObjectDictionary:(ImmutableDictionary*)rootObjectDictionary
+- (id)initWithInterface:(WKRemoteObjectInterface *)interface rootObjectDictionary:(const WebKit::ImmutableDictionary*)rootObjectDictionary
 {
     if (!(self = [super init]))
         return nil;
 
+    _interface = interface;
+
     _rootDictionary = rootObjectDictionary;
-    _currentDictionary = _rootDictionary.get();
+    _currentDictionary = _rootDictionary;
 
     return self;
 }
@@ -330,6 +334,12 @@ static void validateClass(WKRemoteObjectDecoder *decoder, Class objectClass)
     [decoder validateClassSupportsSecureCoding:objectClass];
 }
 
+static NSInvocation *decodeInvocation(WKRemoteObjectDecoder *decoder)
+{
+    // FIXME: Implement this.
+    return nil;
+}
+
 static id decodeObject(WKRemoteObjectDecoder *decoder)
 {
     WebString* classNameString = decoder->_currentDictionary->get<WebString>(classNameKey);
@@ -344,7 +354,10 @@ static id decodeObject(WKRemoteObjectDecoder *decoder)
 
     validateClass(decoder, objectClass);
 
-    RetainPtr<id> result = [objectClass alloc];
+    if (objectClass == [NSInvocation class])
+        return decodeInvocation(decoder);
+
+    RetainPtr<id> result = [objectClass allocWithZone:decoder.zone];
     if (!result)
         [NSException raise:NSInvalidUnarchiveOperationException format:@"Class \"%s\" returned nil from +alloc while being decoded", className.data()];
 

@@ -1,5 +1,30 @@
 2013-11-05  Anders Carlsson  <andersca@apple.com>
 
+        WKRemoteObjectDecoder should know which interface it's decoding for
+        https://bugs.webkit.org/show_bug.cgi?id=123833
+
+        Reviewed by Andreas Kling.
+
+        Move the interface identifier out into the root object body dictionary and make 
+        the encoded invocation a sibling of it. That way we can look up the interface before
+        creating the decoder.
+        
+        Also, manage exported objects and interfaces in a separate hash map.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.h:
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (-[WKRemoteObjectDecoder initWithInterface:rootObjectDictionary:WebKit::]):
+        (decodeInvocation):
+        (decodeObject):
+        * Shared/API/Cocoa/WKRemoteObjectRegistry.mm:
+        (-[WKRemoteObjectRegistry registerExportedObject:interface:]):
+        (-[WKRemoteObjectRegistry unregisterExportedObject:interface:]):
+        (-[WKRemoteObjectRegistry _sendInvocation:interface:]):
+        (-[WKRemoteObjectRegistry _handleMessageWithName:body:]):
+        (-[WKRemoteObjectRegistry _invokeMessageWithInterfaceIdentifier:encodedInvocation:]):
+
+2013-11-05  Anders Carlsson  <andersca@apple.com>
+
         Add support for decoding NSStrings
         https://bugs.webkit.org/show_bug.cgi?id=123829
 
