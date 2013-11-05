@@ -1,3 +1,9 @@
+2013-11-05  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed GTK gardening. Two tests pass after r158575 and r15856.
+
+        * platform/gtk/TestExpectations: Removed passing tests.
+
 2013-11-05  Robert Plociennik  <r.plociennik@samsung.com>
 
         [EFL] accessibility/svg-group-element-with-title.html is failing
