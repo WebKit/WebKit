@@ -1,5 +1,27 @@
 2013-11-04  Brady Eidson  <beidson@apple.com>
 
+        IDB: deleteDatabase() interface should be asynchronous
+        https://bugs.webkit.org/show_bug.cgi?id=123787
+
+        Reviewed by Tim Horton.
+
+        No new tests (No behavior change for a tested port).
+
+        deleteDatabase now has no return value, but calls back to a bool function:
+        * Modules/indexeddb/IDBBackingStoreInterface.h:
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        (WebCore::IDBBackingStoreLevelDB::deleteDatabase):
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.h:
+
+        Refactor to account for the new async deleteDatabase:
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::processPendingCalls):
+        (WebCore::IDBDatabaseBackendImpl::deleteDatabase):
+        (WebCore::IDBDatabaseBackendImpl::deleteDatabaseAsync):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h:
+
+2013-11-04  Brady Eidson  <beidson@apple.com>
+
         Add Modules/indexeddb/leveldb to the WebCore.xcodeproj
 
         Rubberstamped by Andreas Kling.

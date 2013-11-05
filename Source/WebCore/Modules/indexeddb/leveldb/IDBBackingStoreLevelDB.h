@@ -71,10 +71,12 @@ public:
 
     virtual Vector<String> getDatabaseNames();
 
+    // New-style asynchronous callbacks
     virtual void getOrEstablishIDBDatabaseMetadata(const String& name, GetIDBDatabaseMetadataFunction) OVERRIDE;
+    virtual void deleteDatabase(const String& name, BoolCallbackFunction) OVERRIDE;
 
+    // Old-style synchronous callbacks
     virtual bool updateIDBDatabaseVersion(IDBBackingStoreInterface::Transaction&, int64_t rowId, uint64_t version) OVERRIDE;
-    virtual bool deleteDatabase(const String& name) OVERRIDE;
 
     virtual bool createObjectStore(IDBBackingStoreInterface::Transaction&, int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement) OVERRIDE;
     virtual bool deleteObjectStore(IDBBackingStoreInterface::Transaction&, int64_t databaseId, int64_t objectStoreId) OVERRIDE WARN_UNUSED_RETURN;

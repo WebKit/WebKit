@@ -661,7 +661,7 @@ static void deleteRange(LevelDBTransaction* transaction, const Vector<char>& beg
         transaction->remove(it->key());
 }
 
-bool IDBBackingStoreLevelDB::deleteDatabase(const String& name)
+void IDBBackingStoreLevelDB::deleteDatabase(const String& name, BoolCallbackFunction boolCallbackFunction)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::deleteDatabase");
     OwnPtr<LevelDBWriteOnlyTransaction> transaction = LevelDBWriteOnlyTransaction::create(m_db.get());
@@ -669,10 +669,15 @@ bool IDBBackingStoreLevelDB::deleteDatabase(const String& name)
     IDBDatabaseMetadata metadata;
     bool success = false;
     bool ok = getIDBDatabaseMetaData(name, &metadata, success);
-    if (!ok)
-        return false;
-    if (!success)
-        return true;
+    if (!ok) {
+        boolCallbackFunction(false);
+        return;
+    }
+
+    if (!success) {
+        boolCallbackFunction(true);
+        return;
+    }
 
     const Vector<char> startKey = DatabaseMetaDataKey::encode(metadata.id, DatabaseMetaDataKey::OriginName);
     const Vector<char> stopKey = DatabaseMetaDataKey::encode(metadata.id + 1, DatabaseMetaDataKey::OriginName);
@@ -685,9 +690,10 @@ bool IDBBackingStoreLevelDB::deleteDatabase(const String& name)
 
     if (!transaction->commit()) {
         INTERNAL_WRITE_ERROR(DeleteDatabase);
-        return false;
+        boolCallbackFunction(false);
+        return;
     }
-    return true;
+    boolCallbackFunction(true);
 }
 
 static bool checkObjectStoreAndMetaDataType(const LevelDBIterator* it, const Vector<char>& stopKey, int64_t objectStoreId, int64_t metaDataType)

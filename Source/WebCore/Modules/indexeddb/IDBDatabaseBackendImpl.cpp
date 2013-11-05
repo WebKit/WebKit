@@ -415,10 +415,17 @@ void IDBDatabaseBackendImpl::processPendingCalls()
         return;
     while (!m_pendingDeleteCalls.isEmpty()) {
         OwnPtr<IDBPendingDeleteCall> pendingDeleteCall = m_pendingDeleteCalls.takeFirst();
-        deleteDatabaseFinal(pendingDeleteCall->callbacks());
+        m_deleteCallbacksWaitingCompletion.add(pendingDeleteCall->callbacks());
+        deleteDatabaseAsync(pendingDeleteCall->callbacks());
     }
-    // deleteDatabaseFinal should never re-queue calls.
+
+    // deleteDatabaseAsync should never re-queue calls.
     ASSERT(m_pendingDeleteCalls.isEmpty());
+
+    // If there are any database deletions waiting for completion, we're done for now.
+    // Further callbacks will be handled in a future call to processPendingCalls().
+    if (m_deleteCallbacksWaitingCompletion.isEmpty())
+        return;
 
     if (m_runningVersionChangeTransaction)
         return;
@@ -574,7 +581,7 @@ void IDBDatabaseBackendImpl::deleteDatabase(PassRefPtr<IDBCallbacks> prpCallback
         m_pendingDeleteCalls.append(IDBPendingDeleteCall::create(callbacks.release()));
         return;
     }
-    deleteDatabaseFinal(callbacks.release());
+    deleteDatabaseAsync(callbacks.release());
 }
 
 bool IDBDatabaseBackendImpl::isDeleteDatabaseBlocked()
@@ -582,18 +589,30 @@ bool IDBDatabaseBackendImpl::isDeleteDatabaseBlocked()
     return connectionCount();
 }
 
-void IDBDatabaseBackendImpl::deleteDatabaseFinal(PassRefPtr<IDBCallbacks> callbacks)
+void IDBDatabaseBackendImpl::deleteDatabaseAsync(PassRefPtr<IDBCallbacks> callbacks)
 {
     ASSERT(!isDeleteDatabaseBlocked());
     ASSERT(m_backingStore);
-    if (!m_backingStore->deleteDatabase(m_metadata.name)) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error deleting database."));
-        return;
-    }
-    m_metadata.id = InvalidId;
-    m_metadata.version = IDBDatabaseMetadata::NoIntVersion;
-    m_metadata.objectStores.clear();
-    callbacks->onSuccess();
+
+    RefPtr<IDBDatabaseBackendImpl> self(this);
+    m_backingStore->deleteDatabase(m_metadata.name, [self, callbacks](bool success) {
+        ASSERT(self->m_deleteCallbacksWaitingCompletion.contains(callbacks));
+        self->m_deleteCallbacksWaitingCompletion.remove(callbacks);
+
+        // If this IDBDatabaseBackend was closed while waiting for deleteDatabase to complete, no point in performing any callbacks.
+        if (!self->m_backingStore)
+            return;
+
+        if (success) {
+            self->m_metadata.id = InvalidId;
+            self->m_metadata.version = IDBDatabaseMetadata::NoIntVersion;
+            self->m_metadata.objectStores.clear();
+            callbacks->onSuccess();
+        } else
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error deleting database."));
+
+        self->processPendingCalls();
+    });
 }
 
 void IDBDatabaseBackendImpl::close(PassRefPtr<IDBDatabaseCallbacks> prpCallbacks)

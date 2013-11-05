@@ -82,15 +82,19 @@ public:
 
     virtual std::unique_ptr<Transaction> createBackingStoreTransaction() = 0;
 
+    // New-style asynchronous callbacks
     typedef std::function<void (const IDBDatabaseMetadata&, bool success)> GetIDBDatabaseMetadataFunction;
     virtual void getOrEstablishIDBDatabaseMetadata(const String& name, GetIDBDatabaseMetadataFunction) = 0;
 
+    typedef std::function<void (bool success)> BoolCallbackFunction;
+    virtual void deleteDatabase(const String& name, BoolCallbackFunction) = 0;
+
+    // Old-style synchronous callbacks
     virtual bool keyExistsInObjectStore(IDBBackingStoreInterface::Transaction&, int64_t databaseId, int64_t objectStoreId, const IDBKey&, RefPtr<IDBRecordIdentifier>& foundIDBRecordIdentifier) = 0;
 
     virtual bool putIndexDataForRecord(IDBBackingStoreInterface::Transaction&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&, const IDBRecordIdentifier*) = 0;
     virtual bool keyExistsInIndex(IDBBackingStoreInterface::Transaction&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&, RefPtr<IDBKey>& foundPrimaryKey, bool& exists) = 0;
 
-    virtual bool deleteDatabase(const String& name) = 0;
     virtual bool updateIDBDatabaseVersion(IDBBackingStoreInterface::Transaction&, int64_t rowId, uint64_t version) = 0;
 
     virtual bool getRecord(IDBBackingStoreInterface::Transaction&, int64_t databaseId, int64_t objectStoreId, const IDBKey&, Vector<char>& record) = 0;

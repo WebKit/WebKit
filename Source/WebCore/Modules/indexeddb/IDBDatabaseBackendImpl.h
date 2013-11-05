@@ -116,13 +116,13 @@ private:
     void processPendingOpenCalls(bool success);
 
     bool isDeleteDatabaseBlocked();
-    void deleteDatabaseFinal(PassRefPtr<IDBCallbacks>);
+    void deleteDatabaseAsync(PassRefPtr<IDBCallbacks>);
 
     RefPtr<IDBBackingStoreInterface> m_backingStore;
     IDBDatabaseMetadata m_metadata;
 
     String m_identifier;
-    // This might not need to be a RefPtr since the factory's lifetime is that of the page group, but it's better to be conservitive than sorry.
+    // This might not need to be a RefPtr since the factory's lifetime is that of the page group, but it's better to be conservative than sorry.
     RefPtr<IDBFactoryBackendInterface> m_factory;
 
     OwnPtr<IDBTransactionCoordinator> m_transactionCoordinator;
@@ -135,6 +135,7 @@ private:
     OwnPtr<IDBPendingOpenCall> m_pendingSecondHalfOpen;
 
     Deque<OwnPtr<IDBPendingDeleteCall>> m_pendingDeleteCalls;
+    HashSet<RefPtr<IDBCallbacks>> m_deleteCallbacksWaitingCompletion;
 
     typedef ListHashSet<RefPtr<IDBDatabaseCallbacks>> DatabaseCallbacksSet;
     DatabaseCallbacksSet m_databaseCallbacksSet;
