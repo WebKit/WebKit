@@ -139,14 +139,15 @@ void MediaFragmentURIParser::parseFragments()
         
         //  b. Convert name and value to Unicode strings by interpreting them as UTF-8. If either
         //     name or value are not valid UTF-8 strings, then remove the name-value pair from the list.
-        bool validUTF8 = true;
-        if (!name.isEmpty()) {
+        bool validUTF8 = false;
+        if (!name.isEmpty() && !value.isEmpty()) {
             name = name.utf8(StrictConversion).data();
             validUTF8 = !name.isEmpty();
-        }
-        if (validUTF8 && !value.isEmpty()) {
-            value = value.utf8(StrictConversion).data();
-            validUTF8 = !value.isEmpty();
+
+            if (validUTF8) {
+                value = value.utf8(StrictConversion).data();
+                validUTF8 = !value.isEmpty();
+            }
         }
         
         if (validUTF8)
@@ -205,7 +206,7 @@ bool MediaFragmentURIParser::parseNPTFragment(const LChar* timeString, unsigned 
 {
     unsigned offset = 0;
     if (length >= nptIdentiferLength && timeString[0] == 'n' && timeString[1] == 'p' && timeString[2] == 't' && timeString[3] == ':')
-            offset += nptIdentiferLength;
+        offset += nptIdentiferLength;
 
     if (offset == length)
         return false;

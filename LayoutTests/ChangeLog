@@ -1,3 +1,12 @@
+2013-11-04  Eric Carlson  <eric.carlson@apple.com>
+
+        REGRESSION(r158311): media/media-fragments/TC0054.html and TC0061.html hit assertions
+        https://bugs.webkit.org/show_bug.cgi?id=123555
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations: Remove media/media-fragments/TC0054.html and media/media-fragments/TC0061.html.
+
 2013-11-04  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Mail attachments at the start of an email are not output by VoiceOver

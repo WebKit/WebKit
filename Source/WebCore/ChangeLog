@@ -1,3 +1,17 @@
+2013-11-04  Eric Carlson  <eric.carlson@apple.com>
+
+        REGRESSION(r158311): media/media-fragments/TC0054.html and TC0061.html hit assertions
+        https://bugs.webkit.org/show_bug.cgi?id=123555
+
+        Reviewed by Darin Adler.
+
+        No new tests, covered by existing tests.
+
+        * html/MediaFragmentURIParser.cpp:
+        (WebCore::MediaFragmentURIParser::parseFragments): Don't add a fragment with empty key or value as
+            they will not processed.
+        (WebCore::MediaFragmentURIParser::parseNPTFragment): Remove excess whitespace.
+
 2013-11-04  Patrick Gansterer  <paroga@webkit.org>
 
         Remove code duplications in createFontCustomPlatformData()
