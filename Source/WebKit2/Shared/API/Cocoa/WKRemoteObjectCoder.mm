@@ -30,10 +30,13 @@
 #import "MutableDictionary.h"
 #import "WebData.h"
 #import "WebNumber.h"
+#import "WebString.h"
+#import <objc/runtime.h>
 #import <wtf/TemporaryChange.h>
 
 #if WK_API_ENABLED
 
+const char* const classNameKey = "$class";
 const char* const objectStreamKey = "$objectStream";
 
 using namespace WebKit;
@@ -168,6 +171,14 @@ static void encodeObject(WKRemoteObjectEncoder *encoder, id object)
     if (![object conformsToProtocol:@protocol(NSSecureCoding)])
         [NSException raise:NSInvalidArgumentException format:@"%@ does not conform to NSSecureCoding", object];
 
+    if (class_isMetaClass(object_getClass(object)))
+        [NSException raise:NSInvalidArgumentException format:@"Class objects may not be encoded"];
+
+    Class cls = [object classForCoder];
+    if (!cls)
+        [NSException raise:NSInvalidArgumentException format:@"-classForCoder returned nil for %@", object];
+
+    encoder->_currentDictionary->set(classNameKey, WebString::create(class_getName(cls)));
     [object encodeWithCoder:encoder];
 }
 
