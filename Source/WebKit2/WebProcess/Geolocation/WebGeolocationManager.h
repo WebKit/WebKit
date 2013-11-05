@@ -47,12 +47,12 @@ class WebGeolocationManager : public WebProcessSupplement, public CoreIPC::Messa
     WTF_MAKE_NONCOPYABLE(WebGeolocationManager);
 public:
     explicit WebGeolocationManager(WebProcess*);
-    ~WebGeolocationManager();
 
     static const char* supplementName();
 
     void registerWebPage(WebPage*);
     void unregisterWebPage(WebPage*);
+    void setEnableHighAccuracyForPage(WebPage*, bool);
 
     void requestPermission(WebCore::Geolocation*);
 
@@ -60,11 +60,15 @@ private:
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
+    bool isUpdating() const { return !m_pageSet.isEmpty(); }
+    bool isHighAccuracyEnabled() const { return !m_highAccuracyPageSet.isEmpty(); }
+
     void didChangePosition(const WebGeolocationPosition::Data&);
     void didFailToDeterminePosition(const String& errorMessage);
 
     WebProcess* m_process;
     HashSet<WebPage*> m_pageSet;
+    HashSet<WebPage*> m_highAccuracyPageSet;
 };
 
 } // namespace WebKit

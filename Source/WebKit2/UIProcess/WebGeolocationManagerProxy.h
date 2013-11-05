@@ -65,11 +65,16 @@ private:
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
+    bool isUpdating() const { return !m_updateRequesters.isEmpty(); }
+    bool isHighAccuracyEnabled() const { return !m_highAccuracyRequesters.isEmpty(); }
+
     void startUpdating(CoreIPC::Connection*);
     void stopUpdating(CoreIPC::Connection*);
     void removeRequester(const CoreIPC::Connection::Client*);
+    void setEnableHighAccuracy(CoreIPC::Connection*, bool);
 
     HashSet<const CoreIPC::Connection::Client*> m_updateRequesters;
+    HashSet<const CoreIPC::Connection::Client*> m_highAccuracyRequesters;
 
     WebGeolocationProvider m_provider;
 };

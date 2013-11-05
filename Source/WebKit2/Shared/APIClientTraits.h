@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "WKBundle.h"
 #include "WKBundlePage.h"
 #include "WKContext.h"
+#include "WKGeolocationManager.h"
 #include "WKIconDatabase.h"
 #include "WKPage.h"
 
@@ -84,6 +85,10 @@ template<> struct APIClientTraits<WKContextInjectedBundleClient> {
 };
 
 template<> struct APIClientTraits<WKIconDatabaseClient> {
+    static const size_t interfaceSizesByVersion[2];
+};
+
+template<> struct APIClientTraits<WKGeolocationProvider> {
     static const size_t interfaceSizesByVersion[2];
 };
 

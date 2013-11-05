@@ -1,3 +1,45 @@
+2013-11-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        [WK2] Add a WebKit2 API for Geolocation's highAccuracy
+        https://bugs.webkit.org/show_bug.cgi?id=123786
+
+        Reviewed by Darin Adler.
+
+        This adds support for highAccuracy Geolocation with WebKit2.
+
+        The key is to track which page/requester need what kind of geolocation
+        in order to change between high and low accuracy as pages run and disappear.
+
+        WebGeolocationManager and WebGeolocationManagerProxy have very similar roles
+        but for different sources:
+        -WebGeolocationManager tracks which live page require high accuracy geolocation.
+         When the state changes, it forward the information to the UIProcess.
+        -WebGeolocationManagerProxy tracks which WebContent processes needs high accuracy.
+
+        * Shared/APIClientTraits.cpp:
+        * Shared/APIClientTraits.h:
+        * UIProcess/API/C/WKGeolocationManager.h:
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        (WebKit::WebGeolocationManagerProxy::startUpdating):
+        (WebKit::WebGeolocationManagerProxy::removeRequester):
+        (WebKit::WebGeolocationManagerProxy::setEnableHighAccuracy):
+        * UIProcess/WebGeolocationManagerProxy.h:
+        (WebKit::WebGeolocationManagerProxy::isUpdating):
+        (WebKit::WebGeolocationManagerProxy::isHighAccuracyEnabled):
+        * UIProcess/WebGeolocationManagerProxy.messages.in:
+        * UIProcess/WebGeolocationProvider.cpp:
+        (WebKit::WebGeolocationProvider::setEnableHighAccuracy):
+        * UIProcess/WebGeolocationProvider.h:
+        * WebProcess/Geolocation/WebGeolocationManager.cpp:
+        (WebKit::WebGeolocationManager::registerWebPage):
+        (WebKit::WebGeolocationManager::unregisterWebPage):
+        (WebKit::WebGeolocationManager::setEnableHighAccuracyForPage):
+        * WebProcess/Geolocation/WebGeolocationManager.h:
+        (WebKit::WebGeolocationManager::isUpdating):
+        (WebKit::WebGeolocationManager::isHighAccuracyEnabled):
+        * WebProcess/WebCoreSupport/WebGeolocationClient.cpp:
+        (WebKit::WebGeolocationClient::setEnableHighAccuracy):
+
 2013-11-05  Anders Carlsson  <andersca@apple.com>
 
         Implement more NSCoder methods

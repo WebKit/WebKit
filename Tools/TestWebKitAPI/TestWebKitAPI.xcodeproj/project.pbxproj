@@ -41,6 +41,11 @@
 		26DF5A6315A2A27E003689C2 /* CancelLoadFromResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26DF5A6115A2A22B003689C2 /* CancelLoadFromResourceLoadDelegate.html */; };
 		26F1B44415CA434F00D1E4BF /* AtomicString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F1B44215CA434F00D1E4BF /* AtomicString.cpp */; };
 		26F1B44515CA434F00D1E4BF /* StringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F1B44315CA434F00D1E4BF /* StringImpl.cpp */; };
+		26F52EAB182872600023D412 /* Geolocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F52EAA182872600023D412 /* Geolocation.cpp */; };
+		26F52EAD1828827B0023D412 /* geolocationGetCurrentPosition.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26F52EAC1828820E0023D412 /* geolocationGetCurrentPosition.html */; };
+		26F52EAF18288C230023D412 /* geolocationGetCurrentPositionWithHighAccuracy.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26F52EAE18288C040023D412 /* geolocationGetCurrentPositionWithHighAccuracy.html */; };
+		26F52EB218288F240023D412 /* geolocationWatchPosition.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26F52EB018288F0F0023D412 /* geolocationWatchPosition.html */; };
+		26F52EB318288F240023D412 /* geolocationWatchPositionWithHighAccuracy.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 26F52EB118288F0F0023D412 /* geolocationWatchPositionWithHighAccuracy.html */; };
 		290A9BB71735DE8A00D71BBC /* CloseNewWindowInNavigationPolicyDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 290A9BB51735DE8A00D71BBC /* CloseNewWindowInNavigationPolicyDelegate.mm */; };
 		290A9BB91735F63800D71BBC /* OpenNewWindow.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 290A9BB81735F42300D71BBC /* OpenNewWindow.html */; };
 		290F4275172A221C00939FF0 /* custom-protocol-sync-xhr.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 290F4274172A1FDE00939FF0 /* custom-protocol-sync-xhr.html */; };
@@ -290,6 +295,10 @@
 				BC2D006412AA04CE00E732A3 /* file-with-anchor.html in Copy Resources */,
 				C5101C4F176B8D9200EE9B15 /* findRanges.html in Copy Resources */,
 				1A02C870125D4CFD00E3F4BD /* find.html in Copy Resources */,
+				26F52EB218288F240023D412 /* geolocationWatchPosition.html in Copy Resources */,
+				26F52EB318288F240023D412 /* geolocationWatchPositionWithHighAccuracy.html in Copy Resources */,
+				26F52EAF18288C230023D412 /* geolocationGetCurrentPositionWithHighAccuracy.html in Copy Resources */,
+				26F52EAD1828827B0023D412 /* geolocationGetCurrentPosition.html in Copy Resources */,
 				9B4F8FA7159D52DD002D9F94 /* HTMLCollectionNamedItem.html in Copy Resources */,
 				9B26FCCA159D16DE00CC3765 /* HTMLFormCollectionNamedItem.html in Copy Resources */,
 				CE14F1A4181873B0001C2705 /* WillPerformClientRedirectToURLCrash.html in Copy Resources */,
@@ -355,6 +364,11 @@
 		26DF5A6115A2A22B003689C2 /* CancelLoadFromResourceLoadDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CancelLoadFromResourceLoadDelegate.html; sourceTree = "<group>"; };
 		26F1B44215CA434F00D1E4BF /* AtomicString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AtomicString.cpp; sourceTree = "<group>"; };
 		26F1B44315CA434F00D1E4BF /* StringImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringImpl.cpp; sourceTree = "<group>"; };
+		26F52EAA182872600023D412 /* Geolocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Geolocation.cpp; sourceTree = "<group>"; };
+		26F52EAC1828820E0023D412 /* geolocationGetCurrentPosition.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = geolocationGetCurrentPosition.html; sourceTree = "<group>"; };
+		26F52EAE18288C040023D412 /* geolocationGetCurrentPositionWithHighAccuracy.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = geolocationGetCurrentPositionWithHighAccuracy.html; sourceTree = "<group>"; };
+		26F52EB018288F0F0023D412 /* geolocationWatchPosition.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = geolocationWatchPosition.html; sourceTree = "<group>"; };
+		26F52EB118288F0F0023D412 /* geolocationWatchPositionWithHighAccuracy.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = geolocationWatchPositionWithHighAccuracy.html; sourceTree = "<group>"; };
 		290A9BB51735DE8A00D71BBC /* CloseNewWindowInNavigationPolicyDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CloseNewWindowInNavigationPolicyDelegate.mm; sourceTree = "<group>"; };
 		290A9BB81735F42300D71BBC /* OpenNewWindow.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = OpenNewWindow.html; sourceTree = "<group>"; };
 		290F4274172A1FDE00939FF0 /* custom-protocol-sync-xhr.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "custom-protocol-sync-xhr.html"; sourceTree = "<group>"; };
@@ -750,6 +764,7 @@
 				1ADBEFAD130C689C00D61D19 /* ForceRepaint.cpp */,
 				BCBD370F125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp */,
 				BCBD3760125ABCFE00D2C29F /* FrameMIMETypePNG.cpp */,
+				26F52EAA182872600023D412 /* Geolocation.cpp */,
 				F660AA0C15A5F061003A1243 /* GetInjectedBundleInitializationUserDataCallback.cpp */,
 				F660AA0F15A5F624003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp */,
 				4BFDFFA8131477770061F24B /* HitTestResultNodeHandle.cpp */,
@@ -861,6 +876,10 @@
 				BC2D004A12A9FEB300E732A3 /* file-with-anchor.html */,
 				1A02C84B125D4A5E00E3F4BD /* find.html */,
 				C5101C4E176B8BB900EE9B15 /* findRanges.html */,
+				26F52EAC1828820E0023D412 /* geolocationGetCurrentPosition.html */,
+				26F52EAE18288C040023D412 /* geolocationGetCurrentPositionWithHighAccuracy.html */,
+				26F52EB018288F0F0023D412 /* geolocationWatchPosition.html */,
+				26F52EB118288F0F0023D412 /* geolocationWatchPositionWithHighAccuracy.html */,
 				BCBD372E125ABBE600D2C29F /* icon.png */,
 				378E647816326FDF00B6C676 /* link-with-title.html */,
 				9361002814DC957B0061379D /* lots-of-iframes.html */,
@@ -1200,6 +1219,7 @@
 				BC90977A125571AB00083756 /* PageLoadBasic.cpp in Sources */,
 				BC2D004912A9FDFA00E732A3 /* PageLoadDidChangeLocationWithinPageForFrame.cpp in Sources */,
 				9331407C17B4419000F083B1 /* DidNotHandleKeyDown.cpp in Sources */,
+				26F52EAB182872600023D412 /* Geolocation.cpp in Sources */,
 				A51B650916ADF9B1007AA5D9 /* PageVisibilityState.cpp in Sources */,
 				A57A34F016AF677200C2501F /* PageVisibilityStateWithWindowChanges.mm in Sources */,
 				52E5CE4614D21E9D003B2BD8 /* ParentFrame.cpp in Sources */,

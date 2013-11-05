@@ -94,10 +94,12 @@ void WebGeolocationManagerProxy::providerDidFailToDeterminePosition(const String
 
 void WebGeolocationManagerProxy::startUpdating(CoreIPC::Connection* connection)
 {
-    bool wasUpdating = !m_updateRequesters.isEmpty();
+    bool wasUpdating = isUpdating();
     m_updateRequesters.add(connection->client());
-    if (!wasUpdating)
+    if (!wasUpdating) {
+        m_provider.setEnableHighAccuracy(this, isHighAccuracyEnabled());
         m_provider.startUpdating(this);
+    }
 }
 
 void WebGeolocationManagerProxy::stopUpdating(CoreIPC::Connection* connection)
@@ -107,10 +109,34 @@ void WebGeolocationManagerProxy::stopUpdating(CoreIPC::Connection* connection)
 
 void WebGeolocationManagerProxy::removeRequester(const CoreIPC::Connection::Client* client)
 {
-    bool wasUpdating = !m_updateRequesters.isEmpty();
+    bool wasUpdating = isUpdating();
+    ASSERT(wasUpdating);
+    bool highAccuracyWasEnabled = isHighAccuracyEnabled();
+
+    m_highAccuracyRequesters.remove(client);
     m_updateRequesters.remove(client);
-    if (wasUpdating && m_updateRequesters.isEmpty())
+
+    if (wasUpdating && !isUpdating())
         m_provider.stopUpdating(this);
+    else {
+        bool highAccuracyShouldBeEnabled = isHighAccuracyEnabled();
+        if (highAccuracyShouldBeEnabled != highAccuracyWasEnabled)
+            m_provider.setEnableHighAccuracy(this, highAccuracyShouldBeEnabled);
+    }
+}
+
+void WebGeolocationManagerProxy::setEnableHighAccuracy(CoreIPC::Connection* connection, bool enabled)
+{
+    bool highAccuracyWasEnabled = isHighAccuracyEnabled();
+
+    if (enabled)
+        m_highAccuracyRequesters.add(connection->client());
+    else
+        m_highAccuracyRequesters.remove(connection->client());
+
+    bool highAccuracyShouldBeEnabled = isHighAccuracyEnabled();
+    if (isUpdating() && highAccuracyWasEnabled != highAccuracyShouldBeEnabled)
+        m_provider.setEnableHighAccuracy(this, highAccuracyShouldBeEnabled);
 }
 
 } // namespace WebKit

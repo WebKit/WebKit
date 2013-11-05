@@ -51,26 +51,44 @@ WebGeolocationManager::WebGeolocationManager(WebProcess* process)
     m_process->addMessageReceiver(Messages::WebGeolocationManager::messageReceiverName(), this);
 }
 
-WebGeolocationManager::~WebGeolocationManager()
-{
-}
-
 void WebGeolocationManager::registerWebPage(WebPage* page)
 {
-    bool wasEmpty = m_pageSet.isEmpty();
+    bool wasUpdating = isUpdating();
 
     m_pageSet.add(page);
-    
-    if (wasEmpty)
+
+    if (!wasUpdating)
         m_process->parentProcessConnection()->send(Messages::WebGeolocationManagerProxy::StartUpdating(), 0);
 }
 
 void WebGeolocationManager::unregisterWebPage(WebPage* page)
 {
-    m_pageSet.remove(page);
+    bool highAccuracyWasEnabled = isHighAccuracyEnabled();
 
-    if (m_pageSet.isEmpty())
+    m_pageSet.remove(page);
+    m_highAccuracyPageSet.remove(page);
+
+    if (!isUpdating())
         m_process->parentProcessConnection()->send(Messages::WebGeolocationManagerProxy::StopUpdating(), 0);
+    else {
+        bool highAccuracyShouldBeEnabled = isHighAccuracyEnabled();
+        if (highAccuracyWasEnabled != highAccuracyShouldBeEnabled)
+            m_process->parentProcessConnection()->send(Messages::WebGeolocationManagerProxy::SetEnableHighAccuracy(highAccuracyShouldBeEnabled), 0);
+    }
+}
+
+void WebGeolocationManager::setEnableHighAccuracyForPage(WebPage* page, bool enabled)
+{
+    bool highAccuracyWasEnabled = isHighAccuracyEnabled();
+
+    if (enabled)
+        m_highAccuracyPageSet.add(page);
+    else
+        m_highAccuracyPageSet.remove(page);
+
+    bool highAccuracyShouldBeEnabled = isHighAccuracyEnabled();
+    if (highAccuracyWasEnabled != highAccuracyShouldBeEnabled)
+        m_process->parentProcessConnection()->send(Messages::WebGeolocationManagerProxy::SetEnableHighAccuracy(highAccuracyShouldBeEnabled), 0);
 }
 
 void WebGeolocationManager::didChangePosition(const WebGeolocationPosition::Data& data)

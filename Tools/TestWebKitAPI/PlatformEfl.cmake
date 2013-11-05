@@ -71,6 +71,7 @@ set(test_webkit2_api_BINARIES
     ForceRepaint
     FrameMIMETypeHTML
     FrameMIMETypePNG
+    Geolocation
     GetInjectedBundleInitializationUserDataCallback
     HitTestResultNodeHandle
     InjectedBundleBasic

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,16 +35,21 @@ extern "C" {
 // Provider.
 typedef void (*WKGeolocationProviderStartUpdatingCallback)(WKGeolocationManagerRef geolocationManager, const void* clientInfo);
 typedef void (*WKGeolocationProviderStopUpdatingCallback)(WKGeolocationManagerRef geolocationManager, const void* clientInfo);
+typedef void (*WKGeolocationProviderSetEnableHighAccuracyCallback)(WKGeolocationManagerRef geolocationManager, bool enabled, const void* clientInfo);
 
 struct WKGeolocationProvider {
     int                                                                 version;
     const void *                                                        clientInfo;
     WKGeolocationProviderStartUpdatingCallback                          startUpdating;
     WKGeolocationProviderStopUpdatingCallback                           stopUpdating;
+
+    // Version 1.
+    WKGeolocationProviderSetEnableHighAccuracyCallback                  setEnableHighAccuracy;
+
 };
 typedef struct WKGeolocationProvider WKGeolocationProvider;
 
-enum { kWKGeolocationProviderCurrentVersion = 0 };
+enum { kWKGeolocationProviderCurrentVersion = 1 };
 
 WK_EXPORT WKTypeID WKGeolocationManagerGetTypeID();
 

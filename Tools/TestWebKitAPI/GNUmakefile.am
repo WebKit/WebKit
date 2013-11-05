@@ -262,6 +262,7 @@ Programs_TestWebKitAPI_TestWebKit2_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WebKit2/ForceRepaint.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/FrameMIMETypeHTML.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/FrameMIMETypePNG.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/Geolocation.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/GetInjectedBundleInitializationUserDataCallback.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/HitTestResultNodeHandle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/InjectedBundleBasic.cpp \

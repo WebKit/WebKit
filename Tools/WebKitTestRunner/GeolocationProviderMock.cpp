@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #include "GeolocationProviderMock.h"
 
 #include <WebKit2/WKGeolocationManager.h>
+#include <string.h>
 #include <wtf/Assertions.h>
 #include <wtf/CurrentTime.h>
 
@@ -50,11 +51,12 @@ GeolocationProviderMock::GeolocationProviderMock(WKContextRef context)
 {
     m_geolocationManager = WKContextGetGeolocationManager(context);
 
-    WKGeolocationProvider providerCallback = {
-        kWKGeolocationProviderCurrentVersion,
-        this,
-        startUpdatingCallback,
-        stopUpdatingCallback };
+    WKGeolocationProvider providerCallback;
+    memset(&providerCallback, 0, sizeof(WKGeolocationProvider));
+    providerCallback.version = 0;
+    providerCallback.clientInfo = this;
+    providerCallback.startUpdating = startUpdatingCallback;
+    providerCallback.stopUpdating = stopUpdatingCallback;
     WKGeolocationManagerSetProvider(m_geolocationManager, &providerCallback);
 }
 

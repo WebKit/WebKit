@@ -1,3 +1,42 @@
+2013-11-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        [WK2] Add a WebKit2 API for Geolocation's highAccuracy
+        https://bugs.webkit.org/show_bug.cgi?id=123786
+
+        Reviewed by Darin Adler.
+
+        Add basic testing for the Geolocation API (start, stop and change accuracy).
+
+        * TestWebKitAPI/GNUmakefile.am:
+        * TestWebKitAPI/PlatformEfl.cmake:
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/Geolocation.cpp: Added.
+        (TestWebKitAPI::operator<<):
+        (TestWebKitAPI::GeolocationStateTracker::~GeolocationStateTracker):
+        (TestWebKitAPI::GeolocationStateTracker::eventsChanged):
+        (TestWebKitAPI::GeolocationStateTracker::startUpdatingCallback):
+        (TestWebKitAPI::GeolocationStateTracker::stopUpdatingCallback):
+        (TestWebKitAPI::GeolocationStateTracker::setEnableHighAccuracyCallback):
+        (TestWebKitAPI::decidePolicyForGeolocationPermissionRequestCallBack):
+        (TestWebKitAPI::setupGeolocationProvider):
+        (TestWebKitAPI::setupView):
+        (TestWebKitAPI::GeolocationBasicStateTracker::GeolocationBasicStateTracker):
+        (TestWebKitAPI::GeolocationBasicStateTracker::eventsChanged):
+        (TestWebKitAPI::GeolocationBasicWithHighAccuracyStateTracker::GeolocationBasicWithHighAccuracyStateTracker):
+        (TestWebKitAPI::GeolocationBasicWithHighAccuracyStateTracker::eventsChanged):
+        (TestWebKitAPI::GeolocationTransitionToHighAccuracyStateTracker::GeolocationTransitionToHighAccuracyStateTracker):
+        (TestWebKitAPI::GeolocationTransitionToHighAccuracyStateTracker::eventsChanged):
+        (TestWebKitAPI::GeolocationTransitionToLowAccuracyStateTracker::GeolocationTransitionToLowAccuracyStateTracker):
+        (TestWebKitAPI::GeolocationTransitionToLowAccuracyStateTracker::eventsChanged):
+        (TestWebKitAPI::didFinishLoadForFrame):
+        * TestWebKitAPI/Tests/WebKit2/geolocationGetCurrentPosition.html: Added.
+        * TestWebKitAPI/Tests/WebKit2/geolocationGetCurrentPositionWithHighAccuracy.html: Added.
+        * TestWebKitAPI/Tests/WebKit2/geolocationWatchPosition.html: Added.
+        * TestWebKitAPI/Tests/WebKit2/geolocationWatchPositionWithHighAccuracy.html: Added.
+        * WebKitTestRunner/GeolocationProviderMock.cpp:
+        (WTR::GeolocationProviderMock::GeolocationProviderMock):
+
 2013-11-05  Anders Carlsson  <andersca@apple.com>
 
         Implement more NSCoder methods
