@@ -34,7 +34,11 @@
 
 #if WK_API_ENABLED
 
+const char* const objectStreamKey = "$objectStream";
+
 using namespace WebKit;
+
+static PassRefPtr<ImmutableDictionary> createEncodedObject(WKRemoteObjectEncoder *, id);
 
 @interface NSMethodSignature (Details)
 - (NSString *)_typeString;
@@ -42,6 +46,8 @@ using namespace WebKit;
 
 @implementation WKRemoteObjectEncoder {
     RefPtr<MutableDictionary> _rootDictionary;
+    MutableArray* _objectStream;
+
     MutableDictionary* _currentDictionary;
 }
 
@@ -70,25 +76,114 @@ using namespace WebKit;
     return _rootDictionary.get();
 }
 
-- (BOOL)allowsKeyedCoding
+static void ensureObjectStream(WKRemoteObjectEncoder *encoder)
 {
-    return YES;
+    if (encoder->_objectStream)
+        return;
+
+    RefPtr<MutableArray> objectStream = MutableArray::create();
+    encoder->_objectStream = objectStream.get();
+
+    encoder->_rootDictionary->set(objectStreamKey, objectStream.release());
 }
 
-- (void)encodeObject:(id)object forKey:(NSString *)key
+static void encodeToObjectStream(WKRemoteObjectEncoder *encoder, double value)
+{
+    ensureObjectStream(encoder);
+
+    encoder->_objectStream->append(WebDouble::create(value));
+}
+
+static void encodeToObjectStream(WKRemoteObjectEncoder *encoder, int value)
+{
+    ensureObjectStream(encoder);
+
+    encoder->_objectStream->append(WebUInt64::create(value));
+}
+
+static void encodeToObjectStream(WKRemoteObjectEncoder *encoder, id value)
+{
+    ensureObjectStream(encoder);
+
+    encoder->_objectStream->append(createEncodedObject(encoder, value));
+}
+
+static void encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invocation)
+{
+    NSMethodSignature *methodSignature = invocation.methodSignature;
+    [encoder encodeObject:methodSignature._typeString forKey:@"typeString"];
+    [encoder encodeObject:NSStringFromSelector(invocation.selector) forKey:@"selector"];
+
+    NSUInteger argumentCount = methodSignature.numberOfArguments;
+
+    // The invocation should always have have self and _cmd arguments.
+    ASSERT(argumentCount >= 2);
+
+    // We ignore self and _cmd.
+    for (NSUInteger i = 2; i < argumentCount; ++i) {
+        const char* type = [methodSignature getArgumentTypeAtIndex:i];
+
+        switch (*type) {
+        // double
+        case 'd': {
+            double value;
+            [invocation getArgument:&value atIndex:i];
+
+            encodeToObjectStream(encoder, value);
+            break;
+        }
+
+        // int
+        case 'i': {
+            int value;
+            [invocation getArgument:&value atIndex:i];
+
+            encodeToObjectStream(encoder, value);
+            break;
+        }
+
+        // Objective-C object
+        case '@': {
+            id value;
+            [invocation getArgument:&value atIndex:i];
+
+            encodeToObjectStream(encoder, value);
+            break;
+        }
+
+        default:
+            [NSException raise:NSInvalidArgumentException format:@"Unsupported invocation argument type '%s'", type];
+        }
+    }
+}
+
+static void encodeObject(WKRemoteObjectEncoder *encoder, id object)
 {
     if ([object isKindOfClass:[NSInvocation class]]) {
         // We have to special case NSInvocation since we don't want to encode the target.
-        [self _encodeInvocation:object forKey:key];
+        encodeInvocation(encoder, object);
         return;
     }
 
     if (![object conformsToProtocol:@protocol(NSSecureCoding)])
         [NSException raise:NSInvalidArgumentException format:@"%@ does not conform to NSSecureCoding", object];
 
-    [self _encodeObjectForKey:key usingBlock:^{
-        [object encodeWithCoder:self];
-    }];
+    [object encodeWithCoder:encoder];
+}
+
+static PassRefPtr<ImmutableDictionary> createEncodedObject(WKRemoteObjectEncoder *encoder, id object)
+{
+    RefPtr<MutableDictionary> dictionary = MutableDictionary::create();
+    TemporaryChange<MutableDictionary*> dictionaryChange(encoder->_currentDictionary, dictionary.get());
+
+    encodeObject(encoder, object);
+
+    return dictionary;
+}
+
+- (BOOL)allowsKeyedCoding
+{
+    return YES;
 }
 
 static NSString *escapeKey(NSString *key)
@@ -99,81 +194,14 @@ static NSString *escapeKey(NSString *key)
     return key;
 }
 
-- (void)_encodeInvocation:(NSInvocation *)invocation forKey:(NSString *)key
+- (void)encodeObject:(id)object forKey:(NSString *)key
 {
-    [self _encodeObjectForKey:key usingBlock:^{
-        NSMethodSignature *methodSignature = invocation.methodSignature;
-        [self encodeObject:methodSignature._typeString forKey:@"typeString"];
-        [self encodeObject:NSStringFromSelector(invocation.selector) forKey:@"selector"];
-
-        NSUInteger argumentCount = methodSignature.numberOfArguments;
-
-        // The invocation should always have have self and _cmd arguments.
-        ASSERT(argumentCount >= 2);
-
-        RefPtr<MutableArray> arguments = MutableArray::create();
-
-        // We ignore self and _cmd.
-        for (NSUInteger i = 2; i < argumentCount; ++i) {
-            const char* type = [methodSignature getArgumentTypeAtIndex:i];
-
-            switch (*type) {
-            // double
-            case 'i': {
-                int value;
-                [invocation getArgument:&value atIndex:i];
-
-                arguments->append(WebUInt64::create(value));
-                break;
-            }
-
-            // int
-            case 'd': {
-                double value;
-                [invocation getArgument:&value atIndex:i];
-
-                arguments->append(WebDouble::create(value));
-                break;
-            }
-
-            // Objective-C object
-            case '@': {
-                id value;
-                [invocation getArgument:&value atIndex:i];
-
-                arguments->append([self _encodedObjectUsingBlock:^{
-                    [value encodeWithCoder:self];
-                }]);
-                break;
-            }
-
-            default:
-                [NSException raise:NSInvalidArgumentException format:@"Unsupported invocation argument type '%s'", type];
-            }
-        }
-
-        _currentDictionary->set("arguments", arguments.release());
-    }];
+    _currentDictionary->set(escapeKey(key), createEncodedObject(self, object));
 }
 
 - (void)encodeBytes:(const uint8_t *)bytes length:(NSUInteger)length forKey:(NSString *)key
 {
     _currentDictionary->set(escapeKey(key), WebData::create(bytes, length));
-}
-
-- (RefPtr<MutableDictionary>)_encodedObjectUsingBlock:(void (^)())block
-{
-    RefPtr<MutableDictionary> dictionary = MutableDictionary::create();
-
-    TemporaryChange<MutableDictionary*> dictionaryChange(_currentDictionary, dictionary.get());
-    block();
-
-    return dictionary;
-}
-
-- (void)_encodeObjectForKey:(NSString *)key usingBlock:(void (^)())block
-{
-    _currentDictionary->set(escapeKey(key), [self _encodedObjectUsingBlock:block]);
 }
 
 @end

@@ -1,3 +1,33 @@
+2013-11-05  Anders Carlsson  <andersca@apple.com>
+
+        Clean up the WKRemoteObjectEncoder code
+        https://bugs.webkit.org/show_bug.cgi?id=123811
+
+        Reviewed by Dan Bernstein.
+
+        Add a new object stream array to be used for the non-keyed encoding values
+        and free functions for encoding values to the object stream. Simplify object encoding
+        by moving the dictionary creation out into a separate function and ditching the block based methods.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (ensureObjectStream):
+        Add helper function to create an object stream.
+
+        (encodeToObjectStream):
+        Add overloads for encoding values into the object streams.
+
+        (encodeInvocation):
+        Add helper function for encoding an NSInvocation.
+
+        (encodeObject):
+        Call encodeInvocation if needed, otherwise just use encodeWithCoder:.
+
+        (createEncodedObject):
+        Helper function that sets up a dictionary, encodes the object into the dictionary and then returns the dictionary.
+
+        (-[WKRemoteObjectEncoder encodeObject:forKey:]):
+        Call createEncodedObject.    
+
 2013-11-04  Brady Eidson  <beidson@apple.com>
 
         IDB: Split backend Cursors and Transactions into their own files
