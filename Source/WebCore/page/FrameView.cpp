@@ -245,11 +245,6 @@ FrameView::~FrameView()
     ASSERT(m_scheduledEvents.isEmpty());
 
     ASSERT(frame().view() != this || !frame().contentRenderer());
-
-    // FIXME: How could this ever happen when RenderWidget retains the Widget!?
-    RenderWidget* renderer = frame().ownerRenderer();
-    if (renderer && renderer->widget() == this)
-        renderer->setWidget(0);
 }
 
 void FrameView::reset()

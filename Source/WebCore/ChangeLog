@@ -1,3 +1,14 @@
+2013-11-04  Andreas Kling  <akling@apple.com>
+
+        FrameView destructor is worried about being retained by a renderer.
+        <https://webkit.org/b/123763>
+
+        There's no way we can be in ~FrameView() while also being owned by
+        a RenderWidget. Remove some overly paranoid code that was making sure
+        the renderer didn't have a reference on us.
+
+        Reviewed by Anders Carlsson.
+
 2013-11-04  Eric Carlson  <eric.carlson@apple.com>
 
         REGRESSION(r158311): media/media-fragments/TC0054.html and TC0061.html hit assertions
