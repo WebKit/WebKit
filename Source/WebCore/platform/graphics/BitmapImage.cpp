@@ -182,12 +182,7 @@ void BitmapImage::didDecodeProperties() const
 
 void BitmapImage::updateSize(ImageOrientationDescription description) const
 {
-    if (!m_sizeAvailable || (m_haveSize
-#if ENABLE(CSS_IMAGE_ORIENTATION)
-        && description.imageOrientation() == static_cast<ImageOrientationEnum>(m_imageOrientation)
-        && description.respectImageOrientation() == static_cast<RespectImageOrientationEnum>(m_shouldRespectImageOrientation)
-#endif
-        ))
+    if (!m_sizeAvailable || m_haveSize)
         return;
 
     m_size = m_source.size(description);

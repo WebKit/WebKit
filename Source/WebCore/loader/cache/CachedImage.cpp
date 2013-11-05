@@ -257,18 +257,14 @@ LayoutSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float
     if (!m_image)
         return IntSize();
 
-    LayoutSize imageSize;
+    LayoutSize imageSize(m_image->size());
 
 #if ENABLE(CSS_IMAGE_ORIENTATION)
-    if (!renderer)
-        return IntSize();
-
-    ImageOrientationDescription orientationDescription(renderer->shouldRespectImageOrientation());
-    orientationDescription.setImageOrientationEnum(renderer->style().imageOrientation());
-
-    if (m_image->isBitmapImage()
-        && (orientationDescription.respectImageOrientation() == RespectImageOrientation && orientationDescription.imageOrientation() != DefaultImageOrientation))
-        imageSize = static_cast<BitmapImage*>(m_image.get())->sizeRespectingOrientation(orientationDescription);
+    if (renderer && m_image->isBitmapImage()) {
+        ImageOrientationDescription orientationDescription(renderer->shouldRespectImageOrientation(), renderer->style().imageOrientation());
+        if (orientationDescription.respectImageOrientation() == RespectImageOrientation)
+            imageSize = static_cast<BitmapImage*>(m_image.get())->sizeRespectingOrientation(orientationDescription);
+    }
 #else
     if (m_image->isBitmapImage() && (renderer && renderer->shouldRespectImageOrientation() == RespectImageOrientation))
         imageSize = static_cast<BitmapImage*>(m_image.get())->sizeRespectingOrientation();
@@ -279,8 +275,6 @@ LayoutSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float
         imageSize = m_svgImageCache->imageSizeForRenderer(renderer);
     }
 #endif
-    else
-        imageSize = m_image->size();
 
     if (multiplier == 1.0f)
         return imageSize;

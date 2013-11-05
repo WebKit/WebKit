@@ -1,3 +1,21 @@
+2013-11-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CSS] Enable css-image-orientation on EFL and GTK ports.
+        https://bugs.webkit.org/show_bug.cgi?id=123698
+
+        Reviewed by Beth Dakin.
+
+        r157909 added wrong early return for css-image-orientation. It causes about 20 regressions in layout test
+        when enabling css-image-orientation. This fixes those wrong implementation as well as enables it on EFL
+        and GTK ports by default.
+
+        Test: fast/css/image-orientation/image-orientation.html
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::imageSizeForRenderer):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::updateSize):
+
 2013-11-05  Andreas Kling  <akling@apple.com>
 
         RenderEmbeddedObject shouldn't know about fallback content.
