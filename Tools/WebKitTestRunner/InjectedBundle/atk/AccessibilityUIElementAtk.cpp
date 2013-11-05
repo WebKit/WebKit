@@ -1468,6 +1468,18 @@ PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForIndex(i
     // FIXME: implement
     return 0;
 }
+    
+PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarker()
+{
+    // FIXME: implement
+    return 0;    
+}
+
+PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarker()
+{
+    // FIXME: implement
+    return 0;
+}
 
 void AccessibilityUIElement::scrollToMakeVisible()
 {

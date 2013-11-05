@@ -1,3 +1,18 @@
+2013-11-04  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Mail attachments at the start of an email are not output by VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=123697
+
+        Reviewed by Ryosuke Niwa.
+
+        Add two flavors of this. One where the replaced element has rendered children and one where it does not,
+        which go down two different code paths.
+
+        * platform/mac/accessibility/object-replacement-with-no-rendered-children-at-node-start-expected.txt: Added.
+        * platform/mac/accessibility/object-replacement-with-no-rendered-children-at-node-start.html: Added.
+        * platform/mac/accessibility/object-replacement-with-rendered-children-at-node-start-expected.txt: Added.
+        * platform/mac/accessibility/object-replacement-with-rendered-children-at-node-start.html: Added.
+
 2013-11-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r158586): plugins/refcount-leaks.html fails

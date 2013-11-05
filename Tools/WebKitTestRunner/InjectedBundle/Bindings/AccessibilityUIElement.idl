@@ -169,6 +169,8 @@ interface AccessibilityUIElement {
     int indexForTextMarker(AccessibilityTextMarker marker);
     boolean isTextMarkerValid(AccessibilityTextMarker marker);
     AccessibilityTextMarker textMarkerForIndex(int textIndex);
+    readonly attribute AccessibilityTextMarker startTextMarker;
+    readonly attribute AccessibilityTextMarker endTextMarker;
 
     // Returns an ordered list of supported actions for an element.
     readonly attribute DOMString supportedActions;

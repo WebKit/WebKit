@@ -177,6 +177,8 @@ PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForBo
 PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForPoint(int, int) { return 0; }
 PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousTextMarker(AccessibilityTextMarker*) { return 0; }
 PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextTextMarker(AccessibilityTextMarker*) { return 0; }
+PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarker() { return 0; }
+PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarker() { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForTextMarkerRange(AccessibilityTextMarkerRange*) { return 0; }
 bool AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*) { return false; }
 int AccessibilityUIElement::indexForTextMarker(AccessibilityTextMarker*) { return -1; }

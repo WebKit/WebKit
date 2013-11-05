@@ -229,6 +229,9 @@ public:
     AccessibilityTextMarker previousTextMarker(AccessibilityTextMarker*);
     AccessibilityTextMarker nextTextMarker(AccessibilityTextMarker*);
     AccessibilityUIElement accessibilityElementForTextMarker(AccessibilityTextMarker*);
+    AccessibilityTextMarker startTextMarker();
+    AccessibilityTextMarker endTextMarker();
+    
     JSStringRef stringForTextMarkerRange(AccessibilityTextMarkerRange*);
     int textMarkerRangeLength(AccessibilityTextMarkerRange*);
     bool attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*);

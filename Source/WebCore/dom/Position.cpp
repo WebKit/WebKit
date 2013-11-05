@@ -937,6 +937,9 @@ bool Position::isCandidate() const
     if (m_anchorNode->hasTagName(htmlTag))
         return false;
         
+    if (isRendererReplacedElement(renderer))
+        return !nodeIsUserSelectNone(deprecatedNode()) && atFirstEditingPositionForNode();
+
     if (renderer->isRenderBlockFlow()) {
         RenderBlock& block = toRenderBlock(*renderer);
         if (block.logicalHeight() || m_anchorNode->hasTagName(bodyTag)) {

@@ -29,6 +29,7 @@
 #include "HTMLNames.h"
 #include "RenderBlock.h"
 #include "RenderText.h"
+#include "TextIterator.h"
 #include "htmlediting.h"
 
 namespace WebCore {

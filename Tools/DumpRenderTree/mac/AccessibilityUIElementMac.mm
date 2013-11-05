@@ -1563,6 +1563,26 @@ AccessibilityUIElement AccessibilityUIElement::accessibilityElementForTextMarker
     return 0;  
 }
 
+AccessibilityTextMarker AccessibilityUIElement::startTextMarker()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id textMarker = [m_element accessibilityAttributeValue:@"AXStartTextMarker"];
+    return AccessibilityTextMarker(textMarker);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
+
+AccessibilityTextMarker AccessibilityUIElement::endTextMarker()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id textMarker = [m_element accessibilityAttributeValue:@"AXEndTextMarker"];
+    return AccessibilityTextMarker(textMarker);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
+
 #endif // SUPPORTS_AX_TEXTMARKERS
 
 JSStringRef AccessibilityUIElement::supportedActions()
