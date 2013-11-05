@@ -149,7 +149,7 @@ protected:
         if (beginTime() <= 0)
             setBeginTime(t);
     }
-    
+
 private:
     AnimationType m_type;
     
