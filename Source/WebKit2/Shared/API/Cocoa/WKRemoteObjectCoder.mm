@@ -91,6 +91,14 @@ using namespace WebKit;
     }];
 }
 
+static NSString *escapeKey(NSString *key)
+{
+    if (key.length && [key characterAtIndex:0] == '$')
+        return [@"$" stringByAppendingString:key];
+
+    return key;
+}
+
 - (void)_encodeInvocation:(NSInvocation *)invocation forKey:(NSString *)key
 {
     [self _encodeObjectForKey:key usingBlock:^{
@@ -150,7 +158,7 @@ using namespace WebKit;
 
 - (void)encodeBytes:(const uint8_t *)bytes length:(NSUInteger)length forKey:(NSString *)key
 {
-    _currentDictionary->set(key, WebData::create(bytes, length));
+    _currentDictionary->set(escapeKey(key), WebData::create(bytes, length));
 }
 
 - (RefPtr<MutableDictionary>)_encodedObjectUsingBlock:(void (^)())block
@@ -165,7 +173,7 @@ using namespace WebKit;
 
 - (void)_encodeObjectForKey:(NSString *)key usingBlock:(void (^)())block
 {
-    _currentDictionary->set(key, [self _encodedObjectUsingBlock:block]);
+    _currentDictionary->set(escapeKey(key), [self _encodedObjectUsingBlock:block]);
 }
 
 @end
