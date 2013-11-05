@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/helper.js"></script>
+<style>
+    body { font-family: monospace }
+    .content { -webkit-flow-into: flow }
+    .region {  -webkit-flow-from: flow}
+    #region, #region2, #region3 { width: 250px; height: 50px; }
+</style>
+</head>
+<body>
+<div id="article" class="content">
+<p>Content inside article</p>
+</div>
+<script>
+    description("Test for 90608: [CSSRegions]Implement NamedFlow::firstEmptyRegionIndex attribute.");
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    // Named flow does not have any regions yet
+    var namedFlow = getFlowByName("flow");
+
+    // FirstEmptyRegionIndex should be -1 for an empty named flow
+    shouldBe("namedFlow.firstEmptyRegionIndex", "-1");
+
+    // Add a region to take the content, firstEmptyRegionIndex should still be -1.
+    var region = document.createElement("div");
+    document.body.appendChild(region);
+    region.id = "region";
+    region.className = "region";
+
+    // FirstEmptyRegions should be -1, since there are no empty regions
+    shouldBe("namedFlow.firstEmptyRegionIndex", "-1");
+
+    // Add another region, firstEmptyRegionIndex should be 1 since content only flows within the first region.
+    var region2 = document.createElement("div");
+    document.body.appendChild(region2);
+    region2.id = "region2";
+    region2.className = "region";
+
+    // FirstEmptyRegionIndex should be 1
+    shouldBe("namedFlow.firstEmptyRegionIndex", "1");
+
+    // Add content until some is flowed inside second region
+    while (region2.webkitRegionOverset == "empty") {
+        var p = document.createElement("p");
+        p.appendChild(document.createTextNode("Content inside article"));
+        document.getElementById("article").appendChild(p);
+    }
+    // Add the third region, firstEmptyRegionIndex should be 2.
+    var region3 = document.createElement("div");
+    document.body.appendChild(region3);
+    region3.id = "region3";
+    region3.className = "region";
+
+    // FirstEmptyRegionIndex should be 2 since the content fits in the first two regions.
+    shouldBe("namedFlow.firstEmptyRegionIndex", "2");
+
+    // Remove the first region from the flow, firstEmptyRegionIndex should be -1.
+    region.className = "";
+
+    // Overset should be true since the content does not fit the regions
+    shouldBe("namedFlow.firstEmptyRegionIndex", "-1");
+
+    // Remove the content from the flow, firstEmptyRegionIndex should be 0.
+    document.getElementById("article").className = "";
+
+    // FirstEmptyRegionIndex should be 0, since there is no more content.
+    shouldBe("namedFlow.firstEmptyRegionIndex", "0");
+
+    // Remove all the regions from the flow
+    region2.className = region3.className = "";
+
+    // FirstEmptyRegionIndex should be -1, since there are no more regions in the named flow.
+    shouldBe("namedFlow.firstEmptyRegionIndex", "-1");
+
+    document.getElementById("article").style.display = "none";
+    region.style.display = "none";
+    region2.style.display = "none";
+    region3.style.display = "none";
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/helper.js"></script>
+<style>
+#article {
+    -webkit-flow-into: article;
+    border: 2px solid black;
+}
+#region_1, #region_2{
+    -webkit-flow-from: no_article;
+    overflow:hidden;
+    display:inline-block;
+    vertical-align:top;
+    margin:10px;
+}
+.block {
+   display:block;
+}
+#region_1, #region_2 { height:110px; width:200px; margin: 5px; border: 1px solid red;}
+</style>
+</head>
+<body>
+<div id="description" class="block"></div>
+<div id="article">
+    <div>
+        <div id="content" style="height: 200px; background-color: green;"></div>
+    </div>
+</div>
+
+<div id="region_1"></div>
+<div id="region_2"></div>
+
+<div id="console" class="block"></div>
+
+<script>
+    description("Tests regionOversetChange event")
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    
+    window.jsTestIsAsync = true;
+    function flowContent(flowName) {
+        var r = document.getElementById("region_1");
+        r.style.webkitFlowFrom = flowName;
+        r = document.getElementById("region_2");
+        r.style.webkitFlowFrom = flowName;
+    }
+
+    var eventCount = 0;
+    function finishTest() {
+        shouldBe("eventCount", "2");
+        finishJSTest();
+    }
+
+    function regionOversetChanged(event) {
+        shouldBeEqualToString("event.target.name", "article");
+        if (++eventCount > 1) {
+            // this should be reached after region_2 is removed from DOM
+           setTimeout("finishTest()", 200);
+           return;
+        }
+        
+        var r2 = document.getElementById("region_2");
+        debug("Removing region_2 from flow");
+        r2.style.webkitFlowFrom = "none"; // this will trigger a new round of events due to layout
+    }
+    
+    function startTest() {
+        var flow = getFlowByName("article");
+        flow.addEventListener("webkitregionoversetchange", regionOversetChanged);
+        
+        debug("Flow content");
+        flowContent("article");
+    }
+    window.addEventListener("load", startTest);
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

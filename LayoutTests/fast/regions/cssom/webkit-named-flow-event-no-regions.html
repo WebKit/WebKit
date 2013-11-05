@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/helper.js"></script>
+<style>
+#article {
+    -webkit-flow-into: article;
+    border: 2px solid black;
+}
+#region_1, #region_2{
+    -webkit-flow-from: no_article;
+    overflow:hidden;
+    display:inline-block;
+    vertical-align:top;
+    margin:10px;
+}
+.block {
+   display:block;
+}
+#region_1, #region_2 { height:110px; width:200px; margin: 5px;}
+</style>
+</head>
+<body>
+<div id="article">
+    <div>
+        <div id="content" style="height: 200px; background-color: green;"></div>
+    </div>
+</div>
+
+<div id="region_1"></div>
+<div id="container2">
+    <div id="region_2"></div>
+</div>
+
+<script>
+    description("Tests regionOversetChange being dispatched when the region chain is removed");
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    window.jsTestIsAsync = true;
+    function flowContent(flowName) {
+        var r = document.getElementById("region_1");
+        r.style.webkitFlowFrom = flowName;
+        r = document.getElementById("region_2");
+        r.style.webkitFlowFrom = flowName;
+    }
+
+    function finishTest() {
+        shouldBe("eventCount", "2");
+        finishJSTest();
+    }
+
+    var eventCount = 0;
+    function regionOversetChanged(event) {
+        shouldBeEqualToString("event.target.name", "article");
+        if (++eventCount > 1) {
+           event.target.removeEventListener("webkitregionoversetchange", regionOversetChanged);
+           finishTest();
+           return;
+        }
+
+        debug("Removing region 1");
+        var r = document.getElementById("region_1");
+        r.style.webkitFlowFrom = "no-article";
+        debug("Removing region 2");
+        r = document.getElementById("region_2");
+        r.style.webkitFlowFrom = "no-article";
+    }
+
+    function startTest() {
+        var flow = getFlowByName("article");
+        flow.addEventListener("webkitregionoversetchange", regionOversetChanged);
+
+        debug("Flow content");
+        flowContent("article");
+    }
+    window.addEventListener("load", startTest);
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

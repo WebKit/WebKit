@@ -1,3 +1,154 @@
+2013-11-05  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Move cssom related tests into fast/regions/cssom
+        https://bugs.webkit.org/show_bug.cgi?id=123705
+
+        Reviewed by Sam Weinig.
+
+        Move tests related to http://dev.w3.org/csswg/css-regions/#cssom_view_and_css_regions into their own folder and adjust paths for resources used in tests.
+        They test the same functionality: CSSRegions and CSSOM-view.
+
+        * fast/regions/cssom/element-region-overset-state-expected.txt: Renamed from LayoutTests/fast/regions/element-region-overset-state-expected.txt.
+        * fast/regions/cssom/element-region-overset-state-negative-letter-spacing-expected.txt: Renamed from LayoutTests/fast/regions/element-region-overset-state-negative-letter-spacing-expected.txt.
+        * fast/regions/cssom/element-region-overset-state-negative-letter-spacing.html: Renamed from LayoutTests/fast/regions/element-region-overset-state-negative-letter-spacing.html.
+        * fast/regions/cssom/element-region-overset-state-vertical-rl-expected.txt: Renamed from LayoutTests/fast/regions/element-region-overset-state-vertical-rl-expected.txt.
+        * fast/regions/cssom/element-region-overset-state-vertical-rl-negative-letter-spacing-expected.txt: Renamed from LayoutTests/fast/regions/element-region-overset-state-vertical-rl-negative-letter-spacing-expected.txt.
+        * fast/regions/cssom/element-region-overset-state-vertical-rl-negative-letter-spacing.html: Renamed from LayoutTests/fast/regions/element-region-overset-state-vertical-rl-negative-letter-spacing.html.
+        * fast/regions/cssom/element-region-overset-state-vertical-rl.html: Renamed from LayoutTests/fast/regions/element-region-overset-state-vertical-rl.html.
+        * fast/regions/cssom/element-region-overset-state.html: Renamed from LayoutTests/fast/regions/element-region-overset-state.html.
+        * fast/regions/cssom/flowed-content-bounding-client-rect-expected.txt: Renamed from LayoutTests/fast/regions/flowed-content-bounding-client-rect-expected.txt.
+        * fast/regions/cssom/flowed-content-bounding-client-rect-horizontal-bt-expected.txt: Renamed from LayoutTests/fast/regions/flowed-content-bounding-client-rect-horizontal-bt-expected.txt.
+        * fast/regions/cssom/flowed-content-bounding-client-rect-horizontal-bt.html: Renamed from LayoutTests/fast/regions/flowed-content-bounding-client-rect-horizontal-bt.html.
+        * fast/regions/cssom/flowed-content-bounding-client-rect-vertical-expected.txt: Renamed from LayoutTests/fast/regions/flowed-content-bounding-client-rect-vertical-expected.txt.
+        * fast/regions/cssom/flowed-content-bounding-client-rect-vertical-rl-expected.txt: Renamed from LayoutTests/fast/regions/flowed-content-bounding-client-rect-vertical-rl-expected.txt.
+        * fast/regions/cssom/flowed-content-bounding-client-rect-vertical-rl.html: Renamed from LayoutTests/fast/regions/flowed-content-bounding-client-rect-vertical-rl.html.
+        * fast/regions/cssom/flowed-content-bounding-client-rect-vertical.html: Renamed from LayoutTests/fast/regions/flowed-content-bounding-client-rect-vertical.html.
+        * fast/regions/cssom/flowed-content-bounding-client-rect.html: Renamed from LayoutTests/fast/regions/flowed-content-bounding-client-rect.html.
+        * fast/regions/cssom/flowed-content-transform-bounding-client-rect-expected.txt: Renamed from LayoutTests/fast/regions/flowed-content-transform-bounding-client-rect-expected.txt.
+        * fast/regions/cssom/flowed-content-transform-bounding-client-rect.html: Renamed from LayoutTests/fast/regions/flowed-content-transform-bounding-client-rect.html.
+        * fast/regions/cssom/flowed-inline-content-bounding-client-rect-expected.txt: Renamed from LayoutTests/fast/regions/flowed-inline-content-bounding-client-rect-expected.txt.
+        * fast/regions/cssom/flowed-inline-content-bounding-client-rect.html: Renamed from LayoutTests/fast/regions/flowed-inline-content-bounding-client-rect.html.
+        * fast/regions/cssom/get-region-flow-ranges-absolute-pos-expected.txt: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-absolute-pos-expected.txt.
+        * fast/regions/cssom/get-region-flow-ranges-absolute-pos.html: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-absolute-pos.html.
+        * fast/regions/cssom/get-region-flow-ranges-content-nodes-expected.txt: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-content-nodes-expected.txt.
+        * fast/regions/cssom/get-region-flow-ranges-content-nodes.html: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-content-nodes.html.
+        * fast/regions/cssom/get-region-flow-ranges-display-none-expected.txt: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-display-none-expected.txt.
+        * fast/regions/cssom/get-region-flow-ranges-display-none.html: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-display-none.html.
+        * fast/regions/cssom/get-region-flow-ranges-empty-regions-expected.txt: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-empty-regions-expected.txt.
+        * fast/regions/cssom/get-region-flow-ranges-empty-regions.html: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-empty-regions.html.
+        * fast/regions/cssom/get-region-flow-ranges-expected.txt: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-expected.txt.
+        * fast/regions/cssom/get-region-flow-ranges-fixed-pos-expected.txt: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-fixed-pos-expected.txt.
+        * fast/regions/cssom/get-region-flow-ranges-fixed-pos.html: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-fixed-pos.html.
+        * fast/regions/cssom/get-region-flow-ranges-horiz-bt-expected.txt: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-horiz-bt-expected.txt.
+        * fast/regions/cssom/get-region-flow-ranges-horiz-bt.html: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-horiz-bt.html.
+        * fast/regions/cssom/get-region-flow-ranges-inline-only-expected.txt: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-inline-only-expected.txt.
+        * fast/regions/cssom/get-region-flow-ranges-inline-only.html: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-inline-only.html.
+        * fast/regions/cssom/get-region-flow-ranges-inline-svg-expected.txt: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-inline-svg-expected.txt.
+        * fast/regions/cssom/get-region-flow-ranges-inline-svg.html: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-inline-svg.html.
+        * fast/regions/cssom/get-region-flow-ranges-text-expected.txt: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-text-expected.txt.
+        * fast/regions/cssom/get-region-flow-ranges-text-vert-lr-expected.txt: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-text-vert-lr-expected.txt.
+        * fast/regions/cssom/get-region-flow-ranges-text-vert-lr.html: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-text-vert-lr.html.
+        * fast/regions/cssom/get-region-flow-ranges-text.html: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-text.html.
+        * fast/regions/cssom/get-region-flow-ranges-vert-lr-expected.txt: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-vert-lr-expected.txt.
+        * fast/regions/cssom/get-region-flow-ranges-vert-lr.html: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-vert-lr.html.
+        * fast/regions/cssom/get-region-flow-ranges-vert-rl-expected.txt: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-vert-rl-expected.txt.
+        * fast/regions/cssom/get-region-flow-ranges-vert-rl.html: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-vert-rl.html.
+        * fast/regions/cssom/get-region-flow-ranges-writing-modes-rl-rb-lr-expected.txt: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-writing-modes-rl-rb-lr-expected.txt.
+        * fast/regions/cssom/get-region-flow-ranges-writing-modes-rl-rb-lr.html: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-writing-modes-rl-rb-lr.html.
+        * fast/regions/cssom/get-region-flow-ranges-writing-modes-tb-rl-lr-expected.txt: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-writing-modes-tb-rl-lr-expected.txt.
+        * fast/regions/cssom/get-region-flow-ranges-writing-modes-tb-rl-lr.html: Renamed from LayoutTests/fast/regions/get-region-flow-ranges-writing-modes-tb-rl-lr.html.
+        * fast/regions/cssom/get-region-flow-ranges.html: Renamed from LayoutTests/fast/regions/get-region-flow-ranges.html.
+        * fast/regions/cssom/get-regions-by-content-expected.txt: Renamed from LayoutTests/fast/regions/get-regions-by-content-expected.txt.
+        * fast/regions/cssom/get-regions-by-content-horiz-bt-expected.txt: Renamed from LayoutTests/fast/regions/get-regions-by-content-horiz-bt-expected.txt.
+        * fast/regions/cssom/get-regions-by-content-horiz-bt.html: Renamed from LayoutTests/fast/regions/get-regions-by-content-horiz-bt.html.
+        * fast/regions/cssom/get-regions-by-content-horiz-tb-expected.txt: Renamed from LayoutTests/fast/regions/get-regions-by-content-horiz-tb-expected.txt.
+        * fast/regions/cssom/get-regions-by-content-horiz-tb.html: Renamed from LayoutTests/fast/regions/get-regions-by-content-horiz-tb.html.
+        * fast/regions/cssom/get-regions-by-content-pseudo-expected.txt: Renamed from LayoutTests/fast/regions/get-regions-by-content-pseudo-expected.txt.
+        * fast/regions/cssom/get-regions-by-content-pseudo.html: Renamed from LayoutTests/fast/regions/get-regions-by-content-pseudo.html.
+        * fast/regions/cssom/get-regions-by-content-vert-lr-expected.txt: Renamed from LayoutTests/fast/regions/get-regions-by-content-vert-lr-expected.txt.
+        * fast/regions/cssom/get-regions-by-content-vert-lr.html: Renamed from LayoutTests/fast/regions/get-regions-by-content-vert-lr.html.
+        * fast/regions/cssom/get-regions-by-content-vert-rl-expected.txt: Renamed from LayoutTests/fast/regions/get-regions-by-content-vert-rl-expected.txt.
+        * fast/regions/cssom/get-regions-by-content-vert-rl.html: Renamed from LayoutTests/fast/regions/get-regions-by-content-vert-rl.html.
+        * fast/regions/cssom/get-regions-by-content.html: Renamed from LayoutTests/fast/regions/get-regions-by-content.html.
+        * fast/regions/cssom/get-regions-by-content2-expected.txt: Renamed from LayoutTests/fast/regions/get-regions-by-content2-expected.txt.
+        * fast/regions/cssom/get-regions-by-content2.html: Renamed from LayoutTests/fast/regions/get-regions-by-content2.html.
+        * fast/regions/cssom/offsetLeft-offsetTop-in-multiple-regions-expected.txt: Renamed from LayoutTests/fast/regions/offsetLeft-offsetTop-in-multiple-regions-expected.txt.
+        * fast/regions/cssom/offsetLeft-offsetTop-in-multiple-regions.html: Renamed from LayoutTests/fast/regions/offsetLeft-offsetTop-in-multiple-regions.html.
+        * fast/regions/cssom/offsetLeft-offsetTop-in-region-absolute-sticky-fixed-expected.txt: Renamed from LayoutTests/fast/regions/offsetLeft-offsetTop-in-region-absolute-sticky-fixed-expected.txt.
+        * fast/regions/cssom/offsetLeft-offsetTop-in-region-absolute-sticky-fixed.html: Renamed from LayoutTests/fast/regions/offsetLeft-offsetTop-in-region-absolute-sticky-fixed.html.
+        * fast/regions/cssom/offsetLeft-offsetTop-in-region-float-expected.txt: Renamed from LayoutTests/fast/regions/offsetLeft-offsetTop-in-region-float-expected.txt.
+        * fast/regions/cssom/offsetLeft-offsetTop-in-region-float-vert-rl-expected.txt: Renamed from LayoutTests/fast/regions/offsetLeft-offsetTop-in-region-float-vert-rl-expected.txt.
+        * fast/regions/cssom/offsetLeft-offsetTop-in-region-float-vert-rl.html: Renamed from LayoutTests/fast/regions/offsetLeft-offsetTop-in-region-float-vert-rl.html.
+        * fast/regions/cssom/offsetLeft-offsetTop-in-region-float.html: Renamed from LayoutTests/fast/regions/offsetLeft-offsetTop-in-region-float.html.
+        * fast/regions/cssom/offsetLeft-offsetTop-inlines-region-in-element-expected.txt: Renamed from LayoutTests/fast/regions/offsetLeft-offsetTop-inlines-region-in-element-expected.txt.
+        * fast/regions/cssom/offsetLeft-offsetTop-inlines-region-in-element.html: Renamed from LayoutTests/fast/regions/offsetLeft-offsetTop-inlines-region-in-element.html.
+        * fast/regions/cssom/offsetParent-body-in-flow-thread-expected.txt: Renamed from LayoutTests/fast/regions/offsetParent-body-in-flow-thread-expected.txt.
+        * fast/regions/cssom/offsetParent-body-in-flow-thread.html: Renamed from LayoutTests/fast/regions/offsetParent-body-in-flow-thread.html.
+        * fast/regions/cssom/offsetParent-in-flow-thread-expected.txt: Renamed from LayoutTests/fast/regions/offsetParent-in-flow-thread-expected.txt.
+        * fast/regions/cssom/offsetParent-in-flow-thread.html: Renamed from LayoutTests/fast/regions/offsetParent-in-flow-thread.html.
+        * fast/regions/cssom/overset-break-expected.txt: Renamed from LayoutTests/fast/regions/overset-break-expected.txt.
+        * fast/regions/cssom/overset-break-nested-expected.txt: Renamed from LayoutTests/fast/regions/overset-break-nested-expected.txt.
+        * fast/regions/cssom/overset-break-nested.html: Renamed from LayoutTests/fast/regions/overset-break-nested.html.
+        * fast/regions/cssom/overset-break-with-sibling-expected.txt: Renamed from LayoutTests/fast/regions/overset-break-with-sibling-expected.txt.
+        * fast/regions/cssom/overset-break-with-sibling.html: Renamed from LayoutTests/fast/regions/overset-break-with-sibling.html.
+        * fast/regions/cssom/overset-break.html: Renamed from LayoutTests/fast/regions/overset-break.html.
+        * fast/regions/cssom/region-range-for-box-crash-expected.txt: Renamed from LayoutTests/fast/regions/region-range-for-box-crash-expected.txt.
+        * fast/regions/cssom/region-range-for-box-crash.html: Renamed from LayoutTests/fast/regions/region-range-for-box-crash.html.
+        * fast/regions/cssom/webkit-named-flow-collection-crash-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-collection-crash-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-collection-crash.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-collection-crash.html.
+        * fast/regions/cssom/webkit-named-flow-collection-empty-getters-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-collection-empty-getters-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-collection-empty-getters.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-collection-empty-getters.html.
+        * fast/regions/cssom/webkit-named-flow-collection-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-collection-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-collection.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-collection.html.
+        * fast/regions/cssom/webkit-named-flow-event-add-to-flow-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-add-to-flow-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-event-add-to-flow.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-add-to-flow.html.
+        * fast/regions/cssom/webkit-named-flow-event-auto-height-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-auto-height-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-event-auto-height.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-auto-height.html.
+        * fast/regions/cssom/webkit-named-flow-event-crash-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-crash-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-event-crash.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-crash.html.
+        * fast/regions/cssom/webkit-named-flow-event-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-event-no-regions-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-no-regions-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-event-no-regions.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-no-regions.html.
+        * fast/regions/cssom/webkit-named-flow-event-region-in-flexbox-no-overset-change-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-region-in-flexbox-no-overset-change-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-event-region-in-flexbox-no-overset-change.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-region-in-flexbox-no-overset-change.html.
+        * fast/regions/cssom/webkit-named-flow-event-region-in-flexbox-overset-change-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-region-in-flexbox-overset-change-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-event-region-in-flexbox-overset-change.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-region-in-flexbox-overset-change.html.
+        * fast/regions/cssom/webkit-named-flow-event-remove-from-dom-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-remove-from-dom-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-event-remove-from-dom.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-remove-from-dom.html.
+        * fast/regions/cssom/webkit-named-flow-event-remove-from-flow-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-remove-from-flow-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-event-remove-from-flow.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-remove-from-flow.html.
+        * fast/regions/cssom/webkit-named-flow-event-target-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-target-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-event-target.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-target.html.
+        * fast/regions/cssom/webkit-named-flow-event-to-null-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-to-null-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-event-to-null.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-event-to-null.html.
+        * fast/regions/cssom/webkit-named-flow-event.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-event.html.
+        * fast/regions/cssom/webkit-named-flow-existing-flow-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-existing-flow-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-existing-flow.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-existing-flow.html.
+        * fast/regions/cssom/webkit-named-flow-first-empty-region-index-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-first-empty-region-index-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-first-empty-region-index.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-first-empty-region-index.html.
+        * fast/regions/cssom/webkit-named-flow-flow-added-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-flow-added-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-flow-added.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-flow-added.html.
+        * fast/regions/cssom/webkit-named-flow-get-content-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-get-content-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-get-content.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-get-content.html.
+        * fast/regions/cssom/webkit-named-flow-get-regions-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-get-regions-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-get-regions-pseudo-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-get-regions-pseudo-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-get-regions-pseudo.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-get-regions-pseudo.html.
+        * fast/regions/cssom/webkit-named-flow-get-regions.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-get-regions.html.
+        * fast/regions/cssom/webkit-named-flow-invalid-name-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-invalid-name-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-invalid-name.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-invalid-name.html.
+        * fast/regions/cssom/webkit-named-flow-modified-flow-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-modified-flow-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-modified-flow.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-modified-flow.html.
+        * fast/regions/cssom/webkit-named-flow-name-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-name-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-name.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-name.html.
+        * fast/regions/cssom/webkit-named-flow-non-existing-flow-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-non-existing-flow-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-non-existing-flow.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-non-existing-flow.html.
+        * fast/regions/cssom/webkit-named-flow-overset-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-overset-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-overset.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-overset.html.
+        * fast/regions/cssom/webkit-named-flow-removed-flow-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-removed-flow-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-removed-flow.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-removed-flow.html.
+        * fast/regions/cssom/webkit-named-flow-same-object-expected.txt: Renamed from LayoutTests/fast/regions/webkit-named-flow-same-object-expected.txt.
+        * fast/regions/cssom/webkit-named-flow-same-object.html: Renamed from LayoutTests/fast/regions/webkit-named-flow-same-object.html.
+
 2013-11-05  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Unreviewed GTK gardening. Two tests pass after r158575 and r15856.
