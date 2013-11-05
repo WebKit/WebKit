@@ -132,22 +132,14 @@ bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
     m_clipRect = clipRect;
 
     WeakPtr<RenderWidget> weakThis = createWeakPtr();
-
-    // This call *may* cause this renderer to disappear from underneath...
-    m_widget->setFrameRect(newFrame);
-
+    // These calls *may* cause this renderer to disappear from underneath...
+    if (boundsChanged)
+        m_widget->setFrameRect(newFrame);
+    else if (clipChanged)
+        m_widget->clipRectChanged();
     // ...so we follow up with a sanity check.
     if (!weakThis)
         return true;
-
-    if (clipChanged && !boundsChanged) {
-        // This call *may* cause this renderer to disappear from underneath...
-        m_widget->clipRectChanged();
-
-        // ...so here's another sanity check.
-        if (!weakThis)
-            return true;
-    }
 
 #if USE(ACCELERATED_COMPOSITING)
     if (hasLayer() && layer()->isComposited())
