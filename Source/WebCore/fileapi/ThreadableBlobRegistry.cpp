@@ -29,7 +29,6 @@
  */
 
 #include "config.h"
-
 #include "ThreadableBlobRegistry.h"
 
 #include "BlobData.h"
@@ -83,7 +82,7 @@ static ThreadSpecific<BlobUrlOriginMap>& originMap()
 
 static void registerBlobURLTask(void* context)
 {
-    OwnPtr<BlobRegistryContext> blobRegistryContext = adoptPtr(static_cast<BlobRegistryContext*>(context));
+    std::unique_ptr<BlobRegistryContext> blobRegistryContext(static_cast<BlobRegistryContext*>(context));
     blobRegistry().registerBlobURL(blobRegistryContext->url, std::move(blobRegistryContext->blobData));
 }
 
@@ -91,15 +90,13 @@ void ThreadableBlobRegistry::registerBlobURL(const URL& url, std::unique_ptr<Blo
 {
     if (isMainThread())
         blobRegistry().registerBlobURL(url, std::move(blobData));
-    else {
-        OwnPtr<BlobRegistryContext> context = adoptPtr(new BlobRegistryContext(url, std::move(blobData)));
-        callOnMainThread(&registerBlobURLTask, context.leakPtr());
-    }
+    else
+        callOnMainThread(&registerBlobURLTask, new BlobRegistryContext(url, std::move(blobData)));
 }
 
 static void registerBlobURLFromTask(void* context)
 {
-    OwnPtr<BlobRegistryContext> blobRegistryContext = adoptPtr(static_cast<BlobRegistryContext*>(context));
+    std::unique_ptr<BlobRegistryContext> blobRegistryContext(static_cast<BlobRegistryContext*>(context));
     blobRegistry().registerBlobURL(blobRegistryContext->url, blobRegistryContext->srcURL);
 }
 
@@ -111,15 +108,13 @@ void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, const URL& 
 
     if (isMainThread())
         blobRegistry().registerBlobURL(url, srcURL);
-    else {
-        OwnPtr<BlobRegistryContext> context = adoptPtr(new BlobRegistryContext(url, srcURL));
-        callOnMainThread(&registerBlobURLFromTask, context.leakPtr());
-    }
+    else
+        callOnMainThread(&registerBlobURLFromTask, new BlobRegistryContext(url, srcURL));
 }
 
 static void unregisterBlobURLTask(void* context)
 {
-    OwnPtr<BlobRegistryContext> blobRegistryContext = adoptPtr(static_cast<BlobRegistryContext*>(context));
+    std::unique_ptr<BlobRegistryContext> blobRegistryContext(static_cast<BlobRegistryContext*>(context));
     blobRegistry().unregisterBlobURL(blobRegistryContext->url);
 }
 
@@ -130,10 +125,8 @@ void ThreadableBlobRegistry::unregisterBlobURL(const URL& url)
 
     if (isMainThread())
         blobRegistry().unregisterBlobURL(url);
-    else {
-        OwnPtr<BlobRegistryContext> context = adoptPtr(new BlobRegistryContext(url));
-        callOnMainThread(&unregisterBlobURLTask, context.leakPtr());
-    }
+    else
+        callOnMainThread(&unregisterBlobURLTask, new BlobRegistryContext(url));
 }
 
 PassRefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const URL& url)

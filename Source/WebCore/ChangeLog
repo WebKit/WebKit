@@ -1,3 +1,21 @@
+2013-11-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Main thread tasks in ThreadableBlobRegistry should use std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=122946
+
+        Reviewed by Darin Adler.
+
+        The new BlobRegistryContext objects don't have to be adopted into OwnPtr and then have OwnPtr's leaked pointer
+        passed into the WTF::callOnMainThread call - the pointer to the new heap-allocated object is passed in directly,
+        with the object ending up being managed by std::unique_ptr in the designated main thread task.
+
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::registerBlobURLTask):
+        (WebCore::ThreadableBlobRegistry::registerBlobURL):
+        (WebCore::registerBlobURLFromTask):
+        (WebCore::unregisterBlobURLTask):
+        (WebCore::ThreadableBlobRegistry::unregisterBlobURL):
+
 2013-11-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CSS] Enable css-image-orientation on EFL and GTK ports.
