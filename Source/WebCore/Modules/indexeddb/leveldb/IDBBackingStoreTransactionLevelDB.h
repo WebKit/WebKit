@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
- *               2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,41 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBIndexWriter_h
-#define IDBIndexWriter_h
+#ifndef IDBBackingStoreTransactionLevelDB_h
+#define IDBBackingStoreTransactionLevelDB_h
 
-#include "IDBBackingStoreInterface.h"
-#include "IDBDatabaseBackendInterface.h"
-#include "IDBMetadata.h"
-#include <wtf/RefCounted.h>
+#include "IDBBackingStoreTransactionInterface.h"
+#include "LevelDBTransaction.h"
 
 #if ENABLE(INDEXED_DATABASE)
+#if USE(LEVELDB)
 
 namespace WebCore {
 
-typedef Vector<RefPtr<IDBKey>> IndexKeys;
+class IDBBackingStoreInterface;
 
-class IDBIndexWriter : public RefCounted<IDBIndexWriter> {
+class IDBBackingStoreTransactionLevelDB FINAL : public IDBBackingStoreTransactionInterface {
 public:
-    static PassRefPtr<IDBIndexWriter> create(const IDBIndexMetadata& indexMetadata, const IndexKeys& indexKeys)
+    explicit IDBBackingStoreTransactionLevelDB(IDBBackingStoreInterface*);
+
+    virtual void begin() OVERRIDE;
+    virtual bool commit() OVERRIDE;
+    virtual void rollback() OVERRIDE;
+    virtual void resetTransaction() OVERRIDE
     {
-        return adoptRef(new IDBIndexWriter(indexMetadata, indexKeys));
+        m_backingStore = 0;
+        m_transaction = 0;
     }
 
-    bool verifyIndexKeys(IDBBackingStoreInterface&, IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey = 0, String* errorMessage = 0) const WARN_UNUSED_RETURN;
-
-    void writeIndexKeys(const IDBRecordIdentifier*, IDBBackingStoreInterface&, IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId) const;
+    static LevelDBTransaction* levelDBTransactionFrom(IDBBackingStoreTransactionInterface& transaction)
+    {
+        return static_cast<IDBBackingStoreTransactionLevelDB&>(transaction).m_transaction.get();
+    }
 
 private:
-    IDBIndexWriter(const IDBIndexMetadata&, const IndexKeys&);
-
-    bool addingKeyAllowed(IDBBackingStoreInterface&, IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const WARN_UNUSED_RETURN;
-
-    const IDBIndexMetadata m_indexMetadata;
-    IndexKeys m_indexKeys;
+    IDBBackingStoreInterface* m_backingStore;
+    RefPtr<LevelDBTransaction> m_transaction;
 };
 
 } // namespace WebCore
 
+#endif // USE(LEVELDB)
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBIndexWriter_h
+#endif // IDBBackingStoreTransactionLevelDB_h

@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
- *               2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,41 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBIndexWriter_h
-#define IDBIndexWriter_h
+#ifndef IDBBackingStoreCursorInterface_h
+#define IDBBackingStoreCursorInterface_h
 
-#include "IDBBackingStoreInterface.h"
-#include "IDBDatabaseBackendInterface.h"
-#include "IDBMetadata.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-typedef Vector<RefPtr<IDBKey>> IndexKeys;
+class IDBKey;
+class IDBRecordIdentifier;
+class SharedBuffer;
 
-class IDBIndexWriter : public RefCounted<IDBIndexWriter> {
+class IDBBackingStoreCursorInterface : public RefCounted<IDBBackingStoreCursorInterface> {
 public:
-    static PassRefPtr<IDBIndexWriter> create(const IDBIndexMetadata& indexMetadata, const IndexKeys& indexKeys)
-    {
-        return adoptRef(new IDBIndexWriter(indexMetadata, indexKeys));
-    }
+    enum IteratorState {
+        Ready = 0,
+        Seek
+    };
 
-    bool verifyIndexKeys(IDBBackingStoreInterface&, IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey = 0, String* errorMessage = 0) const WARN_UNUSED_RETURN;
+    virtual ~IDBBackingStoreCursorInterface() { }
 
-    void writeIndexKeys(const IDBRecordIdentifier*, IDBBackingStoreInterface&, IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId) const;
+    virtual PassRefPtr<IDBKey> key() const = 0;
+    virtual bool continueFunction(const IDBKey* = 0, IteratorState = Seek) = 0;
+    virtual bool advance(unsigned long) = 0;
 
-private:
-    IDBIndexWriter(const IDBIndexMetadata&, const IndexKeys&);
-
-    bool addingKeyAllowed(IDBBackingStoreInterface&, IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const WARN_UNUSED_RETURN;
-
-    const IDBIndexMetadata m_indexMetadata;
-    IndexKeys m_indexKeys;
+    virtual PassRefPtr<IDBBackingStoreCursorInterface> clone() = 0;
+    virtual PassRefPtr<IDBKey> primaryKey() const = 0;
+    virtual PassRefPtr<SharedBuffer> value() const = 0;
+    virtual const IDBRecordIdentifier& recordIdentifier() const = 0;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBIndexWriter_h
+#endif // IDBBackingStoreCursorInterface_h

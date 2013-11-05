@@ -64,7 +64,7 @@ public:
 
     virtual void addPreemptiveEvent() OVERRIDE { m_pendingPreemptiveEvents++; }
     virtual void didCompletePreemptiveEvent() OVERRIDE { m_pendingPreemptiveEvents--; ASSERT(m_pendingPreemptiveEvents >= 0); }
-    virtual IDBBackingStoreInterface::Transaction& backingStoreTransaction() { return *m_backingStoreTransaction; }
+    virtual IDBBackingStoreTransactionInterface& backingStoreTransaction() { return *m_backingStoreTransaction; }
 
     virtual IDBDatabaseBackendInterface& database() const OVERRIDE { return *m_database; }
 
@@ -81,7 +81,7 @@ public:
     virtual void scheduleDeleteRangeOperation(int64_t objectStoreId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>) OVERRIDE FINAL;
     virtual void scheduleClearOperation(int64_t objectStoreId, PassRefPtr<IDBCallbacks>) OVERRIDE FINAL;
 
-    virtual PassRefPtr<IDBCursorBackendInterface> createCursorBackend(IDBBackingStoreInterface::Cursor&, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, int64_t objectStoreId) OVERRIDE;
+    virtual PassRefPtr<IDBCursorBackendInterface> createCursorBackend(IDBBackingStoreCursorInterface&, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, int64_t objectStoreId) OVERRIDE;
 
 private:
     IDBTransactionBackendImpl(IDBDatabaseBackendImpl*, int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
@@ -114,7 +114,7 @@ private:
     TaskQueue m_preemptiveTaskQueue;
     TaskQueue m_abortTaskQueue;
 
-    std::unique_ptr<IDBBackingStoreInterface::Transaction> m_backingStoreTransaction;
+    std::unique_ptr<IDBBackingStoreTransactionInterface> m_backingStoreTransaction;
 
     // FIXME: delete the timer once we have threads instead.
     Timer<IDBTransactionBackendImpl> m_taskTimer;

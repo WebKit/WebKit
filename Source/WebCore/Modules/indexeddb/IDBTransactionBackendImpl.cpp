@@ -330,7 +330,7 @@ void IDBTransactionBackendImpl::scheduleClearOperation(int64_t objectStoreId, Pa
     scheduleTask(ClearOperation::create(this, m_backingStore.get(), database().id(), objectStoreId, callbacks));
 }
 
-PassRefPtr<IDBCursorBackendInterface> IDBTransactionBackendImpl::createCursorBackend(IDBBackingStoreInterface::Cursor& cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, int64_t objectStoreId)
+PassRefPtr<IDBCursorBackendInterface> IDBTransactionBackendImpl::createCursorBackend(IDBBackingStoreCursorInterface& cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, int64_t objectStoreId)
 {
     return m_database->factoryBackend().createCursorBackend(*this, cursor, cursorType, taskType, objectStoreId);
 }

@@ -786,7 +786,10 @@ set(WebCore_SOURCES
     Modules/indexeddb/IDBVersionChangeEvent.cpp
     Modules/indexeddb/PageGroupIndexedDatabase.cpp
     Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp
+
+    Modules/indexeddb/leveldb/IDBBackingStoreCursorLevelDB.cpp
     Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp
+    Modules/indexeddb/leveldb/IDBBackingStoreTransactionLevelDB.cpp
     Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp
     Modules/indexeddb/leveldb/IDBLevelDBCoding.cpp
 

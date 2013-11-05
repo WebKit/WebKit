@@ -1,3 +1,104 @@
+2013-11-04  Brady Eidson  <beidson@apple.com>
+
+        IDB: Split backend Cursors and Transactions into their own files
+        https://bugs.webkit.org/show_bug.cgi?id=123789
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests (Rename, no change in behavior).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/indexeddb/IDBBackingStoreCursorInterface.h:
+        (WebCore::IDBBackingStoreCursorInterface::~IDBBackingStoreCursorInterface):
+
+        * Modules/indexeddb/IDBBackingStoreInterface.h:
+
+        * Modules/indexeddb/IDBBackingStoreTransactionInterface.h: Added.
+        (WebCore::IDBBackingStoreTransactionInterface::~IDBBackingStoreTransactionInterface):
+
+        * Modules/indexeddb/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::IDBCursorBackendImpl):
+        * Modules/indexeddb/IDBCursorBackendImpl.h:
+        (WebCore::IDBCursorBackendImpl::create):
+
+        * Modules/indexeddb/IDBFactoryBackendInterface.h:
+
+        * Modules/indexeddb/IDBIndexWriter.cpp:
+        (WebCore::IDBIndexWriter::writeIndexKeys):
+        (WebCore::IDBIndexWriter::verifyIndexKeys):
+        (WebCore::IDBIndexWriter::addingKeyAllowed):
+        * Modules/indexeddb/IDBIndexWriter.h:
+
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::createCursorBackend):
+        * Modules/indexeddb/IDBTransactionBackendImpl.h:
+        * Modules/indexeddb/IDBTransactionBackendInterface.h:
+
+        * Modules/indexeddb/IDBTransactionBackendOperations.cpp:
+        (WebCore::GetOperation::perform):
+        (WebCore::OpenCursorOperation::perform):
+        (WebCore::CountOperation::perform):
+        (WebCore::DeleteRangeOperation::perform):
+
+        * Modules/indexeddb/leveldb/IDBBackingStoreCursorLevelDB.cpp: Added.
+        (WebCore::IDBBackingStoreCursorLevelDB::IDBBackingStoreCursorLevelDB):
+        (WebCore::IDBBackingStoreCursorLevelDB::firstSeek):
+        (WebCore::IDBBackingStoreCursorLevelDB::advance):
+        (WebCore::IDBBackingStoreCursorLevelDB::continueFunction):
+        (WebCore::IDBBackingStoreCursorLevelDB::haveEnteredRange):
+        (WebCore::IDBBackingStoreCursorLevelDB::isPastBounds):
+        * Modules/indexeddb/leveldb/IDBBackingStoreCursorLevelDB.h: Added.
+        (WebCore::IDBBackingStoreCursorLevelDB::~IDBBackingStoreCursorLevelDB):
+        (WebCore::IDBBackingStoreCursorLevelDB::IDBBackingStoreCursorLevelDB):
+
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        (WebCore::IDBBackingStoreLevelDB::compareIndexKeys):
+        (WebCore::IDBBackingStoreLevelDB::updateIDBDatabaseVersion):
+        (WebCore::IDBBackingStoreLevelDB::createObjectStore):
+        (WebCore::IDBBackingStoreLevelDB::deleteObjectStore):
+        (WebCore::IDBBackingStoreLevelDB::getRecord):
+        (WebCore::IDBBackingStoreLevelDB::putRecord):
+        (WebCore::IDBBackingStoreLevelDB::clearObjectStore):
+        (WebCore::IDBBackingStoreLevelDB::deleteRecord):
+        (WebCore::IDBBackingStoreLevelDB::getKeyGeneratorCurrentNumber):
+        (WebCore::IDBBackingStoreLevelDB::maybeUpdateKeyGeneratorCurrentNumber):
+        (WebCore::IDBBackingStoreLevelDB::keyExistsInObjectStore):
+        (WebCore::IDBBackingStoreLevelDB::createIndex):
+        (WebCore::IDBBackingStoreLevelDB::deleteIndex):
+        (WebCore::IDBBackingStoreLevelDB::putIndexDataForRecord):
+        (WebCore::findGreatestKeyLessThanOrEqual):
+        (WebCore::IDBBackingStoreLevelDB::findKeyInIndex):
+        (WebCore::IDBBackingStoreLevelDB::getPrimaryKeyViaIndex):
+        (WebCore::IDBBackingStoreLevelDB::keyExistsInIndex):
+        (WebCore::ObjectStoreKeyCursorImpl::create):
+        (WebCore::ObjectStoreKeyCursorImpl::clone):
+        (WebCore::ObjectStoreKeyCursorImpl::ObjectStoreKeyCursorImpl):
+        (WebCore::ObjectStoreCursorImpl::create):
+        (WebCore::ObjectStoreCursorImpl::clone):
+        (WebCore::ObjectStoreCursorImpl::ObjectStoreCursorImpl):
+        (WebCore::objectStoreCursorOptions):
+        (WebCore::indexCursorOptions):
+        (WebCore::IDBBackingStoreLevelDB::openObjectStoreCursor):
+        (WebCore::IDBBackingStoreLevelDB::openObjectStoreKeyCursor):
+        (WebCore::IDBBackingStoreLevelDB::openIndexKeyCursor):
+        (WebCore::IDBBackingStoreLevelDB::openIndexCursor):
+        (WebCore::IDBBackingStoreLevelDB::createBackingStoreTransaction):
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.h:
+ 
+       * Modules/indexeddb/leveldb/IDBBackingStoreTransactionLevelDB.cpp: Added.
+        (WebCore::IDBBackingStoreTransactionLevelDB::IDBBackingStoreTransactionLevelDB):
+        (WebCore::IDBBackingStoreTransactionLevelDB::begin):
+        (WebCore::IDBBackingStoreTransactionLevelDB::commit):
+        (WebCore::IDBBackingStoreTransactionLevelDB::rollback):
+        * Modules/indexeddb/leveldb/IDBBackingStoreTransactionLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp:
+        (WebCore::IDBFactoryBackendLevelDB::createCursorBackend):
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.h:
+
 2013-11-04  Zalan Bujtas  <zalan@apple.com>
 
         Do not call setFrameRect on Widget unless its boundaries changed.

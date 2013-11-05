@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
- *               2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,41 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBIndexWriter_h
-#define IDBIndexWriter_h
-
-#include "IDBBackingStoreInterface.h"
-#include "IDBDatabaseBackendInterface.h"
-#include "IDBMetadata.h"
-#include <wtf/RefCounted.h>
+#ifndef IDBBackingStoreTransactionInterface_h
+#define IDBBackingStoreTransactionInterface_h
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-typedef Vector<RefPtr<IDBKey>> IndexKeys;
-
-class IDBIndexWriter : public RefCounted<IDBIndexWriter> {
+class IDBBackingStoreTransactionInterface {
 public:
-    static PassRefPtr<IDBIndexWriter> create(const IDBIndexMetadata& indexMetadata, const IndexKeys& indexKeys)
-    {
-        return adoptRef(new IDBIndexWriter(indexMetadata, indexKeys));
-    }
+    virtual ~IDBBackingStoreTransactionInterface() { }
 
-    bool verifyIndexKeys(IDBBackingStoreInterface&, IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey = 0, String* errorMessage = 0) const WARN_UNUSED_RETURN;
-
-    void writeIndexKeys(const IDBRecordIdentifier*, IDBBackingStoreInterface&, IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId) const;
-
-private:
-    IDBIndexWriter(const IDBIndexMetadata&, const IndexKeys&);
-
-    bool addingKeyAllowed(IDBBackingStoreInterface&, IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const WARN_UNUSED_RETURN;
-
-    const IDBIndexMetadata m_indexMetadata;
-    IndexKeys m_indexKeys;
+    virtual void begin() = 0;
+    virtual bool commit() = 0;
+    virtual void rollback() = 0;
+    virtual void resetTransaction() = 0;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBIndexWriter_h
+#endif // IDBBackingStoreTransactionInterface_h

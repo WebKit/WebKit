@@ -66,7 +66,7 @@ public:
 
     virtual PassRefPtr<IDBTransactionBackendInterface> maybeCreateTransactionBackend(IDBDatabaseBackendInterface*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode) = 0;
 
-    virtual PassRefPtr<IDBCursorBackendInterface> createCursorBackend(IDBTransactionBackendInterface&, IDBBackingStoreInterface::Cursor&, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, int64_t objectStoreId) = 0;
+    virtual PassRefPtr<IDBCursorBackendInterface> createCursorBackend(IDBTransactionBackendInterface&, IDBBackingStoreCursorInterface&, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, int64_t objectStoreId) = 0;
 };
 
 } // namespace WebCore

@@ -106,7 +106,7 @@ PassRefPtr<IDBTransactionBackendInterface> WebIDBFactoryBackend::maybeCreateTran
     return 0;
 }
 
-PassRefPtr<IDBCursorBackendInterface> WebIDBFactoryBackend::createCursorBackend(IDBTransactionBackendInterface&, IDBBackingStoreInterface::Cursor&, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, int64_t)
+PassRefPtr<IDBCursorBackendInterface> WebIDBFactoryBackend::createCursorBackend(IDBTransactionBackendInterface&, IDBBackingStoreCursorInterface&, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, int64_t)
 {
     notImplemented();
     return 0;

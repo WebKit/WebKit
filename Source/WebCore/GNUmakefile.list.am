@@ -1784,9 +1784,15 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/DOMWindowIndexedDatabase.h \
 	Source/WebCore/Modules/indexeddb/IDBAny.cpp \
 	Source/WebCore/Modules/indexeddb/IDBAny.h \
+	Source/WebCore/Modules/indexeddb/IDBBackingStoreCursorInterface.h \
 	Source/WebCore/Modules/indexeddb/IDBBackingStoreInterface.h \
+	Source/WebCore/Modules/indexeddb/IDBBackingStoreTransactionInterface.h \
+	Source/WebCore/Modules/indexeddb/leveldb/IDBBackingStoreCursorLevelDB.cpp \
+	Source/WebCore/Modules/indexeddb/leveldb/IDBBackingStoreCursorLevelDB.h \
 	Source/WebCore/Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp \
 	Source/WebCore/Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.h \
+	Source/WebCore/Modules/indexeddb/leveldb/IDBBackingStoreTransactionLevelDB.cpp \
+	Source/WebCore/Modules/indexeddb/leveldb/IDBBackingStoreTransactionLevelDB.h \
 	Source/WebCore/Modules/indexeddb/IDBCallbacks.h \
 	Source/WebCore/Modules/indexeddb/IDBCursorBackendImpl.cpp \
 	Source/WebCore/Modules/indexeddb/IDBCursorBackendImpl.h \

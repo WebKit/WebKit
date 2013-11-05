@@ -82,10 +82,10 @@ public:
     virtual void addPreemptiveEvent() = 0;
     virtual void didCompletePreemptiveEvent() = 0;
 
-    virtual IDBBackingStoreInterface::Transaction& backingStoreTransaction() = 0;
+    virtual IDBBackingStoreTransactionInterface& backingStoreTransaction() = 0;
     virtual IDBDatabaseBackendInterface& database() const = 0;
 
-    virtual PassRefPtr<IDBCursorBackendInterface> createCursorBackend(IDBBackingStoreInterface::Cursor&, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, int64_t objectStoreId) = 0;
+    virtual PassRefPtr<IDBCursorBackendInterface> createCursorBackend(IDBBackingStoreCursorInterface&, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, int64_t objectStoreId) = 0;
 
     int64_t id() const { return m_id; }
 
