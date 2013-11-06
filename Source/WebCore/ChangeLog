@@ -1,3 +1,38 @@
+2013-11-05  James Craig  <jcraig@apple.com>
+
+        AX: media controls accessibility needs more work
+        https://bugs.webkit.org/show_bug.cgi?id=123749
+
+        Reviewed by Jer Noble.
+
+        Updated some of the control labels/roles to improve accessibility.
+          - Volume slider is now keyboard/screenreader accessible.
+          - muteButton was a checkbox toggling checked state, now a button that toggles label "mute/unmute"
+          - fullscreenButton was a checkbox toggling checked state, now a button that toggles label "display/exit full screen"
+          - captionButton was a checkbox, now a popup button that launches the newly accessible menu.
+        Subtitles menu is now keyboard/screenreader accessible (uses roaming tabindex).
+        Render dump expectations changed because volume slider is now hidden via... 
+        ...opacity/size (to make accessible without hover) instead of display:none.
+
+        Updated existing test coverage.
+
+        * Modules/mediacontrols/mediaControlsApple.css:
+        (audio::-webkit-media-controls-panel .volume-box):
+        (audio::-webkit-media-controls-panel .volume-box:active):
+        (audio::-webkit-media-controls-toggle-closed-captions-button):
+        (audio::-webkit-media-controls-closed-captions-container .list):
+        (audio::-webkit-media-controls-closed-captions-container li:focus):
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.createControls):
+        (Controller.prototype.handleFullscreenChange):
+        (Controller.prototype.handleMuteButtonClicked):
+        (Controller.prototype.handleMinButtonClicked):
+        (Controller.prototype.handleMaxButtonClicked):
+        (Controller.prototype.handleVolumeSliderChange):
+        (Controller.prototype.buildCaptionMenu):
+        (Controller.prototype.focusSiblingCaptionItem):
+        (Controller.prototype.handleCaptionItemKeyUp):
+
 2013-11-05  Andreas Kling  <akling@apple.com>
 
         Move some plugin-specific code from RenderWidget to RenderEmbeddedObject.

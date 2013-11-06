@@ -54,12 +54,20 @@ State at 'canplaythrough' event:
                     role: AXRole: AXStaticText
 
 
+            description: AXDescription: Volume
+            role: AXRole: AXSlider
+
+
+                description: AXDescription: 
+                role: AXRole: AXValueIndicator
+
+
             description: AXDescription: Mute
-            role: AXRole: AXCheckBox
+            role: AXRole: AXButton
 
 
             description: AXDescription: Display Full Screen
-            role: AXRole: AXCheckBox
+            role: AXRole: AXButton
 
 
 

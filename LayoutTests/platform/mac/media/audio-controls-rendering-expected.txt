@@ -43,6 +43,13 @@ layer at (104,51) size 6x6
   RenderBlock {DIV} at (0,0) size 6x6 [bgcolor=#FFFFFF]
 layer at (184,44) size 22x22
   RenderFlexibleBox {DIV} at (176,2) size 22x22
+layer at (184,44) size 2x22
+  RenderFlexibleBox {DIV} at (0,0) size 2x22 [border: (1px solid #000000F3)]
+    RenderSlider {INPUT} at (-7,6) size 2x10 [color=#909090] [border: (1px solid #000000DF)]
+      RenderFlexibleBox {DIV} at (1,1) size 0x8
+        RenderBlock {DIV} at (0,0) size 0x8
+layer at (170,51) size 8x8
+  RenderBlock {DIV} at (-8,0) size 8x8
 layer at (187,47) size 16x16
   RenderButton {BUTTON} at (3,3) size 16x16 [color=#FFFFFF]
 layer at (8,85) size 320x25
@@ -74,6 +81,13 @@ layer at (104,94) size 6x6
   RenderBlock {DIV} at (0,0) size 6x6 [bgcolor=#FFFFFF]
 layer at (304,87) size 22x22
   RenderFlexibleBox {DIV} at (296,2) size 22x22
+layer at (304,87) size 2x22
+  RenderFlexibleBox {DIV} at (0,0) size 2x22 [border: (1px solid #000000F3)]
+    RenderSlider {INPUT} at (-7,6) size 2x10 [color=#909090] [border: (1px solid #000000DF)]
+      RenderFlexibleBox {DIV} at (1,1) size 0x8
+        RenderBlock {DIV} at (0,0) size 0x8
+layer at (290,94) size 8x8
+  RenderBlock {DIV} at (-8,0) size 8x8
 layer at (307,90) size 16x16
   RenderButton {BUTTON} at (3,3) size 16x16 [color=#FFFFFF]
 layer at (8,128) size 320x100
@@ -107,5 +121,12 @@ layer at (104,212) size 6x6
   RenderBlock {DIV} at (0,0) size 6x6 [bgcolor=#FFFFFF]
 layer at (304,205) size 22x22
   RenderFlexibleBox {DIV} at (296,2) size 22x22
+layer at (304,205) size 2x22
+  RenderFlexibleBox {DIV} at (0,0) size 2x22 [border: (1px solid #000000F3)]
+    RenderSlider {INPUT} at (-7,6) size 2x10 [color=#909090] [border: (1px solid #000000DF)]
+      RenderFlexibleBox {DIV} at (1,1) size 0x8
+        RenderBlock {DIV} at (0,0) size 0x8
+layer at (290,212) size 8x8
+  RenderBlock {DIV} at (-8,0) size 8x8
 layer at (307,208) size 16x16
   RenderButton {BUTTON} at (3,3) size 16x16 [color=#FFFFFF]

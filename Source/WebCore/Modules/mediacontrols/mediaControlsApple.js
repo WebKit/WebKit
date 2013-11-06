@@ -76,6 +76,19 @@ Controller.prototype = {
         thumbnailTrack: 'thumbnail-track',
         volumeBox: 'volume-box',
     },
+    KeyCodes: {
+        enter: 13,
+        escape: 27,
+        space: 32,
+        pageUp: 33,
+        pageDown: 34,
+        end: 35,
+        home: 36,
+        left: 37,
+        up: 38,
+        right: 39,
+        down: 40
+    },
 
     // Localized string accessor
     UIString: function(s){
@@ -88,23 +101,26 @@ Controller.prototype = {
         // FIXME: Move localization to ext strings file <http://webkit.org/b/120956>
         'Aborted': 'Aborted',
         'Audio Playback': 'Audio Playback',
+        'Captions': 'Captions',
         'Display Full Screen': 'Display Full Screen',
         'Duration': 'Duration',
+        'Elapsed': 'Elapsed',
         'Error': 'Error',
+        'Exit Full Screen': 'Exit Full Screen',
         'Fast Forward': 'Fast Forward',
         'Loading': 'Loading',
         'Maximum Volume': 'Maximum Volume',
         'Minimum Volume': 'Minimum Volume',
         'Mute': 'Mute',
-        'Play': 'Play',
         'Pause': 'Pause',
+        'Play': 'Play',
+        'Remaining': 'Remaining',
         'Rewind': 'Rewind',
         'Rewind %%sec%% Seconds': 'Rewind %%sec%% Seconds',
-        'Show Captions': 'Show Captions',
         'Stalled': 'Stalled',
+        'Subtitles': 'Subtitles',
         'Suspended': 'Suspended',
-        'Elapsed': 'Elapsed',
-        'Remaining': 'Remaining',
+        'Unmute': 'Unmute',
         'Video Playback': 'Video Playback',
         'Volume': 'Volume',
         'Waiting': 'Waiting'
@@ -301,8 +317,6 @@ Controller.prototype = {
         var muteButton = this.controls.muteButton = document.createElement('button');
         muteButton.setAttribute('pseudo', '-webkit-media-controls-mute-button');
         muteButton.setAttribute('aria-label', this.UIString('Mute'));
-        muteButton.setAttribute('role', 'checkbox');
-        muteButton.setAttribute('aria-checked', 'false');
         this.listenFor(muteButton, 'click', this.handleMuteButtonClicked);
 
         var minButton = this.controls.minButton = document.createElement('button');
@@ -329,16 +343,13 @@ Controller.prototype = {
 
         var captionButton = this.controls.captionButton = document.createElement('button');
         captionButton.setAttribute('pseudo', '-webkit-media-controls-toggle-closed-captions-button');
-        captionButton.setAttribute('aria-label', this.UIString('Show Captions'));
-        captionButton.setAttribute('role', 'checkbox');
-        captionButton.setAttribute('aria-checked', 'false');
+        captionButton.setAttribute('aria-label', this.UIString('Captions'));
+        captionButton.setAttribute('aria-haspopup', 'true');
         this.listenFor(captionButton, 'click', this.handleCaptionButtonClicked);
 
         var fullscreenButton = this.controls.fullscreenButton = document.createElement('button');
         fullscreenButton.setAttribute('pseudo', '-webkit-media-controls-fullscreen-button');
         fullscreenButton.setAttribute('aria-label', this.UIString('Display Full Screen'));
-        fullscreenButton.setAttribute('role', 'checkbox');
-        fullscreenButton.setAttribute('aria-checked', 'false');
         this.listenFor(fullscreenButton, 'click', this.handleFullscreenButtonClicked);
     },
 
@@ -519,11 +530,11 @@ Controller.prototype = {
 
         if (this.isFullScreen()) {
             this.controls.fullscreenButton.classList.add(this.ClassNames.exit);
-            this.controls.fullscreenButton.setAttribute('aria-checked', 'true');
+            this.controls.fullscreenButton.setAttribute('aria-label', this.UIString('Exit Full Screen'));
             this.setControlsType(Controller.FullScreenControls);
         } else {
             this.controls.fullscreenButton.classList.remove(this.ClassNames.exit);
-            this.controls.fullscreenButton.setAttribute('aria-checked', 'false');
+            this.controls.fullscreenButton.setAttribute('aria-label', this.UIString('Display Full Screen'));
             this.setControlsType(Controller.InlineControls);
         }
     },
@@ -668,14 +679,14 @@ Controller.prototype = {
     {
         this.video.muted = !this.video.muted;
         if (this.video.muted)
-            this.controls.muteButton.setAttribute('aria-checked', 'true');
+            this.controls.muteButton.setAttribute('aria-label', this.UIString('Unmute'));
     },
 
     handleMinButtonClicked: function(event)
     {
         if (this.video.muted) {
             this.video.muted = false;
-            this.controls.muteButton.setAttribute('aria-checked', 'false');
+            this.controls.muteButton.setAttribute('aria-label', this.UIString('Mute'));
         }
         this.video.volume = 0;
     },
@@ -684,7 +695,7 @@ Controller.prototype = {
     {
         if (this.video.muted) {
             this.video.muted = false;
-            this.controls.muteButton.setAttribute('aria-checked', 'false');
+            this.controls.muteButton.setAttribute('aria-label', this.UIString('Mute'));
         }
         this.video.volume = 1;
     },
@@ -693,7 +704,7 @@ Controller.prototype = {
     {
         if (this.video.muted) {
             this.video.muted = false;
-            this.controls.muteButton.setAttribute('aria-checked', 'false');
+            this.controls.muteButton.setAttribute('aria-label', this.UIString('Mute'));
         }
         this.video.volume = this.controls.volume.value;
     },
@@ -928,16 +939,22 @@ Controller.prototype = {
         list.classList.add(this.ClassNames.list);
 
         var heading = document.createElement('h3');
+        heading.id = 'webkitMediaControlsClosedCaptionsHeading'; // for AX menu label
         list.appendChild(heading);
-        heading.innerText = 'Subtitles';
+        heading.innerText = this.UIString('Subtitles');
 
         var ul = document.createElement('ul');
+        ul.setAttribute('role', 'menu');
+        ul.setAttribute('aria-labelledby', 'webkitMediaControlsClosedCaptionsHeading');
         list.appendChild(ul);
 
         for (var i = 0; i < tracks.length; ++i) {
             var menuItem = document.createElement('li');
+            menuItem.setAttribute('role', 'menuitemradio');
+            menuItem.setAttribute('tabindex', '-1');
             this.captionMenuItems.push(menuItem);
             this.listenFor(menuItem, 'click', this.captionItemSelected);
+            this.listenFor(menuItem, 'keyup', this.handleCaptionItemKeyUp);
             ul.appendChild(menuItem);
 
             var track = tracks[i];
@@ -950,25 +967,89 @@ Controller.prototype = {
             }
 
             if (track === automaticItem) {
-                if (displayMode === 'automatic')
+                if (displayMode === 'automatic') {
                     menuItem.classList.add(this.ClassNames.selected);
+                    menuItem.setAttribute('tabindex', '0');
+                    menuItem.setAttribute('aria-checked', 'true');
+                }
                 continue;
             }
 
             if (displayMode != 'automatic' && track.mode === 'showing') {
                 var trackMenuItemSelected = true;
                 menuItem.classList.add(this.ClassNames.selected);
+                menuItem.setAttribute('tabindex', '0');
+                menuItem.setAttribute('aria-checked', 'true');
             }
+
         }
 
-        if (offMenu && displayMode === 'forced-only' && !trackMenuItemSelected)
+        if (offMenu && displayMode === 'forced-only' && !trackMenuItemSelected) {
             offMenu.classList.add(this.ClassNames.selected);
+            menuItem.setAttribute('tabindex', '0');
+            menuItem.setAttribute('aria-checked', 'true');
+        }
+        
+        // focus first selected menuitem
+        for (var i = 0, c = this.captionMenuItems.length; i < c; i++) {
+            var item = this.captionMenuItems[i];
+            if (item.classList.contains(this.ClassNames.selected)) {
+                item.focus();
+                break;
+            }
+        }
+        
     },
 
     captionItemSelected: function(event)
     {
         this.host.setSelectedTextTrack(event.target.track);
         this.destroyCaptionMenu();
+    },
+
+    focusSiblingCaptionItem: function(event)
+    {
+        var currentItem = event.target;
+        var pendingItem = false;
+        switch(event.keyCode) {
+        case this.KeyCodes.left:
+        case this.KeyCodes.up:
+            pendingItem = currentItem.previousSibling;
+            break;
+        case this.KeyCodes.right:
+        case this.KeyCodes.down:
+            pendingItem = currentItem.nextSibling;
+            break;
+        }
+        if (pendingItem) {
+            currentItem.setAttribute('tabindex', '-1');
+            pendingItem.setAttribute('tabindex', '0');
+            pendingItem.focus();
+        }
+    },
+
+    handleCaptionItemKeyUp: function(event)
+    {
+        switch (event.keyCode) {
+        case this.KeyCodes.enter:
+        case this.KeyCodes.space:
+            this.captionItemSelected(event);
+            break;
+        case this.KeyCodes.escape:
+            this.destroyCaptionMenu();
+            break;
+        case this.KeyCodes.left:
+        case this.KeyCodes.up:
+        case this.KeyCodes.right:
+        case this.KeyCodes.down:
+            this.focusSiblingCaptionItem(event);
+            break;
+        default:
+            return;
+        }
+        // handled
+        event.stopPropagation();
+        event.preventDefault();
     },
 
     destroyCaptionMenu: function()
@@ -978,7 +1059,12 @@ Controller.prototype = {
 
         this.captionMenuItems.forEach(function(item){
             this.stopListeningFor(item, 'click', this.captionItemSelected);
+            this.stopListeningFor(item, 'keyup', this.handleCaptionItemKeyUp);
         }, this);
+
+        // FKA and AX: focus the trigger before destroying the element with focus
+        if (this.controls.captionButton)
+            this.controls.captionButton.focus();
 
         if (this.captionMenu.parentNode)
             this.captionMenu.parentNode.removeChild(this.captionMenu);

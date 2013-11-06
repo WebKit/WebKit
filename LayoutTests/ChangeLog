@@ -1,3 +1,28 @@
+2013-11-05  James Craig  <jcraig@apple.com>
+
+        AX: media controls accessibility needs more work
+        https://bugs.webkit.org/show_bug.cgi?id=123749
+
+        Reviewed by Jer Noble.
+
+        Updated some of the control labels/roles to improve accessibility.
+          - Volume slider is now keyboard/screenreader accessible.
+          - muteButton was a checkbox toggling checked state, now a button that toggles label "mute/unmute"
+          - fullscreenButton was a checkbox toggling checked state, now a button that toggles label "display/exit full screen"
+          - captionButton was a checkbox, now a popup button that launches the newly accessible menu.
+        Subtitles menu is now keyboard/screenreader accessible (uses roaming tabindex).
+        Render dump expectations changed because volume slider is now hidden via... 
+        ...opacity/size (to make accessible without hover) instead of display:none.
+
+        Updated existing test coverage.
+
+        * platform/mac/accessibility/media-element-expected.txt:
+        * platform/mac/media/audio-controls-rendering-expected.txt:
+        * platform/mac/media/controls-after-reload-expected.txt:
+        * platform/mac/media/controls-strict-expected.txt:
+        * platform/mac/media/controls-styling-strict-expected.txt:
+        * platform/mac/media/controls-without-preload-expected.txt:
+
 2013-11-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a test to obtain offsetWidth of expanded table cell
