@@ -29,6 +29,7 @@
 #if WK_API_ENABLED
 
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/ResourceResponse.h>
 
 using namespace WebKit;
 
@@ -56,6 +57,11 @@ using namespace WebKit;
 - (NSURL *)destinationURL
 {
     return [NSURL URLWithString:reinterpret_cast<WebNavigationData*>(&_data)->url()];
+}
+
+- (NSURLResponse *)response
+{
+    return reinterpret_cast<WebNavigationData*>(&_data)->response().nsURLResponse();
 }
 
 #pragma mark WKObject protocol implementation

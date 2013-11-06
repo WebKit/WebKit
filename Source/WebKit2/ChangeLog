@@ -1,3 +1,21 @@
+2013-11-06  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Add -[WKNavigationData response]
+        https://bugs.webkit.org/show_bug.cgi?id=123918
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebNavigationDataStore.h: Added a ResourceResponse data member.
+        (WebKit::WebNavigationDataStore::encode): Encode the response.
+        (WebKit::WebNavigationDataStore::decode): Decode the response.
+        * UIProcess/Cocoa/WKNavigationData.h: Declared new property.
+        * UIProcess/Cocoa/WKNavigationData.mm:
+        (-[WKNavigationData response]): Added.
+        * UIProcess/WebNavigationData.h:
+        (WebKit::WebNavigationData::response): Added.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::updateGlobalHistory): Set the response in the data store.
+
 2013-11-06  Sam Weinig  <sam@webkit.org>
 
         Fix the 32-bit build.
