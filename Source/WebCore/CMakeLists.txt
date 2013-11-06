@@ -2827,6 +2827,13 @@ if (WTF_USE_3D_GRAPHICS)
         list(APPEND WebCore_LIBRARIES
             ${OPENGL_gl_LIBRARY}
         )
+    elseif (OPENGLES2_FOUND)
+        list(APPEND WebCore_INCLUDE_DIRECTORIES
+            ${OPENGLES2_INCLUDE_DIR}
+        )
+        list(APPEND WebCore_LIBRARIES
+            ${OPENGLES2_LIBRARIES}
+        )
     endif ()
 
     list(APPEND ANGLESupport_SOURCES

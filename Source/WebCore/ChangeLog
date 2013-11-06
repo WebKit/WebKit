@@ -1,3 +1,11 @@
+2013-11-05  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix on CMake based ports with GLES.
+
+        * CMakeLists.txt:
+        Added OPENGLES2_LIBRARIES and OPENGLES2_INCLUDE_DIR into the includes and
+        libraries list.
+
 2013-11-05  Tim Horton  <timothy_horton@apple.com>
 
         platformCALayerDeviceScaleFactor should be const
