@@ -1,3 +1,14 @@
+2013-11-06  Robert Plociennik  <r.plociennik@samsung.com>
+
+        [GTK] accessibility/svg-group-element-with-title.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=114251
+
+        Unreviewed GTK gardening.
+
+        Removed failure expectation as the test is passing since r158664.
+
+        * platform/gtk/TestExpectations: The test is no longer failing.
+
 2013-11-06  Piotr Grad  <p.grad@samsung.com>
 
         Test for seek not working properly with negative playback rate.
