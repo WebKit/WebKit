@@ -1,3 +1,4 @@
+
 Test that default positioned TextTrack's cues are rendered correctly.
 EVENT(canplaythrough)
 EVENT(seeked)

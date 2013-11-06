@@ -3,6 +3,7 @@ Test media element fullscreen API when an element is in the DOM.
 
 
 
+
 *** Creating <audio> element with "content/test.mp4" in the document, should NOT support fullscreen even though it has video
 EVENT(loadstart)
 EVENT(durationchange)

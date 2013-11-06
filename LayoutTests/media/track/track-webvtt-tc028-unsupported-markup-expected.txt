@@ -1,6 +1,7 @@
 Tests that unsupported markup is properly ignored.
 
 
+
 *** Testing text track 0
 EXPECTED (cues.length == '3') OK
 EXPECTED (cues[0].getCueAsHTML().textContent == 'Bear is Coming!!!!! And what kind of a bear it is - just have look.') OK
@@ -18,6 +19,7 @@ I said Bear is still coming!!!!
 EXPECTED (cues[2].getCueAsHTML().textContent == ' I said Bear is coming now!!!! ') OK
 EXPECTED (cues[2].text == '
 I said Bear is coming now!!!!
+
 
 ') OK
 END OF TEST

@@ -1,3 +1,4 @@
+
 Test that an explicit load() to a media element whose preload is set to "none" still loads the video.
 
 EXPECTED (video.preload == 'none') OK

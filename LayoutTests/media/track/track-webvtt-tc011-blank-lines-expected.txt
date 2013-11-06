@@ -1,6 +1,7 @@
 Tests that cues are not affected by multiple newlines \n, \r, and \r\n and that cue not properly separated are treated as one big cue.
 
 
+
 *** Testing text track 0
 EXPECTED (cues.length == '3') OK
 EXPECTED (cues[0].id == '1') OK

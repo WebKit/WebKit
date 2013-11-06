@@ -1,5 +1,6 @@
 Tests that TextTracks in a TextTrackList are kept in the correct order.
 
+
 ** Add a track with video.addTextTrack().
 RUN(video.addTextTrack('descriptions', 'Descriptions Track', 'en'))
 

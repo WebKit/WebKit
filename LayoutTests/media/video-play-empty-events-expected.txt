@@ -1,3 +1,4 @@
+
 Test that play() from EMPTY network state triggers load() and async play event.
 
 EXPECTED (video.networkState == '0') OK

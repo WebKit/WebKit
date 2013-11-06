@@ -1,3 +1,4 @@
+
 Test 'controls' attribute
 
 EXPECTED (video.controls != 'null') OK

@@ -1,5 +1,6 @@
 Tests that events are triggered for missed (skipped) cues during normal playback.
 
+
 EVENT(canplaythrough)
 EXPECTED (testTrack.track.cues.length == '7') OK
 RUN(video.play())

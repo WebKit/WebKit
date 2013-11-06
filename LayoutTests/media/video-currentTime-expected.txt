@@ -1,3 +1,4 @@
+
 EXPECTED (video.currentTime == '0') OK
 EVENT(canplaythrough)
 EXPECTED (video.currentTime == '0') OK

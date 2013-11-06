@@ -1,3 +1,4 @@
+
 Tests that adding a text track does not make controls visible.
 
 EVENT(canplaythrough)

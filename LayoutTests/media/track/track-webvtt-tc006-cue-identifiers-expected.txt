@@ -1,6 +1,7 @@
 Tests that any text other than "-->" is recognized as optional cue identifier.
 
 
+
 *** Testing text track 0
 EXPECTED (cues.length == '4') OK
 EXPECTED (cues[0].id == 'random_id') OK

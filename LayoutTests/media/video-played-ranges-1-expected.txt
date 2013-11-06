@@ -1,3 +1,4 @@
+
 Test of the media element 'played' attribute, ranges part 1.
 
 EVENT(loadstart)

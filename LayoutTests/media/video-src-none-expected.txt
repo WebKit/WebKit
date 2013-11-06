@@ -1,4 +1,5 @@
 
+
 Network state should remain in NETWORK_EMPTY with missing 'src' attribute.
 ** <video> with no src attribute**
 EXPECTED (videos[0].error == 'null') OK

@@ -1,3 +1,4 @@
+
 Test that the cue is styled properly throughout its lifetime.
 EVENT(canplaythrough)
 EVENT(seeked)

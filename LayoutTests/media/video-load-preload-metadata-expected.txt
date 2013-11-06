@@ -1,3 +1,4 @@
+
 Test that preload="metadata" disables buffering before playback.
 
 EXPECTED (video.preload == 'metadata') OK

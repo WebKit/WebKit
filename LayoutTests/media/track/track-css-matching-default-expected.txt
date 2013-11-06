@@ -1,3 +1,4 @@
+
 Test that u, b, i WebVTT objects are being styled correctly.
 EVENT(canplaythrough)
 EVENT(seeked)

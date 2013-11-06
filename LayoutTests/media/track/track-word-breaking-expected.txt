@@ -1,3 +1,4 @@
+
 Test that line breaks are forced in captions.
 EVENT(canplaythrough)
 Single line caption height recorded.

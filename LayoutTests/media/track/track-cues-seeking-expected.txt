@@ -1,5 +1,6 @@
 Tests TextTrack's activeCues are indexed and updated during video playback.
 
+
 EVENT(canplaythrough)
 EXPECTED (testTrack.track.cues.length == '3') OK
 RUN(video.currentTime = 0.5)

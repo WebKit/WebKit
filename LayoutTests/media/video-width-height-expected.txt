@@ -1,3 +1,4 @@
+
 EXPECTED (video.width == '100') OK
 EXPECTED (video.height == '50') OK
 EXPECTED (video.offsetWidth == '100') OK

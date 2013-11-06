@@ -1,6 +1,7 @@
 Tests that the TextTrack mode attribute is appropriately set.
 
 
+
 ++ Test default attribute value
 EXPECTED (textTrack.mode == 'showing') OK
 EXPECTED (video.textTracks[0].mode == 'showing') OK

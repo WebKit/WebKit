@@ -1,5 +1,6 @@
 Tests that the 'kind' attribute is set properly and that cues are only visible when 'kind' is set to 'captions' or 'subtitles'.
 
+
 ++ Test default attribute value
 EXPECTED (trackElement.getAttribute('kind') == 'null') OK
 EXPECTED (trackElement.kind == 'subtitles') OK

@@ -1,3 +1,4 @@
+
 Video has no src. Test that the playing event is not dispatched.
 
 RUN(video.play())

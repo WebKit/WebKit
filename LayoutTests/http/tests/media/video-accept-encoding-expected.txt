@@ -1,3 +1,4 @@
+
 Test that video requests contain no "Accept-Encoding" header.
 
 EVENT(loadedmetadata)

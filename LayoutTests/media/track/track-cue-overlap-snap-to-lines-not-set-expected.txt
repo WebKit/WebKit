@@ -1,3 +1,4 @@
+
 Test that TextTrack's cues are rendered correctly when the snap to lines flag is not set.
 EVENT(canplaythrough)
 EVENT(seeked)

@@ -1,3 +1,4 @@
+
 Test <video> element with and without a poster.
 
 Testing poster null, with 'width' and 'height' attributes.

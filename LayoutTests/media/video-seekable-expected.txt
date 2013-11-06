@@ -1,3 +1,4 @@
+
 EXPECTED (video.seekable.length == '0') OK
 TEST(video.seekable.start(-1)) THROWS(DOMException.INDEX_SIZE_ERR) OK
 TEST(video.seekable.end(-1)) THROWS(DOMException.INDEX_SIZE_ERR) OK

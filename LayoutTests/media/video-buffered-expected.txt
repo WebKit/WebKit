@@ -1,3 +1,4 @@
+
 EXPECTED (video.buffered.length == '0') OK
 TEST(video.buffered.start(-1)) THROWS(DOMException.INDEX_SIZE_ERR) OK
 TEST(video.buffered.end(-1)) THROWS(DOMException.INDEX_SIZE_ERR) OK

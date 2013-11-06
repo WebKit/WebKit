@@ -1,3 +1,4 @@
+
 Test that removing 'src' attribute does NOT trigger load of <source> elements
 
 

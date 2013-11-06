@@ -1,3 +1,4 @@
+
 Test that the painted buffered range contains currentTime.
 
 EVENT(loadedmetadata)

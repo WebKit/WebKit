@@ -1,3 +1,4 @@
+
 Test media element close caption API.
 
 Test before movie is open:

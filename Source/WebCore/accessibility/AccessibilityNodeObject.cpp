@@ -1100,8 +1100,12 @@ bool AccessibilityNodeObject::isGenericFocusableElement() const
     if (!canSetFocusAttribute())
         return false;
 
-     // If it's a control, it's not generic.
-     if (isControl())
+    // If it's a control, it's not generic.
+    if (isControl())
+        return false;
+    
+    AccessibilityRole role = roleValue();
+    if (role == VideoRole || role == AudioRole)
         return false;
 
     // If it has an aria role, it's not generic.
@@ -1117,14 +1121,14 @@ bool AccessibilityNodeObject::isGenericFocusableElement() const
 
     // The web area and body element are both focusable, but existing logic handles these
     // cases already, so we don't need to include them here.
-    if (roleValue() == WebAreaRole)
+    if (role == WebAreaRole)
         return false;
     if (node() && node()->hasTagName(bodyTag))
         return false;
 
     // An SVG root is focusable by default, but it's probably not interactive, so don't
     // include it. It can still be made accessible by giving it an ARIA role.
-    if (roleValue() == SVGRootRole)
+    if (role == SVGRootRole)
         return false;
 
     return true;

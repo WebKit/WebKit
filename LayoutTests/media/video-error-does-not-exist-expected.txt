@@ -1,6 +1,7 @@
 Test that the media element is in correct state after load fails.
 
 
+
 EXPECTED (video.error == 'null') OK
 
 EVENT(error)

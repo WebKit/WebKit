@@ -250,7 +250,7 @@ bool isRendererReplacedElement(RenderObject* renderer)
     if (!renderer)
         return false;
     
-    if (renderer->isImage() || renderer->isWidget())
+    if (renderer->isImage() || renderer->isWidget() || renderer->isMedia())
         return true;
     
     if (renderer->node() && renderer->node()->isElementNode()) {

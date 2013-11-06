@@ -1,3 +1,4 @@
+
 Test that accessing member of a non loaded video works.
 
 RUN(video.played)

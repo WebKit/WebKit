@@ -1,4 +1,5 @@
 
+
 Video loaded
 
 EXPECTED (video.clientWidth == '320') OK

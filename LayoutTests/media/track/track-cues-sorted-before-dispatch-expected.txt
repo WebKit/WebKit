@@ -1,5 +1,6 @@
 Tests that all events events are triggered in chronological order.
 
+
 EVENT(canplaythrough)
 EXPECTED (testTrack.track.cues.length == '8') OK
 RUN(video.play())

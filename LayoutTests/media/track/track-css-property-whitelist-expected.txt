@@ -1,3 +1,4 @@
+
 This should display inline
 EVENT(canplaythrough)
 EVENT(seeked)

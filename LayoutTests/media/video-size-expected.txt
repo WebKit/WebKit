@@ -1,3 +1,4 @@
+
 Test <video> element size with and without 'src' and 'poster' attributes.
 
 Testing movie with no 'src' and no 'poster', with 'width' and 'height' attributes.

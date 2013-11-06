@@ -1,3 +1,4 @@
+
 EXPECTED (video.currentSrc == '') OK
 EXPECTED (video.currentSrc == '') OK
 EVENT(canplaythrough)

@@ -1,3 +1,4 @@
+
 When changing the source for a video, we shouldn't get duplicate in-band tracks.
 
 EVENT(canplaythrough)

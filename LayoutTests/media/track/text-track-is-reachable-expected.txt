@@ -1,5 +1,6 @@
 Ensure that a TextTrack won't be collected if it has a custom property.
 
+
 ** Validate.
 EXPECTED (video.textTracks.length == '1') OK
 EXPECTED (video.textTracks[0].kind == 'captions') OK

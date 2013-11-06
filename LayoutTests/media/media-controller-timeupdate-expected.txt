@@ -1,3 +1,4 @@
+
 EVENT(canplay)
 RUN(video.play)
 EVENT(timeupdate)

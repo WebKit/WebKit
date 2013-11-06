@@ -1,3 +1,4 @@
+
 <video> element with src="" should invoke media element's load algorithm and should fire 'error' event. Network state should be NETWORK_NO_SOURCE and set error to MEDIA_ERR_SRC_NOT_SUPPORTED.
 
 ** <video> with valid non-empty 'src' attribute**

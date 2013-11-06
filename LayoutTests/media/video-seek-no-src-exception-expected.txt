@@ -1,3 +1,4 @@
+
 Test that seeking video with no 'src' attribute throws an INVALID_STATE_ERR exception.
 
 EXPECTED (video.networkState == '0') OK

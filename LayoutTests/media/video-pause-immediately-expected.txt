@@ -1,5 +1,6 @@
 Test that pausing the media element has an immediate effect on the clock.
 
+
 EVENT(canplay)
 EVENT(playing)
 EVENT(pause)

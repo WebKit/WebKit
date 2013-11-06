@@ -1,4 +1,5 @@
 CONSOLE MESSAGE: Not allowed to load local resource: scaled-matrix.mov
+
 Test that a remote video element can not use a local 'src'
 
 This test only works in DRT

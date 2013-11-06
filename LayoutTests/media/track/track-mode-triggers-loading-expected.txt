@@ -1,6 +1,7 @@
 Tests that a 'metadata' track does not load automatically, but does load when the mode is changed.
 
 
+
 EVENT(load) -- <body>
 **check initial metadata track state
 EXPECTED (track.readyState == '0') OK

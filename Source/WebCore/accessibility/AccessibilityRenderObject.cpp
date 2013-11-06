@@ -1221,9 +1221,14 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (hasContentEditableAttributeSet())
         return false;
     
-    // List items play an important role in defining the structure of lists. They should not be ignored.
-    if (roleValue() == ListItemRole)
+    switch (roleValue()) {
+    case AudioRole:
+    case ListItemRole:
+    case VideoRole:
         return false;
+    default:
+        break;
+    }
     
     // if this element has aria attributes on it, it should not be ignored.
     if (supportsARIAAttributes())
@@ -2547,6 +2552,13 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (node && node->hasTagName(addressTag))
         return LandmarkContentInfoRole;
 
+#if ENABLE(VIDEO)
+    if (node && isHTMLVideoElement(node))
+        return VideoRole;
+    if (node && isHTMLAudioElement(node))
+        return AudioRole;
+#endif
+    
     // The HTML element should not be exposed as an element. That's what the RenderView element does.
     if (node && node->hasTagName(htmlTag))
         return IgnoredRole;

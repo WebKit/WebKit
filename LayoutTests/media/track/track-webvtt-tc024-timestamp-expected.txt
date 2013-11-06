@@ -1,5 +1,6 @@
 Tests cues with <timestamps> tags.
 
+
 EXPECTED (video.textTracks[0].cues.length == '3') OK
 EXPECTED (video.textTracks[0].cues[0].getCueAsHTML().textContent == 'This cue is painted on.') OK
 EXPECTED (video.textTracks[0].cues[1].getCueAsHTML().textContent == 'I said Bear is coming!!!!') OK

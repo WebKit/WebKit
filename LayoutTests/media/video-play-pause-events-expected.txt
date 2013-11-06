@@ -1,3 +1,4 @@
+
 Test that calling play() and pause() triggers async play, timeupdate and pause events.
 
 RUN(video.play())

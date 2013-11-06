@@ -1,6 +1,7 @@
 Test to see if media loads automatically when 'preload' is specified.
 
 
+
 Will load with 'preload=none', should not buffer automatically until 'play()' is called
 RUN(video.setAttribute('preload', 'none'))
 RUN(video.removeAttribute('autoplay'))

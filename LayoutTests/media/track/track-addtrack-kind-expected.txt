@@ -1,5 +1,6 @@
 Tests that the addTextTrack() only accepts known 'kind' values.
 
+
 ++ Test invalid 'kind'.
 EXPECTED (video.textTracks.length == '0') OK
 TEST(video.addTextTrack('kaptions')) THROWS(DOMException.SYNTAX_ERR) OK

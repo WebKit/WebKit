@@ -1,3 +1,4 @@
+
 Test that in-band tracks work with .webkitClosedCaptionsVisible.
 
 EVENT(canplaythrough)

@@ -1,4 +1,5 @@
 
+
 Test before movie is open
 EXPECTED (video.error == 'null') OK
 
