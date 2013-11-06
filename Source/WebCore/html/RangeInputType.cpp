@@ -149,10 +149,10 @@ void RangeInputType::handleMouseDownEvent(MouseEvent* event)
     ASSERT(element().shadowRoot());
     if (targetNode != &element() && !targetNode->isDescendantOf(element().userAgentShadowRoot()))
         return;
-    SliderThumbElement& thumb = typedSliderThumbElement();
-    if (targetNode == &thumb)
+    RefPtr<SliderThumbElement> thumb = &typedSliderThumbElement();
+    if (targetNode == thumb)
         return;
-    thumb.dragFrom(event->absoluteLocation());
+    thumb->dragFrom(event->absoluteLocation());
 }
 
 #if ENABLE(TOUCH_EVENTS)
