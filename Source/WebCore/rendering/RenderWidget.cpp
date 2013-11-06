@@ -24,13 +24,9 @@
 #include "RenderWidget.h"
 
 #include "AXObjectCache.h"
-#include "AnimationController.h"
 #include "Frame.h"
-#include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HitTestResult.h"
-#include "PluginViewBase.h"
-#include "RenderCounter.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include <wtf/StackStats.h>
@@ -387,16 +383,6 @@ bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
     return inside;
 }
 
-CursorDirective RenderWidget::getCursor(const LayoutPoint& point, Cursor& cursor) const
-{
-    if (widget() && widget()->isPluginViewBase()) {
-        // A plug-in is responsible for setting the cursor when the pointer is over it.
-        return DoNotSetCursor;
-    }
-    return RenderReplaced::getCursor(point, cursor);
-}
-
-
 #if USE(ACCELERATED_COMPOSITING)
 bool RenderWidget::requiresLayer() const
 {
@@ -405,13 +391,7 @@ bool RenderWidget::requiresLayer() const
 
 bool RenderWidget::requiresAcceleratedCompositing() const
 {
-    // There are two general cases in which we can return true. First, if this is a plugin 
-    // renderer and the plugin has a layer, then we need a layer. Second, if this is 
-    // a renderer with a contentDocument and that document needs a layer, then we need
-    // a layer.
-    if (widget() && widget()->isPluginViewBase() && toPluginViewBase(widget())->platformLayer())
-        return true;
-
+    // If this is a renderer with a contentDocument and that document needs a layer, then we need a layer.
     if (Document* contentDocument = frameOwnerElement().contentDocument()) {
         if (RenderView* view = contentDocument->renderView())
             return view->usesCompositing();

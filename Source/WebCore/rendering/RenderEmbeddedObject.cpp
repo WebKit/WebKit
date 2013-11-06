@@ -630,6 +630,10 @@ CursorDirective RenderEmbeddedObject::getCursor(const LayoutPoint& point, Cursor
         cursor = handCursor();
         return SetCursor;
     }
+    if (widget() && widget()->isPluginViewBase()) {
+        // A plug-in is responsible for setting the cursor when the pointer is over it.
+        return DoNotSetCursor;
+    }
     return RenderWidget::getCursor(point, cursor);
 }
 

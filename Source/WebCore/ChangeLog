@@ -1,3 +1,15 @@
+2013-11-05  Andreas Kling  <akling@apple.com>
+
+        Move some plugin-specific code from RenderWidget to RenderEmbeddedObject.
+        <https://webkit.org/b/123845>
+
+        All RenderWidgets representing plugins will be RenderEmbeddedObjects.
+        Move some of the plugin-specific logic to RenderEmbeddedObject since it
+        doesn't make sense for all RenderWidgets (frames, embedded documents)
+        to care about this.
+
+        Reviewed by Anders Carlsson.
+
 2013-11-05  Tim Horton  <timothy_horton@apple.com>
 
         Fix the 32-bit build.
