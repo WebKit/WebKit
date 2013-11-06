@@ -28,7 +28,7 @@
 
 #include "WKAPICast.h"
 #include "WKEinaSharedString.h"
-#include "WKNavigationData.h"
+#include "WKNavigationDataRef.h"
 #include "WKRetainPtr.h"
 #include "ewk_private.h"
 #include "ewk_url_request_private.h"

@@ -1,3 +1,15 @@
+2013-11-06  Sergio Correia  <sergio.correia@openbossa.org>
+
+        Fix EFL build after r158753
+        https://bugs.webkit.org/show_bug.cgi?id=123923
+
+        r158753 renamed WKNavigationData.h as WKNavigationDataRef.h, so
+        update it in UIProcess/API/efl/ewk_navigation_data_private.h.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * UIProcess/API/efl/ewk_navigation_data_private.h:
+
 2013-11-06  Anders Carlsson  <andersca@apple.com>
 
         Implement more decoding methods
