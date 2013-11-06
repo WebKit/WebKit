@@ -1,3 +1,35 @@
+2013-11-05  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: Moving an element while in the DOMNodeRemoved handler will hide it in the inspector
+        https://bugs.webkit.org/show_bug.cgi?id=123516
+
+        Reviewed by Timothy Hatcher.
+
+        InspectorInstrumentation::willRemoveDOMNode was actually calling both willRemoveDOMNodeImpl and
+        didRemoveDOMNodeImpl, making the DOMAgent unbind the element even if it was still part of the DOM.
+
+        Because of that the DOMAgent was sending two events:
+        1. When the element was about to be removed, just before JS "DOMNodeRemoved" was triggered.
+        2. When the element was actually removed.
+
+        Note that inspector's event #2 will not know about the node, as it just removed it from the
+        internal hashmap, so it will just use a nodeID == 0 for it.
+
+        This patch adds a separate call to InspectorInstrumentation::didRemoveDOMNode, just before the
+        element is about to be removed. The InspectorInstrumentation::willRemoveDOMNode call is now only used
+        by the DOMDebugger to trigger the DOM breakpoints in the Web Inspector. That feature is not exposed
+        in the new Inspector UI, but can be used/tested using the protocol directly.
+
+        Tests: inspector-protocol/dom-debugger/node-removed.html
+               inspector-protocol/dom/dom-remove-events.html
+               inspector-protocol/dom/remove-multiple-nodes.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeBetween):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willRemoveDOMNode):
+        (WebCore::InspectorInstrumentation::didRemoveDOMNode):
+
 2013-11-05  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix on CMake based ports with GLES.

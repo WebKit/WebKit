@@ -119,6 +119,7 @@ public:
     static void willInsertDOMNode(Document*, Node* parent);
     static void didInsertDOMNode(Document*, Node*);
     static void willRemoveDOMNode(Document*, Node*);
+    static void didRemoveDOMNode(Document*, Node*);
     static void willModifyDOMAttr(Document*, Element*, const AtomicString& oldValue, const AtomicString& newValue);
     static void didModifyDOMAttr(Document*, Element*, const AtomicString& name, const AtomicString& value);
     static void didRemoveDOMAttr(Document*, Element*, const AtomicString& name);
@@ -565,10 +566,20 @@ inline void InspectorInstrumentation::willRemoveDOMNode(Document* document, Node
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document)) {
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
         willRemoveDOMNodeImpl(instrumentingAgents, node);
+#else
+    UNUSED_PARAM(document);
+    UNUSED_PARAM(node);
+#endif
+}
+
+inline void InspectorInstrumentation::didRemoveDOMNode(Document* document, Node* node)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
         didRemoveDOMNodeImpl(instrumentingAgents, node);
-    }
 #else
     UNUSED_PARAM(document);
     UNUSED_PARAM(node);

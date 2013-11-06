@@ -1,3 +1,22 @@
+2013-11-05  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: Moving an element while in the DOMNodeRemoved handler will hide it in the inspector
+        https://bugs.webkit.org/show_bug.cgi?id=123516
+
+        Reviewed by Timothy Hatcher.
+
+        Added tests to check that the DOM.childNodeRemoved inspector-protocol message is dispatched
+        correctly when DOM nodes are moved while inside the "DOMNodeRemoved" event handler.
+
+        * inspector-protocol/dom-debugger/node-removed-expected.txt: Added.
+        * inspector-protocol/dom-debugger/node-removed.html: Added. Checking that the DOMDebugger agent 
+        is still sending the node-removed events.
+        * inspector-protocol/dom/dom-remove-events-expected.txt: Added.
+        * inspector-protocol/dom/dom-remove-events.html: Added. Test with a single DOM remove event.
+        * inspector-protocol/dom/remove-multiple-nodes-expected.txt: Added.
+        * inspector-protocol/dom/remove-multiple-nodes.html: Added. Test case when multiple children
+        are removed at once with parentNode.textContent = "String".
+
 2013-11-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         text-decoration-skip: ink isn't tested with underlines that don't intersect the underlined text

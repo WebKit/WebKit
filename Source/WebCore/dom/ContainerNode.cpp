@@ -585,6 +585,8 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
 
 void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node& oldChild)
 {
+    InspectorInstrumentation::didRemoveDOMNode(&oldChild.document(), &oldChild);
+
     NoEventDispatchAssertion assertNoEventDispatch;
 
     ASSERT(oldChild.parentNode() == this);
