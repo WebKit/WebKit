@@ -45,55 +45,6 @@ namespace JSC {
 
 #if COMPILER(GCC)
 
-asm (
-".text\n"
-".globl " SYMBOL_STRING(ctiTrampoline) "\n"
-HIDE_SYMBOL(ctiTrampoline) "\n"
-SYMBOL_STRING(ctiTrampoline) ":" "\n"
-    "pushq %rbp" "\n"
-    "movq %rbp, %rax" "\n" // Save previous frame pointer
-    "movq %rsp, %rbp" "\n"
-    "pushq %r12" "\n"
-    "pushq %r13" "\n"
-    "pushq %r14" "\n"
-    "pushq %r15" "\n"
-    "pushq %rbx" "\n"
-
-    // The X86_64 ABI specifies that the worse case stack alignment requirement
-    // is 32 bytes.
-    "subq $0x8, %rsp" "\n"
-
-    "movq $512, %r12" "\n"
-    "movq $0xFFFF000000000000, %r14" "\n"
-    "movq $0xFFFF000000000002, %r15" "\n"
-    "movq %rdx, %r13" "\n"
-    "movq (%r13), %r11" "\n" // Put the previous frame pointer in the VM entry sentinal frame above us
-    "movq %rax, (%r11)" "\n"
-    "call *%rdi" "\n"
-    "addq $0x8, %rsp" "\n"
-    "popq %rbx" "\n"
-    "popq %r15" "\n"
-    "popq %r14" "\n"
-    "popq %r13" "\n"
-    "popq %r12" "\n"
-    "popq %rbp" "\n"
-    "ret" "\n"
-);
-
-asm (
-".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
-HIDE_SYMBOL(ctiOpThrowNotCaught) "\n"
-SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
-    "addq $0x8, %rsp" "\n"
-    "popq %rbx" "\n"
-    "popq %r15" "\n"
-    "popq %r14" "\n"
-    "popq %r13" "\n"
-    "popq %r12" "\n"
-    "popq %rbp" "\n"
-    "ret" "\n"
-);
-
 #if USE(MASM_PROBE)
 asm (
 ".globl " SYMBOL_STRING(ctiMasmProbeTrampoline) "\n"

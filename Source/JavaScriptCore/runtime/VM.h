@@ -329,6 +329,10 @@ namespace JSC {
             return jitStubs->ctiStub(this, generator);
         }
         NativeExecutable* getHostFunction(NativeFunction, Intrinsic);
+
+        typedef EncodedJSValue(*CallJavaScriptJITFunction)(void *, ExecState*);
+
+        CallJavaScriptJITFunction callJavaScriptJITFunction;
 #endif
 #if ENABLE(FTL_JIT)
         std::unique_ptr<FTL::Thunks> ftlThunks;

@@ -25,60 +25,9 @@
 
 EXTERN getHostCallReturnValueWithExecState : near
 
-PUBLIC ctiTrampoline
-PUBLIC ctiOpThrowNotCaught
 PUBLIC getHostCallReturnValue
 
 _TEXT   SEGMENT
-
-ctiTrampoline PROC
-    ; Dump register parameters to their home address
-    mov qword ptr[rsp+20h], r9
-    mov qword ptr[rsp+18h], r8
-    mov qword ptr[rsp+10h], rdx
-    mov qword ptr[rsp+8h], rcx
-
-    push rbp
-    mov rbp, rax ; Save previous frame pointer
-    mov rbp, rsp
-    push r12
-    push r13
-    push r14
-    push r15
-    push rbx
-
-    ; JIT operations can use up to 6 args (4 in registers and 2 on the stack).
-    ; In addition, X86_64 ABI specifies that the worse case stack alignment
-    ; requirement is 32 bytes. Based on these factors, we need to pad the stack
-    ; and additional 28h bytes.
-    sub rsp, 28h
-    mov r12, 512
-    mov r14, 0FFFF000000000000h
-    mov r15, 0FFFF000000000002h
-    mov r13, r8
-    mov r11, qword ptr[r13] ; Put the previous frame pointer in the host call frame above us
-    mov qword ptr[r11], rax
-    call rcx
-    add rsp, 28h
-    pop rbx
-    pop r15
-    pop r14
-    pop r13
-    pop r12
-    pop rbp
-    ret
-ctiTrampoline ENDP
-
-ctiOpThrowNotCaught PROC
-    add rsp, 28h
-    pop rbx
-    pop r15
-    pop r14
-    pop r13
-    pop r12
-    pop rbp
-    ret
-ctiOpThrowNotCaught ENDP
 
 getHostCallReturnValue PROC
     sub r13, 40

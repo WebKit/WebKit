@@ -30,57 +30,9 @@
 #ifndef JITStubs_h
 #define JITStubs_h
 
-#include "CallData.h"
-#include "Intrinsic.h"
-#include "JITExceptions.h"
-#include "LowLevelInterpreter.h"
-#include "MacroAssemblerCodeRef.h"
-#include "Register.h"
-
 namespace JSC {
 
 #if ENABLE(JIT)
-
-struct StructureStubInfo;
-
-class ArrayAllocationProfile;
-class CodeBlock;
-class ExecutablePool;
-class FunctionExecutable;
-class Identifier;
-class VM;
-class JSGlobalObject;
-class JSObject;
-class JSPropertyNameIterator;
-class JSStack;
-class JSValue;
-class JSValueEncodedAsPointer;
-class LegacyProfiler;
-class NativeExecutable;
-class PropertySlot;
-class PutPropertySlot;
-class RegExp;
-class Structure;
-
-#define STUB_ARGS_DECLARATION void** args
-#define STUB_ARGS (args)
-
-#if CPU(X86)
-#if COMPILER(MSVC)
-#define JIT_STUB __fastcall
-#elif COMPILER(GCC)
-#define JIT_STUB  __attribute__ ((fastcall))
-#elif COMPILER(SUNCC)
-#define JIT_STUB
-#else
-#error "JIT_STUB function calls require fastcall conventions on x86, add appropriate directive/attribute here for your compiler!"
-#endif
-#else
-#define JIT_STUB
-#endif
-
-extern "C" void ctiOpThrowNotCaught();
-extern "C" EncodedJSValue ctiTrampoline(void* code, JSStack*, CallFrame*, void* /*unused1*/, void* /*unused2*/, VM*);
 
 #if USE(MASM_PROBE)
 extern "C" void ctiMasmProbeTrampoline();

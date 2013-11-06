@@ -49,7 +49,7 @@ void genericUnwind(VM* vm, ExecState* callFrame, JSValue exceptionValue)
         catchPCForInterpreter = &callFrame->codeBlock()->instructions()[handler->target];
         catchRoutine = ExecutableBase::catchRoutineFor(handler, catchPCForInterpreter);
     } else
-        catchRoutine = FunctionPtr(LLInt::getCodePtr(ctiOpThrowNotCaught)).value();
+        catchRoutine = vm->getCTIStub(throwNotCaught).code().executableAddress();
     
     vm->callFrameForThrow = callFrame;
     vm->targetMachinePCForThrow = catchRoutine;

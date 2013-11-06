@@ -45,48 +45,6 @@ namespace JSC {
 
 #if COMPILER(GCC)
 
-asm (
-".text\n"
-".globl " SYMBOL_STRING(ctiTrampoline) "\n"
-HIDE_SYMBOL(ctiTrampoline) "\n"
-SYMBOL_STRING(ctiTrampoline) ":" "\n"
-    "pushl %ebp" "\n"
-    "movl %ebp, %eax" "\n" // Save previous frame pointer
-    "movl %esp, %ebp" "\n"
-    "pushl %esi" "\n"
-    "pushl %edi" "\n"
-    "pushl %ebx" "\n"
-
-    // JIT Operation can use up to 6 arguments right now. So, we need to
-    // reserve space in this stack frame for the out-going args. To ensure that
-    // the stack remains aligned on an 16 byte boundary, we round the padding up
-    // by 0x1c bytes.
-    "subl $0x1c, %esp" "\n"
-    "movl 0x38(%esp), %edi" "\n"
-    "movl (%edi), %ebx" "\n" // Put the previous frame pointer in the VM entry sentinal frame above us
-    "movl %eax, (%ebx)" "\n"
-    "call *0x30(%esp)" "\n"
-    "addl $0x1c, %esp" "\n"
-
-    "popl %ebx" "\n"
-    "popl %edi" "\n"
-    "popl %esi" "\n"
-    "popl %ebp" "\n"
-    "ret" "\n"
-);
-
-asm (
-".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
-HIDE_SYMBOL(ctiOpThrowNotCaught) "\n"
-SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
-    "addl $0x1c, %esp" "\n"
-    "popl %ebx" "\n"
-    "popl %edi" "\n"
-    "popl %esi" "\n"
-    "popl %ebp" "\n"
-    "ret" "\n"
-);
-
 #if USE(MASM_PROBE)
 asm (
 ".globl " SYMBOL_STRING(ctiMasmProbeTrampoline) "\n"
@@ -241,49 +199,6 @@ SYMBOL_STRING(ctiMasmProbeTrampolineEnd) ":" "\n"
 #endif // USE(MASM_PROBE)
 
 #endif // COMPILER(GCC)
-
-#if COMPILER(MSVC)
-
-extern "C" {
-
-    __declspec(naked) EncodedJSValue ctiTrampoline(void* code, JSStack*, CallFrame*, void* /*unused1*/, void* /*unused2*/, VM*)
-    {
-        __asm {
-            push ebp;
-            mov eax, ebp;
-            mov ebp, esp;
-            push esi;
-            push edi;
-            push ebx;
-            sub esp, 0x1c;
-            mov ecx, esp;
-            mov edi, [esp + 0x38];
-            mov ebx, [edi];
-            mov [ebx], eax;
-            call [esp + 0x30];
-            add esp, 0x1c;
-            pop ebx;
-            pop edi;
-            pop esi;
-            pop ebp;
-            ret;
-        }
-    }
-
-    __declspec(naked) void ctiOpThrowNotCaught()
-    {
-        __asm {
-            add esp, 0x1c;
-            pop ebx;
-            pop edi;
-            pop esi;
-            pop ebp;
-            ret;
-        }
-    }
-}
-
-#endif // COMPILER(MSVC)
 
 } // namespace JSC
 

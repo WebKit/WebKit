@@ -41,11 +41,6 @@
 
 namespace JSC {
 
-// Also update the MSVC section (defined at DEFINE_STUB_FUNCTION)
-// when changing one of the following values.
-#define THUNK_RETURN_ADDRESS_OFFSET 64
-#define PRESERVEDR4_OFFSET          68
-
 #if COMPILER(GCC)
 
 #if USE(MASM_PROBE)
@@ -150,39 +145,6 @@ COMPILE_ASSERT(sizeof(MacroAssembler::ProbeContext) == PROBE_SIZE, ProbeContext_
 
 #endif // USE(MASM_PROBE)
 
-
-asm (
-".text" "\n"
-".globl " SYMBOL_STRING(ctiTrampoline) "\n"
-HIDE_SYMBOL(ctiTrampoline) "\n"
-INLINE_ARM_FUNCTION(ctiTrampoline)
-SYMBOL_STRING(ctiTrampoline) ":" "\n"
-    "stmdb sp!, {r1-r3}" "\n"
-    "stmdb sp!, {r4-r6, r8-r11, lr}" "\n"
-    "sub sp, sp, #" STRINGIZE_VALUE_OF(PRESERVEDR4_OFFSET) "\n"
-    "mov r5, r2" "\n"
-    "ldr r4, [r5]" "\n"
-    "str r11, [r4]" "\n"
-    // r0 contains the code
-    "blx r0" "\n"
-    "add sp, sp, #" STRINGIZE_VALUE_OF(PRESERVEDR4_OFFSET) "\n"
-    "ldmia sp!, {r4-r6, r8-r11, lr}" "\n"
-    "add sp, sp, #12" "\n"
-    "bx lr" "\n"
-);
-
-asm (
-// Both has the same return sequence
-".text" "\n"
-".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
-HIDE_SYMBOL(ctiOpThrowNotCaught) "\n"
-INLINE_ARM_FUNCTION(ctiOpThrowNotCaught)
-SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
-    "add sp, sp, #" STRINGIZE_VALUE_OF(PRESERVEDR4_OFFSET) "\n"
-    "ldmia sp!, {r4-r6, r8-r11, lr}" "\n"
-    "add sp, sp, #12" "\n"
-    "bx lr" "\n"
-);
 
 #if USE(MASM_PROBE)
 asm (
@@ -332,139 +294,15 @@ SYMBOL_STRING(ctiMasmProbeTrampolineEnd) ":" "\n"
 #endif // USE(MASM_PROBE)
 
 
-#define DEFINE_STUB_FUNCTION(rtype, op) \
-    extern "C" { \
-        rtype JITStubThunked_##op(STUB_ARGS_DECLARATION); \
-    }; \
-    asm ( \
-        ".globl " SYMBOL_STRING(cti_##op) "\n" \
-        INLINE_ARM_FUNCTION(cti_##op) \
-        SYMBOL_STRING(cti_##op) ":" "\n" \
-        "str lr, [sp, #" STRINGIZE_VALUE_OF(THUNK_RETURN_ADDRESS_OFFSET) "]" "\n" \
-        "bl " SYMBOL_STRING(JITStubThunked_##op) "\n" \
-        "ldr lr, [sp, #" STRINGIZE_VALUE_OF(THUNK_RETURN_ADDRESS_OFFSET) "]" "\n" \
-        "bx lr" "\n" \
-        ); \
-    rtype JITStubThunked_##op(STUB_ARGS_DECLARATION)
 
 #endif // COMPILER(GCC)
 
 #if COMPILER(RVCT)
 
-__asm EncodedJSValue ctiTrampoline(void*, JSStack*, CallFrame*, void* /*unused1*/, void* /*unused2*/, VM*)
-{
-    ARM
-    stmdb sp!, {r1-r3}
-    stmdb sp!, {r4-r6, r8-r11, lr}
-    sub sp, sp, # PRESERVEDR4_OFFSET
-    mov r5, r2
-    ldr r4, [r5]
-    str r11, [r4]
-    mov lr, pc
-    bx r0
-    add sp, sp, # PRESERVEDR4_OFFSET
-    ldmia sp!, {r4-r6, r8-r11, lr}
-    add sp, sp, #12
-    bx lr
-}
-
-__asm void ctiOpThrowNotCaught()
-{
-    ARM
-    add sp, sp, # PRESERVEDR4_OFFSET
-    ldmia sp!, {r4-r8, lr}
-    add sp, sp, #12
-    bx lr
-}
-
-#define DEFINE_STUB_FUNCTION(rtype, op) rtype JITStubThunked_##op(STUB_ARGS_DECLARATION)
-
-/* The following is a workaround for RVCT toolchain; precompiler macros are not expanded before the code is passed to the assembler */
-
-/* The following section is a template to generate code for GeneratedJITStubs_RVCT.h */
-/* The pattern "#xxx#" will be replaced with "xxx" */
-
-/*
-RVCT(extern "C" #rtype# JITStubThunked_#op#(STUB_ARGS_DECLARATION);)
-RVCT(__asm #rtype# cti_#op#(STUB_ARGS_DECLARATION))
-RVCT({)
-RVCT(    PRESERVE8)
-RVCT(    IMPORT JITStubThunked_#op#)
-RVCT(    str lr, [sp, # THUNK_RETURN_ADDRESS_OFFSET])
-RVCT(    bl JITStubThunked_#op#)
-RVCT(    ldr lr, [sp, # THUNK_RETURN_ADDRESS_OFFSET])
-RVCT(    bx lr)
-RVCT(})
-RVCT()
-*/
-
 /* Include the generated file */
 #include "GeneratedJITStubs_RVCT.h"
 
 #endif // COMPILER(RVCT)
-
-#if COMPILER(MSVC)
-
-#define DEFINE_STUB_FUNCTION(rtype, op) extern "C" rtype JITStubThunked_##op(STUB_ARGS_DECLARATION)
-
-/* The following is a workaround for MSVC toolchain; inline assembler is not supported */
-
-/* The following section is a template to generate code for GeneratedJITStubs_MSVC.asm */
-/* The pattern "#xxx#" will be replaced with "xxx" */
-
-/*
-MSVC_BEGIN(    AREA Trampoline, CODE)
-MSVC_BEGIN()
-MSVC_BEGIN(    EXPORT ctiTrampoline)
-MSVC_BEGIN(    EXPORT ctiTrampolineEnd)
-MSVC_BEGIN(    EXPORT ctiOpThrowNotCaught)
-MSVC_BEGIN(    EXPORT getHostCallReturnValue)
-MSVC_BEGIN(    IMPORT getHostCallReturnValueWithExecState)
-MSVC_BEGIN()
-MSVC_BEGIN(ctiTrampoline PROC)
-MSVC_BEGIN(    stmdb sp!, {r1-r3})
-MSVC_BEGIN(    stmdb sp!, {r4-r6, r8-r11, lr})
-MSVC_BEGIN(    sub sp, sp, #68 ; sync with PRESERVEDR4_OFFSET)
-MSVC_BEGIN(    mov r5, r2)
-MSVC_BEGIN(    ldr r4, [r5])
-MSVC_BEGIN(    str r11, [r4])
-MSVC_BEGIN(    ; r0 contains the code)
-MSVC_BEGIN(    mov lr, pc)
-MSVC_BEGIN(    bx r0)
-MSVC_BEGIN(    add sp, sp, #68 ; sync with PRESERVEDR4_OFFSET)
-MSVC_BEGIN(    ldmia sp!, {r4-r6, r8-r11, lr})
-MSVC_BEGIN(    add sp, sp, #12)
-MSVC_BEGIN(    bx lr)
-MSVC_BEGIN(ctiTrampolineEnd)
-MSVC_BEGIN(ctiTrampoline ENDP)
-MSVC_BEGIN()
-MSVC_BEGIN(ctiOpThrowNotCaught PROC)
-MSVC_BEGIN(    add sp, sp, #68 ; sync with PRESERVEDR4_OFFSET)
-MSVC_BEGIN(    ldmia sp!, {r4-r6, r8-r11, lr})
-MSVC_BEGIN(    add sp, sp, #12)
-MSVC_BEGIN(    bx lr)
-MSVC_BEGIN(ctiOpThrowNotCaught ENDP)
-MSVC_BEGIN()
-MSVC_BEGIN(getHostCallReturnValue PROC)
-MSVC_BEGIN(    ldr r5, [r5, #40])
-MSVC_BEGIN(    mov r0, r5)
-MSVC_BEGIN(    b getHostCallReturnValueWithExecState)
-MSVC_BEGIN(getHostCallReturnValue ENDP)
-MSVC_BEGIN()
-
-MSVC(    EXPORT cti_#op#)
-MSVC(    IMPORT JITStubThunked_#op#)
-MSVC(cti_#op# PROC)
-MSVC(    str lr, [sp, #64] ; sync with THUNK_RETURN_ADDRESS_OFFSET)
-MSVC(    bl JITStubThunked_#op#)
-MSVC(    ldr lr, [sp, #64] ; sync with THUNK_RETURN_ADDRESS_OFFSET)
-MSVC(    bx lr)
-MSVC(cti_#op# ENDP)
-MSVC()
-
-MSVC_END(    END)
-*/
-#endif // COMPILER(MSVC)
 
 } // namespace JSC
 

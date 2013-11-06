@@ -257,6 +257,8 @@ VM::VM(VMType vmType, HeapType heapType)
 
 #if ENABLE(JIT)
     jitStubs = adoptPtr(new JITThunks());
+
+    callJavaScriptJITFunction = reinterpret_cast<CallJavaScriptJITFunction>(getCTIStub(callToJavaScript).code().executableAddress());
 #endif
 
 #if ENABLE(FTL_JIT)

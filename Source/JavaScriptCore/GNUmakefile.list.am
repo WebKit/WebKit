@@ -662,10 +662,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/JITStubs.cpp \
 	Source/JavaScriptCore/jit/JITStubs.h \
 	Source/JavaScriptCore/jit/JITStubsARM.h \
-	Source/JavaScriptCore/jit/JITStubsARM64.h \
 	Source/JavaScriptCore/jit/JITStubsARMv7.h \
-	Source/JavaScriptCore/jit/JITStubsMIPS.h \
-	Source/JavaScriptCore/jit/JITStubsSH4.h \
 	Source/JavaScriptCore/jit/JITStubsX86.h \
 	Source/JavaScriptCore/jit/JITStubsX86_64.h \
 	Source/JavaScriptCore/jit/JITStubsX86Common.h \
