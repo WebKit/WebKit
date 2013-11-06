@@ -1,3 +1,16 @@
+2013-11-05  Zalan Bujtas  <zalan@apple.com>
+
+        Widget's position change should not initiate layout, only when its size changes.
+        https://bugs.webkit.org/show_bug.cgi?id=123860
+
+        Reviewed by Andreas Kling.
+
+        RenderWidgets initiate unnecessary layouts while scrolling when they are embedded to
+        overflow:scroll containers. Scroll position change doesn't dirty the render tree
+        so it should not trigger layout either.
+
+        * ManualTests/layouts-on-renderwidgets-while-scrolling.html: Added.
+
 2013-11-05  Éva Balázsfalvi  <balazsfalvi.eva@stud.u-szeged.hu>
 
         Remove leftover Qt related things from WebKitMacros.cmake

@@ -118,9 +118,10 @@ static inline IntRect roundedIntRect(const LayoutRect& rect)
 bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
 {
     IntRect clipRect = roundedIntRect(enclosingLayer()->childrenClipRect());
-    IntRect newFrame = roundedIntRect(frame);
+    IntRect newFrameRect = roundedIntRect(frame);
+    IntRect oldFrameRect = m_widget->frameRect();
     bool clipChanged = m_clipRect != clipRect;
-    bool boundsChanged = m_widget->frameRect() != newFrame;
+    bool boundsChanged = oldFrameRect != newFrameRect;
 
     if (!boundsChanged && !clipChanged)
         return false;
@@ -130,7 +131,7 @@ bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
     WeakPtr<RenderWidget> weakThis = createWeakPtr();
     // These calls *may* cause this renderer to disappear from underneath...
     if (boundsChanged)
-        m_widget->setFrameRect(newFrame);
+        m_widget->setFrameRect(newFrameRect);
     else if (clipChanged)
         m_widget->clipRectChanged();
     // ...so we follow up with a sanity check.
@@ -138,19 +139,18 @@ bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
         return true;
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (hasLayer() && layer()->isComposited())
+    if (boundsChanged && hasLayer() && layer()->isComposited())
         layer()->backing()->updateAfterWidgetResize();
 #endif
-    
-    return boundsChanged;
+    return oldFrameRect.size() != newFrameRect.size();
 }
 
 bool RenderWidget::updateWidgetGeometry()
 {
-    LayoutRect contentBox = contentBoxRect();
     if (!m_widget->transformsAffectFrameRect())
         return setWidgetGeometry(absoluteContentBox());
 
+    LayoutRect contentBox = contentBoxRect();
     LayoutRect absoluteContentBox(localToAbsoluteQuad(FloatQuad(contentBox)).boundingBox());
     if (m_widget->isFrameView()) {
         contentBox.setLocation(absoluteContentBox.location());
@@ -316,18 +316,16 @@ void RenderWidget::updateWidgetPosition()
         return;
 
     WeakPtr<RenderWidget> weakThis = createWeakPtr();
-
-    bool boundsChanged = updateWidgetGeometry();
-
+    bool widgetSizeChanged = updateWidgetGeometry();
     if (!weakThis)
         return;
 
-    // if the frame bounds got changed, or if view needs layout (possibly indicating
-    // content size is wrong) we have to do a layout to set the right widget size
-    if (m_widget && m_widget->isFrameView()) {
+    // if the frame size got changed, or if view needs layout (possibly indicating
+    // content size is wrong) we have to do a layout to set the right widget size.
+    if (m_widget->isFrameView()) {
         FrameView* frameView = toFrameView(m_widget.get());
         // Check the frame's page to make sure that the frame isn't in the process of being destroyed.
-        if ((boundsChanged || frameView->needsLayout()) && frameView->frame().page())
+        if ((widgetSizeChanged || frameView->needsLayout()) && frameView->frame().page())
             frameView->layout();
     }
 }
