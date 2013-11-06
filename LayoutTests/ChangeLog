@@ -1,3 +1,9 @@
+2013-11-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove the flaky test expectation after r158720 now that the test is not flaky.
+
+        * platform/mac/TestExpectations:
+
 2013-11-06  Filip Pizlo  <fpizlo@apple.com>
 
         DFG CheckArray(NonArray) should prove that the child isn't an array
