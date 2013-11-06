@@ -1,3 +1,16 @@
+2013-11-06  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] accessibility/tabindex-elements-are-accessible.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=123884
+
+        Reviewed by Mario Sanchez Prada.
+
+        Added new accessibility expectation file. ATK represents paragraph's role as a ATK_ROLE_PARAGRAPH.
+
+        * platform/efl/TestExpectations: Test is no longer failing.
+        * platform/efl/accessibility/tabindex-elements-are-accessible-expected.txt: Added.
+        * platform/gtk/accessibility/tabindex-elements-are-accessible-expected.txt: Added.
+
 2013-11-06  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Unreviewed GTK gardening. Tests failing after r158195
