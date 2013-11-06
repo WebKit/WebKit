@@ -135,7 +135,11 @@ public:
 
     explicit LogicalSelectionOffsetCaches(RenderBlock& rootBlock)
     {
+#if ENABLE(TEXT_SELECTION)
+        // FIXME: We should either move this assertion to the caller (if applicable) or structure the code
+        // such that we can remove this assertion.
         ASSERT(rootBlock.isSelectionRoot());
+#endif
         auto parent = rootBlock.parent();
 
         // LogicalSelectionOffsetCaches should not be used on an orphaned tree.

@@ -110,11 +110,11 @@ TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintSty
 {
     paintSelectedTextOnly = (paintInfo.phase == PaintPhaseSelection);
     paintSelectedTextSeparately = false;
-    const ShadowData* textShadow = paintInfo.forceBlackText() ? 0 : lineStyle.textShadow();
+    selectionShadow = paintInfo.forceBlackText() ? nullptr : lineStyle.textShadow();
 
     TextPaintStyle selectionPaintStyle = textPaintStyle;
 
-    selectionShadow = textShadow;
+#if ENABLE(TEXT_SELECTION)
     Color foreground = paintInfo.forceBlackText() ? Color::black : renderer.selectionForegroundColor();
     if (foreground.isValid() && foreground != selectionPaintStyle.fillColor) {
         if (!paintSelectedTextOnly)
@@ -151,6 +151,11 @@ TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintSty
             selectionPaintStyle.strokeColor = stroke;
         }
     }
+#else
+    UNUSED_PARAM(renderer);
+    UNUSED_PARAM(lineStyle);
+    UNUSED_PARAM(paintInfo);
+#endif
     return selectionPaintStyle;
 }
 

@@ -2615,6 +2615,7 @@ GapRects RenderBlock::selectionGapRectsForRepaint(const RenderLayerModelObject* 
 
 void RenderBlock::paintSelection(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
+#if ENABLE(TEXT_SELECTION)
     if (shouldPaintSelectionGaps() && paintInfo.phase == PaintPhaseForeground) {
         LogicalSelectionOffsetCaches cache(*this);
         LayoutUnit lastTop = 0;
@@ -2637,6 +2638,10 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, const LayoutPoint& paintO
             }
         }
     }
+#else
+    UNUSED_PARAM(paintInfo);
+    UNUSED_PARAM(paintOffset);
+#endif
 }
 
 static void clipOutPositionedObjects(const PaintInfo* paintInfo, const LayoutPoint& offset, TrackedRendererListHashSet* positionedObjects)

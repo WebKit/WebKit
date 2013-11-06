@@ -1,3 +1,14 @@
+2013-11-06  Daniel Bates  <dabates@apple.com>
+
+        Add ENABLE(TEXT_SELECTION)
+        https://bugs.webkit.org/show_bug.cgi?id=123827
+
+        Reviewed by Ryosuke Niwa.
+
+        Enable selection painting by default on all ports except iOS.
+
+        * wtf/FeatureDefines.h:
+
 2013-11-04  Alexey Proskuryakov  <ap@apple.com>
 
         Implement base64url encoding from RFC 4648

@@ -646,6 +646,7 @@ void alignSelectionRectToDevicePixels(FloatRect& rect)
 
 void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& boxOrigin, const RenderStyle& style, const Font& font, Color textColor)
 {
+#if ENABLE(TEXT_SELECTION)
     if (context->paintingDisabled())
         return;
 
@@ -697,6 +698,13 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
     context->clip(clipRect);
 
     context->drawHighlightForText(font, textRun, localOrigin, selHeight, c, style.colorSpace(), sPos, ePos);
+#else
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(boxOrigin);
+    UNUSED_PARAM(style);
+    UNUSED_PARAM(font);
+    UNUSED_PARAM(textColor);
+#endif
 }
 
 void InlineTextBox::paintCompositionBackground(GraphicsContext* context, const FloatPoint& boxOrigin, const RenderStyle& style, const Font& font, int startPos, int endPos)
