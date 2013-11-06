@@ -104,6 +104,8 @@ inline CapabilityLevel canCompile(Node* node)
             break;
         return CannotCompile;
     case GetIndexedPropertyStorage:
+        if (node->arrayMode().type() == Array::String)
+            break;
         if (isTypedView(node->arrayMode().typedArrayType()))
             break;
         return CannotCompile;
@@ -124,6 +126,7 @@ inline CapabilityLevel canCompile(Node* node)
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:
+        case Array::String:
             break;
         default:
             if (isTypedView(node->arrayMode().typedArrayType()))
@@ -134,6 +137,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetByVal:
         switch (node->arrayMode().type()) {
         case Array::ForceExit:
+        case Array::String:
             return CanCompileAndOSREnter;
         case Array::Int32:
         case Array::Double:

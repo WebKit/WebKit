@@ -1,3 +1,25 @@
+2013-11-05  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should support String character access operations
+        https://bugs.webkit.org/show_bug.cgi?id=123783
+
+        Reviewed by Oliver Hunt.
+        
+        Implements:
+        
+        - string.length
+        
+        - string[index]
+
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileGetIndexedPropertyStorage):
+        (JSC::FTL::LowerDFGToLLVM::compileGetArrayLength):
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+
 2013-11-05  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         ObjCCallbackFunctionImpl's NSInvocation shouldn't retain its target or arguments

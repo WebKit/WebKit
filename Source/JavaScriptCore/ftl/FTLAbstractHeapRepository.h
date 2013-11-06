@@ -65,6 +65,7 @@ namespace JSC { namespace FTL {
     macro(indexedDoubleProperties, sizeof(double)) \
     macro(indexedContiguousProperties, sizeof(EncodedJSValue)) \
     macro(indexedArrayStorageProperties, sizeof(EncodedJSValue)) \
+    macro(singleCharacterStrings, sizeof(JSString*)) \
     macro(variables, sizeof(Register))
     
 #define FOR_EACH_NUMBERED_ABSTRACT_HEAP(macro) \

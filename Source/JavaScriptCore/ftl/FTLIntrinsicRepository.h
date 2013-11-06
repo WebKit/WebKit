@@ -53,7 +53,9 @@ namespace JSC { namespace FTL {
 #define FOR_EACH_FUNCTION_TYPE(macro) \
     macro(I_JITOperation_EJss, functionType(intPtr, intPtr, intPtr)) \
     macro(J_JITOperation_E, functionType(int64, intPtr)) \
+    macro(J_JITOperation_EJssZ, functionType(int64, intPtr, intPtr, int32)) \
     macro(J_JITOperation_ESsiJI, functionType(int64, intPtr, intPtr, int64, intPtr)) \
+    macro(Jss_JITOperation_EZ, functionType(intPtr, intPtr, int32)) \
     macro(P_JITOperation_EC, functionType(intPtr, intPtr, intPtr)) \
     macro(V_JITOperation_EOZD, functionType(voidType, intPtr, intPtr, int32, doubleType)) \
     macro(V_JITOperation_EOZJ, functionType(voidType, intPtr, intPtr, int32, int64)) \

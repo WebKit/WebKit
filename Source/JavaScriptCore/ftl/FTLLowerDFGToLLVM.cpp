@@ -1282,7 +1282,31 @@ private:
     
     void compileGetIndexedPropertyStorage()
     {
-        setStorage(m_out.loadPtr(lowCell(m_node->child1()), m_heaps.JSArrayBufferView_vector));
+        LValue cell = lowCell(m_node->child1());
+        
+        if (m_node->arrayMode().type() == Array::String) {
+            LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("GetIndexedPropertyStorage String slow case"));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("GetIndexedPropertyStorage String continuation"));
+            
+            ValueFromBlock fastResult = m_out.anchor(
+                m_out.loadPtr(cell, m_heaps.JSString_value));
+            
+            m_out.branch(m_out.notNull(fastResult.value()), continuation, slowPath);
+            
+            LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
+            
+            ValueFromBlock slowResult = m_out.anchor(
+                vmCall(m_out.operation(operationResolveRope), m_callFrame, cell));
+            
+            m_out.jump(continuation);
+            
+            m_out.appendTo(continuation, lastNext);
+            
+            setStorage(m_out.loadPtr(m_out.phi(m_out.intPtr, fastResult, slowResult), m_heaps.StringImpl_data));
+            return;
+        }
+        
+        setStorage(m_out.loadPtr(cell, m_heaps.JSArrayBufferView_vector));
     }
     
     void compileCheckArray()
@@ -1305,6 +1329,12 @@ private:
         case Array::Double:
         case Array::Contiguous: {
             setInt32(m_out.load32(lowStorage(m_node->child2()), m_heaps.Butterfly_publicLength));
+            return;
+        }
+            
+        case Array::String: {
+            LValue string = lowCell(m_node->child1());
+            setInt32(m_out.load32(string, m_heaps.JSString_length));
             return;
         }
             
@@ -1374,6 +1404,100 @@ private:
             // FIXME: Implement hole/OOB loads in the FTL.
             // https://bugs.webkit.org/show_bug.cgi?id=118077
             RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
+            
+        case Array::String: {
+            LValue base = lowCell(m_node->child1());
+            
+            LBasicBlock fastPath = FTL_NEW_BLOCK(m_out, ("GetByVal String fast path"));
+            LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("GetByVal String slow path"));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("GetByVal String continuation"));
+            
+            m_out.branch(
+                m_out.aboveOrEqual(
+                    index, m_out.load32(base, m_heaps.JSString_length)),
+                slowPath, fastPath);
+            
+            LBasicBlock lastNext = m_out.appendTo(fastPath, slowPath);
+            
+            LValue stringImpl = m_out.loadPtr(base, m_heaps.JSString_value);
+            
+            LBasicBlock is8Bit = FTL_NEW_BLOCK(m_out, ("GetByVal String 8-bit case"));
+            LBasicBlock is16Bit = FTL_NEW_BLOCK(m_out, ("GetByVal String 16-bit case"));
+            LBasicBlock bitsContinuation = FTL_NEW_BLOCK(m_out, ("GetByVal String bitness continuation"));
+            LBasicBlock bigCharacter = FTL_NEW_BLOCK(m_out, ("GetByVal String big character"));
+            
+            m_out.branch(
+                m_out.testIsZero32(
+                    m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags),
+                    m_out.constInt32(StringImpl::flagIs8Bit())),
+                is16Bit, is8Bit);
+            
+            m_out.appendTo(is8Bit, is16Bit);
+            
+            ValueFromBlock char8Bit = m_out.anchor(m_out.zeroExt(
+                m_out.load8(m_out.baseIndex(
+                    m_heaps.characters8,
+                    storage, m_out.zeroExt(index, m_out.intPtr),
+                    m_state.forNode(m_node->child2()).m_value)),
+                m_out.int32));
+            m_out.jump(bitsContinuation);
+            
+            m_out.appendTo(is16Bit, bigCharacter);
+            
+            ValueFromBlock char16Bit = m_out.anchor(m_out.zeroExt(
+                m_out.load16(m_out.baseIndex(
+                    m_heaps.characters16,
+                    storage, m_out.zeroExt(index, m_out.intPtr),
+                    m_state.forNode(m_node->child2()).m_value)),
+                m_out.int32));
+            m_out.branch(m_out.aboveOrEqual(char16Bit.value(), m_out.constInt32(0x100)), bigCharacter, bitsContinuation);
+            
+            m_out.appendTo(bigCharacter, bitsContinuation);
+            
+            Vector<ValueFromBlock, 4> results;
+            results.append(m_out.anchor(vmCall(
+                m_out.operation(operationSingleCharacterString),
+                m_callFrame, char16Bit.value())));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(bitsContinuation, slowPath);
+            
+            LValue character = m_out.phi(m_out.int32, char8Bit, char16Bit);
+            
+            LValue smallStrings = m_out.constIntPtr(vm().smallStrings.singleCharacterStrings());
+            
+            results.append(m_out.anchor(m_out.loadPtr(m_out.baseIndex(
+                m_heaps.singleCharacterStrings, smallStrings,
+                m_out.zeroExt(character, m_out.intPtr)))));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(slowPath, continuation);
+            
+            if (m_node->arrayMode().isInBounds()) {
+                speculate(OutOfBounds, noValue(), 0, m_out.booleanTrue);
+                results.append(m_out.anchor(m_out.intPtrZero));
+            } else {
+                JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->codeOrigin);
+                
+                if (globalObject->stringPrototypeChainIsSane()) {
+                    LBasicBlock negativeIndex = FTL_NEW_BLOCK(m_out, ("GetByVal String negative index"));
+                    
+                    results.append(m_out.anchor(m_out.constInt64(JSValue::encode(jsUndefined()))));
+                    m_out.branch(m_out.lessThan(index, m_out.int32Zero), negativeIndex, continuation);
+                    
+                    m_out.appendTo(negativeIndex, continuation);
+                }
+                
+                results.append(m_out.anchor(vmCall(
+                    m_out.operation(operationGetByValStringInt), base, index)));
+            }
+            
+            m_out.jump(continuation);
+            
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(m_out.int64, results));
             return;
         }
             
