@@ -120,7 +120,6 @@
 /* Specific compiler features */
 #if COMPILER(GCC) && !COMPILER(CLANG)
 #if GCC_VERSION_AT_LEAST(4, 8, 0)
-#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #endif
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
@@ -147,6 +146,7 @@
 #define WTF_COMPILER_SUPPORTS_CXX_STRONG_ENUMS 1
 #endif
 #if GCC_VERSION_AT_LEAST(4, 7, 0)
+#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #define WTF_COMPILER_SUPPORTS_CXX_OVERRIDE_CONTROL 1
 #endif
 #endif /* defined(__GXX_EXPERIMENTAL_CXX0X__) || (defined(__cplusplus) && __cplusplus >= 201103L) */
