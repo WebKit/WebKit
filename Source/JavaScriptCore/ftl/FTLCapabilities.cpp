@@ -96,6 +96,7 @@ inline CapabilityLevel canCompile(Node* node)
     case PutClosureVar:
     case Int52ToValue:
     case InvalidationPoint:
+    case StringCharAt:
         // These are OK.
         break;
     case GetById:

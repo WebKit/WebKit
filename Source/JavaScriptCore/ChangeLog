@@ -1,5 +1,21 @@
 2013-11-05  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL should support StringCharAt
+        https://bugs.webkit.org/show_bug.cgi?id=123855
+
+        Reviewed by Oliver Hunt.
+        
+        This is just like GetByVal for String, so we reuse that code.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileGetByVal):
+        (JSC::FTL::LowerDFGToLLVM::compileStringCharAt):
+
+2013-11-05  Filip Pizlo  <fpizlo@apple.com>
+
         Remove old unused code for hypothetical LLVM intrinsics
         https://bugs.webkit.org/show_bug.cgi?id=123824
 
