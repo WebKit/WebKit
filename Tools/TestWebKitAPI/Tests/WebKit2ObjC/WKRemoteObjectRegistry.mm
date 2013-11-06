@@ -101,9 +101,11 @@ TEST(WebKit2, WKRemoteObjectRegistryTest)
     [remoteObjectProxy sayHello];
     [remoteObjectProxy testMethodWithString:@"Hello" double:123.456 integer:789];
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.webkit.org/" relativeToURL:[NSURL URLWithString:@"http://www.webkit.org/"]] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:123.456];
 
     [remoteObjectProxy testMethodWithArray:@[ @1, @2, @3 ] dictionary:@{ @"Key" : @"Value", @123 : @456 } request:request];
+#endif
 
     // FIXME: Set this once the test actually is finished.
     testFinished = true;

@@ -1,3 +1,12 @@
+2013-11-06  Anders Carlsson  <andersca@apple.com>
+
+        Fix a Mountain Lion test failure.
+
+        NSURLRequest doesn't conform to NSSecureCoding on Mountain Lion, so don't try to test encoding it.
+
+        * TestWebKitAPI/Tests/WebKit2ObjC/WKRemoteObjectRegistry.mm:
+        (TestWebKitAPI::TEST):
+
 2013-11-06  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Implement tables-related attributesOf*() functions for AccessibilityUIElement
