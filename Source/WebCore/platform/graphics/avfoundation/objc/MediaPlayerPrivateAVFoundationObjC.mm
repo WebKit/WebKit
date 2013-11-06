@@ -1173,7 +1173,7 @@ void MediaPlayerPrivateAVFoundationObjC::sizeChanged()
     // Some assets don't report track properties until they are completely ready to play, but we
     // want to report a size as early as possible so use presentationSize when an asset has no tracks.
     if (m_avPlayerItem && ![m_cachedTracks count]) {
-        setNaturalSize(IntSize(m_cachedPresentationSize));
+        setNaturalSize(roundedIntSize(m_cachedPresentationSize));
         return;
     }
 
