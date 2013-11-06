@@ -1,0 +1,12 @@
+PASS ranges["blur"].startContainer is sample
+PASS ranges["blur"].endContainer is sample
+PASS ranges["blur"].startOffset is 0
+PASS ranges["blur"].endOffset is 0
+PASS ranges["DOMNodeRemovedFromDocument"].startContainer is sample
+PASS ranges["DOMNodeRemovedFromDocument"].endContainer is sample
+PASS ranges["DOMNodeRemovedFromDocument"].startOffset is 0
+PASS ranges["DOMNodeRemovedFromDocument"].endOffset is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

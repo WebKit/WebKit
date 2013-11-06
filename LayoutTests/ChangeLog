@@ -1,5 +1,19 @@
 2013-11-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Notify nodes removal to Range/Selection after dispatching blur and mutation event
+        https://bugs.webkit.org/show_bug.cgi?id=123880
+
+        Reviewed by Andreas Kling.
+
+        * editing/selection/selection-change-in-blur-event-by-remove-children-expected.txt: Added.
+        * editing/selection/selection-change-in-blur-event-by-remove-children.html: Added.
+        * editing/selection/selection-change-in-mutation-event-by-remove-children-expected.txt: Added.
+        * editing/selection/selection-change-in-mutation-event-by-remove-children.html: Added.
+        * fast/dom/Range/range-created-during-remove-children-expected.txt: Added.
+        * fast/dom/Range/range-created-during-remove-children.html: Added.
+
+2013-11-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix out-of-date offset in selection range code in range.surroundContents
         https://bugs.webkit.org/show_bug.cgi?id=123871
 

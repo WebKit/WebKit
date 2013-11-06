@@ -502,8 +502,6 @@ static void willRemoveChildren(ContainerNode& container)
     NodeVector children;
     getChildNodes(container, children);
 
-    container.document().nodeChildrenWillBeRemoved(container);
-
     ChildListMutationScope mutation(container);
     for (auto it = children.begin(); it != children.end(); ++it) {
         Node& child = it->get();
@@ -513,6 +511,8 @@ static void willRemoveChildren(ContainerNode& container)
         // fire removed from document mutation events.
         dispatchChildRemovalEvents(child);
     }
+
+    container.document().nodeChildrenWillBeRemoved(container);
 
     ChildFrameDisconnector(container).disconnect(ChildFrameDisconnector::DescendantsOnly);
 }
