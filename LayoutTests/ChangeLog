@@ -1,3 +1,9 @@
+2013-11-06  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed GTK gardening. Media elements wrongly exposed after r158743.
+
+        * platform/gtk/TestExpectations: Added failure expectations.
+
 2013-11-06  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Providing new table related accessibility expectations after r158742
