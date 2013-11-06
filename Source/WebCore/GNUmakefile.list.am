@@ -4278,6 +4278,8 @@ webcore_sources += \
 	Source/WebCore/rendering/ImageQualityController.h \
 	Source/WebCore/rendering/InlineBox.cpp \
 	Source/WebCore/rendering/InlineBox.h \
+	Source/WebCore/rendering/InlineElementBox.cpp \
+	Source/WebCore/rendering/InlineElementBox.h \
 	Source/WebCore/rendering/InlineFlowBox.cpp \
 	Source/WebCore/rendering/InlineFlowBox.h \
 	Source/WebCore/rendering/InlineIterator.h \

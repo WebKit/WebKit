@@ -34,38 +34,11 @@ class RootInlineBox;
 // some RenderObject (i.e., it represents a portion of that RenderObject).
 class InlineBox {
 public:
-    explicit InlineBox(RenderObject& renderer)
-        : m_next(0)
-        , m_prev(0)
-        , m_parent(0)
-        , m_renderer(renderer)
-        , m_logicalWidth(0)
-#if !ASSERT_DISABLED
-        , m_hasBadParent(false)
-#endif
-    {
-    }
-
-    InlineBox(RenderObject& renderer, FloatPoint topLeft, float logicalWidth, bool firstLine, bool constructed,
-              bool dirty, bool extracted, bool isHorizontal, InlineBox* next, InlineBox* prev, InlineFlowBox* parent)
-        : m_next(next)
-        , m_prev(prev)
-        , m_parent(parent)
-        , m_renderer(renderer)
-        , m_topLeft(topLeft)
-        , m_logicalWidth(logicalWidth)
-        , m_bitfields(firstLine, constructed, dirty, extracted, isHorizontal)
-#if !ASSERT_DISABLED
-        , m_hasBadParent(false)
-#endif
-    {
-    }
-
     virtual ~InlineBox();
 
-    virtual void deleteLine();
-    virtual void extractLine();
-    virtual void attachLine();
+    virtual void deleteLine() = 0;
+    virtual void extractLine() = 0;
+    virtual void attachLine() = 0;
 
     virtual bool isLineBreak() const { return renderer().isLineBreak(); }
 
@@ -169,7 +142,7 @@ public:
     InlineBox* nextLeafChildIgnoringLineBreak() const;
     InlineBox* prevLeafChildIgnoringLineBreak() const;
 
-    // FIXME: There should be a subclass that returns RenderElement. Plain InlineBox shouldn't be instantiated.
+    // FIXME: Hide this once all callers are using tighter types.
     RenderObject& renderer() const { return m_renderer; }
 
     InlineFlowBox* parent() const
@@ -387,6 +360,33 @@ private:
     InlineBoxBitfields m_bitfields;
 
 protected:
+    explicit InlineBox(RenderObject& renderer)
+        : m_next(nullptr)
+        , m_prev(nullptr)
+        , m_parent(nullptr)
+        , m_renderer(renderer)
+        , m_logicalWidth(0)
+#if !ASSERT_DISABLED
+        , m_hasBadParent(false)
+#endif
+    {
+    }
+
+    InlineBox(RenderObject& renderer, FloatPoint topLeft, float logicalWidth, bool firstLine, bool constructed,
+              bool dirty, bool extracted, bool isHorizontal, InlineBox* next, InlineBox* prev, InlineFlowBox* parent)
+        : m_next(next)
+        , m_prev(prev)
+        , m_parent(parent)
+        , m_renderer(renderer)
+        , m_topLeft(topLeft)
+        , m_logicalWidth(logicalWidth)
+        , m_bitfields(firstLine, constructed, dirty, extracted, isHorizontal)
+#if !ASSERT_DISABLED
+        , m_hasBadParent(false)
+#endif
+    {
+    }
+
     // For RootInlineBox
     bool endsWithBreak() const { return m_bitfields.endsWithBreak(); }
     void setEndsWithBreak(bool endsWithBreak) { m_bitfields.setEndsWithBreak(endsWithBreak); }

@@ -20,7 +20,7 @@
 #ifndef EllipsisBox_h
 #define EllipsisBox_h
 
-#include "InlineBox.h"
+#include "InlineElementBox.h"
 #include "RenderBlockFlow.h"
 
 namespace WebCore {
@@ -28,7 +28,7 @@ namespace WebCore {
 class HitTestRequest;
 class HitTestResult;
 
-class EllipsisBox FINAL : public InlineBox {
+class EllipsisBox FINAL : public InlineElementBox {
 public:
     EllipsisBox(RenderBlockFlow&, const AtomicString& ellipsisStr, InlineFlowBox* parent, int width, int height, int y, bool firstLine, bool isVertical, InlineBox* markupBox);
     virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom);

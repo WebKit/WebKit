@@ -1,3 +1,19 @@
+2013-11-06  Andreas Kling  <akling@apple.com>
+
+        Add InlineElementBox and stop instantiating InlineBox directly.
+        <https://webkit.org/b/123882>
+
+        Make the InlineBox constructors protected and add a new class
+        called InlineElementBox on top. This is somewhat analogous to the
+        split between RenderText and RenderElement, and allows us to make
+        renderer() return a far tighter RenderBoxModelObject& instead
+        of a RenderObject&.
+
+        Moved over attachLine(), deleteLine() and extractLine() to start
+        things off. More things will follow.
+
+        Reviewed by Antti Koivisto.
+
 2013-11-06  Piotr Grad  <p.grad@samsung.com>
 
         Seek for video doesn't work when playback rate is negative

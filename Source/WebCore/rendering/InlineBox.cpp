@@ -156,35 +156,6 @@ void InlineBox::dirtyLineBoxes()
         curr->markDirty();
 }
 
-void InlineBox::deleteLine()
-{
-    if (!m_bitfields.extracted()) {
-        if (m_renderer.isBox())
-            toRenderBox(renderer()).setInlineBoxWrapper(0);
-        else if (renderer().isLineBreak())
-            toRenderLineBreak(renderer()).setInlineBoxWrapper(0);
-    }
-    delete this;
-}
-
-void InlineBox::extractLine()
-{
-    m_bitfields.setExtracted(true);
-    if (m_renderer.isBox())
-        toRenderBox(renderer()).setInlineBoxWrapper(0);
-    else if (renderer().isLineBreak())
-        toRenderLineBreak(renderer()).setInlineBoxWrapper(0);
-}
-
-void InlineBox::attachLine()
-{
-    m_bitfields.setExtracted(false);
-    if (m_renderer.isBox())
-        toRenderBox(renderer()).setInlineBoxWrapper(this);
-    else if (renderer().isLineBreak())
-        toRenderLineBreak(renderer()).setInlineBoxWrapper(this);
-}
-
 void InlineBox::adjustPosition(float dx, float dy)
 {
     m_topLeft.move(dx, dy);

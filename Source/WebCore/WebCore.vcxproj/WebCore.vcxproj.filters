@@ -2385,6 +2385,9 @@
     <ClCompile Include="..\rendering\InlineBox.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\InlineElementBox.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
     <ClCompile Include="..\rendering\InlineFlowBox.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
@@ -9251,6 +9254,9 @@
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\InlineBox.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\InlineElementBox.h">
       <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\InlineFlowBox.h">

@@ -2081,6 +2081,7 @@ set(WebCore_SOURCES
     rendering/HitTestingTransformState.cpp
     rendering/ImageQualityController.cpp
     rendering/InlineBox.cpp
+    rendering/InlineElementBox.cpp
     rendering/InlineFlowBox.cpp
     rendering/InlineTextBox.cpp
     rendering/LayoutRepainter.cpp
