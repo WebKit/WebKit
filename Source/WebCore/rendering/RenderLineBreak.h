@@ -39,7 +39,7 @@ public:
 
     virtual bool isWBR() const OVERRIDE { return m_isWBR; }
 
-    InlineBox* createInlineBox();
+    std::unique_ptr<InlineBox> createInlineBox();
     InlineBox* inlineBoxWrapper() const { return m_inlineBoxWrapper; }
     void setInlineBoxWrapper(InlineBox*);
     void deleteInlineBoxWrapper();

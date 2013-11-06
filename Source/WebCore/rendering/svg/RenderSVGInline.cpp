@@ -38,11 +38,11 @@ RenderSVGInline::RenderSVGInline(SVGGraphicsElement& element, PassRef<RenderStyl
     setAlwaysCreateLineBoxes();
 }
 
-InlineFlowBox* RenderSVGInline::createInlineFlowBox()
+std::unique_ptr<InlineFlowBox> RenderSVGInline::createInlineFlowBox()
 {
-    InlineFlowBox* box = new SVGInlineFlowBox(*this);
+    auto box = std::make_unique<SVGInlineFlowBox>(*this);
     box->setHasVirtualLogicalHeight();
-    return box;
+    return std::move(box);
 }
 
 FloatRect RenderSVGInline::objectBoundingBox() const

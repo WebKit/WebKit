@@ -1939,9 +1939,9 @@ LayoutSize RenderBox::offsetFromContainer(RenderObject* o, const LayoutPoint& po
     return offset;
 }
 
-InlineBox* RenderBox::createInlineBox()
+std::unique_ptr<InlineBox> RenderBox::createInlineBox()
 {
-    return new InlineBox(*this);
+    return std::make_unique<InlineBox>(*this);
 }
 
 void RenderBox::dirtyLineBoxes(bool fullLayout)

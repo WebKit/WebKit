@@ -1342,16 +1342,17 @@ void RenderInline::deleteLines()
     m_lineBoxes.deleteLineBoxTree();
 }
 
-InlineFlowBox* RenderInline::createInlineFlowBox() 
+std::unique_ptr<InlineFlowBox> RenderInline::createInlineFlowBox()
 {
-    return new InlineFlowBox(*this);
+    return std::make_unique<InlineFlowBox>(*this);
 }
 
 InlineFlowBox* RenderInline::createAndAppendInlineFlowBox()
 {
     setAlwaysCreateLineBoxes();
-    InlineFlowBox* flowBox = createInlineFlowBox();
-    m_lineBoxes.appendLineBox(flowBox);
+    auto newFlowBox = createInlineFlowBox();
+    auto flowBox = newFlowBox.get();
+    m_lineBoxes.appendLineBox(std::move(newFlowBox));
     return flowBox;
 }
 

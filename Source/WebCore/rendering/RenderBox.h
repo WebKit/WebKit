@@ -373,7 +373,7 @@ public:
     
     void positionLineBox(InlineBox*);
 
-    virtual InlineBox* createInlineBox();
+    virtual std::unique_ptr<InlineBox> createInlineBox();
     void dirtyLineBoxes(bool fullLayout);
 
     // For inline replaced elements, this function returns the inline box that owns us.  Enables

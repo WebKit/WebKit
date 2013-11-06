@@ -1,3 +1,20 @@
+2013-11-05  Andreas Kling  <akling@apple.com>
+
+        Apply more unique_ptr to line box management.
+        <https://webkit.org/b/123857>
+
+        Make all of the functions that return newly-created line boxes
+        return them packed up in std::unique_ptrs.
+
+        There is one exception in RenderBlockLineLayout where the function
+        createInlineBoxForRenderer() is inconsistent about the ownership of
+        the returned object. This will be addressed by a subsequent patch.
+
+        We now "release" the line boxes into their various home structures,
+        so the pointer smartness doesn't go end-to-end just yet.
+
+        Reviewed by Anders Carlsson.
+
 2013-11-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         getComputedStyle(x).lineHeight is affected by zooming

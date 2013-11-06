@@ -283,15 +283,16 @@ void RenderBlockFlow::appendRunsForObject(BidiRunList<BidiRun>& runs, int start,
     }
 }
 
-RootInlineBox* RenderBlockFlow::createRootInlineBox()
+std::unique_ptr<RootInlineBox> RenderBlockFlow::createRootInlineBox()
 {
-    return new RootInlineBox(*this);
+    return std::make_unique<RootInlineBox>(*this);
 }
 
 RootInlineBox* RenderBlockFlow::createAndAppendRootInlineBox()
 {
-    RootInlineBox* rootBox = createRootInlineBox();
-    m_lineBoxes.appendLineBox(rootBox);
+    auto newRootBox = createRootInlineBox();
+    RootInlineBox* rootBox = newRootBox.get();
+    m_lineBoxes.appendLineBox(std::move(newRootBox));
 
     if (UNLIKELY(AXObjectCache::accessibilityEnabled()) && m_lineBoxes.firstLineBox() == rootBox) {
         if (AXObjectCache* cache = document().existingAXObjectCache())
@@ -310,11 +311,14 @@ static inline InlineBox* createInlineBoxForRenderer(RenderObject* obj, bool isRo
     if (obj->isText())
         return toRenderText(obj)->createInlineTextBox();
 
-    if (obj->isBox())
-        return toRenderBox(obj)->createInlineBox();
+    if (obj->isBox()) {
+        // FIXME: This is terrible. This branch returns an *owned* pointer!
+        return toRenderBox(obj)->createInlineBox().release();
+    }
 
     if (obj->isLineBreak()) {
-        InlineBox* inlineBox = toRenderLineBreak(obj)->createInlineBox();
+        // FIXME: This is terrible. This branch returns an *owned* pointer!
+        InlineBox* inlineBox = toRenderLineBreak(obj)->createInlineBox().release();
         // We only treat a box as text for a <br> if we are on a line by ourself or in strict mode
         // (Note the use of strict mode. In "almost strict" mode, we don't treat the box for <br> as text.)
         inlineBox->setBehavesLikeText(isOnlyRun || obj->document().inNoQuirksMode() || obj->isLineBreakOpportunity());
@@ -1792,8 +1796,9 @@ void RenderBlockFlow::linkToEndLineIfNeeded(LineLayoutState& layoutState)
         if (layoutState.checkForFloatsFromLastLine()) {
             LayoutUnit bottomVisualOverflow = lastRootBox()->logicalBottomVisualOverflow();
             LayoutUnit bottomLayoutOverflow = lastRootBox()->logicalBottomLayoutOverflow();
-            TrailingFloatsRootInlineBox* trailingFloatsLineBox = new TrailingFloatsRootInlineBox(*this);
-            m_lineBoxes.appendLineBox(trailingFloatsLineBox);
+            auto newLineBox = std::make_unique<TrailingFloatsRootInlineBox>(*this);
+            auto trailingFloatsLineBox = newLineBox.get();
+            m_lineBoxes.appendLineBox(std::move(newLineBox));
             trailingFloatsLineBox->setConstructed();
             GlyphOverflowAndFallbackFontsMap textBoxDataMap;
             VerticalPositionCache verticalPositionCache;

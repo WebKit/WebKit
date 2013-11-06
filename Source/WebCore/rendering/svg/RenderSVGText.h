@@ -90,7 +90,7 @@ private:
 
     virtual const AffineTransform& localToParentTransform() const { return m_localTransform; }
     virtual AffineTransform localTransform() const { return m_localTransform; }
-    virtual RootInlineBox* createRootInlineBox();
+    virtual std::unique_ptr<RootInlineBox> createRootInlineBox() OVERRIDE;
 
     virtual RenderBlock* firstLineBlock() const;
     virtual void updateFirstLetter();

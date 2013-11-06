@@ -441,11 +441,11 @@ void RenderSVGText::layout()
     clearNeedsLayout();
 }
 
-RootInlineBox* RenderSVGText::createRootInlineBox() 
+std::unique_ptr<RootInlineBox> RenderSVGText::createRootInlineBox()
 {
-    RootInlineBox* box = new SVGRootInlineBox(*this);
+    auto box = std::make_unique<SVGRootInlineBox>(*this);
     box->setHasVirtualLogicalHeight();
-    return box;
+    return std::move(box);
 }
 
 bool RenderSVGText::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)

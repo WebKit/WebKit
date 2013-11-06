@@ -1023,9 +1023,9 @@ void RenderText::dirtyLineBoxes(bool fullLayout)
     m_linesDirty = false;
 }
 
-InlineTextBox* RenderText::createTextBox()
+std::unique_ptr<InlineTextBox> RenderText::createTextBox()
 {
-    return new InlineTextBox(*this);
+    return std::make_unique<InlineTextBox>(*this);
 }
 
 void RenderText::positionLineBox(InlineBox* box)

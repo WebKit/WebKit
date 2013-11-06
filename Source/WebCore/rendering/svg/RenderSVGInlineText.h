@@ -62,7 +62,7 @@ private:
     virtual VisiblePosition positionForPoint(const LayoutPoint&) OVERRIDE;
     virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0) OVERRIDE;
     virtual IntRect linesBoundingBox() const OVERRIDE;
-    virtual InlineTextBox* createTextBox() OVERRIDE;
+    virtual std::unique_ptr<InlineTextBox> createTextBox() OVERRIDE;
 
     float m_scalingFactor;
     Font m_scaledFont;

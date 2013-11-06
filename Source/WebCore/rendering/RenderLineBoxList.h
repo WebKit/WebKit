@@ -54,7 +54,7 @@ public:
 
     void checkConsistency() const;
 
-    void appendLineBox(InlineFlowBox*);
+    void appendLineBox(std::unique_ptr<InlineFlowBox>);
 
     void deleteLineBoxTree();
     void deleteLineBoxes();
