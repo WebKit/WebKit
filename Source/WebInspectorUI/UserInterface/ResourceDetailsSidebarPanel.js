@@ -340,9 +340,9 @@ WebInspector.ResourceDetailsSidebarPanel.prototype = {
         function addDataGridNode(nodeValue)
         {
             console.assert(typeof nodeValue.name === "string");
-            console.assert(typeof nodeValue.value === "string");
+            console.assert(!nodeValue.value || typeof nodeValue.value === "string");
 
-            var node = new WebInspector.DataGridNode({name: nodeValue.name, value: nodeValue.value}, false);
+            var node = new WebInspector.DataGridNode({name: nodeValue.name, value: nodeValue.value || ""}, false);
             node.selectable = true;
             dataGrid.appendChild(node);
         }

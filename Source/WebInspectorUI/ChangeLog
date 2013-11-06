@@ -1,3 +1,14 @@
+2013-11-06  Timothy Hatcher  <timothy@apple.com>
+
+        Fix the display of query parameters when the value is missing. 
+
+        https://bugs.webkit.org/show_bug.cgi?id=123920
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._createNameValueDataGrid):
+
 2013-11-06  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: CSS Regions: When a flow is clicked the content of flow needs to be displayed
