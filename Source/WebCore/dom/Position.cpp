@@ -65,10 +65,8 @@ static bool hasInlineBoxWrapper(RenderObject& renderer)
 static Node* nextRenderedEditable(Node* node)
 {
     while ((node = nextLeafNode(node))) {
-        if (!node->rendererIsEditable())
-            continue;
         RenderObject* renderer = node->renderer();
-        if (!renderer)
+        if (!renderer || !node->rendererIsEditable())
             continue;
         if (hasInlineBoxWrapper(*renderer))
             return node;
@@ -79,10 +77,8 @@ static Node* nextRenderedEditable(Node* node)
 static Node* previousRenderedEditable(Node* node)
 {
     while ((node = previousLeafNode(node))) {
-        if (!node->rendererIsEditable())
-            continue;
         RenderObject* renderer = node->renderer();
-        if (!renderer)
+        if (!renderer || !node->rendererIsEditable())
             continue;
         if (hasInlineBoxWrapper(*renderer))
             return node;
