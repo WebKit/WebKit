@@ -1,3 +1,10 @@
+2013-11-06  Andreas Kling  <akling@apple.com>
+
+        Reinstate an annoying assertion that I accidentally commented out.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::synchronousIconForPageURL):
+
 2013-11-06  Brendan Long  <b.long@cablelabs.com>
 
         [GStreamer] Override label() and language() in Audio and VideoTrackPrivateGStreamer

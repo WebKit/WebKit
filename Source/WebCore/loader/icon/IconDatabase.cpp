@@ -263,7 +263,7 @@ Image* IconDatabase::synchronousIconForPageURL(const String& pageURLOriginal, co
         return 0;
     
     // The only way we should *not* have an icon record is if this pageURL is retained but has no icon yet - make sure of that
-  //  ASSERT(iconRecord || m_retainedPageURLs.contains(pageURLOriginal));
+    ASSERT(iconRecord || m_retainedPageURLs.contains(pageURLOriginal));
     
     if (!iconRecord)
         return 0;
