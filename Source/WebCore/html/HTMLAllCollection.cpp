@@ -36,7 +36,7 @@ PassRef<HTMLAllCollection> HTMLAllCollection::create(Document& document, Collect
 }
 
 HTMLAllCollection::HTMLAllCollection(Document& document, CollectionType type)
-    : HTMLCollection(document, type, DoesNotOverrideItemAfter)
+    : HTMLCollection(document, type)
 {
 }
 

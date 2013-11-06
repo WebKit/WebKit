@@ -131,7 +131,7 @@ static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(Col
     return DoNotInvalidateOnAttributeChanges;
 }
 
-HTMLCollection::HTMLCollection(ContainerNode& ownerNode, CollectionType type, ItemAfterOverrideType itemAfterOverrideType)
+HTMLCollection::HTMLCollection(ContainerNode& ownerNode, CollectionType type, ElementTraversalType traversalType)
     : m_ownerNode(ownerNode)
     , m_cachedElement(nullptr)
     , m_isLengthCacheValid(false)
@@ -141,7 +141,7 @@ HTMLCollection::HTMLCollection(ContainerNode& ownerNode, CollectionType type, It
     , m_shouldOnlyIncludeDirectChildren(shouldOnlyIncludeDirectChildren(type))
     , m_isNameCacheValid(false)
     , m_collectionType(type)
-    , m_overridesItemAfter(itemAfterOverrideType == OverridesItemAfter)
+    , m_usesCustomForwardOnlyTraversal(traversalType == CustomForwardOnlyTraversal)
     , m_isItemRefElementsCacheValid(false)
 {
     ASSERT(m_rootType == static_cast<unsigned>(rootTypeFromCollectionType(type)));
@@ -153,7 +153,7 @@ HTMLCollection::HTMLCollection(ContainerNode& ownerNode, CollectionType type, It
 
 PassRefPtr<HTMLCollection> HTMLCollection::create(ContainerNode& base, CollectionType type)
 {
-    return adoptRef(new HTMLCollection(base, type, DoesNotOverrideItemAfter));
+    return adoptRef(new HTMLCollection(base, type));
 }
 
 HTMLCollection::~HTMLCollection()
@@ -305,15 +305,6 @@ bool ALWAYS_INLINE HTMLCollection::isFirstItemCloserThanCachedItem(unsigned offs
     return offset < distanceFromCachedItem;
 }
 
-ALWAYS_INLINE void HTMLCollection::setCachedElement(Element& element, unsigned offset, unsigned elementsArrayOffset) const
-{
-    setCachedElement(element, offset);
-    if (overridesItemAfter())
-        static_cast<const HTMLCollection*>(this)->m_cachedElementsArrayOffset = elementsArrayOffset;
-
-    ASSERT(overridesItemAfter() || !elementsArrayOffset);
-}
-
 unsigned HTMLCollection::length() const
 {
     if (isLengthCacheValid())
@@ -335,19 +326,18 @@ Node* HTMLCollection::item(unsigned offset) const
 
     ContainerNode& root = rootNode();
 
-    if (isLengthCacheValid() && !overridesItemAfter() && isLastItemCloserThanLastOrCachedItem(offset)) {
+    if (isLengthCacheValid() && !usesCustomForwardOnlyTraversal() && isLastItemCloserThanLastOrCachedItem(offset)) {
         Element* lastItem = itemBefore(0);
         ASSERT(lastItem);
-        setCachedElement(*lastItem, cachedLength() - 1, 0);
-    } else if (!isElementCacheValid() || isFirstItemCloserThanCachedItem(offset) || (overridesItemAfter() && offset < cachedElementOffset())) {
-        unsigned offsetInArray = 0;
-        Element* firstItem = traverseFirstElement(offsetInArray, &root);
+        setCachedElement(*lastItem, cachedLength() - 1);
+    } else if (!isElementCacheValid() || isFirstItemCloserThanCachedItem(offset) || (usesCustomForwardOnlyTraversal() && offset < cachedElementOffset())) {
+        Element* firstItem = firstElement(&root);
 
         if (!firstItem) {
             setLengthCache(0);
             return 0;
         }
-        setCachedElement(*firstItem, 0, offsetInArray);
+        setCachedElement(*firstItem, 0);
         ASSERT(!cachedElementOffset());
     }
 
@@ -365,12 +355,12 @@ inline Element* HTMLCollection::elementBeforeOrAfterCachedElement(unsigned offse
     ASSERT(currentOffset != offset);
 
     if (offset < cachedElementOffset()) {
-        ASSERT(!overridesItemAfter());
+        ASSERT(!usesCustomForwardOnlyTraversal());
         while ((currentItem = itemBefore(currentItem))) {
             ASSERT(currentOffset);
             currentOffset--;
             if (currentOffset == offset) {
-                setCachedElement(*currentItem, currentOffset, 0);
+                setCachedElement(*currentItem, currentOffset);
                 return currentItem;
             }
         }
@@ -378,22 +368,15 @@ inline Element* HTMLCollection::elementBeforeOrAfterCachedElement(unsigned offse
         return 0;
     }
 
-    unsigned offsetInArray = 0;
-    currentItem = traverseForwardToOffset(offset, currentItem, currentOffset, offsetInArray, root);
+    currentItem = traverseForwardToOffset(offset, currentItem, currentOffset, root);
 
     if (!currentItem) {
         // Did not find the item. On plus side, we now know the length.
         setLengthCache(currentOffset + 1);
         return 0;
     }
-    setCachedElement(*currentItem, currentOffset, offsetInArray);
+    setCachedElement(*currentItem, currentOffset);
     return currentItem;
-}
-
-Element* HTMLCollection::virtualItemAfter(unsigned&, Element*) const
-{
-    ASSERT_NOT_REACHED();
-    return 0;
 }
 
 static inline bool nameShouldBeVisibleInDocumentAll(HTMLElement* element)
@@ -425,32 +408,20 @@ inline Element* nextMatchingSiblingElement(const HTMLCollection* nodeList, Eleme
     return current;
 }
 
-inline Element* HTMLCollection::traverseFirstElement(unsigned& offsetInArray, ContainerNode* root) const
+inline Element* HTMLCollection::firstElement(ContainerNode* root) const
 {
-    if (overridesItemAfter())
-        return virtualItemAfter(offsetInArray, 0);
-    ASSERT(!offsetInArray);
+    if (usesCustomForwardOnlyTraversal())
+        return customElementAfter(nullptr);
     if (m_shouldOnlyIncludeDirectChildren)
-        return firstMatchingChildElement(static_cast<const HTMLCollection*>(this), root);
-    return firstMatchingElement(static_cast<const HTMLCollection*>(this), root);
+        return firstMatchingChildElement(this, root);
+    return firstMatchingElement(this, root);
 }
 
-inline Element* HTMLCollection::traverseNextElement(unsigned& offsetInArray, Element* previous, ContainerNode* root) const
-{
-    if (overridesItemAfter())
-        return virtualItemAfter(offsetInArray, previous);
-    ASSERT(!offsetInArray);
-    if (m_shouldOnlyIncludeDirectChildren)
-        return nextMatchingSiblingElement(this, previous);
-    return nextMatchingElement(this, previous, root);
-}
-
-inline Element* HTMLCollection::traverseForwardToOffset(unsigned offset, Element* currentElement, unsigned& currentOffset, unsigned& offsetInArray, ContainerNode* root) const
+inline Element* HTMLCollection::traverseForwardToOffset(unsigned offset, Element* currentElement, unsigned& currentOffset, ContainerNode* root) const
 {
     ASSERT_WITH_SECURITY_IMPLICATION(currentOffset < offset);
-    if (overridesItemAfter()) {
-        offsetInArray = m_cachedElementsArrayOffset;
-        while ((currentElement = virtualItemAfter(offsetInArray, currentElement))) {
+    if (usesCustomForwardOnlyTraversal()) {
+        while ((currentElement = customElementAfter(currentElement))) {
             if (++currentOffset == offset)
                 return currentElement;
         }
@@ -475,7 +446,6 @@ void HTMLCollection::invalidateCache() const
     m_isItemRefElementsCacheValid = false;
     m_idCache.clear();
     m_nameCache.clear();
-    m_cachedElementsArrayOffset = 0;
 }
 
 void HTMLCollection::invalidateIdNameCacheMaps() const
@@ -496,7 +466,7 @@ Node* HTMLCollection::namedItem(const AtomicString& name) const
         return 0;
 
     ContainerNode& root = rootNode();
-    if (!overridesItemAfter() && root.isInTreeScope()) {
+    if (!usesCustomForwardOnlyTraversal() && root.isInTreeScope()) {
         TreeScope& treeScope = root.treeScope();
         Element* candidate = 0;
         if (treeScope.hasElementWithId(*name.impl())) {
@@ -540,8 +510,8 @@ void HTMLCollection::updateNameCache() const
 
     ContainerNode& root = rootNode();
 
-    unsigned arrayOffset = 0;
-    for (Element* element = traverseFirstElement(arrayOffset, &root); element; element = traverseNextElement(arrayOffset, element, &root)) {
+    unsigned offset = 0;
+    for (Element* element = firstElement(&root); element; element = traverseForwardToOffset(offset + 1, element, offset, &root)) {
         const AtomicString& idAttrVal = element->getIdAttribute();
         if (!idAttrVal.isEmpty())
             appendIdCache(idAttrVal, element);

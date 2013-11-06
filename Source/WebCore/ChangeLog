@@ -1,3 +1,62 @@
+2013-11-06  Antti Koivisto  <antti@apple.com>
+
+        Move array position caching out from HTMLCollection
+        https://bugs.webkit.org/show_bug.cgi?id=123895
+
+        Reviewed by Darin Adler.
+
+        This caching complicates the logic but is used by a single subclass
+        (HTMLFormControlsCollection) only. The subclass can do the caching itself.
+
+        * html/HTMLAllCollection.cpp:
+        (WebCore::HTMLAllCollection::HTMLAllCollection):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::HTMLCollection::create):
+        (WebCore::HTMLCollection::item):
+        (WebCore::HTMLCollection::elementBeforeOrAfterCachedElement):
+        (WebCore::HTMLCollection::firstElement):
+        
+            Renamed from traverseFirstElement.
+
+        (WebCore::HTMLCollection::traverseForwardToOffset):
+        (WebCore::HTMLCollection::invalidateCache):
+        
+            Make cache invalidation virtual so we can clear HTMLTableRowsCollection index cache.
+
+        (WebCore::HTMLCollection::namedItem):
+        (WebCore::HTMLCollection::updateNameCache):
+        
+            Use traverseForwardToOffset instead traverseNextElement. This allows removal of traverseNextElement.
+
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollection::usesCustomForwardOnlyTraversal):
+        
+            Renamed the enum and the accessor to be more informative.
+
+        (WebCore::HTMLCollection::setCachedElement):
+        (WebCore::HTMLCollection::customElementAfter):
+        
+            Renamed from virtualItemAfter.
+
+        * html/HTMLFormControlsCollection.cpp:
+        (WebCore::HTMLFormControlsCollection::HTMLFormControlsCollection):
+        (WebCore::findFormAssociatedElement):
+        (WebCore::HTMLFormControlsCollection::customElementAfter):
+        
+            Move the array position caching logic here.
+
+        (WebCore::HTMLFormControlsCollection::invalidateCache):
+        * html/HTMLFormControlsCollection.h:
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::HTMLNameCollection):
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::HTMLOptionsCollection):
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::HTMLTableRowsCollection):
+        (WebCore::HTMLTableRowsCollection::customElementAfter):
+        * html/HTMLTableRowsCollection.h:
+
 2013-11-06  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [ATK] accessibility/title-ui-element-correctness.html fails

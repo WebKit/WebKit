@@ -27,7 +27,7 @@
 namespace WebCore {
 
 HTMLOptionsCollection::HTMLOptionsCollection(HTMLSelectElement& select)
-    : HTMLCollection(select, SelectOptions, DoesNotOverrideItemAfter)
+    : HTMLCollection(select, SelectOptions)
 {
 }
 
