@@ -918,7 +918,7 @@ size_t RenderGrid::resolveGridPositionFromStyle(const GridPosition& position, Gr
     {
         NamedGridAreaMap::const_iterator it = style().namedGridArea().find(position.namedGridLine());
         // Unknown grid area should have been computed to 'auto' by now.
-        ASSERT(it != style()->namedGridArea().end());
+        ASSERT(it != style().namedGridArea().end());
         const GridCoordinate& gridAreaCoordinate = it->value;
         switch (side) {
         case ColumnStartSide:
