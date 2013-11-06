@@ -1,3 +1,22 @@
+2013-11-06  Anders Carlsson  <andersca@apple.com>
+
+        Remove dead code
+        https://bugs.webkit.org/show_bug.cgi?id=123902
+
+        Reviewed by Tim Horton.
+
+        Remove the PageClient::containingWindowGraphicsContext() as well as the
+        WKPageSetDebugPaintFlags and WKPageGetDebugPaintFlags API functions.
+
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::searchTheWeb):
+
 2013-11-06  Dan Bernstein  <mitz@apple.com>
 
         Promoted WKBrowsingContextHistoryDelegate.h to private.

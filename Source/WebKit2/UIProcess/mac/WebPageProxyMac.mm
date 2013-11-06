@@ -137,11 +137,6 @@ void WebPageProxy::searchTheWeb(const String& string)
     
     NSPerformService(@"Search With %WebSearchProvider@", pasteboard);
 }
-    
-CGContextRef WebPageProxy::containingWindowGraphicsContext()
-{
-    return m_pageClient->containingWindowGraphicsContext();
-}
 
 void WebPageProxy::windowAndViewFramesChanged(const FloatRect& viewFrameInWindowCoordinates, const FloatPoint& accessibilityViewCoordinates)
 {

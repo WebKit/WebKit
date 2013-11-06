@@ -785,16 +785,6 @@ WKURLRef WKPageCopyCommittedURL(WKPageRef pageRef)
     return toCopiedURLAPI(toImpl(pageRef)->committedURL());
 }
 
-void WKPageSetDebugPaintFlags(WKPageDebugPaintFlags flags)
-{
-    WebPageProxy::setDebugPaintFlags(flags);
-}
-
-WKPageDebugPaintFlags WKPageGetDebugPaintFlags()
-{
-    return WebPageProxy::debugPaintFlags();
-}
-
 WKStringRef WKPageCopyStandardUserAgentWithApplicationName(WKStringRef applicationName)
 {
     return toCopiedAPI(WebPageProxy::standardUserAgent(toImpl(applicationName)->string()));

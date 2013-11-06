@@ -379,7 +379,6 @@ public:
     bool executeKeypressCommands(const Vector<WebCore::KeypressCommand>&);
 
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
-    CGContextRef containingWindowGraphicsContext();
     bool shouldDelayWindowOrderingForEvent(const WebMouseEvent&);
     bool acceptsFirstMouse(int eventNumber, const WebMouseEvent&);
 
@@ -673,20 +672,9 @@ public:
 
     const String& pendingAPIRequestURL() const { return m_pendingAPIRequestURL; }
 
-    void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
-
 #if PLATFORM(MAC)
     void handleAlternativeTextUIResult(const String& result);
 #endif
-
-    static void setDebugPaintFlags(WKPageDebugPaintFlags flags) { s_debugPaintFlags = flags; }
-    static WKPageDebugPaintFlags debugPaintFlags() { return s_debugPaintFlags; }
-
-    // Color to be used with kWKDebugFlashViewUpdates.
-    static WebCore::Color viewUpdatesFlashColor();
-
-    // Color to be used with kWKDebugFlashBackingStoreUpdates.
-    static WebCore::Color backingStoreUpdatesFlashColor();
 
     void saveDataToFileInDownloadsFolder(const String& suggestedFilename, const String& mimeType, const String& originatingURLString, WebData*);
     void savePDFToFileInDownloadsFolder(const String& suggestedFilename, const String& originatingURLString, const CoreIPC::DataReference&);
@@ -1217,8 +1205,6 @@ private:
     WebCore::IntRect m_visibleScrollerThumbRect;
 
     uint64_t m_renderTreeSize;
-
-    static WKPageDebugPaintFlags s_debugPaintFlags;
 
     bool m_shouldSendEventsSynchronously;
 

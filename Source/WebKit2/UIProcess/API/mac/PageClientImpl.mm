@@ -447,22 +447,6 @@ void PageClientImpl::setPluginComplexTextInputState(uint64_t pluginComplexTextIn
     [m_wkView _setPluginComplexTextInputState:pluginComplexTextInputState pluginComplexTextInputIdentifier:pluginComplexTextInputIdentifier];
 }
 
-CGContextRef PageClientImpl::containingWindowGraphicsContext()
-{
-    NSWindow *window = [m_wkView window];
-
-    // Don't try to get the graphics context if the NSWindow doesn't have a window device.
-    if ([window windowNumber] <= 0)
-        return 0;
-
-    return static_cast<CGContextRef>([[window graphicsContext] graphicsPort]);
-}
-
-void PageClientImpl::flashBackingStoreUpdates(const Vector<IntRect>&)
-{
-    notImplemented();
-}
-
 void PageClientImpl::didPerformDictionaryLookup(const AttributedString& text, const DictionaryPopupInfo& dictionaryPopupInfo)
 {
     RetainPtr<NSAttributedString> attributedString = text.string;

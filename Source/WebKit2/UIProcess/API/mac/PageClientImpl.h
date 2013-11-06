@@ -113,10 +113,6 @@ private:
 
     virtual void makeFirstResponder();
     
-    virtual CGContextRef containingWindowGraphicsContext();
-
-    virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
-
     virtual void didPerformDictionaryLookup(const AttributedString&, const DictionaryPopupInfo&);
     virtual void dismissDictionaryLookupPanel();
 
