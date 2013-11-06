@@ -1,5 +1,39 @@
 2013-11-05  Anders Carlsson  <andersca@apple.com>
 
+        Begin work on decoding invocations
+        https://bugs.webkit.org/show_bug.cgi?id=123838
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeInvocation):
+        Declare the type string and selector keys as constants.
+
+        (encodeObject):
+        Make sure to encode the class name for NSInvocations as well.
+
+        (decodeInvocation):
+        Figure out the local and remove method signatures and make sure that they are equal.
+
+        * Shared/API/Cocoa/WKRemoteObjectInterface.mm:
+        (methodArgumentTypeEncodingForSelector):
+        Helper function that returns the type encoding for a given selector.
+
+        (-[WKRemoteObjectInterface _methodSignatureForSelector:]):
+        Helper function that returns a method signature for the method with the name referred to by selector.
+
+        * Shared/API/Cocoa/WKRemoteObjectInterfaceInternal.h: Added.
+        Add internal header.
+
+        * Shared/API/Cocoa/WKRemoteObjectRegistry.mm:
+        (-[WKRemoteObjectRegistry _invokeMessageWithInterfaceIdentifier:encodedInvocation:]):
+        Pass the right object to the WKRemoteObjectDecoder initializer and decode the invocation.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add internal header.
+
+2013-11-05  Anders Carlsson  <andersca@apple.com>
+
         WKRemoteObjectDecoder should know which interface it's decoding for
         https://bugs.webkit.org/show_bug.cgi?id=123833
 

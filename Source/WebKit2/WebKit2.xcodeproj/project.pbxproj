@@ -230,6 +230,7 @@
 		1AA5889311EE70400061B882 /* NetscapePluginStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA5889111EE70400061B882 /* NetscapePluginStream.cpp */; };
 		1AAB4A8D1296F0A20023952F /* SandboxExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAB4A8C1296F0A20023952F /* SandboxExtension.h */; };
 		1AAB4AAA1296F1540023952F /* SandboxExtensionMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAB4AA91296F1540023952F /* SandboxExtensionMac.mm */; };
+		1AABFE3A1829C1ED005B070E /* WKRemoteObjectInterfaceInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AABFE391829C1ED005B070E /* WKRemoteObjectInterfaceInternal.h */; };
 		1AAF0C4A12B16334008E49E2 /* ArgumentCodersCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF0C4812B16334008E49E2 /* ArgumentCodersCF.h */; };
 		1AAF0C4B12B16334008E49E2 /* ArgumentCodersCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AAF0C4912B16334008E49E2 /* ArgumentCodersCF.cpp */; };
 		1AAF263814687C39004A1E8A /* TiledCoreAnimationDrawingArea.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAF263614687C39004A1E8A /* TiledCoreAnimationDrawingArea.mm */; };
@@ -1702,6 +1703,7 @@
 		1AA5889111EE70400061B882 /* NetscapePluginStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetscapePluginStream.cpp; sourceTree = "<group>"; };
 		1AAB4A8C1296F0A20023952F /* SandboxExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SandboxExtension.h; sourceTree = "<group>"; };
 		1AAB4AA91296F1540023952F /* SandboxExtensionMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SandboxExtensionMac.mm; sourceTree = "<group>"; };
+		1AABFE391829C1ED005B070E /* WKRemoteObjectInterfaceInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRemoteObjectInterfaceInternal.h; sourceTree = "<group>"; };
 		1AADE6FE10D855FC00D3D63D /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		1AAF0C4812B16334008E49E2 /* ArgumentCodersCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentCodersCF.h; sourceTree = "<group>"; };
 		1AAF0C4912B16334008E49E2 /* ArgumentCodersCF.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = ArgumentCodersCF.cpp; sourceTree = "<group>"; };
@@ -3721,6 +3723,7 @@
 				1A9E329C1822FEDD00F5D04C /* WKRemoteObjectCoder.mm */,
 				1A9E328B182165A900F5D04C /* WKRemoteObjectInterface.h */,
 				1A9E328C182165A900F5D04C /* WKRemoteObjectInterface.mm */,
+				1AABFE391829C1ED005B070E /* WKRemoteObjectInterfaceInternal.h */,
 				1A9E32871821636900F5D04C /* WKRemoteObjectRegistry.h */,
 				1A9E32881821636900F5D04C /* WKRemoteObjectRegistry.mm */,
 				1A9E32A01823018900F5D04C /* WKRemoteObjectRegistryInternal.h */,
@@ -5907,6 +5910,7 @@
 				BC017D0B16260FF4007054F5 /* WKDOMInternals.h in Headers */,
 				BC017D0D16260FF4007054F5 /* WKDOMNode.h in Headers */,
 				BC5D24C216CD706D007D5461 /* WKDOMNodePrivate.h in Headers */,
+				1AABFE3A1829C1ED005B070E /* WKRemoteObjectInterfaceInternal.h in Headers */,
 				BC39C4361626366F008BC689 /* WKDOMRange.h in Headers */,
 				BC5D24C516CD7088007D5461 /* WKDOMRangePrivate.h in Headers */,
 				1A9E328D182165A900F5D04C /* WKRemoteObjectInterface.h in Headers */,

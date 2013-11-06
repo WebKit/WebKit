@@ -143,10 +143,12 @@ using namespace WebKit;
         return;
     }
 
-    RetainPtr<WKRemoteObjectDecoder> decoder = adoptNS([[WKRemoteObjectDecoder alloc] initWithInterface:interfaceAndObject.first.get() rootObjectDictionary:encodedInvocation]);
+    RetainPtr<WKRemoteObjectDecoder> decoder = adoptNS([[WKRemoteObjectDecoder alloc] initWithInterface:interfaceAndObject.second.get() rootObjectDictionary:encodedInvocation]);
+
+    NSInvocation *invocation = nil;
 
     @try {
-        // FIXME: Decode the invocation.
+        invocation = [decoder decodeObjectOfClass:[NSInvocation class] forKey:invocationKey];
     } @catch (NSException *exception) {
         NSLog(@"Exception caught during decoding of message: %@", exception);
     }

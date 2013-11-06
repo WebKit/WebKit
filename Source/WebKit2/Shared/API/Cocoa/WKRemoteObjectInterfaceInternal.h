@@ -23,54 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
 #import "WKRemoteObjectInterface.h"
-
-#import <objc/runtime.h>
 
 #if WK_API_ENABLED
 
-@implementation WKRemoteObjectInterface
+@interface WKRemoteObjectInterface ()
 
-- (id)initWithProtocol:(Protocol *)protocol identifier:(NSString *)identifier
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _protocol = protocol;
-    _identifier = [identifier copy];
-
-    return self;
-}
-
-+ (instancetype)remoteObjectInterfaceWithProtocol:(Protocol *)protocol
-{
-    return [[[self alloc] initWithProtocol:protocol identifier:NSStringFromProtocol(protocol)] autorelease];
-}
-
-static const char* methodArgumentTypeEncodingForSelector(Protocol *protocol, SEL selector)
-{
-    // First look at required methods.
-    struct objc_method_description method = protocol_getMethodDescription(protocol, selector, YES, YES);
-    if (method.name)
-        return method.types;
-
-    // Then look at optional methods.
-    method = protocol_getMethodDescription(protocol, selector, NO, YES);
-    if (method.name)
-        return method.types;
-
-    return nullptr;
-}
-
-- (NSMethodSignature *)_methodSignatureForSelector:(SEL)selector
-{
-    const char* types = methodArgumentTypeEncodingForSelector(_protocol, selector);
-    if (!types)
-        return nil;
-
-    return [NSMethodSignature signatureWithObjCTypes:types];
-}
+- (NSMethodSignature *)_methodSignatureForSelector:(SEL)selector;
 
 @end
 

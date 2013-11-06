@@ -28,6 +28,7 @@
 
 #import "MutableArray.h"
 #import "MutableDictionary.h"
+#import "WKRemoteObjectInterfaceInternal.h"
 #import "WebData.h"
 #import "WebNumber.h"
 #import "WebString.h"
@@ -38,8 +39,11 @@
 
 #if WK_API_ENABLED
 
-const char* const classNameKey = "$class";
-const char* const objectStreamKey = "$objectStream";
+static const char* const classNameKey = "$class";
+static const char* const objectStreamKey = "$objectStream";
+
+static NSString * const selectorKey = @"selector";
+static NSString * const typeStringKey = @"typeString";
 
 using namespace WebKit;
 
@@ -120,8 +124,8 @@ static void encodeToObjectStream(WKRemoteObjectEncoder *encoder, id value)
 static void encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invocation)
 {
     NSMethodSignature *methodSignature = invocation.methodSignature;
-    [encoder encodeObject:methodSignature._typeString forKey:@"typeString"];
-    [encoder encodeObject:NSStringFromSelector(invocation.selector) forKey:@"selector"];
+    [encoder encodeObject:methodSignature._typeString forKey:typeStringKey];
+    [encoder encodeObject:NSStringFromSelector(invocation.selector) forKey:selectorKey];
 
     NSUInteger argumentCount = methodSignature.numberOfArguments;
 
@@ -169,14 +173,8 @@ static void encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invoc
 static void encodeObject(WKRemoteObjectEncoder *encoder, id object)
 {
     ASSERT(object);
-    
-    if ([object isKindOfClass:[NSInvocation class]]) {
-        // We have to special case NSInvocation since we don't want to encode the target.
-        encodeInvocation(encoder, object);
-        return;
-    }
 
-    if (![object conformsToProtocol:@protocol(NSSecureCoding)])
+    if (![object conformsToProtocol:@protocol(NSSecureCoding)] && ![object isKindOfClass:[NSInvocation class]])
         [NSException raise:NSInvalidArgumentException format:@"%@ does not conform to NSSecureCoding", object];
 
     if (class_isMetaClass(object_getClass(object)))
@@ -187,6 +185,13 @@ static void encodeObject(WKRemoteObjectEncoder *encoder, id object)
         [NSException raise:NSInvalidArgumentException format:@"-classForCoder returned nil for %@", object];
 
     encoder->_currentDictionary->set(classNameKey, WebString::create(class_getName(objectClass)));
+
+    if ([object isKindOfClass:[NSInvocation class]]) {
+        // We have to special case NSInvocation since we don't want to encode the target.
+        encodeInvocation(encoder, object);
+        return;
+    }
+
     [object encodeWithCoder:encoder];
 }
 
@@ -336,7 +341,26 @@ static void validateClass(WKRemoteObjectDecoder *decoder, Class objectClass)
 
 static NSInvocation *decodeInvocation(WKRemoteObjectDecoder *decoder)
 {
-    // FIXME: Implement this.
+    NSString *selectorString = [decoder decodeObjectOfClass:[NSString class] forKey:selectorKey];
+    if (!selectorString)
+        [NSException raise:NSInvalidUnarchiveOperationException format:@"Invocation had no selector"];
+
+    SEL selector = NSSelectorFromString(selectorString);
+    ASSERT(selector);
+
+    NSMethodSignature *localMethodSignature = [decoder->_interface _methodSignatureForSelector:selector];
+    if (!localMethodSignature)
+        [NSException raise:NSInvalidUnarchiveOperationException format:@"Selector \"%@\" is not defined in the local interface", selectorString];
+
+    NSString *typeSignature = [decoder decodeObjectOfClass:[NSString class] forKey:typeStringKey];
+    if (!typeSignature)
+        [NSException raise:NSInvalidUnarchiveOperationException format:@"Invocation had no type signature"];
+
+    NSMethodSignature *remoteMethodSignature = [NSMethodSignature signatureWithObjCTypes:typeSignature.UTF8String];
+    if (![localMethodSignature isEqualTo:remoteMethodSignature])
+        [NSException raise:NSInvalidUnarchiveOperationException format:@"Local and remote method signatures are not equal for method \"%@\"", selectorString];
+
+    // FIXME: Handle arguments.
     return nil;
 }
 
