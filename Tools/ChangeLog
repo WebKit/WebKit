@@ -1,3 +1,23 @@
+2013-11-06  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Implement tables-related attributesOf*() functions for AccessibilityUIElement
+        https://bugs.webkit.org/show_bug.cgi?id=118969
+
+        Reviewed by Mario Sanchez Prada.
+
+        Added missing implementation of attributesOfColumnHeaders, attributesOfRowHeaders, attributesOfVisibleCells.
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::attributesOfChildren):
+        (AccessibilityUIElement::attributesOfColumnHeaders):
+        (AccessibilityUIElement::attributesOfRowHeaders):
+        (AccessibilityUIElement::attributesOfVisibleCells):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::attributesOfChildren):
+        (WTR::AccessibilityUIElement::attributesOfColumnHeaders):
+        (WTR::AccessibilityUIElement::attributesOfRowHeaders):
+        (WTR::AccessibilityUIElement::attributesOfVisibleCells):
+
 2013-11-05  Benjamin Poulain  <benjamin@webkit.org>
 
         [WK2] Add a WebKit2 API for Geolocation's highAccuracy
