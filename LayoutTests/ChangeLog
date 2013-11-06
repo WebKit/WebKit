@@ -1,3 +1,9 @@
+2013-11-06  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed GTK gardening. Tests failing after r158195
+
+        * platform/gtk/TestExpectations: Added failure expectations.
+
 2013-11-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Notify nodes removal to Range/Selection after dispatching blur and mutation event
