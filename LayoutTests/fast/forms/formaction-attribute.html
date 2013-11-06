@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
+<script src="resources/common.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -46,6 +47,11 @@ function passTest3(ul)
 doneAction = false;
 var input = document.getElementById('button1');
 input.click();
+if (!doneAction)
+    testFailed('Both of the action and the formaction attributes were ignored.');
+
+doneAction = false;
+clickElement(input);
 if (!doneAction)
     testFailed('Both of the action and the formaction attributes were ignored.');
 

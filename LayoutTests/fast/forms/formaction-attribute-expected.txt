@@ -4,6 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS The formaction attribute in the input tag was used.
+PASS The formaction attribute in the input tag was used.
 PASS The formaction attribute in the button tag was used.
 PASS The formaction attribute in the button tag was used.
 PASS successfullyParsed is true
