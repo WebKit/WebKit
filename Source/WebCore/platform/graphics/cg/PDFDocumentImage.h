@@ -97,7 +97,6 @@ private:
     FloatRect m_cachedSourceRect;
     size_t m_cachedBytes;
 
-    FloatRect m_mediaBox;
     FloatRect m_cropBox;
     float m_rotation;
     bool m_hasPage;

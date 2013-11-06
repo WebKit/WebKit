@@ -1,3 +1,21 @@
+2013-11-05  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] PDFDocumentImage is too big if PDF has a crop box smaller than the media box
+        https://bugs.webkit.org/show_bug.cgi?id=123840
+        <rdar://problem/15308765>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/images/pdf-as-image-crop-box-expected.html: Added.
+        * fast/images/pdf-as-image-crop-box.html: Added.
+        * fast/images/resources/green-1x1.pdf: Added.
+        * fast/images/resources/red-green-2x2-cropped-to-1x1.pdf: Added.
+        Add a test that ensures that PDFDocumentImage respects the PDF's crop box.
+        red-green-2x2-cropped-to-1x1 has a 2"x2" red square with a 1"x1" green
+        square centered in it, a media box of 2"x2", and a crop box of 1"x1"
+        offset by 0.5", 0.5". green-1x1 has a 1"x1" green square. The two images
+        should render the same if the crop box is being respected correctly.
+
 2013-11-05  Enrica Casucci  <enrica@apple.com>
 
         Full width semicolon is wrong in vertical text.

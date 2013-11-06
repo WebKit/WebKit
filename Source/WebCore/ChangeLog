@@ -1,3 +1,28 @@
+2013-11-05  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] PDFDocumentImage is too big if PDF has a crop box smaller than the media box
+        https://bugs.webkit.org/show_bug.cgi?id=123840
+        <rdar://problem/15308765>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: fast/images/pdf-as-image-crop-box.html
+
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::size):
+        Use the crop box when determining the size of the image.
+
+        (WebCore::PDFDocumentImage::computeBoundsForCurrentPage):
+        * platform/graphics/cg/PDFDocumentImage.h:
+        * platform/graphics/mac/PDFDocumentImageMac.mm:
+        (WebCore::PDFDocumentImage::computeBoundsForCurrentPage):
+        Get rid of m_mediaBox, since we don't need it anymore.
+
+        (WebCore::PDFDocumentImage::drawPDFPage):
+        PDFKit does the translation by the crop box origin for us;
+        if we do it additionally, we'll be painting the wrong part of the image.
+        So, don't do the translation here.
+
 2013-11-05  Antti Koivisto  <antti@apple.com>
 
         Factor index cache for NodeLists and HTMLCollections to a class

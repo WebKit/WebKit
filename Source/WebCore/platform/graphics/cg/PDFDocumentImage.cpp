@@ -66,8 +66,8 @@ IntSize PDFDocumentImage::size() const
 {
     const float sina = sinf(-m_rotation);
     const float cosa = cosf(-m_rotation);
-    const float width = m_mediaBox.size().width();
-    const float height = m_mediaBox.size().height();
+    const float width = m_cropBox.size().width();
+    const float height = m_cropBox.size().height();
     const float rotWidth = fabsf(width * cosa - height * sina);
     const float rotHeight = fabsf(width * sina + height * cosa);
     
@@ -227,15 +227,14 @@ void PDFDocumentImage::createPDFDocument()
 void PDFDocumentImage::computeBoundsForCurrentPage()
 {
     CGPDFPageRef cgPage = CGPDFDocumentGetPage(m_document.get(), 1);
-
-    m_mediaBox = CGPDFPageGetBoxRect(cgPage, kCGPDFMediaBox);
+    CGRect mediaBox = CGPDFPageGetBoxRect(cgPage, kCGPDFMediaBox);
 
     // Get crop box (not always there). If not, use media box.
     CGRect r = CGPDFPageGetBoxRect(cgPage, kCGPDFCropBox);
     if (!CGRectIsEmpty(r))
         m_cropBox = r;
     else
-        m_cropBox = m_mediaBox;
+        m_cropBox = mediaBox;
 
     m_rotation = deg2rad(static_cast<float>(CGPDFPageGetRotationAngle(cgPage)));
 }
