@@ -1,3 +1,52 @@
+2013-11-05  Oliver Hunt  <oliver@apple.com>
+
+        Support iteration of the Arguments object
+        https://bugs.webkit.org/show_bug.cgi?id=123835
+
+        Reviewed by Mark Lam.
+
+        Add an ArgumentsIterator object, and associated classes so that we can support
+        iteration of the arguments object.
+
+        This is a largely mechanical patch.  The only gnarliness is in the
+        logic to avoid reifying the Arguments object in for(... of arguments)
+        scenarios.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitEnumeration):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::getOwnPropertySlot):
+        (JSC::argumentsFuncIterator):
+        * runtime/Arguments.h:
+        * runtime/ArgumentsIteratorConstructor.cpp: Added.
+        (JSC::ArgumentsIteratorConstructor::finishCreation):
+        * runtime/ArgumentsIteratorConstructor.h: Added.
+        (JSC::ArgumentsIteratorConstructor::create):
+        (JSC::ArgumentsIteratorConstructor::createStructure):
+        (JSC::ArgumentsIteratorConstructor::ArgumentsIteratorConstructor):
+        * runtime/ArgumentsIteratorPrototype.cpp: Added.
+        (JSC::ArgumentsIteratorPrototype::finishCreation):
+        (JSC::argumentsIteratorPrototypeFuncIterator):
+        (JSC::argumentsIteratorPrototypeFuncNext):
+        * runtime/ArgumentsIteratorPrototype.h: Added.
+        (JSC::ArgumentsIteratorPrototype::create):
+        (JSC::ArgumentsIteratorPrototype::createStructure):
+        (JSC::ArgumentsIteratorPrototype::ArgumentsIteratorPrototype):
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSArgumentsIterator.cpp: Added.
+        (JSC::JSArgumentsIterator::finishCreation):
+        * runtime/JSArgumentsIterator.h: Added.
+        (JSC::JSArgumentsIterator::createStructure):
+        (JSC::JSArgumentsIterator::create):
+        (JSC::JSArgumentsIterator::next):
+        (JSC::JSArgumentsIterator::JSArgumentsIterator):
+        * runtime/JSArrayIterator.cpp:
+        (JSC::createIteratorResult):
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+
 2013-11-06  Filip Pizlo  <fpizlo@apple.com>
 
         DFG CheckArray(NonArray) should prove that the child isn't an array

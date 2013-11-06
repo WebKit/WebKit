@@ -273,6 +273,8 @@ set(JavaScriptCore_SOURCES
 
     runtime/ArgList.cpp
     runtime/Arguments.cpp
+    runtime/ArgumentsIteratorConstructor.cpp
+    runtime/ArgumentsIteratorPrototype.cpp
     runtime/ArrayBuffer.cpp
     runtime/ArrayBufferView.cpp
     runtime/ArrayConstructor.cpp
@@ -316,6 +318,7 @@ set(JavaScriptCore_SOURCES
     runtime/InternalFunction.cpp
     runtime/JSAPIValueWrapper.cpp
     runtime/JSActivation.cpp
+    runtime/JSArgumentsIterator.cpp
     runtime/JSArray.cpp
     runtime/JSArrayBuffer.cpp
     runtime/JSArrayBufferConstructor.cpp

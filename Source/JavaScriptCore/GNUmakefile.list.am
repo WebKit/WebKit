@@ -764,6 +764,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/ArgList.h \
 	Source/JavaScriptCore/runtime/Arguments.cpp \
 	Source/JavaScriptCore/runtime/Arguments.h \
+	Source/JavaScriptCore/runtime/ArgumentsIteratorConstructor.cpp \
+    Source/JavaScriptCore/runtime/ArgumentsIteratorConstructor.h \
+    Source/JavaScriptCore/runtime/ArgumentsIteratorPrototype.cpp \
+    Source/JavaScriptCore/runtime/ArgumentsIteratorPrototype.h \
 	Source/JavaScriptCore/runtime/ArrayBuffer.cpp \
 	Source/JavaScriptCore/runtime/ArrayBuffer.h \
 	Source/JavaScriptCore/runtime/ArrayBufferView.cpp \
@@ -868,6 +872,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSActivation.h \
 	Source/JavaScriptCore/runtime/JSAPIValueWrapper.cpp \
 	Source/JavaScriptCore/runtime/JSAPIValueWrapper.h \
+	Source/JavaScriptCore/runtime/JSArgumentsIterator.cpp \
+    Source/JavaScriptCore/runtime/JSArgumentsIterator.h \
 	Source/JavaScriptCore/runtime/JSArray.cpp \
 	Source/JavaScriptCore/runtime/JSArray.h \
 	Source/JavaScriptCore/runtime/JSArrayBuffer.cpp \

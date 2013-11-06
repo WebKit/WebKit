@@ -2395,6 +2395,30 @@ void BytecodeGenerator::emitReadOnlyExceptionIfNeeded()
     
 void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, ExpressionNode* subjectNode, const std::function<void(BytecodeGenerator&, RegisterID*)>& callBack)
 {
+    if (subjectNode->isResolveNode()
+        && willResolveToArguments(static_cast<ResolveNode*>(subjectNode)->identifier())
+        && !symbolTable().slowArguments()) {
+        RefPtr<RegisterID> index = emitLoad(newTemporary(), jsNumber(0));
+
+        LabelScopePtr scope = newLabelScope(LabelScope::Loop);
+        RefPtr<RegisterID> value = emitLoad(newTemporary(), jsUndefined());
+        
+        emitJump(scope->continueTarget());
+        
+        RefPtr<Label> loopStart = newLabel();
+        emitLabel(loopStart.get());
+        emitLoopHint();
+        emitGetArgumentByVal(value.get(), uncheckedRegisterForArguments(), index.get());
+        callBack(*this, value.get());
+        emitInc(index.get());
+        emitLabel(scope->continueTarget());
+
+        RefPtr<RegisterID> length = emitGetArgumentsLength(newTemporary(), uncheckedRegisterForArguments());
+        emitJumpIfTrue(emitEqualityOp(op_less, newTemporary(), index.get(), length.get()), loopStart.get());
+        emitLabel(scope->breakTarget());
+        return;
+    }
+
     LabelScopePtr scope = newLabelScope(LabelScope::Loop);
     RefPtr<RegisterID> subject = newTemporary();
     emitNode(subject.get(), subjectNode);

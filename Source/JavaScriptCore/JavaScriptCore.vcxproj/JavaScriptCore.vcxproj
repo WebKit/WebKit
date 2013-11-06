@@ -513,6 +513,8 @@
     <ClCompile Include="..\profiler\ProfilerProfiledBytecodes.cpp" />
     <ClCompile Include="..\runtime\ArgList.cpp" />
     <ClCompile Include="..\runtime\Arguments.cpp" />
+    <ClCompile Include="..\runtime\ArgumentsIteratorConstructor.cpp" />
+    <ClCompile Include="..\runtime\ArgumentsIteratorPrototype.cpp" />
     <ClCompile Include="..\runtime\ArrayBuffer.cpp" />
     <ClCompile Include="..\runtime\ArrayBufferView.cpp" />
     <ClCompile Include="..\runtime\ArrayConstructor.cpp" />
@@ -555,6 +557,7 @@
     <ClCompile Include="..\runtime\InternalFunction.cpp" />
     <ClCompile Include="..\runtime\JSAPIValueWrapper.cpp" />
     <ClCompile Include="..\runtime\JSActivation.cpp" />
+    <ClCompile Include="..\runtime\JSArgumentsIterator.cpp" />
     <ClCompile Include="..\runtime\JSArray.cpp" />
     <ClCompile Include="..\runtime\JSArrayIterator.cpp" />
     <ClCompile Include="..\runtime\JSArrayBuffer.cpp" />
@@ -1058,6 +1061,8 @@
     <ClInclude Include="..\profiler\ProfilerProfiledBytecodes.h" />
     <ClInclude Include="..\runtime\ArgList.h" />
     <ClInclude Include="..\runtime\Arguments.h" />
+    <ClInclude Include="..\runtime\ArgumentsConstructor.h" />
+    <ClInclude Include="..\runtime\ArgumentsPrototype.h" />
     <ClInclude Include="..\runtime\ArrayBuffer.h" />
     <ClInclude Include="..\runtime\ArrayBufferView.h" />
     <ClInclude Include="..\runtime\ArrayConstructor.h" />
@@ -1118,6 +1123,7 @@
     <ClInclude Include="..\runtime\Intrinsic.h" />
     <ClInclude Include="..\runtime\JSAPIValueWrapper.h" />
     <ClInclude Include="..\runtime\JSActivation.h" />
+    <ClInclude Include="..\runtime\JSArgumentsIterator.h" />
     <ClInclude Include="..\runtime\JSArray.h" />
     <ClInclude Include="..\runtime\JSArrayBuffer.h" />
     <ClInclude Include="..\runtime\JSArrayBufferConstructor.h" />

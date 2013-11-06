@@ -1,3 +1,23 @@
+2013-11-05  Oliver Hunt  <oliver@apple.com>
+
+        Support iteration of the Arguments object
+        https://bugs.webkit.org/show_bug.cgi?id=123835
+
+        Reviewed by Mark Lam.
+
+        Add test cases
+
+        * js/arguments-iterator-expected.txt: Added.
+        * js/arguments-iterator.html: Added.
+        * js/script-tests/arguments-iterator.js: Added.
+        (shouldThrow.test):
+        (testAlias):
+        (testStrict):
+        (testReifiedArguments):
+        (testOverwrittenArguments):
+        (testNullArguments):
+        (testNonArrayLikeArguments):
+
 2013-11-06  Oliver Hunt  <oliver@apple.com>
 
         Fix test case

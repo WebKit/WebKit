@@ -27,6 +27,7 @@
 
 #include "CallFrameInlines.h"
 #include "JSActivation.h"
+#include "JSArgumentsIterator.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "Operations.h"
@@ -50,6 +51,8 @@ void Arguments::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_callee);
     visitor.append(&thisObject->m_activation);
 }
+    
+static EncodedJSValue JSC_HOST_CALL argumentsFuncIterator(ExecState*);
 
 void Arguments::destroy(JSCell* cell)
 {
@@ -151,7 +154,16 @@ bool Arguments::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyNa
     if (propertyName == exec->propertyNames().caller && thisObject->m_isStrictMode)
         thisObject->createStrictModeCallerIfNecessary(exec);
 
-    return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
+    if (JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot))
+        return true;
+    if (propertyName == exec->propertyNames().iteratorPrivateName) {
+        VM& vm = exec->vm();
+        JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+        thisObject->JSC_NATIVE_FUNCTION(exec->propertyNames().iteratorPrivateName, argumentsFuncIterator, DontEnum, 0);
+        if (JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot))
+            return true;
+    }
+    return false;
 }
 
 void Arguments::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
@@ -361,5 +373,15 @@ void Arguments::tearOff(CallFrame* callFrame, InlineCallFrame* inlineCallFrame)
         trySetArgument(callFrame->vm(), i, recovery.recover(callFrame));
     }
 }
+    
+EncodedJSValue JSC_HOST_CALL argumentsFuncIterator(ExecState* exec)
+{
+    JSObject* thisObj = exec->hostThisValue().toThis(exec, StrictMode).toObject(exec);
+    Arguments* arguments = jsDynamicCast<Arguments*>(thisObj);
+    if (!arguments)
+        return JSValue::encode(throwTypeError(exec, "Attempted to use Arguments iterator on non-Arguments object"));
+    return JSValue::encode(JSArgumentsIterator::create(exec->vm(), exec->callee()->globalObject()->argumentsIteratorStructure(), arguments));
+}
+
 
 } // namespace JSC

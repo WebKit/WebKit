@@ -37,6 +37,7 @@ namespace JSC {
 
 class Arguments : public JSDestructibleObject {
     friend class JIT;
+    friend class JSArgumentsIterator;
 public:
     typedef JSDestructibleObject Base;
 

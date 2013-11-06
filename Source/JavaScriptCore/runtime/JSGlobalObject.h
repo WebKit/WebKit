@@ -82,6 +82,7 @@ struct HashTable;
     macro(JSArrayBuffer, arrayBuffer, arrayBuffer, JSArrayBuffer, ArrayBuffer) \
     macro(WeakMap, weakMap, weakMap, JSWeakMap, WeakMap) \
     macro(ArrayIterator, arrayIterator, arrayIterator, JSArrayIterator, ArrayIterator) \
+    macro(ArgumentsIterator, argumentsIterator, argumentsIterator, JSArgumentsIterator, ArgumentsIterator) \
 
 #define DECLARE_SIMPLE_BUILTIN_TYPE(capitalName, lowerName, properName, instanceType, jsName) \
     class JS ## capitalName; \

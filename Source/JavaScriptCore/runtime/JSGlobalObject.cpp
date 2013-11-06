@@ -31,6 +31,8 @@
 #include "JSGlobalObject.h"
 
 #include "Arguments.h"
+#include "ArgumentsIteratorConstructor.h"
+#include "ArgumentsIteratorPrototype.h"
 #include "ArrayConstructor.h"
 #include "ArrayIteratorConstructor.h"
 #include "ArrayIteratorPrototype.h"
@@ -52,6 +54,7 @@
 #include "Interpreter.h"
 #include "JSAPIWrapperObject.h"
 #include "JSActivation.h"
+#include "JSArgumentsIterator.h"
 #include "JSArrayBuffer.h"
 #include "JSArrayBufferConstructor.h"
 #include "JSArrayBufferPrototype.h"

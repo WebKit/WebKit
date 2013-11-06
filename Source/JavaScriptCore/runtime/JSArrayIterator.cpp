@@ -73,7 +73,6 @@ void JSArrayIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 static EncodedJSValue createIteratorResult(CallFrame* callFrame, ArrayIterationKind kind, size_t index, JSValue result, bool done)
 {
-    callFrame->setArgument(callFrame->argumentCount() - 1, jsBoolean(done));
     if (done)
         return JSValue::encode(callFrame->vm().iterationTerminator.get());
     
