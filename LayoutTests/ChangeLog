@@ -1,3 +1,16 @@
+2013-11-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge r158766
+
+    2013-08-21  Brent Fulgham  <bfulgham@apple.com>
+
+            <https://webkit.org/b/120113> Enable CSS_IMAGE_SET
+
+            Reviewed by Anders Carlsson.
+
+            * platform/win/TestExpectations: Turn on two CSS_IMAGE_SET-based tests that
+            now pass on Windows.
+
 2013-11-04  Dean Jackson  <dino@apple.com>
 
         <rdar://problem/15292359>
