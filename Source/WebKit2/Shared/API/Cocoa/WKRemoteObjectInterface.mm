@@ -27,10 +27,79 @@
 #import "WKRemoteObjectInterface.h"
 
 #import <objc/runtime.h>
+#import <wtf/HashMap.h>
+#import <wtf/Vector.h>
+#import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
 
-@implementation WKRemoteObjectInterface
+extern "C"
+const char *_protocol_getMethodTypeEncoding(Protocol *p, SEL sel, BOOL isRequiredMethod, BOOL isInstanceMethod);
+
+@interface NSMethodSignature (Details)
+- (Class)_classForObjectAtArgumentIndex:(NSInteger)idx;
+@end
+
+@implementation WKRemoteObjectInterface {
+    HashMap<SEL, Vector<RetainPtr<NSSet>>> _allowedArgumentClasses;
+}
+
+static Vector<RetainPtr<NSSet>> allowedArgumentClassesForMethod(NSMethodSignature *methodSignature)
+{
+    Vector<RetainPtr<NSSet>> result;
+
+    NSSet *emptySet = [NSSet set];
+
+    // We ignore self and _cmd.
+    NSUInteger argumentCount = methodSignature.numberOfArguments - 2;
+
+    result.reserveInitialCapacity(argumentCount);
+
+    for (NSUInteger i = 0; i < argumentCount; ++i) {
+        const char* type = [methodSignature getArgumentTypeAtIndex:i + 2];
+
+        if (*type != '@') {
+            // This is a non-object type; we won't allow any classes to be decoded for it.
+            result.uncheckedAppend(emptySet);
+            continue;
+        }
+
+        Class objectClass = [methodSignature _classForObjectAtArgumentIndex:i + 2];
+        if (!objectClass) {
+            result.uncheckedAppend(emptySet);
+            continue;
+        }
+
+        result.uncheckedAppend([NSSet setWithObject:objectClass]);
+    }
+
+    return result;
+}
+
+static void initializeAllowedArgumentClasses(WKRemoteObjectInterface *interface, bool requiredMethods)
+{
+    unsigned methodCount;
+    struct objc_method_description *methods = protocol_copyMethodDescriptionList(interface->_protocol, requiredMethods, true, &methodCount);
+
+    for (unsigned i = 0; i < methodCount; ++i) {
+        SEL selector = methods[i].name;
+
+        const char* types = _protocol_getMethodTypeEncoding(interface->_protocol, selector, requiredMethods, true);
+        if (!types)
+            [NSException raise:NSInvalidArgumentException format:@"Could not find method type encoding for method \"%s\"", sel_getName(selector)];
+
+        NSMethodSignature *methodSignature = [NSMethodSignature signatureWithObjCTypes:types];
+        interface->_allowedArgumentClasses.set(selector, allowedArgumentClassesForMethod(methodSignature));
+    }
+
+    free(methods);
+}
+
+static void initializeAllowedArgumentClasses(WKRemoteObjectInterface *interface)
+{
+    initializeAllowedArgumentClasses(interface, true);
+    initializeAllowedArgumentClasses(interface, false);
+}
 
 - (id)initWithProtocol:(Protocol *)protocol identifier:(NSString *)identifier
 {
@@ -39,6 +108,8 @@
 
     _protocol = protocol;
     _identifier = [identifier copy];
+
+    initializeAllowedArgumentClasses(self);
 
     return self;
 }
@@ -70,6 +141,14 @@ static const char* methodArgumentTypeEncodingForSelector(Protocol *protocol, SEL
         return nil;
 
     return [NSMethodSignature signatureWithObjCTypes:types];
+}
+
+- (const Vector<RetainPtr<NSSet>>&)_allowedArgumentClassesForSelector:(SEL)selector
+{
+    auto it = _allowedArgumentClasses.find(selector);
+    ASSERT(it != _allowedArgumentClasses.end());
+
+    return it->value;
 }
 
 @end

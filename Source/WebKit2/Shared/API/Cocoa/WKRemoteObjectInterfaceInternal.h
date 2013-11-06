@@ -27,9 +27,13 @@
 
 #if WK_API_ENABLED
 
+#import <wtf/Forward.h>
+#import <wtf/RetainPtr.h>
+
 @interface WKRemoteObjectInterface ()
 
 - (NSMethodSignature *)_methodSignatureForSelector:(SEL)selector;
+- (const Vector<RetainPtr<NSSet>>&)_allowedArgumentClassesForSelector:(SEL)selector;
 
 @end
 

@@ -1,5 +1,32 @@
 2013-11-06  Anders Carlsson  <andersca@apple.com>
 
+        WKRemoteObjectInterface should keep track of allowed decodable classes
+        https://bugs.webkit.org/show_bug.cgi?id=123903
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/Cocoa/WKRemoteObjectInterface.mm:
+        (allowedArgumentClassesForMethod):
+        Helper function that returns a vector of sets of allowed classes for each method argument.
+
+        (initializeAllowedArgumentClasses):
+        Iterate over the methods in the protocol, get the extended method type encoding and create an
+        NSMethodSignature from it. Finally, pass the signature to allowedArgumentClassesForMethod.
+
+        (initializeAllowedArgumentClasses):
+        Call the other initializeAllowedArgumentClasses twice, once for required methods,
+        and once for optional methods.
+
+        (-[WKRemoteObjectInterface initWithProtocol:identifier:]):
+        Call initializeAllowedArgumentClasses.
+
+        (-[WKRemoteObjectInterface _allowedArgumentClassesForSelector:]):
+        Add new getter.
+
+        * Shared/API/Cocoa/WKRemoteObjectInterfaceInternal.h:
+
+2013-11-06  Anders Carlsson  <andersca@apple.com>
+
         Remove dead code
         https://bugs.webkit.org/show_bug.cgi?id=123902
 
