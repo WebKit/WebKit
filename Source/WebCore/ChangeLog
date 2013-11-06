@@ -1,3 +1,77 @@
+2013-11-04  Jer Noble  <jer.noble@apple.com>
+
+        Playing many sounds with HTML5 Audio makes WebKit unresponsive
+        https://bugs.webkit.org/show_bug.cgi?id=116145
+
+        Reviewed by Eric Carlson.
+
+        Cache as much information as possible from AVPlayerItem to eliminate unneccesary
+        calls into AVFoundation.
+
+        Add WillChange/DidChange functions to handle the results of KVO notifications
+        from AVPlayerItem and AVPlayer:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformPlay):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformPause):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateRate):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::playerItemStatusDidChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::playbackLikelyToKeepUpWillChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::playbackLikelyToKeepUpDidChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::playbackBufferEmptyWillChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::playbackBufferEmptyDidChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::playbackBufferFullWillChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::playbackBufferFullDidChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesDidChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::loadedTimeRangesDidChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksDidChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::hasEnabledAudioDidChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::presentationSizeDidChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::durationDidChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::rateDidChange):
+        (WebCore::itemKVOProperties):
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+
+        Instruct the HTMLMediaElement to cache the currentTime value for 5 seconds:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::maximumDurationToCacheMediaTime):
+
+        Add and initialize member variables to hold these cached values:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad):
+
+        Add a new Notification type which can take (and call) a Function object:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::dispatchNotification):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::Notification::Notification):
+        (WebCore::MediaPlayerPrivateAVFoundation::Notification::function):
+
+        Implement queries in terms of the cached values of AVPlayerItem and AVPlayer
+        properties:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::playerItemStatus):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::rate):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformBufferedTimeRanges):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformMinTimeSeekable):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformMaxTimeSeekable):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformMaxTimeLoaded):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::totalBytes):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateAudioTracks):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateVideoTracks):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::sizeChanged):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processLegacyClosedCaptionsTracks):
+
+        Invalidate the cached currentTime before calling scheduleTimeUpdate so that the
+        correct movieTime is saved in m_clockTimeAtLastUpdateEvent:
+        * html/HTMLMediaElement.cpp:
+        (HTMLMediaElement::setReadyState):
+
 2013-10-24  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Add support for named grid areas

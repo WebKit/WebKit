@@ -808,7 +808,7 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
         
         if (!m_queuedNotifications.isEmpty() && !m_mainThreadCallPending)
             callOnMainThread(mainThreadCallback, this);
-        
+
         if (!notification.isValid())
             return;
     }
@@ -874,6 +874,9 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
     case Notification::InbandTracksNeedConfiguration:
         m_inbandTrackConfigurationPending = false;
         configureInbandTracks();
+        break;
+    case Notification::FunctionType:
+        notification.function()();
         break;
 
     case Notification::None:

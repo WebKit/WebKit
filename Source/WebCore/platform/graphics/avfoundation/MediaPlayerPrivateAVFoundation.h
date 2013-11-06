@@ -32,6 +32,7 @@
 #include "InbandTextTrackPrivateAVF.h"
 #include "MediaPlayerPrivate.h"
 #include "Timer.h"
+#include <wtf/Functional.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
@@ -83,6 +84,7 @@ public:
 #define DEFINE_TYPE_ENUM(type) type,
             FOR_EACH_MEDIAPLAYERPRIVATEAVFOUNDATION_NOTIFICATION_TYPE(DEFINE_TYPE_ENUM)
 #undef DEFINE_TYPE_ENUM
+            FunctionType,
         };
         
         Notification()
@@ -105,16 +107,26 @@ public:
             , m_finished(finished)
         {
         }
+
+        Notification(WTF::Function<void ()> function)
+            : m_type(FunctionType)
+            , m_time(0)
+            , m_finished(false)
+            , m_function(function)
+        {
+        }
         
         Type type() { return m_type; }
         bool isValid() { return m_type != None; }
         double time() { return m_time; }
         bool finished() { return m_finished; }
+        Function<void ()>& function() { return m_function; }
         
     private:
         Type m_type;
         double m_time;
         bool m_finished;
+        Function<void ()> m_function;
     };
 
     void scheduleMainThreadNotification(Notification);

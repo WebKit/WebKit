@@ -1889,6 +1889,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     } else {
         if (wasPotentiallyPlaying && m_readyState < HAVE_FUTURE_DATA) {
             // 4.8.10.8
+            invalidateCachedTime();
             scheduleTimeupdateEvent(false);
             scheduleEvent(eventNames().waitingEvent);
         }

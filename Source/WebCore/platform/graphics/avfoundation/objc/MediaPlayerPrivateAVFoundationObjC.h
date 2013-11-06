@@ -91,6 +91,21 @@ public:
     static RetainPtr<AVAssetResourceLoadingRequest> takeRequestForPlayerAndKeyURI(MediaPlayer*, const String&);
 #endif
 
+    void playerItemStatusDidChange(int);
+    void playbackLikelyToKeepUpWillChange();
+    void playbackLikelyToKeepUpDidChange(bool);
+    void playbackBufferEmptyWillChange();
+    void playbackBufferEmptyDidChange(bool);
+    void playbackBufferFullWillChange();
+    void playbackBufferFullDidChange(bool);
+    void loadedTimeRangesDidChange(NSArray*);
+    void seekableTimeRangesDidChange(NSArray*);
+    void tracksDidChange(NSArray*);
+    void hasEnabledAudioDidChange(bool);
+    void presentationSizeDidChange(FloatSize);
+    void durationDidChange(double);
+    void rateDidChange(double);
+
 private:
     MediaPlayerPrivateAVFoundationObjC(MediaPlayer*);
 
@@ -116,6 +131,7 @@ private:
     virtual PlatformLayer* platformLayer() const;
     virtual bool supportsAcceleratedRendering() const { return true; }
     virtual float mediaTimeForTimeValue(float) const;
+    virtual double maximumDurationToCacheMediaTime() const { return 5; }
 
     virtual void createAVPlayer();
     virtual void createAVPlayerItem();
@@ -227,6 +243,19 @@ private:
 #endif
 
     InbandTextTrackPrivateAVF* m_currentTrack;
+
+    mutable RetainPtr<NSArray> m_cachedSeekableRanges;
+    mutable RetainPtr<NSArray> m_cachedLoadedRanges;
+    RetainPtr<NSArray> m_cachedTracks;
+    FloatSize m_cachedPresentationSize;
+    double m_cachedDuration;
+    double m_cachedRate;
+    unsigned m_pendingStatusChanges;
+    int m_cachedItemStatus;
+    bool m_cachedLikelyToKeepUp;
+    bool m_cachedBufferEmpty;
+    bool m_cachedBufferFull;
+    bool m_cachedHasEnabledAudio;
 };
 
 }
