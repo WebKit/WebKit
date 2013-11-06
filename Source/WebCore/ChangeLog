@@ -1,3 +1,10 @@
+2013-11-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Address the review comment after r158724.
+
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleMouseDownEvent):
+
 2013-11-05  Zalan Bujtas  <zalan@apple.com>
 
         Widget's position change should not initiate layout, only when its size changes.
