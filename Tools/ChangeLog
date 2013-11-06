@@ -1,3 +1,16 @@
+2013-11-06  Jer Noble  <jer.noble@apple.com>
+
+        [Win] run-webkit-tests on the win platform should fall back to mac-mountainlion, not mac-lion.
+        https://bugs.webkit.org/show_bug.cgi?id=123905
+
+        Reviewed by Brent Fulgham.
+
+        Now that the mac-lion results have been removed, the win port should fall back to
+        the mac-mountainlion results.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.default_baseline_search_path):
+
 2013-11-06  Anders Carlsson  <andersca@apple.com>
 
         Fix a Mountain Lion test failure.
