@@ -1,3 +1,14 @@
+2013-11-06  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Change required version of ATK to 2.10.0
+        https://bugs.webkit.org/show_bug.cgi?id=123883
+
+        Reviewed by Mario Sanchez Prada.
+
+        Changing a required version of ATK to 2.10.0
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2013-11-05  Zalan Bujtas  <zalan@apple.com>
 
         Widget's position change should not initiate layout, only when its size changes.
