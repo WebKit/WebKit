@@ -41,6 +41,7 @@
 
 id tryUnwrapObjcObject(JSGlobalContextRef, JSValueRef);
 
+bool supportsInitMethodConstructors();
 Protocol *getJSExportProtocol();
 Class getNSBlockClass();
 

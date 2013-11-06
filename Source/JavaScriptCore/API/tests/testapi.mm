@@ -298,10 +298,15 @@ static JSVirtualMachine *sharedInstance = nil;
 
 @protocol InitA <JSExport>
 - (id)initWithA:(int)a;
+- (int)initialize;
 @end
 
 @protocol InitB <JSExport>
 - (id)initWithA:(int)a b:(int)b;
+@end
+
+@protocol InitC <JSExport>
+- (id)_init;
 @end
 
 @interface ClassA : NSObject<InitA>
@@ -311,6 +316,9 @@ static JSVirtualMachine *sharedInstance = nil;
 @end
 
 @interface ClassC : ClassB<InitA, InitB>
+@end
+
+@interface ClassCPrime : ClassB<InitA, InitC>
 @end
 
 @interface ClassD : NSObject<InitA>
@@ -333,6 +341,10 @@ static JSVirtualMachine *sharedInstance = nil;
     _a = a;
 
     return self;
+}
+- (int)initialize
+{
+    return 42;
 }
 @end
 
@@ -370,12 +382,30 @@ static JSVirtualMachine *sharedInstance = nil;
 }
 @end
 
+@implementation ClassCPrime
+- (id)initWithA:(int)a
+{
+    self = [super initWithA:a b:0];
+    if (!self)
+        return nil;
+    return self;
+}
+- (id)_init
+{
+    return [self initWithA:42];
+}
+@end
+
 @implementation ClassD
 
 - (id)initWithA:(int)a
 {
     self = nil;
     return [[ClassE alloc] initWithA:a];
+}
+- (int)initialize
+{
+    return 0;
 }
 @end
 
@@ -1093,9 +1123,11 @@ void testObjectiveCAPI()
         context[@"ClassA"] = [ClassA class];
         context[@"ClassB"] = [ClassB class];
         context[@"ClassC"] = [ClassC class]; // Should print error message about too many inits found.
+        context[@"ClassCPrime"] = [ClassCPrime class]; // Ditto.
 
         JSValue *a = [context evaluateScript:@"(new ClassA(42))"];
         checkResult(@"a instanceof ClassA", [a isInstanceOf:context[@"ClassA"]]);
+        checkResult(@"a.initialize() is callable", [[a invokeMethod:@"initialize" withArguments:@[]] toInt32] == 42);
 
         JSValue *b = [context evaluateScript:@"(new ClassB(42, 53))"];
         checkResult(@"b instanceof ClassB", [b isInstanceOf:context[@"ClassB"]]);
@@ -1109,6 +1141,15 @@ void testObjectiveCAPI()
             } \
         })()"];
         checkResult(@"shouldn't be able to construct ClassC", ![canConstructClassC toBool]);
+        JSValue *canConstructClassCPrime = [context evaluateScript:@"(function() { \
+            try { \
+                (new ClassCPrime(1)); \
+                return true; \
+            } catch(e) { \
+                return false; \
+            } \
+        })()"];
+        checkResult(@"shouldn't be able to construct ClassCPrime", ![canConstructClassCPrime toBool]);
     }
 
     @autoreleasepool {

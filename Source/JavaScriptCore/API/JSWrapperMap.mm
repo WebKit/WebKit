@@ -42,11 +42,9 @@
 #import <wtf/Vector.h>
 #import <wtf/HashSet.h>
 
-#if OS(DARWIN)
 #include <mach-o/dyld.h>
 
 static const int32_t webkitFirstVersionWithInitConstructorSupport = 0x21A0400; // 538.4.0
-#endif
 
 @class JSObjCClassInfo;
 
@@ -159,6 +157,44 @@ inline void putNonEnumerable(JSValue *base, NSString *propertyName, JSValue *val
     }];
 }
 
+static bool isInitFamilyMethod(NSString *name)
+{
+    NSUInteger i = 0;
+
+    // Skip over initial underscores.
+    for (; i < [name length]; ++i) {
+        if ([name characterAtIndex:i] != '_')
+            break;
+    }
+
+    // Match 'init'.
+    NSUInteger initIndex = 0;
+    NSString* init = @"init";
+    for (; i < [name length] && initIndex < [init length]; ++i, ++initIndex) {
+        if ([name characterAtIndex:i] != [init characterAtIndex:initIndex])
+            return false;
+    }
+
+    // We didn't match all of 'init'.
+    if (initIndex < [init length])
+        return false;
+
+    // If we're at the end or the next character is a capital letter then this is an init-family selector.
+    return i == [name length] || [[NSCharacterSet uppercaseLetterCharacterSet] characterIsMember:[name characterAtIndex:i]]; 
+}
+
+static bool shouldSkipMethodWithName(NSString *name)
+{
+    // For clients that don't support init-based constructors just copy 
+    // over the init method as we would have before.
+    if (!supportsInitMethodConstructors())
+        return false;
+
+    // Skip over init family methods because we handle those specially 
+    // for the purposes of hooking up the constructor correctly.
+    return isInitFamilyMethod(name);
+}
+
 // This method will iterate over the set of required methods in the protocol, and:
 //  * Determine a property name (either via a renameMap or default conversion).
 //  * If an accessorMap is provided, and contains this name, store the method in the map.
@@ -170,9 +206,8 @@ static void copyMethodsToObject(JSContext *context, Class objcClass, Protocol *p
     forEachMethodInProtocol(protocol, YES, isInstanceMethod, ^(SEL sel, const char* types){
         const char* nameCStr = sel_getName(sel);
         NSString *name = @(nameCStr);
-        // Don't copy over init family methods because we handle those specially 
-        // for the purposes of hooking up the constructor correctly.
-        if ([name hasPrefix:@"init"])
+
+        if (shouldSkipMethodWithName(name))
             return;
 
         if (accessorMethods && accessorMethods[name]) {
@@ -343,10 +378,9 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
 
 static JSValue *allocateConstructorForCustomClass(JSContext *context, const char* className, Class cls)
 {
-#if OS(DARWIN)
-    if (NSVersionOfLinkTimeLibrary("JavaScriptCore") < webkitFirstVersionWithInitConstructorSupport)
+    if (!supportsInitMethodConstructors())
         return objectWithCustomBrand(context, [NSString stringWithFormat:@"%sConstructor", className], cls);
-#endif
+
     // For each protocol that the class implements, gather all of the init family methods into a hash table.
     __block HashMap<String, Protocol *> initTable;
     Protocol *exportProtocol = getJSExportProtocol();
@@ -354,7 +388,7 @@ static JSValue *allocateConstructorForCustomClass(JSContext *context, const char
         forEachProtocolImplementingProtocol(currentClass, exportProtocol, ^(Protocol *protocol) {
             forEachMethodInProtocol(protocol, YES, YES, ^(SEL selector, const char*) {
                 const char* name = sel_getName(selector);
-                if (![@(name) hasPrefix:@"init"])
+                if (!isInitFamilyMethod(@(name)))
                     return;
                 initTable.set(name, protocol);
             });
@@ -581,6 +615,14 @@ NS_ROOT_CLASS @interface JSExport <JSExport>
 @end
 @implementation JSExport
 @end
+
+bool supportsInitMethodConstructors()
+{
+    static int32_t versionOfLinkTimeLibrary = 0;
+    if (!versionOfLinkTimeLibrary)
+        versionOfLinkTimeLibrary = NSVersionOfLinkTimeLibrary("JavaScriptCore");
+    return versionOfLinkTimeLibrary >= webkitFirstVersionWithInitConstructorSupport;
+}
 
 Protocol *getJSExportProtocol()
 {

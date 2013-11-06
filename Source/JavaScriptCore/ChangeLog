@@ -1,3 +1,33 @@
+2013-11-06  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSExport doesn't support constructors
+        https://bugs.webkit.org/show_bug.cgi?id=123380
+
+        Reviewed by Geoffrey Garen.
+
+        Needed another linked-on-or-after check for when we're deciding whether
+        we should copy over init family methods.
+
+        Factored out the link time checks into a separate function so that they can be cached.
+
+        Factored out the check for init-family method selectors into helper function and changed it to
+        match the description in the clang docs, namely that there can be underscores at the beginning
+        and the first letter after 'init' part of the selector (if there is one) must be a capital letter.
+
+        Updated tests to make sure we don't treat "initialize" as an init-family method and that we do
+        treat "_init" as an init-family method.
+
+        * API/JSWrapperMap.h:
+        * API/JSWrapperMap.mm:
+        (isInitFamilyMethod):
+        (shouldSkipMethodWithName):
+        (copyMethodsToObject):
+        (allocateConstructorForCustomClass):
+        (supportsInitMethodConstructors):
+        * API/tests/testapi.mm:
+        (-[ClassA initialize]):
+        (-[ClassD initialize]):
+
 2013-11-06  Michael Saboff  <msaboff@apple.com>
 
         Change ctiTrampoline into a thunk
