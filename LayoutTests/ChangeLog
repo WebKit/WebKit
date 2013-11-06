@@ -1,3 +1,11 @@
+2013-11-06  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed gardening; Fix expected results for video-seek-with-negative-playback.html,
+        and modify the test to conform to media test style.
+
+        * media/video-seek-with-negative-playback-expected.txt:
+        * media/video-seek-with-negative-playback.html:
+
 2013-10-24  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Add support for named grid areas

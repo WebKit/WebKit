@@ -1,3 +1,6 @@
+
+Test that seeking with a negative playbackRate works correctly.
+
 EVENT(canplaythrough)
 EVENT(seeked)
 EVENT(timeupdate)
