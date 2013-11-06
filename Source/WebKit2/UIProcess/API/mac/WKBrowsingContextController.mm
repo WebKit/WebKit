@@ -90,8 +90,10 @@ NSString *WKActionFrameNameKey = @"WKActionFrameNameKey";
     // Delegate for load callbacks.
     id<WKBrowsingContextLoadDelegate> _loadDelegate;
 
+#if WK_API_ENABLED
     // Delegate for policy callbacks.
     id<WKBrowsingContextPolicyDelegate> _policyDelegate;
+#endif
 }
 @end
 
@@ -104,7 +106,10 @@ NSString *WKActionFrameNameKey = @"WKActionFrameNameKey";
 - (void)dealloc
 {
     WKPageSetPageLoaderClient(_data->_pageRef.get(), nullptr);
+
+#if WK_API_ENABLED
     WKPageSetPagePolicyClient(_data->_pageRef.get(), nullptr);
+#endif
 
     [_data release];
     [super dealloc];
@@ -127,6 +132,7 @@ NSString *WKActionFrameNameKey = @"WKActionFrameNameKey";
     _data->_loadDelegate = loadDelegate;
 }
 
+#if WK_API_ENABLED
 - (id<WKBrowsingContextPolicyDelegate>)policyDelegate
 {
     return _data->_policyDelegate;
@@ -136,6 +142,7 @@ NSString *WKActionFrameNameKey = @"WKActionFrameNameKey";
 {
     _data->_policyDelegate = policyDelegate;
 }
+#endif
 
 #pragma mark Loading
 
@@ -578,6 +585,7 @@ static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, 
     WKPageSetPageLoaderClient(pageRef, &loaderClient);
 }
 
+#if WK_API_ENABLED
 static WKPolicyDecisionHandler makePolicyDecisionBlock(WKFramePolicyListenerRef listener)
 {
     WKRetain(listener); // Released in the decision handler below.
@@ -659,6 +667,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 
     WKPageSetPagePolicyClient(pageRef, &policyClient);
 }
+#endif
 
 /* This should only be called from associate view. */
 
@@ -672,7 +681,10 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
     _data->_pageRef = pageRef;
 
     setUpPageLoaderClient(self, pageRef);
+
+#if WK_API_ENABLED
     setUpPagePolicyClient(self, pageRef);
+#endif
 
     return self;
 }

@@ -43,9 +43,9 @@ WK_EXPORT
 #pragma mark Delegates
 
 @property (assign) id <WKBrowsingContextLoadDelegate> loadDelegate;
-@property (assign) id <WKBrowsingContextPolicyDelegate> policyDelegate;
 
 #if WK_API_ENABLED
+@property (assign) id <WKBrowsingContextPolicyDelegate> policyDelegate;
 @property (assign) id <WKBrowsingContextHistoryDelegate> historyDelegate;
 #endif
 
