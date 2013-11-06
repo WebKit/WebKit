@@ -47,8 +47,7 @@ namespace JSC { namespace FTL {
     macro(patchpointInt64, "llvm.experimental.patchpoint.i64", functionType(int64, int32, int32, ref8, int32, Variadic)) \
     macro(patchpointVoid, "llvm.experimental.patchpoint.void", functionType(voidType, int32, int32, ref8, int32, Variadic)) \
     macro(stackmap, "llvm.experimental.stackmap", functionType(voidType, int32, int32, Variadic)) \
-    macro(trap, "llvm.trap", functionType(voidType)) \
-    macro(osrExit, "webkit_osr_exit", functionType(voidType, boolean, int32, Variadic))
+    macro(trap, "llvm.trap", functionType(voidType))
 
 #define FOR_EACH_FUNCTION_TYPE(macro) \
     macro(I_JITOperation_EJss, functionType(intPtr, intPtr, intPtr)) \
