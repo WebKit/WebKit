@@ -78,8 +78,7 @@ const AtomicString& VideoTrack::commentaryKeyword()
 }
 
 VideoTrack::VideoTrack(VideoTrackClient* client, PassRefPtr<VideoTrackPrivate> trackPrivate)
-    : TrackBase(TrackBase::VideoTrack, trackPrivate->label(), trackPrivate->language())
-    , m_id(trackPrivate->id())
+    : TrackBase(TrackBase::VideoTrack, trackPrivate->id(), trackPrivate->label(), trackPrivate->language())
     , m_selected(trackPrivate->selected())
     , m_client(client)
     , m_private(trackPrivate)
@@ -159,6 +158,12 @@ void VideoTrack::selectedChanged(VideoTrackPrivate* trackPrivate, bool selected)
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     setSelected(selected);
+}
+
+void VideoTrack::idChanged(TrackPrivateBase* trackPrivate, const String& id)
+{
+    ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
+    setId(id);
 }
 
 void VideoTrack::labelChanged(TrackPrivateBase* trackPrivate, const String& label)

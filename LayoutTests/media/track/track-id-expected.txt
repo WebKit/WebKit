@@ -1,0 +1,7 @@
+Tests that the 'id' attribute on a TextTrack matches the track element.
+
+
+EXPECTED (video.textTracks[0].id == 'Test-ID-123') OK
+
+END OF TEST
+

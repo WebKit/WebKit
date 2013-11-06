@@ -42,6 +42,7 @@ class TrackPrivateBase;
 class TrackPrivateBaseClient {
 public:
     virtual ~TrackPrivateBaseClient() { }
+    virtual void idChanged(TrackPrivateBase*, const String&) = 0;
     virtual void labelChanged(TrackPrivateBase*, const String&) = 0;
     virtual void languageChanged(TrackPrivateBase*, const String&) = 0;
     virtual void willRemove(TrackPrivateBase*) = 0;

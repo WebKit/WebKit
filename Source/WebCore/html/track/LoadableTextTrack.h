@@ -57,6 +57,8 @@ public:
 
     virtual void clearClient();
 
+    virtual AtomicString id() const OVERRIDE;
+
     size_t trackElementIndex();
     HTMLTrackElement* trackElement() { return m_trackElement; }
     void setTrackElement(HTMLTrackElement*);

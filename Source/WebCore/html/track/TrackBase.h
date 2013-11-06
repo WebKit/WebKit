@@ -47,6 +47,9 @@ public:
     HTMLMediaElement* mediaElement() { return m_mediaElement; }
     virtual Element* element();
 
+    virtual AtomicString id() const { return m_id; }
+    virtual void setId(const AtomicString& id) { m_id = id; }
+
     AtomicString kind() const { return m_kind; }
     virtual void setKind(const AtomicString&);
 
@@ -59,7 +62,7 @@ public:
     virtual void clearClient() = 0;
 
 protected:
-    TrackBase(Type, const AtomicString& label, const AtomicString& language);
+    TrackBase(Type, const AtomicString& id, const AtomicString& label, const AtomicString& language);
 
     virtual bool isValidKind(const AtomicString&) const = 0;
     virtual const AtomicString& defaultKindKeyword() const = 0;
@@ -68,6 +71,7 @@ protected:
 
 private:
     Type m_type;
+    AtomicString m_id;
     AtomicString m_kind;
     AtomicString m_label;
     AtomicString m_language;

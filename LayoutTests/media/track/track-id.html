@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            function loaded()
+            {
+                findMediaElement();
+                var trackElement = video.firstElementChild;
+
+                testExpected("video.textTracks[0].id", trackElement.id);
+
+                consoleWrite("");
+                endTest();
+            }
+
+            setCaptionDisplayMode('Automatic');
+
+        </script>
+    </head>
+    <body onload="loaded()">
+        <p>Tests that the 'id' attribute on a TextTrack matches the track element.</p>
+        <video>
+            <track id="Test-ID-123" src="captions-webvtt/captions-fast.vtt">
+        </video>
+    </body>
+</html>

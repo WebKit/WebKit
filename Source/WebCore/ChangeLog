@@ -1,3 +1,41 @@
+2013-11-06  Brendan Long  <b.long@cablelabs.com>
+
+        Add "id" attribute to TextTrack
+        https://bugs.webkit.org/show_bug.cgi?id=123825
+
+        Reviewed by Eric Carlson.
+
+        Test: media/track/track-id.html
+
+        * html/HTMLMediaElement.cpp:
+        (HTMLMediaElement::addTextTrack): Add emptyString() for track id.
+        * html/track/AudioTrack.cpp:
+        (WebCore::AudioTrack::AudioTrack): Pass trackPrivate->id() to TrackBase.
+        (WebCore::AudioTrack::idChanged): Added, set id.
+        * html/track/AudioTrack.h: Move m_id to TrackBase.
+        * html/track/InbandTextTrack.cpp:
+        (WebCore::InbandTextTrack::InbandTextTrack): Pass trackPrivate->id() to TrackBase.
+        (WebCore::InbandTextTrack::idChanged): Added, set id.
+        * html/track/InbandTextTrack.h: Add idChanged().
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::LoadableTextTrack): Add emptyString() for track id.
+        (WebCore::LoadableTextTrack::id): Override to return the track element's id.
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::captionMenuOffItem): Add empty string for track id.
+        (WebCore::TextTrack::captionMenuAutomaticItem): Add empty string for track id.
+        (WebCore::TextTrack::TextTrack): Pass id to TrackBase.
+        * html/track/TextTrack.h:
+        (WebCore::TextTrack::create): Add id parameter.
+        * html/track/TextTrack.idl: Add id attribute.
+        * html/track/TrackBase.cpp:
+        (WebCore::TrackBase::TrackBase): Add m_id.
+        * html/track/TrackBase.h: Add id attribute / m_id.
+        * html/track/VideoTrack.cpp:
+        (WebCore::VideoTrack::VideoTrack): Pass trackPrivate->id() to TrackBase.
+        (WebCore::VideoTrack::idChanged): Added, set id.
+        * html/track/VideoTrack.h: Move m_id to TrackBase.
+        * platform/graphics/TrackPrivateBase.h: Add idChanged() callback.
+
 2013-11-06  Antti Koivisto  <antti@apple.com>
 
         Move array position caching out from HTMLCollection

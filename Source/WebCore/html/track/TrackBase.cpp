@@ -32,8 +32,9 @@
 
 namespace WebCore {
 
-TrackBase::TrackBase(Type type, const AtomicString& label, const AtomicString& language)
+TrackBase::TrackBase(Type type, const AtomicString& id, const AtomicString& label, const AtomicString& language)
     : m_mediaElement(0)
+    , m_id(id)
     , m_label(label)
     , m_language(language)
 {

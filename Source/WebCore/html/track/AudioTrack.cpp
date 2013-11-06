@@ -78,8 +78,7 @@ const AtomicString& AudioTrack::commentaryKeyword()
 }
 
 AudioTrack::AudioTrack(AudioTrackClient* client, PassRefPtr<AudioTrackPrivate> trackPrivate)
-    : TrackBase(TrackBase::AudioTrack, trackPrivate->label(), trackPrivate->language())
-    , m_id(trackPrivate->id())
+    : TrackBase(TrackBase::AudioTrack, trackPrivate->id(), trackPrivate->label(), trackPrivate->language())
     , m_enabled(trackPrivate->enabled())
     , m_client(client)
     , m_private(trackPrivate)
@@ -159,6 +158,12 @@ void AudioTrack::enabledChanged(AudioTrackPrivate* trackPrivate, bool enabled)
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     setEnabled(enabled);
+}
+
+void AudioTrack::idChanged(TrackPrivateBase* trackPrivate, const String& id)
+{
+    ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
+    setId(id);
 }
 
 void AudioTrack::labelChanged(TrackPrivateBase* trackPrivate, const String& label)
