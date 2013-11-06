@@ -30,6 +30,7 @@
 #include "ArgumentEncoder.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/ResourceResponse.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
