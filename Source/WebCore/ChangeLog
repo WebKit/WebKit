@@ -1,3 +1,9 @@
+2013-11-05  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the 32-bit build.
+
+        * WebCore.exp.in:
+
 2013-11-05  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: Moving an element while in the DOMNodeRemoved handler will hide it in the inspector
