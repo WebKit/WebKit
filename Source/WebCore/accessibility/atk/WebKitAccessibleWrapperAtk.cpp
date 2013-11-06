@@ -191,12 +191,26 @@ static const gchar* webkitAccessibleGetDescription(AtkObject* object)
     return cacheAndReturnAtkProperty(object, AtkCachedAccessibleDescription, accessibilityDescription(coreObject));
 }
 
+static void removeAtkRelationByType(AtkRelationSet* relationSet, AtkRelationType relationType)
+{
+    int count = atk_relation_set_get_n_relations(relationSet);
+    for (int i = 0; i < count; i++) {
+        AtkRelation* relation = atk_relation_set_get_relation(relationSet, i);
+        if (atk_relation_get_relation_type(relation) == relationType) {
+            atk_relation_set_remove(relationSet, relation);
+            break;
+        }
+    }
+}
+
 static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, AtkRelationSet* relationSet)
 {
     if (coreObject->isFieldset()) {
         AccessibilityObject* label = coreObject->titleUIElement();
-        if (label)
+        if (label) {
+            removeAtkRelationByType(relationSet, ATK_RELATION_LABELLED_BY);
             atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABELLED_BY, label->wrapper());
+        }
         return;
     }
 
@@ -212,8 +226,10 @@ static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, Atk
 
     if (coreObject->isControl()) {
         AccessibilityObject* label = coreObject->correspondingLabelForControlElement();
-        if (label)
+        if (label) {
+            removeAtkRelationByType(relationSet, ATK_RELATION_LABELLED_BY);
             atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABELLED_BY, label->wrapper());
+        }
     } else {
         AccessibilityObject* control = coreObject->correspondingControlForLabelElement();
         if (control)
