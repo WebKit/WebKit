@@ -37,6 +37,7 @@
 #include "HitTestLocation.cpp"
 #include "ImageQualityController.cpp"
 #include "InlineBox.cpp"
+#include "InlineElementBox.cpp"
 #include "InlineFlowBox.cpp"
 #include "InlineTextBox.cpp"
 #include "LayoutRepainter.cpp"

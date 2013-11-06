@@ -1,3 +1,9 @@
+2013-11-06  Jer Noble  <jer.noble@apple.com>
+
+        Unrevewied Windows build fix after r158736; add InlineElementBox.cpp to the RenderingAllInOne.cpp file.
+
+        * rendering/RenderingAllInOne.cpp:
+
 2013-11-06  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed build fix, style() return type is now a reference.
