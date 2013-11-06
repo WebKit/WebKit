@@ -1,3 +1,16 @@
+2013-11-06  Anders Carlsson  <andersca@apple.com>
+
+        Encode parameters as objects
+        https://bugs.webkit.org/show_bug.cgi?id=123912
+
+        Reviewed by Beth Dakin.
+
+        We want to ensure that the objects have the right types when decoded, so just encode them as objects.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeInvocation):
+        (-[WKRemoteObjectEncoder encodeValueOfObjCType:at:]):
+
 2013-11-06  Sam Weinig  <sam@webkit.org>
 
         Add WKBrowsingContextPolicyDelegate

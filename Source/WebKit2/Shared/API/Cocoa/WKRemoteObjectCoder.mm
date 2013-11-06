@@ -100,20 +100,6 @@ static void ensureObjectStream(WKRemoteObjectEncoder *encoder)
     encoder->_rootDictionary->set(objectStreamKey, objectStream.release());
 }
 
-static void encodeToObjectStream(WKRemoteObjectEncoder *encoder, double value)
-{
-    ensureObjectStream(encoder);
-
-    encoder->_objectStream->append(WebDouble::create(value));
-}
-
-static void encodeToObjectStream(WKRemoteObjectEncoder *encoder, int value)
-{
-    ensureObjectStream(encoder);
-
-    encoder->_objectStream->append(WebUInt64::create(value));
-}
-
 static void encodeToObjectStream(WKRemoteObjectEncoder *encoder, id value)
 {
     ensureObjectStream(encoder);
@@ -142,7 +128,7 @@ static void encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invoc
             double value;
             [invocation getArgument:&value atIndex:i];
 
-            encodeToObjectStream(encoder, value);
+            encodeToObjectStream(encoder, @(value));
             break;
         }
 
@@ -151,7 +137,7 @@ static void encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invoc
             int value;
             [invocation getArgument:&value atIndex:i];
 
-            encodeToObjectStream(encoder, value);
+            encodeToObjectStream(encoder, @(value));
             break;
         }
 
@@ -213,7 +199,7 @@ static PassRefPtr<ImmutableDictionary> createEncodedObject(WKRemoteObjectEncoder
     switch (*type) {
     // int
     case 'i':
-        encodeToObjectStream(self, *static_cast<const int*>(address));
+        encodeToObjectStream(self, @(*static_cast<const int*>(address)));
         break;
 
     // Objective-C object.
