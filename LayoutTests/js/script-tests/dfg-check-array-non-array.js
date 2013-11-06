@@ -21,7 +21,7 @@ function baz(o, p) {
     return result;
 }
 
-neverInlineFunction(baz);
+noInline(baz);
 
 // Get bar's profiling to claim that it sees a particular original array.
 for (var i = 0; i < 100; ++i)
