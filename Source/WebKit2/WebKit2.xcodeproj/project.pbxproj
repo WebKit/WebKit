@@ -406,7 +406,7 @@
 		370F34A21829BE1E009027C8 /* WKNavigationData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 370F34A01829BE1E009027C8 /* WKNavigationData.mm */; };
 		370F34A31829BE1E009027C8 /* WKNavigationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 370F34A11829BE1E009027C8 /* WKNavigationData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		370F34A51829BEA3009027C8 /* WKNavigationDataInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 370F34A41829BEA3009027C8 /* WKNavigationDataInternal.h */; };
-		370F34A71829CFF3009027C8 /* WKBrowsingContextHistoryDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 370F34A61829CFF3009027C8 /* WKBrowsingContextHistoryDelegate.h */; };
+		370F34A71829CFF3009027C8 /* WKBrowsingContextHistoryDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 370F34A61829CFF3009027C8 /* WKBrowsingContextHistoryDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		371A19411824D29300F32A5E /* WKNSDictionary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 371A193F1824D29300F32A5E /* WKNSDictionary.mm */; };
 		371A19421824D29300F32A5E /* WKNSDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 371A19401824D29300F32A5E /* WKNSDictionary.h */; };
 		374436881820E7240049579F /* WKObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 374436871820E7240049579F /* WKObject.mm */; };
