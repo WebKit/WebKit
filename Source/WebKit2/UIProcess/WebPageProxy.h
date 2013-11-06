@@ -297,6 +297,7 @@ public:
     String activeURL() const;
     String provisionalURL() const;
     String committedURL() const;
+    String unreachableURL() const;
 
     bool willHandleHorizontalScrollEvents() const;
 

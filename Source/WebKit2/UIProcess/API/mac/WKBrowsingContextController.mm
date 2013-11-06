@@ -324,6 +324,15 @@ static void releaseNSData(unsigned char*, const void* data)
     return autoreleased(WKPageCopyCommittedURL(self._pageRef));
 }
 
+- (NSURL *)unreachableURL
+{
+    const String& unreachableURL = toImpl(_data->_pageRef.get())->unreachableURL();
+    if (!unreachableURL)
+        return nil;
+
+    return !unreachableURL ? nil : [NSURL URLWithString:unreachableURL];
+}
+
 - (double)estimatedProgress
 {
     return toImpl(self._pageRef)->estimatedProgress();

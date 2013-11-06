@@ -874,6 +874,14 @@ String WebPageProxy::committedURL() const
     return m_mainFrame->url();
 }
 
+String WebPageProxy::unreachableURL() const
+{
+    if (!m_mainFrame)
+        return String();
+
+    return m_mainFrame->unreachableURL();
+}
+
 bool WebPageProxy::canShowMIMEType(const String& mimeType) const
 {
     if (MIMETypeRegistry::canShowMIMEType(mimeType))
