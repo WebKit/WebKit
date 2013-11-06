@@ -1,3 +1,17 @@
+2013-11-05  Andreas Kling  <akling@apple.com>
+
+        RenderBlockFlow should only expose its line boxes as RootInlineBox.
+        <https://webkit.org/b/123878>
+
+        The line boxes attached directly to a RenderBlockFlow are always
+        RootInlineBox objects, so call sites should always use the tightly
+        typed firstRootBox() and lastRootBox().
+
+        This allows the compiler to devirtualize calls to member functions
+        of RootInlineBox that are marked FINAL.
+
+        Reviewed by Antti Koivisto.
+
 2013-11-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Assertion failure end < m_runCount in WebCore::BidiRunList<WebCore::BidiRun>::reverseRuns

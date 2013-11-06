@@ -294,7 +294,7 @@ RootInlineBox* RenderBlockFlow::createAndAppendRootInlineBox()
     RootInlineBox* rootBox = newRootBox.get();
     m_lineBoxes.appendLineBox(std::move(newRootBox));
 
-    if (UNLIKELY(AXObjectCache::accessibilityEnabled()) && m_lineBoxes.firstLineBox() == rootBox) {
+    if (UNLIKELY(AXObjectCache::accessibilityEnabled()) && firstRootBox() == rootBox) {
         if (AXObjectCache* cache = document().existingAXObjectCache())
             cache->recomputeIsIgnored(this);
     }
@@ -373,7 +373,7 @@ InlineFlowBox* RenderBlockFlow::createLineBoxes(RenderObject* obj, const LineInf
         RenderInline* inlineFlow = (obj != this) ? toRenderInline(obj) : 0;
 
         // Get the last box we made for this render object.
-        parentBox = inlineFlow ? inlineFlow->lastLineBox() : toRenderBlockFlow(obj)->lastLineBox();
+        parentBox = inlineFlow ? inlineFlow->lastLineBox() : toRenderBlockFlow(obj)->lastRootBox();
 
         // If this box or its ancestor is constructed then it is from a previous line, and we need
         // to make a new box for our line.  If this box or its ancestor is unconstructed but it has
@@ -510,22 +510,22 @@ RootInlineBox* RenderBlockFlow::constructLine(BidiRunList<BidiRun>& bidiRuns, co
 
     // We should have a root inline box.  It should be unconstructed and
     // be the last continuation of our line list.
-    ASSERT(lastLineBox() && !lastLineBox()->isConstructed());
+    ASSERT(lastRootBox() && !lastRootBox()->isConstructed());
 
     // Set the m_selectedChildren flag on the root inline box if one of the leaf inline box
     // from the bidi runs walk above has a selection state.
     if (rootHasSelectedChildren)
-        lastLineBox()->root().setHasSelectedChildren(true);
+        lastRootBox()->root().setHasSelectedChildren(true);
 
     // Set bits on our inline flow boxes that indicate which sides should
     // paint borders/margins/padding.  This knowledge will ultimately be used when
     // we determine the horizontal positions and widths of all the inline boxes on
     // the line.
     bool isLogicallyLastRunWrapped = bidiRuns.logicallyLastRun()->m_object && bidiRuns.logicallyLastRun()->m_object->isText() ? !reachedEndOfTextRenderer(bidiRuns) : true;
-    lastLineBox()->determineSpacingForFlowBoxes(lineInfo.isLastLine(), isLogicallyLastRunWrapped, bidiRuns.logicallyLastRun()->m_object);
+    lastRootBox()->determineSpacingForFlowBoxes(lineInfo.isLastLine(), isLogicallyLastRunWrapped, bidiRuns.logicallyLastRun()->m_object);
 
     // Now mark the line boxes as being constructed.
-    lastLineBox()->setConstructed();
+    lastRootBox()->setConstructed();
 
     // Return the last line.
     return lastRootBox();
@@ -1854,11 +1854,11 @@ void RenderBlockFlow::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaint
         layoutLineGridBox();
 
     RenderFlowThread* flowThread = flowThreadContainingBlock();
-    bool clearLinesForPagination = firstLineBox() && flowThread && !flowThread->hasRegions();
+    bool clearLinesForPagination = firstRootBox() && flowThread && !flowThread->hasRegions();
 
     // Figure out if we should clear out our line boxes.
     // FIXME: Handle resize eventually!
-    bool isFullLayout = !firstLineBox() || selfNeedsLayout() || relayoutChildren || clearLinesForPagination;
+    bool isFullLayout = !firstRootBox() || selfNeedsLayout() || relayoutChildren || clearLinesForPagination;
     LineLayoutState layoutState(isFullLayout, repaintLogicalTop, repaintLogicalBottom, flowThread);
 
     if (isFullLayout)
@@ -1941,7 +1941,7 @@ void RenderBlockFlow::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaint
     // Now add in the bottom border/padding.
     setLogicalHeight(logicalHeight() + lastLineAnnotationsAdjustment + borderAndPaddingAfter() + scrollbarLogicalHeight());
 
-    if (!firstLineBox() && hasLineIfEmpty())
+    if (!firstRootBox() && hasLineIfEmpty())
         setLogicalHeight(logicalHeight() + lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
 
     // See if we have any lines that spill out of our block.  If we do, then we will possibly need to
@@ -2031,7 +2031,7 @@ RootInlineBox* RenderBlockFlow::determineStartPosition(LineLayoutState& layoutSt
         m_lineBoxes.deleteLineBoxTree();
         curr = 0;
 
-        ASSERT(!firstLineBox() && !lastLineBox());
+        ASSERT(!firstRootBox() && !lastRootBox());
     } else {
         if (curr) {
             // We have a dirty line.

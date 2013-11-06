@@ -308,11 +308,8 @@ public:
     RenderLineBoxList& lineBoxes() { return m_lineBoxes; }
     const RenderLineBoxList& lineBoxes() const { return m_lineBoxes; }
 
-    InlineFlowBox* firstLineBox() const { return m_lineBoxes.firstLineBox(); }
-    InlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }
-
-    RootInlineBox* firstRootBox() const { return static_cast<RootInlineBox*>(firstLineBox()); }
-    RootInlineBox* lastRootBox() const { return static_cast<RootInlineBox*>(lastLineBox()); }
+    RootInlineBox* firstRootBox() const { return static_cast<RootInlineBox*>(m_lineBoxes.firstLineBox()); }
+    RootInlineBox* lastRootBox() const { return static_cast<RootInlineBox*>(m_lineBoxes.lastLineBox()); }
 
     virtual bool hasLines() const OVERRIDE FINAL;
 

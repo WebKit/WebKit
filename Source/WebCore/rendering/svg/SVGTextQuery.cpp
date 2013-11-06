@@ -61,8 +61,8 @@ static inline InlineFlowBox* flowBoxForRenderer(RenderObject* renderer)
         RenderBlockFlow& renderBlock = toRenderBlockFlow(*renderer);
 
         // RenderSVGText only ever contains a single line box.
-        InlineFlowBox* flowBox = renderBlock.firstLineBox();
-        ASSERT(flowBox == renderBlock.lastLineBox());
+        auto flowBox = renderBlock.firstRootBox();
+        ASSERT(flowBox == renderBlock.lastRootBox());
         return flowBox;
     }
 
