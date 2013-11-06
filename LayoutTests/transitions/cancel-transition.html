@@ -54,11 +54,13 @@
         function cancelTransition()
         {
             document.getElementById("container").className = "";
+            document.body.offsetHeight;
         }
 
         function restartTransition()
         {
             document.getElementById("container").className = "run";
+            document.body.offsetHeight;
             // The transition should restart at the beginning here. After 250 it should be halfway done.
             setTimeout("check()", 250);
         }
@@ -90,6 +92,7 @@
         function start()
         {
             document.getElementById("container").className = "run";
+            document.body.offsetHeight;
             setTimeout("cancelTransition()", 100);
             setTimeout("restartTransition()", 200);
         }
