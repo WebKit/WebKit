@@ -1,3 +1,24 @@
+2013-11-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Subresource loads should not prevent page throttling
+        https://bugs.webkit.org/show_bug.cgi?id=123757
+
+        Reviewed by Alexey Proskuryakov.
+
+        The page-is-loading test for inhibiting process supression is currently
+        too conservative, preventing supression of pages with infinitely loading
+        resources (commonly XHRs). Instead, just rely on the FrameLoader being
+        active (with hysteresis).
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::init):
+        (WebCore::SubresourceLoader::checkForHTTPStatusCodeError):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::didFail):
+        (WebCore::SubresourceLoader::willCancel):
+        * loader/SubresourceLoader.h:
+            - remove m_activityAssertion from SubresourceLoader.
+
 2013-11-05  Tim Horton  <timothy_horton@apple.com>
 
         [mac] PDFDocumentImage is too big if PDF has a crop box smaller than the media box
