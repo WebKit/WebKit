@@ -3277,11 +3277,19 @@ private:
                     m_out.bitAnd(indexingType, m_out.constInt8(IsArray | IndexingShapeMask)),
                     m_out.constInt8(IsArray | arrayMode.shapeMask()));
                 
-            default:
+            case Array::NonArray:
+            case Array::OriginalNonArray:
+                return m_out.equal(
+                    m_out.bitAnd(indexingType, m_out.constInt8(IsArray | IndexingShapeMask)),
+                    m_out.constInt8(arrayMode.shapeMask()));
+                
+            case Array::PossiblyArray:
                 return m_out.equal(
                     m_out.bitAnd(indexingType, m_out.constInt8(IndexingShapeMask)),
                     m_out.constInt8(arrayMode.shapeMask()));
             }
+            
+            RELEASE_ASSERT_NOT_REACHED();
         }
             
         default:
