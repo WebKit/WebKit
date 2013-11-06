@@ -1,3 +1,19 @@
+2013-11-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        getComputedStyle(x).lineHeight is affected by zooming
+        https://bugs.webkit.org/show_bug.cgi?id=123847
+
+        Reviewed by Benjamin Poulain.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/7957097afbab2899ababd0d9c8acbf6e3eddb870
+
+        Test: fast/css/line-height-zoom-get-computed-style.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::lineHeightFromStyle): Don't round line-height values.
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyLineHeight::applyValue): Use the computed value instead of the used value.
+
 2013-11-05  James Craig  <jcraig@apple.com>
 
         AX: media controls accessibility needs more work

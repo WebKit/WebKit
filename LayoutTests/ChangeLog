@@ -1,3 +1,16 @@
+2013-11-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        getComputedStyle(x).lineHeight is affected by zooming
+        https://bugs.webkit.org/show_bug.cgi?id=123847
+
+        Reviewed by Benjamin Poulain.
+
+        Cleaned up the test.
+
+        * fast/css/line-height-zoom-get-computed-style-expected.txt: Added.
+        * fast/css/line-height-zoom-get-computed-style.html: Added.
+        * platform/mac-mountainlion/fast/forms/textAreaLineHeight-expected.txt: Rebaselined.
+
 2013-11-05  James Craig  <jcraig@apple.com>
 
         AX: media controls accessibility needs more work

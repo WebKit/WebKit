@@ -1563,7 +1563,7 @@ static PassRefPtr<CSSPrimitiveValue> lineHeightFromStyle(RenderStyle* style, Ren
         // On the other hand, since font-size doesn't include the zoom factor, we really can't do
         // that here either.
         return zoomAdjustedPixelValue(static_cast<int>(length.percent() * style->fontDescription().specifiedSize()) / 100, style);
-    return zoomAdjustedPixelValue(valueForLength(length, 0, renderView), style);
+    return zoomAdjustedPixelValue(floatValueForLength(length, 0, renderView), style);
 }
 
 static PassRefPtr<CSSPrimitiveValue> fontSizeFromStyle(RenderStyle* style)
