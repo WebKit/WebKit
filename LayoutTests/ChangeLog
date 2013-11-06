@@ -1,5 +1,18 @@
 2013-11-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add a test for queries whose leftmost selector matches the root node
+        https://bugs.webkit.org/show_bug.cgi?id=123877
+
+        Reviewed by Andreas Kling.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/22981c70bf93e8a07ee7b4d68a4522aee21b26ce
+        so that we won't introduce the regression they had.
+
+        * fast/selectors/querySelector-leftmost-selector-matches-rootNode-expected.txt: Added.
+        * fast/selectors/querySelector-leftmost-selector-matches-rootNode.html: Added.
+
+2013-11-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         Assertion failure end < m_runCount in WebCore::BidiRunList<WebCore::BidiRun>::reverseRuns
         https://bugs.webkit.org/show_bug.cgi?id=123863
 
