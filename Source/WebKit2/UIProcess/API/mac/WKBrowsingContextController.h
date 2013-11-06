@@ -32,6 +32,7 @@
 @class WKBackForwardListItem;
 @protocol WKBrowsingContextHistoryDelegate;
 @protocol WKBrowsingContextLoadDelegate;
+@protocol WKBrowsingContextPolicyDelegate;
 
 WK_EXPORT
 @interface WKBrowsingContextController : NSObject {
@@ -41,7 +42,8 @@ WK_EXPORT
 
 #pragma mark Delegates
 
-@property(assign) id<WKBrowsingContextLoadDelegate> loadDelegate;
+@property (assign) id <WKBrowsingContextLoadDelegate> loadDelegate;
+@property (assign) id <WKBrowsingContextPolicyDelegate> policyDelegate;
 
 #if WK_API_ENABLED
 @property (assign) id <WKBrowsingContextHistoryDelegate> historyDelegate;

@@ -1,3 +1,23 @@
+2013-11-06  Sam Weinig  <sam@webkit.org>
+
+        Add WKBrowsingContextPolicyDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=123904
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKBrowsingContextController.h:
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        Implement a WKPagePolicyClient in terms of the new WKBrowsingContextPolicyDelegate protocol.
+        
+        * UIProcess/API/mac/WKBrowsingContextPolicyDelegate.h: 
+        Added.
+
+        * UIProcess/API/mac/WebKit2.h:
+        Add new #include of WKBrowsingContextPolicyDelegate.h
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new file.
+
 2013-11-06  Anders Carlsson  <andersca@apple.com>
 
         WKRemoteObjectInterface should keep track of allowed decodable classes
