@@ -7,12 +7,25 @@ if (window.testRunner)
 </script>
 <link href="resources/grid.css" rel="stylesheet">
 <style>
+.grid {
+    -webkit-grid-template: "firstArea secondArea"
+                           "thirdArea thirdArea";
+}
+
 #oneValueGridArea {
     -webkit-grid-area: 1;
 }
 
+#oneValueIdentGridArea {
+    -webkit-grid-area: thirdArea;
+}
+
 #twoValueGridArea {
     -webkit-grid-area: -1 / span 1;
+}
+
+#twoValueIdentGridArea {
+    -webkit-grid-area: firstArea / secondArea;
 }
 
 #threeValueGridArea {
@@ -22,15 +35,22 @@ if (window.testRunner)
 #fourValueGridArea {
     -webkit-grid-area: -5 / 5 span / span 8 / 9;
 }
+
+#fourValueMixedGridArea {
+    -webkit-grid-area: firstArea / span / nonExistent / "foobar";
+}
 </style>
 <script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
 <div class="grid">
     <div id="oneValueGridArea"></div>
+    <div id="oneValueIdentGridArea"></div>
     <div id="twoValueGridArea"></div>
+    <div id="twoValueIdentGridArea"></div>
     <div id="threeValueGridArea"></div>
     <div id="fourValueGridArea"></div>
+    <div id="fourValueMixedGridArea"></div>
 </div>
 <script>
     description('This test checks that -webkit-grid-area is properly parsed and stored internally.');
@@ -79,14 +99,17 @@ if (window.testRunner)
         document.body.removeChild(element);
     }
 
-    debug("Test getting -webkit-grid-area set through CSS");
+    debug("Test getting grid-area set through CSS");
     testGridAreaCSSParsing("oneValueGridArea", "1");
+    testGridAreaCSSParsing("oneValueIdentGridArea", "thirdArea", "thirdArea", "thirdArea", "thirdArea");
     testGridAreaCSSParsing("twoValueGridArea", "-1", "span 1");
+    testGridAreaCSSParsing("twoValueIdentGridArea", "firstArea", "secondArea", "firstArea", "secondArea");
     testGridAreaCSSParsing("threeValueGridArea", "span 1", "10", "-1");
     testGridAreaCSSParsing("fourValueGridArea", "-5", "span 5", "span 8", "9");
+    testGridAreaCSSParsing("fourValueMixedGridArea", "firstArea", "span 1", "auto", "1 foobar");
 
     debug("");
-    debug("Test getting and setting -webkit-grid-area set through JS");
+    debug("Test getting and setting grid-area set through JS");
     testGridAreaJSParsing("-1");
     testGridAreaJSParsing("-1 / span 5");
     testGridAreaJSParsing("-1 / 10 / span 3");

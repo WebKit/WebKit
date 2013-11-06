@@ -30,13 +30,14 @@ window.testColumnRowCSSParsing = function(id, columnValue, rowValue)
 window.testColumnRowJSParsing = function(columnValue, rowValue, expectedColumnValue, expectedRowValue)
 {
     var gridItem = document.createElement("div");
-    document.body.appendChild(gridItem);
+    var gridElement = document.getElementsByClassName("grid")[0];
+    gridElement.appendChild(gridItem);
     gridItem.style.webkitGridColumn = columnValue;
     gridItem.style.webkitGridRow = rowValue;
 
     checkColumnRowValues(gridItem, expectedColumnValue ? expectedColumnValue : columnValue, expectedRowValue ? expectedRowValue : rowValue);
 
-    document.body.removeChild(gridItem);
+    gridElement.removeChild(gridItem);
 }
 
 window.testColumnRowInvalidJSParsing = function(columnValue, rowValue)
@@ -51,28 +52,40 @@ window.testColumnRowInvalidJSParsing = function(columnValue, rowValue)
     document.body.removeChild(gridItem);
 }
 
-window.testColumnStartRowStartJSParsing = function(columnStartValue, rowStartValue)
+window.testColumnStartRowStartJSParsing = function(columnStartValue, rowStartValue, expectedColumnStartValue, expectedRowStartValue)
 {
     var gridItem = document.createElement("div");
-    document.body.appendChild(gridItem);
+    var gridElement = document.getElementsByClassName("grid")[0];
+    gridElement.appendChild(gridItem);
     gridItem.style.webkitGridColumnStart = columnStartValue;
     gridItem.style.webkitGridRowStart = rowStartValue;
 
-    checkColumnRowValues(gridItem, columnStartValue + " / auto", rowStartValue + " / auto");
+    if (expectedColumnStartValue === undefined)
+        expectedColumnStartValue = columnStartValue;
+    if (expectedRowStartValue === undefined)
+        expectedRowStartValue = rowStartValue;
 
-    document.body.removeChild(gridItem);
+    checkColumnRowValues(gridItem, expectedColumnStartValue + " / auto", expectedRowStartValue + " / auto");
+
+    gridElement.removeChild(gridItem);
 }
 
-window.testColumnEndRowEndJSParsing = function(columnEndValue, rowEndValue)
+window.testColumnEndRowEndJSParsing = function(columnEndValue, rowEndValue, expectedColumnEndValue, expectedRowEndValue)
 {
     var gridItem = document.createElement("div");
-    document.body.appendChild(gridItem);
+    var gridElement = document.getElementsByClassName("grid")[0];
+    gridElement.appendChild(gridItem);
     gridItem.style.webkitGridColumnEnd = columnEndValue;
     gridItem.style.webkitGridRowEnd = rowEndValue;
 
-    checkColumnRowValues(gridItem, "auto / " + columnEndValue, "auto / " + rowEndValue);
+    if (expectedColumnEndValue === undefined)
+        expectedColumnEndValue = columnEndValue;
+    if (expectedRowEndValue === undefined)
+        expectedRowEndValue = rowEndValue;
 
-    document.body.removeChild(gridItem);
+    checkColumnRowValues(gridItem, "auto / " + expectedColumnEndValue, "auto / " + expectedRowEndValue);
+
+    gridElement.removeChild(gridItem);
 }
 
 })();

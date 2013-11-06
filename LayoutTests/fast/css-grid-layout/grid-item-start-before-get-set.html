@@ -7,6 +7,11 @@ if (window.testRunner)
 </script>
 <link href="resources/grid.css" rel="stylesheet">
 <style>
+.grid {
+    -webkit-grid-template: "firstArea secondArea"
+                           "thirdArea thirdArea";
+}
+
 .gridItemWithPositiveInteger {
     -webkit-grid-column-start: 10;
     -webkit-grid-row-start: 15;
@@ -31,6 +36,10 @@ if (window.testRunner)
     -webkit-grid-column-start: auto;
     -webkit-grid-row-start: auto;
 }
+.gridItemWithArea {
+    -webkit-grid-column-start: firstArea;
+    -webkit-grid-row-start: thirdArea;
+}
 </style>
 <script src="resources/grid-item-column-row-parsing-utils.js"></script>
 <script src="../../resources/js-test-pre.js"></script>
@@ -45,11 +54,12 @@ if (window.testRunner)
     <div class="gridItemWithAfterSpan" id="gridItemWithAfterSpan"></div>
     <div class="gridItemWithOnlySpan" id="gridItemWithOnlySpan"></div>
     <div class="gridItemWithAuto" id="gridItemWithAutoElement"></div>
+    <div class="gridItemWithArea" id="gridItemWithArea"></div>
 </div>
 <script>
     description('Test that setting and getting grid-column-start and grid-row-start works as expected');
 
-    debug("Test getting -webkit-grid-column-start and -webkit-grid-row-start set through CSS");
+    debug("Test getting grid-column-start and grid-row-start set through CSS");
     var gridElement = document.getElementById("gridElement");
     shouldBe("getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-column-start')", "'auto'");
     shouldBe("getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-column')", "'auto / auto'");
@@ -62,6 +72,7 @@ if (window.testRunner)
     testColumnRowCSSParsing("gridItemWithAfterSpan", "span 2 / auto", "span 8 / auto");
     testColumnRowCSSParsing("gridItemWithOnlySpan", "span 1 / auto", "span 1 / auto");
     testColumnRowCSSParsing("gridItemWithAutoElement", "auto / auto", "auto / auto");
+    testColumnRowCSSParsing("gridItemWithArea", "firstArea / auto", "thirdArea / auto");
 
     debug("");
     debug("Test the initial value");
@@ -78,6 +89,9 @@ if (window.testRunner)
     testColumnStartRowStartJSParsing("-55", "-40");
     testColumnStartRowStartJSParsing("span 3", "span 20");
     testColumnStartRowStartJSParsing("auto", "auto");
+    testColumnStartRowStartJSParsing("thirdArea", "secondArea");
+    testColumnStartRowStartJSParsing("nonExistentArea", "secondArea", "auto", "secondArea");
+    testColumnStartRowStartJSParsing("secondArea", "nonExistentArea", "secondArea", "auto");
 
     debug("");
     debug("Test setting grid-column-start and grid-row-start back to 'auto' through JS");

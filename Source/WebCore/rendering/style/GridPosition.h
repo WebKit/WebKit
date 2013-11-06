@@ -38,7 +38,8 @@ namespace WebCore {
 enum GridPositionType {
     AutoPosition,
     ExplicitPosition, // [ <integer> || <string> ]
-    SpanPosition
+    SpanPosition, // span && [ <integer> || <string> ]
+    NamedGridAreaPosition // <ident>
 };
 
 class GridPosition {
@@ -54,6 +55,7 @@ public:
     GridPositionType type() const { return m_type; }
     bool isAuto() const { return m_type == AutoPosition; }
     bool isSpan() const { return m_type == SpanPosition; }
+    bool isNamedGridArea() const { return m_type == NamedGridAreaPosition; }
 
     void setExplicitPosition(int position, const String& namedGridLine)
     {
@@ -72,6 +74,12 @@ public:
         m_namedGridLine = namedGridLine;
     }
 
+    void setNamedGridArea(const String& namedGridArea)
+    {
+        m_type = NamedGridAreaPosition;
+        m_namedGridLine = namedGridArea;
+    }
+
     int integerPosition() const
     {
         ASSERT(type() == ExplicitPosition);
@@ -80,7 +88,7 @@ public:
 
     String namedGridLine() const
     {
-        ASSERT(type() == ExplicitPosition || type() == SpanPosition);
+        ASSERT(type() == ExplicitPosition || type() == SpanPosition || type() == NamedGridAreaPosition);
         return m_namedGridLine;
     }
 

@@ -4,12 +4,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Test getting -webkit-grid-column and -webkit-grid-row set through CSS
-PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-column') is "auto / auto"
-PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-column-start') is "auto"
-PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-column-end') is "auto"
-PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-row') is "auto / auto"
-PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-row-start') is "auto"
-PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-row-end') is "auto"
+PASS getComputedStyle(gridItemWithNoCSSRule, '').getPropertyValue('-webkit-grid-column') is "auto / auto"
+PASS getComputedStyle(gridItemWithNoCSSRule, '').getPropertyValue('-webkit-grid-column-start') is "auto"
+PASS getComputedStyle(gridItemWithNoCSSRule, '').getPropertyValue('-webkit-grid-column-end') is "auto"
+PASS getComputedStyle(gridItemWithNoCSSRule, '').getPropertyValue('-webkit-grid-row') is "auto / auto"
+PASS getComputedStyle(gridItemWithNoCSSRule, '').getPropertyValue('-webkit-grid-row-start') is "auto"
+PASS getComputedStyle(gridItemWithNoCSSRule, '').getPropertyValue('-webkit-grid-row-end') is "auto"
 PASS getComputedStyle(gridItemWithPositiveInteger, '').getPropertyValue('-webkit-grid-column') is "10 / auto"
 PASS getComputedStyle(gridItemWithPositiveInteger, '').getPropertyValue('-webkit-grid-column-start') is "10"
 PASS getComputedStyle(gridItemWithPositiveInteger, '').getPropertyValue('-webkit-grid-column-end') is "auto"
@@ -94,6 +94,18 @@ PASS getComputedStyle(gridItemWithSpanNumberString, '').getPropertyValue('-webki
 PASS getComputedStyle(gridItemWithSpanNumberString, '').getPropertyValue('-webkit-grid-row') is "-1 / span 2 last"
 PASS getComputedStyle(gridItemWithSpanNumberString, '').getPropertyValue('-webkit-grid-row-start') is "-1"
 PASS getComputedStyle(gridItemWithSpanNumberString, '').getPropertyValue('-webkit-grid-row-end') is "span 2 last"
+PASS getComputedStyle(gridItemWithSingleNamedGridArea, '').getPropertyValue('-webkit-grid-column') is "thirdArea / thirdArea"
+PASS getComputedStyle(gridItemWithSingleNamedGridArea, '').getPropertyValue('-webkit-grid-column-start') is "thirdArea"
+PASS getComputedStyle(gridItemWithSingleNamedGridArea, '').getPropertyValue('-webkit-grid-column-end') is "thirdArea"
+PASS getComputedStyle(gridItemWithSingleNamedGridArea, '').getPropertyValue('-webkit-grid-row') is "firstArea / firstArea"
+PASS getComputedStyle(gridItemWithSingleNamedGridArea, '').getPropertyValue('-webkit-grid-row-start') is "firstArea"
+PASS getComputedStyle(gridItemWithSingleNamedGridArea, '').getPropertyValue('-webkit-grid-row-end') is "firstArea"
+PASS getComputedStyle(gridItemWithNamedGridAreaAndSpan, '').getPropertyValue('-webkit-grid-column') is "thirdArea / span 1"
+PASS getComputedStyle(gridItemWithNamedGridAreaAndSpan, '').getPropertyValue('-webkit-grid-column-start') is "thirdArea"
+PASS getComputedStyle(gridItemWithNamedGridAreaAndSpan, '').getPropertyValue('-webkit-grid-column-end') is "span 1"
+PASS getComputedStyle(gridItemWithNamedGridAreaAndSpan, '').getPropertyValue('-webkit-grid-row') is "firstArea / span 2"
+PASS getComputedStyle(gridItemWithNamedGridAreaAndSpan, '').getPropertyValue('-webkit-grid-row-start') is "firstArea"
+PASS getComputedStyle(gridItemWithNamedGridAreaAndSpan, '').getPropertyValue('-webkit-grid-row-end') is "span 2"
 
 Test the initial value
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column') is 'auto / auto'
@@ -182,6 +194,24 @@ PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-end') 
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row') is "span 2 last / -1 nav"
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-start') is "span 2 last"
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-end') is "-1 nav"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column') is "5 / auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-start') is "5"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-end') is "auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row') is "8 / auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-start') is "8"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-end') is "auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column') is "auto / auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-start') is "auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-end') is "auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row') is "auto / auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-start') is "auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-end') is "auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column') is "span 3 first / auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-start') is "span 3 first"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-end') is "auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row') is "span 1 last / auto"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-start') is "span 1 last"
+PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-end') is "auto"
 
 Test setting grid-column and grid-row back to 'auto' through JS
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column') is '18 / 19'
@@ -198,12 +228,6 @@ PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row-start') is
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row-end') is 'auto'
 
 Test getting and setting invalid grid-column and grid-row through JS
-PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column') is "auto / auto"
-PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-start') is "auto"
-PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-end') is "auto"
-PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row') is "auto / auto"
-PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-start') is "auto"
-PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-row-end') is "auto"
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column') is "auto / auto"
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-start') is "auto"
 PASS getComputedStyle(gridItem, '').getPropertyValue('-webkit-grid-column-end') is "auto"

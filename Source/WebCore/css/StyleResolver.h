@@ -346,7 +346,7 @@ private:
 #endif
 
     void adjustRenderStyle(RenderStyle* styleToAdjust, RenderStyle* parentStyle, Element*);
-    void adjustGridItemPosition(RenderStyle* styleToAdjust) const;
+    void adjustGridItemPosition(RenderStyle* styleToAdjust, RenderStyle* parentStyle) const;
 
     bool fastRejectSelector(const RuleData&) const;
 

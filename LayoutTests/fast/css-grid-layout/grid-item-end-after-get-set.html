@@ -7,6 +7,11 @@ if (window.testRunner)
 </script>
 <link href="resources/grid.css" rel="stylesheet">
 <style>
+.grid {
+    -webkit-grid-template: "firstArea secondArea"
+                           "thirdArea thirdArea";
+}
+
 .gridItemWithPositiveInteger {
     -webkit-grid-column-end: 10;
     -webkit-grid-row-end: 15;
@@ -31,13 +36,17 @@ if (window.testRunner)
     -webkit-grid-column-end: auto;
     -webkit-grid-row-end: auto;
 }
+.gridItemWithArea {
+    -webkit-grid-column-end: firstArea;
+    -webkit-grid-row-end: thirdArea;
+}
 </style>
 <script src="resources/grid-item-column-row-parsing-utils.js"></script>
 <script src="../../resources/js-test-pre.js"></script>
 </head>
 <body>
-<!-- The first has no properties set on it. -->
 <div class="grid">
+    <!-- The first has no properties set on it. -->
     <div id="gridElement"></div>
     <div class="gridItemWithPositiveInteger" id="gridItemWithPositiveInteger"></div>
     <div class="gridItemWithNegativeInteger" id="gridItemWithNegativeInteger"></div>
@@ -45,6 +54,7 @@ if (window.testRunner)
     <div class="gridItemWithAfterSpan" id="gridItemWithAfterSpan"></div>
     <div class="gridItemWithOnlySpan" id="gridItemWithOnlySpan"></div>
     <div class="gridItemWithAuto" id="gridItemWithAutoElement"></div>
+    <div class="gridItemWithArea" id="gridItemWithArea"></div>
 </div>
 <script>
     description('Test that setting and getting grid-column-end and grid-row-end works as expected');
@@ -57,6 +67,7 @@ if (window.testRunner)
     testColumnRowCSSParsing("gridItemWithAfterSpan", "auto / span 2", "auto / span 9");
     testColumnRowCSSParsing("gridItemWithOnlySpan", "auto / span 1", "auto / span 1");
     testColumnRowCSSParsing("gridItemWithAutoElement", "auto / auto", "auto / auto");
+    testColumnRowCSSParsing("gridItemWithArea", "auto / firstArea", "auto / thirdArea");
 
     debug("");
     debug("Test the initial value");
@@ -73,6 +84,9 @@ if (window.testRunner)
     testColumnEndRowEndJSParsing("-55", "-40");
     testColumnEndRowEndJSParsing("span 7", "span 2");
     testColumnEndRowEndJSParsing("auto", "auto");
+    testColumnEndRowEndJSParsing("thirdArea", "secondArea");
+    testColumnEndRowEndJSParsing("nonExistentArea", "secondArea", "auto", "secondArea");
+    testColumnEndRowEndJSParsing("secondArea", "nonExistentArea", "secondArea", "auto");
 
     debug("");
     debug("Test setting grid-column-end and grid-row-end back to 'auto' through JS");

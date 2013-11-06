@@ -894,7 +894,6 @@ size_t RenderGrid::resolveNamedGridLinePositionFromStyle(const GridPosition& pos
 
 size_t RenderGrid::resolveGridPositionFromStyle(const GridPosition& position, GridPositionSide side) const
 {
-    // FIXME: Handle other values for grid-{row,column} like ranges or line names.
     switch (position.type()) {
     case ExplicitPosition: {
         ASSERT(position.integerPosition());
@@ -915,12 +914,28 @@ size_t RenderGrid::resolveGridPositionFromStyle(const GridPosition& position, Gr
 
         return adjustGridPositionForSide(endOfTrack - resolvedPosition, side);
     }
-    case AutoPosition:
-        // 'auto' depends on the opposite position for resolution (e.g. grid-row: auto / 1).
+    case NamedGridAreaPosition:
+    {
+        NamedGridAreaMap::const_iterator it = style().namedGridArea().find(position.namedGridLine());
+        // Unknown grid area should have been computed to 'auto' by now.
+        ASSERT(it != style()->namedGridArea().end());
+        const GridCoordinate& gridAreaCoordinate = it->value;
+        switch (side) {
+        case ColumnStartSide:
+            return gridAreaCoordinate.columns.initialPositionIndex;
+        case ColumnEndSide:
+            return gridAreaCoordinate.columns.finalPositionIndex;
+        case RowStartSide:
+            return gridAreaCoordinate.rows.initialPositionIndex;
+        case RowEndSide:
+            return gridAreaCoordinate.rows.finalPositionIndex;
+        }
         ASSERT_NOT_REACHED();
         return 0;
+    }
+    case AutoPosition:
     case SpanPosition:
-        // FIXME: Handle span positions.
+        // 'auto' and span depend on the opposite position for resolution (e.g. grid-row: auto / 1 or grid-column: span 3 / "myHeader").
         ASSERT_NOT_REACHED();
         return 0;
     }

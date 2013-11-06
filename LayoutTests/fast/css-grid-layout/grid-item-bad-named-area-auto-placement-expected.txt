@@ -1,0 +1,6 @@
+This test checks that unknown named area are treated as 'auto' by applying the auto-placement algorithm when mandated.
+
+PASS
+PASS
+PASS
+PASS

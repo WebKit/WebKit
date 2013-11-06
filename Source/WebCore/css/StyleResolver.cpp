@@ -1363,7 +1363,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
     if (e && e->hasTagName(iframeTag) && style->display() == INLINE && toHTMLIFrameElement(e)->shouldDisplaySeamlessly())
         style->setDisplay(INLINE_BLOCK);
 
-    adjustGridItemPosition(style);
+    adjustGridItemPosition(style, parentStyle);
 
 #if ENABLE(SVG)
     if (e && e->isSVGElement()) {
@@ -1390,18 +1390,35 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
 #endif
 }
 
-void StyleResolver::adjustGridItemPosition(RenderStyle* style) const
+void StyleResolver::adjustGridItemPosition(RenderStyle* style, RenderStyle* parentStyle) const
 {
+    const GridPosition& columnStartPosition = style->gridItemColumnStart();
+    const GridPosition& columnEndPosition = style->gridItemColumnEnd();
+    const GridPosition& rowStartPosition = style->gridItemRowStart();
+    const GridPosition& rowEndPosition = style->gridItemRowEnd();
+
     // If opposing grid-placement properties both specify a grid span, they both compute to ‘auto’.
-    if (style->gridItemColumnStart().isSpan() && style->gridItemColumnEnd().isSpan()) {
+    if (columnStartPosition.isSpan() && columnEndPosition.isSpan()) {
         style->setGridItemColumnStart(GridPosition());
         style->setGridItemColumnEnd(GridPosition());
     }
 
-    if (style->gridItemRowStart().isSpan() && style->gridItemRowEnd().isSpan()) {
+    if (rowStartPosition.isSpan() && rowEndPosition.isSpan()) {
         style->setGridItemRowStart(GridPosition());
         style->setGridItemRowEnd(GridPosition());
     }
+
+    // Unknown named grid area compute to 'auto'.
+    const NamedGridAreaMap& map = parentStyle->namedGridArea();
+
+#define CLEAR_UNKNOWN_NAMED_AREA(prop, Prop) \
+    if (prop.isNamedGridArea() && !map.contains(prop.namedGridLine())) \
+        style->setGridItem##Prop(GridPosition());
+
+    CLEAR_UNKNOWN_NAMED_AREA(columnStartPosition, ColumnStart);
+    CLEAR_UNKNOWN_NAMED_AREA(columnEndPosition, ColumnEnd);
+    CLEAR_UNKNOWN_NAMED_AREA(rowStartPosition, RowStart);
+    CLEAR_UNKNOWN_NAMED_AREA(rowEndPosition, RowEnd);
 }
 
 bool StyleResolver::checkRegionStyle(Element* regionElement)
@@ -1984,12 +2001,17 @@ static bool createGridTrackList(CSSValue* value, Vector<GridTrackSize>& trackSiz
 
 static bool createGridPosition(CSSValue* value, GridPosition& position)
 {
-    // For now, we only accept: 'auto' | [ <integer> || <string> ] | span && <integer>?
+    // We accept the specification's grammar:
+    // 'auto' | [ <integer> || <string> ] | [ span && [ <integer> || string ] ] | <ident>
     if (value->isPrimitiveValue()) {
-#if !ASSERT_DISABLED
         CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
+        // We translate <ident> to <string> during parsing as it makes handling it simpler.
+        if (primitiveValue->isString()) {
+            position.setNamedGridArea(primitiveValue->getStringValue());
+            return true;
+        }
+
         ASSERT(primitiveValue->getValueID() == CSSValueAuto);
-#endif
         return true;
     }
 

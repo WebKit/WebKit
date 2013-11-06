@@ -2713,7 +2713,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         parsedValue = parseGridPosition();
         break;
 
-    case CSSPropertyWebkitGridArea:
     case CSSPropertyWebkitGridColumn:
     case CSSPropertyWebkitGridRow: {
         if (!cssGridLayoutEnabled())
@@ -2721,6 +2720,11 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 
         return parseGridItemPositionShorthand(propId, important);
     }
+
+    case CSSPropertyWebkitGridArea:
+        if (!cssGridLayoutEnabled())
+            return false;
+        return parseGridAreaShorthand(important);
 
     case CSSPropertyWebkitGridTemplate:
         if (!cssGridLayoutEnabled())
@@ -4871,6 +4875,11 @@ PassRefPtr<CSSValue> CSSParser::parseGridPosition()
         return cssValuePool().createIdentifierValue(CSSValueAuto);
     }
 
+    if (value->id != CSSValueSpan && value->unit == CSSPrimitiveValue::CSS_IDENT) {
+        m_valueList->next();
+        return cssValuePool().createValue(value->string, CSSPrimitiveValue::CSS_STRING);
+    }
+
     RefPtr<CSSPrimitiveValue> numericValue;
     RefPtr<CSSPrimitiveValue> gridLineName;
     bool hasSeenSpanKeyword = false;
@@ -4911,33 +4920,94 @@ PassRefPtr<CSSValue> CSSParser::parseGridPosition()
     return values.release();
 }
 
+static PassRefPtr<CSSValue> gridMissingGridPositionValue(CSSValue* value)
+{
+    if (value->isPrimitiveValue() && toCSSPrimitiveValue(value)->isString())
+        return value;
+
+    return cssValuePool().createIdentifierValue(CSSValueAuto);
+}
+
 bool CSSParser::parseGridItemPositionShorthand(CSSPropertyID shorthandId, bool important)
 {
     ShorthandScope scope(this, shorthandId);
     const StylePropertyShorthand& shorthand = shorthandForProperty(shorthandId);
-    if (!parseValue(shorthand.properties()[0], important))
+    ASSERT(shorthand.length() == 2);
+
+    RefPtr<CSSValue> startValue = parseGridPosition();
+    if (!startValue)
         return false;
 
-    size_t index = 1;
-    for (; index < shorthand.length(); ++index) {
-        if (!m_valueList->current())
-            break;
-
+    RefPtr<CSSValue> endValue;
+    if (m_valueList->current()) {
         if (!isForwardSlashOperator(m_valueList->current()))
             return false;
 
         if (!m_valueList->next())
             return false;
 
-        if (!parseValue(shorthand.properties()[index], important))
+        endValue = parseGridPosition();
+        if (!endValue || m_valueList->current())
             return false;
-    }
+    } else
+        endValue = gridMissingGridPositionValue(startValue.get());
 
-    // Only some values out of the {2|4} positions were specified, the other values should be set to 'auto'.
-    // FIXME: If the first property was <ident>, the opposite value should be the same <ident>.
-    for (; index < shorthand.length(); ++index)
-        addProperty(shorthand.properties()[index], cssValuePool().createIdentifierValue(CSSValueAuto), important);
+    addProperty(shorthand.properties()[0], startValue, important);
+    addProperty(shorthand.properties()[1], endValue, important);
+    return true;
+}
 
+bool CSSParser::parseGridAreaShorthand(bool important)
+{
+    ASSERT(cssGridLayoutEnabled());
+
+    ShorthandScope scope(this, CSSPropertyWebkitGridArea);
+    ASSERT(shorthandForProperty(CSSPropertyWebkitGridArea).length() == 4);
+
+    RefPtr<CSSValue> rowStartValue = parseGridPosition();
+    if (!rowStartValue)
+        return false;
+
+    RefPtr<CSSValue> columnStartValue;
+    if (!parseSingleGridAreaLonghand(columnStartValue))
+        return false;
+
+    RefPtr<CSSValue> rowEndValue;
+    if (!parseSingleGridAreaLonghand(rowEndValue))
+        return false;
+
+    RefPtr<CSSValue> columnEndValue;
+    if (!parseSingleGridAreaLonghand(columnEndValue))
+        return false;
+
+    if (!columnStartValue)
+        columnStartValue = gridMissingGridPositionValue(rowStartValue.get());
+
+    if (!rowEndValue)
+        rowEndValue = gridMissingGridPositionValue(rowStartValue.get());
+
+    if (!columnEndValue)
+        columnEndValue = gridMissingGridPositionValue(columnStartValue.get());
+
+    addProperty(CSSPropertyWebkitGridRowStart, rowStartValue, important);
+    addProperty(CSSPropertyWebkitGridColumnStart, columnStartValue, important);
+    addProperty(CSSPropertyWebkitGridRowEnd, rowEndValue, important);
+    addProperty(CSSPropertyWebkitGridColumnEnd, columnEndValue, important);
+    return true;
+}
+
+bool CSSParser::parseSingleGridAreaLonghand(RefPtr<CSSValue>& property)
+{
+    if (!m_valueList->current())
+        return true;
+
+    if (!isForwardSlashOperator(m_valueList->current()))
+        return false;
+
+    if (!m_valueList->next())
+        return false;
+
+    property = parseGridPosition();
     return true;
 }
 

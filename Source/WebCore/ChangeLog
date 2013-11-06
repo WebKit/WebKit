@@ -1,3 +1,46 @@
+2013-10-24  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Add support for named grid areas
+        https://bugs.webkit.org/show_bug.cgi?id=120045
+
+        Reviewed by Andreas Kling.
+
+        From Blink r155555, r155850 and r155889 by <jchaffraix@chromium.org>
+
+        Added support for named grid areas. Basically a named grid area is
+        now a valid grid position. The shorthand parsing of grid-area was
+        split from the grid-{row|column} as the rules for expanding are
+        slightly different.
+
+        Unknown grid area names are treated as 'auto' as per the
+        specification. This means that for those cases we need to trigger
+        the auto-placement algorithm.
+
+        Tests: fast/css-grid-layout/grid-item-bad-named-area-auto-placement.html
+               fast/css-grid-layout/grid-item-named-grid-area-resolution.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForGridPosition):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseGridPosition):
+        (WebCore::gridMissingGridPositionValue):
+        (WebCore::CSSParser::parseGridItemPositionShorthand):
+        (WebCore::CSSParser::parseGridAreaShorthand):
+        (WebCore::CSSParser::parseSingleGridAreaLonghand):
+        * css/CSSParser.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        (WebCore::StyleResolver::adjustGridItemPosition):
+        (WebCore::createGridPosition):
+        * css/StyleResolver.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::resolveGridPositionFromStyle):
+        * rendering/style/GridPosition.h:
+        (WebCore::GridPosition::isNamedGridArea):
+        (WebCore::GridPosition::setNamedGridArea):
+        (WebCore::GridPosition::namedGridLine):
+
 2013-11-06  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Audio and Video attachments are not output to VoiceOver
