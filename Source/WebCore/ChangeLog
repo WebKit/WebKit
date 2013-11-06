@@ -1,5 +1,26 @@
 2013-11-06  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r158629
+
+    2013-11-04  Samuel White  <samuel_white@apple.com>
+
+            AX: AXShowMenu doesn't always work.
+            https://bugs.webkit.org/show_bug.cgi?id=123649
+
+            Reviewed by Chris Fleizach.
+
+            No new tests, the change occurs in a code path that forces the context menu to show which
+            locks up DRT if we try to test it (platform menu is shown). The change itself gives the mouse
+            event handler a chance to handle our platform mouse event BEFORE the event ends up in the show
+            context menu machinery. This is necessary because without it, the element will not become
+            focused. Without focus, accessibility shows different/less menu items than a mouse click. The
+            end result is that context menus shown via accessibility are consistent with menus shown via click.
+
+            * page/ContextMenuController.cpp:
+            (WebCore::ContextMenuController::showContextMenuAt):
+
+2013-11-06  Lucas Forschler  <lforschler@apple.com>
+
         Merge r154391
 
     2013-08-21  Brent Fulgham  <bfulgham@apple.com>
