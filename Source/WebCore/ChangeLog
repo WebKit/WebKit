@@ -1,3 +1,19 @@
+2013-11-06  Brendan Long  <b.long@cablelabs.com>
+
+        [GStreamer] Override label() and language() in Audio and VideoTrackPrivateGStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=123836
+
+        The tests are currently flakey because we only get the label and language if we get
+        tags after the track client is set.
+
+        Reviewed by Philippe Normand.
+
+        No new tests because the tests already exist (this fixes flakeyness).
+
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.h: Override label() and language() to use m_label and m_language.
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.h: Same.
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.h: Make m_label and m_language protected so they can be used in the functions above.
+
 2013-11-05  Andreas Kling  <akling@apple.com>
 
         RenderBlockFlow should only expose its line boxes as RootInlineBox.

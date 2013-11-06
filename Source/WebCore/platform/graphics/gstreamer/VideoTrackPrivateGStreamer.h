@@ -45,6 +45,10 @@ public:
     virtual void setActive(bool enabled) OVERRIDE { setSelected(enabled); }
 
     virtual int trackIndex() const OVERRIDE { return m_index; }
+
+    virtual AtomicString label() const OVERRIDE { return m_label; }
+    virtual AtomicString language() const OVERRIDE { return m_language; }
+
     virtual void labelChanged(const String&) OVERRIDE;
     virtual void languageChanged(const String&) OVERRIDE;
 

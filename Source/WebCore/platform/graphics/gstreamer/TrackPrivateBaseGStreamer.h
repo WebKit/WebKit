@@ -60,10 +60,11 @@ protected:
     gint m_index;
     GRefPtr<GstElement> m_playbin;
 
-private:
-    GRefPtr<GstPad> m_pad;
     String m_label;
     String m_language;
+
+private:
+    GRefPtr<GstPad> m_pad;
     guint m_activeTimerHandler;
     guint m_tagTimerHandler;
 };
