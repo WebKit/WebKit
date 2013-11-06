@@ -630,7 +630,8 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
             };
             
             [browsingContext.policyDelegate browsingContextController:browsingContext decidePolicyForNavigationAction:actionDictionary decisionHandler:makePolicyDecisionBlock(listener)];
-        }
+        } else
+            WKFramePolicyListenerUse(listener);
     };
 
     policyClient.decidePolicyForNewWindowAction = [](WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
@@ -647,8 +648,8 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
             };
             
             [browsingContext.policyDelegate browsingContextController:browsingContext decidePolicyForNewWindowAction:actionDictionary decisionHandler:makePolicyDecisionBlock(listener)];
-        }
-
+        } else
+            WKFramePolicyListenerUse(listener);
     };
 
     policyClient.decidePolicyForResponse = [](WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
@@ -662,7 +663,8 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
             };
 
             [browsingContext.policyDelegate browsingContextController:browsingContext decidePolicyForResponseAction:actionDictionary decisionHandler:makePolicyDecisionBlock(listener)];
-        }
+        } else
+            WKFramePolicyListenerUse(listener);
     };
 
     WKPageSetPagePolicyClient(pageRef, &policyClient);

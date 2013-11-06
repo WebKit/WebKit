@@ -1,3 +1,13 @@
+2013-11-06  Dan Bernstein  <mitz@apple.com>
+
+        Fixed multiple API test failures after r158764.
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (setUpPagePolicyClient): If the delegate isn’t set or doesn’t respond to a selector, respond
+        with WKFramePolicyListenerUse().
+
 2013-11-06  Anders Carlsson  <andersca@apple.com>
 
         Move allowed classes handling to decodeObject
