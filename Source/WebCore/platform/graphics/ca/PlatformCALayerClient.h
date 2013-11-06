@@ -60,7 +60,7 @@ public:
     virtual void platformCALayerLayerDidDisplay(PlatformLayer*) = 0;
 
     virtual void platformCALayerSetNeedsToRevalidateTiles() { }
-    virtual float platformCALayerDeviceScaleFactor() = 0;
+    virtual float platformCALayerDeviceScaleFactor() const = 0;
 
     virtual bool isCommittingChanges() const { return false; }
 

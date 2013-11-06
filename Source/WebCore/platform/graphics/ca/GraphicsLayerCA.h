@@ -176,7 +176,7 @@ private:
     virtual bool platformCALayerDrawsContent() const { return drawsContent(); }
     virtual void platformCALayerLayerDidDisplay(PlatformLayer* layer) { return layerDidDisplay(layer); }
     virtual void platformCALayerSetNeedsToRevalidateTiles() OVERRIDE;
-    virtual float platformCALayerDeviceScaleFactor() OVERRIDE;
+    virtual float platformCALayerDeviceScaleFactor() const OVERRIDE;
     virtual bool isCommittingChanges() const OVERRIDE { return m_isCommittingChanges; }
 
     virtual double backingStoreMemoryEstimate() const;

@@ -187,7 +187,7 @@ void TileController::platformCALayerPaintContents(PlatformCALayer* platformCALay
     }
 }
 
-float TileController::platformCALayerDeviceScaleFactor()
+float TileController::platformCALayerDeviceScaleFactor() const
 {
     return owningGraphicsLayer()->platformCALayerDeviceScaleFactor();
 }

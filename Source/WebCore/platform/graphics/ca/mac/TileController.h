@@ -139,7 +139,7 @@ private:
     virtual void platformCALayerLayerDidDisplay(PlatformLayer*) OVERRIDE { }
 
     virtual void platformCALayerSetNeedsToRevalidateTiles() OVERRIDE { }
-    virtual float platformCALayerDeviceScaleFactor() OVERRIDE;
+    virtual float platformCALayerDeviceScaleFactor() const OVERRIDE;
 
     IntRect bounds() const;
 

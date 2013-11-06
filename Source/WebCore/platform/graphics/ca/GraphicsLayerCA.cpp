@@ -1228,7 +1228,7 @@ void GraphicsLayerCA::platformCALayerSetNeedsToRevalidateTiles()
     noteLayerPropertyChanged(TilingAreaChanged, m_isCommittingChanges ? DontScheduleFlush : ScheduleFlush);
 }
 
-float GraphicsLayerCA::platformCALayerDeviceScaleFactor()
+float GraphicsLayerCA::platformCALayerDeviceScaleFactor() const
 {
     return deviceScaleFactor();
 }

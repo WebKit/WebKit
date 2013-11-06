@@ -1,3 +1,24 @@
+2013-11-05  Tim Horton  <timothy_horton@apple.com>
+
+        platformCALayerDeviceScaleFactor should be const
+        https://bugs.webkit.org/show_bug.cgi?id=123842
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::LayerClient::platformCALayerDeviceScaleFactor):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::platformCALayerDeviceScaleFactor):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayerClient.h:
+        * platform/graphics/ca/mac/TileController.h:
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::platformCALayerDeviceScaleFactor):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayerClient::platformCALayerDeviceScaleFactor):
+        Constify PlatformCALayerClient::platformCALayerDeviceScaleFactor.
+
 2013-11-05  Gavin Barraclough  <barraclough@apple.com>
 
         Subresource loads should not prevent page throttling
