@@ -371,6 +371,9 @@ private:
         case StringCharAt:
             compileStringCharAt();
             break;
+        case StringCharCodeAt:
+            compileStringCharCodeAt();
+            break;
         case GetByOffset:
             compileGetByOffset();
             break;
@@ -1845,6 +1848,53 @@ private:
             
         m_out.appendTo(continuation, lastNext);
         setJSValue(m_out.phi(m_out.int64, results));
+    }
+    
+    void compileStringCharCodeAt()
+    {
+        LBasicBlock is8Bit = FTL_NEW_BLOCK(m_out, ("StringCharCodeAt 8-bit case"));
+        LBasicBlock is16Bit = FTL_NEW_BLOCK(m_out, ("StringCharCodeAt 16-bit case"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("StringCharCodeAt continuation"));
+
+        LValue base = lowCell(m_node->child1());
+        LValue index = lowInt32(m_node->child2());
+        LValue storage = lowStorage(m_node->child3());
+        
+        speculate(
+            Uncountable, noValue(), 0,
+            m_out.aboveOrEqual(index, m_out.load32(base, m_heaps.JSString_length)));
+        
+        LValue stringImpl = m_out.loadPtr(base, m_heaps.JSString_value);
+        
+        m_out.branch(
+            m_out.testIsZero32(
+                m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags),
+                m_out.constInt32(StringImpl::flagIs8Bit())),
+            is16Bit, is8Bit);
+            
+        LBasicBlock lastNext = m_out.appendTo(is8Bit, is16Bit);
+            
+        ValueFromBlock char8Bit = m_out.anchor(m_out.zeroExt(
+            m_out.load8(m_out.baseIndex(
+                m_heaps.characters8,
+                storage, m_out.zeroExt(index, m_out.intPtr),
+                m_state.forNode(m_node->child2()).m_value)),
+            m_out.int32));
+        m_out.jump(continuation);
+            
+        m_out.appendTo(is16Bit, continuation);
+            
+        ValueFromBlock char16Bit = m_out.anchor(m_out.zeroExt(
+            m_out.load16(m_out.baseIndex(
+                m_heaps.characters16,
+                storage, m_out.zeroExt(index, m_out.intPtr),
+                m_state.forNode(m_node->child2()).m_value)),
+            m_out.int32));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        
+        setInt32(m_out.phi(m_out.int32, char8Bit, char16Bit));
     }
     
     void compileGetByOffset()
