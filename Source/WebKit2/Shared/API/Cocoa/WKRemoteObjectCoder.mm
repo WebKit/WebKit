@@ -294,7 +294,7 @@ static NSString *escapeKey(NSString *key)
     return [self decodeObjectOfClasses:nil forKey:key];
 }
 
-static id decodeObject(WKRemoteObjectDecoder *decoder, const ImmutableDictionary*);
+static id decodeObject(WKRemoteObjectDecoder *, const ImmutableDictionary*, NSSet *allowedClasses);
 
 static id decodeObjectFromObjectStream(WKRemoteObjectDecoder *decoder, NSSet *allowedClasses)
 {
@@ -304,11 +304,9 @@ static id decodeObjectFromObjectStream(WKRemoteObjectDecoder *decoder, NSSet *al
     if (decoder->_objectStreamPosition == decoder->_objectStream->size())
         return nil;
 
-    TemporaryChange<NSSet *> allowedClassesChange(decoder->_allowedClasses, allowedClasses);
-
     const ImmutableDictionary* dictionary = decoder->_objectStream->at<ImmutableDictionary>(decoder->_objectStreamPosition++);
 
-    return decodeObject(decoder, dictionary);
+    return decodeObject(decoder, dictionary, allowedClasses);
 }
 
 static void checkIfClassIsAllowed(WKRemoteObjectDecoder *decoder, Class objectClass)
@@ -443,13 +441,18 @@ static id decodeObject(WKRemoteObjectDecoder *decoder)
     return [result.leakRef() autorelease];
 }
 
-static id decodeObject(WKRemoteObjectDecoder *decoder, const ImmutableDictionary* dictionary)
+static id decodeObject(WKRemoteObjectDecoder *decoder, const ImmutableDictionary* dictionary, NSSet *allowedClasses)
 {
     if (!dictionary)
         return nil;
 
     TemporaryChange<const ImmutableDictionary*> dictionaryChange(decoder->_currentDictionary, dictionary);
 
+    // If no allowed classes were listed, just use the currently allowed classes.
+    if (!allowedClasses)
+        return decodeObject(decoder);
+
+    TemporaryChange<NSSet *> allowedClassesChange(decoder->_allowedClasses, allowedClasses);
     return decodeObject(decoder);
 }
 
@@ -486,9 +489,7 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const ImmutableDictionary
 
 - (id)decodeObjectOfClasses:(NSSet *)classes forKey:(NSString *)key
 {
-    TemporaryChange<NSSet *> allowedClassesChange(_allowedClasses, classes);
-
-    return decodeObject(self, _currentDictionary->get<ImmutableDictionary>(escapeKey(key)));
+    return decodeObject(self, _currentDictionary->get<ImmutableDictionary>(escapeKey(key)), classes);
 }
 
 - (NSSet *)allowedClasses

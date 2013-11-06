@@ -1,3 +1,20 @@
+2013-11-06  Anders Carlsson  <andersca@apple.com>
+
+        Move allowed classes handling to decodeObject
+        https://bugs.webkit.org/show_bug.cgi?id=123930
+
+        Reviewed by Andreas Kling.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (decodeObjectFromObjectStream):
+        Pass allowed classes through to decodeObject.
+
+        (decodeObject):
+        Update to take an NSSet of allowed classes. If the set is nil, use the current set.
+
+        (-[WKRemoteObjectDecoder decodeObjectOfClasses:forKey:]):
+        Pass classes to decodeObject.
+
 2013-11-06  Sergio Correia  <sergio.correia@openbossa.org>
 
         Fix EFL build after r158753
