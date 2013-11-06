@@ -1786,15 +1786,8 @@ window.CodeMirror = (function() {
     }
   }
 
-  function clickInGutter(cm, e) {
+  function gutterEvent(cm, e, gutterEvent, mX, mY, signaler) {
     var display = cm.display;
-    try { var mX = e.clientX, mY = e.clientY; }
-    catch(e) { return false; }
-
-    if (mX >= Math.floor(getRect(display.gutters).right)) return false;
-    e_preventDefault(e);
-    if (!hasHandler(cm, "gutterClick")) return true;
-
     var lineBox = getRect(display.lineDiv);
     if (mY > lineBox.bottom) return true;
     mY -= lineBox.top - display.viewOffset;
@@ -1804,10 +1797,33 @@ window.CodeMirror = (function() {
       if (g && getRect(g).right >= mX) {
         var line = lineAtHeight(cm.doc, mY);
         var gutter = cm.options.gutters[i];
-        signalLater(cm, "gutterClick", cm, line, gutter, e);
-        break;
+        return signaler(cm, gutterEvent, cm, line, gutter, e);
       }
     }
+  }
+  
+  function contextMenuInGutter(cm, e) {
+    if (!hasHandler(cm, "gutterContextMenu")) return false;
+
+    try { var mX = e.clientX, mY = e.clientY; }
+    catch(e) { return false; }
+    if (mX >= Math.floor(getRect(cm.display.gutters).right)) return false;
+
+    return gutterEvent(cm, e, "gutterContextMenu", mX, mY, function() {
+      signal.apply(null, arguments);
+      return e_defaultPrevented(e);
+     });
+  }
+
+  function clickInGutter(cm, e) {
+    try { var mX = e.clientX, mY = e.clientY; }
+    catch(e) { return false; }
+
+    if (mX >= Math.floor(getRect(cm.display.gutters).right)) return false;
+    e_preventDefault(e);
+    if (!hasHandler(cm, "gutterClick")) return true;
+
+    gutterEvent(cm, e, "gutterClick", mX, mY, signalLater);
     return true;
   }
 
@@ -2081,7 +2097,8 @@ window.CodeMirror = (function() {
   function onContextMenu(cm, e) {
     var display = cm.display, sel = cm.doc.sel;
     if (eventInWidget(display, e)) return;
-
+    if (contextMenuInGutter(cm, e)) return;
+    
     var pos = posFromMouse(cm, e), scrollPos = display.scroller.scrollTop;
     if (!pos || opera) return; // Opera is difficult.
     if (posEq(sel.from, sel.to) || posLess(pos, sel.from) || !posLess(pos, sel.to))
