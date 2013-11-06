@@ -1,3 +1,24 @@
+2013-11-06  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Providing new table related accessibility expectations after r158742
+        https://bugs.webkit.org/show_bug.cgi?id=123893
+
+        Reviewed by Chris Fleizach.
+
+        New baselines after added missing implementation in r158742.
+
+        * platform/efl-wk1/TestExpectations: Tests are no longer failing.
+        * platform/efl-wk2/TestExpectations: Tests are no longer failing.
+        * platform/efl-wk2/accessibility/table-attributes-expected.txt: Added.
+        * platform/efl-wk2/accessibility/table-sections-expected.txt: Added.
+        * platform/efl/accessibility/table-attributes-expected.txt: Added.
+        * platform/efl/accessibility/table-sections-expected.txt: Added.
+        * platform/gtk-wk2/accessibility/table-attributes-expected.txt: Added.
+        * platform/gtk-wk2/accessibility/table-sections-expected.txt: Added.
+        * platform/gtk/TestExpectations: Tests are no longer failing.
+        * platform/gtk/accessibility/table-attributes-expected.txt: Added.
+        * platform/gtk/accessibility/table-sections-expected.txt: Added.
+
 2013-11-06  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed gardening; Fix expected results for video-seek-with-negative-playback.html,

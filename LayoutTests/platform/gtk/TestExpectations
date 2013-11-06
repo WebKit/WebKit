@@ -96,8 +96,6 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix Timeout
 # the right platform or re-written in a more platform-agnostic way.
 webkit.org/b/98348 accessibility/internal-link-anchors2.html [ WontFix Missing ]
 webkit.org/b/98348 accessibility/radio-button-group-members.html [ WontFix Missing ]
-webkit.org/b/98348 accessibility/table-attributes.html [ WontFix Missing ]
-webkit.org/b/98348 accessibility/table-sections.html [ WontFix Missing ]
 
 # Feature disabled, see: https://bugs.webkit.org/show_bug.cgi?id=85425
 webkit.org/b/98925 fast/viewport/viewport-legacy-handheldfriendly.html [ Skip ]
