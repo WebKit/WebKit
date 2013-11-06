@@ -32,10 +32,8 @@ WebInspector.TextEditor = function(element, mimeType, delegate)
     this._element.classList.add(WebInspector.TextEditor.StyleClassName);
     this._element.classList.add(WebInspector.SyntaxHighlightedStyleClassName);
 
-    this._readOnly = true;
-
     this._codeMirror = CodeMirror(this.element, {
-        readOnly: this._readOnly,
+        readOnly: true,
         indentWithTabs: true,
         indentUnit: 4,
         lineNumbers: true,
@@ -150,8 +148,7 @@ WebInspector.TextEditor.prototype = {
 
     set readOnly(readOnly)
     {
-        this._readOnly = readOnly;
-        this._updateCodeMirrorReadOnly();
+        this._codeMirror.setOption("readOnly", readOnly);
     },
 
     get formatted()
@@ -174,7 +171,6 @@ WebInspector.TextEditor.prototype = {
         console.assert(this._ignoreCodeMirrorContentDidChangeEvent >= 0);
 
         this._formatted = formatted;
-        this._updateCodeMirrorReadOnly();
 
         this.dispatchEventToListeners(WebInspector.TextEditor.Event.FormattingDidChange);
     },
@@ -582,15 +578,21 @@ WebInspector.TextEditor.prototype = {
 
     // Private
 
-    _updateCodeMirrorReadOnly: function()
-    {
-        this._codeMirror.setOption("readOnly", this._readOnly || this._formatted);
-    },
-
     _contentChanged: function(codeMirror, change)
     {
         if (this._ignoreCodeMirrorContentDidChangeEvent > 0)
             return;
+
+        if (this._formatted) {
+            this._formatterSourceMap = null;
+            this._formatted = false;
+
+            if (this._delegate && typeof this._delegate.textEditorUpdatedFormatting === "function")
+                this._delegate.textEditorUpdatedFormatting(this);
+
+            this.dispatchEventToListeners(WebInspector.TextEditor.Event.FormattingDidChange);
+        }
+
         this.dispatchEventToListeners(WebInspector.TextEditor.Event.ContentDidChange);
     },
 
