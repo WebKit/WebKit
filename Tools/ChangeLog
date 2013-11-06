@@ -1,5 +1,12 @@
 2013-11-06  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed webkitpy unit test fix; update baselines after r158765
+
+        * Scripts/webkitpy/port/win_unittest.py:
+        (WinPortTest.test_baseline_search_path):
+
+2013-11-06  Jer Noble  <jer.noble@apple.com>
+
         [Win] run-webkit-tests on the win platform should fall back to mac-mountainlion, not mac-lion.
         https://bugs.webkit.org/show_bug.cgi?id=123905
 
