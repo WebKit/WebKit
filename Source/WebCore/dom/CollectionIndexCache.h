@@ -80,7 +80,7 @@ inline NodeType* CollectionIndexCache<Collection, NodeType>::nodeBeforeCached(co
     ASSERT(index < m_currentIndex);
 
     bool firstIsCloser = index < m_currentIndex - index;
-    if (firstIsCloser) {
+    if (firstIsCloser || !collection.collectionCanTraverseBackward()) {
         m_currentNode = collection.collectionFirst();
         m_currentIndex = 0;
         if (index)
@@ -104,7 +104,7 @@ inline NodeType* CollectionIndexCache<Collection, NodeType>::nodeAfterCached(con
     ASSERT(!m_nodeCountValid || index < m_nodeCount);
 
     bool lastIsCloser = m_nodeCountValid && m_nodeCount - index < index - m_currentIndex;
-    if (lastIsCloser) {
+    if (lastIsCloser && collection.collectionCanTraverseBackward()) {
         m_currentNode = collection.collectionLast();
         if (index < m_nodeCount - 1)
             m_currentNode = collection.collectionTraverseBackward(*m_currentNode, m_nodeCount - index - 1);
@@ -142,7 +142,7 @@ inline NodeType* CollectionIndexCache<Collection, NodeType>::nodeAt(const Collec
     }
 
     bool lastIsCloser = m_nodeCountValid && m_nodeCount - index < index;
-    if (lastIsCloser) {
+    if (lastIsCloser && collection.collectionCanTraverseBackward()) {
         m_currentNode = collection.collectionLast();
         if (index < m_nodeCount - 1)
             m_currentNode = collection.collectionTraverseBackward(*m_currentNode, m_nodeCount - index - 1);

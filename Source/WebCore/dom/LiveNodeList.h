@@ -66,7 +66,7 @@ public:
 
         document().registerNodeList(*this);
     }
-    virtual Node* namedItem(const AtomicString&) const OVERRIDE;
+    virtual Node* namedItem(const AtomicString&) const OVERRIDE FINAL;
     virtual bool nodeMatches(Element*) const = 0;
 
     virtual ~LiveNodeList()
@@ -75,8 +75,8 @@ public:
     }
 
     // DOM API
-    virtual unsigned length() const OVERRIDE;
-    virtual Node* item(unsigned offset) const OVERRIDE;
+    virtual unsigned length() const OVERRIDE FINAL;
+    virtual Node* item(unsigned offset) const OVERRIDE FINAL;
 
     ALWAYS_INLINE bool isRootedAtDocument() const { return m_rootType == NodeListIsRootedAtDocument; }
     ALWAYS_INLINE NodeListInvalidationType invalidationType() const { return static_cast<NodeListInvalidationType>(m_invalidationType); }
@@ -94,6 +94,7 @@ public:
     Element* collectionLast() const;
     Element* collectionTraverseForward(Element&, unsigned count, unsigned& traversedCount) const;
     Element* collectionTraverseBackward(Element&, unsigned count) const;
+    bool collectionCanTraverseBackward() const { return true; }
 
 protected:
     Document& document() const { return m_ownerNode->document(); }

@@ -73,6 +73,7 @@ public:
     Node* collectionLast() const;
     Node* collectionTraverseForward(Node&, unsigned count, unsigned& traversedCount) const;
     Node* collectionTraverseBackward(Node&, unsigned count) const;
+    bool collectionCanTraverseBackward() const { return true; }
 
 private:
     explicit ChildNodeList(ContainerNode& parent);

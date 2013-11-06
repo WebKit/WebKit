@@ -1,3 +1,51 @@
+2013-11-06  Antti Koivisto  <antti@apple.com>
+
+        HTMLCollection should use CollectionIndexCache
+        https://bugs.webkit.org/show_bug.cgi?id=123906
+
+        Reviewed by Ryosuke Niwa.
+        
+        More code sharing.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::namedItemGetter):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::nameGetter):
+        * dom/ChildNodeList.h:
+        * dom/CollectionIndexCache.h:
+        (WebCore::::nodeBeforeCached):
+        (WebCore::::nodeAfterCached):
+        (WebCore::::nodeAt):
+            
+            Add a mechanism for disabling use of backward traversal.
+
+        * dom/LiveNodeList.h:
+        (WebCore::LiveNodeList::collectionCanTraverseBackward):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::isMatchingElement):
+        (WebCore::HTMLCollection::iterateForPreviousElement):
+        (WebCore::firstMatchingElement):
+        (WebCore::nextMatchingElement):
+        (WebCore::HTMLCollection::length):
+        (WebCore::HTMLCollection::item):
+        (WebCore::nameShouldBeVisibleInDocumentAll):
+        (WebCore::firstMatchingChildElement):
+        (WebCore::nextMatchingSiblingElement):
+        (WebCore::HTMLCollection::firstElement):
+        (WebCore::HTMLCollection::traverseForward):
+        (WebCore::HTMLCollection::collectionFirst):
+        (WebCore::HTMLCollection::collectionLast):
+        (WebCore::HTMLCollection::collectionTraverseForward):
+        (WebCore::HTMLCollection::collectionTraverseBackward):
+        (WebCore::HTMLCollection::invalidateCache):
+        (WebCore::HTMLCollection::namedItem):
+        (WebCore::HTMLCollection::updateNameCache):
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollection::collectionCanTraverseBackward):
+        
+            Disable use of backward traversal for collections that use custom traversal.
+
 2013-11-06  Brendan Long  <b.long@cablelabs.com>
 
         Add "id" attribute to TextTrack
