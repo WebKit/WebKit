@@ -187,8 +187,6 @@ protected:
     virtual void exitAcceleratedCompositingMode() OVERRIDE;
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) OVERRIDE;
 
-    virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>&) OVERRIDE;
-
 protected:
     WebViewClient m_client;
     RefPtr<WebPageProxy> m_page;

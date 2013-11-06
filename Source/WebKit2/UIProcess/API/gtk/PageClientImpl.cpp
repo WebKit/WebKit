@@ -269,11 +269,6 @@ void PageClientImpl::preferencesDidChange()
     notImplemented();
 }
 
-void PageClientImpl::flashBackingStoreUpdates(const Vector<IntRect>&)
-{
-    notImplemented();
-}
-
 void PageClientImpl::updateTextInputState()
 {
     webkitWebViewBaseUpdateTextInputState(WEBKIT_WEB_VIEW_BASE(m_viewWidget));

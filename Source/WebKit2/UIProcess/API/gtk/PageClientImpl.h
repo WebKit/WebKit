@@ -88,7 +88,6 @@ private:
     virtual PassRefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& intialColor, const WebCore::IntRect&);
 #endif
     virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate);
-    virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
     virtual void getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent&, const AtomicString&, Vector<WTF::String>&);
     virtual void updateTextInputState();
     virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);

@@ -468,11 +468,6 @@ void WebView::updateAcceleratedCompositingMode(const LayerTreeContext&)
     notImplemented();
 }
 
-void WebView::flashBackingStoreUpdates(const Vector<IntRect>&)
-{
-    notImplemented();
-}
-
 void WebView::updateTextInputState()
 {
     notImplemented();
