@@ -715,6 +715,16 @@ static JSValueRef accessibilityElementForTextMarkerCallback(JSContextRef context
     return AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->accessibilityElementForTextMarker(marker));
 }
 
+static JSValueRef startTextMarkerCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef*)
+{
+    return AccessibilityTextMarker::makeJSAccessibilityTextMarker(context, toAXElement(thisObject)->startTextMarker());
+}
+
+static JSValueRef endTextMarkerCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef*)
+{
+    return AccessibilityTextMarker::makeJSAccessibilityTextMarker(context, toAXElement(thisObject)->endTextMarker());
+}
+
 // Static Value Getters
 
 static JSValueRef getARIADropEffectsCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
@@ -1194,6 +1204,16 @@ AccessibilityTextMarker AccessibilityUIElement::textMarkerForIndex(int)
     return 0;
 }
 
+AccessibilityTextMarker AccessibilityUIElement::startTextMarker()
+{
+    return 0;
+}
+
+AccessibilityTextMarker AccessibilityUIElement::endTextMarker()
+{
+    return 0;
+}
+
 #endif
 
 // Destruction
@@ -1265,6 +1285,8 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "selectedChildrenCount", selectedChildrenCountCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "horizontalScrollbar", horizontalScrollbarCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "verticalScrollbar", verticalScrollbarCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "startTextMarker", startTextMarkerCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "endTextMarker", endTextMarkerCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #if PLATFORM(IOS)
         { "iphoneLabel", getIPhoneLabelCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "iphoneHint", getIPhoneHintCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

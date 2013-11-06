@@ -1492,6 +1492,26 @@ PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForIndex(i
     
     return 0;                                                                          
 }
+    
+PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarker()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id textMarker = [m_element accessibilityAttributeValue:@"AXStartTextMarker"];
+    return AccessibilityTextMarker::create(textMarker);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
+
+PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::endTextMarker()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id textMarker = [m_element accessibilityAttributeValue:@"AXEndTextMarker"];
+    return AccessibilityTextMarker::create(textMarker);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
 
 static NSString *_convertMathMultiscriptPairsToString(NSArray *pairs)
 {

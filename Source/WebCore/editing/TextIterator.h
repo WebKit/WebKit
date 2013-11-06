@@ -63,6 +63,7 @@ inline bool isCollapsibleWhitespace(UChar c)
 
 String plainText(const Range*, TextIteratorBehavior defaultBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
 PassRefPtr<Range> findPlainText(const Range*, const String&, FindOptions);
+bool isRendererReplacedElement(RenderObject*);
 
 class BitStack {
 public:

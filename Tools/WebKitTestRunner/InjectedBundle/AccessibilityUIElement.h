@@ -229,6 +229,8 @@ public:
     int indexForTextMarker(AccessibilityTextMarker*);
     bool isTextMarkerValid(AccessibilityTextMarker*);
     PassRefPtr<AccessibilityTextMarker> textMarkerForIndex(int);
+    PassRefPtr<AccessibilityTextMarker> startTextMarker();
+    PassRefPtr<AccessibilityTextMarker> endTextMarker();
 
     // Returns an ordered list of supported actions for an element.
     JSRetainPtr<JSStringRef> supportedActions() const;
