@@ -50,6 +50,7 @@ WebGLTexture::WebGLTexture(WebGLRenderingContext* ctx)
     , m_isNPOT(false)
     , m_isComplete(false)
     , m_needToUseBlackTexture(false)
+    , m_isCompressed(false)
 {
     setObject(ctx->graphicsContext3D()->createTexture());
 }
@@ -239,6 +240,19 @@ bool WebGLTexture::needToUseBlackTexture() const
     return m_needToUseBlackTexture;
 }
 
+bool WebGLTexture::isCompressed() const
+{
+    if (!object())
+        return false;
+    return m_isCompressed;
+}
+
+void WebGLTexture::setCompressed()
+{
+    ASSERT(object());
+    m_isCompressed = true;
+}
+    
 void WebGLTexture::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)
 {
     context3d->deleteTexture(object);

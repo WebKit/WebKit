@@ -1340,6 +1340,7 @@ void WebGLRenderingContext::compressedTexImage2D(GC3Denum target, GC3Dint level,
     graphicsContext3D()->compressedTexImage2D(target, level, internalformat, width, height,
                                               border, data->byteLength(), data->baseAddress());
     tex->setLevelInfo(target, level, internalformat, width, height, GraphicsContext3D::UNSIGNED_BYTE);
+    tex->setCompressed();
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1371,6 +1372,7 @@ void WebGLRenderingContext::compressedTexSubImage2D(GC3Denum target, GC3Dint lev
 
     graphicsContext3D()->compressedTexSubImage2D(target, level, xoffset, yoffset,
                                                  width, height, format, data->byteLength(), data->baseAddress());
+    tex->setCompressed();
     cleanupAfterGraphicsCall(false);
 }
 
@@ -2220,6 +2222,11 @@ void WebGLRenderingContext::generateMipmap(GC3Denum target)
         return;
     if (!tex->canGenerateMipmaps()) {
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "generateMipmap", "level 0 not power of 2 or not all the same size");
+        return;
+    }
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=123916. Compressed textures should be allowed in WebGL 2:
+    if (tex->isCompressed()) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "generateMipmap", "trying to generate mipmaps from compressed texture");
         return;
     }
     if (!validateSettableTexFormat("generateMipmap", tex->getInternalFormat(target, 0)))

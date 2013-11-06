@@ -665,7 +665,7 @@ void GraphicsContext3D::frontFace(GC3Denum mode)
 void GraphicsContext3D::generateMipmap(GC3Denum target)
 {
     makeContextCurrent();
-    ::glGenerateMipmapEXT(target);
+    ::glGenerateMipmap(target);
 }
 
 bool GraphicsContext3D::getActiveAttrib(Platform3DObject program, GC3Duint index, ActiveInfo& info)
