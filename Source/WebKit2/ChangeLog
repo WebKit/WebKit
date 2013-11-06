@@ -1,3 +1,26 @@
+2013-11-06  Anders Carlsson  <andersca@apple.com>
+
+        Implement more decoding methods
+        https://bugs.webkit.org/show_bug.cgi?id=123922
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (-[WKRemoteObjectDecoder decodeObjectForKey:]):
+        Call decodeObjectOfClasses:forKey: passing nil as the classes set.
+
+        (-[WKRemoteObjectDecoder decodeInt64ForKey:]):
+        Try to get a WebUInt64 and return its value.
+
+        (-[WKRemoteObjectDecoder decodeDoubleForKey:]):
+        Try to get a WebDouble and return its value.
+
+        (-[WKRemoteObjectDecoder decodeBytesForKey:returnedLength:]):
+        Move this method next to the other decoding methods.
+
+        (-[WKRemoteObjectDecoder requiresSecureCoding]):
+        Ditto.
+
 2013-11-06  Brendan Long  <b.long@cablelabs.com>
 
         [Gtk][EFL] Fix build after r158759

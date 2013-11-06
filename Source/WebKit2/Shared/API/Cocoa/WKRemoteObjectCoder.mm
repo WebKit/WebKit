@@ -289,19 +289,9 @@ static NSString *escapeKey(NSString *key)
     return _currentDictionary->map().contains(escapeKey(key));
 }
 
-- (const uint8_t *)decodeBytesForKey:(NSString *)key returnedLength:(NSUInteger *)length
+- (id)decodeObjectForKey:(NSString *)key
 {
-    WebData* data = _currentDictionary->get<WebData>(escapeKey(key));
-    if (!data || !data->size())
-        return nullptr;
-
-    *length = data->size();
-    return data->bytes();
-}
-
-- (BOOL)requiresSecureCoding
-{
-    return YES;
+    return [self decodeObjectOfClasses:nil forKey:key];
 }
 
 static id decodeObject(WKRemoteObjectDecoder *decoder, const ImmutableDictionary*);
@@ -461,6 +451,37 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const ImmutableDictionary
     TemporaryChange<const ImmutableDictionary*> dictionaryChange(decoder->_currentDictionary, dictionary);
 
     return decodeObject(decoder);
+}
+
+- (int64_t)decodeInt64ForKey:(NSString *)key
+{
+    const WebUInt64* value = _currentDictionary->get<WebUInt64>(escapeKey(key));
+    if (!value)
+        return 0;
+    return value->value();
+}
+
+- (double)decodeDoubleForKey:(NSString *)key
+{
+    const WebDouble* value = _currentDictionary->get<WebDouble>(escapeKey(key));
+    if (!value)
+        return 0;
+    return value->value();
+}
+
+- (const uint8_t *)decodeBytesForKey:(NSString *)key returnedLength:(NSUInteger *)length
+{
+    WebData* data = _currentDictionary->get<WebData>(escapeKey(key));
+    if (!data || !data->size())
+        return nullptr;
+
+    *length = data->size();
+    return data->bytes();
+}
+
+- (BOOL)requiresSecureCoding
+{
+    return YES;
 }
 
 - (id)decodeObjectOfClasses:(NSSet *)classes forKey:(NSString *)key
