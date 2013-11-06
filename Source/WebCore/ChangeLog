@@ -1,3 +1,21 @@
+2013-11-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix out-of-date offset in selection range code in range.surroundContents
+        https://bugs.webkit.org/show_bug.cgi?id=123871
+
+        Reviewed by Andreas Kling.
+        
+        Merge https://chromium.googlesource.com/chromium/blink/+/c89b413ff0fc4aafa0c71d180b0b1e131bb37707
+
+        The code in Range::insertNode assumeed that the start offset of the selection range within its container
+        doesn't change across a call to insertBefore on the container but this is wrong. This patch recomputes
+        the start offset when it is used after the insertBefore call.
+
+        Test: editing/selection/range-surroundContents-with-preceding-node.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::insertNode):
+
 2013-11-06  Andreas Kling  <akling@apple.com>
 
         Add InlineElementBox and stop instantiating InlineBox directly.
