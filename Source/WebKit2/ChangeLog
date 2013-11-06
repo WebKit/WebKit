@@ -1,3 +1,29 @@
+2013-11-06  Anders Carlsson  <andersca@apple.com>
+
+        Decode invocation arguments
+        https://bugs.webkit.org/show_bug.cgi?id=123917
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (-[WKRemoteObjectDecoder initWithInterface:rootObjectDictionary:WebKit::]):
+        Initialize the object stream.
+
+        (decodeObjectFromObjectStream):
+        Check that we're not reading past the end of the stream, then decode the object.
+
+        (decodeInvocationArguments):
+        Decode arguments from the object stream.
+
+        (decodeInvocation):
+        Call decodeInvocationArguments and set up the selector argument.
+        
+        * Shared/ImmutableArray.h:
+        (WebKit::ImmutableArray::at):
+        (WebKit::ImmutableArray::size):
+        (WebKit::ImmutableArray::entries):
+        Constify.
+
 2013-11-06  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Add -[WKNavigationData response]

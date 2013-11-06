@@ -258,6 +258,9 @@ static NSString *escapeKey(NSString *key)
     const ImmutableDictionary* _rootDictionary;
     const ImmutableDictionary* _currentDictionary;
 
+    const ImmutableArray* _objectStream;
+    size_t _objectStreamPosition;
+
     NSSet *_allowedClasses;
 }
 
@@ -270,6 +273,8 @@ static NSString *escapeKey(NSString *key)
 
     _rootDictionary = rootObjectDictionary;
     _currentDictionary = _rootDictionary;
+
+    _objectStream = _rootDictionary->get<ImmutableArray>(objectStreamKey);
 
     return self;
 }
@@ -299,6 +304,23 @@ static NSString *escapeKey(NSString *key)
     return YES;
 }
 
+static id decodeObject(WKRemoteObjectDecoder *decoder, const ImmutableDictionary*);
+
+static id decodeObjectFromObjectStream(WKRemoteObjectDecoder *decoder, NSSet *allowedClasses)
+{
+    if (!decoder->_objectStream)
+        return nil;
+
+    if (decoder->_objectStreamPosition == decoder->_objectStream->size())
+        return nil;
+
+    TemporaryChange<NSSet *> allowedClassesChange(decoder->_allowedClasses, allowedClasses);
+
+    const ImmutableDictionary* dictionary = decoder->_objectStream->at<ImmutableDictionary>(decoder->_objectStreamPosition++);
+
+    return decodeObject(decoder, dictionary);
+}
+
 static void checkIfClassIsAllowed(WKRemoteObjectDecoder *decoder, Class objectClass)
 {
     NSSet *allowedClasses = decoder->_allowedClasses;
@@ -325,6 +347,50 @@ static void validateClass(WKRemoteObjectDecoder *decoder, Class objectClass)
     [decoder validateClassSupportsSecureCoding:objectClass];
 }
 
+static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocation *invocation, const Vector<RetainPtr<NSSet>>& allowedArgumentClasses)
+{
+    NSMethodSignature *methodSignature = invocation.methodSignature;
+    NSUInteger argumentCount = methodSignature.numberOfArguments;
+
+    // The invocation should always have have self and _cmd arguments.
+    ASSERT(argumentCount >= 2);
+
+    // We ignore self and _cmd.
+    for (NSUInteger i = 2; i < argumentCount; ++i) {
+        const char* type = [methodSignature getArgumentTypeAtIndex:i];
+
+        switch (*type) {
+        // double
+        case 'd': {
+            double value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) doubleValue];
+            [invocation setArgument:&value atIndex:i];
+            break;
+        }
+
+        // int
+        case 'i': {
+            int value = [decodeObjectFromObjectStream(decoder, [NSSet setWithObject:[NSNumber class]]) intValue];
+            [invocation setArgument:&value atIndex:i];
+            break;
+        }
+
+        // Objective-C object
+        case '@': {
+            NSSet *allowedClasses = allowedArgumentClasses[i - 2].get();
+
+            id value = decodeObjectFromObjectStream(decoder, allowedClasses);
+            [invocation setArgument:&value atIndex:i];
+
+            // FIXME: Make sure the invocation doesn't outlive the value.
+            break;
+        }
+
+        default:
+            [NSException raise:NSInvalidArgumentException format:@"Unsupported invocation argument type '%s' for argument %zu", type, i];
+        }
+    }
+}
+
 static NSInvocation *decodeInvocation(WKRemoteObjectDecoder *decoder)
 {
     NSString *selectorString = [decoder decodeObjectOfClass:[NSString class] forKey:selectorKey];
@@ -346,8 +412,13 @@ static NSInvocation *decodeInvocation(WKRemoteObjectDecoder *decoder)
     if (![localMethodSignature isEqualTo:remoteMethodSignature])
         [NSException raise:NSInvalidUnarchiveOperationException format:@"Local and remote method signatures are not equal for method \"%@\"", selectorString];
 
-    // FIXME: Handle arguments.
-    return nil;
+    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:localMethodSignature];
+
+    const auto& allowedClasses = [decoder->_interface _allowedArgumentClassesForSelector:selector];
+    decodeInvocationArguments(decoder, invocation, allowedClasses);
+
+    [invocation setArgument:&selector atIndex:1];
+    return invocation;
 }
 
 static id decodeObject(WKRemoteObjectDecoder *decoder)

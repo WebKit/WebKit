@@ -58,14 +58,20 @@ public:
     virtual ~ImmutableArray();
 
     template<typename T>
-    T* at(size_t i) { if (m_entries[i]->type() != T::APIType) return 0; return static_cast<T*>(m_entries[i].get()); }
+    T* at(size_t i) const
+    {
+        if (m_entries[i]->type() != T::APIType)
+            return nullptr;
 
-    APIObject* at(size_t i) { return m_entries[i].get(); }
-    size_t size() { return m_entries.size(); }
+        return static_cast<T*>(m_entries[i].get());
+    }
+
+    APIObject* at(size_t i) const { return m_entries[i].get(); }
+    size_t size() const { return m_entries.size(); }
 
     virtual bool isMutable() { return false; }
 
-    const Vector<RefPtr<APIObject>>& entries() { return m_entries; }
+    const Vector<RefPtr<APIObject>>& entries() const { return m_entries; }
 
 protected:
     ImmutableArray();
