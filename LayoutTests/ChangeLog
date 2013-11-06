@@ -1,3 +1,17 @@
+2013-11-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        text-decoration-skip: ink isn't tested with underlines that don't intersect the underlined text
+        https://bugs.webkit.org/show_bug.cgi?id=123839
+
+        Reviewed by Simon Fraser.
+
+        text-decoration-skip: ink uses a mask to determine where the underline can be drawn. Right now,
+        there is not a test that makes sure that the mask always gets applied to the location
+        where the underline will get drawn.
+
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-non-intersecting-underline-expected.html: Added.
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-non-intersecting-underline.html: Added.
+
 2013-11-05  Tim Horton  <timothy_horton@apple.com>
 
         [mac] PDFDocumentImage is too big if PDF has a crop box smaller than the media box
