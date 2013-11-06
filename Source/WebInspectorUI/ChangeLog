@@ -1,3 +1,40 @@
+2013-11-06  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: CSS Regions: When a flow is clicked the content of flow needs to be displayed
+        https://bugs.webkit.org/show_bug.cgi?id=122927
+
+        Reviewed by Joseph Pecoraro.
+
+        ContentFlowTreeContentView is now used to display the content nodes of a ContentFlow. It is
+        very similar to the DOMTreeContentView class, but can handle multiple root nodes.
+
+        * UserInterface/ContentFlowTreeContentView.js: Added.
+        (WebInspector.ContentFlowTreeContentView):
+        (WebInspector.ContentFlowTreeContentView.prototype.get selectionPathComponents):
+        (WebInspector.ContentFlowTreeContentView.prototype.updateLayout):
+        (WebInspector.ContentFlowTreeContentView.prototype.shown):
+        (WebInspector.ContentFlowTreeContentView.prototype.hidden):
+        (WebInspector.ContentFlowTreeContentView.prototype.closed):
+        (WebInspector.ContentFlowTreeContentView.prototype._selectedNodeDidChange):
+        (WebInspector.ContentFlowTreeContentView.prototype._pathComponentSelected):
+        (WebInspector.ContentFlowTreeContentView.prototype._createContentNodeTree):
+        (WebInspector.ContentFlowTreeContentView.prototype._createContentTrees):
+        (WebInspector.ContentFlowTreeContentView.prototype._contentNodeWasAdded):
+        (WebInspector.ContentFlowTreeContentView.prototype._contentNodeWasRemoved):
+        * UserInterface/ContentView.js:
+        (WebInspector.ContentView):
+        (WebInspector.ContentView.isViewable):
+        * UserInterface/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype.ondeselect): We need to remove the selected "dom node"
+        so that the element is not going to stay selected after the we move to a different DOM tree.
+        * UserInterface/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline.prototype.selectDOMNode):
+        * UserInterface/Main.html:
+        * UserInterface/Main.js:
+        (WebInspector.sidebarPanelForRepresentedObject):
+        * UserInterface/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype._treeElementSelected):
+
 2013-11-01  Antoine Quint  <graouts@apple.com>
 
         Remove custom Function.prototype.bind() in favor of native version

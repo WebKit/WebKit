@@ -12,7 +12,7 @@
  *    copyright notice, this list of conditions and the following
  *    disclaimer in the documentation and/or other materials
  *    provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -46,6 +46,7 @@ WebInspector.ContentFlow.Event = {
 WebInspector.ContentFlow.prototype = {
 
     constructor: WebInspector.ContentFlow,
+    __proto__: WebInspector.Object.prototype,
 
     // Public
 
@@ -105,6 +106,3 @@ WebInspector.ContentFlow.prototype = {
         this.dispatchEventToListeners(WebInspector.ContentFlow.Event.ContentNodeWasRemoved, {node: contentNode});
     }
 };
-
-
-WebInspector.ContentFlow.prototype.__proto__ = WebInspector.Object.prototype;

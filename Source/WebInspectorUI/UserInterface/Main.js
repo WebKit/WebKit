@@ -322,7 +322,7 @@ WebInspector.sidebarPanelForCurrentContentView = function()
 WebInspector.sidebarPanelForRepresentedObject = function(representedObject)
 {
     if (representedObject instanceof WebInspector.Frame || representedObject instanceof WebInspector.Resource ||
-        representedObject instanceof WebInspector.Script)
+        representedObject instanceof WebInspector.Script || representedObject instanceof WebInspector.ContentFlow)
         return this.resourceSidebarPanel;
 
     if (representedObject instanceof WebInspector.DOMStorageObject || representedObject instanceof WebInspector.CookieStorageObject ||

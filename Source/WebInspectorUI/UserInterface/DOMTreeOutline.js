@@ -155,7 +155,8 @@ WebInspector.DOMTreeOutline.prototype = {
         // and the select() call would change the selectedDOMNode and reenter this setter. So to
         // avoid calling _selectedNodeChanged() twice, first check if _selectedDOMNode is the same
         // node as the one passed in.
-        if (this._selectedDOMNode === node)
+        // Note that _revealAndSelectNode will not do anything for a null node.
+        if (!node || this._selectedDOMNode === node)
             this._selectedNodeChanged();
     },
 

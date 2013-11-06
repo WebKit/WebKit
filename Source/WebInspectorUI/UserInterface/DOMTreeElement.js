@@ -481,6 +481,11 @@ WebInspector.DOMTreeElement.prototype = {
         this.treeOutline.suppressRevealAndSelect = false;
     },
 
+    ondeselect: function(treeElement)
+    {
+        this.treeOutline.selectDOMNode(null);
+    },
+
     ondelete: function()
     {
         var startTagTreeElement = this.treeOutline.findTreeElement(this.representedObject);
