@@ -50,6 +50,7 @@ namespace JSC { namespace FTL {
     macro(trap, "llvm.trap", functionType(voidType))
 
 #define FOR_EACH_FUNCTION_TYPE(macro) \
+    macro(C_JITOperation_ESt, functionType(intPtr, intPtr, intPtr)) \
     macro(I_JITOperation_EJss, functionType(intPtr, intPtr, intPtr)) \
     macro(J_JITOperation_E, functionType(int64, intPtr)) \
     macro(J_JITOperation_EJssZ, functionType(int64, intPtr, intPtr, int32)) \

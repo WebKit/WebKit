@@ -1,5 +1,23 @@
 2013-11-05  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL should support NewObject
+        https://bugs.webkit.org/show_bug.cgi?id=123849
+
+        Reviewed by Oliver Hunt.
+
+        * ftl/FTLAbstractHeapRepository.cpp:
+        (JSC::FTL::AbstractHeapRepository::AbstractHeapRepository):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileNewObject):
+        (JSC::FTL::LowerDFGToLLVM::allocate):
+
+2013-11-05  Filip Pizlo  <fpizlo@apple.com>
+
         FTL should support StringCharAt
         https://bugs.webkit.org/show_bug.cgi?id=123855
 

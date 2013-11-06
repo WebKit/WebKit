@@ -62,6 +62,7 @@ inline CapabilityLevel canCompile(Node* node)
     case PutStructure:
     case PhantomPutStructure:
     case GetButterfly:
+    case NewObject:
     case GetByOffset:
     case PutByOffset:
     case GetGlobalVar:

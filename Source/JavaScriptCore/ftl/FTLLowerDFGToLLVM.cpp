@@ -365,6 +365,9 @@ private:
         case PutByValAlias:
             compilePutByVal();
             break;
+        case NewObject:
+            compileNewObject();
+            break;
         case StringCharAt:
             compileStringCharAt();
             break;
@@ -1722,6 +1725,32 @@ private:
         }
     }
     
+    void compileNewObject()
+    {
+        Structure* structure = m_node->structure();
+        size_t allocationSize = JSFinalObject::allocationSize(structure->inlineCapacity());
+        MarkedAllocator* allocator = &vm().heap.allocatorForObjectWithoutDestructor(allocationSize);
+        
+        LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("NewObject slow path"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("NewObject continuation"));
+        
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
+        
+        ValueFromBlock fastResult = m_out.anchor(allocate(
+            m_out.constIntPtr(allocator), m_out.constIntPtr(structure), m_out.intPtrZero, slowPath));
+        
+        m_out.jump(continuation);
+        
+        m_out.appendTo(slowPath, continuation);
+        
+        ValueFromBlock slowResult = m_out.anchor(vmCall(
+            m_out.operation(operationNewObject), m_callFrame, m_out.constIntPtr(structure)));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(m_out.intPtr, fastResult, slowResult));
+    }
+    
     void compileStringCharAt()
     {
         LValue base = lowCell(m_node->child1());
@@ -2296,6 +2325,28 @@ private:
         callStackmap(exit, arguments);
         
         info.m_isInvalidationPoint = true;
+    }
+    
+    LValue allocate(
+        LValue allocator, LValue structure, LValue butterfly, LBasicBlock slowPath)
+    {
+        LBasicBlock success = FTL_NEW_BLOCK(m_out, ("allocation success"));
+        
+        LValue result = m_out.loadPtr(
+            allocator, m_heaps.MarkedAllocator_freeListHead);
+        
+        m_out.branch(m_out.notNull(result), success, slowPath);
+        
+        m_out.appendTo(success);
+        
+        m_out.storePtr(
+            m_out.loadPtr(result, m_heaps.JSCell_freeListNext),
+            allocator, m_heaps.MarkedAllocator_freeListHead);
+        
+        m_out.storePtr(structure, result, m_heaps.JSCell_structure);
+        m_out.storePtr(butterfly, result, m_heaps.JSObject_butterfly);
+        
+        return result;
     }
     
     LValue boolify(Edge edge)

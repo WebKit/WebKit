@@ -51,6 +51,7 @@ namespace JSC { namespace FTL {
     macro(JSString_length, JSString::offsetOfLength()) \
     macro(JSString_value, JSString::offsetOfValue()) \
     macro(JSVariableObject_registers, JSVariableObject::offsetOfRegisters()) \
+    macro(MarkedAllocator_freeListHead, MarkedAllocator::offsetOfFreeListHead()) \
     macro(StringImpl_data, StringImpl::dataOffset()) \
     macro(StringImpl_hashAndFlags, StringImpl::flagsOffset()) \
     macro(Structure_classInfo, Structure::classInfoOffset()) \
@@ -89,6 +90,8 @@ public:
 #define ABSTRACT_FIELD_DECLARATION(name, offset) AbstractField name;
     FOR_EACH_ABSTRACT_FIELD(ABSTRACT_FIELD_DECLARATION)
 #undef ABSTRACT_FIELD_DECLARATION
+    
+    AbstractField& JSCell_freeListNext;
     
 #define INDEXED_ABSTRACT_HEAP_DECLARATION(name, size) IndexedAbstractHeap name;
     FOR_EACH_INDEXED_ABSTRACT_HEAP(INDEXED_ABSTRACT_HEAP_DECLARATION)
