@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKNavigationData.h"
+#import <WebKit2/WKFoundation.h>
 
-#include "WKAPICast.h"
-#include "WebNavigationData.h"
-#include "WebURLRequest.h"
+#if WK_API_ENABLED
 
-using namespace WebKit;
+#import <Foundation/Foundation.h>
+#import <WebKit2/WKBrowsingContextController.h>
+#import <WebKit2/WKNavigationData.h>
 
-WKTypeID WKNavigationDataGetTypeID()
-{
-    return toAPI(WebNavigationData::APIType);
-}
+@protocol WKBrowsingContextHistoryDelegate <NSObject>
+@optional
 
-WKStringRef WKNavigationDataCopyTitle(WKNavigationDataRef navigationDataRef)
-{
-    return toCopiedAPI(toImpl(navigationDataRef)->title());
-}
+- (void)browsingContextController:(WKBrowsingContextController *)browsingContextController didNavigateWithNavigationData:(WKNavigationData *)navigationData;
+- (void)browsingContextController:(WKBrowsingContextController *)browsingContextController didPerformClientRedirectFromURL:(NSURL *)sourceURL toURL:(NSURL *)destinationURL;
+- (void)browsingContextController:(WKBrowsingContextController *)browsingContextController didPerformServerRedirectFromURL:(NSURL *)sourceURL toURL:(NSURL *)destinationURL;
+- (void)browsingContextController:(WKBrowsingContextController *)browsingContextController didUpdateHistoryTitle:(NSString *)title forURL:(NSURL *)URL;
 
-WKURLRef WKNavigationDataCopyURL(WKNavigationDataRef navigationDataRef)
-{
-    // This returns the URL of the original request for backwards-compatibility purposes.
-    return toCopiedURLAPI(toImpl(navigationDataRef)->originalRequest().url());
-}
+@end
 
-WKURLRef WKNavigationDataCopyNavigationDestinationURL(WKNavigationDataRef navigationDataRef)
-{
-    return toCopiedURLAPI(toImpl(navigationDataRef)->url());
-}
-
-WKURLRequestRef WKNavigationDataCopyOriginalRequest(WKNavigationDataRef navigationData)
-{
-    return toAPI(WebURLRequest::create(toImpl(navigationData)->originalRequest()).leakRef());
-}
+#endif // WK_API_ENABLED

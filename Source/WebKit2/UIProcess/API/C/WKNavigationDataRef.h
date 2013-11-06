@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKFoundation.h"
+#ifndef WKNavigationDataRef_h
+#define WKNavigationDataRef_h
 
-#if WK_API_ENABLED
+#include <WebKit2/WKBase.h>
 
-#import "WKObject.h"
-#import "WebURL.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace WebKit {
-inline NSURL *wrapper(WebURL& url) { ASSERT([url.wrapper() isKindOfClass:[NSURL class]]); return (NSURL *)url.wrapper(); }
+WK_EXPORT WKTypeID WKNavigationDataGetTypeID();
+
+WK_EXPORT WKStringRef WKNavigationDataCopyTitle(WKNavigationDataRef navigationData);
+WK_EXPORT WKURLRequestRef WKNavigationDataCopyOriginalRequest(WKNavigationDataRef navigationData);
+WK_EXPORT WKURLRef WKNavigationDataCopyNavigationDestinationURL(WKNavigationDataRef navigationDataRef);
+
+// This returns the URL of the original request for backwards-compatibility purposes.
+WK_EXPORT WKURLRef WKNavigationDataCopyURL(WKNavigationDataRef navigationData);
+
+#ifdef __cplusplus
 }
+#endif
 
-@interface WKNSURL : WKObject <NSCopying>
-@end
-
-#endif // WK_API_ENABLED
+#endif /* WKNavigationDataRef_h */

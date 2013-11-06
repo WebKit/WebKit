@@ -23,18 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKFoundation.h"
+#import "config.h"
+#import "WKNavigationDataInternal.h"
 
 #if WK_API_ENABLED
 
-#import "WKObject.h"
-#import "WebURL.h"
+#import <WebCore/ResourceRequest.h>
 
-namespace WebKit {
-inline NSURL *wrapper(WebURL& url) { ASSERT([url.wrapper() isKindOfClass:[NSURL class]]); return (NSURL *)url.wrapper(); }
+using namespace WebKit;
+
+@implementation WKNavigationData {
+    std::aligned_storage<sizeof(WebNavigationData), std::alignment_of<WebNavigationData>::value>::type _data;
 }
 
-@interface WKNSURL : WKObject <NSCopying>
+- (void)dealloc
+{
+    reinterpret_cast<WebNavigationData*>(&_data)->~WebNavigationData();
+
+    [super dealloc];
+}
+
+- (NSString *)title
+{
+    return reinterpret_cast<WebNavigationData*>(&_data)->title();
+}
+
+- (NSURLRequest *)originalRequest
+{
+    return reinterpret_cast<WebNavigationData*>(&_data)->originalRequest().nsURLRequest(WebCore::DoNotUpdateHTTPBody);
+}
+
+- (NSURL *)destinationURL
+{
+    return [NSURL URLWithString:reinterpret_cast<WebNavigationData*>(&_data)->url()];
+}
+
+#pragma mark WKObject protocol implementation
+
+- (APIObject&)_apiObject
+{
+    return *reinterpret_cast<APIObject*>(&_data);
+}
+
 @end
 
 #endif // WK_API_ENABLED

@@ -1,3 +1,50 @@
+2013-11-06  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] History delegate
+        https://bugs.webkit.org/show_bug.cgi?id=123837
+
+        Reviewed by Sam Weinig.
+
+        * Shared/Cocoa/APIObject.mm:
+        (WebKit::APIObject::newObject): Allocate a WKNavigationData if the object is a
+        WebNavigationData.
+
+        * Shared/Cocoa/WKNSString.h:
+        (WebKit::wrapper): Added. Returns a WebString’s wrapper as an NSString.
+
+        * Shared/Cocoa/WKNSURL.h:
+        (WebKit::wrapper): Added. Returns a WebURL’s wrapper as an NSURL.
+
+        * UIProcess/API/C/WKNavigationData.cpp: Renamed.
+        * UIProcess/API/C/WKNavigationData.h: Renamed.
+        * UIProcess/API/C/WKNavigationDataRef.cpp: Copied from Source/WebKit2/UIProcess/API/C/WKNavigationData.cpp.
+        * UIProcess/API/C/WKNavigationDataRef.h: Copied from Source/WebKit2/UIProcess/API/C/WKNavigationData.h.
+
+        * UIProcess/API/mac/WKBrowsingContextController.h: Declared historyDelegate property.
+
+        * UIProcess/API/mac/WKProcessGroup.mm:
+        (didNavigateWithNavigationData): Added history client callback that calls the browsing
+        context’s history delegate.
+        (didPerformClientRedirect): Ditto.
+        (didPerformServerRedirect): Ditto.
+        (didUpdateHistoryTitle): Ditto.
+        (setUpHistoryClient): Added.
+        (-[WKProcessGroup initWithInjectedBundleURL:]): Added call to setUpHistoryClient.
+        (-[WKProcessGroup dealloc]): Clear the history client.
+
+        * UIProcess/Cocoa/WKBrowsingContextHistoryDelegate.h: Added.
+
+        * UIProcess/Cocoa/WKNavigationData.h: Added.
+        * UIProcess/Cocoa/WKNavigationData.mm: Added.
+        (-[WKNavigationData dealloc]): Calls the WebNavigationData destructor.
+        (-[WKNavigationData title]): Added.
+        (-[WKNavigationData originalRequest]): Added.
+        (-[WKNavigationData destinationURL]): Added.
+        (-[WKNavigationData _apiObject]): Returns the wrapped WebNavigationData.
+        * UIProcess/Cocoa/WKNavigationDataInternal.h: Added.
+        (WebKit::wrapper): Added. Returns a WebNavigationData’s wrapper as a WKNavigationData.
+        * WebKit2.xcodeproj/project.pbxproj: Updated for renames and additions.
+
 2013-11-05  Anders Carlsson  <andersca@apple.com>
 
         Begin work on decoding invocations

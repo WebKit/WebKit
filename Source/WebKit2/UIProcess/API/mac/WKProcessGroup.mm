@@ -28,11 +28,21 @@
 #import "WKProcessGroupPrivate.h"
 
 #import "ObjCObjectGraph.h"
+#import "WKAPICast.h"
+#import "WKBrowsingContextControllerInternal.h"
+#import "WKBrowsingContextHistoryDelegate.h"
 #import "WKConnectionInternal.h"
 #import "WKContext.h"
+#import "WKNSString.h"
+#import "WKNSURL.h"
+#import "WKNavigationDataInternal.h"
 #import "WKRetainPtr.h"
 #import "WKStringCF.h"
+#import "WebFrameProxy.h"
+#import "WebNavigationData.h"
 #import <wtf/RetainPtr.h>
+
+using namespace WebKit;
 
 @interface WKProcessGroupData : NSObject {
 @public
@@ -94,6 +104,65 @@ static void setUpInectedBundleClient(WKProcessGroup *processGroup, WKContextRef 
     WKContextSetInjectedBundleClient(contextRef, &injectedBundleClient);
 }
 
+#if WK_API_ENABLED
+
+static void didNavigateWithNavigationData(WKContextRef, WKPageRef pageRef, WKNavigationDataRef navigationDataRef, WKFrameRef frameRef, const void*)
+{
+    if (!toImpl(frameRef)->isMainFrame())
+        return;
+
+    WKBrowsingContextController *controller = [WKBrowsingContextController _browsingContextControllerForPageRef:pageRef];
+    if ([controller.historyDelegate respondsToSelector:@selector(browsingContextController:didNavigateWithNavigationData:)])
+        [controller.historyDelegate browsingContextController:controller didNavigateWithNavigationData:wrapper(*toImpl(navigationDataRef))];
+}
+
+static void didPerformClientRedirect(WKContextRef, WKPageRef pageRef, WKURLRef sourceURLRef, WKURLRef destinationURLRef, WKFrameRef frameRef, const void*)
+{
+    if (!toImpl(frameRef)->isMainFrame())
+        return;
+
+    WKBrowsingContextController *controller = [WKBrowsingContextController _browsingContextControllerForPageRef:pageRef];
+    if ([controller.historyDelegate respondsToSelector:@selector(browsingContextController:didPerformClientRedirectFromURL:toURL:)])
+        [controller.historyDelegate browsingContextController:controller didPerformClientRedirectFromURL:wrapper(*toImpl(sourceURLRef)) toURL:wrapper(*toImpl(destinationURLRef))];
+}
+
+static void didPerformServerRedirect(WKContextRef, WKPageRef pageRef, WKURLRef sourceURLRef, WKURLRef destinationURLRef, WKFrameRef frameRef, const void*)
+{
+    if (!toImpl(frameRef)->isMainFrame())
+        return;
+
+    WKBrowsingContextController *controller = [WKBrowsingContextController _browsingContextControllerForPageRef:pageRef];
+    if ([controller.historyDelegate respondsToSelector:@selector(browsingContextController:didPerformServerRedirectFromURL:toURL:)])
+        [controller.historyDelegate browsingContextController:controller didPerformServerRedirectFromURL:wrapper(*toImpl(sourceURLRef)) toURL:wrapper(*toImpl(destinationURLRef))];
+}
+
+static void didUpdateHistoryTitle(WKContextRef, WKPageRef pageRef, WKStringRef titleRef, WKURLRef urlRef, WKFrameRef frameRef, const void*)
+{
+    if (!toImpl(frameRef)->isMainFrame())
+        return;
+
+    WKBrowsingContextController *controller = [WKBrowsingContextController _browsingContextControllerForPageRef:pageRef];
+    if ([controller.historyDelegate respondsToSelector:@selector(browsingContextController:didUpdateHistoryTitle:forURL:)])
+        [controller.historyDelegate browsingContextController:controller didUpdateHistoryTitle:wrapper(*toImpl(titleRef)) forURL:wrapper(*toImpl(urlRef))];
+}
+
+static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contextRef)
+{
+    WKContextHistoryClient historyClient;
+    memset(&historyClient, 0, sizeof(historyClient));
+
+    historyClient.version = kWKContextHistoryClientCurrentVersion;
+    historyClient.clientInfo = processGroup;
+    historyClient.didNavigateWithNavigationData = didNavigateWithNavigationData;
+    historyClient.didPerformClientRedirect = didPerformClientRedirect;
+    historyClient.didPerformServerRedirect = didPerformServerRedirect;
+    historyClient.didUpdateHistoryTitle = didUpdateHistoryTitle;
+
+    WKContextSetHistoryClient(contextRef, &historyClient);
+}
+
+#endif // WK_API_ENABLED
+
 - (id)init
 {
     return [self initWithInjectedBundleURL:nil];
@@ -114,6 +183,9 @@ static void setUpInectedBundleClient(WKProcessGroup *processGroup, WKContextRef 
 
     setUpConnectionClient(self, _data->_contextRef.get());
     setUpInectedBundleClient(self, _data->_contextRef.get());
+#if WK_API_ENABLED
+    setUpHistoryClient(self, _data->_contextRef.get());
+#endif
 
     return self;
 }
@@ -122,6 +194,7 @@ static void setUpInectedBundleClient(WKProcessGroup *processGroup, WKContextRef 
 {
     WKContextSetConnectionClient(_data->_contextRef.get(), 0);
     WKContextSetInjectedBundleClient(_data->_contextRef.get(), 0);
+    WKContextSetHistoryClient(_data->_contextRef.get(), 0);
 
     [_data release];
     [super dealloc];

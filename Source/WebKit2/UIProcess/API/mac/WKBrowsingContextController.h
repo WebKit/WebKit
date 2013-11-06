@@ -30,6 +30,7 @@
 @class WKBrowsingContextControllerData;
 @class WKBackForwardList;
 @class WKBackForwardListItem;
+@protocol WKBrowsingContextHistoryDelegate;
 @protocol WKBrowsingContextLoadDelegate;
 
 WK_EXPORT
@@ -42,6 +43,9 @@ WK_EXPORT
 
 @property(assign) id<WKBrowsingContextLoadDelegate> loadDelegate;
 
+#if WK_API_ENABLED
+@property (assign) id <WKBrowsingContextHistoryDelegate> historyDelegate;
+#endif
 
 #pragma mark Loading
 

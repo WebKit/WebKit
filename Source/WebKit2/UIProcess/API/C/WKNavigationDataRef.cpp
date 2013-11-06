@@ -23,26 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKNavigationData_h
-#define WKNavigationData_h
+#include "config.h"
+#include "WKNavigationDataRef.h"
 
-#include <WebKit2/WKBase.h>
+#include "WKAPICast.h"
+#include "WebNavigationData.h"
+#include "WebURLRequest.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+using namespace WebKit;
 
-WK_EXPORT WKTypeID WKNavigationDataGetTypeID();
-
-WK_EXPORT WKStringRef WKNavigationDataCopyTitle(WKNavigationDataRef navigationData);
-WK_EXPORT WKURLRequestRef WKNavigationDataCopyOriginalRequest(WKNavigationDataRef navigationData);
-WK_EXPORT WKURLRef WKNavigationDataCopyNavigationDestinationURL(WKNavigationDataRef navigationDataRef);
-
-// This returns the URL of the original request for backwards-compatibility purposes.
-WK_EXPORT WKURLRef WKNavigationDataCopyURL(WKNavigationDataRef navigationData);
-
-#ifdef __cplusplus
+WKTypeID WKNavigationDataGetTypeID()
+{
+    return toAPI(WebNavigationData::APIType);
 }
-#endif
 
-#endif /* WKNavigationData_h */
+WKStringRef WKNavigationDataCopyTitle(WKNavigationDataRef navigationDataRef)
+{
+    return toCopiedAPI(toImpl(navigationDataRef)->title());
+}
+
+WKURLRef WKNavigationDataCopyURL(WKNavigationDataRef navigationDataRef)
+{
+    // This returns the URL of the original request for backwards-compatibility purposes.
+    return toCopiedURLAPI(toImpl(navigationDataRef)->originalRequest().url());
+}
+
+WKURLRef WKNavigationDataCopyNavigationDestinationURL(WKNavigationDataRef navigationDataRef)
+{
+    return toCopiedURLAPI(toImpl(navigationDataRef)->url());
+}
+
+WKURLRequestRef WKNavigationDataCopyOriginalRequest(WKNavigationDataRef navigationData)
+{
+    return toAPI(WebURLRequest::create(toImpl(navigationData)->originalRequest()).leakRef());
+}

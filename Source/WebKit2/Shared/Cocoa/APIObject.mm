@@ -34,6 +34,7 @@
 #import "WKNSDictionary.h"
 #import "WKNSString.h"
 #import "WKNSURL.h"
+#import "WKNavigationDataInternal.h"
 
 namespace WebKit {
 
@@ -70,6 +71,10 @@ void* APIObject::newObject(size_t size, Type type)
 
     case TypeDictionary:
         wrapper = [WKNSDictionary alloc];
+        break;
+
+    case TypeNavigationData:
+        wrapper = [WKNavigationData alloc];
         break;
 
     case TypeString:

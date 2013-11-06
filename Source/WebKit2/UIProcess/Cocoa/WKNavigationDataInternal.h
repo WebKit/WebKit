@@ -23,18 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKFoundation.h"
+#import "WKNavigationData.h"
 
 #if WK_API_ENABLED
 
 #import "WKObject.h"
-#import "WebURL.h"
+#import "WebNavigationData.h"
 
 namespace WebKit {
-inline NSURL *wrapper(WebURL& url) { ASSERT([url.wrapper() isKindOfClass:[NSURL class]]); return (NSURL *)url.wrapper(); }
+inline WKNavigationData *wrapper(WebNavigationData& data) { ASSERT([data.wrapper() isKindOfClass:[WKNavigationData class]]); return (WKNavigationData *)data.wrapper(); }
 }
 
-@interface WKNSURL : WKObject <NSCopying>
+@interface WKNavigationData () <WKObject>
 @end
 
 #endif // WK_API_ENABLED
