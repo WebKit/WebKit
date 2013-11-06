@@ -1,0 +1,7 @@
+EVENT(canplaythrough)
+EVENT(seeked)
+EVENT(timeupdate)
+EVENT(timeupdate)
+EXPECTED (video.currentTime < '3') OK
+END OF TEST
+

@@ -1,3 +1,15 @@
+2013-11-06  Piotr Grad  <p.grad@samsung.com>
+
+        Test for seek not working properly with negative playback rate.
+        https://bugs.webkit.org/show_bug.cgi?id=123791
+
+        Seek method should work properly with negative playback rate.
+
+        Reviewed by Philippe Normand.
+
+        * media/video-seek-with-negative-playback.html: Added.
+        * media/video-seek-with-negative-playback-expected.txt: Added.
+
 2013-11-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a test for queries whose leftmost selector matches the root node

@@ -1,3 +1,17 @@
+2013-11-06  Piotr Grad  <p.grad@samsung.com>
+
+        Seek for video doesn't work when playback rate is negative
+        https://bugs.webkit.org/show_bug.cgi?id=123791
+
+        In MediaPlayerPrivateGStreamer::seek negative playback rate was not taken to account.
+
+        Reviewed by Philippe Normand.
+
+        Test: media/video-seek-with-negative-playback.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::seek):
+
 2013-11-06  Andreas Kling  <akling@apple.com>
 
         Reinstate an annoying assertion that I accidentally commented out.

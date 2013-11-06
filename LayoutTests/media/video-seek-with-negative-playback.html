@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var lastTime = -1;
+            function start() {
+                findMediaElement();
+                video.src = findMediaFile("video", "content/test");
+                waitForEventOnce('canplaythrough',
+                    function () {
+                        video.playbackRate = -1;
+                        video.currentTime = 3;
+                        waitForEventOnce('seeked', function () {
+                            waitForEvent('timeupdate', function () {
+                                if (lastTime == -1) {
+                                    lastTime = video.currentTime;
+                                    return;
+                                }
+                                testExpected("video.currentTime", 3, "<");
+                                endTest();
+                            });
+                        });
+                        video.play();
+                    });
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video/>
+    </body>
+</html>

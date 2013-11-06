@@ -613,9 +613,18 @@ void MediaPlayerPrivateGStreamer::seek(float time)
                 loadingFailed(MediaPlayer::Empty);
         }
     } else {
+        gint64 startTime, endTime;
+        if (m_player->rate() > 0) {
+            startTime = clockTime;
+            endTime = GST_CLOCK_TIME_NONE;
+        } else {
+            startTime = 0;
+            endTime = clockTime;
+        }
+
         // We can seek now.
         if (!gst_element_seek(m_playBin.get(), m_player->rate(), GST_FORMAT_TIME, static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE),
-            GST_SEEK_TYPE_SET, clockTime, GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE)) {
+            GST_SEEK_TYPE_SET, startTime, GST_SEEK_TYPE_SET, endTime)) {
             LOG_MEDIA_MESSAGE("[Seek] seeking to %f failed", time);
             return;
         }
