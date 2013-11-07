@@ -970,7 +970,6 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
         Attr& attr = toAttr(*source);
         if (attr.ownerElement())
             attr.ownerElement()->removeAttributeNode(&attr, ec);
-        attr.setSpecified(true);
         break;
     }       
     default:
