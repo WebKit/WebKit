@@ -73,7 +73,7 @@ namespace JSC {
         static const RegisterID thirdArgumentRegister = X86Registers::r8;
 #endif
 
-        static const RegisterID callFrameRegister = X86Registers::r13;
+        static const RegisterID callFrameRegister = X86Registers::ebp;
         static const RegisterID tagTypeNumberRegister = X86Registers::r14;
         static const RegisterID tagMaskRegister = X86Registers::r15;
 
@@ -98,7 +98,7 @@ namespace JSC {
         static const RegisterID firstArgumentRegister = X86Registers::ecx;
         static const RegisterID secondArgumentRegister = X86Registers::edx;
         
-        static const RegisterID callFrameRegister = X86Registers::edi;
+        static const RegisterID callFrameRegister = X86Registers::ebp;
         
         static const RegisterID regT0 = X86Registers::eax;
         static const RegisterID regT1 = X86Registers::edx;
@@ -124,7 +124,7 @@ namespace JSC {
         static const RegisterID regT4 = ARMRegisters::r7;
         static const RegisterID regT5 = ARMRegisters::r8;
 
-        static const RegisterID callFrameRegister = ARMRegisters::r5;
+        static const RegisterID callFrameRegister = ARMRegisters::fp;
 
         static const FPRegisterID fpRegT0 = ARMRegisters::d0;
         static const FPRegisterID fpRegT1 = ARMRegisters::d1;
@@ -146,7 +146,7 @@ namespace JSC {
         static const RegisterID regT3 = ARM64Registers::x23;
         static const RegisterID regT4 = ARM64Registers::x24;
         
-        static const RegisterID callFrameRegister = ARM64Registers::x25;
+        static const RegisterID callFrameRegister = ARM64Registers::fp;
         static const RegisterID timeoutCheckRegister = ARM64Registers::x26;
         static const RegisterID tagTypeNumberRegister = ARM64Registers::x27;
         static const RegisterID tagMaskRegister = ARM64Registers::x28;
@@ -178,7 +178,7 @@ namespace JSC {
         static const RegisterID regT4 = MIPSRegisters::t5;
         static const RegisterID regT5 = MIPSRegisters::t6;
 
-        static const RegisterID callFrameRegister = MIPSRegisters::s0;
+        static const RegisterID callFrameRegister = MIPSRegisters::fp;
         
         static const FPRegisterID fpRegT0 = MIPSRegisters::f4;
         static const FPRegisterID fpRegT1 = MIPSRegisters::f6;

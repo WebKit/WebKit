@@ -45,11 +45,11 @@ namespace ARMRegisters {
         r4,
         r5,
         r6,
-        r7, wr = r7,   // thumb work register
+        r7, fp = r7,   // frame pointer
         r8,
         r9, sb = r9,   // static base
         r10, sl = r10, // stack limit
-        r11, fp = r11, // frame pointer
+        r11,
         r12, ip = r12,
         r13, sp = r13,
         r14, lr = r14,

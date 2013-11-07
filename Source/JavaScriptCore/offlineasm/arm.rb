@@ -99,7 +99,7 @@ class RegisterID
         when "t4"
             "r10"
         when "cfr"
-            "r5"
+            isARMv7 ?  "r7" : "r11"
         when "lr"
             "lr"
         when "sp"

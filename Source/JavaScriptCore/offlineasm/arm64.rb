@@ -117,7 +117,7 @@ class RegisterID
         when 't6'
             arm64GPRName('x12', kind)
         when 'cfr'
-            arm64GPRName('x25', kind)
+            arm64GPRName('x29', kind)
         when 'csr1'
             arm64GPRName('x27', kind)
         when 'csr2'

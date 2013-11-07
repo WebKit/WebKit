@@ -1717,8 +1717,8 @@ asm (
 ".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
 HIDE_SYMBOL(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
-    "mov 0(%r13), %r13\n" // CallerFrameAndPC::callerFrame
-    "mov %r13, %rdi\n"
+    "mov 0(%rbp), %rbp\n" // CallerFrameAndPC::callerFrame
+    "mov %rbp, %rdi\n"
     "jmp " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
 
@@ -1728,8 +1728,8 @@ asm (
 ".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
 HIDE_SYMBOL(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
-    "mov 0(%edi), %edi\n" // CallerFrameAndPC::callerFrame
-    "mov %edi, 4(%esp)\n"
+    "mov 0(%ebp), %ebp\n" // CallerFrameAndPC::callerFrame
+    "mov %ebp, 4(%esp)\n"
     "jmp " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
 

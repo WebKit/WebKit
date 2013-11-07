@@ -101,7 +101,7 @@ class RegisterID
         when "t8"
             "$t8"
         when "cfr"
-            "$s0"
+            "$fp"
         when "lr"
             "$ra"
         when "sp"

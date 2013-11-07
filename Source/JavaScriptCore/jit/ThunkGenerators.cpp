@@ -221,11 +221,11 @@ MacroAssemblerCodeRef callToJavaScript(VM* vm)
     jit.push(ARMRegisters::r10);
     jit.push(ARMRegisters::r11);
     jit.push(ARMRegisters::lr);
-
+    jit.move(ARMRegisters::r11, GPRInfo::nonArgGPR0);
     jit.subPtr(CCallHelpers::TrustedImm32(EXTRA_STACK_SIZE), ARMRegisters::sp);
 
 #   define CALLFRAME_SRC_REG GPRInfo::argumentGPR1
-#   define PREVIOUS_CALLFRAME_REG ARMRegisters::r11
+#   define PREVIOUS_CALLFRAME_REG GPRInfo::nonArgGPR0
 #elif CPU(ARM_THUMB2)
     jit.push(ARMRegisters::lr);
     jit.push(ARMRegisters::r4);
@@ -236,10 +236,11 @@ MacroAssemblerCodeRef callToJavaScript(VM* vm)
     jit.push(ARMRegisters::r9);
     jit.push(ARMRegisters::r10);
     jit.push(ARMRegisters::r11);
+    jit.move(ARMRegisters::r7, GPRInfo::nonArgGPR0);
     jit.subPtr(CCallHelpers::TrustedImm32(EXTRA_STACK_SIZE), ARMRegisters::sp);
 
 #   define CALLFRAME_SRC_REG GPRInfo::argumentGPR1
-#   define PREVIOUS_CALLFRAME_REG ARMRegisters::r7
+#   define PREVIOUS_CALLFRAME_REG GPRInfo::nonArgGPR0
 #elif CPU(ARM64)
     jit.push(ARM64Registers::lr);
     jit.push(ARM64Registers::x19);
@@ -253,9 +254,10 @@ MacroAssemblerCodeRef callToJavaScript(VM* vm)
     jit.push(ARM64Registers::x27);
     jit.push(ARM64Registers::x28);
     jit.push(ARM64Registers::x29);
+    jit.move(ARM64Registers::x29, GPRInfo::nonArgGPR0);
 
 #   define CALLFRAME_SRC_REG GPRInfo::argumentGPR1
-#   define PREVIOUS_CALLFRAME_REG ARM64Registers::x29
+#   define PREVIOUS_CALLFRAME_REG GPRInfo::nonArgGPR0
 #elif CPU(MIPS)
     jit.subPtr(CCallHelpers::TrustedImm32(STACK_LENGTH), MIPSRegisters::sp);
     jit.storePtr(MIPSRegisters::ra, CCallHelpers::Address(MIPSRegisters::sp, PRESERVED_RETURN_ADDRESS_OFFSET));
@@ -267,9 +269,10 @@ MacroAssemblerCodeRef callToJavaScript(VM* vm)
 #if WTF_MIPS_PIC
     jit.storePtr(MIPSRegisters::gp), CCallHelpers::Address(MIPSRegisters::sp, PRESERVED_GP_OFFSET));
 #endif
+    jit.move(MIPSRegisters::fp, GPRInfo::nonArgGPR0);
 
 #   define CALLFRAME_SRC_REG GPRInfo::argumentGPR1
-#   define PREVIOUS_CALLFRAME_REG MIPSRegisters::fp
+#   define PREVIOUS_CALLFRAME_REG GPRInfo::nonArgGPR0
 #elif CPU(SH4)
     jit.push(SH4Registers::fp);
     jit.push(SH4Registers::pr);

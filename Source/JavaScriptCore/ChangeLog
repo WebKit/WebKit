@@ -1,3 +1,37 @@
+2013-11-07  Michael Saboff  <msaboff@apple.com>
+
+        Change CallFrameRegister to architected frame pointer register
+        https://bugs.webkit.org/show_bug.cgi?id=123956
+
+        Reviewed by Geoffrey Garen.
+
+        Changed X86 and ARM variants as well as MIPS to use their respective architected
+        frame pointer registers.  The freed up callFrameRegisteris are made available to 
+        the DFG register allocator.  Modified the FTL OSR exit compiler to use a temporary
+        register as a stand in for the destination callFrameRegister since the FTL frame
+        pointer register is needed to extract values from the FTL stack.
+
+        Reviewed by Geoffrey Garen.
+
+        * assembler/ARMAssembler.h:
+        * assembler/ARMv7Assembler.h:
+        * assembler/MacroAssemblerMIPS.h:
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::addressFor):
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::toRegister):
+        (JSC::GPRInfo::toIndex):
+        * jit/JITOperations.cpp:
+        * jit/JSInterfaceJIT.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::callToJavaScript):
+        * offlineasm/arm.rb:
+        * offlineasm/arm64.rb:
+        * offlineasm/mips.rb:
+        * offlineasm/x86.rb:
+
 2013-11-07  Oliver Hunt  <oliver@apple.com>
 
         Reproducible crash when using Map (affects Web Inspector)

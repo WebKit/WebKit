@@ -176,6 +176,11 @@ public:
     {
         return Address(GPRInfo::callFrameRegister, byteOffset);
     }
+    static Address addressFor(VirtualRegister virtualRegister, GPRReg baseReg)
+    {
+        ASSERT(virtualRegister.isValid());
+        return Address(baseReg, virtualRegister.offset() * sizeof(Register));
+    }
     static Address addressFor(VirtualRegister virtualRegister)
     {
         ASSERT(virtualRegister.isValid());

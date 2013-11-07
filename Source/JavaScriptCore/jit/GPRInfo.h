@@ -284,7 +284,7 @@ private:
 class GPRInfo {
 public:
     typedef GPRReg RegisterType;
-    static const unsigned numberOfRegisters = 5;
+    static const unsigned numberOfRegisters = 6;
     static const unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
     // Temporary registers.
@@ -292,11 +292,12 @@ public:
     static const GPRReg regT1 = X86Registers::edx;
     static const GPRReg regT2 = X86Registers::ecx;
     static const GPRReg regT3 = X86Registers::ebx;
-    static const GPRReg regT4 = X86Registers::esi;
+    static const GPRReg regT4 = X86Registers::edi;
+    static const GPRReg regT5 = X86Registers::esi;
     // These registers match the baseline JIT.
     static const GPRReg cachedResultRegister = regT0;
     static const GPRReg cachedResultRegister2 = regT1;
-    static const GPRReg callFrameRegister = X86Registers::edi;
+    static const GPRReg callFrameRegister = X86Registers::ebp;
     // These constants provide the names for the general purpose argument & return value registers.
     static const GPRReg argumentGPR0 = X86Registers::ecx; // regT2
     static const GPRReg argumentGPR1 = X86Registers::edx; // regT1
@@ -310,7 +311,7 @@ public:
     static GPRReg toRegister(unsigned index)
     {
         ASSERT(index < numberOfRegisters);
-        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4 };
+        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5 };
         return registerForIndex[index];
     }
 
@@ -318,7 +319,7 @@ public:
     {
         ASSERT(reg != InvalidGPRReg);
         ASSERT(static_cast<int>(reg) < 8);
-        static const unsigned indexForRegister[8] = { 0, 2, 1, 3, InvalidIndex, InvalidIndex, 4, InvalidIndex };
+        static const unsigned indexForRegister[8] = { 0, 2, 1, 3, InvalidIndex, InvalidIndex, 5, 4 };
         unsigned result = indexForRegister[reg];
         ASSERT(result != InvalidIndex);
         return result;
@@ -347,12 +348,12 @@ private:
 class GPRInfo {
 public:
     typedef GPRReg RegisterType;
-    static const unsigned numberOfRegisters = 9;
+    static const unsigned numberOfRegisters = 10;
     static const unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
     // These registers match the baseline JIT.
     static const GPRReg cachedResultRegister = X86Registers::eax;
-    static const GPRReg callFrameRegister = X86Registers::r13;
+    static const GPRReg callFrameRegister = X86Registers::ebp;
     static const GPRReg tagTypeNumberRegister = X86Registers::r14;
     static const GPRReg tagMaskRegister = X86Registers::r15;
     // Temporary registers.
@@ -365,6 +366,7 @@ public:
     static const GPRReg regT6 = X86Registers::r8;
     static const GPRReg regT7 = X86Registers::r9;
     static const GPRReg regT8 = X86Registers::r10;
+    static const GPRReg regT9 = X86Registers::r13;
     // These constants provide the names for the general purpose argument & return value registers.
     static const GPRReg argumentGPR0 = X86Registers::edi; // regT4
     static const GPRReg argumentGPR1 = X86Registers::esi; // regT5
@@ -382,7 +384,7 @@ public:
     static GPRReg toRegister(unsigned index)
     {
         ASSERT(index < numberOfRegisters);
-        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6, regT7, regT8 };
+        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6, regT7, regT8, regT9 };
         return registerForIndex[index];
     }
     
@@ -397,7 +399,7 @@ public:
     {
         ASSERT(reg != InvalidGPRReg);
         ASSERT(static_cast<int>(reg) < 16);
-        static const unsigned indexForRegister[16] = { 0, 2, 1, 3, InvalidIndex, InvalidIndex, 5, 4, 6, 7, 8, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
+        static const unsigned indexForRegister[16] = { 0, 2, 1, 3, InvalidIndex, InvalidIndex, 5, 4, 6, 7, 8, InvalidIndex, InvalidIndex, 9, InvalidIndex, InvalidIndex };
         unsigned result = indexForRegister[reg];
         ASSERT(result != InvalidIndex);
         return result;
@@ -428,7 +430,7 @@ private:
 class GPRInfo {
 public:
     typedef GPRReg RegisterType;
-    static const unsigned numberOfRegisters = 9;
+    static const unsigned numberOfRegisters = 10;
     static const unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
     // Temporary registers.
@@ -441,10 +443,11 @@ public:
     static const GPRReg regT6 = ARMRegisters::r10;
     static const GPRReg regT7 = ARMRegisters::r11;
     static const GPRReg regT8 = ARMRegisters::r3;
+    static const GPRReg regT9 = ARMRegisters::r5;
     // These registers match the baseline JIT.
     static const GPRReg cachedResultRegister = regT0;
     static const GPRReg cachedResultRegister2 = regT1;
-    static const GPRReg callFrameRegister = ARMRegisters::r5;
+    static const GPRReg callFrameRegister = ARMRegisters::fp;
     // These constants provide the names for the general purpose argument & return value registers.
     static const GPRReg argumentGPR0 = ARMRegisters::r0; // regT0
     static const GPRReg argumentGPR1 = ARMRegisters::r1; // regT1
@@ -460,7 +463,7 @@ public:
     static GPRReg toRegister(unsigned index)
     {
         ASSERT(index < numberOfRegisters);
-        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6, regT7, regT8 };
+        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6, regT7, regT8, regT9 };
         return registerForIndex[index];
     }
 
@@ -468,7 +471,7 @@ public:
     {
         ASSERT(static_cast<unsigned>(reg) != InvalidGPRReg);
         ASSERT(static_cast<unsigned>(reg) < 16);
-        static const unsigned indexForRegister[16] = { 0, 1, 2, 8, 3, InvalidIndex, InvalidIndex, InvalidIndex, 4, 5, 6, 7, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
+        static const unsigned indexForRegister[16] = { 0, 1, 2, 8, 3, 9, InvalidIndex, InvalidIndex, 4, 5, 6, 7, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
         unsigned result = indexForRegister[reg];
         ASSERT(result != InvalidIndex);
         return result;
@@ -504,7 +507,7 @@ public:
     // These registers match the baseline JIT.
     static const GPRReg cachedResultRegister = ARM64Registers::x0;
     static const GPRReg timeoutCheckRegister = ARM64Registers::x26;
-    static const GPRReg callFrameRegister = ARM64Registers::x25;
+    static const GPRReg callFrameRegister = ARM64Registers::fp;
     static const GPRReg tagTypeNumberRegister = ARM64Registers::x27;
     static const GPRReg tagMaskRegister = ARM64Registers::x28;
     // Temporary registers.
@@ -592,7 +595,7 @@ private:
 class GPRInfo {
 public:
     typedef GPRReg RegisterType;
-    static const unsigned numberOfRegisters = 6;
+    static const unsigned numberOfRegisters = 7;
     static const unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
     // Temporary registers.
@@ -602,10 +605,11 @@ public:
     static const GPRReg regT3 = MIPSRegisters::s2;
     static const GPRReg regT4 = MIPSRegisters::t5;
     static const GPRReg regT5 = MIPSRegisters::t6;
+    static const GPRReg regT6 = MIPSRegisters::s0;
     // These registers match the baseline JIT.
     static const GPRReg cachedResultRegister = regT0;
     static const GPRReg cachedResultRegister2 = regT1;
-    static const GPRReg callFrameRegister = MIPSRegisters::s0;
+    static const GPRReg callFrameRegister = MIPSRegisters::fp;
     // These constants provide the names for the general purpose argument & return value registers.
     static const GPRReg argumentGPR0 = MIPSRegisters::a0;
     static const GPRReg argumentGPR1 = MIPSRegisters::a1;
@@ -621,7 +625,7 @@ public:
     static GPRReg toRegister(unsigned index)
     {
         ASSERT(index < numberOfRegisters);
-        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5 };
+        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6 };
         return registerForIndex[index];
     }
 
@@ -632,7 +636,7 @@ public:
         static const unsigned indexForRegister[24] = {
             InvalidIndex, InvalidIndex, 0, 1, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex,
             InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, 2, 4, 5, InvalidIndex,
-            InvalidIndex, InvalidIndex, 3, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex
+            6, InvalidIndex, 3, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex
         };
         unsigned result = indexForRegister[reg];
         ASSERT(result != InvalidIndex);

@@ -101,7 +101,7 @@ public:
     };
 
     static const RegisterID stackPointerRegister = MIPSRegisters::sp;
-    static const RegisterID framePointerRegister = MIPSRegisters::s0;
+    static const RegisterID framePointerRegister = MIPSRegisters::fp;
     static const RegisterID returnAddressRegister = MIPSRegisters::ra;
 
     // Integer arithmetic operations:

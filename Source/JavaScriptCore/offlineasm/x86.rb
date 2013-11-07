@@ -166,26 +166,24 @@ class RegisterID
             if isX64
                 case kind
                 when :half
-                    "%r13w"
+                    "%bp"
                 when :int
-                    "%r13d"
+                    "%ebp"
                 when :ptr
-                    "%r13"
+                    "%rbp"
                 when :quad
-                    "%r13"
+                    "%rbp"
                 else
                     raise
                 end
             else
                 case kind
-                when :byte
-                    "%dil"
                 when :half
-                    "%di"
+                    "%bp"
                 when :int
-                    "%edi"
+                    "%ebp"
                 when :ptr
-                    "%edi"
+                    "%ebp"
                 else
                     raise
                 end

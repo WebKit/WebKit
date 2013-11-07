@@ -55,6 +55,9 @@ static void compileStub(
     
     RELEASE_ASSERT(record->patchpointID == exit.m_stackmapID);
     
+    // This code requires framePointerRegister is the same as callFrameRegister
+    static_assert(MacroAssembler::framePointerRegister == GPRInfo::callFrameRegister, "MacroAssembler::framePointerRegister and GPRInfo::callFrameRegister must be the same");
+
     CCallHelpers jit(vm, codeBlock);
     
     // We need scratch space to save all registers and to build up the JSStack.
@@ -76,7 +79,8 @@ static void compileStub(
     // call frame.
     
     // Get the call frame and tag thingies.
-    record->locations[0].restoreInto(jit, jitCode->stackmaps, registerScratch, GPRInfo::callFrameRegister);
+    // Restore the exiting function's callFrame value into a regT4
+    record->locations[0].restoreInto(jit, jitCode->stackmaps, registerScratch, GPRInfo::regT4);
     jit.move(MacroAssembler::TrustedImm64(TagTypeNumber), GPRInfo::tagTypeNumberRegister);
     jit.move(MacroAssembler::TrustedImm64(TagMask), GPRInfo::tagMaskRegister);
     
@@ -126,7 +130,7 @@ static void compileStub(
         case ExitValueInJSStackAsInt32:
         case ExitValueInJSStackAsInt52:
         case ExitValueInJSStackAsDouble:
-            jit.load64(AssemblyHelpers::addressFor(value.virtualRegister()), GPRInfo::regT0);
+            jit.load64(AssemblyHelpers::addressFor(value.virtualRegister(), GPRInfo::regT4), GPRInfo::regT0);
             break;
             
         default:
@@ -146,14 +150,19 @@ static void compileStub(
         jit.load64(scratch + index, GPRInfo::regT0);
         reboxAccordingToFormat(
             value.valueFormat(), jit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2);
-        jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand));
+        jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(static_cast<VirtualRegister>(operand), GPRInfo::regT4));
     }
+    
+    // Save the current framePointer into regT3 for the epilogue.
+    // Put regT4 into callFrameRegister
+    jit.move(MacroAssembler::framePointerRegister, GPRInfo::regT3);
+    jit.move(GPRInfo::regT4, GPRInfo::callFrameRegister);
     
     handleExitCounts(jit, exit);
     reifyInlinedCallFrames(jit, exit);
     
-    jit.move(MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister);
-    jit.pop(MacroAssembler::framePointerRegister);
+    jit.move(GPRInfo::regT3, MacroAssembler::stackPointerRegister);
+    jit.pop(GPRInfo::regT3); // ignore prior framePointer
     jit.pop(GPRInfo::nonArgGPR0); // ignore the result.
     
     if (exit.m_lastSetOperand.isValid()) {
