@@ -1,3 +1,17 @@
+2013-11-07  Samuel White  <samuel_white@apple.com>
+
+        AX: DRT AccessibilityUIElement::isFocused methods should be finished.
+        https://bugs.webkit.org/show_bug.cgi?id=123774
+
+        Reviewed by Chris Fleizach.
+
+        Implemented AccessibilityUIElement::isFocused methods and removed FIXMEs.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::isFocused):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::isFocused):
+
 2013-11-07  Dániel Bátyai  <Batyai.Daniel@stud.u-szeged.hu>
 
         Removed retrieveQMakespecVar function

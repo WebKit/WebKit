@@ -1,3 +1,15 @@
+2013-11-07  Samuel White  <samuel_white@apple.com>
+
+        AX: DRT AccessibilityUIElement::isFocused methods should be finished.
+        https://bugs.webkit.org/show_bug.cgi?id=123774
+
+        Reviewed by Chris Fleizach.
+
+        Added Mac platform test so we can validate our AccessibilityUIElement convenience method expectations.
+
+        * platform/mac/accessibility/test-convenience-methods-expected.txt: Added.
+        * platform/mac/accessibility/test-convenience-methods.html: Added.
+
 2013-11-07  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [GTK] Glyphs in vertical text tests are rotated 90 degrees clockwise

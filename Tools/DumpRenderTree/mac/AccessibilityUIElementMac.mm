@@ -738,7 +738,12 @@ bool AccessibilityUIElement::isRequired() const
 
 bool AccessibilityUIElement::isFocused() const
 {
-    // FIXME: implement
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id value = [m_element accessibilityAttributeValue:NSAccessibilityFocusedAttribute];
+    if ([value isKindOfClass:[NSNumber class]])
+        return [value boolValue];
+    END_AX_OBJC_EXCEPTIONS
+    
     return false;
 }
 
