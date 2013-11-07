@@ -12,7 +12,8 @@ function store_results($db, $master, $builder_name, $build_number, $start_time, 
     if (!$builder_id)
         exit_with_error('FailedToInsertBuilder', array('master' => $master, 'builderName' => $builder_name));
 
-    $build_id = add_build($db, $builder_id, $build_number);
+    $slave_id = add_slave($db, $_POST['build_slave']);
+    $build_id = add_build($db, $builder_id, $build_number, $slave_id);
     if (!$build_id)
         exit_with_error('FailedToInsertBuild', array('builderId' => $builder_id, 'buildNumber' => $build_number));
 
@@ -30,11 +31,8 @@ function store_results($db, $master, $builder_name, $build_number, $start_time, 
             or exit_with_error('FailedToInsertRevision', array('name' => $repository_name, 'data' => $revision_data));
     }
 
-    $slave_id = add_slave($db, $_POST['build_slave']);
-    if (!store_test_results($db, $test_results, $build_id, $start_time, $end_time, $slave_id))
+    if (!store_test_results($db, $test_results, $build_id, $start_time, $end_time))
         exit_with_error('FailedToStoreResults', array('buildId' => $build_id));
-
-    return array('build_id' => $build_id, 'builder_id' => $builder_id);
 }
 
 function main() {
@@ -66,26 +64,8 @@ function main() {
     $json_path = $_FILES['file']['tmp_name'];
 
     $db = connect();
-    $builder_and_build = store_results($db, $master, $builder_name, $build_number, $start_time, $end_time, $revisions, $json_path);
-    @ob_end_clean();
-    ignore_user_abort();
-    ob_start();
-
+    store_results($db, $master, $builder_name, $build_number, $start_time, $end_time, $revisions, $json_path);
     echo_success();
-
-    header('Connection: close');
-    header('Content-Length: ' . ob_get_length());
-
-    @ob_end_flush();
-    flush();
-    if (function_exists('fastcgi_finish_request'))
-        fastcgi_finish_request();
-
-    update_flakiness_after_inserting_build($db, $builder_and_build['build_id']);
-
-    $generator = new ResultsJSONGenerator($db, $builder_and_build['builder_id']);
-    $generator->generate('wrongexpectations');
-    $generator->generate('flaky');
 }
 
 main();

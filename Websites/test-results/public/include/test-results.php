@@ -15,8 +15,8 @@ function add_builder($db, $master, $builder_name) {
     return $db->select_or_insert_row('builders', NULL, array('master' => $master, 'name' => $builder_name));
 }
 
-function add_build($db, $builder_id, $build_number) {
-    return $db->select_or_insert_row('builds', NULL, array('builder' => $builder_id, 'number' => $build_number));
+function add_build($db, $builder_id, $build_number, $slave_id) {
+    return $db->select_or_insert_row('builds', NULL, array('builder' => $builder_id, 'number' => $build_number, 'slave' => $slave_id));
 }
 
 function add_slave($db, $name) {
@@ -34,15 +34,15 @@ function fetch_and_parse_test_results_json($url, $jsonp = FALSE) {
     return json_decode($json_contents, true);
 }
 
-function store_test_results($db, $test_results, $build_id, $start_time, $end_time, $slave_id) {
+function store_test_results($db, $test_results, $build_id, $start_time, $end_time) {
     $db->begin_transaction();
 
     try {
         recursively_add_test_results($db, $build_id, $test_results['tests'], '');
 
         $db->query_and_get_affected_rows(
-            'UPDATE builds SET (start_time, end_time, slave) = (least($1, start_time), greatest($2, end_time), $3) WHERE id = $4',
-            array($start_time->format('Y-m-d H:i:s.u'), $end_time->format('Y-m-d H:i:s.u'), $slave_id, $build_id));
+            'UPDATE builds SET (start_time, end_time, is_processed) = (least($1, start_time), greatest($2, end_time), FALSE) WHERE id = $3',
+            array($start_time->format('Y-m-d H:i:s.u'), $end_time->format('Y-m-d H:i:s.u'), $build_id));
         $db->commit_transaction();
     } catch (Exception $e) {
         $db->rollback_transaction();

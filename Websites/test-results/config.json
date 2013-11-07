@@ -1,6 +1,7 @@
 {
     "debug": true,
     "jsonCacheMaxAge": 600,
+    "defaultBuildWaitInterval": 10,
     "dataDirectory": "../data",
     "database": {
         "host": "localhost",

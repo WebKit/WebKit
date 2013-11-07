@@ -29,6 +29,7 @@ CREATE TABLE builds (
     start_time timestamp,
     end_time timestamp,
     slave integer REFERENCES slaves ON DELETE CASCADE,
+    is_processed boolean,
     CONSTRAINT builder_and_build_number_must_be_unique UNIQUE(builder, number));
 CREATE INDEX build_builder_index ON builds(builder);
 CREATE INDEX build_slave_index ON builds(slave);
