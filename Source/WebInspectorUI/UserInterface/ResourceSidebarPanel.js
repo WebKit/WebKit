@@ -151,7 +151,7 @@ WebInspector.ResourceSidebarPanel.prototype = {
             representedObject = representedObject.parentFrame;
 
         var newContentView = WebInspector.contentBrowser.contentViewForRepresentedObject(representedObject);
-        var cookie = {lineNumber: positionToReveal.lineNumber, columnNumber: positionToReveal.columnNumber};
+        var cookie = positionToReveal ? {lineNumber: positionToReveal.lineNumber, columnNumber: positionToReveal.columnNumber} : {};
 
         WebInspector.contentBrowser.showContentView(newContentView, cookie);
     },
