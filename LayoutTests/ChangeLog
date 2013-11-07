@@ -1,3 +1,14 @@
+2013-11-07  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Remove failure test expectations from passing tests.
+
+        * platform/efl-wk2/fast/repaint/caret-with-transformation-expected.png: Removed.
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/repaint/caret-with-transformation-expected.png: Added.
+        * platform/efl/fast/repaint/caret-with-transformation-expected.txt: Renamed from LayoutTests/platform/efl-wk2/fast/repaint/caret-with-transformation-expected.txt.
+
 2013-11-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash when submitting form in a document with null encoding
