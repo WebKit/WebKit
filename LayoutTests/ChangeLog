@@ -1,3 +1,31 @@
+2013-11-07  Brendan Long  <b.long@cablelabs.com>
+
+        [GStreamer] Fix in-band track tests after r158743
+        https://bugs.webkit.org/show_bug.cgi?id=124007
+
+        Add a new line to a bunch of tests to match changes made in r158743.
+
+        Reviewed by Eric Carlson.
+
+        * media/track/audio/audio-track-mkv-vorbis-language-expected.txt:
+        * media/track/in-band/track-in-band-kate-ogg-addtrack-expected.txt:
+        * media/track/in-band/track-in-band-kate-ogg-cues-added-once-expected.txt:
+        * media/track/in-band/track-in-band-kate-ogg-kind-expected.txt:
+        * media/track/in-band/track-in-band-kate-ogg-language-expected.txt:
+        * media/track/in-band/track-in-band-kate-ogg-mode-expected.txt:
+        * media/track/in-band/track-in-band-kate-ogg-style-expected.txt:
+        * media/track/in-band/track-in-band-kate-ogg-track-order-expected.txt:
+        * media/track/in-band/track-in-band-mkv-chapters-expected.txt:
+        * media/track/in-band/track-in-band-srt-mkv-addtrack-expected.txt:
+        * media/track/in-band/track-in-band-srt-mkv-cues-added-once-expected.txt:
+        * media/track/in-band/track-in-band-srt-mkv-kind-expected.txt:
+        * media/track/in-band/track-in-band-srt-mkv-language-expected.txt:
+        * media/track/in-band/track-in-band-srt-mkv-mode-expected.txt:
+        * media/track/in-band/track-in-band-srt-mkv-style-expected.txt:
+        * media/track/in-band/track-in-band-srt-mkv-track-order-expected.txt:
+        * media/track/video/video-track-mkv-theora-language-expected.txt:
+        * media/track/video/video-track-mkv-theora-selected-expected.txt:
+
 2013-11-07  Antti Koivisto  <antti@apple.com>
 
         Simple line layout crashes with SVG fonts

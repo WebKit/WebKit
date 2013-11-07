@@ -1,3 +1,4 @@
+
 Test that style is applied to all cues correctly.
 EVENT(canplaythrough)
 

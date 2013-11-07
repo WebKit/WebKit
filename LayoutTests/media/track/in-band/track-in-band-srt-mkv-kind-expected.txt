@@ -1,3 +1,4 @@
+
 Check in-band text tracks' kind attributes.
 
 EVENT(canplaythrough)

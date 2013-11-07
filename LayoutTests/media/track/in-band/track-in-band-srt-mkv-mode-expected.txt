@@ -1,3 +1,4 @@
+
 Test that cues from in-band tracks are displayed immediately when a track is made visible.
 
 EVENT(canplaythrough)
