@@ -331,6 +331,9 @@ private:
         case StructureTransitionWatchpoint:
             compileStructureTransitionWatchpoint();
             break;
+        case CheckFunction:
+            compileCheckFunction();
+            break;
         case ArrayifyToStructure:
             compileArrayifyToStructure();
             break;
@@ -1163,6 +1166,15 @@ private:
     {
         addWeakReference(m_node->structure());
         speculateCell(m_node->child1());
+    }
+    
+    void compileCheckFunction()
+    {
+        LValue cell = lowCell(m_node->child1());
+        
+        speculate(
+            BadFunction, jsValueValue(cell), m_node->child1().node(),
+            m_out.notEqual(cell, weakPointer(m_node->function())));
     }
     
     void compileArrayifyToStructure()

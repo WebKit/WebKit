@@ -98,6 +98,7 @@ inline CapabilityLevel canCompile(Node* node)
     case Int52ToValue:
     case InvalidationPoint:
     case StringCharAt:
+    case CheckFunction:
     case StringCharCodeAt:
         // These are OK.
         break;

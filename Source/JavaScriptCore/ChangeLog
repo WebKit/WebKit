@@ -1,3 +1,16 @@
+2013-11-05  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should support CheckFunction
+        https://bugs.webkit.org/show_bug.cgi?id=123862
+
+        Reviewed by Sam Weinig.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileCheckFunction):
+
 2013-11-06  Filip Pizlo  <fpizlo@apple.com>
 
         IC code should handle the call frame register not being the callFrameRegister
