@@ -3705,9 +3705,8 @@
 				370F34A01829BE1E009027C8 /* WKNavigationData.mm */,
 				370F34A41829BEA3009027C8 /* WKNavigationDataInternal.h */,
 			);
-			name = Cocoa;
-			path = UIProcess/Cocoa;
-			sourceTree = SOURCE_ROOT;
+			path = Cocoa;
+			sourceTree = "<group>";
 		};
 		37C4C0901814B37B003688B9 /* Cocoa */ = {
 			isa = PBXGroup;

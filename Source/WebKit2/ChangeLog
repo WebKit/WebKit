@@ -1,3 +1,23 @@
+2013-11-06  Dan Bernstein  <mitz@apple.com>
+
+        Moved UIProcess/Cocoa to UIProcess/API/Cocoa.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * UIProcess/API/Cocoa: Copied from Source/WebKit2/UIProcess/Cocoa.
+        * UIProcess/Cocoa: Removed.
+        * UIProcess/Cocoa/WKBackForwardList.h: Removed.
+        * UIProcess/Cocoa/WKBackForwardList.mm: Removed.
+        * UIProcess/Cocoa/WKBackForwardListInternal.h: Removed.
+        * UIProcess/Cocoa/WKBackForwardListItem.h: Removed.
+        * UIProcess/Cocoa/WKBackForwardListItem.mm: Removed.
+        * UIProcess/Cocoa/WKBackForwardListItemInternal.h: Removed.
+        * UIProcess/Cocoa/WKBrowsingContextHistoryDelegate.h: Removed.
+        * UIProcess/Cocoa/WKNavigationData.h: Removed.
+        * UIProcess/Cocoa/WKNavigationData.mm: Removed.
+        * UIProcess/Cocoa/WKNavigationDataInternal.h: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-11-06  Brendan Long  <b.long@cablelabs.com>
 
         [Gtk][EFL] Fix build after r158759
