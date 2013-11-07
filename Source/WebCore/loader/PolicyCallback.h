@@ -33,6 +33,7 @@
 #include "FrameLoaderTypes.h"
 #include "NavigationAction.h"
 #include "ResourceRequest.h"
+#include <functional>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,11 +41,9 @@ namespace WebCore {
 
 class FormState;
 
-typedef void (*NavigationPolicyDecisionFunction)(void* argument,
-    const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
-typedef void (*NewWindowPolicyDecisionFunction)(void* argument,
-    const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, const NavigationAction&, bool shouldContinue);
-typedef void (*ContentPolicyDecisionFunction)(void* argument, PolicyAction);
+typedef std::function<void (const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue)> NavigationPolicyDecisionFunction;
+typedef std::function<void (const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, const NavigationAction&, bool shouldContinue)> NewWindowPolicyDecisionFunction;
+typedef std::function<void (PolicyAction)> ContentPolicyDecisionFunction;
 
 class PolicyCallback {
 public:
@@ -52,11 +51,9 @@ public:
     ~PolicyCallback();
 
     void clear();
-    void set(const ResourceRequest&, PassRefPtr<FormState>,
-        NavigationPolicyDecisionFunction, void* argument);
-    void set(const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, const NavigationAction&,
-        NewWindowPolicyDecisionFunction, void* argument);
-    void set(ContentPolicyDecisionFunction, void* argument);
+    void set(const ResourceRequest&, PassRefPtr<FormState>, NavigationPolicyDecisionFunction);
+    void set(const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, const NavigationAction&, NewWindowPolicyDecisionFunction);
+    void set(ContentPolicyDecisionFunction);
 
     const ResourceRequest& request() const { return m_request; }
     void clearRequest();
@@ -74,7 +71,6 @@ private:
     NavigationPolicyDecisionFunction m_navigationFunction;
     NewWindowPolicyDecisionFunction m_newWindowFunction;
     ContentPolicyDecisionFunction m_contentFunction;
-    void* m_argument;
 };
 
 } // namespace WebCore

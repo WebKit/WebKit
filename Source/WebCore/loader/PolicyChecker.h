@@ -50,10 +50,10 @@ class PolicyChecker {
 public:
     explicit PolicyChecker(Frame&);
 
-    void checkNavigationPolicy(const ResourceRequest&, DocumentLoader*, PassRefPtr<FormState>, NavigationPolicyDecisionFunction, void* argument);
-    void checkNavigationPolicy(const ResourceRequest&, NavigationPolicyDecisionFunction, void* argument);
-    void checkNewWindowPolicy(const NavigationAction&, NewWindowPolicyDecisionFunction, const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, void* argument);
-    void checkContentPolicy(const ResourceResponse&, ContentPolicyDecisionFunction, void* argument);
+    void checkNavigationPolicy(const ResourceRequest&, DocumentLoader*, PassRefPtr<FormState>, NavigationPolicyDecisionFunction);
+    void checkNavigationPolicy(const ResourceRequest&, NavigationPolicyDecisionFunction);
+    void checkNewWindowPolicy(const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, NewWindowPolicyDecisionFunction);
+    void checkContentPolicy(const ResourceResponse&, ContentPolicyDecisionFunction);
 
     // FIXME: These are different.  They could use better names.
     void cancelCheck();

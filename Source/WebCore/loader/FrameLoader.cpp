@@ -1237,8 +1237,9 @@ void FrameLoader::loadURL(const URL& newURL, const String& referrer, const Strin
     NavigationAction action(request, newLoadType, isFormSubmission, event);
 
     if (!targetFrame && !frameName.isEmpty()) {
-        policyChecker().checkNewWindowPolicy(action, FrameLoader::callContinueLoadAfterNewWindowPolicy,
-            request, formState.release(), frameName, this);
+        policyChecker().checkNewWindowPolicy(action, request, formState.release(), frameName, [this](const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName, const NavigationAction& action, bool shouldContinue) {
+            continueLoadAfterNewWindowPolicy(request, formState, frameName, action, shouldContinue);
+        });
         return;
     }
 
@@ -1255,21 +1256,24 @@ void FrameLoader::loadURL(const URL& newURL, const String& referrer, const Strin
         oldDocumentLoader->setLastCheckedRequest(ResourceRequest());
         policyChecker().stopCheck();
         policyChecker().setLoadType(newLoadType);
-        policyChecker().checkNavigationPolicy(request, oldDocumentLoader.get(), formState.release(),
-            callContinueFragmentScrollAfterNavigationPolicy, this);
-    } else {
-        // must grab this now, since this load may stop the previous load and clear this flag
-        bool isRedirect = m_quickRedirectComing;
-        loadWithNavigationAction(request, action, lockHistory, newLoadType, formState.release());
-        if (isRedirect) {
-            m_quickRedirectComing = false;
-            if (m_provisionalDocumentLoader)
-                m_provisionalDocumentLoader->setIsClientRedirect(true);
-        } else if (sameURL && newLoadType != FrameLoadTypeReload && newLoadType != FrameLoadTypeReloadFromOrigin)
-            // Example of this case are sites that reload the same URL with a different cookie
-            // driving the generated content, or a master frame with links that drive a target
-            // frame, where the user has clicked on the same link repeatedly.
-            m_loadType = FrameLoadTypeSame;
+        policyChecker().checkNavigationPolicy(request, oldDocumentLoader.get(), formState.release(), [this](const ResourceRequest& request, PassRefPtr<FormState>, bool shouldContinue) {
+            continueFragmentScrollAfterNavigationPolicy(request, shouldContinue);
+        });
+        return;
+    }
+
+    // must grab this now, since this load may stop the previous load and clear this flag
+    bool isRedirect = m_quickRedirectComing;
+    loadWithNavigationAction(request, action, lockHistory, newLoadType, formState.release());
+    if (isRedirect) {
+        m_quickRedirectComing = false;
+        if (m_provisionalDocumentLoader)
+            m_provisionalDocumentLoader->setIsClientRedirect(true);
+    } else if (sameURL && newLoadType != FrameLoadTypeReload && newLoadType != FrameLoadTypeReloadFromOrigin) {
+        // Example of this case are sites that reload the same URL with a different cookie
+        // driving the generated content, or a master frame with links that drive a target
+        // frame, where the user has clicked on the same link repeatedly.
+        m_loadType = FrameLoadTypeSame;
     }
 }
 
@@ -1302,7 +1306,10 @@ void FrameLoader::load(const FrameLoadRequest& passedRequest)
     }
 
     if (request.shouldCheckNewWindowPolicy()) {
-        policyChecker().checkNewWindowPolicy(NavigationAction(request.resourceRequest(), NavigationTypeOther), FrameLoader::callContinueLoadAfterNewWindowPolicy, request.resourceRequest(), 0, request.frameName(), this);
+        policyChecker().checkNewWindowPolicy(NavigationAction(request.resourceRequest(), NavigationTypeOther), request.resourceRequest(), nullptr, request.frameName(), [this](const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName, const NavigationAction& action, bool shouldContinue) {
+            continueLoadAfterNewWindowPolicy(request, formState, frameName, action, shouldContinue);
+        });
+
         return;
     }
 
@@ -1397,33 +1404,36 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         oldDocumentLoader->setTriggeringAction(action);
         oldDocumentLoader->setLastCheckedRequest(ResourceRequest());
         policyChecker().stopCheck();
-        policyChecker().checkNavigationPolicy(loader->request(), oldDocumentLoader.get(), formState,
-            callContinueFragmentScrollAfterNavigationPolicy, this);
-    } else {
-        if (Frame* parent = m_frame.tree().parent())
-            loader->setOverrideEncoding(parent->loader().documentLoader()->overrideEncoding());
-
-        policyChecker().stopCheck();
-        setPolicyDocumentLoader(loader);
-        if (loader->triggeringAction().isEmpty())
-            loader->setTriggeringAction(NavigationAction(loader->request(), policyChecker().loadType(), isFormSubmission));
-
-        if (Element* ownerElement = m_frame.ownerElement()) {
-            // We skip dispatching the beforeload event if we've already
-            // committed a real document load because the event would leak
-            // subsequent activity by the frame which the parent frame isn't
-            // supposed to learn. For example, if the child frame navigated to
-            // a new URL, the parent frame shouldn't learn the URL.
-            if (!m_stateMachine.committedFirstRealDocumentLoad()
-                && !ownerElement->dispatchBeforeLoadEvent(loader->request().url().string())) {
-                continueLoadAfterNavigationPolicy(loader->request(), formState, false);
-                return;
-            }
-        }
-
-        policyChecker().checkNavigationPolicy(loader->request(), loader, formState,
-            callContinueLoadAfterNavigationPolicy, this);
+        policyChecker().checkNavigationPolicy(loader->request(), oldDocumentLoader.get(), formState, [this](const ResourceRequest& request, PassRefPtr<FormState>, bool shouldContinue) {
+            continueFragmentScrollAfterNavigationPolicy(request, shouldContinue);
+        });
+        return;
     }
+
+    if (Frame* parent = m_frame.tree().parent())
+        loader->setOverrideEncoding(parent->loader().documentLoader()->overrideEncoding());
+
+    policyChecker().stopCheck();
+    setPolicyDocumentLoader(loader);
+    if (loader->triggeringAction().isEmpty())
+        loader->setTriggeringAction(NavigationAction(loader->request(), policyChecker().loadType(), isFormSubmission));
+
+    if (Element* ownerElement = m_frame.ownerElement()) {
+        // We skip dispatching the beforeload event if we've already
+        // committed a real document load because the event would leak
+        // subsequent activity by the frame which the parent frame isn't
+        // supposed to learn. For example, if the child frame navigated to
+        // a new URL, the parent frame shouldn't learn the URL.
+        if (!m_stateMachine.committedFirstRealDocumentLoad()
+            && !ownerElement->dispatchBeforeLoadEvent(loader->request().url().string())) {
+            continueLoadAfterNavigationPolicy(loader->request(), formState, false);
+            return;
+        }
+    }
+
+    policyChecker().checkNavigationPolicy(loader->request(), loader, formState, [this](const ResourceRequest& request, PassRefPtr<FormState> formState, bool shouldContinue) {
+        continueLoadAfterNavigationPolicy(request, formState, shouldContinue);
+    });
 }
 
 void FrameLoader::reportLocalLoadFailed(Frame* frame, const String& url)
@@ -2552,19 +2562,24 @@ void FrameLoader::loadPostRequest(const ResourceRequest& inRequest, const String
 
     if (!frameName.isEmpty()) {
         // The search for a target frame is done earlier in the case of form submission.
-        if (Frame* targetFrame = formState ? 0 : findFrameForNavigation(frameName))
+        if (Frame* targetFrame = formState ? 0 : findFrameForNavigation(frameName)) {
             targetFrame->loader().loadWithNavigationAction(workingResourceRequest, action, lockHistory, loadType, formState.release());
-        else
-            policyChecker().checkNewWindowPolicy(action, FrameLoader::callContinueLoadAfterNewWindowPolicy, workingResourceRequest, formState.release(), frameName, this);
-    } else {
-        // must grab this now, since this load may stop the previous load and clear this flag
-        bool isRedirect = m_quickRedirectComing;
-        loadWithNavigationAction(workingResourceRequest, action, lockHistory, loadType, formState.release());    
-        if (isRedirect) {
-            m_quickRedirectComing = false;
-            if (m_provisionalDocumentLoader)
-                m_provisionalDocumentLoader->setIsClientRedirect(true);
+            return;
         }
+
+        policyChecker().checkNewWindowPolicy(action, workingResourceRequest, formState.release(), frameName, [this](const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName, const NavigationAction& action, bool shouldContinue) {
+            continueLoadAfterNewWindowPolicy(request, formState, frameName, action, shouldContinue);
+        });
+        return;
+    }
+
+    // must grab this now, since this load may stop the previous load and clear this flag
+    bool isRedirect = m_quickRedirectComing;
+    loadWithNavigationAction(workingResourceRequest, action, lockHistory, loadType, formState.release());    
+    if (isRedirect) {
+        m_quickRedirectComing = false;
+        if (m_provisionalDocumentLoader)
+            m_provisionalDocumentLoader->setIsClientRedirect(true);
     }
 }
 

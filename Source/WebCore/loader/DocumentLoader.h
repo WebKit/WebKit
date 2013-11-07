@@ -288,10 +288,8 @@ namespace WebCore {
         bool isMultipartReplacingLoad() const;
         bool isPostOrRedirectAfterPost(const ResourceRequest&, const ResourceResponse&);
 
-        static void callContinueAfterNavigationPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
         void continueAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue);
 
-        static void callContinueAfterContentPolicy(void*, PolicyAction);
         void continueAfterContentPolicy(PolicyAction);
 
         void stopLoadingForPolicyChange();

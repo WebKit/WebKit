@@ -1,3 +1,32 @@
+2013-11-07  Anders Carlsson  <andersca@apple.com>
+
+        Use std::function for all policy continuation functions
+        https://bugs.webkit.org/show_bug.cgi?id=124011
+
+        Reviewed by Sam Weinig.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest):
+        (WebCore::DocumentLoader::responseReceived):
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::loadPostRequest):
+        * loader/PolicyCallback.cpp:
+        (WebCore::PolicyCallback::clear):
+        (WebCore::PolicyCallback::set):
+        (WebCore::PolicyCallback::call):
+        (WebCore::PolicyCallback::clearRequest):
+        (WebCore::PolicyCallback::cancel):
+        * loader/PolicyCallback.h:
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        (WebCore::PolicyChecker::checkNewWindowPolicy):
+        (WebCore::PolicyChecker::checkContentPolicy):
+        * loader/PolicyChecker.h:
+
 2013-11-07  Brady Eidson  <beidson@apple.com>
 
         Use SQLite journal mode WAL (WriteAheadLogging)

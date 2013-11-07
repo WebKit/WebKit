@@ -527,13 +527,12 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
     // listener. But there's no way to do that in practice. So instead we cancel later if the
     // listener tells us to. In practice that means the navigation policy needs to be decided
     // synchronously for these redirect cases.
-    if (!redirectResponse.isNull())
-        frameLoader()->policyChecker().checkNavigationPolicy(newRequest, callContinueAfterNavigationPolicy, this);
-}
+    if (redirectResponse.isNull())
+        return;
 
-void DocumentLoader::callContinueAfterNavigationPolicy(void* argument, const ResourceRequest& request, PassRefPtr<FormState>, bool shouldContinue)
-{
-    static_cast<DocumentLoader*>(argument)->continueAfterNavigationPolicy(request, shouldContinue);
+    frameLoader()->policyChecker().checkNavigationPolicy(newRequest, [this](const ResourceRequest& request, PassRefPtr<FormState>, bool shouldContinue) {
+        continueAfterNavigationPolicy(request, shouldContinue);
+    });
 }
 
 void DocumentLoader::continueAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue)
@@ -638,12 +637,9 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
         m_contentFilter = ContentFilter::create(response);
 #endif
 
-    frameLoader()->policyChecker().checkContentPolicy(m_response, callContinueAfterContentPolicy, this);
-}
-
-void DocumentLoader::callContinueAfterContentPolicy(void* argument, PolicyAction policy)
-{
-    static_cast<DocumentLoader*>(argument)->continueAfterContentPolicy(policy);
+    frameLoader()->policyChecker().checkContentPolicy(m_response, [this](PolicyAction policy) {
+        continueAfterContentPolicy(policy);
+    });
 }
 
 void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
