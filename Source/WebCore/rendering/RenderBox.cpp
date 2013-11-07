@@ -1940,7 +1940,7 @@ LayoutSize RenderBox::offsetFromContainer(RenderObject* o, const LayoutPoint& po
     return offset;
 }
 
-std::unique_ptr<InlineBox> RenderBox::createInlineBox()
+std::unique_ptr<InlineElementBox> RenderBox::createInlineBox()
 {
     return std::make_unique<InlineElementBox>(*this);
 }

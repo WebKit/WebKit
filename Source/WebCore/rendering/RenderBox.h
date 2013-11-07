@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class InlineElementBox;
 class RenderBlockFlow;
 class RenderBoxRegionInfo;
 class RenderRegion;
@@ -373,7 +374,7 @@ public:
     
     void positionLineBox(InlineBox*);
 
-    virtual std::unique_ptr<InlineBox> createInlineBox();
+    virtual std::unique_ptr<InlineElementBox> createInlineBox();
     void dirtyLineBoxes(bool fullLayout);
 
     // For inline replaced elements, this function returns the inline box that owns us.  Enables

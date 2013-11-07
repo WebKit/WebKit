@@ -26,6 +26,7 @@
 
 namespace WebCore {
 
+class InlineElementBox;
 class HTMLElement;
 class Position;
 
@@ -39,7 +40,7 @@ public:
 
     virtual bool isWBR() const OVERRIDE { return m_isWBR; }
 
-    std::unique_ptr<InlineBox> createInlineBox();
+    std::unique_ptr<InlineElementBox> createInlineBox();
     InlineBox* inlineBoxWrapper() const { return m_inlineBoxWrapper; }
     void setInlineBoxWrapper(InlineBox*);
     void deleteInlineBoxWrapper();

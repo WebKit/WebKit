@@ -1,3 +1,13 @@
+2013-11-06  Andreas Kling  <akling@apple.com>
+
+        Nothing should return std::unique_ptr<InlineBox>.
+        <https://webkit.org/b/123936>
+
+        Made RenderBox, RenderLineBreak and RenderListMarker return tightly
+        typed InlineElementBoxes instead.
+
+        Reviewed by Anders Carlsson.
+
 2013-11-06  Daniel Bates  <dabates@apple.com>
 
         [iOS] Upstream Letterpress effect

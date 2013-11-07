@@ -68,7 +68,7 @@ int RenderLineBreak::baselinePosition(FontBaseline baselineType, bool firstLine,
     return fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2;
 }
 
-std::unique_ptr<InlineBox> RenderLineBreak::createInlineBox()
+std::unique_ptr<InlineElementBox> RenderLineBreak::createInlineBox()
 {
     return std::make_unique<InlineElementBox>(*this);
 }

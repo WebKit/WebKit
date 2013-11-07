@@ -27,6 +27,7 @@
 #include "BidiResolver.h"
 #include "FloatingObjects.h"
 #include "Hyphenation.h"
+#include "InlineElementBox.h"
 #include "InlineIterator.h"
 #include "InlineTextBox.h"
 #include "LineInfo.h"
@@ -318,7 +319,7 @@ static inline InlineBox* createInlineBoxForRenderer(RenderObject* obj, bool isRo
 
     if (obj->isLineBreak()) {
         // FIXME: This is terrible. This branch returns an *owned* pointer!
-        InlineBox* inlineBox = toRenderLineBreak(obj)->createInlineBox().release();
+        auto inlineBox = toRenderLineBreak(obj)->createInlineBox().release();
         // We only treat a box as text for a <br> if we are on a line by ourself or in strict mode
         // (Note the use of strict mode. In "almost strict" mode, we don't treat the box for <br> as text.)
         inlineBox->setBehavesLikeText(isOnlyRun || obj->document().inNoQuirksMode() || obj->isLineBreakOpportunity());
