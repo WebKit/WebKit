@@ -1,5 +1,18 @@
 2013-11-07  Anders Carlsson  <andersca@apple.com>
 
+        Remove more dead code
+        https://bugs.webkit.org/show_bug.cgi?id=124016
+
+        Reviewed by Beth Dakin.
+
+        We're always layer backed now so we never scroll using the PageClient.
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::canScrollView):
+        (WebKit::PageClientImpl::scrollView):
+
+2013-11-07  Anders Carlsson  <andersca@apple.com>
+
         Don't repaint the view when the web process crashes
         https://bugs.webkit.org/show_bug.cgi?id=124013
 
