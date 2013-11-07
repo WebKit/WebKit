@@ -1019,7 +1019,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
     if (m_object->supportsARIADropping())
         [additional addObject:NSAccessibilityDropEffectsAttribute];
     
-    if (m_object->isAccessibilityTable() && static_cast<AccessibilityTable*>(m_object)->supportsSelectedRows())
+    if (m_object->isAccessibilityTable() && toAccessibilityTable(m_object)->supportsSelectedRows())
         [additional addObject:NSAccessibilitySelectedRowsAttribute];
     
     if (m_object->supportsARIALiveRegion()) {
@@ -2354,12 +2354,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         // TODO: distinguish between visible and non-visible rows
         if ([attributeName isEqualToString:NSAccessibilityRowsAttribute] ||
             [attributeName isEqualToString:NSAccessibilityVisibleRowsAttribute]) {
-            return convertToNSArray(static_cast<AccessibilityTable*>(m_object)->rows());
+            return convertToNSArray(toAccessibilityTable(m_object)->rows());
         }
         // TODO: distinguish between visible and non-visible columns
         if ([attributeName isEqualToString:NSAccessibilityColumnsAttribute] ||
             [attributeName isEqualToString:NSAccessibilityVisibleColumnsAttribute]) {
-            return convertToNSArray(static_cast<AccessibilityTable*>(m_object)->columns());
+            return convertToNSArray(toAccessibilityTable(m_object)->columns());
         }
         
         if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute]) {
@@ -2375,12 +2375,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         
         if ([attributeName isEqualToString:(NSString *)kAXColumnHeaderUIElementsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector columnHeaders;
-            static_cast<AccessibilityTable*>(m_object)->columnHeaders(columnHeaders);
+            toAccessibilityTable(m_object)->columnHeaders(columnHeaders);
             return convertToNSArray(columnHeaders);
         }
         
         if ([attributeName isEqualToString:NSAccessibilityHeaderAttribute]) {
-            AccessibilityObject* headerContainer = static_cast<AccessibilityTable*>(m_object)->headerContainer();
+            AccessibilityObject* headerContainer = toAccessibilityTable(m_object)->headerContainer();
             if (headerContainer)
                 return headerContainer->wrapper();
             return nil;
@@ -2388,13 +2388,13 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         
         if ([attributeName isEqualToString:NSAccessibilityRowHeaderUIElementsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector rowHeaders;
-            static_cast<AccessibilityTable*>(m_object)->rowHeaders(rowHeaders);
+            toAccessibilityTable(m_object)->rowHeaders(rowHeaders);
             return convertToNSArray(rowHeaders);
         }
         
         if ([attributeName isEqualToString:NSAccessibilityVisibleCellsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector cells;
-            static_cast<AccessibilityTable*>(m_object)->cells(cells);
+            toAccessibilityTable(m_object)->cells(cells);
             return convertToNSArray(cells);
         }
     }
@@ -3493,7 +3493,7 @@ static RenderObject* rendererForView(NSView* view)
         if ([attribute isEqualToString:NSAccessibilityCellForColumnAndRowParameterizedAttribute]) {
             if (array == nil || [array count] != 2)
                 return nil;
-            AccessibilityTableCell* cell = static_cast<AccessibilityTable*>(m_object)->cellForColumnAndRow([[array objectAtIndex:0] unsignedIntValue], [[array objectAtIndex:1] unsignedIntValue]);
+            AccessibilityTableCell* cell = toAccessibilityTable(m_object)->cellForColumnAndRow([[array objectAtIndex:0] unsignedIntValue], [[array objectAtIndex:1] unsignedIntValue]);
             if (!cell)
                 return nil;
             

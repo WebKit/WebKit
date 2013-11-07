@@ -1,3 +1,35 @@
+2013-11-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [AX] Use toAccessibilityTable() instead of using manual static_cast<>
+        https://bugs.webkit.org/show_bug.cgi?id=123982
+
+        Reviewed by Mario Sanchez Prada.
+
+        Though there is toAccessibilityTable(), static_cast<> are being used by many places.
+        We need to use toAccessibilityTable().
+
+        No new tests, no behavior changes.
+
+        * accessibility/AccessibilityARIAGridRow.cpp:
+        (WebCore::AccessibilityARIAGridRow::disclosedRows):
+        (WebCore::AccessibilityARIAGridRow::disclosedByRow):
+        * accessibility/AccessibilityTableHeaderContainer.cpp:
+        (WebCore::AccessibilityTableHeaderContainer::addChildren):
+        * accessibility/atk/WebKitAccessibleInterfaceTable.cpp:
+        (cell):
+        (cellAtIndex):
+        (webkitAccessibleTableGetIndexAt):
+        (webkitAccessibleTableGetNColumns):
+        (webkitAccessibleTableGetNRows):
+        (webkitAccessibleTableGetColumnHeader):
+        (webkitAccessibleTableGetRowHeader):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper tableParent]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper additionalAccessibilityAttributeNames]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2013-11-07  Andreas Kling  <akling@apple.com>
 
         Use tighter InlineBox subtypes in some places.

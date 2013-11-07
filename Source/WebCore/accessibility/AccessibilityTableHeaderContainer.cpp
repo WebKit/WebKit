@@ -73,7 +73,7 @@ void AccessibilityTableHeaderContainer::addChildren()
     if (!m_parent || !m_parent->isAccessibilityTable())
         return;
     
-    static_cast<AccessibilityTable*>(m_parent)->columnHeaders(m_children);
+    toAccessibilityTable(m_parent)->columnHeaders(m_children);
     
     unsigned length = m_children.size();
     for (unsigned k = 0; k < length; ++k)
