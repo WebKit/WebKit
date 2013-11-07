@@ -47,6 +47,9 @@ public:
     virtual void deleteLine() OVERRIDE;
     virtual void extractLine() OVERRIDE;
     virtual void attachLine() OVERRIDE;
+
+    virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) OVERRIDE;
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom) OVERRIDE;
 };
 
 }
