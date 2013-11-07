@@ -1,3 +1,16 @@
+2013-11-07  Tamas Gergely  <gertom@inf.u-szeged.hu>
+
+        Report error on unknown template class usage.
+        https://bugs.webkit.org/show_bug.cgi?id=123096
+
+        Reviewed by Darin Adler.
+
+        Report error when template class is not found in the dictionary.
+
+        * Scripts/webkit2/messages.py:
+        (class_template_headers):
+        (class_template_headers.template):
+
 2013-11-07  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [GTK] Glyphs in vertical text tests are rotated 90 degrees clockwise
