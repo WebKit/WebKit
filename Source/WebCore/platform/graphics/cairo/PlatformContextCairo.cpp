@@ -156,6 +156,10 @@ static void drawPatternToCairoContext(cairo_t* cr, cairo_pattern_t* pattern, con
 
 void PlatformContextCairo::drawSurfaceToContext(cairo_surface_t* surface, const FloatRect& destRect, const FloatRect& originalSrcRect, GraphicsContext* context)
 {
+    // Avoid invalid cairo matrix with small values.
+    if (std::fabs(destRect.width()) < 0.5f || std::fabs(destRect.height()) < 0.5f)
+        return;
+
     FloatRect srcRect = originalSrcRect;
 
     // We need to account for negative source dimensions by flipping the rectangle.
