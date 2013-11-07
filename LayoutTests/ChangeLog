@@ -1,3 +1,13 @@
+2013-11-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash when submitting form in a document with null encoding
+        https://bugs.webkit.org/show_bug.cgi?id=123975
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/forms/form-submit-in-image-document-expected.txt: Added.
+        * fast/forms/form-submit-in-image-document.html: Added.
+
 2013-11-07  Brendan Long  <b.long@cablelabs.com>
 
         [GStreamer] Fix in-band track tests after r158743

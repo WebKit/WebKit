@@ -1,3 +1,21 @@
+2013-11-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash when submitting form in a document with null encoding
+        https://bugs.webkit.org/show_bug.cgi?id=123975
+
+        Reviewed by Alexey Proskuryakov.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/bba01a7fff09e3053ada96ababac2a6e4261fe5f
+        
+        The CString object which is passed to normalizeLineEndingsToCRLF() can be
+        a null string. It is created in FormDataList::appendString(), and it
+        produces a null CString if FormDataList::m_encoding is a null encoding.
+
+        Test: fast/forms/form-submit-in-image-document.html
+
+        * platform/text/LineEnding.cpp:
+        (internalNormalizeLineEndingsToCRLF):
+
 2013-11-07  Anders Carlsson  <andersca@apple.com>
 
         Use std::function for all policy continuation functions

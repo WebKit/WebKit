@@ -96,6 +96,8 @@ private:
 
 void internalNormalizeLineEndingsToCRLF(const CString& from, OutputBuffer& buffer)
 {
+    if (!from.length())
+        return;
     // Compute the new length.
     size_t newLen = 0;
     const char* p = from.data();
