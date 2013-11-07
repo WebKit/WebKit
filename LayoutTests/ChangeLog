@@ -1,3 +1,13 @@
+2013-11-07  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed GTK gardening. Expectations are finally the same for
+        WK1 and WK2 so, besides needing a rebaseline, we now can share them.
+
+        * platform/gtk-wk1/accessibility/table-attributes-expected.txt: Removed.
+        * platform/gtk-wk1/accessibility/table-sections-expected.txt: Removed.
+        * platform/gtk/accessibility/table-attributes-expected.txt: Renamed from LayoutTests/platform/gtk-wk2/accessibility/table-attributes-expected.txt.
+        * platform/gtk/accessibility/table-sections-expected.txt: Renamed from LayoutTests/platform/gtk-wk2/accessibility/table-sections-expected.txt.
+
 2013-11-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, Add new baselines to EFL port since r158743 as well as do rebaseline.
