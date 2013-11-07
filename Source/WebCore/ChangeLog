@@ -1,3 +1,15 @@
+2013-11-07  Brady Eidson  <beidson@apple.com>
+
+        Use SQLite journal mode WAL (WriteAheadLogging)
+        https://bugs.webkit.org/show_bug.cgi?id=124009
+
+        Reviewed by Anders Carlsson.
+
+        WriteAheadLogging journalling is better than the traditional rollback model.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::open): Use a PRAGMA to set journal_mode to WAL.
+
 2013-11-07  Mark Lam  <mark.lam@apple.com>
 
         Cosmetic: rename xxxId to xxxID for ScriptId, SourceId, and BreakpointId.
