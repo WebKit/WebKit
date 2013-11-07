@@ -382,8 +382,10 @@ HTMLMediaElement::~HTMLMediaElement()
     }
 #endif
 
-    if (m_mediaController)
+    if (m_mediaController) {
         m_mediaController->removeMediaElement(this);
+        m_mediaController = 0;
+    }
 
 #if ENABLE(MEDIA_SOURCE)
     closeMediaSource();
