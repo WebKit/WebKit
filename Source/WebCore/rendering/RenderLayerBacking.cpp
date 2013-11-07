@@ -2116,6 +2116,11 @@ float RenderLayerBacking::deviceScaleFactor() const
     return compositor().deviceScaleFactor();
 }
 
+float RenderLayerBacking::contentsScaleMultiplierForNewTiles(const GraphicsLayer* layer) const
+{
+    return compositor().contentsScaleMultiplierForNewTiles(layer);
+}
+
 void RenderLayerBacking::didCommitChangesForLayer(const GraphicsLayer* layer) const
 {
     compositor().didFlushChangesForLayer(m_owningLayer, layer);

@@ -244,6 +244,7 @@ public:
     String layerTreeAsText(LayerTreeFlags);
 
     virtual float deviceScaleFactor() const OVERRIDE;
+    virtual float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const OVERRIDE;
     virtual float pageScaleFactor() const OVERRIDE;
     virtual void didCommitChangesForLayer(const GraphicsLayer*) const OVERRIDE;
     virtual void notifyFlushBeforeDisplayRefresh(const GraphicsLayer*) OVERRIDE;

@@ -177,6 +177,8 @@ private:
     virtual void platformCALayerLayerDidDisplay(PlatformLayer* layer) { return layerDidDisplay(layer); }
     virtual void platformCALayerSetNeedsToRevalidateTiles() OVERRIDE;
     virtual float platformCALayerDeviceScaleFactor() const OVERRIDE;
+    virtual float platformCALayerContentsScaleMultiplierForNewTiles(PlatformCALayer*) const OVERRIDE;
+
     virtual bool isCommittingChanges() const OVERRIDE { return m_isCommittingChanges; }
 
     virtual double backingStoreMemoryEstimate() const;

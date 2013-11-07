@@ -2480,6 +2480,11 @@ float RenderLayerCompositor::pageScaleFactor() const
     return page ? page->pageScaleFactor() : 1;
 }
 
+float RenderLayerCompositor::contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const
+{
+    return 1;
+}
+
 void RenderLayerCompositor::didCommitChangesForLayer(const GraphicsLayer*) const
 {
     // Nothing to do here yet.

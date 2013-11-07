@@ -1,3 +1,39 @@
+2013-11-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow customization of the contentsScale of TileController tiles
+        https://bugs.webkit.org/show_bug.cgi?id=124004
+
+        Reviewed by Tim Horton.
+
+        On some platorms, zooming out on pages with TiledBacking compositing
+        layers can cause very high memory use, because the TiledBacking retains
+        the original page scale while the zoom is in flight, but can be asked
+        to cover a large area.
+        
+        Make it possible to reduce memory use in this case by allowing RenderLayerCompositor
+        to provide an additional scale factor for newly created tiles. Platforms can
+        then customize this to create low-res tiles when necessary.
+
+        * WebCore.exp.in:
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::contentsScaleMultiplierForNewTiles):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::platformCALayerContentsScaleMultiplierForNewTiles):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayerClient.h:
+        (WebCore::PlatformCALayerClient::platformCALayerContentsScaleMultiplierForNewTiles):
+        * platform/graphics/ca/mac/TileController.h:
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::TileController):
+        (WebCore::TileController::setScale):
+        (WebCore::TileController::createTileLayer):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::contentsScaleMultiplierForNewTiles):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::contentsScaleMultiplierForNewTiles):
+        * rendering/RenderLayerCompositor.h:
+
 2013-11-07  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed Win build fix after r158855; wrap shapeInfoForFloat() in an ENABLE(CSS_SHAPES) guard.

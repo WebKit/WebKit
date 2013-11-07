@@ -66,6 +66,7 @@ TileController::TileController(PlatformCALayer* rootPlatformLayer)
     , m_acceleratesDrawing(false)
     , m_tilesAreOpaque(false)
     , m_clipsToExposedRect(false)
+    , m_hasTilesWithTemporaryScaleFactor(false)
     , m_tileDebugBorderWidth(0)
     , m_indicatorMode(ThreadedScrollingIndication)
 {
@@ -212,9 +213,10 @@ void TileController::setScale(float scale)
     // Divide by the device scale factor so we'll get the page scale factor.
     scale /= deviceScaleFactor;
 
-    if (m_scale == scale && m_deviceScaleFactor == deviceScaleFactor)
+    if (m_scale == scale && m_deviceScaleFactor == deviceScaleFactor && !m_hasTilesWithTemporaryScaleFactor)
         return;
 
+    m_hasTilesWithTemporaryScaleFactor = false;
     m_deviceScaleFactor = deviceScaleFactor;
     m_scale = scale;
 
@@ -945,7 +947,10 @@ RefPtr<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect)
     layer->setName("Tile");
 #endif
 
-    layer->setContentsScale(m_deviceScaleFactor);
+    float temporaryScaleFactor = owningGraphicsLayer()->platformCALayerContentsScaleMultiplierForNewTiles(m_tileCacheLayer);
+    m_hasTilesWithTemporaryScaleFactor |= temporaryScaleFactor != 1;
+
+    layer->setContentsScale(m_deviceScaleFactor * temporaryScaleFactor);
     layer->setAcceleratesDrawing(m_acceleratesDrawing);
 
     layer->setNeedsDisplay();

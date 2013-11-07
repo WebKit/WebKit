@@ -165,6 +165,8 @@ public:
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& clip) OVERRIDE;
 
     virtual float deviceScaleFactor() const OVERRIDE;
+    virtual float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const OVERRIDE;
+
     virtual float pageScaleFactor() const OVERRIDE;
     virtual void didCommitChangesForLayer(const GraphicsLayer*) const OVERRIDE;
     virtual bool getCurrentTransform(const GraphicsLayer*, TransformationMatrix&) const OVERRIDE;
