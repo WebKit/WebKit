@@ -1416,6 +1416,10 @@ static PassRefPtr<CSSValue> renderTextDecorationFlagsToCSSValue(int textDecorati
         list->append(cssValuePool().createIdentifierValue(CSSValueOverline));
     if (textDecoration & TextDecorationLineThrough)
         list->append(cssValuePool().createIdentifierValue(CSSValueLineThrough));
+#if ENABLE(LETTERPRESS)
+    if (textDecoration & TextDecorationLetterpress)
+        list->append(cssValuePool().createIdentifierValue(CSSValueWebkitLetterpress));
+#endif
 
     if (!list->length())
         return cssValuePool().createIdentifierValue(CSSValueNone);

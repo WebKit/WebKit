@@ -9793,6 +9793,9 @@ bool CSSParser::parseTextDecoration(CSSPropertyID propId, bool important)
         case CSSValueLineThrough:
         case CSSValueOverline:
         case CSSValueUnderline:
+#if ENABLE(LETTERPRESS)
+        case CSSValueWebkitLetterpress:
+#endif
             list->append(cssValuePool().createIdentifierValue(value->id));
             break;
         default:

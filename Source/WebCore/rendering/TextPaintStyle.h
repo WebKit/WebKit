@@ -46,6 +46,9 @@ struct TextPaintStyle {
     Color strokeColor;
     Color emphasisMarkColor;
     float strokeWidth;
+#if ENABLE(LETTERPRESS)
+    bool useLetterpressEffect;
+#endif
 };
 
 TextPaintStyle computeTextPaintStyle(const RenderText&, const RenderStyle&, const PaintInfo&);

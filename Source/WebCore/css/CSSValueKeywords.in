@@ -871,6 +871,10 @@ no-limit
 manual
 // auto
 
+#if defined(ENABLE_LETTERPRESS) && ENABLE_LETTERPRESS
+-webkit-letterpress
+#endif
+
 #if defined(ENABLE_ACCELERATED_OVERFLOW_SCROLLING) && ENABLE_ACCELERATED_OVERFLOW_SCROLLING
 // -webkit-overflow-scrolling
 // auto

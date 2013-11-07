@@ -95,8 +95,11 @@ namespace WebCore {
     class TransformationMatrix;
 
     enum TextDrawingMode {
-        TextModeFill      = 1 << 0,
-        TextModeStroke    = 1 << 1,
+        TextModeFill = 1 << 0,
+        TextModeStroke = 1 << 1,
+#if ENABLE(LETTERPRESS)
+        TextModeLetterpress = 1 << 2,
+#endif
     };
     typedef unsigned TextDrawingModeFlags;
 

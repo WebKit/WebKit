@@ -1,3 +1,15 @@
+2013-11-06  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream Letterpress effect
+        https://bugs.webkit.org/show_bug.cgi?id=123932
+
+        Reviewed by Sam Weinig.
+
+        Add feature define ENABLE_LETTERPRESS disabled by default. We only enable
+        letterpress on iOS.
+
+        * wtf/FeatureDefines.h:
+
 2013-11-06  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         Disable "unused local typedefs" warning for GCC 4.7

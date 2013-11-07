@@ -39,6 +39,9 @@ namespace WebCore {
 TextPaintStyle::TextPaintStyle(ColorSpace colorSpace)
     : colorSpace(colorSpace)
     , strokeWidth(0)
+#if ENABLE(LETTERPRESS)
+    , useLetterpressEffect(false)
+#endif
 {
 }
 
@@ -47,6 +50,9 @@ TextPaintStyle::TextPaintStyle(Color color, ColorSpace colorSpace)
     , fillColor(color)
     , strokeColor(color)
     , strokeWidth(0)
+#if ENABLE(LETTERPRESS)
+    , useLetterpressEffect(false)
+#endif
 {
 }
 
@@ -69,6 +75,9 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const RenderSty
 {
     TextPaintStyle paintStyle(lineStyle.colorSpace());
 
+#if ENABLE(LETTERPRESS)
+    paintStyle.useLetterpressEffect = lineStyle.textDecorationsInEffect() & TextDecorationLetterpress;
+#endif
     paintStyle.strokeWidth = lineStyle.textStrokeWidth();
 
     if (paintInfo.forceBlackText()) {
@@ -162,14 +171,20 @@ TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintSty
 void updateGraphicsContext(GraphicsContext& context, const TextPaintStyle& paintStyle, FillColorType fillColorType)
 {
     TextDrawingModeFlags mode = context.textDrawingMode();
-    if (paintStyle.strokeWidth > 0) {
-        TextDrawingModeFlags newMode = mode | TextModeStroke;
-        if (mode != newMode) {
-            context.setTextDrawingMode(newMode);
-            mode = newMode;
-        }
+    TextDrawingModeFlags newMode = mode;
+#if ENABLE(LETTERPRESS)
+    if (paintStyle.useLetterpressEffect)
+        newMode |= TextModeLetterpress;
+    else
+        newMode &= ~TextModeLetterpress;
+#endif
+    if (paintStyle.strokeWidth > 0)
+        newMode |= TextModeStroke;
+    if (mode != newMode) {
+        context.setTextDrawingMode(newMode);
+        mode = newMode;
     }
-    
+
     Color fillColor = fillColorType == UseEmphasisMarkColor ? paintStyle.emphasisMarkColor : paintStyle.fillColor;
     if (mode & TextModeFill && (fillColor != context.fillColor() || paintStyle.colorSpace != context.fillColorSpace()))
         context.setFillColor(fillColor, paintStyle.colorSpace);

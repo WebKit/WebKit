@@ -28,8 +28,28 @@
 #import "Logging.h"
 #import "SimpleFontData.h"
 #import "WebCoreSystemInterface.h"
+#if USE(APPKIT)
 #import <AppKit/AppKit.h>
+#endif
 #import <wtf/MathExtras.h>
+
+#if ENABLE(LETTERPRESS)
+#import "SoftLinking.h"
+#if __has_include(<CoreGraphics/CoreGraphicsPrivate.h>)
+#import <CoreGraphics/CoreGraphicsPrivate.h>
+#else
+extern CGColorRef CGContextGetFillColorAsColor(CGContextRef);
+#endif
+#import <CoreUI/CUICatalog.h>
+#import <CoreUI/CUIStyleEffectConfiguration.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK(CoreUI)
+SOFT_LINK_CLASS(CoreUI, CUICatalog)
+SOFT_LINK_CLASS(CoreUI, CUIStyleEffectConfiguration)
+
+SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK(UIKit, _UIKitGetTextEffectsCatalog, CUICatalog *, (void), ())
+#endif
 
 #define SYNTHETIC_OBLIQUE_ANGLE 14
 
@@ -53,6 +73,67 @@ bool Font::canExpandAroundIdeographsInComplexText()
     return true;
 }
 
+static inline void fillVectorWithHorizontalGlyphPositions(Vector<CGPoint, 256>& positions, CGContextRef context, const CGSize* advances, size_t count)
+{
+    CGAffineTransform matrix = CGAffineTransformInvert(CGContextGetTextMatrix(context));
+    positions[0] = CGPointZero;
+    for (size_t i = 1; i < count; ++i) {
+        CGSize advance = CGSizeApplyAffineTransform(advances[i - 1], matrix);
+        positions[i].x = positions[i - 1].x + advance.width;
+        positions[i].y = positions[i - 1].y + advance.height;
+    }
+}
+
+static inline bool shouldUseLetterpressEffect(const GraphicsContext& context)
+{
+#if ENABLE(LETTERPRESS)
+    return context.textDrawingMode() & TextModeLetterpress;
+#else
+    UNUSED_PARAM(context);
+    return false;
+#endif
+}
+
+static void showLetterpressedGlyphsWithAdvances(const FloatPoint& point, const SimpleFontData* font, CGContextRef context, const CGGlyph* glyphs, const CGSize* advances, size_t count)
+{
+#if ENABLE(LETTERPRESS)
+    if (!count)
+        return;
+
+    const FontPlatformData& platformData = font->platformData();
+    if (platformData.orientation() == Vertical) {
+        // FIXME: Implement support for vertical text. See <rdar://problem/13737298>.
+        return;
+    }
+
+    CGContextSetTextPosition(context, point.x(), point.y());
+    Vector<CGPoint, 256> positions(count);
+    fillVectorWithHorizontalGlyphPositions(positions, context, advances, count);
+
+    CTFontRef ctFont = platformData.ctFont();
+    CGContextSetFontSize(context, CTFontGetSize(ctFont));
+
+    static CUICatalog *catalog = _UIKitGetTextEffectsCatalog();
+    if (!catalog)
+        return;
+
+    static CUIStyleEffectConfiguration *styleConfiguration;
+    if (!styleConfiguration) {
+        styleConfiguration = [[getCUIStyleEffectConfigurationClass() alloc] init];
+        styleConfiguration.useSimplifiedEffect = YES;
+    }
+
+    [catalog drawGlyphs:glyphs atPositions:positions.data() inContext:context withFont:ctFont count:count stylePresetName:@"_UIKitNewLetterpressStyle" styleConfiguration:styleConfiguration foregroundColor:CGContextGetFillColorAsColor(context)];
+#else
+UNUSED_PARAM(point);
+UNUSED_PARAM(font);
+UNUSED_PARAM(context);
+UNUSED_PARAM(glyphs);
+UNUSED_PARAM(advances);
+UNUSED_PARAM(count);
+#endif
+}
+
 static void showGlyphsWithAdvances(const FloatPoint& point, const SimpleFontData* font, CGContextRef context, const CGGlyph* glyphs, const CGSize* advances, size_t count)
 {
     if (!count)
@@ -62,15 +143,8 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const SimpleFontData
 
     const FontPlatformData& platformData = font->platformData();
     Vector<CGPoint, 256> positions(count);
-    if (platformData.isColorBitmapFont()) {
-        CGAffineTransform matrix = CGAffineTransformInvert(CGContextGetTextMatrix(context));
-        positions[0] = CGPointZero;
-        for (size_t i = 1; i < count; ++i) {
-            CGSize advance = CGSizeApplyAffineTransform(advances[i - 1], matrix);
-            positions[i].x = positions[i - 1].x + advance.width;
-            positions[i].y = positions[i - 1].y + advance.height;
-        }
-    }
+    if (platformData.isColorBitmapFont())
+        fillVectorWithHorizontalGlyphPositions(positions, context, advances, count);
     if (platformData.orientation() == Vertical) {
         CGAffineTransform savedMatrix;
         CGAffineTransform rotateLeftTransform = CGAffineTransformMake(0, -1, 1, 0, 0, 0);
@@ -154,6 +228,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         CGContextSetShouldSmoothFonts(cgContext, shouldSmoothFonts);
     }
 
+#if !PLATFORM(IOS)
     NSFont* drawFont;
     if (!isPrinterFont()) {
         drawFont = [platformData.font() screenFont];
@@ -167,15 +242,22 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
             NSLog(@"Attempting to set non-printer font (%@) when printing.  Using printer font anyway, may result in incorrect metrics.",
                 [[[platformData.font() fontDescriptor] fontAttributes] objectForKey:NSFontNameAttribute]);
     }
+#endif
     
     CGContextSetFont(cgContext, platformData.cgFont());
 
+    bool useLetterpressEffect = shouldUseLetterpressEffect(*context);
+#if PLATFORM(IOS)
+    float fontSize = platformData.size();
+    CGAffineTransform matrix = useLetterpressEffect || platformData.isColorBitmapFont() ? CGAffineTransformIdentity : CGAffineTransformMakeScale(fontSize, fontSize);
+#else
     CGAffineTransform matrix = CGAffineTransformIdentity;
     if (drawFont && !platformData.isColorBitmapFont())
         memcpy(&matrix, [drawFont matrix], sizeof(matrix));
+#endif
     matrix.b = -matrix.b;
     matrix.d = -matrix.d;
-    if (platformData.m_syntheticOblique) {
+    if (platformData.m_syntheticOblique && !useLetterpressEffect) {
         static float obliqueSkew = tanf(SYNTHETIC_OBLIQUE_ANGLE * piFloat / 180);
         if (platformData.orientation() == Vertical)
             matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, obliqueSkew, 0, 1, 0, 0));
@@ -184,11 +266,15 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     }
     CGContextSetTextMatrix(cgContext, matrix);
 
+#if PLATFORM(IOS)
+    CGContextSetFontSize(cgContext, 1);
+#else
     wkSetCGFontRenderingMode(cgContext, drawFont, context->shouldSubpixelQuantizeFonts());
     if (drawFont)
-        CGContextSetFontSize(cgContext, 1.0f);
+        CGContextSetFontSize(cgContext, 1);
     else
         CGContextSetFontSize(cgContext, platformData.m_size);
+#endif
 
 
     FloatSize shadowOffset;
@@ -223,15 +309,20 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         context->setFillColor(fillColor, fillColorSpace);
     }
 
-    showGlyphsWithAdvances(point, font, cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
+    if (useLetterpressEffect)
+        showLetterpressedGlyphsWithAdvances(point, font, cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
+    else
+        showGlyphsWithAdvances(point, font, cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
     if (syntheticBoldOffset)
         showGlyphsWithAdvances(FloatPoint(point.x() + syntheticBoldOffset, point.y()), font, cgContext, glyphBuffer.glyphs(from), static_cast<const CGSize*>(glyphBuffer.advances(from)), numGlyphs);
 
     if (hasSimpleShadow)
         context->setShadow(shadowOffset, shadowBlur, shadowColor, shadowColorSpace);
 
+#if !PLATFORM(IOS)
     if (changeFontSmoothing)
         CGContextSetShouldSmoothFonts(cgContext, originalShouldUseFontSmoothing);
+#endif
 }
 
 }

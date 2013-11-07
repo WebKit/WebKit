@@ -2623,6 +2623,10 @@ template<> inline CSSPrimitiveValue::operator TextDecoration() const
         return TextDecorationLineThrough;
     case CSSValueBlink:
         return TextDecorationBlink;
+#if ENABLE(LETTERPRESS)
+    case CSSValueWebkitLetterpress:
+        return TextDecorationLetterpress;
+#endif
     default:
         break;
     }

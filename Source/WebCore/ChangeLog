@@ -1,3 +1,36 @@
+2013-11-06  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream Letterpress effect
+        https://bugs.webkit.org/show_bug.cgi?id=123932
+
+        Reviewed by Sam Weinig.
+
+        Test: platform/iphone-simulator/iphone/getComputedStyle-text-decoration-letterpress.html
+
+        * Configurations/FeatureDefines.xcconfig: Add feature define ENABLE_LETTERPRESS disabled
+        by default. We only enable letterpress on iOS.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::renderTextDecorationFlagsToCSSValue): Add support for CSS value -webkit-letterpress.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseTextDecoration): Ditto.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator TextDecoration): Ditto.
+        * css/CSSValueKeywords.in: Added CSS value -webkit-letterpress.
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::fillVectorWithHorizontalGlyphPositions): Added.
+        (WebCore::shouldUseLetterpressEffect): Added.
+        (WebCore::showLetterpressedGlyphsWithAdvances): Added.
+        (WebCore::showGlyphsWithAdvances): Modified to call showLetterpressedGlyphsWithAdvances()
+        to show a letterpressed glyph. I also included additional iOS-specific changes.
+        (WebCore::Font::drawGlyphs):
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::TextPaintStyle::TextPaintStyle): 
+        (WebCore::computeTextPaintStyle): Modified to compute letterpress effect style.
+        (WebCore::updateGraphicsContext): Modified to apply/unapply letterpress effect drawing mode.
+        * rendering/TextPaintStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+
 2013-11-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in SliderThumbElement::dragFrom

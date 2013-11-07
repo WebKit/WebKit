@@ -1,3 +1,15 @@
+2013-11-06  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream Letterpress effect
+        https://bugs.webkit.org/show_bug.cgi?id=123932
+
+        Reviewed by Sam Weinig.
+
+        Add feature define ENABLE_LETTERPRESS disabled by default. We only enable
+        letterpress on iOS.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-11-05  Oliver Hunt  <oliver@apple.com>
 
         Support iteration of the Arguments object

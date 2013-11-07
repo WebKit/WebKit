@@ -349,9 +349,20 @@ enum ETextTransform {
     CAPITALIZE, UPPERCASE, LOWERCASE, TTNONE
 };
 
+#if ENABLE(LETTERPRESS)
+static const size_t TextDecorationBits = 5;
+#else
 static const size_t TextDecorationBits = 4;
+#endif
 enum TextDecoration {
-    TextDecorationNone = 0x0, TextDecorationUnderline = 0x1, TextDecorationOverline = 0x2, TextDecorationLineThrough = 0x4, TextDecorationBlink = 0x8
+    TextDecorationNone = 0x0,
+    TextDecorationUnderline = 0x1,
+    TextDecorationOverline = 0x2,
+    TextDecorationLineThrough = 0x4,
+    TextDecorationBlink = 0x8,
+#if ENABLE(LETTERPRESS)
+    TextDecorationLetterpress = 0x10,
+#endif
 };
 inline TextDecoration operator| (TextDecoration a, TextDecoration b) { return TextDecoration(int(a) | int(b)); }
 inline TextDecoration& operator|= (TextDecoration& a, TextDecoration b) { return a = a | b; }
