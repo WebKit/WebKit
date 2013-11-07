@@ -1,3 +1,17 @@
+2013-11-06  Daniel Bates  <dabates@apple.com>
+
+        Cleanup FontMac.mm
+        https://bugs.webkit.org/show_bug.cgi?id=123928
+
+        Reviewed by Andy Estes.
+
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::showGlyphsWithAdvances): Inline the value of variable isVertical as we
+        reference it exactly once and its value is sufficiently clear.
+        (WebCore::Font::drawGlyphs): Remove default case in switch block so that the compiler
+        checks that all cases are covered. Move definition of platformData to the top of the
+        function and use it whenever we want to access the platform font data
+
 2013-11-06  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] We should not allow generateMipMap on compressed textures

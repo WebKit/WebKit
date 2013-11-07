@@ -71,8 +71,7 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const SimpleFontData
             positions[i].y = positions[i - 1].y + advance.height;
         }
     }
-    bool isVertical = font->platformData().orientation() == Vertical;
-    if (isVertical) {
+    if (platformData.orientation() == Vertical) {
         CGAffineTransform savedMatrix;
         CGAffineTransform rotateLeftTransform = CGAffineTransformMake(0, -1, 1, 0, 0, 0);
         savedMatrix = CGContextGetTextMatrix(context);
@@ -109,13 +108,14 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const SimpleFontData
 
 void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
 {
-    if (!font->platformData().size())
+    const FontPlatformData& platformData = font->platformData();
+    if (!platformData.size())
         return;
 
     CGContextRef cgContext = context->platformContext();
 
-    bool shouldSmoothFonts = true;
-    bool changeFontSmoothing = false;
+    bool shouldSmoothFonts;
+    bool changeFontSmoothing;
     
     switch(fontDescription().fontSmoothing()) {
     case Antialiased: {
@@ -137,11 +137,10 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         break;
     }
     case AutoSmoothing: {
-        // For the AutoSmooth case, don't do anything! Keep the default settings.
-        break; 
+        shouldSmoothFonts = true;
+        changeFontSmoothing = false;
+        break;
     }
-    default: 
-        ASSERT_NOT_REACHED();
     }
     
     if (!shouldUseSmoothing()) {
@@ -155,7 +154,6 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         CGContextSetShouldSmoothFonts(cgContext, shouldSmoothFonts);
     }
 
-    const FontPlatformData& platformData = font->platformData();
     NSFont* drawFont;
     if (!isPrinterFont()) {
         drawFont = [platformData.font() screenFont];
@@ -179,7 +177,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     matrix.d = -matrix.d;
     if (platformData.m_syntheticOblique) {
         static float obliqueSkew = tanf(SYNTHETIC_OBLIQUE_ANGLE * piFloat / 180);
-        if (font->platformData().orientation() == Vertical)
+        if (platformData.orientation() == Vertical)
             matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, obliqueSkew, 0, 1, 0, 0));
         else
             matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, 0, -obliqueSkew, 1, 0, 0));
