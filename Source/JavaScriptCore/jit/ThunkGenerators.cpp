@@ -206,9 +206,6 @@ MacroAssemblerCodeRef callToJavaScript(VM* vm)
     jit.push(X86Registers::ebx);
 
     jit.subPtr(CCallHelpers::TrustedImm32(EXTRA_STACK_SIZE), X86Registers::esp);
-#if COMPILER(MSVC)
-    jit.move(X86Registers::esp, X86Registers::ecx);
-#endif
 
     jit.load32(CCallHelpers::Address(X86Registers::esp, EXTRA_STACK_SIZE + 24), GPRInfo::callFrameRegister);
 

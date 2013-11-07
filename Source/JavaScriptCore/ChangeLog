@@ -1,3 +1,16 @@
+2013-11-07  Michael Saboff  <msaboff@apple.com>
+
+        Remove unneeded moving of ESP to ECX in callToJavaScript for COMPILER(MSVC)
+        https://bugs.webkit.org/show_bug.cgi?id=123998
+
+        Reviewed by Mark Lam.
+
+        Dead code removal.  Passing esp as the first "C" argument to a JavaScript
+        function is no longer needed.
+
+        * jit/ThunkGenerators.cpp:
+        (JSC::callToJavaScript):
+
 2013-11-07  Julien Brianceau  <jbriance@cisco.com>
 
         Fix build for architectures with 4 argument registers (broken since r158820).
