@@ -65,7 +65,7 @@ public:
 
     virtual ~ScriptDebugListener() { }
 
-    virtual void didParseSource(const String& scriptId, const Script&) = 0;
+    virtual void didParseSource(const String& scriptID, const Script&) = 0;
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) = 0;
     virtual void didPause(JSC::ExecState*, const ScriptValue& callFrames, const ScriptValue& exception) = 0;
     virtual void didContinue() = 0;

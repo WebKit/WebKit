@@ -1478,7 +1478,7 @@ PassRefPtr<TypeBuilder::DOM::EventListener> InspectorDOMAgent::buildObjectForEve
     JSC::JSObject* handler = nullptr;
     String body;
     int lineNumber = 0;
-    String scriptId;
+    String scriptID;
     String sourceName;
     if (auto scriptListener = JSEventListener::cast(eventListener.get())) {
         JSC::JSLockHolder lock(scriptListener->isolatedWorld().vm());
@@ -1490,7 +1490,7 @@ PassRefPtr<TypeBuilder::DOM::EventListener> InspectorDOMAgent::buildObjectForEve
                 if (!function->isHostFunction()) {
                     if (auto executable = function->jsExecutable()) {
                         lineNumber = executable->lineNo() - 1;
-                        scriptId = executable->sourceID() == JSC::SourceProvider::nullID ? emptyString() : String::number(executable->sourceID());
+                        scriptID = executable->sourceID() == JSC::SourceProvider::nullID ? emptyString() : String::number(executable->sourceID());
                         sourceName = executable->sourceURL();
                     }
                 }
@@ -1509,9 +1509,9 @@ PassRefPtr<TypeBuilder::DOM::EventListener> InspectorDOMAgent::buildObjectForEve
         if (!injectedScript.hasNoValue())
             value->setHandler(injectedScript.wrapObject(ScriptValue(state->vm(), handler), *objectGroupId));
     }
-    if (!scriptId.isNull()) {
+    if (!scriptID.isNull()) {
         RefPtr<TypeBuilder::Debugger::Location> location = TypeBuilder::Debugger::Location::create()
-            .setScriptId(scriptId)
+            .setScriptId(scriptID)
             .setLineNumber(lineNumber);
         value->setLocation(location.release());
         if (!sourceName.isEmpty())

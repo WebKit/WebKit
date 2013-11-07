@@ -50,7 +50,7 @@ public:
     CallFrame* callFrame() const { return m_callFrame; }
     JS_EXPORT_PRIVATE PassRefPtr<DebuggerCallFrame> callerFrame();
     ExecState* exec() const { return m_callFrame; }
-    JS_EXPORT_PRIVATE intptr_t sourceId() const;
+    JS_EXPORT_PRIVATE intptr_t sourceID() const;
 
     // line and column are in base 0 e.g. the first line is line 0.
     int line() const { return m_position.m_line.zeroBasedInt(); }
@@ -72,7 +72,7 @@ public:
 
     JS_EXPORT_PRIVATE static JSValue evaluateWithCallFrame(CallFrame*, const String& script, JSValue& exception);
     JS_EXPORT_PRIVATE static TextPosition positionForCallFrame(CallFrame*);
-    JS_EXPORT_PRIVATE static intptr_t sourceIdForCallFrame(CallFrame*);
+    JS_EXPORT_PRIVATE static intptr_t sourceIDForCallFrame(CallFrame*);
     static JSValue thisValueForCallFrame(CallFrame*);
 
 private:

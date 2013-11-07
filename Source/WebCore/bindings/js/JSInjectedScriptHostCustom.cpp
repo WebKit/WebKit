@@ -169,11 +169,11 @@ JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)
     int lineNumber = sourceCode->firstLine();
     if (lineNumber)
         lineNumber -= 1; // In the inspector protocol all positions are 0-based while in SourceCode they are 1-based
-    String scriptId = String::number(sourceCode->provider()->asID());
+    String scriptID = String::number(sourceCode->provider()->asID());
 
     JSObject* location = constructEmptyObject(exec);
     location->putDirect(exec->vm(), Identifier(exec, "lineNumber"), jsNumber(lineNumber));
-    location->putDirect(exec->vm(), Identifier(exec, "scriptId"), jsString(exec, scriptId));
+    location->putDirect(exec->vm(), Identifier(exec, "scriptId"), jsString(exec, scriptID));
 
     JSObject* result = constructEmptyObject(exec);
     result->putDirect(exec->vm(), Identifier(exec, "location"), location);

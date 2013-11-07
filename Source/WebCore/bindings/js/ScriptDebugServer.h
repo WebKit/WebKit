@@ -58,7 +58,7 @@ class ScriptDebugServer : protected JSC::Debugger {
     WTF_MAKE_NONCOPYABLE(ScriptDebugServer); WTF_MAKE_FAST_ALLOCATED;
 public:
     String setBreakpoint(const String& sourceID, const ScriptBreakpoint&, int* actualLineNumber, int* actualColumnNumber);
-    void removeBreakpoint(const String& breakpointId);
+    void removeBreakpoint(const String& breakpointID);
     void clearBreakpoints();
     void setBreakpointsActivated(bool activated);
     void activateBreakpoints() { setBreakpointsActivated(true); }
@@ -97,9 +97,9 @@ public:
     bool isPaused() { return m_paused; }
     bool runningNestedMessageLoop() { return m_runningNestedMessageLoop; }
 
-    void compileScript(JSC::ExecState*, const String& expression, const String& sourceURL, String* scriptId, String* exceptionMessage);
+    void compileScript(JSC::ExecState*, const String& expression, const String& sourceURL, String* scriptID, String* exceptionMessage);
     void clearCompiledScripts();
-    void runScript(JSC::ExecState*, const String& scriptId, ScriptValue* result, bool* wasThrown, String* exceptionMessage);
+    void runScript(JSC::ExecState*, const String& scriptID, ScriptValue* result, bool* wasThrown, String* exceptionMessage);
 
     class Task {
         WTF_MAKE_FAST_ALLOCATED;
@@ -158,7 +158,7 @@ protected:
 
     typedef Vector<ScriptBreakpoint> BreakpointsInLine;
     typedef HashMap<int, BreakpointsInLine, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> LineToBreakpointsMap;
-    typedef HashMap<intptr_t, LineToBreakpointsMap> SourceIdToBreakpointsMap;
+    typedef HashMap<intptr_t, LineToBreakpointsMap> SourceIDToBreakpointsMap;
 
     bool m_callingListeners;
     PauseOnExceptionsState m_pauseOnExceptionsState;
@@ -170,11 +170,11 @@ protected:
     JSC::CallFrame* m_pauseOnCallFrame;
     JSC::CallFrame* m_currentCallFrame;
     RefPtr<JSC::DebuggerCallFrame> m_currentDebuggerCallFrame;
-    SourceIdToBreakpointsMap m_sourceIdToBreakpoints;
+    SourceIDToBreakpointsMap m_sourceIDToBreakpoints;
     Timer<ScriptDebugServer> m_recompileTimer;
 
     int m_lastExecutedLine;
-    intptr_t m_lastExecutedSourceId;
+    intptr_t m_lastExecutedSourceID;
 
     friend class DebuggerCallFrameScope;
 };

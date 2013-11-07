@@ -88,7 +88,7 @@ ScriptDebugServer::ScriptDebugServer()
     , m_currentCallFrame(0)
     , m_recompileTimer(this, &ScriptDebugServer::recompileAllJSFunctions)
     , m_lastExecutedLine(-1)
-    , m_lastExecutedSourceId(-1)
+    , m_lastExecutedSourceID(-1)
 {
 }
 
@@ -101,9 +101,9 @@ String ScriptDebugServer::setBreakpoint(const String& sourceID, const ScriptBrea
     intptr_t sourceIDValue = sourceID.toIntPtr();
     if (!sourceIDValue)
         return "";
-    SourceIdToBreakpointsMap::iterator it = m_sourceIdToBreakpoints.find(sourceIDValue);
-    if (it == m_sourceIdToBreakpoints.end())
-        it = m_sourceIdToBreakpoints.set(sourceIDValue, LineToBreakpointsMap()).iterator;
+    SourceIDToBreakpointsMap::iterator it = m_sourceIDToBreakpoints.find(sourceIDValue);
+    if (it == m_sourceIDToBreakpoints.end())
+        it = m_sourceIDToBreakpoints.set(sourceIDValue, LineToBreakpointsMap()).iterator;
     LineToBreakpointsMap::iterator breaksIt = it->value.find(scriptBreakpoint.lineNumber);
     if (breaksIt == it->value.end())
         breaksIt = it->value.set(scriptBreakpoint.lineNumber, BreakpointsInLine()).iterator;
@@ -122,10 +122,10 @@ String ScriptDebugServer::setBreakpoint(const String& sourceID, const ScriptBrea
     return sourceID + ":" + String::number(scriptBreakpoint.lineNumber) + ":" + String::number(scriptBreakpoint.columnNumber);
 }
 
-void ScriptDebugServer::removeBreakpoint(const String& breakpointId)
+void ScriptDebugServer::removeBreakpoint(const String& breakpointID)
 {
     Vector<String> tokens;
-    breakpointId.split(":", tokens);
+    breakpointID.split(":", tokens);
     if (tokens.size() != 3)
         return;
     bool success;
@@ -139,8 +139,8 @@ void ScriptDebugServer::removeBreakpoint(const String& breakpointId)
     if (!success)
         return;
 
-    SourceIdToBreakpointsMap::iterator it = m_sourceIdToBreakpoints.find(sourceIDValue);
-    if (it == m_sourceIdToBreakpoints.end())
+    SourceIDToBreakpointsMap::iterator it = m_sourceIDToBreakpoints.find(sourceIDValue);
+    if (it == m_sourceIDToBreakpoints.end())
         return;
     LineToBreakpointsMap::iterator breaksIt = it->value.find(lineNumber);
     if (breaksIt == it->value.end())
@@ -162,8 +162,8 @@ bool ScriptDebugServer::hasBreakpoint(intptr_t sourceID, const TextPosition& pos
     if (!m_breakpointsActivated)
         return false;
 
-    SourceIdToBreakpointsMap::const_iterator it = m_sourceIdToBreakpoints.find(sourceID);
-    if (it == m_sourceIdToBreakpoints.end())
+    SourceIDToBreakpointsMap::const_iterator it = m_sourceIDToBreakpoints.find(sourceID);
+    if (it == m_sourceIDToBreakpoints.end())
         return false;
 
     int line = position.m_line.zeroBasedInt();
@@ -246,7 +246,7 @@ bool ScriptDebugServer::evaluateBreakpointActions(const ScriptBreakpoint& breakp
 
 void ScriptDebugServer::clearBreakpoints()
 {
-    m_sourceIdToBreakpoints.clear();
+    m_sourceIDToBreakpoints.clear();
     updateNumberOfBreakpoints(0);
 }
 
@@ -478,10 +478,10 @@ void ScriptDebugServer::dispatchFunctionToListeners(JavaScriptExecutionCallback 
 void ScriptDebugServer::updateCallFrame(CallFrame* callFrame)
 {
     m_currentCallFrame = callFrame;
-    intptr_t sourceId = DebuggerCallFrame::sourceIdForCallFrame(callFrame);
-    if (m_lastExecutedSourceId != sourceId) {
+    intptr_t sourceID = DebuggerCallFrame::sourceIDForCallFrame(callFrame);
+    if (m_lastExecutedSourceID != sourceID) {
         m_lastExecutedLine = -1;
-        m_lastExecutedSourceId = sourceId;
+        m_lastExecutedSourceID = sourceID;
     }
 }
 
@@ -507,9 +507,9 @@ void ScriptDebugServer::pauseIfNeeded(CallFrame* callFrame)
     bool pauseNow = m_pauseOnNextStatement;
     pauseNow |= (m_pauseOnCallFrame == m_currentCallFrame);
 
-    intptr_t sourceId = DebuggerCallFrame::sourceIdForCallFrame(m_currentCallFrame);
+    intptr_t sourceID = DebuggerCallFrame::sourceIDForCallFrame(m_currentCallFrame);
     TextPosition position = DebuggerCallFrame::positionForCallFrame(m_currentCallFrame);
-    pauseNow |= didHitBreakpoint = hasBreakpoint(sourceId, position, &breakpoint);
+    pauseNow |= didHitBreakpoint = hasBreakpoint(sourceID, position, &breakpoint);
     m_lastExecutedLine = position.m_line.zeroBasedInt();
     if (!pauseNow)
         return;

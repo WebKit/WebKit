@@ -45,7 +45,7 @@ public:
     }
 
     JavaScriptCallFrame* caller();
-    intptr_t sourceID() const { return m_debuggerCallFrame->sourceId(); }
+    intptr_t sourceID() const { return m_debuggerCallFrame->sourceID(); }
     const TextPosition position() const { return m_debuggerCallFrame->position(); }
     int line() const { return m_debuggerCallFrame->line(); }
     int column() const { return m_debuggerCallFrame->column(); }

@@ -161,7 +161,7 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
     addConsoleMessage(adoptPtr(new ConsoleMessage(!isWorkerAgent(), source, type, level, message, arguments, state, requestIdentifier)));
 }
 
-void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptId, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)
+void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)
 {
     if (!developerExtrasEnabled())
         return;
@@ -172,7 +172,7 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
     }
 
     bool canGenerateCallStack = !isWorkerAgent() && m_frontend;
-    addConsoleMessage(adoptPtr(new ConsoleMessage(canGenerateCallStack, source, type, level, message, scriptId, lineNumber, columnNumber, state, requestIdentifier)));
+    addConsoleMessage(adoptPtr(new ConsoleMessage(canGenerateCallStack, source, type, level, message, scriptID, lineNumber, columnNumber, state, requestIdentifier)));
 }
 
 Vector<unsigned> InspectorConsoleAgent::consoleMessageArgumentCounts()

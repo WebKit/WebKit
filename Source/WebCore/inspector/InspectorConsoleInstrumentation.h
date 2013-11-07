@@ -72,18 +72,18 @@ inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSou
 #endif
 }
 
-inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptId, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)
+inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, scriptId, lineNumber, columnNumber, state, requestIdentifier);
+        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, scriptID, lineNumber, columnNumber, state, requestIdentifier);
 #else
     UNUSED_PARAM(page);
     UNUSED_PARAM(source);
     UNUSED_PARAM(type);
     UNUSED_PARAM(level);
     UNUSED_PARAM(message);
-    UNUSED_PARAM(scriptId);
+    UNUSED_PARAM(scriptID);
     UNUSED_PARAM(lineNumber);
     UNUSED_PARAM(state);
     UNUSED_PARAM(requestIdentifier);
@@ -107,18 +107,18 @@ inline void InspectorInstrumentation::addMessageToConsole(WorkerGlobalScope* wor
 #endif
 }
 
-inline void InspectorInstrumentation::addMessageToConsole(WorkerGlobalScope* workerGlobalScope, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptId, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)
+inline void InspectorInstrumentation::addMessageToConsole(WorkerGlobalScope* workerGlobalScope, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForWorkerGlobalScope(workerGlobalScope))
-        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, scriptId, lineNumber, columnNumber, state, requestIdentifier);
+        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, scriptID, lineNumber, columnNumber, state, requestIdentifier);
 #else
     UNUSED_PARAM(workerGlobalScope);
     UNUSED_PARAM(source);
     UNUSED_PARAM(type);
     UNUSED_PARAM(level);
     UNUSED_PARAM(message);
-    UNUSED_PARAM(scriptId);
+    UNUSED_PARAM(scriptID);
     UNUSED_PARAM(lineNumber);
     UNUSED_PARAM(columnNumber);
     UNUSED_PARAM(state);
