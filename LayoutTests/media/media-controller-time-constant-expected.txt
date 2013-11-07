@@ -1,3 +1,4 @@
+
 This tests that currentTime is kept stable during script execution.
 RUN(controller = video.controller)
 EVENT(canplaythrough)

@@ -1,3 +1,4 @@
+
 Test HTMLMediaElement canPlayType() method.
 
 EXPECTED (video.canPlayType() == '') OK

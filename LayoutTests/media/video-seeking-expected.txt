@@ -1,3 +1,4 @@
+
 Test that seeking attribute is true immediately after a seek, goes back to false when seeking completes, and that a 'seeked' event is fired for each seek
 
 EVENT(canplaythrough)

@@ -1,3 +1,4 @@
+
 Test 'timeupdate' events are posted while playing but not while paused.
 
 RUN(video.play())

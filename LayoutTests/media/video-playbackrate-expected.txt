@@ -1,3 +1,4 @@
+
 'playbackRate' should not change when play() is called.
 'playbackRate' and 'defaultPlaybackRate' should always return the last value set.
 *** setting src

@@ -1,3 +1,4 @@
+
 EXPECTED (video.videoWidth == '0') OK
 EXPECTED (video.videoHeight == '0') OK
 EVENT(loadedmetadata)

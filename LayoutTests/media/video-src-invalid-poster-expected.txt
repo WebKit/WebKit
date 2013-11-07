@@ -1,3 +1,4 @@
+
 RUN(video.load())
 EVENT(loadstart)
 EXPECTED (video.clientWidth == '76') OK

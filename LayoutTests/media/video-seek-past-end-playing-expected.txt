@@ -1,3 +1,4 @@
+
 Test that seeking video with 'loop' past it's end rewinds to the beginning and continues playback.
 
 EVENT(canplaythrough)

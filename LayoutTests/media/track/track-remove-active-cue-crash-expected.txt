@@ -1,5 +1,6 @@
 Tests that removing an active cue does not crash the browser.
 
+
 ** Add a text track to the video element **
 ** Add a cue to the track with enter event listener. **
 

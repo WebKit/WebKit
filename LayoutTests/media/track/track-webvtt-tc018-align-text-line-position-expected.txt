@@ -1,6 +1,7 @@
 Tests cue alignment, line and text position from settings.
 
 
+
 *** Testing text track 0
 EXPECTED (cues.length == '5') OK
 EXPECTED (cues[0].align == 'start') OK

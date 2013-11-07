@@ -1,5 +1,6 @@
 Tests "Automatic" mode track selection.
 
+
 RUN(internals.settings.setShouldDisplayTrackKind('Captions', false))
 RUN(internals.settings.setShouldDisplayTrackKind('Subtitles', true))
 

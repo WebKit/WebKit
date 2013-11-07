@@ -1,5 +1,6 @@
 Tests that a track with the 'default' attribute loads automatically.
 
+
 EVENT(load)
 EXPECTED (event.target.readyState == '2') OK
 EXPECTED (event.target.id == 'default') OK

@@ -1,5 +1,6 @@
 Tests that the video is paused after cues that have pause-on-exit flag are processed
 
+
 EVENT(canplaythrough)
 EXPECTED (testTrack.track.cues.length == '4') OK
 

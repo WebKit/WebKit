@@ -1,4 +1,5 @@
 
+
 ++ Test default attribute value
 EXPECTED (video.preload == 'auto') OK
 EXPECTED (video.getAttribute('preload') == 'null') OK

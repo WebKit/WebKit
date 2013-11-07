@@ -1,5 +1,6 @@
 Test that the audio element supports MPEG files.
 
+
 EVENT(canplaythrough)
 EXPECTED (mediaElement.currentTime == '0') OK
 EVENT(play)

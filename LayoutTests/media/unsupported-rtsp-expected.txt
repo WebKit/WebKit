@@ -1,3 +1,4 @@
+
 Test that QuickTime file with RTSP URL generates a load error.
 
 EVENT(error)

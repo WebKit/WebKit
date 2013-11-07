@@ -1,3 +1,4 @@
+
 EXPECTED (video.readyState == '0') OK
 EVENT(loadstart)
 EVENT(loadedmetadata)

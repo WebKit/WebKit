@@ -1,5 +1,6 @@
 Test that video play(), pause() and webkitEnterFullScreen() should not work unless a user clicked on the play button.
 
+
 EVENT(canplaythrough)
 
 * No user gesture initiated

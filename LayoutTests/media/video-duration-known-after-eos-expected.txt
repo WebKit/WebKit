@@ -1,3 +1,4 @@
+
 Tests that duration is known after playback ended.
 
 

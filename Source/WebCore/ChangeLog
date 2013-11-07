@@ -1,3 +1,35 @@
+2013-11-07  Chris Fleizach  <cfleizach@apple.com>
+
+        Merge r158743
+
+    2013-11-06  Chris Fleizach  <cfleizach@apple.com> 
+ 
+        AX: Audio and Video attachments are not output to VoiceOver 
+        https://bugs.webkit.org/show_bug.cgi?id=123479 
+
+        Reviewed by Mario Sanchez Prada. 
+
+        Video and audio elements don't appear as distinct objects in the AX hierarchy, 
+        nor are they treated as replaceable objects when emitting the text. We should 
+        treat these characters like attachments, for one. On the Mac platform, we should 
+        also identify them with special subroles. 
+
+        Tests: platform/mac/accessibility/media-emits-object-replacement.html 
+              platform/mac/accessibility/media-role-descriptions.html 
+ 
+        * accessibility/AccessibilityNodeObject.cpp: 
+        (WebCore::AccessibilityNodeObject::isGenericFocusableElement): 
+        * accessibility/AccessibilityObject.h: 
+        * accessibility/AccessibilityRenderObject.cpp: 
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored): 
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole): 
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm: 
+        (createAccessibilityRoleMap): 
+        (-[WebAccessibilityObjectWrapper subrole]): 
+        (-[WebAccessibilityObjectWrapper roleDescription]): 
+        * editing/TextIterator.cpp: 
+        (WebCore::isRendererReplacedElement): 
+
 2013-11-06  Lucas Forschler  <lforschler@apple.com>
 
         Merge r158617

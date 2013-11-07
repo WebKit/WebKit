@@ -1,3 +1,4 @@
+
 Test 'volume' attribute
 
 EXPECTED (video.volume == '1') OK

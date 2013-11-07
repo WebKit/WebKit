@@ -1,5 +1,6 @@
 Test that the load eventually suspends and returns to NETWORK_IDLE.
 
+
 RUN(video.src = file)
 EVENT(loadstart)
 EVENT(suspend)

@@ -1,3 +1,4 @@
+
 Test HTMLMediaElement canPlayType() method with "application/octet-stream".
 
 These tests should always pass as no WebKit port should support "application/octet-stream".

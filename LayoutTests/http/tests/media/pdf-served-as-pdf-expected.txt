@@ -1,3 +1,4 @@
+
 EXPECTED (video.error == 'null') OK
 EVENT(loadstart)
 EVENT(error)

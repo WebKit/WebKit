@@ -1,5 +1,6 @@
 Tests cues with class markup <c>.
 
+
 EXPECTED (video.textTracks[0].cues.length == '3') OK
 EXPECTED (true == 'true') OK
 EXPECTED (true == 'true') OK

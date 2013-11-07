@@ -1,3 +1,4 @@
+
 Test that multiple seeks issued at the same time will result in only a single 'seeked' event.
 
 EVENT(canplaythrough)

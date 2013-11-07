@@ -1706,7 +1706,9 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { CanvasRole, NSAccessibilityImageRole },
         { SVGRootRole, NSAccessibilityGroupRole },
         { LegendRole, NSAccessibilityGroupRole },
-        { MathElementRole, NSAccessibilityGroupRole }
+        { MathElementRole, NSAccessibilityGroupRole },
+        { AudioRole, NSAccessibilityGroupRole },
+        { VideoRole, NSAccessibilityGroupRole }
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     
@@ -1870,6 +1872,11 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return @"AXMathMultiscript";
     }
     
+    if (m_object->roleValue() == VideoRole)
+        return @"AXVideo";
+    if (m_object->roleValue() == AudioRole)
+        return @"AXAudio";
+    
     if (m_object->isMediaTimeline())
         return NSAccessibilityTimelineSubrole;
     
@@ -1894,16 +1901,20 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return ariaLandmarkRoleDescription;
         
         switch (m_object->roleValue()) {
-            case DefinitionRole:
-                return AXDefinitionText();
-            case DescriptionListTermRole:
-                return AXDescriptionListTermText();
-            case DescriptionListDetailRole:
-                return AXDescriptionListDetailText();
-            case FooterRole:
-                return AXFooterRoleDescriptionText();
-            default:
-                return NSAccessibilityRoleDescription(NSAccessibilityGroupRole, [self subrole]);
+        case AudioRole:
+            return localizedMediaControlElementString("AudioElement");
+        case DefinitionRole:
+            return AXDefinitionText();
+        case DescriptionListTermRole:
+            return AXDescriptionListTermText();
+        case DescriptionListDetailRole:
+            return AXDescriptionListDetailText();
+        case FooterRole:
+            return AXFooterRoleDescriptionText();
+        case VideoRole:
+            return localizedMediaControlElementString("VideoElement");
+        default:
+            return NSAccessibilityRoleDescription(NSAccessibilityGroupRole, [self subrole]);
         }
     }
     

@@ -1,3 +1,4 @@
+
 Test that pause() from EMPTY network state triggers load()
 
 EXPECTED (video.networkState == '3') OK

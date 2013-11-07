@@ -2,6 +2,7 @@ This tests that media element controls are reset to their default state when the
 
 This test only runs in DRT!
 
+
 EVENT(canplaythrough)
 EXPECTED (getTimeLineValue() == '0') OK
 EVENT(seeked)

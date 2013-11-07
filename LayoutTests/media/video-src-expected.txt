@@ -1,3 +1,4 @@
+
 EVENT(loadstart)
 EXPECTED (stripExtension(relativeURL(video.currentSrc)) == 'content/test') OK
 EXPECTED (stripExtension(relativeURL(video.src)) == 'content/test') OK

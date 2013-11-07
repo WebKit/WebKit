@@ -1,3 +1,4 @@
+
 Test a delay in playing the movie results in a canPlay event.
 
 EVENT(canplaythrough)

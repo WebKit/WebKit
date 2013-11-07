@@ -1,3 +1,4 @@
+
 A <video> should not have a layer until playback begins.
 This test can not be run manually, it requires testRunner.layerTreeAsText.
 

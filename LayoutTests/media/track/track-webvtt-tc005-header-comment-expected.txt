@@ -1,6 +1,7 @@
 Tests that the optional comment area under the "WEBVTT" file header is properly ignored. Also, default settings and styling are currently ignored (treated as faulty cues).
 
 
+
 *** Testing text track 0
 EXPECTED (cues.length == '2') OK
 EXPECTED (cues[0].id == '1') OK

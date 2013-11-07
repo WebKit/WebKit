@@ -1,5 +1,6 @@
 Test that we can seek after reached the end of the video.
 
+
 EVENT(playing)
 EVENT(ended)
 EVENT(seeked)

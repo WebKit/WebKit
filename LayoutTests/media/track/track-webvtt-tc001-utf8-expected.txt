@@ -1,6 +1,7 @@
 Tests that UTF-8 encoded characters are recognized properly and that different encodings (iconv) are not recognized as a WebVTT file (we do allow it, it just looks ugly).
 
 
+
 *** Testing text track 0
 EXPECTED (cues.length == '2') OK
 EXPECTED (cues[0].id == '1') OK

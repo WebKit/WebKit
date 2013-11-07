@@ -1,3 +1,4 @@
+
 Test that play event does not fire when "src" set with no autoplay attribute.
 
 EXPECTED (video.paused == 'true') OK

@@ -1,6 +1,7 @@
 Tests cue line position from settings.
 
 
+
 *** Testing text track 0
 EXPECTED (cues.length == '7') OK
 EXPECTED (cues[0].line == '0') OK

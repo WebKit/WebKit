@@ -1,3 +1,4 @@
+
 Test that the resource selection algorithm is restarted when load() is called, and that all <source> elements are reconsidered.
 
 +++ Test initial networkState.
