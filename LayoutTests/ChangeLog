@@ -1,3 +1,15 @@
+2013-11-06  Vani Hegde  <vani.hegde@samsung.com>
+
+        Applied background color is not retained after typing a characters
+        https://bugs.webkit.org/show_bug.cgi?id=117337
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/style/background-color-retained-expected.txt: Added.
+        * editing/style/background-color-retained.html: Added.
+        Test to make sure that background color applied on a
+        selection is retained after deleting the selection.
+
 2013-11-06  Andreas Kling  <akling@apple.com>
 
         Optimize baselines: svg/W3C-I18N
