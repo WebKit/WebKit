@@ -1,3 +1,13 @@
+2013-11-07  Roger Fong  <roger_fong@apple.com>
+
+        Rollout part of r146669 which caused a performance regression.
+        <rdar://problem/15265457>.
+
+        Rubberstamped by Filip Pizlo.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
 2013-10-28  Lucas Forschler  <lforschler@apple.com>
 
         Merge r156302
