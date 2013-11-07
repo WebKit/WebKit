@@ -147,6 +147,12 @@ if (window.testRunner)
     element.style.webkitGridDefinitionColumns = "'foo'";
     element.style.webkitGridDefinitionRows = "'bar";
     testValue(element, "none", "none");
+
+    element = document.createElement("div");
+    document.body.appendChild(element);
+    element.style.webkitGridDefinitionColumns = "'foo' 'bar'";
+    element.style.webkitGridDefinitionRows = "'bar' 'foo'";
+    testValue(element, "none", "none");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

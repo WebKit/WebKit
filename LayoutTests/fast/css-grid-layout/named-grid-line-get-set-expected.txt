@@ -46,6 +46,8 @@ PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-definition
 Test getting and setting invalid -webkit-grid-definition-columns and -webkit-grid-definition-rows through JS
 PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
 PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
+PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-definition-columns') is "none"
+PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-definition-rows') is "none"
 PASS successfullyParsed is true
 
 TEST COMPLETE

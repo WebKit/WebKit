@@ -1,5 +1,18 @@
 2013-11-06  Sergio Villar Senin  <svillar@igalia.com>
 
+        [CSS Grid Layout] CSSParser should reject <track-list> without a <track-size>
+        https://bugs.webkit.org/show_bug.cgi?id=118025
+
+        Reviewed by Andreas Kling.
+
+        Added a new test that verifies that <track-list> exclusively made
+        of <track-name> are not supported.
+
+        * fast/css-grid-layout/named-grid-line-get-set-expected.txt:
+        * fast/css-grid-layout/named-grid-line-get-set.html:
+
+2013-11-06  Sergio Villar Senin  <svillar@igalia.com>
+
         [CSS Grid Layout] Fix handling of 'inherit' and 'initial' for grid lines
         https://bugs.webkit.org/show_bug.cgi?id=115401
 

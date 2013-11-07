@@ -1,5 +1,25 @@
 2013-11-06  Sergio Villar Senin  <svillar@igalia.com>
 
+        [CSS Grid Layout] CSSParser should reject <track-list> without a <track-size>
+        https://bugs.webkit.org/show_bug.cgi?id=118025
+
+        Reviewed by Andreas Kling.
+
+        From Blink r152914 by <jchaffraix@chromium.org>
+
+        Make sure that we parse at least 1 <track-size> inside each
+        <track-list>. The old parser code allowed track-lists exclusively
+        made of <track-name>. The way it was implemented eases the future
+        addition of parsing for the repeat() function.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTrackList):
+        * css/StyleResolver.cpp:
+        (WebCore::createGridTrackList): ASSERT if we don't find any
+        <track-size> now that we detect their absence in the parser.
+
+2013-11-06  Sergio Villar Senin  <svillar@igalia.com>
+
         [CSS Grid Layout] Fix handling of 'inherit' and 'initial' for grid lines
         https://bugs.webkit.org/show_bug.cgi?id=115401
 

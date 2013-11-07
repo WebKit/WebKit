@@ -1992,9 +1992,9 @@ static bool createGridTrackList(CSSValue* value, Vector<GridTrackSize>& trackSiz
         trackSizes.append(trackSize);
     }
 
-    if (trackSizes.isEmpty())
-        return false;
-
+    // The parser should have rejected any <track-list> without any <track-size> as
+    // this is not conformant to the syntax.
+    ASSERT(!trackSizes.isEmpty());
     return true;
 }
 

@@ -5023,23 +5023,32 @@ bool CSSParser::parseGridTrackList(CSSPropertyID propId, bool important)
     }
 
     RefPtr<CSSValueList> values = CSSValueList::createSpaceSeparated();
+    // Handle leading track names
+    while (m_valueList->current() && m_valueList->current()->unit == CSSPrimitiveValue::CSS_STRING) {
+        RefPtr<CSSPrimitiveValue> name = createPrimitiveStringValue(m_valueList->current());
+        values->append(name.release());
+        m_valueList->next();
+    }
+
+    bool seenTrackSize = false;
     while (m_valueList->current()) {
-        while (m_valueList->current() && m_valueList->current()->unit == CSSPrimitiveValue::CSS_STRING) {
-            RefPtr<CSSPrimitiveValue> name = createPrimitiveStringValue(m_valueList->current());
-            values->append(name);
-            m_valueList->next();
-        }
-
-        // This allows trailing <string>* per the specification.
-        if (!m_valueList->current())
-            break;
-
         RefPtr<CSSPrimitiveValue> primitiveValue = parseGridTrackSize();
         if (!primitiveValue)
             return false;
 
+        seenTrackSize = true;
         values->append(primitiveValue.release());
+
+        while (m_valueList->current() && m_valueList->current()->unit == CSSPrimitiveValue::CSS_STRING) {
+            RefPtr<CSSPrimitiveValue> name = createPrimitiveStringValue(m_valueList->current());
+            values->append(name.release());
+            m_valueList->next();
+        }
     }
+
+    if (!seenTrackSize)
+        return false;
+
     addProperty(propId, values.release(), important);
     return true;
 }
