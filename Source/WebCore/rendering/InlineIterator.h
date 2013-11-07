@@ -448,9 +448,8 @@ static inline unsigned numberOfIsolateAncestors(const InlineIterator& iter)
 
 // FIXME: This belongs on InlineBidiResolver, except it's a template specialization
 // of BidiResolver which knows nothing about RenderObjects.
-static inline void addPlaceholderRunForIsolatedInline(InlineBidiResolver& resolver, RenderObject* obj, unsigned pos)
+static inline void addPlaceholderRunForIsolatedInline(InlineBidiResolver& resolver, RenderObject& obj, unsigned pos)
 {
-    ASSERT(obj);
     BidiRun* isolatedRun = new BidiRun(pos, 0, obj, resolver.context(), resolver.dir());
     resolver.runs().addRun(isolatedRun);
     // FIXME: isolatedRuns() could be a hash of object->run and then we could cheaply
@@ -480,12 +479,12 @@ public:
     void embed(UCharDirection, BidiEmbeddingSource) { }
     void commitExplicitEmbedding() { }
 
-    void addFakeRunIfNecessary(RenderObject* obj, unsigned pos, InlineBidiResolver& resolver)
+    void addFakeRunIfNecessary(RenderObject& obj, unsigned pos, InlineBidiResolver& resolver)
     {
         // We only need to add a fake run for a given isolated span once during each call to createBidiRunsForLine.
         // We'll be called for every span inside the isolated span so we just ignore subsequent calls.
         // We also avoid creating a fake run until we hit a child that warrants one, e.g. we skip floats.
-        if (m_haveAddedFakeRunForRootIsolate || RenderBlock::shouldSkipCreatingRunsForObject(obj))
+        if (m_haveAddedFakeRunForRootIsolate || RenderBlock::shouldSkipCreatingRunsForObject(&obj))
             return;
         m_haveAddedFakeRunForRootIsolate = true;
         // obj and pos together denote a single position in the inline, from which the parsing of the isolate will start.
@@ -496,7 +495,7 @@ public:
         // For now, if we enter an isolate between midpoints, we increment our current midpoint or else
         // we'll leave the isolate and ignore the content that follows.
         MidpointState<InlineIterator>& midpointState = resolver.midpointState();
-        if (midpointState.betweenMidpoints && midpointState.midpoints[midpointState.currentMidpoint].object() == obj) {
+        if (midpointState.betweenMidpoints && midpointState.midpoints[midpointState.currentMidpoint].object() == &obj) {
             midpointState.betweenMidpoints = false;
             ++midpointState.currentMidpoint;
         }
@@ -519,7 +518,7 @@ inline void InlineBidiResolver::appendRun()
         RenderObject* obj = m_sor.m_obj;
         while (obj && obj != m_eor.m_obj && obj != endOfLine.m_obj) {
             if (isolateTracker.inIsolate())
-                isolateTracker.addFakeRunIfNecessary(obj, start, *this);
+                isolateTracker.addFakeRunIfNecessary(*obj, start, *this);
             else
                 RenderBlockFlow::appendRunsForObject(m_runs, start, obj->length(), obj, *this);
             // FIXME: start/obj should be an InlineIterator instead of two separate variables.
@@ -535,7 +534,7 @@ inline void InlineBidiResolver::appendRun()
             // It's OK to add runs for zero-length RenderObjects, just don't make the run larger than it should be
             int end = obj->length() ? pos + 1 : 0;
             if (isolateTracker.inIsolate())
-                isolateTracker.addFakeRunIfNecessary(obj, start, *this);
+                isolateTracker.addFakeRunIfNecessary(*obj, start, *this);
             else
                 RenderBlockFlow::appendRunsForObject(m_runs, start, end, obj, *this);
         }

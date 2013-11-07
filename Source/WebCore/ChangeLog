@@ -1,5 +1,18 @@
 2013-11-07  Andreas Kling  <akling@apple.com>
 
+        Clean up BidiRun a little bit.
+        <https://webkit.org/b/123964>
+
+        Make BidiRun's member variables private and add accessors for them.
+        In doing so, codify the following:
+
+            - BidiRun always has a corresponding RenderObject.
+            - The inline box is never cleared after being set.
+
+        Reviewed by Antti Koivisto.
+
+2013-11-07  Andreas Kling  <akling@apple.com>
+
         More CSSPrimitiveValue constructors should return PassRef.
         <https://webkit.org/b/123953>
 

@@ -34,14 +34,16 @@ class BidiContext;
 class InlineBox;
 
 struct BidiRun : BidiCharacterRun {
-    BidiRun(int start, int stop, RenderObject*, BidiContext*, UCharDirection);
+    BidiRun(int start, int stop, RenderObject&, BidiContext*, UCharDirection);
     ~BidiRun();
 
     BidiRun* next() { return static_cast<BidiRun*>(m_next); }
-    RenderObject* object() { return m_object; }
+    RenderObject& renderer() { return m_renderer; }
+    InlineBox* box() { return m_box; }
+    void setBox(InlineBox& box) { m_box = &box; }
 
-public:
-    RenderObject* m_object;
+private:
+    RenderObject& m_renderer;
     InlineBox* m_box;
 };
 

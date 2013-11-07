@@ -33,15 +33,15 @@ namespace WebCore {
 
 DEFINE_DEBUG_ONLY_GLOBAL(RefCountedLeakCounter, bidiRunCounter, ("BidiRun"));
 
-BidiRun::BidiRun(int start, int stop, RenderObject* object, BidiContext* context, UCharDirection dir)
+BidiRun::BidiRun(int start, int stop, RenderObject& renderer, BidiContext* context, UCharDirection dir)
     : BidiCharacterRun(start, stop, context, dir)
-    , m_object(object)
-    , m_box(0)
+    , m_renderer(renderer)
+    , m_box(nullptr)
 {
 #ifndef NDEBUG
     bidiRunCounter.increment();
 #endif
-    ASSERT(!object->isText() || static_cast<unsigned>(stop) <= toRenderText(object)->textLength());
+    ASSERT(!m_renderer.isText() || static_cast<unsigned>(stop) <= toRenderText(m_renderer).textLength());
     // Stored in base class to save space.
     m_hasHyphen = false;
 #if ENABLE(CSS_SHAPES)
