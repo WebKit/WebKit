@@ -1,3 +1,17 @@
+2013-11-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in SliderThumbElement::dragFrom
+        https://bugs.webkit.org/show_bug.cgi?id=123873
+
+        Reviewed by Sam Weinig.
+
+        Moved Ref.
+
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleMouseDownEvent):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::dragFrom):
+
 2013-11-06  Daniel Bates  <dabates@apple.com>
 
         Cleanup FontMac.mm
