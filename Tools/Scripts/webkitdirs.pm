@@ -1736,34 +1736,6 @@ sub buildVisualStudioProject
     return system @command;
 }
 
-sub retrieveQMakespecVar
-{
-    my $mkspec = $_[0];
-    my $varname = $_[1];
-
-    my $varvalue = undef;
-    #print "retrieveMakespecVar " . $mkspec . ", " . $varname . "\n";
-
-    local *SPEC;
-    open SPEC, "<$mkspec" or return $varvalue;
-    while (<SPEC>) {
-        if ($_ =~ /\s*include\((.+)\)/) {
-            # open the included mkspec
-            my $oldcwd = getcwd();
-            (my $volume, my $directories, my $file) = File::Spec->splitpath($mkspec);
-            my $newcwd = "$volume$directories";
-            chdir $newcwd if $newcwd;
-            $varvalue = retrieveQMakespecVar($1, $varname);
-            chdir $oldcwd;
-        } elsif ($_ =~ /$varname\s*=\s*([^\s]+)/) {
-            $varvalue = $1;
-            last;
-        }
-    }
-    close SPEC;
-    return $varvalue;
-}
-
 sub autotoolsFlag($$)
 {
     my ($flag, $feature) = @_;
