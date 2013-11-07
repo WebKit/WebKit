@@ -1028,20 +1028,18 @@ std::unique_ptr<InlineTextBox> RenderText::createTextBox()
     return std::make_unique<InlineTextBox>(*this);
 }
 
-void RenderText::positionLineBox(InlineBox* box)
+void RenderText::positionLineBox(InlineTextBox& textBox)
 {
-    InlineTextBox* textBox = toInlineTextBox(box);
-
     // FIXME: should not be needed!!!
-    if (!textBox->len()) {
+    if (!textBox.len()) {
         // We want the box to be destroyed.
-        textBox->removeFromParent();
-        m_lineBoxes.remove(*textBox);
-        delete textBox;
+        textBox.removeFromParent();
+        m_lineBoxes.remove(textBox);
+        delete &textBox;
         return;
     }
 
-    m_containsReversedText |= !textBox->isLeftToRightDirection();
+    m_containsReversedText |= !textBox.isLeftToRightDirection();
 }
 
 void RenderText::ensureLineBoxes()

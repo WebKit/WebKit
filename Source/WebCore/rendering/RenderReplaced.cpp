@@ -26,6 +26,7 @@
 
 #include "Frame.h"
 #include "GraphicsContext.h"
+#include "InlineElementBox.h"
 #include "LayoutRepainter.h"
 #include "Page.h"
 #include "RenderBlock.h"

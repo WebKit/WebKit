@@ -41,10 +41,10 @@ public:
     virtual bool isWBR() const OVERRIDE { return m_isWBR; }
 
     std::unique_ptr<InlineElementBox> createInlineBox();
-    InlineBox* inlineBoxWrapper() const { return m_inlineBoxWrapper; }
-    void setInlineBoxWrapper(InlineBox*);
+    InlineElementBox* inlineBoxWrapper() const { return m_inlineBoxWrapper; }
+    void setInlineBoxWrapper(InlineElementBox*);
     void deleteInlineBoxWrapper();
-    void replaceInlineBoxWrapper(InlineBox*);
+    void replaceInlineBoxWrapper(InlineElementBox&);
     void dirtyLineBoxes(bool fullLayout);
 
     IntRect linesBoundingBox() const;
@@ -85,7 +85,7 @@ private:
     virtual void updateFromStyle() OVERRIDE;
     virtual bool requiresLayer() const OVERRIDE { return false; }
 
-    InlineBox* m_inlineBoxWrapper;
+    InlineElementBox* m_inlineBoxWrapper;
     mutable int m_cachedLineHeight;
     bool m_isWBR;
 };

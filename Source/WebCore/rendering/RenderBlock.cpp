@@ -38,6 +38,7 @@
 #include "HTMLNames.h"
 #include "HitTestLocation.h"
 #include "HitTestResult.h"
+#include "InlineElementBox.h"
 #include "InlineIterator.h"
 #include "InlineTextBox.h"
 #include "LayoutRepainter.h"

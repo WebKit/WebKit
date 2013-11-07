@@ -27,6 +27,7 @@
 #include "ElementTraversal.h"
 #include "HTMLNames.h"
 #include "HTMLOListElement.h"
+#include "InlineElementBox.h"
 #include "PseudoElement.h"
 #include "RenderListMarker.h"
 #include "RenderView.h"

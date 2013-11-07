@@ -30,6 +30,7 @@
 #include "RenderLineBoxList.h"
 
 #include "HitTestResult.h"
+#include "InlineElementBox.h"
 #include "InlineTextBox.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
@@ -343,12 +344,10 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject* contain
             continue;
 
         if (curr->isReplaced()) {
-            InlineBox* wrapper = toRenderBox(curr)->inlineBoxWrapper();
-            if (wrapper)
+            if (auto wrapper = toRenderBox(curr)->inlineBoxWrapper())
                 box = &wrapper->root();
         } if (curr->isLineBreak()) {
-            InlineBox* wrapper = toRenderLineBreak(curr)->inlineBoxWrapper();
-            if (wrapper)
+            if (auto wrapper = toRenderLineBreak(curr)->inlineBoxWrapper())
                 box = &wrapper->root();
         } else if (curr->isText()) {
             InlineTextBox* textBox = toRenderText(curr)->lastTextBox();

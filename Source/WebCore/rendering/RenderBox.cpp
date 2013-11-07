@@ -1956,7 +1956,7 @@ void RenderBox::dirtyLineBoxes(bool fullLayout)
     }
 }
 
-void RenderBox::positionLineBox(InlineBox* box)
+void RenderBox::positionLineBox(InlineElementBox& box)
 {
     if (isOutOfFlowPositioned()) {
         // Cache the x position only if we were an INLINE type originally.
@@ -1965,30 +1965,33 @@ void RenderBox::positionLineBox(InlineBox* box)
             // The value is cached in the xPos of the box.  We only need this value if
             // our object was inline originally, since otherwise it would have ended up underneath
             // the inlines.
-            RootInlineBox& rootBox = box->root();
-            rootBox.blockFlow().setStaticInlinePositionForChild(*this, rootBox.lineTopWithLeading(), roundedLayoutUnit(box->logicalLeft()));
-            if (style().hasStaticInlinePosition(box->isHorizontal()))
+            RootInlineBox& rootBox = box.root();
+            rootBox.blockFlow().setStaticInlinePositionForChild(*this, rootBox.lineTopWithLeading(), roundedLayoutUnit(box.logicalLeft()));
+            if (style().hasStaticInlinePosition(box.isHorizontal()))
                 setChildNeedsLayout(MarkOnlyThis); // Just go ahead and mark the positioned object as needing layout, so it will update its position properly.
         } else {
             // Our object was a block originally, so we make our normal flow position be
             // just below the line box (as though all the inlines that came before us got
             // wrapped in an anonymous block, which is what would have happened had we been
             // in flow).  This value was cached in the y() of the box.
-            layer()->setStaticBlockPosition(box->logicalTop());
-            if (style().hasStaticBlockPosition(box->isHorizontal()))
+            layer()->setStaticBlockPosition(box.logicalTop());
+            if (style().hasStaticBlockPosition(box.isHorizontal()))
                 setChildNeedsLayout(MarkOnlyThis); // Just go ahead and mark the positioned object as needing layout, so it will update its position properly.
         }
 
         // Nuke the box.
-        box->removeFromParent();
-        delete box;
-    } else if (isReplaced()) {
-        setLocation(roundedLayoutPoint(box->topLeft()));
+        box.removeFromParent();
+        delete &box;
+        return;
+    }
+
+    if (isReplaced()) {
+        setLocation(roundedLayoutPoint(box.topLeft()));
         // m_inlineBoxWrapper should already be 0. Deleting it is a safeguard against security issues.
         ASSERT(!m_inlineBoxWrapper);
         if (m_inlineBoxWrapper)
             deleteLineBoxWrapper();
-        m_inlineBoxWrapper = box;
+        m_inlineBoxWrapper = &box;
     }
 }
 

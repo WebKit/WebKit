@@ -1,3 +1,18 @@
+2013-11-07  Andreas Kling  <akling@apple.com>
+
+        Use tighter InlineBox subtypes in some places.
+        <https://webkit.org/b/123980>
+
+        RenderLineBreak and RenderBox line box wrappers are always going to
+        be InlineElementBox, so codify this with tighter types. Also made
+        the various positionLine() functions take tighter reference types.
+
+        All the casting to renderer-appropriate box types happens inside of
+        RenderBlockFlow::computeBlockDirectionPositionsForLine() and
+        propagates from there.
+
+        Reviewed by Antti Koivisto.
+
 2013-11-07  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         AX: [ATK] Video and audio elements are not properly exposed

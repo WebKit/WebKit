@@ -966,19 +966,21 @@ void RenderBlockFlow::computeBlockDirectionPositionsForLine(RootInlineBox* lineB
         if (!r->box())
             continue; // Skip runs with no line boxes.
 
+        InlineBox& box = *r->box();
+
         // Align positioned boxes with the top of the line box.  This is
         // a reasonable approximation of an appropriate y position.
         if (r->renderer().isOutOfFlowPositioned())
-            r->box()->setLogicalTop(logicalHeight());
+            box.setLogicalTop(logicalHeight());
 
         // Position is used to properly position both replaced elements and
         // to update the static normal flow x/y of positioned elements.
         if (r->renderer().isText())
-            toRenderText(r->renderer()).positionLineBox(r->box());
+            toRenderText(r->renderer()).positionLineBox(toInlineTextBox(box));
         else if (r->renderer().isBox())
-            toRenderBox(r->renderer()).positionLineBox(r->box());
+            toRenderBox(r->renderer()).positionLineBox(toInlineElementBox(box));
         else if (r->renderer().isLineBreak())
-            toRenderLineBreak(r->renderer()).replaceInlineBoxWrapper(r->box());
+            toRenderLineBreak(r->renderer()).replaceInlineBoxWrapper(toInlineElementBox(box));
     }
     // Positioned objects and zero-length text nodes destroy their boxes in
     // position(), which unnecessarily dirties the line.

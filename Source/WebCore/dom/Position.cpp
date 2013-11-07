@@ -29,6 +29,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
+#include "InlineElementBox.h"
 #include "InlineIterator.h"
 #include "InlineTextBox.h"
 #include "Logging.h"
