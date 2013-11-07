@@ -40,6 +40,7 @@ platform_webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/graphics/gtk \
 	-I$(srcdir)/Source/WebCore/platform/graphics/harfbuzz \
 	-I$(srcdir)/Source/WebCore/platform/graphics/opengl \
+	-I$(srcdir)/Source/WebCore/platform/graphics/opentype \
 	-I$(srcdir)/Source/WebCore/platform/graphics/texmap \
 	-I$(srcdir)/Source/WebCore/platform/graphics/transforms \
 	-I$(srcdir)/Source/WebCore/platform/gtk \

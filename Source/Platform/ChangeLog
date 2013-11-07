@@ -1,3 +1,14 @@
+2013-11-07  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        [GTK] Glyphs in vertical text tests are rotated 90 degrees clockwise
+        https://bugs.webkit.org/show_bug.cgi?id=50619
+
+        Reviewed by Martin Robinson.
+
+        Added WebCore/platform/graphics/opentype to the include path.
+
+        * GNUmakefile.am:
+
 2013-10-29  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         Adding Nix files in Source/Platform to trunk

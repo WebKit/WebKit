@@ -58,9 +58,9 @@ FontCustomPlatformData::~FontCustomPlatformData()
     cairo_font_face_destroy(m_fontFace);
 }
 
-FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation, FontWidthVariant, FontRenderingMode)
+FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation orientation, FontWidthVariant, FontRenderingMode)
 {
-    return FontPlatformData(m_fontFace, size, bold, italic);
+    return FontPlatformData(m_fontFace, size, bold, italic, orientation);
 }
 
 std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer)

@@ -39,10 +39,13 @@
 #include "FontCache.h"
 #include "FontDescription.h"
 #include "GlyphBuffer.h"
+#include "OpenTypeTypes.h"
 #include "UTF16UChar32Iterator.h"
 #include <cairo-ft.h>
 #include <cairo.h>
 #include <fontconfig/fcfreetype.h>
+#include <freetype/tttables.h>
+#include <freetype/tttags.h>
 #include <unicode/normlzr.h>
 #include <wtf/MathExtras.h>
 #include <wtf/unicode/Unicode.h>
@@ -55,13 +58,12 @@ void SimpleFontData::platformInit()
         return;
 
     ASSERT(m_platformData.scaledFont());
-    cairo_font_extents_t font_extents;
-    cairo_text_extents_t text_extents;
-    cairo_scaled_font_extents(m_platformData.scaledFont(), &font_extents);
+    cairo_font_extents_t fontExtents;
+    cairo_scaled_font_extents(m_platformData.scaledFont(), &fontExtents);
 
-    float ascent = narrowPrecisionToFloat(font_extents.ascent);
-    float descent = narrowPrecisionToFloat(font_extents.descent);
-    float lineGap = narrowPrecisionToFloat(font_extents.height - font_extents.ascent - font_extents.descent);
+    float ascent = narrowPrecisionToFloat(fontExtents.ascent);
+    float descent = narrowPrecisionToFloat(fontExtents.descent);
+    float lineGap = narrowPrecisionToFloat(fontExtents.height - fontExtents.ascent - fontExtents.descent);
 
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
@@ -74,11 +76,18 @@ void SimpleFontData::platformInit()
 #endif
     m_fontMetrics.setLineGap(lineGap);
 
-    cairo_scaled_font_text_extents(m_platformData.scaledFont(), "x", &text_extents);
-    m_fontMetrics.setXHeight(narrowPrecisionToFloat(text_extents.height));
+    cairo_text_extents_t textExtents;
+    cairo_scaled_font_text_extents(m_platformData.scaledFont(), "x", &textExtents);
+    m_fontMetrics.setXHeight(narrowPrecisionToFloat((platformData().orientation() == Horizontal) ? textExtents.height : textExtents.width));
 
-    cairo_scaled_font_text_extents(m_platformData.scaledFont(), " ", &text_extents);
-    m_spaceWidth = narrowPrecisionToFloat(text_extents.x_advance);
+    cairo_scaled_font_text_extents(m_platformData.scaledFont(), " ", &textExtents);
+    m_spaceWidth = narrowPrecisionToFloat((platformData().orientation() == Horizontal) ? textExtents.x_advance : -textExtents.y_advance);
+
+    if ((platformData().orientation() == Vertical) && !isTextOrientationFallback()) {
+        FT_Face freeTypeFace = cairo_ft_scaled_font_lock_face(m_platformData.scaledFont());
+        m_fontMetrics.setUnitsPerEm(freeTypeFace->units_per_EM);
+        cairo_ft_scaled_font_unlock_face(m_platformData.scaledFont());
+    }
 
     m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
 }
@@ -98,9 +107,11 @@ PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const Fo
 {
     ASSERT(m_platformData.scaledFont());
     return SimpleFontData::create(FontPlatformData(cairo_scaled_font_get_font_face(m_platformData.scaledFont()),
-                                                        scaleFactor * fontDescription.computedSize(),
-                                                        m_platformData.syntheticBold(),
-                                                        m_platformData.syntheticOblique()), isCustomFont(), false);
+        scaleFactor * fontDescription.computedSize(),
+        m_platformData.syntheticBold(),
+        m_platformData.syntheticOblique(),
+        fontDescription.orientation()),
+        isCustomFont(), false);
 }
 
 bool SimpleFontData::containsCharacters(const UChar* characters, int bufferLength) const
@@ -149,15 +160,14 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
     if (!m_platformData.size())
         return 0;
 
-    cairo_glyph_t cglyph = { glyph, 0, 0 };
+    if (cairo_scaled_font_status(m_platformData.scaledFont()) != CAIRO_STATUS_SUCCESS)
+        return m_spaceWidth;
+
+    cairo_glyph_t cairoGlyph = { glyph, 0, 0 };
     cairo_text_extents_t extents;
-    cairo_scaled_font_glyph_extents(m_platformData.scaledFont(), &cglyph, 1, &extents);
-
-    float w = (float)m_spaceWidth;
-    if (cairo_scaled_font_status(m_platformData.scaledFont()) == CAIRO_STATUS_SUCCESS && extents.x_advance)
-        w = (float)extents.x_advance;
-
-    return w;    
+    cairo_scaled_font_glyph_extents(m_platformData.scaledFont(), &cairoGlyph, 1, &extents);
+    float width = platformData().orientation() == Horizontal ? extents.x_advance : -extents.y_advance;
+    return width ? width : m_spaceWidth;
 }
 
 #if USE(HARFBUZZ)

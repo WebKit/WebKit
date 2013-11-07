@@ -26,11 +26,14 @@
 #ifndef FontPlatformDataFreeType_h
 #define FontPlatformDataFreeType_h
 
+#include "FontCache.h"
 #include "FontDescription.h"
 #include "FontOrientation.h"
 #include "GlyphBuffer.h"
 #include "HarfBuzzFace.h"
+#include "OpenTypeVerticalData.h"
 #include "RefPtrCairo.h"
+#include "SharedBuffer.h"
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
 
@@ -47,6 +50,7 @@ public:
         , m_syntheticBold(false)
         , m_syntheticOblique(false)
         , m_scaledFont(hashTableDeletedFontValue())
+        , m_orientation(Horizontal)
         { }
 
     FontPlatformData()
@@ -55,10 +59,11 @@ public:
         , m_syntheticBold(false)
         , m_syntheticOblique(false)
         , m_scaledFont(0)
+        , m_orientation(Horizontal)
         { }
 
     FontPlatformData(FcPattern*, const FontDescription&);
-    FontPlatformData(cairo_font_face_t* fontFace, float size, bool bold, bool italic);
+    FontPlatformData(cairo_font_face_t*, float size, bool bold, bool italic, FontOrientation);
     FontPlatformData(float size, bool bold, bool italic);
     FontPlatformData(const FontPlatformData&);
     FontPlatformData(const FontPlatformData&, float size);
@@ -74,8 +79,10 @@ public:
     bool syntheticOblique() const { return m_syntheticOblique; }
     bool hasCompatibleCharmap();
 
-    FontOrientation orientation() const { return Horizontal; } // FIXME: Implement.
-    void setOrientation(FontOrientation) { } // FIXME: Implement.
+    FontOrientation orientation() const { return m_orientation; }
+    void setOrientation(FontOrientation);
+    PassRefPtr<SharedBuffer> openTypeTable(uint32_t table) const;
+    PassRefPtr<OpenTypeVerticalData> verticalData() const;
 
     cairo_scaled_font_t* scaledFont() const { return m_scaledFont; }
 
@@ -107,6 +114,9 @@ public:
 private:
     void initializeWithFontFace(cairo_font_face_t*, const FontDescription& = FontDescription());
     static cairo_scaled_font_t* hashTableDeletedFontValue() { return reinterpret_cast<cairo_scaled_font_t*>(-1); }
+
+    FontOrientation m_orientation;
+    cairo_matrix_t m_horizontalOrientationMatrix;
 };
 
 }

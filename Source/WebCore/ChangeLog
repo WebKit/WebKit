@@ -1,3 +1,76 @@
+2013-11-07  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        [GTK] Glyphs in vertical text tests are rotated 90 degrees clockwise
+        https://bugs.webkit.org/show_bug.cgi?id=50619
+
+        Reviewed by Martin Robinson.
+
+        Implemented the OPENTYPE_VERTICAL feature for the GTK+ port. It resolves
+        the 90 degrees rotation problem of CJK characters when displaying
+        vertical text.
+
+        New tests are not required as the existing tests for vertical text will
+        work properly now.
+
+        * GNUmakefile.list.am: Added OpenTypeVerticalData.cpp and
+        OpenTypeVerticalData.h to platformgtk_sources.
+        * PlatformEfl.cmake: Added OpenTypeVerticalData.cpp.
+        * PlatformGTK.cmake: Added OpenTypeVerticalData.cpp.
+        * platform/graphics/FontCache.cpp: Originally the HashMap for
+        OpenTypeVerticalData was designed with FontFileKey as integer in the
+        Chromium port, which was an unique number provided by Skia. Since other
+        ports use FontFileKey as string, new generic hash functions had to be
+        implemented instead of using the specific ones for integers.
+        (WebCore::FontVerticalDataCacheKeyHash::hash): New hash function for
+        HashMap of OpenTypeVerticalData.
+        (WebCore::FontVerticalDataCacheKeyHash::equal): New function for
+        comparing hash indexes in the HashMap of OpenTypeVerticalData.
+        (WebCore::FontVerticalDataCacheKeyTraits::emptyValue): New function for
+        giving an empty FontFileKey.
+        (WebCore::FontVerticalDataCacheKeyTraits::constructDeletedValue): New
+        function to create a FontFileKey for deleted values.
+        (WebCore::FontVerticalDataCacheKeyTraits::isDeletedValue): New function
+        to check if a HashMap entry is available.
+        * platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Added font
+        orientation as a parameter to the FontPlatformData constructor.
+        * platform/graphics/freetype/FontPlatformData.h: Added m_orientation to
+        store the font orientation and m_horizontalOrientationMatrix to store
+        the Cairo matrix for horizontal orientation, which can be restored in
+        setOrientation().
+        (WebCore::FontPlatformData::FontPlatformData): Added font orientation as
+        a parameter.
+        (WebCore::FontPlatformData::orientation): Implemented this function
+        based on m_orientation.
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp: Added new
+        helper function rotateCairoMatrixForVerticalOrientation() to rotate the
+        Cairo matrix in case of vertical orientation.
+        (WebCore::FontPlatformData::FontPlatformData): Initialized
+        m_orientation.
+        (WebCore::FontPlatformData::operator=): Added m_orientation and
+        m_horizontalOrientationMatrix to the assignment operator.
+        (WebCore::FontPlatformData::operator==): Added m_orientation to the
+        equal operator.
+        (WebCore::FontPlatformData::initializeWithFontFace): Rotated and
+        translated fonts if orientation is vertical. Also stored the horizontal
+        Cairo matrix.
+        (WebCore::FontPlatformData::verticalData): Returned the vertical data
+        from the font cache.
+        (WebCore::FontPlatformData::openTypeTable): Loaded the font table into
+        a shared buffer.
+        (WebCore::FontPlatformData::setOrientation): Replaced the scaled font
+        data by rotating fonts according to the new orientation.
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::SimpleFontData::platformInit): Set the glyph's height and
+        width according to the font orientation. It also sets EM.
+        (WebCore::SimpleFontData::platformCreateScaledFontData): Added
+        orientation to the FontPlatformData constructor.
+        (WebCore::SimpleFontData::platformWidthForGlyph): Returned the glyph's
+        width according the orientation.
+        * platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp:
+        (WebCore::CairoGetGlyphWidthAndExtents): Obtained the character advance
+        and extents according to the font orientation.
+
 2013-11-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [AX] Use toAccessibilityRenderObject() instead of using static_cast<>

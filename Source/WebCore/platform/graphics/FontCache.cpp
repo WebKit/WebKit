@@ -226,7 +226,39 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
 }
 
 #if ENABLE(OPENTYPE_VERTICAL)
-typedef HashMap<FontCache::FontFileKey, RefPtr<OpenTypeVerticalData>, WTF::IntHash<FontCache::FontFileKey>, WTF::UnsignedWithZeroKeyHashTraits<FontCache::FontFileKey>> FontVerticalDataCache;
+struct FontVerticalDataCacheKeyHash {
+    static unsigned hash(const FontCache::FontFileKey& fontFileKey)
+    {
+        return PtrHash<const FontCache::FontFileKey*>::hash(&fontFileKey);
+    }
+
+    static bool equal(const FontCache::FontFileKey& a, const FontCache::FontFileKey& b)
+    {
+        return a == b;
+    }
+
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+
+struct FontVerticalDataCacheKeyTraits : WTF::GenericHashTraits<FontCache::FontFileKey> {
+    static const bool emptyValueIsZero = true;
+    static const bool needsDestruction = true;
+    static const FontCache::FontFileKey& emptyValue()
+    {
+        DEFINE_STATIC_LOCAL(FontCache::FontFileKey, key, (nullAtom));
+        return key;
+    }
+    static void constructDeletedValue(FontCache::FontFileKey& slot)
+    {
+        new (NotNull, &slot) FontCache::FontFileKey(HashTableDeletedValue);
+    }
+    static bool isDeletedValue(const FontCache::FontFileKey& value)
+    {
+        return value.isHashTableDeletedValue();
+    }
+};
+
+typedef HashMap<FontCache::FontFileKey, RefPtr<OpenTypeVerticalData>, FontVerticalDataCacheKeyHash, FontVerticalDataCacheKeyTraits> FontVerticalDataCache;
 
 FontVerticalDataCache& fontVerticalDataCacheInstance()
 {

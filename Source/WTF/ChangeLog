@@ -1,3 +1,15 @@
+2013-11-07  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        [GTK] Glyphs in vertical text tests are rotated 90 degrees clockwise
+        https://bugs.webkit.org/show_bug.cgi?id=50619
+
+        Reviewed by Martin Robinson.
+
+        Enabled OPENTYPE_VERTICAL by default on GTK+ and EFL ports, which are
+        currently using Freetype.
+
+        * wtf/Platform.h:
+
 2013-11-06  Daniel Bates  <dabates@apple.com>
 
         [iOS] Upstream Letterpress effect

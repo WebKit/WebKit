@@ -1,3 +1,95 @@
+2013-11-07  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        [GTK] Glyphs in vertical text tests are rotated 90 degrees clockwise
+        https://bugs.webkit.org/show_bug.cgi?id=50619
+
+        Reviewed by Martin Robinson.
+
+        Updated existing test results that uses vertical texts.
+
+        * platform/gtk-wk1/fast/writing-mode/Kusa-Makura-background-canvas-expected.png: Added.
+        * platform/gtk-wk1/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt: Updated.
+        * platform/gtk/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.png: Updated.
+        * platform/gtk/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt: Updated.
+        * platform/gtk/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.png: Updated.
+        * platform/gtk/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.txt: Updated.
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.png: Updated.
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt: Updated.
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.png: Updated.
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.txt: Updated.
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png: Updated.
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt: Updated.
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.png: Updated.
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt: Updated.
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.png: Updated.
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.txt: Updated.
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png: Updated.
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt: Updated.
+        * platform/gtk/fast/block/lineboxcontain/block-with-ideographs-expected.png: Updated.
+        * platform/gtk/fast/block/lineboxcontain/block-with-ideographs-expected.txt: Updated.
+        * platform/gtk/fast/css/relative-positioned-block-with-inline-ancestor-and-parent-dynamic-expected.png: Updated.
+        * platform/gtk/fast/dynamic/text-combine-expected.png: Updated.
+        * platform/gtk/fast/dynamic/text-combine-expected.txt: Updated.
+        * platform/gtk/fast/html/details-writing-mode-expected.png: Updated.
+        * platform/gtk/fast/repaint/japanese-rl-selection-clear-expected.png: Updated.
+        * platform/gtk/fast/repaint/japanese-rl-selection-clear-expected.txt: Added.
+        * platform/gtk/fast/repaint/japanese-rl-selection-repaint-expected.png: Updated.
+        * platform/gtk/fast/repaint/japanese-rl-selection-repaint-expected.txt: Added.
+        * platform/gtk/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Updated.
+        * platform/gtk/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt: Updated.
+        * platform/gtk/fast/repaint/repaint-across-writing-mode-boundary-expected.png: Updated.
+        * platform/gtk/fast/repaint/repaint-across-writing-mode-boundary-expected.txt: Updated.
+        * platform/gtk/fast/ruby/base-shorter-than-text-expected.png: Updated.
+        * platform/gtk/fast/ruby/base-shorter-than-text-expected.txt: Updated.
+        * platform/gtk/fast/text/decorations-with-text-combine-expected.png: Updated.
+        * platform/gtk/fast/text/decorations-with-text-combine-expected.txt: Updated.
+        * platform/gtk/fast/text/emphasis-combined-text-expected.png: Updated.
+        * platform/gtk/fast/text/emphasis-combined-text-expected.txt: Updated.
+        * platform/gtk/fast/text/emphasis-vertical-expected.png: Updated.
+        * platform/gtk/fast/text/emphasis-vertical-expected.txt: Updated.
+        * platform/gtk/fast/text/international/text-combine-image-test-expected.png: Updated.
+        * platform/gtk/fast/text/international/text-combine-image-test-expected.txt: Updated.
+        * platform/gtk/fast/text/international/text-spliced-font-expected.png: Updated.
+        * platform/gtk/fast/text/international/text-spliced-font-expected.txt: Updated.
+        * platform/gtk/fast/text/international/vertical-text-glyph-test-expected.png: Updated.
+        * platform/gtk/fast/text/international/vertical-text-glyph-test-expected.txt: Added.
+        * platform/gtk/fast/text/justify-ideograph-vertical-expected.png: Updated.
+        * platform/gtk/fast/text/justify-ideograph-vertical-expected.txt: Added.
+        * platform/gtk/fast/text/orientation-sideways-expected.png: Updated.
+        * platform/gtk/fast/text/orientation-sideways-expected.txt: Updated.
+        * platform/gtk/fast/writing-mode/Kusa-Makura-background-canvas-expected.png: Updated.
+        * platform/gtk/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt: Updated.
+        * platform/gtk/fast/writing-mode/border-vertical-lr-expected.png: Updated.
+        * platform/gtk/fast/writing-mode/border-vertical-lr-expected.txt: Updated.
+        * platform/gtk/fast/writing-mode/broken-ideograph-small-caps-expected.png: Updated.
+        * platform/gtk/fast/writing-mode/broken-ideograph-small-caps-expected.txt: Updated.
+        * platform/gtk/fast/writing-mode/broken-ideographic-font-expected.png: Updated.
+        * platform/gtk/fast/writing-mode/broken-ideographic-font-expected.txt: Updated.
+        * platform/gtk/fast/writing-mode/fallback-orientation-expected.png: Updated.
+        * platform/gtk/fast/writing-mode/fallback-orientation-expected.txt: Updated.
+        * platform/gtk/fast/writing-mode/japanese-lr-selection-expected.png: Updated.
+        * platform/gtk/fast/writing-mode/japanese-lr-selection-expected.txt: Updated.
+        * platform/gtk/fast/writing-mode/japanese-lr-text-expected.png: Updated.
+        * platform/gtk/fast/writing-mode/japanese-lr-text-expected.txt: Updated.
+        * platform/gtk/fast/writing-mode/japanese-rl-selection-expected.png: Updated.
+        * platform/gtk/fast/writing-mode/japanese-rl-selection-expected.txt: Updated.
+        * platform/gtk/fast/writing-mode/japanese-rl-text-expected.png: Updated.
+        * platform/gtk/fast/writing-mode/japanese-rl-text-expected.txt: Updated.
+        * platform/gtk/fast/writing-mode/japanese-rl-text-with-broken-font-expected.png: Updated.
+        * platform/gtk/fast/writing-mode/japanese-rl-text-with-broken-font-expected.txt: Updated.
+        * platform/gtk/fast/writing-mode/japanese-ruby-vertical-lr-expected.png: Updated.
+        * platform/gtk/fast/writing-mode/japanese-ruby-vertical-lr-expected.txt: Updated.
+        * platform/gtk/fast/writing-mode/japanese-ruby-vertical-rl-expected.png: Updated.
+        * platform/gtk/fast/writing-mode/japanese-ruby-vertical-rl-expected.txt: Updated.
+        * platform/gtk/fast/writing-mode/text-orientation-basic-expected.png: Updated.
+        * platform/gtk/fast/writing-mode/text-orientation-basic-expected.txt:
+        * platform/gtk/fast/writing-mode/vertical-align-table-baseline-expected.png: Updated.
+        * platform/gtk/fast/writing-mode/vertical-align-table-baseline-expected.txt: Updated.
+        * platform/gtk/fast/writing-mode/vertical-baseline-alignment-expected.png: Updated.
+        * platform/gtk/fast/writing-mode/vertical-baseline-alignment-expected.txt: Updated.
+        * platform/gtk/fast/writing-mode/vertical-font-fallback-expected.png: Updated.
+        * platform/gtk/fast/writing-mode/vertical-font-fallback-expected.txt: Updated.
+
 2013-11-07  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Unreviewed GTK gardening. Expectations are finally the same for

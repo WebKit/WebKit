@@ -1,3 +1,15 @@
+2013-11-07  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        [GTK] Glyphs in vertical text tests are rotated 90 degrees clockwise
+        https://bugs.webkit.org/show_bug.cgi?id=50619
+
+        Reviewed by Martin Robinson.
+
+        Added WebCore/platform/graphics/opentype to the include path.
+
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+
 2013-11-07  Brendan Long  <b.long@cablelabs.com>
 
         [Gtk] Remove old takeFocus() method from PageClientImpl and mark methods as OVERRIDE
