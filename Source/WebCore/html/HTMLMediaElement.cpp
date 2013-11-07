@@ -295,7 +295,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     , m_needWidgetUpdate(false)
 #endif
-    , m_dispatchingCanPlayEvent(false)
     , m_loadInitiatedByUserGesture(false)
     , m_completelyLoaded(false)
     , m_havePreparedToPlay(false)
@@ -2489,16 +2488,6 @@ void HTMLMediaElement::play()
         return;
     if (ScriptController::processingUserGesture())
         removeBehaviorsRestrictionsAfterFirstUserGesture();
-
-    Settings* settings = document().settings();
-    if (settings && settings->needsSiteSpecificQuirks() && m_dispatchingCanPlayEvent && !m_loadInitiatedByUserGesture) {
-        // It should be impossible to be processing the canplay event while handling a user gesture
-        // since it is dispatched asynchronously.
-        ASSERT(!ScriptController::processingUserGesture());
-        String host = document().baseURL().host();
-        if (host.endsWith(".npr.org", false) || equalIgnoringCase(host, "npr.org"))
-            return;
-    }
 
     playInternal();
 }
@@ -4957,24 +4946,6 @@ void HTMLMediaElement::updateMediaController()
 {
     if (m_mediaController)
         m_mediaController->reportControllerState();
-}
-
-bool HTMLMediaElement::dispatchEvent(PassRefPtr<Event> event)
-{
-    bool dispatchResult;
-    bool isCanPlayEvent;
-
-    isCanPlayEvent = (event->type() == eventNames().canplayEvent);
-
-    if (isCanPlayEvent)
-        m_dispatchingCanPlayEvent = true;
-
-    dispatchResult = HTMLElement::dispatchEvent(event);
-
-    if (isCanPlayEvent)
-        m_dispatchingCanPlayEvent = false;
-
-    return dispatchResult;
 }
 
 bool HTMLMediaElement::isBlocked() const

@@ -377,8 +377,6 @@ public:
     MediaController* controller() const;
     void setController(PassRefPtr<MediaController>);
 
-    virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE;
-
     virtual bool willRespondToMouseClickEvents() OVERRIDE;
 
     void enteredOrExitedFullscreen() { configureMediaControls(); }
@@ -732,7 +730,6 @@ private:
     bool m_needWidgetUpdate : 1;
 #endif
 
-    bool m_dispatchingCanPlayEvent : 1;
     bool m_loadInitiatedByUserGesture : 1;
     bool m_completelyLoaded : 1;
     bool m_havePreparedToPlay : 1;

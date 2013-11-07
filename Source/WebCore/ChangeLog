@@ -1,3 +1,17 @@
+2013-11-07  Eric Carlson  <eric.carlson@apple.com>
+
+        Remove npr.org specific hack in HTMLMediaElement
+        https://bugs.webkit.org/show_bug.cgi?id=123859
+
+        Reviewed by Jer Noble.
+
+        Remove the site specific hack added in r57820, it is no longer necessary.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Remove m_dispatchingCanPlayEvent.
+        (HTMLMediaElement::play): Don't special case npr.org.
+        * html/HTMLMediaElement.h:
+
 2013-11-07  Simon Fraser  <simon.fraser@apple.com>
 
         Attempt to fix the 32-bit build. Virtual thunks seem to have different
