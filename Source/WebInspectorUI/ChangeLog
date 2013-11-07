@@ -1,3 +1,18 @@
+2013-11-07  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: CSS Regions: Use a Map object to store the ContentFlows
+        https://bugs.webkit.org/show_bug.cgi?id=124015
+
+        Reviewed by Joseph Pecoraro.
+
+        Changed the Object hashmap to a Map based hashmap when storing the flows in DOMTreeManager.
+
+        * UserInterface/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager):
+        (WebInspector.DOMTreeManager.prototype.getNamedFlowCollection):
+        (WebInspector.DOMTreeManager.prototype.namedFlowRemoved):
+        (WebInspector.DOMTreeManager.prototype._sendNamedFlowUpdateEvents):
+
 2013-11-07  Timothy Hatcher  <timothy@apple.com>
 
         Fix up some sidebar switching details to make selections persist better.
