@@ -52,7 +52,8 @@
   <repository type="tarball" name="downloads.sourceforge.net"
       href="http://downloads.sourceforge.net/project/"/>
 
-  <autotools id="cairo" autogen-sh="configure">
+  <autotools id="cairo" autogen-sh="configure"
+             makeargs="CFLAGS='-fno-lto' CXXFLAGS='-fno-lto' LDFLAGS='-fno-lto'">
     <dependencies>
       <dep package="fontconfig"/>
       <dep package="pixman"/>
