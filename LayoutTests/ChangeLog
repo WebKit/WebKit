@@ -1,5 +1,94 @@
 2013-11-06  Andreas Kling  <akling@apple.com>
 
+        Optimize baselines: svg/W3C-I18N
+
+        Unreviewed; run "webkit-patch optimize-baselines svg/W3C-I18N"
+
+        * platform/efl/svg/W3C-I18N/text-dirLTR-ubOverride-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/g-dirLTR-ubNone-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/g-dirLTR-ubOverride-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/g-dirRTL-ubNone-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/g-dirRTL-ubOverride-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/text-anchor-no-markup-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/text-dirLTR-ubNone-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/text-dirLTR-ubOverride-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/text-dirRTL-ubNone-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/text-dirRTL-ubOverride-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-ltr-context-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/tspan-dirRTL-ubNone-in-ltr-context-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-default-context-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/tspan-direction-ltr-expected.txt: Removed.
+        * platform/gtk/svg/W3C-I18N/tspan-direction-rtl-expected.txt: Removed.
+        * svg/W3C-I18N/g-dirLTR-ubNone-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/g-dirLTR-ubNone-expected.txt.
+        * svg/W3C-I18N/g-dirLTR-ubOverride-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/g-dirLTR-ubOverride-expected.txt.
+        * svg/W3C-I18N/g-dirRTL-ubNone-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/g-dirRTL-ubNone-expected.txt.
+        * svg/W3C-I18N/g-dirRTL-ubOverride-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/g-dirRTL-ubOverride-expected.txt.
+        * svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.txt.
+        * svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.txt.
+        * svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.txt.
+        * svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.txt.
+        * svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.txt.
+        * svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.txt.
+        * svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.txt.
+        * svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.txt.
+        * svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.txt.
+        * svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.txt.
+        * svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.txt.
+        * svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.txt.
+        * svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.txt.
+        * svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.txt.
+        * svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.txt.
+        * svg/W3C-I18N/text-anchor-no-markup-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/text-anchor-no-markup-expected.txt.
+        * svg/W3C-I18N/text-dirLTR-ubNone-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/text-dirLTR-ubNone-expected.txt.
+        * svg/W3C-I18N/text-dirRTL-ubNone-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/text-dirRTL-ubNone-expected.txt.
+        * svg/W3C-I18N/text-dirRTL-ubOverride-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/text-dirRTL-ubOverride-expected.txt.
+        * svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.txt.
+        * svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.txt.
+        * svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.txt.
+        * svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.txt.
+        * svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.txt.
+        * svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.txt.
+        * svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.txt.
+        * svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context-expected.txt.
+        * svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context-expected.txt.
+        * svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-ltr-context-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-ltr-context-expected.txt.
+        * svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context-expected.txt.
+        * svg/W3C-I18N/tspan-dirRTL-ubNone-in-ltr-context-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/tspan-dirRTL-ubNone-in-ltr-context-expected.txt.
+        * svg/W3C-I18N/tspan-dirRTL-ubOverride-in-default-context-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-default-context-expected.txt.
+        * svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context-expected.txt.
+        * svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.txt.
+        * svg/W3C-I18N/tspan-direction-ltr-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/tspan-direction-ltr-expected.txt.
+        * svg/W3C-I18N/tspan-direction-rtl-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-I18N/tspan-direction-rtl-expected.txt.
+
+2013-11-06  Andreas Kling  <akling@apple.com>
+
         Optimize baselines: accessibility
 
         Unreviewed; run "webkit-patch optimize-baselines accessibility"
