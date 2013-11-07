@@ -1,3 +1,4 @@
+
 Test the, so far unused, 'startTime' attribute.
 
 EVENT(loadeddata)

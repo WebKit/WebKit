@@ -1,5 +1,6 @@
 Test that captions and subtitles menu items are localized.
 
+
 EVENT(canplaythrough)
 
 *** Set the user language preference.

@@ -1,3 +1,4 @@
+
 EVENT(canplay)
 EVENT(webkitfullscreenchange)
 RUN(video.volume = 1)

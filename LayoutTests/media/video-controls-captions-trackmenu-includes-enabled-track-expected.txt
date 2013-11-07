@@ -1,5 +1,5 @@
-
 Test that all enabled tracks are included in the track menu.
+
 
 EVENT(canplaythrough)
 

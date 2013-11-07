@@ -1,5 +1,6 @@
 This tests that the video element's controls are draggable in full screen. Press any key to continue.
 
+
 EVENT(webkitfullscreenchange)
 First drag.
 EXPECTED (endBox.left - startBox.left == '15') OK

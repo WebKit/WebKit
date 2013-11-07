@@ -1,5 +1,6 @@
 Tests that the video controls are properly rendered when the display none is set and unset.
 
+
 ** The volume slider should have almost the same left offset as the mute button **
 EXPECTED (volumeSliderElement.offsetLeft >= muteButtonElement.offsetLeft - threshold == 'true') OK
 EXPECTED (volumeSliderElement.offsetLeft <= muteButtonElement.offsetLeft + threshold == 'true') OK

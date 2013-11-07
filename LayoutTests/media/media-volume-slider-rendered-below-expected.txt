@@ -1,3 +1,4 @@
+
 ** Test that the volume slider is rendered correctly if the controls are near the top of the page **
 
 ** Move mouse on top of the mute button **

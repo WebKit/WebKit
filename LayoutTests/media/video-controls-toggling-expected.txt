@@ -1,5 +1,6 @@
 Tests that showing / hiding video controls uses the sets the display:none property
 
+
 ** Playing the video **
 RUN(video.play())
 
