@@ -126,11 +126,6 @@ void PageClientImpl::didRelaunchProcess()
     notImplemented();
 }
 
-void PageClientImpl::takeFocus(bool)
-{
-    notImplemented();
-}
-
 void PageClientImpl::toolTipChanged(const String&, const String& newToolTip)
 {
     webkitWebViewBaseSetTooltipText(WEBKIT_WEB_VIEW_BASE(m_viewWidget), newToolTip.utf8().data());

@@ -54,52 +54,51 @@ public:
 private:
     explicit PageClientImpl(GtkWidget*);
 
-    virtual std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy();
-    virtual void setViewNeedsDisplay(const WebCore::IntRect&);
-    virtual void displayView();
-    virtual bool canScrollView() { return false; }
-    virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
-    virtual WebCore::IntSize viewSize();
-    virtual bool isViewWindowActive();
-    virtual bool isViewFocused();
-    virtual bool isViewVisible();
-    virtual bool isViewInWindow();
-    virtual void processDidCrash();
-    virtual void didRelaunchProcess();
-    virtual void pageClosed();
-    virtual void preferencesDidChange();
-    virtual void takeFocus(bool direction);
-    virtual void toolTipChanged(const WTF::String&, const WTF::String&);
-    virtual void setCursor(const WebCore::Cursor&);
-    virtual void setCursorHiddenUntilMouseMoves(bool);
-    virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&);
-    virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
-    virtual void clearAllEditCommands();
-    virtual bool canUndoRedo(WebPageProxy::UndoOrRedo);
-    virtual void executeUndoRedo(WebPageProxy::UndoOrRedo);
-    virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);
-    virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
-    virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&);
-    virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&);
-    virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled);
-    virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*);
-    virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*);
+    virtual std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy() OVERRIDE;
+    virtual void setViewNeedsDisplay(const WebCore::IntRect&) OVERRIDE;
+    virtual void displayView() OVERRIDE;
+    virtual bool canScrollView() OVERRIDE { return false; }
+    virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) OVERRIDE;
+    virtual WebCore::IntSize viewSize() OVERRIDE;
+    virtual bool isViewWindowActive() OVERRIDE;
+    virtual bool isViewFocused() OVERRIDE;
+    virtual bool isViewVisible() OVERRIDE;
+    virtual bool isViewInWindow() OVERRIDE;
+    virtual void processDidCrash() OVERRIDE;
+    virtual void didRelaunchProcess() OVERRIDE;
+    virtual void pageClosed() OVERRIDE;
+    virtual void preferencesDidChange() OVERRIDE;
+    virtual void toolTipChanged(const WTF::String&, const WTF::String&) OVERRIDE;
+    virtual void setCursor(const WebCore::Cursor&) OVERRIDE;
+    virtual void setCursorHiddenUntilMouseMoves(bool) OVERRIDE;
+    virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&) OVERRIDE;
+    virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo) OVERRIDE;
+    virtual void clearAllEditCommands() OVERRIDE;
+    virtual bool canUndoRedo(WebPageProxy::UndoOrRedo) OVERRIDE;
+    virtual void executeUndoRedo(WebPageProxy::UndoOrRedo) OVERRIDE;
+    virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&) OVERRIDE;
+    virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) OVERRIDE;
+    virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&) OVERRIDE;
+    virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&) OVERRIDE;
+    virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) OVERRIDE;
+    virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*) OVERRIDE;
+    virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) OVERRIDE;
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual PassRefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& intialColor, const WebCore::IntRect&);
+    virtual PassRefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& intialColor, const WebCore::IntRect&) OVERRIDE;
 #endif
-    virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate);
-    virtual void getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent&, const AtomicString&, Vector<WTF::String>&);
-    virtual void updateTextInputState();
-    virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
-    virtual bool isWindowVisible();
+    virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate) OVERRIDE;
+    virtual void getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent&, const AtomicString&, Vector<WTF::String>&) OVERRIDE;
+    virtual void updateTextInputState() OVERRIDE;
+    virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage) OVERRIDE;
+    virtual bool isWindowVisible() OVERRIDE;
 
 #if USE(ACCELERATED_COMPOSITING)
-    virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
-    virtual void exitAcceleratedCompositingMode();
-    virtual void updateAcceleratedCompositingMode(const LayerTreeContext&);
+    virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) OVERRIDE;
+    virtual void exitAcceleratedCompositingMode() OVERRIDE;
+    virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) OVERRIDE;
 #endif
 
-    virtual void handleDownloadRequest(DownloadProxy*);
+    virtual void handleDownloadRequest(DownloadProxy*) OVERRIDE;
 
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;

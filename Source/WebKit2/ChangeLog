@@ -1,3 +1,13 @@
+2013-11-07  Brendan Long  <b.long@cablelabs.com>
+
+        [Gtk] Remove old takeFocus() method from PageClientImpl and mark methods as OVERRIDE
+        https://bugs.webkit.org/show_bug.cgi?id=123919
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp: Remove takeFocus().
+        * UIProcess/API/gtk/PageClientImpl.h: Remove takeFocus() and mark methods as OVERRIDE.
+
 2013-11-06  Dan Bernstein  <mitz@apple.com>
 
         Moved UIProcess/Cocoa to UIProcess/API/Cocoa.
