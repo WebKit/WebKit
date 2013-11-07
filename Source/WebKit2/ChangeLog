@@ -1,5 +1,22 @@
 2013-11-06  Anders Carlsson  <andersca@apple.com>
 
+        Implement enough functionality so that NSURLRequest objects can be decoded
+        https://bugs.webkit.org/show_bug.cgi?id=123942
+
+        Reviewed by Andreas Kling.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (-[WKRemoteObjectEncoder requiresSecureCoding]):
+        Add new method. Return YES.
+
+        (-[WKRemoteObjectDecoder decodeValueOfObjCType:at:]):
+        Add new method. This currently only handles 'i', but we'll add more variants as needed.
+
+        (-[WKRemoteObjectDecoder decodeBoolForKey:]):
+        Get a WebBoolean from the dictionary and return its value.
+
+2013-11-06  Anders Carlsson  <andersca@apple.com>
+
         Encoded object stream should be sequential
         https://bugs.webkit.org/show_bug.cgi?id=123939
 

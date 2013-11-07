@@ -255,6 +255,11 @@ static NSString *escapeKey(NSString *key)
     _currentDictionary->set(escapeKey(key), WebDouble::create(value));
 }
 
+- (BOOL)requiresSecureCoding
+{
+    return YES;
+}
+
 @end
 
 @implementation WKRemoteObjectDecoder {
@@ -282,6 +287,19 @@ static NSString *escapeKey(NSString *key)
     _objectStream = _rootDictionary->get<ImmutableArray>(objectStreamKey);
 
     return self;
+}
+
+- (void)decodeValueOfObjCType:(const char *)type at:(void *)data
+{
+    switch (*type) {
+    // int
+    case 'i':
+        *static_cast<int*>(data) = [decodeObjectFromObjectStream(self, [NSSet setWithObject:[NSNumber class]]) intValue];
+        break;
+
+    default:
+        [NSException raise:NSInvalidUnarchiveOperationException format:@"Unsupported type '%s'", type];
+    }
 }
 
 - (BOOL)allowsKeyedCoding
@@ -459,6 +477,14 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const ImmutableDictionary
 
     TemporaryChange<NSSet *> allowedClassesChange(decoder->_allowedClasses, allowedClasses);
     return decodeObject(decoder);
+}
+
+- (BOOL)decodeBoolForKey:(NSString *)key
+{
+    const WebBoolean* value = _currentDictionary->get<WebBoolean>(escapeKey(key));
+    if (!value)
+        return false;
+    return value->value();
 }
 
 - (int64_t)decodeInt64ForKey:(NSString *)key
