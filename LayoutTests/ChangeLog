@@ -1,3 +1,25 @@
+2013-11-06  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Fix handling of 'inherit' and 'initial' for grid lines
+        https://bugs.webkit.org/show_bug.cgi?id=115401
+
+        Reviewed by Andreas Kling.
+
+        Added 'inherit' and 'initial' testing support to existing tests.
+
+        * fast/css-grid-layout/grid-auto-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-auto-columns-rows-get-set.html:
+        * fast/css-grid-layout/grid-auto-flow-get-set-expected.txt:
+        * fast/css-grid-layout/grid-auto-flow-get-set.html:
+        * fast/css-grid-layout/grid-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple-expected.txt:
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set-multiple.js:
+        (testInherit): New helper function.
+        (testInitial): Ditto.
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set.js:
+        (testInherit): New helper function.
+        (testInitial): Ditto.
+
 2013-11-06  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed gardening

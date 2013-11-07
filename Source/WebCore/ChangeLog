@@ -1,3 +1,21 @@
+2013-11-06  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Fix handling of 'inherit' and 'initial' for grid lines
+        https://bugs.webkit.org/show_bug.cgi?id=115401
+
+        Reviewed by Andreas Kling.
+
+        From Blink r150585 by <jchaffraix@chromium.org>
+
+        Added support for 'inherit' and 'initial' special values to
+        grid-auto-{columns|rows} and grid-definition-{columns|rows}.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty): Resolve 'initial' and 'inherit'.
+        * rendering/style/RenderStyle.h: Added initialNamedGrid{Column|Row}Lines().
+        * rendering/style/StyleGridData.cpp:
+        (WebCore::StyleGridData::StyleGridData): Initialize m_namedGrid{Column|Row}Lines.
+
 2013-11-07  Andreas Kling  <akling@apple.com>
 
         Clean up BidiRun a little bit.

@@ -2759,6 +2759,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     }
 #endif
     case CSSPropertyWebkitGridAutoColumns: {
+        HANDLE_INHERIT_AND_INITIAL(gridAutoColumns, GridAutoColumns);
         GridTrackSize trackSize;
         if (!createGridTrackSize(value, trackSize, state))
             return;
@@ -2766,6 +2767,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
     case CSSPropertyWebkitGridAutoRows: {
+        HANDLE_INHERIT_AND_INITIAL(gridAutoRows, GridAutoRows);
         GridTrackSize trackSize;
         if (!createGridTrackSize(value, trackSize, state))
             return;
@@ -2773,6 +2775,16 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
     case CSSPropertyWebkitGridDefinitionColumns: {
+        if (isInherit) {
+            m_state.style()->setGridColumns(m_state.parentStyle()->gridColumns());
+            m_state.style()->setNamedGridColumnLines(m_state.parentStyle()->namedGridColumnLines());
+            return;
+        }
+        if (isInitial) {
+            m_state.style()->setGridColumns(RenderStyle::initialGridColumns());
+            m_state.style()->setNamedGridColumnLines(RenderStyle::initialNamedGridColumnLines());
+            return;
+        }
         Vector<GridTrackSize> trackSizes;
         NamedGridLinesMap namedGridLines;
         if (!createGridTrackList(value, trackSizes, namedGridLines, state))
@@ -2782,6 +2794,16 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
     case CSSPropertyWebkitGridDefinitionRows: {
+        if (isInherit) {
+            m_state.style()->setGridRows(m_state.parentStyle()->gridRows());
+            m_state.style()->setNamedGridRowLines(m_state.parentStyle()->namedGridRowLines());
+            return;
+        }
+        if (isInitial) {
+            m_state.style()->setGridRows(RenderStyle::initialGridRows());
+            m_state.style()->setNamedGridRowLines(RenderStyle::initialNamedGridRowLines());
+            return;
+        }
         Vector<GridTrackSize> trackSizes;
         NamedGridLinesMap namedGridLines;
         if (!createGridTrackList(value, trackSizes, namedGridLines, state))

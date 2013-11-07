@@ -74,6 +74,16 @@ PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-col
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
+
+Test setting grid-definition-columns and grid-definition-rows to 'inherit' through JS
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is '50px 1fr last'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is '101% middle 45px'
+
+Test setting grid-definition-columns and grid-definition-rows to 'initial' through JS
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is '150% middle 55px'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is '1fr line 2fr line'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
 PASS successfullyParsed is true
 
 TEST COMPLETE

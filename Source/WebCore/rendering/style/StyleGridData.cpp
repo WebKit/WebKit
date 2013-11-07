@@ -33,6 +33,8 @@ namespace WebCore {
 StyleGridData::StyleGridData()
     : m_gridColumns(RenderStyle::initialGridColumns())
     , m_gridRows(RenderStyle::initialGridRows())
+    , m_namedGridColumnLines(RenderStyle::initialNamedGridColumnLines())
+    , m_namedGridRowLines(RenderStyle::initialNamedGridRowLines())
     , m_gridAutoFlow(RenderStyle::initialGridAutoFlow())
     , m_gridAutoRows(RenderStyle::initialGridAutoRows())
     , m_gridAutoColumns(RenderStyle::initialGridAutoColumns())

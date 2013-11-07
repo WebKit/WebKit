@@ -262,3 +262,43 @@ element.style.webkitGridDefinitionColumns = "none";
 element.style.webkitGridDefinitionRows = "none";
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'none'");
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'none'");
+
+function testInherit()
+{
+    var parentElement = document.createElement("div");
+    document.body.appendChild(parentElement);
+    parentElement.style.webkitGridDefinitionColumns = "50px 'last'";
+    parentElement.style.webkitGridDefinitionRows = "'first' 101%";
+
+    element = document.createElement("div");
+    parentElement.appendChild(element);
+    element.style.webkitGridDefinitionColumns = "inherit";
+    element.style.webkitGridDefinitionRows = "inherit";
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'50px last'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'first 101%'");
+
+    document.body.removeChild(parentElement);
+}
+debug("");
+debug("Test setting grid-definition-columns and grid-definition-rows to 'inherit' through JS");
+testInherit();
+
+function testInitial()
+{
+    element = document.createElement("div");
+    document.body.appendChild(element);
+    element.style.webkitGridDefinitionColumns = "150% 'last'";
+    element.style.webkitGridDefinitionRows = "'first' 1fr";
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'150% last'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'first 1fr'");
+
+    element.style.webkitGridDefinitionColumns = "initial";
+    element.style.webkitGridDefinitionRows = "initial";
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'none'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'none'");
+
+    document.body.removeChild(element);
+}
+debug("");
+debug("Test setting grid-definition-columns and grid-definition-rows to 'initial' through JS");
+testInitial();

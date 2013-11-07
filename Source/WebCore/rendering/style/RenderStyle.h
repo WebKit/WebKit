@@ -1793,6 +1793,9 @@ public:
     static NamedGridAreaMap initialNamedGridArea() { return NamedGridAreaMap(); }
     static size_t initialNamedGridAreaCount() { return 0; }
 
+    static NamedGridLinesMap initialNamedGridColumnLines() { return NamedGridLinesMap(); }
+    static NamedGridLinesMap initialNamedGridRowLines() { return NamedGridLinesMap(); }
+
     // 'auto' is the default.
     static GridPosition initialGridPosition() { return GridPosition(); }
 

@@ -34,6 +34,16 @@ PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns')
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows') is 'auto'
+
+Test setting grid-auto-columns and grid-auto-rows to 'inherit' through JS
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns') is '50px'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows') is '101%'
+
+Test setting grid-auto-columns and grid-auto-rows to 'initial' through JS
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns') is '150%'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows') is '1fr'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows') is 'auto'
 PASS successfullyParsed is true
 
 TEST COMPLETE

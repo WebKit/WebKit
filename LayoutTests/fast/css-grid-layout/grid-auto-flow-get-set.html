@@ -26,7 +26,10 @@ if (window.testRunner)
 <div class="grid gridAutoFlowColumn" id="gridAutoFlowColumn"></div>
 <div class="grid gridAutoFlowRow" id="gridAutoFlowRow"></div>
 <div class="grid gridAutoFlowColumn">
-    <div><div class="grid gridAutoFlowInherit" id="gridAutoFlowInherit"></div></div>
+    <div class="grid gridAutoFlowInherit" id="gridAutoFlowInherit"></div>
+</div>
+<div class="grid gridAutoFlowColumn">
+    <div><div class="grid gridAutoFlowInherit" id="gridAutoFlowNoInherit"></div><div>
 </div>
 <div class="grid gridAutoFlowColumns" id="gridAutoFlowColumns"></div>
 <div class="grid gridAutoFlowRows" id="gridAutoFlowRows"></div>
@@ -50,7 +53,10 @@ if (window.testRunner)
     shouldBe("window.getComputedStyle(gridAutoFlowRows, '').getPropertyValue('-webkit-grid-auto-flow')", "'none'");
 
     var gridAutoFlowInherit = document.getElementById("gridAutoFlowInherit");
-    shouldBe("window.getComputedStyle(gridAutoFlowInherit, '').getPropertyValue('-webkit-grid-auto-flow')", "'none'");
+    shouldBe("window.getComputedStyle(gridAutoFlowInherit, '').getPropertyValue('-webkit-grid-auto-flow')", "'column'");
+
+    var gridAutoFlowNoInherit = document.getElementById("gridAutoFlowNoInherit");
+    shouldBe("window.getComputedStyle(gridAutoFlowNoInherit, '').getPropertyValue('-webkit-grid-auto-flow')", "'none'");
 
     debug("");
     debug("Test the initial value");
@@ -70,9 +76,14 @@ if (window.testRunner)
 
     debug("");
     debug("Test getting and setting bad values for -webkit-grid-auto-flow through JS");
-    document.body.appendChild(element);
     element.style.webkitGridAutoFlow = "noone";
     shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'row'");
+
+    debug("");
+    debug("Test setting -webkit-grid-auto-flow to 'initial' through JS");
+    // Reusing the value so that we can check that it is set back to its initial value.
+    element.style.webkitGridAutoFlow = "initial";
+    shouldBe("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-flow')", "'none'");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

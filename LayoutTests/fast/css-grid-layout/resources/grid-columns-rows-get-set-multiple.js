@@ -183,3 +183,43 @@ element.style.webkitGridDefinitionColumns = "10px minmax(16px, -1vw)";
 element.style.webkitGridDefinitionRows = "minmax(-1%, 15%) 10vw";
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'none'");
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'none'");
+
+function testInherit()
+{
+    var parentElement = document.createElement("div");
+    document.body.appendChild(parentElement);
+    parentElement.style.webkitGridDefinitionColumns = "50px 1fr 'last'";
+    parentElement.style.webkitGridDefinitionRows = "101% 'middle' 45px";
+
+    element = document.createElement("div");
+    parentElement.appendChild(element);
+    element.style.webkitGridDefinitionColumns = "inherit";
+    element.style.webkitGridDefinitionRows = "inherit";
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'50px 1fr last'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'101% middle 45px'");
+
+    document.body.removeChild(parentElement);
+}
+debug("");
+debug("Test setting grid-definition-columns and grid-definition-rows to 'inherit' through JS");
+testInherit();
+
+function testInitial()
+{
+    element = document.createElement("div");
+    document.body.appendChild(element);
+    element.style.webkitGridDefinitionColumns = "150% 'middle' 55px";
+    element.style.webkitGridDefinitionRows = "1fr 'line' 2fr 'line'";
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'150% middle 55px'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'1fr line 2fr line'");
+
+    element.style.webkitGridDefinitionColumns = "initial";
+    element.style.webkitGridDefinitionRows = "initial";
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'none'");
+    shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'none'");
+
+    document.body.removeChild(element);
+}
+debug("");
+debug("Test setting grid-definition-columns and grid-definition-rows to 'initial' through JS");
+testInitial();
