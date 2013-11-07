@@ -775,6 +775,10 @@ void InspectorCSSAgent::didUnregisterNamedFlowContentElement(Document* document,
 
     ErrorString errorString;
     int contentElementNodeId = m_domAgent->pushNodeToFrontend(&errorString, documentNodeId, contentElement);
+    if (!contentElementNodeId) {
+        // We've already notified that the DOM node was removed from the DOM, so there's no need to send another event.
+        return;
+    }
     m_frontend->unregisteredNamedFlowContentElement(documentNodeId, namedFlow->name().string(), contentElementNodeId);
 }
 

@@ -1,3 +1,22 @@
+2013-11-07  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: CSS Regions: Removing a content node of a ContentFlow from the DOM will send a 0 nodeId
+        https://bugs.webkit.org/show_bug.cgi?id=123577
+
+        Reviewed by  Timothy Hatcher.
+
+        Fixed the content node removal from the content flow.
+
+        * UserInterface/ContentFlowTreeContentView.js:
+        * UserInterface/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager):
+        (WebInspector.DOMTreeManager.prototype._createContentFlowFromPayload): Registered all the content nodes
+        in the _contentNodesToFlowsMap.
+        (WebInspector.DOMTreeManager.prototype._unbind): Added call to _removeContentNodeFromFlowIfNeeded.
+        (WebInspector.DOMTreeManager.prototype._removeContentNodeFromFlowIfNeeded): Called from _unbind to check
+        and remove a node from it's parent content flow if needed.
+        (WebInspector.DOMTreeManager.prototype.unregisteredNamedFlowContentElement):
+
 2013-11-06  Timothy Hatcher  <timothy@apple.com>
 
         Properly null check positionToReveal in ResourceSidebarPanel.prototype.showSourceCode.

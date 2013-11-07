@@ -183,6 +183,6 @@ WebInspector.ContentFlowTreeContentView.prototype = {
         contentNodeOutline.close();
         contentNodeOutline.element.remove();
 
-        this._nodesMap.remove(event.data.node.id);
+        this._nodesMap.delete(event.data.node.id);
     }
 };

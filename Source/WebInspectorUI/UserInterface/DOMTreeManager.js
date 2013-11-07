@@ -40,6 +40,7 @@ WebInspector.DOMTreeManager = function() {
     this._document = null;
     this._attributeLoadNodeIds = {};
     this._flows = {};
+    this._contentNodesToFlowsMap = new Map;
 }
 
 WebInspector.Object.addConstructorFunctions(WebInspector.DOMTreeManager);
@@ -337,6 +338,8 @@ WebInspector.DOMTreeManager.prototype = {
      */
     _unbind: function(node)
     {
+        this._removeContentNodeFromFlowIfNeeded(node);
+
         delete this._idToDOMNode[node.id];
         for (var i = 0; node.children && i < node.children.length; ++i)
             this._unbind(node.children[i]);
@@ -536,7 +539,14 @@ WebInspector.DOMTreeManager.prototype = {
     _createContentFlowFromPayload: function(flowPayload)
     {
         // FIXME: Collect the regions from the payload.
-        return new WebInspector.ContentFlow(flowPayload.documentNodeId, flowPayload.name, flowPayload.overset, flowPayload.content.map(this.nodeForId.bind(this)));
+        var flow = new WebInspector.ContentFlow(flowPayload.documentNodeId, flowPayload.name, flowPayload.overset, flowPayload.content.map(this.nodeForId.bind(this)));
+
+        for (var contentNode of flow.contentNodes) {
+            console.assert(!this._contentNodesToFlowsMap.has(contentNode.id));
+            this._contentNodesToFlowsMap.set(contentNode.id, flow);
+        }
+
+        return flow;
     },
 
     _updateContentFlowFromPayload: function(contentFlow, flowPayload)
@@ -557,6 +567,7 @@ WebInspector.DOMTreeManager.prototype = {
                 console.error("Error while getting the named flows for document " + documentNodeIdentifier + ": " + error);
                 return;
             }
+            this._contentNodesToFlowsMap.clear();
             var contentFlows = [];
             for (var i = 0; i < flows.length; ++i) {
                 var flowPayload = flows[i];
@@ -614,9 +625,12 @@ WebInspector.DOMTreeManager.prototype = {
     {
         var flowKey = WebInspector.DOMTreeManager._flowPayloadHashKey({documentNodeId: documentNodeIdentifier, name: flowName});
         console.assert(this._flows.hasOwnProperty(flowKey));
+        console.assert(!this._contentNodesToFlowsMap.has(contentNodeId));
 
         var flow = this._flows[flowKey];
         var contentNode = this.nodeForId(contentNodeId);
+
+        this._contentNodesToFlowsMap.set(contentNode.id, flow);
 
         if (nextContentElementNodeId)
             flow.insertContentNodeBefore(contentNode, this.nodeForId(nextContentElementNodeId));
@@ -624,11 +638,24 @@ WebInspector.DOMTreeManager.prototype = {
             flow.appendContentNode(contentNode);
     },
 
+    _removeContentNodeFromFlowIfNeeded: function(node)
+    {
+        if (!this._contentNodesToFlowsMap.has(node.id))
+            return;
+        var flow = this._contentNodesToFlowsMap.get(node.id);
+        this._contentNodesToFlowsMap.delete(node.id);
+        flow.removeContentNode(node);
+    },
+
     unregisteredNamedFlowContentElement: function(documentNodeIdentifier, flowName, contentNodeId)
     {
-        var flowKey = WebInspector.DOMTreeManager._flowPayloadHashKey({documentNodeId: documentNodeIdentifier, name: flowName});
-        console.assert(this._flows.hasOwnProperty(flowKey));
-        this._flows[flowKey].removeContentNode(this.nodeForId(contentNodeId));
+        console.assert(this._contentNodesToFlowsMap.has(contentNodeId));
+
+        var flow = this._contentNodesToFlowsMap.get(contentNodeId);
+        console.assert(flow.id === WebInspector.DOMTreeManager._flowPayloadHashKey({documentNodeId: documentNodeIdentifier, name: flowName}));
+
+        this._contentNodesToFlowsMap.delete(contentNodeId);
+        flow.removeContentNode(this.nodeForId(contentNodeId));
     }
 }
 

@@ -1,3 +1,16 @@
+2013-11-07  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: CSS Regions: Removing a content node of a ContentFlow from the DOM will send a 0 nodeId
+        https://bugs.webkit.org/show_bug.cgi?id=123577
+
+        Reviewed by Timothy Hatcher.
+
+        Added test to check that the notification that an element was removed from the ContentFlow is handled
+        correctly in the WebInspector even if the element is not part of the DOM anymore.
+
+        * inspector-protocol/model/content-flow-content-removal-expected.txt: Added.
+        * inspector-protocol/model/content-flow-content-removal.html: Added.
+
 2013-10-24  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Add mock MediaSource classes for testing.
