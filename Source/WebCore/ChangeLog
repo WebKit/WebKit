@@ -1,3 +1,53 @@
+2013-11-07  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Refactor logical left/right offset for line methods
+        https://bugs.webkit.org/show_bug.cgi?id=123898
+
+        Reviewed by David Hyatt.
+
+        Simplify the logical left/right offset for line methods and their
+        implementation, including the ComputeFloatOffsetAdapter. This also
+        reduces the number of line offset methods in RenderBlock.
+
+        No new tests, no behavior change.
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::ComputeFloatOffsetAdapter::ComputeFloatOffsetAdapter):
+        (WebCore::ComputeFloatOffsetAdapter::offset): Add a method to return
+            the offset instead of using a confusing out parameter.
+        (WebCore::::shapeOffset): Method to return the offset modified by the
+            shape delta. Moving the computation to this method allowed for
+            simplification of the users of ComputeFloatOffsetAdapter.
+        (WebCore::FloatingObjects::logicalLeftOffsetForPositioningFloat): Added this
+            method so that ShapeOutsideFloatOffsetMode isn't needed. Returns the
+            offset based on the float margin box.
+        (WebCore::FloatingObjects::logicalRightOffsetForPositioningFloat): Ditto.
+        (WebCore::FloatingObjects::logicalLeftOffset): This now only returns
+            the offset based on the shape's contour.
+        (WebCore::FloatingObjects::logicalRightOffset): Ditto.
+        (WebCore::::heightRemaining): Rename to properly follow the getter
+            naming convention.
+        * rendering/FloatingObjects.h:
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::logicalRightOffsetForLine): Update to remove
+            use of ShapeOutsideFloatOffsetMode and heightRemaining.
+        (WebCore::RenderBlock::logicalLeftOffsetForLine): Ditto.
+        (WebCore::RenderBlock::logicalRightFloatOffsetForLine): Ditto.
+        (WebCore::RenderBlock::logicalLeftFloatOffsetForLine): Ditto.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::logicalLeftOffsetForPositioningFloat):
+            Positioning a float is the only case where the float margin box
+            should be used, and also the only case where heightRemaining is
+            needed. This handles that case.
+        (WebCore::RenderBlockFlow::logicalRightOffsetForPositioningFloat):
+            Ditto.
+        (WebCore::RenderBlockFlow::computeLogicalLocationForFloat): Update to
+            use logical(Left|Right)OffsetForPositioningFloatOnLine.
+        (WebCore::RenderBlockFlow::logicalLeftFloatOffsetForLine): Update to
+            remove use for ShapeOutsideFloatOffsetMode and heightRemaining.
+        (WebCore::RenderBlockFlow::logicalRightFloatOffsetForLine): Ditto.
+        * rendering/RenderBlockFlow.h:
+
 2013-11-07  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: CSS Regions: Removing a content node of a ContentFlow from the DOM will send a 0 nodeId
