@@ -272,9 +272,6 @@ void CoordinatedDrawingAreaProxy::incorporateUpdate(const UpdateInfo& updateInfo
             m_webPageProxy->setViewNeedsDisplay(updateInfo.updateRects[i]);
     }
 
-    if (WebPageProxy::debugPaintFlags() & kWKDebugFlashBackingStoreUpdates)
-        m_webPageProxy->flashBackingStoreUpdates(updateInfo.updateRects);
-
     if (shouldScroll)
         m_webPageProxy->displayView();
 }
