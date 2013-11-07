@@ -36,7 +36,7 @@
 #include "MediaStreamCenterGStreamer.h"
 
 #include "MediaStreamCreationClient.h"
-#include "MediaStreamDescriptor.h"
+#include "MediaStreamPrivate.h"
 #include "MediaStreamSourceCapabilities.h"
 #include "MediaStreamTrackSourcesRequestClient.h"
 #include "NotImplemented.h"

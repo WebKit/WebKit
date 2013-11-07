@@ -1,3 +1,14 @@
+2013-11-07  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Changing MediaStreamDescriptor to MediaStreamPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=123935
+
+        Reviewed by Eric Carlson.
+
+        * WebCoreSupport/UserMediaClientImpl.cpp:
+        (WebCore::toMediaStreamPrivate):
+        (WebCore::WebUserMediaRequestClientImpl::requestSucceeded):
+
 2013-11-01  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Removing MediaStreamTrackVector and MediaStreamSourceVector typedefs

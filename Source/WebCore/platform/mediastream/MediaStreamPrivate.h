@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,8 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamDescriptor_h
-#define MediaStreamDescriptor_h
+#ifndef MediaStreamPrivate_h
+#define MediaStreamPrivate_h
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -44,9 +45,9 @@ namespace WebCore {
 
 class MediaStreamTrackPrivate;
 
-class MediaStreamDescriptorClient : public MediaStreamTrack::Observer {
+class MediaStreamPrivateClient : public MediaStreamTrack::Observer {
 public:
-    virtual ~MediaStreamDescriptorClient() { }
+    virtual ~MediaStreamPrivateClient() { }
 
     virtual void streamDidEnd() = 0;
     virtual void addRemoteSource(MediaStreamSource*) = 0;
@@ -55,15 +56,15 @@ public:
     virtual void removeRemoteTrack(MediaStreamTrackPrivate*) = 0;
 };
 
-class MediaStreamDescriptor : public RefCounted<MediaStreamDescriptor> {
+class MediaStreamPrivate : public RefCounted<MediaStreamPrivate> {
 public:
-    static PassRefPtr<MediaStreamDescriptor> create(const Vector<RefPtr<MediaStreamSource>>& audioSources, const Vector<RefPtr<MediaStreamSource>>& videoSources);
-    static PassRefPtr<MediaStreamDescriptor> create(const Vector<RefPtr<MediaStreamTrackPrivate>>& audioPrivateTracks, const Vector<RefPtr<MediaStreamTrackPrivate>>& videoPrivateTracks);
+    static PassRefPtr<MediaStreamPrivate> create(const Vector<RefPtr<MediaStreamSource>>& audioSources, const Vector<RefPtr<MediaStreamSource>>& videoSources);
+    static PassRefPtr<MediaStreamPrivate> create(const Vector<RefPtr<MediaStreamTrackPrivate>>& audioPrivateTracks, const Vector<RefPtr<MediaStreamTrackPrivate>>& videoPrivateTracks);
 
-    virtual ~MediaStreamDescriptor() { }
+    virtual ~MediaStreamPrivate() { }
 
-    MediaStreamDescriptorClient* client() const { return m_client; }
-    void setClient(MediaStreamDescriptorClient* client) { m_client = client; }
+    MediaStreamPrivateClient* client() const { return m_client; }
+    void setClient(MediaStreamPrivateClient* client) { m_client = client; }
 
     String id() const { return m_id; }
 
@@ -95,10 +96,10 @@ public:
     void removeRemoteTrack(MediaStreamTrackPrivate*);
 
 private:
-    MediaStreamDescriptor(const String& id, const Vector<RefPtr<MediaStreamSource>>& audioSources, const Vector<RefPtr<MediaStreamSource>>& videoSources);
-    MediaStreamDescriptor(const String& id, const Vector<RefPtr<MediaStreamTrackPrivate>>& audioPrivateTracks, const Vector<RefPtr<MediaStreamTrackPrivate>>& videoPrivateTracks);
+    MediaStreamPrivate(const String& id, const Vector<RefPtr<MediaStreamSource>>& audioSources, const Vector<RefPtr<MediaStreamSource>>& videoSources);
+    MediaStreamPrivate(const String& id, const Vector<RefPtr<MediaStreamTrackPrivate>>& audioPrivateTracks, const Vector<RefPtr<MediaStreamTrackPrivate>>& videoPrivateTracks);
 
-    MediaStreamDescriptorClient* m_client;
+    MediaStreamPrivateClient* m_client;
     String m_id;
     Vector<RefPtr<MediaStreamSource>> m_audioStreamSources;
     Vector<RefPtr<MediaStreamSource>> m_videoStreamSources;
@@ -108,10 +109,10 @@ private:
     bool m_ended;
 };
 
-typedef Vector<RefPtr<MediaStreamDescriptor>> MediaStreamDescriptorVector;
+typedef Vector<RefPtr<MediaStreamPrivate>> MediaStreamPrivateVector;
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#endif // MediaStreamDescriptor_h
+#endif // MediaStreamPrivate_h

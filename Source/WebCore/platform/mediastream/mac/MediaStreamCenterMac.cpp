@@ -36,7 +36,7 @@
 
 #include "AVCaptureDeviceManager.h"
 #include "MediaStreamCreationClient.h"
-#include "MediaStreamDescriptor.h"
+#include "MediaStreamPrivate.h"
 #include "MediaStreamTrackSourcesRequestClient.h"
 #include <wtf/MainThread.h>
 
@@ -121,7 +121,7 @@ void MediaStreamCenterMac::createMediaStream(PassRefPtr<MediaStreamCreationClien
         videoSources.append(videoSource.release());
     }
     
-    client->didCreateStream(MediaStreamDescriptor::create(audioSources, videoSources));
+    client->didCreateStream(MediaStreamPrivate::create(audioSources, videoSources));
 }
 
 bool MediaStreamCenterMac::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient> prpClient)

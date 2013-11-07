@@ -36,7 +36,7 @@
 #include "MediaStreamCenterBlackBerry.h"
 
 #include "MediaStreamCreationClient.h"
-#include "MediaStreamDescriptor.h"
+#include "MediaStreamPrivate.h"
 #include "MediaStreamTrackSourcesRequestClient.h"
 #include "NotImplemented.h"
 #include <wtf/MainThread.h>

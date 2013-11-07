@@ -41,7 +41,7 @@ public:
     virtual void constraintsValidated() = 0;
     virtual void constraintsInvalid(const String& constraintName) = 0;
 
-    virtual void didCreateStream(PassRefPtr<MediaStreamDescriptor>) = 0;
+    virtual void didCreateStream(PassRefPtr<MediaStreamPrivate>) = 0;
     virtual void failedToCreateStreamWithConstraintsError(const String& constraintName) = 0;
     virtual void failedToCreateStreamWithPermissionError() = 0;
 };

@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-class MediaStreamDescriptor;
+class MediaStreamPrivate;
 class MediaStreamSource;
 class MediaStreamSourcesQueryClient;
 

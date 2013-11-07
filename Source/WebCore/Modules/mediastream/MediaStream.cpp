@@ -2,6 +2,7 @@
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011, 2012 Ericsson AB. All rights reserved.
  * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +44,7 @@ namespace WebCore {
 
 PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context)
 {
-    return MediaStream::create(context, MediaStreamDescriptor::create(Vector<RefPtr<MediaStreamSource>>(), Vector<RefPtr<MediaStreamSource>>()));
+    return MediaStream::create(context, MediaStreamPrivate::create(Vector<RefPtr<MediaStreamSource>>(), Vector<RefPtr<MediaStreamSource>>()));
 }
 
 PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context, PassRefPtr<MediaStream> stream)
@@ -59,7 +60,7 @@ PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context, Pas
     for (size_t i = 0; i < stream->m_videoTracks.size(); ++i)
         videoTracks.append(&stream->m_videoTracks[i]->privateTrack());
 
-    return MediaStream::create(context, MediaStreamDescriptor::create(audioTracks, videoTracks));
+    return MediaStream::create(context, MediaStreamPrivate::create(audioTracks, videoTracks));
 }
 
 PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context, const Vector<RefPtr<MediaStreamTrack>>& tracks)
@@ -74,35 +75,35 @@ PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context, con
             videoTracks.append(&tracks[i]->privateTrack());
     }
 
-    return MediaStream::create(context, MediaStreamDescriptor::create(audioTracks, videoTracks));
+    return MediaStream::create(context, MediaStreamPrivate::create(audioTracks, videoTracks));
 }
 
-PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context, PassRefPtr<MediaStreamDescriptor> streamDescriptor)
+PassRefPtr<MediaStream> MediaStream::create(ScriptExecutionContext& context, PassRefPtr<MediaStreamPrivate> privateStream)
 {
-    return adoptRef(new MediaStream(context, streamDescriptor));
+    return adoptRef(new MediaStream(context, privateStream));
 }
 
-MediaStream::MediaStream(ScriptExecutionContext& context, PassRefPtr<MediaStreamDescriptor> streamDescriptor)
+MediaStream::MediaStream(ScriptExecutionContext& context, PassRefPtr<MediaStreamPrivate> privateStream)
     : ContextDestructionObserver(&context)
-    , m_descriptor(streamDescriptor)
+    , m_private(privateStream)
     , m_scheduledEventTimer(this, &MediaStream::scheduledEventTimerFired)
 {
-    ASSERT(m_descriptor);
-    m_descriptor->setClient(this);
+    ASSERT(m_private);
+    m_private->setClient(this);
 
     RefPtr<MediaStreamTrack> track;
-    size_t numberOfAudioTracks = m_descriptor->numberOfAudioTracks();
+    size_t numberOfAudioTracks = m_private->numberOfAudioTracks();
     m_audioTracks.reserveCapacity(numberOfAudioTracks);
     for (size_t i = 0; i < numberOfAudioTracks; i++) {
-        track = AudioStreamTrack::create(context, *m_descriptor->audioTracks(i));
+        track = AudioStreamTrack::create(context, *m_private->audioTracks(i));
         track->addObserver(this);
         m_audioTracks.append(track.release());
     }
 
-    size_t numberOfVideoTracks = m_descriptor->numberOfVideoTracks();
+    size_t numberOfVideoTracks = m_private->numberOfVideoTracks();
     m_videoTracks.reserveCapacity(numberOfVideoTracks);
     for (size_t i = 0; i < numberOfVideoTracks; i++) {
-        track = VideoStreamTrack::create(context, *m_descriptor->videoTracks(i));
+        track = VideoStreamTrack::create(context, *m_private->videoTracks(i));
         track->addObserver(this);
         m_videoTracks.append(track.release());
     }
@@ -110,19 +111,19 @@ MediaStream::MediaStream(ScriptExecutionContext& context, PassRefPtr<MediaStream
 
 MediaStream::~MediaStream()
 {
-    m_descriptor->setClient(0);
+    m_private->setClient(0);
 }
 
 bool MediaStream::ended() const
 {
-    return m_descriptor->ended();
+    return m_private->ended();
 }
 
 void MediaStream::setEnded()
 {
     if (ended())
         return;
-    m_descriptor->setEnded();
+    m_private->setEnded();
 }
 
 PassRefPtr<MediaStream> MediaStream::clone()
@@ -167,7 +168,7 @@ bool MediaStream::addTrack(PassRefPtr<MediaStreamTrack> prpTrack)
 
     tracks->append(track);
     track->addObserver(this);
-    m_descriptor->addTrack(&track->privateTrack());
+    m_private->addTrack(&track->privateTrack());
     return true;
 }
 
@@ -198,13 +199,13 @@ bool MediaStream::removeTrack(PassRefPtr<MediaStreamTrack> prpTrack)
         return false;
 
     tracks->remove(pos);
-    m_descriptor->removeTrack(&track->privateTrack());
+    m_private->removeTrack(&track->privateTrack());
     // There can be other tracks using the same source in the same MediaStream,
     // like when MediaStreamTrack::clone() is called, for instance.
     // Spec says that a source can be shared, so we must assure that there is no
     // other track using it.
     if (!haveTrackWithSource(track->source()))
-        m_descriptor->removeSource(track->source());
+        m_private->removeSource(track->source());
 
     track->removeObserver(this);
     if (!m_audioTracks.size() && !m_videoTracks.size())
@@ -293,11 +294,11 @@ void MediaStream::removeRemoteSource(MediaStreamSource* source)
         RefPtr<MediaStreamTrack> track = (*tracks)[i];
         track->removeObserver(this);
         tracks->remove(i);
-        m_descriptor->removeTrack(&track->privateTrack());
+        m_private->removeTrack(&track->privateTrack());
         scheduleDispatchEvent(MediaStreamTrackEvent::create(eventNames().removetrackEvent, false, false, track.release()));
     }
 
-    m_descriptor->removeSource(source);
+    m_private->removeSource(source);
 }
 
 void MediaStream::addRemoteTrack(MediaStreamTrackPrivate* privateTrack)

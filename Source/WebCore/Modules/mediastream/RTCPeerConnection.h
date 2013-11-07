@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -115,8 +116,8 @@ public:
     virtual void didChangeSignalingState(SignalingState) OVERRIDE;
     virtual void didChangeIceGatheringState(IceGatheringState) OVERRIDE;
     virtual void didChangeIceConnectionState(IceConnectionState) OVERRIDE;
-    virtual void didAddRemoteStream(PassRefPtr<MediaStreamDescriptor>) OVERRIDE;
-    virtual void didRemoveRemoteStream(MediaStreamDescriptor*) OVERRIDE;
+    virtual void didAddRemoteStream(PassRefPtr<MediaStreamPrivate>) OVERRIDE;
+    virtual void didRemoveRemoteStream(MediaStreamPrivate*) OVERRIDE;
     virtual void didAddRemoteDataChannel(PassOwnPtr<RTCDataChannelHandler>) OVERRIDE;
 
     // EventTarget

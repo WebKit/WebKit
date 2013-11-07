@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,7 +34,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamDescriptor.h"
+#include "MediaStreamPrivate.h"
 
 #include "MediaStreamCenter.h"
 #include "UUID.h"
@@ -42,17 +43,17 @@
 
 namespace WebCore {
 
-PassRefPtr<MediaStreamDescriptor> MediaStreamDescriptor::create(const Vector<RefPtr<MediaStreamSource>>& audioSources, const Vector<RefPtr<MediaStreamSource>>& videoSources)
+PassRefPtr<MediaStreamPrivate> MediaStreamPrivate::create(const Vector<RefPtr<MediaStreamSource>>& audioSources, const Vector<RefPtr<MediaStreamSource>>& videoSources)
 {
-    return adoptRef(new MediaStreamDescriptor(createCanonicalUUIDString(), audioSources, videoSources));
+    return adoptRef(new MediaStreamPrivate(createCanonicalUUIDString(), audioSources, videoSources));
 }
 
-PassRefPtr<MediaStreamDescriptor> MediaStreamDescriptor::create(const Vector<RefPtr<MediaStreamTrackPrivate>>& audioPrivateTracks, const Vector<RefPtr<MediaStreamTrackPrivate>>& videoPrivateTracks)
+PassRefPtr<MediaStreamPrivate> MediaStreamPrivate::create(const Vector<RefPtr<MediaStreamTrackPrivate>>& audioPrivateTracks, const Vector<RefPtr<MediaStreamTrackPrivate>>& videoPrivateTracks)
 {
-    return adoptRef(new MediaStreamDescriptor(createCanonicalUUIDString(), audioPrivateTracks, videoPrivateTracks));
+    return adoptRef(new MediaStreamPrivate(createCanonicalUUIDString(), audioPrivateTracks, videoPrivateTracks));
 }
 
-void MediaStreamDescriptor::addSource(PassRefPtr<MediaStreamSource> prpSource)
+void MediaStreamPrivate::addSource(PassRefPtr<MediaStreamSource> prpSource)
 {
     RefPtr<MediaStreamSource> source = prpSource;
     switch (source->type()) {
@@ -70,7 +71,7 @@ void MediaStreamDescriptor::addSource(PassRefPtr<MediaStreamSource> prpSource)
     }
 }
 
-void MediaStreamDescriptor::removeSource(PassRefPtr<MediaStreamSource> source)
+void MediaStreamPrivate::removeSource(PassRefPtr<MediaStreamSource> source)
 {
     size_t pos = notFound;
     switch (source->type()) {
@@ -92,7 +93,7 @@ void MediaStreamDescriptor::removeSource(PassRefPtr<MediaStreamSource> source)
     }
 }
 
-void MediaStreamDescriptor::addRemoteSource(MediaStreamSource* source)
+void MediaStreamPrivate::addRemoteSource(MediaStreamSource* source)
 {
     if (m_client)
         m_client->addRemoteSource(source);
@@ -100,7 +101,7 @@ void MediaStreamDescriptor::addRemoteSource(MediaStreamSource* source)
         addSource(source);
 }
 
-void MediaStreamDescriptor::removeRemoteSource(MediaStreamSource* source)
+void MediaStreamPrivate::removeRemoteSource(MediaStreamSource* source)
 {
     if (m_client)
         m_client->removeRemoteSource(source);
@@ -108,7 +109,7 @@ void MediaStreamDescriptor::removeRemoteSource(MediaStreamSource* source)
         removeSource(source);
 }
 
-void MediaStreamDescriptor::addRemoteTrack(MediaStreamTrackPrivate* track)
+void MediaStreamPrivate::addRemoteTrack(MediaStreamTrackPrivate* track)
 {
     if (m_client)
         m_client->addRemoteTrack(track);
@@ -116,7 +117,7 @@ void MediaStreamDescriptor::addRemoteTrack(MediaStreamTrackPrivate* track)
         addTrack(track);
 }
 
-void MediaStreamDescriptor::removeRemoteTrack(MediaStreamTrackPrivate* track)
+void MediaStreamPrivate::removeRemoteTrack(MediaStreamTrackPrivate* track)
 {
     if (m_client)
         m_client->removeRemoteTrack(track);
@@ -124,7 +125,7 @@ void MediaStreamDescriptor::removeRemoteTrack(MediaStreamTrackPrivate* track)
         removeTrack(track);
 }
 
-MediaStreamDescriptor::MediaStreamDescriptor(const String& id, const Vector<RefPtr<MediaStreamSource>>& audioSources, const Vector<RefPtr<MediaStreamSource>>& videoSources)
+MediaStreamPrivate::MediaStreamPrivate(const String& id, const Vector<RefPtr<MediaStreamSource>>& audioSources, const Vector<RefPtr<MediaStreamSource>>& videoSources)
     : m_client(0)
     , m_id(id)
     , m_ended(false)
@@ -138,13 +139,13 @@ MediaStreamDescriptor::MediaStreamDescriptor(const String& id, const Vector<RefP
 
     unsigned providedSourcesSize = audioSources.size() + videoSources.size();
     unsigned tracksSize = m_audioPrivateTracks.size() + m_videoPrivateTracks.size();
-    // If sources were provided and no track was added to the MediaStreamDescriptor's tracks, this means
+    // If sources were provided and no track was added to the MediaStreamPrivate's tracks, this means
     // that the tracks were all ended
     if (providedSourcesSize > 0 && !tracksSize)
         m_ended = true;
 }
 
-MediaStreamDescriptor::MediaStreamDescriptor(const String& id, const Vector<RefPtr<MediaStreamTrackPrivate>>& audioPrivateTracks, const Vector<RefPtr<MediaStreamTrackPrivate>>& videoPrivateTracks)
+MediaStreamPrivate::MediaStreamPrivate(const String& id, const Vector<RefPtr<MediaStreamTrackPrivate>>& audioPrivateTracks, const Vector<RefPtr<MediaStreamTrackPrivate>>& videoPrivateTracks)
     : m_client(0)
     , m_id(id)
     , m_ended(false)
@@ -158,13 +159,13 @@ MediaStreamDescriptor::MediaStreamDescriptor(const String& id, const Vector<RefP
 
     unsigned providedTracksSize = audioPrivateTracks.size() + videoPrivateTracks.size();
     unsigned tracksSize = m_audioPrivateTracks.size() + m_videoPrivateTracks.size();
-    // If tracks were provided and no one was added to the MediaStreamDescriptor's tracks, this means
+    // If tracks were provided and no one was added to the MediaStreamPrivate's tracks, this means
     // that the tracks were all ended
     if (providedTracksSize > 0 && !tracksSize)
         m_ended = true;
 }
 
-void MediaStreamDescriptor::setEnded()
+void MediaStreamPrivate::setEnded()
 {
     if (m_client)
         m_client->streamDidEnd();
@@ -172,7 +173,7 @@ void MediaStreamDescriptor::setEnded()
     m_ended = true;
 }
 
-void MediaStreamDescriptor::addTrack(PassRefPtr<MediaStreamTrackPrivate> prpTrack)
+void MediaStreamPrivate::addTrack(PassRefPtr<MediaStreamTrackPrivate> prpTrack)
 {
     RefPtr<MediaStreamTrackPrivate> track = prpTrack;
     if (track->ended())
@@ -189,7 +190,7 @@ void MediaStreamDescriptor::addTrack(PassRefPtr<MediaStreamTrackPrivate> prpTrac
         addSource(track->source());
 }
 
-void MediaStreamDescriptor::removeTrack(PassRefPtr<MediaStreamTrackPrivate> track)
+void MediaStreamPrivate::removeTrack(PassRefPtr<MediaStreamTrackPrivate> track)
 {
     Vector<RefPtr<MediaStreamTrackPrivate>>& tracks = track->type() == MediaStreamSource::Audio ? m_audioPrivateTracks : m_videoPrivateTracks;
 

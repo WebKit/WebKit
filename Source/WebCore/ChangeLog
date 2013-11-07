@@ -1,3 +1,96 @@
+2013-11-07  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Changing MediaStreamDescriptor to MediaStreamPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=123935
+
+        Reviewed by Eric Carlson.
+
+        No new tests needed.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::create):
+        (WebCore::MediaStream::MediaStream):
+        (WebCore::MediaStream::~MediaStream):
+        (WebCore::MediaStream::ended):
+        (WebCore::MediaStream::setEnded):
+        (WebCore::MediaStream::addTrack):
+        (WebCore::MediaStream::removeTrack):
+        (WebCore::MediaStream::removeRemoteSource):
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStreamRegistry.cpp:
+        (WebCore::MediaStreamRegistry::registerURL):
+        (WebCore::MediaStreamRegistry::unregisterURL):
+        (WebCore::MediaStreamRegistry::lookupMediaStreamPrivate):
+        * Modules/mediastream/MediaStreamRegistry.h:
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::addStream):
+        (WebCore::RTCPeerConnection::removeStream):
+        (WebCore::RTCPeerConnection::didAddRemoteStream):
+        (WebCore::RTCPeerConnection::didRemoveRemoteStream):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::didCreateStream):
+        (WebCore::UserMediaRequest::callSuccessHandler):
+        * Modules/mediastream/UserMediaRequest.h:
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode):
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.cpp:
+        (HTMLMediaElement::loadResource):
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.cpp:
+        (WebCore::toWebMediaStreamPrivate):
+        (WebCore::MediaPlayerPrivate::lookupMediaStream):
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.h:
+        * platform/mediastream/MediaStreamCenter.cpp:
+        * platform/mediastream/MediaStreamCreationClient.h:
+        * platform/mediastream/MediaStreamPrivate.cpp: Renamed from Source/WebCore/platform/mediastream/MediaStreamDescriptor.cpp.
+        (WebCore::MediaStreamPrivate::create):
+        (WebCore::MediaStreamPrivate::addSource):
+        (WebCore::MediaStreamPrivate::removeSource):
+        (WebCore::MediaStreamPrivate::addRemoteSource):
+        (WebCore::MediaStreamPrivate::removeRemoteSource):
+        (WebCore::MediaStreamPrivate::addRemoteTrack):
+        (WebCore::MediaStreamPrivate::removeRemoteTrack):
+        (WebCore::MediaStreamPrivate::MediaStreamPrivate):
+        (WebCore::MediaStreamPrivate::setEnded):
+        (WebCore::MediaStreamPrivate::addTrack):
+        (WebCore::MediaStreamPrivate::removeTrack):
+        * platform/mediastream/MediaStreamPrivate.h: Renamed from Source/WebCore/platform/mediastream/MediaStreamDescriptor.h.
+        (WebCore::MediaStreamPrivateClient::~MediaStreamPrivateClient):
+        (WebCore::MediaStreamPrivate::~MediaStreamPrivate):
+        (WebCore::MediaStreamPrivate::client):
+        (WebCore::MediaStreamPrivate::setClient):
+        (WebCore::MediaStreamPrivate::id):
+        (WebCore::MediaStreamPrivate::numberOfAudioSources):
+        (WebCore::MediaStreamPrivate::audioSources):
+        (WebCore::MediaStreamPrivate::numberOfVideoSources):
+        (WebCore::MediaStreamPrivate::videoSources):
+        (WebCore::MediaStreamPrivate::numberOfAudioTracks):
+        (WebCore::MediaStreamPrivate::audioTracks):
+        (WebCore::MediaStreamPrivate::numberOfVideoTracks):
+        (WebCore::MediaStreamPrivate::videoTracks):
+        (WebCore::MediaStreamPrivate::ended):
+        * platform/mediastream/MediaStreamSource.cpp:
+        * platform/mediastream/MediaStreamSource.h:
+        * platform/mediastream/RTCPeerConnectionHandler.h:
+        * platform/mediastream/RTCPeerConnectionHandlerClient.h:
+        * platform/mediastream/blackberry/MediaStreamCenterBlackBerry.cpp:
+        * platform/mediastream/blackberry/MediaStreamCenterBlackBerry.h:
+        * platform/mediastream/gstreamer/MediaStreamCenterGStreamer.cpp:
+        * platform/mediastream/gstreamer/MediaStreamCenterGStreamer.h:
+        * platform/mediastream/mac/MediaStreamCenterMac.cpp:
+        (WebCore::MediaStreamCenterMac::createMediaStream):
+        * platform/mock/MockMediaStreamCenter.cpp:
+        (WebCore::MockMediaStreamCenter::createMediaStream):
+        * platform/mock/RTCPeerConnectionHandlerMock.cpp:
+        (WebCore::RTCPeerConnectionHandlerMock::addStream):
+        (WebCore::RTCPeerConnectionHandlerMock::removeStream):
+        * platform/mock/RTCPeerConnectionHandlerMock.h:
+
 2013-11-07  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [GTK] Glyphs in vertical text tests are rotated 90 degrees clockwise

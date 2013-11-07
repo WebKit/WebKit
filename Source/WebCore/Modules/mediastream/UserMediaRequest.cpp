@@ -2,6 +2,7 @@
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +43,7 @@
 #include "MediaConstraintsImpl.h"
 #include "MediaStream.h"
 #include "MediaStreamCenter.h"
-#include "MediaStreamDescriptor.h"
+#include "MediaStreamPrivate.h"
 #include "SecurityOrigin.h"
 #include "UserMediaController.h"
 #include <wtf/Functional.h>
@@ -150,20 +151,20 @@ void UserMediaRequest::constraintsInvalid(const String& constraintName)
     failedToCreateStreamWithConstraintsError(constraintName);
 }
 
-void UserMediaRequest::didCreateStream(PassRefPtr<MediaStreamDescriptor> streamDescriptor)
+void UserMediaRequest::didCreateStream(PassRefPtr<MediaStreamPrivate> privateStream)
 {
     if (!m_scriptExecutionContext || !m_successCallback)
         return;
 
-    callOnMainThread(bind(&UserMediaRequest::callSuccessHandler, this, streamDescriptor));
+    callOnMainThread(bind(&UserMediaRequest::callSuccessHandler, this, privateStream));
 }
 
-void UserMediaRequest::callSuccessHandler(PassRefPtr<MediaStreamDescriptor> streamDescriptor)
+void UserMediaRequest::callSuccessHandler(PassRefPtr<MediaStreamPrivate> privateStream)
 {
     // 4 - Create the MediaStream and pass it to the success callback.
     ASSERT(m_successCallback);
 
-    RefPtr<MediaStream> stream = MediaStream::create(*m_scriptExecutionContext, streamDescriptor);
+    RefPtr<MediaStream> stream = MediaStream::create(*m_scriptExecutionContext, privateStream);
 
     Vector<RefPtr<MediaStreamTrack>> tracks = stream->getAudioTracks();
     for (auto iter = tracks.begin(); iter != tracks.end(); ++iter)

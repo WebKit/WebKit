@@ -20,13 +20,13 @@
 #include "UserMediaClientImpl.h"
 
 #if ENABLE(MEDIA_STREAM)
-#include "MediaStreamDescriptor.h"
+#include "MediaStreamPrivate.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "WebPage.h"
 #include "WebPageClient.h"
 
-#include <BlackBerryPlatformWebMediaStreamDescriptor.h>
+#include <BlackBerryPlatformWebMediaStreamPrivate.h>
 #include <BlackBerryPlatformWebUserMediaRequest.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
@@ -53,7 +53,7 @@ static PassRefPtr<MediaStreamSource> toMediaStreamSource(const WebMediaStreamSou
     return MediaStreamSource::create(WTF::String::fromUTF8(src.id().c_str()), static_cast<MediaStreamSource::Type>(src.type()), WTF::String::fromUTF8(src.name().c_str()));
 }
 
-static PassRefPtr<MediaStreamDescriptor> toMediaStreamDescriptor(const WebMediaStreamDescriptor& d)
+static PassRefPtr<MediaStreamPrivate> toMediaStreamPrivate(const WebMediaStreamPrivate& d)
 {
     Vector<RefPtr<MediaStreamSource>> audioSources;
     for (size_t i = 0; i < d.audios().size(); i++) {
@@ -67,7 +67,7 @@ static PassRefPtr<MediaStreamDescriptor> toMediaStreamDescriptor(const WebMediaS
         videoSources.append(src.release());
     }
 
-    return MediaStreamDescriptor::create(WTF::String::fromUTF8(d.label().c_str()), audioSources, videoSources);
+    return MediaStreamPrivate::create(WTF::String::fromUTF8(d.label().c_str()), audioSources, videoSources);
 }
 
 class WebUserMediaRequestClientImpl : public WebUserMediaRequestClient {
@@ -77,10 +77,10 @@ public:
     {
     }
 
-    void requestSucceeded(const WebMediaStreamDescriptor& d)
+    void requestSucceeded(const WebMediaStreamPrivate& d)
     {
         if (m_request) {
-            RefPtr<MediaStreamDescriptor> descriptor = toMediaStreamDescriptor(d);
+            RefPtr<MediaStreamPrivate> descriptor = toMediaStreamPrivate(d);
             m_request->succeed(descriptor);
 
             userMediaRequestsMap().remove(m_request.get());

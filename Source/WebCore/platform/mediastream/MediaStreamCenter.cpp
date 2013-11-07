@@ -35,7 +35,7 @@
 
 #include "MediaStreamCenter.h"
 
-#include "MediaStreamDescriptor.h"
+#include "MediaStreamPrivate.h"
 
 namespace WebCore {
 

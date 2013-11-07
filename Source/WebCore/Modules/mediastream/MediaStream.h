@@ -2,6 +2,7 @@
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +33,7 @@
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
 #include "ExceptionBase.h"
-#include "MediaStreamDescriptor.h"
+#include "MediaStreamPrivate.h"
 #include "MediaStreamTrack.h"
 #include "ScriptWrappable.h"
 #include "Timer.h"
@@ -44,15 +45,15 @@ namespace WebCore {
 
 class MediaStreamCenter;
 
-class MediaStream FINAL : public RefCounted<MediaStream>, public URLRegistrable, public ScriptWrappable, public MediaStreamDescriptorClient, public EventTargetWithInlineData, public ContextDestructionObserver {
+class MediaStream FINAL : public RefCounted<MediaStream>, public URLRegistrable, public ScriptWrappable, public MediaStreamPrivateClient, public EventTargetWithInlineData, public ContextDestructionObserver {
 public:
     static PassRefPtr<MediaStream> create(ScriptExecutionContext&);
     static PassRefPtr<MediaStream> create(ScriptExecutionContext&, PassRefPtr<MediaStream>);
     static PassRefPtr<MediaStream> create(ScriptExecutionContext&, const Vector<RefPtr<MediaStreamTrack>>&);
-    static PassRefPtr<MediaStream> create(ScriptExecutionContext&, PassRefPtr<MediaStreamDescriptor>);
+    static PassRefPtr<MediaStream> create(ScriptExecutionContext&, PassRefPtr<MediaStreamPrivate>);
     virtual ~MediaStream();
 
-    String id() const { return m_descriptor->id(); }
+    String id() const { return m_private->id(); }
 
     void addTrack(PassRefPtr<MediaStreamTrack>, ExceptionCode&);
     void removeTrack(PassRefPtr<MediaStreamTrack>, ExceptionCode&);
@@ -69,7 +70,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(addtrack);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(removetrack);
 
-    MediaStreamDescriptor* descriptor() const { return m_descriptor.get(); }
+    MediaStreamPrivate* privateStream() const { return m_private.get(); }
 
     // EventTarget
     virtual EventTargetInterface eventTargetInterface() const FINAL { return MediaStreamEventTargetInterfaceType; }
@@ -82,7 +83,7 @@ public:
     virtual URLRegistry& registry() const OVERRIDE;
 
 protected:
-    MediaStream(ScriptExecutionContext&, PassRefPtr<MediaStreamDescriptor>);
+    MediaStream(ScriptExecutionContext&, PassRefPtr<MediaStreamPrivate>);
 
     // ContextDestructionObserver
     virtual void contextDestroyed() OVERRIDE FINAL;
@@ -92,7 +93,7 @@ private:
     virtual void refEventTarget() OVERRIDE FINAL { ref(); }
     virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
 
-    // MediaStreamDescriptorClient
+    // MediaStreamPrivateClient
     virtual void trackDidEnd() OVERRIDE FINAL;
     virtual void streamDidEnd() OVERRIDE FINAL;
     virtual void addRemoteSource(MediaStreamSource*) OVERRIDE FINAL;
@@ -112,7 +113,7 @@ private:
 
     Vector<RefPtr<MediaStreamTrack>>* trackVectorForType(MediaStreamSource::Type);
 
-    RefPtr<MediaStreamDescriptor> m_descriptor;
+    RefPtr<MediaStreamPrivate> m_private;
     Vector<RefPtr<MediaStreamTrack>> m_audioTracks;
     Vector<RefPtr<MediaStreamTrack>> m_videoTracks;
 

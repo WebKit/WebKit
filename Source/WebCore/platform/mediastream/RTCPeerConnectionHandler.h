@@ -33,7 +33,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamDescriptor.h"
+#include "MediaStreamPrivate.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
@@ -85,8 +85,8 @@ public:
     virtual PassRefPtr<RTCSessionDescriptionDescriptor> remoteDescription() = 0;
     virtual bool updateIce(PassRefPtr<RTCConfiguration>, PassRefPtr<MediaConstraints>) = 0;
     virtual bool addIceCandidate(PassRefPtr<RTCVoidRequest>, PassRefPtr<RTCIceCandidateDescriptor>) = 0;
-    virtual bool addStream(PassRefPtr<MediaStreamDescriptor>, PassRefPtr<MediaConstraints>) = 0;
-    virtual void removeStream(PassRefPtr<MediaStreamDescriptor>) = 0;
+    virtual bool addStream(PassRefPtr<MediaStreamPrivate>, PassRefPtr<MediaConstraints>) = 0;
+    virtual void removeStream(PassRefPtr<MediaStreamPrivate>) = 0;
     virtual void getStats(PassRefPtr<RTCStatsRequest>) = 0;
     virtual PassOwnPtr<RTCDataChannelHandler> createDataChannel(const String& label, const RTCDataChannelInit&) = 0;
     virtual PassOwnPtr<RTCDTMFSenderHandler> createDTMFSender(PassRefPtr<MediaStreamSource>) = 0;

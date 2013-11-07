@@ -25,7 +25,7 @@
 #include "CredentialStorage.h"
 #include "DOMFileSystemBase.h"
 #include "HostWindow.h"
-#include "MediaStreamDescriptor.h"
+#include "MediaStreamPrivate.h"
 #include "MediaStreamRegistry.h"
 #include "SecurityOrigin.h"
 
@@ -820,7 +820,7 @@ static WebMediaStreamSource toWebMediaStreamSource(MediaStreamSource* src)
     return WebMediaStreamSource(src->id(), static_cast<WebMediaStreamSource::Type>(src->type()), src->name());
 }
 
-static WebMediaStreamDescriptor toWebMediaStreamDescriptor(MediaStreamDescriptor* d)
+static WebMediaStreamPrivate toWebMediaStreamPrivate(MediaStreamPrivate* d)
 {
     vector<WebMediaStreamSource> audioSources;
     for (size_t i = 0; i < d->numberOfAudioComponents(); i++)
@@ -830,16 +830,16 @@ static WebMediaStreamDescriptor toWebMediaStreamDescriptor(MediaStreamDescriptor
     for (size_t i = 0; i < d->numberOfVideoComponents(); i++)
         videoSources.push_back(toWebMediaStreamSource(d->videoComponent(i)->source()));
 
-    return WebMediaStreamDescriptor(d->id(), audioSources, videoSources);
+    return WebMediaStreamPrivate(d->id(), audioSources, videoSources);
 }
 
-WebMediaStreamDescriptor MediaPlayerPrivate::lookupMediaStream(const BlackBerry::Platform::String& url)
+WebMediaStreamPrivate MediaPlayerPrivate::lookupMediaStream(const BlackBerry::Platform::String& url)
 {
-    MediaStreamDescriptor* descriptor = MediaStreamRegistry::registry().lookupMediaStreamDescriptor(WTF::String::fromUTF8(url.c_str()));
+    MediaStreamPrivate* descriptor = MediaStreamRegistry::registry().lookupMediaStreamPrivate(WTF::String::fromUTF8(url.c_str()));
     if (!descriptor)
-        return WebMediaStreamDescriptor();
+        return WebMediaStreamPrivate();
 
-    return toWebMediaStreamDescriptor(descriptor);
+    return toWebMediaStreamPrivate(descriptor);
 }
 
 BlackBerry::Platform::Graphics::Window* MediaPlayerPrivate::platformWindow()

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +37,7 @@ namespace WebCore {
 
 class URL;
 class MediaStream;
-class MediaStreamDescriptor;
+class MediaStreamPrivate;
 
 class MediaStreamRegistry : public URLRegistry {
 public:
@@ -47,10 +48,10 @@ public:
     virtual void registerURL(SecurityOrigin*, const URL&, URLRegistrable*) OVERRIDE;
     virtual void unregisterURL(const URL&) OVERRIDE;
 
-    MediaStreamDescriptor* lookupMediaStreamDescriptor(const String& url);
+    MediaStreamPrivate* lookupMediaStreamPrivate(const String& url);
 
 private:
-    HashMap<String, RefPtr<MediaStreamDescriptor>> m_streamDescriptors;
+    HashMap<String, RefPtr<MediaStreamPrivate>> m_privateStreams;
 };
 
 } // namespace WebCore

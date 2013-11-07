@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,7 +49,7 @@ namespace WebCore {
 class Dictionary;
 class Document;
 class MediaConstraints;
-class MediaStreamDescriptor;
+class MediaStreamPrivate;
 class UserMediaController;
 class SecurityOrigin;
 
@@ -71,14 +72,14 @@ private:
     // MediaStreamCreationClient
     virtual void constraintsValidated() OVERRIDE FINAL;
     virtual void constraintsInvalid(const String& constraintName) OVERRIDE FINAL;
-    virtual void didCreateStream(PassRefPtr<MediaStreamDescriptor>) OVERRIDE FINAL;
+    virtual void didCreateStream(PassRefPtr<MediaStreamPrivate>) OVERRIDE FINAL;
     virtual void failedToCreateStreamWithConstraintsError(const String& constraintName) OVERRIDE FINAL;
     virtual void failedToCreateStreamWithPermissionError() OVERRIDE FINAL;
 
     // ContextDestructionObserver
     virtual void contextDestroyed() OVERRIDE FINAL;
     
-    void callSuccessHandler(PassRefPtr<MediaStreamDescriptor>);
+    void callSuccessHandler(PassRefPtr<MediaStreamPrivate>);
     void callErrorHandler(PassRefPtr<NavigatorUserMediaError>);
     void requestPermission();
     void createMediaStream();

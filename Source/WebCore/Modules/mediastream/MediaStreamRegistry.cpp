@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,19 +46,19 @@ void MediaStreamRegistry::registerURL(SecurityOrigin*, const URL& url, URLRegist
 {
     ASSERT(&stream->registry() == this);
     ASSERT(isMainThread());
-    m_streamDescriptors.set(url.string(), static_cast<MediaStream*>(stream)->descriptor());
+    m_privateStreams.set(url.string(), static_cast<MediaStream*>(stream)->privateStream());
 }
 
 void MediaStreamRegistry::unregisterURL(const URL& url)
 {
     ASSERT(isMainThread());
-    m_streamDescriptors.remove(url.string());
+    m_privateStreams.remove(url.string());
 }
 
-MediaStreamDescriptor* MediaStreamRegistry::lookupMediaStreamDescriptor(const String& url)
+MediaStreamPrivate* MediaStreamRegistry::lookupMediaStreamPrivate(const String& url)
 {
     ASSERT(isMainThread());
-    return m_streamDescriptors.get(url);
+    return m_privateStreams.get(url);
 }
 
 } // namespace WebCore

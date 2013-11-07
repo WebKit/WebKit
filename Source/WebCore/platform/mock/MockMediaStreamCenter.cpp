@@ -31,7 +31,7 @@
 
 #include "MediaStream.h"
 #include "MediaStreamCreationClient.h"
-#include "MediaStreamDescriptor.h"
+#include "MediaStreamPrivate.h"
 #include "MediaStreamSource.h"
 #include "MediaStreamSourceCapabilities.h"
 #include "MediaStreamTrack.h"
@@ -229,7 +229,7 @@ void MockMediaStreamCenter::createMediaStream(PassRefPtr<MediaStreamCreationClie
         videoSources.append(videoSource.release());
     }
     
-    client->didCreateStream(MediaStreamDescriptor::create(audioSources, videoSources));
+    client->didCreateStream(MediaStreamPrivate::create(audioSources, videoSources));
 }
 
 bool MockMediaStreamCenter::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient> prpClient)

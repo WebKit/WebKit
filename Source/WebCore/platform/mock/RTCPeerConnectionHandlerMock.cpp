@@ -133,14 +133,14 @@ bool RTCPeerConnectionHandlerMock::addIceCandidate(PassRefPtr<RTCVoidRequest> re
     return true;
 }
 
-bool RTCPeerConnectionHandlerMock::addStream(PassRefPtr<MediaStreamDescriptor>, PassRefPtr<MediaConstraints>)
+bool RTCPeerConnectionHandlerMock::addStream(PassRefPtr<MediaStreamPrivate>, PassRefPtr<MediaConstraints>)
 {
     // Spec states that every time a stream is added, a negotiationneeded event must be fired.
     m_client->negotiationNeeded();
     return true;
 }
 
-void RTCPeerConnectionHandlerMock::removeStream(PassRefPtr<MediaStreamDescriptor>)
+void RTCPeerConnectionHandlerMock::removeStream(PassRefPtr<MediaStreamPrivate>)
 {
     // Spec states that every time a stream is removed, a negotiationneeded event must be fired.
     m_client->negotiationNeeded();
