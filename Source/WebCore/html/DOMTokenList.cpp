@@ -79,7 +79,7 @@ void DOMTokenList::add(const Vector<String>& tokens, ExceptionCode& ec)
     for (size_t i = 0; i < tokens.size(); ++i) {
         if (!validateToken(tokens[i], ec))
             return;
-        if (!containsInternal(tokens[i]))
+        if (!containsInternal(tokens[i]) && !filteredTokens.contains(tokens[i]))
             filteredTokens.append(tokens[i]);
     }
 

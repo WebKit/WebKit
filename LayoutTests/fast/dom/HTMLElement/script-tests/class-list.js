@@ -299,7 +299,7 @@ shouldBeEqualToString('element.className', 'a b c null d undefined 0 false');
 
 createElement('');
 element.classList.add('a', 'b', 'a');
-shouldBeEqualToString('element.className', 'a b a');
+shouldBeEqualToString('element.className', 'a b');
 
 createElement('');
 shouldThrowDOMException(function() {

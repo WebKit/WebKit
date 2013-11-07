@@ -89,7 +89,7 @@ Variadic calls
 PASS element.className is "a b"
 PASS element.className is "a b c"
 PASS element.className is "a b c null d undefined 0 false"
-PASS element.className is "a b a"
+PASS element.className is "a b"
 PASS element.classList.add('a', 'b', '') threw expected DOMException with code 12
 PASS element.className is ""
 PASS element.classList.add('a', 'b', 'c d') threw expected DOMException with code 5
