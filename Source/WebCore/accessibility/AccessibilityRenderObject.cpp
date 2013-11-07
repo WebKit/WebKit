@@ -2310,10 +2310,9 @@ void AccessibilityRenderObject::handleActiveDescendantChanged()
     if (!element)
         return;
     if (!renderer()->frame().selection().isFocusedAndActive() || renderer()->document().focusedElement() != element)
-        return; 
-    AccessibilityRenderObject* activedescendant = static_cast<AccessibilityRenderObject*>(activeDescendant());
-    
-    if (activedescendant && shouldNotifyActiveDescendant())
+        return;
+
+    if (toAccessibilityRenderObject(activeDescendant()) && shouldNotifyActiveDescendant())
         renderer()->document().axObjectCache()->postNotification(m_renderer, AXObjectCache::AXActiveDescendantChanged);
 }
 
@@ -2625,7 +2624,7 @@ bool AccessibilityRenderObject::inheritsPresentationalRole() const
         if (!parent->isAccessibilityRenderObject())
             continue;
         
-        Node* elementNode = static_cast<AccessibilityRenderObject*>(parent)->node();
+        Node* elementNode = toAccessibilityRenderObject(parent)->node();
         if (!elementNode || !elementNode->isElementNode())
             continue;
         

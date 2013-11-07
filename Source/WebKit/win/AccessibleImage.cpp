@@ -44,7 +44,7 @@ String AccessibleImage::name() const
     if (!m_object->isAccessibilityRenderObject())
         return AccessibleBase::name();
 
-    AccessibilityRenderObject* obj = static_cast<AccessibilityRenderObject*>(m_object);
+    AccessibilityRenderObject* obj = toAccessibilityRenderObject(m_object);
 
     String ariaLabel = obj->ariaLabeledByAttribute();
     if (!ariaLabel.isEmpty())

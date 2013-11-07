@@ -818,7 +818,7 @@ static void AXAttributeStringSetElement(NSMutableAttributedString* attrString, N
     if (object && object->isAccessibilityRenderObject()) {
         // make a serializable AX object
         
-        RenderObject* renderer = static_cast<AccessibilityRenderObject*>(object)->renderer();
+        RenderObject* renderer = toAccessibilityRenderObject(object)->renderer();
         if (!renderer)
             return;
         
@@ -2124,7 +2124,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (m_object->isWebArea()) {
         if ([attributeName isEqualToString:@"AXLinkUIElements"]) {
             AccessibilityObject::AccessibilityChildrenVector links;
-            static_cast<AccessibilityRenderObject*>(m_object)->getDocumentLinks(links);
+            toAccessibilityRenderObject(m_object)->getDocumentLinks(links);
             return convertToNSArray(links);
         }
         if ([attributeName isEqualToString:@"AXLoaded"])
@@ -2545,7 +2545,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return [NSNumber numberWithBool:m_object->isSelected()];
     
     if ([attributeName isEqualToString: NSAccessibilityServesAsTitleForUIElementsAttribute] && m_object->isMenuButton()) {
-        AccessibilityObject* uiElement = static_cast<AccessibilityRenderObject*>(m_object)->menuForMenuButton();
+        AccessibilityObject* uiElement = toAccessibilityRenderObject(m_object)->menuForMenuButton();
         if (uiElement)
             return [NSArray arrayWithObject:uiElement->wrapper()];
     }

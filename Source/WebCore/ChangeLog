@@ -1,5 +1,30 @@
 2013-11-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        [AX] Use toAccessibilityRenderObject() instead of using static_cast<>
+        https://bugs.webkit.org/show_bug.cgi?id=123986
+
+        Reviewed by Mario Sanchez Prada.
+
+        Though there is toAccessibilityRenderObject(), static_cast<> are being used by many places.
+        To use toAccessibilityRenderObject() is more helpful to find bad type cast.
+
+        No new tests, no behavior changes.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::notificationPostTimerFired):
+        * accessibility/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::imageMapLinkRenderer):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::handleActiveDescendantChanged):
+        (WebCore::AccessibilityRenderObject::inheritsPresentationalRole):
+        * accessibility/ios/AccessibilityObjectIOS.mm:
+        (WebCore::AccessibilityObject::accessibilityPasswordFieldLength):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (AXAttributeStringSetElement):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
+2013-11-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         [AX] Use toAccessibilityTable() instead of using manual static_cast<>
         https://bugs.webkit.org/show_bug.cgi?id=123982
 

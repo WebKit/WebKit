@@ -62,7 +62,7 @@ int AccessibilityObject::accessibilityPasswordFieldLength()
 {
     if (!isPasswordField())
         return 0;
-    RenderObject* renderObject = static_cast<AccessibilityRenderObject*>(this)->renderer();
+    RenderObject* renderObject = toAccessibilityRenderObject(this)->renderer();
     
     if (!renderObject || !renderObject->node() || !renderObject->node()->isHTMLElement())
         return false;
