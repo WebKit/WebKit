@@ -1,3 +1,18 @@
+2013-11-06  Dean Jackson  <dino@apple.com>
+
+        kTraceBufferLen is unused in default builds
+        https://bugs.webkit.org/show_bug.cgi?id=123941
+        <rdar://problem/15409804>
+
+        Reviewed by Tim Horton.
+
+        kTraceBufferLen is not used in debug.cpp if TRACE_ENABLED is
+        not defined. This causes a warning in newer builds of clang.
+        For now, skip warnings on unused variables until we
+        update from ANGLE.
+
+        * src/compiler/debug.cpp: Add unused-variable ignore pragma.
+
 2013-10-24  Mark Rowe  <mrowe@apple.com>
 
         Remove references to OS X 10.7 from Xcode configuration settings.
