@@ -33,7 +33,7 @@ PASS axElement.role is "AXRole: AXButton"
 
 combobox1
 PASS document.activeElement == element is true
-PASS axElement.role is "AXRole: AXPopUpButton"
+PASS axElement.role is "AXRole: AXComboBox"
 
 focusable1
 PASS document.activeElement == element is true
@@ -73,7 +73,7 @@ PASS axElement.role is "AXRole: AXButton"
 
 combobox2
 PASS document.activeElement == element is true
-PASS axElement.role is "AXRole: AXPopUpButton"
+PASS axElement.role is "AXRole: AXComboBox"
 
 focusable2
 PASS document.activeElement == element is true

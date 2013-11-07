@@ -1,5 +1,70 @@
 2013-11-06  Andreas Kling  <akling@apple.com>
 
+        Optimize baselines: accessibility
+
+        Unreviewed; run "webkit-patch optimize-baselines accessibility"
+
+        * accessibility/adjacent-continuations-cause-assertion-failure-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/adjacent-continuations-cause-assertion-failure-expected.txt.
+        * accessibility/aria-combobox-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/aria-combobox-expected.txt.
+        * accessibility/aria-fallback-roles-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/aria-fallback-roles-expected.txt.
+        * accessibility/aria-labelledby-overrides-aria-label-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/aria-labelledby-overrides-aria-label-expected.txt.
+        * accessibility/aria-menubar-menuitems-expected.txt:
+        * accessibility/aria-option-role-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/aria-option-role-expected.txt.
+        * accessibility/aria-roles-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/aria-roles-expected.txt.
+        * accessibility/aria-tab-role-on-buttons-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/aria-tab-role-on-buttons-expected.txt.
+        * accessibility/aria-tables-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/aria-tables-expected.txt.
+        * accessibility/aria-toggle-button-with-title-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/aria-toggle-button-with-title-expected.txt.
+        * accessibility/canvas-description-and-role-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/canvas-description-and-role-expected.txt.
+        * accessibility/canvas-fallback-content-expected.txt:
+        * accessibility/deleting-iframe-destroys-axcache-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/deleting-iframe-destroys-axcache-expected.txt.
+        * accessibility/div-within-anchors-causes-crash-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/div-within-anchors-causes-crash-expected.txt.
+        * accessibility/file-upload-button-stringvalue-expected.txt: Renamed from LayoutTests/platform/efl-wk1/accessibility/file-upload-button-stringvalue-expected.txt.
+        * accessibility/img-alt-tag-only-whitespace-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/img-alt-tag-only-whitespace-expected.txt.
+        * accessibility/notification-listeners-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/notification-listeners-expected.txt.
+        * accessibility/paragraph-with-linebreaks-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/paragraph-with-linebreaks-expected.txt.
+        * accessibility/svg-image-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/svg-image-expected.txt.
+        * accessibility/svg-remote-element-expected.txt:
+        * platform/efl-wk1/accessibility/table-attributes-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/table-attributes-expected.txt.
+        * platform/efl-wk1/accessibility/table-detection-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/table-detection-expected.txt.
+        * platform/efl-wk1/accessibility/table-one-cell-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/table-one-cell-expected.txt.
+        * platform/efl-wk1/accessibility/table-sections-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/table-sections-expected.txt.
+        * platform/efl-wk1/accessibility/table-with-rules-expected.txt: Renamed from LayoutTests/platform/efl/accessibility/table-with-rules-expected.txt.
+        * platform/efl/accessibility/aria-menubar-menuitems-expected.txt: Removed.
+        * platform/efl/accessibility/canvas-fallback-content-expected.txt: Removed.
+        * platform/efl/accessibility/svg-remote-element-expected.txt: Removed.
+        * platform/gtk-wk1/accessibility/table-attributes-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/table-attributes-expected.txt.
+        * platform/gtk-wk1/accessibility/table-sections-expected.txt: Renamed from LayoutTests/platform/gtk/accessibility/table-sections-expected.txt.
+        * platform/gtk/accessibility/adjacent-continuations-cause-assertion-failure-expected.txt: Removed.
+        * platform/gtk/accessibility/aria-combobox-expected.txt: Removed.
+        * platform/gtk/accessibility/aria-fallback-roles-expected.txt: Removed.
+        * platform/gtk/accessibility/aria-labelledby-overrides-aria-label-expected.txt: Removed.
+        * platform/gtk/accessibility/aria-menubar-menuitems-expected.txt: Removed.
+        * platform/gtk/accessibility/aria-option-role-expected.txt: Removed.
+        * platform/gtk/accessibility/aria-roles-expected.txt: Removed.
+        * platform/gtk/accessibility/aria-tab-role-on-buttons-expected.txt: Removed.
+        * platform/gtk/accessibility/aria-tables-expected.txt: Removed.
+        * platform/gtk/accessibility/aria-toggle-button-with-title-expected.txt: Removed.
+        * platform/gtk/accessibility/canvas-description-and-role-expected.txt: Removed.
+        * platform/gtk/accessibility/canvas-fallback-content-expected.txt: Removed.
+        * platform/gtk/accessibility/deleting-iframe-destroys-axcache-expected.txt: Removed.
+        * platform/gtk/accessibility/div-within-anchors-causes-crash-expected.txt: Removed.
+        * platform/gtk/accessibility/file-upload-button-stringvalue-expected.txt: Removed.
+        * platform/gtk/accessibility/img-alt-tag-only-whitespace-expected.txt: Removed.
+        * platform/gtk/accessibility/notification-listeners-expected.txt: Removed.
+        * platform/gtk/accessibility/paragraph-with-linebreaks-expected.txt: Removed.
+        * platform/gtk/accessibility/svg-image-expected.txt: Removed.
+        * platform/gtk/accessibility/svg-remote-element-expected.txt: Removed.
+        * platform/mac/accessibility/aria-fallback-roles-expected.txt: Removed.
+        * platform/mac/accessibility/aria-menubar-menuitems-expected.txt: Copied from LayoutTests/accessibility/aria-menubar-menuitems-expected.txt.
+        * platform/mac/accessibility/aria-roles-expected.txt: Removed.
+        * platform/mac/accessibility/aria-tables-expected.txt: Removed.
+        * platform/mac/accessibility/canvas-fallback-content-expected.txt: Copied from LayoutTests/accessibility/canvas-fallback-content-expected.txt.
+        * platform/mac/accessibility/img-alt-tag-only-whitespace-expected.txt: Removed.
+        * platform/mac/accessibility/svg-image-expected.txt: Removed.
+        * platform/win-future/accessibility/svg-remote-element-expected.txt: Copied from LayoutTests/accessibility/svg-remote-element-expected.txt.
+
+2013-11-06  Andreas Kling  <akling@apple.com>
+
         Optimize baselines: media
 
         Unreviewed; run "webkit-patch optimize-baselines media"

@@ -13,11 +13,11 @@ PASS menuBar.childrenCount is 2
 AXRole: AXMenuItem
 PASS menuItem.childrenCount is 2
 AXRole: AXGroup
-FAIL menuSubItem1.childrenCount should be 0. Was 2.
+PASS menuSubItem1.childrenCount is 0
 AXRole: AXMenu
 PASS menuSubItem2.childrenCount is 1
-AXRole: AXMenuItem
-FAIL subMenuSubItem.childrenCount should be 0. Was 1.
+AXRole: AXRadioMenuItem
+PASS subMenuSubItem.childrenCount is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE
