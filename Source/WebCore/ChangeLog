@@ -1,3 +1,15 @@
+2013-11-07  Laszlo Vidacs  <lac@inf.u-szeged.hu>
+        
+        Fix crash in BitmapImage::destroyDecodedData()
+        https://bugs.webkit.org/show_bug.cgi?id=116494
+
+        Reviewed by Csaba Osztrogonác.
+
+        Merge from https://chromium.googlesource.com/chromium/blink/+/6b6887bf53068f8537908e501fdc7317ad2c6d86
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::destroyDecodedData):
+
 2013-11-06  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] CSSParser should reject <track-list> without a <track-size>
