@@ -1,5 +1,82 @@
 2013-11-07  Andreas Kling  <akling@apple.com>
 
+        Optimize baselines: svg/batik
+
+        Unreviewed; run "webkit-patch optimize-baselines svg/batik"
+
+        * platform/gtk/svg/batik/filters/feTile-expected.txt: Removed.
+        * platform/gtk/svg/batik/filters/filterRegions-expected.txt: Removed.
+        * platform/gtk/svg/batik/masking/maskRegions-expected.txt: Removed.
+        * platform/gtk/svg/batik/paints/gradientLimit-expected.txt: Removed.
+        * platform/gtk/svg/batik/paints/patternPreserveAspectRatioA-expected.txt: Removed.
+        * platform/gtk/svg/batik/paints/patternRegionA-expected.txt: Removed.
+        * platform/gtk/svg/batik/paints/patternRegions-expected.txt: Removed.
+        * platform/gtk/svg/batik/paints/patternRegions-positioned-objects-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/longTextOnPath-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/smallFonts-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textAnchor-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textAnchor2-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textAnchor3-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textDecoration-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textDecoration2-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textEffect-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textEffect2-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textEffect3-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textFeatures-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textGlyphOrientationHorizontal-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textLayout-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textLayout2-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textLength-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textOnPath-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textOnPath2-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textOnPath3-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textOnPathSpaces-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textPCDATA-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textPosition-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textProperties-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textProperties2-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/textStyles-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/verticalText-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/verticalTextOnPath-expected.txt: Removed.
+        * platform/gtk/svg/batik/text/xmlSpace-expected.txt: Removed.
+        * svg/batik/filters/feTile-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/filters/feTile-expected.txt.
+        * svg/batik/filters/filterRegions-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/filters/filterRegions-expected.txt.
+        * svg/batik/masking/maskRegions-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/masking/maskRegions-expected.txt.
+        * svg/batik/paints/gradientLimit-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/paints/gradientLimit-expected.txt.
+        * svg/batik/paints/patternPreserveAspectRatioA-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/paints/patternPreserveAspectRatioA-expected.txt.
+        * svg/batik/paints/patternRegionA-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/paints/patternRegionA-expected.txt.
+        * svg/batik/paints/patternRegions-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/paints/patternRegions-expected.txt.
+        * svg/batik/paints/patternRegions-positioned-objects-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/paints/patternRegions-positioned-objects-expected.txt.
+        * svg/batik/text/longTextOnPath-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/longTextOnPath-expected.txt.
+        * svg/batik/text/smallFonts-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/smallFonts-expected.txt.
+        * svg/batik/text/textAnchor-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textAnchor-expected.txt.
+        * svg/batik/text/textAnchor2-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textAnchor2-expected.txt.
+        * svg/batik/text/textAnchor3-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textAnchor3-expected.txt.
+        * svg/batik/text/textDecoration-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textDecoration-expected.txt.
+        * svg/batik/text/textDecoration2-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textDecoration2-expected.txt.
+        * svg/batik/text/textEffect-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textEffect-expected.txt.
+        * svg/batik/text/textEffect2-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textEffect2-expected.txt.
+        * svg/batik/text/textEffect3-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textEffect3-expected.txt.
+        * svg/batik/text/textFeatures-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textFeatures-expected.txt.
+        * svg/batik/text/textGlyphOrientationHorizontal-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textGlyphOrientationHorizontal-expected.txt.
+        * svg/batik/text/textLayout-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textLayout-expected.txt.
+        * svg/batik/text/textLayout2-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textLayout2-expected.txt.
+        * svg/batik/text/textLength-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textLength-expected.txt.
+        * svg/batik/text/textOnPath-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textOnPath-expected.txt.
+        * svg/batik/text/textOnPath2-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textOnPath2-expected.txt.
+        * svg/batik/text/textOnPath3-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textOnPath3-expected.txt.
+        * svg/batik/text/textOnPathSpaces-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textOnPathSpaces-expected.txt.
+        * svg/batik/text/textPCDATA-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textPCDATA-expected.txt.
+        * svg/batik/text/textPosition-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textPosition-expected.txt.
+        * svg/batik/text/textProperties-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textProperties-expected.txt.
+        * svg/batik/text/textProperties2-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textProperties2-expected.txt.
+        * svg/batik/text/textStyles-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/textStyles-expected.txt.
+        * svg/batik/text/verticalText-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/verticalText-expected.txt.
+        * svg/batik/text/verticalTextOnPath-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/verticalTextOnPath-expected.txt.
+        * svg/batik/text/xmlSpace-expected.txt: Renamed from LayoutTests/platform/efl/svg/batik/text/xmlSpace-expected.txt.
+
+2013-11-07  Andreas Kling  <akling@apple.com>
+
         Optimize baselines: svg/as-background-image
 
         Unreviewed; run "webkit-patch optimize-baselines svg/as-background-image"
