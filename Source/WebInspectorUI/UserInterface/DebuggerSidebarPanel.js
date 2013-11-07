@@ -123,6 +123,17 @@ WebInspector.DebuggerSidebarPanel.ExceptionIconStyleClassName = "breakpoint-exce
 WebInspector.DebuggerSidebarPanel.prototype = {
     constructor: WebInspector.DebuggerSidebarPanel,
 
+    // Public
+
+    treeElementForRepresentedObject: function(representedObject)
+    {
+        // The main resource is used as the representedObject instead of Frame in our tree.
+        if (representedObject instanceof WebInspector.Frame)
+            representedObject = representedObject.mainResource;
+
+        return this.contentTreeOutline.getCachedTreeElement(representedObject);
+    },
+
     // Private
 
     _debuggerPauseResumeButtonClicked: function(event)

@@ -839,6 +839,8 @@ WebInspector._revealAndSelectRepresentedObjectInNavigationSidebar = function(rep
         return;
 
     var selectedSidebarPanel = this.navigationSidebar.selectedSidebarPanel;
+    if (!selectedSidebarPanel)
+        return;
 
     // If the tree outline is processing a selection currently then we can assume the selection does not
     // need to be changed. This is needed to allow breakpoints tree elements to be selected without jumping
@@ -869,7 +871,7 @@ WebInspector._updateNavigationSidebarForCurrentContentView = function()
     // Ensure the navigation sidebar panel is allowed by the current content view, if not ask the sidebar panel
     // to show the content view for the current selection.
     var allowedNavigationSidebarPanels = currentContentView.allowedNavigationSidebarPanels;
-    if (!allowedNavigationSidebarPanels.contains(selectedSidebarPanel.identifier)) {
+    if (allowedNavigationSidebarPanels.length && !allowedNavigationSidebarPanels.contains(selectedSidebarPanel.identifier)) {
         selectedSidebarPanel.showContentViewForCurrentSelection();
 
         // Fetch the current content view again, since it likely changed.
@@ -1001,9 +1003,13 @@ WebInspector._contentBrowserCurrentContentViewDidChange = function(event)
     if (!currentContentView)
         return;
 
+    var selectedSidebarPanel = this.navigationSidebar.selectedSidebarPanel;
+    if (!selectedSidebarPanel)
+        return;
+
     // Ensure the navigation sidebar panel is allowed by the current content view, if not change the navigation sidebar panel
     // to the last navigation sidebar panel used with the content view or the first one allowed.
-    var selectedSidebarPanelIdentifier = this.navigationSidebar.selectedSidebarPanel.identifier;
+    var selectedSidebarPanelIdentifier = selectedSidebarPanel.identifier;
 
     var allowedNavigationSidebarPanels = currentContentView.allowedNavigationSidebarPanels;
     if (allowedNavigationSidebarPanels.length && !allowedNavigationSidebarPanels.contains(selectedSidebarPanelIdentifier)) {
