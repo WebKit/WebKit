@@ -75,7 +75,7 @@ TextRun SVGTextMetrics::constructTextRun(RenderSVGInlineText* text, const UChar*
                 , style.direction()
                 , isOverride(style.unicodeBidi()) /* directionalOverride */);
 
-    if (textRunNeedsRenderingContext(style.font()))
+    if (style.font().isSVGFont())
         run.setRenderingContext(SVGTextRunRenderingContext::create(*text));
 
     run.disableRoundingHacks();
@@ -99,7 +99,7 @@ SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText* text, unsigned position, uns
 {
     ASSERT(text);
 
-    bool needsContext = textRunNeedsRenderingContext(text->style().font());
+    bool needsContext = text->style().font().isSVGFont();
     float scalingFactor = text->scalingFactor();
     ASSERT(scalingFactor);
 

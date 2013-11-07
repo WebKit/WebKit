@@ -118,6 +118,7 @@ public:
     void setLetterSpacing(short s) { m_letterSpacing = s; }
     bool isFixedPitch() const;
     bool isPrinterFont() const { return m_fontDescription.usePrinterFont(); }
+    bool isSVGFont() const { return primaryFont()->isSVGFont(); }
     
     FontRenderingMode renderingMode() const { return m_fontDescription.renderingMode(); }
 

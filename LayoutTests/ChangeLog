@@ -1,3 +1,13 @@
+2013-11-07  Antti Koivisto  <antti@apple.com>
+
+        Simple line layout crashes with SVG fonts
+        https://bugs.webkit.org/show_bug.cgi?id=124002
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/svg-font-simple-line-crash-expected.txt: Added.
+        * fast/text/svg-font-simple-line-crash.html: Added.
+
 2013-11-07  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: CSS Regions: Removing a content node of a ContentFlow from the DOM will send a 0 nodeId

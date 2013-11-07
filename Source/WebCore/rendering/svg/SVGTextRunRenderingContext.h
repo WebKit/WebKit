@@ -66,14 +66,6 @@ private:
 #endif
 };
 
-inline bool textRunNeedsRenderingContext(const Font& font)
-{
-    // Only save the extra data if SVG Fonts are used, which depend on them.
-    // FIXME: SVG Fonts won't work as segmented fonts at the moment, if that's fixed, we need to check for them as well below.
-    ASSERT(font.primaryFont());
-    return font.primaryFont()->isSVGFont();
-}
-
 } // namespace WebCore
 
 #endif // SVGTextRunRenderingContext_h

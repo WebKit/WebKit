@@ -1,3 +1,37 @@
+2013-11-07  Antti Koivisto  <antti@apple.com>
+
+        Simple line layout crashes with SVG fonts
+        https://bugs.webkit.org/show_bug.cgi?id=124002
+
+        Reviewed by Simon Fraser.
+        
+        Don't use simple line layout for flows using SVG fonts. They crash if kerning is enabled.
+
+        Test: fast/text/svg-font-simple-line-crash.html
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::isSVGFont):
+        
+            Add isSVGFont() so callers don't need to go via primaryFont().
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::constructTextRun):
+        * rendering/RenderBlock.cpp:
+        (WebCore::constructTextRunInternal):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+        
+            Disallow SVG fonts.
+
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::constructTextRun):
+        * rendering/svg/SVGTextMetrics.cpp:
+        (WebCore::SVGTextMetrics::constructTextRun):
+        (WebCore::SVGTextMetrics::SVGTextMetrics):
+        * rendering/svg/SVGTextRunRenderingContext.h:
+        
+            Get rid of the abstract textRunNeedsRenderingContext in favor of just testing isSVGFont().
+
 2013-11-07  Simon Fraser  <simon.fraser@apple.com>
 
         Allow customization of the contentsScale of TileController tiles
