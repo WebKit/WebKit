@@ -89,4 +89,14 @@ bool RemoteLayerTreeDrawingArea::shouldUseTiledBackingForFrameView(const FrameVi
     return frameView && frameView->frame().isMainFrame();
 }
 
+void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore&)
+{
+    Settings& settings = m_webPage->corePage()->settings();
+
+    // Fixed position elements need to be composited and create stacking contexts
+    // in order to be scrolled by the ScrollingCoordinator.
+    settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+    settings.setFixedPositionCreatesStackingContext(true);
+}
+
 } // namespace WebKit

@@ -251,9 +251,8 @@ void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&
         it->value->setShowRepaintCounter(settings.showRepaintCounter());
     }
 
-    // Soon we want pages with fixed positioned elements to be able to be scrolled by the ScrollingCoordinator.
-    // As a part of that work, we have to composite fixed position elements, and we have to allow those
-    // elements to create a stacking context.
+    // Fixed position elements need to be composited and create stacking contexts
+    // in order to be scrolled by the ScrollingCoordinator.
     settings.setAcceleratedCompositingForFixedPositionEnabled(true);
     settings.setFixedPositionCreatesStackingContext(true);
 

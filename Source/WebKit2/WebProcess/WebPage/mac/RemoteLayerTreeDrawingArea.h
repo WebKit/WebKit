@@ -50,6 +50,8 @@ private:
 
     virtual bool shouldUseTiledBackingForFrameView(const WebCore::FrameView*) OVERRIDE;
 
+    virtual void updatePreferences(const WebPreferencesStore&) OVERRIDE;
+
     std::unique_ptr<RemoteLayerTreeContext> m_remoteLayerTreeContext;
 };
 
