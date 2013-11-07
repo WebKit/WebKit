@@ -1326,9 +1326,6 @@ webkit.org/b/114259 platform/gtk/accessibility/combo-box-collapsed-selection-cha
 webkit.org/b/123885 platform/gtk/accessibility/spans-paragraphs-and-divs.html [ Failure ]
 webkit.org/b/123885 platform/gtk/accessibility/spans.html [ Failure ]
 
-webkit.org/b/123894 accessibility/media-element.html [ Failure ]
-webkit.org/b/123894 platform/gtk/accessibility/media-controls-panel-title.html [ Failure ]
-
 webkit.org/b/114612 editing/style/block-style-005.html [ Failure ]
 
 webkit.org/b/115025 fast/events/constructors/mouse-event-constructor.html [ Failure ]

@@ -190,6 +190,8 @@ inline const char* roleToString(AtkRole role)
         return "AXComboBox";
     case ATK_ROLE_DOCUMENT_FRAME:
         return "AXWebArea";
+    case ATK_ROLE_EMBEDDED:
+        return "AXEmbedded";
     case ATK_ROLE_ENTRY:
         return "AXTextField";
     case ATK_ROLE_FOOTER:

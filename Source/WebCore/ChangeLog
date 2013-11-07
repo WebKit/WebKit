@@ -1,3 +1,20 @@
+2013-11-07  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        AX: [ATK] Video and audio elements are not properly exposed
+        https://bugs.webkit.org/show_bug.cgi?id=123894
+
+        Reviewed by Chris Fleizach.
+
+        Expose <audio> and <video> elements with ATK_ROLE_EMBEDDED, so we
+        can identify them properly from ATK/AT-SPI based ATs.
+
+        Tests: platform/gtk/accessibility/media-controls-panel-title.html
+               platform/efl/accessibility/media-emits-object-replacement.html
+               platform/gtk/accessibility/media-emits-object-replacement.html
+
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole): Add the new mapping.
+
 2013-11-07  Laszlo Vidacs  <lac@inf.u-szeged.hu>
         
         Fix crash in BitmapImage::destroyDecodedData()

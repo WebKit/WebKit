@@ -1,3 +1,39 @@
+2013-11-07  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        AX: [ATK] Video and audio elements are not properly exposed
+        https://bugs.webkit.org/show_bug.cgi?id=123894
+
+        Reviewed by Chris Fleizach.
+
+        Updated tests and expectations according to the new behavior.
+
+        Updated failing test to reflect the new reality.
+        * platform/gtk/accessibility/media-element-expected.txt: Updated.
+
+        Extended GTK specific test by adding an <audio> element besides
+        the <video> one and printing all the information about those
+        related to their media nature.
+
+        * platform/gtk/accessibility/media-controls-panel-title.html: Extended.
+        * platform/gtk/accessibility/media-controls-panel-title-expected.txt: Updated.
+
+        Added new tests for GTK and EFL to check that the replaced
+        character is being properly emitter for both <video> and <audio>
+        elements. Inspired in the ones in platform/mac, we use a different
+        approach here to print the test since we don't have the
+        textMarkerRangeForElement functionality in our DRT/WKTR, and
+        because we expect embedded objects to show up in the results in a
+        GTK/EFL specific way (using the "<obj>" string).
+
+        * platform/efl/accessibility/media-emits-object-replacement-expected.txt: Added.
+        * platform/efl/accessibility/media-emits-object-replacement.html: Added.
+        * platform/gtk/accessibility/media-emits-object-replacement-expected.txt: Added.
+        * platform/gtk/accessibility/media-emits-object-replacement.html: Added.
+
+        Removed tests with failure expectations that are now passing.
+
+        * platform/gtk/TestExpectations: Removed passing tests.
+
 2013-11-06  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] CSSParser should reject <track-list> without a <track-size>

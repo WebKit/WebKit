@@ -5,6 +5,7 @@
 </head>
 <body id="body">
 <video controls="" autoplay="" name="media" src="../../../media/content/test.wav"></video>
+<audio controls="" autoplay="" name="media" src="../../../media/content/test.wav"></audio>
 <p id="description"></p>
 <div id="console"></div>
 <script>
@@ -12,12 +13,25 @@ description("This tests that the media controls panel has the correct name and r
 if (window.accessibilityController) {
     document.getElementById("body").focus();
     var webArea = accessibilityController.focusedElement;
-    var element = webArea.childAtIndex(0);
-    shouldBe("element.role", "'AXRole: AXGroup'");
+    var mainBlock = webArea.childAtIndex(0);
+    shouldBe("mainBlock.role", "'AXRole: AXGroup'");
+    shouldBe("mainBlock.title", "'AXTitle: '");
+
+    // Video element.
+    var element = mainBlock.childAtIndex(0);
+    shouldBe("element.role", "'AXRole: AXEmbedded'");
     shouldBe("element.title", "'AXTitle: '");
     element = element.childAtIndex(0);
     shouldBe("element.role", "'AXRole: AXToolbar'");
     shouldBe("element.title", "'AXTitle: video playback'");
+
+    // Audio element.
+    element = mainBlock.childAtIndex(1);
+    shouldBe("element.role", "'AXRole: AXEmbedded'");
+    shouldBe("element.title", "'AXTitle: '");
+    element = element.childAtIndex(0);
+    shouldBe("element.role", "'AXRole: AXToolbar'");
+    shouldBe("element.title", "'AXTitle: audio playback'");
 }
 
 </script>

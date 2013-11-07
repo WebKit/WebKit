@@ -536,6 +536,9 @@ static AtkRole atkRole(AccessibilityRole role)
     switch (role) {
     case UnknownRole:
         return ATK_ROLE_UNKNOWN;
+    case AudioRole:
+    case VideoRole:
+        return ATK_ROLE_EMBEDDED;
     case ButtonRole:
         return ATK_ROLE_PUSH_BUTTON;
     case ToggleButtonRole:
