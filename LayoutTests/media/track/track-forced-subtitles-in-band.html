@@ -7,18 +7,20 @@
         <script src=../trackmenu-test.js></script>
         <script src=../video-test.js></script>
         <script>
-            var test = 0;
 
-            function seeked()
+            function testVisibleCue()
             {
+                consoleWrite("");
+                consoleWrite("EVENT(seeked)");
+                consoleWrite("EVENT(cuechange)");
                 testExpected("video.textTracks[3].activeCues.length", 1);
                 testExpected("textTrackDisplayElement(video, 'cue')", null, "!=");
                 consoleWrite("");
 
                 endTest();
             }
-
-            function testForced()
+            
+            function testTracks()
             {
                 consoleWrite("<br><i>** Forced tracks should be in .textTracks, but not in the menu<" + "/i>");
                 testExpected("video.textTracks.length", 9);
@@ -27,8 +29,10 @@
                 clickCCButton();
 
                 trackMenuItems = trackMenuList();
-                if (!trackMenuItems)
+                if (!trackMenuItems) {
+                    failTest("Failed to find track menu!");
                     return;
+                }
                 testExpected("trackMenuItems.length", 6);
 
                 consoleWrite("<br><i>** Only the 'fr' forced track should be showing<" + "/i>");
@@ -77,7 +81,8 @@
                 testExpected("video.textTracks[8].mode", "disabled");
                 consoleWrite("");
 
-                waitForEvent('seeked', seeked);
+                waitForEventsAndCall([[video, 'seeked'], [video.textTracks[3], 'cuechange']], testVisibleCue);
+
                 run("video.currentTime = 9.5");
             }
 
@@ -89,9 +94,9 @@
                 run("internals.setUserPreferredLanguages(['en'])");
                 run("internals.setPrimaryAudioTrackLanguageOverride('fr')");
                 run("internals.setCaptionDisplayMode('ForcedOnly')");
-                video.src = '../content/CC+Subtitles.m4v';
-                video.volume = 0;
-                waitForEvent('canplaythrough', testForced);
+                video.src = '../content/CC+Subtitles.mov';
+
+                waitForEvent('canplaythrough', testTracks);
             }
 
         </script>

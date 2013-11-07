@@ -1015,8 +1015,7 @@ webkit.org/b/103663 [ MountainLion ] media/track/track-in-band.html
 webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-cues-added-once.html
 webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-style.html
 webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-legacy-api.html
-# Always times out on Mavericks https://bugs.webkit.org/show_bug.cgi?id=123412
-webkit.org/b/103663 media/track/track-forced-subtitles-in-band.html
+webkit.org/b/103663 [ MountainLion ] media/track/track-forced-subtitles-in-band.html
 webkit.org/b/103663 [ MountainLion ] media/track/track-in-band-mode.html
 
 # These two tests often timeout

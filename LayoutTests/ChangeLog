@@ -1,3 +1,22 @@
+2013-11-06  Eric Carlson  <eric.carlson@apple.com>
+
+        LayoutTests/media/track/track-forced-subtitles-in-band.html always times out
+        https://bugs.webkit.org/show_bug.cgi?id=123412
+
+        Reviewed by Jer Noble.
+
+        * media/content/CC+Subtitles.mov: Added.
+
+        * media/track/track-forced-subtitles-in-band.html: Fail loudly if the caption track menu is
+            not found by the helper function. Wait for both 'seeked' and 'cuechange' events before
+            checking activeCues.
+
+        * media/trackmenu-test.js: 
+        (getTrackListElement): Correct the caption menu pseudo-id.
+        (trackMenuList): Complain when the track menu is not found.
+
+        * platform/mac/TestExpectations: Remove track-forced-subtitles-in-band.html.
+
 2013-11-05  Oliver Hunt  <oliver@apple.com>
 
         Support iteration of the Arguments object
