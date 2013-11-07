@@ -1522,8 +1522,16 @@ public:
 
 class ApplyPropertyPageSize {
 private:
-    static Length mmLength(double mm) { return CSSPrimitiveValue::create(mm, CSSPrimitiveValue::CSS_MM)->computeLength<Length>(0, 0); }
-    static Length inchLength(double inch) { return CSSPrimitiveValue::create(inch, CSSPrimitiveValue::CSS_IN)->computeLength<Length>(0, 0); }
+    static Length mmLength(double mm)
+    {
+        Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(mm, CSSPrimitiveValue::CSS_MM));
+        return value.get().computeLength<Length>(0, 0);
+    }
+    static Length inchLength(double inch)
+    {
+        Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(inch, CSSPrimitiveValue::CSS_IN));
+        return value.get().computeLength<Length>(0, 0);
+    }
     static bool getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrimitiveValue* pageOrientation, Length& width, Length& height)
     {
         DEFINE_STATIC_LOCAL(Length, a5Width, (mmLength(148)));

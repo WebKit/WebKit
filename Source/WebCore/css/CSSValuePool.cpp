@@ -87,7 +87,7 @@ PassRef<CSSPrimitiveValue> CSSValuePool::createColorValue(unsigned rgbValue)
     return *entry.iterator->value;
 }
 
-PassRefPtr<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSPrimitiveValue::UnitTypes type)
+PassRef<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSPrimitiveValue::UnitTypes type)
 {
     if (value < 0 || value > maximumCacheableIntegerValue)
         return CSSPrimitiveValue::create(value, type);
@@ -113,7 +113,7 @@ PassRefPtr<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSPrimiti
 
     if (!cache[intValue])
         cache[intValue] = CSSPrimitiveValue::create(value, type);
-    return cache[intValue];
+    return *cache[intValue];
 }
 
 PassRefPtr<CSSPrimitiveValue> CSSValuePool::createFontFamilyValue(const String& familyName)

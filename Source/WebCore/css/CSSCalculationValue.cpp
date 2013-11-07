@@ -213,7 +213,7 @@ public:
     {
         if (std::isnan(value) || std::isinf(value))
             return 0;
-        return adoptRef(new CSSCalcPrimitiveValue(CSSPrimitiveValue::create(value, type).get(), isInteger));
+        return adoptRef(new CSSCalcPrimitiveValue(CSSPrimitiveValue::create(value, type), isInteger));
     }
 
     virtual bool isZero() const

@@ -1,5 +1,15 @@
 2013-11-07  Andreas Kling  <akling@apple.com>
 
+        More CSSPrimitiveValue constructors should return PassRef.
+        <https://webkit.org/b/123953>
+
+        Make some more CSSPrimitiveValue constructor helpers (that are
+        known to never return null) return PassRef instead of PassRefPtr.
+
+        Reviewed by Antti Koivisto.
+
+2013-11-07  Andreas Kling  <akling@apple.com>
+
         Generate type casting helpers for line boxes and use them.
         <https://webkit.org/b/123976>
 
