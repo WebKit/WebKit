@@ -116,15 +116,15 @@ static void returnFromJavaScript(CCallHelpers& jit)
 #   define EXTRA_STACK_SIZE              28
 
     jit.addPtr(CCallHelpers::TrustedImm32(EXTRA_STACK_SIZE), ARMRegisters::sp);
-    jit.push(ARMRegisters::r11);
-    jit.push(ARMRegisters::r10);
-    jit.push(ARMRegisters::r9);
-    jit.push(ARMRegisters::r8);
-    jit.push(ARMRegisters::r7);
-    jit.push(ARMRegisters::r6);
-    jit.push(ARMRegisters::r5);
-    jit.push(ARMRegisters::r4);
-    jit.push(ARMRegisters::lr);
+    jit.pop(ARMRegisters::r11);
+    jit.pop(ARMRegisters::r10);
+    jit.pop(ARMRegisters::r9);
+    jit.pop(ARMRegisters::r8);
+    jit.pop(ARMRegisters::r7);
+    jit.pop(ARMRegisters::r6);
+    jit.pop(ARMRegisters::r5);
+    jit.pop(ARMRegisters::r4);
+    jit.pop(ARMRegisters::lr);
 #elif CPU(ARM64)
     jit.pop(ARM64Registers::x28);
     jit.pop(ARM64Registers::x27);

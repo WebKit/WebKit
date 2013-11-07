@@ -1,5 +1,17 @@
 2013-11-07  Michael Saboff  <msaboff@apple.com>
 
+        returnFromJavaScript() for ARM_THUMB2 uses push()s which should be pop()s
+        https://bugs.webkit.org/show_bug.cgi?id=124006
+
+        Rubber stamped by Mark Hahnenberg.
+
+        Changed the push() calls to pop().
+
+        * jit/ThunkGenerators.cpp:
+        (JSC::returnFromJavaScript):
+
+2013-11-07  Michael Saboff  <msaboff@apple.com>
+
         Remove unneeded moving of ESP to ECX in callToJavaScript for COMPILER(MSVC)
         https://bugs.webkit.org/show_bug.cgi?id=123998
 
