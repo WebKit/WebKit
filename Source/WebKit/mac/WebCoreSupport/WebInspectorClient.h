@@ -73,6 +73,8 @@ public:
     virtual void highlight() OVERRIDE;
     virtual void hideHighlight() OVERRIDE;
 
+    virtual void didSetSearchingForNode(bool) OVERRIDE;
+
     virtual bool sendMessageToFrontend(const String&) OVERRIDE;
 
     bool inspectorStartsAttached();
@@ -97,10 +99,6 @@ public:
     bool canBeRemotelyInspected() const;
 
     WebView *inspectedWebView();
-
-#if PLATFORM(IOS)
-    virtual void didSetSearchingForNode(bool) OVERRIDE FINAL;
-#endif
 #endif
 
 private:

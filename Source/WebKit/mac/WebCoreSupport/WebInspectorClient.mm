@@ -197,6 +197,18 @@ void WebInspectorClient::hideHighlight()
     [m_highlighter.get() hideHighlight];
 }
 
+void WebInspectorClient::didSetSearchingForNode(bool enabled)
+{
+    WebInspector *inspector = [m_webView inspector];
+
+    ASSERT(isMainThread());
+
+    if (enabled)
+        [[NSNotificationCenter defaultCenter] postNotificationName:WebInspectorDidStartSearchingForNode object:inspector];
+    else
+        [[NSNotificationCenter defaultCenter] postNotificationName:WebInspectorDidStopSearchingForNode object:inspector];
+}
+
 void WebInspectorClient::releaseFrontend()
 {
     m_frontendClient = 0;

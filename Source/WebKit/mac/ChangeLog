@@ -1,3 +1,20 @@
+2013-11-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove a PLATFORM(IOS) from WebKit Private Header
+        https://bugs.webkit.org/show_bug.cgi?id=124014
+
+        Reviewed by Timothy Hatcher.
+
+        Make the previously iOS only WebInspectorDidStartSearchingForNode
+        and WebInspectorDidStopSearchingForNode notifications non iOS specific.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::didSetSearchingForNode):
+        * WebInspector/WebInspector.h:
+        * WebInspector/WebInspector.mm:
+        * WebKit.exp:
+
 2013-11-07  Mark Lam  <mark.lam@apple.com>
 
         Cosmetic: rename xxxId to xxxID for ScriptId, SourceId, and BreakpointId.

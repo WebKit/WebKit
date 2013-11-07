@@ -36,8 +36,6 @@ _WebViewProgressBackgroundColorKey
 _WebViewProgressEstimatedProgressKey
 
 # For WebInspector notifications
-_WebInspectorDidStartSearchingForNode
-_WebInspectorDidStopSearchingForNode
 __WebViewRemoteInspectorHasSessionChangedNotification
 
 # WebKit1 internal types exposed for WebKit2.

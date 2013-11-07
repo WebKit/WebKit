@@ -95,6 +95,8 @@ _WebIconMediumSize
 _WebIconNotificationUserInfoURLKey
 _WebIconSmallSize
 _WebInitForCarbon
+_WebInspectorDidStartSearchingForNode
+_WebInspectorDidStopSearchingForNode
 _WebInstallMemoryPressureHandler
 _WebKitErrorDomain
 _WebKitErrorMIMETypeKey
