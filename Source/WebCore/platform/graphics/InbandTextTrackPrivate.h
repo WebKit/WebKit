@@ -34,6 +34,11 @@ namespace WebCore {
 
 class InbandTextTrackPrivate : public TrackPrivateBase {
 public:
+    enum CueFormat {
+        Generic,
+        WebVTT
+    };
+    static RefPtr<InbandTextTrackPrivate> create(CueFormat format) { return adoptRef(new InbandTextTrackPrivate(format)); }
     virtual ~InbandTextTrackPrivate() { }
 
     void setClient(InbandTextTrackPrivateClient* client) { m_client = client; }
@@ -63,11 +68,12 @@ public:
     virtual bool isMainProgramContent() const { return true; }
     virtual bool isEasyToRead() const { return false; }
     virtual bool isDefault() const { return false; }
+    virtual AtomicString label() const { return emptyAtom; }
+    virtual AtomicString language() const { return emptyAtom; }
+    virtual AtomicString id() const { return emptyAtom; }
 
-    enum CueFormat {
-        Generic,
-        WebVTT
-    };
+    virtual int textTrackIndex() const { return 0; }
+
     CueFormat cueFormat() const { return m_format; }
 
 protected:

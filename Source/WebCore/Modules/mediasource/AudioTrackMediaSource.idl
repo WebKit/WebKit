@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,15 +24,8 @@
  */
 
 [
-    NoInterfaceObject,
-    Conditional=VIDEO_TRACK,
-    GenerateIsReachable=ImplElementRoot,
-    JSCustomMarkFunction
-] interface VideoTrack {
-    readonly attribute DOMString id;
-    [CustomSetter] attribute DOMString kind;
-    readonly attribute DOMString label;
-    [CustomSetter] attribute DOMString language;
-
-    attribute boolean selected;
+    Conditional=MEDIA_SOURCE&VIDEO_TRACK,
+]
+partial interface AudioTrack {
+    readonly attribute SourceBuffer sourceBuffer;
 };

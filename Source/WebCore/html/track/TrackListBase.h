@@ -68,6 +68,8 @@ public:
     // Needs to be public so tracks can call it
     void scheduleChangeEvent();
 
+    bool isAnyTrackEnabled() const;
+
 protected:
     TrackListBase(HTMLMediaElement*, ScriptExecutionContext*);
 

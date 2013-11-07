@@ -150,6 +150,10 @@ public:
     PassRefPtr<PlatformTextTrack> platformTextTrack();
 #endif
 
+#if ENABLE(MEDIA_SOURCE)
+    virtual void setLanguage(const AtomicString&) OVERRIDE;
+#endif
+
     using RefCounted<TrackBase>::ref;
     using RefCounted<TrackBase>::deref;
 
@@ -163,6 +167,8 @@ protected:
 
 private:
     virtual bool isValidKind(const AtomicString&) const OVERRIDE;
+
+    virtual bool enabled() const OVERRIDE;
 
     virtual void refEventTarget() OVERRIDE FINAL { ref(); }
     virtual void derefEventTarget() OVERRIDE FINAL { deref(); }

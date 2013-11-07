@@ -35,6 +35,7 @@ namespace WebCore {
 
 class Element;
 class HTMLMediaElement;
+class SourceBuffer;
 
 class TrackBase : public RefCounted<TrackBase> {
 public:
@@ -57,9 +58,16 @@ public:
     void setLabel(const AtomicString& label) { m_label = label; }
 
     AtomicString language() const { return m_language; }
-    void setLanguage(const AtomicString& language) { m_language = language; }
+    virtual void setLanguage(const AtomicString& language) { m_language = language; }
 
     virtual void clearClient() = 0;
+
+#if ENABLE(MEDIA_SOURCE)
+    SourceBuffer* sourceBuffer() const { return m_sourceBuffer; }
+    void setSourceBuffer(SourceBuffer* buffer) { m_sourceBuffer = buffer; }
+#endif
+
+    virtual bool enabled() const = 0;
 
 protected:
     TrackBase(Type, const AtomicString& id, const AtomicString& label, const AtomicString& language);
@@ -67,7 +75,13 @@ protected:
     virtual bool isValidKind(const AtomicString&) const = 0;
     virtual const AtomicString& defaultKindKeyword() const = 0;
 
+    void setKindInternal(const AtomicString&);
+
     HTMLMediaElement* m_mediaElement;
+
+#if ENABLE(MEDIA_SOURCE)
+    SourceBuffer* m_sourceBuffer;
+#endif
 
 private:
     Type m_type;

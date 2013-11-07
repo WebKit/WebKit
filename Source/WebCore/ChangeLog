@@ -1,3 +1,95 @@
+2013-10-25  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Add MediaSource extensions to AudioTrack, VideoTrack, and TextTrack.
+        https://bugs.webkit.org/show_bug.cgi?id=123374
+
+        Reviewed by Eric Carlson.
+
+        No tests added; tests will be added when Mock implementations are added in a future patch.
+
+        Add new partial interfaces for added methods on AudioTrack, TextTrack, and VideoTrack:
+        * Modules/mediasource/AudioTrackMediaSource.idl: Add read-only sourceBuffer attribute.
+        * Modules/mediasource/TextTrackMediaSource.idl: Ditto.
+        * Modules/mediasource/VideoTrackMediaSource.idl: Ditto.
+        * Modules/mediasource/AudioTrackMediaSource.h:
+        (WebCore::AudioTrackMediaSource::sourceBuffer): Added static wrapper around non-static sourceBuffer().
+        * Modules/mediasource/TextTrackMediaSource.h:
+        (WebCore::TextTrackMediaSource::sourceBuffer): Ditto.
+        * Modules/mediasource/VideoTrackMediaSource.h:
+        (WebCore::VideoTrackMediaSource::sourceBuffer): Ditto.
+
+        Add support for writable kind & language attributes through a custom setter:
+        * bindings/js/JSAudioTrackCustom.cpp:
+        (WebCore::JSAudioTrack::setKind):
+        (WebCore::JSAudioTrack::setLanguage):
+        * bindings/js/JSTextTrackCustom.cpp:
+        (WebCore::JSTextTrack::setKind):
+        (WebCore::JSTextTrack::setLanguage):
+        * bindings/js/JSVideoTrackCustom.cpp:
+        (WebCore::JSVideoTrack::setKind):
+        (WebCore::JSVideoTrack::setLanguage):
+        * html/track/AudioTrack.idl:
+        * html/track/TextTrack.idl:
+        * html/track/VideoTrack.idl:
+
+        Add setter methods to the implementation classes:
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::TextTrack):
+        (WebCore::TextTrack::setKind):
+        (WebCore::TextTrack::setLanguage):
+        * html/track/TextTrack.h:
+        * html/track/TrackBase.cpp:
+        (WebCore::TrackBase::TrackBase):
+        (WebCore::TrackBase::setKind):
+        (WebCore::TrackBase::setKindInternal):
+        * html/track/TrackBase.h:
+        (WebCore::TrackBase::setLanguage):
+        (WebCore::TrackBase::sourceBuffer):
+        (WebCore::TrackBase::setSourceBuffer):
+        * html/track/VideoTrack.cpp:
+        (WebCore::VideoTrack::VideoTrack):
+        (WebCore::VideoTrack::setKind):
+        (WebCore::VideoTrack::setLanguage):
+        * html/track/VideoTrack.h:
+
+        Implement the unimplemented portions of MediaSource and SourceBuffer:
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::removeSourceBuffer):
+        * Modules/mediasource/MediaSourceBase.cpp:
+        (WebCore::MediaSourceBase::MediaSourceBase):
+        (WebCore::MediaSourceBase::setPrivateAndOpen):
+        (WebCore::MediaSourceBase::setReadyState):
+        (WebCore::MediaSourceBase::attachToElement):
+        * Modules/mediasource/MediaSourceBase.h:
+        (WebCore::MediaSourceBase::mediaElement):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::videoTracks):
+        (WebCore::SourceBuffer::audioTracks):
+        (WebCore::SourceBuffer::textTracks):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidAddAudioTrack):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidAddVideoTrack):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidAddTextTrack):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidChangeActiveState):
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediasource/SourceBuffer.idl:
+
+        Add new files to the project:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        And a smorgasbord of other utility changes:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource): Pass this when attaching.
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddTextTrack): Ditto.
+        * html/HTMLMediaSource.h:
+        * html/track/TextTrackList.cpp:
+        (TextTrackList::item): Make const.
+        * html/track/TextTrackList.h:
+        (WebCore::TextTrackList::lastItem): Added.
+        * platform/graphics/InbandTextTrackPrivate.h:
+        (WebCore::InbandTextTrackPrivate::create): Added.
+        (WebCore::MockSourceBufferPrivate::trackDidChangeEnabled):
+
 2013-11-06  Vani Hegde  <vani.hegde@samsung.com>
 
         Applied background color is not retained after typing a characters

@@ -47,7 +47,9 @@ public:
     int getTrackIndexRelativeToRenderedTracks(TextTrack*);
     virtual bool contains(TrackBase*) const OVERRIDE;
 
-    TextTrack* item(unsigned index);
+    TextTrack* item(unsigned index) const;
+    TextTrack* lastItem() const { return item(length() - 1); }
+
     void append(PassRefPtr<TextTrack>);
     virtual void remove(TrackBase*) OVERRIDE;
 

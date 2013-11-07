@@ -1115,7 +1115,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
         m_mediaSource = HTMLMediaSource::lookup(url.string());
 
     if (m_mediaSource) {
-        if (m_mediaSource->attachToElement())
+        if (m_mediaSource->attachToElement(this))
             m_player->load(url, contentType, m_mediaSource);
         else {
             // Forget our reference to the MediaSource, so we leave it alone
@@ -2893,6 +2893,7 @@ void HTMLMediaElement::mediaPlayerDidAddTextTrack(PassRefPtr<InbandTextTrackPriv
     // 4.8.10.12.2 Sourcing in-band text tracks
     // 1. Associate the relevant data with a new text track and its corresponding new TextTrack object.
     RefPtr<InbandTextTrack> textTrack = InbandTextTrack::create(ActiveDOMObject::scriptExecutionContext(), this, prpTrack);
+    textTrack->setMediaElement(this);
     
     // 2. Set the new text track's kind, label, and language based on the semantics of the relevant data,
     // as defined by the relevant specification. If there is no label in that data, then the label must

@@ -62,7 +62,7 @@ public:
     static const AtomicString& commentaryKeyword();
     virtual const AtomicString& defaultKindKeyword() const OVERRIDE { return emptyAtom; }
 
-    bool enabled() const { return m_enabled; }
+    virtual bool enabled() const OVERRIDE { return m_enabled; }
     virtual void setEnabled(const bool);
 
     virtual void clearClient() OVERRIDE { m_client = 0; }

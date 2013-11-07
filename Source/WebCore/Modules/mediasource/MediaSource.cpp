@@ -33,15 +33,22 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "AudioTrack.h"
+#include "AudioTrackList.h"
 #include "ContentType.h"
 #include "ExceptionCodePlaceholder.h"
 #include "GenericEventQueue.h"
+#include "HTMLMediaElement.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MediaPlayer.h"
 #include "MediaSourceRegistry.h"
 #include "SourceBufferPrivate.h"
+#include "TextTrack.h"
+#include "TextTrackList.h"
 #include "TimeRanges.h"
+#include "VideoTrack.h"
+#include "VideoTrackList.h"
 #include <runtime/Uint8Array.h>
 #include <wtf/text/CString.h>
 
@@ -136,8 +143,126 @@ void MediaSource::removeSourceBuffer(SourceBuffer* buffer, ExceptionCode& ec)
     // 3. If the sourceBuffer.updating attribute equals true, then run the following steps: ...
     buffer->abortIfUpdating();
 
-    // Steps 4-9 are related to updating audioTracks, videoTracks, and textTracks which aren't implmented yet.
-    // FIXME(91649): support track selection
+    // 4. Let SourceBuffer audioTracks list equal the AudioTrackList object returned by sourceBuffer.audioTracks.
+    RefPtr<AudioTrackList> audioTracks = buffer->audioTracks();
+
+    // 5. If the SourceBuffer audioTracks list is not empty, then run the following steps:
+    if (audioTracks->length()) {
+        // 5.1 Let HTMLMediaElement audioTracks list equal the AudioTrackList object returned by the audioTracks
+        // attribute on the HTMLMediaElement.
+        // 5.2 Let the removed enabled audio track flag equal false.
+        bool removedEnabledAudioTrack = false;
+
+        // 5.3 For each AudioTrack object in the SourceBuffer audioTracks list, run the following steps:
+        while (audioTracks->length()) {
+            AudioTrack* track = audioTracks->lastItem();
+
+            // 5.3.1 Set the sourceBuffer attribute on the AudioTrack object to null.
+            track->setSourceBuffer(0);
+
+            // 5.3.2 If the enabled attribute on the AudioTrack object is true, then set the removed enabled
+            // audio track flag to true.
+            if (track->enabled())
+                removedEnabledAudioTrack = true;
+
+            // 5.3.3 Remove the AudioTrack object from the HTMLMediaElement audioTracks list.
+            // 5.3.4 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
+            // cancelable, and that uses the TrackEvent interface, at the HTMLMediaElement audioTracks list.
+            if (mediaElement())
+                mediaElement()->removeAudioTrack(track);
+
+            // 5.3.5 Remove the AudioTrack object from the SourceBuffer audioTracks list.
+            // 5.3.6 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
+            // cancelable, and that uses the TrackEvent interface, at the SourceBuffer audioTracks list.
+            audioTracks->remove(track);
+        }
+
+        // 5.4 If the removed enabled audio track flag equals true, then queue a task to fire a simple event
+        // named change at the HTMLMediaElement audioTracks list.
+        if (removedEnabledAudioTrack)
+            mediaElement()->audioTracks()->scheduleChangeEvent();
+    }
+
+    // 6. Let SourceBuffer videoTracks list equal the VideoTrackList object returned by sourceBuffer.videoTracks.
+    RefPtr<VideoTrackList> videoTracks = buffer->videoTracks();
+
+    // 7. If the SourceBuffer videoTracks list is not empty, then run the following steps:
+    if (videoTracks->length()) {
+        // 7.1 Let HTMLMediaElement videoTracks list equal the VideoTrackList object returned by the videoTracks
+        // attribute on the HTMLMediaElement.
+        // 7.2 Let the removed selected video track flag equal false.
+        bool removedSelectedVideoTrack = false;
+
+        // 7.3 For each VideoTrack object in the SourceBuffer videoTracks list, run the following steps:
+        while (videoTracks->length()) {
+            VideoTrack* track = videoTracks->lastItem();
+
+            // 7.3.1 Set the sourceBuffer attribute on the VideoTrack object to null.
+            track->setSourceBuffer(0);
+
+            // 7.3.2 If the selected attribute on the VideoTrack object is true, then set the removed selected
+            // video track flag to true.
+            if (track->selected())
+                removedSelectedVideoTrack = true;
+
+            // 7.3.3 Remove the VideoTrack object from the HTMLMediaElement videoTracks list.
+            // 7.3.4 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
+            // cancelable, and that uses the TrackEvent interface, at the HTMLMediaElement videoTracks list.
+            if (mediaElement())
+                mediaElement()->removeVideoTrack(track);
+
+            // 7.3.5 Remove the VideoTrack object from the SourceBuffer videoTracks list.
+            // 7.3.6 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
+            // cancelable, and that uses the TrackEvent interface, at the SourceBuffer videoTracks list.
+            videoTracks->remove(track);
+        }
+
+        // 7.4 If the removed selected video track flag equals true, then queue a task to fire a simple event
+        // named change at the HTMLMediaElement videoTracks list.
+        if (removedSelectedVideoTrack)
+            mediaElement()->videoTracks()->scheduleChangeEvent();
+    }
+
+    // 8. Let SourceBuffer textTracks list equal the TextTrackList object returned by sourceBuffer.textTracks.
+    RefPtr<TextTrackList> textTracks = buffer->textTracks();
+
+    // 9. If the SourceBuffer textTracks list is not empty, then run the following steps:
+    if (textTracks->length()) {
+        // 9.1 Let HTMLMediaElement textTracks list equal the TextTrackList object returned by the textTracks
+        // attribute on the HTMLMediaElement.
+        // 9.2 Let the removed enabled text track flag equal false.
+        bool removedEnabledTextTrack = false;
+
+        // 9.3 For each TextTrack object in the SourceBuffer textTracks list, run the following steps:
+        while (textTracks->length()) {
+            TextTrack* track = textTracks->lastItem();
+
+            // 9.3.1 Set the sourceBuffer attribute on the TextTrack object to null.
+            track->setSourceBuffer(0);
+
+            // 9.3.2 If the mode attribute on the TextTrack object is set to "showing" or "hidden", then
+            // set the removed enabled text track flag to true.
+            if (track->mode() == TextTrack::showingKeyword() || track->mode() == TextTrack::hiddenKeyword())
+                removedEnabledTextTrack = true;
+
+            // 9.3.3 Remove the TextTrack object from the HTMLMediaElement textTracks list.
+            // 9.3.4 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
+            // cancelable, and that uses the TrackEvent interface, at the HTMLMediaElement textTracks list.
+            if (mediaElement())
+                mediaElement()->removeTextTrack(track);
+
+            // 9.3.5 Remove the TextTrack object from the SourceBuffer textTracks list.
+            // 9.3.6 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
+            // cancelable, and that uses the TrackEvent interface, at the SourceBuffer textTracks list.
+            textTracks->remove(track);
+        }
+
+        // 9.4 If the removed enabled text track flag equals true, then queue a task to fire a simple event
+        // named change at the HTMLMediaElement textTracks list.
+        if (removedEnabledTextTrack)
+            mediaElement()->textTracks()->scheduleChangeEvent();
+    }
+
 
     // 10. If sourceBuffer is in activeSourceBuffers, then remove sourceBuffer from activeSourceBuffers ...
     m_activeSourceBuffers->remove(buffer);
@@ -215,6 +340,118 @@ EventTargetInterface MediaSource::eventTargetInterface() const
 {
     return MediaSourceEventTargetInterfaceType;
 }
+
+void MediaSource::sourceBufferDidChangeAcitveState(SourceBuffer* sourceBuffer, bool active)
+{
+    if (active && !m_activeSourceBuffers->contains(sourceBuffer))
+        m_activeSourceBuffers->add(sourceBuffer);
+    else if (!active && m_activeSourceBuffers->contains(sourceBuffer))
+        m_activeSourceBuffers->remove(sourceBuffer);
+}
+
+class SourceBufferBufferedDoesNotContainTime {
+public:
+    SourceBufferBufferedDoesNotContainTime(double time) : m_time(time) { }
+    bool operator()(RefPtr<SourceBuffer> sourceBuffer)
+    {
+        return !sourceBuffer->buffered()->contain(m_time);
+    }
+
+    double m_time;
+};
+
+class SourceBufferBufferedHasEnough {
+public:
+    SourceBufferBufferedHasEnough(double time, double duration) : m_time(time), m_duration(duration) { }
+    bool operator()(RefPtr<SourceBuffer> sourceBuffer)
+    {
+        size_t rangePos = sourceBuffer->buffered()->find(m_time);
+        if (rangePos == notFound)
+            return false;
+
+        double endTime = sourceBuffer->buffered()->end(rangePos, IGNORE_EXCEPTION);
+        return m_duration - endTime < 1;
+    }
+
+    double m_time;
+    double m_duration;
+};
+
+class SourceBufferBufferedHasFuture {
+public:
+    SourceBufferBufferedHasFuture(double time) : m_time(time) { }
+    bool operator()(RefPtr<SourceBuffer> sourceBuffer)
+    {
+        size_t rangePos = sourceBuffer->buffered()->find(m_time);
+        if (rangePos == notFound)
+            return false;
+
+        double endTime = sourceBuffer->buffered()->end(rangePos, IGNORE_EXCEPTION);
+        return endTime - m_time > 1;
+    }
+
+    double m_time;
+};
+
+void MediaSource::monitorSourceBuffers()
+{
+    double currentTime = mediaElement()->currentTime();
+
+    // 2.4.4 SourceBuffer Monitoring
+    // ↳ If buffered for all objects in activeSourceBuffers do not contain TimeRanges for the current
+    // playback position:
+    auto begin = m_activeSourceBuffers->begin();
+    auto end = m_activeSourceBuffers->end();
+    if (std::all_of(begin, end, SourceBufferBufferedDoesNotContainTime(currentTime))) {
+        // 1. Set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
+        // 2. If this is the first transition to HAVE_METADATA, then queue a task to fire a simple event
+        // named loadedmetadata at the media element.
+        m_private->setReadyState(MediaPlayer::HaveMetadata);
+
+        // 3. Abort these steps.
+        return;
+    }
+
+    // ↳ If buffered for all objects in activeSourceBuffers contain TimeRanges that include the current
+    // playback position and enough data to ensure uninterrupted playback:
+    if (std::all_of(begin, end, SourceBufferBufferedHasEnough(currentTime, mediaElement()->duration()))) {
+        // 1. Set the HTMLMediaElement.readyState attribute to HAVE_ENOUGH_DATA.
+        // 2. Queue a task to fire a simple event named canplaythrough at the media element.
+        // 3. Playback may resume at this point if it was previously suspended by a transition to HAVE_CURRENT_DATA.
+        m_private->setReadyState(MediaPlayer::HaveEnoughData);
+
+        // 4. Abort these steps.
+        return;
+    }
+
+    // ↳ If buffered for at least one object in activeSourceBuffers contains a TimeRange that includes
+    // the current playback position but not enough data to ensure uninterrupted playback:
+    if (std::any_of(begin, end, SourceBufferBufferedHasFuture(currentTime))) {
+        // 1. Set the HTMLMediaElement.readyState attribute to HAVE_FUTURE_DATA.
+        // 2. If the previous value of HTMLMediaElement.readyState was less than HAVE_FUTURE_DATA, then queue a task to fire a simple event named canplay at the media element.
+        // 3. Playback may resume at this point if it was previously suspended by a transition to HAVE_CURRENT_DATA.
+        m_private->setReadyState(MediaPlayer::HaveFutureData);
+
+        // 4. Abort these steps.
+        return;
+    }
+
+    // ↳ If buffered for at least one object in activeSourceBuffers contains a TimeRange that ends
+    // at the current playback position and does not have a range covering the time immediately
+    // after the current position:
+    // NOTE: Logically, !(all objects do not contain currentTime) == (some objects contain current time)
+
+    // 1. Set the HTMLMediaElement.readyState attribute to HAVE_CURRENT_DATA.
+    // 2. If this is the first transition to HAVE_CURRENT_DATA, then queue a task to fire a simple
+    // event named loadeddata at the media element.
+    // 3. Playback is suspended at this point since the media element doesn't have enough data to
+    // advance the media timeline.
+    m_private->setReadyState(MediaPlayer::HaveCurrentData);
+
+    // 4. Abort these steps.
+}
+
+
 
 } // namespace WebCore
 

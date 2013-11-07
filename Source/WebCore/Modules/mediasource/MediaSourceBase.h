@@ -61,7 +61,7 @@ public:
     bool isOpen() const;
 
     // HTMLMediaSource
-    virtual bool attachToElement() OVERRIDE;
+    virtual bool attachToElement(HTMLMediaElement*) OVERRIDE;
     virtual void setPrivateAndOpen(PassRef<MediaSourcePrivate>) OVERRIDE;
     virtual void close() OVERRIDE;
     virtual bool isClosed() const OVERRIDE;
@@ -75,6 +75,7 @@ public:
     void setReadyState(const AtomicString&);
     void endOfStream(const AtomicString& error, ExceptionCode&);
 
+    HTMLMediaElement* mediaElement() const { return m_mediaElement; }
 
     // ActiveDOMObject interface
     virtual bool hasPendingActivity() const OVERRIDE;
@@ -101,11 +102,10 @@ protected:
     void scheduleEvent(const AtomicString& eventName);
     GenericEventQueue& asyncEventQueue() { return m_asyncEventQueue; }
 
-private:
     RefPtr<MediaSourcePrivate> m_private;
+    HTMLMediaElement* m_mediaElement;
     AtomicString m_readyState;
     GenericEventQueue m_asyncEventQueue;
-    bool m_attached;
 };
 
 }

@@ -38,6 +38,7 @@
 
 namespace WebCore {
 
+class MediaDescription;
 class VideoTrack;
 
 class VideoTrackClient {
@@ -70,6 +71,13 @@ public:
 
     size_t inbandTrackIndex();
 
+#if ENABLE(MEDIA_SOURCE)
+    virtual void setKind(const AtomicString&) OVERRIDE;
+    virtual void setLanguage(const AtomicString&) OVERRIDE;
+#endif
+
+    const MediaDescription& description() const;
+
 protected:
     VideoTrack(VideoTrackClient*, PassRefPtr<VideoTrackPrivate> privateTrack);
 
@@ -81,6 +89,8 @@ private:
     virtual void labelChanged(TrackPrivateBase*, const String&) OVERRIDE;
     virtual void languageChanged(TrackPrivateBase*, const String&) OVERRIDE;
     virtual void willRemove(TrackPrivateBase*) OVERRIDE;
+
+    virtual bool enabled() const OVERRIDE { return selected(); }
 
     bool m_selected;
     VideoTrackClient* m_client;

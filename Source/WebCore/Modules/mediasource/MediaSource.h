@@ -59,6 +59,10 @@ public:
     using RefCounted<MediaSourceBase>::ref;
     using RefCounted<MediaSourceBase>::deref;
 
+    void sourceBufferDidChangeAcitveState(SourceBuffer*, bool);
+
+    void monitorSourceBuffers();
+
 private:
     explicit MediaSource(ScriptExecutionContext&);
 

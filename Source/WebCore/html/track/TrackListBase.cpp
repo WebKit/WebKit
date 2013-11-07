@@ -179,4 +179,14 @@ void TrackListBase::asyncEventTimerFired(Timer<TrackListBase>*)
     --m_dispatchingEvents;
 }
 
+bool TrackListBase::isAnyTrackEnabled() const
+{
+    for (size_t i = 0; i < m_inbandTracks.size(); ++i) {
+        TrackBase* track = m_inbandTracks[i].get();
+        if (track->enabled())
+            return true;
+    }
+    return false;
+}
+
 #endif

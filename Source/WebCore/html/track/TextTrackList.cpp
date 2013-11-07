@@ -104,7 +104,7 @@ int TextTrackList::getTrackIndexRelativeToRenderedTracks(TextTrack *textTrack)
     return -1;
 }
 
-TextTrack* TextTrackList::item(unsigned index)
+TextTrack* TextTrackList::item(unsigned index) const
 {
     // 4.8.10.12.1 Text track model
     // The text tracks are sorted as follows:

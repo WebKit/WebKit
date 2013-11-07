@@ -30,9 +30,9 @@
     JSCustomMarkFunction
 ] interface AudioTrack {
     readonly attribute DOMString id;
-    readonly attribute DOMString kind;
+    [CustomSetter] attribute DOMString kind;
     readonly attribute DOMString label;
-    readonly attribute DOMString language;
+    [CustomSetter] attribute DOMString language;
 
     attribute boolean enabled;
 };

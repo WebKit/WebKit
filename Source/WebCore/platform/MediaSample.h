@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    NoInterfaceObject,
-    Conditional=VIDEO_TRACK,
-    GenerateIsReachable=ImplElementRoot,
-    JSCustomMarkFunction
-] interface VideoTrack {
-    readonly attribute DOMString id;
-    [CustomSetter] attribute DOMString kind;
-    readonly attribute DOMString label;
-    [CustomSetter] attribute DOMString language;
+#ifndef MediaSample_h
+#define MediaSample_h
 
-    attribute boolean selected;
+#include <wtf/MediaTime.h>
+#include <wtf/RefCounted.h>
+
+namespace WebCore {
+
+class MockSampleBox;
+
+struct PlatformSample {
+    enum {
+        None,
+        MockSampleBoxType,
+    } type;
+    union {
+        MockSampleBox* mockSampleBox;
+    } sample;
 };
+
+class MediaSample : public RefCounted<MediaSample> {
+public:
+    virtual ~MediaSample() { }
+
+    virtual MediaTime presentationTime() const = 0;
+    virtual MediaTime decodeTime() const = 0;
+    virtual MediaTime duration() const = 0;
+    virtual AtomicString trackID() const = 0;
+
+    enum SampleFlags {
+        None = 0,
+        IsSync = 1 << 0,
+    };
+    virtual SampleFlags flags() const = 0;
+    virtual PlatformSample platformSample() = 0;
+};
+
+}
+
+#endif

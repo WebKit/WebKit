@@ -32,6 +32,7 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "MediaPlayer.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -55,6 +56,9 @@ public:
     enum EndOfStreamStatus { EosNoError, EosNetworkError, EosDecodeError };
     virtual void markEndOfStream(EndOfStreamStatus) = 0;
     virtual void unmarkEndOfStream() = 0;
+
+    virtual MediaPlayer::ReadyState readyState() const = 0;
+    virtual void setReadyState(MediaPlayer::ReadyState) = 0;
 };
 
 }

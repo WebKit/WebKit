@@ -54,10 +54,12 @@ public:
     unsigned length() const { return m_ranges.size(); }
     double start(unsigned index, ExceptionCode&) const;
     double end(unsigned index, ExceptionCode&) const;
-    
+
     void add(double start, double end);
     
     bool contain(double time) const;
+
+    size_t find(double time) const;
     
     double nearest(double time) const;
 

@@ -157,11 +157,16 @@ void TimeRanges::add(double start, double end)
 
 bool TimeRanges::contain(double time) const
 {
+    return find(time) != notFound;
+}
+
+size_t TimeRanges::find(double time) const
+{
     for (unsigned n = 0; n < length(); n++) {
         if (time >= start(n, IGNORE_EXCEPTION) && time <= end(n, IGNORE_EXCEPTION))
-            return true;
+            return n;
     }
-    return false;
+    return notFound;
 }
 
 double TimeRanges::nearest(double time) const

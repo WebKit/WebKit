@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    NoInterfaceObject,
-    Conditional=VIDEO_TRACK,
-    GenerateIsReachable=ImplElementRoot,
-    JSCustomMarkFunction
-] interface VideoTrack {
-    readonly attribute DOMString id;
-    [CustomSetter] attribute DOMString kind;
-    readonly attribute DOMString label;
-    [CustomSetter] attribute DOMString language;
+#ifndef VideoTrackMediaSource_h
+#define VideoTrackMediaSource_h
 
-    attribute boolean selected;
+#if ENABLE(MEDIA_SOURCE) && ENABLE(VIDEO_TRACK)
+
+#include "VideoTrack.h"
+
+namespace WebCore {
+
+class SourceBuffer;
+
+class VideoTrackMediaSource {
+public:
+    static SourceBuffer* sourceBuffer(VideoTrack* track) { return track->sourceBuffer(); }
 };
+
+}
+
+#endif
+
+#endif

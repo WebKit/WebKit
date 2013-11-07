@@ -39,6 +39,10 @@
 #include "HTMLMediaElement.h"
 #include "VideoTrackList.h"
 
+#if ENABLE(MEDIA_SOURCE)
+#include "SourceBuffer.h"
+#endif
+
 namespace WebCore {
 
 const AtomicString& VideoTrack::alternativeKeyword()
@@ -87,25 +91,25 @@ VideoTrack::VideoTrack(VideoTrackClient* client, PassRefPtr<VideoTrackPrivate> t
 
     switch (m_private->kind()) {
     case VideoTrackPrivate::Alternative:
-        setKind(VideoTrack::alternativeKeyword());
+        setKindInternal(VideoTrack::alternativeKeyword());
         break;
     case VideoTrackPrivate::Captions:
-        setKind(VideoTrack::captionsKeyword());
+        setKindInternal(VideoTrack::captionsKeyword());
         break;
     case VideoTrackPrivate::Main:
-        setKind(VideoTrack::mainKeyword());
+        setKindInternal(VideoTrack::mainKeyword());
         break;
     case VideoTrackPrivate::Sign:
-        setKind(VideoTrack::signKeyword());
+        setKindInternal(VideoTrack::signKeyword());
         break;
     case VideoTrackPrivate::Subtitles:
-        setKind(VideoTrack::subtitlesKeyword());
+        setKindInternal(VideoTrack::subtitlesKeyword());
         break;
     case VideoTrackPrivate::Commentary:
-        setKind(VideoTrack::commentaryKeyword());
+        setKindInternal(VideoTrack::commentaryKeyword());
         break;
     case VideoTrackPrivate::None:
-        setKind(emptyString());
+        setKindInternal(emptyString());
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -183,6 +187,49 @@ void VideoTrack::willRemove(TrackPrivateBase* trackPrivate)
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     mediaElement()->removeVideoTrack(this);
 }
+
+#if ENABLE(MEDIA_SOURCE)
+void VideoTrack::setKind(const AtomicString& kind)
+{
+    // 10.1 kind, on setting:
+    // 1. If the value being assigned to this attribute does not match one of the video track kinds,
+    // then abort these steps.
+    if (!isValidKind(kind))
+        return;
+
+    // 2. Update this attribute to the new value.
+    setKindInternal(kind);
+
+    // 3. If the sourceBuffer attribute on this track is not null, then queue a task to fire a simple
+    // event named change at sourceBuffer.videoTracks.
+    if (m_sourceBuffer)
+        m_sourceBuffer->videoTracks()->scheduleChangeEvent();
+
+    // 4. Queue a task to fire a simple event named change at the VideoTrackList object referenced by
+    // the videoTracks attribute on the HTMLMediaElement.
+    mediaElement()->videoTracks()->scheduleChangeEvent();
+}
+
+void VideoTrack::setLanguage(const AtomicString& language)
+{
+    // 10.1 language, on setting:
+    // 1. If the value being assigned to this attribute is not an empty string or a BCP 47 language
+    // tag[BCP47], then abort these steps.
+    // FIXME(123926): Validate the BCP47-ness of langague.
+
+    // 2. Update this attribute to the new value.
+    TrackBase::setLanguage(language);
+
+    // 3. If the sourceBuffer attribute on this track is not null, then queue a task to fire a simple
+    // event named change at sourceBuffer.videoTracks.
+    if (m_sourceBuffer)
+        m_sourceBuffer->videoTracks()->scheduleChangeEvent();
+
+    // 4. Queue a task to fire a simple event named change at the VideoTrackList object referenced by
+    // the videoTracks attribute on the HTMLMediaElement.
+    mediaElement()->videoTracks()->scheduleChangeEvent();
+}
+#endif
 
 } // namespace WebCore
 
