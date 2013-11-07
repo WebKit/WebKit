@@ -5402,6 +5402,16 @@
 		CDEE393717974259001D7580 /* PublicURLManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEE393617974259001D7580 /* PublicURLManager.cpp */; };
 		CDEF4FD717E85C8F00AEE24B /* GridLength.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEF4FD617E85C8F00AEE24B /* GridLength.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDF2B004181F059C00F2B424 /* MediaDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF2B003181F059C00F2B424 /* MediaDescription.h */; };
+		CDF2B0101820540600F2B424 /* MockBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF2B0061820540600F2B424 /* MockBox.cpp */; };
+		CDF2B0111820540600F2B424 /* MockBox.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF2B0071820540600F2B424 /* MockBox.h */; };
+		CDF2B0121820540600F2B424 /* MockMediaPlayerMediaSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF2B0081820540600F2B424 /* MockMediaPlayerMediaSource.cpp */; };
+		CDF2B0131820540600F2B424 /* MockMediaPlayerMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF2B0091820540600F2B424 /* MockMediaPlayerMediaSource.h */; };
+		CDF2B0141820540600F2B424 /* MockMediaSourcePrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF2B00A1820540600F2B424 /* MockMediaSourcePrivate.cpp */; };
+		CDF2B0151820540600F2B424 /* MockMediaSourcePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF2B00B1820540600F2B424 /* MockMediaSourcePrivate.h */; };
+		CDF2B0161820540700F2B424 /* MockSourceBufferPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF2B00C1820540600F2B424 /* MockSourceBufferPrivate.cpp */; };
+		CDF2B0171820540700F2B424 /* MockSourceBufferPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF2B00D1820540600F2B424 /* MockSourceBufferPrivate.h */; };
+		CDF2B0181820540700F2B424 /* MockTracks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF2B00E1820540600F2B424 /* MockTracks.cpp */; };
+		CDF2B0191820540700F2B424 /* MockTracks.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF2B00F1820540600F2B424 /* MockTracks.h */; };
 		CDF65CC8145B1E7500C4C7AA /* MediaController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD27F6E4145767870078207D /* MediaController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDF65CCA145B448800C4C7AA /* MediaControllerInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF65CC9145B43A700C4C7AA /* MediaControllerInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE057FA51220731100A476D5 /* DocumentMarkerController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */; };
@@ -12448,6 +12458,16 @@
 		CDEE393817974274001D7580 /* URLRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = URLRegistry.h; sourceTree = "<group>"; };
 		CDEF4FD617E85C8F00AEE24B /* GridLength.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridLength.h; path = style/GridLength.h; sourceTree = "<group>"; };
 		CDF2B003181F059C00F2B424 /* MediaDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaDescription.h; sourceTree = "<group>"; };
+		CDF2B0061820540600F2B424 /* MockBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockBox.cpp; sourceTree = "<group>"; };
+		CDF2B0071820540600F2B424 /* MockBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockBox.h; sourceTree = "<group>"; };
+		CDF2B0081820540600F2B424 /* MockMediaPlayerMediaSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockMediaPlayerMediaSource.cpp; sourceTree = "<group>"; };
+		CDF2B0091820540600F2B424 /* MockMediaPlayerMediaSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockMediaPlayerMediaSource.h; sourceTree = "<group>"; };
+		CDF2B00A1820540600F2B424 /* MockMediaSourcePrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockMediaSourcePrivate.cpp; sourceTree = "<group>"; };
+		CDF2B00B1820540600F2B424 /* MockMediaSourcePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockMediaSourcePrivate.h; sourceTree = "<group>"; };
+		CDF2B00C1820540600F2B424 /* MockSourceBufferPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockSourceBufferPrivate.cpp; sourceTree = "<group>"; };
+		CDF2B00D1820540600F2B424 /* MockSourceBufferPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockSourceBufferPrivate.h; sourceTree = "<group>"; };
+		CDF2B00E1820540600F2B424 /* MockTracks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockTracks.cpp; sourceTree = "<group>"; };
+		CDF2B00F1820540600F2B424 /* MockTracks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockTracks.h; sourceTree = "<group>"; };
 		CDF65CC9145B43A700C4C7AA /* MediaControllerInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControllerInterface.h; sourceTree = "<group>"; };
 		CDF65CCC145B6AFE00C4C7AA /* JSHTMLMediaElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLMediaElementCustom.cpp; sourceTree = "<group>"; };
 		CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentMarkerController.cpp; sourceTree = "<group>"; };
@@ -15122,6 +15142,7 @@
 		59C77F101054591C00506104 /* mock */ = {
 			isa = PBXGroup;
 			children = (
+				CDF2B005182053DF00F2B424 /* mediasource */,
 				07C59B6117F4CF87000FBCBB /* MockMediaStreamCenter.cpp */,
 				07C59B6217F4CF87000FBCBB /* MockMediaStreamCenter.h */,
 				59309A1011F4AE5800250603 /* DeviceOrientationClientMock.cpp */,
@@ -20222,6 +20243,23 @@
 			name = MediaControls;
 			sourceTree = "<group>";
 		};
+		CDF2B005182053DF00F2B424 /* mediasource */ = {
+			isa = PBXGroup;
+			children = (
+				CDF2B0061820540600F2B424 /* MockBox.cpp */,
+				CDF2B0071820540600F2B424 /* MockBox.h */,
+				CDF2B0081820540600F2B424 /* MockMediaPlayerMediaSource.cpp */,
+				CDF2B0091820540600F2B424 /* MockMediaPlayerMediaSource.h */,
+				CDF2B00A1820540600F2B424 /* MockMediaSourcePrivate.cpp */,
+				CDF2B00B1820540600F2B424 /* MockMediaSourcePrivate.h */,
+				CDF2B00C1820540600F2B424 /* MockSourceBufferPrivate.cpp */,
+				CDF2B00D1820540600F2B424 /* MockSourceBufferPrivate.h */,
+				CDF2B00E1820540600F2B424 /* MockTracks.cpp */,
+				CDF2B00F1820540600F2B424 /* MockTracks.h */,
+			);
+			path = mediasource;
+			sourceTree = "<group>";
+		};
 		CE79D68617F220ED00815C00 /* ios */ = {
 			isa = PBXGroup;
 			children = (
@@ -22312,6 +22350,7 @@
 				85E7118F0AC5D5350053270F /* DOMCharacterDataInternal.h in Headers */,
 				85089CD90A98C42800A275AA /* DOMComment.h in Headers */,
 				078E093717D16B2C00420AA1 /* MediaStreamPrivate.h in Headers */,
+				CDF2B0151820540600F2B424 /* MockMediaSourcePrivate.h in Headers */,
 				85E711900AC5D5350053270F /* DOMCommentInternal.h in Headers */,
 				BC1A37AF097C715F0019F3D8 /* DOMCore.h in Headers */,
 				BC60D6E90D28D83400B9918F /* DOMCoreException.h in Headers */,
@@ -22624,6 +22663,7 @@
 				078E091817D14D1C00420AA1 /* MediaStreamTrack.h in Headers */,
 				8AC822FD180FC03300FB64D5 /* RenderNamedFlowFragment.h in Headers */,
 				51D719D9181106E00016DC51 /* IDBIndex.h in Headers */,
+				CDF2B0191820540700F2B424 /* MockTracks.h in Headers */,
 				316FE0820E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRuleInternal.h in Headers */,
 				498391500F1E76B400C23782 /* DOMWebKitCSSMatrix.h in Headers */,
 				498391520F1E76B400C23782 /* DOMWebKitCSSMatrixInternal.h in Headers */,
@@ -22633,6 +22673,7 @@
 				31611E630E1C4E1400F6A579 /* DOMWebKitCSSTransformValueInternal.h in Headers */,
 				3F2B33EB165AF15600E3987C /* DOMWebKitCSSViewportRule.h in Headers */,
 				3F2B33ED165AF15600E3987C /* DOMWebKitCSSViewportRuleInternal.h in Headers */,
+				CDF2B0171820540700F2B424 /* MockSourceBufferPrivate.h in Headers */,
 				8A195932147EA16E00D1EA61 /* DOMWebKitNamedFlow.h in Headers */,
 				8A195934147EA16E00D1EA61 /* DOMWebKitNamedFlowInternal.h in Headers */,
 				31C0FF4C0E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.h in Headers */,
@@ -24185,6 +24226,7 @@
 				514C767A0CE923A1007EF3CD /* ResourceHandleClient.h in Headers */,
 				514C767B0CE923A1007EF3CD /* ResourceHandleInternal.h in Headers */,
 				51E4143416A6596300C633C7 /* ResourceHandleTypes.h in Headers */,
+				CDF2B0111820540600F2B424 /* MockBox.h in Headers */,
 				656D373F0ADBA5DE00A4554D /* ResourceLoader.h in Headers */,
 				D0A3A7311405A39800FB8ED3 /* ResourceLoaderOptions.h in Headers */,
 				51AF503616F100F60095B2E8 /* ResourceLoaderTypes.h in Headers */,
@@ -24749,6 +24791,7 @@
 				A824B4650E2EF2EA0081A7B7 /* TextRun.h in Headers */,
 				448B1B7A0F3A2F9B0047A9E2 /* TextSizeAdjustment.h in Headers */,
 				B2C3DA4B0D006C1D00EF6F26 /* TextStream.h in Headers */,
+				CDF2B0131820540600F2B424 /* MockMediaPlayerMediaSource.h in Headers */,
 				9759E94014EF1CF80026A2DD /* TextTrack.h in Headers */,
 				9759E94314EF1CF80026A2DD /* TextTrackCue.h in Headers */,
 				071A9EC3168FBC55002629F9 /* TextTrackCueGeneric.h in Headers */,
@@ -25821,6 +25864,7 @@
 				D359D792129CA3C00006E5D2 /* DOMHTMLDetailsElement.mm in Sources */,
 				85BA4D0C0AA688680088052D /* DOMHTMLDirectoryElement.mm in Sources */,
 				85BA4D0E0AA688680088052D /* DOMHTMLDivElement.mm in Sources */,
+				CDF2B0141820540600F2B424 /* MockMediaSourcePrivate.cpp in Sources */,
 				85BA4D100AA688680088052D /* DOMHTMLDListElement.mm in Sources */,
 				85BCBC140ABBA87D00381160 /* DOMHTMLDocument.mm in Sources */,
 				85DF2EEE0AA387CB00AD64C5 /* DOMHTMLElement.mm in Sources */,
@@ -25926,6 +25970,7 @@
 				31C0FF4A0E4CEFDD007D6FE5 /* DOMWebKitAnimationEvent.mm in Sources */,
 				A2E8AE4116A498CF006BB3AA /* DOMWebKitCSSFilterRule.mm in Sources */,
 				3106037A143281CD00ABF4BA /* DOMWebKitCSSFilterValue.mm in Sources */,
+				CDF2B0101820540600F2B424 /* MockBox.cpp in Sources */,
 				316FE07E0E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRule.mm in Sources */,
 				316FE0810E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.mm in Sources */,
 				498391510F1E76B400C23782 /* DOMWebKitCSSMatrix.mm in Sources */,
@@ -26254,6 +26299,7 @@
 				A871DC290A15205700B12A68 /* HTMLTitleElement.cpp in Sources */,
 				977B3877122883E900B81FF8 /* HTMLTokenizer.cpp in Sources */,
 				0707568B142262D600414161 /* HTMLTrackElement.cpp in Sources */,
+				CDF2B0121820540600F2B424 /* MockMediaPlayerMediaSource.cpp in Sources */,
 				977B37251228721700B81FF8 /* HTMLTreeBuilder.cpp in Sources */,
 				9B7E78BD16F16CC600126914 /* HTMLTreeBuilderSimulator.cpp in Sources */,
 				A8EA79F30A1916DF00A8EF5F /* HTMLUListElement.cpp in Sources */,
@@ -27653,6 +27699,7 @@
 				431A308813B8F978007791E4 /* SVGAnimatedBoolean.cpp in Sources */,
 				43A625F913B3304000AC94B8 /* SVGAnimatedColor.cpp in Sources */,
 				71CC7A20152A0BFE009EEAF9 /* SVGAnimatedEnumeration.cpp in Sources */,
+				CDF2B0161820540700F2B424 /* MockSourceBufferPrivate.cpp in Sources */,
 				43F6FD9613BCD0B100224052 /* SVGAnimatedInteger.cpp in Sources */,
 				1A3586E115264F950022A659 /* SVGAnimatedIntegerOptionalInteger.cpp in Sources */,
 				8AC822FC180FC03300FB64D5 /* RenderNamedFlowFragment.cpp in Sources */,
@@ -27782,6 +27829,7 @@
 				8476C9EF11DF6A5800555B02 /* SVGPathParser.cpp in Sources */,
 				B2227A800D00BF220071B782 /* SVGPathSegList.cpp in Sources */,
 				8476C9E511DF6A0B00555B02 /* SVGPathSegListBuilder.cpp in Sources */,
+				CDF2B0181820540700F2B424 /* MockTracks.cpp in Sources */,
 				08FF102012950F5A00F00276 /* SVGPathSegListPropertyTearOff.cpp in Sources */,
 				84B6B977120F13E500B8EFAF /* SVGPathSegListSource.cpp in Sources */,
 				8419D2B9120E0C7600141F8F /* SVGPathStringBuilder.cpp in Sources */,

@@ -273,4 +273,6 @@
     [RaisesException] boolean isPluginUnavailabilityIndicatorObscured(Element element);
 
     [RaisesException] ClientRect selectionBounds();
+    
+    [Conditional=MEDIA_SOURCE] void initializeMockMediaSource();
 };

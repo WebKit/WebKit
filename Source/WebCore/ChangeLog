@@ -1,3 +1,187 @@
+2013-10-30  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Add mock MediaSource classes for testing.
+        https://bugs.webkit.org/show_bug.cgi?id=123322
+
+        Reviewed by Eric Carlson.
+
+        Tests: media/media-source/media-source-addsourcebuffer.html
+               media/media-source/media-source-append-buffer.html
+               media/media-source/media-source-canplaythrough.html
+               media/media-source/media-source-closed.html
+               media/media-source/media-source-play.html
+               media/media-source/media-source-track-enabled.html
+               media/media-source/media-source-tracks.html
+
+
+        Add mock implementation of platform MediaSource classes, allowing ports to test the
+        MediaSource API without having a platform implementation.
+
+        The MockMediaSource will support a byteformat defined in MockBox.h: a simple box-style media
+        format with an initialization segment containing a number of tracks, followed by a list of
+        samples.
+
+        Add a means to insert a new media engine factory at runtime, so the internals object can add
+        a MockMediaSourceMediaPlayer:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayerFactorySupport::callRegisterMediaEngine):
+        * platform/graphics/MediaPlayer.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::initializeMockMediaSource):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+        For non-media-source supporting media engines, fail immediately when asked to load a media
+        source, so that the MockMediaSourceMediaPlayer will be instantiated as a fall-back:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::load):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsType):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::load):
+        (WebCore::MediaPlayerPrivateQTKit::supportsType):
+
+        Add new files to the project:
+        * WebCore.xcodeproj/project.pbxproj:
+        * Source/WebCore/WebCore.exp.in:
+
+        Update the MediaSource implementation:
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::monitorSourceBuffers): Add a link to the spec.
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::buffered): Ditto.
+        (WebCore::SourceBuffer::setTimestampOffset): Ditto.
+        (WebCore::SourceBuffer::validateInitializationSegment): Ditto.
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment): Ditto. Also,
+            bring the implementation up to date with part of the spec.
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample): Remove "Predicate" from
+            SampleIsRandomAccessPredicate.
+
+        Add utility classes to parse and represent the bytestream supported by the MockMediaSource:
+        * platform/mock/mediasource/MockBox.cpp: Added.
+        (WebCore::MockBox::MockBox):
+        (WebCore::MockBox::peekType):
+        (WebCore::MockBox::peekLength):
+        (WebCore::MockTrackBox::MockTrackBox):
+        (WebCore::MockTrackBox::type):
+        (WebCore::MockInitializationBox::MockInitializationBox):
+        (WebCore::MockInitializationBox::type):
+        (WebCore::MockSampleBox::MockSampleBox):
+        (WebCore::MockSampleBox::type):
+        * platform/mock/mediasource/MockBox.h: Added.
+        (WebCore::MockBox::length):
+        (WebCore::MockBox::type):
+        (WebCore::MockTrackBox::trackID):
+        (WebCore::MockTrackBox::codec):
+        (WebCore::MockTrackBox::kind):
+        (WebCore::MockInitializationBox::duration):
+        (WebCore::MockInitializationBox::tracks):
+        (WebCore::MockSampleBox::presentationTimestamp):
+        (WebCore::MockSampleBox::decodeTimestamp):
+        (WebCore::MockSampleBox::duration):
+        (WebCore::MockSampleBox::trackID):
+        (WebCore::MockSampleBox::flags):
+        (WebCore::MockSampleBox::isSync):
+
+        Add a MediaPlayerPrivate implementation which uses MockMediaSource:
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp: Added.
+        (WebCore::MockMediaPlayerMediaSource::registerMediaEngine):
+        (WebCore::MockMediaPlayerMediaSource::create):
+        (WebCore::mimeTypeCache):
+        (WebCore::MockMediaPlayerMediaSource::getSupportedTypes):
+        (WebCore::MockMediaPlayerMediaSource::supportsType):
+        (WebCore::MockMediaPlayerMediaSource::MockMediaPlayerMediaSource):
+        (WebCore::MockMediaPlayerMediaSource::~MockMediaPlayerMediaSource):
+        (WebCore::MockMediaPlayerMediaSource::load):
+        (WebCore::MockMediaPlayerMediaSource::cancelLoad):
+        (WebCore::MockMediaPlayerMediaSource::play):
+        (WebCore::MockMediaPlayerMediaSource::pause):
+        (WebCore::MockMediaPlayerMediaSource::naturalSize):
+        (WebCore::MockMediaPlayerMediaSource::hasVideo):
+        (WebCore::MockMediaPlayerMediaSource::hasAudio):
+        (WebCore::MockMediaPlayerMediaSource::setVisible):
+        (WebCore::MockMediaPlayerMediaSource::seeking):
+        (WebCore::MockMediaPlayerMediaSource::paused):
+        (WebCore::MockMediaPlayerMediaSource::networkState):
+        (WebCore::MockMediaPlayerMediaSource::readyState):
+        (WebCore::MockMediaPlayerMediaSource::buffered):
+        (WebCore::MockMediaPlayerMediaSource::didLoadingProgress):
+        (WebCore::MockMediaPlayerMediaSource::setSize):
+        (WebCore::MockMediaPlayerMediaSource::paint):
+        (WebCore::MockMediaPlayerMediaSource::currentTimeDouble):
+        (WebCore::MockMediaPlayerMediaSource::durationDouble):
+        (WebCore::MockMediaPlayerMediaSource::seekDouble):
+        (WebCore::MockMediaPlayerMediaSource::advanceCurrentTime):
+        (WebCore::MockMediaPlayerMediaSource::updateDuration):
+        (WebCore::MockMediaPlayerMediaSource::setReadyState):
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.h: Added.
+
+        Add a mock implementation of MediaSourcePrivate, which uses MockSourceBuffer:
+        * platform/mock/mediasource/MockMediaSourcePrivate.cpp: Added.
+        (WebCore::MockMediaSourcePrivate::create):
+        (WebCore::MockMediaSourcePrivate::MockMediaSourcePrivate):
+        (WebCore::MockMediaSourcePrivate::~MockMediaSourcePrivate):
+        (WebCore::MockMediaSourcePrivate::addSourceBuffer):
+        (WebCore::MockMediaSourcePrivate::removeSourceBuffer):
+        (WebCore::MockMediaSourcePrivate::duration):
+        (WebCore::MockMediaSourcePrivate::setDuration):
+        (WebCore::MockMediaSourcePrivate::markEndOfStream):
+        (WebCore::MockMediaSourcePrivate::unmarkEndOfStream):
+        (WebCore::MockMediaSourcePrivate::readyState):
+        (WebCore::MockMediaSourcePrivate::setReadyState):
+        (WebCore::MockMediaSourcePrivate::sourceBufferPrivateDidChangeActiveState):
+        (WebCore::MockSourceBufferPrivateHasAudio):
+        (WebCore::MockMediaSourcePrivate::hasAudio):
+        (WebCore::MockSourceBufferPrivateHasVideo):
+        (WebCore::MockMediaSourcePrivate::hasVideo):
+        * platform/mock/mediasource/MockMediaSourcePrivate.h: Added.
+        (WebCore::MockMediaSourcePrivate::activeSourceBuffers):
+        (WebCore::MockMediaSourcePrivate::player):
+
+        Add a mock implementation of SourceBufferPrivate, which uses MockBoxes to parse the
+        bytestream provided by SourceBuffer:
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp: Added.
+        (WebCore::MockMediaSample::create):
+        (WebCore::MockMediaSample::~MockMediaSample):
+        (WebCore::MockMediaSample::MockMediaSample):
+        (WebCore::MockMediaSample::platformSample):
+        (WebCore::MockMediaDescription::create):
+        (WebCore::MockMediaDescription::~MockMediaDescription):
+        (WebCore::MockMediaDescription::MockMediaDescription):
+        (WebCore::MockSourceBufferPrivate::create):
+        (WebCore::MockSourceBufferPrivate::MockSourceBufferPrivate):
+        (WebCore::MockSourceBufferPrivate::~MockSourceBufferPrivate):
+        (WebCore::MockSourceBufferPrivate::setClient):
+        (WebCore::MockSourceBufferPrivate::append):
+        (WebCore::MockSourceBufferPrivate::didReceiveInitializationSegment):
+        (WebCore::MockSourceBufferPrivate::didReceiveSample):
+        (WebCore::MockSourceBufferPrivate::abort):
+        (WebCore::MockSourceBufferPrivate::removedFromMediaSource):
+        (WebCore::MockSourceBufferPrivate::readyState):
+        (WebCore::MockSourceBufferPrivate::setReadyState):
+        (WebCore::MockSourceBufferPrivate::hasVideo):
+        (WebCore::MockSourceBufferPrivate::hasAudio):
+        * platform/mock/mediasource/MockSourceBufferPrivate.h: Added.
+
+        Create mock implementations of AudioTrackPrivate, VideoTrackPrivate, and TextTrackPrivate
+        which wrap the MockTrackBox class:
+        * platform/mock/mediasource/MockTracks.cpp: Added.
+        * platform/mock/mediasource/MockTracks.h: Added.
+        (WebCore::MockAudioTrackPrivate::create):
+        (WebCore::MockAudioTrackPrivate::~MockAudioTrackPrivate):
+        (WebCore::MockAudioTrackPrivate::id):
+        (WebCore::MockAudioTrackPrivate::MockAudioTrackPrivate):
+        (WebCore::MockTextTrackPrivate::create):
+        (WebCore::MockTextTrackPrivate::~MockTextTrackPrivate):
+        (WebCore::MockTextTrackPrivate::id):
+        (WebCore::MockTextTrackPrivate::MockTextTrackPrivate):
+        (WebCore::MockVideoTrackPrivate::create):
+        (WebCore::MockVideoTrackPrivate::~MockVideoTrackPrivate):
+        (WebCore::MockVideoTrackPrivate::id):
+        (WebCore::MockVideoTrackPrivate::MockVideoTrackPrivate):
+
 2013-11-07  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Changing MediaStreamDescriptor to MediaStreamPrivate

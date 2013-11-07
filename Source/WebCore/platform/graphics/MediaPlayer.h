@@ -549,6 +549,12 @@ typedef void (*MediaEngineClearMediaCacheForSite)(const String&);
 
 typedef void (*MediaEngineRegistrar)(CreateMediaEnginePlayer, MediaEngineSupportedTypes, MediaEngineSupportsType,
     MediaEngineGetSitesInMediaCache, MediaEngineClearMediaCache, MediaEngineClearMediaCacheForSite);
+typedef void (*MediaEngineRegister)(MediaEngineRegistrar);
+
+class MediaPlayerFactorySupport {
+public:
+    static void callRegisterMediaEngine(MediaEngineRegister);
+};
 
 }
 

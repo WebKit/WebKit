@@ -1,0 +1,8 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(loadedmetadata)
+EVENT(loadeddata)
+EVENT(canplay)
+EVENT(canplaythrough)
+END OF TEST
+

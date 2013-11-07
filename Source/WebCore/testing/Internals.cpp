@@ -70,6 +70,7 @@
 #include "Language.h"
 #include "MainFrame.h"
 #include "MallocStatistics.h"
+#include "MediaPlayer.h"
 #include "MemoryCache.h"
 #include "MemoryInfo.h"
 #include "Page.h"
@@ -151,6 +152,10 @@
 #include "MockMediaStreamCenter.h"
 #include "RTCPeerConnection.h"
 #include "RTCPeerConnectionHandlerMock.h"
+#endif
+
+#if ENABLE(MEDIA_SOURCE)
+#include "MockMediaPlayerMediaSource.h"
 #endif
 
 namespace WebCore {
@@ -2166,5 +2171,12 @@ bool Internals::isPluginUnavailabilityIndicatorObscured(Element* element, Except
     RenderEmbeddedObject* embed = toRenderEmbeddedObject(renderer);
     return embed->isReplacementObscured();
 }
+
+#if ENABLE(MEDIA_SOURCE)
+void Internals::initializeMockMediaSource()
+{
+    MediaPlayerFactorySupport::callRegisterMediaEngine(MockMediaPlayerMediaSource::registerMediaEngine);
+}
+#endif
 
 }

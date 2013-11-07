@@ -398,6 +398,7 @@ void MediaSource::monitorSourceBuffers()
     double currentTime = mediaElement()->currentTime();
 
     // 2.4.4 SourceBuffer Monitoring
+    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#buffer-monitoring
     // ↳ If buffered for all objects in activeSourceBuffers do not contain TimeRanges for the current
     // playback position:
     auto begin = m_activeSourceBuffers->begin();

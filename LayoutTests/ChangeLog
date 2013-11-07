@@ -1,3 +1,23 @@
+2013-10-24  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Add mock MediaSource classes for testing.
+        https://bugs.webkit.org/show_bug.cgi?id=123322
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-addsourcebuffer-expected.txt: Added.
+        * media/media-source/media-source-addsourcebuffer.html: Added.
+        * media/media-source/media-source-append-buffer-expected.txt: Added.
+        * media/media-source/media-source-append-buffer.html: Added.
+        * media/media-source/media-source-canplaythrough-expected.txt: Added.
+        * media/media-source/media-source-canplaythrough.html: Added.
+        * media/media-source/media-source-closed-expected.txt: Added.
+        * media/media-source/media-source-closed.html: Added.
+        * media/media-source/media-source-play-expected.txt: Added.
+        * media/media-source/media-source-play.html: Added.
+        * media/media-source/mock-media-source.js: Added.
+        * media/video-test.js:
+
 2013-11-07  Samuel White  <samuel_white@apple.com>
 
         AX: DRT AccessibilityUIElement::isFocused methods should be finished.

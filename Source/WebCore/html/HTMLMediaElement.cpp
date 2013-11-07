@@ -1437,8 +1437,8 @@ void HTMLMediaElement::audioTrackEnabledChanged(AudioTrack* track)
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled())
         return;
-    ASSERT_UNUSED(track, m_audioTracks->contains(track));
-    m_audioTracks->scheduleChangeEvent();
+    if (m_audioTracks && m_audioTracks->contains(track))
+        m_audioTracks->scheduleChangeEvent();
 }
 
 void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
@@ -1478,8 +1478,8 @@ void HTMLMediaElement::videoTrackSelectedChanged(VideoTrack* track)
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled())
         return;
-    ASSERT_UNUSED(track, m_videoTracks->contains(track));
-    m_videoTracks->scheduleChangeEvent();
+    if (m_videoTracks && m_videoTracks->contains(track))
+        m_videoTracks->scheduleChangeEvent();
 }
 
 void HTMLMediaElement::textTrackKindChanged(TextTrack* track)

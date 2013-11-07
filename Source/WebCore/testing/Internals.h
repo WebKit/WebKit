@@ -325,6 +325,10 @@ public:
 
     bool isPluginUnavailabilityIndicatorObscured(Element*, ExceptionCode&);
 
+#if ENABLE(MEDIA_SOURCE)
+    void initializeMockMediaSource();
+#endif
+
 private:
     explicit Internals(Document*);
     Document* contextDocument() const;

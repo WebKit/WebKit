@@ -108,6 +108,7 @@ SourceBuffer::~SourceBuffer()
 PassRefPtr<TimeRanges> SourceBuffer::buffered(ExceptionCode& ec) const
 {
     // Section 3.1 buffered attribute steps.
+    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#attributes-1
     // 1. If this object has been removed from the sourceBuffers attribute of the parent media source then throw an
     //    INVALID_STATE_ERR exception and abort these steps.
     if (isRemoved()) {
@@ -132,6 +133,7 @@ double SourceBuffer::timestampOffset() const
 void SourceBuffer::setTimestampOffset(double offset, ExceptionCode& ec)
 {
     // Section 3.1 timestampOffset attribute setter steps.
+    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#attributes-1
     // 1. If this object has been removed from the sourceBuffers attribute of the parent media source then throw an
     //    INVALID_STATE_ERR exception and abort these steps.
     if (isRemoved()) {
@@ -390,9 +392,16 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
     m_appendState = ParsingInitSegment;
 
     // 3.5.7 Initialization Segment Received
+    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#sourcebuffer-init-segment-received
     // 1. Update the duration attribute if it currently equals NaN:
-    if (std::isnan(m_source->duration()) && segment.duration.isValid())
-        m_source->setDuration(segment.duration.toDouble(), IGNORE_EXCEPTION);
+    if (std::isnan(m_source->duration())) {
+        // ↳ If the initialization segment contains a duration:
+        //   Run the duration change algorithm with new duration set to the duration in the initialization segment.
+        // ↳ Otherwise:
+        //   Run the duration change algorithm with new duration set to positive Infinity.
+        MediaTime newDuration = segment.duration.isValid() ? segment.duration : MediaTime::positiveInfiniteTime();
+        m_source->setDuration(newDuration.toDouble(), IGNORE_EXCEPTION);
+    }
 
     // 2. If the initialization segment has no audio, video, or text tracks, then run the end of stream
     // algorithm with the error parameter set to "decode" and abort these steps.
@@ -560,6 +569,9 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
 
 bool SourceBuffer::validateInitializationSegment(const InitializationSegment& segment)
 {
+    // 3.5.7 Initialization Segment Received (ctd)
+    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#sourcebuffer-init-segment-received
+
     // 3.1. Verify the following properties. If any of the checks fail then run the end of stream
     // algorithm with the error parameter set to "decode" and abort these steps.
     //   * The number of audio, video, and text tracks match what was in the first initialization segment.
@@ -656,7 +668,7 @@ public:
     }
 };
 
-class SampleIsRandomAccessPredicate {
+class SampleIsRandomAccess {
 public:
     bool operator()(std::pair<MediaTime, RefPtr<MediaSample>> value)
     {
@@ -842,7 +854,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
             // Otherwise: Remove all coded frames between the coded frames removed in the previous step
             // and the next random access point after those removed frames.
             auto first_iter = std::upper_bound(trackBuffer.samples.begin(), trackBuffer.samples.end(), *erasedSamples.begin(), SampleLessThanComparator());
-            auto second_iter = std::find_if(first_iter, trackBuffer.samples.end(), SampleIsRandomAccessPredicate());
+            auto second_iter = std::find_if(first_iter, trackBuffer.samples.end(), SampleIsRandomAccess());
             if (first_iter != trackBuffer.samples.end()) {
                 trackBuffer.samples.erase(first_iter, second_iter);
                 erasedSamples.insert(first_iter, second_iter);

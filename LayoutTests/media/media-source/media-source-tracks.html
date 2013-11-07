@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        waitForEventOn(source, 'sourceopen', sourceOpen);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen() {
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+
+        waitForEventOn(sourceBuffer, 'updatestart');
+        waitForEventOn(sourceBuffer, 'update');
+        waitForEventOn(sourceBuffer, 'updateend', updateEnd);
+        initSegment = makeAInit(100, [
+            makeATrack(1, 'mock', TRACK_KIND.VIDEO),
+            makeATrack(2, 'mock', TRACK_KIND.AUDIO),
+            makeATrack(3, 'mock', TRACK_KIND.AUDIO),
+            makeATrack(4, 'mock', TRACK_KIND.TEXT),
+            makeATrack(5, 'mock', TRACK_KIND.TEXT),
+            makeATrack(6, 'mock', TRACK_KIND.TEXT),
+        ]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+        testExpected('sourceBuffer.updating', true);
+    }
+    
+    function updateEnd() {
+        testExpected('sourceBuffer.updating', false);
+        testExpected('sourceBuffer.videoTracks.length', 1);
+        testExpected('sourceBuffer.audioTracks.length', 2);
+        testExpected('sourceBuffer.textTracks.length', 3);
+        endTest();
+    }
+
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>
