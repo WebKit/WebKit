@@ -1,3 +1,10 @@
+2013-11-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Attempt to fix the 32-bit build. Virtual thunks seem to have different
+        symbol names between 32- and 64-bit.
+        
+        * WebCore.exp.in:
+
 2013-11-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in HTMLMediaElement::contextDestroyed
