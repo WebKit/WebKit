@@ -1,3 +1,17 @@
+2013-11-07  Andreas Kling  <akling@apple.com>
+
+        Generate type casting helpers for line boxes and use them.
+        <https://webkit.org/b/123976>
+
+        Semi-automatically generate the full set of toFooInlineBox()
+        helpers with macros instead of having them (partially) hand-coded.
+        Replaced static_casts with the new helpers across the codebase.
+
+        Also made the isFooInlineBox() overrides private since they should
+        never be called when the type is already known.
+
+        Reviewed by Antti Koivisto.
+
 2013-11-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Simplify Attr by removing m_specified member variable and setter

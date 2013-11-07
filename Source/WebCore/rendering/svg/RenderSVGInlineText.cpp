@@ -118,7 +118,7 @@ LayoutRect RenderSVGInlineText::localCaretRect(InlineBox* box, int caretOffset, 
     if (!box || !box->isInlineTextBox())
         return LayoutRect();
 
-    InlineTextBox* textBox = static_cast<InlineTextBox*>(box);
+    InlineTextBox* textBox = toInlineTextBox(box);
     if (static_cast<unsigned>(caretOffset) < textBox->start() || static_cast<unsigned>(caretOffset) > textBox->start() + textBox->len())
         return LayoutRect();
 

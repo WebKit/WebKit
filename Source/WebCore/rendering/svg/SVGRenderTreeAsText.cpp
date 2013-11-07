@@ -378,7 +378,7 @@ static TextStream& operator<<(TextStream& ts, const RenderSVGRoot& root)
 
 static void writeRenderSVGTextBox(TextStream& ts, const RenderSVGText& text)
 {
-    SVGRootInlineBox* box = static_cast<SVGRootInlineBox*>(text.firstRootBox());
+    SVGRootInlineBox* box = toSVGRootInlineBox(text.firstRootBox());
     if (!box)
         return;
 

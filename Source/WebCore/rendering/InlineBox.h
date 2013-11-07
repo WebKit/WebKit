@@ -80,7 +80,8 @@ public:
 
     bool behavesLikeText() const { return m_bitfields.behavesLikeText(); }
     void setBehavesLikeText(bool behavesLikeText) { m_bitfields.setBehavesLikeText(behavesLikeText); }
- 
+
+    virtual bool isInlineElementBox() const { return false; }
     virtual bool isInlineFlowBox() const { return false; }
     virtual bool isInlineTextBox() const { return false; }
     virtual bool isRootInlineBox() const { return false; }
@@ -411,6 +412,9 @@ private:
     bool m_hasBadParent;
 #endif
 };
+
+#define INLINE_BOX_OBJECT_TYPE_CASTS(ToValueTypeName, predicate) \
+    TYPE_CASTS_BASE(ToValueTypeName, InlineBox, object, object->predicate, object.predicate)
 
 #if ASSERT_DISABLED
 inline InlineBox::~InlineBox()

@@ -96,7 +96,7 @@ void SVGTextQuery::collectTextBoxesInFlowBox(InlineFlowBox* flowBox)
             if (!child->renderer().node())
                 continue;
 
-            collectTextBoxesInFlowBox(static_cast<InlineFlowBox*>(child));
+            collectTextBoxesInFlowBox(toInlineFlowBox(child));
             continue;
         }
 

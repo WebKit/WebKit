@@ -53,11 +53,7 @@ private:
     float m_logicalHeight;
 };
 
-inline SVGInlineFlowBox* toSVGInlineFlowBox(InlineBox* box)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!box || box->isSVGInlineFlowBox());
-    return static_cast<SVGInlineFlowBox*>(box);
-}
+INLINE_BOX_OBJECT_TYPE_CASTS(SVGInlineFlowBox, isSVGInlineFlowBox())
 
 } // namespace WebCore
 

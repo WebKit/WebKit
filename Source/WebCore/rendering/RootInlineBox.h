@@ -40,13 +40,12 @@ public:
     explicit RootInlineBox(RenderBlockFlow&);
     virtual ~RootInlineBox();
 
-    virtual bool isRootInlineBox() const OVERRIDE FINAL { return true; }
     RenderBlockFlow& blockFlow() const;
 
     void detachEllipsisBox();
 
-    RootInlineBox* nextRootBox() const { return static_cast<RootInlineBox*>(m_nextLineBox); }
-    RootInlineBox* prevRootBox() const { return static_cast<RootInlineBox*>(m_prevLineBox); }
+    RootInlineBox* nextRootBox() const;
+    RootInlineBox* prevRootBox() const;
 
     virtual void adjustPosition(float dx, float dy) OVERRIDE FINAL;
 
@@ -201,6 +200,8 @@ public:
     virtual const char* boxName() const OVERRIDE;
 #endif
 private:
+    virtual bool isRootInlineBox() const OVERRIDE FINAL { return true; }
+
     LayoutUnit lineSnapAdjustment(LayoutUnit delta = 0) const;
 
     LayoutUnit beforeAnnotationsAdjustment() const;
@@ -254,6 +255,18 @@ private:
     // good for as long as the line has not been marked dirty.
     OwnPtr<Vector<RenderBox*>> m_floats;
 };
+
+INLINE_BOX_OBJECT_TYPE_CASTS(RootInlineBox, isRootInlineBox())
+
+inline RootInlineBox* RootInlineBox::nextRootBox() const
+{
+    return toRootInlineBox(m_nextLineBox);
+}
+
+inline RootInlineBox* RootInlineBox::prevRootBox() const
+{
+    return toRootInlineBox(m_prevLineBox);
+}
 
 } // namespace WebCore
 

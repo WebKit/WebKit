@@ -38,8 +38,6 @@ public:
 
     RenderSVGInlineText& renderer() const { return toRenderSVGInlineText(InlineTextBox::renderer()); }
 
-    virtual bool isSVGInlineTextBox() const { return true; }
-
     virtual float virtualLogicalHeight() const { return m_logicalHeight; }
     void setLogicalHeight(float height) { m_logicalHeight = height; }
 
@@ -69,6 +67,8 @@ public:
     FloatRect selectionRectForTextFragment(const SVGTextFragment&, int fragmentStartPosition, int fragmentEndPosition, RenderStyle*) const;
 
 private:
+    virtual bool isSVGInlineTextBox() const OVERRIDE { return true; }
+
     TextRun constructTextRun(RenderStyle*, const SVGTextFragment&) const;
 
     bool acquirePaintingResource(GraphicsContext*&, float scalingFactor, RenderBoxModelObject&, RenderStyle*);
@@ -92,11 +92,7 @@ private:
     Vector<SVGTextFragment> m_textFragments;
 };
 
-inline SVGInlineTextBox* toSVGInlineTextBox(InlineBox* box)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!box || box->isSVGInlineTextBox());
-    return static_cast<SVGInlineTextBox*>(box);
-}
+INLINE_BOX_OBJECT_TYPE_CASTS(SVGInlineTextBox, isSVGInlineTextBox())
 
 } // namespace WebCore
 

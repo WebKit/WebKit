@@ -37,7 +37,6 @@ class SVGRootInlineBox FINAL : public RootInlineBox {
 public:
     SVGRootInlineBox(RenderSVGText&);
 
-    virtual bool isSVGRootInlineBox() const { return true; }
     RenderSVGText& renderSVGText();
 
     virtual float virtualLogicalHeight() const { return m_logicalHeight; }
@@ -53,6 +52,7 @@ public:
     InlineBox* closestLeafChildForPosition(const LayoutPoint&);
 
 private:
+    virtual bool isSVGRootInlineBox() const OVERRIDE { return true; }
     void reorderValueLists(Vector<SVGTextLayoutAttributes*>&);
     void layoutCharactersInTextBoxes(InlineFlowBox*, SVGTextLayoutEngine&);
     void layoutChildBoxes(InlineFlowBox*, FloatRect* = 0);
@@ -60,6 +60,8 @@ private:
 
     float m_logicalHeight;
 };
+
+INLINE_BOX_OBJECT_TYPE_CASTS(SVGRootInlineBox, isSVGRootInlineBox())
 
 } // namespace WebCore
 

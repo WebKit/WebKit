@@ -293,6 +293,8 @@ public:
     }
 
 private:
+    virtual bool isInlineFlowBox() const OVERRIDE FINAL { return true; }
+
     void addBoxShadowVisualOverflow(LayoutRect& logicalVisualOverflow);
     void addBorderOutsetVisualOverflow(LayoutRect& logicalVisualOverflow);
     void addTextBoxVisualOverflow(InlineTextBox*, GlyphOverflowAndFallbackFontsMap&, LayoutRect& logicalVisualOverflow);
@@ -301,8 +303,6 @@ private:
 
 protected:
     OwnPtr<RenderOverflow> m_overflow;
-
-    virtual bool isInlineFlowBox() const OVERRIDE FINAL { return true; }
 
     InlineBox* m_firstChild;
     InlineBox* m_lastChild;
@@ -344,20 +344,7 @@ private:
 #endif
 };
 
-inline InlineFlowBox* toInlineFlowBox(InlineBox* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isInlineFlowBox());
-    return static_cast<InlineFlowBox*>(object);
-}
-
-inline const InlineFlowBox* toInlineFlowBox(const InlineBox* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isInlineFlowBox());
-    return static_cast<const InlineFlowBox*>(object);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toInlineFlowBox(const InlineFlowBox*);
+INLINE_BOX_OBJECT_TYPE_CASTS(InlineFlowBox, isInlineFlowBox())
 
 #ifdef NDEBUG
 inline void InlineFlowBox::checkConsistency() const

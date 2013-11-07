@@ -50,7 +50,12 @@ public:
 
     virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) OVERRIDE;
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom) OVERRIDE;
+
+private:
+    virtual bool isInlineElementBox() const OVERRIDE FINAL { return true; }
 };
+
+INLINE_BOX_OBJECT_TYPE_CASTS(InlineElementBox, isInlineElementBox())
 
 }
 
