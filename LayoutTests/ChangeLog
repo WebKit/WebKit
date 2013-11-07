@@ -1,3 +1,54 @@
+2013-11-07  Andreas Kling  <akling@apple.com>
+
+        Optimize baselines: svg/as-background-image
+
+        Unreviewed; run "webkit-patch optimize-baselines svg/as-background-image"
+
+        * platform/efl/svg/as-background-image/svg-as-background-1-expected.txt: Removed.
+        * platform/efl/svg/as-background-image/svg-as-background-2-expected.txt: Removed.
+        * platform/efl/svg/as-background-image/svg-as-background-3-expected.txt: Removed.
+        * platform/efl/svg/as-background-image/svg-as-background-4-expected.txt: Removed.
+        * platform/efl/svg/as-background-image/svg-as-background-5-expected.txt: Removed.
+        * platform/efl/svg/as-background-image/svg-as-background-6-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/animated-svg-as-background-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-background-1-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-background-2-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-background-3-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-background-4-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-background-5-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-background-6-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-background-expected.png: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-background-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-background-with-relative-size-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-background-with-viewBox-expected.png: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-background-with-viewBox-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-tiled-background-expected.png: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-tiled-background-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/svg-width-100p-as-background-expected.png: Removed.
+        * platform/gtk/svg/as-background-image/svg-width-100p-as-background-expected.txt: Removed.
+        * platform/win-future/svg/as-background-image/svg-as-background-1-expected.txt: Copied from LayoutTests/svg/as-background-image/svg-as-background-1-expected.txt.
+        * platform/win-future/svg/as-background-image/svg-as-background-2-expected.txt: Copied from LayoutTests/svg/as-background-image/svg-as-background-2-expected.txt.
+        * platform/win-future/svg/as-background-image/svg-as-background-3-expected.txt: Copied from LayoutTests/svg/as-background-image/svg-as-background-3-expected.txt.
+        * platform/win-future/svg/as-background-image/svg-as-background-4-expected.txt: Copied from LayoutTests/svg/as-background-image/svg-as-background-4-expected.txt.
+        * platform/win-future/svg/as-background-image/svg-as-background-5-expected.txt: Copied from LayoutTests/svg/as-background-image/svg-as-background-5-expected.txt.
+        * platform/win-future/svg/as-background-image/svg-as-background-6-expected.txt: Copied from LayoutTests/svg/as-background-image/svg-as-background-6-expected.txt.
+        * svg/as-background-image/animated-svg-as-background-expected.txt: Renamed from LayoutTests/platform/efl/svg/as-background-image/animated-svg-as-background-expected.txt.
+        * svg/as-background-image/svg-as-background-1-expected.txt:
+        * svg/as-background-image/svg-as-background-2-expected.txt:
+        * svg/as-background-image/svg-as-background-3-expected.txt:
+        * svg/as-background-image/svg-as-background-4-expected.txt:
+        * svg/as-background-image/svg-as-background-5-expected.txt:
+        * svg/as-background-image/svg-as-background-6-expected.txt:
+        * svg/as-background-image/svg-as-background-expected.png: Renamed from LayoutTests/platform/efl/svg/as-background-image/svg-as-background-expected.png.
+        * svg/as-background-image/svg-as-background-expected.txt: Renamed from LayoutTests/platform/efl/svg/as-background-image/svg-as-background-expected.txt.
+        * svg/as-background-image/svg-as-background-with-relative-size-expected.txt: Renamed from LayoutTests/platform/efl/svg/as-background-image/svg-as-background-with-relative-size-expected.txt.
+        * svg/as-background-image/svg-as-background-with-viewBox-expected.png: Renamed from LayoutTests/platform/efl/svg/as-background-image/svg-as-background-with-viewBox-expected.png.
+        * svg/as-background-image/svg-as-background-with-viewBox-expected.txt: Renamed from LayoutTests/platform/efl/svg/as-background-image/svg-as-background-with-viewBox-expected.txt.
+        * svg/as-background-image/svg-as-tiled-background-expected.png: Renamed from LayoutTests/platform/efl/svg/as-background-image/svg-as-tiled-background-expected.png.
+        * svg/as-background-image/svg-as-tiled-background-expected.txt: Renamed from LayoutTests/platform/efl/svg/as-background-image/svg-as-tiled-background-expected.txt.
+        * svg/as-background-image/svg-width-100p-as-background-expected.png: Renamed from LayoutTests/platform/efl/svg/as-background-image/svg-width-100p-as-background-expected.png.
+        * svg/as-background-image/svg-width-100p-as-background-expected.txt: Renamed from LayoutTests/platform/efl/svg/as-background-image/svg-width-100p-as-background-expected.txt.
+
 2013-11-06  Vani Hegde  <vani.hegde@samsung.com>
 
         Applied background color is not retained after typing a characters
