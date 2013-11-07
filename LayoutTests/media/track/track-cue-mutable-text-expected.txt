@@ -1,3 +1,4 @@
+
 Test that cue text is mutable.
 
 

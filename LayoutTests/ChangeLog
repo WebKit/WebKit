@@ -1,3 +1,39 @@
+2013-11-06  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed gardening
+
+        Adjust test expectations after r158743.
+
+        * fullscreen/video-controls-override-expected.txt:
+        * http/tests/media/video-cookie-expected.txt:
+        * media/W3C/video/canPlayType/canPlayType_codecs_order_2-expected.txt:
+        * media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_2-expected.txt:
+        * media/W3C/video/canPlayType/canPlayType_two_implies_one_3-expected.txt:
+        * media/W3C/video/canPlayType/canPlayType_two_implies_one_4-expected.txt:
+        * media/context-menu-actions-expected.txt:
+        * media/media-can-play-flac-audio-expected.txt:
+        * media/media-volume-slider-rendered-below-expected.txt:
+        * media/media-volume-slider-rendered-normal-expected.txt:
+        * media/track/audio/audio-track-mkv-vorbis-addtrack-expected.txt:
+        * media/track/audio/audio-track-mkv-vorbis-enabled-expected.txt:
+        * media/track/track-cue-mutable-text-expected.txt:
+        * media/track/track-cue-rendering-mode-changed-expected.txt:
+        * media/track/track-language-preference-expected.txt:
+        * media/track/video/video-track-mkv-theora-addtrack-expected.txt:
+        * media/video-controls-fullscreen-volume-expected.txt:
+        * media/video-controls-toggling-expected.txt:
+        * media/video-controls-visible-exiting-fullscreen-expected.txt:
+        * media/video-seek-past-end-paused-expected.txt:
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_codecs_order_1-expected.txt:
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_codecs_order_3-expected.txt:
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_1-expected.txt:
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_3-expected.txt:
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_two_implies_one_1-expected.txt:
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_two_implies_one_2-expected.txt:
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_two_implies_one_5-expected.txt:
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_two_implies_one_6-expected.txt:
+        * platform/efl/media/media-can-play-webm-expected.txt:
+
 2013-11-07  Andreas Kling  <akling@apple.com>
 
         Optimize baselines: svg/batik

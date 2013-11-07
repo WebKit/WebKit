@@ -1,5 +1,6 @@
 Test the various actions available in the HTML5 media element context-menu.
 
+
 RUN(video.src = 'content/test.mp4')
 EVENT(play)
 EXPECTED (video.paused == 'false') OK

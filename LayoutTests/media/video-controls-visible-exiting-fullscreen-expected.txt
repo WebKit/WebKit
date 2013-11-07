@@ -1,4 +1,5 @@
 Tests that video controls are shwon after exiting fullscreen
+
 EVENT(canplaythrough)
 ** Move mouse to the play button and start playing the video **
 

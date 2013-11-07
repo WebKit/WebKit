@@ -1,3 +1,4 @@
+
 Test that seeking a paused video past its end sets currentTime to duration and leaves the video paused.
 
 EVENT(canplaythrough)
