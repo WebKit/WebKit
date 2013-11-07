@@ -1,3 +1,46 @@
+2013-11-06  Filip Pizlo  <fpizlo@apple.com>
+
+        IC code should handle the call frame register not being the callFrameRegister
+        https://bugs.webkit.org/show_bug.cgi?id=123865
+
+        Reviewed by Geoffrey Garen.
+        
+        For now, in the FTL, the call frame may be something other than our frame pointer,
+        since it's an argument passed in according to whatever convention LLVM picks.
+        
+        This is temporary in two ways - pretty soon the callFrameRegister will be the actual
+        frame pointer and not some other register, and LLVM will not pass the frame pointer
+        as an argument to IC's.
+
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::fixFunctionBasedOnStackMaps):
+        * ftl/FTLInlineCacheSize.cpp:
+        (JSC::FTL::sizeOfGetById):
+        (JSC::FTL::sizeOfPutById):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArguments):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITByIdGenerator::JITByIdGenerator):
+        (JSC::JITPutByIdGenerator::JITPutByIdGenerator):
+        * jit/JITInlineCacheGenerator.h:
+        (JSC::JITGetByIdGenerator::JITGetByIdGenerator):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        * jit/Repatch.cpp:
+        (JSC::tryBuildGetByIDList):
+        (JSC::emitPutTransitionStub):
+
 2013-11-06  Daniel Bates  <dabates@apple.com>
 
         [iOS] Upstream Letterpress effect

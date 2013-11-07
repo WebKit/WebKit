@@ -225,6 +225,7 @@ struct StructureStubInfo {
 
     struct {
         int8_t registersFlushed;
+        int8_t callFrameRegister;
         int8_t baseGPR;
 #if USE(JSVALUE32_64)
         int8_t valueTagGPR;

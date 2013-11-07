@@ -198,8 +198,8 @@ static void fixFunctionBasedOnStackMaps(
             GPRReg result = GPRInfo::returnValueGPR;
             
             JITGetByIdGenerator gen(
-                codeBlock, getById.codeOrigin(), usedRegisters, JSValueRegs(base),
-                JSValueRegs(result), false);
+                codeBlock, getById.codeOrigin(), usedRegisters, callFrameRegister,
+                JSValueRegs(base), JSValueRegs(result), false);
             
             MacroAssembler::Label begin = slowPathJIT.label();
             
@@ -234,9 +234,9 @@ static void fixFunctionBasedOnStackMaps(
             GPRReg value = GPRInfo::argumentGPR2;
             
             JITPutByIdGenerator gen(
-                codeBlock, putById.codeOrigin(), usedRegisters, JSValueRegs(base),
-                JSValueRegs(value), GPRInfo::argumentGPR3, false, putById.ecmaMode(),
-                putById.putKind());
+                codeBlock, putById.codeOrigin(), usedRegisters, callFrameRegister,
+                JSValueRegs(base), JSValueRegs(value), GPRInfo::argumentGPR3, false,
+                putById.ecmaMode(), putById.putKind());
             
             MacroAssembler::Label begin = slowPathJIT.label();
             

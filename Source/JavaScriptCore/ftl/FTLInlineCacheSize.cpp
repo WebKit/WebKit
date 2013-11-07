@@ -44,8 +44,8 @@ size_t sizeOfGetById()
     MacroAssembler jit;
     
     JITGetByIdGenerator generator(
-        0, CodeOrigin(), RegisterSet(), JSValueRegs(GPRInfo::regT6), JSValueRegs(GPRInfo::regT7),
-        false);
+        0, CodeOrigin(), RegisterSet(), GPRInfo::callFrameRegister,
+        JSValueRegs(GPRInfo::regT6), JSValueRegs(GPRInfo::regT7), false);
     generator.generateFastPath(jit);
     
     return s_sizeOfGetById = jit.m_assembler.codeSize();
@@ -59,8 +59,9 @@ size_t sizeOfPutById()
     MacroAssembler jit;
     
     JITPutByIdGenerator generator(
-        0, CodeOrigin(), RegisterSet(), JSValueRegs(GPRInfo::regT6), JSValueRegs(GPRInfo::regT7),
-        GPRInfo::regT8, false, NotStrictMode, NotDirect);
+        0, CodeOrigin(), RegisterSet(), GPRInfo::callFrameRegister,
+        JSValueRegs(GPRInfo::regT6), JSValueRegs(GPRInfo::regT7), GPRInfo::regT8, false,
+        NotStrictMode, NotDirect);
     generator.generateFastPath(jit);
     
     return s_sizeOfPutById = jit.m_assembler.codeSize();
