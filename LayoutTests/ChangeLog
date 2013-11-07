@@ -1,3 +1,37 @@
+2013-11-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, Add new baselines to EFL port since r158743 as well as do rebaseline.
+        Because r158743 didn't update EFL port.
+
+        * platform/efl/fullscreen/video-controls-override-expected.txt: Added.
+        * platform/efl/http/tests/media/video-cookie-expected.txt: Added.
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_codecs_order_1-expected.txt:
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_codecs_order_2-expected.txt: Added.
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_codecs_order_3-expected.txt: Added.
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_1-expected.txt:
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_2-expected.txt: Added.
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_3-expected.txt: Added.
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_two_implies_one_1-expected.txt:
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_two_implies_one_2-expected.txt:
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_two_implies_one_3-expected.txt: Added.
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_two_implies_one_4-expected.txt: Added.
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_two_implies_one_5-expected.txt: Added.
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_two_implies_one_6-expected.txt: Added.
+        * platform/efl/media/context-menu-actions-expected.txt: Added.
+        * platform/efl/media/media-can-play-flac-audio-expected.txt: Added.
+        * platform/efl/media/media-can-play-webm-expected.txt: Added.
+        * platform/efl/media/media-volume-slider-rendered-below-expected.txt: Added.
+        * platform/efl/media/media-volume-slider-rendered-normal-expected.txt: Added.
+        * platform/efl/media/track/audio/audio-track-mkv-vorbis-addtrack-expected.txt: Added.
+        * platform/efl/media/track/audio/audio-track-mkv-vorbis-enabled-expected.txt: Added.
+        * platform/efl/media/track/track-cue-mutable-text-expected.txt: Added.
+        * platform/efl/media/track/track-cue-rendering-mode-changed-expected.txt: Added.
+        * platform/efl/media/track/track-language-preference-expected.txt: Added.
+        * platform/efl/media/track/video/video-track-mkv-theora-addtrack-expected.txt: Added.
+        * platform/efl/media/track/video/video-track-mkv-theora-selected-expected.txt: Added.
+        * platform/efl/media/video-controls-fullscreen-volume-expected.txt: Added.
+        * platform/efl/media/video-controls-toggling-expected.txt: Added.
+
 2013-11-07  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         AX: [ATK] Video and audio elements are not properly exposed
