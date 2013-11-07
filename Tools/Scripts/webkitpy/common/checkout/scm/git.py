@@ -310,14 +310,12 @@ class Git(SCM, SVNRepository):
 
     @memoized
     def git_commit_from_svn_revision(self, svn_revision):
-        # FIXME: https://bugs.webkit.org/show_bug.cgi?id=111668
-        # We should change this to run git log --grep 'git-svn-id' instead
-        # so that we don't require git+svn to be set up.
-        git_commit = self._run_git_svn_find_rev('r%s' % svn_revision)
+        git_log = self._run_git(['log', '-1', '--grep=^\s*git-svn-id:.*@%s ' % svn_revision])
+        git_commit = re.search("^commit (?P<commit>[a-f0-9]{40})", git_log)
         if not git_commit:
             # FIXME: Alternatively we could offer to update the checkout? Or return None?
             raise ScriptError(message='Failed to find git commit for revision %s, your checkout likely needs an update.' % svn_revision)
-        return git_commit
+        return str(git_commit.group('commit'))
 
     @memoized
     def svn_revision_from_git_commit(self, git_commit):
