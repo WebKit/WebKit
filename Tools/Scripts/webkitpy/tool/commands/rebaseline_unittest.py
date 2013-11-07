@@ -314,7 +314,7 @@ class TestRebaseline(_BaseTestCase):
             oc.restore_output()
             builders._exact_matches = old_exact_matches
 
-        calls = filter(lambda x: x != ['qmake', '-v'] and x[0] != 'perl', self.tool.executive.calls)
+        calls = filter(lambda x: x[0] != 'perl', self.tool.executive.calls)
         self.assertEqual(calls,
             [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder', '--test', 'mock/path/to/test.html', '--verbose']]])
 
@@ -336,7 +336,7 @@ class TestRebaselineExpectations(_BaseTestCase):
         self.command.execute(self.options, [], self.tool)
 
         # FIXME: change this to use the test- ports.
-        calls = filter(lambda x: x != ['qmake', '-v'], self.tool.executive.calls)
+        calls = self.tool.executive.calls
         self.assertEqual(len(calls), 1)
         self.assertEqual(len(calls[0]), 24)
 
