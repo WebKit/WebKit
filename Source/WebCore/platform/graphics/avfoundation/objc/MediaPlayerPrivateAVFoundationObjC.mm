@@ -1888,7 +1888,7 @@ NSArray* itemKVOProperties()
         else if ([keyPath isEqualToString:@"presentationSize"])
             function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::presentationSizeDidChange, m_callback, FloatSize([newValue sizeValue]));
         else if ([keyPath isEqualToString:@"duration"])
-            function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::durationDidChange, m_callback, [newValue doubleValue]);
+            function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::durationDidChange, m_callback, CMTimeGetSeconds([newValue CMTimeValue]));
     }
 
     if (context == MediaPlayerAVFoundationObservationContextPlayer && !willChange) {
