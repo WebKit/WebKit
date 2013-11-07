@@ -1,3 +1,18 @@
+2013-11-07  Anders Carlsson  <andersca@apple.com>
+
+        Don't repaint the view when the web process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=124013
+
+        Reviewed by Dan Bernstein.
+
+        It's up to each individual port to decide whether the view should be repainted when the web process crashes.
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setViewNeedsDisplay):
+        (WebKit::PageClientImpl::displayView):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+
 2013-11-07  Tamas Gergely  <gertom@inf.u-szeged.hu>
 
         Report error on unknown template class usage.

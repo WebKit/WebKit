@@ -140,12 +140,12 @@ std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::IntRect& rect)
 {
-    [m_wkView setNeedsDisplayInRect:rect];
+    ASSERT_NOT_REACHED();
 }
 
 void PageClientImpl::displayView()
 {
-    [m_wkView displayIfNeeded];
+    ASSERT_NOT_REACHED();
 }
 
 bool PageClientImpl::canScrollView()
