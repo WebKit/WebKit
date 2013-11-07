@@ -1,3 +1,17 @@
+2013-11-07  Oliver Hunt  <oliver@apple.com>
+
+        Reproducible crash when using Map (affects Web Inspector)
+        https://bugs.webkit.org/show_bug.cgi?id=123940
+
+        Reviewed by Geoffrey Garen.
+
+        Add testcases
+
+        * js/map-grow-with-holes-expected.txt: Added.
+        * js/map-grow-with-holes.html: Added.
+        * js/script-tests/map-grow-with-holes.js: Added.
+        (get map):
+
 2013-11-07  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening

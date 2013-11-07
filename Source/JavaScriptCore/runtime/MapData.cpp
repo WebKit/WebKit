@@ -80,14 +80,15 @@ bool MapData::contains(CallFrame* callFrame, KeyType key)
 
 template <typename Map, typename Key> MapData::Entry* MapData::add(CallFrame* callFrame, Map& map, Key key, KeyType keyValue)
 {
-    typename Map::AddResult result = map.add(key, m_size);
-    if (!result.isNewEntry)
-        return &m_entries[result.iterator->value];
-    if (!ensureSpaceForAppend(callFrame)) {
-        map.remove(result.iterator);
+    typename Map::iterator location = map.find(key);
+    if (location != map.end())
+        return &m_entries[location->value];
+    
+    if (!ensureSpaceForAppend(callFrame))
         return 0;
-    }
 
+    auto result = map.add(key, m_size);
+    RELEASE_ASSERT(result.isNewEntry);
     Entry* entry = &m_entries[m_size++];
     new (entry) Entry();
     entry->key.set(callFrame->vm(), this, keyValue.value);
