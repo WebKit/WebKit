@@ -1,3 +1,9 @@
+2013-11-07  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed Win build fix after r158855; wrap shapeInfoForFloat() in an ENABLE(CSS_SHAPES) guard.
+
+        * rendering/FloatingObjects.cpp:
+
 2013-11-07  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Refactor logical left/right offset for line methods

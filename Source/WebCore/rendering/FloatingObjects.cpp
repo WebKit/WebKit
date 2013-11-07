@@ -267,6 +267,7 @@ inline const FloatingObjectTree& FloatingObjects::placedFloatsTree()
     return m_placedFloatsTree;
 }
 
+#if ENABLE(CSS_SHAPES)
 static inline ShapeOutsideInfo* shapeInfoForFloat(const FloatingObject* floatingObject, const RenderBlockFlow* containingBlock, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
     if (floatingObject) {
@@ -278,6 +279,7 @@ static inline ShapeOutsideInfo* shapeInfoForFloat(const FloatingObject* floating
 
     return 0;
 }
+#endif
 
 template<>
 inline LayoutUnit ComputeFloatOffsetAdapter<FloatingObject::FloatLeft>::shapeOffset() const
