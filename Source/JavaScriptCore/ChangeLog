@@ -1,3 +1,13 @@
+2013-11-07  Julien Brianceau  <jbriance@cisco.com>
+
+        Fix build for architectures with 4 argument registers (broken since r158820).
+        https://bugs.webkit.org/show_bug.cgi?id=123969
+
+        Reviewed by Andreas Kling.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArguments):
+
 2013-11-05  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should support CheckFunction
