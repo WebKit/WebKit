@@ -1,3 +1,20 @@
+2013-11-06  Anders Carlsson  <andersca@apple.com>
+
+        Allow property list classes to exist in containers
+        https://bugs.webkit.org/show_bug.cgi?id=123938
+
+        Reviewed by Andreas Kling.
+
+        * Shared/API/Cocoa/WKRemoteObjectInterface.mm:
+        (isContainerClass):
+        Return whether a given class is a container class.
+
+        (propertyListClasses):
+        Return the set of property list classes.
+
+        (allowedArgumentClassesForMethod):
+        Allow all property list classes for container type arguments.
+
 2013-11-06  Daniel Bates  <dabates@apple.com>
 
         [iOS] Upstream Letterpress effect

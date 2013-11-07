@@ -44,6 +44,22 @@ const char *_protocol_getMethodTypeEncoding(Protocol *p, SEL sel, BOOL isRequire
     HashMap<SEL, Vector<RetainPtr<NSSet>>> _allowedArgumentClasses;
 }
 
+static bool isContainerClass(Class objectClass)
+{
+    // FIXME: Add more classes here if needed.
+    static NSSet *containerClasses = [[NSSet alloc] initWithObjects:[NSArray class], [NSDictionary class], nil];
+
+    return [containerClasses containsObject:objectClass];
+}
+
+static NSSet *propertyListClasses()
+{
+    // FIXME: Add more property list classes if needed.
+    static NSSet *propertyListClasses = [[NSSet alloc] initWithObjects:[NSArray class], [NSDictionary class], [NSNumber class], [NSString class], nil];
+
+    return propertyListClasses;
+}
+
 static Vector<RetainPtr<NSSet>> allowedArgumentClassesForMethod(NSMethodSignature *methodSignature)
 {
     Vector<RetainPtr<NSSet>> result;
@@ -67,6 +83,12 @@ static Vector<RetainPtr<NSSet>> allowedArgumentClassesForMethod(NSMethodSignatur
         Class objectClass = [methodSignature _classForObjectAtArgumentIndex:i + 2];
         if (!objectClass) {
             result.uncheckedAppend(emptySet);
+            continue;
+        }
+
+        if (isContainerClass(objectClass)) {
+            // For container classes, we allow all simple property list classes.
+            result.uncheckedAppend(propertyListClasses());
             continue;
         }
 
