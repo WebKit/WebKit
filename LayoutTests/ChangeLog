@@ -1,3 +1,45 @@
+2013-11-06  Andreas Kling  <akling@apple.com>
+
+        Optimize baselines: media
+
+        Unreviewed; run "webkit-patch optimize-baselines media"
+
+        * media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_2-expected.txt:
+        * media/W3C/video/canPlayType/canPlayType_codecs_order_3-expected.txt:
+        * media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_3-expected.txt:
+        * media/W3C/video/canPlayType/canPlayType_two_implies_one_5-expected.txt:
+        * media/W3C/video/canPlayType/canPlayType_two_implies_one_6-expected.txt:
+        * media/media-can-play-webm-expected.txt: Renamed from LayoutTests/platform/efl/media/media-can-play-webm-expected.txt.
+        * media/video-controls-visible-audio-only-expected.txt: Renamed from LayoutTests/platform/efl/media/video-controls-visible-audio-only-expected.txt.
+        * platform/efl-wk2/media/video-layer-crash-expected.png: Renamed from LayoutTests/platform/efl/media/video-layer-crash-expected.png.
+        * platform/efl-wk2/media/video-transformed-expected.png: Renamed from LayoutTests/platform/efl/media/video-transformed-expected.png.
+        * platform/efl-wk2/media/video-zoom-expected.png: Renamed from LayoutTests/platform/efl/media/video-zoom-expected.png.
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_two_implies_one_5-expected.txt: Removed.
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_two_implies_one_6-expected.txt: Removed.
+        * platform/gtk/media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_2-expected.txt: Removed.
+        * platform/gtk/media/W3C/video/canPlayType/canPlayType_codecs_order_3-expected.txt: Removed.
+        * platform/gtk/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_3-expected.txt: Removed.
+        * platform/gtk/media/W3C/video/canPlayType/canPlayType_two_implies_one_5-expected.txt: Removed.
+        * platform/gtk/media/W3C/video/canPlayType/canPlayType_two_implies_one_6-expected.txt: Removed.
+        * platform/gtk/media/media-can-play-webm-expected.txt: Removed.
+        * platform/gtk/media/video-controls-visible-audio-only-expected.txt: Removed.
+        * platform/mac/media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_2-expected.txt: Copied from LayoutTests/media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_2-expected.txt.
+        * platform/mac/media/W3C/video/canPlayType/canPlayType_codecs_order_3-expected.txt: Copied from LayoutTests/media/W3C/video/canPlayType/canPlayType_codecs_order_3-expected.txt.
+        * platform/mac/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_3-expected.txt: Copied from LayoutTests/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_3-expected.txt.
+        * platform/mac/media/W3C/video/canPlayType/canPlayType_two_implies_one_5-expected.txt: Copied from LayoutTests/media/W3C/video/canPlayType/canPlayType_two_implies_one_5-expected.txt.
+        * platform/mac/media/W3C/video/canPlayType/canPlayType_two_implies_one_6-expected.txt: Copied from LayoutTests/media/W3C/video/canPlayType/canPlayType_two_implies_one_6-expected.txt.
+        * platform/mac/media/video-controls-visible-audio-only-expected.txt: Removed.
+        * platform/win-7sp0/media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_2-expected.txt: Renamed from LayoutTests/platform/efl/media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_2-expected.txt.
+        * platform/win-7sp0/media/W3C/video/canPlayType/canPlayType_codecs_order_3-expected.txt: Renamed from LayoutTests/platform/efl/media/W3C/video/canPlayType/canPlayType_codecs_order_3-expected.txt.
+        * platform/win-7sp0/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_3-expected.txt: Renamed from LayoutTests/platform/efl/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_3-expected.txt.
+        * platform/win/media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_2-expected.txt: Removed.
+        * platform/win/media/W3C/video/canPlayType/canPlayType_codecs_order_3-expected.txt: Removed.
+        * platform/win/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_3-expected.txt: Removed.
+        * platform/win/media/media-can-play-ogg-expected.txt: Removed.
+        * platform/win/media/video-colorspace-yuv420-expected.txt: Removed.
+        * platform/win/media/video-colorspace-yuv422-expected.txt: Removed.
+        * platform/win/media/video-size-intrinsic-scale-expected.txt: Removed.
+
 2013-11-06  Daniel Bates  <dabates@apple.com>
 
         [iOS] Upstream Letterpress effect

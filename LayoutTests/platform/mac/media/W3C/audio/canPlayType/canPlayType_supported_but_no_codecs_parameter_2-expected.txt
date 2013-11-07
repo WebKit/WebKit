@@ -1,9 +1,8 @@
-video.canPlayType() - codecs parameter logic
+audio.canPlayType() - supported format w/o codecs parameter
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS "probably" is "probably"
 
 TEST COMPLETE
 spec reference
