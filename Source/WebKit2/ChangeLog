@@ -1,5 +1,20 @@
 2013-11-06  Anders Carlsson  <andersca@apple.com>
 
+        Encoded object stream should be sequential
+        https://bugs.webkit.org/show_bug.cgi?id=123939
+
+        Reviewed by Andreas Kling.
+
+        Reserve space in the object stream for objects that are to be encoded, otherwise
+        the object stream will not be sequential.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeToObjectStream):
+        * Shared/ImmutableArray.h:
+        (WebKit::ImmutableArray::entries):
+
+2013-11-06  Anders Carlsson  <andersca@apple.com>
+
         Allow property list classes to exist in containers
         https://bugs.webkit.org/show_bug.cgi?id=123938
 
