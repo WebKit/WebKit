@@ -1,3 +1,35 @@
+2013-11-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, rolling out r158846.
+        http://trac.webkit.org/changeset/158846
+
+        r158846 was duplicating gardening against r158837.
+
+        * platform/efl/fullscreen/video-controls-override-expected.txt: Removed.
+        * platform/efl/http/tests/media/video-cookie-expected.txt: Removed.
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_codecs_order_2-expected.txt: Removed.
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_codecs_order_3-expected.txt: Removed.
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_2-expected.txt: Removed.
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_3-expected.txt: Removed.
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_two_implies_one_3-expected.txt: Removed.
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_two_implies_one_4-expected.txt: Removed.
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_two_implies_one_5-expected.txt: Removed.
+        * platform/efl/media/W3C/video/canPlayType/canPlayType_two_implies_one_6-expected.txt: Removed.
+        * platform/efl/media/context-menu-actions-expected.txt: Removed.
+        * platform/efl/media/media-can-play-flac-audio-expected.txt: Removed.
+        * platform/efl/media/media-can-play-webm-expected.txt: Removed.
+        * platform/efl/media/media-volume-slider-rendered-below-expected.txt: Removed.
+        * platform/efl/media/media-volume-slider-rendered-normal-expected.txt: Removed.
+        * platform/efl/media/track/audio/audio-track-mkv-vorbis-addtrack-expected.txt: Removed.
+        * platform/efl/media/track/audio/audio-track-mkv-vorbis-enabled-expected.txt: Removed.
+        * platform/efl/media/track/track-cue-mutable-text-expected.txt: Removed.
+        * platform/efl/media/track/track-cue-rendering-mode-changed-expected.txt: Removed.
+        * platform/efl/media/track/track-language-preference-expected.txt: Removed.
+        * platform/efl/media/track/video/video-track-mkv-theora-addtrack-expected.txt: Removed.
+        * platform/efl/media/track/video/video-track-mkv-theora-selected-expected.txt: Removed.
+        * platform/efl/media/video-controls-fullscreen-volume-expected.txt: Removed.
+        * platform/efl/media/video-controls-toggling-expected.txt: Removed.
+
 2013-11-07  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Image shape-outside with vertical gaps is handled incorrectly
