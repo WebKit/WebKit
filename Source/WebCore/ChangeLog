@@ -1,3 +1,18 @@
+2013-11-08  Sam Weinig  <sam@webkit.org>
+
+        Modernize FrameLoader a bit
+        https://bugs.webkit.org/show_bug.cgi?id=124073
+
+        Reviewed by Anders Carlsson.
+
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+        Use std::unique_ptrs rather than OwnPtrs.
+
+        * loader/MixedContentChecker.cpp:
+        * loader/MixedContentChecker.h:
+        Switch to hold a Frame& rather than Frame*.
+
 2013-11-08  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove code guarded with ENABLE(STREAM)

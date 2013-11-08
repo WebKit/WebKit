@@ -43,14 +43,14 @@
 
 namespace WebCore {
 
-MixedContentChecker::MixedContentChecker(Frame* frame)
+MixedContentChecker::MixedContentChecker(Frame& frame)
     : m_frame(frame)
 {
 }
 
 FrameLoaderClient& MixedContentChecker::client() const
 {
-    return m_frame->loader().client();
+    return m_frame.loader().client();
 }
 
 // static
@@ -68,7 +68,7 @@ bool MixedContentChecker::canDisplayInsecureContent(SecurityOrigin* securityOrig
     if (!isMixedContent(securityOrigin, url))
         return true;
 
-    bool allowed = client().allowDisplayingInsecureContent(m_frame->settings().allowDisplayOfInsecureContent(), securityOrigin, url);
+    bool allowed = client().allowDisplayingInsecureContent(m_frame.settings().allowDisplayOfInsecureContent(), securityOrigin, url);
     logWarning(allowed, "displayed", url);
 
     if (allowed)
@@ -82,7 +82,7 @@ bool MixedContentChecker::canRunInsecureContent(SecurityOrigin* securityOrigin, 
     if (!isMixedContent(securityOrigin, url))
         return true;
 
-    bool allowed = client().allowRunningInsecureContent(m_frame->settings().allowRunningOfInsecureContent(), securityOrigin, url);
+    bool allowed = client().allowRunningInsecureContent(m_frame.settings().allowRunningOfInsecureContent(), securityOrigin, url);
     logWarning(allowed, "ran", url);
 
     if (allowed)
@@ -93,8 +93,8 @@ bool MixedContentChecker::canRunInsecureContent(SecurityOrigin* securityOrigin, 
 
 void MixedContentChecker::logWarning(bool allowed, const String& action, const URL& target) const
 {
-    String message = makeString((allowed ? "" : "[blocked] "), "The page at ", m_frame->document()->url().stringCenterEllipsizedToLength(), " ", action, " insecure content from ", target.stringCenterEllipsizedToLength(), ".\n");
-    m_frame->document()->addConsoleMessage(SecurityMessageSource, WarningMessageLevel, message);
+    String message = makeString((allowed ? "" : "[blocked] "), "The page at ", m_frame.document()->url().stringCenterEllipsizedToLength(), " ", action, " insecure content from ", target.stringCenterEllipsizedToLength(), ".\n");
+    m_frame.document()->addConsoleMessage(SecurityMessageSource, WarningMessageLevel, message);
 }
 
 } // namespace WebCore

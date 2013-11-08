@@ -176,7 +176,12 @@ static bool isDocumentSandboxed(Frame* frame, SandboxFlags mask)
 
 class FrameLoader::FrameProgressTracker {
 public:
-    static PassOwnPtr<FrameProgressTracker> create(Frame& frame) { return adoptPtr(new FrameProgressTracker(frame)); }
+    explicit FrameProgressTracker(Frame& frame)
+        : m_frame(frame)
+        , m_inProgress(false)
+    {
+    }
+
     ~FrameProgressTracker()
     {
         ASSERT(!m_inProgress || m_frame.page());
@@ -201,12 +206,6 @@ public:
     }
 
 private:
-    FrameProgressTracker(Frame& frame)
-        : m_frame(frame)
-        , m_inProgress(false)
-    {
-    }
-
     Frame& m_frame;
     bool m_inProgress;
 };
@@ -214,12 +213,12 @@ private:
 FrameLoader::FrameLoader(Frame& frame, FrameLoaderClient& client)
     : m_frame(frame)
     , m_client(client)
-    , m_policyChecker(adoptPtr(new PolicyChecker(frame)))
-    , m_history(adoptPtr(new HistoryController(frame)))
+    , m_policyChecker(std::make_unique<PolicyChecker>(frame))
+    , m_history(std::make_unique<HistoryController>(frame))
     , m_notifier(frame)
-    , m_subframeLoader(adoptPtr(new SubframeLoader(frame)))
-    , m_icon(adoptPtr(new IconController(frame)))
-    , m_mixedContentChecker(&frame)
+    , m_subframeLoader(std::make_unique<SubframeLoader>(frame))
+    , m_icon(std::make_unique<IconController>(frame))
+    , m_mixedContentChecker(frame)
     , m_state(FrameStateProvisional)
     , m_loadType(FrameLoadTypeStandard)
     , m_delegateIsHandlingProvisionalLoadError(false)
@@ -235,7 +234,7 @@ FrameLoader::FrameLoader(Frame& frame, FrameLoaderClient& client)
     , m_checkTimer(this, &FrameLoader::checkTimerFired)
     , m_shouldCallCheckCompleted(false)
     , m_shouldCallCheckLoadComplete(false)
-    , m_opener(0)
+    , m_opener(nullptr)
     , m_didPerformFirstNavigation(false)
     , m_loadingFromCachedPage(false)
     , m_suppressOpenerInNewFrame(false)
@@ -246,7 +245,7 @@ FrameLoader::FrameLoader(Frame& frame, FrameLoaderClient& client)
 
 FrameLoader::~FrameLoader()
 {
-    setOpener(0);
+    setOpener(nullptr);
 
     HashSet<Frame*>::iterator end = m_openedFrames.end();
     for (HashSet<Frame*>::iterator it = m_openedFrames.begin(); it != end; ++it)
@@ -268,7 +267,7 @@ void FrameLoader::init()
     m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocument);
 
     m_networkingContext = m_client.createNetworkingContext();
-    m_progressTracker = FrameProgressTracker::create(m_frame);
+    m_progressTracker = std::make_unique<FrameProgressTracker>(m_frame);
 }
 
 void FrameLoader::setDefersLoading(bool defers)
@@ -2414,7 +2413,7 @@ void FrameLoader::detachFromParent()
 
     detachViewsAndDocumentLoader();
 
-    m_progressTracker.clear();
+    m_progressTracker = nullptr;
 
     if (Frame* parent = m_frame.tree().parent()) {
         parent->loader().closeAndRemoveChild(&m_frame);
