@@ -1,3 +1,23 @@
+2013-11-08  Przemyslaw Szymanski  <p.szymanski3@samsung.com>
+
+        [JHBUILD] Jhbuild Makefile build bug workaround
+        https://bugs.webkit.org/show_bug.cgi?id=123971
+
+        Reviewed by Ryosuke Niwa.
+
+        After Jhbuild repository is cloned (for instance when you use
+        Tools/Scripts/update-webkitefl-libs) it is built from sources.
+        If you have GREP_OPTIONS grep env variable set (for instance
+        GREP_OPTIONS=-n) then it is jhbuild build error. Makefile.plain
+        uses shell grep. For specific GREP_OPTIONS grep output will be
+        different than expected one by Jhbuild and there is an error
+        with Jhbuild build. Jhbuild will not be built and then WebKit
+        source also will not be built. This patch is a workaround to this
+        issue. It disables GREP_OPTIONS for Jhbuild build time.
+
+        * jhbuild/jhbuild-wrapper:
+        (install_jhbuild):
+
 2013-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Ignore deprecated macros when generating gtk-doc
