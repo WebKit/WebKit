@@ -78,8 +78,8 @@ public:
     }
 
     // Helper utilities used in the render tree to access resources used for painting shapes/text (gradients & patterns & solid colors only)
-    static RenderSVGResource* fillPaintingResource(RenderElement&, const RenderStyle*, Color& fallbackColor);
-    static RenderSVGResource* strokePaintingResource(RenderElement&, const RenderStyle*, Color& fallbackColor);
+    static RenderSVGResource* fillPaintingResource(RenderElement&, const RenderStyle&, Color& fallbackColor);
+    static RenderSVGResource* strokePaintingResource(RenderElement&, const RenderStyle&, Color& fallbackColor);
     static RenderSVGResourceSolidColor* sharedSolidPaintingResource();
 
     static void markForLayoutAndParentResourceInvalidation(RenderObject*, bool needsLayout = true);

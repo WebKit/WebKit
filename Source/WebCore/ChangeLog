@@ -1,3 +1,13 @@
+2013-11-07  Andreas Kling  <akling@apple.com>
+
+        RenderSVGResource helpers should take RenderStyle by const reference.
+        <https://webkit.org/b/124029>
+
+        Take const RenderStyle& instead of RenderStyle* in a few more places
+        so we can get rid of some ampersands and assertions.
+
+        Reviewed by Anders Carlsson.
+
 2013-11-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [AX] Generate toAccessibilityTableRow|Column|Cell to detect bad type casts

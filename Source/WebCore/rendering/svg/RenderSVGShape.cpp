@@ -140,7 +140,7 @@ bool RenderSVGShape::fillContains(const FloatPoint& point, bool requiresFill, co
         return false;
 
     Color fallbackColor;
-    if (requiresFill && !RenderSVGResource::fillPaintingResource(*this, &style(), fallbackColor))
+    if (requiresFill && !RenderSVGResource::fillPaintingResource(*this, style(), fallbackColor))
         return false;
 
     return shapeDependentFillContains(point, fillRule);
@@ -152,7 +152,7 @@ bool RenderSVGShape::strokeContains(const FloatPoint& point, bool requiresStroke
         return false;
 
     Color fallbackColor;
-    if (requiresStroke && !RenderSVGResource::strokePaintingResource(*this, &style(), fallbackColor))
+    if (requiresStroke && !RenderSVGResource::strokePaintingResource(*this, style(), fallbackColor))
         return false;
 
     return shapeDependentStrokeContains(point);
@@ -231,31 +231,31 @@ bool RenderSVGShape::shouldGenerateMarkerPositions() const
     return resources->markerStart() || resources->markerMid() || resources->markerEnd();
 }
 
-void RenderSVGShape::fillShape(RenderStyle* style, GraphicsContext* context)
+void RenderSVGShape::fillShape(const RenderStyle& style, GraphicsContext* context)
 {
     Color fallbackColor;
     if (RenderSVGResource* fillPaintingResource = RenderSVGResource::fillPaintingResource(*this, style, fallbackColor)) {
-        if (fillPaintingResource->applyResource(*this, *style, context, ApplyToFillMode))
+        if (fillPaintingResource->applyResource(*this, style, context, ApplyToFillMode))
             fillPaintingResource->postApplyResource(*this, context, ApplyToFillMode, 0, this);
         else if (fallbackColor.isValid()) {
             RenderSVGResourceSolidColor* fallbackResource = RenderSVGResource::sharedSolidPaintingResource();
             fallbackResource->setColor(fallbackColor);
-            if (fallbackResource->applyResource(*this, *style, context, ApplyToFillMode))
+            if (fallbackResource->applyResource(*this, style, context, ApplyToFillMode))
                 fallbackResource->postApplyResource(*this, context, ApplyToFillMode, 0, this);
         }
     }
 }
 
-void RenderSVGShape::strokeShape(RenderStyle* style, GraphicsContext* context)
+void RenderSVGShape::strokeShape(const RenderStyle& style, GraphicsContext* context)
 {
     Color fallbackColor;
     if (RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(*this, style, fallbackColor)) {
-        if (strokePaintingResource->applyResource(*this, *style, context, ApplyToStrokeMode))
+        if (strokePaintingResource->applyResource(*this, style, context, ApplyToStrokeMode))
             strokePaintingResource->postApplyResource(*this, context, ApplyToStrokeMode, 0, this);
         else if (fallbackColor.isValid()) {
             RenderSVGResourceSolidColor* fallbackResource = RenderSVGResource::sharedSolidPaintingResource();
             fallbackResource->setColor(fallbackColor);
-            if (fallbackResource->applyResource(*this, *style, context, ApplyToStrokeMode))
+            if (fallbackResource->applyResource(*this, style, context, ApplyToStrokeMode))
                 fallbackResource->postApplyResource(*this, context, ApplyToStrokeMode, 0, this);
         }
     }
@@ -263,11 +263,9 @@ void RenderSVGShape::strokeShape(RenderStyle* style, GraphicsContext* context)
 
 void RenderSVGShape::fillAndStrokeShape(GraphicsContext* context)
 {
-    RenderStyle& style = this->style();
+    fillShape(style(), context);
 
-    fillShape(&style, context);
-
-    if (!style.svgStyle().hasVisibleStroke())
+    if (!style().svgStyle().hasVisibleStroke())
         return;
 
     GraphicsContextStateSaver stateSaver(*context, false);
@@ -278,7 +276,7 @@ void RenderSVGShape::fillAndStrokeShape(GraphicsContext* context)
             return;
     }
 
-    strokeShape(&style, context);
+    strokeShape(style(), context);
 }
 
 void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)

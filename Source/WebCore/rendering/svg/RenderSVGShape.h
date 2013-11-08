@@ -115,8 +115,8 @@ private:
     FloatRect markerRect(float strokeWidth) const;
     void processMarkerPositions();
 
-    void fillShape(RenderStyle*, GraphicsContext*);
-    void strokeShape(RenderStyle*, GraphicsContext*);
+    void fillShape(const RenderStyle&, GraphicsContext*);
+    void strokeShape(const RenderStyle&, GraphicsContext*);
     void fillAndStrokeShape(GraphicsContext*);
     void drawMarkers(PaintInfo&);
 
