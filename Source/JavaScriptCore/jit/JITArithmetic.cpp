@@ -477,10 +477,10 @@ void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondi
         linkSlowCase(iter);
         linkSlowCase(iter);
 
-        emitGetVirtualRegister(op1, firstArgumentRegister);
-        emitGetVirtualRegister(op2, secondArgumentRegister);
-        callOperation(operation, firstArgumentRegister, secondArgumentRegister);
-        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueRegister), target);
+        emitGetVirtualRegister(op1, argumentGPR0);
+        emitGetVirtualRegister(op2, argumentGPR1);
+        callOperation(operation, argumentGPR0, argumentGPR1);
+        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueGPR), target);
         return;
     }
 
@@ -506,7 +506,7 @@ void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondi
 
         emitGetVirtualRegister(op2, regT1);
         callOperation(operation, regT0, regT1);
-        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueRegister), target);
+        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueGPR), target);
     } else if (isOperandConstantImmediateInt(op1)) {
         linkSlowCase(iter);
 
@@ -529,7 +529,7 @@ void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondi
 
         emitGetVirtualRegister(op1, regT2);
         callOperation(operation, regT2, regT1);
-        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueRegister), target);
+        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueGPR), target);
     } else {
         linkSlowCase(iter);
 
@@ -553,7 +553,7 @@ void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondi
 
         linkSlowCase(iter);
         callOperation(operation, regT0, regT1);
-        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueRegister), target);
+        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueGPR), target);
     }
 }
 

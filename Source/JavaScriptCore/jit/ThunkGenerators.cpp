@@ -717,7 +717,7 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
     jit.addPtr(JSInterfaceJIT::TrustedImm32(-12), JSInterfaceJIT::stackPointerRegister);
     jit.push(JSInterfaceJIT::callFrameRegister);
 #else
-    jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::firstArgumentRegister);
+    jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::argumentGPR0);
 #endif
     jit.move(JSInterfaceJIT::TrustedImmPtr(FunctionPtr(operationVMHandleException).value()), JSInterfaceJIT::regT3);
     jit.call(JSInterfaceJIT::regT3);

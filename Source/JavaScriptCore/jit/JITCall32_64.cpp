@@ -192,7 +192,7 @@ void JIT::compileLoadVarargs(Instruction* instruction)
     emitLoad(thisValue, regT1, regT0);
     emitLoad(arguments, regT3, regT2);
     callOperation(operationLoadVarargs, regT1, regT0, regT3, regT2, firstFreeRegister);
-    move(returnValueRegister, regT3);
+    move(returnValueGPR, regT3);
 
     if (canOptimize)
         end.link(this);

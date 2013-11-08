@@ -121,7 +121,7 @@ void JIT::compileLoadVarargs(Instruction* instruction)
     emitGetVirtualRegister(thisValue, regT0);
     emitGetVirtualRegister(arguments, regT1);
     callOperation(operationLoadVarargs, regT0, regT1, firstFreeRegister);
-    move(returnValueRegister, regT1);
+    move(returnValueGPR, regT1);
 
     if (canOptimize)
         end.link(this);

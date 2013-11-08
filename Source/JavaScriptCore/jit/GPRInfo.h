@@ -278,6 +278,8 @@ private:
 };
 #endif
 
+// The baseline JIT requires that regT3 be callee-preserved.
+
 #if CPU(X86)
 #define NUMBER_OF_ARGUMENT_REGISTERS 0u
 
@@ -286,6 +288,8 @@ public:
     typedef GPRReg RegisterType;
     static const unsigned numberOfRegisters = 6;
     static const unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
+
+    // Note: regT3 is required to be callee-preserved.
 
     // Temporary registers.
     static const GPRReg regT0 = X86Registers::eax;
@@ -343,13 +347,19 @@ private:
 #endif
 
 #if CPU(X86_64)
+#if !OS(WINDOWS)
 #define NUMBER_OF_ARGUMENT_REGISTERS 6u
+#else
+#define NUMBER_OF_ARGUMENT_REGISTERS 4u
+#endif
 
 class GPRInfo {
 public:
     typedef GPRReg RegisterType;
     static const unsigned numberOfRegisters = 10;
     static const unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
+
+    // Note: regT3 is required to be callee-preserved.
 
     // These registers match the baseline JIT.
     static const GPRReg cachedResultRegister = X86Registers::eax;
@@ -368,12 +378,19 @@ public:
     static const GPRReg regT8 = X86Registers::r10;
     static const GPRReg regT9 = X86Registers::r13;
     // These constants provide the names for the general purpose argument & return value registers.
+#if !OS(WINDOWS)
     static const GPRReg argumentGPR0 = X86Registers::edi; // regT4
     static const GPRReg argumentGPR1 = X86Registers::esi; // regT5
     static const GPRReg argumentGPR2 = X86Registers::edx; // regT1
     static const GPRReg argumentGPR3 = X86Registers::ecx; // regT2
     static const GPRReg argumentGPR4 = X86Registers::r8;  // regT6
     static const GPRReg argumentGPR5 = X86Registers::r9;  // regT7
+#else
+    static const GPRReg argumentGPR0 = X86Registers::ecx;
+    static const GPRReg argumentGPR1 = X86Registers::edx;
+    static const GPRReg argumentGPR2 = X86Registers::r8; // regT6
+    static const GPRReg argumentGPR3 = X86Registers::r9; // regT7
+#endif
     static const GPRReg nonArgGPR0 = X86Registers::eax; // regT0
     static const GPRReg nonArgGPR1 = X86Registers::ebx; // regT3
     static const GPRReg nonArgGPR2 = X86Registers::r10; // regT8
@@ -391,7 +408,11 @@ public:
     static GPRReg toArgumentRegister(unsigned index)
     {
         ASSERT(index < numberOfArgumentRegisters);
+#if !OS(WINDOWS)
         static const GPRReg registerForIndex[numberOfArgumentRegisters] = { argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3, argumentGPR4, argumentGPR5 };
+#else
+        static const GPRReg registerForIndex[numberOfArgumentRegisters] = { argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3 };
+#endif
         return registerForIndex[index];
     }
     
@@ -433,6 +454,8 @@ public:
     static const unsigned numberOfRegisters = 10;
     static const unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
+    // Note: regT3 is required to be callee-preserved.
+
     // Temporary registers.
     static const GPRReg regT0 = ARMRegisters::r0;
     static const GPRReg regT1 = ARMRegisters::r1;
@@ -459,6 +482,10 @@ public:
     static const GPRReg returnValueGPR = ARMRegisters::r0; // regT0
     static const GPRReg returnValueGPR2 = ARMRegisters::r1; // regT1
     static const GPRReg nonPreservedNonReturnGPR = ARMRegisters::r2;
+
+#if ENABLE(VALUE_PROFILER)
+    static const GPRReg bucketCounterRegister = ARMRegisters::r7;
+#endif
 
     static GPRReg toRegister(unsigned index)
     {
@@ -504,6 +531,8 @@ public:
     typedef GPRReg RegisterType;
     static const unsigned numberOfRegisters = 16;
 
+    // Note: regT3 is required to be callee-preserved.
+
     // These registers match the baseline JIT.
     static const GPRReg cachedResultRegister = ARM64Registers::x0;
     static const GPRReg timeoutCheckRegister = ARM64Registers::x26;
@@ -514,8 +543,8 @@ public:
     static const GPRReg regT0 = ARM64Registers::x0;
     static const GPRReg regT1 = ARM64Registers::x1;
     static const GPRReg regT2 = ARM64Registers::x2;
-    static const GPRReg regT3 = ARM64Registers::x3;
-    static const GPRReg regT4 = ARM64Registers::x4;
+    static const GPRReg regT3 = ARM64Registers::x23;
+    static const GPRReg regT4 = ARM64Registers::x24;
     static const GPRReg regT5 = ARM64Registers::x5;
     static const GPRReg regT6 = ARM64Registers::x6;
     static const GPRReg regT7 = ARM64Registers::x7;
@@ -542,6 +571,10 @@ public:
     static const GPRReg returnValueGPR = ARM64Registers::x0; // regT0
     static const GPRReg returnValueGPR2 = ARM64Registers::x1; // regT1
     static const GPRReg nonPreservedNonReturnGPR = ARM64Registers::x2;
+
+#if ENABLE(VALUE_PROFILER)
+    static const GPRReg bucketCounterRegister = ARM64Registers::x7;
+#endif
 
     // GPRReg mapping is direct, the machine regsiter numbers can
     // be used directly as indices into the GPR RegisterBank.
@@ -597,6 +630,10 @@ public:
     typedef GPRReg RegisterType;
     static const unsigned numberOfRegisters = 7;
     static const unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
+
+    // regT0 must be v0 for returning a 32-bit value.
+    // regT1 must be v1 for returning a pair of 32-bit value.
+    // regT3 must be saved in the callee, so use an S register.
 
     // Temporary registers.
     static const GPRReg regT0 = MIPSRegisters::v0;
@@ -670,6 +707,8 @@ public:
     typedef GPRReg RegisterType;
     static const unsigned numberOfRegisters = 10;
 
+    // Note: regT3 is required to be callee-preserved.
+
     // Temporary registers.
     static const GPRReg regT0 = SH4Registers::r0;
     static const GPRReg regT1 = SH4Registers::r1;
@@ -729,6 +768,14 @@ private:
     static const unsigned InvalidIndex = 0xffffffff;
 };
 
+#endif
+
+// The baseline JIT uses "accumulator" style execution with regT0 (for 64-bit)
+// and regT0 + regT1 (for 32-bit) serving as the accumulator register(s) for
+// passing results of one opcode to the next. Hence:
+COMPILE_ASSERT(GPRInfo::regT0 == GPRInfo::returnValueGPR, regT0_must_equal_returnValueGPR);
+#if USE(JSVALUE32_64)
+COMPILE_ASSERT(GPRInfo::regT1 == GPRInfo::returnValueGPR2, regT1_must_equal_returnValueGPR2);
 #endif
 
 } // namespace JSC

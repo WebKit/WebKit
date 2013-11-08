@@ -28,6 +28,8 @@
 
 #include "BytecodeConventions.h"
 #include "CCallHelpers.h"
+#include "FPRInfo.h"
+#include "GPRInfo.h"
 #include "JITCode.h"
 #include "JITOperations.h"
 #include "JITStubs.h"
@@ -40,177 +42,12 @@
 #if ENABLE(JIT)
 
 namespace JSC {
-    class JSInterfaceJIT : public CCallHelpers {
+    class JSInterfaceJIT : public CCallHelpers, public GPRInfo, public FPRInfo {
     public:
         JSInterfaceJIT(VM* vm, CodeBlock* codeBlock = 0)
             : CCallHelpers(vm, codeBlock)
         {
         }
-        
-        // NOTES:
-        //
-        // regT0 has two special meanings.  The return value from a stub
-        // call will always be in regT0, and by default (unless
-        // a register is specified) emitPutVirtualRegister() will store
-        // the value from regT0.
-        //
-        // regT3 is required to be callee-preserved.
-        //
-        // tempRegister2 is has no such dependencies.  It is important that
-        // on x86/x86-64 it is ecx for performance reasons, since the
-        // MacroAssembler will need to plant register swaps if it is not -
-        // however the code will still function correctly.
-#if CPU(X86_64)
-        static const RegisterID returnValueRegister = X86Registers::eax;
-        static const RegisterID returnValue2Register = X86Registers::edx;
-        static const RegisterID cachedResultRegister = X86Registers::eax;
-#if !OS(WINDOWS)
-        static const RegisterID firstArgumentRegister = X86Registers::edi;
-        static const RegisterID secondArgumentRegister = X86Registers::esi;
-#else
-        static const RegisterID firstArgumentRegister = X86Registers::ecx;
-        static const RegisterID secondArgumentRegister = X86Registers::edx;
-        static const RegisterID thirdArgumentRegister = X86Registers::r8;
-#endif
-
-        static const RegisterID callFrameRegister = X86Registers::ebp;
-        static const RegisterID tagTypeNumberRegister = X86Registers::r14;
-        static const RegisterID tagMaskRegister = X86Registers::r15;
-
-        static const RegisterID regT0 = X86Registers::eax;
-        static const RegisterID regT1 = X86Registers::edx;
-        static const RegisterID regT2 = X86Registers::ecx;
-        static const RegisterID regT3 = X86Registers::ebx;
-        static const RegisterID regT4 = X86Registers::r10;
-
-        static const FPRegisterID fpRegT0 = X86Registers::xmm0;
-        static const FPRegisterID fpRegT1 = X86Registers::xmm1;
-        static const FPRegisterID fpRegT2 = X86Registers::xmm2;
-        static const FPRegisterID fpRegT3 = X86Registers::xmm3;
-
-        static const RegisterID nonArgGPR1 = X86Registers::eax; // regT0
-#elif CPU(X86)
-        static const RegisterID returnValueRegister = X86Registers::eax;
-        static const RegisterID returnValue2Register = X86Registers::edx;
-        static const RegisterID cachedResultRegister = X86Registers::eax;
-        // On x86 we always use fastcall conventions = but on
-        // OS X if might make more sense to just use regparm.
-        static const RegisterID firstArgumentRegister = X86Registers::ecx;
-        static const RegisterID secondArgumentRegister = X86Registers::edx;
-        
-        static const RegisterID callFrameRegister = X86Registers::ebp;
-        
-        static const RegisterID regT0 = X86Registers::eax;
-        static const RegisterID regT1 = X86Registers::edx;
-        static const RegisterID regT2 = X86Registers::ecx;
-        static const RegisterID regT3 = X86Registers::ebx;
-        static const RegisterID regT4 = X86Registers::esi;
-        
-        static const FPRegisterID fpRegT0 = X86Registers::xmm0;
-        static const FPRegisterID fpRegT1 = X86Registers::xmm1;
-        static const FPRegisterID fpRegT2 = X86Registers::xmm2;
-        static const FPRegisterID fpRegT3 = X86Registers::xmm3;
-#elif CPU(ARM)
-        static const RegisterID returnValueRegister = ARMRegisters::r0;
-        static const RegisterID returnValue2Register = ARMRegisters::r1;
-        static const RegisterID cachedResultRegister = ARMRegisters::r0;
-        static const RegisterID firstArgumentRegister = ARMRegisters::r0;
-        static const RegisterID secondArgumentRegister = ARMRegisters::r1;
-
-        static const RegisterID regT0 = ARMRegisters::r0;
-        static const RegisterID regT1 = ARMRegisters::r1;
-        static const RegisterID regT2 = ARMRegisters::r2;
-        static const RegisterID regT3 = ARMRegisters::r4;
-        static const RegisterID regT4 = ARMRegisters::r7;
-        static const RegisterID regT5 = ARMRegisters::r8;
-
-        static const RegisterID callFrameRegister = ARMRegisters::fp;
-
-        static const FPRegisterID fpRegT0 = ARMRegisters::d0;
-        static const FPRegisterID fpRegT1 = ARMRegisters::d1;
-        static const FPRegisterID fpRegT2 = ARMRegisters::d2;
-        static const FPRegisterID fpRegT3 = ARMRegisters::d3;
-#elif CPU(ARM64)
-        static const RegisterID returnValueRegister = ARM64Registers::x0;
-        static const RegisterID cachedResultRegister = ARM64Registers::x0;
-        static const RegisterID firstArgumentRegister = ARM64Registers::x0;
-        static const RegisterID secondArgumentRegister = ARM64Registers::x1;
-
-#if ENABLE(VALUE_PROFILER)
-        static const RegisterID bucketCounterRegister = ARM64Registers::x7;
-#endif
-
-        static const RegisterID regT0 = ARM64Registers::x0;
-        static const RegisterID regT1 = ARM64Registers::x1;
-        static const RegisterID regT2 = ARM64Registers::x2;
-        static const RegisterID regT3 = ARM64Registers::x23;
-        static const RegisterID regT4 = ARM64Registers::x24;
-        
-        static const RegisterID callFrameRegister = ARM64Registers::fp;
-        static const RegisterID timeoutCheckRegister = ARM64Registers::x26;
-        static const RegisterID tagTypeNumberRegister = ARM64Registers::x27;
-        static const RegisterID tagMaskRegister = ARM64Registers::x28;
-        
-        static const FPRegisterID fpRegT0 = ARM64Registers::q0;
-        static const FPRegisterID fpRegT1 = ARM64Registers::q1;
-        static const FPRegisterID fpRegT2 = ARM64Registers::q2;
-        static const FPRegisterID fpRegT3 = ARM64Registers::q3;
-
-        static const RegisterID nonArgGPR1 = ARM64Registers::x9;
-#elif CPU(MIPS)
-        static const RegisterID returnValueRegister = MIPSRegisters::v0;
-        static const RegisterID returnValue2Register = MIPSRegisters::v1;
-        static const RegisterID cachedResultRegister = MIPSRegisters::v0;
-        static const RegisterID firstArgumentRegister = MIPSRegisters::a0;
-        static const RegisterID secondArgumentRegister = MIPSRegisters::a1;
-        
-        // regT0 must be v0 for returning a 32-bit value.
-        static const RegisterID regT0 = MIPSRegisters::v0;
-        
-        // regT1 must be v1 for returning a pair of 32-bit value.
-        static const RegisterID regT1 = MIPSRegisters::v1;
-        
-        static const RegisterID regT2 = MIPSRegisters::t4;
-        
-        // regT3 must be saved in the callee, so use an S register.
-        static const RegisterID regT3 = MIPSRegisters::s2;
-        
-        static const RegisterID regT4 = MIPSRegisters::t5;
-        static const RegisterID regT5 = MIPSRegisters::t6;
-
-        static const RegisterID callFrameRegister = MIPSRegisters::fp;
-        
-        static const FPRegisterID fpRegT0 = MIPSRegisters::f4;
-        static const FPRegisterID fpRegT1 = MIPSRegisters::f6;
-        static const FPRegisterID fpRegT2 = MIPSRegisters::f8;
-        static const FPRegisterID fpRegT3 = MIPSRegisters::f10;
-#elif CPU(SH4)
-        static const RegisterID callFrameRegister = SH4Registers::fp;
-
-        static const RegisterID regT0 = SH4Registers::r0;
-        static const RegisterID regT1 = SH4Registers::r1;
-        static const RegisterID regT2 = SH4Registers::r2;
-        static const RegisterID regT3 = SH4Registers::r10;
-        static const RegisterID regT4 = SH4Registers::r4;
-        static const RegisterID regT5 = SH4Registers::r5;
-        static const RegisterID regT6 = SH4Registers::r6;
-        static const RegisterID regT7 = SH4Registers::r7;
-        static const RegisterID firstArgumentRegister = regT4;
-        static const RegisterID secondArgumentRegister = regT5;
-
-        static const RegisterID returnValueRegister = SH4Registers::r0;
-        static const RegisterID returnValue2Register = SH4Registers::r1;
-        static const RegisterID cachedResultRegister = SH4Registers::r0;
-
-        static const FPRegisterID fpRegT0 = SH4Registers::dr0;
-        static const FPRegisterID fpRegT1 = SH4Registers::dr2;
-        static const FPRegisterID fpRegT2 = SH4Registers::dr4;
-        static const FPRegisterID fpRegT3 = SH4Registers::dr6;
-        static const FPRegisterID fpRegT4 = SH4Registers::dr8;
-        static const FPRegisterID fpRegT5 = SH4Registers::dr10;
-#else
-#error "JIT not supported on this platform."
-#endif
 
 #if USE(JSVALUE32_64)
         // Can't just propogate JSValue::Int32Tag as visual studio doesn't like it

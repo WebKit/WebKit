@@ -1,3 +1,69 @@
+2013-11-07  Mark Lam  <mark.lam@apple.com>
+
+        Get rid of the regT* definitions in JSInterfaceJIT.h.
+        https://bugs.webkit.org/show_bug.cgi?id=123806.
+
+        Reviewed by Geoffrey Garen.
+
+        JSInterfaceJIT now inherits from GPRInfo and FPRInfo, and relies on them
+        to provide all the register definitions.
+
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::toArgumentRegister):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitEnterOptimizationCheck):
+        (JSC::JIT::privateCompile):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_compareAndJumpSlow):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_compareAndJumpSlow):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileLoadVarargs):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileLoadVarargs):
+        * jit/JITInlines.h:
+        (JSC::JIT::appendCallWithExceptionCheckSetJSValueResult):
+        (JSC::JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_end):
+        (JSC::JIT::emitSlow_op_new_object):
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::emit_op_ret_object_or_this):
+        (JSC::JIT::emit_op_throw):
+        (JSC::JIT::emit_op_get_pnames):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        (JSC::JIT::emit_op_switch_string):
+        (JSC::JIT::emit_op_create_activation):
+        (JSC::JIT::emit_op_create_arguments):
+        (JSC::JIT::emitSlow_op_jfalse):
+        (JSC::JIT::emitSlow_op_jtrue):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emitSlow_op_neq):
+        (JSC::JIT::emitSlow_op_get_argument_by_val):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        (JSC::JIT::emit_op_end):
+        (JSC::JIT::emitSlow_op_new_object):
+        (JSC::JIT::emitSlow_op_jfalse):
+        (JSC::JIT::emitSlow_op_jtrue):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emitSlow_op_neq):
+        (JSC::JIT::emit_op_throw):
+        (JSC::JIT::emit_op_get_pnames):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        (JSC::JIT::emit_op_switch_string):
+        (JSC::JIT::emit_op_create_activation):
+        (JSC::JIT::emit_op_create_arguments):
+        (JSC::JIT::emitSlow_op_get_argument_by_val):
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::JSInterfaceJIT):
+        * jit/SlowPathCall.h:
+        (JSC::JITSlowPathCall::call):
+        * jit/ThunkGenerators.cpp:
+
 2013-11-07  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should support NewArray

@@ -149,9 +149,9 @@ ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueRe
 {
     MacroAssembler::Call call = appendCallWithExceptionCheck(function);
 #if USE(JSVALUE64)
-    emitPutVirtualRegister(dst, returnValueRegister);
+    emitPutVirtualRegister(dst, returnValueGPR);
 #else
-    emitStore(dst, returnValue2Register, returnValueRegister);
+    emitStore(dst, returnValueGPR2, returnValueGPR);
 #endif
     return call;
 }
@@ -161,9 +161,9 @@ ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueRe
     MacroAssembler::Call call = appendCallWithExceptionCheck(function);
     emitValueProfilingSite(regT4);
 #if USE(JSVALUE64)
-    emitPutVirtualRegister(dst, returnValueRegister);
+    emitPutVirtualRegister(dst, returnValueGPR);
 #else
-    emitStore(dst, returnValue2Register, returnValueRegister);
+    emitStore(dst, returnValueGPR2, returnValueGPR);
 #endif
     return call;
 }

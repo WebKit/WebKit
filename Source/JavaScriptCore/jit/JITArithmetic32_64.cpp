@@ -160,7 +160,7 @@ void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondi
     emitLoad(op1, regT1, regT0);
     emitLoad(op2, regT3, regT2);
     callOperation(operation, regT1, regT0, regT3, regT2);
-    emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueRegister), target);
+    emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueGPR), target);
 }
 
 // LeftShift (<<)

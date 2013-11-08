@@ -176,7 +176,7 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
     addPtr(TrustedImm32(-12), stackPointerRegister);
     push(callFrameRegister);
 #else
-    move(callFrameRegister, firstArgumentRegister);
+    move(callFrameRegister, argumentGPR0);
 #endif
     move(TrustedImmPtr(FunctionPtr(operationVMHandleException).value()), regT3);
     call(regT3);
@@ -210,7 +210,7 @@ void JIT::emit_op_mov(Instruction* currentInstruction)
 
 void JIT::emit_op_end(Instruction* currentInstruction)
 {
-    ASSERT(returnValueRegister != callFrameRegister);
+    ASSERT(returnValueGPR != callFrameRegister);
     emitLoad(currentInstruction[1].u.operand, regT1, regT0);
     restoreReturnAddressBeforeReturn(Address(callFrameRegister, CallFrame::returnPCOffset()));
     ret();
@@ -243,7 +243,7 @@ void JIT::emitSlow_op_new_object(Instruction* currentInstruction, Vector<SlowCas
     int dst = currentInstruction[1].u.operand;
     Structure* structure = currentInstruction[3].u.objectAllocationProfile->structure();
     callOperation(operationNewObject, structure);
-    emitStoreCell(dst, returnValueRegister);
+    emitStoreCell(dst, returnValueGPR);
 }
 
 void JIT::emit_op_check_has_instance(Instruction* currentInstruction)
@@ -508,7 +508,7 @@ void JIT::emitSlow_op_jfalse(Instruction* currentInstruction, Vector<SlowCaseEnt
     }
 
     callOperation(operationConvertJSValueToBoolean, regT1, regT0);
-    emitJumpSlowToHot(branchTest32(Zero, returnValueRegister), target); // Inverted.
+    emitJumpSlowToHot(branchTest32(Zero, returnValueGPR), target); // Inverted.
 }
 
 void JIT::emit_op_jtrue(Instruction* currentInstruction)
@@ -542,7 +542,7 @@ void JIT::emitSlow_op_jtrue(Instruction* currentInstruction, Vector<SlowCaseEntr
     }
 
     callOperation(operationConvertJSValueToBoolean, regT1, regT0);
-    emitJumpSlowToHot(branchTest32(NonZero, returnValueRegister), target);
+    emitJumpSlowToHot(branchTest32(NonZero, returnValueGPR), target);
 }
 
 void JIT::emit_op_jeq_null(Instruction* currentInstruction)
@@ -651,7 +651,7 @@ void JIT::emitSlow_op_eq(Instruction* currentInstruction, Vector<SlowCaseEntry>:
     callOperation(operationCompareEq, regT1, regT0, regT3, regT2);
 
     storeResult.link(this);
-    emitStoreBool(dst, returnValueRegister);
+    emitStoreBool(dst, returnValueGPR);
 }
 
 void JIT::emit_op_neq(Instruction* currentInstruction)
@@ -693,8 +693,8 @@ void JIT::emitSlow_op_neq(Instruction* currentInstruction, Vector<SlowCaseEntry>
     callOperation(operationCompareEq, regT1, regT0, regT3, regT2);
 
     storeResult.link(this);
-    xor32(TrustedImm32(0x1), returnValueRegister);
-    emitStoreBool(dst, returnValueRegister);
+    xor32(TrustedImm32(0x1), returnValueGPR);
+    emitStoreBool(dst, returnValueGPR);
 }
 
 void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqType type)
@@ -825,7 +825,7 @@ void JIT::emit_op_neq_null(Instruction* currentInstruction)
 
 void JIT::emit_op_throw(Instruction* currentInstruction)
 {
-    ASSERT(regT0 == returnValueRegister);
+    ASSERT(regT0 == returnValueGPR);
     emitLoad(currentInstruction[1].u.operand, regT1, regT0);
     callOperationNoExceptionCheck(operationThrow, regT1, regT0);
     jumpToExceptionHandler();
@@ -853,7 +853,7 @@ void JIT::emit_op_get_pnames(Instruction* currentInstruction)
     // this call doesn't seem to be hot.
     Label isObject(this);
     callOperation(operationGetPNames, regT0);
-    emitStoreCell(dst, returnValueRegister);
+    emitStoreCell(dst, returnValueGPR);
     load32(Address(regT0, OBJECT_OFFSETOF(JSPropertyNameIterator, m_jsStringsSize)), regT3);
     store32(TrustedImm32(Int32Tag), intTagFor(i));
     store32(TrustedImm32(0), intPayloadFor(i));
@@ -1006,7 +1006,7 @@ void JIT::emit_op_switch_imm(Instruction* currentInstruction)
 
     emitLoad(scrutinee, regT1, regT0);
     callOperation(operationSwitchImmWithUnknownKeyType, regT1, regT0, tableIndex);
-    jump(returnValueRegister);
+    jump(returnValueGPR);
 }
 
 void JIT::emit_op_switch_char(Instruction* currentInstruction)
@@ -1022,7 +1022,7 @@ void JIT::emit_op_switch_char(Instruction* currentInstruction)
 
     emitLoad(scrutinee, regT1, regT0);
     callOperation(operationSwitchCharWithUnknownKeyType, regT1, regT0, tableIndex);
-    jump(returnValueRegister);
+    jump(returnValueGPR);
 }
 
 void JIT::emit_op_switch_string(Instruction* currentInstruction)
@@ -1037,7 +1037,7 @@ void JIT::emit_op_switch_string(Instruction* currentInstruction)
 
     emitLoad(scrutinee, regT1, regT0);
     callOperation(operationSwitchStringWithUnknownKeyType, regT1, regT0, tableIndex);
-    jump(returnValueRegister);
+    jump(returnValueGPR);
 }
 
 void JIT::emit_op_throw_static_error(Instruction* currentInstruction)
@@ -1083,7 +1083,7 @@ void JIT::emit_op_create_activation(Instruction* currentInstruction)
     
     Jump activationCreated = branch32(NotEqual, tagFor(activation), TrustedImm32(JSValue::EmptyValueTag));
     callOperation(operationCreateActivation, 0);
-    emitStoreCell(activation, returnValueRegister);
+    emitStoreCell(activation, returnValueGPR);
     activationCreated.link(this);
 }
 
@@ -1093,8 +1093,8 @@ void JIT::emit_op_create_arguments(Instruction* currentInstruction)
 
     Jump argsCreated = branch32(NotEqual, tagFor(dst), TrustedImm32(JSValue::EmptyValueTag));
     callOperation(operationCreateArguments);
-    emitStoreCell(dst, returnValueRegister);
-    emitStoreCell(unmodifiedArgumentsRegister(VirtualRegister(dst)).offset(), returnValueRegister);
+    emitStoreCell(dst, returnValueGPR);
+    emitStoreCell(unmodifiedArgumentsRegister(VirtualRegister(dst)).offset(), returnValueGPR);
     argsCreated.link(this);
 }
 
@@ -1243,8 +1243,8 @@ void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vecto
     linkSlowCase(iter);
 
     callOperation(operationCreateArguments);
-    emitStoreCell(arguments, returnValueRegister);
-    emitStoreCell(unmodifiedArgumentsRegister(VirtualRegister(arguments)).offset(), returnValueRegister);
+    emitStoreCell(arguments, returnValueGPR);
+    emitStoreCell(unmodifiedArgumentsRegister(VirtualRegister(arguments)).offset(), returnValueGPR);
     
     skipArgumentsCreation.link(this);
     emitLoad(arguments, regT1, regT0);

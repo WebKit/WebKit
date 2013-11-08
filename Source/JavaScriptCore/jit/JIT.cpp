@@ -109,8 +109,8 @@ void JIT::emitEnterOptimizationCheck()
     skipOptimize.append(branchAdd32(Signed, TrustedImm32(Options::executionCounterIncrementForEntry()), AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter())));
     ASSERT(!m_bytecodeOffset);
     callOperation(operationOptimize, m_bytecodeOffset);
-    skipOptimize.append(branchTestPtr(Zero, returnValueRegister));
-    jump(returnValueRegister);
+    skipOptimize.append(branchTestPtr(Zero, returnValueGPR));
+    jump(returnValueGPR);
     skipOptimize.link(this);
 }
 #endif
@@ -621,8 +621,8 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         m_bytecodeOffset = 0;
 
         callOperationWithCallFrameRollbackOnException(m_codeBlock->m_isConstructor ? operationConstructArityCheck : operationCallArityCheck);
-        if (returnValueRegister != regT0)
-            move(returnValueRegister, regT0);
+        if (returnValueGPR != regT0)
+            move(returnValueGPR, regT0);
         branchTest32(Zero, regT0).linkTo(beginLabel, this);
         emitNakedCall(m_vm->getCTIStub(arityFixup).code());
 
