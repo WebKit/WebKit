@@ -41,6 +41,7 @@ public:
 
     StringReference messageReceiverName() const { return m_messageReceiverName; }
     StringReference messageName() const { return m_messageName; }
+    uint64_t destinationID() const { return m_destinationID; }
 
     bool isSyncMessage() const;
     bool shouldDispatchMessageWhenWaitingForSyncReply() const;
@@ -53,6 +54,8 @@ private:
     uint8_t m_messageFlags;
     StringReference m_messageReceiverName;
     StringReference m_messageName;
+
+    uint64_t m_destinationID;
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     std::unique_ptr<ImportanceAssertion> m_importanceAssertion;
