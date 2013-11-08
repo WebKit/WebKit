@@ -100,8 +100,10 @@ static EncodedJSValue createIteratorResult(CallFrame* callFrame, ArrayIterationK
 static inline EncodedJSValue JSC_HOST_CALL arrayIteratorNext(CallFrame* callFrame)
 {
     JSArrayIterator* iterator = jsDynamicCast<JSArrayIterator*>(callFrame->thisValue());
-    if (!iterator)
-        throwTypeError(callFrame, ASCIILiteral("Cannot call ArrayIterator.next() on a non-ArrayIterator object"));
+    if (!iterator) {
+        ASSERT_NOT_REACHED();
+        return JSValue::encode(throwTypeError(callFrame, ASCIILiteral("Cannot call ArrayIterator.next() on a non-ArrayIterator object")));
+    }
     JSObject* iteratedObject = iterator->iteratedObject();
     size_t index = iterator->nextIndex();
     ArrayIterationKind kind = iterator->iterationKind();
