@@ -59,8 +59,6 @@ private:
 
     virtual bool isContentScript(JSC::ExecState*) OVERRIDE { return false; }
 
-    virtual void willExecuteProgram(JSC::CallFrame*) OVERRIDE;
-
     virtual void runEventLoopWhilePaused() OVERRIDE;
 
     WorkerGlobalScope* m_workerGlobalScope;

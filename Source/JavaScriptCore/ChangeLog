@@ -1,3 +1,69 @@
+2013-11-08  Mark Lam  <mark.lam@apple.com>
+
+        Move breakpoint (and exception break) functionality into JSC::Debugger.
+        https://bugs.webkit.org/show_bug.cgi?id=121796.
+
+        Reviewed by Geoffrey Garen.
+
+        - In ScriptDebugServer and JSC::Debugger, SourceID and BreakpointID are
+          now numeric tokens.
+
+        - JSC::Debugger now tracks user defined breakpoints in a JSC::Breakpoint
+          record. Previously, this info is tracked in the ScriptBreakpoint record
+          in ScriptDebugServer. The only element of ScriptBreakpoint that is not
+          being tracked by JSC::Breakpoint is the ScriptBreakpointAction.
+             The ScriptBreakpointAction is still tracked by the ScriptDebugServer
+          in a list keyed on the corresponding BreakpointID.
+             The ScriptBreakpoint record is now only used as a means of passing
+          breakpoint paramaters to the ScriptDebugServer.
+
+        - ScriptDebugServer now no longer accesses the JSC::CallFrame* directly.
+          It always goes through the DebuggerCallFrame.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * debugger/Breakpoint.h: Added.
+        (JSC::Breakpoint::Breakpoint):
+        - Breakpoint class to track info for each breakpoint in JSC::Debugger.
+        * debugger/Debugger.cpp:
+        (JSC::DebuggerCallFrameScope::DebuggerCallFrameScope):
+        (JSC::DebuggerCallFrameScope::~DebuggerCallFrameScope):
+        (JSC::Debugger::Debugger):
+        (JSC::Debugger::detach):
+        (JSC::Debugger::updateNeedForOpDebugCallbacks):
+        (JSC::Debugger::setBreakpoint):
+        (JSC::Debugger::removeBreakpoint):
+        (JSC::Debugger::hasBreakpoint):
+        (JSC::Debugger::clearBreakpoints):
+        (JSC::Debugger::setBreakpointsActivated):
+        (JSC::Debugger::setPauseOnExceptionsState):
+        (JSC::Debugger::setPauseOnNextStatement):
+        (JSC::Debugger::breakProgram):
+        (JSC::Debugger::continueProgram):
+        (JSC::Debugger::stepIntoStatement):
+        (JSC::Debugger::stepOverStatement):
+        (JSC::Debugger::stepOutOfFunction):
+        (JSC::Debugger::updateCallFrame):
+        (JSC::Debugger::updateCallFrameAndPauseIfNeeded):
+        (JSC::Debugger::pauseIfNeeded):
+        (JSC::Debugger::exception):
+        (JSC::Debugger::atStatement):
+        (JSC::Debugger::callEvent):
+        (JSC::Debugger::returnEvent):
+        (JSC::Debugger::willExecuteProgram):
+        (JSC::Debugger::didExecuteProgram):
+        (JSC::Debugger::didReachBreakpoint):
+        (JSC::Debugger::currentDebuggerCallFrame):
+        * debugger/Debugger.h:
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::sourceID):
+        (JSC::DebuggerCallFrame::sourceIDForCallFrame):
+        * debugger/DebuggerCallFrame.h:
+        * debugger/DebuggerPrimitives.h: Added.
+        - define SourceID, noSourceID, BreakpointID, and noBreakpointID.
+
 2013-11-08  Oliver Hunt  <oliver@apple.com>
 
         Map.forEach crashes on deleted values

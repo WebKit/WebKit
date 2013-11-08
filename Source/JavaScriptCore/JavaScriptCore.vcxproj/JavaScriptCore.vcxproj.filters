@@ -1469,6 +1469,9 @@
     <ClInclude Include="..\bytecompiler\RegisterID.h">
       <Filter>bytecodecompiler</Filter>
     </ClInclude>
+    <ClInclude Include="..\debugger\Breakpoint.h">
+      <Filter>debugger</Filter>
+    </ClInclude>
     <ClInclude Include="..\debugger\Debugger.h">
       <Filter>debugger</Filter>
     </ClInclude>
@@ -1476,6 +1479,9 @@
       <Filter>debugger</Filter>
     </ClInclude>
     <ClInclude Include="..\debugger\DebuggerCallFrame.h">
+      <Filter>debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\debugger\DebuggerPrimitives.h">
       <Filter>debugger</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGDriver.h">

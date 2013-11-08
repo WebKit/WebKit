@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011 Google Inc. All rights reserved.
+ * Copyright (c) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -43,7 +44,7 @@
 namespace WebCore {
 
 WorkerScriptDebugServer::WorkerScriptDebugServer(WorkerGlobalScope* context, const String& mode)
-    : ScriptDebugServer()
+    : ScriptDebugServer(true)
     , m_workerGlobalScope(context)
     , m_debuggerTaskMode(mode)
 {
@@ -58,12 +59,6 @@ void WorkerScriptDebugServer::addListener(ScriptDebugListener* listener)
         m_workerGlobalScope->script()->attachDebugger(this);
     m_listeners.add(listener);
     recompileAllJSFunctions(0);
-}
-
-void WorkerScriptDebugServer::willExecuteProgram(JSC::CallFrame* callFrame)
-{
-    if (!m_paused)
-        updateCallFrame(callFrame);
 }
 
 void WorkerScriptDebugServer::recompileAllJSFunctions(Timer<ScriptDebugServer>*)

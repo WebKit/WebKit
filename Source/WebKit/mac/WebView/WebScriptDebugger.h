@@ -56,13 +56,8 @@ public:
 
 private:
     virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const WTF::String& errorMsg) OVERRIDE;
-    virtual void callEvent(JSC::CallFrame*) OVERRIDE { }
-    virtual void atStatement(JSC::CallFrame*) OVERRIDE { }
-    virtual void returnEvent(JSC::CallFrame*) OVERRIDE { }
-    virtual void exception(JSC::CallFrame*, JSC::JSValue exceptionValue, bool hasHandler) OVERRIDE;
-    virtual void willExecuteProgram(JSC::CallFrame*) OVERRIDE { }
-    virtual void didExecuteProgram(JSC::CallFrame*) OVERRIDE { }
-    virtual void didReachBreakpoint(JSC::CallFrame*) OVERRIDE { }
+    virtual void handlePause(JSC::Debugger::ReasonForPause, JSC::JSGlobalObject*) OVERRIDE;
+    virtual bool needPauseHandling(JSC::JSGlobalObject*) OVERRIDE { return true; }
 
     bool m_callingDelegate;
 

@@ -1,3 +1,64 @@
+2013-11-08  Mark Lam  <mark.lam@apple.com>
+
+        Move breakpoint (and exception break) functionality into JSC::Debugger.
+        https://bugs.webkit.org/show_bug.cgi?id=121796.
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        - In ScriptDebugServer and JSC::Debugger, SourceID and BreakpointID are
+          now numeric tokens.
+
+        - JSC::Debugger now tracks user defined breakpoints in a JSC::Breakpoint
+          record. Previously, this info is tracked in the ScriptBreakpoint record
+          in ScriptDebugServer. The only element of ScriptBreakpoint that is not
+          being tracked by JSC::Breakpoint is the ScriptBreakpointAction.
+             The ScriptBreakpointAction is still tracked by the ScriptDebugServer
+          in a list keyed on the corresponding BreakpointID.
+             The ScriptBreakpoint record is now only used as a means of passing
+          breakpoint paramaters to the ScriptDebugServer.
+
+        - ScriptDebugServer now no longer accesses the JSC::CallFrame* directly.
+          It always goes through the DebuggerCallFrame.
+
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/BreakpointID.h: Added.
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::ScriptDebugServer):
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::removeBreakpoint):
+        (WebCore::ScriptDebugServer::clearBreakpoints):
+        (WebCore::ScriptDebugServer::dispatchDidPause):
+        (WebCore::ScriptDebugServer::dispatchDidContinue):
+        (WebCore::ScriptDebugServer::dispatchDidParseSource):
+        (WebCore::ScriptDebugServer::notifyDoneProcessingDebuggerEvents):
+        (WebCore::ScriptDebugServer::needPauseHandling):
+        (WebCore::ScriptDebugServer::handleBreakpointHit):
+        (WebCore::ScriptDebugServer::handleExceptionInBreakpointCondition):
+        (WebCore::ScriptDebugServer::handlePause):
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/js/SourceID.h: Added.
+        * bindings/js/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::WorkerScriptDebugServer):
+        * bindings/js/WorkerScriptDebugServer.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::parseLocation):
+        (WebCore::InspectorDebuggerAgent::setBreakpoint):
+        (WebCore::InspectorDebuggerAgent::continueToLocation):
+        (WebCore::InspectorDebuggerAgent::resolveBreakpoint):
+        (WebCore::InspectorDebuggerAgent::searchInContent):
+        (WebCore::InspectorDebuggerAgent::getScriptSource):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        (WebCore::InspectorDebuggerAgent::didPause):
+        (WebCore::InspectorDebuggerAgent::clear):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/ScriptDebugListener.h:
+
 2013-11-08  László Langó  <lango@inf.u-szeged.hu>
 
         InspectorConsoleAgent::didFinishXHRLoading ConsoleMessage should include a column number

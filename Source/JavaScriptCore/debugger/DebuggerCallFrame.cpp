@@ -85,11 +85,11 @@ JSC::JSGlobalObject* DebuggerCallFrame::dynamicGlobalObject() const
     return m_callFrame->dynamicGlobalObject();
 }
 
-intptr_t DebuggerCallFrame::sourceID() const
+SourceID DebuggerCallFrame::sourceID() const
 {
     ASSERT(isValid());
     if (!isValid())
-        return 0;
+        return noSourceID;
     return sourceIDForCallFrame(m_callFrame);
 }
 
@@ -185,12 +185,12 @@ TextPosition DebuggerCallFrame::positionForCallFrame(CallFrame* callFrame)
     return TextPosition(OrdinalNumber::fromOneBasedInt(functor.line()), OrdinalNumber::fromOneBasedInt(functor.column()));
 }
 
-intptr_t DebuggerCallFrame::sourceIDForCallFrame(CallFrame* callFrame)
+SourceID DebuggerCallFrame::sourceIDForCallFrame(CallFrame* callFrame)
 {
     ASSERT(callFrame);
     CodeBlock* codeBlock = callFrame->codeBlock();
     if (!codeBlock)
-        return 0;
+        return noSourceID;
     return codeBlock->ownerExecutable()->sourceID();
 }
 

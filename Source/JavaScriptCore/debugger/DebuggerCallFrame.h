@@ -30,12 +30,13 @@
 #define DebuggerCallFrame_h
 
 #include "CallFrame.h"
+#include "DebuggerPrimitives.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/TextPosition.h>
 
 namespace JSC {
-    
+
 class DebuggerCallFrame : public RefCounted<DebuggerCallFrame> {
 public:
     enum Type { ProgramType, FunctionType };
@@ -50,7 +51,7 @@ public:
     CallFrame* callFrame() const { return m_callFrame; }
     JS_EXPORT_PRIVATE PassRefPtr<DebuggerCallFrame> callerFrame();
     ExecState* exec() const { return m_callFrame; }
-    JS_EXPORT_PRIVATE intptr_t sourceID() const;
+    JS_EXPORT_PRIVATE SourceID sourceID() const;
 
     // line and column are in base 0 e.g. the first line is line 0.
     int line() const { return m_position.m_line.zeroBasedInt(); }
@@ -72,7 +73,7 @@ public:
 
     JS_EXPORT_PRIVATE static JSValue evaluateWithCallFrame(CallFrame*, const String& script, JSValue& exception);
     JS_EXPORT_PRIVATE static TextPosition positionForCallFrame(CallFrame*);
-    JS_EXPORT_PRIVATE static intptr_t sourceIDForCallFrame(CallFrame*);
+    JS_EXPORT_PRIVATE static SourceID sourceIDForCallFrame(CallFrame*);
     static JSValue thisValueForCallFrame(CallFrame*);
 
 private:

@@ -785,9 +785,11 @@
     <ClInclude Include="..\bytecompiler\LabelScope.h" />
     <ClInclude Include="..\bytecompiler\RegisterID.h" />
     <ClInclude Include="..\config.h" />
+    <ClInclude Include="..\debugger\Breakpoint.h" />
     <ClInclude Include="..\debugger\Debugger.h" />
     <ClInclude Include="..\debugger\DebuggerActivation.h" />
     <ClInclude Include="..\debugger\DebuggerCallFrame.h" />
+    <ClInclude Include="..\debugger\DebuggerPrimitives.h" />
     <ClInclude Include="..\dfg\DFGAbstractHeap.h" />
     <ClInclude Include="..\dfg\DFGAbstractInterpreter.h" />
     <ClInclude Include="..\dfg\DFGAbstractInterpreterInlines.h" />

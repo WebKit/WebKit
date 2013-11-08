@@ -561,12 +561,14 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/WriteBarrierSupport.cpp \
 	Source/JavaScriptCore/heap/WriteBarrierSupport.h \
 	Source/JavaScriptCore/config.h \
+	Source/JavaScriptCore/debugger/Breakpoint.h \
 	Source/JavaScriptCore/debugger/DebuggerActivation.cpp \
 	Source/JavaScriptCore/debugger/DebuggerActivation.h \
 	Source/JavaScriptCore/debugger/DebuggerCallFrame.cpp \
 	Source/JavaScriptCore/debugger/DebuggerCallFrame.h \
 	Source/JavaScriptCore/debugger/Debugger.cpp \
 	Source/JavaScriptCore/debugger/Debugger.h \
+	Source/JavaScriptCore/debugger/DebuggerPrimitives.h \
 	Source/JavaScriptCore/ForwardingHeaders/JavaScriptCore/APICast.h \
 	Source/JavaScriptCore/ForwardingHeaders/JavaScriptCore/APIShims.h \
 	Source/JavaScriptCore/ForwardingHeaders/JavaScriptCore/JavaScript.h \
