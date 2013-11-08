@@ -559,10 +559,16 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
         // If we ever turn one scrollbar off, always turn the other one off too.  Never ever
         // try to both gain/lose a scrollbar in the same pass.
-        if (!newHasHorizontalScrollbar && hasHorizontalScrollbar && vScroll != ScrollbarAlwaysOn)
+        bool needAnotherPass = false;
+        if (!newHasHorizontalScrollbar && hasHorizontalScrollbar && vScroll != ScrollbarAlwaysOn) {
             newHasVerticalScrollbar = false;
-        if (!newHasVerticalScrollbar && hasVerticalScrollbar && hScroll != ScrollbarAlwaysOn)
+            needAnotherPass = true;
+        }
+
+        if (!newHasVerticalScrollbar && hasVerticalScrollbar && hScroll != ScrollbarAlwaysOn) {
             newHasHorizontalScrollbar = false;
+            needAnotherPass = true;
+        }
 
         if (hasHorizontalScrollbar != newHasHorizontalScrollbar && (hasHorizontalScrollbar || !avoidScrollbarCreation())) {
             if (scrollOrigin().y() && !newHasHorizontalScrollbar)
@@ -590,7 +596,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
             }
         }
 
-        if (sendContentResizedNotification && m_updateScrollbarsPass < cMaxUpdateScrollbarsPass) {
+        if ((sendContentResizedNotification || needAnotherPass) && m_updateScrollbarsPass < cMaxUpdateScrollbarsPass) {
             m_updateScrollbarsPass++;
             contentsResized();
             visibleContentsResized();

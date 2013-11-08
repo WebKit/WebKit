@@ -1,3 +1,24 @@
+2013-11-08  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r155660): Some Etherpad pages not scrollable with overlay scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=124075
+
+        Reviewed by Beth Dakin.
+        
+        In r155660 I removed some scrollbar-related layouts when scrollbars
+        are in overlay mode.
+        
+        However, ScrollView::updateScrollbars() has a case where we still need
+        to do multiple pases, related to its "Never ever try to both gain/lose a
+        scrollbar in the same pass" comment. When we avoid making a new scrollbar
+        because the other was removed, we need to do another pass to bring the
+        correct scrollbar back.
+
+        Can't test overlay scrollbars in tests.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+
 2013-11-08  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Image valued shape-outside that extends vertically into the margin-box is top-clipped
