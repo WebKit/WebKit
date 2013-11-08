@@ -34,6 +34,8 @@
 
 #define SHOW_CRASH_REPORTER 1
 
+using namespace WebCore;
+
 namespace WebKit {
 
 ChildProcessMainDelegate::~ChildProcessMainDelegate()
@@ -91,6 +93,11 @@ bool ChildProcessMainDelegate::getClientProcessName(String& clientProcessName)
 bool ChildProcessMainDelegate::getExtraInitializationData(HashMap<String, String>&)
 {
     return true;
+}
+
+void ChildProcessMainDelegate::startRunLoop()
+{
+    RunLoop::run();
 }
 
 void ChildProcessMainDelegate::doPostRunWork()

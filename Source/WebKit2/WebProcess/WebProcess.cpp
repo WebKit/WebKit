@@ -672,7 +672,7 @@ void WebProcess::didClose(CoreIPC::Connection*)
 #endif    
 
     // The UI process closed this connection, shut down.
-    RunLoop::main()->stop();
+    stopRunLoop();
 }
 
 void WebProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)

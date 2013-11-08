@@ -52,6 +52,7 @@ public:
     virtual bool getClientProcessName(String& clientProcessName);
     virtual bool getExtraInitializationData(HashMap<String, String>& extraInitializationData);
 
+    virtual void startRunLoop();
     virtual void doPostRunWork();
 
 protected:
@@ -95,7 +96,7 @@ int ChildProcessMain(int argc, char** argv)
         ChildProcessType::shared().initialize(parameters);
     }
 
-    WebCore::RunLoop::run();
+    delegate.startRunLoop();
 
     @autoreleasepool {
         delegate.doPostRunWork();

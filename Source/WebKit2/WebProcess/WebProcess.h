@@ -246,6 +246,10 @@ private:
     virtual bool shouldTerminate() OVERRIDE;
     virtual void terminate() OVERRIDE;
 
+#if PLATFORM(MAC)
+    virtual void stopRunLoop() OVERRIDE;
+#endif
+
     void platformInitializeProcess(const ChildProcessInitializationParameters&);
 
     // CoreIPC::Connection::Client

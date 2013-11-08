@@ -91,6 +91,12 @@ protected:
     virtual bool shouldTerminate() = 0;
     virtual void terminate();
 
+    virtual void stopRunLoop();
+
+#if PLATFORM(MAC)
+    static void stopNSAppRunLoop();
+#endif
+
 private:
     // CoreIPC::MessageSender
     virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
