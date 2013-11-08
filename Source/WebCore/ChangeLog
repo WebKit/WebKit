@@ -1,3 +1,18 @@
+2013-11-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        REGRESSION (r154375): Image is oriented incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=123831
+
+        Reviewed by Antonio Gomes.
+
+        r154375 made that shouldRespectImageOrientation() isn't used by drawImage().
+        It causes an image isn't oriented correctly. This patch sets shouldRespectImageOrientation()
+        value by default.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::paintIntoRect):
+
 2013-11-07  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Image shape-outside with vertical gaps is handled incorrectly
