@@ -1,3 +1,12 @@
+2013-11-07  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Windows WebKit makefile fixes.
+
+        No need to copy over WebKit.resources.
+
+        * WebKit.vcxproj/WebKit.make:
+        * WebKit.vcxproj/WebKit/WebKitPostBuild.cmd:
+
 2013-11-07  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [GTK] Glyphs in vertical text tests are rotated 90 degrees clockwise
