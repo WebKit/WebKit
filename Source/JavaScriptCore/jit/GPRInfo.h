@@ -496,8 +496,8 @@ public:
 
     static unsigned toIndex(GPRReg reg)
     {
-        ASSERT(static_cast<unsigned>(reg) != InvalidGPRReg);
-        ASSERT(static_cast<unsigned>(reg) < 16);
+        ASSERT(reg != InvalidGPRReg);
+        ASSERT(reg < 16);
         static const unsigned indexForRegister[16] = { 0, 1, 2, 8, 3, 9, InvalidIndex, InvalidIndex, 4, 5, 6, 7, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
         unsigned result = indexForRegister[reg];
         ASSERT(result != InvalidIndex);
@@ -506,8 +506,8 @@ public:
 
     static const char* debugName(GPRReg reg)
     {
-        ASSERT(static_cast<unsigned>(reg) != InvalidGPRReg);
-        ASSERT(static_cast<unsigned>(reg) < 16);
+        ASSERT(reg != InvalidGPRReg);
+        ASSERT(reg < 16);
         static const char* nameForRegister[16] = {
             "r0", "r1", "r2", "r3",
             "r4", "r5", "r6", "r7",

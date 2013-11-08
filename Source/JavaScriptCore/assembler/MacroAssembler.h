@@ -359,6 +359,7 @@ public:
         return PatchableJump(branchPtrWithPatch(cond, left, dataLabel, initialRightValue));
     }
 
+#if !CPU(ARM_TRADITIONAL)
     PatchableJump patchableJump()
     {
         return PatchableJump(jump());
@@ -373,6 +374,7 @@ public:
     {
         return PatchableJump(branch32(cond, reg, imm));
     }
+#endif
 #endif
 
     void jump(Label target)

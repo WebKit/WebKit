@@ -1,3 +1,22 @@
+2013-11-08  Julien Brianceau  <jbriance@cisco.com>
+
+        [arm] Use specific PatchableJump implementation for CPU(ARM_TRADITIONAL).
+        https://bugs.webkit.org/show_bug.cgi?id=123891
+
+        Reviewed by Michael Saboff.
+
+        Although patchableBranch32 is implemented in MacroAssemblerARM.h, the used implementation
+        is the generic one in MacroAssembler.h. This patch fixes it and also implements the
+        patchableJump() function for CPU(ARM_TRADITIONAL). These specific implementations are
+        needed for this architecture backend to ensure that these jumps can be relinked.
+
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::patchableJump):
+        * jit/GPRInfo.h: Remove static_cast that are generating warnings in debug builds.
+        (JSC::GPRInfo::toIndex):
+        (JSC::GPRInfo::debugName):
+
 2013-11-07  Mark Lam  <mark.lam@apple.com>
 
         Get rid of the regT* definitions in JSInterfaceJIT.h.

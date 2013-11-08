@@ -821,6 +821,11 @@ public:
         return Jump(m_assembler.jmp(ARMCondition(cond)));
     }
 
+    PatchableJump patchableJump()
+    {
+        return PatchableJump(m_assembler.jmp(ARMAssembler::AL, 1));
+    }
+
     PatchableJump patchableBranch32(RelationalCondition cond, RegisterID reg, TrustedImm32 imm)
     {
         internalCompare32(reg, imm);
