@@ -1,3 +1,18 @@
+2013-11-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Left sidebar on cubic-bezier.com flickers
+        https://bugs.webkit.org/show_bug.cgi?id=123128
+
+        Reviewed by Dean Jackson.
+        
+        Tests with transformed, fixed elements which dump the layer tree to see
+        which layers get composited.
+
+        * compositing/layer-creation/fixed-position-transformed-into-view-expected.txt: Added.
+        * compositing/layer-creation/fixed-position-transformed-into-view.html: Added.
+        * compositing/layer-creation/fixed-position-transformed-outside-view-expected.txt: Added.
+        * compositing/layer-creation/fixed-position-transformed-outside-view.html: Added.
+
 2013-11-08  Oliver Hunt  <oliver@apple.com>
 
         Fix layout test that was actually testing incorrect behaviour.
