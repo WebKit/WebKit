@@ -1,3 +1,25 @@
+2013-11-07  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Crash at com.apple.WebCore: WebCore::MediaPlayerPrivateAVFoundationObjC::tracksDidChange + 26
+        https://bugs.webkit.org/show_bug.cgi?id=124031
+
+        Reviewed by Eric Carlson.
+
+        WTF::bind() causes errors when given a bare id pointer as a parameter,
+        when that parameter is casted to a specific NS type pointer (in this
+        case, a NSArray*) in order to pass it as a parameter to the bound
+        function.
+
+        Instead of passing around bare id pointers, wrap them in RetainPtr<>
+        objects before passing them to WTF::bind().
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesDidChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::loadedTimeRangesDidChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksDidChange):
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+
 2013-11-08  Antti Koivisto  <antti@apple.com>
 
         Templated LChar/UChar paths for simple line layout

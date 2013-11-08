@@ -1699,7 +1699,7 @@ void MediaPlayerPrivateAVFoundationObjC::playbackBufferFullDidChange(bool buffer
         updateStates();
 }
 
-void MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesDidChange(NSArray* seekableRanges)
+void MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesDidChange(RetainPtr<NSArray> seekableRanges)
 {
     m_cachedSeekableRanges = seekableRanges;
 
@@ -1707,7 +1707,7 @@ void MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesDidChange(NSArray* se
     updateStates();
 }
 
-void MediaPlayerPrivateAVFoundationObjC::loadedTimeRangesDidChange(NSArray* loadedRanges)
+void MediaPlayerPrivateAVFoundationObjC::loadedTimeRangesDidChange(RetainPtr<NSArray> loadedRanges)
 {
     m_cachedLoadedRanges = loadedRanges;
 
@@ -1715,7 +1715,7 @@ void MediaPlayerPrivateAVFoundationObjC::loadedTimeRangesDidChange(NSArray* load
     updateStates();
 }
 
-void MediaPlayerPrivateAVFoundationObjC::tracksDidChange(NSArray* tracks)
+void MediaPlayerPrivateAVFoundationObjC::tracksDidChange(RetainPtr<NSArray> tracks)
 {
     m_cachedTracks = tracks;
 
@@ -1876,13 +1876,13 @@ NSArray* itemKVOProperties()
         else if ([keyPath isEqualToString:@"playbackBufferFull"])
             function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::playbackBufferFullDidChange, m_callback, [newValue boolValue]);
         else if ([keyPath isEqualToString:@"asset"])
-            function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::setAsset, m_callback, newValue);
+            function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::setAsset, m_callback, RetainPtr<NSArray>(newValue));
         else if ([keyPath isEqualToString:@"loadedTimeRanges"])
-            function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::loadedTimeRangesDidChange, m_callback, newValue);
+            function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::loadedTimeRangesDidChange, m_callback, RetainPtr<NSArray>(newValue));
         else if ([keyPath isEqualToString:@"seekableTimeRanges"])
-            function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesDidChange, m_callback, newValue);
+            function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesDidChange, m_callback, RetainPtr<NSArray>(newValue));
         else if ([keyPath isEqualToString:@"tracks"])
-            function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::tracksDidChange, m_callback, newValue);
+            function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::tracksDidChange, m_callback, RetainPtr<NSArray>(newValue));
         else if ([keyPath isEqualToString:@"hasEnabledAudio"])
             function = WTF::bind(&MediaPlayerPrivateAVFoundationObjC::hasEnabledAudioDidChange, m_callback, [newValue boolValue]);
         else if ([keyPath isEqualToString:@"presentationSize"])

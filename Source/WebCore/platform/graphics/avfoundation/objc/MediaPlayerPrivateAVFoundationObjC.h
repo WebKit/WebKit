@@ -98,9 +98,9 @@ public:
     void playbackBufferEmptyDidChange(bool);
     void playbackBufferFullWillChange();
     void playbackBufferFullDidChange(bool);
-    void loadedTimeRangesDidChange(NSArray*);
-    void seekableTimeRangesDidChange(NSArray*);
-    void tracksDidChange(NSArray*);
+    void loadedTimeRangesDidChange(RetainPtr<NSArray>);
+    void seekableTimeRangesDidChange(RetainPtr<NSArray>);
+    void tracksDidChange(RetainPtr<NSArray>);
     void hasEnabledAudioDidChange(bool);
     void presentationSizeDidChange(FloatSize);
     void durationDidChange(double);
