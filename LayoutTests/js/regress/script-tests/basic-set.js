@@ -18,7 +18,7 @@ for (var i = 8000; i >= 0; --i) {
 }
 set.forEach(function(k){ result += set.size; })
 
-if (result != 1600072002)
+if (result != 1600048001)
     throw "Bad result: " + result;
 
 

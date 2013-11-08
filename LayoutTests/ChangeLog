@@ -1,3 +1,9 @@
+2013-11-08  Oliver Hunt  <oliver@apple.com>
+
+        Fix layout test that was actually testing incorrect behaviour.
+
+        * js/regress/script-tests/basic-set.js:
+
 2013-11-08  Martin Robinson  <mrobinson@igalia.com>
 
         [MathML] Center of stretched curly bracket not always vertically centered
