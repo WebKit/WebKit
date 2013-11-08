@@ -1,5 +1,13 @@
 2013-11-08  Anders Carlsson  <andersca@apple.com>
 
+        More build fixes.
+
+        * UIProcess/API/mac/WKConnection.h:
+        * UIProcess/API/mac/WKConnection.mm:
+        (didReceiveMessage):
+
+2013-11-08  Anders Carlsson  <andersca@apple.com>
+
         Try to fix the 32-bit build.
 
         * Shared/API/Cocoa/WKBrowsingContextHandleInternal.h:

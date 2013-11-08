@@ -25,6 +25,7 @@
 
 #import <Foundation/Foundation.h>
 #import <WebKit2/WKDeclarationSpecifiers.h>
+#import <WebKit2/WKFoundation.h>
 
 @class WKConnection;
 @class WKConnectionData;
@@ -47,6 +48,10 @@ WK_EXPORT
 
 @property(assign) id <WKConnectionDelegate> delegate;
 
+#if WK_API_ENABLED
+
 @property (nonatomic, readonly) WKRemoteObjectRegistry *remoteObjectRegistry;
+
+#endif
 
 @end

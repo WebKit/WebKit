@@ -46,7 +46,9 @@ using namespace WebKit;
     // Delegate for callbacks.
     id<WKConnectionDelegate> _delegate;
 
+#if WK_API_ENABLED
     RetainPtr<WKRemoteObjectRegistry> _remoteObjectRegistry;
+#endif
 }
 @end
 
@@ -81,6 +83,7 @@ using namespace WebKit;
     _data->_delegate = delegate;
 }
 
+#if WK_API_ENABLED
 - (WKRemoteObjectRegistry *)remoteObjectRegistry
 {
     if (!_data->_remoteObjectRegistry)
@@ -88,6 +91,7 @@ using namespace WebKit;
 
     return _data->_remoteObjectRegistry.get();
 }
+#endif
 
 @end
 
@@ -95,9 +99,11 @@ using namespace WebKit;
 
 static void didReceiveMessage(WKConnectionRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
 {
+#if WK_API_ENABLED
     WKConnection *connection = (WKConnection *)clientInfo;
     if ([connection->_data->_remoteObjectRegistry _handleMessageWithName:messageName body:messageBody])
         return;
+#endif
 
     if ([connection.delegate respondsToSelector:@selector(connection:didReceiveMessageWithName:body:)]) {
         RetainPtr<CFStringRef> nsMessageName = adoptCF(WKStringCopyCFString(kCFAllocatorDefault, messageName));
