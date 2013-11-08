@@ -1,3 +1,77 @@
+2013-11-07  Andreas Kling  <akling@apple.com>
+
+        Optimize baselines: svg/filters
+
+        Unreviewed; run "webkit-patch optimize-baselines svg/filters"
+
+        * platform/gtk/svg/filters/animate-fill-expected.png: Removed.
+        * platform/gtk/svg/filters/feColorMatrix-default-type-expected.png: Removed.
+        * platform/gtk/svg/filters/feColorMatrix-offset-expected.png: Removed.
+        * platform/gtk/svg/filters/feColorMatrix-values-expected.png: Removed.
+        * platform/gtk/svg/filters/feComposite-expected.txt: Removed.
+        * platform/gtk/svg/filters/feDisplacementMap-expected.txt: Removed.
+        * platform/gtk/svg/filters/feDropShadow-subregion-expected.png: Removed.
+        * platform/gtk/svg/filters/feDropShadow-zero-deviation-expected.png: Removed.
+        * platform/gtk/svg/filters/feDropShadow-zero-deviation-expected.txt: Removed.
+        * platform/gtk/svg/filters/feGaussianBlur-subregion-expected.png: Removed.
+        * platform/gtk/svg/filters/feGaussianBlur-zero-deviation-expected.png: Removed.
+        * platform/gtk/svg/filters/feGaussianBlur-zero-deviation-expected.txt: Removed.
+        * platform/gtk/svg/filters/feImage-change-target-id-expected.png: Removed.
+        * platform/gtk/svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-userSpaceOnUse-expected.txt: Removed.
+        * platform/gtk/svg/filters/feImage-remove-target-expected.png: Removed.
+        * platform/gtk/svg/filters/feLighting-crash-expected.png: Removed.
+        * platform/gtk/svg/filters/feMerge-wrong-input-expected.png: Removed.
+        * platform/gtk/svg/filters/filter-empty-g-expected.png: Removed.
+        * platform/gtk/svg/filters/filter-hidden-content-expected.txt: Removed.
+        * platform/gtk/svg/filters/filter-on-filter-for-text-expected.png: Removed.
+        * platform/gtk/svg/filters/filter-on-filter-for-text-expected.txt: Removed.
+        * platform/gtk/svg/filters/filter-on-tspan-expected.txt: Removed.
+        * platform/gtk/svg/filters/filter-refresh-expected.png: Removed.
+        * platform/gtk/svg/filters/filter-rounding-issues-expected.png: Removed.
+        * platform/gtk/svg/filters/filter-width-update-expected.txt: Removed.
+        * platform/gtk/svg/filters/filterRes-expected.txt: Removed.
+        * platform/gtk/svg/filters/filterRes2-expected.png: Removed.
+        * platform/gtk/svg/filters/filteredImage-expected.png: Removed.
+        * platform/gtk/svg/filters/sourceAlpha-expected.png: Removed.
+        * platform/gtk/svg/filters/sourceAlpha-expected.txt: Removed.
+        * platform/mac/svg/filters/feDisplacementMap-expected.txt: Removed.
+        * platform/mac/svg/filters/feDropShadow-zero-deviation-expected.txt: Removed.
+        * platform/mac/svg/filters/feGaussianBlur-zero-deviation-expected.txt: Removed.
+        * platform/mac/svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-userSpaceOnUse-expected.txt: Removed.
+        * platform/mac/svg/filters/filter-hidden-content-expected.txt: Removed.
+        * platform/mac/svg/filters/filterRes-expected.txt: Removed.
+        * platform/win-future/svg/filters/feImage-reference-svg-primitive-expected.png: Renamed from LayoutTests/svg/filters/feImage-reference-svg-primitive-expected.png.
+        * svg/filters/animate-fill-expected.png: Renamed from LayoutTests/platform/efl/svg/filters/animate-fill-expected.png.
+        * svg/filters/feColorMatrix-default-type-expected.png: Renamed from LayoutTests/platform/efl/svg/filters/feColorMatrix-default-type-expected.png.
+        * svg/filters/feColorMatrix-offset-expected.png: Renamed from LayoutTests/platform/efl/svg/filters/feColorMatrix-offset-expected.png.
+        * svg/filters/feColorMatrix-values-expected.png: Renamed from LayoutTests/platform/efl/svg/filters/feColorMatrix-values-expected.png.
+        * svg/filters/feComposite-expected.txt: Renamed from LayoutTests/platform/efl/svg/filters/feComposite-expected.txt.
+        * svg/filters/feDisplacementMap-expected.txt: Renamed from LayoutTests/platform/efl/svg/filters/feDisplacementMap-expected.txt.
+        * svg/filters/feDropShadow-subregion-expected.png: Renamed from LayoutTests/platform/efl/svg/filters/feDropShadow-subregion-expected.png.
+        * svg/filters/feDropShadow-zero-deviation-expected.png: Renamed from LayoutTests/platform/efl/svg/filters/feDropShadow-zero-deviation-expected.png.
+        * svg/filters/feDropShadow-zero-deviation-expected.txt: Renamed from LayoutTests/platform/efl/svg/filters/feDropShadow-zero-deviation-expected.txt.
+        * svg/filters/feGaussianBlur-subregion-expected.png: Renamed from LayoutTests/platform/efl/svg/filters/feGaussianBlur-subregion-expected.png.
+        * svg/filters/feGaussianBlur-zero-deviation-expected.png: Renamed from LayoutTests/platform/efl/svg/filters/feGaussianBlur-zero-deviation-expected.png.
+        * svg/filters/feGaussianBlur-zero-deviation-expected.txt: Renamed from LayoutTests/platform/efl/svg/filters/feGaussianBlur-zero-deviation-expected.txt.
+        * svg/filters/feImage-change-target-id-expected.png: Renamed from LayoutTests/platform/efl/svg/filters/feImage-change-target-id-expected.png.
+        * svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-userSpaceOnUse-expected.txt: Renamed from LayoutTests/platform/efl/svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-userSpaceOnUse-expected.txt.
+        * svg/filters/feImage-remove-target-expected.png: Renamed from LayoutTests/platform/efl/svg/filters/feImage-remove-target-expected.png.
+        * svg/filters/feLighting-crash-expected.png: Renamed from LayoutTests/platform/efl/svg/filters/feLighting-crash-expected.png.
+        * svg/filters/feMerge-wrong-input-expected.png: Renamed from LayoutTests/platform/efl/svg/filters/feMerge-wrong-input-expected.png.
+        * svg/filters/filter-empty-g-expected.png: Renamed from LayoutTests/platform/efl/svg/filters/filter-empty-g-expected.png.
+        * svg/filters/filter-hidden-content-expected.txt: Renamed from LayoutTests/platform/efl/svg/filters/filter-hidden-content-expected.txt.
+        * svg/filters/filter-on-filter-for-text-expected.png: Renamed from LayoutTests/platform/efl/svg/filters/filter-on-filter-for-text-expected.png.
+        * svg/filters/filter-on-filter-for-text-expected.txt: Renamed from LayoutTests/platform/efl/svg/filters/filter-on-filter-for-text-expected.txt.
+        * svg/filters/filter-on-tspan-expected.txt: Renamed from LayoutTests/platform/efl/svg/filters/filter-on-tspan-expected.txt.
+        * svg/filters/filter-refresh-expected.png: Renamed from LayoutTests/platform/efl/svg/filters/filter-refresh-expected.png.
+        * svg/filters/filter-rounding-issues-expected.png: Renamed from LayoutTests/platform/efl/svg/filters/filter-rounding-issues-expected.png.
+        * svg/filters/filter-width-update-expected.txt: Renamed from LayoutTests/platform/efl/svg/filters/filter-width-update-expected.txt.
+        * svg/filters/filterRes-expected.txt: Renamed from LayoutTests/platform/efl/svg/filters/filterRes-expected.txt.
+        * svg/filters/filterRes2-expected.png: Renamed from LayoutTests/platform/efl/svg/filters/filterRes2-expected.png.
+        * svg/filters/filteredImage-expected.png: Renamed from LayoutTests/platform/efl/svg/filters/filteredImage-expected.png.
+        * svg/filters/sourceAlpha-expected.png: Renamed from LayoutTests/platform/efl/svg/filters/sourceAlpha-expected.png.
+        * svg/filters/sourceAlpha-expected.txt: Renamed from LayoutTests/platform/efl/svg/filters/sourceAlpha-expected.txt.
+
 2013-11-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         DOMTokenList::add can add duplicated values if arguments had duplicated values
