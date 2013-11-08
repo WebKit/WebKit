@@ -37,6 +37,8 @@
 
 @property (nonatomic, readonly) WKBrowsingContextHandle *handle;
 
++ (instancetype)lookUpBrowsingContextFromHandle:(WKBrowsingContextHandle *)handle;
+
 @end
 
 #endif // WK_API_ENABLED

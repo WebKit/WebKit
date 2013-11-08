@@ -35,7 +35,9 @@
 #import "WKBundlePagePrivate.h"
 #import "WKDOMInternals.h"
 #import "WKRetainPtr.h"
+#import "WKWebProcessPlugInInternal.h"
 #import "WebPage.h"
+#import "WebProcess.h"
 #import <WebCore/Document.h>
 #import <WebCore/Frame.h>
 
@@ -87,6 +89,15 @@ using namespace WebKit;
 - (WKBrowsingContextHandle *)handle
 {
     return [[[WKBrowsingContextHandle alloc] _initWithPageID:toImpl(_bundlePageRef.get())->pageID()] autorelease];
+}
+
++ (instancetype)lookUpBrowsingContextFromHandle:(WKBrowsingContextHandle *)handle
+{
+    WebPage* webPage = WebProcess::shared().webPage(handle.pageID);
+    if (!webPage)
+        return nil;
+
+    return [[WKWebProcessPlugInController _shared] _browserContextControllerForBundlePageRef:toAPI(webPage)];
 }
 
 @end
