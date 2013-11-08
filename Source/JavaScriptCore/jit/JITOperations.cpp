@@ -1742,8 +1742,8 @@ HIDE_SYMBOL(getHostCallReturnValue) "\n"
 ".thumb" "\n"
 ".thumb_func " THUMB_FUNC_PARAM(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
-    "ldr r5, [r5, #0]" "\n" // CallerFrameAndPC::callerFrame
-    "mov r0, r5" "\n"
+    "ldr r7, [r7, #0]" "\n" // CallerFrameAndPC::callerFrame
+    "mov r0, r7" "\n"
     "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
 
@@ -1754,8 +1754,8 @@ asm (
 HIDE_SYMBOL(getHostCallReturnValue) "\n"
 INLINE_ARM_FUNCTION(getHostCallReturnValue)
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
-    "ldr r5, [r5, #0]" "\n" // CallerFrameAndPC::callerFrame
-    "mov r0, r5" "\n"
+    "ldr r11, [r11, #0]" "\n" // CallerFrameAndPC::callerFrame
+    "mov r0, r11" "\n"
     "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
 

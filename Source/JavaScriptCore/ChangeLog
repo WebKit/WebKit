@@ -1,5 +1,19 @@
 2013-11-08  Julien Brianceau  <jbriance@cisco.com>
 
+        REGRESSION(r158883): Fix crashes for ARM architecture.
+        https://bugs.webkit.org/show_bug.cgi?id=124038
+
+        Reviewed by Michael Saboff.
+
+        * jit/GPRInfo.h: Remove r11 from the temporary register set, use a free register for
+        nonPreservedNonReturnGPR and remove obsolete declaration of bucketCounterRegister.
+        (JSC::GPRInfo::toRegister):
+        (JSC::GPRInfo::toIndex):
+        * jit/JITOperations.cpp: Frame pointer register is r11 for ARM_TRADITIONAL and
+        r7 for ARM_THUMB2 instead of r5 since r158883.
+
+2013-11-08  Julien Brianceau  <jbriance@cisco.com>
+
         REGRESSION(r158883): Fix crashes for MIPS architecture.
         https://bugs.webkit.org/show_bug.cgi?id=124044
 
