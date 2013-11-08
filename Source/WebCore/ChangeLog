@@ -1,3 +1,45 @@
+2013-11-08  Antti Koivisto  <antti@apple.com>
+
+        Templated LChar/UChar paths for simple line layout
+        https://bugs.webkit.org/show_bug.cgi?id=124035
+
+        Reviewed by Andreas Kling.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForText):
+        (WebCore::SimpleLineLayout::canUseFor):
+        
+            Use a templated function to check for illegal characters.
+
+        (WebCore::SimpleLineLayout::skipWhitespaces):
+        
+            Make a template function.
+
+        (WebCore::SimpleLineLayout::textWidth):
+        
+            Make a template function plus some argument changes.
+
+        (WebCore::SimpleLineLayout::createTextRuns):
+        
+            Template function for creating runs while operating with either LChars or UChar.
+            Also simplified line breaking and text width measuring logic.
+
+        (WebCore::SimpleLineLayout::create):
+        
+            Pick the template.
+
+        * rendering/break_lines.cpp:
+        * rendering/break_lines.h:
+        
+            Move the implementation to the header (except for the table) so we can use the template
+            versions directly.
+
+        (WebCore::isBreakableSpace):
+        (WebCore::shouldBreakAfter):
+        (WebCore::needsLineBreakIterator):
+        (WebCore::nextBreakablePosition):
+        (WebCore::nextBreakablePositionIgnoringNBSP):
+
 2013-11-08  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         AX: [ATK] <span> elements exposed through ATK when not needed
