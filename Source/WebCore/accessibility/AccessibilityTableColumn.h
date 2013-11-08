@@ -65,7 +65,9 @@ private:
     AccessibilityObject* headerObjectForSection(RenderTableSection*, bool thTagRequired);
     virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
 };
-   
+
+ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityTableColumn, isTableColumn())
+
 } // namespace WebCore 
 
 #endif // AccessibilityTableColumn_h

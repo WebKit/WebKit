@@ -1,5 +1,42 @@
 2013-11-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        [AX] Generate toAccessibilityTableRow|Column|Cell to detect bad type casts
+        https://bugs.webkit.org/show_bug.cgi?id=123984
+
+        Reviewed by Mario Sanchez Prada.
+
+        As a step to let static_cast<> use TYPE_CASTS_BASE, AccessibilityTableRow|Column|Cell use
+        ACCESSIBILITY_OBJECT_TYPE_CASTS which can support more helper functions rather than manual
+        static_cast<>. This change will help to detect bad type casts further.
+
+        No new tests, no behavior changes.
+
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::addTableCellChild):
+        (WebCore::AccessibilityARIAGrid::addChildren):
+        * accessibility/AccessibilityARIAGridCell.cpp:
+        (WebCore::AccessibilityARIAGridCell::rowIndexRange):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::addChildren):
+        (WebCore::AccessibilityTable::rowHeaders):
+        (WebCore::AccessibilityTable::columnHeaders):
+        (WebCore::AccessibilityTable::cellForColumnAndRow):
+        * accessibility/AccessibilityTableCell.h:
+        * accessibility/AccessibilityTableColumn.h:
+        * accessibility/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::headerObject):
+        * accessibility/AccessibilityTableRow.h:
+        * accessibility/atk/WebKitAccessibleInterfaceTable.cpp:
+        (cellAtIndex):
+        (webkitAccessibleTableGetColumnHeader):
+        (webkitAccessibleTableGetRowHeader):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper tableCellParent]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
+2013-11-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         REGRESSION (r154375): Image is oriented incorrectly
         https://bugs.webkit.org/show_bug.cgi?id=123831
 

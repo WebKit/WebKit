@@ -2401,15 +2401,15 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     if (m_object->isTableColumn()) {
         if ([attributeName isEqualToString:NSAccessibilityIndexAttribute])
-            return [NSNumber numberWithInt:static_cast<AccessibilityTableColumn*>(m_object)->columnIndex()];
+            return [NSNumber numberWithInt:toAccessibilityTableColumn(m_object)->columnIndex()];
         
         // rows attribute for a column is the list of all the elements in that column at each row
         if ([attributeName isEqualToString:NSAccessibilityRowsAttribute] ||
             [attributeName isEqualToString:NSAccessibilityVisibleRowsAttribute]) {
-            return convertToNSArray(static_cast<AccessibilityTableColumn*>(m_object)->children());
+            return convertToNSArray(toAccessibilityTableColumn(m_object)->children());
         }
         if ([attributeName isEqualToString:NSAccessibilityHeaderAttribute]) {
-            AccessibilityObject* header = static_cast<AccessibilityTableColumn*>(m_object)->headerObject();
+            AccessibilityObject* header = toAccessibilityTableColumn(m_object)->headerObject();
             if (!header)
                 return nil;
             return header->wrapper();
@@ -2419,12 +2419,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (m_object->isTableCell()) {
         if ([attributeName isEqualToString:NSAccessibilityRowIndexRangeAttribute]) {
             pair<unsigned, unsigned> rowRange;
-            static_cast<AccessibilityTableCell*>(m_object)->rowIndexRange(rowRange);
+            toAccessibilityTableCell(m_object)->rowIndexRange(rowRange);
             return [NSValue valueWithRange:NSMakeRange(rowRange.first, rowRange.second)];
         }
         if ([attributeName isEqualToString:NSAccessibilityColumnIndexRangeAttribute]) {
             pair<unsigned, unsigned> columnRange;
-            static_cast<AccessibilityTableCell*>(m_object)->columnIndexRange(columnRange);
+            toAccessibilityTableCell(m_object)->columnIndexRange(columnRange);
             return [NSValue valueWithRange:NSMakeRange(columnRange.first, columnRange.second)];
         }
     }
@@ -2467,7 +2467,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         }
         if (m_object->isTableRow()) {
             if ([attributeName isEqualToString:NSAccessibilityIndexAttribute])
-                return [NSNumber numberWithInt:static_cast<AccessibilityTableRow*>(m_object)->rowIndex()];
+                return [NSNumber numberWithInt:toAccessibilityTableRow(m_object)->rowIndex()];
         }
     }
     

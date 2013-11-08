@@ -59,7 +59,9 @@ private:
     virtual bool exposesTitleUIElement() const OVERRIDE { return true; }
     virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
 }; 
-    
+
+ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityTableCell, isTableCell())
+
 } // namespace WebCore 
 
 #endif // AccessibilityTableCell_h
