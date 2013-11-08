@@ -1576,7 +1576,6 @@ webkit.org/b/122963 fast/regions/region-generated-content-before-after.html [ Mi
 webkit.org/b/122963 fast/regions/text-region-split-small-pagination.html [ Missing ]
 webkit.org/b/122963 fast/regions/top-overflow-out-of-second-region.html [ Missing ]
 
-webkit.org/b/122963 fast/repaint/japanese-rl-selection-repaint-in-regions.html [ Missing ]
 webkit.org/b/122963 fast/repaint/line-flow-with-floats-in-regions.html [ Missing ]
 webkit.org/b/122963 fast/repaint/overflow-flipped-writing-mode-block-in-regions.html [ Missing ]
 webkit.org/b/122963 fast/repaint/region-painting-invalidation.html [ Missing ]
