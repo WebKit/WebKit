@@ -1,3 +1,21 @@
+2013-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Pass the library namespace to gtkdoc-mkdb
+        https://bugs.webkit.org/show_bug.cgi?id=123900
+
+        Reviewed by Martin Robinson.
+
+        This fixes the generation of the index of symbols in the API
+        documentation.
+
+        * gtk/generate-gtkdoc:
+        (get_webkit2_options): Define namespace as WebKit.
+        (get_webkit1_options): Ditto.
+        (get_webkitdom_options): Define namespace as WebKitDOM.
+        * gtk/gtkdoc.py:
+        (GTKDoc.__init__): Add namespace option.
+        (GTKDoc._run_gtkdoc_mkdb): Pass namespace to mkdb if present.
+
 2013-11-07  Chris Fleizach  <cfleizach@apple.com>
 
         Modify email order list for James Craig so his primary email is first.

@@ -43,6 +43,7 @@ class GTKDoc(object):
                           only necessary to provide the basenames of these files.
                           Typically it is important to provide an updated list of
                           ignored files to prevent warnings about undocumented symbols.
+    namespace          -- The library namespace.
     decorator          -- If a decorator is used to unhide certain symbols in header
                           files this parameter is required for successful scanning.
                           (default '')
@@ -87,6 +88,7 @@ class GTKDoc(object):
         self.module_name = ''
         self.source_dirs = []
         self.ignored_files = []
+        self.namespace = ''
         self.decorator = ''
         self.deprecation_guard = ''
 
@@ -330,6 +332,9 @@ class GTKDoc(object):
                 '--source-suffixes=h,c,cpp,cc',
                 '--output-format=xml',
                 '--sgml-mode']
+
+        if self.namespace:
+            args.append('--name-space=%s' % self.namespace)
 
         ignored_files_basenames = self._ignored_files_basenames()
         if ignored_files_basenames:
