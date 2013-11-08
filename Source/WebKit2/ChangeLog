@@ -1,5 +1,11 @@
 2013-11-08  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix the 32-bit build.
+
+        * Shared/API/Cocoa/WKBrowsingContextHandleInternal.h:
+
+2013-11-08  Anders Carlsson  <andersca@apple.com>
+
         Replace __alignof with alignof.
 
         Rubber-stamped by Beth Dakin.
