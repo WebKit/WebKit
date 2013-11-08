@@ -1,3 +1,17 @@
+2013-11-08  Martin Robinson  <mrobinson@igalia.com>
+
+        [MathML] Center of stretched curly bracket not always vertically centered
+        https://bugs.webkit.org/show_bug.cgi?id=123715
+
+        Reviewed by Brent Fulgham.
+
+        * TestExpectations: Unskip mo-stretch.html. It was skipped originally,
+        because MathML is changing rapidly, but we need it to test these changes.
+        * mathml/presentation/mo-stretch.html: Update to show stretching characteristics
+        of all stretchable glyphs.
+        * platform/gtk/mathml/presentation/mo-stretch-expected.png:
+        * platform/gtk/mathml/presentation/mo-stretch-expected.txt:
+
 2013-11-08  Oliver Hunt  <oliver@apple.com>
 
         Map.forEach crashes on deleted values

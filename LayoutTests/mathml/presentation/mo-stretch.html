@@ -1,88 +1,76 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-    <title>&lt;mo&gt; Stretching Tests</title>
-    
-    <style>
-    	td		{ border: solid }
-    </style>
-</head>
-
 <body>
-
-<math display="block">
-  <mrow>
-    <mrow>
-      <mrow>
-        <mi>f</mi>
+    <!-- This shows the unstretched operators. -->
+    <math>
         <mrow>
-          <mo>(</mo>
-          <mfrac>
-            <mrow><mfrac><mi>a</mi><mi>b</mi></mfrac><mo>+</mo><mi>c</mi></mrow>
-            <mrow><mfrac><mi>c</mi><mi>d</mi></mfrac><mo>+</mo><mi>e</mi></mrow>
-          </mfrac>
-          <mo>)</mo>
+            <mo>(</mo> <mo>)</mo>
+            <mo>{</mo> <mo>}</mo>
+            <mo>[</mo> <mo>]</mo>
+            <mo>&LeftCeiling;</mo> <mo>&RightCeiling;</mo>
+            <mo>&LeftFloor;</mo> <mo>&RightFloor;</mo>
+            <mo stretchy="true">&Integral;</mo>
+            <mo>|</mo> <mo>&Verbar;</mo>
         </mrow>
-      </mrow>
-      <mo>+</mo>
-      <mrow>
-        <mi>g</mi>
+    </math>
+
+    <br/>
+
+    <!-- Stretch the operators to different heights. -->
+    <math>
         <mrow>
-          <mo>[</mo>
-          <msubsup>
-            <mi>x</mi>
-            <mrow><mfrac><mi>c</mi><mi>d</mi></mfrac><mo>+</mo><mi>e</mi></mrow>
-            <mrow><mfrac><mi>a</mi><mi>b</mi></mfrac><mo>+</mo><mi>c</mi></mrow>
-          </msubsup>
-          <mo>]</mo>
+            <mo>(</mo> <mo>)</mo>
+            <mo>{</mo> <mo>}</mo>
+            <mo>[</mo> <mo>]</mo>
+            <mo>&LeftCeiling;</mo> <mo>&RightCeiling;</mo>
+            <mo>&LeftFloor;</mo> <mo>&RightFloor;</mo>
+            <mo stretchy="true">&Integral;</mo>
+            <mo>|</mo> <mo>&Verbar;</mo>
+            <mspace height="75px" depth="1px"/>
         </mrow>
-      </mrow>
-    </mrow>
-    <mo>+</mo>
-    <mrow>
-      <msubsup>
-        <mo>&int;</mo>
-        <mi>a</mi>
-        <mi>b</mi>
-      </msubsup>
-      <mrow>
-        <munderover><mo>&sum;</mo><mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow><mi>n</mi></munderover>
-        <mi>i</mi>
-      </mrow>
-    </mrow>
-  </mrow>
-</math>
+    </math>
 
-<p>Implied <code>mrow</code> with operator stretching:</p>
-<math display="block">
-  <msqrt>
-    <mi>f</mi>
-    <mo>(</mo>
-    <mfrac> <mn>1</mn> <mi>y</mi> </mfrac>
-    <mo>)</mo>
-  </msqrt>
-</math>
+    <math>
+        <mrow>
+            <mo>(</mo> <mo>)</mo>
+            <mo>{</mo> <mo>}</mo>
+            <mo>[</mo> <mo>]</mo>
+            <mo>&LeftCeiling;</mo> <mo>&RightCeiling;</mo>
+            <mo>&LeftFloor;</mo> <mo>&RightFloor;</mo>
+            <mo stretchy="true">&Integral;</mo>
+            <mo>|</mo> <mo>&Verbar;</mo>
+            <mspace height="50px" depth="1px"/>
+        </mrow>
+    </math>
 
-<p>Preferred logical widths and heights, with operator stretching:</p>
-<table><td>a</table>
-<table><td id="grow-td">x</table>
-<script>
-    window.addEventListener("load", function() {
-        document.body.offsetTop;
-        
-        var e = document.createElement("div");
-        e.innerHTML = "<math display='block' style='margin-bottom: 0'> <mrow>"+
-        	"<mrow> <mo>{</mo> <mi>x</mi> <mo>}</mo> </mrow> <mo>+</mo>" +
-        	"<mfenced> <mfrac> <mn>1</mn> <mi>y</mi> </mfrac> </mfenced> <mo>+</mo>" +
-            "<mrow> <mo>[</mo> <mtable> <mtr><mtd><mn>1</mn></mtd></mtr> <mtr><mtd><mn>2</mn></mtd></mtr>" +
-            	"<mtr><mtd><mn>3</mn></mtd></mtr> </mtable> <mo>]</mo> </mrow> </mrow> </math>";
-        var td = document.getElementById("grow-td"), t = td.firstChild;
-        td.insertBefore(e.firstChild, t);
-        td.removeChild(t);
-    }, false);
-</script>
+    <math>
+        <mrow>
+            <mo>(</mo> <mo>)</mo>
+            <mo>{</mo> <mo>}</mo>
+            <mo>[</mo> <mo>]</mo>
+            <mo>&LeftCeiling;</mo> <mo>&RightCeiling;</mo>
+            <mo>&LeftFloor;</mo> <mo>&RightFloor;</mo>
+            <mo stretchy="true">&Integral;</mo>
+            <mo>|</mo> <mo>&Verbar;</mo>
+            <mspace height="20px" depth="1px"/>
+        </mrow>
+    </math>
+
+    <br/>
+
+    <!-- Show that stretching also works in msqrt as well as mrow. -->
+    <math>
+        <msqrt>
+            <mo>(</mo> <mo>)</mo>
+            <mo>{</mo> <mo>}</mo>
+            <mo>[</mo> <mo>]</mo>
+            <mo>&LeftCeiling;</mo> <mo>&RightCeiling;</mo>
+            <mo>&LeftFloor;</mo> <mo>&RightFloor;</mo>
+            <mo stretchy="true">&Integral;</mo>
+            <mo>|</mo> <mo>&Verbar;</mo>
+            <mspace height="40px" depth="1px"/>
+      </msqrt>
+    </math>
 
 </body>
-
 </html>

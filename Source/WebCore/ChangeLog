@@ -1,3 +1,15 @@
+2013-11-08  Martin Robinson  <mrobinson@igalia.com>
+
+        [MathML] Center of stretched curly bracket not always vertically centered
+        https://bugs.webkit.org/show_bug.cgi?id=123715
+
+        Reviewed by Brent Fulgham.
+
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::fillWithExtensionGlyph): Update an assertion and
+        handle the case where two glyph pieces abut.
+        (WebCore::RenderMathMLOperator::paint): Do not offset the center glyph by y().
+
 2013-10-30  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Bring SourceBuffer.append up to the most recent spec.

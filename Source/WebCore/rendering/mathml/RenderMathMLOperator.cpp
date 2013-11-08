@@ -322,7 +322,11 @@ void RenderMathMLOperator::fillWithExtensionGlyph(PaintInfo& info, const LayoutP
 {
     ASSERT(m_stretchyCharacter);
     ASSERT(m_stretchyCharacter->extensionGlyph);
-    ASSERT(from.y() < to.y());
+    ASSERT(from.y() <= to.y());
+
+    // If there is no space for the extension glyph, we don't need to do anything.
+    if (from.y() == to.y())
+        return;
 
     GraphicsContextStateSaver stateSaver(*info.context);
 
@@ -382,7 +386,7 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
     if (m_stretchyCharacter->middleGlyph) {
         // Center the glyph origin between the start and end glyph paint extents. Then shift it half the paint height toward the bottom glyph.
         FloatRect middleGlyphBounds = glyphBoundsForCharacter(m_stretchyCharacter->middleGlyph);
-        LayoutPoint middleGlyphOrigin(operatorTopLeft.x(), topGlyphOrigin.y() + y());
+        LayoutPoint middleGlyphOrigin(operatorTopLeft.x(), topGlyphOrigin.y());
         middleGlyphOrigin.moveBy(LayoutPoint(0, (bottomGlyphPaintRect.y() - topGlyphPaintRect.maxY()) / 2.0));
         middleGlyphOrigin.moveBy(LayoutPoint(0, middleGlyphBounds.height() / 2.0));
 
