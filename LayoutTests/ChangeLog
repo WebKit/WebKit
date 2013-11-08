@@ -1,3 +1,9 @@
+2013-11-08  Andreas Kling  <akling@apple.com>
+
+        Add back expectation for test that went missing in r158813.
+
+        * svg/W3C-I18N/text-dirLTR-ubOverride-expected.txt: Added.
+
 2013-11-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Layout tests with vertical texts need to be rebaselined
