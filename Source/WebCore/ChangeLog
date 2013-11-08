@@ -1,3 +1,45 @@
+2013-11-08  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        RenderBlockFlow::nextFloatLogicalBottomBelow should not use ShapeOutsideFloatOffsetMode
+        https://bugs.webkit.org/show_bug.cgi?id=123931
+
+        Reviewed by Sam Weinig.
+
+        Rewrite nextFloatLogicalBottomBelow to use the placed floats tree for
+        the search and to not need ShapeOutsideFloatOffsetMode anymore. This
+        moves almost all of the logic into FloatingObjects, making a small
+        reduction in the amount that RenderBlockFlow needs to know about the
+        implementation of FloatingObjects.
+
+        In addition, change ComputeFloatOffsetAdapter to take in LayoutUnits
+        and roundToInt itself so that all of it's callers can be simplified.
+
+        No new tests, no new behavior.
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::rangesIntersect):
+        (WebCore::ComputeFloatOffsetAdapter::ComputeFloatOffsetAdapter):
+        (WebCore::FindNextFloatLogicalBottomAdapter::FindNextFloatLogicalBottomAdapter):
+        (WebCore::FindNextFloatLogicalBottomAdapter::lowValue):
+        (WebCore::FindNextFloatLogicalBottomAdapter::highValue):
+        (WebCore::FindNextFloatLogicalBottomAdapter::nextLogicalBottom):
+        (WebCore::FindNextFloatLogicalBottomAdapter::nextShapeLogicalBottom):
+        (WebCore::FindNextFloatLogicalBottomAdapter::collectIfNeeded):
+        (WebCore::FloatingObjects::findNextFloatLogicalBottomBelow):
+        (WebCore::FloatingObjects::findNextFloatLogicalBottomBelowForBlock):
+        (WebCore::FloatingObjects::logicalLeftOffsetForPositioningFloat):
+        (WebCore::FloatingObjects::logicalRightOffsetForPositioningFloat):
+        (WebCore::FloatingObjects::logicalLeftOffset):
+        (WebCore::FloatingObjects::logicalRightOffset):
+        * rendering/FloatingObjects.h:
+        * rendering/LineWidth.cpp:
+        (WebCore::LineWidth::fitBelowFloats):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::nextFloatLogicalBottomBelow):
+        (WebCore::RenderBlockFlow::nextFloatLogicalBottomBelowForBlock):
+        (WebCore::RenderBlockFlow::getClearDelta):
+        * rendering/RenderBlockFlow.h:
+
 2013-11-08  Alexey Proskuryakov  <ap@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=124064

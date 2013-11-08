@@ -2276,31 +2276,20 @@ LayoutUnit RenderBlockFlow::logicalRightFloatOffsetForLine(LayoutUnit logicalTop
     return fixedOffset;
 }
 
-LayoutUnit RenderBlockFlow::nextFloatLogicalBottomBelow(LayoutUnit logicalHeight, ShapeOutsideFloatOffsetMode offsetMode) const
+LayoutUnit RenderBlockFlow::nextFloatLogicalBottomBelow(LayoutUnit logicalHeight) const
 {
     if (!m_floatingObjects)
         return logicalHeight;
 
-    LayoutUnit bottom = LayoutUnit::max();
-    const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-    auto end = floatingObjectSet.end();
-    for (auto it = floatingObjectSet.begin(); it != end; ++it) {
-        FloatingObject* floatingObject = it->get();
-        LayoutUnit floatBottom = logicalBottomForFloat(floatingObject);
-#if ENABLE(CSS_SHAPES)
-        ShapeOutsideInfo* shapeOutside = floatingObject->renderer().shapeOutsideInfo();
-        if (offsetMode == ShapeOutsideFloatShapeOffset && shapeOutside) {
-            LayoutUnit shapeBottom = logicalTopForFloat(floatingObject) + marginBeforeForChild(floatingObject->renderer()) + shapeOutside->shapeLogicalBottom();
-            // Use the shapeBottom unless it extends outside of the margin box, in which case it is clipped.
-            if (shapeBottom < floatBottom)
-                floatBottom = shapeBottom;
-        }
-#endif
-        if (floatBottom > logicalHeight)
-            bottom = min(floatBottom, bottom);
-    }
+    return m_floatingObjects->findNextFloatLogicalBottomBelow(logicalHeight);
+}
 
-    return bottom == LayoutUnit::max() ? LayoutUnit() : bottom;
+LayoutUnit RenderBlockFlow::nextFloatLogicalBottomBelowForBlock(LayoutUnit logicalHeight) const
+{
+    if (!m_floatingObjects)
+        return logicalHeight;
+
+    return m_floatingObjects->findNextFloatLogicalBottomBelowForBlock(logicalHeight);
 }
 
 LayoutUnit RenderBlockFlow::lowestFloatLogicalBottom(FloatingObject::Type floatType) const
@@ -2552,7 +2541,7 @@ LayoutUnit RenderBlockFlow::getClearDelta(RenderBox& child, LayoutUnit logicalTo
                 return newLogicalTop - logicalTop;
             }
 
-            newLogicalTop = nextFloatLogicalBottomBelow(newLogicalTop);
+            newLogicalTop = nextFloatLogicalBottomBelowForBlock(newLogicalTop);
             ASSERT(newLogicalTop >= logicalTop);
             if (newLogicalTop < logicalTop)
                 break;
