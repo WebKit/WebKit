@@ -457,10 +457,14 @@ static void releaseNSData(unsigned char*, const void* data)
     return WKPageGetPageCount(self._pageRef);
 }
 
+#if WK_API_ENABLED
+
 - (WKBrowsingContextHandle *)handle
 {
     return [[[WKBrowsingContextHandle alloc] _initWithPageID:toImpl(self._pageRef)->pageID()] autorelease];
 }
+
+#endif
 
 @end
 

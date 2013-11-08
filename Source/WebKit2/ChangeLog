@@ -2,6 +2,14 @@
 
         More build fixes.
 
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        * UIProcess/API/mac/WKConnection.mm:
+        (didReceiveMessage):
+
+2013-11-08  Anders Carlsson  <andersca@apple.com>
+
+        More build fixes.
+
         * UIProcess/API/mac/WKConnection.h:
         * UIProcess/API/mac/WKConnection.mm:
         (didReceiveMessage):

@@ -99,8 +99,9 @@ using namespace WebKit;
 
 static void didReceiveMessage(WKConnectionRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
 {
-#if WK_API_ENABLED
     WKConnection *connection = (WKConnection *)clientInfo;
+
+#if WK_API_ENABLED
     if ([connection->_data->_remoteObjectRegistry _handleMessageWithName:messageName body:messageBody])
         return;
 #endif
