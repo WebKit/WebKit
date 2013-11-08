@@ -27,6 +27,7 @@
 #import "WebCoreArgumentCoders.h"
 
 #import "ArgumentCodersCF.h"
+#import "DataReference.h"
 #import "PlatformCertificateInfo.h"
 #import "WebKitSystemInterface.h"
 #import <WebCore/KeyboardEvent.h>
@@ -105,8 +106,19 @@ void ArgumentCoder<ResourceResponse>::encodePlatformData(ArgumentEncoder& encode
     if (!responseIsPresent)
         return;
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
+    RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
+
+    [archiver setRequiresSecureCoding:YES];
+    [archiver.get() encodeObject:resourceResponse.nsURLResponse() forKey:@"response"];
+    [archiver finishEncoding];
+
+    encoder << CoreIPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
+#else
     RetainPtr<CFDictionaryRef> dictionary = adoptCF(WKNSURLResponseCreateSerializableRepresentation(resourceResponse.nsURLResponse(), CoreIPC::tokenNullTypeRef()));
     CoreIPC::encode(encoder, dictionary.get());
+#endif
 }
 
 bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder& decoder, ResourceResponse& resourceResponse)
@@ -120,11 +132,24 @@ bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder& decode
         return true;
     }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    CoreIPC::DataReference dataReference;
+    if (!decoder.decode(dataReference))
+        return false;
+
+    RetainPtr<NSData> data = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<uint8_t*>(dataReference.data()) length:dataReference.size() freeWhenDone:NO]);
+    RetainPtr<NSKeyedUnarchiver> unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:data.get()]);
+
+    [unarchiver setRequiresSecureCoding:YES];
+    NSURLResponse *nsURLResponse = [unarchiver.get() decodeObjectOfClass:[NSURLResponse class] forKey:@"response"];
+#else
     RetainPtr<CFDictionaryRef> dictionary;
     if (!CoreIPC::decode(decoder, dictionary))
         return false;
 
-    NSURLResponse* nsURLResponse = WKNSURLResponseFromSerializableRepresentation(dictionary.get(), CoreIPC::tokenNullTypeRef());
+    NSURLResponse *nsURLResponse = WKNSURLResponseFromSerializableRepresentation(dictionary.get(), CoreIPC::tokenNullTypeRef());
+#endif
+
     if (!nsURLResponse)
         return false;
 
