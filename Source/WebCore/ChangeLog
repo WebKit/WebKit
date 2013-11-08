@@ -1,5 +1,20 @@
 2013-11-07  Andreas Kling  <akling@apple.com>
 
+        InlineFlowBox always has a RenderBoxModelObject, take advantage.
+        <https://webkit.org/b/124024>
+
+        Since InlineFlowBox already has the branch-less renderer() returning
+        a RenderBoxModelObject&, avoid using InlineBox::boxModelObject()
+        wherever we have a tightly-typed box. One branch disappears from
+        every call site.
+
+        Deleted boxModelObject() on InlineFlowBox to prevent new code from
+        calling the less efficient function.
+
+        Reviewed by Anders Carlsson.
+
+2013-11-07  Andreas Kling  <akling@apple.com>
+
         CTTE: Scrolling tree nodes should always have a ScrollingTree&.
         <https://webkit.org/b/124022>
 

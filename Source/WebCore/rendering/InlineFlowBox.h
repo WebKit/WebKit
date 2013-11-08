@@ -131,13 +131,13 @@ public:
     {
         if (!includeLogicalLeftEdge())
             return 0;
-        return isHorizontal() ? boxModelObject()->marginLeft() : boxModelObject()->marginTop();
+        return isHorizontal() ? renderer().marginLeft() : renderer().marginTop();
     }
     LayoutUnit marginLogicalRight() const
     {
         if (!includeLogicalRightEdge())
             return 0;
-        return isHorizontal() ? boxModelObject()->marginRight() : boxModelObject()->marginBottom();
+        return isHorizontal() ? renderer().marginRight() : renderer().marginBottom();
     }
     int borderLogicalLeft() const
     {
@@ -155,13 +155,13 @@ public:
     {
         if (!includeLogicalLeftEdge())
             return 0;
-        return isHorizontal() ? boxModelObject()->paddingLeft() : boxModelObject()->paddingTop();
+        return isHorizontal() ? renderer().paddingLeft() : renderer().paddingTop();
     }
     int paddingLogicalRight() const
     {
         if (!includeLogicalRightEdge())
             return 0;
-        return isHorizontal() ? boxModelObject()->paddingRight() : boxModelObject()->paddingBottom();
+        return isHorizontal() ? renderer().paddingRight() : renderer().paddingBottom();
     }
 
     bool includeLogicalLeftEdge() const { return m_includeLogicalLeftEdge; }
@@ -294,6 +294,7 @@ public:
 
 private:
     virtual bool isInlineFlowBox() const OVERRIDE FINAL { return true; }
+    void boxModelObject() const WTF_DELETED_FUNCTION;
 
     void addBoxShadowVisualOverflow(LayoutRect& logicalVisualOverflow);
     void addBorderOutsetVisualOverflow(LayoutRect& logicalVisualOverflow);

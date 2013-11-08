@@ -587,7 +587,7 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox* rootBox, LayoutUnit&
             if (maxPositionBottom < boxHeight)
                 maxPositionBottom = boxHeight;
         } else if (!inlineFlowBox || strictMode || inlineFlowBox->hasTextChildren() || (inlineFlowBox->descendantsHaveSameLineHeightAndBaseline() && inlineFlowBox->hasTextDescendants())
-                   || inlineFlowBox->boxModelObject()->hasInlineDirectionBordersOrPadding()) {
+                   || inlineFlowBox->renderer().hasInlineDirectionBordersOrPadding()) {
             // Note that these values can be negative.  Even though we only affect the maxAscent and maxDescent values
             // if our box (excluding line-height) was above (for ascent) or below (for descent) the root baseline, once you factor in line-height
             // the final box can end up being fully above or fully below the root box's baseline!  This is ok, but what it
@@ -629,7 +629,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
     if (descendantsHaveSameLineHeightAndBaseline()) {
         adjustmentForChildrenWithSameLineHeightAndBaseline = logicalTop();
         if (parent())
-            adjustmentForChildrenWithSameLineHeightAndBaseline += (boxModelObject()->borderAndPaddingBefore());
+            adjustmentForChildrenWithSameLineHeightAndBaseline += renderer().borderAndPaddingBefore();
     }
 
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
@@ -649,7 +649,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
         else if (curr->verticalAlign() == BOTTOM && verticalAlignApplies(curr->renderer()))
             curr->setLogicalTop(top + maxHeight - curr->lineHeight());
         else {
-            if (!strictMode && inlineFlowBox && !inlineFlowBox->hasTextChildren() && !curr->boxModelObject()->hasInlineDirectionBordersOrPadding()
+            if (!strictMode && inlineFlowBox && !inlineFlowBox->hasTextChildren() && !inlineFlowBox->renderer().hasInlineDirectionBordersOrPadding()
                 && !(inlineFlowBox->descendantsHaveSameLineHeightAndBaseline() && inlineFlowBox->hasTextDescendants()))
                 childAffectsTopBottomPos = false;
             LayoutUnit posAdjust = maxAscent - curr->baselinePosition(baselineType);
@@ -963,10 +963,10 @@ void InlineFlowBox::computeOverflow(LayoutUnit lineTop, LayoutUnit lineBottom, G
         } else if (curr->renderer().isRenderInline()) {
             InlineFlowBox* flow = toInlineFlowBox(curr);
             flow->computeOverflow(lineTop, lineBottom, textBoxDataMap);
-            if (!flow->boxModelObject()->hasSelfPaintingLayer())
+            if (!flow->renderer().hasSelfPaintingLayer())
                 logicalVisualOverflow.unite(flow->logicalVisualOverflowRect(lineTop, lineBottom));
             LayoutRect childLayoutOverflow = flow->logicalLayoutOverflowRect(lineTop, lineBottom);
-            childLayoutOverflow.move(flow->boxModelObject()->relativePositionLogicalOffset());
+            childLayoutOverflow.move(flow->renderer().relativePositionLogicalOffset());
             logicalLayoutOverflow.unite(childLayoutOverflow);
         } else
             addReplacedChildOverflow(curr, logicalLayoutOverflow, logicalVisualOverflow);
@@ -1133,7 +1133,7 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
                         containingBlockPaintsContinuationOutline = false;
                     else {
                         cb = enclosingAnonymousBlock->containingBlock();
-                        for (RenderBoxModelObject* box = boxModelObject(); box != cb; box = box->parent()->enclosingBoxModelObject()) {
+                        for (auto box = &renderer(); box != cb; box = box->parent()->enclosingBoxModelObject()) {
                             if (box->hasSelfPaintingLayer()) {
                                 containingBlockPaintsContinuationOutline = false;
                                 break;
@@ -1197,12 +1197,12 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, c
     StyleImage* img = fillLayer->image();
     bool hasFillImage = img && img->canRender(&renderer(), renderer().style().effectiveZoom());
     if ((!hasFillImage && !renderer().style().hasBorderRadius()) || (!prevLineBox() && !nextLineBox()) || !parent())
-        boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, rect, BackgroundBleedNone, this, rect.size(), op);
+        renderer().paintFillLayerExtended(paintInfo, c, fillLayer, rect, BackgroundBleedNone, this, rect.size(), op);
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
     else if (renderer().style().boxDecorationBreak() == DCLONE) {
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
         paintInfo.context->clip(LayoutRect(rect.x(), rect.y(), width(), height()));
-        boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, rect, BackgroundBleedNone, this, rect.size(), op);
+        renderer().paintFillLayerExtended(paintInfo, c, fillLayer, rect, BackgroundBleedNone, this, rect.size(), op);
     }
 #endif
     else {
@@ -1234,18 +1234,18 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, c
 
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
         paintInfo.context->clip(LayoutRect(rect.x(), rect.y(), width(), height()));
-        boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, LayoutRect(stripX, stripY, stripWidth, stripHeight), BackgroundBleedNone, this, rect.size(), op);
+        renderer().paintFillLayerExtended(paintInfo, c, fillLayer, LayoutRect(stripX, stripY, stripWidth, stripHeight), BackgroundBleedNone, this, rect.size(), op);
     }
 }
 
 void InlineFlowBox::paintBoxShadow(const PaintInfo& info, const RenderStyle& style, ShadowStyle shadowStyle, const LayoutRect& paintRect)
 {
     if ((!prevLineBox() && !nextLineBox()) || !parent())
-        boxModelObject()->paintBoxShadow(info, paintRect, &style, shadowStyle);
+        renderer().paintBoxShadow(info, paintRect, &style, shadowStyle);
     else {
         // FIXME: We can do better here in the multi-line case. We want to push a clip so that the shadow doesn't
         // protrude incorrectly at the edges, and we want to possibly include shadows cast from the previous/following lines
-        boxModelObject()->paintBoxShadow(info, paintRect, &style, shadowStyle, includeLogicalLeftEdge(), includeLogicalRightEdge());
+        renderer().paintBoxShadow(info, paintRect, &style, shadowStyle, includeLogicalLeftEdge(), includeLogicalRightEdge());
     }
 }
 
@@ -1322,7 +1322,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
     GraphicsContext* context = paintInfo.context;
     LayoutRect paintRect = LayoutRect(adjustedPaintoffset, frameRect.size());
     // Shadow comes first and is behind the background and border.
-    if (!boxModelObject()->boxShadowShouldBeAppliedToBackground(BackgroundBleedNone, this))
+    if (!renderer().boxShadowShouldBeAppliedToBackground(BackgroundBleedNone, this))
         paintBoxShadow(paintInfo, lineStyle, Normal, paintRect);
 
     Color c = lineStyle.visitedDependentColor(CSSPropertyBackgroundColor);
@@ -1342,7 +1342,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
     // The simple case is where we either have no border image or we are the only box for this object. In those
     // cases only a single call to draw is required.
     if (!hasBorderImage || (!prevLineBox() && !nextLineBox()))
-        boxModelObject()->paintBorder(paintInfo, paintRect, &lineStyle, BackgroundBleedNone, includeLogicalLeftEdge(), includeLogicalRightEdge());
+        renderer().paintBorder(paintInfo, paintRect, &lineStyle, BackgroundBleedNone, includeLogicalLeftEdge(), includeLogicalRightEdge());
     else {
         // We have a border image that spans multiple lines.
         // We need to adjust tx and ty by the width of all previous lines.
@@ -1366,7 +1366,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&
         LayoutRect clipRect = clipRectForNinePieceImageStrip(this, borderImage, paintRect);
         GraphicsContextStateSaver stateSaver(*context);
         context->clip(clipRect);
-        boxModelObject()->paintBorder(paintInfo, LayoutRect(stripX, stripY, stripWidth, stripHeight), &lineStyle);
+        renderer().paintBorder(paintInfo, LayoutRect(stripX, stripY, stripWidth, stripHeight), &lineStyle);
     }
 }
 
@@ -1390,7 +1390,7 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
     // Figure out if we need to push a transparency layer to render our mask.
     bool pushTransparencyLayer = false;
-    bool compositedMask = renderer().hasLayer() && boxModelObject()->layer()->hasCompositedMask();
+    bool compositedMask = renderer().hasLayer() && renderer().layer()->hasCompositedMask();
     bool flattenCompositingLayers = renderer().view().frameView().paintBehavior() & PaintBehaviorFlattenCompositingLayers;
     CompositeOperator compositeOp = CompositeSourceOver;
     if (!compositedMask || flattenCompositingLayers) {
@@ -1418,7 +1418,7 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     // The simple case is where we are the only box for this object.  In those
     // cases only a single call to draw is required.
     if (!prevLineBox() && !nextLineBox()) {
-        boxModelObject()->paintNinePieceImage(paintInfo.context, LayoutRect(adjustedPaintOffset, frameRect.size()), &renderer().style(), maskNinePieceImage, compositeOp);
+        renderer().paintNinePieceImage(paintInfo.context, LayoutRect(adjustedPaintOffset, frameRect.size()), &renderer().style(), maskNinePieceImage, compositeOp);
     } else {
         // We have a mask image that spans multiple lines.
         // We need to adjust _tx and _ty by the width of all previous lines.
@@ -1436,7 +1436,7 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         LayoutRect clipRect = clipRectForNinePieceImageStrip(this, maskNinePieceImage, paintRect);
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
         paintInfo.context->clip(clipRect);
-        boxModelObject()->paintNinePieceImage(paintInfo.context, LayoutRect(stripX, stripY, stripWidth, stripHeight), &renderer().style(), maskNinePieceImage, compositeOp);
+        renderer().paintNinePieceImage(paintInfo.context, LayoutRect(stripX, stripY, stripWidth, stripHeight), &renderer().style(), maskNinePieceImage, compositeOp);
     }
     
     if (pushTransparencyLayer)

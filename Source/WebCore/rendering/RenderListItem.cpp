@@ -371,7 +371,7 @@ void RenderListItem::positionListMarker()
                         adjustOverflow = true;
                 }
                 box->setOverflowFromLogicalRects(newLogicalLayoutOverflowRect, newLogicalVisualOverflowRect, lineTop, lineBottom);
-                if (box->boxModelObject()->hasSelfPaintingLayer())
+                if (box->renderer().hasSelfPaintingLayer())
                     hitSelfPaintingLayer = true;
             }
         } else {
@@ -393,7 +393,7 @@ void RenderListItem::positionListMarker()
                 }
                 box->setOverflowFromLogicalRects(newLogicalLayoutOverflowRect, newLogicalVisualOverflowRect, lineTop, lineBottom);
                 
-                if (box->boxModelObject()->hasSelfPaintingLayer())
+                if (box->renderer().hasSelfPaintingLayer())
                     hitSelfPaintingLayer = true;
             }
         }
