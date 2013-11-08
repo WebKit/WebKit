@@ -1410,6 +1410,13 @@ void MediaPlayerPrivateQTKit::paint(GraphicsContext* context, const IntRect& r)
     [m_objcObserver.get() setDelayCallbacks:NO];
 }
 
+static bool shouldRejectMIMEType(const String& type)
+{
+    // QTKit will return non-video MIME types which it claims to support, but which we
+    // do not support in the <video> element. Disclaim all non video/ or audio/ types.
+    return !type.startsWith("video/") && !type.startsWith("audio/");
+}
+
 static void addFileTypesToCache(NSArray * fileTypes, HashSet<String> &cache)
 {
     int count = [fileTypes count];
@@ -1419,6 +1426,8 @@ static void addFileTypesToCache(NSArray * fileTypes, HashSet<String> &cache)
         if (!uti)
             continue;
         RetainPtr<CFStringRef> mime = adoptCF(UTTypeCopyPreferredTagWithClass(uti.get(), kUTTagClassMIMEType));
+        if (shouldRejectMIMEType(mime.get()))
+            continue;
         if (mime)
             cache.add(mime.get());
 
@@ -1433,9 +1442,7 @@ static void addFileTypesToCache(NSArray * fileTypes, HashSet<String> &cache)
             for (unsigned ndx = 0; ndx < count; ++ndx) {
                 String& type = typesForExtension[ndx];
 
-                // QTKit will return non-video MIME types which it claims to support, but which we
-                // do not support in the <video> element. Disclaim all non video/ or audio/ types.
-                if (!type.startsWith("video/") && !type.startsWith("audio/"))
+                if (shouldRejectMIMEType(type))
                     continue;
 
                 if (!cache.contains(type))
@@ -1497,7 +1504,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateQTKit::supportsType(const String& ty
 
     // Due to <rdar://problem/10777059>, avoid calling the mime types cache functions if at
     // all possible:
-    if (!type.startsWith("video/") && !type.startsWith("audio/"))
+    if (shouldRejectMIMEType(type))
         return MediaPlayer::IsNotSupported;
 
     // We check the "modern" type cache first, as it doesn't require QTKitServer to start.
