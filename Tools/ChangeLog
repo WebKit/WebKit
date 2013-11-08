@@ -1,5 +1,16 @@
 2013-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Ignore deprecated macros when generating gtk-doc
+        https://bugs.webkit.org/show_bug.cgi?id=123988
+
+        Reviewed by Philippe Normand.
+
+        * gtk/generate-gtkdoc:
+        (get_common_options): Ignore also WEBKIT_DEPRECATED and
+        WEBKIT_DEPRECATED_FOR decorators.
+
+2013-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Pass the library namespace to gtkdoc-mkdb
         https://bugs.webkit.org/show_bug.cgi?id=123900
 

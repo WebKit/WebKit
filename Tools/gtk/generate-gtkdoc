@@ -59,7 +59,7 @@ def get_common_options():
             break
 
     return {
-        'decorator': 'WEBKIT_API',
+        'decorator': 'WEBKIT_API|WEBKIT_DEPRECATED|WEBKIT_DEPRECATED_FOR\(.+\)',
         'deprecation_guard': 'WEBKIT_DISABLE_DEPRECATED',
         'library_path' : common.build_path('.libs'),
         'virtual_root' : virtual_root,
