@@ -208,11 +208,6 @@ void RasterShapeIntervals::getExcludedIntervals(int y1, int y2, IntShapeInterval
     y1 = std::max(y1, bounds().y());
     y2 = std::min(y2, bounds().maxY());
 
-    for (int y = y1; y < y2;  y++) {
-        if (intervalsAt(y).isEmpty())
-            return;
-    }
-
     result = intervalsAt(y1);
     for (int y = y1 + 1; y < y2;  y++) {
         IntShapeIntervals intervals;

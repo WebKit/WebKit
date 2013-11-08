@@ -1,3 +1,19 @@
+2013-11-07  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Image shape-outside with vertical gaps is handled incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=123934
+
+        Reviewed by Andreas Kling.
+
+        RasterShapeIntervals::getExcludedIntervals() was returning an empty
+        list when the line overlapped any vertical gap in the image. This short-circuit
+        had been mistakenly copied from getIncludedIntervals(), where it makes sense.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-floats-image-vgap.html
+
+        * rendering/shapes/RasterShape.cpp:
+        (WebCore::RasterShapeIntervals::getExcludedIntervals):
+
 2013-11-07  Simon Fraser  <simon.fraser@apple.com>
 
         Make contents layer borders more visible
