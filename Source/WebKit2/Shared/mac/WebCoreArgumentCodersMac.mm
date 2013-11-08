@@ -39,6 +39,33 @@ using namespace WebKit;
 
 namespace CoreIPC {
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+static void archiveAndEncodeObject(ArgumentEncoder& encoder, id object, NSString *key)
+{
+    RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
+    RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
+
+    [archiver setRequiresSecureCoding:YES];
+    [archiver.get() encodeObject:object forKey:key];
+    [archiver finishEncoding];
+    encoder << CoreIPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
+}
+
+template<typename T>
+static bool decodeAndUnarchiveObject(ArgumentDecoder& decoder, NSString *key, RetainPtr<T>& result)
+{
+    CoreIPC::DataReference dataReference;
+    if (!decoder.decode(dataReference))
+        return false;
+
+    RetainPtr<NSData> data = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<uint8_t*>(dataReference.data()) length:dataReference.size() freeWhenDone:NO]);
+    RetainPtr<NSKeyedUnarchiver> unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:data.get()]);
+    [unarchiver setRequiresSecureCoding:YES];
+    result = [unarchiver decodeObjectOfClass:[T class] forKey:key];
+    return true;
+}
+#endif
+
 void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder, const ResourceRequest& resourceRequest)
 {
     RetainPtr<NSURLRequest> requestToSerialize = resourceRequest.nsURLRequest(DoNotUpdateHTTPBody);
@@ -51,14 +78,18 @@ void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder
 
     // We don't send HTTP body over IPC for better performance.
     // Also, it's not always possible to do, as streams can only be created in process that does networking.
-    if ([requestToSerialize.get() HTTPBody] || [requestToSerialize.get() HTTPBodyStream]) {
-        requestToSerialize = adoptNS([requestToSerialize.get() mutableCopy]);
-        [(NSMutableURLRequest *)requestToSerialize.get() setHTTPBody:nil];
-        [(NSMutableURLRequest *)requestToSerialize.get() setHTTPBodyStream:nil];
+    if ([requestToSerialize HTTPBody] || [requestToSerialize HTTPBodyStream]) {
+        requestToSerialize = adoptNS([requestToSerialize mutableCopy]);
+        [(NSMutableURLRequest *)requestToSerialize setHTTPBody:nil];
+        [(NSMutableURLRequest *)requestToSerialize setHTTPBodyStream:nil];
     }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    archiveAndEncodeObject(encoder, requestToSerialize.get(), @"request");
+#else
     RetainPtr<CFDictionaryRef> dictionary = adoptCF(WKNSURLRequestCreateSerializableRepresentation(requestToSerialize.get(), CoreIPC::tokenNullTypeRef()));
     CoreIPC::encode(encoder, dictionary.get());
+#endif
 
     // The fallback array is part of NSURLRequest, but it is not encoded by WKNSURLRequestCreateSerializableRepresentation.
     encoder << resourceRequest.responseContentDispositionEncodingFallbackArray();
@@ -75,15 +106,21 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder& decoder
         return true;
     }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    RetainPtr<NSURLRequest> nsURLRequest;
+    if (!decodeAndUnarchiveObject(decoder, @"request", nsURLRequest))
+        return false;
+#else
     RetainPtr<CFDictionaryRef> dictionary;
     if (!CoreIPC::decode(decoder, dictionary))
         return false;
 
-    NSURLRequest *nsURLRequest = WKNSURLRequestFromSerializableRepresentation(dictionary.get(), CoreIPC::tokenNullTypeRef());
+    RetainPtr<NSURLRequest> nsURLRequest = WKNSURLRequestFromSerializableRepresentation(dictionary.get(), CoreIPC::tokenNullTypeRef());
     if (!nsURLRequest)
         return false;
+#endif
 
-    resourceRequest = ResourceRequest(nsURLRequest);
+    resourceRequest = ResourceRequest(nsURLRequest.get());
     
     Vector<String> responseContentDispositionEncodingFallbackArray;
     if (!decoder.decode(responseContentDispositionEncodingFallbackArray))
@@ -107,14 +144,7 @@ void ArgumentCoder<ResourceResponse>::encodePlatformData(ArgumentEncoder& encode
         return;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    RetainPtr<NSMutableData> data = adoptNS([[NSMutableData alloc] init]);
-    RetainPtr<NSKeyedArchiver> archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
-
-    [archiver setRequiresSecureCoding:YES];
-    [archiver.get() encodeObject:resourceResponse.nsURLResponse() forKey:@"response"];
-    [archiver finishEncoding];
-
-    encoder << CoreIPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
+    archiveAndEncodeObject(encoder, resourceResponse.nsURLResponse(), @"response");
 #else
     RetainPtr<CFDictionaryRef> dictionary = adoptCF(WKNSURLResponseCreateSerializableRepresentation(resourceResponse.nsURLResponse(), CoreIPC::tokenNullTypeRef()));
     CoreIPC::encode(encoder, dictionary.get());
@@ -133,27 +163,21 @@ bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder& decode
     }
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    CoreIPC::DataReference dataReference;
-    if (!decoder.decode(dataReference))
+    RetainPtr<NSURLResponse> nsURLResponse;
+    if (!decodeAndUnarchiveObject(decoder, @"response", nsURLResponse))
         return false;
-
-    RetainPtr<NSData> data = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<uint8_t*>(dataReference.data()) length:dataReference.size() freeWhenDone:NO]);
-    RetainPtr<NSKeyedUnarchiver> unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:data.get()]);
-
-    [unarchiver setRequiresSecureCoding:YES];
-    NSURLResponse *nsURLResponse = [unarchiver.get() decodeObjectOfClass:[NSURLResponse class] forKey:@"response"];
 #else
     RetainPtr<CFDictionaryRef> dictionary;
     if (!CoreIPC::decode(decoder, dictionary))
         return false;
 
-    NSURLResponse *nsURLResponse = WKNSURLResponseFromSerializableRepresentation(dictionary.get(), CoreIPC::tokenNullTypeRef());
+    RetainPtr<NSURLResponse> nsURLResponse = WKNSURLResponseFromSerializableRepresentation(dictionary.get(), CoreIPC::tokenNullTypeRef());
 #endif
 
     if (!nsURLResponse)
         return false;
 
-    resourceResponse = ResourceResponse(nsURLResponse);
+    resourceResponse = ResourceResponse(nsURLResponse.get());
     return true;
 }
 
