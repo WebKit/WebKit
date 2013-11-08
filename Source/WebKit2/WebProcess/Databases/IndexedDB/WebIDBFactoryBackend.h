@@ -47,7 +47,7 @@ public:
 
     virtual PassRefPtr<WebCore::IDBTransactionBackendInterface> maybeCreateTransactionBackend(WebCore::IDBDatabaseBackendInterface*, int64_t transactionId, PassRefPtr<WebCore::IDBDatabaseCallbacks>, const Vector<int64_t>&, WebCore::IndexedDB::TransactionMode) OVERRIDE;
 
-    virtual PassRefPtr<WebCore::IDBCursorBackendInterface> createCursorBackend(WebCore::IDBTransactionBackendInterface&, WebCore::IDBBackingStoreCursorInterface&, WebCore::IndexedDB::CursorType, WebCore::IDBDatabaseBackendInterface::TaskType, int64_t objectStoreId) OVERRIDE;
+    virtual PassRefPtr<WebCore::IDBCursorBackend> createCursorBackend(WebCore::IDBTransactionBackendInterface&, WebCore::IDBBackingStoreCursorInterface&, WebCore::IndexedDB::CursorType, WebCore::IDBDatabaseBackendInterface::TaskType, int64_t objectStoreId) OVERRIDE;
 
 private:
     explicit WebIDBFactoryBackend(const String& databaseDirectoryIdentifier);

@@ -42,7 +42,7 @@ namespace WebCore {
 class DOMRequestState;
 class IDBAny;
 class IDBCallbacks;
-class IDBCursorBackendInterface;
+class IDBCursorBackend;
 class IDBRequest;
 class ScriptExecutionContext;
 
@@ -58,7 +58,7 @@ public:
     static IndexedDB::CursorDirection stringToDirection(const String& modeString, ExceptionCode&);
     static const AtomicString& directionToString(unsigned short mode);
 
-    static PassRefPtr<IDBCursor> create(PassRefPtr<IDBCursorBackendInterface>, IndexedDB::CursorDirection, IDBRequest*, IDBAny* source, IDBTransaction*);
+    static PassRefPtr<IDBCursor> create(PassRefPtr<IDBCursorBackend>, IndexedDB::CursorDirection, IDBRequest*, IDBAny* source, IDBTransaction*);
     virtual ~IDBCursor();
 
     // Implement the IDL
@@ -82,13 +82,13 @@ public:
     PassRefPtr<IDBKey> idbPrimaryKey() { return m_currentPrimaryKey; }
 
 protected:
-    IDBCursor(PassRefPtr<IDBCursorBackendInterface>, IndexedDB::CursorDirection, IDBRequest*, IDBAny* source, IDBTransaction*);
+    IDBCursor(PassRefPtr<IDBCursorBackend>, IndexedDB::CursorDirection, IDBRequest*, IDBAny* source, IDBTransaction*);
     virtual bool isKeyCursor() const { return true; }
 
 private:
     PassRefPtr<IDBObjectStore> effectiveObjectStore();
 
-    RefPtr<IDBCursorBackendInterface> m_backend;
+    RefPtr<IDBCursorBackend> m_backend;
     RefPtr<IDBRequest> m_request;
     const IndexedDB::CursorDirection m_direction;
     RefPtr<IDBAny> m_source;

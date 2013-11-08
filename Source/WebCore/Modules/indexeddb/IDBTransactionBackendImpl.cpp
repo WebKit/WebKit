@@ -28,7 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBCursorBackendInterface.h"
+#include "IDBCursorBackend.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseCallbacks.h"
 #include "IDBDatabaseException.h"
@@ -153,12 +153,12 @@ bool IDBTransactionBackendImpl::hasPendingTasks() const
     return m_pendingPreemptiveEvents || !isTaskQueueEmpty();
 }
 
-void IDBTransactionBackendImpl::registerOpenCursor(IDBCursorBackendInterface* cursor)
+void IDBTransactionBackendImpl::registerOpenCursor(IDBCursorBackend* cursor)
 {
     m_openCursors.add(cursor);
 }
 
-void IDBTransactionBackendImpl::unregisterOpenCursor(IDBCursorBackendInterface* cursor)
+void IDBTransactionBackendImpl::unregisterOpenCursor(IDBCursorBackend* cursor)
 {
     m_openCursors.remove(cursor);
 }
@@ -265,7 +265,7 @@ void IDBTransactionBackendImpl::taskTimerFired(Timer<IDBTransactionBackendImpl>*
 
 void IDBTransactionBackendImpl::closeOpenCursors()
 {
-    for (HashSet<IDBCursorBackendInterface*>::iterator i = m_openCursors.begin(); i != m_openCursors.end(); ++i)
+    for (HashSet<IDBCursorBackend*>::iterator i = m_openCursors.begin(); i != m_openCursors.end(); ++i)
         (*i)->close();
     m_openCursors.clear();
 }
@@ -330,7 +330,7 @@ void IDBTransactionBackendImpl::scheduleClearOperation(int64_t objectStoreId, Pa
     scheduleTask(ClearOperation::create(this, m_backingStore.get(), database().id(), objectStoreId, callbacks));
 }
 
-PassRefPtr<IDBCursorBackendInterface> IDBTransactionBackendImpl::createCursorBackend(IDBBackingStoreCursorInterface& cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, int64_t objectStoreId)
+PassRefPtr<IDBCursorBackend> IDBTransactionBackendImpl::createCursorBackend(IDBBackingStoreCursorInterface& cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, int64_t objectStoreId)
 {
     return m_database->factoryBackend().createCursorBackend(*this, cursor, cursorType, taskType, objectStoreId);
 }

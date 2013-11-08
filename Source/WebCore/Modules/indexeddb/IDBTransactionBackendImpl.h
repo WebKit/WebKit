@@ -59,8 +59,8 @@ public:
     virtual void scheduleTask(PassOwnPtr<IDBOperation> task, PassOwnPtr<IDBOperation> abortTask = nullptr) { scheduleTask(IDBDatabaseBackendInterface::NormalTask, task, abortTask); }
     virtual void scheduleTask(IDBDatabaseBackendInterface::TaskType, PassOwnPtr<IDBOperation>, PassOwnPtr<IDBOperation> abortTask = nullptr) OVERRIDE;
 
-    virtual void registerOpenCursor(IDBCursorBackendInterface*) OVERRIDE;
-    virtual void unregisterOpenCursor(IDBCursorBackendInterface*) OVERRIDE;
+    virtual void registerOpenCursor(IDBCursorBackend*) OVERRIDE;
+    virtual void unregisterOpenCursor(IDBCursorBackend*) OVERRIDE;
 
     virtual void addPreemptiveEvent() OVERRIDE { m_pendingPreemptiveEvents++; }
     virtual void didCompletePreemptiveEvent() OVERRIDE { m_pendingPreemptiveEvents--; ASSERT(m_pendingPreemptiveEvents >= 0); }
@@ -81,7 +81,7 @@ public:
     virtual void scheduleDeleteRangeOperation(int64_t objectStoreId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>) OVERRIDE FINAL;
     virtual void scheduleClearOperation(int64_t objectStoreId, PassRefPtr<IDBCallbacks>) OVERRIDE FINAL;
 
-    virtual PassRefPtr<IDBCursorBackendInterface> createCursorBackend(IDBBackingStoreCursorInterface&, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, int64_t objectStoreId) OVERRIDE;
+    virtual PassRefPtr<IDBCursorBackend> createCursorBackend(IDBBackingStoreCursorInterface&, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, int64_t objectStoreId) OVERRIDE;
 
 private:
     IDBTransactionBackendImpl(IDBDatabaseBackendImpl*, int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
@@ -120,7 +120,7 @@ private:
     Timer<IDBTransactionBackendImpl> m_taskTimer;
     int m_pendingPreemptiveEvents;
 
-    HashSet<IDBCursorBackendInterface*> m_openCursors;
+    HashSet<IDBCursorBackend*> m_openCursors;
     
     RefPtr<IDBBackingStoreInterface> m_backingStore;
 };

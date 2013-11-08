@@ -63,8 +63,8 @@ public:
     virtual void scheduleTask(PassOwnPtr<IDBOperation>, PassOwnPtr<IDBOperation> abortTask = nullptr) = 0;
     virtual void scheduleTask(IDBDatabaseBackendInterface::TaskType, PassOwnPtr<IDBOperation>, PassOwnPtr<IDBOperation> abortTask = nullptr) = 0;
 
-    virtual void registerOpenCursor(IDBCursorBackendInterface*) = 0;
-    virtual void unregisterOpenCursor(IDBCursorBackendInterface*) = 0;
+    virtual void registerOpenCursor(IDBCursorBackend*) = 0;
+    virtual void unregisterOpenCursor(IDBCursorBackend*) = 0;
 
     virtual void scheduleCreateObjectStoreOperation(const IDBObjectStoreMetadata&) = 0;
     virtual void scheduleDeleteObjectStoreOperation(const IDBObjectStoreMetadata&) = 0;
@@ -85,7 +85,7 @@ public:
     virtual IDBBackingStoreTransactionInterface& backingStoreTransaction() = 0;
     virtual IDBDatabaseBackendInterface& database() const = 0;
 
-    virtual PassRefPtr<IDBCursorBackendInterface> createCursorBackend(IDBBackingStoreCursorInterface&, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, int64_t objectStoreId) = 0;
+    virtual PassRefPtr<IDBCursorBackend> createCursorBackend(IDBBackingStoreCursorInterface&, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, int64_t objectStoreId) = 0;
 
     int64_t id() const { return m_id; }
 

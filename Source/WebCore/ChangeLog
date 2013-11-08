@@ -1,3 +1,35 @@
+2013-11-08  Brady Eidson  <beidson@apple.com>
+
+        Merge IDBCursorBackendInterface and IDBCursorBackendImpl
+        https://bugs.webkit.org/show_bug.cgi?id=124068
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/indexeddb/IDBCursorBackendInterface.h: Removed.
+
+        * Modules/indexeddb/IDBCursorBackend.cpp: Renamed from Source/WebCore/Modules/indexeddb/IDBCursorBackendImpl.cpp.
+        * Modules/indexeddb/IDBCursorBackend.h: Renamed from Source/WebCore/Modules/indexeddb/IDBCursorBackendImpl.h.
+
+        * Modules/indexeddb/IDBCallbacks.h:
+        * Modules/indexeddb/IDBCursor.cpp:
+        * Modules/indexeddb/IDBCursor.h:
+        * Modules/indexeddb/IDBCursorWithValue.cpp:
+        * Modules/indexeddb/IDBCursorWithValue.h:
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        * Modules/indexeddb/IDBFactoryBackendInterface.h:
+        * Modules/indexeddb/IDBRequest.cpp:
+        * Modules/indexeddb/IDBRequest.h:
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        * Modules/indexeddb/IDBTransactionBackendImpl.h:
+        * Modules/indexeddb/IDBTransactionBackendInterface.h:
+        * Modules/indexeddb/IDBTransactionBackendOperations.cpp:
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp:
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.h:
+
 2013-11-08  Sam Weinig  <sam@webkit.org>
 
         Modernize FrameLoader a bit

@@ -28,12 +28,12 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBCursorBackendInterface.h"
+#include "IDBCursorBackend.h"
 #include "IDBKey.h"
 
 namespace WebCore {
 
-PassRefPtr<IDBCursorWithValue> IDBCursorWithValue::create(PassRefPtr<IDBCursorBackendInterface> backend, IndexedDB::CursorDirection direction, IDBRequest* request, IDBAny* source, IDBTransaction* transaction)
+PassRefPtr<IDBCursorWithValue> IDBCursorWithValue::create(PassRefPtr<IDBCursorBackend> backend, IndexedDB::CursorDirection direction, IDBRequest* request, IDBAny* source, IDBTransaction* transaction)
 {
     return adoptRef(new IDBCursorWithValue(backend, direction, request, source, transaction));
 }
@@ -44,7 +44,7 @@ PassRefPtr<IDBCursorWithValue> IDBCursorWithValue::fromCursor(PassRefPtr<IDBCurs
     return cursorWithValue.release();
 }
 
-IDBCursorWithValue::IDBCursorWithValue(PassRefPtr<IDBCursorBackendInterface> backend, IndexedDB::CursorDirection direction, IDBRequest* request, IDBAny* source, IDBTransaction* transaction)
+IDBCursorWithValue::IDBCursorWithValue(PassRefPtr<IDBCursorBackend> backend, IndexedDB::CursorDirection direction, IDBRequest* request, IDBAny* source, IDBTransaction* transaction)
     : IDBCursor(backend, direction, request, source, transaction)
 {
 }

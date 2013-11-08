@@ -1794,9 +1794,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/leveldb/IDBBackingStoreTransactionLevelDB.cpp \
 	Source/WebCore/Modules/indexeddb/leveldb/IDBBackingStoreTransactionLevelDB.h \
 	Source/WebCore/Modules/indexeddb/IDBCallbacks.h \
-	Source/WebCore/Modules/indexeddb/IDBCursorBackendImpl.cpp \
-	Source/WebCore/Modules/indexeddb/IDBCursorBackendImpl.h \
-	Source/WebCore/Modules/indexeddb/IDBCursorBackendInterface.h \
+	Source/WebCore/Modules/indexeddb/IDBCursorBackend.cpp \
+	Source/WebCore/Modules/indexeddb/IDBCursorBackend.h \
 	Source/WebCore/Modules/indexeddb/IDBCursor.cpp \
 	Source/WebCore/Modules/indexeddb/IDBCursor.h \
 	Source/WebCore/Modules/indexeddb/IDBCursorWithValue.cpp \

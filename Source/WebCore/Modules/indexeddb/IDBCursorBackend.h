@@ -24,13 +24,12 @@
  */
 
 
-#ifndef IDBCursorBackendImpl_h
-#define IDBCursorBackendImpl_h
+#ifndef IDBCursorBackend_h
+#define IDBCursorBackend_h
 
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBBackingStoreInterface.h"
-#include "IDBCursorBackendInterface.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBTransactionBackendImpl.h"
 #include "SharedBuffer.h"
@@ -42,34 +41,33 @@ namespace WebCore {
 
 class IDBKeyRange;
 
-class IDBCursorBackendImpl : public IDBCursorBackendInterface {
+class IDBCursorBackend : public RefCounted<IDBCursorBackend> {
 public:
-    static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBBackingStoreCursorInterface> cursor, IndexedDB::CursorType cursorType, IDBTransactionBackendInterface* transaction, int64_t objectStoreId)
+    static PassRefPtr<IDBCursorBackend> create(PassRefPtr<IDBBackingStoreCursorInterface> cursor, IndexedDB::CursorType cursorType, IDBTransactionBackendInterface* transaction, int64_t objectStoreId)
     {
-        return adoptRef(new IDBCursorBackendImpl(cursor, cursorType, IDBDatabaseBackendInterface::NormalTask, transaction, objectStoreId));
+        return adoptRef(new IDBCursorBackend(cursor, cursorType, IDBDatabaseBackendInterface::NormalTask, transaction, objectStoreId));
     }
-    static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBBackingStoreCursorInterface> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackendInterface* transaction, int64_t objectStoreId)
+    static PassRefPtr<IDBCursorBackend> create(PassRefPtr<IDBBackingStoreCursorInterface> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackendInterface* transaction, int64_t objectStoreId)
     {
-        return adoptRef(new IDBCursorBackendImpl(cursor, cursorType, taskType, transaction, objectStoreId));
+        return adoptRef(new IDBCursorBackend(cursor, cursorType, taskType, transaction, objectStoreId));
     }
-    virtual ~IDBCursorBackendImpl();
+    ~IDBCursorBackend();
 
-    // IDBCursorBackendInterface
-    virtual void advance(unsigned long, PassRefPtr<IDBCallbacks>, ExceptionCode&);
-    virtual void continueFunction(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
-    virtual void deleteFunction(PassRefPtr<IDBCallbacks>, ExceptionCode&);
-    virtual void prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbacks>, ExceptionCode&);
-    virtual void prefetchReset(int usedPrefetches, int unusedPrefetches);
-    virtual void postSuccessHandlerCallback() { }
+    void advance(unsigned long, PassRefPtr<IDBCallbacks>, ExceptionCode&);
+    void continueFunction(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
+    void deleteFunction(PassRefPtr<IDBCallbacks>, ExceptionCode&);
+    void prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbacks>, ExceptionCode&);
+    void prefetchReset(int usedPrefetches, int unusedPrefetches);
+    void postSuccessHandlerCallback() { }
 
-    virtual IDBKey* key() const OVERRIDE { return m_cursor->key().get(); }
-    virtual IDBKey* primaryKey() const OVERRIDE { return m_cursor->primaryKey().get(); }
-    virtual SharedBuffer* value() const OVERRIDE { return (m_cursorType == IndexedDB::CursorKeyOnly) ? 0 : m_cursor->value().get(); }
+    IDBKey* key() const { return m_cursor->key().get(); }
+    IDBKey* primaryKey() const { return m_cursor->primaryKey().get(); }
+    SharedBuffer* value() const { return (m_cursorType == IndexedDB::CursorKeyOnly) ? 0 : m_cursor->value().get(); }
 
-    virtual void close() OVERRIDE;
+    void close();
 
 private:
-    IDBCursorBackendImpl(PassRefPtr<IDBBackingStoreCursorInterface>, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, IDBTransactionBackendInterface*, int64_t objectStoreId);
+    IDBCursorBackend(PassRefPtr<IDBBackingStoreCursorInterface>, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, IDBTransactionBackendInterface*, int64_t objectStoreId);
 
     class CursorIterationOperation;
     class CursorAdvanceOperation;
@@ -91,4 +89,4 @@ private:
 
 #endif // ENABLE(INDEXED_DATABASE)
 
-#endif // IDBCursorBackendImpl_h
+#endif // IDBCursorBackend_h

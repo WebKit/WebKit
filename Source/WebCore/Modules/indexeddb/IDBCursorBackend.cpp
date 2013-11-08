@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "IDBCursorBackendImpl.h"
+#include "IDBCursorBackend.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -41,67 +41,67 @@
 
 namespace WebCore {
 
-class IDBCursorBackendImpl::CursorIterationOperation : public IDBOperation {
+class IDBCursorBackend::CursorIterationOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBOperation> create(PassRefPtr<IDBCursorBackendImpl> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
+    static PassOwnPtr<IDBOperation> create(PassRefPtr<IDBCursorBackend> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
     {
         return adoptPtr(new CursorIterationOperation(cursor, key, callbacks));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    CursorIterationOperation(PassRefPtr<IDBCursorBackendImpl> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
+    CursorIterationOperation(PassRefPtr<IDBCursorBackend> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
         : m_cursor(cursor)
         , m_key(key)
         , m_callbacks(callbacks)
     {
     }
 
-    RefPtr<IDBCursorBackendImpl> m_cursor;
+    RefPtr<IDBCursorBackend> m_cursor;
     RefPtr<IDBKey> m_key;
     RefPtr<IDBCallbacks> m_callbacks;
 };
 
-class IDBCursorBackendImpl::CursorAdvanceOperation : public IDBOperation {
+class IDBCursorBackend::CursorAdvanceOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBOperation> create(PassRefPtr<IDBCursorBackendImpl> cursor, unsigned long count, PassRefPtr<IDBCallbacks> callbacks)
+    static PassOwnPtr<IDBOperation> create(PassRefPtr<IDBCursorBackend> cursor, unsigned long count, PassRefPtr<IDBCallbacks> callbacks)
     {
         return adoptPtr(new CursorAdvanceOperation(cursor, count, callbacks));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    CursorAdvanceOperation(PassRefPtr<IDBCursorBackendImpl> cursor, unsigned long count, PassRefPtr<IDBCallbacks> callbacks)
+    CursorAdvanceOperation(PassRefPtr<IDBCursorBackend> cursor, unsigned long count, PassRefPtr<IDBCallbacks> callbacks)
         : m_cursor(cursor)
         , m_count(count)
         , m_callbacks(callbacks)
     {
     }
 
-    RefPtr<IDBCursorBackendImpl> m_cursor;
+    RefPtr<IDBCursorBackend> m_cursor;
     unsigned long m_count;
     RefPtr<IDBCallbacks> m_callbacks;
 };
 
-class IDBCursorBackendImpl::CursorPrefetchIterationOperation : public IDBOperation {
+class IDBCursorBackend::CursorPrefetchIterationOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBOperation> create(PassRefPtr<IDBCursorBackendImpl> cursor, int numberToFetch, PassRefPtr<IDBCallbacks> callbacks)
+    static PassOwnPtr<IDBOperation> create(PassRefPtr<IDBCursorBackend> cursor, int numberToFetch, PassRefPtr<IDBCallbacks> callbacks)
     {
         return adoptPtr(new CursorPrefetchIterationOperation(cursor, numberToFetch, callbacks));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    CursorPrefetchIterationOperation(PassRefPtr<IDBCursorBackendImpl> cursor, int numberToFetch, PassRefPtr<IDBCallbacks> callbacks)
+    CursorPrefetchIterationOperation(PassRefPtr<IDBCursorBackend> cursor, int numberToFetch, PassRefPtr<IDBCallbacks> callbacks)
         : m_cursor(cursor)
         , m_numberToFetch(numberToFetch)
         , m_callbacks(callbacks)
     {
     }
 
-    RefPtr<IDBCursorBackendImpl> m_cursor;
+    RefPtr<IDBCursorBackend> m_cursor;
     int m_numberToFetch;
     RefPtr<IDBCallbacks> m_callbacks;
 };
 
-IDBCursorBackendImpl::IDBCursorBackendImpl(PassRefPtr<IDBBackingStoreCursorInterface> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackendInterface* transaction, int64_t objectStoreId)
+IDBCursorBackend::IDBCursorBackend(PassRefPtr<IDBBackingStoreCursorInterface> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackendInterface* transaction, int64_t objectStoreId)
     : m_taskType(taskType)
     , m_cursorType(cursorType)
     , m_database(&(transaction->database()))
@@ -113,27 +113,27 @@ IDBCursorBackendImpl::IDBCursorBackendImpl(PassRefPtr<IDBBackingStoreCursorInter
     m_transaction->registerOpenCursor(this);
 }
 
-IDBCursorBackendImpl::~IDBCursorBackendImpl()
+IDBCursorBackend::~IDBCursorBackend()
 {
     m_transaction->unregisterOpenCursor(this);
 }
 
 
-void IDBCursorBackendImpl::continueFunction(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
+void IDBCursorBackend::continueFunction(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
 {
-    LOG(StorageAPI, "IDBCursorBackendImpl::continue");
+    LOG(StorageAPI, "IDBCursorBackend::continue");
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     m_transaction->scheduleTask(m_taskType, CursorIterationOperation::create(this, key, callbacks));
 }
 
-void IDBCursorBackendImpl::advance(unsigned long count, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
+void IDBCursorBackend::advance(unsigned long count, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
 {
-    LOG(StorageAPI, "IDBCursorBackendImpl::advance");
+    LOG(StorageAPI, "IDBCursorBackend::advance");
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     m_transaction->scheduleTask(CursorAdvanceOperation::create(this, count, callbacks));
 }
 
-void IDBCursorBackendImpl::CursorAdvanceOperation::perform()
+void IDBCursorBackend::CursorAdvanceOperation::perform()
 {
     LOG(StorageAPI, "CursorAdvanceOperation");
     if (!m_cursor->m_cursor || !m_cursor->m_cursor->advance(m_count)) {
@@ -145,7 +145,7 @@ void IDBCursorBackendImpl::CursorAdvanceOperation::perform()
     m_callbacks->onSuccess(m_cursor->key(), m_cursor->primaryKey(), m_cursor->value());
 }
 
-void IDBCursorBackendImpl::CursorIterationOperation::perform()
+void IDBCursorBackend::CursorIterationOperation::perform()
 {
     LOG(StorageAPI, "CursorIterationOperation");
     if (!m_cursor->m_cursor || !m_cursor->m_cursor->continueFunction(m_key.get())) {
@@ -157,22 +157,22 @@ void IDBCursorBackendImpl::CursorIterationOperation::perform()
     m_callbacks->onSuccess(m_cursor->key(), m_cursor->primaryKey(), m_cursor->value());
 }
 
-void IDBCursorBackendImpl::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
+void IDBCursorBackend::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
 {
-    LOG(StorageAPI, "IDBCursorBackendImpl::delete");
+    LOG(StorageAPI, "IDBCursorBackend::delete");
     ASSERT(m_transaction->mode() != IndexedDB::TransactionReadOnly);
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::create(m_cursor->primaryKey());
     m_database->deleteRange(m_transaction.get()->id(), m_objectStoreId, keyRange.release(), prpCallbacks);
 }
 
-void IDBCursorBackendImpl::prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
+void IDBCursorBackend::prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
 {
-    LOG(StorageAPI, "IDBCursorBackendImpl::prefetchContinue");
+    LOG(StorageAPI, "IDBCursorBackend::prefetchContinue");
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     m_transaction->scheduleTask(m_taskType, CursorPrefetchIterationOperation::create(this, numberToFetch, callbacks));
 }
 
-void IDBCursorBackendImpl::CursorPrefetchIterationOperation::perform()
+void IDBCursorBackend::CursorPrefetchIterationOperation::perform()
 {
     LOG(StorageAPI, "CursorPrefetchIterationOperation");
 
@@ -221,9 +221,9 @@ void IDBCursorBackendImpl::CursorPrefetchIterationOperation::perform()
     m_callbacks->onSuccessWithPrefetch(foundKeys, foundPrimaryKeys, foundValues);
 }
 
-void IDBCursorBackendImpl::prefetchReset(int usedPrefetches, int)
+void IDBCursorBackend::prefetchReset(int usedPrefetches, int)
 {
-    LOG(StorageAPI, "IDBCursorBackendImpl::prefetchReset");
+    LOG(StorageAPI, "IDBCursorBackend::prefetchReset");
     m_cursor = m_savedCursor;
     m_savedCursor = 0;
 
@@ -237,9 +237,9 @@ void IDBCursorBackendImpl::prefetchReset(int usedPrefetches, int)
     }
 }
 
-void IDBCursorBackendImpl::close()
+void IDBCursorBackend::close()
 {
-    LOG(StorageAPI, "IDBCursorBackendImpl::close");
+    LOG(StorageAPI, "IDBCursorBackend::close");
     m_closed = true;
     m_cursor.clear();
     m_savedCursor.clear();

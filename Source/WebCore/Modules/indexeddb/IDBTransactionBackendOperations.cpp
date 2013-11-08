@@ -26,7 +26,7 @@
 #include "config.h"
 #include "IDBTransactionBackendOperations.h"
 
-#include "IDBCursorBackendInterface.h"
+#include "IDBCursorBackend.h"
 #include "IDBDatabaseCallbacks.h"
 #include "IDBIndexWriter.h"
 #include "IDBKeyRange.h"
@@ -280,7 +280,7 @@ void OpenCursorOperation::perform()
 
     IDBDatabaseBackendInterface::TaskType taskType(static_cast<IDBDatabaseBackendInterface::TaskType>(m_taskType));
 
-    RefPtr<IDBCursorBackendInterface> cursor = m_transaction->createCursorBackend(*backingStoreCursor, m_cursorType, taskType, m_objectStoreId);
+    RefPtr<IDBCursorBackend> cursor = m_transaction->createCursorBackend(*backingStoreCursor, m_cursorType, taskType, m_objectStoreId);
     m_callbacks->onSuccess(cursor, cursor->key(), cursor->primaryKey(), cursor->value());
 }
 
