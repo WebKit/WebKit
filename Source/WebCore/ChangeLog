@@ -1,5 +1,24 @@
 2013-11-08  Alexey Proskuryakov  <ap@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=124064
+        Some WebCrypto files are not in correct directories
+
+        Rubber-stamped by Anders Carlsson.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * crypto/CryptoAlgorithmAesCbcParams.h: Removed.
+        * crypto/CryptoAlgorithmAesKeyGenParams.h: Removed.
+        * crypto/CryptoKeyAES.cpp: Removed.
+        * crypto/CryptoKeyAES.h: Removed.
+        * crypto/CryptoKeyMac.cpp: Removed.
+        * crypto/keys/CryptoKeyAES.cpp: Copied from Source/WebCore/crypto/CryptoKeyAES.cpp.
+        * crypto/keys/CryptoKeyAES.h: Copied from Source/WebCore/crypto/CryptoKeyAES.h.
+        * crypto/mac/CryptoKeyMac.cpp: Copied from Source/WebCore/crypto/CryptoKeyMac.cpp.
+        * crypto/parameters/CryptoAlgorithmAesCbcParams.h: Copied from Source/WebCore/crypto/CryptoAlgorithmAesCbcParams.h.
+        * crypto/parameters/CryptoAlgorithmAesKeyGenParams.h: Copied from Source/WebCore/crypto/CryptoAlgorithmAesKeyGenParams.h.
+
+2013-11-08  Alexey Proskuryakov  <ap@apple.com>
+
         Implement JWK key import for HMAC and AES-CBC
         https://bugs.webkit.org/show_bug.cgi?id=124059
 
