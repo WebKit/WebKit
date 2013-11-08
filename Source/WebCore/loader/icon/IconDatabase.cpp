@@ -261,9 +261,10 @@ Image* IconDatabase::synchronousIconForPageURL(const String& pageURLOriginal, co
     // we can just bail now
     if (!m_iconURLImportComplete && !iconRecord)
         return 0;
-    
-    // The only way we should *not* have an icon record is if this pageURL is retained but has no icon yet - make sure of that
-    ASSERT(iconRecord || m_retainedPageURLs.contains(pageURLOriginal));
+
+    // Assuming we're done initializing and cleanup is allowed,
+    // the only way we should *not* have an icon record is if this pageURL is retained but has no icon yet.
+    ASSERT(iconRecord || databaseCleanupCounter || m_retainedPageURLs.contains(pageURLOriginal));
     
     if (!iconRecord)
         return 0;
