@@ -147,6 +147,7 @@ WebKitDOMNode* webkit_dom_test_event_target_item(WebKitDOMTestEventTarget* self,
     return WebKit::kit(gobjectResult.get());
 }
 
+#if !defined(WEBKIT_DISABLE_DEPRECATED)
 gboolean webkit_dom_test_event_target_dispatch_event(WebKitDOMTestEventTarget* self, WebKitDOMEvent* evt, GError** error)
 {
     WebCore::JSMainThreadNullState state;
@@ -163,4 +164,5 @@ gboolean webkit_dom_test_event_target_dispatch_event(WebKitDOMTestEventTarget* s
     }
     return result;
 }
+#endif // WEBKIT_DISABLE_DEPRECATED
 

@@ -958,6 +958,10 @@ sub GenerateFunction {
 
     push(@symbols, "$returnType $functionName($symbolSig)\n");
 
+    if ($deprecationVersion) {
+        push(@hBody, "#if !defined(WEBKIT_DISABLE_DEPRECATED)\n");
+    }
+
     # Insert introspection annotations
     push(@hBody, "/**\n");
     push(@hBody, " * ${functionName}:\n");
@@ -1001,8 +1005,14 @@ sub GenerateFunction {
         push(@hBody, "WEBKIT_API ");
     }
     push(@hBody, "$returnType\n$functionName($functionSig);\n");
+    if ($deprecationVersion) {
+        push(@hBody, "#endif /* WEBKIT_DISABLE_DEPRECATED */\n");
+    }
     push(@hBody, "\n");
 
+    if ($deprecationVersion) {
+        push(@cBody, "#if !defined(WEBKIT_DISABLE_DEPRECATED)\n");
+    }
     push(@cBody, "$returnType $functionName($functionSig)\n{\n");
     push(@cBody, "#if ${parentConditionalString}\n") if $parentConditionalString;
     push(@cBody, "#if ${conditionalString}\n") if $conditionalString;
@@ -1218,7 +1228,13 @@ EOF
         push(@cBody, "#endif /* ${parentConditionalString} */\n");
     }
 
-    push(@cBody, "}\n\n");
+    push(@cBody, "}\n");
+
+    if ($deprecationVersion) {
+        push(@cBody, "#endif // WEBKIT_DISABLE_DEPRECATED\n");
+    }
+
+    push(@cBody, "\n");
 }
 
 sub ClassHasFunction {
