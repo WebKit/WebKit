@@ -1,3 +1,24 @@
+2013-10-30  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Bring SourceBuffer.append up to the most recent spec.
+        https://bugs.webkit.org/show_bug.cgi?id=123377
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-append-failed.html
+
+        Bring the MediaSource append() implementation up to the current spec.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::appendBufferInternal):
+        (WebCore::SourceBuffer::appendBufferTimerFired):
+        * platform/graphics/SourceBufferPrivate.h:
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+        (WebCore::MockSourceBufferPrivate::append):
+        (WebCore::MockSourceBufferPrivate::evictCodedFrames):
+        (WebCore::MockSourceBufferPrivate::isFull):
+        * platform/mock/mediasource/MockSourceBufferPrivate.h:
+
 2013-11-07  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Crash at com.apple.WebCore: WebCore::MediaPlayerPrivateAVFoundationObjC::tracksDidChange + 26

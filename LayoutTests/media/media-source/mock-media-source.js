@@ -69,4 +69,15 @@ function makeAInit(duration, tracks) {
     return buffer;
 }
 
+function makeAnInvalidBox() {
+    var byteLength = 12;
+    var buffer = new ArrayBuffer(byteLength);
+    var array = new Uint8Array(buffer);
+    array.set(stringToArray('invl'));
+
+    var view = new DataView(buffer);
+    view.setUint32(8, 0xFFFF, true);
+
+    return buffer;
+}
 

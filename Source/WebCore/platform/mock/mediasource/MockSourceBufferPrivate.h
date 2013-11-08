@@ -58,11 +58,13 @@ private:
 
     // SourceBufferPrivate overrides
     virtual void setClient(SourceBufferPrivateClient*) OVERRIDE;
-    virtual void append(const unsigned char* data, unsigned length) OVERRIDE;
+    virtual AppendResult append(const unsigned char* data, unsigned length) OVERRIDE;
     virtual void abort() OVERRIDE;
     virtual void removedFromMediaSource() OVERRIDE;
     virtual MediaPlayer::ReadyState readyState() const OVERRIDE;
     virtual void setReadyState(MediaPlayer::ReadyState) OVERRIDE;
+    virtual void evictCodedFrames() OVERRIDE;
+    virtual bool isFull() OVERRIDE;
 
     void didReceiveInitializationSegment(const MockInitializationBox&);
     void didReceiveSample(const MockSampleBox&);

@@ -106,11 +106,12 @@ void MockSourceBufferPrivate::setClient(SourceBufferPrivateClient* client)
     m_client = client;
 }
 
-void MockSourceBufferPrivate::append(const unsigned char* data, unsigned length)
+SourceBufferPrivate::AppendResult MockSourceBufferPrivate::append(const unsigned char* data, unsigned length)
 {
     m_inputBuffer.append(data, length);
+    AppendResult result = AppendSucceeded;
 
-    while (m_inputBuffer.size()) {
+    while (m_inputBuffer.size() && result == AppendSucceeded) {
         RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(m_inputBuffer.data(), m_inputBuffer.size());
         size_t boxLength = MockBox::peekLength(buffer.get());
         if (boxLength > buffer->byteLength())
@@ -120,15 +121,16 @@ void MockSourceBufferPrivate::append(const unsigned char* data, unsigned length)
         if (type == MockInitializationBox::type()) {
             MockInitializationBox initBox = MockInitializationBox(buffer.get());
             didReceiveInitializationSegment(initBox);
-        }
-
-        if (type == MockSampleBox::type()) {
+        } else if (type == MockSampleBox::type()) {
             MockSampleBox sampleBox = MockSampleBox(buffer.get());
             didReceiveSample(sampleBox);
-        }
+        } else
+            result = ParsingFailed;
 
         m_inputBuffer.remove(0, boxLength);
     }
+
+    return result;
 }
 
 void MockSourceBufferPrivate::didReceiveInitializationSegment(const MockInitializationBox& initBox)
@@ -188,6 +190,16 @@ MediaPlayer::ReadyState MockSourceBufferPrivate::readyState() const
 void MockSourceBufferPrivate::setReadyState(MediaPlayer::ReadyState readyState)
 {
     m_parent->player()->setReadyState(readyState);
+}
+
+void MockSourceBufferPrivate::evictCodedFrames()
+{
+    // No-op.
+}
+
+bool MockSourceBufferPrivate::isFull()
+{
+    return false;
 }
 
 bool MockSourceBufferPrivate::hasVideo() const

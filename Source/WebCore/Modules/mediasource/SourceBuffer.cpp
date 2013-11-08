@@ -35,6 +35,7 @@
 
 #include "AudioTrackList.h"
 #include "Event.h"
+#include "ExceptionCodePlaceholder.h"
 #include "GenericEventQueue.h"
 #include "HTMLMediaElement.h"
 #include "InbandTextTrack.h"
@@ -272,28 +273,42 @@ void SourceBuffer::appendBufferInternal(unsigned char* data, unsigned size, Exce
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#widl-SourceBuffer-appendBuffer-void-ArrayBufferView-data
 
     // Step 1 is enforced by the caller.
-    // 2. If this object has been removed from the sourceBuffers attribute of the parent media source then throw an INVALID_STATE_ERR exception and abort these steps.
-    // 3. If the updating attribute equals true, then throw an INVALID_STATE_ERR exception and abort these steps.
+    // 2. Run the prepare append algorithm.
+    // Section 3.5.4 Prepare AppendAlgorithm
+
+    // 1. If the SourceBuffer has been removed from the sourceBuffers attribute of the parent media source
+    // then throw an INVALID_STATE_ERR exception and abort these steps.
+    // 2. If the updating attribute equals true, then throw an INVALID_STATE_ERR exception and abort these steps.
     if (isRemoved() || m_updating) {
         ec = INVALID_STATE_ERR;
         return;
     }
 
-    // 4. If the readyState attribute of the parent media source is in the "ended" state then run the following steps: ...
+    // 3. If the readyState attribute of the parent media source is in the "ended" state then run the following steps:
+    // 3.1. Set the readyState attribute of the parent media source to "open"
+    // 3.2. Queue a task to fire a simple event named sourceopen at the parent media source .
     m_source->openIfInEndedState();
 
-    // Steps 5-6
+    // 4. Run the coded frame eviction algorithm.
+    m_private->evictCodedFrames();
 
-    // 7. Add data to the end of the input buffer.
+    // 5. If the buffer full flag equals true, then throw a QUOTA_EXCEEDED_ERR exception and abort these step.
+    if (m_private->isFull()) {
+        ec = QUOTA_EXCEEDED_ERR;
+        return;
+    }
+
+    // NOTE: Return to 3.2 appendBuffer()
+    // 3. Add data to the end of the input buffer.
     m_pendingAppendData.append(data, size);
 
-    // 8. Set the updating attribute to true.
+    // 4. Set the updating attribute to true.
     m_updating = true;
 
-    // 9. Queue a task to fire a simple event named updatestart at this SourceBuffer object.
+    // 5. Queue a task to fire a simple event named updatestart at this SourceBuffer object.
     scheduleEvent(eventNames().updatestartEvent);
 
-    // 10. Asynchronously run the buffer append algorithm.
+    // 6. Asynchronously run the buffer append algorithm.
     m_appendBufferTimer.startOneShot(0);
 }
 
@@ -301,11 +316,10 @@ void SourceBuffer::appendBufferTimerFired(Timer<SourceBuffer>*)
 {
     ASSERT(m_updating);
 
-    // Section 3.5.4 Buffer Append Algorithm
+    // Section 3.5.5 Buffer Append Algorithm
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#sourcebuffer-buffer-append
 
     // 1. Run the segment parser loop algorithm.
-    // Step 2 doesn't apply since we run Step 1 synchronously here.
     size_t appendSize = m_pendingAppendData.size();
     if (!appendSize) {
         // Resize buffer for 0 byte appends so we always have a valid pointer.
@@ -313,11 +327,40 @@ void SourceBuffer::appendBufferTimerFired(Timer<SourceBuffer>*)
         // that it can clear its end of stream state if necessary.
         m_pendingAppendData.resize(1);
     }
-    m_private->append(m_pendingAppendData.data(), appendSize);
+
+    // Section 3.5.1 Segment Parser Loop
+    // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#sourcebuffer-segment-parser-loop
+    // When the segment parser loop algorithm is invoked, run the following steps:
+
+    SourceBufferPrivate::AppendResult result = SourceBufferPrivate::AppendSucceeded;
+    do {
+        // 1. Loop Top: If the input buffer is empty, then jump to the need more data step below.
+        if (!m_pendingAppendData.size())
+            break;
+
+        result = m_private->append(m_pendingAppendData.data(), appendSize);
+        m_pendingAppendData.clear();
+
+        // 2. If the input buffer contains bytes that violate the SourceBuffer byte stream format specification,
+        // then run the end of stream algorithm with the error parameter set to "decode" and abort this algorithm.
+        if (result == SourceBufferPrivate::ParsingFailed) {
+            m_source->endOfStream(decodeError(), IgnorableExceptionCode());
+            break;
+        }
+
+        // NOTE: Steps 3 - 6 enforced by sourceBufferPrivateDidReceiveInitializationSegment() and
+        // sourceBufferPrivateDidReceiveSample below.
+
+        // 7. Need more data: Return control to the calling algorithm.
+    } while (0);
+
+    // NOTE: return to Section 3.5.5
+    // 2.If the segment parser loop algorithm in the previous step was aborted, then abort this algorithm.
+    if (result != SourceBufferPrivate::AppendSucceeded)
+        return;
 
     // 3. Set the updating attribute to false.
     m_updating = false;
-    m_pendingAppendData.clear();
 
     // 4. Queue a task to fire a simple event named update at this SourceBuffer object.
     scheduleEvent(eventNames().updateEvent);
@@ -389,8 +432,6 @@ void SourceBuffer::sourceBufferPrivateDidEndStream(SourceBufferPrivate*, const W
 
 void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBufferPrivate*, const InitializationSegment& segment)
 {
-    m_appendState = ParsingInitSegment;
-
     // 3.5.7 Initialization Segment Received
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#sourcebuffer-init-segment-received
     // 1. Update the duration attribute if it currently equals NaN:

@@ -1,3 +1,14 @@
+2013-10-30  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Bring SourceBuffer.append up to the most recent spec.
+        https://bugs.webkit.org/show_bug.cgi?id=123377
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-append-failed-expected.txt: Added.
+        * media/media-source/media-source-append-failed.html: Added.
+        * media/media-source/mock-media-source.js:
+
 2013-11-08  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening
