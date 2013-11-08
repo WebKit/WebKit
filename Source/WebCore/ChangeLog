@@ -1,3 +1,31 @@
+2013-11-08  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Use references instead of pointers to RenderBlockFlow in FloatingObjects and ComputeFloatOffsetAdapter
+        https://bugs.webkit.org/show_bug.cgi?id=124074
+
+        Reviewed by Sam Weinig.
+
+        Just a straightforward conversion from const pointers to const references.
+
+        Also, remove unneeded argument from FloatingObjects constructor.
+
+        No new tests, no behavior change.
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::ComputeFloatOffsetAdapter::ComputeFloatOffsetAdapter):
+        (WebCore::FloatingObjects::findNextFloatLogicalBottomBelow):
+        (WebCore::FloatingObjects::findNextFloatLogicalBottomBelowForBlock):
+        (WebCore::FloatingObjects::FloatingObjects):
+        (WebCore::FloatingObjects::clearLineBoxTreePointers):
+        (WebCore::FloatingObjects::computePlacedFloatsTree):
+        (WebCore::shapeInfoForFloat):
+        (WebCore::::updateOffsetIfNeeded):
+        (WebCore::::collectIfNeeded):
+        (WebCore::::heightRemaining):
+        * rendering/FloatingObjects.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::createFloatingObjects):
+
 2013-11-08  Sam Weinig  <sam@webkit.org>
 
         Teach SubframeLoader a bit about references

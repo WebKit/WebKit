@@ -124,7 +124,7 @@ typedef HashMap<RenderBox*, std::unique_ptr<FloatingObject>> RendererToFloatInfo
 class FloatingObjects {
     WTF_MAKE_NONCOPYABLE(FloatingObjects); WTF_MAKE_FAST_ALLOCATED;
 public:
-    FloatingObjects(const RenderBlockFlow*, bool horizontalWritingMode);
+    FloatingObjects(const RenderBlockFlow&);
     ~FloatingObjects();
 
     void clear();
@@ -161,7 +161,7 @@ private:
     unsigned m_leftObjectsCount;
     unsigned m_rightObjectsCount;
     bool m_horizontalWritingMode;
-    const RenderBlockFlow* m_renderer;
+    const RenderBlockFlow& m_renderer;
 };
 
 #ifndef NDEBUG
