@@ -1802,11 +1802,9 @@ SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
 extern "C" {
     __declspec(naked) EncodedJSValue HOST_CALL_RETURN_VALUE_OPTION getHostCallReturnValue()
     {
-        __asm {
-            mov edi, [edi + 0]; // CallerFrameAndPC::callerFrame
-            mov [esp + 4], edi;
-            jmp getHostCallReturnValueWithExecState
-        }
+        __asm mov ebp, [ebp + 0]; // CallerFrameAndPC::callerFrame
+        __asm mov [esp + 4], ebp;
+        __asm jmp getHostCallReturnValueWithExecState
     }
 }
 #endif
