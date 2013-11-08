@@ -1,3 +1,14 @@
+2013-11-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: remove -webkit-min and -webkit-max from CSS completions
+        https://bugs.webkit.org/show_bug.cgi?id=124072
+
+        Reviewed by Timothy Hatcher.
+
+        -webkit-min and -webkit-max are not implemented in WebCore, despite mentions of it.
+
+        * UserInterface/CSSKeywordCompletions.js:
+
 2013-11-07  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: CSS Regions: Use a Map object to store the ContentFlows

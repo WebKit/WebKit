@@ -157,7 +157,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "baseline", "sub", "super"
     ],
     "border-bottom-width": [
-        "medium", "thick", "thin", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "medium", "thick", "thin", "calc()", "-webkit-calc()"
     ],
     "margin-top-collapse": [
         "collapse", "separate", "discard"
@@ -173,7 +173,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "default", "srgb"
     ],
     "border-left-width": [
-        "medium", "thick", "thin", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "medium", "thick", "thin", "calc()", "-webkit-calc()"
     ],
     "-webkit-writing-mode": [
         "lr", "rl", "tb", "lr-tb", "rl-tb", "tb-rl", "horizontal-tb", "vertical-rl", "vertical-lr", "horizontal-bt"
@@ -200,7 +200,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "collapse", "separate"
     ],
     "border-top-width": [
-        "medium", "thick", "thin", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "medium", "thick", "thin", "calc()", "-webkit-calc()"
     ],
     "outline-color": [
         "invert", "-webkit-focus-ring-color"
@@ -216,7 +216,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "-webkit-grabbing", "url()", "-webkit-image-set()"
     ],
     "border-width": [
-        "medium", "thick", "thin", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "medium", "thick", "thin", "calc()", "-webkit-calc()"
     ],
     "size": [
         "a3", "a4", "a5", "b4", "b5", "landscape", "ledger", "legal", "letter", "portrait"
@@ -279,7 +279,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "collapse", "separate", "discard"
     ],
     "text-overline-width": [
-        "normal", "medium", "auto", "thick", "thin", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "normal", "medium", "auto", "thick", "thin", "calc()", "-webkit-calc()"
     ],
     "text-transform": [
         "none", "capitalize", "uppercase", "lowercase"
@@ -353,7 +353,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "ideographic", "alphabetic", "hanging", "mathematical"
     ],
     "outline-width": [
-        "medium", "thick", "thin", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "medium", "thick", "thin", "calc()", "-webkit-calc()"
     ],
     "text-line-through-width": [
         "normal", "medium", "auto", "thick", "thin"
@@ -455,40 +455,40 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "auto"
     ],
     "width": [
-        "intrinsic", "min-intrinsic", "-webkit-min-content", "-webkit-max-content", "-webkit-fill-available", "-webkit-fit-content", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "intrinsic", "min-intrinsic", "-webkit-min-content", "-webkit-max-content", "-webkit-fill-available", "-webkit-fit-content", "calc()", "-webkit-calc()"
     ],
     "height": [
-        "intrinsic", "min-intrinsic", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "intrinsic", "min-intrinsic", "calc()", "-webkit-calc()"
     ],
     "max-width": [
-        "none", "intrinsic", "min-intrinsic", "-webkit-min-content", "-webkit-max-content", "-webkit-fill-available", "-webkit-fit-content", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "none", "intrinsic", "min-intrinsic", "-webkit-min-content", "-webkit-max-content", "-webkit-fill-available", "-webkit-fit-content", "calc()", "-webkit-calc()"
     ],
     "min-width": [
-        "intrinsic", "min-intrinsic", "-webkit-min-content", "-webkit-max-content", "-webkit-fill-available", "-webkit-fit-content", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "intrinsic", "min-intrinsic", "-webkit-min-content", "-webkit-max-content", "-webkit-fill-available", "-webkit-fit-content", "calc()", "-webkit-calc()"
     ],
     "max-height": [
-        "none", "intrinsic", "min-intrinsic", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "none", "intrinsic", "min-intrinsic", "calc()", "-webkit-calc()"
     ],
     "min-height": [
-        "intrinsic", "min-intrinsic", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "intrinsic", "min-intrinsic", "calc()", "-webkit-calc()"
     ],
     "-webkit-logical-width": [
-        "intrinsic", "min-intrinsic", "-webkit-min-content", "-webkit-max-content", "-webkit-fill-available", "-webkit-fit-content", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "intrinsic", "min-intrinsic", "-webkit-min-content", "-webkit-max-content", "-webkit-fill-available", "-webkit-fit-content", "calc()", "-webkit-calc()"
     ],
     "-webkit-logical-height": [
-        "intrinsic", "min-intrinsic", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "intrinsic", "min-intrinsic", "calc()", "-webkit-calc()"
     ],
     "-webkit-max-logical-width": [
-        "none", "intrinsic", "min-intrinsic", "-webkit-min-content", "-webkit-max-content", "-webkit-fill-available", "-webkit-fit-content", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "none", "intrinsic", "min-intrinsic", "-webkit-min-content", "-webkit-max-content", "-webkit-fill-available", "-webkit-fit-content", "calc()", "-webkit-calc()"
     ],
     "-webkit-min-logical-width": [
-        "intrinsic", "min-intrinsic", "-webkit-min-content", "-webkit-max-content", "-webkit-fill-available", "-webkit-fit-content", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "intrinsic", "min-intrinsic", "-webkit-min-content", "-webkit-max-content", "-webkit-fill-available", "-webkit-fit-content", "calc()", "-webkit-calc()"
     ],
     "-webkit-max-logical-height": [
-        "none", "intrinsic", "min-intrinsic", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "none", "intrinsic", "min-intrinsic", "calc()", "-webkit-calc()"
     ],
     "-webkit-min-logical-height": [
-        "intrinsic", "min-intrinsic", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "intrinsic", "min-intrinsic", "calc()", "-webkit-calc()"
     ],
     "empty-cells": [
         "hide", "show"
@@ -497,10 +497,10 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "none", "all", "auto", "visible", "visiblepainted", "visiblefill", "visiblestroke", "painted", "fill", "stroke"
     ],
     "letter-spacing": [
-        "normal", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "normal", "calc()", "-webkit-calc()"
     ],
     "word-spacing": [
-        "normal", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "normal", "calc()", "-webkit-calc()"
     ],
     "background-clip": [
         "border-box", "content-box", "padding-box"
@@ -531,7 +531,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "normal", "break-all", "break-word"
     ],
     "text-underline-width": [
-        "normal", "medium", "auto", "thick", "thin", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "normal", "medium", "auto", "thick", "thin", "calc()", "-webkit-calc()"
     ],
     "text-indent": [
         "-webkit-each-line", "-webkit-hanging"
@@ -749,7 +749,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "ease", "linear", "ease-in", "ease-out", "ease-in-out", "step-start", "step-end", "steps()", "cubic-bezier()"
     ],
     "-webkit-column-span": [
-        "all", "none", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "all", "none", "calc()", "-webkit-calc()"
     ],
     "-webkit-region-break-after": [
         "auto", "always", "avoid", "left", "right"
@@ -812,22 +812,22 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "read-only", "read-write", "read-write-plaintext-only"
     ],
     "-webkit-text-stroke-width": [
-        "medium", "thick", "thin", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "medium", "thick", "thin", "calc()", "-webkit-calc()"
     ],
     "-webkit-border-start-width": [
-        "medium", "thick", "thin", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "medium", "thick", "thin", "calc()", "-webkit-calc()"
     ],
     "-webkit-border-end-width": [
-        "medium", "thick", "thin", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "medium", "thick", "thin", "calc()", "-webkit-calc()"
     ],
     "-webkit-border-before-width": [
-        "medium", "thick", "thin", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "medium", "thick", "thin", "calc()", "-webkit-calc()"
     ],
     "-webkit-border-after-width": [
-        "medium", "thick", "thin", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "medium", "thick", "thin", "calc()", "-webkit-calc()"
     ],
     "-webkit-column-rule-width": [
-        "medium", "thick", "thin", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "medium", "thick", "thin", "calc()", "-webkit-calc()"
     ],
     "-webkit-aspect-ratio": [
         "none"
@@ -839,16 +839,16 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "none"
     ],
     "-webkit-column-count": [
-        "auto", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "auto", "calc()", "-webkit-calc()"
     ],
     "-webkit-column-gap": [
-        "normal", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "normal", "calc()", "-webkit-calc()"
     ],
     "-webkit-column-axis": [
         "horizontal", "vertical", "auto"
     ],
     "-webkit-column-width": [
-        "auto", "calc()", "-webkit-calc()", "-webkit-min()", "-webkit-max()"
+        "auto", "calc()", "-webkit-calc()"
     ],
     "-webkit-highlight": [
         "none"
