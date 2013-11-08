@@ -116,10 +116,12 @@ public:
     SendFunctor()
         : m_hasSkippedFirstFrame(false)
         , m_line(0)
+        , m_column(0)
     {
     }
 
     unsigned line() const { return m_line; }
+    unsigned column() const { return m_column; }
     String url() const { return m_url; }
 
     StackVisitor::Status operator()(StackVisitor& visitor)
@@ -130,9 +132,10 @@ public:
         }
 
         unsigned line = 0;
-        unsigned unusedColumn = 0;
-        visitor->computeLineAndColumn(line, unusedColumn);
+        unsigned column = 0;
+        visitor->computeLineAndColumn(line, column);
         m_line = line;
+        m_column = column;
         m_url = visitor->sourceURL();
         return StackVisitor::Done;
     }
@@ -140,6 +143,7 @@ public:
 private:
     bool m_hasSkippedFirstFrame;
     unsigned m_line;
+    unsigned m_column;
     String m_url;
 };
 
@@ -167,7 +171,7 @@ JSValue JSXMLHttpRequest::send(ExecState* exec)
 
     SendFunctor functor;
     exec->iterate(functor);
-    impl().setLastSendLineNumber(functor.line());
+    impl().setLastSendLineAndColumnNumber(functor.line(), functor.column());
     impl().setLastSendURL(functor.url());
     setDOMException(exec, ec);
     return jsUndefined();

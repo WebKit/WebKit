@@ -1,3 +1,34 @@
+2013-11-08  László Langó  <lango@inf.u-szeged.hu>
+
+        InspectorConsoleAgent::didFinishXHRLoading ConsoleMessage should include a column number
+        https://bugs.webkit.org/show_bug.cgi?id=114316
+
+        Reviewed by Timothy Hatcher.
+
+        InspectorConsoleAgent::didFinishXHRLoading creates a ConsoleMessage with a line number, 
+        but it should also include a column number. It looks like ultimately the line number comes from
+        JSXMLHttpRequest::send, it should also be possible to get the column number at the time.
+        The column number would be needed by the Web Inspector to jump to the proper place in source code 
+        to show where the XHR originated from.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::SendFunctor::SendFunctor):
+        (WebCore::SendFunctor::column):
+        (WebCore::SendFunctor::operator()):
+        (WebCore::JSXMLHttpRequest::send):
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::didFinishXHRLoading):
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didFinishXHRLoadingImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didFinishXHRLoading):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::setLastSendLineAndColumnNumber):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        * xml/XMLHttpRequest.h:
+
 2013-11-08  Simon Fraser  <simon.fraser@apple.com>
 
         Left sidebar on cubic-bezier.com flickers

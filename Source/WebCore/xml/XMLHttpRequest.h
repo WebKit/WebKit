@@ -137,7 +137,7 @@ public:
     JSC::ArrayBuffer* responseArrayBuffer();
     JSC::ArrayBuffer* optionalResponseArrayBuffer() const { return m_responseArrayBuffer.get(); }
 
-    void setLastSendLineNumber(unsigned lineNumber) { m_lastSendLineNumber = lineNumber; }
+    void setLastSendLineAndColumnNumber(unsigned lineNumber, unsigned columnNumber);
     void setLastSendURL(const String& url) { m_lastSendURL = url; }
 
     XMLHttpRequestUpload* upload();
@@ -249,6 +249,7 @@ private:
     long long m_receivedLength;
 
     unsigned m_lastSendLineNumber;
+    unsigned m_lastSendColumnNumber;
     String m_lastSendURL;
     ExceptionCode m_exceptionCode;
 

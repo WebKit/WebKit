@@ -188,6 +188,7 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext& context)
     , m_sameOriginRequest(true)
     , m_receivedLength(0)
     , m_lastSendLineNumber(0)
+    , m_lastSendColumnNumber(0)
     , m_exceptionCode(0)
     , m_progressEventThrottle(this)
     , m_responseTypeCode(ResponseTypeDefault)
@@ -400,6 +401,12 @@ String XMLHttpRequest::responseType()
         return "arraybuffer";
     }
     return "";
+}
+
+void XMLHttpRequest::setLastSendLineAndColumnNumber(unsigned lineNumber, unsigned columnNumber)
+{
+    m_lastSendLineNumber = lineNumber;
+    m_lastSendColumnNumber = columnNumber;
 }
 
 XMLHttpRequestUpload* XMLHttpRequest::upload()
@@ -1155,7 +1162,7 @@ void XMLHttpRequest::didFinishLoading(unsigned long identifier, double)
 
     m_responseBuilder.shrinkToFit();
 
-    InspectorInstrumentation::didFinishXHRLoading(scriptExecutionContext(), this, identifier, m_responseBuilder.toStringPreserveCapacity(), m_url, m_lastSendURL, m_lastSendLineNumber);
+    InspectorInstrumentation::didFinishXHRLoading(scriptExecutionContext(), this, identifier, m_responseBuilder.toStringPreserveCapacity(), m_url, m_lastSendURL, m_lastSendLineNumber, m_lastSendColumnNumber);
 
     bool hadLoader = m_loader;
     m_loader = 0;

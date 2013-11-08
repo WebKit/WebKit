@@ -205,7 +205,7 @@ public:
     static void documentThreadableLoaderStartedLoadingForClient(ScriptExecutionContext*, unsigned long identifier, ThreadableLoaderClient*);
     static void willLoadXHR(ScriptExecutionContext*, ThreadableLoaderClient*, const String&, const URL&, bool, PassRefPtr<FormData>, const HTTPHeaderMap&, bool);
     static void didFailXHRLoading(ScriptExecutionContext*, ThreadableLoaderClient*);
-    static void didFinishXHRLoading(ScriptExecutionContext*, ThreadableLoaderClient*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
+    static void didFinishXHRLoading(ScriptExecutionContext*, ThreadableLoaderClient*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber, unsigned sendColumnNumber);
     static void didReceiveXHRResponse(ScriptExecutionContext*, unsigned long identifier);
     static void willLoadXHRSynchronously(ScriptExecutionContext*);
     static void didLoadXHRSynchronously(ScriptExecutionContext*);
@@ -411,7 +411,7 @@ private:
     static void documentThreadableLoaderStartedLoadingForClientImpl(InstrumentingAgents*, unsigned long identifier, ThreadableLoaderClient*);
     static void willLoadXHRImpl(InstrumentingAgents*, ThreadableLoaderClient*, const String&, const URL&, bool, PassRefPtr<FormData>, const HTTPHeaderMap&, bool);
     static void didFailXHRLoadingImpl(InstrumentingAgents*, ThreadableLoaderClient*);
-    static void didFinishXHRLoadingImpl(InstrumentingAgents*, ThreadableLoaderClient*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
+    static void didFinishXHRLoadingImpl(InstrumentingAgents*, ThreadableLoaderClient*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber, unsigned sendColumnNumber);
     static void didReceiveXHRResponseImpl(InstrumentingAgents*, unsigned long identifier);
     static void willLoadXHRSynchronouslyImpl(InstrumentingAgents*);
     static void didLoadXHRSynchronouslyImpl(InstrumentingAgents*);
@@ -1571,11 +1571,11 @@ inline void InspectorInstrumentation::didFailXHRLoading(ScriptExecutionContext* 
 }
 
 
-inline void InspectorInstrumentation::didFinishXHRLoading(ScriptExecutionContext* context, ThreadableLoaderClient* client, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber)
+inline void InspectorInstrumentation::didFinishXHRLoading(ScriptExecutionContext* context, ThreadableLoaderClient* client, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber, unsigned sendColumnNumber)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        didFinishXHRLoadingImpl(instrumentingAgents, client, identifier, sourceString, url, sendURL, sendLineNumber);
+        didFinishXHRLoadingImpl(instrumentingAgents, client, identifier, sourceString, url, sendURL, sendLineNumber, sendColumnNumber);
 #else
     UNUSED_PARAM(context);
     UNUSED_PARAM(client);

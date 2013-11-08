@@ -245,14 +245,13 @@ void InspectorConsoleAgent::frameWindowDiscarded(DOMWindow* window)
     m_injectedScriptManager->discardInjectedScriptsFor(window);
 }
 
-void InspectorConsoleAgent::didFinishXHRLoading(unsigned long requestIdentifier, const String& url, const String& sendURL, unsigned sendLineNumber)
+void InspectorConsoleAgent::didFinishXHRLoading(unsigned long requestIdentifier, const String& url, const String& sendURL, unsigned sendLineNumber, unsigned sendColumnNumber)
 {
     if (!developerExtrasEnabled())
         return;
     if (m_frontend && m_monitoringXHREnabled) {
         String message = "XHR finished loading: \"" + url + "\".";
-        // FIXME: <http://webkit.org/b/114316> InspectorConsoleAgent::didFinishXHRLoading ConsoleMessage should include a column number
-        addMessageToConsole(NetworkMessageSource, LogMessageType, DebugMessageLevel, message, sendURL, sendLineNumber, 0, 0, requestIdentifier);
+        addMessageToConsole(NetworkMessageSource, LogMessageType, DebugMessageLevel, message, sendURL, sendLineNumber, sendColumnNumber, 0, requestIdentifier);
     }
 }
 

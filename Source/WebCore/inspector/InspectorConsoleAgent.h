@@ -82,7 +82,7 @@ public:
 
     void frameWindowDiscarded(DOMWindow*);
 
-    void didFinishXHRLoading(unsigned long requestIdentifier, const String& url, const String& sendURL, unsigned sendLineNumber);
+    void didFinishXHRLoading(unsigned long requestIdentifier, const String& url, const String& sendURL, unsigned sendLineNumber, unsigned sendColumnNumber);
     void didReceiveResponse(unsigned long requestIdentifier, const ResourceResponse&);
     void didFailLoading(unsigned long requestIdentifier, const ResourceError&);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
