@@ -145,6 +145,7 @@ static void returnFromJavaScript(CCallHelpers& jit)
 #   define PRESERVED_S3_OFFSET         76
 #   define PRESERVED_S4_OFFSET         80
 #   define PRESERVED_RETURN_ADDRESS_OFFSET 84
+#   define PRESERVED_FP_OFFSET         88
 #   define STACK_LENGTH               112
 
     jit.loadPtr(CCallHelpers::Address(MIPSRegisters::sp, PRESERVED_S0_OFFSET), MIPSRegisters::s0);
@@ -153,6 +154,7 @@ static void returnFromJavaScript(CCallHelpers& jit)
     jit.loadPtr(CCallHelpers::Address(MIPSRegisters::sp, PRESERVED_S3_OFFSET), MIPSRegisters::s3);
     jit.loadPtr(CCallHelpers::Address(MIPSRegisters::sp, PRESERVED_S4_OFFSET), MIPSRegisters::s4);
     jit.loadPtr(CCallHelpers::Address(MIPSRegisters::sp, PRESERVED_RETURN_ADDRESS_OFFSET), MIPSRegisters::ra);
+    jit.loadPtr(CCallHelpers::Address(MIPSRegisters::sp, PRESERVED_FP_OFFSET), MIPSRegisters::fp);
     jit.addPtr(CCallHelpers::TrustedImm32(STACK_LENGTH), MIPSRegisters::sp);
 #elif CPU(SH4)
 #   define EXTRA_STACK_SIZE 20
@@ -260,6 +262,7 @@ MacroAssemblerCodeRef callToJavaScript(VM* vm)
 #   define PREVIOUS_CALLFRAME_REG GPRInfo::nonArgGPR0
 #elif CPU(MIPS)
     jit.subPtr(CCallHelpers::TrustedImm32(STACK_LENGTH), MIPSRegisters::sp);
+    jit.storePtr(MIPSRegisters::fp, CCallHelpers::Address(MIPSRegisters::sp, PRESERVED_FP_OFFSET));
     jit.storePtr(MIPSRegisters::ra, CCallHelpers::Address(MIPSRegisters::sp, PRESERVED_RETURN_ADDRESS_OFFSET));
     jit.storePtr(MIPSRegisters::s4, CCallHelpers::Address(MIPSRegisters::sp, PRESERVED_S4_OFFSET));
     jit.storePtr(MIPSRegisters::s3, CCallHelpers::Address(MIPSRegisters::sp, PRESERVED_S3_OFFSET));

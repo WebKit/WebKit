@@ -1,3 +1,15 @@
+2013-11-08  Julien Brianceau  <jbriance@cisco.com>
+
+        REGRESSION(r158883): Fix crashes for MIPS architecture.
+        https://bugs.webkit.org/show_bug.cgi?id=124044
+
+        Reviewed by Michael Saboff.
+
+        * jit/JITOperations.cpp: Frame pointer register is fp instead of s0 since r158883 for MIPS.
+        * jit/ThunkGenerators.cpp: Save and restore the new frame pointer register.
+        (JSC::returnFromJavaScript):
+        (JSC::callToJavaScript):
+
 2013-11-08  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] JavaScript crash in getHostCallReturnValue.

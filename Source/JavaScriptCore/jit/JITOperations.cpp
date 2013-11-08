@@ -1778,8 +1778,8 @@ asm (
 HIDE_SYMBOL(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     LOAD_FUNCTION_TO_T9(getHostCallReturnValueWithExecState)
-    "lw $s0, 0($s0)" "\n" // CallerFrameAndPC::callerFrame
-    "move $a0, $s0" "\n"
+    "lw $fp, 0($fp)" "\n" // CallerFrameAndPC::callerFrame
+    "move $a0, $fp" "\n"
     "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
 
