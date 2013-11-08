@@ -1,3 +1,12 @@
+2013-11-08  Chris Fleizach  <cfleizach@apple.com>
+
+        Fix up failing layout tests that in branch due to recent accessibility patches.
+
+        Unreviewed.
+
+        * media/track/track-in-band-mode-expected.txt:
+        * platform/mac/accessibility/listitem-title-expected.txt:
+
 2013-11-07  Chris Fleizach  <cfleizach@apple.com>
 
         Fix up failing layout tests that referenced wrong paths (due to ToT changes).
