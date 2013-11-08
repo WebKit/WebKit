@@ -1,5 +1,17 @@
 2013-11-07  Chris Fleizach  <cfleizach@apple.com>
 
+        Fix up failing layout tests that referenced wrong paths (due to ToT changes).
+
+        Unreviewed.
+
+        * accessibility/negative-tabindex-does-not-expose-label.html:
+        * media/track/track-cue-rendering-mode-changed-expected.txt:
+        * platform/mac/accessibility/native-list-item-should-not-expose-label.html:
+        * platform/mac/accessibility/object-replacement-with-no-rendered-children-at-node-start.html:
+        * platform/mac/accessibility/object-replacement-with-rendered-children-at-node-start.html:
+
+2013-11-07  Chris Fleizach  <cfleizach@apple.com>
+
         AX: Audio and Video attachments are not output to VoiceOver
         https://bugs.webkit.org/show_bug.cgi?id=123479
 
