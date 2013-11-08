@@ -41,7 +41,6 @@ class ScrollingStateScrollingNode;
 
 class ScrollingTreeNode {
 public:
-    explicit ScrollingTreeNode(ScrollingTree*, ScrollingNodeID);
     virtual ~ScrollingTreeNode();
 
     virtual void updateBeforeChildren(ScrollingStateNode*) = 0;
@@ -58,13 +57,14 @@ public:
     void removeChild(ScrollingTreeNode*);
 
 protected:
-    ScrollingTree* scrollingTree() const { return m_scrollingTree; }
+    ScrollingTreeNode(ScrollingTree&, ScrollingNodeID);
+    ScrollingTree& scrollingTree() const { return m_scrollingTree; }
 
     typedef Vector<OwnPtr<ScrollingTreeNode>> ScrollingTreeChildrenVector;
     OwnPtr<ScrollingTreeChildrenVector> m_children;
 
 private:
-    ScrollingTree* m_scrollingTree;
+    ScrollingTree& m_scrollingTree;
 
     ScrollingNodeID m_nodeID;
 

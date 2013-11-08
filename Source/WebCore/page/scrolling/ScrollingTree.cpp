@@ -174,18 +174,18 @@ void ScrollingTree::updateTreeFromStateNode(ScrollingStateNode* stateNode)
             // This is the root node. Nuke the node map.
             m_nodeMap.clear();
 
-            m_rootNode = ScrollingTreeScrollingNode::create(this, nodeID);
+            m_rootNode = ScrollingTreeScrollingNode::create(*this, nodeID);
             m_nodeMap.set(nodeID, m_rootNode.get());
             m_rootNode->updateBeforeChildren(stateNode);
             node = m_rootNode.get();
         } else {
             OwnPtr<ScrollingTreeNode> newNode;
             if (stateNode->isScrollingNode())
-                newNode = ScrollingTreeScrollingNode::create(this, nodeID);
+                newNode = ScrollingTreeScrollingNode::create(*this, nodeID);
             else if (stateNode->isFixedNode())
-                newNode = ScrollingTreeFixedNode::create(this, nodeID);
+                newNode = ScrollingTreeFixedNode::create(*this, nodeID);
             else if (stateNode->isStickyNode())
-                newNode = ScrollingTreeStickyNode::create(this, nodeID);
+                newNode = ScrollingTreeStickyNode::create(*this, nodeID);
             else
                 ASSERT_NOT_REACHED();
 

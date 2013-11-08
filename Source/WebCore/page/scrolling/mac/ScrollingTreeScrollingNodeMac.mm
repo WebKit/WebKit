@@ -50,12 +50,12 @@ static void logThreadedScrollingMode(unsigned mainThreadScrollingReasons);
 static void logWheelEventHandlerCountChanged(unsigned);
 
 
-PassOwnPtr<ScrollingTreeScrollingNode> ScrollingTreeScrollingNode::create(ScrollingTree* scrollingTree, ScrollingNodeID nodeID)
+PassOwnPtr<ScrollingTreeScrollingNode> ScrollingTreeScrollingNode::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
 {
     return adoptPtr(new ScrollingTreeScrollingNodeMac(scrollingTree, nodeID));
 }
 
-ScrollingTreeScrollingNodeMac::ScrollingTreeScrollingNodeMac(ScrollingTree* scrollingTree, ScrollingNodeID nodeID)
+ScrollingTreeScrollingNodeMac::ScrollingTreeScrollingNodeMac(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
     : ScrollingTreeScrollingNode(scrollingTree, nodeID)
     , m_scrollElasticityController(this)
     , m_verticalScrollbarPainter(0)
@@ -106,12 +106,12 @@ void ScrollingTreeScrollingNodeMac::updateBeforeChildren(ScrollingStateNode* sta
             }
         }
 
-        if (scrollingTree()->scrollingPerformanceLoggingEnabled())
+        if (scrollingTree().scrollingPerformanceLoggingEnabled())
             logThreadedScrollingMode(mainThreadScrollingReasons);
     }
 
     if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::WheelEventHandlerCount)) {
-        if (scrollingTree()->scrollingPerformanceLoggingEnabled())
+        if (scrollingTree().scrollingPerformanceLoggingEnabled())
             logWheelEventHandlerCountChanged(scrollingStateNode->wheelEventHandlerCount());
     }
 }
@@ -136,7 +136,7 @@ void ScrollingTreeScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& w
         return;
 
     m_scrollElasticityController.handleWheelEvent(wheelEvent);
-    scrollingTree()->handleWheelEventPhase(wheelEvent.phase());
+    scrollingTree().handleWheelEventPhase(wheelEvent.phase());
 }
 
 bool ScrollingTreeScrollingNodeMac::allowsHorizontalStretching()
@@ -183,11 +183,11 @@ IntSize ScrollingTreeScrollingNodeMac::stretchAmount()
     else if (scrollPosition().x() > maximumScrollPosition().x())
         stretch.setWidth(scrollPosition().x() - maximumScrollPosition().x());
 
-    if (scrollingTree()->rootNode() == this) {
+    if (scrollingTree().rootNode() == this) {
         if (stretch.isZero())
-            scrollingTree()->setMainFrameIsRubberBanding(false);
+            scrollingTree().setMainFrameIsRubberBanding(false);
         else
-            scrollingTree()->setMainFrameIsRubberBanding(true);
+            scrollingTree().setMainFrameIsRubberBanding(true);
     }
 
     return stretch;
@@ -268,7 +268,7 @@ void ScrollingTreeScrollingNodeMac::stopSnapRubberbandTimer()
     if (!m_snapRubberbandTimer)
         return;
 
-    scrollingTree()->setMainFrameIsRubberBanding(false);
+    scrollingTree().setMainFrameIsRubberBanding(false);
 
     // Since the rubberband timer has stopped, totalContentsSizeForRubberBand can be synchronized with totalContentsSize.
     setTotalContentsSizeForRubberBand(totalContentsSize());
@@ -294,7 +294,7 @@ void ScrollingTreeScrollingNodeMac::setScrollPosition(const IntPoint& scrollPosi
 
     setScrollPositionWithoutContentEdgeConstraints(newScrollPosition);
 
-    if (scrollingTree()->scrollingPerformanceLoggingEnabled())
+    if (scrollingTree().scrollingPerformanceLoggingEnabled())
         logExposedUnfilledArea();
 }
 
@@ -304,12 +304,12 @@ void ScrollingTreeScrollingNodeMac::setScrollPositionWithoutContentEdgeConstrain
 
     if (shouldUpdateScrollLayerPositionOnMainThread()) {
         m_probableMainThreadScrollPosition = scrollPosition;
-        scrollingTree()->updateMainFrameScrollPosition(scrollPosition, SetScrollingLayerPosition);
+        scrollingTree().updateMainFrameScrollPosition(scrollPosition, SetScrollingLayerPosition);
         return;
     }
 
     setScrollLayerPosition(scrollPosition);
-    scrollingTree()->updateMainFrameScrollPosition(scrollPosition);
+    scrollingTree().updateMainFrameScrollPosition(scrollPosition);
 }
 
 void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const IntPoint& position)
@@ -374,7 +374,7 @@ IntPoint ScrollingTreeScrollingNodeMac::minimumScrollPosition() const
 {
     IntPoint position;
     
-    if (scrollingTree()->rootNode() == this && scrollingTree()->scrollPinningBehavior() == PinToBottom)
+    if (scrollingTree().rootNode() == this && scrollingTree().scrollPinningBehavior() == PinToBottom)
         position.setY(maximumScrollPosition().y());
 
     return position;
@@ -387,7 +387,7 @@ IntPoint ScrollingTreeScrollingNodeMac::maximumScrollPosition() const
 
     position.clampNegativeToZero();
 
-    if (scrollingTree()->rootNode() == this && scrollingTree()->scrollPinningBehavior() == PinToTop)
+    if (scrollingTree().rootNode() == this && scrollingTree().scrollPinningBehavior() == PinToTop)
         position.setY(minimumScrollPosition().y());
 
     return position;
@@ -410,7 +410,7 @@ void ScrollingTreeScrollingNodeMac::updateMainFramePinState(const IntPoint& scro
     bool pinnedToTheTop = scrollPosition.y() <= minimumScrollPosition().y();
     bool pinnedToTheBottom = scrollPosition.y() >= maximumScrollPosition().y();
 
-    scrollingTree()->setMainFramePinState(pinnedToTheLeft, pinnedToTheRight, pinnedToTheTop, pinnedToTheBottom);
+    scrollingTree().setMainFramePinState(pinnedToTheLeft, pinnedToTheRight, pinnedToTheTop, pinnedToTheBottom);
 }
 
 void ScrollingTreeScrollingNodeMac::logExposedUnfilledArea()

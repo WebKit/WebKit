@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-ScrollingTreeScrollingNode::ScrollingTreeScrollingNode(ScrollingTree* scrollingTree, ScrollingNodeID nodeID)
+ScrollingTreeScrollingNode::ScrollingTreeScrollingNode(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
     : ScrollingTreeNode(scrollingTree, nodeID)
     , m_frameScaleFactor(1)
     , m_shouldUpdateScrollLayerPositionOnMainThread(0)
@@ -60,7 +60,7 @@ void ScrollingTreeScrollingNode::updateBeforeChildren(ScrollingStateNode* stateN
         m_viewportRect = state->viewportRect();
 
     if (state->hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize)) {
-        if (scrollingTree()->isRubberBandInProgress())
+        if (scrollingTree().isRubberBandInProgress())
             m_totalContentsSizeForRubberBand = m_totalContentsSize;
         else
             m_totalContentsSizeForRubberBand = state->totalContentsSize();

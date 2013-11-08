@@ -1,3 +1,13 @@
+2013-11-07  Andreas Kling  <akling@apple.com>
+
+        CTTE: Scrolling tree nodes should always have a ScrollingTree&.
+        <https://webkit.org/b/124022>
+
+        Let ScrollingTreeNode and subclasses store the backpointer to the
+        tree as a ScrollingTree& reference.
+
+        Reviewed by Anders Carlsson.
+
 2013-11-07  Simon Fraser  <simon.fraser@apple.com>
 
         Lots of layers get solid color but transparent contents layers now

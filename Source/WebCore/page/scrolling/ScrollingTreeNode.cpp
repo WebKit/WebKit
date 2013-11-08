@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-ScrollingTreeNode::ScrollingTreeNode(ScrollingTree* scrollingTree, ScrollingNodeID nodeID)
+ScrollingTreeNode::ScrollingTreeNode(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
     : m_scrollingTree(scrollingTree)
     , m_nodeID(nodeID)
     , m_parent(0)

@@ -33,12 +33,12 @@
 
 namespace WebCore {
 
-PassOwnPtr<ScrollingTreeFixedNode> ScrollingTreeFixedNode::create(ScrollingTree* scrollingTree, ScrollingNodeID nodeID)
+PassOwnPtr<ScrollingTreeFixedNode> ScrollingTreeFixedNode::create(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
 {
     return adoptPtr(new ScrollingTreeFixedNode(scrollingTree, nodeID));
 }
 
-ScrollingTreeFixedNode::ScrollingTreeFixedNode(ScrollingTree* scrollingTree, ScrollingNodeID nodeID)
+ScrollingTreeFixedNode::ScrollingTreeFixedNode(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
     : ScrollingTreeNode(scrollingTree, nodeID)
 {
 }
