@@ -1,3 +1,31 @@
+2013-11-08  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Image valued shape-outside that extends vertically into the margin-box is top-clipped
+        https://bugs.webkit.org/show_bug.cgi?id=123769
+
+        Reviewed by Dirk Schulze.
+
+        Remove the assumption that Y coordinates are >= 0 from the RasterShapeIntervals class
+        and correct its computeShapeMarginIntervals() method. The computeShapeMarginIntervals()
+        method now generates intervals with Y coordinates that begin at the image shape's
+        bounds.y - shape-margin, which may be less than 0.
+
+        The RasterShapeIntervals::intervalsAt() method now offsets its Y coordinate parameter
+        by the shape-margin. A non-const overload of the method was added to centralize all
+        access to m_intervalLists.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-floats-image-margin-004.html
+              fast/shapes/shape-outside-floats/shape-outside-floats-image-margin-005.html
+
+        * rendering/shapes/RasterShape.cpp:
+        (WebCore::MarginIntervalGenerator::intervalAt): Don't clip X coordinates to 0 since they can extend into the margin-box.
+        (WebCore::RasterShapeIntervals::appendInterval): Use the non-const intervalsAt() method.
+        (WebCore::RasterShapeIntervals::uniteMarginInterval): Ditto.
+        (WebCore::RasterShapeIntervals::computeShapeMarginIntervals): See above.
+        * rendering/shapes/RasterShape.h:
+        (WebCore::RasterShapeIntervals::RasterShapeIntervals): Added a field for the margin.
+        (WebCore::RasterShapeIntervals::intervalsAt): Offset y coordinates by the margin; added a non-const overload.
+
 2013-11-08  Piotr Grad  <p.grad@samsung.com>
 
         Ended event should work also when playback rate is negative

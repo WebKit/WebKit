@@ -40,9 +40,10 @@ namespace WebCore {
 
 class RasterShapeIntervals {
 public:
-    RasterShapeIntervals(unsigned size)
+    RasterShapeIntervals(unsigned size, unsigned shapeMargin = 0)
+        : m_shapeMargin(shapeMargin)
     {
-        m_intervalLists.resize(size);
+        m_intervalLists.resize(size + shapeMargin * 2);
     }
 
     const IntRect& bounds() const { return m_bounds; }
@@ -52,15 +53,21 @@ public:
     void getIncludedIntervals(int y1, int y2, IntShapeIntervals& result) const;
     void getExcludedIntervals(int y1, int y2, IntShapeIntervals& result) const;
     bool firstIncludedIntervalY(int minY, const IntSize& minSize, LayoutUnit& result) const;
-    PassOwnPtr<RasterShapeIntervals> computeShapeMarginIntervals(unsigned margin) const;
+    PassOwnPtr<RasterShapeIntervals> computeShapeMarginIntervals(unsigned shapeMargin) const;
 
 private:
     int size() const { return m_intervalLists.size(); }
 
+    IntShapeIntervals& intervalsAt(int y)
+    {
+        ASSERT(y + m_shapeMargin >= 0 && y + m_shapeMargin < m_intervalLists.size());
+        return m_intervalLists[y + m_shapeMargin];
+    }
+
     const IntShapeIntervals& intervalsAt(int y) const
     {
-        ASSERT(y >= 0 && y < size());
-        return m_intervalLists[y];
+        ASSERT(y + m_shapeMargin >= 0 && y + m_shapeMargin < m_intervalLists.size());
+        return m_intervalLists[y + m_shapeMargin];
     }
 
     IntShapeInterval limitIntervalAt(int y) const
@@ -74,6 +81,7 @@ private:
     void uniteMarginInterval(int y, const IntShapeInterval&);
     IntRect m_bounds;
     Vector<IntShapeIntervals> m_intervalLists;
+    unsigned m_shapeMargin;
 };
 
 class RasterShape : public Shape {
