@@ -1,3 +1,13 @@
+2013-11-08  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] accessibility/aria-link-supports-press.html
+        https://bugs.webkit.org/show_bug.cgi?id=111987
+
+        Unreviewed EFL gardening, passes after r158913.
+
+        * platform/efl-wk1/TestExpectations: test is no longer failing.
+        * platform/efl-wk2/TestExpectations: test is no longer failing.
+
 2013-11-08  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         AX: [ATK] <span> elements exposed through ATK when not needed
