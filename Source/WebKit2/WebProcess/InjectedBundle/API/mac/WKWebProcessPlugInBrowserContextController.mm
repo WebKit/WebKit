@@ -25,12 +25,11 @@
 
 #import "config.h"
 
-#import "WKWebProcessPlugInBrowserContextController.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
-#import "WKWebProcessPlugInBrowserContextControllerPrivate.h"
 
 #if WK_API_ENABLED
 
+#import "WKBrowsingContextHandleInternal.h"
 #import "WKBundleAPICast.h"
 #import "WKBundlePage.h"
 #import "WKBundlePagePrivate.h"
@@ -40,13 +39,12 @@
 #import <WebCore/Document.h>
 #import <WebCore/Frame.h>
 
-@interface WKWebProcessPlugInBrowserContextController () {
-    // Underlying WKBundlePageRef.
+using namespace WebCore;
+using namespace WebKit;
+
+@implementation WKWebProcessPlugInBrowserContextController {
     WKRetainPtr<WKBundlePageRef> _bundlePageRef;
 }
-@end
-
-@implementation WKWebProcessPlugInBrowserContextController (Internal)
 
 - (id)_initWithBundlePageRef:(WKBundlePageRef)bundlePageRef
 {
@@ -59,26 +57,22 @@
     return self;
 }
 
-@end
-
-@implementation WKWebProcessPlugInBrowserContextController
-
 - (WKDOMDocument *)mainFrameDocument
 {
-    WebCore::Frame* webCoreMainFrame = WebKit::toImpl(self._bundlePageRef)->mainFrame();
+    WebCore::Frame* webCoreMainFrame = toImpl(_bundlePageRef.get())->mainFrame();
     if (!webCoreMainFrame)
         return nil;
 
-    return WebKit::toWKDOMDocument(webCoreMainFrame->document());
+    return toWKDOMDocument(webCoreMainFrame->document());
 }
 
 - (WKDOMRange *)selectedRange
 {
-    RefPtr<WebCore::Range> range = WebKit::toImpl(self._bundlePageRef)->currentSelectionAsRange();
+    RefPtr<WebCore::Range> range = toImpl(_bundlePageRef.get())->currentSelectionAsRange();
     if (!range)
         return nil;
 
-    return WebKit::toWKDOMRange(range.get());
+    return toWKDOMRange(range.get());
 }
 
 @end
@@ -88,6 +82,11 @@
 - (WKBundlePageRef)_bundlePageRef
 {
     return _bundlePageRef.get();
+}
+
+- (WKBrowsingContextHandle *)handle
+{
+    return [[[WKBrowsingContextHandle alloc] _initWithPageID:toImpl(_bundlePageRef.get())->pageID()] autorelease];
 }
 
 @end

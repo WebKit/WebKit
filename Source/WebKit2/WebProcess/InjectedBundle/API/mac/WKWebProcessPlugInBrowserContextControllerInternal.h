@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWebProcessPlugInBrowserContextController.h"
+#import "WKWebProcessPlugInBrowserContextControllerPrivate.h"
 #import "WKBase.h"
 
 #if WK_API_ENABLED
 
-@interface WKWebProcessPlugInBrowserContextController (Internal)
+@interface WKWebProcessPlugInBrowserContextController ()
 
 - (id)_initWithBundlePageRef:(WKBundlePageRef)bundlePageRef;
 

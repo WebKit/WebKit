@@ -40,6 +40,19 @@
     return self;
 }
 
+- (NSUInteger)hash
+{
+    return _pageID;
+}
+
+- (BOOL)isEqual:(id)object
+{
+    if (![object isKindOfClass:[WKBrowsingContextHandle class]])
+        return NO;
+
+    return _pageID == static_cast<WKBrowsingContextHandle *>(object)->_pageID;
+}
+
 - (void)encodeWithCoder:(NSCoder *)coder
 {
     [coder encodeInt64:_pageID forKey:@"pageID"];

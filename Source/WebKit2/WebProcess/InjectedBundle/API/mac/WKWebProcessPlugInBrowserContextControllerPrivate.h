@@ -27,9 +27,15 @@
 
 #if WK_API_ENABLED
 
+#import <WebKit2/WKBase.h>
+
+@class WKBrowsingContextHandle;
+
 @interface WKWebProcessPlugInBrowserContextController (Private)
 
-@property(readonly) WKBundlePageRef _bundlePageRef;
+@property (nonatomic, readonly) WKBundlePageRef _bundlePageRef;
+
+@property (nonatomic, readonly) WKBrowsingContextHandle *handle;
 
 @end
 
