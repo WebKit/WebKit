@@ -267,7 +267,7 @@ MacroAssemblerCodeRef callToJavaScript(VM* vm)
     jit.storePtr(MIPSRegisters::s1, CCallHelpers::Address(MIPSRegisters::sp, PRESERVED_S1_OFFSET));
     jit.storePtr(MIPSRegisters::s0, CCallHelpers::Address(MIPSRegisters::sp, PRESERVED_S0_OFFSET));
 #if WTF_MIPS_PIC
-    jit.storePtr(MIPSRegisters::gp), CCallHelpers::Address(MIPSRegisters::sp, PRESERVED_GP_OFFSET));
+    jit.storePtr(MIPSRegisters::gp, CCallHelpers::Address(MIPSRegisters::sp, PRESERVED_GP_OFFSET));
 #endif
     jit.move(MIPSRegisters::fp, GPRInfo::nonArgGPR0);
 
