@@ -1,3 +1,24 @@
+2013-11-08  Antti Koivisto  <antti@apple.com>
+
+        Add line layout performance test that exercises more cases
+        https://bugs.webkit.org/show_bug.cgi?id=124041
+        
+        Reviewed by Anders Carlsson.
+
+        The existing line-layout.html covers the most basic left-aligned case only.
+        Add a test with more coverage for things that are mostly not yet supported by the simple
+        line layout path:
+        
+        - centered text
+        - right aligned text
+        - justified text
+        - pre
+        - white-space:pre-wrap
+        - text with simple inlines
+        - text with br
+
+        * Layout/line-layout-simple.html: Added.
+
 2013-10-25  Sergio Villar Senin  <svillar@igalia.com>
 
         Use a Vector instead of HashSet to computed the orderValues in RenderFlexibleBox
