@@ -31,6 +31,7 @@
 #include "WebContext.h"
 #include "WebIconDatabaseMessages.h"
 #include "WebIconDatabaseProxyMessages.h"
+#include "WebPreferences.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/IconDatabase.h>
 #include <WebCore/IconDatabaseBase.h>
@@ -75,6 +76,11 @@ void WebIconDatabase::setDatabasePath(const String& path)
     IconDatabase::delayDatabaseCleanup();
     m_databaseCleanupDisabled = true;
     m_iconDatabaseImpl->setEnabled(true);
+
+    // FIXME: WebIconDatabases are per-WebContext but WebContext's don't have their own notion of the current private browsing setting.
+    // As we clean up private browsing throughout the stack we need to clean it up here.
+    m_iconDatabaseImpl->setPrivateBrowsingEnabled(WebPreferences::anyPageGroupsAreUsingPrivateBrowsing());
+
     if (!m_iconDatabaseImpl->open(directoryName(path), pathGetFileName(path))) {
         LOG_ERROR("Unable to open WebKit2 icon database on disk");
         m_iconDatabaseImpl.clear();
@@ -290,6 +296,12 @@ void WebIconDatabase::notifyIconDataReadyForPageURL(const String& pageURL)
 {
     m_iconDatabaseClient.iconDataReadyForPageURL(this, WebURL::create(pageURL).get());
     didChangeIconForPageURL(pageURL);
+}
+
+void WebIconDatabase::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
+{
+    if (m_iconDatabaseImpl)
+        m_iconDatabaseImpl->setPrivateBrowsingEnabled(privateBrowsingEnabled);
 }
 
 } // namespace WebKit
