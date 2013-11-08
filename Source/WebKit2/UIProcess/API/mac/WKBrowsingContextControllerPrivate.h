@@ -26,27 +26,34 @@
 #import <WebKit2/WKBrowsingContextController.h>
 #import <WebKit2/WKBase.h>
 
-enum {
+typedef NS_ENUM(NSUInteger, WKBrowsingContextPaginationMode) {
     WKPaginationModeUnpaginated,
     WKPaginationModeLeftToRight,
     WKPaginationModeRightToLeft,
     WKPaginationModeTopToBottom,
     WKPaginationModeBottomToTop,
 };
-typedef NSUInteger WKBrowsingContextPaginationMode;
+
+@class WKBrowsingContextHandle;
 
 @interface WKBrowsingContextController (Private)
 
-@property(readonly) WKPageRef _pageRef;
+@property (readonly) WKPageRef _pageRef;
 
 @property WKBrowsingContextPaginationMode paginationMode;
+
 // Whether the column-break-{before,after} properties are respected instead of the
 // page-break-{before,after} properties.
 @property BOOL paginationBehavesLikeColumns;
+
 // Set to 0 to have the page length equal the view length.
 @property CGFloat pageLength;
 @property CGFloat gapBetweenPages;
 
-@property(readonly) NSUInteger pageCount;
+@property (readonly) NSUInteger pageCount;
+
+#if WK_API_ENABLED
+@property (nonatomic, readonly) WKBrowsingContextHandle *handle;
+#endif
 
 @end

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKBrowsingContextControllerPrivate.h"
+#import <WebKit2/WKFoundation.h>
 
-@interface WKBrowsingContextController (Internal)
+#if WK_API_ENABLED
 
-/* This should only be called from associate view. */
-- (id)_initWithPageRef:(WKPageRef)pageRef;
-
-/* Returns a WKBrowsingContextController associated with the WKPageRef. */
-+ (WKBrowsingContextController *)_browsingContextControllerForPageRef:(WKPageRef)pageRef;
-
-+ (NSMutableSet *)customSchemes;
-
+WK_API_CLASS
+@interface WKBrowsingContextHandle : NSObject <NSSecureCoding>
 @end
+
+#endif

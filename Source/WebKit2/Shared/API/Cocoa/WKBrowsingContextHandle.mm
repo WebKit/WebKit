@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKBrowsingContextControllerPrivate.h"
+#import "config.h"
+#import "WKBrowsingContextHandleInternal.h"
 
-@interface WKBrowsingContextController (Internal)
+#if WK_API_ENABLED
 
-/* This should only be called from associate view. */
-- (id)_initWithPageRef:(WKPageRef)pageRef;
+@implementation WKBrowsingContextHandle
 
-/* Returns a WKBrowsingContextController associated with the WKPageRef. */
-+ (WKBrowsingContextController *)_browsingContextControllerForPageRef:(WKPageRef)pageRef;
+- (id)_initWithPageID:(uint64_t)pageID
+{
+    if (!(self = [super init]))
+        return nil;
 
-+ (NSMutableSet *)customSchemes;
+    _pageID = pageID;
+
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    [coder encodeInt64:_pageID forKey:@"pageID"];
+}
+
+- (id)initWithCoder:(NSCoder *)coder
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _pageID = [coder decodeInt64ForKey:@"pageID"];
+
+    return self;
+}
+
++ (BOOL)supportsSecureCoding
+{
+    return YES;
+}
 
 @end
+
+#endif // WK_API_ENABLED

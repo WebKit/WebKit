@@ -24,8 +24,6 @@
  */
 
 #import "config.h"
-#import "WKBrowsingContextController.h"
-#import "WKBrowsingContextControllerPrivate.h"
 #import "WKBrowsingContextControllerInternal.h"
 
 #import "ObjCObjectGraph.h"
@@ -49,6 +47,7 @@
 #import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 
+#import "WKBrowsingContextHandleInternal.h"
 #import "WKBrowsingContextLoadDelegate.h"
 #import "WKBrowsingContextPolicyDelegate.h"
 
@@ -456,6 +455,11 @@ static void releaseNSData(unsigned char*, const void* data)
 - (NSUInteger)pageCount
 {
     return WKPageGetPageCount(self._pageRef);
+}
+
+- (WKBrowsingContextHandle *)handle
+{
+    return [[[WKBrowsingContextHandle alloc] _initWithPageID:toImpl(self._pageRef)->pageID()] autorelease];
 }
 
 @end

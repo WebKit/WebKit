@@ -1,5 +1,28 @@
 2013-11-08  Anders Carlsson  <andersca@apple.com>
 
+        Add A WKBrowsingContextHandle class
+        https://bugs.webkit.org/show_bug.cgi?id=124058
+
+        Reviewed by Sam Weinig.
+
+        The WKBrowsingContextHandle class represents a browsing context and can be sent across process boundaries.
+
+        * Shared/API/Cocoa/WKBrowsingContextHandle.h: Added.
+        * Shared/API/Cocoa/WKBrowsingContextHandle.mm: Added.
+        (-[WKBrowsingContextHandle _initWithPageID:]):
+        (-[WKBrowsingContextHandle encodeWithCoder:]):
+        (-[WKBrowsingContextHandle initWithCoder:]):
+        (+[WKBrowsingContextHandle supportsSecureCoding]):
+        * Shared/API/Cocoa/WKBrowsingContextHandleInternal.h: Added.
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController handle]):
+        * UIProcess/API/mac/WKBrowsingContextControllerInternal.h:
+        * UIProcess/API/mac/WKBrowsingContextControllerPrivate.h:
+        (NS_ENUM):
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2013-11-08  Anders Carlsson  <andersca@apple.com>
+
         Add WKRemoteObjectRegistry to WKConnection
         https://bugs.webkit.org/show_bug.cgi?id=124054
 
