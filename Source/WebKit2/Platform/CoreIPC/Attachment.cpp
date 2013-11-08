@@ -39,18 +39,9 @@ Attachment::Attachment()
 #if OS(DARWIN)
 Attachment::Attachment(mach_port_name_t port, mach_msg_type_name_t disposition)
     : m_type(MachPortType)
+    , m_port(port)
+    , m_disposition(disposition)
 {
-    m_port.port = port;
-    m_port.disposition = disposition;
-}
-
-Attachment::Attachment(void* address, mach_msg_size_t size, mach_msg_copy_options_t copyOptions, bool deallocate)
-    : m_type(MachOOLMemoryType)
-{
-    m_oolMemory.address = address;
-    m_oolMemory.size = size;
-    m_oolMemory.copyOptions = copyOptions;
-    m_oolMemory.deallocate = deallocate;
 }
 
 void Attachment::release()

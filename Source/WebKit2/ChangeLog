@@ -1,3 +1,22 @@
+2013-11-07  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of the out-of-line memory attachment type
+        https://bugs.webkit.org/show_bug.cgi?id=124023
+
+        Reviewed by Andreas Kling.
+
+        We're only using out-of-line memory for when the message body is too big, so
+        isolate that code in Connection and get rid of the out of line attachment type.
+
+        * Platform/CoreIPC/Attachment.cpp:
+        (CoreIPC::Attachment::Attachment):
+        * Platform/CoreIPC/Attachment.h:
+        (CoreIPC::Attachment::port):
+        (CoreIPC::Attachment::disposition):
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::sendOutgoingMessage):
+        (CoreIPC::createMessageDecoder):
+
 2013-11-07  Simon Fraser  <simon.fraser@apple.com>
 
         Lots of layers get solid color but transparent contents layers now

@@ -44,7 +44,6 @@ public:
         Uninitialized,
 #if OS(DARWIN)
         MachPortType,
-        MachOOLMemoryType,
 #elif USE(UNIX_DOMAIN_SOCKETS)
         SocketType,
         MappedMemoryType
@@ -53,7 +52,6 @@ public:
 
 #if OS(DARWIN)
     Attachment(mach_port_name_t port, mach_msg_type_name_t disposition);
-    Attachment(void* address, mach_msg_size_t size, mach_msg_copy_options_t copyOptions, bool deallocate);
 #elif USE(UNIX_DOMAIN_SOCKETS)
     Attachment(int fileDescriptor, size_t);
     Attachment(int fileDescriptor);
@@ -65,14 +63,9 @@ public:
     void release();
 
     // MachPortType
-    mach_port_name_t port() const { ASSERT(m_type == MachPortType); return m_port.port; }
-    mach_msg_type_name_t disposition() const { ASSERT(m_type == MachPortType); return m_port.disposition; }
+    mach_port_name_t port() const { return m_port; }
+    mach_msg_type_name_t disposition() const { return m_disposition; }
 
-    // MachOOLMemoryType
-    void* address() const { ASSERT(m_type == MachOOLMemoryType); return m_oolMemory.address; }
-    mach_msg_size_t size() const { ASSERT(m_type == MachOOLMemoryType); return m_oolMemory.size; }
-    mach_msg_copy_options_t copyOptions() const { ASSERT(m_type == MachOOLMemoryType); return m_oolMemory.copyOptions; }
-    bool deallocate() const { ASSERT(m_type == MachOOLMemoryType); return m_oolMemory.deallocate; }
 #elif USE(UNIX_DOMAIN_SOCKETS)
     size_t size() const { return m_size; }
 
@@ -89,18 +82,8 @@ private:
     Type m_type;
 
 #if OS(DARWIN)
-    union {
-        struct {
-            mach_port_name_t port;
-            mach_msg_type_name_t disposition;
-        } m_port;
-        struct {
-            void* address;
-            mach_msg_size_t size;
-            mach_msg_copy_options_t copyOptions;
-            bool deallocate;
-        } m_oolMemory;
-    };
+    mach_port_name_t m_port;
+    mach_msg_type_name_t m_disposition;
 #elif USE(UNIX_DOMAIN_SOCKETS)
     int m_fileDescriptor;
     size_t m_size;
