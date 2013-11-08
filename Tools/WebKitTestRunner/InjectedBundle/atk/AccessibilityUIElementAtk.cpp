@@ -1010,7 +1010,8 @@ bool AccessibilityUIElement::isPressActionSupported()
     if (!ATK_IS_ACTION(m_element.get()))
         return false;
 
-    return equalIgnoringCase(atk_action_get_name(ATK_ACTION(m_element.get()), 0), String("press"));
+    const gchar* actionName = atk_action_get_name(ATK_ACTION(m_element.get()), 0);
+    return equalIgnoringCase(actionName, String("press")) || equalIgnoringCase(actionName, String("jump"));
 }
 
 bool AccessibilityUIElement::isIncrementActionSupported()
