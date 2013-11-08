@@ -1,3 +1,13 @@
+2013-11-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Make base64url decoding actually work
+        https://bugs.webkit.org/show_bug.cgi?id=124050
+
+        Reviewed by Sam Weinig.
+
+        * wtf/text/Base64.cpp: (WTF::base64DecodeInternal): Don't hardcode knowledge about
+        alphabet, put it into the map.
+
 2013-11-07  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [GTK] Glyphs in vertical text tests are rotated 90 degrees clockwise
