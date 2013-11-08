@@ -1,3 +1,26 @@
+2013-11-07  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should support NewArray
+        https://bugs.webkit.org/show_bug.cgi?id=124010
+
+        Reviewed by Oliver Hunt.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileNewObject):
+        (JSC::FTL::LowerDFGToLLVM::compileNewArray):
+        (JSC::FTL::LowerDFGToLLVM::allocateCell):
+        (JSC::FTL::LowerDFGToLLVM::allocateObject):
+        (JSC::FTL::LowerDFGToLLVM::allocateBasicStorageAndGetEnd):
+        (JSC::FTL::LowerDFGToLLVM::ArrayValues::ArrayValues):
+        (JSC::FTL::LowerDFGToLLVM::allocateJSArray):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::loadDouble):
+        (JSC::FTL::Output::storeDouble):
+
 2013-11-07  Michael Saboff  <msaboff@apple.com>
 
         Change CallFrameRegister to architected frame pointer register
