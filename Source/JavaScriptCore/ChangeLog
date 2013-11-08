@@ -1,3 +1,20 @@
+2013-11-08  Oliver Hunt  <oliver@apple.com>
+
+        Map.forEach crashes on deleted values
+        https://bugs.webkit.org/show_bug.cgi?id=124017
+
+        Reviewed by Ryosuke Niwa.
+
+        MapData iterator did not consider the case of the first entries
+        being holes.  To fix this I've refactored iteration so that we
+        can perform an initialisation increment on construction, whle
+        retaining the useful assertion in MapData::const_iterator::operator++
+
+        * runtime/MapData.h:
+        (JSC::MapData::const_iterator::operator++):
+        (JSC::MapData::const_iterator::internalIncrement):
+        (JSC::MapData::const_iterator::const_iterator):
+
 2013-11-08  Julien Brianceau  <jbriance@cisco.com>
 
         REGRESSION(r158883): Fix crashes for ARM architecture.

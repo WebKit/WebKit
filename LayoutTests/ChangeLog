@@ -1,3 +1,17 @@
+2013-11-08  Oliver Hunt  <oliver@apple.com>
+
+        Map.forEach crashes on deleted values
+        https://bugs.webkit.org/show_bug.cgi?id=124017
+
+        Reviewed by Ryosuke Niwa.
+
+        Test case
+
+        * js/map-iterate-first-entry-is-a-hole-expected.txt: Added.
+        * js/map-iterate-first-entry-is-a-hole.html: Added.
+        * js/script-tests/map-iterate-first-entry-is-a-hole.js: Added.
+        (set map0):
+
 2013-10-30  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Bring SourceBuffer.append up to the most recent spec.
