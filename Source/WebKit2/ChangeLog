@@ -1,5 +1,17 @@
 2013-11-08  Anders Carlsson  <andersca@apple.com>
 
+        Remove a workaround for a bug in malloc on Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=124069
+
+        Reviewed by Sam Weinig.
+
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+        (CoreIPC::ArgumentDecoder::~ArgumentDecoder):
+        (CoreIPC::ArgumentDecoder::initialize):
+        * Platform/CoreIPC/ArgumentDecoder.h:
+
+2013-11-08  Anders Carlsson  <andersca@apple.com>
+
         More build fixes.
 
         * UIProcess/API/mac/WKBrowsingContextController.mm:

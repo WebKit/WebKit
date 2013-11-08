@@ -99,7 +99,6 @@ protected:
     bool bufferIsLargeEnoughToContain(unsigned alignment, size_t size) const;
 
 private:
-    uint8_t* m_allocatedBase;
     uint8_t* m_buffer;
     uint8_t* m_bufferPos;
     uint8_t* m_bufferEnd;
