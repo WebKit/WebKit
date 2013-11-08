@@ -1,5 +1,14 @@
 2013-11-08  Oliver Hunt  <oliver@apple.com>
 
+        Remove more accidentally added files.
+
+        * runtime/SetIteratorConstructor.cpp: Removed.
+        * runtime/SetIteratorConstructor.h: Removed.
+        * runtime/SetIteratorPrototype.cpp: Removed.
+        * runtime/SetIteratorPrototype.h: Removed.
+
+2013-11-08  Oliver Hunt  <oliver@apple.com>
+
         Remove accidentally added files.
 
         * runtime/JSSetIterator.cpp: Removed.
