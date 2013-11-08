@@ -1,3 +1,17 @@
+2013-11-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Make contents layer borders more visible
+        https://bugs.webkit.org/show_bug.cgi?id=124025
+
+        Reviewed by Tim Horton.
+
+        Layer borders for contents layers are impossible to see when the
+        contentsLayer has the same bounds as its parent; make the contents
+        layer border 4px thick to make it more visible.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setupContentsLayer):
+
 2013-11-07  Andreas Kling  <akling@apple.com>
 
         InlineFlowBox always has a RenderBoxModelObject, take advantage.
