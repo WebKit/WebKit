@@ -42,7 +42,7 @@ function requestSucceeded1()
     shouldNotThrow('pc.setRemoteDescription(sessionDescription, requestSucceeded2, requestFailed2);');
 }
 
-pc = new webkitRTCPeerConnection(null, null);
+pc = new webkitRTCPeerConnection({iceServers:[]}, null);
 var sessionDescription = new RTCSessionDescription({type:"answer", sdp:"remote"});
 shouldNotThrow('pc.setRemoteDescription(sessionDescription, requestSucceeded1, requestFailed1);');
 

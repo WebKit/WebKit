@@ -41,7 +41,7 @@ function gotStream(s) {
     testPassed('gotStream was called.');
     stream = s;
 
-    pc = new webkitRTCPeerConnection(null, null);
+    pc = new webkitRTCPeerConnection({iceServers:[]}, null);
     pc.onnegotiationneeded = onNegotiationNeeded;
 
     pc.addStream(stream);

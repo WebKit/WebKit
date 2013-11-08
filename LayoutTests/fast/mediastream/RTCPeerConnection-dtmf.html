@@ -52,7 +52,7 @@ function gotStream(s) {
     shouldBe('stream.getAudioTracks().length', '1');
     shouldBe('stream.getVideoTracks().length', '0');
 
-    pc = new webkitRTCPeerConnection(null, null);
+    pc = new webkitRTCPeerConnection({iceServers:[]}, null);
     pc.oniceconnectionstatechange = pc_onicechange;
 }
 

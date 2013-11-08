@@ -73,7 +73,7 @@ function statsHandler2(status)
 }
 
 var startTime = new Date().getTime();
-shouldNotThrow('pc = new webkitRTCPeerConnection(null)');
+shouldNotThrow('pc = new webkitRTCPeerConnection({iceServers:[]})');
 shouldNotThrow('pc.getStats(statsHandler1)');
 
 window.jsTestIsAsync = true;

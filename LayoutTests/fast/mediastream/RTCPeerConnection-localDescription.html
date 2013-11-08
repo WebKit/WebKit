@@ -42,7 +42,7 @@ function requestSucceeded1()
     shouldNotThrow('pc.setLocalDescription(sessionDescription, requestSucceeded2, requestFailed2);');
 }
 
-pc = new webkitRTCPeerConnection(null, null);
+pc = new webkitRTCPeerConnection({iceServers:[]}, null);
 var sessionDescription = new RTCSessionDescription({type:"offer", sdp:"local"});
 shouldNotThrow('pc.setLocalDescription(sessionDescription, requestSucceeded1, requestFailed1);');
 

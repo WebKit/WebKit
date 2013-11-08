@@ -319,6 +319,7 @@
 		07C59B7117F79C7C000FBCBB /* JSMediaSourceStates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C59B6F17F79C7C000FBCBB /* JSMediaSourceStates.cpp */; };
 		07C59B7217F79C7C000FBCBB /* JSMediaSourceStates.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C59B7017F79C7C000FBCBB /* JSMediaSourceStates.h */; };
 		07C59B7617F7D0DB000FBCBB /* CapabilityRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C59B7417F7D09D000FBCBB /* CapabilityRange.h */; };
+		07CA120E182D67D800D12197 /* JSRTCPeerConnectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07CA120D182D67D800D12197 /* JSRTCPeerConnectionCustom.cpp */; };
 		07CE77D516712A6A00C55A47 /* InbandTextTrackPrivateClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 07CE77D416712A6A00C55A47 /* InbandTextTrackPrivateClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07DC5FD417D3EEE90099F890 /* JSRTCStatsResponseCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07DC5FD317D3EEE90099F890 /* JSRTCStatsResponseCustom.cpp */; };
 		07E116B11489C9A100EC5ACE /* JSTextTrackCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07E116B01489C9A100EC5ACE /* JSTextTrackCustom.cpp */; };
@@ -6845,6 +6846,7 @@
 		07C59B7317F7D09D000FBCBB /* AllVideoCapabilities.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AllVideoCapabilities.idl; sourceTree = "<group>"; };
 		07C59B7417F7D09D000FBCBB /* CapabilityRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CapabilityRange.h; sourceTree = "<group>"; };
 		07C59B7517F7D09D000FBCBB /* CapabilityRange.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CapabilityRange.idl; sourceTree = "<group>"; };
+		07CA120D182D67D800D12197 /* JSRTCPeerConnectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCPeerConnectionCustom.cpp; sourceTree = "<group>"; };
 		07CE77D416712A6A00C55A47 /* InbandTextTrackPrivateClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrackPrivateClient.h; sourceTree = "<group>"; };
 		07DC5FD317D3EEE90099F890 /* JSRTCStatsResponseCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRTCStatsResponseCustom.cpp; sourceTree = "<group>"; };
 		07E116B01489C9A100EC5ACE /* JSTextTrackCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackCustom.cpp; sourceTree = "<group>"; };
@@ -19665,6 +19667,7 @@
 				FD8AA63D169514A700D2EA68 /* JSPannerNodeCustom.cpp */,
 				A85F22081430377D007CC884 /* JSPopStateEventCustom.cpp */,
 				4998AED313FC417F0090B1AA /* JSRequestAnimationFrameCallbackCustom.cpp */,
+				07CA120D182D67D800D12197 /* JSRTCPeerConnectionCustom.cpp */,
 				07DC5FD317D3EEE90099F890 /* JSRTCStatsResponseCustom.cpp */,
 				51DCE8010CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp */,
 				1AD2316D0CD269E700C1F194 /* JSSQLTransactionCustom.cpp */,
@@ -27837,6 +27840,7 @@
 				B2227A2F0D00BF220071B782 /* SVGLangSpace.cpp in Sources */,
 				B2227A320D00BF220071B782 /* SVGLength.cpp in Sources */,
 				7134496D146941B300720312 /* SVGLengthContext.cpp in Sources */,
+				07CA120E182D67D800D12197 /* JSRTCPeerConnectionCustom.cpp in Sources */,
 				B2227A350D00BF220071B782 /* SVGLengthList.cpp in Sources */,
 				07277E5017D018CC0015534D /* JSMediaStreamEvent.cpp in Sources */,
 				B2227A380D00BF220071B782 /* SVGLinearGradientElement.cpp in Sources */,

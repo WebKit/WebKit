@@ -51,7 +51,7 @@ function requestSucceeded1(sd)
     finishJSTest();
 }
 
-pc = new webkitRTCPeerConnection(null, null);
+pc = new webkitRTCPeerConnection({iceServers:[]}, null);
 pc.createOffer(requestSucceeded1, requestFailed1);
 
 window.jsTestIsAsync = true;

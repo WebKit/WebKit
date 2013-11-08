@@ -47,7 +47,7 @@ function statsHandler2(status)
 }
 
 var startTime = new Date().getTime();
-shouldNotThrow('pc = new webkitRTCPeerConnection(null)');
+shouldNotThrow('pc = new webkitRTCPeerConnection({iceServers:[]})');
 shouldNotThrow('getUserMedia({audio:true, video:true}, gotStream)');
 
 window.jsTestIsAsync = true;

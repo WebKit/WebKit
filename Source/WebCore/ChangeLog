@@ -1,3 +1,27 @@
+2013-11-08  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Checking for TypeError in RTCPeerConnection object creation
+        https://bugs.webkit.org/show_bug.cgi?id=124049
+
+        Reviewed by Eric Carlson.
+
+        If invalid parameters are passed on RTCPeerConnection creation we must throw a TypeError exception.
+        According to the spec it requires a Dictionary argument, the RTCConfiguration, which is mandatory.
+
+        Please notice that this patch does not make every tests run as expected,
+        RTCPeerConnectionHandlerMock needs to be update to deal with contraints.
+
+        Existing tests were updated.
+
+        * GNUmakefile.list.am:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * UseJSC.cmake:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSRTCPeerConnectionCustom.cpp: Added.
+        (WebCore::JSRTCPeerConnectionConstructor::constructJSRTCPeerConnection):
+
 2013-11-08  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Use references instead of pointers to RenderBlockFlow in FloatingObjects and ComputeFloatOffsetAdapter
