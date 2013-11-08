@@ -1,3 +1,33 @@
+2013-11-08  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        [GTK] Add new GTK-specific layout test results for vertical text
+        https://bugs.webkit.org/show_bug.cgi?id=124000
+
+        Reviewed by Mario Sanchez Prada.
+
+        Rebaselined some expected results for tests that use vertical text.
+        These tests are now working fine after the fix from Bug 50619.
+        They have specific results for WebKit2 GTK+ because WebKit1 has a
+        permanent area in the bottom for the horizontal scroll bar.
+        This area reduces the layout area in WebKit1 and consequently the
+        results differ from WebKit2.
+
+        * fast/repaint/japanese-rl-selection-clear-expected.txt:
+        * fast/repaint/japanese-rl-selection-repaint-expected.txt:
+        * fast/repaint/repaint-across-writing-mode-boundary-expected.txt:
+        * fast/text/international/vertical-text-glyph-test-expected.txt:
+        * fast/text/justify-ideograph-vertical-expected.txt:
+        * platform/efl/fast/repaint/japanese-rl-selection-clear-expected.txt: Removed.
+        * platform/efl/fast/repaint/japanese-rl-selection-repaint-expected.txt: Removed.
+        * platform/efl/fast/repaint/repaint-across-writing-mode-boundary-expected.txt: Removed.
+        * platform/efl/fast/text/international/vertical-text-glyph-test-expected.txt: Removed.
+        * platform/efl/fast/text/justify-ideograph-vertical-expected.txt: Removed.
+        * platform/gtk-wk2/fast/repaint/japanese-rl-selection-clear-expected.txt: Copied from LayoutTests/fast/repaint/japanese-rl-selection-clear-expected.txt.
+        * platform/gtk-wk2/fast/repaint/japanese-rl-selection-repaint-expected.txt: Copied from LayoutTests/fast/repaint/japanese-rl-selection-repaint-expected.txt.
+        * platform/gtk-wk2/fast/repaint/repaint-across-writing-mode-boundary-expected.txt: Copied from LayoutTests/fast/repaint/repaint-across-writing-mode-boundary-expected.txt.
+        * platform/gtk-wk2/fast/text/international/vertical-text-glyph-test-expected.txt: Copied from LayoutTests/fast/text/international/vertical-text-glyph-test-expected.txt.
+        * platform/gtk-wk2/fast/text/justify-ideograph-vertical-expected.txt: Copied from LayoutTests/fast/text/justify-ideograph-vertical-expected.txt.
+
 2013-11-08  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] accessibility/aria-link-supports-press.html
