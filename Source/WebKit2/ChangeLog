@@ -1,5 +1,19 @@
 2013-11-08  Anders Carlsson  <andersca@apple.com>
 
+        Add WKRemoteObjectRegistry to WKConnection
+        https://bugs.webkit.org/show_bug.cgi?id=124054
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/mac/WKConnection.h:
+        * UIProcess/API/mac/WKConnection.mm:
+        (-[WKConnection delegate]):
+        (-[WKConnection setDelegate:]):
+        (-[WKConnection remoteObjectRegistry]):
+        (didReceiveMessage):
+
+2013-11-08  Anders Carlsson  <andersca@apple.com>
+
         Encode and decode NSURLRequests using NSCoder
         https://bugs.webkit.org/show_bug.cgi?id=124051
 

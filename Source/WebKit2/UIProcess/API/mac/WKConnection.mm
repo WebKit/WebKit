@@ -33,6 +33,7 @@
 #import "WKRetainPtr.h"
 #import "WKString.h"
 #import "WKStringCF.h"
+#import "WKRemoteObjectRegistryInternal.h"
 #import <wtf/RetainPtr.h>
 
 using namespace WebKit;
@@ -44,6 +45,8 @@ using namespace WebKit;
 
     // Delegate for callbacks.
     id<WKConnectionDelegate> _delegate;
+
+    RetainPtr<WKRemoteObjectRegistry> _remoteObjectRegistry;
 }
 @end
 
@@ -68,16 +71,22 @@ using namespace WebKit;
     WKConnectionPostMessage(_data->_connectionRef.get(), wkMessageName.get(), (WKTypeRef)wkMessageBody.get());
 }
 
-#pragma mark Delegates
-
-- (id<WKConnectionDelegate>)delegate
+- (id <WKConnectionDelegate>)delegate
 {
     return _data->_delegate;
 }
 
-- (void)setDelegate:(id<WKConnectionDelegate>)delegate
+- (void)setDelegate:(id <WKConnectionDelegate>)delegate
 {
     _data->_delegate = delegate;
+}
+
+- (WKRemoteObjectRegistry *)remoteObjectRegistry
+{
+    if (!_data->_remoteObjectRegistry)
+        _data->_remoteObjectRegistry = adoptNS([[WKRemoteObjectRegistry alloc] _initWithConnectionRef:_data->_connectionRef.get()]);
+
+    return _data->_remoteObjectRegistry.get();
 }
 
 @end
@@ -87,6 +96,9 @@ using namespace WebKit;
 static void didReceiveMessage(WKConnectionRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
 {
     WKConnection *connection = (WKConnection *)clientInfo;
+    if ([connection->_data->_remoteObjectRegistry _handleMessageWithName:messageName body:messageBody])
+        return;
+
     if ([connection.delegate respondsToSelector:@selector(connection:didReceiveMessageWithName:body:)]) {
         RetainPtr<CFStringRef> nsMessageName = adoptCF(WKStringCopyCFString(kCFAllocatorDefault, messageName));
         RetainPtr<id> nsMessageBody = ((ObjCObjectGraph*)messageBody)->rootObject();
