@@ -80,22 +80,7 @@ void CryptoAlgorithm::deriveBits(const CryptoAlgorithmParameters&, const CryptoK
     ec = NOT_SUPPORTED_ERR;
 }
 
-void CryptoAlgorithm::importKey(const CryptoAlgorithmParameters&, CryptoKeyFormat, const CryptoOperationData&, bool, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
-{
-    ec = NOT_SUPPORTED_ERR;
-}
-
-void CryptoAlgorithm::exportKey(const CryptoAlgorithmParameters&, CryptoKeyFormat, const CryptoKey&, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
-{
-    ec = NOT_SUPPORTED_ERR;
-}
-
-void CryptoAlgorithm::wrapKey(const CryptoAlgorithmParameters&, CryptoKeyFormat, const CryptoKey&, const CryptoKey&, CryptoAlgorithm*, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
-{
-    ec = NOT_SUPPORTED_ERR;
-}
-
-void CryptoAlgorithm::unwrapKey(const CryptoAlgorithmParameters&, CryptoKeyFormat, const CryptoOperationData&, const CryptoKey&, CryptoAlgorithm*, CryptoAlgorithm*, bool, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
+void CryptoAlgorithm::importKey(const CryptoAlgorithmParameters&, const CryptoKeyData&, bool, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
 {
     ec = NOT_SUPPORTED_ERR;
 }

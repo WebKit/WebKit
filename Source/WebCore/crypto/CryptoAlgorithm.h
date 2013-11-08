@@ -27,7 +27,6 @@
 #define CryptoAlgorithm_h
 
 #include "CryptoAlgorithmIdentifier.h"
-#include "CryptoKeyFormat.h"
 #include "CryptoKeyUsage.h"
 #include <wtf/Vector.h>
 
@@ -39,6 +38,7 @@ typedef int ExceptionCode;
 
 class CryptoAlgorithmParameters;
 class CryptoKey;
+class CryptoKeyData;
 class PromiseWrapper;
 
 // Data is mutable, so async operations should copy it first.
@@ -59,10 +59,7 @@ public:
     virtual void generateKey(const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&);
     virtual void deriveKey(const CryptoAlgorithmParameters&, const CryptoKey& baseKey, CryptoAlgorithm* derivedKeyType, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&);
     virtual void deriveBits(const CryptoAlgorithmParameters&, const CryptoKey& baseKey, unsigned long length, std::unique_ptr<PromiseWrapper>, ExceptionCode&);
-    virtual void importKey(const CryptoAlgorithmParameters&, CryptoKeyFormat, const CryptoOperationData&, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&);
-    virtual void exportKey(const CryptoAlgorithmParameters&, CryptoKeyFormat, const CryptoKey&, std::unique_ptr<PromiseWrapper>, ExceptionCode&);
-    virtual void wrapKey(const CryptoAlgorithmParameters&, CryptoKeyFormat, const CryptoKey&, const CryptoKey& wrappingKey, CryptoAlgorithm* wrapAlgorithm, std::unique_ptr<PromiseWrapper>, ExceptionCode&);
-    virtual void unwrapKey(const CryptoAlgorithmParameters&, CryptoKeyFormat, const CryptoOperationData&, const CryptoKey& unwrappingKey, CryptoAlgorithm* unwrapAlgorithm, CryptoAlgorithm* unwrappedKeyAlgorithm, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&);
+    virtual void importKey(const CryptoAlgorithmParameters&, const CryptoKeyData&, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&);
 
 protected:
     CryptoAlgorithm();

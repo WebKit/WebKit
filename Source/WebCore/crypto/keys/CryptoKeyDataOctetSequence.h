@@ -23,28 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoKeyFormat_h
-#define CryptoKeyFormat_h
+#ifndef CryptoKeyDataOctetSequence_h
+#define CryptoKeyDataOctetSequence_h
+
+#include "CryptoKeyData.h"
+#include <wtf/Vector.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-ENUM_CLASS(CryptoKeyFormat) {
-    // An unformatted sequence of bytes. Intended for secret keys.
-    Raw,
+class CryptoKeyDataOctetSequence FINAL : public CryptoKeyData {
+public:
+    static std::unique_ptr<CryptoKeyDataOctetSequence> create(const Vector<char>& keyData)
+    {
+        return std::unique_ptr<CryptoKeyDataOctetSequence>(new CryptoKeyDataOctetSequence(keyData));
+    }
+    virtual ~CryptoKeyDataOctetSequence();
 
-    // The DER encoding of the PrivateKeyInfo structure from RFC 5208.
-    PKCS8,
+    const Vector<char>& octetSequence() const { return m_keyData; }
 
-    // The DER encoding of the SubjectPublicKeyInfo structure from RFC 5280.
-    SPKI,
+private:
+    CryptoKeyDataOctetSequence(const Vector<char>&);
 
-    // The key is represented as JSON according to the JSON Web Key format.
-    JWK
+    Vector<char> m_keyData;
 };
 
+inline const CryptoKeyDataOctetSequence& asCryptoKeyDataOctetSequence(const CryptoKeyData& data)
+{
+    ASSERT(data.format() == CryptoKeyData::Format::OctetSequence);
+    return static_cast<const CryptoKeyDataOctetSequence&>(data);
 }
 
+} // namespace WebCore
+
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoKeyFormat_h
+#endif // CryptoKeyDataOctetSequence_h

@@ -23,36 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmAES_CBC_h
-#define CryptoAlgorithmAES_CBC_h
-
-#include "CryptoAlgorithm.h"
+#include "config.h"
+#include "CryptoKeySerializationRaw.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#include "CryptoAlgorithm.h"
+#include "CryptoKeyDataOctetSequence.h"
+
 namespace WebCore {
 
-class CryptoAlgorithmAES_CBC FINAL : public CryptoAlgorithm {
-public:
-    static const char* const s_name;
-    static const CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_CBC;
-
-    static std::unique_ptr<CryptoAlgorithm> create();
-
-    virtual CryptoAlgorithmIdentifier identifier() const OVERRIDE;
-
-    virtual void encrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
-    virtual void decrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
-    virtual void generateKey(const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
-    virtual void importKey(const CryptoAlgorithmParameters&, const CryptoKeyData&, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
-
-private:
-    CryptoAlgorithmAES_CBC();
-    virtual ~CryptoAlgorithmAES_CBC();
-};
-
+CryptoKeySerializationRaw::CryptoKeySerializationRaw(const CryptoOperationData& data)
+{
+    m_data.append(data.first, data.second);
 }
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+CryptoKeySerializationRaw::~CryptoKeySerializationRaw()
+{
+}
 
-#endif // CryptoAlgorithmAES_CBC_h
+bool CryptoKeySerializationRaw::reconcileAlgorithm(std::unique_ptr<CryptoAlgorithm>&, std::unique_ptr<CryptoAlgorithmParameters>&) const
+{
+    return true;
+}
+
+void CryptoKeySerializationRaw::reconcileUsages(CryptoKeyUsage&) const
+{
+}
+
+void CryptoKeySerializationRaw::reconcileExtractable(bool&) const
+{
+}
+
+std::unique_ptr<CryptoKeyData> CryptoKeySerializationRaw::keyData() const
+{
+    return CryptoKeyDataOctetSequence::create(m_data);
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(SUBTLE_CRYPTO)

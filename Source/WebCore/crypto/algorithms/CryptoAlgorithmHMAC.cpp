@@ -30,6 +30,7 @@
 
 #include "CryptoAlgorithmHmacKeyParams.h"
 #include "CryptoAlgorithmHmacParams.h"
+#include "CryptoKeyDataOctetSequence.h"
 #include "CryptoKeyHMAC.h"
 #include "ExceptionCode.h"
 #include "JSDOMPromise.h"
@@ -69,23 +70,18 @@ void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParameters& parameter
     promise->fulfill(result.release());
 }
 
-void CryptoAlgorithmHMAC::importKey(const CryptoAlgorithmParameters& parameters, CryptoKeyFormat format, const CryptoOperationData& data, bool extractable, CryptoKeyUsage usage, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
+void CryptoAlgorithmHMAC::importKey(const CryptoAlgorithmParameters& parameters, const CryptoKeyData& keyData, bool extractable, CryptoKeyUsage usage, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
 {
-    if (format != CryptoKeyFormat::Raw) {
+    if (keyData.format() != CryptoKeyData::Format::OctetSequence) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    const CryptoAlgorithmHmacParams& hmacParameters = static_cast<const CryptoAlgorithmHmacParams&>(parameters);
-    Vector<char> keyData;
-    keyData.append(data.first, data.second);
-    RefPtr<CryptoKeyHMAC> result = CryptoKeyHMAC::create(keyData, hmacParameters.hash, extractable, usage);
-    promise->fulfill(result.release());
-}
+    const CryptoKeyDataOctetSequence& keyDataOctetSequence = asCryptoKeyDataOctetSequence(keyData);
 
-void CryptoAlgorithmHMAC::exportKey(const CryptoAlgorithmParameters&, CryptoKeyFormat, const CryptoKey&, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
-{
-    // Not implemented yet.
-    ec = NOT_SUPPORTED_ERR;
+    const CryptoAlgorithmHmacParams& hmacParameters = static_cast<const CryptoAlgorithmHmacParams&>(parameters);
+
+    RefPtr<CryptoKeyHMAC> result = CryptoKeyHMAC::create(keyDataOctetSequence.octetSequence(), hmacParameters.hash, extractable, usage);
+    promise->fulfill(result.release());
 }
 
 }

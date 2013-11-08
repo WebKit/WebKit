@@ -23,36 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmAES_CBC_h
-#define CryptoAlgorithmAES_CBC_h
+#ifndef JSCryptoKeySerializationJWK_h
+#define JSCryptoKeySerializationJWK_h
 
-#include "CryptoAlgorithm.h"
+#include "CryptoKeySerialization.h"
+#include <heap/Strong.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+namespace JSC {
+class ExecState;
+class JSObject;
+}
+
 namespace WebCore {
 
-class CryptoAlgorithmAES_CBC FINAL : public CryptoAlgorithm {
+class CryptoAlgorithmParameters;
+
+class JSCryptoKeySerializationJWK FINAL : public CryptoKeySerialization {
+WTF_MAKE_NONCOPYABLE(JSCryptoKeySerializationJWK);
 public:
-    static const char* const s_name;
-    static const CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_CBC;
+    static std::unique_ptr<JSCryptoKeySerializationJWK> create(JSC::ExecState* exec, const String& jsonString)
+    {
+        return std::unique_ptr<JSCryptoKeySerializationJWK>(new JSCryptoKeySerializationJWK(exec, jsonString));
+    }
 
-    static std::unique_ptr<CryptoAlgorithm> create();
+    virtual ~JSCryptoKeySerializationJWK();
 
-    virtual CryptoAlgorithmIdentifier identifier() const OVERRIDE;
+    virtual bool reconcileAlgorithm(std::unique_ptr<CryptoAlgorithm>&, std::unique_ptr<CryptoAlgorithmParameters>&) const OVERRIDE;
 
-    virtual void encrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
-    virtual void decrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
-    virtual void generateKey(const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
-    virtual void importKey(const CryptoAlgorithmParameters&, const CryptoKeyData&, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
+    virtual void reconcileUsages(CryptoKeyUsage&) const OVERRIDE;
+    virtual void reconcileExtractable(bool&) const OVERRIDE;
+
+    virtual std::unique_ptr<CryptoKeyData> keyData() const OVERRIDE;
 
 private:
-    CryptoAlgorithmAES_CBC();
-    virtual ~CryptoAlgorithmAES_CBC();
+    JSCryptoKeySerializationJWK(JSC::ExecState*, const String&);
+
+    bool keySizeIsValid(size_t sizeInBits) const;
+
+    JSC::ExecState* m_exec;
+    JSC::Strong<JSC::JSObject> m_json;
+
+    mutable String m_jwkAlgorithmName; // Stored when reconcileAlgorithm is called, and used later.
 };
 
 }
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-
-#endif // CryptoAlgorithmAES_CBC_h
+#endif // JSCryptoKeySerializationJWK_h

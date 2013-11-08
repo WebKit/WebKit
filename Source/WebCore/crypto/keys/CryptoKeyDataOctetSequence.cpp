@@ -23,36 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmAES_CBC_h
-#define CryptoAlgorithmAES_CBC_h
-
-#include "CryptoAlgorithm.h"
+#include "config.h"
+#include "CryptoKeyDataOctetSequence.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-class CryptoAlgorithmAES_CBC FINAL : public CryptoAlgorithm {
-public:
-    static const char* const s_name;
-    static const CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_CBC;
-
-    static std::unique_ptr<CryptoAlgorithm> create();
-
-    virtual CryptoAlgorithmIdentifier identifier() const OVERRIDE;
-
-    virtual void encrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
-    virtual void decrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
-    virtual void generateKey(const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
-    virtual void importKey(const CryptoAlgorithmParameters&, const CryptoKeyData&, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
-
-private:
-    CryptoAlgorithmAES_CBC();
-    virtual ~CryptoAlgorithmAES_CBC();
-};
-
+CryptoKeyDataOctetSequence::CryptoKeyDataOctetSequence(const Vector<char>& data)
+    : CryptoKeyData(CryptoKeyData::Format::OctetSequence)
+    , m_keyData(data)
+{
 }
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+CryptoKeyDataOctetSequence::~CryptoKeyDataOctetSequence()
+{
+}
 
-#endif // CryptoAlgorithmAES_CBC_h
+} // namespace WebCore
+
+#endif // ENABLE(SUBTLE_CRYPTO)

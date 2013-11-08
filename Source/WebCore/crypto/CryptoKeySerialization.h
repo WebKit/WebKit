@@ -23,36 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmAES_CBC_h
-#define CryptoAlgorithmAES_CBC_h
+#ifndef CryptoKeySerialization_h
+#define CryptoKeySerialization_h
 
-#include "CryptoAlgorithm.h"
+#include "CryptoKeyUsage.h"
+#include <wtf/Noncopyable.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-class CryptoAlgorithmAES_CBC FINAL : public CryptoAlgorithm {
+class CryptoAlgorithm;
+class CryptoAlgorithmParameters;
+class CryptoKeyData;
+
+typedef std::pair<const char*, size_t> CryptoOperationData;
+
+class CryptoKeySerialization {
+WTF_MAKE_NONCOPYABLE(CryptoKeySerialization);
 public:
-    static const char* const s_name;
-    static const CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_CBC;
+    CryptoKeySerialization() { }
+    virtual ~CryptoKeySerialization() { }
 
-    static std::unique_ptr<CryptoAlgorithm> create();
+    // Returns false if suggested algorithm was not compatible with one stored in the serialization.
+    virtual bool reconcileAlgorithm(std::unique_ptr<CryptoAlgorithm>&, std::unique_ptr<CryptoAlgorithmParameters>&) const = 0;
 
-    virtual CryptoAlgorithmIdentifier identifier() const OVERRIDE;
+    virtual void reconcileUsages(CryptoKeyUsage&) const = 0;
+    virtual void reconcileExtractable(bool&) const = 0;
 
-    virtual void encrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
-    virtual void decrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
-    virtual void generateKey(const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
-    virtual void importKey(const CryptoAlgorithmParameters&, const CryptoKeyData&, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
-
-private:
-    CryptoAlgorithmAES_CBC();
-    virtual ~CryptoAlgorithmAES_CBC();
+    virtual std::unique_ptr<CryptoKeyData> keyData() const = 0;
 };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-
-#endif // CryptoAlgorithmAES_CBC_h
+#endif // CryptoKeySerialization_h

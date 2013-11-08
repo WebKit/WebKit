@@ -1,3 +1,93 @@
+2013-11-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Implement JWK key import for HMAC and AES-CBC
+        https://bugs.webkit.org/show_bug.cgi?id=124059
+
+        Reviewed by Anders Carlsson.
+
+        Tests: crypto/subtle/aes-cbc-import-jwk.html
+               crypto/subtle/hmac-import-jwk.html
+               crypto/subtle/import-jwk.html
+
+        WebCrypto supports multiple key formats - raw, pkcs8, spki, jwk. The design is that
+        we'll transform these into parsed KeyData subclasses before passing to algorithms.
+
+        CryptoKeySerialization is a base class for handling all these formats.
+
+        * WebCore.xcodeproj/project.pbxproj: Added new files. Removed CryptoKeyFormat.h.
+        
+        * bindings/js/JSCryptoKeySerializationJWK.h: Added.
+        * bindings/js/JSCryptoKeySerializationJWK.cpp: Added.
+        (WebCore::getStringFromJSON): A helper. Note that we can rely on the object being
+        a nice freshly parsed JSON, no getters or anything.
+        (WebCore::getBooleanFromJSON): Ditto.
+        (WebCore::JSCryptoKeySerializationJWK::JSCryptoKeySerializationJWK):
+        (WebCore::JSCryptoKeySerializationJWK::~JSCryptoKeySerializationJWK):
+        (WebCore::createHMACParameters): A simple helper.
+        (WebCore::JSCryptoKeySerializationJWK::reconcileAlgorithm): WebCrypto API is weird,
+        you can have algorithm parameters both inside a JWK key and passed as importKey()
+        arguments. They need to agree, whatever that means for specific serialization's
+        algorithm options (not all necessarily have a 1-1 matching to WebCrypto).
+        (WebCore::JSCryptoKeySerializationJWK::reconcileUsages): Take an intersection of usages.
+        (WebCore::JSCryptoKeySerializationJWK::reconcileExtractable): Only extractable if
+        both JWK and the caller agree.
+        (WebCore::JSCryptoKeySerializationJWK::keySizeIsValid): Verify validity of JWK key.
+        (WebCore::JSCryptoKeySerializationJWK::keyData): Return an appropriate KeyData
+        subclass.
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::ENUM_CLASS): Moved CryptoKeyFormat here.
+        (WebCore::cryptoKeyFormatFromJSValue): Added a human readable string to an exception.
+        (WebCore::JSSubtleCrypto::importKey): Support multiple key formats, not just raw.
+
+        * crypto/CryptoAlgorithm.cpp: (WebCore::CryptoAlgorithm::importKey):
+        * crypto/CryptoAlgorithm.h:
+        Updated signature for importKey to one that makes more sense. Decoding formats all
+        the way from a binary blob is not something that CryptoAlgorithm subclasses should
+        do, we now pass a KeyData subclass instead.
+        Removed exportKey/wrapKey/unwrapKey altogether, because I don't yet know what the
+        signatures will be.
+
+        * crypto/CryptoKeyData.h: Added.
+        (WebCore::CryptoKeyData::ENUM_CLASS):
+        (WebCore::CryptoKeyData::CryptoKeyData):
+        (WebCore::CryptoKeyData::~CryptoKeyData):
+        (WebCore::CryptoKeyData::format):
+        A base class for passing key material to algorithms. Currently, only one type is
+        supported, that being OctetSequence for secret keys. Keys for RSA and EC are more
+        complicated, and secret/public ones are different too.
+
+        * crypto/CryptoKeyFormat.h: Removed. There are too many key format classes
+        confusingly floating around, and this was only needed in one file for parsing.
+
+        * crypto/CryptoKeySerialization.h: Added.
+        Base class for handling raw/pkcs8/spki/jwk keys.
+
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::importKey):
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.h:
+        Updated to use CryptoKeyData.
+
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        (WebCore::CryptoAlgorithmHMAC::importKey):
+        * crypto/algorithms/CryptoAlgorithmHMAC.h:
+        Updated to use CryptoKeyData.
+
+        * crypto/keys/CryptoKeyDataOctetSequence.cpp: Added.
+        (WebCore::CryptoKeyDataOctetSequence::CryptoKeyDataOctetSequence):
+        (WebCore::CryptoKeyDataOctetSequence::~CryptoKeyDataOctetSequence):
+        * crypto/keys/CryptoKeyDataOctetSequence.h: Added.
+        (WebCore::asCryptoKeyDataOctetSequence):
+        * crypto/keys/CryptoKeySerializationRaw.cpp: Added.
+        (WebCore::CryptoKeySerializationRaw::CryptoKeySerializationRaw):
+        (WebCore::CryptoKeySerializationRaw::~CryptoKeySerializationRaw):
+        (WebCore::CryptoKeySerializationRaw::reconcileAlgorithm):
+        (WebCore::CryptoKeySerializationRaw::reconcileUsages):
+        (WebCore::CryptoKeySerializationRaw::reconcileExtractable):
+        (WebCore::CryptoKeySerializationRaw::keyData):
+        * crypto/keys/CryptoKeySerializationRaw.h: Added.
+        Much code to pass around a Vector<char>.
+
 2013-11-08  Mark Lam  <mark.lam@apple.com>
 
         Move breakpoint (and exception break) functionality into JSC::Debugger.

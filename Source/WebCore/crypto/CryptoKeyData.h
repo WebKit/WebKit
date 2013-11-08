@@ -23,36 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmAES_CBC_h
-#define CryptoAlgorithmAES_CBC_h
+#ifndef CryptoKeyData_h
+#define CryptoKeyData_h
 
-#include "CryptoAlgorithm.h"
+#include <wtf/Noncopyable.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-class CryptoAlgorithmAES_CBC FINAL : public CryptoAlgorithm {
+class CryptoKeyData {
+WTF_MAKE_NONCOPYABLE(CryptoKeyData);
 public:
-    static const char* const s_name;
-    static const CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_CBC;
+    ENUM_CLASS(Format) {
+        OctetSequence
+    };
 
-    static std::unique_ptr<CryptoAlgorithm> create();
+    CryptoKeyData(Format format)
+        : m_format(format)
+    {
+    }
+    virtual ~CryptoKeyData() { }
 
-    virtual CryptoAlgorithmIdentifier identifier() const OVERRIDE;
-
-    virtual void encrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
-    virtual void decrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
-    virtual void generateKey(const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
-    virtual void importKey(const CryptoAlgorithmParameters&, const CryptoKeyData&, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
+    Format format() const { return m_format; }
 
 private:
-    CryptoAlgorithmAES_CBC();
-    virtual ~CryptoAlgorithmAES_CBC();
+    Format m_format;
 };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-
-#endif // CryptoAlgorithmAES_CBC_h
+#endif // CryptoKeyData_h

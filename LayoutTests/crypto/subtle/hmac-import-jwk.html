@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a JWK key for HMAC.");
+
+jsTestIsAsync = true;
+
+if (!window.subtle)
+    window.crypto.subtle = window.crypto.webkitSubtle;
+
+var extractable = true;
+
+var hmacKey = {
+    "kty": "oct",
+    "alg": "HS256",
+    "use": "sig",
+    "extractable": false,
+    "k": "ahjkn-_387fgnsibf23qsvahjkn-_387fgnsibf23qs"
+};
+
+var hmacKeyAsArrayBuffer = asciiToArrayBuffer(JSON.stringify(hmacKey));
+
+debug("Importing a key...\n");
+crypto.subtle.importKey("jwk", hmacKeyAsArrayBuffer, null, extractable, ["sign", "verify"]).then(function(result) {
+    key = result;
+
+    shouldBe("key.type", "'secret'");
+    shouldBe("key.extractable", "false");
+    shouldBe("key.algorithm.name", "'hmac'");
+    shouldBe("key.algorithm.length", "32");
+    shouldBe("key.usages", '["sign", "verify"]');
+
+    debug("\nUsing the key to sign message 'foo'...");
+    return crypto.subtle.sign(key.algorithm, key, [asciiToArrayBuffer('foo')]);
+}).then(function(result) {
+    signature = result;
+    shouldBe("byteArrayToHexString(new Uint8Array(signature))", "'[e0 37 36 fe 09 88 92 b2 a2 da 77 81 24 31 f7 c0 14 d3 2e 2f d6 9f 3b cf f8 83 ac 92 3a 8f a2 da]'");
+
+    debug("\nVerifying the signature...");
+    return crypto.subtle.verify(key.algorithm, key, result, [asciiToArrayBuffer('foo')]);
+}).then(function(result) {
+    verificationResult = result;
+    shouldBe("verificationResult", "true");
+    finishJSTest();
+});
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

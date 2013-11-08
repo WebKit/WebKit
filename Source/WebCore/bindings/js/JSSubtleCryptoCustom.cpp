@@ -31,9 +31,12 @@
 #include "CryptoAlgorithm.h"
 #include "CryptoAlgorithmParameters.h"
 #include "CryptoAlgorithmRegistry.h"
+#include "CryptoKeyData.h"
+#include "CryptoKeySerializationRaw.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "JSCryptoAlgorithmDictionary.h"
+#include "JSCryptoKeySerializationJWK.h"
 #include "JSCryptoOperationData.h"
 #include "JSDOMPromise.h"
 #include <runtime/Error.h>
@@ -41,6 +44,20 @@
 using namespace JSC;
 
 namespace WebCore {
+
+ENUM_CLASS(CryptoKeyFormat) {
+    // An unformatted sequence of bytes. Intended for secret keys.
+    Raw,
+
+    // The DER encoding of the PrivateKeyInfo structure from RFC 5208.
+    PKCS8,
+
+    // The DER encoding of the SubjectPublicKeyInfo structure from RFC 5280.
+    SPKI,
+
+    // The key is represented as JSON according to the JSON Web Key format.
+    JWK
+};
 
 static std::unique_ptr<CryptoAlgorithm> createAlgorithmFromJSValue(ExecState* exec, JSValue value)
 {
@@ -70,7 +87,7 @@ static bool cryptoKeyFormatFromJSValue(ExecState* exec, JSValue value, CryptoKey
     else if (keyFormatString == "jwk")
         result = CryptoKeyFormat::JWK;
     else {
-        throwTypeError(exec);
+        throwTypeError(exec, "Unknown key format");
         return false;
     }
     return true;
@@ -400,25 +417,56 @@ JSValue JSSubtleCrypto::importKey(JSC::ExecState* exec)
     }
 
     std::unique_ptr<CryptoAlgorithm> algorithm;
+    std::unique_ptr<CryptoAlgorithmParameters> parameters;
     if (!exec->uncheckedArgument(2).isNull()) {
         algorithm = createAlgorithmFromJSValue(exec, exec->uncheckedArgument(2));
         if (!algorithm) {
             ASSERT(exec->hadException());
             return jsUndefined();
         }
+        parameters = JSCryptoAlgorithmDictionary::createParametersForImportKey(exec, algorithm->identifier(), exec->uncheckedArgument(2));
+        if (!parameters) {
+            ASSERT(exec->hadException());
+            return jsUndefined();
+        }
     }
-    // The algorithm can presumably be null when we can deduce it from the key (JWE perhaps?)
-    // But we only support raw key format right now.
-    if (!algorithm) {
-        setDOMException(exec, NOT_SUPPORTED_ERR);
+
+    std::unique_ptr<CryptoKeySerialization> keySerialization;
+    switch (keyFormat) {
+    case CryptoKeyFormat::Raw:
+        keySerialization = CryptoKeySerializationRaw::create(data);
+        break;
+    case CryptoKeyFormat::JWK: {
+        String jwkString = String::fromUTF8(data.first, data.second);
+        if (jwkString.isNull()) {
+            throwTypeError(exec, "JWK JSON serialization is not valid UTF-8");
+            return jsUndefined();
+        }
+        keySerialization = JSCryptoKeySerializationJWK::create(exec, jwkString);
+        if (exec->hadException())
+            return jsUndefined();
+        break;
+    }
+    default:
+        throwTypeError(exec, "Unsupported key format");
         return jsUndefined();
     }
 
-    auto parameters = JSCryptoAlgorithmDictionary::createParametersForImportKey(exec, algorithm->identifier(), exec->uncheckedArgument(2));
-    if (!parameters) {
-        ASSERT(exec->hadException());
+    ASSERT(keySerialization);
+
+    if (!keySerialization->reconcileAlgorithm(algorithm, parameters)) {
+        if (!exec->hadException())
+            throwTypeError(exec, "Algorithm specified in key is not compatible with one passed to importKey as argument");
         return jsUndefined();
     }
+    if (exec->hadException())
+        return jsUndefined();
+
+    if (!algorithm) {
+        throwTypeError(exec, "Neither key nor function argument has crypto algorithm specified");
+        return jsUndefined();
+    }
+    ASSERT(parameters);
 
     bool extractable = false;
     if (exec->argumentCount() >= 4) {
@@ -426,6 +474,9 @@ JSValue JSSubtleCrypto::importKey(JSC::ExecState* exec)
         if (exec->hadException())
             return jsUndefined();
     }
+    keySerialization->reconcileExtractable(extractable);
+    if (exec->hadException())
+        return jsUndefined();
 
     CryptoKeyUsage keyUsages = 0;
     if (exec->argumentCount() >= 5) {
@@ -434,12 +485,19 @@ JSValue JSSubtleCrypto::importKey(JSC::ExecState* exec)
             return jsUndefined();
         }
     }
+    keySerialization->reconcileUsages(keyUsages);
+    if (exec->hadException())
+        return jsUndefined();
+
+    auto keyData = keySerialization->keyData();
+    if (exec->hadException())
+        return jsUndefined();
 
     JSPromise* promise = JSPromise::createWithResolver(exec->vm(), globalObject());
     auto promiseWrapper = PromiseWrapper::create(globalObject(), promise);
 
     ExceptionCode ec = 0;
-    algorithm->importKey(*parameters, keyFormat, data, extractable, keyUsages, std::move(promiseWrapper), ec);
+    algorithm->importKey(*parameters, *keyData, extractable, keyUsages, std::move(promiseWrapper), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();

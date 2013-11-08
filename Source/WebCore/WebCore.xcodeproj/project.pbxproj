@@ -5544,6 +5544,14 @@
 		E125F845182425C900D84CD9 /* CryptoAlgorithmAES_CBCMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F843182425C900D84CD9 /* CryptoAlgorithmAES_CBCMac.cpp */; };
 		E125F84D1824289D00D84CD9 /* CryptoKeyAES.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F84B1824289D00D84CD9 /* CryptoKeyAES.cpp */; };
 		E125F84E1824289D00D84CD9 /* CryptoKeyAES.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F84C1824289D00D84CD9 /* CryptoKeyAES.h */; };
+		E125F85118283A5600D84CD9 /* JSCryptoKeySerializationJWK.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F84F18283A5600D84CD9 /* JSCryptoKeySerializationJWK.cpp */; };
+		E125F85218283A5600D84CD9 /* JSCryptoKeySerializationJWK.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F85018283A5600D84CD9 /* JSCryptoKeySerializationJWK.h */; };
+		E125F856182C0F8300D84CD9 /* CryptoKeySerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F855182C0F8300D84CD9 /* CryptoKeySerialization.h */; };
+		E125F859182C1AA600D84CD9 /* CryptoKeySerializationRaw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F857182C1AA600D84CD9 /* CryptoKeySerializationRaw.cpp */; };
+		E125F85A182C1AA600D84CD9 /* CryptoKeySerializationRaw.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F858182C1AA600D84CD9 /* CryptoKeySerializationRaw.h */; };
+		E125F85E182C2DF600D84CD9 /* CryptoKeyData.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F85D182C2DF600D84CD9 /* CryptoKeyData.h */; };
+		E125F863182C303A00D84CD9 /* CryptoKeyDataOctetSequence.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F861182C303A00D84CD9 /* CryptoKeyDataOctetSequence.cpp */; };
+		E125F864182C303A00D84CD9 /* CryptoKeyDataOctetSequence.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F862182C303A00D84CD9 /* CryptoKeyDataOctetSequence.h */; };
 		E12719C70EEEC16800F61213 /* NavigatorBase.h in Headers */ = {isa = PBXBuildFile; fileRef = E12719C60EEEC16800F61213 /* NavigatorBase.h */; };
 		E12719CA0EEEC21300F61213 /* NavigatorBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E12719C90EEEC21300F61213 /* NavigatorBase.cpp */; };
 		E1271A0B0EEEC77A00F61213 /* WorkerNavigator.h in Headers */ = {isa = PBXBuildFile; fileRef = E1271A0A0EEEC77A00F61213 /* WorkerNavigator.h */; };
@@ -5597,7 +5605,6 @@
 		E172AF6D180F24C600FBADB9 /* CryptoAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E172AF6B180F24C600FBADB9 /* CryptoAlgorithm.cpp */; };
 		E172AF6E180F24C600FBADB9 /* CryptoAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = E172AF6C180F24C600FBADB9 /* CryptoAlgorithm.h */; };
 		E172AF70180F289500FBADB9 /* CryptoKeyUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = E172AF6F180F289500FBADB9 /* CryptoKeyUsage.h */; };
-		E172AF77180F366C00FBADB9 /* CryptoKeyFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = E172AF76180F366C00FBADB9 /* CryptoKeyFormat.h */; };
 		E172AF8F1811BC3700FBADB9 /* JSDOMPromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E172AF8D1811BC3700FBADB9 /* JSDOMPromise.cpp */; };
 		E172AF901811BC3700FBADB9 /* JSDOMPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = E172AF8E1811BC3700FBADB9 /* JSDOMPromise.h */; };
 		E17B491516A9B094001C8839 /* TransitionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E17B491316A9B093001C8839 /* TransitionEvent.cpp */; };
@@ -12611,6 +12618,14 @@
 		E125F843182425C900D84CD9 /* CryptoAlgorithmAES_CBCMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoAlgorithmAES_CBCMac.cpp; path = mac/CryptoAlgorithmAES_CBCMac.cpp; sourceTree = "<group>"; };
 		E125F84B1824289D00D84CD9 /* CryptoKeyAES.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoKeyAES.cpp; sourceTree = "<group>"; };
 		E125F84C1824289D00D84CD9 /* CryptoKeyAES.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyAES.h; sourceTree = "<group>"; };
+		E125F84F18283A5600D84CD9 /* JSCryptoKeySerializationJWK.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoKeySerializationJWK.cpp; sourceTree = "<group>"; };
+		E125F85018283A5600D84CD9 /* JSCryptoKeySerializationJWK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCryptoKeySerializationJWK.h; sourceTree = "<group>"; };
+		E125F855182C0F8300D84CD9 /* CryptoKeySerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeySerialization.h; sourceTree = "<group>"; };
+		E125F857182C1AA600D84CD9 /* CryptoKeySerializationRaw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoKeySerializationRaw.cpp; path = keys/CryptoKeySerializationRaw.cpp; sourceTree = "<group>"; };
+		E125F858182C1AA600D84CD9 /* CryptoKeySerializationRaw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CryptoKeySerializationRaw.h; path = keys/CryptoKeySerializationRaw.h; sourceTree = "<group>"; };
+		E125F85D182C2DF600D84CD9 /* CryptoKeyData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyData.h; sourceTree = "<group>"; };
+		E125F861182C303A00D84CD9 /* CryptoKeyDataOctetSequence.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoKeyDataOctetSequence.cpp; path = keys/CryptoKeyDataOctetSequence.cpp; sourceTree = "<group>"; };
+		E125F862182C303A00D84CD9 /* CryptoKeyDataOctetSequence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CryptoKeyDataOctetSequence.h; path = keys/CryptoKeyDataOctetSequence.h; sourceTree = "<group>"; };
 		E12719C60EEEC16800F61213 /* NavigatorBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorBase.h; sourceTree = "<group>"; };
 		E12719C90EEEC21300F61213 /* NavigatorBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorBase.cpp; sourceTree = "<group>"; };
 		E1271A0A0EEEC77A00F61213 /* WorkerNavigator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerNavigator.h; sourceTree = "<group>"; };
@@ -12668,7 +12683,6 @@
 		E172AF6B180F24C600FBADB9 /* CryptoAlgorithm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithm.cpp; sourceTree = "<group>"; };
 		E172AF6C180F24C600FBADB9 /* CryptoAlgorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithm.h; sourceTree = "<group>"; };
 		E172AF6F180F289500FBADB9 /* CryptoKeyUsage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyUsage.h; sourceTree = "<group>"; };
-		E172AF76180F366C00FBADB9 /* CryptoKeyFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyFormat.h; sourceTree = "<group>"; };
 		E172AF8D1811BC3700FBADB9 /* JSDOMPromise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMPromise.cpp; sourceTree = "<group>"; };
 		E172AF8E1811BC3700FBADB9 /* JSDOMPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMPromise.h; sourceTree = "<group>"; };
 		E176580C180DF3A0005A96D1 /* OESElementIndexUint.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = OESElementIndexUint.idl; path = canvas/OESElementIndexUint.idl; sourceTree = "<group>"; };
@@ -19469,6 +19483,8 @@
 				BC60901E0E91B8EC000C68B5 /* JSEventTargetCustom.cpp */,
 				3314ACE910892086000F0E56 /* JSExceptionBase.cpp */,
 				3314ACEA10892086000F0E56 /* JSExceptionBase.h */,
+				E125F84F18283A5600D84CD9 /* JSCryptoKeySerializationJWK.cpp */,
+				E125F85018283A5600D84CD9 /* JSCryptoKeySerializationJWK.h */,
 				8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */,
 				8F934D831189F1EE00508D5D /* JSMainThreadExecState.h */,
 				B56576E417DA599F00A56BDC /* JSMainThreadExecStateInstrumentation.h */,
@@ -20338,8 +20354,12 @@
 			children = (
 				E125F84B1824289D00D84CD9 /* CryptoKeyAES.cpp */,
 				E125F84C1824289D00D84CD9 /* CryptoKeyAES.h */,
+				E125F861182C303A00D84CD9 /* CryptoKeyDataOctetSequence.cpp */,
+				E125F862182C303A00D84CD9 /* CryptoKeyDataOctetSequence.h */,
 				E125F8331822F18A00D84CD9 /* CryptoKeyHMAC.cpp */,
 				E125F8341822F18A00D84CD9 /* CryptoKeyHMAC.h */,
+				E125F857182C1AA600D84CD9 /* CryptoKeySerializationRaw.cpp */,
+				E125F858182C1AA600D84CD9 /* CryptoKeySerializationRaw.h */,
 			);
 			name = keys;
 			sourceTree = "<group>";
@@ -20482,7 +20502,8 @@
 				E157A8DC18172C2C009F821D /* CryptoKey.idl */,
 				E157A8E218173A3A009F821D /* CryptoKey.cpp */,
 				E157A8E318173A3A009F821D /* CryptoKey.h */,
-				E172AF76180F366C00FBADB9 /* CryptoKeyFormat.h */,
+				E125F85D182C2DF600D84CD9 /* CryptoKeyData.h */,
+				E125F855182C0F8300D84CD9 /* CryptoKeySerialization.h */,
 				E19727151820549E00592D51 /* CryptoKeyType.h */,
 				E172AF6F180F289500FBADB9 /* CryptoKeyUsage.h */,
 				E1FF8F5C1807364B00132674 /* SubtleCrypto.idl */,
@@ -22531,6 +22552,7 @@
 				85F32AEE0AA63B8700FF3184 /* DOMHTMLOptGroupElement.h in Headers */,
 				CD9DE18217AAD6A400EA386D /* DOMURLMediaSource.h in Headers */,
 				85E711BF0AC5D5350053270F /* DOMHTMLOptGroupElementInternal.h in Headers */,
+				E125F85E182C2DF600D84CD9 /* CryptoKeyData.h in Headers */,
 				8540756B0AD6CBF900620C57 /* DOMHTMLOptionElement.h in Headers */,
 				8540756D0AD6CBF900620C57 /* DOMHTMLOptionElementInternal.h in Headers */,
 				078E091F17D14D1C00420AA1 /* RTCDataChannelEvent.h in Headers */,
@@ -22834,6 +22856,7 @@
 				14993BE60B2F2B1C0050497F /* FocusController.h in Headers */,
 				062287840B4DB322000C34DF /* FocusDirection.h in Headers */,
 				B6D9D23514EABD260090D75E /* FocusEvent.h in Headers */,
+				E125F85A182C1AA600D84CD9 /* CryptoKeySerializationRaw.h in Headers */,
 				B2C3DA610D006CD600EF6F26 /* Font.h in Headers */,
 				BCB92D4F1293550B00C8387F /* FontBaseline.h in Headers */,
 				B2C3DA630D006CD600EF6F26 /* FontCache.h in Headers */,
@@ -23087,6 +23110,7 @@
 				1A71D57C0F33819000F9CE4E /* IdentifierRep.h in Headers */,
 				5913A24213D49EBA00F5B05C /* IdentifiersFactory.h in Headers */,
 				49E911C50EF86D47009D0CAF /* IdentityTransformOperation.h in Headers */,
+				E125F856182C0F8300D84CD9 /* CryptoKeySerialization.h in Headers */,
 				CD641EC01819B36000EE4C41 /* MediaTimeMac.h in Headers */,
 				C0C054CD1118C8E400CE2636 /* IDLParser.pm in Headers */,
 				C3CF17A515B0063F00276D39 /* IdTargetObserver.h in Headers */,
@@ -23499,7 +23523,6 @@
 				1AE82FED0CAB07EE002237AE /* JSSQLResultSet.h in Headers */,
 				1AFE119A0CBFFCC4003017FA /* JSSQLResultSetRowList.h in Headers */,
 				B59DD6A511902A62007E9684 /* JSSQLStatementCallback.h in Headers */,
-				E172AF77180F366C00FBADB9 /* CryptoKeyFormat.h in Headers */,
 				B59DD6A911902A71007E9684 /* JSSQLStatementErrorCallback.h in Headers */,
 				BC82432A0D0CE8A200460C8F /* JSSQLTransaction.h in Headers */,
 				B59DD69D11902A42007E9684 /* JSSQLTransactionCallback.h in Headers */,
@@ -23664,6 +23687,7 @@
 				B2FA3E110AB75A6F000E5AC4 /* JSSVGTSpanElement.h in Headers */,
 				B2FA3E130AB75A6F000E5AC4 /* JSSVGUnitTypes.h in Headers */,
 				B2FA3E150AB75A6F000E5AC4 /* JSSVGUseElement.h in Headers */,
+				E125F85218283A5600D84CD9 /* JSCryptoKeySerializationJWK.h in Headers */,
 				B2FA3E170AB75A6F000E5AC4 /* JSSVGViewElement.h in Headers */,
 				7118FED515685CC60030B79A /* JSSVGViewSpec.h in Headers */,
 				8485227E1190162C006EDC7F /* JSSVGVKernElement.h in Headers */,
@@ -23895,6 +23919,7 @@
 				A818721B0977D3C0005826D9 /* NodeList.h in Headers */,
 				63189AE30E83A33300012E41 /* NodeRareData.h in Headers */,
 				A74F3EF51678B24F00B05A6E /* NodeRenderingTraversal.h in Headers */,
+				E125F864182C303A00D84CD9 /* CryptoKeyDataOctetSequence.h in Headers */,
 				63D7B32D0E78CD3F00F7617C /* NodeRenderStyle.h in Headers */,
 				E43105BB16750F1600DB2FB8 /* NodeTraversal.h in Headers */,
 				9382AAB40D8C386100F357A6 /* NodeWithIndex.h in Headers */,
@@ -26967,6 +26992,7 @@
 				070363D6181A146500C074A5 /* MediaStreamSourceStates.cpp in Sources */,
 				B2FA3E100AB75A6F000E5AC4 /* JSSVGTSpanElement.cpp in Sources */,
 				B2FA3E120AB75A6F000E5AC4 /* JSSVGUnitTypes.cpp in Sources */,
+				E125F85118283A5600D84CD9 /* JSCryptoKeySerializationJWK.cpp in Sources */,
 				B2FA3E140AB75A6F000E5AC4 /* JSSVGUseElement.cpp in Sources */,
 				B2FA3E160AB75A6F000E5AC4 /* JSSVGViewElement.cpp in Sources */,
 				7118FED415685CC60030B79A /* JSSVGViewSpec.cpp in Sources */,
@@ -27633,6 +27659,7 @@
 				078E08FF17D14CEE00420AA1 /* MediaStream.cpp in Sources */,
 				97BC6A5A1505F081001B74AC /* SQLTransactionSync.cpp in Sources */,
 				1A2E6E590CC55213004A2062 /* SQLValue.cpp in Sources */,
+				E125F863182C303A00D84CD9 /* CryptoKeyDataOctetSequence.cpp in Sources */,
 				93F19AE608245E59001E9ABC /* SSLKeyGeneratorMac.cpp in Sources */,
 				BC7FA62E0D1F0EFF00DB22A9 /* StaticNodeList.cpp in Sources */,
 				A5AFB34F115151A700B045CB /* StepRange.cpp in Sources */,
@@ -27650,6 +27677,7 @@
 				C5102D950FD9AA2D00FAFF04 /* StorageSyncManager.cpp in Sources */,
 				511F23190DC160DA004F0032 /* StorageThread.cpp in Sources */,
 				3AB02D2B12D4F91600FBB694 /* StorageTracker.cpp in Sources */,
+				E125F859182C1AA600D84CD9 /* CryptoKeySerializationRaw.cpp in Sources */,
 				8102C5881325BB1100DDE67A /* StringCallback.cpp in Sources */,
 				E4D988B617BFEB210084FB88 /* TextNodeTraversal.cpp in Sources */,
 				B23540F20D00782E002382FA /* StringTruncator.cpp in Sources */,

@@ -1,3 +1,17 @@
+2013-11-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Implement JWK key import for HMAC and AES-CBC
+        https://bugs.webkit.org/show_bug.cgi?id=124059
+
+        Reviewed by Anders Carlsson.
+
+        * crypto/subtle/aes-cbc-import-jwk-expected.txt: Added.
+        * crypto/subtle/aes-cbc-import-jwk.html: Added.
+        * crypto/subtle/hmac-import-jwk-expected.txt: Added.
+        * crypto/subtle/hmac-import-jwk.html: Added.
+        * crypto/subtle/import-jwk-expected.txt: Added.
+        * crypto/subtle/import-jwk.html: Added.
+
 2013-11-08  Simon Fraser  <simon.fraser@apple.com>
 
         Left sidebar on cubic-bezier.com flickers
