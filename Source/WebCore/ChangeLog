@@ -1,5 +1,18 @@
 2013-11-07  Brady Eidson  <beidson@apple.com>
 
+        Enhance SQL journal_mode setting code to be less likely to log an error.
+        <rdar://problem/15418577> and https://bugs.webkit.org/show_bug.cgi?id=124018
+
+        Reviewed by Anders Carlsson.
+
+        Even though the docs says SQLITE_ROW will always be returned, apparently SQLITE_OK is sometimes returned.
+        Change the code to handle that.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::open): Save the statement result value, and accept SQLITE_OK as a non-error condition.
+
+2013-11-07  Brady Eidson  <beidson@apple.com>
+
         Update an out-dated ASSERT in IconDatabase code.
         <rdar://problem/15171118> and https://bugs.webkit.org/show_bug.cgi?id=124030.
 
