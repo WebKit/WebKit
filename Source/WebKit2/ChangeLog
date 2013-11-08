@@ -1,5 +1,24 @@
 2013-11-08  Anders Carlsson  <andersca@apple.com>
 
+        Replace __alignof with alignof.
+
+        Rubber-stamped by Beth Dakin.
+
+        * Platform/CoreIPC/ArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::decodeStringText):
+        * Platform/CoreIPC/ArgumentCoders.h:
+        (CoreIPC::SimpleArgumentCoder::encode):
+        (CoreIPC::SimpleArgumentCoder::decode):
+        * Platform/CoreIPC/ArgumentDecoder.h:
+        (CoreIPC::ArgumentDecoder::bufferIsLargeEnoughToContain):
+        * WebProcess/WebPage/DecoderAdapter.cpp:
+        (WebKit::DecoderAdapter::decodeString):
+        * WebProcess/WebPage/EncoderAdapter.cpp:
+        (WebKit::EncoderAdapter::encodeString):
+
+2013-11-08  Anders Carlsson  <andersca@apple.com>
+
         Add a way to get a WKWebProcessPlugInBrowserContextController from a handle
         https://bugs.webkit.org/show_bug.cgi?id=124063
 

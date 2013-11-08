@@ -126,7 +126,7 @@ bool DecoderAdapter::decodeString(String& value)
 
     UChar* buffer;
     String string = String::createUninitialized(length, buffer);
-    if (!m_decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length * sizeof(UChar), __alignof(UChar)))
+    if (!m_decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length * sizeof(UChar), alignof(UChar)))
         return false;
 
     value = string;

@@ -102,9 +102,9 @@ void ArgumentCoder<String>::encode(ArgumentEncoder& encoder, const String& strin
     encoder << length << is8Bit;
 
     if (is8Bit)
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters8()), length * sizeof(LChar), __alignof(LChar));
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters8()), length * sizeof(LChar), alignof(LChar));
     else
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters16()), length * sizeof(UChar), __alignof(UChar));
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters16()), length * sizeof(UChar), alignof(UChar));
 }
 
 template <typename CharacterType>
@@ -118,7 +118,7 @@ static inline bool decodeStringText(ArgumentDecoder& decoder, uint32_t length, S
     
     CharacterType* buffer;
     String string = String::createUninitialized(length, buffer);
-    if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length * sizeof(CharacterType), __alignof(CharacterType)))
+    if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length * sizeof(CharacterType), alignof(CharacterType)))
         return false;
     
     result = string;

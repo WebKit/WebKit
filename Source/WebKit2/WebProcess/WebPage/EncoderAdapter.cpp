@@ -108,7 +108,7 @@ void EncoderAdapter::encodeString(const String& value)
 
     uint64_t lengthInBytes = length * sizeof(UChar);
     m_encoder << lengthInBytes;
-    m_encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(value.characters()), length * sizeof(UChar), __alignof(UChar));
+    m_encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(value.characters()), length * sizeof(UChar), alignof(UChar));
 }
 
 }

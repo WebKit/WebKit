@@ -39,12 +39,12 @@ namespace CoreIPC {
 template<typename T> struct SimpleArgumentCoder {
     static void encode(ArgumentEncoder& encoder, const T& t)
     {
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&t), sizeof(T), __alignof(T));
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&t), sizeof(T), alignof(T));
     }
 
     static bool decode(ArgumentDecoder& decoder, T& t)
     {
-        return decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(&t), sizeof(T), __alignof(T));
+        return decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(&t), sizeof(T), alignof(T));
     }
 };
 
@@ -127,7 +127,7 @@ template<typename T> struct VectorArgumentCoder<true, T> {
     static void encode(ArgumentEncoder& encoder, const Vector<T>& vector)
     {
         encoder << static_cast<uint64_t>(vector.size());
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(vector.data()), vector.size() * sizeof(T), __alignof(T));
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(vector.data()), vector.size() * sizeof(T), alignof(T));
     }
     
     static bool decode(ArgumentDecoder& decoder, Vector<T>& vector)
@@ -147,7 +147,7 @@ template<typename T> struct VectorArgumentCoder<true, T> {
         Vector<T> temp;
         temp.resize(size);
 
-        decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(temp.data()), size * sizeof(T), __alignof(T));
+        decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(temp.data()), size * sizeof(T), alignof(T));
 
         vector.swap(temp);
         return true;
