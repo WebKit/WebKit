@@ -1,3 +1,15 @@
+2013-11-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Lots of layers get solid color but transparent contents layers now
+        https://bugs.webkit.org/show_bug.cgi?id=123537
+
+        Reviewed by Tim Horton.
+        
+        Add some properties to the list of things not to implicitly animate.
+
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::disableActionsForLayer):
+
 2013-11-07  Anders Carlsson  <andersca@apple.com>
 
         Remove more dead code
