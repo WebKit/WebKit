@@ -21,6 +21,7 @@
 #include "config.h"
 #include "AccessibilityObject.h"
 
+#include "HTMLNames.h"
 #include "RenderObject.h"
 #include "RenderText.h"
 #include <glib-object.h>
@@ -78,6 +79,19 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     if (role == UnknownRole)
         return IgnoreObject;
 
+    // Lines past this point only make sense for AccessibilityRenderObjects.
+    RenderObject* renderObject = renderer();
+    if (!renderObject)
+        return DefaultBehavior;
+
+    // We don't want <span> elements to show up in the accessibility hierarchy unless
+    // we have good reasons for that (e.g. focusable or visible because of containing
+    // a meaningful accessible name, maybe set through ARIA), so we can use
+    // atk_component_grab_focus() to set the focus to it.
+    Node* node = renderObject->node();
+    if (node && node->hasTagName(HTMLNames::spanTag) && !canSetFocusAttribute() && !hasAttributesRequiredForInclusion())
+        return IgnoreObject;
+
     // Given a paragraph or div containing a non-nested anonymous block, WebCore
     // ignores the paragraph or div and includes the block. We want the opposite:
     // ATs are expecting accessible objects associated with textual elements. They
@@ -86,13 +100,13 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     if (role == ParagraphRole || role == DivRole) {
         // Don't call textUnderElement() here, because it's slow and it can
         // crash when called while we're in the middle of a subtree being deleted.
-        if (!renderer()->firstChildSlow())
+        if (!renderObject->firstChildSlow())
             return DefaultBehavior;
 
         if (!parent->renderer() || parent->renderer()->isAnonymousBlock())
             return DefaultBehavior;
 
-        for (RenderObject* r = renderer()->firstChildSlow(); r; r = r->nextSibling()) {
+        for (RenderObject* r = renderObject->firstChildSlow(); r; r = r->nextSibling()) {
             if (r->isAnonymousBlock())
                 return IncludeObject;
         }
@@ -109,7 +123,7 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     // anonymous blocks which are aria-related to themselves have an aria role, nor
     // have we encountered instances where the parent of an anonymous block also lacked
     // an aria role but the grandparent had one.
-    if (renderer() && renderer()->isAnonymousBlock() && !parent->renderer()->isBody()
+    if (renderObject && renderObject->isAnonymousBlock() && !parent->renderer()->isBody()
         && parent->ariaRoleAttribute() == UnknownRole)
         return IgnoreObject;
 

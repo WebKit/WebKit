@@ -42,6 +42,7 @@
 #include "HTMLNames.h"
 #include "LocalizedStrings.h"
 #include "MainFrame.h"
+#include "MathMLNames.h"
 #include "NodeList.h"
 #include "NodeTraversal.h"
 #include "NotImplemented.h"
@@ -510,6 +511,23 @@ void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* crite
 
         previousObject = startObject;
     }
+}
+
+bool AccessibilityObject::hasAttributesRequiredForInclusion() const
+{
+    // These checks are simplified in the interest of execution speed.
+    if (!getAttribute(aria_helpAttr).isEmpty()
+        || !getAttribute(aria_describedbyAttr).isEmpty()
+        || !getAttribute(altAttr).isEmpty()
+        || !getAttribute(titleAttr).isEmpty())
+        return true;
+
+#if ENABLE(MATHML)
+    if (!getAttribute(MathMLNames::alttextAttr).isEmpty())
+        return true;
+#endif
+
+    return false;
 }
 
 bool AccessibilityObject::isARIAInput(AccessibilityRole ariaRole)

@@ -1297,29 +1297,15 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (isWebArea() || isSeamlessWebArea() || m_renderer->isListMarker())
         return false;
     
-    // Using the help text, title or accessibility description (so we
-    // check if there's some kind of accessible name for the element)
-    // to decide an element's visibility is not as definitive as
-    // previous checks, so this should remain as one of the last.
-    //
-    // These checks are simplified in the interest of execution speed;
-    // for example, any element having an alt attribute will make it
-    // not ignored, rather than just images.
-    if (!getAttribute(aria_helpAttr).isEmpty() || !getAttribute(aria_describedbyAttr).isEmpty() || !getAttribute(altAttr).isEmpty() || !getAttribute(titleAttr).isEmpty())
+    // Using the presence of an accessible name to decide an element's visibility is not
+    // as definitive as previous checks, so this should remain as one of the last.
+    if (hasAttributesRequiredForInclusion())
         return false;
 
     // Don't ignore generic focusable elements like <div tabindex=0>
     // unless they're completely empty, with no children.
     if (isGenericFocusableElement() && node->firstChild())
         return false;
-
-    if (!ariaAccessibilityDescription().isEmpty())
-        return false;
-
-#if ENABLE(MATHML)
-    if (!getAttribute(MathMLNames::alttextAttr).isEmpty())
-        return false;
-#endif
 
     // <span> tags are inline tags and not meant to convey information if they have no other aria
     // information on them. If we don't ignore them, they may emit signals expected to come from

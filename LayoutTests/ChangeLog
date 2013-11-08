@@ -1,3 +1,14 @@
+2013-11-08  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        AX: [ATK] <span> elements exposed through ATK when not needed
+        https://bugs.webkit.org/show_bug.cgi?id=123885
+
+        Reviewed by Chris Fleizach.
+
+        Removed failure expectations for tests now passing.
+
+        * platform/gtk/TestExpectations: Removed expectations.
+
 2013-11-08  Krzysztof Czech  <k.czech@samsung.com>
 
         [GTK] accessibility/aria-link-supports-press.html is failing

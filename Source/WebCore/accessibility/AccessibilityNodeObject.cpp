@@ -1914,6 +1914,17 @@ String AccessibilityNodeObject::ariaLabeledByAttribute() const
     return accessibilityDescriptionForElements(elements);
 }
 
+bool AccessibilityNodeObject::hasAttributesRequiredForInclusion() const
+{
+    if (AccessibilityObject::hasAttributesRequiredForInclusion())
+        return true;
+
+    if (!ariaAccessibilityDescription().isEmpty())
+        return true;
+
+    return false;
+}
+
 bool AccessibilityNodeObject::canSetFocusAttribute() const
 {
     Node* node = this->node();

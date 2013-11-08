@@ -1,3 +1,51 @@
+2013-11-08  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        AX: [ATK] <span> elements exposed through ATK when not needed
+        https://bugs.webkit.org/show_bug.cgi?id=123885
+
+        Reviewed by Chris Fleizach.
+
+        As per SVN r158195, the way it's decided whether <span> elements
+        should be ignored or not has slightly changed, causing that the
+        GTK/EFL ports expose them in cases that they should be ignored,
+        such as for text elements that neither are focusable (e.g. by
+        explicitly setting tabindex) nor have a meaningful accessible name
+        suggesting they should be exposed.
+
+        As a result, the flattening that ATK based ports normally do for
+        this kind of elements (by folding them into their parents) do not
+        work correctly anymore, making two tests to fail:
+
+            platform/gtk/accessibility/spans-paragraphs-and-divs.html
+            platform/gtk/accessibility/spans.html
+
+        This patch encapsulates the part of the logic that affects this in
+        the computeAccessibilityIsIgnored() method, placing it in a
+        new method of AccessibilityObject that we can call from ATK's
+        accessibilityPlatformIncludesObject() to ensure we hide those
+        <span> elements when they don't fulfill those requirements.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::hasAttributesRequiredForInclusion):
+        New virtual method encapsulating part of the logic from the function
+        that computes whether accessibility should be ignored or not.
+        * accessibility/AccessibilityObject.h:
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::hasAttributesRequiredForInclusion):
+        Override of the new method adding additional checks, as extracted from
+        the original bits in computeAccessibilityIsIgnored().
+        * accessibility/AccessibilityNodeObject.h:
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        Use the newly added function where we had the original code before.
+
+        * accessibility/atk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        Make sure <span> elements are ignored if they are not focusable
+        and they don't have a meaningful accessible name.
+
 2013-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add missing symbols to WebKitDOMEventTarget.symbols

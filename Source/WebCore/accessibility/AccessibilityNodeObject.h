@@ -128,6 +128,7 @@ public:
     virtual String stringValue() const OVERRIDE;
     virtual void colorValue(int& r, int& g, int& b) const OVERRIDE;
     virtual String ariaLabeledByAttribute() const OVERRIDE;
+    virtual bool hasAttributesRequiredForInclusion() const OVERRIDE FINAL;
 
     virtual Element* actionElement() const OVERRIDE;
     Element* mouseButtonListener() const;
