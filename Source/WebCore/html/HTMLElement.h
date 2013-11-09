@@ -98,15 +98,15 @@ public:
 protected:
     HTMLElement(const QualifiedName& tagName, Document&, ConstructionType);
 
-    void addHTMLLengthToStyle(MutableStylePropertySet*, CSSPropertyID, const String& value);
-    void addHTMLColorToStyle(MutableStylePropertySet*, CSSPropertyID, const String& color);
+    void addHTMLLengthToStyle(MutableStylePropertySet&, CSSPropertyID, const String& value);
+    void addHTMLColorToStyle(MutableStylePropertySet&, CSSPropertyID, const String& color);
 
-    void applyAlignmentAttributeToStyle(const AtomicString&, MutableStylePropertySet*);
-    void applyBorderAttributeToStyle(const AtomicString&, MutableStylePropertySet*);
+    void applyAlignmentAttributeToStyle(const AtomicString&, MutableStylePropertySet&);
+    void applyBorderAttributeToStyle(const AtomicString&, MutableStylePropertySet&);
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStylePropertySet*) OVERRIDE;
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStylePropertySet&) OVERRIDE;
     unsigned parseBorderWidthAttribute(const AtomicString&) const;
 
     virtual void childrenChanged(const ChildChange&) OVERRIDE;
@@ -117,7 +117,7 @@ protected:
 private:
     virtual String nodeName() const OVERRIDE FINAL;
 
-    void mapLanguageAttributeToLocale(const AtomicString&, MutableStylePropertySet*);
+    void mapLanguageAttributeToLocale(const AtomicString&, MutableStylePropertySet&);
 
     virtual HTMLFormElement* virtualForm() const;
 

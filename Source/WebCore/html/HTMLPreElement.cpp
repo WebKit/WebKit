@@ -50,10 +50,10 @@ bool HTMLPreElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLPreElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet* style)
+void HTMLPreElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet& style)
 {
     if (name == wrapAttr)
-        style->setProperty(CSSPropertyWhiteSpace, CSSValuePreWrap);
+        style.setProperty(CSSPropertyWhiteSpace, CSSValuePreWrap);
     else
         HTMLElement::collectStyleForPresentationAttribute(name, value, style);
 }

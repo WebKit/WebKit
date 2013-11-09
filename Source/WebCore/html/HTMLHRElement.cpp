@@ -57,7 +57,7 @@ bool HTMLHRElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLHRElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet* style)
+void HTMLHRElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet& style)
 {
     if (name == alignAttr) {
         if (equalIgnoringCase(value, "left")) {
@@ -85,8 +85,8 @@ void HTMLHRElement::collectStyleForPresentationAttribute(const QualifiedName& na
         addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
 
         RefPtr<CSSPrimitiveValue> darkGrayValue = cssValuePool().createColorValue(Color::darkGray);
-        style->setProperty(CSSPropertyBorderColor, darkGrayValue);
-        style->setProperty(CSSPropertyBackgroundColor, darkGrayValue);
+        style.setProperty(CSSPropertyBorderColor, darkGrayValue);
+        style.setProperty(CSSPropertyBackgroundColor, darkGrayValue);
     } else if (name == sizeAttr) {
         StringImpl* si = value.impl();
         int size = si->toInt();

@@ -338,7 +338,7 @@ void StyledElement::rebuildPresentationAttributeStyle()
         unsigned size = attributeCount();
         for (unsigned i = 0; i < size; ++i) {
             const Attribute& attribute = attributeAt(i);
-            collectStyleForPresentationAttribute(attribute.name(), attribute.value(), static_cast<MutableStylePropertySet*>(style.get()));
+            collectStyleForPresentationAttribute(attribute.name(), attribute.value(), static_cast<MutableStylePropertySet&>(*style));
         }
     }
 
@@ -364,19 +364,19 @@ void StyledElement::rebuildPresentationAttributeStyle()
         cacheIterator->value = newEntry.release();
 }
 
-void StyledElement::addPropertyToPresentationAttributeStyle(MutableStylePropertySet* style, CSSPropertyID propertyID, CSSValueID identifier)
+void StyledElement::addPropertyToPresentationAttributeStyle(MutableStylePropertySet& style, CSSPropertyID propertyID, CSSValueID identifier)
 {
-    style->setProperty(propertyID, cssValuePool().createIdentifierValue(identifier));
+    style.setProperty(propertyID, cssValuePool().createIdentifierValue(identifier));
 }
 
-void StyledElement::addPropertyToPresentationAttributeStyle(MutableStylePropertySet* style, CSSPropertyID propertyID, double value, CSSPrimitiveValue::UnitTypes unit)
+void StyledElement::addPropertyToPresentationAttributeStyle(MutableStylePropertySet& style, CSSPropertyID propertyID, double value, CSSPrimitiveValue::UnitTypes unit)
 {
-    style->setProperty(propertyID, cssValuePool().createValue(value, unit));
+    style.setProperty(propertyID, cssValuePool().createValue(value, unit));
 }
     
-void StyledElement::addPropertyToPresentationAttributeStyle(MutableStylePropertySet* style, CSSPropertyID propertyID, const String& value)
+void StyledElement::addPropertyToPresentationAttributeStyle(MutableStylePropertySet& style, CSSPropertyID propertyID, const String& value)
 {
-    style->setProperty(propertyID, value, false, &document().elementSheet().contents());
+    style.setProperty(propertyID, value, false, &document().elementSheet().contents());
 }
 
 }

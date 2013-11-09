@@ -1,3 +1,12 @@
+2013-11-08  Sam Weinig  <sam@webkit.org>
+
+        Change collectStyleForPresentationAttribute and related functions to take a MutableStylePropertySet by reference
+        https://bugs.webkit.org/show_bug.cgi?id=124096
+
+        Reviewed by Andreas Kling.
+
+        Pass MutableStylePropertySet by reference. It is never null.
+
 2013-11-08  Anders Carlsson  <andersca@apple.com>
 
         Implement encoding of arrays of objects
