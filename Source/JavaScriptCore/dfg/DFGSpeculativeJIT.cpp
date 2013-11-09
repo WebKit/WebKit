@@ -4510,7 +4510,7 @@ void SpeculativeJIT::compileAllocatePropertyStorage(Node* node)
         emitAllocateBasicStorage(
             TrustedImm32(initialOutOfLineCapacity * sizeof(JSValue)), scratchGPR);
 
-    m_jit.addPtr(JITCompiler::TrustedImm32(sizeof(JSValue)), scratchGPR);
+    m_jit.addPtr(JITCompiler::TrustedImm32(sizeof(IndexingHeader)), scratchGPR);
         
     addSlowPathGenerator(
         slowPathCall(slowPath, this, operationAllocatePropertyStorageWithInitialCapacity, scratchGPR));
@@ -4553,7 +4553,7 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
     JITCompiler::Jump slowPath =
         emitAllocateBasicStorage(TrustedImm32(newSize), scratchGPR2);
 
-    m_jit.addPtr(JITCompiler::TrustedImm32(sizeof(JSValue)), scratchGPR2);
+    m_jit.addPtr(JITCompiler::TrustedImm32(sizeof(IndexingHeader)), scratchGPR2);
         
     addSlowPathGenerator(
         slowPathCall(slowPath, this, operationAllocatePropertyStorage, scratchGPR2, newSize / sizeof(JSValue)));

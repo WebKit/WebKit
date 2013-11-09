@@ -102,6 +102,7 @@ inline CapabilityLevel canCompile(Node* node)
     case StringCharAt:
     case CheckFunction:
     case StringCharCodeAt:
+    case AllocatePropertyStorage:
         // These are OK.
         break;
     case GetById:

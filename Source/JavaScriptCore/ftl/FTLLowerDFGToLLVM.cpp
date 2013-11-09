@@ -377,6 +377,9 @@ private:
         case NewArrayBuffer:
             compileNewArrayBuffer();
             break;
+        case AllocatePropertyStorage:
+            compileAllocatePropertyStorage();
+            break;
         case StringCharAt:
             compileStringCharAt();
             break;
@@ -1892,6 +1895,48 @@ private:
             m_out.operation(operationNewArrayBuffer), m_callFrame,
             m_out.constIntPtr(structure), m_out.constIntPtr(m_node->startConstant()),
             m_out.constIntPtr(m_node->numConstants())));
+    }
+    
+    void compileAllocatePropertyStorage()
+    {
+        StructureTransitionData& data = m_node->structureTransitionData();
+        
+        LValue object = lowCell(m_node->child1());
+        
+        if (data.previousStructure->couldHaveIndexingHeader()) {
+            setStorage(vmCall(
+                m_out.operation(
+                    operationReallocateButterflyToHavePropertyStorageWithInitialCapacity),
+                m_callFrame, object));
+            return;
+        }
+        
+        LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("AllocatePropertyStorage slow path"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("AllocatePropertyStorage continuation"));
+        
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
+        
+        LValue endOfStorage = allocateBasicStorageAndGetEnd(
+            m_out.constIntPtr(initialOutOfLineCapacity * sizeof(JSValue)), slowPath);
+        
+        ValueFromBlock fastButterfly = m_out.anchor(
+            m_out.add(m_out.constIntPtr(sizeof(IndexingHeader)), endOfStorage));
+        
+        m_out.jump(continuation);
+        
+        m_out.appendTo(slowPath, continuation);
+        
+        ValueFromBlock slowButterfly = m_out.anchor(vmCall(
+            m_out.operation(operationAllocatePropertyStorageWithInitialCapacity), m_callFrame));
+        
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        
+        LValue result = m_out.phi(m_out.intPtr, fastButterfly, slowButterfly);
+        m_out.storePtr(result, object, m_heaps.JSObject_butterfly);
+        
+        setStorage(result);
     }
     
     void compileStringCharAt()

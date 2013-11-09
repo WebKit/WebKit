@@ -1,5 +1,24 @@
 2013-11-08  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL should support AllocatePropertyStorage
+        https://bugs.webkit.org/show_bug.cgi?id=124086
+
+        Reviewed by Oliver Hunt.
+        
+        Also rationalized some offsets in the DFG.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileAllocatePropertyStorage):
+
+2013-11-08  Filip Pizlo  <fpizlo@apple.com>
+
         Get rid of the bizarre Darwin/x86-only MacroAssembler::shouldBlindForSpecificArch(uintptr_t) overload
         https://bugs.webkit.org/show_bug.cgi?id=124087
 
