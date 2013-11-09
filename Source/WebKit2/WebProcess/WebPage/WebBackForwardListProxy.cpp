@@ -28,7 +28,6 @@
 
 #include "DataReference.h"
 #include "EncoderAdapter.h"
-#include "KeyedEncoder.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"

@@ -1,3 +1,12 @@
+2013-11-08  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Unreviewed build fix after r158984.
+
+        No needs to include "KeyedEncoder.h".
+        WebKit/Source/WebKit2/WebProcess/WebPage/WebBackForwardListProxy.cpp:31:26: fatal error: KeyedEncoder.h: No such file or directory
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp: Removed #include line.
+
 2013-11-08  Anders Carlsson  <andersca@apple.com>
 
         Implement encoding of arrays of objects
