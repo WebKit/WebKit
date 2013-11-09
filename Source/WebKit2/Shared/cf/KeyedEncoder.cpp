@@ -48,9 +48,27 @@ KeyedEncoder::~KeyedEncoder()
     ASSERT(m_dictionaryStack.last() == m_rootDictionary);
 }
 
+void KeyedEncoder::encodeBytes(const String& key, const uint8_t* bytes, size_t size)
+{
+    RetainPtr<CFDataRef> data = adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, bytes, size, kCFAllocatorNull));
+    CFDictionarySetValue(m_dictionaryStack.last(), key.createCFString().get(), data.get());
+}
+
 void KeyedEncoder::encodeUInt32(const String& key, uint32_t value)
 {
     RetainPtr<CFNumberRef> number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &value));
+    CFDictionarySetValue(m_dictionaryStack.last(), key.createCFString().get(), number.get());
+}
+
+void KeyedEncoder::encodeInt32(const String& key, int32_t value)
+{
+    RetainPtr<CFNumberRef> number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &value));
+    CFDictionarySetValue(m_dictionaryStack.last(), key.createCFString().get(), number.get());
+}
+
+void KeyedEncoder::encodeFloat(const String& key, float value)
+{
+    RetainPtr<CFNumberRef> number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &value));
     CFDictionarySetValue(m_dictionaryStack.last(), key.createCFString().get(), number.get());
 }
 

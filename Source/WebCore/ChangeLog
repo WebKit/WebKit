@@ -1,3 +1,16 @@
+2013-11-08  Anders Carlsson  <andersca@apple.com>
+
+        Implement more KeyedEncoder functionality
+        https://bugs.webkit.org/show_bug.cgi?id=124089
+
+        Reviewed by Beth Dakin.
+
+        * bindings/js/SerializedScriptValue.h:
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::encodeBackForwardTreeNode):
+        * platform/KeyedCoding.h:
+        (WebCore::KeyedEncoder::encodeConditionalObject):
+
 2013-11-08  Eric Carlson  <eric.carlson@apple.com>
 
         getCueAsHTML() on an empty cue should return a document fragment

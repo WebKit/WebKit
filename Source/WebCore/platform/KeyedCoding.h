@@ -35,8 +35,10 @@ protected:
     virtual ~KeyedEncoder() { }
 
 public:
+    virtual void encodeBytes(const String& key, const uint8_t*, size_t) = 0;
     virtual void encodeUInt32(const String& key, uint32_t) = 0;
-
+    virtual void encodeInt32(const String& key, int32_t) = 0;
+    virtual void encodeFloat(const String& key, float) = 0;
     virtual void encodeString(const String& key, const String&) = 0;
 
     template<typename T, typename F>
@@ -45,6 +47,15 @@ public:
         this->beginObject(key);
         function(*this, object);
         this->endObject();
+    }
+
+    template<typename T, typename F>
+    void encodeConditionalObject(const String& key, const T* object, F&& function)
+    {
+        if (!object)
+            return;
+
+        encodeObject(key, *object, std::forward<F>(function));
     }
 
 private:

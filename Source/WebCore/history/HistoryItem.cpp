@@ -739,6 +739,25 @@ void HistoryItem::encodeBackForwardTreeNode(KeyedEncoder& encoder) const
 {
     // FIXME: Implement.
 
+    encoder.encodeString("formContentType", m_formContentType);
+
+    encoder.encodeConditionalObject("formData", m_formData.get(), [](KeyedEncoder&, const FormData&) {
+        // FIXME: Implement.
+    });
+
+    encoder.encodeString("referrer", m_referrer);
+
+    encoder.encodeObject("scrollPoint", m_scrollPoint, [](KeyedEncoder& encoder, const IntPoint& scrollPoint) {
+        encoder.encodeInt32("x", scrollPoint.x());
+        encoder.encodeInt32("y", scrollPoint.y());
+    });
+
+    encoder.encodeFloat("pageScaleFactor", m_pageScaleFactor);
+
+    encoder.encodeConditionalObject("stateObject", m_stateObject.get(), [](KeyedEncoder& encoder, const SerializedScriptValue& stateObject) {
+        encoder.encodeBytes("data", stateObject.data().data(), stateObject.data().size());
+    });
+
     encoder.encodeString("target", m_target);
 }
 

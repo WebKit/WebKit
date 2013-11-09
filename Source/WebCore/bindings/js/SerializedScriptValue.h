@@ -95,7 +95,7 @@ public:
     ScriptValue deserializeForInspector(JSC::ExecState*);
 #endif
 
-    const Vector<uint8_t>& data() { return m_data; }
+    const Vector<uint8_t>& data() const { return m_data; }
     const Vector<String>& blobURLs() const { return m_blobURLs; }
 
 #if ENABLE(INDEXED_DATABASE)
