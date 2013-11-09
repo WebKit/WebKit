@@ -281,7 +281,7 @@ void RenderSVGResourceClipper::calculateClipContentRepaintRect()
 bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundingBox, const FloatPoint& nodeAtPoint)
 {
     FloatPoint point = nodeAtPoint;
-    if (!SVGRenderSupport::pointInClippingArea(this, point))
+    if (!SVGRenderSupport::pointInClippingArea(*this, point))
         return false;
 
     if (clipPathElement().clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {

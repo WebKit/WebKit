@@ -64,7 +64,7 @@ void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint&)
     GraphicsContextStateSaver stateSaver(*childPaintInfo.context);
     childPaintInfo.applyTransform(localTransform());
 
-    if (SVGRenderSupport::isOverflowHidden(this))
+    if (SVGRenderSupport::isOverflowHidden(*this))
         childPaintInfo.context->clip(m_viewport);
 
     SVGRenderingContext renderingContext;
@@ -96,12 +96,12 @@ void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint&)
 
 LayoutRect RenderSVGForeignObject::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
 {
-    return SVGRenderSupport::clippedOverflowRectForRepaint(this, repaintContainer);
+    return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer);
 }
 
 void RenderSVGForeignObject::computeFloatRectForRepaint(const RenderLayerModelObject* repaintContainer, FloatRect& repaintRect, bool fixed) const
 {
-    SVGRenderSupport::computeFloatRectForRepaint(this, repaintContainer, repaintRect, fixed);
+    SVGRenderSupport::computeFloatRectForRepaint(*this, repaintContainer, repaintRect, fixed);
 }
 
 const AffineTransform& RenderSVGForeignObject::localToParentTransform() const
@@ -133,7 +133,7 @@ void RenderSVGForeignObject::layout()
     ASSERT(needsLayout());
     ASSERT(!view().layoutStateEnabled()); // RenderSVGRoot disables layoutState for the SVG rendering tree.
 
-    LayoutRepainter repainter(*this, SVGRenderSupport::checkForSVGRepaintDuringLayout(this));
+    LayoutRepainter repainter(*this, SVGRenderSupport::checkForSVGRepaintDuringLayout(*this));
 
     bool updateCachedBoundariesInParents = false;
     if (m_needsTransformUpdate) {
@@ -182,7 +182,7 @@ bool RenderSVGForeignObject::nodeAtFloatPoint(const HitTestRequest& request, Hit
     FloatPoint localPoint = localTransform().inverse().mapPoint(pointInParent);
 
     // Early exit if local point is not contained in clipped viewport area
-    if (SVGRenderSupport::isOverflowHidden(this) && !m_viewport.contains(localPoint))
+    if (SVGRenderSupport::isOverflowHidden(*this) && !m_viewport.contains(localPoint))
         return false;
 
     // FOs establish a stacking context, so we need to hit-test all layers.
@@ -200,12 +200,12 @@ bool RenderSVGForeignObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, 
 
 void RenderSVGForeignObject::mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState& transformState, MapCoordinatesFlags, bool* wasFixed) const
 {
-    SVGRenderSupport::mapLocalToContainer(this, repaintContainer, transformState, wasFixed);
+    SVGRenderSupport::mapLocalToContainer(*this, repaintContainer, transformState, wasFixed);
 }
 
 const RenderObject* RenderSVGForeignObject::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
 {
-    return SVGRenderSupport::pushMappingToContainer(this, ancestorToStopAt, geometryMap);
+    return SVGRenderSupport::pushMappingToContainer(*this, ancestorToStopAt, geometryMap);
 }
 
 }

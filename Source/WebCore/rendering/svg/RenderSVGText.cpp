@@ -102,7 +102,7 @@ const RenderSVGText* RenderSVGText::locateRenderSVGTextAncestor(const RenderObje
 
 LayoutRect RenderSVGText::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
 {
-    return SVGRenderSupport::clippedOverflowRectForRepaint(this, repaintContainer);
+    return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer);
 }
 
 void RenderSVGText::computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect& rect, bool fixed) const
@@ -114,17 +114,17 @@ void RenderSVGText::computeRectForRepaint(const RenderLayerModelObject* repaintC
 
 void RenderSVGText::computeFloatRectForRepaint(const RenderLayerModelObject* repaintContainer, FloatRect& repaintRect, bool fixed) const
 {
-    SVGRenderSupport::computeFloatRectForRepaint(this, repaintContainer, repaintRect, fixed);
+    SVGRenderSupport::computeFloatRectForRepaint(*this, repaintContainer, repaintRect, fixed);
 }
 
 void RenderSVGText::mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState& transformState, MapCoordinatesFlags, bool* wasFixed) const
 {
-    SVGRenderSupport::mapLocalToContainer(this, repaintContainer, transformState, wasFixed);
+    SVGRenderSupport::mapLocalToContainer(*this, repaintContainer, transformState, wasFixed);
 }
 
 const RenderObject* RenderSVGText::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
 {
-    return SVGRenderSupport::pushMappingToContainer(this, ancestorToStopAt, geometryMap);
+    return SVGRenderSupport::pushMappingToContainer(*this, ancestorToStopAt, geometryMap);
 }
 
 static inline void collectLayoutAttributes(RenderObject* text, Vector<SVGTextLayoutAttributes*>& attributes)
@@ -355,7 +355,7 @@ void RenderSVGText::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
-    LayoutRepainter repainter(*this, SVGRenderSupport::checkForSVGRepaintDuringLayout(this));
+    LayoutRepainter repainter(*this, SVGRenderSupport::checkForSVGRepaintDuringLayout(*this));
 
     bool updateCachedBoundariesInParents = false;
     if (m_needsTransformUpdate) {
@@ -388,7 +388,7 @@ void RenderSVGText::layout()
         m_needsReordering = true;
         m_needsPositioningValuesUpdate = false;
         updateCachedBoundariesInParents = true;
-    } else if (m_needsTextMetricsUpdate || SVGRenderSupport::findTreeRootObject(this)->isLayoutSizeChanged()) {
+    } else if (m_needsTextMetricsUpdate || SVGRenderSupport::findTreeRootObject(*this).isLayoutSizeChanged()) {
         // If the root layout size changed (eg. window size changes) or the transform to the root
         // context has changed then recompute the on-screen font size.
         updateFontInAllDescendants(this, &m_layoutAttributesBuilder);
@@ -457,7 +457,7 @@ bool RenderSVGText::nodeAtFloatPoint(const HitTestRequest& request, HitTestResul
             || (hitRules.canHitFill && (style().svgStyle().hasFill() || !hitRules.requireFill))) {
             FloatPoint localPoint = localToParentTransform().inverse().mapPoint(pointInParent);
 
-            if (!SVGRenderSupport::pointInClippingArea(this, localPoint))
+            if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
                 return false;       
 
             HitTestLocation hitTestLocation(LayoutPoint(flooredIntPoint(localPoint)));

@@ -161,7 +161,7 @@ bool RenderSVGShape::strokeContains(const FloatPoint& point, bool requiresStroke
 void RenderSVGShape::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
-    LayoutRepainter repainter(*this, SVGRenderSupport::checkForSVGRepaintDuringLayout(this) && selfNeedsLayout());
+    LayoutRepainter repainter(*this, SVGRenderSupport::checkForSVGRepaintDuringLayout(*this) && selfNeedsLayout());
 
     bool updateCachedBoundariesInParents = false;
 
@@ -329,7 +329,7 @@ bool RenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTestResu
 
     FloatPoint localPoint = m_localTransform.inverse().mapPoint(pointInParent);
 
-    if (!SVGRenderSupport::pointInClippingArea(this, localPoint))
+    if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
         return false;
 
     PointerEventsHitRules hitRules(PointerEventsHitRules::SVG_PATH_HITTESTING, request, style().pointerEvents());
@@ -421,7 +421,7 @@ void RenderSVGShape::updateRepaintBoundingBox()
     SVGRenderSupport::intersectRepaintRectWithResources(*this, m_repaintBoundingBoxExcludingShadow);
 
     m_repaintBoundingBox = m_repaintBoundingBoxExcludingShadow;
-    SVGRenderSupport::intersectRepaintRectWithShadows(this, m_repaintBoundingBox);
+    SVGRenderSupport::intersectRepaintRectWithShadows(*this, m_repaintBoundingBox);
 }
 
 float RenderSVGShape::strokeWidth() const

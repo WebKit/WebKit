@@ -72,7 +72,7 @@ void RenderSVGResourceMarker::removeClientFromCache(RenderObject* client, bool m
 
 void RenderSVGResourceMarker::applyViewportClip(PaintInfo& paintInfo)
 {
-    if (SVGRenderSupport::isOverflowHidden(this))
+    if (SVGRenderSupport::isOverflowHidden(*this))
         paintInfo.context->clip(m_viewport);
 }
 

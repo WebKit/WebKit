@@ -214,7 +214,7 @@ void RenderSVGRoot::layout()
     buildLocalToBorderBoxTransform();
 
     m_isLayoutSizeChanged = needsLayout || (svgSVGElement().hasRelativeLengths() && oldSize != size());
-    SVGRenderSupport::layoutChildren(this, needsLayout || SVGRenderSupport::filtersForceContainerLayout(this));
+    SVGRenderSupport::layoutChildren(*this, needsLayout || SVGRenderSupport::filtersForceContainerLayout(*this));
 
     if (!m_resourcesNeedingToInvalidateClients.isEmpty()) {
         // Invalidate resource clients, which may mark some nodes for layout.
@@ -223,7 +223,7 @@ void RenderSVGRoot::layout()
             (*it)->removeAllClientsFromCache();
 
         m_isLayoutSizeChanged = false;
-        SVGRenderSupport::layoutChildren(this, false);
+        SVGRenderSupport::layoutChildren(*this, false);
     }
 
     // At this point LayoutRepainter already grabbed the old bounds,
@@ -357,7 +357,7 @@ const AffineTransform& RenderSVGRoot::localToParentTransform() const
 
 LayoutRect RenderSVGRoot::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
 {
-    return SVGRenderSupport::clippedOverflowRectForRepaint(this, repaintContainer);
+    return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer);
 }
 
 void RenderSVGRoot::computeFloatRectForRepaint(const RenderLayerModelObject* repaintContainer, FloatRect& repaintRect, bool fixed) const
@@ -396,12 +396,12 @@ const RenderObject* RenderSVGRoot::pushMappingToContainer(const RenderLayerModel
 
 void RenderSVGRoot::updateCachedBoundaries()
 {
-    SVGRenderSupport::computeContainerBoundingBoxes(this, m_objectBoundingBox, m_objectBoundingBoxValid, m_strokeBoundingBox, m_repaintBoundingBoxExcludingShadow);
+    SVGRenderSupport::computeContainerBoundingBoxes(*this, m_objectBoundingBox, m_objectBoundingBoxValid, m_strokeBoundingBox, m_repaintBoundingBoxExcludingShadow);
     SVGRenderSupport::intersectRepaintRectWithResources(*this, m_repaintBoundingBoxExcludingShadow);
     m_repaintBoundingBoxExcludingShadow.inflate(borderAndPaddingWidth());
 
     m_repaintBoundingBox = m_repaintBoundingBoxExcludingShadow;
-    SVGRenderSupport::intersectRepaintRectWithShadows(this, m_repaintBoundingBox);
+    SVGRenderSupport::intersectRepaintRectWithShadows(*this, m_repaintBoundingBox);
 }
 
 bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)

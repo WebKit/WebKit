@@ -1,5 +1,21 @@
 2013-11-09  Andreas Kling  <akling@apple.com>
 
+        Beat SVGRenderSupport with the RenderElement stick.
+        <https://webkit.org/b/124102>
+
+        Tighten up all the SVGRenderSupport helper functions by making them
+        take const RenderElements references instead of raw RenderObject
+        pointers as much as possible.
+
+        This tunes up a bunch of branchy style() calls.
+
+        The patch looks big but it's mostly mechanical. I just changed the
+        signatures and then worked backwards until everything built again.
+
+        Reviewed by Antti Koivisto.
+
+2013-11-09  Andreas Kling  <akling@apple.com>
+
         SVGTextLayoutAttributes always has a RenderSVGInlineText.
         <https://webkit.org/b/124101>
 

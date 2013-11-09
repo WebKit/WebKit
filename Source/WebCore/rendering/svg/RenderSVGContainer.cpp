@@ -59,7 +59,7 @@ void RenderSVGContainer::layout()
     // RenderSVGRoot disables layoutState for the SVG rendering tree.
     ASSERT(!view().layoutStateEnabled());
 
-    LayoutRepainter repainter(*this, SVGRenderSupport::checkForSVGRepaintDuringLayout(this) || selfWillPaint());
+    LayoutRepainter repainter(*this, SVGRenderSupport::checkForSVGRepaintDuringLayout(*this) || selfWillPaint());
 
     // Allow RenderSVGViewportContainer to update its viewport.
     calcViewport();
@@ -70,7 +70,7 @@ void RenderSVGContainer::layout()
     // RenderSVGViewportContainer needs to set the 'layout size changed' flag.
     determineIfLayoutSizeChanged();
 
-    SVGRenderSupport::layoutChildren(this, selfNeedsLayout() || SVGRenderSupport::filtersForceContainerLayout(this));
+    SVGRenderSupport::layoutChildren(*this, selfNeedsLayout() || SVGRenderSupport::filtersForceContainerLayout(*this));
 
     // Invalidate all resources of this client if our layout changed.
     if (everHadLayout() && needsLayout())
@@ -167,7 +167,7 @@ void RenderSVGContainer::addFocusRingRects(Vector<IntRect>& rects, const LayoutP
 
 void RenderSVGContainer::updateCachedBoundaries()
 {
-    SVGRenderSupport::computeContainerBoundingBoxes(this, m_objectBoundingBox, m_objectBoundingBoxValid, m_strokeBoundingBox, m_repaintBoundingBox);
+    SVGRenderSupport::computeContainerBoundingBoxes(*this, m_objectBoundingBox, m_objectBoundingBoxValid, m_strokeBoundingBox, m_repaintBoundingBox);
     SVGRenderSupport::intersectRepaintRectWithResources(*this, m_repaintBoundingBox);
 }
 
@@ -179,7 +179,7 @@ bool RenderSVGContainer::nodeAtFloatPoint(const HitTestRequest& request, HitTest
 
     FloatPoint localPoint = localToParentTransform().inverse().mapPoint(pointInParent);
 
-    if (!SVGRenderSupport::pointInClippingArea(this, localPoint))
+    if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
         return false;
                 
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {

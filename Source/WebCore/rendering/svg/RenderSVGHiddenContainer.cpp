@@ -37,7 +37,7 @@ void RenderSVGHiddenContainer::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
-    SVGRenderSupport::layoutChildren(this, selfNeedsLayout()); 
+    SVGRenderSupport::layoutChildren(*this, selfNeedsLayout());
     clearNeedsLayout();    
 }
 

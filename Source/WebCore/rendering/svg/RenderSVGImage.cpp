@@ -87,7 +87,7 @@ void RenderSVGImage::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
-    LayoutRepainter repainter(*this, SVGRenderSupport::checkForSVGRepaintDuringLayout(this) && selfNeedsLayout());
+    LayoutRepainter repainter(*this, SVGRenderSupport::checkForSVGRepaintDuringLayout(*this) && selfNeedsLayout());
     updateImageViewport();
 
     bool transformOrBoundariesUpdate = m_needsTransformUpdate || m_needsBoundariesUpdate;
@@ -101,7 +101,7 @@ void RenderSVGImage::layout()
         SVGRenderSupport::intersectRepaintRectWithResources(*this, m_repaintBoundingBoxExcludingShadow);
 
         m_repaintBoundingBox = m_repaintBoundingBoxExcludingShadow;
-        SVGRenderSupport::intersectRepaintRectWithShadows(this, m_repaintBoundingBox);
+        SVGRenderSupport::intersectRepaintRectWithShadows(*this, m_repaintBoundingBox);
 
         m_needsBoundariesUpdate = false;
     }
@@ -176,7 +176,7 @@ bool RenderSVGImage::nodeAtFloatPoint(const HitTestRequest& request, HitTestResu
     if (isVisible || !hitRules.requireVisible) {
         FloatPoint localPoint = localToParentTransform().inverse().mapPoint(pointInParent);
             
-        if (!SVGRenderSupport::pointInClippingArea(this, localPoint))
+        if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
             return false;
 
         if (hitRules.canHitFill) {

@@ -54,7 +54,7 @@ void RenderSVGViewportContainer::determineIfLayoutSizeChanged()
 
 void RenderSVGViewportContainer::applyViewportClip(PaintInfo& paintInfo)
 {
-    if (SVGRenderSupport::isOverflowHidden(this))
+    if (SVGRenderSupport::isOverflowHidden(*this))
         paintInfo.context->clip(m_viewport);
 }
 
@@ -137,7 +137,7 @@ AffineTransform RenderSVGViewportContainer::viewportTransform() const
 bool RenderSVGViewportContainer::pointIsInsideViewportClip(const FloatPoint& pointInParent)
 {
     // Respect the viewport clip (which is in parent coords)
-    if (!SVGRenderSupport::isOverflowHidden(this))
+    if (!SVGRenderSupport::isOverflowHidden(*this))
         return true;
     
     return m_viewport.contains(pointInParent);
