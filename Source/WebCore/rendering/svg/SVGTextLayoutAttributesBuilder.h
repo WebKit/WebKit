@@ -44,7 +44,7 @@ class SVGTextLayoutAttributesBuilder {
 public:
     SVGTextLayoutAttributesBuilder();
     bool buildLayoutAttributesForForSubtree(RenderSVGText*);
-    void buildLayoutAttributesForTextRenderer(RenderSVGInlineText*);
+    void buildLayoutAttributesForTextRenderer(RenderSVGInlineText&);
 
     void rebuildMetricsForTextRenderer(RenderSVGInlineText*);
 

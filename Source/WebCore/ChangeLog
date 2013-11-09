@@ -1,5 +1,15 @@
 2013-11-09  Andreas Kling  <akling@apple.com>
 
+        SVGTextLayoutAttributes always has a RenderSVGInlineText.
+        <https://webkit.org/b/124101>
+
+        No SVGTextLayoutAttributes object is without a RenderSVGInlineText
+        "context" so make context() return a reference.
+
+        Reviewed by Antti Koivisto.
+
+2013-11-09  Andreas Kling  <akling@apple.com>
+
         Move BindingSecurity stuff under JSDOMBinding umbrella.
         <https://webkit.org/b/124099>
 

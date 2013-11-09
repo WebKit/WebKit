@@ -70,7 +70,7 @@ static String applySVGWhitespaceRules(const String& string, bool preserveWhiteSp
 RenderSVGInlineText::RenderSVGInlineText(Text& textNode, const String& string)
     : RenderText(textNode, applySVGWhitespaceRules(string, false))
     , m_scalingFactor(1)
-    , m_layoutAttributes(this)
+    , m_layoutAttributes(*this)
 {
 }
 

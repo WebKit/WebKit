@@ -338,7 +338,7 @@ bool SVGTextLayoutEngine::currentLogicalCharacterAttributes(SVGTextLayoutAttribu
     logicalAttributes = m_layoutAttributes[m_layoutAttributesPosition];
     ASSERT(logicalAttributes);
 
-    if (m_logicalCharacterOffset != logicalAttributes->context()->textLength())
+    if (m_logicalCharacterOffset != logicalAttributes->context().textLength())
         return true;
 
     ++m_layoutAttributesPosition;
@@ -485,7 +485,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, Rend
         // When we've advanced to the box start offset, determine using the original x/y values,
         // whether this character starts a new text chunk, before doing any further processing.
         if (m_visualCharacterOffset == textBox->start())
-            textBox->setStartsNewTextChunk(logicalAttributes->context()->characterStartsNewTextChunk(m_logicalCharacterOffset));
+            textBox->setStartsNewTextChunk(logicalAttributes->context().characterStartsNewTextChunk(m_logicalCharacterOffset));
 
         float angle = data.rotate == SVGTextLayoutAttributes::emptyValue() ? 0 : data.rotate;
 

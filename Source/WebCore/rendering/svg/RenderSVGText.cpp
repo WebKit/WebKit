@@ -211,8 +211,8 @@ void RenderSVGText::subtreeChildWasAdded(RenderObject* child)
             bool stopAfterNext = false;
             SVGTextLayoutAttributes* previous = 0;
             SVGTextLayoutAttributes* next = 0;
-            ASSERT_UNUSED(child, attributes->context() == child);
-            findPreviousAndNextAttributes(this, attributes->context(), stopAfterNext, previous, next);
+            ASSERT_UNUSED(child, &attributes->context() == child);
+            findPreviousAndNextAttributes(this, &attributes->context(), stopAfterNext, previous, next);
 
             if (previous)
                 m_layoutAttributesBuilder.buildLayoutAttributesForTextRenderer(previous->context());
@@ -335,7 +335,7 @@ void RenderSVGText::subtreeTextDidChange(RenderSVGInlineText* text)
     checkLayoutAttributesConsistency(this, m_layoutAttributes);
     for (RenderObject* descendant = text; descendant; descendant = descendant->nextInPreOrder(text)) {
         if (descendant->isSVGInlineText())
-            m_layoutAttributesBuilder.buildLayoutAttributesForTextRenderer(toRenderSVGInlineText(descendant));
+            m_layoutAttributesBuilder.buildLayoutAttributesForTextRenderer(toRenderSVGInlineText(*descendant));
     }
 }
 
