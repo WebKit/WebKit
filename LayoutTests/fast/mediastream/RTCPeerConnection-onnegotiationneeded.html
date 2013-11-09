@@ -1,50 +1,50 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-<head>
-<script src="../../resources/js-test-pre.js"></script>
-</head>
-<body>
-<script>
-description("Tests RTCPeerConnection onnegotiationneeded.");
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description("Tests RTCPeerConnection onnegotiationneeded.");
 
-var stream = null;
-var pc = null;
+            var stream = null;
+            var pc = null;
 
-function error() {
-    testFailed('Stream generation failed.');
-    finishJSTest();
-}
+            function error() {
+                testFailed('Stream generation failed.');
+                finishJSTest();
+            }
 
-function getUserMedia(dictionary, callback) {
-    try {
-        navigator.webkitGetUserMedia(dictionary, callback, error);
-    } catch (e) {
-        testFailed('webkitGetUserMedia threw exception :' + e);
-        finishJSTest();
-    }
-}
+            function getUserMedia(dictionary, callback) {
+                try {
+                    navigator.webkitGetUserMedia(dictionary, callback, error);
+                } catch (e) {
+                    testFailed('webkitGetUserMedia threw exception :' + e);
+                    finishJSTest();
+                }
+            }
 
-function onNegotiationNeeded(event) {
-    testPassed('onNegotiationNeeded was called.');
+            function onNegotiationNeeded(event) {
+                testPassed('onNegotiationNeeded was called.');
 
-    finishJSTest();
-}
+                finishJSTest();
+            }
 
-function gotStream(s) {
-    testPassed('Got a stream.');
-    stream = s;
+            function gotStream(s) {
+                testPassed('Got a stream.');
+                stream = s;
 
-    pc = new webkitRTCPeerConnection({iceServers:[]}, null);
-    pc.onnegotiationneeded = onNegotiationNeeded;
+                pc = new webkitRTCPeerConnection({iceServers:[]}, null);
+                pc.onnegotiationneeded = onNegotiationNeeded;
 
-    pc.addStream(stream);
-}
+                pc.addStream(stream);
+            }
 
-getUserMedia({audio:true, video:true}, gotStream);
+            getUserMedia({audio:true, video:true}, gotStream);
 
-window.jsTestIsAsync = true;
-window.successfullyParsed = true;
-</script>
-<script src="../../resources/js-test-post.js"></script>
-</body>
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
 </html>

@@ -1,38 +1,38 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-<head>
-<script src="../../resources/js-test-pre.js"></script>
-</head>
-<body>
-<p id="description"></p>
-<div id="console"></div>
-<script>
-description("Tests RTCSessionDescription.");
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <p id="description"></p>
+        <div id="console"></div>
+        <script>
+            description("Tests RTCSessionDescription.");
 
-var initializer = {type:"offer", sdp:"foobar"};
-var sessionDescription;
-shouldNotThrow("sessionDescription = new RTCSessionDescription(initializer);");
-shouldBe('sessionDescription.type', '"offer"');
-shouldBe('sessionDescription.sdp', '"foobar"');
+            var initializer = {type:"offer", sdp:"foobar"};
+            var sessionDescription;
+            shouldNotThrow("sessionDescription = new RTCSessionDescription(initializer);");
+            shouldBe('sessionDescription.type', '"offer"');
+            shouldBe('sessionDescription.sdp', '"foobar"');
 
-shouldNotThrow('initializer = JSON.parse(JSON.stringify(sessionDescription));');
+            shouldNotThrow('initializer = JSON.parse(JSON.stringify(sessionDescription));');
 
-shouldNotThrow("sessionDescription = new RTCSessionDescription(initializer);");
-shouldBe('sessionDescription.type', '"offer"');
-shouldBe('sessionDescription.sdp', '"foobar"');
+            shouldNotThrow("sessionDescription = new RTCSessionDescription(initializer);");
+            shouldBe('sessionDescription.type', '"offer"');
+            shouldBe('sessionDescription.sdp', '"foobar"');
 
-shouldThrow("new RTCSessionDescription({});");
-shouldThrow("new RTCSessionDescription(5);");
-shouldThrow("new RTCSessionDescription('foobar');");
-shouldThrow("new RTCSessionDescription({type:'foobar', sdp:'x'});");
-shouldThrow("new RTCSessionDescription({type:'offer', sdp:''});");
+            shouldThrow("new RTCSessionDescription({});");
+            shouldThrow("new RTCSessionDescription(5);");
+            shouldThrow("new RTCSessionDescription('foobar');");
+            shouldThrow("new RTCSessionDescription({type:'foobar', sdp:'x'});");
+            shouldThrow("new RTCSessionDescription({type:'offer', sdp:''});");
 
-shouldNotThrow("new RTCSessionDescription({type:'offer', sdp:'x'});");
-shouldNotThrow("new RTCSessionDescription({type:'answer', sdp:'x'});");
-shouldNotThrow("new RTCSessionDescription({type:'pranswer', sdp:'x'});");
+            shouldNotThrow("new RTCSessionDescription({type:'offer', sdp:'x'});");
+            shouldNotThrow("new RTCSessionDescription({type:'answer', sdp:'x'});");
+            shouldNotThrow("new RTCSessionDescription({type:'pranswer', sdp:'x'});");
 
-window.successfullyParsed = true;
-</script>
-<script src="../../resources/js-test-post.js"></script>
-</body>
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
 </html>

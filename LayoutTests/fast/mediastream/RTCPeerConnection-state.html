@@ -1,29 +1,29 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-<head>
-<script src="../../resources/js-test-pre.js"></script>
-</head>
-<body>
-<script>
-description("Tests the RTCPeerConnection states.");
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description("Tests the RTCPeerConnection states.");
 
-var pc = null;
+            var pc = null;
 
-function stateChanged()
-{
-    testPassed("stateChanged was called");
-    shouldBeEqualToString('pc.signalingState', 'closed');
-    finishJSTest();
-}
+            function stateChanged()
+            {
+                testPassed("stateChanged was called");
+                shouldBeEqualToString('pc.signalingState', 'closed');
+                finishJSTest();
+            }
 
-shouldNotThrow('pc = new webkitRTCPeerConnection({iceServers:[]}, null);');
-shouldBeEqualToString('pc.signalingState', 'stable');
-pc.onsignalingstatechange = stateChanged;
-pc.close();
+            shouldNotThrow('pc = new webkitRTCPeerConnection({iceServers:[]}, null);');
+            shouldBeEqualToString('pc.signalingState', 'stable');
+            pc.onsignalingstatechange = stateChanged;
+            pc.close();
 
-window.jsTestIsAsync = true;
-window.successfullyParsed = true;
-</script>
-<script src="../../resources/js-test-post.js"></script>
-</body>
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
 </html>

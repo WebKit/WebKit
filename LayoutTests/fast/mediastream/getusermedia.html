@@ -1,86 +1,86 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-<head>
-<script src="../../resources/js-test-pre.js"></script>
-</head>
-<body>
-<p id="description"></p>
-<div id="console"></div>
-<script>
-description("Tests webkitGetUserMedia.");
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <p id="description"></p>
+        <div id="console"></div>
+        <script>
+            description("Tests webkitGetUserMedia.");
 
-var stream;
-var errorArg;
+            var stream;
+            var errorArg;
 
-function error() {
-    testFailed('Error callback called.');
-    finishJSTest();
-}
+            function error() {
+                testFailed('Error callback called.');
+                finishJSTest();
+            }
 
-function gotStreamInError(s) {
-    testFailed('Stream generated.');
-    finishJSTest();
-}
+            function gotStreamInError(s) {
+                testFailed('Stream generated.');
+                finishJSTest();
+            }
 
-function gotStream5(s) {
-    stream = s;
-    testPassed('Stream generated.');
-    shouldBe('stream.getAudioTracks().length', '1');
-    shouldBe('stream.getVideoTracks().length', '1');
-    finishJSTest();
-}
+            function gotStream5(s) {
+                stream = s;
+                testPassed('Stream generated.');
+                shouldBe('stream.getAudioTracks().length', '1');
+                shouldBe('stream.getVideoTracks().length', '1');
+                finishJSTest();
+            }
 
-function error1(e) {
-    errorArg = e;
-    testPassed('Error callback called.');
-    shouldBeEqualToString('errorArg.name', 'ConstraintNotSatisfiedError');
-    shouldBeEqualToString('errorArg.constraintName', 'valid_but_unsupported_1');
+            function error1(e) {
+                errorArg = e;
+                testPassed('Error callback called.');
+                shouldBeEqualToString('errorArg.name', 'ConstraintNotSatisfiedError');
+                shouldBeEqualToString('errorArg.constraintName', 'valid_but_unsupported_1');
 
-    shouldNotThrow("navigator.webkitGetUserMedia({audio:{mandatory:{'valid_and_supported_1':1}, optional:[{'valid_but_unsupported_1':0}]}, video:true}, gotStream5, error);");
-}
+                shouldNotThrow("navigator.webkitGetUserMedia({audio:{mandatory:{'valid_and_supported_1':1}, optional:[{'valid_but_unsupported_1':0}]}, video:true}, gotStream5, error);");
+            }
 
-function gotStream4(s) {
-    stream = s;
-    testPassed('Stream generated.');
-    shouldBe('stream.getAudioTracks().length', '1');
-    shouldBe('stream.getVideoTracks().length', '1');
+            function gotStream4(s) {
+                stream = s;
+                testPassed('Stream generated.');
+                shouldBe('stream.getAudioTracks().length', '1');
+                shouldBe('stream.getVideoTracks().length', '1');
 
-    shouldNotThrow("navigator.webkitGetUserMedia({audio:{mandatory:{'valid_but_unsupported_1':0}, optional:[]}, video:true}, gotStreamInError, error1);");
-}
+                shouldNotThrow("navigator.webkitGetUserMedia({audio:{mandatory:{'valid_but_unsupported_1':0}, optional:[]}, video:true}, gotStreamInError, error1);");
+            }
 
-function gotStream3(s) {
-    stream = s;
-    testPassed('Stream generated.');
-    shouldBe('stream.getAudioTracks().length', '1');
-    shouldBe('stream.getVideoTracks().length', '1');
+            function gotStream3(s) {
+                stream = s;
+                testPassed('Stream generated.');
+                shouldBe('stream.getAudioTracks().length', '1');
+                shouldBe('stream.getVideoTracks().length', '1');
 
-    shouldNotThrow("navigator.webkitGetUserMedia({audio:{mandatory:{}, optional:[]}, video:true}, gotStream4, error);");
-}
+                shouldNotThrow("navigator.webkitGetUserMedia({audio:{mandatory:{}, optional:[]}, video:true}, gotStream4, error);");
+            }
 
-function gotStream2(s) {
-    stream = s;
-    testPassed('Stream generated.');
-    shouldBe('stream.getAudioTracks().length', '0');
-    shouldBe('stream.getVideoTracks().length', '1');
+            function gotStream2(s) {
+                stream = s;
+                testPassed('Stream generated.');
+                shouldBe('stream.getAudioTracks().length', '0');
+                shouldBe('stream.getVideoTracks().length', '1');
 
-    shouldNotThrow("navigator.webkitGetUserMedia({audio:true, video:true}, gotStream3, error);");
-}
+                shouldNotThrow("navigator.webkitGetUserMedia({audio:true, video:true}, gotStream3, error);");
+            }
 
-function gotStream1(s) {
-    stream = s;
-    testPassed('Stream generated.');
-    shouldBe('stream.getAudioTracks().length', '1');
-    shouldBe('stream.getVideoTracks().length', '0');
+            function gotStream1(s) {
+                stream = s;
+                testPassed('Stream generated.');
+                shouldBe('stream.getAudioTracks().length', '1');
+                shouldBe('stream.getVideoTracks().length', '0');
 
-    shouldNotThrow("navigator.webkitGetUserMedia({video:true}, gotStream2, error);")
-}
+                shouldNotThrow("navigator.webkitGetUserMedia({video:true}, gotStream2, error);")
+            }
 
-shouldThrow("navigator.webkitGetUserMedia({audio:false, video:false}, error, error);")
-shouldNotThrow("navigator.webkitGetUserMedia({audio:true}, gotStream1, error);");
+            shouldThrow("navigator.webkitGetUserMedia({audio:false, video:false}, error, error);")
+            shouldNotThrow("navigator.webkitGetUserMedia({audio:true}, gotStream1, error);");
 
-window.jsTestIsAsync = true;
-window.successfullyParsed = true;
-</script>
-<script src="../../resources/js-test-post.js"></script>
-</body>
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
 </html>

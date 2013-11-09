@@ -1,78 +1,78 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-<head>
-<script src="../../resources/js-test-pre.js"></script>
-</head>
-<body>
-<p id="description"></p>
-<div id="console"></div>
-<script>
-description("Tests MediaStream::onended callback.");
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <p id="description"></p>
+        <div id="console"></div>
+        <script>
+            description("Tests MediaStream::onended callback.");
 
-function error() {
-    testFailed('Stream generation failed.');
-    finishJSTest();
-}
+            function error() {
+                testFailed('Stream generation failed.');
+                finishJSTest();
+            }
 
-function getUserMedia(dictionary, callback) {
-    try {
-        navigator.webkitGetUserMedia(dictionary, callback, error);
-    } catch (e) {
-        testFailed('webkitGetUserMedia threw exception :' + e);
-        finishJSTest();
-    }
-}
+            function getUserMedia(dictionary, callback) {
+                try {
+                    navigator.webkitGetUserMedia(dictionary, callback, error);
+                } catch (e) {
+                    testFailed('webkitGetUserMedia threw exception :' + e);
+                    finishJSTest();
+                }
+            }
 
-var stream;
+            var stream;
 
-function streamEnded2() {
-    debug("");
-    testPassed('streamEnded2 was called.');
-    shouldBeTrue('stream.ended');
-    finishJSTest();
-}
+            function streamEnded2() {
+                debug("");
+                testPassed('streamEnded2 was called.');
+                shouldBeTrue('stream.ended');
+                finishJSTest();
+            }
 
-function gotStream2(s) {
-    debug("");
-    testPassed('gotStream2 was called.');
-    stream = new webkitMediaStream(s);
-    shouldBeFalse('stream.ended');
-    try {
-        stream.onended = streamEnded2;
-        stream.stop();
-    } catch (e) {
-        testFailed('MediaStream threw exception :' + e);
-        finishJSTest();
-    }
-}
+            function gotStream2(s) {
+                debug("");
+                testPassed('gotStream2 was called.');
+                stream = new webkitMediaStream(s);
+                shouldBeFalse('stream.ended');
+                try {
+                    stream.onended = streamEnded2;
+                    stream.stop();
+                } catch (e) {
+                    testFailed('MediaStream threw exception :' + e);
+                    finishJSTest();
+                }
+            }
 
-function streamEnded() {
-    debug("");
-    testPassed('streamEnded was called.');
-    shouldBeTrue('stream.ended');
+            function streamEnded() {
+                debug("");
+                testPassed('streamEnded was called.');
+                shouldBeTrue('stream.ended');
 
-    getUserMedia({audio:true, video:true}, gotStream2);
-}
+                getUserMedia({audio:true, video:true}, gotStream2);
+            }
 
-function gotStream(s) {
-    debug("");
-    testPassed('gotStream was called.');
-    stream = s;
-    shouldBeFalse('stream.ended');
-    try {
-        stream.onended = streamEnded;
-        stream.stop();
-    } catch (e) {
-        testFailed('MediaStream threw exception :' + e);
-        finishJSTest();
-    }
-}
+            function gotStream(s) {
+                debug("");
+                testPassed('gotStream was called.');
+                stream = s;
+                shouldBeFalse('stream.ended');
+                try {
+                    stream.onended = streamEnded;
+                    stream.stop();
+                } catch (e) {
+                    testFailed('MediaStream threw exception :' + e);
+                    finishJSTest();
+                }
+            }
 
-getUserMedia({audio:true, video:true}, gotStream);
+            getUserMedia({audio:true, video:true}, gotStream);
 
-window.jsTestIsAsync = true;
-window.successfullyParsed = true;
-</script>
-<script src="../../resources/js-test-post.js"></script>
-</body>
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
 </html>

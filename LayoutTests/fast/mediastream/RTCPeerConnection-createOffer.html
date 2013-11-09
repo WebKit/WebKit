@@ -1,52 +1,52 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-<head>
-<script src="../../resources/js-test-pre.js"></script>
-</head>
-<body>
-<script>
-description("Tests RTCPeerConnection createOffer.");
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description("Tests RTCPeerConnection createOffer.");
 
-var pc = null;
+            var pc = null;
 
-function requestFailed2(reason)
-{
-    testPassed('requestFailed was called.');
+            function requestFailed2(reason)
+            {
+                testPassed('requestFailed was called.');
 
-    errorReason = reason;
-    shouldBe('errorReason', '"TEST_ERROR"');
+                errorReason = reason;
+                shouldBe('errorReason', '"TEST_ERROR"');
 
-    finishJSTest();
-}
+                finishJSTest();
+            }
 
-function requestSucceeded2(sd)
-{
-    testFailed('requestSucceeded was called.');
-    finishJSTest();
-}
+            function requestSucceeded2(sd)
+            {
+                testFailed('requestSucceeded was called.');
+                finishJSTest();
+            }
 
-function requestFailed1()
-{
-    testFailed('requestFailed was called.');
-    finishJSTest();
-}
+            function requestFailed1()
+            {
+                testFailed('requestFailed was called.');
+                finishJSTest();
+            }
 
-function requestSucceeded1(sd)
-{
-    testPassed('requestSucceeded was called.');
+            function requestSucceeded1(sd)
+            {
+                testPassed('requestSucceeded was called.');
 
-    sessionDescription = sd;
-    shouldBe('sessionDescription.type', '"offer"');
+                sessionDescription = sd;
+                shouldBe('sessionDescription.type', '"offer"');
 
-    pc.createOffer(requestSucceeded2, requestFailed2, {mandatory:{"succeed":false}});
-}
+                pc.createOffer(requestSucceeded2, requestFailed2, {mandatory:{"succeed":false}});
+            }
 
-pc = new webkitRTCPeerConnection({iceServers:[]}, null);
-pc.createOffer(requestSucceeded1, requestFailed1, {mandatory:{"succeed":true}});
+            pc = new webkitRTCPeerConnection({iceServers:[]}, null);
+            pc.createOffer(requestSucceeded1, requestFailed1, {mandatory:{"succeed":true}});
 
-window.jsTestIsAsync = true;
-window.successfullyParsed = true;
-</script>
-<script src="../../resources/js-test-post.js"></script>
-</body>
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
 </html>
