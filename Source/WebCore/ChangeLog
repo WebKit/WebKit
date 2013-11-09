@@ -1,5 +1,20 @@
 2013-11-09  Andreas Kling  <akling@apple.com>
 
+        Tighten typing in SVGResourcesCycleSolver a bit.
+        <https://webkit.org/b/124104>
+
+        Make the SVGResourcesCycleSolver constructor take a RenderElement&
+        and a SVGResources&.
+
+        While I was in the neighborhood, also converted one loop to use a
+        renderer iterator instead of walking siblings manually.
+
+        Finally used "auto" to clean up some overly wordy loops.
+
+        Reviewed by Anders Carlsson.
+
+2013-11-09  Andreas Kling  <akling@apple.com>
+
         Beat SVGRenderSupport with the RenderElement stick.
         <https://webkit.org/b/124102>
 

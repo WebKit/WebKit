@@ -25,24 +25,24 @@
 
 namespace WebCore {
 
-class RenderObject;
+class RenderElement;
 class RenderSVGResourceContainer;
 class SVGResources;
 
 class SVGResourcesCycleSolver {
     WTF_MAKE_NONCOPYABLE(SVGResourcesCycleSolver);
 public:
-    SVGResourcesCycleSolver(RenderObject*, SVGResources*);
+    SVGResourcesCycleSolver(RenderElement&, SVGResources&);
     ~SVGResourcesCycleSolver();
 
     void resolveCycles();
 
 private:
-    bool resourceContainsCycles(RenderObject*) const;
-    void breakCycle(RenderSVGResourceContainer*);
+    bool resourceContainsCycles(RenderElement&) const;
+    void breakCycle(RenderSVGResourceContainer&);
 
-    RenderObject* m_renderer;
-    SVGResources* m_resources;
+    RenderElement& m_renderer;
+    SVGResources& m_resources;
     HashSet<RenderSVGResourceContainer*> m_allResources; 
 };
 

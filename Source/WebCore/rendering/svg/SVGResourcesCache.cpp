@@ -50,15 +50,15 @@ void SVGResourcesCache::addResourcesFromRenderer(RenderElement& renderer, const 
         return;
 
     // Put object in cache.
-    SVGResources* resources = m_cache.add(&renderer, newResources.release()).iterator->value.get();
+    SVGResources& resources = *m_cache.add(&renderer, newResources.release()).iterator->value;
 
     // Run cycle-detection _afterwards_, so self-references can be caught as well.
-    SVGResourcesCycleSolver solver(&renderer, resources);
+    SVGResourcesCycleSolver solver(renderer, resources);
     solver.resolveCycles();
 
     // Walk resources and register the render object at each resources.
     HashSet<RenderSVGResourceContainer*> resourceSet;
-    resources->buildSetOfResources(resourceSet);
+    resources.buildSetOfResources(resourceSet);
 
     for (auto it = resourceSet.begin(), end = resourceSet.end(); it != end; ++it)
         (*it)->addClient(&renderer);
