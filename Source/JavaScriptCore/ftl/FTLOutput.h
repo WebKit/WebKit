@@ -361,12 +361,6 @@ public:
         return intToPtr(constIntPtr(function), pointerType(operationType(function)));
     }
     
-    LValue convertToTailCall(LValue call)
-    {
-        setTailCall(call, IsTailCall);
-        return call;
-    }
-    
     void jump(LBasicBlock destination) { buildBr(m_builder, destination); }
     void branch(LValue condition, LBasicBlock taken, LBasicBlock notTaken) { buildCondBr(m_builder, condition, taken, notTaken); }
     template<typename VectorType>
