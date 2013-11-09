@@ -40,7 +40,6 @@ class FPRInfo {
 public:
     typedef FPRReg RegisterType;
     static const unsigned numberOfRegisters = 6;
-    static const unsigned numberOfArgumentRegisters = 8;
 
     // Temporary registers.
     static const FPRReg fpRegT0 = X86Registers::xmm0;

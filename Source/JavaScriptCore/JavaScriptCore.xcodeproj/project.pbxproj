@@ -86,8 +86,6 @@
 		0F1E3A67153A21E2000F9456 /* DFGSilentRegisterSavePlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1E3A65153A21DF000F9456 /* DFGSilentRegisterSavePlan.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F21C27D14BE727A00ADC64B /* CodeSpecializationKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F21C27914BE727300ADC64B /* CodeSpecializationKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F21C27F14BEAA8200ADC64B /* BytecodeConventions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F21C27E14BEAA8000ADC64B /* BytecodeConventions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F235BD117178E1C00690C7F /* FTLCArgumentGetter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F235BBB17178E1C00690C7F /* FTLCArgumentGetter.cpp */; };
-		0F235BD217178E1C00690C7F /* FTLCArgumentGetter.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BBC17178E1C00690C7F /* FTLCArgumentGetter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F235BD317178E1C00690C7F /* FTLExitArgument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F235BBD17178E1C00690C7F /* FTLExitArgument.cpp */; };
 		0F235BD417178E1C00690C7F /* FTLExitArgument.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BBE17178E1C00690C7F /* FTLExitArgument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F235BD517178E1C00690C7F /* FTLExitArgumentForOperand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F235BBF17178E1C00690C7F /* FTLExitArgumentForOperand.cpp */; };
@@ -1360,8 +1358,6 @@
 		0F1E3A65153A21DF000F9456 /* DFGSilentRegisterSavePlan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGSilentRegisterSavePlan.h; path = dfg/DFGSilentRegisterSavePlan.h; sourceTree = "<group>"; };
 		0F21C27914BE727300ADC64B /* CodeSpecializationKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeSpecializationKind.h; sourceTree = "<group>"; };
 		0F21C27E14BEAA8000ADC64B /* BytecodeConventions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeConventions.h; sourceTree = "<group>"; };
-		0F235BBB17178E1C00690C7F /* FTLCArgumentGetter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLCArgumentGetter.cpp; path = ftl/FTLCArgumentGetter.cpp; sourceTree = "<group>"; };
-		0F235BBC17178E1C00690C7F /* FTLCArgumentGetter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLCArgumentGetter.h; path = ftl/FTLCArgumentGetter.h; sourceTree = "<group>"; };
 		0F235BBD17178E1C00690C7F /* FTLExitArgument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLExitArgument.cpp; path = ftl/FTLExitArgument.cpp; sourceTree = "<group>"; };
 		0F235BBE17178E1C00690C7F /* FTLExitArgument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLExitArgument.h; path = ftl/FTLExitArgument.h; sourceTree = "<group>"; };
 		0F235BBF17178E1C00690C7F /* FTLExitArgumentForOperand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLExitArgumentForOperand.cpp; path = ftl/FTLExitArgumentForOperand.cpp; sourceTree = "<group>"; };
@@ -2751,8 +2747,6 @@
 				0FEA0A1A1708B00700BB722C /* FTLAbstractHeapRepository.h */,
 				0FEA09FE170513DB00BB722C /* FTLCapabilities.cpp */,
 				0FEA09FF170513DB00BB722C /* FTLCapabilities.h */,
-				0F235BBB17178E1C00690C7F /* FTLCArgumentGetter.cpp */,
-				0F235BBC17178E1C00690C7F /* FTLCArgumentGetter.h */,
 				0FEA0A251709623B00BB722C /* FTLCommonValues.cpp */,
 				0FEA0A211709606900BB722C /* FTLCommonValues.h */,
 				0FEA0A00170513DB00BB722C /* FTLCompile.cpp */,
@@ -4347,7 +4341,6 @@
 				0FEA0A1D1708B00700BB722C /* FTLAbstractHeap.h in Headers */,
 				0FEA0A1F1708B00700BB722C /* FTLAbstractHeapRepository.h in Headers */,
 				0FEA0A0A170513DB00BB722C /* FTLCapabilities.h in Headers */,
-				0F235BD217178E1C00690C7F /* FTLCArgumentGetter.h in Headers */,
 				0FEA0A231709606900BB722C /* FTLCommonValues.h in Headers */,
 				0FEA0A0C170513DB00BB722C /* FTLCompile.h in Headers */,
 				0F235BD417178E1C00690C7F /* FTLExitArgument.h in Headers */,
@@ -5364,7 +5357,6 @@
 				0FEA0A1C1708B00700BB722C /* FTLAbstractHeap.cpp in Sources */,
 				0FEA0A1E1708B00700BB722C /* FTLAbstractHeapRepository.cpp in Sources */,
 				0FEA0A09170513DB00BB722C /* FTLCapabilities.cpp in Sources */,
-				0F235BD117178E1C00690C7F /* FTLCArgumentGetter.cpp in Sources */,
 				0FEA0A271709623B00BB722C /* FTLCommonValues.cpp in Sources */,
 				0FEA0A0B170513DB00BB722C /* FTLCompile.cpp in Sources */,
 				0F235BD317178E1C00690C7F /* FTLExitArgument.cpp in Sources */,

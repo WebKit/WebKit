@@ -30,7 +30,6 @@
 
 #include "DFGOSRExitCompilerCommon.h"
 #include "DFGOSRExitPreparation.h"
-#include "FTLCArgumentGetter.h"
 #include "FTLExitArgumentForOperand.h"
 #include "FTLJITCode.h"
 #include "FTLOSRExit.h"
