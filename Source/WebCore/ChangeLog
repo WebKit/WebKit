@@ -1,3 +1,18 @@
+2013-11-08  Anders Carlsson  <andersca@apple.com>
+
+        Implement encoding of arrays of objects
+        https://bugs.webkit.org/show_bug.cgi?id=124091
+
+        Reviewed by Beth Dakin.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::encodeBackForwardTreeNode):
+        Encode the rest of the members.
+
+        * platform/KeyedCoding.h:
+        (WebCore::KeyedEncoder::encodeObjects):
+        Call beginArray, then beginArrayElement/endArrayElement for every element and lastly endArray.
+
 2013-11-08  Tim Horton  <timothy_horton@apple.com>
 
         Remote Layer Tree: RemoteLayerBackingStore partial repaint is broken for the tile cache

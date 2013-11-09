@@ -84,9 +84,6 @@ void WebBackForwardListProxy::setHighestItemIDFromUIProcess(uint64_t itemID)
 
 static void updateBackForwardItem(uint64_t itemID, HistoryItem* item)
 {
-    KeyedEncoder keyedEncoder;
-    item->encodeBackForwardTree(keyedEncoder);
-
     EncoderAdapter encoder;
     item->encodeBackForwardTree(encoder);
 

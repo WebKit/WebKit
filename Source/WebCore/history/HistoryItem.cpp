@@ -737,13 +737,26 @@ void HistoryItem::encodeBackForwardTreeNode(Encoder& encoder) const
 
 void HistoryItem::encodeBackForwardTreeNode(KeyedEncoder& encoder) const
 {
-    // FIXME: Implement.
+    encoder.encodeObjects("children", m_children.begin(), m_children.end(), [](KeyedEncoder& encoder, const RefPtr<HistoryItem>& child) {
+        encoder.encodeString("originalURLString", child->m_originalURLString);
+        encoder.encodeString("urlString", child->m_urlString);
+
+        child->encodeBackForwardTreeNode(encoder);
+    });
+
+    encoder.encodeInt64("documentSequenceNumber", m_documentSequenceNumber);
+
+    encoder.encodeObjects("documentState", m_documentState.begin(), m_documentState.end(), [](KeyedEncoder& encoder, const String& string) {
+        encoder.encodeString("string", string);
+    });
 
     encoder.encodeString("formContentType", m_formContentType);
 
     encoder.encodeConditionalObject("formData", m_formData.get(), [](KeyedEncoder&, const FormData&) {
         // FIXME: Implement.
     });
+
+    encoder.encodeInt64("itemSequenceNumber", m_itemSequenceNumber);
 
     encoder.encodeString("referrer", m_referrer);
 

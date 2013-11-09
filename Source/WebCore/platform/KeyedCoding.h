@@ -38,15 +38,16 @@ public:
     virtual void encodeBytes(const String& key, const uint8_t*, size_t) = 0;
     virtual void encodeUInt32(const String& key, uint32_t) = 0;
     virtual void encodeInt32(const String& key, int32_t) = 0;
+    virtual void encodeInt64(const String& key, int64_t) = 0;
     virtual void encodeFloat(const String& key, float) = 0;
     virtual void encodeString(const String& key, const String&) = 0;
 
     template<typename T, typename F>
-    void encodeObject(const String& key, const T& object, F function)
+    void encodeObject(const String& key, const T& object, F&& function)
     {
-        this->beginObject(key);
+        beginObject(key);
         function(*this, object);
-        this->endObject();
+        endObject();
     }
 
     template<typename T, typename F>
@@ -58,9 +59,29 @@ public:
         encodeObject(key, *object, std::forward<F>(function));
     }
 
+    template<typename T, typename F>
+    void encodeObjects(const String& key, T begin, T end, F&& function)
+    {
+        if (begin == end)
+            return;
+
+        beginArray(key);
+        for (T it = begin; it != end; ++it) {
+            beginArrayElement();
+            function(*this, *it);
+            endArrayElement();
+        }
+        endArray();
+    }
+
 private:
     virtual void beginObject(const String& key) = 0;
     virtual void endObject() = 0;
+
+    virtual void beginArray(const String& key) = 0;
+    virtual void beginArrayElement() = 0;
+    virtual void endArrayElement() = 0;
+    virtual void endArray() = 0;
 };
 
 } // namespace WebCore

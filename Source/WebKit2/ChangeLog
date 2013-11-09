@@ -1,3 +1,25 @@
+2013-11-08  Anders Carlsson  <andersca@apple.com>
+
+        Implement encoding of arrays of objects
+        https://bugs.webkit.org/show_bug.cgi?id=124091
+
+        Reviewed by Beth Dakin.
+
+        Add a new array stack and push and pop from it accordingly.
+
+        * Shared/cf/KeyedEncoder.cpp:
+        (WebKit::KeyedEncoder::~KeyedEncoder):
+        (WebKit::KeyedEncoder::encodeBytes):
+        (WebKit::KeyedEncoder::encodeUInt32):
+        (WebKit::KeyedEncoder::encodeInt32):
+        (WebKit::KeyedEncoder::encodeInt64):
+        (WebKit::KeyedEncoder::encodeFloat):
+        (WebKit::KeyedEncoder::beginArray):
+        (WebKit::KeyedEncoder::beginArrayElement):
+        (WebKit::KeyedEncoder::endArrayElement):
+        (WebKit::KeyedEncoder::endArray):
+        * Shared/cf/KeyedEncoder.h:
+
 2013-11-08  Tim Horton  <timothy_horton@apple.com>
 
         Remote Layer Tree: RemoteLayerBackingStore partial repaint is broken for the tile cache
