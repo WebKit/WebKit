@@ -1,3 +1,14 @@
+2013-11-09  Antti Koivisto  <antti@apple.com>
+
+        Add subtest for word-break:break-all to Layout/line-layout-simple.html
+        https://bugs.webkit.org/show_bug.cgi?id=124103
+
+        Reviewed by Andreas Kling.
+
+        * Layout/line-layout-simple.html:
+
+        Combination "white-space:pre-wrap; word-break:break-all" is common for pure text.
+
 2013-11-08  Antti Koivisto  <antti@apple.com>
 
         Add line layout performance test that exercises more cases
