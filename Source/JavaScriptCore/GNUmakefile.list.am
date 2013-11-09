@@ -417,8 +417,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/ftl/FTLAbstractHeapRepository.h \
 	Source/JavaScriptCore/ftl/FTLCapabilities.cpp \
 	Source/JavaScriptCore/ftl/FTLCapabilities.h \
-	Source/JavaScriptCore/ftl/FTLCArgumentGetter.cpp \
-	Source/JavaScriptCore/ftl/FTLCArgumentGetter.h \
 	Source/JavaScriptCore/ftl/FTLCommonValues.cpp \
 	Source/JavaScriptCore/ftl/FTLCommonValues.h \
 	Source/JavaScriptCore/ftl/FTLCompile.cpp \
