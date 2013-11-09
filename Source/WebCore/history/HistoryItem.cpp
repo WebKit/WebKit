@@ -687,7 +687,9 @@ void HistoryItem::encodeBackForwardTree(KeyedEncoder& encoder) const
 {
     encoder.encodeUInt32("version", backForwardTreeEncodingVersion);
 
-    // FIXME: Encode the tree.
+    encoder.encodeObject("root", *this, [](KeyedEncoder& encoder, const HistoryItem& item) {
+        item.encodeBackForwardTreeNode(encoder);
+    });
 }
 
 void HistoryItem::encodeBackForwardTreeNode(Encoder& encoder) const
@@ -731,6 +733,13 @@ void HistoryItem::encodeBackForwardTreeNode(Encoder& encoder) const
         encoder.encodeBytes(m_stateObject->data().data(), m_stateObject->data().size());
 
     encoder.encodeString(m_target);
+}
+
+void HistoryItem::encodeBackForwardTreeNode(KeyedEncoder& encoder) const
+{
+    // FIXME: Implement.
+
+    encoder.encodeString("target", m_target);
 }
 
 struct DecodeRecursionStackElement {

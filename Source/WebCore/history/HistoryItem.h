@@ -223,10 +223,7 @@ private:
     HistoryItem* findTargetItem();
 
     void encodeBackForwardTreeNode(Encoder&) const;
-
-    /* When adding new member variables to this class, please notify the Qt team.
-     * qt/HistoryItemQt.cpp contains code to serialize history items.
-     */
+    void encodeBackForwardTreeNode(KeyedEncoder&) const;
 
     String m_urlString;
     String m_originalURLString;

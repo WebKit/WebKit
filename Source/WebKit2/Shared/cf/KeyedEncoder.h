@@ -28,6 +28,7 @@
 
 #include <WebCore/KeyedCoding.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
@@ -38,8 +39,13 @@ public:
 
 private:
     virtual void encodeUInt32(const String& key, uint32_t) OVERRIDE;
+    virtual void encodeString(const String& key, const String&) OVERRIDE;
+
+    virtual void beginObject(const String& key) OVERRIDE;
+    virtual void endObject() OVERRIDE;
 
     RetainPtr<CFMutableDictionaryRef> m_rootDictionary;
+    Vector<CFMutableDictionaryRef, 16> m_dictionaryStack;
 };
 
 } // namespace WebKit

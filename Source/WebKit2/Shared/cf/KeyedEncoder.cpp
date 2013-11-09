@@ -39,16 +39,37 @@ static RetainPtr<CFMutableDictionaryRef> createDictionary()
 KeyedEncoder::KeyedEncoder()
     : m_rootDictionary(createDictionary())
 {
+    m_dictionaryStack.append(m_rootDictionary.get());
 }
     
 KeyedEncoder::~KeyedEncoder()
 {
+    ASSERT(m_dictionaryStack.size() == 1);
+    ASSERT(m_dictionaryStack.last() == m_rootDictionary);
 }
 
 void KeyedEncoder::encodeUInt32(const String& key, uint32_t value)
 {
     RetainPtr<CFNumberRef> number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &value));
-    CFDictionarySetValue(m_rootDictionary.get(), key.createCFString().get(), number.get());
+    CFDictionarySetValue(m_dictionaryStack.last(), key.createCFString().get(), number.get());
+}
+
+void KeyedEncoder::encodeString(const String& key, const String& value)
+{
+    CFDictionarySetValue(m_dictionaryStack.last(), key.createCFString().get(), value.createCFString().get());
+}
+
+void KeyedEncoder::beginObject(const String& key)
+{
+    auto dictionary = createDictionary();
+    CFDictionarySetValue(m_dictionaryStack.last(), key.createCFString().get(), dictionary.get());
+
+    m_dictionaryStack.append(dictionary.get());
+}
+
+void KeyedEncoder::endObject()
+{
+    m_dictionaryStack.removeLast();
 }
 
 } // namespace WebKit

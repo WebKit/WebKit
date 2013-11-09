@@ -36,6 +36,20 @@ protected:
 
 public:
     virtual void encodeUInt32(const String& key, uint32_t) = 0;
+
+    virtual void encodeString(const String& key, const String&) = 0;
+
+    template<typename T, typename F>
+    void encodeObject(const String& key, const T& object, F function)
+    {
+        this->beginObject(key);
+        function(*this, object);
+        this->endObject();
+    }
+
+private:
+    virtual void beginObject(const String& key) = 0;
+    virtual void endObject() = 0;
 };
 
 } // namespace WebCore

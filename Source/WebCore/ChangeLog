@@ -1,3 +1,24 @@
+2013-11-08  Anders Carlsson  <andersca@apple.com>
+
+        KeyedEncoder should be able to encoder objects
+        https://bugs.webkit.org/show_bug.cgi?id=124085
+
+        Reviewed by Sam Weinig.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::encodeBackForwardTree):
+        Encode the root object.
+
+        (WebCore::HistoryItem::encodeBackForwardTreeNode):
+        Encode the target.
+
+        * history/HistoryItem.h:
+        Add new members.
+
+        * platform/KeyedCoding.h:
+        (WebCore::KeyedEncoder::encodeObject):
+        Call beginObject, call the functor and then call endObject().
+
 2013-11-08  Sam Weinig  <sam@webkit.org>
 
         Teach CanvasObserver about references
