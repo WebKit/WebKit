@@ -64,6 +64,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetButterfly:
     case NewObject:
     case NewArray:
+    case NewArrayBuffer:
     case GetByOffset:
     case PutByOffset:
     case GetGlobalVar:

@@ -153,17 +153,18 @@ static void compileStub(
         jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(static_cast<VirtualRegister>(operand), GPRInfo::regT4));
     }
     
-    // Save the current framePointer into regT3 for the epilogue.
-    // Put regT4 into callFrameRegister
-    jit.move(MacroAssembler::framePointerRegister, GPRInfo::regT3);
+    // Restore the old stack pointer and then put regT4 into callFrameRegister. The idea is
+    // that the FTL call frame is pushed onto the JS call frame and we can recover the old
+    // value of the stack pointer by popping the FTL call frame. We already know what the
+    // frame pointer in the JS call frame was because it would have been passed as an argument
+    // to the FTL call frame.
+    jit.move(MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister);
+    jit.pop(GPRInfo::nonArgGPR0);
+    jit.pop(GPRInfo::nonArgGPR0);
     jit.move(GPRInfo::regT4, GPRInfo::callFrameRegister);
     
     handleExitCounts(jit, exit);
     reifyInlinedCallFrames(jit, exit);
-    
-    jit.move(GPRInfo::regT3, MacroAssembler::stackPointerRegister);
-    jit.pop(GPRInfo::regT3); // ignore prior framePointer
-    jit.pop(GPRInfo::nonArgGPR0); // ignore the result.
     
     if (exit.m_lastSetOperand.isValid()) {
         jit.load64(

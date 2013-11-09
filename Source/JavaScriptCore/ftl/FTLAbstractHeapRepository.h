@@ -31,6 +31,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "FTLAbstractHeap.h"
+#include "IndexingType.h"
 
 namespace JSC { namespace FTL {
 
@@ -102,6 +103,31 @@ public:
 #undef NUMBERED_ABSTRACT_HEAP_DECLARATION
 
     AbsoluteAbstractHeap absolute;
+    
+    IndexedAbstractHeap* forIndexingType(IndexingType indexingType)
+    {
+        switch (indexingType) {
+        case ALL_BLANK_INDEXING_TYPES:
+        case ALL_UNDECIDED_INDEXING_TYPES:
+            return 0;
+            
+        case ALL_INT32_INDEXING_TYPES:
+            return &indexedInt32Properties;
+            
+        case ALL_DOUBLE_INDEXING_TYPES:
+            return &indexedDoubleProperties;
+            
+        case ALL_CONTIGUOUS_INDEXING_TYPES:
+            return &indexedContiguousProperties;
+            
+        case ALL_ARRAY_STORAGE_INDEXING_TYPES:
+            return &indexedArrayStorageProperties;
+            
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return 0;
+        }
+    }
 
 private:
     friend class AbstractHeap;

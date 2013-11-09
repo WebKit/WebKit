@@ -374,6 +374,9 @@ private:
         case NewArray:
             compileNewArray();
             break;
+        case NewArrayBuffer:
+            compileNewArrayBuffer();
+            break;
         case StringCharAt:
             compileStringCharAt();
             break;
@@ -1786,12 +1789,6 @@ private:
         RELEASE_ASSERT(structure->indexingType() == m_node->indexingType());
         
         if (!globalObject->isHavingABadTime() && !hasArrayStorage(m_node->indexingType())) {
-            ASSERT(
-                hasUndecided(structure->indexingType())
-                || hasInt32(structure->indexingType())
-                || hasDouble(structure->indexingType())
-                || hasContiguous(structure->indexingType()));
-            
             unsigned numElements = m_node->numChildren();
             
             ArrayValues arrayValues = allocateJSArray(structure, numElements);
@@ -1812,16 +1809,11 @@ private:
                     break;
                     
                 case ALL_INT32_INDEXING_TYPES:
-                    m_out.store64(
-                        lowJSValue(edge),
-                        arrayValues.butterfly, m_heaps.indexedInt32Properties[operandIndex]);
-                    break;
-                    
                 case ALL_CONTIGUOUS_INDEXING_TYPES:
                     m_out.store64(
-                        lowJSValue(edge),
+                        lowJSValue(edge, ManualOperandSpeculation),
                         arrayValues.butterfly,
-                        m_heaps.indexedContiguousProperties[operandIndex]);
+                        m_heaps.forIndexingType(m_node->indexingType())->at(operandIndex));
                     break;
                     
                 default:
@@ -1847,7 +1839,9 @@ private:
         
         for (unsigned operandIndex = 0; operandIndex < m_node->numChildren(); ++operandIndex) {
             Edge edge = m_graph.varArgChild(m_node, operandIndex);
-            m_out.store64(lowJSValue(edge), m_out.absolute(buffer + operandIndex));
+            m_out.store64(
+                lowJSValue(edge, ManualOperandSpeculation),
+                m_out.absolute(buffer + operandIndex));
         }
         
         m_out.storePtr(
@@ -1861,6 +1855,43 @@ private:
         m_out.storePtr(m_out.intPtrZero, m_out.absolute(scratchBuffer->activeLengthPtr()));
         
         setJSValue(result);
+    }
+    
+    void compileNewArrayBuffer()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->codeOrigin);
+        Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(
+            m_node->indexingType());
+        
+        RELEASE_ASSERT(structure->indexingType() == m_node->indexingType());
+        
+        if (!globalObject->isHavingABadTime() && !hasArrayStorage(m_node->indexingType())) {
+            unsigned numElements = m_node->numConstants();
+            
+            ArrayValues arrayValues = allocateJSArray(structure, numElements);
+            
+            JSValue* data = codeBlock()->constantBuffer(m_node->startConstant());
+            for (unsigned index = 0; index < m_node->numConstants(); ++index) {
+                int64_t value;
+                if (hasDouble(m_node->indexingType()))
+                    value = bitwise_cast<int64_t>(data[index].asNumber());
+                else
+                    value = JSValue::encode(data[index]);
+                
+                m_out.store64(
+                    m_out.constInt64(value),
+                    arrayValues.butterfly,
+                    m_heaps.forIndexingType(m_node->indexingType())->at(index));
+            }
+            
+            setJSValue(arrayValues.array);
+            return;
+        }
+        
+        setJSValue(vmCall(
+            m_out.operation(operationNewArrayBuffer), m_callFrame,
+            m_out.constIntPtr(structure), m_out.constIntPtr(m_node->startConstant()),
+            m_out.constIntPtr(m_node->numConstants())));
     }
     
     void compileStringCharAt()
@@ -1950,7 +1981,7 @@ private:
             }
                 
             results.append(m_out.anchor(vmCall(
-                m_out.operation(operationGetByValStringInt), base, index)));
+                m_out.operation(operationGetByValStringInt), m_callFrame, base, index)));
         }
             
         m_out.jump(continuation);
