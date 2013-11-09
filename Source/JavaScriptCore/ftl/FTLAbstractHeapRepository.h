@@ -58,7 +58,8 @@ namespace JSC { namespace FTL {
     macro(Structure_classInfo, Structure::classInfoOffset()) \
     macro(Structure_globalObject, Structure::globalObjectOffset()) \
     macro(Structure_indexingType, Structure::indexingTypeOffset()) \
-    macro(Structure_typeInfoFlags, Structure::typeInfoFlagsOffset())
+    macro(Structure_typeInfoFlags, Structure::typeInfoFlagsOffset()) \
+    macro(Structure_typeInfoType, Structure::typeInfoTypeOffset())
 
 #define FOR_EACH_INDEXED_ABSTRACT_HEAP(macro) \
     macro(characters8, sizeof(LChar)) \

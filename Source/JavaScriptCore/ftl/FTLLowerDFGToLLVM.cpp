@@ -3502,6 +3502,9 @@ private:
         case ObjectOrOtherUse:
             speculateObjectOrOther(edge);
             break;
+        case FinalObjectUse:
+            speculateFinalObject(edge);
+            break;
         case StringUse:
             speculateString(edge);
             break;
@@ -3611,6 +3614,20 @@ private:
             m_out.constIntPtr(classInfo));
     }
     
+    LValue isType(LValue cell, JSType type)
+    {
+        return m_out.equal(
+            m_out.load8(
+                m_out.loadPtr(cell, m_heaps.JSCell_structure),
+                m_heaps.Structure_typeInfoType),
+            m_out.constInt8(type));
+    }
+    
+    LValue isNotType(LValue cell, JSType type)
+    {
+        return m_out.bitNot(isType(cell, type));
+    }
+    
     void speculateObject(Edge edge, LValue cell)
     {
         FTL_TYPE_CHECK(jsValueValue(cell), edge, SpecObject, isNotObject(cell));
@@ -3655,6 +3672,17 @@ private:
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
+    }
+    
+    void speculateFinalObject(Edge edge, LValue cell)
+    {
+        FTL_TYPE_CHECK(
+            jsValueValue(cell), edge, SpecFinalObject, isNotType(cell, FinalObjectType));
+    }
+    
+    void speculateFinalObject(Edge edge)
+    {
+        speculateFinalObject(edge, lowCell(edge));
     }
     
     void speculateString(Edge edge, LValue cell)

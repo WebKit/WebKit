@@ -1,5 +1,21 @@
 2013-11-08  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL should support Phantom(FinalObject:)
+        https://bugs.webkit.org/show_bug.cgi?id=124092
+
+        Reviewed by Oliver Hunt.
+
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::speculate):
+        (JSC::FTL::LowerDFGToLLVM::isType):
+        (JSC::FTL::LowerDFGToLLVM::isNotType):
+        (JSC::FTL::LowerDFGToLLVM::speculateFinalObject):
+
+2013-11-08  Filip Pizlo  <fpizlo@apple.com>
+
         Get rid of the FTL tail call APIs since they are unused
         https://bugs.webkit.org/show_bug.cgi?id=124093
 
