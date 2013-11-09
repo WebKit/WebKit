@@ -43,10 +43,10 @@
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/ResourceHandle.h>
-#import <WebCore/RunLoop.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
 
 using namespace WebCore;
 
@@ -306,7 +306,7 @@ public:
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-    WebCore::RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMainRunLoop();
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         @"Times",                       WebKitStandardFontPreferenceKey,

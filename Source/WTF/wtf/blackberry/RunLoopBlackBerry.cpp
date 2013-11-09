@@ -28,7 +28,7 @@
 
 #include "NotImplemented.h"
 
-namespace WebCore {
+namespace WTF {
 
 RunLoop::RunLoop()
 {
@@ -45,4 +45,4 @@ void RunLoop::wakeUp()
     notImplemented();
 }
 
-} // namespace WebCore
+} // namespace WTF

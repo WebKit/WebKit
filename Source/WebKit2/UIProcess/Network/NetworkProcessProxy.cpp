@@ -35,7 +35,7 @@
 #include "NetworkProcessMessages.h"
 #include "WebContext.h"
 #include "WebProcessMessages.h"
-#include <WebCore/RunLoop.h>
+#include <wtf/RunLoop.h>
 
 #if USE(SECURITY_FRAMEWORK)
 #include "SecItemShimProxy.h"

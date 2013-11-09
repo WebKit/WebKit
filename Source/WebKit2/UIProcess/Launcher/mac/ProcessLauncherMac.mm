@@ -29,7 +29,6 @@
 #import "DynamicLinkerEnvironmentExtractor.h"
 #import "EnvironmentVariables.h"
 #import "WebKitSystemInterface.h"
-#import <WebCore/RunLoop.h>
 #import <crt_externs.h>
 #import <mach-o/dyld.h>
 #import <mach/machine.h>
@@ -40,12 +39,11 @@
 #import <sys/stat.h>
 #import <wtf/PassRefPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
 #import <wtf/Threading.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 #import <xpc/xpc.h>
-
-using namespace WebCore;
 
 // FIXME: We should be doing this another way.
 extern "C" kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t);

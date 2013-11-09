@@ -26,7 +26,7 @@
 #ifndef ResponsivenessTimer_h
 #define ResponsivenessTimer_h
 
-#include <WebCore/RunLoop.h>
+#include <wtf/RunLoop.h>
 
 namespace WebKit {
 
@@ -56,7 +56,7 @@ private:
     ResponsivenessTimer::Client* m_client;
     bool m_isResponsive;
 
-    WebCore::RunLoop::Timer<ResponsivenessTimer> m_timer;
+    RunLoop::Timer<ResponsivenessTimer> m_timer;
 };
 
 } // namespace WebKit

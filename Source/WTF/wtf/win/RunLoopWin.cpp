@@ -31,7 +31,7 @@
 
 using namespace std;
 
-namespace WebCore {
+namespace WTF {
 
 static const UINT PerformWorkMessage = WM_USER + 1;
 static const LPWSTR kRunLoopMessageWindowClassName = L"RunLoopMessageWindow";
@@ -99,8 +99,7 @@ RunLoop::RunLoop()
     registerRunLoopMessageWindowClass();
 
     m_runLoopMessageWindow = ::CreateWindow(kRunLoopMessageWindowClassName, 0, 0,
-                                            CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,
-                                            HWND_MESSAGE, 0, 0, this);
+        CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, HWND_MESSAGE, 0, 0, this);
     ASSERT(::IsWindow(m_runLoopMessageWindow));
 }
 
@@ -176,4 +175,4 @@ bool RunLoop::TimerBase::isActive() const
     return m_runLoop->m_activeTimers.contains(m_ID);
 }
 
-} // namespace WebCore
+} // namespace WTF

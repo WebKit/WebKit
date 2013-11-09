@@ -28,7 +28,7 @@
 
 #include "MessageSender.h"
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/RunLoop.h>
+#include <wtf/RunLoop.h>
 
 typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
 

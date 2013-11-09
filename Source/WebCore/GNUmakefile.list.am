@@ -6027,8 +6027,6 @@ platform_sources += \
 	Source/WebCore/platform/PODRedBlackTree.h \
 	Source/WebCore/platform/ReferrerPolicy.h \
 	Source/WebCore/platform/RefCountedSupplement.h \
-	Source/WebCore/platform/RunLoop.cpp \
-	Source/WebCore/platform/RunLoop.h \
 	Source/WebCore/platform/RuntimeApplicationChecks.cpp \
 	Source/WebCore/platform/RuntimeApplicationChecks.h \
 	Source/WebCore/platform/SearchPopupMenu.h \
@@ -6182,7 +6180,6 @@ platformgtk_sources += \
 	Source/WebCore/platform/gtk/PlatformMouseEventGtk.cpp \
 	Source/WebCore/platform/gtk/PlatformScreenGtk.cpp \
 	Source/WebCore/platform/gtk/PlatformWheelEventGtk.cpp \
-	Source/WebCore/platform/gtk/RunLoopGtk.cpp \
 	Source/WebCore/platform/gtk/SearchPopupMenuGtk.cpp \
 	Source/WebCore/platform/gtk/SearchPopupMenuGtk.h \
 	Source/WebCore/platform/gtk/SharedBufferGtk.cpp \

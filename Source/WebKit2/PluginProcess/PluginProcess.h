@@ -109,7 +109,7 @@ private:
     
     bool m_supportsAsynchronousPluginInitialization;
 
-    WebCore::RunLoop::Timer<PluginProcess> m_minimumLifetimeTimer;
+    RunLoop::Timer<PluginProcess> m_minimumLifetimeTimer;
 
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
     // The Mach port used for accelerated compositing.

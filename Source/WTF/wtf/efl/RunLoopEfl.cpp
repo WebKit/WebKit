@@ -34,7 +34,7 @@
 static const int ecorePipeMessageSize = 1;
 static const char wakupEcorePipeMessage[] = "W";
 
-namespace WebCore {
+namespace WTF {
 
 RunLoop::RunLoop()
     : m_initEfl(false)
@@ -58,7 +58,7 @@ void RunLoop::stop()
     ecore_main_loop_quit();
 }
 
-void RunLoop::wakeUpEvent(void* data, void*, unsigned int)
+void RunLoop::wakeUpEvent(void* data, void*, unsigned)
 {
     RunLoop* loop = static_cast<RunLoop*>(data);
 
@@ -131,4 +131,4 @@ bool RunLoop::TimerBase::isActive() const
     return (m_timer) ? true : false;
 }
 
-} // namespace WebCore
+} // namespace WTF

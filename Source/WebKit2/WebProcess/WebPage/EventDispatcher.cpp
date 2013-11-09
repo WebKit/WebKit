@@ -33,8 +33,8 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/Page.h>
-#include <WebCore/RunLoop.h>
 #include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
 
 #if ENABLE(THREADED_SCROLLING)
 #include <WebCore/ScrollingCoordinator.h>

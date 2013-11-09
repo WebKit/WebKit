@@ -29,8 +29,8 @@
 #include "BackingStore.h"
 #include "DrawingAreaProxy.h"
 #include "LayerTreeContext.h"
-#include <WebCore/RunLoop.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 class Region;
@@ -109,7 +109,7 @@ private:
     bool m_isBackingStoreDiscardable;
     std::unique_ptr<BackingStore> m_backingStore;
 
-    WebCore::RunLoop::Timer<DrawingAreaProxyImpl> m_discardBackingStoreTimer;
+    RunLoop::Timer<DrawingAreaProxyImpl> m_discardBackingStoreTimer;
 };
 
 } // namespace WebKit

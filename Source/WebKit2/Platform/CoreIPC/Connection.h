@@ -49,7 +49,7 @@
 #include "PlatformProcessIdentifier.h"
 #endif
 
-namespace WebCore {
+namespace WTF {
 class RunLoop;
 }
 
@@ -117,8 +117,8 @@ public:
     static bool identifierIsNull(Identifier identifier) { return !identifier; }
 #endif
 
-    static PassRefPtr<Connection> createServerConnection(Identifier, Client*, WebCore::RunLoop* clientRunLoop);
-    static PassRefPtr<Connection> createClientConnection(Identifier, Client*, WebCore::RunLoop* clientRunLoop);
+    static PassRefPtr<Connection> createServerConnection(Identifier, Client*, WTF::RunLoop* clientRunLoop);
+    static PassRefPtr<Connection> createClientConnection(Identifier, Client*, WTF::RunLoop* clientRunLoop);
     ~Connection();
 
     Client* client() const { return m_client; }
@@ -167,7 +167,7 @@ public:
     bool inSendSync() const { return m_inSendSyncCount; }
 
 private:
-    Connection(Identifier, bool isServer, Client*, WebCore::RunLoop* clientRunLoop);
+    Connection(Identifier, bool isServer, Client*, WTF::RunLoop* clientRunLoop);
     void platformInitialize(Identifier);
     void platformInvalidate();
     
@@ -213,7 +213,7 @@ private:
 
     bool m_isConnected;
     RefPtr<WorkQueue> m_connectionQueue;
-    WebCore::RunLoop* m_clientRunLoop;
+    WTF::RunLoop* m_clientRunLoop;
 
     HashMap<StringReference, std::pair<RefPtr<WorkQueue>, RefPtr<WorkQueueMessageReceiver>>> m_workQueueMessageReceivers;
 

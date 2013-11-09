@@ -37,7 +37,7 @@
 #include "WebPluginSiteDataManager.h"
 #include "WebProcessProxy.h"
 #include <WebCore/NotImplemented.h>
-#include <WebCore/RunLoop.h>
+#include <wtf/RunLoop.h>
 
 #if PLATFORM(MAC)
 #include "MachPort.h"

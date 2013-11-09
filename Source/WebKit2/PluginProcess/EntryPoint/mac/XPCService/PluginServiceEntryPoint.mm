@@ -29,7 +29,7 @@
 #import "PluginProcess.h"
 #import "WKBase.h"
 #import "XPCServiceEntryPoint.h"
-#import <WebCore/RunLoop.h>
+#import <wtf/RunLoop.h>
 
 namespace WebKit {
 
@@ -59,7 +59,6 @@ public:
 
 } // namespace WebKit
 
-using namespace WebCore;
 using namespace WebKit;
 
 extern "C" WK_EXPORT void PluginServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage);

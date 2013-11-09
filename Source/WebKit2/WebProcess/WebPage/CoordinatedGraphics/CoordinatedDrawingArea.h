@@ -32,7 +32,7 @@
 #include "DrawingArea.h"
 #include "LayerTreeHost.h"
 #include <WebCore/Region.h>
-#include <WebCore/RunLoop.h>
+#include <wtf/RunLoop.h>
 
 namespace WebKit {
 
@@ -124,8 +124,8 @@ private:
     // won't paint until painting has resumed again.
     bool m_isPaintingSuspended;
 
-    WebCore::RunLoop::Timer<CoordinatedDrawingArea> m_displayTimer;
-    WebCore::RunLoop::Timer<CoordinatedDrawingArea> m_exitCompositingTimer;
+    RunLoop::Timer<CoordinatedDrawingArea> m_displayTimer;
+    RunLoop::Timer<CoordinatedDrawingArea> m_exitCompositingTimer;
 
     // The layer tree host that handles accelerated compositing.
     RefPtr<LayerTreeHost> m_layerTreeHost;

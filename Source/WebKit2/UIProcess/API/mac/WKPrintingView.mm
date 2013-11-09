@@ -34,8 +34,8 @@
 #import "WebPageProxy.h"
 #import <PDFKit/PDFKit.h>
 #import <WebCore/GraphicsContext.h>
-#import <WebCore/RunLoop.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/RunLoop.h>
 
 using namespace WebKit;
 using namespace WebCore;

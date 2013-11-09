@@ -29,7 +29,7 @@
 #import "WKBase.h"
 #import "WebProcess.h"
 #import "XPCServiceEntryPoint.h"
-#import <WebCore/RunLoop.h>
+#import <wtf/RunLoop.h>
 
 using namespace WebCore;
 using namespace WebKit;

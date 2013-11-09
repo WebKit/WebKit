@@ -29,9 +29,9 @@
 #include "Connection.h"
 #include "MessageReceiverMap.h"
 #include "MessageSender.h"
-#include <WebCore/RunLoop.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -114,7 +114,7 @@ private:
     // after a given period of time.
     unsigned m_terminationCounter;
 
-    WebCore::RunLoop::Timer<ChildProcess> m_terminationTimer;
+    RunLoop::Timer<ChildProcess> m_terminationTimer;
 
     RefPtr<CoreIPC::Connection> m_connection;
     CoreIPC::MessageReceiverMap m_messageReceiverMap;
@@ -124,7 +124,7 @@ private:
     void setProcessSuppressionEnabledInternal(bool);
     size_t m_activeTaskCount;
     bool m_shouldSuspend;
-    WebCore::RunLoop::Timer<ChildProcess> m_suspensionHysteresisTimer;
+    RunLoop::Timer<ChildProcess> m_suspensionHysteresisTimer;
     RetainPtr<id> m_processSuppressionAssertion;
 #endif
 };

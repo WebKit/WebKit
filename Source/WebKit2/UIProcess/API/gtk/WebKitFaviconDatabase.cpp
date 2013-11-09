@@ -27,8 +27,8 @@
 #include <WebCore/Image.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/RefPtrCairo.h>
-#include <WebCore/RunLoop.h>
 #include <glib/gi18n-lib.h>
+#include <wtf/RunLoop.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>

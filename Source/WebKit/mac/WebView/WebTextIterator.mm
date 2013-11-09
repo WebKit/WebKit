@@ -28,12 +28,12 @@
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "WebTypesInternal.h"
-#import <wtf/Vector.h>
-#import <WebCore/RunLoop.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
+#import <wtf/RunLoop.h>
+#import <wtf/Vector.h>
 
 using namespace JSC;
 using namespace WebCore;
@@ -50,7 +50,7 @@ using namespace WebCore;
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-    WebCore::RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMainRunLoop();
     WebCoreObjCFinalizeOnMainThread(self);
 }
 

@@ -32,12 +32,12 @@
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/NetworkingContext.h>
 #include <WebCore/ResourceHandle.h>
-#include <WebCore/RunLoop.h>
 #include <WebKit2/WebProcess.h>
 #include <gtk/gtk.h>
 #include <libintl.h>
 #include <libsoup/soup.h>
 #include <unistd.h>
+#include <wtf/RunLoop.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 

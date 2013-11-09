@@ -1,3 +1,100 @@
+2013-11-09  Patrick Gansterer  <paroga@webkit.org>
+
+        Move RunLoop from WebCore to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=116606
+
+        Reviewed by Anders Carlsson.
+
+        With this change RunLoop can be used in JavaScriptCore too.
+
+        * GNUmakefile.list.am:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/PlatformBlackBerry.cmake:
+        * wtf/PlatformEfl.cmake:
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformWin.cmake:
+        * wtf/RunLoop.cpp: Renamed from Source/WebCore/platform/RunLoop.cpp.
+        (WTF::RunLoop::Holder::Holder):
+        (WTF::RunLoop::Holder::runLoop):
+        (WTF::RunLoop::initializeMainRunLoop):
+        (WTF::RunLoop::current):
+        (WTF::RunLoop::main):
+        (WTF::RunLoop::isMain):
+        (WTF::RunLoop::performWork):
+        (WTF::RunLoop::dispatch):
+        * wtf/RunLoop.h: Renamed from Source/WebCore/platform/RunLoop.h.
+        (WTF::RunLoop::TimerBase::startRepeating):
+        (WTF::RunLoop::TimerBase::startOneShot):
+        (WTF::RunLoop::TimerBase::isRepeating):
+        (WTF::RunLoop::Timer::Timer):
+        (WTF::RunLoop::Timer::fired):
+        * wtf/blackberry/RunLoopBlackBerry.cpp: Renamed from Source/WebCore/platform/blackberry/RunLoopBlackBerry.cpp.
+        (WTF::RunLoop::RunLoop):
+        (WTF::RunLoop::~RunLoop):
+        (WTF::RunLoop::wakeUp):
+        * wtf/cf/RunLoopCF.cpp: Renamed from Source/WebCore/platform/cf/RunLoopCF.cpp.
+        (WTF::RunLoop::performWork):
+        (WTF::RunLoop::RunLoop):
+        (WTF::RunLoop::~RunLoop):
+        (WTF::RunLoop::runForDuration):
+        (WTF::RunLoop::wakeUp):
+        (WTF::RunLoop::run):
+        (WTF::RunLoop::stop):
+        (WTF::RunLoop::TimerBase::timerFired):
+        (WTF::RunLoop::TimerBase::TimerBase):
+        (WTF::RunLoop::TimerBase::~TimerBase):
+        (WTF::RunLoop::TimerBase::start):
+        (WTF::RunLoop::TimerBase::stop):
+        (WTF::RunLoop::TimerBase::isActive):
+        * wtf/efl/RunLoopEfl.cpp: Renamed from Source/WebCore/platform/efl/RunLoopEfl.cpp.
+        (WTF::RunLoop::RunLoop):
+        (WTF::RunLoop::~RunLoop):
+        (WTF::RunLoop::run):
+        (WTF::RunLoop::stop):
+        (WTF::RunLoop::wakeUpEvent):
+        (WTF::RunLoop::wakeUp):
+        (WTF::RunLoop::TimerBase::TimerBase):
+        (WTF::RunLoop::TimerBase::~TimerBase):
+        (WTF::RunLoop::TimerBase::timerFired):
+        (WTF::RunLoop::TimerBase::start):
+        (WTF::RunLoop::TimerBase::stop):
+        (WTF::RunLoop::TimerBase::isActive):
+        * wtf/gtk/RunLoopGtk.cpp: Renamed from Source/WebCore/platform/gtk/RunLoopGtk.cpp.
+        (WTF::RunLoop::RunLoop):
+        (WTF::RunLoop::~RunLoop):
+        (WTF::RunLoop::run):
+        (WTF::RunLoop::innermostLoop):
+        (WTF::RunLoop::pushNestedMainLoop):
+        (WTF::RunLoop::popNestedMainLoop):
+        (WTF::RunLoop::stop):
+        (WTF::RunLoop::queueWork):
+        (WTF::RunLoop::wakeUp):
+        (WTF::RunLoop::TimerBase::TimerBase):
+        (WTF::RunLoop::TimerBase::~TimerBase):
+        (WTF::RunLoop::TimerBase::clearTimerSource):
+        (WTF::RunLoop::TimerBase::timerFiredCallback):
+        (WTF::RunLoop::TimerBase::start):
+        (WTF::RunLoop::TimerBase::stop):
+        (WTF::RunLoop::TimerBase::isActive):
+        * wtf/win/RunLoopWin.cpp: Renamed from Source/WebCore/platform/win/RunLoopWin.cpp.
+        (WTF::RunLoop::RunLoopWndProc):
+        (WTF::RunLoop::wndProc):
+        (WTF::RunLoop::run):
+        (WTF::RunLoop::stop):
+        (WTF::RunLoop::registerRunLoopMessageWindowClass):
+        (WTF::RunLoop::RunLoop):
+        (WTF::RunLoop::~RunLoop):
+        (WTF::RunLoop::wakeUp):
+        (WTF::RunLoop::TimerBase::timerFired):
+        (WTF::generateTimerID):
+        (WTF::RunLoop::TimerBase::TimerBase):
+        (WTF::RunLoop::TimerBase::~TimerBase):
+        (WTF::RunLoop::TimerBase::start):
+        (WTF::RunLoop::TimerBase::stop):
+        (WTF::RunLoop::TimerBase::isActive):
+
 2013-11-08  Alexey Proskuryakov  <ap@apple.com>
 
         Make base64url decoding actually work

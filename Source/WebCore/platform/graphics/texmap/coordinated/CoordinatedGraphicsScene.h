@@ -30,7 +30,6 @@
 #include "GraphicsSurface.h"
 #include "IntRect.h"
 #include "IntSize.h"
-#include "RunLoop.h"
 #include "TextureMapper.h"
 #include "TextureMapperBackingStore.h"
 #include "TextureMapperFPSCounter.h"

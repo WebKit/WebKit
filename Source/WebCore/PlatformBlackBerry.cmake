@@ -120,7 +120,6 @@ list(APPEND WebCore_SOURCES
     platform/blackberry/PlatformTouchPointBlackBerry.cpp
     platform/blackberry/PopupMenuBlackBerry.cpp
     platform/blackberry/RenderThemeBlackBerry.cpp
-    platform/blackberry/RunLoopBlackBerry.cpp
     platform/blackberry/SSLKeyGeneratorBlackBerry.cpp
     platform/blackberry/ScrollbarThemeBlackBerry.cpp
     platform/blackberry/SearchPopupMenuBlackBerry.cpp

@@ -35,10 +35,8 @@
 #include "NPRemoteObjectMap.h"
 #include "NPRuntimeUtilities.h"
 #include "NPVariantData.h"
-#include <WebCore/RunLoop.h>
 #include <wtf/MainThread.h>
-
-using namespace WebCore;
+#include <wtf/RunLoop.h>
 
 namespace WebKit {
 

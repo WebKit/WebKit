@@ -137,6 +137,8 @@ wtf_sources += \
     Source/WTF/wtf/RefPtr.h \
     Source/WTF/wtf/RefPtrHashMap.h \
     Source/WTF/wtf/RetainPtr.h \
+    Source/WTF/wtf/RunLoop.cpp \
+    Source/WTF/wtf/RunLoop.h \
     Source/WTF/wtf/SHA1.cpp \
     Source/WTF/wtf/SHA1.h \
     Source/WTF/wtf/SaturatedArithmetic.h \
@@ -216,6 +218,7 @@ wtf_sources += \
     Source/WTF/wtf/gobject/GlibUtilities.cpp \
     Source/WTF/wtf/gobject/GlibUtilities.h \
     Source/WTF/wtf/gtk/MainThreadGtk.cpp \
+    Source/WTF/wtf/gtk/RunLoopGtk.cpp \
     Source/WTF/wtf/text/ASCIIFastPath.h \
     Source/WTF/wtf/text/AtomicString.cpp \
     Source/WTF/wtf/text/AtomicString.h \

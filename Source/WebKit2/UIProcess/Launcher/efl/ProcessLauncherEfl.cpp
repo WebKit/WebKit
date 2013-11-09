@@ -27,8 +27,8 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/NetworkingContext.h>
 #include <WebCore/ResourceHandle.h>
-#include <WebCore/RunLoop.h>
 #include <sys/socket.h>
+#include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

@@ -33,10 +33,10 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/NetworkingContext.h>
 #include <WebCore/ResourceHandle.h>
-#include <WebCore/RunLoop.h>
 #include <errno.h>
 #include <glib.h>
 #include <locale.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/gobject/GOwnPtr.h>

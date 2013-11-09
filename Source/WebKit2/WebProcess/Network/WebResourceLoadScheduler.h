@@ -30,7 +30,7 @@
 #include <WebCore/ResourceLoadPriority.h>
 #include <WebCore/ResourceLoadScheduler.h>
 #include <WebCore/ResourceLoader.h>
-#include <WebCore/RunLoop.h>
+#include <wtf/RunLoop.h>
 
 #if ENABLE(NETWORK_PROCESS)
 
@@ -68,7 +68,7 @@ private:
     void internallyFailedLoadTimerFired();
     
     HashSet<RefPtr<WebCore::ResourceLoader>> m_internallyFailedResourceLoaders;
-    WebCore::RunLoop::Timer<WebResourceLoadScheduler> m_internallyFailedLoadTimer;
+    RunLoop::Timer<WebResourceLoadScheduler> m_internallyFailedLoadTimer;
     
     HashMap<unsigned long, RefPtr<WebResourceLoader>> m_webResourceLoaders;
     

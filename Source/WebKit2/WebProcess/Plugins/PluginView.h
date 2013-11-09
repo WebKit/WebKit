@@ -36,9 +36,9 @@
 #include <WebCore/PluginViewBase.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
-#include <WebCore/RunLoop.h>
 #include <WebCore/Timer.h>
 #include <wtf/Deque.h>
+#include <wtf/RunLoop.h>
 
 // FIXME: Eventually this should move to WebCore.
 
@@ -234,7 +234,7 @@ private:
 
     // Pending URLRequests that the plug-in has made.
     Deque<RefPtr<URLRequest>> m_pendingURLRequests;
-    WebCore::RunLoop::Timer<PluginView> m_pendingURLRequestsTimer;
+    RunLoop::Timer<PluginView> m_pendingURLRequestsTimer;
 
     // Pending frame loads that the plug-in has made.
     typedef HashMap<RefPtr<WebFrame>, RefPtr<URLRequest>> FrameLoadMap;

@@ -60,6 +60,9 @@
 		26299B6E17A9E5B800ADEBE5 /* Ref.h in Headers */ = {isa = PBXBuildFile; fileRef = 26299B6D17A9E5B800ADEBE5 /* Ref.h */; };
 		2C05385415BC819000F21B96 /* GregorianDateTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C05385315BC819000F21B96 /* GregorianDateTime.h */; };
 		2CCD892A15C0390200285083 /* GregorianDateTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CCD892915C0390200285083 /* GregorianDateTime.cpp */; };
+		2CDED0EF18115C38004DBA70 /* RunLoopCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDED0EE18115C38004DBA70 /* RunLoopCF.cpp */; };
+		2CDED0F318115C85004DBA70 /* RunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDED0F118115C85004DBA70 /* RunLoop.cpp */; };
+		2CDED0F418115C85004DBA70 /* RunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CDED0F218115C85004DBA70 /* RunLoop.h */; };
 		44F66008171AFAE600E4AD19 /* EnumClass.h in Headers */ = {isa = PBXBuildFile; fileRef = 44F66007171AFAA900E4AD19 /* EnumClass.h */; };
 		4F0321BC156AA8D1006EBAF6 /* BitArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F0321BB156AA8D1006EBAF6 /* BitArray.h */; };
 		7E29C33E15FFD79B00516D61 /* ObjcRuntimeExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E29C33D15FFD79B00516D61 /* ObjcRuntimeExtras.h */; };
@@ -324,6 +327,9 @@
 		26299B6D17A9E5B800ADEBE5 /* Ref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ref.h; sourceTree = "<group>"; };
 		2C05385315BC819000F21B96 /* GregorianDateTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GregorianDateTime.h; sourceTree = "<group>"; };
 		2CCD892915C0390200285083 /* GregorianDateTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GregorianDateTime.cpp; sourceTree = "<group>"; };
+		2CDED0EE18115C38004DBA70 /* RunLoopCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RunLoopCF.cpp; path = cf/RunLoopCF.cpp; sourceTree = "<group>"; };
+		2CDED0F118115C85004DBA70 /* RunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoop.cpp; sourceTree = "<group>"; };
+		2CDED0F218115C85004DBA70 /* RunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoop.h; sourceTree = "<group>"; };
 		44DEE74A152274BB00C6EC37 /* iOS.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = iOS.xcconfig; sourceTree = "<group>"; };
 		44F66007171AFAA900E4AD19 /* EnumClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnumClass.h; sourceTree = "<group>"; };
 		4F0321BB156AA8D1006EBAF6 /* BitArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitArray.h; sourceTree = "<group>"; };
@@ -565,6 +571,14 @@
 			path = ios;
 			sourceTree = "<group>";
 		};
+		2CDED0F018115C3F004DBA70 /* cf */ = {
+			isa = PBXGroup;
+			children = (
+				2CDED0EE18115C38004DBA70 /* RunLoopCF.cpp */,
+			);
+			name = cf;
+			sourceTree = "<group>";
+		};
 		5D247B5714689B8600E78B76 = {
 			isa = PBXGroup;
 			children = (
@@ -625,6 +639,7 @@
 		A876DBD6151816E500DADB95 /* wtf */ = {
 			isa = PBXGroup;
 			children = (
+				2CDED0F018115C3F004DBA70 /* cf */,
 				A8A47281151A825A004123FF /* dtoa */,
 				1FA47C87152502DA00568D1B /* ios */,
 				A8A472C4151A825A004123FF /* mac */,
@@ -765,6 +780,8 @@
 				A8A47303151A825B004123FF /* RefPtr.h */,
 				A8A47304151A825B004123FF /* RefPtrHashMap.h */,
 				A8A47305151A825B004123FF /* RetainPtr.h */,
+				2CDED0F118115C85004DBA70 /* RunLoop.cpp */,
+				2CDED0F218115C85004DBA70 /* RunLoop.h */,
 				1469419016EAAF6D0024E146 /* RunLoopTimer.h */,
 				1469419116EAAF6D0024E146 /* RunLoopTimerCF.cpp */,
 				14F3B0F615E45E4600210069 /* SaturatedArithmetic.h */,
@@ -1056,6 +1073,7 @@
 				A8A4741C151A825B004123FF /* RefPtr.h in Headers */,
 				A8A4741D151A825B004123FF /* RefPtrHashMap.h in Headers */,
 				A8A4741E151A825B004123FF /* RetainPtr.h in Headers */,
+				2CDED0F418115C85004DBA70 /* RunLoop.h in Headers */,
 				1469419216EAAF6D0024E146 /* RunLoopTimer.h in Headers */,
 				14F3B0F715E45E4600210069 /* SaturatedArithmetic.h in Headers */,
 				1469419616EAAFF80024E146 /* SchedulePair.h in Headers */,
@@ -1232,6 +1250,8 @@
 				143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */,
 				A8A47414151A825B004123FF /* RandomNumber.cpp in Sources */,
 				A8A4741A151A825B004123FF /* RefCountedLeakCounter.cpp in Sources */,
+				2CDED0F318115C85004DBA70 /* RunLoop.cpp in Sources */,
+				2CDED0EF18115C38004DBA70 /* RunLoopCF.cpp in Sources */,
 				1469419316EAAF6D0024E146 /* RunLoopTimerCF.cpp in Sources */,
 				1469419916EAB0410024E146 /* SchedulePairCF.cpp in Sources */,
 				A5BA15F3182433A900A82E69 /* StringMac.mm in Sources */,

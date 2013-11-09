@@ -38,7 +38,7 @@
 #include "WebProcessConnection.h"
 #include <WebCore/MemoryPressureHandler.h>
 #include <WebCore/NotImplemented.h>
-#include <WebCore/RunLoop.h>
+#include <wtf/RunLoop.h>
 
 #if PLATFORM(MAC)
 #include <crt_externs.h>

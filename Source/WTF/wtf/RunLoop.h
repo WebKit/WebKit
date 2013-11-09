@@ -44,45 +44,45 @@
 #include <Ecore.h>
 #endif
 
-namespace WebCore {
+namespace WTF {
 
 class RunLoop : public FunctionDispatcher {
 public:
     // Must be called from the main thread (except for the Mac platform, where it
     // can be called from any thread).
-    static void initializeMainRunLoop();
+    WTF_EXPORT_PRIVATE static void initializeMainRunLoop();
 
-    static RunLoop* current();
-    static RunLoop* main();
-    static bool isMain();
+    WTF_EXPORT_PRIVATE static RunLoop* current();
+    WTF_EXPORT_PRIVATE static RunLoop* main();
+    WTF_EXPORT_PRIVATE static bool isMain();
     ~RunLoop();
 
     virtual void dispatch(std::function<void ()>) OVERRIDE;
 
-    static void run();
-    void stop();
-    void wakeUp();
+    WTF_EXPORT_PRIVATE static void run();
+    WTF_EXPORT_PRIVATE void stop();
+    WTF_EXPORT_PRIVATE void wakeUp();
 
 #if PLATFORM(MAC)
-    void runForDuration(double duration);
+    WTF_EXPORT_PRIVATE void runForDuration(double duration);
 #endif
     
     class TimerBase {
         friend class RunLoop;
     public:
-        explicit TimerBase(RunLoop*);
-        virtual ~TimerBase();
+        WTF_EXPORT_PRIVATE explicit TimerBase(RunLoop*);
+        WTF_EXPORT_PRIVATE virtual ~TimerBase();
 
         void startRepeating(double repeatInterval) { start(repeatInterval, true); }
         void startOneShot(double interval) { start(interval, false); }
 
-        void stop();
-        bool isActive() const;
+        WTF_EXPORT_PRIVATE void stop();
+        WTF_EXPORT_PRIVATE bool isActive() const;
 
         virtual void fired() = 0;
 
     private:
-        void start(double nextFireInterval, bool repeat);
+        WTF_EXPORT_PRIVATE void start(double nextFireInterval, bool repeat);
 
         RunLoop* m_runLoop;
 
@@ -157,7 +157,7 @@ private:
     Mutex m_wakeUpEventRequestedLock;
     bool m_wakeUpEventRequested;
 
-    static void wakeUpEvent(void* data, void*, unsigned int);
+    static void wakeUpEvent(void* data, void*, unsigned);
 #elif USE(GLIB)
 public:
     static gboolean queueWork(RunLoop*);
@@ -170,6 +170,8 @@ private:
 #endif
 };
 
-} // namespace WebCore
+} // namespace WTF
+
+using WTF::RunLoop;
 
 #endif // RunLoop_h

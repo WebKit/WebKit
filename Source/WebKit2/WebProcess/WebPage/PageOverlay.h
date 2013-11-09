@@ -28,8 +28,8 @@
 
 #include "APIObject.h"
 #include "WKBase.h"
-#include <WebCore/RunLoop.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
     class GraphicsContext;
@@ -90,7 +90,7 @@ private:
     Client* m_client;
     WebPage* m_webPage;
 
-    WebCore::RunLoop::Timer<PageOverlay> m_fadeAnimationTimer;
+    RunLoop::Timer<PageOverlay> m_fadeAnimationTimer;
     double m_fadeAnimationStartTime;
     double m_fadeAnimationDuration;
 

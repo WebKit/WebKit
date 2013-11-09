@@ -35,10 +35,6 @@
 #include "NetworkResourceLoadScheduler.h"
 #include <wtf/Forward.h>
 
-namespace WebCore {
-    class RunLoop;
-}
-
 namespace WebKit {
 
 class AuthenticationManager;

@@ -28,9 +28,9 @@
 
 #include "Logging.h"
 #include <WebCore/Logging.h>
-#include <WebCore/RunLoop.h>
 #include <runtime/InitializeThreading.h>
 #include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
 
 #if PLATFORM(MAC)
 #include "WebSystemInterface.h"
@@ -46,7 +46,7 @@ void InitializeWebKit2()
 
     JSC::initializeThreading();
     WTF::initializeMainThread();
-    WebCore::RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMainRunLoop();
 
 #if !LOG_DISABLED
     WebCore::initializeLoggingChannelsIfNecessary();

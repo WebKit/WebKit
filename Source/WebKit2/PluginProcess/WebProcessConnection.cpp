@@ -39,8 +39,8 @@
 #include "PluginProcessConnectionMessages.h"
 #include "PluginProxyMessages.h"
 #include "WebProcessConnectionMessages.h"
-#include <WebCore/RunLoop.h>
 #include <unistd.h>
+#include <wtf/RunLoop.h>
 
 using namespace WebCore;
 

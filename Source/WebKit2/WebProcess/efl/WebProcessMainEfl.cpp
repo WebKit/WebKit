@@ -36,11 +36,11 @@
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/NetworkingContext.h>
 #include <WebCore/ResourceHandle.h>
-#include <WebCore/RunLoop.h>
 #include <WebKit2/WebProcess.h>
 #include <libsoup/soup.h>
 #include <runtime/Operations.h>
 #include <unistd.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
 
 #ifdef HAVE_ECORE_X

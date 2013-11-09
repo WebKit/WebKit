@@ -54,7 +54,6 @@
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/ResourceBuffer.h>
 #import <WebCore/ResourceRequest.h>
-#import <WebCore/RunLoop.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
@@ -65,6 +64,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
 
 using namespace WebCore;
 
@@ -145,7 +145,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     if (self == [WebDataSource class]) {
         JSC::initializeThreading();
         WTF::initializeMainThreadToProcessMainThread();
-        WebCore::RunLoop::initializeMainRunLoop();
+        RunLoop::initializeMainRunLoop();
         WebCoreObjCFinalizeOnMainThread(self);
     }
 }

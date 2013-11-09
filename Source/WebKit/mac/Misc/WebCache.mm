@@ -33,9 +33,9 @@
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/CrossOriginPreflightResultCache.h>
 #import <WebCore/MemoryCache.h>
-#import <WebCore/RunLoop.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
+#import <wtf/RunLoop.h>
 
 @implementation WebCache
 
@@ -43,7 +43,7 @@
 {
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
-    WebCore::RunLoop::initializeMainRunLoop();
+    RunLoop::initializeMainRunLoop();
     InitWebCoreSystemInterface();   
 }
 

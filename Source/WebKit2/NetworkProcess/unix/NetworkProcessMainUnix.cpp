@@ -32,12 +32,12 @@
 #include "ProxyResolverSoup.h"
 #include "WKBase.h"
 #include "WebKit2Initialize.h"
-#include <WebCore/RunLoop.h>
 #include <WebKit2/NetworkProcess.h>
 #include <error.h>
 #include <runtime/InitializeThreading.h>
 #include <stdlib.h>
 #include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
 #include <wtf/gobject/GRefPtr.h>
 
 #if PLATFORM(EFL)

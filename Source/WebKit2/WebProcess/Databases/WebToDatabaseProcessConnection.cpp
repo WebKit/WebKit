@@ -30,7 +30,7 @@
 #include "DatabaseToWebProcessConnectionMessages.h"
 #include "WebProcess.h"
 #include "WebProcessIDBDatabaseBackend.h"
-#include <WebCore/RunLoop.h>
+#include <wtf/RunLoop.h>
 
 #if ENABLE(INDEXED_DATABASE)
 

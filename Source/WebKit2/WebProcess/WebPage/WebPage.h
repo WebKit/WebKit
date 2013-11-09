@@ -862,7 +862,7 @@ private:
     String m_primaryPlugInPageOrigin;
     String m_primaryPlugInOrigin;
     String m_primaryPlugInMimeType;
-    WebCore::RunLoop::Timer<WebPage> m_determinePrimarySnapshottedPlugInTimer;
+    RunLoop::Timer<WebPage> m_determinePrimarySnapshottedPlugInTimer;
 #endif
 
 #if PLATFORM(MAC)
@@ -901,8 +901,8 @@ private:
     RefPtr<PageBanner> m_headerBanner;
     RefPtr<PageBanner> m_footerBanner;
 
-    WebCore::RunLoop::Timer<WebPage> m_setCanStartMediaTimer;
-    WebCore::RunLoop::Timer<WebPage> m_sendDidUpdateViewStateTimer;
+    RunLoop::Timer<WebPage> m_setCanStartMediaTimer;
+    RunLoop::Timer<WebPage> m_sendDidUpdateViewStateTimer;
     bool m_mayStartMediaWhenInWindow;
 
     HashMap<uint64_t, RefPtr<WebUndoStep>> m_undoStepMap;

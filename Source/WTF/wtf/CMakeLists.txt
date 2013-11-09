@@ -86,6 +86,7 @@ set(WTF_HEADERS
     RefPtr.h
     RefPtrHashMap.h
     RetainPtr.h
+    RunLoop.h
     SHA1.h
     SaturatedArithmetic.h
     SegmentedVector.h
@@ -173,6 +174,7 @@ set(WTF_SOURCES
     RAMSize.cpp
     RandomNumber.cpp
     RefCountedLeakCounter.cpp
+    RunLoop.cpp
     SHA1.cpp
     SixCharacterHash.cpp
     StackBounds.cpp

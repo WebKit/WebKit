@@ -26,9 +26,7 @@
 #include "config.h"
 #include "ChildProcessProxy.h"
 
-#include <WebCore/RunLoop.h>
-
-using namespace WebCore;
+#include <wtf/RunLoop.h>
 
 namespace WebKit {
 

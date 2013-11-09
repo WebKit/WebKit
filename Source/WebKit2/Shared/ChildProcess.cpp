@@ -29,8 +29,6 @@
 #include "SandboxInitializationParameters.h"
 #include <unistd.h>
 
-using namespace WebCore;
-
 namespace WebKit {
 
 ChildProcess::ChildProcess()

@@ -7294,7 +7294,6 @@
     <ClCompile Include="..\platform\NotImplemented.cpp" />
     <ClCompile Include="..\platform\PlatformEvent.cpp" />
     <ClCompile Include="..\platform\PlatformStrategies.cpp" />
-    <ClCompile Include="..\platform\RunLoop.cpp" />
     <ClCompile Include="..\platform\RuntimeApplicationChecks.cpp" />
     <ClCompile Include="..\platform\SchemeRegistry.cpp" />
     <ClCompile Include="..\platform\ScrollableArea.cpp" />
@@ -7353,7 +7352,6 @@
     <ClCompile Include="..\platform\win\PlatformMouseEventWin.cpp" />
     <ClCompile Include="..\platform\win\PlatformScreenWin.cpp" />
     <ClCompile Include="..\platform\win\PopupMenuWin.cpp" />
-    <ClCompile Include="..\platform\win\RunLoopWin.cpp" />
     <ClCompile Include="..\platform\win\ScrollbarThemeSafari.cpp" />
     <ClCompile Include="..\platform\win\ScrollbarThemeWin.cpp" />
     <ClCompile Include="..\platform\win\SearchPopupMenuWin.cpp" />
@@ -18899,7 +18897,6 @@
     <ClInclude Include="..\platform\PopupMenuStyle.h" />
     <ClInclude Include="..\platform\PurgeableBuffer.h" />
     <ClInclude Include="..\platform\ReferrerPolicy.h" />
-    <ClInclude Include="..\platform\RunLoop.h" />
     <ClInclude Include="..\platform\RuntimeApplicationChecks.h" />
     <ClInclude Include="..\platform\SchemeRegistry.h" />
     <ClInclude Include="..\platform\ScrollableArea.h" />

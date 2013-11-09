@@ -39,7 +39,7 @@
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/RunLoop.h>
+#include <wtf/RunLoop.h>
 
 #if ENABLE(NETWORK_PROCESS)
 

@@ -32,7 +32,7 @@
 #import "NetscapePluginModule.h"
 #import "PluginProcess.h"
 #import "WKBase.h"
-#import <WebCore/RunLoop.h>
+#import <wtf/RunLoop.h>
 
 #if USE(APPKIT)
 @interface NSApplication (WebNSApplicationDetails)

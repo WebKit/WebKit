@@ -44,7 +44,7 @@
 #include "WebCookieManager.h"
 #include <WebCore/Logging.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/RunLoop.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
 
 #if USE(SECURITY_FRAMEWORK)

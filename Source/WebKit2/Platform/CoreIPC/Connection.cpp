@@ -26,13 +26,11 @@
 #include "config.h"
 #include "Connection.h"
 
-#include <WebCore/RunLoop.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/threads/BinarySemaphore.h>
-
-using namespace WebCore;
 
 namespace CoreIPC {
 

@@ -27,12 +27,10 @@
 #include "config.h"
 #include "RunLoop.h"
 
-#include <gdk/gdk.h>
 #include <glib.h>
-
 #include <wtf/MainThread.h>
 
-namespace WebCore {
+namespace WTF {
 
 RunLoop::RunLoop()
 {
@@ -168,4 +166,4 @@ bool RunLoop::TimerBase::isActive() const
     return m_timerSource;
 }
 
-} // namespace WebCore
+} // namespace WTF

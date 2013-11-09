@@ -29,7 +29,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadSpecific.h>
 
-namespace WebCore {
+namespace WTF {
 
 static RunLoop* s_mainRunLoop;
 
@@ -128,4 +128,4 @@ void RunLoop::dispatch(std::function<void ()> function)
     wakeUp();
 }
 
-} // namespace WebCore
+} // namespace WTF

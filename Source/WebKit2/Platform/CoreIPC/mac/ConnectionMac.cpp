@@ -30,12 +30,10 @@
 #include "ImportanceAssertion.h"
 #include "MachPort.h"
 #include "MachUtilities.h"
-#include <WebCore/RunLoop.h>
 #include <mach/mach_error.h>
 #include <mach/vm_map.h>
+#include <wtf/RunLoop.h>
 #include <xpc/xpc.h>
-
-using namespace WebCore;
 
 namespace CoreIPC {
 

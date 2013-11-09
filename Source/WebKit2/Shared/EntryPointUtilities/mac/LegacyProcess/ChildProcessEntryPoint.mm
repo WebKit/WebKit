@@ -34,8 +34,6 @@
 
 #define SHOW_CRASH_REPORTER 1
 
-using namespace WebCore;
-
 namespace WebKit {
 
 ChildProcessMainDelegate::~ChildProcessMainDelegate()

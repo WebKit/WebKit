@@ -30,7 +30,7 @@
 #include <dispatch/dispatch.h>
 #include <wtf/AutodrainedPool.h>
 
-namespace WebCore {
+namespace WTF {
 
 void RunLoop::performWork(void* context)
 {
@@ -126,4 +126,4 @@ bool RunLoop::TimerBase::isActive() const
     return m_timer && CFRunLoopTimerIsValid(m_timer.get());
 }
 
-} // namespace WebCore
+} // namespace WTF

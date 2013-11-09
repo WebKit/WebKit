@@ -29,7 +29,7 @@
 #include "DatabaseProcessIDBDatabaseBackend.h"
 #include "DatabaseProcessIDBDatabaseBackendMessages.h"
 #include "DatabaseToWebProcessConnectionMessages.h"
-#include <WebCore/RunLoop.h>
+#include <wtf/RunLoop.h>
 
 #if ENABLE(DATABASE_PROCESS)
 

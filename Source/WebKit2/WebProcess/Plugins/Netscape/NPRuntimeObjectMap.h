@@ -28,11 +28,11 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-#include <WebCore/RunLoop.h>
 #include <heap/Weak.h>
 #include <heap/WeakInlines.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/RunLoop.h>
 
 struct NPObject;
 typedef struct _NPVariant NPVariant;
@@ -98,7 +98,7 @@ private:
     HashMap<JSC::JSObject*, NPJSObject*> m_npJSObjects;
     HashMap<NPObject*, JSC::Weak<JSNPObject>> m_jsNPObjects;
     Vector<NPObject*> m_npObjectsToFinalize;
-    WebCore::RunLoop::Timer<NPRuntimeObjectMap> m_finalizationTimer;
+    RunLoop::Timer<NPRuntimeObjectMap> m_finalizationTimer;
 };
 
 } // namespace WebKit

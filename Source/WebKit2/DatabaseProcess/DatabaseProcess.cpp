@@ -31,8 +31,6 @@
 
 #if ENABLE(DATABASE_PROCESS)
 
-using namespace WebCore;
-
 namespace WebKit {
 
 DatabaseProcess& DatabaseProcess::shared()
