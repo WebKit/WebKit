@@ -1,3 +1,12 @@
+2013-11-09  Sam Weinig  <sam@webkit.org>
+
+        Modernize CanvasObserverProxy
+        https://bugs.webkit.org/show_bug.cgi?id=124106
+
+        Reviewed by Anders Carlsson.
+
+        * css/CSSCanvasValue.h:
+
 2013-11-09  Patrick Gansterer  <paroga@webkit.org>
 
         Move RunLoop from WebCore to WTF
