@@ -43,7 +43,7 @@
                 }
             }
 
-            shouldNotThrow('pc = new webkitRTCPeerConnection({iceServers:[]}, null);');
+            shouldNotThrow('pc = new webkitRTCPeerConnection({iceServers:[]});');
             pc.oniceconnectionstatechange = onIceChange1;
 
             window.jsTestIsAsync = true;

@@ -60,7 +60,7 @@
 
                 shouldBeFalse("stream.id === stream2.id");
 
-                pc = new webkitRTCPeerConnection({iceServers:[]}, null);
+                pc = new webkitRTCPeerConnection({iceServers:[]});
                 pc.onnegotiationneeded = onAddStream;
                 pc.addStream(stream);
             }

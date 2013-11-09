@@ -16,7 +16,7 @@
                 finishJSTest();
             }
 
-            shouldNotThrow('pc = new webkitRTCPeerConnection({iceServers:[]}, null);');
+            shouldNotThrow('pc = new webkitRTCPeerConnection({iceServers:[]});');
             shouldBeEqualToString('pc.signalingState', 'stable');
             pc.onsignalingstatechange = stateChanged;
             pc.close();
