@@ -200,6 +200,10 @@ public:
 
     virtual PassRefPtr<PlatformCALayer> createCompatibleLayer(LayerType, PlatformCALayerClient*) const = 0;
 
+#if PLATFORM(MAC)
+    virtual void enumerateRectsBeingDrawn(CGContextRef, void (^block)(CGRect)) = 0;
+#endif
+
 protected:
     PlatformCALayer(LayerType layerType, PlatformCALayerClient* owner)
         : m_layerType(layerType)

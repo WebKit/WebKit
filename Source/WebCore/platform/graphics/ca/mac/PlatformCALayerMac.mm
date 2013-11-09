@@ -736,4 +736,9 @@ PassRefPtr<PlatformCALayer> PlatformCALayerMac::createCompatibleLayer(PlatformCA
     return PlatformCALayerMac::create(layerType, client);
 }
 
+void PlatformCALayerMac::enumerateRectsBeingDrawn(CGContextRef context, void (^block)(CGRect))
+{
+    wkCALayerEnumerateRectsBeingDrawnWithBlock(m_layer.get(), context, block);
+}
+
 #endif // USE(ACCELERATED_COMPOSITING)

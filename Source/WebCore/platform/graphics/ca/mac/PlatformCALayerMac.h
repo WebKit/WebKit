@@ -141,6 +141,8 @@ public:
 
     virtual PassRefPtr<PlatformCALayer> createCompatibleLayer(PlatformCALayer::LayerType, PlatformCALayerClient*) const OVERRIDE;
 
+    virtual void enumerateRectsBeingDrawn(CGContextRef, void (^block)(CGRect)) OVERRIDE;
+
 private:
     PlatformCALayerMac(LayerType, PlatformLayer*, PlatformCALayerClient* owner);
 

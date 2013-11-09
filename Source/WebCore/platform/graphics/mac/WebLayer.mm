@@ -33,8 +33,6 @@
 #import "GraphicsLayerCA.h"
 #import "PlatformCALayer.h"
 #import "ThemeMac.h"
-#import "WebCoreSystemInterface.h"
-#import <objc/runtime.h>
 #import <QuartzCore/QuartzCore.h>
 
 @interface CALayer(WebCoreCALayerPrivate)
@@ -45,32 +43,32 @@ using namespace WebCore;
 
 namespace WebCore {
 
-void drawLayerContents(CGContextRef context, WebCore::PlatformCALayer* platformCALayer)
+RepaintRectList collectRectsToPaint(CGContextRef context, PlatformCALayer* platformCALayer)
 {
     __block double totalRectArea = 0;
     __block unsigned rectCount = 0;
-    __block Vector<FloatRect, webLayerMaxRectsToPaint> dirtyRects;
+    __block RepaintRectList dirtyRects;
 
-    if (PlatformLayer *platformLayer = platformCALayer->platformLayer()) {
-        wkCALayerEnumerateRectsBeingDrawnWithBlock(platformLayer, context, ^(CGRect rect) {
-            if (++rectCount > webLayerMaxRectsToPaint)
-                return;
+    platformCALayer->enumerateRectsBeingDrawn(context, ^(CGRect rect) {
+        if (++rectCount > webLayerMaxRectsToPaint)
+            return;
 
-            totalRectArea += rect.size.width * rect.size.height;
-            dirtyRects.append(rect);
-        });
-    }
+        totalRectArea += rect.size.width * rect.size.height;
+        dirtyRects.append(rect);
+    });
 
     FloatRect clipBounds = CGContextGetClipBoundingBox(context);
     double clipArea = clipBounds.width() * clipBounds.height();
 
-    if (rectCount >= webLayerMaxRectsToPaint || totalRectArea >= clipArea * webLayerWastedSpaceThreshold)
+    if (rectCount >= webLayerMaxRectsToPaint || totalRectArea >= clipArea * webLayerWastedSpaceThreshold) {
         dirtyRects.clear();
+        dirtyRects.append(clipBounds);
+    }
 
-    drawLayerContents(context, platformCALayer, dirtyRects);
+    return dirtyRects;
 }
 
-void drawLayerContents(CGContextRef context, WebCore::PlatformCALayer* platformCALayer, Vector<FloatRect, webLayerMaxRectsToPaint> dirtyRects)
+void drawLayerContents(CGContextRef context, WebCore::PlatformCALayer* platformCALayer, RepaintRectList& dirtyRects)
 {
     WebCore::PlatformCALayerClient* layerContents = platformCALayer->owner();
     if (!layerContents)
@@ -78,11 +76,8 @@ void drawLayerContents(CGContextRef context, WebCore::PlatformCALayer* platformC
 
     CGContextSaveGState(context);
 
-    if (layerContents->platformCALayerContentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesBottomUp) {
-        FloatRect layerBounds = platformCALayer->bounds();
-        CGContextScaleCTM(context, 1, -1);
-        CGContextTranslateCTM(context, 0, -layerBounds.height());
-    }
+    // We never use CompositingCoordinatesBottomUp on Mac.
+    ASSERT(layerContents->platformCALayerContentsOrientation() == GraphicsLayer::CompositingCoordinatesTopDown);
 
     [NSGraphicsContext saveGraphicsState];
 
@@ -112,20 +107,11 @@ void drawLayerContents(CGContextRef context, WebCore::PlatformCALayer* platformC
 #endif
     ThemeMac::setFocusRingClipRect(focusRingClipRect);
 
-    // If we have no dirty rects, repaint the whole layer.
-    if (dirtyRects.isEmpty()) {
-        // CGContextGetClipBoundingBox() gives us the bounds of the dirty region, so clipBounds
-        // encompasses all the dirty rects.
-        layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, enclosingIntRect(clipBounds));
-    } else {
-        for (unsigned i = 0; i < dirtyRects.size(); ++i) {
-            const FloatRect& currentRect = dirtyRects[i];
-            
-            GraphicsContextStateSaver stateSaver(graphicsContext);
-            graphicsContext.clip(currentRect);
-            
-            layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, enclosingIntRect(currentRect));
-        }
+    for (auto rect : dirtyRects) {
+        GraphicsContextStateSaver stateSaver(graphicsContext);
+        graphicsContext.clip(rect);
+
+        layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, enclosingIntRect(rect));
     }
 
     ThemeMac::setFocusRingClipRect(FloatRect());
@@ -189,8 +175,10 @@ void drawRepaintIndicator(CGContextRef context, PlatformCALayer* platformCALayer
 - (void)drawInContext:(CGContextRef)context
 {
     PlatformCALayer* layer = PlatformCALayer::platformCALayer(self);
-    if (layer)
-        drawLayerContents(context, layer);
+    if (layer) {
+        RepaintRectList rectsToPaint = collectRectsToPaint(context, layer);
+        drawLayerContents(context, layer, rectsToPaint);
+    }
 }
 
 @end // implementation WebLayer
@@ -223,17 +211,11 @@ void drawRepaintIndicator(CGContextRef context, PlatformCALayer* platformCALayer
 
     if (PlatformCALayerClient* layerOwner = platformLayer->owner()) {
         if (layerOwner->platformCALayerDrawsContent()) {
-            if (layerOwner->platformCALayerContentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesBottomUp)
-                dirtyRect.origin.y = [self bounds].size.height - dirtyRect.origin.y - dirtyRect.size.height;
-
             [super setNeedsDisplayInRect:dirtyRect];
 
             if (layerOwner->platformCALayerShowRepaintCounter(platformLayer)) {
                 CGRect bounds = [self bounds];
                 CGRect indicatorRect = CGRectMake(bounds.origin.x, bounds.origin.y, 52, 27);
-                if (layerOwner->platformCALayerContentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesBottomUp)
-                    indicatorRect.origin.y = [self bounds].size.height - indicatorRect.origin.y - indicatorRect.size.height;
-
                 [super setNeedsDisplayInRect:indicatorRect];
             }
         }

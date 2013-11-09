@@ -502,6 +502,11 @@ PassRefPtr<PlatformCALayer> PlatformCALayerRemote::createCompatibleLayer(Platfor
     return PlatformCALayerRemote::create(layerType, client, m_context);
 }
 
+void PlatformCALayerRemote::enumerateRectsBeingDrawn(CGContextRef context, void (^block)(CGRect))
+{
+    m_properties.backingStore.enumerateRectsBeingDrawn(context, block);
+}
+
 uint32_t PlatformCALayerRemote::hostingContextID()
 {
     ASSERT_NOT_REACHED();

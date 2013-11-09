@@ -1,3 +1,41 @@
+2013-11-08  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: RemoteLayerBackingStore partial repaint is broken for the tile cache
+        https://bugs.webkit.org/show_bug.cgi?id=123944
+
+        Reviewed by Simon Fraser.
+
+        Rework RemoteLayerBackingStore painting to fix some rounding issues
+        that would cause pixel cracks upon repaint, and to speed it up a bit.
+
+        * Shared/mac/RemoteLayerBackingStore.h:
+        Redefine RepaintRectList because we can't include WebLayer.h here yet.
+        Remove createBackingStore, which was never implemented.
+        Remove mapToContentCoordinates, because we don't need it on Mac.
+
+        (WebKit::RemoteLayerBackingStore::paintingRects): Added.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (RemoteLayerBackingStore::setNeedsDisplay):
+        (RemoteLayerBackingStore::display):
+        Stop using mapToContentCoordinates.
+
+        (RemoteLayerBackingStore::drawInContext):
+        Use clipping instead of painting the image multiple times.
+        Never repaint more than the dirty region's bounds.
+        Don't waste time with all of the drawNativeImage code, just use CG.
+        Unindent the switch's cases.
+        Store the rects we're painting so that enumerateRectsBeingDrawn can get them.
+        Pixel-snap the rects we're painting.
+        Clip the context before going to paint.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::enumerateRectsBeingDrawn):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        Retrieve the rects currently being painted from our backing store, and
+        transform them (mostly) according to the CTM, to match the transformation
+        that will have occurred underneath wkCALayerEnumerateRectsBeingDrawnWithBlock.
+
 2013-11-08  Anders Carlsson  <andersca@apple.com>
 
         Implement more KeyedEncoder functionality

@@ -172,7 +172,8 @@ void TileController::platformCALayerPaintContents(PlatformCALayer* platformCALay
         context.translate(-layerOrigin.x(), -layerOrigin.y());
         context.scale(FloatSize(m_scale, m_scale));
 
-        drawLayerContents(context.platformContext(), m_tileCacheLayer);
+        RepaintRectList dirtyRects = collectRectsToPaint(context.platformContext(), platformCALayer);
+        drawLayerContents(context.platformContext(), m_tileCacheLayer, dirtyRects);
     }
 
     int repaintCount = platformCALayerIncrementRepaintCount(platformCALayer);

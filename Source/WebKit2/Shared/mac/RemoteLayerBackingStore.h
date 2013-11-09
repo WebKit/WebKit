@@ -32,6 +32,11 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/Region.h>
 
+// FIXME: Make PlatformCALayerRemote.cpp Objective-C so we can include WebLayer.h here and share the typedef.
+namespace WebCore {
+typedef Vector<WebCore::FloatRect, 5> RepaintRectList;
+}
+
 namespace WebKit {
 
 class PlatformCALayerRemote;
@@ -58,12 +63,11 @@ public:
     void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder&, RemoteLayerBackingStore&);
 
-private:
-    WebCore::IntRect mapToContentCoordinates(const WebCore::IntRect) const;
+    void enumerateRectsBeingDrawn(CGContextRef, void (^)(CGRect));
 
+private:
     bool hasFrontBuffer() { return m_acceleratesDrawing ? !!m_frontSurface : !!m_frontBuffer; }
 
-    std::unique_ptr<WebCore::GraphicsContext> createBackingStore();
     void drawInContext(WebCore::GraphicsContext&, CGImageRef frontImage);
 
     PlatformCALayerRemote* m_layer;
@@ -77,6 +81,8 @@ private:
     RetainPtr<IOSurfaceRef> m_frontSurface;
 
     bool m_acceleratesDrawing;
+
+    WebCore::RepaintRectList m_paintingRects;
 };
 
 } // namespace WebKit

@@ -146,6 +146,8 @@ public:
 
     virtual PassRefPtr<PlatformCALayer> createCompatibleLayer(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient*) const OVERRIDE;
 
+    virtual void enumerateRectsBeingDrawn(CGContextRef, void (^block)(CGRect)) OVERRIDE;
+
     virtual uint32_t hostingContextID();
 
 protected:

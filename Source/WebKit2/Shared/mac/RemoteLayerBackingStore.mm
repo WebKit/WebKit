@@ -110,18 +110,9 @@ bool RemoteLayerBackingStore::decode(CoreIPC::ArgumentDecoder& decoder, RemoteLa
     return true;
 }
 
-IntRect RemoteLayerBackingStore::mapToContentCoordinates(const IntRect rect) const
-{
-    IntRect flippedRect = rect;
-    if (m_layer->owner()->platformCALayerContentsOrientation() == GraphicsLayer::CompositingCoordinatesBottomUp)
-        flippedRect.setY(m_size.height() - rect.y() - rect.height());
-    return flippedRect;
-}
-
 void RemoteLayerBackingStore::setNeedsDisplay(const IntRect rect)
 {
-    IntRect flippedRect = mapToContentCoordinates(rect);
-    m_dirtyRegion.unite(flippedRect);
+    m_dirtyRegion.unite(rect);
 }
 
 void RemoteLayerBackingStore::setNeedsDisplay()
@@ -197,7 +188,7 @@ bool RemoteLayerBackingStore::display()
         m_dirtyRegion.unite(IntRect(IntPoint(), m_size));
 
     if (m_layer->owner()->platformCALayerShowRepaintCounter(m_layer)) {
-        IntRect indicatorRect = mapToContentCoordinates(IntRect(0, 0, 52, 27));
+        IntRect indicatorRect(0, 0, 52, 27);
         m_dirtyRegion.unite(indicatorRect);
     }
 
@@ -232,7 +223,7 @@ bool RemoteLayerBackingStore::display()
         }
     } else {
         RetainPtr<CGImageRef> frontImage = image();
-        m_frontBuffer = ShareableBitmap::createShareable(expandedIntSize(scaledSize), ShareableBitmap::SupportsAlpha);
+        m_frontBuffer = ShareableBitmap::createShareable(expandedScaledSize, ShareableBitmap::SupportsAlpha);
         std::unique_ptr<GraphicsContext> context = m_frontBuffer->createGraphicsContext();
         drawInContext(*context, frontImage.get());
     }
@@ -242,58 +233,93 @@ bool RemoteLayerBackingStore::display()
 
 void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef frontImage)
 {
-    Vector<IntRect> dirtyRects = m_dirtyRegion.rects();
+    IntRect layerBounds(IntPoint(), m_size);
+    IntRect scaledLayerBounds(IntPoint(), expandedIntSize(m_size * m_scale));
+
+    CGContextRef cgContext = context.platformContext();
 
     // If we have less than webLayerMaxRectsToPaint rects to paint and they cover less
-    // than webLayerWastedSpaceThreshold of the area, we'll do a partial repaint.
-
-    Vector<FloatRect, webLayerMaxRectsToPaint> rectsToPaint;
-    if (dirtyRects.size() <= webLayerMaxRectsToPaint && m_dirtyRegion.totalArea() <= webLayerWastedSpaceThreshold * m_size.width() * m_size.height()) {
-        // Copy over the parts of the front buffer that we're not going to repaint.
-        if (frontImage) {
-            Region cleanRegion(IntRect(IntPoint(), m_size));
-            cleanRegion.subtract(m_dirtyRegion);
-
-            for (const auto& rect : cleanRegion.rects()) {
-                FloatRect scaledRect = rect;
-                scaledRect.scale(m_scale);
-                FloatSize imageSize(CGImageGetWidth(frontImage), CGImageGetHeight(frontImage));
-                context.drawNativeImage(frontImage, imageSize, ColorSpaceDeviceRGB, scaledRect, scaledRect);
-            }
-        }
-
-        for (const auto& rect : dirtyRects)
-            rectsToPaint.append(rect);
+    // than webLayerWastedSpaceThreshold of the total dirty area, we'll repaint each rect separately.
+    // Otherwise, repaint the entire bounding box of the dirty region.
+    IntRect dirtyBounds = m_dirtyRegion.bounds();
+    Vector<IntRect> dirtyRects = m_dirtyRegion.rects();
+    if (dirtyRects.size() > webLayerMaxRectsToPaint && m_dirtyRegion.totalArea() > webLayerWastedSpaceThreshold * dirtyBounds.width() * dirtyBounds.height()) {
+        dirtyRects.clear();
+        dirtyRects.append(dirtyBounds);
     }
+
+    for (const auto& rect : dirtyRects) {
+        FloatRect scaledRect(rect);
+        scaledRect.scale(m_scale, m_scale);
+        scaledRect = enclosingIntRect(scaledRect);
+        scaledRect.scale(1 / m_scale, 1 / m_scale);
+        m_paintingRects.append(scaledRect);
+    }
+
+    CGRect cgPaintingRects[webLayerMaxRectsToPaint];
+    for (size_t i = 0, dirtyRectCount = m_paintingRects.size(); i < dirtyRectCount; ++i) {
+        FloatRect scaledPaintingRect = m_paintingRects[i];
+        scaledPaintingRect.scale(m_scale);
+        cgPaintingRects[i] = enclosingIntRect(scaledPaintingRect);
+    }
+
+    if (frontImage) {
+        CGContextSaveGState(cgContext);
+        CGContextSetBlendMode(cgContext, kCGBlendModeCopy);
+
+        CGContextAddRect(cgContext, CGRectInfinite);
+        CGContextAddRects(cgContext, cgPaintingRects, m_paintingRects.size());
+        CGContextEOClip(cgContext);
+
+        CGContextTranslateCTM(cgContext, 0, scaledLayerBounds.height());
+        CGContextScaleCTM(cgContext, 1, -1);
+        CGContextDrawImage(cgContext, scaledLayerBounds, frontImage);
+        CGContextRestoreGState(cgContext);
+    }
+
+    CGContextClipToRects(cgContext, cgPaintingRects, m_paintingRects.size());
 
     context.scale(FloatSize(m_scale, m_scale));
 
     switch (m_layer->layerType()) {
-        case PlatformCALayer::LayerTypeSimpleLayer:
-        case PlatformCALayer::LayerTypeTiledBackingTileLayer:
-            if (rectsToPaint.isEmpty())
-                rectsToPaint.append(IntRect(IntPoint(), m_size));
-            for (const auto& rect : rectsToPaint)
-                m_layer->owner()->platformCALayerPaintContents(m_layer, context, enclosingIntRect(rect));
-            break;
-        case PlatformCALayer::LayerTypeWebLayer:
-            drawLayerContents(context.platformContext(), m_layer, rectsToPaint);
-            break;
-        case PlatformCALayer::LayerTypeLayer:
-        case PlatformCALayer::LayerTypeTransformLayer:
-        case PlatformCALayer::LayerTypeWebTiledLayer:
-        case PlatformCALayer::LayerTypeTiledBackingLayer:
-        case PlatformCALayer::LayerTypePageTiledBackingLayer:
-        case PlatformCALayer::LayerTypeRootLayer:
-        case PlatformCALayer::LayerTypeAVPlayerLayer:
-        case PlatformCALayer::LayerTypeCustom:
-            ASSERT_NOT_REACHED();
-            break;
+    case PlatformCALayer::LayerTypeSimpleLayer:
+    case PlatformCALayer::LayerTypeTiledBackingTileLayer:
+        m_layer->owner()->platformCALayerPaintContents(m_layer, context, dirtyBounds);
+        break;
+    case PlatformCALayer::LayerTypeWebLayer:
+        drawLayerContents(cgContext, m_layer, m_paintingRects);
+        break;
+    case PlatformCALayer::LayerTypeLayer:
+    case PlatformCALayer::LayerTypeTransformLayer:
+    case PlatformCALayer::LayerTypeWebTiledLayer:
+    case PlatformCALayer::LayerTypeTiledBackingLayer:
+    case PlatformCALayer::LayerTypePageTiledBackingLayer:
+    case PlatformCALayer::LayerTypeRootLayer:
+    case PlatformCALayer::LayerTypeAVPlayerLayer:
+    case PlatformCALayer::LayerTypeCustom:
+        ASSERT_NOT_REACHED();
+        break;
     };
 
     m_dirtyRegion = Region();
+    m_paintingRects.clear();
 
     CGContextFlush(context.platformContext());
+}
+
+void RemoteLayerBackingStore::enumerateRectsBeingDrawn(CGContextRef context, void (^block)(CGRect))
+{
+    CGAffineTransform inverseTransform = CGAffineTransformInvert(CGContextGetCTM(context));
+
+    // We don't want to un-apply the flipping or contentsScale,
+    // because they're not applied to repaint rects.
+    inverseTransform = CGAffineTransformScale(inverseTransform, m_scale, -m_scale);
+    inverseTransform = CGAffineTransformTranslate(inverseTransform, 0, -m_size.height());
+
+    for (auto rect : m_paintingRects) {
+        CGRect rectToDraw = CGRectApplyAffineTransform(rect, inverseTransform);
+        block(rectToDraw);
+    }
 }
 
 #endif // USE(ACCELERATED_COMPOSITING)

@@ -46,10 +46,12 @@ class GraphicsLayer;
 class PlatformCALayer;
 class PlatformCALayerClient;
 
+typedef Vector<FloatRect, webLayerMaxRectsToPaint> RepaintRectList;
+
 // Functions allows us to share implementation across WebTiledLayer and WebLayer
-void drawLayerContents(CGContextRef, WebCore::PlatformCALayer*);
-void drawLayerContents(CGContextRef, WebCore::PlatformCALayer*, Vector<WebCore::FloatRect, webLayerMaxRectsToPaint> dirtyRects);
-void drawRepaintIndicator(CGContextRef, WebCore::PlatformCALayer*, int repaintCount, CGColorRef customBackgroundColor);
+RepaintRectList collectRectsToPaint(CGContextRef, PlatformCALayer*);
+void drawLayerContents(CGContextRef, PlatformCALayer*, RepaintRectList& dirtyRects);
+void drawRepaintIndicator(CGContextRef, PlatformCALayer*, int repaintCount, CGColorRef customBackgroundColor);
 }
 
 #endif // USE(ACCELERATED_COMPOSITING)
