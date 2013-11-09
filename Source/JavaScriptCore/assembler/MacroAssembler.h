@@ -985,6 +985,13 @@ public:
         return value > 0xff;
     }
     
+    bool shouldBlindPointerForSpecificArch(uintptr_t value)
+    {
+        if (sizeof(void*) == 4)
+            return shouldBlindForSpecificArch(static_cast<uint32_t>(value));
+        return shouldBlindForSpecificArch(static_cast<uint64_t>(value));
+    }
+    
     bool shouldBlind(ImmPtr imm)
     {
         if (!canBlind())
@@ -1020,7 +1027,7 @@ public:
         if (!shouldConsiderBlinding())
             return false;
 
-        return shouldBlindForSpecificArch(value);
+        return shouldBlindPointerForSpecificArch(value);
     }
     
     struct RotatedImmPtr {

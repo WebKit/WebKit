@@ -1,5 +1,18 @@
 2013-11-08  Filip Pizlo  <fpizlo@apple.com>
 
+        Get rid of the bizarre Darwin/x86-only MacroAssembler::shouldBlindForSpecificArch(uintptr_t) overload
+        https://bugs.webkit.org/show_bug.cgi?id=124087
+
+        Reviewed by Michael Saboff.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::shouldBlindPointerForSpecificArch):
+        (JSC::MacroAssembler::shouldBlind):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::shouldBlindForSpecificArch):
+
+2013-11-08  Filip Pizlo  <fpizlo@apple.com>
+
         FTL should support NewArrayBuffer
         https://bugs.webkit.org/show_bug.cgi?id=124067
 
