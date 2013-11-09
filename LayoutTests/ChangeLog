@@ -1,3 +1,15 @@
+2013-11-08  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: It should be possible to debug the Inspector code
+        https://bugs.webkit.org/show_bug.cgi?id=124065
+
+        Reviewed by Timothy Hatcher.
+
+        Added test to check that a second inspector window can be used to debug the first one.
+
+        * inspector-protocol/debugger/nested-inspectors-expected.txt: Added.
+        * inspector-protocol/debugger/nested-inspectors.html: Added.
+
 2013-11-08  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Image valued shape-outside that extends vertically into the margin-box is top-clipped

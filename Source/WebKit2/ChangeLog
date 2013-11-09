@@ -1,3 +1,32 @@
+2013-11-08  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: It should be possible to debug the Inspector code
+        https://bugs.webkit.org/show_bug.cgi?id=124065
+
+        Reviewed by Timothy Hatcher.
+
+        When the script is paused, the debugger will pause all the pages in the same PageGroup.
+        All the Inspector windows were created in the same PageGroup, so pausing one debugger
+        would stop the other too.
+
+        Added WebInspectorPageGroups to manage the PageGroups created for the Inspectors.
+        The WebInspectors will now use the inspection "level" to figure out which PageGroup to use.
+        The inspector that debugs the main page will use "__WebInspectorPageGroupLevel1__",
+        the second inspector (that debugs the first inspector) will use "__WebInspectorPageGroupLevel2__" ...
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorPageGroups::shared):
+        (WebKit::WebInspectorPageGroups::inspectorLevel):
+        (WebKit::WebInspectorPageGroups::isInspectorPageGroup):
+        (WebKit::WebInspectorPageGroups::inspectorPageGroupLevel):
+        (WebKit::WebInspectorPageGroups::inspectorPageGroupForLevel):
+        (WebKit::WebInspectorPageGroups::createInspectorPageGroup):
+        (WebKit::WebInspectorProxy::WebInspectorProxy):
+        (WebKit::WebInspectorProxy::inspectorPageGroup):
+        (WebKit::WebInspectorProxy::isInspectorPage):
+        (WebKit::WebInspectorProxy::canAttach):
+        * UIProcess/WebInspectorProxy.h:
+
 2013-11-08  Anders Carlsson  <andersca@apple.com>
 
         Begin stubbing out a KeyedEncoder class in WebCore

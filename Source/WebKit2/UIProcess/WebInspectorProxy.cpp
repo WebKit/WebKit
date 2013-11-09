@@ -58,26 +58,67 @@ const unsigned WebInspectorProxy::initialWindowHeight = 650;
 const unsigned WebInspectorProxy::minimumAttachedWidth = 750;
 const unsigned WebInspectorProxy::minimumAttachedHeight = 250;
 
-static PassRefPtr<WebPageGroup> createInspectorPageGroup()
-{
-    RefPtr<WebPageGroup> pageGroup = WebPageGroup::create("__WebInspectorPageGroup__", false, false);
+class WebInspectorPageGroups {
+public:
+    static WebInspectorPageGroups& shared()
+    {
+        DEFINE_STATIC_LOCAL(WebInspectorPageGroups, instance, ());
+        return instance;
+    }
+
+    unsigned inspectorLevel(WebPageGroup* inspectedPageGroup)
+    {
+        return isInspectorPageGroup(inspectedPageGroup) ? inspectorPageGroupLevel(inspectedPageGroup) + 1 : 1;
+    }
+
+    bool isInspectorPageGroup(WebPageGroup* group)
+    {
+        return m_pageGroupLevel.contains(group);
+    }
+
+    unsigned inspectorPageGroupLevel(WebPageGroup* group)
+    {
+        ASSERT(isInspectorPageGroup(group));
+        return m_pageGroupLevel.get(group);
+    }
+
+    WebPageGroup* inspectorPageGroupForLevel(unsigned level)
+    {
+        // The level is the key of the HashMap, so it cannot be 0.
+        ASSERT(level);
+
+        auto iterator = m_pageGroupByLevel.find(level);
+        if (iterator != m_pageGroupByLevel.end())
+            return iterator->value.get();
+
+        RefPtr<WebPageGroup> group = createInspectorPageGroup(level);
+        m_pageGroupByLevel.set(level, group.get());
+        m_pageGroupLevel.set(group.get(), level);
+        return group.get();
+    }
+
+private:
+    static PassRefPtr<WebPageGroup> createInspectorPageGroup(unsigned level)
+    {
+        RefPtr<WebPageGroup> pageGroup = WebPageGroup::create(String::format("__WebInspectorPageGroupLevel%u__", level), false, false);
 
 #ifndef NDEBUG
-    // Allow developers to inspect the Web Inspector in debug builds.
-    pageGroup->preferences()->setDeveloperExtrasEnabled(true);
-    pageGroup->preferences()->setLogsPageMessagesToSystemConsoleEnabled(true);
+        // Allow developers to inspect the Web Inspector in debug builds.
+        pageGroup->preferences()->setDeveloperExtrasEnabled(true);
+        pageGroup->preferences()->setLogsPageMessagesToSystemConsoleEnabled(true);
 #endif
 
-    pageGroup->preferences()->setApplicationChromeModeEnabled(true);
+        pageGroup->preferences()->setApplicationChromeModeEnabled(true);
 
-    return pageGroup.release();
-}
+        return pageGroup.release();
+    }
 
-WebPageGroup* WebInspectorProxy::inspectorPageGroup()
-{
-    static WebPageGroup* pageGroup = createInspectorPageGroup().leakRef();
-    return pageGroup;
-}
+    typedef HashMap<unsigned, RefPtr<WebPageGroup> > PageGroupByLevelMap;
+    typedef HashMap<WebPageGroup*, unsigned> PageGroupLevelMap;
+
+    PageGroupByLevelMap m_pageGroupByLevel;
+    PageGroupLevelMap m_pageGroupLevel;
+};
 
 WebInspectorProxy::WebInspectorProxy(WebPageProxy* page)
     : m_page(page)
@@ -98,11 +139,17 @@ WebInspectorProxy::WebInspectorProxy(WebPageProxy* page)
     , m_remoteInspectionPageId(0)
 #endif
 {
+    m_level = WebInspectorPageGroups::shared().inspectorLevel(m_page->pageGroup());
     m_page->process()->addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_page->pageID(), this);
 }
 
 WebInspectorProxy::~WebInspectorProxy()
 {
+}
+
+WebPageGroup* WebInspectorProxy::inspectorPageGroup() const
+{
+    return WebInspectorPageGroups::shared().inspectorPageGroupForLevel(m_level);
 }
 
 void WebInspectorProxy::invalidate()
@@ -311,7 +358,7 @@ void WebInspectorProxy::togglePageProfiling()
 
 bool WebInspectorProxy::isInspectorPage(WebPageProxy* page)
 {
-    return page->pageGroup() == inspectorPageGroup();
+    return WebInspectorPageGroups::shared().isInspectorPageGroup(page->pageGroup());
 }
 
 static bool isMainInspectorPage(const WebInspectorProxy* webInspectorProxy, WKURLRequestRef requestRef)
@@ -502,8 +549,7 @@ bool WebInspectorProxy::canAttach()
         return true;
 
     // Don't allow attaching to another inspector -- two inspectors in one window is too much!
-    bool isInspectorPage = m_page->pageGroup() == inspectorPageGroup();
-    if (isInspectorPage)
+    if (m_level > 0)
         return false;
 
     // Don't allow the attach if the window would be too small to accommodate the minimum inspector height.
