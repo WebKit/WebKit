@@ -1,3 +1,11 @@
+2013-11-09  Anders Carlsson  <andersca@apple.com>
+
+        Remove an unused file.
+
+        Rubber-stamped by Andreas Kling.
+
+        * WebProcess/WebPage/gtk/ChunkedUpdateDrawingAreaGtk.cpp: Removed.
+
 2013-11-09  Patrick Gansterer  <paroga@webkit.org>
 
         Move RunLoop from WebCore to WTF
