@@ -23,48 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef KeyedEncoder_h
-#define KeyedEncoder_h
+#include "config.h"
+#include "KeyedEncoder.h"
 
-#include <wtf/Forward.h>
-#include <wtf/HashMap.h>
+#include <CoreFoundation/CoreFoundation.h>
 #include <wtf/text/WTFString.h>
-
-// FIXME: I believe this class can be moved to either WTF or WebCore
-// and replace the Encoder/Decoder classes there. Currently the Encoder/Decoder
-// classes are used to serialize history trees and using a keyed encoder would be
-// less fragile from a binary compatibility perspective.
 
 namespace WebKit {
 
-struct KeyedCodingValue;
+static RetainPtr<CFMutableDictionaryRef> createDictionary()
+{
+    return adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+}
 
-class KeyedEncoder {
-public:
-    KeyedEncoder();
-    ~KeyedEncoder();
+KeyedEncoder::KeyedEncoder()
+    : m_rootDictionary(createDictionary())
+{
+}
+    
+KeyedEncoder::~KeyedEncoder()
+{
+}
 
-    void encode(const String& key, const String& value);
-
-private:
-#if 0
-    struct Value {
-        enum Type {
-            StringValue,
-            ObjectValue,
-        };
-
-        String string;
-        HashMap<String, Value> object;
-    };
-
-    HashMap<String, Value> root;
-#endif
-
-    HashMap<String, KeyedCodingValue> m_rootObject;
-    HashMap<String, KeyedCodingValue>* m_currentObject;
-};
+void KeyedEncoder::encodeUInt32(const String& key, uint32_t value)
+{
+    RetainPtr<CFNumberRef> number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &value));
+    CFDictionarySetValue(m_rootDictionary.get(), key.createCFString().get(), number.get());
+}
 
 } // namespace WebKit
-
-#endif // KeyedEncoder_h

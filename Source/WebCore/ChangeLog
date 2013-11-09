@@ -1,3 +1,24 @@
+2013-11-08  Anders Carlsson  <andersca@apple.com>
+
+        Begin stubbing out a KeyedEncoder class in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=124079
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in:
+        Add symbol needed by WebCore.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new header file.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::encodeBackForwardTree):
+        * history/HistoryItem.h:
+        Add an encodeBackForwardTree overload that takes a KeyedEncoder object. Encode the version.
+
+        * platform/KeyedCoding.h:
+        Add a KeyedEncoder class that just has a single encodeUInt32 member function for now.
+
 2013-11-08  Brady Eidson  <beidson@apple.com>
 
         Merge IDBTransactionBackendInterface and IDBTransactionBackendImpl

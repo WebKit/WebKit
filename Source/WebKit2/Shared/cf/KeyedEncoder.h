@@ -23,16 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef KeyedCodingValueCF_h
-#define KeyedCodingValueCF_h
+#ifndef KeyedEncoder_h
+#define KeyedEncoder_h
 
-#include "KeyedCodingValue.h"
+#include <WebCore/KeyedCoding.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebKit {
 
-RetainPtr<CFTypeRef> toCFType(const KeyedCodingValue&);
+class KeyedEncoder : public WebCore::KeyedEncoder {
+public:
+    KeyedEncoder();
+    ~KeyedEncoder();
+
+private:
+    virtual void encodeUInt32(const String& key, uint32_t) OVERRIDE;
+
+    RetainPtr<CFMutableDictionaryRef> m_rootDictionary;
+};
 
 } // namespace WebKit
 
-#endif // KeyedCodingValueCF_h
+#endif // KeyedEncoder_h

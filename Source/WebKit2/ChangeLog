@@ -1,3 +1,31 @@
+2013-11-08  Anders Carlsson  <andersca@apple.com>
+
+        Begin stubbing out a KeyedEncoder class in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=124079
+
+        Reviewed by Sam Weinig.
+
+        * Shared/KeyedEncoder.h: Removed.
+        * Shared/cf/KeyedCodingValueCF.cpp: Removed.
+        * Shared/cf/KeyedEncoder.cpp: Added.
+        Remove old keyed encoders.
+
+        (WebKit::createDictionary):
+        Helper function to create a mutable dictionary.
+        (WebKit::KeyedEncoder::KeyedEncoder):
+        Create the root dictionary.
+
+        (WebKit::KeyedEncoder::encodeUInt32):
+        Create a CFNumberRef and add it to the dictionary.
+
+        * Shared/cf/KeyedEncoder.h: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::updateBackForwardItem):
+        Create a KeyedEncoder and encode the history tree.
+
 2013-11-08  Brady Eidson  <beidson@apple.com>
 
         Merge IDBTransactionBackendInterface and IDBTransactionBackendImpl

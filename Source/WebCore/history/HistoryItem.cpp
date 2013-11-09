@@ -29,6 +29,7 @@
 #include "CachedPage.h"
 #include "Document.h"
 #include "IconDatabase.h"
+#include "KeyedCoding.h"
 #include "PageCache.h"
 #include "ResourceRequest.h"
 #include "SerializedScriptValue.h"
@@ -680,6 +681,13 @@ void HistoryItem::encodeBackForwardTree(Encoder& encoder) const
     encoder.encodeUInt32(backForwardTreeEncodingVersion);
 
     encodeBackForwardTreeNode(encoder);
+}
+
+void HistoryItem::encodeBackForwardTree(KeyedEncoder& encoder) const
+{
+    encoder.encodeUInt32("version", backForwardTreeEncodingVersion);
+
+    // FIXME: Encode the tree.
 }
 
 void HistoryItem::encodeBackForwardTreeNode(Encoder& encoder) const

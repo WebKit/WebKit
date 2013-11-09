@@ -50,8 +50,9 @@ class Document;
 class FormData;
 class HistoryItem;
 class Image;
-class URL;
+class KeyedEncoder;
 class ResourceRequest;
+class URL;
 
 typedef Vector<RefPtr<HistoryItem>> HistoryItemVector;
 
@@ -88,6 +89,7 @@ public:
     void reset();
     
     void encodeBackForwardTree(Encoder&) const;
+    void encodeBackForwardTree(KeyedEncoder&) const;
     static PassRefPtr<HistoryItem> decodeBackForwardTree(const String& urlString, const String& title, const String& originalURLString, Decoder&);
 
     const String& originalURLString() const;

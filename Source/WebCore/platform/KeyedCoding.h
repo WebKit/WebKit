@@ -23,33 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "KeyedEncoder.h"
+#ifndef KeyedCoding_h
+#define KeyedCoding_h
 
-#include "KeyedCodingValue.h"
-#include <wtf/text/StringHash.h>
+#include <wtf/Forward.h>
 
-namespace WebKit {
+namespace WebCore {
 
-KeyedEncoder::KeyedEncoder()
-    : m_currentObject(&m_rootObject)
-{
-}
+class KeyedEncoder {
+protected:
+    virtual ~KeyedEncoder() { }
 
-KeyedEncoder::~KeyedEncoder()
-{
-    ASSERT(m_currentObject == &m_rootObject);
-}
+public:
+    virtual void encodeUInt32(const String& key, uint32_t) = 0;
+};
 
-void KeyedEncoder::encode(const String& key, const String& value)
-{
-    ASSERT(!m_currentObject->contains(key));
+} // namespace WebCore
 
-    KeyedCodingValue keyedCodingValue;
-    keyedCodingValue.type = KeyedCodingValue::StringValue;
-    keyedCodingValue.string = value;
-
-    m_currentObject->set(key, std::move(keyedCodingValue));
-}
-
-} // namespace WebKit
+#endif // KeyedCoding_h

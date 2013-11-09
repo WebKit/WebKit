@@ -756,6 +756,7 @@
 		1AD8F81C11CAB9E900E93E54 /* PlatformStrategies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD8F81A11CAB9E900E93E54 /* PlatformStrategies.cpp */; };
 		1ADA14100E1AE5D900023EE5 /* PluginMainThreadScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ADA140E0E1AE5D900023EE5 /* PluginMainThreadScheduler.cpp */; };
 		1ADA14110E1AE5D900023EE5 /* PluginMainThreadScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ADA140F0E1AE5D900023EE5 /* PluginMainThreadScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1AE00D59182DAC8D00087DD7 /* KeyedCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE00D57182DAC8D00087DD7 /* KeyedCoding.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AE2AA1E0A1CDAB400B42B25 /* JSHTMLAreaElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE2AA0A0A1CDAB300B42B25 /* JSHTMLAreaElement.cpp */; };
 		1AE2AA1F0A1CDAB400B42B25 /* JSHTMLAreaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2AA0B0A1CDAB300B42B25 /* JSHTMLAreaElement.h */; };
 		1AE2AA200A1CDAB400B42B25 /* JSHTMLBaseFontElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE2AA0C0A1CDAB300B42B25 /* JSHTMLBaseFontElement.cpp */; };
@@ -7331,6 +7332,7 @@
 		1AD8F81A11CAB9E900E93E54 /* PlatformStrategies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformStrategies.cpp; sourceTree = "<group>"; };
 		1ADA140E0E1AE5D900023EE5 /* PluginMainThreadScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginMainThreadScheduler.cpp; sourceTree = "<group>"; };
 		1ADA140F0E1AE5D900023EE5 /* PluginMainThreadScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginMainThreadScheduler.h; sourceTree = "<group>"; };
+		1AE00D57182DAC8D00087DD7 /* KeyedCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyedCoding.h; sourceTree = "<group>"; };
 		1AE2A9F00A1CDA5700B42B25 /* HTMLAreaElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLAreaElement.idl; sourceTree = "<group>"; };
 		1AE2A9F10A1CDA5700B42B25 /* HTMLBaseFontElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLBaseFontElement.idl; sourceTree = "<group>"; };
 		1AE2A9F20A1CDA5700B42B25 /* HTMLBodyElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLBodyElement.idl; sourceTree = "<group>"; };
@@ -20049,11 +20051,9 @@
 				D6FDAEF2149C06190037B1E1 /* HistogramSupport.cpp */,
 				D630E2AB149BF344005B2F93 /* HistogramSupport.h */,
 				BC3BC29B0E91AB0F00835588 /* HostWindow.h */,
+				1AE00D57182DAC8D00087DD7 /* KeyedCoding.h */,
 				521D46F711AEC9B100514613 /* KillRing.h */,
 				4306E4E514955543007F17AC /* KillRingNone.cpp */,
-				6593923509AE4346002C531F /* URL.cpp */,
-				6593923609AE4346002C531F /* URL.h */,
-				BCBD21AA0E417AD400A070F2 /* URLHash.h */,
 				E18772F0126E2629003DD586 /* Language.cpp */,
 				85EC9AF90A71A2C600EEEAED /* Language.h */,
 				141DC0471648348F00371E5A /* LayoutUnit.h */,
@@ -20150,6 +20150,9 @@
 				93309EA1099EB78C0056E581 /* Timer.cpp */,
 				9305B24C098F1B6B00C28855 /* Timer.h */,
 				1419D2C40CEA6F6100FF507A /* TreeShared.h */,
+				6593923509AE4346002C531F /* URL.cpp */,
+				6593923609AE4346002C531F /* URL.h */,
+				BCBD21AA0E417AD400A070F2 /* URLHash.h */,
 				2E3BBF051162DA1100B9409A /* UUID.cpp */,
 				2E3BBF061162DA1100B9409A /* UUID.h */,
 				515788C01207852C00A37C4A /* VisitedLinkStrategy.h */,
@@ -23442,6 +23445,7 @@
 				7A0E771F10C00DB100A0276E /* JSInspectorFrontendHost.h in Headers */,
 				1C5FAED20DCFD90100D58F78 /* JSJavaScriptCallFrame.h in Headers */,
 				A86629D309DA2B48009633A5 /* JSKeyboardEvent.h in Headers */,
+				1AE00D59182DAC8D00087DD7 /* KeyedCoding.h in Headers */,
 				935F45430F7C3B5F00D7C1FB /* JSLazyEventListener.h in Headers */,
 				BCE1C43C0D9830D3003B02F2 /* JSLocation.h in Headers */,
 				FD23A12613F5FA5900F67001 /* JSMediaElementAudioSourceNode.h in Headers */,
