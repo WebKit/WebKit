@@ -1,3 +1,16 @@
+2013-11-08  Eric Carlson  <eric.carlson@apple.com>
+
+        getCueAsHTML() on an empty cue should return a document fragment
+        https://bugs.webkit.org/show_bug.cgi?id=124084
+
+        Reviewed by Darin Adler.
+
+        Test: media/track/track-cue-empty-cue-text.html
+
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::createDocumentFragmentFromCueText): Don't return early when the
+            passed an empty string.
+
 2013-11-08  Anders Carlsson  <andersca@apple.com>
 
         KeyedEncoder should be able to encoder objects

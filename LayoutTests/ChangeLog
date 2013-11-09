@@ -1,3 +1,13 @@
+2013-11-08  Eric Carlson  <eric.carlson@apple.com>
+
+        getCueAsHTML() on an empty cue should return a document fragment
+        https://bugs.webkit.org/show_bug.cgi?id=124084
+
+        Reviewed by Darin Adler.
+
+        * media/track/track-cue-empty-cue-text-expected.txt: Added.
+        * media/track/track-cue-empty-cue-text.html: Added.
+
 2013-11-08  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: It should be possible to debug the Inspector code
