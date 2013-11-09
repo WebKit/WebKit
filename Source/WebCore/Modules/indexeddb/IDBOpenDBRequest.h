@@ -43,8 +43,8 @@ public:
     using IDBRequest::onSuccess;
 
     virtual void onBlocked(uint64_t existingVersion) OVERRIDE;
-    virtual void onUpgradeNeeded(uint64_t oldVersion, PassRefPtr<IDBDatabaseBackendInterface>, const IDBDatabaseMetadata&) OVERRIDE;
-    virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>, const IDBDatabaseMetadata&) OVERRIDE;
+    virtual void onUpgradeNeeded(uint64_t oldVersion, PassRefPtr<IDBDatabaseBackend>, const IDBDatabaseMetadata&) OVERRIDE;
+    virtual void onSuccess(PassRefPtr<IDBDatabaseBackend>, const IDBDatabaseMetadata&) OVERRIDE;
 
     // EventTarget
     virtual EventTargetInterface eventTargetInterface() const;

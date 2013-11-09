@@ -45,7 +45,7 @@ PassRefPtr<IDBOpenDBRequest> IDBOpenDBRequest::create(ScriptExecutionContext* co
 }
 
 IDBOpenDBRequest::IDBOpenDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseCallbacks> callbacks, int64_t transactionId, uint64_t version, IndexedDB::VersionNullness versionNullness)
-    : IDBRequest(context, IDBAny::createNull(), IDBDatabaseBackendInterface::NormalTask, 0)
+    : IDBRequest(context, IDBAny::createNull(), IDBDatabaseBackend::NormalTask, 0)
     , m_databaseCallbacks(callbacks)
     , m_transactionId(transactionId)
     , m_version(version)
@@ -72,11 +72,11 @@ void IDBOpenDBRequest::onBlocked(uint64_t oldVersion)
     enqueueEvent(IDBVersionChangeEvent::create(oldVersion, m_version, m_versionNullness, eventNames().blockedEvent));
 }
 
-void IDBOpenDBRequest::onUpgradeNeeded(uint64_t oldVersion, PassRefPtr<IDBDatabaseBackendInterface> prpDatabaseBackend, const IDBDatabaseMetadata& metadata)
+void IDBOpenDBRequest::onUpgradeNeeded(uint64_t oldVersion, PassRefPtr<IDBDatabaseBackend> prpDatabaseBackend, const IDBDatabaseMetadata& metadata)
 {
     LOG(StorageAPI, "IDBOpenDBRequest::onUpgradeNeeded()");
     if (m_contextStopped || !scriptExecutionContext()) {
-        RefPtr<IDBDatabaseBackendInterface> db = prpDatabaseBackend;
+        RefPtr<IDBDatabaseBackend> db = prpDatabaseBackend;
         db->abort(m_transactionId);
         db->close(m_databaseCallbacks);
         return;
@@ -86,7 +86,7 @@ void IDBOpenDBRequest::onUpgradeNeeded(uint64_t oldVersion, PassRefPtr<IDBDataba
 
     ASSERT(m_databaseCallbacks);
 
-    RefPtr<IDBDatabaseBackendInterface> databaseBackend = prpDatabaseBackend;
+    RefPtr<IDBDatabaseBackend> databaseBackend = prpDatabaseBackend;
 
     RefPtr<IDBDatabase> idbDatabase = IDBDatabase::create(scriptExecutionContext(), databaseBackend, m_databaseCallbacks);
     idbDatabase->setMetadata(metadata);
@@ -104,13 +104,13 @@ void IDBOpenDBRequest::onUpgradeNeeded(uint64_t oldVersion, PassRefPtr<IDBDataba
     enqueueEvent(IDBVersionChangeEvent::create(oldVersion, m_version, m_versionNullness, eventNames().upgradeneededEvent));
 }
 
-void IDBOpenDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> prpBackend, const IDBDatabaseMetadata& metadata)
+void IDBOpenDBRequest::onSuccess(PassRefPtr<IDBDatabaseBackend> prpBackend, const IDBDatabaseMetadata& metadata)
 {
     LOG(StorageAPI, "IDBOpenDBRequest::onSuccess()");
     if (!shouldEnqueueEvent())
         return;
 
-    RefPtr<IDBDatabaseBackendInterface> backend = prpBackend;
+    RefPtr<IDBDatabaseBackend> backend = prpBackend;
     RefPtr<IDBDatabase> idbDatabase;
     if (m_result) {
         idbDatabase = m_result->idbDatabase();

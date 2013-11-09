@@ -26,7 +26,7 @@
 #ifndef IDBTransactionBackendOperations_h
 #define IDBTransactionBackendOperations_h
 
-#include "IDBDatabaseBackendImpl.h"
+#include "IDBDatabaseBackend.h"
 #include "IDBOperation.h"
 #include "IDBTransactionBackend.h"
 
@@ -74,7 +74,7 @@ private:
     const IDBObjectStoreMetadata m_objectStoreMetadata;
 };
 
-class IDBDatabaseBackendImpl::VersionChangeOperation : public IDBOperation {
+class IDBDatabaseBackend::VersionChangeOperation : public IDBOperation {
 public:
     static PassOwnPtr<IDBOperation> create(IDBTransactionBackend* transaction, int64_t transactionId, int64_t version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
     {
@@ -134,7 +134,7 @@ private:
     IDBObjectStoreMetadata m_objectStoreMetadata;
 };
 
-class IDBDatabaseBackendImpl::VersionChangeAbortOperation : public IDBOperation {
+class IDBDatabaseBackend::VersionChangeAbortOperation : public IDBOperation {
 public:
     static PassOwnPtr<IDBOperation> create(IDBTransactionBackend* transaction, const String& previousVersion, int64_t previousIntVersion)
     {
@@ -276,13 +276,13 @@ private:
 
 class PutOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBOperation> create(IDBTransactionBackend* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
+    static PassOwnPtr<IDBOperation> create(IDBTransactionBackend* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, IDBDatabaseBackend::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
     {
         return adoptPtr(new PutOperation(transaction, backingStore, databaseId, objectStore, value, key, putMode, callbacks, indexIds, indexKeys));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    PutOperation(IDBTransactionBackend* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, PassRefPtr<SharedBuffer>& value, PassRefPtr<IDBKey> key, IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
+    PutOperation(IDBTransactionBackend* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, PassRefPtr<SharedBuffer>& value, PassRefPtr<IDBKey> key, IDBDatabaseBackend::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
         : m_transaction(transaction)
         , m_backingStore(backingStore)
         , m_databaseId(databaseId)
@@ -302,7 +302,7 @@ private:
     const IDBObjectStoreMetadata m_objectStore;
     const RefPtr<SharedBuffer> m_value;
     const RefPtr<IDBKey> m_key;
-    const IDBDatabaseBackendInterface::PutMode m_putMode;
+    const IDBDatabaseBackend::PutMode m_putMode;
     const RefPtr<IDBCallbacks> m_callbacks;
     const Vector<int64_t> m_indexIds;
     const Vector<IndexKeys> m_indexKeys;
@@ -328,13 +328,13 @@ private:
 
 class OpenCursorOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBOperation> create(IDBTransactionBackend* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorDirection direction, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, PassRefPtr<IDBCallbacks> callbacks)
+    static PassOwnPtr<IDBOperation> create(IDBTransactionBackend* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorDirection direction, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, PassRefPtr<IDBCallbacks> callbacks)
     {
         return adoptPtr(new OpenCursorOperation(transaction, backingStore, databaseId, objectStoreId, indexId, keyRange, direction, cursorType, taskType, callbacks));
     }
     virtual void perform() OVERRIDE FINAL;
 private:
-    OpenCursorOperation(IDBTransactionBackend* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorDirection direction, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, PassRefPtr<IDBCallbacks> callbacks)
+    OpenCursorOperation(IDBTransactionBackend* transaction, IDBBackingStoreInterface* backingStore, int64_t databaseId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorDirection direction, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, PassRefPtr<IDBCallbacks> callbacks)
         : m_transaction(transaction)
         , m_backingStore(backingStore)
         , m_databaseId(databaseId)
@@ -356,7 +356,7 @@ private:
     const PassRefPtr<IDBKeyRange> m_keyRange;
     const IndexedDB::CursorDirection m_direction;
     const IndexedDB::CursorType m_cursorType;
-    const IDBDatabaseBackendInterface::TaskType m_taskType;
+    const IDBDatabaseBackend::TaskType m_taskType;
     const RefPtr<IDBCallbacks> m_callbacks;
 };
 

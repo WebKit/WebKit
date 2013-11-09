@@ -51,14 +51,14 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBDatabase> IDBDatabase::create(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseBackendInterface> database, PassRefPtr<IDBDatabaseCallbacks> callbacks)
+PassRefPtr<IDBDatabase> IDBDatabase::create(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseBackend> database, PassRefPtr<IDBDatabaseCallbacks> callbacks)
 {
     RefPtr<IDBDatabase> idbDatabase(adoptRef(new IDBDatabase(context, database, callbacks)));
     idbDatabase->suspendIfNeeded();
     return idbDatabase.release();
 }
 
-IDBDatabase::IDBDatabase(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseBackendInterface> backend, PassRefPtr<IDBDatabaseCallbacks> callbacks)
+IDBDatabase::IDBDatabase(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseBackend> backend, PassRefPtr<IDBDatabaseCallbacks> callbacks)
     : ActiveDOMObject(context)
     , m_backend(backend)
     , m_closePending(false)
@@ -185,7 +185,7 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
     int64_t objectStoreId = m_metadata.maxObjectStoreId + 1;
     m_backend->createObjectStore(m_versionChangeTransaction->id(), objectStoreId, name, keyPath, autoIncrement);
 
-    IDBObjectStoreMetadata metadata(name, objectStoreId, keyPath, autoIncrement, IDBDatabaseBackendInterface::MinimumIndexId);
+    IDBObjectStoreMetadata metadata(name, objectStoreId, keyPath, autoIncrement, IDBDatabaseBackend::MinimumIndexId);
     RefPtr<IDBObjectStore> objectStore = IDBObjectStore::create(metadata, m_versionChangeTransaction.get());
     m_metadata.objectStores.set(metadata.id, metadata);
     ++m_metadata.maxObjectStoreId;

@@ -67,11 +67,11 @@ public:
 
     PassRefPtr<IDBRequest> add(JSC::ExecState*, ScriptValue&, ExceptionCode&);
     PassRefPtr<IDBRequest> put(JSC::ExecState*, ScriptValue&, ExceptionCode&);
-    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, ExceptionCode& ec) { return openCursor(context, static_cast<IDBKeyRange*>(0), ec); }
-    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec) { return openCursor(context, keyRange, IDBCursor::directionNext(), ec); }
-    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, const ScriptValue& key, ExceptionCode& ec) { return openCursor(context, key, IDBCursor::directionNext(), ec); }
-    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, const String& direction, ExceptionCode& ec) { return openCursor(context, range, direction, IDBDatabaseBackendInterface::NormalTask, ec); }
-    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, const String& direction, IDBDatabaseBackendInterface::TaskType, ExceptionCode&);
+    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, ExceptionCode&);
+    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
+    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const ScriptValue& key, ExceptionCode&);
+    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, const String& direction, ExceptionCode&);
+    PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, const String& direction, IDBDatabaseBackend::TaskType, ExceptionCode&);
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const ScriptValue& key, const String& direction, ExceptionCode&);
 
     PassRefPtr<IDBRequest> get(ScriptExecutionContext*, const ScriptValue& key, ExceptionCode&);
@@ -94,8 +94,8 @@ public:
     PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
     PassRefPtr<IDBRequest> count(ScriptExecutionContext*, const ScriptValue& key, ExceptionCode&);
 
-    PassRefPtr<IDBRequest> put(IDBDatabaseBackendInterface::PutMode, PassRefPtr<IDBAny> source, JSC::ExecState*, ScriptValue&, const ScriptValue& key, ExceptionCode&);
-    PassRefPtr<IDBRequest> put(IDBDatabaseBackendInterface::PutMode, PassRefPtr<IDBAny> source, JSC::ExecState*, ScriptValue&, PassRefPtr<IDBKey>, ExceptionCode&);
+    PassRefPtr<IDBRequest> put(IDBDatabaseBackend::PutMode, PassRefPtr<IDBAny> source, JSC::ExecState*, ScriptValue&, const ScriptValue& key, ExceptionCode&);
+    PassRefPtr<IDBRequest> put(IDBDatabaseBackend::PutMode, PassRefPtr<IDBAny> source, JSC::ExecState*, ScriptValue&, PassRefPtr<IDBKey>, ExceptionCode&);
     void markDeleted() { m_deleted = true; }
     void transactionFinished();
 
@@ -105,7 +105,7 @@ public:
     typedef Vector<RefPtr<IDBKey>> IndexKeys;
     typedef HashMap<String, IndexKeys> IndexKeyMap;
 
-    IDBDatabaseBackendInterface* backendDB() const;
+    IDBDatabaseBackend* backendDB() const;
 
 private:
     IDBObjectStore(const IDBObjectStoreMetadata&, IDBTransaction*);

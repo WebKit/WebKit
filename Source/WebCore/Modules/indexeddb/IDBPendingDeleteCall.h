@@ -26,14 +26,13 @@
 #ifndef IDBPendingDeleteCall_h
 #define IDBPendingDeleteCall_h
 
+#include "IDBCallbacks.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
-
-class IDBCallbacks;
 
 class IDBPendingDeleteCall {
 public:

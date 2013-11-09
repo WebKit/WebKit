@@ -116,7 +116,7 @@ void WebProcessIDBDatabaseBackend::get(int64_t transactionId, int64_t objectStor
     ASSERT_NOT_REACHED();
 }
 
-void WebProcessIDBDatabaseBackend::put(int64_t transactionId, int64_t objectStoreId, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&)
+void WebProcessIDBDatabaseBackend::put(int64_t transactionId, int64_t objectStoreId, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey>, IDBDatabaseBackend::PutMode, PassRefPtr<IDBCallbacks>, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&)
 {
     ASSERT_NOT_REACHED();
 }
@@ -131,7 +131,7 @@ void WebProcessIDBDatabaseBackend::setIndexesReady(int64_t transactionId, int64_
     ASSERT_NOT_REACHED();
 }
 
-void WebProcessIDBDatabaseBackend::openCursor(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, IndexedDB::CursorDirection, bool keyOnly, TaskType, PassRefPtr<IDBCallbacks>)
+void WebProcessIDBDatabaseBackend::openCursor(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, IndexedDB::CursorDirection, bool keyOnly, IDBDatabaseBackend::TaskType, PassRefPtr<IDBCallbacks>)
 {
     ASSERT_NOT_REACHED();
 }

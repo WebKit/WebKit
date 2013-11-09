@@ -28,7 +28,7 @@
 #define IDBIndexWriter_h
 
 #include "IDBBackingStoreInterface.h"
-#include "IDBDatabaseBackendInterface.h"
+#include "IDBDatabaseBackend.h"
 #include "IDBMetadata.h"
 #include <wtf/RefCounted.h>
 

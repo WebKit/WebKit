@@ -42,7 +42,7 @@
 #include "IDBAny.h"
 #include "IDBCallbacks.h"
 #include "IDBCursor.h"
-#include "IDBDatabaseBackendInterface.h"
+#include "IDBDatabaseBackend.h"
 #include "IDBDatabaseCallbacks.h"
 #include "ScriptWrappable.h"
 
@@ -55,7 +55,7 @@ typedef int ExceptionCode;
 class IDBRequest : public ScriptWrappable, public IDBCallbacks, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
     static PassRefPtr<IDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransaction*);
-    static PassRefPtr<IDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBDatabaseBackendInterface::TaskType, IDBTransaction*);
+    static PassRefPtr<IDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBDatabaseBackend::TaskType, IDBTransaction*);
     virtual ~IDBRequest();
 
     PassRefPtr<IDBAny> result(ExceptionCode&) const;
@@ -111,12 +111,12 @@ public:
     using RefCounted<IDBCallbacks>::ref;
     using RefCounted<IDBCallbacks>::deref;
 
-    IDBDatabaseBackendInterface::TaskType taskType() { return m_taskType; }
+    IDBDatabaseBackend::TaskType taskType() { return m_taskType; }
 
     DOMRequestState* requestState() { return &m_requestState; }
 
 protected:
-    IDBRequest(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBDatabaseBackendInterface::TaskType, IDBTransaction*);
+    IDBRequest(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBDatabaseBackend::TaskType, IDBTransaction*);
     void enqueueEvent(PassRefPtr<Event>);
     virtual bool shouldEnqueueEvent() const;
     void onSuccessInternal(PassRefPtr<SerializedScriptValue>);
@@ -143,7 +143,7 @@ private:
     void setResultCursor(PassRefPtr<IDBCursor>, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, const ScriptValue&);
 
     RefPtr<IDBAny> m_source;
-    const IDBDatabaseBackendInterface::TaskType m_taskType;
+    const IDBDatabaseBackend::TaskType m_taskType;
 
     bool m_hasPendingActivity;
     Vector<RefPtr<Event>> m_enqueuedEvents;

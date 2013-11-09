@@ -421,7 +421,7 @@ void IDBTransaction::enqueueEvent(PassRefPtr<Event> event)
     scriptExecutionContext()->eventQueue().enqueueEvent(event);
 }
 
-IDBDatabaseBackendInterface* IDBTransaction::backendDB() const
+IDBDatabaseBackend* IDBTransaction::backendDB() const
 {
     return db()->backend();
 }

@@ -18461,8 +18461,7 @@
     <ClInclude Include="..\Modules\indexeddb\IDBCursor.h" />
     <ClInclude Include="..\Modules\indexeddb\IDBCursorBackend.h" />
     <ClInclude Include="..\Modules\indexeddb\IDBDatabase.h" />
-    <ClInclude Include="..\Modules\indexeddb\IDBDatabaseBackendImpl.h" />
-    <ClInclude Include="..\Modules\indexeddb\IDBDatabaseBackendInterface.h" />
+    <ClInclude Include="..\Modules\indexeddb\IDBDatabaseBackend.h" />
     <ClInclude Include="..\Modules\indexeddb\IDBDatabaseError.h" />
     <ClInclude Include="..\Modules\indexeddb\IDBDatabaseException.h" />
     <ClInclude Include="..\Modules\indexeddb\IDBFactory.h" />

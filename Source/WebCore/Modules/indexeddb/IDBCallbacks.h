@@ -40,7 +40,7 @@
 namespace WebCore {
 class DOMStringList;
 class IDBCursorBackend;
-class IDBDatabaseBackendInterface;
+class IDBDatabaseBackend;
 
 struct IDBDatabaseMetadata;
 
@@ -72,8 +72,8 @@ public:
     // From IDBFactory.open()/deleteDatabase()
     virtual void onBlocked(uint64_t /* existingVersion */) { ASSERT_NOT_REACHED(); }
     // From IDBFactory.open()
-    virtual void onUpgradeNeeded(uint64_t /* oldVersion */, PassRefPtr<IDBDatabaseBackendInterface>, const IDBDatabaseMetadata&) { ASSERT_NOT_REACHED(); }
-    virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>, const IDBDatabaseMetadata&) { ASSERT_NOT_REACHED(); }
+    virtual void onUpgradeNeeded(uint64_t /* oldVersion */, PassRefPtr<IDBDatabaseBackend>, const IDBDatabaseMetadata&) { ASSERT_NOT_REACHED(); }
+    virtual void onSuccess(PassRefPtr<IDBDatabaseBackend>, const IDBDatabaseMetadata&) { ASSERT_NOT_REACHED(); }
 };
 
 } // namespace WebCore

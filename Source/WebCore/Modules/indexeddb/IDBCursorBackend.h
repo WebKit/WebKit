@@ -30,7 +30,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBBackingStoreInterface.h"
-#include "IDBDatabaseBackendImpl.h"
+#include "IDBDatabaseBackend.h"
 #include "IDBTransactionBackend.h"
 #include "SharedBuffer.h"
 #include <wtf/OwnPtr.h>
@@ -45,9 +45,9 @@ class IDBCursorBackend : public RefCounted<IDBCursorBackend> {
 public:
     static PassRefPtr<IDBCursorBackend> create(PassRefPtr<IDBBackingStoreCursorInterface> cursor, IndexedDB::CursorType cursorType, IDBTransactionBackend* transaction, int64_t objectStoreId)
     {
-        return adoptRef(new IDBCursorBackend(cursor, cursorType, IDBDatabaseBackendInterface::NormalTask, transaction, objectStoreId));
+        return adoptRef(new IDBCursorBackend(cursor, cursorType, IDBDatabaseBackend::NormalTask, transaction, objectStoreId));
     }
-    static PassRefPtr<IDBCursorBackend> create(PassRefPtr<IDBBackingStoreCursorInterface> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackend* transaction, int64_t objectStoreId)
+    static PassRefPtr<IDBCursorBackend> create(PassRefPtr<IDBBackingStoreCursorInterface> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, IDBTransactionBackend* transaction, int64_t objectStoreId)
     {
         return adoptRef(new IDBCursorBackend(cursor, cursorType, taskType, transaction, objectStoreId));
     }
@@ -67,15 +67,15 @@ public:
     void close();
 
 private:
-    IDBCursorBackend(PassRefPtr<IDBBackingStoreCursorInterface>, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, IDBTransactionBackend*, int64_t objectStoreId);
+    IDBCursorBackend(PassRefPtr<IDBBackingStoreCursorInterface>, IndexedDB::CursorType, IDBDatabaseBackend::TaskType, IDBTransactionBackend*, int64_t objectStoreId);
 
     class CursorIterationOperation;
     class CursorAdvanceOperation;
     class CursorPrefetchIterationOperation;
 
-    IDBDatabaseBackendInterface::TaskType m_taskType;
+    IDBDatabaseBackend::TaskType m_taskType;
     IndexedDB::CursorType m_cursorType;
-    const RefPtr<IDBDatabaseBackendInterface> m_database;
+    const RefPtr<IDBDatabaseBackend> m_database;
     RefPtr<IDBTransactionBackend> m_transaction;
     const int64_t m_objectStoreId;
 

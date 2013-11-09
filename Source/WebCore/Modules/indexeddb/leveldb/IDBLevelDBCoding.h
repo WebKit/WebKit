@@ -281,7 +281,7 @@ private:
 class ObjectStoreNamesKey {
 public:
     // FIXME: We never use this to look up object store ids, because a mapping
-    // is kept in the IDBDatabaseBackendImpl. Can the mapping become unreliable?
+    // is kept in the IDBDatabaseBackend. Can the mapping become unreliable?
     // Can we remove this?
     static const char* decode(const char* start, const char* limit, ObjectStoreNamesKey* result);
     static Vector<char> encode(int64_t databaseId, const String& objectStoreName);

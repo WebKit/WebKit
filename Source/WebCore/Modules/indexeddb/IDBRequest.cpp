@@ -49,7 +49,7 @@ namespace WebCore {
 
 PassRefPtr<IDBRequest> IDBRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBTransaction* transaction)
 {
-    RefPtr<IDBRequest> request(adoptRef(new IDBRequest(context, source, IDBDatabaseBackendInterface::NormalTask, transaction)));
+    RefPtr<IDBRequest> request(adoptRef(new IDBRequest(context, source, IDBDatabaseBackend::NormalTask, transaction)));
     request->suspendIfNeeded();
     // Requests associated with IDBFactory (open/deleteDatabase/getDatabaseNames) are not associated with transactions.
     if (transaction)
@@ -57,7 +57,7 @@ PassRefPtr<IDBRequest> IDBRequest::create(ScriptExecutionContext* context, PassR
     return request.release();
 }
 
-PassRefPtr<IDBRequest> IDBRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBDatabaseBackendInterface::TaskType taskType, IDBTransaction* transaction)
+PassRefPtr<IDBRequest> IDBRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBDatabaseBackend::TaskType taskType, IDBTransaction* transaction)
 {
     RefPtr<IDBRequest> request(adoptRef(new IDBRequest(context, source, taskType, transaction)));
     request->suspendIfNeeded();
@@ -67,7 +67,7 @@ PassRefPtr<IDBRequest> IDBRequest::create(ScriptExecutionContext* context, PassR
     return request.release();
 }
 
-IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBDatabaseBackendInterface::TaskType taskType, IDBTransaction* transaction)
+IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBDatabaseBackend::TaskType taskType, IDBTransaction* transaction)
     : ActiveDOMObject(context)
     , m_result(0)
     , m_errorCode(0)

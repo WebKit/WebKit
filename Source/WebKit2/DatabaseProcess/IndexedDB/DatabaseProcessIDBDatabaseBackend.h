@@ -27,7 +27,7 @@
 #define DatabaseProcessIDBDatabaseBackend_h
 
 #include "MessageSender.h"
-#include <WebCore/IDBDatabaseBackendInterface.h>
+#include <WebCore/IDBDatabaseBackend.h>
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
@@ -35,7 +35,7 @@ namespace WebKit {
 
 class DatabaseToWebProcessConnection;
 
-// FIXME: When adding actual IDB logic, this class will inherit from WebCore::IDBDatabaseBackendInterface
+// FIXME: When adding actual IDB logic, this class will inherit from WebCore::IDBDatabaseBackend
 // instead of inheriting from RefCounted directly.
 // Doing so will also add a large number of interface methods to implement which is why I'm holding off for now.
 

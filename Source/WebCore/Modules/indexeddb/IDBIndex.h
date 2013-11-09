@@ -83,7 +83,7 @@ public:
 
     void markDeleted() { m_deleted = true; }
 
-    IDBDatabaseBackendInterface* backendDB() const;
+    IDBDatabaseBackend* backendDB() const;
 
 private:
     IDBIndex(const IDBIndexMetadata&, IDBObjectStore*, IDBTransaction*);

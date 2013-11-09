@@ -51,7 +51,7 @@ typedef int ExceptionCode;
 
 class IDBDatabase FINAL : public RefCounted<IDBDatabase>, public ScriptWrappable, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
-    static PassRefPtr<IDBDatabase> create(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendInterface>, PassRefPtr<IDBDatabaseCallbacks>);
+    static PassRefPtr<IDBDatabase> create(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackend>, PassRefPtr<IDBDatabaseCallbacks>);
     ~IDBDatabase();
 
     void setMetadata(const IDBDatabaseMetadata& metadata) { m_metadata = metadata; }
@@ -101,7 +101,7 @@ public:
         return findObjectStoreId(name) != IDBObjectStoreMetadata::InvalidId;
     }
 
-    IDBDatabaseBackendInterface* backend() const { return m_backend.get(); }
+    IDBDatabaseBackend* backend() const { return m_backend.get(); }
 
     static int64_t nextTransactionId();
 
@@ -109,7 +109,7 @@ public:
     using RefCounted<IDBDatabase>::deref;
 
 private:
-    IDBDatabase(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendInterface>, PassRefPtr<IDBDatabaseCallbacks>);
+    IDBDatabase(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackend>, PassRefPtr<IDBDatabaseCallbacks>);
 
     // ActiveDOMObject
     virtual void stop() OVERRIDE;
@@ -121,7 +121,7 @@ private:
     void closeConnection();
 
     IDBDatabaseMetadata m_metadata;
-    RefPtr<IDBDatabaseBackendInterface> m_backend;
+    RefPtr<IDBDatabaseBackend> m_backend;
     RefPtr<IDBTransaction> m_versionChangeTransaction;
     typedef HashMap<int64_t, IDBTransaction*> TransactionMap;
     TransactionMap m_transactions;

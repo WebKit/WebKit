@@ -29,8 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBBackingStoreInterface.h"
-#include "IDBDatabaseBackendImpl.h"
-#include "IDBDatabaseBackendInterface.h"
+#include "IDBDatabaseBackend.h"
 #include "IDBDatabaseError.h"
 #include "IDBOperation.h"
 #include "IDBTransactionBackend.h"
@@ -41,11 +40,12 @@
 
 namespace WebCore {
 
+class IDBCursorBackend;
 class IDBDatabaseCallbacks;
 
 class IDBTransactionBackend : public RefCounted<IDBTransactionBackend> {
 public:
-    static PassRefPtr<IDBTransactionBackend> create(IDBDatabaseBackendImpl*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
+    static PassRefPtr<IDBTransactionBackend> create(IDBDatabaseBackend*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
     ~IDBTransactionBackend();
 
     void commit();
@@ -56,8 +56,8 @@ public:
     IndexedDB::TransactionMode mode() const  { return m_mode; }
     const HashSet<int64_t>& scope() const  { return m_objectStoreIds; }
 
-    void scheduleTask(PassOwnPtr<IDBOperation> task, PassOwnPtr<IDBOperation> abortTask = nullptr) { scheduleTask(IDBDatabaseBackendInterface::NormalTask, task, abortTask); }
-    void scheduleTask(IDBDatabaseBackendInterface::TaskType, PassOwnPtr<IDBOperation>, PassOwnPtr<IDBOperation> abortTask = nullptr);
+    void scheduleTask(PassOwnPtr<IDBOperation> task, PassOwnPtr<IDBOperation> abortTask = nullptr) { scheduleTask(IDBDatabaseBackend::NormalTask, task, abortTask); }
+    void scheduleTask(IDBDatabaseBackend::TaskType, PassOwnPtr<IDBOperation>, PassOwnPtr<IDBOperation> abortTask = nullptr);
 
     void registerOpenCursor(IDBCursorBackend*);
     void unregisterOpenCursor(IDBCursorBackend*);
@@ -66,7 +66,7 @@ public:
     void didCompletePreemptiveEvent()  { m_pendingPreemptiveEvents--; ASSERT(m_pendingPreemptiveEvents >= 0); }
     IDBBackingStoreTransactionInterface& backingStoreTransaction() { return *m_backingStoreTransaction; }
 
-    IDBDatabaseBackendInterface& database() const  { return *m_database; }
+    IDBDatabaseBackend& database() const  { return *m_database; }
 
     void scheduleCreateObjectStoreOperation(const IDBObjectStoreMetadata&);
     void scheduleDeleteObjectStoreOperation(const IDBObjectStoreMetadata&);
@@ -74,19 +74,19 @@ public:
     void scheduleCreateIndexOperation(int64_t objectStoreId, const IDBIndexMetadata&);
     void scheduleDeleteIndexOperation(int64_t objectStoreId, const IDBIndexMetadata&);
     void scheduleGetOperation(const IDBDatabaseMetadata&, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, IndexedDB::CursorType, PassRefPtr<IDBCallbacks>);
-    void schedulePutOperation(const IDBObjectStoreMetadata&, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey>, IDBDatabaseBackendInterface::PutMode, PassRefPtr<IDBCallbacks>, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&);
+    void schedulePutOperation(const IDBObjectStoreMetadata&, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey>, IDBDatabaseBackend::PutMode, PassRefPtr<IDBCallbacks>, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&);
     void scheduleSetIndexesReadyOperation(size_t indexCount);
-    void scheduleOpenCursorOperation(int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, IndexedDB::CursorDirection, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, PassRefPtr<IDBCallbacks>);
+    void scheduleOpenCursorOperation(int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, IndexedDB::CursorDirection, IndexedDB::CursorType, IDBDatabaseBackend::TaskType, PassRefPtr<IDBCallbacks>);
     void scheduleCountOperation(int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>);
     void scheduleDeleteRangeOperation(int64_t objectStoreId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>);
     void scheduleClearOperation(int64_t objectStoreId, PassRefPtr<IDBCallbacks>);
 
-    PassRefPtr<IDBCursorBackend> createCursorBackend(IDBBackingStoreCursorInterface&, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, int64_t objectStoreId);
+    PassRefPtr<IDBCursorBackend> createCursorBackend(IDBBackingStoreCursorInterface&, IndexedDB::CursorType, IDBDatabaseBackend::TaskType, int64_t objectStoreId);
 
     int64_t id() const { return m_id; }
 
 private:
-    IDBTransactionBackend(IDBDatabaseBackendImpl*, int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
+    IDBTransactionBackend(IDBDatabaseBackend*, int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
 
     enum State {
         Unused, // Created, but no tasks yet.
@@ -109,7 +109,7 @@ private:
     State m_state;
     bool m_commitPending;
     RefPtr<IDBDatabaseCallbacks> m_callbacks;
-    RefPtr<IDBDatabaseBackendImpl> m_database;
+    RefPtr<IDBDatabaseBackend> m_database;
 
     typedef Deque<OwnPtr<IDBOperation>> TaskQueue;
     TaskQueue m_taskQueue;

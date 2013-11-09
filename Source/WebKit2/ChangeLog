@@ -1,3 +1,26 @@
+2013-11-08  Brady Eidson  <beidson@apple.com>
+
+        Merge IDBDatabaseBackendInterface and IDBDatabaseBackendImpl
+        https://bugs.webkit.org/show_bug.cgi?id=124088
+
+        Reviewed by Tim Horton.
+
+        This abstraction is no longer meaningful in its current form in WebCore.
+        The current groundwork for the WK2 DatabaseProcess relied on this abstraction,
+        but that will be reworked in a future patch.
+
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBDatabaseBackend.h:
+
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.cpp:
+        (WebKit::WebIDBFactoryBackend::maybeCreateTransactionBackend):
+        (WebKit::WebIDBFactoryBackend::createCursorBackend):
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.h:
+
+        * WebProcess/Databases/IndexedDB/WebProcessIDBDatabaseBackend.cpp:
+        (WebKit::WebProcessIDBDatabaseBackend::put):
+        (WebKit::WebProcessIDBDatabaseBackend::openCursor):
+        * WebProcess/Databases/IndexedDB/WebProcessIDBDatabaseBackend.h:
+
 2013-11-08  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Unreviewed build fix after r158984.

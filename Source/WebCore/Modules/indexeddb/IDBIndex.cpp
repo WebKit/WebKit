@@ -71,7 +71,7 @@ PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, Pas
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     request->setCursorDetails(IndexedDB::CursorKeyAndValue, direction);
-    backendDB()->openCursor(m_transaction->id(), m_objectStore->id(), m_metadata.id, keyRange, direction, false, IDBDatabaseBackendInterface::NormalTask, request);
+    backendDB()->openCursor(m_transaction->id(), m_objectStore->id(), m_metadata.id, keyRange, direction, false, IDBDatabaseBackend::NormalTask, request);
     return request;
 }
 
@@ -126,7 +126,7 @@ PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, 
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     request->setCursorDetails(IndexedDB::CursorKeyOnly, direction);
-    backendDB()->openCursor(m_transaction->id(), m_objectStore->id(), m_metadata.id, keyRange, direction, true, IDBDatabaseBackendInterface::NormalTask, request);
+    backendDB()->openCursor(m_transaction->id(), m_objectStore->id(), m_metadata.id, keyRange, direction, true, IDBDatabaseBackend::NormalTask, request);
     return request;
 }
 
@@ -200,7 +200,7 @@ PassRefPtr<IDBRequest> IDBIndex::getKey(ScriptExecutionContext* context, PassRef
     return request;
 }
 
-IDBDatabaseBackendInterface* IDBIndex::backendDB() const
+IDBDatabaseBackend* IDBIndex::backendDB() const
 {
     return m_transaction->backendDB();
 }

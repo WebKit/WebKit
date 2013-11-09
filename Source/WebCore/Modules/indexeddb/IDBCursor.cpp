@@ -149,7 +149,7 @@ PassRefPtr<IDBRequest> IDBCursor::update(JSC::ExecState* state, ScriptValue& val
         }
     }
 
-    return objectStore->put(IDBDatabaseBackendInterface::CursorUpdate, IDBAny::create(this), state, value, m_currentPrimaryKey, ec);
+    return objectStore->put(IDBDatabaseBackend::CursorUpdate, IDBAny::create(this), state, value, m_currentPrimaryKey, ec);
 }
 
 void IDBCursor::advance(unsigned long count, ExceptionCode& ec)

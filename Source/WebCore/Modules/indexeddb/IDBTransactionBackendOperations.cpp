@@ -180,7 +180,7 @@ void PutOperation::perform()
     bool keyWasGenerated = false;
 
     RefPtr<IDBKey> key;
-    if (m_putMode != IDBDatabaseBackendInterface::CursorUpdate && m_objectStore.autoIncrement && !m_key) {
+    if (m_putMode != IDBDatabaseBackend::CursorUpdate && m_objectStore.autoIncrement && !m_key) {
         RefPtr<IDBKey> autoIncKey = m_backingStore->generateKey(*m_transaction, m_databaseId, m_objectStore.id);
         keyWasGenerated = true;
         if (!autoIncKey->isValid()) {
@@ -195,7 +195,7 @@ void PutOperation::perform()
     ASSERT(key->isValid());
 
     RefPtr<IDBRecordIdentifier> recordIdentifier;
-    if (m_putMode == IDBDatabaseBackendInterface::AddOnly) {
+    if (m_putMode == IDBDatabaseBackend::AddOnly) {
         bool ok = m_backingStore->keyExistsInObjectStore(m_transaction->backingStoreTransaction(), m_databaseId, m_objectStore.id, *key, recordIdentifier);
         if (!ok) {
             m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error checking key existence."));
@@ -232,7 +232,7 @@ void PutOperation::perform()
         indexWriter->writeIndexKeys(recordIdentifier.get(), *m_backingStore, m_transaction->backingStoreTransaction(), m_databaseId, m_objectStore.id);
     }
 
-    if (m_objectStore.autoIncrement && m_putMode != IDBDatabaseBackendInterface::CursorUpdate && key->type() == IDBKey::NumberType) {
+    if (m_objectStore.autoIncrement && m_putMode != IDBDatabaseBackend::CursorUpdate && key->type() == IDBKey::NumberType) {
         bool ok = m_backingStore->updateKeyGenerator(*m_transaction, m_databaseId, m_objectStore.id, *key, !keyWasGenerated);
         if (!ok) {
             m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error updating key generator."));
@@ -258,7 +258,7 @@ void OpenCursorOperation::perform()
     // until the indexing is complete. This can't happen any earlier
     // because we don't want to switch to early mode in case multiple
     // indexes are being created in a row, with put()'s in between.
-    if (m_taskType == IDBDatabaseBackendInterface::PreemptiveTask)
+    if (m_taskType == IDBDatabaseBackend::PreemptiveTask)
         m_transaction->addPreemptiveEvent();
 
     RefPtr<IDBBackingStoreCursorInterface> backingStoreCursor;
@@ -266,7 +266,7 @@ void OpenCursorOperation::perform()
         ASSERT(m_cursorType != IndexedDB::CursorKeyOnly);
         backingStoreCursor = m_backingStore->openObjectStoreCursor(m_transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId, m_keyRange.get(), m_direction);
     } else {
-        ASSERT(m_taskType == IDBDatabaseBackendInterface::NormalTask);
+        ASSERT(m_taskType == IDBDatabaseBackend::NormalTask);
         if (m_cursorType == IndexedDB::CursorKeyOnly)
             backingStoreCursor = m_backingStore->openIndexKeyCursor(m_transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId, m_indexId, m_keyRange.get(), m_direction);
         else
@@ -278,7 +278,7 @@ void OpenCursorOperation::perform()
         return;
     }
 
-    IDBDatabaseBackendInterface::TaskType taskType(static_cast<IDBDatabaseBackendInterface::TaskType>(m_taskType));
+    IDBDatabaseBackend::TaskType taskType(static_cast<IDBDatabaseBackend::TaskType>(m_taskType));
 
     RefPtr<IDBCursorBackend> cursor = m_transaction->createCursorBackend(*backingStoreCursor, m_cursorType, taskType, m_objectStoreId);
     m_callbacks->onSuccess(cursor, cursor->key(), cursor->primaryKey(), cursor->value());
@@ -342,10 +342,10 @@ void DeleteObjectStoreOperation::perform()
     }
 }
 
-void IDBDatabaseBackendImpl::VersionChangeOperation::perform()
+void IDBDatabaseBackend::VersionChangeOperation::perform()
 {
     LOG(StorageAPI, "VersionChangeOperation");
-    IDBDatabaseBackendInterface& database = m_transaction->database();
+    IDBDatabaseBackend& database = m_transaction->database();
     int64_t databaseId = database.id();
     uint64_t oldVersion = database.metadata().version;
 
@@ -375,7 +375,7 @@ void DeleteObjectStoreAbortOperation::perform()
     m_transaction->database().addObjectStore(m_objectStoreMetadata, IDBObjectStoreMetadata::InvalidId);
 }
 
-void IDBDatabaseBackendImpl::VersionChangeAbortOperation::perform()
+void IDBDatabaseBackend::VersionChangeAbortOperation::perform()
 {
     LOG(StorageAPI, "VersionChangeAbortOperation");
     m_transaction->database().setCurrentVersion(m_previousIntVersion);

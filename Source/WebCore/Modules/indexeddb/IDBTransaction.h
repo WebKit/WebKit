@@ -44,7 +44,7 @@ namespace WebCore {
 
 class IDBCursor;
 class IDBDatabase;
-class IDBDatabaseBackendInterface;
+class IDBDatabaseBackend;
 class IDBDatabaseError;
 class IDBObjectStore;
 class IDBOpenDBRequest;
@@ -65,7 +65,7 @@ public:
     static IndexedDB::TransactionMode stringToMode(const String&, ExceptionCode&);
     static const AtomicString& modeToString(IndexedDB::TransactionMode);
 
-    IDBDatabaseBackendInterface* backendDB() const;
+    IDBDatabaseBackend* backendDB() const;
 
     int64_t id() const { return m_id; }
     bool isActive() const { return m_state == Active; }

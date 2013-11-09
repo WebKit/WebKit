@@ -23,12 +23,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBDatabaseBackendImpl_h
-#define IDBDatabaseBackendImpl_h
+#ifndef IDBDatabaseBackend_h
+#define IDBDatabaseBackend_h
 
-#include "IDBDatabaseBackendInterface.h"
+#include "IDBDatabaseBackend.h"
+#include "IDBDatabaseCallbacks.h"
 #include "IDBMetadata.h"
 #include "IDBPendingDeleteCall.h"
+#include "IDBPendingOpenCall.h"
 #include <stdint.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
@@ -41,38 +43,49 @@ namespace WebCore {
 class IDBBackingStoreInterface;
 class IDBDatabase;
 class IDBFactoryBackendInterface;
+class IDBKey;
+class IDBKeyPath;
+class IDBKeyRange;
 class IDBTransactionBackend;
 class IDBTransactionCoordinator;
+class SharedBuffer;
 
-class IDBDatabaseBackendImpl FINAL : public IDBDatabaseBackendInterface {
+struct IDBDatabaseMetadata;
+struct IDBIndexMetadata;
+struct IDBObjectStoreMetadata;
+
+typedef Vector<RefPtr<IDBKey>> IndexKeys;
+typedef int ExceptionCode;
+
+class IDBDatabaseBackend : public RefCounted<IDBDatabaseBackend> {
 public:
-    static PassRefPtr<IDBDatabaseBackendImpl> create(const String& name, IDBBackingStoreInterface*, IDBFactoryBackendInterface*, const String& uniqueIdentifier);
-    virtual ~IDBDatabaseBackendImpl();
+    static PassRefPtr<IDBDatabaseBackend> create(const String& name, IDBBackingStoreInterface*, IDBFactoryBackendInterface*, const String& uniqueIdentifier);
+    ~IDBDatabaseBackend();
 
-    virtual IDBBackingStoreInterface* backingStore() const OVERRIDE;
+    IDBBackingStoreInterface* backingStore() const;
 
     static const int64_t InvalidId = 0;
-    virtual int64_t id() const OVERRIDE { return m_metadata.id; }
-    virtual void addObjectStore(const IDBObjectStoreMetadata&, int64_t newMaxObjectStoreId) OVERRIDE;
-    virtual void removeObjectStore(int64_t objectStoreId) OVERRIDE;
-    virtual void addIndex(int64_t objectStoreId, const IDBIndexMetadata&, int64_t newMaxIndexId) OVERRIDE;
-    virtual void removeIndex(int64_t objectStoreId, int64_t indexId) OVERRIDE;
+    int64_t id() const { return m_metadata.id; }
+    void addObjectStore(const IDBObjectStoreMetadata&, int64_t newMaxObjectStoreId);
+    void removeObjectStore(int64_t objectStoreId);
+    void addIndex(int64_t objectStoreId, const IDBIndexMetadata&, int64_t newMaxIndexId);
+    void removeIndex(int64_t objectStoreId, int64_t indexId);
 
     void openConnection(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, uint64_t version);
     void deleteDatabase(PassRefPtr<IDBCallbacks>);
 
-    // IDBDatabaseBackendInterface
-    virtual void createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement);
-    virtual void deleteObjectStore(int64_t transactionId, int64_t objectStoreId);
-    virtual void createTransaction(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, unsigned short mode);
-    virtual void close(PassRefPtr<IDBDatabaseCallbacks>);
+    // IDBDatabaseBackend
+    void createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement);
+    void deleteObjectStore(int64_t transactionId, int64_t objectStoreId);
+    void createTransaction(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, unsigned short mode);
+    void close(PassRefPtr<IDBDatabaseCallbacks>);
 
-    virtual void commit(int64_t transactionId);
-    virtual void abort(int64_t transactionId);
-    virtual void abort(int64_t transactionId, PassRefPtr<IDBDatabaseError>);
+    void commit(int64_t transactionId);
+    void abort(int64_t transactionId);
+    void abort(int64_t transactionId, PassRefPtr<IDBDatabaseError>);
 
-    virtual void createIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath&, bool unique, bool multiEntry);
-    virtual void deleteIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId);
+    void createIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath&, bool unique, bool multiEntry);
+    void deleteIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId);
 
     IDBTransactionCoordinator* transactionCoordinator() const { return m_transactionCoordinator.get(); }
     void transactionStarted(IDBTransactionBackend*);
@@ -80,30 +93,43 @@ public:
     void transactionFinishedAndCompleteFired(IDBTransactionBackend*);
     void transactionFinishedAndAbortFired(IDBTransactionBackend*);
 
-    virtual void get(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, bool keyOnly, PassRefPtr<IDBCallbacks>) OVERRIDE;
-    virtual void put(int64_t transactionId, int64_t objectStoreId, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&) OVERRIDE;
-    virtual void setIndexKeys(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKey> prpPrimaryKey, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&) OVERRIDE;
-    virtual void setIndexesReady(int64_t transactionId, int64_t objectStoreId, const Vector<int64_t>& indexIds) OVERRIDE;
-    virtual void openCursor(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, IndexedDB::CursorDirection, bool keyOnly, TaskType, PassRefPtr<IDBCallbacks>) OVERRIDE;
-    virtual void count(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>) OVERRIDE;
-    virtual void deleteRange(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>) OVERRIDE;
-    virtual void clear(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBCallbacks>) OVERRIDE;
+    enum TaskType {
+        NormalTask = 0,
+        PreemptiveTask
+    };
 
-    virtual const IDBDatabaseMetadata& metadata() const OVERRIDE { return m_metadata; }
-    virtual void setCurrentVersion(uint64_t version) OVERRIDE { m_metadata.version = version; }
+    enum PutMode {
+        AddOrUpdate,
+        AddOnly,
+        CursorUpdate
+    };
 
-    virtual bool isIDBDatabaseBackendImpl() OVERRIDE { return true; }
+    static const int64_t MinimumIndexId = 30;
 
-    virtual bool hasPendingSecondHalfOpen() OVERRIDE { return m_pendingSecondHalfOpen; }
-    virtual void setPendingSecondHalfOpen(PassOwnPtr<IDBPendingOpenCall> pendingOpenCall) OVERRIDE { m_pendingSecondHalfOpen = pendingOpenCall; }
+    void get(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, bool keyOnly, PassRefPtr<IDBCallbacks>);
+    void put(int64_t transactionId, int64_t objectStoreId, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&);
+    void setIndexKeys(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKey> prpPrimaryKey, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&);
+    void setIndexesReady(int64_t transactionId, int64_t objectStoreId, const Vector<int64_t>& indexIds);
+    void openCursor(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, IndexedDB::CursorDirection, bool keyOnly, TaskType, PassRefPtr<IDBCallbacks>);
+    void count(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>);
+    void deleteRange(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>);
+    void clear(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBCallbacks>);
 
-    virtual IDBFactoryBackendInterface& factoryBackend() OVERRIDE { return *m_factory; }
+    const IDBDatabaseMetadata& metadata() const { return m_metadata; }
+    void setCurrentVersion(uint64_t version) { m_metadata.version = version; }
+
+    bool isIDBDatabaseBackend() { return true; }
+
+    bool hasPendingSecondHalfOpen() { return m_pendingSecondHalfOpen; }
+    void setPendingSecondHalfOpen(PassOwnPtr<IDBPendingOpenCall> pendingOpenCall) { m_pendingSecondHalfOpen = pendingOpenCall; }
+
+    IDBFactoryBackendInterface& factoryBackend() { return *m_factory; }
 
     class VersionChangeOperation;
     class VersionChangeAbortOperation;
 
 private:
-    IDBDatabaseBackendImpl(const String& name, IDBBackingStoreInterface*, IDBFactoryBackendInterface*, const String& uniqueIdentifier);
+    IDBDatabaseBackend(const String& name, IDBBackingStoreInterface*, IDBFactoryBackendInterface*, const String& uniqueIdentifier);
 
     void openConnectionInternal(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, uint64_t version);
 
@@ -147,4 +173,4 @@ private:
 
 #endif // ENABLE(INDEXED_DATABASE)
 
-#endif // IDBDatabaseBackendImpl_h
+#endif // IDBDatabaseBackend_h

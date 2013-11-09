@@ -28,7 +28,7 @@
 #define WebProcessIDBDatabaseBackend_h
 
 #include "MessageSender.h"
-#include <WebCore/IDBDatabaseBackendInterface.h>
+#include <WebCore/IDBDatabaseBackend.h>
 
 #if ENABLE(INDEXED_DATABASE)
 #if ENABLE(DATABASE_PROCESS)
@@ -41,50 +41,50 @@ namespace WebKit {
 
 class WebIDBFactoryBackend;
 
-class WebProcessIDBDatabaseBackend FINAL : public WebCore::IDBDatabaseBackendInterface, public CoreIPC::MessageSender {
+class WebProcessIDBDatabaseBackend : public RefCounted<WebProcessIDBDatabaseBackend>, public CoreIPC::MessageSender {
 public:
     static PassRefPtr<WebProcessIDBDatabaseBackend> create(WebIDBFactoryBackend& factory, const String& name) { return adoptRef(new WebProcessIDBDatabaseBackend(factory, name)); }
 
     virtual ~WebProcessIDBDatabaseBackend();
 
-    virtual WebCore::IDBBackingStoreInterface* backingStore() const OVERRIDE;
+    virtual WebCore::IDBBackingStoreInterface* backingStore() const;
 
-    virtual void createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const WebCore::IDBKeyPath&, bool autoIncrement) OVERRIDE;
-    virtual void deleteObjectStore(int64_t transactionId, int64_t objectStoreId) OVERRIDE;
-    virtual void createTransaction(int64_t transactionId, PassRefPtr<WebCore::IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, unsigned short mode) OVERRIDE;
-    virtual void close(PassRefPtr<WebCore::IDBDatabaseCallbacks>) OVERRIDE;
+    virtual void createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const WebCore::IDBKeyPath&, bool autoIncrement);
+    virtual void deleteObjectStore(int64_t transactionId, int64_t objectStoreId);
+    virtual void createTransaction(int64_t transactionId, PassRefPtr<WebCore::IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, unsigned short mode);
+    virtual void close(PassRefPtr<WebCore::IDBDatabaseCallbacks>);
 
     // Transaction-specific operations.
-    virtual void commit(int64_t transactionId) OVERRIDE;
-    virtual void abort(int64_t transactionId) OVERRIDE;
-    virtual void abort(int64_t transactionId, PassRefPtr<WebCore::IDBDatabaseError>) OVERRIDE;
+    virtual void commit(int64_t transactionId);
+    virtual void abort(int64_t transactionId);
+    virtual void abort(int64_t transactionId, PassRefPtr<WebCore::IDBDatabaseError>);
 
-    virtual void createIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId, const String& name, const WebCore::IDBKeyPath&, bool unique, bool multiEntry) OVERRIDE;
-    virtual void deleteIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId) OVERRIDE;
+    virtual void createIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId, const String& name, const WebCore::IDBKeyPath&, bool unique, bool multiEntry);
+    virtual void deleteIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId);
 
-    virtual void get(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<WebCore::IDBKeyRange>, bool keyOnly, PassRefPtr<WebCore::IDBCallbacks>) OVERRIDE;
+    virtual void get(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<WebCore::IDBKeyRange>, bool keyOnly, PassRefPtr<WebCore::IDBCallbacks>);
     // Note that 'value' may be consumed/adopted by this call.
-    virtual void put(int64_t transactionId, int64_t objectStoreId, PassRefPtr<WebCore::SharedBuffer> value, PassRefPtr<WebCore::IDBKey>, PutMode, PassRefPtr<WebCore::IDBCallbacks>, const Vector<int64_t>& indexIds, const Vector<WebCore::IndexKeys>&) OVERRIDE;
-    virtual void setIndexKeys(int64_t transactionId, int64_t objectStoreId, PassRefPtr<WebCore::IDBKey> prpPrimaryKey, const Vector<int64_t>& indexIds, const Vector<WebCore::IndexKeys>&) OVERRIDE;
-    virtual void setIndexesReady(int64_t transactionId, int64_t objectStoreId, const Vector<int64_t>& indexIds) OVERRIDE;
-    virtual void openCursor(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<WebCore::IDBKeyRange>, WebCore::IndexedDB::CursorDirection, bool keyOnly, TaskType, PassRefPtr<WebCore::IDBCallbacks>) OVERRIDE;
-    virtual void count(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<WebCore::IDBKeyRange>, PassRefPtr<WebCore::IDBCallbacks>) OVERRIDE;
-    virtual void deleteRange(int64_t transactionId, int64_t objectStoreId, PassRefPtr<WebCore::IDBKeyRange>, PassRefPtr<WebCore::IDBCallbacks>) OVERRIDE;
-    virtual void clear(int64_t transactionId, int64_t objectStoreId, PassRefPtr<WebCore::IDBCallbacks>) OVERRIDE;
+    virtual void put(int64_t transactionId, int64_t objectStoreId, PassRefPtr<WebCore::SharedBuffer> value, PassRefPtr<WebCore::IDBKey>, WebCore::IDBDatabaseBackend::PutMode, PassRefPtr<WebCore::IDBCallbacks>, const Vector<int64_t>& indexIds, const Vector<WebCore::IndexKeys>&);
+    virtual void setIndexKeys(int64_t transactionId, int64_t objectStoreId, PassRefPtr<WebCore::IDBKey> prpPrimaryKey, const Vector<int64_t>& indexIds, const Vector<WebCore::IndexKeys>&);
+    virtual void setIndexesReady(int64_t transactionId, int64_t objectStoreId, const Vector<int64_t>& indexIds);
+    virtual void openCursor(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<WebCore::IDBKeyRange>, WebCore::IndexedDB::CursorDirection, bool keyOnly, WebCore::IDBDatabaseBackend::TaskType, PassRefPtr<WebCore::IDBCallbacks>);
+    virtual void count(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<WebCore::IDBKeyRange>, PassRefPtr<WebCore::IDBCallbacks>);
+    virtual void deleteRange(int64_t transactionId, int64_t objectStoreId, PassRefPtr<WebCore::IDBKeyRange>, PassRefPtr<WebCore::IDBCallbacks>);
+    virtual void clear(int64_t transactionId, int64_t objectStoreId, PassRefPtr<WebCore::IDBCallbacks>);
 
-    virtual int64_t id() const OVERRIDE;
-    virtual void addObjectStore(const WebCore::IDBObjectStoreMetadata&, int64_t newMaxObjectStoreId) OVERRIDE;
-    virtual void removeObjectStore(int64_t objectStoreId) OVERRIDE;
-    virtual void addIndex(int64_t objectStoreId, const WebCore::IDBIndexMetadata&, int64_t newMaxIndexId) OVERRIDE;
-    virtual void removeIndex(int64_t objectStoreId, int64_t indexId) OVERRIDE;
+    virtual int64_t id() const;
+    virtual void addObjectStore(const WebCore::IDBObjectStoreMetadata&, int64_t newMaxObjectStoreId);
+    virtual void removeObjectStore(int64_t objectStoreId);
+    virtual void addIndex(int64_t objectStoreId, const WebCore::IDBIndexMetadata&, int64_t newMaxIndexId);
+    virtual void removeIndex(int64_t objectStoreId, int64_t indexId);
 
-    virtual const WebCore::IDBDatabaseMetadata& metadata() const OVERRIDE;
-    virtual void setCurrentVersion(uint64_t) OVERRIDE;
+    virtual const WebCore::IDBDatabaseMetadata& metadata() const;
+    virtual void setCurrentVersion(uint64_t);
 
-    virtual bool hasPendingSecondHalfOpen() OVERRIDE;
-    virtual void setPendingSecondHalfOpen(PassOwnPtr<WebCore::IDBPendingOpenCall>) OVERRIDE;
+    virtual bool hasPendingSecondHalfOpen();
+    virtual void setPendingSecondHalfOpen(PassOwnPtr<WebCore::IDBPendingOpenCall>);
 
-    virtual WebCore::IDBFactoryBackendInterface& factoryBackend() OVERRIDE;
+    virtual WebCore::IDBFactoryBackendInterface& factoryBackend();
 
     void openConnection(PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::IDBDatabaseCallbacks>, int64_t transactionId, uint64_t version);
 
@@ -97,7 +97,7 @@ private:
     RefPtr<WebCore::SecurityOrigin> m_securityOrigin;
 
     // CoreIPC::MessageSender
-    virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
+    virtual CoreIPC::Connection* messageSenderConnection();
     virtual uint64_t messageSenderDestinationID() OVERRIDE { return m_backendIdentifier; }
 
     uint64_t m_backendIdentifier;
