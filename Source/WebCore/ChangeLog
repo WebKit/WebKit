@@ -1,3 +1,9 @@
+2013-11-08  Andreas Kling  <akling@apple.com>
+
+        Reindent JSDOMBinding.h (finally.)
+
+        Rubber-stamped by Sam Weinig.
+
 2013-11-08  Sam Weinig  <sam@webkit.org>
 
         Change collectStyleForPresentationAttribute and related functions to take a MutableStylePropertySet by reference
