@@ -1,3 +1,17 @@
+2013-11-09  Andreas Kling  <akling@apple.com>
+
+        Move BindingSecurity stuff under JSDOMBinding umbrella.
+        <https://webkit.org/b/124099>
+
+        We are hitting shouldAllowAccessToDOMWindow() pretty hard on the
+        demo here: <http://www.jasondavies.com/maps/rotate/>
+
+        Putting it together with the rest of the JSDOMBinding code takes
+        CPU time spent in there from 8.7% to 6.5%. The abstraction was
+        only used to support alternate JS engines in the past.
+
+        Reviewed by Antti Koivisto.
+
 2013-11-08  Brady Eidson  <beidson@apple.com>
 
         Merge IDBDatabaseBackendInterface and IDBDatabaseBackendImpl

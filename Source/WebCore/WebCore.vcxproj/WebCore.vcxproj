@@ -15506,7 +15506,6 @@
     <ClCompile Include="..\html\track\WebVTTParser.cpp" />
     <ClCompile Include="..\html\track\WebVTTTokenizer.cpp" />
     <ClCompile Include="..\bindings\generic\ActiveDOMCallback.cpp" />
-    <ClCompile Include="..\bindings\generic\BindingSecurity.cpp" />
     <ClCompile Include="..\bindings\generic\RuntimeEnabledFeatures.cpp" />
     <ClCompile Include="..\bindings\js\ArrayValue.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -20317,7 +20316,6 @@
     <ClInclude Include="..\html\track\WebVTTToken.h" />
     <ClInclude Include="..\html\track\WebVTTTokenizer.h" />
     <ClInclude Include="..\bindings\generic\ActiveDOMCallback.h" />
-    <ClInclude Include="..\bindings\generic\BindingSecurity.h" />
     <ClInclude Include="..\bindings\generic\RuntimeEnabledFeatures.h" />
     <ClInclude Include="..\bindings\js\ArrayValue.h" />
     <ClInclude Include="..\bindings\js\BreakpointID.h" />

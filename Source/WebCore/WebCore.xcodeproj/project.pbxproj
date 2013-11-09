@@ -3177,8 +3177,6 @@
 		9728C3141268E4390041E89B /* MarkupAccumulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9728C3121268E4390041E89B /* MarkupAccumulator.h */; };
 		973889A0116EA9DC00ADF313 /* DocumentWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9738899E116EA9DC00ADF313 /* DocumentWriter.cpp */; };
 		973889A1116EA9DC00ADF313 /* DocumentWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 9738899F116EA9DC00ADF313 /* DocumentWriter.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		973AA3F915D0891B00E38A85 /* BindingSecurity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 973AA3F715D0891B00E38A85 /* BindingSecurity.cpp */; };
-		973AA3FA15D0891B00E38A85 /* BindingSecurity.h in Headers */ = {isa = PBXBuildFile; fileRef = 973AA3F815D0891B00E38A85 /* BindingSecurity.h */; };
 		973DC63F145A9409002842C2 /* ExceptionCodeDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 973DC63D145A9409002842C2 /* ExceptionCodeDescription.cpp */; };
 		973DC640145A9409002842C2 /* ExceptionCodeDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 973DC63E145A9409002842C2 /* ExceptionCodeDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		973E325610883B7C005BC493 /* ResourceLoadNotifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 973E325410883B7C005BC493 /* ResourceLoadNotifier.cpp */; };
@@ -9894,8 +9892,6 @@
 		9728C3121268E4390041E89B /* MarkupAccumulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkupAccumulator.h; sourceTree = "<group>"; };
 		9738899E116EA9DC00ADF313 /* DocumentWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentWriter.cpp; sourceTree = "<group>"; };
 		9738899F116EA9DC00ADF313 /* DocumentWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentWriter.h; sourceTree = "<group>"; };
-		973AA3F715D0891B00E38A85 /* BindingSecurity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BindingSecurity.cpp; path = generic/BindingSecurity.cpp; sourceTree = "<group>"; };
-		973AA3F815D0891B00E38A85 /* BindingSecurity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BindingSecurity.h; path = generic/BindingSecurity.h; sourceTree = "<group>"; };
 		973DC63D145A9409002842C2 /* ExceptionCodeDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExceptionCodeDescription.cpp; sourceTree = "<group>"; };
 		973DC63E145A9409002842C2 /* ExceptionCodeDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionCodeDescription.h; sourceTree = "<group>"; };
 		973E325410883B7C005BC493 /* ResourceLoadNotifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadNotifier.cpp; sourceTree = "<group>"; };
@@ -19396,8 +19392,6 @@
 			children = (
 				B5D31DF811CF610B009F22B4 /* ActiveDOMCallback.cpp */,
 				B5D31DF911CF610B009F22B4 /* ActiveDOMCallback.h */,
-				973AA3F715D0891B00E38A85 /* BindingSecurity.cpp */,
-				973AA3F815D0891B00E38A85 /* BindingSecurity.h */,
 			);
 			name = generic;
 			sourceTree = "<group>";
@@ -22016,7 +22010,6 @@
 				B2C3DA250D006C1D00EF6F26 /* BidiResolver.h in Headers */,
 				BCE789861120E7A60060ECE5 /* BidiRun.h in Headers */,
 				A8C402931348B2220063F1E5 /* BidiRunList.h in Headers */,
-				973AA3FA15D0891B00E38A85 /* BindingSecurity.h in Headers */,
 				F35AE5AC14925F5B004D5776 /* BindingVisitors.h in Headers */,
 				FD31608D12B026F700C1A359 /* Biquad.h in Headers */,
 				FD31602512B0267600C1A359 /* BiquadDSPKernel.h in Headers */,
@@ -25540,7 +25533,6 @@
 				85031B3C0A44EFC700F992E0 /* BeforeUnloadEvent.cpp in Sources */,
 				B2C3DA230D006C1D00EF6F26 /* BidiContext.cpp in Sources */,
 				BCE7898B1120E8020060ECE5 /* BidiRun.cpp in Sources */,
-				973AA3F915D0891B00E38A85 /* BindingSecurity.cpp in Sources */,
 				FD31608C12B026F700C1A359 /* Biquad.cpp in Sources */,
 				FD31602412B0267600C1A359 /* BiquadDSPKernel.cpp in Sources */,
 				FDC54F041399B0DA008D9117 /* BiquadFilterNode.cpp in Sources */,

@@ -22,7 +22,6 @@
 #include "config.h"
 #include "JSDOMBinding.h"
 
-#include "BindingSecurity.h"
 #include "CachedScript.h"
 #include "DOMConstructorWithDocument.h"
 #include "DOMObjectHashTableMap.h"
@@ -31,8 +30,10 @@
 #include "ExceptionHeaders.h"
 #include "ExceptionInterfaces.h"
 #include "Frame.h"
+#include "HTMLParserIdioms.h"
 #include "JSDOMWindowCustom.h"
 #include "JSExceptionBase.h"
+#include "SecurityOrigin.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
 #include <interpreter/Interpreter.h>
@@ -494,6 +495,37 @@ DOMWindow& activeDOMWindow(ExecState* exec)
 DOMWindow& firstDOMWindow(ExecState* exec)
 {
     return asJSDOMWindow(exec->dynamicGlobalObject())->impl();
+}
+
+static inline bool canAccessDocument(JSC::ExecState* state, Document* targetDocument, SecurityReportingOption reportingOption = ReportSecurityError)
+{
+    if (!targetDocument)
+        return false;
+
+    DOMWindow& active = activeDOMWindow(state);
+
+    if (active.document()->securityOrigin()->canAccess(targetDocument->securityOrigin()))
+        return true;
+
+    if (reportingOption == ReportSecurityError)
+        printErrorMessageForFrame(targetDocument->frame(), targetDocument->domWindow()->crossDomainAccessErrorMessage(active));
+
+    return false;
+}
+
+bool BindingSecurity::shouldAllowAccessToDOMWindow(JSC::ExecState* state, DOMWindow& target, SecurityReportingOption reportingOption)
+{
+    return canAccessDocument(state, target.document(), reportingOption);
+}
+
+bool BindingSecurity::shouldAllowAccessToFrame(JSC::ExecState* state, Frame* target, SecurityReportingOption reportingOption)
+{
+    return target && canAccessDocument(state, target->document(), reportingOption);
+}
+
+bool BindingSecurity::shouldAllowAccessToNode(JSC::ExecState* state, Node* target)
+{
+    return target && canAccessDocument(state, &target->document());
 }
 
 } // namespace WebCore

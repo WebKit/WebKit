@@ -645,6 +645,18 @@ template <typename T> struct ReportMemoryCost<T, false> {
     }
 };
 
+enum SecurityReportingOption {
+    DoNotReportSecurityError,
+    ReportSecurityError,
+};
+
+class BindingSecurity {
+public:
+    static bool shouldAllowAccessToNode(JSC::ExecState*, Node*);
+    static bool shouldAllowAccessToDOMWindow(JSC::ExecState*, DOMWindow&, SecurityReportingOption = ReportSecurityError);
+    static bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*, SecurityReportingOption = ReportSecurityError);
+};
+
 } // namespace WebCore
 
 #endif // JSDOMBinding_h

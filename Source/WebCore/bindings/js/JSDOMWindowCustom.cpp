@@ -21,7 +21,6 @@
 #include "config.h"
 #include "JSDOMWindowCustom.h"
 
-#include "BindingSecurity.h"
 #include "Frame.h"
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"

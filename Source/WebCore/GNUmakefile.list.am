@@ -2237,8 +2237,6 @@ webcore_sources += \
 	Source/WebCore/accessibility/AXObjectCache.h \
 	Source/WebCore/bindings/generic/ActiveDOMCallback.cpp \
 	Source/WebCore/bindings/generic/ActiveDOMCallback.h \
-	Source/WebCore/bindings/generic/BindingSecurity.cpp \
-	Source/WebCore/bindings/generic/BindingSecurity.h \
 	Source/WebCore/bindings/generic/RuntimeEnabledFeatures.cpp \
 	Source/WebCore/bindings/generic/RuntimeEnabledFeatures.h \
 	Source/WebCore/bindings/js/ArrayValue.cpp \

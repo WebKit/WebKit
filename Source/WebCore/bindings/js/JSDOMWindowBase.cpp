@@ -23,7 +23,6 @@
 #include "config.h"
 #include "JSDOMWindowBase.h"
 
-#include "BindingSecurity.h"
 #include "Chrome.h"
 #include "Console.h"
 #include "DOMWindow.h"

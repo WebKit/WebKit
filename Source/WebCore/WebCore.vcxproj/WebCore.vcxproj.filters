@@ -4248,9 +4248,6 @@
     <ClCompile Include="..\bindings\generic\ActiveDOMCallback.cpp">
       <Filter>bindings\generic</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\generic\BindingSecurity.cpp">
-      <Filter>bindings\generic</Filter>
-    </ClCompile>
     <ClCompile Include="..\bindings\generic\RuntimeEnabledFeatures.cpp">
       <Filter>bindings\generic</Filter>
     </ClCompile>
@@ -11320,9 +11317,6 @@
       <Filter>html\track</Filter>
     </ClInclude>
     <ClInclude Include="..\bindings\generic\ActiveDOMCallback.h">
-      <Filter>bindings\generic</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bindings\generic\BindingSecurity.h">
       <Filter>bindings\generic</Filter>
     </ClInclude>
     <ClInclude Include="..\bindings\generic\RuntimeEnabledFeatures.h">

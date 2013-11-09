@@ -36,7 +36,6 @@
 
 #include "InjectedScriptManager.h"
 
-#include "BindingSecurity.h"
 #include "ExceptionCode.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWindowCustom.h"

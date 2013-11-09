@@ -26,7 +26,6 @@
 #import "config.h"
 #import "WebScriptObjectPrivate.h"
 
-#import "BindingSecurity.h"
 #import "BridgeJSC.h"
 #import "Console.h"
 #import "DOMInternal.h"
