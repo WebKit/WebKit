@@ -38,7 +38,7 @@
 #include "IDBKeyRange.h"
 #include "IDBLevelDBCoding.h"
 #include "IDBMetadata.h"
-#include "IDBTransactionBackendInterface.h"
+#include "IDBTransactionBackend.h"
 #include "LevelDBComparator.h"
 #include "LevelDBDatabase.h"
 #include "LevelDBIterator.h"
@@ -1383,7 +1383,7 @@ bool IDBBackingStoreLevelDB::keyExistsInIndex(IDBBackingStoreTransactionInterfac
 }
 
 
-bool IDBBackingStoreLevelDB::makeIndexWriters(IDBTransactionBackendInterface& transaction, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, IDBKey& primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys, Vector<RefPtr<IDBIndexWriter>>& indexWriters, String* errorMessage, bool& completed)
+bool IDBBackingStoreLevelDB::makeIndexWriters(IDBTransactionBackend& transaction, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, IDBKey& primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys, Vector<RefPtr<IDBIndexWriter>>& indexWriters, String* errorMessage, bool& completed)
 {
     ASSERT(indexIds.size() == indexKeys.size());
     completed = false;
@@ -1415,7 +1415,7 @@ bool IDBBackingStoreLevelDB::makeIndexWriters(IDBTransactionBackendInterface& tr
     return true;
 }
 
-PassRefPtr<IDBKey> IDBBackingStoreLevelDB::generateKey(IDBTransactionBackendInterface& transaction, int64_t databaseId, int64_t objectStoreId)
+PassRefPtr<IDBKey> IDBBackingStoreLevelDB::generateKey(IDBTransactionBackend& transaction, int64_t databaseId, int64_t objectStoreId)
 {
     const int64_t maxGeneratorValue = 9007199254740992LL; // Maximum integer storable as ECMAScript number.
     int64_t currentNumber;
@@ -1431,7 +1431,7 @@ PassRefPtr<IDBKey> IDBBackingStoreLevelDB::generateKey(IDBTransactionBackendInte
 }
 
 
-bool IDBBackingStoreLevelDB::updateKeyGenerator(IDBTransactionBackendInterface& transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, bool checkCurrent)
+bool IDBBackingStoreLevelDB::updateKeyGenerator(IDBTransactionBackend& transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, bool checkCurrent)
 {
     ASSERT(key.type() == IDBKey::NumberType);
     return maybeUpdateKeyGeneratorCurrentNumber(transaction.backingStoreTransaction(), databaseId, objectStoreId, static_cast<int64_t>(floor(key.number())) + 1, checkCurrent);

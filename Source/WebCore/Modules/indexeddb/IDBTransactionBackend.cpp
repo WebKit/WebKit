@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "IDBTransactionBackendImpl.h"
+#include "IDBTransactionBackend.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -40,27 +40,27 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBTransactionBackendImpl> IDBTransactionBackendImpl::create(IDBDatabaseBackendImpl* databaseBackend, int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode)
+PassRefPtr<IDBTransactionBackend> IDBTransactionBackend::create(IDBDatabaseBackendImpl* databaseBackend, int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode)
 {
     HashSet<int64_t> objectStoreHashSet;
     for (size_t i = 0; i < objectStoreIds.size(); ++i)
         objectStoreHashSet.add(objectStoreIds[i]);
 
-    return adoptRef(new IDBTransactionBackendImpl(databaseBackend, id, callbacks, objectStoreHashSet, mode));
+    return adoptRef(new IDBTransactionBackend(databaseBackend, id, callbacks, objectStoreHashSet, mode));
 }
 
-IDBTransactionBackendImpl::IDBTransactionBackendImpl(IDBDatabaseBackendImpl* databaseBackend, int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode)
-    : IDBTransactionBackendInterface(id)
-    , m_objectStoreIds(objectStoreIds)
+IDBTransactionBackend::IDBTransactionBackend(IDBDatabaseBackendImpl* databaseBackend, int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode)
+    : m_objectStoreIds(objectStoreIds)
     , m_mode(mode)
     , m_state(Unused)
     , m_commitPending(false)
     , m_callbacks(callbacks)
     , m_database(databaseBackend)
     , m_backingStoreTransaction(databaseBackend->backingStore()->createBackingStoreTransaction())
-    , m_taskTimer(this, &IDBTransactionBackendImpl::taskTimerFired)
+    , m_taskTimer(this, &IDBTransactionBackend::taskTimerFired)
     , m_pendingPreemptiveEvents(0)
     , m_backingStore(databaseBackend->backingStore())
+    , m_id(id)
 {
     // We pass a reference of this object before it can be adopted.
     relaxAdoptionRequirement();
@@ -68,13 +68,13 @@ IDBTransactionBackendImpl::IDBTransactionBackendImpl(IDBDatabaseBackendImpl* dat
     m_database->transactionCoordinator()->didCreateTransaction(this);
 }
 
-IDBTransactionBackendImpl::~IDBTransactionBackendImpl()
+IDBTransactionBackend::~IDBTransactionBackend()
 {
     // It shouldn't be possible for this object to get deleted until it's either complete or aborted.
     ASSERT(m_state == Finished);
 }
 
-void IDBTransactionBackendImpl::scheduleTask(IDBDatabaseBackendInterface::TaskType type, PassOwnPtr<IDBOperation> task, PassOwnPtr<IDBOperation> abortTask)
+void IDBTransactionBackend::scheduleTask(IDBDatabaseBackendInterface::TaskType type, PassOwnPtr<IDBOperation> task, PassOwnPtr<IDBOperation> abortTask)
 {
     if (m_state == Finished)
         return;
@@ -93,14 +93,14 @@ void IDBTransactionBackendImpl::scheduleTask(IDBDatabaseBackendInterface::TaskTy
         m_taskTimer.startOneShot(0);
 }
 
-void IDBTransactionBackendImpl::abort()
+void IDBTransactionBackend::abort()
 {
     abort(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error (unknown cause)"));
 }
 
-void IDBTransactionBackendImpl::abort(PassRefPtr<IDBDatabaseError> error)
+void IDBTransactionBackend::abort(PassRefPtr<IDBDatabaseError> error)
 {
-    LOG(StorageAPI, "IDBTransactionBackendImpl::abort");
+    LOG(StorageAPI, "IDBTransactionBackend::abort");
     if (m_state == Finished)
         return;
 
@@ -109,7 +109,7 @@ void IDBTransactionBackendImpl::abort(PassRefPtr<IDBDatabaseError> error)
     // The last reference to this object may be released while performing the
     // abort steps below. We therefore take a self reference to keep ourselves
     // alive while executing this method.
-    Ref<IDBTransactionBackendImpl> protect(*this);
+    Ref<IDBTransactionBackend> protect(*this);
 
     m_state = Finished;
     m_taskTimer.stop();
@@ -143,27 +143,27 @@ void IDBTransactionBackendImpl::abort(PassRefPtr<IDBDatabaseError> error)
     m_database = 0;
 }
 
-bool IDBTransactionBackendImpl::isTaskQueueEmpty() const
+bool IDBTransactionBackend::isTaskQueueEmpty() const
 {
     return m_preemptiveTaskQueue.isEmpty() && m_taskQueue.isEmpty();
 }
 
-bool IDBTransactionBackendImpl::hasPendingTasks() const
+bool IDBTransactionBackend::hasPendingTasks() const
 {
     return m_pendingPreemptiveEvents || !isTaskQueueEmpty();
 }
 
-void IDBTransactionBackendImpl::registerOpenCursor(IDBCursorBackend* cursor)
+void IDBTransactionBackend::registerOpenCursor(IDBCursorBackend* cursor)
 {
     m_openCursors.add(cursor);
 }
 
-void IDBTransactionBackendImpl::unregisterOpenCursor(IDBCursorBackend* cursor)
+void IDBTransactionBackend::unregisterOpenCursor(IDBCursorBackend* cursor)
 {
     m_openCursors.remove(cursor);
 }
 
-void IDBTransactionBackendImpl::run()
+void IDBTransactionBackend::run()
 {
     // TransactionCoordinator has started this transaction. Schedule a timer
     // to process the first task.
@@ -173,7 +173,7 @@ void IDBTransactionBackendImpl::run()
     m_taskTimer.startOneShot(0);
 }
 
-void IDBTransactionBackendImpl::start()
+void IDBTransactionBackend::start()
 {
     ASSERT(m_state == Unused);
 
@@ -182,9 +182,9 @@ void IDBTransactionBackendImpl::start()
     m_database->transactionStarted(this);
 }
 
-void IDBTransactionBackendImpl::commit()
+void IDBTransactionBackend::commit()
 {
-    LOG(StorageAPI, "IDBTransactionBackendImpl::commit");
+    LOG(StorageAPI, "IDBTransactionBackend::commit");
 
     // In multiprocess ports, front-end may have requested a commit but an abort has already
     // been initiated asynchronously by the back-end.
@@ -202,7 +202,7 @@ void IDBTransactionBackendImpl::commit()
     // The last reference to this object may be released while performing the
     // commit steps below. We therefore take a self reference to keep ourselves
     // alive while executing this method.
-    Ref<IDBTransactionBackendImpl> protect(*this);
+    Ref<IDBTransactionBackend> protect(*this);
 
     bool unused = m_state == Unused;
     m_state = Finished;
@@ -232,9 +232,9 @@ void IDBTransactionBackendImpl::commit()
     m_database = 0;
 }
 
-void IDBTransactionBackendImpl::taskTimerFired(Timer<IDBTransactionBackendImpl>*)
+void IDBTransactionBackend::taskTimerFired(Timer<IDBTransactionBackend>*)
 {
-    LOG(StorageAPI, "IDBTransactionBackendImpl::taskTimerFired");
+    LOG(StorageAPI, "IDBTransactionBackend::taskTimerFired");
     ASSERT(!isTaskQueueEmpty());
 
     if (m_state == StartPending) {
@@ -245,7 +245,7 @@ void IDBTransactionBackendImpl::taskTimerFired(Timer<IDBTransactionBackendImpl>*
     // The last reference to this object may be released while performing the
     // tasks. Take take a self reference to keep this object alive so that
     // the loop termination conditions can be checked.
-    Ref<IDBTransactionBackendImpl> protect(*this);
+    Ref<IDBTransactionBackend> protect(*this);
 
     TaskQueue* taskQueue = m_pendingPreemptiveEvents ? &m_preemptiveTaskQueue : &m_taskQueue;
     while (!taskQueue->isEmpty() && m_state != Finished) {
@@ -263,74 +263,74 @@ void IDBTransactionBackendImpl::taskTimerFired(Timer<IDBTransactionBackendImpl>*
         commit();
 }
 
-void IDBTransactionBackendImpl::closeOpenCursors()
+void IDBTransactionBackend::closeOpenCursors()
 {
     for (HashSet<IDBCursorBackend*>::iterator i = m_openCursors.begin(); i != m_openCursors.end(); ++i)
         (*i)->close();
     m_openCursors.clear();
 }
 
-void IDBTransactionBackendImpl::scheduleCreateObjectStoreOperation(const IDBObjectStoreMetadata& objectStoreMetadata)
+void IDBTransactionBackend::scheduleCreateObjectStoreOperation(const IDBObjectStoreMetadata& objectStoreMetadata)
 {
     scheduleTask(CreateObjectStoreOperation::create(this, m_backingStore.get(), objectStoreMetadata), CreateObjectStoreAbortOperation::create(this, objectStoreMetadata.id));
 }
 
-void IDBTransactionBackendImpl::scheduleDeleteObjectStoreOperation(const IDBObjectStoreMetadata& objectStoreMetadata)
+void IDBTransactionBackend::scheduleDeleteObjectStoreOperation(const IDBObjectStoreMetadata& objectStoreMetadata)
 {
     scheduleTask(DeleteObjectStoreOperation::create(this, m_backingStore.get(), objectStoreMetadata), DeleteObjectStoreAbortOperation::create(this, objectStoreMetadata));
 }
 
-void IDBTransactionBackendImpl::scheduleVersionChangeOperation(int64_t transactionId, int64_t requestedVersion, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, const IDBDatabaseMetadata& metadata)
+void IDBTransactionBackend::scheduleVersionChangeOperation(int64_t transactionId, int64_t requestedVersion, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, const IDBDatabaseMetadata& metadata)
 {
     scheduleTask(IDBDatabaseBackendImpl::VersionChangeOperation::create(this, transactionId, requestedVersion, callbacks, databaseCallbacks), IDBDatabaseBackendImpl::VersionChangeAbortOperation::create(this, String::number(metadata.version), metadata.version));
 }
 
-void IDBTransactionBackendImpl::scheduleCreateIndexOperation(int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
+void IDBTransactionBackend::scheduleCreateIndexOperation(int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
 {
     scheduleTask(CreateIndexOperation::create(this, m_backingStore.get(), objectStoreId, indexMetadata), CreateIndexAbortOperation::create(this, objectStoreId, indexMetadata.id));
 }
 
-void IDBTransactionBackendImpl::scheduleDeleteIndexOperation(int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
+void IDBTransactionBackend::scheduleDeleteIndexOperation(int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
 {
     scheduleTask(DeleteIndexOperation::create(this, m_backingStore.get(), objectStoreId, indexMetadata), DeleteIndexAbortOperation::create(this, objectStoreId, indexMetadata));
 }
 
-void IDBTransactionBackendImpl::scheduleGetOperation(const IDBDatabaseMetadata& metadata, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorType cursorType, PassRefPtr<IDBCallbacks> callbacks)
+void IDBTransactionBackend::scheduleGetOperation(const IDBDatabaseMetadata& metadata, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorType cursorType, PassRefPtr<IDBCallbacks> callbacks)
 {
     scheduleTask(GetOperation::create(this, m_backingStore.get(), metadata, objectStoreId, indexId, keyRange, cursorType, callbacks));
 }
 
-void IDBTransactionBackendImpl::schedulePutOperation(const IDBObjectStoreMetadata& objectStoreMetadata, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
+void IDBTransactionBackend::schedulePutOperation(const IDBObjectStoreMetadata& objectStoreMetadata, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
 {
     scheduleTask(PutOperation::create(this, m_backingStore.get(), database().id(), objectStoreMetadata, value, key, putMode, callbacks, indexIds, indexKeys));
 }
 
-void IDBTransactionBackendImpl::scheduleSetIndexesReadyOperation(size_t indexCount)
+void IDBTransactionBackend::scheduleSetIndexesReadyOperation(size_t indexCount)
 {
     scheduleTask(IDBDatabaseBackendInterface::PreemptiveTask, SetIndexesReadyOperation::create(this, indexCount));
 }
 
-void IDBTransactionBackendImpl::scheduleOpenCursorOperation(int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorDirection direction, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, PassRefPtr<IDBCallbacks> callbacks)
+void IDBTransactionBackend::scheduleOpenCursorOperation(int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, IndexedDB::CursorDirection direction, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, PassRefPtr<IDBCallbacks> callbacks)
 {
     scheduleTask(OpenCursorOperation::create(this, m_backingStore.get(), database().id(), objectStoreId, indexId, keyRange, direction, cursorType, taskType, callbacks));
 }
 
-void IDBTransactionBackendImpl::scheduleCountOperation(int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
+void IDBTransactionBackend::scheduleCountOperation(int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
 {
     scheduleTask(CountOperation::create(this, m_backingStore.get(), database().id(), objectStoreId, indexId, keyRange, callbacks));
 }
 
-void IDBTransactionBackendImpl::scheduleDeleteRangeOperation(int64_t objectStoreId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
+void IDBTransactionBackend::scheduleDeleteRangeOperation(int64_t objectStoreId, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks)
 {
     scheduleTask(DeleteRangeOperation::create(this, m_backingStore.get(), database().id(), objectStoreId, keyRange, callbacks));
 }
 
-void IDBTransactionBackendImpl::scheduleClearOperation(int64_t objectStoreId, PassRefPtr<IDBCallbacks> callbacks)
+void IDBTransactionBackend::scheduleClearOperation(int64_t objectStoreId, PassRefPtr<IDBCallbacks> callbacks)
 {
     scheduleTask(ClearOperation::create(this, m_backingStore.get(), database().id(), objectStoreId, callbacks));
 }
 
-PassRefPtr<IDBCursorBackend> IDBTransactionBackendImpl::createCursorBackend(IDBBackingStoreCursorInterface& cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, int64_t objectStoreId)
+PassRefPtr<IDBCursorBackend> IDBTransactionBackend::createCursorBackend(IDBBackingStoreCursorInterface& cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, int64_t objectStoreId)
 {
     return m_database->factoryBackend().createCursorBackend(*this, cursor, cursorType, taskType, objectStoreId);
 }

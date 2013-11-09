@@ -31,7 +31,7 @@
 
 #include "IDBBackingStoreInterface.h"
 #include "IDBDatabaseBackendImpl.h"
-#include "IDBTransactionBackendImpl.h"
+#include "IDBTransactionBackend.h"
 #include "SharedBuffer.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -43,11 +43,11 @@ class IDBKeyRange;
 
 class IDBCursorBackend : public RefCounted<IDBCursorBackend> {
 public:
-    static PassRefPtr<IDBCursorBackend> create(PassRefPtr<IDBBackingStoreCursorInterface> cursor, IndexedDB::CursorType cursorType, IDBTransactionBackendInterface* transaction, int64_t objectStoreId)
+    static PassRefPtr<IDBCursorBackend> create(PassRefPtr<IDBBackingStoreCursorInterface> cursor, IndexedDB::CursorType cursorType, IDBTransactionBackend* transaction, int64_t objectStoreId)
     {
         return adoptRef(new IDBCursorBackend(cursor, cursorType, IDBDatabaseBackendInterface::NormalTask, transaction, objectStoreId));
     }
-    static PassRefPtr<IDBCursorBackend> create(PassRefPtr<IDBBackingStoreCursorInterface> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackendInterface* transaction, int64_t objectStoreId)
+    static PassRefPtr<IDBCursorBackend> create(PassRefPtr<IDBBackingStoreCursorInterface> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackend* transaction, int64_t objectStoreId)
     {
         return adoptRef(new IDBCursorBackend(cursor, cursorType, taskType, transaction, objectStoreId));
     }
@@ -67,7 +67,7 @@ public:
     void close();
 
 private:
-    IDBCursorBackend(PassRefPtr<IDBBackingStoreCursorInterface>, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, IDBTransactionBackendInterface*, int64_t objectStoreId);
+    IDBCursorBackend(PassRefPtr<IDBBackingStoreCursorInterface>, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, IDBTransactionBackend*, int64_t objectStoreId);
 
     class CursorIterationOperation;
     class CursorAdvanceOperation;
@@ -76,7 +76,7 @@ private:
     IDBDatabaseBackendInterface::TaskType m_taskType;
     IndexedDB::CursorType m_cursorType;
     const RefPtr<IDBDatabaseBackendInterface> m_database;
-    RefPtr<IDBTransactionBackendInterface> m_transaction;
+    RefPtr<IDBTransactionBackend> m_transaction;
     const int64_t m_objectStoreId;
 
     RefPtr<IDBBackingStoreCursorInterface> m_cursor; // Must be destroyed before m_transaction.

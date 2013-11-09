@@ -1,3 +1,35 @@
+2013-11-08  Brady Eidson  <beidson@apple.com>
+
+        Merge IDBTransactionBackendInterface and IDBTransactionBackendImpl
+        https://bugs.webkit.org/show_bug.cgi?id=124077
+
+        Reviewed by Alexey Proskuryakov.
+
+        The abstraction is no longer needed.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/indexeddb/IDBTransactionBackendInterface.h: Removed.
+
+        * Modules/indexeddb/IDBTransactionBackend.cpp: Renamed from Source/WebCore/Modules/indexeddb/IDBTransactionBackendImpl.cpp.
+        * Modules/indexeddb/IDBTransactionBackend.h: Renamed from Source/WebCore/Modules/indexeddb/IDBTransactionBackendImpl.h.
+
+        * Modules/indexeddb/IDBBackingStoreInterface.h:
+        * Modules/indexeddb/IDBCursorBackend.cpp:
+        * Modules/indexeddb/IDBCursorBackend.h:
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h:
+        * Modules/indexeddb/IDBFactoryBackendInterface.h:
+        * Modules/indexeddb/IDBTransactionBackendOperations.h:
+        * Modules/indexeddb/IDBTransactionCoordinator.cpp:
+        * Modules/indexeddb/IDBTransactionCoordinator.h:
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.h:
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp:
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.h:
+
 2013-11-08  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r155660): Some Etherpad pages not scrollable with overlay scrollbars

@@ -780,7 +780,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/IDBPendingTransactionMonitor.cpp
     Modules/indexeddb/IDBRequest.cpp
     Modules/indexeddb/IDBTransaction.cpp
-    Modules/indexeddb/IDBTransactionBackendImpl.cpp
+    Modules/indexeddb/IDBTransactionBackend.cpp
     Modules/indexeddb/IDBTransactionBackendOperations.cpp
     Modules/indexeddb/IDBTransactionCoordinator.cpp
     Modules/indexeddb/IDBVersionChangeEvent.cpp

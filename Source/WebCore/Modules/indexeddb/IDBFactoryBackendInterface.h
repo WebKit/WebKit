@@ -43,7 +43,7 @@ class IDBCallbacks;
 class IDBDatabase;
 class IDBDatabaseBackendInterface;
 class IDBDatabaseCallbacks;
-class IDBTransactionBackendInterface;
+class IDBTransactionBackend;
 class SecurityOrigin;
 class ScriptExecutionContext;
 
@@ -64,9 +64,9 @@ public:
 
     virtual void removeIDBDatabaseBackend(const String& uniqueIdentifier) = 0;
 
-    virtual PassRefPtr<IDBTransactionBackendInterface> maybeCreateTransactionBackend(IDBDatabaseBackendInterface*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode) = 0;
+    virtual PassRefPtr<IDBTransactionBackend> maybeCreateTransactionBackend(IDBDatabaseBackendInterface*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode) = 0;
 
-    virtual PassRefPtr<IDBCursorBackend> createCursorBackend(IDBTransactionBackendInterface&, IDBBackingStoreCursorInterface&, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, int64_t objectStoreId) = 0;
+    virtual PassRefPtr<IDBCursorBackend> createCursorBackend(IDBTransactionBackend&, IDBBackingStoreCursorInterface&, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, int64_t objectStoreId) = 0;
 };
 
 } // namespace WebCore

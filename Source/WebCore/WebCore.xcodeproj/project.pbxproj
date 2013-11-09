@@ -1643,10 +1643,10 @@
 		50E18CDA16F9285800C65486 /* StyleCustomFilterProgramCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 50E18CD716F9285800C65486 /* StyleCustomFilterProgramCache.h */; };
 		510184690B08602A004A825F /* CachedPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 510184670B08602A004A825F /* CachedPage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5101846A0B08602A004A825F /* CachedPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510184680B08602A004A825F /* CachedPage.cpp */; };
-		51059DDB1820B17600DFF9B1 /* IDBTransactionBackendImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51059DD71820B17600DFF9B1 /* IDBTransactionBackendImpl.cpp */; };
-		51059DDC1820B17600DFF9B1 /* IDBTransactionBackendImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 51059DD81820B17600DFF9B1 /* IDBTransactionBackendImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51059DDD1820B17600DFF9B1 /* IDBTransactionBackendOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51059DD91820B17600DFF9B1 /* IDBTransactionBackendOperations.cpp */; };
 		51059DDE1820B17600DFF9B1 /* IDBTransactionBackendOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 51059DDA1820B17600DFF9B1 /* IDBTransactionBackendOperations.h */; };
+		510B7DB7182D9F5D009BF957 /* IDBTransactionBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510B7DB5182D9F5D009BF957 /* IDBTransactionBackend.cpp */; };
+		510B7DB8182D9F5D009BF957 /* IDBTransactionBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 510B7DB6182D9F5D009BF957 /* IDBTransactionBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510D4A33103165EE0049EA54 /* SocketStreamErrorBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510D4A2D103165EE0049EA54 /* SocketStreamErrorBase.cpp */; };
 		510D4A34103165EE0049EA54 /* SocketStreamErrorBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A2E103165EE0049EA54 /* SocketStreamErrorBase.h */; };
 		510D4A36103165EE0049EA54 /* SocketStreamHandleBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510D4A30103165EE0049EA54 /* SocketStreamHandleBase.cpp */; };
@@ -1848,7 +1848,6 @@
 		51EAC5681815ED3E004F1BA4 /* IDBTransactionCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EAC5661815ED3E004F1BA4 /* IDBTransactionCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51EAC5B218163F4E004F1BA4 /* IDBRecordIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EAC5B018163F4E004F1BA4 /* IDBRecordIdentifier.h */; };
 		51EC92650CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51EC925D0CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp */; };
-		51F6E0A31811D2520058A00A /* IDBTransactionBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F6E08F1811D2520058A00A /* IDBTransactionBackendInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51FA2D78152132B300C1BA0B /* DOMWindowExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 517FBA18151AA71B00B57959 /* DOMWindowExtension.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51FB5504113E3E9100821176 /* JSCloseEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FB5502113E3E9100821176 /* JSCloseEvent.h */; };
 		51FB5505113E3E9100821176 /* JSCloseEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FB5503113E3E9100821176 /* JSCloseEvent.cpp */; };
@@ -8325,10 +8324,10 @@
 		50E18CD716F9285800C65486 /* StyleCustomFilterProgramCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleCustomFilterProgramCache.h; path = style/StyleCustomFilterProgramCache.h; sourceTree = "<group>"; };
 		510184670B08602A004A825F /* CachedPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedPage.h; sourceTree = "<group>"; };
 		510184680B08602A004A825F /* CachedPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedPage.cpp; sourceTree = "<group>"; };
-		51059DD71820B17600DFF9B1 /* IDBTransactionBackendImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBTransactionBackendImpl.cpp; sourceTree = "<group>"; };
-		51059DD81820B17600DFF9B1 /* IDBTransactionBackendImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBTransactionBackendImpl.h; sourceTree = "<group>"; };
 		51059DD91820B17600DFF9B1 /* IDBTransactionBackendOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBTransactionBackendOperations.cpp; sourceTree = "<group>"; };
 		51059DDA1820B17600DFF9B1 /* IDBTransactionBackendOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBTransactionBackendOperations.h; sourceTree = "<group>"; };
+		510B7DB5182D9F5D009BF957 /* IDBTransactionBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBTransactionBackend.cpp; sourceTree = "<group>"; };
+		510B7DB6182D9F5D009BF957 /* IDBTransactionBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBTransactionBackend.h; sourceTree = "<group>"; };
 		510D4A2D103165EE0049EA54 /* SocketStreamErrorBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketStreamErrorBase.cpp; sourceTree = "<group>"; };
 		510D4A2E103165EE0049EA54 /* SocketStreamErrorBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamErrorBase.h; sourceTree = "<group>"; };
 		510D4A30103165EE0049EA54 /* SocketStreamHandleBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketStreamHandleBase.cpp; sourceTree = "<group>"; };
@@ -8555,7 +8554,6 @@
 		51EC925D0CE90DD400F90308 /* JSCustomSQLStatementErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomSQLStatementErrorCallback.cpp; sourceTree = "<group>"; };
 		51F6A3D50663BF04004D2919 /* HTMLCanvasElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLCanvasElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F6A3D60663BF04004D2919 /* HTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLCanvasElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		51F6E08F1811D2520058A00A /* IDBTransactionBackendInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBTransactionBackendInterface.h; sourceTree = "<group>"; };
 		51FB5502113E3E9100821176 /* JSCloseEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCloseEvent.h; sourceTree = "<group>"; };
 		51FB5503113E3E9100821176 /* JSCloseEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCloseEvent.cpp; sourceTree = "<group>"; };
 		521D46F511AEC98100514613 /* KillRingMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KillRingMac.mm; sourceTree = "<group>"; };
@@ -17008,9 +17006,8 @@
 				51D719A4181106E00016DC51 /* IDBTransaction.cpp */,
 				51D719A5181106E00016DC51 /* IDBTransaction.h */,
 				51D719A6181106E00016DC51 /* IDBTransaction.idl */,
-				51059DD71820B17600DFF9B1 /* IDBTransactionBackendImpl.cpp */,
-				51059DD81820B17600DFF9B1 /* IDBTransactionBackendImpl.h */,
-				51F6E08F1811D2520058A00A /* IDBTransactionBackendInterface.h */,
+				510B7DB5182D9F5D009BF957 /* IDBTransactionBackend.cpp */,
+				510B7DB6182D9F5D009BF957 /* IDBTransactionBackend.h */,
 				51059DD91820B17600DFF9B1 /* IDBTransactionBackendOperations.cpp */,
 				51059DDA1820B17600DFF9B1 /* IDBTransactionBackendOperations.h */,
 				51EAC5651815ED3E004F1BA4 /* IDBTransactionCoordinator.cpp */,
@@ -22546,6 +22543,7 @@
 				85ECBEF50AA7626900544F0B /* DOMHTMLModElement.h in Headers */,
 				85E711BC0AC5D5350053270F /* DOMHTMLModElementInternal.h in Headers */,
 				85DF812B0AA7787200486AD7 /* DOMHTMLObjectElement.h in Headers */,
+				510B7DB8182D9F5D009BF957 /* IDBTransactionBackend.h in Headers */,
 				85E711BD0AC5D5350053270F /* DOMHTMLObjectElementInternal.h in Headers */,
 				85BA4D150AA688680088052D /* DOMHTMLOListElement.h in Headers */,
 				85E711BE0AC5D5350053270F /* DOMHTMLOListElementInternal.h in Headers */,
@@ -22821,7 +22819,6 @@
 				2EDF369F122C94C8002F7D4E /* FileException.h in Headers */,
 				0F099D0917B968A100FF84B9 /* WebCoreTypedArrayController.h in Headers */,
 				1A88A90517553CD7000C74F9 /* FileIconLoader.h in Headers */,
-				51059DDC1820B17600DFF9B1 /* IDBTransactionBackendImpl.h in Headers */,
 				F55B3DBE1251F12D003EF269 /* FileInputType.h in Headers */,
 				976D6C86122B8A3D001FD1F7 /* FileList.h in Headers */,
 				4689F1AF1267BAE100E8D380 /* FileMetadata.h in Headers */,
@@ -23957,7 +23954,6 @@
 				77A17A7212F28182004E02F6 /* OESVertexArrayObject.h in Headers */,
 				FDA3E95A134A49EF008D4B5A /* OfflineAudioCompletionEvent.h in Headers */,
 				FDA9325E16703B2A008982DC /* OfflineAudioContext.h in Headers */,
-				51F6E0A31811D2520058A00A /* IDBTransactionBackendInterface.h in Headers */,
 				FDA3E95C134A49EF008D4B5A /* OfflineAudioDestinationNode.h in Headers */,
 				F4EAF4AF10C742B1009100D3 /* OpenTypeSanitizer.h in Headers */,
 				0014628B103CD1DE000B20DB /* OriginAccessEntry.h in Headers */,
@@ -26728,6 +26724,7 @@
 				FD23A12513F5FA5900F67001 /* JSMediaElementAudioSourceNode.cpp in Sources */,
 				E44614180CD6826900FADA75 /* JSMediaError.cpp in Sources */,
 				E19AC3F41824DC7900349426 /* CryptoAlgorithmSHA512.cpp in Sources */,
+				510B7DB7182D9F5D009BF957 /* IDBTransactionBackend.cpp in Sources */,
 				CDA98DA31601464100FEA3B1 /* JSMediaKeyError.cpp in Sources */,
 				CDB859FA160D494900E5B07F /* JSMediaKeyEvent.cpp in Sources */,
 				CDA98DDF16026A3700FEA3B1 /* JSMediaKeyMessageEvent.cpp in Sources */,
@@ -27693,7 +27690,6 @@
 				AA4C3A760B2B1679002334A2 /* InlineStyleSheetOwner.cpp in Sources */,
 				319AE063142D6B24006563A1 /* StyleFilterData.cpp in Sources */,
 				5317612213C516690026E454 /* StyleFlexibleBoxData.cpp in Sources */,
-				51059DDB1820B17600DFF9B1 /* IDBTransactionBackendImpl.cpp in Sources */,
 				BCEF447D0E674806001C1287 /* StyleGeneratedImage.cpp in Sources */,
 				A10DC76A14747BAB005E2471 /* StyleGridData.cpp in Sources */,
 				A110DB9D14F5DF8700A03B93 /* StyleGridItemData.cpp in Sources */,

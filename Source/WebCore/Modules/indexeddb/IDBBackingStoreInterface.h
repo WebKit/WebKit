@@ -46,7 +46,7 @@ class IDBKey;
 class IDBKeyPath;
 class IDBKeyRange;
 class IDBRecordIdentifier;
-class IDBTransactionBackendInterface;
+class IDBTransactionBackend;
 class SharedBuffer;
 
 class IDBBackingStoreInterface : public RefCounted<IDBBackingStoreInterface> {
@@ -91,10 +91,10 @@ public:
     virtual bool getKeyGeneratorCurrentNumber(IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId, int64_t& keyGeneratorCurrentNumber) = 0;
     virtual bool maybeUpdateKeyGeneratorCurrentNumber(IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId, int64_t newState, bool checkCurrent) = 0;
 
-    virtual bool makeIndexWriters(IDBTransactionBackendInterface&, int64_t databaseId, const IDBObjectStoreMetadata&, IDBKey& primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&, Vector<RefPtr<IDBIndexWriter>>& indexWriters, String* errorMessage, bool& completed) = 0;
+    virtual bool makeIndexWriters(IDBTransactionBackend&, int64_t databaseId, const IDBObjectStoreMetadata&, IDBKey& primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&, Vector<RefPtr<IDBIndexWriter>>& indexWriters, String* errorMessage, bool& completed) = 0;
 
-    virtual PassRefPtr<IDBKey> generateKey(IDBTransactionBackendInterface&, int64_t databaseId, int64_t objectStoreId) = 0;
-    virtual bool updateKeyGenerator(IDBTransactionBackendInterface&, int64_t databaseId, int64_t objectStoreId, const IDBKey&, bool checkCurrent) = 0;
+    virtual PassRefPtr<IDBKey> generateKey(IDBTransactionBackend&, int64_t databaseId, int64_t objectStoreId) = 0;
+    virtual bool updateKeyGenerator(IDBTransactionBackend&, int64_t databaseId, int64_t objectStoreId, const IDBKey&, bool checkCurrent) = 0;
 
 };
 

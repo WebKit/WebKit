@@ -1847,9 +1847,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/IDBRequest.h \
 	Source/WebCore/Modules/indexeddb/IDBTransaction.cpp \
 	Source/WebCore/Modules/indexeddb/IDBTransaction.h \
-	Source/WebCore/Modules/indexeddb/IDBTransactionBackendImpl.cpp \
-	Source/WebCore/Modules/indexeddb/IDBTransactionBackendImpl.h \
-	Source/WebCore/Modules/indexeddb/IDBTransactionBackendInterface.h \
+	Source/WebCore/Modules/indexeddb/IDBTransactionBackend.cpp \
+	Source/WebCore/Modules/indexeddb/IDBTransactionBackend.h \
 	Source/WebCore/Modules/indexeddb/IDBTransactionBackendOperations.cpp \
 	Source/WebCore/Modules/indexeddb/IDBTransactionBackendOperations.h \
 	Source/WebCore/Modules/indexeddb/IDBTransactionCoordinator.cpp \

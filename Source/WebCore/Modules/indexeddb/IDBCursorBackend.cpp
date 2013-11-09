@@ -101,7 +101,7 @@ private:
     RefPtr<IDBCallbacks> m_callbacks;
 };
 
-IDBCursorBackend::IDBCursorBackend(PassRefPtr<IDBBackingStoreCursorInterface> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackendInterface* transaction, int64_t objectStoreId)
+IDBCursorBackend::IDBCursorBackend(PassRefPtr<IDBBackingStoreCursorInterface> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackend* transaction, int64_t objectStoreId)
     : m_taskType(taskType)
     , m_cursorType(cursorType)
     , m_database(&(transaction->database()))

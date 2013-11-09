@@ -41,7 +41,7 @@ namespace WebCore {
 class IDBBackingStoreInterface;
 class IDBDatabase;
 class IDBFactoryBackendInterface;
-class IDBTransactionBackendInterface;
+class IDBTransactionBackend;
 class IDBTransactionCoordinator;
 
 class IDBDatabaseBackendImpl FINAL : public IDBDatabaseBackendInterface {
@@ -75,10 +75,10 @@ public:
     virtual void deleteIndex(int64_t transactionId, int64_t objectStoreId, int64_t indexId);
 
     IDBTransactionCoordinator* transactionCoordinator() const { return m_transactionCoordinator.get(); }
-    void transactionStarted(IDBTransactionBackendInterface*);
-    void transactionFinished(IDBTransactionBackendInterface*);
-    void transactionFinishedAndCompleteFired(IDBTransactionBackendInterface*);
-    void transactionFinishedAndAbortFired(IDBTransactionBackendInterface*);
+    void transactionStarted(IDBTransactionBackend*);
+    void transactionFinished(IDBTransactionBackend*);
+    void transactionFinishedAndCompleteFired(IDBTransactionBackend*);
+    void transactionFinishedAndAbortFired(IDBTransactionBackend*);
 
     virtual void get(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, bool keyOnly, PassRefPtr<IDBCallbacks>) OVERRIDE;
     virtual void put(int64_t transactionId, int64_t objectStoreId, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, const Vector<int64_t>& indexIds, const Vector<IndexKeys>&) OVERRIDE;
@@ -126,9 +126,9 @@ private:
     RefPtr<IDBFactoryBackendInterface> m_factory;
 
     OwnPtr<IDBTransactionCoordinator> m_transactionCoordinator;
-    RefPtr<IDBTransactionBackendInterface> m_runningVersionChangeTransaction;
+    RefPtr<IDBTransactionBackend> m_runningVersionChangeTransaction;
 
-    typedef HashMap<int64_t, IDBTransactionBackendInterface*> TransactionMap;
+    typedef HashMap<int64_t, IDBTransactionBackend*> TransactionMap;
     TransactionMap m_transactions;
 
     Deque<OwnPtr<IDBPendingOpenCall>> m_pendingOpenCalls;
