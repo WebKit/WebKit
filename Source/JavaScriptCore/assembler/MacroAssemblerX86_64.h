@@ -641,6 +641,7 @@ public:
         return FunctionPtr(X86Assembler::readPointer(call.dataLabelPtrAtOffset(-REPTACH_OFFSET_CALL_R11).dataLocation()));
     }
 
+    static bool haveScratchRegisterForBlinding() { return true; }
     static RegisterID scratchRegisterForBlinding() { return scratchRegister; }
 
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return true; }

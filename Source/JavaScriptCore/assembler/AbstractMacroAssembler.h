@@ -836,9 +836,18 @@ protected:
     Vector<RegisterAllocationOffset, 10> m_registerAllocationForOffsets;
 #endif
 
-    static bool scratchRegisterForBlinding() { return false; }
-    static bool shouldBlindForSpecificArch(uint32_t) { return true; }
-    static bool shouldBlindForSpecificArch(uint64_t) { return true; }
+    static bool haveScratchRegisterForBlinding()
+    {
+        return false;
+    }
+    static RegisterID scratchRegisterForBlinding()
+    {
+        UNREACHABLE_FOR_PLATFORM();
+        return firstRegister();
+    }
+    static bool canBlind() { return false; }
+    static bool shouldBlindForSpecificArch(uint32_t) { return false; }
+    static bool shouldBlindForSpecificArch(uint64_t) { return false; }
 
     class CachedTempRegister {
         friend class DataLabelPtr;

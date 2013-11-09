@@ -1,3 +1,26 @@
+2013-11-08  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be easy to disable blinding on a per-architecture basis
+        https://bugs.webkit.org/show_bug.cgi?id=124083
+
+        Reviewed by Michael Saboff.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::haveScratchRegisterForBlinding):
+        (JSC::AbstractMacroAssembler::scratchRegisterForBlinding):
+        (JSC::AbstractMacroAssembler::canBlind):
+        (JSC::AbstractMacroAssembler::shouldBlindForSpecificArch):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::shouldBlind):
+        (JSC::MacroAssembler::store32):
+        (JSC::MacroAssembler::branch32):
+        (JSC::MacroAssembler::branchAdd32):
+        (JSC::MacroAssembler::branchMul32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::canBlind):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::haveScratchRegisterForBlinding):
+
 2013-11-08  Oliver Hunt  <oliver@apple.com>
 
         Remove more accidentally added files.
