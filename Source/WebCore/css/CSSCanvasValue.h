@@ -52,7 +52,7 @@ public:
 private:
     explicit CSSCanvasValue(const String& name)
         : CSSImageGeneratorValue(CanvasClass)
-        , m_canvasObserver(this)
+        , m_canvasObserver(*this)
         , m_name(name)
         , m_element(0)
     {
@@ -62,27 +62,33 @@ private:
     // to avoid adding a vptr to CSSCanvasValue.
     class CanvasObserverProxy : public CanvasObserver {
     public:
-        CanvasObserverProxy(CSSCanvasValue* ownerValue) : m_ownerValue(ownerValue) { }
-        virtual ~CanvasObserverProxy() { }
-        virtual void canvasChanged(HTMLCanvasElement* canvas, const FloatRect& changedRect)
+        CanvasObserverProxy(CSSCanvasValue& ownerValue)
+            : m_ownerValue(ownerValue)
         {
-            m_ownerValue->canvasChanged(canvas, changedRect);
         }
-        virtual void canvasResized(HTMLCanvasElement* canvas)
+        virtual ~CanvasObserverProxy()
         {
-            m_ownerValue->canvasResized(canvas);
         }
-        virtual void canvasDestroyed(HTMLCanvasElement* canvas)
+        virtual void canvasChanged(HTMLCanvasElement& canvas, const FloatRect& changedRect)
         {
-            m_ownerValue->canvasDestroyed(canvas);
+            m_ownerValue.canvasChanged(canvas, changedRect);
         }
+        virtual void canvasResized(HTMLCanvasElement& canvas)
+        {
+            m_ownerValue.canvasResized(canvas);
+        }
+        virtual void canvasDestroyed(HTMLCanvasElement& canvas)
+        {
+            m_ownerValue.canvasDestroyed(canvas);
+        }
+
     private:
-        CSSCanvasValue* m_ownerValue;
+        CSSCanvasValue& m_ownerValue;
     };
 
-    void canvasChanged(HTMLCanvasElement*, const FloatRect& changedRect);
-    void canvasResized(HTMLCanvasElement*);
-    void canvasDestroyed(HTMLCanvasElement*);
+    void canvasChanged(HTMLCanvasElement&, const FloatRect& changedRect);
+    void canvasResized(HTMLCanvasElement&);
+    void canvasDestroyed(HTMLCanvasElement&);
 
     HTMLCanvasElement* element(Document&);
 

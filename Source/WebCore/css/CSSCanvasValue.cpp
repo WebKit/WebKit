@@ -35,7 +35,7 @@ namespace WebCore {
 CSSCanvasValue::~CSSCanvasValue()
 {
     if (m_element)
-        m_element->removeObserver(&m_canvasObserver);
+        m_element->removeObserver(m_canvasObserver);
 }
 
 String CSSCanvasValue::customCSSText() const
@@ -47,22 +47,22 @@ String CSSCanvasValue::customCSSText() const
     return result.toString();
 }
 
-void CSSCanvasValue::canvasChanged(HTMLCanvasElement*, const FloatRect& changedRect)
+void CSSCanvasValue::canvasChanged(HTMLCanvasElement&, const FloatRect& changedRect)
 {
     IntRect imageChangeRect = enclosingIntRect(changedRect);
     for (auto it = clients().begin(), end = clients().end(); it != end; ++it)
         it->key->imageChanged(static_cast<WrappedImagePtr>(this), &imageChangeRect);
 }
 
-void CSSCanvasValue::canvasResized(HTMLCanvasElement*)
+void CSSCanvasValue::canvasResized(HTMLCanvasElement&)
 {
     for (auto it = clients().begin(), end = clients().end(); it != end; ++it)
         it->key->imageChanged(static_cast<WrappedImagePtr>(this));
 }
 
-void CSSCanvasValue::canvasDestroyed(HTMLCanvasElement* element)
+void CSSCanvasValue::canvasDestroyed(HTMLCanvasElement& element)
 {
-    ASSERT_UNUSED(element, element == m_element);
+    ASSERT_UNUSED(&element, &element == m_element);
     m_element = nullptr;
 }
 
@@ -78,8 +78,8 @@ HTMLCanvasElement* CSSCanvasValue::element(Document& document)
      if (!m_element) {
         m_element = document.getCSSCanvasElement(m_name);
         if (!m_element)
-            return 0;
-        m_element->addObserver(&m_canvasObserver);
+            return nullptr;
+        m_element->addObserver(m_canvasObserver);
     }
     return m_element;
 }
