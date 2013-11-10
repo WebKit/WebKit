@@ -1,3 +1,15 @@
+2013-11-10  Sergio Correia  <sergio.correia@openbossa.org>
+
+        Fix EFL build after r159027
+        https://bugs.webkit.org/show_bug.cgi?id=124127
+
+        Reviewed by Anders Carlsson.
+
+        No new tests, build fix.
+
+        * page/Settings.in: Add std to numeric_limits, since we don't have
+        'using std' directives anymore.
+
 2013-11-10  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
