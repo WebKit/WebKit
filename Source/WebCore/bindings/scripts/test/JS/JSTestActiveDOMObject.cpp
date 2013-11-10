@@ -21,7 +21,6 @@
 #include "config.h"
 #include "JSTestActiveDOMObject.h"
 
-#include "BindingSecurity.h"
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSNode.h"
