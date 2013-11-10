@@ -415,20 +415,7 @@ private:
 #endif
 }; // class ScrollView
 
-inline ScrollView* toScrollView(Widget* widget)
-{
-    ASSERT(!widget || widget->isScrollView());
-    return static_cast<ScrollView*>(widget);
-}
-
-inline const ScrollView* toScrollView(const Widget* widget)
-{
-    ASSERT(!widget || widget->isScrollView());
-    return static_cast<const ScrollView*>(widget);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toScrollView(const ScrollView*);
+WIDGET_TYPE_CASTS(ScrollView, isScrollView());
 
 } // namespace WebCore
 

@@ -59,8 +59,8 @@ ScrollView* Widget::root() const
     while (top->parent())
         top = top->parent();
     if (top->isFrameView())
-        return const_cast<ScrollView*>(static_cast<const ScrollView*>(top));
-    return 0;
+        return const_cast<ScrollView*>(toScrollView(top));
+    return nullptr;
 }
     
 void Widget::removeFromParent()

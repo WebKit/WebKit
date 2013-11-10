@@ -233,6 +233,9 @@ private:
 #endif
 };
 
+#define WIDGET_TYPE_CASTS(ToValueTypeName, predicate) \
+    TYPE_CASTS_BASE(ToValueTypeName, Widget, object, object->predicate, object.predicate)
+
 #if !PLATFORM(MAC)
 
 inline PlatformWidget Widget::platformWidget() const

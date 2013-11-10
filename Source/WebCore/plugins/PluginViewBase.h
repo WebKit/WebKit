@@ -75,20 +75,7 @@ protected:
     explicit PluginViewBase(PlatformWidget widget = 0) : Widget(widget) { }
 };
 
-inline PluginViewBase* toPluginViewBase(Widget* widget)
-{
-    ASSERT(!widget || widget->isPluginViewBase());
-    return static_cast<PluginViewBase*>(widget);
-}
-
-inline const PluginViewBase* toPluginViewBase(const Widget* widget)
-{
-    ASSERT(!widget || widget->isPluginViewBase());
-    return static_cast<const PluginViewBase*>(widget);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toPluginViewBase(const PluginViewBase*);
+WIDGET_TYPE_CASTS(PluginViewBase, isPluginViewBase());
 
 } // namespace WebCore
 

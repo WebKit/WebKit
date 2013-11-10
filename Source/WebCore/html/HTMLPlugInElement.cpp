@@ -78,7 +78,7 @@ HTMLPlugInElement::~HTMLPlugInElement()
 
 bool HTMLPlugInElement::canProcessDrag() const
 {
-    const PluginViewBase* plugin = pluginWidget() && pluginWidget()->isPluginViewBase() ? static_cast<const PluginViewBase*>(pluginWidget()) : 0;
+    const PluginViewBase* plugin = pluginWidget() && pluginWidget()->isPluginViewBase() ? toPluginViewBase(pluginWidget()) : nullptr;
     return plugin ? plugin->canProcessDrag() : false;
 }
 

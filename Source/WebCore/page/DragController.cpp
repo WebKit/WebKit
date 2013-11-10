@@ -398,7 +398,7 @@ DragOperation DragController::operationForLoad(DragData& dragData)
 
     if (doc && doc->isPluginDocument()) {
         const Widget* widget = toPluginDocument(doc)->pluginWidget();
-        const PluginViewBase* pluginView = (widget && widget->isPluginViewBase()) ? static_cast<const PluginViewBase*>(widget) : 0;
+        const PluginViewBase* pluginView = (widget && widget->isPluginViewBase()) ? toPluginViewBase(widget) : nullptr;
 
         if (pluginView)
             pluginDocumentAcceptsDrags = pluginView->shouldAllowNavigationFromDrags();

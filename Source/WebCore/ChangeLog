@@ -1,5 +1,16 @@
 2013-11-10  Andreas Kling  <akling@apple.com>
 
+        Generate type casting helpers for Widget classes.
+        <https://webkit.org/b/124120>
+
+        Add a WIDGET_TYPE_CASTS macro and replace all the hand-written
+        toFoo() helpers we had for Widget subclasses. Fixed up a handful
+        of places that were still using static_cast.
+
+        Reviewed by Antti Koivisto.
+
+2013-11-10  Andreas Kling  <akling@apple.com>
+
         Remove unused FragmentationDisabler class.
         <https://webkit.org/b/124118>
 

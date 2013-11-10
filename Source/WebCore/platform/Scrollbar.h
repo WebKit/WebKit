@@ -201,6 +201,8 @@ private:
     virtual bool isScrollbar() const OVERRIDE { return true; }
 };
 
+WIDGET_TYPE_CASTS(Scrollbar, isScrollbar());
+
 } // namespace WebCore
 
 #endif // Scrollbar_h
