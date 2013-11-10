@@ -60,7 +60,7 @@ layer at (0,0) size 800x323
       RenderBlock {p} at (50,199) size 750x43
         RenderText {#text} at (0,26) size 199x17
           text run at (0,26) width 199: "SVG in a \"transparent\" iframe: "
-        RenderPartObject {iframe} at (199,0) size 40x40
+        RenderIFrame {iframe} at (199,0) size 40x40
           layer at (0,0) size 40x40
             RenderView at (0,0) size 40x40
           layer at (0,0) size 40x40

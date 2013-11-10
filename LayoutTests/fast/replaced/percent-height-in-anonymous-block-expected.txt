@@ -7,7 +7,7 @@ layer at (0,0) size 800x116
         RenderBlock {DIV} at (0,0) size 100x100
           RenderBlock {DIV} at (0,0) size 100x0
           RenderBlock (anonymous) at (0,0) size 100x100
-            RenderPartObject {IFRAME} at (0,0) size 100x100 [bgcolor=#008000]
+            RenderIFrame {IFRAME} at (0,0) size 100x100 [bgcolor=#008000]
               layer at (0,0) size 100x100
                 RenderView at (0,0) size 100x100
               layer at (0,0) size 100x100

@@ -1,5 +1,15 @@
 2013-11-09  Andreas Kling  <akling@apple.com>
 
+        RenderIFrame should display its name correctly in DRT output.
+        <https://webkit.org/b/124117>
+
+        Nuke an age-old FIXME about making RenderIFrame show its true name
+        in DRT output. No more "RenderPartObject {IFRAME}"!
+
+        Reviewed by Anders Carlsson.
+
+2013-11-09  Andreas Kling  <akling@apple.com>
+
         SVGTextMetricsBuilder::walkTree() should take a RenderElement.
         <https://webkit.org/b/124105>
 

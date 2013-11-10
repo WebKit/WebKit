@@ -6,7 +6,7 @@ layer at (0,0) size 800x8
 layer at (20,50) size 200x100
   RenderBlock (positioned) {DIV} at (20,50) size 200x100 [bgcolor=#008000]
 layer at (20,50) size 200x100
-  RenderPartObject {IFRAME} at (20,50) size 200x100
+  RenderIFrame {IFRAME} at (20,50) size 200x100
     layer at (0,0) size 200x100
       RenderView at (0,0) size 200x100
     layer at (0,0) size 200x16

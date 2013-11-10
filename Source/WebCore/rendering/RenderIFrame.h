@@ -54,7 +54,7 @@ private:
 
     virtual bool isRenderIFrame() const OVERRIDE { return true; }
 
-    virtual const char* renderName() const OVERRIDE { return "RenderPartObject"; } // Lying for now to avoid breaking tests
+    virtual const char* renderName() const OVERRIDE { return "RenderIFrame"; }
 
     virtual bool requiresLayer() const OVERRIDE;
 

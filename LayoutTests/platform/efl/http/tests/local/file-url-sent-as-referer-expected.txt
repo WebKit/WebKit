@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,18) size 499x17
         text run at (0,18) width 499: "This is a test to see if a file:// url is sent out as the referrer for a subresource load"
       RenderBR {BR} at (499,32) size 0x0
-      RenderPartObject {IFRAME} at (0,36) size 304x154 [border: (2px inset #000000)]
+      RenderIFrame {IFRAME} at (0,36) size 304x154 [border: (2px inset #000000)]
         layer at (0,0) size 300x150
           RenderView at (0,0) size 300x150
         layer at (0,0) size 300x150

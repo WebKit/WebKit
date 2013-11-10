@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 759: "To perform this test manually, click once in the image frame, choose Edit -> Copy then click in the red box and paste the"
           text run at (0,18) width 355: "image. If the image pastes successfully the test is passed."
       RenderBlock (anonymous) at (0,86) size 784x154
-        RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px solid #0000FF)]
+        RenderIFrame {IFRAME} at (0,0) size 304x154 [border: (2px solid #0000FF)]
           layer at (0,0) size 300x150
             RenderView at (0,0) size 300x150
           layer at (0,0) size 300x150

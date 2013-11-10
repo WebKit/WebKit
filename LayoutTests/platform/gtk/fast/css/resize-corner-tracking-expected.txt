@@ -34,7 +34,7 @@ layer at (10,320) size 220x61 clip at (11,321) size 218x59
   RenderTextControl {TEXTAREA} at (2,126) size 220x61 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 214x17
 layer at (8,386) size 323x175
-  RenderPartObject {IFRAME} at (0,192) size 323x175 [border: (2px inset #000000)]
+  RenderIFrame {IFRAME} at (0,192) size 323x175 [border: (2px inset #000000)]
     layer at (0,0) size 319x171
       RenderView at (0,0) size 319x171
     layer at (0,0) size 319x171

@@ -7,7 +7,7 @@ layer at (0,0) size 800x50
         RenderText {#text} at (0,0) size 303x17
           text run at (0,0) width 303: "Test passes if there is no red visible on the page."
 layer at (8,146) size 306x6
-  RenderPartObject {IFRAME} at (0,96) size 306x6 [border: (3px solid #FF0000)]
+  RenderIFrame {IFRAME} at (0,96) size 306x6 [border: (3px solid #FF0000)]
     layer at (0,0) size 285x8
       RenderView at (0,0) size 285x0
     layer at (0,0) size 285x8

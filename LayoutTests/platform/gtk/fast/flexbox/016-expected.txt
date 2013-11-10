@@ -12,7 +12,7 @@ layer at (0,0) size 800x585
             text run at (0,17) width 254: "filled with an olive-bordered green box. "
             text run at (254,17) width 499: "It should start beneath the header, end above the footer, and fill the width of the"
             text run at (0,34) width 111: "browser window."
-        RenderPartObject {IFRAME} at (0,51) size 812x517 [bgcolor=#008000] [border: (10px solid #808000)]
+        RenderIFrame {IFRAME} at (0,51) size 812x517 [bgcolor=#008000] [border: (10px solid #808000)]
           layer at (0,0) size 792x497
             RenderView at (0,0) size 792x497
           layer at (0,0) size 792x497

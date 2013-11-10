@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x169
   RenderBlock {HTML} at (0,0) size 800x169
     RenderBody {BODY} at (8,8) size 784x153
-      RenderPartObject {IFRAME} at (0,0) size 784x150
+      RenderIFrame {IFRAME} at (0,0) size 784x150
         layer at (0,0) size 784x150
           RenderView at (0,0) size 784x150
         layer at (0,0) size 784x119
