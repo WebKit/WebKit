@@ -61,17 +61,17 @@ void RenderMultiColumnBlock::computeColumnCountAndWidth()
 
     LayoutUnit availWidth = m_columnWidth;
     LayoutUnit colGap = columnGap();
-    LayoutUnit colWidth = max<LayoutUnit>(1, LayoutUnit(style().columnWidth()));
-    int colCount = max<int>(1, style().columnCount());
+    LayoutUnit colWidth = std::max<LayoutUnit>(1, LayoutUnit(style().columnWidth()));
+    int colCount = std::max<int>(1, style().columnCount());
 
     if (style().hasAutoColumnWidth() && !style().hasAutoColumnCount()) {
         m_columnCount = colCount;
-        m_columnWidth = max<LayoutUnit>(0, (availWidth - ((m_columnCount - 1) * colGap)) / m_columnCount);
+        m_columnWidth = std::max<LayoutUnit>(0, (availWidth - ((m_columnCount - 1) * colGap)) / m_columnCount);
     } else if (!style().hasAutoColumnWidth() && style().hasAutoColumnCount()) {
-        m_columnCount = max<LayoutUnit>(1, (availWidth + colGap) / (colWidth + colGap));
+        m_columnCount = std::max<LayoutUnit>(1, (availWidth + colGap) / (colWidth + colGap));
         m_columnWidth = ((availWidth + colGap) / m_columnCount) - colGap;
     } else {
-        m_columnCount = max<LayoutUnit>(min<LayoutUnit>(colCount, (availWidth + colGap) / (colWidth + colGap)), 1);
+        m_columnCount = std::max<LayoutUnit>(std::min<LayoutUnit>(colCount, (availWidth + colGap) / (colWidth + colGap)), 1);
         m_columnWidth = ((availWidth + colGap) / m_columnCount) - colGap;
     }
 }
@@ -90,7 +90,7 @@ void RenderMultiColumnBlock::checkForPaginationLogicalHeightChange(LayoutUnit& /
 {
     // We don't actually update any of the variables. We just subclassed to adjust our column height.
     updateLogicalHeight();
-    m_columnHeightAvailable = max<LayoutUnit>(contentLogicalHeight(), 0);
+    m_columnHeightAvailable = std::max<LayoutUnit>(contentLogicalHeight(), 0);
     setLogicalHeight(0);
 }
 
