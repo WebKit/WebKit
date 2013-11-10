@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,54 +24,23 @@
  */
 
 #import "config.h"
-#import "WKURLCF.h"
+#import "WKNSURLExtras.h"
 
-#import "WKAPICast.h"
-#import "WKNSURL.h"
 #import <WebCore/CFURLExtras.h>
-#import <objc/runtime.h>
 #import <wtf/text/CString.h>
+#import <wtf/text/WTFString.h>
 
 using namespace WebCore;
-using namespace WebKit;
 
-#if WK_API_ENABLED
-static inline Class wkNSURLClass()
+@implementation NSURL (WKExtras)
+
++ (instancetype)_web_URLWithWTFString:(const WTF::String&)string relativeToURL:(NSURL *)baseURL
 {
-    static dispatch_once_t once;
-    static Class wkNSURLClass;
-    dispatch_once(&once, ^{
-        wkNSURLClass = [WKNSURL class];
-    });
-    return wkNSURLClass;
-}
-#endif // WK_API_ENABLED
+    if (!string)
+        return nil;
 
-WKURLRef WKURLCreateWithCFURL(CFURLRef cfURL)
-{
-    if (!cfURL)
-        return 0;
-
-#if WK_API_ENABLED
-    // Since WKNSURL is an internal class with no subclasses, we can do a simple equality check.
-    if (object_getClass((NSURL *)cfURL) == wkNSURLClass()) {
-        return toAPI(static_cast<WebURL*>(&[(WKNSURL *)cfURL retain]._apiObject));
-    }
-#endif
-
-    CString urlBytes;
-    getURLBytes(cfURL, urlBytes);
-
-    return toCopiedURLAPI(urlBytes.data());
+    CString buffer = string.utf8();
+    return CFBridgingRelease(createCFURLFromBuffer(buffer.data(), buffer.length(), (CFURLRef)baseURL).leakRef());
 }
 
-CFURLRef WKURLCopyCFURL(CFAllocatorRef allocatorRef, WKURLRef URLRef)
-{
-    ASSERT(!toImpl(URLRef)->string().isNull());
-
-    // We first create a CString and then create the CFURL from it. This will ensure that the CFURL is stored in 
-    // UTF-8 which uses less memory and is what WebKit clients might expect.
-
-    CString buffer = toImpl(URLRef)->string().utf8();
-    return createCFURLFromBuffer(buffer.data(), buffer.length(), 0).leakRef();
-}
+@end

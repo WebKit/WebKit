@@ -1,3 +1,31 @@
+2013-11-09  Dan Bernstein  <mitz@apple.com>
+
+        Use createCFURLFromBuffer when converting a String to a CFURL
+        https://bugs.webkit.org/show_bug.cgi?id=124113
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/c/cf/WKURLCF.mm:
+        (WKURLCopyCFURL): Replaced some code with a call to createCFURLFromBuffer(), which does the
+        same thing.
+
+        * Shared/Cocoa/WKNSURLExtras.h: Added.
+        * Shared/Cocoa/WKNSURLExtras.mm: Added.
+        (+[NSURL _web_URLWithWTFString:relativeToURL:]): Added. Returns nil for the null String,
+        otherwise returns the result of createCFURLFromBuffer().
+
+        * UIProcess/API/Cocoa/WKBackForwardListItem.mm:
+        (-[WKBackForwardListItem URL]): Changed to use +_web_URLWithWTFString:relativeToURL:.
+        (-[WKBackForwardListItem originalURL]): Ditto.
+
+        * UIProcess/API/Cocoa/WKNavigationData.mm:
+        (-[WKNavigationData destinationURL]): Ditto.
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController unreachableURL]): Ditto.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added references to new files.
+
 2013-11-09  Anders Carlsson  <andersca@apple.com>
 
         Encode form data using the KeyedEncoder

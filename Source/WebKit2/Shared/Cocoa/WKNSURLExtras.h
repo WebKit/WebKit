@@ -23,55 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKNavigationDataInternal.h"
+#import <wtf/Forward.h>
 
-#if WK_API_ENABLED
+@interface NSURL (WKExtras)
 
-#import "WKNSURLExtras.h"
-#import <WebCore/ResourceRequest.h>
-#import <WebCore/ResourceResponse.h>
-
-using namespace WebKit;
-
-@implementation WKNavigationData {
-    std::aligned_storage<sizeof(WebNavigationData), std::alignment_of<WebNavigationData>::value>::type _data;
-}
-
-- (void)dealloc
-{
-    reinterpret_cast<WebNavigationData*>(&_data)->~WebNavigationData();
-
-    [super dealloc];
-}
-
-- (NSString *)title
-{
-    return reinterpret_cast<WebNavigationData*>(&_data)->title();
-}
-
-- (NSURLRequest *)originalRequest
-{
-    return reinterpret_cast<WebNavigationData*>(&_data)->originalRequest().nsURLRequest(WebCore::DoNotUpdateHTTPBody);
-}
-
-- (NSURL *)destinationURL
-{
-    return [NSURL _web_URLWithWTFString:reinterpret_cast<WebNavigationData*>(&_data)->url() relativeToURL:nil];
-}
-
-- (NSURLResponse *)response
-{
-    return reinterpret_cast<WebNavigationData*>(&_data)->response().nsURLResponse();
-}
-
-#pragma mark WKObject protocol implementation
-
-- (APIObject&)_apiObject
-{
-    return *reinterpret_cast<APIObject*>(&_data);
-}
++ (instancetype)_web_URLWithWTFString:(const WTF::String&)string relativeToURL:(NSURL *)baseURL;
 
 @end
-
-#endif // WK_API_ENABLED

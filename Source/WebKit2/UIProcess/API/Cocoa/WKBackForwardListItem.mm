@@ -28,7 +28,7 @@
 
 #if WK_API_ENABLED
 
-#import "WebString.h"
+#import "WKNSURLExtras.h"
 
 using namespace WebKit;
 
@@ -45,10 +45,7 @@ using namespace WebKit;
 
 - (NSURL *)URL
 {
-    if (!reinterpret_cast<WebBackForwardListItem*>(&_item)->url())
-        return nil;
-
-    return [NSURL URLWithString:reinterpret_cast<WebBackForwardListItem*>(&_item)->url()];
+    return [NSURL _web_URLWithWTFString:reinterpret_cast<WebBackForwardListItem*>(&_item)->url() relativeToURL:nil];
 }
 
 - (NSString *)title
@@ -61,10 +58,7 @@ using namespace WebKit;
 
 - (NSURL *)originalURL
 {
-    if (!reinterpret_cast<WebBackForwardListItem*>(&_item)->originalURL())
-        return nil;
-
-    return [NSURL URLWithString:reinterpret_cast<WebBackForwardListItem*>(&_item)->originalURL()];
+    return [NSURL _web_URLWithWTFString:reinterpret_cast<WebBackForwardListItem*>(&_item)->originalURL() relativeToURL:nil];
 }
 
 #pragma mark WKObject protocol implementation

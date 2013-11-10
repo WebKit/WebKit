@@ -33,6 +33,7 @@
 #import "WKFrame.h"
 #import "WKFramePolicyListener.h"
 #import "WKNSArray.h"
+#import "WKNSURLExtras.h"
 #import "WKPagePrivate.h"
 #import "WKRetainPtr.h"
 #import "WKStringCF.h"
@@ -332,11 +333,7 @@ static void releaseNSData(unsigned char*, const void* data)
 
 - (NSURL *)unreachableURL
 {
-    const String& unreachableURL = toImpl(_data->_pageRef.get())->unreachableURL();
-    if (!unreachableURL)
-        return nil;
-
-    return !unreachableURL ? nil : [NSURL URLWithString:unreachableURL];
+    return [NSURL _web_URLWithWTFString:toImpl(_data->_pageRef.get())->unreachableURL() relativeToURL:nil];
 }
 
 - (double)estimatedProgress
