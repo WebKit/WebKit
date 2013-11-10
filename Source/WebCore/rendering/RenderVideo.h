@@ -92,19 +92,7 @@ private:
     LayoutSize m_cachedImageSize;
 };
 
-inline RenderVideo& toRenderVideo(RenderObject& object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(object.isVideo());
-    return static_cast<RenderVideo&>(object);
-}
-
-inline const RenderVideo& toRenderVideo(const RenderObject& object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(object.isVideo());
-    return static_cast<const RenderVideo&>(object);
-}
-
-void toRenderVideo(const RenderVideo&);
+RENDER_OBJECT_TYPE_CASTS(RenderVideo, isVideo());
 
 } // namespace WebCore
 

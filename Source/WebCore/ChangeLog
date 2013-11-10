@@ -1,5 +1,20 @@
 2013-11-09  Andreas Kling  <akling@apple.com>
 
+        Use RENDER_OBJECT_TYPE_CASTS for more types.
+        <https://webkit.org/b/124112>
+
+        Generate toRenderFoo() type casting helpers for these classes:
+
+            - RenderCombineText
+            - RenderDetailsMarker
+            - RenderListMarker
+            - RenderVideo
+            - RenderView
+
+        Reviewed by Anders Carlsson.
+
+2013-11-09  Andreas Kling  <akling@apple.com>
+
         Move MathML type checking virtuals to RenderObject.
         <https://webkit.org/b/124111>
 

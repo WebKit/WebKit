@@ -45,13 +45,7 @@ private:
     Path getPath(const LayoutPoint& origin) const;
 };
 
-inline const RenderDetailsMarker& toRenderDetailsMarker(const RenderObject& object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(object.isDetailsMarker());
-    return static_cast<const RenderDetailsMarker&>(object);
-}
-
-void toRenderDetailsMarker(const RenderDetailsMarker&);
+RENDER_OBJECT_TYPE_CASTS(RenderDetailsMarker, isDetailsMarker());
 
 }
 

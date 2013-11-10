@@ -85,19 +85,7 @@ private:
     RenderListItem& m_listItem;
 };
 
-inline RenderListMarker& toRenderListMarker(RenderObject& object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(object.isListMarker());
-    return static_cast<RenderListMarker&>(object);
-}
-
-inline const RenderListMarker& toRenderListMarker(const RenderObject& object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(object.isListMarker());
-    return static_cast<const RenderListMarker&>(object);
-}
-
-void toRenderListMarker(const RenderListMarker&);
+RENDER_OBJECT_TYPE_CASTS(RenderListMarker, isListMarker());
 
 } // namespace WebCore
 
