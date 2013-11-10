@@ -1,3 +1,30 @@
+2013-11-09  Andreas Kling  <akling@apple.com>
+
+        Optimize baselines: svg/css
+
+        Unreviewed; run "webkit-patch optimize-baselines svg/css"
+
+        * platform/gtk/svg/css/circle-in-mask-with-shadow-expected.png: Removed.
+        * platform/gtk/svg/css/clippath-with-shadow-expected.png: Removed.
+        * platform/gtk/svg/css/group-with-shadow-expected.txt: Removed.
+        * platform/gtk/svg/css/path-with-shadow-expected.png: Removed.
+        * platform/gtk/svg/css/shadow-with-large-radius-expected.png: Removed.
+        * platform/gtk/svg/css/shadow-with-negative-offset-expected.png: Removed.
+        * platform/gtk/svg/css/stars-with-shadow-expected.txt: Removed.
+        * platform/gtk/svg/css/text-gradient-shadow-expected.txt: Removed.
+        * platform/mac/svg/css/composite-shadow-example-expected.txt: Removed.
+        * platform/mac/svg/css/composite-shadow-with-opacity-expected.txt: Removed.
+        * svg/css/circle-in-mask-with-shadow-expected.png: Renamed from LayoutTests/platform/efl-wk1/svg/css/circle-in-mask-with-shadow-expected.png.
+        * svg/css/clippath-with-shadow-expected.png: Renamed from LayoutTests/platform/efl/svg/css/clippath-with-shadow-expected.png.
+        * svg/css/composite-shadow-example-expected.txt: Renamed from LayoutTests/platform/efl/svg/css/composite-shadow-example-expected.txt.
+        * svg/css/composite-shadow-with-opacity-expected.txt: Renamed from LayoutTests/platform/efl/svg/css/composite-shadow-with-opacity-expected.txt.
+        * svg/css/group-with-shadow-expected.txt: Renamed from LayoutTests/platform/efl/svg/css/group-with-shadow-expected.txt.
+        * svg/css/path-with-shadow-expected.png: Renamed from LayoutTests/platform/efl-wk1/svg/css/path-with-shadow-expected.png.
+        * svg/css/shadow-with-large-radius-expected.png: Renamed from LayoutTests/platform/efl-wk1/svg/css/shadow-with-large-radius-expected.png.
+        * svg/css/shadow-with-negative-offset-expected.png: Renamed from LayoutTests/platform/efl-wk1/svg/css/shadow-with-negative-offset-expected.png.
+        * svg/css/stars-with-shadow-expected.txt: Renamed from LayoutTests/platform/efl/svg/css/stars-with-shadow-expected.txt.
+        * svg/css/text-gradient-shadow-expected.txt: Renamed from LayoutTests/platform/efl/svg/css/text-gradient-shadow-expected.txt.
+
 2013-11-09  Oliver Hunt  <oliver@apple.com>
 
         Add Map Iterators
