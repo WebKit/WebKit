@@ -33,6 +33,7 @@
 #include "FileSystem.h"
 #include "FormDataBuilder.h"
 #include "FormDataList.h"
+#include "KeyedCoding.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "TextEncoding.h"
@@ -443,6 +444,35 @@ static void encodeElement(Encoder& encoder, const FormDataElement& element)
     ASSERT_NOT_REACHED();
 }
 
+static void encodeElement(KeyedEncoder& encoder, const FormDataElement& element)
+{
+    encoder.encodeEnum("type", element.m_type);
+
+    switch (element.m_type) {
+    case FormDataElement::data:
+        encoder.encodeBytes("data", reinterpret_cast<const uint8_t*>(element.m_data.data()), element.m_data.size());
+        return;
+    case FormDataElement::encodedFile:
+        encoder.encodeString("filename", element.m_filename);
+        encoder.encodeString("generatedFilename", element.m_generatedFilename);
+        encoder.encodeBool("shouldGenerateFile", element.m_shouldGenerateFile);
+#if ENABLE(BLOB)
+        encoder.encodeInt64("fileStart", element.m_fileStart);
+        encoder.encodeInt64("fileLength", element.m_fileLength);
+        encoder.encodeDouble("expectedFileModificationTime", element.m_expectedFileModificationTime);
+#endif
+        return;
+
+#if ENABLE(BLOB)
+    case FormDataElement::encodedBlob:
+        encoder.encodeString("url", element.m_url.string());
+        return;
+#endif
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
 static bool decodeElement(Decoder& decoder, FormDataElement& element)
 {
     uint32_t type;
@@ -525,6 +555,19 @@ void FormData::encode(Encoder& encoder) const
     encoder.encodeBool(m_hasGeneratedFiles);
 
     encoder.encodeInt64(m_identifier);
+}
+
+void FormData::encode(KeyedEncoder& encoder) const
+{
+    encoder.encodeBool("alwaysStream", m_alwaysStream);
+    encoder.encodeBytes("boundary", reinterpret_cast<const uint8_t*>(m_boundary.data()), m_boundary.size());
+
+    encoder.encodeObjects("elements", m_elements.begin(), m_elements.end(), [](KeyedEncoder& encoder, const FormDataElement& element) {
+        encodeElement(encoder, element);
+    });
+
+    encoder.encodeBool("hasGeneratedFiles", m_hasGeneratedFiles);
+    encoder.encodeInt64("identifier", m_identifier);
 }
 
 PassRefPtr<FormData> FormData::decode(Decoder& decoder)

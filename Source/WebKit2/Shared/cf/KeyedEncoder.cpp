@@ -55,6 +55,11 @@ void KeyedEncoder::encodeBytes(const String& key, const uint8_t* bytes, size_t s
     CFDictionarySetValue(m_dictionaryStack.last(), key.createCFString().get(), data.get());
 }
 
+void KeyedEncoder::encodeBool(const String& key, bool value)
+{
+    CFDictionarySetValue(m_dictionaryStack.last(), key.createCFString().get(), value ? kCFBooleanTrue : kCFBooleanFalse);
+}
+
 void KeyedEncoder::encodeUInt32(const String& key, uint32_t value)
 {
     auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &value));
@@ -76,6 +81,12 @@ void KeyedEncoder::encodeInt64(const String& key, int64_t value)
 void KeyedEncoder::encodeFloat(const String& key, float value)
 {
     auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &value));
+    CFDictionarySetValue(m_dictionaryStack.last(), key.createCFString().get(), number.get());
+}
+
+void KeyedEncoder::encodeDouble(const String& key, double value)
+{
+    auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &value));
     CFDictionarySetValue(m_dictionaryStack.last(), key.createCFString().get(), number.get());
 }
 

@@ -30,6 +30,7 @@ namespace WebCore {
 
 class Document;
 class FormDataList;
+class KeyedEncoder;
 class TextEncoding;
 
 class FormDataElement {
@@ -108,6 +109,7 @@ public:
     ~FormData();
 
     void encode(Encoder&) const;
+    void encode(KeyedEncoder&) const;
     static PassRefPtr<FormData> decode(Decoder&);
 
     void appendData(const void* data, size_t);

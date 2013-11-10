@@ -36,11 +36,21 @@ protected:
 
 public:
     virtual void encodeBytes(const String& key, const uint8_t*, size_t) = 0;
+    virtual void encodeBool(const String& key, bool) = 0;
     virtual void encodeUInt32(const String& key, uint32_t) = 0;
     virtual void encodeInt32(const String& key, int32_t) = 0;
     virtual void encodeInt64(const String& key, int64_t) = 0;
     virtual void encodeFloat(const String& key, float) = 0;
+    virtual void encodeDouble(const String& key, double) = 0;
     virtual void encodeString(const String& key, const String&) = 0;
+
+    template<typename T>
+    void encodeEnum(const String& key, T value)
+    {
+        static_assert(std::is_enum<T>::value, "T must be an enum type");
+
+        encodeInt64(key, static_cast<int64_t>(value));
+    }
 
     template<typename T, typename F>
     void encodeObject(const String& key, const T& object, F&& function)

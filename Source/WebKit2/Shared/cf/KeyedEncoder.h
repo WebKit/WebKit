@@ -32,18 +32,19 @@
 
 namespace WebKit {
 
-class KeyedEncoder : public WebCore::KeyedEncoder {
+class KeyedEncoder FINAL : public WebCore::KeyedEncoder {
 public:
     KeyedEncoder();
     ~KeyedEncoder();
 
 private:
     virtual void encodeBytes(const String& key, const uint8_t*, size_t) OVERRIDE;
-
+    virtual void encodeBool(const String& key, bool) OVERRIDE;
     virtual void encodeUInt32(const String& key, uint32_t) OVERRIDE;
     virtual void encodeInt32(const String& key, int32_t) OVERRIDE;
     virtual void encodeInt64(const String& key, int64_t) OVERRIDE;
     virtual void encodeFloat(const String& key, float) OVERRIDE;
+    virtual void encodeDouble(const String& key, double) OVERRIDE;
     virtual void encodeString(const String& key, const String&) OVERRIDE;
 
     virtual void beginObject(const String& key) OVERRIDE;
