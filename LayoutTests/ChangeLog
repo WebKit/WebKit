@@ -1,3 +1,274 @@
+2013-11-10  Andreas Kling  <akling@apple.com>
+
+        Optimize baselines: svg/*
+
+        Unreviewed; run "webkit-patch optimize-baselines svg"
+
+        * platform/efl-wk2/svg/dom/SVGLengthList-basics-expected.png: Renamed from LayoutTests/platform/efl/svg/dom/SVGLengthList-basics-expected.png.
+        * platform/efl/svg/wicd/sizing-flakiness-expected.txt: Removed.
+        * platform/gtk/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t-expected.txt: Removed.
+        * platform/gtk/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t-expected.txt: Removed.
+        * platform/gtk/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t-expected.txt: Removed.
+        * platform/gtk/svg/as-image/svg-as-image-expected.png: Removed.
+        * platform/gtk/svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-1-expected.png: Removed.
+        * platform/gtk/svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2-expected.png: Removed.
+        * platform/gtk/svg/as-object/embedded-svg-size-changes-no-layout-triggers-expected.png: Removed.
+        * platform/gtk/svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-1-expected.png: Removed.
+        * platform/gtk/svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-2-expected.png: Removed.
+        * platform/gtk/svg/custom/feDisplacementMap-01-expected.txt: Removed.
+        * platform/gtk/svg/custom/pattern-skew-transformed-expected.png: Removed.
+        * platform/gtk/svg/custom/radialGradient-focal-radius-expected.txt: Removed.
+        * platform/gtk/svg/custom/simple-text-double-shadow-expected.png: Removed.
+        * platform/gtk/svg/custom/simple-text-double-shadow-expected.txt: Removed.
+        * platform/gtk/svg/dom/SVGPathSegList-segment-modification-expected.txt: Removed.
+        * platform/gtk/svg/dom/SVGPathSegList-xml-dom-synchronization2-expected.txt: Removed.
+        * platform/gtk/svg/dom/SVGRectElement/rect-modify-rx-expected.png: Removed.
+        * platform/gtk/svg/dynamic-updates/SVGAElement-dom-href-attr-expected.png: Removed.
+        * platform/gtk/svg/dynamic-updates/SVGAElement-dom-target-attr-expected.png: Removed.
+        * platform/gtk/svg/dynamic-updates/SVGAElement-svgdom-href-prop-expected.png: Removed.
+        * platform/gtk/svg/dynamic-updates/SVGAElement-svgdom-target-prop-expected.png: Removed.
+        * platform/gtk/svg/foreignObject/disallowed-svg-nodes-as-direct-children-expected.png: Removed.
+        * platform/gtk/svg/foreignObject/fO-display-none-expected.png: Removed.
+        * platform/gtk/svg/foreignObject/fO-display-none-with-relative-pos-content-expected.png: Removed.
+        * platform/gtk/svg/foreignObject/fO-parent-display-changes-expected.png: Removed.
+        * platform/gtk/svg/foreignObject/fO-parent-display-changes-expected.txt: Removed.
+        * platform/gtk/svg/foreignObject/fO-parent-display-none-expected.png: Removed.
+        * platform/gtk/svg/foreignObject/fO-parent-display-none-with-relative-pos-content-expected.png: Removed.
+        * platform/gtk/svg/foreignObject/fO-parent-of-parent-display-none-expected.png: Removed.
+        * platform/gtk/svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content-expected.png: Removed.
+        * platform/gtk/svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.png: Removed.
+        * platform/gtk/svg/foreignObject/svg-document-as-direct-child-expected.png: Removed.
+        * platform/gtk/svg/foreignObject/svg-document-as-direct-child-expected.txt: Removed.
+        * platform/gtk/svg/in-html/by-reference-expected.txt: Removed.
+        * platform/gtk/svg/overflow/overflow-on-foreignObject-expected.png: Removed.
+        * platform/gtk/svg/overflow/overflow-on-inner-svg-element-defaults-expected.png: Removed.
+        * platform/gtk/svg/overflow/overflow-on-outermost-svg-element-defaults-expected.png: Removed.
+        * platform/gtk/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1-expected.png: Removed.
+        * platform/gtk/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2-expected.png: Removed.
+        * platform/gtk/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3-expected.png: Removed.
+        * platform/gtk/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-auto-expected.png: Removed.
+        * platform/gtk/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-hidden-expected.png: Removed.
+        * platform/gtk/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-scroll-expected.png: Removed.
+        * platform/gtk/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible-expected.png: Removed.
+        * platform/gtk/svg/repaint/filter-repaint-expected.txt: Removed.
+        * platform/gtk/svg/repaint/image-href-change-expected.png: Removed.
+        * platform/gtk/svg/repaint/inner-svg-change-viewBox-contract-expected.png: Removed.
+        * platform/gtk/svg/repaint/inner-svg-change-viewPort-relative-expected.txt: Removed.
+        * platform/gtk/svg/repaint/text-mask-update-expected.png: Removed.
+        * platform/gtk/svg/stroke/zero-length-path-linecap-rendering-expected.txt: Removed.
+        * platform/gtk/svg/stroke/zero-length-subpaths-linecap-rendering-expected.txt: Removed.
+        * platform/gtk/svg/text/append-text-node-to-tspan-expected.txt: Removed.
+        * platform/gtk/svg/text/bidi-embedded-direction-expected.txt: Removed.
+        * platform/gtk/svg/text/bidi-reorder-value-lists-expected.txt: Removed.
+        * platform/gtk/svg/text/bidi-text-anchor-direction-expected.txt: Removed.
+        * platform/gtk/svg/text/bidi-text-query-expected.txt: Removed.
+        * platform/gtk/svg/text/bidi-tspans-expected.txt: Removed.
+        * platform/gtk/svg/text/ems-display-none-expected.txt: Removed.
+        * platform/gtk/svg/text/exs-display-none-expected.txt: Removed.
+        * platform/gtk/svg/text/font-size-below-point-five-expected.txt: Removed.
+        * platform/gtk/svg/text/modify-text-node-in-tspan-expected.txt: Removed.
+        * platform/gtk/svg/text/remove-text-node-from-tspan-expected.txt: Removed.
+        * platform/gtk/svg/text/remove-tspan-from-text-expected.txt: Removed.
+        * platform/gtk/svg/text/scaled-font-expected.txt: Removed.
+        * platform/gtk/svg/text/scaling-font-with-geometric-precision-expected.txt: Removed.
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-1-expected.txt: Removed.
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-2-expected.txt: Removed.
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-3-expected.txt: Removed.
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-4-expected.txt: Removed.
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-1-expected.txt: Removed.
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-2-expected.txt: Removed.
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-3-expected.txt: Removed.
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-4-expected.txt: Removed.
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-squeeze-1-expected.txt: Removed.
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-squeeze-2-expected.txt: Removed.
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-squeeze-3-expected.txt: Removed.
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-squeeze-4-expected.txt: Removed.
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.txt: Removed.
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.txt: Removed.
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.txt: Removed.
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.txt: Removed.
+        * platform/gtk/svg/text/select-x-list-1-expected.txt: Removed.
+        * platform/gtk/svg/text/select-x-list-2-expected.txt: Removed.
+        * platform/gtk/svg/text/select-x-list-3-expected.txt: Removed.
+        * platform/gtk/svg/text/select-x-list-4-expected.txt: Removed.
+        * platform/gtk/svg/text/select-x-list-with-tspans-1-expected.txt: Removed.
+        * platform/gtk/svg/text/select-x-list-with-tspans-2-expected.txt: Removed.
+        * platform/gtk/svg/text/select-x-list-with-tspans-3-expected.txt: Removed.
+        * platform/gtk/svg/text/select-x-list-with-tspans-4-expected.txt: Removed.
+        * platform/gtk/svg/text/selection-doubleclick-expected.txt: Removed.
+        * platform/gtk/svg/text/small-fonts-2-expected.txt: Removed.
+        * platform/gtk/svg/text/small-fonts-3-expected.txt: Removed.
+        * platform/gtk/svg/text/small-fonts-expected.txt: Removed.
+        * platform/gtk/svg/text/text-align-01-b-expected.txt: Removed.
+        * platform/gtk/svg/text/text-align-02-b-expected.txt: Removed.
+        * platform/gtk/svg/text/text-align-03-b-expected.txt: Removed.
+        * platform/gtk/svg/text/text-align-04-b-expected.txt: Removed.
+        * platform/gtk/svg/text/text-align-05-b-expected.txt: Removed.
+        * platform/gtk/svg/text/text-align-06-b-expected.txt: Removed.
+        * platform/gtk/svg/text/text-altglyph-01-b-expected.txt: Removed.
+        * platform/gtk/svg/text/text-deco-01-b-expected.txt: Removed.
+        * platform/gtk/svg/text/text-fill-opacity-expected.txt: Removed.
+        * platform/gtk/svg/text/text-fonts-01-t-expected.txt: Removed.
+        * platform/gtk/svg/text/text-fonts-02-t-expected.txt: Removed.
+        * platform/gtk/svg/text/text-gradient-positioning-expected.txt: Removed.
+        * platform/gtk/svg/text/text-intro-05-t-expected.txt: Removed.
+        * platform/gtk/svg/text/text-midpoint-split-bug-expected.txt: Removed.
+        * platform/gtk/svg/text/text-path-01-b-expected.txt: Removed.
+        * platform/gtk/svg/text/text-path-middle-align-expected.txt: Removed.
+        * platform/gtk/svg/text/text-spacing-01-b-expected.txt: Removed.
+        * platform/gtk/svg/text/text-text-01-b-expected.txt: Removed.
+        * platform/gtk/svg/text/text-text-03-b-expected.txt: Removed.
+        * platform/gtk/svg/text/text-text-04-t-expected.txt: Removed.
+        * platform/gtk/svg/text/text-text-05-t-expected.txt: Removed.
+        * platform/gtk/svg/text/text-text-06-t-expected.txt: Removed.
+        * platform/gtk/svg/text/text-text-07-t-expected.txt: Removed.
+        * platform/gtk/svg/text/text-text-08-b-expected.txt: Removed.
+        * platform/gtk/svg/text/text-tref-01-b-expected.txt: Removed.
+        * platform/gtk/svg/text/text-tselect-01-b-expected.txt: Removed.
+        * platform/gtk/svg/text/text-tselect-02-f-expected.txt: Removed.
+        * platform/gtk/svg/text/text-tspan-01-b-expected.txt: Removed.
+        * platform/gtk/svg/text/text-ws-01-t-expected.txt: Removed.
+        * platform/gtk/svg/text/text-ws-02-t-expected.txt: Removed.
+        * platform/gtk/svg/text/tspan-dynamic-positioning-expected.txt: Removed.
+        * platform/gtk/svg/transforms/text-with-mask-with-svg-transform-expected.txt: Removed.
+        * platform/gtk/svg/transforms/text-with-pattern-with-svg-transform-expected.txt: Removed.
+        * platform/gtk/svg/wicd/sizing-flakiness-expected.txt: Removed.
+        * platform/mac/svg/custom/feDisplacementMap-01-expected.txt: Removed.
+        * platform/mac/svg/custom/radialGradient-focal-radius-expected.txt: Removed.
+        * platform/mac/svg/custom/stroked-pattern-expected.txt: Removed.
+        * platform/mac/svg/text/selection-tripleclick-expected.txt: Removed.
+        * platform/win-future/svg/wicd/sizing-flakiness-expected.txt: Copied from LayoutTests/svg/wicd/sizing-flakiness-expected.txt.
+        * platform/win/svg/custom/pattern-scaling-expected.txt: Removed.
+        * svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t-expected.txt.
+        * svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t-expected.txt.
+        * svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t-expected.txt: Renamed from LayoutTests/platform/efl/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t-expected.txt.
+        * svg/as-image/svg-as-image-expected.png: Renamed from LayoutTests/platform/efl/svg/as-image/svg-as-image-expected.png.
+        * svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-1-expected.png: Renamed from LayoutTests/platform/efl/svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-1-expected.png.
+        * svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2-expected.png: Renamed from LayoutTests/platform/efl/svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2-expected.png.
+        * svg/as-object/embedded-svg-size-changes-no-layout-triggers-expected.png: Renamed from LayoutTests/platform/efl/svg/as-object/embedded-svg-size-changes-no-layout-triggers-expected.png.
+        * svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-1-expected.png: Renamed from LayoutTests/platform/efl/svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-1-expected.png.
+        * svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-2-expected.png: Renamed from LayoutTests/platform/efl/svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-2-expected.png.
+        * svg/custom/feDisplacementMap-01-expected.txt: Renamed from LayoutTests/platform/efl/svg/custom/feDisplacementMap-01-expected.txt.
+        * svg/custom/pattern-skew-transformed-expected.png: Renamed from LayoutTests/platform/efl/svg/custom/pattern-skew-transformed-expected.png.
+        * svg/custom/radialGradient-focal-radius-expected.txt: Renamed from LayoutTests/platform/efl/svg/custom/radialGradient-focal-radius-expected.txt.
+        * svg/custom/simple-text-double-shadow-expected.png: Renamed from LayoutTests/platform/efl/svg/custom/simple-text-double-shadow-expected.png.
+        * svg/custom/simple-text-double-shadow-expected.txt: Renamed from LayoutTests/platform/efl/svg/custom/simple-text-double-shadow-expected.txt.
+        * svg/custom/stroked-pattern-expected.txt: Renamed from LayoutTests/platform/efl/svg/custom/stroked-pattern-expected.txt.
+        * svg/dom/SVGPathSegList-segment-modification-expected.txt: Renamed from LayoutTests/platform/efl/svg/dom/SVGPathSegList-segment-modification-expected.txt.
+        * svg/dom/SVGPathSegList-xml-dom-synchronization2-expected.txt: Renamed from LayoutTests/platform/efl/svg/dom/SVGPathSegList-xml-dom-synchronization2-expected.txt.
+        * svg/dom/SVGRectElement/rect-modify-rx-expected.png: Renamed from LayoutTests/platform/efl/svg/dom/SVGRectElement/rect-modify-rx-expected.png.
+        * svg/dynamic-updates/SVGAElement-dom-href-attr-expected.png: Renamed from LayoutTests/platform/efl/svg/dynamic-updates/SVGAElement-dom-href-attr-expected.png.
+        * svg/dynamic-updates/SVGAElement-dom-target-attr-expected.png: Renamed from LayoutTests/platform/efl/svg/dynamic-updates/SVGAElement-dom-target-attr-expected.png.
+        * svg/dynamic-updates/SVGAElement-svgdom-href-prop-expected.png: Renamed from LayoutTests/platform/efl/svg/dynamic-updates/SVGAElement-svgdom-href-prop-expected.png.
+        * svg/dynamic-updates/SVGAElement-svgdom-target-prop-expected.png: Renamed from LayoutTests/platform/efl/svg/dynamic-updates/SVGAElement-svgdom-target-prop-expected.png.
+        * svg/foreignObject/disallowed-svg-nodes-as-direct-children-expected.png: Renamed from LayoutTests/platform/efl/svg/foreignObject/disallowed-svg-nodes-as-direct-children-expected.png.
+        * svg/foreignObject/fO-display-none-expected.png: Renamed from LayoutTests/platform/efl/svg/foreignObject/fO-display-none-expected.png.
+        * svg/foreignObject/fO-display-none-with-relative-pos-content-expected.png: Renamed from LayoutTests/platform/efl/svg/foreignObject/fO-display-none-with-relative-pos-content-expected.png.
+        * svg/foreignObject/fO-parent-display-changes-expected.png: Renamed from LayoutTests/platform/efl/svg/foreignObject/fO-parent-display-changes-expected.png.
+        * svg/foreignObject/fO-parent-display-changes-expected.txt: Renamed from LayoutTests/platform/efl/svg/foreignObject/fO-parent-display-changes-expected.txt.
+        * svg/foreignObject/fO-parent-display-none-expected.png: Renamed from LayoutTests/platform/efl/svg/foreignObject/fO-parent-display-none-expected.png.
+        * svg/foreignObject/fO-parent-display-none-with-relative-pos-content-expected.png: Renamed from LayoutTests/platform/efl/svg/foreignObject/fO-parent-display-none-with-relative-pos-content-expected.png.
+        * svg/foreignObject/fO-parent-of-parent-display-none-expected.png: Renamed from LayoutTests/platform/efl/svg/foreignObject/fO-parent-of-parent-display-none-expected.png.
+        * svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content-expected.png: Renamed from LayoutTests/platform/efl/svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content-expected.png.
+        * svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.png: Renamed from LayoutTests/platform/efl/svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.png.
+        * svg/foreignObject/svg-document-as-direct-child-expected.png: Renamed from LayoutTests/platform/efl/svg/foreignObject/svg-document-as-direct-child-expected.png.
+        * svg/foreignObject/svg-document-as-direct-child-expected.txt: Renamed from LayoutTests/platform/efl/svg/foreignObject/svg-document-as-direct-child-expected.txt.
+        * svg/in-html/by-reference-expected.txt: Renamed from LayoutTests/platform/efl/svg/in-html/by-reference-expected.txt.
+        * svg/overflow/overflow-on-foreignObject-expected.png: Renamed from LayoutTests/platform/efl/svg/overflow/overflow-on-foreignObject-expected.png.
+        * svg/overflow/overflow-on-inner-svg-element-defaults-expected.png: Renamed from LayoutTests/platform/efl/svg/overflow/overflow-on-inner-svg-element-defaults-expected.png.
+        * svg/overflow/overflow-on-outermost-svg-element-defaults-expected.png: Renamed from LayoutTests/platform/efl/svg/overflow/overflow-on-outermost-svg-element-defaults-expected.png.
+        * svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1-expected.png: Renamed from LayoutTests/platform/efl/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1-expected.png.
+        * svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2-expected.png: Renamed from LayoutTests/platform/efl/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2-expected.png.
+        * svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3-expected.png: Renamed from LayoutTests/platform/efl/svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3-expected.png.
+        * svg/overflow/overflow-on-outermost-svg-element-in-xhtml-auto-expected.png: Renamed from LayoutTests/platform/efl/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-auto-expected.png.
+        * svg/overflow/overflow-on-outermost-svg-element-in-xhtml-hidden-expected.png: Renamed from LayoutTests/platform/efl/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-hidden-expected.png.
+        * svg/overflow/overflow-on-outermost-svg-element-in-xhtml-scroll-expected.png: Renamed from LayoutTests/platform/efl/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-scroll-expected.png.
+        * svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible-expected.png: Renamed from LayoutTests/platform/efl/svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible-expected.png.
+        * svg/repaint/filter-repaint-expected.txt: Renamed from LayoutTests/platform/efl/svg/repaint/filter-repaint-expected.txt.
+        * svg/repaint/image-href-change-expected.png: Renamed from LayoutTests/platform/efl/svg/repaint/image-href-change-expected.png.
+        * svg/repaint/inner-svg-change-viewBox-contract-expected.png: Renamed from LayoutTests/platform/efl/svg/repaint/inner-svg-change-viewBox-contract-expected.png.
+        * svg/repaint/inner-svg-change-viewPort-relative-expected.txt: Renamed from LayoutTests/platform/efl/svg/repaint/inner-svg-change-viewPort-relative-expected.txt.
+        * svg/repaint/text-mask-update-expected.png: Renamed from LayoutTests/platform/efl/svg/repaint/text-mask-update-expected.png.
+        * svg/stroke/zero-length-path-linecap-rendering-expected.txt: Renamed from LayoutTests/platform/efl/svg/stroke/zero-length-path-linecap-rendering-expected.txt.
+        * svg/stroke/zero-length-subpaths-linecap-rendering-expected.txt: Renamed from LayoutTests/platform/efl/svg/stroke/zero-length-subpaths-linecap-rendering-expected.txt.
+        * svg/text/append-text-node-to-tspan-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/append-text-node-to-tspan-expected.txt.
+        * svg/text/bidi-embedded-direction-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/bidi-embedded-direction-expected.txt.
+        * svg/text/bidi-reorder-value-lists-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/bidi-reorder-value-lists-expected.txt.
+        * svg/text/bidi-text-anchor-direction-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/bidi-text-anchor-direction-expected.txt.
+        * svg/text/bidi-text-query-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/bidi-text-query-expected.txt.
+        * svg/text/bidi-tspans-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/bidi-tspans-expected.txt.
+        * svg/text/ems-display-none-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/ems-display-none-expected.txt.
+        * svg/text/exs-display-none-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/exs-display-none-expected.txt.
+        * svg/text/font-size-below-point-five-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/font-size-below-point-five-expected.txt.
+        * svg/text/modify-text-node-in-tspan-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/modify-text-node-in-tspan-expected.txt.
+        * svg/text/remove-text-node-from-tspan-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/remove-text-node-from-tspan-expected.txt.
+        * svg/text/remove-tspan-from-text-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/remove-tspan-from-text-expected.txt.
+        * svg/text/scaled-font-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/scaled-font-expected.txt.
+        * svg/text/scaling-font-with-geometric-precision-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/scaling-font-with-geometric-precision-expected.txt.
+        * svg/text/select-textLength-spacing-squeeze-1-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-textLength-spacing-squeeze-1-expected.txt.
+        * svg/text/select-textLength-spacing-squeeze-2-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-textLength-spacing-squeeze-2-expected.txt.
+        * svg/text/select-textLength-spacing-squeeze-3-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-textLength-spacing-squeeze-3-expected.txt.
+        * svg/text/select-textLength-spacing-squeeze-4-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-textLength-spacing-squeeze-4-expected.txt.
+        * svg/text/select-textLength-spacing-stretch-1-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-textLength-spacing-stretch-1-expected.txt.
+        * svg/text/select-textLength-spacing-stretch-2-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-textLength-spacing-stretch-2-expected.txt.
+        * svg/text/select-textLength-spacing-stretch-3-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-textLength-spacing-stretch-3-expected.txt.
+        * svg/text/select-textLength-spacing-stretch-4-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-textLength-spacing-stretch-4-expected.txt.
+        * svg/text/select-textLength-spacingAndGlyphs-squeeze-1-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-textLength-spacingAndGlyphs-squeeze-1-expected.txt.
+        * svg/text/select-textLength-spacingAndGlyphs-squeeze-2-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-textLength-spacingAndGlyphs-squeeze-2-expected.txt.
+        * svg/text/select-textLength-spacingAndGlyphs-squeeze-3-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-textLength-spacingAndGlyphs-squeeze-3-expected.txt.
+        * svg/text/select-textLength-spacingAndGlyphs-squeeze-4-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-textLength-spacingAndGlyphs-squeeze-4-expected.txt.
+        * svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.txt.
+        * svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.txt.
+        * svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.txt.
+        * svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.txt.
+        * svg/text/select-x-list-1-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-x-list-1-expected.txt.
+        * svg/text/select-x-list-2-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-x-list-2-expected.txt.
+        * svg/text/select-x-list-3-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-x-list-3-expected.txt.
+        * svg/text/select-x-list-4-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-x-list-4-expected.txt.
+        * svg/text/select-x-list-with-tspans-1-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-x-list-with-tspans-1-expected.txt.
+        * svg/text/select-x-list-with-tspans-2-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-x-list-with-tspans-2-expected.txt.
+        * svg/text/select-x-list-with-tspans-3-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-x-list-with-tspans-3-expected.txt.
+        * svg/text/select-x-list-with-tspans-4-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/select-x-list-with-tspans-4-expected.txt.
+        * svg/text/selection-doubleclick-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/selection-doubleclick-expected.txt.
+        * svg/text/selection-tripleclick-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/selection-tripleclick-expected.txt.
+        * svg/text/small-fonts-2-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/small-fonts-2-expected.txt.
+        * svg/text/small-fonts-3-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/small-fonts-3-expected.txt.
+        * svg/text/small-fonts-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/small-fonts-expected.txt.
+        * svg/text/text-align-01-b-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-align-01-b-expected.txt.
+        * svg/text/text-align-02-b-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-align-02-b-expected.txt.
+        * svg/text/text-align-03-b-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-align-03-b-expected.txt.
+        * svg/text/text-align-04-b-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-align-04-b-expected.txt.
+        * svg/text/text-align-05-b-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-align-05-b-expected.txt.
+        * svg/text/text-align-06-b-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-align-06-b-expected.txt.
+        * svg/text/text-altglyph-01-b-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-altglyph-01-b-expected.txt.
+        * svg/text/text-deco-01-b-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-deco-01-b-expected.txt.
+        * svg/text/text-fill-opacity-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-fill-opacity-expected.txt.
+        * svg/text/text-fonts-01-t-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-fonts-01-t-expected.txt.
+        * svg/text/text-fonts-02-t-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-fonts-02-t-expected.txt.
+        * svg/text/text-gradient-positioning-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-gradient-positioning-expected.txt.
+        * svg/text/text-intro-05-t-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-intro-05-t-expected.txt.
+        * svg/text/text-midpoint-split-bug-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-midpoint-split-bug-expected.txt.
+        * svg/text/text-path-01-b-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-path-01-b-expected.txt.
+        * svg/text/text-path-middle-align-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-path-middle-align-expected.txt.
+        * svg/text/text-spacing-01-b-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-spacing-01-b-expected.txt.
+        * svg/text/text-text-01-b-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-text-01-b-expected.txt.
+        * svg/text/text-text-03-b-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-text-03-b-expected.txt.
+        * svg/text/text-text-04-t-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-text-04-t-expected.txt.
+        * svg/text/text-text-05-t-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-text-05-t-expected.txt.
+        * svg/text/text-text-06-t-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-text-06-t-expected.txt.
+        * svg/text/text-text-07-t-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-text-07-t-expected.txt.
+        * svg/text/text-text-08-b-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-text-08-b-expected.txt.
+        * svg/text/text-tref-01-b-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-tref-01-b-expected.txt.
+        * svg/text/text-tselect-01-b-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-tselect-01-b-expected.txt.
+        * svg/text/text-tselect-02-f-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-tselect-02-f-expected.txt.
+        * svg/text/text-tspan-01-b-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-tspan-01-b-expected.txt.
+        * svg/text/text-ws-01-t-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-ws-01-t-expected.txt.
+        * svg/text/text-ws-02-t-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/text-ws-02-t-expected.txt.
+        * svg/text/tspan-dynamic-positioning-expected.txt: Renamed from LayoutTests/platform/efl/svg/text/tspan-dynamic-positioning-expected.txt.
+        * svg/transforms/text-with-mask-with-svg-transform-expected.txt: Renamed from LayoutTests/platform/efl/svg/transforms/text-with-mask-with-svg-transform-expected.txt.
+        * svg/transforms/text-with-pattern-with-svg-transform-expected.txt: Renamed from LayoutTests/platform/efl/svg/transforms/text-with-pattern-with-svg-transform-expected.txt.
+        * svg/wicd/sizing-flakiness-expected.txt:
+
 2013-11-09  Andreas Kling  <akling@apple.com>
 
         RenderIFrame should display its name correctly in DRT output.
