@@ -1,5 +1,30 @@
 2013-11-09  Andreas Kling  <akling@apple.com>
 
+        Optimize baselines: svg/carto.net
+
+        Unreviewed; run "webkit-patch optimize-baselines svg/carto.net"
+
+        * platform/gtk/svg/carto.net/button-expected.txt: Removed.
+        * platform/gtk/svg/carto.net/colourpicker-expected.txt: Removed.
+        * platform/gtk/svg/carto.net/combobox-expected.txt: Removed.
+        * platform/gtk/svg/carto.net/scrollbar-expected.txt: Removed.
+        * platform/gtk/svg/carto.net/selectionlist-expected.txt: Removed.
+        * platform/gtk/svg/carto.net/slider-expected.txt: Removed.
+        * platform/gtk/svg/carto.net/tabgroup-expected.txt: Removed.
+        * platform/gtk/svg/carto.net/textbox-expected.txt: Removed.
+        * platform/gtk/svg/carto.net/window-expected.txt: Removed.
+        * svg/carto.net/button-expected.txt: Renamed from LayoutTests/platform/efl/svg/carto.net/button-expected.txt.
+        * svg/carto.net/colourpicker-expected.txt: Renamed from LayoutTests/platform/efl/svg/carto.net/colourpicker-expected.txt.
+        * svg/carto.net/combobox-expected.txt: Renamed from LayoutTests/platform/efl/svg/carto.net/combobox-expected.txt.
+        * svg/carto.net/scrollbar-expected.txt: Renamed from LayoutTests/platform/efl/svg/carto.net/scrollbar-expected.txt.
+        * svg/carto.net/selectionlist-expected.txt: Renamed from LayoutTests/platform/efl/svg/carto.net/selectionlist-expected.txt.
+        * svg/carto.net/slider-expected.txt: Renamed from LayoutTests/platform/efl/svg/carto.net/slider-expected.txt.
+        * svg/carto.net/tabgroup-expected.txt: Renamed from LayoutTests/platform/efl/svg/carto.net/tabgroup-expected.txt.
+        * svg/carto.net/textbox-expected.txt: Renamed from LayoutTests/platform/efl/svg/carto.net/textbox-expected.txt.
+        * svg/carto.net/window-expected.txt: Renamed from LayoutTests/platform/efl/svg/carto.net/window-expected.txt.
+
+2013-11-09  Andreas Kling  <akling@apple.com>
+
         Optimize baselines: svg/css
 
         Unreviewed; run "webkit-patch optimize-baselines svg/css"
