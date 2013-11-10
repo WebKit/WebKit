@@ -1,3 +1,31 @@
+2013-11-10  Antti Koivisto  <antti@apple.com>
+
+        Implement white-space property on simple line layout path
+        https://bugs.webkit.org/show_bug.cgi?id=124122
+
+        Reviewed by Andreas Kling.
+        
+        The simple line layout produces slightly different runs in some pre-wrap cases compared
+        to the line box path (with less unnecessary boxes). To keep the test coverage this patch forces the
+        existing render tree dump based tests to use line boxes. It also adds new ref tests for
+        the same cases where the test uses the simple line path and the ref is forced on the line box path.
+        This ensures that the paths produce pixel-identical results.
+
+        * fast/forms/basic-textareas-simple-lines-expected.html: Added.
+        * fast/forms/basic-textareas-simple-lines.html: Added.
+        * fast/forms/basic-textareas.html:
+        * fast/text/embed-at-end-of-pre-wrap-line-simple-lines-expected.html: Added.
+        * fast/text/embed-at-end-of-pre-wrap-line-simple-lines.html: Added.
+        * fast/text/embed-at-end-of-pre-wrap-line.html:
+        * fast/text/whitespace/pre-wrap-line-test-simple-lines-expected.html: Added.
+        * fast/text/whitespace/pre-wrap-line-test-simple-lines.html: Added.
+        * fast/text/whitespace/pre-wrap-line-test.html:
+        * fast/text/whitespace/pre-wrap-long-word-simple-lines-expected.html: Added.
+        * fast/text/whitespace/pre-wrap-long-word-simple-lines.html: Added. New simple test for overflowing lines which was only covered by the very large basic-textareas.html.
+        * fast/text/whitespace/pre-wrap-spaces-after-newline-simple-lines-expected.html: Added.
+        * fast/text/whitespace/pre-wrap-spaces-after-newline-simple-lines.html: Added.
+        * fast/text/whitespace/pre-wrap-spaces-after-newline.html:
+
 2013-11-10  Andreas Kling  <akling@apple.com>
 
         Optimize baselines: svg/*

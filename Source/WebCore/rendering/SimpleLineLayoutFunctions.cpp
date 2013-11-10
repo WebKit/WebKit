@@ -50,6 +50,8 @@ namespace SimpleLineLayout {
 
 static void paintDebugBorders(GraphicsContext& context, const LayoutRect& borderRect, const LayoutPoint& paintOffset)
 {
+    if (borderRect.isEmpty())
+        return;
     GraphicsContextStateSaver stateSaver(context);
     context.setStrokeColor(Color(0, 255, 0), ColorSpaceDeviceRGB);
     context.setFillColor(Color::transparent, ColorSpaceDeviceRGB);
@@ -80,7 +82,9 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
     auto resolver = runResolver(flow, layout);
     for (auto it = resolver.begin(), end = resolver.end(); it != end; ++it) {
         auto run = *it;
-        context.drawText(font, TextRun(run.text()), run.baseline() + paintOffset);
+        TextRun textRun(run.text());
+        textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
+        context.drawText(font, textRun, run.baseline() + paintOffset);
         if (debugBordersEnabled)
             paintDebugBorders(context, run.rect(), paintOffset);
     }

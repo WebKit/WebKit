@@ -1,5 +1,6 @@
 (repaint rects
   (rect 8 13 784 15)
+  (rect 8 13 784 15)
   (rect 8 413 784 28)
   (rect 0 421 800 28)
 )

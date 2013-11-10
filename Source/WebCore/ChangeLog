@@ -1,3 +1,29 @@
+2013-11-10  Antti Koivisto  <antti@apple.com>
+
+        Implement white-space property on simple line layout path
+        https://bugs.webkit.org/show_bug.cgi?id=124122
+
+        Reviewed by Andreas Kling.
+        
+        Support all values of the white-space property and the tab-size property.
+
+        Tests: fast/forms/basic-textareas-simple-lines.html
+               fast/text/embed-at-end-of-pre-wrap-line-simple-lines.html
+               fast/text/whitespace/pre-wrap-line-test-simple-lines.html
+               fast/text/whitespace/pre-wrap-long-word-simple-lines.html
+               fast/text/whitespace/pre-wrap-spaces-after-newline-simple-lines.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+        (WebCore::SimpleLineLayout::isWhitespace):
+        (WebCore::SimpleLineLayout::skipWhitespaces):
+        (WebCore::SimpleLineLayout::textWidth):
+        (WebCore::SimpleLineLayout::measureWord):
+        (WebCore::SimpleLineLayout::createTextRuns):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintDebugBorders):
+        (WebCore::SimpleLineLayout::paintFlow):
+
 2013-11-10  Sergio Correia  <sergio.correia@openbossa.org>
 
         Fix EFL build after r159027
