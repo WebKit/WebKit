@@ -1,5 +1,15 @@
 2013-11-10  Andreas Kling  <akling@apple.com>
 
+        Remove unused FragmentationDisabler class.
+        <https://webkit.org/b/124118>
+
+        This RAII object was added in r144744 to avoid a crash when using
+        MathML inside CSS regions. Its only user was removed in r157070.
+
+        Reviewed by Antti Koivisto.
+
+2013-11-10  Andreas Kling  <akling@apple.com>
+
         Simplify some is-this-a-MathML-element? checks.
         <https://webkit.org/b/124119>
 
