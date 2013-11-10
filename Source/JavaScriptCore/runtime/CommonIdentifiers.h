@@ -40,6 +40,7 @@
     macro(Infinity) \
     macro(JSON) \
     macro(Map)\
+    macro(MapIterator)\
     macro(Math) \
     macro(NaN) \
     macro(Number) \
@@ -88,6 +89,7 @@
     macro(displayName) \
     macro(document) \
     macro(done) \
+    macro(entries) \
     macro(enumerable) \
     macro(eval) \
     macro(exec) \
@@ -111,6 +113,7 @@
     macro(isPrototypeOf) \
     macro(isWatchpoint) \
     macro(join) \
+    macro(keys) \
     macro(lastIndex) \
     macro(length) \
     macro(message) \
@@ -147,6 +150,7 @@
     macro(toPrecision) \
     macro(toString) \
     macro(value) \
+    macro(values) \
     macro(valueOf) \
     macro(window) \
     macro(writable)

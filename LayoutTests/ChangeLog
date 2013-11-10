@@ -1,3 +1,18 @@
+2013-11-09  Oliver Hunt  <oliver@apple.com>
+
+        Add Map Iterators
+        https://bugs.webkit.org/show_bug.cgi?id=124109
+
+        Reviewed by Andreas Kling.
+
+        Moved map tests to a more sensible location, and added new iteration tests.
+
+        * js/basic-map-expected.txt: Renamed from LayoutTests/js/dom/basic-map-expected.txt.
+        * js/basic-map.html: Renamed from LayoutTests/js/dom/basic-map.html.
+        * js/script-tests/basic-map.js: Renamed from LayoutTests/js/dom/script-tests/basic-map.js.
+        (set shouldBe):
+        (set var):
+
 2013-11-09  Martin Robinson  <mrobinson@igalia.com>
 
         [MathML] Poor spacing around delimiters in MathML Torture Test 14

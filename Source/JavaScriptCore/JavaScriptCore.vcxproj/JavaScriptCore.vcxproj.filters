@@ -1179,6 +1179,12 @@
     <ClCompile Include="..\runtime\ArgumentsIteratorPrototype.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\MapIteratorConstructor.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\MapIteratorPrototype.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\jit\AssemblyHelpers.cpp">
       <Filter>jit</Filter>
     </ClCompile>
@@ -1186,6 +1192,9 @@
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\JSArgumentsIterator.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\JSMapIterator.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\jit\Repatch.cpp">
@@ -2997,6 +3006,12 @@
     <ClInclude Include="..\runtime\ArgumentsIteratorConstructor.h">
       <Filter>runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\runtime\MapIteratorPrototype.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\MapIteratorConstructor.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\jit\AssemblyHelpers.h">
       <Filter>jit</Filter>
     </ClInclude>
@@ -3019,6 +3034,9 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSArgumentsIterator.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\JSMapIterator.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\jit\Repatch.h">

@@ -121,3 +121,119 @@ for (var i = 0; i < keys.length; i++) {
 	var expectedValue = keys[i][1]
 	shouldBe("map.get("+JSON.stringify(expectedKey)+")", JSON.stringify(expectedValue));
 }
+
+map = new Map;
+
+var count = 5;
+var keys = [];
+var values = [];
+for (var i = 0; i < count; i++) {
+    map.set(i, i * 2)
+    map.set("" + i , i * 2 + 1)
+    keys.push("" + i)
+    keys.push("'" + i + "'")
+    values.push(i * 2)
+    values.push(i * 2 + 1)
+}
+
+var i = 0;
+
+debug("map.@@iterator()")
+for (var [key, value] of map) {
+    shouldBe("key", "" + keys[i])
+    shouldBe("value", "" + values[i])
+    i++;
+}
+
+debug("map.entries()")
+shouldBe("i", "" + count * 2)
+var i = 0;
+for (var [key, value] of map.entries()) {
+    shouldBe("key", "" + keys[i])
+    shouldBe("value", "" + values[i])
+    i++;
+}
+shouldBe("i", "" + count * 2)
+
+debug("map.keys()")
+var i = 0;
+for (var key of map.keys()) {
+    shouldBe("key", "" + keys[i])
+    i++;
+}
+shouldBe("i", "" + count * 2)
+
+var i = 0;
+debug("map.values()")
+for (var value of map.values()) {
+    shouldBe("value", "" + values[i])
+    i++;
+}
+shouldBe("i", "" + count * 2)
+
+debug("Map mutation with live iterator and GC")
+map = new Map;
+map.set(0, 0)
+map.set(1, 2)
+map.set(2, 4)
+map.set(3, 6)
+map.set(4, 8)
+map.set(5, 10)
+map.set(6, 12)
+map.set(7, 14)
+map.set(9, 14)
+map.set(14, "should be deleted")
+
+var keys = [1,3,4,5,7]
+var values = [2,6,8,10,14]
+var entries = map.entries();
+gc();
+map.delete(0)
+gc()
+var i = 0;
+for (var [key, value] of entries) {
+    shouldBe("key", "" + keys[i])
+    shouldBe("value", "" + values[i])
+    if (key == 7)
+        map.delete(9)
+    map.delete(1)
+    map.delete(key * 2)
+    gc()
+    i++
+}
+shouldBe("i", "5")
+shouldBe("map.size", "4");
+
+debug("test forEach")
+
+map = new Map;
+map.set(0, 0)
+map.set(1, 2)
+map.set(2, 4)
+map.set(3, 6)
+map.set(4, 8)
+map.set(5, 10)
+map.set(6, 12)
+map.set(7, 14)
+map.set(9, 14)
+map.set(14, "should be deleted")
+
+var keys = [1,3,4,5,7]
+var values = [2,6,8,10,14]
+map.delete(0)
+var i = 0;
+map.forEach(function (v, k) {
+    key = k;
+    value = v;
+    shouldBe("key", "" + keys[i])
+    shouldBe("value", "" + values[i])
+    if (key == 7)
+        map.delete(9)
+    map.delete(1)
+    map.delete(key * 2)
+    gc()
+    i++
+});
+shouldBe("i", "5")
+shouldBe("map.size", "4");
+

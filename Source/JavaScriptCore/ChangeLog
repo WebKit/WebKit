@@ -1,3 +1,56 @@
+2013-11-09  Oliver Hunt  <oliver@apple.com>
+
+        Add Map Iterators
+        https://bugs.webkit.org/show_bug.cgi?id=124109
+
+        Reviewed by Andreas Kling.
+
+        Added new Map iterator implementation.  This is a mostly boilerplate patch
+        however there's a a little bit of additional logic added to the MapData iterator
+        to deal with the possibility of map mutation between creation of the iterator
+        and use of it.  We'll be able to improve the performance of this substantially
+        by using intrinsics, however I'm pondering coming up with a better way to define
+        these thunks without requiring so much duplicated logic.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSMapIterator.cpp: Added.
+        (JSC::JSMapIterator::finishCreation):
+        (JSC::JSMapIterator::visitChildren):
+        (JSC::JSMapIterator::createPair):
+        * runtime/JSMapIterator.h: Added.
+        (JSC::JSMapIterator::createStructure):
+        (JSC::JSMapIterator::create):
+        (JSC::JSMapIterator::next):
+        (JSC::JSMapIterator::JSMapIterator):
+        * runtime/MapData.h:
+        (JSC::MapData::const_iterator::ensureSlot):
+        * runtime/MapIteratorConstructor.cpp: Added.
+        (JSC::MapIteratorConstructor::finishCreation):
+        * runtime/MapIteratorConstructor.h: Added.
+        (JSC::MapIteratorConstructor::create):
+        (JSC::MapIteratorConstructor::createStructure):
+        (JSC::MapIteratorConstructor::MapIteratorConstructor):
+        * runtime/MapIteratorPrototype.cpp: Added.
+        (JSC::MapIteratorPrototype::finishCreation):
+        (JSC::MapIteratorPrototypeFuncIterator):
+        (JSC::MapIteratorPrototypeFuncNext):
+        * runtime/MapIteratorPrototype.h: Added.
+        (JSC::MapIteratorPrototype::create):
+        (JSC::MapIteratorPrototype::createStructure):
+        (JSC::MapIteratorPrototype::MapIteratorPrototype):
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        (JSC::mapProtoFuncValues):
+        (JSC::mapProtoFuncEntries):
+        (JSC::mapProtoFuncKeys):
+
 2013-11-08  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix.

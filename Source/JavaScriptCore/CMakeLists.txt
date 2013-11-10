@@ -337,6 +337,7 @@ set(JavaScriptCore_SOURCES
     runtime/JSGlobalObjectFunctions.cpp
     runtime/JSLock.cpp
     runtime/JSMap.cpp
+    runtime/JSMapIterator.cpp
     runtime/JSNameScope.cpp
     runtime/JSNotAnObject.cpp
     runtime/JSONObject.cpp
@@ -368,6 +369,8 @@ set(JavaScriptCore_SOURCES
     runtime/Lookup.cpp
     runtime/MapConstructor.cpp
     runtime/MapData.cpp
+    runtime/MapIteratorConstructor.cpp
+    runtime/MapIteratorPrototype.cpp
     runtime/MapPrototype.cpp
     runtime/MathObject.cpp
     runtime/MemoryStatistics.cpp

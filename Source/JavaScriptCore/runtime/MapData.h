@@ -49,6 +49,8 @@ public:
         bool operator!=(const const_iterator& other);
         bool operator==(const const_iterator& other);
 
+        bool ensureSlot();
+
     private:
         // This is a bit gnarly. We use an index of -1 to indicate the
         // "end()" iterator. By casting to unsigned we can immediately
@@ -175,6 +177,19 @@ ALWAYS_INLINE void MapData::const_iterator::internalIncrement()
     while (index < end && !entries[index].key)
         index++;
     m_index = index;
+}
+    
+ALWAYS_INLINE bool MapData::const_iterator::ensureSlot()
+{
+    // When an iterator exists outside of host cost it is possible for
+    // the containing map to be modified
+    Entry* entries = m_mapData->m_entries;
+    size_t index = m_index;
+    size_t end = m_mapData->m_size;
+    if (index < end && entries[index].key)
+        return true;
+    internalIncrement();
+    return static_cast<size_t>(m_index) < end;
 }
 
 ALWAYS_INLINE MapData::const_iterator::const_iterator(const MapData* mapData)
