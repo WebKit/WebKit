@@ -33,8 +33,6 @@
 #include <CFNetwork/CFURLResponsePriv.h>
 #include <wtf/RetainPtr.h>
 
-using namespace std;
-
 // We would like a better value for a maximum time_t,
 // but there is no way to do that in C with any certainty.
 // INT_MAX should work well enough for our purposes.

@@ -29,8 +29,6 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/RefPtr.h>
 
-using namespace std;
-
 namespace WebCore {
 
 RenderProgress::RenderProgress(HTMLElement& element, PassRef<RenderStyle> style)

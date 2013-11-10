@@ -53,8 +53,6 @@
 #include "SourceGraphic.h"
 #include <wtf/Vector.h>
 
-using namespace std;
-
 namespace WebCore {
 
 RenderSVGResourceType RenderSVGResourceFilter::s_resourceType = FilterResourceType;

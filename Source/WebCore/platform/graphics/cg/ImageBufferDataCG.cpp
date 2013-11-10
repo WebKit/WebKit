@@ -38,8 +38,6 @@
 #include <dispatch/dispatch.h>
 #endif
 
-using namespace std;
-
 #if USE(ACCELERATE)
 struct ScanlineData {
     vImagePixelCount scanlineWidth;
@@ -130,7 +128,7 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
         destx = -originx;
         originx = 0;
     }
-    destw = min<int>(destw, ceilf(size.width() / resolutionScale) - originx);
+    destw = std::min<int>(destw, ceilf(size.width() / resolutionScale) - originx);
     originx *= resolutionScale;
     if (endx.unsafeGet() > size.width())
         endx = size.width();
@@ -144,7 +142,7 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
         desty = -originy;
         originy = 0;
     }
-    desth = min<int>(desth, ceilf(size.height() / resolutionScale) - originy);
+    desth = std::min<int>(desth, ceilf(size.height() / resolutionScale) - originy);
     originy *= resolutionScale;
     if (endy.unsafeGet() > size.height())
         endy = size.height();

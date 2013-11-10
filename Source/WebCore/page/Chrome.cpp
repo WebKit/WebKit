@@ -60,7 +60,6 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-using namespace std;
 
 Chrome::Chrome(Page& page, ChromeClient& client)
     : m_page(page)

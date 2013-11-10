@@ -38,8 +38,6 @@
 #include "IntRect.h"
 #include <algorithm>
 
-using namespace std;
-
 namespace WebCore {
 
 static int computeNumTiles(int maxTextureSize, int totalSize, int borderTexels)
@@ -47,7 +45,7 @@ static int computeNumTiles(int maxTextureSize, int totalSize, int borderTexels)
     if (maxTextureSize - 2 * borderTexels <= 0)
         return totalSize > 0 && maxTextureSize >= totalSize ? 1 : 0;
 
-    int numTiles = max(1, 1 + (totalSize - 1 - 2 * borderTexels) / (maxTextureSize - 2 * borderTexels));
+    int numTiles = std::max(1, 1 + (totalSize - 1 - 2 * borderTexels) / (maxTextureSize - 2 * borderTexels));
     return totalSize > 0 ? numTiles : 0;
 }
 
@@ -84,7 +82,7 @@ int TilingData::tileXIndexFromSrcCoord(int srcPos) const
 
     ASSERT(m_maxTextureSize.width() - 2 * m_borderTexels);
     int x = (srcPos - m_borderTexels) / (m_maxTextureSize.width() - 2 * m_borderTexels);
-    return min(max(x, 0), numTilesX() - 1);
+    return std::min(std::max(x, 0), numTilesX() - 1);
 }
 
 int TilingData::tileYIndexFromSrcCoord(int srcPos) const
@@ -94,7 +92,7 @@ int TilingData::tileYIndexFromSrcCoord(int srcPos) const
 
     ASSERT(m_maxTextureSize.height() - 2 * m_borderTexels);
     int y = (srcPos - m_borderTexels) / (m_maxTextureSize.height() - 2 * m_borderTexels);
-    return min(max(y, 0), numTilesY() - 1);
+    return std::min(std::max(y, 0), numTilesY() - 1);
 }
 
 IntRect TilingData::tileBounds(int i, int j) const

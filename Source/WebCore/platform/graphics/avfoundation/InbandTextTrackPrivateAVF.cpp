@@ -93,8 +93,6 @@ SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_CharacterBackgroundColor
 #define kCMTextMarkupAttribute_BackgroundColorARGB getkCMTextMarkupAttribute_BackgroundColorARGB()
 #define kCMTextMarkupAttribute_CharacterBackgroundColorARGB getkCMTextMarkupAttribute_CharacterBackgroundColorARGB()
 
-using namespace std;
-
 namespace WebCore {
 
 AVFInbandTrackParent::~AVFInbandTrackParent()
@@ -410,7 +408,7 @@ void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, double 
 
         m_currentCueStartTime = time;
         cueData->setStartTime(m_currentCueStartTime);
-        cueData->setEndTime(numeric_limits<double>::infinity());
+        cueData->setEndTime(std::numeric_limits<double>::infinity());
         
         // AVFoundation cue "position" is to the center of the text so adjust relative to the edge because we will use it to
         // set CSS "left".

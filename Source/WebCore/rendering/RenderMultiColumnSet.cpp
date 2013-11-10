@@ -31,8 +31,6 @@
 #include "RenderMultiColumnBlock.h"
 #include "RenderMultiColumnFlowThread.h"
 
-using namespace std;
-
 namespace WebCore {
 
 RenderMultiColumnSet::RenderMultiColumnSet(RenderFlowThread& flowThread, PassRef<RenderStyle> style)
@@ -55,7 +53,7 @@ LayoutUnit RenderMultiColumnSet::heightAdjustedForSetOffset(LayoutUnit height) c
     LayoutUnit contentLogicalTop = logicalTop() - multicolBlock->borderAndPaddingBefore();
 
     height -= contentLogicalTop;
-    return max(height, LayoutUnit(1)); // Let's avoid zero height, as that would probably cause an infinite amount of columns to be created.
+    return std::max(height, LayoutUnit(1)); // Let's avoid zero height, as that would probably cause an infinite amount of columns to be created.
 }
 
 LayoutUnit RenderMultiColumnSet::pageLogicalTopForOffset(LayoutUnit offset) const
@@ -83,7 +81,7 @@ bool RenderMultiColumnSet::calculateBalancedHeight(bool initial)
     if (initial) {
         // Start with the lowest imaginable column height.
         LayoutUnit logicalHeightGuess = ceilf(float(flowThread()->logicalHeight()) / float(m_computedColumnCount));
-        logicalHeightGuess = max(logicalHeightGuess, m_minimumColumnHeight);
+        logicalHeightGuess = std::max(logicalHeightGuess, m_minimumColumnHeight);
         setAndConstrainColumnHeight(logicalHeightGuess);
 
         // The multicol container now typically needs at least one more layout pass with a new
@@ -140,7 +138,7 @@ void RenderMultiColumnSet::updateLogicalWidth()
     LayoutUnit colGap = columnGap();
     LayoutUnit minimumContentLogicalWidth = colCount * computedColumnWidth() + (colCount - 1) * colGap;
     LayoutUnit currentContentLogicalWidth = contentLogicalWidth();
-    LayoutUnit delta = max(LayoutUnit(), minimumContentLogicalWidth - currentContentLogicalWidth);
+    LayoutUnit delta = std::max(LayoutUnit(), minimumContentLogicalWidth - currentContentLogicalWidth);
     if (!delta)
         return;
 

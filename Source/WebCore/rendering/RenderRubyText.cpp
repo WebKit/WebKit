@@ -33,8 +33,6 @@
 
 #include "RenderRubyText.h"
 
-using namespace std;
-
 namespace WebCore {
 
 RenderRubyText::RenderRubyText(Element& element, PassRef<RenderStyle> style)
@@ -77,7 +75,7 @@ void RenderRubyText::adjustInlineDirectionLineBounds(int expansionOpportunityCou
     // ruby character on each side.
     float inset = (logicalWidth - maxPreferredLogicalWidth) / (expansionOpportunityCount + 1);
     if (expansionOpportunityCount)
-        inset = min<float>(2 * style().fontSize(), inset);
+        inset = std::min<float>(2 * style().fontSize(), inset);
 
     logicalLeft += inset / 2;
     logicalWidth -= inset;

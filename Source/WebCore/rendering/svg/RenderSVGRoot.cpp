@@ -53,8 +53,6 @@
 #include "RenderSVGResourceFilter.h"
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 RenderSVGRoot::RenderSVGRoot(SVGSVGElement& element, PassRef<RenderStyle> style)

@@ -38,8 +38,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/ParallelJobs.h>
 
-using namespace std;
-
 static inline float gaussianKernelFactor()
 {
     return 3 / 4.f * sqrtf(2 * piFloat);
@@ -103,7 +101,7 @@ inline void boxBlur(Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* dstPixe
             // Furthermore, this code path affects more than just the input area.
             if (edgeMode == EDGEMODE_NONE) {
                 // Fill the kernel
-                int maxKernelSize = min(dxRight, effectWidth);
+                int maxKernelSize = std::min(dxRight, effectWidth);
                 for (int i = 0; i < maxKernelSize; ++i)
                     sum += srcPixelArray->item(line + i * stride + channel);
 
@@ -173,7 +171,7 @@ inline void FEGaussianBlur::platformApplyGeneric(Uint8ClampedArray* srcPixelArra
 #else
             boxBlur(src, dst, kernelSizeX, dxLeft, dxRight, 4, stride, paintSize.width(), paintSize.height(), isAlphaImage(), m_edgeMode);
 #endif
-            swap(src, dst);
+            std::swap(src, dst);
         }
 
         if (kernelSizeY) {
@@ -186,7 +184,7 @@ inline void FEGaussianBlur::platformApplyGeneric(Uint8ClampedArray* srcPixelArra
 #else
             boxBlur(src, dst, kernelSizeY, dyLeft, dyRight, stride, 4, paintSize.height(), paintSize.width(), isAlphaImage(), m_edgeMode);
 #endif
-            swap(src, dst);
+            std::swap(src, dst);
         }
     }
 
@@ -279,10 +277,10 @@ void FEGaussianBlur::calculateUnscaledKernelSize(unsigned& kernelSizeX, unsigned
 
     kernelSizeX = 0;
     if (stdX)
-        kernelSizeX = max<unsigned>(2, static_cast<unsigned>(floorf(stdX * gaussianKernelFactor() + 0.5f)));
+        kernelSizeX = std::max<unsigned>(2, static_cast<unsigned>(floorf(stdX * gaussianKernelFactor() + 0.5f)));
     kernelSizeY = 0;
     if (stdY)
-        kernelSizeY = max<unsigned>(2, static_cast<unsigned>(floorf(stdY * gaussianKernelFactor() + 0.5f)));
+        kernelSizeY = std::max<unsigned>(2, static_cast<unsigned>(floorf(stdY * gaussianKernelFactor() + 0.5f)));
     
     // Limit the kernel size to 1000. A bigger radius won't make a big difference for the result image but
     // inflates the absolute paint rect to much. This is compatible with Firefox' behavior.
@@ -369,7 +367,7 @@ TextStream& FEGaussianBlur::externalRepresentation(TextStream& ts, int indent) c
 float FEGaussianBlur::calculateStdDeviation(float radius)
 {
     // Blur radius represents 2/3 times the kernel size, the dest pixel is half of the radius applied 3 times
-    return max((radius * 2 / 3.f - 0.5f) / gaussianKernelFactor(), 0.f);
+    return std::max((radius * 2 / 3.f - 0.5f) / gaussianKernelFactor(), 0.f);
 }
 
 } // namespace WebCore

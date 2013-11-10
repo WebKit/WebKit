@@ -38,8 +38,6 @@
 #include "RenderView.h"
 #include "StyleResolver.h"
 
-using namespace std;
-
 namespace WebCore {
 
 RenderNamedFlowFragment::RenderNamedFlowFragment(Document& document, PassRef<RenderStyle> style)

@@ -34,8 +34,6 @@
 #include "ScrollbarTheme.h"
 #include <algorithm>
 
-using namespace std;
-
 #if PLATFORM(GTK)
 // The position of the scrollbar thumb affects the appearance of the steppers, so
 // when the thumb moves, we have to invalidate them for painting.
@@ -282,9 +280,9 @@ void Scrollbar::moveThumb(int pos, bool draggingDocument)
         FloatPoint currentPosition = m_scrollableArea->scrollAnimator()->currentPosition();
         int destinationPosition = (m_orientation == HorizontalScrollbar ? currentPosition.x() : currentPosition.y()) + delta;
         if (delta > 0)
-            destinationPosition = min(destinationPosition + delta, maximum());
+            destinationPosition = std::min(destinationPosition + delta, maximum());
         else if (delta < 0)
-            destinationPosition = max(destinationPosition + delta, 0);
+            destinationPosition = std::max(destinationPosition + delta, 0);
         m_scrollableArea->scrollToOffsetWithoutAnimation(m_orientation, destinationPosition);
         m_documentDragPos = pos;
         return;
@@ -301,9 +299,9 @@ void Scrollbar::moveThumb(int pos, bool draggingDocument)
     int trackLen = theme()->trackLength(this);
     int maxPos = trackLen - thumbLen;
     if (delta > 0)
-        delta = min(maxPos - thumbPos, delta);
+        delta = std::min(maxPos - thumbPos, delta);
     else if (delta < 0)
-        delta = max(-thumbPos, delta);
+        delta = std::max(-thumbPos, delta);
     
     if (delta) {
         float newPosition = static_cast<float>(thumbPos + delta) * maximum() / (trackLen - thumbLen);

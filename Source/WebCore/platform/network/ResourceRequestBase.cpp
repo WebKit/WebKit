@@ -28,8 +28,6 @@
 
 #include "ResourceRequest.h"
 
-using namespace std;
-
 namespace WebCore {
 
 #if !USE(SOUP) && (!PLATFORM(MAC) || USE(CFNETWORK))

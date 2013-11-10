@@ -134,8 +134,6 @@
 
 #define MIN_INTERSECT_FOR_REVEAL 32
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -2183,8 +2181,8 @@ IntSize RenderLayer::clampScrollOffset(const IntSize& scrollOffset) const
     int maxX = scrollWidth() - box->pixelSnappedClientWidth();
     int maxY = scrollHeight() - box->pixelSnappedClientHeight();
 
-    int x = max(min(scrollOffset.width(), maxX), 0);
-    int y = max(min(scrollOffset.height(), maxY), 0);
+    int x = std::max(std::min(scrollOffset.width(), maxX), 0);
+    int y = std::max(std::min(scrollOffset.height(), maxY), 0);
     return IntSize(x, y);
 }
 
@@ -2336,8 +2334,8 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
                 int xOffset = roundToInt(exposeRect.x());
                 int yOffset = roundToInt(exposeRect.y());
                 // Adjust offsets if they're outside of the allowable range.
-                xOffset = max(0, min(frameView.contentsWidth(), xOffset));
-                yOffset = max(0, min(frameView.contentsHeight(), yOffset));
+                xOffset = std::max(0, std::min(frameView.contentsWidth(), xOffset));
+                yOffset = std::max(0, std::min(frameView.contentsHeight(), yOffset));
 
                 frameView.setScrollPosition(IntPoint(xOffset, yOffset));
                 if (frameView.safeToPropagateScrollToParent()) {
@@ -2592,8 +2590,8 @@ IntRect RenderLayer::visibleContentRect(VisibleContentRectIncludesScrollbars scr
     }
     
     return IntRect(IntPoint(scrollXOffset(), scrollYOffset()),
-                   IntSize(max(0, m_layerSize.width() - verticalScrollbarWidth), 
-                           max(0, m_layerSize.height() - horizontalScrollbarHeight)));
+                   IntSize(std::max(0, m_layerSize.width() - verticalScrollbarWidth),
+                           std::max(0, m_layerSize.height() - horizontalScrollbarHeight)));
 }
 
 IntSize RenderLayer::overhangAmount() const
@@ -3155,13 +3153,13 @@ void RenderLayer::updateScrollbarsAfterLayout()
     // Set up the range (and page step/line step).
     if (m_hBar) {
         int clientWidth = box->pixelSnappedClientWidth();
-        int pageStep = max(max<int>(clientWidth * Scrollbar::minFractionToStepWhenPaging(), clientWidth - Scrollbar::maxOverlapBetweenPages()), 1);
+        int pageStep = std::max(std::max<int>(clientWidth * Scrollbar::minFractionToStepWhenPaging(), clientWidth - Scrollbar::maxOverlapBetweenPages()), 1);
         m_hBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
         m_hBar->setProportion(clientWidth, m_scrollSize.width());
     }
     if (m_vBar) {
         int clientHeight = box->pixelSnappedClientHeight();
-        int pageStep = max(max<int>(clientHeight * Scrollbar::minFractionToStepWhenPaging(), clientHeight - Scrollbar::maxOverlapBetweenPages()), 1);
+        int pageStep = std::max(std::max<int>(clientHeight * Scrollbar::minFractionToStepWhenPaging(), clientHeight - Scrollbar::maxOverlapBetweenPages()), 1);
         m_vBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
         m_vBar->setProportion(clientHeight, m_scrollSize.height());
     }
@@ -3417,7 +3415,7 @@ bool RenderLayer::hitTestOverflowControls(HitTestResult& result, const IntPoint&
             return true;
     }
 
-    int resizeControlSize = max(resizeControlRect.height(), 0);
+    int resizeControlSize = std::max(resizeControlRect.height(), 0);
 
     // FIXME: We should hit test the m_scrollCorner and pass it back through the result.
 
@@ -3432,7 +3430,7 @@ bool RenderLayer::hitTestOverflowControls(HitTestResult& result, const IntPoint&
         }
     }
 
-    resizeControlSize = max(resizeControlRect.width(), 0);
+    resizeControlSize = std::max(resizeControlRect.width(), 0);
     if (m_hBar && m_hBar->shouldParticipateInHitTesting()) {
         LayoutRect hBarRect(horizontalScrollbarStart(0),
                             box->height() - box->borderBottom() - m_hBar->height(),
@@ -4652,7 +4650,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
 
     // The following are used for keeping track of the z-depth of the hit point of 3d-transformed
     // descendants.
-    double localZOffset = -numeric_limits<double>::infinity();
+    double localZOffset = -std::numeric_limits<double>::infinity();
     double* zOffsetForDescendantsPtr = 0;
     double* zOffsetForContentsPtr = 0;
     
@@ -5462,8 +5460,8 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
         // then it has to be big enough to cover the viewport in order to display the background. This is akin
         // to the code in RenderBox::paintRootBoxFillLayers().
         const FrameView& frameView = renderer().view().frameView();
-        boundingBoxRect.setWidth(max(boundingBoxRect.width(), frameView.contentsWidth() - boundingBoxRect.x()));
-        boundingBoxRect.setHeight(max(boundingBoxRect.height(), frameView.contentsHeight() - boundingBoxRect.y()));
+        boundingBoxRect.setWidth(std::max(boundingBoxRect.width(), frameView.contentsWidth() - boundingBoxRect.x()));
+        boundingBoxRect.setHeight(std::max(boundingBoxRect.height(), frameView.contentsHeight() - boundingBoxRect.y()));
     }
 
     LayoutRect unionBounds = boundingBoxRect;

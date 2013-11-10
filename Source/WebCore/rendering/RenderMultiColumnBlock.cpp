@@ -31,8 +31,6 @@
 #include "RenderView.h"
 #include "StyleInheritedData.h"
 
-using namespace std;
-
 namespace WebCore {
 
 RenderMultiColumnBlock::RenderMultiColumnBlock(Element& element, PassRef<RenderStyle> style)

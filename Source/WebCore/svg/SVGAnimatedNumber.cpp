@@ -25,8 +25,6 @@
 #include "SVGAnimateElement.h"
 #include "SVGParserUtilities.h"
 
-using namespace std;
-
 namespace WebCore {
 
 SVGAnimatedNumberAnimator::SVGAnimatedNumberAnimator(SVGAnimationElement* animationElement, SVGElement* contextElement)

@@ -29,8 +29,6 @@
 #include "GraphicsContext.h"
 #include "ScrollbarThemeClient.h"
 
-using namespace std;
-
 namespace WebCore {
 
 bool ScrollbarThemeComposite::paint(ScrollbarThemeClient* scrollbar, GraphicsContext* graphicsContext, const IntRect& damageRect)
@@ -214,7 +212,7 @@ static float usedTotalSize(ScrollbarThemeClient* scrollbar)
 {
     float overhangAtStart = -scrollbar->currentPos();
     float overhangAtEnd = scrollbar->currentPos() + scrollbar->visibleSize() - scrollbar->totalSize();
-    float overhang = max(0.0f, max(overhangAtStart, overhangAtEnd));
+    float overhang = std::max(0.0f, std::max(overhangAtStart, overhangAtEnd));
     return scrollbar->totalSize() + overhang;
 }
 
@@ -225,7 +223,7 @@ int ScrollbarThemeComposite::thumbPosition(ScrollbarThemeClient* scrollbar)
         // Avoid doing a floating point divide by zero and return 1 when usedTotalSize == visibleSize.
         if (!size)
             return 1;
-        float pos = max(0.0f, scrollbar->currentPos()) * (trackLength(scrollbar) - thumbLength(scrollbar)) / size;
+        float pos = std::max(0.0f, scrollbar->currentPos()) * (trackLength(scrollbar) - thumbLength(scrollbar)) / size;
         return (pos < 1 && pos > 0) ? 1 : pos;
     }
     return 0;
@@ -239,7 +237,7 @@ int ScrollbarThemeComposite::thumbLength(ScrollbarThemeClient* scrollbar)
     float proportion = scrollbar->visibleSize() / usedTotalSize(scrollbar);
     int trackLen = trackLength(scrollbar);
     int length = round(proportion * trackLen);
-    length = max(length, minimumThumbLength(scrollbar));
+    length = std::max(length, minimumThumbLength(scrollbar));
     if (length > trackLen)
         length = 0; // Once the thumb is below the track length, it just goes away (to make more room for the track).
     return length;

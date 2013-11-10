@@ -47,8 +47,6 @@
 - (BOOL)_isFakeFixedPitch;
 @end
 
-using namespace std;
-
 namespace WebCore {
   
 static bool fontHasVerticalGlyphs(CTFontRef ctFont)

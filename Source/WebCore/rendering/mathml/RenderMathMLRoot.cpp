@@ -35,8 +35,6 @@
 #include "RenderIterator.h"
 #include "RenderMathMLRow.h"
 
-using namespace std;
-
 namespace WebCore {
     
 // FIXME: This whole file should be changed to work with various writing modes. See https://bugs.webkit.org/show_bug.cgi?id=48951.
@@ -196,7 +194,7 @@ void RenderMathMLRoot::layout()
     // Base height above which the shape of the root changes
     float thresholdHeight = gThresholdBaseHeightEms * style().fontSize();
     if (baseHeight > thresholdHeight && thresholdHeight) {
-        float shift = min<float>((baseHeight - thresholdHeight) / thresholdHeight, 1.0f);
+        float shift = std::min<float>((baseHeight - thresholdHeight) / thresholdHeight, 1.0f);
         m_overbarLeftPointShift = static_cast<int>(shift * gRadicalBottomPointXFront * frontWidth);
         m_intrinsicPaddingAfter = lroundf(gBigRootBottomPaddingEms * style().fontSize());
     } else {

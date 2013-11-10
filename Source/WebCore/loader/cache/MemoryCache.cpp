@@ -49,8 +49,6 @@
 #include "ResourceBuffer.h"
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 static const int cDefaultCacheCapacity = 8192 * 1024;
@@ -200,9 +198,9 @@ CachedResource* MemoryCache::resourceForRequest(const ResourceRequest& request)
 unsigned MemoryCache::deadCapacity() const 
 {
     // Dead resource capacity is whatever space is not occupied by live resources, bounded by an independent minimum and maximum.
-    unsigned capacity = m_capacity - min(m_liveSize, m_capacity); // Start with available capacity.
-    capacity = max(capacity, m_minDeadCapacity); // Make sure it's above the minimum.
-    capacity = min(capacity, m_maxDeadCapacity); // Make sure it's below the maximum.
+    unsigned capacity = m_capacity - std::min(m_liveSize, m_capacity); // Start with available capacity.
+    capacity = std::max(capacity, m_minDeadCapacity); // Make sure it's above the minimum.
+    capacity = std::min(capacity, m_maxDeadCapacity); // Make sure it's below the maximum.
     return capacity;
 }
 
@@ -495,7 +493,7 @@ void MemoryCache::evict(CachedResource* resource)
 
 MemoryCache::LRUList* MemoryCache::lruListFor(CachedResource* resource)
 {
-    unsigned accessCount = max(resource->accessCount(), 1U);
+    unsigned accessCount = std::max(resource->accessCount(), 1U);
     unsigned queueIndex = WTF::fastLog2(resource->size() / accessCount);
 #ifndef NDEBUG
     resource->m_lruIndex = queueIndex;

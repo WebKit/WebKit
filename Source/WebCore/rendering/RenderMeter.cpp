@@ -26,8 +26,6 @@
 #include "HTMLNames.h"
 #include "RenderTheme.h"
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;

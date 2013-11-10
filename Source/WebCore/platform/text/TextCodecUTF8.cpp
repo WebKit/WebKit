@@ -33,7 +33,6 @@
 
 using namespace WTF;
 using namespace WTF::Unicode;
-using namespace std;
 
 namespace WebCore {
 
@@ -426,7 +425,7 @@ CString TextCodecUTF8::encode(const UChar* characters, size_t length, Unencodabl
     // The maximum number of UTF-8 bytes needed per UTF-16 code unit is 3.
     // BMP characters take only one UTF-16 code unit and can take up to 3 bytes (3x).
     // Non-BMP characters take two UTF-16 code units and can take up to 4 bytes (2x).
-    if (length > numeric_limits<size_t>::max() / 3)
+    if (length > std::numeric_limits<size_t>::max() / 3)
         CRASH();
     Vector<uint8_t> bytes(length * 3);
 

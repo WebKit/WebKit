@@ -38,8 +38,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/StackStats.h>
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -204,7 +202,7 @@ void RenderTableSection::ensureRows(unsigned numRows)
     unsigned oldSize = m_grid.size();
     m_grid.grow(numRows);
 
-    unsigned effectiveColumnCount = max(1u, table()->numEffCols());
+    unsigned effectiveColumnCount = std::max(1u, table()->numEffCols());
     for (unsigned row = oldSize; row < m_grid.size(); ++row)
         m_grid[row].row.grow(effectiveColumnCount);
 }
@@ -292,7 +290,7 @@ int RenderTableSection::calcRowLogicalHeight()
         LayoutUnit baselineDescent = 0;
 
         // Our base size is the biggest logical height from our cells' styles (excluding row spanning cells).
-        m_rowPos[r + 1] = max(m_rowPos[r] + minimumValueForLength(m_grid[r].logicalHeight, 0).round(), 0);
+        m_rowPos[r + 1] = std::max(m_rowPos[r] + minimumValueForLength(m_grid[r].logicalHeight, 0).round(), 0);
 
         Row& row = m_grid[r].row;
         unsigned totalCols = row.size();
@@ -343,22 +341,22 @@ int RenderTableSection::calcRowLogicalHeight()
                 }
 
                 int cellLogicalHeight = cell->logicalHeightForRowSizing();
-                m_rowPos[r + 1] = max(m_rowPos[r + 1], m_rowPos[cellStartRow] + cellLogicalHeight);
+                m_rowPos[r + 1] = std::max(m_rowPos[r + 1], m_rowPos[cellStartRow] + cellLogicalHeight);
 
                 // Find out the baseline. The baseline is set on the first row in a rowspan.
                 if (cell->isBaselineAligned()) {
                     LayoutUnit baselinePosition = cell->cellBaselinePosition();
                     if (baselinePosition > cell->borderAndPaddingBefore()) {
-                        m_grid[cellStartRow].baseline = max(m_grid[cellStartRow].baseline, baselinePosition);
+                        m_grid[cellStartRow].baseline = std::max(m_grid[cellStartRow].baseline, baselinePosition);
                         // The descent of a cell that spans multiple rows does not affect the height of the first row it spans, so don't let it
                         // become the baseline descent applied to the rest of the row. Also we don't account for the baseline descent of
                         // non-spanning cells when computing a spanning cell's extent.
                         int cellStartRowBaselineDescent = 0;
                         if (cell->rowSpan() == 1) {
-                            baselineDescent = max(baselineDescent, cellLogicalHeight - (baselinePosition - cell->intrinsicPaddingBefore()));
+                            baselineDescent = std::max(baselineDescent, cellLogicalHeight - (baselinePosition - cell->intrinsicPaddingBefore()));
                             cellStartRowBaselineDescent = baselineDescent;
                         }
-                        m_rowPos[cellStartRow + 1] = max<int>(m_rowPos[cellStartRow + 1], m_rowPos[cellStartRow] + m_grid[cellStartRow].baseline + cellStartRowBaselineDescent);
+                        m_rowPos[cellStartRow + 1] = std::max<int>(m_rowPos[cellStartRow + 1], m_rowPos[cellStartRow] + m_grid[cellStartRow].baseline + cellStartRowBaselineDescent);
                     }
                 }
             }
@@ -366,7 +364,7 @@ int RenderTableSection::calcRowLogicalHeight()
 
         // Add the border-spacing to our final position.
         m_rowPos[r + 1] += m_grid[r].rowRenderer ? spacing : 0;
-        m_rowPos[r + 1] = max(m_rowPos[r + 1], m_rowPos[r]);
+        m_rowPos[r + 1] = std::max(m_rowPos[r + 1], m_rowPos[r]);
     }
 
     ASSERT(!needsLayout());
@@ -429,14 +427,14 @@ void RenderTableSection::distributeExtraLogicalHeightToPercentRows(int& extraLog
     unsigned totalRows = m_grid.size();
     int totalHeight = m_rowPos[totalRows] + extraLogicalHeight;
     int totalLogicalHeightAdded = 0;
-    totalPercent = min(totalPercent, 100);
+    totalPercent = std::min(totalPercent, 100);
     int rowHeight = m_rowPos[1] - m_rowPos[0];
     for (unsigned r = 0; r < totalRows; ++r) {
         if (totalPercent > 0 && m_grid[r].logicalHeight.isPercent()) {
-            int toAdd = min<int>(extraLogicalHeight, (totalHeight * m_grid[r].logicalHeight.percent() / 100) - rowHeight);
+            int toAdd = std::min<int>(extraLogicalHeight, (totalHeight * m_grid[r].logicalHeight.percent() / 100) - rowHeight);
             // If toAdd is negative, then we don't want to shrink the row (this bug
             // affected Outlook Web Access).
-            toAdd = max(0, toAdd);
+            toAdd = std::max(0, toAdd);
             totalLogicalHeightAdded += toAdd;
             extraLogicalHeight -= toAdd;
             totalPercent -= m_grid[r].logicalHeight.percent();
@@ -616,7 +614,7 @@ void RenderTableSection::layoutRows()
                 if (cell->isBaselineAligned()) {
                     LayoutUnit baseline = cell->cellBaselinePosition();
                     if (baseline > cell->borderAndPaddingBefore())
-                        m_grid[r].baseline = max(m_grid[r].baseline, baseline);
+                        m_grid[r].baseline = std::max(m_grid[r].baseline, baseline);
                 }
             }
 
@@ -637,7 +635,7 @@ void RenderTableSection::layoutRows()
                 // We'll also do a basic increase of the row height to accommodate the cell if it's bigger, but this isn't quite right
                 // either. It's at least stable though and won't result in an infinite # of relayouts that may never stabilize.
                 if (cell->logicalHeight() > rHeight)
-                    rowHeightIncreaseForPagination = max<int>(rowHeightIncreaseForPagination, cell->logicalHeight() - rHeight);
+                    rowHeightIncreaseForPagination = std::max<int>(rowHeightIncreaseForPagination, cell->logicalHeight() - rHeight);
                 cell->setLogicalHeight(rHeight);
             }
 
@@ -931,7 +929,7 @@ int RenderTableSection::firstLineBaseline() const
         const RenderTableCell* cell = cs.primaryCell();
         // Only cells with content have a baseline
         if (cell && cell->contentLogicalHeight())
-            firstLineBaseline = max<int>(firstLineBaseline, cell->logicalTop() + cell->borderAndPaddingBefore() + cell->contentLogicalHeight());
+            firstLineBaseline = std::max<int>(firstLineBaseline, cell->logicalTop() + cell->borderAndPaddingBefore() + cell->contentLogicalHeight());
     }
 
     return firstLineBaseline;
@@ -1550,19 +1548,19 @@ void RenderTableSection::removeCachedCollapsedBorders(const RenderTableCell* cel
         return;
     
     for (int side = CBSBefore; side <= CBSEnd; ++side)
-        m_cellsCollapsedBorders.remove(make_pair(cell, side));
+        m_cellsCollapsedBorders.remove(std::make_pair(cell, side));
 }
 
 void RenderTableSection::setCachedCollapsedBorder(const RenderTableCell* cell, CollapsedBorderSide side, CollapsedBorderValue border)
 {
     ASSERT(table()->collapseBorders());
-    m_cellsCollapsedBorders.set(make_pair(cell, side), border);
+    m_cellsCollapsedBorders.set(std::make_pair(cell, side), border);
 }
 
 CollapsedBorderValue& RenderTableSection::cachedCollapsedBorder(const RenderTableCell* cell, CollapsedBorderSide side)
 {
     ASSERT(table()->collapseBorders());
-    HashMap<pair<const RenderTableCell*, int>, CollapsedBorderValue>::iterator it = m_cellsCollapsedBorders.find(make_pair(cell, side));
+    HashMap<pair<const RenderTableCell*, int>, CollapsedBorderValue>::iterator it = m_cellsCollapsedBorders.find(std::make_pair(cell, side));
     ASSERT(it != m_cellsCollapsedBorders.end());
     return it->value;
 }

@@ -46,8 +46,6 @@
 #include "StyleResolver.h"
 #include "TextControlInnerElements.h"
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -146,14 +144,14 @@ LayoutUnit RenderSearchField::computeControlLogicalHeight(LayoutUnit lineHeight,
     HTMLElement* resultsButton = resultsButtonElement();
     if (RenderBox* resultsRenderer = resultsButton ? resultsButton->renderBox() : 0) {
         resultsRenderer->updateLogicalHeight();
-        nonContentHeight = max(nonContentHeight, resultsRenderer->borderAndPaddingLogicalHeight() + resultsRenderer->marginLogicalHeight());
-        lineHeight = max(lineHeight, resultsRenderer->logicalHeight());
+        nonContentHeight = std::max(nonContentHeight, resultsRenderer->borderAndPaddingLogicalHeight() + resultsRenderer->marginLogicalHeight());
+        lineHeight = std::max(lineHeight, resultsRenderer->logicalHeight());
     }
     HTMLElement* cancelButton = cancelButtonElement();
     if (RenderBox* cancelRenderer = cancelButton ? cancelButton->renderBox() : 0) {
         cancelRenderer->updateLogicalHeight();
-        nonContentHeight = max(nonContentHeight, cancelRenderer->borderAndPaddingLogicalHeight() + cancelRenderer->marginLogicalHeight());
-        lineHeight = max(lineHeight, cancelRenderer->logicalHeight());
+        nonContentHeight = std::max(nonContentHeight, cancelRenderer->borderAndPaddingLogicalHeight() + cancelRenderer->marginLogicalHeight());
+        lineHeight = std::max(lineHeight, cancelRenderer->logicalHeight());
     }
 
     return lineHeight + nonContentHeight;

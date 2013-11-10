@@ -45,8 +45,6 @@
 #include "TextControlInnerElements.h"
 #include <wtf/StackStats.h>
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;

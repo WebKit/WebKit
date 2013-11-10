@@ -36,8 +36,6 @@
 #include "SharedBuffer.h"
 #include <ApplicationServices/ApplicationServices.h>
 
-using namespace std;
-
 namespace WebCore {
 
 const CFStringRef kCGImageSourceShouldPreferRGB32 = CFSTR("kCGImageSourceShouldPreferRGB32");

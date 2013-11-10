@@ -46,7 +46,6 @@
 // We either have to optimize that operator so it doesn't involve
 // so many allocations, or change this to use StringBuffer instead.
 
-using namespace std;
 using namespace WTF;
 
 namespace WebCore {
@@ -1532,7 +1531,7 @@ static void findHostnamesInMailToURL(const UChar* str, int strLen, Vector<pair<i
                 done = false;
             }
 
-            nameRanges.append(make_pair(hostnameStart, hostnameEnd));
+            nameRanges.append(std::make_pair(hostnameStart, hostnameEnd));
 
             if (done)
                 return;
@@ -1877,7 +1876,7 @@ bool portAllowed(const URL& url)
 #endif
 
     // If the port is not in the blocked port list, allow it.
-    if (!binary_search(blockedPortList, blockedPortListEnd, port))
+    if (!std::binary_search(blockedPortList, blockedPortListEnd, port))
         return true;
 
     // Allow ports 21 and 22 for FTP URLs, as Mozilla does.

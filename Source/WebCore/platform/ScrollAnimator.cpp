@@ -37,8 +37,6 @@
 #include <algorithm>
 #include <wtf/PassOwnPtr.h>
 
-using namespace std;
-
 namespace WebCore {
 
 #if !ENABLE(SMOOTH_SCROLLING)
@@ -105,7 +103,7 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
         if (deltaY) {
             if (e.granularity() == ScrollByPageWheelEvent) {
                 bool negative = deltaY < 0;
-                deltaY = max(max(static_cast<float>(m_scrollableArea->visibleHeight()) * Scrollbar::minFractionToStepWhenPaging(), static_cast<float>(m_scrollableArea->visibleHeight() - Scrollbar::maxOverlapBetweenPages())), 1.0f);
+                deltaY = std::max(std::max(static_cast<float>(m_scrollableArea->visibleHeight()) * Scrollbar::minFractionToStepWhenPaging(), static_cast<float>(m_scrollableArea->visibleHeight() - Scrollbar::maxOverlapBetweenPages())), 1.0f);
                 if (negative)
                     deltaY = -deltaY;
             }
@@ -115,7 +113,7 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
         if (deltaX) {
             if (e.granularity() == ScrollByPageWheelEvent) {
                 bool negative = deltaX < 0;
-                deltaX = max(max(static_cast<float>(m_scrollableArea->visibleWidth()) * Scrollbar::minFractionToStepWhenPaging(), static_cast<float>(m_scrollableArea->visibleWidth() - Scrollbar::maxOverlapBetweenPages())), 1.0f);
+                deltaX = std::max(std::max(static_cast<float>(m_scrollableArea->visibleWidth()) * Scrollbar::minFractionToStepWhenPaging(), static_cast<float>(m_scrollableArea->visibleWidth() - Scrollbar::maxOverlapBetweenPages())), 1.0f);
                 if (negative)
                     deltaX = -deltaX;
             }

@@ -34,8 +34,6 @@
 #include <stdio.h>
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 struct SameSizeAsInlineBox {

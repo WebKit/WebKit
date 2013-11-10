@@ -38,8 +38,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
 
-using namespace std;
-
 namespace WebCore {
 
 enum {
@@ -248,7 +246,7 @@ static void calculateLobes(int lobes[][2], float blurRadius, bool shadowsIgnoreT
 {
     int diameter;
     if (shadowsIgnoreTransforms)
-        diameter = max(2, static_cast<int>(floorf((2 / 3.f) * blurRadius))); // Canvas shadow. FIXME: we should adjust the blur radius higher up.
+        diameter = std::max(2, static_cast<int>(floorf((2 / 3.f) * blurRadius))); // Canvas shadow. FIXME: we should adjust the blur radius higher up.
     else {
         // http://dev.w3.org/csswg/css3-background/#box-shadow
         // Approximate a Gaussian blur with a standard deviation equal to half the blur radius,
@@ -258,7 +256,7 @@ static void calculateLobes(int lobes[][2], float blurRadius, bool shadowsIgnoreT
         float stdDev = blurRadius / 2;
         const float gaussianKernelFactor = 3 / 4.f * sqrtf(2 * piFloat);
         const float fudgeFactor = 0.88f;
-        diameter = max(2, static_cast<int>(floorf(stdDev * gaussianKernelFactor * fudgeFactor + 0.5f)));
+        diameter = std::max(2, static_cast<int>(floorf(stdDev * gaussianKernelFactor * fudgeFactor + 0.5f)));
     }
 
     if (diameter & 1) {
@@ -485,11 +483,11 @@ void ShadowBlur::drawShadowBuffer(GraphicsContext* graphicsContext)
 
 static void computeSliceSizesFromRadii(const IntSize& twiceRadius, const RoundedRect::Radii& radii, int& leftSlice, int& rightSlice, int& topSlice, int& bottomSlice)
 {
-    leftSlice = twiceRadius.width() + max(radii.topLeft().width(), radii.bottomLeft().width()); 
-    rightSlice = twiceRadius.width() + max(radii.topRight().width(), radii.bottomRight().width()); 
+    leftSlice = twiceRadius.width() + std::max(radii.topLeft().width(), radii.bottomLeft().width());
+    rightSlice = twiceRadius.width() + std::max(radii.topRight().width(), radii.bottomRight().width());
 
-    topSlice = twiceRadius.height() + max(radii.topLeft().height(), radii.topRight().height());
-    bottomSlice = twiceRadius.height() + max(radii.bottomLeft().height(), radii.bottomRight().height());
+    topSlice = twiceRadius.height() + std::max(radii.topLeft().height(), radii.topRight().height());
+    bottomSlice = twiceRadius.height() + std::max(radii.bottomLeft().height(), radii.bottomRight().height());
 }
 
 IntSize ShadowBlur::templateSize(const IntSize& radiusPadding, const RoundedRect::Radii& radii) const

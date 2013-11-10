@@ -31,8 +31,6 @@
 #include "SVGInlineTextBox.h"
 #include "SVGRenderingContext.h"
 
-using namespace std;
-
 namespace WebCore {
 
 void SVGInlineFlowBox::paintSelectionBackground(PaintInfo& paintInfo)
@@ -104,8 +102,8 @@ void SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(RenderSVGInlineText
 
             SVGInlineTextBox* textBox = toSVGInlineTextBox(box);
 
-            int markerStartPosition = max<int>(marker->startOffset() - textBox->start(), 0);
-            int markerEndPosition = min<int>(marker->endOffset() - textBox->start(), textBox->len());
+            int markerStartPosition = std::max<int>(marker->startOffset() - textBox->start(), 0);
+            int markerEndPosition = std::min<int>(marker->endOffset() - textBox->start(), textBox->len());
 
             if (markerStartPosition >= markerEndPosition)
                 continue;

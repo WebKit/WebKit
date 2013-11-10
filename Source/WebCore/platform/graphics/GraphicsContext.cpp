@@ -36,8 +36,6 @@
 
 #include "stdio.h"
 
-using namespace std;
-
 namespace WebCore {
 
 class TextRunIterator {

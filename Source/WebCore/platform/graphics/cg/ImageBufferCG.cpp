@@ -50,8 +50,6 @@
 #include <IOSurface/IOSurface.h>
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)

@@ -52,8 +52,6 @@
 #include "break_lines.h"
 #include <wtf/text/CString.h>
 
-using namespace std;
-
 namespace WebCore {
 
 struct SameSizeAsInlineTextBox : public InlineBox {
@@ -132,8 +130,8 @@ LayoutUnit InlineTextBox::selectionHeight() const
 
 bool InlineTextBox::isSelected(int startPos, int endPos) const
 {
-    LayoutUnit sPos = max<LayoutUnit>(startPos - m_start, 0);
-    LayoutUnit ePos = min<LayoutUnit>(endPos - m_start, m_len);
+    LayoutUnit sPos = std::max<LayoutUnit>(startPos - m_start, 0);
+    LayoutUnit ePos = std::min<LayoutUnit>(endPos - m_start, m_len);
     return (sPos < ePos);
 }
 
@@ -202,8 +200,8 @@ static const Font& fontToUse(const RenderStyle& style, const RenderText& rendere
 
 LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos) const
 {
-    int sPos = max(startPos - m_start, 0);
-    int ePos = min(endPos - m_start, (int)m_len);
+    int sPos = std::max(startPos - m_start, 0);
+    int ePos = std::min(endPos - m_start, (int)m_len);
     
     if (sPos > ePos)
         return LayoutRect();
@@ -306,7 +304,7 @@ float InlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, flo
             // and the ellipsis edge.
             m_truncation = cFullTruncation;
             truncatedWidth += ellipsisWidth;
-            return flowIsLTR ? min(ellipsisX, x()) : max(ellipsisX, right() - ellipsisWidth);
+            return flowIsLTR ? std::min(ellipsisX, x()) : std::max(ellipsisX, right() - ellipsisWidth);
         }
 
         // Set the truncation index on the text run.
@@ -389,7 +387,7 @@ FloatSize InlineTextBox::applyShadowToGraphicsContext(GraphicsContext* context, 
         context->save();
         context->clip(shadowRect);
 
-        extraOffset = FloatSize(0, 2 * textRect.height() + max(0.0f, shadowOffset.height()) + shadowRadius);
+        extraOffset = FloatSize(0, 2 * textRect.height() + std::max(0.0f, shadowOffset.height()) + shadowRadius);
         shadowOffset -= extraOffset;
     }
 
@@ -558,8 +556,8 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         selectionStartEnd(sPos, ePos);
 
     if (m_truncation != cNoTruncation) {
-        sPos = min<int>(sPos, m_truncation);
-        ePos = min<int>(ePos, m_truncation);
+        sPos = std::min<int>(sPos, m_truncation);
+        ePos = std::min<int>(ePos, m_truncation);
         length = m_truncation;
     }
 
@@ -633,8 +631,8 @@ void InlineTextBox::selectionStartEnd(int& sPos, int& ePos)
             startPos = 0;
     }
 
-    sPos = max(startPos - m_start, 0);
-    ePos = min(endPos - m_start, (int)m_len);
+    sPos = std::max(startPos - m_start, 0);
+    ePos = std::min(endPos - m_start, (int)m_len);
 }
 
 void alignSelectionRectToDevicePixels(FloatRect& rect)
@@ -689,7 +687,7 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
     LayoutUnit selectionTop = rootBox.selectionTopAdjustedForPrecedingBlock();
 
     int deltaY = roundToInt(renderer().style().isFlippedLinesWritingMode() ? selectionBottom - logicalBottom() : logicalTop() - selectionTop);
-    int selHeight = max(0, roundToInt(selectionBottom - selectionTop));
+    int selHeight = std::max(0, roundToInt(selectionBottom - selectionTop));
 
     FloatPoint localOrigin(boxOrigin.x(), boxOrigin.y() - deltaY);
     FloatRect clipRect(localOrigin, FloatSize(m_logicalWidth, selHeight));
@@ -710,8 +708,8 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
 void InlineTextBox::paintCompositionBackground(GraphicsContext* context, const FloatPoint& boxOrigin, const RenderStyle& style, const Font& font, int startPos, int endPos)
 {
     int offset = m_start;
-    int sPos = max(startPos - offset, 0);
-    int ePos = min(endPos - offset, (int)m_len);
+    int sPos = std::max(startPos - offset, 0);
+    int ePos = std::min(endPos - offset, (int)m_len);
 
     if (sPos >= ePos)
         return;
@@ -776,7 +774,7 @@ static int computeUnderlineOffset(const TextUnderlinePosition underlinePosition,
 {
     // Compute the gap between the font and the underline. Use at least one
     // pixel gap, if underline is thick then use a bigger gap.
-    const int gap = max<int>(1, ceilf(textDecorationThickness / 2.0));
+    const int gap = std::max<int>(1, ceilf(textDecorationThickness / 2.0));
 
     // According to the specification TextUnderlinePositionAuto should default to 'alphabetic' for horizontal text
     // and to 'under Left' for vertical text (e.g. japanese). We support only horizontal text for now.
@@ -1022,7 +1020,7 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
             int shadowY = isHorizontal() ? s->y() : -s->x();
             shadowRect.move(shadowX, shadowY);
             clipRect.unite(shadowRect);
-            extraOffset = max(extraOffset, max(0, shadowY) + shadowExtent);
+            extraOffset = std::max(extraOffset, std::max(0, shadowY) + shadowExtent);
         }
         context.save();
         context.clip(clipRect);
@@ -1195,11 +1193,11 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext* pt, const FloatPoint& b
 
     bool isDictationMarker = marker->type() == DocumentMarker::DictationAlternatives;
     if (!markerSpansWholeBox || grammar || isDictationMarker) {
-        int startPosition = max<int>(marker->startOffset() - m_start, 0);
-        int endPosition = min<int>(marker->endOffset() - m_start, m_len);
+        int startPosition = std::max<int>(marker->startOffset() - m_start, 0);
+        int endPosition = std::min<int>(marker->endOffset() - m_start, m_len);
         
         if (m_truncation != cNoTruncation)
-            endPosition = min<int>(endPosition, m_truncation);
+            endPosition = std::min<int>(endPosition, m_truncation);
 
         // Calculate start & width
         int deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
@@ -1248,8 +1246,8 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, const FloatPoint& 
     int deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
     int selHeight = selectionHeight();
 
-    int sPos = max(marker->startOffset() - m_start, (unsigned)0);
-    int ePos = min(marker->endOffset() - m_start, (unsigned)m_len);
+    int sPos = std::max(marker->startOffset() - m_start, (unsigned)0);
+    int ePos = std::min(marker->endOffset() - m_start, (unsigned)m_len);
     TextRun run = constructTextRun(style, font);
 
     // Always compute and store the rect associated with this marker. The computed rect is in absolute coordinates.
@@ -1275,8 +1273,8 @@ void InlineTextBox::computeRectForReplacementMarker(DocumentMarker* marker, cons
     int top = selectionTop();
     int h = selectionHeight();
     
-    int sPos = max(marker->startOffset() - m_start, (unsigned)0);
-    int ePos = min(marker->endOffset() - m_start, (unsigned)m_len);
+    int sPos = std::max(marker->startOffset() - m_start, (unsigned)0);
+    int ePos = std::min(marker->endOffset() - m_start, (unsigned)m_len);
     TextRun run = constructTextRun(style, font);
     IntPoint startPoint = IntPoint(x(), top);
     
@@ -1365,11 +1363,11 @@ void InlineTextBox::paintCompositionUnderline(GraphicsContext* ctx, const FloatP
         start = renderer().width(m_start, paintStart - m_start, textPos(), isFirstLine());
     }
     if (paintEnd != underline.endOffset) {      // end points at the last char, not past it
-        paintEnd = min(paintEnd, (unsigned)underline.endOffset);
+        paintEnd = std::min(paintEnd, (unsigned)underline.endOffset);
         useWholeWidth = false;
     }
     if (m_truncation != cNoTruncation) {
-        paintEnd = min(paintEnd, (unsigned)m_start + m_truncation);
+        paintEnd = std::min(paintEnd, (unsigned)m_start + m_truncation);
         useWholeWidth = false;
     }
     if (!useWholeWidth) {

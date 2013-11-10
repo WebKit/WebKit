@@ -33,8 +33,6 @@
 #import <limits>
 #import <wtf/StdLibExtras.h>
 
-using namespace std;
-
 @interface NSURLResponse (WebNSURLResponseDetails)
 - (NSTimeInterval)_calculatedExpiration;
 - (id)_initWithCFURLResponse:(CFURLResponseRef)response;
@@ -51,7 +49,7 @@ void ResourceResponse::initNSURLResponse() const
     // The init function takes an NSInteger, even though the accessor returns a long long.
     // For values that won't fit in an NSInteger, pass -1 instead.
     NSInteger expectedContentLength;
-    if (m_expectedContentLength < 0 || m_expectedContentLength > numeric_limits<NSInteger>::max())
+    if (m_expectedContentLength < 0 || m_expectedContentLength > std::numeric_limits<NSInteger>::max())
         expectedContentLength = -1;
     else
         expectedContentLength = static_cast<NSInteger>(m_expectedContentLength);

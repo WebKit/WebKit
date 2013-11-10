@@ -27,7 +27,6 @@
 #include <wtf/text/WTFString.h>
 
 using namespace WTF;
-using namespace std;
 
 namespace WebCore {
 
@@ -100,7 +99,7 @@ static UText* textClone(UText* destination, const UText* source, UBool deep, UEr
         return destination;
     void* extraNew = destination->pExtra;
     int32_t flags = destination->flags;
-    int sizeToCopy = min(source->sizeOfStruct, destination->sizeOfStruct);
+    int sizeToCopy = std::min(source->sizeOfStruct, destination->sizeOfStruct);
     memcpy(destination, source, sizeToCopy);
     destination->pExtra = extraNew;
     destination->flags = flags;
@@ -168,8 +167,8 @@ static void textLatin1MoveInPrimaryContext(UText* text, int64_t nativeIndex, int
     }
     int64_t length = text->chunkNativeLimit - text->chunkNativeStart;
     // Ensure chunk length is well defined if computed length exceeds int32_t range.
-    ASSERT(length < numeric_limits<int32_t>::max());
-    text->chunkLength = length < numeric_limits<int32_t>::max() ? static_cast<int32_t>(length) : 0;
+    ASSERT(length < std::numeric_limits<int32_t>::max());
+    text->chunkLength = length < std::numeric_limits<int32_t>::max() ? static_cast<int32_t>(length) : 0;
     text->nativeIndexingLimit = text->chunkLength;
     text->chunkOffset = forward ? 0 : text->chunkLength;
     StringImpl::copyChars(const_cast<UChar*>(text->chunkContents), static_cast<const LChar*>(text->p) + (text->chunkNativeStart - text->b), static_cast<unsigned>(text->chunkLength));
@@ -194,8 +193,8 @@ static void textLatin1MoveInPriorContext(UText* text, int64_t nativeIndex, int64
     text->nativeIndexingLimit = text->chunkLength;
     int64_t offset = nativeIndex - text->chunkNativeStart;
     // Ensure chunk offset is well defined if computed offset exceeds int32_t range or chunk length.
-    ASSERT(offset < numeric_limits<int32_t>::max());
-    text->chunkOffset = min(offset < numeric_limits<int32_t>::max() ? static_cast<int32_t>(offset) : 0, text->chunkLength);
+    ASSERT(offset < std::numeric_limits<int32_t>::max());
+    text->chunkOffset = std::min(offset < std::numeric_limits<int32_t>::max() ? static_cast<int32_t>(offset) : 0, text->chunkLength);
 }
 
 static void textLatin1SwitchToPriorContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
@@ -211,8 +210,8 @@ static inline bool textInChunkOrOutOfRange(UText* text, int64_t nativeIndex, int
         if (nativeIndex >= text->chunkNativeStart && nativeIndex < text->chunkNativeLimit) {
             int64_t offset = nativeIndex - text->chunkNativeStart;
             // Ensure chunk offset is well formed if computed offset exceeds int32_t range.
-            ASSERT(offset < numeric_limits<int32_t>::max());
-            text->chunkOffset = offset < numeric_limits<int32_t>::max() ? static_cast<int32_t>(offset) : 0;
+            ASSERT(offset < std::numeric_limits<int32_t>::max());
+            text->chunkOffset = offset < std::numeric_limits<int32_t>::max() ? static_cast<int32_t>(offset) : 0;
             isAccessible = TRUE;
             return true;
         }
@@ -225,8 +224,8 @@ static inline bool textInChunkOrOutOfRange(UText* text, int64_t nativeIndex, int
         if (nativeIndex > text->chunkNativeStart && nativeIndex <= text->chunkNativeLimit) {
             int64_t offset = nativeIndex - text->chunkNativeStart;
             // Ensure chunk offset is well formed if computed offset exceeds int32_t range.
-            ASSERT(offset < numeric_limits<int32_t>::max());
-            text->chunkOffset = offset < numeric_limits<int32_t>::max() ? static_cast<int32_t>(offset) : 0;
+            ASSERT(offset < std::numeric_limits<int32_t>::max());
+            text->chunkOffset = offset < std::numeric_limits<int32_t>::max() ? static_cast<int32_t>(offset) : 0;
             isAccessible = TRUE;
             return true;
         }
@@ -292,7 +291,7 @@ static UText* textOpenLatin1(UTextWithBuffer* utWithBuffer, const LChar* string,
 {
     if (U_FAILURE(*status))
         return 0;
-    if (!string || length > static_cast<unsigned>(numeric_limits<int32_t>::max())) {
+    if (!string || length > static_cast<unsigned>(std::numeric_limits<int32_t>::max())) {
         *status = U_ILLEGAL_ARGUMENT_ERROR;
         return 0;
     }
@@ -321,13 +320,13 @@ static void textUTF16MoveInPrimaryContext(UText* text, int64_t nativeIndex, int6
     text->chunkNativeLimit = nativeLength;
     int64_t length = text->chunkNativeLimit - text->chunkNativeStart;
     // Ensure chunk length is well defined if computed length exceeds int32_t range.
-    ASSERT(length < numeric_limits<int32_t>::max());
-    text->chunkLength = length < numeric_limits<int32_t>::max() ? static_cast<int32_t>(length) : 0;
+    ASSERT(length < std::numeric_limits<int32_t>::max());
+    text->chunkLength = length < std::numeric_limits<int32_t>::max() ? static_cast<int32_t>(length) : 0;
     text->nativeIndexingLimit = text->chunkLength;
     int64_t offset = nativeIndex - text->chunkNativeStart;
     // Ensure chunk offset is well defined if computed offset exceeds int32_t range or chunk length.
-    ASSERT(offset < numeric_limits<int32_t>::max());
-    text->chunkOffset = min(offset < numeric_limits<int32_t>::max() ? static_cast<int32_t>(offset) : 0, text->chunkLength);
+    ASSERT(offset < std::numeric_limits<int32_t>::max());
+    text->chunkOffset = std::min(offset < std::numeric_limits<int32_t>::max() ? static_cast<int32_t>(offset) : 0, text->chunkLength);
 }
 
 static void textUTF16SwitchToPrimaryContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
@@ -349,8 +348,8 @@ static void textUTF16MoveInPriorContext(UText* text, int64_t nativeIndex, int64_
     text->nativeIndexingLimit = text->chunkLength;
     int64_t offset = nativeIndex - text->chunkNativeStart;
     // Ensure chunk offset is well defined if computed offset exceeds int32_t range or chunk length.
-    ASSERT(offset < numeric_limits<int32_t>::max());
-    text->chunkOffset = min(offset < numeric_limits<int32_t>::max() ? static_cast<int32_t>(offset) : 0, text->chunkLength);
+    ASSERT(offset < std::numeric_limits<int32_t>::max());
+    text->chunkOffset = std::min(offset < std::numeric_limits<int32_t>::max() ? static_cast<int32_t>(offset) : 0, text->chunkLength);
 }
 
 static void textUTF16SwitchToPriorContext(UText* text, int64_t nativeIndex, int64_t nativeLength, UBool forward)
@@ -402,7 +401,7 @@ static UText* textOpenUTF16(UText* text, const UChar* string, unsigned length, c
 {
     if (U_FAILURE(*status))
         return 0;
-    if (!string || length > static_cast<unsigned>(numeric_limits<int32_t>::max())) {
+    if (!string || length > static_cast<unsigned>(std::numeric_limits<int32_t>::max())) {
         *status = U_ILLEGAL_ARGUMENT_ERROR;
         return 0;
     }

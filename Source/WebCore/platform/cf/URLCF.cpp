@@ -30,8 +30,6 @@
 #include <CoreFoundation/CFURL.h>
 #include <wtf/text/CString.h>
 
-using namespace std;
-
 namespace WebCore {
 
 URL::URL(CFURLRef url)

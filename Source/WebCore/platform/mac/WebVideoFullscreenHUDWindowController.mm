@@ -35,7 +35,6 @@
 #import <wtf/RetainPtr.h>
 
 using namespace WebCore;
-using namespace std;
 
 static inline CGFloat webkit_CGFloor(CGFloat value)
 {
@@ -482,7 +481,7 @@ static NSTextField *createTimeTextField(NSRect frame)
         return;
 
     float volume = [self volume] + 10;
-    [self setVolume:min(volume, [self maxVolume])];
+    [self setVolume:std::min(volume, [self maxVolume])];
 }
 
 - (float)volume
@@ -554,7 +553,7 @@ static NSString *timeToString(double time)
     if (!std::isfinite(time))
         time = 0;
 
-    int seconds = narrowPrecisionToFloat(abs(time));
+    int seconds = narrowPrecisionToFloat(std::abs(time));
     int hours = seconds / (60 * 60);
     int minutes = (seconds / 60) % 60;
     seconds %= 60;

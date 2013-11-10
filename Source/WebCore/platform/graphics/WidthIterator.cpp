@@ -31,7 +31,6 @@
 
 using namespace WTF;
 using namespace Unicode;
-using namespace std;
 
 namespace WebCore {
 
@@ -45,8 +44,8 @@ WidthIterator::WidthIterator(const Font* font, const TextRun& run, HashSet<const
     , m_typesettingFeatures(font->typesettingFeatures())
     , m_fallbackFonts(fallbackFonts)
     , m_accountForGlyphBounds(accountForGlyphBounds)
-    , m_maxGlyphBoundingBoxY(numeric_limits<float>::min())
-    , m_minGlyphBoundingBoxY(numeric_limits<float>::max())
+    , m_maxGlyphBoundingBoxY(std::numeric_limits<float>::min())
+    , m_minGlyphBoundingBoxY(std::numeric_limits<float>::max())
     , m_firstGlyphOverflow(0)
     , m_lastGlyphOverflow(0)
     , m_forTextEmphasis(forTextEmphasis)
@@ -266,13 +265,13 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
         }
 
         if (shouldApplyFontTransforms() && glyphBuffer && Font::treatAsSpace(character))
-            charactersTreatedAsSpace.append(make_pair(glyphBuffer->size(),
+            charactersTreatedAsSpace.append(std::make_pair(glyphBuffer->size(),
                 OriginalAdvancesForCharacterTreatedAsSpace(character == ' ', glyphBuffer->size() ? glyphBuffer->advanceAt(glyphBuffer->size() - 1).width() : 0, width)));
 
         if (m_accountForGlyphBounds) {
             bounds = fontData->boundsForGlyph(glyph);
             if (!textIterator.currentCharacter())
-                m_firstGlyphOverflow = max<float>(0, -bounds.x());
+                m_firstGlyphOverflow = std::max<float>(0, -bounds.x());
         }
 
         if (m_forTextEmphasis && !Font::canReceiveTextEmphasis(character))
@@ -317,9 +316,9 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
         lastRoundingWidth = width - oldWidth;
 
         if (m_accountForGlyphBounds) {
-            m_maxGlyphBoundingBoxY = max(m_maxGlyphBoundingBoxY, bounds.maxY());
-            m_minGlyphBoundingBoxY = min(m_minGlyphBoundingBoxY, bounds.y());
-            m_lastGlyphOverflow = max<float>(0, bounds.maxX() - width);
+            m_maxGlyphBoundingBoxY = std::max(m_maxGlyphBoundingBoxY, bounds.maxY());
+            m_minGlyphBoundingBoxY = std::min(m_minGlyphBoundingBoxY, bounds.y());
+            m_lastGlyphOverflow = std::max<float>(0, bounds.maxX() - width);
         }
     }
 

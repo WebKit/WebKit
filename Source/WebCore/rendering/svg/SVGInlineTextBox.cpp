@@ -41,8 +41,6 @@
 #include "SVGRootInlineBox.h"
 #include "SVGTextRunRenderingContext.h"
 
-using namespace std;
-
 namespace WebCore {
 
 struct ExpectedSVGInlineTextBoxSize : public InlineTextBox {
@@ -132,8 +130,8 @@ FloatRect SVGInlineTextBox::selectionRectForTextFragment(const SVGTextFragment& 
 LayoutRect SVGInlineTextBox::localSelectionRect(int startPosition, int endPosition) const
 {
     int boxStart = start();
-    startPosition = max(startPosition - boxStart, 0);
-    endPosition = min(endPosition - boxStart, static_cast<int>(len()));
+    startPosition = std::max(startPosition - boxStart, 0);
+    endPosition = std::min(endPosition - boxStart, static_cast<int>(len()));
     if (startPosition >= endPosition)
         return LayoutRect();
 

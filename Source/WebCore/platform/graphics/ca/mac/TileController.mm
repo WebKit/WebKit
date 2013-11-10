@@ -34,8 +34,6 @@
 #import <wtf/MainThread.h>
 #import <utility>
 
-using namespace std;
-
 namespace WebCore {
     
 enum TileValidationPolicyFlag {
@@ -410,14 +408,14 @@ void TileController::getTileIndexRangeForRect(const IntRect& rect, TileIndex& to
     clampedRect.scale(m_scale);
     clampedRect.intersect(rect);
 
-    topLeft.setX(max(clampedRect.x() / m_tileSize.width(), 0));
-    topLeft.setY(max(clampedRect.y() / m_tileSize.height(), 0));
+    topLeft.setX(std::max(clampedRect.x() / m_tileSize.width(), 0));
+    topLeft.setY(std::max(clampedRect.y() / m_tileSize.height(), 0));
 
     int bottomXRatio = ceil((float)clampedRect.maxX() / m_tileSize.width());
-    bottomRight.setX(max(bottomXRatio - 1, 0));
+    bottomRight.setX(std::max(bottomXRatio - 1, 0));
 
     int bottomYRatio = ceil((float)clampedRect.maxY() / m_tileSize.height());
-    bottomRight.setY(max(bottomYRatio - 1, 0));
+    bottomRight.setY(std::max(bottomYRatio - 1, 0));
 }
 
 FloatRect TileController::computeTileCoverageRect(const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect) const
@@ -451,12 +449,12 @@ FloatRect TileController::computeTileCoverageRect(const FloatRect& previousVisib
     // Don't extend coverage before 0 or after the end.
     FloatRect coverageBounds = bounds();
     float coverageLeft = visibleRect.x() - (coverageHorizontalSize - visibleRect.width()) / 2;
-    coverageLeft = min(coverageLeft, coverageBounds.maxX() - coverageHorizontalSize);
-    coverageLeft = max(coverageLeft, coverageBounds.x());
+    coverageLeft = std::min(coverageLeft, coverageBounds.maxX() - coverageHorizontalSize);
+    coverageLeft = std::max(coverageLeft, coverageBounds.x());
 
     float coverageTop = visibleRect.y() - (coverageVerticalSize - visibleRect.height()) / 2;
-    coverageTop = min(coverageTop, coverageBounds.maxY() - coverageVerticalSize);
-    coverageTop = max(coverageTop, coverageBounds.y());
+    coverageTop = std::min(coverageTop, coverageBounds.maxY() - coverageVerticalSize);
+    coverageTop = std::max(coverageTop, coverageBounds.y());
 
     return FloatRect(coverageLeft, coverageTop, coverageHorizontalSize, coverageVerticalSize);
 }

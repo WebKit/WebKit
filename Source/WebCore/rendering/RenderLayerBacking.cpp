@@ -74,8 +74,6 @@
 #include "GraphicsContext3D.h"
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;

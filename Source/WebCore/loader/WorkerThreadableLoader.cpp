@@ -49,8 +49,6 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 
-using namespace std;
-
 namespace WebCore {
 
 static const char loadResourceSynchronouslyMode[] = "loadResourceSynchronouslyMode";

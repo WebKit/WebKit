@@ -65,8 +65,7 @@ inline void wkDrawMediaSliderTrack(CGContextRef context, const CGRect& rect, flo
 
 #endif
  
-using namespace std;
- 
+
 namespace WebCore {
 
 #if PLATFORM(WIN)

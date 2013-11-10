@@ -26,8 +26,6 @@
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
-using namespace std;
-
 namespace WebCore {
 
 PassRefPtr<TransformOperation> RotateTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)

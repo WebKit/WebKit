@@ -26,8 +26,6 @@
 #include "Matrix3DTransformOperation.h"
 #include <algorithm>
 
-using namespace std;
-
 namespace WebCore {
 
 TransformOperations::TransformOperations(bool makeIdentity)
@@ -71,7 +69,7 @@ TransformOperations TransformOperations::blendByMatchingOperations(const Transfo
 
     unsigned fromSize = from.operations().size();
     unsigned toSize = operations().size();
-    unsigned size = max(fromSize, toSize);
+    unsigned size = std::max(fromSize, toSize);
     for (unsigned i = 0; i < size; i++) {
         RefPtr<TransformOperation> fromOperation = (i < fromSize) ? from.operations()[i].get() : 0;
         RefPtr<TransformOperation> toOperation = (i < toSize) ? operations()[i].get() : 0;

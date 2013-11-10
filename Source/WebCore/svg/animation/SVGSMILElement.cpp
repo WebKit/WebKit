@@ -47,8 +47,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
-using namespace std;
-
 namespace WebCore {
     
 // This is used for duration type time values that can't be negative.
@@ -698,7 +696,7 @@ SMILTime SVGSMILElement::minValue() const
                  
 SMILTime SVGSMILElement::simpleDuration() const
 {
-    return min(dur(), SMILTime::indefinite());
+    return std::min(dur(), SMILTime::indefinite());
 }
 
 void SVGSMILElement::addBeginTime(SMILTime eventTime, SMILTime beginTime, SMILTimeWithOrigin::Origin origin)
@@ -774,7 +772,7 @@ SMILTime SVGSMILElement::repeatingDuration() const
     if (!simpleDuration || (repeatDur.isUnresolved() && repeatCount.isUnresolved()))
         return simpleDuration;
     SMILTime repeatCountDuration = simpleDuration * repeatCount;
-    return min(repeatCountDuration, min(repeatDur, SMILTime::indefinite()));
+    return std::min(repeatCountDuration, std::min(repeatDur, SMILTime::indefinite()));
 }
 
 SMILTime SVGSMILElement::resolveActiveEnd(SMILTime resolvedBegin, SMILTime resolvedEnd) const
@@ -787,7 +785,7 @@ SMILTime SVGSMILElement::resolveActiveEnd(SMILTime resolvedBegin, SMILTime resol
     else if (!resolvedEnd.isFinite())
         preliminaryActiveDuration = repeatingDuration();
     else
-        preliminaryActiveDuration = min(repeatingDuration(), resolvedEnd - resolvedBegin);
+        preliminaryActiveDuration = std::min(repeatingDuration(), resolvedEnd - resolvedBegin);
     
     SMILTime minValue = this->minValue();
     SMILTime maxValue = this->maxValue();
@@ -797,14 +795,14 @@ SMILTime SVGSMILElement::resolveActiveEnd(SMILTime resolvedBegin, SMILTime resol
         minValue = 0;
         maxValue = SMILTime::indefinite();
     }
-    return resolvedBegin + min(maxValue, max(minValue, preliminaryActiveDuration));
+    return resolvedBegin + std::min(maxValue, std::max(minValue, preliminaryActiveDuration));
 }
 
 void SVGSMILElement::resolveInterval(bool first, SMILTime& beginResult, SMILTime& endResult) const
 {
     // See the pseudocode in http://www.w3.org/TR/SMIL3/smil-timing.html#q90.
-    SMILTime beginAfter = first ? -numeric_limits<double>::infinity() : m_intervalEnd;
-    SMILTime lastIntervalTempEnd = numeric_limits<double>::infinity();
+    SMILTime beginAfter = first ? -std::numeric_limits<double>::infinity() : m_intervalEnd;
+    SMILTime lastIntervalTempEnd = std::numeric_limits<double>::infinity();
     while (true) {
         bool equalsMinimumOK = !first || m_intervalEnd > m_intervalBegin;
         SMILTime tempBegin = findInstanceTime(Begin, beginAfter, equalsMinimumOK);
@@ -848,7 +846,7 @@ void SVGSMILElement::resolveFirstInterval()
         m_intervalBegin = begin;
         m_intervalEnd = end;
         notifyDependentsIntervalChanged(wasUnresolved ? NewInterval : ExistingInterval);
-        m_nextProgressTime = min(m_nextProgressTime, m_intervalBegin);
+        m_nextProgressTime = std::min(m_nextProgressTime, m_intervalBegin);
 
         if (m_timeContainer)
             m_timeContainer->notifyIntervalsChanged();
@@ -867,7 +865,7 @@ void SVGSMILElement::resolveNextInterval(bool notifyDependents)
         m_intervalEnd = end;
         if (notifyDependents)
             notifyDependentsIntervalChanged(NewInterval);
-        m_nextProgressTime = min(m_nextProgressTime, m_intervalBegin);
+        m_nextProgressTime = std::min(m_nextProgressTime, m_intervalBegin);
     }
 }
 
@@ -1002,7 +1000,7 @@ float SVGSMILElement::calculateAnimationPercentAndRepeat(SMILTime elapsed, unsig
 
         double percent = (m_intervalEnd.value() - m_intervalBegin.value()) / simpleDuration.value();
         percent = percent - floor(percent);
-        if (percent < numeric_limits<float>::epsilon() || 1 - percent < numeric_limits<float>::epsilon())
+        if (percent < std::numeric_limits<float>::epsilon() || 1 - percent < std::numeric_limits<float>::epsilon())
             return 1.0f;
         return narrowPrecisionToFloat(percent);
     }

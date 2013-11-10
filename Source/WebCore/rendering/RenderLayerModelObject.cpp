@@ -28,8 +28,6 @@
 #include "RenderLayer.h"
 #include "RenderView.h"
 
-using namespace std;
-
 namespace WebCore {
 
 bool RenderLayerModelObject::s_wasFloating = false;

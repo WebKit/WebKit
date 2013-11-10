@@ -42,8 +42,6 @@
 #include <wtf/StringExtras.h>
 #include <wtf/text/StringBuilder.h>
 
-using namespace std;
-
 namespace WebCore {
 
 static const char flatFileSubdirectory[] = "ApplicationCache";
@@ -1188,7 +1186,7 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
     
     FallbackURLVector fallbackURLs;
     while ((result = fallbackStatement.step()) == SQLResultRow) 
-        fallbackURLs.append(make_pair(URL(ParsedURLString, fallbackStatement.getColumnText(0)), URL(ParsedURLString, fallbackStatement.getColumnText(1))));
+        fallbackURLs.append(std::make_pair(URL(ParsedURLString, fallbackStatement.getColumnText(0)), URL(ParsedURLString, fallbackStatement.getColumnText(1))));
 
     if (result != SQLResultDone)
         LOG_ERROR("Could not load fallback URLs, error \"%s\"", m_database.lastErrorMsg());

@@ -30,8 +30,6 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 
-using namespace std;
-
 namespace WebCore {
 
 CrossfadeGeneratedImage::CrossfadeGeneratedImage(Image* fromImage, Image* toImage, float percentage, IntSize crossfadeSize, const IntSize& size)

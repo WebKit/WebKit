@@ -33,8 +33,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
 
-using namespace std;
-
 namespace WebCore {
 
 #if !COMPILER(MSVC)
@@ -51,18 +49,18 @@ static const RGBA32 darkenedWhite = 0xFFABABAB;
 
 RGBA32 makeRGB(int r, int g, int b)
 {
-    return 0xFF000000 | max(0, min(r, 255)) << 16 | max(0, min(g, 255)) << 8 | max(0, min(b, 255));
+    return 0xFF000000 | std::max(0, std::min(r, 255)) << 16 | std::max(0, std::min(g, 255)) << 8 | std::max(0, std::min(b, 255));
 }
 
 RGBA32 makeRGBA(int r, int g, int b, int a)
 {
-    return max(0, min(a, 255)) << 24 | max(0, min(r, 255)) << 16 | max(0, min(g, 255)) << 8 | max(0, min(b, 255));
+    return std::max(0, std::min(a, 255)) << 24 | std::max(0, std::min(r, 255)) << 16 | std::max(0, std::min(g, 255)) << 8 | std::max(0, std::min(b, 255));
 }
 
 static int colorFloatToRGBAByte(float f)
 {
     // We use lroundf and 255 instead of nextafterf(256, 0) to match CG's rounding
-    return max(0, min(static_cast<int>(lroundf(255.0f * f)), 255));
+    return std::max(0, std::min(static_cast<int>(lroundf(255.0f * f)), 255));
 }
 
 RGBA32 makeRGBA32FromFloats(float r, float g, float b, float a)
@@ -278,13 +276,13 @@ Color Color::light() const
     float r, g, b, a;
     getRGBA(r, g, b, a);
 
-    float v = max(r, max(g, b));
+    float v = std::max(r, std::max(g, b));
 
     if (v == 0.0f)
         // Lightened black with alpha.
         return Color(0x54, 0x54, 0x54, alpha());
 
-    float multiplier = min(1.0f, v + 0.33f) / v;
+    float multiplier = std::min(1.0f, v + 0.33f) / v;
 
     return Color(static_cast<int>(multiplier * r * scaleFactor),
                  static_cast<int>(multiplier * g * scaleFactor),
@@ -303,8 +301,8 @@ Color Color::dark() const
     float r, g, b, a;
     getRGBA(r, g, b, a);
 
-    float v = max(r, max(g, b));
-    float multiplier = max(0.0f, (v - 0.33f) / v);
+    float v = std::max(r, std::max(g, b));
+    float multiplier = std::max(0.0f, (v - 0.33f) / v);
 
     return Color(static_cast<int>(multiplier * r * scaleFactor),
                  static_cast<int>(multiplier * g * scaleFactor),

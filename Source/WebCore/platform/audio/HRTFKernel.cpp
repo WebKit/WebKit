@@ -38,8 +38,6 @@
 #include "FloatConversion.h"
 #include <wtf/MathExtras.h>
 
-using namespace std;
-
 namespace WebCore {
 
 // Takes the input AudioChannel as an input impulse response and calculates the average group delay.
@@ -82,7 +80,7 @@ HRTFKernel::HRTFKernel(AudioChannel* channel, size_t fftSize, float sampleRate)
     size_t responseLength = channel->length();
 
     // We need to truncate to fit into 1/2 the FFT size (with zero padding) in order to do proper convolution.
-    size_t truncatedResponseLength = min(responseLength, fftSize / 2); // truncate if necessary to max impulse response length allowed by FFT
+    size_t truncatedResponseLength = std::min(responseLength, fftSize / 2); // truncate if necessary to max impulse response length allowed by FFT
 
     // Quick fade-out (apply window) at truncation point
     unsigned numberOfFadeOutFrames = static_cast<unsigned>(sampleRate / 4410); // 10 sample-frames @44.1KHz sample-rate
@@ -123,7 +121,7 @@ PassRefPtr<HRTFKernel> HRTFKernel::createInterpolatedKernel(HRTFKernel* kernel1,
         return 0;
  
     ASSERT(x >= 0.0 && x < 1.0);
-    x = min(1.0f, max(0.0f, x));
+    x = std::min(1.0f, std::max(0.0f, x));
     
     float sampleRate1 = kernel1->sampleRate();
     float sampleRate2 = kernel2->sampleRate();

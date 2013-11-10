@@ -1,3 +1,504 @@
+2013-11-10  Anders Carlsson  <andersca@apple.com>
+
+        Remove all 'std' using directives from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=124125
+
+        Reviewed by Sam Weinig.
+
+        As per the coding style guidelines.
+
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::CrossOriginPreflightResultCache::appendEntry):
+        (WebCore::CrossOriginPreflightResultCache::canSkipPreflight):
+        * loader/WorkerThreadableLoader.cpp:
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::loadCache):
+        * loader/appcache/ManifestParser.cpp:
+        (WebCore::parseManifest):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::deadCapacity):
+        (WebCore::MemoryCache::lruListFor):
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        * page/Chrome.cpp:
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::intervalClampedToMinimum):
+        * page/FocusController.cpp:
+        * page/Frame.cpp:
+        (WebCore::Frame::resizePageRectsKeepingRatio):
+        * page/PageGroupLoadDeferrer.cpp:
+        * page/Settings.cpp:
+        * page/animation/AnimationBase.cpp:
+        (WebCore::solveStepsFunction):
+        (WebCore::AnimationBase::fireAnimationEventsIfNeeded):
+        (WebCore::AnimationBase::timeToNextService):
+        (WebCore::AnimationBase::fractionalTime):
+        (WebCore::AnimationBase::getTimeToNextEvent):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::fetchIntervalEndpointsForProperty):
+        * platform/DateComponents.cpp:
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::handleWheelEvent):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::unscaledVisibleContentSize):
+        (WebCore::ScrollView::setScrollOffset):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::scrollContents):
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::moveThumb):
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::usedTotalSize):
+        (WebCore::ScrollbarThemeComposite::thumbPosition):
+        (WebCore::ScrollbarThemeComposite::thumbLength):
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::append):
+        (WebCore::SharedBuffer::copyBufferAndClear):
+        (WebCore::SharedBuffer::getSomeData):
+        * platform/ThreadTimers.cpp:
+        (WebCore::ThreadTimers::updateSharedTimer):
+        * platform/Timer.cpp:
+        (WebCore::TimerHeapLessThanFunction::operator()):
+        (WebCore::TimerBase::heapPop):
+        (WebCore::TimerBase::nextUnalignedFireInterval):
+        * platform/URL.cpp:
+        (WebCore::findHostnamesInMailToURL):
+        (WebCore::portAllowed):
+        * platform/audio/AudioResampler.cpp:
+        (WebCore::AudioResampler::setRate):
+        * platform/audio/AudioResamplerKernel.cpp:
+        (WebCore::AudioResamplerKernel::process):
+        * platform/audio/Distance.cpp:
+        (WebCore::DistanceEffect::gain):
+        * platform/audio/DynamicsCompressorKernel.cpp:
+        (WebCore::DynamicsCompressorKernel::process):
+        * platform/audio/EqualPowerPanner.cpp:
+        (WebCore::EqualPowerPanner::pan):
+        * platform/audio/HRTFDatabase.cpp:
+        (WebCore::HRTFDatabase::indexFromElevationAngle):
+        * platform/audio/HRTFElevation.cpp:
+        (WebCore::HRTFElevation::createForSubject):
+        * platform/audio/HRTFKernel.cpp:
+        (WebCore::HRTFKernel::HRTFKernel):
+        (WebCore::HRTFKernel::createInterpolatedKernel):
+        * platform/audio/HRTFPanner.cpp:
+        (WebCore::HRTFPanner::calculateDesiredAzimuthIndexAndBlend):
+        * platform/audio/Reverb.cpp:
+        * platform/audio/SincResampler.cpp:
+        (WebCore::SincResampler::process):
+        * platform/cf/URLCF.cpp:
+        * platform/graphics/Color.cpp:
+        (WebCore::makeRGB):
+        (WebCore::makeRGBA):
+        (WebCore::colorFloatToRGBAByte):
+        (WebCore::Color::light):
+        (WebCore::Color::dark):
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        * platform/graphics/FloatQuad.cpp:
+        (WebCore::min4):
+        (WebCore::max4):
+        (WebCore::withinEpsilon):
+        * platform/graphics/FloatSize.cpp:
+        (WebCore::FloatSize::isZero):
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::floatWidthForSimpleText):
+        * platform/graphics/FontPlatformData.cpp:
+        * platform/graphics/GraphicsContext.cpp:
+        * platform/graphics/RoundedRect.cpp:
+        (WebCore::RoundedRect::Radii::expand):
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::calculateLobes):
+        (WebCore::computeSliceSizesFromRadii):
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::initCharWidths):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::WidthIterator):
+        (WebCore::WidthIterator::advanceInternal):
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::processCue):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformDuration):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::currentTime):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setOpacity):
+        (WebCore::GraphicsLayerCA::setNeedsDisplay):
+        (WebCore::GraphicsLayerCA::setupAnimation):
+        (WebCore::clampedContentsScaleForScale):
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::getTileIndexRangeForRect):
+        (WebCore::TileController::computeTileCoverageRect):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+        (WebCore::computeLineBoundsAndAntialiasingModeForText):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        (WebCore::ImageBufferData::getData):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        * platform/graphics/filters/FEDropShadow.cpp:
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::boxBlur):
+        (WebCore::FEGaussianBlur::platformApplyGeneric):
+        (WebCore::FEGaussianBlur::calculateUnscaledKernelSize):
+        (WebCore::FEGaussianBlur::calculateStdDeviation):
+        * platform/graphics/gpu/Texture.cpp:
+        (WebCore::Texture::updateSubRect):
+        * platform/graphics/gpu/TilingData.cpp:
+        (WebCore::computeNumTiles):
+        (WebCore::TilingData::tileXIndexFromSrcCoord):
+        (WebCore::TilingData::tileYIndexFromSrcCoord):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::ComplexTextController):
+        (WebCore::ComplexTextController::offsetForPosition):
+        (WebCore::ComplexTextController::advance):
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+        * platform/graphics/mac/FontComplexTextMac.cpp:
+        (WebCore::Font::floatWidthForComplexText):
+        * platform/graphics/mac/FontMac.mm:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::duration):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        * platform/graphics/transforms/Matrix3DTransformOperation.cpp:
+        * platform/graphics/transforms/MatrixTransformOperation.cpp:
+        * platform/graphics/transforms/PerspectiveTransformOperation.cpp:
+        * platform/graphics/transforms/RotateTransformOperation.cpp:
+        * platform/graphics/transforms/TransformOperations.cpp:
+        (WebCore::TransformOperations::blendByMatchingOperations):
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::clampEdgeValue):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::adjustScrollPositionIfNecessary):
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::platformSetContentsSize):
+        (WebCore::ScrollView::platformSetScrollPosition):
+        * platform/mac/ScrollbarThemeMac.mm:
+        * platform/mac/ThemeMac.mm:
+        * platform/mac/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindowController incrementVolume]):
+        (timeToString):
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::copyData):
+        * platform/network/ResourceRequestBase.cpp:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::parseCacheControlDirectives):
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::initNSURLResponse):
+        * platform/text/TextBreakIteratorICU.cpp:
+        (WebCore::textClone):
+        (WebCore::textLatin1MoveInPrimaryContext):
+        (WebCore::textLatin1MoveInPriorContext):
+        (WebCore::textInChunkOrOutOfRange):
+        (WebCore::textOpenLatin1):
+        (WebCore::textUTF16MoveInPrimaryContext):
+        (WebCore::textUTF16MoveInPriorContext):
+        (WebCore::textOpenUTF16):
+        * platform/text/TextCodecUTF16.cpp:
+        (WebCore::TextCodecUTF16::encode):
+        * platform/text/TextCodecUTF8.cpp:
+        (WebCore::TextCodecUTF8::encode):
+        * platform/text/TextStream.cpp:
+        * platform/text/mac/LocaleMac.mm:
+        * platform/text/mac/TextCodecMac.cpp:
+        (WebCore::TextCodecMac::decode):
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        (WebCore::AutoTableLayout::computeIntrinsicLogicalWidths):
+        (WebCore::AutoTableLayout::applyPreferredLogicalWidthQuirks):
+        (WebCore::AutoTableLayout::calcEffectiveLogicalWidth):
+        (WebCore::AutoTableLayout::layout):
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::applyPreferredLogicalWidthQuirks):
+        * rendering/FloatingObjects.cpp:
+        (WebCore::FindNextFloatLogicalBottomAdapter::collectIfNeeded):
+        (WebCore::FloatingObjects::logicalRightOffsetForPositioningFloat):
+        (WebCore::FloatingObjects::logicalRightOffset):
+        * rendering/InlineBox.cpp:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxRangeInInlineDirection):
+        (WebCore::InlineFlowBox::adjustMaxAscentAndDescent):
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::computeMaxLogicalTop):
+        (WebCore::InlineFlowBox::addBoxShadowVisualOverflow):
+        (WebCore::InlineFlowBox::addBorderOutsetVisualOverflow):
+        (WebCore::InlineFlowBox::addTextBoxVisualOverflow):
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        (WebCore::InlineFlowBox::constrainToLineTopAndBottomIfNeeded):
+        (WebCore::InlineFlowBox::computeOverAnnotationAdjustment):
+        (WebCore::InlineFlowBox::computeUnderAnnotationAdjustment):
+        (WebCore::InlineFlowBox::collectLeafBoxesInLogicalOrder):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::isSelected):
+        (WebCore::InlineTextBox::localSelectionRect):
+        (WebCore::InlineTextBox::placeEllipsisBox):
+        (WebCore::InlineTextBox::applyShadowToGraphicsContext):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::selectionStartEnd):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        (WebCore::computeUnderlineOffset):
+        (WebCore::InlineTextBox::paintDecoration):
+        (WebCore::InlineTextBox::paintDocumentMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::computeRectForReplacementMarker):
+        (WebCore::InlineTextBox::paintCompositionUnderline):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeOverflow):
+        (WebCore::RenderBlock::computeStartPositionDeltaForChildAvoidingFloats):
+        (WebCore::RenderBlock::paintChild):
+        (WebCore::RenderBlock::blockSelectionGap):
+        (WebCore::RenderBlock::logicalLeftSelectionGap):
+        (WebCore::RenderBlock::logicalRightSelectionGap):
+        (WebCore::RenderBlock::calcColumnWidth):
+        (WebCore::RenderBlock::adjustRectForColumns):
+        (WebCore::RenderBlock::computeIntrinsicLogicalWidths):
+        (WebCore::RenderBlock::computePreferredLogicalWidths):
+        (WebCore::RenderBlock::adjustIntrinsicLogicalWidthsForColumns):
+        (WebCore::updatePreferredWidth):
+        (WebCore::RenderBlock::computeInlinePreferredLogicalWidths):
+        (WebCore::RenderBlock::computeBlockPreferredLogicalWidths):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::clearFloats):
+        (WebCore::RenderBlockFlow::layoutBlock):
+        (WebCore::RenderBlockFlow::layoutBlockChild):
+        (WebCore::RenderBlockFlow::collapseMargins):
+        (WebCore::RenderBlockFlow::clearFloatsIfNeeded):
+        (WebCore::RenderBlockFlow::marginBeforeEstimateForChild):
+        (WebCore::RenderBlockFlow::estimateLogicalTopPosition):
+        (WebCore::RenderBlockFlow::setCollapsedBottomMargin):
+        (WebCore::RenderBlockFlow::handleAfterSideOfBlock):
+        (WebCore::calculateMinimumPageHeight):
+        (WebCore::RenderBlockFlow::adjustLinePositionForPagination):
+        (WebCore::RenderBlockFlow::removeFloatingObject):
+        (WebCore::RenderBlockFlow::computeLogicalLocationForFloat):
+        (WebCore::RenderBlockFlow::positionNewFloats):
+        (WebCore::RenderBlockFlow::lowestFloatLogicalBottom):
+        (WebCore::RenderBlockFlow::addOverhangingFloats):
+        (WebCore::RenderBlockFlow::getClearDelta):
+        (WebCore::RenderBlockFlow::adjustForBorderFit):
+        (WebCore::RenderBlockFlow::fitBorderToLinesIfNeeded):
+        (WebCore::RenderBlockFlow::updateLogicalHeight):
+        (WebCore::RenderBlockFlow::positionForPointWithInlineChildren):
+        (WebCore::RenderBlockFlow::addFocusRingRectsForInlineChildren):
+        (WebCore::RenderBlockFlow::relayoutForPagination):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::updateLogicalWidthForLeftAlignedBlock):
+        (WebCore::updateLogicalWidthForRightAlignedBlock):
+        (WebCore::updateLogicalWidthForCenterAlignedBlock):
+        (WebCore::setLogicalWidthForTextRun):
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForLine):
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlockFlow::layoutLineBoxes):
+        (WebCore::RenderBlockFlow::checkFloatsInCleanLine):
+        (WebCore::RenderBlockFlow::checkPaginationAndFloatsAtEndLine):
+        (WebCore::tryHyphenating):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::scrollWidth):
+        (WebCore::RenderBox::scrollHeight):
+        (WebCore::RenderBox::constrainLogicalWidthInRegionByMinMax):
+        (WebCore::RenderBox::constrainLogicalHeightByMinMax):
+        (WebCore::RenderBox::constrainContentBoxLogicalHeightByMinMax):
+        (WebCore::RenderBox::adjustBorderBoxLogicalWidthForBoxSizing):
+        (WebCore::RenderBox::adjustBorderBoxLogicalHeightForBoxSizing):
+        (WebCore::RenderBox::adjustContentBoxLogicalWidthForBoxSizing):
+        (WebCore::RenderBox::adjustContentBoxLogicalHeightForBoxSizing):
+        (WebCore::RenderBox::repaintLayerRectsForImage):
+        (WebCore::RenderBox::shrinkLogicalWidthToAvoidFloats):
+        (WebCore::RenderBox::containingBlockLogicalWidthForContentInRegion):
+        (WebCore::RenderBox::containingBlockAvailableLineWidthInRegion):
+        (WebCore::RenderBox::perpendicularContainingBlockLogicalHeight):
+        (WebCore::RenderBox::computeLogicalWidthInRegion):
+        (WebCore::RenderBox::computeIntrinsicLogicalWidthUsing):
+        (WebCore::RenderBox::computeLogicalWidthInRegionUsing):
+        (WebCore::RenderBox::computeInlineDirectionMargins):
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        (WebCore::RenderBox::computeReplacedLogicalWidthRespectingMinMaxWidth):
+        (WebCore::RenderBox::computeReplacedLogicalHeightRespectingMinMaxHeight):
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned):
+        (WebCore::RenderBox::computePositionedLogicalWidthUsing):
+        (WebCore::RenderBox::computePositionedLogicalHeightUsing):
+        (WebCore::RenderBox::applyVisualEffectOverflow):
+        (WebCore::RenderBox::addLayoutOverflow):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateFillTileSize):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setNoRepeatX):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setNoRepeatY):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::useFixedAttachment):
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+        (WebCore::RenderBoxModelObject::paintOneBorderSide):
+        (WebCore::calculateAdjustedInnerBorder):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        (WebCore::RenderBoxModelObject::localCaretRectForEmptyElement):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::FlexBoxIterator::next):
+        (WebCore::RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths):
+        (WebCore::RenderDeprecatedFlexibleBox::computePreferredLogicalWidths):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        (WebCore::RenderDeprecatedFlexibleBox::allowedChildFlex):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::maxFilenameWidth):
+        (WebCore::RenderFileUploadControl::computeIntrinsicLogicalWidths):
+        (WebCore::RenderFileUploadControl::computePreferredLogicalWidths):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::setImageSizeForAltText):
+        * rendering/RenderInline.cpp:
+        (WebCore::computeMargin):
+        (WebCore::RenderInline::linesVisualOverflowBoundingBox):
+        (WebCore::RenderInline::paintOutline):
+        (WebCore::RenderInline::paintOutlineForLine):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::clampScrollOffset):
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::RenderLayer::visibleContentRect):
+        (WebCore::RenderLayer::updateScrollbarsAfterLayout):
+        (WebCore::RenderLayer::hitTestOverflowControls):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::calculateLayerBounds):
+        * rendering/RenderLayerBacking.cpp:
+        * rendering/RenderLayerModelObject.cpp:
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::rangeIntersectsRect):
+        (WebCore::RenderLineBoxList::anyLineIntersectsRect):
+        (WebCore::RenderLineBoxList::lineIntersectsDirtyRect):
+        (WebCore::RenderLineBoxList::paint):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::layout):
+        (WebCore::RenderListBox::computePreferredLogicalWidths):
+        (WebCore::RenderListBox::size):
+        (WebCore::RenderListBox::numVisibleItems):
+        (WebCore::RenderListBox::panScroll):
+        (WebCore::RenderListBox::scrollHeight):
+        * rendering/RenderListItem.cpp:
+        * rendering/RenderListMarker.cpp:
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::marqueeSpeed):
+        (WebCore::RenderMarquee::computePosition):
+        (WebCore::RenderMarquee::timerFired):
+        * rendering/RenderMediaControls.cpp:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateOptionsWidth):
+        (WebCore::RenderMenuList::computeIntrinsicLogicalWidths):
+        (WebCore::RenderMenuList::computePreferredLogicalWidths):
+        * rendering/RenderMeter.cpp:
+        * rendering/RenderMultiColumnBlock.cpp:
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::heightAdjustedForSetOffset):
+        (WebCore::RenderMultiColumnSet::calculateBalancedHeight):
+        (WebCore::RenderMultiColumnSet::updateLogicalWidth):
+        * rendering/RenderNamedFlowFragment.cpp:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        (WebCore::RenderObject::caretMaxOffset):
+        * rendering/RenderProgress.cpp:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::overflowRectForFlowThreadPortion):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::shouldPaint):
+        (WebCore::RenderReplaced::computeReplacedLogicalWidth):
+        (WebCore::RenderReplaced::computePreferredLogicalWidths):
+        * rendering/RenderRubyBase.cpp:
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::getOverhang):
+        * rendering/RenderRubyText.cpp:
+        (WebCore::RenderRubyText::adjustInlineDirectionLineBounds):
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::RenderScrollbarPart::computeScrollbarWidth):
+        (WebCore::RenderScrollbarPart::computeScrollbarHeight):
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::computeControlLogicalHeight):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::updateLogicalWidth):
+        (WebCore::RenderTable::convertStyleLogicalHeightToComputedHeight):
+        (WebCore::RenderTable::layout):
+        (WebCore::RenderTable::computePreferredLogicalWidths):
+        (WebCore::RenderTable::calcBorderStart):
+        (WebCore::RenderTable::calcBorderEnd):
+        (WebCore::RenderTable::outerBorderBefore):
+        (WebCore::RenderTable::outerBorderAfter):
+        (WebCore::RenderTable::outerBorderStart):
+        (WebCore::RenderTable::outerBorderEnd):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::parseColSpanFromDOM):
+        (WebCore::RenderTableCell::parseRowSpanFromDOM):
+        (WebCore::RenderTableCell::logicalWidthFromColumns):
+        (WebCore::RenderTableCell::computePreferredLogicalWidths):
+        (WebCore::RenderTableCell::layout):
+        (WebCore::RenderTableCell::setOverrideLogicalContentHeightFromRowHeight):
+        (WebCore::RenderTableCell::clippedOverflowRectForRepaint):
+        (WebCore::RenderTableCell::alignLeftRightBorderPaintRect):
+        (WebCore::RenderTableCell::alignTopBottomBorderPaintRect):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::ensureRows):
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+        (WebCore::RenderTableSection::distributeExtraLogicalHeightToPercentRows):
+        (WebCore::RenderTableSection::layoutRows):
+        (WebCore::RenderTableSection::firstLineBaseline):
+        (WebCore::RenderTableSection::removeCachedCollapsedBorders):
+        (WebCore::RenderTableSection::setCachedCollapsedBorder):
+        (WebCore::RenderTableSection::cachedCollapsedBorder):
+        * rendering/RenderText.cpp:
+        (WebCore::makeCapitalized):
+        (WebCore::RenderText::absoluteRectsForRange):
+        (WebCore::RenderText::absoluteQuadsForRange):
+        (WebCore::maxWordFragmentWidth):
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::computePreferredLogicalWidths):
+        * rendering/RenderTextControlSingleLine.cpp:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintProgressBar):
+        (WebCore::RenderThemeMac::paintMenuListButton):
+        * rendering/RenderWidget.cpp:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::alignBoxesInBlockDirection):
+        (WebCore::RootInlineBox::beforeAnnotationsAdjustment):
+        (WebCore::RootInlineBox::selectionTopAdjustedForPrecedingBlock):
+        (WebCore::RootInlineBox::blockDirectionPointInLine):
+        (WebCore::RootInlineBox::paddedLayoutOverflowRect):
+        (WebCore::setAscentAndDescent):
+        (WebCore::RootInlineBox::ascentAndDescentForBox):
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::layout):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::calcConstraintScaleFor):
+        (WebCore::RenderStyle::setFontSize):
+        (WebCore::RenderStyle::getShadowExtent):
+        (WebCore::RenderStyle::getShadowInsetExtent):
+        (WebCore::RenderStyle::getShadowHorizontalExtent):
+        (WebCore::RenderStyle::getShadowVerticalExtent):
+        * rendering/style/SVGRenderStyle.cpp:
+        * rendering/style/ShadowData.cpp:
+        (WebCore::calculateShadowExtent):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        * rendering/svg/RenderSVGRoot.cpp:
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::localSelectionRect):
+        * svg/SVGAnimatedNumber.cpp:
+        * svg/SVGAnimatedNumberOptionalNumber.cpp:
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::startTimer):
+        (WebCore::SMILTimeContainer::updateAnimations):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::simpleDuration):
+        (WebCore::SVGSMILElement::repeatingDuration):
+        (WebCore::SVGSMILElement::resolveActiveEnd):
+        (WebCore::SVGSMILElement::resolveInterval):
+        (WebCore::SVGSMILElement::resolveFirstInterval):
+        (WebCore::SVGSMILElement::resolveNextInterval):
+        (WebCore::SVGSMILElement::calculateAnimationPercentAndRepeat):
+        * xml/XMLTreeViewer.cpp:
+        * xml/parser/XMLDocumentParser.cpp:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::OffsetBuffer::readOutBytes):
+
 2013-11-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [AX] Clean up static_cast<> to cast from AccessibilityObject 

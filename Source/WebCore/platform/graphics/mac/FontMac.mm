@@ -59,8 +59,6 @@ SOFT_LINK(UIKit, _UIKitGetTextEffectsCatalog, CUICatalog *, (void), ())
 #define URefCon UInt32
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 bool Font::canReturnFallbackFontsForComplexText()

@@ -35,8 +35,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
 
-using namespace std;
-
 namespace WebCore {
 
 static const int maxIntervalForUserGestureForwarding = 1000; // One second matches Gecko.
@@ -178,7 +176,7 @@ void DOMTimer::adjustMinimumTimerInterval(double oldMinimumTimerInterval)
 
 double DOMTimer::intervalClampedToMinimum(int timeout, double minimumTimerInterval) const
 {
-    double intervalMilliseconds = max(oneMillisecond, timeout * oneMillisecond);
+    double intervalMilliseconds = std::max(oneMillisecond, timeout * oneMillisecond);
 
     if (intervalMilliseconds < minimumTimerInterval && m_nestingLevel >= maxTimerNestingLevel)
         intervalMilliseconds = minimumTimerInterval;

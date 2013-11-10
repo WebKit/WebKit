@@ -29,8 +29,6 @@
 #include "AnimationUtilities.h"
 #include <wtf/MathExtras.h>
 
-using namespace std;
-
 namespace WebCore {
 
 PassRefPtr<TransformOperation> PerspectiveTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)

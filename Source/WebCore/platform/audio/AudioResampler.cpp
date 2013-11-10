@@ -32,8 +32,6 @@
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
-using namespace std;
- 
 namespace WebCore {
 
 const double AudioResampler::MaxRate = 8.0;
@@ -113,7 +111,7 @@ void AudioResampler::setRate(double rate)
     if (std::isnan(rate) || std::isinf(rate) || rate <= 0.0)
         return;
     
-    m_rate = min(AudioResampler::MaxRate, rate);
+    m_rate = std::min(AudioResampler::MaxRate, rate);
 }
 
 void AudioResampler::reset()

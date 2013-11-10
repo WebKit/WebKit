@@ -31,8 +31,6 @@
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/WTFString.h>
 
-using namespace std;
-
 namespace WebCore {
 
 void TextCodecUTF16::registerEncodingNames(EncodingNameRegistrar registrar)
@@ -125,7 +123,7 @@ CString TextCodecUTF16::encode(const UChar* characters, size_t length, Unencodab
     // the buffer doesn't occupy the entire address space, we can
     // assert here that doubling the length does not overflow size_t
     // and there's no need for a runtime check.
-    ASSERT(length <= numeric_limits<size_t>::max() / 2);
+    ASSERT(length <= std::numeric_limits<size_t>::max() / 2);
 
     char* bytes;
     CString string = CString::newUninitialized(length * 2, bytes);

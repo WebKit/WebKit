@@ -53,9 +53,6 @@ SOFT_LINK_POINTER(AVFoundation, AVMetadataKeySpaceCommon, NSString *)
 #define AVMetadataCommonKeyTitle getAVMetadataCommonKeyTitle()
 #define AVMetadataKeySpaceCommon getAVMetadataKeySpaceCommon()
 
-using namespace WebCore;
-using namespace std;
-
 namespace WebCore {
 
 InbandTextTrackPrivateLegacyAVFObjC::InbandTextTrackPrivateLegacyAVFObjC(MediaPlayerPrivateAVFoundationObjC* player, AVPlayerItemTrack* track)

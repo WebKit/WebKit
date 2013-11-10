@@ -24,8 +24,6 @@
 
 #include <algorithm>
 
-using namespace std;
-
 namespace WebCore {
 
 PassRefPtr<TransformOperation> MatrixTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)

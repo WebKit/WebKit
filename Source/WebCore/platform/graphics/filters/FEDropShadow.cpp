@@ -31,8 +31,6 @@
 #include <runtime/Uint8ClampedArray.h>
 #include <wtf/MathExtras.h>
 
-using namespace std;
-
 namespace WebCore {
     
 FEDropShadow::FEDropShadow(Filter* filter, float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity)

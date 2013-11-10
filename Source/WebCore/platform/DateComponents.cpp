@@ -37,8 +37,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>
 
-using namespace std;
-
 namespace WebCore {
 
 // HTML5 specification defines minimum week of year is one.

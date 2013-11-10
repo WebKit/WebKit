@@ -40,8 +40,6 @@
 #include <emmintrin.h>
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 //
@@ -682,7 +680,7 @@ FloatQuad TransformationMatrix::projectQuad(const FloatQuad& q, bool* clamped) c
 static float clampEdgeValue(float f)
 {
     ASSERT(!std::isnan(f));
-    return min<float>(max<float>(f, -LayoutUnit::max() / 2), LayoutUnit::max() / 2);
+    return std::min<float>(std::max<float>(f, -LayoutUnit::max() / 2), LayoutUnit::max() / 2);
 }
 
 LayoutRect TransformationMatrix::clampedBoundsOfProjectedQuad(const FloatQuad& q) const

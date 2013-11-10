@@ -41,10 +41,7 @@
 #include <algorithm>
 #include <wtf/StdLibExtras.h>
 
-using namespace std;
-
 namespace WebCore {
-
 
 Texture::Texture(GraphicsContext3D* context, PassOwnPtr<Vector<unsigned int>> tileTextureIds, Format format, int width, int height, int maxTextureSize)
     : m_context(context)
@@ -171,8 +168,8 @@ void Texture::updateSubRect(void* pixels, const IntRect& updateRect)
         // FIXME:  This could use PBO's to save doing an extra copy here.
     }
     int tempBuffSize = // Temporary buffer size is the smaller of the max texture size or the updateRectSanitized
-        min(m_tiles.maxTextureSize().width(), m_tiles.borderTexels() + updateRectSanitized.width()) *
-        min(m_tiles.maxTextureSize().height(), m_tiles.borderTexels() + updateRectSanitized.height());
+        std::min(m_tiles.maxTextureSize().width(), m_tiles.borderTexels() + updateRectSanitized.width()) *
+        std::min(m_tiles.maxTextureSize().height(), m_tiles.borderTexels() + updateRectSanitized.height());
     auto tempBuff = std::make_unique<uint32_t[]>(tempBuffSize);
 
     for (int tile = 0; tile < m_tiles.numTilesX() * m_tiles.numTilesY(); tile++) {

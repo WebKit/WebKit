@@ -39,8 +39,6 @@
 #include "RenderView.h"
 #include "RootInlineBox.h"
 
-using namespace std;
-
 namespace WebCore {
 
 #ifndef NDEBUG
@@ -161,7 +159,7 @@ bool RenderLineBoxList::rangeIntersectsRect(RenderBoxModelObject* renderer, Layo
     LayoutUnit physicalStart = block->flipForWritingMode(logicalTop);
     LayoutUnit physicalEnd = block->flipForWritingMode(logicalBottom);
     LayoutUnit physicalExtent = absoluteValue(physicalEnd - physicalStart);
-    physicalStart = min(physicalStart, physicalEnd);
+    physicalStart = std::min(physicalStart, physicalEnd);
     
     if (renderer->style().isHorizontalWritingMode()) {
         physicalStart += offset.y();
@@ -186,10 +184,10 @@ bool RenderLineBoxList::anyLineIntersectsRect(RenderBoxModelObject* renderer, co
     const RootInlineBox& lastRootBox = lastLineBox()->root();
     LayoutUnit firstLineTop = firstLineBox()->logicalTopVisualOverflow(firstRootBox.lineTop());
     if (usePrintRect && !firstLineBox()->parent())
-        firstLineTop = min(firstLineTop, firstRootBox.lineTop());
+        firstLineTop = std::min(firstLineTop, firstRootBox.lineTop());
     LayoutUnit lastLineBottom = lastLineBox()->logicalBottomVisualOverflow(lastRootBox.lineBottom());
     if (usePrintRect && !lastLineBox()->parent())
-        lastLineBottom = max(lastLineBottom, lastRootBox.lineBottom());
+        lastLineBottom = std::max(lastLineBottom, lastRootBox.lineBottom());
     LayoutUnit logicalTop = firstLineTop - outlineSize;
     LayoutUnit logicalBottom = outlineSize + lastLineBottom;
     
@@ -199,7 +197,7 @@ bool RenderLineBoxList::anyLineIntersectsRect(RenderBoxModelObject* renderer, co
 bool RenderLineBoxList::lineIntersectsDirtyRect(RenderBoxModelObject* renderer, InlineFlowBox* box, const PaintInfo& paintInfo, const LayoutPoint& offset) const
 {
     const RootInlineBox& rootBox = box->root();
-    LayoutUnit logicalTop = min<LayoutUnit>(box->logicalTopVisualOverflow(rootBox.lineTop()), rootBox.selectionTop()) - renderer->maximalOutlineSize(paintInfo.phase);
+    LayoutUnit logicalTop = std::min<LayoutUnit>(box->logicalTopVisualOverflow(rootBox.lineTop()), rootBox.selectionTop()) - renderer->maximalOutlineSize(paintInfo.phase);
     LayoutUnit logicalBottom = box->logicalBottomVisualOverflow(rootBox.lineBottom()) + renderer->maximalOutlineSize(paintInfo.phase);
     
     return rangeIntersectsRect(renderer, logicalTop, logicalBottom, paintInfo.rect, offset);
@@ -244,13 +242,13 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
             LayoutUnit bottomForPaginationCheck = curr->logicalLeftVisualOverflow();
             if (!curr->parent()) {
                 // We're a root box.  Use lineTop and lineBottom as well here.
-                topForPaginationCheck = min(topForPaginationCheck, rootBox.lineTop());
-                bottomForPaginationCheck = max(bottomForPaginationCheck, rootBox.lineBottom());
+                topForPaginationCheck = std::min(topForPaginationCheck, rootBox.lineTop());
+                bottomForPaginationCheck = std::max(bottomForPaginationCheck, rootBox.lineBottom());
             }
             if (bottomForPaginationCheck - topForPaginationCheck <= v.printRect().height()) {
                 if (paintOffset.y() + bottomForPaginationCheck > v.printRect().maxY()) {
                     if (RootInlineBox* nextRootBox = rootBox.nextRootBox())
-                        bottomForPaginationCheck = min(bottomForPaginationCheck, min<LayoutUnit>(nextRootBox->logicalTopVisualOverflow(), nextRootBox->lineTop()));
+                        bottomForPaginationCheck = std::min(bottomForPaginationCheck, std::min<LayoutUnit>(nextRootBox->logicalTopVisualOverflow(), nextRootBox->lineTop()));
                 }
                 if (paintOffset.y() + bottomForPaginationCheck > v.printRect().maxY()) {
                     if (paintOffset.y() + topForPaginationCheck < v.truncatedAt())

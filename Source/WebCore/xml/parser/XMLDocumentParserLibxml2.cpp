@@ -73,8 +73,6 @@
 #include <libxslt/xslt.h>
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 static inline bool hasNoStyleInformation(Document* document)
@@ -376,7 +374,7 @@ public:
     int readOutBytes(char* outputBuffer, unsigned askedToRead)
     {
         unsigned bytesLeft = m_buffer.size() - m_currentOffset;
-        unsigned lenToCopy = min(askedToRead, bytesLeft);
+        unsigned lenToCopy = std::min(askedToRead, bytesLeft);
         if (lenToCopy) {
             memcpy(outputBuffer, m_buffer.data() + m_currentOffset, lenToCopy);
             m_currentOffset += lenToCopy;

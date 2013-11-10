@@ -38,8 +38,6 @@
 #include "RenderStyle.h"
 #include "StyleResolver.h"
 
-using namespace std;
-
 namespace WebCore {
 
 KeyframeAnimation::KeyframeAnimation(const Animation& animation, RenderElement* renderer, int index, CompositeAnimation* compAnim, RenderStyle* unanimatedStyle)
@@ -85,7 +83,7 @@ void KeyframeAnimation::fetchIntervalEndpointsForProperty(CSSPropertyID property
     // Find the first key
     double elapsedTime = getElapsedTime();
     if (m_animation->duration() && m_animation->iterationCount() != Animation::IterationCountInfinite)
-        elapsedTime = min(elapsedTime, m_animation->duration() * m_animation->iterationCount());
+        elapsedTime = std::min(elapsedTime, m_animation->duration() * m_animation->iterationCount());
 
     const double fractionalTime = this->fractionalTime(1, elapsedTime, 0);
 

@@ -34,8 +34,6 @@
 #include "RenderRubyRun.h"
 #include "RenderRubyText.h"
 
-using namespace std;
-
 namespace WebCore {
 
 RenderRubyBase::RenderRubyBase(Document& document, PassRef<RenderStyle> style)

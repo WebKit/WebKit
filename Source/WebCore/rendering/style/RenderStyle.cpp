@@ -51,8 +51,6 @@
 #include "TextAutosizer.h"
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 struct SameSizeAsBorderValue {
@@ -1089,22 +1087,22 @@ static float calcConstraintScaleFor(const IntRect& rect, const RoundedRect::Radi
     // top
     radiiSum = static_cast<unsigned>(radii.topLeft().width()) + static_cast<unsigned>(radii.topRight().width()); // Casts to avoid integer overflow.
     if (radiiSum > static_cast<unsigned>(rect.width()))
-        factor = min(static_cast<float>(rect.width()) / radiiSum, factor);
+        factor = std::min(static_cast<float>(rect.width()) / radiiSum, factor);
 
     // bottom
     radiiSum = static_cast<unsigned>(radii.bottomLeft().width()) + static_cast<unsigned>(radii.bottomRight().width());
     if (radiiSum > static_cast<unsigned>(rect.width()))
-        factor = min(static_cast<float>(rect.width()) / radiiSum, factor);
+        factor = std::min(static_cast<float>(rect.width()) / radiiSum, factor);
     
     // left
     radiiSum = static_cast<unsigned>(radii.topLeft().height()) + static_cast<unsigned>(radii.bottomLeft().height());
     if (radiiSum > static_cast<unsigned>(rect.height()))
-        factor = min(static_cast<float>(rect.height()) / radiiSum, factor);
+        factor = std::min(static_cast<float>(rect.height()) / radiiSum, factor);
     
     // right
     radiiSum = static_cast<unsigned>(radii.topRight().height()) + static_cast<unsigned>(radii.bottomRight().height());
     if (radiiSum > static_cast<unsigned>(rect.height()))
-        factor = min(static_cast<float>(rect.height()) / radiiSum, factor);
+        factor = std::min(static_cast<float>(rect.height()) / radiiSum, factor);
     
     ASSERT(factor <= 1);
     return factor;
@@ -1442,7 +1440,7 @@ void RenderStyle::setFontSize(float size)
     if (!std::isfinite(size) || size < 0)
         size = 0;
     else
-        size = min(maximumAllowedFontSize, size);
+        size = std::min(maximumAllowedFontSize, size);
 
     FontSelector* currentFontSelector = font().fontSelector();
     FontDescription desc(fontDescription());
@@ -1473,10 +1471,10 @@ void RenderStyle::getShadowExtent(const ShadowData* shadow, LayoutUnit &top, Lay
             continue;
 
         int extentAndSpread = shadow->paintingExtent() + shadow->spread();
-        top = min<LayoutUnit>(top, shadow->y() - extentAndSpread);
-        right = max<LayoutUnit>(right, shadow->x() + extentAndSpread);
-        bottom = max<LayoutUnit>(bottom, shadow->y() + extentAndSpread);
-        left = min<LayoutUnit>(left, shadow->x() - extentAndSpread);
+        top = std::min<LayoutUnit>(top, shadow->y() - extentAndSpread);
+        right = std::max<LayoutUnit>(right, shadow->x() + extentAndSpread);
+        bottom = std::max<LayoutUnit>(bottom, shadow->y() + extentAndSpread);
+        left = std::min<LayoutUnit>(left, shadow->x() - extentAndSpread);
     }
 }
 
@@ -1492,10 +1490,10 @@ LayoutBoxExtent RenderStyle::getShadowInsetExtent(const ShadowData* shadow) cons
             continue;
 
         int extentAndSpread = shadow->paintingExtent() + shadow->spread();
-        top = max<LayoutUnit>(top, shadow->y() + extentAndSpread);
-        right = min<LayoutUnit>(right, shadow->x() - extentAndSpread);
-        bottom = min<LayoutUnit>(bottom, shadow->y() - extentAndSpread);
-        left = max<LayoutUnit>(left, shadow->x() + extentAndSpread);
+        top = std::max<LayoutUnit>(top, shadow->y() + extentAndSpread);
+        right = std::min<LayoutUnit>(right, shadow->x() - extentAndSpread);
+        bottom = std::min<LayoutUnit>(bottom, shadow->y() - extentAndSpread);
+        left = std::max<LayoutUnit>(left, shadow->x() + extentAndSpread);
     }
 
     return LayoutBoxExtent(top, right, bottom, left);
@@ -1511,8 +1509,8 @@ void RenderStyle::getShadowHorizontalExtent(const ShadowData* shadow, LayoutUnit
             continue;
 
         int extentAndSpread = shadow->paintingExtent() + shadow->spread();
-        left = min<LayoutUnit>(left, shadow->x() - extentAndSpread);
-        right = max<LayoutUnit>(right, shadow->x() + extentAndSpread);
+        left = std::min<LayoutUnit>(left, shadow->x() - extentAndSpread);
+        right = std::max<LayoutUnit>(right, shadow->x() + extentAndSpread);
     }
 }
 
@@ -1526,8 +1524,8 @@ void RenderStyle::getShadowVerticalExtent(const ShadowData* shadow, LayoutUnit &
             continue;
 
         int extentAndSpread = shadow->paintingExtent() + shadow->spread();
-        top = min<LayoutUnit>(top, shadow->y() - extentAndSpread);
-        bottom = max<LayoutUnit>(bottom, shadow->y() + extentAndSpread);
+        top = std::min<LayoutUnit>(top, shadow->y() - extentAndSpread);
+        bottom = std::max<LayoutUnit>(bottom, shadow->y() + extentAndSpread);
     }
 }
 

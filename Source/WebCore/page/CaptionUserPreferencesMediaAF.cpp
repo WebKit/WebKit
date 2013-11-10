@@ -122,8 +122,6 @@ SOFT_LINK_AVF_POINTER(CoreText, kCTFontNameAttribute, CFStringRef)
 #define kCTFontNameAttribute getkCTFontNameAttribute()
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)

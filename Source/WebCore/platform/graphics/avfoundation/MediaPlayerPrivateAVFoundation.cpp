@@ -43,8 +43,6 @@
 #include <CoreMedia/CoreMedia.h>
 #include <wtf/MainThread.h>
 
-using namespace std;
-
 namespace WebCore {
 
 MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* player)

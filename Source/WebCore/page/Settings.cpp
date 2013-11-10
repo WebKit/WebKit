@@ -46,8 +46,6 @@
 #include "TextAutosizer.h"
 #include <limits>
 
-using namespace std;
-
 namespace WebCore {
 
 static void setImageLoadingSettings(Page* page)

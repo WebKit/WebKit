@@ -33,8 +33,6 @@
 
 #include <utility>
 
-using namespace std;
-
 namespace WebCore {
 
 HTTPHeaderMap::HTTPHeaderMap()
@@ -52,7 +50,7 @@ PassOwnPtr<CrossThreadHTTPHeaderMapData> HTTPHeaderMap::copyData() const
 
     HTTPHeaderMap::const_iterator end_it = end();
     for (HTTPHeaderMap::const_iterator it = begin(); it != end_it; ++it)
-        data->uncheckedAppend(make_pair(it->key.string().isolatedCopy(), it->value.isolatedCopy()));
+        data->uncheckedAppend(std::make_pair(it->key.string().isolatedCopy(), it->value.isolatedCopy()));
 
     return data.release();
 }

@@ -37,8 +37,6 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
-using namespace std;
-
 namespace WebCore {
 
 // We need to keep this because ICU doesn't support some of the encodings that we need:
@@ -142,7 +140,7 @@ OSStatus TextCodecMac::decode(const unsigned char* inputBuffer, int inputBufferL
         // First, fill the partial character buffer with as many bytes as are available.
         ASSERT_WITH_SECURITY_IMPLICATION(m_numBufferedBytes < sizeof(m_bufferedBytes));
         const int spaceInBuffer = sizeof(m_bufferedBytes) - m_numBufferedBytes;
-        const int bytesToPutInBuffer = min(spaceInBuffer, inputBufferLength);
+        const int bytesToPutInBuffer = std::min(spaceInBuffer, inputBufferLength);
         ASSERT(bytesToPutInBuffer != 0);
         memcpy(m_bufferedBytes + m_numBufferedBytes, inputBuffer, bytesToPutInBuffer);
 

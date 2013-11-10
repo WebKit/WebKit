@@ -153,7 +153,6 @@ enum {
 @end
 
 using namespace WebCore;
-using namespace std;
 
 @interface WebCoreMovieObserver : NSObject
 {
@@ -737,7 +736,7 @@ float MediaPlayerPrivateQTKit::duration() const
 
     QTTime time = [m_qtMovie.get() duration];
     if (time.flags == kQTTimeIsIndefinite)
-        return numeric_limits<float>::infinity();
+        return std::numeric_limits<float>::infinity();
     return static_cast<float>(time.timeValue) / time.timeScale;
 }
 

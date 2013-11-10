@@ -47,7 +47,6 @@
 #include <wtf/text/StringBuffer.h>
 #include <wtf/unicode/CharacterNames.h>
 
-using namespace std;
 using namespace WTF;
 using namespace Unicode;
 
@@ -107,7 +106,7 @@ static void makeCapitalized(String* string, UChar previous)
     unsigned length = string->length();
     const StringImpl& stringImpl = *string->impl();
 
-    if (length >= numeric_limits<unsigned>::max())
+    if (length >= std::numeric_limits<unsigned>::max())
         CRASH();
 
     StringBuffer<UChar> stringWithPrevious(length + 1);
@@ -294,8 +293,8 @@ Vector<IntRect> RenderText::absoluteRectsForRange(unsigned start, unsigned end, 
     // that would cause many ripple effects, so for now we'll just clamp our unsigned parameters to INT_MAX.
     ASSERT(end == UINT_MAX || end <= INT_MAX);
     ASSERT(start <= INT_MAX);
-    start = min(start, static_cast<unsigned>(INT_MAX));
-    end = min(end, static_cast<unsigned>(INT_MAX));
+    start = std::min(start, static_cast<unsigned>(INT_MAX));
+    end = std::min(end, static_cast<unsigned>(INT_MAX));
     
     return m_lineBoxes.absoluteRectsForRange(*this, start, end, useSelectionHeight, wasFixed);
 }
@@ -325,8 +324,8 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
     // that would cause many ripple effects, so for now we'll just clamp our unsigned parameters to INT_MAX.
     ASSERT(end == UINT_MAX || end <= INT_MAX);
     ASSERT(start <= INT_MAX);
-    start = min(start, static_cast<unsigned>(INT_MAX));
-    end = min(end, static_cast<unsigned>(INT_MAX));
+    start = std::min(start, static_cast<unsigned>(INT_MAX));
+    end = std::min(end, static_cast<unsigned>(INT_MAX));
     
     return m_lineBoxes.absoluteQuadsForRange(*this, start, end, useSelectionHeight, wasFixed);
 }
@@ -558,7 +557,7 @@ static float maxWordFragmentWidth(RenderText* renderer, const RenderStyle& style
             continue;
 
         suffixStart += fragmentLength;
-        maxFragmentWidth = max(maxFragmentWidth, fragmentWidth);
+        maxFragmentWidth = std::max(maxFragmentWidth, fragmentWidth);
     }
 
     return maxFragmentWidth;
@@ -600,7 +599,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
 
     // If automatic hyphenation is allowed, we keep track of the width of the widest word (or word
     // fragment) encountered so far, and only try hyphenating words that are wider.
-    float maxWordWidth = numeric_limits<float>::max();
+    float maxWordWidth = std::numeric_limits<float>::max();
     int minimumPrefixLength = 0;
     int minimumSuffixLength = 0;
     if (style.hyphens() == HyphensAuto && canHyphenate(style.locale())) {
@@ -706,10 +705,10 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
                     else
                         suffixWidth = widthFromCache(f, i + suffixStart, wordLen - suffixStart, leadWidth + currMaxWidth, 0, 0, style);
 
-                    maxFragmentWidth = max(maxFragmentWidth, suffixWidth);
+                    maxFragmentWidth = std::max(maxFragmentWidth, suffixWidth);
 
                     currMinWidth += maxFragmentWidth - w;
-                    maxWordWidth = max(maxWordWidth, maxFragmentWidth);
+                    maxWordWidth = std::max(maxWordWidth, maxFragmentWidth);
                 } else
                     maxWordWidth = w;
             }
@@ -793,8 +792,8 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
     if ((needsWordSpacing && len > 1) || (ignoringSpaces && !firstWord))
         currMaxWidth += wordSpacing;
 
-    m_minWidth = max(currMinWidth, m_minWidth);
-    m_maxWidth = max(currMaxWidth, m_maxWidth);
+    m_minWidth = std::max(currMinWidth, m_minWidth);
+    m_maxWidth = std::max(currMaxWidth, m_maxWidth);
 
     if (!style.autoWrap())
         m_minWidth = m_maxWidth;

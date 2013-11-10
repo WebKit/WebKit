@@ -37,8 +37,6 @@
 #include "SVGElement.h"
 #include <wtf/NeverDestroyed.h>
 
-using namespace std;
-
 namespace WebCore {
 
 static const SVGRenderStyle& defaultSVGStyle()

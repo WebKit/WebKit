@@ -24,8 +24,6 @@
 
 #include "LayoutRect.h"
 
-using namespace std;
-
 namespace WebCore {
 
 ShadowData::ShadowData(const ShadowData& o)
@@ -58,10 +56,10 @@ static inline void calculateShadowExtent(const ShadowData* shadow, int additiona
     do {
         int extentAndSpread = shadow->paintingExtent() + shadow->spread() + additionalOutlineSize;
         if (shadow->style() == Normal) {
-            shadowLeft = min(shadow->x() - extentAndSpread, shadowLeft);
-            shadowRight = max(shadow->x() + extentAndSpread, shadowRight);
-            shadowTop = min(shadow->y() - extentAndSpread, shadowTop);
-            shadowBottom = max(shadow->y() + extentAndSpread, shadowBottom);
+            shadowLeft = std::min(shadow->x() - extentAndSpread, shadowLeft);
+            shadowRight = std::max(shadow->x() + extentAndSpread, shadowRight);
+            shadowTop = std::min(shadow->y() - extentAndSpread, shadowTop);
+            shadowBottom = std::max(shadow->y() + extentAndSpread, shadowBottom);
         }
 
         shadow = shadow->next();

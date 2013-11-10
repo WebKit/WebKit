@@ -41,10 +41,6 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
-#if OS(DARWIN)
-using namespace std;
-#endif
-
 namespace WebCore {
 
 using namespace VectorMath;

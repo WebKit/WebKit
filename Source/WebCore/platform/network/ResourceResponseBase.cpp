@@ -33,8 +33,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 
-using namespace std;
-
 namespace WebCore {
 
 static void parseCacheHeader(const String& header, Vector<pair<String, String>>& result);
@@ -348,7 +346,7 @@ void ResourceResponseBase::parseCacheControlDirectives() const
 
     m_cacheControlContainsMustRevalidate = false;
     m_cacheControlContainsNoCache = false;
-    m_cacheControlMaxAge = numeric_limits<double>::quiet_NaN();
+    m_cacheControlMaxAge = std::numeric_limits<double>::quiet_NaN();
 
     DEFINE_STATIC_LOCAL(const AtomicString, cacheControlString, ("cache-control", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(const AtomicString, noCacheDirective, ("no-cache", AtomicString::ConstructFromLiteral));

@@ -34,18 +34,16 @@
 #include <algorithm>
 #include <limits>
 
-using namespace std;
-
 namespace WebCore {
 
 static inline float min4(float a, float b, float c, float d)
 {
-    return min(min(a, b), min(c, d));
+    return std::min(std::min(a, b), std::min(c, d));
 }
 
 static inline float max4(float a, float b, float c, float d)
 {
-    return max(max(a, b), max(c, d));
+    return std::max(std::max(a, b), std::max(c, d));
 }
 
 inline float dot(const FloatSize& a, const FloatSize& b)
@@ -94,7 +92,7 @@ FloatRect FloatQuad::boundingBox() const
 
 static inline bool withinEpsilon(float a, float b)
 {
-    return fabs(a - b) < numeric_limits<float>::epsilon();
+    return fabs(a - b) < std::numeric_limits<float>::epsilon();
 }
 
 bool FloatQuad::isRectilinear() const

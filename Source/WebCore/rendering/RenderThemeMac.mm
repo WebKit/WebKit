@@ -72,8 +72,6 @@
 #include "HTMLMeterElement.h"
 #endif
 
-using namespace std;
-
 // The methods in this file are specific to the Mac OS X platform.
 
 // FIXME: The platform-independent code in this class should be factored out and merged with RenderThemeSafari.
@@ -1046,7 +1044,7 @@ bool RenderThemeMac::paintProgressBar(RenderObject* renderObject, const PaintInf
 
     trackInfo.bounds = IntRect(IntPoint(), inflatedRect.size());
     trackInfo.min = 0;
-    trackInfo.max = numeric_limits<SInt32>::max();
+    trackInfo.max = std::numeric_limits<SInt32>::max();
     trackInfo.value = lround(renderProgress->position() * nextafter(trackInfo.max, 0));
     trackInfo.trackInfo.progress.phase = lround(renderProgress->animationProgress() * nextafter(progressAnimationNumFrames, 0) * deviceScaleFactor);
     trackInfo.attributes = kThemeTrackHorizontal;
@@ -1203,7 +1201,7 @@ bool RenderThemeMac::paintMenuListButton(RenderObject* o, const PaintInfo& paint
     paintMenuListButtonGradients(o, paintInfo, bounds);
 
     // Since we actually know the size of the control here, we restrict the font scale to make sure the arrows will fit vertically in the bounds
-    float fontScale = min(o->style().fontSize() / baseFontSize, bounds.height() / (baseArrowHeight * 2 + baseSpaceBetweenArrows));
+    float fontScale = std::min(o->style().fontSize() / baseFontSize, bounds.height() / (baseArrowHeight * 2 + baseSpaceBetweenArrows));
     float centerY = bounds.y() + bounds.height() / 2.0f;
     float arrowHeight = baseArrowHeight * fontScale;
     float arrowWidth = baseArrowWidth * fontScale;

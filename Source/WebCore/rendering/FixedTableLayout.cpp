@@ -68,8 +68,6 @@
   overflow content.
 */
 
-using namespace std;
-
 namespace WebCore {
 
 FixedTableLayout::FixedTableLayout(RenderTable* table)
@@ -180,7 +178,7 @@ void FixedTableLayout::applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, La
 {
     Length tableLogicalWidth = m_table->style().logicalWidth();
     if (tableLogicalWidth.isFixed() && tableLogicalWidth.isPositive())
-        minWidth = maxWidth = max<int>(minWidth, tableLogicalWidth.value() - m_table->bordersPaddingAndSpacingInRowDirection());
+        minWidth = maxWidth = std::max<int>(minWidth, tableLogicalWidth.value() - m_table->bordersPaddingAndSpacingInRowDirection());
 
     /*
         <table style="width:100%; background-color:red"><tr><td>

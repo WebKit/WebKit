@@ -43,8 +43,6 @@
 #include "XMLViewerCSS.h"
 #include "XMLViewerJS.h"
 
-using namespace std;
-
 namespace WebCore {
 
 XMLTreeViewer::XMLTreeViewer(Document* document)

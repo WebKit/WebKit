@@ -36,8 +36,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/RefPtr.h>
 
-using namespace std;
-
 namespace WebCore {
 
 // The value of 2 milliseconds is larger than the largest delay which exists in any HRTFKernel from the default HRTFDatabase (0.0136 seconds).
@@ -115,8 +113,8 @@ int HRTFPanner::calculateDesiredAzimuthIndexAndBlend(double azimuth, double& azi
 
     // We don't immediately start using this azimuth index, but instead approach this index from the last index we rendered at.
     // This minimizes the clicks and graininess for moving sources which occur otherwise.
-    desiredAzimuthIndex = max(0, desiredAzimuthIndex);
-    desiredAzimuthIndex = min(numberOfAzimuths - 1, desiredAzimuthIndex);
+    desiredAzimuthIndex = std::max(0, desiredAzimuthIndex);
+    desiredAzimuthIndex = std::min(numberOfAzimuths - 1, desiredAzimuthIndex);
     return desiredAzimuthIndex;
 }
 

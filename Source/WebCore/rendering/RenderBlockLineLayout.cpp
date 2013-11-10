@@ -63,7 +63,6 @@
 #include "SVGRootInlineBox.h"
 #endif
 
-using namespace std;
 using namespace WTF;
 using namespace Unicode;
 
@@ -544,7 +543,7 @@ static void updateLogicalWidthForLeftAlignedBlock(bool isLeftToRightDirection, B
     // In particular with RTL blocks, wide lines should still spill out to the left.
     if (isLeftToRightDirection) {
         if (totalLogicalWidth > availableLogicalWidth && trailingSpaceRun)
-            trailingSpaceRun->box()->setLogicalWidth(max<float>(0, trailingSpaceRun->box()->logicalWidth() - totalLogicalWidth + availableLogicalWidth));
+            trailingSpaceRun->box()->setLogicalWidth(std::max<float>(0, trailingSpaceRun->box()->logicalWidth() - totalLogicalWidth + availableLogicalWidth));
         return;
     }
 
@@ -570,7 +569,7 @@ static void updateLogicalWidthForRightAlignedBlock(bool isLeftToRightDirection, 
     }
 
     if (totalLogicalWidth > availableLogicalWidth && trailingSpaceRun) {
-        trailingSpaceRun->box()->setLogicalWidth(max<float>(0, trailingSpaceRun->box()->logicalWidth() - totalLogicalWidth + availableLogicalWidth));
+        trailingSpaceRun->box()->setLogicalWidth(std::max<float>(0, trailingSpaceRun->box()->logicalWidth() - totalLogicalWidth + availableLogicalWidth));
         totalLogicalWidth -= trailingSpaceRun->box()->logicalWidth();
     } else
         logicalLeft += availableLogicalWidth - totalLogicalWidth;
@@ -581,11 +580,11 @@ static void updateLogicalWidthForCenterAlignedBlock(bool isLeftToRightDirection,
     float trailingSpaceWidth = 0;
     if (trailingSpaceRun) {
         totalLogicalWidth -= trailingSpaceRun->box()->logicalWidth();
-        trailingSpaceWidth = min(trailingSpaceRun->box()->logicalWidth(), (availableLogicalWidth - totalLogicalWidth + 1) / 2);
-        trailingSpaceRun->box()->setLogicalWidth(max<float>(0, trailingSpaceWidth));
+        trailingSpaceWidth = std::min(trailingSpaceRun->box()->logicalWidth(), (availableLogicalWidth - totalLogicalWidth + 1) / 2);
+        trailingSpaceRun->box()->setLogicalWidth(std::max<float>(0, trailingSpaceWidth));
     }
     if (isLeftToRightDirection)
-        logicalLeft += max<float>((availableLogicalWidth - totalLogicalWidth) / 2, 0);
+        logicalLeft += std::max<float>((availableLogicalWidth - totalLogicalWidth) / 2, 0);
     else
         logicalLeft += totalLogicalWidth > availableLogicalWidth ? (availableLogicalWidth - totalLogicalWidth) : (availableLogicalWidth - totalLogicalWidth) / 2 - trailingSpaceWidth;
 }
@@ -706,14 +705,14 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
     run->box()->setLogicalWidth(measuredWidth + hyphenWidth);
     if (!fallbackFonts.isEmpty()) {
         ASSERT(run->box()->behavesLikeText());
-        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(toInlineTextBox(run->box()), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).iterator;
+        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(toInlineTextBox(run->box()), std::make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).iterator;
         ASSERT(it->value.first.isEmpty());
         copyToVector(fallbackFonts, it->value.first);
         run->box()->parent()->clearDescendantsHaveSameLineHeightAndBaseline();
     }
     if ((glyphOverflow.top || glyphOverflow.bottom || glyphOverflow.left || glyphOverflow.right)) {
         ASSERT(run->box()->behavesLikeText());
-        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(toInlineTextBox(run->box()), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).iterator;
+        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(toInlineTextBox(run->box()), std::make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).iterator;
         it->value.second = glyphOverflow;
         run->box()->clearKnownToHaveNoOverflow();
     }
@@ -845,8 +844,8 @@ void RenderBlockFlow::computeInlineDirectionPositionsForLine(RootInlineBox* line
     if (shapeInsideInfo && shapeInsideInfo->hasSegments()) {
         BidiRun* segmentStart = firstRun;
         const SegmentList& segments = shapeInsideInfo->segments();
-        float logicalLeft = max<float>(roundToInt(segments[0].logicalLeft), lineLogicalLeft);
-        float logicalRight = min<float>(floorToInt(segments[0].logicalRight), lineLogicalRight);
+        float logicalLeft = std::max<float>(roundToInt(segments[0].logicalLeft), lineLogicalLeft);
+        float logicalRight = std::min<float>(floorToInt(segments[0].logicalRight), lineLogicalRight);
         float startLogicalLeft = logicalLeft;
         float endLogicalRight = logicalLeft;
         float minLogicalLeft = logicalLeft;
@@ -854,8 +853,8 @@ void RenderBlockFlow::computeInlineDirectionPositionsForLine(RootInlineBox* line
         lineBox->beginPlacingBoxRangesInInlineDirection(logicalLeft);
         for (size_t i = 0; i < segments.size(); i++) {
             if (i) {
-                logicalLeft = max<float>(roundToInt(segments[i].logicalLeft), lineLogicalLeft);
-                logicalRight = min<float>(floorToInt(segments[i].logicalRight), lineLogicalRight);
+                logicalLeft = std::max<float>(roundToInt(segments[i].logicalLeft), lineLogicalLeft);
+                logicalRight = std::min<float>(floorToInt(segments[i].logicalRight), lineLogicalRight);
             }
             availableLogicalWidth = logicalRight - logicalLeft;
             BidiRun* newSegmentStart = computeInlineDirectionPositionsForSegment(lineBox, lineInfo, textAlign, logicalLeft, availableLogicalWidth, segmentStart, trailingSpaceRun, textBoxDataMap, verticalPositionCache, wordMeasurements);
@@ -1737,7 +1736,7 @@ void RenderBlockFlow::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, I
             if (numLinesAvailable <= 0)
                 return;
 
-            int numLinesToTake = min(numLinesAvailable, numLinesNeeded);
+            int numLinesToTake = std::min(numLinesAvailable, numLinesNeeded);
             // Wind back from our first widowed line.
             lineBox = currentFirstLineOfNewPage;
             for (int i = 0; i < numLinesToTake; ++i)
@@ -1931,7 +1930,7 @@ void RenderBlockFlow::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaint
     // Expand the last line to accommodate Ruby and emphasis marks.
     int lastLineAnnotationsAdjustment = 0;
     if (lastRootBox()) {
-        LayoutUnit lowestAllowedPosition = max(lastRootBox()->lineBottom(), logicalHeight() + paddingAfter());
+        LayoutUnit lowestAllowedPosition = std::max(lastRootBox()->lineBottom(), logicalHeight() + paddingAfter());
         if (!style().isFlippedLinesWritingMode())
             lastLineAnnotationsAdjustment = lastRootBox()->computeUnderAnnotationAdjustment(lowestAllowedPosition);
         else
@@ -1968,8 +1967,8 @@ void RenderBlockFlow::checkFloatsInCleanLine(RootInlineBox* line, Vector<FloatWi
 
         if (floats[floatIndex].rect.size() != newSize) {
             LayoutUnit floatTop = isHorizontalWritingMode() ? floats[floatIndex].rect.y() : floats[floatIndex].rect.x();
-            LayoutUnit floatHeight = isHorizontalWritingMode() ? max(floats[floatIndex].rect.height(), newSize.height()) : max(floats[floatIndex].rect.width(), newSize.width());
-            floatHeight = min(floatHeight, LayoutUnit::max() - floatTop);
+            LayoutUnit floatHeight = isHorizontalWritingMode() ? std::max(floats[floatIndex].rect.height(), newSize.height()) : std::max(floats[floatIndex].rect.width(), newSize.width());
+            floatHeight = std::min(floatHeight, LayoutUnit::max() - floatTop);
             line->markDirty();
             markLinesDirtyInBlockRange(line->lineBottomWithLeading(), floatTop + floatHeight, line);
             floats[floatIndex].rect.setSize(newSize);
@@ -2159,7 +2158,7 @@ bool RenderBlockFlow::checkPaginationAndFloatsAtEndLine(LineLayoutState& layoutS
         return true;
     
     // See if any floats end in the range along which we want to shift the lines vertically.
-    LayoutUnit logicalTop = min(logicalHeight(), layoutState.endLineLogicalTop());
+    LayoutUnit logicalTop = std::min(logicalHeight(), layoutState.endLineLogicalTop());
 
     RootInlineBox* lastLine = layoutState.endLine();
     while (RootInlineBox* nextLine = lastLine->nextRootBox())
@@ -2452,7 +2451,7 @@ static void tryHyphenating(RenderText* text, const Font& font, const AtomicStrin
     if (prefixLength < minimumPrefixLength)
         return;
 
-    prefixLength = lastHyphenLocation(text->characters() + lastSpace, pos - lastSpace, min(prefixLength, pos - lastSpace - minimumSuffixLength) + 1, localeIdentifier);
+    prefixLength = lastHyphenLocation(text->characters() + lastSpace, pos - lastSpace, std::min(prefixLength, pos - lastSpace - minimumSuffixLength) + 1, localeIdentifier);
     if (!prefixLength || prefixLength < minimumPrefixLength)
         return;
 

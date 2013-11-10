@@ -30,8 +30,6 @@
 
 #include <algorithm>
 
-using namespace std;
-
 namespace WebCore {
 
 bool RoundedRect::Radii::isZero() const
@@ -63,20 +61,20 @@ void RoundedRect::Radii::scale(float factor)
 void RoundedRect::Radii::expand(int topWidth, int bottomWidth, int leftWidth, int rightWidth)
 {
     if (m_topLeft.width() > 0 && m_topLeft.height() > 0) {
-        m_topLeft.setWidth(max<int>(0, m_topLeft.width() + leftWidth));
-        m_topLeft.setHeight(max<int>(0, m_topLeft.height() + topWidth));
+        m_topLeft.setWidth(std::max<int>(0, m_topLeft.width() + leftWidth));
+        m_topLeft.setHeight(std::max<int>(0, m_topLeft.height() + topWidth));
     }
     if (m_topRight.width() > 0 && m_topRight.height() > 0) {
-        m_topRight.setWidth(max<int>(0, m_topRight.width() + rightWidth));
-        m_topRight.setHeight(max<int>(0, m_topRight.height() + topWidth));
+        m_topRight.setWidth(std::max<int>(0, m_topRight.width() + rightWidth));
+        m_topRight.setHeight(std::max<int>(0, m_topRight.height() + topWidth));
     }
     if (m_bottomLeft.width() > 0 && m_bottomLeft.height() > 0) {
-        m_bottomLeft.setWidth(max<int>(0, m_bottomLeft.width() + leftWidth));
-        m_bottomLeft.setHeight(max<int>(0, m_bottomLeft.height() + bottomWidth));
+        m_bottomLeft.setWidth(std::max<int>(0, m_bottomLeft.width() + leftWidth));
+        m_bottomLeft.setHeight(std::max<int>(0, m_bottomLeft.height() + bottomWidth));
     }
     if (m_bottomRight.width() > 0 && m_bottomRight.height() > 0) {
-        m_bottomRight.setWidth(max<int>(0, m_bottomRight.width() + rightWidth));
-        m_bottomRight.setHeight(max<int>(0, m_bottomRight.height() + bottomWidth));
+        m_bottomRight.setWidth(std::max<int>(0, m_bottomRight.width() + rightWidth));
+        m_bottomRight.setHeight(std::max<int>(0, m_bottomRight.height() + bottomWidth));
     }
 }
 

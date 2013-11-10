@@ -28,7 +28,6 @@
 #include "RenderBox.h"
 #include "RenderView.h"
 
-using namespace std;
 using namespace WTF;
 
 namespace WebCore {
@@ -198,7 +197,7 @@ inline void FindNextFloatLogicalBottomAdapter::collectIfNeeded(const IntervalTyp
     if (ShapeOutsideInfo* shapeOutside = floatingObject->renderer().shapeOutsideInfo()) {
         LayoutUnit shapeBottom = m_renderer.logicalTopForFloat(floatingObject) + m_renderer.marginBeforeForChild(floatingObject->renderer()) + shapeOutside->shapeLogicalBottom();
         // Use the shapeBottom unless it extends outside of the margin box, in which case it is clipped.
-        m_nextShapeLogicalBottom = min(shapeBottom, floatBottom);
+        m_nextShapeLogicalBottom = std::min(shapeBottom, floatBottom);
     } else
         m_nextShapeLogicalBottom = floatBottom;
 #endif
@@ -411,7 +410,7 @@ LayoutUnit FloatingObjects::logicalRightOffsetForPositioningFloat(LayoutUnit fix
     if (heightRemaining)
         *heightRemaining = adapter.heightRemaining();
 
-    return min(fixedOffset, adapter.offset());
+    return std::min(fixedOffset, adapter.offset());
 }
 
 LayoutUnit FloatingObjects::logicalLeftOffset(LayoutUnit fixedOffset, LayoutUnit logicalTop, LayoutUnit logicalHeight)
@@ -427,7 +426,7 @@ LayoutUnit FloatingObjects::logicalRightOffset(LayoutUnit fixedOffset, LayoutUni
     ComputeFloatOffsetAdapter<FloatingObject::FloatRight> adapter(m_renderer, logicalTop, logicalTop + logicalHeight, fixedOffset);
     placedFloatsTree().allOverlapsWithAdapter(adapter);
 
-    return min(fixedOffset, adapter.shapeOffset());
+    return std::min(fixedOffset, adapter.shapeOffset());
 }
 
 template<>

@@ -32,8 +32,6 @@
 #include "RenderView.h"
 #include <wtf/StackStats.h>
 
-using namespace std;
-
 namespace WebCore {
 
 RenderScrollbarPart::RenderScrollbarPart(Document& document, PassRef<RenderStyle> style, RenderScrollbar* scrollbar, ScrollbarPart part)
@@ -99,7 +97,7 @@ void RenderScrollbarPart::computeScrollbarWidth()
     int w = calcScrollbarThicknessUsing(MainOrPreferredSize, style().width(), visibleSize, renderView);
     int minWidth = calcScrollbarThicknessUsing(MinSize, style().minWidth(), visibleSize, renderView);
     int maxWidth = style().maxWidth().isUndefined() ? w : calcScrollbarThicknessUsing(MaxSize, style().maxWidth(), visibleSize, renderView);
-    setWidth(max(minWidth, min(maxWidth, w)));
+    setWidth(std::max(minWidth, std::min(maxWidth, w)));
     
     // Buttons and track pieces can all have margins along the axis of the scrollbar. 
     m_marginBox.setLeft(minimumValueForLength(style().marginLeft(), visibleSize, renderView));
@@ -117,7 +115,7 @@ void RenderScrollbarPart::computeScrollbarHeight()
     int h = calcScrollbarThicknessUsing(MainOrPreferredSize, style().height(), visibleSize, renderView);
     int minHeight = calcScrollbarThicknessUsing(MinSize, style().minHeight(), visibleSize, renderView);
     int maxHeight = style().maxHeight().isUndefined() ? h : calcScrollbarThicknessUsing(MaxSize, style().maxHeight(), visibleSize, renderView);
-    setHeight(max(minHeight, min(maxHeight, h)));
+    setHeight(std::max(minHeight, std::min(maxHeight, h)));
 
     // Buttons and track pieces can all have margins along the axis of the scrollbar. 
     m_marginBox.setTop(minimumValueForLength(style().marginTop(), visibleSize, renderView));

@@ -39,8 +39,6 @@
 #include <emmintrin.h>
 #endif
 
-using namespace std;
-
 // Input buffer layout, dividing the total buffer into regions (r0 - r5):
 //
 // |----------------|----------------------------------------------------------------|----------------|
@@ -164,7 +162,7 @@ public:
         float* buffer = bus->channel(0)->mutableData();
 
         // Clamp to number of frames available and zero-pad.
-        size_t framesToCopy = min(m_sourceFramesAvailable, framesToProcess);
+        size_t framesToCopy = std::min(m_sourceFramesAvailable, framesToProcess);
         memcpy(buffer, m_source, sizeof(float) * framesToCopy);
 
         // Zero-pad if necessary.
@@ -191,7 +189,7 @@ void SincResampler::process(const float* source, float* destination, unsigned nu
     unsigned remaining = numberOfDestinationFrames;
     
     while (remaining) {
-        unsigned framesThisTime = min(remaining, m_blockSize);
+        unsigned framesThisTime = std::min(remaining, m_blockSize);
         process(&sourceProvider, destination, framesThisTime);
         
         destination += framesThisTime;

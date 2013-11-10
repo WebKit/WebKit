@@ -157,7 +157,6 @@ SOFT_LINK_POINTER(AVFoundation, AVPlayerItemLegibleOutputTextStylingResolutionSo
 #define kCMTimeZero getkCMTimeZero()
 
 using namespace WebCore;
-using namespace std;
 
 enum MediaPlayerAVFoundationObservationContext {
     MediaPlayerAVFoundationObservationContextPlayerItem,
@@ -626,7 +625,7 @@ float MediaPlayerPrivateAVFoundationObjC::platformDuration() const
         return narrowPrecisionToFloat(CMTimeGetSeconds(cmDuration));
 
     if (CMTIME_IS_INDEFINITE(cmDuration)) {
-        return numeric_limits<float>::infinity();
+        return std::numeric_limits<float>::infinity();
     }
 
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::platformDuration(%p) - invalid duration, returning %.0f", this, MediaPlayer::invalidTime());
@@ -639,9 +638,8 @@ float MediaPlayerPrivateAVFoundationObjC::currentTime() const
         return 0;
 
     CMTime itemTime = [m_avPlayerItem.get() currentTime];
-    if (CMTIME_IS_NUMERIC(itemTime)) {
-        return max(narrowPrecisionToFloat(CMTimeGetSeconds(itemTime)), 0.0f);
-    }
+    if (CMTIME_IS_NUMERIC(itemTime))
+        return std::max(narrowPrecisionToFloat(CMTimeGetSeconds(itemTime)), 0.0f);
 
     return 0;
 }

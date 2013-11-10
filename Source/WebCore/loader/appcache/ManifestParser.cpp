@@ -30,8 +30,6 @@
 #include "URL.h"
 #include <wtf/unicode/CharacterNames.h>
 
-using namespace std;
-
 namespace WebCore {
 
 enum Mode { Explicit, Fallback, OnlineWhitelist, Unknown };
@@ -173,7 +171,7 @@ bool parseManifest(const URL& manifestURL, const char* data, int length, Manifes
             if (!protocolHostAndPortAreEqual(manifestURL, fallbackURL))
                 continue;
 
-            manifest.fallbackURLs.append(make_pair(namespaceURL, fallbackURL));            
+            manifest.fallbackURLs.append(std::make_pair(namespaceURL, fallbackURL));            
         } else 
             ASSERT_NOT_REACHED();
     }

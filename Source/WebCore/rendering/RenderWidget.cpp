@@ -36,8 +36,6 @@
 #include "RenderLayerBacking.h"
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 static HashMap<const Widget*, RenderWidget*>& widgetRendererMap()

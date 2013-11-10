@@ -36,8 +36,6 @@
 #include "DiskImageCacheIOS.h"
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 static const unsigned segmentSize = 0x1000;
@@ -305,7 +303,7 @@ void SharedBuffer::append(const char* data, unsigned length)
         segment = m_segments.last() + positionInSegment;
 
     unsigned segmentFreeSpace = segmentSize - positionInSegment;
-    unsigned bytesToCopy = min(length, segmentFreeSpace);
+    unsigned bytesToCopy = std::min(length, segmentFreeSpace);
 
     for (;;) {
         memcpy(segment, data, bytesToCopy);
@@ -316,7 +314,7 @@ void SharedBuffer::append(const char* data, unsigned length)
         data += bytesToCopy;
         segment = allocateSegment();
         m_segments.append(segment);
-        bytesToCopy = min(length, segmentSize);
+        bytesToCopy = std::min(length, segmentSize);
     }
 #else
     m_size += length;
@@ -380,7 +378,7 @@ PassOwnPtr<PurgeableBuffer> SharedBuffer::releasePurgeableBuffer()
 void SharedBuffer::copyBufferAndClear(char* destination, unsigned bytesToCopy) const
 {
     for (unsigned i = 0; i < m_segments.size(); ++i) {
-        unsigned effectiveBytesToCopy = min(bytesToCopy, segmentSize);
+        unsigned effectiveBytesToCopy = std::min(bytesToCopy, segmentSize);
         memcpy(destination, m_segments[i], effectiveBytesToCopy);
         destination += effectiveBytesToCopy;
         bytesToCopy -= effectiveBytesToCopy;
@@ -440,7 +438,7 @@ unsigned SharedBuffer::getSomeData(const char*& someData, unsigned position) con
     unsigned segment = segmentIndex(position);
     if (segment < segments) {
         unsigned bytesLeft = totalSize - consecutiveSize;
-        unsigned segmentedSize = min(maxSegmentedSize, bytesLeft);
+        unsigned segmentedSize = std::min(maxSegmentedSize, bytesLeft);
 
         unsigned positionInSegment = offsetInSegment(position);
         someData = m_segments[segment] + positionInSegment;

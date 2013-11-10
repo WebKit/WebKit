@@ -42,7 +42,6 @@
 #include <wtf/PassOwnPtr.h>
 
 using namespace WebCore;
-using namespace std;
 
 static bool supportsUIStateTransitionProgress()
 {
@@ -728,8 +727,8 @@ FloatPoint ScrollAnimatorMac::adjustScrollPositionIfNecessary(const FloatPoint& 
     if (!m_scrollableArea->constrainsScrollingToContentEdge())
         return position;
 
-    float newX = max<float>(min<float>(position.x(), m_scrollableArea->totalContentsSize().width() - m_scrollableArea->visibleWidth()), 0);
-    float newY = max<float>(min<float>(position.y(), m_scrollableArea->totalContentsSize().height() - m_scrollableArea->visibleHeight()), 0);
+    float newX = std::max<float>(std::min<float>(position.x(), m_scrollableArea->totalContentsSize().width() - m_scrollableArea->visibleWidth()), 0);
+    float newY = std::max<float>(std::min<float>(position.y(), m_scrollableArea->totalContentsSize().height() - m_scrollableArea->visibleHeight()), 0);
 
     return FloatPoint(newX, newY);
 }

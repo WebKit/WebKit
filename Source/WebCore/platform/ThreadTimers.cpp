@@ -33,8 +33,6 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 
-using namespace std;
-
 namespace WebCore {
 
 // Fire timers for this length of time, and then quit to let the run loop process user input events.
@@ -95,7 +93,7 @@ void ThreadTimers::updateSharedTimer()
                 return;
         } 
         m_pendingSharedTimerFireTime = nextFireTime;
-        m_sharedTimer->setFireInterval(max(nextFireTime - currentMonotonicTime, 0.0));
+        m_sharedTimer->setFireInterval(std::max(nextFireTime - currentMonotonicTime, 0.0));
     }
 }
 

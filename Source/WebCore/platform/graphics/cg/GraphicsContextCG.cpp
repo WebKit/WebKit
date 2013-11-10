@@ -56,8 +56,6 @@ extern "C" {
     CG_EXTERN CGAffineTransform CGContextGetBaseCTM(CGContextRef);
 };
 
-using namespace std;
-
 // FIXME: The following using declaration should be in <wtf/HashFunctions.h>.
 using WTF::pairIntHash;
 
@@ -958,7 +956,7 @@ void GraphicsContext::setPlatformShadow(const FloatSize& offset, float blur, con
     }
 
     // Extreme "blur" values can make text drawing crash or take crazy long times, so clamp
-    blurRadius = min(blurRadius, narrowPrecisionToCGFloat(1000.0));
+    blurRadius = std::min(blurRadius, narrowPrecisionToCGFloat(1000.0));
 
     applyShadowOffsetWorkaroundIfNeeded(*this, xOffset, yOffset);
 
@@ -1244,14 +1242,14 @@ static FloatRect computeLineBoundsAndAntialiasingModeForText(GraphicsContext& co
 
     // Use a minimum thickness of 0.5 in user space.
     // See http://bugs.webkit.org/show_bug.cgi?id=4255 for details of why 0.5 is the right minimum thickness to use.
-    FloatRect initialBounds(point, FloatSize(width, max(context.strokeThickness(), 0.5f)));
+    FloatRect initialBounds(point, FloatSize(width, std::max(context.strokeThickness(), 0.5f)));
 
     if (printing || context.paintingDisabled() || !context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale).preservesAxisAlignment())
         return initialBounds;
 
     // On screen, use a minimum thickness of 1.0 in user space (later rounded to an integral number in device space).
     FloatRect adjustedBounds = initialBounds;
-    adjustedBounds.setHeight(max(initialBounds.width(), 1.0f));
+    adjustedBounds.setHeight(std::max(initialBounds.width(), 1.0f));
 
     // FIXME: This should be done a better way.
     // We try to round all parameters to integer boundaries in device space. If rounding pixels in device space

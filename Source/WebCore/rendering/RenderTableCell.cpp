@@ -42,8 +42,6 @@
 #include "MathMLNames.h"
 #endif
 
-using namespace std;
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -91,10 +89,10 @@ unsigned RenderTableCell::parseColSpanFromDOM() const
 {
     ASSERT(element());
     if (element()->hasTagName(tdTag) || element()->hasTagName(thTag))
-        return min<unsigned>(toHTMLTableCellElement(element())->colSpan(), maxColumnIndex);
+        return std::min<unsigned>(toHTMLTableCellElement(element())->colSpan(), maxColumnIndex);
 #if ENABLE(MATHML)
     if (element()->hasTagName(MathMLNames::mtdTag))
-        return min<unsigned>(toMathMLElement(element())->colSpan(), maxColumnIndex);
+        return std::min<unsigned>(toMathMLElement(element())->colSpan(), maxColumnIndex);
 #endif
     return 1;
 }
@@ -103,10 +101,10 @@ unsigned RenderTableCell::parseRowSpanFromDOM() const
 {
     ASSERT(element());
     if (element()->hasTagName(tdTag) || element()->hasTagName(thTag))
-        return min<unsigned>(toHTMLTableCellElement(element())->rowSpan(), maxRowIndex);
+        return std::min<unsigned>(toHTMLTableCellElement(element())->rowSpan(), maxRowIndex);
 #if ENABLE(MATHML)
     if (element()->hasTagName(MathMLNames::mtdTag))
-        return min<unsigned>(toMathMLElement(element())->rowSpan(), maxRowIndex);
+        return std::min<unsigned>(toMathMLElement(element())->rowSpan(), maxRowIndex);
 #endif
     return 1;
 }
@@ -165,7 +163,7 @@ Length RenderTableCell::logicalWidthFromColumns(RenderTableCol* firstColForThisC
     // Column widths specified on <col> apply to the border box of the cell, see bug 8126.
     // FIXME: Why is border/padding ignored in the negative width case?
     if (colWidthSum > 0)
-        return Length(max(0, colWidthSum - borderAndPaddingLogicalWidth().ceil()), Fixed);
+        return Length(std::max(0, colWidthSum - borderAndPaddingLogicalWidth().ceil()), Fixed);
     return Length(colWidthSum, Fixed);
 }
 
@@ -187,7 +185,7 @@ void RenderTableCell::computePreferredLogicalWidths()
             // to make the minwidth of the cell into the fixed width.  They do this
             // even in strict mode, so do not make this a quirk.  Affected the top
             // of hiptop.com.
-            m_minPreferredLogicalWidth = max<LayoutUnit>(w.value(), m_minPreferredLogicalWidth);
+            m_minPreferredLogicalWidth = std::max<LayoutUnit>(w.value(), m_minPreferredLogicalWidth);
     }
 }
 
@@ -264,7 +262,7 @@ void RenderTableCell::layout()
     // of them wrong. So if our content's intrinsic height has changed push the new content up into the intrinsic padding and relayout so that the rest of
     // table and row layout can use the correct baseline and height for this cell.
     if (isBaselineAligned() && section()->rowBaseline(rowIndex()) && cellBaselinePosition() > section()->rowBaseline(rowIndex())) {
-        int newIntrinsicPaddingBefore = max<LayoutUnit>(0, intrinsicPaddingBefore() - max<LayoutUnit>(0, cellBaselinePosition() - oldCellBaseline));
+        int newIntrinsicPaddingBefore = std::max<LayoutUnit>(0, intrinsicPaddingBefore() - std::max<LayoutUnit>(0, cellBaselinePosition() - oldCellBaseline));
         setIntrinsicPaddingBefore(newIntrinsicPaddingBefore);
         setNeedsLayout(MarkOnlyThis);
         layoutBlock(cellWidthChanged());
@@ -318,7 +316,7 @@ LayoutUnit RenderTableCell::paddingAfter() const
 void RenderTableCell::setOverrideLogicalContentHeightFromRowHeight(LayoutUnit rowHeight)
 {
     clearIntrinsicPadding();
-    setOverrideLogicalContentHeight(max<LayoutUnit>(0, rowHeight - borderAndPaddingLogicalHeight()));
+    setOverrideLogicalContentHeight(std::max<LayoutUnit>(0, rowHeight - borderAndPaddingLogicalHeight()));
 }
 
 LayoutSize RenderTableCell::offsetFromContainer(RenderObject* o, const LayoutPoint& point, bool* offsetDependsOnPoint) const
@@ -343,36 +341,36 @@ LayoutRect RenderTableCell::clippedOverflowRectForRepaint(const RenderLayerModel
 
     bool rtl = !styleForCellFlow().isLeftToRightDirection();
     int outlineSize = style().outlineSize();
-    int left = max(borderHalfLeft(true), outlineSize);
-    int right = max(borderHalfRight(true), outlineSize);
-    int top = max(borderHalfTop(true), outlineSize);
-    int bottom = max(borderHalfBottom(true), outlineSize);
+    int left = std::max(borderHalfLeft(true), outlineSize);
+    int right = std::max(borderHalfRight(true), outlineSize);
+    int top = std::max(borderHalfTop(true), outlineSize);
+    int bottom = std::max(borderHalfBottom(true), outlineSize);
     if ((left && !rtl) || (right && rtl)) {
         if (RenderTableCell* before = table()->cellBefore(this)) {
-            top = max(top, before->borderHalfTop(true));
-            bottom = max(bottom, before->borderHalfBottom(true));
+            top = std::max(top, before->borderHalfTop(true));
+            bottom = std::max(bottom, before->borderHalfBottom(true));
         }
     }
     if ((left && rtl) || (right && !rtl)) {
         if (RenderTableCell* after = table()->cellAfter(this)) {
-            top = max(top, after->borderHalfTop(true));
-            bottom = max(bottom, after->borderHalfBottom(true));
+            top = std::max(top, after->borderHalfTop(true));
+            bottom = std::max(bottom, after->borderHalfBottom(true));
         }
     }
     if (top) {
         if (RenderTableCell* above = table()->cellAbove(this)) {
-            left = max(left, above->borderHalfLeft(true));
-            right = max(right, above->borderHalfRight(true));
+            left = std::max(left, above->borderHalfLeft(true));
+            right = std::max(right, above->borderHalfRight(true));
         }
     }
     if (bottom) {
         if (RenderTableCell* below = table()->cellBelow(this)) {
-            left = max(left, below->borderHalfLeft(true));
-            right = max(right, below->borderHalfRight(true));
+            left = std::max(left, below->borderHalfLeft(true));
+            right = std::max(right, below->borderHalfRight(true));
         }
     }
-    LayoutPoint location(max<LayoutUnit>(left, -visualOverflowRect().x()), max<LayoutUnit>(top, -visualOverflowRect().y()));
-    LayoutRect r(-location.x(), -location.y(), location.x() + max(width() + right, visualOverflowRect().maxX()), location.y() + max(height() + bottom, visualOverflowRect().maxY()));
+    LayoutPoint location(std::max<LayoutUnit>(left, -visualOverflowRect().x()), std::max<LayoutUnit>(top, -visualOverflowRect().y()));
+    LayoutRect r(-location.x(), -location.y(), location.x() + std::max(width() + right, visualOverflowRect().maxX()), location.y() + std::max(height() + bottom, visualOverflowRect().maxY()));
 
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
@@ -1143,8 +1141,8 @@ bool RenderTableCell::alignLeftRightBorderPaintRect(int& leftXOffset, int& right
     const RenderStyle& styleForTopCell = styleForCellFlow();
     int left = cachedCollapsedLeftBorder(&styleForTopCell).width();
     int right = cachedCollapsedRightBorder(&styleForTopCell).width();
-    leftXOffset = max<int>(leftXOffset, left);
-    rightXOffset = max<int>(rightXOffset, right);
+    leftXOffset = std::max<int>(leftXOffset, left);
+    rightXOffset = std::max<int>(rightXOffset, right);
     if (colSpan() > 1)
         return false;
     return true;
@@ -1155,8 +1153,8 @@ bool RenderTableCell::alignTopBottomBorderPaintRect(int& topYOffset, int& bottom
     const RenderStyle& styleForBottomCell = styleForCellFlow();
     int top = cachedCollapsedTopBorder(&styleForBottomCell).width();
     int bottom = cachedCollapsedBottomBorder(&styleForBottomCell).width();
-    topYOffset = max<int>(topYOffset, top);
-    bottomYOffset = max<int>(bottomYOffset, bottom);
+    topYOffset = std::max<int>(topYOffset, top);
+    bottomYOffset = std::max<int>(bottomYOffset, bottom);
     if (rowSpan() > 1)
         return false;
     return true;
