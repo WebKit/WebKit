@@ -1,3 +1,121 @@
+2013-11-09  Andreas Kling  <akling@apple.com>
+
+        Optimize baselines: svg/hixie
+
+        Unreviewed; run "webkit-patch optimize-baselines svg/hixie"
+
+        * platform/efl/svg/hixie/perf/007-expected.txt: Removed.
+        * platform/gtk/svg/hixie/dynamic/002-expected.png: Removed.
+        * platform/gtk/svg/hixie/dynamic/003-expected.png: Removed.
+        * platform/gtk/svg/hixie/dynamic/004-expected.png: Removed.
+        * platform/gtk/svg/hixie/dynamic/005-expected.png: Removed.
+        * platform/gtk/svg/hixie/dynamic/006-expected.png: Removed.
+        * platform/gtk/svg/hixie/error/001-expected.png: Removed.
+        * platform/gtk/svg/hixie/error/002-expected.png: Removed.
+        * platform/gtk/svg/hixie/error/002-expected.txt: Removed.
+        * platform/gtk/svg/hixie/error/003-expected.txt: Removed.
+        * platform/gtk/svg/hixie/error/006-expected.png: Removed.
+        * platform/gtk/svg/hixie/error/007-expected.png: Removed.
+        * platform/gtk/svg/hixie/error/008-expected.png: Removed.
+        * platform/gtk/svg/hixie/error/009-expected.png: Removed.
+        * platform/gtk/svg/hixie/error/010-expected.png: Removed.
+        * platform/gtk/svg/hixie/error/010-expected.txt: Removed.
+        * platform/gtk/svg/hixie/error/011-expected.png: Removed.
+        * platform/gtk/svg/hixie/error/011-expected.txt: Removed.
+        * platform/gtk/svg/hixie/error/014-expected.png: Removed.
+        * platform/gtk/svg/hixie/error/014-test-expected.png: Removed.
+        * platform/gtk/svg/hixie/error/015-expected.png: Removed.
+        * platform/gtk/svg/hixie/error/016-expected.png: Removed.
+        * platform/gtk/svg/hixie/error/017-expected.txt: Removed.
+        * platform/gtk/svg/hixie/intrinsic/001-expected.png: Removed.
+        * platform/gtk/svg/hixie/intrinsic/001-expected.txt: Removed.
+        * platform/gtk/svg/hixie/intrinsic/002-expected.png: Removed.
+        * platform/gtk/svg/hixie/intrinsic/002-expected.txt: Removed.
+        * platform/gtk/svg/hixie/links/002-expected.png: Removed.
+        * platform/gtk/svg/hixie/links/002-expected.txt: Removed.
+        * platform/gtk/svg/hixie/mixed/007-expected.png: Removed.
+        * platform/gtk/svg/hixie/painting/001-expected.png: Removed.
+        * platform/gtk/svg/hixie/perf/001-expected.txt: Removed.
+        * platform/gtk/svg/hixie/perf/002-expected.txt: Removed.
+        * platform/gtk/svg/hixie/perf/003-expected.txt: Removed.
+        * platform/gtk/svg/hixie/perf/004-expected.txt: Removed.
+        * platform/gtk/svg/hixie/perf/005-expected.txt: Removed.
+        * platform/gtk/svg/hixie/perf/006-expected.txt: Removed.
+        * platform/gtk/svg/hixie/perf/007-expected.txt: Removed.
+        * platform/gtk/svg/hixie/processing-model/003-expected.png: Removed.
+        * platform/gtk/svg/hixie/processing-model/004-expected.png: Removed.
+        * platform/gtk/svg/hixie/processing-model/005-expected.png: Removed.
+        * platform/gtk/svg/hixie/rendering-model/003a-expected.png: Removed.
+        * platform/gtk/svg/hixie/shapes/path/001-expected.txt: Removed.
+        * platform/gtk/svg/hixie/text/002-expected.txt: Removed.
+        * platform/gtk/svg/hixie/text/003a-expected.txt: Removed.
+        * platform/gtk/svg/hixie/text/003b-expected.txt: Removed.
+        * platform/gtk/svg/hixie/use/001-expected.png: Removed.
+        * platform/gtk/svg/hixie/use/002-expected.png: Removed.
+        * platform/gtk/svg/hixie/use/002-test-expected.png: Removed.
+        * platform/gtk/svg/hixie/viewbox/001-expected.png: Removed.
+        * platform/gtk/svg/hixie/viewbox/004-expected.png: Removed.
+        * platform/gtk/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt: Removed.
+        * platform/gtk/svg/hixie/viewbox/preserveAspectRatio/002-expected.txt: Removed.
+        * platform/mac/svg/hixie/cascade/002-expected.txt: Removed.
+        * platform/mac/svg/hixie/perf/004-expected.txt: Removed.
+        * platform/mac/svg/hixie/perf/005-expected.txt: Removed.
+        * platform/mac/svg/hixie/perf/006-expected.txt: Removed.
+        * platform/win-future/svg/hixie/perf/007-expected.txt: Copied from LayoutTests/svg/hixie/perf/007-expected.txt.
+        * svg/hixie/cascade/002-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/cascade/002-expected.txt.
+        * svg/hixie/dynamic/002-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/dynamic/002-expected.png.
+        * svg/hixie/dynamic/003-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/dynamic/003-expected.png.
+        * svg/hixie/dynamic/004-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/dynamic/004-expected.png.
+        * svg/hixie/dynamic/005-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/dynamic/005-expected.png.
+        * svg/hixie/dynamic/006-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/dynamic/006-expected.png.
+        * svg/hixie/error/001-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/error/001-expected.png.
+        * svg/hixie/error/002-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/error/002-expected.png.
+        * svg/hixie/error/002-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/error/002-expected.txt.
+        * svg/hixie/error/003-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/error/003-expected.txt.
+        * svg/hixie/error/006-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/error/006-expected.png.
+        * svg/hixie/error/007-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/error/007-expected.png.
+        * svg/hixie/error/008-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/error/008-expected.png.
+        * svg/hixie/error/009-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/error/009-expected.png.
+        * svg/hixie/error/010-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/error/010-expected.png.
+        * svg/hixie/error/010-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/error/010-expected.txt.
+        * svg/hixie/error/011-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/error/011-expected.png.
+        * svg/hixie/error/011-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/error/011-expected.txt.
+        * svg/hixie/error/014-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/error/014-expected.png.
+        * svg/hixie/error/014-test-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/error/014-test-expected.png.
+        * svg/hixie/error/015-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/error/015-expected.png.
+        * svg/hixie/error/016-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/error/016-expected.png.
+        * svg/hixie/error/017-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/error/017-expected.txt.
+        * svg/hixie/intrinsic/001-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/intrinsic/001-expected.png.
+        * svg/hixie/intrinsic/001-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/intrinsic/001-expected.txt.
+        * svg/hixie/intrinsic/002-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/intrinsic/002-expected.png.
+        * svg/hixie/intrinsic/002-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/intrinsic/002-expected.txt.
+        * svg/hixie/links/002-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/links/002-expected.png.
+        * svg/hixie/links/002-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/links/002-expected.txt.
+        * svg/hixie/mixed/007-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/mixed/007-expected.png.
+        * svg/hixie/painting/001-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/painting/001-expected.png.
+        * svg/hixie/perf/001-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/perf/001-expected.txt.
+        * svg/hixie/perf/002-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/perf/002-expected.txt.
+        * svg/hixie/perf/003-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/perf/003-expected.txt.
+        * svg/hixie/perf/004-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/perf/004-expected.txt.
+        * svg/hixie/perf/005-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/perf/005-expected.txt.
+        * svg/hixie/perf/006-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/perf/006-expected.txt.
+        * svg/hixie/perf/007-expected.txt:
+        * svg/hixie/processing-model/003-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/processing-model/003-expected.png.
+        * svg/hixie/processing-model/004-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/processing-model/004-expected.png.
+        * svg/hixie/processing-model/005-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/processing-model/005-expected.png.
+        * svg/hixie/rendering-model/003a-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/rendering-model/003a-expected.png.
+        * svg/hixie/shapes/path/001-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/shapes/path/001-expected.txt.
+        * svg/hixie/text/002-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/text/002-expected.txt.
+        * svg/hixie/text/003a-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/text/003a-expected.txt.
+        * svg/hixie/text/003b-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/text/003b-expected.txt.
+        * svg/hixie/use/001-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/use/001-expected.png.
+        * svg/hixie/use/002-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/use/002-expected.png.
+        * svg/hixie/use/002-test-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/use/002-test-expected.png.
+        * svg/hixie/viewbox/001-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/viewbox/001-expected.png.
+        * svg/hixie/viewbox/004-expected.png: Renamed from LayoutTests/platform/efl/svg/hixie/viewbox/004-expected.png.
+        * svg/hixie/viewbox/preserveAspectRatio/001-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt.
+        * svg/hixie/viewbox/preserveAspectRatio/002-expected.txt: Renamed from LayoutTests/platform/efl/svg/hixie/viewbox/preserveAspectRatio/002-expected.txt.
+
 2013-11-08  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Updating LayoutTests that depend on RTCPeerConnection
