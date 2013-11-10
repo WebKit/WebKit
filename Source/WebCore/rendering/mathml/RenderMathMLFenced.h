@@ -54,7 +54,7 @@ private:
     UChar m_close;
     RefPtr<StringImpl> m_separators;
     
-    RenderObject* m_closeFenceRenderer;
+    RenderMathMLOperator* m_closeFenceRenderer;
 };
     
 }

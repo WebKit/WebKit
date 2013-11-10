@@ -1,5 +1,15 @@
 2013-11-09  Andreas Kling  <akling@apple.com>
 
+        RenderMathMLFenced should pass around operators in tighter types.
+        <https://webkit.org/b/124115>
+
+        Store operator renderers in RenderMathMLOperator pointers instead
+        of passing them around as RenderObject.
+
+        Reviewed by Martin Robinson.
+
+2013-11-09  Andreas Kling  <akling@apple.com>
+
         Use RENDER_OBJECT_TYPE_CASTS for more types.
         <https://webkit.org/b/124112>
 

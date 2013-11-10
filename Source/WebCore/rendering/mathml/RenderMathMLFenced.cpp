@@ -49,7 +49,7 @@ RenderMathMLFenced::RenderMathMLFenced(MathMLInlineContainerElement& element, Pa
     : RenderMathMLRow(element, std::move(style))
     , m_open(OpeningBraceChar)
     , m_close(ClosingBraceChar)
-    , m_closeFenceRenderer(0)
+    , m_closeFenceRenderer(nullptr)
 {
 }
 
@@ -114,7 +114,7 @@ void RenderMathMLFenced::addChild(RenderObject* child, RenderObject* beforeChild
     // FIXME: Adding or removing a child should possibly cause all later separators to shift places if they're different,
     // as later child positions change by +1 or -1.
     
-    RenderObject* separatorRenderer = 0;
+    RenderMathMLOperator* separatorRenderer = nullptr;
     if (m_separators.get()) {
         unsigned int count = 0;
         for (Node* position = child->node(); position; position = position->previousSibling()) {
