@@ -76,7 +76,7 @@ AccessibilityMenuListOption* AccessibilityMenuListPopup::menuListOptionAccessibi
     AccessibilityObject* object = document()->axObjectCache()->getOrCreate(MenuListOptionRole);
     ASSERT_WITH_SECURITY_IMPLICATION(object->isMenuListOption());
 
-    AccessibilityMenuListOption* option = static_cast<AccessibilityMenuListOption*>(object);
+    AccessibilityMenuListOption* option = toAccessibilityMenuListOption(object);
     option->setElement(element);
 
     return option;

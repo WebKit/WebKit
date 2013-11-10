@@ -56,6 +56,8 @@ private:
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
     virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const OVERRIDE;
 };
+
+ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityListBox, isListBox())
     
 } // namespace WebCore
 

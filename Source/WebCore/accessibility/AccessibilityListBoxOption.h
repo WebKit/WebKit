@@ -62,8 +62,8 @@ public:
 
     virtual LayoutRect elementRect() const OVERRIDE;
     virtual AccessibilityObject* parentObject() const OVERRIDE;
-    bool isListBoxOption() const { return true; }
-    
+    virtual bool isListBoxOption() const OVERRIDE FINAL { return true; }
+
 private:
     HTMLElement* m_optionElement;
     
@@ -74,6 +74,8 @@ private:
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
     virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
 };
+
+ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityListBoxOption, isListBoxOption())
     
 } // namespace WebCore 
 

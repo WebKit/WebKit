@@ -1,3 +1,68 @@
+2013-11-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [AX] Clean up static_cast<> to cast from AccessibilityObject 
+        https://bugs.webkit.org/show_bug.cgi?id=124032
+
+        Reviewed by Mario Sanchez Prada.
+
+        ACCESSIBILITY_OBJECT_TYPE_CASTS can support more helpful casting functions.
+        So, we need to use them as much as possible. This patch cleans up all static_cast<> in accessibility.
+
+        This patch generates toAccessibilityFoo() in order to replace static_cast<> with it. Below toAccessibilityFoo()
+        are generated.
+
+        - toAccessibilityARIAGridRow()
+        - toAccessibilityImageMapLink()
+        - toAccessibilityListBox()
+        - toAccessibilityListBoxOption()
+        - toAccessibilityMenuListOption()
+        - toAccessibilityMenuListPopup()
+        - toAccessibilityScrollbar()
+        - toAccessibilitySlider()
+
+        No new tests, no behavior changes.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::focusedImageMapUIElement):
+        * accessibility/AccessibilityARIAGridRow.h:
+        * accessibility/AccessibilityImageMapLink.h:
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::setSelectedChildren):
+        (WebCore::AccessibilityListBox::selectedChildren):
+        (WebCore::AccessibilityListBox::listBoxOptionAccessibilityObject):
+        * accessibility/AccessibilityListBox.h:
+        * accessibility/AccessibilityListBoxOption.h:
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::addChildren):
+        (WebCore::AccessibilityMenuList::didUpdateActiveOption):
+        * accessibility/AccessibilityMenuListOption.h:
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::menuListOptionAccessibilityObject):
+        * accessibility/AccessibilityMenuListPopup.h:
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isListBoxOption):
+        (WebCore::AccessibilityObject::isSliderThumb):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::getDocumentLinks):
+        (WebCore::AccessibilityRenderObject::addImageMapChildren):
+        (WebCore::AccessibilityRenderObject::addTextFieldChildren):
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::addChildScrollbar):
+        * accessibility/AccessibilityScrollbar.h:
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::addChildren):
+        * accessibility/AccessibilitySlider.h:
+        * accessibility/AccessibilitySpinButton.cpp:
+        (WebCore::AccessibilitySpinButton::addChildren):
+        * accessibility/atk/WebKitAccessibleInterfaceSelection.cpp:
+        (webkitAccessibleSelectionClearSelection):
+        (webkitAccessibleSelectionSelectAllSelection):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[WebAccessibilityObjectWrapper accessibilitySetValue:forAttribute:]):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::didUpdateActiveOption):
+
 2013-11-10  Andreas Kling  <akling@apple.com>
 
         Rebaseline bindings tests after r158997.

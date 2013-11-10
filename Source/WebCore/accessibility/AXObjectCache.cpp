@@ -149,7 +149,7 @@ AccessibilityObject* AXObjectCache::focusedImageMapUIElement(HTMLAreaElement* ar
         if (!child->isImageMapLink())
             continue;
         
-        if (static_cast<AccessibilityImageMapLink*>(child)->areaElement() == areaElement)
+        if (toAccessibilityImageMapLink(child)->areaElement() == areaElement)
             return child;
     }    
     

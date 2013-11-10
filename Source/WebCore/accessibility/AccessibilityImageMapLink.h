@@ -80,6 +80,8 @@ private:
     virtual bool isImageMapLink() const OVERRIDE { return true; }
     virtual bool supportsPath() const OVERRIDE { return true; }
 };
+
+ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityImageMapLink, isImageMapLink())
     
 } // namespace WebCore
 

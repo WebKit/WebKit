@@ -50,7 +50,9 @@ private:
     virtual bool isARIATreeGridRow() const OVERRIDE;
     virtual AccessibilityObject* parentTable() const OVERRIDE;
 }; 
-    
+
+ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityARIAGridRow, isARIATreeGridRow())
+
 } // namespace WebCore 
 
 #endif // AccessibilityARIAGridRow_h

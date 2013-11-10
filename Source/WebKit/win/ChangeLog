@@ -1,3 +1,15 @@
+2013-11-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [AX] Clean up static_cast<> to cast from AccessibilityObject 
+        https://bugs.webkit.org/show_bug.cgi?id=124032
+
+        Reviewed by Mario Sanchez Prada.
+
+        Use toAccessibilityListBox instead of using static_cast<AccessibilityListBox*>.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::accSelect):
+
 2013-11-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Windows build fix attempt after r158704.

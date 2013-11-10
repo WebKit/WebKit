@@ -156,7 +156,7 @@ static gboolean webkitAccessibleSelectionClearSelection(AtkSelection* selection)
     AccessibilityObject::AccessibilityChildrenVector selectedItems;
     if (coreSelection->isListBox() || coreSelection->isMenuList()) {
         // Set the list of selected items to an empty list; then verify that it worked.
-        AccessibilityListBox* listBox = static_cast<AccessibilityListBox*>(coreSelection);
+        AccessibilityListBox* listBox = toAccessibilityListBox(coreSelection);
         listBox->setSelectedChildren(selectedItems);
         listBox->selectedChildren(selectedItems);
         return !selectedItems.size();
@@ -252,7 +252,7 @@ static gboolean webkitAccessibleSelectionSelectAllSelection(AtkSelection* select
 
     AccessibilityObject::AccessibilityChildrenVector children = coreSelection->children();
     if (coreSelection->isListBox()) {
-        AccessibilityListBox* listBox = static_cast<AccessibilityListBox*>(coreSelection);
+        AccessibilityListBox* listBox = toAccessibilityListBox(coreSelection);
         listBox->setSelectedChildren(children);
         AccessibilityObject::AccessibilityChildrenVector selectedItems;
         listBox->selectedChildren(selectedItems);

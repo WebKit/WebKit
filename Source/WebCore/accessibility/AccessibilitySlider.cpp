@@ -84,7 +84,7 @@ void AccessibilitySlider::addChildren()
 
     AXObjectCache* cache = m_renderer->document().axObjectCache();
 
-    AccessibilitySliderThumb* thumb = static_cast<AccessibilitySliderThumb*>(cache->getOrCreate(SliderThumbRole));
+    AccessibilitySliderThumb* thumb = toAccessibilitySliderThumb(cache->getOrCreate(SliderThumbRole));
     thumb->setParent(this);
 
     // Before actually adding the value indicator to the hierarchy,

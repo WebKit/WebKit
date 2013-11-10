@@ -72,6 +72,8 @@ public:
     static PassRefPtr<AccessibilitySliderThumb> create();
     virtual ~AccessibilitySliderThumb() { }
 
+    virtual bool isSliderThumb() const OVERRIDE FINAL { return true; }
+
     virtual AccessibilityRole roleValue() const OVERRIDE { return SliderThumbRole; }
 
     virtual LayoutRect elementRect() const OVERRIDE;
@@ -82,6 +84,7 @@ private:
     virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
 };
 
+ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilitySliderThumb, isSliderThumb())
 
 } // namespace WebCore
 

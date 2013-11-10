@@ -66,7 +66,7 @@ void AccessibilityMenuList::addChildren()
     if (!list)
         return;
 
-    static_cast<AccessibilityMockObject*>(list)->setParent(this);
+    toAccessibilityMockObject(list)->setParent(this);
     if (list->accessibilityIsIgnored()) {
         cache->remove(list->axObjectID());
         return;
@@ -114,7 +114,7 @@ void AccessibilityMenuList::didUpdateActiveOption(int optionIndex)
         ASSERT(childObjects[0]->isMenuListPopup());
 
         if (childObjects[0]->isMenuListPopup()) {
-            if (AccessibilityMenuListPopup* popup = static_cast<AccessibilityMenuListPopup*>(childObjects[0].get()))
+            if (AccessibilityMenuListPopup* popup = toAccessibilityMenuListPopup(childObjects[0].get()))
                 popup->didUpdateActiveOption(optionIndex);
         }
     }

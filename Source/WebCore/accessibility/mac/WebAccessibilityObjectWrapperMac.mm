@@ -2479,7 +2479,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return convertToNSArray(rowsCopy);
         } else if (m_object->isARIATreeGridRow()) {
             AccessibilityObject::AccessibilityChildrenVector rowsCopy;
-            static_cast<AccessibilityARIAGridRow*>(m_object)->disclosedRows(rowsCopy);
+            toAccessibilityARIAGridRow(m_object)->disclosedRows(rowsCopy);
             return convertToNSArray(rowsCopy);
         }
     }
@@ -2498,7 +2498,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             }
             return nil;
         } else if (m_object->isARIATreeGridRow()) {
-            AccessibilityObject* row = static_cast<AccessibilityARIAGridRow*>(m_object)->disclosedByRow();
+            AccessibilityObject* row = toAccessibilityARIAGridRow(m_object)->disclosedByRow();
             if (!row)
                 return nil;
             return row->wrapper();
@@ -3069,7 +3069,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return;
         AccessibilityObject::AccessibilityChildrenVector selectedChildren;
         convertToVector(array, selectedChildren);
-        static_cast<AccessibilityListBox*>(m_object)->setSelectedChildren(selectedChildren);
+        toAccessibilityListBox(m_object)->setSelectedChildren(selectedChildren);
     } else if (m_object->isTextControl()) {
         if ([attributeName isEqualToString: NSAccessibilitySelectedTextAttribute]) {
             m_object->setSelectedText(string);
