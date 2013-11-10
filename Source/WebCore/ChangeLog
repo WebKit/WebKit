@@ -1,3 +1,9 @@
+2013-11-10  Andreas Kling  <akling@apple.com>
+
+        Remove RenderTheme::shouldOpenPickerWithF4Key().
+
+        Rubber-stamped by Anders Carlsson.
+
 2013-11-09  Andreas Kling  <akling@apple.com>
 
         CSSValuePool::createFontFamilyValue() should return PassRef.
