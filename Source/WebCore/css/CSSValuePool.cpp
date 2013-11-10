@@ -116,12 +116,12 @@ PassRef<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSPrimitiveV
     return *cache[intValue];
 }
 
-PassRefPtr<CSSPrimitiveValue> CSSValuePool::createFontFamilyValue(const String& familyName)
+PassRef<CSSPrimitiveValue> CSSValuePool::createFontFamilyValue(const String& familyName)
 {
     RefPtr<CSSPrimitiveValue>& value = m_fontFamilyValueCache.add(familyName, nullptr).iterator->value;
     if (!value)
         value = CSSPrimitiveValue::create(familyName, CSSPrimitiveValue::CSS_STRING);
-    return value;
+    return *value;
 }
 
 PassRefPtr<CSSValueList> CSSValuePool::createFontFaceValue(const AtomicString& string)

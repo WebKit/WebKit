@@ -43,7 +43,7 @@ class CSSValuePool {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PassRefPtr<CSSValueList> createFontFaceValue(const AtomicString&);
-    PassRefPtr<CSSPrimitiveValue> createFontFamilyValue(const String&);
+    PassRef<CSSPrimitiveValue> createFontFamilyValue(const String&);
     PassRef<CSSInheritedValue> createInheritedValue() { return m_inheritedValue.get(); }
     PassRef<CSSInitialValue> createImplicitInitialValue() { return m_implicitInitialValue.get(); }
     PassRef<CSSInitialValue> createExplicitInitialValue() { return m_explicitInitialValue.get(); }

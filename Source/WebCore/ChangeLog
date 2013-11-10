@@ -1,5 +1,15 @@
 2013-11-09  Andreas Kling  <akling@apple.com>
 
+        CSSValuePool::createFontFamilyValue() should return PassRef.
+        <https://webkit.org/b/124114>
+
+        Unlike createFontFaceValue(), createFontFamilyValue() can never
+        fail to return an object and thus should return PassRef.
+
+        Reviewed by Anders Carlsson.
+
+2013-11-09  Andreas Kling  <akling@apple.com>
+
         RenderIFrame should display its name correctly in DRT output.
         <https://webkit.org/b/124117>
 
