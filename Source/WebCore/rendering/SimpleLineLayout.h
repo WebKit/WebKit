@@ -44,16 +44,16 @@ bool canUseFor(const RenderBlockFlow&);
 
 struct Run {
     Run() { }
-    Run(unsigned textOffset, float left)
-        : textOffset(textOffset)
-        , textLength(0)
+    Run(unsigned start, float left)
+        : start(start)
+        , end(start)
         , isEndOfLine(false)
         , left(left)
         , right(left)
     { }
 
-    unsigned textOffset;
-    unsigned textLength : 31;
+    unsigned start;
+    unsigned end : 31;
     unsigned isEndOfLine : 1;
     float left;
     float right;

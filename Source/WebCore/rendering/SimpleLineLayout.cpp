@@ -310,7 +310,7 @@ void createTextRuns(Layout::RunVector& runs, unsigned& lineCount, RenderBlockFlo
                 if (wordStart > lineStart)
                     lineRuns.append(Run(lineEnd, lineRuns.last().right));
                 lineRuns.last().right = lineRuns.last().left;
-                lineRuns.last().textLength = 1;
+                lineRuns.last().end = lineEnd + 1;
                 lineEnd = wordEnd;
                 break;
             }
@@ -343,7 +343,7 @@ void createTextRuns(Layout::RunVector& runs, unsigned& lineCount, RenderBlockFlo
                         // Include newline to this run too.
                         if (whitespaceEnd < textLength && text[whitespaceEnd] == '\n')
                             ++whitespaceEnd;
-                        lineRuns.last().textLength = whitespaceEnd - lineRuns.last().textOffset;
+                        lineRuns.last().end = whitespaceEnd;
                         lineRuns.last().right = lineWidth.availableWidth();
                         lineEnd = whitespaceEnd;
                         break;
@@ -355,7 +355,7 @@ void createTextRuns(Layout::RunVector& runs, unsigned& lineCount, RenderBlockFlo
                 // There were more than one consecutive whitespace.
                 ASSERT(wordIsPrecededByWhitespace);
                 // Include space to the end of the previous run.
-                lineRuns.last().textLength++;
+                lineRuns.last().end++;
                 lineRuns.last().right += spaceWidth;
                 // Start a new run on the same line.
                 lineRuns.append(Run(wordStart + 1, lineRuns.last().right));
@@ -364,7 +364,7 @@ void createTextRuns(Layout::RunVector& runs, unsigned& lineCount, RenderBlockFlo
             lineWidth.commit();
 
             lineRuns.last().right = lineWidth.committedWidth();
-            lineRuns.last().textLength = wordEnd - lineRuns.last().textOffset;
+            lineRuns.last().end = wordEnd;
 
             lineEnd = wordEnd;
             if (collapseWhitespace)

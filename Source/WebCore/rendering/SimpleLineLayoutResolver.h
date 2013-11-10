@@ -148,7 +148,7 @@ inline String RunResolver::Run::text() const
 {
     auto& resolver = m_iterator.resolver();
     auto& run = m_iterator.simpleRun();
-    return resolver.m_string.substringSharingImpl(run.textOffset, run.textLength);
+    return resolver.m_string.substringSharingImpl(run.start, run.end - run.start);
 }
 
 inline unsigned RunResolver::Run::lineIndex() const

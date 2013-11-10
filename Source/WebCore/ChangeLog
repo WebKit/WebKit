@@ -1,5 +1,26 @@
 2013-11-10  Antti Koivisto  <antti@apple.com>
 
+        Use start/end instead of textOffset/textLength for simple text runs
+        https://bugs.webkit.org/show_bug.cgi?id=124130
+
+        Reviewed by Oliver Hunt.
+        
+        The code reads better this way.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::createTextRuns):
+        * rendering/SimpleLineLayout.h:
+        (WebCore::SimpleLineLayout::Run::Run):
+        * rendering/SimpleLineLayoutFunctions.h:
+        (WebCore::SimpleLineLayout::findTextCaretMinimumOffset):
+        (WebCore::SimpleLineLayout::findTextCaretMaximumOffset):
+        (WebCore::SimpleLineLayout::containsTextCaretOffset):
+        (WebCore::SimpleLineLayout::isTextRendered):
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::Run::text):
+
+2013-11-10  Antti Koivisto  <antti@apple.com>
+
         Implement white-space property on simple line layout path
         https://bugs.webkit.org/show_bug.cgi?id=124122
 
