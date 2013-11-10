@@ -954,6 +954,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSSegmentedVariableObject.h \
 	Source/JavaScriptCore/runtime/JSSet.cpp \
 	Source/JavaScriptCore/runtime/JSSet.h \
+	Source/JavaScriptCore/runtime/JSSetIterator.cpp \
+	Source/JavaScriptCore/runtime/JSSetIterator.h \
 	Source/JavaScriptCore/runtime/JSTypedArrayConstructors.cpp \
 	Source/JavaScriptCore/runtime/JSTypedArrayConstructors.h \
 	Source/JavaScriptCore/runtime/JSTypedArrayPrototypes.cpp \
@@ -1068,6 +1070,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/SamplingCounter.h \
 	Source/JavaScriptCore/runtime/SetConstructor.cpp \
 	Source/JavaScriptCore/runtime/SetConstructor.h\
+	Source/JavaScriptCore/runtime/SetIteratorConstructor.cpp \
+	Source/JavaScriptCore/runtime/SetIteratorConstructor.h\
+	Source/JavaScriptCore/runtime/SetIteratorPrototype.cpp \
+	Source/JavaScriptCore/runtime/SetIteratorPrototype.h \
 	Source/JavaScriptCore/runtime/SetPrototype.cpp \
 	Source/JavaScriptCore/runtime/SetPrototype.h \
 	Source/JavaScriptCore/runtime/SimpleTypedArrayController.cpp \

@@ -51,6 +51,7 @@
     macro(ReferenceError) \
     macro(RegExp) \
     macro(Set)\
+    macro(SetIterator)\
     macro(String) \
     macro(SyntaxError) \
     macro(TypeError) \

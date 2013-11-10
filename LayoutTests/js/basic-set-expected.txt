@@ -121,6 +121,72 @@ PASS set.has("5") is true
 PASS set.has(6) is true
 PASS set.has("6") is true
 PASS set.has(4) is true
+set.@@iterator()
+PASS key is 0
+PASS key is '0'
+PASS key is 1
+PASS key is '1'
+PASS key is 2
+PASS key is '2'
+PASS key is 3
+PASS key is '3'
+PASS key is 4
+PASS key is '4'
+PASS i is 10
+set.entries()
+PASS key is 0
+PASS value is 0
+PASS key is '0'
+PASS value is '0'
+PASS key is 1
+PASS value is 1
+PASS key is '1'
+PASS value is '1'
+PASS key is 2
+PASS value is 2
+PASS key is '2'
+PASS value is '2'
+PASS key is 3
+PASS value is 3
+PASS key is '3'
+PASS value is '3'
+PASS key is 4
+PASS value is 4
+PASS key is '4'
+PASS value is '4'
+PASS i is 10
+set.keys()
+PASS key is 0
+PASS key is '0'
+PASS key is 1
+PASS key is '1'
+PASS key is 2
+PASS key is '2'
+PASS key is 3
+PASS key is '3'
+PASS key is 4
+PASS key is '4'
+PASS i is 10
+set.values()
+PASS value is 0
+PASS value is '0'
+PASS value is 1
+PASS value is '1'
+PASS value is 2
+PASS value is '2'
+PASS value is 3
+PASS value is '3'
+PASS value is 4
+PASS value is '4'
+PASS i is 10
+Set mutation with live iterator and GC
+PASS key is 1
+PASS key is 3
+PASS key is 4
+PASS key is 5
+PASS key is 7
+PASS i is 5
+PASS set.size is 4
 PASS successfullyParsed is true
 
 TEST COMPLETE

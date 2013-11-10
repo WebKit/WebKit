@@ -33,6 +33,7 @@
 #include "JSCJSValueInlines.h"
 #include "JSFunctionInlines.h"
 #include "JSSet.h"
+#include "JSSetIterator.h"
 #include "MapData.h"
 
 namespace JSC {
@@ -44,6 +45,10 @@ static EncodedJSValue JSC_HOST_CALL setProtoFuncClear(ExecState*);
 static EncodedJSValue JSC_HOST_CALL setProtoFuncDelete(ExecState*);
 static EncodedJSValue JSC_HOST_CALL setProtoFuncForEach(ExecState*);
 static EncodedJSValue JSC_HOST_CALL setProtoFuncHas(ExecState*);
+static EncodedJSValue JSC_HOST_CALL setProtoFuncKeys(ExecState*);
+static EncodedJSValue JSC_HOST_CALL setProtoFuncValues(ExecState*);
+static EncodedJSValue JSC_HOST_CALL setProtoFuncEntries(ExecState*);
+
 
 static EncodedJSValue JSC_HOST_CALL setProtoFuncSize(ExecState*);
 
@@ -58,6 +63,10 @@ void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION(vm.propertyNames->deleteKeyword, setProtoFuncDelete, DontEnum, 1);
     JSC_NATIVE_FUNCTION(vm.propertyNames->forEach, setProtoFuncForEach, DontEnum, 1);
     JSC_NATIVE_FUNCTION(vm.propertyNames->has, setProtoFuncHas, DontEnum, 1);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->keys, setProtoFuncKeys, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->values, setProtoFuncValues, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->entries, setProtoFuncEntries, DontEnum, 0);
+    JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorPrivateName, setProtoFuncKeys, DontEnum, 0);
 
     GetterSetter* accessor = GetterSetter::create(vm);
     JSFunction* function = JSFunction::create(vm, globalObject, 0, vm.propertyNames->size.string(), setProtoFuncSize);
@@ -149,6 +158,30 @@ EncodedJSValue JSC_HOST_CALL setProtoFuncSize(CallFrame* callFrame)
     if (!data)
         return JSValue::encode(jsUndefined());
     return JSValue::encode(jsNumber(data->size(callFrame)));
+}
+    
+EncodedJSValue JSC_HOST_CALL setProtoFuncValues(CallFrame* callFrame)
+{
+    JSSet* thisObj = jsDynamicCast<JSSet*>(callFrame->thisValue());
+    if (!thisObj)
+        return JSValue::encode(throwTypeError(callFrame, ASCIILiteral("Cannot create a Map value iterator for a non-Map object.")));
+    return JSValue::encode(JSSetIterator::create(callFrame->vm(), callFrame->callee()->globalObject()->setIteratorStructure(), thisObj, SetIterateValue));
+}
+
+EncodedJSValue JSC_HOST_CALL setProtoFuncEntries(CallFrame* callFrame)
+{
+    JSSet* thisObj = jsDynamicCast<JSSet*>(callFrame->thisValue());
+    if (!thisObj)
+        return JSValue::encode(throwTypeError(callFrame, ASCIILiteral("Cannot create a Map key iterator for a non-Map object.")));
+    return JSValue::encode(JSSetIterator::create(callFrame->vm(), callFrame->callee()->globalObject()->setIteratorStructure(), thisObj, SetIterateKeyValue));
+}
+
+EncodedJSValue JSC_HOST_CALL setProtoFuncKeys(CallFrame* callFrame)
+{
+    JSSet* thisObj = jsDynamicCast<JSSet*>(callFrame->thisValue());
+    if (!thisObj)
+        return JSValue::encode(throwTypeError(callFrame, ASCIILiteral("Cannot create a Map entry iterator for a non-Map object.")));
+    return JSValue::encode(JSSetIterator::create(callFrame->vm(), callFrame->callee()->globalObject()->setIteratorStructure(), thisObj, SetIterateKey));
 }
 
 }

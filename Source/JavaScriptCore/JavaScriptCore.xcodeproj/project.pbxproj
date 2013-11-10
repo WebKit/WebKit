@@ -976,6 +976,12 @@
 		A78A977F179738D5009DF744 /* FTLGeneratedFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = A78A977C179738D5009DF744 /* FTLGeneratedFunction.h */; };
 		A78A9780179738D5009DF744 /* FTLJITFinalizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A78A977D179738D5009DF744 /* FTLJITFinalizer.cpp */; };
 		A78A9781179738D5009DF744 /* FTLJITFinalizer.h in Headers */ = {isa = PBXBuildFile; fileRef = A78A977E179738D5009DF744 /* FTLJITFinalizer.h */; };
+		A790DD6B182F499700588807 /* SetIteratorConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A790DD65182F499700588807 /* SetIteratorConstructor.cpp */; };
+		A790DD6C182F499700588807 /* SetIteratorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A790DD66182F499700588807 /* SetIteratorConstructor.h */; };
+		A790DD6D182F499700588807 /* SetIteratorPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A790DD67182F499700588807 /* SetIteratorPrototype.cpp */; };
+		A790DD6E182F499700588807 /* SetIteratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A790DD68182F499700588807 /* SetIteratorPrototype.h */; };
+		A790DD6F182F499700588807 /* JSSetIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A790DD69182F499700588807 /* JSSetIterator.cpp */; };
+		A790DD70182F499700588807 /* JSSetIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = A790DD6A182F499700588807 /* JSSetIterator.h */; };
 		A7986D5717A0BB1E00A95DD0 /* DFGEdgeUsesStructure.h in Headers */ = {isa = PBXBuildFile; fileRef = A7986D5617A0BB1E00A95DD0 /* DFGEdgeUsesStructure.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7A4AE0817973B26005612B1 /* MacroAssemblerX86Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7A4AE0717973B26005612B1 /* MacroAssemblerX86Common.cpp */; };
 		A7A4AE1017973B4D005612B1 /* JITStubsX86Common.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A4AE0C17973B4D005612B1 /* JITStubsX86Common.h */; };
@@ -2266,6 +2272,12 @@
 		A78A977C179738D5009DF744 /* FTLGeneratedFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLGeneratedFunction.h; path = ftl/FTLGeneratedFunction.h; sourceTree = "<group>"; };
 		A78A977D179738D5009DF744 /* FTLJITFinalizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLJITFinalizer.cpp; path = ftl/FTLJITFinalizer.cpp; sourceTree = "<group>"; };
 		A78A977E179738D5009DF744 /* FTLJITFinalizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLJITFinalizer.h; path = ftl/FTLJITFinalizer.h; sourceTree = "<group>"; };
+		A790DD65182F499700588807 /* SetIteratorConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetIteratorConstructor.cpp; sourceTree = "<group>"; };
+		A790DD66182F499700588807 /* SetIteratorConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetIteratorConstructor.h; sourceTree = "<group>"; };
+		A790DD67182F499700588807 /* SetIteratorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetIteratorPrototype.cpp; sourceTree = "<group>"; };
+		A790DD68182F499700588807 /* SetIteratorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetIteratorPrototype.h; sourceTree = "<group>"; };
+		A790DD69182F499700588807 /* JSSetIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSetIterator.cpp; sourceTree = "<group>"; };
+		A790DD6A182F499700588807 /* JSSetIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSetIterator.h; sourceTree = "<group>"; };
 		A7986D5617A0BB1E00A95DD0 /* DFGEdgeUsesStructure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGEdgeUsesStructure.h; path = dfg/DFGEdgeUsesStructure.h; sourceTree = "<group>"; };
 		A79E781E15EECBA80047C855 /* UnlinkedCodeBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnlinkedCodeBlock.cpp; sourceTree = "<group>"; };
 		A79E781F15EECBA80047C855 /* UnlinkedCodeBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnlinkedCodeBlock.h; sourceTree = "<group>"; };
@@ -3656,6 +3668,12 @@
 				A74DEF8E182D991400522C22 /* MapIteratorPrototype.h */,
 				A74DEF8F182D991400522C22 /* JSMapIterator.cpp */,
 				A74DEF90182D991400522C22 /* JSMapIterator.h */,
+				A790DD65182F499700588807 /* SetIteratorConstructor.cpp */,
+				A790DD66182F499700588807 /* SetIteratorConstructor.h */,
+				A790DD67182F499700588807 /* SetIteratorPrototype.cpp */,
+				A790DD68182F499700588807 /* SetIteratorPrototype.h */,
+				A790DD69182F499700588807 /* JSSetIterator.cpp */,
+				A790DD6A182F499700588807 /* JSSetIterator.h */,
 			);
 			path = runtime;
 			sourceTree = "<group>";
@@ -4454,6 +4472,7 @@
 				0FB14E1F18124ACE009B6B4D /* JITInlineCacheGenerator.h in Headers */,
 				86CC85A10EE79A4700288682 /* JITInlines.h in Headers */,
 				0F24E54D17EE274900ABB217 /* JITOperations.h in Headers */,
+				A790DD70182F499700588807 /* JSSetIterator.h in Headers */,
 				0F24E54E17EE274900ABB217 /* JITOperationWrappers.h in Headers */,
 				0F766D3115AA8112008F363E /* JITStubRoutine.h in Headers */,
 				0F766D2C15A8CC3A008F363E /* JITStubRoutineSet.h in Headers */,
@@ -4626,6 +4645,7 @@
 				0FB5467B14F5C7E1002C2989 /* MethodOfGettingAValueProfile.h in Headers */,
 				86C568E211A213EE0007F7F0 /* MIPSAssembler.h in Headers */,
 				86EBF3001560F06A008E9222 /* NameConstructor.h in Headers */,
+				A790DD6E182F499700588807 /* SetIteratorPrototype.h in Headers */,
 				86EBF3021560F06A008E9222 /* NameInstance.h in Headers */,
 				86EBF3041560F06A008E9222 /* NamePrototype.h in Headers */,
 				BC02E9110E1839DB000F9297 /* NativeErrorConstructor.h in Headers */,
@@ -4712,6 +4732,7 @@
 				A7299DA217D12848005F5FF9 /* SetPrototype.h in Headers */,
 				86AE64AA135E5E1C00963012 /* SH4Assembler.h in Headers */,
 				0F2B670517B6B5AB00A7AE3F /* SimpleTypedArrayController.h in Headers */,
+				A790DD6C182F499700588807 /* SetIteratorConstructor.h in Headers */,
 				14BA78F113AAB88F005B7C2C /* SlotVisitor.h in Headers */,
 				C2160FE715F7E95E00942DFC /* SlotVisitorInlines.h in Headers */,
 				A709F2F017A0AC0400512E98 /* SlowPathCall.h in Headers */,
@@ -5228,6 +5249,7 @@
 				147F39BF107EC37600427A48 /* ArrayConstructor.cpp in Sources */,
 				A7BDAEC617F4EA1400F6140C /* ArrayIteratorConstructor.cpp in Sources */,
 				A7BDAEC817F4EA1400F6140C /* ArrayIteratorPrototype.cpp in Sources */,
+				A790DD6F182F499700588807 /* JSSetIterator.cpp in Sources */,
 				0F63945415D07055006A597C /* ArrayProfile.cpp in Sources */,
 				147F39C0107EC37600427A48 /* ArrayPrototype.cpp in Sources */,
 				0F24E54017EA9F5900ABB217 /* AssemblyHelpers.cpp in Sources */,
@@ -5608,6 +5630,7 @@
 				A7299DA517D12858005F5FF9 /* SetConstructor.cpp in Sources */,
 				A7299DA117D12848005F5FF9 /* SetPrototype.cpp in Sources */,
 				0F2B670417B6B5AB00A7AE3F /* SimpleTypedArrayController.cpp in Sources */,
+				A790DD6D182F499700588807 /* SetIteratorPrototype.cpp in Sources */,
 				C225494315F7DBAA0065E898 /* SlotVisitor.cpp in Sources */,
 				9330402C0E6A764000786E6A /* SmallStrings.cpp in Sources */,
 				0F8F2B9E17306C8D007DBDA5 /* SourceCode.cpp in Sources */,
@@ -5637,6 +5660,7 @@
 				0F2B670A17B6B5AB00A7AE3F /* TypedArrayType.cpp in Sources */,
 				0FF4274A158EBE91004CB9FF /* udis86.c in Sources */,
 				0FF42740158EBE8B004CB9FF /* udis86_decode.c in Sources */,
+				A790DD6B182F499700588807 /* SetIteratorConstructor.cpp in Sources */,
 				0FF42743158EBE91004CB9FF /* udis86_input.c in Sources */,
 				0FF4274D158EBFE6004CB9FF /* udis86_itab_holder.c in Sources */,
 				0FF42745158EBE91004CB9FF /* udis86_syn-att.c in Sources */,

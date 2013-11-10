@@ -1,3 +1,45 @@
+2013-11-10  Oliver Hunt  <oliver@apple.com>
+
+        Implement Set iterators
+        https://bugs.webkit.org/show_bug.cgi?id=124129
+
+        Reviewed by Antti Koivisto.
+
+        Add Set iterator classes and implementations
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSSetIterator.cpp: Added.
+        (JSC::JSSetIterator::finishCreation):
+        (JSC::JSSetIterator::visitChildren):
+        (JSC::JSSetIterator::createPair):
+        * runtime/JSSetIterator.h: Added.
+        (JSC::JSSetIterator::createStructure):
+        (JSC::JSSetIterator::create):
+        (JSC::JSSetIterator::next):
+        (JSC::JSSetIterator::JSSetIterator):
+        * runtime/SetIteratorConstructor.cpp: Added.
+        (JSC::SetIteratorConstructor::finishCreation):
+        * runtime/SetIteratorConstructor.h: Added.
+        (JSC::SetIteratorConstructor::create):
+        (JSC::SetIteratorConstructor::createStructure):
+        (JSC::SetIteratorConstructor::SetIteratorConstructor):
+        * runtime/SetIteratorPrototype.cpp: Added.
+        (JSC::SetIteratorPrototype::finishCreation):
+        (JSC::SetIteratorPrototypeFuncIterator):
+        (JSC::SetIteratorPrototypeFuncNext):
+        * runtime/SetIteratorPrototype.h: Added.
+        (JSC::SetIteratorPrototype::create):
+        (JSC::SetIteratorPrototype::createStructure):
+        (JSC::SetIteratorPrototype::SetIteratorPrototype):
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+        (JSC::setProtoFuncValues):
+        (JSC::setProtoFuncEntries):
+        (JSC::setProtoFuncKeys):
+
 2013-11-09  Oliver Hunt  <oliver@apple.com>
 
         Add Map Iterators

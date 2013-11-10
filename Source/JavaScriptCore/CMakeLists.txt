@@ -354,6 +354,7 @@ set(JavaScriptCore_SOURCES
     runtime/JSScope.cpp
     runtime/JSSegmentedVariableObject.cpp
     runtime/JSSet.cpp
+    runtime/JSSetIterator.cpp
     runtime/JSStaticScopeObject.cpp
     runtime/JSString.cpp
     runtime/JSStringJoiner.cpp
@@ -400,6 +401,8 @@ set(JavaScriptCore_SOURCES
     runtime/RegExpPrototype.cpp
     runtime/SamplingCounter.cpp
     runtime/SetConstructor.cpp
+    runtime/SetIteratorConstructor.cpp
+    runtime/SetIteratorPrototype.cpp
     runtime/SetPrototype.cpp
     runtime/SimpleTypedArrayController.cpp
     runtime/SmallStrings.cpp

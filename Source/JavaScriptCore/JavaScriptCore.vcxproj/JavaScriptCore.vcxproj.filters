@@ -594,6 +594,9 @@
     <ClCompile Include="..\runtime\JSSet.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\JSSetIterator.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\JSSegmentedVariableObject.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -711,7 +714,16 @@
     <ClCompile Include="..\runtime\SetPrototype.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\SetIteratorPrototype.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\SetIteratorConstructor.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\SetConstructor.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\SetIteratorConstructor.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\SparseArrayValueMap.cpp">
@@ -2607,6 +2619,9 @@
     <ClInclude Include="..\runtime\JSSet.h">
       <Filter>runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\runtime\JSSetIterator.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\llint\LLIntEntrypoint.h">
       <Filter>llint</Filter>
     </ClInclude>
@@ -2619,10 +2634,16 @@
     <ClInclude Include="..\runtime\SetPrototype.h">
       <Filter>runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\runtime\SetIteratorPrototype.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\runtime\MapPrototype.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\SetConstructor.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\SetIteratorConstructor.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGAbstractHeap.h">

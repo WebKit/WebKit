@@ -86,6 +86,7 @@ struct HashTable;
     DEFINE_STANDARD_BUILTIN(macro, ArrayIterator, arrayIterator) \
     DEFINE_STANDARD_BUILTIN(macro, ArgumentsIterator, argumentsIterator) \
     DEFINE_STANDARD_BUILTIN(macro, MapIterator, mapIterator) \
+    DEFINE_STANDARD_BUILTIN(macro, SetIterator, setIterator) \
 
 
 #define DECLARE_SIMPLE_BUILTIN_TYPE(capitalName, lowerName, properName, instanceType, jsName) \

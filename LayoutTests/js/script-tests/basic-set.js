@@ -119,3 +119,81 @@ for (var i = 0; i < keys.length; i++) {
 	var expectedKey = keys[i]
 	shouldBeTrue("set.has("+JSON.stringify(expectedKey)+")");
 }
+
+
+
+set = new Set;
+
+var count = 5;
+var keys = [];
+for (var i = 0; i < count; i++) {
+    set.add(i)
+    set.add("" + i)
+    keys.push("" + i)
+    keys.push("'" + i + "'")
+}
+
+var i = 0;
+
+debug("set.@@iterator()")
+for (var key of set) {
+    shouldBe("key", "" + keys[i])
+    i++;
+}
+shouldBe("i", "" + count * 2)
+
+debug("set.entries()")
+var i = 0;
+for (var [key, value] of set.entries()) {
+    shouldBe("key", "" + keys[i])
+    shouldBe("value", "" + keys[i])
+    i++;
+}
+shouldBe("i", "" + count * 2)
+
+debug("set.keys()")
+var i = 0;
+for (var key of set.keys()) {
+    shouldBe("key", "" + keys[i])
+    i++;
+}
+shouldBe("i", "" + count * 2)
+
+var i = 0;
+debug("set.values()")
+for (var value of set.values()) {
+    shouldBe("value", "" + keys[i])
+    i++;
+}
+shouldBe("i", "" + count * 2)
+
+debug("Set mutation with live iterator and GC")
+set = new Set;
+set.add(0)
+set.add(1)
+set.add(2)
+set.add(3)
+set.add(4)
+set.add(5)
+set.add(6)
+set.add(7)
+set.add(9)
+set.add(14)
+
+var keys = [1,3,4,5,7]
+var keyIterator = set.keys();
+gc();
+set.delete(0)
+gc()
+var i = 0;
+for (var key of keyIterator) {
+    shouldBe("key", "" + keys[i])
+    if (key == 7)
+        set.delete(9)
+    set.delete(1)
+    set.delete(key * 2)
+    gc()
+    i++
+}
+shouldBe("i", "5")
+shouldBe("set.size", "4");

@@ -592,6 +592,7 @@
     <ClCompile Include="..\runtime\JSScope.cpp" />
     <ClCompile Include="..\runtime\JSSegmentedVariableObject.cpp" />
     <ClCompile Include="..\runtime\JSSet.cpp" />
+    <ClCompile Include="..\runtime\JSSetIterator.cpp" />
     <ClCompile Include="..\runtime\JSString.cpp" />
     <ClCompile Include="..\runtime\JSStringJoiner.cpp" />
     <ClCompile Include="..\runtime\JSSymbolTableObject.cpp" />
@@ -636,6 +637,8 @@
     <ClCompile Include="..\runtime\RegExpPrototype.cpp" />
     <ClCompile Include="..\runtime\SamplingCounter.cpp" />
     <ClCompile Include="..\runtime\SetConstructor.cpp" />
+    <ClCompile Include="..\runtime\SetIteratorConstructor.cpp" />
+    <ClCompile Include="..\runtime\SetIteratorPrototype.cpp" />
     <ClCompile Include="..\runtime\SetPrototype.cpp" />
     <ClCompile Include="..\runtime\SimpleTypedArrayController.cpp" />
     <ClCompile Include="..\runtime\SmallStrings.cpp" />
@@ -1178,6 +1181,7 @@
     <ClInclude Include="..\runtime\JSScope.h" />
     <ClInclude Include="..\runtime\JSSegmentedVariableObject.h" />
     <ClInclude Include="..\runtime\JSSet.h" />
+    <ClInclude Include="..\runtime\JSSetIterator.h" />
     <ClInclude Include="..\runtime\JSString.h" />
     <ClInclude Include="..\runtime\JSStringBuilder.h" />
     <ClInclude Include="..\runtime\JSStringJoiner.h" />
@@ -1240,6 +1244,8 @@
     <ClInclude Include="..\runtime\Reject.h" />
     <ClInclude Include="..\runtime\SamplingCounter.h" />
     <ClInclude Include="..\runtime\SetConstructor.h" />
+    <ClInclude Include="..\runtime\SetIteratorConstructor.h" />
+    <ClInclude Include="..\runtime\SetIteratorPrototype.h" />
     <ClInclude Include="..\runtime\SetPrototype.h" />
     <ClInclude Include="..\runtime\SimpleTypedArrayController.h" />
     <ClInclude Include="..\runtime\SmallStrings.h" />
