@@ -1,5 +1,56 @@
 2013-11-09  Andreas Kling  <akling@apple.com>
 
+        Optimize baselines: svg/clip-path
+
+        Unreviewed; run "webkit-patch optimize-baselines svg/clip-path"
+
+        * platform/efl/svg/clip-path/clip-path-pixelation-expected.txt: Removed.
+        * platform/gtk/svg/clip-path/clip-in-clip-expected.png: Removed.
+        * platform/gtk/svg/clip-path/clip-path-clipped-no-content-expected.png: Removed.
+        * platform/gtk/svg/clip-path/clip-path-pixelation-expected.txt: Removed.
+        * platform/gtk/svg/clip-path/clip-path-recursive-call-by-child-expected.png: Removed.
+        * platform/gtk/svg/clip-path/clip-path-recursive-call-expected.png: Removed.
+        * platform/gtk/svg/clip-path/clip-path-text-and-shape-expected.txt: Removed.
+        * platform/gtk/svg/clip-path/clip-path-text-and-stroke-expected.txt: Removed.
+        * platform/gtk/svg/clip-path/clip-path-text-expected.txt: Removed.
+        * platform/gtk/svg/clip-path/clip-path-tspan-and-stroke-expected.txt: Removed.
+        * platform/gtk/svg/clip-path/clip-path-use-as-child2-expected.png: Removed.
+        * platform/gtk/svg/clip-path/clip-path-use-as-child3-expected.png: Removed.
+        * platform/gtk/svg/clip-path/clip-path-use-as-child4-expected.png: Removed.
+        * platform/gtk/svg/clip-path/clip-path-use-as-child5-expected.png: Removed.
+        * platform/gtk/svg/clip-path/clip-path-with-container-expected.png: Removed.
+        * platform/gtk/svg/clip-path/clip-path-with-different-unittypes-expected.png: Removed.
+        * platform/gtk/svg/clip-path/clip-path-with-different-unittypes2-expected.png: Removed.
+        * platform/gtk/svg/clip-path/clip-path-with-invisibile-child-expected.png: Removed.
+        * platform/gtk/svg/clip-path/clip-path-with-text-clipped-expected.txt: Removed.
+        * platform/gtk/svg/clip-path/clipper-placement-issue-expected.png: Removed.
+        * platform/gtk/svg/clip-path/deep-nested-clip-in-mask-expected.txt: Removed.
+        * platform/gtk/svg/clip-path/deep-nested-clip-in-mask-panning-expected.txt: Removed.
+        * platform/win-future/svg/clip-path/clip-path-pixelation-expected.txt: Copied from LayoutTests/svg/clip-path/clip-path-pixelation-expected.txt.
+        * svg/clip-path/clip-in-clip-expected.png: Renamed from LayoutTests/platform/efl/svg/clip-path/clip-in-clip-expected.png.
+        * svg/clip-path/clip-path-clipped-no-content-expected.png: Renamed from LayoutTests/platform/efl/svg/clip-path/clip-path-clipped-no-content-expected.png.
+        * svg/clip-path/clip-path-pixelation-expected.txt:
+        * svg/clip-path/clip-path-recursive-call-by-child-expected.png: Renamed from LayoutTests/platform/efl/svg/clip-path/clip-path-recursive-call-by-child-expected.png.
+        * svg/clip-path/clip-path-recursive-call-expected.png: Renamed from LayoutTests/platform/efl/svg/clip-path/clip-path-recursive-call-expected.png.
+        * svg/clip-path/clip-path-text-and-shape-expected.txt: Renamed from LayoutTests/platform/efl/svg/clip-path/clip-path-text-and-shape-expected.txt.
+        * svg/clip-path/clip-path-text-and-stroke-expected.txt: Renamed from LayoutTests/platform/efl/svg/clip-path/clip-path-text-and-stroke-expected.txt.
+        * svg/clip-path/clip-path-text-expected.txt: Renamed from LayoutTests/platform/efl/svg/clip-path/clip-path-text-expected.txt.
+        * svg/clip-path/clip-path-tspan-and-stroke-expected.txt: Renamed from LayoutTests/platform/efl/svg/clip-path/clip-path-tspan-and-stroke-expected.txt.
+        * svg/clip-path/clip-path-use-as-child2-expected.png: Renamed from LayoutTests/platform/efl/svg/clip-path/clip-path-use-as-child2-expected.png.
+        * svg/clip-path/clip-path-use-as-child3-expected.png: Renamed from LayoutTests/platform/efl/svg/clip-path/clip-path-use-as-child3-expected.png.
+        * svg/clip-path/clip-path-use-as-child4-expected.png: Renamed from LayoutTests/platform/efl/svg/clip-path/clip-path-use-as-child4-expected.png.
+        * svg/clip-path/clip-path-use-as-child5-expected.png: Renamed from LayoutTests/platform/efl/svg/clip-path/clip-path-use-as-child5-expected.png.
+        * svg/clip-path/clip-path-with-container-expected.png: Renamed from LayoutTests/platform/efl/svg/clip-path/clip-path-with-container-expected.png.
+        * svg/clip-path/clip-path-with-different-unittypes-expected.png: Renamed from LayoutTests/platform/efl/svg/clip-path/clip-path-with-different-unittypes-expected.png.
+        * svg/clip-path/clip-path-with-different-unittypes2-expected.png: Renamed from LayoutTests/platform/efl/svg/clip-path/clip-path-with-different-unittypes2-expected.png.
+        * svg/clip-path/clip-path-with-invisibile-child-expected.png: Renamed from LayoutTests/platform/efl/svg/clip-path/clip-path-with-invisibile-child-expected.png.
+        * svg/clip-path/clip-path-with-text-clipped-expected.txt: Renamed from LayoutTests/platform/efl/svg/clip-path/clip-path-with-text-clipped-expected.txt.
+        * svg/clip-path/clipper-placement-issue-expected.png: Renamed from LayoutTests/platform/efl/svg/clip-path/clipper-placement-issue-expected.png.
+        * svg/clip-path/deep-nested-clip-in-mask-expected.txt: Renamed from LayoutTests/platform/efl/svg/clip-path/deep-nested-clip-in-mask-expected.txt.
+        * svg/clip-path/deep-nested-clip-in-mask-panning-expected.txt: Renamed from LayoutTests/platform/efl/svg/clip-path/deep-nested-clip-in-mask-panning-expected.txt.
+
+2013-11-09  Andreas Kling  <akling@apple.com>
+
         Optimize baselines: svg/hixie
 
         Unreviewed; run "webkit-patch optimize-baselines svg/hixie"
