@@ -1,5 +1,16 @@
 2013-11-09  Andreas Kling  <akling@apple.com>
 
+        SVGTextMetricsBuilder::walkTree() should take a RenderElement.
+        <https://webkit.org/b/124105>
+
+        Make walkTree() take a RenderElement so we can use the non-virtual
+        firstChild() internally. All call sites had pointers to compatible
+        objects already.
+
+        Reviewed by Anders Carlsson.
+
+2013-11-09  Andreas Kling  <akling@apple.com>
+
         RenderMathMLFenced should pass around operators in tighter types.
         <https://webkit.org/b/124115>
 

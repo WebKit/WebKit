@@ -177,9 +177,9 @@ void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText* text, Measu
     data->skippedCharacters = 0;
 }
 
-void SVGTextMetricsBuilder::walkTree(RenderObject* start, RenderSVGInlineText* stopAtLeaf, MeasureTextData* data)
+void SVGTextMetricsBuilder::walkTree(RenderElement& start, RenderSVGInlineText* stopAtLeaf, MeasureTextData* data)
 {
-    for (RenderObject* child = start->firstChildSlow(); child; child = child->nextSibling()) {
+    for (auto child = start.firstChild(); child; child = child->nextSibling()) {
         if (child->isSVGInlineText()) {
             RenderSVGInlineText* text = toRenderSVGInlineText(child);
             if (stopAtLeaf && stopAtLeaf != text) {
@@ -199,7 +199,7 @@ void SVGTextMetricsBuilder::walkTree(RenderObject* start, RenderSVGInlineText* s
         if (!child->isSVGInline())
             continue;
 
-        walkTree(child, stopAtLeaf, data);
+        walkTree(toRenderElement(*child), stopAtLeaf, data);
     }
 }
 
@@ -212,14 +212,14 @@ void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText* text)
         return;
 
     MeasureTextData data(0);
-    walkTree(textRoot, text, &data);
+    walkTree(*textRoot, text, &data);
 }
 
 void SVGTextMetricsBuilder::buildMetricsAndLayoutAttributes(RenderSVGText* textRoot, RenderSVGInlineText* stopAtLeaf, SVGCharacterDataMap& allCharactersMap)
 {
     ASSERT(textRoot);
     MeasureTextData data(&allCharactersMap);
-    walkTree(textRoot, stopAtLeaf, &data);
+    walkTree(*textRoot, stopAtLeaf, &data);
 }
 
 }
