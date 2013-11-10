@@ -3409,96 +3409,64 @@ bool AccessibilityRenderObject::isMathElement() const
 
 bool AccessibilityRenderObject::isMathFraction() const
 {
-    if (!m_renderer || !m_renderer->isRenderMathMLBlock())
-        return false;
-    
-    return toRenderMathMLBlock(m_renderer)->isRenderMathMLFraction();
+    return m_renderer && m_renderer->isRenderMathMLFraction();
 }
 
 bool AccessibilityRenderObject::isMathFenced() const
 {
-    if (!m_renderer || !m_renderer->isRenderMathMLBlock())
-        return false;
-    
-    return toRenderMathMLBlock(m_renderer)->isRenderMathMLFenced();
+    return m_renderer && m_renderer->isRenderMathMLFenced();
 }
 
 bool AccessibilityRenderObject::isMathSubscriptSuperscript() const
 {
-    if (!m_renderer || !m_renderer->isRenderMathMLBlock())
-        return false;
-    
-    return toRenderMathMLBlock(m_renderer)->isRenderMathMLScripts() && !isMathMultiscript();
+    return m_renderer && m_renderer->isRenderMathMLScripts() && !isMathMultiscript();
 }
 
 bool AccessibilityRenderObject::isMathRow() const
 {
-    if (!m_renderer || !m_renderer->isRenderMathMLBlock())
-        return false;
-    
-    return toRenderMathMLBlock(m_renderer)->isRenderMathMLRow();
+    return m_renderer && m_renderer->isRenderMathMLRow();
 }
 
 bool AccessibilityRenderObject::isMathUnderOver() const
 {
-    if (!m_renderer || !m_renderer->isRenderMathMLBlock())
-        return false;
-    
-    return toRenderMathMLBlock(m_renderer)->isRenderMathMLUnderOver();
+    return m_renderer && m_renderer->isRenderMathMLUnderOver();
 }
 
 bool AccessibilityRenderObject::isMathSquareRoot() const
 {
-    if (!m_renderer || !m_renderer->isRenderMathMLBlock())
-        return false;
-    
-    return toRenderMathMLBlock(m_renderer)->isRenderMathMLSquareRoot();
+    return m_renderer && m_renderer->isRenderMathMLSquareRoot();
 }
     
 bool AccessibilityRenderObject::isMathRoot() const
 {
-    if (!m_renderer || !m_renderer->isRenderMathMLBlock())
-        return false;
-    
-    return toRenderMathMLBlock(m_renderer)->isRenderMathMLRoot();
+    return m_renderer && m_renderer->isRenderMathMLRoot();
 }
 
 bool AccessibilityRenderObject::isMathOperator() const
 {
-    if (!m_renderer || !m_renderer->isRenderMathMLBlock())
+    if (!m_renderer || !m_renderer->isRenderMathMLOperator())
         return false;
-    
+
     // Ensure that this is actually a render MathML operator because
     // MathML will create MathMLBlocks and use the original node as the node
     // of this new block that is not tied to the DOM.
-    if (!toRenderMathMLBlock(m_renderer)->isRenderMathMLOperator())
-        return false;
-    
     return isMathElement() && node()->hasTagName(MathMLNames::moTag);
 }
 
 bool AccessibilityRenderObject::isMathFenceOperator() const
 {
-    if (!m_renderer || !m_renderer->isRenderMathMLBlock())
+    if (!m_renderer || !m_renderer->isRenderMathMLOperator())
         return false;
-    
-    if (!toRenderMathMLBlock(m_renderer)->isRenderMathMLOperator())
-        return false;
-    
-    RenderMathMLOperator* mathOperator = toRenderMathMLOperator(toRenderMathMLBlock(m_renderer));
-    return mathOperator->operatorType() == RenderMathMLOperator::Fence;
+
+    return toRenderMathMLOperator(*m_renderer).operatorType() == RenderMathMLOperator::Fence;
 }
 
 bool AccessibilityRenderObject::isMathSeparatorOperator() const
 {
-    if (!m_renderer || !m_renderer->isRenderMathMLBlock())
+    if (!m_renderer || !m_renderer->isRenderMathMLOperator())
         return false;
-    
-    if (!toRenderMathMLBlock(m_renderer)->isRenderMathMLOperator())
-        return false;
-    
-    RenderMathMLOperator* mathOperator = toRenderMathMLOperator(toRenderMathMLBlock(m_renderer));
-    return mathOperator->operatorType() == RenderMathMLOperator::Separator;
+
+    return toRenderMathMLOperator(*m_renderer).operatorType() == RenderMathMLOperator::Separator;
 }
     
 bool AccessibilityRenderObject::isMathText() const

@@ -97,22 +97,9 @@ private:
     StretchyCharacter* m_stretchyCharacter;
 };
 
-inline RenderMathMLOperator* toRenderMathMLOperator(RenderMathMLBlock* block)
-{ 
-    ASSERT_WITH_SECURITY_IMPLICATION(!block || block->isRenderMathMLOperator());
-    return static_cast<RenderMathMLOperator*>(block);
-}
+RENDER_OBJECT_TYPE_CASTS(RenderMathMLOperator, isRenderMathMLOperator());
 
-inline const RenderMathMLOperator* toRenderMathMLOperator(const RenderMathMLBlock* block)
-{ 
-    ASSERT_WITH_SECURITY_IMPLICATION(!block || block->isRenderMathMLOperator());
-    return static_cast<const RenderMathMLOperator*>(block);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderMathMLOperator(const RenderMathMLOperator*);
-
-template<> inline bool isRendererOfType<const RenderMathMLOperator>(const RenderObject& renderer) { return renderer.isRenderMathMLBlock() && toRenderMathMLBlock(&renderer)->isRenderMathMLOperator(); }
+template<> inline bool isRendererOfType<const RenderMathMLOperator>(const RenderObject& renderer) { return renderer.isRenderMathMLOperator(); }
 
 inline UChar convertHyphenMinusToMinusSign(UChar glyph)
 {

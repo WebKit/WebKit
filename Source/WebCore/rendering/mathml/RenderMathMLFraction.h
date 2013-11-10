@@ -57,18 +57,8 @@ private:
     
     LayoutUnit m_lineThickness;
 };
-    
-inline RenderMathMLFraction* toRenderMathMLFraction(RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || (object->isRenderMathMLBlock() && toRenderMathMLBlock(object)->isRenderMathMLFraction()));
-    return static_cast<RenderMathMLFraction*>(object);
-}
 
-inline const RenderMathMLFraction* toRenderMathMLFraction(const RenderObject* object)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || (object->isRenderMathMLBlock() && toRenderMathMLBlock(object)->isRenderMathMLFraction()));
-    return static_cast<const RenderMathMLFraction*>(object);
-}
+RENDER_OBJECT_TYPE_CASTS(RenderMathMLFraction, isRenderMathMLFraction());
 
 }
 

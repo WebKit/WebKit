@@ -54,20 +54,8 @@ private:
     LayoutUnit m_depth;
 };
 
-inline RenderMathMLSpace* toRenderMathMLSpace(RenderMathMLBlock* block)
-{ 
-    ASSERT_WITH_SECURITY_IMPLICATION(!block || block->isRenderMathMLSpace());
-    return static_cast<RenderMathMLSpace*>(block);
-}
+RENDER_OBJECT_TYPE_CASTS(RenderMathMLSpace, isRenderMathMLSpace());
 
-inline const RenderMathMLSpace* toRenderMathMLSpace(const RenderMathMLBlock* block)
-{ 
-    ASSERT_WITH_SECURITY_IMPLICATION(!block || block->isRenderMathMLSpace());
-    return static_cast<const RenderMathMLSpace*>(block);
-}
-
-// This will catch anyone doing an unnecessary cast.
-void toRenderMathMLSpace(const RenderMathMLSpace*);
 }
 
 #endif // ENABLE(MATHML)

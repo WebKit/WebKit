@@ -46,19 +46,6 @@ public:
 
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const OVERRIDE;
     
-    virtual bool isRenderMathMLBlock() const OVERRIDE { return true; }
-    virtual bool isRenderMathMLOperator() const { return false; }
-    virtual bool isRenderMathMLRow() const { return false; }
-    virtual bool isRenderMathMLMath() const { return false; }
-    virtual bool isRenderMathMLFenced() const { return false; }
-    virtual bool isRenderMathMLFraction() const { return false; }
-    virtual bool isRenderMathMLRoot() const { return false; }
-    virtual bool isRenderMathMLSpace() const { return false; }
-    virtual bool isRenderMathMLSquareRoot() const { return false; }
-    virtual bool isRenderMathMLScripts() const { return false; }
-    virtual bool isRenderMathMLScriptsWrapper() const { return false; }
-    virtual bool isRenderMathMLUnderOver() const { return false; }
-    
     // MathML defines an "embellished operator" as roughly an <mo> that may have subscripts,
     // superscripts, underscripts, overscripts, or a denominator (as in d/dx, where "d" is some
     // differential operator). The padding, precedence, and stretchiness of the base <mo> should
@@ -81,7 +68,9 @@ public:
     bool ignoreInAccessibilityTree() const { return m_ignoreInAccessibilityTree; }
     
 private:
+    virtual bool isRenderMathMLBlock() const OVERRIDE FINAL { return true; }
     virtual const char* renderName() const OVERRIDE;
+
     bool m_ignoreInAccessibilityTree;
 };
 

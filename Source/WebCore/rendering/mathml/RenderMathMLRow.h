@@ -38,14 +38,13 @@ public:
     RenderMathMLRow(Document&, PassRef<RenderStyle>);
 
     static RenderMathMLRow* createAnonymousWithParentRenderer(const RenderObject*);
-    
-    virtual bool isRenderMathMLRow() const { return true; }
-    
+
 protected:
     virtual void layout();
 
 private:
-    virtual const char* renderName() const { return isAnonymous() ? "RenderMathMLRow (anonymous)" : "RenderMathMLRow"; }
+    virtual bool isRenderMathMLRow() const OVERRIDE FINAL { return true; }
+    virtual const char* renderName() const OVERRIDE { return isAnonymous() ? "RenderMathMLRow (anonymous)" : "RenderMathMLRow"; }
 };
 
 }

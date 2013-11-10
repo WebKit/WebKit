@@ -54,8 +54,8 @@ protected:
     virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
 
 private:
-    virtual bool isRenderMathMLRoot() const { return true; }
-    virtual const char* renderName() const { return "RenderMathMLRoot"; }
+    virtual bool isRenderMathMLRoot() const OVERRIDE FINAL { return true; }
+    virtual const char* renderName() const OVERRIDE { return "RenderMathMLRoot"; }
     
     // This may return 0 for a non-MathML index (which won't occur in valid MathML).
     RenderBox* index() const;
