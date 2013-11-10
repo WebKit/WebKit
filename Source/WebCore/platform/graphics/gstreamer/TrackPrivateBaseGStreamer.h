@@ -33,18 +33,17 @@
 
 namespace WebCore {
 
+class TrackPrivateBase;
+
 class TrackPrivateBaseGStreamer {
 public:
     virtual ~TrackPrivateBaseGStreamer();
 
-    virtual void labelChanged(const String&) = 0;
-    virtual void languageChanged(const String&) = 0;
-
     GstPad* pad() const { return m_pad.get(); }
 
-    void disconnect();
+    virtual void disconnect();
 
-    virtual void setActive(bool) = 0;
+    virtual void setActive(bool) { }
 
     void setIndex(int index) { m_index =  index; }
 
@@ -55,16 +54,17 @@ public:
     void notifyTrackOfTagsChanged();
 
 protected:
-    TrackPrivateBaseGStreamer(const char* notifyActiveSignal, GRefPtr<GstElement> playbin, gint index, GRefPtr<GstPad>);
+    TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstPad>);
 
     gint m_index;
-    GRefPtr<GstElement> m_playbin;
-
     String m_label;
     String m_language;
+    GRefPtr<GstPad> m_pad;
 
 private:
-    GRefPtr<GstPad> m_pad;
+    bool getTag(GstTagList* tags, const gchar* tagName, String& value);
+
+    TrackPrivateBase* m_owner;
     guint m_activeTimerHandler;
     guint m_tagTimerHandler;
 };

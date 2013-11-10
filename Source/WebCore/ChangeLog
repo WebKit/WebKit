@@ -1,3 +1,41 @@
+2013-11-10  Brendan Long  <b.long@cablelabs.com>
+
+        [GStreamer] Consolidate more code into TrackPrivateBaseGStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=124020
+
+        Reviewed by Philippe Normand.
+
+        No new tests because this is just refactoring.
+
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp:
+        (WebCore::AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer): Don't pass playbin to TrackPrivateBaseGStreamer, and do pass a pointer to "this".
+        (WebCore::AudioTrackPrivateGStreamer::disconnect): Clear m_playbin().
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.h: Move labelChanged() and languageChanged() to TrackPrivateBaseGStreamer. Move m_playbin to this class (along with disconnect() to clear it).
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp: Move tag handling, pad and index to TrackPrivateBaseGStreamer.
+        (WebCore::textTrackPrivateEventCallback):
+        (WebCore::InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer):
+        (WebCore::InbandTextTrackPrivateGStreamer::disconnect):
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/TextCombinerGStreamer.cpp: Add WebKitTextCombinerPad with "tags" property, set in the same was as input-selector's pads.
+        (webkit_text_combiner_pad_init): Initialize tags to 0.
+        (webkitTextCombinerPadFinalize): Clear tags.
+        (webkitTextCombinerPadGetProperty): Handling "tags" property.
+        (webkitTextCombinerPadEvent): Changed to be a pad event function instead of a pad probe, and now intercepts tags and merges them (like input-selector pads do).
+        (webkitTextCombinerRequestNewPad): Using WebKitTextCombinerPad instead of just GhostPad.
+        (webkit_text_combiner_pad_class_init): Setup WebKitTextCombinerPad.
+        * platform/graphics/gstreamer/TextCombinerGStreamer.h: Remove superfluous code.
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer): Use "notify::active" so we don't need a playbin, and immediately check for tags after the constructor.
+        (WebCore::TrackPrivateBaseGStreamer::disconnect): Remove m_playbin.
+        (WebCore::TrackPrivateBaseGStreamer::getTag): Refactored out from notifyTrackOfTagsChanged.
+        (WebCore::TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged): Simplify using m_owner (so we can call labelChanged() and languageChanged() directly), and use getTag() above.
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.h: Add m_owner to we can access the owning track, and change some functions to match our needs better.
+        (WebCore::TrackPrivateBaseGStreamer::setActive): Add empty default since InbandTextTrackPrivateGStreamer doesn't need this.
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp: Same as AudioTrackPrivateGStreamer.
+        (WebCore::VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer):
+        (WebCore::VideoTrackPrivateGStreamer::disconnect):
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.h: Same as AudioTrackPrivateGStreamer.
+
 2013-11-10  Andreas Kling  <akling@apple.com>
 
         Generate type casting helpers for Widget classes.

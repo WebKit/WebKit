@@ -44,6 +44,35 @@ G_DEFINE_TYPE_WITH_CODE(WebKitTextCombiner, webkit_text_combiner, GST_TYPE_BIN,
     GST_DEBUG_CATEGORY_INIT(webkitTextCombinerDebug, "webkittextcombiner", 0,
         "webkit text combiner"));
 
+enum {
+    PROP_PAD_0,
+    PROP_PAD_TAGS
+};
+
+#define WEBKIT_TYPE_TEXT_COMBINER_PAD webkit_text_combiner_pad_get_type()
+
+#define WEBKIT_TEXT_COMBINER_PAD(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_TEXT_COMBINER_PAD, WebKitTextCombinerPad))
+#define WEBKIT_TEXT_COMBINER_PAD_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST((klass), WEBKIT_TYPE_TEXT_COMBINER_PAD, WebKitTextCombinerPadClass))
+#define WEBKIT_IS_TEXT_COMBINER_PAD(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_TEXT_COMBINER_PAD))
+#define WEBKIT_IS_TEXT_COMBINER_PAD_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), WEBKIT_TYPE_TEXT_COMBINER_PAD))
+#define WEBKIT_TEXT_COMBINER_PAD_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS((obj), WEBKIT_TYPE_TEXT_COMBINER_PAD, WebKitTextCombinerPadClass))
+
+typedef struct _WebKitTextCombinerPad WebKitTextCombinerPad;
+typedef struct _WebKitTextCombinerPadClass WebKitTextCombinerPadClass;
+
+struct _WebKitTextCombinerPad {
+    GstGhostPad parent;
+
+    GstTagList* tags;
+};
+
+struct _WebKitTextCombinerPadClass {
+    GstGhostPadClass parent;
+};
+
+G_DEFINE_TYPE(WebKitTextCombinerPad, webkit_text_combiner_pad, GST_TYPE_GHOST_PAD);
+
+static gboolean webkitTextCombinerPadEvent(GstPad*, GstObject* parent, GstEvent*);
 
 static void webkit_text_combiner_init(WebKitTextCombiner* combiner)
 {
@@ -61,17 +90,46 @@ static void webkit_text_combiner_init(WebKitTextCombiner* combiner)
     ASSERT(ret);
 }
 
-static GstPadProbeReturn webkitTextCombinerPadEvent(GstPad* pad, GstPadProbeInfo *info, gpointer)
+static void webkit_text_combiner_pad_init(WebKitTextCombinerPad* pad)
+{
+    pad->tags = 0;
+
+    gst_pad_set_event_function(GST_PAD(pad), webkitTextCombinerPadEvent);
+}
+
+static void webkitTextCombinerPadFinalize(GObject* object)
+{
+    WebKitTextCombinerPad* pad = WEBKIT_TEXT_COMBINER_PAD(object);
+    if (pad->tags)
+        gst_tag_list_unref(pad->tags);
+    G_OBJECT_CLASS(webkit_text_combiner_pad_parent_class)->finalize(object);
+}
+
+static void webkitTextCombinerPadGetProperty(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
+{
+    WebKitTextCombinerPad* pad = WEBKIT_TEXT_COMBINER_PAD(object);
+    switch (propertyId) {
+    case PROP_PAD_TAGS:
+        GST_OBJECT_LOCK(object);
+        g_value_set_boxed(value, pad->tags);
+        GST_OBJECT_UNLOCK(object);
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
+        break;
+    }
+}
+
+static gboolean webkitTextCombinerPadEvent(GstPad* pad, GstObject* parent, GstEvent* event)
 {
     gboolean ret;
     UNUSED_PARAM(ret);
-    WebKitTextCombiner* combiner = WEBKIT_TEXT_COMBINER(gst_pad_get_parent(pad));
+    WebKitTextCombiner* combiner = WEBKIT_TEXT_COMBINER(parent);
+    WebKitTextCombinerPad* combinerPad = WEBKIT_TEXT_COMBINER_PAD(pad);
     ASSERT(combiner);
 
-    GstEvent* event = gst_pad_probe_info_get_event(info);
-    ASSERT(event);
-
-    if (GST_EVENT_TYPE(event) == GST_EVENT_CAPS) {
+    switch (GST_EVENT_TYPE(event)) {
+    case GST_EVENT_CAPS: {
         GstCaps* caps;
         gst_event_parse_caps(event, &caps);
         ASSERT(caps);
@@ -137,10 +195,21 @@ static GstPadProbeReturn webkitTextCombinerPadEvent(GstPad* pad, GstPadProbeInfo
         gst_caps_unref(textCaps);
         gst_object_unref(targetParent);
         gst_object_unref(target);
+        break;
     }
-    gst_object_unref(combiner);
+    case GST_EVENT_TAG: {
+        GstTagList* tags;
+        gst_event_parse_tag(event, &tags);
+        ASSERT(tags);
 
-    return GST_PAD_PROBE_OK;
+        combinerPad->tags = gst_tag_list_merge(combinerPad->tags, tags, GST_TAG_MERGE_REPLACE);
+        g_object_notify(G_OBJECT(pad), "tags");
+        break;
+    }
+    default:
+        break;
+    }
+    return gst_pad_event_default(pad, parent, event);
 }
 
 static GstPad* webkitTextCombinerRequestNewPad(GstElement * element,
@@ -156,10 +225,14 @@ static GstPad* webkitTextCombinerRequestNewPad(GstElement * element,
     GstPad* pad = gst_element_request_pad(combiner->funnel, templ, name, caps);
     ASSERT(pad);
 
-    GstPad* ghostPad = gst_ghost_pad_new(NULL, pad);
+    GstPad* ghostPad = GST_PAD(g_object_new(WEBKIT_TYPE_TEXT_COMBINER_PAD, "direction", gst_pad_get_direction(pad), NULL));
     ASSERT(ghostPad);
 
-    gst_pad_add_probe(ghostPad, GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, webkitTextCombinerPadEvent, NULL, NULL);
+    ret = gst_ghost_pad_construct(GST_GHOST_PAD(ghostPad));
+    ASSERT(ret);
+
+    ret = gst_ghost_pad_set_target(GST_GHOST_PAD(ghostPad), pad);
+    ASSERT(ret);
 
     ret = gst_pad_set_active(ghostPad, true);
     ASSERT(ret);
@@ -199,6 +272,18 @@ static void webkit_text_combiner_class_init(WebKitTextCombinerClass* klass)
         GST_DEBUG_FUNCPTR(webkitTextCombinerRequestNewPad);
     elementClass->release_pad =
         GST_DEBUG_FUNCPTR(webkitTextCombinerReleasePad);
+}
+
+static void webkit_text_combiner_pad_class_init(WebKitTextCombinerPadClass* klass)
+{
+    GObjectClass* gobjectClass = G_OBJECT_CLASS(klass);
+
+    gobjectClass->finalize = GST_DEBUG_FUNCPTR(webkitTextCombinerPadFinalize);
+    gobjectClass->get_property = GST_DEBUG_FUNCPTR(webkitTextCombinerPadGetProperty);
+
+    g_object_class_install_property(gobjectClass, PROP_PAD_TAGS,
+        g_param_spec_boxed("tags", "Tags", "The currently active tags on the pad", GST_TYPE_TAG_LIST,
+            static_cast<GParamFlags>(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
 }
 
 GstElement* webkitTextCombinerNew()

@@ -31,8 +31,10 @@
 
 #include "GStreamerUtilities.h"
 #include "Logging.h"
+#include "TrackPrivateBase.h"
 #include <glib-object.h>
 #include <gst/gst.h>
+#include <wtf/gobject/GOwnPtr.h>
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);
 #define GST_CAT_DEFAULT webkit_media_player_debug
@@ -61,16 +63,19 @@ static gboolean trackPrivateTagsChangeTimeoutCallback(TrackPrivateBaseGStreamer*
     return FALSE;
 }
 
-TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(const char* notifyActiveSignal, GRefPtr<GstElement> playbin, gint index, GRefPtr<GstPad> pad)
+TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstPad> pad)
     : m_index(index)
-    , m_playbin(playbin)
     , m_pad(pad)
+    , m_owner(owner)
     , m_activeTimerHandler(0)
     , m_tagTimerHandler(0)
 {
     ASSERT(m_pad);
-    g_signal_connect(m_playbin.get(), notifyActiveSignal, G_CALLBACK(trackPrivateActiveChangedCallback), this);
+
+    g_signal_connect(m_pad.get(), "notify::active", G_CALLBACK(trackPrivateActiveChangedCallback), this);
     g_signal_connect(m_pad.get(), "notify::tags", G_CALLBACK(trackPrivateTagsChangedCallback), this);
+
+    notifyTrackOfTagsChanged();
 }
 
 TrackPrivateBaseGStreamer::~TrackPrivateBaseGStreamer()
@@ -95,7 +100,6 @@ void TrackPrivateBaseGStreamer::disconnect()
         g_source_remove(m_tagTimerHandler);
 
     m_pad.clear();
-    m_playbin.clear();
 }
 
 void TrackPrivateBaseGStreamer::activeChanged()
@@ -126,40 +130,34 @@ void TrackPrivateBaseGStreamer::notifyTrackOfActiveChanged()
     setActive(active);
 }
 
+bool TrackPrivateBaseGStreamer::getTag(GstTagList* tags, const gchar* tagName, String& value)
+{
+    GOwnPtr<gchar> tagValue;
+    if (gst_tag_list_get_string(tags, tagName, &tagValue.outPtr())) {
+        INFO_MEDIA_MESSAGE("Track %d got %s %s.", m_index, tagName, tagValue.get());
+        value = tagValue.get();
+        return true;
+    }
+    return false;
+}
+
 void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
 {
     m_tagTimerHandler = 0;
     if (!m_pad)
         return;
 
-    String label;
-    String language;
+    TrackPrivateBaseClient* client = m_owner->client();
     GRefPtr<GstTagList> tags;
     g_object_get(m_pad.get(), "tags", &tags.outPtr(), NULL);
-    if (tags) {
-        gchar* tagValue;
-        if (gst_tag_list_get_string(tags.get(), GST_TAG_TITLE, &tagValue)) {
-            INFO_MEDIA_MESSAGE("Video track %d got title %s.", m_index, tagValue);
-            label = tagValue;
-            g_free(tagValue);
-        }
+    if (!tags)
+        return;
 
-        if (gst_tag_list_get_string(tags.get(), GST_TAG_LANGUAGE_CODE, &tagValue)) {
-            INFO_MEDIA_MESSAGE("Video track %d got language %s.", m_index, tagValue);
-            language = tagValue;
-            g_free(tagValue);
-        }
-    }
+    if (getTag(tags.get(), GST_TAG_TITLE, m_label) && client)
+        client->labelChanged(m_owner, m_label);
 
-    if (m_label != label) {
-        m_label = label;
-        labelChanged(m_label);
-    }
-
-    if (m_language != language) {
-        m_language = language;
-        languageChanged(m_language);
-    }
+    if (getTag(tags.get(), GST_TAG_LANGUAGE_CODE, m_language) && client)
+        client->languageChanged(m_owner, m_language);
 }
 
 } // namespace WebCore

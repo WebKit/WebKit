@@ -41,6 +41,8 @@ public:
         return adoptRef(new VideoTrackPrivateGStreamer(playbin, index, pad));
     }
 
+    virtual void disconnect() OVERRIDE;
+
     virtual void setSelected(bool) OVERRIDE;
     virtual void setActive(bool enabled) OVERRIDE { setSelected(enabled); }
 
@@ -49,11 +51,10 @@ public:
     virtual AtomicString label() const OVERRIDE { return m_label; }
     virtual AtomicString language() const OVERRIDE { return m_language; }
 
-    virtual void labelChanged(const String&) OVERRIDE;
-    virtual void languageChanged(const String&) OVERRIDE;
-
 private:
     VideoTrackPrivateGStreamer(GRefPtr<GstElement> playbin, gint index, GRefPtr<GstPad>);
+
+    GRefPtr<GstElement> m_playbin;
 };
 
 } // namespace WebCore

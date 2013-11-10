@@ -46,8 +46,6 @@ struct _WebKitTextCombiner {
     GstBin parent;
 
     GstElement *funnel;
-private:
-
 };
 
 struct _WebKitTextCombinerClass {

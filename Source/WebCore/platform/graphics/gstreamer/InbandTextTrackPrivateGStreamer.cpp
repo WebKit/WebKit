@@ -43,9 +43,6 @@ static GstPadProbeReturn textTrackPrivateEventCallback(GstPad*, GstPadProbeInfo*
 {
     GstEvent* event = gst_pad_probe_info_get_event(info);
     switch (GST_EVENT_TYPE(event)) {
-    case GST_EVENT_TAG:
-        track->tagsChanged();
-        break;
     case GST_EVENT_STREAM_START:
         track->streamChanged();
         break;
@@ -67,32 +64,15 @@ static gboolean textTrackPrivateStreamTimeoutCallback(InbandTextTrackPrivateGStr
     return FALSE;
 }
 
-static gboolean textTrackPrivateTagsChangeTimeoutCallback(InbandTextTrackPrivateGStreamer* track)
-{
-    track->notifyTrackOfTagsChanged();
-    return FALSE;
-}
-
 InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(gint index, GRefPtr<GstPad> pad)
-    : InbandTextTrackPrivate(WebVTT)
-    , m_index(index)
-    , m_pad(pad)
+    : InbandTextTrackPrivate(WebVTT), TrackPrivateBaseGStreamer(this, index, pad)
     , m_sampleTimerHandler(0)
     , m_streamTimerHandler(0)
-    , m_tagTimerHandler(0)
 {
-    ASSERT(m_pad);
     m_eventProbe = gst_pad_add_probe(m_pad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM,
         reinterpret_cast<GstPadProbeCallback>(textTrackPrivateEventCallback), this, 0);
 
-    /* We want to check these in case we got events before the track was created */
-    streamChanged();
-    tagsChanged();
-}
-
-InbandTextTrackPrivateGStreamer::~InbandTextTrackPrivateGStreamer()
-{
-    disconnect();
+    notifyTrackOfStreamChanged();
 }
 
 void InbandTextTrackPrivateGStreamer::disconnect()
@@ -101,13 +81,11 @@ void InbandTextTrackPrivateGStreamer::disconnect()
         return;
 
     gst_pad_remove_probe(m_pad.get(), m_eventProbe);
-    g_signal_handlers_disconnect_by_func(m_pad.get(),
-        reinterpret_cast<gpointer>(textTrackPrivateEventCallback), this);
 
-    if (m_tagTimerHandler)
-        g_source_remove(m_tagTimerHandler);
+    if (m_streamTimerHandler)
+        g_source_remove(m_streamTimerHandler);
 
-    m_pad.clear();
+    TrackPrivateBaseGStreamer::disconnect();
 }
 
 void InbandTextTrackPrivateGStreamer::handleSample(GRefPtr<GstSample> sample)
@@ -128,14 +106,6 @@ void InbandTextTrackPrivateGStreamer::streamChanged()
         g_source_remove(m_streamTimerHandler);
     m_streamTimerHandler = g_timeout_add(0,
         reinterpret_cast<GSourceFunc>(textTrackPrivateStreamTimeoutCallback), this);
-}
-
-void InbandTextTrackPrivateGStreamer::tagsChanged()
-{
-    if (m_tagTimerHandler)
-        g_source_remove(m_tagTimerHandler);
-    m_tagTimerHandler = g_timeout_add(0,
-        reinterpret_cast<GSourceFunc>(textTrackPrivateTagsChangeTimeoutCallback), this);
 }
 
 void InbandTextTrackPrivateGStreamer::notifyTrackOfSample()
@@ -183,45 +153,6 @@ void InbandTextTrackPrivateGStreamer::notifyTrackOfStreamChanged()
     gst_event_parse_stream_start(event.get(), &streamId);
     INFO_MEDIA_MESSAGE("Track %d got stream start for stream %s.", m_index, streamId);
     m_streamId = streamId;
-}
-
-void InbandTextTrackPrivateGStreamer::notifyTrackOfTagsChanged()
-{
-    m_tagTimerHandler = 0;
-    if (!m_pad)
-        return;
-
-    String label;
-    String language;
-    GRefPtr<GstEvent> event;
-    for (guint i = 0; (event = adoptGRef(gst_pad_get_sticky_event(m_pad.get(), GST_EVENT_TAG, i))); ++i) {
-        GstTagList* tags = 0;
-        gst_event_parse_tag(event.get(), &tags);
-        ASSERT(tags);
-
-        gchar* tagValue;
-        if (gst_tag_list_get_string(tags, GST_TAG_TITLE, &tagValue)) {
-            INFO_MEDIA_MESSAGE("Text track %d got title %s.", m_index, tagValue);
-            label = tagValue;
-            g_free(tagValue);
-        }
-
-        if (gst_tag_list_get_string(tags, GST_TAG_LANGUAGE_CODE, &tagValue)) {
-            INFO_MEDIA_MESSAGE("Text track %d got language %s.", m_index, tagValue);
-            language = tagValue;
-            g_free(tagValue);
-        }
-    }
-
-    if (m_label != label) {
-        m_label = label;
-        client()->labelChanged(this, m_label);
-    }
-
-    if (m_language != language) {
-        m_language = language;
-        client()->languageChanged(this, m_language);
-    }
 }
 
 } // namespace WebCore
