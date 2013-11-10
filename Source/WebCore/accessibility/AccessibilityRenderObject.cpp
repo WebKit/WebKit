@@ -257,8 +257,8 @@ static inline RenderInline* startOfContinuations(RenderObject* r)
         // MathML elements make anonymous RenderObjects, then set their node to the parent's node.
         // This makes it so that the renderer() != renderer()->node()->renderer()
         // (which is what isInlineElementContinuation() uses as a determinant).
-        if (r->node()->isElementNode() && toElement(r->node())->isMathMLElement())
-            return 0;
+        if (r->node()->isMathMLElement())
+            return nullptr;
 #endif
         
         return toRenderInline(r->node()->renderer());
@@ -3404,7 +3404,7 @@ bool AccessibilityRenderObject::isMathElement() const
     if (!m_renderer || !node)
         return false;
     
-    return node->isElementNode() && toElement(node)->isMathMLElement();
+    return node->isMathMLElement();
 }
 
 bool AccessibilityRenderObject::isMathFraction() const

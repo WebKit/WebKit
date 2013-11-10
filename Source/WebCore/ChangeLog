@@ -1,5 +1,16 @@
 2013-11-10  Andreas Kling  <akling@apple.com>
 
+        Simplify some is-this-a-MathML-element? checks.
+        <https://webkit.org/b/124119>
+
+        As of r158198, the MathML-ness of an Element is determined by
+        a Node flag, so there's no need to cast to Element before checking
+        on this. Simplify accordingly.
+
+        Reviewed by Antti Koivisto.
+
+2013-11-10  Andreas Kling  <akling@apple.com>
+
         Remove RenderTheme::shouldOpenPickerWithF4Key().
 
         Rubber-stamped by Anders Carlsson.

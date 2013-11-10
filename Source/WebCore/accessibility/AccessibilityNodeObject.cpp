@@ -1275,7 +1275,7 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
 #endif
     
 #if ENABLE(MATHML)
-    if (node->isElementNode() && toElement(node)->isMathMLElement())
+    if (node->isMathMLElement())
         textOrder.append(AccessibilityText(getAttribute(MathMLNames::alttextAttr), AlternativeText));
 #endif
 }
@@ -1484,7 +1484,7 @@ String AccessibilityNodeObject::accessibilityDescription() const
 #endif
     
 #if ENABLE(MATHML)
-    if (m_node && m_node->isElementNode() && toElement(m_node)->isMathMLElement())
+    if (m_node && m_node->isMathMLElement())
         return getAttribute(MathMLNames::alttextAttr);
 #endif
 
