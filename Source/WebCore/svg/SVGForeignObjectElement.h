@@ -44,7 +44,7 @@ private:
     virtual void svgAttributeChanged(const QualifiedName&);
 
     virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
-    virtual bool childShouldCreateRenderer(const Node*) const;
+    virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
     virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
 
     virtual bool selfHasRelativeLengths() const;

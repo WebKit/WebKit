@@ -193,12 +193,12 @@ RenderElement* SVGFilterElement::createRenderer(PassRef<RenderStyle> style)
     return new RenderSVGResourceFilter(*this, std::move(style));
 }
 
-bool SVGFilterElement::childShouldCreateRenderer(const Node* child) const
+bool SVGFilterElement::childShouldCreateRenderer(const Node& child) const
 {
-    if (!child->isSVGElement())
+    if (!child.isSVGElement())
         return false;
 
-    const SVGElement* svgElement = toSVGElement(child);
+    const SVGElement& svgElement = toSVGElement(child);
 
     DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, allowedChildElementTags, ());
     if (allowedChildElementTags.isEmpty()) {
@@ -229,7 +229,7 @@ bool SVGFilterElement::childShouldCreateRenderer(const Node* child) const
         allowedChildElementTags.add(SVGNames::feTurbulenceTag);
     }
 
-    return allowedChildElementTags.contains<SVGAttributeHashTranslator>(svgElement->tagQName());
+    return allowedChildElementTags.contains<SVGAttributeHashTranslator>(svgElement.tagQName());
 }
 
 bool SVGFilterElement::selfHasRelativeLengths() const

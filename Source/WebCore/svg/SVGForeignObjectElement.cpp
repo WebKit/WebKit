@@ -131,11 +131,11 @@ RenderElement* SVGForeignObjectElement::createRenderer(PassRef<RenderStyle> styl
     return new RenderSVGForeignObject(*this, std::move(style));
 }
 
-bool SVGForeignObjectElement::childShouldCreateRenderer(const Node* child) const
+bool SVGForeignObjectElement::childShouldCreateRenderer(const Node& child) const
 {
     // Disallow arbitary SVG content. Only allow proper <svg xmlns="svgNS"> subdocuments.
-    if (child->isSVGElement())
-        return child->hasTagName(SVGNames::svgTag);
+    if (child.isSVGElement())
+        return child.hasTagName(SVGNames::svgTag);
 
     // Skip over SVG rules which disallow non-SVG kids
     return StyledElement::childShouldCreateRenderer(child);

@@ -479,7 +479,7 @@ public:
     // to event listeners, and prevents DOMActivate events from being sent at all.
     virtual bool isDisabledFormControl() const { return false; }
 
-    virtual bool childShouldCreateRenderer(const Node*) const OVERRIDE;
+    virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
 
 #if ENABLE(SVG)
     bool hasPendingResources() const;

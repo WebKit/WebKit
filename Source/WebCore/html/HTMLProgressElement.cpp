@@ -66,7 +66,7 @@ RenderElement* HTMLProgressElement::createRenderer(PassRef<RenderStyle> style)
     return new RenderProgress(*this, std::move(style));
 }
 
-bool HTMLProgressElement::childShouldCreateRenderer(const Node* child) const
+bool HTMLProgressElement::childShouldCreateRenderer(const Node& child) const
 {
     return hasShadowRootParent(child) && HTMLElement::childShouldCreateRenderer(child);
 }

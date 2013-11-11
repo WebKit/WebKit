@@ -73,16 +73,16 @@ RenderElement* SVGTextElement::createRenderer(PassRef<RenderStyle> style)
     return new RenderSVGText(*this, std::move(style));
 }
 
-bool SVGTextElement::childShouldCreateRenderer(const Node* child) const
+bool SVGTextElement::childShouldCreateRenderer(const Node& child) const
 {
-    if (child->isTextNode()
-        || child->hasTagName(SVGNames::aTag)
+    if (child.isTextNode()
+        || child.hasTagName(SVGNames::aTag)
 #if ENABLE(SVG_FONTS)
-        || child->hasTagName(SVGNames::altGlyphTag)
+        || child.hasTagName(SVGNames::altGlyphTag)
 #endif
-        || child->hasTagName(SVGNames::textPathTag)
-        || child->hasTagName(SVGNames::trefTag)
-        || child->hasTagName(SVGNames::tspanTag))
+        || child.hasTagName(SVGNames::textPathTag)
+        || child.hasTagName(SVGNames::trefTag)
+        || child.hasTagName(SVGNames::tspanTag))
         return true;
 
     return false;

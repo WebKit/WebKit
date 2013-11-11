@@ -65,11 +65,11 @@ HTMLTextFormControlElement::~HTMLTextFormControlElement()
 {
 }
 
-bool HTMLTextFormControlElement::childShouldCreateRenderer(const Node* child) const
+bool HTMLTextFormControlElement::childShouldCreateRenderer(const Node& child) const
 {
     // FIXME: We shouldn't force the pseudo elements down into the shadow, but
     // this perserves the current behavior of WebKit.
-    if (child->isPseudoElement())
+    if (child.isPseudoElement())
         return HTMLFormControlElementWithState::childShouldCreateRenderer(child);
     return hasShadowRootParent(child) && HTMLFormControlElementWithState::childShouldCreateRenderer(child);
 }
@@ -612,7 +612,7 @@ HTMLTextFormControlElement* enclosingTextFormControl(const Position& position)
 {
     ASSERT(position.isNull() || position.anchorType() == Position::PositionIsOffsetInAnchor
         || position.containerNode() || !position.anchorNode()->shadowHost()
-        || hasShadowRootParent(position.anchorNode()));
+        || hasShadowRootParent(*position.anchorNode()));
         
     Node* container = position.containerNode();
     if (!container)

@@ -36,7 +36,7 @@ private:
     HTMLDetailsElement(const QualifiedName&, Document&);
 
     virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
-    virtual bool childShouldCreateRenderer(const Node*) const OVERRIDE;
+    virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
 
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;

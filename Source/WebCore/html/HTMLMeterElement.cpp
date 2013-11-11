@@ -65,7 +65,7 @@ RenderElement* HTMLMeterElement::createRenderer(PassRef<RenderStyle> style)
     return new RenderMeter(*this, std::move(style));
 }
 
-bool HTMLMeterElement::childShouldCreateRenderer(const Node* child) const
+bool HTMLMeterElement::childShouldCreateRenderer(const Node& child) const
 {
     return hasShadowRootParent(child) && HTMLElement::childShouldCreateRenderer(child);
 }

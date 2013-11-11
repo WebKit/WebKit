@@ -55,7 +55,7 @@ private:
     virtual void childrenChanged(const ChildChange&) OVERRIDE;
 
     virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
-    virtual bool childShouldCreateRenderer(const Node*) const OVERRIDE;
+    virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
 
     virtual bool selfHasRelativeLengths() const;
 

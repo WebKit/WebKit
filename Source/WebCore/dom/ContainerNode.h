@@ -122,7 +122,7 @@ public:
 
     void disconnectDescendantFrames();
 
-    virtual bool childShouldCreateRenderer(const Node*) const { return true; }
+    virtual bool childShouldCreateRenderer(const Node&) const { return true; }
 
     using Node::setAttributeEventListener;
     void setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value);

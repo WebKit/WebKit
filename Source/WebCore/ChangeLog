@@ -1,3 +1,12 @@
+2013-11-10  Sam Weinig  <sam@webkit.org>
+
+        Make childShouldCreateRenderer() take a Node reference
+        https://bugs.webkit.org/show_bug.cgi?id=124132
+
+        Reviewed by Andreas Kling.
+
+        The Node passed to childShouldCreateRenderer() is never null.
+
 2013-11-10  Frédéric Wang  <fred.wang@free.fr>
 
         CSS direction must be reset to ltr on <math> element.

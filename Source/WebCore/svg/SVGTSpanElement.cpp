@@ -45,15 +45,15 @@ RenderElement* SVGTSpanElement::createRenderer(PassRef<RenderStyle> style)
     return new RenderSVGTSpan(*this, std::move(style));
 }
 
-bool SVGTSpanElement::childShouldCreateRenderer(const Node* child) const
+bool SVGTSpanElement::childShouldCreateRenderer(const Node& child) const
 {
-    if (child->isTextNode()
-        || child->hasTagName(SVGNames::aTag)
+    if (child.isTextNode()
+        || child.hasTagName(SVGNames::aTag)
 #if ENABLE(SVG_FONTS)
-        || child->hasTagName(SVGNames::altGlyphTag)
+        || child.hasTagName(SVGNames::altGlyphTag)
 #endif
-        || child->hasTagName(SVGNames::trefTag)
-        || child->hasTagName(SVGNames::tspanTag))
+        || child.hasTagName(SVGNames::trefTag)
+        || child.hasTagName(SVGNames::tspanTag))
         return true;
 
     return false;

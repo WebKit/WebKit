@@ -225,9 +225,9 @@ RenderElement* SVGTRefElement::createRenderer(PassRef<RenderStyle> style)
     return new RenderSVGInline(*this, std::move(style));
 }
 
-bool SVGTRefElement::childShouldCreateRenderer(const Node* child) const
+bool SVGTRefElement::childShouldCreateRenderer(const Node& child) const
 {
-    return child->isInShadowTree();
+    return child.isInShadowTree();
 }
 
 bool SVGTRefElement::rendererIsNeeded(const RenderStyle& style)

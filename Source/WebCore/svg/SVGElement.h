@@ -148,7 +148,7 @@ protected:
 
     virtual void finishParsingChildren() OVERRIDE;
     virtual void attributeChanged(const QualifiedName&, const AtomicString&, AttributeModificationReason = ModifiedDirectly) OVERRIDE;
-    virtual bool childShouldCreateRenderer(const Node*) const OVERRIDE;
+    virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
 
     SVGElementRareData& ensureSVGRareData();
 

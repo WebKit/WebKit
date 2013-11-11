@@ -41,8 +41,6 @@ public:
     int colSpan() const;
     int rowSpan() const;
 
-    virtual bool childShouldCreateRenderer(const Node*) const OVERRIDE;
-
 protected:
     MathMLElement(const QualifiedName& tagName, Document&);
 
@@ -51,6 +49,8 @@ protected:
 private:    
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStylePropertySet&) OVERRIDE;
+
+    virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
 };
 
 void isMathMLElement(const MathMLElement&); // Catch unnecessary runtime check of type known at compile time.

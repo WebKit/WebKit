@@ -39,8 +39,7 @@ private:
     virtual bool isValid() const { return SVGTests::isValid(); }
     virtual bool supportsFocus() const OVERRIDE { return true; }
 
-    virtual bool childShouldCreateRenderer(const Node*) const;
-
+    virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
     virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGSwitchElement)

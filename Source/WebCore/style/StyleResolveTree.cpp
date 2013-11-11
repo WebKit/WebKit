@@ -156,7 +156,7 @@ static bool shouldCreateRenderer(const Element& element, const ContainerNode* re
         return false;
     if (!parentRenderer->canHaveChildren() && !(element.isPseudoElement() && parentRenderer->canHaveGeneratedChildren()))
         return false;
-    if (!renderingParent->childShouldCreateRenderer(&element))
+    if (!renderingParent->childShouldCreateRenderer(element))
         return false;
     return true;
 }
@@ -375,7 +375,7 @@ static void createTextRendererIfNeeded(Text& textNode)
     RenderElement* parentRenderer = renderingParentNode->renderer();
     if (!parentRenderer || !parentRenderer->canHaveChildren())
         return;
-    if (!renderingParentNode->childShouldCreateRenderer(&textNode))
+    if (!renderingParentNode->childShouldCreateRenderer(textNode))
         return;
 
     // FIXME: constify this RenderStyle&.

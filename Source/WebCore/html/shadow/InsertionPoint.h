@@ -129,11 +129,11 @@ inline ShadowRoot* shadowRootOfParentForDistribution(const Node* node)
 
 InsertionPoint* findInsertionPointOf(const Node*);
 
-inline bool hasShadowRootOrActiveInsertionPointParent(const Node* node)
+inline bool hasShadowRootOrActiveInsertionPointParent(const Node& node)
 {
     return hasShadowRootParent(node)
-        || isActiveInsertionPoint(findInsertionPointOf(node))
-        || isActiveInsertionPoint(node->parentNode());
+        || isActiveInsertionPoint(findInsertionPointOf(&node))
+        || isActiveInsertionPoint(node.parentNode());
 }
 
 } // namespace WebCore

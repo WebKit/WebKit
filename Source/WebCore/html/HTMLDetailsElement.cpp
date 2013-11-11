@@ -142,9 +142,9 @@ void HTMLDetailsElement::parseAttribute(const QualifiedName& name, const AtomicS
         HTMLElement::parseAttribute(name, value);
 }
 
-bool HTMLDetailsElement::childShouldCreateRenderer(const Node* child) const
+bool HTMLDetailsElement::childShouldCreateRenderer(const Node& child) const
 {
-    if (child->isPseudoElement())
+    if (child.isPseudoElement())
         return HTMLElement::childShouldCreateRenderer(child);
 
     if (!hasShadowRootOrActiveInsertionPointParent(child))
@@ -153,10 +153,10 @@ bool HTMLDetailsElement::childShouldCreateRenderer(const Node* child) const
     if (m_isOpen)
         return HTMLElement::childShouldCreateRenderer(child);
 
-    if (!child->hasTagName(summaryTag))
+    if (!child.hasTagName(summaryTag))
         return false;
 
-    return child == findMainSummary() && HTMLElement::childShouldCreateRenderer(child);
+    return &child == findMainSummary() && HTMLElement::childShouldCreateRenderer(child);
 }
 
 void HTMLDetailsElement::toggleOpen()

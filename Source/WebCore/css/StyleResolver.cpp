@@ -431,7 +431,7 @@ inline void StyleResolver::State::initForStyleResolve(Document& document, Elemen
 
     if (e) {
         m_parentNode = NodeRenderingTraversal::parent(e);
-        bool resetStyleInheritance = hasShadowRootParent(e) && toShadowRoot(e->parentNode())->resetStyleInheritance();
+        bool resetStyleInheritance = hasShadowRootParent(*e) && toShadowRoot(e->parentNode())->resetStyleInheritance();
         m_parentStyle = resetStyleInheritance ? 0 :
             parentStyle ? parentStyle :
             m_parentNode ? m_parentNode->renderStyle() : 0;

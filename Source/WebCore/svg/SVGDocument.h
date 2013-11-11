@@ -51,7 +51,7 @@ public:
 private:
     SVGDocument(Frame*, const URL&);
 
-    virtual bool childShouldCreateRenderer(const Node*) const OVERRIDE;
+    virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
 
     FloatPoint m_translate;
 };

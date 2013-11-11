@@ -2603,12 +2603,12 @@ const AtomicString& Element::UIActions() const
 }
 #endif
 
-bool Element::childShouldCreateRenderer(const Node* child) const
+bool Element::childShouldCreateRenderer(const Node& child) const
 {
 #if ENABLE(SVG)
     // Only create renderers for SVG elements whose parents are SVG elements, or for proper <svg xmlns="svgNS"> subdocuments.
-    if (child->isSVGElement())
-        return child->hasTagName(SVGNames::svgTag) || isSVGElement();
+    if (child.isSVGElement())
+        return child.hasTagName(SVGNames::svgTag) || isSVGElement();
 #endif
     return ContainerNode::childShouldCreateRenderer(child);
 }

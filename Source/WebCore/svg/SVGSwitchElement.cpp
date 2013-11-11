@@ -49,7 +49,7 @@ PassRefPtr<SVGSwitchElement> SVGSwitchElement::create(const QualifiedName& tagNa
     return adoptRef(new SVGSwitchElement(tagName, document));
 }
 
-bool SVGSwitchElement::childShouldCreateRenderer(const Node* child) const
+bool SVGSwitchElement::childShouldCreateRenderer(const Node& child) const
 {
     // FIXME: This function does not do what the comment below implies it does.
     // It will create a renderer for any valid SVG element children, not just the first one.
@@ -57,7 +57,7 @@ bool SVGSwitchElement::childShouldCreateRenderer(const Node* child) const
     for (auto element = svgChildren.begin(), end = svgChildren.end(); element != end; ++element) {
         if (!element->isValid())
             continue;
-        return &*element == child; // Only allow this child if it's the first valid child
+        return &*element == &child; // Only allow this child if it's the first valid child
     }
 
     return false;

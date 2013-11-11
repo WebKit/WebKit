@@ -350,7 +350,7 @@ RenderElement* HTMLSelectElement::createRenderer(PassRef<RenderStyle> style)
     return new RenderListBox(*this, std::move(style));
 }
 
-bool HTMLSelectElement::childShouldCreateRenderer(const Node* child) const
+bool HTMLSelectElement::childShouldCreateRenderer(const Node& child) const
 {
     if (!HTMLFormControlElementWithState::childShouldCreateRenderer(child))
         return false;

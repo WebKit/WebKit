@@ -441,7 +441,7 @@ private:
     virtual bool supportsFocus() const OVERRIDE;
     virtual bool isMouseFocusable() const OVERRIDE;
     virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
-    virtual bool childShouldCreateRenderer(const Node*) const OVERRIDE;
+    virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) OVERRIDE;
     virtual void removedFrom(ContainerNode&) OVERRIDE;
     virtual void didRecalcStyle(Style::Change) OVERRIDE;
