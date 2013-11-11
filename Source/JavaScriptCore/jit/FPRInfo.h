@@ -168,6 +168,8 @@ public:
         };
         return nameForRegister[reg];
     }
+
+    static const unsigned InvalidIndex = 0xffffffff;
 };
 
 #endif

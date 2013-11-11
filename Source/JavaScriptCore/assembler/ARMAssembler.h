@@ -153,6 +153,12 @@ namespace JSC {
 
         ARMBuffer& buffer() { return m_buffer; }
 
+        static RegisterID firstRegister() { return ARMRegisters::r0; }
+        static RegisterID lastRegister() { return ARMRegisters::r15; }
+
+        static FPRegisterID firstFPRegister() { return ARMRegisters::d0; }
+        static FPRegisterID lastFPRegister() { return ARMRegisters::d31; }
+
         // ARM conditional constants
         typedef enum {
             EQ = 0x00000000, // Zero / Equal.
