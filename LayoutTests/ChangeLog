@@ -1,3 +1,9 @@
+2013-11-11  Oliver Hunt  <oliver@apple.com>
+
+        Whoops, fix test post move
+
+        * js/basic-set.html:
+
 2013-11-11  Simon Fraser  <simon.fraser@apple.com>
 
         Add a testcase for a tiled layer inside an iframe
