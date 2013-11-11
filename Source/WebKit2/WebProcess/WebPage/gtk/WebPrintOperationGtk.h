@@ -53,6 +53,7 @@ public:
     WebCore::PrintContext* printContext() const { return m_printContext; }
     GtkPrintSettings* printSettings() const { return m_printSettings.get(); }
     GtkPageSetup* pageSetup() const { return m_pageSetup.get(); }
+    PrintInfo::PrintMode printMode() const { return m_printMode; }
     void setNumberOfPagesToPrint(size_t numberOfPages) { m_numberOfPagesToPrint = numberOfPages; }
     unsigned int pagesToPrint() const { return m_pagesToPrint; }
     int pageCount() const;
@@ -95,6 +96,7 @@ protected:
     WebPage* m_webPage;
     GRefPtr<GtkPrintSettings> m_printSettings;
     GRefPtr<GtkPageSetup> m_pageSetup;
+    PrintInfo::PrintMode m_printMode;
     WebCore::PrintContext* m_printContext;
     uint64_t m_callbackID;
     RefPtr<cairo_t> m_cairoContext;

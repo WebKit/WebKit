@@ -47,7 +47,12 @@ namespace WebKit {
 struct PrintInfo {
     PrintInfo();
 #if PLATFORM(GTK)
-    explicit PrintInfo(GtkPrintSettings*, GtkPageSetup*);
+    enum PrintMode {
+        PrintModeAsync,
+        PrintModeSync
+    };
+
+    explicit PrintInfo(GtkPrintSettings*, GtkPageSetup*, PrintMode = PrintModeAsync);
 #else
     explicit PrintInfo(NSPrintInfo *);
 #endif
@@ -59,6 +64,7 @@ struct PrintInfo {
 #if PLATFORM(GTK)
     GRefPtr<GtkPrintSettings> printSettings;
     GRefPtr<GtkPageSetup> pageSetup;
+    PrintMode printMode;
 #endif
 
     void encode(CoreIPC::ArgumentEncoder&) const;

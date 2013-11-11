@@ -1,3 +1,52 @@
+2013-11-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Crash when printing via javascript in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=124043
+
+        Reviewed by Martin Robinson.
+
+        It happens because the print operation when started by the
+        WebProcess due to a DOM operation is supposed to be synchronous
+        and our print operation is always asynchronous. This is currently
+        handled only in the UI process because other ports print
+        synchronously in the WebProcess. In the GTK+ port we need to
+        notify the WebProcess that the print operation should run
+        synchronously when request by a DOM operation. Together with the
+        print settings and page setup we now send a print mode that can be
+        sync or async. When printing in sync mode we run a nested main loop
+        for the print operation, making sure that print sources have a
+        higher priority.
+
+        * Shared/PrintInfo.cpp:
+        (WebKit::PrintInfo::encode): Encode the print mode.
+        (WebKit::PrintInfo::decode): Decode the print mode.
+        * Shared/PrintInfo.h: Add PrintMode enum.
+        * Shared/gtk/PrintInfoGtk.cpp:
+        (WebKit::PrintInfo::PrintInfo): Initialize print mode.
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (drawPagesForPrintingCompleted): Do not call endPrinting() when
+        printing synchronously because WebPageProxy already calls it right
+        after sending the message to the WebProcess.
+        (webkitPrintOperationPrintPagesForFrame): Create the PrintInfo
+        struct with a print mode.
+        (webkitPrintOperationSetPrintMode): Helper private function to set
+        the print mode of the print operation.
+        * UIProcess/API/gtk/WebKitPrintOperationPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewPrintFrame): Set sync print mode when printing due
+        to a UIClient request.
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::PrintPagesData::PrintPagesData): Create a main loop when
+        printing synchronously.
+        (WebKit::WebPrintOperationGtk::WebPrintOperationGtk): Initialize
+        print mode.
+        (WebKit::WebPrintOperationGtk::printPagesIdleDone): Finish the
+        nested main loop when printing synchronously.
+        (WebKit::WebPrintOperationGtk::print): Run a nested main loop when
+        printing synchronously.
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.h:
+        (WebKit::WebPrintOperationGtk::printMode): Return the print mode.
+
 2013-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] [WebKit2] Crash when printing to a file via javascript

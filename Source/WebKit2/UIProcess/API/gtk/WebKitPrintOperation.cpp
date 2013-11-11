@@ -20,7 +20,6 @@
 #include "config.h"
 #include "WebKitPrintOperation.h"
 
-#include "PrintInfo.h"
 #include "WebKitPrintOperationPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
@@ -73,6 +72,7 @@ struct _WebKitPrintOperationPrivate {
 
     WebKitWebView* webView;
     gulong webViewDestroyedId;
+    PrintInfo::PrintMode printMode;
 
     GRefPtr<GtkPrintSettings> printSettings;
     GRefPtr<GtkPageSetup> pageSetup;
@@ -264,7 +264,10 @@ static void drawPagesForPrintingCompleted(WKErrorRef wkPrintError, WKErrorRef, v
 {
     GRefPtr<WebKitPrintOperation> printOperation = adoptGRef(WEBKIT_PRINT_OPERATION(context));
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(printOperation->priv->webView));
-    page->endPrinting();
+
+    // When running synchronously WebPageProxy::printFrame() calls endPrinting().
+    if (printOperation->priv->printMode == PrintInfo::PrintModeAsync)
+        page->endPrinting();
 
     const WebCore::ResourceError& resourceError = toImpl(wkPrintError)->platformError();
     if (!resourceError.isNull()) {
@@ -278,7 +281,7 @@ static void drawPagesForPrintingCompleted(WKErrorRef wkPrintError, WKErrorRef, v
 
 static void webkitPrintOperationPrintPagesForFrame(WebKitPrintOperation* printOperation, WebFrameProxy* webFrame, GtkPrintSettings* printSettings, GtkPageSetup* pageSetup)
 {
-    PrintInfo printInfo(printSettings, pageSetup);
+    PrintInfo printInfo(printSettings, pageSetup, printOperation->priv->printMode);
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(printOperation->priv->webView));
     page->drawPagesForPrinting(webFrame, printInfo, PrintFinishedCallback::create(g_object_ref(printOperation), &drawPagesForPrintingCompleted));
 }
@@ -298,6 +301,11 @@ WebKitPrintOperationResponse webkitPrintOperationRunDialogForFrame(WebKitPrintOp
 
     webkitPrintOperationPrintPagesForFrame(printOperation, webFrame, priv->printSettings.get(), priv->pageSetup.get());
     return response;
+}
+
+void webkitPrintOperationSetPrintMode(WebKitPrintOperation* printOperation, PrintInfo::PrintMode printMode)
+{
+    printOperation->priv->printMode = printMode;
 }
 
 /**
