@@ -40,7 +40,7 @@
 namespace WebCore {
     
 struct SameSizeAsRootInlineBox : public InlineFlowBox {
-    unsigned variables[5];
+    unsigned variables[7];
     void* pointers[4];
 };
 
@@ -52,15 +52,11 @@ static EllipsisBoxMap* gEllipsisBoxMap = 0;
 RootInlineBox::RootInlineBox(RenderBlockFlow& block)
     : InlineFlowBox(block)
     , m_lineBreakPos(0)
-    , m_lineBreakObj(0)
-    , m_lineTop(0)
-    , m_lineBottom(0)
-    , m_lineTopWithLeading(0)
-    , m_lineBottomWithLeading(0)
+    , m_lineBreakObj(nullptr)
+    , m_containingRegion(nullptr)
 {
     setIsHorizontal(block.isHorizontalWritingMode());
 }
-
 
 RootInlineBox::~RootInlineBox()
 {
@@ -247,25 +243,22 @@ void RootInlineBox::childRemoved(InlineBox* box)
 
 RenderRegion* RootInlineBox::containingRegion() const
 {
-    RenderRegion* region = m_fragmentationData ? m_fragmentationData->m_containingRegion : 0;
-
 #ifndef NDEBUG
-    if (region) {
+    if (m_containingRegion) {
         RenderFlowThread* flowThread = blockFlow().flowThreadContainingBlock();
         const RenderRegionList& regionList = flowThread->renderRegionList();
-        ASSERT(regionList.contains(region));
+        ASSERT(regionList.contains(m_containingRegion));
     }
 #endif
 
-    return region;
+    return m_containingRegion;
 }
 
 void RootInlineBox::setContainingRegion(RenderRegion* region)
 {
     ASSERT(!isDirty());
     ASSERT(blockFlow().flowThreadContainingBlock());
-    LineFragmentationData* fragmentationData  = ensureLineFragmentationData();
-    fragmentationData->m_containingRegion = region;
+    m_containingRegion = region;
 }
 
 LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache)

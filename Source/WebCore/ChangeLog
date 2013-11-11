@@ -1,3 +1,17 @@
+2013-11-11  Andreas Kling  <akling@apple.com>
+
+        Bring the LineFragmentationData back to RootInlineBox.
+        <https://webkit.org/b/124136>
+
+        Now that we have the simple line layout path, almost all the root
+        line boxes end up with some kind of fragmentation data, so we might
+        as well put the members back on RootInlineBox and avoid the extra
+        allocation (and indirection.)
+
+        1.74 MB progression on HTML5 spec at <http://whatwg.org/c>
+
+        Reviewed by Antti Koivisto.
+
 2013-11-10  Andreas Kling  <akling@apple.com>
 
         Shrink RenderInline.
