@@ -376,7 +376,6 @@
 		A10C1D8C1820305E0036883A /* WebPDFViewIPhone.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D871820305E0036883A /* WebPDFViewIPhone.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10C1D8D1820305E0036883A /* WebPDFViewPlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D881820305E0036883A /* WebPDFViewPlaceholder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10C1D8E1820305E0036883A /* WebPDFViewPlaceholder.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10C1D891820305E0036883A /* WebPDFViewPlaceholder.mm */; };
-		A10C1D901820307D0036883A /* WebKit.iOS.exp in Sources */ = {isa = PBXBuildFile; fileRef = A10C1D8F1820307D0036883A /* WebKit.iOS.exp */; };
 		A17A11B1180DC84800E5498C /* WebPluginPackagePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A17A11B0180DC84800E5498C /* WebPluginPackagePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5214FC713B975C8000015EF /* WebInspectorRemoteChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = A5214FC113B975C8000015EF /* WebInspectorRemoteChannel.h */; };
 		A5214FC813B975C8000015EF /* WebInspectorRemoteChannel.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5214FC213B975C8000015EF /* WebInspectorRemoteChannel.mm */; };
@@ -2271,7 +2270,6 @@
 				939810C10824BF01008DF038 /* WebIconDatabase.mm in Sources */,
 				51494CD70C7EBDE0004178C5 /* WebIconDatabaseClient.mm in Sources */,
 				5D7BF8150C2A1D90008CE06D /* WebInspector.mm in Sources */,
-				A10C1D901820307D0036883A /* WebKit.iOS.exp in Sources */,
 				06693DDD0BFBA85200216072 /* WebInspectorClient.mm in Sources */,
 				1C7B0C660EB2464D00A28502 /* WebInspectorClientCF.cpp in Sources */,
 				A57EB79013B97A4E008D691D /* WebInspectorClientRegistry.mm in Sources */,

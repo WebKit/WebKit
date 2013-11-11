@@ -1,3 +1,13 @@
+2013-11-11  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] .exp files are not source code
+        https://bugs.webkit.org/show_bug.cgi?id=124154
+
+        Reviewed by Andy Estes.
+
+        * WebKit.xcodeproj/project.pbxproj: Removed WebKit.iOS.exp from the Compile Sources build
+        phase.
+
 2013-11-07  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Windows WebKit makefile fixes.

@@ -1,3 +1,13 @@
+2013-11-11  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] .exp files are not source code
+        https://bugs.webkit.org/show_bug.cgi?id=124154
+
+        Reviewed by Andy Estes.
+
+        * Configurations/WebKit.xcconfig: Removed WebKit.iOS.exp from
+        EXCLUDED_SOURCE_FILE_NAMES_macosx.
+
 2013-11-09  Patrick Gansterer  <paroga@webkit.org>
 
         Move RunLoop from WebCore to WTF
