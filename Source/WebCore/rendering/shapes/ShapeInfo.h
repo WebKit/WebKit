@@ -105,10 +105,39 @@ public:
     const RenderType* owner() const { return m_renderer; }
     LayoutSize shapeSize() const { return m_shapeLogicalSize; }
 
-protected:
-    ShapeInfo(const RenderType* renderer): m_renderer(renderer) { }
+    LayoutRect computedShapePhysicalBoundingBox() const
+    {
+        LayoutRect physicalBoundingBox = computedShapeLogicalBoundingBox();
+        physicalBoundingBox.setX(physicalBoundingBox.x() + logicalLeftOffset());
+        physicalBoundingBox.setY(physicalBoundingBox.y() + logicalTopOffset());
+        if (m_renderer->style().isFlippedBlocksWritingMode())
+            physicalBoundingBox.setY(m_renderer->logicalHeight() - physicalBoundingBox.maxY());
+        if (!m_renderer->style().isHorizontalWritingMode())
+            physicalBoundingBox = physicalBoundingBox.transposedRect();
+        return physicalBoundingBox;
+    }
+
+    FloatPoint shapeToRendererPoint(FloatPoint point) const
+    {
+        FloatPoint result = FloatPoint(point.x() + logicalLeftOffset(), point.y() + logicalTopOffset());
+        if (m_renderer->style().isFlippedBlocksWritingMode())
+            result.setY(m_renderer->logicalHeight() - result.y());
+        if (!m_renderer->style().isHorizontalWritingMode())
+            result = result.transposedPoint();
+        return result;
+    }
+
+    FloatSize shapeToRendererSize(FloatSize size) const
+    {
+        if (!m_renderer->style().isHorizontalWritingMode())
+            return size.transposedSize();
+        return size;
+    }
 
     const Shape* computedShape() const;
+
+protected:
+    explicit ShapeInfo(const RenderType* renderer): m_renderer(renderer) { }
 
     virtual LayoutRect computedShapeLogicalBoundingBox() const = 0;
     virtual ShapeValue* shapeValue() const = 0;

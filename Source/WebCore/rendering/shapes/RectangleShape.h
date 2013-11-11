@@ -75,6 +75,11 @@ public:
     virtual void getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const OVERRIDE;
     virtual bool firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit&) const OVERRIDE;
 
+    LayoutUnit logicalRx() const { return m_bounds.rx(); }
+    LayoutUnit logicalRy() const { return m_bounds.ry(); }
+
+    virtual ShapeType type() const OVERRIDE { return Shape::RoundedRectangleType; }
+
 private:
     FloatRoundedRect shapeMarginBounds() const;
     FloatRoundedRect shapePaddingBounds() const;

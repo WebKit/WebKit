@@ -97,6 +97,10 @@ public:
     virtual void getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const OVERRIDE;
     virtual bool firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit&) const OVERRIDE;
 
+    virtual ShapeType type() const OVERRIDE { return Shape::PolygonType; }
+
+    const FloatPolygon& polygon() const { return m_polygon; }
+
 private:
     const FloatPolygon& shapeMarginBounds() const;
     const FloatPolygon& shapePaddingBounds() const;

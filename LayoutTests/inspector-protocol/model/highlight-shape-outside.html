@@ -1,0 +1,103 @@
+<html>
+<head>
+<style>
+body {
+    margin: 0;
+}
+.shape {
+    float: left;
+    width: 200px;
+    height: 200px;
+    margin-right: -200px;
+}
+.padded {
+    width: 100px;
+    height: 100px;
+    padding: 25px 75px 75px 25px;
+}
+.border-box {
+    box-sizing: border-box;
+}
+.vertical-lr {
+    -webkit-writing-mode: vertical-lr;
+}
+.vertical-rl {
+    -webkit-writing-mode: vertical-rl;
+}
+.rectangle {
+    -webkit-shape-outside: rectangle(50px, 50px, 100px, 50px);
+}
+.polygon {
+    -webkit-shape-outside: polygon(50px 50px, 100px 50px, 100px 100px, 50px 100px);
+}
+</style>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script type="text/javascript" src="../resources/shape-info-helper.js"></script>
+<script>
+function shapeTests() {
+    var tests = [
+    {
+        'selector' : '.rectangle',
+        'path' : ['M', 50, 50, 'L', 150, 50, 'L', 150, 100, 'L', 50, 100, 'L', 50, 50, 'Z']
+    },
+    {
+        'selector' : '.polygon',
+        'path' : ['M', 50, 50, 'L', 100, 50, 'L', 100, 100, 'L', 50, 100, 'Z']
+    },
+    {
+        'selector' : '.rectangle.padded',
+        'path' : ['M', 75, 75, 'L', 175, 75, 'L', 175, 125, 'L', 75, 125, 'L', 75, 75, 'Z']
+    },
+    {
+        'selector' : '.rectangle.padded.border-box',
+        'path' : ['M', 50, 50, 'L', 150, 50, 'L', 150, 100, 'L', 50, 100, 'L', 50, 50, 'Z']
+    },
+    {
+        'selector' : '.rectangle.vertical-lr',
+        'path' : ['M', 50, 50, 'L', 150, 50, 'L', 150, 100, 'L', 50, 100, 'L', 50, 50, 'Z']
+    },
+    {
+        'selector' : '.rectangle.vertical-rl',
+        'path' : ['M', 50, 50, 'L', 150, 50, 'L', 150, 100, 'L', 50, 100, 'L', 50, 50, 'Z']
+    },
+    {
+        'selector' : '.rectangle.padded.vertical-rl',
+        'path' : ['M', 75, 75, 'L', 175, 75, 'L', 175, 125, 'L', 75, 125, 'L', 75, 75, 'Z']
+    },
+    {
+        'selector' : '.rectangle.padded.vertical-rl.border-box',
+        'path' : ['M', 50, 50, 'L', 150, 50, 'L', 150, 100, 'L', 50, 100, 'L', 50, 50, 'Z']
+    }
+    ];
+
+    function doTests(tests) {
+        if (!tests.length) {
+            InspectorTest.completeTest();
+            return;
+        }
+        var test = tests[0];
+        tests = tests.splice(1);
+        InspectorTest.shapeOutsideInfo(test.selector, function(shapeOutside) {
+            var actual = shapeOutside.path.join(' ');
+            var expected = test.path.join(' ');
+            InspectorTest.assert(actual === expected, "Actual [" + actual + "] Expected [" + expected + "]");
+            doTests(tests);
+        });
+    }
+
+    doTests(tests);
+}
+window.onload = function() { ShapeInfoHelper.runShapeTest(shapeTests); }
+</script>
+</head>
+<body>
+    <div class='shape rectangle'></div>
+    <div class='shape polygon'></div>
+    <div class='shape padded rectangle'></div>
+    <div class='shape padded rectangle border-box'></div>
+    <div class='shape rectangle vertical-lr'></div>
+    <div class='shape rectangle vertical-rl'></div>
+    <div class='shape padded rectangle vertical-rl'></div>
+    <div class='shape padded rectangle vertical-rl border-box'></div>
+</body>
+</html>

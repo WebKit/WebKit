@@ -18,6 +18,9 @@ const regionNumberFont = "bold 40pt sans-serif";
 const regionNumberFillColor = "rgba(255, 255, 255, 0.9)";
 const regionNumberStrokeColor = "rgb(61, 127, 204)";
 
+// CSS Shapes highlight colors
+const shapeHighlightColor = "rgb(255, 105, 180)";
+
 function drawPausedInDebuggerMessage(message)
 {
     var pausedInDebugger = document.getElementById("paused-in-debugger");
@@ -181,6 +184,58 @@ function drawOutlinedQuad(quad, fillColor, outlineColor)
         context.strokeStyle = outlineColor;
         context.stroke();
     }
+    context.restore();
+}
+
+function pathCommand(context, commands, name, index, length) {
+    context[name].apply(context, commands.slice(index + 1, index + length + 1));
+    return index + length + 1;
+}
+
+function drawPath(context, commands, fillColor, outlineColor)
+{
+    context.save();
+    context.beginPath();
+
+    var commandsIndex = 0;
+    var commandsLength = commands.length;
+    while(commandsIndex < commandsLength) {
+        switch(commands[commandsIndex]) {
+        // 1 point
+        case 'M':
+            commandsIndex = pathCommand(context, commands, "moveTo", commandsIndex, 2);
+            break;
+        // 1 point
+        case 'L':
+            commandsIndex = pathCommand(context, commands, "lineTo", commandsIndex, 2);
+            break;
+        // 3 points
+        case 'C':
+            commandsIndex = pathCommand(context, commands, "bezierCurveTo", commandsIndex, 6);
+            break;
+        // 2 points
+        case 'Q':
+            commandsIndex = pathCommand(context, commands, "quadraticCurveTo", commandsIndex, 2);
+            break;
+        // 0 points
+        case 'Z':
+            commandsIndex = pathCommand(context, commands, "closePath", commandsIndex, 0);
+            break;
+        default:
+            commandsIndex++;
+        }
+    }
+
+    context.closePath();
+    context.fillStyle = fillColor;
+    context.fill();
+
+    if (outlineColor) {
+        context.lineWidth = 2;
+        context.strokeStyle = outlineColor;
+        context.stroke();
+    }
+
     context.restore();
 }
 
@@ -506,6 +561,13 @@ function _drawRegionsHighlight(regions)
     }
 }
 
+function _drawShapeHighlight(shapeInfo) {
+    if (shapeInfo.path)
+        drawPath(context, shapeInfo.path, shapeHighlightColor);
+    else
+        drawOutlinedQuad(shapeInfo.bounds, shapeHighlightColor, shapeHighlightColor);
+}
+
 function _drawFragmentHighlight(highlight)
 {
     if (!highlight.quads.length) {
@@ -579,6 +641,9 @@ function drawNodeHighlight(highlight)
 
     if (highlight.elementInfo && highlight.elementInfo.regionFlowInfo)
         _drawRegionsHighlight(highlight.elementInfo.regionFlowInfo.regions, highlight);
+
+    if (highlight.elementInfo && highlight.elementInfo.shapeOutsideInfo)
+        _drawShapeHighlight(highlight.elementInfo.shapeOutsideInfo);
 
     context.restore();
 

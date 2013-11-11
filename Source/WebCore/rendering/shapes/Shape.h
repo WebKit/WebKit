@@ -60,6 +60,12 @@ typedef Vector<LineSegment> SegmentList;
 
 class Shape {
 public:
+    enum ShapeType {
+        RoundedRectangleType,
+        PolygonType,
+        RasterType
+    };
+
     static PassOwnPtr<Shape> createShape(const BasicShape*, const LayoutSize& logicalBoxSize, WritingMode, Length margin, Length padding);
     static PassOwnPtr<Shape> createShape(const StyleImage*, float threshold, const LayoutSize& logicalBoxSize, WritingMode, Length margin, Length padding);
 
@@ -71,6 +77,8 @@ public:
     virtual void getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const = 0;
     virtual void getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const = 0;
     virtual bool firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit& result) const = 0;
+
+    virtual ShapeType type() const = 0;
 
 protected:
     float shapeMargin() const { return m_margin; }

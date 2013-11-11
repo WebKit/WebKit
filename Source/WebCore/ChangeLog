@@ -1,3 +1,47 @@
+2013-11-11  Bear Travis  <betravis@adobe.com>
+
+        Web Inspector: [CSS Shapes] Highlight shape-outside when its element is selected in the Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=124071
+
+        Reviewed by Timothy Hatcher.
+
+        Adding code to pass computed shape information (path and bounds) to the Inspector overlay
+        canvas, and the code to display it. The code creates a path based on ShapeInfo's computed
+        shape. The shape highlight draws whenever an element is highlighted, via selection in
+        the Inspector elements view.
+
+        Test: inspector-protocol/model/highlight-shape-outside.html
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::localPointToRoot): Convert a local point to be relative to the root view.
+        (WebCore::appendPathCommandAndPoints): Helper for building a single segment's worth
+        of the overall path.
+        (WebCore::appendPathSegment): Build a single segment's worth of the overall path.
+        (WebCore::buildObjectForShapeOutside): Build an object to pass to the Inspector overlay
+        that represents the shape.
+        (WebCore::buildObjectForElementInfo): Call buildObjectForShapeOutside and pass the
+        resulting object along.
+        * inspector/InspectorOverlayPage.js:
+        (pathCommand): Draw a single path command.
+        (drawPath): Draw the overall path.
+        (_drawShapeHighlight): Draw the highlight for the given shapeInfo.
+        (drawNodeHighlight): Call _drawShapeHighlight.
+        * rendering/shapes/PolygonShape.h:
+        (WebCore::PolygonShape::polygon): Expose the underlying vertex information for a
+        PolygonShape.
+        * rendering/shapes/RasterShape.h:
+        * rendering/shapes/RectangleShape.h:
+        (WebCore::RectangleShape::logicalRx): Expose the logical radii for a shape.
+        (WebCore::RectangleShape::logicalRy): Ditto.
+        * rendering/shapes/Shape.h:
+        * rendering/shapes/ShapeInfo.h:
+        (WebCore::ShapeInfo::computedShapePhysicalBoundingBox): The physical bounds of a
+        shape in renderer coordinates.
+        (WebCore::ShapeInfo::shapeToRendererPoint): Convert shape coordinates to renderer
+        coordinates.
+        (WebCore::ShapeInfo::shapeToRendererSize): Ditto.
+        (WebCore::ShapeInfo::ShapeInfo):
+
 2013-11-11  Alexey Proskuryakov  <ap@apple.com>
 
         Support WebCrypto KeyPair interface

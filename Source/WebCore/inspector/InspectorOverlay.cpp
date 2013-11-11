@@ -43,6 +43,8 @@
 #include "MainFrame.h"
 #include "Node.h"
 #include "Page.h"
+#include "PolygonShape.h"
+#include "RectangleShape.h"
 #include "RenderBoxModelObject.h"
 #include "RenderElement.h"
 #include "RenderFlowThread.h"
@@ -532,6 +534,125 @@ static PassRefPtr<InspectorArray> buildObjectForRendererFragments(RenderObject* 
     return fragmentsArray.release();
 }
 
+#if ENABLE(CSS_SHAPES)
+static FloatPoint localPointToRoot(RenderObject* renderer, const FrameView* mainView, const FrameView* view, const FloatPoint& point)
+{
+    FloatPoint result = renderer->localToAbsolute(point);
+    result = view->contentsToRootView(roundedIntPoint(result));
+    result += mainView->scrollOffset();
+    return result;
+}
+
+struct PathApplyInfo {
+    FrameView* rootView;
+    FrameView* view;
+    InspectorArray* array;
+    RenderObject* renderer;
+};
+
+static void appendPathCommandAndPoints(PathApplyInfo* info, const String& command, const FloatPoint points[], unsigned length)
+{
+    FloatPoint point;
+    info->array->pushString(command);
+    for (unsigned i = 0; i < length; i++) {
+        point = localPointToRoot(info->renderer, info->rootView, info->view, points[i]);
+        info->array->pushNumber(point.x());
+        info->array->pushNumber(point.y());
+    }
+}
+
+static void appendPathSegment(void* info, const PathElement* pathElement)
+{
+    PathApplyInfo* pathApplyInfo = static_cast<PathApplyInfo*>(info);
+    FloatPoint point;
+    switch (pathElement->type) {
+    // The points member will contain 1 value.
+    case PathElementMoveToPoint:
+        appendPathCommandAndPoints(pathApplyInfo, ASCIILiteral("M"), pathElement->points, 1);
+        break;
+    // The points member will contain 1 value.
+    case PathElementAddLineToPoint:
+        appendPathCommandAndPoints(pathApplyInfo, ASCIILiteral("L"), pathElement->points, 1);
+        break;
+    // The points member will contain 3 values.
+    case PathElementAddCurveToPoint:
+        appendPathCommandAndPoints(pathApplyInfo, ASCIILiteral("C"), pathElement->points, 3);
+        break;
+    // The points member will contain 2 values.
+    case PathElementAddQuadCurveToPoint:
+        appendPathCommandAndPoints(pathApplyInfo, ASCIILiteral("Q"), pathElement->points, 2);
+        break;
+    // The points member will contain no values.
+    case PathElementCloseSubpath:
+        appendPathCommandAndPoints(pathApplyInfo, ASCIILiteral("Z"), nullptr, 0);
+        break;
+    }
+}
+
+static PassRefPtr<InspectorObject> buildObjectForShapeOutside(Frame* containingFrame, RenderBox* renderer)
+{
+    const ShapeOutsideInfo* shapeOutsideInfo = renderer->shapeOutsideInfo();
+    if (!shapeOutsideInfo)
+        return nullptr;
+
+    RefPtr<InspectorObject> shapeObject = InspectorObject::create();
+    LayoutRect shapeBounds = shapeOutsideInfo->computedShapePhysicalBoundingBox();
+    FloatQuad shapeQuad = renderer->localToAbsoluteQuad(FloatRect(shapeBounds));
+    contentsQuadToPage(containingFrame->page()->mainFrame().view(), containingFrame->view(), shapeQuad);
+    shapeObject->setArray("bounds", buildArrayForQuad(shapeQuad));
+
+    Path path;
+    switch (shapeOutsideInfo->computedShape()->type()) {
+    case Shape::RoundedRectangleType: {
+        const RectangleShape* shape = static_cast<const RectangleShape*>(shapeOutsideInfo->computedShape());
+        FloatSize radii(shape->logicalRx(), shape->logicalRy());
+        radii = shapeOutsideInfo->shapeToRendererSize(radii);
+        path.addRoundedRect(shapeBounds, radii, Path::PreferBezierRoundedRect);
+        break;
+    }
+
+    case Shape::PolygonType: {
+        const PolygonShape* shape = static_cast<const PolygonShape*>(shapeOutsideInfo->computedShape());
+        const FloatPolygon& polygon = shape->polygon();
+        FloatPoint vertex;
+
+        if (polygon.numberOfVertices()) {
+            vertex = shapeOutsideInfo->shapeToRendererPoint(polygon.vertexAt(0));
+            path.moveTo(vertex);
+        }
+
+        for (size_t i = 1; i < polygon.numberOfVertices(); i++) {
+            FloatPoint vertex = shapeOutsideInfo->shapeToRendererPoint(polygon.vertexAt(i));
+            path.addLineTo(vertex);
+        }
+
+        if (polygon.numberOfVertices())
+            path.closeSubpath();
+        break;
+    }
+
+    case Shape::RasterType:
+        // FIXME: Bug 124080 - RasterShapes are not yet supported and only display their shape bounds
+        break;
+    }
+
+    if (path.length()) {
+        RefPtr<InspectorArray> shapePath = InspectorArray::create();
+        PathApplyInfo info;
+        info.rootView = containingFrame->page()->mainFrame().view();
+        info.view = containingFrame->view();
+        info.array = shapePath.get();
+        info.renderer = renderer;
+
+        path.apply(&info, &appendPathSegment);
+
+        shapeObject->setArray("path", shapePath.release());
+    }
+
+    return shapeObject.release();
+}
+#endif
+
 static PassRefPtr<InspectorObject> buildObjectForElementInfo(Node* node)
 {
     if (!node->isElementNode() || !node->document().frame())
@@ -584,6 +705,14 @@ static PassRefPtr<InspectorObject> buildObjectForElementInfo(Node* node)
         contentFlowInfo->setString("name", toRenderNamedFlowThread(containingFlowThread)->flowThreadName());
         elementInfo->setObject("contentFlowInfo", contentFlowInfo.release());
     }
+
+#if ENABLE(CSS_SHAPES)
+    if (renderer->isBox()) {
+        RenderBox* renderBox = toRenderBox(renderer);
+        if (RefPtr<InspectorObject> shapeObject = buildObjectForShapeOutside(containingFrame, renderBox))
+            elementInfo->setObject("shapeOutsideInfo", shapeObject.release());
+    }
+#endif
 
     return elementInfo.release();
 }

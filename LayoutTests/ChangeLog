@@ -1,3 +1,21 @@
+2013-11-11  Bear Travis  <betravis@adobe.com>
+
+        Web Inspector: [CSS Shapes] Highlight shape-outside when its element is selected in the Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=124071
+
+        Reviewed by Timothy Hatcher.
+
+        Test that the information passed to the Inspector overlay properly corresponds to the
+        underlying shape. Retrieving the shape highlight information involves a series of
+        steps and has been abstracted into shape-info-helper.js, which supplies
+        Inspector.shapeOutsideInfo inside an Inspector test, and the ShapeInfoHelper.runShapesTest
+        method to begin a test.
+
+        * inspector-protocol/model/highlight-shape-outside-expected.txt: Added.
+        * inspector-protocol/model/highlight-shape-outside.html: Added.
+        * inspector-protocol/resources/shape-info-helper.js: Added.
+        (window.ShapeInfoHelper): Exposes ShapeInfoHelper.runShapesTest.
+
 2013-11-11  Samuel White  <samuel_white@apple.com>
 
         AX: support helpText() in DumpRenderTree
