@@ -30,6 +30,7 @@
 
 #include "CCallHelpers.h"
 #include "CallFrameInlines.h"
+#include "FTLThunks.h"
 #include "GCAwareJITStubRoutine.h"
 #include "LinkBuffer.h"
 #include "Operations.h"
@@ -52,10 +53,44 @@ namespace JSC {
 // give the FTL closure call patching support until we switch to the C stack - but when we do that,
 // callFrameRegister will disappear.
 
+static FunctionPtr readCallTarget(RepatchBuffer& repatchBuffer, CodeLocationCall call)
+{
+    FunctionPtr result = MacroAssembler::readCallTarget(call);
+#if ENABLE(FTL_JIT)
+    CodeBlock* codeBlock = repatchBuffer.codeBlock();
+    if (codeBlock->jitType() == JITCode::FTLJIT) {
+        return FunctionPtr(codeBlock->vm()->ftlThunks->keyForSlowPathCallThunk(
+            MacroAssemblerCodePtr::createFromExecutableAddress(
+                result.executableAddress())).callTarget());
+    }
+#else
+    UNUSED_PARAM(repatchBuffer);
+#endif // ENABLE(FTL_JIT)
+    return result;
+}
+
+static void repatchCall(RepatchBuffer& repatchBuffer, CodeLocationCall call, FunctionPtr newCalleeFunction)
+{
+#if ENABLE(FTL_JIT)
+    CodeBlock* codeBlock = repatchBuffer.codeBlock();
+    if (codeBlock->jitType() == JITCode::FTLJIT) {
+        VM& vm = *codeBlock->vm();
+        FTL::Thunks& thunks = *vm.ftlThunks;
+        FTL::SlowPathCallKey key = thunks.keyForSlowPathCallThunk(
+            MacroAssemblerCodePtr::createFromExecutableAddress(
+                MacroAssembler::readCallTarget(call).executableAddress()));
+        key = key.withCallTarget(newCalleeFunction.executableAddress());
+        newCalleeFunction = FunctionPtr(
+            thunks.getSlowPathCallThunk(vm, key).code().executableAddress());
+    }
+#endif // ENABLE(FTL_JIT)
+    repatchBuffer.relink(call, newCalleeFunction);
+}
+
 static void repatchCall(CodeBlock* codeblock, CodeLocationCall call, FunctionPtr newCalleeFunction)
 {
     RepatchBuffer repatchBuffer(codeblock);
-    repatchBuffer.relink(call, newCalleeFunction);
+    repatchCall(repatchBuffer, call, newCalleeFunction);
 }
 
 static void repatchByIdSelfAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo, Structure* structure, PropertyOffset offset, const FunctionPtr &slowPathFunction, bool compact)
@@ -63,7 +98,7 @@ static void repatchByIdSelfAccess(CodeBlock* codeBlock, StructureStubInfo& stubI
     RepatchBuffer repatchBuffer(codeBlock);
 
     // Only optimize once!
-    repatchBuffer.relink(stubInfo.callReturnLocation, slowPathFunction);
+    repatchCall(repatchBuffer, stubInfo.callReturnLocation, slowPathFunction);
 
     // Patch the structure check & the offset of the load.
     repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelPtrAtOffset(-(intptr_t)stubInfo.patch.deltaCheckImmToCall), structure);
@@ -314,7 +349,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         
         RepatchBuffer repatchBuffer(codeBlock);
         replaceWithJump(repatchBuffer, stubInfo, stubInfo.stubRoutine->code().code());
-        repatchBuffer.relink(stubInfo.callReturnLocation, operationGetById);
+        repatchCall(repatchBuffer, stubInfo.callReturnLocation, operationGetById);
         
         return true;
     }
@@ -362,7 +397,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
     
     RepatchBuffer repatchBuffer(codeBlock);
     replaceWithJump(repatchBuffer, stubInfo, stubInfo.stubRoutine->code().code());
-    repatchBuffer.relink(stubInfo.callReturnLocation, operationGetByIdBuildList);
+    repatchCall(repatchBuffer, stubInfo.callReturnLocation, operationGetByIdBuildList);
     
     stubInfo.initGetByIdChain(*vm, codeBlock->ownerExecutable(), structure, prototypeChain, count, true);
     return true;
@@ -1000,7 +1035,7 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
                 stubInfo.callReturnLocation.jumpAtOffset(
                     stubInfo.patch.deltaCallToStructCheck),
                 CodeLocationLabel(stubInfo.stubRoutine->code().code()));
-            repatchBuffer.relink(stubInfo.callReturnLocation, appropriateListBuildingPutByIdFunction(slot, putKind));
+            repatchCall(repatchBuffer, stubInfo.callReturnLocation, appropriateListBuildingPutByIdFunction(slot, putKind));
             
             stubInfo.initPutByIdTransition(*vm, codeBlock->ownerExecutable(), oldStructure, structure, prototypeChain, putKind == Direct);
             
@@ -1105,7 +1140,7 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
         repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.deltaCallToStructCheck), CodeLocationLabel(stubRoutine->code().code()));
         
         if (list->isFull())
-            repatchBuffer.relink(stubInfo.callReturnLocation, appropriateGenericPutByIdFunction(slot, putKind));
+            repatchCall(repatchBuffer, stubInfo.callReturnLocation, appropriateGenericPutByIdFunction(slot, putKind));
         
         return true;
     }
@@ -1380,7 +1415,7 @@ void linkClosureCall(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* cal
 
 void resetGetByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
 {
-    repatchBuffer.relink(stubInfo.callReturnLocation, operationGetByIdOptimize);
+    repatchCall(repatchBuffer, stubInfo.callReturnLocation, operationGetByIdOptimize);
     CodeLocationDataLabelPtr structureLabel = stubInfo.callReturnLocation.dataLabelPtrAtOffset(-(intptr_t)stubInfo.patch.deltaCheckImmToCall);
     if (MacroAssembler::canJumpReplacePatchableBranchPtrWithPatch()) {
         repatchBuffer.revertJumpReplacementToPatchableBranchPtrWithPatch(
@@ -1402,7 +1437,7 @@ void resetGetByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
 
 void resetPutByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
 {
-    V_JITOperation_ESsiJJI unoptimizedFunction = bitwise_cast<V_JITOperation_ESsiJJI>(MacroAssembler::readCallTarget(stubInfo.callReturnLocation).executableAddress());
+    V_JITOperation_ESsiJJI unoptimizedFunction = bitwise_cast<V_JITOperation_ESsiJJI>(readCallTarget(repatchBuffer, stubInfo.callReturnLocation).executableAddress());
     V_JITOperation_ESsiJJI optimizedFunction;
     if (unoptimizedFunction == operationPutByIdStrict || unoptimizedFunction == operationPutByIdStrictBuildList)
         optimizedFunction = operationPutByIdStrictOptimize;
@@ -1414,7 +1449,7 @@ void resetPutByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
         ASSERT(unoptimizedFunction == operationPutByIdDirectNonStrict || unoptimizedFunction == operationPutByIdDirectNonStrictBuildList);
         optimizedFunction = operationPutByIdDirectNonStrictOptimize;
     }
-    repatchBuffer.relink(stubInfo.callReturnLocation, optimizedFunction);
+    repatchCall(repatchBuffer, stubInfo.callReturnLocation, optimizedFunction);
     CodeLocationDataLabelPtr structureLabel = stubInfo.callReturnLocation.dataLabelPtrAtOffset(-(intptr_t)stubInfo.patch.deltaCheckImmToCall);
     if (MacroAssembler::canJumpReplacePatchableBranchPtrWithPatch()) {
         repatchBuffer.revertJumpReplacementToPatchableBranchPtrWithPatch(

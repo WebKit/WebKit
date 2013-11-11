@@ -65,7 +65,7 @@ struct StackMaps {
         void parse(DataView*, unsigned& offset);
         void dump(PrintStream& out) const;
         
-        GPRReg directGPR(StackMaps&) const;
+        GPRReg directGPR() const;
         void restoreInto(MacroAssembler&, StackMaps&, char* savedRegisters, GPRReg result) const;
     };
     

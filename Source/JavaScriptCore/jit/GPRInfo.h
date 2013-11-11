@@ -339,7 +339,6 @@ public:
         };
         return nameForRegister[reg];
     }
-private:
 
     static const unsigned InvalidIndex = 0xffffffff;
 };
@@ -421,9 +420,7 @@ public:
         ASSERT(reg != InvalidGPRReg);
         ASSERT(static_cast<int>(reg) < 16);
         static const unsigned indexForRegister[16] = { 0, 2, 1, 3, InvalidIndex, InvalidIndex, 5, 4, 6, 7, 8, InvalidIndex, InvalidIndex, 9, InvalidIndex, InvalidIndex };
-        unsigned result = indexForRegister[reg];
-        ASSERT(result != InvalidIndex);
-        return result;
+        return indexForRegister[reg];
     }
 
     static const char* debugName(GPRReg reg)
@@ -438,7 +435,6 @@ public:
         };
         return nameForRegister[reg];
     }
-private:
 
     static const unsigned InvalidIndex = 0xffffffff;
 };
@@ -511,7 +507,6 @@ public:
         };
         return nameForRegister[reg];
     }
-private:
 
     static const unsigned InvalidIndex = 0xffffffff;
 };
@@ -610,7 +605,6 @@ public:
         };
         return nameForRegister[reg];
     }
-private:
 
     static const unsigned InvalidIndex = 0xffffffff;
 };

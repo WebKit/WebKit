@@ -84,7 +84,9 @@ public:
         return result;
     }
 
-    static Location forStackmaps(const StackMaps&, const StackMaps::Location&);
+    // You can pass a null StackMaps if you are confident that the location doesn't
+    // involve a wide constant.
+    static Location forStackmaps(const StackMaps*, const StackMaps::Location&);
     
     Kind kind() const { return m_kind; }
     

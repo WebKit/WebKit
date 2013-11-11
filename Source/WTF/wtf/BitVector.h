@@ -181,6 +181,16 @@ public:
         ASSERT(isInline());
     }
     
+    void filter(const BitVector& other)
+    {
+        if (!isInline() || !other.isInline()) {
+            filterSlow(other);
+            return;
+        }
+        m_bitsOrPointer &= other.m_bitsOrPointer;
+        ASSERT(isInline());
+    }
+    
     void exclude(const BitVector& other)
     {
         if (!isInline() || !other.isInline()) {
@@ -302,6 +312,7 @@ private:
     WTF_EXPORT_PRIVATE void setSlow(const BitVector& other);
     
     WTF_EXPORT_PRIVATE void mergeSlow(const BitVector& other);
+    WTF_EXPORT_PRIVATE void filterSlow(const BitVector& other);
     WTF_EXPORT_PRIVATE void excludeSlow(const BitVector& other);
     
     WTF_EXPORT_PRIVATE size_t bitCountSlow() const;

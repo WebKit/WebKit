@@ -61,6 +61,11 @@ public:
     void* callTarget() const { return m_callTarget; }
     ptrdiff_t offset() const { return m_offset; }
     
+    SlowPathCallKey withCallTarget(void* callTarget)
+    {
+        return SlowPathCallKey(usedRegisters(), callTarget, offset());
+    }
+    
     void dump(PrintStream&) const;
     
     enum EmptyValueTag { EmptyValue };

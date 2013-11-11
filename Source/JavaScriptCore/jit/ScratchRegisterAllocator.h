@@ -44,9 +44,21 @@ public:
         , m_didReuseRegisters(false)
     {
     }
-    
-    template<typename T>
-    void lock(T reg) { m_lockedRegisters.set(reg); }
+
+    void lock(GPRReg reg)
+    {
+        unsigned index = GPRInfo::toIndex(reg);
+        if (index == GPRInfo::InvalidIndex)
+            return;
+        m_lockedRegisters.setGPRByIndex(index);
+    }
+    void lock(FPRReg reg)
+    {
+        unsigned index = FPRInfo::toIndex(reg);
+        if (index == FPRInfo::InvalidIndex)
+            return;
+        m_lockedRegisters.setFPRByIndex(index);
+    }
     
     template<typename BankInfo>
     typename BankInfo::RegisterType allocateScratch()

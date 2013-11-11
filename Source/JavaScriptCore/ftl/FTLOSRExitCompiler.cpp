@@ -176,8 +176,8 @@ static void compileStub(
     exit.m_code = FINALIZE_CODE_IF(
         shouldShowDisassembly(),
         patchBuffer,
-        ("FTL OSR exit #%u (bc#%u, %s) from %s, with operands = %s, and record = %s",
-            exitID, exit.m_codeOrigin.bytecodeIndex,
+        ("FTL OSR exit #%u (%s, %s) from %s, with operands = %s, and record = %s",
+            exitID, toCString(exit.m_codeOrigin).data(),
             exitKindToString(exit.m_kind), toCString(*codeBlock).data(),
             toCString(ignoringContext<DumpContext>(exit.m_values)).data(),
             toCString(*record).data()));

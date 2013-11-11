@@ -1,3 +1,18 @@
+2013-11-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Switch FTL GetById/PutById IC's over to using AnyRegCC
+        https://bugs.webkit.org/show_bug.cgi?id=124094
+
+        Reviewed by Sam Weinig.
+        
+        I needed to add another set operation, namely filter(), which is an in-place set
+        intersection.
+
+        * wtf/BitVector.cpp:
+        (WTF::BitVector::filterSlow):
+        * wtf/BitVector.h:
+        (WTF::BitVector::filter):
+
 2013-11-10  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Build break on Ubuntu 13.10

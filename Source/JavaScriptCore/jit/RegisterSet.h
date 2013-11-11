@@ -81,6 +81,7 @@ public:
     bool get(FPRReg reg) const { return m_vector.get(MacroAssembler::registerIndex(reg)); }
     
     void merge(const RegisterSet& other) { m_vector.merge(other.m_vector); }
+    void filter(const RegisterSet& other) { m_vector.filter(other.m_vector); }
     void exclude(const RegisterSet& other) { m_vector.exclude(other.m_vector); }
     
     size_t numberOfSetRegisters() const { return m_vector.bitCount(); }

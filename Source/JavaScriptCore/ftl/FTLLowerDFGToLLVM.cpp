@@ -1275,10 +1275,12 @@ private:
 
         // Arguments: id, bytes, target, numArgs, args...
         unsigned stackmapID = m_stackmapIDs++;
-        setJSValue(m_out.call(
+        LValue call = m_out.call(
             m_out.patchpointInt64Intrinsic(),
             m_out.constInt32(stackmapID), m_out.constInt32(sizeOfGetById()),
-            constNull(m_out.ref8), m_out.constInt32(2), m_callFrame, base));
+            constNull(m_out.ref8), m_out.constInt32(2), m_callFrame, base);
+        setInstructionCallingConvention(call, LLVMAnyRegCallConv);
+        setJSValue(call);
         
         m_ftlState.getByIds.append(GetByIdDescriptor(stackmapID, m_node->codeOrigin, uid));
     }
@@ -1294,10 +1296,11 @@ private:
 
         // Arguments: id, bytes, target, numArgs, args...
         unsigned stackmapID = m_stackmapIDs++;
-        m_out.call(
+        LValue call = m_out.call(
             m_out.patchpointVoidIntrinsic(),
             m_out.constInt32(stackmapID), m_out.constInt32(sizeOfPutById()),
             constNull(m_out.ref8), m_out.constInt32(3), m_callFrame, base, value);
+        setInstructionCallingConvention(call, LLVMAnyRegCallConv);
         
         m_ftlState.putByIds.append(PutByIdDescriptor(
             stackmapID, m_node->codeOrigin, uid,

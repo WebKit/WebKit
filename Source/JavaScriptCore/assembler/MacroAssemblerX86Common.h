@@ -34,11 +34,12 @@
 namespace JSC {
 
 class MacroAssemblerX86Common : public AbstractMacroAssembler<X86Assembler> {
-protected:
+public:
 #if CPU(X86_64)
     static const X86Registers::RegisterID scratchRegister = X86Registers::r11;
 #endif
 
+protected:
     static const int DoubleConditionBitInvert = 0x10;
     static const int DoubleConditionBitSpecial = 0x20;
     static const int DoubleConditionBits = DoubleConditionBitInvert | DoubleConditionBitSpecial;

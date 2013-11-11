@@ -334,9 +334,39 @@ public:
     {
         dumpWithName("CodePtr", out);
     }
+    
+    enum EmptyValueTag { EmptyValue };
+    enum DeletedValueTag { DeletedValue };
+    
+    MacroAssemblerCodePtr(EmptyValueTag)
+        : m_value(emptyValue())
+    {
+    }
+    
+    MacroAssemblerCodePtr(DeletedValueTag)
+        : m_value(deletedValue())
+    {
+    }
+    
+    bool isEmptyValue() const { return m_value == emptyValue(); }
+    bool isDeletedValue() const { return m_value == deletedValue(); }
+    
+    unsigned hash() const { return PtrHash<void*>::hash(m_value); }
 
 private:
+    static void* emptyValue() { return bitwise_cast<void*>(static_cast<intptr_t>(1)); }
+    static void* deletedValue() { return bitwise_cast<void*>(static_cast<intptr_t>(2)); }
+    
     void* m_value;
+};
+
+struct MacroAssemblerCodePtrHash {
+    static unsigned hash(const MacroAssemblerCodePtr& ptr) { return ptr.hash(); }
+    static bool equal(const MacroAssemblerCodePtr& a, const MacroAssemblerCodePtr& b)
+    {
+        return a == b;
+    }
+    static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
 // MacroAssemblerCodeRef:
@@ -419,5 +449,17 @@ private:
 };
 
 } // namespace JSC
+
+namespace WTF {
+
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<JSC::MacroAssemblerCodePtr> {
+    typedef JSC::MacroAssemblerCodePtrHash Hash;
+};
+
+template<typename T> struct HashTraits;
+template<> struct HashTraits<JSC::MacroAssemblerCodePtr> : public CustomHashTraits<JSC::MacroAssemblerCodePtr> { };
+
+} // namespace WTF
 
 #endif // MacroAssemblerCodeRef_h

@@ -45,6 +45,7 @@ class RepatchBuffer {
 
 public:
     RepatchBuffer(CodeBlock* codeBlock)
+        : m_codeBlock(codeBlock)
     {
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
         RefPtr<JITCode> code = codeBlock->jitCode();
@@ -52,8 +53,6 @@ public:
         m_size = code->size();
 
         ExecutableAllocator::makeWritable(m_start, m_size);
-#else
-        UNUSED_PARAM(codeBlock);
 #endif
     }
 
@@ -63,6 +62,8 @@ public:
         ExecutableAllocator::makeExecutable(m_start, m_size);
 #endif
     }
+    
+    CodeBlock* codeBlock() const { return m_codeBlock; }
 
     void relink(CodeLocationJump jump, CodeLocationLabel destination)
     {
@@ -176,6 +177,7 @@ public:
     }
 
 private:
+    CodeBlock* m_codeBlock;
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
     void* m_start;
     size_t m_size;

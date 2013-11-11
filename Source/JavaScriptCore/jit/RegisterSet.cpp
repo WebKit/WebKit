@@ -59,7 +59,6 @@ RegisterSet RegisterSet::calleeSaveRegisters()
 #if CPU(X86_64)
     result.set(X86Registers::ebx);
     result.set(X86Registers::ebp);
-    result.set(X86Registers::r10);
     result.set(X86Registers::r12);
     result.set(X86Registers::r13);
     result.set(X86Registers::r14);

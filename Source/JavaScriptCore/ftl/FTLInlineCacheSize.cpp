@@ -33,38 +33,18 @@
 
 namespace JSC { namespace FTL {
 
-static size_t s_sizeOfGetById;
-static size_t s_sizeOfPutById;
+// These sizes are x86-64-specific, and were found empirically. They have to cover the worst
+// possible combination of registers leading to the largest possible encoding of each
+// instruction in the IC.
 
 size_t sizeOfGetById()
 {
-    if (s_sizeOfGetById)
-        return s_sizeOfGetById;
-    
-    MacroAssembler jit;
-    
-    JITGetByIdGenerator generator(
-        0, CodeOrigin(), RegisterSet(), GPRInfo::callFrameRegister,
-        JSValueRegs(GPRInfo::regT6), JSValueRegs(GPRInfo::regT7), false);
-    generator.generateFastPath(jit);
-    
-    return s_sizeOfGetById = jit.m_assembler.codeSize();
+    return 29;
 }
 
 size_t sizeOfPutById()
 {
-    if (s_sizeOfPutById)
-        return s_sizeOfPutById;
-    
-    MacroAssembler jit;
-    
-    JITPutByIdGenerator generator(
-        0, CodeOrigin(), RegisterSet(), GPRInfo::callFrameRegister,
-        JSValueRegs(GPRInfo::regT6), JSValueRegs(GPRInfo::regT7), GPRInfo::regT8, false,
-        NotStrictMode, NotDirect);
-    generator.generateFastPath(jit);
-    
-    return s_sizeOfPutById = jit.m_assembler.codeSize();
+    return 32;
 }
 
 } } // namespace JSC::FTL

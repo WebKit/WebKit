@@ -35,7 +35,7 @@
 
 namespace JSC { namespace FTL {
 
-Location Location::forStackmaps(const StackMaps& stackmaps, const StackMaps::Location& location)
+Location Location::forStackmaps(const StackMaps* stackmaps, const StackMaps::Location& location)
 {
     switch (location.kind) {
     case StackMaps::Location::Unprocessed:
@@ -53,7 +53,8 @@ Location Location::forStackmaps(const StackMaps& stackmaps, const StackMaps::Loc
         return forConstant(location.offset);
         
     case StackMaps::Location::ConstantIndex:
-        return forConstant(stackmaps.constants[location.offset].integer);
+        ASSERT(stackmaps);
+        return forConstant(stackmaps->constants[location.offset].integer);
     }
     
     RELEASE_ASSERT_NOT_REACHED();

@@ -188,14 +188,12 @@ static void fixFunctionBasedOnStackMaps(
             
             StackMaps::Record& record = iter->value;
             
-            UNUSED_PARAM(record); // FIXME: use AnyRegs.
-
             // FIXME: LLVM should tell us which registers are live.
             RegisterSet usedRegisters = RegisterSet::allRegisters();
             
-            GPRReg callFrameRegister = GPRInfo::argumentGPR0;
-            GPRReg base = GPRInfo::argumentGPR1;
-            GPRReg result = GPRInfo::returnValueGPR;
+            GPRReg result = record.locations[0].directGPR();
+            GPRReg callFrameRegister = record.locations[1].directGPR();
+            GPRReg base = record.locations[2].directGPR();
             
             JITGetByIdGenerator gen(
                 codeBlock, getById.codeOrigin(), usedRegisters, callFrameRegister,
@@ -224,19 +222,17 @@ static void fixFunctionBasedOnStackMaps(
             
             StackMaps::Record& record = iter->value;
             
-            UNUSED_PARAM(record); // FIXME: use AnyRegs.
-
             // FIXME: LLVM should tell us which registers are live.
             RegisterSet usedRegisters = RegisterSet::allRegisters();
             
-            GPRReg callFrameRegister = GPRInfo::argumentGPR0;
-            GPRReg base = GPRInfo::argumentGPR1;
-            GPRReg value = GPRInfo::argumentGPR2;
+            GPRReg callFrameRegister = record.locations[0].directGPR();
+            GPRReg base = record.locations[1].directGPR();
+            GPRReg value = record.locations[2].directGPR();
             
             JITPutByIdGenerator gen(
                 codeBlock, putById.codeOrigin(), usedRegisters, callFrameRegister,
-                JSValueRegs(base), JSValueRegs(value), GPRInfo::argumentGPR3, false,
-                putById.ecmaMode(), putById.putKind());
+                JSValueRegs(base), JSValueRegs(value), MacroAssembler::scratchRegister,
+                false, putById.ecmaMode(), putById.putKind());
             
             MacroAssembler::Label begin = slowPathJIT.label();
             

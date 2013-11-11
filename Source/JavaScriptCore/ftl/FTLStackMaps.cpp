@@ -66,15 +66,15 @@ void StackMaps::Location::dump(PrintStream& out) const
     out.print("(", kind, ", reg", dwarfRegNum, ", ", offset, ")");
 }
 
-GPRReg StackMaps::Location::directGPR(StackMaps& stackmaps) const
+GPRReg StackMaps::Location::directGPR() const
 {
-    return FTL::Location::forStackmaps(stackmaps, *this).directGPR();
+    return FTL::Location::forStackmaps(nullptr, *this).directGPR();
 }
 
 void StackMaps::Location::restoreInto(
     MacroAssembler& jit, StackMaps& stackmaps, char* savedRegisters, GPRReg result) const
 {
-    FTL::Location::forStackmaps(stackmaps, *this).restoreInto(jit, savedRegisters, result);
+    FTL::Location::forStackmaps(&stackmaps, *this).restoreInto(jit, savedRegisters, result);
 }
 
 bool StackMaps::Record::parse(DataView* view, unsigned& offset)

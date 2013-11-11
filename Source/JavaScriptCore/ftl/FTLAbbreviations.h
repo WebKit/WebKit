@@ -269,6 +269,7 @@ static inline LValue buildCall(LBuilder builder, LValue function, LValue arg1, L
     LValue args[] = { arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8 };
     return buildCall(builder, function, args, 8);
 }
+static inline void setInstructionCallingConvention(LValue instruction, LCallConv callingConvention) { llvm->SetInstructionCallConv(instruction, callingConvention); }
 static inline LValue buildExtractValue(LBuilder builder, LValue aggVal, unsigned index) { return llvm->BuildExtractValue(builder, aggVal, index, ""); }
 static inline LValue buildSelect(LBuilder builder, LValue condition, LValue taken, LValue notTaken) { return llvm->BuildSelect(builder, condition, taken, notTaken, ""); }
 static inline LValue buildBr(LBuilder builder, LBasicBlock destination) { return llvm->BuildBr(builder, destination); }

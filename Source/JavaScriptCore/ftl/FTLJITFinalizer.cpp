@@ -75,7 +75,7 @@ bool JITFinalizer::finalizeFunction()
                 CodeLocationLabel(
                     m_plan.vm.ftlThunks->getOSRExitGenerationThunk(
                         m_plan.vm, Location::forStackmaps(
-                            jitCode->stackmaps, iter->value.locations[0])).code()));
+                            &jitCode->stackmaps, iter->value.locations[0])).code()));
         }
         
         jitCode->initializeExitThunks(

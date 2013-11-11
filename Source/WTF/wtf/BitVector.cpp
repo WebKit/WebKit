@@ -124,6 +124,31 @@ void BitVector::mergeSlow(const BitVector& other)
         a->bits()[i] |= b->bits()[i];
 }
 
+void BitVector::filterSlow(const BitVector& other)
+{
+    if (other.isInline()) {
+        ASSERT(!isInline());
+        *bits() &= cleanseInlineBits(other.m_bitsOrPointer);
+        return;
+    }
+    
+    if (isInline()) {
+        ASSERT(!other.isInline());
+        m_bitsOrPointer &= *other.outOfLineBits()->bits();
+        m_bitsOrPointer |= (static_cast<uintptr_t>(1) << maxInlineBits());
+        ASSERT(isInline());
+        return;
+    }
+    
+    OutOfLineBits* a = outOfLineBits();
+    const OutOfLineBits* b = other.outOfLineBits();
+    for (unsigned i = std::min(a->numWords(), b->numWords()); i--;)
+        a->bits()[i] &= b->bits()[i];
+    
+    for (unsigned i = b->numWords(); i < a->numWords(); ++i)
+        a->bits()[i] = 0;
+}
+
 void BitVector::excludeSlow(const BitVector& other)
 {
     if (other.isInline()) {
