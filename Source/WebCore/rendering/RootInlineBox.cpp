@@ -72,11 +72,6 @@ void RootInlineBox::detachEllipsisBox()
     }
 }
 
-RenderLineBoxList& RootInlineBox::rendererLineBoxes() const
-{
-    return blockFlow().lineBoxes();
-}
-
 void RootInlineBox::clearTruncation()
 {
     if (hasEllipsisBox()) {

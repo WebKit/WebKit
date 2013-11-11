@@ -261,11 +261,6 @@ void InlineFlowBox::adjustPosition(float dx, float dy)
         m_overflow->move(dx, dy); // FIXME: Rounding error here since overflow was pixel snapped, but nobody other than list markers passes non-integral values here.
 }
 
-RenderLineBoxList& InlineFlowBox::rendererLineBoxes() const
-{
-    return toRenderInline(renderer()).lineBoxes();
-}
-
 static inline bool isLastChildForRenderer(const RenderElement& ancestor, const RenderObject* child)
 {
     if (!child)
@@ -309,11 +304,13 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, bool isLogically
 
     // The root inline box never has borders/margins/padding.
     if (parent()) {
+        const auto& inlineFlow = toRenderInline(renderer());
+
         bool ltr = renderer().style().isLeftToRightDirection();
 
         // Check to see if all initial lines are unconstructed.  If so, then
         // we know the inline began on this line (unless we are a continuation).
-        RenderLineBoxList& lineBoxList = rendererLineBoxes();
+        const auto& lineBoxList = inlineFlow.lineBoxes();
         if (!lineBoxList.firstLineBox()->isConstructed() && !renderer().isInlineElementContinuation()) {
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
             if (renderer().style().boxDecorationBreak() == DCLONE)
@@ -327,7 +324,6 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, bool isLogically
         }
 
         if (!lineBoxList.lastLineBox()->isConstructed()) {
-            RenderInline& inlineFlow = toRenderInline(renderer());
             bool isLastObjectOnLine = !isAncestorAndWithinBlock(inlineFlow, logicallyLastRunRenderer) || (isLastChildForRenderer(renderer(), logicallyLastRunRenderer) && !isLogicallyLastRunWrapped);
 
             // We include the border under these conditions:

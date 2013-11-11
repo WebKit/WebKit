@@ -1,5 +1,18 @@
 2013-11-11  Andreas Kling  <akling@apple.com>
 
+        Kill InlineFlowBox::rendererLineBoxes().
+        <https://webkit.org/b/124141>
+
+        We only ever used this to access the RenderLineBoxList for non-root
+        boxes, and those always have a RenderInline renderer.
+
+        Tighten things up by losing the virtual rendererLineBoxes() and
+        calling RenderInline::lineBoxes() directly.
+
+        Reviewed by Antti Koivisto.
+
+2013-11-11  Andreas Kling  <akling@apple.com>
+
         Bring the LineFragmentationData back to RootInlineBox.
         <https://webkit.org/b/124136>
 
