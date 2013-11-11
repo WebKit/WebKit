@@ -1,3 +1,10 @@
+2013-11-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r159027 to make Apple Windows build happy.
+
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::sharedBufferGetBytesAtPosition):
+
 2013-11-11  Andreas Kling  <akling@apple.com>
 
         Kill InlineFlowBox::rendererLineBoxes().
