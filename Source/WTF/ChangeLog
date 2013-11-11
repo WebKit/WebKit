@@ -1,3 +1,14 @@
+2013-11-10  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Build break on Ubuntu 13.10
+        https://bugs.webkit.org/show_bug.cgi?id=124131
+
+        Reviewed by Gyuyoung Kim.
+
+        Turned DisallowCType macros off on EFL port because gtest-internal.h uses isspace().
+
+        * wtf/DisallowCType.h: Added !PLATFORM(EFL) guard.
+
 2013-11-09  Patrick Gansterer  <paroga@webkit.org>
 
         Move RunLoop from WebCore to WTF
