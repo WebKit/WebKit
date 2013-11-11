@@ -228,8 +228,12 @@ static WebKitPrintOperationResponse webkitPrintOperationRunDialog(WebKitPrintOpe
                                                                                                  | GTK_PRINT_CAPABILITY_SCALE));
 
     WebKitPrintOperationPrivate* priv = printOperation->priv;
-    if (priv->printSettings)
-        gtk_print_unix_dialog_set_settings(printDialog, priv->printSettings.get());
+    // Make sure the initial settings of the GtkPrintUnixDialog is a valid
+    // GtkPrintSettings object to work around a crash happening in the GTK+
+    // file print backend. https://bugzilla.gnome.org/show_bug.cgi?id=703784.
+    if (!priv->printSettings)
+        priv->printSettings = adoptGRef(gtk_print_settings_new());
+    gtk_print_unix_dialog_set_settings(printDialog, priv->printSettings.get());
 
     if (priv->pageSetup)
         gtk_print_unix_dialog_set_page_setup(printDialog, priv->pageSetup.get());

@@ -1,3 +1,17 @@
+2013-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] [WebKit2] Crash when printing to a file via javascript
+        https://bugs.webkit.org/show_bug.cgi?id=122801
+
+        Reviewed by Martin Robinson.
+
+        This crash is caused by a GTK+ bug, but we can work around it by
+        ensuring the print dialog is always shown with a valid
+        GtkPrintSettings object.
+
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (webkitPrintOperationRunDialog):
+
 2013-10-04  Lorenzo Tilve  <ltilve@igalia.com>
 
         [GTK] Enable text edition UndoOperations support in WebKit2
