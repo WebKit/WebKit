@@ -231,6 +231,7 @@ protected:
         addFunction(vm, "readline", functionReadline, 0);
         addFunction(vm, "preciseTime", functionPreciseTime, 0);
         addFunction(vm, "neverInlineFunction", functionNeverInlineFunction, 1);
+        addFunction(vm, "noInline", functionNeverInlineFunction, 1);
         addFunction(vm, "numberOfDFGCompiles", functionNumberOfDFGCompiles, 1);
 #if ENABLE(SAMPLING_FLAGS)
         addFunction(vm, "setSamplingFlags", functionSetSamplingFlags, 1);

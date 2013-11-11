@@ -1,3 +1,16 @@
+2013-11-10  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG Int52 boxing code may clobber the source without telling anyone
+        https://bugs.webkit.org/show_bug.cgi?id=124137
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::boxInt52): This is called in places where source is expected to be unchanged. We never call this expecting super-amazing codegen. So, preserve the source's value the dumb way (by recovering it mathematically).
+        * jit/AssemblyHelpers.h: Document the invariant for boxInt52.
+        * jsc.cpp:
+        (GlobalObject::finishCreation): It's been super annoying that sometimes we say noInline() and sometimes we say neverInlineFunction(). The LayoutTests harnesses ensure that we have something called noInline(), but it's great to also ensure that the shell has it.
+
 2013-11-11  Oliver Hunt  <oliver@apple.com>
 
         ExtJS breaks with modern Array.prototype.values API due to use of with()

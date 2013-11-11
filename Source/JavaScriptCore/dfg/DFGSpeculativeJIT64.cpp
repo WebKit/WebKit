@@ -58,6 +58,9 @@ void SpeculativeJIT::boxInt52(GPRReg sourceGPR, GPRReg targetGPR, DataFormat for
     
     m_jit.boxInt52(sourceGPR, targetGPR, tempGPR, fpr);
     
+    if (format == DataFormatInt52 && sourceGPR != targetGPR)
+        m_jit.lshift64(TrustedImm32(JSValue::int52ShiftAmount), sourceGPR);
+    
     if (tempGPR != targetGPR)
         unlock(tempGPR);
     
