@@ -1,5 +1,22 @@
 2013-11-11  Oliver Hunt  <oliver@apple.com>
 
+        ExtJS breaks with modern Array.prototype.values API due to use of with()
+        https://bugs.webkit.org/show_bug.cgi?id=123440
+
+        Reviewed by Beth Dakin.
+
+        Update tests for removal of Array.prototype.values, and add test to ensure that
+        it's gone.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/array-iterators-expected.txt:
+        * js/basic-for-of-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+        * js/script-tests/array-iterators.js:
+        * js/script-tests/basic-for-of.js:
+
+2013-11-11  Oliver Hunt  <oliver@apple.com>
+
         Whoops, fix test post move
 
         * js/basic-set.html:

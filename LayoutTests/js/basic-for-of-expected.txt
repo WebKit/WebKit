@@ -10,13 +10,6 @@ PASS value is testArray[3]
 PASS value is testArray[4]
 PASS value is testArray[5]
 PASS testArray.length is 6
-PASS value is testArray[0]
-PASS value is testArray[1]
-PASS value is testArray[2]
-PASS value is testArray[3]
-PASS value is testArray[4]
-PASS value is testArray[5]
-PASS testArray.length is 6
 PASS key is 0
 PASS key is 1
 PASS key is 2

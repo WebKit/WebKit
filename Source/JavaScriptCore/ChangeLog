@@ -1,3 +1,17 @@
+2013-11-11  Oliver Hunt  <oliver@apple.com>
+
+        ExtJS breaks with modern Array.prototype.values API due to use of with()
+        https://bugs.webkit.org/show_bug.cgi?id=123440
+
+        Reviewed by Beth Dakin.
+
+        As with our attempt to make Arguments use the Array prototype, ExtJS has
+        a weird dependency on not adding new APIs to core types.  In this case
+        Array.prototype.values.  The fix is to remove it, and push for ES6 to drop
+        the API.
+
+        * runtime/ArrayPrototype.cpp:
+
 2013-11-11  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Fix CPU(ARM_TRADITIONAL) build after r159039.

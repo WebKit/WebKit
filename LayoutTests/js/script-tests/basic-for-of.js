@@ -6,12 +6,6 @@ description(
 var testArray = [1,2,3,4,5,6]
 
 var i = 0;
-for (var value of testArray.values())
-    shouldBe("value", "testArray[" + i++ + "]")
-
-shouldBe("testArray.length", String(i))
-
-var i = 0;
 for (var value of testArray)
     shouldBe("value", "testArray[" + i++ + "]")
 

@@ -2,6 +2,7 @@ description(
 "This test checks the behavior of the iterator methods on Array objects."
 );
 
+shouldBeFalse("'values' in []");
 
 var testArray = [1,2,3,4,5,6]
 var keys = testArray.keys();
@@ -9,15 +10,6 @@ var i = 0;
 for (var key of keys) {
     shouldBe("key", String(i))
     i++;
-}
-
-shouldBe("testArray.length", String(i))
-
-var values = testArray.values();
-var i = 0;
-for (var value of values) {
-    i++;
-    shouldBe("value", String(i) )
 }
 
 shouldBe("testArray.length", String(i))
