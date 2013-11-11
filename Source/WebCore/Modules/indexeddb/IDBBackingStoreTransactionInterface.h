@@ -26,11 +26,13 @@
 #ifndef IDBBackingStoreTransactionInterface_h
 #define IDBBackingStoreTransactionInterface_h
 
+#include <wtf/RefCounted.h>
+
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-class IDBBackingStoreTransactionInterface {
+class IDBBackingStoreTransactionInterface : public RefCounted<IDBBackingStoreTransactionInterface> {
 public:
     virtual ~IDBBackingStoreTransactionInterface() { }
 

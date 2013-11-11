@@ -1912,9 +1912,9 @@ PassRefPtr<IDBBackingStoreCursorInterface> IDBBackingStoreLevelDB::openIndexCurs
     return cursor.release();
 }
 
-std::unique_ptr<IDBBackingStoreTransactionInterface> IDBBackingStoreLevelDB::createBackingStoreTransaction()
+PassRefPtr<IDBBackingStoreTransactionInterface> IDBBackingStoreLevelDB::createBackingStoreTransaction()
 {
-    return std::unique_ptr<IDBBackingStoreTransactionInterface>(new IDBBackingStoreTransactionLevelDB(this));
+    return IDBBackingStoreTransactionLevelDB::create(this);
 }
 
 } // namespace WebCore

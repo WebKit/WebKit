@@ -116,7 +116,7 @@ private:
     TaskQueue m_preemptiveTaskQueue;
     TaskQueue m_abortTaskQueue;
 
-    std::unique_ptr<IDBBackingStoreTransactionInterface> m_backingStoreTransaction;
+    RefPtr<IDBBackingStoreTransactionInterface> m_backingStoreTransaction;
 
     // FIXME: delete the timer once we have threads instead.
     Timer<IDBTransactionBackend> m_taskTimer;

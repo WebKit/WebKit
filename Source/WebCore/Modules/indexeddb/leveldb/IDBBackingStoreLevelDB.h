@@ -67,7 +67,7 @@ public:
     static PassRefPtr<IDBBackingStoreLevelDB> openInMemory(const String& identifier, LevelDBFactory*);
     WeakPtr<IDBBackingStoreLevelDB> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
 
-    virtual std::unique_ptr<IDBBackingStoreTransactionInterface> createBackingStoreTransaction();
+    virtual PassRefPtr<IDBBackingStoreTransactionInterface> createBackingStoreTransaction();
 
     virtual Vector<String> getDatabaseNames();
 

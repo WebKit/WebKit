@@ -38,7 +38,10 @@ class IDBBackingStoreInterface;
 
 class IDBBackingStoreTransactionLevelDB FINAL : public IDBBackingStoreTransactionInterface {
 public:
-    explicit IDBBackingStoreTransactionLevelDB(IDBBackingStoreInterface*);
+    static PassRefPtr<IDBBackingStoreTransactionInterface> create(IDBBackingStoreInterface* backingStore)
+    {
+        return adoptRef(new IDBBackingStoreTransactionLevelDB(backingStore));
+    }
 
     virtual void begin() OVERRIDE;
     virtual bool commit() OVERRIDE;
@@ -55,6 +58,8 @@ public:
     }
 
 private:
+    IDBBackingStoreTransactionLevelDB(IDBBackingStoreInterface*);
+
     IDBBackingStoreInterface* m_backingStore;
     RefPtr<LevelDBTransaction> m_transaction;
 };
