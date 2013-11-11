@@ -32,7 +32,6 @@
 [
     GenerateIsReachable=ImplFrame,
     InterfaceName=Selection,
-    OperationsNotDeletable
 ] interface DOMSelection {
     readonly attribute Node anchorNode;
     readonly attribute long anchorOffset;

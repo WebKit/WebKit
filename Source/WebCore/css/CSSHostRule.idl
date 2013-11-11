@@ -21,7 +21,6 @@
 // Introduced in Shadow DOM spec:
 [
     Conditional=SHADOW_DOM,
-    OperationsNotDeletable
 ] interface CSSHostRule : CSSRule {
     readonly attribute CSSRuleList cssRules;
     

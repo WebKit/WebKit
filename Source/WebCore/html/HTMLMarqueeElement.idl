@@ -17,9 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    OperationsNotDeletable
-] interface HTMLMarqueeElement : HTMLElement {
+interface HTMLMarqueeElement : HTMLElement {
     void start();
     void stop();
     

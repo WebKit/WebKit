@@ -31,7 +31,6 @@
     Conditional=SQL_DATABASE,
     JSNoStaticTables,
     SkipVTableValidation,
-    OperationsNotDeletable
 ] interface SQLTransaction {
     [Custom] void executeSql(DOMString sqlStatement,
                              ObjectArray arguments,

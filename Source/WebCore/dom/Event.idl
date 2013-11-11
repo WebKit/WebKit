@@ -24,7 +24,6 @@
     ConstructorTemplate=Event,
     JSNoStaticTables,
     ObjCPolymorphic,
-    OperationsNotDeletable
 ] interface Event {
 
     // DOM PhaseType

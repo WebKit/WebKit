@@ -20,7 +20,6 @@
 [
     ConstructorConditional=DOM4_EVENTS_CONSTRUCTOR,
     ConstructorTemplate=Event,
-    OperationsNotDeletable
 ] interface MouseEvent : UIEvent {
     [InitializedByEventConstructor] readonly attribute long             screenX;
     [InitializedByEventConstructor] readonly attribute long             screenY;

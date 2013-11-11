@@ -35,7 +35,6 @@
     EventTarget,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    OperationsNotDeletable
 ] interface SourceBuffer : EventTarget {
 
     readonly attribute boolean updating;

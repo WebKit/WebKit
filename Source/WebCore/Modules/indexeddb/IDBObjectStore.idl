@@ -27,7 +27,6 @@
     Conditional=INDEXED_DATABASE,
     JSNoStaticTables,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] interface IDBObjectStore {
     [TreatReturnedNullStringAs=Null] readonly attribute DOMString name;
     [ImplementedAs=keyPathAny] readonly attribute IDBAny keyPath;

@@ -25,9 +25,7 @@
 
 enum CanvasWindingRule { "nonzero", "evenodd" };
 
-[
-    OperationsNotDeletable
-] interface CanvasRenderingContext2D : CanvasRenderingContext {
+interface CanvasRenderingContext2D : CanvasRenderingContext {
 
     void save();
     void restore();

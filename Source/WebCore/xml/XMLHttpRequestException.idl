@@ -30,7 +30,6 @@
     JSNoStaticTables,
     DoNotCheckConstants,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] exception XMLHttpRequestException {
 
     readonly attribute unsigned short   code;

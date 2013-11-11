@@ -20,7 +20,6 @@
 
 [
     CustomNamedGetter,
-    OperationsNotDeletable
 ] interface HTMLFormElement : HTMLElement {
     [Reflect=accept_charset] attribute DOMString acceptCharset;
     [Reflect, URL] attribute DOMString action;

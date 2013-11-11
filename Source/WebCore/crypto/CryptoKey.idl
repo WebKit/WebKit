@@ -44,7 +44,6 @@ enum KeyUsage {
     Conditional=SUBTLE_CRYPTO,
     InterfaceName=Key,
     NoInterfaceObject,
-    OperationsNotDeletable,
     SkipVTableValidation
 ] interface CryptoKey {
     readonly attribute KeyType type;

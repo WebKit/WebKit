@@ -27,7 +27,6 @@
 // Introduced in DOM Level 3:
 [
     ConstructorTemplate=Event,
-    OperationsNotDeletable
 ] interface CustomEvent : Event {
     [InitializedByEventConstructor] readonly attribute any detail;
 

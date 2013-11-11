@@ -21,7 +21,6 @@
 
 [
     Conditional=SVG,
-    OperationsNotDeletable
 ] interface SVGTransform { 
     // Transform Types
     const unsigned short SVG_TRANSFORM_UNKNOWN = 0;

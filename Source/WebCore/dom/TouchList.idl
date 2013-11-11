@@ -26,7 +26,6 @@
 [
     Conditional=TOUCH_EVENTS,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] interface TouchList {
     readonly attribute unsigned long length;
 

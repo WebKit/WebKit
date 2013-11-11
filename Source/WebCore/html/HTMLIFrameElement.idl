@@ -18,9 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    OperationsNotDeletable
-] interface HTMLIFrameElement : HTMLElement {
+interface HTMLIFrameElement : HTMLElement {
     [Reflect] attribute DOMString align;
     [Reflect] attribute DOMString frameBorder;
     [Reflect] attribute DOMString height;

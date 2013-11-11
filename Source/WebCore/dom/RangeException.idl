@@ -20,7 +20,6 @@
 [
     DoNotCheckConstants,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] exception RangeException {
 
     readonly attribute unsigned short   code;

@@ -28,7 +28,6 @@
     NoInterfaceObject,
     Conditional=GEOLOCATION, 
     GenerateIsReachable=ImplFrame,
-    OperationsNotDeletable
 ] interface Geolocation {
     [Custom] void getCurrentPosition(PositionCallback successCallback,
                                      optional PositionErrorCallback errorCallback,

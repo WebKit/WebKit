@@ -32,7 +32,6 @@
     GenerateIsReachable=Impl,
     JSNoStaticTables,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] interface WorkerLocation {
     readonly attribute DOMString href;
     readonly attribute DOMString protocol;

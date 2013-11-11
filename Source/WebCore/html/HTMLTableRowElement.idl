@@ -18,9 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    OperationsNotDeletable
-] interface HTMLTableRowElement : HTMLElement {
+interface HTMLTableRowElement : HTMLElement {
     readonly attribute long rowIndex;
     readonly attribute long sectionRowIndex;
     readonly attribute HTMLCollection cells;

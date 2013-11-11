@@ -29,7 +29,6 @@
 [
     DoNotCheckConstants,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] exception XPathException {
 
     readonly attribute unsigned short   code;

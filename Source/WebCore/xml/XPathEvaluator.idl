@@ -20,7 +20,6 @@
 [
     Constructor,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] interface XPathEvaluator {
     [RaisesException] XPathExpression createExpression([Default=Undefined] optional DOMString expression,
                                      [Default=Undefined] optional XPathNSResolver resolver);

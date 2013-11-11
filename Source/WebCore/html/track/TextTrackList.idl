@@ -28,7 +28,6 @@
     GenerateIsReachable=ImplElementRoot,
     EventTarget,
     JSCustomMarkFunction,
-    OperationsNotDeletable
 ] interface TextTrackList {
     readonly attribute unsigned long length;
     getter TextTrack item(unsigned long index);

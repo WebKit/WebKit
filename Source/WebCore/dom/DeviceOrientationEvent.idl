@@ -25,7 +25,6 @@
 
 [
     Conditional=DEVICE_ORIENTATION,
-    OperationsNotDeletable
 ] interface DeviceOrientationEvent : Event {
     [Custom] readonly attribute double alpha;
     [Custom] readonly attribute double beta;

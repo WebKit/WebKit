@@ -26,7 +26,6 @@
 
 [
     Conditional=SVG,
-    OperationsNotDeletable
 ] interface SVGPathElement : SVGGraphicsElement {
     readonly attribute SVGAnimatedNumber pathLength;
 

@@ -33,7 +33,6 @@
     InterfaceName=WebKitNamedFlowCollection,
     JSGenerateToJSObject,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] interface DOMNamedFlowCollection {
     readonly attribute unsigned long length;
     getter WebKitNamedFlow item(unsigned long index);

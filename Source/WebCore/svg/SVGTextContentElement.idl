@@ -25,7 +25,6 @@
 
 [
     Conditional=SVG,
-    OperationsNotDeletable
 ] interface SVGTextContentElement : SVGGraphicsElement {
     // lengthAdjust Types
     const unsigned short LENGTHADJUST_UNKNOWN          = 0;

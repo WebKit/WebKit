@@ -33,7 +33,6 @@
     Conditional=SQL_DATABASE,
     JSNoStaticTables,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] interface SQLTransactionSync {
     [Custom] SQLResultSet executeSql(DOMString sqlStatement, ObjectArray arguments);
 };

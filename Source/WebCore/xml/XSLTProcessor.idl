@@ -34,7 +34,6 @@
     Conditional=XSLT,
     Constructor,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] interface XSLTProcessor {
     
     void importStylesheet([Default=Undefined] optional Node stylesheet);

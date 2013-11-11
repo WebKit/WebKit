@@ -27,7 +27,6 @@
 [
     CustomIsReachable,
     SkipVTableValidation,
-    OperationsNotDeletable
 ] interface CSSRuleList {
     readonly attribute unsigned long    length;
     getter CSSRule item([Default=Undefined] optional unsigned long index);

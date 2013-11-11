@@ -38,7 +38,6 @@
     ConstructorCallWith=ScriptExecutionContext,
     EventTarget,
     InterfaceName=webkitRTCPeerConnection,
-    OperationsNotDeletable
 ] interface RTCPeerConnection {
     [RaisesException] void createOffer(RTCSessionDescriptionCallback successCallback, [Default=Undefined] optional RTCErrorCallback failureCallback, optional Dictionary mediaConstraints);
 

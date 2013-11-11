@@ -31,7 +31,6 @@
     DoNotCheckConstants,
     InterfaceName=DOMException,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] exception DOMCoreException {
 
     readonly attribute unsigned short   code;

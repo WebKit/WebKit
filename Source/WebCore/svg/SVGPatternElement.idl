@@ -25,7 +25,6 @@
 
 [
     Conditional=SVG,
-    OperationsNotDeletable
 ] interface SVGPatternElement : SVGElement {
     readonly attribute SVGAnimatedEnumeration   patternUnits;
     readonly attribute SVGAnimatedEnumeration   patternContentUnits;

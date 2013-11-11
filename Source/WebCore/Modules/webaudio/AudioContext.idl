@@ -30,7 +30,6 @@
     CustomConstructor,
     EventTarget,
     InterfaceName=webkitAudioContext,
-    OperationsNotDeletable
 ] interface AudioContext {
     // All rendered audio ultimately connects to destination, which represents the audio hardware.
     readonly attribute AudioDestinationNode destination;

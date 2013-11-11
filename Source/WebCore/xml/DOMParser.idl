@@ -20,7 +20,6 @@
 [
     Constructor,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] interface DOMParser {
     [RaisesException] Document parseFromString([Default=Undefined] optional DOMString str,
                              [Default=Undefined] optional DOMString contentType);

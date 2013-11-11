@@ -24,7 +24,6 @@
  */
 [
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] interface CanvasGradient {
 
     [RaisesException] void addColorStop([Default=Undefined] optional float offset, 

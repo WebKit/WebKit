@@ -26,7 +26,6 @@
 
 [
     Conditional=SVG&FILTERS,
-    OperationsNotDeletable
 ] interface SVGFilterElement : SVGElement {
     readonly attribute SVGAnimatedEnumeration filterUnits;
     readonly attribute SVGAnimatedEnumeration primitiveUnits;

@@ -22,7 +22,6 @@
     NoInterfaceObject,
     ObjCProtocol,
     SkipVTableValidation,
-    OperationsNotDeletable
 ] interface XPathNSResolver {
     [TreatReturnedNullStringAs=Null] DOMString lookupNamespaceURI([Default=Undefined] optional DOMString prefix);
 };

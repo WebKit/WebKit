@@ -22,9 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    OperationsNotDeletable
-] interface HTMLOutputElement : HTMLElement {
+interface HTMLOutputElement : HTMLElement {
     readonly attribute DOMSettableTokenList htmlFor;
     readonly attribute HTMLFormElement form;
     [Reflect] attribute DOMString name;

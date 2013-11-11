@@ -29,7 +29,6 @@
     Conditional=SVG,
     ObjCProtocol,
     SuppressToJSObject,
-    OperationsNotDeletable
 ] interface SVGTests {
     readonly attribute SVGStringList requiredFeatures;
     readonly attribute SVGStringList requiredExtensions;

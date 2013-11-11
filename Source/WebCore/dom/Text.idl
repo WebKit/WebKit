@@ -17,9 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    OperationsNotDeletable
-] interface Text : CharacterData {
+interface Text : CharacterData {
 
     // DOM Level 1
 

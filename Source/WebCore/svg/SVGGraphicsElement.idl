@@ -25,7 +25,6 @@
 
 [
     Conditional=SVG,
-    OperationsNotDeletable
 ] interface SVGGraphicsElement : SVGElement {
     readonly attribute SVGAnimatedTransformList transform;
 

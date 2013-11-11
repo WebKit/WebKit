@@ -21,7 +21,6 @@
 [
     GenerateIsReachable=ImplElementRoot,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] interface NamedNodeMap {
 
     getter Node getNamedItem([Default=Undefined] optional DOMString name);

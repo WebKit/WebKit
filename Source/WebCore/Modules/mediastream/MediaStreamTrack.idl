@@ -30,7 +30,6 @@ enum MediaStreamTrackState { "new", "live", "ended" };
     EventTarget,
     ActiveDOMObject,
     SkipVTableValidation,
-    OperationsNotDeletable
 ] interface MediaStreamTrack {
     readonly attribute DOMString kind;
     readonly attribute DOMString id;

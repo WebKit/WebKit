@@ -34,7 +34,6 @@
     DoNotCheckConstants,
     JSNoStaticTables,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] exception FileException {
 
     readonly attribute unsigned short   code;

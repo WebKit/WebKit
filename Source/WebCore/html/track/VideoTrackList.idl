@@ -29,7 +29,6 @@
     GenerateIsReachable=ImplElementRoot,
     EventTarget,
     JSCustomMarkFunction,
-    OperationsNotDeletable
 ] interface VideoTrackList {
     readonly attribute unsigned long length;
     getter VideoTrack item(unsigned long index);

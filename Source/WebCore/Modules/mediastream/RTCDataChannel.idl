@@ -26,7 +26,6 @@
     NoInterfaceObject,
     Conditional=MEDIA_STREAM,
     EventTarget,
-    OperationsNotDeletable
 ] interface RTCDataChannel {
     readonly attribute DOMString label;
     readonly attribute boolean ordered;

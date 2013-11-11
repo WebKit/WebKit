@@ -29,7 +29,6 @@
     GenerateIsReachable=ImplElementRoot,
     EventTarget,
     JSCustomMarkFunction,
-    OperationsNotDeletable
 ] interface AudioTrackList {
     readonly attribute unsigned long length;
     getter AudioTrack item(unsigned long index);

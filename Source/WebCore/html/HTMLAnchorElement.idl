@@ -18,9 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    OperationsNotDeletable
-] interface HTMLAnchorElement : HTMLElement {
+interface HTMLAnchorElement : HTMLElement {
     [Reflect] attribute DOMString charset;
     [Reflect] attribute DOMString coords;
     [Conditional=DOWNLOAD_ATTRIBUTE, Reflect] attribute DOMString download;

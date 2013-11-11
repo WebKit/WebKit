@@ -33,7 +33,6 @@
     Conditional=WORKERS,
     JSGenerateToNativeObject,
     JSNoStaticTables,
-    OperationsNotDeletable
 ] interface DedicatedWorkerGlobalScope : WorkerGlobalScope {
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP

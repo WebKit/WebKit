@@ -27,7 +27,6 @@
 [
     NoInterfaceObject,
     GenerateIsReachable=ImplFrame,
-    OperationsNotDeletable
 ] interface StyleMedia {
     readonly attribute DOMString type;
     boolean matchMedium([Default=Undefined] optional DOMString mediaquery);

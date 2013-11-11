@@ -27,7 +27,6 @@
     Conditional=INDEXED_DATABASE,
     JSNoStaticTables,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] interface IDBIndex {
     readonly attribute DOMString name;
     readonly attribute IDBObjectStore objectStore;

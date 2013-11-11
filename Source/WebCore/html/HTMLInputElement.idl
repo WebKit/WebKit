@@ -19,9 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    OperationsNotDeletable
-] interface HTMLInputElement : HTMLElement {
+interface HTMLInputElement : HTMLElement {
     [Reflect] attribute DOMString accept;
     [Reflect] attribute DOMString alt;
     [Reflect] attribute DOMString autocomplete;

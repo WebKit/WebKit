@@ -28,7 +28,6 @@
     JSGenerateToNativeObject,
     GenerateIsReachable=Impl,
     EventTarget,
-    OperationsNotDeletable
 ] interface AudioNode : EventTarget {
     readonly attribute AudioContext context;
     readonly attribute unsigned long numberOfInputs;

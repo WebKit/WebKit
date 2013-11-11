@@ -21,7 +21,6 @@
 [
     GenerateIsReachable=ImplFrame,
     InterfaceName=MimeTypeArray,
-    OperationsNotDeletable
 ] interface DOMMimeTypeArray {
     readonly attribute unsigned long length;
     getter DOMMimeType item([Default=Undefined] optional unsigned long index);

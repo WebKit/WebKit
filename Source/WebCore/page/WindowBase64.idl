@@ -27,7 +27,6 @@
 
 [
     NoInterfaceObject,
-    OperationsNotDeletable
 ] interface WindowBase64 {
     [RaisesException] DOMString atob(DOMString string);
     [RaisesException] DOMString btoa(DOMString string);

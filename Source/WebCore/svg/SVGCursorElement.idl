@@ -25,7 +25,6 @@
 
 [
     Conditional=SVG,
-    OperationsNotDeletable
 ] interface SVGCursorElement : SVGElement {
     readonly attribute SVGAnimatedLength x;
     readonly attribute SVGAnimatedLength y;

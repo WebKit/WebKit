@@ -28,7 +28,6 @@
     JSGenerateToNativeObject,
     JSInlineGetOwnPropertySlot,
     ObjCPolymorphic,
-    OperationsNotDeletable
 ] interface Node
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     : Object, EventTarget

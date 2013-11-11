@@ -26,7 +26,6 @@
     CustomToJSObject,
     JSCustomToNativeObject,
     EventTarget,
-    OperationsNotDeletable
 ] interface EventTarget {
     [ObjCLegacyUnnamedParameters] void addEventListener(DOMString type, 
                                          EventListener listener, 

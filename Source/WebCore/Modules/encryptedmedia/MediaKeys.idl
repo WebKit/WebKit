@@ -28,7 +28,6 @@
     Constructor(DOMString keySystem),
     ConstructorRaisesException,
     InterfaceName=WebKitMediaKeys,
-    OperationsNotDeletable
 ] interface MediaKeys {
     [CallWith=ScriptExecutionContext, RaisesException] MediaKeySession createSession([Default=Undefined] optional DOMString type, [Default=Undefined] optional Uint8Array initData);
 

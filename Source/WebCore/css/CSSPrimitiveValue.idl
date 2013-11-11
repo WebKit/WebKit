@@ -19,7 +19,6 @@
 
 [
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] interface CSSPrimitiveValue : CSSValue {
 
     // UnitTypes

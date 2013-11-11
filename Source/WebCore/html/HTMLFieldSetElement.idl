@@ -17,9 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    OperationsNotDeletable
-] interface HTMLFieldSetElement : HTMLElement {
+interface HTMLFieldSetElement : HTMLElement {
     [Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
     [Reflect] attribute DOMString name;

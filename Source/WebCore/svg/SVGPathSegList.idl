@@ -26,7 +26,6 @@
 
 [
     Conditional=SVG,
-    OperationsNotDeletable
 ] interface SVGPathSegList {
     readonly attribute unsigned long numberOfItems;
 

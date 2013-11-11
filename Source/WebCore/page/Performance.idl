@@ -33,7 +33,6 @@
 [
     Conditional=WEB_TIMING,
     EventTarget,
-    OperationsNotDeletable
 ] interface Performance {
     readonly attribute PerformanceNavigation navigation;
     readonly attribute PerformanceTiming timing;

@@ -31,7 +31,6 @@
     JSNoStaticTables,
     DoNotCheckConstants,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] exception EventException {
 
     readonly attribute unsigned short   code;

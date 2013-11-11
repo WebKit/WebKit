@@ -28,7 +28,6 @@
     Conditional=MEDIA_STREAM,
     ActiveDOMObject,
     EventTarget,
-    OperationsNotDeletable
 ] interface RTCDTMFSender {
     readonly attribute boolean canInsertDTMF;
     readonly attribute MediaStreamTrack track;

@@ -27,7 +27,6 @@
     Conditional=INDEXED_DATABASE,
     JSNoStaticTables,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] interface IDBFactory {
     [CallWith=ScriptExecutionContext, RaisesException] IDBOpenDBRequest open(DOMString name, [EnforceRange] optional unsigned long long version);
     [CallWith=ScriptExecutionContext, RaisesException] IDBOpenDBRequest deleteDatabase(DOMString name);

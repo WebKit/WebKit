@@ -36,7 +36,6 @@
     JSGenerateToNativeObject,
     Constructor,
     ConstructorCallWith=ScriptExecutionContext,
-    OperationsNotDeletable
 ] interface MediaSource : EventTarget {
     // All the source buffers created by this object.
     readonly attribute SourceBufferList sourceBuffers;

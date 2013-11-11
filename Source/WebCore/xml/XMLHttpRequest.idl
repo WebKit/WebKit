@@ -43,7 +43,6 @@ enum XMLHttpRequestResponseType {
     JSCustomMarkFunction,
     EventTarget,
     JSNoStaticTables,
-    OperationsNotDeletable
 ] interface XMLHttpRequest {
     // From XMLHttpRequestEventTarget
     // event handler attributes

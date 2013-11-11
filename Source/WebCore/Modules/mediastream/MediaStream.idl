@@ -30,7 +30,6 @@
     Constructor(MediaStreamTrack[] tracks),
     ConstructorCallWith=ScriptExecutionContext,
     InterfaceName=webkitMediaStream,
-    OperationsNotDeletable
 ] interface MediaStream {
 
     readonly attribute DOMString id;

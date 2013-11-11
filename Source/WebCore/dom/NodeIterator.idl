@@ -22,7 +22,6 @@
 [
     JSCustomMarkFunction,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] interface NodeIterator {
     readonly attribute Node root;
     readonly attribute unsigned long whatToShow;

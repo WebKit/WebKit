@@ -29,7 +29,6 @@
     GenerateIsReachable=ImplElementRoot,
     JSCustomMarkFunction,
     SkipVTableValidation,
-    OperationsNotDeletable
 ] interface TextTrack {
     readonly attribute DOMString id;
     [CustomSetter] attribute DOMString kind;

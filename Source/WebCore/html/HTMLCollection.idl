@@ -22,7 +22,6 @@
     CustomToJSObject,
     GenerateIsReachable=ImplOwnerNodeRoot,
     ObjCPolymorphic,
-    OperationsNotDeletable
 ] interface HTMLCollection {
     readonly attribute unsigned long length;
     getter Node item([Default=Undefined] optional unsigned long index);

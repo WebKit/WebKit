@@ -36,7 +36,6 @@
     JSGenerateToNativeObject,
     GenerateIsReachable=Impl,
     CallWith=ScriptExecutionContext,
-    OperationsNotDeletable
 ] interface SourceBufferList : EventTarget {
     readonly attribute unsigned long length;
     getter SourceBuffer item(unsigned long index);

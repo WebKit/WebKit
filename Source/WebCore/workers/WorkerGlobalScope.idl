@@ -32,7 +32,6 @@
     EventTarget,
     JSLegacyParent=JSWorkerGlobalScopeBase,
     JSNoStaticTables,
-    OperationsNotDeletable
 ] interface WorkerGlobalScope {
 
     // WorkerGlobalScope

@@ -21,7 +21,6 @@
 
 [
     Conditional=SVG,
-    OperationsNotDeletable
 ] interface SVGDocument : Document {
     readonly attribute SVGSVGElement        rootElement;
 

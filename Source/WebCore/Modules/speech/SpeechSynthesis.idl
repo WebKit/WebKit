@@ -26,7 +26,6 @@
 [
     NoInterfaceObject,
     Conditional=SPEECH_SYNTHESIS,
-    OperationsNotDeletable
 ] interface SpeechSynthesis  {
     readonly attribute boolean pending;
     readonly attribute boolean speaking;

@@ -30,7 +30,6 @@
     ConstructorCallWith=ScriptExecutionContext,
     EventTarget,
     InterfaceName=webkitSpeechRecognition,
-    OperationsNotDeletable
 ] interface SpeechRecognition {
     attribute SpeechGrammarList grammars;
     attribute DOMString lang;

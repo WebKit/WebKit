@@ -22,7 +22,6 @@
     CustomNamedSetter,
     JSCustomGetOwnPropertySlotAndDescriptor,
     CustomCall,
-    OperationsNotDeletable
 ] interface HTMLObjectElement : HTMLElement {
     readonly attribute HTMLFormElement form;
     [Reflect] attribute DOMString code;

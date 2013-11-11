@@ -32,7 +32,6 @@
     NoInterfaceObject,
     Conditional=DATA_TRANSFER_ITEMS,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] interface DataTransferItem {
     readonly attribute DOMString kind;
     readonly attribute DOMString type;

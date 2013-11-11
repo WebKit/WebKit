@@ -22,7 +22,6 @@
     CustomToJSObject,
     JSGenerateToNativeObject,
     JSInlineGetOwnPropertySlot,
-    OperationsNotDeletable
 ] interface Document : Node {
 
     // DOM Level 1 Core

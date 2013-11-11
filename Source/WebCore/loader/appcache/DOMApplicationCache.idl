@@ -28,7 +28,6 @@
     EventTarget,
     DoNotCheckConstants,
     GenerateIsReachable=ImplFrame,
-    OperationsNotDeletable
 ] interface DOMApplicationCache {
     // update status
     const unsigned short UNCACHED = 0;

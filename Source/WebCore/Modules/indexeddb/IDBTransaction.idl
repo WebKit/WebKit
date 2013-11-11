@@ -31,7 +31,6 @@
     JSNoStaticTables,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    OperationsNotDeletable
 ] interface IDBTransaction : EventTarget {
     readonly attribute DOMString mode;
     readonly attribute IDBDatabase db;

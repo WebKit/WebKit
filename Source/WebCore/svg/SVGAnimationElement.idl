@@ -26,7 +26,6 @@
 
 [
     Conditional=SVG,
-    OperationsNotDeletable
 ] interface SVGAnimationElement : SVGElement {
     readonly attribute SVGElement targetElement;
 

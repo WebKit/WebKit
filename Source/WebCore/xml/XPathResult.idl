@@ -20,7 +20,6 @@
 [
     JSCustomMarkFunction,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] interface XPathResult {
     const unsigned short ANY_TYPE                       = 0;
     const unsigned short NUMBER_TYPE                    = 1;

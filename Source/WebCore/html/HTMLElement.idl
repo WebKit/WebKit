@@ -21,7 +21,6 @@
 [
     JSGenerateToNativeObject,
     JSCustomPushEventHandlerScope,
-    OperationsNotDeletable
 ] interface HTMLElement : Element {
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
              // FIXME: id should be moved to Element for ObjC as well.

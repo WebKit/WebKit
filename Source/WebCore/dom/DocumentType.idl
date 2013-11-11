@@ -19,7 +19,6 @@
 
 [
     JSGenerateToNativeObject,
-    OperationsNotDeletable
 ] interface DocumentType : Node {
 
     // DOM Level 1

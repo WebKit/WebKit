@@ -27,9 +27,7 @@
  */
 
 // Introduced in DOM Level ?:
-[
-    OperationsNotDeletable
-] interface WebKitCSSKeyframesRule : CSSRule {
+interface WebKitCSSKeyframesRule : CSSRule {
 
     [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] attribute DOMString name;
     readonly attribute CSSRuleList cssRules;

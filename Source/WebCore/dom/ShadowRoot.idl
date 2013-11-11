@@ -28,7 +28,6 @@
     Conditional=SHADOW_DOM,
     JSGenerateToJSObject,
     InterfaceName=WebKitShadowRoot,
-    OperationsNotDeletable
 ] interface ShadowRoot : DocumentFragment {
     readonly attribute Element activeElement;
     attribute boolean applyAuthorStyles;

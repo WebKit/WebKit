@@ -25,7 +25,6 @@
 // TODO: no events::DocumentEvent available!
 [
     Conditional=SVG,
-    OperationsNotDeletable
 ] interface SVGSVGElement : SVGGraphicsElement {
     readonly attribute SVGAnimatedLength x;
     readonly attribute SVGAnimatedLength y;

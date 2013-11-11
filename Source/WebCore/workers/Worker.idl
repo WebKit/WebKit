@@ -31,7 +31,6 @@
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
     ActiveDOMObject,
-    OperationsNotDeletable
 ] interface Worker : EventTarget {
 
     attribute EventListener onmessage;

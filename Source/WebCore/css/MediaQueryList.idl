@@ -19,7 +19,6 @@
 [
     NoInterfaceObject,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] interface MediaQueryList {
     readonly attribute DOMString media;
     readonly attribute boolean matches;

@@ -27,7 +27,6 @@
     Conditional=VIDEO,
     JSGenerateToNativeObject,
     ActiveDOMObject,
-    OperationsNotDeletable
 ] interface HTMLMediaElement : HTMLElement {
 
 // error state

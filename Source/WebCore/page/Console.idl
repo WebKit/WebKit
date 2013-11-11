@@ -29,7 +29,6 @@
 [
     NoInterfaceObject,
     GenerateIsReachable=ImplFrame,
-    OperationsNotDeletable
 ] interface Console {
 
     [CallWith=ScriptArguments&ScriptState] void debug();

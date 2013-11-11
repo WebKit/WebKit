@@ -21,7 +21,6 @@
 // DOM 4
 [
     NoInterfaceObject,
-    OperationsNotDeletable
 ] interface ChildNode {
     // readonly attribute Element? previousElementSibling;
     // readonly attribute Element? nextElementSibling;

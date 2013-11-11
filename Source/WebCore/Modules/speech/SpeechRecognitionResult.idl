@@ -27,7 +27,6 @@
     NoInterfaceObject,
     Conditional=SCRIPTED_SPEECH,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] interface SpeechRecognitionResult {
     readonly attribute unsigned long length;
     getter SpeechRecognitionAlternative item([IsIndex] unsigned long index);

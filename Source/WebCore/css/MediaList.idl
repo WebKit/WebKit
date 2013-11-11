@@ -28,7 +28,6 @@
     JSCustomHeader,
     GenerateIsReachable,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] interface MediaList {
 
     [TreatNullAs=NullString, TreatReturnedNullStringAs=Null, SetterRaisesException] attribute DOMString mediaText;

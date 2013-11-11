@@ -33,7 +33,6 @@
     Conditional=BLOB,
     Constructor,
     JSNoStaticTables,
-    OperationsNotDeletable
 ] interface FileReaderSync {
     [CallWith=ScriptExecutionContext, RaisesException] ArrayBuffer readAsArrayBuffer(Blob blob);
     [CallWith=ScriptExecutionContext, RaisesException] DOMString readAsBinaryString(Blob blob);

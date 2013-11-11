@@ -28,9 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    OperationsNotDeletable
-] interface HTMLKeygenElement : HTMLElement {
+interface HTMLKeygenElement : HTMLElement {
     [Reflect] attribute boolean autofocus;
     [Reflect] attribute DOMString challenge;
     [Reflect] attribute boolean disabled;

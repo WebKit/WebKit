@@ -23,7 +23,6 @@
     Conditional=BATTERY_STATUS,
     ActiveDOMObject,
     EventTarget,
-    OperationsNotDeletable
 ] interface BatteryManager {
     readonly attribute boolean charging;
     readonly attribute double chargingTime;

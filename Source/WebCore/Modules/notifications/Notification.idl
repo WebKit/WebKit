@@ -37,7 +37,6 @@
     Constructor(DOMString title, [Default=Undefined] optional Dictionary options),
     ConstructorCallWith=ScriptExecutionContext,
 #endif
-    OperationsNotDeletable,
 ] interface Notification {
     void show();
 #if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS

@@ -22,7 +22,6 @@
 [
     GenerateIsReachable=ImplDocument,
     ImplementationLacksVTable,
-    OperationsNotDeletable
 ] interface StyleSheetList {
     readonly attribute unsigned long    length;
     getter StyleSheet         item([Default=Undefined] optional unsigned long index);
