@@ -1,3 +1,13 @@
+2013-11-10  Frédéric Wang  <fred.wang@free.fr>
+
+        CSS direction must be reset to ltr on <math> element.
+        <https://webkit.org/b/124121>
+
+        Reviewed by Darin Adler.
+
+        * mathml/presentation/direction-expected.html: Added.
+        * mathml/presentation/direction.html: Added.
+
 2013-11-10  Oliver Hunt  <oliver@apple.com>
 
         Implement Set iterators

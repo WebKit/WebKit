@@ -1,3 +1,15 @@
+2013-11-10  Frédéric Wang  <fred.wang@free.fr>
+
+        CSS direction must be reset to ltr on <math> element.
+        <https://webkit.org/b/124121>
+
+        Reviewed by Darin Adler.
+
+        Test: mathml/presentation/direction.html
+
+        * css/mathml.css:
+        (math): set direction: ltr; on the <math> element.
+
 2013-11-10  Sam Weinig  <sam@webkit.org>
 
         Reduce the size of RenderBlockFlow by making its rare data inherit from RenderBlockRareData
