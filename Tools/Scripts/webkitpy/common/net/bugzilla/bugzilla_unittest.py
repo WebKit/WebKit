@@ -429,6 +429,7 @@ class BugzillaQueriesTest(unittest.TestCase):
     def test_request_page_parsing(self):
         queries = BugzillaQueries(None)
         self.assertEqual([40511, 40722, 40723], queries._parse_attachment_ids_request_query(self._sample_request_page))
+        self.assertEqual([40722, 40723], queries._parse_attachment_ids_request_query(self._sample_request_page, datetime.datetime(2009, 10, 4, 11, 38, 44)))
 
     def test_quip_page_parsing(self):
         queries = BugzillaQueries(None)

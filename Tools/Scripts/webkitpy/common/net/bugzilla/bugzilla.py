@@ -1,6 +1,7 @@
 # Copyright (c) 2011 Google Inc. All rights reserved.
 # Copyright (c) 2009 Apple Inc. All rights reserved.
 # Copyright (c) 2010 Research In Motion Limited. All rights reserved.
+# Copyright (c) 2013 University of Szeged. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -180,15 +181,36 @@ class BugzillaQueries(object):
         return [int(bug_link_cell.find("a").string)
                 for bug_link_cell in soup('td', "first-child")]
 
-    def _parse_attachment_ids_request_query(self, page):
+    def _parse_attachment_ids_request_query(self, page, since=None):
+        # Formats
         digits = re.compile("\d+")
         attachment_href = re.compile("attachment.cgi\?id=\d+&action=review")
-        attachment_links = SoupStrainer("a", href=attachment_href)
-        return [int(digits.search(tag["href"]).group(0))
+        # if no date is given, return all ids
+        if not since:
+            attachment_links = SoupStrainer("a", href=attachment_href)
+            return [int(digits.search(tag["href"]).group(0))
                 for tag in BeautifulSoup(page, parseOnlyThese=attachment_links)]
 
-    def _fetch_attachment_ids_request_query(self, query):
-        return self._parse_attachment_ids_request_query(self._load_query(query))
+        # Parse the main table only
+        date_format = re.compile("\d{4}-\d{2}-\d{2} \d{2}:\d{2}")
+        mtab = SoupStrainer("table", {"class": "requests"})
+        soup = BeautifulSoup(page, parseOnlyThese=mtab)
+        patch_ids = []
+
+        for row in soup.findAll("tr"):
+            patch_tag = row.find("a", {"href": attachment_href})
+            if not patch_tag:
+                continue
+            patch_id = int(digits.search(patch_tag["href"]).group(0))
+            date_tag = row.find("td", text=date_format)
+            if date_tag and datetime.strptime(date_format.search(date_tag).group(0), "%Y-%m-%d %H:%M") < since:
+                _log.info("Patch is old: %d (%s)" % (patch_id, date_tag))
+                continue
+            patch_ids.append(patch_id)
+        return patch_ids
+
+    def _fetch_attachment_ids_request_query(self, query, since=None):
+        return self._parse_attachment_ids_request_query(self._load_query(query), since)
 
     def _parse_quips(self, page):
         soup = BeautifulSoup(page, convertEntities=BeautifulSoup.HTML_ENTITIES)
@@ -252,9 +274,9 @@ class BugzillaQueries(object):
 
     # NOTE: This is the only client of _fetch_attachment_ids_request_query
     # This method only makes one request to bugzilla.
-    def fetch_attachment_ids_from_review_queue(self):
+    def fetch_attachment_ids_from_review_queue(self, since=None):
         review_queue_url = "request.cgi?action=queue&type=review&group=type"
-        return self._fetch_attachment_ids_request_query(review_queue_url)
+        return self._fetch_attachment_ids_request_query(review_queue_url, since)
 
     # This only works if your account has edituser privileges.
     # We could easily parse https://bugs.webkit.org/userprefs.cgi?tab=permissions to

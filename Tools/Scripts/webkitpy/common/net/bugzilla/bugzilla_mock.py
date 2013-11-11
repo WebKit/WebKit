@@ -251,9 +251,12 @@ class MockBugzillaQueries(object):
                 self._all_bugs())
         return map(lambda bug: bug.id(), bugs_with_commit_queued_patches)
 
-    def fetch_attachment_ids_from_review_queue(self):
+    def fetch_attachment_ids_from_review_queue(self, since=None):
         unreviewed_patches = sum([bug.unreviewed_patches()
                                   for bug in self._all_bugs()], [])
+        if since:
+            unreviewed_pacthes = [patch for patch in unreviewed_patches
+                                        if patch.attach_date() >= since]
         return map(lambda patch: patch.id(), unreviewed_patches)
 
     def fetch_patches_from_commit_queue(self):
