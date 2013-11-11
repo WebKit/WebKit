@@ -1,3 +1,18 @@
+2013-11-10  Sun-woo Nam  <sunny.nam@samsung.com>
+
+        [EFL] Layout tests with css1 box properties need to be rebaselined.
+        https://bugs.webkit.org/show_bug.cgi?id=124135
+
+        Reviewed by Gyuyoung Kim.
+
+        EFL css1 rebaseline after r101343 for EFL gardening.
+
+        * platform/efl/css1/box_properties/margin_right-expected.txt:
+        * platform/efl/css1/box_properties/padding-expected.txt:
+        * platform/efl/css1/box_properties/padding_left-expected.txt:
+        * platform/efl/css1/box_properties/padding_right-expected.txt:
+        * platform/efl/css1/box_properties/padding_top-expected.txt:
+
 2013-11-10  Frédéric Wang  <fred.wang@free.fr>
 
         CSS direction must be reset to ltr on <math> element.
