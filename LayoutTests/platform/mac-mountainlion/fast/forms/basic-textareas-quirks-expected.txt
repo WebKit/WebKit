@@ -365,10 +365,10 @@ layer at (26,603) size 161x136 clip at (27,604) size 159x134
         text run at (29,26) width 5: " "
         text run at (0,39) width 130: "abcdefghijklmnopqrstuv"
         text run at (129,39) width 5: " "
-layer at (26,761) size 56x58 clip at (27,762) size 39x56 scrollHeight 186
+layer at (26,761) size 56x58 clip at (27,762) size 39x56 scrollHeight 173
   RenderTextControl {TEXTAREA} at (17,3) size 56x58 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 35x182
-      RenderText {#text} at (0,0) size 35x182
+    RenderBlock {DIV} at (3,3) size 35x169
+      RenderText {#text} at (0,0) size 35x169
         text run at (0,0) width 34: "Lorem"
         text run at (33,0) width 2: " "
         text run at (0,13) width 33: "ipsum"
@@ -386,7 +386,7 @@ layer at (26,761) size 56x58 clip at (27,762) size 39x56 scrollHeight 186
         text run at (0,130) width 34: "fghijkl"
         text run at (0,143) width 31: "mnop"
         text run at (0,156) width 34: "qrstuv"
-        text run at (0,169) width 4: " "
+        text run at (33,156) width 2: " "
 layer at (376,26) size 60x32 clip at (377,27) size 43x30 scrollHeight 160
   RenderTextControl {TEXTAREA} at (15,3) size 60x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 39x156

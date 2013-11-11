@@ -546,27 +546,27 @@ layer at (0,0) size 785x1438
                 text run at (0,26) width 30: "WXYZ"
                 text run at (29,26) width 5: " "
                 text run at (0,39) width 130: "abcdefghijklmnopqrstuv"
-        layer at (583,422) size 56x58 clip at (584,423) size 39x56 scrollHeight 186
+        layer at (583,422) size 56x58 clip at (584,423) size 39x56 scrollHeight 173
           RenderTextControl {TEXTAREA} at (3,31) size 56x58 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-            RenderBlock {DIV} at (3,3) size 35x182
-              RenderText {#text} at (0,0) size 35x182
+            RenderBlock {DIV} at (3,3) size 35x169
+              RenderText {#text} at (0,0) size 35x169
                 text run at (0,0) width 34: "Lorem"
                 text run at (33,0) width 2: " "
                 text run at (0,13) width 33: "ipsum"
-                text run at (0,26) width 7: "  "
-                text run at (0,39) width 29: "dolor"
-                text run at (28,39) width 4: " "
-                text run at (0,52) width 30: "ABCD"
-                text run at (0,65) width 35: "EFGHIJ"
-                text run at (0,78) width 31: "KLMN"
-                text run at (0,91) width 31: "OPQR"
-                text run at (0,104) width 28: "STUV"
-                text run at (0,117) width 30: "WXYZ"
-                text run at (29,117) width 5: " "
-                text run at (0,130) width 32: "abcde"
-                text run at (0,143) width 34: "fghijkl"
-                text run at (0,156) width 31: "mnop"
-                text run at (0,169) width 34: "qrstuv"
+                text run at (32,13) width 3: "  "
+                text run at (0,26) width 29: "dolor"
+                text run at (28,26) width 4: " "
+                text run at (0,39) width 30: "ABCD"
+                text run at (0,52) width 35: "EFGHIJ"
+                text run at (0,65) width 31: "KLMN"
+                text run at (0,78) width 31: "OPQR"
+                text run at (0,91) width 28: "STUV"
+                text run at (0,104) width 30: "WXYZ"
+                text run at (29,104) width 5: " "
+                text run at (0,117) width 32: "abcde"
+                text run at (0,130) width 34: "fghijkl"
+                text run at (0,143) width 31: "mnop"
+                text run at (0,156) width 34: "qrstuv"
         layer at (3,503) size 161x47 clip at (4,504) size 159x30 scrollWidth 425
           RenderTextControl {TEXTAREA} at (3,17) size 161x47 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
             RenderBlock {DIV} at (3,3) size 155x13
@@ -1245,27 +1245,27 @@ layer at (0,0) size 785x1438
                 text run at (0,26) width 30: "WXYZ"
                 text run at (29,26) width 5: " "
                 text run at (0,39) width 130: "abcdefghijklmnopqrstuv"
-        layer at (583,401) size 56x58 clip at (584,402) size 39x56 scrollHeight 186
+        layer at (583,401) size 56x58 clip at (584,402) size 39x56 scrollHeight 173
           RenderTextControl {TEXTAREA} at (3,31) size 56x58 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-            RenderBlock {DIV} at (3,3) size 35x182
-              RenderText {#text} at (0,0) size 35x182
+            RenderBlock {DIV} at (3,3) size 35x169
+              RenderText {#text} at (0,0) size 35x169
                 text run at (0,0) width 34: "Lorem"
                 text run at (33,0) width 2: " "
                 text run at (0,13) width 33: "ipsum"
-                text run at (0,26) width 7: "  "
-                text run at (0,39) width 29: "dolor"
-                text run at (28,39) width 4: " "
-                text run at (0,52) width 30: "ABCD"
-                text run at (0,65) width 35: "EFGHIJ"
-                text run at (0,78) width 31: "KLMN"
-                text run at (0,91) width 31: "OPQR"
-                text run at (0,104) width 28: "STUV"
-                text run at (0,117) width 30: "WXYZ"
-                text run at (29,117) width 5: " "
-                text run at (0,130) width 32: "abcde"
-                text run at (0,143) width 34: "fghijkl"
-                text run at (0,156) width 31: "mnop"
-                text run at (0,169) width 34: "qrstuv"
+                text run at (32,13) width 3: "  "
+                text run at (0,26) width 29: "dolor"
+                text run at (28,26) width 4: " "
+                text run at (0,39) width 30: "ABCD"
+                text run at (0,52) width 35: "EFGHIJ"
+                text run at (0,65) width 31: "KLMN"
+                text run at (0,78) width 31: "OPQR"
+                text run at (0,91) width 28: "STUV"
+                text run at (0,104) width 30: "WXYZ"
+                text run at (29,104) width 5: " "
+                text run at (0,117) width 32: "abcde"
+                text run at (0,130) width 34: "fghijkl"
+                text run at (0,143) width 31: "mnop"
+                text run at (0,156) width 34: "qrstuv"
         layer at (3,479) size 161x47 clip at (4,480) size 159x30 scrollWidth 425
           RenderTextControl {TEXTAREA} at (3,17) size 161x47 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
             RenderBlock {DIV} at (3,3) size 155x13
