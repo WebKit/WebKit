@@ -1,3 +1,14 @@
+2013-11-11  Samuel White  <samuel_white@apple.com>
+
+        AX: support helpText() in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=40194
+
+        Reviewed by Chris Fleizach.
+
+        Moving layout test back to its original location. Shouldn't be platform specific.
+
+        * accessibility/aria-help.html: Renamed from LayoutTests/platform/mac/accessibility/aria-help.html.
+
 2013-11-11  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening

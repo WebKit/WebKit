@@ -324,7 +324,15 @@ JSStringRef AccessibilityUIElement::language()
 
 JSStringRef AccessibilityUIElement::helpText() const
 {
-    return 0;
+    if (!m_element)
+        return JSStringCreateWithCharacters(0, 0);
+
+    BSTR helpTextBSTR;
+    if (FAILED(m_element->get_accHelp(self(), &helpTextBSTR)) || !helpTextBSTR)
+        return JSStringCreateWithCharacters(0, 0);
+    wstring helpText(helpTextBSTR, SysStringLen(helpTextBSTR));
+    ::SysFreeString(helpTextBSTR);
+    return JSStringCreateWithCharacters(helpText.data(), helpText.length());
 }
 
 double AccessibilityUIElement::x()
