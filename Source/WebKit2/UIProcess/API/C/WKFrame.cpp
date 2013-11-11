@@ -29,10 +29,6 @@
 #include "WKAPICast.h"
 #include "WebFrameProxy.h"
 
-#ifdef __BLOCKS__
-#include <Block.h>
-#endif
-
 using namespace WebKit;
 
 WKTypeID WKFrameGetTypeID()
@@ -136,44 +132,10 @@ void WKFrameGetResourceData(WKFrameRef frameRef, WKURLRef resourceURL, WKFrameGe
     toImpl(frameRef)->getResourceData(toImpl(resourceURL), DataCallback::create(context, callback));
 }
 
-#ifdef __BLOCKS__
-static void callGetResourceDataBlockAndDispose(WKDataRef data, WKErrorRef error, void* context)
-{
-    WKFrameGetResourceDataBlock block = (WKFrameGetResourceDataBlock)context;
-    block(data, error);
-    Block_release(block);
-}
-
-void WKFrameGetMainResourceData_b(WKFrameRef frameRef, WKFrameGetResourceDataBlock block)
-{
-    WKFrameGetMainResourceData(frameRef, callGetResourceDataBlockAndDispose, Block_copy(block));
-}
-
-void WKFrameGetResourceData_b(WKFrameRef frameRef, WKURLRef resourceURL, WKFrameGetResourceDataBlock block)
-{
-    WKFrameGetResourceData(frameRef, resourceURL, callGetResourceDataBlockAndDispose, Block_copy(block));
-}
-#endif
-
 void WKFrameGetWebArchive(WKFrameRef frameRef, WKFrameGetWebArchiveFunction callback, void* context)
 {
     toImpl(frameRef)->getWebArchive(DataCallback::create(context, callback));
 }
-
-#ifdef __BLOCKS__
-static void callGetWebArchiveBlockAndDispose(WKDataRef archiveData, WKErrorRef error, void* context)
-{
-    WKFrameGetWebArchiveBlock block = (WKFrameGetWebArchiveBlock)context;
-    block(archiveData, error);
-    Block_release(block);
-}
-
-void WKFrameGetWebArchive_b(WKFrameRef frameRef, WKFrameGetWebArchiveBlock block)
-{
-    WKFrameGetWebArchive(frameRef, callGetWebArchiveBlockAndDispose, Block_copy(block));
-}
-#endif
-
 
 // NOTE: These are deprecated and should be removed. They currently do nothing.
 

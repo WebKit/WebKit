@@ -71,19 +71,9 @@ WK_EXPORT bool WKFrameIsFrameSet(WKFrameRef frame);
 typedef void (*WKFrameGetResourceDataFunction)(WKDataRef data, WKErrorRef error, void* functionContext);
 WK_EXPORT void WKFrameGetMainResourceData(WKFrameRef frame, WKFrameGetResourceDataFunction function, void* functionContext);
 WK_EXPORT void WKFrameGetResourceData(WKFrameRef frame, WKURLRef resourceURL, WKFrameGetResourceDataFunction function, void* functionContext);
-#ifdef __BLOCKS__
-typedef void (^WKFrameGetResourceDataBlock)(WKDataRef data, WKErrorRef error);
-WK_EXPORT void WKFrameGetMainResourceData_b(WKFrameRef frame, WKFrameGetResourceDataBlock block);
-WK_EXPORT void WKFrameGetResourceData_b(WKFrameRef frame, WKURLRef resourceURL, WKFrameGetResourceDataBlock block);
-#endif
 
 typedef void (*WKFrameGetWebArchiveFunction)(WKDataRef archiveData, WKErrorRef error, void* functionContext);
 WK_EXPORT void WKFrameGetWebArchive(WKFrameRef frame, WKFrameGetWebArchiveFunction function, void* functionContext);
-#ifdef __BLOCKS__
-typedef void (^WKFrameGetWebArchiveBlock)(WKDataRef archiveData, WKErrorRef error);
-WK_EXPORT void WKFrameGetWebArchive_b(WKFrameRef frame, WKFrameGetWebArchiveBlock block);
-#endif
-
 
 // NOTE: These are deprecated and should be removed. They currently do nothing.
 

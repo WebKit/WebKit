@@ -281,16 +281,17 @@
     [[self window] display];    
 }
 
+static void dumpSource(WKStringRef source, WKErrorRef error, void* context)
+{
+    if (!source)
+        return;
+
+    LOG(@"Main frame source\n \"%@\"", CFBridgingRelease(WKStringCopyCFString(0, source)));
+}
+
 - (IBAction)dumpSourceToConsole:(id)sender
 {
-    WKPageGetSourceForFrame_b(_webView.pageRef, WKPageGetMainFrame(_webView.pageRef), ^(WKStringRef result, WKErrorRef error) {
-        if (!result)
-            return;
-
-        CFStringRef cfResult = WKStringCopyCFString(0, result);
-        LOG(@"Main frame source\n \"%@\"", (NSString *)cfResult);
-        CFRelease(cfResult);
-    });
+    WKPageGetSourceForFrame(_webView.pageRef, WKPageGetMainFrame(_webView.pageRef), NULL, dumpSource);
 }
 
 // MARK: Loader Client Callbacks

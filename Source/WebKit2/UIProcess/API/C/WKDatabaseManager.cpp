@@ -29,10 +29,6 @@
 #include "WebDatabaseManagerProxy.h"
 #include "WKAPICast.h"
 
-#ifdef __BLOCKS__
-#include <Block.h>
-#endif
-
 using namespace WebKit;
 
 WKTypeID WKDatabaseManagerGetTypeID()
@@ -140,48 +136,12 @@ void WKDatabaseManagerGetDatabasesByOrigin(WKDatabaseManagerRef databaseManagerR
 #endif
 }
 
-#ifdef __BLOCKS__
-static void callGetDatabasesByOriginBlockAndDispose(WKArrayRef resultValue, WKErrorRef errorRef, void* context)
-{
-#if ENABLE(SQL_DATABASE)
-    WKDatabaseManagerGetDatabasesByOriginBlock block = (WKDatabaseManagerGetDatabasesByOriginBlock)context;
-    block(resultValue, errorRef);
-    Block_release(block);
-#endif
-}
-
-void WKDatabaseManagerGetDatabasesByOrigin_b(WKDatabaseManagerRef databaseManagerRef, WKDatabaseManagerGetDatabasesByOriginBlock block)
-{
-#if ENABLE(SQL_DATABASE)
-    WKDatabaseManagerGetDatabasesByOrigin(databaseManagerRef, Block_copy(block), callGetDatabasesByOriginBlockAndDispose);
-#endif
-}
-#endif // __BLOCKS__
-
 void WKDatabaseManagerGetDatabaseOrigins(WKDatabaseManagerRef databaseManagerRef, void* context, WKDatabaseManagerGetDatabaseOriginsFunction callback)
 {
 #if ENABLE(SQL_DATABASE)
     toImpl(databaseManagerRef)->getDatabaseOrigins(ArrayCallback::create(context, callback));
 #endif
 }
-
-#ifdef __BLOCKS__
-static void callGetDatabaseOriginsBlockBlockAndDispose(WKArrayRef resultValue, WKErrorRef errorRef, void* context)
-{
-#if ENABLE(SQL_DATABASE)
-    WKDatabaseManagerGetDatabaseOriginsBlock block = (WKDatabaseManagerGetDatabaseOriginsBlock)context;
-    block(resultValue, errorRef);
-    Block_release(block);
-#endif
-}
-
-void WKDatabaseManagerGetDatabaseOrigins_b(WKDatabaseManagerRef databaseManagerRef, WKDatabaseManagerGetDatabaseOriginsBlock block)
-{
-#if ENABLE(SQL_DATABASE)
-    WKDatabaseManagerGetDatabaseOrigins(databaseManagerRef, Block_copy(block), callGetDatabaseOriginsBlockBlockAndDispose);
-#endif
-}
-#endif // __BLOCKS__
 
 void WKDatabaseManagerDeleteDatabasesWithNameForOrigin(WKDatabaseManagerRef databaseManagerRef, WKStringRef databaseNameRef, WKSecurityOriginRef originRef)
 {

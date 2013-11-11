@@ -1,3 +1,16 @@
+2013-11-11  Anders Carlsson  <andersca@apple.com>
+
+        Remove block based APIs from the WebKit2 C API
+        https://bugs.webkit.org/show_bug.cgi?id=124157
+
+        Reviewed by Sam Weinig.
+
+        Update for WK2 changes.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (dumpSource):
+        (-[WK2BrowserWindowController dumpSourceToConsole:]):
+
 2013-11-11  Tamas Gergely  <gertom@inf.u-szeged.hu>
 
         The feeder queue will not feed patches older than one week.

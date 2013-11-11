@@ -1,3 +1,22 @@
+2013-11-11  Anders Carlsson  <andersca@apple.com>
+
+        Remove block based APIs from the WebKit2 C API
+        https://bugs.webkit.org/show_bug.cgi?id=124157
+
+        Reviewed by Sam Weinig.
+
+        Remove most of the block based C APIs from WebKit2. We want to discourage people from using
+        them since any C API "objects" captured by blocks won't be implicitly retained which
+        can lead to dangling pointer bugs.
+
+        * UIProcess/API/C/WKDatabaseManager.cpp:
+        * UIProcess/API/C/WKDatabaseManager.h:
+        * UIProcess/API/C/WKFrame.cpp:
+        * UIProcess/API/C/WKFrame.h:
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/C/WKPagePrivate.h:
+
 2013-11-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Crash when printing via javascript in WebKit2
