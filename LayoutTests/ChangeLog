@@ -1,3 +1,15 @@
+2013-11-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a testcase for a tiled layer inside an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=124159
+
+        Reviewed by Tim Horton.
+        
+        Add a test for a tiled compositing layer inside an iframe.
+
+        * compositing/tiling/resources/tiled-layer-tall.html: Added.
+        * compositing/tiling/tiled-in-iframe.html: Added.
+
 2013-11-11  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Regions] Selection focusNode set to the "region" block, instead of the "source" block
