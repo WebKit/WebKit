@@ -46,6 +46,7 @@
 #include "OverflowEvent.h"
 #include "Page.h"
 #include "PaintInfo.h"
+#include "RenderBlockFlow.h"
 #include "RenderBoxRegionInfo.h"
 #include "RenderCombineText.h"
 #include "RenderDeprecatedFlexibleBox.h"
@@ -4918,22 +4919,24 @@ void RenderBlock::updateFirstLetter()
 
 void RenderBlock::setPaginationStrut(LayoutUnit strut)
 {
-    if (!m_rareData) {
+    if (!hasRareData()) {
         if (!strut)
             return;
-        m_rareData = adoptPtr(new RenderBlockRareData());
+        materializeRareData();
     }
-    m_rareData->m_paginationStrut = strut;
+
+    rareData()->m_paginationStrut = strut;
 }
 
 void RenderBlock::setPageLogicalOffset(LayoutUnit logicalOffset)
 {
-    if (!m_rareData) {
+    if (!hasRareData()) {
         if (!logicalOffset)
             return;
-        m_rareData = adoptPtr(new RenderBlockRareData());
+        materializeRareData();
     }
-    m_rareData->m_pageLogicalOffset = logicalOffset;
+
+    rareData()->m_pageLogicalOffset = logicalOffset;
 }
 
 void RenderBlock::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
@@ -5539,5 +5542,24 @@ void RenderBlock::adjustComputedFontSizes(float size, float visibleWidth)
     }
 }
 #endif // ENABLE(IOS_TEXT_AUTOSIZING)
+
+RenderBlock::RenderBlockRareData& RenderBlock::ensureRareData()
+{
+    if (hasRareData())
+        return *m_rareData;
+
+    materializeRareData();
+    return *m_rareData;
+}
+
+void RenderBlock::materializeRareData()
+{
+    ASSERT(!hasRareData());
+
+    if (isRenderBlockFlow())
+        m_rareData = std::make_unique<RenderBlockFlow::RenderBlockFlowRareData>(toRenderBlockFlow(*this));
+    else
+        m_rareData = std::make_unique<RenderBlock::RenderBlockRareData>();
+}
 
 } // namespace WebCore

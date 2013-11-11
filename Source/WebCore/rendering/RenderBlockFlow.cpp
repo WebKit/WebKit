@@ -1172,24 +1172,26 @@ void RenderBlockFlow::handleAfterSideOfBlock(LayoutUnit beforeSide, LayoutUnit a
 
 void RenderBlockFlow::setMaxMarginBeforeValues(LayoutUnit pos, LayoutUnit neg)
 {
-    if (!m_rareData) {
+    if (!hasRareData()) {
         if (pos == RenderBlockFlowRareData::positiveMarginBeforeDefault(*this) && neg == RenderBlockFlowRareData::negativeMarginBeforeDefault(*this))
             return;
-        m_rareData = adoptPtr(new RenderBlockFlowRareData(*this));
+        materializeRareData();
     }
-    m_rareData->m_margins.setPositiveMarginBefore(pos);
-    m_rareData->m_margins.setNegativeMarginBefore(neg);
+
+    rareData()->m_margins.setPositiveMarginBefore(pos);
+    rareData()->m_margins.setNegativeMarginBefore(neg);
 }
 
 void RenderBlockFlow::setMaxMarginAfterValues(LayoutUnit pos, LayoutUnit neg)
 {
-    if (!m_rareData) {
+    if (!hasRareData()) {
         if (pos == RenderBlockFlowRareData::positiveMarginAfterDefault(*this) && neg == RenderBlockFlowRareData::negativeMarginAfterDefault(*this))
             return;
-        m_rareData = adoptPtr(new RenderBlockFlowRareData(*this));
+        materializeRareData();
     }
-    m_rareData->m_margins.setPositiveMarginAfter(pos);
-    m_rareData->m_margins.setNegativeMarginAfter(neg);
+
+    rareData()->m_margins.setPositiveMarginAfter(pos);
+    rareData()->m_margins.setNegativeMarginAfter(neg);
 }
 
 void RenderBlockFlow::setMustDiscardMarginBefore(bool value)
@@ -1198,14 +1200,14 @@ void RenderBlockFlow::setMustDiscardMarginBefore(bool value)
         ASSERT(value);
         return;
     }
-    
-    if (!m_rareData && !value)
-        return;
 
-    if (!m_rareData)
-        m_rareData = adoptPtr(new RenderBlockFlowRareData(*this));
+    if (!hasRareData()) {
+        if (!value)
+            return;
+        materializeRareData();
+    }
 
-    m_rareData->m_discardMarginBefore = value;
+    rareData()->m_discardMarginBefore = value;
 }
 
 void RenderBlockFlow::setMustDiscardMarginAfter(bool value)
@@ -1215,23 +1217,23 @@ void RenderBlockFlow::setMustDiscardMarginAfter(bool value)
         return;
     }
 
-    if (!m_rareData && !value)
-        return;
+    if (!hasRareData()) {
+        if (!value)
+            return;
+        materializeRareData();
+    }
 
-    if (!m_rareData)
-        m_rareData = adoptPtr(new RenderBlockFlowRareData(*this));
-
-    m_rareData->m_discardMarginAfter = value;
+    rareData()->m_discardMarginAfter = value;
 }
 
 bool RenderBlockFlow::mustDiscardMarginBefore() const
 {
-    return style().marginBeforeCollapse() == MDISCARD || (m_rareData && m_rareData->m_discardMarginBefore);
+    return style().marginBeforeCollapse() == MDISCARD || (hasRareData() && rareData()->m_discardMarginBefore);
 }
 
 bool RenderBlockFlow::mustDiscardMarginAfter() const
 {
-    return style().marginAfterCollapse() == MDISCARD || (m_rareData && m_rareData->m_discardMarginAfter);
+    return style().marginAfterCollapse() == MDISCARD || (hasRareData() && rareData()->m_discardMarginAfter);
 }
 
 bool RenderBlockFlow::mustDiscardMarginBeforeForChild(const RenderBox& child) const
@@ -1517,37 +1519,34 @@ void RenderBlockFlow::adjustLinePositionForPagination(RootInlineBox* lineBox, La
 void RenderBlockFlow::setBreakAtLineToAvoidWidow(int lineToBreak)
 {
     ASSERT(lineToBreak >= 0);
-    if (!m_rareData)
-        m_rareData = adoptPtr(new RenderBlockFlowRareData(*this));
-
-    ASSERT(!m_rareData->m_didBreakAtLineToAvoidWidow);
-    m_rareData->m_lineBreakToAvoidWidow = lineToBreak;
+    ASSERT(!ensureRareData().m_didBreakAtLineToAvoidWidow);
+    ensureRareData().m_lineBreakToAvoidWidow = lineToBreak;
 }
 
 void RenderBlockFlow::setDidBreakAtLineToAvoidWidow()
 {
     ASSERT(!shouldBreakAtLineToAvoidWidow());
-    if (!m_rareData)
+    if (!hasRareData())
         return;
 
-    m_rareData->m_didBreakAtLineToAvoidWidow = true;
+    rareData()->m_didBreakAtLineToAvoidWidow = true;
 }
 
 void RenderBlockFlow::clearDidBreakAtLineToAvoidWidow()
 {
-    if (!m_rareData)
+    if (!hasRareData())
         return;
 
-    m_rareData->m_didBreakAtLineToAvoidWidow = false;
+    rareData()->m_didBreakAtLineToAvoidWidow = false;
 }
 
 void RenderBlockFlow::clearShouldBreakAtLineToAvoidWidow() const
 {
     ASSERT(shouldBreakAtLineToAvoidWidow());
-    if (!m_rareData)
+    if (!hasRareData())
         return;
 
-    m_rareData->m_lineBreakToAvoidWidow = -1;
+    rareData()->m_lineBreakToAvoidWidow = -1;
 }
 
 bool RenderBlockFlow::relayoutToAvoidWidows(LayoutStateMaintainer& statePusher)
@@ -2821,16 +2820,6 @@ void RenderBlockFlow::setRenderNamedFlowFragment(RenderNamedFlowFragment* flowFr
     if (rareData.m_renderNamedFlowFragment)
         rareData.m_renderNamedFlowFragment->destroy();
     rareData.m_renderNamedFlowFragment = flowFragment;
-}
-
-// FIXME: Use this function in more places.
-RenderBlockFlow::RenderBlockFlowRareData& RenderBlockFlow::ensureRareData()
-{
-    if (m_rareData)
-        return *m_rareData;
-
-    m_rareData = adoptPtr(new RenderBlockFlowRareData(*this));
-    return *m_rareData;
 }
 
 static bool shouldCheckLines(RenderObject& obj)

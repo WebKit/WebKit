@@ -1,3 +1,17 @@
+2013-11-10  Sam Weinig  <sam@webkit.org>
+
+        Reduce the size of RenderBlockFlow by making its rare data inherit from RenderBlockRareData
+        https://bugs.webkit.org/show_bug.cgi?id=124124
+
+        Reviewed by Anders Carlsson.
+
+        Reduce RenderBlockFlow by one word.
+
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        * rendering/RenderBlockFlow.h:
+
 2013-11-10  Antti Koivisto  <antti@apple.com>
 
         Use start/end instead of textOffset/textLength for simple text runs

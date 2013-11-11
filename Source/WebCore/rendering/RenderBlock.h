@@ -299,12 +299,12 @@ public:
     unsigned columnCount(ColumnInfo*) const;
     LayoutRect columnRectAt(ColumnInfo*, unsigned) const;
 
-    LayoutUnit paginationStrut() const { return m_rareData ? m_rareData->m_paginationStrut : LayoutUnit(); }
+    LayoutUnit paginationStrut() const { return hasRareData() ? rareData()->m_paginationStrut : LayoutUnit(); }
     void setPaginationStrut(LayoutUnit);
 
     // The page logical offset is the object's offset from the top of the page in the page progression
     // direction (so an x-offset in vertical text and a y-offset for horizontal text).
-    LayoutUnit pageLogicalOffset() const { return m_rareData ? m_rareData->m_pageLogicalOffset : LayoutUnit(); }
+    LayoutUnit pageLogicalOffset() const { return hasRareData() ? rareData()->m_pageLogicalOffset : LayoutUnit(); }
     void setPageLogicalOffset(LayoutUnit);
 
     // Accessors for logical width/height and margins in the containing block's block-flow direction.
@@ -393,22 +393,20 @@ public:
 #if ENABLE(CSS_SHAPES)
     ShapeInsideInfo* ensureShapeInsideInfo()
     {
-        if (!m_rareData || !m_rareData->m_shapeInsideInfo)
+        if (!hasRareData() || !rareData()->m_shapeInsideInfo)
             setShapeInsideInfo(ShapeInsideInfo::createInfo(this));
-        return m_rareData->m_shapeInsideInfo.get();
+        return rareData()->m_shapeInsideInfo.get();
     }
 
     ShapeInsideInfo* shapeInsideInfo() const
     {
-        if (!m_rareData || !m_rareData->m_shapeInsideInfo)
-            return 0;
-        return ShapeInsideInfo::isEnabledFor(this) ? m_rareData->m_shapeInsideInfo.get() : 0;
+        if (!hasRareData() || !rareData()->m_shapeInsideInfo)
+            return nullptr;
+        return ShapeInsideInfo::isEnabledFor(this) ? rareData()->m_shapeInsideInfo.get() : nullptr;
     }
     void setShapeInsideInfo(PassOwnPtr<ShapeInsideInfo> value)
     {
-        if (!m_rareData)
-            m_rareData = adoptPtr(new RenderBlockRareData());
-        m_rareData->m_shapeInsideInfo = value;
+        ensureRareData().m_shapeInsideInfo = value;
     }
     void markShapeInsideDescendantsForLayout();
     ShapeInsideInfo* layoutShapeInsideInfo() const;
@@ -674,16 +672,25 @@ public:
         { 
         }
 
+        virtual ~RenderBlockRareData()
+        {
+        }
+
         LayoutUnit m_paginationStrut;
         LayoutUnit m_pageLogicalOffset;
 
 #if ENABLE(CSS_SHAPES)
         OwnPtr<ShapeInsideInfo> m_shapeInsideInfo;
 #endif
-     };
+    };
+
+    bool hasRareData() const { return m_rareData.get(); }
+    RenderBlockRareData* rareData() const { ASSERT_WITH_SECURITY_IMPLICATION(hasRareData()); return m_rareData.get(); }
+    RenderBlockRareData& ensureRareData();
+    void materializeRareData();
 
 protected:
-    OwnPtr<RenderBlockRareData> m_rareData;
+    std::unique_ptr<RenderBlockRareData> m_rareData;
 
     mutable signed m_lineHeight : 25;
     unsigned m_hasMarginBeforeQuirk : 1; // Note these quirk values can't be put in RenderBlockRareData since they are set too frequently.
