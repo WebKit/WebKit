@@ -1,3 +1,12 @@
+2013-11-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Make bytecode dumping use the right opcode names for inc/dec.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+
 2013-11-10  Filip Pizlo  <fpizlo@apple.com>
 
         DFG Int52 boxing code may clobber the source without telling anyone

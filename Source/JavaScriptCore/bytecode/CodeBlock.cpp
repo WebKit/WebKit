@@ -805,12 +805,12 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
         }
         case op_inc: {
             int r0 = (++it)->u.operand;
-            printLocationOpAndRegisterOperand(out, exec, location, it, "pre_inc", r0);
+            printLocationOpAndRegisterOperand(out, exec, location, it, "inc", r0);
             break;
         }
         case op_dec: {
             int r0 = (++it)->u.operand;
-            printLocationOpAndRegisterOperand(out, exec, location, it, "pre_dec", r0);
+            printLocationOpAndRegisterOperand(out, exec, location, it, "dec", r0);
             break;
         }
         case op_to_number: {
