@@ -1,3 +1,28 @@
+2013-11-11  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Regions] Selection focusNode set to the "region" block, instead of the "source" block
+        https://bugs.webkit.org/show_bug.cgi?id=120769
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/resources/helper.js:
+        (selectContentFromIdToPos):
+        (selectContentFromIdToPosVert):
+        (.document.onmouseup):
+        (onMouseUpLogSelectionAndFocus):
+        * fast/regions/selection/position-for-point-1-expected.txt: Added.
+        * fast/regions/selection/position-for-point-1-vert-lr-expected.txt: Added.
+        * fast/regions/selection/position-for-point-1-vert-lr.html: Added.
+        * fast/regions/selection/position-for-point-1-vert-rl-expected.txt: Added.
+        * fast/regions/selection/position-for-point-1-vert-rl.html: Added.
+        * fast/regions/selection/position-for-point-1.html: Added.
+        * fast/regions/selection/position-for-point-expected.txt: Added.
+        * fast/regions/selection/position-for-point-vert-lr-expected.txt: Added.
+        * fast/regions/selection/position-for-point-vert-lr.html: Added.
+        * fast/regions/selection/position-for-point-vert-rl-expected.txt: Added.
+        * fast/regions/selection/position-for-point-vert-rl.html: Added.
+        * fast/regions/selection/position-for-point.html: Added.
+
 2013-11-10  Sun-woo Nam  <sunny.nam@samsung.com>
 
         [EFL] Layout tests with css1 box properties need to be rebaselined.

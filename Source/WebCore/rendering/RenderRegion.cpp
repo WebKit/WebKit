@@ -71,6 +71,54 @@ RenderRegion::RenderRegion(Document& document, PassRef<RenderStyle> style, Rende
 {
 }
 
+LayoutPoint RenderRegion::mapRegionPointIntoFlowThreadCoordinates(const LayoutPoint& point)
+{
+    // Assuming the point is relative to the region block, 3 cases will be considered:
+    // a) top margin, padding or border.
+    // b) bottom margin, padding or border.
+    // c) non-content region area.
+
+    LayoutUnit pointLogicalTop(isHorizontalWritingMode() ? point.y() : point.x());
+    LayoutUnit pointLogicalLeft(isHorizontalWritingMode() ? point.x() : point.y());
+    LayoutUnit flowThreadLogicalTop(isHorizontalWritingMode() ? m_flowThreadPortionRect.y() : m_flowThreadPortionRect.x());
+    LayoutUnit flowThreadLogicalLeft(isHorizontalWritingMode() ? m_flowThreadPortionRect.x() : m_flowThreadPortionRect.y());
+    LayoutUnit flowThreadPortionTopBound(isHorizontalWritingMode() ? m_flowThreadPortionRect.height() : m_flowThreadPortionRect.width());
+    LayoutUnit flowThreadPortionLeftBound(isHorizontalWritingMode() ? m_flowThreadPortionRect.width() : m_flowThreadPortionRect.height());
+    LayoutUnit flowThreadPortionTopMax(isHorizontalWritingMode() ? m_flowThreadPortionRect.maxY() : m_flowThreadPortionRect.maxX());
+    LayoutUnit flowThreadPortionLeftMax(isHorizontalWritingMode() ? m_flowThreadPortionRect.maxX() : m_flowThreadPortionRect.maxY());
+    LayoutUnit effectiveFixedPointDenominator;
+    effectiveFixedPointDenominator.setRawValue(1);
+
+    if (pointLogicalTop < 0) {
+        LayoutPoint pointInThread(0, flowThreadLogicalTop);
+        return isHorizontalWritingMode() ? pointInThread : pointInThread.transposedPoint();
+    }
+
+    if (pointLogicalTop >= flowThreadPortionTopBound) {
+        LayoutPoint pointInThread(flowThreadPortionLeftBound, flowThreadPortionTopMax - effectiveFixedPointDenominator);
+        return isHorizontalWritingMode() ? pointInThread : pointInThread.transposedPoint();
+    }
+
+    if (pointLogicalLeft < 0) {
+        LayoutPoint pointInThread(flowThreadLogicalLeft, pointLogicalTop + flowThreadLogicalTop);
+        return isHorizontalWritingMode() ? pointInThread : pointInThread.transposedPoint();
+    }
+    if (pointLogicalLeft >= flowThreadPortionLeftBound) {
+        LayoutPoint pointInThread(flowThreadPortionLeftMax - effectiveFixedPointDenominator, pointLogicalTop + flowThreadLogicalTop);
+        return isHorizontalWritingMode() ? pointInThread : pointInThread.transposedPoint();
+    }
+    LayoutPoint pointInThread(pointLogicalLeft + flowThreadLogicalLeft, pointLogicalTop + flowThreadLogicalTop);
+    return isHorizontalWritingMode() ? pointInThread : pointInThread.transposedPoint();
+}
+
+VisiblePosition RenderRegion::positionForPoint(const LayoutPoint& point)
+{
+    if (!m_flowThread->firstChild()) // checking for empty region blocks.
+        return RenderBlock::positionForPoint(point);
+
+    return toRenderBlock(m_flowThread->firstChild())->positionForPoint(mapRegionPointIntoFlowThreadCoordinates(point));
+}
+
 LayoutUnit RenderRegion::pageLogicalWidth() const
 {
     ASSERT(m_flowThread);

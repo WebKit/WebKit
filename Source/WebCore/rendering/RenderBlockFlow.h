@@ -259,6 +259,7 @@ public:
 
     virtual void deleteLines() OVERRIDE;
     virtual void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false) OVERRIDE;
+    virtual VisiblePosition positionForPoint(const LayoutPoint&) OVERRIDE;
 
     void removeFloatingObjects();
     void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = nullptr, bool inLayout = true);

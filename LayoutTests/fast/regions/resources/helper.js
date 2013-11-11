@@ -214,6 +214,20 @@ function selectContentByRange(fromX, fromY, toX, toY) {
     eventSender.mouseUp();
 }
 
+function selectContentFromIdToPos(fromId, toX, toY) {
+  var fromRect = document.getElementById(fromId).getBoundingClientRect();
+  var fromRectVerticalCenter = fromRect.top + fromRect.height / 2;
+
+  selectContentByRange(fromRect.left, fromRectVerticalCenter, toX, toY);
+}
+
+function selectContentFromIdToPosVert(fromId, toX, toY) {
+  var fromRect = document.getElementById(fromId).getBoundingClientRect();
+  var fromRectHorizontalCenter = fromRect.left + fromRect.width / 2;
+
+  selectContentByRange(fromRectHorizontalCenter, fromRect.top, toX, toY);
+}
+
 function selectContentByIds(fromId, toId) {
     var fromRect = document.getElementById(fromId).getBoundingClientRect();
     var toRect = document.getElementById(toId).getBoundingClientRect();
@@ -249,6 +263,22 @@ function mouseClick(positionX, positionY) {
     eventSender.mouseMoveTo(positionX, positionY);
     eventSender.mouseDown();
     eventSender.mouseUp();
+}
+
+function onMouseUpLogSelectionAndFocus(contentId, nodeId, offsetId) {
+    document.onmouseup = function() {
+        var selectedContent = document.getElementById(contentId);
+        var focusNode = document.getElementById(nodeId);
+        var focusOffset = document.getElementById(offsetId);
+        var sel = window.getSelection();
+        var node = sel['focusNode'];
+        var id = " (id: " + node.id + ")";
+        if (node.nodeType == 3)
+            id = " (parent id: " + node.parentNode.id + ")";
+        focusNode.innerHTML = id + " " + sel['focusNode'] + " " + sel['focusNode'].nodeValue;
+        focusOffset.innerHTML = sel['focusOffset'];
+        selectedContent.innerHTML = sel.getRangeAt(0);
+    }
 }
 
 function onMouseUpLogSelection(elementId) {

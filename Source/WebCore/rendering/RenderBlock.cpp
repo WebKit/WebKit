@@ -55,6 +55,7 @@
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderMarquee.h"
+#include "RenderNamedFlowFragment.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
 #include "RenderTableCell.h"
@@ -3465,9 +3466,20 @@ VisiblePosition RenderBlock::positionForPointWithInlineChildren(const LayoutPoin
     return VisiblePosition();
 }
 
-static inline bool isChildHitTestCandidate(RenderBox& box)
+static inline bool isChildHitTestCandidate(const RenderBox& box)
 {
     return box.height() && box.style().visibility() == VISIBLE && !box.isFloatingOrOutOfFlowPositioned();
+}
+
+// Valid candidates in a FlowThread must be rendered by the region.
+static inline bool isChildHitTestCandidate(const RenderBox& box, RenderRegion* region, const LayoutPoint& point)
+{
+    if (!isChildHitTestCandidate(box))
+        return false;
+    if (!region)
+        return true;
+    const RenderBlock& block = box.isRenderBlock() ? toRenderBlock(box) : *box.containingBlock();
+    return block.regionAtBlockOffset(point.y()) == region;
 }
 
 VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point)
@@ -3495,8 +3507,9 @@ VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point)
     if (childrenInline())
         return positionForPointWithInlineChildren(pointInLogicalContents);
 
+    RenderRegion* region = regionAtBlockOffset(pointInLogicalContents.y());
     RenderBox* lastCandidateBox = lastChildBox();
-    while (lastCandidateBox && !isChildHitTestCandidate(*lastCandidateBox))
+    while (lastCandidateBox && !isChildHitTestCandidate(*lastCandidateBox, region, pointInLogicalContents))
         lastCandidateBox = lastCandidateBox->previousSiblingBox();
 
     bool blocksAreFlipped = style().isFlippedBlocksWritingMode();
@@ -3506,11 +3519,11 @@ VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point)
             return positionForPointRespectingEditingBoundaries(*this, *lastCandidateBox, pointInContents);
 
         for (auto childBox = firstChildBox(); childBox; childBox = childBox->nextSiblingBox()) {
-            if (!isChildHitTestCandidate(*childBox))
+            if (!isChildHitTestCandidate(*childBox, region, pointInLogicalContents))
                 continue;
             LayoutUnit childLogicalBottom = logicalTopForChild(*childBox) + logicalHeightForChild(*childBox);
             // We hit child if our click is above the bottom of its padding box (like IE6/7 and FF3).
-            if (isChildHitTestCandidate(*childBox) && (pointInLogicalContents.y() < childLogicalBottom
+            if (isChildHitTestCandidate(*childBox, region, pointInLogicalContents) && (pointInLogicalContents.y() < childLogicalBottom
                 || (blocksAreFlipped && pointInLogicalContents.y() == childLogicalBottom)))
                 return positionForPointRespectingEditingBoundaries(*this, *childBox, pointInContents);
         }

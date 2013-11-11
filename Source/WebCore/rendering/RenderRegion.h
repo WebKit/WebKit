@@ -32,6 +32,7 @@
 
 #include "RenderBlockFlow.h"
 #include "StyleInheritedData.h"
+#include "VisiblePosition.h"
 
 namespace WebCore {
 
@@ -151,6 +152,7 @@ public:
 
     virtual bool canHaveChildren() const OVERRIDE { return false; }
     virtual bool canHaveGeneratedChildren() const OVERRIDE { return true; }
+    virtual VisiblePosition positionForPoint(const LayoutPoint&) OVERRIDE;
 
 protected:
     RenderRegion(Element&, PassRef<RenderStyle>, RenderFlowThread*);
@@ -197,6 +199,8 @@ private:
 
     void incrementAutoLogicalHeightCount();
     void decrementAutoLogicalHeightCount();
+
+    LayoutPoint mapRegionPointIntoFlowThreadCoordinates(const LayoutPoint&);
 
 protected:
     RenderFlowThread* m_flowThread;

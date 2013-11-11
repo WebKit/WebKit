@@ -3052,6 +3052,14 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
     return createVisiblePosition(0, DOWNSTREAM);
 }
 
+VisiblePosition RenderBlockFlow::positionForPoint(const LayoutPoint& point)
+{
+    if (auto fragment = renderNamedFlowFragment())
+        return fragment->positionForPoint(point);
+    return RenderBlock::positionForPoint(point);
+}
+
+
 void RenderBlockFlow::addFocusRingRectsForInlineChildren(Vector<IntRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*)
 {
     ASSERT(childrenInline());

@@ -1,3 +1,49 @@
+2013-11-11  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Regions] Selection focusNode set to the "region" block, instead of the "source" block
+        https://bugs.webkit.org/show_bug.cgi?id=120769
+
+        Reviewed by David Hyatt.
+
+        When a point hits a Region block, current positionForPoint algorithm determines its
+        position in the DOM and returns either the start or end offset for such block, since
+        Region blocks have no children in the DOM.
+
+        It's necessary to map the point into Flow Thread coordinates in order to determine
+        the DOM position of the specific element rendered by the Region.
+
+        Top margin, padding and border points should be mapped to the beginning of the Region
+        block, while bottom points are mapped to the block end. The Left coordinate its just
+        adjusted to fit in the Flow Thread boundaries, since its not affected by the Flow
+        direction.
+
+        Besides, when inspecting the Flow Thread blocks looking for the last candidate box,
+        the Region originally associated to the point might be taken into account. Only the
+        blocks/boxes rendered by the Region are potential candidates.
+
+        Tests: fast/regions/selection/position-for-point-1-vert-lr.html
+               fast/regions/selection/position-for-point-1-vert-rl.html
+               fast/regions/selection/position-for-point-1.html
+               fast/regions/selection/position-for-point-vert-lr.html
+               fast/regions/selection/position-for-point-vert-rl.html
+               fast/regions/selection/position-for-point.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::isChildHitTestCandidate):
+        (WebCore::RenderBlock::positionForPoint):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::positionForPoint): Added.
+        It just redirects the call to the associated RenderNamedFlowFragment instance.
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::mapRegionPointIntoFlowThreadCoordinates): Added.
+        It performs the coordinates mapping.
+        (WebCore::RenderRegion::positionForPoint): Added.
+        It determines the corresponding LayoutPoint in the FlowThread the Region
+        is associated to, forwarding the call to the RenderBlock class using the
+        FlowThread's first child block and such new point.
+        * rendering/RenderRegion.h:
+
 2013-11-11  Gergo Balogh  <geryxyz@inf.u-szeged.hu>
 
         [curl] Remove unused includes.
