@@ -60,13 +60,13 @@ private:
 
     IntShapeIntervals& intervalsAt(int y)
     {
-        ASSERT(y + m_shapeMargin >= 0 && y + m_shapeMargin < m_intervalLists.size());
+        ASSERT(static_cast<int>(y + m_shapeMargin) >= 0 && y + m_shapeMargin < m_intervalLists.size());
         return m_intervalLists[y + m_shapeMargin];
     }
 
     const IntShapeIntervals& intervalsAt(int y) const
     {
-        ASSERT(y + m_shapeMargin >= 0 && y + m_shapeMargin < m_intervalLists.size());
+        ASSERT(static_cast<int>(y + m_shapeMargin) >= 0 && y + m_shapeMargin < m_intervalLists.size());
         return m_intervalLists[y + m_shapeMargin];
     }
 

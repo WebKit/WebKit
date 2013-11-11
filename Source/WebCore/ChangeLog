@@ -1,3 +1,16 @@
+2013-11-11  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        Fix build after r158967
+        https://bugs.webkit.org/show_bug.cgi?id=124160
+
+        Reviewed by Anders Carlsson.
+
+        After r158967, gcc debug builds with "-Werror=type-limits" enabled
+        fail. This patch fixes it.
+
+        * rendering/shapes/RasterShape.h:
+        (WebCore::RasterShapeIntervals::intervalsAt):
+
 2013-11-11  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove the OperationsNotDeletable attribute from most of the WebIDL interfaces
