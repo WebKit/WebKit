@@ -1643,6 +1643,7 @@ void webkitWebViewPrintFrame(WebKitWebView* webView, WebFrameProxy* frame)
     if (returnValue)
         return;
 
+    webkitPrintOperationSetPrintMode(printOperation.get(), PrintInfo::PrintModeSync);
     WebKitPrintOperationResponse response = webkitPrintOperationRunDialogForFrame(printOperation.get(), 0, frame);
     if (response == WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL)
         return;

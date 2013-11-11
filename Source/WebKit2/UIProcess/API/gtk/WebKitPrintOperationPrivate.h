@@ -20,9 +20,11 @@
 #ifndef WebKitPrintOperationPrivate_h
 #define WebKitPrintOperationPrivate_h
 
+#include "PrintInfo.h"
 #include "WebFrameProxy.h"
 #include "WebKitPrintOperation.h"
 
 WebKitPrintOperationResponse webkitPrintOperationRunDialogForFrame(WebKitPrintOperation*, GtkWindow* parent, WebKit::WebFrameProxy*);
+void webkitPrintOperationSetPrintMode(WebKitPrintOperation*, WebKit::PrintInfo::PrintMode);
 
 #endif // WebKitPrintOperationPrivate_h

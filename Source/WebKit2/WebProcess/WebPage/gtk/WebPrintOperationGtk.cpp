@@ -109,7 +109,7 @@ public:
         m_printContext = printContext;
         m_callbackID = callbackID;
         gtk_enumerate_printers(reinterpret_cast<GtkPrinterFunc>(enumeratePrintersFunction), this,
-                               reinterpret_cast<GDestroyNotify>(enumeratePrintersFinished), FALSE);
+            reinterpret_cast<GDestroyNotify>(enumeratePrintersFinished), m_printMode == PrintInfo::PrintModeSync);
     }
 
     void startPage(cairo_t* cr)
@@ -217,6 +217,9 @@ struct PrintPagesData {
         , isDone(false)
         , isValid(true)
     {
+        if (printOperation->printMode() == PrintInfo::PrintModeSync)
+            mainLoop = adoptGRef(g_main_loop_new(0, FALSE));
+
         if (printOperation->collateCopies()) {
             collatedCopies = printOperation->copies();
             uncollatedCopies = 1;
@@ -358,6 +361,7 @@ struct PrintPagesData {
     }
 
     RefPtr<WebPrintOperationGtk> printOperation;
+    GRefPtr<GMainLoop> mainLoop;
 
     int totalPrinted;
     size_t totalToPrint;
@@ -392,6 +396,7 @@ WebPrintOperationGtk::WebPrintOperationGtk(WebPage* page, const PrintInfo& print
     : m_webPage(page)
     , m_printSettings(printInfo.printSettings.get())
     , m_pageSetup(printInfo.pageSetup.get())
+    , m_printMode(printInfo.printMode)
     , m_printContext(0)
     , m_callbackID(0)
     , m_xDPI(1)
@@ -669,6 +674,8 @@ gboolean WebPrintOperationGtk::printPagesIdle(gpointer userData)
 void WebPrintOperationGtk::printPagesIdleDone(gpointer userData)
 {
     PrintPagesData* data = static_cast<PrintPagesData*>(userData);
+    if (data->mainLoop)
+        g_main_loop_quit(data->mainLoop.get());
 
     data->printOperation->printPagesDone();
     delete data;
@@ -705,8 +712,17 @@ void WebPrintOperationGtk::print(cairo_surface_t* surface, double xDPI, double y
     m_xDPI = xDPI;
     m_yDPI = yDPI;
     m_cairoContext = adoptRef(cairo_create(surface));
-    m_printPagesIdleId = gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE + 10, printPagesIdle,
-                                                   data.leakPtr(), printPagesIdleDone);
+
+    // Make sure the print pages idle has more priority than IPC messages comming from
+    // the IO thread, so that the EndPrinting message is always handled once the print
+    // operation has finished. See https://bugs.webkit.org/show_bug.cgi?id=122801.
+    unsigned idlePriority = m_printMode == PrintInfo::PrintModeSync ? G_PRIORITY_DEFAULT - 10 : G_PRIORITY_DEFAULT_IDLE + 10;
+    GMainLoop* mainLoop = data->mainLoop.get();
+    m_printPagesIdleId = gdk_threads_add_idle_full(idlePriority, printPagesIdle, data.leakPtr(), printPagesIdleDone);
+    if (m_printMode == PrintInfo::PrintModeSync) {
+        ASSERT(mainLoop);
+        g_main_loop_run(mainLoop);
+    }
 }
 
 }

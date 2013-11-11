@@ -52,6 +52,7 @@ void PrintInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
 #if PLATFORM(GTK)
     CoreIPC::encode(encoder, printSettings.get());
     CoreIPC::encode(encoder, pageSetup.get());
+    encoder.encodeEnum(printMode);
 #endif
 }
 
@@ -68,6 +69,8 @@ bool PrintInfo::decode(CoreIPC::ArgumentDecoder& decoder, PrintInfo& info)
     if (!CoreIPC::decode(decoder, info.printSettings))
         return false;
     if (!CoreIPC::decode(decoder, info.pageSetup))
+        return false;
+    if (!decoder.decodeEnum(info.printMode))
         return false;
 #endif
 
