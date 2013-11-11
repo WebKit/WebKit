@@ -100,9 +100,6 @@ class ImageDiffer(object):
         if self._process.has_crashed():
             err_str += "ImageDiff crashed\n"
 
-        # FIXME: There is no need to shut down the ImageDiff server after every diff.
-        self._process.stop()
-
         diff_percent = 0
         if output and output.startswith('diff'):
             m = re.match('diff: (.+)% (passed|failed)', output)

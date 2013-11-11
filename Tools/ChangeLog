@@ -1,3 +1,16 @@
+2013-11-11  Tamas Gergely  <gertom@inf.u-szeged.hu>
+
+        Do not shut down ImageDiff server after every diff during the tests.
+        https://bugs.webkit.org/show_bug.cgi?id=124140
+
+        Reviewed by Csaba Osztrogonác.
+
+        There was a FIXME: There is no need to shut down the ImageDiff
+        server after every diff. Shutdown is removed from that point.
+
+        * Scripts/webkitpy/port/image_diff.py:
+        (ImageDiffer._read):
+
 2013-11-08  Matthew Hanson  <matthew_hanson@apple.com>
 
         Unreviewed. Added myself as a contributor.
