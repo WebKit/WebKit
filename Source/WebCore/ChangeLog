@@ -1,3 +1,16 @@
+2013-11-10  Andreas Kling  <akling@apple.com>
+
+        Shrink RenderInline.
+        <https://webkit.org/b/124134>
+
+        Move the "always create line boxes" bit from RenderInline up to
+        RenderElement. I didn't do this earlier because there were no bits
+        free on RenderObject but thanks to RenderElement we now have tons!
+
+        540 kB progression on HTML5 spec at <http://whatwg.org/c>
+
+        Reviewed by Anders Carlsson.
+
 2013-11-10  Sam Weinig  <sam@webkit.org>
 
         Make childShouldCreateRenderer() take a Node reference

@@ -81,8 +81,8 @@ public:
     using RenderBoxModelObject::continuation;
     using RenderBoxModelObject::setContinuation;
 
-    bool alwaysCreateLineBoxes() const { return m_alwaysCreateLineBoxes; }
-    void setAlwaysCreateLineBoxes() { m_alwaysCreateLineBoxes = true; }
+    bool alwaysCreateLineBoxes() const { return renderInlineAlwaysCreatesLineBoxes(); }
+    void setAlwaysCreateLineBoxes() { setRenderInlineAlwaysCreatesLineBoxes(true); }
     void updateAlwaysCreateLineBoxes(bool fullLayout);
 
     virtual LayoutRect localCaretRect(InlineBox*, int, LayoutUnit* extraWidthToEndOfLine) OVERRIDE FINAL;
@@ -172,8 +172,6 @@ private:
     RenderBoxModelObject* continuationBefore(RenderObject* beforeChild);
 
     RenderLineBoxList m_lineBoxes;   // All of the line boxes created for this inline flow.  For example, <i>Hello<br>world.</i> will have two <i> line boxes.
-
-    bool m_alwaysCreateLineBoxes : 1;
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderInline, isRenderInline())

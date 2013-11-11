@@ -51,14 +51,12 @@ namespace WebCore {
 
 RenderInline::RenderInline(Element& element, PassRef<RenderStyle> style)
     : RenderBoxModelObject(element, std::move(style), RenderInlineFlag)
-    , m_alwaysCreateLineBoxes(false)
 {
     setChildrenInline(true);
 }
 
 RenderInline::RenderInline(Document& document, PassRef<RenderStyle> style)
     : RenderBoxModelObject(document, std::move(style), RenderInlineFlag)
-    , m_alwaysCreateLineBoxes(false)
 {
     setChildrenInline(true);
 }
@@ -192,13 +190,13 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
         updateStyleOfAnonymousBlockContinuations(toRenderBlock(block), &newStyle, oldStyle);
     }
 
-    if (!m_alwaysCreateLineBoxes) {
+    if (!alwaysCreateLineBoxes()) {
         bool alwaysCreateLineBoxes = hasSelfPaintingLayer() || hasBoxDecorations() || newStyle.hasPadding() || newStyle.hasMargin() || hasOutline();
         if (oldStyle && alwaysCreateLineBoxes) {
             dirtyLineBoxes(false);
             setNeedsLayout();
         }
-        m_alwaysCreateLineBoxes = alwaysCreateLineBoxes;
+        setRenderInlineAlwaysCreatesLineBoxes(alwaysCreateLineBoxes);
     }
 }
 
@@ -206,7 +204,7 @@ void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
 {
     // Once we have been tainted once, just assume it will happen again. This way effects like hover highlighting that change the
     // background color will only cause a layout on the first rollover.
-    if (m_alwaysCreateLineBoxes)
+    if (alwaysCreateLineBoxes())
         return;
 
     RenderStyle* parentStyle = &parent()->style();
@@ -233,7 +231,7 @@ void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
     if (alwaysCreateLineBoxes) {
         if (!fullLayout)
             dirtyLineBoxes(false);
-        m_alwaysCreateLineBoxes = true;
+        setAlwaysCreateLineBoxes();
     }
 }
 

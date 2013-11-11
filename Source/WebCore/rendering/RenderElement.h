@@ -141,6 +141,9 @@ protected:
     virtual void willBeRemovedFromTree() OVERRIDE;
     virtual void willBeDestroyed() OVERRIDE;
 
+    void setRenderInlineAlwaysCreatesLineBoxes(bool b) { m_renderInlineAlwaysCreatesLineBoxes = b; }
+    bool renderInlineAlwaysCreatesLineBoxes() const { return m_renderInlineAlwaysCreatesLineBoxes; }
+
 private:
     void node() const WTF_DELETED_FUNCTION;
     void nonPseudoNode() const WTF_DELETED_FUNCTION;
@@ -166,6 +169,9 @@ private:
     unsigned m_baseTypeFlags : 6;
     bool m_ancestorLineBoxDirty : 1;
     bool m_hasInitializedStyle : 1;
+
+    // Specific to RenderInline.
+    bool m_renderInlineAlwaysCreatesLineBoxes : 1;
 
     RenderObject* m_firstChild;
     RenderObject* m_lastChild;
