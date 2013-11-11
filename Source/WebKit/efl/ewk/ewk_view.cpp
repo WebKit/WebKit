@@ -4255,6 +4255,9 @@ Eina_Bool ewk_view_visibility_state_set(Evas_Object* ewkView, Ewk_Page_Visibilit
     return true;
 #else
     DBG("PAGE_VISIBILITY_API is disabled.");
+    UNUSED_PARAM(ewkView);
+    UNUSED_PARAM(pageVisibilityState);
+    UNUSED_PARAM(initialState);
     return false;
 #endif
 }
@@ -4268,6 +4271,7 @@ Ewk_Page_Visibility_State ewk_view_visibility_state_get(const Evas_Object* ewkVi
     return static_cast<Ewk_Page_Visibility_State>(priv->page->visibilityState());
 #else
     DBG("PAGE_VISIBILITY_API is disabled.");
+    UNUSED_PARAM(ewkView);
     return EWK_PAGE_VISIBILITY_STATE_VISIBLE;
 #endif
 }

@@ -143,6 +143,8 @@ void ewk_settings_web_database_path_set(const char* path)
 #if ENABLE(SQL_DATABASE)
     WebCore::DatabaseManager::manager().setDatabaseDirectoryPath(WTF::String::fromUTF8(path));
     eina_stringshare_replace(&s_webDatabasePath, path);
+#else
+    UNUSED_PARAM(path);
 #endif
 }
 

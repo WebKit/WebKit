@@ -1,3 +1,18 @@
+2013-11-10  Tibor Meszaros  <mtibor@inf.u-szeged.hu>
+
+        Cleanup the EFL --minimal build from unused parameters
+        https://bugs.webkit.org/show_bug.cgi?id=124048
+
+        Reviewed by Gyuyoung Kim.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::createWindow):
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_web_database_path_set):
+        * ewk/ewk_view.cpp:
+        (ewk_view_visibility_state_set):
+        (ewk_view_visibility_state_get):
+
 2013-11-05  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Remove NATIVE_FULLSCREEN_VIDEO support
