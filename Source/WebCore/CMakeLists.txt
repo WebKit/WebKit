@@ -281,6 +281,7 @@ set(WebCore_IDL_FILES
     Modules/websockets/WebSocket.idl
 
     crypto/CryptoKey.idl
+    crypto/CryptoKeyPair.idl
     crypto/SubtleCrypto.idl
 
     css/CSSCharsetRule.idl

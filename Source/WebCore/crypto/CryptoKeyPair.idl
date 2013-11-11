@@ -23,32 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum KeyType {
-    "secret",
-    "public",
-    "private"
-};
-
-enum KeyUsage {
-    "encrypt",
-    "decrypt",
-    "sign",
-    "verify",
-    "deriveKey",
-    "deriveBits",
-    "wrapKey",
-    "unwrapKey"
-};
-
 [
     Conditional=SUBTLE_CRYPTO,
-    GenerateIsReachable=Impl,
-    InterfaceName=Key,
+    ImplementationLacksVTable,
+    InterfaceName=KeyPair,
+    JSCustomMarkFunction,
     NoInterfaceObject,
-    SkipVTableValidation
-] interface CryptoKey {
-    readonly attribute KeyType type;
-    readonly attribute boolean extractable;
-    [Custom] readonly attribute Algorithm algorithm;
-    readonly attribute KeyUsage[] usages;
+    OperationsNotDeletable
+] interface CryptoKeyPair {
+    readonly attribute CryptoKey publicKey;
+    readonly attribute CryptoKey privateKey;
 };

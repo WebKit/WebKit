@@ -23,32 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum KeyType {
-    "secret",
-    "public",
-    "private"
+#ifndef CryptoKeyPair_h
+#define CryptoKeyPair_h
+
+#include "CryptoKey.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+
+#if ENABLE(SUBTLE_CRYPTO)
+
+namespace WebCore {
+
+class CryptoKeyPair : public RefCounted<CryptoKeyPair> {
+public:
+    static PassRefPtr<CryptoKeyPair> create(PassRefPtr<CryptoKey> publicKey, PassRefPtr<CryptoKey> privateKey)
+    {
+        return adoptRef(new CryptoKeyPair(publicKey, privateKey));
+    }
+    ~CryptoKeyPair();
+
+    CryptoKey* publicKey() { return m_publicKey.get(); }
+    CryptoKey* privateKey() { return m_privateKey.get(); }
+
+private:
+    CryptoKeyPair(PassRefPtr<CryptoKey> publicKey, PassRefPtr<CryptoKey> privateKey);
+
+    RefPtr<CryptoKey> m_publicKey;
+    RefPtr<CryptoKey> m_privateKey;
 };
 
-enum KeyUsage {
-    "encrypt",
-    "decrypt",
-    "sign",
-    "verify",
-    "deriveKey",
-    "deriveBits",
-    "wrapKey",
-    "unwrapKey"
-};
+} // namespace WebCore
 
-[
-    Conditional=SUBTLE_CRYPTO,
-    GenerateIsReachable=Impl,
-    InterfaceName=Key,
-    NoInterfaceObject,
-    SkipVTableValidation
-] interface CryptoKey {
-    readonly attribute KeyType type;
-    readonly attribute boolean extractable;
-    [Custom] readonly attribute Algorithm algorithm;
-    readonly attribute KeyUsage[] usages;
-};
+#endif // ENABLE(SUBTLE_CRYPTO)
+#endif // CryptoKeyPair_h

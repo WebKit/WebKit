@@ -27,6 +27,7 @@
 #define JSDOMPromise_h
 
 #include "JSCryptoKey.h"
+#include "JSCryptoKeyPair.h"
 #include "JSDOMBinding.h"
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSPromise.h>

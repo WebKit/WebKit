@@ -5698,6 +5698,11 @@
 		E1ED8AC30CC49BE000BFC557 /* CSSPrimitiveValueMappings.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ED8AC20CC49BE000BFC557 /* CSSPrimitiveValueMappings.h */; };
 		E1F1E82F0C3C2BB9006DB391 /* XSLTExtensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F1E82D0C3C2BB9006DB391 /* XSLTExtensions.cpp */; };
 		E1F1E8300C3C2BB9006DB391 /* XSLTExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F1E82E0C3C2BB9006DB391 /* XSLTExtensions.h */; };
+		E1F80B8718317252007885C3 /* CryptoKeyPair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F80B8518317252007885C3 /* CryptoKeyPair.cpp */; };
+		E1F80B8818317252007885C3 /* CryptoKeyPair.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F80B8618317252007885C3 /* CryptoKeyPair.h */; };
+		E1F80B8A183172A2007885C3 /* JSCryptoKeyPairCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F80B89183172A2007885C3 /* JSCryptoKeyPairCustom.cpp */; };
+		E1F80B8D183172B5007885C3 /* JSCryptoKeyPair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F80B8B183172B5007885C3 /* JSCryptoKeyPair.cpp */; };
+		E1F80B8E183172B5007885C3 /* JSCryptoKeyPair.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F80B8C183172B5007885C3 /* JSCryptoKeyPair.h */; };
 		E1FF57A30F01255B00891EBB /* ThreadGlobalData.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FF57A20F01255B00891EBB /* ThreadGlobalData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1FF57A60F01256B00891EBB /* ThreadGlobalData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF57A50F01256B00891EBB /* ThreadGlobalData.cpp */; };
 		E1FF8F5F1807442100132674 /* SubtleCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF8F5D1807442100132674 /* SubtleCrypto.cpp */; };
@@ -12780,6 +12785,12 @@
 		E1ED8AC20CC49BE000BFC557 /* CSSPrimitiveValueMappings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPrimitiveValueMappings.h; sourceTree = "<group>"; };
 		E1F1E82D0C3C2BB9006DB391 /* XSLTExtensions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTExtensions.cpp; sourceTree = "<group>"; };
 		E1F1E82E0C3C2BB9006DB391 /* XSLTExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTExtensions.h; sourceTree = "<group>"; };
+		E1F80B8418317247007885C3 /* CryptoKeyPair.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CryptoKeyPair.idl; sourceTree = "<group>"; };
+		E1F80B8518317252007885C3 /* CryptoKeyPair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoKeyPair.cpp; sourceTree = "<group>"; };
+		E1F80B8618317252007885C3 /* CryptoKeyPair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyPair.h; sourceTree = "<group>"; };
+		E1F80B89183172A2007885C3 /* JSCryptoKeyPairCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoKeyPairCustom.cpp; sourceTree = "<group>"; };
+		E1F80B8B183172B5007885C3 /* JSCryptoKeyPair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoKeyPair.cpp; sourceTree = "<group>"; };
+		E1F80B8C183172B5007885C3 /* JSCryptoKeyPair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCryptoKeyPair.h; sourceTree = "<group>"; };
 		E1FF57A20F01255B00891EBB /* ThreadGlobalData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadGlobalData.h; sourceTree = "<group>"; };
 		E1FF57A50F01256B00891EBB /* ThreadGlobalData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadGlobalData.cpp; sourceTree = "<group>"; };
 		E1FF8F5C1807364B00132674 /* SubtleCrypto.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SubtleCrypto.idl; sourceTree = "<group>"; };
@@ -19582,6 +19593,7 @@
 				BCA83E510D7CE205003421A8 /* JSClipboardCustom.cpp */,
 				209B456A16796A7E00E54E4E /* JSCryptoCustom.cpp */,
 				E157A8E618184C67009F821D /* JSCryptoKeyCustom.cpp */,
+				E1F80B89183172A2007885C3 /* JSCryptoKeyPairCustom.cpp */,
 				BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */,
 				AD726FE916D9F40A003A4E6D /* JSCSSRuleCustom.h */,
 				9392262E10321084006E7D5D /* JSCSSRuleListCustom.cpp */,
@@ -20485,6 +20497,9 @@
 				E157A8E218173A3A009F821D /* CryptoKey.cpp */,
 				E157A8E318173A3A009F821D /* CryptoKey.h */,
 				E125F85D182C2DF600D84CD9 /* CryptoKeyData.h */,
+				E1F80B8518317252007885C3 /* CryptoKeyPair.cpp */,
+				E1F80B8618317252007885C3 /* CryptoKeyPair.h */,
+				E1F80B8418317247007885C3 /* CryptoKeyPair.idl */,
 				E125F855182C0F8300D84CD9 /* CryptoKeySerialization.h */,
 				E19727151820549E00592D51 /* CryptoKeyType.h */,
 				E172AF6F180F289500FBADB9 /* CryptoKeyUsage.h */,
@@ -20500,6 +20515,8 @@
 			children = (
 				E157A8DE1817331C009F821D /* JSCryptoKey.cpp */,
 				E157A8DF1817331C009F821D /* JSCryptoKey.h */,
+				E1F80B8B183172B5007885C3 /* JSCryptoKeyPair.cpp */,
+				E1F80B8C183172B5007885C3 /* JSCryptoKeyPair.h */,
 				E1FF8F62180745D800132674 /* JSSubtleCrypto.cpp */,
 				E1FF8F63180745D800132674 /* JSSubtleCrypto.h */,
 			);
@@ -22180,6 +22197,7 @@
 				FB3056C2169E5DAC0096A232 /* CSSGroupingRule.h in Headers */,
 				BC772B3C0C4EA91E0083285F /* CSSHelper.h in Headers */,
 				FB49C39D16784947007FFB5D /* CSSHostRule.h in Headers */,
+				E1F80B8E183172B5007885C3 /* JSCryptoKeyPair.h in Headers */,
 				BC23EE920DAED2BC009FDC91 /* CSSImageGeneratorValue.h in Headers */,
 				9393E600151A99F200066F06 /* CSSImageSetValue.h in Headers */,
 				A80E6CFA0A1989CA007FB8C5 /* CSSImageValue.h in Headers */,
@@ -24215,6 +24233,7 @@
 				A8DF4AEF0980C42C0052981B /* RenderTableSection.h in Headers */,
 				BCEA488C097D93020094C9E4 /* RenderText.h in Headers */,
 				AB67D1A9097F3AE300F9392E /* RenderTextControl.h in Headers */,
+				E1F80B8818317252007885C3 /* CryptoKeyPair.h in Headers */,
 				083DAEA70F01A7FB00342754 /* RenderTextControlMultiLine.h in Headers */,
 				083DAEA90F01A7FB00342754 /* RenderTextControlSingleLine.h in Headers */,
 				BCEA488E097D93020094C9E4 /* RenderTextFragment.h in Headers */,
@@ -25844,6 +25863,7 @@
 				85ACA9C10A9B5FA500671E90 /* DOMElement.mm in Sources */,
 				85CA96B90A9621A600690CCF /* DOMEntity.mm in Sources */,
 				85089CDE0A98C42800A275AA /* DOMEntityReference.mm in Sources */,
+				E1F80B8D183172B5007885C3 /* JSCryptoKeyPair.cpp in Sources */,
 				BC1BDF24156C1883001C1243 /* DOMError.cpp in Sources */,
 				85AFA8230AAF528A00E84305 /* DOMEvent.mm in Sources */,
 				BC1A37B3097C715F0019F3D8 /* DOMEvents.mm in Sources */,
@@ -26377,6 +26397,7 @@
 				B885E8D411E06DD2009FFBF4 /* InspectorApplicationCacheAgent.cpp in Sources */,
 				4F707A9911EF679400ACDA69 /* InspectorBackendDispatcher.cpp in Sources */,
 				7AA51B6F1483B61600AD2752 /* InspectorBaseAgent.cpp in Sources */,
+				E1F80B8A183172A2007885C3 /* JSCryptoKeyPairCustom.cpp in Sources */,
 				AAD766EB157E502F00E85423 /* InspectorCanvasAgent.cpp in Sources */,
 				7A1F2B52126C61B20006A7E6 /* InspectorClient.cpp in Sources */,
 				F3335BF812E07DC300D33011 /* InspectorConsoleAgent.cpp in Sources */,
@@ -27475,6 +27496,7 @@
 				FD3160AA12B026F700C1A359 /* ReverbConvolverStage.cpp in Sources */,
 				51D719E9181106E00016DC51 /* IDBPendingTransactionMonitor.cpp in Sources */,
 				FD3160AC12B026F700C1A359 /* ReverbInputBuffer.cpp in Sources */,
+				E1F80B8718317252007885C3 /* CryptoKeyPair.cpp in Sources */,
 				BC74DA381013F3F7007987AD /* RGBColor.cpp in Sources */,
 				A8CFF5E70A155A05000A4234 /* RootInlineBox.cpp in Sources */,
 				49E911C80EF86D47009D0CAF /* RotateTransformOperation.cpp in Sources */,

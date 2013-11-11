@@ -23,32 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum KeyType {
-    "secret",
-    "public",
-    "private"
-};
+#include "config.h"
+#include "CryptoKeyPair.h"
 
-enum KeyUsage {
-    "encrypt",
-    "decrypt",
-    "sign",
-    "verify",
-    "deriveKey",
-    "deriveBits",
-    "wrapKey",
-    "unwrapKey"
-};
+#if ENABLE(SUBTLE_CRYPTO)
 
-[
-    Conditional=SUBTLE_CRYPTO,
-    GenerateIsReachable=Impl,
-    InterfaceName=Key,
-    NoInterfaceObject,
-    SkipVTableValidation
-] interface CryptoKey {
-    readonly attribute KeyType type;
-    readonly attribute boolean extractable;
-    [Custom] readonly attribute Algorithm algorithm;
-    readonly attribute KeyUsage[] usages;
-};
+namespace WebCore {
+
+CryptoKeyPair::CryptoKeyPair(PassRefPtr<CryptoKey> publicKey, PassRefPtr<CryptoKey> privateKey)
+    : m_publicKey(publicKey)
+    , m_privateKey(privateKey)
+{
+}
+
+CryptoKeyPair::~CryptoKeyPair()
+{
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(SUBTLE_CRYPTO)

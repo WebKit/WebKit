@@ -23,32 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum KeyType {
-    "secret",
-    "public",
-    "private"
-};
+#include "config.h"
+#include "JSCryptoKeyPair.h"
 
-enum KeyUsage {
-    "encrypt",
-    "decrypt",
-    "sign",
-    "verify",
-    "deriveKey",
-    "deriveBits",
-    "wrapKey",
-    "unwrapKey"
-};
+#if ENABLE(SUBTLE_CRYPTO)
 
-[
-    Conditional=SUBTLE_CRYPTO,
-    GenerateIsReachable=Impl,
-    InterfaceName=Key,
-    NoInterfaceObject,
-    SkipVTableValidation
-] interface CryptoKey {
-    readonly attribute KeyType type;
-    readonly attribute boolean extractable;
-    [Custom] readonly attribute Algorithm algorithm;
-    readonly attribute KeyUsage[] usages;
-};
+using namespace JSC;
+
+namespace WebCore {
+
+void JSCryptoKeyPair::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSCryptoKeyPair* thisObject = jsCast<JSCryptoKeyPair*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+
+    visitor.addOpaqueRoot(thisObject->m_impl->publicKey());
+    visitor.addOpaqueRoot(thisObject->m_impl->privateKey());
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(SUBTLE_CRYPTO)

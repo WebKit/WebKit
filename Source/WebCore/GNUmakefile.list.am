@@ -152,6 +152,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSCSSValueList.h \
 	DerivedSources/WebCore/JSCryptoKey.cpp \
 	DerivedSources/WebCore/JSCryptoKey.h \
+	DerivedSources/WebCore/JSCryptoKeyPair.cpp \
+	DerivedSources/WebCore/JSCryptoKeyPair.h \
 	DerivedSources/WebCore/JSCustomEvent.cpp \
 	DerivedSources/WebCore/JSCustomEvent.h \
 	DerivedSources/WebCore/JSDatabase.cpp \
@@ -1291,6 +1293,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/websockets/CloseEvent.idl \
 	$(WebCore)/Modules/websockets/WebSocket.idl \
 	$(WebCore)/crypto/CryptoKey.idl \
+	$(WebCore)/crypto/CryptoKeyPair.idl \
 	$(WebCore)/crypto/SubtleCrypto.idl \
 	$(WebCore)/css/CSSCharsetRule.idl \
 	$(WebCore)/css/CSSFontFaceLoadEvent.idl \

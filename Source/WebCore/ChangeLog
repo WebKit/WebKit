@@ -1,3 +1,35 @@
+2013-11-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Support WebCrypto KeyPair interface
+        https://bugs.webkit.org/show_bug.cgi?id=124161
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests yet, will be tested once generateKey is implemented for any RSA algorithms.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+        Added new files.
+
+        * bindings/js/JSDOMPromise.h: Support returning a key pair via a promise.
+
+        * bindings/js/JSCryptoKeyPairCustom.cpp: Added.
+        (WebCore::JSCryptoKeyPair::visitChildren):
+        * crypto/CryptoKey.idl:
+        CryptoKey wrapper is reachable through KeyPair, but it doesn't have (or need)
+        a back pointer.
+
+        * crypto/CryptoKeyPair.cpp: Added.
+        (WebCore::CryptoKeyPair::CryptoKeyPair):
+        (WebCore::CryptoKeyPair::~CryptoKeyPair):
+        * crypto/CryptoKeyPair.h: Added.
+        (WebCore::CryptoKeyPair::create):
+        (WebCore::CryptoKeyPair::publicKey):
+        (WebCore::CryptoKeyPair::privateKey):
+        * crypto/CryptoKeyPair.idl: Added.
+
 2013-11-11  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         Fix build after r158967
