@@ -349,37 +349,9 @@ private:
             CodeOrigin codeOrigin = node->codeOrigin;
             AdjacencyList children = node->children;
             
-            if (node->op() == GetLocal) {
-                // GetLocals without a Phi child are guaranteed dead. We don't have to
-                // do anything about them.
-                if (!node->child1())
-                    continue;
-                
-                if (m_graph.m_form != LoadStore) {
-                    VariableAccessData* variable = node->variableAccessData();
-                    Node* phi = node->child1().node();
-                    if (phi->op() == Phi
-                        && block->variablesAtHead.operand(variable->local()) == phi
-                        && block->variablesAtTail.operand(variable->local()) == node) {
-                        
-                        // Keep the graph threaded for easy cases. This is improves compile
-                        // times. It would be correct to just dethread here.
-                        
-                        m_graph.convertToConstant(node, value);
-                        Node* phantom = m_insertionSet.insertNode(
-                            indexInBlock, SpecNone, PhantomLocal,  codeOrigin,
-                            OpInfo(variable), Edge(phi));
-                        block->variablesAtHead.operand(variable->local()) = phantom;
-                        block->variablesAtTail.operand(variable->local()) = phantom;
-                        
-                        changed = true;
-                        
-                        continue;
-                    }
-                    
-                    m_graph.dethread();
-                }
-            } else
+            if (node->op() == GetLocal)
+                m_graph.dethread();
+            else
                 ASSERT(!node->hasVariableAccessData(m_graph));
             
             m_graph.convertToConstant(node, value);

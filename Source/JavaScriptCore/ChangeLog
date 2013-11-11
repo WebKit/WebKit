@@ -1,5 +1,18 @@
 2013-11-11  Filip Pizlo  <fpizlo@apple.com>
 
+        Remove ConstantFoldingPhase's weirdo compile-time optimization
+        https://bugs.webkit.org/show_bug.cgi?id=124169
+
+        Reviewed by Mark Hahnenberg.
+        
+        It turns out that this compile-time optimization doesn't optimize compile times
+        anymore. Kill it with fire.
+
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+
+2013-11-11  Filip Pizlo  <fpizlo@apple.com>
+
         Make bytecode dumping use the right opcode names for inc/dec.
 
         Rubber stamped by Mark Hahnenberg.
