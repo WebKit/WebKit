@@ -610,7 +610,7 @@ public:
     PassRefPtr<ImmutableArray> relatedPages() const;
 
     const String& urlAtProcessExit() const { return m_urlAtProcessExit; }
-    WebFrameProxy::LoadState loadStateAtProcessExit() const { return m_loadStateAtProcessExit; }
+    FrameLoadState::LoadState loadStateAtProcessExit() const { return m_loadStateAtProcessExit; }
 
 #if ENABLE(DRAG_SUPPORT)
     WebCore::DragSession dragSession() const { return m_currentDragSession; }
@@ -1090,7 +1090,7 @@ private:
     String m_toolTip;
 
     String m_urlAtProcessExit;
-    WebFrameProxy::LoadState m_loadStateAtProcessExit;
+    FrameLoadState::LoadState m_loadStateAtProcessExit;
 
     EditorState m_editorState;
     bool m_temporarilyClosedComposition; // Editor state changed from hasComposition to !hasComposition, but that was only with shouldIgnoreCompositionSelectionChange yet.

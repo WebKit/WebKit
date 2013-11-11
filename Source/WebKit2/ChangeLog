@@ -1,3 +1,39 @@
+2013-11-11  Anders Carlsson  <andersca@apple.com>
+
+        Add a FrameLoadState object and begin moving loading related members from WebFrameProxy
+        https://bugs.webkit.org/show_bug.cgi?id=124163
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameGetFrameLoadState):
+        * UIProcess/FrameLoadState.cpp: Added.
+        (WebKit::FrameLoadState::FrameLoadState):
+        (WebKit::FrameLoadState::~FrameLoadState):
+        * UIProcess/FrameLoadState.h: Added.
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::WebFrameProxy):
+        (WebKit::WebFrameProxy::didStartProvisionalLoad):
+        (WebKit::WebFrameProxy::didReceiveServerRedirectForProvisionalLoad):
+        (WebKit::WebFrameProxy::didFailProvisionalLoad):
+        (WebKit::WebFrameProxy::didCommitLoad):
+        (WebKit::WebFrameProxy::didFinishLoad):
+        (WebKit::WebFrameProxy::didFailLoad):
+        (WebKit::WebFrameProxy::didSameDocumentNavigation):
+        (WebKit::WebFrameProxy::setUnreachableURL):
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::frameLoadState):
+        (WebKit::WebFrameProxy::loadState):
+        (WebKit::WebFrameProxy::url):
+        (WebKit::WebFrameProxy::provisionalURL):
+        (WebKit::WebFrameProxy::unreachableURL):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::activeURL):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::loadStateAtProcessExit):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-11-11  Gergo Balogh  <geryxyz@inf.u-szeged.hu>
 
         Remove #include from test input of the *Messages.in processing scripts.

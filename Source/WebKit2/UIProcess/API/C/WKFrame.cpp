@@ -44,13 +44,13 @@ bool WKFrameIsMainFrame(WKFrameRef frameRef)
 WKFrameLoadState WKFrameGetFrameLoadState(WKFrameRef frameRef)
 {
     WebFrameProxy* frame = toImpl(frameRef);
-    switch (frame->loadState()) {
-        case WebFrameProxy::LoadStateProvisional:
-            return kWKFrameLoadStateProvisional;
-        case WebFrameProxy::LoadStateCommitted:
-            return kWKFrameLoadStateCommitted;
-        case WebFrameProxy::LoadStateFinished:
-            return kWKFrameLoadStateFinished;
+    switch (frame->frameLoadState().m_loadState) {
+    case FrameLoadState::LoadStateProvisional:
+        return kWKFrameLoadStateProvisional;
+    case FrameLoadState::LoadStateCommitted:
+        return kWKFrameLoadStateCommitted;
+    case FrameLoadState::LoadStateFinished:
+        return kWKFrameLoadStateFinished;
     }
     
     ASSERT_NOT_REACHED();

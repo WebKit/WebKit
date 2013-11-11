@@ -27,6 +27,7 @@
 #define WebFrameProxy_h
 
 #include "APIObject.h"
+#include "FrameLoadState.h"
 #include "ImmutableArray.h"
 #include "GenericCallback.h"
 #include "WebFrameListenerProxy.h"
@@ -60,12 +61,6 @@ public:
 
     virtual ~WebFrameProxy();
 
-    enum LoadState {
-        LoadStateProvisional,
-        LoadStateCommitted,
-        LoadStateFinished
-    };
-
     uint64_t frameID() const { return m_frameID; }
     WebPageProxy* page() const { return m_page; }
 
@@ -76,15 +71,17 @@ public:
     void setIsFrameSet(bool value) { m_isFrameSet = value; }
     bool isFrameSet() const { return m_isFrameSet; }
 
-    LoadState loadState() const { return m_loadState; }
+    FrameLoadState& frameLoadState() { return m_frameLoadState; }
+
+    FrameLoadState::LoadState loadState() const { return m_frameLoadState.m_loadState; }
     
     void stopLoading() const;
 
-    const String& url() const { return m_url; }
-    const String& provisionalURL() const { return m_provisionalURL; }
+    const String& url() const { return m_frameLoadState.m_url; }
+    const String& provisionalURL() const { return m_frameLoadState.m_provisionalURL; }
 
     void setUnreachableURL(const String&);
-    const String& unreachableURL() const { return m_unreachableURL; }
+    const String& unreachableURL() const { return m_frameLoadState.m_unreachableURL; }
 
     const String& mimeType() const { return m_MIMEType; }
 
@@ -121,11 +118,9 @@ private:
     WebFrameProxy(WebPageProxy* page, uint64_t frameID);
 
     WebPageProxy* m_page;
-    LoadState m_loadState;
-    String m_url;
-    String m_provisionalURL;
-    String m_unreachableURL;
-    String m_lastUnreachableURL;
+
+    FrameLoadState m_frameLoadState;
+
     String m_MIMEType;
     String m_title;
     bool m_isFrameSet;
