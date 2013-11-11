@@ -48,8 +48,6 @@ _messages_file_contents = """# Copyright (C) 2010 Apple Inc. All rights reserved
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "config.h"
-
 #if ENABLE(WEBKIT2)
 
 messages -> WebPage LegacyReceiver {

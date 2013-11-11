@@ -1,3 +1,12 @@
+2013-11-11  Gergo Balogh  <geryxyz@inf.u-szeged.hu>
+
+        Remove #include from test input of the *Messages.in processing scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=123563
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkit2/messages_unittest.py:
+
 2013-11-11  Anders Carlsson  <andersca@apple.com>
 
         Remove block based APIs from the WebKit2 C API
