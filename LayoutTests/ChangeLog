@@ -1,3 +1,23 @@
+2013-11-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Mac] Characters too close together in complex Arabic text
+        https://bugs.webkit.org/show_bug.cgi?id=124057
+
+        Reviewed by Darin Adler.
+
+        complex-grapheme-cluster-with-initial-advance adds a span around a word in some
+        complex Arabic text, and expects that the word spacing is the same as without the
+        span.
+
+        selection-in-initial-advance-region simulates a mouse drag across a complex text run
+        with an initial advance. This makes sure that ComplexTextController::offsetForPosition
+        doesn't crash when there is an initial advance.
+
+        * fast/text/complex-grapheme-cluster-with-initial-advance-expected.html: Added.
+        * fast/text/complex-grapheme-cluster-with-initial-advance.html: Added.
+        * fast/text/selection-in-initial-advance-region-expected.txt: added
+        * fast/text/selection-in-initial-advance-region.html: added
+
 2013-11-11  Antti Koivisto  <antti@apple.com>
 
         End of line whitespace should collapse with white-space:pre-wrap; overflow-wrap:break-word in all cases

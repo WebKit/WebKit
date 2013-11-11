@@ -188,7 +188,10 @@ int ComplexTextController::offsetForPosition(float h, bool includePartialGlyphs)
     for (size_t r = 0; r < runCount; ++r) {
         const ComplexTextRun& complexTextRun = *m_complexTextRuns[r];
         for (unsigned j = 0; j < complexTextRun.glyphCount(); ++j) {
-            CGFloat adjustedAdvance = m_adjustedAdvances[offsetIntoAdjustedGlyphs + j].width;
+            size_t index = offsetIntoAdjustedGlyphs + j;
+            CGFloat adjustedAdvance = m_adjustedAdvances[index].width;
+            if (!index)
+                adjustedAdvance += complexTextRun.initialAdvance().width;
             if (x < adjustedAdvance) {
                 CFIndex hitGlyphStart = complexTextRun.indexAt(j);
                 CFIndex hitGlyphEnd;
@@ -578,6 +581,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             previousAdvance.height -= complexTextRun.initialAdvance().height;
             m_adjustedAdvances[m_adjustedAdvances.size() - 1] = previousAdvance;
         }
+        widthSinceLastCommit += complexTextRun.initialAdvance().width;
 
         if (!complexTextRun.isLTR())
             m_isLTROnly = false;

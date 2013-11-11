@@ -1,3 +1,27 @@
+2013-11-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Mac] Characters too close together in complex Arabic text
+        https://bugs.webkit.org/show_bug.cgi?id=124057
+
+        Reviewed by Darin Adler.
+
+        We weren't updating our total width variable with run's initial
+        advance information, leading to widths that were too narrow.
+
+        In addition, while initial advances for runs that aren't the first
+        run are accounted for by baking in the initial advances into the
+        previous character's advance, the initial advance for the first run
+        has to be accounted for in ComplexTextController::offsetForPosition.
+
+        Test: fast/text/complex-grapheme-cluster-with-initial-advance.html
+        Test: fast/text/selection-in-initial-advance-region.html
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances): Update
+        total width variable
+        (WebCore::ComplexTextController::offsetOfPosition): Account for
+        the first run's initial advance.
+
 2013-11-11  Brady Eidson  <beidson@apple.com>
 
         Make IDBBackingStoreTransaction be RefCounted
