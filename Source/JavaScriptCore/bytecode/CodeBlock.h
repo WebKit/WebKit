@@ -1044,13 +1044,13 @@ private:
 #endif
 #if ENABLE(VALUE_PROFILER)
     Vector<ValueProfile> m_argumentValueProfiles;
-    SegmentedVector<ValueProfile, 8> m_valueProfiles;
+    Vector<ValueProfile> m_valueProfiles;
     SegmentedVector<RareCaseProfile, 8> m_rareCaseProfiles;
     SegmentedVector<RareCaseProfile, 8> m_specialFastCaseProfiles;
-    SegmentedVector<ArrayAllocationProfile, 8> m_arrayAllocationProfiles;
+    Vector<ArrayAllocationProfile> m_arrayAllocationProfiles;
     ArrayProfileVector m_arrayProfiles;
 #endif
-    SegmentedVector<ObjectAllocationProfile, 8> m_objectAllocationProfiles;
+    Vector<ObjectAllocationProfile> m_objectAllocationProfiles;
 
     // Constant Pool
     Vector<Identifier> m_additionalIdentifiers;

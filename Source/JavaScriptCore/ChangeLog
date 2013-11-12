@@ -1,3 +1,18 @@
+2013-11-11  Andreas Kling  <akling@apple.com>
+
+        CodeBlock: Un-segment some Vectors.
+        <https://webkit.org/b/124188>
+
+        Turn some SegmentedVectors into Vectors where the final item count
+        is known at CodeBlock construction time. This removes unnecessary
+        allocation and indirection.
+
+        I've got ~4.5 MB below SegmentedVector<ValueProfile>::ensureSegment
+        on Membuster3 (peak, before pressure signal) so this should help
+        take a bit of the edge off there.
+
+        Reviewed by Geoffrey Garen.
+
 2013-11-11  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of the lastResultRegister optimization in the baseline JIT

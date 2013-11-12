@@ -1718,12 +1718,12 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     if (size_t size = unlinkedCodeBlock->numberOfArrayProfiles())
         m_arrayProfiles.grow(size);
     if (size_t size = unlinkedCodeBlock->numberOfArrayAllocationProfiles())
-        m_arrayAllocationProfiles.grow(size);
+        m_arrayAllocationProfiles.resizeToFit(size);
     if (size_t size = unlinkedCodeBlock->numberOfValueProfiles())
-        m_valueProfiles.grow(size);
+        m_valueProfiles.resizeToFit(size);
 #endif
     if (size_t size = unlinkedCodeBlock->numberOfObjectAllocationProfiles())
-        m_objectAllocationProfiles.grow(size);
+        m_objectAllocationProfiles.resizeToFit(size);
 
     // Copy and translate the UnlinkedInstructions
     size_t instructionCount = unlinkedCodeBlock->instructions().size();
