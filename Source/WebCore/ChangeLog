@@ -1,3 +1,18 @@
+2013-11-11  Andreas Kling  <akling@apple.com>
+
+        Elements with class names automatically get unique ElementData.
+        <https://webkit.org/b/124184>
+
+        We were calling Element::ensureUniqueElementData() for all Elements
+        with a non-empty list of class names. Doing that on parser-fresh
+        Elements caused us to upgrade them to UniqueElementData despite not
+        needing it (ElementData::setClass() is a const function for caching
+        the "cooked" class and can be called on ShareableElementData.)
+
+        1.09 MB progression on HTML5 spec at <http://whatwg.org/c>
+
+        Reviewed by Antti Koivisto.
+
 2013-11-12  Zan Dobersek  <zdobersek@igalia.com>
 
         JSC bindings generator should generate deletable JSC functions
