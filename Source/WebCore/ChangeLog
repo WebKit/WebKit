@@ -1,3 +1,22 @@
+2013-11-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Clean up static_cast<Element*> usage
+        https://bugs.webkit.org/show_bug.cgi?id=124133
+
+        Reviewed by Andreas Kling.
+
+        We need to use toFoo cast function instead of static_cast<>. Though there is toElement(),
+        static_cast<Element*> is still being used.
+
+        No new tests, no behavior changes.
+
+        * bindings/gobject/WebKitDOMPrivate.cpp:
+        (WebKit::wrap):
+        * dom/ElementTraversal.h:
+        (WebCore::::lastWithinTemplate):
+        (WebCore::::nextTemplate):
+        (WebCore::::previousTemplate):
+
 2013-11-11  Anders Carlsson  <andersca@apple.com>
 
         FrameFilter can just be an std::function instead

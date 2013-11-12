@@ -109,7 +109,7 @@ inline Element* Traversal<Element>::lastWithinTemplate(CurrentType* current)
     Node* node = NodeTraversal::last(current);
     while (node && !node->isElementNode())
         node = NodeTraversal::previous(node, current);
-    return static_cast<Element*>(node);
+    return toElement(node);
 }
 
 template <>
@@ -119,7 +119,7 @@ inline Element* Traversal<Element>::nextTemplate(CurrentType* current)
     Node* node = NodeTraversal::next(current);
     while (node && !node->isElementNode())
         node = NodeTraversal::nextSkippingChildren(node);
-    return static_cast<Element*>(node);
+    return toElement(node);
 }
 
 template <>
@@ -129,7 +129,7 @@ inline Element* Traversal<Element>::nextTemplate(CurrentType* current, const Nod
     Node* node = NodeTraversal::next(current, stayWithin);
     while (node && !node->isElementNode())
         node = NodeTraversal::nextSkippingChildren(node, stayWithin);
-    return static_cast<Element*>(node);
+    return toElement(node);
 }
 
 template <>
@@ -139,7 +139,7 @@ inline Element* Traversal<Element>::previousTemplate(CurrentType* current)
     Node* node = NodeTraversal::previous(current);
     while (node && !node->isElementNode())
         node = NodeTraversal::previous(node);
-    return static_cast<Element*>(node);
+    return toElement(node);
 }
 
 template <>
@@ -149,7 +149,7 @@ inline Element* Traversal<Element>::previousTemplate(CurrentType* current, const
     Node* node = NodeTraversal::previous(current, stayWithin);
     while (node && !node->isElementNode())
         node = NodeTraversal::previous(node, stayWithin);
-    return static_cast<Element*>(node);
+    return toElement(node);
 }
 
 // Generic versions.
