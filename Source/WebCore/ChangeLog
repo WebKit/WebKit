@@ -1,5 +1,24 @@
 2013-11-12  Zan Dobersek  <zdobersek@igalia.com>
 
+        Manage StorageThread through std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=124197
+
+        Reviewed by Anders Carlsson.
+
+        New StorageThread objects are crafted through std::make_unique. This removes the need for the static
+        StorageThread::create() method but requires that the StorageThread constructor is made public.
+
+        * storage/StorageSyncManager.cpp:
+        (WebCore::StorageSyncManager::StorageSyncManager):
+        * storage/StorageSyncManager.h:
+        * storage/StorageThread.cpp:
+        * storage/StorageThread.h:
+        * storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::StorageTracker):
+        * storage/StorageTracker.h:
+
+2013-11-12  Zan Dobersek  <zdobersek@igalia.com>
+
         Remove unnecessary PassOwnPtr.h header includes under Source/WebCore/fileapi
         https://bugs.webkit.org/show_bug.cgi?id=124196
 

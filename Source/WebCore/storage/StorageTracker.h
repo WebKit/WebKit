@@ -28,7 +28,6 @@
 
 #include "SQLiteDatabase.h"
 #include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -109,7 +108,7 @@ private:
     OriginSet m_originSet;
     OriginSet m_originsBeingDeleted;
 
-    OwnPtr<StorageThread> m_thread;
+    std::unique_ptr<StorageThread> m_thread;
     
     bool m_isActive;
     bool m_needsInitialization;

@@ -29,7 +29,6 @@
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -48,7 +47,7 @@ public:
 private:
     explicit StorageSyncManager(const String& path);
 
-    OwnPtr<StorageThread> m_thread;
+    std::unique_ptr<StorageThread> m_thread;
 
 // The following members are subject to thread synchronization issues
 public:

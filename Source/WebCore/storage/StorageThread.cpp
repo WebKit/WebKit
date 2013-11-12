@@ -40,11 +40,6 @@ static HashSet<StorageThread*>& activeStorageThreads()
     return threads;
 }
 
-PassOwnPtr<StorageThread> StorageThread::create()
-{
-    return adoptPtr(new StorageThread);
-}
-
 StorageThread::StorageThread()
     : m_threadID(0)
 {
