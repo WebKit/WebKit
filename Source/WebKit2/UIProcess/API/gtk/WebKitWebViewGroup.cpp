@@ -236,7 +236,7 @@ static PassRefPtr<ImmutableArray> toImmutableArray(const char* const* list)
         entries.append(WebString::createFromUTF8String(*list));
         list++;
     }
-    return ImmutableArray::adopt(entries);
+    return ImmutableArray::create(std::move(entries));
 }
 
 /**
