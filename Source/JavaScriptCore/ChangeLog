@@ -1,3 +1,17 @@
+2013-11-12  Andy Estes  <aestes@apple.com>
+
+        Run JavaScriptCore Objective-C API tests on all supported platforms
+        https://bugs.webkit.org/show_bug.cgi?id=124214
+
+        Reviewed by Mark Hahnenberg.
+
+        Now that we support the API on iOS and on OS X 10.8, there's no reason
+        to limit the tests to OS X 10.9 (or greater).
+
+        * API/tests/CurrentThisInsideBlockGetterTest.h:
+        * API/tests/CurrentThisInsideBlockGetterTest.mm:
+        * API/tests/testapi.mm:
+
 2013-08-02  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         CodeBlocks should be able to determine bytecode liveness

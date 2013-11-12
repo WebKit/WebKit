@@ -35,7 +35,7 @@ extern "C" const char * _Block_signature(id);
 extern int failed;
 extern "C" void testObjectiveCAPI(void);
 
-#if JSC_OBJC_API_ENABLED && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if JSC_OBJC_API_ENABLED
 
 @protocol ParentObject <JSExport>
 @end
@@ -1170,4 +1170,4 @@ void testObjectiveCAPI()
 {
 }
 
-#endif
+#endif // JSC_OBJC_API_ENABLED

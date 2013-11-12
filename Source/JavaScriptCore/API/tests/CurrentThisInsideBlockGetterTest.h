@@ -28,11 +28,11 @@
 
 #include <JavaScriptCore/JavaScriptCore.h>
 
-#if JSC_OBJC_API_ENABLED && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if JSC_OBJC_API_ENABLED
 
 void currentThisInsideBlockGetterTest();
 
-#endif // JSC_OBJC_API_ENABLED && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#endif // JSC_OBJC_API_ENABLED
 
 
 #endif // CurrentThisInsideBlockGetterTest_h
