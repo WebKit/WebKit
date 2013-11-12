@@ -28,6 +28,8 @@
 
 #if JSC_OBJC_API_ENABLED
 
+#import <CoreGraphics/CGGeometry.h>
+
 @class JSContext;
 
 // A JSValue is a reference to a value within the JavaScript object space of a

@@ -1,3 +1,14 @@
+2013-11-11  Andy Estes  <aestes@apple.com>
+
+        [iOS] Define JSC_OBJC_API_ENABLED
+        https://bugs.webkit.org/show_bug.cgi?id=124192
+
+        Reviewed by Geoffrey Garen.
+
+        * API/JSBase.h: JSC_OBJC_API_ENABLED should evaluate to true if
+        TARGET_OS_IPHONE is true.
+        * API/JSValue.h: Ensure CG types referenced later in the file are defined.
+
 2013-11-12  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         Fix undefined reference issues in JavaScriptCore build.
