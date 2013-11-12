@@ -169,16 +169,18 @@ WKArrayRef WKBundlePageCopyContextMenuItems(WKBundlePageRef pageRef)
 {
 #if ENABLE(CONTEXT_MENUS)
     WebContextMenu* contextMenu = toImpl(pageRef)->contextMenu();
-    const Vector<WebContextMenuItemData>& items = contextMenu->items();
-    size_t arrayLength = items.size();
 
-    auto wkItems = std::make_unique<WKTypeRef[]>(arrayLength);
-    for (size_t i = 0; i < arrayLength; ++i)
-        wkItems[i] = toAPI(WebContextMenuItem::create(items[i]).leakRef());
+    auto items = contextMenu->items();
 
-    return WKArrayCreate(wkItems.get(), arrayLength);
+    Vector<RefPtr<APIObject>> menuItems;
+    menuItems.reserveInitialCapacity(items.size());
+
+    for (const auto& item : items)
+        menuItems.uncheckedAppend(WebContextMenuItem::create(item));
+
+    return toAPI(ImmutableArray::create(std::move(menuItems)).leakRef());
 #else
-    return 0;
+    return nullptr;
 #endif
 }
 
