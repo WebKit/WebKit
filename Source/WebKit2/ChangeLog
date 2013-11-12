@@ -1,5 +1,11 @@
 2013-11-12  Csaba Osztrogonác  <ossy@webkit.org>
 
+        The last URTBF after r159108 to make GTK happy.
+
+        * GNUmakefile.am:
+
+2013-11-12  Csaba Osztrogonác  <ossy@webkit.org>
+
         One more URTBF after r159108, I hope the last one.
 
         * GNUmakefile.am:
