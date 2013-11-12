@@ -110,8 +110,6 @@ WEBKIT_API gchar* webkit_dom_html_element_get_id(WebKitDOMHTMLElement* self);
  *
  * This method is deprecated. Use webkit_dom_element_set_id() instead.
  *
- * Returns:
- *
 **/
 WEBKIT_API void webkit_dom_html_element_set_id(WebKitDOMHTMLElement* self, const gchar* value);
 
