@@ -1,3 +1,10 @@
+2013-11-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt: Rebaseline after new constructors
+        were made available with enabling the Media Stream feature.
+
 2013-11-12  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: Crash when closing the Inspector while debugging an exception inside a breakpoint condition.
