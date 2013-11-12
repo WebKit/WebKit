@@ -1,3 +1,36 @@
+2013-11-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        JSC bindings generator should generate deletable JSC functions
+        https://bugs.webkit.org/show_bug.cgi?id=122422
+
+        Reviewed by Geoffrey Garen.
+
+        The JSC functions that the JSC bindings generator generates should be deletable to conform to
+        the WebIDL specification, which instructs that the WebIDL operations must be configurable (which
+        translates to the JSC functions being deletable).
+
+        The generator will still produce a non-deletable JSC function for operations under almost all
+        Web-facing interfaces since they're annotated with the OperationsNotDeletable attribute. The
+        exception here is the Node interface that is having the attribute removed, with the provided
+        test case testing that all the functions on the Node prototype object are writable, enumerable
+        and configurable. This behavior conforms to the WebIDL specification and the behaviors of IE
+        and Firefox. Chrome at the moment still provides non-configurable functions.
+
+        Test: fast/dom/webidl-operations-on-node-prototype.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): Enforce the non-deletable behavior of the JSC function if either the
+        operation's interface is annotated with the OperationsNotDeletable attribute or the operation itself
+        is annotated with the NotDeletable attribute.
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp: Update the JSC generator test baselines.
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestInterface.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestObj.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp: Ditto.
+        * dom/Node.idl: Remove the OperationsNotDeletable attribute.
+
 2013-11-11  Brady Eidson  <beidson@apple.com>
 
         Make IDBTransaction tasks asynchronous

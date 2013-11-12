@@ -73,7 +73,7 @@ bool JSTestMediaQueryListListenerConstructor::getOwnPropertySlot(JSObject* objec
 
 static const HashTableValue JSTestMediaQueryListListenerPrototypeTableValues[] =
 {
-    { "method", DontDelete | JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestMediaQueryListListenerPrototypeFunctionMethod), (intptr_t)1 },
+    { "method", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestMediaQueryListListenerPrototypeFunctionMethod), (intptr_t)1 },
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 

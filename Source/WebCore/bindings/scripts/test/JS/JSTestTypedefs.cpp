@@ -112,16 +112,16 @@ ConstructType JSTestTypedefsConstructor::getConstructData(JSCell*, ConstructData
 
 static const HashTableValue JSTestTypedefsPrototypeTableValues[] =
 {
-    { "func", DontDelete | JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionFunc), (intptr_t)0 },
-    { "setShadow", DontDelete | JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionSetShadow), (intptr_t)3 },
-    { "methodWithSequenceArg", DontDelete | JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionMethodWithSequenceArg), (intptr_t)1 },
-    { "nullableArrayArg", DontDelete | JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionNullableArrayArg), (intptr_t)1 },
-    { "funcWithClamp", DontDelete | JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionFuncWithClamp), (intptr_t)1 },
-    { "immutablePointFunction", DontDelete | JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionImmutablePointFunction), (intptr_t)0 },
-    { "stringArrayFunction", DontDelete | JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionStringArrayFunction), (intptr_t)1 },
-    { "stringArrayFunction2", DontDelete | JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionStringArrayFunction2), (intptr_t)1 },
-    { "callWithSequenceThatRequiresInclude", DontDelete | JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresInclude), (intptr_t)1 },
-    { "methodWithException", DontDelete | JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionMethodWithException), (intptr_t)0 },
+    { "func", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionFunc), (intptr_t)0 },
+    { "setShadow", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionSetShadow), (intptr_t)3 },
+    { "methodWithSequenceArg", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionMethodWithSequenceArg), (intptr_t)1 },
+    { "nullableArrayArg", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionNullableArrayArg), (intptr_t)1 },
+    { "funcWithClamp", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionFuncWithClamp), (intptr_t)1 },
+    { "immutablePointFunction", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionImmutablePointFunction), (intptr_t)0 },
+    { "stringArrayFunction", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionStringArrayFunction), (intptr_t)1 },
+    { "stringArrayFunction2", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionStringArrayFunction2), (intptr_t)1 },
+    { "callWithSequenceThatRequiresInclude", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionCallWithSequenceThatRequiresInclude), (intptr_t)1 },
+    { "methodWithException", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestTypedefsPrototypeFunctionMethodWithException), (intptr_t)0 },
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 

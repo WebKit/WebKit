@@ -1563,7 +1563,8 @@ sub GenerateImplementation
             push(@hashValue2, $functionLength);
 
             my @specials = ();
-            push(@specials, "DontDelete") unless $function->signature->extendedAttributes->{"Deletable"};
+            push(@specials, "DontDelete") if $interface->extendedAttributes->{"OperationsNotDeletable"}
+                || $function->signature->extendedAttributes->{"NotDeletable"};
             push(@specials, "DontEnum") if $function->signature->extendedAttributes->{"NotEnumerable"};
             push(@specials, "JSC::Function");
             my $special = (@specials > 0) ? join(" | ", @specials) : "0";
@@ -1627,7 +1628,8 @@ sub GenerateImplementation
         push(@hashValue2, $functionLength);
 
         my @specials = ();
-        push(@specials, "DontDelete") unless $function->signature->extendedAttributes->{"Deletable"};
+        push(@specials, "DontDelete") if $interface->extendedAttributes->{"OperationsNotDeletable"}
+            || $function->signature->extendedAttributes->{"NotDeletable"};
         push(@specials, "DontEnum") if $function->signature->extendedAttributes->{"NotEnumerable"};
         push(@specials, "JSC::Function");
         my $special = (@specials > 0) ? join(" | ", @specials) : "0";

@@ -33,7 +33,7 @@ PASS Object.getOwnPropertyDescriptor(document.__proto__.__proto__, 'createElemen
 PASS Object.getOwnPropertyDescriptor(document.__proto__.__proto__, 'createElement').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(document.__proto__.__proto__, 'createElement').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(document.__proto__.__proto__, 'createElement').enumerable is true
-PASS Object.getOwnPropertyDescriptor(document.__proto__.__proto__, 'createElement').configurable is false
+PASS Object.getOwnPropertyDescriptor(document.__proto__.__proto__, 'createElement').configurable is true
 PASS Object.getOwnPropertyDescriptor(Number, 'NEGATIVE_INFINITY').value is Number.NEGATIVE_INFINITY
 PASS Object.getOwnPropertyDescriptor(Number, 'NEGATIVE_INFINITY').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(Number, 'NEGATIVE_INFINITY').hasOwnProperty('set') is false

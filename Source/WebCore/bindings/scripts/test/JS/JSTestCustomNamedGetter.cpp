@@ -73,7 +73,7 @@ bool JSTestCustomNamedGetterConstructor::getOwnPropertySlot(JSObject* object, Ex
 
 static const HashTableValue JSTestCustomNamedGetterPrototypeTableValues[] =
 {
-    { "anotherFunction", DontDelete | JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestCustomNamedGetterPrototypeFunctionAnotherFunction), (intptr_t)1 },
+    { "anotherFunction", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestCustomNamedGetterPrototypeFunctionAnotherFunction), (intptr_t)1 },
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 

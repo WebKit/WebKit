@@ -1,3 +1,22 @@
+2013-11-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        JSC bindings generator should generate deletable JSC functions
+        https://bugs.webkit.org/show_bug.cgi?id=122422
+
+        Reviewed by Geoffrey Garen.
+
+        Test that all the functions on the Node prototype object (apart from the constructor) are
+        writable, enumerable and configurable, as expected for WebIDL operations. This matches the
+        WebIDL specification as well as IE and Firefox.
+
+        Other affected test cases and baselines are updated to reflect the new behavior.
+
+        * fast/dom/webidl-operations-on-node-prototype-expected.txt: Added.
+        * fast/dom/webidl-operations-on-node-prototype.html: Added.
+        * js/dom/getOwnPropertyDescriptor-expected.txt:
+        * js/resources/getOwnPropertyDescriptor.js:
+        * platform/mac/canvas/philip/tests/type.prototype-expected.txt: Removed.
+
 2013-11-11  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r155660): box-shadow causes overlay scrollbars to be in the wrong position when element is composited (85647)

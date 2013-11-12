@@ -74,8 +74,8 @@ bool JSTestActiveDOMObjectConstructor::getOwnPropertySlot(JSObject* object, Exec
 
 static const HashTableValue JSTestActiveDOMObjectPrototypeTableValues[] =
 {
-    { "excitingFunction", DontDelete | JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestActiveDOMObjectPrototypeFunctionExcitingFunction), (intptr_t)1 },
-    { "postMessage", DontDelete | JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestActiveDOMObjectPrototypeFunctionPostMessage), (intptr_t)1 },
+    { "excitingFunction", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestActiveDOMObjectPrototypeFunctionExcitingFunction), (intptr_t)1 },
+    { "postMessage", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestActiveDOMObjectPrototypeFunctionPostMessage), (intptr_t)1 },
     { 0, 0, NoIntrinsic, 0, 0 }
 };
 
