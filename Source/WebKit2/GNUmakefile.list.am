@@ -842,6 +842,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/DrawingAreaProxyImpl.h \
 	Source/WebKit2/UIProcess/FindIndicator.cpp \
 	Source/WebKit2/UIProcess/FindIndicator.h \
+	Source/WebKit2/UIProcess/FrameLoadState.cpp \
+	Source/WebKit2/UIProcess/FrameLoadState.h \
 	Source/WebKit2/UIProcess/GenericCallback.h \
 	Source/WebKit2/UIProcess/GeolocationPermissionRequestManagerProxy.cpp \
 	Source/WebKit2/UIProcess/GeolocationPermissionRequestManagerProxy.h \

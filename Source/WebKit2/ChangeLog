@@ -1,3 +1,9 @@
+2013-11-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r159077 to make GTK build happy.
+
+        * GNUmakefile.list.am:
+
 2013-11-11  Gustavo Noronha Silva  <gns@gnome.org>
 
         REGRESSION(r158976): Web Inspector: unable to start docked or dock
