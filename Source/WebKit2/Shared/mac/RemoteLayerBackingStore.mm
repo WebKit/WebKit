@@ -243,7 +243,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, CGImageRef
     // Otherwise, repaint the entire bounding box of the dirty region.
     IntRect dirtyBounds = m_dirtyRegion.bounds();
     Vector<IntRect> dirtyRects = m_dirtyRegion.rects();
-    if (dirtyRects.size() > webLayerMaxRectsToPaint && m_dirtyRegion.totalArea() > webLayerWastedSpaceThreshold * dirtyBounds.width() * dirtyBounds.height()) {
+    if (dirtyRects.size() > webLayerMaxRectsToPaint || m_dirtyRegion.totalArea() > webLayerWastedSpaceThreshold * dirtyBounds.width() * dirtyBounds.height()) {
         dirtyRects.clear();
         dirtyRects.append(dirtyBounds);
     }
