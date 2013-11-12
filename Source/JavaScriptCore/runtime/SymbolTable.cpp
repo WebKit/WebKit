@@ -29,6 +29,10 @@
 #include "config.h"
 #include "SymbolTable.h"
 
+#include "JSCellInlines.h"
+#include "JSDestructibleObject.h"
+#include "SlotVisitorInlines.h"
+
 namespace JSC {
 
 const ClassInfo SharedSymbolTable::s_info = { "SharedSymbolTable", 0, 0, 0, CREATE_METHOD_TABLE(SharedSymbolTable) };

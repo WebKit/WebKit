@@ -1,3 +1,14 @@
+2013-11-12  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        Fix undefined reference issues in JavaScriptCore build.
+        https://bugs.webkit.org/show_bug.cgi?id=124152
+
+        Reviewed by Michael Saboff.
+
+        Missing includes added.
+
+        * runtime/SymbolTable.cpp:
+
 2013-11-12  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: Crash when closing the Inspector while debugging an exception inside a breakpoint condition.
