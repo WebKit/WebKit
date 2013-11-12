@@ -115,6 +115,25 @@ private:
     Debugger& m_debugger;
 };
 
+// This is very similar to TemporaryChange<bool>, but that cannot be used
+// as the m_isPaused field uses only one bit.
+class TemporaryPausedState {
+public:
+    TemporaryPausedState(Debugger& debugger)
+        : m_debugger(debugger)
+    {
+        ASSERT(!m_debugger.m_isPaused);
+        m_debugger.m_isPaused = true;
+    }
+
+    ~TemporaryPausedState()
+    {
+        m_debugger.m_isPaused = false;
+    }
+
+private:
+    Debugger& m_debugger;
+};
 
 Debugger::Debugger(bool isInWorkerThread)
     : m_pauseOnExceptionsState(DontPauseOnExceptions)
@@ -264,7 +283,7 @@ void Debugger::removeBreakpoint(BreakpointID id)
     updateNeedForOpDebugCallbacks();
 }
 
-bool Debugger::hasBreakpoint(SourceID sourceID, const TextPosition& position, Breakpoint *hitBreakpoint) const
+bool Debugger::hasBreakpoint(SourceID sourceID, const TextPosition& position, Breakpoint *hitBreakpoint)
 {
     if (!m_breakpointsActivated)
         return false;
@@ -303,13 +322,23 @@ bool Debugger::hasBreakpoint(SourceID sourceID, const TextPosition& position, Br
     if (breakpoints[i].condition.isEmpty())
         return true;
 
+    // We cannot stop in the debugger while executing condition code,
+    // so make it looks like the debugger is already paused.
+    TemporaryPausedState pausedState(*this);
+
     JSValue exception;
     JSValue result = DebuggerCallFrame::evaluateWithCallFrame(m_currentCallFrame, breakpoints[i].condition, exception);
+
+    // We can lose the debugger while executing JavaScript.
+    if (!m_currentCallFrame)
+        return false;
+
     if (exception) {
         // An erroneous condition counts as "false".
         handleExceptionInBreakpointCondition(m_currentCallFrame, exception);
         return false;
     }
+
     return result.toBoolean(m_currentCallFrame);
 }
 
@@ -427,15 +456,19 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
 
     DebuggerCallFrameScope debuggerCallFrameScope(*this);
 
-    if (didHitBreakpoint) {
-        handleBreakpointHit(breakpoint);
-        if (breakpoint.autoContinue)
-            return;
-    }
-
+    // Make sure we are not going to pause again on breakpoint actions by
+    // reseting the pause state before executing any breakpoint actions.
+    TemporaryPausedState pausedState(*this);
     m_pauseOnCallFrame = 0;
     m_pauseOnNextStatement = false;
-    m_isPaused = true;
+
+    if (didHitBreakpoint) {
+        handleBreakpointHit(breakpoint);
+        // Note that the actions can potentially stop the debugger, so we need to check that
+        // we still have a current call frame when we get back.
+        if (breakpoint.autoContinue || !m_currentCallFrame)
+            return;
+    }
 
     handlePause(m_reasonForPause, dynamicGlobalObject);
 
@@ -444,8 +477,6 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
         if (!needsOpDebugCallbacks())
             m_currentCallFrame = 0;
     }
-
-    m_isPaused = false;
 }
 
 void Debugger::exception(CallFrame* callFrame, JSValue exception, bool hasHandler)

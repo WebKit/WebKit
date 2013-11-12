@@ -1,3 +1,26 @@
+2013-11-12  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: Crash when closing the Inspector while debugging an exception inside a breakpoint condition.
+        https://bugs.webkit.org/show_bug.cgi?id=124078
+
+        Reviewed by Joseph Pecoraro.
+
+        The crash would happen because the Debugger is not designed to support nested
+        breaks. For example, when the debugger handles a breakpoint and the Inspector
+        executes a console command that would hit the breakpoint again, the Debugger
+        will just ignore the breakpoint.
+
+        There were no checks for conditions and actions. Because of that conditions and actions
+        could trigger exceptions and breakpoints. This patch disables that functionality as it
+        cannot be supported without a bigger rewrite of the code.
+
+        * debugger/Debugger.cpp:
+        (JSC::TemporaryPausedState::TemporaryPausedState):
+        (JSC::TemporaryPausedState::~TemporaryPausedState):
+        (JSC::Debugger::hasBreakpoint):
+        (JSC::Debugger::pauseIfNeeded):
+        * debugger/Debugger.h:
+
 2013-11-12  Julien Brianceau  <jbriance@cisco.com>
 
         InvalidIndex shouldn't be private in GPRInfo and FPRInfo for sh4, mips and arm64 architectures.

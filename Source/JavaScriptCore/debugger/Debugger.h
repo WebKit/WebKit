@@ -144,7 +144,7 @@ private:
         Debugger& m_debugger;
     };
 
-    bool hasBreakpoint(SourceID, const TextPosition&, Breakpoint* hitBreakpoint) const;
+    bool hasBreakpoint(SourceID, const TextPosition&, Breakpoint* hitBreakpoint);
 
     bool shouldPause() const { return m_shouldPause; }
     void setShouldPause(bool);
@@ -185,6 +185,7 @@ private:
     RefPtr<JSC::DebuggerCallFrame> m_currentDebuggerCallFrame;
 
     friend class DebuggerCallFrameScope;
+    friend class TemporaryPausedState;
     friend class LLIntOffsetsExtractor;
 };
 

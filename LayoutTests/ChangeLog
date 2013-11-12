@@ -1,3 +1,35 @@
+2013-11-12  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: Crash when closing the Inspector while debugging an exception inside a breakpoint condition.
+        https://bugs.webkit.org/show_bug.cgi?id=124078
+
+        Reviewed by Joseph Pecoraro.
+
+        Checking that the debugger will not crash nor stall when exceptions are throw while the debugger
+        is already paused. The cases when that can happen include breakpoint conditions, actions, eval
+        or runtime object inspection.
+
+        The current behavior was to ignore the exceptions or breakpoints while executing "console commands"
+        when the debugger was already paused. I'm extending this mechanism to breakpoint conditions and
+        actions as the Debugger is not designed to support nested "debugger breaks".
+
+        * http/tests/inspector-protocol/resources/protocol-test.js:
+        (closeTest): Avoid having internals.closeDummyInspectorFrontend and testRunner.notifyDone
+        in the same function. The debugger will not have a chance to exit the temporary EventLoop
+        before loading the next test.
+        * inspector-protocol/debugger/breakpoint-action-detach-expected.txt: Added.
+        * inspector-protocol/debugger/breakpoint-action-detach.html: Added.
+        * inspector-protocol/debugger/breakpoint-action-with-exception-expected.txt: Added.
+        * inspector-protocol/debugger/breakpoint-action-with-exception.html: Added.
+        * inspector-protocol/debugger/breakpoint-condition-detach-expected.txt: Added.
+        * inspector-protocol/debugger/breakpoint-condition-detach.html: Added.
+        * inspector-protocol/debugger/breakpoint-condition-with-exception-expected.txt: Added.
+        * inspector-protocol/debugger/breakpoint-condition-with-exception.html: Added.
+        * inspector-protocol/debugger/breakpoint-eval-with-exception-expected.txt: Added.
+        * inspector-protocol/debugger/breakpoint-eval-with-exception.html: Added.
+        * inspector-protocol/debugger/breakpoint-inside-conditons-and-actions-expected.txt: Added.
+        * inspector-protocol/debugger/breakpoint-inside-conditons-and-actions.html: Added.
+
 2013-11-12  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Unreviewed GTK gardening. Share expectations for vertical text among WK1 and WK2.
