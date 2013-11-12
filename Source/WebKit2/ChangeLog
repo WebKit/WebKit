@@ -1,3 +1,9 @@
+2013-11-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        One more URTBF after r159108.
+
+        * GNUmakefile.am:
+
 2013-11-12  Anders Carlsson  <andersca@apple.com>
 
         Begin cleaning up handling of ImmutableArray vectors

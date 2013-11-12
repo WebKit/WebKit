@@ -99,6 +99,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	-I$(srcdir)/Source/WebKit2/Platform \
 	-I$(srcdir)/Source/WebKit2/Platform/CoreIPC \
 	-I$(srcdir)/Source/WebKit2/Platform/CoreIPC/gtk \
+	-I$(srcdir)/Source/WebKit2/Platform/IPC \
 	-I$(srcdir)/Source/WebKit2/Platform/gtk \
 	-I$(srcdir)/Source/WebKit2/PluginProcess \
 	-I$(srcdir)/Source/WebKit2/Shared \
