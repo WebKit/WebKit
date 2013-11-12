@@ -34,7 +34,6 @@
 #include "CrossThreadCopier.h"
 #include "CrossThreadTask.h"
 #include "FileThread.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {

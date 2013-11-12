@@ -35,7 +35,6 @@
 #include "URL.h"
 #include "ScriptWrappable.h"
 #include "URLRegistry.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>

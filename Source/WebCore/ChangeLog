@@ -1,3 +1,16 @@
+2013-11-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove unnecessary PassOwnPtr.h header includes under Source/WebCore/fileapi
+        https://bugs.webkit.org/show_bug.cgi?id=124196
+
+        Reviewed by Anders Carlsson.
+
+        PassOwnPtr is not used anywhere under Source/WebCore/fileapi/, so PassOwnPtr.h inclusions can be removed.
+
+        * fileapi/Blob.h:
+        * fileapi/FileThread.h:
+        * fileapi/FileThreadTask.h:
+
 2013-11-12  Antti Koivisto  <antti@apple.com>
 
         Text on simple lines sometimes paints one pixel off

@@ -34,7 +34,6 @@
 #if ENABLE(BLOB)
 
 #include <wtf/MessageQueue.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 
