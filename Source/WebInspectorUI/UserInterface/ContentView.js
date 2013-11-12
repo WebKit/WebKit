@@ -55,7 +55,7 @@ WebInspector.ContentView = function(representedObject)
             return new WebInspector.ApplicationCacheFrameContentView(representedObject);
 
         if (representedObject instanceof WebInspector.DOMTree)
-            return new WebInspector.DOMTreeContentView(representedObject);
+            return new WebInspector.FrameDOMTreeContentView(representedObject);
 
         if (representedObject instanceof WebInspector.LogObject)
             return new WebInspector.LogContentView(representedObject);
@@ -73,7 +73,7 @@ WebInspector.ContentView = function(representedObject)
             return new WebInspector.CanvasProfileView(representedObject);
 
         if (representedObject instanceof WebInspector.ContentFlow)
-            return new WebInspector.ContentFlowTreeContentView(representedObject);
+            return new WebInspector.ContentFlowDOMTreeContentView(representedObject);
 
         if (typeof representedObject === "string" || representedObject instanceof String)
             return new WebInspector.TextContentView(representedObject);

@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMTreeContentView = function(domTree)
+WebInspector.DOMTreeContentView = function(representedObject)
 {
-    console.assert(domTree);
+    console.assert(representedObject);
 
-    WebInspector.ContentView.call(this, domTree);
+    WebInspector.ContentView.call(this, representedObject);
 
     this._compositingBordersButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("layer-borders", WebInspector.UIString("Show compositing borders"), WebInspector.UIString("Hide compositing borders"), "Images/LayerBorders.svg", 16, 16);
     this._compositingBordersButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleCompositingBorders, this);
@@ -41,9 +41,6 @@ WebInspector.DOMTreeContentView = function(domTree)
     this.element.classList.add(WebInspector.DOMTreeContentView.StyleClassName);
     this.element.addEventListener("click", this._mouseWasClicked.bind(this), false);
 
-    this._domTree = domTree;
-    this._domTree.addEventListener(WebInspector.DOMTree.Event.RootDOMNodeInvalidated, this._rootDOMNodeInvalidated, this);
-
     this._domTreeOutline = new WebInspector.DOMTreeOutline(true, true, false);
     this._domTreeOutline.addEventListener(WebInspector.DOMTreeOutline.Event.SelectedNodeChanged, this._selectedNodeDidChange, this);
     this._domTreeOutline.wireToDomAgent();
@@ -56,14 +53,13 @@ WebInspector.DOMTreeContentView = function(domTree)
     this._lastSelectedNodePathSetting = new WebInspector.Setting("last-selected-node-path", null);
 
     this._numberOfSearchResults = null;
-
-    this._requestRootDOMNode();
 };
 
 WebInspector.DOMTreeContentView.StyleClassName = "dom-tree";
 
 WebInspector.DOMTreeContentView.prototype = {
     constructor: WebInspector.DOMTreeContentView,
+    __proto__: WebInspector.ContentView.prototype,
 
     // Public
 
@@ -72,9 +68,9 @@ WebInspector.DOMTreeContentView.prototype = {
         return [this._showsShadowDOMButtonNavigationItem, this._compositingBordersButtonNavigationItem];
     },
 
-    get domTree()
+    get domTreeOutline()
     {
-        return this._domTree;
+        return this._domTreeOutline;
     },
 
     get scrollableElements()
@@ -101,7 +97,6 @@ WebInspector.DOMTreeContentView.prototype = {
 
     closed: function()
     {
-        this._domTree.removeEventListener(null, null, this);
         WebInspector.domTreeManager.removeEventListener(null, null, this);
 
         this._domTreeOutline.close();
@@ -284,20 +279,13 @@ WebInspector.DOMTreeContentView.prototype = {
         DOMAgent.getSearchResults(this._searchIdentifier, index, index + 1, revealResult.bind(this));
     },
 
-    _rootDOMNodeAvailable: function(rootDOMNode)
+    _restoreSelectedNodeAfterUpdate: function(documentURL, defaultNode)
     {
-        this._domTreeOutline.rootDOMNode = rootDOMNode;
-
-        if (!rootDOMNode) {
-            this._domTreeOutline.selectDOMNode(null, false);
-            return;
-        }
-
         function selectNode(lastSelectedNode)
         {
             var nodeToFocus = lastSelectedNode;
             if (!nodeToFocus)
-                nodeToFocus = rootDOMNode.body || rootDOMNode.documentElement;
+                nodeToFocus = defaultNode;
 
             if (!nodeToFocus)
                 return;
@@ -316,27 +304,17 @@ WebInspector.DOMTreeContentView.prototype = {
             selectNode.call(this, WebInspector.domTreeManager.nodeForId(nodeId));
         }
 
-        if (this._lastSelectedNodePathSetting.value && this._lastSelectedNodePathSetting.value.path && this._lastSelectedNodePathSetting.value.url === this._domTree.frame.url.hash)
+        if (documentURL && this._lastSelectedNodePathSetting.value && this._lastSelectedNodePathSetting.value.path && this._lastSelectedNodePathSetting.value.url === documentURL.hash)
             WebInspector.domTreeManager.pushNodeByPathToFrontend(this._lastSelectedNodePathSetting.value.path, selectLastSelectedNode.bind(this));
         else
             selectNode.call(this);
-    },
-
-    _rootDOMNodeInvalidated: function(event)
-    {
-        this._requestRootDOMNode();
-    },
-
-    _requestRootDOMNode: function()
-    {
-        this._domTree.requestRootDOMNode(this._rootDOMNodeAvailable.bind(this));
     },
 
     _selectedNodeDidChange: function(event)
     {
         var selectedDOMNode = this._domTreeOutline.selectedDOMNode();
         if (selectedDOMNode && !this._dontSetLastSelectedNodePath)
-            this._lastSelectedNodePathSetting.value = {url: this._domTree.frame.url.hash, path: selectedDOMNode.path()};
+            this._lastSelectedNodePathSetting.value = {url: selectedDOMNode.ownerDocument.documentURL.hash, path: selectedDOMNode.path()};
 
         if (selectedDOMNode)
             ConsoleAgent.addInspectedNode(selectedDOMNode.id);
@@ -409,7 +387,7 @@ WebInspector.DOMTreeContentView.prototype = {
         this._compositingBordersButtonNavigationItem.activated = activated;
         PageAgent.setCompositingBordersVisible(activated);
     },
-    
+
     _updateCompositingBordersButtonToMatchPageSettings: function()
     {
         if (!PageAgent.getCompositingBordersVisible)
@@ -434,5 +412,3 @@ WebInspector.DOMTreeContentView.prototype = {
         WebInspector.showShadowDOMSetting.value = !WebInspector.showShadowDOMSetting.value;
     }
 };
-
-WebInspector.DOMTreeContentView.prototype.__proto__ = WebInspector.ContentView.prototype;

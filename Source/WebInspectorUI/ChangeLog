@@ -1,3 +1,55 @@
+2013-11-12  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: ContentFlowTreeContentView should use only one DOMTreeOutline
+        https://bugs.webkit.org/show_bug.cgi?id=124230
+
+        Reviewed by Timothy Hatcher.
+
+        Changed ContentFlowTreeContentView to use one DOMTreeOutline by just
+        populating it with root DOMTreeElements directly. That is very
+        similar to how DOMTreeOutline works when omitRootDOMNode is used.
+
+        Now that ContentFlowTreeContentView has only one DOMTreeOutline,
+        it makes sense to change its base class to be DOMTreeContentView instead.
+        Also, with that I've changed its name to ContentFlowDOMTreeContentView.
+
+        I had to move all the DOMTree document loading code from DOMTreeContentView to a
+        new class called FrameDOMTreeContentView. This is used to display the DOM of the
+        frame objects. FrameDOMTreeContentView is also inheriting from DOMTreeContentView.
+
+        Issues that are fixed as a side effect:
+        - Selection path components are now displaying all the sibling elements for contentFlow.contentNodes
+        (those are the nodes that have "-webkit-flow-into" set directly).
+        - Keyboard navigation works for the contentFlow.contentNodes.
+        - Search is implemented in DOMTreeContentView, so that code now works for flows too.
+        The DOMAgents's search API will use all the Documents to lookup for nodes, so it might
+        find DOM nodes that are not part of the flow. This is in line with the behavior for the
+        frames.
+
+        * UserInterface/ContentFlowDOMTreeContentView.js: Renamed from ContentFlowTreeContentView
+        to better reflect the inheritance from DOMTreeContentView.
+        (WebInspector.ContentFlowDOMTreeContentView):
+        (WebInspector.ContentFlowDOMTreeContentView.prototype.closed):
+        (WebInspector.ContentFlowDOMTreeContentView.prototype._createContentTrees):
+        (WebInspector.ContentFlowDOMTreeContentView.prototype._contentNodeWasAdded):
+        (WebInspector.ContentFlowDOMTreeContentView.prototype._contentNodeWasRemoved):
+        * UserInterface/ContentView.js:
+        (WebInspector.ContentView):
+        * UserInterface/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView):
+        (WebInspector.DOMTreeContentView.prototype.closed):
+        (WebInspector.DOMTreeContentView.prototype.):
+        (WebInspector.DOMTreeContentView.prototype._restoreSelectedNodeAfterUpdate):
+        (WebInspector.DOMTreeContentView.prototype._selectedNodeDidChange):
+        * UserInterface/FrameDOMTreeContentView.js: Added.
+        (WebInspector.FrameDOMTreeContentView):
+        (WebInspector.FrameDOMTreeContentView.prototype.get domTree):
+        (WebInspector.FrameDOMTreeContentView.prototype.closed):
+        (WebInspector.FrameDOMTreeContentView.prototype._rootDOMNodeAvailable):
+        (WebInspector.FrameDOMTreeContentView.prototype._rootDOMNodeInvalidated):
+        (WebInspector.FrameDOMTreeContentView.prototype._requestRootDOMNode):
+        * UserInterface/Main.html:
+
 2013-11-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: remove -webkit-min and -webkit-max from CSS completions
