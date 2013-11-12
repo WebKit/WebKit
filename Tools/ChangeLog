@@ -1,3 +1,15 @@
+2013-11-12  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        [GTK] Update GTK builders in Tools/Scripts/webkitpy/port/builders.py
+        https://bugs.webkit.org/show_bug.cgi?id=124144
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Updated the list of GTK builders in Tools/Scripts/webkitpy/port/builders.py
+        according to http://build.webkit.org/builders.
+
+        * Scripts/webkitpy/port/builders.py:
+
 2013-11-11  Samuel White  <samuel_white@apple.com>
 
         AX: support helpText() in DumpRenderTree
