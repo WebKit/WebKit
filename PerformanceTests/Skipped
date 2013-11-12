@@ -86,3 +86,6 @@ Layout/LineLayoutJapanese.html
 
 # New DOM benchmark is not ready for the prime time yet.
 DoYouEvenBench
+
+# Needs deflakization
+Parser/HTML5-8266-FullRender.html

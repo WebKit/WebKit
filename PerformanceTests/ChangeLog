@@ -1,5 +1,14 @@
 2013-11-12  Andreas Kling  <akling@apple.com>
 
+        Neutralize external resource loads in the new HTML5 spec copy.
+
+        Skip Parser/HTML5-8266-FullRender.html until I can make it less flaky.
+
+        * Parser/resources/html5-8266.html:
+        * Skipped:
+
+2013-11-12  Andreas Kling  <akling@apple.com>
+
         Import a fresh version of the full HTML5 spec for perf testing.
 
         Rubber-stamped by Antti Koivisto.
