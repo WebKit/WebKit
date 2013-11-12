@@ -393,10 +393,11 @@ PassRefPtr<ImmutableArray> WebPageProxy::relatedPages() const
     Vector<WebPageProxy*> pages = m_process->pages();
 
     Vector<RefPtr<APIObject>> result;
-    result.reserveCapacity(pages.size());
-    for (size_t i = 0; i < pages.size(); ++i) {
-        if (pages[i] != this)
-            result.append(pages[i]);
+    result.reserveInitialCapacity(pages.size());
+
+    for (const auto& page : pages) {
+        if (page != this)
+            result.uncheckedAppend(page);
     }
 
     return ImmutableArray::adopt(result);
@@ -3039,16 +3040,16 @@ void WebPageProxy::didFindStringMatches(const String& string, Vector<Vector<WebC
     Vector<RefPtr<APIObject>> matches;
     matches.reserveInitialCapacity(matchRects.size());
 
-    for (size_t i = 0; i < matchRects.size(); ++i) {
-        const Vector<WebCore::IntRect>& rects = matchRects[i];
-        size_t numRects = matchRects[i].size();
+    for (const auto& rects : matchRects) {
         Vector<RefPtr<APIObject>> apiRects;
-        apiRects.reserveInitialCapacity(numRects);
+        apiRects.reserveInitialCapacity(rects.size());
 
-        for (size_t i = 0; i < numRects; ++i)
-            apiRects.uncheckedAppend(WebRect::create(toAPI(rects[i])));
+        for (const auto& rect : rects)
+            apiRects.uncheckedAppend(WebRect::create(toAPI(rect)));
+
         matches.uncheckedAppend(ImmutableArray::adopt(apiRects));
     }
+
     m_findMatchesClient.didFindStringMatches(this, string, ImmutableArray::adopt(matches).get(), firstIndexAfterSelection);
 }
 

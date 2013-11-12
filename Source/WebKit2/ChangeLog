@@ -1,3 +1,54 @@
+2013-11-12  Anders Carlsson  <andersca@apple.com>
+
+        Begin cleaning up handling of ImmutableArray vectors
+        https://bugs.webkit.org/show_bug.cgi?id=124208
+
+        Reviewed by Andreas Kling.
+
+        Use range based for to iterate the loops. Use reserveInitialCapacity + uncheckedAppend
+        when appending vector elements.
+
+        * Shared/SecurityOriginData.cpp:
+        (WebKit::performAPICallbackWithSecurityOriginDataVector):
+        * Shared/WebArchive.cpp:
+        (WebKit::WebArchive::subresources):
+        (WebKit::WebArchive::subframeArchives):
+        * Shared/WebContextMenuItem.cpp:
+        (WebKit::WebContextMenuItem::submenuItemsAsImmutableArray):
+        * Shared/WebOpenPanelParameters.cpp:
+        (WebKit::WebOpenPanelParameters::acceptMIMETypes):
+        (WebKit::WebOpenPanelParameters::selectedFileNames):
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextGetInfoForInstalledPlugIns):
+        * UIProcess/Plugins/WebPluginSiteDataManager.cpp:
+        (WebKit::WebPluginSiteDataManager::didGetSitesWithData):
+        * UIProcess/StatisticsRequest.cpp:
+        (WebKit::StatisticsRequest::completedRequest):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::pluginInfoStoreDidLoadPlugins):
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::didGetHostnamesWithCookies):
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        (WebKit::WebDatabaseManagerProxy::didGetDatabasesByOrigin):
+        (WebKit::WebDatabaseManagerProxy::didGetDatabaseOrigins):
+        * UIProcess/WebMediaCacheManagerProxy.cpp:
+        (WebKit::WebMediaCacheManagerProxy::didGetHostnamesWithMediaCache):
+        * UIProcess/WebPageContextMenuClient.cpp:
+        (WebKit::WebPageContextMenuClient::showContextMenu):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::relatedPages):
+        (WebKit::WebPageProxy::didFindStringMatches):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::originsWithApplicationCache):
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardListItem.cpp:
+        (WebKit::InjectedBundleBackForwardListItem::children):
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp:
+        (WebKit::InjectedBundlePageFormClient::didAssociateFormControls):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::featuresUsedInPage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::trackedRepaintRects):
+
 2013-11-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         One more URTBF after r159108.

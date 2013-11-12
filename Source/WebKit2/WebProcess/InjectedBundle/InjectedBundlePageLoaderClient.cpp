@@ -341,15 +341,13 @@ void InjectedBundlePageLoaderClient::featuresUsedInPage(WebPage* page, const Vec
     if (!m_client.featuresUsedInPage)
         return;
 
-    Vector<RefPtr<APIObject>> featureStringObjectsVector;
+    Vector<RefPtr<APIObject>> featureStrings;
+    featureStrings.reserveInitialCapacity(features.size());
 
-    Vector<String>::const_iterator end = features.end();
-    for (Vector<String>::const_iterator it = features.begin(); it != end; ++it)
-        featureStringObjectsVector.append(WebString::create((*it)));
+    for (const auto& feature : features)
+        featureStrings.uncheckedAppend(WebString::create(feature));
 
-    RefPtr<ImmutableArray> featureStringObjectsArray = ImmutableArray::adopt(featureStringObjectsVector);
-
-    return m_client.featuresUsedInPage(toAPI(page), toAPI(featureStringObjectsArray.get()), m_client.clientInfo);
+    return m_client.featuresUsedInPage(toAPI(page), toAPI(ImmutableArray::adopt(featureStrings).get()), m_client.clientInfo);
 }
 
 void InjectedBundlePageLoaderClient::willDestroyFrame(WebPage* page, WebFrame* frame)

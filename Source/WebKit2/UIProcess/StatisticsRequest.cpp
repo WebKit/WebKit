@@ -83,13 +83,15 @@ void StatisticsRequest::completedRequest(uint64_t requestID, const StatisticsDat
         m_responseDictionary->set("JavaScriptProtectedObjectTypeCounts", createDictionaryFromHashMap(data.javaScriptProtectedObjectTypeCounts).get());
     if (!data.javaScriptObjectTypeCounts.isEmpty())
         m_responseDictionary->set("JavaScriptObjectTypeCounts", createDictionaryFromHashMap(data.javaScriptObjectTypeCounts).get());
-    
-    size_t cacheStatisticsCount = data.webCoreCacheStatistics.size();
-    if (cacheStatisticsCount) {
-        Vector<RefPtr<APIObject>> cacheStatisticsVector(cacheStatisticsCount);
-        for (size_t i = 0; i < cacheStatisticsCount; ++i)
-            cacheStatisticsVector[i] = createDictionaryFromHashMap(data.webCoreCacheStatistics[i]);
-        m_responseDictionary->set("WebCoreCacheStatistics", ImmutableArray::adopt(cacheStatisticsVector).get());
+
+    if (!data.webCoreCacheStatistics.isEmpty()) {
+        Vector<RefPtr<APIObject>> cacheStatistics;
+        cacheStatistics.reserveInitialCapacity(data.webCoreCacheStatistics.size());
+
+        for (const auto& statistic : data.webCoreCacheStatistics)
+            cacheStatistics.uncheckedAppend(createDictionaryFromHashMap(statistic));
+
+        m_responseDictionary->set("WebCoreCacheStatistics", ImmutableArray::adopt(cacheStatistics).get());
     }
 
     if (m_outstandingRequests.isEmpty()) {

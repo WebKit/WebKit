@@ -407,14 +407,14 @@ PassRefPtr<ImmutableArray> InjectedBundle::originsWithApplicationCache()
 {
     HashSet<RefPtr<SecurityOrigin>> origins;
     cacheStorage().getOriginsWithCache(origins);
-    Vector< RefPtr<APIObject>> originsVector;
 
-    HashSet<RefPtr<SecurityOrigin>>::iterator it = origins.begin();
-    HashSet<RefPtr<SecurityOrigin>>::iterator end = origins.end();
-    for ( ; it != end; ++it)
-        originsVector.append(WebString::create((*it)->databaseIdentifier()));
+    Vector<RefPtr<APIObject>> originIdentifiers;
+    originIdentifiers.reserveInitialCapacity(origins.size());
 
-    return ImmutableArray::adopt(originsVector);
+    for (const auto& origin : origins)
+        originIdentifiers.uncheckedAppend(WebString::create(origin->databaseIdentifier()));
+
+    return ImmutableArray::adopt(originIdentifiers);
 }
 
 int InjectedBundle::numberOfPages(WebFrame* frame, double pageWidthInPixels, double pageHeightInPixels)

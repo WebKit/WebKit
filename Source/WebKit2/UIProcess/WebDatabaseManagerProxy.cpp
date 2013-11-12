@@ -156,26 +156,24 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
         return;
     }
 
-    size_t originAndDatabasesCount = originAndDatabasesVector.size();
-    Vector<RefPtr<APIObject>> result(originAndDatabasesCount);
+    Vector<RefPtr<APIObject>> result;
+    result.reserveInitialCapacity(originAndDatabasesVector.size());
 
-    for (size_t i = 0; i < originAndDatabasesCount; ++i) {
-        const OriginAndDatabases& originAndDatabases = originAndDatabasesVector[i];
-    
+    for (const auto& originAndDatabases : originAndDatabasesVector) {
         RefPtr<APIObject> origin = WebSecurityOrigin::createFromDatabaseIdentifier(originAndDatabases.originIdentifier);
-    
-        size_t databasesCount = originAndDatabases.databases.size();
-        Vector<RefPtr<APIObject>> databases(databasesCount);
-    
-        for (size_t j = 0; j < databasesCount; ++j) {
-            const DatabaseDetails& details = originAndDatabases.databases[i];
+
+        Vector<RefPtr<APIObject>> databases;
+        databases.reserveInitialCapacity(originAndDatabases.databases.size());
+
+        for (const auto& databaseDetails : originAndDatabases.databases) {
             HashMap<String, RefPtr<APIObject>> detailsMap;
 
-            detailsMap.set(databaseDetailsNameKey(), WebString::create(details.name()));
-            detailsMap.set(databaseDetailsDisplayNameKey(), WebString::create(details.displayName()));
-            detailsMap.set(databaseDetailsExpectedUsageKey(), WebUInt64::create(details.expectedUsage()));
-            detailsMap.set(databaseDetailsCurrentUsageKey(), WebUInt64::create(details.currentUsage()));
-            databases.append(ImmutableDictionary::adopt(detailsMap));
+            detailsMap.set(databaseDetailsNameKey(), WebString::create(databaseDetails.name()));
+            detailsMap.set(databaseDetailsDisplayNameKey(), WebString::create(databaseDetails.displayName()));
+            detailsMap.set(databaseDetailsExpectedUsageKey(), WebUInt64::create(databaseDetails.expectedUsage()));
+            detailsMap.set(databaseDetailsCurrentUsageKey(), WebUInt64::create(databaseDetails.currentUsage()));
+
+            databases.uncheckedAppend(ImmutableDictionary::adopt(detailsMap));
         }
 
         HashMap<String, RefPtr<APIObject>> originAndDatabasesMap;
@@ -184,11 +182,10 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
         originAndDatabasesMap.set(originUsageKey(), WebUInt64::create(originAndDatabases.originUsage));
         originAndDatabasesMap.set(databaseDetailsKey(), ImmutableArray::adopt(databases));
 
-        result.append(ImmutableDictionary::adopt(originAndDatabasesMap));
+        result.uncheckedAppend(ImmutableDictionary::adopt(originAndDatabasesMap));
     }
 
-    RefPtr<ImmutableArray> resultArray = ImmutableArray::adopt(result);
-    callback->performCallbackWithReturnValue(resultArray.get());
+    callback->performCallbackWithReturnValue(ImmutableArray::adopt(result).get());
 }
 
 void WebDatabaseManagerProxy::getDatabaseOrigins(PassRefPtr<ArrayCallback> prpCallback)
@@ -208,11 +205,11 @@ void WebDatabaseManagerProxy::didGetDatabaseOrigins(const Vector<String>& origin
         return;
     }
 
-    size_t originIdentifiersCount = originIdentifiers.size();
-    Vector<RefPtr<APIObject>> securityOrigins(originIdentifiersCount);
+    Vector<RefPtr<APIObject>> securityOrigins;
+    securityOrigins.reserveInitialCapacity(originIdentifiers.size());
 
-    for (size_t i = 0; i < originIdentifiersCount; ++i)
-        securityOrigins[i] = WebSecurityOrigin::createFromDatabaseIdentifier(originIdentifiers[i]);
+    for (const auto& originIdentifier : originIdentifiers)
+        securityOrigins.uncheckedAppend(WebSecurityOrigin::createFromDatabaseIdentifier(originIdentifier));
 
     callback->performCallbackWithReturnValue(ImmutableArray::adopt(securityOrigins).get());
 }

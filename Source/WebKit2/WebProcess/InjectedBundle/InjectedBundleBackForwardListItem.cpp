@@ -34,12 +34,13 @@ namespace WebKit {
 
 PassRefPtr<ImmutableArray> InjectedBundleBackForwardListItem::children() const
 {
-    const HistoryItemVector& children = m_item->children();
-    size_t size = children.size();
-    Vector<RefPtr<APIObject>> vector(size);
-    for (size_t i = 0; i < size; ++i)
-        vector[i] = InjectedBundleBackForwardListItem::create(children[i]);
-    return ImmutableArray::adopt(vector);
+    Vector<RefPtr<APIObject>> children;
+    children.reserveInitialCapacity(m_item->children().size());
+
+    for (const auto& child : m_item->children())
+        children.uncheckedAppend(InjectedBundleBackForwardListItem::create(child));
+
+    return ImmutableArray::adopt(children);
 }
 
 } // namespace WebKit

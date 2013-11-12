@@ -90,7 +90,7 @@ void WebMediaCacheManagerProxy::getHostnamesWithMediaCache(PassRefPtr<ArrayCallb
     context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebMediaCacheManager::GetHostnamesWithMediaCache(callbackID));
 }
     
-void WebMediaCacheManagerProxy::didGetHostnamesWithMediaCache(const Vector<String>& hostnameList, uint64_t callbackID)
+void WebMediaCacheManagerProxy::didGetHostnamesWithMediaCache(const Vector<String>& hostnames, uint64_t callbackID)
 {
     RefPtr<ArrayCallback> callback = m_arrayCallbacks.take(callbackID);
     if (!callback) {
@@ -98,13 +98,13 @@ void WebMediaCacheManagerProxy::didGetHostnamesWithMediaCache(const Vector<Strin
         return;
     }
 
-    size_t hostnameCount = hostnameList.size();
-    Vector<RefPtr<APIObject>> hostnames(hostnameCount);
+    Vector<RefPtr<APIObject>> hostnamesArray;
+    hostnamesArray.reserveInitialCapacity(hostnames.size());
 
-    for (size_t i = 0; i < hostnameCount; ++i)
-        hostnames[i] = WebString::create(hostnameList[i]);
+    for (const auto& hostname : hostnames)
+        hostnamesArray.uncheckedAppend(WebString::create(hostname));
 
-    callback->performCallbackWithReturnValue(ImmutableArray::adopt(hostnames).get());
+    callback->performCallbackWithReturnValue(ImmutableArray::adopt(hostnamesArray).get());
 }
 
 void WebMediaCacheManagerProxy::clearCacheForHostname(const String& hostname)

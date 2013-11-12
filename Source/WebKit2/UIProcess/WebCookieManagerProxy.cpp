@@ -107,7 +107,7 @@ void WebCookieManagerProxy::getHostnamesWithCookies(PassRefPtr<ArrayCallback> pr
     context()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::GetHostnamesWithCookies(callbackID));
 }
     
-void WebCookieManagerProxy::didGetHostnamesWithCookies(const Vector<String>& hostnameList, uint64_t callbackID)
+void WebCookieManagerProxy::didGetHostnamesWithCookies(const Vector<String>& hostnames, uint64_t callbackID)
 {
     RefPtr<ArrayCallback> callback = m_arrayCallbacks.take(callbackID);
     if (!callback) {
@@ -115,13 +115,13 @@ void WebCookieManagerProxy::didGetHostnamesWithCookies(const Vector<String>& hos
         return;
     }
 
-    size_t hostnameCount = hostnameList.size();
-    Vector<RefPtr<APIObject>> hostnames(hostnameCount);
+    Vector<RefPtr<APIObject>> hostnameStrings;
+    hostnameStrings.reserveInitialCapacity(hostnames.size());
 
-    for (size_t i = 0; i < hostnameCount; ++i)
-        hostnames[i] = WebString::create(hostnameList[i]);
+    for (const auto& hostname : hostnames)
+        hostnameStrings.uncheckedAppend(WebString::create(hostname));
 
-    callback->performCallbackWithReturnValue(ImmutableArray::adopt(hostnames).get());
+    callback->performCallbackWithReturnValue(ImmutableArray::adopt(hostnameStrings).get());
 }
 
 void WebCookieManagerProxy::deleteCookiesForHostname(const String& hostname)

@@ -74,8 +74,10 @@ void WKContextGetInfoForInstalledPlugIns(WKContextRef contextRef, WKContextGetIn
     Vector<PluginModuleInfo> plugins = toImpl(contextRef)->pluginInfoStore().plugins();
 
     Vector<RefPtr<APIObject>> pluginInfoDictionaries;
+    pluginInfoDictionaries.reserveInitialCapacity(plugins.size());
+
     for (const auto& plugin: plugins)
-        pluginInfoDictionaries.append(createPluginInformationDictionary(plugin));
+        pluginInfoDictionaries.uncheckedAppend(createPluginInformationDictionary(plugin));
 
     RefPtr<ImmutableArray> array = ImmutableArray::adopt(pluginInfoDictionaries);
 

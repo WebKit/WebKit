@@ -130,13 +130,11 @@ void InjectedBundlePageFormClient::didAssociateFormControls(WebPage* page, const
     if (!m_client.didAssociateFormControls)
         return;
 
-    size_t size = elements.size();
-
     Vector<RefPtr<APIObject>> elementHandles;
-    elementHandles.reserveCapacity(size);
+    elementHandles.reserveInitialCapacity(elements.size());
 
-    for (size_t i = 0; i < size; ++i)
-        elementHandles.uncheckedAppend(InjectedBundleNodeHandle::getOrCreate(elements[i].get()).get());
+    for (const auto& element : elements)
+        elementHandles.uncheckedAppend(InjectedBundleNodeHandle::getOrCreate(element.get()));
 
     m_client.didAssociateFormControls(toAPI(page), toAPI(ImmutableArray::adopt(elementHandles).get()), m_client.clientInfo);
 }

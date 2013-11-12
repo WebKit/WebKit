@@ -1256,29 +1256,33 @@ void WebContext::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store)
 #endif
     ASSERT(store == &m_pluginInfoStore);
 
-    Vector<RefPtr<APIObject>> pluginArray;
+    Vector<PluginModuleInfo> pluginModules = m_pluginInfoStore.plugins();
 
-    Vector<PluginModuleInfo> plugins = m_pluginInfoStore.plugins();
-    for (size_t i = 0; i < plugins.size(); ++i) {
-        PluginModuleInfo& plugin = plugins[i];
+    Vector<RefPtr<APIObject>> plugins;
+    plugins.reserveInitialCapacity(pluginModules.size());
+
+    for (const auto& pluginModule : pluginModules) {
         ImmutableDictionary::MapType map;
-        map.set(ASCIILiteral("path"), WebString::create(plugin.path));
-        map.set(ASCIILiteral("name"), WebString::create(plugin.info.name));
-        map.set(ASCIILiteral("file"), WebString::create(plugin.info.file));
-        map.set(ASCIILiteral("desc"), WebString::create(plugin.info.desc));
-        Vector<RefPtr<APIObject>> mimeArray;
-        for (size_t j = 0; j <  plugin.info.mimes.size(); ++j)
-            mimeArray.append(WebString::create(plugin.info.mimes[j].type));
-        map.set(ASCIILiteral("mimes"), ImmutableArray::adopt(mimeArray));
+        map.set(ASCIILiteral("path"), WebString::create(pluginModule.path));
+        map.set(ASCIILiteral("name"), WebString::create(pluginModule.info.name));
+        map.set(ASCIILiteral("file"), WebString::create(pluginModule.info.file));
+        map.set(ASCIILiteral("desc"), WebString::create(pluginModule.info.desc));
+
+        Vector<RefPtr<APIObject>> mimeTypes;
+        mimeTypes.reserveInitialCapacity(pluginModule.info.mimes.size());
+        for (const auto& mimeClassInfo : pluginModule.info.mimes)
+            mimeTypes.uncheckedAppend(WebString::create(mimeClassInfo.type));
+        map.set(ASCIILiteral("mimes"), ImmutableArray::adopt(mimeTypes));
+
 #if PLATFORM(MAC)
-        map.set(ASCIILiteral("bundleId"), WebString::create(plugin.bundleIdentifier));
-        map.set(ASCIILiteral("version"), WebString::create(plugin.versionString));
+        map.set(ASCIILiteral("bundleId"), WebString::create(pluginModule.bundleIdentifier));
+        map.set(ASCIILiteral("version"), WebString::create(pluginModule.versionString));
 #endif
 
-        pluginArray.append(ImmutableDictionary::adopt(map));
+        plugins.uncheckedAppend(ImmutableDictionary::adopt(map));
     }
 
-    m_client.plugInInformationBecameAvailable(this, ImmutableArray::adopt(pluginArray).get());
+    m_client.plugInInformationBecameAvailable(this, ImmutableArray::adopt(plugins).get());
 }
 #endif
 

@@ -98,13 +98,11 @@ bool WebPageContextMenuClient::showContextMenu(WebPageProxy* page, const WebCore
     if (!m_client.showContextMenu)
         return false;
 
-    unsigned size = menuItemsVector.size();
-
     Vector<RefPtr<APIObject>> menuItems;
-    menuItems.reserveCapacity(size);
+    menuItems.reserveInitialCapacity(menuItemsVector.size());
 
-    for (unsigned i = 0; i < size; ++i)
-        menuItems.uncheckedAppend(WebContextMenuItem::create(menuItemsVector[i]).get());
+    for (const auto& menuItem : menuItemsVector)
+        menuItems.uncheckedAppend(WebContextMenuItem::create(menuItem));
 
     m_client.showContextMenu(toAPI(page), toAPI(menuLocation), toAPI(ImmutableArray::adopt(menuItems).get()), m_client.clientInfo);
 
