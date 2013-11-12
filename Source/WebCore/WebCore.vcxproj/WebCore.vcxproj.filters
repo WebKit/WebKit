@@ -313,6 +313,9 @@
     <Filter Include="page\scrolling\coordinatedgraphics">
       <UniqueIdentifier>{1912e806-139c-44ba-8a2f-e46d4f370106}</UniqueIdentifier>
     </Filter>
+    <Filter Include="platform\graphics\gstreamer">
+      <UniqueIdentifier>{8178404b-8759-4480-93d4-0217a74ae338}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DerivedSources.cpp">
@@ -7032,6 +7035,48 @@
     </ClCompile>
     <ClCompile Include="..\rendering\OrderIterator.cpp">
       <Filter>rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gstreamer\AudioTrackPrivateGStreamer.cpp">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gstreamer\GRefPtrGStreamer.cpp">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gstreamer\GStreamerUtilities.cpp">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gstreamer\GStreamerVersioning.cpp">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gstreamer\ImageGStreamerCairo.cpp">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gstreamer\InbandTextTrackPrivateGStreamer.cpp">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gstreamer\MediaPlayerPrivateGStreamer.cpp">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gstreamer\MediaPlayerPrivateGStreamerBase.cpp">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gstreamer\TextCombinerGStreamer.cpp">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gstreamer\TextSinkGStreamer.cpp">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gstreamer\TrackPrivateBaseGStreamer.cpp">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gstreamer\VideoSinkGStreamer.cpp">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gstreamer\VideoTrackPrivateGStreamer.cpp">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\gstreamer\WebKitWebSourceGStreamer.cpp">
+      <Filter>platform\graphics\gstreamer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -14809,6 +14854,51 @@
     </ClInclude>
     <ClInclude Include="..\dom\CollectionIndexCache.h">
       <Filter>dom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gstreamer\AudioTrackPrivateGStreamer.h">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gstreamer\GRefPtrGStreamer.h">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gstreamer\GStreamerUtilities.h">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gstreamer\GStreamerVersioning.h">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gstreamer\ImageGStreamer.h">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gstreamer\InbandMetadataTextTrackPrivateGStreamer.h">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gstreamer\InbandTextTrackPrivateGStreamer.h">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gstreamer\MediaPlayerPrivateGStreamer.h">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gstreamer\MediaPlayerPrivateGStreamerBase.h">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gstreamer\TextCombinerGStreamer.h">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gstreamer\TextSinkGStreamer.h">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gstreamer\TrackPrivateBaseGStreamer.h">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gstreamer\VideoSinkGStreamer.h">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gstreamer\VideoTrackPrivateGStreamer.h">
+      <Filter>platform\graphics\gstreamer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\gstreamer\WebKitWebSourceGStreamer.h">
+      <Filter>platform\graphics\gstreamer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

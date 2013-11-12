@@ -1,3 +1,15 @@
+2013-11-12  Alex Christensen  <achristensen@webkit.org>
+
+        Build GStreamer files on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=124180
+
+        Reviewed by Brent Fulgham.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.vcxproj/copy-files.cmd:
+        Include gobject files in WinCairo build.
+
 2013-11-09  Filip Pizlo  <fpizlo@apple.com>
 
         Switch FTL GetById/PutById IC's over to using AnyRegCC

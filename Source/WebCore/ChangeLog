@@ -1,3 +1,15 @@
+2013-11-12  Alex Christensen  <achristensen@webkit.org>
+
+        Build GStreamer files on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=124180
+
+        Reviewed by Brent Fulgham.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.vcxproj/copyForwardingHeaders.cmd:
+        Include gstreamer files in WinCairo build.
+
 2013-11-12  Brady Eidson  <beidson@apple.com>
 
         Introduce IDBServerConnection (and start moving things to it).

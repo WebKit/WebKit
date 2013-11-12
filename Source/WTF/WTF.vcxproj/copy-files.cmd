@@ -11,6 +11,7 @@ if "%1" EQU "rebuild" call :clean
 for %%d in (
     wtf
     wtf\dtoa
+    wtf\gobject
     wtf\text
     wtf\threads
     wtf\unicode
