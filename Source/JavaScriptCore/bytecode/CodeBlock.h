@@ -33,6 +33,7 @@
 #include "ArrayProfile.h"
 #include "ByValInfo.h"
 #include "BytecodeConventions.h"
+#include "BytecodeLivenessAnalysis.h"
 #include "CallLinkInfo.h"
 #include "CallReturnOffsetToBytecodeOffset.h"
 #include "CodeBlockHash.h"
@@ -95,6 +96,7 @@ enum ReoptimizationMode { DontCountReoptimization, CountReoptimization };
 
 class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFinalizer, public WeakReferenceHarvester {
     WTF_MAKE_FAST_ALLOCATED;
+    friend class BytecodeLivenessAnalysis;
     friend class JIT;
     friend class LLIntOffsetsExtractor;
 public:
@@ -677,6 +679,8 @@ public:
 
     JSGlobalObject* globalObjectFor(CodeOrigin);
 
+    BytecodeLivenessAnalysis& livenessAnalysis() { return m_livenessAnalysis; }
+
     // Jump Tables
 
     size_t numberOfSwitchJumpTables() const { return m_rareData ? m_rareData->m_switchJumpTables.size() : 0; }
@@ -1072,6 +1076,8 @@ private:
     uint16_t m_reoptimizationRetryCounter;
     
     mutable CodeBlockHash m_hash;
+
+    BytecodeLivenessAnalysis m_livenessAnalysis;
 
     struct RareData {
         WTF_MAKE_FAST_ALLOCATED;

@@ -108,6 +108,12 @@
     <ClCompile Include="..\bytecode\ArrayProfile.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
+    <ClCompile Include="..\bytecode\BytecodeBasicBlock.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bytecode\BytecodeLivenessAnalysis.cpp">
+      <Filter>bytecode</Filter>
+    </ClCompile>
     <ClCompile Include="..\bytecode\CallLinkInfo.cpp">
       <Filter>bytecode</Filter>
     </ClCompile>
@@ -1362,6 +1368,12 @@
       <Filter>bytecode</Filter>
     </ClInclude>
     <ClInclude Include="..\bytecode\ByValInfo.h">
+      <Filter>bytecode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\BytecodeBasicBlock.h">
+      <Filter>bytecode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\bytecode\BytecodeLivenessAnalysis.h">
       <Filter>bytecode</Filter>
     </ClInclude>
     <ClInclude Include="..\bytecode\CallLinkInfo.h">

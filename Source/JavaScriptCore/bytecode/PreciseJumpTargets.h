@@ -31,6 +31,7 @@
 namespace JSC {
 
 void computePreciseJumpTargets(CodeBlock*, Vector<unsigned, 32>& out);
+void findJumpTargetsForBytecodeOffset(CodeBlock*, unsigned bytecodeOffset, Vector<unsigned, 1>& out);
 
 } // namespace JSC
 

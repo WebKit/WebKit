@@ -1,3 +1,104 @@
+2013-08-02  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        CodeBlocks should be able to determine bytecode liveness
+        https://bugs.webkit.org/show_bug.cgi?id=118546
+
+        Reviewed by Filip Pizlo.
+
+        This will simplify some things in the DFG related to OSR exits and determining 
+        which bytecode variables are live at which points during execution. It will
+        also be useful for making our conservative GC scan more precise. Currently it 
+        doesn't properly account for liveness while the DFG is running, so it will be 
+        off by default behing a runtime Options flag.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeBasicBlock.cpp: Added.
+        (JSC::isBranch): Used to determine the end of basic blocks.
+        (JSC::isUnconditionalBranch): Used to determine when a branch at the end of a 
+        basic block can't possibly fall through to the next basic block in program order.
+        (JSC::isTerminal): Also used to detect the end of a block.
+        (JSC::isThrow):
+        (JSC::isJumpTarget): Used to correctly separate basic blocks. Any jump destination 
+        must be the head of its own basic block.
+        (JSC::linkBlocks): Links two blocks together in a bi-direcitonal fashion.
+        (JSC::computeBytecodeBasicBlocks): Creates a set of basic blocks given a particular 
+        CodeBlock and links them together.
+        * bytecode/BytecodeBasicBlock.h: Added.
+        (JSC::BytecodeBasicBlock::isEntryBlock): Entry blocks are a special basic blocks 
+        that indicate the beginning of the function.
+        (JSC::BytecodeBasicBlock::isExitBlock): Exit blocks are a special basic block that 
+        all blocks that exit the function have as a successor. Entry and exit blocks allows 
+        the various code paths to be more regular.
+        (JSC::BytecodeBasicBlock::leaderBytecodeOffset): The leader bytecode offset is the 
+        bytecode offset of the first instruction in the block.
+        (JSC::BytecodeBasicBlock::totalBytecodeLength): The total length of all the bytecodes 
+        in this block.
+        (JSC::BytecodeBasicBlock::bytecodeOffsets): The bytecode offsets in this particular 
+        basic block. This Vector allows us to iterate over the bytecodes in reverse order 
+        which wouldn't be possible normally since they are of variable size.
+        (JSC::BytecodeBasicBlock::addPredecessor): Links a block to a specified predecessor. 
+        Only creates one direction of the link.
+        (JSC::BytecodeBasicBlock::addSuccessor): Same as addPredecessor, but for successors.
+        (JSC::BytecodeBasicBlock::predecessors): Getter for predecessors.
+        (JSC::BytecodeBasicBlock::successors): Getter for successors.
+        (JSC::BytecodeBasicBlock::in): Getter for the liveness info at the head of the block.
+        (JSC::BytecodeBasicBlock::out): Getter for the liveness info at  the tail of the block.
+        (JSC::BytecodeBasicBlock::BytecodeBasicBlock):
+        (JSC::BytecodeBasicBlock::addBytecodeLength): When creating basic blocks we call 
+        this function when we want to add the next bytecode in program order to this block.
+        * bytecode/BytecodeLivenessAnalysis.cpp: Added.
+        (JSC::BytecodeLivenessAnalysis::BytecodeLivenessAnalysis):
+        (JSC::numberOfCapturedVariables): Convenience wrapper. Returns the
+        number of captured variables for a particular CodeBlock, or 0 if 
+        the CodeBlock has no SymbolTable.
+        (JSC::captureStart): Ditto, but for captureStart().
+        (JSC::captureEnd): Ditto, but for captureEnd().
+        (JSC::isValidRegisterForLiveness): Returns true if the liveness analysis should 
+        track the liveness of a particular operand. We ignore constants, arguments, and 
+        captured variables. We ignore arguments because they're live for the duration of 
+        a function call. We ignore captured variables because we also treat them as live 
+        for the duration of the function. This could probably be improved to be more precise, 
+        but it didn't seem worth it for now.
+        (JSC::setForOperand): Convenience wrapper that sets the bit in the provided bit 
+        vector for the provided operand. It handles skipping over captured variables.
+        (JSC::computeUsesForBytecodeOffset): Computes which operands are used by a particular bytecode.
+        (JSC::computeDefsForBytecodeOffset): Computes which operands are defined by a particular 
+        bytecode. Typically this is just the left-most operand.
+        (JSC::findBasicBlockWithLeaderOffset): 
+        (JSC::findBasicBlockForBytecodeOffset): Scans over basic blocks to find the block 
+        which contains a particular bytecode offset.
+        (JSC::computeLocalLivenessForBytecodeOffset): Computes block-local liveness from the 
+        bottom of the block until a specified bytecode offset is reached. 
+        (JSC::computeLocalLivenessForBlock): Computes liveness for the entire block and 
+        stores the resulting liveness at the head.
+        (JSC::BytecodeLivenessAnalysis::runLivenessFixpoint): Runs backward flow liveness 
+        analysis to fixpoint.
+        (JSC::BytecodeLivenessAnalysis::getLivenessInfoForNonCapturedVarsAtBytecodeOffset): 
+        Slow path to get liveness info for non-captured, non-argument variable.
+        (JSC::BytecodeLivenessAnalysis::operandIsLiveAtBytecodeOffset): 
+        (JSC::BytecodeLivenessAnalysis::getLivenessInfoAtBytecodeOffset): Returns the liveness 
+        info for both captured and non-captured vars at a particular bytecode offset.
+        (JSC::BytecodeLivenessAnalysis::dumpResults): Dumps the output of the liveness analysis. 
+        Controlled by new flag in Options.h/.cpp.
+        (JSC::BytecodeLivenessAnalysis::compute): Creates bytecode basic blocks and runs 
+        full liveness analysis.
+        * bytecode/BytecodeLivenessAnalysis.h: Added.
+        (JSC::BytecodeLivenessAnalysis::hasBeenComputed):
+        (JSC::BytecodeLivenessAnalysis::computeIfNecessary):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::livenessAnalysis):
+        * bytecode/PreciseJumpTargets.cpp: Refactored to be able to get the jump targets for 
+        a particular bytecode offset for use during bytecode basic block construction.
+        (JSC::getJumpTargetsForBytecodeOffset):
+        (JSC::computePreciseJumpTargets):
+        (JSC::findJumpTargetsForBytecodeOffset):
+        * bytecode/PreciseJumpTargets.h:
+        * runtime/Options.cpp:
+        (JSC::Options::initialize):
+        * runtime/Options.h:
+
 2013-11-11  Andy Estes  <aestes@apple.com>
 
         [iOS] Define JSC_OBJC_API_ENABLED

@@ -26,6 +26,7 @@
 #ifndef FastBitVector_h
 #define FastBitVector_h
 
+#include <string.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 

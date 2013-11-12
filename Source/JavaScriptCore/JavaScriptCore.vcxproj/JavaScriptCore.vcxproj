@@ -296,6 +296,8 @@
     <ClInclude Include="..\assembler\MacroAssemblerX86Common.cpp" />
     <ClCompile Include="..\bytecode\ArrayAllocationProfile.cpp" />
     <ClCompile Include="..\bytecode\ArrayProfile.cpp" />
+    <ClCompile Include="..\bytecode\BytecodeBasicBlock.cpp" />
+    <ClCompile Include="..\bytecode\BytecodeLivenessAnalysis.cpp" />
     <ClCompile Include="..\bytecode\CallLinkInfo.cpp" />
     <ClCompile Include="..\bytecode\CallLinkStatus.cpp" />
     <ClCompile Include="..\bytecode\CodeBlock.cpp" />
@@ -741,6 +743,8 @@
     <ClInclude Include="..\bytecode\ArrayAllocationProfile.h" />
     <ClInclude Include="..\bytecode\ArrayProfile.h" />
     <ClInclude Include="..\bytecode\ByValInfo.h" />
+    <ClInclude Include="..\bytecode\BytecodeBasicBlock.h" />
+    <ClInclude Include="..\bytecode\BytecodeLivenessAnalysis.h" />
     <ClInclude Include="..\bytecode\CallLinkInfo.h" />
     <ClInclude Include="..\bytecode\CallLinkStatus.h" />
     <ClInclude Include="..\bytecode\CallReturnOffsetToBytecodeOffset.h" />

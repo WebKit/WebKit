@@ -100,6 +100,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/ArrayProfile.cpp \
 	Source/JavaScriptCore/bytecode/ArrayProfile.h \
 	Source/JavaScriptCore/bytecode/ByValInfo.h \
+    Source/JavaScriptCore/bytecode/BytecodeBasicBlock.cpp \
+    Source/JavaScriptCore/bytecode/BytecodeBasicBlock.h \
+    Source/JavaScriptCore/bytecode/BytecodeLivenessAnalysis.cpp \
+    Source/JavaScriptCore/bytecode/BytecodeLivenessAnalysis.h \
 	Source/JavaScriptCore/bytecode/BytecodeConventions.h \
 	Source/JavaScriptCore/bytecode/CallLinkInfo.cpp \
 	Source/JavaScriptCore/bytecode/CallLinkInfo.h \
