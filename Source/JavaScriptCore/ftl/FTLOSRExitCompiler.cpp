@@ -164,12 +164,6 @@ static void compileStub(
     
     handleExitCounts(jit, exit);
     reifyInlinedCallFrames(jit, exit);
-    
-    if (exit.m_lastSetOperand.isValid()) {
-        jit.load64(
-            AssemblyHelpers::addressFor(exit.m_lastSetOperand), GPRInfo::cachedResultRegister);
-    }
-    
     adjustAndJumpToTarget(jit, exit);
     
     LinkBuffer patchBuffer(*vm, &jit, codeBlock);

@@ -55,30 +55,10 @@ void JIT::emit_op_mov(Instruction* currentInstruction)
     int dst = currentInstruction[1].u.operand;
     int src = currentInstruction[2].u.operand;
 
-    if (canBeOptimizedOrInlined()) {
-        // Use simpler approach, since the DFG thinks that the last result register
-        // is always set to the destination on every operation.
-        emitGetVirtualRegister(src, regT0);
-        emitPutVirtualRegister(dst);
-    } else {
-        if (m_codeBlock->isConstantRegisterIndex(src)) {
-            if (!getConstantOperand(src).isNumber())
-                store64(TrustedImm64(JSValue::encode(getConstantOperand(src))), Address(callFrameRegister, dst * sizeof(Register)));
-            else
-                store64(Imm64(JSValue::encode(getConstantOperand(src))), Address(callFrameRegister, dst * sizeof(Register)));
-            if (dst == m_lastResultBytecodeRegister)
-                killLastResultRegister();
-        } else if ((src == m_lastResultBytecodeRegister) || (dst == m_lastResultBytecodeRegister)) {
-            // If either the src or dst is the cached register go though
-            // get/put registers to make sure we track this correctly.
-            emitGetVirtualRegister(src, regT0);
-            emitPutVirtualRegister(dst);
-        } else {
-            // Perform the copy via regT1; do not disturb any mapping in regT0.
-            load64(Address(callFrameRegister, src * sizeof(Register)), regT1);
-            store64(regT1, Address(callFrameRegister, dst * sizeof(Register)));
-        }
-    }
+    // Use simpler approach, since the DFG thinks that the last result register
+    // is always set to the destination on every operation.
+    emitGetVirtualRegister(src, regT0);
+    emitPutVirtualRegister(dst);
 }
 
 void JIT::emit_op_end(Instruction* currentInstruction)
@@ -661,7 +641,6 @@ void JIT::emit_op_push_name_scope(Instruction* currentInstruction)
 
 void JIT::emit_op_catch(Instruction* currentInstruction)
 {
-    killLastResultRegister(); // FIXME: Implicitly treat op_catch as a labeled statement, and remove this line of code.
     move(regT0, callFrameRegister);
     move(TrustedImmPtr(m_vm), regT3);
     load64(Address(regT3, VM::exceptionOffset()), regT0);
@@ -1188,14 +1167,8 @@ void JIT::emit_op_new_func(Instruction* currentInstruction)
     FunctionExecutable* funcExec = m_codeBlock->functionDecl(currentInstruction[2].u.operand);
     callOperation(operationNewFunction, dst, funcExec);
 
-    if (currentInstruction[3].u.operand) {
-#if USE(JSVALUE32_64)        
-        unmap();
-#else
-        killLastResultRegister();
-#endif
+    if (currentInstruction[3].u.operand)
         lazyJump.link(this);
-    }
 }
 
 void JIT::emit_op_new_func_exp(Instruction* currentInstruction)

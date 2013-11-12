@@ -432,12 +432,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
         }
     }
     
-    // 11) Load the result of the last bytecode operation into regT0.
-    
-    if (exit.m_lastSetOperand.isValid())
-        m_jit.load64(AssemblyHelpers::addressFor(exit.m_lastSetOperand), GPRInfo::cachedResultRegister);
-    
-    // 12) And finish.
+    // 11) And finish.
     
     adjustAndJumpToTarget(m_jit, exit);
 }

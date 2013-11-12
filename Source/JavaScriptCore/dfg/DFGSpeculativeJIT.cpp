@@ -47,7 +47,6 @@ SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
     , m_currentNode(0)
     , m_indexInBlock(0)
     , m_generationInfo(m_jit.codeBlock()->m_numCalleeRegisters)
-    , m_lastSetOperand(VirtualRegister())
     , m_state(m_jit.graph())
     , m_interpreter(m_jit.graph(), m_state)
     , m_stream(&jit.jitCode()->variableEventStream)
@@ -1539,8 +1538,6 @@ void SpeculativeJIT::compileMovHint(Node* node)
 {
     ASSERT(node->containsMovHint() && node->op() != ZombieHint);
     
-    m_lastSetOperand = node->local();
-
     Node* child = node->child1().node();
     noticeOSRBirth(child);
     
@@ -1621,7 +1618,6 @@ void SpeculativeJIT::compileCurrentBlock()
             VariableEvent::setLocal(virtualRegisterForLocal(i), variable->machineLocal(), format));
     }
     
-    m_lastSetOperand = VirtualRegister();
     m_codeOriginForExitTarget = CodeOrigin();
     m_codeOriginForExitProfile = CodeOrigin();
     
@@ -1667,7 +1663,6 @@ void SpeculativeJIT::compileCurrentBlock()
                 break;
                 
             case ZombieHint: {
-                m_lastSetOperand = m_currentNode->local();
                 recordSetLocal(DataFormatDead);
                 break;
             }

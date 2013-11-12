@@ -55,13 +55,6 @@ void JIT::emitPutCallResult(Instruction* instruction)
     int dst = instruction[1].u.operand;
     emitValueProfilingSite(regT4);
     emitPutVirtualRegister(dst);
-    if (canBeOptimizedOrInlined()) {
-        // Make lastResultRegister tracking simpler in the DFG. This is needed because
-        // the DFG may have the SetLocal corresponding to this Call's return value in
-        // a different basic block, if inlining happened. The DFG isn't smart enough to
-        // track the baseline JIT's last result register across basic blocks.
-        killLastResultRegister();
-    }
 }
 
 void JIT::compileLoadVarargs(Instruction* instruction)
@@ -69,8 +62,6 @@ void JIT::compileLoadVarargs(Instruction* instruction)
     int thisValue = instruction[3].u.operand;
     int arguments = instruction[4].u.operand;
     int firstFreeRegister = instruction[5].u.operand;
-
-    killLastResultRegister();
 
     JumpList slowCase;
     JumpList end;

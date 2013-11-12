@@ -204,7 +204,6 @@ void JIT::emit_op_mov(Instruction* currentInstruction)
     else {
         emitLoad(src, regT1, regT0);
         emitStore(dst, regT1, regT0);
-        map(m_bytecodeOffset + OPCODE_LENGTH(op_mov), dst, regT1, regT0);
     }
 }
 
@@ -432,7 +431,6 @@ void JIT::emit_op_to_primitive(Instruction* currentInstruction)
 
     if (dst != src)
         emitStore(dst, regT1, regT0);
-    map(m_bytecodeOffset + OPCODE_LENGTH(op_to_primitive), dst, regT1, regT0);
 }
 
 void JIT::emitSlow_op_to_primitive(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -956,7 +954,6 @@ void JIT::emit_op_to_number(Instruction* currentInstruction)
 
     if (src != dst)
         emitStore(dst, regT1, regT0);
-    map(m_bytecodeOffset + OPCODE_LENGTH(op_to_number), dst, regT1, regT0);
 }
 
 void JIT::emitSlow_op_to_number(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -990,7 +987,6 @@ void JIT::emit_op_catch(Instruction* currentInstruction)
 
     unsigned exception = currentInstruction[1].u.operand;
     emitStore(exception, regT1, regT0);
-    map(m_bytecodeOffset + OPCODE_LENGTH(op_catch), exception, regT1, regT0);
 }
 
 void JIT::emit_op_switch_imm(Instruction* currentInstruction)

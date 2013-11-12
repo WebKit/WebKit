@@ -266,11 +266,6 @@ namespace JSC {
         {
             Call functionCall = call();
             m_calls.append(CallRecord(functionCall, m_bytecodeOffset, function.value()));
-#if USE(JSVALUE32_64)
-            unmap();
-#else
-            killLastResultRegister();
-#endif
             return functionCall;
         }
 
@@ -390,19 +385,10 @@ namespace JSC {
         void emitStore(int index, const JSValue constant, RegisterID base = callFrameRegister);
         void emitStoreInt32(int index, RegisterID payload, bool indexIsInt32 = false);
         void emitStoreInt32(int index, TrustedImm32 payload, bool indexIsInt32 = false);
-        void emitStoreAndMapInt32(int index, RegisterID tag, RegisterID payload, bool indexIsInt32, size_t opcodeLength);
         void emitStoreCell(int index, RegisterID payload, bool indexIsCell = false);
         void emitStoreBool(int index, RegisterID payload, bool indexIsBool = false);
         void emitStoreDouble(int index, FPRegisterID value);
 
-        bool isLabeled(unsigned bytecodeOffset);
-        void map(unsigned bytecodeOffset, int virtualRegisterIndex, RegisterID tag, RegisterID payload);
-        void unmap(RegisterID);
-        void unmap();
-        bool isMapped(int virtualRegisterIndex);
-        bool getMappedPayload(int virtualRegisterIndex, RegisterID& payload);
-        bool getMappedTag(int virtualRegisterIndex, RegisterID& tag);
-        
         void emitJumpSlowCaseIfNotJSCell(int virtualRegisterIndex);
         void emitJumpSlowCaseIfNotJSCell(int virtualRegisterIndex, RegisterID tag);
 
@@ -434,8 +420,6 @@ namespace JSC {
         }
 
         int32_t getConstantOperandImmediateInt(int src);
-
-        void killLastResultRegister();
 
         Jump emitJumpIfJSCell(RegisterID);
         Jump emitJumpIfBothJSCells(RegisterID, RegisterID, RegisterID);
@@ -645,8 +629,6 @@ namespace JSC {
         bool isOperandConstantImmediateInt(int src);
         bool isOperandConstantImmediateChar(int src);
 
-        bool atJumpTarget();
-
         Jump getSlowCase(Vector<SlowCaseEntry>::iterator& iter)
         {
             return iter++->from;
@@ -814,17 +796,6 @@ namespace JSC {
         unsigned m_putByIdIndex;
         unsigned m_byValInstructionIndex;
         unsigned m_callLinkInfoIndex;
-
-#if USE(JSVALUE32_64)
-        unsigned m_jumpTargetIndex;
-        unsigned m_mappedBytecodeOffset;
-        int m_mappedVirtualRegisterIndex;
-        RegisterID m_mappedTag;
-        RegisterID m_mappedPayload;
-#else
-        int m_lastResultBytecodeRegister;
-#endif
-        unsigned m_jumpTargetsPosition;
 
         OwnPtr<JITDisassembler> m_disassembler;
         RefPtr<Profiler::Compilation> m_compilation;

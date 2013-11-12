@@ -2254,7 +2254,6 @@ public:
     };
     Vector<BranchRecord, 8> m_branches;
 
-    VirtualRegister m_lastSetOperand;
     CodeOrigin m_codeOriginForExitTarget;
     CodeOrigin m_codeOriginForExitProfile;
     

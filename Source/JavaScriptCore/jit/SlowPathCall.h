@@ -77,11 +77,6 @@ public:
             m_jit->sampleInstruction(m_jit->m_codeBlock->instructions().begin() + m_jit->m_bytecodeOffset, false);
 #endif
         
-#if USE(JSVALUE32_64)
-        m_jit->unmap();
-#else
-        m_jit->killLastResultRegister();
-#endif   
         m_jit->exceptionCheck();
         return call;
     }

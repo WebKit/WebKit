@@ -105,7 +105,6 @@ struct OSRExit : public OSRExitBase {
     void convertToForward(BasicBlock*, Node*, unsigned nodeIndex, const ValueRecovery&);
 
     unsigned m_streamIndex;
-    VirtualRegister m_lastSetOperand;
     
     RefPtr<ValueRecoveryOverride> m_valueRecoveryOverride;
 };

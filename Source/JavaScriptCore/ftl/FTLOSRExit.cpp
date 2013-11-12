@@ -43,13 +43,12 @@ using namespace DFG;
 OSRExit::OSRExit(
     ExitKind exitKind, ValueFormat profileValueFormat,
     MethodOfGettingAValueProfile valueProfile, CodeOrigin codeOrigin,
-    CodeOrigin originForProfile, int lastSetOperand, unsigned numberOfArguments,
+    CodeOrigin originForProfile, unsigned numberOfArguments,
     unsigned numberOfLocals)
     : OSRExitBase(exitKind, codeOrigin, originForProfile)
     , m_profileValueFormat(profileValueFormat)
     , m_valueProfile(valueProfile)
     , m_patchableCodeOffset(0)
-    , m_lastSetOperand(lastSetOperand)
     , m_values(numberOfArguments, numberOfLocals)
 {
 }
@@ -79,7 +78,6 @@ void OSRExit::convertToForward(
         return;
     
     VirtualRegister overriddenOperand = lastMovHint->local();
-    m_lastSetOperand = overriddenOperand;
     
     // Is the value for this operand being passed as an argument to the exit, or is
     // it something else? If it's an argument already, then replace that argument;
@@ -94,7 +92,7 @@ void OSRExit::convertToForward(
     
     unsigned argument = arguments.size();
     arguments.append(value.value());
-    m_values.operand(m_lastSetOperand) = ExitValue::exitArgument(
+    m_values.operand(overriddenOperand) = ExitValue::exitArgument(
         ExitArgument(value.format(), argument));
 }
 

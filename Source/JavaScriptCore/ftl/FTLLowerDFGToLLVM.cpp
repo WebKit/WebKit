@@ -71,7 +71,6 @@ public:
         , m_heaps(state.context)
         , m_out(state.context)
         , m_valueSources(OperandsLike, state.graph.block(0)->variablesAtHead)
-        , m_lastSetOperand(VirtualRegister())
         , m_state(state.graph)
         , m_interpreter(state.graph, m_state)
         , m_stackmapIDs(0)
@@ -676,7 +675,6 @@ private:
     void compileZombieHint()
     {
         VariableAccessData* data = m_node->variableAccessData();
-        m_lastSetOperand = data->local();
         m_valueSources.operand(data->local()) = ValueSource(SourceIsDead);
     }
     
@@ -2550,7 +2548,7 @@ private:
         
         m_ftlState.jitCode->osrExit.append(OSRExit(
             UncountableInvalidation, InvalidValueFormat, MethodOfGettingAValueProfile(),
-            m_codeOriginForExitTarget, m_codeOriginForExitProfile, m_lastSetOperand.offset(),
+            m_codeOriginForExitTarget, m_codeOriginForExitProfile,
             m_valueSources.numberOfArguments(), m_valueSources.numberOfLocals()));
         m_ftlState.finalizer->osrExit.append(OSRExitCompilationInfo());
         
@@ -3897,7 +3895,7 @@ private:
         
         m_ftlState.jitCode->osrExit.append(OSRExit(
             kind, lowValue.format(), m_graph.methodOfGettingAValueProfileFor(highValue),
-            m_codeOriginForExitTarget, m_codeOriginForExitProfile, m_lastSetOperand.offset(),
+            m_codeOriginForExitTarget, m_codeOriginForExitProfile,
             m_valueSources.numberOfArguments(), m_valueSources.numberOfLocals()));
         m_ftlState.finalizer->osrExit.append(OSRExitCompilationInfo());
         
@@ -4116,7 +4114,6 @@ private:
         
         VirtualRegister operand = node->local();
         
-        m_lastSetOperand = operand;
         m_valueSources.operand(operand) = ValueSource(node->child1().node());
     }
     
@@ -4280,7 +4277,6 @@ private:
     HashMap<Node*, LValue> m_phis;
     
     Operands<ValueSource> m_valueSources;
-    VirtualRegister m_lastSetOperand;
     
     InPlaceAbstractState m_state;
     AbstractInterpreter<InPlaceAbstractState> m_interpreter;

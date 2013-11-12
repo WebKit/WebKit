@@ -145,7 +145,7 @@ namespace JSC { namespace FTL {
 struct OSRExit : public DFG::OSRExitBase {
     OSRExit(
         ExitKind, ValueFormat profileValueFormat, MethodOfGettingAValueProfile,
-        CodeOrigin, CodeOrigin originForProfile, int lastSetOperand,
+        CodeOrigin, CodeOrigin originForProfile,
         unsigned numberOfArguments, unsigned numberOfLocals);
     
     MacroAssemblerCodeRef m_code;
@@ -160,8 +160,6 @@ struct OSRExit : public DFG::OSRExitBase {
     
     // Offset within the exit stubs of the stub for this exit.
     unsigned m_patchableCodeOffset;
-    
-    VirtualRegister m_lastSetOperand;
     
     Operands<ExitValue> m_values;
     

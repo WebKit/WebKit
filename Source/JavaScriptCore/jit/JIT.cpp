@@ -80,16 +80,6 @@ JIT::JIT(VM* vm, CodeBlock* codeBlock)
     , m_putByIdIndex(UINT_MAX)
     , m_byValInstructionIndex(UINT_MAX)
     , m_callLinkInfoIndex(UINT_MAX)
-#if USE(JSVALUE32_64)
-    , m_jumpTargetIndex(0)
-    , m_mappedBytecodeOffset((unsigned)-1)
-    , m_mappedVirtualRegisterIndex(UINT_MAX)
-    , m_mappedTag((RegisterID)-1)
-    , m_mappedPayload((RegisterID)-1)
-#else
-    , m_lastResultBytecodeRegister(std::numeric_limits<int>::max())
-    , m_jumpTargetsPosition(0)
-#endif
     , m_randomGenerator(cryptographicallyRandomNumber())
 #if ENABLE(VALUE_PROFILER)
     , m_canBeOptimized(false)
@@ -179,11 +169,6 @@ void JIT::privateCompileMainPass()
 #if ENABLE(OPCODE_SAMPLING)
         if (m_bytecodeOffset > 0) // Avoid the overhead of sampling op_enter twice.
             sampleInstruction(currentInstruction);
-#endif
-
-#if USE(JSVALUE64)
-        if (atJumpTarget())
-            killLastResultRegister();
 #endif
 
         m_labels[m_bytecodeOffset] = label();
@@ -376,10 +361,6 @@ void JIT::privateCompileSlowCases()
 #endif
 
     for (Vector<SlowCaseEntry>::iterator iter = m_slowCases.begin(); iter != m_slowCases.end();) {
-#if USE(JSVALUE64)
-        killLastResultRegister();
-#endif
-
         m_bytecodeOffset = iter->to;
 
         unsigned firstTo = m_bytecodeOffset;

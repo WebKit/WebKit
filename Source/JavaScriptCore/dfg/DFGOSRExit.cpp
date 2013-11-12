@@ -42,7 +42,6 @@ OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAVal
     , m_patchableCodeOffset(0)
     , m_recoveryIndex(recoveryIndex)
     , m_streamIndex(streamIndex)
-    , m_lastSetOperand(jit->m_lastSetOperand)
 {
     ASSERT(m_codeOrigin.isSet());
 }
@@ -85,7 +84,6 @@ void OSRExit::convertToForward(BasicBlock* block, Node* currentNode, unsigned no
     
     ASSERT(lastMovHint);
     ASSERT(lastMovHint->child1() == currentNode);
-    m_lastSetOperand = lastMovHint->local();
     m_valueRecoveryOverride = adoptRef(
         new ValueRecoveryOverride(lastMovHint->local(), valueRecovery));
 }

@@ -57,24 +57,17 @@ ALWAYS_INLINE void JIT::emitPutIntToCallFrameHeader(RegisterID from, JSStack::Ca
 ALWAYS_INLINE void JIT::emitGetFromCallFrameHeaderPtr(JSStack::CallFrameHeaderEntry entry, RegisterID to, RegisterID from)
 {
     loadPtr(Address(from, entry * sizeof(Register)), to);
-#if USE(JSVALUE64)
-    killLastResultRegister();
-#endif
 }
 
 ALWAYS_INLINE void JIT::emitGetFromCallFrameHeader32(JSStack::CallFrameHeaderEntry entry, RegisterID to, RegisterID from)
 {
     load32(Address(from, entry * sizeof(Register)), to);
-#if USE(JSVALUE64)
-    killLastResultRegister();
-#endif
 }
 
 #if USE(JSVALUE64)
 ALWAYS_INLINE void JIT::emitGetFromCallFrameHeader64(JSStack::CallFrameHeaderEntry entry, RegisterID to, RegisterID from)
 {
     load64(Address(from, entry * sizeof(Register)), to);
-    killLastResultRegister();
 }
 #endif
 
@@ -104,16 +97,6 @@ ALWAYS_INLINE JIT::Call JIT::emitNakedCall(CodePtr function)
     Call nakedCall = nearCall();
     m_calls.append(CallRecord(nakedCall, m_bytecodeOffset, function.executableAddress()));
     return nakedCall;
-}
-
-ALWAYS_INLINE bool JIT::atJumpTarget()
-{
-    while (m_jumpTargetsPosition < m_codeBlock->numberOfJumpTargets() && m_codeBlock->jumpTarget(m_jumpTargetsPosition) <= m_bytecodeOffset) {
-        if (m_codeBlock->jumpTarget(m_jumpTargetsPosition) == m_bytecodeOffset)
-            return true;
-        ++m_jumpTargetsPosition;
-    }
-    return false;
 }
 
 ALWAYS_INLINE void JIT::updateTopCallFrame()
@@ -806,40 +789,22 @@ inline JITArrayMode JIT::chooseArrayMode(ArrayProfile* profile)
 
 inline void JIT::emitLoadTag(int index, RegisterID tag)
 {
-    RegisterID mappedTag;
-    if (getMappedTag(index, mappedTag)) {
-        move(mappedTag, tag);
-        unmap(tag);
-        return;
-    }
-
     if (m_codeBlock->isConstantRegisterIndex(index)) {
         move(Imm32(getConstantOperand(index).tag()), tag);
-        unmap(tag);
         return;
     }
 
     load32(tagFor(index), tag);
-    unmap(tag);
 }
 
 inline void JIT::emitLoadPayload(int index, RegisterID payload)
 {
-    RegisterID mappedPayload;
-    if (getMappedPayload(index, mappedPayload)) {
-        move(mappedPayload, payload);
-        unmap(payload);
-        return;
-    }
-
     if (m_codeBlock->isConstantRegisterIndex(index)) {
         move(Imm32(getConstantOperand(index).payload()), payload);
-        unmap(payload);
         return;
     }
 
     load32(payloadFor(index), payload);
-    unmap(payload);
 }
 
 inline void JIT::emitLoad(const JSValue& v, RegisterID tag, RegisterID payload)
@@ -871,11 +836,6 @@ inline void JIT::emitLoad(int index, RegisterID tag, RegisterID payload, Registe
 
 inline void JIT::emitLoad2(int index1, RegisterID tag1, RegisterID payload1, int index2, RegisterID tag2, RegisterID payload2)
 {
-    if (isMapped(index1)) {
-        emitLoad(index1, tag1, payload1);
-        emitLoad(index2, tag2, payload2);
-        return;
-    }
     emitLoad(index2, tag2, payload2);
     emitLoad(index1, tag1, payload1);
 }
@@ -910,12 +870,6 @@ inline void JIT::emitStoreInt32(int index, RegisterID payload, bool indexIsInt32
     store32(payload, payloadFor(index, callFrameRegister));
     if (!indexIsInt32)
         store32(TrustedImm32(JSValue::Int32Tag), tagFor(index, callFrameRegister));
-}
-
-inline void JIT::emitStoreAndMapInt32(int index, RegisterID tag, RegisterID payload, bool indexIsInt32, size_t opcodeLength)
-{
-    emitStoreInt32(index, payload, indexIsInt32);
-    map(m_bytecodeOffset + opcodeLength, index, tag, payload);
 }
 
 inline void JIT::emitStoreInt32(int index, TrustedImm32 payload, bool indexIsInt32)
@@ -953,81 +907,6 @@ inline void JIT::emitStore(int index, const JSValue constant, RegisterID base)
 ALWAYS_INLINE void JIT::emitInitRegister(int dst)
 {
     emitStore(dst, jsUndefined());
-}
-
-inline bool JIT::isLabeled(unsigned bytecodeOffset)
-{
-    for (size_t numberOfJumpTargets = m_codeBlock->numberOfJumpTargets(); m_jumpTargetIndex != numberOfJumpTargets; ++m_jumpTargetIndex) {
-        unsigned jumpTarget = m_codeBlock->jumpTarget(m_jumpTargetIndex);
-        if (jumpTarget == bytecodeOffset)
-            return true;
-        if (jumpTarget > bytecodeOffset)
-            return false;
-    }
-    return false;
-}
-
-inline void JIT::map(unsigned bytecodeOffset, int virtualRegisterIndex, RegisterID tag, RegisterID payload)
-{
-    if (isLabeled(bytecodeOffset))
-        return;
-
-    m_mappedBytecodeOffset = bytecodeOffset;
-    m_mappedVirtualRegisterIndex = virtualRegisterIndex;
-    m_mappedTag = tag;
-    m_mappedPayload = payload;
-    
-    ASSERT(!canBeOptimizedOrInlined() || m_mappedPayload == regT0);
-    ASSERT(!canBeOptimizedOrInlined() || m_mappedTag == regT1);
-}
-
-inline void JIT::unmap(RegisterID registerID)
-{
-    if (m_mappedTag == registerID)
-        m_mappedTag = (RegisterID)-1;
-    else if (m_mappedPayload == registerID)
-        m_mappedPayload = (RegisterID)-1;
-}
-
-inline void JIT::unmap()
-{
-    m_mappedBytecodeOffset = (unsigned)-1;
-    m_mappedVirtualRegisterIndex = UINT_MAX;
-    m_mappedTag = (RegisterID)-1;
-    m_mappedPayload = (RegisterID)-1;
-}
-
-inline bool JIT::isMapped(int virtualRegisterIndex)
-{
-    if (m_mappedBytecodeOffset != m_bytecodeOffset)
-        return false;
-    if (m_mappedVirtualRegisterIndex != virtualRegisterIndex)
-        return false;
-    return true;
-}
-
-inline bool JIT::getMappedPayload(int virtualRegisterIndex, RegisterID& payload)
-{
-    if (m_mappedBytecodeOffset != m_bytecodeOffset)
-        return false;
-    if (m_mappedVirtualRegisterIndex != virtualRegisterIndex)
-        return false;
-    if (m_mappedPayload == (RegisterID)-1)
-        return false;
-    payload = m_mappedPayload;
-    return true;
-}
-
-inline bool JIT::getMappedTag(int virtualRegisterIndex, RegisterID& tag)
-{
-    if (m_mappedBytecodeOffset != m_bytecodeOffset)
-        return false;
-    if (m_mappedVirtualRegisterIndex != virtualRegisterIndex)
-        return false;
-    if (m_mappedTag == (RegisterID)-1)
-        return false;
-    tag = m_mappedTag;
-    return true;
 }
 
 inline void JIT::emitJumpSlowCaseIfNotJSCell(int virtualRegisterIndex)
@@ -1074,11 +953,6 @@ ALWAYS_INLINE bool JIT::getOperandConstantImmediateInt(int op1, int op2, int& op
 
 #else // USE(JSVALUE32_64)
 
-ALWAYS_INLINE void JIT::killLastResultRegister()
-{
-    m_lastResultBytecodeRegister = std::numeric_limits<int>::max();
-}
-
 // get arg puts an arg from the SF register array into a h/w register
 ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst)
 {
@@ -1091,20 +965,10 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst)
             move(TrustedImm64(JSValue::encode(value)), dst);
         else
             move(Imm64(JSValue::encode(value)), dst);
-        killLastResultRegister();
-        return;
-    }
-
-    if (src == m_lastResultBytecodeRegister && operandIsLocal(src) && m_codeBlock->isTemporaryRegisterIndex(VirtualRegister(src).toLocal()) && !atJumpTarget()) {
-        // The argument we want is already stored in eax
-        if (dst != cachedResultRegister)
-            move(cachedResultRegister, dst);
-        killLastResultRegister();
         return;
     }
 
     load64(Address(callFrameRegister, src * sizeof(Register)), dst);
-    killLastResultRegister();
 }
 
 ALWAYS_INLINE void JIT::emitGetVirtualRegister(VirtualRegister src, RegisterID dst)
@@ -1114,13 +978,8 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(VirtualRegister src, RegisterID d
 
 ALWAYS_INLINE void JIT::emitGetVirtualRegisters(int src1, RegisterID dst1, int src2, RegisterID dst2)
 {
-    if (src2 == m_lastResultBytecodeRegister) {
-        emitGetVirtualRegister(src2, dst2);
-        emitGetVirtualRegister(src1, dst1);
-    } else {
-        emitGetVirtualRegister(src1, dst1);
-        emitGetVirtualRegister(src2, dst2);
-    }
+    emitGetVirtualRegister(src1, dst1);
+    emitGetVirtualRegister(src2, dst2);
 }
 
 ALWAYS_INLINE void JIT::emitGetVirtualRegisters(VirtualRegister src1, RegisterID dst1, VirtualRegister src2, RegisterID dst2)
@@ -1141,7 +1000,6 @@ ALWAYS_INLINE bool JIT::isOperandConstantImmediateInt(int src)
 ALWAYS_INLINE void JIT::emitPutVirtualRegister(int dst, RegisterID from)
 {
     store64(from, Address(callFrameRegister, dst * sizeof(Register)));
-    m_lastResultBytecodeRegister = (from == cachedResultRegister) ? dst : std::numeric_limits<int>::max();
 }
 
 ALWAYS_INLINE void JIT::emitPutVirtualRegister(VirtualRegister dst, RegisterID from)
