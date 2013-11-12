@@ -62,6 +62,7 @@ libWebKit2Platform_la_CPPFLAGS = \
 	-I$(srcdir)/Source/WebKit2/Platform \
 	-I$(srcdir)/Source/WebKit2/Platform/CoreIPC \
 	-I$(srcdir)/Source/WebKit2/Platform/CoreIPC/gtk \
+	-I$(srcdir)/Source/WebKit2/Platform/IPC \
 	-I$(srcdir)/Source/WebKit2/Platform/gtk \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
 	$(COVERAGE_CFLAGS) \
