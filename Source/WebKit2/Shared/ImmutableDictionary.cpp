@@ -55,7 +55,7 @@ PassRefPtr<ImmutableArray> ImmutableDictionary::keys() const
     for (const auto& key : m_map.keys())
         keys.uncheckedAppend(WebString::create(key));
 
-    return ImmutableArray::adopt(keys);
+    return ImmutableArray::create(std::move(keys));
 }
 
 } // namespace WebKit

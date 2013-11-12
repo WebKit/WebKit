@@ -668,7 +668,7 @@ PassRefPtr<ImmutableArray> WebPage::trackedRepaintRects()
     for (const auto& repaintRect : view->trackedRepaintRects())
         repaintRects.uncheckedAppend(WebRect::create(toAPI(repaintRect)));
 
-    return ImmutableArray::adopt(repaintRects);
+    return ImmutableArray::create(std::move(repaintRects));
 }
 
 PluginView* WebPage::focusedPluginViewForFrame(Frame& frame)

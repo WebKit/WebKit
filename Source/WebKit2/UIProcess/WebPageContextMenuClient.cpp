@@ -104,7 +104,7 @@ bool WebPageContextMenuClient::showContextMenu(WebPageProxy* page, const WebCore
     for (const auto& menuItem : menuItemsVector)
         menuItems.uncheckedAppend(WebContextMenuItem::create(menuItem));
 
-    m_client.showContextMenu(toAPI(page), toAPI(menuLocation), toAPI(ImmutableArray::adopt(menuItems).get()), m_client.clientInfo);
+    m_client.showContextMenu(toAPI(page), toAPI(menuLocation), toAPI(ImmutableArray::create(std::move(menuItems)).get()), m_client.clientInfo);
 
     return true;
 }

@@ -400,7 +400,7 @@ PassRefPtr<ImmutableArray> WebPageProxy::relatedPages() const
             result.uncheckedAppend(page);
     }
 
-    return ImmutableArray::adopt(result);
+    return ImmutableArray::create(std::move(result));
 }
 
 void WebPageProxy::initializeLoaderClient(const WKPageLoaderClient* loadClient)
@@ -3047,10 +3047,10 @@ void WebPageProxy::didFindStringMatches(const String& string, Vector<Vector<WebC
         for (const auto& rect : rects)
             apiRects.uncheckedAppend(WebRect::create(toAPI(rect)));
 
-        matches.uncheckedAppend(ImmutableArray::adopt(apiRects));
+        matches.uncheckedAppend(ImmutableArray::create(std::move(apiRects)));
     }
 
-    m_findMatchesClient.didFindStringMatches(this, string, ImmutableArray::adopt(matches).get(), firstIndexAfterSelection);
+    m_findMatchesClient.didFindStringMatches(this, string, ImmutableArray::create(std::move(matches)).get(), firstIndexAfterSelection);
 }
 
 void WebPageProxy::didFailToFindString(const String& string)

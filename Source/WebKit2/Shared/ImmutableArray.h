@@ -37,24 +37,8 @@ namespace WebKit {
 
 class ImmutableArray : public TypedAPIObject<APIObject::TypeArray> {
 public:
-    enum AdoptTag { Adopt };
-
-    static PassRefPtr<ImmutableArray> create()
-    {
-        return adoptRef(new ImmutableArray);
-    }
-    static PassRefPtr<ImmutableArray> create(APIObject** entries, size_t size)
-    {
-        return adoptRef(new ImmutableArray(entries, size));
-    }
-    static PassRefPtr<ImmutableArray> adopt(APIObject** entries, size_t size)
-    {
-        return adoptRef(new ImmutableArray(Adopt, entries, size));
-    }
-    static PassRefPtr<ImmutableArray> adopt(Vector<RefPtr<APIObject>>& entries)
-    {
-        return adoptRef(new ImmutableArray(entries));
-    }
+    static PassRefPtr<ImmutableArray> create();
+    static PassRefPtr<ImmutableArray> create(Vector<RefPtr<APIObject>> elements);
 
     static PassRefPtr<ImmutableArray> createStringArray(const Vector<String>&);
 
@@ -63,27 +47,24 @@ public:
     template<typename T>
     T* at(size_t i) const
     {
-        if (m_entries[i]->type() != T::APIType)
+        if (m_elements[i]->type() != T::APIType)
             return nullptr;
 
-        return static_cast<T*>(m_entries[i].get());
+        return static_cast<T*>(m_elements[i].get());
     }
 
-    APIObject* at(size_t i) const { return m_entries[i].get(); }
-    size_t size() const { return m_entries.size(); }
+    APIObject* at(size_t i) const { return m_elements[i].get(); }
+    size_t size() const { return m_elements.size(); }
 
     virtual bool isMutable() { return false; }
 
-    const Vector<RefPtr<APIObject>>& entries() const { return m_entries; }
-    Vector<RefPtr<APIObject>>& entries() { return m_entries; }
+    const Vector<RefPtr<APIObject>>& entries() const { return m_elements; }
+    Vector<RefPtr<APIObject>>& entries() { return m_elements; }
 
 protected:
-    ImmutableArray();
-    ImmutableArray(AdoptTag, APIObject** entries, size_t);
-    ImmutableArray(APIObject** entries, size_t);
-    ImmutableArray(Vector<RefPtr<APIObject>>& entries);
+    ImmutableArray(Vector<RefPtr<APIObject>> elements);
 
-    Vector<RefPtr<APIObject>> m_entries;
+    Vector<RefPtr<APIObject>> m_elements;
 };
 
 } // namespace WebKit

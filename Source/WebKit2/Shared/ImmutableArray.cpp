@@ -30,6 +30,16 @@
 
 namespace WebKit {
 
+PassRefPtr<ImmutableArray> ImmutableArray::create()
+{
+    return create(Vector<RefPtr<APIObject>>());
+}
+
+PassRefPtr<ImmutableArray> ImmutableArray::create(Vector<RefPtr<APIObject>> elements)
+{
+    return adoptRef(new ImmutableArray(std::move(elements)));
+}
+
 PassRefPtr<ImmutableArray> ImmutableArray::createStringArray(const Vector<String>& strings)
 {
     Vector<RefPtr<APIObject>> elements;
@@ -38,30 +48,12 @@ PassRefPtr<ImmutableArray> ImmutableArray::createStringArray(const Vector<String
     for (const auto& string : strings)
         elements.uncheckedAppend(WebString::create(string));
 
-    return adopt(elements);
+    return create(std::move(elements));
 }
 
-ImmutableArray::ImmutableArray()
+ImmutableArray::ImmutableArray(Vector<RefPtr<APIObject>> elements)
+    : m_elements(std::move(elements))
 {
-}
-
-ImmutableArray::ImmutableArray(AdoptTag, APIObject** entries, size_t size)
-    : m_entries(size)
-{
-    for (size_t i = 0; i < size; ++i)
-        m_entries[i] = adoptRef(entries[i]);
-}
-
-ImmutableArray::ImmutableArray(APIObject** entries, size_t size)
-    : m_entries(size)
-{
-    for (size_t i = 0; i < size; ++i)
-        m_entries[i] = entries[i];
-}
-
-ImmutableArray::ImmutableArray(Vector<RefPtr<APIObject>>& entries)
-{
-    m_entries.swap(entries);
 }
 
 ImmutableArray::~ImmutableArray()

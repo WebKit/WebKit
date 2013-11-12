@@ -91,7 +91,7 @@ void StatisticsRequest::completedRequest(uint64_t requestID, const StatisticsDat
         for (const auto& statistic : data.webCoreCacheStatistics)
             cacheStatistics.uncheckedAppend(createDictionaryFromHashMap(statistic));
 
-        m_responseDictionary->set("WebCoreCacheStatistics", ImmutableArray::adopt(cacheStatistics).get());
+        m_responseDictionary->set("WebCoreCacheStatistics", ImmutableArray::create(std::move(cacheStatistics)).get());
     }
 
     if (m_outstandingRequests.isEmpty()) {

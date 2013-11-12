@@ -72,7 +72,7 @@ PassRefPtr<ImmutableArray> WebContextMenuItem::submenuItemsAsImmutableArray() co
     for (const auto& item : m_webContextMenuItemData.submenu())
         submenuItems.uncheckedAppend(WebContextMenuItem::create(item));
 
-    return ImmutableArray::adopt(submenuItems);
+    return ImmutableArray::create(std::move(submenuItems));
 }
 
 APIObject* WebContextMenuItem::userData() const

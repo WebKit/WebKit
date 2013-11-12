@@ -79,7 +79,7 @@ void WKContextGetInfoForInstalledPlugIns(WKContextRef contextRef, WKContextGetIn
     for (const auto& plugin: plugins)
         pluginInfoDictionaries.uncheckedAppend(createPluginInformationDictionary(plugin));
 
-    RefPtr<ImmutableArray> array = ImmutableArray::adopt(pluginInfoDictionaries);
+    RefPtr<ImmutableArray> array = ImmutableArray::create(std::move(pluginInfoDictionaries));
 
     toImpl(contextRef)->ref();
     dispatch_async(dispatch_get_main_queue(), ^() {

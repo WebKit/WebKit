@@ -221,7 +221,7 @@ PassRefPtr<ImmutableArray> WebBackForwardList::backListAsImmutableArrayWithLimit
         vector.uncheckedAppend(m_entries[i].get());
     }
 
-    return ImmutableArray::adopt(vector);
+    return ImmutableArray::create(std::move(vector));
 }
 
 PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLimit(unsigned limit) const
@@ -245,7 +245,7 @@ PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLi
         vector.uncheckedAppend(m_entries[i].get());
     }
 
-    return ImmutableArray::adopt(vector);
+    return ImmutableArray::create(std::move(vector));
 }
 
 void WebBackForwardList::clear()

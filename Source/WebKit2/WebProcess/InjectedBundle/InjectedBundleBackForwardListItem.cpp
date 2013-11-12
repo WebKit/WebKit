@@ -40,7 +40,7 @@ PassRefPtr<ImmutableArray> InjectedBundleBackForwardListItem::children() const
     for (const auto& child : m_item->children())
         children.uncheckedAppend(InjectedBundleBackForwardListItem::create(child));
 
-    return ImmutableArray::adopt(children);
+    return ImmutableArray::create(std::move(children));
 }
 
 } // namespace WebKit

@@ -180,12 +180,12 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
         originAndDatabasesMap.set(originKey(), origin);
         originAndDatabasesMap.set(originQuotaKey(), WebUInt64::create(originAndDatabases.originQuota));
         originAndDatabasesMap.set(originUsageKey(), WebUInt64::create(originAndDatabases.originUsage));
-        originAndDatabasesMap.set(databaseDetailsKey(), ImmutableArray::adopt(databases));
+        originAndDatabasesMap.set(databaseDetailsKey(), ImmutableArray::create(std::move(databases)));
 
         result.uncheckedAppend(ImmutableDictionary::adopt(originAndDatabasesMap));
     }
 
-    callback->performCallbackWithReturnValue(ImmutableArray::adopt(result).get());
+    callback->performCallbackWithReturnValue(ImmutableArray::create(std::move(result)).get());
 }
 
 void WebDatabaseManagerProxy::getDatabaseOrigins(PassRefPtr<ArrayCallback> prpCallback)
@@ -211,7 +211,7 @@ void WebDatabaseManagerProxy::didGetDatabaseOrigins(const Vector<String>& origin
     for (const auto& originIdentifier : originIdentifiers)
         securityOrigins.uncheckedAppend(WebSecurityOrigin::createFromDatabaseIdentifier(originIdentifier));
 
-    callback->performCallbackWithReturnValue(ImmutableArray::adopt(securityOrigins).get());
+    callback->performCallbackWithReturnValue(ImmutableArray::create(std::move(securityOrigins)).get());
 }
 
 void WebDatabaseManagerProxy::deleteDatabaseWithNameForOrigin(const String& databaseIdentifier, WebSecurityOrigin* origin)

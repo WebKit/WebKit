@@ -87,7 +87,7 @@ void performAPICallbackWithSecurityOriginDataVector(const Vector<SecurityOriginD
         securityOrigins.uncheckedAppend(std::move(origin));
     }
 
-    callback->performCallbackWithReturnValue(ImmutableArray::adopt(securityOrigins).get());
+    callback->performCallbackWithReturnValue(ImmutableArray::create(std::move(securityOrigins)).get());
 }
 
 } // namespace WebKit

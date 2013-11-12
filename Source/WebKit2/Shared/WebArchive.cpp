@@ -113,7 +113,7 @@ ImmutableArray* WebArchive::subresources()
         for (const auto& subresource : m_legacyWebArchive->subresources())
             subresources.uncheckedAppend(WebArchiveResource::create(subresource));
 
-        m_cachedSubresources = ImmutableArray::adopt(subresources);
+        m_cachedSubresources = ImmutableArray::create(std::move(subresources));
     }
 
     return m_cachedSubresources.get();
@@ -128,7 +128,7 @@ ImmutableArray* WebArchive::subframeArchives()
         for (const auto& subframeArchive : m_legacyWebArchive->subframeArchives())
             subframeWebArchives.uncheckedAppend(WebArchive::create(static_cast<LegacyWebArchive*>(subframeArchive.get())));
 
-        m_cachedSubframeArchives = ImmutableArray::adopt(subframeWebArchives);
+        m_cachedSubframeArchives = ImmutableArray::create(std::move(subframeWebArchives));
     }
 
     return m_cachedSubframeArchives.get();

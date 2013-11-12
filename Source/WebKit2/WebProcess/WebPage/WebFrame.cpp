@@ -431,7 +431,7 @@ PassRefPtr<ImmutableArray> WebFrame::childFrames()
         vector.uncheckedAppend(webFrame);
     }
 
-    return ImmutableArray::adopt(vector);
+    return ImmutableArray::create(std::move(vector));
 }
 
 String WebFrame::layerTreeAsText() const

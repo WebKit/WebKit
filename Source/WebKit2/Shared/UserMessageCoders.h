@@ -283,7 +283,7 @@ public:
                 vector.append(element.release());
             }
 
-            coder.m_root = ImmutableArray::adopt(vector);
+            coder.m_root = ImmutableArray::create(std::move(vector));
             break;
         }
         case APIObject::TypeDictionary: {

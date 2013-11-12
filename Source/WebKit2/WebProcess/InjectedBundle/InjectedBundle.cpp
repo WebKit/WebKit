@@ -414,7 +414,7 @@ PassRefPtr<ImmutableArray> InjectedBundle::originsWithApplicationCache()
     for (const auto& origin : origins)
         originIdentifiers.uncheckedAppend(WebString::create(origin->databaseIdentifier()));
 
-    return ImmutableArray::adopt(originIdentifiers);
+    return ImmutableArray::create(std::move(originIdentifiers));
 }
 
 int InjectedBundle::numberOfPages(WebFrame* frame, double pageWidthInPixels, double pageHeightInPixels)

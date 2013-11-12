@@ -29,6 +29,7 @@
 namespace WebKit {
 
 MutableArray::MutableArray()
+    : ImmutableArray(Vector<RefPtr<APIObject>>())
 {
 }
 
@@ -38,17 +39,17 @@ MutableArray::~MutableArray()
 
 void MutableArray::append(PassRefPtr<APIObject> item)
 {
-    m_entries.append(item);
+    m_elements.append(item);
 }
 
 void MutableArray::reserveCapacity(unsigned capacity)
 {
-    m_entries.reserveCapacity(capacity);
+    m_elements.reserveCapacity(capacity);
 }
 
 void MutableArray::removeItemAtIndex(unsigned index)
 {
-    m_entries.remove(index);
+    m_elements.remove(index);
 }
 
 } // namespace WebKit

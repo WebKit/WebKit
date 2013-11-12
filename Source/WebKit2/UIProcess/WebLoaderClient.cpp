@@ -245,7 +245,7 @@ void WebLoaderClient::didChangeBackForwardList(WebPageProxy* page, WebBackForwar
 
     RefPtr<ImmutableArray> removedItemsArray;
     if (removedItems && !removedItems->isEmpty())
-        removedItemsArray = ImmutableArray::adopt(*removedItems);
+        removedItemsArray = ImmutableArray::create(std::move(*removedItems));
 
     m_client.didChangeBackForwardList(toAPI(page), toAPI(addedItem), toAPI(removedItemsArray.get()), m_client.clientInfo);
 }

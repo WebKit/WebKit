@@ -75,7 +75,7 @@ static void didGetKeyValueStorageOrigins(const Vector<RefPtr<WebCore::SecurityOr
     for (unsigned i = 0; i < securityOrigins.size(); ++i)
         webSecurityOrigins.uncheckedAppend(WebSecurityOrigin::create(securityOrigins[i]));
 
-    callback->performCallbackWithReturnValue(ImmutableArray::adopt(webSecurityOrigins).get());
+    callback->performCallbackWithReturnValue(ImmutableArray::create(std::move(webSecurityOrigins)).get());
 }
 
 void WebKeyValueStorageManager::getKeyValueStorageOrigins(PassRefPtr<ArrayCallback> prpCallback)
