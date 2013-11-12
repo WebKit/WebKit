@@ -51,13 +51,7 @@ WebOpenPanelParameters::~WebOpenPanelParameters()
 
 PassRefPtr<ImmutableArray> WebOpenPanelParameters::acceptMIMETypes() const
 {
-    Vector<RefPtr<APIObject>> vector;
-    vector.reserveInitialCapacity(m_settings.acceptMIMETypes.size());
-
-    for (const auto& mimeType : m_settings.acceptMIMETypes)
-        vector.uncheckedAppend(WebString::create(mimeType));
-
-    return ImmutableArray::adopt(vector);
+    return ImmutableArray::createStringArray(m_settings.acceptMIMETypes);
 }
 
 #if ENABLE(MEDIA_CAPTURE)
@@ -68,14 +62,8 @@ String WebOpenPanelParameters::capture() const
 #endif
 
 PassRefPtr<ImmutableArray> WebOpenPanelParameters::selectedFileNames() const
-{    
-    Vector<RefPtr<APIObject>> vector;
-    vector.reserveInitialCapacity(m_settings.selectedFiles.size());
-
-    for (const auto& selectedFile : m_settings.selectedFiles)
-        vector.uncheckedAppend(WebString::create(selectedFile));
-
-    return ImmutableArray::adopt(vector);
+{
+    return ImmutableArray::createStringArray(m_settings.selectedFiles);
 }
 
 } // namespace WebCore

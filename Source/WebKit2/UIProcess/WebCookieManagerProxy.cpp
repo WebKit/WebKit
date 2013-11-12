@@ -115,13 +115,7 @@ void WebCookieManagerProxy::didGetHostnamesWithCookies(const Vector<String>& hos
         return;
     }
 
-    Vector<RefPtr<APIObject>> hostnameStrings;
-    hostnameStrings.reserveInitialCapacity(hostnames.size());
-
-    for (const auto& hostname : hostnames)
-        hostnameStrings.uncheckedAppend(WebString::create(hostname));
-
-    callback->performCallbackWithReturnValue(ImmutableArray::adopt(hostnameStrings).get());
+    callback->performCallbackWithReturnValue(ImmutableArray::createStringArray(hostnames).get());
 }
 
 void WebCookieManagerProxy::deleteCookiesForHostname(const String& hostname)

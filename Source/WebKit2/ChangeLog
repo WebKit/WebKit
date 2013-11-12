@@ -1,3 +1,30 @@
+2013-11-12  Anders Carlsson  <andersca@apple.com>
+
+        Add ImmutableArray::createStringArray
+        https://bugs.webkit.org/show_bug.cgi?id=124210
+
+        Reviewed by Andreas Kling.
+
+        Creating an ImmutableArray of WebStrings is a common operation, so add a 
+        helper function to ImmutableArray that does this from a Vector of Strings.
+
+        * Shared/ImmutableArray.cpp:
+        (WebKit::ImmutableArray::createStringArray):
+        * Shared/ImmutableArray.h:
+        * Shared/ImmutableDictionary.cpp:
+        (WebKit::ImmutableDictionary::keys):
+        * Shared/WebOpenPanelParameters.cpp:
+        (WebKit::WebOpenPanelParameters::acceptMIMETypes):
+        (WebKit::WebOpenPanelParameters::selectedFileNames):
+        * UIProcess/Plugins/WebPluginSiteDataManager.cpp:
+        (WebKit::WebPluginSiteDataManager::didGetSitesWithData):
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::didGetHostnamesWithCookies):
+        * UIProcess/WebMediaCacheManagerProxy.cpp:
+        (WebKit::WebMediaCacheManagerProxy::didGetHostnamesWithMediaCache):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::featuresUsedInPage):
+
 2013-11-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         One more URTBF after r159108.

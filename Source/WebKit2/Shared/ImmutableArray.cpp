@@ -26,7 +26,20 @@
 #include "config.h"
 #include "ImmutableArray.h"
 
+#include "WebString.h"
+
 namespace WebKit {
+
+PassRefPtr<ImmutableArray> ImmutableArray::createStringArray(const Vector<String>& strings)
+{
+    Vector<RefPtr<APIObject>> elements;
+    elements.reserveInitialCapacity(strings.size());
+
+    for (const auto& string : strings)
+        elements.uncheckedAppend(WebString::create(string));
+
+    return adopt(elements);
+}
 
 ImmutableArray::ImmutableArray()
 {

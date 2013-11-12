@@ -165,13 +165,7 @@ void WebPluginSiteDataManager::didGetSitesWithData(const Vector<String>& sites, 
         return;
     }
 
-    Vector<RefPtr<APIObject>> sitesArray;
-    sitesArray.reserveInitialCapacity(sites.size());
-
-    for (const auto& site : sites)
-        sitesArray.uncheckedAppend(WebString::create(site));
-
-    callback->performCallbackWithReturnValue(ImmutableArray::adopt(sitesArray).get());
+    callback->performCallbackWithReturnValue(ImmutableArray::createStringArray(sites).get());
 }
 
 void WebPluginSiteDataManager::clearSiteData(ImmutableArray* sites, uint64_t flags, uint64_t maxAgeInSeconds, PassRefPtr<VoidCallback> prpCallback)

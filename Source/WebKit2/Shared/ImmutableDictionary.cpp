@@ -49,15 +49,13 @@ PassRefPtr<ImmutableArray> ImmutableDictionary::keys() const
     if (m_map.isEmpty())
         return ImmutableArray::create();
 
-    Vector<RefPtr<APIObject>> vector;
-    vector.reserveInitialCapacity(m_map.size());
+    Vector<RefPtr<APIObject>> keys;
+    keys.reserveInitialCapacity(m_map.size());
 
-    MapType::const_iterator::Keys it = m_map.begin().keys();
-    MapType::const_iterator::Keys end = m_map.end().keys();
-    for (; it != end; ++it)
-        vector.uncheckedAppend(WebString::create(*it));
+    for (const auto& key : m_map.keys())
+        keys.uncheckedAppend(WebString::create(key));
 
-    return ImmutableArray::adopt(vector);
+    return ImmutableArray::adopt(keys);
 }
 
 } // namespace WebKit

@@ -27,6 +27,7 @@
 #define ImmutableArray_h
 
 #include "APIObject.h"
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
@@ -54,6 +55,8 @@ public:
     {
         return adoptRef(new ImmutableArray(entries));
     }
+
+    static PassRefPtr<ImmutableArray> createStringArray(const Vector<String>&);
 
     virtual ~ImmutableArray();
 
