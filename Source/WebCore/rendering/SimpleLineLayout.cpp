@@ -260,12 +260,13 @@ static float computeLineLeft(ETextAlign textAlign, float remainingWidth)
     return 0;
 }
 
-static void adjustRunOffsets(Vector<Run, 4>& lineRuns, ETextAlign textAlign, float lineWidth, float availableWidth)
+static void adjustRunOffsets(Vector<Run, 4>& lineRuns, float adjustment)
 {
-    float lineLeft = computeLineLeft(textAlign, availableWidth - lineWidth);
+    if (!adjustment)
+        return;
     for (unsigned i = 0; i < lineRuns.size(); ++i) {
-        lineRuns[i].left = floor(lineLeft + lineRuns[i].left);
-        lineRuns[i].right = ceil(lineLeft + lineRuns[i].right);
+        lineRuns[i].left += adjustment;
+        lineRuns[i].right += adjustment;
     }
 }
 
@@ -381,7 +382,8 @@ void createTextRuns(Layout::RunVector& runs, unsigned& lineCount, RenderBlockFlo
 
         lineRuns.last().isEndOfLine = true;
 
-        adjustRunOffsets(lineRuns, textAlign, lineWidth.committedWidth(), lineWidth.availableWidth());
+        float lineLeft = computeLineLeft(textAlign, lineWidth.availableWidth() - lineWidth.committedWidth());
+        adjustRunOffsets(lineRuns, lineLeft);
 
         for (unsigned i = 0; i < lineRuns.size(); ++i)
             runs.append(lineRuns[i]);

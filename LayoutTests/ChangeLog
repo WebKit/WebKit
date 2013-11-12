@@ -1,3 +1,13 @@
+2013-11-12  Antti Koivisto  <antti@apple.com>
+
+        Text on simple lines sometimes paints one pixel off
+        https://bugs.webkit.org/show_bug.cgi?id=124200
+
+        Reviewed by Andreas Kling.
+
+        * fast/text/line-runs-rounding-simple-lines-expected.html: Added.
+        * fast/text/line-runs-rounding-simple-lines.html: Added.
+
 2013-11-12  Zan Dobersek  <zdobersek@igalia.com>
 
         JSC bindings generator should generate deletable JSC functions

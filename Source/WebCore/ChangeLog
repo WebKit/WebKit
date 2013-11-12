@@ -1,3 +1,27 @@
+2013-11-12  Antti Koivisto  <antti@apple.com>
+
+        Text on simple lines sometimes paints one pixel off
+        https://bugs.webkit.org/show_bug.cgi?id=124200
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/text/line-runs-simple-lines.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::adjustRunOffsets):
+        
+            Don't round on run construction time.
+
+        (WebCore::SimpleLineLayout::createTextRuns):
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::Run::rect):
+        
+            Instead round when generating rects.
+
+        (WebCore::SimpleLineLayout::RunResolver::Run::baseline):
+        
+            Provide the baseline (used by painting) as unrounded FloatPoint.
+
 2013-11-11  Andreas Kling  <akling@apple.com>
 
         Elements with class names automatically get unique ElementData.
