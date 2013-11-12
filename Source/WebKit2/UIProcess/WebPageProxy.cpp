@@ -238,6 +238,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_estimatedProgress(0)
     , m_viewState(ViewState::NoFlags)
     , m_backForwardList(WebBackForwardList::create(this))
+    , m_loadStateAtProcessExit(FrameLoadState::LoadStateFinished)
     , m_temporarilyClosedComposition(false)
     , m_textZoomFactor(1)
     , m_pageZoomFactor(1)
@@ -3784,6 +3785,11 @@ void WebPageProxy::resetStateAfterProcessExited()
     m_isValid = false;
     m_isPageSuspended = false;
     m_waitingForDidUpdateViewState = false;
+
+    if (m_mainFrame) {
+        m_urlAtProcessExit = m_mainFrame->url();
+        m_loadStateAtProcessExit = m_mainFrame->loadState();
+    }
 
     resetState();
 
