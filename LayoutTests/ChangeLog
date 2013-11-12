@@ -1,3 +1,15 @@
+2013-11-12  Radu Stavila  <stavila@adobe.com>
+
+        Created test for testing repaint rects for elements inside relative-positioned regions.
+
+        [CSS Regions] clip rectangles are incorrectly computed in some positioned elements
+        https://bugs.webkit.org/show_bug.cgi?id=114722
+
+        Reviewed by Mihnea Ovidenie.
+
+        * fast/repaint/increasing-region-content-height-expected.txt: Added.
+        * fast/repaint/increasing-region-content-height.html: Added.
+
 2013-11-12  Tim Horton  <timothy_horton@apple.com>
 
         Fix accessibility/aria-help after r159067.
