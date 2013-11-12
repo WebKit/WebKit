@@ -1,3 +1,12 @@
+2013-11-12  Tim Horton  <timothy_horton@apple.com>
+
+        fast/canvas/webgl/draw-arrays-out-of-bounds.html is flaky on Mavericks WK2 testers, fails about 20% of the time
+        https://bugs.webkit.org/show_bug.cgi?id=124223
+
+        Mark as flaky on Mac-Mavericks-WebKit2.
+
+        * platform/mac-wk2/TestExpectations:
+
 2013-11-11  Oliver Hunt  <oliver@apple.com>
 
         Support unprefixed deconstructing assignment
@@ -17,9 +26,9 @@
 
 2013-11-12  Roger Fong  <roger_fong@apple.com>
 
-		[Windows] Unreviewed gardening of some media tests.
+        [Windows] Unreviewed gardening of some media tests.
 
-		* platform/win/TestExpectations:
+        * platform/win/TestExpectations:
 
 2013-11-12  Tim Horton  <timothy_horton@apple.com>
 

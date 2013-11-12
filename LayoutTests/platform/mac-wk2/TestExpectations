@@ -382,6 +382,8 @@ webkit.org/b/122238 fast/layers/no-clipping-overflow-hidden-added-after-transfor
 
 webkit.org/b/122456 css3/images/cross-fade-svg-with-opacity.html [ ImageOnlyFailure ]
 
+webkit.org/b/124223 [ Mavericks ] fast/canvas/webgl/draw-arrays-out-of-bounds.html [ Pass Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
