@@ -1,3 +1,11 @@
+2013-11-12  Tim Horton  <timothy_horton@apple.com>
+
+        Fix accessibility/aria-help after r159067.
+
+        It's failing everywhere because the path to its script is wrong.
+
+        * accessibility/aria-help.html:
+
 2013-11-12  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening
