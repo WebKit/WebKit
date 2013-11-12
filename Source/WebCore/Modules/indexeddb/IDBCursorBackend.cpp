@@ -41,13 +41,28 @@
 
 namespace WebCore {
 
+class CallOnDestruct {
+public:
+    CallOnDestruct(std::function<void()> callback)
+        : m_callback(callback)
+    { }
+
+    ~CallOnDestruct()
+    {
+        m_callback();
+    }
+
+private:
+    std::function<void()> m_callback;
+};
+
 class IDBCursorBackend::CursorIterationOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBOperation> create(PassRefPtr<IDBCursorBackend> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
+    static PassRefPtr<IDBOperation> create(PassRefPtr<IDBCursorBackend> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
     {
-        return adoptPtr(new CursorIterationOperation(cursor, key, callbacks));
+        return adoptRef(new CursorIterationOperation(cursor, key, callbacks));
     }
-    virtual void perform() OVERRIDE FINAL;
+    virtual void perform(std::function<void()> completionCallback) OVERRIDE FINAL;
 private:
     CursorIterationOperation(PassRefPtr<IDBCursorBackend> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
         : m_cursor(cursor)
@@ -63,11 +78,11 @@ private:
 
 class IDBCursorBackend::CursorAdvanceOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBOperation> create(PassRefPtr<IDBCursorBackend> cursor, unsigned long count, PassRefPtr<IDBCallbacks> callbacks)
+    static PassRefPtr<IDBOperation> create(PassRefPtr<IDBCursorBackend> cursor, unsigned long count, PassRefPtr<IDBCallbacks> callbacks)
     {
-        return adoptPtr(new CursorAdvanceOperation(cursor, count, callbacks));
+        return adoptRef(new CursorAdvanceOperation(cursor, count, callbacks));
     }
-    virtual void perform() OVERRIDE FINAL;
+    virtual void perform(std::function<void()> completionCallback) OVERRIDE FINAL;
 private:
     CursorAdvanceOperation(PassRefPtr<IDBCursorBackend> cursor, unsigned long count, PassRefPtr<IDBCallbacks> callbacks)
         : m_cursor(cursor)
@@ -83,11 +98,11 @@ private:
 
 class IDBCursorBackend::CursorPrefetchIterationOperation : public IDBOperation {
 public:
-    static PassOwnPtr<IDBOperation> create(PassRefPtr<IDBCursorBackend> cursor, int numberToFetch, PassRefPtr<IDBCallbacks> callbacks)
+    static PassRefPtr<IDBOperation> create(PassRefPtr<IDBCursorBackend> cursor, int numberToFetch, PassRefPtr<IDBCallbacks> callbacks)
     {
-        return adoptPtr(new CursorPrefetchIterationOperation(cursor, numberToFetch, callbacks));
+        return adoptRef(new CursorPrefetchIterationOperation(cursor, numberToFetch, callbacks));
     }
-    virtual void perform() OVERRIDE FINAL;
+    virtual void perform(std::function<void()> completionCallback) OVERRIDE FINAL;
 private:
     CursorPrefetchIterationOperation(PassRefPtr<IDBCursorBackend> cursor, int numberToFetch, PassRefPtr<IDBCallbacks> callbacks)
         : m_cursor(cursor)
@@ -133,8 +148,10 @@ void IDBCursorBackend::advance(unsigned long count, PassRefPtr<IDBCallbacks> prp
     m_transaction->scheduleTask(CursorAdvanceOperation::create(this, count, callbacks));
 }
 
-void IDBCursorBackend::CursorAdvanceOperation::perform()
+void IDBCursorBackend::CursorAdvanceOperation::perform(std::function<void()> completionCallback)
 {
+    CallOnDestruct callOnDestruct(completionCallback);
+
     LOG(StorageAPI, "CursorAdvanceOperation");
     if (!m_cursor->m_cursor || !m_cursor->m_cursor->advance(m_count)) {
         m_cursor->m_cursor = 0;
@@ -145,8 +162,10 @@ void IDBCursorBackend::CursorAdvanceOperation::perform()
     m_callbacks->onSuccess(m_cursor->key(), m_cursor->primaryKey(), m_cursor->value());
 }
 
-void IDBCursorBackend::CursorIterationOperation::perform()
+void IDBCursorBackend::CursorIterationOperation::perform(std::function<void()> completionCallback)
 {
+    CallOnDestruct callOnDestruct(completionCallback);
+
     LOG(StorageAPI, "CursorIterationOperation");
     if (!m_cursor->m_cursor || !m_cursor->m_cursor->continueFunction(m_key.get())) {
         m_cursor->m_cursor = 0;
@@ -172,8 +191,10 @@ void IDBCursorBackend::prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbac
     m_transaction->scheduleTask(m_taskType, CursorPrefetchIterationOperation::create(this, numberToFetch, callbacks));
 }
 
-void IDBCursorBackend::CursorPrefetchIterationOperation::perform()
+void IDBCursorBackend::CursorPrefetchIterationOperation::perform(std::function<void()> completionCallback)
 {
+    CallOnDestruct callOnDestruct(completionCallback);
+
     LOG(StorageAPI, "CursorPrefetchIterationOperation");
 
     Vector<RefPtr<IDBKey>> foundKeys;

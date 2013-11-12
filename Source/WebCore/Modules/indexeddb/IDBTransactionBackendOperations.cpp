@@ -38,8 +38,25 @@
 
 namespace WebCore {
 
-void CreateObjectStoreOperation::perform()
+class CallOnDestruct {
+public:
+    CallOnDestruct(std::function<void()> callback)
+        : m_callback(callback)
+    { }
+
+    ~CallOnDestruct()
+    {
+        m_callback();
+    }
+
+private:
+    std::function<void()> m_callback;
+};
+
+void CreateObjectStoreOperation::perform(std::function<void()> completionCallback)
 {
+    CallOnDestruct callOnDestruct(completionCallback);
+
     LOG(StorageAPI, "CreateObjectStoreOperation");
     if (!m_backingStore->createObjectStore(m_transaction->backingStoreTransaction(), m_transaction->database().id(), m_objectStoreMetadata.id, m_objectStoreMetadata.name, m_objectStoreMetadata.keyPath, m_objectStoreMetadata.autoIncrement)) {
         RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error creating object store '%s'.", m_objectStoreMetadata.name.utf8().data()));
@@ -48,8 +65,10 @@ void CreateObjectStoreOperation::perform()
     }
 }
 
-void CreateIndexOperation::perform()
+void CreateIndexOperation::perform(std::function<void()> completionCallback)
 {
+    CallOnDestruct callOnDestruct(completionCallback);
+
     LOG(StorageAPI, "CreateIndexOperation");
     if (!m_backingStore->createIndex(m_transaction->backingStoreTransaction(), m_transaction->database().id(), m_objectStoreId, m_indexMetadata.id, m_indexMetadata.name, m_indexMetadata.keyPath, m_indexMetadata.unique, m_indexMetadata.multiEntry)) {
         m_transaction->abort(IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error when trying to create index '%s'.", m_indexMetadata.name.utf8().data())));
@@ -63,8 +82,10 @@ void CreateIndexAbortOperation::perform()
     m_transaction->database().removeIndex(m_objectStoreId, m_indexId);
 }
 
-void DeleteIndexOperation::perform()
+void DeleteIndexOperation::perform(std::function<void()> completionCallback)
 {
+    CallOnDestruct callOnDestruct(completionCallback);
+
     LOG(StorageAPI, "DeleteIndexOperation");
     bool ok = m_backingStore->deleteIndex(m_transaction->backingStoreTransaction(), m_transaction->database().id(), m_objectStoreId, m_indexMetadata.id);
     if (!ok) {
@@ -79,8 +100,10 @@ void DeleteIndexAbortOperation::perform()
     m_transaction->database().addIndex(m_objectStoreId, m_indexMetadata, IDBIndexMetadata::InvalidId);
 }
 
-void GetOperation::perform()
+void GetOperation::perform(std::function<void()> completionCallback)
 {
+    CallOnDestruct callOnDestruct(completionCallback);
+
     LOG(StorageAPI, "GetOperation");
 
     RefPtr<IDBKey> key;
@@ -172,8 +195,10 @@ void GetOperation::perform()
     m_callbacks->onSuccess(SharedBuffer::adoptVector(value));
 }
 
-void PutOperation::perform()
+void PutOperation::perform(std::function<void()> completionCallback)
 {
+    CallOnDestruct callOnDestruct(completionCallback);
+
     LOG(StorageAPI, "PutOperation");
     ASSERT(m_transaction->mode() != IndexedDB::TransactionReadOnly);
     ASSERT(m_indexIds.size() == m_indexKeys.size());
@@ -243,15 +268,19 @@ void PutOperation::perform()
     m_callbacks->onSuccess(key.release());
 }
 
-void SetIndexesReadyOperation::perform()
+void SetIndexesReadyOperation::perform(std::function<void()> completionCallback)
 {
+    CallOnDestruct callOnDestruct(completionCallback);
+
     LOG(StorageAPI, "SetIndexesReadyOperation");
     for (size_t i = 0; i < m_indexCount; ++i)
         m_transaction->didCompletePreemptiveEvent();
 }
 
-void OpenCursorOperation::perform()
+void OpenCursorOperation::perform(std::function<void()> completionCallback)
 {
+    CallOnDestruct callOnDestruct(completionCallback);
+
     LOG(StorageAPI, "OpenCursorOperation");
 
     // The frontend has begun indexing, so this pauses the transaction
@@ -284,8 +313,10 @@ void OpenCursorOperation::perform()
     m_callbacks->onSuccess(cursor, cursor->key(), cursor->primaryKey(), cursor->value());
 }
 
-void CountOperation::perform()
+void CountOperation::perform(std::function<void()> completionCallback)
 {
+    CallOnDestruct callOnDestruct(completionCallback);
+
     LOG(StorageAPI, "CountOperation");
     uint32_t count = 0;
     RefPtr<IDBBackingStoreCursorInterface> backingStoreCursor;
@@ -306,8 +337,10 @@ void CountOperation::perform()
     m_callbacks->onSuccess(count);
 }
 
-void DeleteRangeOperation::perform()
+void DeleteRangeOperation::perform(std::function<void()> completionCallback)
 {
+    CallOnDestruct callOnDestruct(completionCallback);
+
     LOG(StorageAPI, "DeleteRangeOperation");
     RefPtr<IDBBackingStoreCursorInterface> backingStoreCursor = m_backingStore->openObjectStoreCursor(m_transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId, m_keyRange.get(), IndexedDB::CursorNext);
     if (backingStoreCursor) {
@@ -322,8 +355,10 @@ void DeleteRangeOperation::perform()
     m_callbacks->onSuccess();
 }
 
-void ClearOperation::perform()
+void ClearOperation::perform(std::function<void()> completionCallback)
 {
+    CallOnDestruct callOnDestruct(completionCallback);
+
     LOG(StorageAPI, "ObjectStoreClearOperation");
     if (!m_backingStore->clearObjectStore(m_transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId)) {
         m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Error clearing object store"));
@@ -332,8 +367,10 @@ void ClearOperation::perform()
     m_callbacks->onSuccess();
 }
 
-void DeleteObjectStoreOperation::perform()
+void DeleteObjectStoreOperation::perform(std::function<void()> completionCallback)
 {
+    CallOnDestruct callOnDestruct(completionCallback);
+
     LOG(StorageAPI, "DeleteObjectStoreOperation");
     bool ok = m_backingStore->deleteObjectStore(m_transaction->backingStoreTransaction(), m_transaction->database().id(), m_objectStoreMetadata.id);
     if (!ok) {
@@ -342,8 +379,10 @@ void DeleteObjectStoreOperation::perform()
     }
 }
 
-void IDBDatabaseBackend::VersionChangeOperation::perform()
+void IDBDatabaseBackend::VersionChangeOperation::perform(std::function<void()> completionCallback)
 {
+    CallOnDestruct callOnDestruct(completionCallback);
+
     LOG(StorageAPI, "VersionChangeOperation");
     IDBDatabaseBackend& database = m_transaction->database();
     int64_t databaseId = database.id();

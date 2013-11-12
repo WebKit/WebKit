@@ -74,7 +74,7 @@ IDBTransactionBackend::~IDBTransactionBackend()
     ASSERT(m_state == Finished);
 }
 
-void IDBTransactionBackend::scheduleTask(IDBDatabaseBackend::TaskType type, PassOwnPtr<IDBOperation> task, PassOwnPtr<IDBOperation> abortTask)
+void IDBTransactionBackend::scheduleTask(IDBDatabaseBackend::TaskType type, PassRefPtr<IDBOperation> task, PassRefPtr<IDBSynchronousOperation> abortTask)
 {
     if (m_state == Finished)
         return;
@@ -119,7 +119,7 @@ void IDBTransactionBackend::abort(PassRefPtr<IDBDatabaseError> error)
 
     // Run the abort tasks, if any.
     while (!m_abortTaskQueue.isEmpty()) {
-        OwnPtr<IDBOperation> task(m_abortTaskQueue.takeFirst());
+        RefPtr<IDBSynchronousOperation> task(m_abortTaskQueue.takeFirst());
         task->perform();
     }
 
@@ -235,26 +235,26 @@ void IDBTransactionBackend::commit()
 void IDBTransactionBackend::taskTimerFired(Timer<IDBTransactionBackend>*)
 {
     LOG(StorageAPI, "IDBTransactionBackend::taskTimerFired");
-    ASSERT(!isTaskQueueEmpty());
 
     if (m_state == StartPending) {
         m_backingStoreTransaction->begin();
         m_state = Running;
     }
 
-    // The last reference to this object may be released while performing the
-    // tasks. Take take a self reference to keep this object alive so that
-    // the loop termination conditions can be checked.
-    Ref<IDBTransactionBackend> protect(*this);
+    // The last reference to this object may be released while performing a task.
+    // Take a self reference to keep this object alive so that tasks can
+    // successfully make their completion callbacks.
+    RefPtr<IDBTransactionBackend> self(this);
 
     TaskQueue* taskQueue = m_pendingPreemptiveEvents ? &m_preemptiveTaskQueue : &m_taskQueue;
-    while (!taskQueue->isEmpty() && m_state != Finished) {
+    if (!taskQueue->isEmpty() && m_state != Finished) {
         ASSERT(m_state == Running);
-        OwnPtr<IDBOperation> task(taskQueue->takeFirst());
-        task->perform();
+        RefPtr<IDBOperation> task(taskQueue->takeFirst());
+        task->perform([self, this, task]() {
+            m_taskTimer.startOneShot(0);
+        });
 
-        // Event itself may change which queue should be processed next.
-        taskQueue = m_pendingPreemptiveEvents ? &m_preemptiveTaskQueue : &m_taskQueue;
+        return;
     }
 
     // If there are no pending tasks, we haven't already committed/aborted,

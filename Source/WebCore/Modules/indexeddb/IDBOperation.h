@@ -26,13 +26,21 @@
 #ifndef IDBOperation_h
 #define IDBOperation_h
 
+#include <functional>
+
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
 
-class IDBOperation {
+class IDBOperation : public RefCounted<IDBOperation> {
 public:
     virtual ~IDBOperation() { }
+    virtual void perform(std::function<void()> completionCallback) = 0;
+};
+
+class IDBSynchronousOperation : public RefCounted<IDBSynchronousOperation> {
+public:
+    virtual ~IDBSynchronousOperation() { }
     virtual void perform() = 0;
 };
 

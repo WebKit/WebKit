@@ -1,3 +1,79 @@
+2013-11-11  Brady Eidson  <beidson@apple.com>
+
+        Make IDBTransaction tasks asynchronous
+        https://bugs.webkit.org/show_bug.cgi?id=124183
+
+        Reviewed by Tim Horton.
+
+        This is an almost zero-change in behavior.
+
+        The one thing that is different is that previously, IDBTransactionBackends would synchronously
+        run through their entire set of IDBOperation’s without ever returning control to the runloop.
+
+        Now, they start one task and then wait for its completion to schedule the start of the next task.
+
+        Change IDBOperation’s perform() to take a completion handler so it can be asynchronous.
+        Add an IDBSynchronousOperation class to handle "Abort" tasks, which never need to perform i/o
+        and therefore can be entirely synchronous.
+        * Modules/indexeddb/IDBOperation.h:
+        (WebCore::IDBSynchronousOperation::~IDBSynchronousOperation):
+
+        * Modules/indexeddb/IDBTransactionBackend.cpp:
+        (WebCore::IDBTransactionBackend::scheduleTask): "Abort tasks" are now IDBSynchronousOperations.
+        (WebCore::IDBTransactionBackend::abort):
+        (WebCore::IDBTransactionBackend::taskTimerFired): Instead of running through the entire set of tasks,
+          perform a single task asynchronously. The completion handler for the task will reset the task timer
+          to asynchronously start the next task.
+        * Modules/indexeddb/IDBTransactionBackend.h:
+        (WebCore::IDBTransactionBackend::scheduleTask): "Abort tasks" are now IDBSynchronousOperations.
+
+        Update all operations to take completion handlers.
+        For now, perform things synchronously like before, calling the completion handler when complete.
+        * Modules/indexeddb/IDBCursorBackend.cpp:
+        (WebCore::CallOnDestruct::CallOnDestruct): Helper class to make sure completion callbacks are always called perform() exits.
+        (WebCore::CallOnDestruct::~CallOnDestruct):
+        (WebCore::IDBCursorBackend::CursorIterationOperation::create):
+        (WebCore::IDBCursorBackend::CursorAdvanceOperation::create):
+        (WebCore::IDBCursorBackend::CursorPrefetchIterationOperation::create):
+        (WebCore::IDBCursorBackend::CursorAdvanceOperation::perform):
+        (WebCore::IDBCursorBackend::CursorIterationOperation::perform):
+        (WebCore::IDBCursorBackend::CursorPrefetchIterationOperation::perform):
+
+        * Modules/indexeddb/IDBTransactionBackendOperations.cpp:
+        (WebCore::CallOnDestruct::CallOnDestruct): Helper class to make sure completion callbacks are always called when perform() exits.
+        (WebCore::CallOnDestruct::~CallOnDestruct):
+        (WebCore::CreateObjectStoreOperation::perform):
+        (WebCore::CreateIndexOperation::perform):
+        (WebCore::DeleteIndexOperation::perform):
+        (WebCore::GetOperation::perform):
+        (WebCore::PutOperation::perform):
+        (WebCore::SetIndexesReadyOperation::perform):
+        (WebCore::OpenCursorOperation::perform):
+        (WebCore::CountOperation::perform):
+        (WebCore::DeleteRangeOperation::perform):
+        (WebCore::ClearOperation::perform):
+        (WebCore::DeleteObjectStoreOperation::perform):
+        (WebCore::IDBDatabaseBackend::VersionChangeOperation::perform):
+
+        * Modules/indexeddb/IDBTransactionBackendOperations.h:
+        (WebCore::CreateObjectStoreOperation::create):
+        (WebCore::DeleteObjectStoreOperation::create):
+        (WebCore::IDBDatabaseBackend::VersionChangeOperation::create):
+        (WebCore::CreateObjectStoreAbortOperation::create):
+        (WebCore::DeleteObjectStoreAbortOperation::create):
+        (WebCore::IDBDatabaseBackend::VersionChangeAbortOperation::create):
+        (WebCore::CreateIndexOperation::create):
+        (WebCore::CreateIndexAbortOperation::create):
+        (WebCore::DeleteIndexOperation::create):
+        (WebCore::DeleteIndexAbortOperation::create):
+        (WebCore::GetOperation::create):
+        (WebCore::PutOperation::create):
+        (WebCore::SetIndexesReadyOperation::create):
+        (WebCore::OpenCursorOperation::create):
+        (WebCore::CountOperation::create):
+        (WebCore::DeleteRangeOperation::create):
+        (WebCore::ClearOperation::create):
+
 2013-11-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove some unused generated code

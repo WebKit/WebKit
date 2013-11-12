@@ -56,8 +56,8 @@ public:
     IndexedDB::TransactionMode mode() const  { return m_mode; }
     const HashSet<int64_t>& scope() const  { return m_objectStoreIds; }
 
-    void scheduleTask(PassOwnPtr<IDBOperation> task, PassOwnPtr<IDBOperation> abortTask = nullptr) { scheduleTask(IDBDatabaseBackend::NormalTask, task, abortTask); }
-    void scheduleTask(IDBDatabaseBackend::TaskType, PassOwnPtr<IDBOperation>, PassOwnPtr<IDBOperation> abortTask = nullptr);
+    void scheduleTask(PassRefPtr<IDBOperation> task, PassRefPtr<IDBSynchronousOperation> abortTask = nullptr) { scheduleTask(IDBDatabaseBackend::NormalTask, task, abortTask); }
+    void scheduleTask(IDBDatabaseBackend::TaskType, PassRefPtr<IDBOperation>, PassRefPtr<IDBSynchronousOperation> abortTask = nullptr);
 
     void registerOpenCursor(IDBCursorBackend*);
     void unregisterOpenCursor(IDBCursorBackend*);
@@ -111,10 +111,10 @@ private:
     RefPtr<IDBDatabaseCallbacks> m_callbacks;
     RefPtr<IDBDatabaseBackend> m_database;
 
-    typedef Deque<OwnPtr<IDBOperation>> TaskQueue;
+    typedef Deque<RefPtr<IDBOperation>> TaskQueue;
     TaskQueue m_taskQueue;
     TaskQueue m_preemptiveTaskQueue;
-    TaskQueue m_abortTaskQueue;
+    Deque<RefPtr<IDBSynchronousOperation>> m_abortTaskQueue;
 
     RefPtr<IDBBackingStoreTransactionInterface> m_backingStoreTransaction;
 
