@@ -168,7 +168,8 @@ set(WebKit2_SOURCES
     Platform/CoreIPC/MessageEncoder.cpp
     Platform/CoreIPC/MessageReceiverMap.cpp
     Platform/CoreIPC/MessageSender.cpp
-    Platform/CoreIPC/StringReference.cpp
+
+    Platform/IPC/StringReference.cpp
 
     PluginProcess/PluginControllerProxy.cpp
     PluginProcess/PluginCreationParameters.cpp

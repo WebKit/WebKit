@@ -1,3 +1,10 @@
+2013-11-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r159108.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+
 2013-11-12  Anders Carlsson  <andersca@apple.com>
 
         Move StringReference to Platform/IPC
