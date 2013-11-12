@@ -1,5 +1,27 @@
 2013-11-12  Anders Carlsson  <andersca@apple.com>
 
+        Remove most uses of MutableArray
+        https://bugs.webkit.org/show_bug.cgi?id=124232
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/c/WKMutableArray.cpp:
+        (WKMutableArrayCreate):
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageDecoder::baseDecode):
+        * Shared/WebRenderLayer.h:
+        (WebKit::WebRenderLayer::create):
+        (WebKit::WebRenderLayer::WebRenderLayer):
+        * Shared/WebRenderObject.cpp:
+        (WebKit::WebRenderObject::WebRenderObject):
+        * Shared/WebRenderObject.h:
+        (WebKit::WebRenderObject::create):
+        (WebKit::WebRenderObject::WebRenderObject):
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp:
+        (WebKit::InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems):
+
+2013-11-12  Anders Carlsson  <andersca@apple.com>
+
         Use Vector + ImmutableArray instead of MutableArray
         https://bugs.webkit.org/show_bug.cgi?id=124221
 

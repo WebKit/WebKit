@@ -49,7 +49,7 @@ public:
     }
 
     static PassRefPtr<WebRenderObject> create(const String& name, const String& elementTagName, const String& elementID,
-        PassRefPtr<MutableArray> elementClassNames, WebCore::IntPoint absolutePosition, WebCore::IntRect frameRect, PassRefPtr<MutableArray> children)
+        PassRefPtr<ImmutableArray> elementClassNames, WebCore::IntPoint absolutePosition, WebCore::IntRect frameRect, PassRefPtr<ImmutableArray> children)
     {
         return adoptRef(new WebRenderObject(name, elementTagName, elementID, elementClassNames, absolutePosition, frameRect, children));
     }
@@ -65,8 +65,8 @@ public:
 
 private:
     WebRenderObject(WebCore::RenderObject*, bool shouldIncludeDescendants);
-    WebRenderObject(const String& name, const String& elementTagName, const String& elementID, PassRefPtr<MutableArray> elementClassNames,
-        WebCore::IntPoint absolutePosition, WebCore::IntRect frameRect, PassRefPtr<MutableArray> children)
+    WebRenderObject(const String& name, const String& elementTagName, const String& elementID, PassRefPtr<ImmutableArray> elementClassNames,
+        WebCore::IntPoint absolutePosition, WebCore::IntRect frameRect, PassRefPtr<ImmutableArray> children)
         : m_children(children)
         , m_name(name)
         , m_elementTagName(elementTagName)
@@ -77,12 +77,12 @@ private:
     {
     }
 
-    RefPtr<MutableArray> m_children;
+    RefPtr<ImmutableArray> m_children;
 
     String m_name;
     String m_elementTagName;
     String m_elementID;
-    RefPtr<MutableArray> m_elementClassNames;
+    RefPtr<ImmutableArray> m_elementClassNames;
     WebCore::IntPoint m_absolutePosition;
     WebCore::IntRect m_frameRect;
 };

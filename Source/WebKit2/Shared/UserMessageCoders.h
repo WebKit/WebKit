@@ -419,8 +419,8 @@ public:
             if (!decoder.decode(positiveZOrderListCoder))
                 return false;
             coder.m_root = WebRenderLayer::create(static_pointer_cast<WebRenderObject>(renderer), isReflection, isClipping, isClipped, static_cast<WebRenderLayer::CompositingLayerType>(compositingLayerTypeAsUInt32),
-                absoluteBoundingBox, static_pointer_cast<MutableArray>(negativeZOrderList), static_pointer_cast<MutableArray>(normalFlowList),
-                static_pointer_cast<MutableArray>(positiveZOrderList));
+                absoluteBoundingBox, static_pointer_cast<ImmutableArray>(negativeZOrderList), static_pointer_cast<ImmutableArray>(normalFlowList),
+                static_pointer_cast<ImmutableArray>(positiveZOrderList));
             break;
         }
         case APIObject::TypeRenderObject: {
@@ -450,7 +450,7 @@ public:
                 return false;
             if (children && children->type() != APIObject::TypeArray)
                 return false;
-            coder.m_root = WebRenderObject::create(name, elementTagName, elementID, WTF::static_pointer_cast<MutableArray>(elementClassNames), absolutePosition, frameRect, WTF::static_pointer_cast<MutableArray>(children));
+            coder.m_root = WebRenderObject::create(name, elementTagName, elementID, static_pointer_cast<ImmutableArray>(elementClassNames), absolutePosition, frameRect, static_pointer_cast<ImmutableArray>(children));
             break;
         }
         case APIObject::TypeURL: {

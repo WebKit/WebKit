@@ -42,7 +42,7 @@ public:
 
     static PassRefPtr<WebRenderLayer> create(WebPage*);
     static PassRefPtr<WebRenderLayer> create(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType type,
-        WebCore::IntRect absoluteBoundingBox, PassRefPtr<MutableArray> negativeZOrderList, PassRefPtr<MutableArray> normalFlowList, PassRefPtr<MutableArray> positiveZOrderList)
+        WebCore::IntRect absoluteBoundingBox, PassRefPtr<ImmutableArray> negativeZOrderList, PassRefPtr<ImmutableArray> normalFlowList, PassRefPtr<ImmutableArray> positiveZOrderList)
     {
         return adoptRef(new WebRenderLayer(renderer, isReflection, isClipping, isClipped, type, absoluteBoundingBox, negativeZOrderList, normalFlowList, positiveZOrderList));
     }
@@ -61,7 +61,7 @@ public:
 private:
     WebRenderLayer(WebCore::RenderLayer*);
     WebRenderLayer(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType type, WebCore::IntRect absoluteBoundingBox,
-        PassRefPtr<MutableArray> negativeZOrderList, PassRefPtr<MutableArray> normalFlowList, PassRefPtr<MutableArray> positiveZOrderList)
+        PassRefPtr<ImmutableArray> negativeZOrderList, PassRefPtr<ImmutableArray> normalFlowList, PassRefPtr<ImmutableArray> positiveZOrderList)
         : m_renderer(renderer)
         , m_isReflection(isReflection)
         , m_isClipping(isClipping)
