@@ -36,7 +36,7 @@
 #include "RenderTheme.h"
 
 // FIXME: Unify more of the code for Mac and Win.
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && USE(CG)
 
 #include <CoreGraphics/CoreGraphics.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
@@ -68,7 +68,7 @@ inline void wkDrawMediaSliderTrack(CGContextRef context, const CGRect& rect, flo
 
 namespace WebCore {
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && USE(CG)
 
 static WKMediaControllerThemeState determineState(RenderObject* o)
 {

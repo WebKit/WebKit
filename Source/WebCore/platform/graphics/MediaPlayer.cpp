@@ -61,7 +61,7 @@
 #elif OS(WINCE)
 #include "MediaPlayerPrivateWinCE.h"
 #define PlatformMediaEngineClassName MediaPlayerPrivate
-#elif PLATFORM(WIN)
+#elif PLATFORM(WIN) && !USE(GSTREAMER)
 #include "MediaPlayerPrivateQuickTimeVisualContext.h"
 #define PlatformMediaEngineClassName MediaPlayerPrivateQuickTimeVisualContext
 #if USE(AVFOUNDATION)

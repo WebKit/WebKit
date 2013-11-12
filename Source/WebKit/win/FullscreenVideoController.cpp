@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && !USE(GSTREAMER)
 
 #include "FullscreenVideoController.h"
 

@@ -896,7 +896,7 @@ void RenderThemeWin::adjustSliderThumbSize(RenderStyle* style, Element*) const
         style->setWidth(Length(sliderThumbWidth, Fixed));
         style->setHeight(Length(sliderThumbHeight, Fixed));
     }
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && USE(CG)
     else if (part == MediaSliderThumbPart || part == MediaVolumeSliderThumbPart) 
         RenderMediaControls::adjustMediaSliderThumbSize(style);
 #endif

@@ -101,7 +101,7 @@ typedef unsigned PlatformModuleVersion;
 #endif
 
 // PlatformFileHandle
-#if USE(GLIB) && !PLATFORM(EFL)
+#if USE(GLIB) && !PLATFORM(EFL) && !PLATFORM(WIN)
 typedef GFileIOStream* PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = 0;
 #elif OS(WINDOWS)
