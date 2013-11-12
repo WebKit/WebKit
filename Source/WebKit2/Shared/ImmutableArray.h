@@ -58,8 +58,8 @@ public:
 
     virtual bool isMutable() { return false; }
 
-    const Vector<RefPtr<APIObject>>& entries() const { return m_elements; }
-    Vector<RefPtr<APIObject>>& entries() { return m_elements; }
+    const Vector<RefPtr<APIObject>>& elements() const { return m_elements; }
+    Vector<RefPtr<APIObject>>& elements() { return m_elements; }
 
 protected:
     ImmutableArray(Vector<RefPtr<APIObject>> elements);

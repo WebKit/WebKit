@@ -42,10 +42,6 @@ public:
 
     ~MutableArray();
 
-    void append(PassRefPtr<APIObject>);
-    void reserveCapacity(unsigned);
-    void removeItemAtIndex(unsigned);
-
     virtual bool isMutable() { return true; }
 
 private:

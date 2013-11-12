@@ -105,11 +105,11 @@ static void encodeToObjectStream(WKRemoteObjectEncoder *encoder, id value)
     ensureObjectStream(encoder);
 
     size_t position = encoder->_objectStream->size();
-    encoder->_objectStream->append(nullptr);
+    encoder->_objectStream->elements().append(nullptr);
 
     RefPtr<ImmutableDictionary> encodedObject = createEncodedObject(encoder, value);
-    ASSERT(!encoder->_objectStream->entries()[position]);
-    encoder->_objectStream->entries()[position] = encodedObject.release();
+    ASSERT(!encoder->_objectStream->elements()[position]);
+    encoder->_objectStream->elements()[position] = encodedObject.release();
 }
 
 static void encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invocation)

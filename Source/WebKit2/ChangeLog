@@ -1,5 +1,24 @@
 2013-11-12  Anders Carlsson  <andersca@apple.com>
 
+        Remove more functionality from MutableArray
+        https://bugs.webkit.org/show_bug.cgi?id=124235
+
+        Reviewed by Beth Dakin.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeToObjectStream):
+        * Shared/API/c/WKMutableArray.cpp:
+        (WKArrayAppendItem):
+        (WKArrayRemoveItemAtIndex):
+        * Shared/Cocoa/WKNSArray.mm:
+        (-[WKNSArray copyWithZone:]):
+        * Shared/ImmutableArray.h:
+        (WebKit::ImmutableArray::elements):
+        * Shared/MutableArray.cpp:
+        * Shared/MutableArray.h:
+
+2013-11-12  Anders Carlsson  <andersca@apple.com>
+
         Remove most uses of MutableArray
         https://bugs.webkit.org/show_bug.cgi?id=124232
 

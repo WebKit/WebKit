@@ -37,19 +37,4 @@ MutableArray::~MutableArray()
 {
 }
 
-void MutableArray::append(PassRefPtr<APIObject> item)
-{
-    m_elements.append(item);
-}
-
-void MutableArray::reserveCapacity(unsigned capacity)
-{
-    m_elements.reserveCapacity(capacity);
-}
-
-void MutableArray::removeItemAtIndex(unsigned index)
-{
-    m_elements.remove(index);
-}
-
 } // namespace WebKit

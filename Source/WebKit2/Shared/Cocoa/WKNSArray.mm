@@ -61,8 +61,8 @@ using namespace WebKit;
     if (!reinterpret_cast<ImmutableArray*>(&_array)->isMutable())
         return [self retain];
 
-    auto entries = reinterpret_cast<ImmutableArray*>(&_array)->entries();
-    return ImmutableArray::create(std::move(entries)).leakRef()->wrapper();
+    auto elements = reinterpret_cast<ImmutableArray*>(&_array)->elements();
+    return ImmutableArray::create(std::move(elements)).leakRef()->wrapper();
 }
 
 #pragma mark WKObject protocol implementation
