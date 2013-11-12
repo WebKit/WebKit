@@ -1,3 +1,12 @@
+2013-11-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove some unused generated code
+        https://bugs.webkit.org/show_bug.cgi?id=124179
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/CodeGeneratorInspectorStrings.py:
+
 2013-11-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Clean up static_cast<Element*> usage

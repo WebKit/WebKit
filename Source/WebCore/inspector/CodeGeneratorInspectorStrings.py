@@ -33,9 +33,8 @@ frontend_domain_class = (
 """    class $domainClassName {
     public:
         $domainClassName(InspectorFrontendChannel* inspectorFrontendChannel) : m_inspectorFrontendChannel(inspectorFrontendChannel) { }
-${frontendDomainMethodDeclarations}        void setInspectorFrontendChannel(InspectorFrontendChannel* inspectorFrontendChannel) { m_inspectorFrontendChannel = inspectorFrontendChannel; }
-        InspectorFrontendChannel* getInspectorFrontendChannel() { return m_inspectorFrontendChannel; }
-    private:
+${frontendDomainMethodDeclarations}
+    protected:
         InspectorFrontendChannel* m_inspectorFrontendChannel;
     };
 
@@ -67,8 +66,8 @@ frontend_method = ("""void InspectorFrontend::$domainName::$eventName($parameter
 {
     RefPtr<InspectorObject> jsonMessage = InspectorObject::create();
     jsonMessage->setString("method", "$domainName.$eventName");
-$code    if (m_inspectorFrontendChannel)
-        m_inspectorFrontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
+$code
+    m_inspectorFrontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
 }
 """)
 
@@ -182,7 +181,6 @@ $virtualSetters
     void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage) const;
     virtual void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage, PassRefPtr<InspectorArray> data) const = 0;
     virtual void dispatch(const String& message) = 0;
-    static bool getCommandName(const String& message, String* result);
 
     enum MethodNames {
 $methodNamesEnumContent
@@ -458,22 +456,6 @@ PassRefPtr<InspectorObject> InspectorBackendDispatcherImpl::getObject(InspectorO
 PassRefPtr<InspectorArray> InspectorBackendDispatcherImpl::getArray(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
 {
     return getPropertyValueImpl<PassRefPtr<InspectorArray>, RefPtr<InspectorArray>, InspectorArray*>(object, name, valueFound, protocolErrors, 0, AsMethodBridges::asArray, "Array");
-}
-
-bool InspectorBackendDispatcher::getCommandName(const String& message, String* result)
-{
-    RefPtr<InspectorValue> value = InspectorValue::parseJSON(message);
-    if (!value)
-        return false;
-
-    RefPtr<InspectorObject> object = value->asObject();
-    if (!object)
-        return false;
-
-    if (!object->getString("method", result))
-        return false;
-
-    return true;
 }
 
 InspectorBackendDispatcher::CallbackBase::CallbackBase(PassRefPtr<InspectorBackendDispatcherImpl> backendImpl, int id)
