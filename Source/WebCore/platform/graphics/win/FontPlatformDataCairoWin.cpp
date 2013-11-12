@@ -62,6 +62,7 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> font, cairo_font_face_t* fon
     , m_orientation(Horizontal)
     , m_widthVariant(RegularWidth)
     , m_scaledFont(0)
+    , m_isCompositeFontReference(false)
     , m_isColorBitmapFont(false)
     , m_syntheticBold(bold)
     , m_syntheticOblique(oblique)

@@ -124,6 +124,7 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> hfont, CGFontRef font, float
     , m_font(SharedGDIObject<HFONT>::create(std::move(hfont)))
     , m_cgFont(font)
     , m_isColorBitmapFont(false)
+    , m_isCompositeFontReference(false)
     , m_useGDI(useGDI)
 {
 }

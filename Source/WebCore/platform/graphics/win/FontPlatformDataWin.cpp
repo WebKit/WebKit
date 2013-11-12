@@ -48,6 +48,7 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> font, float size, bool bold,
     , m_scaledFont(0)
 #endif
     , m_isColorBitmapFont(false)
+    , m_isCompositeFontReference(false)
     , m_syntheticBold(bold)
     , m_syntheticOblique(oblique)
     , m_useGDI(useGDI)
