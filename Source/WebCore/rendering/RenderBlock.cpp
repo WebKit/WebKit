@@ -1330,6 +1330,22 @@ void RenderBlock::layout()
     invalidateBackgroundObscurationStatus();
 }
 
+static RenderBlockRareData* getRareData(const RenderBlock* block)
+{
+    return gRareDataMap ? gRareDataMap->get(block) : 0;
+}
+
+static RenderBlockRareData& ensureRareData(const RenderBlock* block)
+{
+    if (!gRareDataMap)
+        gRareDataMap = new RenderBlockRareDataMap;
+    
+    auto& rareData = gRareDataMap->add(block, nullptr).iterator->value;
+    if (!rareData)
+        rareData = std::make_unique<RenderBlockRareData>();
+    return *rareData.get();
+}
+
 #if ENABLE(CSS_SHAPES)
 void RenderBlock::relayoutShapeDescendantIfMoved(RenderBlock* child, LayoutSize offset)
 {
@@ -1407,22 +1423,6 @@ void RenderBlock::updateShapeInsideInfoAfterStyleChange(const ShapeValue* shapeI
         setShapeInsideInfo(nullptr);
         markShapeInsideDescendantsForLayout();
     }
-}
-
-static RenderBlockRareData* getRareData(const RenderBlock* block)
-{
-    return gRareDataMap ? gRareDataMap->get(block) : 0;
-}
-
-static RenderBlockRareData& ensureRareData(const RenderBlock* block)
-{
-    if (!gRareDataMap)
-        gRareDataMap = new RenderBlockRareDataMap;
-    
-    auto& rareData = gRareDataMap->add(block, nullptr).iterator->value;
-    if (!rareData)
-        rareData = std::make_unique<RenderBlockRareData>();
-    return *rareData.get();
 }
 
 ShapeInsideInfo* RenderBlock::ensureShapeInsideInfo()
