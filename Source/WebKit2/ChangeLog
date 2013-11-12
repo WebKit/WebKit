@@ -1,3 +1,24 @@
+2013-11-12  Anders Carlsson  <andersca@apple.com>
+
+        Move StringReference to Platform/IPC
+        https://bugs.webkit.org/show_bug.cgi?id=124203
+
+        Reviewed by Antti Koivisto.
+
+        * Platform/IPC/StringReference.cpp: Renamed from Source/WebKit2/Platform/CoreIPC/StringReference.cpp.
+        (CoreIPC::StringReference::toString):
+        (CoreIPC::StringReference::encode):
+        (CoreIPC::StringReference::decode):
+        (CoreIPC::StringReference::Hash::hash):
+        * Platform/IPC/StringReference.h: Renamed from Source/WebKit2/Platform/CoreIPC/StringReference.h.
+        (CoreIPC::StringReference::StringReference):
+        (CoreIPC::StringReference::isEmpty):
+        (CoreIPC::StringReference::size):
+        (CoreIPC::StringReference::data):
+        (CoreIPC::StringReference::operator==):
+        (CoreIPC::StringReference::Hash::equal):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-11-11  Tim Horton  <timothy_horton@apple.com>
 
         Remote Layer Tree: Sporadic memory corruption during painting

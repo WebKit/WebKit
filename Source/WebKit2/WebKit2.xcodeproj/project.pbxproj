@@ -75,8 +75,6 @@
 		1A0F29E3120B44420053D1B9 /* VisitedLinkProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0F29E1120B44420053D1B9 /* VisitedLinkProvider.cpp */; };
 		1A0F29E4120B44420053D1B9 /* VisitedLinkProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0F29E2120B44420053D1B9 /* VisitedLinkProvider.h */; };
 		1A119A95127B796200A9ECB1 /* MessageSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A119A94127B796200A9ECB1 /* MessageSender.h */; };
-		1A13BEB31635A9C800F19C03 /* StringReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A13BEB11635A9C800F19C03 /* StringReference.cpp */; };
-		1A13BEB41635A9C800F19C03 /* StringReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A13BEB21635A9C800F19C03 /* StringReference.h */; };
 		1A17977F137EE82C00F97D45 /* PluginCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A17977D137EE82C00F97D45 /* PluginCreationParameters.cpp */; };
 		1A179780137EE82C00F97D45 /* PluginCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A17977E137EE82C00F97D45 /* PluginCreationParameters.h */; };
 		1A186EEA12EF7618008E5F37 /* LayerTreeHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A186EE812EF7618008E5F37 /* LayerTreeHost.h */; };
@@ -268,6 +266,8 @@
 		1AE00D5D182DADE100087DD7 /* KeyedEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE00D5B182DADE100087DD7 /* KeyedEncoder.h */; };
 		1AE00D601831792100087DD7 /* FrameLoadState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE00D5E1831792100087DD7 /* FrameLoadState.cpp */; };
 		1AE00D611831792100087DD7 /* FrameLoadState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE00D5F1831792100087DD7 /* FrameLoadState.h */; };
+		1AE00D6B18327C1200087DD7 /* StringReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE00D6918327C1200087DD7 /* StringReference.cpp */; };
+		1AE00D6C18327C1200087DD7 /* StringReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE00D6A18327C1200087DD7 /* StringReference.h */; };
 		1AE117F611DBB30900981615 /* ProcessLauncher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE117F511DBB30900981615 /* ProcessLauncher.cpp */; };
 		1AE4976811FF658E0048B464 /* NPJSObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE4976611FF658E0048B464 /* NPJSObject.h */; };
 		1AE4976911FF658E0048B464 /* NPJSObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE4976711FF658E0048B464 /* NPJSObject.cpp */; };
@@ -1536,8 +1536,6 @@
 		1A0F29E1120B44420053D1B9 /* VisitedLinkProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkProvider.cpp; sourceTree = "<group>"; };
 		1A0F29E2120B44420053D1B9 /* VisitedLinkProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkProvider.h; sourceTree = "<group>"; };
 		1A119A94127B796200A9ECB1 /* MessageSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageSender.h; sourceTree = "<group>"; };
-		1A13BEB11635A9C800F19C03 /* StringReference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringReference.cpp; sourceTree = "<group>"; };
-		1A13BEB21635A9C800F19C03 /* StringReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringReference.h; sourceTree = "<group>"; };
 		1A17635416B1D5D000D88FD6 /* StorageNamespaceImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageNamespaceImpl.cpp; sourceTree = "<group>"; };
 		1A17635516B1D5D000D88FD6 /* StorageNamespaceImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageNamespaceImpl.h; sourceTree = "<group>"; };
 		1A17977D137EE82C00F97D45 /* PluginCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginCreationParameters.cpp; sourceTree = "<group>"; };
@@ -1756,6 +1754,8 @@
 		1AE00D5B182DADE100087DD7 /* KeyedEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyedEncoder.h; sourceTree = "<group>"; };
 		1AE00D5E1831792100087DD7 /* FrameLoadState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameLoadState.cpp; sourceTree = "<group>"; };
 		1AE00D5F1831792100087DD7 /* FrameLoadState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameLoadState.h; sourceTree = "<group>"; };
+		1AE00D6918327C1200087DD7 /* StringReference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringReference.cpp; sourceTree = "<group>"; };
+		1AE00D6A18327C1200087DD7 /* StringReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringReference.h; sourceTree = "<group>"; };
 		1AE117F511DBB30900981615 /* ProcessLauncher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessLauncher.cpp; sourceTree = "<group>"; };
 		1AE4976611FF658E0048B464 /* NPJSObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NPJSObject.h; sourceTree = "<group>"; };
 		1AE4976711FF658E0048B464 /* NPJSObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPJSObject.cpp; sourceTree = "<group>"; };
@@ -3543,8 +3543,6 @@
 				1A3EED0D161A535300AEB4F5 /* MessageReceiverMap.h */,
 				1A6506D1175015E700174518 /* MessageSender.cpp */,
 				1A119A94127B796200A9ECB1 /* MessageSender.h */,
-				1A13BEB11635A9C800F19C03 /* StringReference.cpp */,
-				1A13BEB21635A9C800F19C03 /* StringReference.h */,
 			);
 			path = CoreIPC;
 			sourceTree = "<group>";
@@ -3559,6 +3557,15 @@
 				1AD25E94167AB08100EA9BCD /* DownloadProxyMap.h */,
 			);
 			path = Downloads;
+			sourceTree = "<group>";
+		};
+		1AE00D6818327C1200087DD7 /* IPC */ = {
+			isa = PBXGroup;
+			children = (
+				1AE00D6918327C1200087DD7 /* StringReference.cpp */,
+				1AE00D6A18327C1200087DD7 /* StringReference.h */,
+			);
+			path = IPC;
 			sourceTree = "<group>";
 		};
 		1AEFCC0511D01F34008219D3 /* Plugins */ = {
@@ -4783,6 +4790,7 @@
 		BC2E6E74114196F000A63B1E /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				1AE00D6818327C1200087DD7 /* IPC */,
 				1AA2E51A12E4C05600BC4966 /* cg */,
 				1AB5A1BA10E021D30040F6CF /* CoreIPC */,
 				1A7E814E1152D2240003695B /* mac */,
@@ -5575,6 +5583,7 @@
 				51FCB18617BBFE0300394CD8 /* AsynchronousNetworkLoaderClient.h in Headers */,
 				1A2328FF162C866A00D82F7A /* MessageEncoder.h in Headers */,
 				1AC4C82916B876A90069DCCD /* MessageFlags.h in Headers */,
+				1AE00D6C18327C1200087DD7 /* StringReference.h in Headers */,
 				1A3EED12161A53D600AEB4F5 /* MessageReceiver.h in Headers */,
 				1A3EED0F161A535400AEB4F5 /* MessageReceiverMap.h in Headers */,
 				1A119A95127B796200A9ECB1 /* MessageSender.h in Headers */,
@@ -5692,7 +5701,6 @@
 				1A334DEE16DE8F88006A8E38 /* StorageAreaMapMessages.h in Headers */,
 				1A44B95C16B73F9F00B7BBD8 /* StorageManager.h in Headers */,
 				1AB31A9716BC688100F6DBC9 /* StorageManagerMessages.h in Headers */,
-				1A13BEB41635A9C800F19C03 /* StringReference.h in Headers */,
 				296BD85D15019BC30071F424 /* StringUtilities.h in Headers */,
 				1AA417CB12C00CCA002BE67B /* TextChecker.h in Headers */,
 				1QQ417CB12C00CCA002BE67B /* TextCheckerCompletion.h in Headers */,
@@ -7013,7 +7021,6 @@
 				1AB31A9616BC688100F6DBC9 /* StorageManagerMessageReceiver.cpp in Sources */,
 				1A44B95716B737AA00B7BBD8 /* StorageNamespaceImpl.cpp in Sources */,
 				517DD5BE180DA7D30081660B /* DatabaseProcessProxy.cpp in Sources */,
-				1A13BEB31635A9C800F19C03 /* StringReference.cpp in Sources */,
 				296BD85E15019BC30071F424 /* StringUtilities.mm in Sources */,
 				1ZZ417EF12C00D87002BE67B /* TextCheckerCompletion.cpp in Sources */,
 				51E351FF180F5D0F00E53BE9 /* DatabaseProcess.cpp in Sources */,
@@ -7272,6 +7279,7 @@
 				BCB9F6A61123DD0D00A137E0 /* WKFramePolicyListener.cpp in Sources */,
 				E1AEA23014687BDB00804569 /* WKFullKeyboardAccessWatcher.mm in Sources */,
 				CDCA85C8132ABA4E00E961DF /* WKFullScreenWindowController.mm in Sources */,
+				1AE00D6B18327C1200087DD7 /* StringReference.cpp in Sources */,
 				BC54CC1312D674EE005C67B0 /* WKGeolocationManager.cpp in Sources */,
 				BC06F44F12DBDF3F002D78DE /* WKGeolocationPermissionRequest.cpp in Sources */,
 				BC0E619912D6CD120012A72A /* WKGeolocationPosition.cpp in Sources */,
