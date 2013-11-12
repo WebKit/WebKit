@@ -1101,9 +1101,6 @@
     <ClCompile Include="..\platform\PlatformStrategies.cpp">
       <Filter>platform</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\RunLoop.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\RuntimeApplicationChecks.cpp">
       <Filter>platform</Filter>
     </ClCompile>
@@ -1234,9 +1231,6 @@
       <Filter>platform\win</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\win\PopupMenuWin.cpp">
-      <Filter>platform\win</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\win\RunLoopWin.cpp">
       <Filter>platform\win</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\win\ScrollbarThemeSafari.cpp">
@@ -4478,6 +4472,7 @@
     </ClCompile>
     <ClCompile Include="..\bindings\js\JSRTCPeerConnectionCustom.cpp">
       <Filter>bindings\js</Filter>
+    </ClCompile>
     <ClCompile Include="..\bindings\js\JSRTCStatsResponseCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
@@ -6885,9 +6880,6 @@
     <ClCompile Include="..\rendering\shapes\RectangleShape.cpp">
       <Filter>rendering\shapes</Filter>
     </ClCompile>
-    <ClCompile Include="..\Modules\indexeddb\leveldb\IDBCursorBackendLevelDB.cpp">
-      <Filter>Modules\indexeddb\leveldb</Filter>
-    </ClCompile>
     <ClCompile Include="..\Modules\indexeddb\leveldb\IDBFactoryBackendLevelDB.cpp">
       <Filter>Modules\indexeddb\leveldb</Filter>
     </ClCompile>
@@ -6903,13 +6895,9 @@
     <ClCompile Include="..\Modules\mediacontrols\MediaControlsHost.cpp">
       <Filter>Modules\mediacontrols</Filter>
     </ClCompile>
-    <ClCompile Include="..\css\CSSGridTemplateValue.cpp" />
-    <ClCompile Include="..\rendering\RenderTextLineBoxes.cpp" />
-    <ClCompile Include="..\rendering\TextPaintStyle.cpp" />
     <ClCompile Include="..\platform\graphics\ca\PlatformCALayer.cpp">
       <Filter>platform\graphics\ca</Filter>
     </ClCompile>
-    <ClCompile Include="..\rendering\RenderNamedFlowFragment.cpp" />
     <ClCompile Include="..\platform\graphics\texmap\GraphicsLayerTextureMapper.cpp">
       <Filter>platform\graphics\texmap</Filter>
     </ClCompile>
@@ -7021,6 +7009,30 @@
     <ClCompile Include="..\platform\graphics\cairo\TiledBackingStoreBackendCairo.cpp">
       <Filter>platform\graphics\cairo</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\SimpleLineLayout.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\SimpleLineLayoutFunctions.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\css\CSSGridTemplateValue.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\indexeddb\IDBCursorBackend.cpp">
+      <Filter>Modules\indexeddb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\RenderNamedFlowFragment.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\RenderTextLineBoxes.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\TextPaintStyle.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\OrderIterator.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\geolocation\Coordinates.h">
@@ -7071,19 +7083,7 @@
     <ClInclude Include="..\Modules\indexeddb\IDBCursor.h">
       <Filter>Modules\indexeddb</Filter>
     </ClInclude>
-    <ClInclude Include="..\Modules\indexeddb\IDBCursorBackendImpl.h">
-      <Filter>Modules\indexeddb</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\indexeddb\IDBCursorBackendInterface.h">
-      <Filter>Modules\indexeddb</Filter>
-    </ClInclude>
     <ClInclude Include="..\Modules\indexeddb\IDBDatabase.h">
-      <Filter>Modules\indexeddb</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\indexeddb\IDBDatabaseBackendImpl.h">
-      <Filter>Modules\indexeddb</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\indexeddb\IDBDatabaseBackendInterface.h">
       <Filter>Modules\indexeddb</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\indexeddb\IDBDatabaseError.h">
@@ -8058,9 +8058,6 @@
     <ClInclude Include="..\platform\ReferrerPolicy.h">
       <Filter>platform</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\RunLoop.h">
-      <Filter>platform</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\RuntimeApplicationChecks.h">
       <Filter>platform</Filter>
     </ClInclude>
@@ -8912,9 +8909,6 @@
     </ClInclude>
     <ClInclude Include="..\platform\mock\ScrollbarThemeMock.h">
       <Filter>platform\mock</Filter>
-    </ClInclude>
-    <ClInclude Include="..\crypto\SubtleCrypto.h">
-      <Filter>crypto</Filter>
     </ClInclude>
     <ClInclude Include="..\css\BasicShapeFunctions.h">
       <Filter>css</Filter>
@@ -14639,14 +14633,9 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\SVGElementTypeHelpers.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\UserAgentScripts.h" />
-    <ClInclude Include="..\css\CSSGridTemplateValue.h" />
-    <ClInclude Include="..\rendering\RenderTextLineBoxes.h" />
-    <ClInclude Include="..\rendering\TextPaintStyle.h" />
     <ClInclude Include="..\platform\graphics\ca\win\PlatformCALayerWin.h">
       <Filter>platform\graphics\ca\win</Filter>
     </ClInclude>
-    <ClInclude Include="..\rendering\RenderNamedFlowFragment.h" />
     <ClInclude Include="..\platform\graphics\texmap\GraphicsLayerTextureMapper.h">
       <Filter>platform\graphics\texmap</Filter>
     </ClInclude>
@@ -14775,6 +14764,51 @@
     </ClInclude>
     <ClInclude Include="..\platform\graphics\cairo\TileCairo.h">
       <Filter>platform\graphics\cairo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\SimpleLineLayoutResolver.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\SimpleLineLayout.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\SimpleLineLayoutFunctions.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\css\CSSGridTemplateValue.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\indexeddb\IDBDatabaseBackend.h">
+      <Filter>Modules\indexeddb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\indexeddb\IDBCursorBackend.h">
+      <Filter>Modules\indexeddb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\RenderTextLineBoxes.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\RenderAncestorIterator.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\RenderChildIterator.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\RenderIterator.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\RenderNamedFlowFragment.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\TextPaintStyle.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\UserAgentScripts.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\OrderIterator.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dom\CollectionIndexCache.h">
+      <Filter>dom</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
