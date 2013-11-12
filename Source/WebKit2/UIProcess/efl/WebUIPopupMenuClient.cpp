@@ -46,7 +46,7 @@ void WebUIPopupMenuClient::showPopupMenu(WebPageProxy* pageProxy, WebPopupMenuPr
 
     RefPtr<ImmutableArray> ItemsArray;
     if (!webPopupItems.isEmpty())
-        ItemsArray = ImmutableArray::adopt(webPopupItems);
+        ItemsArray = ImmutableArray::create(std::move(webPopupItems));
 
     m_client.showPopupMenu(toAPI(pageProxy), toAPI(static_cast<WebPopupMenuListenerEfl*>(popupMenuProxy)), toAPI(rect), toAPI(textDirection), pageScaleFactor, toAPI(ItemsArray.get()), selectedIndex, m_client.clientInfo);
 }
