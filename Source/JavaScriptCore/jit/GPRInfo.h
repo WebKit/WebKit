@@ -681,7 +681,6 @@ public:
         };
         return nameForRegister[reg];
     }
-private:
 
     static const unsigned InvalidIndex = 0xffffffff;
 };
@@ -753,7 +752,6 @@ public:
         return nameForRegister[reg];
     }
 
-private:
     static const unsigned InvalidIndex = 0xffffffff;
 };
 
