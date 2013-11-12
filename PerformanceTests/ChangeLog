@@ -1,5 +1,17 @@
 2013-11-12  Andreas Kling  <akling@apple.com>
 
+        Remove body onload handler from html5-8266.html that was causing
+        the test to sometimes finish before doing anything interesting.
+
+        Unskip Parser/HTML5-8266-FullRender.html now that it's stable.
+
+        Rubber-stamped by Antti Koivisto.
+
+        * Parser/resources/html5-8266.html:
+        * Skipped:
+
+2013-11-12  Andreas Kling  <akling@apple.com>
+
         Neutralize external resource loads in the new HTML5 spec copy.
 
         Skip Parser/HTML5-8266-FullRender.html until I can make it less flaky.
