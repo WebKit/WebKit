@@ -1,5 +1,11 @@
 2013-11-12  Tim Horton  <timothy_horton@apple.com>
 
+        Add fast/images/pdf-as-image-crop-box.html to the pile of tiny-color-mismatch tests.
+
+        * platform/mac-wk2/TestExpectations:
+
+2013-11-12  Tim Horton  <timothy_horton@apple.com>
+
         fast/canvas/webgl/draw-arrays-out-of-bounds.html is flaky on Mavericks WK2 testers, fails about 20% of the time
         https://bugs.webkit.org/show_bug.cgi?id=124223
 
