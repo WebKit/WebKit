@@ -1,3 +1,17 @@
+2013-11-11  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION (r158927): curly-braces-escaping.html is broken on Mac WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=124164
+
+        Reviewed by Alexey Proskuryakov.
+
+        Back out the change to use NSSecureCoding for encoding/decoding NSURLRequest and
+        NSURLResponse objects; turns out the NSURL encoding/decoding doesn't preserve the raw URL bytes.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (CoreIPC::encodePlatformData):
+        (CoreIPC::decodePlatformData):
+
 2013-11-11  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix on CMake Based port since r159077.
