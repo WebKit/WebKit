@@ -44,19 +44,19 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBDatabaseBackend> IDBDatabaseBackend::create(const String& name, IDBBackingStoreInterface* backingStore, IDBFactoryBackendInterface* factory, const String& uniqueIdentifier)
+PassRefPtr<IDBDatabaseBackend> IDBDatabaseBackend::create(const String& name, const String& uniqueIdentifier, IDBFactoryBackendInterface* factory, IDBServerConnection& serverConnection)
 {
-    RefPtr<IDBDatabaseBackend> backend = adoptRef(new IDBDatabaseBackend(name, backingStore, factory, uniqueIdentifier));
+    RefPtr<IDBDatabaseBackend> backend = adoptRef(new IDBDatabaseBackend(name, uniqueIdentifier, factory, serverConnection));
     backend->openInternalAsync();
     
     return backend.release();
 }
 
-IDBDatabaseBackend::IDBDatabaseBackend(const String& name, IDBBackingStoreInterface* backingStore, IDBFactoryBackendInterface* factory, const String& uniqueIdentifier)
-    : m_backingStore(backingStore)
-    , m_metadata(name, InvalidId, 0, InvalidId)
+IDBDatabaseBackend::IDBDatabaseBackend(const String& name, const String& uniqueIdentifier, IDBFactoryBackendInterface* factory, IDBServerConnection& serverConnection)
+    : m_metadata(name, InvalidId, 0, InvalidId)
     , m_identifier(uniqueIdentifier)
     , m_factory(factory)
+    , m_serverConnection(serverConnection)
     , m_transactionCoordinator(IDBTransactionCoordinator::create())
     , m_closingConnection(false)
 {
@@ -106,7 +106,7 @@ void IDBDatabaseBackend::removeIndex(int64_t objectStoreId, int64_t indexId)
 void IDBDatabaseBackend::openInternalAsync()
 {
     RefPtr<IDBDatabaseBackend> self = this;
-    m_backingStore->getOrEstablishIDBDatabaseMetadata(m_metadata.name, [self](const IDBDatabaseMetadata& metadata, bool success) {
+    m_serverConnection->getOrEstablishIDBDatabaseMetadata(m_metadata.name, [self](const IDBDatabaseMetadata& metadata, bool success) {
         self->didOpenInternalAsync(metadata, success);
     });
 }
@@ -125,11 +125,6 @@ void IDBDatabaseBackend::didOpenInternalAsync(const IDBDatabaseMetadata& metadat
 
 IDBDatabaseBackend::~IDBDatabaseBackend()
 {
-}
-
-IDBBackingStoreInterface* IDBDatabaseBackend::backingStore() const
-{
-    return m_backingStore.get();
 }
 
 void IDBDatabaseBackend::createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
@@ -257,7 +252,7 @@ void IDBDatabaseBackend::setIndexKeys(int64_t transactionId, int64_t objectStore
     ASSERT(transaction->mode() == IndexedDB::TransactionVersionChange);
 
     RefPtr<IDBKey> primaryKey = prpPrimaryKey;
-    RefPtr<IDBBackingStoreInterface> store = m_backingStore;
+    RefPtr<IDBBackingStoreInterface> store = m_serverConnection->deprecatedBackingStore();
     // FIXME: This method could be asynchronous, but we need to evaluate if it's worth the extra complexity.
     RefPtr<IDBRecordIdentifier> recordIdentifier;
     bool ok = store->keyExistsInObjectStore(transaction->backingStoreTransaction(), m_metadata.id, objectStoreId, *primaryKey, recordIdentifier);
@@ -487,7 +482,6 @@ void IDBDatabaseBackend::openConnection(PassRefPtr<IDBCallbacks> prpCallbacks, P
 
 void IDBDatabaseBackend::openConnectionInternal(PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> prpDatabaseCallbacks, int64_t transactionId, uint64_t version)
 {
-    ASSERT(m_backingStore.get());
     ASSERT(m_pendingDeleteCalls.isEmpty());
     ASSERT(!m_runningVersionChangeTransaction);
 
@@ -592,15 +586,14 @@ bool IDBDatabaseBackend::isDeleteDatabaseBlocked()
 void IDBDatabaseBackend::deleteDatabaseAsync(PassRefPtr<IDBCallbacks> callbacks)
 {
     ASSERT(!isDeleteDatabaseBlocked());
-    ASSERT(m_backingStore);
 
     RefPtr<IDBDatabaseBackend> self(this);
-    m_backingStore->deleteDatabase(m_metadata.name, [self, callbacks](bool success) {
+    m_serverConnection->deleteDatabase(m_metadata.name, [self, callbacks](bool success) {
         ASSERT(self->m_deleteCallbacksWaitingCompletion.contains(callbacks));
         self->m_deleteCallbacksWaitingCompletion.remove(callbacks);
 
         // If this IDBDatabaseBackend was closed while waiting for deleteDatabase to complete, no point in performing any callbacks.
-        if (!self->m_backingStore)
+        if (!self->m_serverConnection->isClosed())
             return;
 
         if (success) {
@@ -648,7 +641,7 @@ void IDBDatabaseBackend::close(PassRefPtr<IDBDatabaseCallbacks> prpCallbacks)
 
         ASSERT(m_transactions.isEmpty());
 
-        m_backingStore.clear();
+        m_serverConnection->close();
 
         // This check should only be false in unit tests.
         ASSERT(m_factory);

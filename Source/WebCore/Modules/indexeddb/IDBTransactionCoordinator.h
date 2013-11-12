@@ -44,6 +44,7 @@ public:
 
     // Called by transactions as they start and finish.
     void didCreateTransaction(IDBTransactionBackend*);
+    void didOpenBackingStoreTransaction(IDBTransactionBackend*);
     void didStartTransaction(IDBTransactionBackend*);
     void didFinishTransaction(IDBTransactionBackend*);
 

@@ -1,3 +1,100 @@
+2013-11-12  Brady Eidson  <beidson@apple.com>
+
+        Introduce IDBServerConnection (and start moving things to it).
+        https://bugs.webkit.org/show_bug.cgi?id=124193
+
+        Reviewed by Alexey Proskuryakov.
+
+        IDBServerConnection will be a purely asynchronous interface for database connections, transactions, and cursors.
+        Its interface will be 100% asynchronous and callback based - Perfect for an IPC divide.
+        Eventually none of the IDB<Foo>Backend classes will need IDBBackingStore<Foo> classes at all, 
+        and they’ll all use IDBServerConnection directly.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/indexeddb/IDBServerConnection.h: Added.
+        (WebCore::IDBServerConnection::~IDBServerConnection):
+
+        Concrete implementation that - for now - wraps an IDBBackingStoreLevelDB:
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.cpp: Added.
+        (WebCore::IDBServerConnectionLevelDB::IDBServerConnectionLevelDB):
+        (WebCore::IDBServerConnectionLevelDB::deprecatedBackingStore):
+        (WebCore::IDBServerConnectionLevelDB::isClosed):
+        (WebCore::IDBServerConnectionLevelDB::getOrEstablishIDBDatabaseMetadata):
+        (WebCore::IDBServerConnectionLevelDB::deleteDatabase):
+        (WebCore::IDBServerConnectionLevelDB::close):
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.h: Added.
+
+        LevelDB created databases get LevelDB server connections:
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp:
+        (WebCore::IDBFactoryBackendLevelDB::deleteDatabase):
+        (WebCore::IDBFactoryBackendLevelDB::open):
+
+        Replace most uses of IDBBackingStore with server connection:
+        * Modules/indexeddb/IDBDatabaseBackend.cpp:
+        (WebCore::IDBDatabaseBackend::create):
+        (WebCore::IDBDatabaseBackend::IDBDatabaseBackend):
+        (WebCore::IDBDatabaseBackend::openInternalAsync):
+        (WebCore::IDBDatabaseBackend::setIndexKeys):
+        (WebCore::IDBDatabaseBackend::openConnectionInternal):
+        (WebCore::IDBDatabaseBackend::deleteDatabaseAsync):
+        (WebCore::IDBDatabaseBackend::close):
+        * Modules/indexeddb/IDBDatabaseBackend.h:
+        (WebCore::IDBDatabaseBackend::serverConnection):
+
+        Change all the operations to access their DatabaseBackend’s server connection instead
+        if hanging on to a backing store directly:
+        * Modules/indexeddb/IDBTransactionBackend.cpp:
+        (WebCore::IDBTransactionBackend::IDBTransactionBackend):
+        (WebCore::IDBTransactionBackend::scheduleCreateObjectStoreOperation):
+        (WebCore::IDBTransactionBackend::scheduleDeleteObjectStoreOperation):
+        (WebCore::IDBTransactionBackend::scheduleCreateIndexOperation):
+        (WebCore::IDBTransactionBackend::scheduleDeleteIndexOperation):
+        (WebCore::IDBTransactionBackend::scheduleGetOperation):
+        (WebCore::IDBTransactionBackend::schedulePutOperation):
+        (WebCore::IDBTransactionBackend::scheduleOpenCursorOperation):
+        (WebCore::IDBTransactionBackend::scheduleCountOperation):
+        (WebCore::IDBTransactionBackend::scheduleDeleteRangeOperation):
+        (WebCore::IDBTransactionBackend::scheduleClearOperation):
+        * Modules/indexeddb/IDBTransactionBackend.h:
+
+        * Modules/indexeddb/IDBTransactionBackendOperations.cpp:
+        (WebCore::CreateObjectStoreOperation::perform):
+        (WebCore::CreateIndexOperation::perform):
+        (WebCore::DeleteIndexOperation::perform):
+        (WebCore::GetOperation::perform):
+        (WebCore::PutOperation::perform):
+        (WebCore::OpenCursorOperation::perform):
+        (WebCore::CountOperation::perform):
+        (WebCore::DeleteRangeOperation::perform):
+        (WebCore::ClearOperation::perform):
+        (WebCore::DeleteObjectStoreOperation::perform):
+        (WebCore::IDBDatabaseBackend::VersionChangeOperation::perform):
+        * Modules/indexeddb/IDBTransactionBackendOperations.h:
+        (WebCore::CreateObjectStoreOperation::create):
+        (WebCore::CreateObjectStoreOperation::CreateObjectStoreOperation):
+        (WebCore::DeleteObjectStoreOperation::create):
+        (WebCore::DeleteObjectStoreOperation::DeleteObjectStoreOperation):
+        (WebCore::CreateIndexOperation::create):
+        (WebCore::CreateIndexOperation::CreateIndexOperation):
+        (WebCore::DeleteIndexOperation::create):
+        (WebCore::DeleteIndexOperation::DeleteIndexOperation):
+        (WebCore::GetOperation::create):
+        (WebCore::GetOperation::GetOperation):
+        (WebCore::PutOperation::create):
+        (WebCore::PutOperation::PutOperation):
+        (WebCore::OpenCursorOperation::create):
+        (WebCore::OpenCursorOperation::OpenCursorOperation):
+        (WebCore::CountOperation::create):
+        (WebCore::CountOperation::CountOperation):
+        (WebCore::DeleteRangeOperation::create):
+        (WebCore::DeleteRangeOperation::DeleteRangeOperation):
+        (WebCore::ClearOperation::create):
+        (WebCore::ClearOperation::ClearOperation):
+        * Modules/indexeddb/IDBTransactionCoordinator.h:
+
 2013-11-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening.

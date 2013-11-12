@@ -123,8 +123,6 @@ private:
     int m_pendingPreemptiveEvents;
 
     HashSet<IDBCursorBackend*> m_openCursors;
-    
-    RefPtr<IDBBackingStoreInterface> m_backingStore;
 
     int64_t m_id;
 };
