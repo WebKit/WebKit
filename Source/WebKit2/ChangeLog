@@ -1,5 +1,11 @@
 2013-11-12  Csaba Osztrogonác  <ossy@webkit.org>
 
+        One more URTBF after r159108.
+
+        * CMakeLists.txt:
+
+2013-11-12  Csaba Osztrogonác  <ossy@webkit.org>
+
         URTBF after r159108.
 
         * CMakeLists.txt:

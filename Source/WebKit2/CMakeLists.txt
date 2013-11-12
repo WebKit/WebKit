@@ -5,6 +5,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/NetworkProcess/FileAPI"
     "${WEBKIT2_DIR}/Platform"
     "${WEBKIT2_DIR}/Platform/CoreIPC"
+    "${WEBKIT2_DIR}/Platform/IPC"
     "${WEBKIT2_DIR}/PluginProcess"
     "${WEBKIT2_DIR}/Shared"
     "${WEBKIT2_DIR}/Shared/API"
