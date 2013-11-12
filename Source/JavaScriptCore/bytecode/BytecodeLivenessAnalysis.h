@@ -38,21 +38,12 @@ class CodeBlock;
 class BytecodeLivenessAnalysis {
 public:
     BytecodeLivenessAnalysis(CodeBlock*);
-    BytecodeLivenessAnalysis(const BytecodeLivenessAnalysis&);
 
     bool operandIsLiveAtBytecodeOffset(int operand, unsigned bytecodeOffset);
     FastBitVector getLivenessInfoAtBytecodeOffset(unsigned bytecodeOffset);
 
-    bool hasBeenComputed() { return m_computed; }
-    void compute();
-    void computeIfNecessary()
-    {
-        if (m_computed)
-            return;
-        compute();
-    }
-
 private:
+    void compute();
     void runLivenessFixpoint();
     void dumpResults();
 
@@ -60,8 +51,6 @@ private:
 
     CodeBlock* m_codeBlock;
     Vector<RefPtr<BytecodeBasicBlock> > m_basicBlocks;
-
-    bool m_computed;
 };
 
 } // namespace JSC

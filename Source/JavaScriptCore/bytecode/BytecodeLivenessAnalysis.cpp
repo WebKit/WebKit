@@ -33,16 +33,9 @@ namespace JSC {
 
 BytecodeLivenessAnalysis::BytecodeLivenessAnalysis(CodeBlock* codeBlock)
     : m_codeBlock(codeBlock)
-    , m_computed(false)
 {
     ASSERT(m_codeBlock);
-}
-
-BytecodeLivenessAnalysis::BytecodeLivenessAnalysis(const BytecodeLivenessAnalysis& other)
-    : m_codeBlock(other.m_codeBlock)
-    , m_basicBlocks(other.m_basicBlocks)
-    , m_computed(other.m_computed)
-{
+    compute();
 }
 
 static int numberOfCapturedVariables(CodeBlock* codeBlock)
@@ -588,7 +581,6 @@ static void computeLocalLivenessForBlock(CodeBlock* codeBlock, BytecodeBasicBloc
 
 void BytecodeLivenessAnalysis::runLivenessFixpoint()
 {
-    ASSERT(!m_computed);
     UnlinkedCodeBlock* unlinkedCodeBlock = m_codeBlock->unlinkedCodeBlock();
     unsigned numberOfVariables = unlinkedCodeBlock->m_numVars + 
         unlinkedCodeBlock->m_numCalleeRegisters - numberOfCapturedVariables(m_codeBlock);
@@ -631,7 +623,6 @@ void BytecodeLivenessAnalysis::getLivenessInfoForNonCapturedVarsAtBytecodeOffset
 bool BytecodeLivenessAnalysis::operandIsLiveAtBytecodeOffset(int operand, unsigned bytecodeOffset)
 {
     int numCapturedVars = numberOfCapturedVariables(m_codeBlock);
-    ASSERT(m_computed);
     if (VirtualRegister(operand).isArgument())
         return true;
     if (operand <= captureStart(m_codeBlock) && operand > captureEnd(m_codeBlock))
@@ -678,7 +669,6 @@ FastBitVector BytecodeLivenessAnalysis::getLivenessInfoAtBytecodeOffset(unsigned
 
 void BytecodeLivenessAnalysis::dumpResults()
 {
-    ASSERT(m_computed);
     Interpreter* interpreter = m_codeBlock->vm()->interpreter;
     Instruction* instructionsBegin = m_codeBlock->instructions().begin();
     for (unsigned i = 0; i < m_basicBlocks.size(); i++) {
@@ -733,13 +723,9 @@ void BytecodeLivenessAnalysis::dumpResults()
 
 void BytecodeLivenessAnalysis::compute()
 {
-    if (m_computed)
-        return;
-
     computeBytecodeBasicBlocks(m_codeBlock, m_basicBlocks);
     ASSERT(m_basicBlocks.size());
     runLivenessFixpoint();
-    m_computed = true;
 
     if (Options::dumpBytecodeLivenessResults())
         dumpResults();

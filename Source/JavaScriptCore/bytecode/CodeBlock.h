@@ -679,7 +679,12 @@ public:
 
     JSGlobalObject* globalObjectFor(CodeOrigin);
 
-    BytecodeLivenessAnalysis& livenessAnalysis() { return m_livenessAnalysis; }
+    BytecodeLivenessAnalysis& livenessAnalysis()
+    {
+        if (!m_livenessAnalysis)
+            m_livenessAnalysis = std::make_unique<BytecodeLivenessAnalysis>(this);
+        return *m_livenessAnalysis;
+    }
 
     // Jump Tables
 
@@ -1077,7 +1082,7 @@ private:
     
     mutable CodeBlockHash m_hash;
 
-    BytecodeLivenessAnalysis m_livenessAnalysis;
+    std::unique_ptr<BytecodeLivenessAnalysis> m_livenessAnalysis;
 
     struct RareData {
         WTF_MAKE_FAST_ALLOCATED;

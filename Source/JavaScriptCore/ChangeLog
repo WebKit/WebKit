@@ -1,3 +1,25 @@
+2013-11-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Liveness analysis should take less memory in CodeBlock when it is unused
+        https://bugs.webkit.org/show_bug.cgi?id=124225
+
+        Reviewed by Mark Hahnenberg.
+        
+        Basically, I turned CodeBlock::m_livenessAnalysis into a pointer that is null by
+        default.
+
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::BytecodeLivenessAnalysis::BytecodeLivenessAnalysis):
+        (JSC::BytecodeLivenessAnalysis::runLivenessFixpoint):
+        (JSC::BytecodeLivenessAnalysis::operandIsLiveAtBytecodeOffset):
+        (JSC::BytecodeLivenessAnalysis::dumpResults):
+        (JSC::BytecodeLivenessAnalysis::compute):
+        * bytecode/BytecodeLivenessAnalysis.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::livenessAnalysis):
+
 2013-11-11  Oliver Hunt  <oliver@apple.com>
 
         Support unprefixed deconstructing assignment
