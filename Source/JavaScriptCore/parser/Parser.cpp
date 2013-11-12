@@ -400,7 +400,8 @@ template <DeconstructionKind kind, class TreeBuilder> TreeDeconstructionPattern 
                 semanticFail("Cannot deconstruct to a parameter named '", name.impl(), "'");
             }
         }
-        context.addVar(&name, kind == DeconstructToParameters ? 0 : DeclarationStacks::HasInitializer);
+        if (kind != DeconstructToExpressions)
+            context.addVar(&name, kind == DeconstructToParameters ? 0 : DeclarationStacks::HasInitializer);
     } else {
         if (kind == DeconstructToVariables) {
             failIfFalseIfStrict(declareVariable(&name), "Cannot declare a variable named '", name.impl(), "' in strict mode");
@@ -424,6 +425,12 @@ template <DeconstructionKind kind, class TreeBuilder> TreeDeconstructionPattern 
 }
 
 template <typename LexerType>
+template <class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::tryParseDeconstructionPatternExpression(TreeBuilder& context)
+{
+    return parseDeconstructionPattern<DeconstructToExpressions>(context);
+}
+
+template <typename LexerType>
 template <DeconstructionKind kind, class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::parseDeconstructionPattern(TreeBuilder& context, int depth)
 {
     failIfStackOverflow();
@@ -433,6 +440,8 @@ template <DeconstructionKind kind, class TreeBuilder> TreeDeconstructionPattern 
     case OPENBRACKET: {
         auto arrayPattern = context.createArrayPattern(m_token.m_location);
         next();
+        if (kind == DeconstructToExpressions && match(CLOSEBRACKET))
+            return 0;
         failIfTrue(match(CLOSEBRACKET), "There must be at least one bound property in an array deconstruction pattern");
         do {
             while (match(COMMA)) {
@@ -442,15 +451,25 @@ template <DeconstructionKind kind, class TreeBuilder> TreeDeconstructionPattern 
             propagateError();
             JSTokenLocation location = m_token.m_location;
             auto innerPattern = parseDeconstructionPattern<kind>(context, depth + 1);
+            if (kind == DeconstructToExpressions && !innerPattern)
+                return 0;
             failIfFalse(innerPattern, "Cannot parse this deconstruction pattern");
             context.appendArrayPatternEntry(arrayPattern, location, innerPattern);
         } while (consume(COMMA));
+        
+        if (kind == DeconstructToExpressions && !match(CLOSEBRACKET))
+            return 0;
+
         consumeOrFail(CLOSEBRACKET, "Expected either a closing ']' or a ',' following an element deconstruction pattern");
         pattern = arrayPattern;
         break;
     }
     case OPENBRACE: {
         next();
+        
+        if (kind == DeconstructToExpressions && match(CLOSEBRACE))
+            return 0;
+
         failIfTrue(match(CLOSEBRACE), "There must be at least one bound property in an object deconstruction pattern");
         auto objectPattern = context.createObjectPattern(m_token.m_location);
         bool wasString = false;
@@ -476,13 +495,18 @@ template <DeconstructionKind kind, class TreeBuilder> TreeDeconstructionPattern 
                     wasString = true;
                     break;
                 default:
-                    if (m_token.m_type != RESERVED && m_token.m_type != RESERVED_IF_STRICT && !(m_token.m_type & KeywordTokenFlag))
+                    if (m_token.m_type != RESERVED && m_token.m_type != RESERVED_IF_STRICT && !(m_token.m_type & KeywordTokenFlag)) {
+                        if (kind == DeconstructToExpressions)
+                            return 0;
                         failWithMessage("Expected a property name");
+                    }
                     propertyName = *m_token.m_data.ident;
                     break;
                 }
                 next();
                 if (!consume(COLON)) {
+                    if (kind == DeconstructToExpressions)
+                        return 0;
                     semanticFailIfTrue(tokenType == RESERVED, "Cannot use abbreviated deconstruction syntax for reserved name '", propertyName.impl(), "'");
                     semanticFailIfTrue(tokenType == RESERVED_IF_STRICT, "Cannot use abbreviated deconstruction syntax for reserved name '", propertyName.impl(), "' in strict mode");
                     semanticFailIfTrue(tokenType & KeywordTokenFlag, "Cannot use abbreviated deconstruction syntax for keyword '", propertyName.impl(), "'");
@@ -491,9 +515,13 @@ template <DeconstructionKind kind, class TreeBuilder> TreeDeconstructionPattern 
                 }
                 innerPattern = parseDeconstructionPattern<kind>(context, depth + 1);
             }
+            if (kind == DeconstructToExpressions && !innerPattern)
+                return 0;
             failIfFalse(innerPattern, "Cannot parse this deconstruction pattern");
             context.appendObjectPatternEntry(objectPattern, location, wasString, propertyName, innerPattern);
         } while (consume(COMMA));
+        if (kind == DeconstructToExpressions && !match(CLOSEBRACE))
+            return 0;
         consumeOrFail(CLOSEBRACE, "Expected either a closing '}' or an ',' after a property deconstruction pattern");
         pattern = objectPattern;
         break;
@@ -501,6 +529,8 @@ template <DeconstructionKind kind, class TreeBuilder> TreeDeconstructionPattern 
 
     default: {
         if (!match(IDENT)) {
+            if (kind == DeconstructToExpressions)
+                return 0;
             semanticFailureDueToKeyword("variable name");
             failWithMessage("Expected a parameter pattern or a ')' in parameter list");
         }
@@ -554,6 +584,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
     JSTextPosition declsStart;
     JSTextPosition declsEnd;
     TreeExpression decls = 0;
+    TreeDeconstructionPattern pattern = 0;
     if (match(VAR)) {
         /*
          for (var IDENT in expression) statement
@@ -603,6 +634,16 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
     }
     
     if (!match(SEMICOLON)) {
+        if (match(OPENBRACE) || match(OPENBRACKET)) {
+            SavePoint savePoint = createSavePoint();
+            declsStart = tokenStartPosition();
+            pattern = tryParseDeconstructionPatternExpression(context);
+            declsEnd = lastTokenEndPosition();
+            if (pattern && (match(INTOKEN) || (match(IDENT) && *m_token.m_data.ident == m_vm->propertyNames->of)))
+                goto enumerationLoop;
+            pattern = 0;
+            restoreSavePoint(savePoint);
+        }
         m_allowsIn = false;
         declsStart = tokenStartPosition();
         decls = parseExpression(context);
@@ -639,6 +680,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
     }
     
     // For-in loop
+enumerationLoop:
     failIfFalse(nonLHSCount == m_nonLHSCount, "Expected a reference on the left hand side of an enumeration statement");
     bool isOfEnumeration = false;
     if (!consume(INTOKEN)) {
@@ -657,6 +699,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
     TreeStatement statement = parseStatement(context, unused);
     endLoop();
     failIfFalse(statement, "Expected a statement as the body of a for-", isOfEnumeration ? "of" : "in", "loop");
+    if (pattern) {
+        ASSERT(!decls);
+        if (isOfEnumeration)
+            return context.createForOfLoop(location, pattern, expr, statement, declsStart, declsEnd, exprEnd, startLine, endLine);
+        return context.createForInLoop(location, pattern, expr, statement, declsStart, declsEnd, exprEnd, startLine, endLine);
+    }
     if (isOfEnumeration)
         return context.createForOfLoop(location, decls, expr, statement, declsStart, declsEnd, exprEnd, startLine, endLine);
     return context.createForInLoop(location, decls, expr, statement, declsStart, declsEnd, exprEnd, startLine, endLine);
@@ -1368,6 +1416,16 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
     JSTokenLocation location(tokenLocation());
     int initialAssignmentCount = m_assignmentCount;
     int initialNonLHSCount = m_nonLHSCount;
+    if (match(OPENBRACE) || match(OPENBRACKET)) {
+        SavePoint savePoint = createSavePoint();
+        auto pattern = tryParseDeconstructionPatternExpression(context);
+        if (pattern && consume(EQUAL)) {
+            auto rhs = parseAssignmentExpression(context);
+            if (rhs)
+                return context.createDeconstructingAssignment(location, pattern, rhs);
+        }
+        restoreSavePoint(savePoint);
+    }
     TreeExpression lhs = parseConditionalExpression(context);
     failIfFalse(lhs, "Cannot parse expression");
     if (initialNonLHSCount != m_nonLHSCount) {

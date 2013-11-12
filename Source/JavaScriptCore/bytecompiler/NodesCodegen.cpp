@@ -2333,11 +2333,17 @@ RegisterID* ArrayPatternNode::emitDirectBinding(BytecodeGenerator& generator, Re
             generator.emitGetArgumentByVal(temp.get(), generator.uncheckedRegisterForArguments(), temp.get());
             target->bindValue(generator, temp.get());
         }
-        return generator.emitLoad(generator.finalDestination(dst), jsUndefined());
+        if (dst == generator.ignoredResult() || !dst)
+            return generator.emitLoad(generator.finalDestination(dst), jsUndefined());
+        Local local = generator.local(generator.vm()->propertyNames->arguments);
+        return generator.moveToDestinationIfNeeded(dst, local.get());
     }
     if (!rhs->isSimpleArray())
         return 0;
 
+    RefPtr<RegisterID> resultRegister;
+    if (dst && dst != generator.ignoredResult())
+        resultRegister = generator.emitNewArray(generator.newTemporary(), 0, 0);
     ElementNode* elementNodes = static_cast<ArrayNode*>(rhs)->elements();
     Vector<ExpressionNode*> elements;
     for (; elementNodes; elementNodes = elementNodes->next())
@@ -2349,13 +2355,16 @@ RegisterID* ArrayPatternNode::emitDirectBinding(BytecodeGenerator& generator, Re
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
         registers.uncheckedAppend(generator.newTemporary());
         generator.emitNode(registers.last().get(), elements[i]);
+        if (resultRegister)
+            generator.emitPutByIndex(resultRegister.get(), i, registers.last().get());
     }
     
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
         if (m_targetPatterns[i])
             m_targetPatterns[i]->bindValue(generator, registers[i].get());
     }
-
+    if (resultRegister)
+        return generator.moveToDestinationIfNeeded(dst, resultRegister.get());
     return generator.emitLoad(generator.finalDestination(dst), jsUndefined());
 }
 

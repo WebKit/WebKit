@@ -731,6 +731,7 @@ private:
 
     template <DeconstructionKind, class TreeBuilder> ALWAYS_INLINE TreeDeconstructionPattern createBindingPattern(TreeBuilder&, const Identifier&, int depth);
     template <DeconstructionKind, class TreeBuilder> TreeDeconstructionPattern parseDeconstructionPattern(TreeBuilder&, int depth = 0);
+    template <class TreeBuilder> NEVER_INLINE TreeDeconstructionPattern tryParseDeconstructionPatternExpression(TreeBuilder&);
     template <FunctionRequirements, FunctionParseMode, bool nameIsInContainingScope, class TreeBuilder> bool parseFunctionInfo(TreeBuilder&, const Identifier*&, TreeFormalParameterList&, TreeFunctionBody&, unsigned& openBraceOffset, unsigned& closeBraceOffset, int& bodyStartLine, unsigned& bodyStartColumn);
     ALWAYS_INLINE int isBinaryOperator(JSTokenType);
     bool allowAutomaticSemicolon();
@@ -768,6 +769,7 @@ private:
     
     ALWAYS_INLINE SavePoint createSavePoint()
     {
+        ASSERT(!hasError());
         SavePoint result;
         result.startOffset = m_token.m_location.startOffset;
         result.oldLineStartOffset = m_token.m_location.lineStartOffset;
@@ -778,6 +780,7 @@ private:
     
     ALWAYS_INLINE void restoreSavePoint(const SavePoint& savePoint)
     {
+        m_errorMessage = String();
         m_lexer->setOffset(savePoint.startOffset, savePoint.oldLineStartOffset);
         next();
         m_lexer->setLastLineNumber(savePoint.oldLastLineNumber);

@@ -1,3 +1,20 @@
+2013-11-11  Oliver Hunt  <oliver@apple.com>
+
+        Support unprefixed deconstructing assignment
+        https://bugs.webkit.org/show_bug.cgi?id=124172
+
+        Reviewed by Mark Lam.
+
+        Add and expand testing of destructuring assignment
+
+        * js/basic-for-of-expected.txt:
+        * js/destructuring-assignment-expected.txt:
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/basic-for-of.js:
+        * js/script-tests/destructuring-assignment.js:
+        (testDestructuring):
+        * js/script-tests/parser-syntax-check.js:
+
 2013-11-12  Roger Fong  <roger_fong@apple.com>
 
 		[Windows] Unreviewed gardening of some media tests.

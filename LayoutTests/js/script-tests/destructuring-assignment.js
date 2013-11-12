@@ -7,6 +7,9 @@ function testDestructuring(pattern, expression, result, expr) {
     debug("Function as String: " + functionString);
     shouldBe(functionString + "(" + expression + ")", result);
     shouldBe("(" + eval(functionString) + ")(" + expression + ")", result);
+    shouldBe("(" + pattern + "=" + expression + "); var r="+expr+"; r", result);
+    if (pattern[0] == '[')
+        shouldBe("" + pattern + "=" + expression + "; var r="+expr+"; r", result);
 }
 
 testDestructuring("[a,b]", "['1','2']", "'12'");

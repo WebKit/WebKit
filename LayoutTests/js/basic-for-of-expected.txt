@@ -63,6 +63,33 @@ PASS key is i
 PASS value is testArray[key]
 PASS key is i
 PASS testArray.length is 9
+PASS value is testArray[key]
+PASS key is i
+PASS value is testArray[key]
+PASS key is i
+PASS value is testArray[key]
+PASS key is i
+PASS value is testArray[key]
+PASS key is i
+PASS value is testArray[key]
+PASS key is i
+PASS value is testArray[key]
+PASS key is i
+PASS value is testArray[key]
+PASS key is i
+PASS value is testArray[key]
+PASS key is i
+PASS value is testArray[key]
+PASS key is i
+PASS value is testArray[key]
+PASS key is i
+PASS value is testArray[key]
+PASS key is i
+PASS value is testArray[key]
+PASS key is i
+PASS value is testArray[key]
+PASS key is i
+PASS testArray.length is 13
 PASS successfullyParsed is true
 
 TEST COMPLETE
