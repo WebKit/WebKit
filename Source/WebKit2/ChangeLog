@@ -1,3 +1,22 @@
+2013-11-12  Anders Carlsson  <andersca@apple.com>
+
+        Use Vector + ImmutableArray instead of MutableArray
+        https://bugs.webkit.org/show_bug.cgi?id=124221
+
+        Reviewed by Andreas Kling.
+
+        * Shared/WebRenderLayer.cpp:
+        (WebKit::WebRenderLayer::createArrayFromLayerList):
+        * Shared/WebRenderLayer.h:
+        * UIProcess/Notifications/WebNotificationProvider.cpp:
+        (WebKit::WebNotificationProvider::clearNotifications):
+        * UIProcess/WebPageContextMenuClient.cpp:
+        (WebKit::WebPageContextMenuClient::getContextMenuFromProposedMenu):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (contextMenuItems):
+        (WKBundlePageCopyContextMenuItems):
+        (WKBundlePageCopyContextMenuAtPointInWindow):
+
 2013-11-12  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix after r159129.

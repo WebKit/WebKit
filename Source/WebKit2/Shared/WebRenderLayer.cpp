@@ -60,18 +60,18 @@ PassRefPtr<WebRenderLayer> WebRenderLayer::create(WebPage* page)
     return adoptRef(new WebRenderLayer(rootLayer));
 }
 
-PassRefPtr<MutableArray> WebRenderLayer::createArrayFromLayerList(Vector<RenderLayer*>* list)
+PassRefPtr<ImmutableArray> WebRenderLayer::createArrayFromLayerList(Vector<RenderLayer*>* list)
 {
     if (!list || !list->size())
-        return 0;
+        return nullptr;
 
-    RefPtr<MutableArray> array = MutableArray::create();
-    for (size_t i = 0; i < list->size(); ++i) {
-        RefPtr<WebRenderLayer> layer = adoptRef(new WebRenderLayer(list->at(i)));
-        array->append(layer.get());
-    }
+    Vector<RefPtr<APIObject>> layers;
+    layers.reserveInitialCapacity(list->size());
 
-    return array.release();
+    for (const auto& layer : *list)
+        layers.uncheckedAppend(adoptRef(new WebRenderLayer(layer)));
+
+    return ImmutableArray::create(std::move(layers));
 }
 
 WebRenderLayer::WebRenderLayer(RenderLayer* layer)

@@ -74,7 +74,7 @@ private:
     {
     }
 
-    static PassRefPtr<MutableArray> createArrayFromLayerList(Vector<WebCore::RenderLayer*>*);
+    static PassRefPtr<ImmutableArray> createArrayFromLayerList(Vector<WebCore::RenderLayer*>*);
 
     RefPtr<WebRenderObject> m_renderer;
     bool m_isReflection;
@@ -83,9 +83,9 @@ private:
     CompositingLayerType m_compositingLayerType;
     WebCore::IntRect m_absoluteBoundingBox;
 
-    RefPtr<MutableArray> m_negativeZOrderList;
-    RefPtr<MutableArray> m_normalFlowList;
-    RefPtr<MutableArray> m_positiveZOrderList;
+    RefPtr<ImmutableArray> m_negativeZOrderList;
+    RefPtr<ImmutableArray> m_normalFlowList;
+    RefPtr<ImmutableArray> m_positiveZOrderList;
 };
 
 } // namespace WebKit

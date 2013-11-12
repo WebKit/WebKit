@@ -165,12 +165,9 @@ void WKBundlePageClickMenuItem(WKBundlePageRef pageRef, WKContextMenuItemRef ite
 #endif
 }
 
-WKArrayRef WKBundlePageCopyContextMenuItems(WKBundlePageRef pageRef)
+static PassRefPtr<ImmutableArray> contextMenuItems(const WebContextMenu& contextMenu)
 {
-#if ENABLE(CONTEXT_MENUS)
-    WebContextMenu* contextMenu = toImpl(pageRef)->contextMenu();
-
-    auto items = contextMenu->items();
+    auto items = contextMenu.items();
 
     Vector<RefPtr<APIObject>> menuItems;
     menuItems.reserveInitialCapacity(items.size());
@@ -178,7 +175,15 @@ WKArrayRef WKBundlePageCopyContextMenuItems(WKBundlePageRef pageRef)
     for (const auto& item : items)
         menuItems.uncheckedAppend(WebContextMenuItem::create(item));
 
-    return toAPI(ImmutableArray::create(std::move(menuItems)).leakRef());
+    return ImmutableArray::create(std::move(menuItems));
+}
+
+WKArrayRef WKBundlePageCopyContextMenuItems(WKBundlePageRef pageRef)
+{
+#if ENABLE(CONTEXT_MENUS)
+    WebContextMenu* contextMenu = toImpl(pageRef)->contextMenu();
+
+    return toAPI(contextMenuItems(*contextMenu).leakRef());
 #else
     return nullptr;
 #endif
@@ -189,19 +194,11 @@ WKArrayRef WKBundlePageCopyContextMenuAtPointInWindow(WKBundlePageRef pageRef, W
 #if ENABLE(CONTEXT_MENUS)
     WebContextMenu* contextMenu = toImpl(pageRef)->contextMenuAtPointInWindow(toIntPoint(point));
     if (!contextMenu)
-        return 0;
+        return nullptr;
 
-    const Vector<WebContextMenuItemData>& items = contextMenu->items();
-    size_t arrayLength = items.size();
-
-    RefPtr<MutableArray> menuArray = MutableArray::create();
-    menuArray->reserveCapacity(arrayLength);
-    for (unsigned i = 0; i < arrayLength; ++i)
-        menuArray->append(WebContextMenuItem::create(items[i]).get());
-    
-    return toAPI(menuArray.release().leakRef());
+    return toAPI(contextMenuItems(*contextMenu).leakRef());
 #else
-    return 0;
+    return nullptr;
 #endif
 }
 

@@ -45,18 +45,18 @@ bool WebPageContextMenuClient::getContextMenuFromProposedMenu(WebPageProxy* page
     if (m_client.version >= 2 && !m_client.getContextMenuFromProposedMenu)
         return false;
 
-    unsigned size = proposedMenuVector.size();
-    RefPtr<MutableArray> proposedMenu = MutableArray::create();
-    proposedMenu->reserveCapacity(size);
-    for (unsigned i = 0; i < size; ++i)
-        proposedMenu->append(WebContextMenuItem::create(proposedMenuVector[i]).get());
-        
-    WKArrayRef newMenu = 0;
+    Vector<RefPtr<APIObject>> proposedMenuItems;
+    proposedMenuItems.reserveInitialCapacity(proposedMenuVector.size());
+
+    for (const auto& menuItem : proposedMenuVector)
+        proposedMenuItems.uncheckedAppend(WebContextMenuItem::create(menuItem));
+
+    WKArrayRef newMenu = nullptr;
     if (m_client.version >= 2) {
         RefPtr<WebHitTestResult> webHitTestResult = WebHitTestResult::create(hitTestResultData);
-        m_client.getContextMenuFromProposedMenu(toAPI(page), toAPI(proposedMenu.get()), &newMenu, toAPI(webHitTestResult.get()), toAPI(userData), m_client.clientInfo);
+        m_client.getContextMenuFromProposedMenu(toAPI(page), toAPI(ImmutableArray::create(std::move(proposedMenuItems)).get()), &newMenu, toAPI(webHitTestResult.get()), toAPI(userData), m_client.clientInfo);
     } else
-        m_client.getContextMenuFromProposedMenu_deprecatedForUseWithV0(toAPI(page), toAPI(proposedMenu.get()), &newMenu, toAPI(userData), m_client.clientInfo);
+        m_client.getContextMenuFromProposedMenu_deprecatedForUseWithV0(toAPI(page), toAPI(ImmutableArray::create(std::move(proposedMenuItems)).get()), &newMenu, toAPI(userData), m_client.clientInfo);
 
     RefPtr<ImmutableArray> array = adoptRef(toImpl(newMenu));
     

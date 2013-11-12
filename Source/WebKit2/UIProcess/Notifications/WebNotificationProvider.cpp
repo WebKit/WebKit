@@ -65,13 +65,13 @@ void WebNotificationProvider::clearNotifications(const Vector<uint64_t>& notific
     if (!m_client.clearNotifications)
         return;
 
-    RefPtr<MutableArray> arrayIDs = MutableArray::create();
-    size_t count = notificationIDs.size();
-    arrayIDs->reserveCapacity(count);
-    for (size_t i = 0; i < count; ++i)
-        arrayIDs->append(WebUInt64::create(notificationIDs[i]).leakRef());
+    Vector<RefPtr<APIObject>> arrayIDs;
+    arrayIDs.reserveInitialCapacity(notificationIDs.size());
 
-    m_client.clearNotifications(toAPI(arrayIDs.get()), m_client.clientInfo);
+    for (const auto& notificationID : notificationIDs)
+        arrayIDs.uncheckedAppend(WebUInt64::create(notificationID));
+
+    m_client.clearNotifications(toAPI(ImmutableArray::create(std::move(arrayIDs)).get()), m_client.clientInfo);
 }
 
 void WebNotificationProvider::addNotificationManager(WebNotificationManagerProxy* manager)
