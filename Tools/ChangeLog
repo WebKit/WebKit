@@ -1,3 +1,11 @@
+2013-11-12  Tim Horton  <timothy_horton@apple.com>
+
+        After http://trac.webkit.org/changeset/159109, update
+        rebaseline_unittest to use the new GTK bot names.
+
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaselineTest.test_baseline_directory):
+
 2013-11-12  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [GTK] Update GTK builders in Tools/Scripts/webkitpy/port/builders.py
