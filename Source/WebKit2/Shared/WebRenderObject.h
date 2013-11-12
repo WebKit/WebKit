@@ -26,8 +26,7 @@
 #ifndef WebRenderObject_h
 #define WebRenderObject_h
 
-#include "APIObject.h"
-#include "MutableArray.h"
+#include "ImmutableArray.h"
 #include <WebCore/IntRect.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>

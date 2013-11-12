@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WKContextMenuItem.h"
 
-#include "MutableArray.h"
+#include "ImmutableArray.h"
 #include "WebContextMenuItem.h"
 #include "WebContextMenuItemData.h"
 #include "WKAPICast.h"

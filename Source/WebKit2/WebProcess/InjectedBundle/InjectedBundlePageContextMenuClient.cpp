@@ -32,7 +32,6 @@
 #include "ImmutableArray.h"
 #include "InjectedBundleHitTestResult.h"
 #include "Logging.h"
-#include "MutableArray.h"
 #include "WebContextMenuItem.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"

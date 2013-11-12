@@ -26,8 +26,8 @@
 #include "config.h"
 #include "WebNotificationProvider.h"
 
+#include "ImmutableArray.h"
 #include "ImmutableDictionary.h"
-#include "MutableArray.h"
 #include "WKAPICast.h"
 #include "WebNotification.h"
 #include "WebNotificationManagerProxy.h"

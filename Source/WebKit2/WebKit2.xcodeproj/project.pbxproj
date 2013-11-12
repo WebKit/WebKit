@@ -1023,8 +1023,6 @@
 		BCAF361F16CA28CD00D4E9FC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		BCAF362016CA28D600D4E9FC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		BCAF362216CA292B00D4E9FC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
-		BCB0AD33122F285800B1341E /* MutableArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC8049D122F0D6B00103529 /* MutableArray.cpp */; };
-		BCB0AD34122F285800B1341E /* MutableArray.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC8049E122F0D6B00103529 /* MutableArray.h */; };
 		BCB0AEE9122F53E300B1341E /* MutableDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB0AEE7122F53E300B1341E /* MutableDictionary.h */; };
 		BCB0AEEA122F53E300B1341E /* MutableDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB0AEE8122F53E300B1341E /* MutableDictionary.cpp */; };
 		BCB0B0DC12305A2500B1341E /* WebContextUserMessageCoders.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB0B0DB12305A2500B1341E /* WebContextUserMessageCoders.h */; };
@@ -2622,8 +2620,6 @@
 		BCC56F771159957D001CCAF9 /* MachPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachPort.h; sourceTree = "<group>"; };
 		BCC57159115ADAEF001CCAF9 /* WebSystemInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSystemInterface.h; sourceTree = "<group>"; };
 		BCC5715A115ADAEF001CCAF9 /* WebSystemInterface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSystemInterface.mm; sourceTree = "<group>"; };
-		BCC8049D122F0D6B00103529 /* MutableArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MutableArray.cpp; sourceTree = "<group>"; };
-		BCC8049E122F0D6B00103529 /* MutableArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutableArray.h; sourceTree = "<group>"; };
 		BCC8B373125FB69000DE46A4 /* WKGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKGeometry.h; sourceTree = "<group>"; };
 		BCC938E01180DE440085E5FE /* WKContextPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextPrivate.h; sourceTree = "<group>"; };
 		BCCB75C51203A1CE00222D1B /* WebContextMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMessageKinds.h; sourceTree = "<group>"; };
@@ -3364,8 +3360,6 @@
 				BCBCB0CC1215E33A00DE59CA /* ImmutableDictionary.cpp */,
 				BCBCB0CA1215E32100DE59CA /* ImmutableDictionary.h */,
 				1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */,
-				BCC8049D122F0D6B00103529 /* MutableArray.cpp */,
-				BCC8049E122F0D6B00103529 /* MutableArray.h */,
 				BCB0AEE8122F53E300B1341E /* MutableDictionary.cpp */,
 				BCB0AEE7122F53E300B1341E /* MutableDictionary.h */,
 				C02BFF1512514FD8009CCBEA /* NativeWebKeyboardEvent.h */,
@@ -5588,7 +5582,6 @@
 				1A3EED0F161A535400AEB4F5 /* MessageReceiverMap.h in Headers */,
 				1A119A95127B796200A9ECB1 /* MessageSender.h in Headers */,
 				C0E3AA7C1209E83C00A49D01 /* Module.h in Headers */,
-				BCB0AD34122F285800B1341E /* MutableArray.h in Headers */,
 				BCB0AEE9122F53E300B1341E /* MutableDictionary.h in Headers */,
 				1A6FBA2A11E6862700DB1371 /* NetscapeBrowserFuncs.h in Headers */,
 				1A6FBD2811E69BC200DB1371 /* NetscapePlugin.h in Headers */,
@@ -6888,7 +6881,6 @@
 				C0E3AA7B1209E83500A49D01 /* Module.cpp in Sources */,
 				C0E3AA7A1209E83000A49D01 /* ModuleMac.mm in Sources */,
 				370F34A21829BE1E009027C8 /* WKNavigationData.mm in Sources */,
-				BCB0AD33122F285800B1341E /* MutableArray.cpp in Sources */,
 				BCB0AEEA122F53E300B1341E /* MutableDictionary.cpp in Sources */,
 				C02BFF1E1251502E009CCBEA /* NativeWebKeyboardEventMac.mm in Sources */,
 				31EA25D2134F78C0005B1452 /* NativeWebMouseEventMac.mm in Sources */,
