@@ -233,8 +233,8 @@ void PlatformCALayerRemote::replaceSublayer(PlatformCALayer* reference, Platform
     size_t referenceIndex = m_children.find(reference);
     if (referenceIndex != notFound) {
         m_children[referenceIndex]->removeFromSuperlayer();
-        m_children.remove(referenceIndex);
         m_children.insert(referenceIndex, layer);
+        toPlatformCALayerRemote(layer)->m_superlayer = this;
     }
 
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::ChildrenChanged);

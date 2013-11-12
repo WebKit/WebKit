@@ -1,3 +1,15 @@
+2013-11-12  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Assertions during layer flushing after replaceSublayer()
+        https://bugs.webkit.org/show_bug.cgi?id=124194
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::replaceSublayer):
+        Only remove the old layer from the children array once (via removeFromSuperlayer).
+        Update the superlayer backpointer on the new layer.
+
 2013-11-12  Anders Carlsson  <andersca@apple.com>
 
         Add ImmutableArray::createStringArray
