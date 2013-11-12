@@ -288,6 +288,7 @@ set(WebKit2_SOURCES
     UIProcess/BackingStore.cpp
     UIProcess/DrawingAreaProxy.cpp
     UIProcess/FindIndicator.cpp
+    UIProcess/FrameLoadState.cpp
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp
     UIProcess/GeolocationPermissionRequestProxy.cpp
     UIProcess/ResponsivenessTimer.cpp

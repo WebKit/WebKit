@@ -1,3 +1,9 @@
+2013-11-11  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix on CMake Based port since r159077.
+
+        * CMakeLists.txt:
+
 2013-11-11  Tim Horton  <timothy_horton@apple.com>
 
         Remote Layer Tree: Implement Page Overlays
