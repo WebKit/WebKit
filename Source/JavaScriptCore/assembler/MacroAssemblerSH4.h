@@ -1314,14 +1314,14 @@ public:
     void load32WithUnalignedHalfWords(BaseIndex address, RegisterID dest)
     {
         RegisterID scr = claimScratch();
-        RegisterID scr1 = claimScratch();
         Jump m_jump;
         JumpList end;
 
+        loadEffectiveAddress(address, scr);
+
+        RegisterID scr1 = claimScratch();
         if (dest != SH4Registers::r0)
             move(SH4Registers::r0, scr1);
-
-        loadEffectiveAddress(address, scr);
 
         m_assembler.ensureSpace(m_assembler.maxInstructionSize + 58, sizeof(uint32_t));
         move(scr, SH4Registers::r0);
