@@ -3005,7 +3005,7 @@ void RenderLayer::positionOverflowControls(const IntSize& offsetFromRoot)
 
 #if USE(ACCELERATED_COMPOSITING)    
     if (isComposited())
-        backing()->positionOverflowControlsLayers(offsetFromRoot);
+        backing()->positionOverflowControlsLayers();
 #endif
 }
 

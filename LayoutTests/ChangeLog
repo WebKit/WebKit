@@ -1,5 +1,18 @@
 2013-11-11  Simon Fraser  <simon.fraser@apple.com>
 
+        REGRESSION (r155660): box-shadow causes overlay scrollbars to be in the wrong position when element is composited (85647)
+        https://bugs.webkit.org/show_bug.cgi?id=124090
+
+        Reviewed by Beth Dakin.
+        
+        Test, but it doesn't actually test the fix until we enable overlay scrollbars
+        in tests (bug 60716).
+
+        * compositing/overflow/overflow-scrollbar-layer-positions-expected.txt: Added.
+        * compositing/overflow/overflow-scrollbar-layer-positions.html: Added.
+
+2013-11-11  Simon Fraser  <simon.fraser@apple.com>
+
         Actually land a result for the test that I added (and make it a text test).
 
         * compositing/tiling/tiled-in-iframe-expected.txt: Added.

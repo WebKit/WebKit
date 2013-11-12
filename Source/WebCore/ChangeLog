@@ -1,3 +1,32 @@
+2013-11-11  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r155660): box-shadow causes overlay scrollbars to be in the wrong position when element is composited (85647)
+        https://bugs.webkit.org/show_bug.cgi?id=124090
+
+        Reviewed by Beth Dakin.
+        
+        After r155660 we did fewer layouts, so were left with overlay scrollbars in the
+        wrong locations because nothing would update them after RenderLayerBacking
+        computed a new offsetFromRenderer.
+        
+        First part of the fix is to wean positionOverflowControlsLayers() off of
+        an absolute offset from the root. Do this by not using Widget::frameRect()
+        to position the layers, but instead RenderLayer::rectFor{Horizontal|Vertical}Scrollbar
+        which is what we used to position the scrollbars in the first place.
+        
+        Second part of the fix is to call positionOverflowControlsLayers() from
+        RenderLayerBacking::updateGraphicsLayerGeometry() if the offsetFromRenderer
+        changed.
+
+        Test: compositing/overflow/overflow-scrollbar-layer-positions.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::positionOverflowControls):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::positionOverflowControlsLayers):
+        * rendering/RenderLayerBacking.h:
+
 2013-11-11  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] m_isCompositeFontReference is uninitialized.

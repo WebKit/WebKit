@@ -146,7 +146,7 @@ public:
     void updateCompositedBounds();
     
     void updateAfterWidgetResize();
-    void positionOverflowControlsLayers(const IntSize& offsetFromRoot);
+    void positionOverflowControlsLayers();
     bool hasUnpositionedOverflowControlsLayers() const;
 
     bool usingTiledBacking() const { return m_usingTiledCacheLayer; }

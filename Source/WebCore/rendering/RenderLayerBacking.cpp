@@ -697,7 +697,11 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
 
     m_graphicsLayer->setPosition(FloatPoint(relativeCompositingBounds.location() - graphicsLayerParentLocation));
     m_graphicsLayer->setSize(contentsSize);
-    m_graphicsLayer->setOffsetFromRenderer(toIntSize(localCompositingBounds.location()));
+    IntSize offsetFromRenderer = toIntSize(localCompositingBounds.location());
+    if (offsetFromRenderer != m_graphicsLayer->offsetFromRenderer()) {
+        m_graphicsLayer->setOffsetFromRenderer(toIntSize(localCompositingBounds.location()));
+        positionOverflowControlsLayers();
+    }
 
     if (!m_isMainFrameRenderViewLayer) {
         // For non-root layers, background is always painted by the primary graphics layer.
@@ -1124,35 +1128,36 @@ bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScroll
     return horizontalScrollbarLayerChanged || verticalScrollbarLayerChanged || scrollCornerLayerChanged;
 }
 
-void RenderLayerBacking::positionOverflowControlsLayers(const IntSize& offsetFromRoot)
+void RenderLayerBacking::positionOverflowControlsLayers()
 {
+    if (!m_owningLayer.hasScrollbars())
+        return;
+
+    const IntRect borderBox = toRenderBox(renderer()).pixelSnappedBorderBoxRect();
+
     IntSize offsetFromRenderer = m_graphicsLayer->offsetFromRenderer();
     if (GraphicsLayer* layer = layerForHorizontalScrollbar()) {
-        Scrollbar* hBar = m_owningLayer.horizontalScrollbar();
-        if (hBar) {
-            layer->setPosition(hBar->frameRect().location() - offsetFromRoot - offsetFromRenderer);
-            layer->setSize(hBar->frameRect().size());
-            if (layer->hasContentsLayer()) {
-                IntRect barRect = IntRect(IntPoint(), hBar->frameRect().size());
-                layer->setContentsRect(barRect);
-                layer->setContentsClippingRect(barRect);
-            }
+        IntRect hBarRect = m_owningLayer.rectForHorizontalScrollbar(borderBox);
+        layer->setPosition(hBarRect.location() - offsetFromRenderer);
+        layer->setSize(hBarRect.size());
+        if (layer->hasContentsLayer()) {
+            IntRect barRect = IntRect(IntPoint(), hBarRect.size());
+            layer->setContentsRect(barRect);
+            layer->setContentsClippingRect(barRect);
         }
-        layer->setDrawsContent(hBar && !layer->hasContentsLayer());
+        layer->setDrawsContent(m_owningLayer.horizontalScrollbar() && !layer->hasContentsLayer());
     }
     
     if (GraphicsLayer* layer = layerForVerticalScrollbar()) {
-        Scrollbar* vBar = m_owningLayer.verticalScrollbar();
-        if (vBar) {
-            layer->setPosition(vBar->frameRect().location() - offsetFromRoot - offsetFromRenderer);
-            layer->setSize(vBar->frameRect().size());
-            if (layer->hasContentsLayer()) {
-                IntRect barRect = IntRect(IntPoint(), vBar->frameRect().size());
-                layer->setContentsRect(barRect);
-                layer->setContentsClippingRect(barRect);
-            }
+        IntRect vBarRect = m_owningLayer.rectForVerticalScrollbar(borderBox);
+        layer->setPosition(vBarRect.location() - offsetFromRenderer);
+        layer->setSize(vBarRect.size());
+        if (layer->hasContentsLayer()) {
+            IntRect barRect = IntRect(IntPoint(), vBarRect.size());
+            layer->setContentsRect(barRect);
+            layer->setContentsClippingRect(barRect);
         }
-        layer->setDrawsContent(vBar && !layer->hasContentsLayer());
+        layer->setDrawsContent(m_owningLayer.verticalScrollbar() && !layer->hasContentsLayer());
     }
 
     if (GraphicsLayer* layer = layerForScrollCorner()) {
