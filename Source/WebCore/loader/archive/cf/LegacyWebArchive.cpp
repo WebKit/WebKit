@@ -422,7 +422,7 @@ RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const Re
 
 #endif
 
-PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Node* node, FrameFilter* filter)
+PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Node* node, std::function<bool (Frame&)> frameFilter)
 {
     ASSERT(node);
     if (!node)
@@ -447,7 +447,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Node* node, FrameFilter* f
     if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
         markupString = documentTypeString(node->document()) + markupString;
 
-    return create(markupString, frame, nodeList, filter);
+    return create(markupString, frame, nodeList, std::move(frameFilter));
 }
 
 PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Frame* frame)
@@ -496,7 +496,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Range* range)
     return create(markupString, frame, nodeList, 0);
 }
 
-PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Frame* frame, const Vector<Node*>& nodes, FrameFilter* frameFilter)
+PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Frame* frame, const Vector<Node*>& nodes, std::function<bool (Frame&)> frameFilter)
 {
     ASSERT(frame);
     
@@ -520,7 +520,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
         Frame* childFrame;
         if ((isHTMLFrameElement(node) || isHTMLIFrameElement(node) || isHTMLObjectElement(node))
             && (childFrame = toHTMLFrameOwnerElement(node).contentFrame())) {
-            if (frameFilter && !frameFilter->shouldIncludeSubframe(childFrame))
+            if (frameFilter && !frameFilter(*childFrame))
                 continue;
                 
             RefPtr<LegacyWebArchive> subframeArchive = create(childFrame->document(), frameFilter);

@@ -1,5 +1,15 @@
 2013-11-11  Anders Carlsson  <andersca@apple.com>
 
+        FrameFilter can just be an std::function instead
+        https://bugs.webkit.org/show_bug.cgi?id=124176
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::webArchiveData):
+
+2013-11-11  Anders Carlsson  <andersca@apple.com>
+
         Remove unused Qt cruft
         https://bugs.webkit.org/show_bug.cgi?id=124174
 
