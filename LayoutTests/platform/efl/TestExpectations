@@ -1035,6 +1035,7 @@ Bug(EFL) http/tests/images/webp-progressive-load.html
 
 # Requires MEDIA_SOURCE support.
 webkit.org/b/95296 http/tests/media/media-source [ Skip ]
+webkit.org/b/95296 media/media-source [ Skip ]
 
 # Requires ENCRYPTED_MEDIA support.
 webkit.org/b/95297 media/encrypted-media [ Skip ]
