@@ -1085,6 +1085,9 @@ webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Failure Pass ]
 # Flakey
 webkit.org/b/112533 media/auto-play-in-sandbox-with-allow-scripts.html [ Pass Failure ]
 
+# Flaky logging underneath us
+webkit.org/b/124219 [ Mavericks ] media/track/track-forced-subtitles-in-band.html [ Failure Pass ]
+
 # The following tests only fail on Mac EWS bots. Unfortunately, we haven't been able to figure out the cause of these failures.
 webkit.org/b/112176 canvas/philip/tests/2d.path.arc.scale.2.html [ Failure Pass ]
 webkit.org/b/112176 canvas/philip/tests/2d.path.arcTo.scale.html [ Failure Pass ]
