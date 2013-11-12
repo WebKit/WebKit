@@ -1,3 +1,10 @@
+2013-11-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening.
+
+        * WTF.vcxproj/WTF.vcxproj.filters: Tidy up filters so files show up
+        in their proper directories.
+
 2013-11-12  Alex Christensen  <achristensen@webkit.org>
 
         Build GStreamer files on Windows.
