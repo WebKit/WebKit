@@ -1,3 +1,11 @@
+2013-11-12  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Mark 73 tests as failing/skipped after r158954.
+
+        * platform/efl/TestExpectations:
+
 2013-11-12  Antti Koivisto  <antti@apple.com>
 
         Text on simple lines sometimes paints one pixel off
