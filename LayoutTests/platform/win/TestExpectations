@@ -2525,6 +2525,8 @@ fast/loader/url-selected-user-gesture.html
 
 # Don't run ogv and mkv tests on mac
 media/track/in-band [ WontFix ]
+media/track/video [ WontFix ]
+media/track/audio [ WontFix ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=113946
 compositing/contents-opaque/control-layer.html
@@ -2877,3 +2879,6 @@ media/video-canvas-drawing-output.html
 
 # crypto.subtle is not yet enabled
 crypto/subtle [ Skip ]
+
+# Mock media source does not work on Windows
+media/media-source [ Failure ]
