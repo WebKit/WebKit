@@ -27,6 +27,7 @@
 #import "RemoteLayerTreeDrawingArea.h"
 
 #import "DrawingAreaProxyMessages.h"
+#import "GraphicsLayerCARemote.h"
 #import "RemoteLayerTreeContext.h"
 #import "WebPage.h"
 #import <WebCore/Frame.h>
@@ -68,6 +69,8 @@ GraphicsLayerFactory* RemoteLayerTreeDrawingArea::graphicsLayerFactory()
 
 void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer* rootLayer)
 {
+    m_rootLayer = rootLayer ? static_cast<GraphicsLayerCARemote*>(rootLayer)->platformCALayer() : nullptr;
+
     m_remoteLayerTreeContext->setRootLayer(rootLayer);
 }
 
@@ -78,7 +81,15 @@ void RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush()
 
 void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, const IntSize& layerPosition)
 {
+    m_viewSize = viewSize;
     m_webPage->setSize(viewSize);
+
+    for (const auto& overlayAndLayer : m_pageOverlayLayers) {
+        GraphicsLayer* layer = overlayAndLayer.value.get();
+        if (layer->drawsContent())
+            layer->setSize(viewSize);
+    }
+
     scheduleCompositingLayerFlush();
 
     m_webPage->send(Messages::DrawingAreaProxy::DidUpdateGeometry());
@@ -97,6 +108,83 @@ void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore&)
     // in order to be scrolled by the ScrollingCoordinator.
     settings.setAcceleratedCompositingForFixedPositionEnabled(true);
     settings.setFixedPositionCreatesStackingContext(true);
+
+    for (const auto& overlayAndLayer : m_pageOverlayLayers) {
+        overlayAndLayer.value->setAcceleratesDrawing(settings.acceleratedDrawingEnabled());
+        overlayAndLayer.value->setShowDebugBorder(settings.showDebugBorders());
+        overlayAndLayer.value->setShowRepaintCounter(settings.showRepaintCounter());
+    }
+}
+
+void RemoteLayerTreeDrawingArea::didInstallPageOverlay(PageOverlay* pageOverlay)
+{
+    std::unique_ptr<GraphicsLayerCARemote> layer(static_cast<GraphicsLayerCARemote*>(GraphicsLayer::create(graphicsLayerFactory(), this).release()));
+#ifndef NDEBUG
+    layer->setName("page overlay content");
+#endif
+
+    layer->setAcceleratesDrawing(m_webPage->corePage()->settings().acceleratedDrawingEnabled());
+    layer->setShowDebugBorder(m_webPage->corePage()->settings().showDebugBorders());
+    layer->setShowRepaintCounter(m_webPage->corePage()->settings().showRepaintCounter());
+
+    m_rootLayer->appendSublayer(layer->platformCALayer());
+    m_remoteLayerTreeContext->outOfTreeLayerWasAdded(layer.get());
+
+    m_pageOverlayLayers.add(pageOverlay, std::move(layer));
+    scheduleCompositingLayerFlush();
+}
+
+void RemoteLayerTreeDrawingArea::didUninstallPageOverlay(PageOverlay* pageOverlay)
+{
+    std::unique_ptr<GraphicsLayerCARemote> layer = m_pageOverlayLayers.take(pageOverlay);
+    ASSERT(layer);
+
+    m_remoteLayerTreeContext->outOfTreeLayerWillBeRemoved(layer.get());
+    layer->platformCALayer()->removeFromSuperlayer();
+
+    scheduleCompositingLayerFlush();
+}
+
+void RemoteLayerTreeDrawingArea::setPageOverlayNeedsDisplay(PageOverlay* pageOverlay, const IntRect& rect)
+{
+    GraphicsLayerCARemote* layer = m_pageOverlayLayers.get(pageOverlay);
+
+    if (!layer)
+        return;
+
+    if (!layer->drawsContent()) {
+        layer->setDrawsContent(true);
+        layer->setSize(m_viewSize);
+    }
+
+    layer->setNeedsDisplayInRect(rect);
+    scheduleCompositingLayerFlush();
+}
+
+void RemoteLayerTreeDrawingArea::setPageOverlayOpacity(PageOverlay* pageOverlay, float opacity)
+{
+    GraphicsLayerCARemote* layer = m_pageOverlayLayers.get(pageOverlay);
+    
+    if (!layer)
+        return;
+    
+    layer->setOpacity(opacity);
+    scheduleCompositingLayerFlush();
+}
+
+void RemoteLayerTreeDrawingArea::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const IntRect& clipRect)
+{
+    for (const auto& overlayAndLayer : m_pageOverlayLayers) {
+        if (overlayAndLayer.value.get() == graphicsLayer) {
+            m_webPage->drawPageOverlay(overlayAndLayer.key, graphicsContext, clipRect);
+            break;
+        }
+    }
+}
+
+float RemoteLayerTreeDrawingArea::deviceScaleFactor() const
+{
+    return m_webPage->corePage()->deviceScaleFactor();
 }
 
 } // namespace WebKit

@@ -1,3 +1,51 @@
+2013-11-11  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Implement Page Overlays
+        https://bugs.webkit.org/show_bug.cgi?id=124165
+        <rdar://problem/15199056>
+
+        Reviewed by Anders Carlsson.
+
+        Implement page overlays, very similar to how they work in TiledCoreAnimationDrawingArea,
+        but manipulating the PlatformCALayer tree instead of the CALayer tree directly.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::outOfTreeLayerWasAdded):
+        (WebKit::RemoteLayerTreeContext::outOfTreeLayerWillBeRemoved):
+        (WebKit::RemoteLayerTreeContext::flushLayers):
+        Add a list of out-of-tree GraphicsLayers which are flushed in addition
+        to the page's GraphicsLayer tree, and functions to manipulate this list.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        Make RemoteLayerTreeDrawingArea a GraphicsLayerClient, so we can get callbacks
+        from the GraphicsLayers that drive our page overlays.
+        Override the relevant page overlay functions.
+        Add storage for the root layer, view size, and a map of PageOverlay->GraphicsLayer.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::setRootCompositingLayer):
+        Store the root GraphicsLayer for later use.
+
+        (WebKit::RemoteLayerTreeDrawingArea::updateGeometry):
+        Update the size of the page overlays when the DrawingArea's geometry changes.
+
+        (WebKit::RemoteLayerTreeDrawingArea::updatePreferences):
+        Update the page overlay settings when necessary.
+
+        (WebKit::RemoteLayerTreeDrawingArea::didInstallPageOverlay):
+        Create a GraphicsLayer for our page overlay, set it up, and parent it.
+        Inform the RemoteLayerTreeContext that it will need to flush this GraphicsLayer,
+        since it's not a part of the page's GraphicsLayer tree.
+
+        (WebKit::RemoteLayerTreeDrawingArea::didUninstallPageOverlay):
+        Tear down our page overlay's GraphicsLayer.
+
+        (WebKit::RemoteLayerTreeDrawingArea::setPageOverlayNeedsDisplay):
+        (WebKit::RemoteLayerTreeDrawingArea::setPageOverlayOpacity):
+        (WebKit::RemoteLayerTreeDrawingArea::paintContents):
+        (WebKit::RemoteLayerTreeDrawingArea::deviceScaleFactor):
+
 2013-11-11  Anders Carlsson  <andersca@apple.com>
 
         Add a FrameLoadState object and begin moving loading related members from WebFrameProxy

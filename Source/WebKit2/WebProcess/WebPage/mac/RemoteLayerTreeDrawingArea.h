@@ -27,12 +27,19 @@
 #define RemoteLayerTreeDrawingArea_h
 
 #include "DrawingArea.h"
+#include "GraphicsLayerCARemote.h"
+#include <WebCore/GraphicsLayerClient.h>
+#include <wtf/HashMap.h>
+
+namespace WebCore {
+class PlatformCALayer;
+}
 
 namespace WebKit {
 
 class RemoteLayerTreeContext;
 
-class RemoteLayerTreeDrawingArea : public DrawingArea {
+class RemoteLayerTreeDrawingArea : public DrawingArea, public WebCore::GraphicsLayerClient {
 public:
     RemoteLayerTreeDrawingArea(WebPage*, const WebPageCreationParameters&);
     virtual ~RemoteLayerTreeDrawingArea();
@@ -52,7 +59,24 @@ private:
 
     virtual void updatePreferences(const WebPreferencesStore&) OVERRIDE;
 
+    virtual void didInstallPageOverlay(PageOverlay*) OVERRIDE;
+    virtual void didUninstallPageOverlay(PageOverlay*) OVERRIDE;
+    virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&) OVERRIDE;
+    virtual void setPageOverlayOpacity(PageOverlay*, float) OVERRIDE;
+
+    // WebCore::GraphicsLayerClient
+    virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) OVERRIDE { }
+    virtual void notifyFlushRequired(const WebCore::GraphicsLayer*) OVERRIDE { }
+    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect) OVERRIDE;
+    virtual float deviceScaleFactor() const OVERRIDE;
+    virtual void didCommitChangesForLayer(const WebCore::GraphicsLayer*) const OVERRIDE { }
+
     std::unique_ptr<RemoteLayerTreeContext> m_remoteLayerTreeContext;
+    RefPtr<WebCore::PlatformCALayer> m_rootLayer;
+
+    HashMap<PageOverlay*, std::unique_ptr<GraphicsLayerCARemote>> m_pageOverlayLayers;
+
+    WebCore::IntSize m_viewSize;
 };
 
 } // namespace WebKit

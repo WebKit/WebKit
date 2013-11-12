@@ -51,6 +51,9 @@ public:
     void layerWasCreated(PlatformCALayerRemote*, WebCore::PlatformCALayer::LayerType);
     void layerWillBeDestroyed(PlatformCALayerRemote*);
 
+    void outOfTreeLayerWasAdded(WebCore::GraphicsLayer*);
+    void outOfTreeLayerWillBeRemoved(WebCore::GraphicsLayer*);
+
     LayerHostingMode layerHostingMode() const { return m_webPage->layerHostingMode(); }
 
 private:
@@ -64,6 +67,7 @@ private:
     WebCore::Timer<RemoteLayerTreeContext> m_layerFlushTimer;
 
     RefPtr<PlatformCALayerRemote> m_rootLayer;
+    Vector<WebCore::GraphicsLayer*> m_outOfTreeLayers;
 
     Vector<RemoteLayerTreeTransaction::LayerCreationProperties> m_createdLayers;
     Vector<RemoteLayerTreeTransaction::LayerID> m_destroyedLayers;

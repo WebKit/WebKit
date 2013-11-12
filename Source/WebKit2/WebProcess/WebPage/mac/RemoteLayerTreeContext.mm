@@ -78,6 +78,19 @@ void RemoteLayerTreeContext::layerWillBeDestroyed(PlatformCALayerRemote* layer)
     m_destroyedLayers.append(layer->layerID());
 }
 
+void RemoteLayerTreeContext::outOfTreeLayerWasAdded(GraphicsLayer* layer)
+{
+    ASSERT(!m_outOfTreeLayers.contains(layer));
+    m_outOfTreeLayers.append(layer);
+}
+
+void RemoteLayerTreeContext::outOfTreeLayerWillBeRemoved(GraphicsLayer* layer)
+{
+    size_t layerIndex = m_outOfTreeLayers.find(layer);
+    ASSERT(layerIndex != notFound);
+    m_outOfTreeLayers.remove(layerIndex);
+}
+
 void RemoteLayerTreeContext::scheduleLayerFlush()
 {
     if (m_layerFlushTimer.isActive())
@@ -107,6 +120,9 @@ void RemoteLayerTreeContext::flushLayers()
 
     m_webPage->layoutIfNeeded();
     m_webPage->corePage()->mainFrame().view()->flushCompositingStateIncludingSubframes();
+
+    for (const auto& layer : m_outOfTreeLayers)
+        layer->flushCompositingStateForThisLayerOnly();
 
     transaction.setCreatedLayers(std::move(m_createdLayers));
     transaction.setDestroyedLayerIDs(std::move(m_destroyedLayers));
