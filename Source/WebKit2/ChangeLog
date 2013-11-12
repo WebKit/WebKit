@@ -1,3 +1,14 @@
+2013-11-11  Gustavo Noronha Silva  <gns@gnome.org>
+
+        REGRESSION(r158976): Web Inspector: unable to start docked or dock
+        https://bugs.webkit.org/show_bug.cgi?id=124148
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::canAttach): check for a level that is greater than 1 rather than 0
+        to deny attachment, since 1 is the first level of inspectors.
+
 2013-11-11  Anders Carlsson  <andersca@apple.com>
 
         FrameFilter can just be an std::function instead

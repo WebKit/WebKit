@@ -549,7 +549,7 @@ bool WebInspectorProxy::canAttach()
         return true;
 
     // Don't allow attaching to another inspector -- two inspectors in one window is too much!
-    if (m_level > 0)
+    if (m_level > 1)
         return false;
 
     // Don't allow the attach if the window would be too small to accommodate the minimum inspector height.
