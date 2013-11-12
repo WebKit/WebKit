@@ -1,3 +1,64 @@
+2013-11-11  David Hyatt  <hyatt@apple.com>
+
+        Make RenderBlockRareData be in a hashtable instead of being a member variable.
+        https://bugs.webkit.org/show_bug.cgi?id=124056
+
+        Reviewed by Anders Carlsson.
+
+        Right now RenderBlock has 4 bytes taken up by a m_rareData member that is almost
+        never allocated. This is better off in a separate hash, so that RenderBlock can
+        get 4 bytes back.
+        
+        Since RenderBlockFlow's rare data member was recently removed and folded into
+        RenderBlock, we need to undo that change and put the rare data member back in
+        RenderBlockFlow. RenderBlockFlowRareData inheriting from RenderBlockRareData
+        was not a good idea anyway, since RenderBlockFlows also very rarely need the
+        RenderBlockRareData members, and were thus paying a heavier cost when the rare
+        data was created than was necessary.
+ 
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlockRareData::RenderBlockRareData):
+        (WebCore::RenderBlock::~RenderBlock):
+        (WebCore::RenderBlock::hasRareData):
+        (WebCore::getRareData):
+        (WebCore::ensureRareData):
+        (WebCore::RenderBlock::ensureShapeInsideInfo):
+        (WebCore::RenderBlock::shapeInsideInfo):
+        (WebCore::RenderBlock::setShapeInsideInfo):
+        (WebCore::RenderBlock::paginationStrut):
+        (WebCore::RenderBlock::pageLogicalOffset):
+        (WebCore::RenderBlock::setPaginationStrut):
+        (WebCore::RenderBlock::setPageLogicalOffset):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::setMaxMarginBeforeValues):
+        (WebCore::RenderBlockFlow::setMaxMarginAfterValues):
+        (WebCore::RenderBlockFlow::setMustDiscardMarginBefore):
+        (WebCore::RenderBlockFlow::setMustDiscardMarginAfter):
+        (WebCore::RenderBlockFlow::mustDiscardMarginBefore):
+        (WebCore::RenderBlockFlow::mustDiscardMarginAfter):
+        (WebCore::RenderBlockFlow::setBreakAtLineToAvoidWidow):
+        (WebCore::RenderBlockFlow::setDidBreakAtLineToAvoidWidow):
+        (WebCore::RenderBlockFlow::clearDidBreakAtLineToAvoidWidow):
+        (WebCore::RenderBlockFlow::clearShouldBreakAtLineToAvoidWidow):
+        (WebCore::RenderBlockFlow::setRenderNamedFlowFragment):
+        (WebCore::RenderBlockFlow::ensureRareBlockFlowData):
+        (WebCore::RenderBlockFlow::materializeRareBlockFlowData):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::shouldBreakAtLineToAvoidWidow):
+        (WebCore::RenderBlockFlow::lineBreakToAvoidWidow):
+        (WebCore::RenderBlockFlow::didBreakAtLineToAvoidWidow):
+        (WebCore::RenderBlockFlow::lineGridBox):
+        (WebCore::RenderBlockFlow::setLineGridBox):
+        (WebCore::RenderBlockFlow::renderNamedFlowFragment):
+        (WebCore::RenderBlockFlow::maxPositiveMarginBefore):
+        (WebCore::RenderBlockFlow::maxNegativeMarginBefore):
+        (WebCore::RenderBlockFlow::maxPositiveMarginAfter):
+        (WebCore::RenderBlockFlow::maxNegativeMarginAfter):
+        (WebCore::RenderBlockFlow::initMaxMarginValues):
+        (WebCore::RenderBlockFlow::hasRareBlockFlowData):
+        (WebCore::RenderBlockFlow::rareBlockFlowData):
+
 2013-11-12  Alex Christensen  <achristensen@webkit.org>
 
         Build GStreamer files on Windows.

@@ -93,7 +93,7 @@ public:
     MarginValues marginValuesForChild(RenderBox& child) const;
 
     // Allocated only when some of these fields have non-default values
-    struct RenderBlockFlowRareData : public RenderBlockRareData {
+    struct RenderBlockFlowRareData {
         WTF_MAKE_NONCOPYABLE(RenderBlockFlowRareData); WTF_MAKE_FAST_ALLOCATED;
     public:
         RenderBlockFlowRareData(const RenderBlockFlow& block)
@@ -136,9 +136,6 @@ public:
         bool m_discardMarginAfter : 1;
         bool m_didBreakAtLineToAvoidWidow : 1;
     };
-
-    RenderBlockFlowRareData* rareData() const { return static_cast<RenderBlockFlowRareData*>(RenderBlock::rareData()); }
-    RenderBlockFlowRareData& ensureRareData() { return static_cast<RenderBlockFlowRareData&>(RenderBlock::ensureRareData()); }
 
     class MarginInfo {
         // Collapsing flags for whether we can collapse our margins with our children's margins.
@@ -233,25 +230,25 @@ public:
     void handleAfterSideOfBlock(LayoutUnit top, LayoutUnit bottom, MarginInfo&);
     void setCollapsedBottomMargin(const MarginInfo&);
 
-    bool shouldBreakAtLineToAvoidWidow() const { return hasRareData() && rareData()->m_lineBreakToAvoidWidow >= 0; }
+    bool shouldBreakAtLineToAvoidWidow() const { return hasRareBlockFlowData() && rareBlockFlowData()->m_lineBreakToAvoidWidow >= 0; }
     void clearShouldBreakAtLineToAvoidWidow() const;
-    int lineBreakToAvoidWidow() const { return hasRareData() ? rareData()->m_lineBreakToAvoidWidow : -1; }
+    int lineBreakToAvoidWidow() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_lineBreakToAvoidWidow : -1; }
     void setBreakAtLineToAvoidWidow(int);
     void clearDidBreakAtLineToAvoidWidow();
     void setDidBreakAtLineToAvoidWidow();
-    bool didBreakAtLineToAvoidWidow() const { return hasRareData() && rareData()->m_didBreakAtLineToAvoidWidow; }
+    bool didBreakAtLineToAvoidWidow() const { return hasRareBlockFlowData() && rareBlockFlowData()->m_didBreakAtLineToAvoidWidow; }
     bool relayoutToAvoidWidows(LayoutStateMaintainer&);
 
     virtual bool canHaveGeneratedChildren() const OVERRIDE;
 
-    RootInlineBox* lineGridBox() const { return hasRareData() ? rareData()->m_lineGridBox.get() : nullptr; }
+    RootInlineBox* lineGridBox() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_lineGridBox.get() : nullptr; }
     void setLineGridBox(std::unique_ptr<RootInlineBox> box)
     {
-        ensureRareData().m_lineGridBox = std::move(box);
+        ensureRareBlockFlowData().m_lineGridBox = std::move(box);
     }
     void layoutLineGridBox();
 
-    RenderNamedFlowFragment* renderNamedFlowFragment() const { return hasRareData() ? rareData()->m_renderNamedFlowFragment : nullptr; }
+    RenderNamedFlowFragment* renderNamedFlowFragment() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_renderNamedFlowFragment : nullptr; }
     void setRenderNamedFlowFragment(RenderNamedFlowFragment*);
 
     bool containsFloats() const OVERRIDE { return m_floatingObjects && !m_floatingObjects->set().isEmpty(); }
@@ -367,20 +364,20 @@ protected:
     LayoutUnit applyBeforeBreak(RenderBox& child, LayoutUnit logicalOffset); // If the child has a before break, then return a new yPos that shifts to the top of the next page/column.
     LayoutUnit applyAfterBreak(RenderBox& child, LayoutUnit logicalOffset, MarginInfo&); // If the child has an after break, then return a new offset that shifts to the top of the next page/column.
 
-    LayoutUnit maxPositiveMarginBefore() const { return hasRareData() ? rareData()->m_margins.positiveMarginBefore() : RenderBlockFlowRareData::positiveMarginBeforeDefault(*this); }
-    LayoutUnit maxNegativeMarginBefore() const { return hasRareData() ? rareData()->m_margins.negativeMarginBefore() : RenderBlockFlowRareData::negativeMarginBeforeDefault(*this); }
-    LayoutUnit maxPositiveMarginAfter() const { return hasRareData() ? rareData()->m_margins.positiveMarginAfter() : RenderBlockFlowRareData::positiveMarginAfterDefault(*this); }
-    LayoutUnit maxNegativeMarginAfter() const { return hasRareData() ? rareData()->m_margins.negativeMarginAfter() : RenderBlockFlowRareData::negativeMarginAfterDefault(*this); }
+    LayoutUnit maxPositiveMarginBefore() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_margins.positiveMarginBefore() : RenderBlockFlowRareData::positiveMarginBeforeDefault(*this); }
+    LayoutUnit maxNegativeMarginBefore() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_margins.negativeMarginBefore() : RenderBlockFlowRareData::negativeMarginBeforeDefault(*this); }
+    LayoutUnit maxPositiveMarginAfter() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_margins.positiveMarginAfter() : RenderBlockFlowRareData::positiveMarginAfterDefault(*this); }
+    LayoutUnit maxNegativeMarginAfter() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_margins.negativeMarginAfter() : RenderBlockFlowRareData::negativeMarginAfterDefault(*this); }
 
     void initMaxMarginValues()
     {
-        if (!hasRareData())
+        if (!hasRareBlockFlowData())
             return;
 
-        rareData()->m_margins = MarginValues(RenderBlockFlowRareData::positiveMarginBeforeDefault(*this) , RenderBlockFlowRareData::negativeMarginBeforeDefault(*this),
+        rareBlockFlowData()->m_margins = MarginValues(RenderBlockFlowRareData::positiveMarginBeforeDefault(*this) , RenderBlockFlowRareData::negativeMarginBeforeDefault(*this),
             RenderBlockFlowRareData::positiveMarginAfterDefault(*this), RenderBlockFlowRareData::negativeMarginAfterDefault(*this));
-        rareData()->m_discardMarginBefore = false;
-        rareData()->m_discardMarginAfter = false;
+        rareBlockFlowData()->m_discardMarginBefore = false;
+        rareBlockFlowData()->m_discardMarginAfter = false;
     }
 
     void setMaxMarginBeforeValues(LayoutUnit pos, LayoutUnit neg);
@@ -521,8 +518,14 @@ public:
     // Pagination routines.
     virtual bool relayoutForPagination(bool hasSpecifiedPageLogicalHeight, LayoutUnit pageLogicalHeight, LayoutStateMaintainer&);
 
+    bool hasRareBlockFlowData() const { return m_rareBlockFlowData.get(); }
+    RenderBlockFlowRareData* rareBlockFlowData() const { ASSERT_WITH_SECURITY_IMPLICATION(hasRareBlockFlowData()); return m_rareBlockFlowData.get(); }
+    RenderBlockFlowRareData& ensureRareBlockFlowData();
+    void materializeRareBlockFlowData();
+
 protected:
     OwnPtr<FloatingObjects> m_floatingObjects;
+    std::unique_ptr<RenderBlockFlowRareData> m_rareBlockFlowData;
     RenderLineBoxList m_lineBoxes;
     std::unique_ptr<SimpleLineLayout::Layout> m_simpleLineLayout;
 

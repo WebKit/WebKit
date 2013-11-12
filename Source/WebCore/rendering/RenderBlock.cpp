@@ -86,7 +86,6 @@ namespace WebCore {
 using namespace HTMLNames;
 
 struct SameSizeAsRenderBlock : public RenderBox {
-    void* pointers[1];
     uint32_t bitfields;
 };
 
@@ -108,6 +107,28 @@ static int gDelayUpdateScrollInfo = 0;
 static DelayedUpdateScrollInfoSet* gDelayedUpdateScrollInfoSet = 0;
 
 static bool gColumnFlowSplitEnabled = true;
+
+// Allocated only when some of these fields have non-default values
+
+struct RenderBlockRareData {
+    WTF_MAKE_NONCOPYABLE(RenderBlockRareData); WTF_MAKE_FAST_ALLOCATED;
+public:
+    RenderBlockRareData() 
+        : m_paginationStrut(0)
+        , m_pageLogicalOffset(0)
+    { 
+    }
+
+    LayoutUnit m_paginationStrut;
+    LayoutUnit m_pageLogicalOffset;
+
+#if ENABLE(CSS_SHAPES)
+    OwnPtr<ShapeInsideInfo> m_shapeInsideInfo;
+#endif
+};
+
+typedef HashMap<const RenderBlock*, std::unique_ptr<RenderBlockRareData>> RenderBlockRareDataMap;
+static RenderBlockRareDataMap* gRareDataMap = 0;
 
 // This class helps dispatching the 'overflow' event on layout change. overflow can be set on RenderBoxes, yet the existing code
 // only works on RenderBlocks. If this change, this class should be shared with other RenderBoxes.
@@ -201,10 +222,17 @@ RenderBlock::~RenderBlock()
 {
     if (hasColumns())
         gColumnInfoMap->take(this);
+    if (gRareDataMap)
+        gRareDataMap->remove(this);
     if (gPercentHeightDescendantsMap)
         removeBlockFromDescendantAndContainerMaps(this, gPercentHeightDescendantsMap, gPercentHeightContainerMap);
     if (gPositionedDescendantsMap)
         removeBlockFromDescendantAndContainerMaps(this, gPositionedDescendantsMap, gPositionedContainerMap);
+}
+
+bool RenderBlock::hasRareData() const
+{
+    return gRareDataMap ? gRareDataMap->contains(this) : false;
 }
 
 void RenderBlock::willBeDestroyed()
@@ -1381,6 +1409,43 @@ void RenderBlock::updateShapeInsideInfoAfterStyleChange(const ShapeValue* shapeI
     }
 }
 
+static RenderBlockRareData* getRareData(const RenderBlock* block)
+{
+    return gRareDataMap ? gRareDataMap->get(block) : 0;
+}
+
+static RenderBlockRareData& ensureRareData(const RenderBlock* block)
+{
+    if (!gRareDataMap)
+        gRareDataMap = new RenderBlockRareDataMap;
+    
+    auto& rareData = gRareDataMap->add(block, nullptr).iterator->value;
+    if (!rareData)
+        rareData = std::make_unique<RenderBlockRareData>();
+    return *rareData.get();
+}
+
+ShapeInsideInfo* RenderBlock::ensureShapeInsideInfo()
+{
+    RenderBlockRareData& rareData = ensureRareData(this);
+    if (!rareData.m_shapeInsideInfo)
+        setShapeInsideInfo(ShapeInsideInfo::createInfo(this));
+    return rareData.m_shapeInsideInfo.get();
+}
+
+ShapeInsideInfo* RenderBlock::shapeInsideInfo() const
+{
+    RenderBlockRareData* rareData = getRareData(this);
+    if (!rareData || !rareData->m_shapeInsideInfo)
+        return 0;
+    return ShapeInsideInfo::isEnabledFor(this) ? rareData->m_shapeInsideInfo.get() : 0;
+}
+
+void RenderBlock::setShapeInsideInfo(PassOwnPtr<ShapeInsideInfo> value)
+{
+    ensureRareData(this).m_shapeInsideInfo = value;
+}
+    
 void RenderBlock::markShapeInsideDescendantsForLayout()
 {
     if (!everHadLayout())
@@ -4930,26 +4995,38 @@ void RenderBlock::updateFirstLetter()
     createFirstLetterRenderer(firstLetterBlock, toRenderText(descendant));
 }
 
+LayoutUnit RenderBlock::paginationStrut() const
+{
+    RenderBlockRareData* rareData = getRareData(this);
+    return rareData ? rareData->m_paginationStrut : LayoutUnit();
+}
+
+LayoutUnit RenderBlock::pageLogicalOffset() const
+{
+    RenderBlockRareData* rareData = getRareData(this);
+    return rareData ? rareData->m_pageLogicalOffset : LayoutUnit();
+}
+
 void RenderBlock::setPaginationStrut(LayoutUnit strut)
 {
-    if (!hasRareData()) {
+    RenderBlockRareData* rareData = getRareData(this);
+    if (!rareData) {
         if (!strut)
             return;
-        materializeRareData();
+        rareData = &ensureRareData(this);
     }
-
-    rareData()->m_paginationStrut = strut;
+    rareData->m_paginationStrut = strut;
 }
 
 void RenderBlock::setPageLogicalOffset(LayoutUnit logicalOffset)
 {
-    if (!hasRareData()) {
+    RenderBlockRareData* rareData = getRareData(this);
+    if (!rareData) {
         if (!logicalOffset)
             return;
-        materializeRareData();
+        rareData = &ensureRareData(this);
     }
-
-    rareData()->m_pageLogicalOffset = logicalOffset;
+    rareData->m_pageLogicalOffset = logicalOffset;
 }
 
 void RenderBlock::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
@@ -5555,24 +5632,5 @@ void RenderBlock::adjustComputedFontSizes(float size, float visibleWidth)
     }
 }
 #endif // ENABLE(IOS_TEXT_AUTOSIZING)
-
-RenderBlock::RenderBlockRareData& RenderBlock::ensureRareData()
-{
-    if (hasRareData())
-        return *m_rareData;
-
-    materializeRareData();
-    return *m_rareData;
-}
-
-void RenderBlock::materializeRareData()
-{
-    ASSERT(!hasRareData());
-
-    if (isRenderBlockFlow())
-        m_rareData = std::make_unique<RenderBlockFlow::RenderBlockFlowRareData>(toRenderBlockFlow(*this));
-    else
-        m_rareData = std::make_unique<RenderBlock::RenderBlockRareData>();
-}
 
 } // namespace WebCore
