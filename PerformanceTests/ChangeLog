@@ -1,3 +1,13 @@
+2013-11-12  Andreas Kling  <akling@apple.com>
+
+        Import a fresh version of the full HTML5 spec for perf testing.
+
+        Rubber-stamped by Antti Koivisto.
+
+        * Parser/HTML5-8266-FullRender.html: Added.
+        * Parser/HTML5-8266-ParseOnly.html: Added.
+        * Parser/resources/html5-8266.html: Added.
+
 2013-11-09  Antti Koivisto  <antti@apple.com>
 
         Add subtest for word-break:break-all to Layout/line-layout-simple.html
