@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,25 +24,14 @@
  */
 
 #include "config.h"
-#include "WKMutableArray.h"
 
-#include "ImmutableArray.h"
-#include "WKAPICast.h"
+#include "WKArray.h"
 
-using namespace WebKit;
+// Deprecated functions that should be removed from the framework once nobody uses them.
 
-WKMutableArrayRef WKMutableArrayCreate()
+WK_EXPORT bool WKArrayIsMutable(WKArrayRef array);
+
+bool WKArrayIsMutable(WKArrayRef array)
 {
-    return const_cast<WKMutableArrayRef>(toAPI(ImmutableArray::create().leakRef()));
+    return false;
 }
-
-void WKArrayAppendItem(WKMutableArrayRef arrayRef, WKTypeRef itemRef)
-{
-    toImpl(arrayRef)->elements().append(toImpl(itemRef));
-}
-
-void WKArrayRemoveItemAtIndex(WKMutableArrayRef arrayRef, size_t index)
-{
-    toImpl(arrayRef)->elements().remove(index);
-}
-

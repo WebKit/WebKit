@@ -1,3 +1,16 @@
+2013-11-13  Anders Carlsson  <andersca@apple.com>
+
+        Add WKDeprecatedFunctions.cpp and move WKArrayIsMutable there
+        https://bugs.webkit.org/show_bug.cgi?id=124284
+
+        Reviewed by Andreas Kling.
+
+        * Shared/API/c/WKDeprecatedFunctions.cpp: Copied from Source/WebKit2/Shared/API/c/WKMutableArray.h.
+        (WKArrayIsMutable):
+        * Shared/API/c/WKMutableArray.cpp:
+        * Shared/API/c/WKMutableArray.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-11-12  Anders Carlsson  <andersca@apple.com>
 
         API::Object::Type should be a strongly typed enum
