@@ -4476,6 +4476,9 @@
     <ClCompile Include="..\bindings\js\JSRTCPeerConnectionCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
+    <ClCompile Include="..\bindings\js\JSRTCSessionDescriptionCustom.cpp">
+      <Filter>bindings\js</Filter>
+    </ClCompile>
     <ClCompile Include="..\bindings\js\JSRTCStatsResponseCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>

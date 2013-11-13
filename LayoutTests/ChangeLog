@@ -1,3 +1,18 @@
+2013-11-13  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Modifying RTCSessionDescription object construction to match the spec
+        https://bugs.webkit.org/show_bug.cgi?id=124212
+
+        Reviewed by Eric Carlson.
+
+        According to the spec the RTCSessionDescriptionInit parameter in RTCSessionDescription constructor is optional,
+        which must not be nullable. If the 'type' and/or 'sdp' keys are not present, the string object that stores
+        them in the RTCSessionDescription class, must be null in those cases. Also, if an object that is not a
+        Dictionary is passed as argument to the constructor, an exception must be raised.
+
+        * fast/mediastream/RTCSessionDescription-expected.txt:
+        * fast/mediastream/RTCSessionDescription.html:
+
 2013-11-09  Martin Robinson  <mrobinson@igalia.com>
 
         [MathML] The double bar vertical delimiter does not stretch properly
