@@ -275,8 +275,6 @@ void WebPlatformStrategies::loadResourceSynchronously(NetworkingContext* context
     if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(loadParameters), Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::Reply(error, response, data), 0)) {
         response = ResourceResponse();
         error = internalError(request.url());
-
-        return;
     }
 }
 
