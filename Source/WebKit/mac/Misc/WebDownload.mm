@@ -106,9 +106,7 @@ using namespace WebCore;
         selector == @selector(download:decideDestinationWithSuggestedFilename:) ||
         selector == @selector(download:didCreateDestination:) ||
         selector == @selector(downloadDidFinish:) ||
-        selector == @selector(download:didFailWithError:) ||
-        selector == @selector(download:shouldBeginChildDownloadOfSource:delegate:) ||
-        selector == @selector(download:didBeginChildDownload:)) {
+        selector == @selector(download:didFailWithError:)) {
         return [realDelegate respondsToSelector:selector];
     }
 
@@ -190,16 +188,6 @@ using namespace WebCore;
 - (void)download:(NSURLDownload *)download didFailWithError:(NSError *)error
 {
     [realDelegate download:download didFailWithError:error];
-}
-
-- (NSURLRequest *)download:(NSURLDownload *)download shouldBeginChildDownloadOfSource:(NSURLRequest *)child delegate:(id *)childDelegate
-{
-    return [realDelegate download:download shouldBeginChildDownloadOfSource:child delegate:childDelegate];
-}
-
-- (void)download:(NSURLDownload *)parent didBeginChildDownload:(NSURLDownload *)child
-{
-    [realDelegate download:parent didBeginChildDownload:child];
 }
 
 @end
