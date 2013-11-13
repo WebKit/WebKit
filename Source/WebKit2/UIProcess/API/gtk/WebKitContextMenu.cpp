@@ -20,7 +20,7 @@
 #include "config.h"
 #include "WebKitContextMenu.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "WebContextMenuItem.h"
 #include "WebKitContextMenuItemPrivate.h"
 #include "WebKitContextMenuPrivate.h"
@@ -74,7 +74,7 @@ void webkitContextMenuPopulate(WebKitContextMenu* menu, Vector<ContextMenuItem>&
     }
 }
 
-WebKitContextMenu* webkitContextMenuCreate(ImmutableArray* items)
+WebKitContextMenu* webkitContextMenuCreate(API::Array* items)
 {
     WebKitContextMenu* menu = webkit_context_menu_new();
     for (size_t i = 0; i < items->size(); ++i) {

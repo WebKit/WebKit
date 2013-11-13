@@ -106,7 +106,7 @@ static WebKitBackForwardListItem* webkitBackForwardListGetOrCreateItem(WebKitBac
     return listItem.get();
 }
 
-static GList* webkitBackForwardListCreateList(WebKitBackForwardList* list, ImmutableArray* backForwardItems)
+static GList* webkitBackForwardListCreateList(WebKitBackForwardList* list, API::Array* backForwardItems)
 {
     if (!backForwardItems)
         return 0;
@@ -128,7 +128,7 @@ WebKitBackForwardList* webkitBackForwardListCreate(WebBackForwardList* backForwa
     return list;
 }
 
-void webkitBackForwardListChanged(WebKitBackForwardList* backForwardList, WebBackForwardListItem* webAddedItem, ImmutableArray* webRemovedItems)
+void webkitBackForwardListChanged(WebKitBackForwardList* backForwardList, WebBackForwardListItem* webAddedItem, API::Array* webRemovedItems)
 {
     WebKitBackForwardListItem* addedItem = webkitBackForwardListGetOrCreateItem(backForwardList, webAddedItem);
     GList* removedItems = 0;
@@ -252,7 +252,7 @@ GList* webkit_back_forward_list_get_back_list_with_limit(WebKitBackForwardList* 
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST(backForwardList), 0);
 
     WebKitBackForwardListPrivate* priv = backForwardList->priv;
-    RefPtr<ImmutableArray> immutableArray = priv->backForwardItems->backListAsImmutableArrayWithLimit(limit);
+    RefPtr<API::Array> immutableArray = priv->backForwardItems->backListAsImmutableArrayWithLimit(limit);
     return webkitBackForwardListCreateList(backForwardList, immutableArray.get());
 }
 
@@ -283,6 +283,6 @@ GList* webkit_back_forward_list_get_forward_list_with_limit(WebKitBackForwardLis
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST(backForwardList), 0);
 
     WebKitBackForwardListPrivate* priv = backForwardList->priv;
-    RefPtr<ImmutableArray> immutableArray = priv->backForwardItems->forwardListAsImmutableArrayWithLimit(limit);
+    RefPtr<API::Array> immutableArray = priv->backForwardItems->forwardListAsImmutableArrayWithLimit(limit);
     return webkitBackForwardListCreateList(backForwardList, immutableArray.get());
 }

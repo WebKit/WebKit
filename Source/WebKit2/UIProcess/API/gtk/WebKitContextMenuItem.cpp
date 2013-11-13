@@ -20,7 +20,7 @@
 #include "config.h"
 #include "WebKitContextMenuItem.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "WebContextMenuItem.h"
 #include "WebContextMenuItemData.h"
 #include "WebKitContextMenuActionsPrivate.h"
@@ -104,7 +104,7 @@ WebKitContextMenuItem* webkitContextMenuItemCreate(WebContextMenuItem* webItem)
     subMenuItems.reserveInitialCapacity(subMenu.size());
     for (size_t i = 0; i < subMenu.size(); ++i)
         subMenuItems.uncheckedAppend(WebContextMenuItem::create(subMenu[i]).get());
-    webkitContextMenuItemSetSubMenu(item, adoptGRef(webkitContextMenuCreate(ImmutableArray::create(std::move(subMenuItems)).get())));
+    webkitContextMenuItemSetSubMenu(item, adoptGRef(webkitContextMenuCreate(API::Array::create(std::move(subMenuItems)).get())));
 
     return item;
 }

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebUIPopupMenuClient.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "WKAPICast.h"
 #include "WebPopupItemEfl.h"
 #include "WebPopupMenuListenerEfl.h"
@@ -44,9 +44,9 @@ void WebUIPopupMenuClient::showPopupMenu(WebPageProxy* pageProxy, WebPopupMenuPr
     for (size_t i = 0; i < size; ++i)
         webPopupItems.append(WebPopupItemEfl::create(items[i]));
 
-    RefPtr<ImmutableArray> ItemsArray;
+    RefPtr<API::Array> ItemsArray;
     if (!webPopupItems.isEmpty())
-        ItemsArray = ImmutableArray::create(std::move(webPopupItems));
+        ItemsArray = API::Array::create(std::move(webPopupItems));
 
     m_client.showPopupMenu(toAPI(pageProxy), toAPI(static_cast<WebPopupMenuListenerEfl*>(popupMenuProxy)), toAPI(rect), toAPI(textDirection), pageScaleFactor, toAPI(ItemsArray.get()), selectedIndex, m_client.clientInfo);
 }

@@ -177,6 +177,7 @@ set(WebKit2_SOURCES
     PluginProcess/PluginProcess.cpp
     PluginProcess/WebProcessConnection.cpp
 
+    Shared/APIArray.cpp
     Shared/APIClientTraits.cpp
     Shared/APIObject.cpp
     Shared/ActivityAssertion.cpp
@@ -187,7 +188,6 @@ set(WebKit2_SOURCES
     Shared/DictionaryPopupInfo.cpp
     Shared/EditorState.cpp
     Shared/FontInfo.cpp
-    Shared/ImmutableArray.cpp
     Shared/ImmutableDictionary.cpp
     Shared/MutableDictionary.cpp
     Shared/OriginAndDatabases.cpp

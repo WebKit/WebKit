@@ -26,9 +26,9 @@
 #include "config.h"
 #include "WKEventEfl.h"
 
+#include "APIArray.h"
 #include "EwkTouchEvent.h"
 #include "EwkTouchPoint.h"
-#include "ImmutableArray.h"
 #include "WKAPICast.h"
 #include "WebEvent.h"
 

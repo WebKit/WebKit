@@ -26,6 +26,7 @@
 #ifndef WebGrammarDetail_h
 #define WebGrammarDetail_h
 
+#include "APIArray.h"
 #include "APIObject.h"
 #include <WebCore/TextCheckerClient.h>
 #include <wtf/Forward.h>
@@ -33,22 +34,20 @@
 
 namespace WebKit {
 
-class ImmutableArray;
-
 class WebGrammarDetail : public API::TypedObject<API::Object::Type::GrammarDetail> {
 public:
-    static PassRefPtr<WebGrammarDetail> create(int location, int length, ImmutableArray* guesses, const String& userDescription);
+    static PassRefPtr<WebGrammarDetail> create(int location, int length, API::Array* guesses, const String& userDescription);
     static PassRefPtr<WebGrammarDetail> create(const WebCore::GrammarDetail&);
 
     int location() const { return m_grammarDetail.location; }
     int length() const { return m_grammarDetail.length; }
-    PassRefPtr<ImmutableArray> guesses() const;
+    PassRefPtr<API::Array> guesses() const;
     const String& userDescription() const { return m_grammarDetail.userDescription; }
 
     const WebCore::GrammarDetail& grammarDetail() { return m_grammarDetail; }
 
 private:
-    WebGrammarDetail(int location, int length, ImmutableArray* guesses, const String& userDescription);
+    WebGrammarDetail(int location, int length, API::Array* guesses, const String& userDescription);
     explicit WebGrammarDetail(const WebCore::GrammarDetail&);
 
     WebCore::GrammarDetail m_grammarDetail;

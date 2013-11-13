@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebTextCheckerClient.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "WKAPICast.h"
 #include "WKSharedAPICast.h"
 #include "WebGrammarDetail.h"
@@ -113,7 +113,7 @@ void WebTextCheckerClient::checkGrammarOfString(uint64_t tag, const String& text
     WKArrayRef wkGrammarDetailsRef = 0;
     m_client.checkGrammarOfString(tag, toAPI(text.impl()), &wkGrammarDetailsRef, &badGrammarLocation, &badGrammarLength, m_client.clientInfo);
 
-    RefPtr<ImmutableArray> wkGrammarDetails = adoptRef(toImpl(wkGrammarDetailsRef));
+    RefPtr<API::Array> wkGrammarDetails = adoptRef(toImpl(wkGrammarDetailsRef));
     size_t numGrammarDetails = wkGrammarDetails->size();
     for (size_t i = 0; i < numGrammarDetails; ++i)
         grammarDetails.append(wkGrammarDetails->at<WebGrammarDetail>(i)->grammarDetail());
@@ -156,7 +156,7 @@ void WebTextCheckerClient::guessesForWord(uint64_t tag, const String& word, Vect
     if (!m_client.guessesForWord)
         return;
 
-    RefPtr<ImmutableArray> wkGuesses = adoptRef(toImpl(m_client.guessesForWord(tag, toAPI(word.impl()), m_client.clientInfo)));
+    RefPtr<API::Array> wkGuesses = adoptRef(toImpl(m_client.guessesForWord(tag, toAPI(word.impl()), m_client.clientInfo)));
     size_t numGuesses = wkGuesses->size();
     for (size_t i = 0; i < numGuesses; ++i)
         guesses.append(wkGuesses->at<WebString>(i)->string());

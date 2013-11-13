@@ -32,9 +32,9 @@
 #include <WebCore/Scrollbar.h>
 
 #if ENABLE(TOUCH_EVENTS)
+#include "APIArray.h"
 #include "EwkTouchEvent.h"
 #include "EwkTouchPoint.h"
-#include "ImmutableArray.h"
 #include "WKAPICast.h"
 #endif
 
@@ -264,7 +264,7 @@ static inline WebEvent::Modifiers toWebEventModifiers(unsigned modifiers)
 
 WebTouchEvent WebEventFactory::createWebTouchEvent(const EwkTouchEvent* event, const AffineTransform& toWebContent)
 {
-    ImmutableArray* touchPointsArray = toImpl(event->touchPoints());
+    API::Array* touchPointsArray = toImpl(event->touchPoints());
     size_t size = touchPointsArray->size();
 
     Vector<WebPlatformTouchPoint> touchPoints;

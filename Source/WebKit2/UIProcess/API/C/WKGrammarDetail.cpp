@@ -26,8 +26,8 @@
 #include "config.h"
 #include "WKGrammarDetail.h"
 
+#include "APIArray.h"
 #include "APIObject.h"
-#include "ImmutableArray.h"
 #include "WKAPICast.h"
 #include "WebGrammarDetail.h"
 

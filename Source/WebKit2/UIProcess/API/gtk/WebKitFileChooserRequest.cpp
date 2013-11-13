@@ -20,7 +20,7 @@
 #include "config.h"
 #include "WebKitFileChooserRequest.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "WebKitFileChooserRequestPrivate.h"
 #include "WebOpenPanelParameters.h"
 #include "WebOpenPanelResultListenerProxy.h"
@@ -205,7 +205,7 @@ const gchar* const* webkit_file_chooser_request_get_mime_types(WebKitFileChooser
     if (request->priv->mimeTypes)
         return reinterpret_cast<gchar**>(request->priv->mimeTypes->pdata);
 
-    RefPtr<ImmutableArray> mimeTypes = request->priv->parameters->acceptMIMETypes();
+    RefPtr<API::Array> mimeTypes = request->priv->parameters->acceptMIMETypes();
     size_t numOfMimeTypes = mimeTypes->size();
     if (!numOfMimeTypes)
         return 0;
@@ -246,7 +246,7 @@ GtkFileFilter* webkit_file_chooser_request_get_mime_types_filter(WebKitFileChoos
     if (request->priv->filter)
         return request->priv->filter.get();
 
-    RefPtr<ImmutableArray> mimeTypes = request->priv->parameters->acceptMIMETypes();
+    RefPtr<API::Array> mimeTypes = request->priv->parameters->acceptMIMETypes();
     size_t numOfMimeTypes = mimeTypes->size();
     if (!numOfMimeTypes)
         return 0;
@@ -314,7 +314,7 @@ void webkit_file_chooser_request_select_files(WebKitFileChooserRequest* request,
     g_ptr_array_add(selectedFiles.get(), 0);
 
     // Select the files in WebCore and update local private attributes.
-    request->priv->listener->chooseFiles(ImmutableArray::create(std::move(choosenFiles)).get());
+    request->priv->listener->chooseFiles(API::Array::create(std::move(choosenFiles)).get());
     request->priv->selectedFiles = selectedFiles;
     request->priv->handledRequest = true;
 }
@@ -345,7 +345,7 @@ const gchar* const* webkit_file_chooser_request_get_selected_files(WebKitFileCho
     if (request->priv->selectedFiles)
         return reinterpret_cast<gchar**>(request->priv->selectedFiles->pdata);
 
-    RefPtr<ImmutableArray> selectedFileNames = request->priv->parameters->selectedFileNames();
+    RefPtr<API::Array> selectedFileNames = request->priv->parameters->selectedFileNames();
     size_t numOfFiles = selectedFileNames->size();
     if (!numOfFiles)
         return 0;

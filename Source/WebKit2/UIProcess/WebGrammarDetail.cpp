@@ -26,13 +26,13 @@
 #include "config.h"
 #include "WebGrammarDetail.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "WKGrammarDetail.h"
 #include "WebString.h"
 
 namespace WebKit {
 
-PassRefPtr<WebGrammarDetail> WebGrammarDetail::create(int location, int length, ImmutableArray* guesses, const String& userDescription)
+PassRefPtr<WebGrammarDetail> WebGrammarDetail::create(int location, int length, API::Array* guesses, const String& userDescription)
 {
     return adoptRef(new WebGrammarDetail(location, length, guesses, userDescription));
 }
@@ -42,7 +42,7 @@ PassRefPtr<WebGrammarDetail> WebGrammarDetail::create(const WebCore::GrammarDeta
     return adoptRef(new WebGrammarDetail(grammarDetail));
 }
 
-WebGrammarDetail::WebGrammarDetail(int location, int length, ImmutableArray* guesses, const String& userDescription)
+WebGrammarDetail::WebGrammarDetail(int location, int length, API::Array* guesses, const String& userDescription)
 {
     m_grammarDetail.location = location;
     m_grammarDetail.length = length;
@@ -55,13 +55,13 @@ WebGrammarDetail::WebGrammarDetail(int location, int length, ImmutableArray* gue
     m_grammarDetail.userDescription = userDescription;
 }
 
-PassRefPtr<ImmutableArray> WebGrammarDetail::guesses() const
+PassRefPtr<API::Array> WebGrammarDetail::guesses() const
 {
     size_t numGuesses = m_grammarDetail.guesses.size();
     Vector<RefPtr<API::Object> > wkGuesses(numGuesses);
     for (unsigned i = 0; i < numGuesses; ++i)
         wkGuesses[i] = WebString::create(m_grammarDetail.guesses[i]);
-    return ImmutableArray::create(std::move(wkGuesses));
+    return API::Array::create(std::move(wkGuesses));
 }
 
 WebGrammarDetail::WebGrammarDetail(const WebCore::GrammarDetail& grammarDetail)

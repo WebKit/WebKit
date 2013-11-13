@@ -200,7 +200,7 @@ static void webkitCookieManagerGetDomainsWithCookiesCallback(WKArrayRef wkDomain
     if (g_task_return_error_if_cancelled(task.get()))
         return;
 
-    ImmutableArray* domains = toImpl(wkDomains);
+    API::Array* domains = toImpl(wkDomains);
     GPtrArray* returnValue = g_ptr_array_sized_new(domains->size());
     for (size_t i = 0; i < domains->size(); ++i) {
         WebString* domainString = static_cast<WebString*>(domains->at(i));

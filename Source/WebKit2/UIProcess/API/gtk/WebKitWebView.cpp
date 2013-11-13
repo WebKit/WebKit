@@ -1804,7 +1804,7 @@ static void contextMenuDismissed(GtkMenuShell*, WebKitWebView* webView)
     g_signal_emit(webView, signals[CONTEXT_MENU_DISMISSED], 0, NULL);
 }
 
-void webkitWebViewPopulateContextMenu(WebKitWebView* webView, ImmutableArray* proposedMenu, WebHitTestResult* webHitTestResult)
+void webkitWebViewPopulateContextMenu(WebKitWebView* webView, API::Array* proposedMenu, WebHitTestResult* webHitTestResult)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(webView);
     WebContextMenuProxyGtk* contextMenuProxy = webkitWebViewBaseGetActiveContextMenuProxy(webViewBase);

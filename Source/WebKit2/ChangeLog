@@ -1,3 +1,48 @@
+2013-11-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r159234.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Shared/efl/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebTouchEvent):
+        * UIProcess/API/C/WKGrammarDetail.cpp:
+        * UIProcess/API/C/efl/WKEventEfl.cpp:
+        * UIProcess/API/gtk/WebKitBackForwardList.cpp:
+        (webkitBackForwardListCreateList):
+        (webkitBackForwardListChanged):
+        (webkit_back_forward_list_get_back_list_with_limit):
+        (webkit_back_forward_list_get_forward_list_with_limit):
+        * UIProcess/API/gtk/WebKitBackForwardListPrivate.h:
+        * UIProcess/API/gtk/WebKitContextMenu.cpp:
+        (webkitContextMenuCreate):
+        * UIProcess/API/gtk/WebKitContextMenuItem.cpp:
+        (webkitContextMenuItemCreate):
+        * UIProcess/API/gtk/WebKitContextMenuPrivate.h:
+        * UIProcess/API/gtk/WebKitCookieManager.cpp:
+        (webkitCookieManagerGetDomainsWithCookiesCallback):
+        * UIProcess/API/gtk/WebKitFileChooserRequest.cpp:
+        (webkit_file_chooser_request_get_mime_types):
+        (webkit_file_chooser_request_get_mime_types_filter):
+        (webkit_file_chooser_request_select_files):
+        (webkit_file_chooser_request_get_selected_files):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewPopulateContextMenu):
+        * UIProcess/API/gtk/WebKitWebViewGroup.cpp:
+        (toImmutableArray):
+        (webkit_web_view_group_add_user_style_sheet):
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/WebGrammarDetail.cpp:
+        (WebKit::WebGrammarDetail::create):
+        (WebKit::WebGrammarDetail::WebGrammarDetail):
+        (WebKit::WebGrammarDetail::guesses):
+        * UIProcess/WebGrammarDetail.h:
+        * UIProcess/WebTextCheckerClient.cpp:
+        (WebKit::WebTextCheckerClient::checkGrammarOfString):
+        (WebKit::WebTextCheckerClient::guessesForWord):
+        * UIProcess/efl/WebUIPopupMenuClient.cpp:
+        (WebUIPopupMenuClient::showPopupMenu):
+
 2013-11-13  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

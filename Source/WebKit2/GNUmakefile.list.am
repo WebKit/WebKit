@@ -322,6 +322,8 @@ webkit2_sources += \
 	Source/WebKit2/Shared/ResourceCachesToClear.h \
 	Source/WebKit2/Shared/ViewState.h \
 	Source/WebKit2/Shared/WebMemorySampler.h \
+	Source/WebKit2/Shared/APIArray.cpp \
+	Source/WebKit2/Shared/APIArray.h \
 	Source/WebKit2/Shared/APIClient.h \
 	Source/WebKit2/Shared/APIClientTraits.cpp \
 	Source/WebKit2/Shared/APIClientTraits.h \
@@ -434,8 +436,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/gtk/WebEventFactory.cpp \
 	Source/WebKit2/Shared/gtk/WebEventFactory.h \
 	Source/WebKit2/Shared/ImageOptions.h \
-	Source/WebKit2/Shared/ImmutableArray.cpp \
-	Source/WebKit2/Shared/ImmutableArray.h \
 	Source/WebKit2/Shared/ImmutableDictionary.cpp \
 	Source/WebKit2/Shared/ImmutableDictionary.h \
 	Source/WebKit2/Shared/LayerTreeContext.h \
