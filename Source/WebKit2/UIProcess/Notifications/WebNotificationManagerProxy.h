@@ -43,7 +43,7 @@ class WebContext;
 class WebPageProxy;
 class WebSecurityOrigin;
 
-class WebNotificationManagerProxy : public API::TypedObject<API::Object::TypeNotificationManager>, public WebContextSupplement {
+class WebNotificationManagerProxy : public API::TypedObject<API::Object::Type::NotificationManager>, public WebContextSupplement {
 public:
 
     static const char* supplementName();

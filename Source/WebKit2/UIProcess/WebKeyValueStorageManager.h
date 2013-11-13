@@ -39,7 +39,7 @@ namespace WebKit {
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-class WebKeyValueStorageManager : public API::TypedObject<API::Object::TypeKeyValueStorageManager>, public WebContextSupplement {
+class WebKeyValueStorageManager : public API::TypedObject<API::Object::Type::KeyValueStorageManager>, public WebContextSupplement {
 public:
     static const char* supplementName();
 

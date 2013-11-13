@@ -35,7 +35,7 @@ class WebPage;
 
 class InjectedBundleBackForwardListItem;
 
-class InjectedBundleBackForwardList : public API::TypedObject<API::Object::TypeBundleBackForwardList> {
+class InjectedBundleBackForwardList : public API::TypedObject<API::Object::Type::BundleBackForwardList> {
 public:
     static PassRefPtr<InjectedBundleBackForwardList> create(WebPage* page)
     {

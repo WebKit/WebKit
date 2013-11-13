@@ -40,7 +40,7 @@ class WebFrameProxy;
 
 class WebFormSubmissionListenerProxy : public WebFrameListenerProxy {
 public:
-    static const Type APIType = TypeFormSubmissionListener;
+    static const Type APIType = Type::FormSubmissionListener;
 
     static PassRefPtr<WebFormSubmissionListenerProxy> create(WebFrameProxy* frame, uint64_t listenerID)
     {

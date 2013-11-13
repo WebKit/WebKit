@@ -109,7 +109,7 @@ bool InjectedBundle::load(API::Object* initializationUserData)
 
     if ([instance respondsToSelector:@selector(webProcessPlugIn:initializeWithObject:)]) {
         RetainPtr<id> objCInitializationUserData;
-        if (initializationUserData && initializationUserData->type() == API::Object::TypeObjCObjectGraph)
+        if (initializationUserData && initializationUserData->type() == API::Object::Type::ObjCObjectGraph)
             objCInitializationUserData = static_cast<ObjCObjectGraph*>(initializationUserData)->rootObject();
         [instance webProcessPlugIn:[WKWebProcessPlugInController _shared] initializeWithObject:objCInitializationUserData.get()];
     } else if ([instance respondsToSelector:@selector(webProcessPlugInInitialize:)]) {

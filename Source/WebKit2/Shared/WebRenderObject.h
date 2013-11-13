@@ -39,7 +39,7 @@ namespace WebKit {
 
 class WebPage;
 
-class WebRenderObject : public API::TypedObject<API::Object::TypeRenderObject> {
+class WebRenderObject : public API::TypedObject<API::Object::Type::RenderObject> {
 public:
     static PassRefPtr<WebRenderObject> create(WebPage*);
     static PassRefPtr<WebRenderObject> create(WebCore::RenderObject* renderer)

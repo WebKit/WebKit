@@ -43,7 +43,7 @@ class WebData;
 class WebString;
 class WebURL;
 
-class WebArchiveResource : public API::TypedObject<API::Object::TypeWebArchiveResource> {
+class WebArchiveResource : public API::TypedObject<API::Object::Type::WebArchiveResource> {
 public:
     virtual ~WebArchiveResource();
 

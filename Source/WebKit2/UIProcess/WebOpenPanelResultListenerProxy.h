@@ -35,7 +35,7 @@ namespace WebKit {
 class ImmutableArray;
 class WebPageProxy;
 
-class WebOpenPanelResultListenerProxy : public API::TypedObject<API::Object::TypeFramePolicyListener> {
+class WebOpenPanelResultListenerProxy : public API::TypedObject<API::Object::Type::FramePolicyListener> {
 public:
     static PassRefPtr<WebOpenPanelResultListenerProxy> create(WebPageProxy* page)
     {

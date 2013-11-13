@@ -219,7 +219,7 @@ private:
 };
 
 class WebPageProxy
-    : public API::TypedObject<API::Object::TypePage>
+    : public API::TypedObject<API::Object::Type::Page>
 #if ENABLE(INPUT_TYPE_COLOR)
     , public WebColorPicker::Client
 #endif

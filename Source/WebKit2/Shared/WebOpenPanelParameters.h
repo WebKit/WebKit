@@ -36,7 +36,7 @@ namespace WebKit {
 
 class ImmutableArray;
 
-class WebOpenPanelParameters : public API::TypedObject<API::Object::TypeOpenPanelParameters> {
+class WebOpenPanelParameters : public API::TypedObject<API::Object::Type::OpenPanelParameters> {
 public:
     static PassRefPtr<WebOpenPanelParameters> create(const WebCore::FileChooserSettings&);
     ~WebOpenPanelParameters();

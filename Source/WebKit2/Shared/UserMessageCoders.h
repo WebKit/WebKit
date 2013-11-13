@@ -74,7 +74,7 @@ public:
     bool baseEncode(CoreIPC::ArgumentEncoder& encoder, API::Object::Type& type) const
     {
         if (!m_root) {
-            encoder << static_cast<uint32_t>(API::Object::TypeNull);
+            encoder << static_cast<uint32_t>(API::Object::Type::Null);
             return true;
         }
 
@@ -82,14 +82,14 @@ public:
         encoder << static_cast<uint32_t>(type);
 
         switch (type) {
-        case API::Object::TypeArray: {
+        case API::Object::Type::Array: {
             ImmutableArray* array = static_cast<ImmutableArray*>(m_root);
             encoder << static_cast<uint64_t>(array->size());
             for (size_t i = 0; i < array->size(); ++i)
                 encoder << Owner(array->at(i));
             return true;
         }
-        case API::Object::TypeDictionary: {
+        case API::Object::Type::Dictionary: {
             ImmutableDictionary* dictionary = static_cast<ImmutableDictionary*>(m_root);
             const ImmutableDictionary::MapType& map = dictionary->map();
             encoder << static_cast<uint64_t>(map.size());
@@ -102,44 +102,44 @@ public:
             }
             return true;
         }
-        case API::Object::TypeString: {
+        case API::Object::Type::String: {
             WebString* string = static_cast<WebString*>(m_root);
             encoder << string->string();
             return true;
         }
-        case API::Object::TypeSerializedScriptValue: {
+        case API::Object::Type::SerializedScriptValue: {
             WebSerializedScriptValue* scriptValue = static_cast<WebSerializedScriptValue*>(m_root);
             encoder << scriptValue->dataReference();
             return true;
         }
-        case API::Object::TypeBoolean: {
+        case API::Object::Type::Boolean: {
             WebBoolean* booleanObject = static_cast<WebBoolean*>(m_root);
             encoder << booleanObject->value();
             return true;
         }
-        case API::Object::TypeDouble: {
+        case API::Object::Type::Double: {
             WebDouble* doubleObject = static_cast<WebDouble*>(m_root);
             encoder << doubleObject->value();
             return true;
         }
-        case API::Object::TypeUInt64: {
+        case API::Object::Type::UInt64: {
             WebUInt64* uint64Object = static_cast<WebUInt64*>(m_root);
             encoder << uint64Object->value();
             return true;
         }
-        case API::Object::TypePoint: {
+        case API::Object::Type::Point: {
             WebPoint* pointObject = static_cast<WebPoint*>(m_root);
             encoder << pointObject->point().x;
             encoder << pointObject->point().y;
             return true;
         }
-        case API::Object::TypeSize: {
+        case API::Object::Type::Size: {
             WebSize* sizeObject = static_cast<WebSize*>(m_root);
             encoder << sizeObject->size().width;
             encoder << sizeObject->size().height;
             return true;
         }
-        case API::Object::TypeRect: {
+        case API::Object::Type::Rect: {
             WebRect* rectObject = static_cast<WebRect*>(m_root);
             encoder << rectObject->rect().origin.x;
             encoder << rectObject->rect().origin.y;
@@ -147,7 +147,7 @@ public:
             encoder << rectObject->rect().size.height;
             return true;
         }
-        case API::Object::TypeRenderLayer: {
+        case API::Object::Type::RenderLayer: {
             WebRenderLayer* renderLayer = static_cast<WebRenderLayer*>(m_root);
             encoder << Owner(renderLayer->renderer());
             encoder << renderLayer->isReflection();
@@ -160,7 +160,7 @@ public:
             encoder << Owner(renderLayer->positiveZOrderList());
             return true;
         }
-        case API::Object::TypeRenderObject: {
+        case API::Object::Type::RenderObject: {
             WebRenderObject* renderObject = static_cast<WebRenderObject*>(m_root);
             encoder << renderObject->name();
             encoder << renderObject->elementTagName();
@@ -171,27 +171,27 @@ public:
             encoder << Owner(renderObject->children().get());
             return true;
         }
-        case API::Object::TypeURL: {
+        case API::Object::Type::URL: {
             WebURL* urlObject = static_cast<WebURL*>(m_root);
             encoder << urlObject->string();
             return true;
         }
-        case API::Object::TypeURLRequest: {
+        case API::Object::Type::URLRequest: {
             WebURLRequest* urlRequestObject = static_cast<WebURLRequest*>(m_root);
             encoder << urlRequestObject->resourceRequest();
             return true;
         }
-        case API::Object::TypeURLResponse: {
+        case API::Object::Type::URLResponse: {
             WebURLResponse* urlResponseObject = static_cast<WebURLResponse*>(m_root);
             encoder << urlResponseObject->resourceResponse();
             return true;
         }
-        case API::Object::TypeUserContentURLPattern: {
+        case API::Object::Type::UserContentURLPattern: {
             WebUserContentURLPattern* urlPattern = static_cast<WebUserContentURLPattern*>(m_root);
             encoder << urlPattern->patternString();
             return true;
         }
-        case API::Object::TypeImage: {
+        case API::Object::Type::Image: {
             WebImage* image = static_cast<WebImage*>(m_root);
 
             ShareableBitmap::Handle handle;
@@ -208,17 +208,17 @@ public:
             encoder << handle;
             return true;
         }
-        case API::Object::TypeData: {
+        case API::Object::Type::Data: {
             WebData* data = static_cast<WebData*>(m_root);
             encoder << data->dataReference();
             return true;
         }
-        case API::Object::TypeCertificateInfo: {
+        case API::Object::Type::CertificateInfo: {
             WebCertificateInfo* certificateInfo = static_cast<WebCertificateInfo*>(m_root);
             encoder << certificateInfo->platformCertificateInfo();
             return true;
         }
-        case API::Object::TypeError: {
+        case API::Object::Type::Error: {
             WebError* errorObject = static_cast<WebError*>(m_root);
             encoder << errorObject->platformError();
             return true;
@@ -269,7 +269,7 @@ public:
         type = static_cast<API::Object::Type>(typeAsUInt32);
 
         switch (type) {
-        case API::Object::TypeArray: {
+        case API::Object::Type::Array: {
             uint64_t size;
             if (!decoder.decode(size))
                 return false;
@@ -286,7 +286,7 @@ public:
             coder.m_root = ImmutableArray::create(std::move(vector));
             break;
         }
-        case API::Object::TypeDictionary: {
+        case API::Object::Type::Dictionary: {
             uint64_t size;
             if (!decoder.decode(size))
                 return false;
@@ -310,14 +310,14 @@ public:
             coder.m_root = ImmutableDictionary::adopt(map);
             break;
         }
-        case API::Object::TypeString: {
+        case API::Object::Type::String: {
             String string;
             if (!decoder.decode(string))
                 return false;
             coder.m_root = WebString::create(string);
             break;
         }
-        case API::Object::TypeSerializedScriptValue: {
+        case API::Object::Type::SerializedScriptValue: {
             CoreIPC::DataReference dataReference;
             if (!decoder.decode(dataReference))
                 return false;
@@ -326,28 +326,28 @@ public:
             coder.m_root = WebSerializedScriptValue::adopt(vector);
             break;
         }
-        case API::Object::TypeDouble: {
+        case API::Object::Type::Double: {
             double value;
             if (!decoder.decode(value))
                 return false;
             coder.m_root = WebDouble::create(value);
             break;
         }
-        case API::Object::TypeUInt64: {
+        case API::Object::Type::UInt64: {
             uint64_t value;
             if (!decoder.decode(value))
                 return false;
             coder.m_root = WebUInt64::create(value);
             break;
         }
-        case API::Object::TypeBoolean: {
+        case API::Object::Type::Boolean: {
             bool value;
             if (!decoder.decode(value))
                 return false;
             coder.m_root = WebBoolean::create(value);
             break;
         }
-        case API::Object::TypeSize: {
+        case API::Object::Type::Size: {
             double width;
             double height;
             if (!decoder.decode(width))
@@ -357,7 +357,7 @@ public:
             coder.m_root = WebSize::create(WKSizeMake(width, height));
             break;
         }
-        case API::Object::TypePoint: {
+        case API::Object::Type::Point: {
             double x;
             double y;
             if (!decoder.decode(x))
@@ -367,7 +367,7 @@ public:
             coder.m_root = WebPoint::create(WKPointMake(x, y));
             break;
         }
-        case API::Object::TypeRect: {
+        case API::Object::Type::Rect: {
             double x;
             double y;
             double width;
@@ -383,7 +383,7 @@ public:
             coder.m_root = WebRect::create(WKRectMake(x, y, width, height));
             break;
         }
-        case API::Object::TypeRenderLayer: {
+        case API::Object::Type::RenderLayer: {
             RefPtr<API::Object> renderer;
             bool isReflection;
             bool isClipping;
@@ -397,7 +397,7 @@ public:
             Owner rendererCoder(coder, renderer);
             if (!decoder.decode(rendererCoder))
                 return false;
-            if (renderer->type() != API::Object::TypeRenderObject)
+            if (renderer->type() != API::Object::Type::RenderObject)
                 return false;
             if (!decoder.decode(isReflection))
                 return false;
@@ -423,7 +423,7 @@ public:
                 static_pointer_cast<ImmutableArray>(positiveZOrderList));
             break;
         }
-        case API::Object::TypeRenderObject: {
+        case API::Object::Type::RenderObject: {
             String name;
             String elementTagName;
             String elementID;
@@ -448,40 +448,40 @@ public:
             Owner messageCoder(coder, children);
             if (!decoder.decode(messageCoder))
                 return false;
-            if (children && children->type() != API::Object::TypeArray)
+            if (children && children->type() != API::Object::Type::Array)
                 return false;
             coder.m_root = WebRenderObject::create(name, elementTagName, elementID, static_pointer_cast<ImmutableArray>(elementClassNames), absolutePosition, frameRect, static_pointer_cast<ImmutableArray>(children));
             break;
         }
-        case API::Object::TypeURL: {
+        case API::Object::Type::URL: {
             String string;
             if (!decoder.decode(string))
                 return false;
             coder.m_root = WebURL::create(string);
             break;
         }
-        case API::Object::TypeURLRequest: {
+        case API::Object::Type::URLRequest: {
             WebCore::ResourceRequest request;
             if (!decoder.decode(request))
                 return false;
             coder.m_root = WebURLRequest::create(request);
             break;
         }
-        case API::Object::TypeURLResponse: {
+        case API::Object::Type::URLResponse: {
             WebCore::ResourceResponse response;
             if (!decoder.decode(response))
                 return false;
             coder.m_root = WebURLResponse::create(response);
             break;
         }
-        case API::Object::TypeUserContentURLPattern: {
+        case API::Object::Type::UserContentURLPattern: {
             String string;
             if (!decoder.decode(string))
                 return false;
             coder.m_root = WebUserContentURLPattern::create(string);
             break;
         }
-        case API::Object::TypeImage: {
+        case API::Object::Type::Image: {
             bool didEncode = false;
             if (!decoder.decode(didEncode))
                 return false;
@@ -496,21 +496,21 @@ public:
             coder.m_root = WebImage::create(ShareableBitmap::create(handle));
             return true;
         }
-        case API::Object::TypeData: {
+        case API::Object::Type::Data: {
             CoreIPC::DataReference dataReference;
             if (!decoder.decode(dataReference))
                 return false;
             coder.m_root = WebData::create(dataReference.data(), dataReference.size());
             break;
         }
-        case API::Object::TypeCertificateInfo: {
+        case API::Object::Type::CertificateInfo: {
             PlatformCertificateInfo platformCertificateInfo;
             if (!decoder.decode(platformCertificateInfo))
                 return false;
             coder.m_root = WebCertificateInfo::create(platformCertificateInfo);
             break;
         }
-        case API::Object::TypeError: {
+        case API::Object::Type::Error: {
             WebCore::ResourceError resourceError;
             if (!decoder.decode(resourceError))
                 return false;

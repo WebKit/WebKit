@@ -57,31 +57,31 @@ void* Object::newObject(size_t size, Type type)
     // API::Object, so they are allocated using +alloc.
 
     switch (type) {
-    case TypeArray:
+    case Type::Array:
         wrapper = [WKNSArray alloc];
         break;
 
-    case TypeBackForwardList:
+    case Type::BackForwardList:
         wrapper = [WKBackForwardList alloc];
         break;
 
-    case TypeBackForwardListItem:
+    case Type::BackForwardListItem:
         wrapper = [WKBackForwardListItem alloc];
         break;
 
-    case TypeDictionary:
+    case Type::Dictionary:
         wrapper = [WKNSDictionary alloc];
         break;
 
-    case TypeNavigationData:
+    case Type::NavigationData:
         wrapper = [WKNavigationData alloc];
         break;
 
-    case TypeString:
+    case Type::String:
         wrapper = NSAllocateObject([WKNSString class], size, nullptr);
         break;
 
-    case TypeURL:
+    case Type::URL:
         wrapper = NSAllocateObject([WKNSURL class], size, nullptr);
         break;
 

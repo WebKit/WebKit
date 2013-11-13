@@ -38,7 +38,7 @@ class ImmutableArray;
 
 // ImmutableDictionary - An immutable dictionary type suitable for vending to an API.
 
-class ImmutableDictionary : public API::TypedObject<API::Object::TypeDictionary> {
+class ImmutableDictionary : public API::TypedObject<API::Object::Type::Dictionary> {
 public:
     typedef HashMap<String, RefPtr<API::Object>> MapType;
 

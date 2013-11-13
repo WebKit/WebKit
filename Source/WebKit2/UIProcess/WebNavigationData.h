@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-class WebNavigationData : public API::TypedObject<API::Object::TypeNavigationData> {
+class WebNavigationData : public API::TypedObject<API::Object::Type::NavigationData> {
 public:
     static PassRefPtr<WebNavigationData> create(const WebNavigationDataStore& store)
     {

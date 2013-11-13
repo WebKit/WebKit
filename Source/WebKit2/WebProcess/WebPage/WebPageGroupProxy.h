@@ -41,7 +41,7 @@ class PageGroup;
 
 namespace WebKit {
 
-class WebPageGroupProxy : public API::TypedObject<API::Object::TypeBundlePageGroup> {
+class WebPageGroupProxy : public API::TypedObject<API::Object::Type::BundlePageGroup> {
 public:
     static PassRefPtr<WebPageGroupProxy> create(const WebPageGroupData&);
     virtual ~WebPageGroupProxy();

@@ -38,7 +38,7 @@
 
 namespace WebKit {
 
-class WebGraphicsContext : public API::TypedObject<API::Object::TypeGraphicsContext> {
+class WebGraphicsContext : public API::TypedObject<API::Object::Type::GraphicsContext> {
 public:
     static PassRefPtr<WebGraphicsContext> create(WebCore::GraphicsContext* graphicsContext)
     {

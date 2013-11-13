@@ -69,7 +69,7 @@ enum AttachmentSide {
     AttachmentSideRight
 };
 
-class WebInspectorProxy : public API::TypedObject<API::Object::TypeInspector>, public CoreIPC::MessageReceiver {
+class WebInspectorProxy : public API::TypedObject<API::Object::Type::Inspector>, public CoreIPC::MessageReceiver {
 public:
     static PassRefPtr<WebInspectorProxy> create(WebPageProxy* page)
     {

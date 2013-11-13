@@ -120,7 +120,7 @@ using namespace WebKit;
     size_t count = WKArrayGetSize(result.get());
     for (size_t k = 0; k < count; k++) {
         WKTypeRef item = WKArrayGetItemAtIndex(result.get(), k);
-        if (toImpl(item)->type() == WKStringGetTypeID()) {
+        if (toImpl(item)->type() == WebString::APIType) {
             RetainPtr<CFStringRef> name = adoptCF(WKStringCopyCFString(kCFAllocatorDefault, (WKStringRef)item));
             [names addObject:(NSString *)name.get()];
         }
@@ -207,9 +207,9 @@ using namespace WebKit;
     if (!result)
         return nil;
     
-    if (toImpl(result.get())->type() == WKStringGetTypeID())
+    if (toImpl(result.get())->type() == WebString::APIType)
         return CFBridgingRelease(WKStringCopyCFString(kCFAllocatorDefault, (WKStringRef)result.get()));
-    else if (toImpl(result.get())->type() == WKBooleanGetTypeID())
+    else if (toImpl(result.get())->type() == WebBoolean::APIType)
         return [NSNumber numberWithBool:WKBooleanGetValue(static_cast<WKBooleanRef>(result.get()))];
 
     return nil;

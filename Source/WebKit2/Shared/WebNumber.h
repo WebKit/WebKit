@@ -50,9 +50,9 @@ private:
     const NumberType m_value;
 };
 
-typedef WebNumber<bool, API::Object::TypeBoolean> WebBoolean;
-typedef WebNumber<double, API::Object::TypeDouble> WebDouble;
-typedef WebNumber<uint64_t, API::Object::TypeUInt64> WebUInt64;
+typedef WebNumber<bool, API::Object::Type::Boolean> WebBoolean;
+typedef WebNumber<double, API::Object::Type::Double> WebDouble;
+typedef WebNumber<uint64_t, API::Object::Type::UInt64> WebUInt64;
 
 } // namespace WebKit
 

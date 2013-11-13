@@ -43,7 +43,7 @@ class WebInspectorFrontendClient;
 class WebPage;
 struct WebPageCreationParameters;
 
-class WebInspector : public API::TypedObject<API::Object::TypeBundleInspector> {
+class WebInspector : public API::TypedObject<API::Object::Type::BundleInspector> {
 public:
     static PassRefPtr<WebInspector> create(WebPage*, WebCore::InspectorFrontendChannel*);
 

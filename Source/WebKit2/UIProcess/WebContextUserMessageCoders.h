@@ -52,28 +52,28 @@ public:
 
     void encode(CoreIPC::ArgumentEncoder& encoder) const
     {
-        API::Object::Type type = API::Object::TypeNull;
+        API::Object::Type type = API::Object::Type::Null;
         if (baseEncode(encoder, type))
             return;
 
         switch (type) {
-        case API::Object::TypePage: {
+        case API::Object::Type::Page: {
             WebPageProxy* page = static_cast<WebPageProxy*>(m_root);
             encoder << page->pageID();
             break;
         }
-        case API::Object::TypeFrame: {
+        case API::Object::Type::Frame: {
             WebFrameProxy* frame = static_cast<WebFrameProxy*>(m_root);
             encoder << frame->frameID();
             break;
         }
-        case API::Object::TypePageGroup: {
+        case API::Object::Type::PageGroup: {
             WebPageGroup* pageGroup = static_cast<WebPageGroup*>(m_root);
             encoder << pageGroup->data();
             break;
         }
 #if PLATFORM(MAC)
-        case API::Object::TypeObjCObjectGraph: {
+        case API::Object::Type::ObjCObjectGraph: {
             ObjCObjectGraph* objectGraph = static_cast<ObjCObjectGraph*>(m_root);
             encoder << WebContextObjCObjectGraphEncoder(objectGraph);
             break;
@@ -109,29 +109,29 @@ public:
 
     static bool decode(CoreIPC::ArgumentDecoder& decoder, WebContextUserMessageDecoder& coder)
     {
-        API::Object::Type type = API::Object::TypeNull;
+        API::Object::Type type = API::Object::Type::Null;
         if (!Base::baseDecode(decoder, coder, type))
             return false;
 
-        if (coder.m_root || type == API::Object::TypeNull)
+        if (coder.m_root || type == API::Object::Type::Null)
             return true;
 
         switch (type) {
-        case API::Object::TypeBundlePage: {
+        case API::Object::Type::BundlePage: {
             uint64_t pageID;
             if (!decoder.decode(pageID))
                 return false;
             coder.m_root = coder.m_process->webPage(pageID);
             break;
         }
-        case API::Object::TypeBundleFrame: {
+        case API::Object::Type::BundleFrame: {
             uint64_t frameID;
             if (!decoder.decode(frameID))
                 return false;
             coder.m_root = coder.m_process->webFrame(frameID);
             break;
         }
-        case API::Object::TypeBundlePageGroup: {
+        case API::Object::Type::BundlePageGroup: {
             uint64_t pageGroupID;
             if (!decoder.decode(pageGroupID))
                 return false;
@@ -139,7 +139,7 @@ public:
             break;
         }
 #if PLATFORM(MAC)
-        case API::Object::TypeObjCObjectGraph: {
+        case API::Object::Type::ObjCObjectGraph: {
             RefPtr<ObjCObjectGraph> objectGraph;
             WebContextObjCObjectGraphDecoder objectGraphDecoder(objectGraph, coder.m_process);
             if (!decoder.decode(objectGraphDecoder))

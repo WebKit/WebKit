@@ -35,7 +35,7 @@ namespace WebKit {
 
 // ImmutableArray - An immutable array type suitable for vending to an API.
 
-class ImmutableArray FINAL : public API::TypedObject<API::Object::TypeArray> {
+class ImmutableArray FINAL : public API::TypedObject<API::Object::Type::Array> {
 public:
     static PassRefPtr<ImmutableArray> create();
     static PassRefPtr<ImmutableArray> create(Vector<RefPtr<API::Object>> elements);

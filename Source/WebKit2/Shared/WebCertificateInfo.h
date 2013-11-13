@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-class WebCertificateInfo : public API::TypedObject<API::Object::TypeCertificateInfo> {
+class WebCertificateInfo : public API::TypedObject<API::Object::Type::CertificateInfo> {
 public:
     static PassRefPtr<WebCertificateInfo> create(const PlatformCertificateInfo& info)
     {

@@ -38,7 +38,7 @@ namespace WebKit {
 
 class WebFramePolicyListenerProxy : public WebFrameListenerProxy {
 public:
-    static const Type APIType = TypeFramePolicyListener;
+    static const Type APIType = Type::FramePolicyListener;
 
     static PassRefPtr<WebFramePolicyListenerProxy> create(WebFrameProxy* frame, uint64_t listenerID)
     {

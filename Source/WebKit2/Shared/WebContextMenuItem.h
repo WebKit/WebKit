@@ -35,7 +35,7 @@ namespace WebKit {
 
 class ImmutableArray;
 
-class WebContextMenuItem : public API::TypedObject<API::Object::TypeContextMenuItem> {
+class WebContextMenuItem : public API::TypedObject<API::Object::Type::ContextMenuItem> {
 public:
     static PassRefPtr<WebContextMenuItem> create(const WebContextMenuItemData& data)
     {

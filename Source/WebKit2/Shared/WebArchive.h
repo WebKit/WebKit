@@ -43,7 +43,7 @@ class ImmutableArray;
 class WebArchiveResource;
 class WebData;
 
-class WebArchive : public API::TypedObject<API::Object::TypeWebArchive> {
+class WebArchive : public API::TypedObject<API::Object::Type::WebArchive> {
 public:
     virtual ~WebArchive();
 

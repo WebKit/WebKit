@@ -38,7 +38,7 @@ namespace WebKit {
 class InjectedBundleNodeHandle;
 class WebFrame;
 
-class InjectedBundleHitTestResult : public API::TypedObject<API::Object::TypeBundleHitTestResult> {
+class InjectedBundleHitTestResult : public API::TypedObject<API::Object::Type::BundleHitTestResult> {
 public:
     static PassRefPtr<InjectedBundleHitTestResult> create(const WebCore::HitTestResult&);
 
