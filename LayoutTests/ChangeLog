@@ -1,3 +1,11 @@
+2013-11-13  Oliver Hunt  <oliver@apple.com>
+
+        Change testcase to not rely on functions that are only available on trunk
+
+        RS=Beth Dakin
+
+        * fast/js/script-tests/dfg-arguments-strict-mode.js:
+
 2013-11-08  Chris Fleizach  <cfleizach@apple.com>
 
         Fix up failing layout tests that in branch due to recent accessibility patches.

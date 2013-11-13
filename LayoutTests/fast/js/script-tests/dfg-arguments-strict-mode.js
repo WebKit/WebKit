@@ -8,9 +8,7 @@ function f(a) {
     return arguments[0];
 }
 
-noInline(f);
-
-while (!dfgCompiled({f:f}))
+for (var i = 0; i < 3000; ++i)
     f(1);
 
 shouldBe("f(1)", "1");
