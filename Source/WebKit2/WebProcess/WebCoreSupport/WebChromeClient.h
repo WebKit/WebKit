@@ -151,8 +151,6 @@ private:
     virtual bool shouldReplaceWithGeneratedFileForUpload(const String& path, String& generatedFilename) OVERRIDE;
     virtual String generateReplacementFile(const String& path) OVERRIDE;
     
-    virtual bool paintCustomOverhangArea(WebCore::GraphicsContext*, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&) OVERRIDE;
-
 #if ENABLE(INPUT_TYPE_COLOR)
     virtual PassOwnPtr<WebCore::ColorChooser> createColorChooser(WebCore::ColorChooserClient*, const WebCore::Color&) OVERRIDE;
 #endif

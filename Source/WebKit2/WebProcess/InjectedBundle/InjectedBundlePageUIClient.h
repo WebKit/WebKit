@@ -58,9 +58,6 @@ public:
     void mouseDidMoveOverElement(WebPage*, const WebCore::HitTestResult&, WebEvent::Modifiers, RefPtr<API::Object>& userData);
     void pageDidScroll(WebPage*);
 
-    bool shouldPaintCustomOverhangArea();
-    void paintCustomOverhangArea(WebPage*, WebCore::GraphicsContext*, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&);
-
     String shouldGenerateFileForUpload(WebPage*, const String& originalFilePath);
     String generateFileForUpload(WebPage*, const String& originalFilePath);
     

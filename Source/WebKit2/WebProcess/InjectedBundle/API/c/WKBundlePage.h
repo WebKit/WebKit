@@ -251,7 +251,6 @@ typedef void (*WKBundlePageWillRunJavaScriptConfirmCallback)(WKBundlePageRef pag
 typedef void (*WKBundlePageWillRunJavaScriptPromptCallback)(WKBundlePageRef page, WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef frame, const void *clientInfo);
 typedef void (*WKBundlePageMouseDidMoveOverElementCallback)(WKBundlePageRef page, WKBundleHitTestResultRef hitTestResult, WKEventModifiers modifiers, WKTypeRef* userData, const void *clientInfo);
 typedef void (*WKBundlePageDidScrollCallback)(WKBundlePageRef page, const void *clientInfo);
-typedef void (*WKBundlePagePaintCustomOverhangAreaCallback)(WKBundlePageRef page, WKGraphicsContextRef graphicsContext, WKRect horizontalOverhang, WKRect verticalOverhang, WKRect dirtyRect, const void* clientInfo);
 typedef WKStringRef (*WKBundlePageGenerateFileForUploadCallback)(WKBundlePageRef page, WKStringRef originalFilePath, const void* clientInfo);
 typedef WKBundlePageUIElementVisibility (*WKBundlePageStatusBarIsVisibleCallback)(WKBundlePageRef page, const void *clientInfo);
 typedef WKBundlePageUIElementVisibility (*WKBundlePageMenuBarIsVisibleCallback)(WKBundlePageRef page, const void *clientInfo);
@@ -273,10 +272,10 @@ struct WKBundlePageUIClient {
     WKBundlePageWillRunJavaScriptPromptCallback                         willRunJavaScriptPrompt;
     WKBundlePageMouseDidMoveOverElementCallback                         mouseDidMoveOverElement;
     WKBundlePageDidScrollCallback                                       pageDidScroll;
-    WKBundlePagePaintCustomOverhangAreaCallback                         paintCustomOverhangArea;
+    void*                                                               unused1;
     WKBundlePageGenerateFileForUploadCallback                           shouldGenerateFileForUpload;
     WKBundlePageGenerateFileForUploadCallback                           generateFileForUpload;
-    void*                                                               unused1;
+    void*                                                               unused2;
     WKBundlePageStatusBarIsVisibleCallback                              statusBarIsVisible;
     WKBundlePageMenuBarIsVisibleCallback                                menuBarIsVisible;
     WKBundlePageToolbarsAreVisibleCallback                              toolbarsAreVisible;

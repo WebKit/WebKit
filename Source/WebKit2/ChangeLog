@@ -1,3 +1,19 @@
+2013-11-13  Anders Carlsson  <andersca@apple.com>
+
+        Remove custom overhang area painting code
+        https://bugs.webkit.org/show_bug.cgi?id=124282
+
+        Reviewed by Andreas Kling.
+
+        This code was only used by the Mac port, to draw the linen background color on Lion.
+        We now do that on the GPU instead so get rid of this code.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2013-11-13  Sergio Correia  <sergio.correia@openbossa.org>
 
         [EFL][WK2] Convert some more OwnPtr/PassOwnPtr to std::unique_ptr

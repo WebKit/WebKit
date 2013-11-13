@@ -654,15 +654,6 @@ String WebChromeClient::generateReplacementFile(const String& path)
     return m_page->injectedBundleUIClient().generateFileForUpload(m_page, path);
 }
 
-bool WebChromeClient::paintCustomOverhangArea(GraphicsContext* context, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect)
-{
-    if (!m_page->injectedBundleUIClient().shouldPaintCustomOverhangArea())
-        return false;
-
-    m_page->injectedBundleUIClient().paintCustomOverhangArea(m_page, context, horizontalOverhangArea, verticalOverhangArea, dirtyRect);
-    return true;
-}
-
 #if ENABLE(INPUT_TYPE_COLOR)
 PassOwnPtr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient* client, const Color& initialColor)
 {
