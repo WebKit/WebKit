@@ -26,6 +26,8 @@
 #include "config.h"
 #include "UserGestureIndicator.h"
 
+#include <wtf/MainThread.h>
+
 namespace WebCore {
 
 static bool isDefinite(ProcessingUserGestureState state)
@@ -38,6 +40,9 @@ ProcessingUserGestureState UserGestureIndicator::s_state = DefinitelyNotProcessi
 UserGestureIndicator::UserGestureIndicator(ProcessingUserGestureState state)
     : m_previousState(s_state)
 {
+    // Silently ignore UserGestureIndicators on non main threads.
+    if (!isMainThread())
+        return;
     // We overwrite s_state only if the caller is definite about the gesture state.
     if (isDefinite(state))
         s_state = state;
@@ -46,8 +51,15 @@ UserGestureIndicator::UserGestureIndicator(ProcessingUserGestureState state)
 
 UserGestureIndicator::~UserGestureIndicator()
 {
+    if (!isMainThread())
+        return;
     s_state = m_previousState;
     ASSERT(isDefinite(s_state));
+}
+
+bool UserGestureIndicator::processingUserGesture()
+{
+    return isMainThread() ? s_state == DefinitelyProcessingUserGesture : false;
 }
 
 }

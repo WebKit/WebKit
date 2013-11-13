@@ -39,7 +39,7 @@ enum ProcessingUserGestureState {
 class UserGestureIndicator {
     WTF_MAKE_NONCOPYABLE(UserGestureIndicator);
 public:
-    static bool processingUserGesture() { return s_state == DefinitelyProcessingUserGesture; }
+    static bool processingUserGesture();
 
     explicit UserGestureIndicator(ProcessingUserGestureState);
     ~UserGestureIndicator();
