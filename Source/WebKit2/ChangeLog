@@ -1,3 +1,9 @@
+2013-11-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        One more attempt to fix the GTK build.
+
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+
 2013-11-13  Anders Carlsson  <andersca@apple.com>
 
         Plug-in processes hang around for 10 sec after Safari quits
