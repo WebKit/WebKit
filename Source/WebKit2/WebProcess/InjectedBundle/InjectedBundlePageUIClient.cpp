@@ -29,7 +29,6 @@
 #include "InjectedBundleHitTestResult.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
-#include "WebGraphicsContext.h"
 #include "WebSecurityOrigin.h"
 #include <wtf/text/WTFString.h>
 

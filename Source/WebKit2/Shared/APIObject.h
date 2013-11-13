@@ -59,7 +59,6 @@ public:
         Data,
         Dictionary,
         Error,
-        GraphicsContext,
         Image,
         ProtectionSpace,
         RenderLayer,
