@@ -3602,9 +3602,6 @@ void FrameView::paintOverhangAreas(GraphicsContext* context, const IntRect& hori
     if (frame().document()->printing())
         return;
 
-    if (frame().isMainFrame() && frame().page()->chrome().client().paintCustomOverhangArea(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect))
-        return;
-
     ScrollView::paintOverhangAreas(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect);
 }
 

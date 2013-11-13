@@ -1,3 +1,17 @@
+2013-11-13  Anders Carlsson  <andersca@apple.com>
+
+        Remove ChromeClient::paintCustomOverhangArea
+        https://bugs.webkit.org/show_bug.cgi?id=124304
+
+        Reviewed by Beth Dakin.
+
+        This function always returns false now; get rid of it.
+
+        * page/Chrome.cpp:
+        * page/ChromeClient.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintOverhangAreas):
+
 2013-11-09  Martin Robinson  <mrobinson@igalia.com>
 
         [MathML] The double bar vertical delimiter does not stretch properly

@@ -570,11 +570,6 @@ String ChromeClient::generateReplacementFile(const String&)
     return String();
 }
 
-bool ChromeClient::paintCustomOverhangArea(GraphicsContext*, const IntRect&, const IntRect&, const IntRect&)
-{
-    return false;
-}
-
 bool Chrome::selectItemWritingDirectionIsNatural()
 {
     return m_client.selectItemWritingDirectionIsNatural();
