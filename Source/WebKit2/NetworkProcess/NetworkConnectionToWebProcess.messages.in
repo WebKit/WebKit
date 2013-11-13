@@ -25,7 +25,7 @@
 messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     ScheduleResourceLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters)
-    PerformSynchronousLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters) -> (WebCore::ResourceError error, WebCore::ResourceResponse response, CoreIPC::DataReference data) Delayed
+    PerformSynchronousLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters) -> (WebCore::ResourceError error, WebCore::ResourceResponse response, Vector<char> data) Delayed
     RemoveLoadIdentifier(uint64_t resourceLoadIdentifier)
     
     ServePendingRequests(uint32_t resourceLoadPriority)

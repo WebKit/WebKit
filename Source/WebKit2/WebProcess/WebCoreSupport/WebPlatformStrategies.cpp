@@ -258,8 +258,6 @@ void WebPlatformStrategies::loadResourceSynchronously(NetworkingContext* context
     WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
     WebPage* webPage = webFrame ? webFrame->page() : 0;
 
-    CoreIPC::DataReference dataReference;
-
     NetworkResourceLoadParameters loadParameters;
     loadParameters.identifier = resourceLoadIdentifier;
     loadParameters.webPageID = webPage ? webPage->pageID() : 0;
@@ -272,16 +270,14 @@ void WebPlatformStrategies::loadResourceSynchronously(NetworkingContext* context
     loadParameters.inPrivateBrowsingMode = context->storageSession().isPrivateBrowsingSession();
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = context->shouldClearReferrerOnHTTPSToHTTPRedirect();
 
-    if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(loadParameters), Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::Reply(error, response, dataReference), 0)) {
+    data.resize(0);
+
+    if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(loadParameters), Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::Reply(error, response, data), 0)) {
         response = ResourceResponse();
         error = internalError(request.url());
-        data.resize(0);
 
         return;
     }
-
-    data.resize(dataReference.size());
-    memcpy(data.data(), dataReference.data(), dataReference.size());
 }
 
 #if ENABLE(BLOB)

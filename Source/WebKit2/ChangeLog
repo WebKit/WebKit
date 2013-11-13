@@ -1,3 +1,22 @@
+2013-11-12  Anders Carlsson  <andersca@apple.com>
+
+        fast/canvas/webgl/draw-arrays-out-of-bounds.html is flaky on Mavericks WK2 testers, fails about 20% of the time
+        https://bugs.webkit.org/show_bug.cgi?id=124223
+        <rdar://problem/15333977>
+
+        Reviewed by Tim Horton.
+
+        It's wrong to use DataReferences in sync IPC replies; the underlying MessageDecoder will be freed after the call to
+        sendSync returns and the DataReference will point to freed memory. Use a Vector<char> instead.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/SynchronousNetworkLoaderClient.cpp:
+        (WebKit::SynchronousNetworkLoaderClient::didReceiveBuffer):
+        (WebKit::SynchronousNetworkLoaderClient::sendDelayedReply):
+        * NetworkProcess/SynchronousNetworkLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::loadResourceSynchronously):
+
 2013-11-12  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed try at fixing the GTK+ build.
