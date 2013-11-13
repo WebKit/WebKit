@@ -31,6 +31,7 @@
 #include <runtime/ObjectConstructor.h>
 #include <runtime/Operations.h>
 #include <runtime/TypedArrays.h>
+#include <runtime/TypedArrayInlines.h>
 
 using namespace JSC;
 

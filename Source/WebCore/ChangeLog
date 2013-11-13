@@ -3,6 +3,15 @@
         Implement key generation and JWK import for RSASSA-PKCS1-v1_5
         https://bugs.webkit.org/show_bug.cgi?id=124236
 
+        Release build fix.
+
+        * bindings/js/JSCryptoAlgorithmBuilder.cpp: Include TypedArrayInlines.h
+
+2013-11-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Implement key generation and JWK import for RSASSA-PKCS1-v1_5
+        https://bugs.webkit.org/show_bug.cgi?id=124236
+
         Reviewed by Sam Weinig.
 
         Tests: crypto/subtle/rsassa-pkcs1-v1_5-generate-key.html
