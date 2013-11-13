@@ -77,6 +77,8 @@ public:
     virtual void getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const = 0;
     virtual void getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const = 0;
     virtual bool firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit& result) const = 0;
+    bool lineOverlapsShapeMarginBounds(LayoutUnit lineTop, LayoutUnit lineHeight) const { return lineOverlapsBoundingBox(lineTop, lineHeight, shapeMarginLogicalBoundingBox()); }
+    bool lineOverlapsShapePaddingBounds(LayoutUnit lineTop, LayoutUnit lineHeight) const { return lineOverlapsBoundingBox(lineTop, lineHeight, shapePaddingLogicalBoundingBox()); }
 
     virtual ShapeType type() const = 0;
 
@@ -85,6 +87,13 @@ protected:
     float shapePadding() const { return m_padding; }
 
 private:
+    bool lineOverlapsBoundingBox(LayoutUnit lineTop, LayoutUnit lineHeight, const LayoutRect& rect) const
+    {
+        if (rect.isEmpty())
+            return false;
+        return (lineTop < rect.maxY() && lineTop + lineHeight > rect.y()) || (!lineHeight && lineTop == rect.y());
+    }
+
     WritingMode m_writingMode;
     float m_margin;
     float m_padding;

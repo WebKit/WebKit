@@ -1,3 +1,22 @@
+2013-11-13  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Determining if a line is inside of a shape should only happen in one place
+        https://bugs.webkit.org/show_bug.cgi?id=121708
+
+        Reviewed by Andreas Kling.
+
+        The ShapeInfo::lineOverlapsShapeBounds() methods now delegate to the Shape object. The
+        logic for the Shape overlap test is now the same for ShapeInsideInfo and ShapeOutsideInfo.
+
+        No new tests, this is just a refactoring of existing code.
+
+        * rendering/shapes/Shape.h:
+        (WebCore::Shape::lineOverlapsShapeMarginBounds): Apply lineOverlapsLayoutRect() to the shape-margin bounds LayoutRect.
+        (WebCore::Shape::lineOverlapsShapePaddingBounds): Apply lineOverlapsLayoutRect() to the shape-padding bounds LayoutRect.
+        (WebCore::Shape::lineOverlapsLayoutRect): The common code for checking if a line and a LayoutRect overlap.
+        * rendering/shapes/ShapeInsideInfo.h: Use lineOverlapsShapePaddingBounds() for lineOverlapShapeBounds().
+        * rendering/shapes/ShapeOutsideInfo.h: Use lineOverlapsShapeMarginBounds() for lineOverlapShapeBounds().
+
 2013-11-13  Jochen Eisinger  <jochen@chromium.org>
 
         Restrict UserGestureIndicator to main thread

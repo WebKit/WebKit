@@ -99,8 +99,7 @@ public:
 
     virtual bool lineOverlapsShapeBounds() const OVERRIDE
     {
-        // The <= test is to handle the case of a zero height line or a zero height shape.
-        return logicalLineTop() < shapeLogicalBottom() && shapeLogicalTop() <= logicalLineBottom();
+        return computedShape()->lineOverlapsShapePaddingBounds(m_shapeLineTop, m_lineHeight);
     }
 
 protected:

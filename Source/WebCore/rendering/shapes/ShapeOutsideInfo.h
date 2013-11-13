@@ -53,8 +53,7 @@ public:
 
     virtual bool lineOverlapsShapeBounds() const OVERRIDE
     {
-        return (logicalLineTop() < shapeLogicalBottom() && shapeLogicalTop() < logicalLineBottom())
-            || logicalLineTop() == shapeLogicalTop(); // case of zero height line or zero height shape
+        return computedShape()->lineOverlapsShapeMarginBounds(m_shapeLineTop, m_lineHeight);
     }
 
 protected:
