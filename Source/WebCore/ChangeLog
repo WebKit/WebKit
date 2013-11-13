@@ -1,3 +1,17 @@
+2013-11-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        Update ResourceHandleCF to use the didReceiveBuffer() callback
+        https://bugs.webkit.org/show_bug.cgi?id=124256
+
+        Reviewed by Alexey Proskuryakov.
+
+        Use didReceiveBuffer() instead of didReceiveData() to pass data back to
+        the ResourceHandleClient. This unify the update code with the NSURLConnection loader.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::didReceiveData):
+        (WebCore::ResourceHandle::handleDataArray):
+
 2013-11-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Split Inspector.json into individual domain json files

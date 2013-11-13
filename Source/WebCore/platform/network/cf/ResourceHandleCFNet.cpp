@@ -214,17 +214,17 @@ static void didReceiveDataArray(CFURLConnectionRef conn, CFArrayRef dataArray, c
 
 static void didReceiveData(CFURLConnectionRef conn, CFDataRef data, CFIndex originalLength, const void* clientInfo)
 {
+    ResourceHandle* handle = static_cast<ResourceHandle*>(const_cast<void*>(clientInfo));
+
 #if LOG_DISABLED
     UNUSED_PARAM(conn);
-#endif
-    ResourceHandle* handle = static_cast<ResourceHandle*>(const_cast<void*>(clientInfo));
-    const UInt8* bytes = CFDataGetBytePtr(data);
+#else
     CFIndex length = CFDataGetLength(data);
-
     LOG(Network, "CFNet - didReceiveData(conn=%p, handle=%p, bytes=%ld) (%s)", conn, handle, length, handle->firstRequest().url().string().utf8().data());
+#endif
 
-    if (handle->client())
-        handle->client()->didReceiveData(handle, (const char*)bytes, length, originalLength);
+    if (ResourceHandleClient* client = handle->client())
+        client->didReceiveBuffer(handle, SharedBuffer::wrapCFData(data), originalLength);
 }
 
 static void didSendBodyData(CFURLConnectionRef, CFIndex, CFIndex totalBytesWritten, CFIndex totalBytesExpectedToWrite, const void *clientInfo)
@@ -784,8 +784,7 @@ void ResourceHandle::handleDataArray(CFArrayRef dataArray)
     ASSERT(count);
     if (count == 1) {
         CFDataRef data = static_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, 0));
-        CFIndex length = CFDataGetLength(data);
-        client()->didReceiveData(this, reinterpret_cast<const char*>(CFDataGetBytePtr(data)), length, static_cast<int>(length));
+        client()->didReceiveBuffer(this, SharedBuffer::wrapCFData(data), -1);
         return;
     }
 
@@ -800,7 +799,7 @@ void ResourceHandle::handleDataArray(CFArrayRef dataArray)
         CFDataAppendBytes(mergedData.get(), CFDataGetBytePtr(data), CFDataGetLength(data));
     }
 
-    client()->didReceiveData(this, reinterpret_cast<const char*>(CFDataGetBytePtr(mergedData.get())), totalSize, static_cast<int>(totalSize));
+    client()->didReceiveBuffer(this, SharedBuffer::wrapCFData(mergedData.get()), -1);
 }
 #endif
 
