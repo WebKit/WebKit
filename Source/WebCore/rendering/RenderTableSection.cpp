@@ -204,7 +204,7 @@ void RenderTableSection::ensureRows(unsigned numRows)
 
     unsigned effectiveColumnCount = std::max(1u, table()->numEffCols());
     for (unsigned row = oldSize; row < m_grid.size(); ++row)
-        m_grid[row].row.grow(effectiveColumnCount);
+        m_grid[row].row.resizeToFit(effectiveColumnCount);
 }
 
 void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)

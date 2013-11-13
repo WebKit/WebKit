@@ -1,5 +1,19 @@
 2013-11-13  Andreas Kling  <akling@apple.com>
 
+        RenderTableSection: Cell structures don't need allocation padding.
+        <https://webkit.org/b/124263>
+
+        The row structure data gets shrunk-to-fit once we get to layout,
+        but per-row cell structures get no such luxury. Fortuntely we know
+        ahead of time how many cells a row needs to accomodate, so we can
+        just use Vector::resizeToFit() instead of Vector::grow().
+
+        1.25 MB progression on HTML5-8266 locally.
+
+        Reviewed by Antti Koivisto.
+
+2013-11-13  Andreas Kling  <akling@apple.com>
+
         Avoid unnecessarily padding the FontDescription families vector.
         <https://webkit.org/b/124267>
 
