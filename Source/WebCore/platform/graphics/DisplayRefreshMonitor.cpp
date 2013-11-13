@@ -81,8 +81,10 @@ void DisplayRefreshMonitor::addClient(DisplayRefreshMonitorClient* client)
 
 bool DisplayRefreshMonitor::removeClient(DisplayRefreshMonitorClient* client)
 {
-    DisplayRefreshMonitorClientSet::iterator it = m_clients.find(client);
+    HashSet<DisplayRefreshMonitorClient*>::iterator it = m_clients.find(client);
     if (it != m_clients.end()) {
+        if (m_clientsToBeNotified)
+            m_clientsToBeNotified->remove(client);
         m_clients.remove(it);
         return true;
     }

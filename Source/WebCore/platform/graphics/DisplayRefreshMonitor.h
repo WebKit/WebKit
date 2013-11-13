@@ -119,9 +119,8 @@ private:
     PlatformDisplayID m_displayID;
     Mutex m_mutex;
 
-    typedef HashSet<DisplayRefreshMonitorClient*> DisplayRefreshMonitorClientSet;
-    DisplayRefreshMonitorClientSet m_clients;
-    DisplayRefreshMonitorClientSet* m_clientsToBeNotified;
+    HashSet<DisplayRefreshMonitorClient*> m_clients;
+    HashSet<DisplayRefreshMonitorClient*>* m_clientsToBeNotified;
 
 #if PLATFORM(BLACKBERRY)
 public:

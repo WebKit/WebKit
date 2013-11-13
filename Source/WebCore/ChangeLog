@@ -1,3 +1,14 @@
+2013-11-13  Dean Jackson  <dino@apple.com>
+
+        <rdar://problem/15292359>
+        Fix incorrect merge of r157299 made in r158605.
+
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::removeClient): Remember to remove clients
+        from m_clientsToBeNotified.
+        * platform/graphics/DisplayRefreshMonitor.h: Might as well make the code
+        more consistent with ToT while I'm here.
+
 2013-11-08  Lucas Forschler  <lforschler@apple.com>
 
         Merge r152867
