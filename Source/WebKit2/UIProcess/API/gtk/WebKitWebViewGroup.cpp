@@ -231,7 +231,7 @@ static PassRefPtr<ImmutableArray> toImmutableArray(const char* const* list)
     if (!list)
         return 0;
 
-    Vector<RefPtr<APIObject> > entries;
+    Vector<RefPtr<API::Object> > entries;
     while (*list) {
         entries.append(WebString::createFromUTF8String(*list));
         list++;

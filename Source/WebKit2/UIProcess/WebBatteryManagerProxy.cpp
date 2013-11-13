@@ -91,12 +91,12 @@ void WebBatteryManagerProxy::processDidClose(WebProcessProxy*)
 
 void WebBatteryManagerProxy::refWebContextSupplement()
 {
-    APIObject::ref();
+    API::Object::ref();
 }
 
 void WebBatteryManagerProxy::derefWebContextSupplement()
 {
-    APIObject::deref();
+    API::Object::deref();
 }
 
 void WebBatteryManagerProxy::startUpdating()

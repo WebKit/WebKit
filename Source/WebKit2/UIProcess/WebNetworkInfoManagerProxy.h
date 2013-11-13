@@ -39,7 +39,7 @@ namespace WebKit {
 class WebContext;
 class WebNetworkInfo;
 
-class WebNetworkInfoManagerProxy : public TypedAPIObject<APIObject::TypeNetworkInfoManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
+class WebNetworkInfoManagerProxy : public API::TypedObject<API::Object::TypeNetworkInfoManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
     static const char* supplementName();
 
@@ -50,8 +50,8 @@ public:
 
     void providerDidChangeNetworkInformation(const WTF::AtomicString& eventType, WebNetworkInfo*);
 
-    using APIObject::ref;
-    using APIObject::deref;
+    using API::Object::ref;
+    using API::Object::deref;
 
 private:
     explicit WebNetworkInfoManagerProxy(WebContext*);

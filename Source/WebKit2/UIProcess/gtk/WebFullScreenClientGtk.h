@@ -29,9 +29,11 @@
 #include "APIClient.h"
 #include "WKFullScreenClientGtk.h"
 
-namespace WebKit {
+namespace API {
+class Object;
+}
 
-class APIObject;
+namespace WebKit {
 
 class WebFullScreenClientGtk : public APIClient<WKFullScreenClientGtk, kWKFullScreenClientGtkCurrentVersion> {
 public:

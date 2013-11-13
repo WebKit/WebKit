@@ -1,3 +1,40 @@
+2013-11-12  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        [GTK][EFL] More on renaming WebKit::APIObject to API::Object
+        https://bugs.webkit.org/show_bug.cgi?id=124255
+
+        Reviewed by Anders Carlsson.
+
+        In r159163 WebKit::APIObject has been renamed to API::Object.
+        This patch refactors the remaining files which were still
+        using WebKit::APIObject and WebKit::TypedAPIObject.
+
+        * Shared/WebBatteryStatus.h:
+        * Shared/WebNetworkInfo.h:
+        * UIProcess/API/C/WKGrammarDetail.cpp:
+        * UIProcess/API/gtk/WebKitContextMenuItem.cpp:
+        * UIProcess/API/gtk/WebKitFileChooserRequest.cpp:
+        * UIProcess/API/gtk/WebKitWebViewGroup.cpp:
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        * UIProcess/WebBatteryManagerProxy.cpp:
+        * UIProcess/WebBatteryManagerProxy.h:
+        * UIProcess/WebGrammarDetail.cpp:
+        * UIProcess/WebNetworkInfoManagerProxy.cpp:
+        * UIProcess/WebNetworkInfoManagerProxy.h:
+        * UIProcess/WebTextChecker.h:
+        * UIProcess/WebVibrationProxy.h:
+        * UIProcess/WebViewportAttributes.h:
+        * UIProcess/efl/EwkTouchEvent.h:
+        * UIProcess/efl/EwkTouchPoint.h:
+        * UIProcess/efl/WebPopupItemEfl.h:
+        * UIProcess/efl/WebUIPopupMenuClient.cpp:
+        * UIProcess/gtk/WebFullScreenClientGtk.h:
+        * UIProcess/gtk/WebInspectorClientGtk.h:
+        * UIProcess/soup/WebSoupRequestManagerProxy.cpp:
+        * UIProcess/soup/WebSoupRequestManagerProxy.h:
+        * WebProcess/InjectedBundle/efl/InjectedBundleEfl.cpp:
+        * WebProcess/InjectedBundle/gtk/InjectedBundleGtk.cpp:
+
 2013-11-12  Anders Carlsson  <andersca@apple.com>
 
         fast/canvas/webgl/draw-arrays-out-of-bounds.html is flaky on Mavericks WK2 testers, fails about 20% of the time

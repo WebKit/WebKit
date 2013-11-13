@@ -36,9 +36,9 @@
 
 namespace WebKit {
 
-class EwkTouchPoint : public APIObject {
+class EwkTouchPoint : public API::Object {
 public:
-    static const APIObject::Type APIType = TypeTouchPoint;
+    static const API::Object::Type APIType = TypeTouchPoint;
 
     static PassRefPtr<EwkTouchPoint> create(uint32_t id, WKTouchPointState state, const WKPoint& screenPosition, const WKPoint& position, const WKSize& radius, float rotationAngle = 0, float forceFactor = 1)
     {
@@ -56,7 +56,7 @@ public:
 private:
     EwkTouchPoint(uint32_t id, WKTouchPointState, const WKPoint&, const WKPoint&, const WKSize&, float rotationAngle, float forceFactor);
 
-    virtual APIObject::Type type() const { return APIType; }
+    virtual API::Object::Type type() const { return APIType; }
 
     uint32_t m_id;
     WKTouchPointState m_state;

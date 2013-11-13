@@ -83,12 +83,12 @@ void WebNetworkInfoManagerProxy::processDidClose(WebProcessProxy*)
 
 void WebNetworkInfoManagerProxy::refWebContextSupplement()
 {
-    APIObject::ref();
+    API::Object::ref();
 }
 
 void WebNetworkInfoManagerProxy::derefWebContextSupplement()
 {
-    APIObject::deref();
+    API::Object::deref();
 }
 
 void WebNetworkInfoManagerProxy::startUpdating()

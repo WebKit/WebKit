@@ -34,7 +34,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-bool InjectedBundle::load(APIObject* initializationUserData)
+bool InjectedBundle::load(API::Object* initializationUserData)
 {
     m_platformBundle = eina_module_new(m_path.utf8().data());
     if (!m_platformBundle) {

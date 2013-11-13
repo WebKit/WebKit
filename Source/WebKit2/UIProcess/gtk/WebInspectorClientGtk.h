@@ -31,9 +31,12 @@
 
 #include <wtf/text/WTFString.h>
 
+namespace API {
+class Object;
+}
+
 namespace WebKit {
 
-class APIObject;
 class WebInspectorProxy;
 
 class WebInspectorClientGtk : public APIClient<WKInspectorClientGtk, kWKInspectorClientGtkCurrentVersion> {

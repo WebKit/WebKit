@@ -51,8 +51,8 @@ public:
 
     const Vector<String>& registeredURISchemes() const { return m_registeredURISchemes; }
 
-    using APIObject::ref;
-    using APIObject::deref;
+    using API::Object::ref;
+    using API::Object::deref;
 
 private:
     WebSoupRequestManagerProxy(WebContext*);

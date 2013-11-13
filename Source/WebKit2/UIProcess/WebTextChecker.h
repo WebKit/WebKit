@@ -35,7 +35,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class WebTextChecker : public TypedAPIObject<APIObject::TypeTextChecker> {
+class WebTextChecker : public API::TypedObject<API::Object::TypeTextChecker> {
 public:
     static WebTextChecker* shared();
 

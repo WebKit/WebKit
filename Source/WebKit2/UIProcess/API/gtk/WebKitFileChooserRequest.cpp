@@ -298,7 +298,7 @@ void webkit_file_chooser_request_select_files(WebKitFileChooserRequest* request,
     g_return_if_fail(files);
 
     GRefPtr<GPtrArray> selectedFiles = adoptGRef(g_ptr_array_new_with_free_func(g_free));
-    Vector<RefPtr<APIObject> > choosenFiles;
+    Vector<RefPtr<API::Object> > choosenFiles;
     for (int i = 0; files[i]; i++) {
         GRefPtr<GFile> filename = adoptGRef(g_file_new_for_path(files[i]));
 

@@ -66,12 +66,12 @@ void WebSoupRequestManagerProxy::processDidClose(WebProcessProxy*)
 
 void WebSoupRequestManagerProxy::refWebContextSupplement()
 {
-    APIObject::ref();
+    API::Object::ref();
 }
 
 void WebSoupRequestManagerProxy::derefWebContextSupplement()
 {
-    APIObject::deref();
+    API::Object::deref();
 }
 
 void WebSoupRequestManagerProxy::registerURIScheme(const String& scheme)

@@ -35,7 +35,7 @@ using namespace WebKit;
 
 WKTypeID WKGrammarDetailGetTypeID()
 {
-    return toAPI(APIObject::TypeGrammarDetail);
+    return toAPI(API::Object::TypeGrammarDetail);
 }
 
 WKGrammarDetailRef WKGrammarDetailCreate(int location, int length, WKArrayRef guesses, WKStringRef userDescription)

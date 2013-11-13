@@ -39,7 +39,7 @@ void WebUIPopupMenuClient::showPopupMenu(WebPageProxy* pageProxy, WebPopupMenuPr
     if (!m_client.showPopupMenu)
         return;
 
-    Vector<RefPtr<APIObject> > webPopupItems;
+    Vector<RefPtr<API::Object> > webPopupItems;
     size_t size = items.size();
     for (size_t i = 0; i < size; ++i)
         webPopupItems.append(WebPopupItemEfl::create(items[i]));

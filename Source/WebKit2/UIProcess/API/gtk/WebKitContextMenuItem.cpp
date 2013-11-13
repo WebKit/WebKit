@@ -100,7 +100,7 @@ WebKitContextMenuItem* webkitContextMenuItemCreate(WebContextMenuItem* webItem)
     if (!subMenu.size())
         return item;
 
-    Vector<RefPtr<APIObject>> subMenuItems;
+    Vector<RefPtr<API::Object>> subMenuItems;
     subMenuItems.reserveInitialCapacity(subMenu.size());
     for (size_t i = 0; i < subMenu.size(); ++i)
         subMenuItems.uncheckedAppend(WebContextMenuItem::create(subMenu[i]).get());

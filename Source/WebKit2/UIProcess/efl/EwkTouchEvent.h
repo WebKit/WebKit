@@ -36,9 +36,9 @@
 
 namespace WebKit {
 
-class EwkTouchEvent : public APIObject {
+class EwkTouchEvent : public API::Object {
 public:
-    static const APIObject::Type APIType = TypeTouchEvent;
+    static const API::Object::Type APIType = TypeTouchEvent;
 
     static PassRefPtr<EwkTouchEvent> create(WKEventType type, WKArrayRef touchPoints, WKEventModifiers modifiers, double timestamp)
     {
@@ -53,7 +53,7 @@ public:
 private:
     EwkTouchEvent(WKEventType, WKArrayRef, WKEventModifiers, double timestamp);
 
-    virtual APIObject::Type type() const { return APIType; }
+    virtual API::Object::Type type() const { return APIType; }
 
     WKEventType m_eventType;
     WKRetainPtr<WKArrayRef> m_touchPoints;

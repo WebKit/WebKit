@@ -37,7 +37,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class WebVibrationProxy : public TypedAPIObject<APIObject::TypeVibration>, private CoreIPC::MessageReceiver {
+class WebVibrationProxy : public API::TypedObject<API::Object::TypeVibration>, private CoreIPC::MessageReceiver {
 public:
     static PassRefPtr<WebVibrationProxy> create(WebPageProxy*);
     virtual ~WebVibrationProxy();
