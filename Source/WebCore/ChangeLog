@@ -1,3 +1,12 @@
+2013-11-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Disable WebCrypto on Mountain Lion
+        https://bugs.webkit.org/show_bug.cgi?id=124261
+
+        Rubber-stamped by Sam Weinig.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-11-12  Zan Dobersek  <zdobersek@igalia.com>
 
         Manage XMLHttpRequestUpload, XSLImportRule, XMLErrors, XML pending callback classes through std::unique_ptr

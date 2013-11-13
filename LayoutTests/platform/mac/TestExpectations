@@ -1300,3 +1300,6 @@ webkit.org/b/123522 [ Mavericks ] media/track/track-in-band-legacy-api.html [ Pa
 # Audio and video tracks aren't supported on mac
 media/track/audio
 media/track/video
+
+# SubtleCrypto is disabled on Mountain Lion
+webkit.org/b/124261 [ MountainLion ] crypto/subtle [ Skip ]
