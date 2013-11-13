@@ -1,3 +1,20 @@
+2013-11-13  Anders Carlsson  <andersca@apple.com>
+
+        Move provisional load state handling to FrameLoadState
+        https://bugs.webkit.org/show_bug.cgi?id=124291
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/FrameLoadState.cpp:
+        (WebKit::FrameLoadState::didStartProvisionalLoad):
+        (WebKit::FrameLoadState::didReceiveServerRedirectForProvisionalLoad):
+        (WebKit::FrameLoadState::didFailProvisionalLoad):
+        * UIProcess/FrameLoadState.h:
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didStartProvisionalLoad):
+        (WebKit::WebFrameProxy::didReceiveServerRedirectForProvisionalLoad):
+        (WebKit::WebFrameProxy::didFailProvisionalLoad):
+
 2013-11-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         One more fix after r159197.

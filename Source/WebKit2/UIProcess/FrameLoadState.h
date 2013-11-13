@@ -41,6 +41,10 @@ public:
         LoadStateFinished
     };
 
+    void didStartProvisionalLoad(const String& url);
+    void didReceiveServerRedirectForProvisionalLoad(const String& url);
+    void didFailProvisionalLoad();
+
     // FIXME: These should all be private, and FrameLoadState should
     // provide state transition member functions.
     LoadState m_loadState;

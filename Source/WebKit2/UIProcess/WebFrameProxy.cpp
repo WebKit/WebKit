@@ -118,23 +118,17 @@ bool WebFrameProxy::isDisplayingPDFDocument() const
 
 void WebFrameProxy::didStartProvisionalLoad(const String& url)
 {
-    ASSERT(m_frameLoadState.m_provisionalURL.isEmpty());
-    m_frameLoadState.m_loadState = FrameLoadState::LoadStateProvisional;
-    m_frameLoadState.m_provisionalURL = url;
+    m_frameLoadState.didStartProvisionalLoad(url);
 }
 
 void WebFrameProxy::didReceiveServerRedirectForProvisionalLoad(const String& url)
 {
-    ASSERT(m_frameLoadState.m_loadState == FrameLoadState::LoadStateProvisional);
-    m_frameLoadState.m_provisionalURL = url;
+    m_frameLoadState.didReceiveServerRedirectForProvisionalLoad(url);
 }
 
 void WebFrameProxy::didFailProvisionalLoad()
 {
-    ASSERT(m_frameLoadState.m_loadState == FrameLoadState::LoadStateProvisional);
-    m_frameLoadState.m_loadState = FrameLoadState::LoadStateFinished;
-    m_frameLoadState.m_provisionalURL = String();
-    m_frameLoadState.m_unreachableURL = m_frameLoadState.m_lastUnreachableURL;
+    m_frameLoadState.didFailProvisionalLoad();
 }
 
 void WebFrameProxy::didCommitLoad(const String& contentType, const PlatformCertificateInfo& certificateInfo)

@@ -37,4 +37,25 @@ FrameLoadState::~FrameLoadState()
 {
 }
 
+void FrameLoadState::didStartProvisionalLoad(const String& url)
+{
+    ASSERT(m_provisionalURL.isEmpty());
+    m_loadState = LoadStateProvisional;
+    m_provisionalURL = url;
+}
+
+void FrameLoadState::didReceiveServerRedirectForProvisionalLoad(const String& url)
+{
+    ASSERT(m_loadState == LoadStateProvisional);
+    m_provisionalURL = url;
+}
+
+void FrameLoadState::didFailProvisionalLoad()
+{
+    ASSERT(m_loadState == LoadStateProvisional);
+    m_loadState = LoadStateFinished;
+    m_provisionalURL = String();
+    m_unreachableURL = m_lastUnreachableURL;
+}
+
 } // namespace WebKit
