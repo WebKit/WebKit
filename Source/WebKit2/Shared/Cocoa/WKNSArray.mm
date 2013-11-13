@@ -58,11 +58,7 @@ using namespace WebKit;
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    if (!reinterpret_cast<ImmutableArray*>(&_array)->isMutable())
-        return [self retain];
-
-    auto elements = reinterpret_cast<ImmutableArray*>(&_array)->elements();
-    return ImmutableArray::create(std::move(elements)).leakRef()->wrapper();
+    return [self retain];
 }
 
 #pragma mark WKObject protocol implementation

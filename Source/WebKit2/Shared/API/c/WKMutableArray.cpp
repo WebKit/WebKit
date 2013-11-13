@@ -38,7 +38,8 @@ WKMutableArrayRef WKMutableArrayCreate()
 
 bool WKArrayIsMutable(WKArrayRef arrayRef)
 {
-    return toImpl(arrayRef)->isMutable();
+    // FIXME: This function should be removed.
+    return false;
 }
 
 void WKArrayAppendItem(WKMutableArrayRef arrayRef, WKTypeRef itemRef)
