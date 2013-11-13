@@ -39,6 +39,10 @@ namespace WebCore {
 
 class IDBBackingStoreInterface;
 class IDBBackingStoreTransactionInterface;
+class IDBDatabaseError;
+class IDBKey;
+
+struct IDBObjectStoreMetadata;
 
 // This interface provides a single asynchronous layer between the web-facing frontend
 // and the I/O performing backend of IndexedDatabase.
@@ -68,6 +72,8 @@ public:
     virtual void commitTransaction(int64_t transactionID, BoolCallbackFunction successCallback) = 0;
     virtual void resetTransaction(int64_t transactionID, std::function<void()> completionCallback) = 0;
     virtual void rollbackTransaction(int64_t transactionID, std::function<void()> completionCallback) = 0;
+    virtual void setIndexKeys(int64_t transactionID, int64_t databaseID, int64_t objectStoreID, const IDBObjectStoreMetadata&, IDBKey& primaryKey, const Vector<int64_t>& indexIDs, const Vector<Vector<RefPtr<IDBKey>>>& indexKeys, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
+
 };
 
 } // namespace WebCore

@@ -31,6 +31,7 @@
 
 #include "IDBBackingStoreLevelDB.h"
 #include "IDBBackingStoreTransactionLevelDB.h"
+#include "IDBIndexWriter.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -136,6 +137,55 @@ void IDBServerConnectionLevelDB::rollbackTransaction(int64_t transactionID, std:
     transaction->rollback();
     callOnMainThread(completionCallback);
 }
+
+void IDBServerConnectionLevelDB::setIndexKeys(int64_t transactionID, int64_t databaseID, int64_t objectStoreID, const IDBObjectStoreMetadata& objectStoreMetadata, IDBKey& primaryKey, const Vector<int64_t>& indexIDs, const Vector<Vector<RefPtr<IDBKey>>>& indexKeys, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback)
+{
+    RefPtr<IDBBackingStoreTransactionLevelDB> backingStoreTransaction = m_backingStoreTransactions.get(transactionID);
+    ASSERT(backingStoreTransaction);
+
+    RefPtr<IDBRecordIdentifier> recordIdentifier;
+    bool ok = m_backingStore->keyExistsInObjectStore(*backingStoreTransaction, databaseID, objectStoreID, primaryKey, recordIdentifier);
+    if (!ok) {
+        callOnMainThread([completionCallback]() {
+            completionCallback(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error: setting index keys."));
+        });
+        return;
+    }
+    if (!recordIdentifier) {
+        callOnMainThread([completionCallback]() {
+            completionCallback(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error: setting index keys for object store."));
+        });
+        return;
+    }
+
+    Vector<RefPtr<IDBIndexWriter>> indexWriters;
+    String errorMessage;
+    bool obeysConstraints = false;
+
+    bool backingStoreSuccess = m_backingStore->makeIndexWriters(transactionID, databaseID, objectStoreMetadata, primaryKey, false, indexIDs, indexKeys, indexWriters, &errorMessage, obeysConstraints);
+    if (!backingStoreSuccess) {
+        callOnMainThread([completionCallback]() {
+            completionCallback(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error: backing store error updating index keys."));
+        });
+        return;
+    }
+    if (!obeysConstraints) {
+        callOnMainThread([completionCallback, errorMessage]() {
+            completionCallback(IDBDatabaseError::create(IDBDatabaseException::ConstraintError, errorMessage));
+        });
+        return;
+    }
+
+    for (size_t i = 0; i < indexWriters.size(); ++i) {
+        IDBIndexWriter* indexWriter = indexWriters[i].get();
+        indexWriter->writeIndexKeys(recordIdentifier.get(), *m_backingStore, *backingStoreTransaction, databaseID, objectStoreID);
+    }
+
+    callOnMainThread([completionCallback]() {
+        completionCallback(0);
+    });
+}
+
 
 } // namespace WebCore
 

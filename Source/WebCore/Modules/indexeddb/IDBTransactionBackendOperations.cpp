@@ -235,7 +235,7 @@ void PutOperation::perform(std::function<void()> completionCallback)
     Vector<RefPtr<IDBIndexWriter>> indexWriters;
     String errorMessage;
     bool obeysConstraints = false;
-    bool backingStoreSuccess = m_transaction->database().serverConnection().deprecatedBackingStore()->makeIndexWriters(*m_transaction, m_databaseId, m_objectStore, *key, keyWasGenerated, m_indexIds, m_indexKeys, indexWriters, &errorMessage, obeysConstraints);
+    bool backingStoreSuccess = m_transaction->database().serverConnection().deprecatedBackingStore()->makeIndexWriters(m_transaction->id(), m_databaseId, m_objectStore, *key, keyWasGenerated, m_indexIds, m_indexKeys, indexWriters, &errorMessage, obeysConstraints);
     if (!backingStoreSuccess) {
         m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error: backing store error updating index keys."));
         return;

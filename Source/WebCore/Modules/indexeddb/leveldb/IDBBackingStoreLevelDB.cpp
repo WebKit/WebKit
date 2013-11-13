@@ -1383,14 +1383,14 @@ bool IDBBackingStoreLevelDB::keyExistsInIndex(IDBBackingStoreTransactionInterfac
 }
 
 
-bool IDBBackingStoreLevelDB::makeIndexWriters(IDBTransactionBackend& transaction, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, IDBKey& primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys, Vector<RefPtr<IDBIndexWriter>>& indexWriters, String* errorMessage, bool& completed)
+bool IDBBackingStoreLevelDB::makeIndexWriters(int64_t transactionID, int64_t databaseID, const IDBObjectStoreMetadata& objectStore, IDBKey& primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIDs, const Vector<IndexKeys>& indexKeys, Vector<RefPtr<IDBIndexWriter>>& indexWriters, String* errorMessage, bool& completed)
 {
-    ASSERT(indexIds.size() == indexKeys.size());
+    ASSERT(indexIDs.size() == indexKeys.size());
     completed = false;
 
     HashMap<int64_t, IndexKeys> indexKeyMap;
-    for (size_t i = 0; i < indexIds.size(); ++i)
-        indexKeyMap.add(indexIds[i], indexKeys[i]);
+    for (size_t i = 0; i < indexIDs.size(); ++i)
+        indexKeyMap.add(indexIDs[i], indexKeys[i]);
 
     for (IDBObjectStoreMetadata::IndexMap::const_iterator it = objectStore.indexes.begin(); it != objectStore.indexes.end(); ++it) {
         const IDBIndexMetadata& index = it->value;
@@ -1402,8 +1402,8 @@ bool IDBBackingStoreLevelDB::makeIndexWriters(IDBTransactionBackend& transaction
 
         RefPtr<IDBIndexWriter> indexWriter = IDBIndexWriter::create(index, keys);
         bool canAddKeys = false;
-        ASSERT(m_backingStoreTransactions.contains(transaction.id()));
-        bool backingStoreSuccess = indexWriter->verifyIndexKeys(*this, *m_backingStoreTransactions.get(transaction.id()), databaseId, objectStore.id, index.id, canAddKeys, &primaryKey, errorMessage);
+        ASSERT(m_backingStoreTransactions.contains(transactionID));
+        bool backingStoreSuccess = indexWriter->verifyIndexKeys(*this, *m_backingStoreTransactions.get(transactionID), databaseID, objectStore.id, index.id, canAddKeys, &primaryKey, errorMessage);
         if (!backingStoreSuccess)
             return false;
         if (!canAddKeys)
