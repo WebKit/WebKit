@@ -39,7 +39,6 @@
 
 
 #define updateErrorMessage(shouldPrintToken, ...) do {\
-    ASSERT(!hasError());\
     logError(shouldPrintToken, __VA_ARGS__); \
 } while (0)
 

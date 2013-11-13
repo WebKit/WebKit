@@ -1,3 +1,9 @@
+2013-11-13  Oliver Hunt  <oliver@apple.com>
+
+        Fix debug build.
+
+        * parser/Parser.cpp:
+
 2013-11-13  Tim Horton  <timothy_horton@apple.com>
 
         r159210 added a period where there previously wasn't one, breaking >100 tests
