@@ -33,6 +33,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "InspectorAgentRegistry.h"
 #include "InspectorBaseAgent.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -48,7 +49,6 @@ class InjectedScriptManager;
 class InspectorAgent;
 class InspectorApplicationCacheAgent;
 class InspectorBackendDispatcher;
-class InspectorBaseAgentInterface;
 class InspectorClient;
 class InspectorDOMAgent;
 class InspectorDOMDebuggerAgent;

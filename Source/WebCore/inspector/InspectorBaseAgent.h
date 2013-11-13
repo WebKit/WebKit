@@ -33,8 +33,6 @@
 
 #include "InspectorBackendDispatcher.h"
 #include <wtf/Forward.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -44,8 +42,13 @@ class InstrumentingAgents;
 
 class InspectorBaseAgentInterface {
 public:
-    InspectorBaseAgentInterface(const String&, InstrumentingAgents*);
-    virtual ~InspectorBaseAgentInterface();
+    InspectorBaseAgentInterface(const String& name, InstrumentingAgents* instrumentingAgents)
+        : m_instrumentingAgents(instrumentingAgents)
+        , m_name(name)
+    {
+    }
+
+    virtual ~InspectorBaseAgentInterface() { }
 
     virtual void setFrontend(InspectorFrontend*) { }
     virtual void clearFrontend() { }
@@ -59,19 +62,6 @@ protected:
 
 private:
     String m_name;
-};
-
-class InspectorAgentRegistry {
-public:
-    void append(PassOwnPtr<InspectorBaseAgentInterface>);
-
-    void setFrontend(InspectorFrontend*);
-    void clearFrontend();
-    void registerInDispatcher(InspectorBackendDispatcher*);
-    void discardAgents();
-
-private:
-    Vector<OwnPtr<InspectorBaseAgentInterface>> m_agents;
 };
 
 template<typename T>

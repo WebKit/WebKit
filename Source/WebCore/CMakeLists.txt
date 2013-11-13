@@ -1544,8 +1544,8 @@ set(WebCore_SOURCES
     inspector/InjectedScriptManager.cpp
     inspector/InjectedScriptModule.cpp
     inspector/InspectorAgent.cpp
+    inspector/InspectorAgentRegistry.cpp
     inspector/InspectorApplicationCacheAgent.cpp
-    inspector/InspectorBaseAgent.cpp
     inspector/InspectorCSSAgent.cpp
     inspector/InspectorCanvasAgent.cpp
     inspector/InspectorClient.cpp

@@ -33,6 +33,7 @@
 
 #if ENABLE(INSPECTOR) && ENABLE(WORKERS)
 
+#include "InspectorAgentRegistry.h"
 #include "InspectorBaseAgent.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
