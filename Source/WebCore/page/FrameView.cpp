@@ -1081,7 +1081,9 @@ void FrameView::layout(bool allowSubtree)
     bool inChildFrameLayoutWithFrameFlattening = isInChildFrameWithFrameFlattening();
 
     if (inChildFrameLayoutWithFrameFlattening) {
-        if (doLayoutWithFrameFlattening(allowSubtree))
+        startLayoutAtMainFrameViewIfNeeded(allowSubtree);
+        RenderElement* root = m_layoutRoot ? m_layoutRoot : frame().document()->renderView();
+        if (!root->needsLayout())
             return;
     }
 
@@ -3360,21 +3362,22 @@ bool FrameView::isInChildFrameWithFrameFlattening() const
     return false;
 }
 
-bool FrameView::doLayoutWithFrameFlattening(bool allowSubtree)
+void FrameView::startLayoutAtMainFrameViewIfNeeded(bool allowSubtree)
 {
-    // Try initiating layout from the topmost parent.
+    // When we start a layout at the child level as opposed to the topmost frame view and this child
+    // frame requires flattening, we need to re-initiate the layout at the topmost view. Layout
+    // will hit this view eventually.
     FrameView* parentView = parentFrameView();
-
     if (!parentView)
-        return false;
+        return;
 
     // In the middle of parent layout, no need to restart from topmost.
     if (parentView->m_nestedLayoutCount)
-        return false;
+        return;
 
     // Parent tree is clean. Starting layout from it would have no effect.
     if (!parentView->needsLayout())
-        return false;
+        return;
 
     while (parentView->parentFrameView())
         parentView = parentView->parentFrameView();
@@ -3383,8 +3386,6 @@ bool FrameView::doLayoutWithFrameFlattening(bool allowSubtree)
 
     RenderElement* root = m_layoutRoot ? m_layoutRoot : frame().document()->renderView();
     ASSERT_UNUSED(root, !root->needsLayout());
-
-    return true;
 }
 
 void FrameView::updateControlTints()
