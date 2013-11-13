@@ -26,24 +26,16 @@
 #ifndef ContextMenuClientEfl_h
 #define ContextMenuClientEfl_h
 
-#include <wtf/PassOwnPtr.h>
-
 class EwkView;
 
 namespace WebKit {
 
 class ContextMenuClientEfl {
 public:
-    static PassOwnPtr<ContextMenuClientEfl> create(EwkView* viewImpl)
-    {
-        return adoptPtr(new ContextMenuClientEfl(viewImpl));
-    }
-
+    explicit ContextMenuClientEfl(EwkView*);
     EwkView* view() { return m_view; }
 
 private:
-    explicit ContextMenuClientEfl(EwkView*);
-
     EwkView* m_view;
 };
 

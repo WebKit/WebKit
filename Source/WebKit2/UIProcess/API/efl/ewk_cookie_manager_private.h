@@ -31,7 +31,6 @@
 #include "WKRetainPtr.h"
 #include "ewk_cookie_manager.h"
 #include <WebKit2/WKBase.h>
-#include <wtf/PassOwnPtr.h>
 
 struct Cookie_Change_Handler {
     Ewk_Cookie_Manager_Changes_Watch_Cb callback;
@@ -50,11 +49,7 @@ struct Cookie_Change_Handler {
 
 class EwkCookieManager {
 public:
-    static PassOwnPtr<EwkCookieManager> create(WKCookieManagerRef cookieManager)
-    {
-        return adoptPtr(new EwkCookieManager(cookieManager));
-    }
-
+    explicit EwkCookieManager(WKCookieManagerRef cookieManager);
     ~EwkCookieManager();
 
     void setPersistentStorage(const char* filename, WKCookieStorageType);
@@ -69,8 +64,6 @@ public:
     void watchChanges(const Cookie_Change_Handler& changeHandler);
 
 private:
-    explicit EwkCookieManager(WKCookieManagerRef cookieManager);
-
     bool isWatchingForChanges() const;
 
     static void cookiesDidChange(WKCookieManagerRef, const void* clientInfo);

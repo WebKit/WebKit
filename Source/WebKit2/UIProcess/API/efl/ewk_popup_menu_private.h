@@ -29,16 +29,12 @@
 
 #include <Eina.h>
 #include <WebKit2/WKBase.h>
-#include <wtf/PassOwnPtr.h>
 
 class EwkView;
 
 class EwkPopupMenu {
 public:
-    static PassOwnPtr<EwkPopupMenu> create(EwkView* view, WKPopupMenuListenerRef popupMenuListener, WKArrayRef items, unsigned selectedIndex)
-    {
-        return adoptPtr(new EwkPopupMenu(view, popupMenuListener, items, selectedIndex));
-    }
+    EwkPopupMenu(EwkView* viewImpl, WKPopupMenuListenerRef, WKArrayRef items, unsigned selectedIndex);
     ~EwkPopupMenu();
 
     void close();
@@ -49,8 +45,6 @@ public:
     unsigned selectedIndex() const;
 
 private:
-    EwkPopupMenu(EwkView* viewImpl, WKPopupMenuListenerRef, WKArrayRef items, unsigned selectedIndex);
-
     EwkView* m_view;
     WKRetainPtr<WKPopupMenuListenerRef> m_popupMenuListener;
     Eina_List* m_popupMenuItems;

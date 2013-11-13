@@ -27,7 +27,6 @@
 
 #include "UnitTestUtils/EWK2UnitTestBase.h"
 #include "UnitTestUtils/EWK2UnitTestServer.h"
-#include <wtf/PassOwnPtr.h>
 
 using namespace EWK2UnitTest;
 
@@ -91,7 +90,7 @@ public:
 
 TEST_F(EWK2AuthRequestTest, ewk_auth_request_success)
 {
-    OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
+    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
     httpServer->run(serverCallback);
 
     Ewk_Auth_Request* authenticationRequest = 0;
@@ -118,7 +117,7 @@ TEST_F(EWK2AuthRequestTest, ewk_auth_request_success)
 
 TEST_F(EWK2AuthRequestTest, ewk_auth_request_failure_then_success)
 {
-    OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
+    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
     httpServer->run(serverCallback);
 
     Ewk_Auth_Request* authenticationRequest = 0;
@@ -159,7 +158,7 @@ TEST_F(EWK2AuthRequestTest, ewk_auth_request_failure_then_success)
 
 TEST_F(EWK2AuthRequestTest, ewk_auth_request_cancel)
 {
-    OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
+    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
     httpServer->run(serverCallback);
 
     Ewk_Auth_Request* authenticationRequest = 0;

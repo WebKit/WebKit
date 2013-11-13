@@ -61,17 +61,17 @@ static inline ContextMap& contextMap()
 
 EwkContext::EwkContext(WKContextRef context)
     : m_context(context)
-    , m_databaseManager(EwkDatabaseManager::create(WKContextGetDatabaseManager(context)))
-    , m_storageManager(EwkStorageManager::create(WKContextGetKeyValueStorageManager(context)))
+    , m_databaseManager(std::make_unique<EwkDatabaseManager>(WKContextGetDatabaseManager(context)))
+    , m_storageManager(std::make_unique<EwkStorageManager>(WKContextGetKeyValueStorageManager(context)))
 #if ENABLE(BATTERY_STATUS)
     , m_batteryProvider(BatteryProvider::create(context))
 #endif
 #if ENABLE(NETWORK_INFO)
     , m_networkInfoProvider(NetworkInfoProvider::create(context))
 #endif
-    , m_downloadManager(DownloadManagerEfl::create(context))
-    , m_requestManagerClient(RequestManagerClientEfl::create(context))
-    , m_historyClient(ContextHistoryClientEfl::create(context))
+    , m_downloadManager(std::make_unique<DownloadManagerEfl>(context))
+    , m_requestManagerClient(std::make_unique<RequestManagerClientEfl>(context))
+    , m_historyClient(std::make_unique<ContextHistoryClientEfl>(context))
 {
     ContextMap::AddResult result = contextMap().add(context, this);
     ASSERT_UNUSED(result, result.isNewEntry);
@@ -132,7 +132,7 @@ EwkContext* EwkContext::defaultContext()
 EwkCookieManager* EwkContext::cookieManager()
 {
     if (!m_cookieManager)
-        m_cookieManager = EwkCookieManager::create(WKContextGetCookieManager(m_context.get()));
+        m_cookieManager = std::make_unique<EwkCookieManager>(WKContextGetCookieManager(m_context.get()));
 
     return m_cookieManager.get();
 }
@@ -147,7 +147,7 @@ void EwkContext::ensureFaviconDatabase()
     if (m_faviconDatabase)
         return;
 
-    m_faviconDatabase = EwkFaviconDatabase::create(WKContextGetIconDatabase(m_context.get()));
+    m_faviconDatabase = std::make_unique<EwkFaviconDatabase>(WKContextGetIconDatabase(m_context.get()));
 }
 
 bool EwkContext::setFaviconDatabaseDirectoryPath(const String& databaseDirectory)

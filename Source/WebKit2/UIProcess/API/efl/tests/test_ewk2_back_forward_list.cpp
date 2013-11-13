@@ -28,8 +28,6 @@
 #include "UnitTestUtils/EWK2UnitTestBase.h"
 #include "UnitTestUtils/EWK2UnitTestServer.h"
 #include "WKEinaSharedString.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 using namespace EWK2UnitTest;
 using namespace WTF;
@@ -102,7 +100,7 @@ TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_current_item_get)
 
 TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_previous_item_get)
 {
-    OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
+    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
     httpServer->run(serverCallbackNavigation);
 
     WKEinaSharedString url1 = urlFromTitle(httpServer.get(), title1);
@@ -124,7 +122,7 @@ TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_previous_item_get)
 
 TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_next_item_get)
 {
-    OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
+    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
     httpServer->run(serverCallbackNavigation);
 
     ASSERT_TRUE(loadUrlSync(urlFromTitle(httpServer.get(), title1)));
@@ -150,7 +148,7 @@ TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_next_item_get)
 
 TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_item_at_index_get)
 {
-    OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
+    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
     httpServer->run(serverCallbackNavigation);
 
     WKEinaSharedString url1 = urlFromTitle(httpServer.get(), title1);
@@ -175,7 +173,7 @@ TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_item_at_index_get)
 
 TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_count)
 {
-    OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
+    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
     httpServer->run(serverCallbackNavigation);
 
     ASSERT_TRUE(loadUrlSync(urlFromTitle(httpServer.get(), title1)));
@@ -192,7 +190,7 @@ TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_count)
 
 TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_n_back_items_copy)
 {
-    OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
+    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
     httpServer->run(serverCallbackNavigation);
 
     WKEinaSharedString url1 = urlFromTitle(httpServer.get(), title1);
@@ -229,7 +227,7 @@ TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_n_back_items_copy)
 
 TEST_F(EWK2BackForwardListTest, ewk_back_forward_list_n_forward_items_copy)
 {
-    OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
+    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
     httpServer->run(serverCallbackNavigation);
 
     ASSERT_TRUE(loadUrlSync(urlFromTitle(httpServer.get(), title1)));

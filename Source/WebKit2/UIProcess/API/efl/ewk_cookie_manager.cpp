@@ -156,12 +156,10 @@ struct Get_Policy_Async_Data {
 
 static void getAcceptPolicyCallback(WKHTTPCookieAcceptPolicy policy, WKErrorRef wkError, void* data)
 {
-    Get_Policy_Async_Data* callbackData = static_cast<Get_Policy_Async_Data*>(data);
+    auto callbackData = std::unique_ptr<Get_Policy_Async_Data>(static_cast<Get_Policy_Async_Data*>(data));
     OwnPtr<EwkError> ewkError = EwkError::create(wkError);
 
     callbackData->callback(static_cast<Ewk_Cookie_Accept_Policy>(policy), ewkError.get(), callbackData->userData);
-
-    delete callbackData;
 }
 
 void ewk_cookie_manager_async_accept_policy_get(const Ewk_Cookie_Manager* manager, Ewk_Cookie_Manager_Async_Policy_Get_Cb callback, void* data)
@@ -186,7 +184,7 @@ struct Get_Hostnames_Async_Data {
 static void getHostnamesWithCookiesCallback(WKArrayRef wkHostnames, WKErrorRef wkError, void* context)
 {
     Eina_List* hostnames = 0;
-    Get_Hostnames_Async_Data* callbackData = static_cast<Get_Hostnames_Async_Data*>(context);
+    auto callbackData = std::unique_ptr<Get_Hostnames_Async_Data>(static_cast<Get_Hostnames_Async_Data*>(context));
     OwnPtr<EwkError> ewkError = EwkError::create(wkError);
 
     const size_t hostnameCount = WKArrayGetSize(wkHostnames);
@@ -202,8 +200,6 @@ static void getHostnamesWithCookiesCallback(WKArrayRef wkHostnames, WKErrorRef w
     void* item;
     EINA_LIST_FREE(hostnames, item)
       eina_stringshare_del(static_cast<Eina_Stringshare*>(item));
-
-    delete callbackData;
 }
 
 void ewk_cookie_manager_async_hostnames_with_cookies_get(const Ewk_Cookie_Manager* manager, Ewk_Cookie_Manager_Async_Hostnames_Get_Cb callback, void* data)

@@ -568,10 +568,8 @@ static void ewkViewPageContentsAsMHTMLCallback(WKDataRef wkData, WKErrorRef, voi
 {
     EINA_SAFETY_ON_NULL_RETURN(context);
 
-    Ewk_Page_Contents_Context* contentsContext = static_cast<Ewk_Page_Contents_Context*>(context);
+    auto contentsContext = std::unique_ptr<Ewk_Page_Contents_Context>(static_cast<Ewk_Page_Contents_Context*>(context));
     contentsContext->callback(contentsContext->type, reinterpret_cast<const char*>(WKDataGetBytes(wkData)), contentsContext->userData);
-
-    delete contentsContext;
 }
 
 /**
@@ -582,10 +580,8 @@ static void ewkViewPageContentsAsStringCallback(WKStringRef wkString, WKErrorRef
 {
     EINA_SAFETY_ON_NULL_RETURN(context);
 
-    Ewk_Page_Contents_Context* contentsContext = static_cast<Ewk_Page_Contents_Context*>(context);
+    auto contentsContext = std::unique_ptr<Ewk_Page_Contents_Context>(static_cast<Ewk_Page_Contents_Context*>(context));
     contentsContext->callback(contentsContext->type, WKEinaSharedString(wkString), contentsContext->userData);
-
-    delete contentsContext;
 }
 
 Eina_Bool ewk_view_page_contents_get(const Evas_Object* ewkView, Ewk_Page_Contents_Type type, Ewk_Page_Contents_Cb callback, void* user_data)

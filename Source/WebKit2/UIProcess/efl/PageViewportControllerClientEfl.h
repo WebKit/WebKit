@@ -29,7 +29,6 @@
 
 #include "PageViewportControllerClient.h"
 #include <WebCore/FloatPoint.h>
-#include <wtf/PassOwnPtr.h>
 
 class EwkView;
 
@@ -37,10 +36,7 @@ namespace WebKit {
 
 class PageViewportControllerClientEfl : public PageViewportControllerClient {
 public:
-    static PassOwnPtr<PageViewportControllerClientEfl> create(EwkView* viewImpl)
-    {
-        return adoptPtr(new PageViewportControllerClientEfl(viewImpl));
-    }
+    explicit PageViewportControllerClientEfl(EwkView*);
     virtual ~PageViewportControllerClientEfl() { }
 
     virtual void setViewportPosition(const WebCore::FloatPoint&) OVERRIDE;
@@ -53,8 +49,6 @@ public:
     virtual void setController(PageViewportController*) OVERRIDE;
 
 private:
-    explicit PageViewportControllerClientEfl(EwkView*);
-
     EwkView* m_view;
     WebCore::FloatPoint m_contentPosition;
     PageViewportController* m_controller;

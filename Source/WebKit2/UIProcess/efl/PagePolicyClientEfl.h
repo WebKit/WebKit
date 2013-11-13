@@ -29,7 +29,6 @@
 #include "WKEvent.h"
 #include "WKPageLoadTypes.h"
 #include <WebKit2/WKBase.h>
-#include <wtf/PassOwnPtr.h>
 
 class EwkView;
 
@@ -37,14 +36,9 @@ namespace WebKit {
 
 class PagePolicyClientEfl {
 public:
-    static PassOwnPtr<PagePolicyClientEfl> create(EwkView* view)
-    {
-        return adoptPtr(new PagePolicyClientEfl(view));
-    }
-
-private:
     explicit PagePolicyClientEfl(EwkView*);
 
+private:
     static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
     static void decidePolicyForNewWindowAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef, WKStringRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
     static void decidePolicyForResponseCallback(WKPageRef, WKFrameRef, WKURLResponseRef, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef, const void*);

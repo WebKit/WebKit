@@ -51,10 +51,7 @@ typedef HashMap<Ewk_Favicon_Database_Icon_Change_Cb, IconChangeCallbackData> Cha
 
 class EwkFaviconDatabase {
 public:
-    static PassOwnPtr<EwkFaviconDatabase> create(WKIconDatabaseRef iconDatabase)
-    {
-        return adoptPtr(new EwkFaviconDatabase(iconDatabase));
-    }
+    explicit EwkFaviconDatabase(WKIconDatabaseRef iconDatabase);
     ~EwkFaviconDatabase();
 
     PassRefPtr<cairo_surface_t> getIconSurfaceSynchronously(const char* pageURL) const;
@@ -62,8 +59,6 @@ public:
     void unwatchChanges(Ewk_Favicon_Database_Icon_Change_Cb callback);
 
 private:
-    explicit EwkFaviconDatabase(WKIconDatabaseRef iconDatabase);
-
     static void didChangeIconForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo);
     static void iconDataReadyForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo);
 

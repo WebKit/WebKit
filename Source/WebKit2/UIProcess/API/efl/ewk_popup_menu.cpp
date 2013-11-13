@@ -43,7 +43,7 @@ EwkPopupMenu::EwkPopupMenu(EwkView* view, WKPopupMenuListenerRef popupMenuListen
     size_t size = WKArrayGetSize(items);
     for (size_t i = 0; i < size; ++i) {
         WKPopupItemRef wkItem = static_cast<WKPopupItemRef>(WKArrayGetItemAtIndex(items, i));
-        m_popupMenuItems = eina_list_append(m_popupMenuItems, EwkPopupMenuItem::create(wkItem).leakPtr());
+        m_popupMenuItems = eina_list_append(m_popupMenuItems, std::make_unique<EwkPopupMenuItem>(wkItem).release());
     }
 }
 

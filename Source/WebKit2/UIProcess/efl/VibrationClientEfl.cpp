@@ -50,11 +50,6 @@ void VibrationClientEfl::cancelVibrationCallback(WKVibrationRef, const void* cli
     toVibrationClient(clientInfo)->m_view->smartCallback<CancelVibration>().call();
 }
 
-PassOwnPtr<VibrationClientEfl> VibrationClientEfl::create(EwkView* viewImpl)
-{
-    return adoptPtr(new VibrationClientEfl(viewImpl));
-}
-
 VibrationClientEfl::VibrationClientEfl(EwkView* view)
     : m_view(view)
 {

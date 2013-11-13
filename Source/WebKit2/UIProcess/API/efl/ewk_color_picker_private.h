@@ -25,21 +25,15 @@
 
 #include "WKRetainPtr.h"
 #include <WebCore/Color.h>
-#include <wtf/PassOwnPtr.h>
 
 class EwkColorPicker {
 public:
-    static PassOwnPtr<EwkColorPicker> create(WKColorPickerResultListenerRef colorPickerListener, const WebCore::Color& initialColor)
-    {
-        return adoptPtr(new EwkColorPicker(colorPickerListener, initialColor));
-    }
+    EwkColorPicker(WKColorPickerResultListenerRef colorPickerListener, const WebCore::Color& initialColor);
 
     const WebCore::Color& color() const;
     void setColor(const WebCore::Color&);
 
 private:
-    EwkColorPicker(WKColorPickerResultListenerRef colorPickerListener, const WebCore::Color& initialColor);
-
     WKRetainPtr<WKColorPickerResultListenerRef> m_colorPickerListener;
     WebCore::Color m_color;
 };

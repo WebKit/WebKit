@@ -32,7 +32,6 @@
 #include <Ecore.h>
 #include <WebCore/IntPoint.h>
 #include <WebKit2/WKEventEfl.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 class EwkView;
@@ -43,18 +42,13 @@ class GestureHandler;
 
 class GestureRecognizer {
 public:
-    static PassOwnPtr<GestureRecognizer> create(EwkView* ewkView)
-    {
-        return adoptPtr(new GestureRecognizer(ewkView));
-    }
+    explicit GestureRecognizer(EwkView*);
     ~GestureRecognizer();
 
     void processTouchEvent(WKTouchEventRef);
     void reset();
 
 private:
-    explicit GestureRecognizer(EwkView*);
-
     static Eina_Bool doubleTapTimerCallback(void*);
     static Eina_Bool tapAndHoldTimerCallback(void*);
 
@@ -78,7 +72,7 @@ private:
     typedef void (GestureRecognizer::*RecognizerFunction)(WKEventType, WKArrayRef);
     RecognizerFunction m_recognizerFunction;
 
-    OwnPtr<WebKit::GestureHandler> m_gestureHandler;
+    std::unique_ptr<WebKit::GestureHandler> m_gestureHandler;
     Ecore_Timer* m_tapAndHoldTimer;
     Ecore_Timer* m_doubleTapTimer;
     WebCore::IntPoint m_firstPressedPoint;

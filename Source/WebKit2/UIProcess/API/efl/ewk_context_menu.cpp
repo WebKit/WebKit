@@ -44,7 +44,7 @@ EwkContextMenu::EwkContextMenu(EwkView* view, WKArrayRef items)
 {
     size_t size = WKArrayGetSize(items);
     for (size_t i = 0; i < size; ++i)
-        m_contextMenuItems = eina_list_append(m_contextMenuItems, Ewk_Context_Menu_Item::create(static_cast<WKContextMenuItemRef>(WKArrayGetItemAtIndex(items, i)), this).leakPtr());
+        m_contextMenuItems = eina_list_append(m_contextMenuItems, std::make_unique<Ewk_Context_Menu_Item>(static_cast<WKContextMenuItemRef>(WKArrayGetItemAtIndex(items, i)), this).release());
 }
 
 EwkContextMenu::EwkContextMenu()

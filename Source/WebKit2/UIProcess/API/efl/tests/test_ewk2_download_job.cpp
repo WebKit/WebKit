@@ -30,8 +30,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 using namespace EWK2UnitTest;
 using namespace WTF;
@@ -151,7 +149,7 @@ public:
 
 TEST_F(EWK2DownloadJobTest, ewk_download)
 {
-    OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
+    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
     httpServer->run(serverCallback);
 
     // Generate unique name for destination file.

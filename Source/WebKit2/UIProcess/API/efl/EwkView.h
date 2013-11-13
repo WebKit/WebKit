@@ -259,18 +259,18 @@ private:
     bool m_pendingSurfaceResize;
 #endif
     WebCore::TransformationMatrix m_userViewportTransform;
-    OwnPtr<WebKit::PageLoadClientEfl> m_pageLoadClient;
-    OwnPtr<WebKit::PagePolicyClientEfl> m_pagePolicyClient;
-    OwnPtr<WebKit::PageUIClientEfl> m_pageUIClient;
-    OwnPtr<WebKit::ContextMenuClientEfl> m_contextMenuClient;
-    OwnPtr<WebKit::FindClientEfl> m_findClient;
-    OwnPtr<WebKit::FormClientEfl> m_formClient;
-    OwnPtr<WebKit::ViewClientEfl> m_viewClient;
+    std::unique_ptr<WebKit::PageLoadClientEfl> m_pageLoadClient;
+    std::unique_ptr<WebKit::PagePolicyClientEfl> m_pagePolicyClient;
+    std::unique_ptr<WebKit::PageUIClientEfl> m_pageUIClient;
+    std::unique_ptr<WebKit::ContextMenuClientEfl> m_contextMenuClient;
+    std::unique_ptr<WebKit::FindClientEfl> m_findClient;
+    std::unique_ptr<WebKit::FormClientEfl> m_formClient;
+    std::unique_ptr<WebKit::ViewClientEfl> m_viewClient;
 #if ENABLE(VIBRATION)
-    OwnPtr<WebKit::VibrationClientEfl> m_vibrationClient;
+    std::unique_ptr<WebKit::VibrationClientEfl> m_vibrationClient;
 #endif
-    OwnPtr<EwkBackForwardList> m_backForwardList;
-    OwnPtr<EwkSettings> m_settings;
+    std::unique_ptr<EwkBackForwardList> m_backForwardList;
+    std::unique_ptr<EwkSettings> m_settings;
     RefPtr<EwkWindowFeatures> m_windowFeatures;
     const void* m_cursorIdentifier; // This is an address, do not free it.
     WKEinaSharedString m_url;
@@ -281,18 +281,18 @@ private:
     bool m_mouseEventsEnabled;
 #if ENABLE(TOUCH_EVENTS)
     bool m_touchEventsEnabled;
-    OwnPtr<WebKit::GestureRecognizer> m_gestureRecognizer;
+    std::unique_ptr<WebKit::GestureRecognizer> m_gestureRecognizer;
 #endif
     WebCore::Timer<EwkView> m_displayTimer;
     RefPtr<EwkContextMenu> m_contextMenu;
-    OwnPtr<EwkPopupMenu> m_popupMenu;
+    std::unique_ptr<EwkPopupMenu> m_popupMenu;
     OwnPtr<WebKit::InputMethodContextEfl> m_inputMethodContext;
 #if ENABLE(INPUT_TYPE_COLOR)
-    OwnPtr<EwkColorPicker> m_colorPicker;
+    std::unique_ptr<EwkColorPicker> m_colorPicker;
 #endif
 #if USE(ACCELERATED_COMPOSITING)
-    OwnPtr<WebKit::PageViewportControllerClientEfl> m_pageViewportControllerClient;
-    OwnPtr<WebKit::PageViewportController> m_pageViewportController;
+    std::unique_ptr<WebKit::PageViewportControllerClientEfl> m_pageViewportControllerClient;
+    std::unique_ptr<WebKit::PageViewportController> m_pageViewportController;
 #endif
     bool m_isAccelerated;
 

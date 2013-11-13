@@ -29,25 +29,18 @@
 #include "ewk_download_job_private.h"
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/HashMap.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebKit {
 
 class DownloadManagerEfl {
 public:
-    static PassOwnPtr<DownloadManagerEfl> create(WKContextRef context)
-    {
-        return adoptPtr(new DownloadManagerEfl(context));
-    }
-
+    explicit DownloadManagerEfl(WKContextRef);
     ~DownloadManagerEfl();
 
     void registerDownloadJob(WKDownloadRef, EwkView*);
 
 private:
-    explicit DownloadManagerEfl(WKContextRef);
-
     EwkDownloadJob* ewkDownloadJob(WKDownloadRef);
     void unregisterDownloadJob(WKDownloadRef);
 

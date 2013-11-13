@@ -30,7 +30,6 @@
 #include "WKRetainPtr.h"
 #include "ewk_popup_menu_item.h"
 #include <WebKit2/WKBase.h>
-#include <wtf/PassOwnPtr.h>
 
 /**
  * \struct  Ewk_Popup_Menu_Item
@@ -38,10 +37,7 @@
  */
 class EwkPopupMenuItem {
 public:
-    static PassOwnPtr<EwkPopupMenuItem> create(WKPopupItemRef item)
-    {
-        return adoptPtr(new EwkPopupMenuItem(item));
-    }
+    explicit EwkPopupMenuItem(WKPopupItemRef item);
 
     Ewk_Popup_Menu_Item_Type type() const;
     Ewk_Text_Direction textDirection() const;
@@ -56,8 +52,6 @@ public:
     const char* accessibilityText() const;
 
 private:
-    explicit EwkPopupMenuItem(WKPopupItemRef item);
-
     WKRetainPtr<WKPopupItemRef> m_wkItem;
 
     // Lazily initialized.

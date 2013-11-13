@@ -28,7 +28,6 @@
 
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKGeometry.h>
-#include <wtf/PassOwnPtr.h>
 
 class EwkView;
 
@@ -36,16 +35,10 @@ namespace WebKit {
 
 class ViewClientEfl {
 public:
-    static PassOwnPtr<ViewClientEfl> create(EwkView* view)
-    {
-        return adoptPtr(new ViewClientEfl(view));
-    }
-
+    explicit ViewClientEfl(EwkView*);
     ~ViewClientEfl();
 
 private:
-    explicit ViewClientEfl(EwkView*);
-
     static EwkView* toEwkView(const void* clientInfo);
     static void viewNeedsDisplay(WKViewRef, WKRect area, const void* clientInfo);
     static void didChangeContentsSize(WKViewRef, WKSize, const void* clientInfo);

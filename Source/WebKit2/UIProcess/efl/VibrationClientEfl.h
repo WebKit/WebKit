@@ -29,7 +29,6 @@
 #if ENABLE(VIBRATION)
 
 #include <WebKit2/WKBase.h>
-#include <wtf/PassOwnPtr.h>
 
 class EwkView;
 
@@ -37,13 +36,10 @@ namespace WebKit {
 
 class VibrationClientEfl {
 public:
-    static PassOwnPtr<VibrationClientEfl> create(EwkView*);
-
+    explicit VibrationClientEfl(EwkView*);
     virtual ~VibrationClientEfl();
 
 private:
-    explicit VibrationClientEfl(EwkView*);
-
     static void vibrateCallback(WKVibrationRef, uint32_t vibrationTime, const void* clientInfo);
     static void cancelVibrationCallback(WKVibrationRef, const void* clientInfo);
 

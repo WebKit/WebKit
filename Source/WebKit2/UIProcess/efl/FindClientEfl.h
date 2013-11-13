@@ -28,7 +28,6 @@
 #define FindClientEfl_h
 
 #include <WebKit2/WKBase.h>
-#include <wtf/PassOwnPtr.h>
 
 class EwkView;
 
@@ -36,14 +35,9 @@ namespace WebKit {
 
 class FindClientEfl {
 public:
-    static PassOwnPtr<FindClientEfl> create(EwkView* viewImpl)
-    {
-        return adoptPtr(new FindClientEfl(viewImpl));
-    }
-
-private:
     explicit FindClientEfl(EwkView*);
 
+private:
     static void didFindString(WKPageRef, WKStringRef, unsigned matchCount, const void* clientInfo);
     static void didFailToFindString(WKPageRef, WKStringRef, const void* clientInfo);
 

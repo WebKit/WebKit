@@ -30,7 +30,6 @@
 #include "WKPage.h"
 #include "WKPopupItem.h"
 #include <WebKit2/WKBase.h>
-#include <wtf/PassOwnPtr.h>
 
 class EwkView;
 
@@ -38,14 +37,9 @@ namespace WebKit {
 
 class PageUIClientEfl {
 public:
-    static PassOwnPtr<PageUIClientEfl> create(EwkView* view)
-    {
-        return adoptPtr(new PageUIClientEfl(view));
-    }
-
-private:
     explicit PageUIClientEfl(EwkView*);
 
+private:
     static void close(WKPageRef, const void*);
     static void takeFocus(WKPageRef, WKFocusDirection, const void*);
     static void focus(WKPageRef, const void*);

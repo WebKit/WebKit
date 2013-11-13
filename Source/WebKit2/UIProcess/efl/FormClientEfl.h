@@ -27,7 +27,6 @@
 #define FormClientEfl_h
 
 #include <WebKit2/WKBase.h>
-#include <wtf/PassOwnPtr.h>
 
 class EwkView;
 
@@ -35,14 +34,9 @@ namespace WebKit {
 
 class FormClientEfl {
 public:
-    static PassOwnPtr<FormClientEfl> create(EwkView* viewImpl)
-    {
-        return adoptPtr(new FormClientEfl(viewImpl));
-    }
-
-private:
     explicit FormClientEfl(EwkView*);
 
+private:
     static void willSubmitForm(WKPageRef, WKFrameRef, WKFrameRef, WKDictionaryRef values, WKTypeRef userData, WKFormSubmissionListenerRef, const void* clientInfo);
 
     EwkView* m_view;

@@ -30,24 +30,17 @@
 #include "WKRetainPtr.h"
 #include "ewk_security_origin_private.h"
 #include <WebKit2/WKBase.h>
-#include <wtf/PassOwnPtr.h>
 
 using namespace WebKit;
 
 class EwkStorageManager {
 public:
-    static PassOwnPtr<EwkStorageManager> create(WKKeyValueStorageManagerRef storageManager)
-    {
-        ASSERT(storageManager);
-        return adoptPtr(new EwkStorageManager(storageManager));
-    }
+    explicit EwkStorageManager(WKKeyValueStorageManagerRef);
 
     Eina_List* createOriginList(WKArrayRef wkList) const;
     void getStorageOrigins(void* context, WKKeyValueStorageManagerGetKeyValueStorageOriginsFunction callback) const;
 
 private:
-    explicit EwkStorageManager(WKKeyValueStorageManagerRef);
-
     WKRetainPtr<WKKeyValueStorageManagerRef> m_storageManager;
     mutable HashMap<WKSecurityOriginRef, RefPtr<EwkSecurityOrigin> > m_wrapperCache;
 };

@@ -40,10 +40,7 @@ namespace WebKit {
 
 class GestureHandler {
 public:
-    static PassOwnPtr<GestureHandler> create(EwkView* ewkView)
-    {
-        return adoptPtr(new GestureHandler(ewkView));
-    }
+    explicit GestureHandler(EwkView*);
     ~GestureHandler();
 
     EwkView* view() { return m_ewkView; }
@@ -61,8 +58,6 @@ public:
     void handlePinchFinished();
 
 private:
-    explicit GestureHandler(EwkView*);
-
     static Eina_Bool panAnimatorCallback(void*);
     static Eina_Bool flickAnimatorCallback(void*);
 
@@ -239,7 +234,7 @@ const int GestureRecognizer::s_squaredPanThreshold = 100;
 
 GestureRecognizer::GestureRecognizer(EwkView* ewkView)
     : m_recognizerFunction(&GestureRecognizer::noGesture)
-    , m_gestureHandler(GestureHandler::create(ewkView))
+    , m_gestureHandler(std::make_unique<GestureHandler>(ewkView))
     , m_tapAndHoldTimer(0)
     , m_doubleTapTimer(0)
 {

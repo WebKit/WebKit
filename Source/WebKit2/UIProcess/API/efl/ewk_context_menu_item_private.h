@@ -31,7 +31,6 @@
 #include "ewk_context_menu.h"
 #include "ewk_context_menu_item.h"
 #include "ewk_context_menu_private.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -41,15 +40,8 @@
  */
 class EwkContextMenuItem {
 public:
-    static PassOwnPtr<EwkContextMenuItem> create(WKContextMenuItemRef item, EwkContextMenu* parentMenu)
-    {
-        return adoptPtr(new EwkContextMenuItem(item, parentMenu));
-    }
-
-    static PassOwnPtr<EwkContextMenuItem> create(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool checked, Eina_Bool enabled, PassRefPtr<EwkContextMenu> subMenu = 0, EwkContextMenu* parentMenu = 0)
-    {
-        return adoptPtr(new EwkContextMenuItem(type, action, title, checked, enabled, subMenu, parentMenu));
-    }
+    EwkContextMenuItem(WKContextMenuItemRef, EwkContextMenu* parentMenu);
+    EwkContextMenuItem(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool checked, Eina_Bool enabled, PassRefPtr<EwkContextMenu> subMenu = nullptr, EwkContextMenu* parentMenu = nullptr);
 
     Ewk_Context_Menu_Item_Action action() const { return m_action; }
     void setAction(Ewk_Context_Menu_Item_Action action) { m_action = action; }
@@ -72,14 +64,11 @@ public:
     EwkContextMenu* subMenu() const { return m_subMenu.get(); }
 
 private:
-    EwkContextMenuItem(WKContextMenuItemRef, EwkContextMenu* parentMenu);
-    EwkContextMenuItem(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Item_Action action, const char* title, Eina_Bool checked, Eina_Bool enabled, PassRefPtr<EwkContextMenu> subMenu, EwkContextMenu* parentMenu);
-
     Ewk_Context_Menu_Item_Type m_type;
     Ewk_Context_Menu_Item_Action m_action;
 
     WKEinaSharedString m_title;
-    
+
     bool m_isChecked;
     bool m_isEnabled;
 

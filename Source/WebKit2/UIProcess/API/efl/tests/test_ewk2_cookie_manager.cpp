@@ -24,8 +24,6 @@
 #include "UnitTestUtils/EWK2UnitTestServer.h"
 #include <stdlib.h>
 #include <unistd.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 using namespace EWK2UnitTest;
 using namespace WTF;
@@ -130,7 +128,7 @@ protected:
 
 TEST_F(EWK2CookieManagerTest, ewk_cookie_manager_accept_policy)
 {
-    OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
+    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
     httpServer->run(serverCallback);
 
     Ewk_Cookie_Manager* cookieManager = ewk_context_cookie_manager_get(ewk_view_context_get(webView()));
@@ -168,7 +166,7 @@ TEST_F(EWK2CookieManagerTest, ewk_cookie_manager_accept_policy)
 
 TEST_F(EWK2CookieManagerTest, ewk_cookie_manager_changes_watch)
 {
-    OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
+    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
     httpServer->run(serverCallback);
 
     Ewk_Cookie_Manager* cookieManager = ewk_context_cookie_manager_get(ewk_view_context_get(webView()));
@@ -231,7 +229,7 @@ TEST_F(EWK2CookieManagerTest, ewk_cookie_manager_changes_watch)
 
 TEST_F(EWK2CookieManagerTest, ewk_cookie_manager_cookies_delete)
 {
-    OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
+    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
     httpServer->run(serverCallback);
 
     Ewk_Cookie_Manager* cookieManager = ewk_context_cookie_manager_get(ewk_view_context_get(webView()));
@@ -267,7 +265,7 @@ TEST_F(EWK2CookieManagerTest, ewk_cookie_manager_cookies_delete)
 
 TEST_F(EWK2CookieManagerTest, DISABLED_ewk_cookie_manager_permanent_storage)
 {
-    OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
+    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
     httpServer->run(serverCallback);
 
     // Generate unique names for cookie storages.

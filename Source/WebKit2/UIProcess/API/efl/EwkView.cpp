@@ -260,30 +260,30 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
 #if USE(ACCELERATED_COMPOSITING)
     , m_pendingSurfaceResize(false)
 #endif
-    , m_pageLoadClient(PageLoadClientEfl::create(this))
-    , m_pagePolicyClient(PagePolicyClientEfl::create(this))
-    , m_pageUIClient(PageUIClientEfl::create(this))
-    , m_contextMenuClient(ContextMenuClientEfl::create(this))
-    , m_findClient(FindClientEfl::create(this))
-    , m_formClient(FormClientEfl::create(this))
-    , m_viewClient(ViewClientEfl::create(this))
+    , m_pageLoadClient(std::make_unique<PageLoadClientEfl>(this))
+    , m_pagePolicyClient(std::make_unique<PagePolicyClientEfl>(this))
+    , m_pageUIClient(std::make_unique<PageUIClientEfl>(this))
+    , m_contextMenuClient(std::make_unique<ContextMenuClientEfl>(this))
+    , m_findClient(std::make_unique<FindClientEfl>(this))
+    , m_formClient(std::make_unique<FormClientEfl>(this))
+    , m_viewClient(std::make_unique<ViewClientEfl>(this))
 #if ENABLE(VIBRATION)
-    , m_vibrationClient(VibrationClientEfl::create(this))
+    , m_vibrationClient(std::make_unique<VibrationClientEfl>(this))
 #endif
-    , m_backForwardList(EwkBackForwardList::create(WKPageGetBackForwardList(wkPage())))
-    , m_settings(EwkSettings::create(this))
+    , m_backForwardList(std::make_unique<EwkBackForwardList>(WKPageGetBackForwardList(wkPage())))
+    , m_settings(std::make_unique<EwkSettings>(this))
     , m_cursorIdentifier(0)
     , m_userAgent(WKEinaSharedString(AdoptWK, WKPageCopyUserAgent(wkPage())))
     , m_mouseEventsEnabled(false)
 #if ENABLE(TOUCH_EVENTS)
     , m_touchEventsEnabled(false)
-    , m_gestureRecognizer(GestureRecognizer::create(this))
+    , m_gestureRecognizer(std::make_unique<GestureRecognizer>(this))
 #endif
     , m_displayTimer(this, &EwkView::displayTimerFired)
     , m_inputMethodContext(InputMethodContextEfl::create(this, smartData()->base.evas))
 #if USE(ACCELERATED_COMPOSITING)
-    , m_pageViewportControllerClient(PageViewportControllerClientEfl::create(this))
-    , m_pageViewportController(adoptPtr(new PageViewportController(page(), m_pageViewportControllerClient.get())))
+    , m_pageViewportControllerClient(std::make_unique<PageViewportControllerClientEfl>(this))
+    , m_pageViewportController(std::make_unique<PageViewportController>(page(), m_pageViewportControllerClient.get()))
 #endif
     , m_isAccelerated(true)
 {
@@ -858,7 +858,7 @@ void EwkView::requestColorPicker(WKColorPickerResultListenerRef listener, const 
     if (m_colorPicker)
         dismissColorPicker();
 
-    m_colorPicker = EwkColorPicker::create(listener, color);
+    m_colorPicker = std::make_unique<EwkColorPicker>(listener, color);
 
     sd->api->input_picker_color_request(sd, m_colorPicker.get());
 }
@@ -878,7 +878,7 @@ void EwkView::dismissColorPicker()
     if (sd->api->input_picker_color_dismiss)
         sd->api->input_picker_color_dismiss(sd);
 
-    m_colorPicker.clear();
+    m_colorPicker = nullptr;
 }
 #endif
 
@@ -893,7 +893,7 @@ void EwkView::customContextMenuItemSelected(WKContextMenuItemRef contextMenuItem
     if (!sd->api->custom_item_selected)
         return;
 
-    OwnPtr<EwkContextMenuItem> item = EwkContextMenuItem::create(contextMenuItem, 0);
+    std::unique_ptr<EwkContextMenuItem> item = std::make_unique<EwkContextMenuItem>(contextMenuItem, nullptr);
 
     sd->api->custom_item_selected(sd, item.get());
 }
@@ -946,7 +946,7 @@ void EwkView::requestPopupMenu(WKPopupMenuListenerRef popupMenuListener, const W
     if (m_popupMenu)
         closePopupMenu();
 
-    m_popupMenu = EwkPopupMenu::create(this, popupMenuListener, items, selectedIndex);
+    m_popupMenu = std::make_unique<EwkPopupMenu>(this, popupMenuListener, items, selectedIndex);
 
     WKPoint popupMenuPosition = WKViewContentsToUserViewport(wkView(), rect.origin);
 
@@ -967,7 +967,7 @@ void EwkView::closePopupMenu()
     if (sd->api->popup_menu_hide)
         sd->api->popup_menu_hide(sd);
 
-    m_popupMenu.clear();
+    m_popupMenu = nullptr;
 }
 
 /**

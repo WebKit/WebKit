@@ -21,8 +21,6 @@
 
 #include "UnitTestUtils/EWK2UnitTestBase.h"
 #include "UnitTestUtils/EWK2UnitTestServer.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -285,7 +283,7 @@ TEST_F(EWK2ViewTest, ewk_view_html_string_load)
 
 TEST_F(EWK2ViewTest, ewk_view_navigation)
 {
-    OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
+    std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
     httpServer->run(serverCallbackNavigation);
 
     // Visit Page1

@@ -26,8 +26,6 @@
 #include "config.h"
 
 #include "UnitTestUtils/EWK2UnitTestBase.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/efl/RefPtrEfl.h>
 
 using namespace EWK2UnitTest;

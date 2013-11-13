@@ -24,7 +24,6 @@
 #include "ewk_object_private.h"
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKRetainPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -93,20 +92,20 @@ private:
 
     WKRetainPtr<WKContextRef> m_context;
 
-    OwnPtr<EwkCookieManager> m_cookieManager;
-    OwnPtr<EwkDatabaseManager> m_databaseManager;
-    OwnPtr<EwkFaviconDatabase> m_faviconDatabase;
-    OwnPtr<EwkStorageManager> m_storageManager;
+    std::unique_ptr<EwkCookieManager> m_cookieManager;
+    std::unique_ptr<EwkDatabaseManager> m_databaseManager;
+    std::unique_ptr<EwkFaviconDatabase> m_faviconDatabase;
+    std::unique_ptr<EwkStorageManager> m_storageManager;
 #if ENABLE(BATTERY_STATUS)
     RefPtr<WebKit::BatteryProvider> m_batteryProvider;
 #endif
 #if ENABLE(NETWORK_INFO)
     RefPtr<WebKit::NetworkInfoProvider> m_networkInfoProvider;
 #endif
-    OwnPtr<WebKit::DownloadManagerEfl> m_downloadManager;
-    OwnPtr<WebKit::RequestManagerClientEfl> m_requestManagerClient;
+    std::unique_ptr<WebKit::DownloadManagerEfl> m_downloadManager;
+    std::unique_ptr<WebKit::RequestManagerClientEfl> m_requestManagerClient;
 
-    OwnPtr<WebKit::ContextHistoryClientEfl> m_historyClient;
+    std::unique_ptr<WebKit::ContextHistoryClientEfl> m_historyClient;
 };
 
 #endif // ewk_context_private_h

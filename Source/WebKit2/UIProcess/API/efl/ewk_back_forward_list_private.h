@@ -30,16 +30,12 @@
 #include "ewk_back_forward_list_item_private.h"
 #include <WebKit2/WKBase.h>
 #include <wtf/HashMap.h>
-#include <wtf/PassOwnPtr.h>
 
 typedef HashMap<WKBackForwardListItemRef, RefPtr<EwkBackForwardListItem> > ItemsMap;
 
 class EwkBackForwardList {
 public:
-    static PassOwnPtr<EwkBackForwardList> create(WKBackForwardListRef listRef)
-    {
-        return adoptPtr(new EwkBackForwardList(listRef));
-    }
+    explicit EwkBackForwardList(WKBackForwardListRef listRef);
 
     EwkBackForwardListItem* previousItem() const;
     EwkBackForwardListItem* currentItem() const;
@@ -54,8 +50,6 @@ public:
     Eina_List* createEinaList(WKArrayRef wkList) const;
 
 private:
-    explicit EwkBackForwardList(WKBackForwardListRef listRef);
-
     EwkBackForwardListItem* getFromCacheOrCreate(WKBackForwardListItemRef wkItem) const;
 
     WKRetainPtr<WKBackForwardListRef> m_wkList;
