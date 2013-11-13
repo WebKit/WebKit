@@ -142,7 +142,7 @@ private:
     virtual void checkPlayability();
     virtual void updateRate();
     virtual float rate() const;
-    virtual void seekToTime(double time);
+    virtual void seekToTime(double time, double negativeTolerance, double positiveTolerance);
     virtual unsigned totalBytes() const;
     virtual PassRefPtr<TimeRanges> platformBufferedTimeRanges() const;
     virtual double platformMinTimeSeekable() const;

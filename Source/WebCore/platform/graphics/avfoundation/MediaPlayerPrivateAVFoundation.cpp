@@ -266,6 +266,11 @@ float MediaPlayerPrivateAVFoundation::duration() const
 
 void MediaPlayerPrivateAVFoundation::seek(float time)
 {
+    seekWithTolerance(time, 0, 0);
+}
+
+void MediaPlayerPrivateAVFoundation::seekWithTolerance(double time, double negativeTolerance, double positiveTolerance)
+{
     if (!metaDataAvailable())
         return;
 
@@ -282,7 +287,7 @@ void MediaPlayerPrivateAVFoundation::seek(float time)
     m_seekTo = time;
 
     ++m_seekCount;
-    seekToTime(time);
+    seekToTime(time, negativeTolerance, positiveTolerance);
 }
 
 void MediaPlayerPrivateAVFoundation::setRate(float rate)

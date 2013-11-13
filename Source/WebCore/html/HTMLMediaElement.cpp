@@ -2146,10 +2146,31 @@ void HTMLMediaElement::prepareToPlay()
     m_player->prepareToPlay();
 }
 
+void HTMLMediaElement::fastSeek(double time, ExceptionCode& ec)
+{
+    LOG(Media, "HTMLMediaElement::fastSeek(%f)", time);
+    // 4.7.10.9 Seeking
+    // 9. If the approximate-for-speed flag is set, adjust the new playback position to a value that will
+    // allow for playback to resume promptly. If new playback position before this step is before current
+    // playback position, then the adjusted new playback position must also be before the current playback
+    // position. Similarly, if the new playback position before this step is after current playback position,
+    // then the adjusted new playback position must also be after the current playback position.
+    refreshCachedTime();
+    double delta = time - currentTime();
+    double negativeTolerance = delta >= 0 ? delta : std::numeric_limits<double>::infinity();
+    double positiveTolerance = delta < 0 ? -delta : std::numeric_limits<double>::infinity();
+
+    seekWithTolerance(time, negativeTolerance, positiveTolerance, ec);
+}
+
 void HTMLMediaElement::seek(double time, ExceptionCode& ec)
 {
     LOG(Media, "HTMLMediaElement::seek(%f)", time);
+    seekWithTolerance(time, 0, 0, ec);
+}
 
+void HTMLMediaElement::seekWithTolerance(double time, double negativeTolerance, double positiveTolerance, ExceptionCode& ec)
+{
     // 4.8.9.9 Seeking
 
     // 1 - If the media element's readyState is HAVE_NOTHING, then raise an INVALID_STATE_ERR exception.
@@ -2232,7 +2253,7 @@ void HTMLMediaElement::seek(double time, ExceptionCode& ec)
     m_sentEndEvent = false;
 
     // 8 - Set the current playback position to the given new playback position
-    m_player->seek(time);
+    m_player->seekWithTolerance(time, negativeTolerance, positiveTolerance);
 
     // 9 - Queue a task to fire a simple event named seeking at the element.
     scheduleEvent(eventNames().seekingEvent);

@@ -159,6 +159,7 @@ protected:
     virtual float duration() const OVERRIDE;
     virtual float currentTime() const = 0;
     virtual void seek(float) OVERRIDE;
+    virtual void seekWithTolerance(double, double, double) OVERRIDE;
     virtual bool seeking() const OVERRIDE;
     virtual void setRate(float) OVERRIDE;
     virtual bool paused() const OVERRIDE;
@@ -223,7 +224,7 @@ protected:
     virtual void checkPlayability() = 0;
     virtual void updateRate() = 0;
     virtual float rate() const = 0;
-    virtual void seekToTime(double time) = 0;
+    virtual void seekToTime(double time, double negativeTolerance, double positiveTolerance) = 0;
     virtual unsigned totalBytes() const = 0;
     virtual PassRefPtr<TimeRanges> platformBufferedTimeRanges() const = 0;
     virtual double platformMaxTimeSeekable() const = 0;

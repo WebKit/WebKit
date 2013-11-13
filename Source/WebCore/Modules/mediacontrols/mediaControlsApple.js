@@ -295,6 +295,8 @@ Controller.prototype = {
         this.listenFor(timeline, 'mouseover', this.handleTimelineMouseOver);
         this.listenFor(timeline, 'mouseout', this.handleTimelineMouseOut);
         this.listenFor(timeline, 'mousemove', this.handleTimelineMouseMove);
+        this.listenFor(timeline, 'mousedown', this.handleTimelineMouseDown);
+        this.listenFor(timeline, 'mouseup', this.handleTimelineMouseUp);
         timeline.step = .01;
 
         var thumbnailTrack = this.controls.thumbnailTrack = document.createElement('div');
@@ -463,7 +465,8 @@ Controller.prototype = {
 
     handleTimeUpdate: function(event)
     {
-        this.updateTime();
+        if (!this.scrubbing)
+            this.updateTime();
     },
 
     handleDurationChange: function(event)
@@ -622,7 +625,7 @@ Controller.prototype = {
 
     handleTimelineChange: function(event)
     {
-        this.video.currentTime = this.controls.timeline.value;
+        this.video.fastSeek(this.controls.timeline.value);
     },
 
     handleTimelineDown: function(event)
@@ -673,6 +676,19 @@ Controller.prototype = {
                 }
             }
         }
+    },
+
+    handleTimelineMouseDown: function(event)
+    {
+        this.scrubbing = true;
+    },
+
+    handleTimelineMouseUp: function(event)
+    {
+        this.scrubbing = false;
+
+        // Do a precise seek when we lift the mouse:
+        this.video.currentTime = this.controls.timeline.value;
     },
 
     handleMuteButtonClicked: function(event)

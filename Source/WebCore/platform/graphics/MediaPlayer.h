@@ -326,6 +326,7 @@ public:
     double duration() const;
     double currentTime() const;
     void seek(double time);
+    void seekWithTolerance(double time, double negativeTolerance, double positiveTolerance);
 
     double startTime() const;
 

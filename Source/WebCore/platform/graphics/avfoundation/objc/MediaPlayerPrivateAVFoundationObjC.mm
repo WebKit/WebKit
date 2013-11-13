@@ -644,13 +644,16 @@ float MediaPlayerPrivateAVFoundationObjC::currentTime() const
     return 0;
 }
 
-void MediaPlayerPrivateAVFoundationObjC::seekToTime(double time)
+void MediaPlayerPrivateAVFoundationObjC::seekToTime(double time, double negativeTolerance, double positiveTolerance)
 {
     // setCurrentTime generates several event callbacks, update afterwards.
     setDelayCallbacks(true);
 
     WebCoreAVFMovieObserver *observer = m_objcObserver.get();
-    [m_avPlayerItem.get() seekToTime:CMTimeMakeWithSeconds(time, 600) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
+    CMTime cmTime = CMTimeMakeWithSeconds(time, 600);
+    CMTime cmBefore = CMTimeMakeWithSeconds(negativeTolerance, 600);
+    CMTime cmAfter = CMTimeMakeWithSeconds(positiveTolerance, 600);
+    [m_avPlayerItem.get() seekToTime:cmTime toleranceBefore:cmBefore toleranceAfter:cmAfter completionHandler:^(BOOL finished) {
         [observer seekCompleted:finished];
     }];
 

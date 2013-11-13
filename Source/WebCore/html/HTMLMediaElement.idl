@@ -75,6 +75,7 @@ readonly attribute boolean ended;
 [Reflect] attribute boolean loop;
 void play();
 void pause();
+[RaisesException] void fastSeek(double time);
 
 // controls
 attribute boolean controls;

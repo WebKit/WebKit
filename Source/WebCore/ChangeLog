@@ -1,3 +1,46 @@
+2013-11-12  Jer Noble  <jer.noble@apple.com>
+
+        Add support for HTMLMediaElement.fastSeek()
+        https://bugs.webkit.org/show_bug.cgi?id=124262
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-fast-seek.html
+
+        Add the fastSeek() method to HTMLMediaElement, and use fastSeek() in
+        the JavaScript media controls.
+
+        Add the new fastSeek() method:
+        * html/HTMLMediaElement.cpp:
+        (HTMLMediaElement::fastSeek): Call seekWithTolerance.
+        (HTMLMediaElement::seek): Call seekWithTolerance with 0 tolerance.
+        (HTMLMediaElement::seekWithTolerance): Renamed from seek().
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+
+        Add seekWithTolerance() to MediaPlayer:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::seekWithTolerance): Pass to MediaPlayerPrivate.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::seekWithTolerance): Default implementation which
+            calls seek().
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::seek): Call seekWithTolerance with 0 tolerance.
+        (WebCore::MediaPlayerPrivateAVFoundation::seekWithTolerance): Renamed from seek().
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::seekToTime): Take tolerance parameters.
+
+        Use the new fastSeek() method while actively scrubbing.
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.createControls): Add mouse up and down handlers.
+        (Controller.prototype.handleTimeUpdate): Only update the timeline when not scrubbing.
+        (Controller.prototype.handleTimelineChange): Use fastSeek().
+        (Controller.prototype.handleTimelineMouseDown): Start scrubbing.
+        (Controller.prototype.handleTimelineMouseUp): Stop scrubbing.
+
 2013-11-13  Andreas Kling  <akling@apple.com>
 
         Generate casting helpers for scrolling tree classes.

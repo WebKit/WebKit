@@ -178,6 +178,7 @@ public:
     void setLoop(bool b);
     virtual void play() OVERRIDE;
     virtual void pause() OVERRIDE;
+    void fastSeek(double, ExceptionCode&);
 
 // captions
     bool webkitHasClosedCaptions() const;
@@ -536,6 +537,7 @@ private:
     void stopPeriodicTimers();
 
     void seek(double time, ExceptionCode&);
+    void seekWithTolerance(double time, double negativeTolerance, double positiveTolerance, ExceptionCode&);
     void finishSeek();
     void checkIfSeekNeeded();
     void addPlayedRange(double start, double end);

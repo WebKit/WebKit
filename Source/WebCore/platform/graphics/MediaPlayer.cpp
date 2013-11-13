@@ -538,6 +538,11 @@ double MediaPlayer::currentTime() const
     return m_private->currentTimeDouble();
 }
 
+void MediaPlayer::seekWithTolerance(double time, double negativeTolerance, double positiveTolerance)
+{
+    m_private->seekWithTolerance(time, negativeTolerance, positiveTolerance);
+}
+
 void MediaPlayer::seek(double time)
 {
     m_private->seekDouble(time);
