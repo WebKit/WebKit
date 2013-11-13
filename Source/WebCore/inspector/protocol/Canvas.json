@@ -1,0 +1,173 @@
+{
+    "domain": "Canvas",
+    "types": [
+        {
+            "id": "ResourceId",
+            "type": "string",
+            "description": "Unique resource identifier."
+        },
+        {
+            "id": "ResourceInfo",
+            "type": "object",
+            "properties": [
+                { "name": "id", "$ref": "ResourceId" },
+                { "name": "description", "type": "string" }
+            ]
+        },
+        {
+            "id": "ResourceState",
+            "type": "object",
+            "properties": [
+                { "name": "id", "$ref": "ResourceId" },
+                { "name": "traceLogId", "$ref": "TraceLogId" },
+                { "name": "imageURL", "type": "string", "optional": true, "description": "Screenshot image data URL." }
+            ]
+        },
+        {
+            "id": "CallArgument",
+            "type": "object",
+            "properties": [
+                { "name": "description", "type": "string" }
+            ]
+        },
+        {
+            "id": "Call",
+            "type": "object",
+            "properties": [
+                { "name": "contextId", "$ref": "ResourceId" },
+                { "name": "functionName", "type": "string", "optional": true },
+                { "name": "arguments", "type": "array", "items": { "$ref": "CallArgument" }, "optional": true },
+                { "name": "result", "$ref": "CallArgument", "optional": true },
+                { "name": "isDrawingCall", "type": "boolean", "optional": true },
+                { "name": "isFrameEndCall", "type": "boolean", "optional": true },
+                { "name": "property", "type": "string", "optional": true },
+                { "name": "value", "$ref": "CallArgument", "optional": true },
+                { "name": "sourceURL", "type": "string", "optional": true },
+                { "name": "lineNumber", "type": "integer", "optional": true },
+                { "name": "columnNumber", "type": "integer", "optional": true }
+            ]
+        },
+        {
+            "id": "TraceLogId",
+            "type": "string",
+            "description": "Unique trace log identifier."
+        },
+        {
+            "id": "TraceLog",
+            "type": "object",
+            "properties": [
+                { "name": "id", "$ref": "TraceLogId" },
+                { "name": "calls", "type": "array", "items": { "$ref": "Call" } },
+                { "name": "startOffset", "type": "integer" },
+                { "name": "alive", "type": "boolean" },
+                { "name": "totalAvailableCalls", "type": "number" }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "enable",
+            "description": "Enables Canvas inspection."
+        },
+        {
+            "name": "disable",
+            "description": "Disables Canvas inspection."
+        },
+        {
+            "name": "dropTraceLog",
+            "parameters": [
+                { "name": "traceLogId", "$ref": "TraceLogId" }
+            ]
+        },
+        {
+            "name": "hasUninstrumentedCanvases",
+            "returns": [
+                { "name": "result", "type": "boolean" }
+            ],
+            "description": "Checks if there is any uninstrumented canvas in the inspected page."
+        },
+        {
+            "name": "captureFrame",
+            "parameters": [
+                { "name": "frameId", "$ref": "Network.FrameId", "optional": true, "description": "Identifier of the frame containing document whose canvases are to be captured. If omitted, main frame is assumed." }
+            ],
+            "returns": [
+                { "name": "traceLogId", "$ref": "TraceLogId", "description": "Identifier of the trace log containing captured canvas calls." }
+            ],
+            "description": "Starts (or continues) a canvas frame capturing which will be stopped automatically after the next frame is prepared."
+        },
+        {
+            "name": "startCapturing",
+            "parameters": [
+                { "name": "frameId", "$ref": "Network.FrameId", "optional": true, "description": "Identifier of the frame containing document whose canvases are to be captured. If omitted, main frame is assumed." }
+            ],
+            "returns": [
+                { "name": "traceLogId", "$ref": "TraceLogId", "description": "Identifier of the trace log containing captured canvas calls." }
+            ],
+            "description": "Starts (or continues) consecutive canvas frames capturing. The capturing is stopped by the corresponding stopCapturing command."
+        },
+        {
+            "name": "stopCapturing",
+            "parameters": [
+                { "name": "traceLogId", "$ref": "TraceLogId" }
+            ]
+        },
+        {
+            "name": "getTraceLog",
+            "parameters": [
+                { "name": "traceLogId", "$ref": "TraceLogId" },
+                { "name": "startOffset", "type": "integer", "optional": true },
+                { "name": "maxLength", "type": "integer", "optional": true }
+            ],
+            "returns": [
+                { "name": "traceLog", "$ref": "TraceLog" }
+            ]
+        },
+        {
+            "name": "replayTraceLog",
+            "parameters": [
+                { "name": "traceLogId", "$ref": "TraceLogId" },
+                { "name": "stepNo", "type": "integer" }
+            ],
+            "returns": [
+                { "name": "resourceState", "$ref": "ResourceState" }
+            ]
+        },
+        {
+            "name": "getResourceInfo",
+            "parameters": [
+                { "name": "resourceId", "$ref": "ResourceId" }
+            ],
+            "returns": [
+                { "name": "resourceInfo", "$ref": "ResourceInfo" }
+            ]
+        },
+        {
+            "name": "getResourceState",
+            "parameters": [
+                { "name": "traceLogId", "$ref": "TraceLogId" },
+                { "name": "resourceId", "$ref": "ResourceId" }
+            ],
+            "returns": [
+                { "name": "resourceState", "$ref": "ResourceState" }
+            ]
+        }
+    ],
+    "events": [
+        {
+            "name": "contextCreated",
+            "parameters": [
+                { "name": "frameId", "$ref": "Network.FrameId", "description": "Identifier of the frame containing a canvas with a context." }
+            ],
+            "description": "Fired when a canvas context has been created in the given frame. The context may not be instrumented (see hasUninstrumentedCanvases command)."
+        },
+        {
+            "name": "traceLogsRemoved",
+            "parameters": [
+                { "name": "frameId", "$ref": "Network.FrameId", "optional": true, "description": "If given, trace logs from the given frame were removed." },
+                { "name": "traceLogId", "$ref": "TraceLogId", "optional": true, "description": "If given, trace log with the given ID was removed." }
+            ],
+            "description": "Fired when a set of trace logs were removed from the backend. If no parameters are given, all trace logs were removed."
+        }
+    ]
+}

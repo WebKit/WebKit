@@ -31,7 +31,7 @@ WebInspector.NetworkObserver = function()
 WebInspector.NetworkObserver.prototype = {
     constructor: WebInspector.NetworkObserver,
 
-    // Events defined by the "Network" domain (see WebCore/inspector/Inspector.json).
+    // Events defined by the "Network" domain.
 
     requestWillBeSent: function(requestId, frameId, loaderId, documentURL, request, timestamp, initiator, redirectResponse, type)
     {

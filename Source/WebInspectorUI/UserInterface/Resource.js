@@ -69,7 +69,7 @@ WebInspector.Resource.Event = {
     CacheStatusDidChange: "resource-cached-did-change"
 };
 
-// Keep these in sync with the "ResourceType" enum defined by the "Page" domain (see WebCore/inspector/Inspector.json).
+// Keep these in sync with the "ResourceType" enum defined by the "Page" domain.
 WebInspector.Resource.Type = {
     Document: "resource-type-document",
     Stylesheet: "resource-type-stylesheet",

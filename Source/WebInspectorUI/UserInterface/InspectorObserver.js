@@ -31,7 +31,7 @@ WebInspector.InspectorObserver = function()
 WebInspector.InspectorObserver.prototype = {
     constructor: WebInspector.InspectorObserver,
 
-    // Events defined by the "Inspector" domain (see WebCore/inspector/Inspector.json).
+    // Events defined by the "Inspector" domain.
 
     evaluateForTestInFrontend: function(testCallId, script)
     {

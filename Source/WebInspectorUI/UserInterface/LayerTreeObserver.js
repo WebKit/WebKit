@@ -31,7 +31,7 @@ WebInspector.LayerTreeObserver = function()
 WebInspector.LayerTreeObserver.prototype = {
     constructor: WebInspector.LayerTreeObserver,
 
-    // Events defined by the "LayerTree" domain (see WebCore/inspector/Inspector.json).
+    // Events defined by the "LayerTree" domain.
 
     layerTreeDidChange: function()
     {

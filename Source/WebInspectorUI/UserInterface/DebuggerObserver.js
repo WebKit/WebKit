@@ -31,7 +31,7 @@ WebInspector.DebuggerObserver = function()
 WebInspector.DebuggerObserver.prototype = {
     constructor: WebInspector.DebuggerObserver,
 
-    // Events defined by the "Debugger" domain (see WebCore/inspector/Inspector.json).
+    // Events defined by the "Debugger" domain.
 
     globalObjectCleared: function()
     {

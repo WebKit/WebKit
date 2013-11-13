@@ -31,7 +31,7 @@ WebInspector.ProfilerObserver = function()
 WebInspector.ProfilerObserver.prototype = {
     constructor: WebInspector.ProfilerObserver,
 
-    // Events defined by the "Profiler" domain (see WebCore/inspector/Inspector.json).
+    // Events defined by the "Profiler" domain.
 
     resetProfiles: function()
     {

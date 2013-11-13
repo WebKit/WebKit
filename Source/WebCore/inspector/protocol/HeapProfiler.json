@@ -1,0 +1,108 @@
+{
+    "domain": "HeapProfiler",
+    "types": [
+        {
+            "id": "ProfileHeader",
+            "type": "object",
+            "description": "Profile header.",
+            "properties": [
+                { "name": "title", "type": "string", "description": "Profile title." },
+                { "name": "uid", "type": "integer", "description": "Unique identifier of the profile." },
+                { "name": "maxJSObjectId", "type": "integer", "optional": true, "description": "Last seen JS object Id." }
+            ]
+        },
+        {
+            "id": "HeapSnapshotObjectId",
+            "type": "string",
+            "description": "Heap snashot object id."
+        }
+    ],
+    "commands": [
+        {
+            "name": "hasHeapProfiler",
+            "returns": [
+                { "name": "result", "type": "boolean" }
+            ]
+        },
+        {
+            "name": "getProfileHeaders",
+            "returns": [
+                { "name": "headers", "type": "array", "items": { "$ref": "ProfileHeader"} }
+            ]
+        },
+        {
+            "name": "getHeapSnapshot",
+            "parameters": [
+                { "name": "uid", "type": "integer" }
+            ]
+        },
+        {
+            "name": "removeProfile",
+            "parameters": [
+                { "name": "uid", "type": "integer" }
+            ]
+        },
+        {
+            "name": "clearProfiles"
+        },
+        {
+            "name": "takeHeapSnapshot",
+            "parameters": [
+                { "name": "reportProgress", "type": "boolean", "optional": true, "description": "If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken." }
+            ]
+        },
+        {
+            "name": "collectGarbage"
+        },
+        {
+            "name": "getObjectByHeapObjectId",
+            "parameters": [
+                { "name": "objectId", "$ref": "HeapSnapshotObjectId" },
+                { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." }
+            ],
+            "returns": [
+                { "name": "result", "$ref": "Runtime.RemoteObject", "description": "Evaluation result." }
+            ]
+        },
+        {
+            "name": "getHeapObjectId",
+            "parameters": [
+                { "name": "objectId", "$ref": "Runtime.RemoteObjectId", "description": "Identifier of the object to get heap object id for." }
+            ],
+            "returns": [
+                { "name": "heapSnapshotObjectId", "$ref": "HeapSnapshotObjectId", "description": "Id of the heap snapshot object corresponding to the passed remote object id." }
+            ]
+        }
+    ],
+    "events": [
+        {
+            "name": "addProfileHeader",
+            "parameters": [
+                { "name": "header", "$ref": "ProfileHeader" }
+            ]
+        },
+        {
+            "name": "addHeapSnapshotChunk",
+            "parameters": [
+                { "name": "uid", "type": "integer" },
+                { "name": "chunk", "type": "string" }
+            ]
+        },
+        {
+            "name": "finishHeapSnapshot",
+            "parameters": [
+                { "name": "uid", "type": "integer" }
+            ]
+        },
+        {
+            "name": "resetProfiles"
+        },
+        {
+            "name": "reportHeapSnapshotProgress",
+            "parameters": [
+                { "name": "done", "type": "integer" },
+                { "name": "total", "type": "integer" }
+            ]
+        }
+    ]
+}

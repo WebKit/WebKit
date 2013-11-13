@@ -32,7 +32,7 @@ WebInspector.DOMStorageObserver = function()
 WebInspector.DOMStorageObserver.prototype = {
     constructor: WebInspector.DOMStorageObserver,
 
-    // Events defined by the "DOMStorage" domain (see WebCore/inspector/Inspector.json).
+    // Events defined by the "DOMStorage" domain.
 
     // COMPATIBILITY (iOS 6): This event no longer exists. It is still needed and called on iOS 6.
     addDOMStorage: function(storage)

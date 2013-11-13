@@ -31,7 +31,7 @@ WebInspector.DOMObserver = function()
 WebInspector.DOMObserver.prototype = {
     constructor: WebInspector.DOMObserver,
 
-    // Events defined by the "DOM" domain (see WebCore/inspector/Inspector.json).
+    // Events defined by the "DOM" domain.
 
     documentUpdated: function()
     {

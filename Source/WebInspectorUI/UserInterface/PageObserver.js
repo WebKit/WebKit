@@ -31,7 +31,7 @@ WebInspector.PageObserver = function()
 WebInspector.PageObserver.prototype = {
     constructor: WebInspector.PageObserver,
 
-    // Events defined by the "Page" domain (see WebCore/inspector/Inspector.json).
+    // Events defined by the "Page" domain.
 
     domContentEventFired: function(timestamp)
     {

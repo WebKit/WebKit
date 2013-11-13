@@ -1,3 +1,46 @@
+2013-11-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Split Inspector.json into individual domain json files
+        https://bugs.webkit.org/show_bug.cgi?id=124098
+
+        Reviewed by Timothy Hatcher.
+
+        Split the Inspector domains into their own json file. Generate a
+        combined Inspector.json from all of the json files at build time
+        so that the CodeGenerator is unchanged.
+
+        * .gitattributes:
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/CodeGeneratorInspector.py:
+        (TypeMap.__init__):
+        * inspector/Inspector.json: Removed.
+        * inspector/Scripts/generate-combined-inspector-json.py: Added.
+        * inspector/protocol/ApplicationCache.json: Added.
+        * inspector/protocol/CSS.json: Added.
+        * inspector/protocol/Canvas.json: Added.
+        * inspector/protocol/Console.json: Added.
+        * inspector/protocol/DOM.json: Added.
+        * inspector/protocol/DOMDebugger.json: Added.
+        * inspector/protocol/DOMStorage.json: Added.
+        * inspector/protocol/Database.json: Added.
+        * inspector/protocol/Debugger.json: Added.
+        * inspector/protocol/FileSystem.json: Added.
+        * inspector/protocol/HeapProfiler.json: Added.
+        * inspector/protocol/IndexedDB.json: Added.
+        * inspector/protocol/Input.json: Added.
+        * inspector/protocol/InspectorDomain.json: Added.
+        * inspector/protocol/LayerTree.json: Added.
+        * inspector/protocol/Memory.json: Added.
+        * inspector/protocol/Network.json: Added.
+        * inspector/protocol/Page.json: Added.
+        * inspector/protocol/Profiler.json: Added.
+        * inspector/protocol/Runtime.json: Added.
+        * inspector/protocol/Timeline.json: Added.
+        * inspector/protocol/Worker.json: Added.
+
 2013-11-13  Zalan Bujtas  <zalan@apple.com>
 
         Code cleanup: change FrameView::doLayoutWithFrameFlattening() to make it more explicit.

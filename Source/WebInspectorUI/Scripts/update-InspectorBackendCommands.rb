@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 
 require 'fileutils'
+require 'tempfile'
 require 'tmpdir'
 
 if ARGV.size != 0
@@ -10,13 +11,14 @@ end
 
 WEB_INSPECTOR_PATH = File.expand_path File.join(File.dirname(__FILE__), "..")
 WEBCORE_PATH = File.expand_path File.join(File.dirname(__FILE__), "..", "..", "WebCore")
+WEBCORE_INSPECTOR_PROTOCOLS_PATH = File.join WEBCORE_PATH, "inspector", "protocol"
 
 $code_generator_path = File.join WEBCORE_PATH, "inspector", "CodeGeneratorInspector.py"
-$inspector_json_path = File.join WEBCORE_PATH, "inspector", "Inspector.json"
+$inspector_json_generator_path = File.join WEBCORE_PATH, "inspector", "Scripts", "generate-combined-inspector-json.py"
+$inspector_json_path = Tempfile.new("generated-Inspector.json").path
 $versions_directory_path = File.join WEB_INSPECTOR_PATH, "Versions"
 $web_inspector_user_interface_path = File.join WEB_INSPECTOR_PATH, "UserInterface"
 $backend_commands_filename = "InspectorBackendCommands.js"
-
 
 class Task
   def initialize(input_json_path, output_directory_path, verification)
@@ -51,8 +53,20 @@ class Task
   end
 end
 
+def generate_combined_inspector_json
+  output = %x{ #{$inspector_json_generator_path} "#{WEBCORE_INSPECTOR_PROTOCOLS_PATH}" > "#{$inspector_json_path}" }
+  if $?.exitstatus != 0
+    puts "ERROR: Could not generate combined Inspector.json file"
+    exit 1
+  end
+  puts output
+  # File.open($inspector_json_path, 'w') { |file| file.write(output) }
+end
+
 def all_tasks
   tasks = []
+
+  generate_combined_inspector_json
   tasks << Task.new($inspector_json_path, $web_inspector_user_interface_path, true)
 
   had_error = false
@@ -62,7 +76,7 @@ def all_tasks
       output_path = File.join $web_inspector_user_interface_path, "Legacy", match[2]
       tasks << Task.new(version_path, output_path, false)
     else
-      puts "ERROR: Version file (#{version_path}) did not the template Inspector<ANYTHING>-<VERSION>.js"
+      puts "ERROR: Version file (#{version_path}) did not match the template Inspector<ANYTHING>-<VERSION>.js"
       had_error = true
     end
   end

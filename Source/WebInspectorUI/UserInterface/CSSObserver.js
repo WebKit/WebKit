@@ -31,7 +31,7 @@ WebInspector.CSSObserver = function()
 WebInspector.CSSObserver.prototype = {
     constructor: WebInspector.CSSObserver,
 
-    // Events defined by the "CSS" domain (see WebCore/inspector/Inspector.json).
+    // Events defined by the "CSS" domain.
 
     mediaQueryResultChanged: function()
     {

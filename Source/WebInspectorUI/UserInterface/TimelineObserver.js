@@ -31,7 +31,7 @@ WebInspector.TimelineObserver = function()
 WebInspector.TimelineObserver.prototype = {
     constructor: WebInspector.TimelineObserver,
 
-    // Events defined by the "Timeline" domain (see WebCore/inspector/Inspector.json).
+    // Events defined by the "Timeline" domain.
 
     eventRecorded: function(record)
     {

@@ -31,7 +31,7 @@ WebInspector.ApplicationCacheObserver = function()
 WebInspector.ApplicationCacheObserver.prototype = {
     constructor: WebInspector.ApplicationCacheObserver,
 
-    // Events defined by the "ApplicationCache" domain (see WebCore/inspector/Inspector.json).
+    // Events defined by the "ApplicationCache" domain.
 
     applicationCacheStatusUpdated: function(frameId, manifestURL, status)
     {

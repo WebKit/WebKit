@@ -1643,7 +1643,12 @@ class TypeMap:
             self.map_[domain_name] = domain_map
 
             domain_data = DomainData(json_domain)
-            self.domains_.append(domain_data)
+
+            # FIXME: The order of types should not matter. The generated code should work regardless of the order of types.
+            if domain_name == "Page":
+                self.domains_.insert(0, domain_data)
+            else:
+                self.domains_.append(domain_data)
 
             if "types" in json_domain:
                 for json_type in json_domain["types"]:

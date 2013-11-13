@@ -33,7 +33,7 @@ WebInspector.DatabaseObserver._callbacks = {};
 WebInspector.DatabaseObserver.prototype = {
     constructor: WebInspector.DatabaseObserver,
 
-    // Events defined by the "Database" domain (see WebCore/inspector/Inspector.json).
+    // Events defined by the "Database" domain.
 
     addDatabase: function(database)
     {

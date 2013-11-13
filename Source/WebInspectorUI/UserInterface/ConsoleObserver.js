@@ -31,7 +31,7 @@ WebInspector.ConsoleObserver = function()
 WebInspector.ConsoleObserver.prototype = {
     constructor: WebInspector.ConsoleObserver,
 
-    // Events defined by the "Console" domain (see WebCore/inspector/Inspector.json).
+    // Events defined by the "Console" domain.
 
     messageAdded: function(message)
     {

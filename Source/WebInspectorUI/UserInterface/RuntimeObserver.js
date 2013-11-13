@@ -31,7 +31,7 @@ WebInspector.RuntimeObserver = function()
 WebInspector.RuntimeObserver.prototype = {
     constructor: WebInspector.RuntimeObserver,
 
-    // Events defined by the "Runtime" domain (see WebCore/inspector/Inspector.json).
+    // Events defined by the "Runtime" domain.
 
     executionContextCreated: function(contextPayload)
     {

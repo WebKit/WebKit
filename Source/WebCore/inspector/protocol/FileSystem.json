@@ -1,0 +1,102 @@
+{
+    "domain": "FileSystem",
+    "types": [
+        {
+            "id": "Entry",
+            "type": "object",
+            "properties": [
+                { "name": "url", "type": "string", "description": "filesystem: URL for the entry." },
+                { "name": "name", "type": "string", "description": "The name of the file or directory." },
+                { "name": "isDirectory", "type": "boolean", "description": "True if the entry is a directory." },
+                { "name": "mimeType", "type": "string", "optional": true, "description": "MIME type of the entry, available for a file only." },
+                { "name": "resourceType", "$ref": "Page.ResourceType", "optional": true, "description": "ResourceType of the entry, available for a file only." },
+                { "name": "isTextFile", "type": "boolean", "optional": true, "description": "True if the entry is a text file." }
+            ],
+            "description": "Represents a browser side file or directory."
+        },
+        {
+            "id": "Metadata",
+            "type": "object",
+            "properties": [
+                { "name": "modificationTime", "type": "number", "description": "Modification time." },
+                { "name": "size", "type": "number", "description": "File size. This field is always zero for directories." }
+            ],
+            "description": "Represents metadata of a file or entry."
+        }
+    ],
+    "commands": [
+        {
+            "name": "enable",
+            "description": "Enables events from backend."
+        },
+        {
+            "name": "disable",
+            "description": "Disables events from backend."
+        },
+        {
+            "name": "requestFileSystemRoot",
+            "async": true,
+            "parameters": [
+                { "name": "origin", "type": "string", "description": "Security origin of requesting FileSystem. One of frames in current page needs to have this security origin." },
+                { "name": "type", "type": "string", "enum": ["temporary", "persistent"], "description": "FileSystem type of requesting FileSystem." }
+            ],
+            "returns": [
+                { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value." },
+                { "name": "root", "$ref": "Entry", "optional": true, "description": "Contains root of the requested FileSystem if the command completed successfully." }
+            ],
+            "description": "Returns root directory of the FileSystem, if exists."
+        },
+        {
+            "name": "requestDirectoryContent",
+            "async": true,
+            "parameters": [
+                { "name": "url", "type": "string", "description": "URL of the directory that the frontend is requesting to read from." }
+            ],
+            "returns": [
+                { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value." },
+                { "name": "entries", "type": "array", "items": { "$ref": "Entry" }, "optional": true, "description": "Contains all entries on directory if the command completed successfully." }
+            ],
+            "description": "Returns content of the directory."
+        },
+        {
+            "name": "requestMetadata",
+            "async": true,
+            "parameters": [
+                { "name": "url", "type": "string", "description": "URL of the entry that the frontend is requesting to get metadata from." }
+            ],
+            "returns": [
+                { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value." },
+                { "name": "metadata", "$ref": "Metadata", "optional": true, "description": "Contains metadata of the entry if the command completed successfully." }
+            ],
+            "description": "Returns metadata of the entry."
+        },
+        {
+            "name": "requestFileContent",
+            "async": true,
+            "parameters": [
+                { "name": "url", "type": "string", "description": "URL of the file that the frontend is requesting to read from." },
+                { "name": "readAsText", "type": "boolean", "description": "True if the content should be read as text, otherwise the result will be returned as base64 encoded text." },
+                { "name": "start", "type": "integer", "optional": true, "description": "Specifies the start of range to read." },
+                { "name": "end", "type": "integer", "optional": true, "description": "Specifies the end of range to read exclusively." },
+                { "name": "charset", "type": "string", "optional": true, "description": "Overrides charset of the content when content is served as text." }
+            ],
+            "returns": [
+                { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise, errorCode is set to FileError::ErrorCode value." },
+                { "name": "content", "type": "string", "optional": true, "description": "Content of the file." },
+                { "name": "charset", "type": "string", "optional": true, "description": "Charset of the content if it is served as text." }
+            ],
+            "description": "Returns content of the file. Result should be sliced into [start, end)."
+        },
+        {
+            "name": "deleteEntry",
+            "async": true,
+            "parameters": [
+                { "name": "url", "type": "string", "description": "URL of the entry to delete." }
+            ],
+            "returns": [
+                { "name": "errorCode", "type": "integer", "description": "0, if no error. Otherwise errorCode is set to FileError::ErrorCode value." }
+            ],
+            "description": "Deletes specified entry. If the entry is a directory, the agent deletes children recursively."
+        }
+    ]
+}

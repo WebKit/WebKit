@@ -31,7 +31,7 @@ WebInspector.CanvasObserver = function()
 WebInspector.CanvasObserver.prototype = {
     constructor: WebInspector.CanvasObserver,
 
-    // Events defined by the "Canvas" domain (see WebCore/inspector/Inspector.json).
+    // Events defined by the "Canvas" domain.
 
     contextCreated: function(frameId)
     {

@@ -1,6 +1,5 @@
 accessibility/AccessibilityAllInOne.cpp -crlf
 bindings/js/JSExceptionBase.cpp -crlf
 bindings/js/JSExceptionBase.h -crlf
-inspector/Inspector.json -crlf
 platform/network/win/NetworkStateNotifierWin.cpp -crlf
 platform/wx/wxcode/non-kerned-drawing.h -crlf
