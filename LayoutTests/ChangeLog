@@ -1,3 +1,11 @@
+2013-11-13  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Remove failure tests expectations after r159116.
+
+        * platform/efl/TestExpectations:
+
 2013-11-13  Alexey Proskuryakov  <ap@apple.com>
 
         crypto/subtle/rsassa-pkcs1-v1_5-import-jwk.html is failing on Maverics release bot
