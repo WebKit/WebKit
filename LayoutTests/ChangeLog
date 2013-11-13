@@ -1,3 +1,9 @@
+2013-11-13  Tim Horton  <timothy_horton@apple.com>
+
+        Remove a crash expectation from a test that seems fixed by r159218.
+
+        * platform/mac/TestExpectations:
+
 2013-11-13  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Modifying RTCSessionDescription object construction to match the spec

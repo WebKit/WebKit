@@ -1172,7 +1172,7 @@ webkit.org/b/116245 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ P
 # Asserts in WebKit1-debug due to a preexisting issue with overflow rect computation
 webkit.org/b/118269 compositing/geometry/fixed-position-flipped-writing-mode.html
 
-webkit.org/b/118479 fast/repaint/fixed-right-in-page-scale.html [ Pass Crash ImageOnlyFailure ]
+webkit.org/b/118479 fast/repaint/fixed-right-in-page-scale.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/118900 mathml/presentation/mspace-units.html [ ImageOnlyFailure ]
 
