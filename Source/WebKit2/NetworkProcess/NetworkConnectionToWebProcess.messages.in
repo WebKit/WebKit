@@ -39,7 +39,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     SetCookiesFromDOM(bool privateBrowsingEnabled, WebCore::URL firstParty, WebCore::URL url, WTF::String cookieString)
     CookiesEnabled(bool privateBrowsingEnabled, WebCore::URL firstParty, WebCore::URL url) -> (bool enabled)
     CookieRequestHeaderFieldValue(bool privateBrowsingEnabled, WebCore::URL firstParty, WebCore::URL url) -> (WTF::String result)
-    GetRawCookies(bool privateBrowsingEnabled, WebCore::URL firstParty, WebCore::URL url) -> (WTF::Vector<WebCore::Cookie> cookies)
+    GetRawCookies(bool privateBrowsingEnabled, WebCore::URL firstParty, WebCore::URL url) -> (Vector<WebCore::Cookie> cookies)
     DeleteCookie(bool privateBrowsingEnabled, WebCore::URL url, WTF::String cookieName)
 
     RegisterBlobURL(WebCore::URL url, WebKit::BlobRegistrationData data)

@@ -1,3 +1,24 @@
+2013-11-13  Tamas Gergely  <gertom@inf.u-szeged.hu>
+
+        Remove prefixed template class processing from message receiver generator.
+        https://bugs.webkit.org/show_bug.cgi?id=123095
+
+        Reviewed by Anders Carlsson.
+
+        There was a FIXME in messages.py to remove unprefixed WTF template classes,
+        but in the discussion of the bug report we concluded that in the messages.in
+        files we should follow the C++ naming convention where none of the WTF
+        classes require the WTF prefix.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * Scripts/webkit2/messages.py:
+        (class_template_headers):
+        * Scripts/webkit2/messages_unittest.py:
+        (std):
+        * UIProcess/Storage/StorageManager.messages.in:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2013-11-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r159199 to make cmake and GTK build happy.

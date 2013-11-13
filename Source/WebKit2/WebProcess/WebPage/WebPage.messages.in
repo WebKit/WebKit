@@ -182,7 +182,7 @@ messages -> WebPage LegacyReceiver {
     # Spelling and grammar.
     AdvanceToNextMisspelling(bool startBeforeSelection)
     ChangeSpellingToWord(WTF::String word)
-    DidFinishCheckingText(uint64_t requestID, WTF::Vector<WebCore::TextCheckingResult> result)
+    DidFinishCheckingText(uint64_t requestID, Vector<WebCore::TextCheckingResult> result)
     DidCancelCheckingText(uint64_t requestID)
 #if USE(APPKIT)
     UppercaseWord()
@@ -237,7 +237,7 @@ messages -> WebPage LegacyReceiver {
 #endif
 
 #if PLATFORM(GTK)
-    SetComposition(WTF::String text, WTF::Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
+    SetComposition(WTF::String text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
     ConfirmComposition(WTF::String text, int64_t selectionStart, int64_t selectionLength)
     CancelComposition()
 #endif
@@ -255,7 +255,7 @@ messages -> WebPage LegacyReceiver {
     ReadSelectionFromPasteboard(WTF::String pasteboardName) -> (bool result)
 
     # Text input.
-    SetComposition(WTF::String text, WTF::Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd) -> (WebKit::EditorState newState)
+    SetComposition(WTF::String text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd) -> (WebKit::EditorState newState)
     ConfirmComposition() -> (WebKit::EditorState newState)
     CancelComposition() -> (WebKit::EditorState newState)
     InsertText(WTF::String text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd) -> (bool handled, WebKit::EditorState newState)
@@ -267,7 +267,7 @@ messages -> WebPage LegacyReceiver {
     ExecuteKeypressCommands(Vector<WebCore::KeypressCommand> savedCommands) -> (bool handled, WebKit::EditorState newState)
     ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result)
     AcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) -> (bool result)
-    InsertDictatedText(WTF::String text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, WTF::Vector<WebCore::DictationAlternative> dictationAlternatives) -> (bool handled, WebKit::EditorState newState)
+    InsertDictatedText(WTF::String text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, Vector<WebCore::DictationAlternative> dictationAlternatives) -> (bool handled, WebKit::EditorState newState)
 #endif
 
     SetMinimumLayoutSize(WebCore::IntSize minimumLayoutSize)
@@ -275,7 +275,7 @@ messages -> WebPage LegacyReceiver {
 
 #if PLATFORM(EFL)
     ConfirmComposition(WTF::String compositionString)
-    SetComposition(WTF::String compositionString, WTF::Vector<WebCore::CompositionUnderline> underlines, uint64_t cursorPosition)
+    SetComposition(WTF::String compositionString, Vector<WebCore::CompositionUnderline> underlines, uint64_t cursorPosition)
     CancelComposition()
 #endif
 #if USE(COORDINATED_GRAPHICS)
