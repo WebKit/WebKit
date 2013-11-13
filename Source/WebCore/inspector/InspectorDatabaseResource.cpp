@@ -56,14 +56,14 @@ InspectorDatabaseResource::InspectorDatabaseResource(PassRefPtr<Database> databa
 {
 }
 
-void InspectorDatabaseResource::bind(InspectorFrontend::Database* frontend)
+void InspectorDatabaseResource::bind(InspectorDatabaseFrontendDispatcher* databaseFrontendDispatcher)
 {
     RefPtr<TypeBuilder::Database::Database> jsonObject = TypeBuilder::Database::Database::create()
         .setId(m_id)
         .setDomain(m_domain)
         .setName(m_name)
         .setVersion(m_version);
-    frontend->addDatabase(jsonObject);
+    databaseFrontendDispatcher->addDatabase(jsonObject);
 }
 
 } // namespace WebCore

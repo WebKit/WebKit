@@ -26,19 +26,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# THis file contains string resources for CodeGeneratorInspector.
+# This file contains string resources for CodeGeneratorInspector.
 # Its syntax is a Python syntax subset, suitable for manual parsing.
 
 frontend_domain_class = (
-"""    class $domainClassName {
-    public:
-        $domainClassName(InspectorFrontendChannel* inspectorFrontendChannel) : m_inspectorFrontendChannel(inspectorFrontendChannel) { }
-${frontendDomainMethodDeclarations}
-    protected:
-        InspectorFrontendChannel* m_inspectorFrontendChannel;
-    };
-
-    $domainClassName* $domainFieldName() { return &m_$domainFieldName; }
+"""class $domainClassName {
+public:
+    $domainClassName(InspectorFrontendChannel* inspectorFrontendChannel) : m_inspectorFrontendChannel(inspectorFrontendChannel) { }
+${frontendDomainMethodDeclarations}private:
+    InspectorFrontendChannel* m_inspectorFrontendChannel;
+};
 
 """)
 
@@ -62,7 +59,7 @@ ${responseCook}
 }
 """)
 
-frontend_method = ("""void InspectorFrontend::$domainName::$eventName($parameters)
+frontend_method = ("""void Inspector${domainName}FrontendDispatcher::$eventName($parameters)
 {
     RefPtr<InspectorObject> jsonMessage = InspectorObject::create();
     jsonMessage->setString("method", "$domainName.$eventName");
@@ -94,27 +91,14 @@ namespace WebCore {
 
 class InspectorFrontendChannel;
 
-// Both InspectorObject and InspectorArray may or may not be declared at this point as defined by ENABLED_INSPECTOR.
-// Double-check we have them at least as forward declaration.
-class InspectorArray;
-class InspectorObject;
-
-typedef String ErrorString;
-
 #if ENABLE(INSPECTOR)
 
-class InspectorFrontend {
-public:
-    InspectorFrontend(InspectorFrontendChannel*);
-
-
 $domainClassList
-private:
-${fieldDeclarations}};
 
 #endif // ENABLE(INSPECTOR)
 
 } // namespace WebCore
+
 #endif // !defined(InspectorFrontend_h)
 """)
 
@@ -205,12 +189,11 @@ backend_cpp = (
 #if ENABLE(INSPECTOR)
 
 #include "InspectorBackendDispatcher.h"
-#include <wtf/text/WTFString.h>
-#include <wtf/text/CString.h>
 
 #include "InspectorAgent.h"
 #include "InspectorValues.h"
 #include "InspectorFrontendChannel.h"
+#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -493,21 +476,16 @@ frontend_cpp = (
 """
 
 #include "config.h"
+
 #if ENABLE(INSPECTOR)
 
 #include "InspectorFrontend.h"
-#include <wtf/text/WTFString.h>
-#include <wtf/text/CString.h>
 
 #include "InspectorFrontendChannel.h"
-#include "InspectorValues.h"
+#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-InspectorFrontend::InspectorFrontend(InspectorFrontendChannel* inspectorFrontendChannel)
-    : $constructorInit{
-}
 
 $methods
 

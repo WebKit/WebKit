@@ -34,19 +34,17 @@
 namespace WebCore {
 
 class InspectorBackendDispatcher;
-class InspectorFrontend;
 
 class InspectorAgentRegistry {
 public:
-    void append(PassOwnPtr<InspectorBaseAgentInterface>);
+    void append(PassOwnPtr<InspectorBaseAgent>);
 
-    void setFrontend(InspectorFrontend*);
-    void clearFrontend();
-    void registerInDispatcher(InspectorBackendDispatcher*);
+    void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*);
+    void willDestroyFrontendAndBackend();
     void discardAgents();
 
 private:
-    Vector<OwnPtr<InspectorBaseAgentInterface>> m_agents;
+    Vector<OwnPtr<InspectorBaseAgent>> m_agents;
 };
 
 } // namespace WebCore

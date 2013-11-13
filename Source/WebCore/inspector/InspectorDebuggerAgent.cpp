@@ -55,9 +55,8 @@ namespace WebCore {
 const char* InspectorDebuggerAgent::backtraceObjectGroup = "backtrace";
 
 InspectorDebuggerAgent::InspectorDebuggerAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager)
-    : InspectorBaseAgent<InspectorDebuggerAgent>("Debugger", instrumentingAgents)
+    : InspectorBaseAgent(ASCIILiteral("Debugger"), instrumentingAgents)
     , m_injectedScriptManager(injectedScriptManager)
-    , m_frontend(0)
     , m_pausedScriptState(0)
     , m_continueToLocationBreakpointID(noBreakpointID)
     , m_enabled(false)
@@ -126,7 +125,7 @@ void InspectorDebuggerAgent::enable(ErrorString*)
 
     enable();
 
-    ASSERT(m_frontend);
+    ASSERT(m_frontendDispatcher);
 }
 
 void InspectorDebuggerAgent::disable(ErrorString*)
@@ -137,17 +136,15 @@ void InspectorDebuggerAgent::disable(ErrorString*)
     disable();
 }
 
-void InspectorDebuggerAgent::setFrontend(InspectorFrontend* frontend)
+void InspectorDebuggerAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
-    m_frontend = frontend->debugger();
+    m_frontendDispatcher = std::make_unique<InspectorDebuggerFrontendDispatcher>(frontendChannel);
+    backendDispatcher->registerAgent(this);
 }
 
-void InspectorDebuggerAgent::clearFrontend()
+void InspectorDebuggerAgent::willDestroyFrontendAndBackend()
 {
-    m_frontend = 0;
-
-    if (!enabled())
-        return;
+    m_frontendDispatcher = nullptr;
 
     disable();
 }
@@ -173,7 +170,7 @@ bool InspectorDebuggerAgent::runningNestedMessageLoop()
 void InspectorDebuggerAgent::addMessageToConsole(MessageSource source, MessageType type)
 {
     if (scriptDebugServer().pauseOnExceptionsState() != ScriptDebugServer::DontPauseOnExceptions && source == ConsoleAPIMessageSource && type == AssertMessageType)
-        breakProgram(InspectorFrontend::Debugger::Reason::Assert, 0);
+        breakProgram(InspectorDebuggerFrontendDispatcher::Reason::Assert, 0);
 }
 
 static PassRefPtr<InspectorObject> buildObjectForBreakpointCookie(const String& url, int lineNumber, int columnNumber, const String& condition, RefPtr<InspectorArray>& actions, bool isRegex, bool autoContinue)
@@ -467,7 +464,7 @@ void InspectorDebuggerAgent::getFunctionDetails(ErrorString* errorString, const 
     injectedScript.getFunctionDetails(errorString, functionId, &details);
 }
 
-void InspectorDebuggerAgent::schedulePauseOnNextStatement(InspectorFrontend::Debugger::Reason::Enum breakReason, PassRefPtr<InspectorObject> data)
+void InspectorDebuggerAgent::schedulePauseOnNextStatement(InspectorDebuggerFrontendDispatcher::Reason::Enum breakReason, PassRefPtr<InspectorObject> data)
 {
     if (m_javaScriptPauseScheduled)
         return;
@@ -636,7 +633,7 @@ void InspectorDebuggerAgent::scriptExecutionBlockedByCSP(const String& directive
     if (scriptDebugServer().pauseOnExceptionsState() != ScriptDebugServer::DontPauseOnExceptions) {
         RefPtr<InspectorObject> directive = InspectorObject::create();
         directive->setString("directiveText", directiveText);
-        breakProgram(InspectorFrontend::Debugger::Reason::CSPViolation, directive.release());
+        breakProgram(InspectorDebuggerFrontendDispatcher::Reason::CSPViolation, directive.release());
     }
 }
 
@@ -690,7 +687,7 @@ void InspectorDebuggerAgent::didParseSource(SourceID sourceID, const Script& inS
     String* sourceMapURLParam = script.sourceMappingURL.isNull() ? 0 : &script.sourceMappingURL;
     const bool* isContentScript = script.isContentScript ? &script.isContentScript : 0;
     String scriptIDStr = String::number(sourceID);
-    m_frontend->scriptParsed(scriptIDStr, scriptURL, script.startLine, script.startColumn, script.endLine, script.endColumn, isContentScript, sourceMapURLParam, hasSourceURLParam);
+    m_frontendDispatcher->scriptParsed(scriptIDStr, scriptURL, script.startLine, script.startColumn, script.endLine, script.endColumn, isContentScript, sourceMapURLParam, hasSourceURLParam);
 
     m_scripts.set(sourceID, script);
 
@@ -719,13 +716,13 @@ void InspectorDebuggerAgent::didParseSource(SourceID sourceID, const Script& inS
 
         RefPtr<TypeBuilder::Debugger::Location> location = resolveBreakpoint(it->key, sourceID, breakpoint);
         if (location)
-            m_frontend->breakpointResolved(it->key, location);
+            m_frontendDispatcher->breakpointResolved(it->key, location);
     }
 }
 
 void InspectorDebuggerAgent::failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage)
 {
-    m_frontend->scriptFailedToParse(url, data, firstLine, errorLine, errorMessage);
+    m_frontendDispatcher->scriptFailedToParse(url, data, firstLine, errorLine, errorMessage);
 }
 
 void InspectorDebuggerAgent::didPause(JSC::ExecState* scriptState, const ScriptValue& callFrames, const ScriptValue& exception)
@@ -737,13 +734,13 @@ void InspectorDebuggerAgent::didPause(JSC::ExecState* scriptState, const ScriptV
     if (!exception.hasNoValue()) {
         InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(scriptState);
         if (!injectedScript.hasNoValue()) {
-            m_breakReason = InspectorFrontend::Debugger::Reason::Exception;
+            m_breakReason = InspectorDebuggerFrontendDispatcher::Reason::Exception;
             m_breakAuxData = injectedScript.wrapObject(exception, "backtrace")->openAccessors();
             // m_breakAuxData might be null after this.
         }
     }
 
-    m_frontend->paused(currentCallFrames(), m_breakReason, m_breakAuxData);
+    m_frontendDispatcher->paused(currentCallFrames(), m_breakReason, m_breakAuxData);
     m_javaScriptPauseScheduled = false;
 
     if (m_continueToLocationBreakpointID != noBreakpointID) {
@@ -759,10 +756,10 @@ void InspectorDebuggerAgent::didContinue()
     m_pausedScriptState = 0;
     m_currentCallStack = ScriptValue();
     clearBreakDetails();
-    m_frontend->resumed();
+    m_frontendDispatcher->resumed();
 }
 
-void InspectorDebuggerAgent::breakProgram(InspectorFrontend::Debugger::Reason::Enum breakReason, PassRefPtr<InspectorObject> data)
+void InspectorDebuggerAgent::breakProgram(InspectorDebuggerFrontendDispatcher::Reason::Enum breakReason, PassRefPtr<InspectorObject> data)
 {
     m_breakReason = breakReason;
     m_breakAuxData = data;
@@ -793,7 +790,7 @@ bool InspectorDebuggerAgent::assertPaused(ErrorString* errorString)
 
 void InspectorDebuggerAgent::clearBreakDetails()
 {
-    m_breakReason = InspectorFrontend::Debugger::Reason::Other;
+    m_breakReason = InspectorDebuggerFrontendDispatcher::Reason::Other;
     m_breakAuxData = 0;
 }
 
@@ -802,8 +799,8 @@ void InspectorDebuggerAgent::reset()
     scriptDebugServer().clearBreakpoints();
     m_scripts.clear();
     m_breakpointIdentifierToDebugServerBreakpointIDs.clear();
-    if (m_frontend)
-        m_frontend->globalObjectCleared();
+    if (m_frontendDispatcher)
+        m_frontendDispatcher->globalObjectCleared();
 }
 
 } // namespace WebCore

@@ -46,7 +46,6 @@ class InspectorDOMAgent;
 class InspectorDOMStorageAgent;
 class InspectorDatabaseAgent;
 class InspectorDebuggerAgent;
-class InspectorFrontend;
 class InspectorObject;
 class InspectorValue;
 class Node;

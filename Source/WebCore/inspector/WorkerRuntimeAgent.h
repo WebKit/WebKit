@@ -48,6 +48,9 @@ public:
     }
     virtual ~WorkerRuntimeAgent();
 
+    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void willDestroyFrontendAndBackend() OVERRIDE;
+
     // Protocol commands.
     virtual void run(ErrorString*);
 

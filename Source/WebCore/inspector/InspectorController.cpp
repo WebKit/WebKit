@@ -80,6 +80,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     : m_instrumentingAgents(InstrumentingAgents::create())
     , m_injectedScriptManager(InjectedScriptManager::createForPage())
     , m_overlay(InspectorOverlay::create(page, inspectorClient))
+    , m_inspectorFrontendChannel(nullptr)
     , m_page(page)
     , m_inspectorClient(inspectorClient)
     , m_isUnderTest(false)
@@ -223,30 +224,29 @@ void InspectorController::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWo
 void InspectorController::connectFrontend(InspectorFrontendChannel* frontendChannel)
 {
     ASSERT(frontendChannel);
+    ASSERT(m_inspectorClient);
+    ASSERT(!m_inspectorFrontendChannel);
+    ASSERT(!m_inspectorBackendDispatcher);
 
-    m_inspectorFrontend = adoptPtr(new InspectorFrontend(frontendChannel));
+    m_inspectorFrontendChannel = frontendChannel;
+    m_inspectorBackendDispatcher = InspectorBackendDispatcher::create(frontendChannel);
 
-    m_agents.setFrontend(m_inspectorFrontend.get());
+    m_agents.didCreateFrontendAndBackend(frontendChannel, m_inspectorBackendDispatcher.get());
 
     InspectorInstrumentation::registerInstrumentingAgents(m_instrumentingAgents.get());
     InspectorInstrumentation::frontendCreated();
-
-    ASSERT(m_inspectorClient);
-    m_inspectorBackendDispatcher = InspectorBackendDispatcher::create(frontendChannel);
-
-    m_agents.registerInDispatcher(m_inspectorBackendDispatcher.get());
 }
 
 void InspectorController::disconnectFrontend()
 {
-    if (!m_inspectorFrontend)
+    if (!m_inspectorFrontendChannel)
         return;
+
+    m_agents.willDestroyFrontendAndBackend();
+
     m_inspectorBackendDispatcher->clearFrontend();
     m_inspectorBackendDispatcher.clear();
-
-    m_agents.clearFrontend();
-
-    m_inspectorFrontend.clear();
+    m_inspectorFrontendChannel = nullptr;
 
     // relese overlay page resources
     m_overlay->freePage();
@@ -259,7 +259,7 @@ void InspectorController::show()
     if (!enabled())
         return;
 
-    if (m_inspectorFrontend)
+    if (m_inspectorFrontendChannel)
         m_inspectorClient->bringFrontendToFront();
     else {
         InspectorFrontendChannel* frontendChannel = m_inspectorClient->openInspectorFrontend(this);
@@ -270,7 +270,7 @@ void InspectorController::show()
 
 void InspectorController::close()
 {
-    if (!m_inspectorFrontend)
+    if (!m_inspectorFrontendChannel)
         return;
     disconnectFrontend();
     m_inspectorClient->closeInspectorFrontend();

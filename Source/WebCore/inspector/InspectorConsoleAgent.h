@@ -42,7 +42,6 @@ namespace WebCore {
 
 class ConsoleMessage;
 class DOMWindow;
-class InspectorFrontend;
 class InjectedScriptManager;
 class InstrumentingAgents;
 class ResourceError;
@@ -53,7 +52,7 @@ class ScriptProfile;
 
 typedef String ErrorString;
 
-class InspectorConsoleAgent : public InspectorBaseAgent<InspectorConsoleAgent>, public InspectorBackendDispatcher::ConsoleCommandHandler {
+class InspectorConsoleAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::ConsoleCommandHandler {
     WTF_MAKE_NONCOPYABLE(InspectorConsoleAgent);
 public:
     InspectorConsoleAgent(InstrumentingAgents*, InjectedScriptManager*);
@@ -65,8 +64,8 @@ public:
     bool enabled() const { return m_enabled; }
     void reset();
 
-    virtual void setFrontend(InspectorFrontend*);
-    virtual void clearFrontend();
+    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, JSC::ExecState*, PassRefPtr<ScriptArguments>, unsigned long requestIdentifier = 0);
     void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* = 0, unsigned long requestIdentifier = 0);
@@ -101,7 +100,7 @@ protected:
     virtual bool developerExtrasEnabled() = 0;
 
     InjectedScriptManager* m_injectedScriptManager;
-    InspectorFrontend::Console* m_frontend;
+    std::unique_ptr<InspectorConsoleFrontendDispatcher> m_frontendDispatcher;
     ConsoleMessage* m_previousMessage;
     Vector<OwnPtr<ConsoleMessage>> m_consoleMessages;
     int m_expiredConsoleMessageCount;

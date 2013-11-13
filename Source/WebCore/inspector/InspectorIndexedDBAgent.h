@@ -44,7 +44,7 @@ class InspectorPageAgent;
 
 typedef String ErrorString;
 
-class InspectorIndexedDBAgent : public InspectorBaseAgent<InspectorIndexedDBAgent>, public InspectorBackendDispatcher::IndexedDBCommandHandler {
+class InspectorIndexedDBAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::IndexedDBCommandHandler {
 public:
     static PassOwnPtr<InspectorIndexedDBAgent> create(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager, InspectorPageAgent* pageAgent)
     {
@@ -52,7 +52,8 @@ public:
     }
     ~InspectorIndexedDBAgent();
 
-    virtual void clearFrontend();
+    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     // Called from the front-end.
     virtual void enable(ErrorString*);

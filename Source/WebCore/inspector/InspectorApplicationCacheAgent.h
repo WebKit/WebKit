@@ -38,7 +38,7 @@ namespace WebCore {
 class Frame;
 class InspectorArray;
 class InspectorAgent;
-class InspectorFrontend;
+class InspectorApplicationCacheFrontendDispatcher;
 class InspectorObject;
 class InspectorPageAgent;
 class InspectorValue;
@@ -48,7 +48,7 @@ class ResourceResponse;
 
 typedef String ErrorString;
 
-class InspectorApplicationCacheAgent : public InspectorBaseAgent<InspectorApplicationCacheAgent>, public InspectorBackendDispatcher::ApplicationCacheCommandHandler {
+class InspectorApplicationCacheAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::ApplicationCacheCommandHandler {
     WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<InspectorApplicationCacheAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent)
@@ -58,8 +58,8 @@ public:
     ~InspectorApplicationCacheAgent() { }
 
     // InspectorBaseAgent
-    virtual void setFrontend(InspectorFrontend*);
-    virtual void clearFrontend();
+    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     // InspectorInstrumentation API
     void updateApplicationCacheStatus(Frame*);
@@ -80,7 +80,7 @@ private:
     DocumentLoader* assertFrameWithDocumentLoader(ErrorString*, String frameId);
 
     InspectorPageAgent* m_pageAgent;
-    InspectorFrontend::ApplicationCache* m_frontend;
+    std::unique_ptr<InspectorApplicationCacheFrontendDispatcher> m_frontendDispatcher;
 };
 
 } // namespace WebCore

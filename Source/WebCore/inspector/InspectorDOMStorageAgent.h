@@ -39,7 +39,7 @@ namespace WebCore {
 
 class Frame;
 class InspectorArray;
-class InspectorFrontend;
+class InspectorDOMStorageFrontendDispatcher;
 class InspectorPageAgent;
 class InstrumentingAgents;
 class Page;
@@ -49,7 +49,7 @@ class StorageArea;
 
 typedef String ErrorString;
 
-class InspectorDOMStorageAgent : public InspectorBaseAgent<InspectorDOMStorageAgent>, public InspectorBackendDispatcher::DOMStorageCommandHandler {
+class InspectorDOMStorageAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::DOMStorageCommandHandler {
 public:
     static PassOwnPtr<InspectorDOMStorageAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent)
     {
@@ -57,8 +57,8 @@ public:
     }
     ~InspectorDOMStorageAgent();
 
-    virtual void setFrontend(InspectorFrontend*);
-    virtual void clearFrontend();
+    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     // Called from the front-end.
     virtual void enable(ErrorString*);
@@ -81,7 +81,7 @@ private:
     PassRefPtr<StorageArea> findStorageArea(ErrorString*, const RefPtr<InspectorObject>&, Frame*&);
 
     InspectorPageAgent* m_pageAgent;
-    InspectorFrontend* m_frontend;
+    std::unique_ptr<InspectorDOMStorageFrontendDispatcher> m_frontendDispatcher;
     bool m_enabled;
 };
 

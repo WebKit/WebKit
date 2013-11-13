@@ -32,27 +32,21 @@
 
 namespace WebCore {
 
-void InspectorAgentRegistry::append(PassOwnPtr<InspectorBaseAgentInterface> agent)
+void InspectorAgentRegistry::append(PassOwnPtr<InspectorBaseAgent> agent)
 {
     m_agents.append(agent);
 }
 
-void InspectorAgentRegistry::setFrontend(InspectorFrontend* frontend)
+void InspectorAgentRegistry::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     for (size_t i = 0; i < m_agents.size(); i++)
-        m_agents[i]->setFrontend(frontend);
+        m_agents[i]->didCreateFrontendAndBackend(frontendChannel, backendDispatcher);
 }
 
-void InspectorAgentRegistry::clearFrontend()
+void InspectorAgentRegistry::willDestroyFrontendAndBackend()
 {
     for (size_t i = 0; i < m_agents.size(); i++)
-        m_agents[i]->clearFrontend();
-}
-
-void InspectorAgentRegistry::registerInDispatcher(InspectorBackendDispatcher* dispatcher)
-{
-    for (size_t i = 0; i < m_agents.size(); i++)
-        m_agents[i]->registerInDispatcher(dispatcher);
+        m_agents[i]->willDestroyFrontendAndBackend();
 }
 
 void InspectorAgentRegistry::discardAgents()

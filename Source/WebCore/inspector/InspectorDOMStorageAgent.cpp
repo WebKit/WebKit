@@ -56,9 +56,8 @@
 namespace WebCore {
 
 InspectorDOMStorageAgent::InspectorDOMStorageAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent)
-    : InspectorBaseAgent<InspectorDOMStorageAgent>("DOMStorage", instrumentingAgents)
+    : InspectorBaseAgent(ASCIILiteral("DOMStorage"), instrumentingAgents)
     , m_pageAgent(pageAgent)
-    , m_frontend(0)
     , m_enabled(false)
 {
     m_instrumentingAgents->setInspectorDOMStorageAgent(this);
@@ -70,15 +69,17 @@ InspectorDOMStorageAgent::~InspectorDOMStorageAgent()
     m_instrumentingAgents = 0;
 }
 
-void InspectorDOMStorageAgent::setFrontend(InspectorFrontend* frontend)
+void InspectorDOMStorageAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
-    m_frontend = frontend;
+    m_frontendDispatcher = std::make_unique<InspectorDOMStorageFrontendDispatcher>(frontendChannel);
+    backendDispatcher->registerAgent(this);
 }
 
-void InspectorDOMStorageAgent::clearFrontend()
+void InspectorDOMStorageAgent::willDestroyFrontendAndBackend()
 {
-    m_frontend = 0;
-    disable(0);
+    m_frontendDispatcher = nullptr;
+
+    disable(nullptr);
 }
 
 void InspectorDOMStorageAgent::enable(ErrorString*)
@@ -164,19 +165,19 @@ PassRefPtr<TypeBuilder::DOMStorage::StorageId> InspectorDOMStorageAgent::storage
 
 void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin, Page*)
 {
-    if (!m_frontend || !m_enabled)
+    if (!m_frontendDispatcher || !m_enabled)
         return;
 
     RefPtr<TypeBuilder::DOMStorage::StorageId> id = storageId(securityOrigin, storageType == LocalStorage);
 
     if (key.isNull())
-        m_frontend->domstorage()->domStorageItemsCleared(id);
+        m_frontendDispatcher->domStorageItemsCleared(id);
     else if (newValue.isNull())
-        m_frontend->domstorage()->domStorageItemRemoved(id, key);
+        m_frontendDispatcher->domStorageItemRemoved(id, key);
     else if (oldValue.isNull())
-        m_frontend->domstorage()->domStorageItemAdded(id, key, newValue);
+        m_frontendDispatcher->domStorageItemAdded(id, key, newValue);
     else
-        m_frontend->domstorage()->domStorageItemUpdated(id, key, oldValue, newValue);
+        m_frontendDispatcher->domStorageItemUpdated(id, key, oldValue, newValue);
 }
 
 PassRefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(ErrorString* errorString, const RefPtr<InspectorObject>& storageId, Frame*& targetFrame)

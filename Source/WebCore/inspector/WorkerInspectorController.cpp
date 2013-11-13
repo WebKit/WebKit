@@ -117,22 +117,19 @@ WorkerInspectorController::~WorkerInspectorController()
 
 void WorkerInspectorController::connectFrontend()
 {
-    ASSERT(!m_frontend);
+    ASSERT(!m_frontendChannel);
     m_frontendChannel = adoptPtr(new PageInspectorProxy(m_workerGlobalScope));
-    m_frontend = adoptPtr(new InspectorFrontend(m_frontendChannel.get()));
     m_backendDispatcher = InspectorBackendDispatcher::create(m_frontendChannel.get());
-    m_agents.registerInDispatcher(m_backendDispatcher.get());
-    m_agents.setFrontend(m_frontend.get());
+    m_agents.didCreateFrontendAndBackend(m_frontendChannel.get(), m_backendDispatcher.get());
 }
 
 void WorkerInspectorController::disconnectFrontend()
 {
-    if (!m_frontend)
+    if (!m_frontendChannel)
         return;
+    m_agents.willDestroyFrontendAndBackend();
     m_backendDispatcher->clearFrontend();
     m_backendDispatcher.clear();
-    m_agents.clearFrontend();
-    m_frontend.clear();
     m_frontendChannel.clear();
 }
 

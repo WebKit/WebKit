@@ -32,53 +32,30 @@
 #define InspectorBaseAgent_h
 
 #include "InspectorBackendDispatcher.h"
-#include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class InspectorFrontend;
+class InspectorFrontendChannel;
 class InstrumentingAgents;
 
-class InspectorBaseAgentInterface {
+class InspectorBaseAgent {
 public:
-    InspectorBaseAgentInterface(const String& name, InstrumentingAgents* instrumentingAgents)
+    virtual ~InspectorBaseAgent() { }
+
+    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) = 0;
+    virtual void willDestroyFrontendAndBackend() = 0;
+    virtual void discardAgent() { }
+
+protected:
+    InspectorBaseAgent(const String& name, InstrumentingAgents* instrumentingAgents)
         : m_instrumentingAgents(instrumentingAgents)
         , m_name(name)
     {
     }
 
-    virtual ~InspectorBaseAgentInterface() { }
-
-    virtual void setFrontend(InspectorFrontend*) { }
-    virtual void clearFrontend() { }
-    virtual void registerInDispatcher(InspectorBackendDispatcher*) = 0;
-    virtual void discardAgent() { }
-
-    String name() const { return m_name; }
-
-protected:
     InstrumentingAgents* m_instrumentingAgents;
-
-private:
     String m_name;
-};
-
-template<typename T>
-class InspectorBaseAgent : public InspectorBaseAgentInterface {
-public:
-    virtual ~InspectorBaseAgent() { }
-
-    virtual void registerInDispatcher(InspectorBackendDispatcher* dispatcher)
-    {
-        dispatcher->registerAgent(static_cast<T*>(this));
-    }
-
-protected:
-    InspectorBaseAgent(const String& name, InstrumentingAgents* instrumentingAgents)
-        : InspectorBaseAgentInterface(name, instrumentingAgents)
-    {
-    }
 };
 
 } // namespace WebCore

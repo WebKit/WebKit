@@ -38,7 +38,6 @@
 #include "IdentifiersFactory.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
-#include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include "ScriptArguments.h"
 #include "ScriptCallFrame.h"
@@ -188,7 +187,7 @@ static TypeBuilder::Console::ConsoleMessage::Level::Enum messageLevelValue(Messa
     return TypeBuilder::Console::ConsoleMessage::Level::Log;
 }
 
-void ConsoleMessage::addToFrontend(InspectorFrontend::Console* frontend, InjectedScriptManager* injectedScriptManager, bool generatePreview)
+void ConsoleMessage::addToFrontend(InspectorConsoleFrontendDispatcher* consoleFrontendDispatcher, InjectedScriptManager* injectedScriptManager, bool generatePreview)
 {
     RefPtr<TypeBuilder::Console::ConsoleMessage> jsonObj = TypeBuilder::Console::ConsoleMessage::create()
         .setSource(messageSourceValue(m_source))
@@ -230,12 +229,12 @@ void ConsoleMessage::addToFrontend(InspectorFrontend::Console* frontend, Injecte
     }
     if (m_callStack)
         jsonObj->setStackTrace(m_callStack->buildInspectorArray());
-    frontend->messageAdded(jsonObj);
+    consoleFrontendDispatcher->messageAdded(jsonObj);
 }
 
-void ConsoleMessage::updateRepeatCountInConsole(InspectorFrontend::Console* frontend)
+void ConsoleMessage::updateRepeatCountInConsole(InspectorConsoleFrontendDispatcher* consoleFrontendDispatcher)
 {
-    frontend->messageRepeatCountUpdated(m_repeatCount);
+    consoleFrontendDispatcher->messageRepeatCountUpdated(m_repeatCount);
 }
 
 bool ConsoleMessage::isEqual(ConsoleMessage* msg) const

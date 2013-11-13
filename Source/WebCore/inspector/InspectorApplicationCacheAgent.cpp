@@ -45,21 +45,22 @@
 namespace WebCore {
 
 InspectorApplicationCacheAgent::InspectorApplicationCacheAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent)
-    : InspectorBaseAgent<InspectorApplicationCacheAgent>(ASCIILiteral("ApplicationCache"), instrumentingAgents)
+    : InspectorBaseAgent(ASCIILiteral("ApplicationCache"), instrumentingAgents)
     , m_pageAgent(pageAgent)
-    , m_frontend(0)
 {
 }
 
-void InspectorApplicationCacheAgent::setFrontend(InspectorFrontend* frontend)
+void InspectorApplicationCacheAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
-    m_frontend = frontend->applicationcache();
+    m_frontendDispatcher = std::make_unique<InspectorApplicationCacheFrontendDispatcher>(frontendChannel);
+    backendDispatcher->registerAgent(this);
 }
 
-void InspectorApplicationCacheAgent::clearFrontend()
+void InspectorApplicationCacheAgent::willDestroyFrontendAndBackend()
 {
+    m_frontendDispatcher = nullptr;
+
     m_instrumentingAgents->setInspectorApplicationCacheAgent(0);
-    m_frontend = 0;
 }
 
 void InspectorApplicationCacheAgent::enable(ErrorString*)
@@ -81,13 +82,13 @@ void InspectorApplicationCacheAgent::updateApplicationCacheStatus(Frame* frame)
     ApplicationCacheHost::CacheInfo info = host->applicationCacheInfo();
 
     String manifestURL = info.m_manifest.string();
-    m_frontend->applicationCacheStatusUpdated(m_pageAgent->frameId(frame), manifestURL, static_cast<int>(status));
+    m_frontendDispatcher->applicationCacheStatusUpdated(m_pageAgent->frameId(frame), manifestURL, static_cast<int>(status));
 }
 
 void InspectorApplicationCacheAgent::networkStateChanged()
 {
     bool isNowOnline = networkStateNotifier().onLine();
-    m_frontend->networkStateUpdated(isNowOnline);
+    m_frontendDispatcher->networkStateUpdated(isNowOnline);
 }
 
 void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::ApplicationCache::FrameWithManifest>>& result)

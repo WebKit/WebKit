@@ -50,7 +50,7 @@ class Document;
 class DocumentStyleSheetCollection;
 class Element;
 class InspectorCSSOMWrappers;
-class InspectorFrontend;
+class InspectorCSSFrontendDispatcher;
 class InstrumentingAgents;
 class NameNodeMap;
 class Node;
@@ -64,7 +64,7 @@ class ChangeRegionOversetTask;
 #if ENABLE(INSPECTOR)
 
 class InspectorCSSAgent
-    : public InspectorBaseAgent<InspectorCSSAgent>
+    : public InspectorBaseAgent
     , public InspectorDOMAgent::DOMListener
     , public InspectorBackendDispatcher::CSSCommandHandler
     , public InspectorStyleSheet::Listener {
@@ -96,8 +96,8 @@ public:
     ~InspectorCSSAgent();
 
     bool forcePseudoState(Element*, CSSSelector::PseudoType);
-    virtual void setFrontend(InspectorFrontend*);
-    virtual void clearFrontend();
+    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void willDestroyFrontendAndBackend() OVERRIDE;
     virtual void discardAgent();
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
@@ -183,7 +183,7 @@ private:
 
     void resetPseudoStates();
 
-    InspectorFrontend::CSS* m_frontend;
+    std::unique_ptr<InspectorCSSFrontendDispatcher> m_frontendDispatcher;
     InspectorDOMAgent* m_domAgent;
 
     IdToInspectorStyleSheet m_idToInspectorStyleSheet;

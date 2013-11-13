@@ -42,12 +42,11 @@ namespace WebCore {
 class Database;
 class InspectorArray;
 class InspectorDatabaseResource;
-class InspectorFrontend;
 class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class InspectorDatabaseAgent : public InspectorBaseAgent<InspectorDatabaseAgent>, public InspectorBackendDispatcher::DatabaseCommandHandler {
+class InspectorDatabaseAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::DatabaseCommandHandler {
 public:
     static PassOwnPtr<InspectorDatabaseAgent> create(InstrumentingAgents* instrumentingAgents)
     {
@@ -55,8 +54,8 @@ public:
     }
     ~InspectorDatabaseAgent();
 
-    virtual void setFrontend(InspectorFrontend*);
-    virtual void clearFrontend();
+    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     void clearResources();
 
@@ -76,7 +75,7 @@ private:
     Database* databaseForId(const String& databaseId);
     InspectorDatabaseResource* findByFileName(const String& fileName);
 
-    InspectorFrontend::Database* m_frontend;
+    std::unique_ptr<InspectorDatabaseFrontendDispatcher> m_frontendDispatcher;
     typedef HashMap<String, RefPtr<InspectorDatabaseResource>> DatabaseResourcesMap;
     DatabaseResourcesMap m_resources;
     bool m_enabled;

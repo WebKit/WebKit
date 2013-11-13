@@ -348,12 +348,11 @@ TypeBuilder::Page::ResourceType::Enum InspectorPageAgent::cachedResourceTypeJson
 }
 
 InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents, Page* page, InspectorAgent* inspectorAgent, InjectedScriptManager* injectedScriptManager, InspectorClient* client, InspectorOverlay* overlay)
-    : InspectorBaseAgent<InspectorPageAgent>("Page", instrumentingAgents)
+    : InspectorBaseAgent(ASCIILiteral("Page"), instrumentingAgents)
     , m_page(page)
     , m_inspectorAgent(inspectorAgent)
     , m_injectedScriptManager(injectedScriptManager)
     , m_client(client)
-    , m_frontend(0)
     , m_overlay(overlay)
     , m_lastScriptIdentifier(0)
     , m_screenWidthOverride(0)
@@ -369,19 +368,21 @@ InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents,
 {
 }
 
-void InspectorPageAgent::setFrontend(InspectorFrontend* frontend)
+void InspectorPageAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
-    m_frontend = frontend->page();
+    m_frontendDispatcher = std::make_unique<InspectorPageFrontendDispatcher>(frontendChannel);
+    backendDispatcher->registerAgent(this);
 }
 
-void InspectorPageAgent::clearFrontend()
+void InspectorPageAgent::willDestroyFrontendAndBackend()
 {
+    m_frontendDispatcher = nullptr;
+
     ErrorString error;
     disable(&error);
 #if ENABLE(TOUCH_EVENTS)
     updateTouchEventEmulationInPage(false);
 #endif
-    m_frontend = 0;
 }
 
 void InspectorPageAgent::webViewResized(const IntSize& size)
@@ -819,7 +820,7 @@ void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWor
     if (frame->isMainFrame())
         m_injectedScriptManager->discardInjectedScripts();
 
-    if (!m_frontend)
+    if (!m_frontendDispatcher)
         return;
 
     if (m_scriptsToEvaluateOnLoad) {
@@ -838,12 +839,12 @@ void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWor
 void InspectorPageAgent::domContentEventFired()
 {
     m_isFirstLayoutAfterOnLoad = true;
-    m_frontend->domContentEventFired(currentTime());
+    m_frontendDispatcher->domContentEventFired(currentTime());
 }
 
 void InspectorPageAgent::loadEventFired()
 {
-    m_frontend->loadEventFired(currentTime());
+    m_frontendDispatcher->loadEventFired(currentTime());
 }
 
 void InspectorPageAgent::frameNavigated(DocumentLoader* loader)
@@ -854,14 +855,14 @@ void InspectorPageAgent::frameNavigated(DocumentLoader* loader)
         m_pendingScriptToEvaluateOnLoadOnce = String();
         m_pendingScriptPreprocessor = String();
     }
-    m_frontend->frameNavigated(buildObjectForFrame(loader->frame()));
+    m_frontendDispatcher->frameNavigated(buildObjectForFrame(loader->frame()));
 }
 
 void InspectorPageAgent::frameDetached(Frame* frame)
 {
     HashMap<Frame*, String>::iterator iterator = m_frameToIdentifier.find(frame);
     if (iterator != m_frameToIdentifier.end()) {
-        m_frontend->frameDetached(iterator->value);
+        m_frontendDispatcher->frameDetached(iterator->value);
         m_identifierToFrame.remove(iterator->value);
         m_frameToIdentifier.remove(iterator);
     }
@@ -945,32 +946,32 @@ void InspectorPageAgent::loaderDetachedFromFrame(DocumentLoader* loader)
 
 void InspectorPageAgent::frameStartedLoading(Frame* frame)
 {
-    m_frontend->frameStartedLoading(frameId(frame));
+    m_frontendDispatcher->frameStartedLoading(frameId(frame));
 }
 
 void InspectorPageAgent::frameStoppedLoading(Frame* frame)
 {
-    m_frontend->frameStoppedLoading(frameId(frame));
+    m_frontendDispatcher->frameStoppedLoading(frameId(frame));
 }
 
 void InspectorPageAgent::frameScheduledNavigation(Frame* frame, double delay)
 {
-    m_frontend->frameScheduledNavigation(frameId(frame), delay);
+    m_frontendDispatcher->frameScheduledNavigation(frameId(frame), delay);
 }
 
 void InspectorPageAgent::frameClearedScheduledNavigation(Frame* frame)
 {
-    m_frontend->frameClearedScheduledNavigation(frameId(frame));
+    m_frontendDispatcher->frameClearedScheduledNavigation(frameId(frame));
 }
 
 void InspectorPageAgent::willRunJavaScriptDialog(const String& message)
 {
-    m_frontend->javascriptDialogOpening(message);
+    m_frontendDispatcher->javascriptDialogOpening(message);
 }
 
 void InspectorPageAgent::didRunJavaScriptDialog()
 {
-    m_frontend->javascriptDialogClosed();
+    m_frontendDispatcher->javascriptDialogClosed();
 }
 
 void InspectorPageAgent::applyScreenWidthOverride(long* width)
@@ -1035,7 +1036,7 @@ void InspectorPageAgent::scriptsEnabled(bool isEnabled)
     if (m_ignoreScriptsEnabledNotification)
         return;
 
-    m_frontend->scriptsEnabled(isEnabled);
+    m_frontendDispatcher->scriptsEnabled(isEnabled);
 }
 
 PassRefPtr<TypeBuilder::Page::Frame> InspectorPageAgent::buildObjectForFrame(Frame* frame)

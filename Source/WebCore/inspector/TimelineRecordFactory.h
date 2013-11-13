@@ -41,7 +41,6 @@ namespace WebCore {
 
     class Event;
     class FloatQuad;
-    class InspectorFrontend;
     class InspectorObject;
     class IntRect;
     class ResourceRequest;

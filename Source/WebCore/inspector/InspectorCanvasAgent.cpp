@@ -62,10 +62,9 @@ using WebCore::TypeBuilder::Network::FrameId;
 namespace WebCore {
 
 InspectorCanvasAgent::InspectorCanvasAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InjectedScriptManager* injectedScriptManager)
-    : InspectorBaseAgent<InspectorCanvasAgent>("Canvas", instrumentingAgents)
+    : InspectorBaseAgent(ASCIILiteral("Canvas"), instrumentingAgents)
     , m_pageAgent(pageAgent)
     , m_injectedScriptManager(injectedScriptManager)
-    , m_frontend(0)
     , m_enabled(false)
 {
 }
@@ -74,16 +73,17 @@ InspectorCanvasAgent::~InspectorCanvasAgent()
 {
 }
 
-void InspectorCanvasAgent::setFrontend(InspectorFrontend* frontend)
+void InspectorCanvasAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
-    ASSERT(frontend);
-    m_frontend = frontend->canvas();
+    m_frontendDispatcher = std::make_unique<InspectorCanvasFrontendDispatcher>(frontendChannel);
+    backendDispatcher->registerAgent(this);
 }
 
-void InspectorCanvasAgent::clearFrontend()
+void InspectorCanvasAgent::willDestroyFrontendAndBackend()
 {
-    m_frontend = 0;
-    disable(0);
+    m_frontendDispatcher = nullptr;
+
+    disable(nullptr);
 }
 
 void InspectorCanvasAgent::enable(ErrorString*)
@@ -199,7 +199,7 @@ ScriptObject InspectorCanvasAgent::wrapWebGLRenderingContextForInstrumentation(c
 
 ScriptObject InspectorCanvasAgent::notifyRenderingContextWasWrapped(const ScriptObject& wrappedContext)
 {
-    ASSERT(m_frontend);
+    ASSERT(m_frontendDispatcher);
     JSC::ExecState* scriptState = wrappedContext.scriptState();
     DOMWindow* domWindow = scriptState ? domWindowFromExecState(scriptState) : 0;
     Frame* frame = domWindow ? domWindow->frame() : 0;
@@ -207,7 +207,7 @@ ScriptObject InspectorCanvasAgent::notifyRenderingContextWasWrapped(const Script
         m_framesWithUninstrumentedCanvases.set(frame, false);
     String frameId = m_pageAgent->frameId(frame);
     if (!frameId.isEmpty())
-        m_frontend->contextCreated(frameId);
+        m_frontendDispatcher->contextCreated(frameId);
     return wrappedContext;
 }
 
@@ -270,7 +270,7 @@ void InspectorCanvasAgent::findFramesWithUninstrumentedCanvases()
     for (FramesWithUninstrumentedCanvases::iterator it = m_framesWithUninstrumentedCanvases.begin(); it != m_framesWithUninstrumentedCanvases.end(); ++it) {
         String frameId = m_pageAgent->frameId(it->key);
         if (!frameId.isEmpty())
-            m_frontend->contextCreated(frameId);
+            m_frontendDispatcher->contextCreated(frameId);
     }
 }
 
@@ -289,14 +289,14 @@ void InspectorCanvasAgent::frameNavigated(Frame* frame)
     if (frame == m_pageAgent->mainFrame()) {
         for (FramesWithUninstrumentedCanvases::iterator it = m_framesWithUninstrumentedCanvases.begin(); it != m_framesWithUninstrumentedCanvases.end(); ++it)
             m_framesWithUninstrumentedCanvases.set(it->key, false);
-        m_frontend->traceLogsRemoved(0, 0);
+        m_frontendDispatcher->traceLogsRemoved(0, 0);
     } else {
         while (frame) {
             if (m_framesWithUninstrumentedCanvases.contains(frame))
                 m_framesWithUninstrumentedCanvases.set(frame, false);
             if (m_pageAgent->hasIdForFrame(frame)) {
                 String frameId = m_pageAgent->frameId(frame);
-                m_frontend->traceLogsRemoved(&frameId, 0);
+                m_frontendDispatcher->traceLogsRemoved(&frameId, 0);
             }
             frame = frame->tree().traverseNext();
         }

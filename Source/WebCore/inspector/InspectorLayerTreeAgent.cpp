@@ -49,8 +49,7 @@
 namespace WebCore {
 
 InspectorLayerTreeAgent::InspectorLayerTreeAgent(InstrumentingAgents* instrumentingAgents)
-    : InspectorBaseAgent<InspectorLayerTreeAgent>("LayerTree", instrumentingAgents)
-    , m_frontend(0)
+    : InspectorBaseAgent(ASCIILiteral("LayerTree"), instrumentingAgents)
 {
 }
 
@@ -59,15 +58,17 @@ InspectorLayerTreeAgent::~InspectorLayerTreeAgent()
     reset();
 }
 
-void InspectorLayerTreeAgent::setFrontend(InspectorFrontend* frontend)
+void InspectorLayerTreeAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
-    m_frontend = frontend->layertree();
+    m_frontendDispatcher = std::make_unique<InspectorLayerTreeFrontendDispatcher>(frontendChannel);
+    backendDispatcher->registerAgent(this);
 }
 
-void InspectorLayerTreeAgent::clearFrontend()
+void InspectorLayerTreeAgent::willDestroyFrontendAndBackend()
 {
-    m_frontend = 0;
-    disable(0);
+    m_frontendDispatcher = nullptr;
+
+    disable(nullptr);
 }
 
 void InspectorLayerTreeAgent::reset()
@@ -90,7 +91,7 @@ void InspectorLayerTreeAgent::disable(ErrorString*)
 
 void InspectorLayerTreeAgent::layerTreeDidChange()
 {
-    m_frontend->layerTreeDidChange();
+    m_frontendDispatcher->layerTreeDidChange();
 }
 
 void InspectorLayerTreeAgent::renderLayerDestroyed(const RenderLayer* renderLayer)

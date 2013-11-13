@@ -38,21 +38,21 @@
 #include <wtf/HashMap.h>
 
 namespace WebCore {
-class InspectorFrontend;
 class InspectorObject;
+class InspectorWorkerFrontendDispatcher;
 class InstrumentingAgents;
 class URL;
 class WorkerGlobalScopeProxy;
 
 typedef String ErrorString;
 
-class InspectorWorkerAgent : public InspectorBaseAgent<InspectorWorkerAgent>, public InspectorBackendDispatcher::WorkerCommandHandler {
+class InspectorWorkerAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::WorkerCommandHandler {
 public:
     static PassOwnPtr<InspectorWorkerAgent> create(InstrumentingAgents*);
     ~InspectorWorkerAgent();
 
-    virtual void setFrontend(InspectorFrontend*);
-    virtual void clearFrontend();
+    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     // Called from InspectorInstrumentation
     bool shouldPauseDedicatedWorkerOnStart() const;
@@ -74,7 +74,7 @@ private:
     void createWorkerFrontendChannel(WorkerGlobalScopeProxy*, const String& url);
     void destroyWorkerFrontendChannels();
 
-    InspectorFrontend* m_inspectorFrontend;
+    std::unique_ptr<InspectorWorkerFrontendDispatcher> m_frontendDispatcher;
     bool m_enabled;
     bool m_shouldPauseDedicatedWorkerOnStart;
 

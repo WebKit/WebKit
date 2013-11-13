@@ -53,7 +53,7 @@ class ScriptObject;
 
 typedef String ErrorString;
 
-class InspectorCanvasAgent : public InspectorBaseAgent<InspectorCanvasAgent>, public InspectorBackendDispatcher::CanvasCommandHandler {
+class InspectorCanvasAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::CanvasCommandHandler {
 public:
     static PassOwnPtr<InspectorCanvasAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InjectedScriptManager* injectedScriptManager)
     {
@@ -61,8 +61,8 @@ public:
     }
     ~InspectorCanvasAgent();
 
-    virtual void setFrontend(InspectorFrontend*);
-    virtual void clearFrontend();
+    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     void frameNavigated(Frame*);
     void frameDetached(Frame*);
@@ -100,7 +100,7 @@ private:
 
     InspectorPageAgent* m_pageAgent;
     InjectedScriptManager* m_injectedScriptManager;
-    InspectorFrontend::Canvas* m_frontend;
+    std::unique_ptr<InspectorCanvasFrontendDispatcher> m_frontendDispatcher;
     bool m_enabled;
     // Contains all frames with canvases, value is true only for frames that have an uninstrumented canvas.
     typedef HashMap<Frame*, bool> FramesWithUninstrumentedCanvases;

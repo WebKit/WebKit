@@ -43,7 +43,6 @@ namespace WebCore {
 class InjectedScript;
 class InjectedScriptManager;
 class InspectorArray;
-class InspectorFrontend;
 class InspectorObject;
 class InspectorValue;
 class InstrumentingAgents;
@@ -52,7 +51,7 @@ class WorkerGlobalScope;
 
 typedef String ErrorString;
 
-class InspectorRuntimeAgent : public InspectorBaseAgent<InspectorRuntimeAgent>, public InspectorBackendDispatcher::RuntimeCommandHandler {
+class InspectorRuntimeAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::RuntimeCommandHandler {
     WTF_MAKE_NONCOPYABLE(InspectorRuntimeAgent);
 public:
     virtual ~InspectorRuntimeAgent();

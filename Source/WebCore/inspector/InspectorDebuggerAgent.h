@@ -51,7 +51,6 @@
 namespace WebCore {
 
 class InjectedScriptManager;
-class InspectorFrontend;
 class InspectorArray;
 class InspectorObject;
 class InspectorValue;
@@ -61,7 +60,7 @@ class ScriptValue;
 
 typedef String ErrorString;
 
-class InspectorDebuggerAgent : public InspectorBaseAgent<InspectorDebuggerAgent>, public ScriptDebugListener, public InspectorBackendDispatcher::DebuggerCommandHandler {
+class InspectorDebuggerAgent : public InspectorBaseAgent, public ScriptDebugListener, public InspectorBackendDispatcher::DebuggerCommandHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDebuggerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     static const char* backtraceObjectGroup;
@@ -72,8 +71,8 @@ public:
     virtual void canSetScriptSource(ErrorString*, bool*);
     virtual void supportsSeparateScriptCompilationAndExecution(ErrorString*, bool*);
 
-    virtual void setFrontend(InspectorFrontend*);
-    virtual void clearFrontend();
+    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     bool isPaused();
     bool runningNestedMessageLoop();
@@ -113,9 +112,9 @@ public:
     void runScript(ErrorString*, const TypeBuilder::Debugger::ScriptId&, const int* executionContextId, const String* objectGroup, const bool* doNotPauseOnExceptionsAndMuteConsole, RefPtr<TypeBuilder::Runtime::RemoteObject>& result, TypeBuilder::OptOutput<bool>* wasThrown);
     virtual void setOverlayMessage(ErrorString*, const String*);
 
-    void schedulePauseOnNextStatement(InspectorFrontend::Debugger::Reason::Enum breakReason, PassRefPtr<InspectorObject> data);
+    void schedulePauseOnNextStatement(InspectorDebuggerFrontendDispatcher::Reason::Enum breakReason, PassRefPtr<InspectorObject> data);
     void cancelPauseOnNextStatement();
-    void breakProgram(InspectorFrontend::Debugger::Reason::Enum breakReason, PassRefPtr<InspectorObject> data);
+    void breakProgram(InspectorDebuggerFrontendDispatcher::Reason::Enum breakReason, PassRefPtr<InspectorObject> data);
     virtual void scriptExecutionBlockedByCSP(const String& directiveText);
 
     class Listener {
@@ -168,14 +167,14 @@ private:
     typedef HashMap<String, RefPtr<InspectorObject>> BreakpointIdentifierToBreakpointMap;
 
     InjectedScriptManager* m_injectedScriptManager;
-    InspectorFrontend::Debugger* m_frontend;
+    std::unique_ptr<InspectorDebuggerFrontendDispatcher> m_frontendDispatcher;
     JSC::ExecState* m_pausedScriptState;
     ScriptValue m_currentCallStack;
     ScriptsMap m_scripts;
     BreakpointIdentifierToDebugServerBreakpointIDsMap m_breakpointIdentifierToDebugServerBreakpointIDs;
     BreakpointIdentifierToBreakpointMap m_javaScriptBreakpoints;
     BreakpointID m_continueToLocationBreakpointID;
-    InspectorFrontend::Debugger::Reason::Enum m_breakReason;
+    InspectorDebuggerFrontendDispatcher::Reason::Enum m_breakReason;
     RefPtr<InspectorObject> m_breakAuxData;
     bool m_enabled;
     bool m_javaScriptPauseScheduled;

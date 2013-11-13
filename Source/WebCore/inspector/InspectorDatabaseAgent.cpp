@@ -201,8 +201,8 @@ void InspectorDatabaseAgent::didOpenDatabase(PassRefPtr<Database> database, cons
     RefPtr<InspectorDatabaseResource> resource = InspectorDatabaseResource::create(database, domain, name, version);
     m_resources.set(resource->id(), resource);
     // Resources are only bound while visible.
-    if (m_frontend && m_enabled)
-        resource->bind(m_frontend);
+    if (m_frontendDispatcher && m_enabled)
+        resource->bind(m_frontendDispatcher.get());
 }
 
 void InspectorDatabaseAgent::clearResources()
@@ -211,7 +211,7 @@ void InspectorDatabaseAgent::clearResources()
 }
 
 InspectorDatabaseAgent::InspectorDatabaseAgent(InstrumentingAgents* instrumentingAgents)
-    : InspectorBaseAgent<InspectorDatabaseAgent>("Database", instrumentingAgents)
+    : InspectorBaseAgent(ASCIILiteral("Database"), instrumentingAgents)
     , m_enabled(false)
 {
     m_instrumentingAgents->setInspectorDatabaseAgent(this);
@@ -222,15 +222,17 @@ InspectorDatabaseAgent::~InspectorDatabaseAgent()
     m_instrumentingAgents->setInspectorDatabaseAgent(0);
 }
 
-void InspectorDatabaseAgent::setFrontend(InspectorFrontend* frontend)
+void InspectorDatabaseAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
-    m_frontend = frontend->database();
+    m_frontendDispatcher = std::make_unique<InspectorDatabaseFrontendDispatcher>(frontendChannel);
+    backendDispatcher->registerAgent(this);
 }
 
-void InspectorDatabaseAgent::clearFrontend()
+void InspectorDatabaseAgent::willDestroyFrontendAndBackend()
 {
-    m_frontend = 0;
-    disable(0);
+    m_frontendDispatcher = nullptr;
+
+    disable(nullptr);
 }
 
 void InspectorDatabaseAgent::enable(ErrorString*)
@@ -241,7 +243,7 @@ void InspectorDatabaseAgent::enable(ErrorString*)
 
     DatabaseResourcesMap::iterator databasesEnd = m_resources.end();
     for (DatabaseResourcesMap::iterator it = m_resources.begin(); it != databasesEnd; ++it)
-        it->value->bind(m_frontend);
+        it->value->bind(m_frontendDispatcher.get());
 }
 
 void InspectorDatabaseAgent::disable(ErrorString*)

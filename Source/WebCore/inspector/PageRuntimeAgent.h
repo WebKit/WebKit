@@ -51,8 +51,8 @@ public:
         return adoptPtr(new PageRuntimeAgent(instrumentingAgents, injectedScriptManager, page, pageAgent));
     }
     virtual ~PageRuntimeAgent();
-    virtual void setFrontend(InspectorFrontend*);
-    virtual void clearFrontend();
+    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void willDestroyFrontendAndBackend() OVERRIDE;
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
 
@@ -70,7 +70,7 @@ private:
 
     Page* m_inspectedPage;
     InspectorPageAgent* m_pageAgent;
-    InspectorFrontend::Runtime* m_frontend;
+    std::unique_ptr<InspectorRuntimeFrontendDispatcher> m_frontendDispatcher;
     bool m_mainWorldContextCreated;
 };
 

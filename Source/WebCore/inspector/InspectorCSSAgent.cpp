@@ -616,8 +616,7 @@ CSSStyleRule* InspectorCSSAgent::asCSSStyleRule(CSSRule* rule)
 }
 
 InspectorCSSAgent::InspectorCSSAgent(InstrumentingAgents* instrumentingAgents, InspectorDOMAgent* domAgent)
-    : InspectorBaseAgent<InspectorCSSAgent>("CSS", instrumentingAgents)
-    , m_frontend(0)
+    : InspectorBaseAgent(ASCIILiteral("CSS"), instrumentingAgents)
     , m_domAgent(domAgent)
     , m_lastStyleSheetId(1)
 {
@@ -630,16 +629,16 @@ InspectorCSSAgent::~InspectorCSSAgent()
     reset();
 }
 
-void InspectorCSSAgent::setFrontend(InspectorFrontend* frontend)
+void InspectorCSSAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
-    ASSERT(!m_frontend);
-    m_frontend = frontend->css();
+    m_frontendDispatcher = std::make_unique<InspectorCSSFrontendDispatcher>(frontendChannel);
+    backendDispatcher->registerAgent(this);
 }
 
-void InspectorCSSAgent::clearFrontend()
+void InspectorCSSAgent::willDestroyFrontendAndBackend()
 {
-    ASSERT(m_frontend);
-    m_frontend = 0;
+    m_frontendDispatcher = nullptr;
+
     resetNonPersistentData();
     String errorString;
     stopSelectorProfilerImpl(&errorString, false);
@@ -682,8 +681,8 @@ void InspectorCSSAgent::disable(ErrorString*)
 
 void InspectorCSSAgent::mediaQueryResultChanged()
 {
-    if (m_frontend)
-        m_frontend->mediaQueryResultChanged();
+    if (m_frontendDispatcher)
+        m_frontendDispatcher->mediaQueryResultChanged();
 }
 
 void InspectorCSSAgent::didCreateNamedFlow(Document* document, WebKitNamedFlow* namedFlow)
@@ -693,7 +692,7 @@ void InspectorCSSAgent::didCreateNamedFlow(Document* document, WebKitNamedFlow* 
         return;
 
     ErrorString errorString;
-    m_frontend->namedFlowCreated(buildObjectForNamedFlow(&errorString, namedFlow, documentNodeId));
+    m_frontendDispatcher->namedFlowCreated(buildObjectForNamedFlow(&errorString, namedFlow, documentNodeId));
 }
 
 void InspectorCSSAgent::willRemoveNamedFlow(Document* document, WebKitNamedFlow* namedFlow)
@@ -708,7 +707,7 @@ void InspectorCSSAgent::willRemoveNamedFlow(Document* document, WebKitNamedFlow*
     if (m_changeRegionOversetTask)
         m_changeRegionOversetTask->unschedule(namedFlow);
 
-    m_frontend->namedFlowRemoved(documentNodeId, namedFlow->name().string());
+    m_frontendDispatcher->namedFlowRemoved(documentNodeId, namedFlow->name().string());
 }
 
 void InspectorCSSAgent::didUpdateRegionLayout(Document* document, WebKitNamedFlow* namedFlow)
@@ -730,7 +729,7 @@ void InspectorCSSAgent::regionLayoutUpdated(WebKitNamedFlow* namedFlow, int docu
     ErrorString errorString;
     Ref<WebKitNamedFlow> protect(*namedFlow);
 
-    m_frontend->regionLayoutUpdated(buildObjectForNamedFlow(&errorString, namedFlow, documentNodeId));
+    m_frontendDispatcher->regionLayoutUpdated(buildObjectForNamedFlow(&errorString, namedFlow, documentNodeId));
 }
 
 void InspectorCSSAgent::didChangeRegionOverset(Document* document, WebKitNamedFlow* namedFlow)
@@ -752,7 +751,7 @@ void InspectorCSSAgent::regionOversetChanged(WebKitNamedFlow* namedFlow, int doc
     ErrorString errorString;
     Ref<WebKitNamedFlow> protect(*namedFlow);
     
-    m_frontend->regionOversetChanged(buildObjectForNamedFlow(&errorString, namedFlow, documentNodeId));
+    m_frontendDispatcher->regionOversetChanged(buildObjectForNamedFlow(&errorString, namedFlow, documentNodeId));
 }
 
 void InspectorCSSAgent::didRegisterNamedFlowContentElement(Document* document, WebKitNamedFlow* namedFlow, Node* contentElement, Node* nextContentElement)
@@ -764,7 +763,7 @@ void InspectorCSSAgent::didRegisterNamedFlowContentElement(Document* document, W
     ErrorString errorString;
     int contentElementNodeId = m_domAgent->pushNodeToFrontend(&errorString, documentNodeId, contentElement);
     int nextContentElementNodeId = nextContentElement ? m_domAgent->pushNodeToFrontend(&errorString, documentNodeId, nextContentElement) : 0;
-    m_frontend->registeredNamedFlowContentElement(documentNodeId, namedFlow->name().string(), contentElementNodeId, nextContentElementNodeId);
+    m_frontendDispatcher->registeredNamedFlowContentElement(documentNodeId, namedFlow->name().string(), contentElementNodeId, nextContentElementNodeId);
 }
 
 void InspectorCSSAgent::didUnregisterNamedFlowContentElement(Document* document, WebKitNamedFlow* namedFlow, Node* contentElement)
@@ -779,7 +778,7 @@ void InspectorCSSAgent::didUnregisterNamedFlowContentElement(Document* document,
         // We've already notified that the DOM node was removed from the DOM, so there's no need to send another event.
         return;
     }
-    m_frontend->unregisteredNamedFlowContentElement(documentNodeId, namedFlow->name().string(), contentElementNodeId);
+    m_frontendDispatcher->unregisteredNamedFlowContentElement(documentNodeId, namedFlow->name().string(), contentElementNodeId);
 }
 
 bool InspectorCSSAgent::forcePseudoState(Element* element, CSSSelector::PseudoType pseudoType)
@@ -1096,7 +1095,7 @@ PassRefPtr<TypeBuilder::CSS::SelectorProfile> InspectorCSSAgent::stopSelectorPro
     if (!m_currentSelectorProfile)
         return 0;
     RefPtr<TypeBuilder::CSS::SelectorProfile> result;
-    if (m_frontend && needProfile)
+    if (m_frontendDispatcher && needProfile)
         result = m_currentSelectorProfile->toInspectorObject();
     m_currentSelectorProfile.clear();
     return result.release();
@@ -1451,8 +1450,8 @@ void InspectorCSSAgent::didModifyDOMAttr(Element* element)
 
 void InspectorCSSAgent::styleSheetChanged(InspectorStyleSheet* styleSheet)
 {
-    if (m_frontend)
-        m_frontend->styleSheetChanged(styleSheet->id());
+    if (m_frontendDispatcher)
+        m_frontendDispatcher->styleSheetChanged(styleSheet->id());
 }
 
 void InspectorCSSAgent::resetPseudoStates()

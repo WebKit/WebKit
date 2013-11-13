@@ -42,7 +42,6 @@ namespace WebCore {
 
 class DOMWindow;
 class InjectedScriptManager;
-class InspectorFrontend;
 class InspectorObject;
 class ScriptArguments;
 class ScriptCallFrame;
@@ -58,8 +57,8 @@ public:
     ConsoleMessage(bool canGenerateCallStack, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptArguments>, JSC::ExecState*, unsigned long requestIdentifier = 0);
     ~ConsoleMessage();
 
-    void addToFrontend(InspectorFrontend::Console*, InjectedScriptManager*, bool generatePreview);
-    void updateRepeatCountInConsole(InspectorFrontend::Console*);
+    void addToFrontend(InspectorConsoleFrontendDispatcher*, InjectedScriptManager*, bool generatePreview);
+    void updateRepeatCountInConsole(InspectorConsoleFrontendDispatcher*);
     void incrementCount() { ++m_repeatCount; }
     bool isEqual(ConsoleMessage* msg) const;
 

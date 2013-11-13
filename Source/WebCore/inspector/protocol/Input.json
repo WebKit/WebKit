@@ -33,6 +33,5 @@
             ],
             "description": "Dispatches a mouse event to the page."
         }
-    ],
-    "events": []
+    ]
 }

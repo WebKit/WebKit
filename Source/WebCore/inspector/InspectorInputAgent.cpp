@@ -52,12 +52,21 @@
 namespace WebCore {
 
 InspectorInputAgent::InspectorInputAgent(InstrumentingAgents* instrumentingAgents, Page* page)
-    : InspectorBaseAgent<InspectorInputAgent>("Input", instrumentingAgents)
+    : InspectorBaseAgent(ASCIILiteral("Input"), instrumentingAgents)
     , m_page(page)
 {
 }
 
 InspectorInputAgent::~InspectorInputAgent()
+{
+}
+
+void InspectorInputAgent::didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher)
+{
+    backendDispatcher->registerAgent(this);
+}
+
+void InspectorInputAgent::willDestroyFrontendAndBackend()
 {
 }
 

@@ -46,21 +46,20 @@ class Element;
 class InspectorAgent;
 class InspectorDOMAgent;
 class InspectorDebuggerAgent;
-class InspectorFrontend;
 class InspectorObject;
 class InstrumentingAgents;
 class Node;
 
 typedef String ErrorString;
 
-class InspectorDOMDebuggerAgent : public InspectorBaseAgent<InspectorDOMDebuggerAgent>, public InspectorDebuggerAgent::Listener, public InspectorBackendDispatcher::DOMDebuggerCommandHandler {
+class InspectorDOMDebuggerAgent : public InspectorBaseAgent, public InspectorDebuggerAgent::Listener, public InspectorBackendDispatcher::DOMDebuggerCommandHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDOMDebuggerAgent);
 public:
     static PassOwnPtr<InspectorDOMDebuggerAgent> create(InstrumentingAgents*, InspectorDOMAgent*, InspectorDebuggerAgent*, InspectorAgent*);
 
     virtual ~InspectorDOMDebuggerAgent();
 
-    // DOMDebugger API for InspectorFrontend
+    // DOMDebugger API
     virtual void setXHRBreakpoint(ErrorString*, const String& url);
     virtual void removeXHRBreakpoint(ErrorString*, const String& url);
     virtual void setEventListenerBreakpoint(ErrorString*, const String& eventName);
@@ -80,7 +79,8 @@ public:
     void willSendXMLHttpRequest(const String& url);
     void pauseOnNativeEventIfNeeded(bool isDOMEvent, const String& eventName, bool synchronous);
 
-    virtual void clearFrontend();
+    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void willDestroyFrontendAndBackend() OVERRIDE;
     virtual void discardAgent();
 
 private:

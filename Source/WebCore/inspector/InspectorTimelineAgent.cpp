@@ -63,24 +63,25 @@ void TimelineTimeConverter::reset()
 
 InspectorTimelineAgent::~InspectorTimelineAgent()
 {
-    clearFrontend();
 }
 
-void InspectorTimelineAgent::setFrontend(InspectorFrontend* frontend)
+void InspectorTimelineAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
-    m_frontend = frontend->timeline();
+    m_frontendDispatcher = std::make_unique<InspectorTimelineFrontendDispatcher>(frontendChannel);
+    backendDispatcher->registerAgent(this);
 }
 
-void InspectorTimelineAgent::clearFrontend()
+void InspectorTimelineAgent::willDestroyFrontendAndBackend()
 {
+    m_frontendDispatcher = nullptr;
+
     ErrorString error;
     stop(&error);
-    m_frontend = 0;
 }
 
 void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth, const bool* includeDomCounters)
 {
-    if (!m_frontend)
+    if (!m_frontendDispatcher)
         return;
 
     if (maxCallStackDepth && *maxCallStackDepth > 0)
@@ -578,10 +579,9 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(TimelineRecordType type)
 }
 
 InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorMemoryAgent* memoryAgent, InspectorType type, InspectorClient* client)
-    : InspectorBaseAgent<InspectorTimelineAgent>("Timeline", instrumentingAgents)
+    : InspectorBaseAgent(ASCIILiteral("Timeline"), instrumentingAgents)
     , m_pageAgent(pageAgent)
     , m_memoryAgent(memoryAgent)
-    , m_frontend(0)
     , m_id(1)
     , m_maxCallStackDepth(5)
     , m_inspectorType(type)
@@ -604,7 +604,7 @@ void InspectorTimelineAgent::sendEvent(PassRefPtr<InspectorObject> event)
 {
     // FIXME: runtimeCast is a hack. We do it because we can't build TimelineEvent directly now.
     RefPtr<TypeBuilder::Timeline::TimelineEvent> recordChecked = TypeBuilder::Timeline::TimelineEvent::runtimeCast(event);
-    m_frontend->eventRecorded(recordChecked.release());
+    m_frontendDispatcher->eventRecorded(recordChecked.release());
 }
 
 void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data, TimelineRecordType type, bool captureCallStack, Frame* frame)

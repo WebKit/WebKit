@@ -59,9 +59,8 @@ static const int expireConsoleMessagesStep = 100;
 int InspectorConsoleAgent::s_enabledAgentCount = 0;
 
 InspectorConsoleAgent::InspectorConsoleAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager)
-    : InspectorBaseAgent<InspectorConsoleAgent>("Console", instrumentingAgents)
+    : InspectorBaseAgent(ASCIILiteral("Console"), instrumentingAgents)
     , m_injectedScriptManager(injectedScriptManager)
-    , m_frontend(0)
     , m_previousMessage(0)
     , m_expiredConsoleMessageCount(0)
     , m_enabled(false)
@@ -88,12 +87,12 @@ void InspectorConsoleAgent::enable(ErrorString*)
 
     if (m_expiredConsoleMessageCount) {
         ConsoleMessage expiredMessage(!isWorkerAgent(), OtherMessageSource, LogMessageType, WarningMessageLevel, String::format("%d console messages are not shown.", m_expiredConsoleMessageCount));
-        expiredMessage.addToFrontend(m_frontend, m_injectedScriptManager, false);
+        expiredMessage.addToFrontend(m_frontendDispatcher.get(), m_injectedScriptManager, false);
     }
 
     size_t messageCount = m_consoleMessages.size();
     for (size_t i = 0; i < messageCount; ++i)
-        m_consoleMessages[i]->addToFrontend(m_frontend, m_injectedScriptManager, false);
+        m_consoleMessages[i]->addToFrontend(m_frontendDispatcher.get(), m_injectedScriptManager, false);
 }
 
 void InspectorConsoleAgent::disable(ErrorString*)
@@ -111,8 +110,8 @@ void InspectorConsoleAgent::clearMessages(ErrorString*)
     m_expiredConsoleMessageCount = 0;
     m_previousMessage = 0;
     m_injectedScriptManager->releaseObjectGroup("console");
-    if (m_frontend && m_enabled)
-        m_frontend->messagesCleared();
+    if (m_frontendDispatcher && m_enabled)
+        m_frontendDispatcher->messagesCleared();
 }
 
 void InspectorConsoleAgent::reset()
@@ -123,14 +122,16 @@ void InspectorConsoleAgent::reset()
     m_counts.clear();
 }
 
-void InspectorConsoleAgent::setFrontend(InspectorFrontend* frontend)
+void InspectorConsoleAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
-    m_frontend = frontend->console();
+    m_frontendDispatcher = std::make_unique<InspectorConsoleFrontendDispatcher>(frontendChannel);
+    backendDispatcher->registerAgent(this);
 }
 
-void InspectorConsoleAgent::clearFrontend()
+void InspectorConsoleAgent::willDestroyFrontendAndBackend()
 {
-    m_frontend = 0;
+    m_frontendDispatcher = nullptr;
+
     String errorString;
     disable(&errorString);
 }
@@ -171,7 +172,7 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
         clearMessages(&error);
     }
 
-    bool canGenerateCallStack = !isWorkerAgent() && m_frontend;
+    bool canGenerateCallStack = !isWorkerAgent() && m_frontendDispatcher;
     addConsoleMessage(adoptPtr(new ConsoleMessage(canGenerateCallStack, source, type, level, message, scriptID, lineNumber, columnNumber, state, requestIdentifier)));
 }
 
@@ -249,7 +250,7 @@ void InspectorConsoleAgent::didFinishXHRLoading(unsigned long requestIdentifier,
 {
     if (!developerExtrasEnabled())
         return;
-    if (m_frontend && m_monitoringXHREnabled) {
+    if (m_frontendDispatcher && m_monitoringXHREnabled) {
         String message = "XHR finished loading: \"" + url + "\".";
         addMessageToConsole(NetworkMessageSource, LogMessageType, DebugMessageLevel, message, sendURL, sendLineNumber, sendColumnNumber, 0, requestIdentifier);
     }
@@ -300,16 +301,16 @@ void InspectorConsoleAgent::addConsoleMessage(PassOwnPtr<ConsoleMessage> console
 
     if (m_previousMessage && !isGroupMessage(m_previousMessage->type()) && m_previousMessage->isEqual(consoleMessage.get())) {
         m_previousMessage->incrementCount();
-        if (m_frontend && m_enabled)
-            m_previousMessage->updateRepeatCountInConsole(m_frontend);
+        if (m_frontendDispatcher && m_enabled)
+            m_previousMessage->updateRepeatCountInConsole(m_frontendDispatcher.get());
     } else {
         m_previousMessage = consoleMessage.get();
         m_consoleMessages.append(consoleMessage);
-        if (m_frontend && m_enabled)
-            m_previousMessage->addToFrontend(m_frontend, m_injectedScriptManager, true);
+        if (m_frontendDispatcher && m_enabled)
+            m_previousMessage->addToFrontend(m_frontendDispatcher.get(), m_injectedScriptManager, true);
     }
 
-    if (!m_frontend && m_consoleMessages.size() >= maximumConsoleMessages) {
+    if (!m_frontendDispatcher && m_consoleMessages.size() >= maximumConsoleMessages) {
         m_expiredConsoleMessageCount += expireConsoleMessagesStep;
         m_consoleMessages.remove(0, expireConsoleMessagesStep);
     }

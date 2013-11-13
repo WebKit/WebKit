@@ -48,8 +48,8 @@ namespace WebCore {
 class InspectorWorkerAgent::WorkerFrontendChannel : public WorkerGlobalScopeProxy::PageInspector {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit WorkerFrontendChannel(InspectorFrontend* frontend, WorkerGlobalScopeProxy* proxy)
-        : m_frontend(frontend)
+    explicit WorkerFrontendChannel(InspectorWorkerFrontendDispatcher* frontendDispatcher, WorkerGlobalScopeProxy* proxy)
+        : m_frontendDispatcher(frontendDispatcher)
         , m_proxy(proxy)
         , m_id(s_nextId++)
         , m_connected(false)
@@ -89,10 +89,10 @@ private:
         RefPtr<InspectorObject> messageObject = value->asObject();
         if (!messageObject)
             return;
-        m_frontend->worker()->dispatchMessageFromWorker(m_id, messageObject);
+        m_frontendDispatcher->dispatchMessageFromWorker(m_id, messageObject);
     }
 
-    InspectorFrontend* m_frontend;
+    InspectorWorkerFrontendDispatcher* m_frontendDispatcher;
     WorkerGlobalScopeProxy* m_proxy;
     int m_id;
     bool m_connected;
@@ -107,8 +107,7 @@ PassOwnPtr<InspectorWorkerAgent> InspectorWorkerAgent::create(InstrumentingAgent
 }
 
 InspectorWorkerAgent::InspectorWorkerAgent(InstrumentingAgents* instrumentingAgents)
-    : InspectorBaseAgent<InspectorWorkerAgent>("Worker", instrumentingAgents)
-    , m_inspectorFrontend(0)
+    : InspectorBaseAgent(ASCIILiteral("Worker"), instrumentingAgents)
     , m_enabled(false)
     , m_shouldPauseDedicatedWorkerOnStart(false)
 {
@@ -120,31 +119,35 @@ InspectorWorkerAgent::~InspectorWorkerAgent()
     m_instrumentingAgents->setInspectorWorkerAgent(0);
 }
 
-void InspectorWorkerAgent::setFrontend(InspectorFrontend* frontend)
+void InspectorWorkerAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
-    m_inspectorFrontend = frontend;
+    m_frontendDispatcher = std::make_unique<InspectorWorkerFrontendDispatcher>(frontendChannel);
+    backendDispatcher->registerAgent(this);
 }
 
-void InspectorWorkerAgent::clearFrontend()
+void InspectorWorkerAgent::willDestroyFrontendAndBackend()
 {
     m_shouldPauseDedicatedWorkerOnStart = false;
-    disable(0);
-    m_inspectorFrontend = 0;
+    disable(nullptr);
+
+    m_frontendDispatcher = nullptr;
 }
 
 void InspectorWorkerAgent::enable(ErrorString*)
 {
     m_enabled = true;
-    if (!m_inspectorFrontend)
+    if (!m_frontendDispatcher)
         return;
+
     createWorkerFrontendChannelsForExistingWorkers();
 }
 
 void InspectorWorkerAgent::disable(ErrorString*)
 {
     m_enabled = false;
-    if (!m_inspectorFrontend)
+    if (!m_frontendDispatcher)
         return;
+
     destroyWorkerFrontendChannels();
 }
 
@@ -197,7 +200,7 @@ bool InspectorWorkerAgent::shouldPauseDedicatedWorkerOnStart() const
 void InspectorWorkerAgent::didStartWorkerGlobalScope(WorkerGlobalScopeProxy* workerGlobalScopeProxy, const URL& url)
 {
     m_dedicatedWorkers.set(workerGlobalScopeProxy, url.string());
-    if (m_inspectorFrontend && m_enabled)
+    if (m_frontendDispatcher && m_enabled)
         createWorkerFrontendChannel(workerGlobalScopeProxy, url.string());
 }
 
@@ -206,7 +209,7 @@ void InspectorWorkerAgent::workerGlobalScopeTerminated(WorkerGlobalScopeProxy* p
     m_dedicatedWorkers.remove(proxy);
     for (WorkerChannels::iterator it = m_idToChannel.begin(); it != m_idToChannel.end(); ++it) {
         if (proxy == it->value->proxy()) {
-            m_inspectorFrontend->worker()->workerTerminated(it->key);
+            m_frontendDispatcher->workerTerminated(it->key);
             delete it->value;
             m_idToChannel.remove(it);
             return;
@@ -231,13 +234,13 @@ void InspectorWorkerAgent::destroyWorkerFrontendChannels()
 
 void InspectorWorkerAgent::createWorkerFrontendChannel(WorkerGlobalScopeProxy* workerGlobalScopeProxy, const String& url)
 {
-    WorkerFrontendChannel* channel = new WorkerFrontendChannel(m_inspectorFrontend, workerGlobalScopeProxy);
+    WorkerFrontendChannel* channel = new WorkerFrontendChannel(m_frontendDispatcher.get(), workerGlobalScopeProxy);
     m_idToChannel.set(channel->id(), channel);
 
-    ASSERT(m_inspectorFrontend);
+    ASSERT(m_frontendDispatcher);
     if (m_shouldPauseDedicatedWorkerOnStart)
         channel->connectToWorkerGlobalScope();
-    m_inspectorFrontend->worker()->workerCreated(channel->id(), url, m_shouldPauseDedicatedWorkerOnStart);
+    m_frontendDispatcher->workerCreated(channel->id(), url, m_shouldPauseDedicatedWorkerOnStart);
 }
 
 } // namespace WebCore

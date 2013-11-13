@@ -45,21 +45,19 @@ class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class InspectorMemoryAgent : public InspectorBaseAgent<InspectorMemoryAgent>, public InspectorBackendDispatcher::MemoryCommandHandler {
+class InspectorMemoryAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::MemoryCommandHandler {
     WTF_MAKE_NONCOPYABLE(InspectorMemoryAgent);
 public:
     static PassOwnPtr<InspectorMemoryAgent> create(InstrumentingAgents* instrumentingAgents);
     virtual ~InspectorMemoryAgent();
 
-    virtual void getDOMCounters(ErrorString*, int* documents, int* nodes, int* jsEventListeners);
+    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
-    virtual void setFrontend(InspectorFrontend*);
-    virtual void clearFrontend();
+    virtual void getDOMCounters(ErrorString*, int* documents, int* nodes, int* jsEventListeners);
 
 private:
     InspectorMemoryAgent(InstrumentingAgents*);
-
-    InspectorFrontend::Memory* m_frontend;
 };
 
 } // namespace WebCore

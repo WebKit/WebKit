@@ -557,7 +557,7 @@ public:
 } // namespace
 
 InspectorIndexedDBAgent::InspectorIndexedDBAgent(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager, InspectorPageAgent* pageAgent)
-    : InspectorBaseAgent<InspectorIndexedDBAgent>("IndexedDB", instrumentingAgents)
+    : InspectorBaseAgent(ASCIILiteral("IndexedDB"), instrumentingAgents)
     , m_injectedScriptManager(injectedScriptManager)
     , m_pageAgent(pageAgent)
 {
@@ -567,9 +567,14 @@ InspectorIndexedDBAgent::~InspectorIndexedDBAgent()
 {
 }
 
-void InspectorIndexedDBAgent::clearFrontend()
+void InspectorIndexedDBAgent::didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher)
 {
-    disable(0);
+    backendDispatcher->registerAgent(this);
+}
+
+void InspectorIndexedDBAgent::willDestroyFrontendAndBackend()
+{
+    disable(nullptr);
 }
 
 void InspectorIndexedDBAgent::enable(ErrorString*)

@@ -55,7 +55,6 @@ class Frame;
 class HTTPHeaderMap;
 class InspectorArray;
 class InspectorClient;
-class InspectorFrontend;
 class InspectorObject;
 class InspectorPageAgent;
 class InstrumentingAgents;
@@ -77,19 +76,17 @@ struct WebSocketFrame;
 
 typedef String ErrorString;
 
-class InspectorResourceAgent : public InspectorBaseAgent<InspectorResourceAgent>, public InspectorBackendDispatcher::NetworkCommandHandler {
+class InspectorResourceAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::NetworkCommandHandler {
 public:
     static PassOwnPtr<InspectorResourceAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client)
     {
         return adoptPtr(new InspectorResourceAgent(instrumentingAgents, pageAgent, client));
     }
 
-    virtual void setFrontend(InspectorFrontend*);
-    virtual void clearFrontend();
-
-    static PassRefPtr<InspectorResourceAgent> restore(Page*, InspectorFrontend*);
-
     ~InspectorResourceAgent();
+
+    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     void willSendRequest(unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
     void markResourceAsCached(unsigned long identifier);
@@ -156,7 +153,7 @@ private:
 
     InspectorPageAgent* m_pageAgent;
     InspectorClient* m_client;
-    InspectorFrontend::Network* m_frontend;
+    std::unique_ptr<InspectorNetworkFrontendDispatcher> m_frontendDispatcher;
     String m_userAgentOverride;
     OwnPtr<NetworkResourcesData> m_resourcesData;
     bool m_enabled;

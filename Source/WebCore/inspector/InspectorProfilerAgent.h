@@ -45,7 +45,6 @@ namespace WebCore {
 class InjectedScriptManager;
 class InspectorArray;
 class InspectorConsoleAgent;
-class InspectorFrontend;
 class InspectorObject;
 class InstrumentingAgents;
 class Page;
@@ -55,7 +54,7 @@ class WorkerGlobalScope;
 
 typedef String ErrorString;
 
-class InspectorProfilerAgent : public InspectorBaseAgent<InspectorProfilerAgent>, public InspectorBackendDispatcher::ProfilerCommandHandler {
+class InspectorProfilerAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::ProfilerCommandHandler {
     WTF_MAKE_NONCOPYABLE(InspectorProfilerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<InspectorProfilerAgent> create(InstrumentingAgents*, InspectorConsoleAgent*, Page*, InjectedScriptManager*);
@@ -90,8 +89,8 @@ public:
     virtual void getHeapSnapshot(ErrorString*, int uid);
     virtual void removeProfile(ErrorString*, const String& type, int uid);
 
-    virtual void setFrontend(InspectorFrontend*);
-    virtual void clearFrontend();
+    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     virtual void takeHeapSnapshot(ErrorString*, const bool* reportProgress);
     void toggleRecordButton(bool isProfiling);
@@ -116,7 +115,7 @@ private:
 
     InspectorConsoleAgent* m_consoleAgent;
     InjectedScriptManager* m_injectedScriptManager;
-    InspectorFrontend::Profiler* m_frontend;
+    std::unique_ptr<InspectorProfilerFrontendDispatcher> m_frontendDispatcher;
     bool m_enabled;
     bool m_profileHeadersRequested;
     bool m_recordingCPUProfile;

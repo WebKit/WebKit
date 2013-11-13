@@ -121,10 +121,9 @@ PassOwnPtr<InspectorProfilerAgent> InspectorProfilerAgent::create(InstrumentingA
 #endif
 
 InspectorProfilerAgent::InspectorProfilerAgent(InstrumentingAgents* instrumentingAgents, InspectorConsoleAgent* consoleAgent, InjectedScriptManager* injectedScriptManager)
-    : InspectorBaseAgent<InspectorProfilerAgent>("Profiler", instrumentingAgents)
+    : InspectorBaseAgent(ASCIILiteral("Profiler"), instrumentingAgents)
     , m_consoleAgent(consoleAgent)
     , m_injectedScriptManager(injectedScriptManager)
-    , m_frontend(0)
     , m_enabled(false)
     , m_profileHeadersRequested(false)
     , m_recordingCPUProfile(false)
@@ -145,14 +144,14 @@ void InspectorProfilerAgent::addProfile(PassRefPtr<ScriptProfile> prpProfile, un
 {
     RefPtr<ScriptProfile> profile = prpProfile;
     m_profiles.add(profile->uid(), profile);
-    if (m_frontend && m_profileHeadersRequested)
-        m_frontend->addProfileHeader(createProfileHeader(*profile));
+    if (m_frontendDispatcher && m_profileHeadersRequested)
+        m_frontendDispatcher->addProfileHeader(createProfileHeader(*profile));
     addProfileFinishedMessageToConsole(profile, lineNumber, columnNumber, sourceURL);
 }
 
 void InspectorProfilerAgent::addProfileFinishedMessageToConsole(PassRefPtr<ScriptProfile> prpProfile, unsigned lineNumber, unsigned columnNumber, const String& sourceURL)
 {
-    if (!m_frontend)
+    if (!m_frontendDispatcher)
         return;
     RefPtr<ScriptProfile> profile = prpProfile;
     String message = makeString(profile->title(), '#', String::number(profile->uid()));
@@ -161,7 +160,7 @@ void InspectorProfilerAgent::addProfileFinishedMessageToConsole(PassRefPtr<Scrip
 
 void InspectorProfilerAgent::addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, unsigned columnNumber, const String& sourceURL)
 {
-    if (!m_frontend)
+    if (!m_frontendDispatcher)
         return;
     m_consoleAgent->addMessageToConsole(ConsoleAPIMessageSource, ProfileMessageType, DebugMessageLevel, title, sourceURL, lineNumber, columnNumber);
 }
@@ -260,12 +259,12 @@ namespace {
 
 class OutputStream : public ScriptHeapSnapshot::OutputStream {
 public:
-    OutputStream(InspectorFrontend::Profiler* frontend, unsigned uid)
-        : m_frontend(frontend), m_uid(uid) { }
-    void Write(const String& chunk) { m_frontend->addHeapSnapshotChunk(m_uid, chunk); }
-    void Close() { m_frontend->finishHeapSnapshot(m_uid); }
+    OutputStream(InspectorProfilerFrontendDispatcher* frontend, unsigned uid)
+        : m_frontendDispatcher(frontend), m_uid(uid) { }
+    void Write(const String& chunk) { m_frontendDispatcher->addHeapSnapshotChunk(m_uid, chunk); }
+    void Close() { m_frontendDispatcher->finishHeapSnapshot(m_uid); }
 private:
-    InspectorFrontend::Profiler* m_frontend;
+    InspectorProfilerFrontendDispatcher* m_frontendDispatcher;
     int m_uid;
 };
 
@@ -293,8 +292,8 @@ void InspectorProfilerAgent::getHeapSnapshot(ErrorString* errorString, int rawUi
         return;
     }
     RefPtr<ScriptHeapSnapshot> snapshot = it->value;
-    if (m_frontend) {
-        OutputStream stream(m_frontend, uid);
+    if (m_frontendDispatcher) {
+        OutputStream stream(m_frontendDispatcher.get(), uid);
         snapshot->writeJSON(&stream);
     }
 }
@@ -322,22 +321,24 @@ void InspectorProfilerAgent::resetState()
 
 void InspectorProfilerAgent::resetFrontendProfiles()
 {
-    if (!m_frontend)
+    if (!m_frontendDispatcher)
         return;
     if (!m_profileHeadersRequested)
         return;
     if (m_profiles.isEmpty() && m_snapshots.isEmpty())
-        m_frontend->resetProfiles();
+        m_frontendDispatcher->resetProfiles();
 }
 
-void InspectorProfilerAgent::setFrontend(InspectorFrontend* frontend)
+void InspectorProfilerAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
-    m_frontend = frontend->profiler();
+    m_frontendDispatcher = std::make_unique<InspectorProfilerFrontendDispatcher>(frontendChannel);
+    backendDispatcher->registerAgent(this);
 }
 
-void InspectorProfilerAgent::clearFrontend()
+void InspectorProfilerAgent::willDestroyFrontendAndBackend()
 {
-    m_frontend = 0;
+    m_frontendDispatcher = nullptr;
+
     stop();
     ErrorString error;
     disable(&error);
@@ -374,21 +375,21 @@ namespace {
 
 class HeapSnapshotProgress: public ScriptProfiler::HeapSnapshotProgress {
 public:
-    explicit HeapSnapshotProgress(InspectorFrontend::Profiler* frontend)
-        : m_frontend(frontend) { }
+    explicit HeapSnapshotProgress(InspectorProfilerFrontendDispatcher* frontend)
+        : m_frontendDispatcher(frontend) { }
     void Start(int totalWork)
     {
         m_totalWork = totalWork;
     }
     void Worked(int workDone)
     {
-        if (m_frontend)
-            m_frontend->reportHeapSnapshotProgress(workDone, m_totalWork);
+        if (m_frontendDispatcher)
+            m_frontendDispatcher->reportHeapSnapshotProgress(workDone, m_totalWork);
     }
     void Done() { }
     bool isCanceled() { return false; }
 private:
-    InspectorFrontend::Profiler* m_frontend;
+    InspectorProfilerFrontendDispatcher* m_frontendDispatcher;
     int m_totalWork;
 };
 
@@ -399,19 +400,19 @@ void InspectorProfilerAgent::takeHeapSnapshot(ErrorString*, const bool* reportPr
     String title = makeString(UserInitiatedProfileName, '.', String::number(m_nextUserInitiatedHeapSnapshotNumber));
     ++m_nextUserInitiatedHeapSnapshotNumber;
 
-    HeapSnapshotProgress progress(reportProgress && *reportProgress ? m_frontend : 0);
+    HeapSnapshotProgress progress(reportProgress && *reportProgress ? m_frontendDispatcher.get() : nullptr);
     RefPtr<ScriptHeapSnapshot> snapshot = ScriptProfiler::takeHeapSnapshot(title, &progress);
     if (snapshot) {
         m_snapshots.add(snapshot->uid(), snapshot);
-        if (m_frontend)
-            m_frontend->addProfileHeader(createSnapshotHeader(*snapshot));
+        if (m_frontendDispatcher)
+            m_frontendDispatcher->addProfileHeader(createSnapshotHeader(*snapshot));
     }
 }
 
 void InspectorProfilerAgent::toggleRecordButton(bool isProfiling)
 {
-    if (m_frontend)
-        m_frontend->setRecordingProfile(isProfiling);
+    if (m_frontendDispatcher)
+        m_frontendDispatcher->setRecordingProfile(isProfiling);
 }
 
 void InspectorProfilerAgent::getObjectByHeapObjectId(ErrorString* error, const String& heapSnapshotObjectId, const String* objectGroup, RefPtr<TypeBuilder::Runtime::RemoteObject>& result)

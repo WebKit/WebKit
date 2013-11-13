@@ -58,7 +58,6 @@ class Document;
 class Element;
 class Event;
 class InspectorClient;
-class InspectorFrontend;
 class InspectorHistory;
 class InspectorOverlay;
 class InspectorPageAgent;
@@ -91,7 +90,7 @@ struct EventListenerInfo {
     const EventListenerVector eventListenerVector;
 };
 
-class InspectorDOMAgent : public InspectorBaseAgent<InspectorDOMAgent>, public InspectorBackendDispatcher::DOMCommandHandler {
+class InspectorDOMAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::DOMCommandHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDOMAgent);
 public:
     struct DOMListener {
@@ -112,8 +111,8 @@ public:
 
     ~InspectorDOMAgent();
 
-    virtual void setFrontend(InspectorFrontend*);
-    virtual void clearFrontend();
+    virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
+    virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
     Vector<Document*> documents();
     void reset();
@@ -245,7 +244,7 @@ private:
     InjectedScriptManager* m_injectedScriptManager;
     InspectorOverlay* m_overlay;
     InspectorClient* m_client;
-    InspectorFrontend::DOM* m_frontend;
+    std::unique_ptr<InspectorDOMFrontendDispatcher> m_frontendDispatcher;
     DOMListener* m_domListener;
     NodeToIdMap m_documentNodeToIdMap;
     typedef HashMap<RefPtr<Node>, BackendNodeId> NodeToBackendIdMap;
