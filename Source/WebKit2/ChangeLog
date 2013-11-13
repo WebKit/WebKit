@@ -1,3 +1,15 @@
+2013-11-12  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        [EFL][GTK] Remove MutableArray leftovers from build systems
+        https://bugs.webkit.org/show_bug.cgi?id=124248
+
+        Reviewed by Anders Carlsson.
+
+        MutableArray.cpp and .h file has been removed by r159155.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+
 2013-11-12  Anders Carlsson  <andersca@apple.com>
 
         Rename APIObject to API::Object
