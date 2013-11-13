@@ -29,6 +29,8 @@
 #ifndef AccessibilityCallbacks_h
 #define AccessibilityCallbacks_h
 
+#if HAVE(ACCESSIBILITY)
+
 #include "AccessibilityNotificationHandlerAtk.h"
 #include "AccessibilityUIElement.h"
 
@@ -37,4 +39,6 @@ bool disconnectAccessibilityCallbacks();
 void addAccessibilityNotificationHandler(AccessibilityNotificationHandler*);
 void removeAccessibilityNotificationHandler(AccessibilityNotificationHandler*);
 
-#endif
+#endif // HAVE(ACCESSIBILITY)
+
+#endif // AccessibilityCallbacks_h

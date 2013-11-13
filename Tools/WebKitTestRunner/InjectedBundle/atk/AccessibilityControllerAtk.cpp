@@ -28,6 +28,8 @@
 #include "config.h"
 #include "AccessibilityController.h"
 
+#if HAVE(ACCESSIBILITY)
+
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
 
@@ -151,3 +153,5 @@ bool AccessibilityController::removeNotificationListener()
 }
 
 } // namespace WTR
+
+#endif // HAVE(ACCESSIBILITY)

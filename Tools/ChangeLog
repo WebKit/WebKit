@@ -1,3 +1,28 @@
+2013-11-13  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Support compilation of EFL/GTK without accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=122448
+
+        Reviewed by Chris Fleizach.
+
+        Added missing HAVE(ACCESSIBILITY) guards and stubs to ATK's related files,
+        so that in case of turning off the HAVE_ACCESSIBILITY macro EFL/GTK would compile properly.
+
+        * DumpRenderTree/AccessibilityController.h:
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/atk/AccessibilityCallbacks.h:
+        * DumpRenderTree/atk/AccessibilityNotificationHandlerAtk.cpp:
+        * DumpRenderTree/atk/AccessibilityNotificationHandlerAtk.h:
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AccessibilityController::rootElement):
+        (WTR::AccessibilityController::focusedElement):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityControllerAtk.cpp:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.h:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        * WebKitTestRunner/PlatformEfl.cmake:
+
 2013-11-12  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Added libxss-dev to install-dependencies

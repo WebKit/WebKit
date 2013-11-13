@@ -281,7 +281,7 @@ private:
     NotificationHandler m_notificationHandler;
 #endif
 
-#if PLATFORM(GTK) || PLATFORM(EFL)
+#if HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
     RefPtr<AccessibilityNotificationHandler> m_notificationHandler;
 #endif
 };

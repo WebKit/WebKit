@@ -87,18 +87,17 @@ PassRefPtr<AccessibilityUIElement> AccessibilityController::elementAtPoint(int x
 
 // Unsupported methods on various platforms.
 // As they're implemented on other platforms this list should be modified.
-#if !PLATFORM(GTK) && !PLATFORM(MAC) && !PLATFORM(EFL)
+#if (!PLATFORM(GTK) && !PLATFORM(MAC) && !PLATFORM(EFL)) || !HAVE(ACCESSIBILITY)
 bool AccessibilityController::addNotificationListener(JSValueRef) { return false; }
 bool AccessibilityController::removeNotificationListener() { return false; }
-#endif
-
-#if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(EFL)
 PassRefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef attribute) { return nullptr; }
-#endif
-
-#if !PLATFORM(GTK) && !PLATFORM(EFL) && !PLATFORM(MAC)
 void AccessibilityController::logAccessibilityEvents() { }
 void AccessibilityController::resetToConsistentState() { }
+#endif
+
+#if !HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
+PassRefPtr<AccessibilityUIElement> AccessibilityController::rootElement() { return nullptr; }
+PassRefPtr<AccessibilityUIElement> AccessibilityController::focusedElement() { return nullptr; }
 #endif
 
 } // namespace WTR

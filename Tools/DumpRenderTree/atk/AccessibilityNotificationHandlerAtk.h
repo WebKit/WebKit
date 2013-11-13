@@ -20,6 +20,8 @@
 #ifndef AccessibilityNotificationHandlerAtk_h
 #define AccessibilityNotificationHandlerAtk_h
 
+#if HAVE(ACCESSIBILITY)
+
 #include <JavaScriptCore/JSObjectRef.h>
 #include <atk/atk.h>
 #include <wtf/PassRefPtr.h>
@@ -43,5 +45,7 @@ private:
     AtkObject* m_platformElement;
     JSObjectRef m_notificationFunctionCallback;
 };
+
+#endif // HAVE(ACCESSIBILITY)
 
 #endif // AccessibilityNotificationHandlerAtk_h

@@ -41,7 +41,7 @@ typedef id PlatformUIElement;
 #else
 typedef struct objc_object* PlatformUIElement;
 #endif
-#elif PLATFORM(GTK) || (PLATFORM(EFL) && HAVE(ACCESSIBILITY))
+#elif HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
 #include "AccessibilityNotificationHandlerAtk.h"
 #include <atk/atk.h>
 #include <wtf/gobject/GRefPtr.h>
@@ -248,6 +248,7 @@ private:
     PlatformUIElement m_element;
     
     // A retained, platform specific object used to help manage notifications for this object.
+#if HAVE(ACCESSIBILITY)
 #if PLATFORM(MAC)
     NotificationHandler m_notificationHandler;
 
@@ -255,13 +256,14 @@ private:
     void getDocumentLinks(Vector<RefPtr<AccessibilityUIElement> >&);
 #endif
 
-#if PLATFORM(MAC) || PLATFORM(GTK) || (PLATFORM(EFL) && HAVE(ACCESSIBILITY))
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(EFL)
     void getChildren(Vector<RefPtr<AccessibilityUIElement> >&);
     void getChildrenWithRange(Vector<RefPtr<AccessibilityUIElement> >&, unsigned location, unsigned length);
 #endif
 
-#if PLATFORM(GTK) || (PLATFORM(EFL) && HAVE(ACCESSIBILITY))
+#if PLATFORM(GTK) || PLATFORM(EFL)
     RefPtr<AccessibilityNotificationHandler> m_notificationHandler;
+#endif
 #endif
 };
     

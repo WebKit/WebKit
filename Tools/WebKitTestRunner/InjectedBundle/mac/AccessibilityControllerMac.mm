@@ -31,6 +31,9 @@
 #import "config.h"
 #import "AccessibilityCommonMac.h"
 #import "AccessibilityController.h"
+
+#if HAVE(ACCESSIBILITY)
+
 #import "AccessibilityNotificationHandler.h"
 #import "InjectedBundle.h"
 #import "InjectedBundlePage.h"
@@ -110,3 +113,5 @@ PassRefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementByI
 }
 
 } // namespace WTR
+
+#endif // HAVE(ACCESSIBILITY)

@@ -20,6 +20,8 @@
 #ifndef AccessibilityNotificationHandlerAtk_h
 #define AccessibilityNotificationHandlerAtk_h
 
+#if HAVE(ACCESSIBILITY)
+
 #include <JavaScriptCore/JSObjectRef.h>
 #include <atk/atk.h>
 #include <atk/atkobject.h>
@@ -53,5 +55,7 @@ private:
 };
 
 } // namespace WTR
+
+#endif // HAVE(ACCESSIBILITY)
 
 #endif // AccessibilityNotificationHandlerAtk_h

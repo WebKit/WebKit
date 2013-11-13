@@ -25,6 +25,9 @@
 
 #import "config.h"
 #import "AccessibilityCommonMac.h"
+
+#if HAVE(ACCESSIBILITY)
+
 #import "AccessibilityNotificationHandler.h"
 #import "AccessibilityUIElement.h"
 #import "InjectedBundle.h"
@@ -1645,3 +1648,4 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::supportedActions() const
 
 } // namespace WTR
 
+#endif // HAVE(ACCESSIBILITY)

@@ -1574,4 +1574,4 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::classList() const
 
 } // namespace WTR
 
-#endif
+#endif // HAVE(ACCESSIBILITY)

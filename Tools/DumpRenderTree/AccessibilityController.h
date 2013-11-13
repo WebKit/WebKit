@@ -90,7 +90,7 @@ private:
     RetainPtr<NotificationHandler> m_globalNotificationHandler;
 #endif
 
-#if PLATFORM(GTK) || PLATFORM(EFL)
+#if HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
     RefPtr<AccessibilityNotificationHandler> m_globalNotificationHandler;
 #endif
 };

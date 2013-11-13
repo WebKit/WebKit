@@ -20,6 +20,8 @@
 #include "config.h"
 #include "AccessibilityNotificationHandlerAtk.h"
 
+#if HAVE(ACCESSIBILITY)
+
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
 #include "JSWrapper.h"
@@ -283,3 +285,5 @@ bool AccessibilityNotificationHandler::disconnectAccessibilityCallbacks()
 }
 
 } // namespace WTR
+
+#endif // HAVE(ACCESSIBILITY)
