@@ -1,3 +1,44 @@
+2013-11-13  Tibor Meszaros  <mtibor@inf.u-szeged.hu>
+
+        Cleanup the build from unused parameters in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=124199.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::cachedOrPendingImage):
+        * dom/Document.cpp:
+        (WebCore::Document::scriptedAnimationControllerSetThrottled):
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::registerBlobURL):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::shouldProhibitLinks):
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::isSemicolonSeparatedAttribute):
+        * inspector/InspectorConsoleInstrumentation.h:
+        (WebCore::InspectorInstrumentation::addMessageToConsole):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::didReceiveData):
+        (WebCore::DocumentThreadableLoader::didFail):
+        (WebCore::DocumentThreadableLoader::preflightFailure):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::imageSizeForRenderer):
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::animate):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::animate):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::applyFontTransforms):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::setIsInWindow):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+        (WebCore::RenderStyle::changeRequiresLayerRepaint):
+        (WebCore::RenderStyle::changeRequiresRecompositeLayer):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setHeaderHeight):
+        (WebCore::Internals::setCaptionsStyleSheetOverride):
+
 2013-11-13  Andreas Kling  <akling@apple.com>
 
         Refalize CSSCursorImageValue.

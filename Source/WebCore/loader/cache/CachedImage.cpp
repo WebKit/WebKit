@@ -274,6 +274,8 @@ LayoutSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float
     else if (m_image->isSVGImage() && sizeType == UsedSize) {
         imageSize = m_svgImageCache->imageSizeForRenderer(renderer);
     }
+#else
+    UNUSED_PARAM(sizeType);
 #endif
 
     if (multiplier == 1.0f)

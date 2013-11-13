@@ -1116,6 +1116,8 @@ void RenderView::setIsInWindow(bool isInWindow)
 #if USE(ACCELERATED_COMPOSITING)
     if (m_compositor)
         m_compositor->setIsInWindow(isInWindow);
+#else
+    UNUSED_PARAM(isInWindow);
 #endif
 }
 

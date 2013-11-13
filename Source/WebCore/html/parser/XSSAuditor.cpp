@@ -186,6 +186,7 @@ static bool isSemicolonSeparatedAttribute(const HTMLToken::Attribute& attribute)
 #if ENABLE(SVG)
     return threadSafeMatch(attribute.name, SVGNames::valuesAttr);
 #else
+    UNUSED_PARAM(attribute);
     return false;
 #endif
 }

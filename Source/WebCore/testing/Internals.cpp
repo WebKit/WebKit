@@ -1769,6 +1769,8 @@ void Internals::setHeaderHeight(float height)
 #if USE(ACCELERATED_COMPOSITING)
     FrameView* frameView = document->view();
     frameView->setHeaderHeight(height);
+#else
+    UNUSED_PARAM(height);
 #endif
 }
 
@@ -2073,6 +2075,8 @@ void Internals::setCaptionsStyleSheetOverride(const String& override, ExceptionC
 
 #if ENABLE(VIDEO_TRACK) && !PLATFORM(WIN)
     document->page()->group().captionPreferences()->setCaptionsStyleSheetOverride(override);
+#else
+    UNUSED_PARAM(override);
 #endif
 }
 

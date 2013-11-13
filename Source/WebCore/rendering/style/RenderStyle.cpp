@@ -466,6 +466,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
             changedContextSensitiveProperties |= ContextSensitivePropertyTransform;
             // Don't return; keep looking for another change
 #else
+            UNUSED_PARAM(changedContextSensitiveProperties);
             return true;
 #endif
         }
@@ -703,6 +704,7 @@ bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle* other, unsigned&
         changedContextSensitiveProperties |= ContextSensitivePropertyOpacity;
         // Don't return; keep looking for another change.
 #else
+        UNUSED_PARAM(changedContextSensitiveProperties);
         return true;
 #endif
     }
@@ -787,6 +789,8 @@ bool RenderStyle::changeRequiresRecompositeLayer(const RenderStyle* other, unsig
             || rareNonInheritedData->m_perspectiveOriginY != other->rareNonInheritedData->m_perspectiveOriginY)
             return true;
     }
+#else
+    UNUSED_PARAM(other);
 #endif
     return false;
 }

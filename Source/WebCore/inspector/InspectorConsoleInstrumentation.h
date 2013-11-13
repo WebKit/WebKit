@@ -87,6 +87,7 @@ inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSou
     UNUSED_PARAM(lineNumber);
     UNUSED_PARAM(state);
     UNUSED_PARAM(requestIdentifier);
+    UNUSED_PARAM(columnNumber);
 #endif
 }
 

@@ -174,6 +174,8 @@ StyleImage* CSSCursorImageValue::cachedOrPendingImage(Document& document)
     // Need to delegate completely so that changes in device scale factor can be handled appropriately.
     if (m_imageValue.get().isImageSetValue())
         return toCSSImageSetValue(m_imageValue.get()).cachedOrPendingImageSet(document);
+#else
+    UNUSED_PARAM(document);
 #endif
 
     if (!m_image)

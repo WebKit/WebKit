@@ -4870,6 +4870,8 @@ void Document::scriptedAnimationControllerSetThrottled(bool isThrottled)
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     if (m_scriptedAnimationController)
         m_scriptedAnimationController->setThrottled(isThrottled);
+#else
+    UNUSED_PARAM(isThrottled);
 #endif
 }
 

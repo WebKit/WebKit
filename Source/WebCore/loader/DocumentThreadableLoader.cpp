@@ -293,6 +293,8 @@ void DocumentThreadableLoader::didReceiveData(unsigned long identifier, const ch
     if (m_actualRequest) {
 #if ENABLE(INSPECTOR)
         InspectorInstrumentation::didReceiveData(m_document->frame(), identifier, 0, 0, dataLength);
+#else
+        UNUSED_PARAM(identifier);
 #endif
         return;
     }
@@ -329,6 +331,8 @@ void DocumentThreadableLoader::didFail(unsigned long identifier, const ResourceE
 #if ENABLE(INSPECTOR)
     if (m_actualRequest)
         InspectorInstrumentation::didFailLoading(m_document->frame(), m_document->frame()->loader().documentLoader(), identifier, error);
+#else
+    UNUSED_PARAM(identifier);
 #endif
 
     m_client->didFail(error);
@@ -353,6 +357,8 @@ void DocumentThreadableLoader::preflightFailure(unsigned long identifier, const 
 #if ENABLE(INSPECTOR)
     if (m_actualRequest)
         InspectorInstrumentation::didFailLoading(m_document->frame(), m_document->frame()->loader().documentLoader(), identifier, error);
+#else
+    UNUSED_PARAM(identifier);
 #endif
     m_actualRequest = nullptr; // Prevent didFinishLoading() from bypassing access check.
     m_client->didFailAccessControlCheck(error);

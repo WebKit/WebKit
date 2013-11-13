@@ -604,6 +604,7 @@ bool shouldProhibitLinks(Element* element)
 #if ENABLE(SVG)
     return isInSVGImage(element);
 #else
+    UNUSED_PARAM(element);
     return false;
 #endif
 }

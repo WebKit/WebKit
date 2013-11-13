@@ -136,7 +136,7 @@ PassRefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const URL& ur
 
 #else
 
-void ThreadableBlobRegistry::registerBlobURL(const URL&, std::unique_ptr<BlobData> blobData)
+void ThreadableBlobRegistry::registerBlobURL(const URL&, std::unique_ptr<BlobData>)
 {
 }
 

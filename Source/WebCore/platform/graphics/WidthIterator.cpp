@@ -120,7 +120,9 @@ static inline float applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, int&
     if (!ltr)
         glyphBuffer->reverse(lastGlyphCount, glyphBufferSize - lastGlyphCount);
 
-#if ENABLE(SVG_FONTS)
+#if !ENABLE(SVG_FONTS)
+    UNUSED_PARAM(iterator);
+#else
     // We need to handle transforms on SVG fonts internally, since they are rendered internally.
     if (fontData->isSVGFont()) {
         ASSERT(iterator.run().renderingContext());
