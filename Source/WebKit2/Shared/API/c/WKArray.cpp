@@ -38,22 +38,22 @@ WKTypeID WKArrayGetTypeID()
 
 WKArrayRef WKArrayCreate(WKTypeRef* values, size_t numberOfValues)
 {
-    Vector<RefPtr<APIObject>> elements;
+    Vector<RefPtr<API::Object>> elements;
     elements.reserveInitialCapacity(numberOfValues);
 
     for (size_t i = 0; i < numberOfValues; ++i)
-        elements.uncheckedAppend(const_cast<APIObject*>(static_cast<const APIObject*>(values[i])));
+        elements.uncheckedAppend(const_cast<API::Object*>(static_cast<const API::Object*>(values[i])));
 
     return toAPI(ImmutableArray::create(std::move(elements)).leakRef());
 }
 
 WKArrayRef WKArrayCreateAdoptingValues(WKTypeRef* values, size_t numberOfValues)
 {
-    Vector<RefPtr<APIObject>> elements;
+    Vector<RefPtr<API::Object>> elements;
     elements.reserveInitialCapacity(numberOfValues);
 
     for (size_t i = 0; i < numberOfValues; ++i)
-        elements.uncheckedAppend(adoptRef(const_cast<APIObject*>(static_cast<const APIObject*>(values[i]))));
+        elements.uncheckedAppend(adoptRef(const_cast<API::Object*>(static_cast<const API::Object*>(values[i]))));
 
     return toAPI(ImmutableArray::create(std::move(elements)).leakRef());
 }

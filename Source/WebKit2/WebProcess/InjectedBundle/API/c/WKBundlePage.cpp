@@ -169,7 +169,7 @@ static PassRefPtr<ImmutableArray> contextMenuItems(const WebContextMenu& context
 {
     auto items = contextMenu.items();
 
-    Vector<RefPtr<APIObject>> menuItems;
+    Vector<RefPtr<API::Object>> menuItems;
     menuItems.reserveInitialCapacity(items.size());
 
     for (const auto& item : items)

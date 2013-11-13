@@ -32,6 +32,10 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>
 
+namespace API {
+class Object;
+}
+
 namespace WebCore {
     class ResourceError;
     class ResourceRequest;
@@ -40,17 +44,16 @@ namespace WebCore {
 
 namespace WebKit {
 
-class APIObject;
 class WebPageProxy;
 class WebFrameProxy;
 class WebFramePolicyListenerProxy;
 
 class WebPolicyClient : public APIClient<WKPagePolicyClient, kWKPagePolicyClientCurrentVersion> {
 public:
-    bool decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, const WebCore::ResourceRequest&, WebFramePolicyListenerProxy*, APIObject* userData);
-    bool decidePolicyForNewWindowAction(WebPageProxy*, WebFrameProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, const WebCore::ResourceRequest&, const String& frameName, WebFramePolicyListenerProxy*, APIObject* userData);
-    bool decidePolicyForResponse(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, WebFramePolicyListenerProxy*, APIObject* userData);
-    void unableToImplementPolicy(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceError&, APIObject* userData);
+    bool decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, const WebCore::ResourceRequest&, WebFramePolicyListenerProxy*, API::Object* userData);
+    bool decidePolicyForNewWindowAction(WebPageProxy*, WebFrameProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, const WebCore::ResourceRequest&, const String& frameName, WebFramePolicyListenerProxy*, API::Object* userData);
+    bool decidePolicyForResponse(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, WebFramePolicyListenerProxy*, API::Object* userData);
+    void unableToImplementPolicy(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceError&, API::Object* userData);
 };
 
 } // namespace WebKit

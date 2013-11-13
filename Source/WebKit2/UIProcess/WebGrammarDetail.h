@@ -35,7 +35,7 @@ namespace WebKit {
 
 class ImmutableArray;
 
-class WebGrammarDetail : public TypedAPIObject<APIObject::TypeGrammarDetail> {
+class WebGrammarDetail : public API::TypedObject<API::Object::TypeGrammarDetail> {
 public:
     static PassRefPtr<WebGrammarDetail> create(int location, int length, ImmutableArray* guesses, const String& userDescription);
     static PassRefPtr<WebGrammarDetail> create(const WebCore::GrammarDetail&);

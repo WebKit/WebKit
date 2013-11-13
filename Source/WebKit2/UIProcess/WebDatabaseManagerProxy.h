@@ -46,7 +46,7 @@ class WebSecurityOrigin;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-class WebDatabaseManagerProxy : public TypedAPIObject<APIObject::TypeDatabaseManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
+class WebDatabaseManagerProxy : public API::TypedObject<API::Object::TypeDatabaseManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
     static const char* supplementName();
 
@@ -71,8 +71,8 @@ public:
     static String databaseDetailsExpectedUsageKey();
     static String databaseDetailsCurrentUsageKey();
 
-    using APIObject::ref;
-    using APIObject::deref;
+    using API::Object::ref;
+    using API::Object::deref;
 
 private:
     explicit WebDatabaseManagerProxy(WebContext*);

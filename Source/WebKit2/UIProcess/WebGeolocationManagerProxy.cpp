@@ -68,12 +68,12 @@ void WebGeolocationManagerProxy::processDidClose(WebProcessProxy* webProcessProx
 
 void WebGeolocationManagerProxy::refWebContextSupplement()
 {
-    APIObject::ref();
+    API::Object::ref();
 }
 
 void WebGeolocationManagerProxy::derefWebContextSupplement()
 {
-    APIObject::deref();
+    API::Object::deref();
 }
 
 void WebGeolocationManagerProxy::providerDidChangePosition(WebGeolocationPosition* position)

@@ -73,7 +73,7 @@ void WKContextGetInfoForInstalledPlugIns(WKContextRef contextRef, WKContextGetIn
 {
     Vector<PluginModuleInfo> plugins = toImpl(contextRef)->pluginInfoStore().plugins();
 
-    Vector<RefPtr<APIObject>> pluginInfoDictionaries;
+    Vector<RefPtr<API::Object>> pluginInfoDictionaries;
     pluginInfoDictionaries.reserveInitialCapacity(plugins.size());
 
     for (const auto& plugin: plugins)

@@ -41,7 +41,7 @@ class ArgumentEncoder;
 
 namespace WebKit {
 
-class WebNotification : public TypedAPIObject<APIObject::TypeNotification> {
+class WebNotification : public API::TypedObject<API::Object::TypeNotification> {
 public:
     static PassRefPtr<WebNotification> create(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, const String& dir, const String& originString, uint64_t notificationID)
     {

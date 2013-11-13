@@ -31,7 +31,6 @@
 
 namespace WebKit {
 
-class APIObject;
 class WebIconDatabase;
 class WebURL;
 

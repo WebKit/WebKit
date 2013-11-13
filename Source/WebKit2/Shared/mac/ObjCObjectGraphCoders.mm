@@ -347,7 +347,7 @@ public:
             break;
         }
         case WKTypeRefWrapperType: {
-            RefPtr<APIObject> object;
+            RefPtr<API::Object> object;
             WebContextUserMessageDecoder objectDecoder(object, coder.m_process);
             if (!decoder.decode(objectDecoder))
                 return false;
@@ -449,7 +449,7 @@ public:
             break;
         }
         case WKTypeRefWrapperType: {
-            RefPtr<APIObject> object;
+            RefPtr<API::Object> object;
             InjectedBundleUserMessageDecoder objectDecoder(object);
             if (!decoder.decode(objectDecoder))
                 return false;

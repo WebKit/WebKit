@@ -38,7 +38,7 @@ namespace WebKit {
 class WebPreferences;
 class WebPageProxy;
 
-class WebPageGroup : public TypedAPIObject<APIObject::TypePageGroup> {
+class WebPageGroup : public API::TypedObject<API::Object::TypePageGroup> {
 public:
     static PassRefPtr<WebPageGroup> create(const String& identifier = String(), bool visibleToInjectedBundle = true, bool visibleToHistoryClient = true);
     static WebPageGroup* get(uint64_t pageGroupID);

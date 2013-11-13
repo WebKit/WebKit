@@ -108,7 +108,7 @@ void InjectedBundlePageFormClient::willSendSubmitEvent(WebPage* page, HTMLFormEl
     m_client.willSendSubmitEvent(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.get()), m_client.clientInfo);
 }
 
-void InjectedBundlePageFormClient::willSubmitForm(WebPage* page, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<String, String>>& values, RefPtr<APIObject>& userData)
+void InjectedBundlePageFormClient::willSubmitForm(WebPage* page, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<String, String>>& values, RefPtr<API::Object>& userData)
 {
     if (!m_client.willSubmitForm)
         return;
@@ -130,7 +130,7 @@ void InjectedBundlePageFormClient::didAssociateFormControls(WebPage* page, const
     if (!m_client.didAssociateFormControls)
         return;
 
-    Vector<RefPtr<APIObject>> elementHandles;
+    Vector<RefPtr<API::Object>> elementHandles;
     elementHandles.reserveInitialCapacity(elements.size());
 
     for (const auto& element : elements)

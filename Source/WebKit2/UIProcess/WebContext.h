@@ -91,7 +91,7 @@ extern NSString *SchemeForCustomProtocolRegisteredNotificationName;
 extern NSString *SchemeForCustomProtocolUnregisteredNotificationName;
 #endif
 
-class WebContext : public TypedAPIObject<APIObject::TypeContext>, private CoreIPC::MessageReceiver
+class WebContext : public API::TypedObject<API::Object::TypeContext>, private CoreIPC::MessageReceiver
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , private PluginInfoStoreClient
 #endif
@@ -159,13 +159,13 @@ public:
 
     DownloadProxy* download(WebPageProxy* initiatingPage, const WebCore::ResourceRequest&);
 
-    void setInjectedBundleInitializationUserData(PassRefPtr<APIObject> userData) { m_injectedBundleInitializationUserData = userData; }
+    void setInjectedBundleInitializationUserData(PassRefPtr<API::Object> userData) { m_injectedBundleInitializationUserData = userData; }
 
-    void postMessageToInjectedBundle(const String&, APIObject*);
+    void postMessageToInjectedBundle(const String&, API::Object*);
 
     // InjectedBundle client
-    void didReceiveMessageFromInjectedBundle(const String&, APIObject*);
-    void didReceiveSynchronousMessageFromInjectedBundle(const String&, APIObject*, RefPtr<APIObject>& returnData);
+    void didReceiveMessageFromInjectedBundle(const String&, API::Object*);
+    void didReceiveSynchronousMessageFromInjectedBundle(const String&, API::Object*, RefPtr<API::Object>& returnData);
 
     void populateVisitedLinks();
 
@@ -417,7 +417,7 @@ private:
 
     RefPtr<WebPageGroup> m_defaultPageGroup;
 
-    RefPtr<APIObject> m_injectedBundleInitializationUserData;
+    RefPtr<API::Object> m_injectedBundleInitializationUserData;
     String m_injectedBundlePath;
     WebContextInjectedBundleClient m_injectedBundleClient;
 
@@ -445,7 +445,7 @@ private:
 
     // Messages that were posted before any pages were created.
     // The client should use initialization messages instead, so that a restarted process would get the same state.
-    Vector<pair<String, RefPtr<APIObject>>> m_messagesToInjectedBundlePostedToEmptyContext;
+    Vector<pair<String, RefPtr<API::Object>>> m_messagesToInjectedBundlePostedToEmptyContext;
 
     CacheModel m_cacheModel;
 

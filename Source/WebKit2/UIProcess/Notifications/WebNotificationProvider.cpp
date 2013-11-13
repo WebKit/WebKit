@@ -65,7 +65,7 @@ void WebNotificationProvider::clearNotifications(const Vector<uint64_t>& notific
     if (!m_client.clearNotifications)
         return;
 
-    Vector<RefPtr<APIObject>> arrayIDs;
+    Vector<RefPtr<API::Object>> arrayIDs;
     arrayIDs.reserveInitialCapacity(notificationIDs.size());
 
     for (const auto& notificationID : notificationIDs)

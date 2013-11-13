@@ -36,13 +36,12 @@
 
 namespace WebKit {
 
-class APIObject;
 class WebContextMenuItemData;
 class WebPageProxy;
 
 class WebPageContextMenuClient : public APIClient<WKPageContextMenuClient, kWKPageContextMenuClientCurrentVersion> {
 public:
-    bool getContextMenuFromProposedMenu(WebPageProxy*, const Vector<WebContextMenuItemData>& proposedMenu, Vector<WebContextMenuItemData>& customMenu, const WebHitTestResult::Data&, APIObject* userData);
+    bool getContextMenuFromProposedMenu(WebPageProxy*, const Vector<WebContextMenuItemData>& proposedMenu, Vector<WebContextMenuItemData>& customMenu, const WebHitTestResult::Data&, API::Object* userData);
     void customContextMenuItemSelected(WebPageProxy*, const WebContextMenuItemData&);
     void contextMenuDismissed(WebPageProxy*);
     bool showContextMenu(WebPageProxy*, const WebCore::IntPoint&, const Vector<WebContextMenuItemData>&);

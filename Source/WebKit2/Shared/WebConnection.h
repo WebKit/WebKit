@@ -34,19 +34,19 @@
 
 namespace WebKit {
 
-class WebConnection : public TypedAPIObject<APIObject::TypeConnection>, public CoreIPC::MessageReceiver, public CoreIPC::MessageSender {
+class WebConnection : public API::TypedObject<API::Object::TypeConnection>, public CoreIPC::MessageReceiver, public CoreIPC::MessageSender {
 public:
     virtual ~WebConnection();
 
     void initializeConnectionClient(const WKConnectionClient*);
-    void postMessage(const String&, APIObject*);
+    void postMessage(const String&, API::Object*);
     void didClose();
 
 protected:
     explicit WebConnection();
 
-    virtual void encodeMessageBody(CoreIPC::ArgumentEncoder&, APIObject*) = 0;
-    virtual bool decodeMessageBody(CoreIPC::ArgumentDecoder&, RefPtr<APIObject>&) = 0;
+    virtual void encodeMessageBody(CoreIPC::ArgumentEncoder&, API::Object*) = 0;
+    virtual bool decodeMessageBody(CoreIPC::ArgumentDecoder&, RefPtr<API::Object>&) = 0;
 
     // CoreIPC::MessageReceiver
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;

@@ -65,7 +65,7 @@ PassRefPtr<ImmutableArray> WebRenderLayer::createArrayFromLayerList(Vector<Rende
     if (!list || !list->size())
         return nullptr;
 
-    Vector<RefPtr<APIObject>> layers;
+    Vector<RefPtr<API::Object>> layers;
     layers.reserveInitialCapacity(list->size());
 
     for (const auto& layer : *list)

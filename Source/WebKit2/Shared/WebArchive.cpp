@@ -107,7 +107,7 @@ WebArchiveResource* WebArchive::mainResource()
 ImmutableArray* WebArchive::subresources()
 {
     if (!m_cachedSubresources) {
-        Vector<RefPtr<APIObject>> subresources;
+        Vector<RefPtr<API::Object>> subresources;
         subresources.reserveInitialCapacity(m_legacyWebArchive->subresources().size());
 
         for (const auto& subresource : m_legacyWebArchive->subresources())
@@ -122,7 +122,7 @@ ImmutableArray* WebArchive::subresources()
 ImmutableArray* WebArchive::subframeArchives()
 {
     if (!m_cachedSubframeArchives) {
-        Vector<RefPtr<APIObject>> subframeWebArchives;
+        Vector<RefPtr<API::Object>> subframeWebArchives;
         subframeWebArchives.reserveInitialCapacity(m_legacyWebArchive->subframeArchives().size());
 
         for (const auto& subframeArchive : m_legacyWebArchive->subframeArchives())

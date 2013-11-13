@@ -219,7 +219,7 @@ private:
 };
 
 class WebPageProxy
-    : public TypedAPIObject<APIObject::TypePage>
+    : public API::TypedObject<API::Object::TypePage>
 #if ENABLE(INPUT_TYPE_COLOR)
     , public WebColorPicker::Client
 #endif
@@ -271,14 +271,14 @@ public:
     bool tryClose();
     bool isClosed() const { return m_isClosed; }
 
-    void loadURL(const String&, APIObject* userData = 0);
-    void loadURLRequest(WebURLRequest*, APIObject* userData = 0);
-    void loadFile(const String& fileURL, const String& resourceDirectoryURL, APIObject* userData = 0);
-    void loadData(WebData*, const String& MIMEType, const String& encoding, const String& baseURL, APIObject* userData = 0);
-    void loadHTMLString(const String& htmlString, const String& baseURL, APIObject* userData = 0);
-    void loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL, APIObject* userData = 0);
-    void loadPlainTextString(const String& string, APIObject* userData = 0);
-    void loadWebArchiveData(const WebData*, APIObject* userData = 0);
+    void loadURL(const String&, API::Object* userData = nullptr);
+    void loadURLRequest(WebURLRequest*, API::Object* userData = nullptr);
+    void loadFile(const String& fileURL, const String& resourceDirectoryURL, API::Object* userData = nullptr);
+    void loadData(WebData*, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData = nullptr);
+    void loadHTMLString(const String& htmlString, const String& baseURL, API::Object* userData = nullptr);
+    void loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL, API::Object* userData = nullptr);
+    void loadPlainTextString(const String&, API::Object* userData = nullptr);
+    void loadWebArchiveData(const WebData*, API::Object* userData = nullptr);
 
     void stopLoading();
     void reload(bool reloadFromOrigin);
@@ -290,7 +290,7 @@ public:
 
     void goToBackForwardItem(WebBackForwardListItem*);
     void tryRestoreScrollPosition();
-    void didChangeBackForwardList(WebBackForwardListItem* addedItem, Vector<RefPtr<APIObject>>* removedItems);
+    void didChangeBackForwardList(WebBackForwardListItem* addedItem, Vector<RefPtr<API::Object>>* removedItems);
     void shouldGoToBackForwardListItem(uint64_t itemID, bool& shouldGoToBackForwardListItem);
     void willGoToBackForwardListItem(uint64_t itemID, CoreIPC::MessageDecoder&);
 
@@ -708,7 +708,7 @@ public:
     void setSuppressVisibilityUpdates(bool flag) { m_suppressVisibilityUpdates = flag; }
     bool suppressVisibilityUpdates() { return m_suppressVisibilityUpdates; }
 
-    void postMessageToInjectedBundle(const String& messageName, APIObject* messageBody);
+    void postMessageToInjectedBundle(const String& messageName, API::Object* messageBody);
 
 #if ENABLE(INPUT_TYPE_COLOR)
     void setColorPickerColor(const WebCore::Color&);

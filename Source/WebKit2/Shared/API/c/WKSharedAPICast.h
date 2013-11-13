@@ -107,7 +107,7 @@ WK_ADD_API_MAPPING(WKSecurityOriginRef, WebSecurityOrigin)
 WK_ADD_API_MAPPING(WKSerializedScriptValueRef, WebSerializedScriptValue)
 WK_ADD_API_MAPPING(WKSizeRef, WebSize)
 WK_ADD_API_MAPPING(WKStringRef, WebString)
-WK_ADD_API_MAPPING(WKTypeRef, APIObject)
+WK_ADD_API_MAPPING(WKTypeRef, API::Object)
 WK_ADD_API_MAPPING(WKUInt64Ref, WebUInt64)
 WK_ADD_API_MAPPING(WKURLRef, WebURL)
 WK_ADD_API_MAPPING(WKURLRequestRef, WebURLRequest)
@@ -282,7 +282,7 @@ inline WKPoint toAPI(const WebCore::IntPoint& point)
 
 /* Enum conversions */
 
-inline WKTypeID toAPI(APIObject::Type type)
+inline WKTypeID toAPI(API::Object::Type type)
 {
     return static_cast<WKTypeID>(type);
 }

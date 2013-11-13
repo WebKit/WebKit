@@ -43,7 +43,7 @@ class WebContext;
 class WebPageProxy;
 class WebSecurityOrigin;
 
-class WebNotificationManagerProxy : public TypedAPIObject<APIObject::TypeNotificationManager>, public WebContextSupplement {
+class WebNotificationManagerProxy : public API::TypedObject<API::Object::TypeNotificationManager>, public WebContextSupplement {
 public:
 
     static const char* supplementName();
@@ -65,8 +65,8 @@ public:
     void providerDidUpdateNotificationPolicy(const WebSecurityOrigin*, bool allowed);
     void providerDidRemoveNotificationPolicies(ImmutableArray* origins);
 
-    using APIObject::ref;
-    using APIObject::deref;
+    using API::Object::ref;
+    using API::Object::deref;
 
 private:
     explicit WebNotificationManagerProxy(WebContext*);

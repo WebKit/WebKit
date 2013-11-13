@@ -102,9 +102,9 @@ static WKBackForwardListItem *toWKBackForwardListItem(WebBackForwardListItem* it
 
 #pragma mark WKObject protocol implementation
 
-- (APIObject &)_apiObject
+- (API::Object&)_apiObject
 {
-    return *reinterpret_cast<APIObject*>(&_list);
+    return *reinterpret_cast<API::Object*>(&_list);
 }
 
 @end

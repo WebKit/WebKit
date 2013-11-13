@@ -39,7 +39,7 @@ namespace WebKit {
 
 class InjectedBundleScriptWorld;
 
-class InjectedBundleRangeHandle : public TypedAPIObject<APIObject::TypeBundleRangeHandle> {
+class InjectedBundleRangeHandle : public API::TypedObject<API::Object::TypeBundleRangeHandle> {
 public:
     static PassRefPtr<InjectedBundleRangeHandle> getOrCreate(JSContextRef, JSObjectRef);
     static PassRefPtr<InjectedBundleRangeHandle> getOrCreate(WebCore::Range*);

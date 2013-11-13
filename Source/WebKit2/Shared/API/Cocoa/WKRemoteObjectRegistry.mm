@@ -118,7 +118,7 @@ using namespace WebKit;
     if (toImpl(name)->string() != messageName)
         return NO;
 
-    if (!toImpl(body) || toImpl(body)->type() != APIObject::TypeDictionary)
+    if (!toImpl(body) || toImpl(body)->type() != API::Object::TypeDictionary)
         return NO;
 
     const ImmutableDictionary* dictionary = toImpl(static_cast<WKDictionaryRef>(body));

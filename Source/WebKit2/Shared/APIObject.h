@@ -38,11 +38,11 @@
 OBJC_CLASS NSObject;
 #endif
 
-namespace WebKit {
+namespace API {
 
-class APIObject
+class Object
 #if !DELEGATE_REF_COUNTING_TO_COCOA
-    : public ThreadSafeRefCounted<APIObject>
+    : public ThreadSafeRefCounted<Object>
 #endif
 {
 public:
@@ -159,7 +159,7 @@ public:
 #endif
     };
 
-    virtual ~APIObject()
+    virtual ~Object()
     {
     }
 
@@ -173,7 +173,7 @@ public:
 #endif // DELEGATE_REF_COUNTING_TO_COCOA
 
 protected:
-    APIObject();
+    Object();
 
 #if DELEGATE_REF_COUNTING_TO_COCOA
     static void* newObject(size_t, Type);
@@ -186,17 +186,17 @@ private:
 #endif // DELEGATE_REF_COUNTING_TO_COCOA
 };
 
-template <APIObject::Type ArgumentType>
-class TypedAPIObject : public APIObject {
+template <Object::Type ArgumentType>
+class TypedObject : public Object {
 public:
     static const Type APIType = ArgumentType;
 
-    virtual ~TypedAPIObject()
+    virtual ~TypedObject()
     {
     }
 
 protected:
-    TypedAPIObject()
+    TypedObject()
     {
     }
 
@@ -207,7 +207,7 @@ protected:
 #endif
 };
 
-} // namespace WebKit
+} // namespace Object
 
 #undef DELEGATE_REF_COUNTING_TO_COCOA
 

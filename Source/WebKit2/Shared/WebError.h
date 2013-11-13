@@ -34,7 +34,7 @@ namespace WebKit {
 
 // WebError - An error type suitable for vending to an API.
 
-class WebError : public TypedAPIObject<APIObject::TypeError> {
+class WebError : public API::TypedObject<API::Object::TypeError> {
 public:
     static PassRefPtr<WebError> create()
     {

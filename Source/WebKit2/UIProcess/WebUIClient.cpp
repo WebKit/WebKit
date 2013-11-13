@@ -159,7 +159,7 @@ void WebUIClient::setStatusText(WebPageProxy* page, const String& text)
     m_client.setStatusText(toAPI(page), toAPI(text.impl()), m_client.clientInfo);
 }
 
-void WebUIClient::mouseDidMoveOverElement(WebPageProxy* page, const WebHitTestResult::Data& data, WebEvent::Modifiers modifiers, APIObject* userData)
+void WebUIClient::mouseDidMoveOverElement(WebPageProxy* page, const WebHitTestResult::Data& data, WebEvent::Modifiers modifiers, API::Object* userData)
 {
     if (!m_client.mouseDidMoveOverElement && !m_client.mouseDidMoveOverElement_deprecatedForUseWithV0)
         return;

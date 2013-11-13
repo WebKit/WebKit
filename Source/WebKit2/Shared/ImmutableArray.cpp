@@ -32,17 +32,17 @@ namespace WebKit {
 
 PassRefPtr<ImmutableArray> ImmutableArray::create()
 {
-    return create(Vector<RefPtr<APIObject>>());
+    return create(Vector<RefPtr<API::Object>>());
 }
 
-PassRefPtr<ImmutableArray> ImmutableArray::create(Vector<RefPtr<APIObject>> elements)
+PassRefPtr<ImmutableArray> ImmutableArray::create(Vector<RefPtr<API::Object>> elements)
 {
     return adoptRef(new ImmutableArray(std::move(elements)));
 }
 
 PassRefPtr<ImmutableArray> ImmutableArray::createStringArray(const Vector<String>& strings)
 {
-    Vector<RefPtr<APIObject>> elements;
+    Vector<RefPtr<API::Object>> elements;
     elements.reserveInitialCapacity(strings.size());
 
     for (const auto& string : strings)
@@ -51,7 +51,7 @@ PassRefPtr<ImmutableArray> ImmutableArray::createStringArray(const Vector<String
     return create(std::move(elements));
 }
 
-ImmutableArray::ImmutableArray(Vector<RefPtr<APIObject>> elements)
+ImmutableArray::ImmutableArray(Vector<RefPtr<API::Object>> elements)
     : m_elements(std::move(elements))
 {
 }

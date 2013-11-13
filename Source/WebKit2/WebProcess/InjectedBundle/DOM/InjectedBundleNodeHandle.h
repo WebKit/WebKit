@@ -44,7 +44,7 @@ class InjectedBundleScriptWorld;
 class WebFrame;
 class WebImage;
 
-class InjectedBundleNodeHandle : public TypedAPIObject<APIObject::TypeBundleNodeHandle> {
+class InjectedBundleNodeHandle : public API::TypedObject<API::Object::TypeBundleNodeHandle> {
 public:
     static PassRefPtr<InjectedBundleNodeHandle> getOrCreate(JSContextRef, JSObjectRef);
     static PassRefPtr<InjectedBundleNodeHandle> getOrCreate(WebCore::Node*);

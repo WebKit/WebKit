@@ -32,6 +32,10 @@
 #include <WebCore/RenderSnapshottedPlugIn.h>
 #include <wtf/Forward.h>
 
+namespace API {
+class Object;
+}
+
 namespace WebCore {
 class GraphicsContext;
 class HitTestResult;
@@ -40,7 +44,6 @@ class IntRect;
 
 namespace WebKit {
 
-class APIObject;
 class WebFrame;
 class WebPage;
 class WebSecurityOrigin;
@@ -52,7 +55,7 @@ public:
     void willRunJavaScriptAlert(WebPage*, const String&, WebFrame*);
     void willRunJavaScriptConfirm(WebPage*, const String&, WebFrame*);
     void willRunJavaScriptPrompt(WebPage*, const String&, const String&, WebFrame*);
-    void mouseDidMoveOverElement(WebPage*, const WebCore::HitTestResult&, WebEvent::Modifiers, RefPtr<APIObject>& userData);
+    void mouseDidMoveOverElement(WebPage*, const WebCore::HitTestResult&, WebEvent::Modifiers, RefPtr<API::Object>& userData);
     void pageDidScroll(WebPage*);
 
     bool shouldPaintCustomOverhangArea();

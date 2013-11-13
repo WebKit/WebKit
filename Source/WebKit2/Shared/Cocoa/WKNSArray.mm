@@ -50,7 +50,7 @@ using namespace WebKit;
 
 - (id)objectAtIndex:(NSUInteger)i
 {
-    APIObject* object = reinterpret_cast<ImmutableArray*>(&_array)->at(i);
+    API::Object* object = reinterpret_cast<ImmutableArray*>(&_array)->at(i);
     return object ? object->wrapper() : [NSNull null];
 }
 
@@ -63,9 +63,9 @@ using namespace WebKit;
 
 #pragma mark WKObject protocol implementation
 
-- (APIObject&)_apiObject
+- (API::Object&)_apiObject
 {
-    return *reinterpret_cast<APIObject*>(&_array);
+    return *reinterpret_cast<API::Object*>(&_array);
 }
 
 @end

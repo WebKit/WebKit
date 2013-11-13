@@ -38,7 +38,7 @@ namespace CoreIPC {
 
 namespace WebKit {
 
-class WebSize : public TypedAPIObject<APIObject::TypeSize> {
+class WebSize : public API::TypedObject<API::Object::TypeSize> {
 public:
     static PassRefPtr<WebSize> create(const WKSize& size)
     {
@@ -55,7 +55,7 @@ private:
     WKSize m_size;
 };
 
-class WebPoint : public TypedAPIObject<APIObject::TypePoint> {
+class WebPoint : public API::TypedObject<API::Object::TypePoint> {
 public:
     static PassRefPtr<WebPoint> create(const WKPoint& point)
     {
@@ -72,7 +72,7 @@ private:
     WKPoint m_point;
 };
 
-class WebRect : public TypedAPIObject<APIObject::TypeRect> {
+class WebRect : public API::TypedObject<API::Object::TypeRect> {
 public:
     static PassRefPtr<WebRect> create(const WKRect& rect)
     {

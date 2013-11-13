@@ -41,12 +41,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-bool InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems(WebPage* page, InjectedBundleHitTestResult* hitTestResult, const Vector<WebContextMenuItemData>& defaultMenu, Vector<WebContextMenuItemData>& newMenu, RefPtr<APIObject>& userData)
+bool InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems(WebPage* page, InjectedBundleHitTestResult* hitTestResult, const Vector<WebContextMenuItemData>& defaultMenu, Vector<WebContextMenuItemData>& newMenu, RefPtr<API::Object>& userData)
 {
     if (!m_client.getContextMenuFromDefaultMenu)
         return false;
 
-    Vector<RefPtr<APIObject>> defaultMenuItems;
+    Vector<RefPtr<API::Object>> defaultMenuItems;
     defaultMenuItems.reserveInitialCapacity(defaultMenu.size());
     for (const auto& item : defaultMenu)
         defaultMenuItems.uncheckedAppend(WebContextMenuItem::create(item));

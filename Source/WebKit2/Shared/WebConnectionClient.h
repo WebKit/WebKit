@@ -30,14 +30,17 @@
 #include "WKConnectionRef.h"
 #include <wtf/Forward.h>
 
+namespace API {
+class Object;
+}
+
 namespace WebKit {
 
-class APIObject;
 class WebConnection;
 
 class WebConnectionClient : public APIClient<WKConnectionClient, WKConnectionClientCurrentVersion> {
 public:
-    void didReceiveMessage(WebConnection*, const String&, APIObject*);
+    void didReceiveMessage(WebConnection*, const String&, API::Object*);
     void didClose(WebConnection*);
 };
 

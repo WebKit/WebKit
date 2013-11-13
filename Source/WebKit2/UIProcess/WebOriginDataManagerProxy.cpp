@@ -72,12 +72,12 @@ bool WebOriginDataManagerProxy::shouldTerminate(WebProcessProxy*) const
 
 void WebOriginDataManagerProxy::refWebContextSupplement()
 {
-    APIObject::ref();
+    API::Object::ref();
 }
 
 void WebOriginDataManagerProxy::derefWebContextSupplement()
 {
-    APIObject::deref();
+    API::Object::deref();
 }
 
 void WebOriginDataManagerProxy::getOrigins(WKOriginDataTypes types, PassRefPtr<ArrayCallback> prpCallback)

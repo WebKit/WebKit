@@ -46,7 +46,7 @@ class WebContext;
 class WebData;
 class WebPageProxy;
 
-class DownloadProxy : public TypedAPIObject<APIObject::TypeDownload>, public CoreIPC::MessageReceiver {
+class DownloadProxy : public API::TypedObject<API::Object::TypeDownload>, public CoreIPC::MessageReceiver {
 public:
     static PassRefPtr<DownloadProxy> create(DownloadProxyMap&, WebContext*);
     ~DownloadProxy();

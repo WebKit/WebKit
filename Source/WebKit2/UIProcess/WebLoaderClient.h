@@ -35,13 +35,16 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
+namespace API {
+class Object;
+}
+
 namespace WebCore {
 class ResourceError;
 }
 
 namespace WebKit {
 
-class APIObject;
 class AuthenticationChallengeProxy;
 class AuthenticationDecisionListener;
 class ImmutableDictionary;
@@ -52,26 +55,26 @@ class WebProtectionSpace;
 
 class WebLoaderClient : public APIClient<WKPageLoaderClient, kWKPageLoaderClientCurrentVersion> {
 public:
-    void didStartProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
-    void didReceiveServerRedirectForProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
-    void didFailProvisionalLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceError&, APIObject*);
-    void didCommitLoadForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
-    void didFinishDocumentLoadForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
-    void didFinishLoadForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
-    void didFailLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceError&, APIObject*);
-    void didSameDocumentNavigationForFrame(WebPageProxy*, WebFrameProxy*, SameDocumentNavigationType, APIObject*);
-    void didReceiveTitleForFrame(WebPageProxy*, const String&, WebFrameProxy*, APIObject*);
-    void didFirstLayoutForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
+    void didStartProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
+    void didReceiveServerRedirectForProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
+    void didFailProvisionalLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceError&, API::Object*);
+    void didCommitLoadForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
+    void didFinishDocumentLoadForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
+    void didFinishLoadForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
+    void didFailLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceError&, API::Object*);
+    void didSameDocumentNavigationForFrame(WebPageProxy*, WebFrameProxy*, SameDocumentNavigationType, API::Object*);
+    void didReceiveTitleForFrame(WebPageProxy*, const String&, WebFrameProxy*, API::Object*);
+    void didFirstLayoutForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
 
     // FIXME: We should consider removing didFirstVisuallyNonEmptyLayoutForFrame since it is replaced by didLayout.
-    void didFirstVisuallyNonEmptyLayoutForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
+    void didFirstVisuallyNonEmptyLayoutForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
 
-    void didRemoveFrameFromHierarchy(WebPageProxy*, WebFrameProxy*, APIObject*);
-    void didDisplayInsecureContentForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
-    void didRunInsecureContentForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
-    void didDetectXSSForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
+    void didRemoveFrameFromHierarchy(WebPageProxy*, WebFrameProxy*, API::Object*);
+    void didDisplayInsecureContentForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
+    void didRunInsecureContentForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
+    void didDetectXSSForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
 
-    void didLayout(WebPageProxy*, WebCore::LayoutMilestones, APIObject*);
+    void didLayout(WebPageProxy*, WebCore::LayoutMilestones, API::Object*);
     
     bool canAuthenticateAgainstProtectionSpaceInFrame(WebPageProxy*, WebFrameProxy*, WebProtectionSpace*);
     void didReceiveAuthenticationChallengeInFrame(WebPageProxy*, WebFrameProxy*, AuthenticationChallengeProxy*);
@@ -86,9 +89,9 @@ public:
     void processDidBecomeResponsive(WebPageProxy*);
     void processDidCrash(WebPageProxy*);
 
-    void didChangeBackForwardList(WebPageProxy*, WebBackForwardListItem* addedItem, Vector<RefPtr<APIObject>>* removedItems);
+    void didChangeBackForwardList(WebPageProxy*, WebBackForwardListItem* addedItem, Vector<RefPtr<API::Object>>* removedItems);
     bool shouldGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*);
-    void willGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*, APIObject*);
+    void willGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*, API::Object*);
 
     PluginModuleLoadPolicy pluginLoadPolicy(WebPageProxy*, PluginModuleLoadPolicy currentPluginLoadPolicy, ImmutableDictionary*, String& unavailabilityDescriptionOutParameter);
     void didFailToInitializePlugin(WebPageProxy*, ImmutableDictionary*);

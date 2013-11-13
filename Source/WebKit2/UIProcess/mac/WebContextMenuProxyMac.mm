@@ -37,15 +37,15 @@
 using namespace WebCore;
 
 @interface WKUserDataWrapper : NSObject {
-    RefPtr<WebKit::APIObject> _webUserData;
+    RefPtr<API::Object> _webUserData;
 }
-- (id)initWithUserData:(WebKit::APIObject*)userData;
-- (WebKit::APIObject*)userData;
+- (id)initWithUserData:(API::Object*)userData;
+- (API::Object*)userData;
 @end
 
 @implementation WKUserDataWrapper
 
-- (id)initWithUserData:(WebKit::APIObject*)userData
+- (id)initWithUserData:(API::Object*)userData
 {
     self = [super init];
     if (!self)
@@ -55,7 +55,7 @@ using namespace WebCore;
     return self;
 }
 
-- (WebKit::APIObject*)userData
+- (API::Object*)userData
 {
     return _webUserData.get();
 }

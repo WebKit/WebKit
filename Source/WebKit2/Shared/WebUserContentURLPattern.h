@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-class WebUserContentURLPattern : public TypedAPIObject<APIObject::TypeUserContentURLPattern> {
+class WebUserContentURLPattern : public API::TypedObject<API::Object::TypeUserContentURLPattern> {
 public:
     static PassRefPtr<WebUserContentURLPattern> create(const String& pattern)
     {

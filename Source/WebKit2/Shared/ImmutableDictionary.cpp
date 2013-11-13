@@ -49,7 +49,7 @@ PassRefPtr<ImmutableArray> ImmutableDictionary::keys() const
     if (m_map.isEmpty())
         return ImmutableArray::create();
 
-    Vector<RefPtr<APIObject>> keys;
+    Vector<RefPtr<API::Object>> keys;
     keys.reserveInitialCapacity(m_map.size());
 
     for (const auto& key : m_map.keys())

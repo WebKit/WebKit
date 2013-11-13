@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-class WebGeolocationPosition : public TypedAPIObject<APIObject::TypeGeolocationPosition> {
+class WebGeolocationPosition : public API::TypedObject<API::Object::TypeGeolocationPosition> {
 public:
     struct Data {
         void encode(CoreIPC::ArgumentEncoder&) const;

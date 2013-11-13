@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-void WebConnectionClient::didReceiveMessage(WebConnection* connection, const String& messageName, APIObject* messageBody)
+void WebConnectionClient::didReceiveMessage(WebConnection* connection, const String& messageName, API::Object* messageBody)
 {
     if (!m_client.didReceiveMessage)
         return;

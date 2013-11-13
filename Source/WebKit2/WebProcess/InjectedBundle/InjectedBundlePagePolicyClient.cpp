@@ -34,7 +34,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForNavigationAction(WebPage* page, WebFrame* frame, InjectedBundleNavigationAction* action, const ResourceRequest& resourceRequest, RefPtr<APIObject>& userData)
+WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForNavigationAction(WebPage* page, WebFrame* frame, InjectedBundleNavigationAction* action, const ResourceRequest& resourceRequest, RefPtr<API::Object>& userData)
 {
     if (!m_client.decidePolicyForNavigationAction)
         return WKBundlePagePolicyActionPassThrough;
@@ -47,7 +47,7 @@ WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForNavigati
     return policy;
 }
 
-WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForNewWindowAction(WebPage* page, WebFrame* frame, InjectedBundleNavigationAction* action, const ResourceRequest& resourceRequest, const String& frameName, RefPtr<APIObject>& userData)
+WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForNewWindowAction(WebPage* page, WebFrame* frame, InjectedBundleNavigationAction* action, const ResourceRequest& resourceRequest, const String& frameName, RefPtr<API::Object>& userData)
 {
     if (!m_client.decidePolicyForNewWindowAction)
         return WKBundlePagePolicyActionPassThrough;
@@ -60,7 +60,7 @@ WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForNewWindo
     return policy;
 }
 
-WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForResponse(WebPage* page, WebFrame* frame, const ResourceResponse& resourceResponse, const ResourceRequest& resourceRequest, RefPtr<APIObject>& userData)
+WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForResponse(WebPage* page, WebFrame* frame, const ResourceResponse& resourceResponse, const ResourceRequest& resourceRequest, RefPtr<API::Object>& userData)
 {
     if (!m_client.decidePolicyForResponse)
         return WKBundlePagePolicyActionPassThrough;
@@ -74,7 +74,7 @@ WKBundlePagePolicyAction InjectedBundlePagePolicyClient::decidePolicyForResponse
     return policy;
 }
 
-void InjectedBundlePagePolicyClient::unableToImplementPolicy(WebPage* page, WebFrame* frame, const WebCore::ResourceError& error, RefPtr<APIObject>& userData)
+void InjectedBundlePagePolicyClient::unableToImplementPolicy(WebPage* page, WebFrame* frame, const WebCore::ResourceError& error, RefPtr<API::Object>& userData)
 {
     if (!m_client.unableToImplementPolicy)
         return;

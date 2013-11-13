@@ -63,9 +63,9 @@ using namespace WebKit;
 
 #pragma mark WKObject protocol implementation
 
-- (APIObject&)_apiObject
+- (API::Object&)_apiObject
 {
-    return *reinterpret_cast<APIObject*>(&_item);
+    return *reinterpret_cast<API::Object*>(&_item);
 }
 
 @end

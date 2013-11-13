@@ -34,7 +34,7 @@ namespace WebKit {
 class ImmutableArray;
 class WebPageProxy;
 
-class InjectedBundleBackForwardListItem : public TypedAPIObject<APIObject::TypeBundleBackForwardListItem> {
+class InjectedBundleBackForwardListItem : public API::TypedObject<API::Object::TypeBundleBackForwardListItem> {
 public:
     static PassRefPtr<InjectedBundleBackForwardListItem> create(PassRefPtr<WebCore::HistoryItem> item)
     {

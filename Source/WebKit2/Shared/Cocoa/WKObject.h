@@ -27,13 +27,13 @@
 
 #if WK_API_ENABLED
 
-namespace WebKit {
-class APIObject;
+namespace API {
+class Object;
 }
 
 @protocol WKObject <NSObject>
 
-@property (readonly) WebKit::APIObject& _apiObject;
+@property (readonly) API::Object& _apiObject;
 
 @end
 

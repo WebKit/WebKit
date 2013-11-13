@@ -662,7 +662,7 @@ PassRefPtr<ImmutableArray> WebPage::trackedRepaintRects()
     if (!view)
         return ImmutableArray::create();
 
-    Vector<RefPtr<APIObject>> repaintRects;
+    Vector<RefPtr<API::Object>> repaintRects;
     repaintRects.reserveInitialCapacity(view->trackedRepaintRects().size());
 
     for (const auto& repaintRect : view->trackedRepaintRects())
@@ -835,7 +835,7 @@ void WebPage::loadURLRequest(const ResourceRequest& request, const SandboxExtens
 {
     SendStopResponsivenessTimer stopper(this);
 
-    RefPtr<APIObject> userData;
+    RefPtr<API::Object> userData;
     InjectedBundleUserMessageDecoder userMessageDecoder(userData);
     if (!decoder.decode(userMessageDecoder))
         return;
@@ -854,7 +854,7 @@ void WebPage::loadDataImpl(PassRefPtr<SharedBuffer> sharedBuffer, const String& 
 {
     SendStopResponsivenessTimer stopper(this);
 
-    RefPtr<APIObject> userData;
+    RefPtr<API::Object> userData;
     InjectedBundleUserMessageDecoder userMessageDecoder(userData);
     if (!decoder.decode(userMessageDecoder))
         return;
@@ -1318,7 +1318,7 @@ void WebPage::postInjectedBundleMessage(const String& messageName, CoreIPC::Mess
     if (!injectedBundle)
         return;
 
-    RefPtr<APIObject> messageBody;
+    RefPtr<API::Object> messageBody;
     InjectedBundleUserMessageDecoder messageBodyDecoder(messageBody);
     if (!decoder.decode(messageBodyDecoder))
         return;

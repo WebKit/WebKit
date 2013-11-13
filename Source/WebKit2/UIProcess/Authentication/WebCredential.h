@@ -37,7 +37,7 @@ namespace WebKit {
 
 class WebCertificateInfo;
 
-class WebCredential : public TypedAPIObject<APIObject::TypeCredential> {
+class WebCredential : public API::TypedObject<API::Object::TypeCredential> {
 public:
     ~WebCredential();
 

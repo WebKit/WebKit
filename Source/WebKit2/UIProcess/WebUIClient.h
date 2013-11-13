@@ -43,7 +43,6 @@ namespace WebCore {
 
 namespace WebKit {
 
-class APIObject;
 class GeolocationPermissionRequestProxy;
 class ImmutableDictionary;
 class NativeWebKeyboardEvent;
@@ -71,7 +70,7 @@ public:
     String runJavaScriptPrompt(WebPageProxy*, const String&, const String&, WebFrameProxy*);
 
     void setStatusText(WebPageProxy*, const String&);
-    void mouseDidMoveOverElement(WebPageProxy*, const WebHitTestResult::Data&, WebEvent::Modifiers, APIObject*);
+    void mouseDidMoveOverElement(WebPageProxy*, const WebHitTestResult::Data&, WebEvent::Modifiers, API::Object*);
     void unavailablePluginButtonClicked(WebPageProxy*, WKPluginUnavailabilityReason, ImmutableDictionary*);
     
     bool implementsDidNotHandleKeyEvent() const;

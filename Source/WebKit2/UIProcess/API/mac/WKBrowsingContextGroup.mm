@@ -113,7 +113,7 @@ static WKRetainPtr<WKArrayRef> createWKArray(NSArray *array)
     if (!count)
         return nullptr;
 
-    Vector<RefPtr<APIObject>> strings;
+    Vector<RefPtr<API::Object>> strings;
     strings.reserveInitialCapacity(count);
 
     for (id entry in array) {

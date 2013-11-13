@@ -267,7 +267,7 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 
     memoryPressureHandler().install();
 
-    RefPtr<APIObject> injectedBundleInitializationUserData;
+    RefPtr<API::Object> injectedBundleInitializationUserData;
     InjectedBundleUserMessageDecoder messageDecoder(injectedBundleInitializationUserData);
     if (!decoder.decode(messageDecoder))
         return;
@@ -982,7 +982,7 @@ void WebProcess::postInjectedBundleMessage(const CoreIPC::DataReference& message
     if (!decoder.decode(messageName))
         return;
 
-    RefPtr<APIObject> messageBody;
+    RefPtr<API::Object> messageBody;
     InjectedBundleUserMessageDecoder messageBodyDecoder(messageBody);
     if (!decoder.decode(messageBodyDecoder))
         return;

@@ -77,11 +77,11 @@ void performAPICallbackWithSecurityOriginDataVector(const Vector<SecurityOriginD
         return;
     }
     
-    Vector<RefPtr<APIObject>> securityOrigins;
+    Vector<RefPtr<API::Object>> securityOrigins;
     securityOrigins.reserveInitialCapacity(originDatas.size());
 
     for (const auto& originData : originDatas) {
-        RefPtr<APIObject> origin = WebSecurityOrigin::create(originData.protocol, originData.host, originData.port);
+        RefPtr<API::Object> origin = WebSecurityOrigin::create(originData.protocol, originData.host, originData.port);
         if (!origin)
             continue;
         securityOrigins.uncheckedAppend(std::move(origin));

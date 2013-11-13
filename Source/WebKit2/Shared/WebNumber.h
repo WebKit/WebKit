@@ -31,8 +31,8 @@
 
 namespace WebKit {
 
-template<typename NumberType, APIObject::Type APIObjectType>
-class WebNumber : public TypedAPIObject<APIObjectType> {
+template<typename NumberType, API::Object::Type APIObjectType>
+class WebNumber : public API::TypedObject<APIObjectType> {
 public:
     static PassRefPtr<WebNumber> create(NumberType value)
     {
@@ -50,9 +50,9 @@ private:
     const NumberType m_value;
 };
 
-typedef WebNumber<bool, APIObject::TypeBoolean> WebBoolean;
-typedef WebNumber<double, APIObject::TypeDouble> WebDouble;
-typedef WebNumber<uint64_t, APIObject::TypeUInt64> WebUInt64;
+typedef WebNumber<bool, API::Object::TypeBoolean> WebBoolean;
+typedef WebNumber<double, API::Object::TypeDouble> WebDouble;
+typedef WebNumber<uint64_t, API::Object::TypeUInt64> WebUInt64;
 
 } // namespace WebKit
 

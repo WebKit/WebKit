@@ -64,7 +64,7 @@ void WebContextMenu::show()
         return;
 
     Vector<WebContextMenuItemData> menuItems;
-    RefPtr<APIObject> userData;
+    RefPtr<API::Object> userData;
     menuItemsWithUserData(menuItems, userData);
     WebHitTestResult::Data webHitTestResultData(controller.hitTestResult());
 
@@ -79,7 +79,7 @@ void WebContextMenu::itemSelected(const WebContextMenuItemData& item)
     m_page->corePage()->contextMenuController().contextMenuItemSelected(&coreItem);
 }
 
-void WebContextMenu::menuItemsWithUserData(Vector<WebContextMenuItemData> &menuItems, RefPtr<APIObject>& userData) const
+void WebContextMenu::menuItemsWithUserData(Vector<WebContextMenuItemData> &menuItems, RefPtr<API::Object>& userData) const
 {
     ContextMenuController& controller = m_page->corePage()->contextMenuController();
 
@@ -104,7 +104,7 @@ void WebContextMenu::menuItemsWithUserData(Vector<WebContextMenuItemData> &menuI
 Vector<WebContextMenuItemData> WebContextMenu::items() const
 {
     Vector<WebContextMenuItemData> menuItems;
-    RefPtr<APIObject> userData;
+    RefPtr<API::Object> userData;
     menuItemsWithUserData(menuItems, userData);
     return menuItems;
 }

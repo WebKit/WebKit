@@ -43,7 +43,7 @@ namespace WebKit {
 
 class WebPage;
 
-class PageBanner : public TypedAPIObject<APIObject::TypeBundlePageBanner> {
+class PageBanner : public API::TypedObject<API::Object::TypeBundlePageBanner> {
 public:
     enum Type {
         NotSet,

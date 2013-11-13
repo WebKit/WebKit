@@ -66,7 +66,7 @@ WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDesce
             m_elementID = element->getIdAttribute();
             
             if (element->isStyledElement() && element->hasClass()) {
-                Vector<RefPtr<APIObject>> classNames;
+                Vector<RefPtr<API::Object>> classNames;
                 classNames.reserveInitialCapacity(element->classNames().size());
 
                 for (size_t i = 0, size = element->classNames().size(); i < size; ++i)
@@ -92,7 +92,7 @@ WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDesce
     if (!shouldIncludeDescendants)
         return;
 
-    Vector<RefPtr<APIObject>> children;
+    Vector<RefPtr<API::Object>> children;
 
     for (RenderObject* coreChild = renderer->firstChildSlow(); coreChild; coreChild = coreChild->nextSibling()) {
         RefPtr<WebRenderObject> child = adoptRef(new WebRenderObject(coreChild, shouldIncludeDescendants));

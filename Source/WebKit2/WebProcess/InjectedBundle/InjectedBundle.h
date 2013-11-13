@@ -71,7 +71,7 @@ class WebFrame;
 class WebPage;
 class WebPageGroupProxy;
 
-class InjectedBundle : public TypedAPIObject<APIObject::TypeBundle> {
+class InjectedBundle : public API::TypedObject<API::Object::TypeBundle> {
 public:
     static PassRefPtr<InjectedBundle> create(const String& path)
     {
@@ -79,13 +79,13 @@ public:
     }
     ~InjectedBundle();
 
-    bool load(APIObject* initializationUserData);
+    bool load(API::Object* initializationUserData);
     void setSandboxExtension(PassRefPtr<SandboxExtension> sandboxExtension) { m_sandboxExtension = sandboxExtension; }
 
     // API
     void initializeClient(WKBundleClient*);
-    void postMessage(const String&, APIObject*);
-    void postSynchronousMessage(const String&, APIObject*, RefPtr<APIObject>& returnData);
+    void postMessage(const String&, API::Object*);
+    void postSynchronousMessage(const String&, API::Object*, RefPtr<API::Object>& returnData);
 
     WebConnection* webConnectionToUIProcess() const;
 
@@ -152,8 +152,8 @@ public:
     void didCreatePage(WebPage*);
     void willDestroyPage(WebPage*);
     void didInitializePageGroup(WebPageGroupProxy*);
-    void didReceiveMessage(const String&, APIObject*);
-    void didReceiveMessageToPage(WebPage*, const String&, APIObject*);
+    void didReceiveMessage(const String&, API::Object*);
+    void didReceiveMessageToPage(WebPage*, const String&, API::Object*);
 
     static void reportException(JSContextRef, JSValueRef exception);
 

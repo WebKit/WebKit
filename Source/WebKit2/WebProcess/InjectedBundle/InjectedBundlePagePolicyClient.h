@@ -45,10 +45,10 @@ class WebPage;
 
 class InjectedBundlePagePolicyClient : public APIClient<WKBundlePagePolicyClient, kWKBundlePagePolicyClientCurrentVersion> {
 public:
-    WKBundlePagePolicyAction decidePolicyForNavigationAction(WebPage*, WebFrame*, InjectedBundleNavigationAction*, const WebCore::ResourceRequest&, RefPtr<APIObject>& userData);
-    WKBundlePagePolicyAction decidePolicyForNewWindowAction(WebPage*, WebFrame*, InjectedBundleNavigationAction*, const WebCore::ResourceRequest&, const String& frameName, RefPtr<APIObject>& userData);
-    WKBundlePagePolicyAction decidePolicyForResponse(WebPage*, WebFrame*, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, RefPtr<APIObject>& userData);
-    void unableToImplementPolicy(WebPage*, WebFrame*, const WebCore::ResourceError&, RefPtr<APIObject>& userData);
+    WKBundlePagePolicyAction decidePolicyForNavigationAction(WebPage*, WebFrame*, InjectedBundleNavigationAction*, const WebCore::ResourceRequest&, RefPtr<API::Object>& userData);
+    WKBundlePagePolicyAction decidePolicyForNewWindowAction(WebPage*, WebFrame*, InjectedBundleNavigationAction*, const WebCore::ResourceRequest&, const String& frameName, RefPtr<API::Object>& userData);
+    WKBundlePagePolicyAction decidePolicyForResponse(WebPage*, WebFrame*, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, RefPtr<API::Object>& userData);
+    void unableToImplementPolicy(WebPage*, WebFrame*, const WebCore::ResourceError&, RefPtr<API::Object>& userData);
 };
 
 } // namespace WebKit

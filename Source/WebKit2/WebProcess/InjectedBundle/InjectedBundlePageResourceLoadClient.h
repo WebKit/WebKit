@@ -40,7 +40,6 @@ class ResourceResponse;
 
 namespace WebKit {
 
-class APIObject;
 class WebPage;
 class WebFrame;
 

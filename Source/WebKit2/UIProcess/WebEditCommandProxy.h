@@ -36,7 +36,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class WebEditCommandProxy : public TypedAPIObject<APIObject::TypeEditCommandProxy> {
+class WebEditCommandProxy : public API::TypedObject<API::Object::TypeEditCommandProxy> {
 public:
     static PassRefPtr<WebEditCommandProxy> create(uint64_t commandID, WebCore::EditAction editAction, WebPageProxy* page)
     {

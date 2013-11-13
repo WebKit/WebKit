@@ -46,7 +46,7 @@ void WebConnection::initializeConnectionClient(const WKConnectionClient* client)
     m_client.initialize(client);
 }
 
-void WebConnection::postMessage(const String& messageName, APIObject* messageBody)
+void WebConnection::postMessage(const String& messageName, API::Object* messageBody)
 {
     if (!hasValidConnection())
         return;
@@ -74,7 +74,7 @@ void WebConnection::handleMessage(CoreIPC::MessageDecoder& decoder)
     if (!decoder.decode(messageName))
         return;
 
-    RefPtr<APIObject> messageBody;
+    RefPtr<API::Object> messageBody;
     if (!decodeMessageBody(decoder, messageBody))
         return;
 

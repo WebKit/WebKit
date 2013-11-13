@@ -62,7 +62,7 @@ using namespace WebKit;
         return nil;
 
     bool exists;
-    APIObject* value = reinterpret_cast<ImmutableDictionary*>(&_dictionary)->get((NSString *)key, exists);
+    API::Object* value = reinterpret_cast<ImmutableDictionary*>(&_dictionary)->get((NSString *)key, exists);
     if (!exists)
         return nil;
 
@@ -87,9 +87,9 @@ using namespace WebKit;
 
 #pragma mark WKObject protocol implementation
 
-- (APIObject&)_apiObject
+- (API::Object&)_apiObject
 {
-    return *reinterpret_cast<APIObject*>(&_dictionary);
+    return *reinterpret_cast<API::Object*>(&_dictionary);
 }
 
 @end

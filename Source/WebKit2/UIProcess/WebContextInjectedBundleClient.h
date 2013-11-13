@@ -30,16 +30,19 @@
 #include "WKContext.h"
 #include <wtf/Forward.h>
 
+namespace API {
+class Object;
+}
+
 namespace WebKit {
 
-class APIObject;
 class WebContext;
 
 class WebContextInjectedBundleClient : public APIClient<WKContextInjectedBundleClient, kWKContextInjectedBundleClientCurrentVersion> {
 public:
-    void didReceiveMessageFromInjectedBundle(WebContext*, const String&, APIObject*);
-    void didReceiveSynchronousMessageFromInjectedBundle(WebContext*, const String&, APIObject*, RefPtr<APIObject>& returnData);
-    PassRefPtr<APIObject> getInjectedBundleInitializationUserData(WebContext*);
+    void didReceiveMessageFromInjectedBundle(WebContext*, const String&, API::Object*);
+    void didReceiveSynchronousMessageFromInjectedBundle(WebContext*, const String&, API::Object*, RefPtr<API::Object>& returnData);
+    PassRefPtr<API::Object> getInjectedBundleInitializationUserData(WebContext*);
 };
 
 } // namespace WebKit

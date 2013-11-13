@@ -35,9 +35,9 @@
 #include <runtime/Operations.h>
 #include <wtf/MainThread.h>
 
-namespace WebKit {
+namespace API {
 
-APIObject::APIObject()
+Object::Object()
 {
     JSC::initializeThreading();
     WTF::initializeMainThread();

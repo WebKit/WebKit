@@ -38,9 +38,9 @@ class ImmutableArray;
 
 // ImmutableDictionary - An immutable dictionary type suitable for vending to an API.
 
-class ImmutableDictionary : public TypedAPIObject<APIObject::TypeDictionary> {
+class ImmutableDictionary : public API::TypedObject<API::Object::TypeDictionary> {
 public:
-    typedef HashMap<String, RefPtr<APIObject>> MapType;
+    typedef HashMap<String, RefPtr<API::Object>> MapType;
 
     static PassRefPtr<ImmutableDictionary> create()
     {
@@ -58,7 +58,7 @@ public:
     template<typename T>
     T* get(const String& key) const
     {
-        RefPtr<APIObject> item = m_map.get(key);
+        RefPtr<API::Object> item = m_map.get(key);
         if (!item)
             return 0;
 
@@ -68,12 +68,12 @@ public:
         return static_cast<T*>(item.get());
     }
 
-    APIObject* get(const String& key) const
+    API::Object* get(const String& key) const
     {
         return m_map.get(key);
     }
 
-    APIObject* get(const String& key, bool& exists) const
+    API::Object* get(const String& key, bool& exists) const
     {
         auto it = m_map.find(key);
         exists = it != m_map.end();

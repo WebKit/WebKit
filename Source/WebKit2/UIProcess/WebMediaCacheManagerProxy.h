@@ -42,7 +42,7 @@ class WebProcessProxy;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-class WebMediaCacheManagerProxy : public TypedAPIObject<APIObject::TypeMediaCacheManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
+class WebMediaCacheManagerProxy : public API::TypedObject<API::Object::TypeMediaCacheManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
     static const char* supplementName();
 
@@ -53,8 +53,8 @@ public:
     void clearCacheForHostname(const String&);
     void clearCacheForAllHostnames();
 
-    using APIObject::ref;
-    using APIObject::deref;
+    using API::Object::ref;
+    using API::Object::deref;
 
 private:
     explicit WebMediaCacheManagerProxy(WebContext*);

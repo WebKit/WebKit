@@ -30,8 +30,6 @@
 
 #import "APIObject.h"
 
-using namespace WebKit;
-
 @implementation WKObject {
     BOOL _hasInitializedTarget;
     NSObject *_target;
@@ -39,7 +37,7 @@ using namespace WebKit;
 
 - (void)dealloc
 {
-    static_cast<APIObject*>(object_getIndexedIvars(self))->~APIObject();
+    static_cast<API::Object*>(object_getIndexedIvars(self))->~Object();
     [_target release];
 
     [super dealloc];
@@ -123,9 +121,9 @@ static inline void initializeTargetIfNeeded(WKObject *self)
 
 #pragma mark WKObject protocol implementation
 
-- (APIObject&)_apiObject
+- (API::Object&)_apiObject
 {
-    return *static_cast<APIObject*>(object_getIndexedIvars(self));
+    return *static_cast<API::Object*>(object_getIndexedIvars(self));
 }
 
 @end

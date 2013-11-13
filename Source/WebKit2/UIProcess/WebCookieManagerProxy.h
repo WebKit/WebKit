@@ -48,7 +48,7 @@ class WebProcessProxy;
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 typedef GenericCallback<WKHTTPCookieAcceptPolicy, HTTPCookieAcceptPolicy> HTTPCookieAcceptPolicyCallback;
 
-class WebCookieManagerProxy : public TypedAPIObject<APIObject::TypeCookieManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
+class WebCookieManagerProxy : public API::TypedObject<API::Object::TypeCookieManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
     static const char* supplementName();
 
@@ -72,8 +72,8 @@ public:
     void getCookiePersistentStorage(String& storagePath, uint32_t& storageType) const;
 #endif
 
-    using APIObject::ref;
-    using APIObject::deref;
+    using API::Object::ref;
+    using API::Object::deref;
 
 private:
     WebCookieManagerProxy(WebContext*);

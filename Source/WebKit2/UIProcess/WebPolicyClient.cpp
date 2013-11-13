@@ -34,7 +34,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-bool WebPolicyClient::decidePolicyForNavigationAction(WebPageProxy* page, WebFrameProxy* frame, NavigationType type, WebEvent::Modifiers modifiers, WebMouseEvent::Button mouseButton, const ResourceRequest& resourceRequest, WebFramePolicyListenerProxy* listener, APIObject* userData)
+bool WebPolicyClient::decidePolicyForNavigationAction(WebPageProxy* page, WebFrameProxy* frame, NavigationType type, WebEvent::Modifiers modifiers, WebMouseEvent::Button mouseButton, const ResourceRequest& resourceRequest, WebFramePolicyListenerProxy* listener, API::Object* userData)
 {
     if (!m_client.decidePolicyForNavigationAction)
         return false;
@@ -45,7 +45,7 @@ bool WebPolicyClient::decidePolicyForNavigationAction(WebPageProxy* page, WebFra
     return true;
 }
 
-bool WebPolicyClient::decidePolicyForNewWindowAction(WebPageProxy* page, WebFrameProxy* frame, NavigationType type, WebEvent::Modifiers modifiers, WebMouseEvent::Button mouseButton, const ResourceRequest& resourceRequest, const String& frameName, WebFramePolicyListenerProxy* listener, APIObject* userData)
+bool WebPolicyClient::decidePolicyForNewWindowAction(WebPageProxy* page, WebFrameProxy* frame, NavigationType type, WebEvent::Modifiers modifiers, WebMouseEvent::Button mouseButton, const ResourceRequest& resourceRequest, const String& frameName, WebFramePolicyListenerProxy* listener, API::Object* userData)
 {
     if (!m_client.decidePolicyForNewWindowAction)
         return false;
@@ -56,7 +56,7 @@ bool WebPolicyClient::decidePolicyForNewWindowAction(WebPageProxy* page, WebFram
     return true;
 }
 
-bool WebPolicyClient::decidePolicyForResponse(WebPageProxy* page, WebFrameProxy* frame, const ResourceResponse& resourceResponse, const ResourceRequest& resourceRequest, WebFramePolicyListenerProxy* listener, APIObject* userData)
+bool WebPolicyClient::decidePolicyForResponse(WebPageProxy* page, WebFrameProxy* frame, const ResourceResponse& resourceResponse, const ResourceRequest& resourceRequest, WebFramePolicyListenerProxy* listener, API::Object* userData)
 {
     if (!m_client.decidePolicyForResponse)
         return false;
@@ -68,7 +68,7 @@ bool WebPolicyClient::decidePolicyForResponse(WebPageProxy* page, WebFrameProxy*
     return true;
 }
 
-void WebPolicyClient::unableToImplementPolicy(WebPageProxy* page, WebFrameProxy* frame, const ResourceError& error, APIObject* userData)
+void WebPolicyClient::unableToImplementPolicy(WebPageProxy* page, WebFrameProxy* frame, const ResourceError& error, API::Object* userData)
 {
     if (!m_client.unableToImplementPolicy)
         return;

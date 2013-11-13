@@ -43,7 +43,7 @@ namespace WebKit {
 
 class WebFrame;
 
-class InjectedBundleNavigationAction : public TypedAPIObject<APIObject::TypeBundleNavigationAction> {
+class InjectedBundleNavigationAction : public API::TypedObject<API::Object::TypeBundleNavigationAction> {
 public:
     static PassRefPtr<InjectedBundleNavigationAction> create(WebFrame*, const WebCore::NavigationAction&, PassRefPtr<WebCore::FormState>);
 

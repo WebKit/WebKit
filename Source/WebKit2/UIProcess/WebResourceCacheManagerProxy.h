@@ -44,7 +44,7 @@ class WebSecurityOrigin;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-class WebResourceCacheManagerProxy : public TypedAPIObject<APIObject::TypeCacheManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
+class WebResourceCacheManagerProxy : public API::TypedObject<API::Object::TypeCacheManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
     static const char* supplementName();
 
@@ -55,8 +55,8 @@ public:
     void clearCacheForOrigin(WebSecurityOrigin*, ResourceCachesToClear);
     void clearCacheForAllOrigins(ResourceCachesToClear);
 
-    using APIObject::ref;
-    using APIObject::deref;
+    using API::Object::ref;
+    using API::Object::deref;
 
 private:
     explicit WebResourceCacheManagerProxy(WebContext*);

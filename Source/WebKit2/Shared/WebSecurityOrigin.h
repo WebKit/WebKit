@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-class WebSecurityOrigin : public TypedAPIObject<APIObject::TypeSecurityOrigin> {
+class WebSecurityOrigin : public API::TypedObject<API::Object::TypeSecurityOrigin> {
 public:
     static PassRefPtr<WebSecurityOrigin> createFromString(const String& string)
     {

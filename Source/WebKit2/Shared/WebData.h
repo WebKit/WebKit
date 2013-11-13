@@ -35,7 +35,7 @@ namespace WebKit {
 
 // WebData - A data buffer type suitable for vending to an API.
 
-class WebData : public TypedAPIObject<APIObject::TypeData> {
+class WebData : public API::TypedObject<API::Object::TypeData> {
 public:
     typedef void (*FreeDataFunction)(unsigned char*, const void* context);
 

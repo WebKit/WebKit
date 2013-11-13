@@ -34,7 +34,7 @@ namespace WebKit {
 
 PassRefPtr<ImmutableArray> InjectedBundleBackForwardListItem::children() const
 {
-    Vector<RefPtr<APIObject>> children;
+    Vector<RefPtr<API::Object>> children;
     children.reserveInitialCapacity(m_item->children().size());
 
     for (const auto& child : m_item->children())

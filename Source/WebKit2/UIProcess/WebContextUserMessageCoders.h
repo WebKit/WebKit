@@ -45,35 +45,35 @@ class WebContextUserMessageEncoder : public UserMessageEncoder<WebContextUserMes
 public:
     typedef UserMessageEncoder<WebContextUserMessageEncoder> Base;
 
-    explicit WebContextUserMessageEncoder(APIObject* root) 
+    explicit WebContextUserMessageEncoder(API::Object* root) 
         : Base(root)
     {
     }
 
     void encode(CoreIPC::ArgumentEncoder& encoder) const
     {
-        APIObject::Type type = APIObject::TypeNull;
+        API::Object::Type type = API::Object::TypeNull;
         if (baseEncode(encoder, type))
             return;
 
         switch (type) {
-        case APIObject::TypePage: {
+        case API::Object::TypePage: {
             WebPageProxy* page = static_cast<WebPageProxy*>(m_root);
             encoder << page->pageID();
             break;
         }
-        case APIObject::TypeFrame: {
+        case API::Object::TypeFrame: {
             WebFrameProxy* frame = static_cast<WebFrameProxy*>(m_root);
             encoder << frame->frameID();
             break;
         }
-        case APIObject::TypePageGroup: {
+        case API::Object::TypePageGroup: {
             WebPageGroup* pageGroup = static_cast<WebPageGroup*>(m_root);
             encoder << pageGroup->data();
             break;
         }
 #if PLATFORM(MAC)
-        case APIObject::TypeObjCObjectGraph: {
+        case API::Object::TypeObjCObjectGraph: {
             ObjCObjectGraph* objectGraph = static_cast<ObjCObjectGraph*>(m_root);
             encoder << WebContextObjCObjectGraphEncoder(objectGraph);
             break;
@@ -95,13 +95,13 @@ class WebContextUserMessageDecoder : public UserMessageDecoder<WebContextUserMes
 public:
     typedef UserMessageDecoder<WebContextUserMessageDecoder> Base;
 
-    WebContextUserMessageDecoder(RefPtr<APIObject>& root, WebProcessProxy* process)
+    WebContextUserMessageDecoder(RefPtr<API::Object>& root, WebProcessProxy* process)
         : Base(root)
         , m_process(process)
     {
     }
 
-    WebContextUserMessageDecoder(WebContextUserMessageDecoder& userMessageDecoder, RefPtr<APIObject>& root)
+    WebContextUserMessageDecoder(WebContextUserMessageDecoder& userMessageDecoder, RefPtr<API::Object>& root)
         : Base(root)
         , m_process(userMessageDecoder.m_process)
     {
@@ -109,29 +109,29 @@ public:
 
     static bool decode(CoreIPC::ArgumentDecoder& decoder, WebContextUserMessageDecoder& coder)
     {
-        APIObject::Type type = APIObject::TypeNull;
+        API::Object::Type type = API::Object::TypeNull;
         if (!Base::baseDecode(decoder, coder, type))
             return false;
 
-        if (coder.m_root || type == APIObject::TypeNull)
+        if (coder.m_root || type == API::Object::TypeNull)
             return true;
 
         switch (type) {
-        case APIObject::TypeBundlePage: {
+        case API::Object::TypeBundlePage: {
             uint64_t pageID;
             if (!decoder.decode(pageID))
                 return false;
             coder.m_root = coder.m_process->webPage(pageID);
             break;
         }
-        case APIObject::TypeBundleFrame: {
+        case API::Object::TypeBundleFrame: {
             uint64_t frameID;
             if (!decoder.decode(frameID))
                 return false;
             coder.m_root = coder.m_process->webFrame(frameID);
             break;
         }
-        case APIObject::TypeBundlePageGroup: {
+        case API::Object::TypeBundlePageGroup: {
             uint64_t pageGroupID;
             if (!decoder.decode(pageGroupID))
                 return false;
@@ -139,7 +139,7 @@ public:
             break;
         }
 #if PLATFORM(MAC)
-        case APIObject::TypeObjCObjectGraph: {
+        case API::Object::TypeObjCObjectGraph: {
             RefPtr<ObjCObjectGraph> objectGraph;
             WebContextObjCObjectGraphDecoder objectGraphDecoder(objectGraph, coder.m_process);
             if (!decoder.decode(objectGraphDecoder))

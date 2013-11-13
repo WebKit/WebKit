@@ -38,7 +38,7 @@ typedef void* PlatformRequest;
 
 namespace WebKit {
 
-class WebURLRequest : public TypedAPIObject<APIObject::TypeURLRequest> {
+class WebURLRequest : public API::TypedObject<API::Object::TypeURLRequest> {
 public:
     static PassRefPtr<WebURLRequest> create(const WebCore::URL&);
 

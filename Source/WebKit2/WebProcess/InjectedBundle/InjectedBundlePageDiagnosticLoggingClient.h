@@ -32,8 +32,7 @@
 #include <wtf/Forward.h>
 
 namespace WebKit {
-    
-class APIObject;
+
 class InjectedBundleHitTestResult;
 class WebContextMenuItemData;
 class WebPage;

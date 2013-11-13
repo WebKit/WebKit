@@ -37,7 +37,7 @@
 
 namespace WebKit {
 
-bool WebPageContextMenuClient::getContextMenuFromProposedMenu(WebPageProxy* page, const Vector<WebContextMenuItemData>& proposedMenuVector, Vector<WebContextMenuItemData>& customMenu, const WebHitTestResult::Data& hitTestResultData, APIObject* userData)
+bool WebPageContextMenuClient::getContextMenuFromProposedMenu(WebPageProxy* page, const Vector<WebContextMenuItemData>& proposedMenuVector, Vector<WebContextMenuItemData>& customMenu, const WebHitTestResult::Data& hitTestResultData, API::Object* userData)
 {
     if (!m_client.getContextMenuFromProposedMenu && !m_client.getContextMenuFromProposedMenu_deprecatedForUseWithV0)
         return false;
@@ -45,7 +45,7 @@ bool WebPageContextMenuClient::getContextMenuFromProposedMenu(WebPageProxy* page
     if (m_client.version >= 2 && !m_client.getContextMenuFromProposedMenu)
         return false;
 
-    Vector<RefPtr<APIObject>> proposedMenuItems;
+    Vector<RefPtr<API::Object>> proposedMenuItems;
     proposedMenuItems.reserveInitialCapacity(proposedMenuVector.size());
 
     for (const auto& menuItem : proposedMenuVector)
@@ -98,7 +98,7 @@ bool WebPageContextMenuClient::showContextMenu(WebPageProxy* page, const WebCore
     if (!m_client.showContextMenu)
         return false;
 
-    Vector<RefPtr<APIObject>> menuItems;
+    Vector<RefPtr<API::Object>> menuItems;
     menuItems.reserveInitialCapacity(menuItemsVector.size());
 
     for (const auto& menuItem : menuItemsVector)

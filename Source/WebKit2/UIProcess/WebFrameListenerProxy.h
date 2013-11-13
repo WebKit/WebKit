@@ -35,7 +35,7 @@ namespace WebKit {
 
 class WebFrameProxy;
 
-class WebFrameListenerProxy : public APIObject {
+class WebFrameListenerProxy : public API::Object {
 public:
     virtual ~WebFrameListenerProxy();
 

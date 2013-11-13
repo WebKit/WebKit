@@ -30,9 +30,12 @@
 #include "WKBundle.h"
 #include <wtf/Forward.h>
 
+namespace API {
+class Object;
+}
+
 namespace WebKit {
 
-class APIObject;
 class InjectedBundle;
 class WebPage;
 class WebPageGroupProxy;
@@ -42,8 +45,8 @@ public:
     void didCreatePage(InjectedBundle*, WebPage*);
     void willDestroyPage(InjectedBundle*, WebPage*);
     void didInitializePageGroup(InjectedBundle*, WebPageGroupProxy*);
-    void didReceiveMessage(InjectedBundle*, const String& messageName, APIObject* messageBody);
-    void didReceiveMessageToPage(InjectedBundle*, WebPage*, const String& messageName, APIObject* messageBody);
+    void didReceiveMessage(InjectedBundle*, const String& messageName, API::Object* messageBody);
+    void didReceiveMessageToPage(InjectedBundle*, WebPage*, const String& messageName, API::Object* messageBody);
 };
 
 } // namespace WebKit

@@ -33,7 +33,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebContextInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebContext* context, const String& messageName, APIObject* messageBody)
+void WebContextInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebContext* context, const String& messageName, API::Object* messageBody)
 {
     if (!m_client.didReceiveMessageFromInjectedBundle)
         return;
@@ -41,7 +41,7 @@ void WebContextInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebCont
     m_client.didReceiveMessageFromInjectedBundle(toAPI(context), toAPI(messageName.impl()), toAPI(messageBody), m_client.clientInfo);
 }
 
-void WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebContext* context, const String& messageName, APIObject* messageBody, RefPtr<APIObject>& returnData)
+void WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebContext* context, const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData)
 {
     if (!m_client.didReceiveSynchronousMessageFromInjectedBundle)
         return;
@@ -51,7 +51,7 @@ void WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBun
     returnData = adoptRef(toImpl(returnDataRef));
 }
 
-PassRefPtr<APIObject> WebContextInjectedBundleClient::getInjectedBundleInitializationUserData(WebContext* context)
+PassRefPtr<API::Object> WebContextInjectedBundleClient::getInjectedBundleInitializationUserData(WebContext* context)
 {
     if (!m_client.getInjectedBundleInitializationUserData)
         return 0;

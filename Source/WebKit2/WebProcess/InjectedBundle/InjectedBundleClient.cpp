@@ -54,7 +54,7 @@ void InjectedBundleClient::didInitializePageGroup(InjectedBundle* bundle, WebPag
     m_client.didInitializePageGroup(toAPI(bundle), toAPI(pageGroup), m_client.clientInfo);
 }
 
-void InjectedBundleClient::didReceiveMessage(InjectedBundle* bundle, const String& messageName, APIObject* messageBody)
+void InjectedBundleClient::didReceiveMessage(InjectedBundle* bundle, const String& messageName, API::Object* messageBody)
 {
     if (!m_client.didReceiveMessage)
         return;
@@ -62,7 +62,7 @@ void InjectedBundleClient::didReceiveMessage(InjectedBundle* bundle, const Strin
     m_client.didReceiveMessage(toAPI(bundle), toAPI(messageName.impl()), toAPI(messageBody), m_client.clientInfo);
 }
 
-void InjectedBundleClient::didReceiveMessageToPage(InjectedBundle* bundle, WebPage* page, const String& messageName, APIObject* messageBody)
+void InjectedBundleClient::didReceiveMessageToPage(InjectedBundle* bundle, WebPage* page, const String& messageName, API::Object* messageBody)
 {
     if (!m_client.didReceiveMessageToPage)
         return;

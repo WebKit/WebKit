@@ -40,7 +40,7 @@ class ShareableBitmap;
 
 // WebImage - An image type suitable for vending to an API.
 
-class WebImage : public TypedAPIObject<APIObject::TypeImage> {
+class WebImage : public API::TypedObject<API::Object::TypeImage> {
 public:
     static PassRefPtr<WebImage> create(const WebCore::IntSize&, ImageOptions);
     static PassRefPtr<WebImage> create(PassRefPtr<ShareableBitmap>);

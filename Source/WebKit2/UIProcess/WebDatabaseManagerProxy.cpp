@@ -131,12 +131,12 @@ bool WebDatabaseManagerProxy::shouldTerminate(WebProcessProxy*) const
 
 void WebDatabaseManagerProxy::refWebContextSupplement()
 {
-    APIObject::ref();
+    API::Object::ref();
 }
 
 void WebDatabaseManagerProxy::derefWebContextSupplement()
 {
-    APIObject::deref();
+    API::Object::deref();
 }
 
 void WebDatabaseManagerProxy::getDatabasesByOrigin(PassRefPtr<ArrayCallback> prpCallback)
@@ -156,17 +156,17 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
         return;
     }
 
-    Vector<RefPtr<APIObject>> result;
+    Vector<RefPtr<API::Object>> result;
     result.reserveInitialCapacity(originAndDatabasesVector.size());
 
     for (const auto& originAndDatabases : originAndDatabasesVector) {
-        RefPtr<APIObject> origin = WebSecurityOrigin::createFromDatabaseIdentifier(originAndDatabases.originIdentifier);
+        RefPtr<API::Object> origin = WebSecurityOrigin::createFromDatabaseIdentifier(originAndDatabases.originIdentifier);
 
-        Vector<RefPtr<APIObject>> databases;
+        Vector<RefPtr<API::Object>> databases;
         databases.reserveInitialCapacity(originAndDatabases.databases.size());
 
         for (const auto& databaseDetails : originAndDatabases.databases) {
-            HashMap<String, RefPtr<APIObject>> detailsMap;
+            HashMap<String, RefPtr<API::Object>> detailsMap;
 
             detailsMap.set(databaseDetailsNameKey(), WebString::create(databaseDetails.name()));
             detailsMap.set(databaseDetailsDisplayNameKey(), WebString::create(databaseDetails.displayName()));
@@ -176,7 +176,7 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
             databases.uncheckedAppend(ImmutableDictionary::adopt(detailsMap));
         }
 
-        HashMap<String, RefPtr<APIObject>> originAndDatabasesMap;
+        HashMap<String, RefPtr<API::Object>> originAndDatabasesMap;
         originAndDatabasesMap.set(originKey(), origin);
         originAndDatabasesMap.set(originQuotaKey(), WebUInt64::create(originAndDatabases.originQuota));
         originAndDatabasesMap.set(originUsageKey(), WebUInt64::create(originAndDatabases.originUsage));
@@ -205,7 +205,7 @@ void WebDatabaseManagerProxy::didGetDatabaseOrigins(const Vector<String>& origin
         return;
     }
 
-    Vector<RefPtr<APIObject>> securityOrigins;
+    Vector<RefPtr<API::Object>> securityOrigins;
     securityOrigins.reserveInitialCapacity(originIdentifiers.size());
 
     for (const auto& originIdentifier : originIdentifiers)

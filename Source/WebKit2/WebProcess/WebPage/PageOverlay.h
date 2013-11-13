@@ -42,7 +42,7 @@ namespace WebKit {
 class WebMouseEvent;
 class WebPage;
 
-class PageOverlay : public TypedAPIObject<APIObject::TypeBundlePageOverlay> {
+class PageOverlay : public API::TypedObject<API::Object::TypeBundlePageOverlay> {
 public:
     class Client {
     protected:
