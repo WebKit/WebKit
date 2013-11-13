@@ -73,6 +73,7 @@
 #define PODRedBlackTree_h
 
 #include "PODFreeListArena.h"
+#include "ValueToString.h"
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
@@ -83,11 +84,6 @@
 #endif
 
 namespace WebCore {
-
-#ifndef NDEBUG
-template<class T>
-struct ValueToString;
-#endif
 
 enum UninitializedTreeEnum {
     UninitializedTree

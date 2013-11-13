@@ -24,7 +24,6 @@
 #define RenderBlock_h
 
 #include "ColumnInfo.h"
-#include "FloatingObjects.h"
 #include "GapRects.h"
 #include "PODIntervalTree.h"
 #include "RenderBox.h"
@@ -90,10 +89,6 @@ typedef unsigned TextRunFlags;
 class RenderBlock : public RenderBox {
 public:
     friend class LineLayoutState;
-#ifndef NDEBUG
-    // Used by the PODIntervalTree for debugging the FloatingObject.
-    template <class> friend struct ValueToString;
-#endif
 
 protected:
     RenderBlock(Element&, PassRef<RenderStyle>, unsigned baseTypeFlags);

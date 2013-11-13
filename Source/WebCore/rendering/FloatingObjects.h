@@ -165,12 +165,12 @@ private:
 };
 
 #ifndef NDEBUG
-// These structures are used by PODIntervalTree for debugging purposes.
-template <> struct ValueToString<int> {
-    static String string(const int value);
-};
+// This helper is used by PODIntervalTree for debugging purposes.
 template<> struct ValueToString<FloatingObject*> {
-    static String string(const FloatingObject*);
+    static String string(const FloatingObject* floatingObject)
+    {
+        return String::format("%p (%ix%i %ix%i)", floatingObject, floatingObject->frameRect().x().toInt(), floatingObject->frameRect().y().toInt(), floatingObject->frameRect().maxX().toInt(), floatingObject->frameRect().maxY().toInt());
+    }
 };
 #endif
 

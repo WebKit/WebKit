@@ -23,6 +23,7 @@
 #ifndef RenderBlockFlow_h
 #define RenderBlockFlow_h
 
+#include "FloatingObjects.h"
 #include "RenderBlock.h"
 #include "RenderLineBoxList.h"
 #include "SimpleLineLayout.h"

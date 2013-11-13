@@ -29,16 +29,12 @@
 #include "PODArena.h"
 #include "PODInterval.h"
 #include "PODRedBlackTree.h"
+#include "ValueToString.h"
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
-
-#ifndef NDEBUG
-template<class T>
-struct ValueToString;
-#endif
 
 template <class T, class UserData = void*>
 class PODIntervalSearchAdapter {

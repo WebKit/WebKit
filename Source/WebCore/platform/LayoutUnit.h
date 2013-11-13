@@ -31,6 +31,7 @@
 #ifndef LayoutUnit_h
 #define LayoutUnit_h
 
+#include "ValueToString.h"
 #include <limits.h>
 #include <limits>
 #include <math.h>
@@ -961,6 +962,14 @@ inline bool isIntegerValue(const LayoutUnit value)
 {
     return value.toInt() == value;
 }
+
+#ifndef NDEBUG
+// This structure is used by PODIntervalTree for debugging.
+template <>
+struct ValueToString<LayoutUnit> {
+    static String string(const LayoutUnit value) { return String::number(value.toFloat()); }
+};
+#endif
 
 } // namespace WebCore
 

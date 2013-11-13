@@ -473,18 +473,4 @@ LayoutUnit ComputeFloatOffsetAdapter<FloatTypeValue>::heightRemaining() const
     return m_outermostFloat ? m_renderer.logicalBottomForFloat(m_outermostFloat) - m_lineTop : LayoutUnit(1);
 }
 
-#ifndef NDEBUG
-// These helpers are only used by the PODIntervalTree for debugging purposes.
-String ValueToString<int>::string(const int value)
-{
-    return String::number(value);
-}
-
-String ValueToString<FloatingObject*>::string(const FloatingObject* floatingObject)
-{
-    return String::format("%p (%ix%i %ix%i)", floatingObject, floatingObject->frameRect().x().toInt(), floatingObject->frameRect().y().toInt(), floatingObject->frameRect().maxX().toInt(), floatingObject->frameRect().maxY().toInt());
-}
-#endif
-
-
 } // namespace WebCore

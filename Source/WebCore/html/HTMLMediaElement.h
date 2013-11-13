@@ -799,15 +799,7 @@ private:
 
 #if ENABLE(VIDEO_TRACK)
 #ifndef NDEBUG
-// Template specializations required by PodIntervalTree in debug mode.
-template <>
-struct ValueToString<double> {
-    static String string(const double value)
-    {
-        return String::number(value);
-    }
-};
-
+// Template specialization required by PodIntervalTree in debug mode.
 template <>
 struct ValueToString<TextTrackCue*> {
     static String string(TextTrackCue* const& cue)

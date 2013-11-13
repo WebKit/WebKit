@@ -1,3 +1,32 @@
+2013-11-12  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Move ValueToString out to its own header file to remove duplication
+        https://bugs.webkit.org/show_bug.cgi?id=124237
+
+        Reviewed by Alexandru Chiculita.
+
+        The ValueToString struct is used in many places for debugging. Move it
+        out to its own header file to remove all the duplicated definitions
+        and make it possible for the specializations to be placed in the
+        header files with the implementation of the classes they print.
+
+        No new tests, no behavior change.
+
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.h:
+        * platform/LayoutUnit.h:
+        * platform/PODInterval.h:
+        * platform/PODIntervalTree.h:
+        * platform/PODRedBlackTree.h:
+        * platform/ValueToString.h: Added.
+        * platform/graphics/FloatPolygon.h:
+        * rendering/FloatingObjects.cpp:
+        * rendering/FloatingObjects.h:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderFlowThread.h:
+
 2013-11-11  David Hyatt  <hyatt@apple.com>
 
         Make RenderBlockRareData be in a hashtable instead of being a member variable.
