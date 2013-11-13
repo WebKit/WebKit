@@ -634,6 +634,15 @@ private:
         m_errorMessage = msg;
     }
     
+    NEVER_INLINE void logError(bool);
+    template <typename A> NEVER_INLINE void logError(bool, const A&);
+    template <typename A, typename B> NEVER_INLINE void logError(bool, const A&, const B&);
+    template <typename A, typename B, typename C> NEVER_INLINE void logError(bool, const A&, const B&, const C&);
+    template <typename A, typename B, typename C, typename D> NEVER_INLINE void logError(bool, const A&, const B&, const C&, const D&);
+    template <typename A, typename B, typename C, typename D, typename E> NEVER_INLINE void logError(bool, const A&, const B&, const C&, const D&, const E&);
+    template <typename A, typename B, typename C, typename D, typename E, typename F> NEVER_INLINE void logError(bool, const A&, const B&, const C&, const D&, const E&, const F&);
+    template <typename A, typename B, typename C, typename D, typename E, typename F, typename G> NEVER_INLINE void logError(bool, const A&, const B&, const C&, const D&, const E&, const F&, const G&);
+    
     NEVER_INLINE void updateErrorWithNameAndMessage(const char* beforeMsg, String name, const char* afterMsg)
     {
         m_errorMessage = makeString(beforeMsg, " '", name, "' ", afterMsg);
