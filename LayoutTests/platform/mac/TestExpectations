@@ -1297,10 +1297,6 @@ webkit.org/b/123498 [ Mavericks ] media/track/track-in-band-cues-added-once.html
 
 webkit.org/b/123522 [ Mavericks ] media/track/track-in-band-legacy-api.html [ Pass Failure ]
 
-# These tests are failing for multiple reasons, one of these being <webkit.org/b/124249>.
-[ MountainLion ] crypto/subtle/rsassa-pkcs1-v1_5-generate-key.html [ Skip ]
-[ MountainLion ] crypto/subtle/rsassa-pkcs1-v1_5-import-jwk.html [ Failure ]
-
 # Audio and video tracks aren't supported on mac
 media/track/audio
 media/track/video

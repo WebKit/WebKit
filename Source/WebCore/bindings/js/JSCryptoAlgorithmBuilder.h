@@ -48,7 +48,6 @@ public:
 
     virtual void add(const char*, unsigned) OVERRIDE;
     virtual void add(const char*, const String&) OVERRIDE;
-    virtual void add(const char*, const Vector<uint8_t>&) OVERRIDE;
     virtual void add(const char*, const CryptoAlgorithmDescriptionBuilder&) OVERRIDE;
 
 private:

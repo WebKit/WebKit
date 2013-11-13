@@ -48,23 +48,12 @@ function asciiToArrayBuffer(str)
 function hexToArrayBuffer(str)
 {
     if (str.length % 2)
-        throw "Hex string length must be even";
+        throw "Hex string lenght must be even";
     var chars = [];
     for (var i = 0; i < str.length; i += 2)
         chars.push(parseInt(str.substr(i, 2), 16));
     return new Uint8Array(chars);
 }
-
-var Base64URL = {
-    stringify: function (a) {
-        var base64string = btoa(String.fromCharCode.apply(0, a));
-        return base64string.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
-    },
-    parse: function (s) {
-        s = s.replace(/-/g, "+").replace(/_/g, "/").replace(/\s/g, '');
-        return new Uint8Array(Array.prototype.map.call(atob(s), function (c) { return c.charCodeAt(0) }));
-    }
-};
 
 function printRejectedResult(value)
 {

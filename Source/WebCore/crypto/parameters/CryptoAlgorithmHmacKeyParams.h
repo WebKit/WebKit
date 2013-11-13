@@ -35,11 +35,6 @@ namespace WebCore {
 
 class CryptoAlgorithmHmacKeyParams FINAL : public CryptoAlgorithmParameters {
 public:
-    CryptoAlgorithmHmacKeyParams()
-        : hasLength(false)
-    {
-    }
-
     // The inner hash function to use.
     CryptoAlgorithmIdentifier hash;
 

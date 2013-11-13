@@ -1,3 +1,72 @@
+2013-11-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r159160, r159161, and r159164.
+        http://trac.webkit.org/changeset/159160
+        http://trac.webkit.org/changeset/159161
+        http://trac.webkit.org/changeset/159164
+        https://bugs.webkit.org/show_bug.cgi?id=124253
+
+        Too many errors (make fewer) (Requested by ap on #webkit).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCryptoAlgorithmBuilder.cpp:
+        * bindings/js/JSCryptoAlgorithmBuilder.h:
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::createAesCbcParams):
+        (WebCore::createAesKeyGenParams):
+        (WebCore::createHmacParams):
+        (WebCore::createHmacKeyParams):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForEncrypt):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDecrypt):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForSign):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForVerify):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDigest):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForGenerateKey):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDeriveKey):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDeriveBits):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForImportKey):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForExportKey):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForWrapKey):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForUnwrapKey):
+        * bindings/js/JSCryptoKeySerializationJWK.cpp:
+        (WebCore::JSCryptoKeySerializationJWK::reconcileAlgorithm):
+        (WebCore::JSCryptoKeySerializationJWK::keyData):
+        * bindings/js/JSCryptoKeySerializationJWK.h:
+        * crypto/CryptoAlgorithmDescriptionBuilder.h:
+        * crypto/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp: Removed.
+        * crypto/CryptoKey.h:
+        (WebCore::ENUM_CLASS):
+        * crypto/CryptoKeyData.h:
+        (WebCore::CryptoKeyData::ENUM_CLASS):
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::importKey):
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        (WebCore::CryptoAlgorithmHMAC::importKey):
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp: Removed.
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.h: Removed.
+        * crypto/keys/CryptoKeyAES.h:
+        (WebCore::asCryptoKeyAES):
+        * crypto/keys/CryptoKeyDataOctetSequence.h:
+        (WebCore::asCryptoKeyDataOctetSequence):
+        * crypto/keys/CryptoKeyDataRSAComponents.cpp: Removed.
+        * crypto/keys/CryptoKeyDataRSAComponents.h: Removed.
+        * crypto/keys/CryptoKeyHMAC.h:
+        (WebCore::asCryptoKeyHMAC):
+        * crypto/keys/CryptoKeyRSA.h: Removed.
+        * crypto/mac/CryptoAlgorithmAES_CBCMac.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::encrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::decrypt):
+        * crypto/mac/CryptoAlgorithmHMACMac.cpp:
+        (WebCore::CryptoAlgorithmHMAC::sign):
+        (WebCore::CryptoAlgorithmHMAC::verify):
+        * crypto/mac/CryptoAlgorithmRegistryMac.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms):
+        * crypto/mac/CryptoKeyRSAMac.cpp: Removed.
+        * crypto/parameters/CryptoAlgorithmHmacKeyParams.h:
+        * crypto/parameters/CryptoAlgorithmRsaKeyGenParams.h: Removed.
+        * crypto/parameters/CryptoAlgorithmRsaSsaKeyParams.h: Removed.
+        * crypto/parameters/CryptoAlgorithmRsaSsaParams.h: Removed.
+
 2013-11-12  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Make the placed floats tree use LayoutUnit instead of int

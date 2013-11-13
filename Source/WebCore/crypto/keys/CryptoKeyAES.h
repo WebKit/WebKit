@@ -56,21 +56,18 @@ private:
     Vector<char> m_key;
 };
 
-inline bool isCryptoKeyAES(const CryptoKey& key)
+inline const CryptoKeyAES* asCryptoKeyAES(const CryptoKey& key)
 {
-    return key.keyClass() == CryptoKeyClass::AES;
+    if (key.keyClass() != CryptoKeyClass::AES)
+        return nullptr;
+    return static_cast<const CryptoKeyAES*>(&key);
 }
 
-inline const CryptoKeyAES& toCryptoKeyAES(const CryptoKey& key)
+inline CryptoKeyAES* asCryptoKeyAES(CryptoKey& key)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isCryptoKeyAES(key));
-    return static_cast<const CryptoKeyAES&>(key);
-}
-
-inline CryptoKeyAES& toCryptoKeyAES(CryptoKey& key)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(isCryptoKeyAES(key));
-    return static_cast<CryptoKeyAES&>(key);
+    if (key.keyClass() != CryptoKeyClass::AES)
+        return nullptr;
+    return static_cast<CryptoKeyAES*>(&key);
 }
 
 } // namespace WebCore

@@ -76,7 +76,7 @@ void CryptoAlgorithmHMAC::importKey(const CryptoAlgorithmParameters& parameters,
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    const CryptoKeyDataOctetSequence& keyDataOctetSequence = toCryptoKeyDataOctetSequence(keyData);
+    const CryptoKeyDataOctetSequence& keyDataOctetSequence = asCryptoKeyDataOctetSequence(keyData);
 
     const CryptoAlgorithmHmacParams& hmacParameters = static_cast<const CryptoAlgorithmHmacParams&>(parameters);
 

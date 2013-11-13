@@ -92,27 +92,27 @@ static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcP
 void CryptoAlgorithmAES_CBC::encrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<CryptoOperationData>& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
 {
     const CryptoAlgorithmAesCbcParams& aesCBCParameters = static_cast<const CryptoAlgorithmAesCbcParams&>(parameters);
+    const CryptoKeyAES* aesKey = asCryptoKeyAES(key);
 
-    if (!isCryptoKeyAES(key)) {
+    if (!aesKey) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    const CryptoKeyAES& aesKey = toCryptoKeyAES(key);
 
-    transformAES_CBC(kCCEncrypt, aesCBCParameters, aesKey, data, std::move(promise));
+    transformAES_CBC(kCCEncrypt, aesCBCParameters, *aesKey, data, std::move(promise));
 }
 
 void CryptoAlgorithmAES_CBC::decrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<CryptoOperationData>& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
 {
     const CryptoAlgorithmAesCbcParams& aesCBCParameters = static_cast<const CryptoAlgorithmAesCbcParams&>(parameters);
+    const CryptoKeyAES* aesKey = asCryptoKeyAES(key);
 
-    if (!isCryptoKeyAES(key)) {
+    if (!aesKey) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    const CryptoKeyAES& aesKey = toCryptoKeyAES(key);
 
-    transformAES_CBC(kCCDecrypt, aesCBCParameters, aesKey, data, std::move(promise));
+    transformAES_CBC(kCCDecrypt, aesCBCParameters, *aesKey, data, std::move(promise));
 }
 
 } // namespace WebCore

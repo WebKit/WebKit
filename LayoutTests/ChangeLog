@@ -1,3 +1,21 @@
+2013-11-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r159160, r159161, and r159164.
+        http://trac.webkit.org/changeset/159160
+        http://trac.webkit.org/changeset/159161
+        http://trac.webkit.org/changeset/159164
+        https://bugs.webkit.org/show_bug.cgi?id=124253
+
+        Too many errors (make fewer) (Requested by ap on #webkit).
+
+        * crypto/subtle/resources/common.js:
+        (hexToArrayBuffer):
+        * crypto/subtle/rsassa-pkcs1-v1_5-generate-key-expected.txt: Removed.
+        * crypto/subtle/rsassa-pkcs1-v1_5-generate-key.html: Removed.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-expected.txt: Removed.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk.html: Removed.
+        * platform/mac/TestExpectations:
+
 2013-11-12  Alexey Proskuryakov  <ap@apple.com>
 
         Implement key generation and JWK import for RSASSA-PKCS1-v1_5

@@ -63,8 +63,6 @@ private:
     JSCryptoKeySerializationJWK(JSC::ExecState*, const String&);
 
     bool keySizeIsValid(size_t sizeInBits) const;
-    std::unique_ptr<CryptoKeyData> keyDataOctetSequence() const;
-    std::unique_ptr<CryptoKeyData> keyDataRSAComponents() const;
 
     JSC::ExecState* m_exec;
     JSC::Strong<JSC::JSObject> m_json;

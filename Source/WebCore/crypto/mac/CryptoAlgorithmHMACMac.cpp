@@ -95,12 +95,7 @@ static Vector<unsigned char> calculateSignature(CCHmacAlgorithm algorithm, const
 void CryptoAlgorithmHMAC::sign(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<CryptoOperationData>& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
 {
     const CryptoAlgorithmHmacParams& hmacParameters = static_cast<const CryptoAlgorithmHmacParams&>(parameters);
-
-    if (!isCryptoKeyHMAC(key)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-    const CryptoKeyHMAC& hmacKey = toCryptoKeyHMAC(key);
+    const CryptoKeyHMAC* hmacKey = asCryptoKeyHMAC(key);
 
     CCHmacAlgorithm algorithm;
     if (!getCommonCryptoAlgorithm(hmacParameters.hash, algorithm)) {
@@ -108,7 +103,12 @@ void CryptoAlgorithmHMAC::sign(const CryptoAlgorithmParameters& parameters, cons
         return;
     }
 
-    Vector<unsigned char> signature = calculateSignature(algorithm, hmacKey.key(), data);
+    if (!hmacKey) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
+    Vector<unsigned char> signature = calculateSignature(algorithm, hmacKey->key(), data);
 
     promise->fulfill(signature);
 }
@@ -116,12 +116,7 @@ void CryptoAlgorithmHMAC::sign(const CryptoAlgorithmParameters& parameters, cons
 void CryptoAlgorithmHMAC::verify(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& expectedSignature, const Vector<CryptoOperationData>& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
 {
     const CryptoAlgorithmHmacParams& hmacParameters = static_cast<const CryptoAlgorithmHmacParams&>(parameters);
-
-    if (!isCryptoKeyHMAC(key)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-    const CryptoKeyHMAC& hmacKey = toCryptoKeyHMAC(key);
+    const CryptoKeyHMAC* hmacKey = asCryptoKeyHMAC(key);
 
     CCHmacAlgorithm algorithm;
     if (!getCommonCryptoAlgorithm(hmacParameters.hash, algorithm)) {
@@ -129,7 +124,12 @@ void CryptoAlgorithmHMAC::verify(const CryptoAlgorithmParameters& parameters, co
         return;
     }
 
-    Vector<unsigned char> signature = calculateSignature(algorithm, hmacKey.key(), data);
+    if (!hmacKey) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
+    Vector<unsigned char> signature = calculateSignature(algorithm, hmacKey->key(), data);
 
     bool result = signature.size() == expectedSignature.second && !memcmp(signature.data(), expectedSignature.first, signature.size());
 

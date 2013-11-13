@@ -28,7 +28,6 @@
 
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Vector.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
@@ -44,7 +43,6 @@ public:
 
     virtual void add(const char*, unsigned) = 0;
     virtual void add(const char*, const String&) = 0;
-    virtual void add(const char*, const Vector<uint8_t>&) = 0;
     virtual void add(const char*, const CryptoAlgorithmDescriptionBuilder&) = 0;
 };
 

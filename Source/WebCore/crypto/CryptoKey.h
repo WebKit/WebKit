@@ -41,8 +41,7 @@ class CryptoAlgorithmDescriptionBuilder;
 
 ENUM_CLASS(CryptoKeyClass) {
     HMAC,
-    AES,
-    RSA
+    AES
 };
 
 class CryptoKey : public RefCounted<CryptoKey> {

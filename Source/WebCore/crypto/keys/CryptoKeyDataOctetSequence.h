@@ -49,7 +49,7 @@ private:
     Vector<char> m_keyData;
 };
 
-inline const CryptoKeyDataOctetSequence& toCryptoKeyDataOctetSequence(const CryptoKeyData& data)
+inline const CryptoKeyDataOctetSequence& asCryptoKeyDataOctetSequence(const CryptoKeyData& data)
 {
     ASSERT(data.format() == CryptoKeyData::Format::OctetSequence);
     return static_cast<const CryptoKeyDataOctetSequence&>(data);

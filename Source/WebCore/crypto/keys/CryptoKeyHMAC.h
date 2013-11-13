@@ -57,21 +57,18 @@ private:
     Vector<char> m_key;
 };
 
-inline bool isCryptoKeyHMAC(const CryptoKey& key)
+inline const CryptoKeyHMAC* asCryptoKeyHMAC(const CryptoKey& key)
 {
-    return key.keyClass() == CryptoKeyClass::HMAC;
+    if (key.keyClass() != CryptoKeyClass::HMAC)
+        return nullptr;
+    return static_cast<const CryptoKeyHMAC*>(&key);
 }
 
-inline const CryptoKeyHMAC& toCryptoKeyHMAC(const CryptoKey& key)
+inline CryptoKeyHMAC* asCryptoKeyHMAC(CryptoKey& key)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(isCryptoKeyHMAC(key));
-    return static_cast<const CryptoKeyHMAC&>(key);
-}
-
-inline CryptoKeyHMAC& toCryptoKeyHMAC(CryptoKey& key)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(isCryptoKeyHMAC(key));
-    return static_cast<CryptoKeyHMAC&>(key);
+    if (key.keyClass() != CryptoKeyClass::HMAC)
+        return nullptr;
+    return static_cast<CryptoKeyHMAC*>(&key);
 }
 
 } // namespace WebCore

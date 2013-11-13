@@ -75,7 +75,7 @@ void CryptoAlgorithmAES_CBC::importKey(const CryptoAlgorithmParameters&, const C
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    const CryptoKeyDataOctetSequence& keyDataOctetSequence = toCryptoKeyDataOctetSequence(keyData);
+    const CryptoKeyDataOctetSequence& keyDataOctetSequence = asCryptoKeyDataOctetSequence(keyData);
     RefPtr<CryptoKeyAES> result = CryptoKeyAES::create(CryptoAlgorithmIdentifier::AES_CBC, keyDataOctetSequence.octetSequence(), extractable, usage);
     promise->fulfill(result.release());
 }
