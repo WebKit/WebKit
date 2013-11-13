@@ -1,3 +1,9 @@
+2013-11-13  Tim Horton  <timothy_horton@apple.com>
+
+        Fix release build after r159224.
+
+        * WebCore.exp.in:
+
 2013-11-13  Anders Carlsson  <andersca@apple.com>
 
         Remove ChromeClient::paintCustomOverhangArea
