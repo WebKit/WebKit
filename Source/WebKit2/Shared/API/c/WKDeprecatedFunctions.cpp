@@ -29,7 +29,9 @@
 
 // Deprecated functions that should be removed from the framework once nobody uses them.
 
+extern "C" {
 WK_EXPORT bool WKArrayIsMutable(WKArrayRef array);
+}
 
 bool WKArrayIsMutable(WKArrayRef array)
 {

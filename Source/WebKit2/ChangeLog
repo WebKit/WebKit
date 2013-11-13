@@ -1,5 +1,14 @@
 2013-11-13  Anders Carlsson  <andersca@apple.com>
 
+        WKArrayIsMutable should not be mangled
+        https://bugs.webkit.org/show_bug.cgi?id=124299
+
+        Reviewed by Andreas Kling.
+
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+
+2013-11-13  Anders Carlsson  <andersca@apple.com>
+
         Move provisional load state handling to FrameLoadState
         https://bugs.webkit.org/show_bug.cgi?id=124291
 
