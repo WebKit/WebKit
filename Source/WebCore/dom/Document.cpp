@@ -427,7 +427,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses)
     , m_xmlVersion(ASCIILiteral("1.0"))
     , m_xmlStandalone(StandaloneUnspecified)
     , m_hasXMLDeclaration(false)
-    , m_savedRenderView(nullptr)
     , m_designMode(inherit)
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
     , m_hasAnnotatedRegions(false)
@@ -532,7 +531,6 @@ Document::~Document()
 {
     ASSERT(!renderView());
     ASSERT(!m_inPageCache);
-    ASSERT(!m_savedRenderView);
     ASSERT(m_ranges.isEmpty());
     ASSERT(!m_styleRecalcTimer.isActive());
     ASSERT(!m_parentTreeScope);
@@ -3927,8 +3925,6 @@ void Document::setInPageCache(bool flag)
         page->lockAllOverlayScrollbarsToHidden(flag);
 
     if (flag) {
-        ASSERT(!m_savedRenderView);
-        m_savedRenderView = renderView();
         if (v) {
             // FIXME: There is some scrolling related work that needs to happen whenever a page goes into the
             // page cache and similar work that needs to occur when it comes out. This is where we do the work
@@ -3947,10 +3943,6 @@ void Document::setInPageCache(bool flag)
         }
         m_styleRecalcTimer.stop();
     } else {
-        ASSERT(!renderView() || renderView() == m_savedRenderView);
-        setRenderView(m_savedRenderView);
-        m_savedRenderView = nullptr;
-
         if (childNeedsStyleRecalc())
             scheduleStyleRecalc();
     }

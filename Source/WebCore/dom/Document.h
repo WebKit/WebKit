@@ -1411,8 +1411,6 @@ private:
 
     String m_contentLanguage;
 
-    RenderView* m_savedRenderView;
-    
     RefPtr<TextResourceDecoder> m_decoder;
 
     InheritedBool m_designMode;

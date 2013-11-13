@@ -1,3 +1,13 @@
+2013-11-13  Andreas Kling  <akling@apple.com>
+
+        Remove Document::m_savedRenderView pointer.
+        <https://webkit.org/b/124310>
+
+        This pointer held a copy of m_renderView while the document was in
+        page cache, and null while it wasn't. It was not used for anything.
+
+        Reviewed by Anders Carlsson.
+
 2013-11-13  Brady Eidson  <beidson@apple.com>
 
         Move setIndexKeys() to the IDBServerConnection
