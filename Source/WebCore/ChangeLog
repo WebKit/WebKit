@@ -1,3 +1,13 @@
+2013-11-13  Andreas Kling  <akling@apple.com>
+
+        Generate casting helpers for SVGPaint and SVGColor.
+        <https://webkit.org/b/124285>
+
+        Use CSS_VALUE_TYPE_CASTS to generate type casting helpers for the
+        SVGPaint and SVGColor classes.
+
+        Reviewed by Anders Carlsson.
+
 2013-11-13  Benjamin Poulain  <bpoulain@apple.com>
 
         Update ResourceHandleCF to use the didReceiveBuffer() callback

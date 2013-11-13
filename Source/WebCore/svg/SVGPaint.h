@@ -115,20 +115,7 @@ private:
     String m_uri;
 };
 
-// This will catch anyone doing an unnecessary cast.
-SVGPaint* toSVGPaint(const SVGColor*);
-
-inline SVGPaint* toSVGPaint(CSSValue* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isSVGPaint());
-    return static_cast<SVGPaint*>(value);
-}
-
-inline const SVGPaint* toSVGPaint(const CSSValue* value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isSVGPaint());
-    return static_cast<const SVGPaint*>(value);
-}
+CSS_VALUE_TYPE_CASTS(SVGPaint, isSVGPaint());
 
 } // namespace WebCore
 
