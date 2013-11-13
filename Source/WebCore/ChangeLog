@@ -1,5 +1,13 @@
 2013-11-12  Andy Estes  <aestes@apple.com>
 
+        Fix the Mountain Lion build after r159171.
+
+        * platform/mac/HTMLConverter.mm:
+        (_dateForString): +[NSCalendar calendarWithIdentifier:] only exists on
+        10.9. Use -[NSCalendar initWithIdentifier:] instead.
+
+2013-11-12  Andy Estes  <aestes@apple.com>
+
         [Mac] Fix some deprecation warnings
         https://bugs.webkit.org/show_bug.cgi?id=124252
 

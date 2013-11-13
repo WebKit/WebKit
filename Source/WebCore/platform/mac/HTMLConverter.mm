@@ -1569,7 +1569,7 @@ static inline NSDate *_dateForString(NSString *string)
     NSString *calendarIdentifier = NSGregorianCalendar;
 #endif
 
-    return [[NSCalendar calendarWithIdentifier:calendarIdentifier] dateFromComponents:dateComponents.get()];
+    return [[[[NSCalendar alloc] initWithCalendarIdentifier:calendarIdentifier] autorelease] dateFromComponents:dateComponents.get()];
 }
 
 static NSInteger _colCompare(id block1, id block2, void *)
