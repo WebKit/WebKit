@@ -1920,9 +1920,9 @@ void FrameView::setFixedVisibleContentRect(const IntRect& visibleContentRect)
     IntSize offset = scrollOffset();
     ScrollView::setFixedVisibleContentRect(visibleContentRect);
     if (offset != scrollOffset()) {
-        repaintFixedElementsAfterScrolling();
+        updateLayerPositionsAfterScrolling();
         if (frame().page()->settings().acceleratedCompositingForFixedPositionEnabled())
-            updateFixedElementsAfterScrolling();
+            updateCompositingLayersAfterScrolling();
         scrollAnimator()->setCurrentPosition(scrollPosition());
         scrollPositionChanged();
     }
@@ -1944,8 +1944,8 @@ void FrameView::setViewportConstrainedObjectsNeedLayout()
 
 void FrameView::scrollPositionChangedViaPlatformWidget()
 {
-    repaintFixedElementsAfterScrolling();
-    updateFixedElementsAfterScrolling();
+    updateLayerPositionsAfterScrolling();
+    updateCompositingLayersAfterScrolling();
     repaintSlowRepaintObjects();
     scrollPositionChanged();
 }
@@ -1963,15 +1963,12 @@ void FrameView::scrollPositionChanged()
 #endif
 }
 
-// FIXME: this function is misnamed; its primary purpose is to update RenderLayer positions.
-void FrameView::repaintFixedElementsAfterScrolling()
+void FrameView::updateLayerPositionsAfterScrolling()
 {
     // If we're scrolling as a result of updating the view size after layout, we'll update widgets and layer positions soon anyway.
     if (m_layoutPhase == InViewSizeAdjust)
         return;
 
-    // For fixed position elements, update widget positions and compositing layers after scrolling,
-    // but only if we're not inside of layout.
     if (m_nestedLayoutCount <= 1 && hasViewportConstrainedObjects()) {
         if (RenderView* renderView = this->renderView()) {
             updateWidgetPositions();
@@ -1980,7 +1977,7 @@ void FrameView::repaintFixedElementsAfterScrolling()
     }
 }
 
-bool FrameView::shouldUpdateFixedElementsAfterScrolling()
+bool FrameView::shouldUpdateCompositingLayersAfterScrolling() const
 {
 #if ENABLE(THREADED_SCROLLING)
     // If the scrolling thread is updating the fixed elements, then the FrameView should not update them as well.
@@ -2010,10 +2007,10 @@ bool FrameView::shouldUpdateFixedElementsAfterScrolling()
     return true;
 }
 
-void FrameView::updateFixedElementsAfterScrolling()
+void FrameView::updateCompositingLayersAfterScrolling()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (!shouldUpdateFixedElementsAfterScrolling())
+    if (!shouldUpdateCompositingLayersAfterScrolling())
         return;
 
     if (m_nestedLayoutCount <= 1 && hasViewportConstrainedObjects()) {

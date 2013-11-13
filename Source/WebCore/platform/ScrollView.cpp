@@ -412,9 +412,9 @@ void ScrollView::scrollTo(const IntSize& newOffset)
         return;
     }
 #endif
-    repaintFixedElementsAfterScrolling();
+    updateLayerPositionsAfterScrolling();
     scrollContents(scrollDelta);
-    updateFixedElementsAfterScrolling();
+    updateCompositingLayersAfterScrolling();
 }
 
 int ScrollView::scrollPosition(Scrollbar* scrollbar) const

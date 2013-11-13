@@ -380,8 +380,8 @@ private:
     IntRect rectToCopyOnScroll() const;
 
     // Called when the scroll position within this view changes.  FrameView overrides this to generate repaint invalidations.
-    virtual void repaintFixedElementsAfterScrolling() { }
-    virtual void updateFixedElementsAfterScrolling() { }
+    virtual void updateLayerPositionsAfterScrolling() { }
+    virtual void updateCompositingLayersAfterScrolling() { }
 
     void platformAddChild(Widget*);
     void platformRemoveChild(Widget*);

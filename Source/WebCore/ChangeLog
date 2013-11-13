@@ -1,3 +1,29 @@
+2013-11-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename FrameView's repaintFixedElementsAfterScrolling and updateFixedElementsAfterScrolling
+        https://bugs.webkit.org/show_bug.cgi?id=124306
+
+        Reviewed by Tim Horton.
+        
+        FrameView::repaintFixedElementsAfterScrolling() didn't do any repainting, and didn't
+        just apply to fixed elements. Rename it to updateLayerPositionsAfterScrolling().
+        
+        updateFixedElementsAfterScrolling() was also confusingly named; rename it
+        to updateCompositingLayersAfterScrolling().
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setFixedVisibleContentRect):
+        (WebCore::FrameView::scrollPositionChangedViaPlatformWidget):
+        (WebCore::FrameView::updateLayerPositionsAfterScrolling):
+        (WebCore::FrameView::shouldUpdateCompositingLayersAfterScrolling):
+        (WebCore::FrameView::updateCompositingLayersAfterScrolling):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollTo):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::updateLayerPositionsAfterScrolling):
+        (WebCore::ScrollView::updateCompositingLayersAfterScrolling):
+
 2013-11-13  Andreas Kling  <akling@apple.com>
 
         Generate casting helpers for SVGPaint and SVGColor.

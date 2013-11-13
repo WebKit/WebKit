@@ -196,8 +196,8 @@ public:
     virtual void setFixedVisibleContentRect(const IntRect&) OVERRIDE;
     virtual void setScrollPosition(const IntPoint&) OVERRIDE;
     void scrollPositionChangedViaPlatformWidget();
-    virtual void repaintFixedElementsAfterScrolling() OVERRIDE;
-    virtual void updateFixedElementsAfterScrolling() OVERRIDE;
+    virtual void updateLayerPositionsAfterScrolling() OVERRIDE;
+    virtual void updateCompositingLayersAfterScrolling() OVERRIDE;
     virtual bool requestScrollPositionUpdate(const IntPoint&) OVERRIDE;
     virtual bool isRubberBandInProgress() const OVERRIDE;
     virtual IntPoint minimumScrollPosition() const OVERRIDE;
@@ -466,7 +466,7 @@ private:
     void updateCanBlitOnScrollRecursively();
     bool contentsInCompositedLayer() const;
 
-    bool shouldUpdateFixedElementsAfterScrolling();
+    bool shouldUpdateCompositingLayersAfterScrolling() const;
 
     void applyOverflowToViewport(RenderElement*, ScrollbarMode& hMode, ScrollbarMode& vMode);
     void applyPaginationToViewport();
