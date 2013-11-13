@@ -1,5 +1,13 @@
 2013-11-13  Tim Horton  <timothy_horton@apple.com>
 
+        compositing/regions/transform-transparent-positioned-video-inside-region.html is flaky on all bots
+        https://bugs.webkit.org/show_bug.cgi?id=124311
+
+        * platform/mac/TestExpectations:
+        Mark as flaky image fail.
+
+2013-11-13  Tim Horton  <timothy_horton@apple.com>
+
         Remove a crash expectation from a test that seems fixed by r159218.
 
         * platform/mac/TestExpectations:

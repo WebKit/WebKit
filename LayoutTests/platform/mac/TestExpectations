@@ -1303,3 +1303,5 @@ media/track/video
 
 # SubtleCrypto is disabled on Mountain Lion
 webkit.org/b/124261 [ MountainLion ] crypto/subtle [ Skip ]
+
+webkit.org/b/124311 compositing/regions/transform-transparent-positioned-video-inside-region.html [ Pass ImageOnlyFailure ]
