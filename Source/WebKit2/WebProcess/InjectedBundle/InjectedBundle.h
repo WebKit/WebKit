@@ -47,6 +47,10 @@ typedef struct _GModule GModule;
 OBJC_CLASS NSBundle;
 #endif
 
+namespace API {
+class Array;
+}
+
 namespace CoreIPC {
     class ArgumentDecoder;
     class Connection;
@@ -62,7 +66,6 @@ typedef ::GModule* PlatformBundle;
 typedef Eina_Module* PlatformBundle;
 #endif
 
-class ImmutableArray;
 class InjectedBundleScriptWorld;
 class WebCertificateInfo;
 class WebConnection;
@@ -122,8 +125,8 @@ public:
     PassRefPtr<WebData> createWebDataFromUint8Array(JSContextRef, JSValueRef);
 
     // UserContent API
-    void addUserScript(WebPageGroupProxy*, InjectedBundleScriptWorld*, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserScriptInjectionTime, WebCore::UserContentInjectedFrames);
-    void addUserStyleSheet(WebPageGroupProxy*, InjectedBundleScriptWorld*, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserContentInjectedFrames);
+    void addUserScript(WebPageGroupProxy*, InjectedBundleScriptWorld*, const String& source, const String& url, API::Array* whitelist, API::Array* blacklist, WebCore::UserScriptInjectionTime, WebCore::UserContentInjectedFrames);
+    void addUserStyleSheet(WebPageGroupProxy*, InjectedBundleScriptWorld*, const String& source, const String& url, API::Array* whitelist, API::Array* blacklist, WebCore::UserContentInjectedFrames);
     void removeUserScript(WebPageGroupProxy*, InjectedBundleScriptWorld*, const String& url);
     void removeUserStyleSheet(WebPageGroupProxy*, InjectedBundleScriptWorld*, const String& url);
     void removeUserScripts(WebPageGroupProxy*, InjectedBundleScriptWorld*);
@@ -141,7 +144,7 @@ public:
     uint64_t appCacheUsageForOrigin(const String& origin);
     void setApplicationCacheOriginQuota(const String& origin, uint64_t);
     void resetApplicationCacheOriginQuota(const String& origin);
-    PassRefPtr<ImmutableArray> originsWithApplicationCache();
+    PassRefPtr<API::Array> originsWithApplicationCache();
 
     // Garbage collection API
     void garbageCollectJavaScriptObjects();

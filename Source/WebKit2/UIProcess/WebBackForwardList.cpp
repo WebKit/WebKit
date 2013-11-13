@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebBackForwardList.h"
 
+#include "APIArray.h"
 #include "WebPageProxy.h"
 
 namespace WebKit {
@@ -200,17 +201,17 @@ int WebBackForwardList::forwardListCount() const
     return m_page && m_hasCurrentIndex ? m_entries.size() - (m_currentIndex + 1) : 0;
 }
 
-PassRefPtr<ImmutableArray> WebBackForwardList::backListAsImmutableArrayWithLimit(unsigned limit) const
+PassRefPtr<API::Array> WebBackForwardList::backListAsImmutableArrayWithLimit(unsigned limit) const
 {
     ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
     if (!m_page || !m_hasCurrentIndex)
-        return ImmutableArray::create();
+        return API::Array::create();
 
     unsigned backListSize = static_cast<unsigned>(backListCount());
     unsigned size = std::min(backListSize, limit);
     if (!size)
-        return ImmutableArray::create();
+        return API::Array::create();
 
     Vector<RefPtr<API::Object>> vector;
     vector.reserveInitialCapacity(size);
@@ -221,19 +222,19 @@ PassRefPtr<ImmutableArray> WebBackForwardList::backListAsImmutableArrayWithLimit
         vector.uncheckedAppend(m_entries[i].get());
     }
 
-    return ImmutableArray::create(std::move(vector));
+    return API::Array::create(std::move(vector));
 }
 
-PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLimit(unsigned limit) const
+PassRefPtr<API::Array> WebBackForwardList::forwardListAsImmutableArrayWithLimit(unsigned limit) const
 {
     ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
     if (!m_page || !m_hasCurrentIndex)
-        return ImmutableArray::create();
+        return API::Array::create();
 
     unsigned size = std::min(static_cast<unsigned>(forwardListCount()), limit);
     if (!size)
-        return ImmutableArray::create();
+        return API::Array::create();
 
     Vector<RefPtr<API::Object>> vector;
     vector.reserveInitialCapacity(size);
@@ -245,7 +246,7 @@ PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLi
         vector.uncheckedAppend(m_entries[i].get());
     }
 
-    return ImmutableArray::create(std::move(vector));
+    return API::Array::create(std::move(vector));
 }
 
 void WebBackForwardList::clear()

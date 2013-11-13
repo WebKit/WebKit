@@ -79,5 +79,5 @@ WKRect WKRenderObjectGetFrameRect(WKRenderObjectRef renderObjectRef)
 
 WKArrayRef WKRenderObjectGetChildren(WKRenderObjectRef renderObjectRef)
 {
-    return toAPI(toImpl(renderObjectRef)->children().get());
+    return toAPI(toImpl(renderObjectRef)->children());
 }

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WKWebArchive.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "InjectedBundleRangeHandle.h"
 #include "WKBundleAPICast.h"
 #include "WKSharedAPICast.h"
@@ -67,13 +67,13 @@ WKWebArchiveResourceRef WKWebArchiveCopyMainResource(WKWebArchiveRef webArchiveR
 
 WKArrayRef WKWebArchiveCopySubresources(WKWebArchiveRef webArchiveRef)
 {
-    RefPtr<ImmutableArray> subresources = toImpl(webArchiveRef)->subresources();
+    RefPtr<API::Array> subresources = toImpl(webArchiveRef)->subresources();
     return toAPI(subresources.release().leakRef());
 }
 
 WKArrayRef WKWebArchiveCopySubframeArchives(WKWebArchiveRef webArchiveRef)
 {
-    RefPtr<ImmutableArray> subframeArchives = toImpl(webArchiveRef)->subframeArchives();
+    RefPtr<API::Array> subframeArchives = toImpl(webArchiveRef)->subframeArchives();
     return toAPI(subframeArchives.release().leakRef());
 }
 

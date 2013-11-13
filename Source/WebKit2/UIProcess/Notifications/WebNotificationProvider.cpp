@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebNotificationProvider.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "ImmutableDictionary.h"
 #include "WKAPICast.h"
 #include "WebNotification.h"
@@ -71,7 +71,7 @@ void WebNotificationProvider::clearNotifications(const Vector<uint64_t>& notific
     for (const auto& notificationID : notificationIDs)
         arrayIDs.uncheckedAppend(WebUInt64::create(notificationID));
 
-    m_client.clearNotifications(toAPI(ImmutableArray::create(std::move(arrayIDs)).get()), m_client.clientInfo);
+    m_client.clearNotifications(toAPI(API::Array::create(std::move(arrayIDs)).get()), m_client.clientInfo);
 }
 
 void WebNotificationProvider::addNotificationManager(WebNotificationManagerProxy* manager)

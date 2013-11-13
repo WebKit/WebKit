@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WKDictionary.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "ImmutableDictionary.h"
 #include "WKAPICast.h"
 
@@ -49,6 +49,6 @@ size_t WKDictionaryGetSize(WKDictionaryRef dictionaryRef)
 
 WKArrayRef WKDictionaryCopyKeys(WKDictionaryRef dictionaryRef)
 {
-    RefPtr<ImmutableArray> keys = toImpl(dictionaryRef)->keys();
+    RefPtr<API::Array> keys = toImpl(dictionaryRef)->keys();
     return toAPI(keys.release().leakRef());
 }

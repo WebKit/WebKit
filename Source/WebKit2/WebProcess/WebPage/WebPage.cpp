@@ -656,11 +656,11 @@ void WebPage::resetTrackedRepaints()
         view->resetTrackedRepaints();
 }
 
-PassRefPtr<ImmutableArray> WebPage::trackedRepaintRects()
+PassRefPtr<API::Array> WebPage::trackedRepaintRects()
 {
     FrameView* view = mainFrameView();
     if (!view)
-        return ImmutableArray::create();
+        return API::Array::create();
 
     Vector<RefPtr<API::Object>> repaintRects;
     repaintRects.reserveInitialCapacity(view->trackedRepaintRects().size());
@@ -668,7 +668,7 @@ PassRefPtr<ImmutableArray> WebPage::trackedRepaintRects()
     for (const auto& repaintRect : view->trackedRepaintRects())
         repaintRects.uncheckedAppend(WebRect::create(toAPI(repaintRect)));
 
-    return ImmutableArray::create(std::move(repaintRects));
+    return API::Array::create(std::move(repaintRects));
 }
 
 PluginView* WebPage::focusedPluginViewForFrame(Frame& frame)

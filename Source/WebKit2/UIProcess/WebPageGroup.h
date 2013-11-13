@@ -57,8 +57,8 @@ public:
     WebPreferences* preferences() const;
     void preferencesDidChange();
     
-    void addUserStyleSheet(const String& source, const String& baseURL, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserContentInjectedFrames, WebCore::UserStyleLevel);
-    void addUserScript(const String& source, const String& baseURL, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserContentInjectedFrames, WebCore::UserScriptInjectionTime);
+    void addUserStyleSheet(const String& source, const String& baseURL, API::Array* whitelist, API::Array* blacklist, WebCore::UserContentInjectedFrames, WebCore::UserStyleLevel);
+    void addUserScript(const String& source, const String& baseURL, API::Array* whitelist, API::Array* blacklist, WebCore::UserContentInjectedFrames, WebCore::UserScriptInjectionTime);
     void removeAllUserStyleSheets();
     void removeAllUserScripts();
     void removeAllUserContent();

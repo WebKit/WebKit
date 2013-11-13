@@ -28,7 +28,6 @@
 
 #include "APIObject.h"
 #include "FrameLoadState.h"
-#include "ImmutableArray.h"
 #include "GenericCallback.h"
 #include "WebFrameListenerProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
@@ -43,7 +42,6 @@ namespace CoreIPC {
 
 namespace WebKit {
 
-class ImmutableArray;
 class PlatformCertificateInfo;
 class WebCertificateInfo;
 class WebFormSubmissionListenerProxy;

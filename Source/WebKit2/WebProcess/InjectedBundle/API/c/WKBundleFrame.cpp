@@ -27,6 +27,7 @@
 #include "WKBundleFrame.h"
 #include "WKBundleFramePrivate.h"
 
+#include "APIArray.h"
 #include "InjectedBundleHitTestResult.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"

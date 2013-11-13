@@ -29,7 +29,7 @@
 
 #include "WebContextMenuItem.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include <WebCore/ContextMenuItem.h>
 
 namespace WebKit {
@@ -39,7 +39,7 @@ WebContextMenuItem::WebContextMenuItem(const WebContextMenuItemData& data)
 {
 }
 
-PassRefPtr<WebContextMenuItem> WebContextMenuItem::create(const String& title, bool enabled, ImmutableArray* submenuItems)
+PassRefPtr<WebContextMenuItem> WebContextMenuItem::create(const String& title, bool enabled, API::Array* submenuItems)
 {
     size_t size = submenuItems->size();
     
@@ -61,10 +61,10 @@ WebContextMenuItem* WebContextMenuItem::separatorItem()
     return separatorItem;
 }
 
-PassRefPtr<ImmutableArray> WebContextMenuItem::submenuItemsAsImmutableArray() const
+PassRefPtr<API::Array> WebContextMenuItem::submenuItemsAsImmutableArray() const
 {    
     if (m_webContextMenuItemData.type() != WebCore::SubmenuType)
-        return ImmutableArray::create();
+        return API::Array::create();
 
     Vector<RefPtr<API::Object>> submenuItems;
     submenuItems.reserveInitialCapacity(m_webContextMenuItemData.submenu().size());
@@ -72,7 +72,7 @@ PassRefPtr<ImmutableArray> WebContextMenuItem::submenuItemsAsImmutableArray() co
     for (const auto& item : m_webContextMenuItemData.submenu())
         submenuItems.uncheckedAppend(WebContextMenuItem::create(item));
 
-    return ImmutableArray::create(std::move(submenuItems));
+    return API::Array::create(std::move(submenuItems));
 }
 
 API::Object* WebContextMenuItem::userData() const

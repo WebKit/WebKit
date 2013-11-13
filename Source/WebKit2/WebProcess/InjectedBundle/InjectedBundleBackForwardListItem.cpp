@@ -26,13 +26,13 @@
 #include "config.h"
 #include "InjectedBundleBackForwardListItem.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 
 using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<ImmutableArray> InjectedBundleBackForwardListItem::children() const
+PassRefPtr<API::Array> InjectedBundleBackForwardListItem::children() const
 {
     Vector<RefPtr<API::Object>> children;
     children.reserveInitialCapacity(m_item->children().size());
@@ -40,7 +40,7 @@ PassRefPtr<ImmutableArray> InjectedBundleBackForwardListItem::children() const
     for (const auto& child : m_item->children())
         children.uncheckedAppend(InjectedBundleBackForwardListItem::create(child));
 
-    return ImmutableArray::create(std::move(children));
+    return API::Array::create(std::move(children));
 }
 
 } // namespace WebKit

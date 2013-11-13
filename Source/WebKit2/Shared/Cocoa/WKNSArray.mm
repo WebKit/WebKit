@@ -28,15 +28,13 @@
 
 #if WK_API_ENABLED
 
-using namespace WebKit;
-
 @implementation WKNSArray {
-    std::aligned_storage<sizeof(ImmutableArray), std::alignment_of<ImmutableArray>::value>::type _array;
+    std::aligned_storage<sizeof(API::Array), std::alignment_of<API::Array>::value>::type _array;
 }
 
 - (void)dealloc
 {
-    reinterpret_cast<ImmutableArray*>(&_array)->~ImmutableArray();
+    reinterpret_cast<API::Array*>(&_array)->~Array();
 
     [super dealloc];
 }
@@ -45,12 +43,12 @@ using namespace WebKit;
 
 - (NSUInteger)count
 {
-    return reinterpret_cast<ImmutableArray*>(&_array)->size();
+    return reinterpret_cast<API::Array*>(&_array)->size();
 }
 
 - (id)objectAtIndex:(NSUInteger)i
 {
-    API::Object* object = reinterpret_cast<ImmutableArray*>(&_array)->at(i);
+    API::Object* object = reinterpret_cast<API::Array*>(&_array)->at(i);
     return object ? object->wrapper() : [NSNull null];
 }
 
@@ -65,7 +63,7 @@ using namespace WebKit;
 
 - (API::Object&)_apiObject
 {
-    return *reinterpret_cast<API::Object*>(&_array);
+    return *reinterpret_cast<API::Array*>(&_array);
 }
 
 @end

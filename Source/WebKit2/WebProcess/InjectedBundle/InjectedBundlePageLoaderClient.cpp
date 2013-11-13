@@ -26,7 +26,7 @@
 #include "config.h"
 #include "InjectedBundlePageLoaderClient.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "InjectedBundleDOMWindowExtension.h"
 #include "InjectedBundleScriptWorld.h"
 #include "WKAPICast.h"
@@ -341,7 +341,7 @@ void InjectedBundlePageLoaderClient::featuresUsedInPage(WebPage* page, const Vec
     if (!m_client.featuresUsedInPage)
         return;
 
-    return m_client.featuresUsedInPage(toAPI(page), toAPI(ImmutableArray::createStringArray(features).get()), m_client.clientInfo);
+    return m_client.featuresUsedInPage(toAPI(page), toAPI(API::Array::createStringArray(features).get()), m_client.clientInfo);
 }
 
 void InjectedBundlePageLoaderClient::willDestroyFrame(WebPage* page, WebFrame* frame)

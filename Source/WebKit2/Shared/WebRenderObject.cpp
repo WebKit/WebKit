@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebRenderObject.h"
 
+#include "APIArray.h"
 #include "WebPage.h"
 #include "WebString.h"
 #include <WebCore/Frame.h>
@@ -55,6 +56,11 @@ PassRefPtr<WebRenderObject> WebRenderObject::create(WebPage* page)
     return adoptRef(new WebRenderObject(contentRenderer, true));
 }
 
+PassRefPtr<WebRenderObject> WebRenderObject::create(const String& name, const String& elementTagName, const String& elementID, PassRefPtr<API::Array> elementClassNames, WebCore::IntPoint absolutePosition, WebCore::IntRect frameRect, PassRefPtr<API::Array> children)
+{
+    return adoptRef(new WebRenderObject(name, elementTagName, elementID, elementClassNames, absolutePosition, frameRect, children));
+}
+
 WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDescendants)
 {
     m_name = renderer->renderName();
@@ -72,7 +78,7 @@ WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDesce
                 for (size_t i = 0, size = element->classNames().size(); i < size; ++i)
                     classNames.append(WebString::create(element->classNames()[i]));
 
-                m_elementClassNames = ImmutableArray::create(std::move(classNames));
+                m_elementClassNames = API::Array::create(std::move(classNames));
             }
         }
     }
@@ -112,7 +118,22 @@ WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDesce
         }
     }
 
-    m_children = ImmutableArray::create(std::move(children));
+    m_children = API::Array::create(std::move(children));
+}
+
+WebRenderObject::WebRenderObject(const String& name, const String& elementTagName, const String& elementID, PassRefPtr<API::Array> elementClassNames, WebCore::IntPoint absolutePosition, WebCore::IntRect frameRect, PassRefPtr<API::Array> children)
+    : m_children(children)
+    , m_name(name)
+    , m_elementTagName(elementTagName)
+    , m_elementID(elementID)
+    , m_elementClassNames(elementClassNames)
+    , m_absolutePosition(absolutePosition)
+    , m_frameRect(frameRect)
+{
+}
+
+WebRenderObject::~WebRenderObject()
+{
 }
 
 } // namespace WebKit

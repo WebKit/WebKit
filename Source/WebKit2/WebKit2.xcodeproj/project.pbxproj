@@ -927,8 +927,8 @@
 		BC5D24C716CD73C5007D5461 /* WKBundleRangeHandlePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5D24C616CD73C5007D5461 /* WKBundleRangeHandlePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC60C5791240A546008C5E29 /* WKBundleRangeHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60C5771240A546008C5E29 /* WKBundleRangeHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC60C57A1240A546008C5E29 /* WKBundleRangeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60C5781240A546008C5E29 /* WKBundleRangeHandle.cpp */; };
-		BC64696F11DBE603006455B0 /* ImmutableArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64696D11DBE603006455B0 /* ImmutableArray.cpp */; };
-		BC64697011DBE603006455B0 /* ImmutableArray.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64696E11DBE603006455B0 /* ImmutableArray.h */; };
+		BC64696F11DBE603006455B0 /* APIArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64696D11DBE603006455B0 /* APIArray.cpp */; };
+		BC64697011DBE603006455B0 /* APIArray.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64696E11DBE603006455B0 /* APIArray.h */; };
 		BC646C1A11DD399F006455B0 /* WKBackForwardListRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC646C1611DD399F006455B0 /* WKBackForwardListRef.cpp */; };
 		BC646C1B11DD399F006455B0 /* WKBackForwardListRef.h in Headers */ = {isa = PBXBuildFile; fileRef = BC646C1711DD399F006455B0 /* WKBackForwardListRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC646C1C11DD399F006455B0 /* WKBackForwardListItemRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC646C1811DD399F006455B0 /* WKBackForwardListItemRef.cpp */; };
@@ -2463,8 +2463,8 @@
 		BC5D24C616CD73C5007D5461 /* WKBundleRangeHandlePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleRangeHandlePrivate.h; sourceTree = "<group>"; };
 		BC60C5771240A546008C5E29 /* WKBundleRangeHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleRangeHandle.h; sourceTree = "<group>"; };
 		BC60C5781240A546008C5E29 /* WKBundleRangeHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleRangeHandle.cpp; sourceTree = "<group>"; };
-		BC64696D11DBE603006455B0 /* ImmutableArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImmutableArray.cpp; sourceTree = "<group>"; };
-		BC64696E11DBE603006455B0 /* ImmutableArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImmutableArray.h; sourceTree = "<group>"; };
+		BC64696D11DBE603006455B0 /* APIArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIArray.cpp; sourceTree = "<group>"; };
+		BC64696E11DBE603006455B0 /* APIArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIArray.h; sourceTree = "<group>"; };
 		BC646C1611DD399F006455B0 /* WKBackForwardListRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBackForwardListRef.cpp; sourceTree = "<group>"; };
 		BC646C1711DD399F006455B0 /* WKBackForwardListRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBackForwardListRef.h; sourceTree = "<group>"; };
 		BC646C1811DD399F006455B0 /* WKBackForwardListItemRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBackForwardListItemRef.cpp; sourceTree = "<group>"; };
@@ -3318,6 +3318,8 @@
 				1AAE058C1279DCD400852418 /* Plugins */,
 				A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */,
 				A7D792D41767CB0900881CBE /* ActivityAssertion.h */,
+				BC64696D11DBE603006455B0 /* APIArray.cpp */,
+				BC64696E11DBE603006455B0 /* APIArray.h */,
 				1A3DD205125E5A2F004515E6 /* APIClient.h */,
 				5D51845313BCF9CC00C7FF4A /* APIClientTraits.cpp */,
 				5D51845413BCF9CC00C7FF4A /* APIClientTraits.h */,
@@ -3345,8 +3347,6 @@
 				762B7481120BBA0100819339 /* FontSmoothingLevel.h */,
 				F638954F133BEF38008941D5 /* HTTPCookieAcceptPolicy.h */,
 				BCCF6B2312C93E7A008F9C35 /* ImageOptions.h */,
-				BC64696D11DBE603006455B0 /* ImmutableArray.cpp */,
-				BC64696E11DBE603006455B0 /* ImmutableArray.h */,
 				BCBCB0CC1215E33A00DE59CA /* ImmutableDictionary.cpp */,
 				BCBCB0CA1215E32100DE59CA /* ImmutableDictionary.h */,
 				1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */,
@@ -5526,7 +5526,7 @@
 				512C06891638F67E00ABB911 /* HostRecord.h in Headers */,
 				37F90DE31376560E0051CF68 /* HTTPCookieAcceptPolicy.h in Headers */,
 				BCCF6B2512C93E7A008F9C35 /* ImageOptions.h in Headers */,
-				BC64697011DBE603006455B0 /* ImmutableArray.h in Headers */,
+				BC64697011DBE603006455B0 /* APIArray.h in Headers */,
 				BCBCB0CB1215E32100DE59CA /* ImmutableDictionary.h in Headers */,
 				BC204EE311C83E98008F3375 /* InjectedBundle.h in Headers */,
 				935EEBA2127761D0003322B8 /* InjectedBundleBackForwardList.h in Headers */,
@@ -6820,7 +6820,7 @@
 				BC06F44B12DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.cpp in Sources */,
 				BC06F43B12DBCCFB002D78DE /* GeolocationPermissionRequestProxy.cpp in Sources */,
 				512C06881638F67E00ABB911 /* HostRecord.cpp in Sources */,
-				BC64696F11DBE603006455B0 /* ImmutableArray.cpp in Sources */,
+				BC64696F11DBE603006455B0 /* APIArray.cpp in Sources */,
 				BCBCB0CD1215E33A00DE59CA /* ImmutableDictionary.cpp in Sources */,
 				BC204EE211C83E98008F3375 /* InjectedBundle.cpp in Sources */,
 				37C4C0931814B3AF003688B9 /* WKNSArray.mm in Sources */,

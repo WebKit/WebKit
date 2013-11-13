@@ -32,6 +32,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
+namespace API {
+class Array;
+}
+
 namespace WebCore {
 class LegacyWebArchive;
 class Range;
@@ -39,7 +43,6 @@ class Range;
 
 namespace WebKit {
 
-class ImmutableArray;
 class WebArchiveResource;
 class WebData;
 
@@ -47,28 +50,28 @@ class WebArchive : public API::TypedObject<API::Object::Type::WebArchive> {
 public:
     virtual ~WebArchive();
 
-    static PassRefPtr<WebArchive> create(WebArchiveResource* mainResource, ImmutableArray* subresources, ImmutableArray* subframeArchives);
+    static PassRefPtr<WebArchive> create(WebArchiveResource* mainResource, PassRefPtr<API::Array> subresources, PassRefPtr<API::Array> subframeArchives);
     static PassRefPtr<WebArchive> create(WebData*);
     static PassRefPtr<WebArchive> create(PassRefPtr<WebCore::LegacyWebArchive>);
     static PassRefPtr<WebArchive> create(WebCore::Range*);
 
     WebArchiveResource* mainResource();
-    ImmutableArray* subresources();
-    ImmutableArray* subframeArchives();
+    API::Array* subresources();
+    API::Array* subframeArchives();
 
     PassRefPtr<WebData> data();
 
     WebCore::LegacyWebArchive* coreLegacyWebArchive();
 
 private:
-    WebArchive(WebArchiveResource* mainResource, ImmutableArray* subresources, ImmutableArray* subframeArchives);
+    WebArchive(WebArchiveResource* mainResource, PassRefPtr<API::Array> subresources, PassRefPtr<API::Array> subframeArchives);
     WebArchive(WebData*);
     WebArchive(PassRefPtr<WebCore::LegacyWebArchive>);
 
     RefPtr<WebCore::LegacyWebArchive> m_legacyWebArchive;
     RefPtr<WebArchiveResource> m_cachedMainResource;
-    RefPtr<ImmutableArray> m_cachedSubresources;
-    RefPtr<ImmutableArray> m_cachedSubframeArchives;
+    RefPtr<API::Array> m_cachedSubresources;
+    RefPtr<API::Array> m_cachedSubframeArchives;
 };
 
 } // namespace WebKit

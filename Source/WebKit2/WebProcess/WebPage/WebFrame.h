@@ -27,7 +27,6 @@
 #define WebFrame_h
 
 #include "APIObject.h"
-#include "ImmutableArray.h"
 #include "WKBase.h"
 #include "WebFrameLoaderClient.h"
 #include <JavaScriptCore/JSBase.h>
@@ -38,6 +37,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+
+namespace API {
+class Array;
+}
 
 namespace WebCore {
 class Frame;
@@ -89,7 +92,7 @@ public:
     String innerText() const;
     bool isFrameSet() const;
     WebFrame* parentFrame() const;
-    PassRefPtr<ImmutableArray> childFrames();
+    PassRefPtr<API::Array> childFrames();
     JSGlobalContextRef jsContext();
     JSGlobalContextRef jsContextForWorld(InjectedBundleScriptWorld*);
     WebCore::IntRect contentBounds() const;

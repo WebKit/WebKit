@@ -55,7 +55,7 @@ void WebFindClient::didCountStringMatches(WebPageProxy* page, const String& stri
     m_client.didCountStringMatches(toAPI(page), toAPI(string.impl()), matchCount, m_client.clientInfo);
 }
 
-void WebFindMatchesClient::didFindStringMatches(WebPageProxy* page, const String& string, ImmutableArray* matches, int firstIndex)
+void WebFindMatchesClient::didFindStringMatches(WebPageProxy* page, const String& string, API::Array* matches, int firstIndex)
 {
     if (!m_client.didFindStringMatches)
         return;

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebContextClient.h"
 
+#include "APIArray.h"
 #include "WebContext.h"
 
 namespace WebKit {
@@ -46,7 +47,7 @@ void WebContextClient::networkProcessDidCrash(WebContext* context)
     m_client.networkProcessDidCrash(toAPI(context), m_client.clientInfo);
 }
 
-void WebContextClient::plugInInformationBecameAvailable(WebContext* context, ImmutableArray* plugInInfo)
+void WebContextClient::plugInInformationBecameAvailable(WebContext* context, API::Array* plugInInfo)
 {
     if (!m_client.plugInInformationBecameAvailable)
         return;

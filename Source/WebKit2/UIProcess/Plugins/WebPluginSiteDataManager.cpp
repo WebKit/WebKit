@@ -28,7 +28,7 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "PluginProcessManager.h"
 #include "WebContext.h"
 #include "WebProcessMessages.h"
@@ -165,10 +165,10 @@ void WebPluginSiteDataManager::didGetSitesWithData(const Vector<String>& sites, 
         return;
     }
 
-    callback->performCallbackWithReturnValue(ImmutableArray::createStringArray(sites).get());
+    callback->performCallbackWithReturnValue(API::Array::createStringArray(sites).get());
 }
 
-void WebPluginSiteDataManager::clearSiteData(ImmutableArray* sites, uint64_t flags, uint64_t maxAgeInSeconds, PassRefPtr<VoidCallback> prpCallback)
+void WebPluginSiteDataManager::clearSiteData(API::Array* sites, uint64_t flags, uint64_t maxAgeInSeconds, PassRefPtr<VoidCallback> prpCallback)
 {
     RefPtr<VoidCallback> callback = prpCallback;
     if (!m_webContext) {

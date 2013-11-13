@@ -28,7 +28,7 @@
 
 #if PLATFORM(MAC)
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "WebArchiveResource.h"
 #include "WebData.h"
 #include <WebCore/LegacyWebArchive.h>
@@ -38,7 +38,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebArchive> WebArchive::create(WebArchiveResource* mainResource, ImmutableArray* subresources, ImmutableArray* subframeArchives)
+PassRefPtr<WebArchive> WebArchive::create(WebArchiveResource* mainResource, PassRefPtr<API::Array> subresources, PassRefPtr<API::Array> subframeArchives)
 {
     return adoptRef(new WebArchive(mainResource, subresources, subframeArchives));
 }
@@ -58,7 +58,7 @@ PassRefPtr<WebArchive> WebArchive::create(Range* range)
     return adoptRef(new WebArchive(LegacyWebArchive::create(range)));
 }
 
-WebArchive::WebArchive(WebArchiveResource* mainResource, ImmutableArray* subresources, ImmutableArray* subframeArchives)
+WebArchive::WebArchive(WebArchiveResource* mainResource, PassRefPtr<API::Array> subresources, PassRefPtr<API::Array> subframeArchives)
     : m_cachedMainResource(mainResource)
     , m_cachedSubresources(subresources)
     , m_cachedSubframeArchives(subframeArchives)
@@ -104,7 +104,7 @@ WebArchiveResource* WebArchive::mainResource()
     return m_cachedMainResource.get();
 }
 
-ImmutableArray* WebArchive::subresources()
+API::Array* WebArchive::subresources()
 {
     if (!m_cachedSubresources) {
         Vector<RefPtr<API::Object>> subresources;
@@ -113,13 +113,13 @@ ImmutableArray* WebArchive::subresources()
         for (const auto& subresource : m_legacyWebArchive->subresources())
             subresources.uncheckedAppend(WebArchiveResource::create(subresource));
 
-        m_cachedSubresources = ImmutableArray::create(std::move(subresources));
+        m_cachedSubresources = API::Array::create(std::move(subresources));
     }
 
     return m_cachedSubresources.get();
 }
 
-ImmutableArray* WebArchive::subframeArchives()
+API::Array* WebArchive::subframeArchives()
 {
     if (!m_cachedSubframeArchives) {
         Vector<RefPtr<API::Object>> subframeWebArchives;
@@ -128,7 +128,7 @@ ImmutableArray* WebArchive::subframeArchives()
         for (const auto& subframeArchive : m_legacyWebArchive->subframeArchives())
             subframeWebArchives.uncheckedAppend(WebArchive::create(static_cast<LegacyWebArchive*>(subframeArchive.get())));
 
-        m_cachedSubframeArchives = ImmutableArray::create(std::move(subframeWebArchives));
+        m_cachedSubframeArchives = API::Array::create(std::move(subframeWebArchives));
     }
 
     return m_cachedSubframeArchives.get();

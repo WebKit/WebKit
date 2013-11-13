@@ -28,7 +28,6 @@
 
 #include "APIObject.h"
 #include "GenericCallback.h"
-#include "ImmutableArray.h"
 #include "MessageReceiver.h"
 #include "WebContextSupplement.h"
 #include <wtf/PassRefPtr.h>

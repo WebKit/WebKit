@@ -26,7 +26,7 @@
 #include "config.h"
 #include "InjectedBundlePageEditorClient.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "InjectedBundleNodeHandle.h"
 #include "InjectedBundleRangeHandle.h"
 #include "WKAPICast.h"
@@ -143,8 +143,8 @@ void InjectedBundlePageEditorClient::getPasteboardDataForRange(WebPage* page, Ra
         WKArrayRef types = 0;
         WKArrayRef data = 0;
         m_client.getPasteboardDataForRange(toAPI(page), toAPI(rangeHandle.get()), &types, &data, m_client.clientInfo);
-        RefPtr<ImmutableArray> typesArray = adoptRef(toImpl(types));
-        RefPtr<ImmutableArray> dataArray = adoptRef(toImpl(data));
+        RefPtr<API::Array> typesArray = adoptRef(toImpl(types));
+        RefPtr<API::Array> dataArray = adoptRef(toImpl(data));
 
         pasteboardTypes.clear();
         pasteboardData.clear();

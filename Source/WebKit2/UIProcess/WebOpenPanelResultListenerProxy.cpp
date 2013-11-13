@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebOpenPanelResultListenerProxy.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "WebPageProxy.h"
 #include <WebCore/URL.h>
 #include <wtf/Vector.h>
@@ -44,7 +44,7 @@ WebOpenPanelResultListenerProxy::~WebOpenPanelResultListenerProxy()
 {
 }
 
-void WebOpenPanelResultListenerProxy::chooseFiles(ImmutableArray* fileURLsArray)
+void WebOpenPanelResultListenerProxy::chooseFiles(API::Array* fileURLsArray)
 {
     if (!m_page)
         return;

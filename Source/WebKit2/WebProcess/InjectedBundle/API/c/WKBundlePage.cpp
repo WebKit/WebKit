@@ -27,6 +27,7 @@
 #include "WKBundlePage.h"
 #include "WKBundlePagePrivate.h"
 
+#include "APIArray.h"
 #include "InjectedBundleBackForwardList.h"
 #include "InjectedBundleNodeHandle.h"
 #include "PageBanner.h"
@@ -165,7 +166,7 @@ void WKBundlePageClickMenuItem(WKBundlePageRef pageRef, WKContextMenuItemRef ite
 #endif
 }
 
-static PassRefPtr<ImmutableArray> contextMenuItems(const WebContextMenu& contextMenu)
+static PassRefPtr<API::Array> contextMenuItems(const WebContextMenu& contextMenu)
 {
     auto items = contextMenu.items();
 
@@ -175,7 +176,7 @@ static PassRefPtr<ImmutableArray> contextMenuItems(const WebContextMenu& context
     for (const auto& item : items)
         menuItems.uncheckedAppend(WebContextMenuItem::create(item));
 
-    return ImmutableArray::create(std::move(menuItems));
+    return API::Array::create(std::move(menuItems));
 }
 
 WKArrayRef WKBundlePageCopyContextMenuItems(WKBundlePageRef pageRef)

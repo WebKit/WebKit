@@ -31,10 +31,6 @@
 #include "FindController.h"
 #include "GeolocationPermissionRequestManager.h"
 #include "ImageOptions.h"
-#include "ImmutableArray.h"
-#if ENABLE(CONTEXT_MENUS)
-#include "InjectedBundlePageContextMenuClient.h"
-#endif
 #include "InjectedBundlePageDiagnosticLoggingClient.h"
 #include "InjectedBundlePageEditorClient.h"
 #include "InjectedBundlePageFormClient.h"
@@ -82,6 +78,10 @@
 #include <WebCore/PlatformTouchEvent.h>
 #endif
 
+#if ENABLE(CONTEXT_MENUS)
+#include "InjectedBundlePageContextMenuClient.h"
+#endif
+
 #if PLATFORM(MAC)
 #include "DictionaryPopupInfo.h"
 #include "LayerHostingContext.h"
@@ -93,6 +93,10 @@ OBJC_CLASS WKAccessibilityWebPageObject;
 
 #define ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC 1
 #endif
+
+namespace API {
+class Array;
+}
 
 namespace CoreIPC {
     class ArgumentDecoder;
@@ -282,7 +286,7 @@ public:
     void setTracksRepaints(bool);
     bool isTrackingRepaints() const;
     void resetTrackedRepaints();
-    PassRefPtr<ImmutableArray> trackedRepaintRects();
+    PassRefPtr<API::Array> trackedRepaintRects();
 
     void executeEditingCommand(const String& commandName, const String& argument);
     bool isEditingCommandEnabled(const String& commandName);

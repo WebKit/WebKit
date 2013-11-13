@@ -28,7 +28,6 @@
 
 #include "APIObject.h"
 #include "GenericCallback.h"
-#include "ImmutableArray.h"
 #include "MessageReceiver.h"
 #include "WebContextSupplement.h"
 #include "WebCookieManagerProxyClient.h"
@@ -39,6 +38,10 @@
 #if USE(SOUP)
 #include "SoupCookiePersistentStorageType.h"
 #endif
+
+namespace API {
+class Array;
+}
 
 namespace WebKit {
 

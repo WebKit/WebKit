@@ -26,10 +26,10 @@
 #ifndef UserMessageCoders_h
 #define UserMessageCoders_h
 
+#include "APIArray.h"
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "DataReference.h"
-#include "ImmutableArray.h"
 #include "ImmutableDictionary.h"
 #include "ShareableBitmap.h"
 #include "WebCertificateInfo.h"
@@ -83,7 +83,7 @@ public:
 
         switch (type) {
         case API::Object::Type::Array: {
-            ImmutableArray* array = static_cast<ImmutableArray*>(m_root);
+            API::Array* array = static_cast<API::Array*>(m_root);
             encoder << static_cast<uint64_t>(array->size());
             for (size_t i = 0; i < array->size(); ++i)
                 encoder << Owner(array->at(i));
@@ -168,7 +168,7 @@ public:
             encoder << Owner(renderObject->elementClassNames());
             encoder << renderObject->absolutePosition();
             encoder << renderObject->frameRect();
-            encoder << Owner(renderObject->children().get());
+            encoder << Owner(renderObject->children());
             return true;
         }
         case API::Object::Type::URL: {
@@ -283,7 +283,7 @@ public:
                 vector.append(element.release());
             }
 
-            coder.m_root = ImmutableArray::create(std::move(vector));
+            coder.m_root = API::Array::create(std::move(vector));
             break;
         }
         case API::Object::Type::Dictionary: {
@@ -419,8 +419,8 @@ public:
             if (!decoder.decode(positiveZOrderListCoder))
                 return false;
             coder.m_root = WebRenderLayer::create(static_pointer_cast<WebRenderObject>(renderer), isReflection, isClipping, isClipped, static_cast<WebRenderLayer::CompositingLayerType>(compositingLayerTypeAsUInt32),
-                absoluteBoundingBox, static_pointer_cast<ImmutableArray>(negativeZOrderList), static_pointer_cast<ImmutableArray>(normalFlowList),
-                static_pointer_cast<ImmutableArray>(positiveZOrderList));
+                absoluteBoundingBox, static_pointer_cast<API::Array>(negativeZOrderList), static_pointer_cast<API::Array>(normalFlowList),
+                static_pointer_cast<API::Array>(positiveZOrderList));
             break;
         }
         case API::Object::Type::RenderObject: {
@@ -450,7 +450,7 @@ public:
                 return false;
             if (children && children->type() != API::Object::Type::Array)
                 return false;
-            coder.m_root = WebRenderObject::create(name, elementTagName, elementID, static_pointer_cast<ImmutableArray>(elementClassNames), absolutePosition, frameRect, static_pointer_cast<ImmutableArray>(children));
+            coder.m_root = WebRenderObject::create(name, elementTagName, elementID, static_pointer_cast<API::Array>(elementClassNames), absolutePosition, frameRect, static_pointer_cast<API::Array>(children));
             break;
         }
         case API::Object::Type::URL: {

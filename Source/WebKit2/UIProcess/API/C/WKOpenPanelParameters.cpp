@@ -27,7 +27,7 @@
 #include "config.h"
 #include "WKOpenPanelParameters.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "WKAPICast.h"
 #include "WebOpenPanelParameters.h"
 

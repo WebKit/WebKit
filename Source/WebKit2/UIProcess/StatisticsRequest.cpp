@@ -26,7 +26,7 @@
 #include "config.h"
 #include "StatisticsRequest.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "MutableDictionary.h"
 #include <wtf/Atomics.h>
 
@@ -91,7 +91,7 @@ void StatisticsRequest::completedRequest(uint64_t requestID, const StatisticsDat
         for (const auto& statistic : data.webCoreCacheStatistics)
             cacheStatistics.uncheckedAppend(createDictionaryFromHashMap(statistic));
 
-        m_responseDictionary->set("WebCoreCacheStatistics", ImmutableArray::create(std::move(cacheStatistics)).get());
+        m_responseDictionary->set("WebCoreCacheStatistics", API::Array::create(std::move(cacheStatistics)).get());
     }
 
     if (m_outstandingRequests.isEmpty()) {

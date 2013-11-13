@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebMediaCacheManagerProxy.h"
 
+#include "APIArray.h"
 #include "WebContext.h"
 #include "WebMediaCacheManagerMessages.h"
 #include "WebMediaCacheManagerProxyMessages.h"
@@ -98,7 +99,7 @@ void WebMediaCacheManagerProxy::didGetHostnamesWithMediaCache(const Vector<Strin
         return;
     }
 
-    callback->performCallbackWithReturnValue(ImmutableArray::createStringArray(hostnames).get());
+    callback->performCallbackWithReturnValue(API::Array::createStringArray(hostnames).get());
 }
 
 void WebMediaCacheManagerProxy::clearCacheForHostname(const String& hostname)

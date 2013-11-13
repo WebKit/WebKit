@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPageGroup.h"
 
+#include "APIArray.h"
 #include "WebPageGroupProxyMessages.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
@@ -129,7 +130,7 @@ void WebPageGroup::preferencesDidChange()
     }
 }
 
-static Vector<String> toStringVector(ImmutableArray* array)
+static Vector<String> toStringVector(API::Array* array)
 {
     Vector<String> patternVector;
     if (!array)
@@ -149,7 +150,7 @@ static Vector<String> toStringVector(ImmutableArray* array)
     return patternVector;
 }
 
-void WebPageGroup::addUserStyleSheet(const String& source, const String& baseURL, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserContentInjectedFrames injectedFrames, WebCore::UserStyleLevel level)
+void WebPageGroup::addUserStyleSheet(const String& source, const String& baseURL, API::Array* whitelist, API::Array* blacklist, WebCore::UserContentInjectedFrames injectedFrames, WebCore::UserStyleLevel level)
 {
     if (source.isEmpty())
         return;
@@ -160,7 +161,7 @@ void WebPageGroup::addUserStyleSheet(const String& source, const String& baseURL
     sendToAllProcessesInGroup(Messages::WebPageGroupProxy::AddUserStyleSheet(userStyleSheet), m_data.pageGroupID);
 }
 
-void WebPageGroup::addUserScript(const String& source, const String& baseURL, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserContentInjectedFrames injectedFrames, WebCore::UserScriptInjectionTime injectionTime)
+void WebPageGroup::addUserScript(const String& source, const String& baseURL, API::Array* whitelist, API::Array* blacklist, WebCore::UserContentInjectedFrames injectedFrames, WebCore::UserScriptInjectionTime injectionTime)
 {
     if (source.isEmpty())
         return;

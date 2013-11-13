@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WKBundle.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "InjectedBundle.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
@@ -260,7 +260,7 @@ void WKBundleResetApplicationCacheOriginQuota(WKBundleRef bundleRef, WKStringRef
 
 WKArrayRef WKBundleCopyOriginsWithApplicationCache(WKBundleRef bundleRef)
 {
-    RefPtr<ImmutableArray> origins = toImpl(bundleRef)->originsWithApplicationCache();
+    RefPtr<API::Array> origins = toImpl(bundleRef)->originsWithApplicationCache();
     return toAPI(origins.release().leakRef());
 }
 

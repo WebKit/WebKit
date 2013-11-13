@@ -26,8 +26,7 @@
 #include "config.h"
 #include "SecurityOriginData.h"
 
-#include "APIObject.h"
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebSecurityOrigin.h"
 
@@ -87,7 +86,7 @@ void performAPICallbackWithSecurityOriginDataVector(const Vector<SecurityOriginD
         securityOrigins.uncheckedAppend(std::move(origin));
     }
 
-    callback->performCallbackWithReturnValue(ImmutableArray::create(std::move(securityOrigins)).get());
+    callback->performCallbackWithReturnValue(API::Array::create(std::move(securityOrigins)).get());
 }
 
 } // namespace WebKit

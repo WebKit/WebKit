@@ -32,9 +32,11 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebKit {
+namespace API {
+class Array;
+}
 
-class ImmutableArray;
+namespace WebKit {
 
 // ImmutableDictionary - An immutable dictionary type suitable for vending to an API.
 
@@ -80,7 +82,7 @@ public:
         return it->value.get();
     }
 
-    PassRefPtr<ImmutableArray> keys() const;
+    PassRefPtr<API::Array> keys() const;
 
     size_t size() const { return m_map.size(); }
 

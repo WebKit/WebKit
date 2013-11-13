@@ -27,6 +27,7 @@
 #include "config.h"
 #include "WebPageProxy.h"
 
+#include "APIArray.h"
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
 #include "DataReference.h"
@@ -35,7 +36,6 @@
 #include "DrawingAreaProxyMessages.h"
 #include "EventDispatcherMessages.h"
 #include "FindIndicator.h"
-#include "ImmutableArray.h"
 #include "Logging.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
@@ -387,7 +387,7 @@ bool WebPageProxy::isValid() const
     return m_isValid;
 }
 
-PassRefPtr<ImmutableArray> WebPageProxy::relatedPages() const
+PassRefPtr<API::Array> WebPageProxy::relatedPages() const
 {
     // pages() returns a list of pages in WebProcess, so this page may or may not be among them - a client can use a reference to WebPageProxy after the page has closed.
     Vector<WebPageProxy*> pages = m_process->pages();
@@ -400,7 +400,7 @@ PassRefPtr<ImmutableArray> WebPageProxy::relatedPages() const
             result.uncheckedAppend(page);
     }
 
-    return ImmutableArray::create(std::move(result));
+    return API::Array::create(std::move(result));
 }
 
 void WebPageProxy::initializeLoaderClient(const WKPageLoaderClient* loadClient)
@@ -3047,10 +3047,10 @@ void WebPageProxy::didFindStringMatches(const String& string, Vector<Vector<WebC
         for (const auto& rect : rects)
             apiRects.uncheckedAppend(WebRect::create(toAPI(rect)));
 
-        matches.uncheckedAppend(ImmutableArray::create(std::move(apiRects)));
+        matches.uncheckedAppend(API::Array::create(std::move(apiRects)));
     }
 
-    m_findMatchesClient.didFindStringMatches(this, string, ImmutableArray::create(std::move(matches)).get(), firstIndexAfterSelection);
+    m_findMatchesClient.didFindStringMatches(this, string, API::Array::create(std::move(matches)).get(), firstIndexAfterSelection);
 }
 
 void WebPageProxy::didFailToFindString(const String& string)

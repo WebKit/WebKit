@@ -607,7 +607,7 @@ public:
 
     bool isValid() const;
 
-    PassRefPtr<ImmutableArray> relatedPages() const;
+    PassRefPtr<API::Array> relatedPages() const;
 
     const String& urlAtProcessExit() const { return m_urlAtProcessExit; }
     FrameLoadState::LoadState loadStateAtProcessExit() const { return m_loadStateAtProcessExit; }

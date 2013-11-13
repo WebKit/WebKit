@@ -29,16 +29,19 @@
 #include "APIClient.h"
 #include "WKContext.h"
 
+namespace API {
+class Array;
+}
+
 namespace WebKit {
 
-class ImmutableArray;
 class WebContext;
 
 class WebContextClient : public APIClient<WKContextClient, kWKContextClientCurrentVersion> {
 public:
     void plugInAutoStartOriginHashesChanged(WebContext*);
     void networkProcessDidCrash(WebContext*);
-    void plugInInformationBecameAvailable(WebContext*, ImmutableArray*);
+    void plugInInformationBecameAvailable(WebContext*, API::Array*);
 };
 
 } // namespace WebKit

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebRenderLayer.h"
 
+#include "APIArray.h"
 #include "WebPage.h"
 #include "WebString.h"
 #include <WebCore/Frame.h>
@@ -60,7 +61,12 @@ PassRefPtr<WebRenderLayer> WebRenderLayer::create(WebPage* page)
     return adoptRef(new WebRenderLayer(rootLayer));
 }
 
-PassRefPtr<ImmutableArray> WebRenderLayer::createArrayFromLayerList(Vector<RenderLayer*>* list)
+PassRefPtr<WebRenderLayer> WebRenderLayer::create(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType type, WebCore::IntRect absoluteBoundingBox, PassRefPtr<API::Array> negativeZOrderList, PassRefPtr<API::Array> normalFlowList, PassRefPtr<API::Array> positiveZOrderList)
+{
+    return adoptRef(new WebRenderLayer(renderer, isReflection, isClipping, isClipped, type, absoluteBoundingBox, negativeZOrderList, normalFlowList, positiveZOrderList));
+}
+
+PassRefPtr<API::Array> WebRenderLayer::createArrayFromLayerList(Vector<RenderLayer*>* list)
 {
     if (!list || !list->size())
         return nullptr;
@@ -71,7 +77,7 @@ PassRefPtr<ImmutableArray> WebRenderLayer::createArrayFromLayerList(Vector<Rende
     for (const auto& layer : *list)
         layers.uncheckedAppend(adoptRef(new WebRenderLayer(layer)));
 
-    return ImmutableArray::create(std::move(layers));
+    return API::Array::create(std::move(layers));
 }
 
 WebRenderLayer::WebRenderLayer(RenderLayer* layer)
@@ -112,6 +118,19 @@ WebRenderLayer::WebRenderLayer(RenderLayer* layer)
     m_negativeZOrderList = createArrayFromLayerList(layer->negZOrderList());
     m_normalFlowList = createArrayFromLayerList(layer->normalFlowList());
     m_positiveZOrderList = createArrayFromLayerList(layer->posZOrderList());
+}
+
+WebRenderLayer::WebRenderLayer(PassRefPtr<WebRenderObject> renderer, bool isReflection, bool isClipping, bool isClipped, CompositingLayerType type, WebCore::IntRect absoluteBoundingBox, PassRefPtr<API::Array> negativeZOrderList, PassRefPtr<API::Array> normalFlowList, PassRefPtr<API::Array> positiveZOrderList)
+    : m_renderer(renderer)
+    , m_isReflection(isReflection)
+    , m_isClipping(isClipping)
+    , m_isClipped(isClipped)
+    , m_compositingLayerType(type)
+    , m_absoluteBoundingBox(absoluteBoundingBox)
+    , m_negativeZOrderList(negativeZOrderList)
+    , m_normalFlowList(normalFlowList)
+    , m_positiveZOrderList(positiveZOrderList)
+{
 }
 
 } // namespace WebKit

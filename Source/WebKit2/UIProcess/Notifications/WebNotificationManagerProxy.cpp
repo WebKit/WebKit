@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebNotificationManagerProxy.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "ImmutableDictionary.h"
 #include "WebContext.h"
 #include "WebNotification.h"
@@ -93,7 +93,7 @@ void WebNotificationManagerProxy::populateCopyOfNotificationPermissions(HashMap<
         return;
 
     permissions.clear();
-    RefPtr<ImmutableArray> knownOrigins = knownPermissions->keys();
+    RefPtr<API::Array> knownOrigins = knownPermissions->keys();
     for (size_t i = 0; i < knownOrigins->size(); ++i) {
         WebString* origin = knownOrigins->at<WebString>(i);
         permissions.set(origin->string(), knownPermissions->get<WebBoolean>(origin->string())->value());
@@ -202,7 +202,7 @@ void WebNotificationManagerProxy::providerDidClickNotification(uint64_t globalNo
 }
 
 
-void WebNotificationManagerProxy::providerDidCloseNotifications(ImmutableArray* globalNotificationIDs)
+void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* globalNotificationIDs)
 {
     HashMap<WebPageProxy*, Vector<uint64_t>> pageNotificationIDs;
     
@@ -240,7 +240,7 @@ void WebNotificationManagerProxy::providerDidUpdateNotificationPolicy(const WebS
     context()->sendToAllProcesses(Messages::WebNotificationManager::DidUpdateNotificationDecision(origin->toString(), allowed));
 }
 
-void WebNotificationManagerProxy::providerDidRemoveNotificationPolicies(ImmutableArray* origins)
+void WebNotificationManagerProxy::providerDidRemoveNotificationPolicies(API::Array* origins)
 {
     if (!context())
         return;

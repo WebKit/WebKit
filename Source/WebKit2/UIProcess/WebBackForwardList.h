@@ -27,7 +27,6 @@
 #define WebBackForwardList_h
 
 #include "APIObject.h"
-#include "ImmutableArray.h"
 #include "WebBackForwardListItem.h"
 #include "WebPageProxy.h"
 #include <wtf/PassRefPtr.h>
@@ -70,8 +69,8 @@ public:
     int backListCount() const;
     int forwardListCount() const;
 
-    PassRefPtr<ImmutableArray> backListAsImmutableArrayWithLimit(unsigned limit) const;
-    PassRefPtr<ImmutableArray> forwardListAsImmutableArrayWithLimit(unsigned limit) const;
+    PassRefPtr<API::Array> backListAsImmutableArrayWithLimit(unsigned limit) const;
+    PassRefPtr<API::Array> forwardListAsImmutableArrayWithLimit(unsigned limit) const;
 
 #if USE(CF)
     CFDictionaryRef createCFDictionaryRepresentation(WebPageProxy::WebPageProxySessionStateFilterCallback, void* context) const;

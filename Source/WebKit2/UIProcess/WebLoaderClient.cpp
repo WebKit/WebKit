@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebLoaderClient.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "ImmutableDictionary.h"
 #include "PluginInformation.h"
 #include "WKAPICast.h"
@@ -243,9 +243,9 @@ void WebLoaderClient::didChangeBackForwardList(WebPageProxy* page, WebBackForwar
     if (!m_client.didChangeBackForwardList)
         return;
 
-    RefPtr<ImmutableArray> removedItemsArray;
+    RefPtr<API::Array> removedItemsArray;
     if (removedItems && !removedItems->isEmpty())
-        removedItemsArray = ImmutableArray::create(std::move(*removedItems));
+        removedItemsArray = API::Array::create(std::move(*removedItems));
 
     m_client.didChangeBackForwardList(toAPI(page), toAPI(addedItem), toAPI(removedItemsArray.get()), m_client.clientInfo);
 }

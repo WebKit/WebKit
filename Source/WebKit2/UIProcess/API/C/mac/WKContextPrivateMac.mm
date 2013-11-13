@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKContextPrivateMac.h"
 
-#import "ImmutableArray.h"
+#import "APIArray.h"
 #import "ImmutableDictionary.h"
 #import "PluginInfoStore.h"
 #import "PluginInformation.h"
@@ -79,7 +79,7 @@ void WKContextGetInfoForInstalledPlugIns(WKContextRef contextRef, WKContextGetIn
     for (const auto& plugin: plugins)
         pluginInfoDictionaries.uncheckedAppend(createPluginInformationDictionary(plugin));
 
-    RefPtr<ImmutableArray> array = ImmutableArray::create(std::move(pluginInfoDictionaries));
+    RefPtr<API::Array> array = API::Array::create(std::move(pluginInfoDictionaries));
 
     toImpl(contextRef)->ref();
     dispatch_async(dispatch_get_main_queue(), ^() {

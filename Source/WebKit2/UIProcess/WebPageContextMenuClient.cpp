@@ -29,7 +29,7 @@
 
 #include "WebPageContextMenuClient.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "Logging.h"
 #include "WebContextMenuItem.h"
 #include "WKAPICast.h"
@@ -54,11 +54,11 @@ bool WebPageContextMenuClient::getContextMenuFromProposedMenu(WebPageProxy* page
     WKArrayRef newMenu = nullptr;
     if (m_client.version >= 2) {
         RefPtr<WebHitTestResult> webHitTestResult = WebHitTestResult::create(hitTestResultData);
-        m_client.getContextMenuFromProposedMenu(toAPI(page), toAPI(ImmutableArray::create(std::move(proposedMenuItems)).get()), &newMenu, toAPI(webHitTestResult.get()), toAPI(userData), m_client.clientInfo);
+        m_client.getContextMenuFromProposedMenu(toAPI(page), toAPI(API::Array::create(std::move(proposedMenuItems)).get()), &newMenu, toAPI(webHitTestResult.get()), toAPI(userData), m_client.clientInfo);
     } else
-        m_client.getContextMenuFromProposedMenu_deprecatedForUseWithV0(toAPI(page), toAPI(ImmutableArray::create(std::move(proposedMenuItems)).get()), &newMenu, toAPI(userData), m_client.clientInfo);
+        m_client.getContextMenuFromProposedMenu_deprecatedForUseWithV0(toAPI(page), toAPI(API::Array::create(std::move(proposedMenuItems)).get()), &newMenu, toAPI(userData), m_client.clientInfo);
 
-    RefPtr<ImmutableArray> array = adoptRef(toImpl(newMenu));
+    RefPtr<API::Array> array = adoptRef(toImpl(newMenu));
     
     customMenu.clear();
     
@@ -104,7 +104,7 @@ bool WebPageContextMenuClient::showContextMenu(WebPageProxy* page, const WebCore
     for (const auto& menuItem : menuItemsVector)
         menuItems.uncheckedAppend(WebContextMenuItem::create(menuItem));
 
-    m_client.showContextMenu(toAPI(page), toAPI(menuLocation), toAPI(ImmutableArray::create(std::move(menuItems)).get()), m_client.clientInfo);
+    m_client.showContextMenu(toAPI(page), toAPI(menuLocation), toAPI(API::Array::create(std::move(menuItems)).get()), m_client.clientInfo);
 
     return true;
 }

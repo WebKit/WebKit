@@ -33,9 +33,12 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
+namespace API {
+class Array;
+}
+
 namespace WebKit {
 
-class ImmutableArray;
 class ImmutableDictionary;
 class WebContext;
 
@@ -52,7 +55,7 @@ public:
 
     PassRefPtr<ImmutableDictionary> autoStartOriginsTableCopy() const;
     void setAutoStartOriginsTable(ImmutableDictionary&);
-    void setAutoStartOriginsArray(ImmutableArray&);
+    void setAutoStartOriginsArray(API::Array&);
 
     PlugInAutoStartOriginHash autoStartOriginHashesCopy() const;
     const PlugInAutoStartOrigins& autoStartOrigins() const { return m_autoStartOrigins; }

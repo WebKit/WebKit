@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebCookieManagerProxy.h"
 
+#include "APIArray.h"
 #include "SecurityOriginData.h"
 #include "WebContext.h"
 #include "WebCookieManagerMessages.h"
@@ -115,7 +116,7 @@ void WebCookieManagerProxy::didGetHostnamesWithCookies(const Vector<String>& hos
         return;
     }
 
-    callback->performCallbackWithReturnValue(ImmutableArray::createStringArray(hostnames).get());
+    callback->performCallbackWithReturnValue(API::Array::createStringArray(hostnames).get());
 }
 
 void WebCookieManagerProxy::deleteCookiesForHostname(const String& hostname)

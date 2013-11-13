@@ -27,7 +27,7 @@
 #import "WKBrowsingContextGroup.h"
 #import "WKBrowsingContextGroupPrivate.h"
 
-#import "ImmutableArray.h"
+#import "APIArray.h"
 #import "WKArray.h"
 #import "WKPageGroup.h"
 #import "WKPreferences.h"
@@ -121,7 +121,7 @@ static WKRetainPtr<WKArrayRef> createWKArray(NSArray *array)
             strings.uncheckedAppend(adoptRef(toImpl(WKStringCreateWithCFString((CFStringRef)entry))));
     }
 
-    return toAPI(ImmutableArray::create(std::move(strings)).leakRef());
+    return toAPI(API::Array::create(std::move(strings)).leakRef());
 }
 
 -(void)addUserStyleSheet:(NSString *)source baseURL:(NSURL *)baseURL whitelistedURLPatterns:(NSArray *)whitelist blacklistedURLPatterns:(NSArray *)blacklist mainFrameOnly:(BOOL)mainFrameOnly

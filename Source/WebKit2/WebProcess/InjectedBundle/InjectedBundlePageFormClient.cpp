@@ -26,7 +26,7 @@
 #include "config.h"
 #include "InjectedBundlePageFormClient.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "ImmutableDictionary.h"
 #include "InjectedBundleNodeHandle.h"
 #include "WKAPICast.h"
@@ -136,7 +136,7 @@ void InjectedBundlePageFormClient::didAssociateFormControls(WebPage* page, const
     for (const auto& element : elements)
         elementHandles.uncheckedAppend(InjectedBundleNodeHandle::getOrCreate(element.get()));
 
-    m_client.didAssociateFormControls(toAPI(page), toAPI(ImmutableArray::create(std::move(elementHandles)).get()), m_client.clientInfo);
+    m_client.didAssociateFormControls(toAPI(page), toAPI(API::Array::create(std::move(elementHandles)).get()), m_client.clientInfo);
 }
 
 bool InjectedBundlePageFormClient::shouldNotifyOnFormChanges(WebPage* page)

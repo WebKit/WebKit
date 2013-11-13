@@ -29,7 +29,7 @@
 
 #include "InjectedBundlePageContextMenuClient.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "InjectedBundleHitTestResult.h"
 #include "Logging.h"
 #include "WebContextMenuItem.h"
@@ -53,8 +53,8 @@ bool InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems(WebPage*
 
     WKArrayRef newMenuWK = 0;
     WKTypeRef userDataToPass = 0;
-    m_client.getContextMenuFromDefaultMenu(toAPI(page), toAPI(hitTestResult), toAPI(ImmutableArray::create(std::move(defaultMenuItems)).get()), &newMenuWK, &userDataToPass, m_client.clientInfo);
-    RefPtr<ImmutableArray> array = adoptRef(toImpl(newMenuWK));
+    m_client.getContextMenuFromDefaultMenu(toAPI(page), toAPI(hitTestResult), toAPI(API::Array::create(std::move(defaultMenuItems)).get()), &newMenuWK, &userDataToPass, m_client.clientInfo);
+    RefPtr<API::Array> array = adoptRef(toImpl(newMenuWK));
     userData = adoptRef(toImpl(userDataToPass));
     
     newMenu.clear();

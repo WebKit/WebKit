@@ -36,9 +36,12 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/StringHash.h>
 
+namespace API {
+class Array;
+}
+
 namespace WebKit {
 
-class ImmutableArray;
 class WebContext;
 class WebPageProxy;
 class WebSecurityOrigin;
@@ -61,9 +64,9 @@ public:
 
     void providerDidShowNotification(uint64_t notificationID);
     void providerDidClickNotification(uint64_t notificationID);
-    void providerDidCloseNotifications(ImmutableArray* notificationIDs);
+    void providerDidCloseNotifications(API::Array* notificationIDs);
     void providerDidUpdateNotificationPolicy(const WebSecurityOrigin*, bool allowed);
-    void providerDidRemoveNotificationPolicies(ImmutableArray* origins);
+    void providerDidRemoveNotificationPolicies(API::Array* origins);
 
     using API::Object::ref;
     using API::Object::deref;

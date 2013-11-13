@@ -1,3 +1,185 @@
+2013-11-13  Anders Carlsson  <andersca@apple.com>
+
+        Rename ImmutableArray to API::Array
+        https://bugs.webkit.org/show_bug.cgi?id=124307
+
+        Reviewed by Andreas Kling.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (ensureObjectStream):
+        (-[WKRemoteObjectDecoder initWithInterface:rootObjectDictionary:WebKit::]):
+        * Shared/API/c/WKArray.cpp:
+        (WKArrayGetTypeID):
+        (WKArrayCreate):
+        (WKArrayCreateAdoptingValues):
+        * Shared/API/c/WKContextMenuItem.cpp:
+        * Shared/API/c/WKDictionary.cpp:
+        (WKDictionaryCopyKeys):
+        * Shared/API/c/WKMutableArray.cpp:
+        (WKMutableArrayCreate):
+        * Shared/API/c/WKRenderObject.cpp:
+        (WKRenderObjectGetChildren):
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toImpl):
+        * Shared/API/c/mac/WKWebArchive.cpp:
+        (WKWebArchiveCopySubresources):
+        (WKWebArchiveCopySubframeArchives):
+        * Shared/APIArray.cpp: Renamed from Source/WebKit2/Shared/ImmutableArray.cpp.
+        (API::Array::create):
+        (API::Array::createStringArray):
+        (API::Array::Array):
+        (API::Array::~Array):
+        * Shared/APIArray.h: Renamed from Source/WebKit2/Shared/ImmutableArray.h.
+        * Shared/Cocoa/WKNSArray.h:
+        (wrapper):
+        * Shared/Cocoa/WKNSArray.mm:
+        (-[WKNSArray dealloc]):
+        (-[WKNSArray count]):
+        (-[WKNSArray objectAtIndex:]):
+        (-[WKNSArray API::]):
+        * Shared/ImmutableDictionary.cpp:
+        (WebKit::ImmutableDictionary::keys):
+        * Shared/ImmutableDictionary.h:
+        * Shared/SecurityOriginData.cpp:
+        (WebKit::performAPICallbackWithSecurityOriginDataVector):
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+        * Shared/WebArchive.cpp:
+        (WebKit::WebArchive::create):
+        (WebKit::WebArchive::WebArchive):
+        (WebKit::WebArchive::subresources):
+        (WebKit::WebArchive::subframeArchives):
+        * Shared/WebArchive.h:
+        * Shared/WebContextMenuItem.cpp:
+        (WebKit::WebContextMenuItem::create):
+        (WebKit::WebContextMenuItem::submenuItemsAsImmutableArray):
+        * Shared/WebContextMenuItem.h:
+        * Shared/WebOpenPanelParameters.cpp:
+        (WebKit::WebOpenPanelParameters::acceptMIMETypes):
+        (WebKit::WebOpenPanelParameters::selectedFileNames):
+        * Shared/WebOpenPanelParameters.h:
+        * Shared/WebRenderLayer.cpp:
+        (WebKit::WebRenderLayer::create):
+        (WebKit::WebRenderLayer::createArrayFromLayerList):
+        (WebKit::WebRenderLayer::WebRenderLayer):
+        * Shared/WebRenderLayer.h:
+        (WebKit::WebRenderLayer::negativeZOrderList):
+        (WebKit::WebRenderLayer::normalFlowList):
+        (WebKit::WebRenderLayer::positiveZOrderList):
+        * Shared/WebRenderObject.cpp:
+        (WebKit::WebRenderObject::create):
+        (WebKit::WebRenderObject::WebRenderObject):
+        (WebKit::WebRenderObject::~WebRenderObject):
+        * Shared/WebRenderObject.h:
+        (WebKit::WebRenderObject::children):
+        (WebKit::WebRenderObject::elementClassNames):
+        * UIProcess/API/C/WKBackForwardListRef.cpp:
+        * UIProcess/API/C/WKOpenPanelParameters.cpp:
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextGetInfoForInstalledPlugIns):
+        * UIProcess/API/Cocoa/WKBackForwardList.mm:
+        (-[WKBackForwardList backListWithLimit:]):
+        (-[WKBackForwardList forwardListWithLimit:]):
+        * UIProcess/API/mac/WKBrowsingContextGroup.mm:
+        (createWKArray):
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::populateCopyOfNotificationPermissions):
+        (WebKit::WebNotificationManagerProxy::providerDidCloseNotifications):
+        (WebKit::WebNotificationManagerProxy::providerDidRemoveNotificationPolicies):
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+        * UIProcess/Notifications/WebNotificationProvider.cpp:
+        (WebKit::WebNotificationProvider::clearNotifications):
+        * UIProcess/Plugins/PlugInAutoStartProvider.cpp:
+        (WebKit::PlugInAutoStartProvider::setAutoStartOriginsArray):
+        * UIProcess/Plugins/PlugInAutoStartProvider.h:
+        * UIProcess/Plugins/WebPluginSiteDataManager.cpp:
+        (WebKit::WebPluginSiteDataManager::didGetSitesWithData):
+        (WebKit::WebPluginSiteDataManager::clearSiteData):
+        * UIProcess/Plugins/WebPluginSiteDataManager.h:
+        * UIProcess/StatisticsRequest.cpp:
+        (WebKit::StatisticsRequest::completedRequest):
+        * UIProcess/WebApplicationCacheManagerProxy.h:
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::backListAsImmutableArrayWithLimit):
+        (WebKit::WebBackForwardList::forwardListAsImmutableArrayWithLimit):
+        * UIProcess/WebBackForwardList.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::setPlugInAutoStartOrigins):
+        (WebKit::WebContext::pluginInfoStoreDidLoadPlugins):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebContextClient.cpp:
+        (WebKit::WebContextClient::plugInInformationBecameAvailable):
+        * UIProcess/WebContextClient.h:
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::didGetHostnamesWithCookies):
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        (WebKit::WebDatabaseManagerProxy::didGetDatabasesByOrigin):
+        (WebKit::WebDatabaseManagerProxy::didGetDatabaseOrigins):
+        * UIProcess/WebFindClient.cpp:
+        (WebKit::WebFindMatchesClient::didFindStringMatches):
+        * UIProcess/WebFindClient.h:
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebKeyValueStorageManager.cpp:
+        (WebKit::didGetKeyValueStorageOrigins):
+        * UIProcess/WebKeyValueStorageManager.h:
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didChangeBackForwardList):
+        * UIProcess/WebMediaCacheManagerProxy.cpp:
+        (WebKit::WebMediaCacheManagerProxy::didGetHostnamesWithMediaCache):
+        * UIProcess/WebMediaCacheManagerProxy.h:
+        * UIProcess/WebOpenPanelResultListenerProxy.cpp:
+        (WebKit::WebOpenPanelResultListenerProxy::chooseFiles):
+        * UIProcess/WebOpenPanelResultListenerProxy.h:
+        * UIProcess/WebOriginDataManagerProxy.h:
+        * UIProcess/WebPageContextMenuClient.cpp:
+        (WebKit::WebPageContextMenuClient::getContextMenuFromProposedMenu):
+        (WebKit::WebPageContextMenuClient::showContextMenu):
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::toStringVector):
+        (WebKit::WebPageGroup::addUserStyleSheet):
+        (WebKit::WebPageGroup::addUserScript):
+        * UIProcess/WebPageGroup.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::relatedPages):
+        (WebKit::WebPageProxy::didFindStringMatches):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebResourceCacheManagerProxy.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleCopyOriginsWithApplicationCache):
+        * WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (contextMenuItems):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::originsWithApplicationCache):
+        (WebKit::toStringVector):
+        (WebKit::InjectedBundle::addUserScript):
+        (WebKit::InjectedBundle::addUserStyleSheet):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardListItem.cpp:
+        (WebKit::InjectedBundleBackForwardListItem::children):
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardListItem.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp:
+        (WebKit::InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems):
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp:
+        (WebKit::InjectedBundlePageEditorClient::getPasteboardDataForRange):
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp:
+        (WebKit::InjectedBundlePageFormClient::didAssociateFormControls):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::featuresUsedInPage):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::findLargestFrameInFrameSet):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::childFrames):
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::trackedRepaintRects):
+        * WebProcess/WebPage/WebPage.h:
+
 2013-11-13  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         [GTK] Fix build after r159222

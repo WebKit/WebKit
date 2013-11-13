@@ -27,11 +27,14 @@
 
 #if WK_API_ENABLED
 
-#import "ImmutableArray.h"
+#import "APIArray.h"
 #import "WKObject.h"
 
-namespace WebKit {
-inline NSArray *wrapper(ImmutableArray& array) { ASSERT([array.wrapper() isKindOfClass:[NSArray class]]); return (NSArray *)array.wrapper(); }
+inline NSArray *wrapper(API::Array& array)
+{
+    ASSERT([array.wrapper() isKindOfClass:[NSArray class]]);
+
+    return (NSArray *)array.wrapper();
 }
 
 @interface WKNSArray : NSArray <WKObject>

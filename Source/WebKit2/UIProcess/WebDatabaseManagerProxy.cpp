@@ -28,7 +28,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "ImmutableDictionary.h"
 #include "WebContext.h"
 #include "WebDatabaseManagerMessages.h"
@@ -180,12 +180,12 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
         originAndDatabasesMap.set(originKey(), origin);
         originAndDatabasesMap.set(originQuotaKey(), WebUInt64::create(originAndDatabases.originQuota));
         originAndDatabasesMap.set(originUsageKey(), WebUInt64::create(originAndDatabases.originUsage));
-        originAndDatabasesMap.set(databaseDetailsKey(), ImmutableArray::create(std::move(databases)));
+        originAndDatabasesMap.set(databaseDetailsKey(), API::Array::create(std::move(databases)));
 
         result.uncheckedAppend(ImmutableDictionary::adopt(originAndDatabasesMap));
     }
 
-    callback->performCallbackWithReturnValue(ImmutableArray::create(std::move(result)).get());
+    callback->performCallbackWithReturnValue(API::Array::create(std::move(result)).get());
 }
 
 void WebDatabaseManagerProxy::getDatabaseOrigins(PassRefPtr<ArrayCallback> prpCallback)
@@ -211,7 +211,7 @@ void WebDatabaseManagerProxy::didGetDatabaseOrigins(const Vector<String>& origin
     for (const auto& originIdentifier : originIdentifiers)
         securityOrigins.uncheckedAppend(WebSecurityOrigin::createFromDatabaseIdentifier(originIdentifier));
 
-    callback->performCallbackWithReturnValue(ImmutableArray::create(std::move(securityOrigins)).get());
+    callback->performCallbackWithReturnValue(API::Array::create(std::move(securityOrigins)).get());
 }
 
 void WebDatabaseManagerProxy::deleteDatabaseWithNameForOrigin(const String& databaseIdentifier, WebSecurityOrigin* origin)

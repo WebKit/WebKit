@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKRemoteObjectCoder.h"
 
-#import "ImmutableArray.h"
+#import "APIArray.h"
 #import "MutableDictionary.h"
 #import "WKRemoteObjectInterfaceInternal.h"
 #import "WebData.h"
@@ -59,7 +59,7 @@ static PassRefPtr<ImmutableDictionary> createEncodedObject(WKRemoteObjectEncoder
 
 @implementation WKRemoteObjectEncoder {
     RefPtr<MutableDictionary> _rootDictionary;
-    ImmutableArray* _objectStream;
+    API::Array* _objectStream;
 
     MutableDictionary* _currentDictionary;
 }
@@ -94,7 +94,7 @@ static void ensureObjectStream(WKRemoteObjectEncoder *encoder)
     if (encoder->_objectStream)
         return;
 
-    RefPtr<ImmutableArray> objectStream = ImmutableArray::create();
+    RefPtr<API::Array> objectStream = API::Array::create();
     encoder->_objectStream = objectStream.get();
 
     encoder->_rootDictionary->set(objectStreamKey, objectStream.release());
@@ -268,7 +268,7 @@ static NSString *escapeKey(NSString *key)
     const ImmutableDictionary* _rootDictionary;
     const ImmutableDictionary* _currentDictionary;
 
-    const ImmutableArray* _objectStream;
+    const API::Array* _objectStream;
     size_t _objectStreamPosition;
 
     NSSet *_allowedClasses;
@@ -284,7 +284,7 @@ static NSString *escapeKey(NSString *key)
     _rootDictionary = rootObjectDictionary;
     _currentDictionary = _rootDictionary;
 
-    _objectStream = _rootDictionary->get<ImmutableArray>(objectStreamKey);
+    _objectStream = _rootDictionary->get<API::Array>(objectStreamKey);
 
     return self;
 }

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebKeyValueStorageManager.h"
 
+#include "APIArray.h"
 #include "SecurityOriginData.h"
 #include "WebContext.h"
 #include "WebSecurityOrigin.h"
@@ -75,7 +76,7 @@ static void didGetKeyValueStorageOrigins(const Vector<RefPtr<WebCore::SecurityOr
     for (unsigned i = 0; i < securityOrigins.size(); ++i)
         webSecurityOrigins.uncheckedAppend(WebSecurityOrigin::create(securityOrigins[i]));
 
-    callback->performCallbackWithReturnValue(ImmutableArray::create(std::move(webSecurityOrigins)).get());
+    callback->performCallbackWithReturnValue(API::Array::create(std::move(webSecurityOrigins)).get());
 }
 
 void WebKeyValueStorageManager::getKeyValueStorageOrigins(PassRefPtr<ArrayCallback> prpCallback)

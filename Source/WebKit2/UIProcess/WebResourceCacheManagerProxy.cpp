@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebResourceCacheManagerProxy.h"
 
-#include "ImmutableArray.h"
 #include "ImmutableDictionary.h"
 #include "SecurityOriginData.h"
 #include "WebContext.h"

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PlugInAutoStartProvider.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "ImmutableDictionary.h"
 #include "WebContext.h"
 #include "WebContextClient.h"
@@ -131,7 +131,7 @@ void PlugInAutoStartProvider::setAutoStartOriginsTable(ImmutableDictionary& tabl
     m_context->sendToAllProcesses(Messages::WebProcess::ResetPlugInAutoStartOriginHashes(hashMap));
 }
 
-void PlugInAutoStartProvider::setAutoStartOriginsArray(ImmutableArray& originList)
+void PlugInAutoStartProvider::setAutoStartOriginsArray(API::Array& originList)
 {
     m_autoStartOrigins.clear();
     for (size_t i = 0, length = originList.size(); i < length; ++i) {

@@ -30,9 +30,12 @@
 #include "WKPage.h"
 #include <wtf/Forward.h>
 
+namespace API {
+class Array;
+}
+
 namespace WebKit {
 
-class ImmutableArray;
 class WebPageProxy;
 class WebImage;
 
@@ -45,7 +48,7 @@ public:
 
 class WebFindMatchesClient : public APIClient<WKPageFindMatchesClient, kWKPageFindMatchesClientCurrentVersion> {
 public:
-    void didFindStringMatches(WebPageProxy*, const String&, ImmutableArray*, int);
+    void didFindStringMatches(WebPageProxy*, const String&, API::Array*, int);
     void didGetImageForMatchResult(WebPageProxy*, WebImage*, uint32_t);
 };
 

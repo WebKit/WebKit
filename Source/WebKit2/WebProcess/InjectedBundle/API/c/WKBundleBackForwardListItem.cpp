@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WKBundleBackForwardListItem.h"
 
-#include "ImmutableArray.h"
+#include "APIArray.h"
 #include "InjectedBundleBackForwardListItem.h"
 #include "WKBundleAPICast.h"
 

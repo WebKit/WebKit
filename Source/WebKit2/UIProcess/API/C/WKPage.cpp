@@ -27,6 +27,7 @@
 #include "WKPage.h"
 #include "WKPagePrivate.h"
 
+#include "APIArray.h"
 #include "PrintInfo.h"
 #include "WKAPICast.h"
 #include "WKPluginInformation.h"

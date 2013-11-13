@@ -58,11 +58,13 @@
 #include <WebCore/UserContentTypes.h>
 #include <WebCore/UserScriptTypes.h>
 
+namespace API {
+class Array;
+}
+
 namespace WebKit {
 
-class ImmutableArray;
 class ImmutableDictionary;
-class MutableArray;
 class MutableDictionary;
 class ObjCObjectGraph;
 class WebArchive;
@@ -89,7 +91,7 @@ template<typename ImplType> struct ImplTypeInfo { };
     template<> struct APITypeInfo<TheAPIType> { typedef TheImplType* ImplType; }; \
     template<> struct ImplTypeInfo<TheImplType*> { typedef TheAPIType APIType; };
 
-WK_ADD_API_MAPPING(WKArrayRef, ImmutableArray)
+WK_ADD_API_MAPPING(WKArrayRef, API::Array)
 WK_ADD_API_MAPPING(WKBooleanRef, WebBoolean)
 WK_ADD_API_MAPPING(WKCertificateInfoRef, WebCertificateInfo)
 WK_ADD_API_MAPPING(WKConnectionRef, WebConnection)
@@ -114,7 +116,7 @@ WK_ADD_API_MAPPING(WKURLRequestRef, WebURLRequest)
 WK_ADD_API_MAPPING(WKURLResponseRef, WebURLResponse)
 WK_ADD_API_MAPPING(WKUserContentURLPatternRef, WebUserContentURLPattern)
 
-template<> struct APITypeInfo<WKMutableArrayRef> { typedef ImmutableArray* ImplType; };
+template<> struct APITypeInfo<WKMutableArrayRef> { typedef API::Array* ImplType; };
 
 #if PLATFORM(MAC)
 WK_ADD_API_MAPPING(WKWebArchiveRef, WebArchive)
@@ -142,7 +144,7 @@ template<typename T>
 inline typename APITypeInfo<T>::ImplType toImpl(T t)
 {
     // An example of the conversions that take place:
-    // const struct OpaqueWKArray* -> const struct OpaqueWKArray -> struct OpaqueWKArray -> struct OpaqueWKArray* -> ImmutableArray*
+    // const struct OpaqueWKArray* -> const struct OpaqueWKArray -> struct OpaqueWKArray -> struct OpaqueWKArray* -> API::Array*
     
     typedef typename std::remove_pointer<T>::type PotentiallyConstValueType;
     typedef typename std::remove_const<PotentiallyConstValueType>::type NonConstValueType;

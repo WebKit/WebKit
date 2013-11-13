@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebFrame.h"
 
+#include "APIArray.h"
 #include "DownloadManager.h"
 #include "InjectedBundleHitTestResult.h"
 #include "InjectedBundleNodeHandle.h"
@@ -412,14 +413,14 @@ WebFrame* WebFrame::parentFrame() const
     return webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
 }
 
-PassRefPtr<ImmutableArray> WebFrame::childFrames()
+PassRefPtr<API::Array> WebFrame::childFrames()
 {
     if (!m_coreFrame)
-        return ImmutableArray::create();
+        return API::Array::create();
 
     size_t size = m_coreFrame->tree().childCount();
     if (!size)
-        return ImmutableArray::create();
+        return API::Array::create();
 
     Vector<RefPtr<API::Object>> vector;
     vector.reserveInitialCapacity(size);
@@ -431,7 +432,7 @@ PassRefPtr<ImmutableArray> WebFrame::childFrames()
         vector.uncheckedAppend(webFrame);
     }
 
-    return ImmutableArray::create(std::move(vector));
+    return API::Array::create(std::move(vector));
 }
 
 String WebFrame::layerTreeAsText() const
