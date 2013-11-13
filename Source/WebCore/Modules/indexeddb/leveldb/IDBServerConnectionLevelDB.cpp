@@ -29,11 +29,13 @@
 #if ENABLE(INDEXED_DATABASE)
 #if USE(LEVELDB)
 
-#include "IDBBackingStoreInterface.h"
+#include "IDBBackingStoreLevelDB.h"
+#include "IDBBackingStoreTransactionLevelDB.h"
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 
-IDBServerConnectionLevelDB::IDBServerConnectionLevelDB(IDBBackingStoreInterface* backingStore)
+IDBServerConnectionLevelDB::IDBServerConnectionLevelDB(IDBBackingStoreLevelDB* backingStore)
     : m_backingStore(backingStore)
     , m_closed(false)
 {
@@ -46,6 +48,13 @@ IDBServerConnectionLevelDB::~IDBServerConnectionLevelDB()
 IDBBackingStoreInterface* IDBServerConnectionLevelDB::deprecatedBackingStore()
 {
     return m_backingStore.get();
+}
+
+IDBBackingStoreTransactionInterface* IDBServerConnectionLevelDB::deprecatedBackingStoreTransaction(int64_t transactionID)
+{
+    if (!m_backingStore)
+        return 0;
+    return m_backingStore->deprecatedBackingStoreTransaction(transactionID);
 }
 
 bool IDBServerConnectionLevelDB::isClosed()
@@ -73,6 +82,59 @@ void IDBServerConnectionLevelDB::close()
 {
     m_backingStore.clear();
     m_closed = true;
+}
+
+void IDBServerConnectionLevelDB::openTransaction(int64_t transactionID, const HashSet<int64_t>&, IndexedDB::TransactionMode, BoolCallbackFunction successCallback)
+{
+    if (!m_backingStore) {
+        callOnMainThread([successCallback]() {
+            successCallback(false);
+        });
+        return;
+    }
+
+    m_backingStore->establishBackingStoreTransaction(transactionID);
+    callOnMainThread([successCallback]() {
+        successCallback(true);
+    });
+}
+
+void IDBServerConnectionLevelDB::beginTransaction(int64_t transactionID, std::function<void()> completionCallback)
+{
+    RefPtr<IDBBackingStoreTransactionLevelDB> transaction = m_backingStoreTransactions.get(transactionID);
+    ASSERT(transaction);
+
+    transaction->begin();
+    callOnMainThread(completionCallback);
+}
+
+void IDBServerConnectionLevelDB::commitTransaction(int64_t transactionID, BoolCallbackFunction successCallback)
+{
+    RefPtr<IDBBackingStoreTransactionLevelDB> transaction = m_backingStoreTransactions.get(transactionID);
+    ASSERT(transaction);
+
+    bool result = transaction->commit();
+    callOnMainThread([successCallback, result]() {
+        successCallback(result);
+    });
+}
+
+void IDBServerConnectionLevelDB::resetTransaction(int64_t transactionID, std::function<void()> completionCallback)
+{
+    RefPtr<IDBBackingStoreTransactionLevelDB> transaction = m_backingStoreTransactions.get(transactionID);
+    ASSERT(transaction);
+
+    transaction->resetTransaction();
+    callOnMainThread(completionCallback);
+}
+
+void IDBServerConnectionLevelDB::rollbackTransaction(int64_t transactionID, std::function<void()> completionCallback)
+{
+    RefPtr<IDBBackingStoreTransactionLevelDB> transaction = m_backingStoreTransactions.get(transactionID);
+    ASSERT(transaction);
+
+    transaction->rollback();
+    callOnMainThread(completionCallback);
 }
 
 } // namespace WebCore

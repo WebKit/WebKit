@@ -33,20 +33,22 @@
 
 namespace WebCore {
 
-class IDBBackingStoreInterface;
+class IDBBackingStoreLevelDB;
+class IDBBackingStoreTransactionLevelDB;
 
 class IDBServerConnectionLevelDB FINAL : public IDBServerConnection {
 public:
-    static PassRefPtr<IDBServerConnection> create(IDBBackingStoreInterface* backingStore)
+    static PassRefPtr<IDBServerConnection> create(IDBBackingStoreLevelDB* backingStore)
     {
         return adoptRef(new IDBServerConnectionLevelDB(backingStore));
     }
 
     virtual ~IDBServerConnectionLevelDB();
 
-    // FIXME: For now, server connection provides a synchronous accessor to the in-process backing store.
+    // FIXME: For now, server connection provides a synchronous accessor to the in-process backing store objects.
     // This is temporary and will be removed soon.
     virtual IDBBackingStoreInterface* deprecatedBackingStore() OVERRIDE;
+    virtual IDBBackingStoreTransactionInterface* deprecatedBackingStoreTransaction(int64_t transactionID) OVERRIDE;
 
     virtual bool isClosed() OVERRIDE;
 
@@ -55,10 +57,19 @@ public:
     virtual void deleteDatabase(const String& name, BoolCallbackFunction successCallback) OVERRIDE;
     virtual void close() OVERRIDE;
 
-private:
-    IDBServerConnectionLevelDB(IDBBackingStoreInterface*);
+    // Transaction-level operations
+    virtual void openTransaction(int64_t transactionID, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode, BoolCallbackFunction successCallback) OVERRIDE;
+    virtual void beginTransaction(int64_t transactionID, std::function<void()> completionCallback) OVERRIDE;
+    virtual void commitTransaction(int64_t transactionID, BoolCallbackFunction successCallback) OVERRIDE;
+    virtual void resetTransaction(int64_t transactionID, std::function<void()> completionCallback) OVERRIDE;
+    virtual void rollbackTransaction(int64_t transactionID, std::function<void()> completionCallback) OVERRIDE;
 
-    RefPtr<IDBBackingStoreInterface> m_backingStore;
+private:
+    IDBServerConnectionLevelDB(IDBBackingStoreLevelDB*);
+
+    RefPtr<IDBBackingStoreLevelDB> m_backingStore;
+    HashMap<int64_t, RefPtr<IDBBackingStoreTransactionLevelDB>> m_backingStoreTransactions;
+
     bool m_closed;
 };
 

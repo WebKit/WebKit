@@ -1402,7 +1402,8 @@ bool IDBBackingStoreLevelDB::makeIndexWriters(IDBTransactionBackend& transaction
 
         RefPtr<IDBIndexWriter> indexWriter = IDBIndexWriter::create(index, keys);
         bool canAddKeys = false;
-        bool backingStoreSuccess = indexWriter->verifyIndexKeys(*this, transaction.backingStoreTransaction(), databaseId, objectStore.id, index.id, canAddKeys, &primaryKey, errorMessage);
+        ASSERT(m_backingStoreTransactions.contains(transaction.id()));
+        bool backingStoreSuccess = indexWriter->verifyIndexKeys(*this, *m_backingStoreTransactions.get(transaction.id()), databaseId, objectStore.id, index.id, canAddKeys, &primaryKey, errorMessage);
         if (!backingStoreSuccess)
             return false;
         if (!canAddKeys)
@@ -1419,7 +1420,8 @@ PassRefPtr<IDBKey> IDBBackingStoreLevelDB::generateKey(IDBTransactionBackend& tr
 {
     const int64_t maxGeneratorValue = 9007199254740992LL; // Maximum integer storable as ECMAScript number.
     int64_t currentNumber;
-    bool ok = getKeyGeneratorCurrentNumber(transaction.backingStoreTransaction(), databaseId, objectStoreId, currentNumber);
+    ASSERT(m_backingStoreTransactions.contains(transaction.id()));
+    bool ok = getKeyGeneratorCurrentNumber(*m_backingStoreTransactions.get(transaction.id()), databaseId, objectStoreId, currentNumber);
     if (!ok) {
         LOG_ERROR("Failed to getKeyGeneratorCurrentNumber");
         return IDBKey::createInvalid();
@@ -1434,7 +1436,9 @@ PassRefPtr<IDBKey> IDBBackingStoreLevelDB::generateKey(IDBTransactionBackend& tr
 bool IDBBackingStoreLevelDB::updateKeyGenerator(IDBTransactionBackend& transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, bool checkCurrent)
 {
     ASSERT(key.type() == IDBKey::NumberType);
-    return maybeUpdateKeyGeneratorCurrentNumber(transaction.backingStoreTransaction(), databaseId, objectStoreId, static_cast<int64_t>(floor(key.number())) + 1, checkCurrent);
+    ASSERT(m_backingStoreTransactions.contains(transaction.id()));
+
+    return maybeUpdateKeyGeneratorCurrentNumber(*m_backingStoreTransactions.get(transaction.id()), databaseId, objectStoreId, static_cast<int64_t>(floor(key.number())) + 1, checkCurrent);
 }
 
 class ObjectStoreKeyCursorImpl : public IDBBackingStoreCursorLevelDB {
@@ -1912,9 +1916,21 @@ PassRefPtr<IDBBackingStoreCursorInterface> IDBBackingStoreLevelDB::openIndexCurs
     return cursor.release();
 }
 
-PassRefPtr<IDBBackingStoreTransactionInterface> IDBBackingStoreLevelDB::createBackingStoreTransaction()
+void IDBBackingStoreLevelDB::establishBackingStoreTransaction(int64_t transactionID)
 {
-    return IDBBackingStoreTransactionLevelDB::create(this);
+    ASSERT(!m_backingStoreTransactions.contains(transactionID));
+    m_backingStoreTransactions.set(transactionID, IDBBackingStoreTransactionLevelDB::create(transactionID, this));
+}
+
+IDBBackingStoreTransactionInterface* IDBBackingStoreLevelDB::deprecatedBackingStoreTransaction(int64_t transactionID)
+{
+    return m_backingStoreTransactions.get(transactionID);
+}
+
+void IDBBackingStoreLevelDB::removeBackingStoreTransaction(IDBBackingStoreTransactionLevelDB* transaction)
+{
+    ASSERT(m_backingStoreTransactions.contains(transaction->transactionID()));
+    m_backingStoreTransactions.remove(transaction->transactionID());
 }
 
 } // namespace WebCore

@@ -255,7 +255,7 @@ void IDBDatabaseBackend::setIndexKeys(int64_t transactionId, int64_t objectStore
     RefPtr<IDBBackingStoreInterface> store = m_serverConnection->deprecatedBackingStore();
     // FIXME: This method could be asynchronous, but we need to evaluate if it's worth the extra complexity.
     RefPtr<IDBRecordIdentifier> recordIdentifier;
-    bool ok = store->keyExistsInObjectStore(transaction->backingStoreTransaction(), m_metadata.id, objectStoreId, *primaryKey, recordIdentifier);
+    bool ok = store->keyExistsInObjectStore(transaction->deprecatedBackingStoreTransaction(), m_metadata.id, objectStoreId, *primaryKey, recordIdentifier);
     if (!ok) {
         transaction->abort(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error setting index keys."));
         return;
@@ -283,7 +283,7 @@ void IDBDatabaseBackend::setIndexKeys(int64_t transactionId, int64_t objectStore
 
     for (size_t i = 0; i < indexWriters.size(); ++i) {
         IDBIndexWriter* indexWriter = indexWriters[i].get();
-        indexWriter->writeIndexKeys(recordIdentifier.get(), *store.get(), transaction->backingStoreTransaction(), id(), objectStoreId);
+        indexWriter->writeIndexKeys(recordIdentifier.get(), *store.get(), transaction->deprecatedBackingStoreTransaction(), id(), objectStoreId);
     }
 }
 

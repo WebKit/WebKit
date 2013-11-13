@@ -64,7 +64,7 @@ public:
 
     void addPreemptiveEvent()  { m_pendingPreemptiveEvents++; }
     void didCompletePreemptiveEvent()  { m_pendingPreemptiveEvents--; ASSERT(m_pendingPreemptiveEvents >= 0); }
-    IDBBackingStoreTransactionInterface& backingStoreTransaction() { return *m_backingStoreTransaction; }
+    IDBBackingStoreTransactionInterface& deprecatedBackingStoreTransaction();
 
     IDBDatabaseBackend& database() const  { return *m_database; }
 
@@ -89,7 +89,8 @@ private:
     IDBTransactionBackend(IDBDatabaseBackend*, int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode);
 
     enum State {
-        Unused, // Created, but no tasks yet.
+        Unopened, // Backing store transaction not yet created.
+        Unused, // Backing store transaction created, but no tasks yet.
         StartPending, // Enqueued tasks, but backing store transaction not yet started.
         Running, // Backing store transaction started but not yet finished.
         Finished, // Either aborted or committed.
@@ -115,8 +116,6 @@ private:
     TaskQueue m_taskQueue;
     TaskQueue m_preemptiveTaskQueue;
     Deque<RefPtr<IDBSynchronousOperation>> m_abortTaskQueue;
-
-    RefPtr<IDBBackingStoreTransactionInterface> m_backingStoreTransaction;
 
     // FIXME: delete the timer once we have threads instead.
     Timer<IDBTransactionBackend> m_taskTimer;

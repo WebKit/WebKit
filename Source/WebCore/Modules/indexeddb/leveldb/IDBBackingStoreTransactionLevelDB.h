@@ -34,33 +34,34 @@
 
 namespace WebCore {
 
-class IDBBackingStoreInterface;
+class IDBBackingStoreLevelDB;
 
 class IDBBackingStoreTransactionLevelDB FINAL : public IDBBackingStoreTransactionInterface {
 public:
-    static PassRefPtr<IDBBackingStoreTransactionInterface> create(IDBBackingStoreInterface* backingStore)
+    static PassRefPtr<IDBBackingStoreTransactionLevelDB> create(int64_t transactionID, IDBBackingStoreLevelDB* backingStore)
     {
-        return adoptRef(new IDBBackingStoreTransactionLevelDB(backingStore));
+        return adoptRef(new IDBBackingStoreTransactionLevelDB(transactionID, backingStore));
     }
+
+    virtual ~IDBBackingStoreTransactionLevelDB();
 
     virtual void begin() OVERRIDE;
     virtual bool commit() OVERRIDE;
     virtual void rollback() OVERRIDE;
-    virtual void resetTransaction() OVERRIDE
-    {
-        m_backingStore = 0;
-        m_transaction = 0;
-    }
+    virtual void resetTransaction() OVERRIDE;
 
     static LevelDBTransaction* levelDBTransactionFrom(IDBBackingStoreTransactionInterface& transaction)
     {
         return static_cast<IDBBackingStoreTransactionLevelDB&>(transaction).m_transaction.get();
     }
 
-private:
-    IDBBackingStoreTransactionLevelDB(IDBBackingStoreInterface*);
+    int64_t transactionID() { return m_transactionID; }
 
-    IDBBackingStoreInterface* m_backingStore;
+private:
+    IDBBackingStoreTransactionLevelDB(int64_t transactionID, IDBBackingStoreLevelDB*);
+
+    int64_t m_transactionID;
+    IDBBackingStoreLevelDB* m_backingStore;
     RefPtr<LevelDBTransaction> m_transaction;
 };
 

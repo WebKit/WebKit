@@ -35,9 +35,16 @@
 
 namespace WebCore {
 
-IDBBackingStoreTransactionLevelDB::IDBBackingStoreTransactionLevelDB(IDBBackingStoreInterface* backingStore)
-    : m_backingStore(backingStore)
+IDBBackingStoreTransactionLevelDB::IDBBackingStoreTransactionLevelDB(int64_t transactionID, IDBBackingStoreLevelDB* backingStore)
+    : m_transactionID(transactionID)
+    , m_backingStore(backingStore)
 {
+}
+
+IDBBackingStoreTransactionLevelDB::~IDBBackingStoreTransactionLevelDB()
+{
+    if (m_backingStore)
+        m_backingStore->removeBackingStoreTransaction(this);
 }
 
 void IDBBackingStoreTransactionLevelDB::begin()
@@ -64,6 +71,14 @@ void IDBBackingStoreTransactionLevelDB::rollback()
     ASSERT(m_transaction);
     m_transaction->rollback();
     m_transaction.clear();
+}
+
+void IDBBackingStoreTransactionLevelDB::resetTransaction()
+{
+    ASSERT(m_backingStore);
+    m_backingStore->removeBackingStoreTransaction(this);
+    m_backingStore = 0;
+    m_transaction = 0;
 }
 
 } // namespace WebCore

@@ -1,3 +1,73 @@
+2013-11-12  Brady Eidson  <beidson@apple.com>
+
+        Move basic IDBBackingStoreTransaction operations to IDBServerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=124244
+
+        Reviewed by Tim Horton (and unofficially Anders Carlsson).
+
+        This patch:
+        - Makes IDBBackingStore the owner of an IDBBackingStoreTransaction.
+        - Adds the integer transaction ID to IDBBackingStoreTransaction for reference.
+        - Removes IDBTransactionBackend’s reliance on IDBBackingStoreTransaction by moving
+          necessary methods to IDBServerConnection.
+        - Renames the IDBTransactionBackend::backingStoreTransaction() accessor to
+          deprecatedBackingStoreTransaction to make it clear it’s on the way out.
+
+        * Modules/indexeddb/IDBBackingStoreInterface.h:
+
+        * Modules/indexeddb/IDBDatabaseBackend.cpp:
+        (WebCore::IDBDatabaseBackend::setIndexKeys):
+
+        * Modules/indexeddb/IDBServerConnection.h:
+
+        * Modules/indexeddb/IDBTransactionBackend.cpp:
+        (WebCore::IDBTransactionBackend::IDBTransactionBackend):
+        (WebCore::IDBTransactionBackend::~IDBTransactionBackend):
+        (WebCore::IDBTransactionBackend::deprecatedBackingStoreTransaction):
+        (WebCore::IDBTransactionBackend::scheduleTask):
+        (WebCore::IDBTransactionBackend::abort):
+        (WebCore::IDBTransactionBackend::commit):
+        (WebCore::IDBTransactionBackend::taskTimerFired):
+        * Modules/indexeddb/IDBTransactionBackend.h:
+
+        * Modules/indexeddb/IDBTransactionBackendOperations.cpp:
+        (WebCore::CreateObjectStoreOperation::perform):
+        (WebCore::CreateIndexOperation::perform):
+        (WebCore::DeleteIndexOperation::perform):
+        (WebCore::GetOperation::perform):
+        (WebCore::PutOperation::perform):
+        (WebCore::OpenCursorOperation::perform):
+        (WebCore::CountOperation::perform):
+        (WebCore::DeleteRangeOperation::perform):
+        (WebCore::ClearOperation::perform):
+        (WebCore::DeleteObjectStoreOperation::perform):
+        (WebCore::IDBDatabaseBackend::VersionChangeOperation::perform):
+
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        (WebCore::IDBBackingStoreLevelDB::makeIndexWriters):
+        (WebCore::IDBBackingStoreLevelDB::generateKey):
+        (WebCore::IDBBackingStoreLevelDB::updateKeyGenerator):
+        (WebCore::IDBBackingStoreLevelDB::establishBackingStoreTransaction):
+        (WebCore::IDBBackingStoreLevelDB::deprecatedBackingStoreTransaction):
+        (WebCore::IDBBackingStoreLevelDB::removeBackingStoreTransaction):
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBBackingStoreTransactionLevelDB.cpp:
+        (WebCore::IDBBackingStoreTransactionLevelDB::IDBBackingStoreTransactionLevelDB):
+        (WebCore::IDBBackingStoreTransactionLevelDB::~IDBBackingStoreTransactionLevelDB):
+        (WebCore::IDBBackingStoreTransactionLevelDB::resetTransaction):
+        * Modules/indexeddb/leveldb/IDBBackingStoreTransactionLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.cpp:
+        (WebCore::IDBServerConnectionLevelDB::IDBServerConnectionLevelDB):
+        (WebCore::IDBServerConnectionLevelDB::deprecatedBackingStoreTransaction):
+        (WebCore::IDBServerConnectionLevelDB::openTransaction):
+        (WebCore::IDBServerConnectionLevelDB::beginTransaction):
+        (WebCore::IDBServerConnectionLevelDB::commitTransaction):
+        (WebCore::IDBServerConnectionLevelDB::resetTransaction):
+        (WebCore::IDBServerConnectionLevelDB::rollbackTransaction):
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.h:
+
 2013-11-12  Andy Estes  <aestes@apple.com>
 
         Fix the Mountain Lion build after r159171.

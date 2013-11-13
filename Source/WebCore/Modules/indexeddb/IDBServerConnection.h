@@ -27,7 +27,9 @@
 #define IDBServerConnection_h
 
 #include "IDBMetadata.h"
+#include "IndexedDB.h"
 #include <functional>
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -36,6 +38,7 @@
 namespace WebCore {
 
 class IDBBackingStoreInterface;
+class IDBBackingStoreTransactionInterface;
 
 // This interface provides a single asynchronous layer between the web-facing frontend
 // and the I/O performing backend of IndexedDatabase.
@@ -44,9 +47,10 @@ class IDBServerConnection : public RefCounted<IDBServerConnection> {
 public:
     virtual ~IDBServerConnection() { }
 
-    // FIXME: For now, server connection provides a synchronous accessor to the in-process backing store.
+    // FIXME: For now, server connection provides a synchronous accessor to the in-process backing store objects.
     // This is temporary and will be removed soon.
     virtual IDBBackingStoreInterface* deprecatedBackingStore() = 0;
+    virtual IDBBackingStoreTransactionInterface* deprecatedBackingStoreTransaction(int64_t transactionID) = 0;
 
     virtual bool isClosed() = 0;
 
@@ -57,6 +61,13 @@ public:
     virtual void getOrEstablishIDBDatabaseMetadata(const String& name, GetIDBDatabaseMetadataFunction) = 0;
     virtual void deleteDatabase(const String& name, BoolCallbackFunction successCallback) = 0;
     virtual void close() = 0;
+
+    // Transaction-level operations
+    virtual void openTransaction(int64_t transactionID, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode, BoolCallbackFunction successCallback) = 0;
+    virtual void beginTransaction(int64_t transactionID, std::function<void()> completionCallback) = 0;
+    virtual void commitTransaction(int64_t transactionID, BoolCallbackFunction successCallback) = 0;
+    virtual void resetTransaction(int64_t transactionID, std::function<void()> completionCallback) = 0;
+    virtual void rollbackTransaction(int64_t transactionID, std::function<void()> completionCallback) = 0;
 };
 
 } // namespace WebCore

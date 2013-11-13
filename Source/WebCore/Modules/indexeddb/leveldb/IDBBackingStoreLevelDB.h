@@ -44,6 +44,7 @@ namespace WebCore {
 class LevelDBComparator;
 class LevelDBDatabase;
 class LevelDBTransaction;
+class IDBBackingStoreTransactionLevelDB;
 class IDBKey;
 class IDBKeyRange;
 class SecurityOrigin;
@@ -67,7 +68,7 @@ public:
     static PassRefPtr<IDBBackingStoreLevelDB> openInMemory(const String& identifier, LevelDBFactory*);
     WeakPtr<IDBBackingStoreLevelDB> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
 
-    virtual PassRefPtr<IDBBackingStoreTransactionInterface> createBackingStoreTransaction();
+    virtual void establishBackingStoreTransaction(int64_t transactionID);
 
     virtual Vector<String> getDatabaseNames();
 
@@ -109,6 +110,9 @@ public:
 
     static int compareIndexKeys(const LevelDBSlice&, const LevelDBSlice&);
 
+    IDBBackingStoreTransactionInterface* deprecatedBackingStoreTransaction(int64_t transactionID);
+    void removeBackingStoreTransaction(IDBBackingStoreTransactionLevelDB*);
+
 protected:
     IDBBackingStoreLevelDB(const String& identifier, PassOwnPtr<LevelDBDatabase>, PassOwnPtr<LevelDBComparator>);
 
@@ -128,6 +132,8 @@ private:
     OwnPtr<LevelDBDatabase> m_db;
     OwnPtr<LevelDBComparator> m_comparator;
     WeakPtrFactory<IDBBackingStoreLevelDB> m_weakFactory;
+
+    HashMap<int64_t, RefPtr<IDBBackingStoreTransactionLevelDB>> m_backingStoreTransactions;
 };
 
 } // namespace WebCore
