@@ -35,7 +35,7 @@
 
 namespace WebKit {
 
-class WebBatteryStatus : public API::TypedObject<API::Object::TypeBatteryStatus> {
+class WebBatteryStatus : public API::TypedObject<API::Object::Type::BatteryStatus> {
 public:
     struct Data {
         void encode(CoreIPC::ArgumentEncoder&) const;

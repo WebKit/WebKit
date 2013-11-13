@@ -39,7 +39,7 @@ namespace WebKit {
 class WebContext;
 class WebBatteryStatus;
 
-class WebBatteryManagerProxy : public API::TypedObject<API::Object::TypeBatteryManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
+class WebBatteryManagerProxy : public API::TypedObject<API::Object::Type::BatteryManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
     static const char* supplementName();
 

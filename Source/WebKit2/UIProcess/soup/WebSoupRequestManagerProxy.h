@@ -34,7 +34,7 @@ namespace WebKit {
 class WebContext;
 class WebData;
 
-class WebSoupRequestManagerProxy : public API::TypedObject<API::Object::TypeSoupRequestManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
+class WebSoupRequestManagerProxy : public API::TypedObject<API::Object::Type::SoupRequestManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
     static const char* supplementName();
 

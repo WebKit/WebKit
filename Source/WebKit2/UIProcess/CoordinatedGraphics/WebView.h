@@ -46,7 +46,7 @@ class CoordinatedGraphicsScene;
 
 namespace WebKit {
 
-class WebView : public API::TypedObject<API::Object::TypeView>, public PageClient {
+class WebView : public API::TypedObject<API::Object::Type::View>, public PageClient {
 public:
     virtual ~WebView();
 

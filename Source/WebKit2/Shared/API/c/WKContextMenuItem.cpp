@@ -44,7 +44,7 @@ WKTypeID WKContextMenuItemGetTypeID()
 #if ENABLE(CONTEXT_MENUS)
     return toAPI(WebContextMenuItem::APIType);
 #else
-    return toAPI(API::Object::TypeNull);
+    return toAPI(API::Object::Type::Null);
 #endif
 }
 
