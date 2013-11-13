@@ -1,3 +1,11 @@
+2013-11-13  Antti Koivisto  <antti@apple.com>
+
+        This was supposed to test overflow-wrap:break-word instead of word-break:break-all.
+
+        Rubber-stamped by Andreas Kling.
+
+        * Layout/line-layout-simple.html:
+
 2013-11-12  Andreas Kling  <akling@apple.com>
 
         Remove body onload handler from html5-8266.html that was causing
