@@ -346,6 +346,7 @@ webkit2_sources += \
 	Source/WebKit2/Shared/API/c/WKData.cpp \
 	Source/WebKit2/Shared/API/c/WKData.h \
 	Source/WebKit2/Shared/API/c/WKDeclarationSpecifiers.h \
+	Source/WebKit2/Shared/API/c/WKDeprecatedFunctions.cpp \
 	Source/WebKit2/Shared/API/c/WKDictionary.cpp \
 	Source/WebKit2/Shared/API/c/WKDictionary.h \
 	Source/WebKit2/Shared/API/c/WKError.cpp \

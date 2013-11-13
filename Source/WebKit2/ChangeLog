@@ -1,3 +1,10 @@
+2013-11-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r159199 to make cmake and GTK build happy.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+
 2013-11-13  Anders Carlsson  <andersca@apple.com>
 
         Add WKDeprecatedFunctions.cpp and move WKArrayIsMutable there
