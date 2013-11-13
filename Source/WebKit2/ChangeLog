@@ -1,3 +1,15 @@
+2013-11-12  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        Fix GTK build after r159142
+        https://bugs.webkit.org/show_bug.cgi?id=124243
+
+        Reviewed by Anders Carlsson.
+
+        Use Vector + ImmutableArray instead of MutableArray
+
+        * UIProcess/API/gtk/WebKitContextMenuItem.cpp:
+        (webkitContextMenuItemCreate):
+
 2013-11-12  Anders Carlsson  <andersca@apple.com>
 
         Remove ImmutableArray::isMutable
