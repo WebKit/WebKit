@@ -3241,6 +3241,14 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 #endif
 }
 
+- (BOOL)isUsingUISideCompositing
+{
+    if (DrawingAreaProxy* drawingArea = _data->_page->drawingArea())
+        return drawingArea->type() == DrawingAreaTypeRemoteLayerTree;
+
+    return NO;
+}
+
 @end
 
 @implementation WKResponderChainSink

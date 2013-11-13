@@ -1,3 +1,17 @@
+2013-11-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Expose a private flag on WKView to indicate whether it's using a remote layer tree drawing area
+        https://bugs.webkit.org/show_bug.cgi?id=124317
+
+        Reviewed by Anders Carlsson.
+        
+        Expose isUsingUISideCompositing on WKView in the private header,
+        which returns YES if the view is using a DrawingAreaTypeRemoteLayerTree.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView isUsingUISideCompositing]):
+        * UIProcess/API/mac/WKViewPrivate.h:
+
 2013-11-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         Maybe the last attempt to fix the GTK build.
