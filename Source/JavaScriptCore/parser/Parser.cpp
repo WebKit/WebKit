@@ -89,7 +89,6 @@ void Parser<LexerType>::logError(bool)
         return;
     StringPrintStream stream;
     printUnexpectedTokenText(stream);
-    stream.print(". ");
     setErrorMessage(stream.toString());
 }
 

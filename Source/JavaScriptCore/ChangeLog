@@ -1,3 +1,13 @@
+2013-11-13  Tim Horton  <timothy_horton@apple.com>
+
+        r159210 added a period where there previously wasn't one, breaking >100 tests
+
+        Rubber-stamped by Oliver Hunt.
+
+        * parser/Parser.cpp:
+        (JSC::::logError):
+        Remove the extra period.
+
 2013-11-13  Oliver Hunt  <oliver@apple.com>
 
         REGRESSION (r158014): Many webpages throw stack overflow exceptions on iOS (because Parser::parseMemberExpression uses ~130K more stack)
