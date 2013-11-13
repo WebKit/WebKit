@@ -60,6 +60,9 @@ crypto.subtle.importKey("jwk", asciiToArrayBuffer(JSON.stringify(publicKeyJSON))
     shouldBe("byteArrayToHexString(privateKey.algorithm.publicExponent)", "'[01 00 01]'");
     shouldBe("privateKey.algorithm.hash.name", "'sha-256'");
     finishJSTest();
+}, function(result) {
+    debug("FAIL");
+    finishJSTest();
 });
 </script>
 

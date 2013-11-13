@@ -3,6 +3,16 @@
         Implement key generation and JWK import for RSASSA-PKCS1-v1_5
         https://bugs.webkit.org/show_bug.cgi?id=124236
 
+        * platform/mac/TestExpectations: Update expectations for Mountain Lion.
+        I'll investigate this later.
+
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk.html: Quickly fail is promise is rejected.
+
+2013-11-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Implement key generation and JWK import for RSASSA-PKCS1-v1_5
+        https://bugs.webkit.org/show_bug.cgi?id=124236
+
         Reviewed by Sam Weinig.
 
         * crypto/subtle/resources/common.js:

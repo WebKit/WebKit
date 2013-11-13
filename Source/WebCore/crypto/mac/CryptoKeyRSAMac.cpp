@@ -110,7 +110,13 @@ void CryptoKeyRSA::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& 
 
     ASSERT(CCRSAGetKeyType(m_platformKey) == ccRSAKeyPublic || CCRSAGetKeyType(m_platformKey) == ccRSAKeyPrivate);
     bool platformKeyIsPublic = CCRSAGetKeyType(m_platformKey) == ccRSAKeyPublic;
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     CCRSACryptorRef publicKey = platformKeyIsPublic ? m_platformKey : CCRSACryptorGetPublicKeyFromPrivateKey(m_platformKey);
+#else
+    if (!platformKeyIsPublic)
+        return;
+    CCRSACryptorRef publicKey = m_platformKey;
+#endif
 
     size_t modulusLength;
     size_t exponentLength;
