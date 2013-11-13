@@ -103,7 +103,7 @@ void TextPainter::paintText()
     ASSERT(m_savedDrawingStateForMask.m_textPaintStyle);
     ASSERT(m_savedDrawingStateForMask.m_selectionPaintStyle);
     
-    FloatPoint boxOrigin = boxRect().location();
+    FloatPoint boxOrigin = m_boxRect.location();
 
     if (!m_paintSelectedTextOnly) {
         // For stroked painting, we have to change the text drawing mode. It's probably dangerous to leave that mutated as a side

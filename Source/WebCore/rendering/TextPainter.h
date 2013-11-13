@@ -64,7 +64,6 @@ public:
     TextRun&, FloatRect& boxRect, FloatPoint& textOrigin, int emphasisMarkOffset, const ShadowData* textShadow, const ShadowData* selectionShadow,
     bool textBoxIsHorizontal, TextPaintStyle& nonSelectionPaintStyle, TextPaintStyle& selectionPaintStyle);
     
-    const FloatRect& boxRect() const { return m_boxRect; }
     void paintText();
     void paintTextInContext(GraphicsContext&, float amountToIncreaseStrokeWidthBy);
 
