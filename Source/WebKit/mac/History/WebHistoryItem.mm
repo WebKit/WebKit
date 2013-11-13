@@ -548,14 +548,6 @@ WebHistoryItem *kit(HistoryItem* item)
     core(_private)->setLastVisitedTime(time);
 }
 
-// FIXME: <rdar://problem/4880065> - Push Global History into WebCore
-// Once that task is complete, this accessor can go away
-- (NSCalendarDate *)_lastVisitedDate
-{
-    ASSERT_MAIN_THREAD();
-    return [[[NSCalendarDate alloc] initWithTimeIntervalSinceReferenceDate:core(_private)->lastVisitedTime()] autorelease];
-}
-
 - (WebHistoryItem *)targetItem
 {    
     ASSERT_MAIN_THREAD();

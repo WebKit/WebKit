@@ -43,7 +43,6 @@
 
 - (NSString *)RSSFeedReferrer;
 - (void)setRSSFeedReferrer:(NSString *)referrer;
-- (NSCalendarDate *)_lastVisitedDate;
 
 - (NSArray *)_redirectURLs;
 

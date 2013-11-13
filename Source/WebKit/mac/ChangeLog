@@ -1,3 +1,15 @@
+2013-11-12  Anders Carlsson  <andersca@apple.com>
+
+        Remove -[WebHistoryItem _lastVisitedDate]
+        https://bugs.webkit.org/show_bug.cgi?id=124250
+
+        Reviewed by Mark Rowe.
+
+        This method is not called by anyone and NSCalendarDate is deprecated so get rid of it.
+
+        * History/WebHistoryItem.mm:
+        * History/WebHistoryItemPrivate.h:
+
 2013-11-11  Anders Carlsson  <andersca@apple.com>
 
         FrameFilter can just be an std::function instead
