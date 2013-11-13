@@ -1,3 +1,111 @@
+2013-11-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Implement key generation and JWK import for RSASSA-PKCS1-v1_5
+        https://bugs.webkit.org/show_bug.cgi?id=124236
+
+        Reviewed by Sam Weinig.
+
+        Tests: crypto/subtle/rsassa-pkcs1-v1_5-generate-key.html
+               crypto/subtle/rsassa-pkcs1-v1_5-import-jwk.html
+
+        * WebCore.xcodeproj/project.pbxproj: Added new files.
+
+        * bindings/js/JSCryptoAlgorithmBuilder.cpp:
+        (WebCore::JSCryptoAlgorithmBuilder::add):
+        * bindings/js/JSCryptoAlgorithmBuilder.h:
+        * crypto/CryptoAlgorithmDescriptionBuilder.h:
+        Added a way to add an Uint8Array, as needed for RSA key.algorithm.publicExponent.
+
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::createAesCbcParams): Removed unneeded JSC prefixes.
+        (WebCore::createAesKeyGenParams): Ditto.
+        (WebCore::createHmacParams): Ditto.
+        (WebCore::createHmacKeyParams): Ditto.
+        (WebCore::createRsaKeyGenParams): Added. 
+        (WebCore::createRsaSsaKeyParams): Added. WebCrypto currently doesn't specify any
+        parameters for importKey, so the structure remains blank (unlike with JWK).
+        (WebCore::createRsaSsaParams): Added (currently unused, will be sued for sign/verify soon).
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForEncrypt): Removed unneeded JSC prefixes.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDecrypt): Ditto.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForSign): Added support for RSAES_PKCS1_v1_5.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForVerify): Ditto.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDigest): Removed unneeded JSC prefixes.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForGenerateKey): Ditto.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDeriveKey): Ditto.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDeriveBits): Ditto.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForImportKey): Added support for RSAES_PKCS1_v1_5.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForExportKey): Removed unneeded JSC prefixes.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForWrapKey): Ditto.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForUnwrapKey): Ditto.
+
+        * bindings/js/JSCryptoKeySerializationJWK.h:
+        * bindings/js/JSCryptoKeySerializationJWK.cpp:
+        (WebCore::getJSArrayFromJSON): Added.
+        (WebCore::getBigIntegerVectorFromJSON): Added.
+        (WebCore::createRSASSAKeyParameters): Create parameters for key import. The key
+        will remember which algorithm it's allowed to be used with.
+        (WebCore::JSCryptoKeySerializationJWK::reconcileAlgorithm): Added support for
+        RS256...RS512 (tha is, RSAES_PKCS1_v1_5 with SHA-256...SHA-512).
+        (WebCore::JSCryptoKeySerializationJWK::keyDataOctetSequence): Split out of keyData().
+        (WebCore::JSCryptoKeySerializationJWK::keyDataRSAComponents): Added code to read
+        RSA key components from JWK.
+        (WebCore::JSCryptoKeySerializationJWK::keyData): Call one of the above functions.
+
+        * crypto/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp: Added.
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::sign):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::verify):
+        Placeholders.
+
+        * crypto/CryptoKey.h: (WebCore::CryptoKeyClass): Added RSA key class for poor man's RTTI.
+
+        * crypto/CryptoKeyData.h: (WebCore::CryptoKeyData::FormatRSAComponents): Added RSAComponents
+        for poor man's RTTI.
+
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp: (WebCore::CryptoAlgorithmAES_CBC::importKey): 
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp: (WebCore::CryptoAlgorithmHMAC::importKey):
+        * crypto/keys/CryptoKeyAES.h:
+        (WebCore::isCryptoKeyAES):
+        (WebCore::toCryptoKeyAES):
+        * crypto/keys/CryptoKeyDataOctetSequence.h:
+        (WebCore::toCryptoKeyDataOctetSequence):
+        * crypto/keys/CryptoKeyHMAC.h:
+        (WebCore::isCryptoKeyHMAC):
+        (WebCore::toCryptoKeyHMAC):
+        * crypto/mac/CryptoAlgorithmAES_CBCMac.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::encrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::decrypt):
+        * crypto/mac/CryptoAlgorithmHMACMac.cpp:
+        (WebCore::CryptoAlgorithmHMAC::sign):
+        (WebCore::CryptoAlgorithmHMAC::verify):
+        Switched from "as" functions to "is" and "to" ones, as that's more idiomatic.
+
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp: Added.
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.h: Added.
+        Glue code for importKey/generateKey for now.
+
+        * crypto/keys/CryptoKeyDataRSAComponents.cpp: Added.
+        (WebCore::CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents):
+        (WebCore::CryptoKeyDataRSAComponents::~CryptoKeyDataRSAComponents):
+        * crypto/keys/CryptoKeyDataRSAComponents.h: Added.
+        (WebCore::toCryptoKeyDataRSAComponents):
+        Added a structure to hold RSA key components, extracted from JWK or another format.
+
+        * crypto/keys/CryptoKeyRSA.h: Added.
+        * crypto/mac/CryptoKeyRSAMac.cpp: Added.
+
+        * crypto/mac/CryptoAlgorithmRegistryMac.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms):
+        Register RSASSA_PKCS1_v1_5.
+
+        * crypto/parameters/CryptoAlgorithmHmacKeyParams.h: Added a constructor to make
+        sure that hasLength is never left uninitialized, even when reading formats that
+        don't contain a length.
+
+        * crypto/parameters/CryptoAlgorithmRsaKeyGenParams.h: Added.
+        * crypto/parameters/CryptoAlgorithmRsaSsaKeyParams.h: Added.
+        * crypto/parameters/CryptoAlgorithmRsaSsaParams.h: Added.
+        Added parameter structures that are needed for RSASSA_PKCS1_v1_5.
+
 2013-11-12  Alexey Proskuryakov  <ap@apple.com>
 
         Disable WebCrypto on Mountain Lion

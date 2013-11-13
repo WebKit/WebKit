@@ -23,39 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoKeyDataOctetSequence_h
-#define CryptoKeyDataOctetSequence_h
+#ifndef CryptoAlgorithmRSASSA_PKCS1_v1_5_h
+#define CryptoAlgorithmRSASSA_PKCS1_v1_5_h
 
-#include "CryptoKeyData.h"
-#include <wtf/Vector.h>
+#include "CryptoAlgorithm.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-class CryptoKeyDataOctetSequence FINAL : public CryptoKeyData {
+class CryptoAlgorithmRSASSA_PKCS1_v1_5 FINAL : public CryptoAlgorithm {
 public:
-    static std::unique_ptr<CryptoKeyDataOctetSequence> create(const Vector<char>& keyData)
-    {
-        return std::unique_ptr<CryptoKeyDataOctetSequence>(new CryptoKeyDataOctetSequence(keyData));
-    }
-    virtual ~CryptoKeyDataOctetSequence();
+    static const char* const s_name;
+    static const CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5;
 
-    const Vector<char>& octetSequence() const { return m_keyData; }
+    static std::unique_ptr<CryptoAlgorithm> create();
+
+    virtual CryptoAlgorithmIdentifier identifier() const OVERRIDE;
+
+    virtual void sign(const CryptoAlgorithmParameters&, const CryptoKey&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
+    virtual void verify(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData& signature, const Vector<CryptoOperationData>& data, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
+    virtual void generateKey(const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
+    virtual void importKey(const CryptoAlgorithmParameters&, const CryptoKeyData&, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
 
 private:
-    CryptoKeyDataOctetSequence(const Vector<char>&);
-
-    Vector<char> m_keyData;
+    CryptoAlgorithmRSASSA_PKCS1_v1_5();
+    virtual ~CryptoAlgorithmRSASSA_PKCS1_v1_5();
 };
 
-inline const CryptoKeyDataOctetSequence& toCryptoKeyDataOctetSequence(const CryptoKeyData& data)
-{
-    ASSERT(data.format() == CryptoKeyData::Format::OctetSequence);
-    return static_cast<const CryptoKeyDataOctetSequence&>(data);
 }
 
-} // namespace WebCore
-
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoKeyDataOctetSequence_h
+#endif // CryptoAlgorithmRSASSA_PKCS1_v1_5_h

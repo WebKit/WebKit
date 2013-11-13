@@ -36,7 +36,8 @@ class CryptoKeyData {
 WTF_MAKE_NONCOPYABLE(CryptoKeyData);
 public:
     ENUM_CLASS(Format) {
-        OctetSequence
+        OctetSequence,
+        RSAComponents
     };
 
     CryptoKeyData(Format format)

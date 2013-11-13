@@ -30,6 +30,8 @@
 
 #include <runtime/ObjectConstructor.h>
 #include <runtime/Operations.h>
+#include <runtime/TypedArrays.h>
+#include <runtime/TypedArrayInlines.h>
 
 using namespace JSC;
 
@@ -62,6 +64,14 @@ void JSCryptoAlgorithmBuilder::add(const char* key, const String& value)
     VM& vm = m_exec->vm();
     Identifier identifier(&vm, key);
     m_dictionary->putDirect(vm, identifier, jsString(m_exec, value));
+}
+
+void JSCryptoAlgorithmBuilder::add(const char* key, const Vector<uint8_t>& buffer)
+{
+    VM& vm = m_exec->vm();
+    Identifier identifier(&vm, key);
+    RefPtr<Uint8Array> arrayView = Uint8Array::create(buffer.data(), buffer.size());
+    m_dictionary->putDirect(vm, identifier, arrayView->wrap(m_exec, vm.dynamicGlobalObject));
 }
 
 void JSCryptoAlgorithmBuilder::add(const char* key, const CryptoAlgorithmDescriptionBuilder& nestedBuilder)

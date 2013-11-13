@@ -23,39 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoKeyDataOctetSequence_h
-#define CryptoKeyDataOctetSequence_h
-
-#include "CryptoKeyData.h"
-#include <wtf/Vector.h>
+#include "config.h"
+#include "CryptoAlgorithmRSASSA_PKCS1_v1_5.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#include "ExceptionCode.h"
+
 namespace WebCore {
 
-class CryptoKeyDataOctetSequence FINAL : public CryptoKeyData {
-public:
-    static std::unique_ptr<CryptoKeyDataOctetSequence> create(const Vector<char>& keyData)
-    {
-        return std::unique_ptr<CryptoKeyDataOctetSequence>(new CryptoKeyDataOctetSequence(keyData));
-    }
-    virtual ~CryptoKeyDataOctetSequence();
-
-    const Vector<char>& octetSequence() const { return m_keyData; }
-
-private:
-    CryptoKeyDataOctetSequence(const Vector<char>&);
-
-    Vector<char> m_keyData;
-};
-
-inline const CryptoKeyDataOctetSequence& toCryptoKeyDataOctetSequence(const CryptoKeyData& data)
+void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(const CryptoAlgorithmParameters&, const CryptoKey&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
 {
-    ASSERT(data.format() == CryptoKeyData::Format::OctetSequence);
-    return static_cast<const CryptoKeyDataOctetSequence&>(data);
+    ec = NOT_SUPPORTED_ERR;
+}
+
+void CryptoAlgorithmRSASSA_PKCS1_v1_5::verify(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData& /*signature*/, const Vector<CryptoOperationData>& /*data*/, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
+{
+    ec = NOT_SUPPORTED_ERR;
 }
 
 } // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoKeyDataOctetSequence_h
