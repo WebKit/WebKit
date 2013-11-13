@@ -29,6 +29,7 @@
 #include "FontCache.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
+#include "HTMLTextFormControlElement.h"
 #include "HitTestLocation.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
@@ -38,6 +39,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderStyle.h"
 #include "RenderText.h"
+#include "RenderTextControl.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include "SimpleLineLayoutResolver.h"
@@ -52,6 +54,9 @@ namespace SimpleLineLayout {
 template <typename CharacterType>
 static bool canUseForText(const CharacterType* text, unsigned length, const SimpleFontData& fontData)
 {
+    // FIXME: <textarea maxlength=0> generates empty text node.
+    if (!length)
+        return false;
     for (unsigned i = 0; i < length; ++i) {
         UChar character = text[i];
         if (character == ' ')
@@ -113,6 +118,12 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
     if (flow.parent()->isDeprecatedFlexibleBox())
         return false;
+    // FIXME: Implementation of wrap=hard looks into lineboxes.
+    if (flow.parent()->isTextArea() && flow.parent()->element()->fastHasAttribute(HTMLNames::wrapAttr))
+        return false;
+    // FIXME: Placeholders do something strange.
+    if (flow.parent()->isTextControl() && toRenderTextControl(*flow.parent()).textFormControlElement().placeholderElement())
+        return false;
     // These tests only works during layout. Outside layout this function may give false positives.
     if (flow.view().layoutState()) {
 #if ENABLE(CSS_SHAPES)
@@ -165,8 +176,6 @@ bool canUseFor(const RenderBlockFlow& flow)
     if (style.hasPseudoStyle(FIRST_LINE) || style.hasPseudoStyle(FIRST_LETTER))
         return false;
     if (style.hasTextCombine())
-        return false;
-    if (style.overflowWrap() != NormalOverflowWrap)
         return false;
     if (style.backgroundClip() == TextFillBox)
         return false;
@@ -282,6 +291,7 @@ void createTextRuns(Layout::RunVector& runs, unsigned& lineCount, RenderBlockFlo
     bool collapseWhitespace = style.collapseWhiteSpace();
     bool preserveNewline = style.preserveNewline();
     bool wrapLines = style.autoWrap();
+    bool breakWordOnOverflow = style.overflowWrap() == BreakOverflowWrap && (wrapLines || preserveNewline);
 
     const CharacterType* text = textRenderer.text()->getCharacters<CharacterType>();
     const unsigned textLength = textRenderer.textLength();
@@ -362,6 +372,26 @@ void createTextRuns(Layout::RunVector& runs, unsigned& lineCount, RenderBlockFlo
                 lineRuns.append(Run(wordStart + 1, lineRuns.last().right));
             }
 
+            if (!lineWidth.fitsOnLine() && breakWordOnOverflow) {
+                // Backtrack and start measuring character-by-character.
+                lineWidth.addUncommittedWidth(-lineWidth.uncommittedWidth());
+                unsigned splitEnd = wordStart;
+                for (; splitEnd < wordEnd; ++splitEnd) {
+                    float charWidth = textWidth(textRenderer, text, textLength, splitEnd, splitEnd + 1, 0, font, tabWidth);
+                    lineWidth.addUncommittedWidth(charWidth);
+                    if (!lineWidth.fitsOnLine() && splitEnd > lineStart)
+                        break;
+                    lineWidth.commit();
+                }
+                lineRuns.last().end = splitEnd;
+                lineRuns.last().right = lineWidth.committedWidth();
+                lineEnd = splitEnd;
+                // To match line boxes, set single-space-only line width to zero.
+                if (text[lineRuns.last().start] == ' ' && lineRuns.last().start + 1 == lineRuns.last().end)
+                    lineRuns.last().right = lineRuns.last().left;
+                break;
+            }
+
             lineWidth.commit();
 
             lineRuns.last().right = lineWidth.committedWidth();
@@ -371,7 +401,7 @@ void createTextRuns(Layout::RunVector& runs, unsigned& lineCount, RenderBlockFlo
             if (collapseWhitespace)
                 wordEnd = skipWhitespaces(text, wordEnd, textLength, preserveNewline);
 
-            if (wrapLines && !lineWidth.fitsOnLine()) {
+            if (!lineWidth.fitsOnLine() && wrapLines) {
                 // The first run on the line overflows.
                 ASSERT(lineRuns.size() == 1);
                 break;

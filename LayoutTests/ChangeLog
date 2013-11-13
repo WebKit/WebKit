@@ -1,3 +1,28 @@
+2013-11-12  Antti Koivisto  <antti@apple.com>
+
+        Support overflow-wrap:break-word on simple line path
+        https://bugs.webkit.org/show_bug.cgi?id=124206
+
+        Reviewed by Andreas Kling.
+        
+        Force these to use line boxes, add ref test versions comparing the paths.
+
+        * fast/forms/basic-textareas-quirks-simple-lines-expected.html: Added.
+        * fast/forms/basic-textareas-quirks-simple-lines.html: Added.
+        * fast/forms/basic-textareas-quirks.html:
+        * fast/forms/linebox-overflow-in-textarea-padding-simple-lines-expected.html: Added.
+        * fast/forms/linebox-overflow-in-textarea-padding-simple-lines.html: Added.
+        * fast/forms/linebox-overflow-in-textarea-padding.html:
+        * fast/forms/negativeLineHeight-simple-lines-expected.html: Added.
+        * fast/forms/negativeLineHeight-simple-lines.html: Added.
+        * fast/forms/negativeLineHeight.html:
+        * fast/forms/textAreaLineHeight-simple-lines-expected.html: Added.
+        * fast/forms/textAreaLineHeight-simple-lines.html: Added.
+        * fast/forms/textAreaLineHeight.html:
+        * fast/parser/entity-comment-in-textarea.html: Made this independent of line layout mode.
+        * fast/replaced/width100percent-textarea.html:
+        * platform/mac/fast/parser/entity-comment-in-textarea-expected.txt:
+
 2013-11-13  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Removing fast/mediastream/constructors.html LayoutTest

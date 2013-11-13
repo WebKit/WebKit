@@ -1,3 +1,30 @@
+2013-11-12  Antti Koivisto  <antti@apple.com>
+
+        Support overflow-wrap:break-word on simple line path
+        https://bugs.webkit.org/show_bug.cgi?id=124206
+
+        Reviewed by Andreas Kling.
+
+        Pure text documents are rendered with break-word. It is also common in discussion board type sites.
+        
+        This also makes many <textarea>'s rendered using the simple line path.
+
+        Tests: fast/forms/basic-textareas-quirks-simple-lines.html
+               fast/forms/linebox-overflow-in-textarea-padding-simple-lines.html
+               fast/forms/negativeLineHeight-simple-lines.html
+               fast/forms/textAreaLineHeight-simple-lines.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateShapeInsideInfoAfterStyleChange):
+        (WebCore::RenderBlock::markShapeInsideDescendantsForLayout):
+        
+            Invalidate the cached line layout mode on shape-inside style change.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForText):
+        (WebCore::SimpleLineLayout::canUseFor):
+        (WebCore::SimpleLineLayout::createTextRuns):
+
 2013-11-13  Andreas Kling  <akling@apple.com>
 
         Turn some not-so-rare ElementRareData bits into Node flags.

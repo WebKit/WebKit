@@ -1419,10 +1419,9 @@ void RenderBlock::updateShapeInsideInfoAfterStyleChange(const ShapeValue* shapeI
     if (shapeInside) {
         ShapeInsideInfo* shapeInsideInfo = ensureShapeInsideInfo();
         shapeInsideInfo->dirtyShapeSize();
-    } else {
+    } else
         setShapeInsideInfo(nullptr);
-        markShapeInsideDescendantsForLayout();
-    }
+    markShapeInsideDescendantsForLayout();
 }
 
 ShapeInsideInfo* RenderBlock::ensureShapeInsideInfo()
@@ -1452,6 +1451,7 @@ void RenderBlock::markShapeInsideDescendantsForLayout()
         return;
     if (childrenInline()) {
         setNeedsLayout();
+        invalidateLineLayoutPath();
         return;
     }
 
