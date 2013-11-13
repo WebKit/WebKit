@@ -1,3 +1,16 @@
+2013-11-13  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Removing fast/mediastream/constructors.html LayoutTest
+        https://bugs.webkit.org/show_bug.cgi?id=124259
+
+        Reviewed by Philippe Normand.
+
+        Apart from being wrong, it was testing the mediastream WebRTC objects constructors, which are already being
+        tested in each particular mediastream WebRTC object LayoutTest.
+
+        * fast/mediastream/constructors-expected.txt: Removed.
+        * fast/mediastream/constructors.html: Removed.
+
 2013-11-13  Alexey Proskuryakov  <ap@apple.com>
 
         Implement key generation and JWK import for RSASSA-PKCS1-v1_5
