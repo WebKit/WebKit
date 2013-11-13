@@ -112,12 +112,15 @@ void CryptoKeyRSA::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& 
     bool platformKeyIsPublic = CCRSAGetKeyType(m_platformKey) == ccRSAKeyPublic;
     CCRSACryptorRef publicKey = platformKeyIsPublic ? m_platformKey : CCRSACryptorGetPublicKeyFromPrivateKey(m_platformKey);
 
-    size_t modulusLength;
-    size_t exponentLength;
+    uint8_t modulus[16384];
+    size_t modulusLength = sizeof(modulus);
     uint8_t publicExponent[16384];
-    size_t dummy;
-    uint8_t buf[16384];
-    CCCryptorStatus status = CCRSAGetKeyComponents(publicKey, buf, &modulusLength, publicExponent, &exponentLength, buf, &dummy, buf, &dummy);
+    size_t exponentLength = sizeof(16384);
+    uint8_t p[16384];
+    size_t pLength = sizeof(p);
+    uint8_t q[16384];
+    size_t qLength = sizeof(q);
+    CCCryptorStatus status = CCRSAGetKeyComponents(publicKey, modulus, &modulusLength, publicExponent, &exponentLength, p, &pLength, q, &qLength);
     if (!platformKeyIsPublic) {
         // CCRSACryptorGetPublicKeyFromPrivateKey has "Get" in the name, but its result needs to be released (see <rdar://problem/15449697>).
         CCRSACryptorRelease(publicKey);
