@@ -1,3 +1,13 @@
+2013-11-13  Andreas Kling  <akling@apple.com>
+
+        Generate casting helpers for scrolling tree classes.
+        <https://webkit.org/b/124286>
+
+        Added SCROLLING_STATE_NODE_TYPE_CASTS and used it to replace the
+        hand-written toFoo() casts for ScrollingStateNode subclasses.
+
+        Reviewed by Anders Carlsson.
+
 2013-11-13  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Determining if a line is inside of a shape should only happen in one place

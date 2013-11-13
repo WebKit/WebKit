@@ -37,7 +37,7 @@ namespace WebCore {
 
 class FixedPositionViewportConstraints;
 
-class ScrollingStateFixedNode : public ScrollingStateNode {
+class ScrollingStateFixedNode FINAL : public ScrollingStateNode {
 public:
     static PassOwnPtr<ScrollingStateFixedNode> create(ScrollingStateTree*, ScrollingNodeID);
 
@@ -56,7 +56,7 @@ private:
     ScrollingStateFixedNode(ScrollingStateTree*, ScrollingNodeID);
     ScrollingStateFixedNode(const ScrollingStateFixedNode&);
 
-    virtual bool isFixedNode() OVERRIDE { return true; }
+    virtual bool isFixedNode() const OVERRIDE { return true; }
 
     virtual void syncLayerPositionForViewportRect(const LayoutRect& viewportRect) OVERRIDE;
 
@@ -65,14 +65,7 @@ private:
     FixedPositionViewportConstraints m_constraints;
 };
 
-inline ScrollingStateFixedNode* toScrollingStateFixedNode(ScrollingStateNode* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isFixedNode());
-    return static_cast<ScrollingStateFixedNode*>(node);
-}
-    
-// This will catch anyone doing an unnecessary cast.
-void toScrollingStateFixedNode(const ScrollingStateFixedNode*);
+SCROLLING_STATE_NODE_TYPE_CASTS(ScrollingStateFixedNode, isFixedNode());
 
 } // namespace WebCore
 

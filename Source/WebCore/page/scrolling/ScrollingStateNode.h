@@ -49,9 +49,9 @@ public:
     ScrollingStateNode(ScrollingStateTree*, ScrollingNodeID);
     virtual ~ScrollingStateNode();
 
-    virtual bool isScrollingNode() { return false; }
-    virtual bool isFixedNode() { return false; }
-    virtual bool isStickyNode() { return false; }
+    virtual bool isScrollingNode() const { return false; }
+    virtual bool isFixedNode() const { return false; }
+    virtual bool isStickyNode() const { return false; }
 
     virtual PassOwnPtr<ScrollingStateNode> clone() = 0;
     PassOwnPtr<ScrollingStateNode> cloneAndReset();
@@ -112,8 +112,10 @@ private:
     RetainPtr<PlatformLayer> m_platformScrollLayer;
 #endif
     GraphicsLayer* m_graphicsLayer;
-
 };
+
+#define SCROLLING_STATE_NODE_TYPE_CASTS(ToValueTypeName, predicate) \
+    TYPE_CASTS_BASE(ToValueTypeName, ScrollingStateNode, value, value->predicate, value.predicate)
 
 } // namespace WebCore
 

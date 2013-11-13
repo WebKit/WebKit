@@ -37,7 +37,7 @@ namespace WebCore {
 
 class StickyPositionViewportConstraints;
 
-class ScrollingStateStickyNode : public ScrollingStateNode {
+class ScrollingStateStickyNode FINAL : public ScrollingStateNode {
 public:
     static PassOwnPtr<ScrollingStateStickyNode> create(ScrollingStateTree*, ScrollingNodeID);
 
@@ -56,7 +56,7 @@ private:
     ScrollingStateStickyNode(ScrollingStateTree*, ScrollingNodeID);
     ScrollingStateStickyNode(const ScrollingStateStickyNode&);
 
-    virtual bool isStickyNode() OVERRIDE { return true; }
+    virtual bool isStickyNode() const OVERRIDE { return true; }
 
     virtual void syncLayerPositionForViewportRect(const LayoutRect& viewportRect) OVERRIDE;
 
@@ -65,14 +65,7 @@ private:
     StickyPositionViewportConstraints m_constraints;
 };
 
-inline ScrollingStateStickyNode* toScrollingStateStickyNode(ScrollingStateNode* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isStickyNode());
-    return static_cast<ScrollingStateStickyNode*>(node);
-}
-    
-// This will catch anyone doing an unnecessary cast.
-void toScrollingStateStickyNode(const ScrollingStateStickyNode*);
+SCROLLING_STATE_NODE_TYPE_CASTS(ScrollingStateStickyNode, isStickyNode());
 
 } // namespace WebCore
 
