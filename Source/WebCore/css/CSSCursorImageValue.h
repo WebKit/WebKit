@@ -33,9 +33,9 @@ class SVGElement;
 
 class CSSCursorImageValue : public CSSValue {
 public:
-    static PassRefPtr<CSSCursorImageValue> create(PassRefPtr<CSSValue> imageValue, bool hasHotSpot, const IntPoint& hotSpot)
+    static PassRef<CSSCursorImageValue> create(PassRef<CSSValue> imageValue, bool hasHotSpot, const IntPoint& hotSpot)
     {
-        return adoptRef(new CSSCursorImageValue(imageValue, hasHotSpot, hotSpot));
+        return adoptRef(*new CSSCursorImageValue(std::move(imageValue), hasHotSpot, hotSpot));
     }
 
     ~CSSCursorImageValue();
@@ -62,7 +62,7 @@ public:
     bool equals(const CSSCursorImageValue&) const;
 
 private:
-    CSSCursorImageValue(PassRefPtr<CSSValue> imageValue, bool hasHotSpot, const IntPoint& hotSpot);
+    CSSCursorImageValue(PassRef<CSSValue> imageValue, bool hasHotSpot, const IntPoint& hotSpot);
 
 #if ENABLE(SVG)
     bool isSVGCursor() const;
@@ -70,7 +70,7 @@ private:
     void clearCachedImage();
 #endif
 
-    RefPtr<CSSValue> m_imageValue;
+    Ref<CSSValue> m_imageValue;
 
     bool m_hasHotSpot;
     IntPoint m_hotSpot;

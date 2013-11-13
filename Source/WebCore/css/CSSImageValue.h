@@ -44,7 +44,7 @@ public:
     // Returns a StyleCachedImage if the image is cached already, otherwise a StylePendingImage.
     StyleImage* cachedOrPendingImage();
 
-    const String& url() { return m_url; }
+    const String& url() const { return m_url; }
 
     String customCSSText() const;
 

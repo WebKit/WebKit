@@ -272,6 +272,12 @@ inline bool compareCSSValuePtr(const RefPtr<CSSValueType>& first, const RefPtr<C
     return first ? second && first->equals(*second) : !second;
 }
 
+template<typename CSSValueType>
+inline bool compareCSSValue(const Ref<CSSValueType>& first, const Ref<CSSValueType>& second)
+{
+    return first.get().equals(second.get());
+}
+
 #define CSS_VALUE_TYPE_CASTS(ToValueTypeName, predicate) \
     TYPE_CASTS_BASE(ToValueTypeName, CSSValue, value, value->predicate, value.predicate)
 

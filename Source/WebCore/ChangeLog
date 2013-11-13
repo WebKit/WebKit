@@ -1,5 +1,18 @@
 2013-11-13  Andreas Kling  <akling@apple.com>
 
+        Refalize CSSCursorImageValue.
+        <https://webkit.org/b/124272>
+
+        Make CSSCursorImageValue constructor return a PassRef, and have it
+        take the image CSSValue as a PassRef (and store it internally in a
+        Ref<CSSValue>.)
+
+        Had to add a Ref version of compareCSSValuePtr() to make this work.
+
+        Reviewed by Antti Koivisto.
+
+2013-11-13  Andreas Kling  <akling@apple.com>
+
         RenderTableSection: Cell structures don't need allocation padding.
         <https://webkit.org/b/124263>
 
