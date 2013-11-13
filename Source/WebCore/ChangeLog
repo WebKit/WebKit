@@ -1,3 +1,29 @@
+2013-11-12  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Make the placed floats tree use LayoutUnit instead of int
+        https://bugs.webkit.org/show_bug.cgi?id=124207
+
+        Reviewed by Alexandru Chiculita.
+
+        The dimensions of floats are in LayoutUnits, so it doesn't make sense
+        to be converting to ints for use in the placed floats tree.
+
+        Also add missed "explicit" to single argument FloatingObjects
+        constructor.
+
+        No new tests, no behavior change.
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::rangesIntersect):
+        (WebCore::ComputeFloatOffsetAdapter::ComputeFloatOffsetAdapter):
+        (WebCore::ComputeFloatOffsetAdapter::lowValue):
+        (WebCore::ComputeFloatOffsetAdapter::highValue):
+        (WebCore::FindNextFloatLogicalBottomAdapter::FindNextFloatLogicalBottomAdapter):
+        (WebCore::FindNextFloatLogicalBottomAdapter::lowValue):
+        (WebCore::FindNextFloatLogicalBottomAdapter::highValue):
+        * rendering/FloatingObjects.h:
+        * rendering/RenderFlowThread.h:
+
 2013-11-12  Alexey Proskuryakov  <ap@apple.com>
 
         Implement key generation and JWK import for RSASSA-PKCS1-v1_5

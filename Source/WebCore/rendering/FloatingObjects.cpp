@@ -99,7 +99,7 @@ std::unique_ptr<FloatingObject> FloatingObject::unsafeClone() const
     return cloneObject;
 }
 
-inline static bool rangesIntersect(int floatTop, int floatBottom, int objectTop, int objectBottom)
+inline static bool rangesIntersect(LayoutUnit floatTop, LayoutUnit floatBottom, LayoutUnit objectTop, LayoutUnit objectBottom)
 {
     if (objectTop >= floatBottom || objectBottom < floatTop)
         return false;
@@ -126,15 +126,15 @@ public:
 
     ComputeFloatOffsetAdapter(const RenderBlockFlow& renderer, LayoutUnit lineTop, LayoutUnit lineBottom, LayoutUnit offset)
         : m_renderer(renderer)
-        , m_lineTop(roundToInt(lineTop))
-        , m_lineBottom(roundToInt(lineBottom))
+        , m_lineTop(lineTop)
+        , m_lineBottom(lineBottom)
         , m_offset(offset)
         , m_outermostFloat(0)
     {
     }
 
-    int lowValue() const { return m_lineTop; }
-    int highValue() const { return m_lineBottom; }
+    LayoutUnit lowValue() const { return m_lineTop; }
+    LayoutUnit highValue() const { return m_lineBottom; }
     void collectIfNeeded(const IntervalType&);
 
     LayoutUnit offset() const { return m_offset; }
@@ -145,8 +145,8 @@ private:
     bool updateOffsetIfNeeded(const FloatingObject*);
 
     const RenderBlockFlow& m_renderer;
-    int m_lineTop;
-    int m_lineBottom;
+    LayoutUnit m_lineTop;
+    LayoutUnit m_lineBottom;
     LayoutUnit m_offset;
     const FloatingObject* m_outermostFloat;
 };
@@ -157,15 +157,15 @@ public:
 
     FindNextFloatLogicalBottomAdapter(const RenderBlockFlow& renderer, LayoutUnit belowLogicalHeight)
         : m_renderer(renderer)
-        , m_belowLogicalHeight(floorToInt(belowLogicalHeight))
-        , m_aboveLogicalHeight(roundToInt(LayoutUnit::max()))
+        , m_belowLogicalHeight(belowLogicalHeight)
+        , m_aboveLogicalHeight(LayoutUnit::max())
         , m_nextLogicalBottom(LayoutUnit::max())
         , m_nextShapeLogicalBottom(LayoutUnit::max())
     {
     }
 
-    int lowValue() const { return m_belowLogicalHeight; }
-    int highValue() const { return m_aboveLogicalHeight; }
+    LayoutUnit lowValue() const { return m_belowLogicalHeight; }
+    LayoutUnit highValue() const { return m_aboveLogicalHeight; }
     void collectIfNeeded(const IntervalType&);
 
     LayoutUnit nextLogicalBottom() { return m_nextLogicalBottom == LayoutUnit::max() ? LayoutUnit() : m_nextLogicalBottom; }
@@ -173,8 +173,8 @@ public:
 
 private:
     const RenderBlockFlow& m_renderer;
-    int m_belowLogicalHeight;
-    int m_aboveLogicalHeight;
+    LayoutUnit m_belowLogicalHeight;
+    LayoutUnit m_aboveLogicalHeight;
     LayoutUnit m_nextLogicalBottom;
     LayoutUnit m_nextShapeLogicalBottom;
 };

@@ -113,8 +113,8 @@ struct FloatingObjectHashTranslator {
 
 typedef ListHashSet<std::unique_ptr<FloatingObject>, 4, FloatingObjectHashFunctions> FloatingObjectSet;
 
-typedef PODInterval<int, FloatingObject*> FloatingObjectInterval;
-typedef PODIntervalTree<int, FloatingObject*> FloatingObjectTree;
+typedef PODInterval<LayoutUnit, FloatingObject*> FloatingObjectInterval;
+typedef PODIntervalTree<LayoutUnit, FloatingObject*> FloatingObjectTree;
 typedef PODFreeListArena<PODRedBlackTree<FloatingObjectInterval>::Node> IntervalArena;
 
 // FIXME: This is really the same thing as FloatingObjectSet.
@@ -124,7 +124,7 @@ typedef HashMap<RenderBox*, std::unique_ptr<FloatingObject>> RendererToFloatInfo
 class FloatingObjects {
     WTF_MAKE_NONCOPYABLE(FloatingObjects); WTF_MAKE_FAST_ALLOCATED;
 public:
-    FloatingObjects(const RenderBlockFlow&);
+    explicit FloatingObjects(const RenderBlockFlow&);
     ~FloatingObjects();
 
     void clear();
