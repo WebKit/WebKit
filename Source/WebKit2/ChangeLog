@@ -1,5 +1,14 @@
 2013-11-13  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        Not sure why these weren't added.
+
+        * Shared/APIArray.cpp: Added.
+        * Shared/APIArray.h: Added.
+
+2013-11-13  Anders Carlsson  <andersca@apple.com>
+
         Rename ImmutableArray to API::Array
         https://bugs.webkit.org/show_bug.cgi?id=124307
 
