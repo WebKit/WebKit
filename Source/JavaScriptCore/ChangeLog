@@ -1,3 +1,18 @@
+2013-11-13  Julien Brianceau  <jbriance@cisco.com>
+
+        [sh4] Protect repatchCompact from flushConstantPool.
+        https://bugs.webkit.org/show_bug.cgi?id=124278
+
+        Reviewed by Michael Saboff.
+
+        Random crashes may occur with sh4 architecture, when a flushConstantPool occurs in
+        movlMemRegCompact. As in this case a branch opcode and the constant pool are put
+        before the movlMemRegCompact, the branch itself is patched when calling repatchCompact
+        instead of the mov instruction, which is really bad.
+
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::repatchCompact): Handle this specific case and add an ASSERT.
+
 2013-11-12  Alexey Proskuryakov  <ap@apple.com>
 
         Disable WebCrypto on Mountain Lion

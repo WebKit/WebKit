@@ -1463,10 +1463,17 @@ public:
 
     static void repatchCompact(void* where, int32_t value)
     {
+        uint16_t* instructionPtr = reinterpret_cast<uint16_t*>(where);
         ASSERT(value >= 0);
         ASSERT(value <= 60);
-        *reinterpret_cast<uint16_t*>(where) = ((*reinterpret_cast<uint16_t*>(where) & 0xfff0) | (value >> 2));
-        cacheFlush(reinterpret_cast<uint16_t*>(where), sizeof(uint16_t));
+
+        // Handle the uncommon case where a flushConstantPool occured in movlMemRegCompact.
+        if ((instructionPtr[0] & 0xf000) == BRA_OPCODE)
+            instructionPtr += (instructionPtr[0] & 0x0fff) + 2;
+
+        ASSERT((instructionPtr[0] & 0xf000) == MOVL_READ_OFFRM_OPCODE);
+        instructionPtr[0] = (instructionPtr[0] & 0xfff0) | (value >> 2);
+        cacheFlush(instructionPtr, sizeof(uint16_t));
     }
 
     static void relinkCall(void* from, void* to)
