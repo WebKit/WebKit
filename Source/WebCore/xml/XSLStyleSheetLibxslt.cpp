@@ -236,7 +236,7 @@ void XSLStyleSheet::loadChildSheets()
 
 void XSLStyleSheet::loadChildSheet(const String& href)
 {
-    OwnPtr<XSLImportRule> childRule = XSLImportRule::create(this, href);
+    auto childRule = std::make_unique<XSLImportRule>(this, href);
     XSLImportRule* c = childRule.get();
     m_children.append(childRule.release());
     c->loadSheet();

@@ -31,7 +31,6 @@
 #include "ScriptWrappable.h"
 #include "ThreadableLoaderClient.h"
 #include "XMLHttpRequestProgressEventThrottle.h"
-#include <wtf/OwnPtr.h>
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -209,7 +208,7 @@ private:
 
     bool shouldDecodeResponse() const { return m_responseTypeCode < FirstBinaryResponseType; }
 
-    OwnPtr<XMLHttpRequestUpload> m_upload;
+    std::unique_ptr<XMLHttpRequestUpload> m_upload;
 
     URL m_url;
     String m_method;

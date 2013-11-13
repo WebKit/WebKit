@@ -98,16 +98,13 @@ static inline bool hasNoStyleInformation(Document* document)
 class PendingCallbacks {
     WTF_MAKE_NONCOPYABLE(PendingCallbacks); WTF_MAKE_FAST_ALLOCATED;
 public:
+    PendingCallbacks() { }
     ~PendingCallbacks() { }
-    static PassOwnPtr<PendingCallbacks> create()
-    {
-        return adoptPtr(new PendingCallbacks);
-    }
-    
+
     void appendStartElementNSCallback(const xmlChar* xmlLocalName, const xmlChar* xmlPrefix, const xmlChar* xmlURI, int nb_namespaces,
                                       const xmlChar** namespaces, int nb_attributes, int nb_defaulted, const xmlChar** attributes)
     {
-        OwnPtr<PendingStartElementNSCallback> callback = adoptPtr(new PendingStartElementNSCallback);
+        auto callback = std::make_unique<PendingStartElementNSCallback>();
 
         callback->xmlLocalName = xmlStrdup(xmlLocalName);
         callback->xmlPrefix = xmlStrdup(xmlPrefix);
@@ -132,87 +129,85 @@ public:
             callback->attributes[i * 5 + 4] = callback->attributes[i * 5 + 3] + len;
         }
 
-        m_callbacks.append(callback.release());
+        m_callbacks.append(std::move(callback));
     }
 
     void appendEndElementNSCallback()
     {
-        m_callbacks.append(adoptPtr(new PendingEndElementNSCallback));
+        m_callbacks.append(std::make_unique<PendingEndElementNSCallback>());
     }
 
     void appendCharactersCallback(const xmlChar* s, int len)
     {
-        OwnPtr<PendingCharactersCallback> callback = adoptPtr(new PendingCharactersCallback);
+        auto callback = std::make_unique<PendingCharactersCallback>();
 
         callback->s = xmlStrndup(s, len);
         callback->len = len;
 
-        m_callbacks.append(callback.release());
+        m_callbacks.append(std::move(callback));
     }
 
     void appendProcessingInstructionCallback(const xmlChar* target, const xmlChar* data)
     {
-        OwnPtr<PendingProcessingInstructionCallback> callback = adoptPtr(new PendingProcessingInstructionCallback);
+        auto callback = std::make_unique<PendingProcessingInstructionCallback>();
 
         callback->target = xmlStrdup(target);
         callback->data = xmlStrdup(data);
 
-        m_callbacks.append(callback.release());
+        m_callbacks.append(std::move(callback));
     }
 
     void appendCDATABlockCallback(const xmlChar* s, int len)
     {
-        OwnPtr<PendingCDATABlockCallback> callback = adoptPtr(new PendingCDATABlockCallback);
+        auto callback = std::make_unique<PendingCDATABlockCallback>();
 
         callback->s = xmlStrndup(s, len);
         callback->len = len;
 
-        m_callbacks.append(callback.release());
+        m_callbacks.append(std::move(callback));
     }
 
     void appendCommentCallback(const xmlChar* s)
     {
-        OwnPtr<PendingCommentCallback> callback = adoptPtr(new PendingCommentCallback);
+        auto callback = std::make_unique<PendingCommentCallback>();
 
         callback->s = xmlStrdup(s);
 
-        m_callbacks.append(callback.release());
+        m_callbacks.append(std::move(callback));
     }
 
     void appendInternalSubsetCallback(const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID)
     {
-        OwnPtr<PendingInternalSubsetCallback> callback = adoptPtr(new PendingInternalSubsetCallback);
+        auto callback = std::make_unique<PendingInternalSubsetCallback>();
 
         callback->name = xmlStrdup(name);
         callback->externalID = xmlStrdup(externalID);
         callback->systemID = xmlStrdup(systemID);
 
-        m_callbacks.append(callback.release());
+        m_callbacks.append(std::move(callback));
     }
 
     void appendErrorCallback(XMLErrors::ErrorType type, const xmlChar* message, OrdinalNumber lineNumber, OrdinalNumber columnNumber)
     {
-        OwnPtr<PendingErrorCallback> callback = adoptPtr(new PendingErrorCallback);
+        auto callback = std::make_unique<PendingErrorCallback>();
 
         callback->message = xmlStrdup(message);
         callback->type = type;
         callback->lineNumber = lineNumber;
         callback->columnNumber = columnNumber;
 
-        m_callbacks.append(callback.release());
+        m_callbacks.append(std::move(callback));
     }
 
     void callAndRemoveFirstCallback(XMLDocumentParser* parser)
     {
-        OwnPtr<PendingCallback> callback = m_callbacks.takeFirst();
+        std::unique_ptr<PendingCallback> callback = m_callbacks.takeFirst();
         callback->call(parser);
     }
 
     bool isEmpty() const { return m_callbacks.isEmpty(); }
 
 private:
-    PendingCallbacks() { }
-
     struct PendingCallback {
         virtual ~PendingCallback() { }
         virtual void call(XMLDocumentParser* parser) = 0;
@@ -352,7 +347,7 @@ private:
         OrdinalNumber columnNumber;
     };
 
-    Deque<OwnPtr<PendingCallback>> m_callbacks;
+    Deque<std::unique_ptr<PendingCallback>> m_callbacks;
 };
 // --------------------------------
 
@@ -578,7 +573,7 @@ XMLDocumentParser::XMLDocumentParser(Document& document, FrameView* frameView)
     : ScriptableDocumentParser(document)
     , m_view(frameView)
     , m_context(0)
-    , m_pendingCallbacks(PendingCallbacks::create())
+    , m_pendingCallbacks(std::make_unique<PendingCallbacks>())
     , m_depthTriggeringEntityExpansion(-1)
     , m_isParsingEntityDeclaration(false)
     , m_currentNode(&document)
@@ -600,7 +595,7 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment& fragment, Element* parent
     : ScriptableDocumentParser(fragment.document(), parserContentPolicy)
     , m_view(0)
     , m_context(0)
-    , m_pendingCallbacks(PendingCallbacks::create())
+    , m_pendingCallbacks(std::make_unique<PendingCallbacks>())
     , m_depthTriggeringEntityExpansion(-1)
     , m_isParsingEntityDeclaration(false)
     , m_currentNode(&fragment)

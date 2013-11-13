@@ -28,7 +28,6 @@
 #include "CachedResourceHandle.h"
 #include "CachedStyleSheetClient.h"
 #include "XSLStyleSheet.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -37,11 +36,7 @@ class CachedXSLStyleSheet;
 class XSLImportRule : private CachedStyleSheetClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<XSLImportRule> create(XSLStyleSheet* parentSheet, const String& href)
-    {
-        return adoptPtr(new XSLImportRule(parentSheet, href));
-    }
-
+    XSLImportRule(XSLStyleSheet* parentSheet, const String& href);
     virtual ~XSLImportRule();
     
     const String& href() const { return m_strHref; }
@@ -54,8 +49,6 @@ public:
     void loadSheet();
     
 private:
-    XSLImportRule(XSLStyleSheet* parentSheet, const String& href);
-
     virtual void setXSLStyleSheet(const String& href, const URL& baseURL, const String& sheet);
     
     XSLStyleSheet* m_parentStyleSheet;

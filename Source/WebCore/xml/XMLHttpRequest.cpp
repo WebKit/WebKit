@@ -412,7 +412,7 @@ void XMLHttpRequest::setLastSendLineAndColumnNumber(unsigned lineNumber, unsigne
 XMLHttpRequestUpload* XMLHttpRequest::upload()
 {
     if (!m_upload)
-        m_upload = XMLHttpRequestUpload::create(this);
+        m_upload = std::make_unique<XMLHttpRequestUpload>(this);
     return m_upload.get();
 }
 

@@ -108,7 +108,7 @@ private:
     URL m_finalURL;
     bool m_isDisabled;
 
-    Vector<OwnPtr<XSLImportRule>> m_children;
+    Vector<std::unique_ptr<XSLImportRule>> m_children;
 
     bool m_embedded;
     bool m_processed;

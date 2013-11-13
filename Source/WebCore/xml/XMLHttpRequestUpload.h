@@ -32,7 +32,6 @@
 #include "XMLHttpRequest.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -45,10 +44,7 @@ namespace WebCore {
 
     class XMLHttpRequestUpload FINAL : public EventTargetWithInlineData {
     public:
-        static PassOwnPtr<XMLHttpRequestUpload> create(XMLHttpRequest* xmlHttpRequest)
-        {
-            return adoptPtr(new XMLHttpRequestUpload(xmlHttpRequest));
-        }
+        explicit XMLHttpRequestUpload(XMLHttpRequest*);
 
         void ref() { m_xmlHttpRequest->ref(); }
         void deref() { m_xmlHttpRequest->deref(); }
@@ -67,8 +63,6 @@ namespace WebCore {
         void dispatchEventAndLoadEnd(PassRefPtr<Event>);
 
     private:
-        explicit XMLHttpRequestUpload(XMLHttpRequest*);
-
         virtual void refEventTarget() OVERRIDE FINAL { ref(); }
         virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
 

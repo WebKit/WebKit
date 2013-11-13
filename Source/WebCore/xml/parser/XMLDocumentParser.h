@@ -32,7 +32,6 @@
 #include "SegmentedString.h"
 #include "XMLErrors.h"
 #include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/CString.h>
 
@@ -160,7 +159,7 @@ public:
 
         xmlParserCtxtPtr context() const { return m_context ? m_context->context() : 0; };
         RefPtr<XMLParserContext> m_context;
-        OwnPtr<PendingCallbacks> m_pendingCallbacks;
+        std::unique_ptr<PendingCallbacks> m_pendingCallbacks;
         Vector<xmlChar> m_bufferedText;
         int m_depthTriggeringEntityExpansion;
         bool m_isParsingEntityDeclaration;
@@ -179,7 +178,7 @@ public:
         bool m_requestingScript;
         bool m_finishCalled;
 
-        OwnPtr<XMLErrors> m_xmlErrors;
+        std::unique_ptr<XMLErrors> m_xmlErrors;
 
         CachedResourceHandle<CachedScript> m_pendingScript;
         RefPtr<Element> m_scriptElement;
