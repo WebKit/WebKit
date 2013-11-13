@@ -162,12 +162,8 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
     
     NSDictionary *pList = nil;
     NSData *data = [NSData dataWithContentsOfFile:pListPath];
-    if (data) {
-        pList = [NSPropertyListSerialization propertyListFromData:data
-                                                 mutabilityOption:NSPropertyListImmutable
-                                                           format:nil
-                                                 errorDescription:nil];
-    }
+    if (data)
+        pList = [NSPropertyListSerialization propertyListWithData:data options:kCFPropertyListImmutable format:nil error:nil];
     
     return pList;
 }

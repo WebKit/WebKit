@@ -1,3 +1,19 @@
+2013-11-12  Andy Estes  <aestes@apple.com>
+
+        [Mac] Fix some deprecation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=124252
+
+        Reviewed by Mark Rowe.
+
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::create): Use CFPropertyListCreateWithData()
+        instead of CFPropertyListCreateFromXMLData().
+        (WebCore::LegacyWebArchive::rawDataRepresentation): Use
+        CFPropertyListWrite() instead of CFPropertyListWriteToStream().
+        * platform/mac/HTMLConverter.mm:
+        (_dateForString): Rewrite this method in terms of NSDateComponents and
+        NSCalendar instead of using CFGregorianDate.
+
 2013-11-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r159160, r159161, and r159164.
