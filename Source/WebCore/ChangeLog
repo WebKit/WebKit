@@ -1,3 +1,36 @@
+2013-11-13  Simon Fraser  <simon.fraser@apple.com>
+
+        ASSERTION FAILED: m_repaintRect == renderer().clippedOverflowRectForRepaint(renderer().containerForRepaint()) after r135816
+        https://bugs.webkit.org/show_bug.cgi?id=103432
+
+        Reviewed by Dave Hyatt.
+
+        RenderLayer caches repaint rects in m_repaintRect, and on updating layer
+        positions after scrolling, asserts that the cached rect is correct. However,
+        this assertion would sometimes fail if we were scrolling as a result of
+        doing adjustViewSize() in the middle of layout, because we haven't updated
+        layer positions post-layout yet.
+        
+        Fix by having the poorly named FrameView::repaintFixedElementsAfterScrolling()
+        skip the layer updating if this FrameView is inside of adjusetViewSize() in
+        layout.
+        
+        In order to know if we're inside view size adjusting, add a LayoutPhase
+        member to FrameView, replacing two existing bools that track laying out state.
+
+        Investigative work showed that there are many, many ways to re-enter FrameView::layout(),
+        which makes it hard (but desirable) to more assertions about state changes, but
+        indicated that saving and restoring the state (via TemporaryChange<LayoutPhase>)
+        was a good idea.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::updateCompositingLayersAfterStyleChange):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::repaintFixedElementsAfterScrolling):
+        * page/FrameView.h:
+
 2013-11-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete unused TextPainter function
