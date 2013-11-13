@@ -703,14 +703,18 @@ public:
         if (!value->isValueList())
             return;
 
+        auto& valueList = toCSSValueList(*value);
+
         FontDescription fontDescription = styleResolver->style()->fontDescription();
         // Before mapping in a new font-family property, we should reset the generic family.
         bool oldFamilyUsedFixedDefaultSize = fontDescription.useFixedDefaultSize();
         fontDescription.setGenericFamily(FontDescription::NoFamily);
 
         Vector<AtomicString, 1> families;
-        for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
-            CSSValue* item = i.value();
+        families.reserveInitialCapacity(valueList.length());
+
+        for (unsigned i = 0; i < valueList.length(); ++i) {
+            CSSValue* item = valueList.item(i);
             if (!item->isPrimitiveValue())
                 continue;
             CSSPrimitiveValue* contentValue = toCSSPrimitiveValue(item);
@@ -755,7 +759,7 @@ public:
                 continue;
             if (families.isEmpty())
                 fontDescription.setIsSpecifiedFont(fontDescription.genericFamily() == FontDescription::NoFamily);
-            families.append(face);
+            families.uncheckedAppend(face);
         }
 
         if (families.isEmpty())

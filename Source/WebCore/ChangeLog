@@ -1,5 +1,21 @@
 2013-11-13  Andreas Kling  <akling@apple.com>
 
+        Avoid unnecessarily padding the FontDescription families vector.
+        <https://webkit.org/b/124267>
+
+        Use a bit of reserveInitialCapacity+uncheckedAppend grease to avoid
+        jumping all the way to capacity=16 when a style has more than just
+        a single font-family in it.
+
+        130 kB progression on HTML5-8266 locally.
+
+        Reviewed by Antti Koivisto.
+
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyFontFamily::applyValue):
+
+2013-11-13  Andreas Kling  <akling@apple.com>
+
         Make remaining CSSPrimitiveValue constructors return PassRef.
         <https://webkit.org/b/124270>
 
