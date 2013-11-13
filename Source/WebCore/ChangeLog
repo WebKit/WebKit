@@ -1,3 +1,13 @@
+2013-11-09  Martin Robinson  <mrobinson@igalia.com>
+
+        [MathML] The double bar vertical delimiter does not stretch properly
+        https://bugs.webkit.org/show_bug.cgi?id=123543
+
+        Reviewed by Chris Fleizach.
+
+        * rendering/mathml/RenderMathMLOperator.cpp: Add stretching support for U+2225, which
+        is another version of the vertical bar.
+
 2013-11-13  Simon Fraser  <simon.fraser@apple.com>
 
         ASSERTION FAILED: m_repaintRect == renderer().clippedOverflowRectForRepaint(renderer().containerForRepaint()) after r135816
