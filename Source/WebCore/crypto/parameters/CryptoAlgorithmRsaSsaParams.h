@@ -23,39 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoKeyDataOctetSequence_h
-#define CryptoKeyDataOctetSequence_h
+#ifndef CryptoAlgorithmRsaSsaParams_h
+#define CryptoAlgorithmRsaSsaParams_h
 
-#include "CryptoKeyData.h"
-#include <wtf/Vector.h>
+#include "CryptoAlgorithmIdentifier.h"
+#include "CryptoAlgorithmParameters.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-class CryptoKeyDataOctetSequence FINAL : public CryptoKeyData {
+class CryptoAlgorithmRsaSsaParams FINAL : public CryptoAlgorithmParameters {
 public:
-    static std::unique_ptr<CryptoKeyDataOctetSequence> create(const Vector<char>& keyData)
-    {
-        return std::unique_ptr<CryptoKeyDataOctetSequence>(new CryptoKeyDataOctetSequence(keyData));
-    }
-    virtual ~CryptoKeyDataOctetSequence();
-
-    const Vector<char>& octetSequence() const { return m_keyData; }
-
-private:
-    CryptoKeyDataOctetSequence(const Vector<char>&);
-
-    Vector<char> m_keyData;
+    // The hash algorithm to use.
+    CryptoAlgorithmIdentifier hash;
 };
 
-inline const CryptoKeyDataOctetSequence& toCryptoKeyDataOctetSequence(const CryptoKeyData& data)
-{
-    ASSERT(data.format() == CryptoKeyData::Format::OctetSequence);
-    return static_cast<const CryptoKeyDataOctetSequence&>(data);
 }
 
-} // namespace WebCore
-
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoKeyDataOctetSequence_h
+#endif // CryptoAlgorithmRsaSsaParams_h

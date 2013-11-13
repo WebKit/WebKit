@@ -23,39 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoKeyDataOctetSequence_h
-#define CryptoKeyDataOctetSequence_h
-
-#include "CryptoKeyData.h"
-#include <wtf/Vector.h>
+#include "config.h"
+#include "CryptoKeyDataRSAComponents.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-class CryptoKeyDataOctetSequence FINAL : public CryptoKeyData {
-public:
-    static std::unique_ptr<CryptoKeyDataOctetSequence> create(const Vector<char>& keyData)
-    {
-        return std::unique_ptr<CryptoKeyDataOctetSequence>(new CryptoKeyDataOctetSequence(keyData));
-    }
-    virtual ~CryptoKeyDataOctetSequence();
-
-    const Vector<char>& octetSequence() const { return m_keyData; }
-
-private:
-    CryptoKeyDataOctetSequence(const Vector<char>&);
-
-    Vector<char> m_keyData;
-};
-
-inline const CryptoKeyDataOctetSequence& toCryptoKeyDataOctetSequence(const CryptoKeyData& data)
+CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(const Vector<char>& modulus, const Vector<char>& exponent)
+    : CryptoKeyData(CryptoKeyData::Format::RSAComponents)
+    , m_type(Type::Public)
+    , m_modulus(modulus)
+    , m_exponent(exponent)
 {
-    ASSERT(data.format() == CryptoKeyData::Format::OctetSequence);
-    return static_cast<const CryptoKeyDataOctetSequence&>(data);
+}
+
+CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(const Vector<char>& modulus, const Vector<char>& exponent, const Vector<char>& privateExponent)
+    : CryptoKeyData(CryptoKeyData::Format::RSAComponents)
+    , m_type(Type::Private)
+    , m_modulus(modulus)
+    , m_exponent(exponent)
+    , m_privateExponent(privateExponent)
+    , m_hasAdditionalPrivateKeyParameters(false)
+{
+}
+
+CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(const Vector<char>& modulus, const Vector<char>& exponent, const Vector<char>& privateExponent, const PrimeInfo& firstPrimeInfo, const PrimeInfo& secondPrimeInfo, const Vector<PrimeInfo>& otherPrimeInfos)
+    : CryptoKeyData(CryptoKeyData::Format::RSAComponents)
+    , m_type(Type::Private)
+    , m_modulus(modulus)
+    , m_exponent(exponent)
+    , m_privateExponent(privateExponent)
+    , m_hasAdditionalPrivateKeyParameters(true)
+    , m_firstPrimeInfo(firstPrimeInfo)
+    , m_secondPrimeInfo(secondPrimeInfo)
+    , m_otherPrimeInfos(otherPrimeInfos)
+{
+}
+
+CryptoKeyDataRSAComponents::~CryptoKeyDataRSAComponents()
+{
 }
 
 } // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoKeyDataOctetSequence_h

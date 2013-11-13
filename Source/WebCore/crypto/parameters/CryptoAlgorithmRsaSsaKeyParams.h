@@ -23,39 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoKeyDataOctetSequence_h
-#define CryptoKeyDataOctetSequence_h
+#ifndef CryptoAlgorithmRsaSsaKeyParams_h
+#define CryptoAlgorithmRsaSsaKey
 
-#include "CryptoKeyData.h"
-#include <wtf/Vector.h>
+#include "CryptoAlgorithmIdentifier.h"
+#include "CryptoAlgorithmParameters.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-class CryptoKeyDataOctetSequence FINAL : public CryptoKeyData {
+// This parameters class is currently not specified in WebCrypto.
+// It is necessary to support import from JWK, which treats hash function as part of algorithm
+// identifier, so we need to remember it to compare with one passed to sign or verify functions.
+class CryptoAlgorithmRsaSsaKeyParams FINAL : public CryptoAlgorithmParameters {
 public:
-    static std::unique_ptr<CryptoKeyDataOctetSequence> create(const Vector<char>& keyData)
+    CryptoAlgorithmRsaSsaKeyParams()
+        : hasHash(false)
     {
-        return std::unique_ptr<CryptoKeyDataOctetSequence>(new CryptoKeyDataOctetSequence(keyData));
     }
-    virtual ~CryptoKeyDataOctetSequence();
 
-    const Vector<char>& octetSequence() const { return m_keyData; }
-
-private:
-    CryptoKeyDataOctetSequence(const Vector<char>&);
-
-    Vector<char> m_keyData;
+    // The hash algorithm to use.
+    bool hasHash;
+    CryptoAlgorithmIdentifier hash;
 };
 
-inline const CryptoKeyDataOctetSequence& toCryptoKeyDataOctetSequence(const CryptoKeyData& data)
-{
-    ASSERT(data.format() == CryptoKeyData::Format::OctetSequence);
-    return static_cast<const CryptoKeyDataOctetSequence&>(data);
 }
 
-} // namespace WebCore
-
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoKeyDataOctetSequence_h
+#endif // CryptoAlgorithmRsaSsaParams_h
