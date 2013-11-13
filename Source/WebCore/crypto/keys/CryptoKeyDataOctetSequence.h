@@ -49,11 +49,12 @@ private:
     Vector<char> m_keyData;
 };
 
-inline const CryptoKeyDataOctetSequence& toCryptoKeyDataOctetSequence(const CryptoKeyData& data)
+inline bool isCryptoKeyDataOctetSequence(const CryptoKeyData& data)
 {
-    ASSERT(data.format() == CryptoKeyData::Format::OctetSequence);
-    return static_cast<const CryptoKeyDataOctetSequence&>(data);
+    return data.format() == CryptoKeyData::Format::OctetSequence;
 }
+
+CRYPTO_KEY_DATA_CASTS(CryptoKeyDataOctetSequence)
 
 } // namespace WebCore
 

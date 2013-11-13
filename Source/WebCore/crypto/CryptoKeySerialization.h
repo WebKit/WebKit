@@ -40,7 +40,7 @@ class CryptoKeyData;
 typedef std::pair<const char*, size_t> CryptoOperationData;
 
 class CryptoKeySerialization {
-WTF_MAKE_NONCOPYABLE(CryptoKeySerialization);
+    WTF_MAKE_NONCOPYABLE(CryptoKeySerialization);
 public:
     CryptoKeySerialization() { }
     virtual ~CryptoKeySerialization() { }

@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class CryptoKeyData {
-WTF_MAKE_NONCOPYABLE(CryptoKeyData);
+    WTF_MAKE_NONCOPYABLE(CryptoKeyData);
 public:
     ENUM_CLASS(Format) {
         OctetSequence,
@@ -51,6 +51,9 @@ public:
 private:
     Format m_format;
 };
+
+#define CRYPTO_KEY_DATA_CASTS(ToClassName) \
+    TYPE_CASTS_BASE(ToClassName, CryptoKeyData, keyData, WebCore::is##ToClassName(*keyData), WebCore::is##ToClassName(keyData))
 
 } // namespace WebCore
 

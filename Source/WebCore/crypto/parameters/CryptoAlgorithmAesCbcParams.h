@@ -37,7 +37,11 @@ class CryptoAlgorithmAesCbcParams FINAL : public CryptoAlgorithmParameters {
 public:
     // The initialization vector. MUST be 16 bytes.
     FixedArray<char, 16> iv;
+
+    virtual Class parametersClass() const OVERRIDE { return Class::AesCbcParams; }
 };
+
+CRYPTO_ALGORITHM_PARAMETERS_CASTS(AesCbcParams)
 
 }
 

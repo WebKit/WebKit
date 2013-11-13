@@ -212,10 +212,10 @@ bool JSCryptoKeySerializationJWK::reconcileAlgorithm(std::unique_ptr<CryptoAlgor
         return false;
 
     if (algorithm->identifier() == CryptoAlgorithmIdentifier::HMAC)
-        return static_cast<CryptoAlgorithmHmacParams&>(*parameters).hash == static_cast<CryptoAlgorithmHmacParams&>(*suggestedParameters).hash;
+        return toCryptoAlgorithmHmacParams(*parameters).hash == toCryptoAlgorithmHmacParams(*suggestedParameters).hash;
     if (algorithm->identifier() == CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5) {
-        CryptoAlgorithmRsaSsaKeyParams& rsaSSAParameters = static_cast<CryptoAlgorithmRsaSsaKeyParams&>(*parameters);
-        CryptoAlgorithmRsaSsaKeyParams& suggestedRSASSAParameters = static_cast<CryptoAlgorithmRsaSsaKeyParams&>(*suggestedParameters);
+        CryptoAlgorithmRsaSsaKeyParams& rsaSSAParameters = toCryptoAlgorithmRsaSsaKeyParams(*parameters);
+        CryptoAlgorithmRsaSsaKeyParams& suggestedRSASSAParameters = toCryptoAlgorithmRsaSsaKeyParams(*suggestedParameters);
         ASSERT(rsaSSAParameters.hasHash);
         if (suggestedRSASSAParameters.hasHash)
             return suggestedRSASSAParameters.hash == rsaSSAParameters.hash;

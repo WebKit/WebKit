@@ -62,17 +62,7 @@ inline bool isCryptoKeyHMAC(const CryptoKey& key)
     return key.keyClass() == CryptoKeyClass::HMAC;
 }
 
-inline const CryptoKeyHMAC& toCryptoKeyHMAC(const CryptoKey& key)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(isCryptoKeyHMAC(key));
-    return static_cast<const CryptoKeyHMAC&>(key);
-}
-
-inline CryptoKeyHMAC& toCryptoKeyHMAC(CryptoKey& key)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(isCryptoKeyHMAC(key));
-    return static_cast<CryptoKeyHMAC&>(key);
-}
+CRYPTO_KEY_TYPE_CASTS(CryptoKeyHMAC)
 
 } // namespace WebCore
 

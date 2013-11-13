@@ -37,7 +37,22 @@ class CryptoAlgorithmParameters {
 public:
     CryptoAlgorithmParameters() { }
     virtual ~CryptoAlgorithmParameters() { }
+
+    ENUM_CLASS(Class) {
+        None,
+        AesCbcParams,
+        AesKeyGenParams,
+        HmacKeyParams,
+        HmacParams,
+        RsaKeyGenParams,
+        RsaSsaKeyParams,
+        RsaSsaParams
+    };
+    virtual Class parametersClass() const { return Class::None; }
 };
+
+#define CRYPTO_ALGORITHM_PARAMETERS_CASTS(ToClassName) \
+    TYPE_CASTS_BASE(CryptoAlgorithm##ToClassName, CryptoAlgorithmParameters, parameters, parameters->parametersClass() == CryptoAlgorithmParameters::Class::ToClassName, parameters.parametersClass() == CryptoAlgorithmParameters::Class::ToClassName)
 
 }
 

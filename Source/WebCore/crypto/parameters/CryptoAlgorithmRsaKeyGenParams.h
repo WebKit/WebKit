@@ -38,7 +38,11 @@ public:
     unsigned modulusLength;
     // The RSA public exponent, encoded as BigInteger.
     Vector<char> publicExponent;
+
+    virtual Class parametersClass() const OVERRIDE { return Class::RsaKeyGenParams; }
 };
+
+CRYPTO_ALGORITHM_PARAMETERS_CASTS(RsaKeyGenParams)
 
 }
 

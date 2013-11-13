@@ -58,7 +58,7 @@ CryptoAlgorithmIdentifier CryptoAlgorithmRSASSA_PKCS1_v1_5::identifier() const
 
 void CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey(const CryptoAlgorithmParameters& parameters, const CryptoKeyData& keyData, bool extractable, CryptoKeyUsage usage, std::unique_ptr<PromiseWrapper> promise, ExceptionCode&)
 {
-    const CryptoAlgorithmRsaSsaKeyParams& rsaSSAParameters = static_cast<const CryptoAlgorithmRsaSsaKeyParams&>(parameters);
+    const CryptoAlgorithmRsaSsaKeyParams& rsaSSAParameters = toCryptoAlgorithmRsaSsaKeyParams(parameters);
     const CryptoKeyDataRSAComponents& rsaComponents = toCryptoKeyDataRSAComponents(keyData);
 
     RefPtr<CryptoKeyRSA> result = CryptoKeyRSA::create(CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5, rsaComponents, extractable, usage);
@@ -75,7 +75,7 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey(const CryptoAlgorithmParameters
 
 void CryptoAlgorithmRSASSA_PKCS1_v1_5::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, std::unique_ptr<PromiseWrapper> promise, ExceptionCode&)
 {
-    const CryptoAlgorithmRsaKeyGenParams& rsaParameters = static_cast<const CryptoAlgorithmRsaKeyGenParams&>(parameters);
+    const CryptoAlgorithmRsaKeyGenParams& rsaParameters = toCryptoAlgorithmRsaKeyGenParams(parameters);
 
     CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5, rsaParameters.modulusLength, rsaParameters.publicExponent, extractable, usages, std::move(promise));
 }

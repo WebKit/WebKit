@@ -68,6 +68,9 @@ private:
     CryptoKeyUsage m_usages;
 };
 
+#define CRYPTO_KEY_TYPE_CASTS(ToClassName) \
+    TYPE_CASTS_BASE(ToClassName, CryptoKey, key, WebCore::is##ToClassName(*key), WebCore::is##ToClassName(key))
+
 } // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)

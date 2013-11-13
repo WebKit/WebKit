@@ -538,7 +538,7 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     case CryptoAlgorithmIdentifier::AES_CFB:
         return std::make_unique<CryptoAlgorithmParameters>();
     case CryptoAlgorithmIdentifier::HMAC:
-        return createHmacKeyParams(exec, value);
+        return createHmacParams(exec, value);
     case CryptoAlgorithmIdentifier::DH:
         return std::make_unique<CryptoAlgorithmParameters>();
     case CryptoAlgorithmIdentifier::SHA_1:

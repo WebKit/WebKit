@@ -58,7 +58,7 @@ CryptoAlgorithmIdentifier CryptoAlgorithmAES_CBC::identifier() const
 
 void CryptoAlgorithmAES_CBC::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, std::unique_ptr<PromiseWrapper> promise, ExceptionCode&)
 {
-    const CryptoAlgorithmAesKeyGenParams& aesParameters = static_cast<const CryptoAlgorithmAesKeyGenParams&>(parameters);
+    const CryptoAlgorithmAesKeyGenParams& aesParameters = toCryptoAlgorithmAesKeyGenParams(parameters);
 
     RefPtr<CryptoKeyAES> result = CryptoKeyAES::generate(CryptoAlgorithmIdentifier::AES_CBC, aesParameters.length, extractable, usages);
     if (!result) {

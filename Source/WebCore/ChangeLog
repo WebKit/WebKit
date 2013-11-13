@@ -1,5 +1,56 @@
 2013-11-13  Alexey Proskuryakov  <ap@apple.com>
 
+        Check WebCrypto parameter types when casting
+        https://bugs.webkit.org/show_bug.cgi?id=124297
+
+        Reviewed by Sam Weinig.
+
+        Also changed existing toCryptoXXX functions to use TYPE_CASTS_BASE mechanism.
+
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForImportKey):
+        And sure enough, there was a bug caught by the added checks.
+
+        * bindings/js/JSCryptoKeySerializationJWK.cpp:
+        (WebCore::JSCryptoKeySerializationJWK::reconcileAlgorithm):
+        * crypto/CryptoAlgorithmParameters.h:
+        (WebCore::CryptoAlgorithmParameters::ENUM_CLASS):
+        (WebCore::CryptoAlgorithmParameters::parametersClass):
+        * crypto/CryptoKey.h:
+        * crypto/CryptoKeyData.h:
+        * crypto/CryptoKeySerialization.h:
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::generateKey):
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        (WebCore::CryptoAlgorithmHMAC::generateKey):
+        (WebCore::CryptoAlgorithmHMAC::importKey):
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::generateKey):
+        * crypto/keys/CryptoKeyAES.h:
+        * crypto/keys/CryptoKeyDataOctetSequence.h:
+        (WebCore::isCryptoKeyDataOctetSequence):
+        * crypto/keys/CryptoKeyDataRSAComponents.h:
+        (WebCore::isCryptoKeyDataRSAComponents):
+        * crypto/keys/CryptoKeyHMAC.h:
+        * crypto/keys/CryptoKeyRSA.h:
+        * crypto/keys/CryptoKeySerializationRaw.h:
+        * crypto/mac/CryptoAlgorithmAES_CBCMac.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::encrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::decrypt):
+        * crypto/mac/CryptoAlgorithmHMACMac.cpp:
+        (WebCore::CryptoAlgorithmHMAC::sign):
+        (WebCore::CryptoAlgorithmHMAC::verify):
+        * crypto/parameters/CryptoAlgorithmAesCbcParams.h:
+        * crypto/parameters/CryptoAlgorithmAesKeyGenParams.h:
+        * crypto/parameters/CryptoAlgorithmHmacKeyParams.h:
+        * crypto/parameters/CryptoAlgorithmHmacParams.h:
+        * crypto/parameters/CryptoAlgorithmRsaKeyGenParams.h:
+        * crypto/parameters/CryptoAlgorithmRsaSsaKeyParams.h:
+        * crypto/parameters/CryptoAlgorithmRsaSsaParams.h:
+
+2013-11-13  Alexey Proskuryakov  <ap@apple.com>
+
         crypto/subtle/rsassa-pkcs1-v1_5-import-jwk.html is failing on Maverics release bot
         https://bugs.webkit.org/show_bug.cgi?id=124280
 

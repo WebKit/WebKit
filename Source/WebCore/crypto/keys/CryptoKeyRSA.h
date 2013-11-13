@@ -74,17 +74,7 @@ inline bool isCryptoKeyRSA(const CryptoKey& key)
     return key.keyClass() == CryptoKeyClass::RSA;
 }
 
-inline const CryptoKeyRSA& toCryptoKeyRSA(const CryptoKey& key)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(isCryptoKeyRSA(key));
-    return static_cast<const CryptoKeyRSA&>(key);
-}
-
-inline CryptoKeyRSA& asCryptoKeyRSA(CryptoKey& key)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(isCryptoKeyRSA(key));
-    return static_cast<CryptoKeyRSA&>(key);
-}
+CRYPTO_KEY_TYPE_CASTS(CryptoKeyRSA)
 
 } // namespace WebCore
 

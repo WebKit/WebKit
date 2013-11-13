@@ -91,7 +91,7 @@ static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcP
 
 void CryptoAlgorithmAES_CBC::encrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<CryptoOperationData>& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
 {
-    const CryptoAlgorithmAesCbcParams& aesCBCParameters = static_cast<const CryptoAlgorithmAesCbcParams&>(parameters);
+    const CryptoAlgorithmAesCbcParams& aesCBCParameters = toCryptoAlgorithmAesCbcParams(parameters);
 
     if (!isCryptoKeyAES(key)) {
         ec = NOT_SUPPORTED_ERR;
@@ -104,7 +104,7 @@ void CryptoAlgorithmAES_CBC::encrypt(const CryptoAlgorithmParameters& parameters
 
 void CryptoAlgorithmAES_CBC::decrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<CryptoOperationData>& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
 {
-    const CryptoAlgorithmAesCbcParams& aesCBCParameters = static_cast<const CryptoAlgorithmAesCbcParams&>(parameters);
+    const CryptoAlgorithmAesCbcParams& aesCBCParameters = toCryptoAlgorithmAesCbcParams(parameters);
 
     if (!isCryptoKeyAES(key)) {
         ec = NOT_SUPPORTED_ERR;

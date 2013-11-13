@@ -47,7 +47,11 @@ public:
     // which is the size of the associated hash function's block size.
     bool hasLength;
     unsigned length;
+
+    virtual Class parametersClass() const OVERRIDE { return Class::HmacKeyParams; }
 };
+
+CRYPTO_ALGORITHM_PARAMETERS_CASTS(HmacKeyParams)
 
 }
 

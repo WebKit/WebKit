@@ -59,7 +59,7 @@ CryptoAlgorithmIdentifier CryptoAlgorithmHMAC::identifier() const
 
 void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, std::unique_ptr<PromiseWrapper> promise, ExceptionCode&)
 {
-    const CryptoAlgorithmHmacKeyParams& hmacParameters = static_cast<const CryptoAlgorithmHmacKeyParams&>(parameters);
+    const CryptoAlgorithmHmacKeyParams& hmacParameters = toCryptoAlgorithmHmacKeyParams(parameters);
 
     RefPtr<CryptoKeyHMAC> result = CryptoKeyHMAC::generate(hmacParameters.hasLength ? hmacParameters.length : 0, hmacParameters.hash, extractable, usages);
     if (!result) {
@@ -78,7 +78,7 @@ void CryptoAlgorithmHMAC::importKey(const CryptoAlgorithmParameters& parameters,
     }
     const CryptoKeyDataOctetSequence& keyDataOctetSequence = toCryptoKeyDataOctetSequence(keyData);
 
-    const CryptoAlgorithmHmacParams& hmacParameters = static_cast<const CryptoAlgorithmHmacParams&>(parameters);
+    const CryptoAlgorithmHmacParams& hmacParameters = toCryptoAlgorithmHmacParams(parameters);
 
     RefPtr<CryptoKeyHMAC> result = CryptoKeyHMAC::create(keyDataOctetSequence.octetSequence(), hmacParameters.hash, extractable, usage);
     promise->fulfill(result.release());

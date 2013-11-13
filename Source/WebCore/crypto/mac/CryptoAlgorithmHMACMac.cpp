@@ -94,7 +94,7 @@ static Vector<unsigned char> calculateSignature(CCHmacAlgorithm algorithm, const
 
 void CryptoAlgorithmHMAC::sign(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<CryptoOperationData>& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
 {
-    const CryptoAlgorithmHmacParams& hmacParameters = static_cast<const CryptoAlgorithmHmacParams&>(parameters);
+    const CryptoAlgorithmHmacParams& hmacParameters = toCryptoAlgorithmHmacParams(parameters);
 
     if (!isCryptoKeyHMAC(key)) {
         ec = NOT_SUPPORTED_ERR;
@@ -115,7 +115,7 @@ void CryptoAlgorithmHMAC::sign(const CryptoAlgorithmParameters& parameters, cons
 
 void CryptoAlgorithmHMAC::verify(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& expectedSignature, const Vector<CryptoOperationData>& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
 {
-    const CryptoAlgorithmHmacParams& hmacParameters = static_cast<const CryptoAlgorithmHmacParams&>(parameters);
+    const CryptoAlgorithmHmacParams& hmacParameters = toCryptoAlgorithmHmacParams(parameters);
 
     if (!isCryptoKeyHMAC(key)) {
         ec = NOT_SUPPORTED_ERR;

@@ -46,7 +46,11 @@ public:
     // The hash algorithm to use.
     bool hasHash;
     CryptoAlgorithmIdentifier hash;
+
+    virtual Class parametersClass() const OVERRIDE { return Class::RsaSsaKeyParams; }
 };
+
+CRYPTO_ALGORITHM_PARAMETERS_CASTS(RsaSsaKeyParams)
 
 }
 

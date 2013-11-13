@@ -61,17 +61,7 @@ inline bool isCryptoKeyAES(const CryptoKey& key)
     return key.keyClass() == CryptoKeyClass::AES;
 }
 
-inline const CryptoKeyAES& toCryptoKeyAES(const CryptoKey& key)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(isCryptoKeyAES(key));
-    return static_cast<const CryptoKeyAES&>(key);
-}
-
-inline CryptoKeyAES& toCryptoKeyAES(CryptoKey& key)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(isCryptoKeyAES(key));
-    return static_cast<CryptoKeyAES&>(key);
-}
+CRYPTO_KEY_TYPE_CASTS(CryptoKeyAES)
 
 } // namespace WebCore
 
