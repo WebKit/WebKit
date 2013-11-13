@@ -1,3 +1,17 @@
+2013-11-13  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Unreviewed gardening of some canvas tests.
+
+        * platform/win/fast/canvas/canvas-draw-canvas-on-canvas-shadow-expected.txt:
+        * platform/win/fast/canvas/canvas-fillRect-gradient-shadow-expected.txt:
+        * platform/win/fast/canvas/canvas-render-layer-expected.txt:
+        * platform/win/fast/canvas/canvas-scale-shadowBlur-expected.txt:
+        * platform/win/fast/canvas/canvas-scale-strokePath-shadow-expected.txt:
+        * platform/win/fast/canvas/canvas-strokePath-gradient-shadow-expected.txt:
+        * platform/win/fast/canvas/canvas-strokeRect-alpha-shadow-expected.txt:
+        * platform/win/fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt:
+        * platform/win/fast/forms/range/slider-mouse-events-expected.txt:
+
 2013-11-13  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening
