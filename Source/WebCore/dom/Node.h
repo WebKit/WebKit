@@ -561,7 +561,7 @@ public:
 
     void markAncestorsWithChildNeedsStyleRecalc();
 
-private:
+protected:
     enum NodeFlags {
         IsTextFlag = 1,
         IsContainerFlag = 1 << 1,
@@ -592,18 +592,20 @@ private:
         IsInShadowTreeFlag = 1 << 23,
         IsMathMLFlag = 1 << 24,
 
+        ChildrenAffectedByFirstChildRulesFlag = 1 << 25,
+        ChildrenAffectedByLastChildRulesFlag = 1 << 26,
+        ChildrenAffectedByDirectAdjacentRulesFlag = 1 << 27,
+        ChildrenAffectedByHoverRulesFlag = 1 << 28,
+
         DefaultNodeFlags = IsParsingChildrenFinishedFlag
     };
-
-    // 8 bits remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 
     void setFlag(NodeFlags mask) const { m_nodeFlags |= mask; } 
-    void clearFlag(NodeFlags mask) const { m_nodeFlags &= ~mask; } 
+    void clearFlag(NodeFlags mask) const { m_nodeFlags &= ~mask; }
 
-protected:
-    enum ConstructionType { 
+    enum ConstructionType {
         CreateOther = DefaultNodeFlags,
         CreateText = DefaultNodeFlags | IsTextFlag,
         CreateContainer = DefaultNodeFlags | IsContainerFlag, 

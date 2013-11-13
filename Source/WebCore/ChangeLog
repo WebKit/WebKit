@@ -1,3 +1,23 @@
+2013-11-13  Andreas Kling  <akling@apple.com>
+
+        Turn some not-so-rare ElementRareData bits into Node flags.
+        <https://webkit.org/b/124275>
+
+        The following 4 bits seem to be the most commonly set:
+
+        - childrenAffectedByHover()
+        - childrenAffectedByFirstChildRules()
+        - childrenAffectedByLastChildRules()
+        - childrenAffectedByDirectAdjacentRules()
+
+        Turning them into Node flags means we don't have to allocate full
+        ElementRareData object in many cases. I also took this opportunity
+        to make Node's flag twiddling functions available to subclasses.
+
+        1.38 MB progression on HTML5-8266 locally.
+
+        Reviewed by Antti Koivisto.
+
 2013-11-13  Tibor Meszaros  <mtibor@inf.u-szeged.hu>
 
         Cleanup the build from unused parameters in WebCore

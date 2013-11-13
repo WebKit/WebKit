@@ -74,19 +74,13 @@ public:
     void setContainsFullScreenElement(bool value) { m_containsFullScreenElement = value; }
 #endif
 
-    bool childrenAffectedByHover() const { return m_childrenAffectedByHover; }
-    void setChildrenAffectedByHover(bool value) { m_childrenAffectedByHover = value; }
     bool childrenAffectedByActive() const { return m_childrenAffectedByActive; }
     void setChildrenAffectedByActive(bool value) { m_childrenAffectedByActive = value; }
     bool childrenAffectedByDrag() const { return m_childrenAffectedByDrag; }
     void setChildrenAffectedByDrag(bool value) { m_childrenAffectedByDrag = value; }
 
-    bool childrenAffectedByFirstChildRules() const { return m_childrenAffectedByFirstChildRules; }
-    void setChildrenAffectedByFirstChildRules(bool value) { m_childrenAffectedByFirstChildRules = value; }
     bool childrenAffectedByLastChildRules() const { return m_childrenAffectedByLastChildRules; }
     void setChildrenAffectedByLastChildRules(bool value) { m_childrenAffectedByLastChildRules = value; }
-    bool childrenAffectedByDirectAdjacentRules() const { return m_childrenAffectedByDirectAdjacentRules; }
-    void setChildrenAffectedByDirectAdjacentRules(bool value) { m_childrenAffectedByDirectAdjacentRules = value; }
     bool childrenAffectedByForwardPositionalRules() const { return m_childrenAffectedByForwardPositionalRules; }
     void setChildrenAffectedByForwardPositionalRules(bool value) { m_childrenAffectedByForwardPositionalRules = value; }
     bool childrenAffectedByBackwardPositionalRules() const { return m_childrenAffectedByBackwardPositionalRules; }
@@ -146,9 +140,7 @@ private:
     // Bits for dynamic child matching.
     // We optimize for :first-child and :last-child. The other positional child selectors like nth-child or
     // *-child-of-type, we will just give up and re-evaluate whenever children change at all.
-    unsigned m_childrenAffectedByFirstChildRules : 1;
     unsigned m_childrenAffectedByLastChildRules : 1;
-    unsigned m_childrenAffectedByDirectAdjacentRules : 1;
     unsigned m_childrenAffectedByForwardPositionalRules : 1;
     unsigned m_childrenAffectedByBackwardPositionalRules : 1;
 
@@ -193,9 +185,7 @@ inline ElementRareData::ElementRareData(RenderElement* renderer)
     , m_childrenAffectedByHover(false)
     , m_childrenAffectedByActive(false)
     , m_childrenAffectedByDrag(false)
-    , m_childrenAffectedByFirstChildRules(false)
     , m_childrenAffectedByLastChildRules(false)
-    , m_childrenAffectedByDirectAdjacentRules(false)
     , m_childrenAffectedByForwardPositionalRules(false)
     , m_childrenAffectedByBackwardPositionalRules(false)
     , m_isInsideRegion(false)
@@ -232,12 +222,9 @@ inline void ElementRareData::resetComputedStyle()
 
 inline void ElementRareData::resetDynamicRestyleObservations()
 {
-    setChildrenAffectedByHover(false);
     setChildrenAffectedByActive(false);
     setChildrenAffectedByDrag(false);
-    setChildrenAffectedByFirstChildRules(false);
     setChildrenAffectedByLastChildRules(false);
-    setChildrenAffectedByDirectAdjacentRules(false);
     setChildrenAffectedByForwardPositionalRules(false);
     setChildrenAffectedByBackwardPositionalRules(false);
 }
