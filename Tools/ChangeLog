@@ -1,3 +1,15 @@
+2013-11-12  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Added libxss-dev to install-dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=124254
+
+        Reviewed by Gyuyoung Kim.
+
+        libxss-dev is required to build EFL packages.
+        see building part in http://www.enlightenment.org/p.php?p=contribute
+
+        * efl/install-dependencies: Added libxss-dev to parameter of apt-get command.
+
 2013-11-12  Tim Horton  <timothy_horton@apple.com>
 
         After http://trac.webkit.org/changeset/159109, update

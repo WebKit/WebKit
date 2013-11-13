@@ -41,6 +41,7 @@ function installDependenciesWithApt {
         libsqlite3-dev \
         libjpeg-dev \
         libpng-dev \
+        libxss-dev \
         libxt-dev \
         libgl1-mesa-dev \
         libgnutls-dev \
