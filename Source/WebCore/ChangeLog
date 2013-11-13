@@ -1,3 +1,12 @@
+2013-11-13  Andreas Kling  <akling@apple.com>
+
+        Make remaining CSSPrimitiveValue constructors return PassRef.
+        <https://webkit.org/b/124270>
+
+        ..and same with the corresponding CSSValuePool functions.
+
+        Reviewed by Antti Koivisto.
+
 2013-11-13  Alexey Proskuryakov  <ap@apple.com>
 
         Implement key generation and JWK import for RSASSA-PKCS1-v1_5
