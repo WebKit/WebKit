@@ -54,6 +54,7 @@
 #define WTF_COMPILER_SUPPORTS_CXX_STRONG_ENUMS __has_feature(cxx_strong_enums)
 #define WTF_COMPILER_SUPPORTS_CXX_REFERENCE_QUALIFIED_FUNCTIONS __has_feature(cxx_reference_qualified_functions)
 #define WTF_COMPILER_SUPPORTS_CXX_AUTO_TYPE __has_feature(cxx_auto_type)
+#define WTF_COMPILER_SUPPORTS_CXX_GENERALIZED_INITIALIZERS __has_feature(cxx_generalized_initializers)
 
 /* Disable final on versions of Apple clang earlier than 4.2 to avoid bugs like http://webkit.org/b/119165 */
 #if defined(__APPLE__) && (__clang_major__ < 4 || (__clang_major__ == 4 && __clang_minor__ < 2))

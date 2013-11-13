@@ -548,6 +548,15 @@ public:
             TypeOperations::uninitializedFill(begin(), end(), val);
     }
 
+#if COMPILER_SUPPORTS(CXX_GENERALIZED_INITIALIZERS)
+    Vector(std::initializer_list<T> initializerList)
+    {
+        reserveInitialCapacity(initializerList.size());
+        for (const auto& element : initializerList)
+            uncheckedAppend(element);
+    }
+#endif
+
     ~Vector()
     {
         if (m_size)

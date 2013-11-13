@@ -1,3 +1,14 @@
+2013-11-13  Anders Carlsson  <andersca@apple.com>
+
+        Add a Vector constructor that takes an std::initializer_list
+        https://bugs.webkit.org/show_bug.cgi?id=124287
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/Compiler.h:
+        * wtf/Vector.h:
+        (WTF::Vector::Vector):
+
 2013-11-12  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening.

@@ -1,3 +1,13 @@
+2013-11-13  Anders Carlsson  <andersca@apple.com>
+
+        Add a Vector constructor that takes an std::initializer_list
+        https://bugs.webkit.org/show_bug.cgi?id=124287
+
+        Reviewed by Antti Koivisto.
+
+        * TestWebKitAPI/Tests/WTF/Vector.cpp:
+        (TestWebKitAPI::TEST):
+
 2013-11-13  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Unreviewed GTK gardening. Updated rebaseline unit tests to include WK2 bot.
