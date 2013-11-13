@@ -1,5 +1,12 @@
 2013-11-13  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Maybe the last attempt to fix the GTK build.
+
+        * UIProcess/API/gtk/WebKitBackForwardListPrivate.h:
+        * UIProcess/API/gtk/WebKitContextMenuPrivate.h:
+
+2013-11-13  Csaba Osztrogonác  <ossy@webkit.org>
+
         One more attempt to fix the GTK build.
 
         * UIProcess/API/gtk/WebKitWebViewPrivate.h:

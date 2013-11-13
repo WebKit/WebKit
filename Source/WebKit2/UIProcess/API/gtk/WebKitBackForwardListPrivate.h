@@ -32,6 +32,6 @@
 WebKitBackForwardList* webkitBackForwardListCreate(WebKit::WebBackForwardList*);
 WebKitBackForwardListItem* webkitBackForwardListItemGetOrCreate(WebKit::WebBackForwardListItem*);
 WebKit::WebBackForwardListItem* webkitBackForwardListItemGetItem(WebKitBackForwardListItem*);
-void webkitBackForwardListChanged(WebKitBackForwardList*, WebKit::WebBackForwardListItem* webAddedItem, WebKit::API::Array* webRemovedItems);
+void webkitBackForwardListChanged(WebKitBackForwardList*, WebKit::WebBackForwardListItem* webAddedItem, API::Array* webRemovedItems);
 
 #endif // WebKitBackForwardListPrivate_h
