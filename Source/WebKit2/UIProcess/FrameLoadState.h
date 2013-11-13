@@ -45,6 +45,14 @@ public:
     void didReceiveServerRedirectForProvisionalLoad(const String& url);
     void didFailProvisionalLoad();
 
+    void didCommitLoad();
+    void didFinishLoad();
+    void didFailLoad();
+
+    void didSameDocumentNotification(const String&);
+
+    void setUnreachableURL(const String&);
+
     // FIXME: These should all be private, and FrameLoadState should
     // provide state transition member functions.
     LoadState m_loadState;

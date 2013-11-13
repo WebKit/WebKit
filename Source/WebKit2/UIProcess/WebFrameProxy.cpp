@@ -133,10 +133,8 @@ void WebFrameProxy::didFailProvisionalLoad()
 
 void WebFrameProxy::didCommitLoad(const String& contentType, const PlatformCertificateInfo& certificateInfo)
 {
-    ASSERT(m_frameLoadState.m_loadState == FrameLoadState::LoadStateProvisional);
-    m_frameLoadState.m_loadState = FrameLoadState::LoadStateCommitted;
-    m_frameLoadState.m_url = m_frameLoadState.m_provisionalURL;
-    m_frameLoadState.m_provisionalURL = String();
+    m_frameLoadState.didCommitLoad();
+
     m_title = String();
     m_MIMEType = contentType;
     m_isFrameSet = false;
@@ -145,21 +143,17 @@ void WebFrameProxy::didCommitLoad(const String& contentType, const PlatformCerti
 
 void WebFrameProxy::didFinishLoad()
 {
-    ASSERT(m_frameLoadState.m_loadState == FrameLoadState::LoadStateCommitted);
-    ASSERT(m_frameLoadState.m_provisionalURL.isEmpty());
-    m_frameLoadState.m_loadState = FrameLoadState::LoadStateFinished;
+    m_frameLoadState.didFinishLoad();
 }
 
 void WebFrameProxy::didFailLoad()
 {
-    ASSERT(m_frameLoadState.m_loadState == FrameLoadState::LoadStateCommitted);
-    ASSERT(m_frameLoadState.m_provisionalURL.isEmpty());
-    m_frameLoadState.m_loadState = FrameLoadState::LoadStateFinished;
+    m_frameLoadState.didFailLoad();
 }
 
 void WebFrameProxy::didSameDocumentNavigation(const String& url)
 {
-    m_frameLoadState.m_url = url;
+    m_frameLoadState.didSameDocumentNotification(url);
 }
 
 void WebFrameProxy::didChangeTitle(const String& title)
@@ -225,8 +219,7 @@ void WebFrameProxy::getResourceData(WebURL* resourceURL, PassRefPtr<DataCallback
 
 void WebFrameProxy::setUnreachableURL(const String& unreachableURL)
 {
-    m_frameLoadState.m_lastUnreachableURL = m_frameLoadState.m_unreachableURL;
-    m_frameLoadState.m_unreachableURL = unreachableURL;
+    m_frameLoadState.setUnreachableURL(unreachableURL);
 }
 
 } // namespace WebKit
