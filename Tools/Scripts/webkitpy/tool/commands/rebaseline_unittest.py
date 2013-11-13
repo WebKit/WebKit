@@ -94,6 +94,7 @@ class TestRebaselineTest(_BaseTestCase):
         self.assertMultiLineEqual(command._baseline_directory("Apple Mavericks Release WK2 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-wk2")
         self.assertMultiLineEqual(command._baseline_directory("GTK Linux 64-bit Debug WK1"), "/mock-checkout/LayoutTests/platform/gtk-wk1")
         self.assertMultiLineEqual(command._baseline_directory("GTK Linux 64-bit Release WK1 (Tests)"), "/mock-checkout/LayoutTests/platform/gtk-wk1")
+        self.assertMultiLineEqual(command._baseline_directory("GTK Linux 64-bit Release"), "/mock-checkout/LayoutTests/platform/gtk-wk2")
         self.assertMultiLineEqual(command._baseline_directory("EFL Linux 64-bit Release WK2"), "/mock-checkout/LayoutTests/platform/efl-wk2")
 
     def test_rebaseline_updates_expectations_file_noop(self):

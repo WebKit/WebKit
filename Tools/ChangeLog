@@ -1,3 +1,10 @@
+2013-11-13  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed GTK gardening. Updated rebaseline unit tests to include WK2 bot.
+
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaselineTest.test_baseline_directory): Updated.
+
 2013-11-13  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Support compilation of EFL/GTK without accessibility
