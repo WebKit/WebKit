@@ -1,3 +1,9 @@
+2013-11-12  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed try at fixing the GTK+ build.
+
+        * UIProcess/soup/WebSoupRequestManagerProxy.h: rename TypedAPIObject to API:TypedObject.
+
 2013-11-12  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         [EFL][GTK] Remove MutableArray leftovers from build systems
