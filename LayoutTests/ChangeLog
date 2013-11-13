@@ -1,3 +1,24 @@
+2013-11-12  Roger Fong  <roger_fong@apple.com>
+
+        [Windows] Unreviewed. More edits to Windows test expectations following r159157.
+
+        * platform/win/editing/selection/extend-selection-home-end-expected.txt:
+        * platform/win/fast/canvas/canvas-draw-canvas-on-canvas-shadow-expected.txt:
+        * platform/win/fast/canvas/canvas-fillRect-gradient-shadow-expected.txt:
+        * platform/win/fast/canvas/canvas-scale-shadowBlur-expected.txt:
+        * platform/win/fast/canvas/canvas-scale-strokePath-shadow-expected.txt:
+        * platform/win/fast/canvas/canvas-strokePath-gradient-shadow-expected.txt:
+        * platform/win/fast/canvas/canvas-strokeRect-alpha-shadow-expected.txt:
+        * platform/win/fast/canvas/canvas-strokeRect-gradient-shadow-expected.txt:
+        * platform/win/fast/dom/horizontal-scrollbar-in-rtl-expected.txt:
+        * platform/win/fast/dom/vertical-scrollbar-in-rtl-expected.txt:
+        * platform/win/fast/forms/cursor-at-editable-content-boundary-expected.txt:
+        * platform/win/fast/forms/implicit-submission-expected.txt:
+        * platform/win/fast/forms/range: Added.
+        * platform/win/fast/forms/range/slider-mouse-events-expected.txt: Copied from platform/win/fast/forms/slider-mouse-events-expected.txt.
+        * platform/win/fast/forms/select-popup-pagekeys-expected.txt:
+        * platform/win/fast/forms/slider-mouse-events-expected.txt: Removed.
+
 2013-11-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r159160, r159161, and r159164.

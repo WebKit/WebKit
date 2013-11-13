@@ -463,4 +463,3 @@ Test 22, RTL:
   validating ltrRight and rtlLeft
   validating ltrLeft and rtlRight
 
-

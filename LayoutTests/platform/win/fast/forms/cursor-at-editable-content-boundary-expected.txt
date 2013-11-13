@@ -7,3 +7,4 @@ autowrap text area with dir=ltr.
 vertical text.
 
 PASS 
+
