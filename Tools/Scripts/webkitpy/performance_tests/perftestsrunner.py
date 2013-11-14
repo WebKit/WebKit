@@ -166,6 +166,11 @@ class PerfTestsRunner(object):
         return tests
 
     def run(self):
+        if "Debug" == self._port.get_option("configuration"):
+            _log.warning("""****************************************************
+* WARNING: run-perf-tests is running in DEBUG mode *
+****************************************************""")
+
         if not self._port.check_build(needs_http=False):
             _log.error("Build not up to date for %s" % self._port._path_to_driver())
             return self.EXIT_CODE_BAD_BUILD
