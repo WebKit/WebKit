@@ -2495,11 +2495,6 @@ public:
             return 0;
         return static_cast<int32_t*>(m_buffer.data())[location / sizeof(int32_t) - 1];
     }
-    
-    PassRefPtr<ExecutableMemoryHandle> executableCopy(VM& vm, void* ownerUID, JITCompilationEffort effort)
-    {
-        return m_buffer.executableCopy(vm, ownerUID, effort);
-    }
 
     void* unlinkedCode() { return m_buffer.data(); }
     size_t codeSize() const { return m_buffer.codeSize(); }

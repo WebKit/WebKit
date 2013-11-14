@@ -127,6 +127,10 @@ public:
     static const RegisterID framePointerRegister = ARM64Registers::fp;
     static const RegisterID linkRegister = ARM64Registers::lr;
 
+    // FIXME: Get reasonable implementations for these
+    static bool shouldBlindForSpecificArch(uint32_t value) { return value >= 0x00ffffff; }
+    static bool shouldBlindForSpecificArch(uint64_t value) { return value >= 0x00ffffff; }
+    static bool shouldBlindForSpecificArch(uintptr_t value) { return value >= 0x00ffffff; }
 
     // Integer operations:
 
@@ -373,9 +377,34 @@ public:
         lshift32(dest, imm, dest);
     }
 
+    void lshift64(RegisterID src, RegisterID shiftAmount, RegisterID dest)
+    {
+        m_assembler.lsl<64>(dest, src, shiftAmount);
+    }
+
+    void lshift64(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        m_assembler.lsl<64>(dest, src, imm.m_value & 0x3f);
+    }
+
+    void lshift64(RegisterID shiftAmount, RegisterID dest)
+    {
+        lshift64(dest, shiftAmount, dest);
+    }
+
+    void lshift64(TrustedImm32 imm, RegisterID dest)
+    {
+        lshift64(dest, imm, dest);
+    }
+    
     void mul32(RegisterID src, RegisterID dest)
     {
         m_assembler.mul<32>(dest, dest, src);
+    }
+    
+    void mul64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.mul<64>(dest, dest, src);
     }
 
     void mul32(TrustedImm32 imm, RegisterID src, RegisterID dest)
@@ -493,6 +522,26 @@ public:
     void rshift32(TrustedImm32 imm, RegisterID dest)
     {
         rshift32(dest, imm, dest);
+    }
+    
+    void rshift64(RegisterID src, RegisterID shiftAmount, RegisterID dest)
+    {
+        m_assembler.lsr<64>(dest, src, shiftAmount);
+    }
+    
+    void rshift64(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        m_assembler.lsr<64>(dest, src, imm.m_value & 0x3f);
+    }
+    
+    void rshift64(RegisterID shiftAmount, RegisterID dest)
+    {
+        rshift64(dest, shiftAmount, dest);
+    }
+    
+    void rshift64(TrustedImm32 imm, RegisterID dest)
+    {
+        rshift64(dest, imm, dest);
     }
 
     void sub32(RegisterID src, RegisterID dest)
@@ -1187,6 +1236,11 @@ public:
         convertInt32ToDouble(dataTempRegister, dest);
     }
     
+    void convertInt64ToDouble(RegisterID src, FPRegisterID dest)
+    {
+        m_assembler.scvtf<64, 64>(dest, src);
+    }
+    
     void divDouble(FPRegisterID src, FPRegisterID dest)
     {
         divDouble(dest, src, dest);
@@ -1828,9 +1882,38 @@ public:
         return branchMul32(cond, dataTempRegister, src, dest);
     }
 
+    Jump branchMul64(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID dest)
+    {
+        ASSERT(cond != Signed);
+
+        // This is a signed multiple of two 64-bit values, producing a 64-bit result.
+        m_assembler.mul<64>(dest, src1, src2);
+
+        if (cond != Overflow)
+            return branchTest64(cond, dest);
+
+        // Compute bits 127..64 of the result into dataTempRegister.
+        m_assembler.smulh(getCachedDataTempRegisterIDAndInvalidate(), src1, src2);
+        // Splat bit 63 of the result to bits 63..0 of memoryTempRegister.
+        m_assembler.asr<64>(getCachedMemoryTempRegisterIDAndInvalidate(), dest, 63);
+        // Check that bits 31..63 of the original result were all equal.
+        return branch64(NotEqual, memoryTempRegister, dataTempRegister);
+    }
+
+    Jump branchMul64(ResultCondition cond, RegisterID src, RegisterID dest)
+    {
+        return branchMul64(cond, dest, src, dest);
+    }
+
     Jump branchNeg32(ResultCondition cond, RegisterID dest)
     {
         m_assembler.neg<32, S>(dest, dest);
+        return Jump(makeBranch(cond));
+    }
+
+    Jump branchNeg64(ResultCondition cond, RegisterID srcDest)
+    {
+        m_assembler.neg<64, S>(srcDest, srcDest);
         return Jump(makeBranch(cond));
     }
 
@@ -2189,6 +2272,8 @@ public:
     {
         return ARM64Assembler::maxJumpReplacementSize();
     }
+
+    RegisterID scratchRegisterForBlinding() { return getCachedDataTempRegisterIDAndInvalidate(); }
 
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return false; }
     

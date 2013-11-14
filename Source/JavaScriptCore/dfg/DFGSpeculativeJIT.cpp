@@ -3479,8 +3479,8 @@ void SpeculativeJIT::compileArithDiv(Node* node)
 
         int32Result(quotient.gpr(), node);
 #elif CPU(ARM64)
-        SpeculateIntegerOperand op1(this, node->child1());
-        SpeculateIntegerOperand op2(this, node->child2());
+        SpeculateInt32Operand op1(this, node->child1());
+        SpeculateInt32Operand op2(this, node->child2());
         GPRReg op1GPR = op1.gpr();
         GPRReg op2GPR = op2.gpr();
         GPRTemporary quotient(this);
@@ -3488,7 +3488,7 @@ void SpeculativeJIT::compileArithDiv(Node* node)
 
         // If the user cares about negative zero, then speculate that we're not about
         // to produce negative zero.
-        if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+        if (!bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
             MacroAssembler::Jump numeratorNonZero = m_jit.branchTest32(MacroAssembler::NonZero, op1GPR);
             speculationCheck(NegativeZero, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::LessThan, op2GPR, TrustedImm32(0)));
             numeratorNonZero.link(&m_jit);
@@ -3498,7 +3498,7 @@ void SpeculativeJIT::compileArithDiv(Node* node)
 
         // Check that there was no remainder. If there had been, then we'd be obligated to
         // produce a double result instead.
-        if (nodeUsedAsNumber(node->arithNodeFlags())) {
+        if (bytecodeUsesAsNumber(node->arithNodeFlags())) {
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchMul32(JITCompiler::Overflow, quotient.gpr(), op2GPR, multiplyAnswer.gpr()));
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branch32(JITCompiler::NotEqual, multiplyAnswer.gpr(), op1GPR));
         }
@@ -3770,7 +3770,7 @@ void SpeculativeJIT::compileArithMod(Node* node)
 
         // If the user cares about negative zero, then speculate that we're not about
         // to produce negative zero.
-        if (!nodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
+        if (!bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())) {
             // Check that we're not about to create negative zero.
             JITCompiler::Jump numeratorPositive = m_jit.branch32(JITCompiler::GreaterThanOrEqual, dividendGPR, TrustedImm32(0));
             speculationCheck(Overflow, JSValueRegs(), 0, m_jit.branchTest32(JITCompiler::Zero, quotientThenRemainderGPR));
