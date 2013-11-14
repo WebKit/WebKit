@@ -312,12 +312,9 @@ void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArr
     if (!reply || !reply->m_returnValue)
         return;
     
-    RetainPtr<NSArray*> array = [NSPropertyListSerialization propertyListFromData:(NSData *)reply->m_result.get()
-                                                                 mutabilityOption:NSPropertyListImmutable
-                                                                           format:0
-                                                                 errorDescription:0];
+    NSArray *array = [NSPropertyListSerialization propertyListWithData:(NSData *)reply->m_result.get() options:NSPropertyListImmutable format:nullptr error:nullptr];
     
-    for (NSNumber *number in array.get()) {
+    for (NSNumber *number in array) {
         IdentifierRep* identifier = reinterpret_cast<IdentifierRep*>([number longLongValue]);
         if (!IdentifierRep::isValid(identifier))
             continue;

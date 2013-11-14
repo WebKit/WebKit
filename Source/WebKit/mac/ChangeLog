@@ -1,3 +1,26 @@
+2013-11-14  Anders Carlsson  <andersca@apple.com>
+
+        Stop using deprecated NSPropertyListSerialization methods
+        https://bugs.webkit.org/show_bug.cgi?id=124377
+
+        Reviewed by Mark Rowe.
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate loadHistoryGutsFromURL:savedItemsCount:collectDiscardedItemsInto:error:]):
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCIdentifierInfo):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::enumerate):
+        (WebKit::NetscapePluginInstanceProxy::marshalValue):
+        (WebKit::NetscapePluginInstanceProxy::marshalValues):
+        (WebKit::NetscapePluginInstanceProxy::demarshalValue):
+        (WebKit::NetscapePluginInstanceProxy::demarshalValues):
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::getPropertyNames):
+
 2013-11-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed rollout of r159271, broke Mountain Lion build.

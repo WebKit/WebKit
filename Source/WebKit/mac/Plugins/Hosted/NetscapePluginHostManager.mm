@@ -121,7 +121,7 @@ bool NetscapePluginHostManager::spawnPluginHost(const String& pluginPath, cpu_ty
                                       (NSString *)localization.get(), @"localization",
                                       nil];
 
-    NSData *data = [NSPropertyListSerialization dataFromPropertyList:launchProperties format:NSPropertyListBinaryFormat_v1_0 errorDescription:0];
+    NSData *data = [NSPropertyListSerialization dataWithPropertyList:launchProperties format:NSPropertyListBinaryFormat_v1_0 options:0 error:nullptr];
     ASSERT(data);
 
     [launchProperties release];
@@ -154,7 +154,7 @@ bool NetscapePluginHostManager::spawnPluginHost(const String& pluginPath, cpu_ty
                                     (NSString *)pluginPath, @"bundlePath",
                                     nil];
     
-    data = [NSPropertyListSerialization dataFromPropertyList:hostProperties format:NSPropertyListBinaryFormat_v1_0 errorDescription:nil];
+    data = [NSPropertyListSerialization dataWithPropertyList:hostProperties format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
     ASSERT(data);
 
     [hostProperties release];
@@ -246,7 +246,7 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
     [properties.get() setObject:[NSNumber numberWithBool:isAcceleratedCompositingEnabled] forKey:@"acceleratedCompositingEnabled"];
     [properties.get() setObject:[NSNumber numberWithBool:hostLayersInWindowServer] forKey:@"hostLayersInWindowServer"];
 
-    NSData *data = [NSPropertyListSerialization dataFromPropertyList:properties.get() format:NSPropertyListBinaryFormat_v1_0 errorDescription:nil];
+    NSData *data = [NSPropertyListSerialization dataWithPropertyList:properties.get() format:NSPropertyListBinaryFormat_v1_0 options:0 error:nullptr];
     ASSERT(data);
     
     RefPtr<NetscapePluginInstanceProxy> instance = NetscapePluginInstanceProxy::create(hostProxy, pluginView, fullFrame);

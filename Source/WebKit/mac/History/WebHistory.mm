@@ -538,12 +538,8 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
         }
     } else {
         NSData *data = [NSURLConnection sendSynchronousRequest:[NSURLRequest requestWithURL:URL] returningResponse:nil error:error];
-        if (data && [data length] > 0) {
-            dictionary = [NSPropertyListSerialization propertyListFromData:data
-                mutabilityOption:NSPropertyListImmutable
-                format:nil
-                errorDescription:nil];
-        }
+        if (data.length)
+            dictionary = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:nullptr error:nullptr];
     }
 
     // We used to support NSArrays here, but that was before Safari 1.0 shipped. We will no longer support

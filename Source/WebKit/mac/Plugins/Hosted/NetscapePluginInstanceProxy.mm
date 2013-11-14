@@ -1240,7 +1240,7 @@ bool NetscapePluginInstanceProxy::enumerate(uint32_t objectID, data_t& resultDat
         [array.get() addObject:[NSNumber numberWithLongLong:methodName]];
     }
 
-    NSData *data = [NSPropertyListSerialization dataFromPropertyList:array.get() format:NSPropertyListBinaryFormat_v1_0 errorDescription:0];
+    NSData *data = [NSPropertyListSerialization dataWithPropertyList:array.get() format:NSPropertyListBinaryFormat_v1_0 options:0 error:nullptr];
     ASSERT(data);
 
     resultLength = [data length];
@@ -1305,13 +1305,13 @@ void NetscapePluginInstanceProxy::marshalValue(ExecState* exec, JSValue value, d
     
     addValueToArray(array.get(), exec, value);
 
-    RetainPtr<NSData *> data = [NSPropertyListSerialization dataFromPropertyList:array.get() format:NSPropertyListBinaryFormat_v1_0 errorDescription:0];
+    NSData *data = [NSPropertyListSerialization dataWithPropertyList:array.get() format:NSPropertyListBinaryFormat_v1_0 options:0 error:nullptr];
     ASSERT(data);
     
-    resultLength = [data.get() length];
+    resultLength = data.length;
     mig_allocate(reinterpret_cast<vm_address_t*>(&resultData), resultLength);
     
-    memcpy(resultData, [data.get() bytes], resultLength);
+    memcpy(resultData, data.bytes, resultLength);
 }
 
 RetainPtr<NSData *> NetscapePluginInstanceProxy::marshalValues(ExecState* exec, const ArgList& args)
@@ -1321,7 +1321,7 @@ RetainPtr<NSData *> NetscapePluginInstanceProxy::marshalValues(ExecState* exec, 
     for (unsigned i = 0; i < args.size(); i++)
         addValueToArray(array.get(), exec, args.at(i));
 
-    RetainPtr<NSData *> data = [NSPropertyListSerialization dataFromPropertyList:array.get() format:NSPropertyListBinaryFormat_v1_0 errorDescription:0];
+    NSData *data = [NSPropertyListSerialization dataWithPropertyList:array.get() format:NSPropertyListBinaryFormat_v1_0 options:0 error:nullptr];
     ASSERT(data);
 
     return data;
@@ -1386,13 +1386,11 @@ JSValue NetscapePluginInstanceProxy::demarshalValue(ExecState* exec, const char*
 {
     RetainPtr<NSData*> data = adoptNS([[NSData alloc] initWithBytesNoCopy:(void*)valueData length:valueLength freeWhenDone:NO]);
 
-    RetainPtr<NSArray*> array = [NSPropertyListSerialization propertyListFromData:data.get()
-                                                                 mutabilityOption:NSPropertyListImmutable
-                                                                           format:0
-                                                                 errorDescription:0];
+    NSArray *array = [NSPropertyListSerialization propertyListWithData:data.get() options:NSPropertyListImmutable format:nullptr error:nullptr];
+
     NSUInteger position = 0;
     JSValue value;
-    bool result = demarshalValueFromArray(exec, array.get(), position, value);
+    bool result = demarshalValueFromArray(exec, array, position, value);
     ASSERT_UNUSED(result, result);
 
     return value;
@@ -1402,13 +1400,11 @@ void NetscapePluginInstanceProxy::demarshalValues(ExecState* exec, data_t values
 {
     RetainPtr<NSData*> data = adoptNS([[NSData alloc] initWithBytesNoCopy:valuesData length:valuesLength freeWhenDone:NO]);
 
-    RetainPtr<NSArray*> array = [NSPropertyListSerialization propertyListFromData:data.get()
-                                                                 mutabilityOption:NSPropertyListImmutable
-                                                                           format:0
-                                                                 errorDescription:0];
+    NSArray *array = [NSPropertyListSerialization propertyListWithData:data.get() options:NSPropertyListImmutable format:nullptr error:nullptr];
+
     NSUInteger position = 0;
     JSValue value;
-    while (demarshalValueFromArray(exec, array.get(), position, value))
+    while (demarshalValueFromArray(exec, array, position, value))
         result.append(value);
 }
 
