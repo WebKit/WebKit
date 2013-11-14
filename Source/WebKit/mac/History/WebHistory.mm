@@ -153,6 +153,18 @@ private:
 
 static void getDayBoundaries(NSTimeInterval interval, NSTimeInterval& beginningOfDay, NSTimeInterval& beginningOfNextDay)
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    NSDate *date = [NSDate dateWithTimeIntervalSinceReferenceDate:interval];
+    
+    NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
+    
+    NSDate *beginningOfDayDate = nil;
+    NSTimeInterval dayLength;
+    [calendar rangeOfUnit:NSCalendarUnitDay startDate:&beginningOfDayDate interval:&dayLength forDate:date];
+    
+    beginningOfDay = beginningOfDayDate.timeIntervalSinceReferenceDate;
+    beginningOfNextDay = beginningOfDay + dayLength;
+#else
     CFTimeZoneRef timeZone = CFTimeZoneCopyDefault();
     CFGregorianDate date = CFAbsoluteTimeGetGregorianDate(interval, timeZone);
     date.hour = 0;
@@ -162,6 +174,7 @@ static void getDayBoundaries(NSTimeInterval interval, NSTimeInterval& beginningO
     date.day += 1;
     beginningOfNextDay = CFGregorianDateGetAbsoluteTime(date, timeZone);
     CFRelease(timeZone);
+#endif
 }
 
 static inline NSTimeInterval beginningOfDay(NSTimeInterval date)
