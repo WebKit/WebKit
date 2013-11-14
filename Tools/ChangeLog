@@ -1,3 +1,11 @@
+2013-11-14  Lucas Forschler  <lforschler@apple.com>
+
+        Add webkit slave.
+
+        Unreviewed.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2013-11-14  Tim Horton  <timothy_horton@apple.com>
 
         build.webkit.org/dashboard can’t open different results in two new tabs

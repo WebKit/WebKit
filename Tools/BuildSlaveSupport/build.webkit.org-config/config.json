@@ -17,6 +17,7 @@
                     { "name": "apple-mini-130", "platform": "mac-mavericks"},
                     { "name": "apple-macpro-5", "platform": "mac-mavericks" },
                     { "name": "apple-macpro-8", "platform": "mac-mavericks" },
+                    { "name": "apple-mini-211", "platform": "mac-mavericks" },
                     
                     { "name": "apple-seo-01", "platform": "mac-mavericks"},
                     { "name": "apple-seo-02", "platform": "mac-mavericks"},
@@ -93,7 +94,7 @@
                     },
                     { "name": "Apple Mavericks Debug WK2 (Tests)", "type": "TestWebKit2", "builddir": "mavericks-debug-tests-wk2",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["apple-seo-03", "apple-macpro-8"]
+                      "slavenames": ["apple-seo-03", "apple-macpro-8", "apple-mini-211"]
                     },
                     { "name": "Apple Mavericks Release (Build)", "type": "Build", "builddir": "mavericks-release",
                       "platform": "mac-mavericks", "configuration": "release", "architectures": ["x86_64"],
