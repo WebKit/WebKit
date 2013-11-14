@@ -1306,7 +1306,7 @@ webkit.org/b/124261 [ MountainLion ] crypto/subtle [ Skip ]
 
 webkit.org/b/124311 compositing/regions/transform-transparent-positioned-video-inside-region.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/124318 fullscreen/anonymous-block-merge-crash.html [ Pass Timeout ]
+webkit.org/b/124318 fullscreen/anonymous-block-merge-crash.html [ Pass Fail ]
 
 webkit.org/b/124321 [ Mavericks ] animations/resume-after-page-cache.html [ Pass Fail ]
 
