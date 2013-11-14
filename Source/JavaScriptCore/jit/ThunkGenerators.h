@@ -31,9 +31,6 @@
 #if ENABLE(JIT)
 namespace JSC {
 
-MacroAssemblerCodeRef callToJavaScript(VM*);
-MacroAssemblerCodeRef throwNotCaught(VM*);
-
 MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(VM*);
 
 MacroAssemblerCodeRef linkCallThunkGenerator(VM*);

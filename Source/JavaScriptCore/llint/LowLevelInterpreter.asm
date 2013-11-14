@@ -421,6 +421,12 @@ macro doReturn()
     ret
 end
 
+# stub to call into JavaScript
+# EncodedJSValue callToJavaScript(void* code, Register* topOfStack)
+# Note, if this stub or one of it's related macros is changed, make the
+# equivalent changes in jit/JITStubsX86.h and/or jit/JITStubsMSVC64.asm
+_callToJavaScript:
+    doCallToJavaScript()
 
 # Indicate the beginning of LLInt.
 _llint_begin:

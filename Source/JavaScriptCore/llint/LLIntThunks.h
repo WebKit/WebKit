@@ -34,7 +34,13 @@
 
 namespace JSC {
 
+class ExecState;
 class VM;
+
+extern "C" {
+    EncodedJSValue callToJavaScript(void*, ExecState*);
+    void returnFromJavaScript();
+}
 
 namespace LLInt {
 

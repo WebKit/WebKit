@@ -30,7 +30,9 @@
 #include "CallFrameInlines.h"
 #include "CodeBlock.h"
 #include "Interpreter.h"
+#include "JITStubs.h"
 #include "JSCJSValue.h"
+#include "LLIntThunks.h"
 #include "VM.h"
 #include "Operations.h"
 
@@ -49,7 +51,7 @@ void genericUnwind(VM* vm, ExecState* callFrame, JSValue exceptionValue)
         catchPCForInterpreter = &callFrame->codeBlock()->instructions()[handler->target];
         catchRoutine = ExecutableBase::catchRoutineFor(handler, catchPCForInterpreter);
     } else
-        catchRoutine = vm->getCTIStub(throwNotCaught).code().executableAddress();
+        catchRoutine = FunctionPtr(LLInt::getCodePtr(returnFromJavaScript)).value();
     
     vm->callFrameForThrow = callFrame;
     vm->targetMachinePCForThrow = catchRoutine;

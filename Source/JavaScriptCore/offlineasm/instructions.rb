@@ -249,6 +249,8 @@ MACRO_INSTRUCTIONS =
      "bnz",
      "leai",
      "leap",
+     "pushCalleeSaves",
+     "popCalleeSaves"
     ]
 
 X86_INSTRUCTIONS =

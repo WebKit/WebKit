@@ -30,9 +30,20 @@
 #ifndef JITStubs_h
 #define JITStubs_h
 
+#include "JSCJSValue.h"
+
 namespace JSC {
 
 #if ENABLE(JIT)
+
+#if OS(WINDOWS)
+class ExecState;
+
+extern "C" {
+    EncodedJSValue callToJavaScript(void*, ExecState*);
+    void returnFromJavaScript();
+}
+#endif
 
 #if USE(MASM_PROBE)
 extern "C" void ctiMasmProbeTrampoline();

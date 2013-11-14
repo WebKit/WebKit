@@ -149,6 +149,80 @@ macro callSlowPath(slowPath)
     move t1, cfr
 end
 
+macro functionPrologue(extraStackSpace)
+    if X86
+        push cfr
+        move sp, cfr
+    end
+    pushCalleeSaves
+    if ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
+        push cfr
+        push lr
+    end
+    subp extraStackSpace, sp
+end
+
+macro functionEpilogue(extraStackSpace)
+    addp extraStackSpace, sp
+    if ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
+        pop lr
+        pop cfr
+    end
+    popCalleeSaves
+    if X86
+        pop cfr
+    end
+end
+
+macro doCallToJavaScript()
+    if X86
+        const extraStackSpace = 28
+        const previousCFR = t0
+        const entry = t5
+        const newCallFrame = t4
+    elsif ARM or ARMv7_TRADITIONAL
+        const extraStackSpace = 16
+        const previousCFR = t3  
+        const entry = a0
+        const newCallFrame = a1
+    elsif ARMv7
+        const extraStackSpace = 28
+        const previousCFR = t3  
+        const entry = a0
+        const newCallFrame = a1
+    elsif MIPS
+        const extraStackSpace = 20
+        const previousCFR = t2  
+        const entry = a0
+        const newCallFrame = a1
+    elsif SH4
+        const extraStackSpace = 20
+        const previousCFR = t3  
+        const entry = a0
+        const newCallFrame = a1
+    end
+
+    if X86
+        move cfr, previousCFR
+    end
+    functionPrologue(extraStackSpace)
+    if X86
+        loadp extraStackSpace+20[sp], entry
+        loadp extraStackSpace+24[sp], newCallFrame
+    else
+        move cfr, previousCFR
+    end
+
+    move newCallFrame, cfr
+    loadp [cfr], newCallFrame
+    storep previousCFR, [newCallFrame]
+    call entry
+
+_returnFromJavaScript:
+    functionEpilogue(extraStackSpace)
+    ret
+end
+
 # Debugging operation if you'd like to print an operand in the instruction stream. fromWhere
 # should be an immediate integer - any integer you like; use it to identify the place you're
 # debugging from. operand should likewise be an immediate, and should identify the operand

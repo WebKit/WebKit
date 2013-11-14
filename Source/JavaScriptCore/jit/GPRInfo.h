@@ -460,7 +460,11 @@ public:
     static const GPRReg regT4 = ARMRegisters::r8;
     static const GPRReg regT5 = ARMRegisters::r9;
     static const GPRReg regT6 = ARMRegisters::r10;
-    static const GPRReg regT7 = ARMRegisters::r5;
+#if CPU(ARM_THUMB2)
+    static const GPRReg regT7 = ARMRegisters::r11;
+#else 
+    static const GPRReg regT7 = ARMRegisters::r7;
+#endif
     static const GPRReg regT8 = ARMRegisters::r3;
     // These registers match the baseline JIT.
     static const GPRReg cachedResultRegister = regT0;
@@ -488,8 +492,13 @@ public:
     static unsigned toIndex(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
-        ASSERT(reg < 16);
-        static const unsigned indexForRegister[16] = { 0, 1, 2, 8, 3, 7, InvalidIndex, InvalidIndex, 4, 5, 6, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
+        ASSERT(static_cast<int>(reg) < 16);
+        static const unsigned indexForRegister[16] =
+#if CPU(ARM_THUMB2)
+            { 0, 1, 2, 8, 3, 9, InvalidIndex, InvalidIndex, 4, 5, 6, 7, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
+#else
+            { 0, 1, 2, 8, 3, 9, InvalidIndex, 7, 4, 5, 6, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
+#endif
         unsigned result = indexForRegister[reg];
         ASSERT(result != InvalidIndex);
         return result;
@@ -498,7 +507,7 @@ public:
     static const char* debugName(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
-        ASSERT(reg < 16);
+        ASSERT(static_cast<int>(reg) < 16);
         static const char* nameForRegister[16] = {
             "r0", "r1", "r2", "r3",
             "r4", "r5", "r6", "r7",

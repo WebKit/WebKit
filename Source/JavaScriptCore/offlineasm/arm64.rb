@@ -38,7 +38,8 @@ require "risc"
 #
 #  x0  => return value, cached result, first argument, t0, a0, r0
 #  x1  => t1, a1, r1
-#  x2  => t2
+#  x2  => t2, a2
+#  x3  => a3
 #  x9  => (nonArgGPR1 in baseline)
 # x10  => t4 (unused in baseline)
 # x11  => t5 (unused in baseline)
@@ -47,10 +48,9 @@ require "risc"
 # x16  => scratch
 # x17  => scratch
 # x23  => t3
-# x25  => cfr
-# x26  => timeout check (i.e. not touched by LLInt)
 # x27  => csr1 (tagTypeNumber)
 # x28  => csr2 (tagMask)
+# x29  => cfr
 #  sp  => sp
 #  lr  => lr
 #
@@ -106,8 +106,10 @@ class RegisterID
             arm64GPRName('x0', kind)
         when 't1', 'a1', 'r1'
             arm64GPRName('x1', kind)
-        when 't2'
+        when 't2', 'a2'
             arm64GPRName('x2', kind)
+        when 'a3'
+            arm64GPRName('x3', kind)
         when 't3'
             arm64GPRName('x23', kind)
         when 't4'
@@ -567,6 +569,28 @@ class Instruction
             emitARM64Unflipped("pop", operands, :ptr)
         when "push"
             emitARM64Unflipped("push", operands, :ptr)
+        when "popCalleeSaves"
+            emitARM64Unflipped("pop", "x28", :ptr)
+            emitARM64Unflipped("pop", "x27", :ptr)
+            emitARM64Unflipped("pop", "x26", :ptr)
+            emitARM64Unflipped("pop", "x25", :ptr)
+            emitARM64Unflipped("pop", "x24", :ptr)
+            emitARM64Unflipped("pop", "x23", :ptr)
+            emitARM64Unflipped("pop", "x22", :ptr)
+            emitARM64Unflipped("pop", "x21", :ptr)
+            emitARM64Unflipped("pop", "x20", :ptr)
+            emitARM64Unflipped("pop", "x19", :ptr)
+        when "pushCalleeSaves"
+            emitARM64Unflipped("push", "x19", :ptr)
+            emitARM64Unflipped("push", "x20", :ptr)
+            emitARM64Unflipped("push", "x21", :ptr)
+            emitARM64Unflipped("push", "x22", :ptr)
+            emitARM64Unflipped("push", "x23", :ptr)
+            emitARM64Unflipped("push", "x24", :ptr)
+            emitARM64Unflipped("push", "x25", :ptr)
+            emitARM64Unflipped("push", "x26", :ptr)
+            emitARM64Unflipped("push", "x27", :ptr)
+            emitARM64Unflipped("push", "x28", :ptr)
         when "move"
             if operands[0].immediate?
                 emitARM64MoveImmediate(operands[0].value, operands[1])

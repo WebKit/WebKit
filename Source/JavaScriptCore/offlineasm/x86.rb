@@ -74,11 +74,11 @@ X64_SCRATCH_REGISTER = SpecialRegister.new("r11")
 class RegisterID
     def supports8BitOnX86
         case name
-        when "t0", "a0", "r0", "t1", "a1", "r1", "t2", "t3"
+        when "t0", "a0", "r0", "t1", "a1", "r1", "t2", "t3", "t4", "t5"
             true
         when "cfr", "ttnr", "tmr"
             false
-        when "t4", "t5"
+        when "t6"
             isX64
         else
             raise
@@ -204,7 +204,6 @@ class RegisterID
                 raise
             end
         when "t5"
-            raise "Cannot use #{name} in 32-bit X86 at #{codeOriginString}" unless isX64
             case kind
             when :byte
                 "%dil"
@@ -213,9 +212,9 @@ class RegisterID
             when :int
                 "%edi"
             when :ptr
-                "%rdi"
+                isX64 ? "%rdi" : "%edi"
             when :quad
-                "%rdi"
+                isX64 ? "%rdi" : raise
             end
         when "t6"
             raise "Cannot use #{name} in 32-bit X86 at #{codeOriginString}" unless isX64
@@ -982,6 +981,30 @@ class Instruction
             $asm.puts "pop #{operands[0].x86Operand(:ptr)}"
         when "push"
             $asm.puts "push #{operands[0].x86Operand(:ptr)}"
+        when "popCalleeSaves"
+            if isX64
+                $asm.puts "pop %rbx"
+                $asm.puts "pop %r15"
+                $asm.puts "pop %r14"
+                $asm.puts "pop %r13"
+                $asm.puts "pop %r12"
+            else
+                $asm.puts "pop %ebx"
+                $asm.puts "pop %edi"
+                $asm.puts "pop %esi"
+            end
+        when "pushCalleeSaves"
+            if isX64
+                $asm.puts "push %r12"
+                $asm.puts "push %r13"
+                $asm.puts "push %r14"
+                $asm.puts "push %r15"
+                $asm.puts "push %rbx"
+            else
+                $asm.puts "push %esi"
+                $asm.puts "push %edi"
+                $asm.puts "push %ebx"
+            end
         when "move"
             handleMove
         when "sxi2q"

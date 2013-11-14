@@ -97,7 +97,9 @@ class RegisterID
         when "t3"
             "r4"
         when "t4"
-            "r10"
+            "r8"
+        when "t5"
+            "r9"
         when "cfr"
             isARMv7 ?  "r7" : "r11"
         when "lr"
@@ -451,9 +453,21 @@ class Instruction
             # FIXME: either support this or remove it.
             raise "ARM does not support this opcode yet, #{codeOrigin}"
         when "pop"
-            $asm.puts "pop #{operands[0].armOperand}"
+            $asm.puts "pop { #{operands[0].armOperand} }"
         when "push"
-            $asm.puts "push #{operands[0].armOperand}"
+            $asm.puts "push { #{operands[0].armOperand} }"
+        when "popCalleeSaves"
+            if isARMv7
+                $asm.puts "pop {r4-r6, r8-r11}"                
+            else
+                $asm.puts "pop {r4-r10}"
+            end
+        when "pushCalleeSaves"
+            if isARMv7
+                $asm.puts "push {r4-r6, r8-r11}"
+            else
+                $asm.puts "push {r4-r10}"
+            end
         when "move"
             if operands[0].immediate?
                 armMoveImmediate(operands[0].value, operands[1])

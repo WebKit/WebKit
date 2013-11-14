@@ -26,8 +26,8 @@
 #include "config.h"
 #include "JITCode.h"
 
+#include "LLIntThunks.h"
 #include "Operations.h"
-#include "ThunkGenerators.h"
 #include <wtf/PrintStream.h>
 
 namespace JSC {
@@ -46,7 +46,7 @@ JSValue JITCode::execute(JSStack* stack, CallFrame* callFrame, VM* vm)
 {
     UNUSED_PARAM(stack);
 
-    JSValue result = JSValue::decode(vm->callJavaScriptJITFunction(executableAddress(), callFrame));
+    JSValue result = JSValue::decode(callToJavaScript(executableAddress(), callFrame));
     return vm->exception() ? jsNull() : result;
 }
 #endif

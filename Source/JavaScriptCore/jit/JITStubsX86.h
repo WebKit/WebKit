@@ -200,6 +200,50 @@ SYMBOL_STRING(ctiMasmProbeTrampolineEnd) ":" "\n"
 
 #endif // COMPILER(GCC)
 
+#if COMPILER(MSVC)
+
+extern "C" {
+
+    // FIXME: Since Windows doesn't use the LLInt, we have inline stubs here.
+    // Until the LLInt is changed to support Windows, these stub needs to be updated.
+    __declspec(naked) EncodedJSValue callToJavaScript(void* code, ExecState*)
+    {
+        __asm {
+            push ebp;
+            mov eax, ebp;
+            mov ebp, esp;
+            push esi;
+            push edi;
+            push ebx;
+            sub esp, 0x1c;
+            mov ebp, [esp + 0x34];
+            mov ebx, [ebp];
+            mov [ebx], eax;
+            call [esp + 0x30];
+            add esp, 0x1c;
+            pop ebx;
+            pop edi;
+            pop esi;
+            pop ebp;
+            ret;
+        }
+    }
+
+    __declspec(naked) void returnFromJavaScript()
+    {
+        __asm {
+            add esp, 0x1c;
+            pop ebx;
+            pop edi;
+            pop esi;
+            pop ebp;
+            ret;
+        }
+    }
+}
+
+#endif // COMPILER(MSVC)
+
 } // namespace JSC
 
 #endif // JITStubsX86_h
