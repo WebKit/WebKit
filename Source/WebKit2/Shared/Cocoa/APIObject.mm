@@ -75,7 +75,7 @@ void* Object::newObject(size_t size, Type type)
         break;
 
     case Type::Error:
-        wrapper = [WKNSError alloc];
+        wrapper = NSAllocateObject([WKNSError self], size, nullptr);
         break;
 
     case Type::NavigationData:

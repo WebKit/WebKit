@@ -1,5 +1,15 @@
 2013-11-13  Dan Bernstein  <mitz@apple.com>
 
+        REGRESSION (r159263): caused 50+ crashes on all mac webkit2 bots
+        https://bugs.webkit.org/show_bug.cgi?id=124327
+
+        Reviewed by Tim Horton.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject): Allocate extra memory for the WebError inside the WKNSError.
+
+2013-11-13  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Add WKNSError
         https://bugs.webkit.org/show_bug.cgi?id=124295
 
