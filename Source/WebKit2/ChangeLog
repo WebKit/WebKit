@@ -1,3 +1,63 @@
+2013-11-14  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [WK2] Move Coordinated Graphics related code out of DrawingAreaProxy
+        https://bugs.webkit.org/show_bug.cgi?id=124328
+
+        Reviewed by Andreas Kling.
+
+        Refactored for DrawingAreaProxy not to include Coordinated Graphics specific code.
+
+        * PlatformEfl.cmake:
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.cpp: Moved from DrawingAreaProxy.cpp.
+        (WebKit::CoordinatedDrawingAreaProxy::updateViewport):
+        (WebKit::CoordinatedDrawingAreaProxy::contentsRect):
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.h: Ditto.
+        (WebKit::CoordinatedDrawingAreaProxy::coordinatedLayerTreeHostProxy): Refactored to return reference instead of pointer.
+        (WebKit::CoordinatedDrawingAreaProxy::viewportVisibleRect):
+        (WebKit::CoordinatedDrawingAreaProxy::page):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp:
+        (WebKit::CoordinatedLayerTreeHostProxy::CoordinatedLayerTreeHostProxy):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        * UIProcess/CoordinatedGraphics/PageViewportController.cpp:
+        Renamed from Source/WebKit2/UIProcess/PageViewportController.cpp because it depends on Coordinated Graphics.
+        (WebKit::fuzzyCompare):
+        (WebKit::PageViewportController::PageViewportController):
+        (WebKit::PageViewportController::innerBoundedViewportScale):
+        (WebKit::PageViewportController::outerBoundedViewportScale):
+        (WebKit::PageViewportController::deviceScaleFactor):
+        (WebKit::isIntegral):
+        (WebKit::PageViewportController::pixelAlignedFloatPoint):
+        (WebKit::PageViewportController::boundContentsPositionAtScale):
+        (WebKit::PageViewportController::boundContentsPosition):
+        (WebKit::PageViewportController::didCommitLoad):
+        (WebKit::PageViewportController::didChangeContentsSize):
+        (WebKit::PageViewportController::didRenderFrame):
+        (WebKit::PageViewportController::pageTransitionViewportReady):
+        (WebKit::PageViewportController::pageDidRequestScroll):
+        (WebKit::PageViewportController::didChangeViewportSize):
+        (WebKit::PageViewportController::didChangeContentsVisibility):
+        (WebKit::PageViewportController::syncVisibleContents): Added cast to access CoordinatedDrawingAreaProxy method.
+        (WebKit::PageViewportController::didChangeViewportAttributes):
+        (WebKit::PageViewportController::visibleContentsSize):
+        (WebKit::PageViewportController::applyScaleAfterRenderingContents):
+        (WebKit::PageViewportController::applyPositionAfterRenderingContents):
+        (WebKit::PageViewportController::updateMinimumScaleToFit):
+        * UIProcess/CoordinatedGraphics/PageViewportController.h:
+        Renamed from Source/WebKit2/UIProcess/PageViewportController.cpp because it depends on Coordinated Graphics.
+        (WebKit::PageViewportController::~PageViewportController):
+        (WebKit::PageViewportController::hadUserInteraction):
+        (WebKit::PageViewportController::allowsUserScaling):
+        (WebKit::PageViewportController::contentsLayoutSize):
+        (WebKit::PageViewportController::minimumScale):
+        (WebKit::PageViewportController::maximumScale):
+        (WebKit::PageViewportController::currentScale):
+        (WebKit::PageViewportController::setHadUserInteraction):
+        * UIProcess/CoordinatedGraphics/WebView.cpp: Added some casts to access CoordinatedDrawingAreaProxy methods.
+        (WebKit::WebView::coordinatedGraphicsScene): Simplified code using reference.
+        (WebKit::WebView::updateViewportSize):
+        * UIProcess/DrawingAreaProxy.cpp: Removed Coordinated Graphics macro and related codes.
+        * UIProcess/DrawingAreaProxy.h: Ditto.
+
 2013-11-13  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         Rename some ImmutableArray leftovers

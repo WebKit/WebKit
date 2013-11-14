@@ -24,6 +24,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "PageViewportController.h"
 
+#include "CoordinatedDrawingAreaProxy.h"
 #include "PageViewportControllerClient.h"
 #include "WebPageProxy.h"
 #include <WebCore/FloatRect.h>
@@ -265,7 +266,7 @@ void PageViewportController::didChangeContentsVisibility(const FloatPoint& posit
 
 void PageViewportController::syncVisibleContents(const FloatPoint& trajectoryVector)
 {
-    DrawingAreaProxy* drawingArea = m_webPageProxy->drawingArea();
+    CoordinatedDrawingAreaProxy* drawingArea = static_cast<CoordinatedDrawingAreaProxy*>(m_webPageProxy->drawingArea());
     if (!drawingArea || m_viewportSize.isEmpty() || m_contentsSize.isEmpty())
         return;
 

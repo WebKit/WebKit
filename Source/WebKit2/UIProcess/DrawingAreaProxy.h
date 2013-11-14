@@ -70,15 +70,6 @@ public:
     virtual void colorSpaceDidChange() { }
     virtual void minimumLayoutSizeDidChange() { }
 
-#if USE(COORDINATED_GRAPHICS)
-    virtual void updateViewport();
-    virtual WebCore::IntRect viewportVisibleRect() const { return contentsRect(); }
-    virtual WebCore::IntRect contentsRect() const;
-    CoordinatedLayerTreeHostProxy* coordinatedLayerTreeHostProxy() const { return m_coordinatedLayerTreeHostProxy.get(); }
-    virtual void setVisibleContentsRect(const WebCore::FloatRect& /* visibleContentsRect */, const WebCore::FloatPoint& /* trajectoryVector */) { }
-
-    WebPageProxy* page() { return m_webPageProxy; }
-#endif
 protected:
     explicit DrawingAreaProxy(DrawingAreaType, WebPageProxy*);
 
@@ -88,10 +79,6 @@ protected:
     WebCore::IntSize m_size;
     WebCore::IntSize m_layerPosition;
     WebCore::IntSize m_scrollOffset;
-
-#if USE(COORDINATED_GRAPHICS)
-    OwnPtr<CoordinatedLayerTreeHostProxy> m_coordinatedLayerTreeHostProxy;
-#endif
 
 private:
     virtual void sizeDidChange() = 0;

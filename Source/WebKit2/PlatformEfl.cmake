@@ -53,7 +53,6 @@ list(APPEND WebKit2_SOURCES
     Shared/soup/WebCoreArgumentCodersSoup.cpp
 
     UIProcess/DefaultUndoController.cpp
-    UIProcess/PageViewportController.cpp
 
     UIProcess/API/C/CoordinatedGraphics/WKView.cpp
 
@@ -107,6 +106,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_view.cpp
     UIProcess/API/efl/ewk_window_features.cpp
 
+    UIProcess/CoordinatedGraphics/PageViewportController.cpp
     UIProcess/CoordinatedGraphics/WebView.cpp
     UIProcess/CoordinatedGraphics/WebViewClient.cpp
 

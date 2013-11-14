@@ -247,20 +247,15 @@ AffineTransform WebView::transformToScene() const
 
 CoordinatedGraphicsScene* WebView::coordinatedGraphicsScene()
 {
-    DrawingAreaProxy* drawingArea = m_page->drawingArea();
-    if (!drawingArea)
-        return 0;
+    if (CoordinatedDrawingAreaProxy* drawingArea = static_cast<CoordinatedDrawingAreaProxy*>(page()->drawingArea()))
+        return drawingArea->coordinatedLayerTreeHostProxy().coordinatedGraphicsScene();
 
-    WebKit::CoordinatedLayerTreeHostProxy* layerTreeHostProxy = drawingArea->coordinatedLayerTreeHostProxy();
-    if (!layerTreeHostProxy)
-        return 0;
-
-    return layerTreeHostProxy->coordinatedGraphicsScene();
+    return nullptr;
 }
 
 void WebView::updateViewportSize()
 {
-    if (DrawingAreaProxy* drawingArea = page()->drawingArea()) {
+    if (CoordinatedDrawingAreaProxy* drawingArea = static_cast<CoordinatedDrawingAreaProxy*>(page()->drawingArea())) {
         // Web Process expects sizes in UI units, and not raw device units.
         drawingArea->setSize(roundedIntSize(dipSize()), IntSize(), IntSize());
         FloatRect visibleContentsRect(contentPosition(), visibleContentsSize());

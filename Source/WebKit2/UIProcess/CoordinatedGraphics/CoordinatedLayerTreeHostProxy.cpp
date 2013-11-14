@@ -23,9 +23,9 @@
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedLayerTreeHostProxy.h"
 
+#include "CoordinatedDrawingAreaProxy.h"
 #include "CoordinatedLayerTreeHostMessages.h"
 #include "CoordinatedLayerTreeHostProxyMessages.h"
-#include "DrawingAreaProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/CoordinatedGraphicsState.h>
@@ -34,7 +34,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-CoordinatedLayerTreeHostProxy::CoordinatedLayerTreeHostProxy(DrawingAreaProxy* drawingAreaProxy)
+CoordinatedLayerTreeHostProxy::CoordinatedLayerTreeHostProxy(CoordinatedDrawingAreaProxy* drawingAreaProxy)
     : m_drawingAreaProxy(drawingAreaProxy)
     , m_scene(adoptRef(new CoordinatedGraphicsScene(this)))
 {

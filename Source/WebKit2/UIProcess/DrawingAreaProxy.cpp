@@ -30,10 +30,6 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 
-#if USE(COORDINATED_GRAPHICS)
-#include "CoordinatedLayerTreeHostProxy.h"
-#endif
-
 using namespace WebCore;
 
 namespace WebKit {
@@ -63,17 +59,5 @@ void DrawingAreaProxy::setSize(const IntSize& size, const IntSize& layerPosition
     m_scrollOffset += scrollOffset;
     sizeDidChange();
 }
-
-#if USE(COORDINATED_GRAPHICS)
-void DrawingAreaProxy::updateViewport()
-{
-    m_webPageProxy->setViewNeedsDisplay(viewportVisibleRect());
-}
-
-WebCore::IntRect DrawingAreaProxy::contentsRect() const
-{
-    return IntRect(IntPoint::zero(), m_webPageProxy->viewSize());
-}
-#endif
 
 } // namespace WebKit

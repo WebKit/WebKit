@@ -110,6 +110,16 @@ void CoordinatedDrawingAreaProxy::paint(BackingStore::PlatformGraphicsContext co
     discardBackingStoreSoon();
 }
 
+void CoordinatedDrawingAreaProxy::updateViewport()
+{
+    m_webPageProxy->setViewNeedsDisplay(viewportVisibleRect());
+}
+
+WebCore::IntRect CoordinatedDrawingAreaProxy::contentsRect() const
+{
+    return IntRect(IntPoint::zero(), m_webPageProxy->viewSize());
+}
+
 void CoordinatedDrawingAreaProxy::sizeDidChange()
 {
     backingStoreStateDidChange(RespondImmediately);
