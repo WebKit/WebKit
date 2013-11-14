@@ -414,6 +414,8 @@
 		37183D57182F4E700080C811 /* WKNSURLExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 37183D55182F4E700080C811 /* WKNSURLExtras.h */; };
 		371A19411824D29300F32A5E /* WKNSDictionary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 371A193F1824D29300F32A5E /* WKNSDictionary.mm */; };
 		371A19421824D29300F32A5E /* WKNSDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 371A19401824D29300F32A5E /* WKNSDictionary.h */; };
+		372CAF0B1833FD910040AC27 /* WKNSError.h in Headers */ = {isa = PBXBuildFile; fileRef = 372CAF091833FD910040AC27 /* WKNSError.h */; };
+		372CAF0C1833FD910040AC27 /* WKNSError.mm in Sources */ = {isa = PBXBuildFile; fileRef = 372CAF0A1833FD910040AC27 /* WKNSError.mm */; };
 		374436881820E7240049579F /* WKObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 374436871820E7240049579F /* WKObject.mm */; };
 		3760881E150413E900FC82C7 /* WebRenderObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3760881C150413E900FC82C7 /* WebRenderObject.cpp */; };
 		3760881F150413E900FC82C7 /* WebRenderObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3760881D150413E900FC82C7 /* WebRenderObject.h */; };
@@ -1916,6 +1918,8 @@
 		37183D55182F4E700080C811 /* WKNSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSURLExtras.h; sourceTree = "<group>"; };
 		371A193F1824D29300F32A5E /* WKNSDictionary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSDictionary.mm; sourceTree = "<group>"; };
 		371A19401824D29300F32A5E /* WKNSDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSDictionary.h; sourceTree = "<group>"; };
+		372CAF091833FD910040AC27 /* WKNSError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSError.h; sourceTree = "<group>"; };
+		372CAF0A1833FD910040AC27 /* WKNSError.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSError.mm; sourceTree = "<group>"; };
 		374436871820E7240049579F /* WKObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKObject.mm; sourceTree = "<group>"; };
 		3760881C150413E900FC82C7 /* WebRenderObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebRenderObject.cpp; sourceTree = "<group>"; };
 		3760881D150413E900FC82C7 /* WebRenderObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebRenderObject.h; sourceTree = "<group>"; };
@@ -3710,6 +3714,8 @@
 				37C4C0911814B3AF003688B9 /* WKNSArray.mm */,
 				371A19401824D29300F32A5E /* WKNSDictionary.h */,
 				371A193F1824D29300F32A5E /* WKNSDictionary.mm */,
+				372CAF091833FD910040AC27 /* WKNSError.h */,
+				372CAF0A1833FD910040AC27 /* WKNSError.mm */,
 				378E1A4818208CD60031007A /* WKNSString.h */,
 				378E1A4718208CD60031007A /* WKNSString.mm */,
 				378E1A4C18208D700031007A /* WKNSURL.h */,
@@ -5904,6 +5910,7 @@
 				BC4075F6124FF0270068F20A /* WKCertificateInfo.h in Headers */,
 				BC407627124FF0400068F20A /* WKCertificateInfoMac.h in Headers */,
 				F036978615F4BE6B00C3A80E /* WKColorPickerResultListener.h in Headers */,
+				372CAF0B1833FD910040AC27 /* WKNSError.h in Headers */,
 				BCA284D71492F2C7001F9042 /* WKConnection.h in Headers */,
 				BC5C75C814954DA600BC4775 /* WKConnectionInternal.h in Headers */,
 				BC4A6297147313A0006C681A /* WKConnectionRef.h in Headers */,
@@ -7045,6 +7052,7 @@
 				51ACBBA1127A8F2C00D203B9 /* WebContextMenuProxyMac.mm in Sources */,
 				BCEE7D0D12846F69009827DA /* WebContextMessageReceiver.cpp in Sources */,
 				3309344F1315B94D0097A7BC /* WebCookieManager.cpp in Sources */,
+				372CAF0C1833FD910040AC27 /* WKNSError.mm in Sources */,
 				1A9E329A1822E1CC00F5D04C /* WKRemoteObject.mm in Sources */,
 				51E35210180F63FB00E53BE9 /* DatabaseProcessIDBDatabaseBackendMessageReceiver.cpp in Sources */,
 				F6A90813133C20510082C3F4 /* WebCookieManagerMac.mm in Sources */,

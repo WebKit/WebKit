@@ -32,6 +32,7 @@
 #import "WKBackForwardListItemInternal.h"
 #import "WKNSArray.h"
 #import "WKNSDictionary.h"
+#import "WKNSError.h"
 #import "WKNSString.h"
 #import "WKNSURL.h"
 #import "WKNavigationDataInternal.h"
@@ -71,6 +72,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::Dictionary:
         wrapper = [WKNSDictionary alloc];
+        break;
+
+    case Type::Error:
+        wrapper = [WKNSError alloc];
         break;
 
     case Type::NavigationData:

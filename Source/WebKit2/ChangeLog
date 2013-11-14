@@ -1,3 +1,20 @@
+2013-11-13  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Add WKNSError
+        https://bugs.webkit.org/show_bug.cgi?id=124295
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject): Allocate a WKNSError if the object is a WebError.
+        * Shared/Cocoa/WKNSError.h: Added.
+        (WebKit::wrapper): Added. Returns a WebError’s wrapper as an NSError.
+        * Shared/Cocoa/WKNSError.mm: Added.
+        (-[WKNSError _web_createTarget]): Override this WKObject method to return a copy of the
+        underlying CFError.
+        (-[WKNSError copyWithZone:]): Retains self.
+        * WebKit2.xcodeproj/project.pbxproj: Added new files.
+
 2013-11-13  Simon Fraser  <simon.fraser@apple.com>
 
         Tweak the property syntax after https://bugs.webkit.org/show_bug.cgi?id=124317
