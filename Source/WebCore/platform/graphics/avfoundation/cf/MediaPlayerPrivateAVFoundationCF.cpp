@@ -107,7 +107,7 @@ public:
     void checkPlayability();
     void beginLoadingMetadata();
     
-    void seekToTime(float);
+    void seekToTime(double, double, double);
     void updateVideoLayerGravity();
 
     void setCurrentTrack(InbandTextTrackPrivateAVF*);
@@ -554,14 +554,14 @@ float MediaPlayerPrivateAVFoundationCF::currentTime() const
     return 0;
 }
 
-void MediaPlayerPrivateAVFoundationCF::seekToTime(double time)
+void MediaPlayerPrivateAVFoundationCF::seekToTime(double time, double negativeTolerance, double positiveTolerance)
 {
     if (!m_avfWrapper)
         return;
     
     // seekToTime generates several event callbacks, update afterwards.
     setDelayCallbacks(true);
-    m_avfWrapper->seekToTime(time);
+    m_avfWrapper->seekToTime(time, negativeTolerance, positiveTolerance);
     setDelayCallbacks(false);
 }
 
@@ -1516,11 +1516,13 @@ void AVFWrapper::seekCompletedCallback(AVCFPlayerItemRef, Boolean finished, void
     self->m_owner->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::SeekCompleted, static_cast<bool>(finished));
 }
 
-void AVFWrapper::seekToTime(float time)
+void AVFWrapper::seekToTime(double time, double negativeTolerance, double positiveTolerance)
 {
     ASSERT(avPlayerItem());
-    AVCFPlayerItemSeekToTimeWithToleranceAndCompletionCallback(avPlayerItem(), CMTimeMakeWithSeconds(time, 600),
-        kCMTimeZero, kCMTimeZero, &seekCompletedCallback, callbackContext());
+    CMTime cmTime = CMTimeMakeWithSeconds(time, 600);
+    CMTime cmBefore = CMTimeMakeWithSeconds(negativeTolerance, 600);
+    CMTime cmAfter = CMTimeMakeWithSeconds(positiveTolerance, 600);
+    AVCFPlayerItemSeekToTimeWithToleranceAndCompletionCallback(avPlayerItem(), cmTime, cmBefore, cmAfter, &seekCompletedCallback, callbackContext());
 }
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)

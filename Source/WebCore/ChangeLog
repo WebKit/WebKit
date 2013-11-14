@@ -1,3 +1,14 @@
+2013-11-13  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build failure; update MediaPlayerPrivateAVFFoundationCF::seekToTime after r159208.
+
+        After r159208, seekToTime takes tolerance parameters.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::seekToTime):
+        (WebCore::AVFWrapper::seekToTime):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+
 2013-11-14  Beth Dakin  <bdakin@apple.com>
 
         Add a new mode where fixed elements don't constrain their positions during a
