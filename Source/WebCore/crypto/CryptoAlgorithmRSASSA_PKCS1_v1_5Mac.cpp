@@ -33,6 +33,7 @@
 #include "CryptoKeyRSA.h"
 #include "ExceptionCode.h"
 #include "JSDOMPromise.h"
+#include <CommonCrypto/CommonCryptor.h>
 
 #if defined(__has_include)
 #if __has_include(<CommonCrypto/CommonRSACryptor.h>)
