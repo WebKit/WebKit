@@ -33,7 +33,7 @@ _TEXT   SEGMENT
 
 callToJavaScript PROC
     push rbp
-    mov rbp, rax ; Save previous frame pointer
+    mov rax, rbp ; Save previous frame pointer
     mov rbp, rsp
     push r12
     push r13

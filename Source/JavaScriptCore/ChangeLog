@@ -1,3 +1,14 @@
+2013-11-14  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r159276): rbp register overwritten in Win 64 version of callToJavascript stub
+        https://bugs.webkit.org/show_bug.cgi?id=124361
+
+        Reviewed by Oliver Hunt.
+
+        Swapped operand ordering to: mov rax, rbp
+
+        * jit/JITStubsMSVC64.asm:
+
 2013-11-14  Julien Brianceau  <jbriance@cisco.com>
 
         REGRESSION (r159276): Fix lots of crashes for sh4 architecture.
