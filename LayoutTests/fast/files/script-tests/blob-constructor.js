@@ -10,8 +10,8 @@ shouldBeTrue("(new Blob(['hello'], {type:'text/html', endings:'native'})) instan
 shouldBeTrue("(new Blob(['hello'], {type:'text/html', endings:'transparent'})) instanceof window.Blob");
 
 // Test invalid blob parts
-shouldThrow("new Blob('hello')", "'TypeError: First argument of the constructor is not of type Array'");
-shouldThrow("new Blob(0)", "'TypeError: First argument of the constructor is not of type Array'");
+shouldThrow("new Blob('hello')", "'TypeError: Value is not a sequence'");
+shouldThrow("new Blob(0)", "'TypeError: Value is not a sequence'");
 
 // Test valid blob parts.
 shouldBeTrue("(new Blob([])) instanceof window.Blob");
@@ -98,3 +98,11 @@ shouldBe("new Blob([(new Float32Array(100)).buffer]).size", "400");
 shouldBe("new Blob([(new Float64Array(100)).buffer]).size", "800");
 shouldBe("new Blob([(new Float64Array(100)).buffer, (new Int32Array(100)).buffer, (new Uint8Array(100)).buffer, (new DataView(new ArrayBuffer(100))).buffer]).size", "1400");
 shouldBe("new Blob([new Blob([(new Int32Array(100)).buffer]), (new Uint8Array(100)).buffer, (new Float32Array(100)).buffer, (new DataView(new ArrayBuffer(100))).buffer]).size", "1000");
+
+// Test passing blob parts in sequences.
+shouldBeTrue("new Blob({length: 0}) instanceof window.Blob");
+shouldBe("new Blob({length: 0}).size", "0");
+shouldBe("new Blob({length: 1, 0: 'string'}).size", "6");
+shouldBe("new Blob({length: 2, 0: new Uint8Array(100), 1: new Int16Array(100)}).size", "300");
+shouldBe("new Blob({length: 1, 0: 'string'}, {type: 'text/html'}).type", "'text/html'");
+shouldThrow("new Blob({length: 0}, {endings:'illegal'})", "'TypeError: The endings property must be either \"transparent\" or \"native\"'");

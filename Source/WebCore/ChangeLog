@@ -1,3 +1,19 @@
+2013-11-13  Victor Costan  <costan@gmail.com>
+
+        Blob constructor accepts a sequence (array-like object) as first arg. 
+        https://bugs.webkit.org/show_bug.cgi?id=124175
+
+        Reviewed by Christophe Dumez.
+
+        Added test cases to fast/files/script-tests/blob-constructor.js.
+
+        * bindings/js/JSBlobCustom.cpp: Make the constructor work with sequences.
+        (WebCore::JSBlobConstructor::constructJSBlob):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toJSSequence): Slightly better error message when conversion fails.
+        (WebCore::toJS): Whitespace.
+        (WebCore::jsArray): Whitespace.
+
 2013-11-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: InspectorBackendDispatcher improvements

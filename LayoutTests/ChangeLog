@@ -1,3 +1,20 @@
+2013-11-13  Victor Costan  <costan@gmail.com>
+
+        Blob constructor accepts a sequence (array-like object) as first arg.
+        https://bugs.webkit.org/show_bug.cgi?id=124175
+
+        Reviewed by Christophe Dumez.
+
+
+        * crypto/subtle/argument-conversion-expected.txt: Updated sequence error expectations.
+        * fast/dom/Window/window-postmessage-args-expected.txt: Updated sequence error expectations.
+        * fast/events/constructors/message-event-constructor-expected.txt: Updated sequence error expectations.
+        * fast/events/message-port-multi-expected.txt: Updated sequence error expectations.
+        * fast/files/blob-constructor-expected.txt: Updated error text and added expectations.
+        * fast/files/script-tests/blob-constructor.js: Added sequence test cases.
+        * fast/workers/worker-context-multi-port-expected.txt: Updated sequence error expectations.
+        * fast/workers/worker-multi-port-expected.txt: Updated sequence error expectations.
+
 2013-11-13  Sun-woo Nam  <sunny.nam@samsung.com>
 
         [EFL] Layout tests with css3 selectors3 properties need to be rebaselined.

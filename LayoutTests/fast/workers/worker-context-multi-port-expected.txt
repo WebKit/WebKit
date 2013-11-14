@@ -9,7 +9,7 @@ PASS event.ports contains two ports when two ports sent
 PASS posting a null port did throw: Error: InvalidStateError: DOM Exception 11
 PASS posting a non-port did throw: TypeError: Type error
 PASS event.ports contains two ports when two ports re-sent after error
-PASS posting a non-array did throw: TypeError: Type error
+PASS posting a non-array did throw: TypeError: Value is not a sequence
 PASS posting a non-sequence did throw: TypeError: Type error
 
 TEST COMPLETE

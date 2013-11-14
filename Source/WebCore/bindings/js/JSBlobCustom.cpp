@@ -71,9 +71,11 @@ EncodedJSValue JSC_HOST_CALL JSBlobConstructor::constructJSBlob(ExecState* exec)
         return JSValue::encode(CREATE_DOM_WRAPPER(exec, jsConstructor->globalObject(), Blob, blob.get()));
     }
 
-    JSValue firstArg = exec->argument(0);
-    if (!isJSArray(firstArg))
-        return throwVMError(exec, createTypeError(exec, "First argument of the constructor is not of type Array"));
+    unsigned blobPartsLength = 0;
+    JSObject* blobParts = toJSSequence(exec, exec->argument(0), blobPartsLength);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+    ASSERT(blobParts);
 
     String type;
     String endings = ASCIILiteral("transparent");
@@ -110,11 +112,8 @@ EncodedJSValue JSC_HOST_CALL JSBlobConstructor::constructJSBlob(ExecState* exec)
 
     BlobBuilder blobBuilder;
 
-    JSArray* array = asArray(firstArg);
-    unsigned length = array->length();
-
-    for (unsigned i = 0; i < length; ++i) {
-        JSValue item = array->getIndex(exec, i);
+    for (unsigned i = 0; i < blobPartsLength; ++i) {
+        JSValue item = blobParts->get(exec, i);
 #if ENABLE(BLOB)
         if (item.inherits(JSArrayBuffer::info()))
             blobBuilder.append(toArrayBuffer(item));

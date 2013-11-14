@@ -119,7 +119,7 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld& world, JSC::ArrayBuff
 {
     return static_cast<WebCoreTypedArrayController*>(world.vm()->m_typedArrayController.get())->wrapperOwner();
 }
-    
+
 inline void* wrapperContext(DOMWrapperWorld& world, JSC::ArrayBuffer*)
 {
     return &world;
@@ -197,7 +197,7 @@ template <typename DOMClass, typename WrapperClass> inline void uncacheWrapper(D
         return;
     weakRemove(world.m_wrappers, (void*)domObject, wrapper);
 }
-    
+
 #define CREATE_DOM_WRAPPER(exec, globalObject, className, object) createWrapper<JS##className>(exec, globalObject, static_cast<className*>(object))
 template<class WrapperClass, class DOMClass> inline JSDOMWrapper* createWrapper(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, DOMClass* node)
 {
@@ -251,7 +251,7 @@ inline JSC::JSValue jsStringWithCache(JSC::ExecState* exec, const AtomicString& 
 {
     return jsStringWithCache(exec, s.string());
 }
-        
+
 JSC::JSValue jsStringOrNull(JSC::ExecState*, const String&); // null if the string is null
 JSC::JSValue jsStringOrNull(JSC::ExecState*, const URL&); // null if the URL is null
 
@@ -325,7 +325,7 @@ inline JSC::JSObject* toJSSequence(JSC::ExecState* exec, JSC::JSValue value, uns
 {
     JSC::JSObject* object = value.getObject();
     if (!object) {
-        throwTypeError(exec);
+        throwVMError(exec, createTypeError(exec, "Value is not a sequence"));
         return 0;
     }
 
@@ -334,7 +334,7 @@ inline JSC::JSObject* toJSSequence(JSC::ExecState* exec, JSC::JSValue value, uns
         return 0;
 
     if (lengthValue.isUndefinedOrNull()) {
-        throwTypeError(exec);
+        throwVMError(exec, createTypeError(exec, "Value is not a sequence"));
         return 0;
     }
 
@@ -374,10 +374,10 @@ template <typename T>
 inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Vector<T> vector)
 {
     JSC::JSArray* array = constructEmptyArray(exec, 0, vector.size());
-    
+
     for (size_t i = 0; i < vector.size(); ++i)
         array->putDirectIndex(exec, i, toJS(exec, globalObject, vector[i]));
-    
+
     return array;
 }
 
@@ -385,10 +385,10 @@ template <typename T>
 inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Vector<RefPtr<T>> vector)
 {
     JSC::JSArray* array = constructEmptyArray(exec, 0, vector.size());
-    
+
     for (size_t i = 0; i < vector.size(); ++i)
         array->putDirectIndex(exec, i, toJS(exec, globalObject, vector[i].get()));
-    
+
     return array;
 }
 
@@ -428,7 +428,7 @@ template <typename T, size_t inlineCapacity>
 JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<T, inlineCapacity>& iterator)
 {
     JSC::MarkedArgumentBuffer list;
-    typename Vector<T, inlineCapacity>::const_iterator end = iterator.end();        
+    typename Vector<T, inlineCapacity>::const_iterator end = iterator.end();
     typedef JSValueTraits<T> TraitsType;
 
     for (typename Vector<T, inlineCapacity>::const_iterator iter = iterator.begin(); iter != end; ++iter)
