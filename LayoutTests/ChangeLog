@@ -1,3 +1,16 @@
+2013-11-14  Sun-woo Nam  <sunny.nam@samsung.com>
+
+        [EFL] Layout tests with text areas need to be rebaselined.
+        https://bugs.webkit.org/show_bug.cgi?id=124337
+
+        Unreviewed, EFL gatdening.
+
+        EFL text areas rebaselined after r129492.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/forms/basic-textareas-expected.txt:
+        * platform/efl/fast/forms/basic-textareas-quirks-expected.txt:
+
 2013-11-13  Victor Costan  <costan@gmail.com>
 
         Blob constructor accepts a sequence (array-like object) as first arg.
