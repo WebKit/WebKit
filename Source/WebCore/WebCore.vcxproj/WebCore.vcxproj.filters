@@ -4815,6 +4815,9 @@
     <ClCompile Include="..\inspector\InspectorApplicationCacheAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
+    <ClCompile Include="..\inspector\InspectorBackendDispatcher.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
     <ClCompile Include="..\inspector\InspectorCanvasAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
@@ -12352,6 +12355,9 @@
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\InspectorApplicationCacheAgent.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\InspectorBackendDispatcher.h">
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\InspectorBaseAgent.h">

@@ -1,5 +1,14 @@
 2013-11-13  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Unreviewed Windows Build Fix after r159268.
+
+        Missed adding InspectorBackendDispatcher.h and cpp to the Windows build.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+
+2013-11-13  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Generate Individual InspectorBackendDispatchers, add base InspectorBackendDispatcher
         https://bugs.webkit.org/show_bug.cgi?id=124296
 

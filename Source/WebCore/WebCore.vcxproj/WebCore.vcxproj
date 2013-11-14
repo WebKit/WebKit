@@ -17610,6 +17610,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\inspector\InspectorBackendDispatcher.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\inspector\InspectorCanvasAgent.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -20844,6 +20852,7 @@
     <ClInclude Include="..\inspector\InjectedScriptModule.h" />
     <ClInclude Include="..\inspector\InspectorAgent.h" />
     <ClInclude Include="..\inspector\InspectorApplicationCacheAgent.h" />
+    <ClInclude Include="..\inspector\InspectorBackendDispatcher.h" />
     <ClInclude Include="..\inspector\InspectorBaseAgent.h" />
     <ClInclude Include="..\inspector\InspectorCanvasAgent.h" />
     <ClInclude Include="..\inspector\InspectorCanvasInstrumentation.h" />
