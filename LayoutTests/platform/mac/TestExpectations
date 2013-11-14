@@ -1310,4 +1310,4 @@ webkit.org/b/124318 fullscreen/anonymous-block-merge-crash.html [ Pass Fail ]
 
 webkit.org/b/124321 [ Mavericks ] animations/resume-after-page-cache.html [ Pass Fail ]
 
-webkit.org/b/124373 [ MountainLion Release ] http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html [ Slow ]
+webkit.org/b/124373 [ MountainLion Release ] http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html [ Pass Fail ]
