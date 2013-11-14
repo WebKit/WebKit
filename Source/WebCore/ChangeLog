@@ -1,3 +1,28 @@
+2013-11-14  Aloisio Almeida Jr  <aloisio.almeida@openbossa.org>
+
+        [Cairo] Avoid extra copy when drawing images
+        https://bugs.webkit.org/show_bug.cgi?id=124209
+
+        Reviewed by Martin Robinson.
+
+        To solve the bug #58309 a cairo subsurface is being used to limit the
+        source image boundaries.
+        In many cases, when a cairo subsurface is used for drawing an image,
+        it occurs an image copy, causing performance penalty. In the case of
+        the function PlatformContextCairo::drawSurfaceToContext, the image
+        copy always happens.
+        So, we should use the subsurface only when it's really necessary.
+        In cases where we're drawing the whole image, the subsurface is
+        unnecessary.
+
+        The proposed patch avoid the use of subsurfaces when sampling the whole
+        image.
+
+        No new tests. It's an enhancement. Already covered by existing tests.
+
+        * platform/graphics/cairo/PlatformContextCairo.cpp:
+        (WebCore::PlatformContextCairo::drawSurfaceToContext):
+
 2013-11-14  Alexey Proskuryakov  <ap@apple.com>
 
         Implement raw format for WebCrypto key export

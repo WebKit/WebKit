@@ -172,14 +172,25 @@ void PlatformContextCairo::drawSurfaceToContext(cairo_surface_t* surface, const 
         srcRect.setHeight(std::fabs(originalSrcRect.height()));
     }
 
-    // Cairo subsurfaces don't support floating point boundaries well, so we expand the rectangle.
-    IntRect expandedSrcRect(enclosingIntRect(srcRect));
+    cairo_surface_t* patternSurface = surface;
+    RefPtr<cairo_surface_t> subsurface;
+    float leftPadding = 0;
+    float topPadding = 0;
+    if (srcRect.x() || srcRect.y() || srcRect.size() == cairoSurfaceSize(surface)) {
+        // Cairo subsurfaces don't support floating point boundaries well, so we expand the rectangle.
+        IntRect expandedSrcRect(enclosingIntRect(srcRect));
 
-    // We use a subsurface here so that we don't end up sampling outside the originalSrcRect rectangle.
-    // See https://bugs.webkit.org/show_bug.cgi?id=58309
-    RefPtr<cairo_surface_t> subsurface = adoptRef(cairo_surface_create_for_rectangle(
-        surface, expandedSrcRect.x(), expandedSrcRect.y(), expandedSrcRect.width(), expandedSrcRect.height()));
-    RefPtr<cairo_pattern_t> pattern = adoptRef(cairo_pattern_create_for_surface(subsurface.get()));
+        // We use a subsurface here so that we don't end up sampling outside the originalSrcRect rectangle.
+        // See https://bugs.webkit.org/show_bug.cgi?id=58309
+        subsurface = adoptRef(cairo_surface_create_for_rectangle(surface, expandedSrcRect.x(),
+            expandedSrcRect.y(), expandedSrcRect.width(), expandedSrcRect.height()));
+        patternSurface = subsurface.get();
+
+        leftPadding = static_cast<float>(expandedSrcRect.x()) - floorf(srcRect.x());
+        topPadding = static_cast<float>(expandedSrcRect.y()) - floorf(srcRect.y());
+    }
+
+    RefPtr<cairo_pattern_t> pattern = adoptRef(cairo_pattern_create_for_surface(patternSurface));
 
     ASSERT(m_state);
     switch (m_state->m_imageInterpolationQuality) {
@@ -203,8 +214,6 @@ void PlatformContextCairo::drawSurfaceToContext(cairo_surface_t* surface, const 
     // of the scale since the original width and height might be negative.
     float scaleX = std::fabs(srcRect.width() / destRect.width());
     float scaleY = std::fabs(srcRect.height() / destRect.height());
-    float leftPadding = static_cast<float>(expandedSrcRect.x()) - floorf(srcRect.x());
-    float topPadding = static_cast<float>(expandedSrcRect.y()) - floorf(srcRect.y());
     cairo_matrix_t matrix = { scaleX, 0, 0, scaleY, leftPadding, topPadding };
     cairo_pattern_set_matrix(pattern.get(), &matrix);
 
