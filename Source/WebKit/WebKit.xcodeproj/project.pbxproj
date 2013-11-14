@@ -1977,7 +1977,6 @@
 				1C6CB0510AA63EB000D23BFD /* Migrate Headers */,
 				939811300824BF01008DF038 /* Make Frameworks Symbolic Link */,
 				9398100D0824BF01008DF038 /* Headers */,
-				1A6D65BA18346ADD005AEDE9 /* Postprocess Headers */,
 				939810B20824BF01008DF038 /* Resources */,
 				939810BB0824BF01008DF038 /* Sources */,
 				1C395DE20C6BE8E0000D1E52 /* Generate 64-bit Export File */,
@@ -2046,21 +2045,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1A6D65BA18346ADD005AEDE9 /* Postprocess Headers */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/WebHistory.h",
-			);
-			name = "Postprocess Headers";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cd \"${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}\"\n\nif [[ ${TARGET_MAC_OS_X_VERSION_MAJOR} == \"1080\" ]]; then\nUNIFDEF_OPTION=\"-U__NSd_10_9\";\nelse\nUNIFDEF_OPTION=\"-D__NSd_10_9\";\nfi\n\nfor HEADER in WebHistory.h; do\nunifdef -B ${UNIFDEF_OPTION} -o ${HEADER}.unifdef ${HEADER}\ncase $? in\n0)\nrm ${HEADER}.unifdef\n;;\n1)\nmv ${HEADER}{.unifdef,}\n;;\n*)\nexit 1\nesac\ndone\n";
-		};
 		1C395DE20C6BE8E0000D1E52 /* Generate 64-bit Export File */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

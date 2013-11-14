@@ -1,3 +1,9 @@
+2013-11-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed rollout of r159271, broke Mountain Lion build.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2013-11-13  Anders Carlsson  <andersca@apple.com>
 
         Deprecate WebHistory methods that use NSCalendarDate

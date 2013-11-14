@@ -28,10 +28,6 @@
 
 #import <Foundation/Foundation.h>
 
-#ifndef __NSd_10_9
-#define __NSd_10_9 ,deprecated=10.9
-#endif
-
 @class NSError;
 
 @class WebHistoryItem;
@@ -120,7 +116,7 @@ extern NSString *WebHistoryItemsKey;
     or more history items, ordered from most recent to oldest.
     @result Returns an array of NSCalendarDates for which history items exist in the WebHistory.
 */
-- (NSArray *)orderedLastVisitedDays NS_DEPRECATED_MAC(10_3, 10_9);
+- (NSArray *)orderedLastVisitedDays;
 
 /*!
     @method orderedItemsLastVisitedOnDay:
@@ -129,7 +125,7 @@ extern NSString *WebHistoryItemsKey;
     @param calendarDate A date identifying the unique day of interest.
     @result Returns an array of WebHistoryItems last visited on the indicated day.
 */
-- (NSArray *)orderedItemsLastVisitedOnDay:(NSCalendarDate *)calendarDate NS_DEPRECATED_MAC(10_3, 10_9);
+- (NSArray *)orderedItemsLastVisitedOnDay:(NSCalendarDate *)calendarDate;
 
 /*!
     @method itemForURL:
