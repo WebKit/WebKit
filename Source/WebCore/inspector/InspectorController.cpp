@@ -41,7 +41,7 @@
 #include "InjectedScriptManager.h"
 #include "InspectorAgent.h"
 #include "InspectorApplicationCacheAgent.h"
-#include "InspectorBackendDispatcher.h"
+#include "InspectorBackendDispatchers.h"
 #include "InspectorBaseAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorCanvasAgent.h"

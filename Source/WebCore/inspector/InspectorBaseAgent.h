@@ -31,7 +31,7 @@
 #ifndef InspectorBaseAgent_h
 #define InspectorBaseAgent_h
 
-#include "InspectorBackendDispatcher.h"
+#include "InspectorBackendDispatchers.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

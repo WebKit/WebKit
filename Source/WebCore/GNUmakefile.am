@@ -357,14 +357,14 @@ DerivedSources/WebCore/Inspector.json: $(WebCore)/inspector/Scripts/generate-com
 	$(AM_V_GEN)$(PYTHON) $(WebCore)/inspector/Scripts/generate-combined-inspector-json.py $(WebCore)/inspector/protocol > $(GENSOURCES_WEBCORE)/Inspector.json
 
 # All Web Inspector generated files are created with this one call to CodeGeneratorInspector.py
-DerivedSources/WebCore/InspectorBackendDispatcher.cpp: DerivedSources/WebCore/Inspector.json $(WebCore)/inspector/CodeGeneratorInspector.py $(WebCore)/inspector/CodeGeneratorInspectorStrings.py
+DerivedSources/WebCore/InspectorBackendDispatchers.cpp: DerivedSources/WebCore/Inspector.json $(WebCore)/inspector/CodeGeneratorInspector.py $(WebCore)/inspector/CodeGeneratorInspectorStrings.py
 	$(AM_V_GEN)$(PYTHON) $(WebCore)/inspector/CodeGeneratorInspector.py $< --output_h_dir $(GENSOURCES_WEBCORE) --output_cpp_dir $(GENSOURCES_WEBCORE) --output_js_dir $(GENSOURCES_WEBCORE)
 DerivedSources/WebCore/InspectorTypeBuilder.h: DerivedSources/WebCore/InspectorTypeBuilder.cpp
 DerivedSources/WebCore/InspectorTypeBuilder.cpp: DerivedSources/WebCore/InspectorFrontend.h
 DerivedSources/WebCore/InspectorFrontend.h: DerivedSources/WebCore/InspectorFrontend.cpp
 DerivedSources/WebCore/InspectorFrontend.cpp: DerivedSources/WebCore/InspectorBackendCommands.js
-DerivedSources/WebCore/InspectorBackendCommands.js: DerivedSources/WebCore/InspectorBackendDispatcher.h
-DerivedSources/WebCore/InspectorBackendDispatcher.h: DerivedSources/WebCore/InspectorBackendDispatcher.cpp
+DerivedSources/WebCore/InspectorBackendCommands.js: DerivedSources/WebCore/InspectorBackendDispatchers.h
+DerivedSources/WebCore/InspectorBackendDispatchers.h: DerivedSources/WebCore/InspectorBackendDispatchers.cpp
 
 DerivedSources/WebCore/InspectorOverlayPage.h: $(WebCore)/inspector/InspectorOverlayPage.html $(WebCore)/inspector/InspectorOverlayPage.css $(WebCore)/inspector/InspectorOverlayPage.js
 	$(AM_V_GEN)$(PYTHON) $(WebCore)/inspector/Scripts/inline-and-minify-stylesheets-and-scripts.py $(WebCore)/inspector/InspectorOverlayPage.html $(GENSOURCES_WEBCORE)/InspectorOverlayPage.combined.html

@@ -36,7 +36,7 @@
 
 #include "InjectedScriptHost.h"
 #include "InjectedScriptManager.h"
-#include "InspectorBackendDispatcher.h"
+#include "InspectorBackendDispatchers.h"
 #include "InspectorClient.h"
 #include "InspectorConsoleAgent.h"
 #include "InspectorFrontend.h"

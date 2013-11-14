@@ -41,7 +41,7 @@
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
-#include "InspectorBackendDispatcher.h"
+#include "InspectorBackendDispatchers.h"
 #include "InspectorController.h"
 #include "InspectorFrontendHost.h"
 #include "InspectorPageAgent.h"

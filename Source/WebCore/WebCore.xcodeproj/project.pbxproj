@@ -1598,8 +1598,8 @@
 		4F4F5FFB11CBD2E100A186BF /* InspectorFrontend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4F5FFA11CBD2D200A186BF /* InspectorFrontend.cpp */; };
 		4F6FDD641341DEDD001F8EE3 /* InspectorPageAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F6FDD621341DEDD001F8EE3 /* InspectorPageAgent.cpp */; };
 		4F6FDD651341DEDD001F8EE3 /* InspectorPageAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F6FDD631341DEDD001F8EE3 /* InspectorPageAgent.h */; };
-		4F707A9911EF679400ACDA69 /* InspectorBackendDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F707A9711EF679400ACDA69 /* InspectorBackendDispatcher.cpp */; };
-		4F707A9A11EF679400ACDA69 /* InspectorBackendDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F707A9811EF679400ACDA69 /* InspectorBackendDispatcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4F707A9911EF679400ACDA69 /* InspectorBackendDispatchers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F707A9711EF679400ACDA69 /* InspectorBackendDispatchers.cpp */; };
+		4F707A9A11EF679400ACDA69 /* InspectorBackendDispatchers.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F707A9811EF679400ACDA69 /* InspectorBackendDispatchers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4FB390AD15EF61F3007AD51F /* GeneratedImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FB390AC15EF61F3007AD51F /* GeneratedImage.cpp */; };
 		4FFC022B1643B710004E1638 /* NodeRareData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FAB48661643A67E00F70C07 /* NodeRareData.cpp */; };
 		4FFC022D1643B726004E1638 /* ElementRareData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FAB48641643A66D00F70C07 /* ElementRareData.cpp */; };
@@ -8292,8 +8292,8 @@
 		4F4F5FFC11CBD30100A186BF /* InspectorFrontend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorFrontend.h; sourceTree = "<group>"; };
 		4F6FDD621341DEDD001F8EE3 /* InspectorPageAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorPageAgent.cpp; sourceTree = "<group>"; };
 		4F6FDD631341DEDD001F8EE3 /* InspectorPageAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorPageAgent.h; sourceTree = "<group>"; };
-		4F707A9711EF679400ACDA69 /* InspectorBackendDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorBackendDispatcher.cpp; sourceTree = "<group>"; };
-		4F707A9811EF679400ACDA69 /* InspectorBackendDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorBackendDispatcher.h; sourceTree = "<group>"; };
+		4F707A9711EF679400ACDA69 /* InspectorBackendDispatchers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorBackendDispatchers.cpp; sourceTree = "<group>"; };
+		4F707A9811EF679400ACDA69 /* InspectorBackendDispatchers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorBackendDispatchers.h; sourceTree = "<group>"; };
 		4FAB48641643A66D00F70C07 /* ElementRareData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ElementRareData.cpp; sourceTree = "<group>"; };
 		4FAB48661643A67E00F70C07 /* NodeRareData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeRareData.cpp; sourceTree = "<group>"; };
 		4FB390AC15EF61F3007AD51F /* GeneratedImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeneratedImage.cpp; sourceTree = "<group>"; };
@@ -14330,8 +14330,8 @@
 			children = (
 				AA912750157E35A500454E54 /* InjectedScriptCanvasModuleSource.h */,
 				7A563E5412DE32B000F4536D /* InjectedScriptSource.h */,
-				4F707A9711EF679400ACDA69 /* InspectorBackendDispatcher.cpp */,
-				4F707A9811EF679400ACDA69 /* InspectorBackendDispatcher.h */,
+				4F707A9711EF679400ACDA69 /* InspectorBackendDispatchers.cpp */,
+				4F707A9811EF679400ACDA69 /* InspectorBackendDispatchers.h */,
 				4F4F5FFA11CBD2D200A186BF /* InspectorFrontend.cpp */,
 				4F4F5FFC11CBD30100A186BF /* InspectorFrontend.h */,
 				573D134514CE39FF0057ABCA /* InspectorTypeBuilder.cpp */,
@@ -23211,7 +23211,7 @@
 				93309DF2099E64920056E581 /* InsertTextCommand.h in Headers */,
 				4F2D205412EAE7B3005C2874 /* InspectorAgent.h in Headers */,
 				B885E8D511E06DD2009FFBF4 /* InspectorApplicationCacheAgent.h in Headers */,
-				4F707A9A11EF679400ACDA69 /* InspectorBackendDispatcher.h in Headers */,
+				4F707A9A11EF679400ACDA69 /* InspectorBackendDispatchers.h in Headers */,
 				7AA51B6E1483B61600AD2752 /* InspectorBaseAgent.h in Headers */,
 				AAD766EC157E502F00E85423 /* InspectorCanvasAgent.h in Headers */,
 				AAD766ED157E502F00E85423 /* InspectorCanvasInstrumentation.h in Headers */,
@@ -26454,7 +26454,7 @@
 				93309DF1099E64920056E581 /* InsertTextCommand.cpp in Sources */,
 				4F2D205512EAE7B3005C2874 /* InspectorAgent.cpp in Sources */,
 				B885E8D411E06DD2009FFBF4 /* InspectorApplicationCacheAgent.cpp in Sources */,
-				4F707A9911EF679400ACDA69 /* InspectorBackendDispatcher.cpp in Sources */,
+				4F707A9911EF679400ACDA69 /* InspectorBackendDispatchers.cpp in Sources */,
 				E1F80B8A183172A2007885C3 /* JSCryptoKeyPairCustom.cpp in Sources */,
 				AAD766EB157E502F00E85423 /* InspectorCanvasAgent.cpp in Sources */,
 				7A1F2B52126C61B20006A7E6 /* InspectorClient.cpp in Sources */,

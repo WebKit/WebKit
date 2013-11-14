@@ -21,8 +21,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/HTMLNames.h \
 	DerivedSources/WebCore/InjectedScriptCanvasModuleSource.h \
 	DerivedSources/WebCore/InjectedScriptSource.h \
-	DerivedSources/WebCore/InspectorBackendDispatcher.cpp \
-	DerivedSources/WebCore/InspectorBackendDispatcher.h \
+	DerivedSources/WebCore/InspectorBackendDispatchers.cpp \
+	DerivedSources/WebCore/InspectorBackendDispatchers.h \
 	DerivedSources/WebCore/InspectorFrontend.cpp \
 	DerivedSources/WebCore/InspectorFrontend.h \
 	DerivedSources/WebCore/InspectorOverlayPage.h \

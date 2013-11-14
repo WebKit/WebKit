@@ -103,8 +103,8 @@ $domainClassList
 """)
 
 backend_h = (
-"""#ifndef InspectorBackendDispatcher_h
-#define InspectorBackendDispatcher_h
+"""#ifndef InspectorBackendDispatchers_h
+#define InspectorBackendDispatchers_h
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -176,7 +176,7 @@ $methodNamesEnumContent
 };
 
 } // namespace WebCore
-#endif // !defined(InspectorBackendDispatcher_h)
+#endif // !defined(InspectorBackendDispatchers_h)
 
 
 """)
@@ -188,7 +188,7 @@ backend_cpp = (
 
 #if ENABLE(INSPECTOR)
 
-#include "InspectorBackendDispatcher.h"
+#include "InspectorBackendDispatchers.h"
 
 #include "InspectorAgent.h"
 #include "InspectorValues.h"

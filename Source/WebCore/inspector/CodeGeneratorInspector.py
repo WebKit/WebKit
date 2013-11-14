@@ -2362,8 +2362,8 @@ class SmartOutput:
 
 Generator.go()
 
-backend_h_file = SmartOutput(output_header_dirname + "/InspectorBackendDispatcher.h")
-backend_cpp_file = SmartOutput(output_cpp_dirname + "/InspectorBackendDispatcher.cpp")
+backend_h_file = SmartOutput(output_header_dirname + "/InspectorBackendDispatchers.h")
+backend_cpp_file = SmartOutput(output_cpp_dirname + "/InspectorBackendDispatchers.cpp")
 
 frontend_h_file = SmartOutput(output_header_dirname + "/InspectorFrontend.h")
 frontend_cpp_file = SmartOutput(output_cpp_dirname + "/InspectorFrontend.cpp")
