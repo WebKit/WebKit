@@ -1306,8 +1306,8 @@ webkit.org/b/124261 [ MountainLion ] crypto/subtle [ Skip ]
 
 webkit.org/b/124311 compositing/regions/transform-transparent-positioned-video-inside-region.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/124318 fullscreen/anonymous-block-merge-crash.html [ Pass Fail ]
+webkit.org/b/124318 fullscreen/anonymous-block-merge-crash.html [ Pass Failure ]
 
-webkit.org/b/124321 [ Mavericks ] animations/resume-after-page-cache.html [ Pass Fail ]
+webkit.org/b/124321 [ Mavericks ] animations/resume-after-page-cache.html [ Pass Failure ]
 
-webkit.org/b/124373 [ MountainLion Release ] http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html [ Pass Fail ]
+webkit.org/b/124373 [ MountainLion Release ] http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html [ Pass Failure ]

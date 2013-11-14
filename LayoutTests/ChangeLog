@@ -1,5 +1,13 @@
 2013-11-14  Tim Horton  <timothy_horton@apple.com>
 
+        Change Fail->Failure in some recent expectations.
+
+        Suddenly, everything is clear.
+
+        * platform/mac/TestExpectations:
+
+2013-11-14  Tim Horton  <timothy_horton@apple.com>
+
         http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html is slow, frequently > 30 second timeout
         https://bugs.webkit.org/show_bug.cgi?id=124373
 
