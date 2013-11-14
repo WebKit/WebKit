@@ -1309,6 +1309,8 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
         [tempArray addObject:(NSString *)kAXColumnHeaderUIElementsAttribute];
         [tempArray addObject:NSAccessibilityRowHeaderUIElementsAttribute];
         [tempArray addObject:NSAccessibilityHeaderAttribute];
+        [tempArray addObject:NSAccessibilityColumnCountAttribute];
+        [tempArray addObject:NSAccessibilityRowCountAttribute];
         tableAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -2397,6 +2399,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             toAccessibilityTable(m_object)->cells(cells);
             return convertToNSArray(cells);
         }
+        
+        if ([attributeName isEqualToString:NSAccessibilityColumnCountAttribute])
+            return @(toAccessibilityTable(m_object)->columnCount());
+        
+        if ([attributeName isEqualToString:NSAccessibilityRowCountAttribute])
+            return @(toAccessibilityTable(m_object)->rowCount());
     }
     
     if (m_object->isTableColumn()) {

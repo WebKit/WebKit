@@ -37,6 +37,8 @@ AXVisibleCells: <array of size 2>
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
+AXColumnCount: 2
+AXRowCount: 1
 AXElementBusy: 0
 
 
@@ -72,6 +74,8 @@ AXVisibleCells: <array of size 2>
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
+AXColumnCount: 2
+AXRowCount: 1
 AXElementBusy: 0
 
 
@@ -107,6 +111,8 @@ AXVisibleCells: <array of size 2>
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
+AXColumnCount: 2
+AXRowCount: 1
 AXElementBusy: 0
 
 
