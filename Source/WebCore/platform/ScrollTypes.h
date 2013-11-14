@@ -174,7 +174,7 @@ namespace WebCore {
 
     enum ScrollBehaviorForFixedElements {
         StickToDocumentBounds,
-        StickToWindowBounds
+        StickToViewportBounds
     };
 }
 

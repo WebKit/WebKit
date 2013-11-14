@@ -1,3 +1,12 @@
+2013-11-14  Beth Dakin  <bdakin@apple.com>
+
+        Rubber-stamped by Tim Horton.
+
+        Post-checkin review comment! StickToViewportBounds sounds better and more accurate 
+        than StickToWindowBounds.
+
+        * platform/ScrollTypes.h:
+
 2013-11-13  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build failure; update MediaPlayerPrivateAVFFoundationCF::seekToTime after r159208.
