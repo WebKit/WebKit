@@ -34,6 +34,8 @@ private:
     SVGPolygonElement(const QualifiedName&, Document&);
 };
 
+NODE_TYPE_CASTS(SVGPolygonElement)
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

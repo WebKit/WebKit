@@ -1,3 +1,26 @@
+2013-11-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Generate toSVGPolyline|gonElement() to replace static_cast<>
+        https://bugs.webkit.org/show_bug.cgi?id=124341
+
+        Reviewed by Andreas Kling.
+
+        toSVGFoo() supports more plenty helper functions. So, toSVGFoo() needs
+        to be used instead of static_cast<>.
+
+        Additionally, cleanup other static_cast<> as well.
+
+        No new tests, no behavior changes.
+
+        * rendering/svg/SVGPathData.cpp:
+        (WebCore::updatePathFromEllipseElement):
+        (WebCore::updatePathFromLineElement):
+        (WebCore::updatePathFromPolygonElement):
+        (WebCore::updatePathFromPolylineElement):
+        * svg/SVGPolygonElement.h:
+        * svg/SVGPolylineElement.h:
+        * svg/svgtags.in: Add *generateTypeHelpers* keyword to polygon, polyline
+
 2013-11-14  Andreas Kling  <akling@apple.com>
 
         FontDescription copies should share families list, not duplicate it.

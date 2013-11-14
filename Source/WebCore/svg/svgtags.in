@@ -79,8 +79,8 @@ missing_glyph generateTypeHelpers
 mpath interfaceName=SVGMPathElement, generateTypeHelpers
 path generateTypeHelpers
 pattern generateTypeHelpers
-polygon
-polyline
+polygon generateTypeHelpers
+polyline generateTypeHelpers
 radialGradient generateTypeHelpers
 rect generateTypeHelpers
 script constructorNeedsCreatedByParser, generateTypeHelpers
