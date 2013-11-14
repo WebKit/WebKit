@@ -154,8 +154,8 @@ void InspectorBackendDispatcher::sendResponse(long callId, PassRefPtr<InspectorO
     }
 
     RefPtr<InspectorObject> responseMessage = InspectorObject::create();
-    responseMessage->setObject("result", result);
-    responseMessage->setNumber("id", callId);
+    responseMessage->setObject(ASCIILiteral("result"), result);
+    responseMessage->setNumber(ASCIILiteral("id"), callId);
     m_inspectorFrontendChannel->sendMessageToFrontend(responseMessage->toJSONString());
 }
 
@@ -166,35 +166,34 @@ void InspectorBackendDispatcher::reportProtocolError(const long* const callId, C
 
 void InspectorBackendDispatcher::reportProtocolError(const long* const callId, CommonErrorCode errorCode, const String& errorMessage, PassRefPtr<InspectorArray> data) const
 {
-    DEFINE_STATIC_LOCAL(Vector<int>, commonErrors, ());
-    if (!commonErrors.size()) {
-        commonErrors.insert(ParseError, -32700);
-        commonErrors.insert(InvalidRequest, -32600);
-        commonErrors.insert(MethodNotFound, -32601);
-        commonErrors.insert(InvalidParams, -32602);
-        commonErrors.insert(InternalError, -32603);
-        commonErrors.insert(ServerError, -32000);
-    }
+    static const int errorCodes[] = {
+        -32700, // ParseError
+        -32600, // InvalidRequest
+        -32601, // MethodNotFound
+        -32602, // InvalidParams
+        -32603, // InternalError
+        -32000, // ServerError
+    };
 
     ASSERT(errorCode >= 0);
-    ASSERT((unsigned)errorCode < commonErrors.size());
-    ASSERT(commonErrors[errorCode]);
+    ASSERT((unsigned)errorCode < WTF_ARRAY_LENGTH(errorCodes));
+    ASSERT(errorCodes[errorCode]);
 
     if (!m_inspectorFrontendChannel)
         return;
 
     RefPtr<InspectorObject> error = InspectorObject::create();
-    error->setNumber("code", commonErrors[errorCode]);
-    error->setString("message", errorMessage);
+    error->setNumber(ASCIILiteral("code"), errorCodes[errorCode]);
+    error->setString(ASCIILiteral("message"), errorMessage);
     if (data)
-        error->setArray("data", data);
+        error->setArray(ASCIILiteral("data"), data);
 
     RefPtr<InspectorObject> message = InspectorObject::create();
-    message->setObject("error", error.release());
+    message->setObject(ASCIILiteral("error"), error.release());
     if (callId)
-        message->setNumber("id", *callId);
+        message->setNumber(ASCIILiteral("id"), *callId);
     else
-        message->setValue("id", InspectorValue::null());
+        message->setValue(ASCIILiteral("id"), InspectorValue::null());
 
     m_inspectorFrontendChannel->sendMessageToFrontend(message->toJSONString());
 }

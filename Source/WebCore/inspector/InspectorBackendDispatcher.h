@@ -40,7 +40,7 @@ typedef String ErrorString;
 
 class InspectorSupplementalBackendDispatcher : public RefCounted<InspectorSupplementalBackendDispatcher> {
 public:
-    InspectorSupplementalBackendDispatcher(InspectorBackendDispatcher *backendDispatcher) : m_backendDispatcher(backendDispatcher) { }
+    InspectorSupplementalBackendDispatcher(InspectorBackendDispatcher* backendDispatcher) : m_backendDispatcher(backendDispatcher) { }
     virtual ~InspectorSupplementalBackendDispatcher() { }
     virtual void dispatch(long callId, const String& method, PassRefPtr<InspectorObject> message) = 0;
 protected:
