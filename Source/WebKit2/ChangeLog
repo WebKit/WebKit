@@ -1,3 +1,20 @@
+2013-11-13  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r159248
+
+    2013-11-13  Anders Carlsson  <andersca@apple.com>
+
+            Plug-in processes hang around for 10 sec after Safari quits
+            https://bugs.webkit.org/show_bug.cgi?id=124314
+            <rdar://problem/15460613>
+
+            Reviewed by Simon Fraser.
+
+            Call stopRunLoop instead of instead of RunLoop::stop().
+
+            * PluginProcess/PluginProcess.cpp:
+            (WebKit::PluginProcess::didClose):
+
 2013-11-08  Matt Hanson  <matthew_hanson@apple.com>
 
         Merge r158101.
