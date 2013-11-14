@@ -204,10 +204,6 @@ namespace WebCore {
         String defaultStatus() const;
         void setDefaultStatus(const String&);
 
-        // This attribute is an alias of defaultStatus and is necessary for legacy uses.
-        String defaultstatus() const { return defaultStatus(); }
-        void setDefaultstatus(const String& status) { setDefaultStatus(status); }
-
         // Self-referential attributes
 
         DOMWindow* self() const;

@@ -121,7 +121,7 @@
     attribute DOMString defaultStatus;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     // This attribute is an alias of defaultStatus and is necessary for legacy uses.
-    attribute DOMString defaultstatus;
+    [ImplementedAs=defaultStatus] attribute DOMString defaultstatus;
 #endif
 
     // Self referential attributes
