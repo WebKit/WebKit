@@ -54,7 +54,7 @@ class WorkerGlobalScope;
 
 typedef String ErrorString;
 
-class InspectorProfilerAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::ProfilerCommandHandler {
+class InspectorProfilerAgent : public InspectorBaseAgent, public InspectorProfilerBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorProfilerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<InspectorProfilerAgent> create(InstrumentingAgents*, InspectorConsoleAgent*, Page*, InjectedScriptManager*);
@@ -116,6 +116,7 @@ private:
     InspectorConsoleAgent* m_consoleAgent;
     InjectedScriptManager* m_injectedScriptManager;
     std::unique_ptr<InspectorProfilerFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<InspectorProfilerBackendDispatcher> m_backendDispatcher;
     bool m_enabled;
     bool m_profileHeadersRequested;
     bool m_recordingCPUProfile;

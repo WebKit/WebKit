@@ -60,7 +60,7 @@ class ScriptValue;
 
 typedef String ErrorString;
 
-class InspectorDebuggerAgent : public InspectorBaseAgent, public ScriptDebugListener, public InspectorBackendDispatcher::DebuggerCommandHandler {
+class InspectorDebuggerAgent : public InspectorBaseAgent, public ScriptDebugListener, public InspectorDebuggerBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDebuggerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     static const char* backtraceObjectGroup;
@@ -168,6 +168,7 @@ private:
 
     InjectedScriptManager* m_injectedScriptManager;
     std::unique_ptr<InspectorDebuggerFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<InspectorDebuggerBackendDispatcher> m_backendDispatcher;
     JSC::ExecState* m_pausedScriptState;
     ScriptValue m_currentCallStack;
     ScriptsMap m_scripts;

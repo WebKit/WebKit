@@ -139,12 +139,13 @@ void InspectorDebuggerAgent::disable(ErrorString*)
 void InspectorDebuggerAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorDebuggerFrontendDispatcher>(frontendChannel);
-    backendDispatcher->registerAgent(this);
+    m_backendDispatcher = InspectorDebuggerBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorDebuggerAgent::willDestroyFrontendAndBackend()
 {
     m_frontendDispatcher = nullptr;
+    m_backendDispatcher.clear();
 
     disable();
 }

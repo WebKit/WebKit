@@ -46,7 +46,7 @@ class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class InspectorDatabaseAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::DatabaseCommandHandler {
+class InspectorDatabaseAgent : public InspectorBaseAgent, public InspectorDatabaseBackendDispatcherHandler {
 public:
     static PassOwnPtr<InspectorDatabaseAgent> create(InstrumentingAgents* instrumentingAgents)
     {
@@ -76,6 +76,7 @@ private:
     InspectorDatabaseResource* findByFileName(const String& fileName);
 
     std::unique_ptr<InspectorDatabaseFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<InspectorDatabaseBackendDispatcher> m_backendDispatcher;
     typedef HashMap<String, RefPtr<InspectorDatabaseResource>> DatabaseResourcesMap;
     DatabaseResourcesMap m_resources;
     bool m_enabled;

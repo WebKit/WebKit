@@ -39,23 +39,63 @@ ${frontendDomainMethodDeclarations}private:
 
 """)
 
+backend_dispatcher_constructor = (
+"""PassRefPtr<${dispatcherName}> ${dispatcherName}::create(InspectorBackendDispatcher* backendDispatcher, ${agentName}* agent)
+{
+    return adoptRef(new ${dispatcherName}(backendDispatcher, agent));
+}
+
+${dispatcherName}::${dispatcherName}(InspectorBackendDispatcher* backendDispatcher, ${agentName}* agent)
+    : InspectorSupplementalBackendDispatcher(backendDispatcher)
+    , m_agent(agent)
+{
+    m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("${domainName}"), this);
+}
+""")
+
+backend_dispatcher_dispatch_method = (
+"""void ${dispatcherName}::dispatch(long callId, const String& method, PassRefPtr<InspectorObject> message)
+{
+    Ref<${dispatcherName}> protect(*this);
+
+    typedef void (${dispatcherName}::*CallHandler)(long callId, const InspectorObject& message);
+    typedef HashMap<String, CallHandler> DispatchMap;
+    DEFINE_STATIC_LOCAL(DispatchMap, dispatchMap, ());
+    if (dispatchMap.isEmpty()) {
+        static const struct MethodTable {
+            const char* name;
+            CallHandler handler;
+        } commands[] = {
+${dispatcherCommands}
+        };
+        size_t length = WTF_ARRAY_LENGTH(commands);
+        for (size_t i = 0; i < length; ++i)
+            dispatchMap.add(commands[i].name, commands[i].handler);
+    }
+
+    HashMap<String, CallHandler>::iterator it = dispatchMap.find(method);
+    if (it == dispatchMap.end()) {
+        m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::MethodNotFound, String("'") + "${domainName}" + '.' + method + "' was not found");
+        return;
+    }
+
+    ((*this).*it->value)(callId, *message.get());
+}
+""")
+
 backend_method = (
-"""void InspectorBackendDispatcherImpl::${domainName}_$methodName(long callId, InspectorObject*$requestMessageObject)
+"""void ${dispatcherName}::${methodName}(long callId, const InspectorObject&${requestMessageObject})
 {
     RefPtr<InspectorArray> protocolErrors = InspectorArray::create();
-
-    if (!$agentField)
-        protocolErrors->pushString("${domainName} handler is not available.");
-$methodOutCode
-$methodInCode
+${methodOutCode}${methodInCode}
     RefPtr<InspectorObject> result = InspectorObject::create();
     ErrorString error;
     if (!protocolErrors->length()) {
-        $agentField->$methodName(&error$agentCallParams);
+        m_agent->${methodName}(&error${agentCallParams});
 
 ${responseCook}
     }
-    sendResponse(callId, result.release(), commandNames[$commandNameIndex], protocolErrors.release(), error);
+    m_backendDispatcher->sendResponse(callId, result.release(), protocolErrors.release(), error);
 }
 """)
 
@@ -69,12 +109,12 @@ $code
 """)
 
 callback_method = (
-"""InspectorBackendDispatcher::$agentName::$callbackName::$callbackName(PassRefPtr<InspectorBackendDispatcherImpl> backendImpl, int id) : CallbackBase(backendImpl, id) {}
+"""${handlerName}::${callbackName}::${callbackName}(PassRefPtr<InspectorBackendDispatcher> backendDispatcher, int id) : InspectorBackendDispatcher::CallbackBase(backendDispatcher, id) { }
 
-void InspectorBackendDispatcher::$agentName::$callbackName::sendSuccess($parameters)
+void ${handlerName}::${callbackName}::sendSuccess(${parameters})
 {
     RefPtr<InspectorObject> jsonMessage = InspectorObject::create();
-$code    sendIfActive(jsonMessage, ErrorString());
+${code}    sendIfActive(jsonMessage, ErrorString());
 }
 """)
 
@@ -106,84 +146,28 @@ backend_h = (
 """#ifndef InspectorBackendDispatchers_h
 #define InspectorBackendDispatchers_h
 
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+#include "InspectorBackendDispatcher.h"
 #include "InspectorTypeBuilder.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class InspectorAgent;
 class InspectorObject;
 class InspectorArray;
-class InspectorFrontendChannel;
 
 typedef String ErrorString;
 
-class InspectorBackendDispatcherImpl;
+$handlerInterfaces
 
-class InspectorBackendDispatcher: public RefCounted<InspectorBackendDispatcher> {
-public:
-    static PassRefPtr<InspectorBackendDispatcher> create(InspectorFrontendChannel* inspectorFrontendChannel);
-    virtual ~InspectorBackendDispatcher() { }
-
-    class CallbackBase: public RefCounted<CallbackBase> {
-    public:
-        CallbackBase(PassRefPtr<InspectorBackendDispatcherImpl> backendImpl, int id);
-        virtual ~CallbackBase();
-        void sendFailure(const ErrorString&);
-        bool isActive();
-
-    protected:
-        void sendIfActive(PassRefPtr<InspectorObject> partialMessage, const ErrorString& invocationError);
-
-    private:
-        void disable() { m_alreadySent = true; }
-
-        RefPtr<InspectorBackendDispatcherImpl> m_backendImpl;
-        int m_id;
-        bool m_alreadySent;
-
-        friend class InspectorBackendDispatcherImpl;
-    };
-
-$agentInterfaces
-$virtualSetters
-
-    virtual void clearFrontend() = 0;
-
-    enum CommonErrorCode {
-        ParseError = 0,
-        InvalidRequest,
-        MethodNotFound,
-        InvalidParams,
-        InternalError,
-        ServerError,
-        LastEntry,
-    };
-
-    void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage) const;
-    virtual void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage, PassRefPtr<InspectorArray> data) const = 0;
-    virtual void dispatch(const String& message) = 0;
-
-    enum MethodNames {
-$methodNamesEnumContent
-
-        kMethodNamesEnumSize
-    };
-
-    static const char* commandNames[];
-};
-
+$dispatcherInterfaces
 } // namespace WebCore
+
 #endif // !defined(InspectorBackendDispatchers_h)
-
-
 """)
 
 backend_cpp = (
 """
-
 #include "config.h"
 
 #if ENABLE(INSPECTOR)
@@ -198,275 +182,7 @@ backend_cpp = (
 
 namespace WebCore {
 
-const char* InspectorBackendDispatcher::commandNames[] = {
-$methodNameDeclarations
-};
-
-
-class InspectorBackendDispatcherImpl : public InspectorBackendDispatcher {
-public:
-    InspectorBackendDispatcherImpl(InspectorFrontendChannel* inspectorFrontendChannel)
-        : m_inspectorFrontendChannel(inspectorFrontendChannel)
-$constructorInit
-    { }
-
-    virtual void clearFrontend() { m_inspectorFrontendChannel = 0; }
-    virtual void dispatch(const String& message);
-    virtual void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage, PassRefPtr<InspectorArray> data) const;
-    using InspectorBackendDispatcher::reportProtocolError;
-
-    void sendResponse(long callId, PassRefPtr<InspectorObject> result, const ErrorString& invocationError);
-    bool isActive() { return m_inspectorFrontendChannel; }
-
-$setters
-private:
-$methodDeclarations
-
-    InspectorFrontendChannel* m_inspectorFrontendChannel;
-$fieldDeclarations
-
-    template<typename R, typename V, typename V0>
-    static R getPropertyValueImpl(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors, V0 initial_value, bool (*as_method)(InspectorValue*, V*), const char* type_name);
-
-    static int getInt(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
-    static double getDouble(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
-    static String getString(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
-    static bool getBoolean(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
-    static PassRefPtr<InspectorObject> getObject(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
-    static PassRefPtr<InspectorArray> getArray(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
-
-    void sendResponse(long callId, PassRefPtr<InspectorObject> result, const char* commandName, PassRefPtr<InspectorArray> protocolErrors, ErrorString invocationError);
-
-};
-
 $methods
-
-PassRefPtr<InspectorBackendDispatcher> InspectorBackendDispatcher::create(InspectorFrontendChannel* inspectorFrontendChannel)
-{
-    return adoptRef(new InspectorBackendDispatcherImpl(inspectorFrontendChannel));
-}
-
-
-void InspectorBackendDispatcherImpl::dispatch(const String& message)
-{
-    Ref<InspectorBackendDispatcher> protect(*this);
-    typedef void (InspectorBackendDispatcherImpl::*CallHandler)(long callId, InspectorObject* messageObject);
-    typedef HashMap<String, CallHandler> DispatchMap;
-    DEFINE_STATIC_LOCAL(DispatchMap, dispatchMap, );
-    long callId = 0;
-
-    if (dispatchMap.isEmpty()) {
-        static CallHandler handlers[] = {
-$messageHandlers
-        };
-        size_t length = WTF_ARRAY_LENGTH(commandNames);
-        for (size_t i = 0; i < length; ++i)
-            dispatchMap.add(commandNames[i], handlers[i]);
-    }
-
-    RefPtr<InspectorValue> parsedMessage = InspectorValue::parseJSON(message);
-    if (!parsedMessage) {
-        reportProtocolError(0, ParseError, "Message must be in JSON format");
-        return;
-    }
-
-    RefPtr<InspectorObject> messageObject = parsedMessage->asObject();
-    if (!messageObject) {
-        reportProtocolError(0, InvalidRequest, "Message must be a JSONified object");
-        return;
-    }
-
-    RefPtr<InspectorValue> callIdValue = messageObject->get("id");
-    if (!callIdValue) {
-        reportProtocolError(0, InvalidRequest, "'id' property was not found");
-        return;
-    }
-
-    if (!callIdValue->asNumber(&callId)) {
-        reportProtocolError(0, InvalidRequest, "The type of 'id' property must be number");
-        return;
-    }
-
-    RefPtr<InspectorValue> methodValue = messageObject->get("method");
-    if (!methodValue) {
-        reportProtocolError(&callId, InvalidRequest, "'method' property wasn't found");
-        return;
-    }
-
-    String method;
-    if (!methodValue->asString(&method)) {
-        reportProtocolError(&callId, InvalidRequest, "The type of 'method' property must be string");
-        return;
-    }
-
-    HashMap<String, CallHandler>::iterator it = dispatchMap.find(method);
-    if (it == dispatchMap.end()) {
-        reportProtocolError(&callId, MethodNotFound, "'" + method + "' wasn't found");
-        return;
-    }
-
-    ((*this).*it->value)(callId, messageObject.get());
-}
-
-void InspectorBackendDispatcherImpl::sendResponse(long callId, PassRefPtr<InspectorObject> result, const char* commandName, PassRefPtr<InspectorArray> protocolErrors, ErrorString invocationError)
-{
-    if (protocolErrors->length()) {
-        String errorMessage = String::format("Some arguments of method '%s' can't be processed", commandName);
-        reportProtocolError(&callId, InvalidParams, errorMessage, protocolErrors);
-        return;
-    }
-    sendResponse(callId, result, invocationError);
-}
-
-void InspectorBackendDispatcherImpl::sendResponse(long callId, PassRefPtr<InspectorObject> result, const ErrorString& invocationError)
-{
-    if (invocationError.length()) {
-        reportProtocolError(&callId, ServerError, invocationError);
-        return;
-    }
-
-    RefPtr<InspectorObject> responseMessage = InspectorObject::create();
-    responseMessage->setObject("result", result);
-    responseMessage->setNumber("id", callId);
-    if (m_inspectorFrontendChannel)
-        m_inspectorFrontendChannel->sendMessageToFrontend(responseMessage->toJSONString());
-}
-
-void InspectorBackendDispatcher::reportProtocolError(const long* const callId, CommonErrorCode code, const String& errorMessage) const
-{
-    reportProtocolError(callId, code, errorMessage, 0);
-}
-
-void InspectorBackendDispatcherImpl::reportProtocolError(const long* const callId, CommonErrorCode code, const String& errorMessage, PassRefPtr<InspectorArray> data) const
-{
-    DEFINE_STATIC_LOCAL(Vector<int>,s_commonErrors,);
-    if (!s_commonErrors.size()) {
-        s_commonErrors.insert(ParseError, -32700);
-        s_commonErrors.insert(InvalidRequest, -32600);
-        s_commonErrors.insert(MethodNotFound, -32601);
-        s_commonErrors.insert(InvalidParams, -32602);
-        s_commonErrors.insert(InternalError, -32603);
-        s_commonErrors.insert(ServerError, -32000);
-    }
-    ASSERT(code >=0);
-    ASSERT((unsigned)code < s_commonErrors.size());
-    ASSERT(s_commonErrors[code]);
-    RefPtr<InspectorObject> error = InspectorObject::create();
-    error->setNumber("code", s_commonErrors[code]);
-    error->setString("message", errorMessage);
-    ASSERT(error);
-    if (data)
-        error->setArray("data", data);
-    RefPtr<InspectorObject> message = InspectorObject::create();
-    message->setObject("error", error.release());
-    if (callId)
-        message->setNumber("id", *callId);
-    else
-        message->setValue("id", InspectorValue::null());
-    if (m_inspectorFrontendChannel)
-        m_inspectorFrontendChannel->sendMessageToFrontend(message->toJSONString());
-}
-
-template<typename R, typename V, typename V0>
-R InspectorBackendDispatcherImpl::getPropertyValueImpl(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors, V0 initial_value, bool (*as_method)(InspectorValue*, V*), const char* type_name)
-{
-    ASSERT(protocolErrors);
-
-    if (valueFound)
-        *valueFound = false;
-
-    V value = initial_value;
-
-    if (!object) {
-        if (!valueFound) {
-            // Required parameter in missing params container.
-            protocolErrors->pushString(String::format("'params' object must contain required parameter '%s' with type '%s'.", name.utf8().data(), type_name));
-        }
-        return value;
-    }
-
-    InspectorObject::const_iterator end = object->end();
-    InspectorObject::const_iterator valueIterator = object->find(name);
-
-    if (valueIterator == end) {
-        if (!valueFound)
-            protocolErrors->pushString(String::format("Parameter '%s' with type '%s' was not found.", name.utf8().data(), type_name));
-        return value;
-    }
-
-    if (!as_method(valueIterator->value.get(), &value))
-        protocolErrors->pushString(String::format("Parameter '%s' has wrong type. It must be '%s'.", name.utf8().data(), type_name));
-    else
-        if (valueFound)
-            *valueFound = true;
-    return value;
-}
-
-struct AsMethodBridges {
-    static bool asInt(InspectorValue* value, int* output) { return value->asNumber(output); }
-    static bool asDouble(InspectorValue* value, double* output) { return value->asNumber(output); }
-    static bool asString(InspectorValue* value, String* output) { return value->asString(output); }
-    static bool asBoolean(InspectorValue* value, bool* output) { return value->asBoolean(output); }
-    static bool asObject(InspectorValue* value, RefPtr<InspectorObject>* output) { return value->asObject(output); }
-    static bool asArray(InspectorValue* value, RefPtr<InspectorArray>* output) { return value->asArray(output); }
-};
-
-int InspectorBackendDispatcherImpl::getInt(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
-{
-    return getPropertyValueImpl<int, int, int>(object, name, valueFound, protocolErrors, 0, AsMethodBridges::asInt, "Number");
-}
-
-double InspectorBackendDispatcherImpl::getDouble(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
-{
-    return getPropertyValueImpl<double, double, double>(object, name, valueFound, protocolErrors, 0, AsMethodBridges::asDouble, "Number");
-}
-
-String InspectorBackendDispatcherImpl::getString(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
-{
-    return getPropertyValueImpl<String, String, String>(object, name, valueFound, protocolErrors, "", AsMethodBridges::asString, "String");
-}
-
-bool InspectorBackendDispatcherImpl::getBoolean(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
-{
-    return getPropertyValueImpl<bool, bool, bool>(object, name, valueFound, protocolErrors, false, AsMethodBridges::asBoolean, "Boolean");
-}
-
-PassRefPtr<InspectorObject> InspectorBackendDispatcherImpl::getObject(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
-{
-    return getPropertyValueImpl<PassRefPtr<InspectorObject>, RefPtr<InspectorObject>, InspectorObject*>(object, name, valueFound, protocolErrors, 0, AsMethodBridges::asObject, "Object");
-}
-
-PassRefPtr<InspectorArray> InspectorBackendDispatcherImpl::getArray(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
-{
-    return getPropertyValueImpl<PassRefPtr<InspectorArray>, RefPtr<InspectorArray>, InspectorArray*>(object, name, valueFound, protocolErrors, 0, AsMethodBridges::asArray, "Array");
-}
-
-InspectorBackendDispatcher::CallbackBase::CallbackBase(PassRefPtr<InspectorBackendDispatcherImpl> backendImpl, int id)
-    : m_backendImpl(backendImpl), m_id(id), m_alreadySent(false) {}
-
-InspectorBackendDispatcher::CallbackBase::~CallbackBase() {}
-
-void InspectorBackendDispatcher::CallbackBase::sendFailure(const ErrorString& error)
-{
-    ASSERT(error.length());
-    sendIfActive(0, error);
-}
-
-bool InspectorBackendDispatcher::CallbackBase::isActive()
-{
-    return !m_alreadySent && m_backendImpl->isActive();
-}
-
-void InspectorBackendDispatcher::CallbackBase::sendIfActive(PassRefPtr<InspectorObject> partialMessage, const ErrorString& invocationError)
-{
-    if (m_alreadySent)
-        return;
-    m_backendImpl->sendResponse(m_id, partialMessage, invocationError);
-    m_alreadySent = true;
-}
-
-COMPILE_ASSERT(static_cast<int>(InspectorBackendDispatcher::kMethodNamesEnumSize) == WTF_ARRAY_LENGTH(InspectorBackendDispatcher::commandNames), command_name_array_problem);
-
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)
@@ -601,12 +317,12 @@ public:
         ArrayItemHelper<T>::Traits::pushRaw(this->openAccessors(), value);
     }
 
-    static PassRefPtr<Array<T> > create()
+    static PassRefPtr<Array<T>> create()
     {
         return adoptRef(new Array<T>());
     }
 
-    static PassRefPtr<Array<T> > runtimeCast(PassRefPtr<InspectorValue> value)
+    static PassRefPtr<Array<T>> runtimeCast(PassRefPtr<InspectorValue> value)
     {
         RefPtr<InspectorArray> array;
         bool castRes = value->asArray(&array);
@@ -765,9 +481,9 @@ struct ArrayItemHelper<InspectorArray> {
 };
 
 template<typename T>
-struct ArrayItemHelper<TypeBuilder::Array<T> > {
+struct ArrayItemHelper<TypeBuilder::Array<T>> {
     struct Traits {
-        static void pushRefPtr(InspectorArray* array, PassRefPtr<TypeBuilder::Array<T> > value)
+        static void pushRefPtr(InspectorArray* array, PassRefPtr<TypeBuilder::Array<T>> value)
         {
             array->pushValue(value);
         }
@@ -853,7 +569,7 @@ $domainInitializers
 """)
 
 param_container_access_code = """
-    RefPtr<InspectorObject> paramsContainer = requestMessageObject->getObject("params");
+    RefPtr<InspectorObject> paramsContainer = message.getObject("params");
     InspectorObject* paramsContainerPtr = paramsContainer.get();
     InspectorArray* protocolErrorsPtr = protocolErrors.get();
 """

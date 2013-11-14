@@ -53,7 +53,7 @@
 
 #include <wtf/Vector.h>
 
-typedef WebCore::InspectorBackendDispatcher::DatabaseCommandHandler::ExecuteSQLCallback ExecuteSQLCallback;
+typedef WebCore::InspectorDatabaseBackendDispatcherHandler::ExecuteSQLCallback ExecuteSQLCallback;
 
 namespace WebCore {
 
@@ -225,12 +225,13 @@ InspectorDatabaseAgent::~InspectorDatabaseAgent()
 void InspectorDatabaseAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorDatabaseFrontendDispatcher>(frontendChannel);
-    backendDispatcher->registerAgent(this);
+    m_backendDispatcher = InspectorDatabaseBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorDatabaseAgent::willDestroyFrontendAndBackend()
 {
     m_frontendDispatcher = nullptr;
+    m_backendDispatcher.clear();
 
     disable(nullptr);
 }

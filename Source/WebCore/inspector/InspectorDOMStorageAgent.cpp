@@ -72,12 +72,13 @@ InspectorDOMStorageAgent::~InspectorDOMStorageAgent()
 void InspectorDOMStorageAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorDOMStorageFrontendDispatcher>(frontendChannel);
-    backendDispatcher->registerAgent(this);
+    m_backendDispatcher = InspectorDOMStorageBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorDOMStorageAgent::willDestroyFrontendAndBackend()
 {
     m_frontendDispatcher = nullptr;
+    m_backendDispatcher.clear();
 
     disable(nullptr);
 }

@@ -51,7 +51,7 @@ class WorkerGlobalScope;
 
 typedef String ErrorString;
 
-class InspectorRuntimeAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::RuntimeCommandHandler {
+class InspectorRuntimeAgent : public InspectorBaseAgent, public InspectorRuntimeBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorRuntimeAgent);
 public:
     virtual ~InspectorRuntimeAgent();

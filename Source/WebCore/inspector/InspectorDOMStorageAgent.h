@@ -49,7 +49,7 @@ class StorageArea;
 
 typedef String ErrorString;
 
-class InspectorDOMStorageAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::DOMStorageCommandHandler {
+class InspectorDOMStorageAgent : public InspectorBaseAgent, public InspectorDOMStorageBackendDispatcherHandler {
 public:
     static PassOwnPtr<InspectorDOMStorageAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent)
     {
@@ -82,6 +82,7 @@ private:
 
     InspectorPageAgent* m_pageAgent;
     std::unique_ptr<InspectorDOMStorageFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<InspectorDOMStorageBackendDispatcher> m_backendDispatcher;
     bool m_enabled;
 };
 

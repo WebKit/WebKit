@@ -79,12 +79,13 @@ namespace WebCore {
 void InspectorResourceAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorNetworkFrontendDispatcher>(frontendChannel);
-    backendDispatcher->registerAgent(this);
+    m_backendDispatcher = InspectorNetworkBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorResourceAgent::willDestroyFrontendAndBackend()
 {
     m_frontendDispatcher = nullptr;
+    m_backendDispatcher.clear();
 
     ErrorString error;
     disable(&error);

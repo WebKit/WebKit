@@ -90,7 +90,7 @@ struct EventListenerInfo {
     const EventListenerVector eventListenerVector;
 };
 
-class InspectorDOMAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::DOMCommandHandler {
+class InspectorDOMAgent : public InspectorBaseAgent, public InspectorDOMBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDOMAgent);
 public:
     struct DOMListener {
@@ -245,6 +245,7 @@ private:
     InspectorOverlay* m_overlay;
     InspectorClient* m_client;
     std::unique_ptr<InspectorDOMFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<InspectorDOMBackendDispatcher> m_backendDispatcher;
     DOMListener* m_domListener;
     NodeToIdMap m_documentNodeToIdMap;
     typedef HashMap<RefPtr<Node>, BackendNodeId> NodeToBackendIdMap;

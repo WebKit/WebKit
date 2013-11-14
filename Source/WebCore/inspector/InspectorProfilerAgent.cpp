@@ -332,12 +332,13 @@ void InspectorProfilerAgent::resetFrontendProfiles()
 void InspectorProfilerAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorProfilerFrontendDispatcher>(frontendChannel);
-    backendDispatcher->registerAgent(this);
+    m_backendDispatcher = InspectorProfilerBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorProfilerAgent::willDestroyFrontendAndBackend()
 {
     m_frontendDispatcher = nullptr;
+    m_backendDispatcher.clear();
 
     stop();
     ErrorString error;

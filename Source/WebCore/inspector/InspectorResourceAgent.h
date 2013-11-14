@@ -76,7 +76,7 @@ struct WebSocketFrame;
 
 typedef String ErrorString;
 
-class InspectorResourceAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::NetworkCommandHandler {
+class InspectorResourceAgent : public InspectorBaseAgent, public InspectorNetworkBackendDispatcherHandler {
 public:
     static PassOwnPtr<InspectorResourceAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorClient* client)
     {
@@ -154,6 +154,7 @@ private:
     InspectorPageAgent* m_pageAgent;
     InspectorClient* m_client;
     std::unique_ptr<InspectorNetworkFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<InspectorNetworkBackendDispatcher> m_backendDispatcher;
     String m_userAgentOverride;
     OwnPtr<NetworkResourcesData> m_resourcesData;
     bool m_enabled;

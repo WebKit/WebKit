@@ -49,7 +49,7 @@ class ScriptProfile;
 
 typedef String ErrorString;
 
-class InspectorHeapProfilerAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::HeapProfilerCommandHandler {
+class InspectorHeapProfilerAgent : public InspectorBaseAgent, public InspectorHeapProfilerBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorHeapProfilerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<InspectorHeapProfilerAgent> create(InstrumentingAgents*, InjectedScriptManager*);
@@ -84,6 +84,7 @@ private:
 
     InjectedScriptManager* m_injectedScriptManager;
     std::unique_ptr<InspectorHeapProfilerFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<InspectorHeapProfilerBackendDispatcher> m_backendDispatcher;
     unsigned m_nextUserInitiatedHeapSnapshotNumber;
     IdToHeapSnapshotMap m_snapshots;
     bool m_profileHeadersRequested;

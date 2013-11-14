@@ -83,12 +83,13 @@ void InspectorHeapProfilerAgent::resetFrontendProfiles()
 void InspectorHeapProfilerAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorHeapProfilerFrontendDispatcher>(frontendChannel);
-    backendDispatcher->registerAgent(this);
+    m_backendDispatcher = InspectorHeapProfilerBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorHeapProfilerAgent::willDestroyFrontendAndBackend()
 {
     m_frontendDispatcher = nullptr;
+    m_backendDispatcher.clear();
 
     m_profileHeadersRequested = false;
 }

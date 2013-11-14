@@ -122,7 +122,7 @@ InspectorWorkerAgent::~InspectorWorkerAgent()
 void InspectorWorkerAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorWorkerFrontendDispatcher>(frontendChannel);
-    backendDispatcher->registerAgent(this);
+    m_backendDispatcher = InspectorWorkerBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorWorkerAgent::willDestroyFrontendAndBackend()
@@ -131,6 +131,7 @@ void InspectorWorkerAgent::willDestroyFrontendAndBackend()
     disable(nullptr);
 
     m_frontendDispatcher = nullptr;
+    m_backendDispatcher.clear();
 }
 
 void InspectorWorkerAgent::enable(ErrorString*)

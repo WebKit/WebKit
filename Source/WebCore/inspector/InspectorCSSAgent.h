@@ -66,7 +66,7 @@ class ChangeRegionOversetTask;
 class InspectorCSSAgent
     : public InspectorBaseAgent
     , public InspectorDOMAgent::DOMListener
-    , public InspectorBackendDispatcher::CSSCommandHandler
+    , public InspectorCSSBackendDispatcherHandler
     , public InspectorStyleSheet::Listener {
     WTF_MAKE_NONCOPYABLE(InspectorCSSAgent);
 public:
@@ -184,6 +184,7 @@ private:
     void resetPseudoStates();
 
     std::unique_ptr<InspectorCSSFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<InspectorCSSBackendDispatcher> m_backendDispatcher;
     InspectorDOMAgent* m_domAgent;
 
     IdToInspectorStyleSheet m_idToInspectorStyleSheet;

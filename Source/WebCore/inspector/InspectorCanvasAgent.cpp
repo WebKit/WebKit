@@ -76,12 +76,13 @@ InspectorCanvasAgent::~InspectorCanvasAgent()
 void InspectorCanvasAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorCanvasFrontendDispatcher>(frontendChannel);
-    backendDispatcher->registerAgent(this);
+    m_backendDispatcher = InspectorCanvasBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorCanvasAgent::willDestroyFrontendAndBackend()
 {
     m_frontendDispatcher = nullptr;
+    m_backendDispatcher.clear();
 
     disable(nullptr);
 }

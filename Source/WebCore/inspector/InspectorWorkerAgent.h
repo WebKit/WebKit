@@ -46,7 +46,7 @@ class WorkerGlobalScopeProxy;
 
 typedef String ErrorString;
 
-class InspectorWorkerAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::WorkerCommandHandler {
+class InspectorWorkerAgent : public InspectorBaseAgent, public InspectorWorkerBackendDispatcherHandler {
 public:
     static PassOwnPtr<InspectorWorkerAgent> create(InstrumentingAgents*);
     ~InspectorWorkerAgent();
@@ -75,6 +75,7 @@ private:
     void destroyWorkerFrontendChannels();
 
     std::unique_ptr<InspectorWorkerFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<InspectorWorkerBackendDispatcher> m_backendDispatcher;
     bool m_enabled;
     bool m_shouldPauseDedicatedWorkerOnStart;
 

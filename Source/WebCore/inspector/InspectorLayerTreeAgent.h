@@ -46,7 +46,7 @@ class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class InspectorLayerTreeAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::LayerTreeCommandHandler {
+class InspectorLayerTreeAgent : public InspectorBaseAgent, public InspectorLayerTreeBackendDispatcherHandler {
 public:
     static PassOwnPtr<InspectorLayerTreeAgent> create(InstrumentingAgents* instrumentingAgents)
     {
@@ -87,6 +87,7 @@ private:
     void unbindPseudoElement(PseudoElement*);
 
     std::unique_ptr<InspectorLayerTreeFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<InspectorLayerTreeBackendDispatcher> m_backendDispatcher;
 
     HashMap<const RenderLayer*, String> m_documentLayerToIdMap;
     HashMap<String, const RenderLayer*> m_idToLayer;

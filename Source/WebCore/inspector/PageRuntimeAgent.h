@@ -71,6 +71,7 @@ private:
     Page* m_inspectedPage;
     InspectorPageAgent* m_pageAgent;
     std::unique_ptr<InspectorRuntimeFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<InspectorRuntimeBackendDispatcher> m_backendDispatcher;
     bool m_mainWorldContextCreated;
 };
 

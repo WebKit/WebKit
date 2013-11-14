@@ -69,11 +69,12 @@ InspectorMemoryAgent::~InspectorMemoryAgent()
 
 void InspectorMemoryAgent::didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher)
 {
-    backendDispatcher->registerAgent(this);
+    m_backendDispatcher = InspectorMemoryBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorMemoryAgent::willDestroyFrontendAndBackend()
 {
+    m_backendDispatcher.clear();
 }
 
 void InspectorMemoryAgent::getDOMCounters(ErrorString*, int* documents, int* nodes, int* jsEventListeners)

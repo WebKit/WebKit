@@ -59,11 +59,12 @@ WorkerRuntimeAgent::~WorkerRuntimeAgent()
 
 void WorkerRuntimeAgent::didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher)
 {
-    backendDispatcher->registerAgent(this);
+    m_backendDispatcher = InspectorRuntimeBackendDispatcher::create(backendDispatcher, this);
 }
 
 void WorkerRuntimeAgent::willDestroyFrontendAndBackend()
 {
+    m_backendDispatcher.clear();
 }
 
 InjectedScript WorkerRuntimeAgent::injectedScriptForEval(ErrorString* error, const int* executionContextId)

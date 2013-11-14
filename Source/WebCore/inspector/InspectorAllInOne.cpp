@@ -39,6 +39,7 @@
 #include "InspectorAgent.cpp"
 #include "InspectorAgentRegistry.cpp"
 #include "InspectorApplicationCacheAgent.cpp"
+#include "InspectorBackendDispatcher.cpp"
 #include "InspectorCSSAgent.cpp"
 #include "InspectorCanvasAgent.cpp"
 #include "InspectorClient.cpp"

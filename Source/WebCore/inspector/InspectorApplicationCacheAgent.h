@@ -48,7 +48,7 @@ class ResourceResponse;
 
 typedef String ErrorString;
 
-class InspectorApplicationCacheAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::ApplicationCacheCommandHandler {
+class InspectorApplicationCacheAgent : public InspectorBaseAgent, public InspectorApplicationCacheBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<InspectorApplicationCacheAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent)
@@ -81,6 +81,7 @@ private:
 
     InspectorPageAgent* m_pageAgent;
     std::unique_ptr<InspectorApplicationCacheFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<InspectorApplicationCacheBackendDispatcher> m_backendDispatcher;
 };
 
 } // namespace WebCore

@@ -113,11 +113,13 @@ void InspectorDOMDebuggerAgent::disable()
 
 void InspectorDOMDebuggerAgent::didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher)
 {
-    backendDispatcher->registerAgent(this);
+    m_backendDispatcher = InspectorDOMDebuggerBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorDOMDebuggerAgent::willDestroyFrontendAndBackend()
 {
+    m_backendDispatcher.clear();
+
     disable();
 }
 

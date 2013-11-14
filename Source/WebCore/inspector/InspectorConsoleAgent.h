@@ -52,7 +52,7 @@ class ScriptProfile;
 
 typedef String ErrorString;
 
-class InspectorConsoleAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::ConsoleCommandHandler {
+class InspectorConsoleAgent : public InspectorBaseAgent, public InspectorConsoleBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorConsoleAgent);
 public:
     InspectorConsoleAgent(InstrumentingAgents*, InjectedScriptManager*);
@@ -101,6 +101,7 @@ protected:
 
     InjectedScriptManager* m_injectedScriptManager;
     std::unique_ptr<InspectorConsoleFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<InspectorConsoleBackendDispatcher> m_backendDispatcher;
     ConsoleMessage* m_previousMessage;
     Vector<OwnPtr<ConsoleMessage>> m_consoleMessages;
     int m_expiredConsoleMessageCount;

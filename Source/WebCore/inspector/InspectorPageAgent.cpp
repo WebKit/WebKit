@@ -371,12 +371,13 @@ InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents,
 void InspectorPageAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorPageFrontendDispatcher>(frontendChannel);
-    backendDispatcher->registerAgent(this);
+    m_backendDispatcher = InspectorPageBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorPageAgent::willDestroyFrontendAndBackend()
 {
     m_frontendDispatcher = nullptr;
+    m_backendDispatcher.clear();
 
     ErrorString error;
     disable(&error);
@@ -781,7 +782,7 @@ void InspectorPageAgent::setContinuousPaintingEnabled(ErrorString*, bool enabled
         mainFrame()->view()->invalidate();
 }
 
-void InspectorPageAgent::getScriptExecutionStatus(ErrorString*, PageCommandHandler::Result::Enum* status)
+void InspectorPageAgent::getScriptExecutionStatus(ErrorString*, InspectorPageBackendDispatcherHandler::Result::Enum* status)
 {
     bool disabledByScriptController = false;
     bool disabledInSettings = false;
@@ -792,14 +793,14 @@ void InspectorPageAgent::getScriptExecutionStatus(ErrorString*, PageCommandHandl
     }
 
     if (!disabledByScriptController) {
-        *status = PageCommandHandler::Result::Allowed;
+        *status = InspectorPageBackendDispatcherHandler::Result::Allowed;
         return;
     }
 
     if (disabledInSettings)
-        *status = PageCommandHandler::Result::Disabled;
+        *status = InspectorPageBackendDispatcherHandler::Result::Disabled;
     else
-        *status = PageCommandHandler::Result::Forbidden;
+        *status = InspectorPageBackendDispatcherHandler::Result::Forbidden;
 }
 
 void InspectorPageAgent::setScriptExecutionDisabled(ErrorString*, bool value)

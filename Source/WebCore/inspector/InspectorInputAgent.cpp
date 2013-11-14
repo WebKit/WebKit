@@ -63,11 +63,12 @@ InspectorInputAgent::~InspectorInputAgent()
 
 void InspectorInputAgent::didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher* backendDispatcher)
 {
-    backendDispatcher->registerAgent(this);
+    m_backendDispatcher = InspectorInputBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorInputAgent::willDestroyFrontendAndBackend()
 {
+    m_backendDispatcher.clear();
 }
 
 void InspectorInputAgent::dispatchKeyEvent(ErrorString* error, const String& type, const int* modifiers, const double* timestamp, const String* text, const String* unmodifiedText, const String* keyIdentifier, const int* windowsVirtualKeyCode, const int* nativeVirtualKeyCode, const int* macCharCode, const bool* autoRepeat, const bool* isKeypad, const bool* isSystemKey)

@@ -1571,6 +1571,7 @@ set(WebCore_SOURCES
     inspector/InspectorAgent.cpp
     inspector/InspectorAgentRegistry.cpp
     inspector/InspectorApplicationCacheAgent.cpp
+    inspector/InspectorBackendDispatcher.cpp
     inspector/InspectorCSSAgent.cpp
     inspector/InspectorCanvasAgent.cpp
     inspector/InspectorClient.cpp

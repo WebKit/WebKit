@@ -234,7 +234,7 @@ InspectorDOMAgent::~InspectorDOMAgent()
 void InspectorDOMAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorDOMFrontendDispatcher>(frontendChannel);
-    backendDispatcher->registerAgent(this);
+    m_backendDispatcher = InspectorDOMBackendDispatcher::create(backendDispatcher, this);
 
     m_history = adoptPtr(new InspectorHistory());
     m_domEditor = adoptPtr(new DOMEditor(m_history.get()));
@@ -249,6 +249,7 @@ void InspectorDOMAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* fr
 void InspectorDOMAgent::willDestroyFrontendAndBackend()
 {
     m_frontendDispatcher = nullptr;
+    m_backendDispatcher.clear();
 
     m_history.clear();
     m_domEditor.clear();

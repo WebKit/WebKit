@@ -51,7 +51,7 @@ class Page;
 
 typedef String ErrorString;
 
-class InspectorAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::InspectorCommandHandler {
+class InspectorAgent : public InspectorBaseAgent, public InspectorInspectorBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
 public:
     static PassOwnPtr<InspectorAgent> create(Page* page, InjectedScriptManager* injectedScriptManager, InstrumentingAgents* instrumentingAgents)
@@ -92,6 +92,7 @@ private:
 
     Page* m_inspectedPage;
     std::unique_ptr<InspectorInspectorFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<InspectorInspectorBackendDispatcher> m_backendDispatcher;
     InjectedScriptManager* m_injectedScriptManager;
 
     Vector<pair<long, String>> m_pendingEvaluateTestCommands;

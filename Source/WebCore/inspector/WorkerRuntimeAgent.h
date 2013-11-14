@@ -64,6 +64,7 @@ private:
     virtual void muteConsole();
     virtual void unmuteConsole();
     WorkerGlobalScope* m_workerGlobalScope;
+    RefPtr<InspectorRuntimeBackendDispatcher> m_backendDispatcher;
     bool m_paused;
 };
 

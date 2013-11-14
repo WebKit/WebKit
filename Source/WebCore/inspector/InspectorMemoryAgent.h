@@ -45,7 +45,7 @@ class InstrumentingAgents;
 
 typedef String ErrorString;
 
-class InspectorMemoryAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::MemoryCommandHandler {
+class InspectorMemoryAgent : public InspectorBaseAgent, public InspectorMemoryBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorMemoryAgent);
 public:
     static PassOwnPtr<InspectorMemoryAgent> create(InstrumentingAgents* instrumentingAgents);
@@ -58,6 +58,8 @@ public:
 
 private:
     InspectorMemoryAgent(InstrumentingAgents*);
+
+    RefPtr<InspectorMemoryBackendDispatcher> m_backendDispatcher;
 };
 
 } // namespace WebCore

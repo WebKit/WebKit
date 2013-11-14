@@ -122,7 +122,7 @@ private:
 
 class InspectorTimelineAgent
     : public InspectorBaseAgent
-    , public InspectorBackendDispatcher::TimelineCommandHandler {
+    , public InspectorTimelineBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
 public:
     enum InspectorType { PageInspector, WorkerInspector };
@@ -259,6 +259,7 @@ private:
     TimelineTimeConverter m_timeConverter;
 
     std::unique_ptr<InspectorTimelineFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<InspectorTimelineBackendDispatcher> m_backendDispatcher;
     double m_timestampOffset;
 
     Vector<TimelineRecordEntry> m_recordStack;

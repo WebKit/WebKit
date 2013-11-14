@@ -53,7 +53,7 @@ class ScriptObject;
 
 typedef String ErrorString;
 
-class InspectorCanvasAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::CanvasCommandHandler {
+class InspectorCanvasAgent : public InspectorBaseAgent, public InspectorCanvasBackendDispatcherHandler {
 public:
     static PassOwnPtr<InspectorCanvasAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InjectedScriptManager* injectedScriptManager)
     {
@@ -101,6 +101,7 @@ private:
     InspectorPageAgent* m_pageAgent;
     InjectedScriptManager* m_injectedScriptManager;
     std::unique_ptr<InspectorCanvasFrontendDispatcher> m_frontendDispatcher;
+    RefPtr<InspectorCanvasBackendDispatcher> m_backendDispatcher;
     bool m_enabled;
     // Contains all frames with canvases, value is true only for frames that have an uninstrumented canvas.
     typedef HashMap<Frame*, bool> FramesWithUninstrumentedCanvases;

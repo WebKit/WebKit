@@ -96,12 +96,13 @@ void InspectorAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld& 
 void InspectorAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorInspectorFrontendDispatcher>(frontendChannel);
-    backendDispatcher->registerAgent(this);
+    m_backendDispatcher = InspectorInspectorBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorAgent::willDestroyFrontendAndBackend()
 {
     m_frontendDispatcher = nullptr;
+    m_backendDispatcher.clear();
 
     m_pendingEvaluateTestCommands.clear();
     m_injectedScriptManager->discardInjectedScripts();

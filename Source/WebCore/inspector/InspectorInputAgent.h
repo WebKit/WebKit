@@ -44,7 +44,7 @@ class Page;
 
 typedef String ErrorString;
 
-class InspectorInputAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::InputCommandHandler {
+class InspectorInputAgent : public InspectorBaseAgent, public InspectorInputBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorInputAgent);
 public:
     static PassOwnPtr<InspectorInputAgent> create(InstrumentingAgents* instrumentingAgents, Page* page)
@@ -65,6 +65,7 @@ private:
     InspectorInputAgent(InstrumentingAgents*, Page*);
 
     Page* m_page;
+    RefPtr<InspectorInputBackendDispatcher> m_backendDispatcher;
 };
 
 #endif // ENABLE(INSPECTOR)

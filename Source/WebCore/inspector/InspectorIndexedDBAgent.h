@@ -44,7 +44,7 @@ class InspectorPageAgent;
 
 typedef String ErrorString;
 
-class InspectorIndexedDBAgent : public InspectorBaseAgent, public InspectorBackendDispatcher::IndexedDBCommandHandler {
+class InspectorIndexedDBAgent : public InspectorBaseAgent, public InspectorIndexedDBBackendDispatcherHandler {
 public:
     static PassOwnPtr<InspectorIndexedDBAgent> create(InstrumentingAgents* instrumentingAgents, InjectedScriptManager* injectedScriptManager, InspectorPageAgent* pageAgent)
     {
@@ -68,6 +68,7 @@ private:
 
     InjectedScriptManager* m_injectedScriptManager;
     InspectorPageAgent* m_pageAgent;
+    RefPtr<InspectorIndexedDBBackendDispatcher> m_backendDispatcher;
 };
 
 } // namespace WebCore

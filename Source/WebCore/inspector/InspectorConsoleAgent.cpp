@@ -125,12 +125,13 @@ void InspectorConsoleAgent::reset()
 void InspectorConsoleAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorConsoleFrontendDispatcher>(frontendChannel);
-    backendDispatcher->registerAgent(this);
+    m_backendDispatcher = InspectorConsoleBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorConsoleAgent::willDestroyFrontendAndBackend()
 {
     m_frontendDispatcher = nullptr;
+    m_backendDispatcher.clear();
 
     String errorString;
     disable(&errorString);

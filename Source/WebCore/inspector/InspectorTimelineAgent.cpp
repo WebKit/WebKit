@@ -68,12 +68,13 @@ InspectorTimelineAgent::~InspectorTimelineAgent()
 void InspectorTimelineAgent::didCreateFrontendAndBackend(InspectorFrontendChannel* frontendChannel, InspectorBackendDispatcher* backendDispatcher)
 {
     m_frontendDispatcher = std::make_unique<InspectorTimelineFrontendDispatcher>(frontendChannel);
-    backendDispatcher->registerAgent(this);
+    m_backendDispatcher = InspectorTimelineBackendDispatcher::create(backendDispatcher, this);
 }
 
 void InspectorTimelineAgent::willDestroyFrontendAndBackend()
 {
     m_frontendDispatcher = nullptr;
+    m_backendDispatcher.clear();
 
     ErrorString error;
     stop(&error);

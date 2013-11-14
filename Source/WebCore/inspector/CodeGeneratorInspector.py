@@ -190,7 +190,6 @@ class DomainNameFixes:
 
         class Res(object):
             skip_js_bind = domain_name in cls.skip_js_bind_domains
-            agent_field_name = field_name_res
 
             @staticmethod
             def get_guard():
@@ -959,7 +958,7 @@ class TypeBindings:
 
                                 writer.newline("}; // struct ")
                                 writer.append(enum_name)
-                                writer.append("\n\n")
+                                writer.append("\n")
 
                             @staticmethod
                             def register_use(forward_listener):
@@ -1245,7 +1244,7 @@ class TypeBindings:
                                     writer.append_multiline("\n    void %s" % setter_name)
                                     writer.append("(%s value)\n" % param_type_binding.get_type_model().get_input_param_type_text())
                                     writer.newline("    {\n")
-                                    writer.newline("        this->set%s(\"%s\", %s);\n"
+                                    writer.newline("        this->set%s(ASCIILiteral(\"%s\"), %s);\n"
                                         % (param_type_binding.reduce_to_raw_type().get_setter_name(), prop_data.p["name"],
                                            format_setter_value_expression(param_type_binding, "value")))
                                     writer.newline("    }\n")
@@ -1730,6 +1729,8 @@ class Templates:
 """)
 
     frontend_domain_class = string.Template(CodeGeneratorInspectorStrings.frontend_domain_class)
+    backend_dispatcher_constructor = string.Template(CodeGeneratorInspectorStrings.backend_dispatcher_constructor)
+    backend_dispatcher_dispatch_method = string.Template(CodeGeneratorInspectorStrings.backend_dispatcher_dispatch_method)
     backend_method = string.Template(CodeGeneratorInspectorStrings.backend_method)
     frontend_method = string.Template(CodeGeneratorInspectorStrings.frontend_method)
     callback_method = string.Template(CodeGeneratorInspectorStrings.callback_method)
@@ -1823,19 +1824,12 @@ def format_setter_value_expression(param_type_binding, value_ref):
 class Generator:
     frontend_domain_class_lines = []
 
-    method_name_enum_list = []
-    backend_method_declaration_list = []
     backend_method_implementation_list = []
-    backend_method_name_declaration_list = []
-    method_handler_list = []
     frontend_method_list = []
     backend_js_domain_initializer_list = []
 
-    backend_virtual_setters_list = []
-    backend_agent_interface_list = []
-    backend_setters_list = []
-    backend_constructor_init_list = []
-    backend_field_list = []
+    backend_handler_interface_list = []
+    backend_dispatcher_interface_list = []
     type_builder_fragments = []
     type_builder_forwards = []
     validator_impl_list = []
@@ -1847,16 +1841,9 @@ class Generator:
         Generator.process_types(type_map)
 
         first_cycle_guardable_list_list = [
-            Generator.backend_method_declaration_list,
             Generator.backend_method_implementation_list,
-            Generator.backend_method_name_declaration_list,
-            Generator.backend_agent_interface_list,
-            Generator.method_handler_list,
-            Generator.method_name_enum_list,
-            Generator.backend_constructor_init_list,
-            Generator.backend_virtual_setters_list,
-            Generator.backend_setters_list,
-            Generator.backend_field_list]
+            Generator.backend_handler_interface_list,
+            Generator.backend_dispatcher_interface_list]
 
         for json_domain in json_api["domains"]:
             domain_name = json_domain["domain"]
@@ -1869,8 +1856,6 @@ class Generator:
             if domain_guard:
                 for l in first_cycle_guardable_list_list:
                     domain_guard.generate_open(l)
-
-            agent_field_name = domain_fixes.agent_field_name
 
             frontend_method_declaration_lines = []
 
@@ -1907,20 +1892,43 @@ class Generator:
                     domain_guard.generate_close(Generator.frontend_method_list)
                     domain_guard.generate_close(Generator.frontend_domain_class_lines)
 
-            agent_interface_name = Capitalizer.lower_camel_case_to_upper(domain_name) + "CommandHandler"
-            Generator.backend_agent_interface_list.append("    class %s {\n" % agent_interface_name)
-            Generator.backend_agent_interface_list.append("    public:\n")
+            dispatcher_name = "Inspector" + Capitalizer.lower_camel_case_to_upper(domain_name) + "BackendDispatcher"
+            agent_interface_name = dispatcher_name + "Handler"
+
+            Generator.backend_dispatcher_interface_list.append("class %s FINAL : public InspectorSupplementalBackendDispatcher {\n" % dispatcher_name)
+            Generator.backend_dispatcher_interface_list.append("public:\n")
+            Generator.backend_dispatcher_interface_list.append("    static PassRefPtr<%s> create(InspectorBackendDispatcher*, %s*);\n" % (dispatcher_name, agent_interface_name))
+            Generator.backend_dispatcher_interface_list.append("    virtual void dispatch(long callId, const String& method, PassRefPtr<InspectorObject> message) OVERRIDE;\n")
+            Generator.backend_dispatcher_interface_list.append("private:\n")
+
+            Generator.backend_handler_interface_list.append("class %s {\n" % agent_interface_name)
+            Generator.backend_handler_interface_list.append("public:\n")
+
+            backend_method_count = len(Generator.backend_method_implementation_list)
+
+            dispatcher_commands_list = []
             if "commands" in json_domain:
                 for json_command in json_domain["commands"]:
-                    Generator.process_command(json_command, domain_name, agent_field_name, agent_interface_name)
-            Generator.backend_agent_interface_list.append("\n    protected:\n")
-            Generator.backend_agent_interface_list.append("        virtual ~%s() { }\n" % agent_interface_name)
-            Generator.backend_agent_interface_list.append("    };\n\n")
+                    Generator.process_command(json_command, domain_name, agent_interface_name, dispatcher_name, dispatcher_commands_list)
 
-            Generator.backend_constructor_init_list.append("        , m_%s(0)" % agent_field_name)
-            Generator.backend_virtual_setters_list.append("    virtual void registerAgent(%s* %s) = 0;" % (agent_interface_name, agent_field_name))
-            Generator.backend_setters_list.append("    virtual void registerAgent(%s* %s) { ASSERT(!m_%s); m_%s = %s; }" % (agent_interface_name, agent_field_name, agent_field_name, agent_field_name, agent_field_name))
-            Generator.backend_field_list.append("    %s* m_%s;" % (agent_interface_name, agent_field_name))
+            Generator.backend_handler_interface_list.append("protected:\n")
+            Generator.backend_handler_interface_list.append("    virtual ~%s() { }\n" % agent_interface_name)
+            Generator.backend_handler_interface_list.append("};\n\n")
+
+            Generator.backend_dispatcher_interface_list.append("private:\n")
+            Generator.backend_dispatcher_interface_list.append("    %s(InspectorBackendDispatcher*, %s*);\n" % (dispatcher_name, agent_interface_name))
+            Generator.backend_dispatcher_interface_list.append("    %s* m_agent;\n" % agent_interface_name)
+            Generator.backend_dispatcher_interface_list.append("};\n\n")
+
+            Generator.backend_method_implementation_list.insert(backend_method_count, Templates.backend_dispatcher_constructor.substitute(None,
+                domainName=domain_name,
+                dispatcherName=dispatcher_name,
+                agentName=agent_interface_name))
+
+            Generator.backend_method_implementation_list.insert(backend_method_count + 1, Templates.backend_dispatcher_dispatch_method.substitute(None,
+                domainName=domain_name,
+                dispatcherName=dispatcher_name,
+                dispatcherCommands="\n".join(dispatcher_commands_list)))
 
             if domain_guard:
                 for l in reversed(first_cycle_guardable_list_list):
@@ -1976,20 +1984,18 @@ class Generator:
         container_name = "paramsObject"
 
     @staticmethod
-    def process_command(json_command, domain_name, agent_field_name, agent_interface_name):
+    def process_command(json_command, domain_name, agent_interface_name, dispatcher_name, dispatcher_commands_list):
         json_command_name = json_command["name"]
 
-        cmd_enum_name = "k%s_%sCmd" % (domain_name, json_command["name"])
-
-        Generator.method_name_enum_list.append("        %s," % cmd_enum_name)
-        Generator.method_handler_list.append("            &InspectorBackendDispatcherImpl::%s_%s," % (domain_name, json_command_name))
-        Generator.backend_method_declaration_list.append("    void %s_%s(long callId, InspectorObject* requestMessageObject);" % (domain_name, json_command_name))
-
         ad_hoc_type_output = []
-        Generator.backend_agent_interface_list.append(ad_hoc_type_output)
-        ad_hoc_type_writer = Writer(ad_hoc_type_output, "        ")
+        Generator.backend_handler_interface_list.append(ad_hoc_type_output)
+        ad_hoc_type_writer = Writer(ad_hoc_type_output, "    ")
 
-        Generator.backend_agent_interface_list.append("        virtual void %s(ErrorString*" % json_command_name)
+        Generator.backend_dispatcher_interface_list.append("    void %s(long callId, const InspectorObject& message);\n" % json_command_name)
+
+        Generator.backend_handler_interface_list.append("    virtual void %s(ErrorString*" % json_command_name)
+
+        dispatcher_commands_list.append("            { \"%s\",  &%s::%s }," % (json_command_name, dispatcher_name, json_command_name))
 
         method_in_code = ""
         method_out_code = ""
@@ -2000,7 +2006,7 @@ class Generator:
         if "parameters" in json_command:
             json_params = json_command["parameters"]
             method_in_code += Templates.param_container_access_code
-            request_message_param = " requestMessageObject"
+            request_message_param = " message"
             js_param_list = []
 
             for json_parameter in json_params:
@@ -2019,13 +2025,13 @@ class Generator:
 
                 if optional:
                     code = ("    bool %s_valueFound = false;\n"
-                            "    %s in_%s = get%s(paramsContainerPtr, \"%s\", &%s_valueFound, protocolErrorsPtr);\n" %
+                            "    %s in_%s = InspectorBackendDispatcher::get%s(paramsContainerPtr, ASCIILiteral(\"%s\"), &%s_valueFound, protocolErrorsPtr);\n" %
                            (json_param_name, non_optional_type_model.get_command_return_pass_model().get_return_var_type(), json_param_name, getter_name, json_param_name, json_param_name))
                     param = ", %s_valueFound ? &in_%s : 0" % (json_param_name, json_param_name)
                     # FIXME: pass optional refptr-values as PassRefPtr
                     formal_param_type_pattern = "const %s*"
                 else:
-                    code = ("    %s in_%s = get%s(paramsContainerPtr, \"%s\", 0, protocolErrorsPtr);\n" %
+                    code = ("    %s in_%s = InspectorBackendDispatcher::get%s(paramsContainerPtr, ASCIILiteral(\"%s\"), nullptr, protocolErrorsPtr);\n" %
                             (non_optional_type_model.get_command_return_pass_model().get_return_var_type(), json_param_name, getter_name, json_param_name))
                     param = ", in_%s" % json_param_name
                     # FIXME: pass not-optional refptr-values as NonNullPassRefPtr
@@ -2036,7 +2042,7 @@ class Generator:
 
                 method_in_code += code
                 agent_call_param_list.append(param)
-                Generator.backend_agent_interface_list.append(", %s in_%s" % (formal_param_type_pattern % non_optional_type_model.get_command_return_pass_model().get_return_var_type(), json_param_name))
+                Generator.backend_handler_interface_list.append(", %s in_%s" % (formal_param_type_pattern % non_optional_type_model.get_command_return_pass_model().get_return_var_type(), json_param_name))
 
                 js_bind_type = param_raw_type.get_js_bind_type()
                 js_param_text = "{\"name\": \"%s\", \"type\": \"%s\", \"optional\": %s}" % (
@@ -2060,22 +2066,22 @@ class Generator:
                                            decl_parameter_list,
                                            Generator.CallbackMethodStructTemplate,
                                            Generator.backend_method_implementation_list, Templates.callback_method,
-                                           {"callbackName": callback_name, "agentName": agent_interface_name})
+                                           {"callbackName": callback_name, "handlerName": agent_interface_name})
 
-            callback_writer.newline("class " + callback_name + " : public CallbackBase {\n")
+            callback_writer.newline("class " + callback_name + " : public InspectorBackendDispatcher::CallbackBase {\n")
             callback_writer.newline("public:\n")
-            callback_writer.newline("    " + callback_name + "(PassRefPtr<InspectorBackendDispatcherImpl>, int id);\n")
+            callback_writer.newline("    " + callback_name + "(PassRefPtr<InspectorBackendDispatcher>, int id);\n")
             callback_writer.newline("    void sendSuccess(" + ", ".join(decl_parameter_list) + ");\n")
             callback_writer.newline("};\n")
 
             ad_hoc_type_output.append(callback_output)
 
-            method_out_code += "    RefPtr<" + agent_interface_name + "::" + callback_name + "> callback = adoptRef(new " + agent_interface_name + "::" + callback_name + "(this, callId));\n"
+            method_out_code += "    RefPtr<" + agent_interface_name + "::" + callback_name + "> callback = adoptRef(new " + agent_interface_name + "::" + callback_name + "(m_backendDispatcher, callId));\n"
             agent_call_param_list.append(", callback")
-            response_cook_text += "        if (!error.length()) \n"
+            response_cook_text += "        if (!error.length())\n"
             response_cook_text += "            return;\n"
             response_cook_text += "        callback->disable();\n"
-            Generator.backend_agent_interface_list.append(", PassRefPtr<%s> callback" % callback_name)
+            Generator.backend_handler_interface_list.append(", PassRefPtr<%s> callback" % callback_name)
         else:
             if "returns" in json_command:
                 method_out_code += "\n"
@@ -2102,7 +2108,7 @@ class Generator:
                     if return_type_binding.get_setter_value_expression_pattern():
                         setter_argument = return_type_binding.get_setter_value_expression_pattern() % setter_argument
 
-                    cook = "            result->set%s(\"%s\", %s);\n" % (setter_type, json_return_name,
+                    cook = "            result->set%s(ASCIILiteral(\"%s\"), %s);\n" % (setter_type, json_return_name,
                                                                          setter_argument)
 
                     set_condition_pattern = type_model.get_command_return_pass_model().get_set_return_condition()
@@ -2114,7 +2120,7 @@ class Generator:
                     if optional:
                         param_name = "opt_" + param_name
 
-                    Generator.backend_agent_interface_list.append(", %s %s" % (annotated_type, param_name))
+                    Generator.backend_handler_interface_list.append(", %s %s" % (annotated_type, param_name))
                     response_cook_list.append(cook)
 
                     method_out_code += code
@@ -2134,18 +2140,16 @@ class Generator:
         js_reply_list = "[%s]" % ", ".join(backend_js_reply_param_list)
 
         Generator.backend_method_implementation_list.append(Templates.backend_method.substitute(None,
-            domainName=domain_name, methodName=json_command_name,
-            agentField="m_" + agent_field_name,
+            dispatcherName=dispatcher_name,
+            methodName=json_command_name,
             methodInCode=method_in_code,
             methodOutCode=method_out_code,
             agentCallParams="".join(agent_call_param_list),
             requestMessageObject=request_message_param,
-            responseCook=response_cook_text,
-            commandNameIndex=cmd_enum_name))
-        Generator.backend_method_name_declaration_list.append("    \"%s.%s\"," % (domain_name, json_command_name))
+            responseCook=response_cook_text))
 
         Generator.backend_js_domain_initializer_list.append("InspectorBackend.registerCommand(\"%s.%s\", [%s], %s);\n" % (domain_name, json_command_name, js_parameters_text, js_reply_list))
-        Generator.backend_agent_interface_list.append(") = 0;\n")
+        Generator.backend_handler_interface_list.append(") = 0;\n")
 
     class CallbackMethodStructTemplate:
         @staticmethod
@@ -2193,7 +2197,7 @@ class Generator:
                 if mode_type_binding.get_setter_value_expression_pattern():
                     setter_argument = mode_type_binding.get_setter_value_expression_pattern() % setter_argument
 
-                setter_code = "    %s->set%s(\"%s\", %s);\n" % (method_struct_template.container_name, setter_type, parameter_name, setter_argument)
+                setter_code = "    %s->set%s(ASCIILiteral(\"%s\"), %s);\n" % (method_struct_template.container_name, setter_type, parameter_name, setter_argument)
                 if optional:
                     setter_code = ("    if (%s)\n    " % parameter_name) + setter_code
                 method_line_list.append(setter_code)
@@ -2375,18 +2379,11 @@ backend_js_file = SmartOutput(output_js_dirname + "/InspectorBackendCommands.js"
 
 
 backend_h_file.write(Templates.backend_h.substitute(None,
-    virtualSetters="\n".join(Generator.backend_virtual_setters_list),
-    agentInterfaces="".join(flatten_list(Generator.backend_agent_interface_list)),
-    methodNamesEnumContent="\n".join(Generator.method_name_enum_list)))
+    handlerInterfaces="".join(flatten_list(Generator.backend_handler_interface_list)),
+    dispatcherInterfaces="".join(flatten_list(Generator.backend_dispatcher_interface_list))))
 
 backend_cpp_file.write(Templates.backend_cpp.substitute(None,
-    constructorInit="\n".join(Generator.backend_constructor_init_list),
-    setters="\n".join(Generator.backend_setters_list),
-    fieldDeclarations="\n".join(Generator.backend_field_list),
-    methodNameDeclarations="\n".join(Generator.backend_method_name_declaration_list),
-    methods="\n".join(Generator.backend_method_implementation_list),
-    methodDeclarations="\n".join(Generator.backend_method_declaration_list),
-    messageHandlers="\n".join(Generator.method_handler_list)))
+    methods="\n".join(Generator.backend_method_implementation_list)))
 
 frontend_h_file.write(Templates.frontend_h.substitute(None,
     domainClassList="".join(Generator.frontend_domain_class_lines)))
@@ -2418,3 +2415,14 @@ typebuilder_h_file.close()
 typebuilder_cpp_file.close()
 
 backend_js_file.close()
+
+# FIXME: This exists to remove some old generated files that can cause build issues if
+# a compiler includes the old files instead of the new files with the same name. This
+# can be removed after a week or so once bots and developers have built with this.
+# Otherwise, developers can always just do a clean build or remove their DerivedSources.
+old_backend_h_file = os.path.join(output_header_dirname, "InspectorBackendDispatcher.h")
+old_backend_cpp_file = os.path.join(output_header_dirname, "InspectorBackendDispatcher.cpp")
+if os.path.exists(old_backend_h_file):
+    os.remove(old_backend_h_file)
+if os.path.exists(old_backend_cpp_file):
+    os.remove(old_backend_cpp_file)
