@@ -1997,16 +1997,20 @@ class Generator:
 
         dispatcher_commands_list.append("            { \"%s\",  &%s::%s }," % (json_command_name, dispatcher_name, json_command_name))
 
-        method_in_code = ""
-        method_out_code = ""
+        method_in_params_handling = []
+        method_dispatch_handling = []
+        method_out_params_handling = []
+        method_ending_handling = []
+        method_request_message_param_name = ""
         agent_call_param_list = []
-        response_cook_list = []
-        request_message_param = ""
         js_parameters_text = ""
         if "parameters" in json_command:
             json_params = json_command["parameters"]
-            method_in_code += Templates.param_container_access_code
-            request_message_param = " message"
+            method_request_message_param_name = " message"
+            method_in_params_handling.append("    RefPtr<InspectorArray> protocolErrors = InspectorArray::create();\n")
+            method_in_params_handling.append("    RefPtr<InspectorObject> paramsContainer = message.getObject(ASCIILiteral(\"params\"));\n")
+            method_in_params_handling.append("    InspectorObject* paramsContainerPtr = paramsContainer.get();\n")
+            method_in_params_handling.append("    InspectorArray* protocolErrorsPtr = protocolErrors.get();\n")
             js_param_list = []
 
             for json_parameter in json_params:
@@ -2027,7 +2031,7 @@ class Generator:
                     code = ("    bool %s_valueFound = false;\n"
                             "    %s in_%s = InspectorBackendDispatcher::get%s(paramsContainerPtr, ASCIILiteral(\"%s\"), &%s_valueFound, protocolErrorsPtr);\n" %
                            (json_param_name, non_optional_type_model.get_command_return_pass_model().get_return_var_type(), json_param_name, getter_name, json_param_name, json_param_name))
-                    param = ", %s_valueFound ? &in_%s : 0" % (json_param_name, json_param_name)
+                    param = ", %s_valueFound ? &in_%s : nullptr" % (json_param_name, json_param_name)
                     # FIXME: pass optional refptr-values as PassRefPtr
                     formal_param_type_pattern = "const %s*"
                 else:
@@ -2040,7 +2044,7 @@ class Generator:
                     else:
                         formal_param_type_pattern = "%s"
 
-                method_in_code += code
+                method_in_params_handling.append(code)
                 agent_call_param_list.append(param)
                 Generator.backend_handler_interface_list.append(", %s in_%s" % (formal_param_type_pattern % non_optional_type_model.get_command_return_pass_model().get_return_var_type(), json_param_name))
 
@@ -2052,9 +2056,18 @@ class Generator:
 
                 js_param_list.append(js_param_text)
 
+            method_in_params_handling.append("    if (protocolErrors->length()) {\n")
+            method_in_params_handling.append("        String errorMessage = String::format(\"Some arguments of method '%%s' can't be processed\", \"%s.%s\");\n" % (domain_name, json_command_name))
+            method_in_params_handling.append("        m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::InvalidParams, errorMessage, protocolErrors.release());\n")
+            method_in_params_handling.append("        return;\n")
+            method_in_params_handling.append("    }\n")
+            method_in_params_handling.append("\n")
+
             js_parameters_text = ", ".join(js_param_list)
 
-        response_cook_text = ""
+        method_dispatch_handling.append("    ErrorString error;\n")
+        method_dispatch_handling.append("    RefPtr<InspectorObject> result = InspectorObject::create();\n")
+
         if json_command.get("async") == True:
             callback_name = Capitalizer.lower_camel_case_to_upper(json_command_name) + "Callback"
 
@@ -2076,60 +2089,71 @@ class Generator:
 
             ad_hoc_type_output.append(callback_output)
 
-            method_out_code += "    RefPtr<" + agent_interface_name + "::" + callback_name + "> callback = adoptRef(new " + agent_interface_name + "::" + callback_name + "(m_backendDispatcher, callId));\n"
+            method_dispatch_handling.append("    RefPtr<%s::%s> callback = adoptRef(new %s::%s(m_backendDispatcher,callId));\n" % (agent_interface_name, callback_name, agent_interface_name, callback_name))
+            method_ending_handling.append("    if (error.length()) {\n")
+            method_ending_handling.append("        callback->disable();\n")
+            method_ending_handling.append("        m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::ServerError, error);\n")
+            method_ending_handling.append("        return;\n")
+            method_ending_handling.append("    }")
+
             agent_call_param_list.append(", callback")
-            response_cook_text += "        if (!error.length())\n"
-            response_cook_text += "            return;\n"
-            response_cook_text += "        callback->disable();\n"
             Generator.backend_handler_interface_list.append(", PassRefPtr<%s> callback" % callback_name)
-        else:
-            if "returns" in json_command:
-                method_out_code += "\n"
-                for json_return in json_command["returns"]:
+        elif "returns" in json_command:
+            has_multiple_returns = len(json_command["returns"]) > 1
+            if has_multiple_returns:
+                method_out_params_handling.append("    if (!error.length()) {\n")
+            else:
+                method_out_params_handling.append("    if (!error.length())\n")
 
-                    json_return_name = json_return["name"]
+            for json_return in json_command["returns"]:
 
-                    optional = bool(json_return.get("optional"))
+                json_return_name = json_return["name"]
 
-                    return_type_binding = Generator.resolve_type_and_generate_ad_hoc(json_return, json_command_name, domain_name, ad_hoc_type_writer, agent_interface_name + "::")
+                optional = bool(json_return.get("optional"))
 
-                    raw_type = return_type_binding.reduce_to_raw_type()
-                    setter_type = raw_type.get_setter_name()
-                    initializer = raw_type.get_c_initializer()
+                return_type_binding = Generator.resolve_type_and_generate_ad_hoc(json_return, json_command_name, domain_name, ad_hoc_type_writer, agent_interface_name + "::")
 
-                    type_model = return_type_binding.get_type_model()
-                    if optional:
-                        type_model = type_model.get_optional()
+                raw_type = return_type_binding.reduce_to_raw_type()
+                setter_type = raw_type.get_setter_name()
+                initializer = raw_type.get_c_initializer()
 
-                    code = "    %s out_%s;\n" % (type_model.get_command_return_pass_model().get_return_var_type(), json_return_name)
-                    param = ", %sout_%s" % (type_model.get_command_return_pass_model().get_output_argument_prefix(), json_return_name)
-                    var_name = "out_%s" % json_return_name
-                    setter_argument = type_model.get_command_return_pass_model().get_output_to_raw_expression() % var_name
-                    if return_type_binding.get_setter_value_expression_pattern():
-                        setter_argument = return_type_binding.get_setter_value_expression_pattern() % setter_argument
+                type_model = return_type_binding.get_type_model()
+                if optional:
+                    type_model = type_model.get_optional()
 
-                    cook = "            result->set%s(ASCIILiteral(\"%s\"), %s);\n" % (setter_type, json_return_name,
-                                                                         setter_argument)
+                code = "    %s out_%s;\n" % (type_model.get_command_return_pass_model().get_return_var_type(), json_return_name)
+                param = ", %sout_%s" % (type_model.get_command_return_pass_model().get_output_argument_prefix(), json_return_name)
+                var_name = "out_%s" % json_return_name
+                setter_argument = type_model.get_command_return_pass_model().get_output_to_raw_expression() % var_name
+                if return_type_binding.get_setter_value_expression_pattern():
+                    setter_argument = return_type_binding.get_setter_value_expression_pattern() % setter_argument
 
-                    set_condition_pattern = type_model.get_command_return_pass_model().get_set_return_condition()
-                    if set_condition_pattern:
-                        cook = ("            if (%s)\n    " % (set_condition_pattern % var_name)) + cook
-                    annotated_type = type_model.get_command_return_pass_model().get_output_parameter_type()
+                cook = "        result->set%s(ASCIILiteral(\"%s\"), %s);\n" % (setter_type, json_return_name, setter_argument)
 
-                    param_name = "out_%s" % json_return_name
-                    if optional:
-                        param_name = "opt_" + param_name
+                set_condition_pattern = type_model.get_command_return_pass_model().get_set_return_condition()
+                if set_condition_pattern:
+                    cook = ("        if (%s)\n    " % (set_condition_pattern % var_name)) + cook
+                annotated_type = type_model.get_command_return_pass_model().get_output_parameter_type()
 
-                    Generator.backend_handler_interface_list.append(", %s %s" % (annotated_type, param_name))
-                    response_cook_list.append(cook)
+                param_name = "out_%s" % json_return_name
+                if optional:
+                    param_name = "opt_" + param_name
 
-                    method_out_code += code
-                    agent_call_param_list.append(param)
+                Generator.backend_handler_interface_list.append(", %s %s" % (annotated_type, param_name))
+                method_out_params_handling.append(cook)
+                method_dispatch_handling.append(code)
 
-                response_cook_text = "".join(response_cook_list)
+                agent_call_param_list.append(param)
 
-                if len(response_cook_text) != 0:
-                    response_cook_text = "        if (!error.length()) {\n" + response_cook_text + "        }"
+            if has_multiple_returns:
+                method_out_params_handling.append("    }\n")
+            method_out_params_handling.append("\n")
+
+        method_dispatch_handling.append("    m_agent->%s(&error%s);\n" % (json_command_name, "".join(agent_call_param_list)))
+        method_dispatch_handling.append("\n")
+
+        if not method_ending_handling:
+            method_ending_handling.append("    m_backendDispatcher->sendResponse(callId, result.release(), error);")
 
         backend_js_reply_param_list = []
         if "returns" in json_command:
@@ -2142,11 +2166,11 @@ class Generator:
         Generator.backend_method_implementation_list.append(Templates.backend_method.substitute(None,
             dispatcherName=dispatcher_name,
             methodName=json_command_name,
-            methodInCode=method_in_code,
-            methodOutCode=method_out_code,
-            agentCallParams="".join(agent_call_param_list),
-            requestMessageObject=request_message_param,
-            responseCook=response_cook_text))
+            requestMessageObject=method_request_message_param_name,
+            methodInParametersHandling="".join(method_in_params_handling),
+            methodDispatchHandling="".join(method_dispatch_handling),
+            methodOutParametersHandling="".join(method_out_params_handling),
+            methodEndingHandling="".join(method_ending_handling)))
 
         Generator.backend_js_domain_initializer_list.append("InspectorBackend.registerCommand(\"%s.%s\", [%s], %s);\n" % (domain_name, json_command_name, js_parameters_text, js_reply_list))
         Generator.backend_handler_interface_list.append(") = 0;\n")

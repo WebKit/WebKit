@@ -131,18 +131,6 @@ void InspectorBackendDispatcher::dispatch(const String& message)
     domainDispatcher->dispatch(callId, domainMethod, messageObject.release());
 }
 
-// FIXME: Remove this by building better generated code.
-void InspectorBackendDispatcher::sendResponse(long callId, PassRefPtr<InspectorObject> result, PassRefPtr<InspectorArray> protocolErrors, const ErrorString& invocationError)
-{
-    if (protocolErrors->length()) {
-        String errorMessage = String::format("Some arguments of method ??? can't be processed");
-        reportProtocolError(&callId, InvalidParams, errorMessage, protocolErrors);
-        return;
-    }
-
-    sendResponse(callId, result, invocationError);
-}
-
 void InspectorBackendDispatcher::sendResponse(long callId, PassRefPtr<InspectorObject> result, const ErrorString& invocationError)
 {
     if (!m_inspectorFrontendChannel)

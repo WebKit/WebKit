@@ -88,9 +88,6 @@ public:
     void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage) const;
     void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage, PassRefPtr<InspectorArray> data) const;
 
-    // FIXME: Remove this by building better generated code.
-    void sendResponse(long callId, PassRefPtr<InspectorObject> result, PassRefPtr<InspectorArray> protocolErrors, const ErrorString& invocationError);
-
     static int getInt(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);
     static double getDouble(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);
     static String getString(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);

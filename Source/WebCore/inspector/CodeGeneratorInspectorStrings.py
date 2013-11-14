@@ -86,16 +86,7 @@ ${dispatcherCommands}
 backend_method = (
 """void ${dispatcherName}::${methodName}(long callId, const InspectorObject&${requestMessageObject})
 {
-    RefPtr<InspectorArray> protocolErrors = InspectorArray::create();
-${methodOutCode}${methodInCode}
-    RefPtr<InspectorObject> result = InspectorObject::create();
-    ErrorString error;
-    if (!protocolErrors->length()) {
-        m_agent->${methodName}(&error${agentCallParams});
-
-${responseCook}
-    }
-    m_backendDispatcher->sendResponse(callId, result.release(), protocolErrors.release(), error);
+${methodInParametersHandling}${methodDispatchHandling}${methodOutParametersHandling}${methodEndingHandling}
 }
 """)
 
