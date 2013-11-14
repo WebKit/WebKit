@@ -92,7 +92,6 @@ private:
 - (void)rebuildHistoryByDayIfNeeded:(WebHistory *)webHistory;
 
 - (NSArray *)orderedLastVisitedDays;
-- (NSArray *)orderedItemsLastVisitedOnDay:(NSCalendarDate *)calendarDate;
 - (BOOL)containsURL:(NSURL *)URL;
 - (WebHistoryItem *)itemForURL:(NSURL *)URL;
 - (WebHistoryItem *)itemForURLString:(NSString *)URLString;
@@ -100,8 +99,6 @@ private:
 
 - (BOOL)loadFromURL:(NSURL *)URL collectDiscardedItemsInto:(NSMutableArray *)discardedItems error:(NSError **)error;
 - (BOOL)saveToURL:(NSURL *)URL error:(NSError **)error;
-
-- (NSCalendarDate *)ageLimitDate;
 
 - (void)setHistoryItemLimit:(int)limit;
 - (int)historyItemLimit;
@@ -432,6 +429,9 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
 
 // MARK: DATE-BASED RETRIEVAL
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 - (NSArray *)orderedLastVisitedDays
 {
     if (!_orderedLastVisitedDays) {
@@ -461,6 +461,8 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
         return nil;
     return _entriesByDate->get(dateKey).get();
 }
+
+#pragma clang diagnostic pop
 
 // MARK: URL MATCHING
 
@@ -512,6 +514,9 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     return [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitHistoryItemLimit"];
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 // Return a date that marks the age limit for history entries saved to or
 // loaded from disk. Any entry older than this item should be rejected.
 - (NSCalendarDate *)ageLimitDate
@@ -519,6 +524,8 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     return [[NSCalendarDate calendarDate] dateByAddingYears:0 months:0 days:-[self historyAgeInDaysLimit]
                                                       hours:0 minutes:0 seconds:0];
 }
+
+#pragma clang diagnostic pop
 
 - (BOOL)loadHistoryGutsFromURL:(NSURL *)URL savedItemsCount:(int *)numberOfItemsLoaded collectDiscardedItemsInto:(NSMutableArray *)discardedItems error:(NSError **)error
 {

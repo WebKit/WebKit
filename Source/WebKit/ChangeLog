@@ -1,3 +1,15 @@
+2013-11-13  Anders Carlsson  <andersca@apple.com>
+
+        Deprecate WebHistory methods that use NSCalendarDate
+        https://bugs.webkit.org/show_bug.cgi?id=124329
+        <rdar://problem/15441122>
+
+        Reviewed by Mark Rowe.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Add a shell script phase that uses unifdef to remove the __NSd_10_9 #define from
+        WebHistory on Mavericks.
+
 2013-11-11  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed build fix for Win64.
