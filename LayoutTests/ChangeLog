@@ -1,3 +1,16 @@
+2013-11-14  Jer Noble  <jer.noble@apple.com>
+
+        Flaky Test: media/video-fast-seek.html
+        https://bugs.webkit.org/show_bug.cgi?id=124298
+
+        Reviewed by Eric Carlson.
+
+        Don't check for the precise results of currentTime, as MediaTime -> double
+        rounding will occasionally result in errors.
+
+        * media/video-fast-seek-expected.txt:
+        * media/video-fast-seek.html:
+
 2013-11-14  Tim Horton  <timothy_horton@apple.com>
 
         fullscreen/anonymous-block-merge-crash.html often times out in WebKit1

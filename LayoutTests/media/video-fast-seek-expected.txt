@@ -5,7 +5,7 @@ EVENT(canplaythrough)
 Seek past the 4th sync sample:
 RUN(video.currentTime = 2.5)
 EVENT(timeupdate)
-EXPECTED (video.currentTime == '2.5') OK
+EXPECTED (video.currentTime.toFixed(1) == '2.5') OK
 Test that fastSeek() past the currentTime will not result in a seek before the currentTime:
 RUN(video.fastSeek(2.6))
 EVENT(timeupdate)
@@ -13,7 +13,7 @@ EXPECTED (video.currentTime >= '2.6') OK
 Seek before the 4th sync sample:
 RUN(video.currentTime = 2.3)
 EVENT(timeupdate)
-EXPECTED (video.currentTime == '2.3') OK
+EXPECTED (video.currentTime.toFixed(1) == '2.3') OK
 Test that fastSeek() before the currentTime will not result in a seek past the currentTime:
 RUN(video.fastSeek(2.2))
 EVENT(timeupdate)

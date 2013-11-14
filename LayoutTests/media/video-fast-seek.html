@@ -27,7 +27,7 @@
 
         function seek1()
         {
-            testExpected('video.currentTime', 2.5);
+            testExpected('video.currentTime.toFixed(1)', 2.5);
             consoleWrite('Test that fastSeek() past the currentTime will not result in a seek before the currentTime:');
             waitForEventOnce('timeupdate', seek2);
             run('video.fastSeek(2.6)');
@@ -43,7 +43,7 @@
 
         function seek3()
         {
-            testExpected('video.currentTime', 2.3);
+            testExpected('video.currentTime.toFixed(1)', 2.3);
             consoleWrite('Test that fastSeek() before the currentTime will not result in a seek past the currentTime:');
             waitForEventOnce('timeupdate', seek4);
             run('video.fastSeek(2.2)');
