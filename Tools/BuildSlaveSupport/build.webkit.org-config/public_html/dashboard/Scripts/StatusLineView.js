@@ -162,7 +162,7 @@ StatusLineView.prototype = {
 
         var anchor = document.createElement("a");
         anchor.href = this.url;
-        anchor.target = "_new";
+        anchor.target = "_blank";
 
         anchor.click();
     }

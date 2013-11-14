@@ -78,7 +78,7 @@ BuildbotQueueView.prototype = {
             var linkElement = document.createElement("a");
             linkElement.href = iteration.queue.buildbot.tracRevisionURL(revision, internal);
             linkElement.textContent = "r" + revision;
-            linkElement.target = "_new";
+            linkElement.target = "_blank";
             return linkElement;
         }
 

@@ -1,3 +1,18 @@
+2013-11-14  Tim Horton  <timothy_horton@apple.com>
+
+        build.webkit.org/dashboard can’t open different results in two new tabs
+        https://bugs.webkit.org/show_bug.cgi?id=124383
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueueView.js:
+        (BuildbotQueueView.prototype.revisionLinksForIteration):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/StatusLineView.js:
+        (StatusLineView.prototype._clicked):
+        Use _blank (which is effectively open-in-new-tab, in Safari) instead of _new (which isn't a
+        real pseudo-target and instead acts as a named target and will end up causing all link clicks
+        to open in the same secondary tab).
+
 2013-11-14  Anders Carlsson  <andersca@apple.com>
 
         Remove duplicate entry.
