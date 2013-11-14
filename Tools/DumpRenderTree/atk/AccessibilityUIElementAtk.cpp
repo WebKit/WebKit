@@ -126,13 +126,13 @@ AtkAttributeSet* getAttributeSet(AtkObject* accessible, AtkAttributeType type)
 
     if (type == TextAttributeType) {
         if (!ATK_IS_TEXT(accessible))
-            return 0;
+            return nullptr;
 
         return atk_text_get_default_attributes(ATK_TEXT(accessible));
     }
 
     ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
 String getAttributeSetValueForId(AtkObject* accessible, AtkAttributeType type, String id)
@@ -561,7 +561,7 @@ int AccessibilityUIElement::childrenCount()
 AccessibilityUIElement AccessibilityUIElement::elementAtPoint(int x, int y)
 {
     if (!ATK_IS_COMPONENT(m_element))
-        return 0;
+        return nullptr;
 
     GRefPtr<AtkObject> objectAtPoint = adoptGRef(atk_component_ref_accessible_at_point(ATK_COMPONENT(m_element), x, y, ATK_XY_WINDOW));
     return AccessibilityUIElement(objectAtPoint ? objectAtPoint.get() : m_element);
@@ -570,13 +570,13 @@ AccessibilityUIElement AccessibilityUIElement::elementAtPoint(int x, int y)
 AccessibilityUIElement AccessibilityUIElement::linkedUIElementAtIndex(unsigned index)
 {
     // FIXME: implement
-    return 0;
+    return nullptr;
 }
 
 AccessibilityUIElement AccessibilityUIElement::getChildAtIndex(unsigned index)
 {
     if (!ATK_IS_OBJECT(m_element))
-        return 0;
+        return nullptr;
 
     Vector<AccessibilityUIElement> children;
     getChildrenWithRange(children, index, index + 1);
@@ -584,7 +584,7 @@ AccessibilityUIElement AccessibilityUIElement::getChildAtIndex(unsigned index)
     if (children.size() == 1)
         return children.at(0);
 
-    return 0;
+    return nullptr;
 }
 
 unsigned AccessibilityUIElement::indexOfChild(AccessibilityUIElement* element)
@@ -616,13 +616,13 @@ JSStringRef AccessibilityUIElement::attributesOfDocumentLinks()
 AccessibilityUIElement AccessibilityUIElement::titleUIElement()
 {
     if (!ATK_IS_OBJECT(m_element))
-        return 0;
+        return nullptr;
 
     AtkRelationSet* set = atk_object_ref_relation_set(ATK_OBJECT(m_element));
     if (!set)
-        return 0;
+        return nullptr;
 
-    AtkObject* target = 0;
+    AtkObject* target = nullptr;
     int count = atk_relation_set_get_n_relations(set);
     for (int i = 0; i < count; i++) {
         AtkRelation* relation = atk_relation_set_get_relation(set, i);
@@ -634,16 +634,16 @@ AccessibilityUIElement AccessibilityUIElement::titleUIElement()
     }
 
     g_object_unref(set);
-    return target ? AccessibilityUIElement(target) : 0;
+    return target ? AccessibilityUIElement(target) : nullptr;
 }
 
 AccessibilityUIElement AccessibilityUIElement::parentElement()
 {
     if (!ATK_IS_OBJECT(m_element))
-        return 0;
+        return nullptr;
 
     AtkObject* parent =  atk_object_get_parent(ATK_OBJECT(m_element));
-    return parent ? AccessibilityUIElement(parent) : 0;
+    return parent ? AccessibilityUIElement(parent) : nullptr;
 }
 
 JSStringRef AccessibilityUIElement::attributesOfChildren()
@@ -678,12 +678,12 @@ JSStringRef AccessibilityUIElement::role()
 
 JSStringRef AccessibilityUIElement::subrole()
 {
-    return 0;
+    return nullptr;
 }
 
 JSStringRef AccessibilityUIElement::roleDescription()
 {
-    return 0;
+    return nullptr;
 }
 
 JSStringRef AccessibilityUIElement::title()
@@ -821,7 +821,7 @@ JSStringRef AccessibilityUIElement::orientation() const
     if (!ATK_IS_OBJECT(m_element))
         return JSStringCreateWithCharacters(0, 0);
 
-    const char* axOrientation = 0;
+    const char* axOrientation = nullptr;
     if (checkElementState(m_element, ATK_STATE_HORIZONTAL))
         axOrientation = "AXOrientation: AXHorizontalOrientation";
     else if (checkElementState(m_element, ATK_STATE_VERTICAL))
@@ -957,7 +957,7 @@ bool AccessibilityUIElement::ariaIsGrabbed() const
 
 JSStringRef AccessibilityUIElement::ariaDropEffects() const
 {   
-    return 0; 
+    return nullptr; 
 }
 
 bool AccessibilityUIElement::isExpanded() const
@@ -1090,18 +1090,18 @@ bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned location
 AccessibilityUIElement AccessibilityUIElement::uiElementForSearchPredicate(JSContextRef context, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText, bool visibleOnly)
 {
     // FIXME: implement
-    return 0;
+    return nullptr;
 }
 
 AccessibilityUIElement AccessibilityUIElement::cellForColumnAndRow(unsigned column, unsigned row)
 {
     if (!ATK_IS_TABLE(m_element))
-        return 0;
+        return nullptr;
 
     // Adopt the AtkObject representing the cell because
     // at_table_ref_at() transfers full ownership.
     GRefPtr<AtkObject> foundCell = adoptGRef(atk_table_ref_at(ATK_TABLE(m_element), row, column));
-    return foundCell ? AccessibilityUIElement(foundCell.get()) : 0;
+    return foundCell ? AccessibilityUIElement(foundCell.get()) : nullptr;
 }
 
 JSStringRef AccessibilityUIElement::selectedTextRange()
@@ -1216,32 +1216,32 @@ void AccessibilityUIElement::showMenu()
 
 AccessibilityUIElement AccessibilityUIElement::disclosedRowAtIndex(unsigned index)
 {
-    return 0;
+    return nullptr;
 }
 
 AccessibilityUIElement AccessibilityUIElement::ariaOwnsElementAtIndex(unsigned index)
 {
-    return 0;
+    return nullptr;
 }
 
 AccessibilityUIElement AccessibilityUIElement::ariaFlowToElementAtIndex(unsigned index)
 {
-    return 0;
+    return nullptr;
 }
 
 AccessibilityUIElement AccessibilityUIElement::selectedRowAtIndex(unsigned index)
 {
-    return 0;
+    return nullptr;
 }
 
 AccessibilityUIElement AccessibilityUIElement::rowAtIndex(unsigned index)
 {
-    return 0;
+    return nullptr;
 }
 
 AccessibilityUIElement AccessibilityUIElement::disclosedByRow()
 {
-    return 0;
+    return nullptr;
 }
 
 JSStringRef AccessibilityUIElement::accessibilityValue() const
@@ -1309,7 +1309,7 @@ void AccessibilityUIElement::removeNotificationListener()
     // Programmers should not be trying to remove a listener that's already removed.
     ASSERT(m_notificationHandler);
 
-    m_notificationHandler = 0;
+    m_notificationHandler = nullptr;
 }
 
 bool AccessibilityUIElement::isFocusable() const
@@ -1410,7 +1410,7 @@ void AccessibilityUIElement::scrollToGlobalPoint(int x, int y)
 JSStringRef AccessibilityUIElement::classList() const
 {
     // FIXME: implement
-    return 0;
+    return nullptr;
 }
 
 #endif

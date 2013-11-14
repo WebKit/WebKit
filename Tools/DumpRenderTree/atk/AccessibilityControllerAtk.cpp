@@ -38,7 +38,7 @@
 bool loggingAccessibilityEvents = false;
 
 AccessibilityController::AccessibilityController()
-    : m_globalNotificationHandler(0)
+    : m_globalNotificationHandler(nullptr)
 {
 }
 
@@ -49,7 +49,7 @@ AccessibilityController::~AccessibilityController()
 AccessibilityUIElement AccessibilityController::elementAtPoint(int x, int y)
 {
     // FIXME: implement
-    return 0;
+    return nullptr;
 }
 
 
@@ -100,13 +100,13 @@ void AccessibilityController::removeNotificationListener()
     // Programmers should not be trying to remove a listener that's already removed.
     ASSERT(m_globalNotificationHandler);
 
-    m_globalNotificationHandler = 0;
+    m_globalNotificationHandler = nullptr;
 }
 
 AtkObject* AccessibilityController::childElementById(AtkObject* parent, const char* id)
 {
     if (!ATK_IS_OBJECT(parent))
-        return 0;
+        return nullptr;
 
     bool parentFound = false;
     AtkAttributeSet* attributeSet(atk_object_get_attributes(parent));
@@ -130,7 +130,7 @@ AtkObject* AccessibilityController::childElementById(AtkObject* parent, const ch
             return result;
     }
 
-    return 0;
+    return nullptr;
 }
 
 #endif

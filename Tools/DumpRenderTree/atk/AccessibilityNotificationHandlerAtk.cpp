@@ -25,8 +25,8 @@
 #include "AccessibilityCallbacks.h"
 
 AccessibilityNotificationHandler::AccessibilityNotificationHandler(void)
-    : m_platformElement(0)
-    , m_notificationFunctionCallback(0)
+    : m_platformElement(nullptr)
+    , m_notificationFunctionCallback(nullptr)
 {
 }
 

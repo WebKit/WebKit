@@ -1,3 +1,85 @@
+2013-11-14  Krzysztof Czech  <k.czech@samsung.com>
+
+        [ATK] Change WKTR/DRT AX methods to use nullptr 
+        https://bugs.webkit.org/show_bug.cgi?id=124352
+
+        Reviewed by Anders Carlsson.
+
+        Change WKTR/DRT accessibility related methods to use nullptr.
+
+        * DumpRenderTree/atk/AccessibilityControllerAtk.cpp:
+        (AccessibilityController::AccessibilityController):
+        (AccessibilityController::elementAtPoint):
+        (AccessibilityController::removeNotificationListener):
+        (AccessibilityController::childElementById):
+        * DumpRenderTree/atk/AccessibilityNotificationHandlerAtk.cpp:
+        (AccessibilityNotificationHandler::AccessibilityNotificationHandler):
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::elementAtPoint):
+        (AccessibilityUIElement::linkedUIElementAtIndex):
+        (AccessibilityUIElement::getChildAtIndex):
+        (AccessibilityUIElement::titleUIElement):
+        (AccessibilityUIElement::parentElement):
+        (AccessibilityUIElement::subrole):
+        (AccessibilityUIElement::roleDescription):
+        (AccessibilityUIElement::orientation):
+        (AccessibilityUIElement::ariaDropEffects):
+        (AccessibilityUIElement::uiElementForSearchPredicate):
+        (AccessibilityUIElement::cellForColumnAndRow):
+        (AccessibilityUIElement::disclosedRowAtIndex):
+        (AccessibilityUIElement::ariaOwnsElementAtIndex):
+        (AccessibilityUIElement::ariaFlowToElementAtIndex):
+        (AccessibilityUIElement::selectedRowAtIndex):
+        (AccessibilityUIElement::rowAtIndex):
+        (AccessibilityUIElement::disclosedByRow):
+        (AccessibilityUIElement::removeNotificationListener):
+        (AccessibilityUIElement::classList):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityControllerAtk.cpp:
+        (WTR::AccessibilityController::logAccessibilityEvents):
+        (WTR::AccessibilityController::resetToConsistentState):
+        (WTR::childElementById):
+        (WTR::AccessibilityController::accessibleElementById):
+        (WTR::AccessibilityController::removeNotificationListener):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp:
+        (WTR::AccessibilityNotificationHandler::setNotificationFunctionCallback):
+        (WTR::AccessibilityNotificationHandler::removeAccessibilityNotificationHandler):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::elementAtPoint):
+        (WTR::AccessibilityUIElement::childAtIndex):
+        (WTR::AccessibilityUIElement::linkedUIElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaOwnsElementAtIndex):
+        (WTR::AccessibilityUIElement::ariaFlowToElementAtIndex):
+        (WTR::AccessibilityUIElement::disclosedRowAtIndex):
+        (WTR::AccessibilityUIElement::rowAtIndex):
+        (WTR::AccessibilityUIElement::selectedChildAtIndex):
+        (WTR::AccessibilityUIElement::selectedRowAtIndex):
+        (WTR::AccessibilityUIElement::titleUIElement):
+        (WTR::AccessibilityUIElement::parentElement):
+        (WTR::AccessibilityUIElement::disclosedByRow):
+        (WTR::AccessibilityUIElement::uiElementAttributeValue):
+        (WTR::AccessibilityUIElement::orientation):
+        (WTR::AccessibilityUIElement::uiElementForSearchPredicate):
+        (WTR::AccessibilityUIElement::cellForColumnAndRow):
+        (WTR::AccessibilityUIElement::horizontalScrollbar):
+        (WTR::AccessibilityUIElement::verticalScrollbar):
+        (WTR::AccessibilityUIElement::removeNotificationListener):
+        (WTR::AccessibilityUIElement::textMarkerRangeForElement):
+        (WTR::AccessibilityUIElement::previousTextMarker):
+        (WTR::AccessibilityUIElement::nextTextMarker):
+        (WTR::AccessibilityUIElement::textMarkerRangeForMarkers):
+        (WTR::AccessibilityUIElement::startTextMarkerForTextMarkerRange):
+        (WTR::AccessibilityUIElement::endTextMarkerForTextMarkerRange):
+        (WTR::AccessibilityUIElement::endTextMarkerForBounds):
+        (WTR::AccessibilityUIElement::startTextMarkerForBounds):
+        (WTR::AccessibilityUIElement::textMarkerForPoint):
+        (WTR::AccessibilityUIElement::accessibilityElementForTextMarker):
+        (WTR::AccessibilityUIElement::textMarkerForIndex):
+        (WTR::AccessibilityUIElement::supportedActions):
+        (WTR::AccessibilityUIElement::pathDescription):
+        (WTR::AccessibilityUIElement::mathPostscriptsDescription):
+        (WTR::AccessibilityUIElement::mathPrescriptsDescription):
+        (WTR::AccessibilityUIElement::classList):
+
 2013-11-14  Éva Balázsfalvi  <balazsfalvi.eva@stud.u-szeged.hu>
 
         run-perf-tests should warn loudly if you're using a Debug build.
