@@ -1,5 +1,20 @@
 2013-11-14  Julien Brianceau  <jbriance@cisco.com>
 
+        REGRESSION (r159276): Fix lots of crashes for sh4 architecture.
+        https://bugs.webkit.org/show_bug.cgi?id=124347
+
+        Reviewed by Michael Saboff.
+
+        Since r159276, we have (t4 == a0 == r4) and (t5 == a1 == r5) in LLINT for sh4.
+        This leads to argument register trampling in cCallX macros, especially with cCall2
+        macro when arg1 == t4.
+
+        * llint/LowLevelInterpreter32_64.asm: Use a new "setargs" pseudo-op to setup arguments for sh4.
+        * offlineasm/instructions.rb:
+        * offlineasm/sh4.rb: Lower "setargs" pseudo-op to setup argument registers and prevent register trampling issues.
+
+2013-11-14  Julien Brianceau  <jbriance@cisco.com>
+
         Fix build for sh4 architectures (broken since r159276).
         https://bugs.webkit.org/show_bug.cgi?id=124344
 

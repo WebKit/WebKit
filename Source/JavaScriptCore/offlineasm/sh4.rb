@@ -563,6 +563,78 @@ def sh4LowerConstPool(list)
 end
 
 
+#
+# Lowering of argument setup for SH4.
+# This phase avoids argument register trampling. For example, if a0 == t4:
+#
+# setargs t1, t4
+#
+# becomes:
+#
+# move t4, a1
+# move t1, a0
+#
+
+def sh4LowerArgumentSetup(list)
+    a0 = RegisterID.forName(codeOrigin, "a0")
+    a1 = RegisterID.forName(codeOrigin, "a1")
+    a2 = RegisterID.forName(codeOrigin, "a2")
+    a3 = RegisterID.forName(codeOrigin, "a3")
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            case node.opcode
+            when "setargs"
+                if node.operands.size == 2
+                    if node.operands[1].sh4Operand != a0.sh4Operand
+                        newList << Instruction.new(codeOrigin, "move", [node.operands[0], a0])
+                        newList << Instruction.new(codeOrigin, "move", [node.operands[1], a1])
+                    elsif node.operands[0].sh4Operand != a1.sh4Operand
+                        newList << Instruction.new(codeOrigin, "move", [node.operands[1], a1])
+                        newList << Instruction.new(codeOrigin, "move", [node.operands[0], a0])
+                    else
+                        # As (operands[0] == a1) and (operands[1] == a0), we just need to swap a0 and a1.
+                        newList << Instruction.new(codeOrigin, "xori", [a0, a1])
+                        newList << Instruction.new(codeOrigin, "xori", [a1, a0])
+                        newList << Instruction.new(codeOrigin, "xori", [a0, a1])
+                    end
+                elsif node.operands.size == 4
+                    # FIXME: We just raise an error if something is likely to go wrong for now.
+                    # It would be better to implement a recovering algorithm.
+                    if (node.operands[0].sh4Operand == a1.sh4Operand) or
+                        (node.operands[0].sh4Operand == a2.sh4Operand) or
+                        (node.operands[0].sh4Operand == a3.sh4Operand) or
+                        (node.operands[1].sh4Operand == a0.sh4Operand) or
+                        (node.operands[1].sh4Operand == a2.sh4Operand) or
+                        (node.operands[1].sh4Operand == a3.sh4Operand) or
+                        (node.operands[2].sh4Operand == a0.sh4Operand) or
+                        (node.operands[2].sh4Operand == a1.sh4Operand) or
+                        (node.operands[2].sh4Operand == a3.sh4Operand) or
+                        (node.operands[3].sh4Operand == a0.sh4Operand) or
+                        (node.operands[3].sh4Operand == a1.sh4Operand) or
+                        (node.operands[3].sh4Operand == a2.sh4Operand)
+                        raise "Potential argument register trampling detected."
+                    end
+
+                    newList << Instruction.new(codeOrigin, "move", [node.operands[0], a0])
+                    newList << Instruction.new(codeOrigin, "move", [node.operands[1], a1])
+                    newList << Instruction.new(codeOrigin, "move", [node.operands[2], a2])
+                    newList << Instruction.new(codeOrigin, "move", [node.operands[3], a3])
+                else
+                    raise "Invalid operands number (#{node.operands.size}) for setargs"
+                end
+            else
+                newList << node
+            end
+        else
+            newList << node
+        end
+    }
+    newList
+end
+
+
 class Sequence
     def getModifiedListSH4
         result = @list
@@ -613,6 +685,7 @@ class Sequence
         result = assignRegistersToTemporaries(result, :gpr, SH4_TMP_FPRS)
 
         result = sh4LowerConstPool(result)
+        result = sh4LowerArgumentSetup(result)
 
         return result
     end
@@ -883,7 +956,7 @@ class Instruction
                 else
                     $asm.puts "mov.l #{operands[0].labelref.asmLabel}, #{operands[1].sh4Operand}"
                 end
-            else
+            elsif operands[0].sh4Operand != operands[1].sh4Operand
                 $asm.puts "mov #{sh4Operands(operands)}"
             end
         when "leap"

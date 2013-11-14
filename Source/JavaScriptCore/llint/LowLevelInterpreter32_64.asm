@@ -105,9 +105,12 @@ macro cCall2(function, arg1, arg2)
         poke arg1, 0
         poke arg2, 1
         call function
-    elsif MIPS or SH4
+    elsif MIPS
         move arg1, a0
         move arg2, a1
+        call function
+    elsif SH4
+        setargs arg1, arg2
         call function
     elsif C_LOOP
         cloopCallSlowPath function, arg1, arg2
@@ -130,11 +133,14 @@ macro cCall4(function, arg1, arg2, arg3, arg4)
         poke arg3, 2
         poke arg4, 3
         call function
-    elsif MIPS or SH4
+    elsif MIPS
         move arg1, a0
         move arg2, a1
         move arg3, a2
         move arg4, a3
+        call function
+    elsif SH4
+        setargs arg1, arg2, arg3, arg4
         call function
     elsif C_LOOP
         error
