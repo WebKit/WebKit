@@ -133,10 +133,14 @@ public:
 
     LayoutUnit borderLogicalLeft() const { return style().isHorizontalWritingMode() ? borderLeft() : borderTop(); }
     LayoutUnit borderLogicalRight() const { return style().isHorizontalWritingMode() ? borderRight() : borderBottom(); }
+    LayoutUnit borderLogicalWidth() const { return borderStart() + borderEnd(); }
+    LayoutUnit borderLogicalHeight() const { return borderBefore() + borderAfter(); }
 
     LayoutUnit paddingLogicalLeft() const { return style().isHorizontalWritingMode() ? paddingLeft() : paddingTop(); }
     LayoutUnit paddingLogicalRight() const { return style().isHorizontalWritingMode() ? paddingRight() : paddingBottom(); }
-    
+    LayoutUnit paddingLogicalWidth() const { return paddingStart() + paddingEnd(); }
+    LayoutUnit paddingLogicalHeight() const { return paddingBefore() + paddingAfter(); }
+
     virtual LayoutUnit marginTop() const = 0;
     virtual LayoutUnit marginBottom() const = 0;
     virtual LayoutUnit marginLeft() const = 0;

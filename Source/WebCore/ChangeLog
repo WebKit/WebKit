@@ -1,3 +1,50 @@
+2013-11-14  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Accept the new <box> value for shape-outside
+        https://bugs.webkit.org/show_bug.cgi?id=124227
+
+        Reviewed by David Hyatt.
+
+        The shape-outside property can now be set to the box values [margin/border/padding/content]-box.
+        This patch adds the parsing code required to accept the new values, and the layout code
+        to create a rectangle shape that has the size and position of the appropriate box.
+
+        Tests: fast/shapes/shape-outside-floats/shape-outside-boxes-001.html
+               fast/shapes/shape-outside-floats/shape-outside-boxes-002.html
+               fast/shapes/shape-outside-floats/shape-outside-boxes-003.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue): Output the new box values.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Accept the new box values.
+        * css/CSSValueKeywords.in: Add margin-box value.
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyShape::applyValue): Accept the new box values.
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::borderLogicalWidth): Added new utility methods to help
+        with box sizing.
+        (WebCore::RenderBoxModelObject::borderLogicalHeight): Ditto.
+        (WebCore::RenderBoxModelObject::paddingLogicalWidth): Ditto.
+        (WebCore::RenderBoxModelObject::paddingLogicalHeight): Ditto.
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createShape): You can create a shape from a box's dimensions, rather
+        than always using a BasicShape or RasterShape value.
+        * rendering/shapes/Shape.h:
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::::computedShape): Create the appropriate shape based on the box values.
+        * rendering/shapes/ShapeInfo.h:
+        (WebCore::ShapeInfo::setShapeSize): Adjust for the box size when using a box value.
+        (WebCore::ShapeInfo::logicalTopOffset): Ditto.
+        (WebCore::ShapeInfo::logicalLeftOffset): Ditto.
+        * rendering/shapes/ShapeInsideInfo.cpp:
+        (WebCore::ShapeInsideInfo::isEnabledFor): Enable for the box values.
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::isEnabledFor): Disable for shape-inside.
+        * rendering/style/ShapeValue.h:
+        (WebCore::ShapeValue::createBoxValue): Create the appropriate shape value for a box.
+        (WebCore::ShapeValue::box): Return the box value for this ShapeValue.
+        (WebCore::ShapeValue::ShapeValue): Create a ShapeValue from a box value.
+
 2013-11-14  Beth Dakin  <bdakin@apple.com>
 
         Rubber-stamped by Tim Horton.

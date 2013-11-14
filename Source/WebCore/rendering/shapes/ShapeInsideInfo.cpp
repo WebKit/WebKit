@@ -54,9 +54,14 @@ bool ShapeInsideInfo::isEnabledFor(const RenderBlock* renderer)
         return shapeValue->shape() && shapeValue->shape()->type() != BasicShape::BasicShapeInsetRectangleType;
     case ShapeValue::Image:
         return shapeValue->isImageValid() && checkShapeImageOrigin(renderer->document(), *(shapeValue->image()->cachedImage()));
-    default:
+    case ShapeValue::Box:
         return false;
+    case ShapeValue::Outside:
+        // Outside value must already be resolved
+        break;
     }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 bool ShapeInsideInfo::updateSegmentsForLine(LayoutSize lineOffset, LayoutUnit lineHeight)

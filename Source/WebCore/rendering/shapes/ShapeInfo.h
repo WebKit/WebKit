@@ -72,11 +72,29 @@ public:
 
     void setShapeSize(LayoutUnit logicalWidth, LayoutUnit logicalHeight)
     {
+        if (shapeValue()->type() == ShapeValue::Box) {
+            switch (shapeValue()->box()) {
+            case CSSValueMarginBox:
+                logicalHeight += m_renderer->marginLogicalHeight();
+                logicalWidth += m_renderer->marginLogicalWidth();
+                break;
+            case CSSValueBorderBox:
+                break;
+            case CSSValuePaddingBox:
+                logicalHeight -= m_renderer->borderLogicalHeight();
+                logicalWidth -= m_renderer->borderLogicalWidth();
+                break;
+            default:
+                logicalHeight -= m_renderer->borderAndPaddingLogicalHeight();
+                logicalWidth -= m_renderer->borderAndPaddingLogicalWidth();
+                break;
+            }
+        } else if (m_renderer->style().boxSizing() == CONTENT_BOX) {
+            logicalHeight -= m_renderer->borderAndPaddingLogicalHeight();
+            logicalWidth -= m_renderer->borderAndPaddingLogicalWidth();
+        }
+
         LayoutSize newLogicalSize(logicalWidth, logicalHeight);
-
-        if (m_renderer->style().boxSizing() == CONTENT_BOX)
-            newLogicalSize -= LayoutSize(m_renderer->borderAndPaddingLogicalWidth(), m_renderer->borderAndPaddingLogicalHeight());
-
         if (m_shapeLogicalSize == newLogicalSize)
             return;
         dirtyShapeSize();
@@ -143,8 +161,31 @@ protected:
     virtual ShapeValue* shapeValue() const = 0;
     virtual void getIntervals(LayoutUnit, LayoutUnit, SegmentList&) const = 0;
 
-    LayoutUnit logicalTopOffset() const { return m_renderer->style().boxSizing() == CONTENT_BOX ? m_renderer->borderAndPaddingBefore() : LayoutUnit(); };
-    LayoutUnit logicalLeftOffset() const { return (m_renderer->style().boxSizing() == CONTENT_BOX && !m_renderer->isRenderRegion()) ? m_renderer->borderAndPaddingStart() : LayoutUnit(); }
+    LayoutUnit logicalTopOffset() const
+    {
+        if (shapeValue()->type() == ShapeValue::Box) {
+            switch (shapeValue()->box()) {
+            case CSSValueMarginBox: return -m_renderer->marginBefore();
+            case CSSValueBorderBox: return LayoutUnit();
+            case CSSValuePaddingBox: return m_renderer->borderBefore();
+            default: return m_renderer->borderAndPaddingBefore();
+            }
+        }
+        return m_renderer->style().boxSizing() == CONTENT_BOX ? m_renderer->borderAndPaddingBefore() : LayoutUnit();
+    }
+
+    LayoutUnit logicalLeftOffset() const
+    {
+        if (shapeValue()->type() == ShapeValue::Box) {
+            switch (shapeValue()->box()) {
+            case CSSValueMarginBox: return -m_renderer->marginStart();
+            case CSSValueBorderBox: return LayoutUnit();
+            case CSSValuePaddingBox: return m_renderer->borderStart();
+            default: return m_renderer->borderAndPaddingStart();
+            }
+        }
+        return (m_renderer->style().boxSizing() == CONTENT_BOX && !m_renderer->isRenderRegion()) ? m_renderer->borderAndPaddingStart() : LayoutUnit();
+    }
 
     LayoutUnit m_shapeLineTop;
     LayoutUnit m_lineHeight;

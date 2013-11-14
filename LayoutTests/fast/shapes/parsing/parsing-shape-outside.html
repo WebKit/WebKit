@@ -9,8 +9,14 @@
 description('Testing parsing of the -webkit-shape-outside property.');
 
 // The test functions and globals used here are defined parsing-test-utils.js.
+var validOutsideValues = validShapeValues.concat(
+'content-box',
+'padding-box',
+'border-box',
+'margin-box'
+);
 
-validShapeValues.forEach(function(elt, i, a) { 
+validOutsideValues.forEach(function(elt, i, a) {
     var value = (elt instanceof Array) ? elt[0] : elt;
     var expectedValue = (elt instanceof Array) ? elt[1] : elt;
     var computedValue = (elt instanceof Array && elt.length > 2) ? elt[2] : expectedValue;

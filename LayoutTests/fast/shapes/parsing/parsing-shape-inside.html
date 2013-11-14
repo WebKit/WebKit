@@ -20,7 +20,14 @@ validShapeValues.concat("outside-shape").forEach(function(elt, i, a) {
 
 testLocalURLShapeProperty("-webkit-shape-inside", "url(\'image\')", "url(image)");
 
-invalidShapeValues.forEach(function(value, i, a) { 
+var invalidInsideValues = invalidShapeValues.concat(
+'content-box',
+'padding-box',
+'border-box',
+'margin-box'
+);
+
+invalidInsideValues.forEach(function(value, i, a) {
     testShapePropertyParsingFailure("-webkit-shape-inside", value, "outside-shape") 
 });
 

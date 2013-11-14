@@ -727,6 +727,9 @@ content-box
 padding
 padding-box
 
+// CSS_SHAPES
+margin-box
+
 //
 // background-size
 //

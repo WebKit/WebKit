@@ -2071,7 +2071,11 @@ public:
             CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
             if (primitiveValue->getValueID() == CSSValueAuto)
                 setValue(styleResolver->style(), 0);
-            // FIXME Bug 102571: Layout for the value 'outside-shape' is not yet implemented
+            else if (primitiveValue->getValueID() == CSSValueContentBox
+                || primitiveValue->getValueID() == CSSValueBorderBox
+                || primitiveValue->getValueID() == CSSValuePaddingBox
+                || primitiveValue->getValueID() == CSSValueMarginBox)
+                setValue(styleResolver->style(), ShapeValue::createBoxValue(primitiveValue->getValueID()));
             else if (primitiveValue->getValueID() == CSSValueOutsideShape)
                 setValue(styleResolver->style(), ShapeValue::createOutsideValue());
             else if (primitiveValue->isShape()) {

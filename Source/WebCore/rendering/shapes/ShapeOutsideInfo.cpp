@@ -49,9 +49,13 @@ bool ShapeOutsideInfo::isEnabledFor(const RenderBox* box)
         return shapeValue->shape();
     case ShapeValue::Image:
         return shapeValue->isImageValid() && checkShapeImageOrigin(box->document(), *(shapeValue->image()->cachedImage()));
-    default:
-        return false;
+    case ShapeValue::Box:
+        return true;
+    case ShapeValue::Outside:
+        break;
     }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 void ShapeOutsideInfo::updateDeltasForContainingBlockLine(const RenderBlockFlow* containingBlock, const FloatingObject* floatingObject, LayoutUnit lineTop, LayoutUnit lineHeight)

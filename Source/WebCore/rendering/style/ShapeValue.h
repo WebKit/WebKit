@@ -31,6 +31,7 @@
 #define ShapeValue_h
 
 #include "BasicShapes.h"
+#include "CSSValueKeywords.h"
 #include "CachedImage.h"
 #include "StyleImage.h"
 #include <wtf/PassRefPtr.h>
@@ -42,6 +43,7 @@ public:
     enum ShapeValueType {
         // The Auto value is defined by a null ShapeValue*
         Shape,
+        Box,
         Outside,
         Image
     };
@@ -49,6 +51,11 @@ public:
     static PassRefPtr<ShapeValue> createShapeValue(PassRefPtr<BasicShape> shape)
     {
         return adoptRef(new ShapeValue(shape));
+    }
+
+    static PassRefPtr<ShapeValue> createBoxValue(CSSValueID id)
+    {
+        return adoptRef(new ShapeValue(id));
     }
 
     static PassRefPtr<ShapeValue> createOutsideValue()
@@ -63,6 +70,7 @@ public:
 
     ShapeValueType type() const { return m_type; }
     BasicShape* shape() const { return m_shape.get(); }
+    CSSValueID box() const { return m_box; }
 
     StyleImage* image() const { return m_image.get(); }
     bool isImageValid() const { return image() && image()->cachedImage() && image()->cachedImage()->hasImage(); }
@@ -90,9 +98,16 @@ private:
         , m_image(image)
     {
     }
+    ShapeValue(CSSValueID box)
+        : m_type(Box)
+        , m_box(box)
+    {
+    }
+
     ShapeValueType m_type;
     RefPtr<BasicShape> m_shape;
     RefPtr<StyleImage> m_image;
+    CSSValueID m_box;
 };
 
 }

@@ -32,6 +32,7 @@
 
 #if ENABLE(CSS_SHAPES)
 
+#include "LengthFunctions.h"
 #include "RenderBlock.h"
 #include "RenderBox.h"
 #include "RenderRegion.h"
@@ -75,7 +76,14 @@ const Shape* ShapeInfo<RenderType>::computedShape() const
         ASSERT(shapeValue->image());
         m_shape = Shape::createShape(shapeValue->image(), shapeImageThreshold, m_shapeLogicalSize, writingMode, margin, padding);
         break;
-    default:
+    case ShapeValue::Box: {
+        ASSERT(shapeValue->box());
+        // Bug 124228: Need to derive proper radii from border-radii
+        m_shape = Shape::createShape(m_shapeLogicalSize, LayoutSize(), writingMode, margin, padding);
+        break;
+    }
+    case ShapeValue::Outside:
+        // Outside should have already resolved to a different shape value
         ASSERT_NOT_REACHED();
     }
 

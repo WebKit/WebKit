@@ -1,3 +1,23 @@
+2013-11-14  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Accept the new <box> value for shape-outside
+        https://bugs.webkit.org/show_bug.cgi?id=124227
+
+        Reviewed by David Hyatt.
+
+        Test the different box values with different writing modes.
+
+        * fast/shapes/parsing/parsing-shape-inside-expected.html: Adding box values as invalid.
+        * fast/shapes/parsing/parsing-shape-inside.html: Ditto.
+        * fast/shapes/parsing/parsing-shape-outside-expected.html: Adding box values as valid.
+        * fast/shapes/parsing/parsing-shape-outside.html: Ditto.
+        * fast/shapes/shape-outside-floats/shape-outside-boxes-001-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-boxes-001.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-boxes-002-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-boxes-002.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-boxes-003-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-boxes-003.html: Added.
+
 2013-11-14  Jer Noble  <jer.noble@apple.com>
 
         Flaky Test: media/video-fast-seek.html

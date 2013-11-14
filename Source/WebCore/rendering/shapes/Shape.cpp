@@ -246,4 +246,16 @@ PassOwnPtr<Shape> Shape::createShape(const StyleImage* styleImage, float thresho
     return rasterShape.release();
 }
 
+PassOwnPtr<Shape> Shape::createShape(const LayoutSize& logicalSize, const LayoutSize& logicalRadii, WritingMode writingMode, Length margin, Length padding)
+{
+    FloatRect bounds(0, 0, logicalSize.width(), logicalSize.height());
+    FloatSize radii(logicalRadii.width(), logicalRadii.height());
+
+    OwnPtr<Shape> shape = createRectangleShape(bounds, radii);
+    shape->m_writingMode = writingMode;
+    shape->m_margin = floatValueForLength(margin, 0);
+    shape->m_padding = floatValueForLength(padding, 0);
+
+    return shape.release();
+}
 } // namespace WebCore
