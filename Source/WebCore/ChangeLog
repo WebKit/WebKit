@@ -1,3 +1,25 @@
+2013-11-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Introduce FILTER_TYPE_CASTS for child filter class
+        https://bugs.webkit.org/show_bug.cgi?id=124332
+
+        Reviewed by Andreas Kling.
+
+        To use TYPE_CASTS_BASE, define FILTER_TYPE_CASTS macro. Thanks to 
+        it, static_cast<SVGFilter*> can be replaced by toSVGFilter().
+
+        No new tests, no behavior changes.
+
+        * platform/graphics/filters/Filter.h:
+            Add isSVGFilter() to check if casting object is SVGFilter object.
+        (WebCore::Filter::isSVGFilter):
+        * rendering/svg/RenderSVGResourceFilterPrimitive.cpp:
+        (WebCore::RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion):
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::determineAbsolutePaintRect):
+        (WebCore::FEImage::platformApplySoftware):
+        * svg/graphics/filters/SVGFilter.h:
+
 2013-11-13  Victor Costan  <costan@gmail.com>
 
         Blob constructor accepts a sequence (array-like object) as first arg. 

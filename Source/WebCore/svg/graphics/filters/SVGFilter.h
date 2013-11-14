@@ -49,6 +49,8 @@ public:
     virtual FloatRect sourceImageRect() const { return m_absoluteSourceDrawingRegion; }
     FloatRect targetBoundingBox() const { return m_targetBoundingBox; }
 
+    virtual bool isSVGFilter() const OVERRIDE FINAL { return true; }
+
 private:
     SVGFilter(const AffineTransform& absoluteTransform, const FloatRect& absoluteSourceDrawingRegion, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode);
 
@@ -59,6 +61,8 @@ private:
     FloatRect m_filterRegion;
     bool m_effectBBoxMode;
 };
+
+FILTER_TYPE_CASTS(SVGFilter, isSVGFilter())
 
 } // namespace WebCore
 

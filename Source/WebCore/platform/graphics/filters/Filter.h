@@ -44,6 +44,8 @@ public:
     RenderingMode renderingMode() const { return m_renderingMode; }
     void setRenderingMode(RenderingMode renderingMode) { m_renderingMode = renderingMode; }
 
+    virtual bool isSVGFilter() const { return false; }
+
     virtual float applyHorizontalScale(float value) const { return value * m_filterResolution.width(); }
     virtual float applyVerticalScale(float value) const { return value * m_filterResolution.height(); }
     
@@ -57,6 +59,9 @@ private:
     FloatSize m_filterResolution;
     RenderingMode m_renderingMode;
 };
+
+#define FILTER_TYPE_CASTS(ToValueTypeName, predicate) \
+    TYPE_CASTS_BASE(ToValueTypeName, Filter, filter, filter->predicate, filter.predicate)
 
 } // namespace WebCore
 
