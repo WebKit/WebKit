@@ -1,4 +1,5 @@
 # Copyright (c) 2013 Google Inc. All rights reserved.
+# Copyright (c) 2013 Apple Inc. All Rights Reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -50,6 +51,17 @@ ${dispatcherName}::${dispatcherName}(InspectorBackendDispatcher* backendDispatch
     , m_agent(agent)
 {
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("${domainName}"), this);
+}
+""")
+
+backend_dispatcher_dispatch_method_simple = (
+"""void ${dispatcherName}::dispatch(long callId, const String& method, PassRefPtr<InspectorObject> message)
+{
+    Ref<${dispatcherName}> protect(*this);
+
+${ifChain}
+    else
+        m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::MethodNotFound, String("'") + "${domainName}" + '.' + method + "' was not found");
 }
 """)
 

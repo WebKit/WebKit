@@ -1,3 +1,15 @@
+2013-11-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Simply generated domain dispatch methods for domains with few commands
+        https://bugs.webkit.org/show_bug.cgi?id=124374
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/CodeGeneratorInspector.py:
+        (Generator.go):
+        (Generator.process_command):
+        * inspector/CodeGeneratorInspectorStrings.py:
+
 2013-11-14  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Accept the new <box> value for shape-outside

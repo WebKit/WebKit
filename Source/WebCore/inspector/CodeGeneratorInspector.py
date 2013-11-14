@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # Copyright (c) 2011 Google Inc. All rights reserved.
 # Copyright (c) 2012 Intel Corporation. All rights reserved.
+# Copyright (c) 2013 Apple Inc. All Rights Reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -1731,6 +1732,7 @@ class Templates:
     frontend_domain_class = string.Template(CodeGeneratorInspectorStrings.frontend_domain_class)
     backend_dispatcher_constructor = string.Template(CodeGeneratorInspectorStrings.backend_dispatcher_constructor)
     backend_dispatcher_dispatch_method = string.Template(CodeGeneratorInspectorStrings.backend_dispatcher_dispatch_method)
+    backend_dispatcher_dispatch_method_simple = string.Template(CodeGeneratorInspectorStrings.backend_dispatcher_dispatch_method_simple)
     backend_method = string.Template(CodeGeneratorInspectorStrings.backend_method)
     frontend_method = string.Template(CodeGeneratorInspectorStrings.frontend_method)
     callback_method = string.Template(CodeGeneratorInspectorStrings.callback_method)
@@ -1906,10 +1908,11 @@ class Generator:
 
             backend_method_count = len(Generator.backend_method_implementation_list)
 
+            dispatcher_if_chain = []
             dispatcher_commands_list = []
             if "commands" in json_domain:
                 for json_command in json_domain["commands"]:
-                    Generator.process_command(json_command, domain_name, agent_interface_name, dispatcher_name, dispatcher_commands_list)
+                    Generator.process_command(json_command, domain_name, agent_interface_name, dispatcher_name, dispatcher_if_chain, dispatcher_commands_list)
 
             Generator.backend_handler_interface_list.append("protected:\n")
             Generator.backend_handler_interface_list.append("    virtual ~%s() { }\n" % agent_interface_name)
@@ -1925,10 +1928,16 @@ class Generator:
                 dispatcherName=dispatcher_name,
                 agentName=agent_interface_name))
 
-            Generator.backend_method_implementation_list.insert(backend_method_count + 1, Templates.backend_dispatcher_dispatch_method.substitute(None,
-                domainName=domain_name,
-                dispatcherName=dispatcher_name,
-                dispatcherCommands="\n".join(dispatcher_commands_list)))
+            if "commands" in json_domain and len(json_domain["commands"]) <= 5:
+                Generator.backend_method_implementation_list.insert(backend_method_count + 1, Templates.backend_dispatcher_dispatch_method_simple.substitute(None,
+                    domainName=domain_name,
+                    dispatcherName=dispatcher_name,
+                    ifChain="\n".join(dispatcher_if_chain)))
+            else:
+                Generator.backend_method_implementation_list.insert(backend_method_count + 1, Templates.backend_dispatcher_dispatch_method.substitute(None,
+                    domainName=domain_name,
+                    dispatcherName=dispatcher_name,
+                    dispatcherCommands="\n".join(dispatcher_commands_list)))
 
             if domain_guard:
                 for l in reversed(first_cycle_guardable_list_list):
@@ -1984,7 +1993,7 @@ class Generator:
         container_name = "paramsObject"
 
     @staticmethod
-    def process_command(json_command, domain_name, agent_interface_name, dispatcher_name, dispatcher_commands_list):
+    def process_command(json_command, domain_name, agent_interface_name, dispatcher_name, dispatcher_if_chain, dispatcher_commands_list):
         json_command_name = json_command["name"]
 
         ad_hoc_type_output = []
@@ -1995,6 +2004,11 @@ class Generator:
 
         Generator.backend_handler_interface_list.append("    virtual void %s(ErrorString*" % json_command_name)
 
+        if not dispatcher_if_chain:
+            dispatcher_if_chain.append("    if (method == \"%s\")" % json_command_name)
+        else:
+            dispatcher_if_chain.append("    else if (method == \"%s\")" % json_command_name)
+        dispatcher_if_chain.append("        %s(callId, *message.get());" % json_command_name)
         dispatcher_commands_list.append("            { \"%s\",  &%s::%s }," % (json_command_name, dispatcher_name, json_command_name))
 
         method_in_params_handling = []
