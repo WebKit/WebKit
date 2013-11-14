@@ -1,3 +1,21 @@
+2013-11-14  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Empty polygons with non-zero shape-padding cause an ASSERT crash
+        https://bugs.webkit.org/show_bug.cgi?id=124324
+
+        Reviewed by Andreas Kling.
+
+        PolygonShape::shapePaddingBounds() and PolygonShape::shapeMarginBounds() no
+        longer attempt to compute a new FloatPolygon when the original is empty, i.e.
+        when it has less than three vertices.
+
+        Tests: fast/shapes/shape-inside/shape-inside-empty-polygon-crash.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-empty-polygon-crash.html
+
+        * rendering/shapes/PolygonShape.cpp:
+        (WebCore::PolygonShape::shapePaddingBounds): Don't compute a padding FloatPolygon if the original polygon is empty.
+        (WebCore::PolygonShape::shapeMarginBounds): Don't compute a margin FloatPolygon if the original polygon is empty.
+
 2013-11-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Cleaner Backend Method Calling Code Generation
