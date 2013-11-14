@@ -1,3 +1,20 @@
+2013-11-14  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: Popovers may shrink unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=124350
+
+        Reviewed by Timothy Hatcher.
+
+        Because we always get the intersection of the preferred frame and the container frame to
+        ensure the popover fits within its container based on a preferred frame that would place
+        the arrow within the center of the attachment edge, we get in situations where we may
+        shrink the popover instead of shifting it to fit within the container frame. We now first
+        shift the preferred frame before getting its intersection with the container frame to
+        avoid such situations. 
+
+        * UserInterface/Popover.js:
+        (WebInspector.Popover.prototype._bestMetricsForEdge):
+
 2013-11-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Split Inspector.json into individual domain json files

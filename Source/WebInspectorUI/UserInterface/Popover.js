@@ -394,6 +394,15 @@ WebInspector.Popover.prototype = {
             break;
         }
 
+        if (x < containerFrame.minX())
+            x = containerFrame.minX(); 
+        if (y < containerFrame.minY())
+            y = containerFrame.minY();
+        if (x + width > containerFrame.maxX())
+            x += containerFrame.maxX() - (x + width);
+        if (y + height > containerFrame.maxY())
+            y += containerFrame.maxY() - (y + height);
+
         var preferredFrame = new WebInspector.Rect(x, y, width, height);
         var bestFrame = preferredFrame.intersectionWithRect(containerFrame);
 
