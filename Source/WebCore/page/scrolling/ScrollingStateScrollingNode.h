@@ -68,7 +68,8 @@ public:
         FooterHeight,
         HeaderLayer,
         FooterLayer,
-        PainterForScrollbar
+        PainterForScrollbar,
+        BehaviorForFixedElements
     };
 
     const IntRect& viewportRect() const { return m_viewportRect; }
@@ -106,6 +107,9 @@ public:
 
     ScrollbarMode verticalScrollbarMode() const { return m_verticalScrollbarMode; }
     void setVerticalScrollbarMode(ScrollbarMode);
+
+    ScrollBehaviorForFixedElements scrollBehaviorForFixedElements() const { return m_behaviorForFixed; }
+    void setScrollBehaviorForFixedElements(ScrollBehaviorForFixedElements);
 
     const IntPoint& requestedScrollPosition() const { return m_requestedScrollPosition; }
     void setRequestedScrollPosition(const IntPoint&, bool representsProgrammaticScroll);
@@ -181,6 +185,8 @@ private:
 
     ScrollbarMode m_horizontalScrollbarMode;
     ScrollbarMode m_verticalScrollbarMode;
+
+    ScrollBehaviorForFixedElements m_behaviorForFixed;
 
     IntPoint m_requestedScrollPosition;
     IntPoint m_scrollOrigin;

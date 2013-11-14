@@ -82,6 +82,8 @@ protected:
     int headerHeight() const { return m_headerHeight; }
     int footerHeight() const { return m_footerHeight; }
 
+    ScrollBehaviorForFixedElements scrollBehaviorForFixedElements() const { return m_behaviorForFixed; }
+
 private:
     IntRect m_viewportRect;
     IntSize m_totalContentsSize;
@@ -103,6 +105,8 @@ private:
 
     int m_headerHeight;
     int m_footerHeight;
+
+    ScrollBehaviorForFixedElements m_behaviorForFixed;
 };
 
 } // namespace WebCore

@@ -171,6 +171,11 @@ namespace WebCore {
         PinToTop,
         PinToBottom
     };
+
+    enum ScrollBehaviorForFixedElements {
+        StickToDocumentBounds,
+        StickToWindowBounds
+    };
 }
 
 #endif

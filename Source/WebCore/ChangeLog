@@ -1,3 +1,54 @@
+2013-11-14  Beth Dakin  <bdakin@apple.com>
+
+        Add a new mode where fixed elements don't constrain their positions during a
+        rubber band
+        https://bugs.webkit.org/show_bug.cgi?id=124260
+
+        Reviewed by Tim Horton.
+
+        This patch adds a new enum called ScrollBehaviorForFixedElements, which has
+        two values, StickToDocumentBounds or StickToWindowBounds. StickToDocumentBounds 
+        corresponds to our current behavior, where fixed elements constrain 
+        their positions during a rubber-band so that they stay stuck to the document.
+        The new mode, StickToWindowBounds, will cause fixed elements to always stay
+        fixed relative to the window.
+
+        scrollOffsetForFixedPosition() now takes a new parameter for the fixed behavior
+        so that it knows whether or not to constrain the position.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollOffsetForFixedPosition):
+        
+        Right now, just return StickToDocumentBounds and retain existing behavior.
+        (WebCore::FrameView::scrollBehaviorForFixedElements):
+        * page/FrameView.h:
+
+        The scrolling thread needs to know about the fixed element scroll behavior,
+        so this code makes ScrollingStateScrollingNodes keep track of that 
+        information to pass over to the scrolling thread.
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::setScrollBehaviorForFixedElements):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::ScrollingTreeScrollingNode):
+        (WebCore::ScrollingTreeScrollingNode::updateBeforeChildren):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (WebCore::ScrollingTreeScrollingNode::scrollBehaviorForFixedElements):
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::frameViewRootLayerDidChange):
+        (WebCore::ScrollingCoordinatorMac::setScrollBehaviorForFixedElementsForNode):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollLayerPosition):
+        
+        Here is the new enum.
+        * platform/ScrollTypes.h:
+        
+        Another place where we only want to constrain scroll position if that is the
+        mode we are in.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::customPositionForVisibleRectComputation):
+
 2013-11-14  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] HMAC sign/verify crashes when key is empty

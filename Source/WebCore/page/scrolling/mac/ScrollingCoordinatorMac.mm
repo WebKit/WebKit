@@ -180,6 +180,7 @@ void ScrollingCoordinatorMac::frameViewRootLayerDidChange(FrameView* frameView)
     setCounterScrollingLayerForNode(counterScrollingLayerForFrameView(frameView), node);
     setHeaderLayerForNode(headerLayerForFrameView(frameView), node);
     setFooterLayerForNode(footerLayerForFrameView(frameView), node);
+    setScrollBehaviorForFixedElementsForNode(frameView->scrollBehaviorForFixedElements(), node);
 }
 
 void ScrollingCoordinatorMac::scrollableAreaScrollbarLayerDidChange(ScrollableArea* scrollableArea, ScrollbarOrientation orientation)
@@ -319,6 +320,12 @@ void ScrollingCoordinatorMac::setScrollParametersForNode(const ScrollParameters&
 void ScrollingCoordinatorMac::setWheelEventHandlerCountForNode(unsigned wheelEventHandlerCount, ScrollingStateScrollingNode* node)
 {
     node->setWheelEventHandlerCount(wheelEventHandlerCount);
+    scheduleTreeStateCommit();
+}
+
+void ScrollingCoordinatorMac::setScrollBehaviorForFixedElementsForNode(ScrollBehaviorForFixedElements behaviorForFixed, ScrollingStateScrollingNode* node)
+{
+    node->setScrollBehaviorForFixedElements(behaviorForFixed);
     scheduleTreeStateCommit();
 }
 

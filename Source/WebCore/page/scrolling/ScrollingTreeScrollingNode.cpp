@@ -45,6 +45,7 @@ ScrollingTreeScrollingNode::ScrollingTreeScrollingNode(ScrollingTree& scrollingT
     , m_verticalScrollbarMode(ScrollbarAuto)
     , m_headerHeight(0)
     , m_footerHeight(0)
+    , m_behaviorForFixed(StickToDocumentBounds)
 {
 }
 
@@ -99,6 +100,9 @@ void ScrollingTreeScrollingNode::updateBeforeChildren(ScrollingStateNode* stateN
 
     if (state->hasChangedProperty(ScrollingStateScrollingNode::FooterHeight))
         m_footerHeight = state->footerHeight();
+
+    if (state->hasChangedProperty(ScrollingStateScrollingNode::BehaviorForFixedElements))
+        m_behaviorForFixed = state->scrollBehaviorForFixedElements();
 }
 
 } // namespace WebCore

@@ -58,6 +58,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree* sta
     , m_requestedScrollPositionRepresentsProgrammaticScroll(false)
     , m_horizontalScrollbarMode(ScrollbarAuto)
     , m_verticalScrollbarMode(ScrollbarAuto)
+    , m_behaviorForFixed(StickToDocumentBounds)
     , m_headerHeight(0)
     , m_footerHeight(0)
 {
@@ -82,6 +83,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_requestedScrollPositionRepresentsProgrammaticScroll(stateNode.requestedScrollPositionRepresentsProgrammaticScroll())
     , m_horizontalScrollbarMode(stateNode.horizontalScrollbarMode())
     , m_verticalScrollbarMode(stateNode.verticalScrollbarMode())
+    , m_behaviorForFixed(stateNode.scrollBehaviorForFixedElements())
     , m_requestedScrollPosition(stateNode.requestedScrollPosition())
     , m_scrollOrigin(stateNode.scrollOrigin())
     , m_headerHeight(stateNode.headerHeight())
@@ -219,6 +221,16 @@ void ScrollingStateScrollingNode::setVerticalScrollbarMode(ScrollbarMode vertica
 
     m_verticalScrollbarMode = verticalScrollbarMode;
     setPropertyChanged(VerticalScrollbarMode);
+    m_scrollingStateTree->setHasChangedProperties(true);
+}
+
+void ScrollingStateScrollingNode::setScrollBehaviorForFixedElements(ScrollBehaviorForFixedElements behaviorForFixed)
+{
+    if (m_behaviorForFixed == behaviorForFixed)
+        return;
+
+    m_behaviorForFixed = behaviorForFixed;
+    setPropertyChanged(BehaviorForFixedElements);
     m_scrollingStateTree->setHasChangedProperties(true);
 }
 

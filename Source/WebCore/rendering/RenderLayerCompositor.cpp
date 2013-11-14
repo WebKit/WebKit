@@ -337,7 +337,10 @@ void RenderLayerCompositor::customPositionForVisibleRectComputation(const Graphi
         return;
 
     FloatPoint scrollPosition = -position;
-    scrollPosition = m_renderView.frameView().constrainScrollPositionForOverhang(roundedIntPoint(scrollPosition));
+
+    if (m_renderView.frameView().scrollBehaviorForFixedElements() == StickToDocumentBounds)
+        scrollPosition = m_renderView.frameView().constrainScrollPositionForOverhang(roundedIntPoint(scrollPosition));
+
     position = -scrollPosition;
 }
 
