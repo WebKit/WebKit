@@ -1,5 +1,12 @@
 2013-11-13  Tim Horton  <timothy_horton@apple.com>
 
+        Layout Test animations/resume-after-page-cache.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=124321
+
+        * platform/mac/TestExpectations:
+
+2013-11-13  Tim Horton  <timothy_horton@apple.com>
+
         fullscreen/anonymous-block-merge-crash.html often times out in WebKit1
         https://bugs.webkit.org/show_bug.cgi?id=124318
 
