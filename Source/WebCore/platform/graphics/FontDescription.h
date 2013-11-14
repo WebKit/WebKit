@@ -35,7 +35,7 @@
 #include "TextRenderingMode.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/MathExtras.h>
-
+#include <wtf/RefCountedArray.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -107,7 +107,7 @@ public:
     unsigned familyCount() const { return m_families.size(); }
     const AtomicString& firstFamily() const { return familyAt(0); }
     const AtomicString& familyAt(unsigned i) const { return m_families[i]; }
-    const Vector<AtomicString, 1>& families() const { return m_families; }
+    const RefCountedArray<AtomicString>& families() const { return m_families; }
 
     float specifiedSize() const { return m_specifiedSize; }
     float computedSize() const { return m_computedSize; }
@@ -141,8 +141,8 @@ public:
     FontDescription makeNormalFeatureSettings() const;
 
     void setOneFamily(const AtomicString& family) { ASSERT(m_families.size() == 1); m_families[0] = family; }
-    void setFamilies(const Vector<AtomicString, 1>& families) { m_families = families; }
-    void adoptFamilies(Vector<AtomicString, 1>& families) { m_families.swap(families); }
+    void setFamilies(const Vector<AtomicString>& families) { m_families = RefCountedArray<AtomicString>(families); }
+    void setFamilies(const RefCountedArray<AtomicString>& families) { m_families = families; }
     void setComputedSize(float s) { m_computedSize = clampToFloat(s); }
     void setSpecifiedSize(float s) { m_specifiedSize = clampToFloat(s); }
     void setItalic(FontItalic i) { m_italic = i; }
@@ -183,7 +183,7 @@ public:
 #endif
 
 private:
-    Vector<AtomicString, 1> m_families;
+    RefCountedArray<AtomicString> m_families;
     RefPtr<FontFeatureSettings> m_featureSettings;
 
     float m_specifiedSize;   // Specified CSS value. Independent of rendering issues such as integer

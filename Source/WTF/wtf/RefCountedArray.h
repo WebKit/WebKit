@@ -155,6 +155,22 @@ public:
     
     T& operator[](size_t i) { return at(i); }
     const T& operator[](size_t i) const { return at(i); }
+
+    bool operator==(const RefCountedArray& other) const
+    {
+        if (m_data == other.m_data)
+            return true;
+        if (!m_data || !other.m_data)
+            return false;
+        unsigned length = Header::fromPayload(m_data)->length;
+        if (length != Header::fromPayload(other.m_data)->length)
+            return false;
+        for (unsigned i = 0; i < length; ++i) {
+            if (m_data[i] != other.m_data[i])
+                return false;
+        }
+        return true;
+    }
     
 private:
     struct Header {

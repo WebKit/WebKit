@@ -710,7 +710,7 @@ public:
         bool oldFamilyUsedFixedDefaultSize = fontDescription.useFixedDefaultSize();
         fontDescription.setGenericFamily(FontDescription::NoFamily);
 
-        Vector<AtomicString, 1> families;
+        Vector<AtomicString> families;
         families.reserveInitialCapacity(valueList.length());
 
         for (unsigned i = 0; i < valueList.length(); ++i) {
@@ -764,7 +764,7 @@ public:
 
         if (families.isEmpty())
             return;
-        fontDescription.adoptFamilies(families);
+        fontDescription.setFamilies(families);
 
         if (fontDescription.keywordSize() && fontDescription.useFixedDefaultSize() != oldFamilyUsedFixedDefaultSize)
             styleResolver->setFontSize(fontDescription, Style::fontSizeForKeyword(CSSValueXxSmall + fontDescription.keywordSize() - 1, !oldFamilyUsedFixedDefaultSize, styleResolver->document()));

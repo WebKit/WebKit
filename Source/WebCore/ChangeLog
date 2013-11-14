@@ -1,3 +1,17 @@
+2013-11-14  Andreas Kling  <akling@apple.com>
+
+        FontDescription copies should share families list, not duplicate it.
+        <https://webkit.org/b/124338>
+
+        Turn FontDescription::m_families into a RefCountedArray<AtomicString>
+        instead of a Vector<AtomicString, 1>. This allows FontDescription to
+        share the families list between copies, instead of each object having
+        its own Vector.
+
+        Also, FontDescription itself shrinks by 16 bytes.
+
+        Reviewed by Antti Koivisto.
+
 2013-11-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Introduce FILTER_TYPE_CASTS for child filter class
