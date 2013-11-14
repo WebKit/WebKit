@@ -22,7 +22,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #include "config.h"
 
 #if ENABLE(CONTEXT_MENUS)
@@ -42,16 +42,16 @@ WebContextMenuItem::WebContextMenuItem(const WebContextMenuItemData& data)
 PassRefPtr<WebContextMenuItem> WebContextMenuItem::create(const String& title, bool enabled, API::Array* submenuItems)
 {
     size_t size = submenuItems->size();
-    
+
     Vector<WebContextMenuItemData> submenu;
     submenu.reserveCapacity(size);
-    
+
     for (size_t i = 0; i < size; ++i) {
         WebContextMenuItem* item = submenuItems->at<WebContextMenuItem>(i);
         if (item)
             submenu.append(*item->data());
     }
-    
+
     return adoptRef(new WebContextMenuItem(WebContextMenuItemData(WebCore::ContextMenuItemTagNoAction, title, enabled, submenu))).leakRef();
 }
 
@@ -61,8 +61,8 @@ WebContextMenuItem* WebContextMenuItem::separatorItem()
     return separatorItem;
 }
 
-PassRefPtr<API::Array> WebContextMenuItem::submenuItemsAsImmutableArray() const
-{    
+PassRefPtr<API::Array> WebContextMenuItem::submenuItemsAsAPIArray() const
+{
     if (m_webContextMenuItemData.type() != WebCore::SubmenuType)
         return API::Array::create();
 

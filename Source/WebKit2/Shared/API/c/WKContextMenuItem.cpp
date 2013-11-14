@@ -158,7 +158,7 @@ bool WKContextMenuItemGetChecked(WKContextMenuItemRef itemRef)
 WKArrayRef WKContextMenuCopySubmenuItems(WKContextMenuItemRef itemRef)
 {
 #if ENABLE(CONTEXT_MENUS)
-    return toAPI(toImpl(itemRef)->submenuItemsAsImmutableArray().leakRef());
+    return toAPI(toImpl(itemRef)->submenuItemsAsAPIArray().leakRef());
 #else
     return 0;
 #endif

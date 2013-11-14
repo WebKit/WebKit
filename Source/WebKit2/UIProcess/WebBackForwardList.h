@@ -69,8 +69,8 @@ public:
     int backListCount() const;
     int forwardListCount() const;
 
-    PassRefPtr<API::Array> backListAsImmutableArrayWithLimit(unsigned limit) const;
-    PassRefPtr<API::Array> forwardListAsImmutableArrayWithLimit(unsigned limit) const;
+    PassRefPtr<API::Array> backListAsAPIArrayWithLimit(unsigned limit) const;
+    PassRefPtr<API::Array> forwardListAsAPIArrayWithLimit(unsigned limit) const;
 
 #if USE(CF)
     CFDictionaryRef createCFDictionaryRepresentation(WebPageProxy::WebPageProxySessionStateFilterCallback, void* context) const;

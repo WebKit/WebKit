@@ -84,7 +84,7 @@ static WKBackForwardListItem *toWKBackForwardListItem(WebBackForwardListItem* it
 
 - (NSArray *)backListWithLimit:(NSUInteger)limit
 {
-    RefPtr<API::Array> list = reinterpret_cast<WebBackForwardList*>(&_list)->backListAsImmutableArrayWithLimit(limit);
+    RefPtr<API::Array> list = reinterpret_cast<WebBackForwardList*>(&_list)->backListAsAPIArrayWithLimit(limit);
     if (!list)
         return nil;
 
@@ -93,7 +93,7 @@ static WKBackForwardListItem *toWKBackForwardListItem(WebBackForwardListItem* it
 
 - (NSArray *)forwardListWithLimit:(NSUInteger)limit
 {
-    RefPtr<API::Array> list = reinterpret_cast<WebBackForwardList*>(&_list)->forwardListAsImmutableArrayWithLimit(limit);
+    RefPtr<API::Array> list = reinterpret_cast<WebBackForwardList*>(&_list)->forwardListAsAPIArrayWithLimit(limit);
     if (!list)
         return nil;
 

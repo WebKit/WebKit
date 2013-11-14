@@ -252,8 +252,8 @@ GList* webkit_back_forward_list_get_back_list_with_limit(WebKitBackForwardList* 
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST(backForwardList), 0);
 
     WebKitBackForwardListPrivate* priv = backForwardList->priv;
-    RefPtr<API::Array> immutableArray = priv->backForwardItems->backListAsImmutableArrayWithLimit(limit);
-    return webkitBackForwardListCreateList(backForwardList, immutableArray.get());
+    RefPtr<API::Array> apiArray = priv->backForwardItems->backListAsAPIArrayWithLimit(limit);
+    return webkitBackForwardListCreateList(backForwardList, apiArray.get());
 }
 
 /**
@@ -283,6 +283,6 @@ GList* webkit_back_forward_list_get_forward_list_with_limit(WebKitBackForwardLis
     g_return_val_if_fail(WEBKIT_IS_BACK_FORWARD_LIST(backForwardList), 0);
 
     WebKitBackForwardListPrivate* priv = backForwardList->priv;
-    RefPtr<API::Array> immutableArray = priv->backForwardItems->forwardListAsImmutableArrayWithLimit(limit);
-    return webkitBackForwardListCreateList(backForwardList, immutableArray.get());
+    RefPtr<API::Array> apiArray = priv->backForwardItems->forwardListAsAPIArrayWithLimit(limit);
+    return webkitBackForwardListCreateList(backForwardList, apiArray.get());
 }

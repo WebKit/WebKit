@@ -201,7 +201,7 @@ int WebBackForwardList::forwardListCount() const
     return m_page && m_hasCurrentIndex ? m_entries.size() - (m_currentIndex + 1) : 0;
 }
 
-PassRefPtr<API::Array> WebBackForwardList::backListAsImmutableArrayWithLimit(unsigned limit) const
+PassRefPtr<API::Array> WebBackForwardList::backListAsAPIArrayWithLimit(unsigned limit) const
 {
     ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 
@@ -225,7 +225,7 @@ PassRefPtr<API::Array> WebBackForwardList::backListAsImmutableArrayWithLimit(uns
     return API::Array::create(std::move(vector));
 }
 
-PassRefPtr<API::Array> WebBackForwardList::forwardListAsImmutableArrayWithLimit(unsigned limit) const
+PassRefPtr<API::Array> WebBackForwardList::forwardListAsAPIArrayWithLimit(unsigned limit) const
 {
     ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 

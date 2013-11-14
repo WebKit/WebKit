@@ -1,3 +1,22 @@
+2013-11-13  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        Rename some ImmutableArray leftovers
+        https://bugs.webkit.org/show_bug.cgi?id=124320
+
+        Reviewed by Anders Carlsson.
+
+        ImmutableArray has been renamed to API::Array in r159234.
+
+        * Shared/API/c/WKContextMenuItem.cpp:
+        * Shared/WebContextMenuItem.cpp:
+        * Shared/WebContextMenuItem.h:
+        * UIProcess/API/C/WKBackForwardListRef.cpp:
+        * UIProcess/API/Cocoa/WKBackForwardList.mm:
+        * UIProcess/API/gtk/WebKitBackForwardList.cpp:
+        * UIProcess/API/gtk/WebKitWebViewGroup.cpp:
+        * UIProcess/WebBackForwardList.cpp:
+        * UIProcess/WebBackForwardList.h:
+
 2013-11-13  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r159263): caused 50+ crashes on all mac webkit2 bots
