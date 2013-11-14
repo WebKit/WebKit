@@ -1,3 +1,23 @@
+2013-11-14  Gergo Balogh  <geryxyz@inf.u-szeged.hu>
+
+        generate-message-receiver.py can't handle nested #ifs
+        https://bugs.webkit.org/show_bug.cgi?id=121877
+
+        Reviewed by Darin Adler.
+
+        parser.py was modifieded to collect and combine conditions of nested #ifs.
+        messages_unittest.py extended to check these modifications.
+
+        * Scripts/webkit2/messages_unittest.py:
+        (LoadSomething):
+        (std):
+        (AddEvent):
+        (LoadSomethingElse):
+        * Scripts/webkit2/parser.py:
+        (combine_condition):
+        (bracket_if_needed):
+        (parse):
+
 2013-11-14  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] WKAction keys are not exported

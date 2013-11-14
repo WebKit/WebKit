@@ -21,37 +21,48 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import re
-import sys
 
 from webkit2 import model
+
+
+def combine_condition(conditions):
+    if conditions:
+        if len(conditions) == 1:
+            return conditions[0]
+        else:
+            return bracket_if_needed(' && '.join(map(bracket_if_needed, conditions)))
+    else:
+        return None
+
+
+def bracket_if_needed(condition):
+    if re.match(r'.*(&&|\|\|).*', condition):
+        return '(%s)' % condition
+    else:
+        return condition
 
 
 def parse(file):
     receiver_attributes = None
     destination = None
     messages = []
-    condition = None
+    conditions = []
     master_condition = None
     for line in file:
         match = re.search(r'messages -> (?P<destination>[A-Za-z_0-9]+) \s*(?:(?P<attributes>.*?)\s+)?{', line)
         if match:
             receiver_attributes = parse_attributes_string(match.group('attributes'))
 
-            if condition:
-                master_condition = condition
-                condition = None
+            if conditions:
+                master_condition = conditions
+                conditions = []
             destination = match.group('destination')
             continue
         if line.startswith('#'):
             if line.startswith('#if '):
-                if condition:
-                    # FIXME: generate-message-receiver.py can't handle nested ifs
-                    # https://bugs.webkit.org/show_bug.cgi?id=121877
-                    sys.stderr.write("ERROR: Nested #ifs aren't supported, please fix %s\n" % file.name)
-                    sys.exit(1)
-                condition = line.rstrip()[4:]
-            elif line.startswith('#endif'):
-                condition = None
+                conditions.append(line.rstrip()[4:])
+            elif line.startswith('#endif') and conditions:
+                conditions.pop()
             continue
         match = re.search(r'([A-Za-z_0-9]+)\((.*?)\)(?:(?:\s+->\s+)\((.*?)\))?(?:\s+(.*))?', line)
         if match:
@@ -59,7 +70,7 @@ def parse(file):
             if parameters_string:
                 parameters = parse_parameters_string(parameters_string)
                 for parameter in parameters:
-                    parameter.condition = condition
+                    parameter.condition = combine_condition(conditions)
             else:
                 parameters = []
 
@@ -68,14 +79,14 @@ def parse(file):
             if reply_parameters_string:
                 reply_parameters = parse_parameters_string(reply_parameters_string)
                 for reply_parameter in reply_parameters:
-                    reply_parameter.condition = condition
+                    reply_parameter.condition = combine_condition(conditions)
             elif reply_parameters_string == '':
                 reply_parameters = []
             else:
                 reply_parameters = None
 
-            messages.append(model.Message(name, parameters, reply_parameters, attributes, condition))
-    return model.MessageReceiver(destination, receiver_attributes, messages, master_condition)
+            messages.append(model.Message(name, parameters, reply_parameters, attributes, combine_condition(conditions)))
+    return model.MessageReceiver(destination, receiver_attributes, messages, combine_condition(master_condition))
 
 
 def parse_attributes_string(attributes_string):

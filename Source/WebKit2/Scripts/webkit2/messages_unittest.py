@@ -49,11 +49,19 @@ _messages_file_contents = """# Copyright (C) 2010 Apple Inc. All rights reserved
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(WEBKIT2)
+#if NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND
 
 messages -> WebPage LegacyReceiver {
     LoadURL(WTF::String url)
 #if ENABLE(TOUCH_EVENTS)
+    LoadSomething(WTF::String url)
+#if NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION
     TouchEvent(WebKit::WebTouchEvent event)
+#endif
+#if NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION
+    AddEvent(WebKit::WebTouchEvent event)
+#endif
+    LoadSomethingElse(WTF::String url)
 #endif
     DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction)
     Close()
@@ -92,11 +100,12 @@ messages -> WebPage LegacyReceiver {
 }
 
 #endif
+#endif
 """
 
 _expected_results = {
     'name': 'WebPage',
-    'conditions': ('ENABLE(WEBKIT2)'),
+    'conditions': ('(ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))'),
     'messages': (
         {
             'name': 'LoadURL',
@@ -106,9 +115,30 @@ _expected_results = {
             'conditions': (None),
         },
         {
+            'name': 'LoadSomething',
+            'parameters': (
+                ('WTF::String', 'url'),
+            ),
+            'conditions': ('ENABLE(TOUCH_EVENTS)'),
+        },
+        {
             'name': 'TouchEvent',
             'parameters': (
                 ('WebKit::WebTouchEvent', 'event'),
+            ),
+            'conditions': ('(ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))'),
+        },
+        {
+            'name': 'AddEvent',
+            'parameters': (
+                ('WebKit::WebTouchEvent', 'event'),
+            ),
+            'conditions': ('(ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))'),
+        },
+        {
+            'name': 'LoadSomethingElse',
+            'parameters': (
+                ('WTF::String', 'url'),
             ),
             'conditions': ('ENABLE(TOUCH_EVENTS)'),
         },
@@ -310,7 +340,7 @@ _expected_header = """/*
 #ifndef WebPageMessages_h
 #define WebPageMessages_h
 
-#if ENABLE(WEBKIT2)
+#if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
 
 #include "Arguments.h"
 #include "Connection.h"
@@ -370,6 +400,30 @@ private:
 };
 
 #if ENABLE(TOUCH_EVENTS)
+class LoadSomething {
+public:
+    typedef std::tuple<WTF::String> DecodeType;
+
+    static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
+    static CoreIPC::StringReference name() { return CoreIPC::StringReference("LoadSomething"); }
+    static const bool isSync = false;
+
+    explicit LoadSomething(const WTF::String& url)
+        : m_arguments(url)
+    {
+    }
+
+    const std::tuple<const WTF::String&> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<const WTF::String&> m_arguments;
+};
+#endif
+
+#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
 class TouchEvent {
 public:
     typedef std::tuple<WebKit::WebTouchEvent> DecodeType;
@@ -390,6 +444,54 @@ public:
 
 private:
     std::tuple<const WebKit::WebTouchEvent&> m_arguments;
+};
+#endif
+
+#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
+class AddEvent {
+public:
+    typedef std::tuple<WebKit::WebTouchEvent> DecodeType;
+
+    static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
+    static CoreIPC::StringReference name() { return CoreIPC::StringReference("AddEvent"); }
+    static const bool isSync = false;
+
+    explicit AddEvent(const WebKit::WebTouchEvent& event)
+        : m_arguments(event)
+    {
+    }
+
+    const std::tuple<const WebKit::WebTouchEvent&> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<const WebKit::WebTouchEvent&> m_arguments;
+};
+#endif
+
+#if ENABLE(TOUCH_EVENTS)
+class LoadSomethingElse {
+public:
+    typedef std::tuple<WTF::String> DecodeType;
+
+    static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
+    static CoreIPC::StringReference name() { return CoreIPC::StringReference("LoadSomethingElse"); }
+    static const bool isSync = false;
+
+    explicit LoadSomethingElse(const WTF::String& url)
+        : m_arguments(url)
+    {
+    }
+
+    const std::tuple<const WTF::String&> arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    std::tuple<const WTF::String&> m_arguments;
 };
 #endif
 
@@ -774,7 +876,7 @@ private:
 } // namespace WebPage
 } // namespace Messages
 
-#endif // ENABLE(WEBKIT2)
+#endif // (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
 
 #endif // WebPageMessages_h
 """
@@ -805,7 +907,7 @@ _expected_receiver_implementation = """/*
 
 #include "config.h"
 
-#if ENABLE(WEBKIT2)
+#if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
 
 #include "WebPage.h"
 
@@ -821,7 +923,7 @@ _expected_receiver_implementation = """/*
 #include "MessageDecoder.h"
 #include "Plugin.h"
 #include "WebCoreArgumentCoders.h"
-#if ENABLE(TOUCH_EVENTS)
+#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION)) || (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
 #include "WebEvent.h"
 #endif
 #include "WebPageMessages.h"
@@ -891,8 +993,26 @@ void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageDec
         return;
     }
 #if ENABLE(TOUCH_EVENTS)
+    if (decoder.messageName() == Messages::WebPage::LoadSomething::name()) {
+        CoreIPC::handleMessage<Messages::WebPage::LoadSomething>(decoder, this, &WebPage::loadSomething);
+        return;
+    }
+#endif
+#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
     if (decoder.messageName() == Messages::WebPage::TouchEvent::name()) {
         CoreIPC::handleMessage<Messages::WebPage::TouchEvent>(decoder, this, &WebPage::touchEvent);
+        return;
+    }
+#endif
+#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
+    if (decoder.messageName() == Messages::WebPage::AddEvent::name()) {
+        CoreIPC::handleMessage<Messages::WebPage::AddEvent>(decoder, this, &WebPage::addEvent);
+        return;
+    }
+#endif
+#if ENABLE(TOUCH_EVENTS)
+    if (decoder.messageName() == Messages::WebPage::LoadSomethingElse::name()) {
+        CoreIPC::handleMessage<Messages::WebPage::LoadSomethingElse>(decoder, this, &WebPage::loadSomethingElse);
         return;
     }
 #endif
@@ -978,7 +1098,7 @@ void WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection* connection, Core
 
 } // namespace WebKit
 
-#endif // ENABLE(WEBKIT2)
+#endif // (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
 """
 
 
