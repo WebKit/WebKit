@@ -1,0 +1,21 @@
+Test importing an RSA key for RSASSA-PKCS1-v1_5.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Importing a public key...
+
+Importing a private key...
+
+Signing some text...
+PASS byteArrayToHexString(new Uint8Array(signature)) is '[0f d9 a8 ae f4 cc 18 76 c0 b7 62 54 53 36 c6 d1 fb 31 5a e1 6a e4 b5 e4 bf 34 d3 84 d8 58 5e a7 a0 1e 76 ea 09 ee 7f 7e e8 d1 c1 22 e7 dd 15 b7 c9 4a 57 3b 2a a0 72 03 e8 d1 3b c6 fd 16 15 6c d8 e5 f0 c1 5a 15 dc cb 62 d1 52 12 7f ca 09 88 2f b5 3b c3 e6 0a b5 86 d1 5b 95 cf 41 1e 3a ab 4a 1c 23 1a 7e 91 aa b0 9e e3 d4 b1 3d 11 e9 75 05 dd ff 77 68 34 70 da 51 0e e7 6e 8b d5 30 c5 6a 85 f9 01 62 6a 5a 71 0f 71 6f 11 3d fe 9c f6 c4 73 ee 16 fa 24 8a ea 34 80 a1 03 3a be 30 f4 c1 24 32 89 a6 61 e6 4d 78 18 b5 56 98 28 06 88 09 71 35 96 8c 6d 4b 02 94 96 d8 5c ab 2a 67 e4 69 67 37 78 1f 70 e4 39 2c 7d f7 1b bd 6c 92 46 59 47 f0 29 a1 de 48 16 0a ce d1 1b 57 21 b1 cd 25 03 9f e2 c1 6c 2b 38 de 73 df 3b 9a 83 e3 ea 75 5f d0 cf e5 1c a0 6b 61 fa df 6d 84 67 7f 95]'
+
+Verifying the signature...
+PASS verificationResult is true
+
+Verifying a bad signature...
+PASS verificationResult is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

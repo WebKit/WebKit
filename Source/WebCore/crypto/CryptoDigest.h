@@ -23,31 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CryptoAlgorithmSHA256.h"
+#ifndef CryptoDigest_h
+#define CryptoDigest_h
+
+#include "CryptoAlgorithmIdentifier.h"
+#include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "JSDOMPromise.h"
-#include <CommonCrypto/CommonCrypto.h>
-
 namespace WebCore {
 
-void CryptoAlgorithmSHA256::digest(const CryptoAlgorithmParameters&, const Vector<CryptoOperationData>& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode&)
-{
-    Vector<unsigned char> result(CC_SHA256_DIGEST_LENGTH);
+struct CryptoDigestContext;
 
-    CC_SHA256_CTX context;
-    CC_SHA256_Init(&context);
+class CryptoDigest {
+    WTF_MAKE_NONCOPYABLE(CryptoDigest);
+public:
+    static std::unique_ptr<CryptoDigest> create(CryptoAlgorithmIdentifier);
+    ~CryptoDigest();
 
-    for (size_t i = 0, size = data.size(); i < size; ++i)
-        CC_SHA256_Update(&context, data[i].first, data[i].second);
+    void addBytes(const void* input, size_t length);
+    Vector<unsigned char> computeHash();
 
-    CC_SHA256_Final(result.data(), &context);
+private:
+    CryptoDigest();
 
-    promise->fulfill(result);
-}
+    std::unique_ptr<CryptoDigestContext> m_context;
+};
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
+#endif // CryptoDigest_h
