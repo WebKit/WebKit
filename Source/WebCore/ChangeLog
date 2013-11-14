@@ -1,3 +1,33 @@
+2013-11-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Implement raw format for WebCrypto key export
+        https://bugs.webkit.org/show_bug.cgi?id=124376
+
+        Reviewed by Anders Carlsson.
+
+        Tests: crypto/subtle/aes-export-key.html
+               crypto/subtle/hmac-export-key.html
+
+        A CryptoKey just exports its native CryptoKeyData, which will also work nicely for
+        JWK format soon. For spki and pkcs8, we'll need to figure out the best way to
+        utilize platform library support for ASN.1, but we are not there yet.
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::JSSubtleCrypto::exportKey):
+        * crypto/CryptoKey.h:
+        * crypto/SubtleCrypto.idl:
+        * crypto/keys/CryptoKeyAES.cpp:
+        (WebCore::CryptoKeyAES::exportData):
+        * crypto/keys/CryptoKeyAES.h:
+        * crypto/keys/CryptoKeyHMAC.cpp:
+        (WebCore::CryptoKeyHMAC::exportData):
+        * crypto/keys/CryptoKeyHMAC.h:
+
+        * crypto/keys/CryptoKeyRSA.h:
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::CryptoKeyRSA::exportData):
+        Added a dummy implementation for RSA.
+
 2013-11-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Simply generated domain dispatch methods for domains with few commands

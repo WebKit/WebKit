@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class CryptoAlgorithmDescriptionBuilder;
+class CryptoKeyData;
 
 ENUM_CLASS(CryptoKeyClass) {
     HMAC,
@@ -58,6 +59,8 @@ public:
     Vector<String> usages() const;
 
     bool allows(CryptoKeyUsage usage) const { return usage == (m_usages & usage); }
+
+    virtual std::unique_ptr<CryptoKeyData> exportData() const = 0;
 
     static Vector<char> randomData(size_t);
 

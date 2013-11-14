@@ -32,6 +32,8 @@
 #include "CryptoAlgorithmParameters.h"
 #include "CryptoAlgorithmRegistry.h"
 #include "CryptoKeyData.h"
+#include "CryptoKeyDataOctetSequence.h"
+#include "CryptoKeyDataRSAComponents.h"
 #include "CryptoKeySerializationRaw.h"
 #include "Document.h"
 #include "ExceptionCode.h"
@@ -500,6 +502,56 @@ JSValue JSSubtleCrypto::importKey(JSC::ExecState* exec)
     algorithm->importKey(*parameters, *keyData, extractable, keyUsages, std::move(promiseWrapper), ec);
     if (ec) {
         setDOMException(exec, ec);
+        return jsUndefined();
+    }
+
+    return promise;
+}
+
+JSValue JSSubtleCrypto::exportKey(JSC::ExecState* exec)
+{
+    if (exec->argumentCount() < 2)
+        return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
+
+    CryptoKeyFormat keyFormat;
+    if (!cryptoKeyFormatFromJSValue(exec, exec->argument(0), keyFormat)) {
+        ASSERT(exec->hadException());
+        return jsUndefined();
+    }
+
+    RefPtr<CryptoKey> key = toCryptoKey(exec->uncheckedArgument(1));
+    if (!key)
+        return throwTypeError(exec);
+
+    JSPromise* promise = JSPromise::createWithResolver(exec->vm(), globalObject());
+    auto promiseWrapper = PromiseWrapper::create(globalObject(), promise);
+
+    if (!key->extractable()) {
+        m_impl->document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "Key is not extractable");
+        promiseWrapper->reject(nullptr);
+        return promise;
+    }
+
+    std::unique_ptr<CryptoKeyData> keyData = key->exportData();
+    if (!keyData) {
+        // FIXME: Shouldn't happen once all key types implement exportData().
+        promiseWrapper->reject(nullptr);
+        return promise;
+    }
+
+    switch (keyFormat) {
+    case CryptoKeyFormat::Raw:
+        if (isCryptoKeyDataOctetSequence(*keyData)) {
+            Vector<unsigned char> result;
+            result.appendVector(toCryptoKeyDataOctetSequence(*keyData).octetSequence());
+            promiseWrapper->fulfill(result);
+        } else {
+            m_impl->document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "Key cannot be exported to raw format");
+            promiseWrapper->reject(nullptr);
+        }
+        break;
+    default:
+        throwTypeError(exec, "Unsupported key format");
         return jsUndefined();
     }
 

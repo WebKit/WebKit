@@ -143,6 +143,13 @@ void CryptoKeyRSA::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& 
     }
 }
 
+std::unique_ptr<CryptoKeyData> CryptoKeyRSA::exportData() const
+{
+    // Not implemented yet.
+    ASSERT(extractable());
+    return nullptr;
+}
+
 static bool bigIntegerToUInt32(const Vector<char>& bigInteger, uint32_t& result)
 {
     result = 0;

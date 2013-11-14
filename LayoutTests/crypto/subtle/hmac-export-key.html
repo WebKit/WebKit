@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test exporting an AES key.");
+
+jsTestIsAsync = true;
+
+if (!window.subtle)
+    window.crypto.subtle = window.crypto.webkitSubtle;
+
+var extractable = true;
+
+var jwkKey = {
+    "kty": "oct",
+    "k": "ahjkn-_387fgnsibf23qsvahjkn-_387fgnsibf23qs"
+};
+
+var jwkKeyAsArrayBuffer = asciiToArrayBuffer(JSON.stringify(jwkKey));
+
+debug("Importing a JWK key...");
+crypto.subtle.importKey("jwk", jwkKeyAsArrayBuffer, { name: "HMAC", hash: "SHA-512" }, extractable, ["sign", "verify"]).then(function(result) {
+    key = result;
+
+    debug("Exporting the key as raw data...");
+    return crypto.subtle.exportKey("raw", key);
+}).then(function(result) {
+    exportedData = result;
+    shouldBe("byteArrayToHexString(new Uint8Array(exportedData))", "'[6a 18 e4 9f ef f7 f3 b7 e0 9e c8 9b 7f 6d ea b2 f6 a1 8e 49 fe ff 7f 3b 7e 09 ec 89 b7 f6 de ab]'");
+
+    finishJSTest();
+});
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

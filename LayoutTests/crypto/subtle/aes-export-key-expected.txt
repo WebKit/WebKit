@@ -1,0 +1,12 @@
+Test exporting an AES key.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Importing a JWK key...
+Exporting the key as raw data...
+PASS byteArrayToHexString(new Uint8Array(exportedData)) is '[8e 73 b0 f7 da 0e 64 52 c8 10 f3 2b 80 90 79 e5 62 f8 ea d2 52 2c 6b 7b]'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

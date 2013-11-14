@@ -48,10 +48,11 @@ public:
 
     const Vector<char>& key() const { return m_key; }
 
-    virtual void buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder&) const OVERRIDE;
-
 private:
     CryptoKeyAES(CryptoAlgorithmIdentifier, const Vector<char>& key, bool extractable, CryptoKeyUsage);
+
+    virtual void buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder&) const OVERRIDE;
+    virtual std::unique_ptr<CryptoKeyData> exportData() const OVERRIDE;
 
     Vector<char> m_key;
 };
