@@ -1,3 +1,13 @@
+2013-11-14  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] WKAction keys are not exported
+        https://bugs.webkit.org/show_bug.cgi?id=124378
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm: Made the keys constant pointers.
+        * UIProcess/API/mac/WKBrowsingContextPolicyDelegate.h: Exported the keys.
+
 2013-11-14  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [WK2] Move Coordinated Graphics related code out of DrawingAreaProxy

@@ -74,13 +74,13 @@ static inline NSURLResponse *autoreleased(WKURLResponseRef urlResponse)
     return urlResponse ? CFBridgingRelease(WKURLResponseCopyNSURLResponse(adoptWK(urlResponse).get())) : nil;
 }
 
-NSString *WKActionIsMainFrameKey = @"WKActionIsMainFrameKey";
-NSString *WKActionNavigationTypeKey = @"WKActionNavigationTypeKey";
-NSString *WKActionMouseButtonKey = @"WKActionMouseButtonKey";
-NSString *WKActionModifierFlagsKey = @"WKActionModifierFlagsKey";
-NSString *WKActionURLRequestKey = @"WKActionURLRequestKey";
-NSString *WKActionURLResponseKey = @"WKActionURLResponseKey";
-NSString *WKActionFrameNameKey = @"WKActionFrameNameKey";
+NSString * const WKActionIsMainFrameKey = @"WKActionIsMainFrameKey";
+NSString * const WKActionNavigationTypeKey = @"WKActionNavigationTypeKey";
+NSString * const WKActionMouseButtonKey = @"WKActionMouseButtonKey";
+NSString * const WKActionModifierFlagsKey = @"WKActionModifierFlagsKey";
+NSString * const WKActionURLRequestKey = @"WKActionURLRequestKey";
+NSString * const WKActionURLResponseKey = @"WKActionURLResponseKey";
+NSString * const WKActionFrameNameKey = @"WKActionFrameNameKey";
 
 @interface WKBrowsingContextControllerData : NSObject {
 @public

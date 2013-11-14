@@ -28,13 +28,13 @@
 @class WKBrowsingContextController;
 
 /* Constants for policy action dictionaries */
-extern NSString *WKActionIsMainFrameKey;    // NSNumber (BOOL)
-extern NSString *WKActionNavigationTypeKey; // NSNumber (WKNavigationType)
-extern NSString *WKActionMouseButtonKey;    // NSNumber (0 for left button, 1 for middle button, 2 for right button)
-extern NSString *WKActionModifierFlagsKey;  // NSNumber (unsigned)
-extern NSString *WKActionURLRequestKey;     // NSURLRequest
-extern NSString *WKActionURLResponseKey;    // NSURLResponse
-extern NSString *WKActionFrameNameKey;      // NSString
+WK_EXPORT extern NSString * const WKActionIsMainFrameKey;    // NSNumber (BOOL)
+WK_EXPORT extern NSString * const WKActionNavigationTypeKey; // NSNumber (WKNavigationType)
+WK_EXPORT extern NSString * const WKActionMouseButtonKey;    // NSNumber (0 for left button, 1 for middle button, 2 for right button)
+WK_EXPORT extern NSString * const WKActionModifierFlagsKey;  // NSNumber (unsigned)
+WK_EXPORT extern NSString * const WKActionURLRequestKey;     // NSURLRequest
+WK_EXPORT extern NSString * const WKActionURLResponseKey;    // NSURLResponse
+WK_EXPORT extern NSString * const WKActionFrameNameKey;      // NSString
 
 typedef NS_ENUM(NSUInteger, WKNavigationType) {
     WKNavigationTypeLinkClicked,
