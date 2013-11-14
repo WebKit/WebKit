@@ -83,7 +83,8 @@ static Vector<unsigned char> calculateSignature(CCHmacAlgorithm algorithm, const
     }
 
     CCHmacContext context;
-    CCHmacInit(&context, algorithm, key.data(), key.size());
+    const char* keyData = key.data() ? key.data() : ""; // <rdar://problem/15467425> HMAC crashes when key pointer is null.
+    CCHmacInit(&context, algorithm, keyData, key.size());
     for (size_t i = 0, size = data.size(); i < size; ++i)
         CCHmacUpdate(&context, data[i].first, data[i].second);
 

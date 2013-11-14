@@ -1,5 +1,17 @@
 2013-11-14  Alexey Proskuryakov  <ap@apple.com>
 
+        [Mac] HMAC sign/verify crashes when key is empty
+        https://bugs.webkit.org/show_bug.cgi?id=124372
+
+        Reviewed by Sam Weinig.
+
+        Test: crypto/subtle/hmac-sign-verify-empty-key.html
+
+        * crypto/mac/CryptoAlgorithmHMACMac.cpp: (WebCore::calculateSignature): Give it
+        a non-null pointer then.
+
+2013-11-14  Alexey Proskuryakov  <ap@apple.com>
+
         Implement RSASSA-PKCS1-v1_5 sign/verify
         https://bugs.webkit.org/show_bug.cgi?id=124335
 

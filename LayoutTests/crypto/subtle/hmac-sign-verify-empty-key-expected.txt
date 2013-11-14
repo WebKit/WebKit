@@ -1,0 +1,20 @@
+Test HMAC sign and verify functions with an empty key.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Importing a raw HMAC key from string literal...
+PASS key.type is 'secret'
+PASS key.extractable is true
+PASS key.algorithm.name is 'hmac'
+PASS key.algorithm.length is 0
+PASS key.algorithm.hash.name is 'sha-1'
+PASS key.usages is ['sign', 'verify']
+Using the key to sign 'foo'...
+PASS byteArrayToHexString(new Uint8Array(signature)) is '[a3 cc 77 0f c0 33 e2 cb 41 9d 42 b6 4e 00 81 a3 bd 3b e3 0e]'
+Verifying the signature...
+PASS verificationResult is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
