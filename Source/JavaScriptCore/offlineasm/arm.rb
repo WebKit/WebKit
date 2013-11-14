@@ -63,7 +63,7 @@ class SpecialRegister
     end
 end
 
-ARM_EXTRA_GPRS = [SpecialRegister.new("r9"), SpecialRegister.new("r8"), SpecialRegister.new("r3")]
+ARM_EXTRA_GPRS = [SpecialRegister.new("r10"), SpecialRegister.new("r12")]
 ARM_EXTRA_FPRS = [SpecialRegister.new("d7")]
 ARM_SCRATCH_FPR = SpecialRegister.new("d6")
 
@@ -223,7 +223,11 @@ class Sequence
         result = riscLowerMalformedImmediates(result, 0..0xff)
         result = riscLowerMisplacedAddresses(result)
         result = riscLowerRegisterReuse(result)
-        result = assignRegistersToTemporaries(result, :gpr, ARM_EXTRA_GPRS)
+        if isARMv7
+            result = assignRegistersToTemporaries(result, :gpr, ARM_EXTRA_GPRS.concat([SpecialRegister.new("r11")]))
+        else
+            result = assignRegistersToTemporaries(result, :gpr, ARM_EXTRA_GPRS.concat([SpecialRegister.new("r7")]))
+        end
         result = assignRegistersToTemporaries(result, :fpr, ARM_EXTRA_FPRS)
         return result
     end

@@ -97,17 +97,13 @@ macro dispatchAfterCall()
 end
 
 macro cCall2(function, arg1, arg2)
-    if ARM or ARMv7 or ARMv7_TRADITIONAL
-        move arg1, t0
-        move arg2, t1
+    if ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
+        move arg1, a0
+        move arg2, a1
         call function
     elsif X86
         poke arg1, 0
         poke arg2, 1
-        call function
-    elsif MIPS
-        move arg1, a0
-        move arg2, a1
         call function
     elsif SH4
         setargs arg1, arg2
@@ -121,23 +117,17 @@ end
 
 # This barely works. arg3 and arg4 should probably be immediates.
 macro cCall4(function, arg1, arg2, arg3, arg4)
-    if ARM or ARMv7 or ARMv7_TRADITIONAL
-        move arg1, t0
-        move arg2, t1
-        move arg3, t2
-        move arg4, t3
+    if ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
+        move arg1, a0
+        move arg2, a1
+        move arg3, a2
+        move arg4, a3
         call function
     elsif X86
         poke arg1, 0
         poke arg2, 1
         poke arg3, 2
         poke arg4, 3
-        call function
-    elsif MIPS
-        move arg1, a0
-        move arg2, a1
-        move arg3, a2
-        move arg4, a3
         call function
     elsif SH4
         setargs arg1, arg2, arg3, arg4

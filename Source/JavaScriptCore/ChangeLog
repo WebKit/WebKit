@@ -1,5 +1,18 @@
 2013-11-14  Michael Saboff  <msaboff@apple.com>
 
+        REGRESSION (r159276): Fix lots of crashes for arm_traditional architecture.
+        https://bugs.webkit.org/show_bug.cgi?id=124365
+
+        Reviewed by Oliver Hunt.
+
+        Crashes were caused by a mixup between regular registers and temporary registers in ARM_EXTRA_GPRS.
+
+        * llint/LowLevelInterpreter32_64.asm: Warning, t3 != a3. It's safer to use an implementation using aX
+        registers like the MIPS one for cCallX macros.
+        * offlineasm/arm.rb: Rearrange ARM_EXTRA_GPRS according to the new register distribution in LLINT.
+
+2013-11-14  Michael Saboff  <msaboff@apple.com>
+
         REGRESSION (r159276): rbp register overwritten in Win 64 version of callToJavascript stub
         https://bugs.webkit.org/show_bug.cgi?id=124361
 
