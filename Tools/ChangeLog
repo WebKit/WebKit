@@ -1,3 +1,13 @@
+2013-11-14  Éva Balázsfalvi  <balazsfalvi.eva@stud.u-szeged.hu>
+
+        Fix Tools/Scripts/webkitpy/port/factory.py --help to display which configuration is default
+        https://bugs.webkit.org/show_bug.cgi?id=124143
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/port/factory.py:
+        (configuration_options):
+
 2013-11-13  Anders Carlsson  <andersca@apple.com>
 
         Add a Vector constructor that takes an std::initializer_list

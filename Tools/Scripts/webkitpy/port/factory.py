@@ -34,6 +34,9 @@ import optparse
 import re
 
 from webkitpy.port import builders
+from webkitpy.port import config
+from webkitpy.common.system import executive
+from webkitpy.common.system import filesystem
 
 
 def platform_options(use_globs=False):
@@ -51,8 +54,7 @@ def platform_options(use_globs=False):
 
 def configuration_options():
     return [
-        optparse.make_option("-t", "--target", dest="configuration", help="(DEPRECATED)"),
-        # FIXME: --help should display which configuration is default.
+        optparse.make_option("-t", "--target", default=config.Config(executive.Executive(), filesystem.FileSystem()).default_configuration(), dest="configuration", help="(DEPRECATED) (default: %default)"),
         optparse.make_option('--debug', action='store_const', const='Debug', dest="configuration",
             help='Set the configuration to Debug'),
         optparse.make_option('--release', action='store_const', const='Release', dest="configuration",
