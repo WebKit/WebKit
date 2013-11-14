@@ -1,3 +1,9 @@
+2013-11-14  Anders Carlsson  <andersca@apple.com>
+
+        Remove duplicate entry.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-11-14  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Change WKTR/DRT AX methods to use nullptr 
