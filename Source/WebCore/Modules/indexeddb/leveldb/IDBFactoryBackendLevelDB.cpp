@@ -192,14 +192,6 @@ void IDBFactoryBackendLevelDB::open(const String& name, uint64_t version, int64_
     databaseBackend->openConnection(callbacks, databaseCallbacks, transactionId, version);
 }
 
-PassRefPtr<IDBTransactionBackend> IDBFactoryBackendLevelDB::maybeCreateTransactionBackend(IDBDatabaseBackend* backend, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode)
-{
-    if (!backend->isIDBDatabaseBackend())
-        return 0;
-
-    return IDBTransactionBackend::create(static_cast<IDBDatabaseBackend*>(backend), transactionId, databaseCallbacks, objectStoreIds, mode);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE) && USE(LEVELDB)

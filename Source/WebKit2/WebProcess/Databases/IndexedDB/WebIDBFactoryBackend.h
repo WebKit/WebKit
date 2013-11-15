@@ -45,8 +45,6 @@ public:
 
     virtual void removeIDBDatabaseBackend(const String& uniqueIdentifier) OVERRIDE;
 
-    virtual PassRefPtr<WebCore::IDBTransactionBackend> maybeCreateTransactionBackend(WebCore::IDBDatabaseBackend*, int64_t transactionId, PassRefPtr<WebCore::IDBDatabaseCallbacks>, const Vector<int64_t>&, WebCore::IndexedDB::TransactionMode) OVERRIDE;
-
 private:
     explicit WebIDBFactoryBackend(const String& databaseDirectoryIdentifier);
 };

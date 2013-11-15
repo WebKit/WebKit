@@ -100,12 +100,6 @@ void WebIDBFactoryBackend::removeIDBDatabaseBackend(const String&)
     notImplemented();
 }
 
-PassRefPtr<IDBTransactionBackend> WebIDBFactoryBackend::maybeCreateTransactionBackend(IDBDatabaseBackend*, int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>&, IndexedDB::TransactionMode)
-{
-    notImplemented();
-    return 0;
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(DATABASE_PROCESS)

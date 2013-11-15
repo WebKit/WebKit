@@ -429,15 +429,12 @@ void IDBDatabaseBackend::processPendingOpenCalls(bool success)
     }
 }
 
-void IDBDatabaseBackend::createTransaction(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, unsigned short mode)
+void IDBDatabaseBackend::createTransaction(int64_t transactionID, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIDs, unsigned short mode)
 {
-    RefPtr<IDBTransactionBackend> transaction = m_factory->maybeCreateTransactionBackend(this, transactionId, callbacks, objectStoreIds, static_cast<IndexedDB::TransactionMode>(mode));
+    RefPtr<IDBTransactionBackend> transaction = IDBTransactionBackend::create(this, transactionID, callbacks, objectStoreIDs, static_cast<IndexedDB::TransactionMode>(mode));
 
-    if (!transaction)
-        return;
-
-    ASSERT(!m_transactions.contains(transactionId));
-    m_transactions.add(transactionId, transaction.get());
+    ASSERT(!m_transactions.contains(transactionID));
+    m_transactions.add(transactionID, transaction.get());
 }
 
 void IDBDatabaseBackend::openConnection(PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> prpDatabaseCallbacks, int64_t transactionId, uint64_t version)

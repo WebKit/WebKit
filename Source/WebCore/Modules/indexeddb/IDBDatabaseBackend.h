@@ -118,8 +118,6 @@ public:
     const IDBDatabaseMetadata& metadata() const { return m_metadata; }
     void setCurrentVersion(uint64_t version) { m_metadata.version = version; }
 
-    bool isIDBDatabaseBackend() { return true; }
-
     bool hasPendingSecondHalfOpen() { return m_pendingSecondHalfOpen; }
     void setPendingSecondHalfOpen(PassOwnPtr<IDBPendingOpenCall> pendingOpenCall) { m_pendingSecondHalfOpen = pendingOpenCall; }
 
