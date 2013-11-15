@@ -38,6 +38,23 @@ a:link {
     -webkit-user-select: all;
 }
 
+div.cellButton {
+    font-family: "HelveticaNeue-Light", sans-serif;
+    font-size: 12px;
+    color: rgb(185, 175, 125);
+    cursor: pointer;
+}
+
+div.cellButton.hide {
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+}
+
+.hidden {
+    display: none;
+}
+
 body {
     background-color: rgb(233, 231, 223);
     text-align: center;

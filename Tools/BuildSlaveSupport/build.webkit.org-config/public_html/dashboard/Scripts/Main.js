@@ -70,8 +70,28 @@ function sortedPlatforms()
     platforms.sort(function(a, b) {
         return a.order - b.order;
     });
-    
+
     return platforms;
+}
+
+function updateHiddenPlatforms()
+{
+    var hiddenPlatforms = settings.getObject("hiddenPlatforms");
+    if (!hiddenPlatforms)
+        hiddenPlatforms = [];
+
+    var platformRows = document.querySelectorAll("tr.platform");
+    for (var i = 0; i < platformRows.length; ++i)
+        platformRows[i].classList.remove("hidden");
+
+    for (var i = 0; i < hiddenPlatforms.length; ++i)
+        document.querySelector("tr.platform." + hiddenPlatforms[i]).classList.add("hidden");
+
+    var unhideButton = document.querySelector("div.cellButton.unhide");
+    if (hiddenPlatforms.length)
+        unhideButton.classList.remove("hidden");
+    else
+        unhideButton.classList.add("hidden");
 }
 
 function documentReady()
@@ -82,8 +102,12 @@ function documentReady()
     var row = document.createElement("tr");
     row.classList.add("headers");
 
-    // Empty header for the platform logo.
     var header = document.createElement("th");
+    var unhideButton = document.createElement("div");
+    unhideButton.addEventListener("click", function () { settings.clearHiddenPlatforms(); });
+    unhideButton.textContent = "Show All Platforms";
+    unhideButton.classList.add("cellButton", "unhide", "hidden");
+    header.appendChild(unhideButton);
     row.appendChild(header);
 
     header = document.createElement("th");
@@ -122,6 +146,12 @@ function documentReady()
         logoImage.classList.add("logo");
         cell.appendChild(logoImage);
 
+        var hideButton = document.createElement("div");
+        hideButton.addEventListener("click", function (platformName) { return function () { settings.toggleHiddenPlatform(platformName); }; }(platform.name) );
+        hideButton.textContent = "hide";
+        hideButton.classList.add("cellButton", "hide");
+        cell.appendChild(hideButton);
+
         row.appendChild(cell);
 
         cell = document.createElement("td");
@@ -146,6 +176,9 @@ function documentReady()
     }
 
     document.body.appendChild(table);
+
+    updateHiddenPlatforms();
+    settings.addSettingListener("hiddenPlatforms", updateHiddenPlatforms);
 }
 
 document.addEventListener("DOMContentLoaded", documentReady);

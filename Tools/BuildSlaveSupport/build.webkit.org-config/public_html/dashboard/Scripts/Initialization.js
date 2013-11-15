@@ -23,4 +23,5 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+var settings = new Settings;
 var buildbot = new WebKitBuildbot;

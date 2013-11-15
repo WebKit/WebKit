@@ -1,3 +1,33 @@
+2013-11-15  Tim Horton  <timothy_horton@apple.com>
+
+        build.webkit.org/dashboard should provide a way to focus on a subset of bots
+        https://bugs.webkit.org/show_bug.cgi?id=122676
+
+        Reviewed by Timothy Hatcher.
+
+        Add a small 'hide' button next to every platform logo, and a 'show all'
+        button which only appears when at least one platform is hidden. Hidden
+        platforms persist using localStorage.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Initialization.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Main.js:
+        (updateHiddenPlatforms):
+        (documentReady.unhideButton):
+        (documentReady.hideButton):
+        (documentReady):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Settings.js: Added.
+        (Settings.prototype.setObject):
+        (Settings.prototype.getObject):
+        (Settings.prototype.addSettingListener):
+        (Settings.prototype.fireSettingListener):
+        (Settings.prototype.toggleHiddenPlatform):
+        (Settings.prototype.clearHiddenPlatforms):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        (div.cellButton):
+        (div.cellButton.hide):
+        (.hidden):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/index.html:
+
 2013-11-15  Jer Noble  <jer.noble@apple.com>
 
         MediaTime addition and subtraction operators have errors when the rhs is infinite.
