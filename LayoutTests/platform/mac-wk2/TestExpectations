@@ -385,6 +385,8 @@ webkit.org/b/122456 css3/images/cross-fade-svg-with-opacity.html [ ImageOnlyFail
 
 webkit.org/b/124425 fast/dom/Geolocation/notimer-after-unload.html [ Pass Crash Failure ]
 
+webkit.org/b/124437 editing/selection/5057506.html [ Pass Timeout ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
