@@ -1,3 +1,16 @@
+2013-11-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Improve support for command line builds of 64-bit JSC
+        https://bugs.webkit.org/show_bug.cgi?id=124380
+
+        Reviewed by David Kilzer.
+
+        * Scripts/webkitdirs.pm:
+        (argumentsForConfiguration): Recognize all flavors of Debug and Release (i.e., 'Debug',
+        'Debug|Win32', 'Debug|x64') when passing arguments to child processes.
+        (determinePassedConfiguration): Don't suffix configuration with "|Win32" or "|x64". That's
+        what the "$configurationForVisualStudio" value is for.
+
 2013-11-14  Oliver Hunt  <oliver@apple.com>
 
         Make CLoop easier to build, and make it work

@@ -373,8 +373,8 @@ sub argumentsForConfiguration()
     determineArchitecture();
 
     my @args = ();
-    push(@args, '--debug') if $configuration eq "Debug";
-    push(@args, '--release') if $configuration eq "Release";
+    push(@args, '--debug') if ($configuration =~ "^Debug");
+    push(@args, '--release') if ($configuration =~ "^Release");
     push(@args, '--32-bit') if ($architecture ne "x86_64" and !isWin64());
     push(@args, '--64-bit') if (isWin64());
     push(@args, '--gtk') if isGtk();
@@ -620,24 +620,18 @@ sub determinePassedConfiguration
             splice(@ARGV, $i, 1);
             $passedConfiguration = "Debug";
             $passedConfiguration .= "_WinCairo" if (isWinCairo() && isCygwin());
-            $passedConfiguration .= "|x64" if isWin64();
-            $passedConfiguration .= "|Win32" if isWindows() && !isWin64();
             return;
         }
         if ($opt =~ /^--release$/i) {
             splice(@ARGV, $i, 1);
             $passedConfiguration = "Release";
             $passedConfiguration .= "_WinCairo" if (isWinCairo() && isCygwin());
-            $passedConfiguration .= "|x64" if isWin64();
-            $passedConfiguration .= "|Win32" if isWindows() && !isWin64();
             return;
         }
         if ($opt =~ /^--profil(e|ing)$/i) {
             splice(@ARGV, $i, 1);
             $passedConfiguration = "Profiling";
             $passedConfiguration .= "_WinCairo" if (isWinCairo() && isCygwin());
-            $passedConfiguration .= "|x64" if isWin64();
-            $passedConfiguration .= "|Win32" if isWindows() && !isWin64();
             return;
         }
     }
