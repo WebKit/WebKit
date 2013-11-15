@@ -1,5 +1,17 @@
 2013-11-14  Victor Costan  <costan@gmail.com>
 
+        XMLSerializer escapes < > & correctly inside <script> and <style> tags.
+        https://bugs.webkit.org/show_bug.cgi?id=123914
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/SelectorAPI/resig-SelectorsAPI-test-expected.txt: fix incorrect expectations.
+        * fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml: use CDATA consistently.
+        * fast/dom/XMLSerializer-entities-expected.txt: Added.
+        * fast/dom/XMLSerializer-entities.html: Added.
+
+2013-11-14  Victor Costan  <costan@gmail.com>
+
         Clean up sequence handling in Blob constructor
         https://bugs.webkit.org/show_bug.cgi?id=124343
 

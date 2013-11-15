@@ -563,8 +563,8 @@ PASS Syntax Error: Element.querySelectorAll: div,
 PASS Syntax Error: Element.querySelector: div,
 PASS Syntax Error: Element.querySelectorAll: .5cm
 PASS Syntax Error: Element.querySelector: .5cm
-PASS Syntax Error: Element.querySelectorAll: foo & address, p
-PASS Syntax Error: Element.querySelector: foo & address, p
+PASS Syntax Error: Element.querySelectorAll: foo &amp; address, p
+PASS Syntax Error: Element.querySelector: foo &amp; address, p
 PASS Syntax Error: Element.querySelectorAll: [*=test]
 PASS Syntax Error: Element.querySelector: [*=test]
 PASS Syntax Error: Element.querySelectorAll: [*|*=test]
@@ -1161,8 +1161,8 @@ PASS Syntax Error: Disconnected Element.querySelectorAll: div,
 PASS Syntax Error: Disconnected Element.querySelector: div,
 PASS Syntax Error: Disconnected Element.querySelectorAll: .5cm
 PASS Syntax Error: Disconnected Element.querySelector: .5cm
-PASS Syntax Error: Disconnected Element.querySelectorAll: foo & address, p
-PASS Syntax Error: Disconnected Element.querySelector: foo & address, p
+PASS Syntax Error: Disconnected Element.querySelectorAll: foo &amp; address, p
+PASS Syntax Error: Disconnected Element.querySelector: foo &amp; address, p
 PASS Syntax Error: Disconnected Element.querySelectorAll: [*=test]
 PASS Syntax Error: Disconnected Element.querySelector: [*=test]
 PASS Syntax Error: Disconnected Element.querySelectorAll: [*|*=test]
@@ -1642,8 +1642,8 @@ PASS Syntax Error: Fragment.querySelectorAll: div,
 PASS Syntax Error: Fragment.querySelector: div,
 PASS Syntax Error: Fragment.querySelectorAll: .5cm
 PASS Syntax Error: Fragment.querySelector: .5cm
-PASS Syntax Error: Fragment.querySelectorAll: foo & address, p
-PASS Syntax Error: Fragment.querySelector: foo & address, p
+PASS Syntax Error: Fragment.querySelectorAll: foo &amp; address, p
+PASS Syntax Error: Fragment.querySelector: foo &amp; address, p
 PASS Syntax Error: Fragment.querySelectorAll: [*=test]
 PASS Syntax Error: Fragment.querySelector: [*=test]
 PASS Syntax Error: Fragment.querySelectorAll: [*|*=test]
@@ -2005,8 +2005,8 @@ PASS Syntax Error: Document.querySelectorAll: div,
 PASS Syntax Error: Document.querySelector: div,
 PASS Syntax Error: Document.querySelectorAll: .5cm
 PASS Syntax Error: Document.querySelector: .5cm
-PASS Syntax Error: Document.querySelectorAll: foo & address, p
-PASS Syntax Error: Document.querySelector: foo & address, p
+PASS Syntax Error: Document.querySelectorAll: foo &amp; address, p
+PASS Syntax Error: Document.querySelector: foo &amp; address, p
 PASS Syntax Error: Document.querySelectorAll: [*=test]
 PASS Syntax Error: Document.querySelector: [*=test]
 PASS Syntax Error: Document.querySelectorAll: [*|*=test]
