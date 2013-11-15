@@ -1318,7 +1318,7 @@ webkit.org/b/102068 webkit.org/b/102993 media/audio-repaint.html [ Failure ]
 webkit.org/b/102068 webkit.org/b/102993 media/media-document-audio-repaint.html [ Failure ]
 
 # It may even be the case that the tests themselves are wrong.
-webkit.org/b/100859 ietestcenter/css3/bordersbackgrounds/background-repeat-space-padding-box.htm [ Failure ]
+webkit.org/b/100859 ietestcenter/css3/bordersbackgrounds/background-repeat-space-padding-box.htm [ Missing ]
 webkit.org/b/100857 ietestcenter/css3/text/textshadow-005.htm [ Missing ]
 
 webkit.org/b/100846 inspector-protocol/debugger/pause-dedicated-worker.html [ Skip ]
@@ -1649,3 +1649,15 @@ webkit.org/b/122511 fast/regions/selection/selecting-text-in-2-regions-vert-lr.h
 
 # Radical sign is overflowing red background
 webkit.org/b/124045 mathml/presentation/bug95404.html [ ImageOnlyFailure ]
+
+# css3 reftests are failing after r154875
+webkit.org/b/120596 css3/background/background-repeat-space-border.html [ ImageOnlyFailure ]
+webkit.org/b/120596 css3/background/background-repeat-space-content.html [ ImageOnlyFailure ]
+webkit.org/b/120596 css3/background/background-repeat-space-padding.html [ ImageOnlyFailure ]
+webkit.org/b/120596 css3/masking/mask-repeat-space-border.html [ ImageOnlyFailure ]
+webkit.org/b/120596 css3/masking/mask-repeat-space-content.html [ ImageOnlyFailure ]
+webkit.org/b/120596 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
+
+webkit.org/b/118595 fast/regions/auto-size/autoheight-correct-region-for-lines-2.html [ ImageOnlyFailure ]
+
+webkit.org/b/120105 http/tests/navigation/post-frames-goback1-uncached.html [ Failure ]

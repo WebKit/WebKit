@@ -58,7 +58,7 @@ webkit.org/b/102651 [ Debug ] networkinformation/add-listener-from-callback.html
 webkit.org/b/102651 [ Debug ] networkinformation/basic-operation.html [ Crash ]
 
 # WebGL test cases crashing in WebCore::GraphicsContext3D::readPixels().
-webkit.org/b/109417 webgl/conformance/textures/texture-attachment-formats.html [ Crash ]
+webkit.org/b/109417 webgl/conformance/textures/texture-attachment-formats.html [ Crash Failure ]
 webkit.org/b/109941 webgl/conformance/textures/origin-clean-conformance.html [ Crash ]
 webkit.org/b/109945 webgl/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Crash ]
 webkit.org/b/109945 webgl/conformance/uniforms/gl-uniform-arrays.html [ Crash Failure ]
@@ -314,7 +314,7 @@ webkit.org/b/109435 webgl/conformance/textures/tex-image-and-sub-image-2d-with-v
 webkit.org/b/114916 fast/media/mq-resolution.html [ Failure ]
 
 # New test introduced in r148672 that fails on EFL WK2.
-webkit.org/b/114917 fast/events/touch/frame-hover-update.html [ Failure ]
+webkit.org/b/114917 fast/events/touch/frame-hover-update.html [ Failure Crash ]
 
 # Regression(r148748).
 webkit.org/b/114946 compositing/patterns/direct-pattern-compositing-add-text.html [ ImageOnlyFailure Crash ]
