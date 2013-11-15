@@ -154,17 +154,17 @@ MediaTime MediaTime::operator+(const MediaTime& rhs) const
     if (rhs.isIndefinite() || isIndefinite())
         return indefiniteTime();
 
-    if (isPositiveInfinite()) {
-        if (rhs.isNegativeInfinite())
-            return invalidTime();
-        return positiveInfiniteTime();
-    }
+    if (isPositiveInfinite() && rhs.isNegativeInfinite())
+        return invalidTime();
 
-    if (isNegativeInfinite()) {
-        if (rhs.isPositiveInfinite())
-            return invalidTime();
+    if (isNegativeInfinite() && rhs.isPositiveInfinite())
+        return invalidTime();
+
+    if (isPositiveInfinite() || rhs.isPositiveInfinite())
+        return positiveInfiniteTime();
+
+    if (isNegativeInfinite() || rhs.isNegativeInfinite())
         return negativeInfiniteTime();
-    }
 
     int32_t commonTimeScale;
     if (!leastCommonMultiple(this->m_timeScale, rhs.m_timeScale, commonTimeScale) || commonTimeScale > MaximumTimeScale)
@@ -191,17 +191,17 @@ MediaTime MediaTime::operator-(const MediaTime& rhs) const
     if (rhs.isIndefinite() || isIndefinite())
         return indefiniteTime();
 
-    if (isPositiveInfinite()) {
-        if (rhs.isPositiveInfinite())
-            return invalidTime();
-        return positiveInfiniteTime();
-    }
+    if (isPositiveInfinite() && rhs.isPositiveInfinite())
+        return invalidTime();
 
-    if (isNegativeInfinite()) {
-        if (rhs.isNegativeInfinite())
-            return invalidTime();
+    if (isNegativeInfinite() && rhs.isNegativeInfinite())
+        return invalidTime();
+
+    if (isPositiveInfinite() || rhs.isNegativeInfinite())
+        return positiveInfiniteTime();
+
+    if (isNegativeInfinite() || rhs.isPositiveInfinite())
         return negativeInfiniteTime();
-    }
 
     int32_t commonTimeScale;
     if (!leastCommonMultiple(this->m_timeScale, rhs.m_timeScale, commonTimeScale) || commonTimeScale > MaximumTimeScale)

@@ -38,6 +38,7 @@ def __lldb_init_module(debugger, dict):
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFAtomicString_SummaryProvider WTF::AtomicString')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFVector_SummaryProvider -x "WTF::Vector<.+>$"')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFHashTable_SummaryProvider -x "WTF::HashTable<.+>$"')
+    debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFMediaTime_SummaryProvider WTF::MediaTime')
     debugger.HandleCommand('type synthetic add -x "WTF::Vector<.+>$" --python-class lldb_webkit.WTFVectorProvider')
     debugger.HandleCommand('type synthetic add -x "WTF::HashTable<.+>$" --python-class lldb_webkit.WTFHashTableProvider')
 
@@ -63,6 +64,20 @@ def WTFVector_SummaryProvider(valobj, dict):
 def WTFHashTable_SummaryProvider(valobj, dict):
     provider = WTFHashTableProvider(valobj, dict)
     return "{ tableSize = %d, keyCount = %d }" % (provider.tableSize(), provider.keyCount())
+
+
+def WTFMediaTime_SummaryProvider(valobj, dict):
+    provider = WTFMediaTimeProvider(valobj, dict)
+    if provider.isInvalid():
+        return "{ Invalid }"
+    if provider.isPositiveInfinity():
+        return "{ +Infinity }"
+    if provider.isNegativeInfinity():
+        return "{ -Infinity }"
+    if provider.isIndefinite():
+        return "{ Indefinite }"
+    return "{ %d/%d, %f }" % (provider.timeValue(), provider.timeScale(), float(provider.timeValue()) / provider.timeScale())
+
 
 # FIXME: Provide support for the following types:
 # def WTFVector_SummaryProvider(valobj, dict):
@@ -263,3 +278,26 @@ class WTFHashTableProvider:
 
     def has_children(self):
         return True
+
+
+class WTFMediaTimeProvider:
+    def __init__(self, valobj, internal_dict):
+        self.valobj = valobj
+
+    def timeValue(self):
+        return self.valobj.GetChildMemberWithName('m_timeValue').GetValueAsSigned(0)
+
+    def timeScale(self):
+        return self.valobj.GetChildMemberWithName('m_timeScale').GetValueAsSigned(0)
+
+    def isInvalid(self):
+        return not self.valobj.GetChildMemberWithName('m_timeFlags').GetValueAsSigned(0) & (1 << 0)
+
+    def isPositiveInfinity(self):
+        return self.valobj.GetChildMemberWithName('m_timeFlags').GetValueAsSigned(0) & (1 << 2)
+
+    def isNegativeInfinity(self):
+        return self.valobj.GetChildMemberWithName('m_timeFlags').GetValueAsSigned(0) & (1 << 3)
+
+    def isIndefinite(self):
+        return self.valobj.GetChildMemberWithName('m_timeFlags').GetValueAsSigned(0) & (1 << 4)

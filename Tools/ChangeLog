@@ -1,3 +1,30 @@
+2013-11-15  Jer Noble  <jer.noble@apple.com>
+
+        MediaTime addition and subtraction operators have errors when the rhs is infinite.
+        https://bugs.webkit.org/show_bug.cgi?id=124413
+
+        Reviewed by Eric Carlson.
+
+        Add a test for operator+ and operator- where an infinite value appears
+        on the right-hand side:
+        * TestWebKitAPI/Tests/WTF/MediaTime.cpp:
+        (TestWebKitAPI::TEST):
+
+        Add a LLDB summary provider for MediaTime which displays the rational
+        time as well as the value in seconds:
+        * lldb/lldb_webkit.py:
+        (__lldb_init_module):
+        (WTFMediaTime_SummaryProvider):
+        (WTFHashTableProvider.has_children):
+        (WTFMediaTimeProvider):
+        (WTFMediaTimeProvider.__init__):
+        (WTFMediaTimeProvider.timeValue):
+        (WTFMediaTimeProvider.timeScale):
+        (WTFMediaTimeProvider.isInvalid):
+        (WTFMediaTimeProvider.isPositiveInfinity):
+        (WTFMediaTimeProvider.isNegativeInfinity):
+        (WTFMediaTimeProvider.isIndefinite):
+
 2013-11-15  Tim Horton  <timothy_horton@apple.com>
 
         Make it possible to select revision numbers on build.webkit.org/dashboard

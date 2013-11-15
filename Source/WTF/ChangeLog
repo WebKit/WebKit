@@ -1,3 +1,17 @@
+2013-11-15  Jer Noble  <jer.noble@apple.com>
+
+        MediaTime addition and subtraction operators have errors when the rhs is infinite.
+        https://bugs.webkit.org/show_bug.cgi?id=124413
+
+        Reviewed by Eric Carlson.
+
+        Correctly account for infinities that can occur on the right-hand side of addition or
+        subtraction operators.
+
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::operator+):
+        (WTF::MediaTime::operator-):
+
 2013-11-14  Oliver Hunt  <oliver@apple.com>
 
         Make CLoop easier to build, and make it work

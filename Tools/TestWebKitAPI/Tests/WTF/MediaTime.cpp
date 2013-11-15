@@ -99,6 +99,10 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime::negativeInfiniteTime() + MediaTime::negativeInfiniteTime(), MediaTime::negativeInfiniteTime());
     EXPECT_EQ(MediaTime::positiveInfiniteTime() + MediaTime::negativeInfiniteTime(), MediaTime::invalidTime());
     EXPECT_EQ(MediaTime::negativeInfiniteTime() + MediaTime::positiveInfiniteTime(), MediaTime::invalidTime());
+    EXPECT_EQ(MediaTime::positiveInfiniteTime() + MediaTime(1, 1), MediaTime::positiveInfiniteTime());
+    EXPECT_EQ(MediaTime(1, 1) + MediaTime::positiveInfiniteTime(), MediaTime::positiveInfiniteTime());
+    EXPECT_EQ(MediaTime::negativeInfiniteTime() + MediaTime(1, 1), MediaTime::negativeInfiniteTime());
+    EXPECT_EQ(MediaTime(1, 1) + MediaTime::negativeInfiniteTime(), MediaTime::negativeInfiniteTime());
     EXPECT_EQ(MediaTime::invalidTime() + MediaTime::positiveInfiniteTime(), MediaTime::invalidTime());
     EXPECT_EQ(MediaTime::invalidTime() + MediaTime::negativeInfiniteTime(), MediaTime::invalidTime());
     EXPECT_EQ(MediaTime::invalidTime() + MediaTime::invalidTime(), MediaTime::invalidTime());
@@ -116,6 +120,10 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime::negativeInfiniteTime() - MediaTime::negativeInfiniteTime(), MediaTime::invalidTime());
     EXPECT_EQ(MediaTime::positiveInfiniteTime() - MediaTime::negativeInfiniteTime(), MediaTime::positiveInfiniteTime());
     EXPECT_EQ(MediaTime::negativeInfiniteTime() - MediaTime::positiveInfiniteTime(), MediaTime::negativeInfiniteTime());
+    EXPECT_EQ(MediaTime::positiveInfiniteTime() - MediaTime(1, 1), MediaTime::positiveInfiniteTime());
+    EXPECT_EQ(MediaTime(1, 1) - MediaTime::positiveInfiniteTime(), MediaTime::negativeInfiniteTime());
+    EXPECT_EQ(MediaTime::negativeInfiniteTime() - MediaTime(1, 1), MediaTime::negativeInfiniteTime());
+    EXPECT_EQ(MediaTime(1, 1) - MediaTime::negativeInfiniteTime(), MediaTime::positiveInfiniteTime());
     EXPECT_EQ(MediaTime::invalidTime() - MediaTime::positiveInfiniteTime(), MediaTime::invalidTime());
     EXPECT_EQ(MediaTime::invalidTime() - MediaTime::negativeInfiniteTime(), MediaTime::invalidTime());
     EXPECT_EQ(MediaTime::invalidTime() - MediaTime::invalidTime(), MediaTime::invalidTime());
