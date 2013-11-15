@@ -408,11 +408,91 @@ LayoutRect RenderFlowThread::computeRegionClippingRect(const LayoutPoint& offset
     return regionClippingRect;
 }
 
+void RenderFlowThread::paintFlowThreadPortionInRegion(PaintInfo& paintInfo, RenderRegion* region, const LayoutRect& flowThreadPortionRect, const LayoutRect& flowThreadPortionOverflowRect, const LayoutPoint& paintOffset) const
+{
+    GraphicsContext* context = paintInfo.context;
+    if (!context)
+        return;
+
+    // RenderFlowThread should start painting its content in a position that is offset
+    // from the region rect's current position. The amount of offset is equal to the location of
+    // the flow thread portion in the flow thread's local coordinates.
+    // Note that we have to pixel snap the location at which we're going to paint, since this is necessary
+    // to minimize the amount of incorrect snapping that would otherwise occur.
+    // If we tried to paint by applying a non-integral translation, then all the
+    // layout code that attempted to pixel snap would be incorrect.
+    IntPoint adjustedPaintOffset;
+    LayoutPoint portionLocation;
+    if (style().isFlippedBlocksWritingMode()) {
+        LayoutRect flippedFlowThreadPortionRect(flowThreadPortionRect);
+        flipForWritingMode(flippedFlowThreadPortionRect);
+        portionLocation = flippedFlowThreadPortionRect.location();
+    } else
+        portionLocation = flowThreadPortionRect.location();
+    adjustedPaintOffset = roundedIntPoint(paintOffset - portionLocation);
+
+    // The clipping rect for the region is set up by assuming the flowThreadPortionRect is going to paint offset from adjustedPaintOffset.
+    // Remember that we pixel snapped and moved the paintOffset and stored the snapped result in adjustedPaintOffset. Now we add back in
+    // the flowThreadPortionRect's location to get the spot where we expect the portion to actually paint. This can be non-integral and
+    // that's ok. We then pixel snap the resulting clipping rect to account for snapping that will occur when the flow thread paints.
+    IntRect regionClippingRect = pixelSnappedIntRect(computeRegionClippingRect(adjustedPaintOffset + portionLocation, flowThreadPortionRect, flowThreadPortionOverflowRect));
+
+    PaintInfo info(paintInfo);
+    info.rect.intersect(regionClippingRect);
+
+    if (!info.rect.isEmpty()) {
+        context->save();
+
+        context->clip(regionClippingRect);
+
+        context->translate(adjustedPaintOffset.x(), adjustedPaintOffset.y());
+        info.rect.moveBy(-adjustedPaintOffset);
+        
+        PaintBehavior paintBehavior = 0;
+        if (info.phase == PaintPhaseTextClip)
+            paintBehavior |= PaintBehaviorForceBlackText;
+        else if (info.phase == PaintPhaseSelection)
+            paintBehavior |= PaintBehaviorSelectionOnly;
+
+        layer()->paint(context, info.rect, paintBehavior, 0, region, RenderLayer::PaintLayerTemporaryClipRects);
+
+        context->restore();
+    }
+}
+
 bool RenderFlowThread::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     if (hitTestAction == HitTestBlockBackground)
         return false;
     return RenderBlockFlow::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction);
+}
+
+bool RenderFlowThread::hitTestFlowThreadPortionInRegion(RenderRegion* region, const LayoutRect& flowThreadPortionRect, const LayoutRect& flowThreadPortionOverflowRect, const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset) const
+{
+    LayoutRect regionClippingRect = computeRegionClippingRect(accumulatedOffset, flowThreadPortionRect, flowThreadPortionOverflowRect);
+    if (!regionClippingRect.contains(locationInContainer.point()))
+        return false;
+
+    LayoutSize renderFlowThreadOffset;
+    if (style().isFlippedBlocksWritingMode()) {
+        LayoutRect flippedFlowThreadPortionRect(flowThreadPortionRect);
+        flipForWritingMode(flippedFlowThreadPortionRect);
+        renderFlowThreadOffset = accumulatedOffset - flippedFlowThreadPortionRect.location();
+    } else
+        renderFlowThreadOffset = accumulatedOffset - flowThreadPortionRect.location();
+
+    // Always ignore clipping, since the RenderFlowThread has nothing to do with the bounds of the FrameView.
+    HitTestRequest newRequest(request.type() | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent);
+
+    // Make a new temporary HitTestLocation in the new region.
+    HitTestLocation newHitTestLocation(locationInContainer, -renderFlowThreadOffset, region);
+
+    bool isPointInsideFlowThread = layer()->hitTest(newRequest, newHitTestLocation, result);
+
+    // FIXME: Should we set result.m_localPoint back to the RenderRegion's coordinate space or leave it in the RenderFlowThread's coordinate
+    // space? Right now it's staying in the RenderFlowThread's coordinate space, which may end up being ok. We will know more when we get around to
+    // patching positionForPoint.
+    return isPointInsideFlowThread;
 }
 
 bool RenderFlowThread::shouldRepaint(const LayoutRect& r) const
@@ -845,30 +925,6 @@ void RenderFlowThread::checkRegionsWithStyling()
     }
     m_hasRegionsWithStyling = hasRegionsWithStyling;
 }
-    
-bool RenderFlowThread::objectShouldPaintInFlowRegion(const RenderObject* object, const RenderRegion* region) const
-{
-    ASSERT(object);
-    ASSERT(region);
-    
-    RenderFlowThread* flowThread = object->flowThreadContainingBlock();
-    if (flowThread != this)
-        return false;
-    if (!m_regionList.contains(const_cast<RenderRegion*>(region)))
-        return false;
-    
-    RenderBox* enclosingBox = object->enclosingBox();
-    RenderRegion* enclosingBoxStartRegion = 0;
-    RenderRegion* enclosingBoxEndRegion = 0;
-    getRegionRangeForBox(enclosingBox, enclosingBoxStartRegion, enclosingBoxEndRegion);
-    
-    // If the box has no range, do not check regionInRange. Boxes inside inlines do not get ranges.
-    // Instead, the containing RootInlineBox will abort when trying to paint inside the wrong region.
-    if (enclosingBoxStartRegion && enclosingBoxEndRegion && !regionInRange(region, enclosingBoxStartRegion, enclosingBoxEndRegion))
-        return false;
-    
-    return object->isBox();
-}
 
 bool RenderFlowThread::objectInFlowRegion(const RenderObject* object, const RenderRegion* region) const
 {
@@ -1256,9 +1312,15 @@ LayoutRect RenderFlowThread::mapFromLocalToFlowThread(const RenderBox* box, cons
             return LayoutRect();
         LayoutPoint currentBoxLocation = box->location();
 
-        if (containerBlock->style().writingMode() != box->style().writingMode())
+        if (containerBlock->style().writingMode() != box->style().writingMode()) {
+            if (containerBlock->style().isFlippedBlocksWritingMode()) {
+                if (containerBlock->isHorizontalWritingMode())
+                    boxRect.setY(box->height() - boxRect.maxY());
+                else
+                    boxRect.setX(box->width() - boxRect.maxX());
+            }
             box->flipForWritingMode(boxRect);
-
+        }
         boxRect.moveBy(currentBoxLocation);
         box = containerBlock;
     }
@@ -1282,63 +1344,17 @@ LayoutRect RenderFlowThread::mapFromFlowThreadToLocal(const RenderBox* box, cons
     LayoutPoint currentBoxLocation = box->location();
     localRect.moveBy(-currentBoxLocation);
 
-    if (containerBlock->style().writingMode() != box->style().writingMode())
+    if (containerBlock->style().writingMode() != box->style().writingMode()) {
+        if (containerBlock->style().isFlippedBlocksWritingMode()) {
+            if (containerBlock->isHorizontalWritingMode())
+                localRect.setY(box->height() - localRect.maxY());
+            else
+                localRect.setX(box->width() - localRect.maxX());
+        }
         box->flipForWritingMode(localRect);
+    }
 
     return localRect;
-}
-
-LayoutRect RenderFlowThread::decorationsClipRectForBoxInRegion(const RenderBox& box, RenderRegion& region) const
-{
-    LayoutRect visualOverflowRect = region.visualOverflowRectForBox(&box);
-    
-    // The visual overflow rect returned by visualOverflowRectForBox is already flipped but the
-    // RenderRegion::rectFlowPortionForBox method expects it unflipped.
-    flipForWritingModeLocalCoordinates(visualOverflowRect);
-    visualOverflowRect = region.rectFlowPortionForBox(&box, visualOverflowRect);
-    
-    // Now flip it again.
-    flipForWritingModeLocalCoordinates(visualOverflowRect);
-    
-    // Layers are in physical coordinates so the origin must be moved to the physical top-left of the flowthread.
-    if (style().isFlippedBlocksWritingMode()) {
-        if (style().isHorizontalWritingMode())
-            visualOverflowRect.moveBy(LayoutPoint(0, height()));
-        else
-            visualOverflowRect.moveBy(LayoutPoint(width(), 0));
-    }
-    
-    const RenderBox* iterBox = &box;
-    while (iterBox && iterBox != this) {
-        RenderBlock* containerBlock = iterBox->containingBlock();
-        
-        LayoutRect currentBoxRect = iterBox->frameRect();
-        if (iterBox->style().isFlippedBlocksWritingMode()) {
-            if (iterBox->style().isHorizontalWritingMode())
-                currentBoxRect.setY(currentBoxRect.height() - currentBoxRect.maxY());
-            else
-                currentBoxRect.setX(currentBoxRect.width() - currentBoxRect.maxX());
-        }
-        
-        if (containerBlock->style().writingMode() != iterBox->style().writingMode())
-            iterBox->flipForWritingMode(currentBoxRect);
-        
-        visualOverflowRect.moveBy(currentBoxRect.location());
-        iterBox = containerBlock;
-    }
-    
-    return visualOverflowRect;
-}
-
-void RenderFlowThread::flipForWritingModeLocalCoordinates(LayoutRect& rect) const
-{
-    if (!style().isFlippedBlocksWritingMode())
-        return;
-    
-    if (isHorizontalWritingMode())
-        rect.setY(0 - rect.maxY());
-    else
-        rect.setX(0 - rect.maxX());
 }
 
 void RenderFlowThread::addRegionsVisualEffectOverflow(const RenderBox* box)
@@ -1393,21 +1409,15 @@ void RenderFlowThread::addRegionsOverflowFromChild(const RenderBox* box, const R
 
     for (auto iter = m_regionList.find(startRegion), end = m_regionList.end(); iter != end; ++iter) {
         RenderRegion* region = *iter;
-        if (!regionInRange(region, containerStartRegion, containerEndRegion)) {
-            if (region == endRegion)
-                break;
+        if (!regionInRange(region, containerStartRegion, containerEndRegion))
             continue;
-        }
 
         LayoutRect childLayoutOverflowRect = region->layoutOverflowRectForBoxForPropagation(child);
         childLayoutOverflowRect.move(delta);
         region->addLayoutOverflowForBox(box, childLayoutOverflowRect);
 
-        if (child->hasSelfPaintingLayer() || box->hasOverflowClip()) {
-            if (region == endRegion)
-                break;
+        if (child->hasSelfPaintingLayer() || box->hasOverflowClip())
             continue;
-        }
         LayoutRect childVisualOverflowRect = region->visualOverflowRectForBoxForPropagation(child);
         childVisualOverflowRect.move(delta);
         region->addVisualOverflowForBox(box, childVisualOverflowRect);
@@ -1416,7 +1426,7 @@ void RenderFlowThread::addRegionsOverflowFromChild(const RenderBox* box, const R
             break;
     }
 }
-    
+
 void RenderFlowThread::addRegionsLayoutOverflow(const RenderBox* box, const LayoutRect& layoutOverflow)
 {
     RenderRegion* startRegion = 0;
@@ -1429,23 +1439,6 @@ void RenderFlowThread::addRegionsLayoutOverflow(const RenderBox* box, const Layo
 
         region->addLayoutOverflowForBox(box, layoutOverflowInRegion);
 
-        if (region == endRegion)
-            break;
-    }
-}
-
-void RenderFlowThread::addRegionsVisualOverflow(const RenderBox* box, const LayoutRect& visualOverflow)
-{
-    RenderRegion* startRegion = 0;
-    RenderRegion* endRegion = 0;
-    getRegionRangeForBox(box, startRegion, endRegion);
-    
-    for (RenderRegionList::iterator iter = m_regionList.find(startRegion); iter != m_regionList.end(); ++iter) {
-        RenderRegion* region = *iter;
-        LayoutRect visualOverflowInRegion = region->rectFlowPortionForBox(box, visualOverflow);
-        
-        region->addVisualOverflowForBox(box, visualOverflowInRegion);
-        
         if (region == endRegion)
             break;
     }
@@ -1476,8 +1469,7 @@ CurrentRenderFlowThreadMaintainer::CurrentRenderFlowThreadMaintainer(RenderFlowT
         return;
     FlowThreadController& controller = m_renderFlowThread->view().flowThreadController();
     m_previousRenderFlowThread = controller.currentRenderFlowThread();
-    // Remove the assert so we can use this to change the flow thread context.
-    // ASSERT(!m_previousRenderFlowThread || !renderFlowThread->isRenderNamedFlowThread());
+    ASSERT(!m_previousRenderFlowThread || !renderFlowThread->isRenderNamedFlowThread());
     controller.setCurrentRenderFlowThread(m_renderFlowThread);
 }
 

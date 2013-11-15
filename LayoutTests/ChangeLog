@@ -1,3 +1,59 @@
+2013-11-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r159337.
+        http://trac.webkit.org/changeset/159337
+        https://bugs.webkit.org/show_bug.cgi?id=124423
+
+        broke a bunch of fast/regions tests on EFL/GTK (Requested by
+        philn on #webkit).
+
+        * fast/regions/bottom-overflow-out-of-first-region-expected.html:
+        * fast/regions/bottom-overflow-out-of-first-region.html:
+        * fast/regions/counters/extract-ordered-lists-in-regions-explicit-counters-005-expected.html:
+        * fast/regions/counters/extract-ordered-lists-in-regions-explicit-counters-005.html:
+        * fast/regions/element-in-named-flow-absolute-from-fixed-expected.txt:
+        * fast/regions/element-in-named-flow-fixed-from-absolute-expected.txt:
+        * fast/regions/element-inflow-fixed-from-outflow-static-expected.txt:
+        * fast/regions/element-outflow-static-from-inflow-fixed-expected.txt:
+        * fast/regions/float-pushed-width-change-2-expected.html:
+        * fast/regions/float-pushed-width-change-2.html:
+        * fast/regions/float-pushed-width-change-expected.html:
+        * fast/regions/float-pushed-width-change.html:
+        * fast/regions/layers/dynamic-layer-added-with-no-layout-expected.txt: Removed.
+        * fast/regions/layers/dynamic-layer-removed-with-no-layout-expected.txt: Removed.
+        * fast/regions/layers/regions-promoted-to-layers-expected.txt: Removed.
+        * fast/regions/layers/regions-promoted-to-layers-horizontal-bt-expected.txt: Removed.
+        * fast/regions/layers/regions-promoted-to-layers-vertical-lr-expected.txt: Removed.
+        * fast/regions/layers/regions-promoted-to-layers-vertical-rl-expected.txt: Removed.
+        * fast/regions/outline-sides-in-region-expected.html:
+        * fast/regions/outline-sides-in-region.html:
+        * fast/regions/overflow-first-and-last-regions-expected.html: Removed.
+        * fast/regions/overflow-first-and-last-regions-in-container-hidden-expected.html: Removed.
+        * fast/regions/overflow-first-and-last-regions-in-container-hidden.html: Removed.
+        * fast/regions/overflow-first-and-last-regions.html: Removed.
+        * fast/regions/overflow-last-region-expected.html: Added.
+        * fast/regions/overflow-last-region.html: Added.
+        * fast/regions/overflow-nested-regions-expected.html: Removed.
+        * fast/regions/overflow-nested-regions.html: Removed.
+        * fast/regions/overflow-region-float-expected.html: Removed.
+        * fast/regions/overflow-region-float.html: Removed.
+        * fast/regions/overflow-region-inline-expected.html: Removed.
+        * fast/regions/overflow-region-inline.html: Removed.
+        * fast/regions/overflow-region-transform-expected.html: Removed.
+        * fast/regions/overflow-region-transform.html: Removed.
+        * fast/regions/overflow-scrollable-rotated-fragment-expected.html:
+        * fast/regions/overflow-scrollable-rotated-fragment.html:
+        * fast/regions/top-overflow-out-of-second-region-expected.html: Removed.
+        * fast/regions/top-overflow-out-of-second-region.html:
+        * fast/regions/webkit-flow-float-unable-to-push-expected.html:
+        * fast/regions/webkit-flow-float-unable-to-push.html:
+        * fast/repaint/increasing-region-content-height-expected.txt:
+        * fast/repaint/increasing-region-content-height.html:
+        * platform/gtk/fast/regions/text-region-split-vertical-rl-expected.txt: Added.
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/fast/regions/top-overflow-out-of-second-region-expected.png: Added.
+        * platform/mac/fast/regions/top-overflow-out-of-second-region-expected.txt: Added.
+
 2013-11-15  Antti Koivisto  <antti@apple.com>
 
         Hovering over text using simple line path should not cause switch to line boxes

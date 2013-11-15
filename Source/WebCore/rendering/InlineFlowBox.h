@@ -302,7 +302,7 @@ private:
     void constrainToLineTopAndBottomIfNeeded(LayoutRect&) const;
 
 protected:
-    RefPtr<RenderOverflow> m_overflow;
+    OwnPtr<RenderOverflow> m_overflow;
 
     InlineBox* m_firstChild;
     InlineBox* m_lastChild;

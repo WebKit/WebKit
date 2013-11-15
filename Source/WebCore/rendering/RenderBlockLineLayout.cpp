@@ -3660,13 +3660,9 @@ bool RenderBlockFlow::positionNewFloatOnLine(FloatingObject* newFloat, FloatingO
             floatingObject->setPaginationStrut(paginationStrut + floatingObject->paginationStrut());
             RenderBox& floatBox = floatingObject->renderer();
             setLogicalTopForChild(floatBox, logicalTopForChild(floatBox) + marginBeforeForChild(floatBox) + paginationStrut);
-
-            if (updateRegionRangeForBoxChild(floatingObject->renderer()))
-                floatBox.setNeedsLayout(MarkOnlyThis);
-            else if (floatBox.isRenderBlock())
+            if (floatBox.isRenderBlock())
                 toRenderBlock(floatBox).setChildNeedsLayout(MarkOnlyThis);
             floatBox.layoutIfNeeded();
-
             // Save the old logical top before calling removePlacedObject which will set
             // isPlaced to false. Otherwise it will trigger an assert in logicalTopForFloat.
             LayoutUnit oldLogicalTop = logicalTopForFloat(floatingObject);

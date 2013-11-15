@@ -49,15 +49,13 @@ class RenderRegion : public RenderBlockFlow {
 public:
     virtual bool isRenderRegion() const OVERRIDE FINAL { return true; }
 
+    virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
+
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     void setFlowThreadPortionRect(const LayoutRect& rect) { m_flowThreadPortionRect = rect; }
     LayoutRect flowThreadPortionRect() const { return m_flowThreadPortionRect; }
-    LayoutRect flowThreadPortionOverflowRect();
-
-    LayoutPoint flowThreadPortionLocation() const;
-    
-    RenderLayer* regionContainerLayer() const;
+    LayoutRect flowThreadPortionOverflowRect() const;
 
     void attachRegion();
     void detachRegion();
@@ -137,7 +135,7 @@ public:
     // Whether or not this region is a set.
     virtual bool isRenderRegionSet() const { return false; }
     
-    virtual void repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate);
+    virtual void repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate) const;
 
     virtual void collectLayerFragments(LayerFragments&, const LayoutRect&, const LayoutRect&) { }
 
@@ -151,9 +149,6 @@ public:
     LayoutRect visualOverflowRectForBoxForPropagation(const RenderBox*);
 
     LayoutRect rectFlowPortionForBox(const RenderBox*, const LayoutRect&) const;
-    
-    void setRegionObjectsRegionStyle();
-    void restoreRegionObjectsOriginalStyle();
 
     virtual bool canHaveChildren() const OVERRIDE { return false; }
     virtual bool canHaveGeneratedChildren() const OVERRIDE { return true; }
@@ -163,7 +158,10 @@ protected:
     RenderRegion(Element&, PassRef<RenderStyle>, RenderFlowThread*);
     RenderRegion(Document&, PassRef<RenderStyle>, RenderFlowThread*);
 
-    void ensureOverflowForBox(const RenderBox*, RefPtr<RenderOverflow>&, bool);
+    RenderOverflow* ensureOverflowForBox(const RenderBox*);
+
+    void setRegionObjectsRegionStyle();
+    void restoreRegionObjectsOriginalStyle();
 
     virtual void computePreferredLogicalWidths() OVERRIDE;
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
@@ -172,9 +170,11 @@ protected:
         LayoutOverflow = 0,
         VisualOverflow
     };
+    LayoutRect overflowRectForFlowThreadPortion(const LayoutRect& flowThreadPortionRect, bool isFirstPortion, bool isLastPortion, OverflowType) const;
 
-    LayoutRect overflowRectForFlowThreadPortion(const LayoutRect& flowThreadPortionRect, bool isFirstPortion, bool isLastPortion, OverflowType);
-    void repaintFlowThreadContentRectangle(const LayoutRect& repaintRect, bool immediate, const LayoutRect& flowThreadPortionRect, const LayoutPoint& regionLocation, const LayoutRect* flowThreadPortionClipRect = 0);
+    void repaintFlowThreadContentRectangle(const LayoutRect& repaintRect, bool immediate, const LayoutRect& flowThreadPortionRect,
+        const LayoutRect& flowThreadPortionOverflowRect, const LayoutPoint& regionLocation) const;
+
     virtual bool shouldHaveAutoLogicalHeight() const;
 
     void computeOverflowFromFlowThread();
@@ -186,6 +186,7 @@ private:
     virtual void willBeRemovedFromTree() OVERRIDE;
 
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE;
+    virtual void paintObject(PaintInfo&, const LayoutPoint&) OVERRIDE;
 
     virtual void installFlowThread();
 

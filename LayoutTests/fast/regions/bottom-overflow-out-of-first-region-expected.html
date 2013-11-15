@@ -4,19 +4,16 @@
         <style>
             body { font: 16px/1.25 monospace; }
 
-            #region1, #region2 { border: 1px solid red; }
+            #region1, #region2 { border: 1px solid black; }
 
             #region1 {
                 width: 412px;
-                height: 140px;
+                height: 210px;
             }
 
             #region2 {
                 width: 300px;
                 height: 150px;
-                position: relative;
-                left: 100px;
-                top: 50px;
             }
 
             #content {
@@ -25,22 +22,31 @@
 
             #first-box {
                 border: 1px solid blue;
-                height:125px;
+                height:200px;
             }
 
             #second-box {
                 margin: auto;
                 border: 1px solid green;
+                border-bottom: 0px;
                 width: 75%;
+                height: 203px;
             }
 
-            #p1, #p2 {
+            #second-box-2 {
+                border: 1px solid green;
+                border-top: 0px;
+                width: 300px;
+                margin-left: 55px;
+            }
+
+            #p1, #p2, #p3 {
                 margin: 0;
             }
         </style>
     </head>
     <body>
-        <p>In the test case below, the green block should not be fragmented into the second region. It is overflowing downwards out of the first region because its parent (the blue block) is only flowed inside the first region.</p>
+        <p>In the test case below, the green block's width should not vary and should use the first region to determine its width. It is overflowing downwards out of the blue block, and so the portion that overflows should continue to use the blue block's containing block width. The blue block does not exist in region two, so using some hypothetical made-up width is incorrect. The overflow should be spilling out of the top of region one and be painted in region two.</p>
         <div id="region1">
             <div id="content">
                 <div id="first-box">
@@ -52,6 +58,9 @@
             </div>
         </div>
         <div id="region2">
+            <div id="second-box-2">
+                <p id="p3">These lines should all fit to the width of the block in the first region and spill out of the bottom of the first region.</p>
+            </div>
         </div>
     </body>
 </html>

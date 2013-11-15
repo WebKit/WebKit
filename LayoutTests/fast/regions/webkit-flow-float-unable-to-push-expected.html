@@ -12,51 +12,29 @@
 
     /* Created to justify the last line of text in the div */
     #paragraph1:after {
-        content: " ________";
+        content: " ____";
         line-height: 0;
         visibility: hidden;
     }
-
-    .region {
-        border: 3px solid black;
-        border-left: 10px solid black;
-    }
-
-    .content {
-        border: 2px solid red;
-        padding: 5px;
-    }
-
-    .first-box {
-        border: 3px solid blue;
-        background-color: #ffff00;
-    }
-
-    .second-box {
-        border: 6px solid green;
-        background-color: #ffffaa;
-    }
     
     #region1 {
-        width: 400px;
-        height: 90px;
-        margin-left: 50px;
-    }
-
-    #content1 {
-        border-bottom: none;
-        height: 78px;
+        border: 1px solid black;
+        width: 390px;
+        height: 80px;
+        padding: 5px;
     }
     
     #first-box1 {
+        border: 1px solid blue;
         border-bottom: none;
-        height: 80px;
     }
     
     #second-box1 {
         margin:10px;
+        border: 1px solid green;
         border-bottom: none;
-        height: 64px;
+        width: 366px;
+        height: 73px;
     }
 
     #first-paragraph2 {
@@ -65,34 +43,32 @@
     
     /* Created to justify the last line of text in the div */
     #second-paragraph2:after {
-        content: " ________";
+        content: " ____";
         line-height: 0;
         visibility: hidden;
     }
     
     #region2 {
-        width: 300px;
-        height: 90px;
-        margin-top: 70px;
-    }
-
-    #content2 {
-        border-bottom: none;
-        border-top: none;
-        height: 85px;
-        padding-top: 0px;
+        border: 1px solid black;
+        width: 290px;
+        height: 80px;
+        padding: 5px;
     }
     
     #first-box2 {
+        border: 1px solid blue;
         border-top: none;
         border-bottom: none;
-        padding-left: 10px;
-        padding-right: 10px;
     }
     
     #second-box2 {
+        margin-left:10px;
+        margin-top: -5px;
+        padding: 0px;
+        border: 1px solid green;
         border-top: none;
         border-bottom: none;
+        width: 266px;
         height: 90px;
     }
 
@@ -101,74 +77,75 @@
     }
 
     #region3 {
-        width: 400px;
-        height: 120px;
-        margin-top: 50px;
-        margin-left: 20px;
-    }
-
-    #content3 {
-        border-top: none;
-        aheight: 109px;
-        padding-top: 0px;
+        border: 1px solid black;
+        width: 390px;
+        height: 80px;
+        padding: 5px;
     }
     
     #first-box3 {
+        border: 1px solid blue;
         border-top: none;
-        padding-left: 10px;
-        padding-right: 10px;
-        padding-bottom: 10px;
     }
     
     #second-box3 {
+        margin:10px;
+        margin-top: -5px;
+        border: 1px solid green;
         border-top: none;
+        width: 366px;
+    }
+
+    .imgFloat {
+        float: right;
+        background-color:green;
     }
 
     #float1 {
-        float: right;
-        background-color:green;
-        border: 2px solid red;
         width: 130px;
-        height: 100px;
+        height: 63px;
     }
 
     #float2 {
-        float: right;
-        width: 34px;
-        height: 70px;
-        visibility: hidden;
+        width: 30px;
+        height: 37px;
+    }
+
+    #imgAbsolute {
+        position: absolute;
+        background-color: green;
+        width: 100px;
+        height: 37px;
+        left: 292px;
+        top: 101px;
     }
 </style>
 
-<div>
-    <div class="region" id="region1">
-        <div class="content" id="content1">
-            <div class="first-box" id="first-box1">
-                <div class="second-box" id="second-box1">
-                    <div class="test_paragraph" id="paragraph1">This <img id="float1" src="resources/transparent.png">line of text should not get out of the region. This line of text should not get out of the</div>
-                </div>
+<div id="content">
+    <div id="region1">
+        <div id="first-box1">
+            <div id="second-box1">
+                <div class="test_paragraph" id="paragraph1">This <img class="imgFloat" id="float1" src="resources/transparent.png">line of text should not get out of the region. This line of text should not get out of the region. This line of text should not</div>
             </div>
         </div>
     </div>
     
-    <div class="region" id="region2">
-        <div class="content" id="content2">
-            <div class="first-box" id="first-box2">
-                <div class="second-box" id="second-box2">
-                    <div class="test_paragraph" id="first-paragraph2">region. <img id="float2" src="resources/transparent.png">This line of text should not get out of the region. This line of text should not get out of the region.</div>
-                    <div class="test_paragraph" id="second-paragraph2">This line of text should not get out of the</div>
-                </div>
+    <div id="region2">
+        <div id="first-box2">
+            <div id="second-box2">
+                <div class="test_paragraph" id="first-paragraph2">get<img class="imgFloat" id="float2" src="resources/transparent.png"> out of the region. This line of text should not get out of the region.</div>
+                <div class="test_paragraph" id="second-paragraph2">This line of text should not get out of the region. This line of text should not get out of the region.</div>
             </div>
         </div>
     </div>
 
-    <div class="region" id="region3">
-        <div class="content" id="content3">
-            <div class="first-box" id="first-box3">
-                <div class="second-box" id="second-box3">
-                    <div class="test_paragraph" id="first-paragraph3">region. This line of text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region.</div>
-                    <div class="test_paragraph" id="second-paragraph3">This line of text should not get out of the region.</div>
-                </div>
+    <img id="imgAbsolute" src="resources/transparent.png">
+    
+    <div id="region3">
+        <div id="first-box3">
+            <div id="second-box3">
+                <div class="test_paragraph" id="first-paragraph3">This line of text should not get out of the region. This line of text should not get out of the region.</div>
+                <div class="test_paragraph" id="second-paragraph3">This line of text should not get out of the region.</div>
             </div>
         </div>
     </div>

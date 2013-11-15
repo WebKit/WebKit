@@ -1612,12 +1612,6 @@ void RenderBlock::addOverflowFromChildren()
             addOverflowFromInlineChildren();
         else
             addOverflowFromBlockChildren();
-        
-        // If this block is flowed inside a flow thread, make sure its overflow is propagated to the containing regions.
-        if (m_overflow) {
-            if (RenderFlowThread* containingFlowThread = flowThreadContainingBlock())
-                containingFlowThread->addRegionsVisualOverflow(this, m_overflow->visualOverflowRect());
-        }
     } else {
         ColumnInfo* colInfo = columnInfo();
         if (columnCount(colInfo)) {
@@ -2183,15 +2177,11 @@ void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     
     PaintPhase phase = paintInfo.phase;
 
-    // Check our region range to make sure we need to be painting in this region.
-    if (paintInfo.renderRegion && !paintInfo.renderRegion->flowThread()->objectShouldPaintInFlowRegion(this, paintInfo.renderRegion))
-        return;
-
     // Check if we need to do anything at all.
     // FIXME: Could eliminate the isRoot() check if we fix background painting so that the RenderView
     // paints the root's background.
     if (!isRoot()) {
-        LayoutRect overflowBox = overflowRectForPaintRejection(paintInfo.renderRegion);
+        LayoutRect overflowBox = overflowRectForPaintRejection();
         flipForWritingMode(overflowBox);
         overflowBox.inflate(maximalOutlineSize(paintInfo.phase));
         overflowBox.moveBy(adjustedPaintOffset);
@@ -2480,26 +2470,8 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
     // 1. paint background, borders etc
     if ((paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) && style().visibility() == VISIBLE) {
-        if (hasBoxDecorations()) {
-            bool didClipToRegion = false;
-            
-            if (paintInfo.paintContainer && paintInfo.renderRegion && paintInfo.paintContainer->isRenderFlowThread()) {
-                // If this box goes beyond the current region, then make sure not to overflow the region.
-                // This (overflowing region X altough also fragmented to region X+1) could happen when one of this box's children
-                // overflows region X and is an unsplittable element (like an image).
-                // The same applies for a box overflowing the top of region X when that box is also fragmented in region X-1.
-
-                paintInfo.context->save();
-                didClipToRegion = true;
-
-                paintInfo.context->clip(toRenderFlowThread(paintInfo.paintContainer)->decorationsClipRectForBoxInRegion(*this, *paintInfo.renderRegion));
-            }
-
+        if (hasBoxDecorations())
             paintBoxDecorations(paintInfo, paintOffset);
-            
-            if (didClipToRegion)
-                paintInfo.context->restore();
-        }
         if (hasColumns() && !paintInfo.paintRootBackgroundOnly())
             paintColumnRules(paintInfo, paintOffset);
     }
@@ -5206,6 +5178,7 @@ RenderBox* RenderBlock::createAnonymousBoxWithSameTypeAs(const RenderObject* par
     return createAnonymousWithParentRendererAndDisplay(parent, style().display());
 }
 
+
 ColumnInfo::PaginationUnit RenderBlock::paginationUnit() const
 {
     return ColumnInfo::Column;
@@ -5263,7 +5236,7 @@ void RenderBlock::computeRegionRangeForBoxChild(const RenderBox& box) const
 void RenderBlock::estimateRegionRangeForBoxChild(const RenderBox& box) const
 {
     RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (!flowThread || !flowThread->hasRegions() || !box.canHaveOutsideRegionRange())
+    if (!flowThread || !flowThread->hasRegions())
         return;
 
     if (box.isUnsplittableForPagination()) {
@@ -5284,7 +5257,7 @@ void RenderBlock::estimateRegionRangeForBoxChild(const RenderBox& box) const
 bool RenderBlock::updateRegionRangeForBoxChild(const RenderBox& box) const
 {
     RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (!flowThread || !flowThread->hasRegions() || !box.canHaveOutsideRegionRange())
+    if (!flowThread || !flowThread->hasRegions())
         return false;
 
     RenderRegion* startRegion = 0;

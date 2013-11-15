@@ -254,7 +254,7 @@ LayoutRect RenderMultiColumnSet::flowThreadPortionRectAt(unsigned index) const
     return portionRect;
 }
 
-LayoutRect RenderMultiColumnSet::flowThreadPortionOverflowRect(const LayoutRect& portionRect, unsigned index, unsigned colCount, LayoutUnit colGap)
+LayoutRect RenderMultiColumnSet::flowThreadPortionOverflowRect(const LayoutRect& portionRect, unsigned index, unsigned colCount, LayoutUnit colGap) const
 {
     // This function determines the portion of the flow thread that paints for the column. Along the inline axis, columns are
     // unclipped at outside edges (i.e., the first and last column in the set), and they clip to half the column
@@ -363,7 +363,7 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
     }
 }
 
-void RenderMultiColumnSet::repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate)
+void RenderMultiColumnSet::repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate) const
 {
     // Figure out the start and end columns and only check within that range so that we don't walk the
     // entire column set. Put the repaint rect into flow thread coordinates by flipping it first.
@@ -392,12 +392,12 @@ void RenderMultiColumnSet::repaintFlowThreadContent(const LayoutRect& repaintRec
         
         // Get the portion of the flow thread that corresponds to this column.
         LayoutRect flowThreadPortion = flowThreadPortionRectAt(i);
-
+        
         // Now get the overflow rect that corresponds to the column.
         LayoutRect flowThreadOverflowPortion = flowThreadPortionOverflowRect(flowThreadPortion, i, colCount, colGap);
 
         // Do a repaint for this specific column.
-        repaintFlowThreadContentRectangle(repaintRect, immediate, flowThreadPortion, colRect.location(), &flowThreadOverflowPortion);
+        repaintFlowThreadContentRectangle(repaintRect, immediate, flowThreadPortion, flowThreadOverflowPortion, colRect.location());
     }
 }
 

@@ -83,6 +83,8 @@ public:
     virtual void updateLogicalWidth() OVERRIDE FINAL;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
 
+    void paintFlowThreadPortionInRegion(PaintInfo&, RenderRegion*, const LayoutRect& flowThreadPortionRect, const LayoutRect& flowThreadPortionOverflowRect, const LayoutPoint&) const;
+    bool hitTestFlowThreadPortionInRegion(RenderRegion*, const LayoutRect& flowThreadPortionRect, const LayoutRect& flowThreadPortionOverflowRect, const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset) const;
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
     bool hasRegions() const { return m_regionList.size(); }
@@ -143,9 +145,6 @@ public:
 
     // Check if the object is in region and the region is part of this flow thread.
     bool objectInFlowRegion(const RenderObject*, const RenderRegion*) const;
-    
-    // Check if the object should be painted in this region and if the region is part of this flow thread.
-    bool objectShouldPaintInFlowRegion(const RenderObject*, const RenderRegion*) const;
 
     void markAutoLogicalHeightRegionsForLayout();
     void markRegionsForOverflowLayoutIfNeeded();
@@ -206,24 +205,17 @@ public:
     LayoutUnit offsetFromLogicalTopOfFirstRegion(const RenderBlock*) const;
     void clearRenderBoxRegionInfoAndCustomStyle(const RenderBox*, const RenderRegion*, const RenderRegion*, const RenderRegion*, const RenderRegion*);
 
+    LayoutRect mapFromFlowThreadToLocal(const RenderBox*, const LayoutRect&) const;
+    LayoutRect mapFromLocalToFlowThread(const RenderBox*, const LayoutRect&) const;
+
     void addRegionsVisualEffectOverflow(const RenderBox*);
     void addRegionsVisualOverflowFromTheme(const RenderBlock*);
     void addRegionsOverflowFromChild(const RenderBox*, const RenderBox*, const LayoutSize&);
     void addRegionsLayoutOverflow(const RenderBox*, const LayoutRect&);
-    void addRegionsVisualOverflow(const RenderBox*, const LayoutRect&);
     void clearRegionsOverflow(const RenderBox*);
-
-    LayoutRect mapFromFlowThreadToLocal(const RenderBox*, const LayoutRect&) const;
-    LayoutRect mapFromLocalToFlowThread(const RenderBox*, const LayoutRect&) const;
-    
-    LayoutRect decorationsClipRectForBoxInRegion(const RenderBox&, RenderRegion&) const;
-    
-    void flipForWritingModeLocalCoordinates(LayoutRect&) const;
 
     // Used to estimate the maximum height of the flow thread.
     static LayoutUnit maxLogicalHeight() { return LayoutUnit::max() / 2; }
-    
-    bool regionInRange(const RenderRegion* targetRegion, const RenderRegion* startRegion, const RenderRegion* endRegion) const;
 
 protected:
     virtual const char* renderName() const = 0;
@@ -236,6 +228,7 @@ protected:
 
     void updateRegionsFlowThreadPortionRect(const RenderRegion* = 0);
     bool shouldRepaint(const LayoutRect&) const;
+    bool regionInRange(const RenderRegion* targetRegion, const RenderRegion* startRegion, const RenderRegion* endRegion) const;
 
     LayoutRect computeRegionClippingRect(const LayoutPoint&, const LayoutRect&, const LayoutRect&) const;
 

@@ -56,8 +56,6 @@ PassRef<RenderStyle> RenderNamedFlowFragment::createStyle(const RenderStyle& par
     style.get().setFlowThread(parentStyle.flowThread());
     style.get().setRegionThread(parentStyle.regionThread());
     style.get().setRegionFragment(parentStyle.regionFragment());
-    style.get().setOverflowX(parentStyle.overflowX());
-    style.get().setOverflowY(parentStyle.overflowY());
 #if ENABLE(CSS_SHAPES)
     style.get().setShapeInside(parentStyle.shapeInside());
 #endif
@@ -94,11 +92,6 @@ LayoutUnit RenderNamedFlowFragment::maxPageLogicalHeight() const
 
     const RenderStyle& styleToUse = parent()->style();
     return styleToUse.logicalMaxHeight().isUndefined() ? RenderFlowThread::maxLogicalHeight() : toRenderBlock(parent())->computeReplacedLogicalHeightUsing(styleToUse.logicalMaxHeight());
-}
-
-RenderNamedFlowThread* RenderNamedFlowFragment::namedFlowThread() const
-{
-    return toRenderNamedFlowThread(flowThread());
 }
 
 } // namespace WebCore

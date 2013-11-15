@@ -193,10 +193,6 @@ void RootInlineBox::paintCustomHighlight(PaintInfo& paintInfo, const LayoutPoint
 
 void RootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
-    // Check if we are in the correct region.
-    if (paintInfo.renderRegion && containingRegion() && containingRegion() != paintInfo.renderRegion)
-        return;
-    
     InlineFlowBox::paint(paintInfo, paintOffset, lineTop, lineBottom);
     paintEllipsisBox(paintInfo, paintOffset, lineTop, lineBottom);
 #if PLATFORM(MAC)
