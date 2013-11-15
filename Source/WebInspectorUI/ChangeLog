@@ -1,3 +1,136 @@
+2013-11-15  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: New color picker
+        https://bugs.webkit.org/show_bug.cgi?id=124354
+
+        Reviewed by Timothy Hatcher.
+
+        Beginning of a new color picker. The focus of this new picker is to let you pick from
+        a color wheel as the primary mean of color picking, with additional slider controls for
+        the brightness and the opacity, better matching the default OS X color picker. This is the
+        basis for a color picker that will evolve to support the following:
+
+        - editable CSS value label (http://webkit.org/b/124356)
+        - picking a color anywhere on screen (http://webkit.org/b/124357)
+        - swatches based on other colors in page (http://webkit.org/b/124358)
+
+        Note also that the color wheel has not been tested on Retina displays
+        (see http://webkit.org/b/124355).
+
+        * UserInterface/CSSColorPicker.css: Removed.
+        * UserInterface/CSSColorPicker.js: Removed.
+        Previous color picker, now removed in favor of the new ColorPicker class.
+
+        * UserInterface/CSSStyleDeclarationTextEditor.js:
+        Adopt new class name for the color picker, add a little padding to the popover
+        target frame and set the base color after the picker has been presented.
+
+        * UserInterface/Color.js:
+        (WebInspector.Color.prototype._hslToRGB):
+        Simplified math.
+
+        (WebInspector.Color.rgb2hsv):
+        (WebInspector.Color.hsv2rgb):
+        New utilities to deal with HSV colors used in the ColorWheel.
+
+        * UserInterface/ColorPicker.css: Added.
+
+        * UserInterface/ColorPicker.js: Added.
+        (WebInspector.ColorPicker):
+        (WebInspector.ColorPicker.prototype.get element):
+        (WebInspector.ColorPicker.prototype.set brightness):
+        (WebInspector.ColorPicker.prototype.set opacity):
+        (WebInspector.ColorPicker.prototype.get color):
+
+        (WebInspector.ColorPicker.prototype.set color):
+        We set the _dontUpdateColor flag here such that we don't attempt to
+        notify about a color change at this point in case the selected color
+        is too saturated to be represented accurately on the color wheel and
+        we would end up changing the color by virtue of presenting the popover.
+
+        (WebInspector.ColorPicker.prototype.colorWheelColorDidChange):
+        (WebInspector.ColorPicker.prototype.sliderValueDidChange):
+        (WebInspector.ColorPicker.prototype._updateColor):
+        (WebInspector.ColorPicker.prototype._updateSliders):
+
+        * UserInterface/ColorWheel.css: Added.
+
+        * UserInterface/ColorWheel.js: Added.
+        The ColorWheel makes use of three different <canvas> elements to draw itself.
+        The "raw" canvas is used to draw the raw, un-tinted color wheel with poor
+        aliasing. The "raw" canvas is only drawn when the dimension is changed.
+        The "tinted" canvas is used to draw the "raw" canvas with a black overlay
+        based on the brightness set on the wheel. The "final" canvas, the only <canvas>
+        element attached to the DOM, is used to draw the "tinted" canvas into a circle
+        clip of a slightly narrower radius so that the drawn image is visually more pleasing
+        and can be displayed above virtually any background color.
+
+        We use color math to generate the color wheel, courtesy of Dean Jackson, and also to
+        figure out where to position the crosshair for the provided base color as well as
+        the opposite operation where we get the color under the mouse pointer.
+
+        The color wheel fires a single delegate method call colorWheelColorDidChange(colorWheel),
+        the colors themselves being retrieved via the public properties tintedColor and rawColor.
+
+        (WebInspector.ColorWheel):
+        (WebInspector.ColorWheel.prototype.set dimension):
+        (WebInspector.ColorWheel.prototype.get element):
+        (WebInspector.ColorWheel.prototype.get brightness):
+        (WebInspector.ColorWheel.prototype.set brightness):
+        (WebInspector.ColorWheel.prototype.get tintedColor):
+        (WebInspector.ColorWheel.prototype.set tintedColor):
+        (WebInspector.ColorWheel.prototype.get rawColor):
+        (WebInspector.ColorWheel.prototype.handleEvent):
+        (WebInspector.ColorWheel.prototype._handleMousedown):
+        (WebInspector.ColorWheel.prototype._handleMousemove):
+        (WebInspector.ColorWheel.prototype._handleMouseup):
+        (WebInspector.ColorWheel.prototype._pointInCircleForEvent):
+        (WebInspector.ColorWheel.prototype._pointInCircleForEvent.angleFromCenterToPoint):
+        (WebInspector.ColorWheel.prototype._pointInCircleForEvent.pointOnCircumference):
+        (WebInspector.ColorWheel.prototype._updateColorForMouseEvent):
+        (WebInspector.ColorWheel.prototype._setCrosshairPosition):
+        (WebInspector.ColorWheel.prototype._tintedColorToPointAndBrightness):
+        (WebInspector.ColorWheel.prototype._drawRawCanvas):
+        (WebInspector.ColorWheel.prototype._colorAtPointWithBrightness):
+        (WebInspector.ColorWheel.prototype._drawTintedCanvas):
+        (WebInspector.ColorWheel.prototype._draw):
+
+        * UserInterface/Images/SliderThumb.png: Added.
+        * UserInterface/Images/SliderThumb@2x.png: Added.
+        * UserInterface/Images/SliderThumbPressed.png: Added.
+        * UserInterface/Images/SliderThumbPressed@2x.png: Added.
+        Supporting artwork for the new Slider class.
+
+        * UserInterface/Main.html:
+        Remove the previous color picker class and add the new one, as well as the new Slider class.
+
+        * UserInterface/Slider.css: Added.
+
+        * UserInterface/Slider.js: Added.
+        New slider to match the look of the sliders used in the native OS X color picker. The most
+        interesting feature of these sliders is that they can be transformed using CSS in any way
+        and will still operate correctly due to always converting the mouse coordinates in the page
+        coordinate system to the coordinate system local to the backing element. For instance, the
+        color picker uses two sliders transformed to be displayed vertically.
+
+        As it stands these slides only support values between 0 and 1 and fire a single delegate
+        method call sliderValueDidChange(slider, newValue).
+
+        (WebInspector.Slider):
+        (WebInspector.Slider.prototype.get element):
+        (WebInspector.Slider.prototype.get value):
+        (WebInspector.Slider.prototype.set value):
+        (WebInspector.Slider.prototype.handleEvent):
+        (WebInspector.Slider.prototype._handleMousedown):
+        (WebInspector.Slider.prototype._handleMousemove):
+        (WebInspector.Slider.prototype._handleMouseup):
+        (WebInspector.Slider.prototype._localPointForEvent):
+        (WebInspector.Slider.prototype.get _maxX):
+
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj:
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+        Update file names for the new color picker.
+
 2013-11-14  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: Popovers may shrink unnecessarily

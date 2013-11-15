@@ -743,19 +743,23 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
         } else {
             this._colorPickerPopover = new WebInspector.Popover(this);
 
-            var colorPicker = new WebInspector.CSSColorPicker;
-            colorPicker.color = color;
+            var colorPicker = new WebInspector.ColorPicker;
 
-            colorPicker.addEventListener(WebInspector.CSSColorPicker.Event.ColorChanged, function(event) {
+            colorPicker.addEventListener(WebInspector.ColorPicker.Event.ColorChanged, function(event) {
                 updateCodeMirror.call(this, event.data.color.toString());
             }.bind(this));
 
             var bounds = WebInspector.Rect.rectFromClientRect(swatch.getBoundingClientRect());
+            const padding = 2;
+            bounds.origin.x -= padding;
+            bounds.origin.y -= padding;
+            bounds.size.width += padding * 2;
+            bounds.size.height += padding * 2;
 
             this._colorPickerPopover.content = colorPicker.element;
             this._colorPickerPopover.present(bounds, [WebInspector.RectEdge.MIN_X]);
 
-            colorPicker.shown();
+            colorPicker.color = color;
         }
     },
 

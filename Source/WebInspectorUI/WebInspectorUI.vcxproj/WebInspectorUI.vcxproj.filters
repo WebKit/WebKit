@@ -249,10 +249,10 @@
     <None Include="..\UserInterface\CookieStorageTreeElement.js">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\CSSColorPicker.css">
+    <None Include="..\UserInterface\ColorPicker.css">
       <Filter>UserInterface</Filter>
     </None>
-    <None Include="..\UserInterface\CSSColorPicker.js">
+    <None Include="..\UserInterface\ColorPicker.js">
       <Filter>UserInterface</Filter>
     </None>
     <None Include="..\UserInterface\CSSCompletions.js">

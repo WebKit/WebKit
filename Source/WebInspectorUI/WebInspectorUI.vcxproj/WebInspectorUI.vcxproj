@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug_WinCairo|Win32">
@@ -214,8 +214,8 @@
     <None Include="..\UserInterface\CookieStorageContentView.js" />
     <None Include="..\UserInterface\CookieStorageObject.js" />
     <None Include="..\UserInterface\CookieStorageTreeElement.js" />
-    <None Include="..\UserInterface\CSSColorPicker.css" />
-    <None Include="..\UserInterface\CSSColorPicker.js" />
+    <None Include="..\UserInterface\ColorPicker.css" />
+    <None Include="..\UserInterface\ColorPicker.js" />
     <None Include="..\UserInterface\CSSCompletions.js" />
     <None Include="..\UserInterface\CSSKeywordCompletions.js" />
     <None Include="..\UserInterface\CSSMedia.js" />

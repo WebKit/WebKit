@@ -413,40 +413,20 @@ WebInspector.Color.prototype = {
         var s = parseFloat(hsl[1]) / 100;
         var l = parseFloat(hsl[2]) / 100;
 
-        if (s < 0)
-            s = 0;
-
-        if (l <= 0.5)
-            var q = l * (1 + s);
-        else
-            var q = l + s - (l * s);
-
-        var p = 2 * l - q;
-
-        var tr = h + (1 / 3);
-        var tg = h;
-        var tb = h - (1 / 3);
-
-        var r = Math.round(hueToRGB(p, q, tr) * 255);
-        var g = Math.round(hueToRGB(p, q, tg) * 255);
-        var b = Math.round(hueToRGB(p, q, tb) * 255);
-        return [r, g, b];
-
-        function hueToRGB(p, q, h) {
-            if (h < 0)
-                h += 1;
-            else if (h > 1)
-                h -= 1;
-
-            if ((h * 6) < 1)
-                return p + (q - p) * h * 6;
-            else if ((h * 2) < 1)
-                return q;
-            else if ((h * 3) < 2)
-                return p + (q - p) * ((2 / 3) - h) * 6;
-            else
-                return p;
-        }
+        h *= 6;
+        var sArray = [
+            l += s *= l < .5 ? l : 1 - l,
+            l - h % 1 * s * 2,
+            l -= s *= 2,
+            l,
+            l + h % 1 * s,
+            l + s
+        ];
+        return [
+            Math.round(sArray[ ~~h    % 6 ] * 255),
+            Math.round(sArray[ (h|16) % 6 ] * 255),
+            Math.round(sArray[ (h|8)  % 6 ] * 255)
+        ];
     },
 
     /**
@@ -851,3 +831,75 @@ WebInspector.Color.AdvancedNickNames = {
     "rgba(0,0,0,0)": [[0, 0, 0, 0], [0, 0, 0, 0], "transparent"],
     "hsla(0,0,0,0)": [[0, 0, 0, 0], [0, 0, 0, 0], "transparent"],
 };
+
+WebInspector.Color.rgb2hsv = function(r, g, b)
+{
+    r /= 255;
+    g /= 255;
+    b /= 255;
+
+    var min = Math.min(Math.min(r, g), b);
+    var max = Math.max(Math.max(r, g), b);
+    var delta = max - min;
+
+    var v = max;
+    var s, h;
+
+    if (max === min)
+        h = 0;
+    else if (max === r)
+        h = (60 * ((g - b) / delta)) % 360;
+    else if (max === g)
+        h = 60 * ((b - r) / delta) + 120;
+    else if (max === b)
+        h = 60 * ((r - g) / delta) + 240;
+
+    if (h < 0)
+        h += 360;
+
+    // Saturation
+    if (max === 0)
+        s = 0;
+    else
+        s = 1 - (min/max);
+
+    return [h, s, v];
+}
+
+WebInspector.Color.hsv2rgb = function(h, s, v)
+{
+    if (s === 0)
+        return [v, v, v];
+
+    h /= 60;
+    var i = Math.floor(h);
+    var data = [
+        v * (1 - s),
+        v * (1 - s * (h - i)),
+        v * (1 - s * (1 - (h - i)))
+    ];
+    var rgb;
+
+    switch (i) {
+    case 0:
+        rgb = [v, data[2], data[0]];
+        break;
+    case 1:
+        rgb = [data[1], v, data[0]];
+        break;
+    case 2:
+        rgb = [data[0], v, data[2]];
+        break;
+    case 3:
+        rgb = [data[0], data[1], v];
+        break;
+    case 4:
+        rgb = [data[2], data[0], v];
+        break;
+    default:
+        rgb = [v, data[0], data[1]];
+        break;
+    }
+
+    return rgb;
+}
