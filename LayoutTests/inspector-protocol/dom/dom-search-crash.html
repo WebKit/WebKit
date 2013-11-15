@@ -1,0 +1,27 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    InspectorTest.sendCommand("DOM.getDocument", {}, onGotDocument);
+
+    function onGotDocument(message) {
+        InspectorTest.checkForError(message);
+        InspectorTest.sendCommand("DOM.performSearch", {query: "FooBar"}, onSearchCompleted);
+    }
+
+    function onSearchCompleted(message)
+    {
+        InspectorTest.checkForError(message);
+        InspectorTest.log("PASS: Test passes if it doesn't crash.");
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body>
+<p>Tests that elements panel search is not crashing on documentElement-less cases.</p>
+<iframe src="resources/dom-search-crash-iframe.html" onload="runTest()"></iframe>
+</body>
+</html>

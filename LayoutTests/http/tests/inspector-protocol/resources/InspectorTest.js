@@ -62,7 +62,35 @@ InspectorFrontendAPI.dispatchMessageAsync = function(messageObject)
         var eventHandler = InspectorTest.eventHandler[eventName];
         if (eventHandler)
             eventHandler(messageObject);
+        else if (InspectorTest.defaultEventHandler)
+            InspectorTest.defaultEventHandler(messageObject);
     }
+}
+
+/**
+* Registers an event handler for messages coming from the InspectorBackend.
+* If multiple callbacks are registered for the same event, it will chain the execution.
+* @param {string} event name
+* @param {function} handler to be executed
+* @param {boolean} execute the handler before all other handlers
+*/
+InspectorTest.addEventListener = function(eventName, callback, capture)
+{
+    if (!InspectorTest.eventHandler[eventName]) {
+        InspectorTest.eventHandler[eventName] = callback;
+        return;
+    }
+    var firstHandler = InspectorTest.eventHandler[eventName];
+    var secondHandler = callback;
+    if (capture) {
+        // Swap firstHandler with the new callback, so that we execute the callback first.
+        [firstHandler, secondHandler] = [secondHandler, firstHandler];
+    }
+    InspectorTest.eventHandler[eventName] = function(messageObject)
+    {
+        firstHandler(messageObject);
+        secondHandler(messageObject);
+    };
 }
 
 /**
@@ -163,7 +191,7 @@ InspectorTest.importInspectorScripts = function()
         InspectorTest.importScript("../../../../../Source/WebInspectorUI/UserInterface/" + inspectorScripts[i] + ".js");
 
     // The initialization should be in sync with WebInspector.loaded in Main.js.
-    // FIXME: As soon as we can support all the observers and managers we should remove UI related tasks 
+    // FIXME: As soon as we can support all the observers and managers we should remove UI related tasks
     // from WebInspector.loaded, so that it can be used from the LayoutTests.
 
     InspectorBackend.registerPageDispatcher(new WebInspector.PageObserver);

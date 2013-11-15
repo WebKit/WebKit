@@ -208,7 +208,8 @@
         {
             "name": "performSearch",
             "parameters": [
-                { "name": "query", "type": "string", "description": "Plain text or query selector or XPath search query." }
+                { "name": "query", "type": "string", "description": "Plain text or query selector or XPath search query." },
+                { "name": "nodeIds", "type": "array", "items": { "$ref": "NodeId" }, "optional": true, "description": "Ids of nodes to use as starting points for the search." }
             ],
             "returns": [
                 { "name": "searchId", "type": "string", "description": "Unique search session identifier." },

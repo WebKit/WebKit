@@ -1,3 +1,40 @@
+2013-11-15  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: DOM.performSearch should accept a list of context nodes
+        https://bugs.webkit.org/show_bug.cgi?id=124390
+
+        Reviewed by Timothy Hatcher.
+
+        Extracted the code in InspectorDOMAgent::performSearch into its own helper class
+        called InspectorNodeFinder. Also added a new array parameter called "nodeIds"
+        that can be used to limit the search results to just partial subtrees.
+
+        Tests: inspector-protocol/dom/dom-search-crash.html
+               inspector-protocol/dom/dom-search-with-context.html
+               inspector-protocol/dom/dom-search.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/protocol/DOM.json:
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::performSearch):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorNodeFinder.cpp: Added.
+        (WebCore::stripCharacters):
+        (WebCore::InspectorNodeFinder::InspectorNodeFinder):
+        (WebCore::InspectorNodeFinder::performSearch):
+        (WebCore::InspectorNodeFinder::searchUsingDOMTreeTraversal):
+        (WebCore::InspectorNodeFinder::matchesAttribute):
+        (WebCore::InspectorNodeFinder::matchesElement):
+        (WebCore::InspectorNodeFinder::searchUsingXPath):
+        (WebCore::InspectorNodeFinder::searchUsingCSSSelectors):
+        * inspector/InspectorNodeFinder.h: Added.
+        (WebCore::InspectorNodeFinder::results):
+
 2013-11-15  Brady Eidson  <beidson@apple.com>
 
         Remove IDBBackingStoreInterface.h includes that are no longer needed

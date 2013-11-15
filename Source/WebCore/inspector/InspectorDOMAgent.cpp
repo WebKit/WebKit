@@ -71,6 +71,7 @@
 #include "InspectorClient.h"
 #include "InspectorFrontend.h"
 #include "InspectorHistory.h"
+#include "InspectorNodeFinder.h"
 #include "InspectorOverlay.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
@@ -80,7 +81,6 @@
 #include "MutationEvent.h"
 #include "Node.h"
 #include "NodeList.h"
-#include "NodeTraversal.h"
 #include "Page.h"
 #include "Pasteboard.h"
 #include "RenderStyle.h"
@@ -96,7 +96,6 @@
 #include "htmlediting.h"
 #include "markup.h"
 #include <wtf/HashSet.h>
-#include <wtf/ListHashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
@@ -881,128 +880,45 @@ void InspectorDOMAgent::getEventListeners(Node* node, Vector<EventListenerInfo>&
     }
 }
 
-void InspectorDOMAgent::performSearch(ErrorString*, const String& whitespaceTrimmedQuery, String* searchId, int* resultCount)
+void InspectorDOMAgent::performSearch(ErrorString* errorString, const String& whitespaceTrimmedQuery, const RefPtr<InspectorArray>* nodeIds, String* searchId, int* resultCount)
 {
-    // FIXME: Few things are missing here:
-    // 1) Search works with node granularity - number of matches within node is not calculated.
-    // 2) There is no need to push all search results to the front-end at a time, pushing next / previous result
-    //    is sufficient.
+    // FIXME: Search works with node granularity - number of matches within node is not calculated.
+    InspectorNodeFinder finder(whitespaceTrimmedQuery);
 
-    unsigned queryLength = whitespaceTrimmedQuery.length();
-    bool startTagFound = !whitespaceTrimmedQuery.find('<');
-    bool endTagFound = whitespaceTrimmedQuery.reverseFind('>') + 1 == queryLength;
-    bool startQuoteFound = !whitespaceTrimmedQuery.find('"');
-    bool endQuoteFound = whitespaceTrimmedQuery.reverseFind('"') + 1 == queryLength;
-    bool exactAttributeMatch = startQuoteFound && endQuoteFound;
-
-    String tagNameQuery = whitespaceTrimmedQuery;
-    String attributeQuery = whitespaceTrimmedQuery;
-    if (startTagFound)
-        tagNameQuery = tagNameQuery.right(tagNameQuery.length() - 1);
-    if (endTagFound)
-        tagNameQuery = tagNameQuery.left(tagNameQuery.length() - 1);
-    if (startQuoteFound)
-        attributeQuery = attributeQuery.right(attributeQuery.length() - 1);
-    if (endQuoteFound)
-        attributeQuery = attributeQuery.left(attributeQuery.length() - 1);
-
-    Vector<Document*> docs = documents();
-    ListHashSet<Node*> resultCollector;
-
-    for (Vector<Document*>::iterator it = docs.begin(); it != docs.end(); ++it) {
-        Document* document = *it;
-        Node* node = document->documentElement();
-        if (!node)
-            continue;
-
-        // Manual plain text search.
-        while ((node = NodeTraversal::next(node, document->documentElement()))) {
-            switch (node->nodeType()) {
-            case Node::TEXT_NODE:
-            case Node::COMMENT_NODE:
-            case Node::CDATA_SECTION_NODE: {
-                String text = node->nodeValue();
-                if (text.findIgnoringCase(whitespaceTrimmedQuery) != notFound)
-                    resultCollector.add(node);
-                break;
+    if (nodeIds) {
+        const RefPtr<InspectorArray>& nodeIdsRef = *nodeIds;
+        for (unsigned i = 0; i < nodeIdsRef->length(); ++i) {
+            RefPtr<InspectorValue> nodeValue = nodeIdsRef->get(i);
+            if (!nodeValue) {
+                *errorString = "Invalid nodeIds item.";
+                return;
             }
-            case Node::ELEMENT_NODE: {
-                if ((!startTagFound && !endTagFound && (node->nodeName().findIgnoringCase(tagNameQuery) != notFound))
-                    || (startTagFound && endTagFound && equalIgnoringCase(node->nodeName(), tagNameQuery))
-                    || (startTagFound && !endTagFound && node->nodeName().startsWith(tagNameQuery, false))
-                    || (!startTagFound && endTagFound && node->nodeName().endsWith(tagNameQuery, false))) {
-                    resultCollector.add(node);
-                    break;
-                }
-                // Go through all attributes and serialize them.
-                const Element* element = toElement(node);
-                if (!element->hasAttributes())
-                    break;
-
-                unsigned numAttrs = element->attributeCount();
-                for (unsigned i = 0; i < numAttrs; ++i) {
-                    // Add attribute pair
-                    const Attribute& attribute = element->attributeAt(i);
-                    if (attribute.localName().find(whitespaceTrimmedQuery) != notFound) {
-                        resultCollector.add(node);
-                        break;
-                    }
-                    size_t foundPosition = attribute.value().find(attributeQuery);
-                    if (foundPosition != notFound) {
-                        if (!exactAttributeMatch || (!foundPosition && attribute.value().length() == attributeQuery.length())) {
-                            resultCollector.add(node);
-                            break;
-                        }
-                    }
-                }
-                break;
+            int nodeId = 0;
+            if (!nodeValue->asNumber(&nodeId)) {
+                *errorString = "Invalid nodeIds item type. Expecting integer types.";
+                return;
             }
-            default:
-                break;
+            Node* node = assertNode(errorString, nodeId);
+            if (!node) {
+                // assertNode should have filled the errorString for us.
+                ASSERT(errorString->length());
+                return;
             }
+            finder.performSearch(node);
         }
-
-        // XPath evaluation
-        for (Vector<Document*>::iterator it = docs.begin(); it != docs.end(); ++it) {
-            Document* document = *it;
-            ExceptionCode ec = 0;
-            RefPtr<XPathResult> result = document->evaluate(whitespaceTrimmedQuery, document, 0, XPathResult::ORDERED_NODE_SNAPSHOT_TYPE, 0, ec);
-            if (ec || !result)
-                continue;
-
-            unsigned long size = result->snapshotLength(ec);
-            for (unsigned long i = 0; !ec && i < size; ++i) {
-                Node* node = result->snapshotItem(i, ec);
-                if (ec)
-                    break;
-
-                if (node->isAttributeNode())
-                    node = toAttr(node)->ownerElement();
-                resultCollector.add(node);
-            }
-        }
-
-        // Selector evaluation
-        for (Vector<Document*>::iterator it = docs.begin(); it != docs.end(); ++it) {
-            Document* document = *it;
-            ExceptionCode ec = 0;
-            RefPtr<NodeList> nodeList = document->querySelectorAll(whitespaceTrimmedQuery, ec);
-            if (ec || !nodeList)
-                continue;
-
-            unsigned size = nodeList->length();
-            for (unsigned i = 0; i < size; ++i)
-                resultCollector.add(nodeList->item(i));
-        }
+    } else if (m_document) {
+        // There's no need to iterate the frames tree because
+        // the search helper will go inside the frame owner elements.
+        finder.performSearch(m_document.get());
     }
 
     *searchId = IdentifiersFactory::createIdentifier();
-    SearchResults::iterator resultsIt = m_searchResults.add(*searchId, Vector<RefPtr<Node>>()).iterator;
 
-    for (ListHashSet<Node*>::iterator it = resultCollector.begin(); it != resultCollector.end(); ++it)
-        resultsIt->value.append(*it);
+    auto& resultsVector = m_searchResults.add(*searchId, Vector<RefPtr<Node>>()).iterator->value;
+    for (auto iterator = finder.results().begin(); iterator != finder.results().end(); ++iterator)
+        resultsVector.append(*iterator);
 
-    *resultCount = resultsIt->value.size();
+    *resultCount = resultsVector.size();
 }
 
 void InspectorDOMAgent::getSearchResults(ErrorString* errorString, const String& searchId, int fromIndex, int toIndex, RefPtr<TypeBuilder::Array<int>>& nodeIds)

@@ -1,0 +1,58 @@
+Testing DOM.performSearch with no parent node ids.
+
+
+=== Query: "body" ===
+Count: 2
+body.main-frame
+body.inside-iframe
+=== Query: "<body" ===
+Count: 2
+body.main-frame
+body.inside-iframe
+=== Query: "body>" ===
+Count: 2
+body.main-frame
+body.inside-iframe
+=== Query: "<body>" ===
+Count: 2
+body.main-frame
+body.inside-iframe
+=== Query: "onload" ===
+Count: 1
+body.main-frame
+=== Query: "runTest()" ===
+Count: 1
+body.main-frame
+=== Query: "\"runTest()" ===
+Count: 1
+body.main-frame
+=== Query: "\"runTest()\"" ===
+Count: 1
+body.main-frame
+=== Query: "runTest()\"" ===
+Count: 1
+body.main-frame
+=== Query: ".body-inside-iframe" ===
+Count: 0
+=== Query: "*" ===
+Count: 12
+html
+head
+script
+script
+body.main-frame
+p
+iframe
+html.inside-iframe
+head.inside-iframe
+body.inside-iframe
+div.base1.inside-iframe
+p.inside-iframe
+=== Query: "/html/body" ===
+Count: 2
+body.main-frame
+body.inside-iframe
+=== Query: "/html/body/@onload" ===
+Count: 1
+body.main-frame
+

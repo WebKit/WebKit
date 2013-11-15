@@ -1,3 +1,36 @@
+2013-11-15  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: DOM.performSearch should accept a list of context nodes
+        https://bugs.webkit.org/show_bug.cgi?id=124390
+
+        Reviewed by Timothy Hatcher.
+
+        Added new inspector-protocol tests to check for the DOM.performSearch implementation.
+        Also, ported an existing test from the old "inspector" format.
+
+        * http/tests/inspector-protocol/resources/InspectorDOMListener.js: Added boilerplate code that
+        can be used to track node ids and class names.
+        (createDOMListener.createNodeAttributesMap):
+        (createDOMListener.collectNode):
+        (createDOMListener.onSetChildNodes):
+        (createDOMListener.onChildNodeRemoved):
+        (createDOMListener.onChildNodeInserted):
+        (createDOMListener.return.getNodeById):
+        (createDOMListener.return.getNodeIdentifier):
+        * http/tests/inspector-protocol/resources/InspectorTest.js:
+        (InspectorFrontendAPI.dispatchMessageAsync): Added a way to catch all the messages received in the inspector.
+        It is useful for debugging the test file.
+        (InspectorTest.addEventListener): Helper method to register multiple handlers for the same event.
+        * inspector-protocol/dom/dom-search-crash-expected.txt: Added.
+        * inspector-protocol/dom/dom-search-crash.html: Added.
+        * inspector-protocol/dom/dom-search-expected.txt: Added.
+        * inspector-protocol/dom/dom-search-with-context-expected.txt: Added.
+        * inspector-protocol/dom/dom-search-with-context.html: Added.
+        * inspector-protocol/dom/dom-search.html: Added.
+        * inspector-protocol/dom/resources/dom-search-crash-iframe.html: Cloned from inspector/dom/resources/dom-search-crash-iframe.html
+        * inspector-protocol/dom/resources/dom-search-iframe.html: Added.
+        * inspector-protocol/dom/resources/dom-search-queries.js: Added.
+
 2013-11-15  Tim Horton  <timothy_horton@apple.com>
 
         Make lint-test-expectations pass for platform/win
