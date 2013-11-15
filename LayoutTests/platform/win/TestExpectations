@@ -589,7 +589,6 @@ accessibility/aria-text-role.html
 accessibility/aria-used-on-image-maps.html
 accessibility/button-press-action.html
 accessibility/document-attributes.html
-accessibility/hidden-legend.html
 accessibility/ignore-spacer-elements.html
 accessibility/image-link.html
 accessibility/image-map1.html
@@ -598,7 +597,6 @@ accessibility/img-aria-button-alt-tag.html
 accessibility/input-image-alt.html
 accessibility/internal-link-anchors2.html
 accessibility/language-attribute.html
-accessibility/legend.html
 accessibility/lists.html
 accessibility/media-element.html
 accessibility/nochildren-elements.html
@@ -1475,7 +1473,6 @@ fast/regions
 
 # CSS Exclusions support not yet enabled. http://webkit.org/b/57311
 fast/exclusions
-csswg/submitted/shapes
 
 # Causes a SyntaxError (http://webkit.org/b/62595).
 fast/workers/worker-crash-with-invalid-location.html
@@ -2567,8 +2564,6 @@ webkit.org/b/116564 fast/dom/Window/window-postmessage-clone.html
 webkit.org/b/116564 fast/dom/Window/window-resize.html
 webkit.org/b/116564 fast/events/clientXY-in-zoom-and-scroll.html
 webkit.org/b/116564 fast/events/remove-target-with-shadow-in-drag.html
-webkit.org/b/116564 js/global-constructors-attributes.html
-webkit.org/b/116564 js/post-message-numeric-property.html
 webkit.org/b/116564 fast/overflow/infiniteRecursionGuard.html
 webkit.org/b/116564 fast/text/text-combine-different-fonts.html
 webkit.org/b/116564 fast/writing-mode/Kusa-Makura-background-canvas.html
@@ -2750,7 +2745,6 @@ webkit.org/b/121509 fast/events/page-visibility-transition-test.html	[ Skip ]
 webkit.org/b/121509 fast/events/page-visibility-iframe-move-test.html	[ Skip ]
 webkit.org/b/121509 fast/history/go-back-to-iframe-with-plugin.html	[ Skip ]
 webkit.org/b/121509 loader/go-back-to-different-window-size.html	[ Skip ]
-webkit.org/b/121509 fast/events/drag-and-drop-autoscroll-inner-frame.html [ Skip ]
 
 # The following test cases are crashing:
 webkit.org/b/121510 fast/parser/residual-style-hang.html	[ Skip ]
@@ -2840,23 +2834,11 @@ csswg/contributors/adobe/submitted/shapes
 # The following tests fail due to the new CSS/JS-based media controls.
 # They need to be rebaselined.
 # REGRESSION(r156730): 18 media tests broken (122021)
-webkit.org/b/122021 media/track/track-cue-mutable-text.html [ Failure ]
 webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html [ Failure ]
-webkit.org/b/122021 media/track/track-in-band-mode.html [ Failure ]
-webkit.org/b/122021 media/video-controls-captions-trackmenu-localized.html [ Failure ]
-webkit.org/b/122021 media/video-controls-captions-trackmenu-sorted.html [ Failure ]
-webkit.org/b/122021 media/video-controls-captions-trackmenu.html [ Failure ]
-webkit.org/b/122021 media/video-controls-fullscreen-volume.html [ Failure ]
 webkit.org/b/122021 media/video-controls-no-scripting.html [ Failure ]
-webkit.org/b/122021 media/video-controls-rendering.html [ Failure ]
 webkit.org/b/122021 media/video-controls-toggling.html [ Failure ]
-webkit.org/b/122021 media/video-controls-visible-exiting-fullscreen.html [ Failure ]
-webkit.org/b/122021 media/video-display-toggle.html [ Failure ]
-webkit.org/b/122021 media/video-empty-source.html [ Failure ]
 webkit.org/b/122021 media/video-rtl.html [ Failure ]
-webkit.org/b/122021 media/video-volume-slider.html [ Failure ]
 webkit.org/b/122021 media/volume-bar-empty-when-muted.html [ Failure ]
-webkit.org/b/122021 media/track/track-cue-rendering-vertical.html [ Pass Failure ]
 
 # The following tests also seem affected by r156730
 webkit.org/b/122166 media/track/audio-track.html [ Failure ]

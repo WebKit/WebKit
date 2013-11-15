@@ -1,5 +1,12 @@
 2013-11-15  Tim Horton  <timothy_horton@apple.com>
 
+        Make lint-test-expectations pass for platform/win
+
+        * platform/win/TestExpectations:
+        I always kept the stronger expectation in the case of duplicates.
+
+2013-11-15  Tim Horton  <timothy_horton@apple.com>
+
         Layout Test fast/dom/Geolocation/notimer-after-unload.html is flaky and crashy on Mac WK2
         https://bugs.webkit.org/show_bug.cgi?id=124425
 
