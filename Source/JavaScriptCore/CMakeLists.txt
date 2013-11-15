@@ -329,7 +329,6 @@ set(JavaScriptCore_SOURCES
     runtime/JSBoundFunction.cpp
     runtime/JSCJSValue.cpp
     runtime/JSCell.cpp
-    runtime/JSChunk.cpp
     runtime/JSDataView.cpp
     runtime/JSDataViewPrototype.cpp
     runtime/JSDateMath.cpp

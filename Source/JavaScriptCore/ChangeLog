@@ -1,5 +1,18 @@
 2013-11-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Remove JSChunk
+        https://bugs.webkit.org/show_bug.cgi?id=124435
+
+        Reviewed by Geoffrey Garen.
+
+        It's empty and has been since it was added 3 years ago.
+
+        * CMakeLists.txt:
+        * runtime/JSChunk.cpp: Removed.
+        * runtime/JSChunk.h: Removed.
+
+2013-11-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Remove VTableSpectrum
         https://bugs.webkit.org/show_bug.cgi?id=124427
 
