@@ -1922,11 +1922,6 @@ void IDBBackingStoreLevelDB::establishBackingStoreTransaction(int64_t transactio
     m_backingStoreTransactions.set(transactionID, IDBBackingStoreTransactionLevelDB::create(transactionID, this));
 }
 
-IDBBackingStoreTransactionInterface* IDBBackingStoreLevelDB::deprecatedBackingStoreTransaction(int64_t transactionID)
-{
-    return m_backingStoreTransactions.get(transactionID);
-}
-
 void IDBBackingStoreLevelDB::removeBackingStoreTransaction(IDBBackingStoreTransactionLevelDB* transaction)
 {
     ASSERT(m_backingStoreTransactions.contains(transaction->transactionID()));

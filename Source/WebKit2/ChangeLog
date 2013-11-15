@@ -1,3 +1,12 @@
+2013-11-15  Brady Eidson  <beidson@apple.com>
+
+        Move execution of IDBTransactionBackendOperations to the IDBServerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=124385
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/Databases/IndexedDB/WebProcessIDBDatabaseBackend.h:
+
 2013-11-15  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Fixed incorrectly placed NETWORK_PROCESS guard in NetworkConnectionToWebProcess.cpp

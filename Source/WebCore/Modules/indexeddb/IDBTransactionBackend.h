@@ -32,7 +32,6 @@
 #include "IDBDatabaseBackend.h"
 #include "IDBDatabaseError.h"
 #include "IDBOperation.h"
-#include "IDBTransactionBackend.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
@@ -64,13 +63,12 @@ public:
 
     void addPreemptiveEvent()  { m_pendingPreemptiveEvents++; }
     void didCompletePreemptiveEvent()  { m_pendingPreemptiveEvents--; ASSERT(m_pendingPreemptiveEvents >= 0); }
-    IDBBackingStoreTransactionInterface& deprecatedBackingStoreTransaction();
 
     IDBDatabaseBackend& database() const  { return *m_database; }
 
     void scheduleCreateObjectStoreOperation(const IDBObjectStoreMetadata&);
     void scheduleDeleteObjectStoreOperation(const IDBObjectStoreMetadata&);
-    void scheduleVersionChangeOperation(int64_t transactionId, int64_t requestedVersion, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, const IDBDatabaseMetadata&);
+    void scheduleVersionChangeOperation(int64_t requestedVersion, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, const IDBDatabaseMetadata&);
     void scheduleCreateIndexOperation(int64_t objectStoreId, const IDBIndexMetadata&);
     void scheduleDeleteIndexOperation(int64_t objectStoreId, const IDBIndexMetadata&);
     void scheduleGetOperation(const IDBDatabaseMetadata&, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, IndexedDB::CursorType, PassRefPtr<IDBCallbacks>);
@@ -79,7 +77,7 @@ public:
     void scheduleOpenCursorOperation(int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, IndexedDB::CursorDirection, IndexedDB::CursorType, IDBDatabaseBackend::TaskType, PassRefPtr<IDBCallbacks>);
     void scheduleCountOperation(int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>);
     void scheduleDeleteRangeOperation(int64_t objectStoreId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>);
-    void scheduleClearOperation(int64_t objectStoreId, PassRefPtr<IDBCallbacks>);
+    void scheduleClearObjectStoreOperation(int64_t objectStoreId, PassRefPtr<IDBCallbacks>);
 
     PassRefPtr<IDBCursorBackend> createCursorBackend(IDBBackingStoreCursorInterface&, IndexedDB::CursorType, IDBDatabaseBackend::TaskType, int64_t objectStoreId);
 

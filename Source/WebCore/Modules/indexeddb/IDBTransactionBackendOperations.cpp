@@ -31,381 +31,159 @@
 #include "IDBIndexWriter.h"
 #include "IDBKeyRange.h"
 #include "IDBRecordIdentifier.h"
+#include "IDBServerConnection.h"
 #include "Logging.h"
 #include <wtf/text/CString.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
+#define STANDARD_DATABASE_ERROR_CALLBACK std::function<void(PassRefPtr<IDBDatabaseError>)> operationCallback = \
+    [operation, completionCallback](PassRefPtr<IDBDatabaseError> error) { \
+        if (error) \
+            operation->m_transaction->abort(error); \
+        completionCallback(); \
+    };
+
 namespace WebCore {
-
-class CallOnDestruct {
-public:
-    CallOnDestruct(std::function<void()> callback)
-        : m_callback(callback)
-    { }
-
-    ~CallOnDestruct()
-    {
-        m_callback();
-    }
-
-private:
-    std::function<void()> m_callback;
-};
 
 void CreateObjectStoreOperation::perform(std::function<void()> completionCallback)
 {
-    CallOnDestruct callOnDestruct(completionCallback);
-
     LOG(StorageAPI, "CreateObjectStoreOperation");
-    if (!m_transaction->database().serverConnection().deprecatedBackingStore()->createObjectStore(m_transaction->deprecatedBackingStoreTransaction(), m_transaction->database().id(), m_objectStoreMetadata.id, m_objectStoreMetadata.name, m_objectStoreMetadata.keyPath, m_objectStoreMetadata.autoIncrement)) {
-        RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error creating object store '%s'.", m_objectStoreMetadata.name.utf8().data()));
-        m_transaction->abort(error.release());
-        return;
-    }
+
+    RefPtr<CreateObjectStoreOperation> operation(this);
+    STANDARD_DATABASE_ERROR_CALLBACK;
+
+    m_transaction->database().serverConnection().createObjectStore(*m_transaction, *this, operationCallback);
 }
 
 void CreateIndexOperation::perform(std::function<void()> completionCallback)
 {
-    CallOnDestruct callOnDestruct(completionCallback);
-
     LOG(StorageAPI, "CreateIndexOperation");
-    if (!m_transaction->database().serverConnection().deprecatedBackingStore()->createIndex(m_transaction->deprecatedBackingStoreTransaction(), m_transaction->database().id(), m_objectStoreId, m_indexMetadata.id, m_indexMetadata.name, m_indexMetadata.keyPath, m_indexMetadata.unique, m_indexMetadata.multiEntry)) {
-        m_transaction->abort(IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error when trying to create index '%s'.", m_indexMetadata.name.utf8().data())));
-        return;
-    }
+
+    RefPtr<CreateIndexOperation> operation(this);
+    STANDARD_DATABASE_ERROR_CALLBACK;
+
+    m_transaction->database().serverConnection().createIndex(*m_transaction, *this, operationCallback);
 }
 
 void CreateIndexAbortOperation::perform()
 {
     LOG(StorageAPI, "CreateIndexAbortOperation");
-    m_transaction->database().removeIndex(m_objectStoreId, m_indexId);
+    m_transaction->database().removeIndex(m_objectStoreID, m_indexID);
 }
 
 void DeleteIndexOperation::perform(std::function<void()> completionCallback)
 {
-    CallOnDestruct callOnDestruct(completionCallback);
-
     LOG(StorageAPI, "DeleteIndexOperation");
-    bool ok = m_transaction->database().serverConnection().deprecatedBackingStore()->deleteIndex(m_transaction->deprecatedBackingStoreTransaction(), m_transaction->database().id(), m_objectStoreId, m_indexMetadata.id);
-    if (!ok) {
-        RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error deleting index '%s'.", m_indexMetadata.name.utf8().data()));
-        m_transaction->abort(error);
-    }
+
+    RefPtr<DeleteIndexOperation> operation(this);
+    STANDARD_DATABASE_ERROR_CALLBACK;
+
+    m_transaction->database().serverConnection().deleteIndex(*m_transaction, *this, operationCallback);
 }
 
 void DeleteIndexAbortOperation::perform()
 {
     LOG(StorageAPI, "DeleteIndexAbortOperation");
-    m_transaction->database().addIndex(m_objectStoreId, m_indexMetadata, IDBIndexMetadata::InvalidId);
+    m_transaction->database().addIndex(m_objectStoreID, m_indexMetadata, IDBIndexMetadata::InvalidId);
 }
 
 void GetOperation::perform(std::function<void()> completionCallback)
 {
-    CallOnDestruct callOnDestruct(completionCallback);
-
     LOG(StorageAPI, "GetOperation");
 
-    RefPtr<IDBKey> key;
+    RefPtr<GetOperation> operation(this);
+    STANDARD_DATABASE_ERROR_CALLBACK;
 
-    if (m_keyRange->isOnlyKey())
-        key = m_keyRange->lower();
-    else {
-        RefPtr<IDBBackingStoreCursorInterface> backingStoreCursor;
-        if (m_indexId == IDBIndexMetadata::InvalidId) {
-            ASSERT(m_cursorType != IndexedDB::CursorKeyOnly);
-            // ObjectStore Retrieval Operation
-            backingStoreCursor = m_transaction->database().serverConnection().deprecatedBackingStore()->openObjectStoreCursor(m_transaction->deprecatedBackingStoreTransaction(), m_databaseId, m_objectStoreId, m_keyRange.get(), IndexedDB::CursorNext);
-        } else {
-            if (m_cursorType == IndexedDB::CursorKeyOnly) {
-                // Index Value Retrieval Operation
-                backingStoreCursor = m_transaction->database().serverConnection().deprecatedBackingStore()->openIndexKeyCursor(m_transaction->deprecatedBackingStoreTransaction(), m_databaseId, m_objectStoreId, m_indexId, m_keyRange.get(), IndexedDB::CursorNext);
-            } else {
-                // Index Referenced Value Retrieval Operation
-                backingStoreCursor = m_transaction->database().serverConnection().deprecatedBackingStore()->openIndexCursor(m_transaction->deprecatedBackingStoreTransaction(), m_databaseId, m_objectStoreId, m_indexId, m_keyRange.get(), IndexedDB::CursorNext);
-            }
-        }
-
-        if (!backingStoreCursor) {
-            m_callbacks->onSuccess();
-            return;
-        }
-
-        key = backingStoreCursor->key();
-    }
-
-    RefPtr<IDBKey> primaryKey;
-    bool ok;
-    if (m_indexId == IDBIndexMetadata::InvalidId) {
-        // Object Store Retrieval Operation
-        Vector<char> value;
-        ok = m_transaction->database().serverConnection().deprecatedBackingStore()->getRecord(m_transaction->deprecatedBackingStoreTransaction(), m_databaseId, m_objectStoreId, *key, value);
-        if (!ok) {
-            m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error in getRecord."));
-            return;
-        }
-
-        if (value.isEmpty()) {
-            m_callbacks->onSuccess();
-            return;
-        }
-
-        if (m_autoIncrement && !m_keyPath.isNull()) {
-            m_callbacks->onSuccess(SharedBuffer::adoptVector(value), key, m_keyPath);
-            return;
-        }
-
-        m_callbacks->onSuccess(SharedBuffer::adoptVector(value));
-        return;
-
-    }
-
-    // From here we are dealing only with indexes.
-    ok = m_transaction->database().serverConnection().deprecatedBackingStore()->getPrimaryKeyViaIndex(m_transaction->deprecatedBackingStoreTransaction(), m_databaseId, m_objectStoreId, m_indexId, *key, primaryKey);
-    if (!ok) {
-        m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error in getPrimaryKeyViaIndex."));
-        return;
-    }
-    if (!primaryKey) {
-        m_callbacks->onSuccess();
-        return;
-    }
-    if (m_cursorType == IndexedDB::CursorKeyOnly) {
-        // Index Value Retrieval Operation
-        m_callbacks->onSuccess(primaryKey.get());
-        return;
-    }
-
-    // Index Referenced Value Retrieval Operation
-    Vector<char> value;
-    ok = m_transaction->database().serverConnection().deprecatedBackingStore()->getRecord(m_transaction->deprecatedBackingStoreTransaction(), m_databaseId, m_objectStoreId, *primaryKey, value);
-    if (!ok) {
-        m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error in getRecord."));
-        return;
-    }
-
-    if (value.isEmpty()) {
-        m_callbacks->onSuccess();
-        return;
-    }
-    if (m_autoIncrement && !m_keyPath.isNull()) {
-        m_callbacks->onSuccess(SharedBuffer::adoptVector(value), primaryKey, m_keyPath);
-        return;
-    }
-    m_callbacks->onSuccess(SharedBuffer::adoptVector(value));
+    m_transaction->database().serverConnection().get(*m_transaction, *this, operationCallback);
 }
 
 void PutOperation::perform(std::function<void()> completionCallback)
 {
-    CallOnDestruct callOnDestruct(completionCallback);
-
     LOG(StorageAPI, "PutOperation");
     ASSERT(m_transaction->mode() != IndexedDB::TransactionReadOnly);
-    ASSERT(m_indexIds.size() == m_indexKeys.size());
-    bool keyWasGenerated = false;
+    ASSERT(m_indexIDs.size() == m_indexKeys.size());
 
-    RefPtr<IDBKey> key;
-    if (m_putMode != IDBDatabaseBackend::CursorUpdate && m_objectStore.autoIncrement && !m_key) {
-        RefPtr<IDBKey> autoIncKey = m_transaction->database().serverConnection().deprecatedBackingStore()->generateKey(*m_transaction, m_databaseId, m_objectStore.id);
-        keyWasGenerated = true;
-        if (!autoIncKey->isValid()) {
-            m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::ConstraintError, "Maximum key generator value reached."));
-            return;
-        }
-        key = autoIncKey;
-    } else
-        key = m_key;
+    RefPtr<PutOperation> operation(this);
+    STANDARD_DATABASE_ERROR_CALLBACK;
 
-    ASSERT(key);
-    ASSERT(key->isValid());
-
-    RefPtr<IDBRecordIdentifier> recordIdentifier;
-    if (m_putMode == IDBDatabaseBackend::AddOnly) {
-        bool ok = m_transaction->database().serverConnection().deprecatedBackingStore()->keyExistsInObjectStore(m_transaction->deprecatedBackingStoreTransaction(), m_databaseId, m_objectStore.id, *key, recordIdentifier);
-        if (!ok) {
-            m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error checking key existence."));
-            return;
-        }
-        if (recordIdentifier) {
-            m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::ConstraintError, "Key already exists in the object store."));
-            return;
-        }
-    }
-
-    Vector<RefPtr<IDBIndexWriter>> indexWriters;
-    String errorMessage;
-    bool obeysConstraints = false;
-    bool backingStoreSuccess = m_transaction->database().serverConnection().deprecatedBackingStore()->makeIndexWriters(m_transaction->id(), m_databaseId, m_objectStore, *key, keyWasGenerated, m_indexIds, m_indexKeys, indexWriters, &errorMessage, obeysConstraints);
-    if (!backingStoreSuccess) {
-        m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error: backing store error updating index keys."));
-        return;
-    }
-    if (!obeysConstraints) {
-        m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::ConstraintError, errorMessage));
-        return;
-    }
-
-    // Before this point, don't do any mutation. After this point, rollback the transaction in case of error.
-    backingStoreSuccess = m_transaction->database().serverConnection().deprecatedBackingStore()->putRecord(m_transaction->deprecatedBackingStoreTransaction(), m_databaseId, m_objectStore.id, *key, m_value, recordIdentifier.get());
-    if (!backingStoreSuccess) {
-        m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error: backing store error performing put/add."));
-        return;
-    }
-
-    for (size_t i = 0; i < indexWriters.size(); ++i) {
-        IDBIndexWriter* indexWriter = indexWriters[i].get();
-        indexWriter->writeIndexKeys(recordIdentifier.get(), *m_transaction->database().serverConnection().deprecatedBackingStore(), m_transaction->deprecatedBackingStoreTransaction(), m_databaseId, m_objectStore.id);
-    }
-
-    if (m_objectStore.autoIncrement && m_putMode != IDBDatabaseBackend::CursorUpdate && key->type() == IDBKey::NumberType) {
-        bool ok = m_transaction->database().serverConnection().deprecatedBackingStore()->updateKeyGenerator(*m_transaction, m_databaseId, m_objectStore.id, *key, !keyWasGenerated);
-        if (!ok) {
-            m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error updating key generator."));
-            return;
-        }
-    }
-
-    m_callbacks->onSuccess(key.release());
+    m_transaction->database().serverConnection().put(*m_transaction, *this, operationCallback);
 }
 
 void SetIndexesReadyOperation::perform(std::function<void()> completionCallback)
 {
-    CallOnDestruct callOnDestruct(completionCallback);
-
     LOG(StorageAPI, "SetIndexesReadyOperation");
+
     for (size_t i = 0; i < m_indexCount; ++i)
         m_transaction->didCompletePreemptiveEvent();
+
+    callOnMainThread(completionCallback);
 }
 
 void OpenCursorOperation::perform(std::function<void()> completionCallback)
 {
-    CallOnDestruct callOnDestruct(completionCallback);
-
     LOG(StorageAPI, "OpenCursorOperation");
 
-    // The frontend has begun indexing, so this pauses the transaction
-    // until the indexing is complete. This can't happen any earlier
-    // because we don't want to switch to early mode in case multiple
-    // indexes are being created in a row, with put()'s in between.
-    if (m_taskType == IDBDatabaseBackend::PreemptiveTask)
-        m_transaction->addPreemptiveEvent();
+    RefPtr<OpenCursorOperation> operation(this);
+    STANDARD_DATABASE_ERROR_CALLBACK;
 
-    RefPtr<IDBBackingStoreCursorInterface> backingStoreCursor;
-    if (m_indexId == IDBIndexMetadata::InvalidId) {
-        ASSERT(m_cursorType != IndexedDB::CursorKeyOnly);
-        backingStoreCursor = m_transaction->database().serverConnection().deprecatedBackingStore()->openObjectStoreCursor(m_transaction->deprecatedBackingStoreTransaction(), m_databaseId, m_objectStoreId, m_keyRange.get(), m_direction);
-    } else {
-        ASSERT(m_taskType == IDBDatabaseBackend::NormalTask);
-        if (m_cursorType == IndexedDB::CursorKeyOnly)
-            backingStoreCursor = m_transaction->database().serverConnection().deprecatedBackingStore()->openIndexKeyCursor(m_transaction->deprecatedBackingStoreTransaction(), m_databaseId, m_objectStoreId, m_indexId, m_keyRange.get(), m_direction);
-        else
-            backingStoreCursor = m_transaction->database().serverConnection().deprecatedBackingStore()->openIndexCursor(m_transaction->deprecatedBackingStoreTransaction(), m_databaseId, m_objectStoreId, m_indexId, m_keyRange.get(), m_direction);
-    }
-
-    if (!backingStoreCursor) {
-        m_callbacks->onSuccess(static_cast<SharedBuffer*>(0));
-        return;
-    }
-
-    IDBDatabaseBackend::TaskType taskType(static_cast<IDBDatabaseBackend::TaskType>(m_taskType));
-
-    RefPtr<IDBCursorBackend> cursor = m_transaction->createCursorBackend(*backingStoreCursor, m_cursorType, taskType, m_objectStoreId);
-    m_callbacks->onSuccess(cursor, cursor->key(), cursor->primaryKey(), cursor->value());
+    m_transaction->database().serverConnection().openCursor(*m_transaction, *this, operationCallback);
 }
 
 void CountOperation::perform(std::function<void()> completionCallback)
 {
-    CallOnDestruct callOnDestruct(completionCallback);
-
     LOG(StorageAPI, "CountOperation");
-    uint32_t count = 0;
-    RefPtr<IDBBackingStoreCursorInterface> backingStoreCursor;
 
-    if (m_indexId == IDBIndexMetadata::InvalidId)
-        backingStoreCursor = m_transaction->database().serverConnection().deprecatedBackingStore()->openObjectStoreKeyCursor(m_transaction->deprecatedBackingStoreTransaction(), m_databaseId, m_objectStoreId, m_keyRange.get(), IndexedDB::CursorNext);
-    else
-        backingStoreCursor = m_transaction->database().serverConnection().deprecatedBackingStore()->openIndexKeyCursor(m_transaction->deprecatedBackingStoreTransaction(), m_databaseId, m_objectStoreId, m_indexId, m_keyRange.get(), IndexedDB::CursorNext);
-    if (!backingStoreCursor) {
-        m_callbacks->onSuccess(count);
-        return;
-    }
+    RefPtr<CountOperation> operation(this);
+    STANDARD_DATABASE_ERROR_CALLBACK;
 
-    do {
-        ++count;
-    } while (backingStoreCursor->continueFunction(0));
-
-    m_callbacks->onSuccess(count);
+    m_transaction->database().serverConnection().count(*m_transaction, *this, operationCallback);
 }
 
 void DeleteRangeOperation::perform(std::function<void()> completionCallback)
 {
-    CallOnDestruct callOnDestruct(completionCallback);
-
     LOG(StorageAPI, "DeleteRangeOperation");
-    RefPtr<IDBBackingStoreCursorInterface> backingStoreCursor = m_transaction->database().serverConnection().deprecatedBackingStore()->openObjectStoreCursor(m_transaction->deprecatedBackingStoreTransaction(), m_databaseId, m_objectStoreId, m_keyRange.get(), IndexedDB::CursorNext);
-    if (backingStoreCursor) {
-        do {
-            if (!m_transaction->database().serverConnection().deprecatedBackingStore()->deleteRecord(m_transaction->deprecatedBackingStoreTransaction(), m_databaseId, m_objectStoreId, backingStoreCursor->recordIdentifier())) {
-                m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Error deleting data in range"));
-                return;
-            }
-        } while (backingStoreCursor->continueFunction(0));
-    }
 
-    m_callbacks->onSuccess();
+    RefPtr<DeleteRangeOperation> operation(this);
+    STANDARD_DATABASE_ERROR_CALLBACK;
+
+    m_transaction->database().serverConnection().deleteRange(*m_transaction, *this, operationCallback);
 }
 
-void ClearOperation::perform(std::function<void()> completionCallback)
+void ClearObjectStoreOperation::perform(std::function<void()> completionCallback)
 {
-    CallOnDestruct callOnDestruct(completionCallback);
+    LOG(StorageAPI, "ClearObjectStoreOperation");
 
-    LOG(StorageAPI, "ObjectStoreClearOperation");
-    if (!m_transaction->database().serverConnection().deprecatedBackingStore()->clearObjectStore(m_transaction->deprecatedBackingStoreTransaction(), m_databaseId, m_objectStoreId)) {
-        m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Error clearing object store"));
-        return;
-    }
-    m_callbacks->onSuccess();
+    RefPtr<ClearObjectStoreOperation> operation(this);
+    STANDARD_DATABASE_ERROR_CALLBACK;
+
+    m_transaction->database().serverConnection().clearObjectStore(*m_transaction, *this, operationCallback);
 }
 
 void DeleteObjectStoreOperation::perform(std::function<void()> completionCallback)
 {
-    CallOnDestruct callOnDestruct(completionCallback);
-
     LOG(StorageAPI, "DeleteObjectStoreOperation");
-    bool ok = m_transaction->database().serverConnection().deprecatedBackingStore()->deleteObjectStore(m_transaction->deprecatedBackingStoreTransaction(), m_transaction->database().id(), m_objectStoreMetadata.id);
-    if (!ok) {
-        RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error deleting object store '%s'.", m_objectStoreMetadata.name.utf8().data()));
-        m_transaction->abort(error);
-    }
+
+    RefPtr<DeleteObjectStoreOperation> operation(this);
+    STANDARD_DATABASE_ERROR_CALLBACK;
+
+    m_transaction->database().serverConnection().deleteObjectStore(*m_transaction, *this, operationCallback);
 }
 
 void IDBDatabaseBackend::VersionChangeOperation::perform(std::function<void()> completionCallback)
 {
-    CallOnDestruct callOnDestruct(completionCallback);
-
     LOG(StorageAPI, "VersionChangeOperation");
-    IDBDatabaseBackend& database = m_transaction->database();
-    int64_t databaseId = database.id();
-    uint64_t oldVersion = database.metadata().version;
 
-    // FIXME: Database versions are now of type uint64_t, but this code expected int64_t.
-    ASSERT(m_version > (int64_t)oldVersion);
-    database.setCurrentVersion(m_version);
-    if (!database.serverConnection().deprecatedBackingStore()->updateIDBDatabaseVersion(m_transaction->deprecatedBackingStoreTransaction(), databaseId, database.metadata().version)) {
-        RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Error writing data to stable storage when updating version.");
-        m_callbacks->onError(error);
-        m_transaction->abort(error);
-        return;
-    }
-    ASSERT(!database.hasPendingSecondHalfOpen());
-    database.setPendingSecondHalfOpen(IDBPendingOpenCall::create(*m_callbacks, *m_databaseCallbacks, m_transactionId, m_version));
-    m_callbacks->onUpgradeNeeded(oldVersion, &database, database.metadata());
+    RefPtr<IDBDatabaseBackend::VersionChangeOperation> operation(this);
+    STANDARD_DATABASE_ERROR_CALLBACK;
+
+    m_transaction->database().serverConnection().changeDatabaseVersion(*m_transaction, *this, operationCallback);
 }
 
 void CreateObjectStoreAbortOperation::perform()
 {
     LOG(StorageAPI, "CreateObjectStoreAbortOperation");
-    m_transaction->database().removeObjectStore(m_objectStoreId);
+    m_transaction->database().removeObjectStore(m_objectStoreID);
 }
 
 void DeleteObjectStoreAbortOperation::perform()

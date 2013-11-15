@@ -34,6 +34,7 @@
 #include "IDBFactoryBackendInterface.h"
 #include "IDBKeyRange.h"
 #include "IDBRecordIdentifier.h"
+#include "IDBServerConnection.h"
 #include "IDBTransactionBackend.h"
 #include "IDBTransactionCoordinator.h"
 #include "Logging.h"
@@ -301,7 +302,7 @@ void IDBDatabaseBackend::deleteRange(int64_t transactionId, int64_t objectStoreI
     transaction->scheduleDeleteRangeOperation(objectStoreId, keyRange, callbacks);
 }
 
-void IDBDatabaseBackend::clear(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBCallbacks> callbacks)
+void IDBDatabaseBackend::clearObjectStore(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBCallbacks> callbacks)
 {
     LOG(StorageAPI, "IDBDatabaseBackend::clear");
     IDBTransactionBackend* transaction = m_transactions.get(transactionId);
@@ -309,7 +310,7 @@ void IDBDatabaseBackend::clear(int64_t transactionId, int64_t objectStoreId, Pas
         return;
     ASSERT(transaction->mode() != IndexedDB::TransactionReadOnly);
 
-    transaction->scheduleClearOperation(objectStoreId, callbacks);
+    transaction->scheduleClearObjectStoreOperation(objectStoreId, callbacks);
 }
 
 void IDBDatabaseBackend::transactionStarted(IDBTransactionBackend* transaction)
@@ -524,7 +525,7 @@ void IDBDatabaseBackend::runIntVersionChangeTransaction(PassRefPtr<IDBCallbacks>
     createTransaction(transactionId, databaseCallbacks, objectStoreIds, IndexedDB::TransactionVersionChange);
     RefPtr<IDBTransactionBackend> transaction = m_transactions.get(transactionId);
 
-    transaction->scheduleVersionChangeOperation(transactionId, requestedVersion, callbacks, databaseCallbacks, m_metadata);
+    transaction->scheduleVersionChangeOperation(requestedVersion, callbacks, databaseCallbacks, m_metadata);
 
     ASSERT(!m_pendingSecondHalfOpen);
     m_databaseCallbacksSet.add(databaseCallbacks);

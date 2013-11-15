@@ -1,3 +1,130 @@
+2013-11-15  Brady Eidson  <beidson@apple.com>
+
+        Move execution of IDBTransactionBackendOperations to the IDBServerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=124385
+
+        Reviewed by Tim Horton.
+
+        Each IDBOperation has it’s ::perform() moved to a method on IDBServerConnection.
+        This almost removes all knowledge of the backing stores from the front end.
+
+        * Modules/indexeddb/IDBDatabaseBackend.cpp:
+        (WebCore::IDBDatabaseBackend::clearObjectStore):
+        (WebCore::IDBDatabaseBackend::runIntVersionChangeTransaction):
+        * Modules/indexeddb/IDBDatabaseBackend.h:
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::clear):
+
+        Add methods to reflect each transaction backend operation:
+        * Modules/indexeddb/IDBServerConnection.h:
+
+        Schedule certain operations with callbacks:
+        * Modules/indexeddb/IDBTransactionBackend.cpp:
+        (WebCore::IDBTransactionBackend::scheduleVersionChangeOperation):
+        (WebCore::IDBTransactionBackend::schedulePutOperation):
+        (WebCore::IDBTransactionBackend::scheduleOpenCursorOperation):
+        (WebCore::IDBTransactionBackend::scheduleCountOperation):
+        (WebCore::IDBTransactionBackend::scheduleDeleteRangeOperation):
+        (WebCore::IDBTransactionBackend::scheduleClearObjectStoreOperation):
+        * Modules/indexeddb/IDBTransactionBackend.h:
+
+        Make each operation’s perform() method defer to the IDBServerConnection (with a callback):
+        * Modules/indexeddb/IDBTransactionBackendOperations.cpp:
+        (WebCore::CreateObjectStoreOperation::perform):
+        (WebCore::CreateIndexOperation::perform):
+        (WebCore::CreateIndexAbortOperation::perform):
+        (WebCore::DeleteIndexOperation::perform):
+        (WebCore::DeleteIndexAbortOperation::perform):
+        (WebCore::GetOperation::perform):
+        (WebCore::PutOperation::perform):
+        (WebCore::SetIndexesReadyOperation::perform):
+        (WebCore::OpenCursorOperation::perform):
+        (WebCore::CountOperation::perform):
+        (WebCore::DeleteRangeOperation::perform):
+        (WebCore::ClearObjectStoreOperation::perform):
+        (WebCore::DeleteObjectStoreOperation::perform):
+        (WebCore::IDBDatabaseBackend::VersionChangeOperation::perform):
+        (WebCore::CreateObjectStoreAbortOperation::perform):
+
+        Add accessors to each operation’s data members so the IDBServerConnection has everything it needs:
+        * Modules/indexeddb/IDBTransactionBackendOperations.h:
+        (WebCore::CreateObjectStoreOperation::objectStoreMetadata):
+        (WebCore::DeleteObjectStoreOperation::objectStoreMetadata):
+        (WebCore::IDBDatabaseBackend::VersionChangeOperation::create):
+        (WebCore::IDBDatabaseBackend::VersionChangeOperation::version):
+        (WebCore::IDBDatabaseBackend::VersionChangeOperation::callbacks):
+        (WebCore::IDBDatabaseBackend::VersionChangeOperation::databaseCallbacks):
+        (WebCore::IDBDatabaseBackend::VersionChangeOperation::VersionChangeOperation):
+        (WebCore::CreateObjectStoreAbortOperation::CreateObjectStoreAbortOperation):
+        (WebCore::CreateIndexOperation::objectStoreID):
+        (WebCore::CreateIndexOperation::idbIndexMetadata):
+        (WebCore::CreateIndexOperation::CreateIndexOperation):
+        (WebCore::CreateIndexAbortOperation::CreateIndexAbortOperation):
+        (WebCore::DeleteIndexOperation::objectStoreID):
+        (WebCore::DeleteIndexOperation::idbIndexMetadata):
+        (WebCore::DeleteIndexOperation::DeleteIndexOperation):
+        (WebCore::DeleteIndexAbortOperation::DeleteIndexAbortOperation):
+        (WebCore::GetOperation::objectStoreID):
+        (WebCore::GetOperation::indexID):
+        (WebCore::GetOperation::cursorType):
+        (WebCore::GetOperation::keyRange):
+        (WebCore::GetOperation::callbacks):
+        (WebCore::GetOperation::autoIncrement):
+        (WebCore::GetOperation::keyPath):
+        (WebCore::GetOperation::GetOperation):
+        (WebCore::PutOperation::create):
+        (WebCore::PutOperation::putMode):
+        (WebCore::PutOperation::objectStore):
+        (WebCore::PutOperation::key):
+        (WebCore::PutOperation::indexIDs):
+        (WebCore::PutOperation::indexKeys):
+        (WebCore::PutOperation::callbacks):
+        (WebCore::PutOperation::value):
+        (WebCore::PutOperation::PutOperation):
+        (WebCore::OpenCursorOperation::create):
+        (WebCore::OpenCursorOperation::objectStoreID):
+        (WebCore::OpenCursorOperation::indexID):
+        (WebCore::OpenCursorOperation::direction):
+        (WebCore::OpenCursorOperation::cursorType):
+        (WebCore::OpenCursorOperation::taskType):
+        (WebCore::OpenCursorOperation::keyRange):
+        (WebCore::OpenCursorOperation::cursorDirection):
+        (WebCore::OpenCursorOperation::callbacks):
+        (WebCore::OpenCursorOperation::OpenCursorOperation):
+        (WebCore::CountOperation::create):
+        (WebCore::CountOperation::objectStoreID):
+        (WebCore::CountOperation::indexID):
+        (WebCore::CountOperation::keyRange):
+        (WebCore::CountOperation::callbacks):
+        (WebCore::CountOperation::CountOperation):
+        (WebCore::DeleteRangeOperation::create):
+        (WebCore::DeleteRangeOperation::objectStoreID):
+        (WebCore::DeleteRangeOperation::callbacks):
+        (WebCore::DeleteRangeOperation::keyRange):
+        (WebCore::DeleteRangeOperation::DeleteRangeOperation):
+        (WebCore::ClearObjectStoreOperation::create):
+        (WebCore::ClearObjectStoreOperation::objectStoreID):
+        (WebCore::ClearObjectStoreOperation::callbacks):
+        (WebCore::ClearObjectStoreOperation::ClearObjectStoreOperation):
+
+        Implement each operation in terms of the appropriate backing store, then perform the callback:
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.cpp:
+        (WebCore::IDBServerConnectionLevelDB::createObjectStore):
+        (WebCore::IDBServerConnectionLevelDB::createIndex):
+        (WebCore::IDBServerConnectionLevelDB::deleteIndex):
+        (WebCore::IDBServerConnectionLevelDB::get):
+        (WebCore::IDBServerConnectionLevelDB::put):
+        (WebCore::IDBServerConnectionLevelDB::openCursor):
+        (WebCore::IDBServerConnectionLevelDB::count):
+        (WebCore::IDBServerConnectionLevelDB::deleteRange):
+        (WebCore::IDBServerConnectionLevelDB::clearObjectStore):
+        (WebCore::IDBServerConnectionLevelDB::deleteObjectStore):
+        (WebCore::IDBServerConnectionLevelDB::changeDatabaseVersion):
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.h:
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2013-11-15  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Modifying RTCIceCandidate object construction to match the spec

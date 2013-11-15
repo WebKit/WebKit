@@ -27,6 +27,7 @@
 #define IDBServerConnection_h
 
 #include "IDBMetadata.h"
+#include "IDBTransactionBackendOperations.h"
 #include "IndexedDB.h"
 #include <functional>
 #include <wtf/HashSet.h>
@@ -41,7 +42,9 @@ class IDBBackingStoreInterface;
 class IDBBackingStoreTransactionInterface;
 class IDBDatabaseError;
 class IDBKey;
+class IDBTransactionBackend;
 
+struct IDBIndexMetadata;
 struct IDBObjectStoreMetadata;
 
 // This interface provides a single asynchronous layer between the web-facing frontend
@@ -54,7 +57,6 @@ public:
     // FIXME: For now, server connection provides a synchronous accessor to the in-process backing store objects.
     // This is temporary and will be removed soon.
     virtual IDBBackingStoreInterface* deprecatedBackingStore() = 0;
-    virtual IDBBackingStoreTransactionInterface* deprecatedBackingStoreTransaction(int64_t transactionID) = 0;
 
     virtual bool isClosed() = 0;
 
@@ -72,8 +74,20 @@ public:
     virtual void commitTransaction(int64_t transactionID, BoolCallbackFunction successCallback) = 0;
     virtual void resetTransaction(int64_t transactionID, std::function<void()> completionCallback) = 0;
     virtual void rollbackTransaction(int64_t transactionID, std::function<void()> completionCallback) = 0;
+
     virtual void setIndexKeys(int64_t transactionID, int64_t databaseID, int64_t objectStoreID, const IDBObjectStoreMetadata&, IDBKey& primaryKey, const Vector<int64_t>& indexIDs, const Vector<Vector<RefPtr<IDBKey>>>& indexKeys, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
 
+    virtual void createObjectStore(IDBTransactionBackend&, const CreateObjectStoreOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
+    virtual void createIndex(IDBTransactionBackend&, const CreateIndexOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
+    virtual void deleteIndex(IDBTransactionBackend&, const DeleteIndexOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
+    virtual void get(IDBTransactionBackend&, const GetOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
+    virtual void put(IDBTransactionBackend&, const PutOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
+    virtual void openCursor(IDBTransactionBackend&, const OpenCursorOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
+    virtual void count(IDBTransactionBackend&, const CountOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
+    virtual void deleteRange(IDBTransactionBackend&, const DeleteRangeOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
+    virtual void clearObjectStore(IDBTransactionBackend&, const ClearObjectStoreOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
+    virtual void deleteObjectStore(IDBTransactionBackend&, const DeleteObjectStoreOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
+    virtual void changeDatabaseVersion(IDBTransactionBackend&, const IDBDatabaseBackend::VersionChangeOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) = 0;
 };
 
 } // namespace WebCore

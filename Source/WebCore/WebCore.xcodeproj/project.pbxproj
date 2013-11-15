@@ -3065,7 +3065,7 @@
 		93B70D6309EB0C7C009D8468 /* JSDOMBinding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4709EB0C7C009D8468 /* JSDOMBinding.cpp */; };
 		93B70D6409EB0C7C009D8468 /* JSDOMBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4809EB0C7C009D8468 /* JSDOMBinding.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93B70D6909EB0C7C009D8468 /* JSEventListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4D09EB0C7C009D8468 /* JSEventListener.cpp */; };
-		93B70D6A09EB0C7C009D8468 /* JSEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4E09EB0C7C009D8468 /* JSEventListener.h */; };
+		93B70D6A09EB0C7C009D8468 /* JSEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4E09EB0C7C009D8468 /* JSEventListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93B70D6B09EB0C7C009D8468 /* JSPluginElementFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4F09EB0C7C009D8468 /* JSPluginElementFunctions.cpp */; };
 		93B70D6C09EB0C7C009D8468 /* JSPluginElementFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5009EB0C7C009D8468 /* JSPluginElementFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93B70D6F09EB0C7C009D8468 /* ScriptController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D5309EB0C7C009D8468 /* ScriptController.cpp */; };
@@ -5108,7 +5108,7 @@
 		BCE32B9E1517C22700F542EC /* RenderMultiColumnSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE32B9D1517C22700F542EC /* RenderMultiColumnSet.cpp */; };
 		BCE3BEC20D222B1D007E06E4 /* TagNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE3BEC00D222B1D007E06E4 /* TagNodeList.cpp */; };
 		BCE3BEC30D222B1D007E06E4 /* TagNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE3BEC10D222B1D007E06E4 /* TagNodeList.h */; };
-		BCE4389C140B1BA8005E437E /* JSDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE4389B140B1BA7005E437E /* JSDictionary.h */; };
+		BCE4389C140B1BA8005E437E /* JSDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE4389B140B1BA7005E437E /* JSDictionary.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCE438A2140C0DC0005E437E /* JSDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE438A1140C0DBF005E437E /* JSDictionary.cpp */; };
 		BCE4413312F748E2009B84B8 /* RenderCombineText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE4413112F748E2009B84B8 /* RenderCombineText.cpp */; };
 		BCE4413412F748E2009B84B8 /* RenderCombineText.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE4413212F748E2009B84B8 /* RenderCombineText.h */; };

@@ -26,12 +26,11 @@
 #ifndef IDBDatabaseBackend_h
 #define IDBDatabaseBackend_h
 
-#include "IDBDatabaseBackend.h"
 #include "IDBDatabaseCallbacks.h"
+#include "IDBKeyRange.h"
 #include "IDBMetadata.h"
 #include "IDBPendingDeleteCall.h"
 #include "IDBPendingOpenCall.h"
-#include "IDBServerConnection.h"
 
 #include <stdint.h>
 #include <wtf/Deque.h>
@@ -46,7 +45,7 @@ class IDBDatabase;
 class IDBFactoryBackendInterface;
 class IDBKey;
 class IDBKeyPath;
-class IDBKeyRange;
+class IDBServerConnection;
 class IDBTransactionBackend;
 class IDBTransactionCoordinator;
 class SharedBuffer;
@@ -114,7 +113,7 @@ public:
     void openCursor(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, IndexedDB::CursorDirection, bool keyOnly, TaskType, PassRefPtr<IDBCallbacks>);
     void count(int64_t transactionId, int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>);
     void deleteRange(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>);
-    void clear(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBCallbacks>);
+    void clearObjectStore(int64_t transactionId, int64_t objectStoreId, PassRefPtr<IDBCallbacks>);
 
     const IDBDatabaseMetadata& metadata() const { return m_metadata; }
     void setCurrentVersion(uint64_t version) { m_metadata.version = version; }

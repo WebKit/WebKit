@@ -28,6 +28,7 @@
 #define WebProcessIDBDatabaseBackend_h
 
 #include "MessageSender.h"
+#include <WebCore/IDBBackingStoreInterface.h>
 #include <WebCore/IDBDatabaseBackend.h>
 
 #if ENABLE(INDEXED_DATABASE)

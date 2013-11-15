@@ -110,7 +110,6 @@ public:
 
     static int compareIndexKeys(const LevelDBSlice&, const LevelDBSlice&);
 
-    IDBBackingStoreTransactionInterface* deprecatedBackingStoreTransaction(int64_t transactionID);
     void removeBackingStoreTransaction(IDBBackingStoreTransactionLevelDB*);
 
 protected:

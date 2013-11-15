@@ -287,7 +287,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::clear(ScriptExecutionContext* context, Ex
     }
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    backendDB()->clear(m_transaction->id(), id(), request);
+    backendDB()->clearObjectStore(m_transaction->id(), id(), request);
     return request.release();
 }
 
