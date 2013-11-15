@@ -119,26 +119,33 @@ macro doCallToJavaScript()
     if X86_64
         const extraStackSpace = 8
         const previousCFR = t0
+        const previousPC = t6
         const entry = t5
         const newCallFrame = t4
     elsif ARM64
         const extraStackSpace = 0
-        const previousCFR = t4  
+        const previousCFR = t4
+        const previousPC = lr
         const entry = a0
         const newCallFrame = a1
     elsif C_LOOP
         const extraStackSpace = 0
         const previousCFR = t4  
+        const previousPC = lr
         const entry = a0
         const newCallFrame = a1
     end
 
+    if X86_64
+        loadp [sp], previousPC
+    end
     move cfr, previousCFR
     functionPrologue(extraStackSpace)
 
     move newCallFrame, cfr
     loadp [cfr], newCallFrame
     storep previousCFR, [newCallFrame]
+    storep previousPC, 8[newCallFrame]
     move 0xffff000000000000, csr1
     addp 2, csr1, csr2
     call entry

@@ -1,3 +1,17 @@
+2013-11-15  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r158586): callToJavaScript needs to save return PC to Sentinel frame
+        https://bugs.webkit.org/show_bug.cgi?id=124420
+
+        Reviewed by Filip Pizlo.
+
+        Save the return PC into the sentinel frame.
+
+        * jit/JITStubsMSVC64.asm:
+        * jit/JITStubsX86.h:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2013-11-14  Oliver Hunt  <oliver@apple.com>
 
         Make CLoop easier to build, and make it work

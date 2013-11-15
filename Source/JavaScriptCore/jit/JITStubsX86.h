@@ -209,6 +209,7 @@ extern "C" {
     __declspec(naked) EncodedJSValue callToJavaScript(void* code, ExecState*)
     {
         __asm {
+            mov edx, [esp]
             push ebp;
             mov eax, ebp;
             mov ebp, esp;
@@ -219,6 +220,7 @@ extern "C" {
             mov ebp, [esp + 0x34];
             mov ebx, [ebp];
             mov [ebx], eax;
+            mov 4[ebx], edx
             call [esp + 0x30];
             add esp, 0x1c;
             pop ebx;

@@ -32,6 +32,7 @@ PUBLIC getHostCallReturnValue
 _TEXT   SEGMENT
 
 callToJavaScript PROC
+    mov r10, qword ptr[sp]
     push rbp
     mov rax, rbp ; Save previous frame pointer
     mov rbp, rsp
@@ -49,6 +50,7 @@ callToJavaScript PROC
     mov rbp, rdx
     mov r11, qword ptr[rbp] ; Put the previous frame pointer in the sentinel call frame above us
     mov qword ptr[r11], rax
+    mov qword ptr[r11 + 8], r10
     mov r14, 0FFFF000000000000h
     mov r15, 0FFFF000000000002h
     call rcx
