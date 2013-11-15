@@ -433,7 +433,7 @@ static NSTextField *createTimeTextField(NSRect frame)
 {
     if (![_delegate mediaElement])
         return;
-    [_delegate mediaElement]->setCurrentTime(currentTime, IGNORE_EXCEPTION);
+    [_delegate mediaElement]->setCurrentTime(currentTime);
     [self updateTime];
 }
 

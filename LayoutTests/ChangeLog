@@ -1,3 +1,13 @@
+2013-11-15  Jer Noble  <jer.noble@apple.com>
+
+        HTMLMediaElement should not throw an exception from setCurrentTime or fastSeek.
+        https://bugs.webkit.org/show_bug.cgi?id=124294
+
+        Reviewed by Eric Carlson.
+
+        * media/video-seek-no-src-exception-expected.txt: Removed.
+        * media/video-seek-no-src-exception.html: Removed.
+
 2013-11-15  Tim Horton  <timothy_horton@apple.com>
 
         Layout Test editing/selection/5057506.html frequently times out on Mac WK2

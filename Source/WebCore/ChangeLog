@@ -1,3 +1,51 @@
+2013-11-15  Jer Noble  <jer.noble@apple.com>
+
+        HTMLMediaElement should not throw an exception from setCurrentTime or fastSeek.
+        https://bugs.webkit.org/show_bug.cgi?id=124294
+
+        Reviewed by Eric Carlson.
+
+        Update the seek logic to match the current specification. This means removing exception
+        throwing from both the .idl and the implementation. 
+
+        Remove the ExceptionCode parameter from setCurrentTime and fastSeek:
+        * html/HTMLMediaElement.cpp:
+        (HTMLMediaElement::fastSeek):
+        (HTMLMediaElement::seek):
+        (HTMLMediaElement::seekWithTolerance):
+        (HTMLMediaElement::setCurrentTime):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+        * html/MediaController.cpp:
+        (MediaController::setCurrentTime):
+        * html/MediaController.h:
+        * html/MediaController.idl:
+        * html/MediaControllerInterface.h:
+
+        Do not pass in an ExceptionCode placeholder when calling seek:
+        * html/HTMLMediaElement.cpp:
+        (HTMLMediaElement::rewind):
+        (HTMLMediaElement::returnToRealtime):
+        (HTMLMediaElement::finishSeek):
+        (HTMLMediaElement::playInternal):
+        (HTMLMediaElement::mediaPlayerTimeChanged):
+        (HTMLMediaElement::mediaPlayerDurationChanged):
+        (HTMLMediaElement::applyMediaFragmentURI):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+        * html/MediaController.cpp:
+        (MediaController::bringElementUpToSpeed):
+        * html/MediaController.h:
+        * html/MediaController.idl:
+        * html/MediaControllerInterface.h:
+        * html/shadow/MediaControlElementTypes.cpp:
+        (WebCore::MediaControlSeekButtonElement::seekTimerFired):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlRewindButtonElement::defaultEventHandler):
+        (WebCore::MediaControlTimelineElement::defaultEventHandler):
+        * platform/mac/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindowController setCurrentTime:]):
+
 2013-11-15  Brady Eidson  <beidson@apple.com>
 
         Remove last vestiges of IDBBackingStore* from IDBTransactionBackend.

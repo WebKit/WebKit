@@ -29,74 +29,74 @@
     ActiveDOMObject,
 ] interface HTMLMediaElement : HTMLElement {
 
-// error state
-readonly attribute MediaError error;
+    // error state
+    readonly attribute MediaError error;
 
-// network state
-[Reflect, URL] attribute DOMString src;
-[URL] readonly attribute DOMString currentSrc;
+    // network state
+    [Reflect, URL] attribute DOMString src;
+    [URL] readonly attribute DOMString currentSrc;
 
-const unsigned short NETWORK_EMPTY = 0;
-const unsigned short NETWORK_IDLE = 1;
-const unsigned short NETWORK_LOADING = 2;
-const unsigned short NETWORK_NO_SOURCE = 3;
-readonly attribute unsigned short networkState;
-attribute DOMString preload;
+    const unsigned short NETWORK_EMPTY = 0;
+    const unsigned short NETWORK_IDLE = 1;
+    const unsigned short NETWORK_LOADING = 2;
+    const unsigned short NETWORK_NO_SOURCE = 3;
+    readonly attribute unsigned short networkState;
+    attribute DOMString preload;
 
-readonly attribute TimeRanges buffered;
-void load();
+    readonly attribute TimeRanges buffered;
+    void load();
 #if defined(ENABLE_ENCRYPTED_MEDIA) && ENABLE_ENCRYPTED_MEDIA
     DOMString canPlayType([Default=Undefined] optional DOMString type, [Default=Undefined, TreatNullAs=NullString, TreatUndefinedAs=NullString] optional DOMString keySystem);
 #elif defined(ENABLE_ENCRYPTED_MEDIA_V2) && ENABLE_ENCRYPTED_MEDIA_V2
     DOMString canPlayType([Default=Undefined] optional DOMString type, [Default=Undefined, TreatNullAs=NullString, TreatUndefinedAs=NullString] optional DOMString keySystem);
 #else
-DOMString canPlayType([Default=Undefined] optional DOMString type);
+    DOMString canPlayType([Default=Undefined] optional DOMString type);
 #endif
 
-// ready state
-const unsigned short HAVE_NOTHING = 0;
-const unsigned short HAVE_METADATA = 1;
-const unsigned short HAVE_CURRENT_DATA = 2;
-const unsigned short HAVE_FUTURE_DATA = 3;
-const unsigned short HAVE_ENOUGH_DATA = 4;
-readonly attribute unsigned short readyState;
-readonly attribute boolean seeking;
+    // ready state
+    const unsigned short HAVE_NOTHING = 0;
+    const unsigned short HAVE_METADATA = 1;
+    const unsigned short HAVE_CURRENT_DATA = 2;
+    const unsigned short HAVE_FUTURE_DATA = 3;
+    const unsigned short HAVE_ENOUGH_DATA = 4;
+    readonly attribute unsigned short readyState;
+    readonly attribute boolean seeking;
 
-// playback state
-[SetterRaisesException] attribute double currentTime;
-readonly attribute double duration;
-readonly attribute boolean paused;
-attribute double defaultPlaybackRate;
-attribute double playbackRate;
-readonly attribute TimeRanges played;
-readonly attribute TimeRanges seekable;
-readonly attribute boolean ended;
-[Reflect] attribute boolean autoplay;
-[Reflect] attribute boolean loop;
-void play();
-void pause();
-[RaisesException] void fastSeek(double time);
+    // playback state
+    attribute double currentTime;
+    readonly attribute double duration;
+    readonly attribute boolean paused;
+    attribute double defaultPlaybackRate;
+    attribute double playbackRate;
+    readonly attribute TimeRanges played;
+    readonly attribute TimeRanges seekable;
+    readonly attribute boolean ended;
+    [Reflect] attribute boolean autoplay;
+    [Reflect] attribute boolean loop;
+    void play();
+    void pause();
+    void fastSeek(double time);
 
-// controls
-attribute boolean controls;
-[SetterRaisesException] attribute double volume;
-attribute boolean muted;
-[Reflect=muted] attribute boolean defaultMuted;
+    // controls
+    attribute boolean controls;
+    [SetterRaisesException] attribute double volume;
+    attribute boolean muted;
+    [Reflect=muted] attribute boolean defaultMuted;
 
-// WebKit extensions
-attribute boolean webkitPreservesPitch;
+    // WebKit extensions
+    attribute boolean webkitPreservesPitch;
 
-readonly attribute boolean webkitHasClosedCaptions;
-attribute boolean webkitClosedCaptionsVisible;
+    readonly attribute boolean webkitHasClosedCaptions;
+    attribute boolean webkitClosedCaptionsVisible;
 
-// The number of bytes consumed by the media decoder.
-[Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitAudioDecodedByteCount;
-[Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitVideoDecodedByteCount;
+    // The number of bytes consumed by the media decoder.
+    [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitAudioDecodedByteCount;
+    [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitVideoDecodedByteCount;
 
 #if defined(ENABLE_ENCRYPTED_MEDIA) && ENABLE_ENCRYPTED_MEDIA
-[RaisesException] void webkitGenerateKeyRequest([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, optional Uint8Array initData);
-[RaisesException] void webkitAddKey([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, Uint8Array key, optional Uint8Array initData, [Default=NullString] optional DOMString sessionId);
-[RaisesException] void webkitCancelKeyRequest([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, [Default=NullString] optional DOMString sessionId);
+    [RaisesException] void webkitGenerateKeyRequest([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, optional Uint8Array initData);
+    [RaisesException] void webkitAddKey([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, Uint8Array key, optional Uint8Array initData, [Default=NullString] optional DOMString sessionId);
+    [RaisesException] void webkitCancelKeyRequest([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, [Default=NullString] optional DOMString sessionId);
 
     attribute EventListener onwebkitkeyadded;
     attribute EventListener onwebkitkeyerror;
@@ -109,12 +109,12 @@ attribute boolean webkitClosedCaptionsVisible;
 #endif
 
 #if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK
-[RaisesException] TextTrack addTextTrack(DOMString kind, optional DOMString label, optional DOMString language);
-readonly attribute AudioTrackList audioTracks;
-readonly attribute TextTrackList textTracks;
-readonly attribute VideoTrackList videoTracks;
+    [RaisesException] TextTrack addTextTrack(DOMString kind, optional DOMString label, optional DOMString language);
+    readonly attribute AudioTrackList audioTracks;
+    readonly attribute TextTrackList textTracks;
+    readonly attribute VideoTrackList videoTracks;
 #endif
 
-[Reflect, TreatNullAs=NullString] attribute DOMString mediaGroup;
-[CustomSetter] attribute MediaController controller;
+    [Reflect, TreatNullAs=NullString] attribute DOMString mediaGroup;
+    [CustomSetter] attribute MediaController controller;
 };

@@ -47,7 +47,7 @@ public:
     
     virtual double duration() const = 0;
     virtual double currentTime() const = 0;
-    virtual void setCurrentTime(double, ExceptionCode&) = 0;
+    virtual void setCurrentTime(double) = 0;
     
     virtual bool paused() const = 0;
     virtual void play() = 0;

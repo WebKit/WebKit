@@ -239,7 +239,7 @@ void MediaControlSeekButtonElement::seekTimerFired(Timer<MediaControlSeekButtonE
 {
     if (m_seekType == Skip) {
         double skipTime = isForwardButton() ? cSkipTime : -cSkipTime;
-        mediaController()->setCurrentTime(mediaController()->currentTime() + skipTime, IGNORE_EXCEPTION);
+        mediaController()->setCurrentTime(mediaController()->currentTime() + skipTime);
     } else
         mediaController()->setPlaybackRate(nextRate());
 }

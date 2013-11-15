@@ -60,7 +60,7 @@ public:
     
     virtual double duration() const OVERRIDE;
     virtual double currentTime() const OVERRIDE;
-    virtual void setCurrentTime(double, ExceptionCode&) OVERRIDE;
+    virtual void setCurrentTime(double) OVERRIDE;
     
     virtual bool paused() const OVERRIDE { return m_paused; }
     virtual void play() OVERRIDE;
