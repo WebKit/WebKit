@@ -1,3 +1,12 @@
+2013-11-15  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Fixed incorrectly placed NETWORK_PROCESS guard in NetworkConnectionToWebProcess.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=124398
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+
 2013-11-15  Tibor Meszaros  <mtibor@inf.u-szeged.hu>
 
         Cleanup the build from unused parameters in WebKit2
