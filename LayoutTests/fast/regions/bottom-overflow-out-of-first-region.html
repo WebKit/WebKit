@@ -11,7 +11,7 @@
 
             #first-box {
                 border: 1px solid blue;
-                height:200px;
+                height:125px;
             }
 
             #second-box {
@@ -21,32 +21,34 @@
             }
 
             #region1, #region2 {
-                border: 1px solid black;
+                border: 1px solid red;
                 -webkit-flow-from: flow1;
             }
 
             #region1 {
                 width: 412px;
-                height: 210px;
+                height: 140px;
             }
 
             #region2 {
                 width: 300px;
                 height: 150px;
+                position: relative;
+                left: 100px;
+                top: 50px;
             }
-            #p1, #p2, #p3 {
+            #p1, #p2 {
                 margin: 0;
             }
         </style>
     </head>
     <body>
-        <p>In the test case below, the green block's width should not vary and should use the first region to determine its width. It is overflowing downwards out of the blue block, and so the portion that overflows should continue to use the blue block's containing block width. The blue block does not exist in region two, so using some hypothetical made-up width is incorrect. The overflow should be spilling out of the top of region one and be painted in region two.</p>
+        <p>In the test case below, the green block should not be fragmented into the second region. It is overflowing downwards out of the first region because its parent (the blue block) is only flowed inside the first region.</p>
         <div id="content">
             <div id="first-box">
                 <div id="second-box">
                     <p id="p1">These lines should all fit to the width of the block in the first region and spill out of the bottom of the first region.</p>
                     <p id="p2">These lines should all fit to the width of the block in the first region and spill out of the bottom of the first region.</p>
-                    <p id="p3">These lines should all fit to the width of the block in the first region and spill out of the bottom of the first region.</p>
                 </div>
             </div>
         </div>

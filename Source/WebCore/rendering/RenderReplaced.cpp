@@ -30,7 +30,9 @@
 #include "LayoutRepainter.h"
 #include "Page.h"
 #include "RenderBlock.h"
+#include "RenderFlowThread.h"
 #include "RenderLayer.h"
+#include "RenderRegion.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "VisiblePosition.h"
@@ -187,6 +189,10 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
         
     // if we're invisible or haven't received a layout yet, then just bail.
     if (style().visibility() != VISIBLE)
+        return false;
+    
+    // Check our region range to make sure we need to be painting in this region.
+    if (paintInfo.renderRegion && !paintInfo.renderRegion->flowThread()->objectShouldPaintInFlowRegion(this, paintInfo.renderRegion))
         return false;
 
     LayoutPoint adjustedPaintOffset = paintOffset + location();

@@ -1,8 +1,0 @@
-Text in region 1. This paragraph has "-webkit-region-break-after: always". There should be nothing in this region after this line.
-
-First element in the region 3. Some text inside a flow. Some text inside a flow. Some text inside a flow. Text in region 4.
-
-Simple line in region 4.
-First line in region 5. This paragraph displays in region 5 because it has a margin-top, which is too high to fit in the previous region.
-First line in region 6. This paragraph uses "-webkit-region-break-before: always".
-FAIL(check region5) outside bounding rect was: [8, 82, 208, 192, 110, 200], and inside was: [8, 196, 85, 213, 17, 77]

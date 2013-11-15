@@ -68,6 +68,8 @@ public:
     RenderLayerModelObject* layerOwner() const { return parent() && parent()->isRenderLayerModelObject() ?
         toRenderLayerModelObject(parent()) : nullptr; }
 
+    RenderNamedFlowThread* namedFlowThread() const;
+
 private:
     virtual bool shouldHaveAutoLogicalHeight() const OVERRIDE;
     virtual const char* renderName() const OVERRIDE { return "RenderNamedFlowFragment"; }

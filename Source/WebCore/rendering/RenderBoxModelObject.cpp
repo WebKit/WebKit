@@ -37,6 +37,7 @@
 #include "RenderBlock.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
+#include "RenderNamedFlowFragment.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
 #include "RenderTable.h"
@@ -571,6 +572,28 @@ static void applyBoxShadowForBackground(GraphicsContext* context, RenderStyle* s
         context->setLegacyShadow(shadowOffset, boxShadow->radius(), boxShadow->color(), style->colorSpace());
 }
 
+void RenderBoxModelObject::paintMaskForTextFillBox(ImageBuffer* maskImage, const IntRect& maskRect, InlineFlowBox* box, const LayoutRect& scrolledPaintRect, RenderRegion* region)
+{
+    GraphicsContext* maskImageContext = maskImage->context();
+    maskImageContext->translate(-maskRect.x(), -maskRect.y());
+
+    // Now add the text to the clip. We do this by painting using a special paint phase that signals to
+    // InlineTextBoxes that they should just add their contents to the clip.
+    PaintInfo info(maskImageContext, maskRect, PaintPhaseTextClip, PaintBehaviorForceBlackText, 0, region);
+    if (box) {
+        const RootInlineBox& rootBox = box->root();
+        box->paint(info, LayoutPoint(scrolledPaintRect.x() - box->x(), scrolledPaintRect.y() - box->y()), rootBox.lineTop(), rootBox.lineBottom());
+    } else if (isRenderNamedFlowFragmentContainer()) {
+        RenderNamedFlowFragment* region = toRenderBlockFlow(this)->renderNamedFlowFragment();
+        if (!region->flowThread())
+            return;
+        region->flowThread()->layer()->paintNamedFlowThreadInsideRegion(maskImageContext, region, maskRect, maskRect.location(), PaintBehaviorForceBlackText, RenderLayer::PaintLayerTemporaryClipRects);
+    } else {
+        LayoutSize localOffset = isBox() ? toRenderBox(this)->locationOffset() : LayoutSize();
+        paint(info, scrolledPaintRect.location() - localOffset);
+    }
+}
+
 void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& color, const FillLayer* bgLayer, const LayoutRect& rect,
     BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox* box, const LayoutSize& boxSize, CompositeOperator op, RenderElement* backgroundObject)
 {
@@ -703,20 +726,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         maskImage = context->createCompatibleBuffer(maskRect.size());
         if (!maskImage)
             return;
-
-        GraphicsContext* maskImageContext = maskImage->context();
-        maskImageContext->translate(-maskRect.x(), -maskRect.y());
-
-        // Now add the text to the clip.  We do this by painting using a special paint phase that signals to
-        // InlineTextBoxes that they should just add their contents to the clip.
-        PaintInfo info(maskImageContext, maskRect, PaintPhaseTextClip, PaintBehaviorForceBlackText, 0, paintInfo.renderRegion);
-        if (box) {
-            const RootInlineBox& rootBox = box->root();
-            box->paint(info, LayoutPoint(scrolledPaintRect.x() - box->x(), scrolledPaintRect.y() - box->y()), rootBox.lineTop(), rootBox.lineBottom());
-        } else {
-            LayoutSize localOffset = isBox() ? toRenderBox(this)->locationOffset() : LayoutSize();
-            paint(info, scrolledPaintRect.location() - localOffset);
-        }
+        paintMaskForTextFillBox(maskImage.get(), maskRect, box, scrolledPaintRect, paintInfo.renderRegion);
 
         // The mask has been created.  Now we just need to clip to it.
         backgroundClipStateSaver.save();

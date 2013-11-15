@@ -337,13 +337,6 @@ webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-b.svg [ Imag
 webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-c.svg  [ ImageOnlyFailure Pass ]
 webkit.org/b/107018 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg [ ImageOnlyFailure Pass ]
 
-# Region overflow doesn't quite work with tiled drawing.
-webkit.org/b/122233 fast/regions/percentage-margins-mixed-ltr-dominant-regions.html [ ImageOnlyFailure ]
-webkit.org/b/122233 fast/regions/percentage-margins-mixed-rtl-dominant-regions.html [ ImageOnlyFailure ]
-webkit.org/b/122233 fast/regions/percentage-margins-rtl-variable-width-regions.html [ ImageOnlyFailure ]
-webkit.org/b/122233 fast/regions/percentage-margins-variable-width-regions.html [ ImageOnlyFailure ]
-webkit.org/b/122233 fast/regions/frame-view-overflow-scroll.html [ ImageOnlyFailure ]
-
 # Color space issues from switching to tiled drawing.
 webkit.org/b/122234 fast/css/computed-image-width-with-percent-height.html [ ImageOnlyFailure ]
 webkit.org/b/122234 svg/filters/color-space-conversion.svg  [ ImageOnlyFailure ]

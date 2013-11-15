@@ -1,0 +1,159 @@
+<!doctype html>
+<html style="font: 14px/1.25 monospace;">
+    <head>
+        <style>
+            p {
+                margin: 5px;
+            }
+            .overflowText {
+                color: red;
+                font-weight: bold;
+            }
+            .overflowHidden {
+                overflow: hidden;
+                border: 2px solid orange;
+            }
+            .overflowVisible {
+                overflow: visible;
+                border: 2px solid blue;
+            }
+            .content {
+                margin-top: -69px;
+            }
+            .region {
+                width: 80px;
+                height: 40px;
+            }
+            .regionRelative {
+                position: relative;
+                top: 12px;
+                left: 5px;
+                border: 3px dotted green;
+            }
+            .regionStatic {
+                position: static;
+                margin-top: 12px;
+                margin-left: 5px;
+                border: 3px solid green;
+            }
+            .outerContainer {
+                position: absolute;
+                width: 135px;
+                height: 97px;
+                padding: 10px;
+            }
+            .firstRow {
+                top: 200px;
+            }
+            .secondRow {
+                top: 375px;
+            }
+            .innerContainer {
+                width: 100px;
+                height: 63px;
+                padding: 10px;
+                margin-top: 5px;
+            }
+            .left1 {
+                left: 10px;
+            }
+            .left2 {
+                left: 185px;
+            }
+            .left3 {
+                left: 360px;
+            }
+            .left4 {
+                left: 535px;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Tests that content overflowing the region respects the overflow style of the region's container.</p>
+        <p>All <span style="color: red;"><b>red</b></span> overflow lines should be <b>selectable</b>.</p>
+        <p><b>Legend:</b></p>
+        <ul style="margin-top: 0px;">
+            <li><span style="color: green;"><b>Regions:</b></span>
+                <ul style="color: green;">
+                    <li><b>Solid</b> border means "position: <b>static</b>"</li>
+                    <li><b>Dotted</b> border means "position: <b>relative</b>"</li>
+                </ul>
+            </li>
+            <li><span style="color: orange;"><b>Orange</b> containers have "overflow: <b>hidden</b>"</span></li>
+            <li><span style="color: blue;"><b>Blue</b> containers have "overflow: <b>visible</b>"</span></li>
+        </ul>
+
+        <div id="container1_outer" class="left1 outerContainer firstRow overflowHidden">
+            <div id="container1_inner" class="innerContainer overflowHidden">
+                <div class="overflowText" style="margin-top: -54px; margin-left: 8px;">Overflowlonglonglongtext<br/>Overflowlonglonglongtext<br/>Overflowlonglonglongtext</div>
+                <div id="region1" class="region regionRelative" style="margin-top: 3px;">
+                    <div style="position: relative; top: -1px;">flow1_1<br/>flow1_2</div>
+                </div>
+                <div class="overflowText" style="margin-top: 19px; margin-left: 8px;">Overflowlonglonglongtext<br/>Overflowlonglonglongtext<br/>Overflowlonglonglongtext</div>
+            </div>
+        </div>
+        <div id="container2_outer" class="left2 outerContainer firstRow overflowVisible">
+            <div id="container2_inner" class="innerContainer overflowHidden">
+                <div class="overflowText" style="margin-top: -54px; margin-left: 8px;">Overflowlonglonglongtext<br/>Overflowlonglonglongtext<br/>Overflowlonglonglongtext</div>
+                <div id="region2" class="region regionRelative" style="margin-top: 3px;">
+                    <div style="position: relative; top: -1px;">flow2_1<br/>flow2_2</div>
+                </div>
+                <div class="overflowText" style="margin-top: 19px; margin-left: 8px;">Overflowlonglonglongtext<br/>Overflowlonglonglongtext<br/>Overflowlonglonglongtext</div>
+            </div>
+        </div>
+        <div id="container3_outer" class="left3 outerContainer firstRow overflowHidden">
+            <div id="container3_inner" class="innerContainer overflowVisible">
+                <div class="overflowText" style="margin-top: -54px; margin-left: 8px;">Overflowlonglonglongtext<br/>Overflowlonglonglongtext<br/>Overflowlonglonglongtext</div>
+                <div id="region3" class="region regionRelative" style="margin-top: 3px;">
+                    <div style="position: relative; top: -1px;">flow3_1<br/>flow3_2</div>
+                </div>
+                <div class="overflowText" style="margin-top: 19px; margin-left: 8px;">Overflowlonglonglongtext<br/>Overflowlonglonglongtext<br/>Overflowlonglonglongtext</div>
+            </div>
+        </div>
+        <div id="container4_outer" class="left4 outerContainer firstRow overflowVisible">
+            <div id="container4_inner" class="innerContainer overflowVisible">
+                <div class="overflowText" style="margin-top: -54px; margin-left: 8px;">Overflowlonglonglongtext<br/>Overflowlonglonglongtext<br/>Overflowlonglonglongtext</div>
+                <div id="region4" class="region regionRelative" style="margin-top: 3px;">
+                    <div style="position: relative; top: -1px;">flow4_1<br/>flow4_2</div>
+                </div>
+                <div class="overflowText" style="margin-top: 19px; margin-left: 8px;">Overflowlonglonglongtext<br/>Overflowlonglonglongtext<br/>Overflowlonglonglongtext</div>
+            </div>
+        </div>
+        <div id="container5_outer" class="left1 outerContainer secondRow overflowHidden">
+            <div id="container5_inner" class="innerContainer overflowHidden">
+                <div class="overflowText" style="margin-top: -54px; margin-left: 8px;">Overflowlonglonglongtext<br/>Overflowlonglonglongtext<br/>Overflowlonglonglongtext</div>
+                <div id="region5" class="region regionStatic" style="margin-top: 15px;">
+                    <div style="position: relative; top: -1px;">flow5_1<br/>flow5_2</div>
+                </div>
+                <div class="overflowText" style="margin-top: 7px; margin-left: 8px;">Overflowlonglonglongtext<br/>Overflowlonglonglongtext<br/>Overflowlonglonglongtext</div>
+            </div>
+        </div>
+        <div id="container6_outer" class="left2 outerContainer secondRow overflowVisible">
+            <div id="container6_inner" class="innerContainer overflowHidden">
+                <div class="overflowText" style="margin-top: -54px; margin-left: 8px;">Overflowlonglonglongtext<br/>Overflowlonglonglongtext<br/>Overflowlonglonglongtext</div>
+                <div id="region6" class="region regionStatic" style="margin-top: 15px;">
+                    <div style="position: relative; top: -1px;">flow6_1<br/>flow6_2</div>
+                </div>
+                <div class="overflowText" style="margin-top: 7px; margin-left: 8px;">Overflowlonglonglongtext<br/>Overflowlonglonglongtext<br/>Overflowlonglonglongtext</div>
+            </div>
+        </div>
+        <div id="container7_outer" class="left3 outerContainer secondRow overflowHidden">
+            <div id="container7_inner" class="innerContainer overflowVisible">
+                <div class="overflowText" style="margin-top: -54px; margin-left: 8px;">Overflowlonglonglongtext<br/>Overflowlonglonglongtext<br/>Overflowlonglonglongtext</div>
+                <div id="region7" class="region regionStatic" style="margin-top: 15px;">
+                    <div style="position: relative; top: -1px;">flow7_1<br/>flow7_2</div>
+                </div>
+                <div class="overflowText" style="margin-top: 7px; margin-left: 8px;">Overflowlonglonglongtext<br/>Overflowlonglonglongtext<br/>Overflowlonglonglongtext</div>
+            </div>
+        </div>
+        <div id="container8_outer" class="left4 outerContainer secondRow overflowVisible">
+            <div id="container8_inner" class="innerContainer overflowVisible">
+                <div class="overflowText" style="margin-top: -54px; margin-left: 8px;">Overflowlonglonglongtext<br/>Overflowlonglonglongtext<br/>Overflowlonglonglongtext</div>
+                <div id="region8" class="region regionStatic" style="margin-top: 15px;">
+                    <div style="position: relative; top: -1px;">flow8_1<br/>flow8_2</div>
+                </div>
+                <div class="overflowText" style="margin-top: 7px; margin-left: 8px;">Overflowlonglonglongtext<br/>Overflowlonglonglongtext<br/>Overflowlonglonglongtext</div>
+            </div>
+        </div>
+    </body>
+</html>

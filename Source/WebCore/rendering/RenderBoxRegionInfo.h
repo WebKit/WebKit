@@ -49,7 +49,7 @@ public:
 
     bool isShifted() const { return m_isShifted; }
 
-    void createOverflow(const LayoutRect& layoutOverflow, const LayoutRect& visualOverflow) { m_overflow = adoptPtr(new RenderOverflow(layoutOverflow, visualOverflow)); }
+    void createOverflow(const LayoutRect& layoutOverflow, const LayoutRect& visualOverflow) { m_overflow = adoptRef(new RenderOverflow(layoutOverflow, visualOverflow)); }
     RenderOverflow* overflow() const { return m_overflow.get(); }
     void clearOverflow()
     {
@@ -61,7 +61,7 @@ private:
     LayoutUnit m_logicalLeft;
     LayoutUnit m_logicalWidth;
     bool m_isShifted;
-    OwnPtr<RenderOverflow> m_overflow;
+    RefPtr<RenderOverflow> m_overflow;
 };
 
 } // namespace WebCore

@@ -1,0 +1,80 @@
+<!doctype html>
+<html style="font: 16px/1.25 monospace;">
+    <head>
+        <style>
+            #content {
+                -webkit-flow-into: flow;
+                border: 1px dotted black;
+            }
+            #content2 {
+                -webkit-flow-into: flow2;
+                border: 1px dotted black;
+            }
+            .overflow {
+                color: orange;
+            }
+            #region {
+                -webkit-flow-from: flow;
+                width: 270px;
+                height: 100px;
+                border: 10px solid blue;
+                padding: 5px;
+                display: inline-block;
+            }
+            #regionInSpan {
+                -webkit-flow-from: flow2;
+                width: 270px;
+                height: 100px;
+                border: 10px solid blue;
+                padding: 5px;
+                display: inline-block;
+                float: right;
+            }
+            #regionContainer {
+                border: 2px solid black;
+                position: absolute;
+                top: 160px;
+                padding: 10px;
+                width: 700px;
+            }
+            #b {
+                opacity: 0.5;
+            }
+            .keyword {
+                color: red;
+                font-style: italic;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test that overflow content is correctly computed when the region is inside one or more inline elements or is inline itself.</p>
+        <p>On success, the following should be true:</p>
+        <ul>
+            <li>Three <span style="color: orange;"><b>orange</b></span> overflow lines should be visible below each <span style="color: blue;"><b>blue</b></span> region.</li>
+            <li>All <span style="color: orange;"><b>orange</b></span> overflow lines should be selectable</li>
+        </ul>
+        <div id="regionContainer">
+            <span><b id="b">y<i>x <div id="region"></div> x</i>y</b>
+                <span>
+                    <div id="regionInSpan"></div>
+                </span>
+            </span>
+        </div>
+        <div id="content">
+            <div>This region has<br/><span class="keyword">display: inline-block</span> and is sitting inside an <span class="keyword">i</span>, inside a <span class="keyword">b</span> with 0.5 opacity and inside a <span class="keyword">span</span>,</div>
+            <br/><br/>
+            <div class="overflow">causing it to be part of a complex tree of line elements.</div>
+            <div class="overflow">Overflow2_1_Overflow2_1_Overflow2_1</div>
+        </div>
+        <div id="content2">
+            <div>This region is <span class="keyword">float:right</span> and is inside a <span class="keyword">span</span></div>
+            <div>Some</div>
+            <div>more</div>
+            <div>text</div>
+            <br/><br/>
+            <div class="overflow">Overflow2_1_Overflow2_1_Overflow2_1</div>
+            <div class="overflow">Overflow2_2</div>
+            <div class="overflow">Overflow2_3</div>
+        </div>
+    </body>
+</html>
