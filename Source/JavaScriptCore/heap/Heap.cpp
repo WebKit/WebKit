@@ -27,6 +27,7 @@
 #include "CopiedSpaceInlines.h"
 #include "CopyVisitorInlines.h"
 #include "DFGWorklist.h"
+#include "DelayedReleaseScope.h"
 #include "GCActivityCallback.h"
 #include "GCIncomingRefCountedSetInlines.h"
 #include "HeapIterationScope.h"
@@ -729,6 +730,7 @@ void Heap::collectAllGarbage()
     if (!m_isSafeToCollect)
         return;
     
+    DelayedReleaseScope delayedReleaseScope(m_objectSpace);
     collect(DoSweep);
 }
 

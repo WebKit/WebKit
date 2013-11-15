@@ -1,6 +1,7 @@
 #include "config.h"
 #include "MarkedAllocator.h"
 
+#include "DelayedReleaseScope.h"
 #include "GCActivityCallback.h"
 #include "Heap.h"
 #include "IncrementalSweeper.h"
@@ -77,6 +78,7 @@ inline void* MarkedAllocator::tryAllocate(size_t bytes)
 void* MarkedAllocator::allocateSlowCase(size_t bytes)
 {
     ASSERT(m_heap->vm()->currentThreadIsHoldingAPILock());
+    DelayedReleaseScope delayedReleaseScope(*m_markedSpace);
 #if COLLECT_ON_EVERY_ALLOCATION
     if (!m_heap->isDeferred())
         m_heap->collectAllGarbage();

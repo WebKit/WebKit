@@ -182,54 +182,43 @@ bool testXYZTested = false;
 @end
 
 @interface TinyDOMNode : NSObject<TinyDOMNode>
-+ (JSVirtualMachine *)sharedVirtualMachine;
-+ (void)clearSharedVirtualMachine;
 @end
 
 @implementation TinyDOMNode {
     NSMutableArray *m_children;
+    JSVirtualMachine *m_sharedVirtualMachine;
 }
 
-static JSVirtualMachine *sharedInstance = nil;
-
-+ (JSVirtualMachine *)sharedVirtualMachine
-{
-    if (!sharedInstance)
-        sharedInstance = [[JSVirtualMachine alloc] init];
-    return sharedInstance;
-}
-
-+ (void)clearSharedVirtualMachine
-{
-    sharedInstance = nil;
-}
-
-- (id)init
+- (id)initWithVirtualMachine:(JSVirtualMachine *)virtualMachine
 {
     self = [super init];
     if (!self)
         return nil;
 
     m_children = [[NSMutableArray alloc] initWithCapacity:0];
+    m_sharedVirtualMachine = virtualMachine;
+#if !__has_feature(objc_arc)
+    [m_sharedVirtualMachine retain];
+#endif
 
     return self;
 }
 
 - (void)dealloc
 {
-    NSEnumerator *enumerator = [m_children objectEnumerator];
-    id nextChild;
-    while ((nextChild = [enumerator nextObject]))
-        [[TinyDOMNode sharedVirtualMachine] removeManagedReference:nextChild withOwner:self];
+    for (TinyDOMNode *child in m_children)
+        [m_sharedVirtualMachine removeManagedReference:child withOwner:self];
 
 #if !__has_feature(objc_arc)
+    [m_children release];
+    [m_sharedVirtualMachine release];
     [super dealloc];
 #endif
 }
 
 - (void)appendChild:(TinyDOMNode *)child
 {
-    [[TinyDOMNode sharedVirtualMachine] addManagedReference:child withOwner:self];
+    [m_sharedVirtualMachine addManagedReference:child withOwner:self];
     [m_children addObject:child];
 }
 
@@ -249,7 +238,7 @@ static JSVirtualMachine *sharedInstance = nil;
 {
     if (index >= [m_children count])
         return;
-    [[TinyDOMNode sharedVirtualMachine] removeManagedReference:[m_children objectAtIndex:index] withOwner:self];
+    [m_sharedVirtualMachine removeManagedReference:[m_children objectAtIndex:index] withOwner:self];
     [m_children removeObjectAtIndex:index];
 }
 
@@ -424,6 +413,47 @@ static JSVirtualMachine *sharedInstance = nil;
     return self;
 }
 @end
+
+static bool evilAllocationObjectWasDealloced = false;
+
+@interface EvilAllocationObject : NSObject
+- (JSValue *)doEvilThingsWithContext:(JSContext *)context;
+@end
+
+@implementation EvilAllocationObject {
+    JSContext *m_context;
+}
+- (id)initWithContext:(JSContext *)context
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    m_context = context;
+
+    return self;
+}
+- (void)dealloc
+{
+    [self doEvilThingsWithContext:m_context];
+    evilAllocationObjectWasDealloced = true;
+}
+
+- (JSValue *)doEvilThingsWithContext:(JSContext *)context
+{
+    return [context evaluateScript:@" \
+        (function() { \
+            var a = []; \
+            var sum = 0; \
+            for (var i = 0; i < 10000; ++i) { \
+                sum += i; \
+                a[i] = sum; \
+            } \
+            return sum; \
+        })()"];
+}
+@end
+
 static void checkResult(NSString *description, bool passed)
 {
     NSLog(@"TEST: \"%@\": %@", description, passed ? @"PASSED" : @"FAILED");
@@ -958,12 +988,11 @@ void testObjectiveCAPI()
     }
 
     @autoreleasepool {
-        JSVirtualMachine *vm = [TinyDOMNode sharedVirtualMachine];
-        JSContext *context = [[JSContext alloc] initWithVirtualMachine:vm];
-        TinyDOMNode *root = [[TinyDOMNode alloc] init];
+        JSContext *context = [[JSContext alloc] init];
+        TinyDOMNode *root = [[TinyDOMNode alloc] initWithVirtualMachine:context.virtualMachine];
         TinyDOMNode *lastNode = root;
         for (NSUInteger i = 0; i < 3; i++) {
-            TinyDOMNode *newNode = [[TinyDOMNode alloc] init];
+            TinyDOMNode *newNode = [[TinyDOMNode alloc] initWithVirtualMachine:context.virtualMachine];
             [lastNode appendChild:newNode];
             lastNode = newNode;
         }
@@ -985,17 +1014,14 @@ void testObjectiveCAPI()
 
         JSValue *myCustomProperty = [context evaluateScript:@"getLastNodeInChain(root).myCustomProperty"];
         checkResult(@"My custom property == 42", [myCustomProperty isNumber] && [myCustomProperty toInt32] == 42);
-
-        [TinyDOMNode clearSharedVirtualMachine];
     }
 
     @autoreleasepool {
-        JSVirtualMachine *vm = [TinyDOMNode sharedVirtualMachine];
-        JSContext *context = [[JSContext alloc] initWithVirtualMachine:vm];
-        TinyDOMNode *root = [[TinyDOMNode alloc] init];
+        JSContext *context = [[JSContext alloc] init];
+        TinyDOMNode *root = [[TinyDOMNode alloc] initWithVirtualMachine:context.virtualMachine];
         TinyDOMNode *lastNode = root;
         for (NSUInteger i = 0; i < 3; i++) {
-            TinyDOMNode *newNode = [[TinyDOMNode alloc] init];
+            TinyDOMNode *newNode = [[TinyDOMNode alloc] initWithVirtualMachine:context.virtualMachine];
             [lastNode appendChild:newNode];
             lastNode = newNode;
         }
@@ -1020,8 +1046,6 @@ void testObjectiveCAPI()
 
         JSValue *myCustomProperty = [context evaluateScript:@"getLastNodeInChain(root).myCustomProperty"];
         checkResult(@"duplicate calls to addManagedReference don't cause things to die", [myCustomProperty isNumber] && [myCustomProperty toInt32] == 42);
-
-        [TinyDOMNode clearSharedVirtualMachine];
     }
 
     @autoreleasepool {
@@ -1159,6 +1183,17 @@ void testObjectiveCAPI()
        
         JSValue *d = [context evaluateScript:@"(new ClassD())"];
         checkResult(@"Returning instance of ClassE from ClassD's init has correct class", [d isInstanceOf:context[@"ClassE"]]);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        @autoreleasepool {
+            EvilAllocationObject *evilObject = [[EvilAllocationObject alloc] initWithContext:context];
+            context[@"evilObject"] = evilObject;
+            context[@"evilObject"] = nil;
+        }
+        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+        checkResult(@"EvilAllocationObject was successfully dealloced without crashing", evilAllocationObjectWasDealloced);
     }
 
     currentThisInsideBlockGetterTest();

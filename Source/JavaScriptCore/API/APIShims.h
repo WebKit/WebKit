@@ -83,8 +83,15 @@ private:
 class APICallbackShim {
 public:
     APICallbackShim(ExecState* exec)
-        : m_dropAllLocks(exec->vm().exclusiveThread ? 0 : exec)
+        : m_dropAllLocks(shouldDropAllLocks(exec->vm()) ? exec : nullptr)
         , m_vm(&exec->vm())
+    {
+        wtfThreadData().resetCurrentIdentifierTable();
+    }
+
+    APICallbackShim(VM& vm)
+        : m_dropAllLocks(shouldDropAllLocks(vm) ? &vm : nullptr)
+        , m_vm(&vm)
     {
         wtfThreadData().resetCurrentIdentifierTable();
     }
@@ -95,6 +102,20 @@ public:
     }
 
 private:
+    static bool shouldDropAllLocks(VM& vm)
+    {
+        if (vm.exclusiveThread)
+            return false;
+
+        // If the VM is in the middle of being destroyed then we don't want to resurrect it
+        // by allowing DropAllLocks to ref it. By this point the APILock has already been 
+        // released anyways, so it doesn't matter that DropAllLocks is a no-op.
+        if (!vm.refCount())
+            return false;
+
+        return true;
+    }
+
     JSLock::DropAllLocks m_dropAllLocks;
     VM* m_vm;
 };

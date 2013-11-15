@@ -186,6 +186,10 @@ namespace JSC {
         
         bool isDeferred() const { return !!m_deferralDepth; }
 
+#if USE(CF)
+        template<typename T> void releaseSoon(RetainPtr<T>&&);
+#endif
+
     private:
         friend class CodeBlock;
         friend class CopiedBlock;
@@ -467,6 +471,14 @@ namespace JSC {
     {
         return m_blockAllocator;
     }
+
+#if USE(CF)
+    template <typename T>
+    inline void Heap::releaseSoon(RetainPtr<T>&& object)
+    {
+        m_objectSpace.releaseSoon(std::move(object));
+    }
+#endif
 
 } // namespace JSC
 

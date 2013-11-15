@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSAPIWrapperObject.h"
 
+#include "DelayedReleaseScope.h"
 #include "JSCJSValueInlines.h"
 #include "JSCallbackObject.h"
 #include "JSCellInlines.h"
@@ -53,7 +54,8 @@ void JSAPIWrapperObjectHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, v
     JSC::JSAPIWrapperObject* wrapperObject = JSC::jsCast<JSC::JSAPIWrapperObject*>(handle.get().asCell());
     if (!wrapperObject->wrappedObject())
         return;
-    [static_cast<id>(wrapperObject->wrappedObject()) release];
+
+    JSC::Heap::heap(wrapperObject)->releaseSoon(adoptNS(static_cast<id>(wrapperObject->wrappedObject())));
     JSC::WeakSet::deallocate(JSC::WeakImpl::asWeakImpl(handle.slot()));
 }
 

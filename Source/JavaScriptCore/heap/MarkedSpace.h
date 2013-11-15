@@ -36,6 +36,7 @@
 
 namespace JSC {
 
+class DelayedReleaseScope;
 class Heap;
 class HeapIterationScope;
 class JSCell;
@@ -114,7 +115,12 @@ public:
 
     bool isPagedOut(double deadline);
 
+#if USE(CF)
+    template<typename T> void releaseSoon(RetainPtr<T>&&);
+#endif
+
 private:
+    friend class DelayedReleaseScope;
     friend class LLIntOffsetsExtractor;
 
     template<typename Functor> void forEachAllocator(Functor&);
@@ -144,6 +150,8 @@ private:
     size_t m_capacity;
     bool m_isIterating;
     MarkedBlockSet m_blocks;
+
+    DelayedReleaseScope* m_currentDelayedReleaseScope;
 };
 
 template<typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachLiveCell(HeapIterationScope&, Functor& functor)

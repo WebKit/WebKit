@@ -31,6 +31,7 @@
 #import "APICallbackFunction.h"
 #import "APICast.h"
 #import "APIShims.h"
+#import "DelayedReleaseScope.h"
 #import "Error.h"
 #import "JSCJSValueInlines.h"
 #import "JSCell.h"
@@ -405,12 +406,12 @@ public:
         ASSERT((type != CallbackInstanceMethod && type != CallbackInitMethod) || instanceClass);
     }
 
-    ~ObjCCallbackFunctionImpl()
+    void destroy(Heap& heap)
     {
-        // We need to explicity release the target since we didn't call 
+        // We need to explicitly release the target since we didn't call 
         // -retainArguments on m_invocation (and we don't want to do so).
         if (m_type == CallbackBlock || m_type == CallbackClassMethod)
-            [[m_invocation.get() target] release];
+            heap.releaseSoon(adoptNS([m_invocation.get() target]));
         [m_instanceClass release];
     }
 
@@ -520,7 +521,9 @@ ObjCCallbackFunction* ObjCCallbackFunction::create(JSC::VM& vm, JSC::JSGlobalObj
 
 void ObjCCallbackFunction::destroy(JSCell* cell)
 {
-    static_cast<ObjCCallbackFunction*>(cell)->ObjCCallbackFunction::~ObjCCallbackFunction();
+    ObjCCallbackFunction& function = *jsCast<ObjCCallbackFunction*>(cell);
+    function.impl()->destroy(*Heap::heap(cell));
+    function.~ObjCCallbackFunction();
 }
 
 

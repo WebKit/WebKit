@@ -1,3 +1,54 @@
+2013-11-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        -dealloc callbacks from wrapped Objective-C objects can happen at bad times
+        https://bugs.webkit.org/show_bug.cgi?id=123821
+
+        Reviewed by Darin Adler.
+
+        Currently with the JSC Obj-C API, JS wrappers for client Obj-C objects retain their associated Obj-C 
+        object. When they are swept, they release their Obj-C objects which can trigger a call to that 
+        object's -dealloc method. These -dealloc methods can then call back into the same VM, which is not 
+        allowed during sweeping or VM shutdown.
+
+        We can handle this case by creating our own pool of Obj-C objects to be released when it is safe to do so.
+        This is accomplished by using DelayedReleaseScope, an RAII-style object that will retain all objects
+        that are unsafe to release until the end of the DelayedReleaseScope.
+
+        * API/APIShims.h:
+        (JSC::APICallbackShim::APICallbackShim):
+        (JSC::APICallbackShim::vmForDropAllLocks):
+        (JSC::APICallbackShim::execForDropAllLocks):
+        * API/JSAPIWrapperObject.mm:
+        (JSAPIWrapperObjectHandleOwner::finalize):
+        * API/ObjCCallbackFunction.mm:
+        (JSC::ObjCCallbackFunctionImpl::destroy):
+        (JSC::ObjCCallbackFunction::destroy):
+        * API/tests/testapi.mm:
+        (-[TinyDOMNode initWithVirtualMachine:]):
+        (-[TinyDOMNode dealloc]):
+        (-[TinyDOMNode appendChild:]):
+        (-[TinyDOMNode removeChildAtIndex:]):
+        (-[EvilAllocationObject initWithContext:]):
+        (-[EvilAllocationObject dealloc]):
+        (-[EvilAllocationObject doEvilThingsWithContext:]):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/DelayedReleaseScope.h: Added.
+        (JSC::DelayedReleaseScope::DelayedReleaseScope):
+        (JSC::DelayedReleaseScope::~DelayedReleaseScope):
+        (JSC::DelayedReleaseScope::releaseSoon):
+        (JSC::MarkedSpace::releaseSoon):
+        * heap/Heap.cpp:
+        (JSC::Heap::collectAllGarbage):
+        * heap/Heap.h:
+        (JSC::Heap::releaseSoon):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::allocateSlowCase):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::lastChanceToFinalize):
+        (JSC::MarkedSpace::sweep):
+        * heap/MarkedSpace.h:
+
 2013-11-15  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (r158586): callToJavaScript needs to save return PC to Sentinel frame
