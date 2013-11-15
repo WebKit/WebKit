@@ -1,3 +1,109 @@
+2013-11-15  Zoltan Horvath  <zoltan@webkit.org>
+
+        Move BreakingContext and LineBreaker into their own files
+        <https://webkit.org/b/124336>
+
+        Reviewed by David Hyatt.
+
+        In this change I introduced 'line' subdirectory inside 'rendering', this directory will contain all the classes
+        which have been refactored from RenderBlockLineLayout.cpp. This change contains the separation of BreakingContext,
+        and the separation of LineBreaker classes. Since I wanted to keep the helper functions organized, I also added a
+        new file called LineInlineHeaders.h, which contains the functions which used in LineBreaker.h and BreakingContext.h.
+        I moved LineInfo class into line directory. It was necessary this time, since I added a cpp for it. I'll move the
+        rest of the line layout related helper classes later. (I wanted to minimize merge conflicts.)
+
+        No new tests, no behavior change.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCoreCommon.props:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::createRun):
+        * rendering/line/BreakingContextInlineHeaders.h: Added.
+        (WebCore::WordMeasurement::WordMeasurement):
+        (WebCore::TrailingObjects::TrailingObjects):
+        (WebCore::TrailingObjects::setTrailingWhitespace):
+        (WebCore::TrailingObjects::clear):
+        (WebCore::TrailingObjects::appendBoxIfNeeded):
+        (WebCore::deprecatedAddMidpoint):
+        (WebCore::startIgnoringSpaces):
+        (WebCore::stopIgnoringSpaces):
+        (WebCore::ensureLineBoxInsideIgnoredSpaces):
+        (WebCore::TrailingObjects::updateMidpointsForTrailingBoxes):
+        (WebCore::BreakingContext::BreakingContext):
+        (WebCore::BreakingContext::currentObject):
+        (WebCore::BreakingContext::lineBreak):
+        (WebCore::BreakingContext::lineBreakRef):
+        (WebCore::BreakingContext::lineWidth):
+        (WebCore::BreakingContext::atEnd):
+        (WebCore::BreakingContext::clearLineBreakIfFitsOnLine):
+        (WebCore::BreakingContext::commitLineBreakAtCurrentWidth):
+        (WebCore::BreakingContext::initializeForCurrentObject):
+        (WebCore::BreakingContext::increment):
+        (WebCore::BreakingContext::handleBR):
+        (WebCore::borderPaddingMarginStart):
+        (WebCore::borderPaddingMarginEnd):
+        (WebCore::shouldAddBorderPaddingMargin):
+        (WebCore::previousInFlowSibling):
+        (WebCore::inlineLogicalWidth):
+        (WebCore::BreakingContext::handleOutOfFlowPositioned):
+        (WebCore::BreakingContext::handleFloat):
+        (WebCore::shouldSkipWhitespaceAfterStartObject):
+        (WebCore::BreakingContext::handleEmptyInline):
+        (WebCore::BreakingContext::handleReplaced):
+        (WebCore::firstPositiveWidth):
+        (WebCore::updateSegmentsForShapes):
+        (WebCore::iteratorIsBeyondEndOfRenderCombineText):
+        (WebCore::nextCharacter):
+        (WebCore::updateCounterIfNeeded):
+        (WebCore::measureHyphenWidth):
+        (WebCore::textWidth):
+        (WebCore::ensureCharacterGetsLineBox):
+        (WebCore::tryHyphenating):
+        (WebCore::BreakingContext::handleText):
+        (WebCore::textBeginsWithBreakablePosition):
+        (WebCore::BreakingContext::canBreakAtThisPosition):
+        (WebCore::BreakingContext::commitAndUpdateLineBreakIfNeeded):
+        (WebCore::checkMidpoints):
+        (WebCore::BreakingContext::handleEndOfLine):
+        * rendering/line/LineBreaker.cpp: Added.
+        (WebCore::LineBreaker::reset):
+        (WebCore::LineBreaker::skipTrailingWhitespace):
+        (WebCore::LineBreaker::skipLeadingWhitespace):
+        * rendering/line/LineBreaker.h: Added.
+        (WebCore::LineBreaker::LineBreaker):
+        (WebCore::LineBreaker::lineWasHyphenated):
+        (WebCore::LineBreaker::positionedObjects):
+        (WebCore::LineBreaker::clear):
+        * rendering/line/LineInfo.cpp: Added.
+        (WebCore::LineInfo::setEmpty):
+        * rendering/line/LineInfo.h: Renamed from Source/WebCore/rendering/LineInfo.h.
+        (WebCore::LineInfo::LineInfo):
+        (WebCore::LineInfo::isFirstLine):
+        (WebCore::LineInfo::isLastLine):
+        (WebCore::LineInfo::isEmpty):
+        (WebCore::LineInfo::previousLineBrokeCleanly):
+        (WebCore::LineInfo::floatPaginationStrut):
+        (WebCore::LineInfo::runsFromLeadingWhitespace):
+        (WebCore::LineInfo::resetRunsFromLeadingWhitespace):
+        (WebCore::LineInfo::incrementRunsFromLeadingWhitespace):
+        (WebCore::LineInfo::setFirstLine):
+        (WebCore::LineInfo::setLastLine):
+        (WebCore::LineInfo::setPreviousLineBrokeCleanly):
+        (WebCore::LineInfo::setFloatPaginationStrut):
+        * rendering/line/LineInlineHeaders.h: Added.
+        (WebCore::hasInlineDirectionBordersPaddingOrMargin):
+        (WebCore::lineStyle):
+        (WebCore::requiresLineBoxForContent):
+        (WebCore::shouldCollapseWhiteSpace):
+        (WebCore::skipNonBreakingSpace):
+        (WebCore::alwaysRequiresLineBox):
+        (WebCore::requiresLineBox):
+        (WebCore::setStaticPositions):
+
 2013-11-15  Brady Eidson  <beidson@apple.com>
 
         Move execution of IDBTransactionBackendOperations to the IDBServerConnection

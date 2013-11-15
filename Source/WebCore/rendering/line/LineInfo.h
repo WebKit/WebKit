@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+class RenderBlock;
+
 class LineInfo {
 public:
     LineInfo()
@@ -56,18 +58,7 @@ public:
 
     void setFirstLine(bool firstLine) { m_isFirstLine = firstLine; }
     void setLastLine(bool lastLine) { m_isLastLine = lastLine; }
-    void setEmpty(bool empty, RenderBlock* block = 0, LineWidth* lineWidth = 0)
-    {
-        if (m_isEmpty == empty)
-            return;
-        m_isEmpty = empty;
-        if (!empty && block && floatPaginationStrut()) {
-            block->setLogicalHeight(block->logicalHeight() + floatPaginationStrut());
-            setFloatPaginationStrut(0);
-            lineWidth->updateAvailableWidth();
-        }
-    }
-
+    void setEmpty(bool empty, RenderBlock* block = 0, LineWidth* lineWidth = 0);
     void setPreviousLineBrokeCleanly(bool previousLineBrokeCleanly) { m_previousLineBrokeCleanly = previousLineBrokeCleanly; }
     void setFloatPaginationStrut(LayoutUnit strut) { m_floatPaginationStrut = strut; }
 
