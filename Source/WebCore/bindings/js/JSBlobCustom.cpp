@@ -114,15 +114,18 @@ EncodedJSValue JSC_HOST_CALL JSBlobConstructor::constructJSBlob(ExecState* exec)
 
     for (unsigned i = 0; i < blobPartsLength; ++i) {
         JSValue item = blobParts->get(exec, i);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+
 #if ENABLE(BLOB)
-        if (item.inherits(JSArrayBuffer::info()))
-            blobBuilder.append(toArrayBuffer(item));
-        else if (item.inherits(JSArrayBufferView::info()))
-            blobBuilder.append(toArrayBufferView(item));
+        if (ArrayBuffer* arrayBuffer = toArrayBuffer(item))
+            blobBuilder.append(arrayBuffer);
+        else if (RefPtr<ArrayBufferView> arrayBufferView = toArrayBufferView(item))
+            blobBuilder.append(arrayBufferView.release());
         else
 #endif
-        if (item.inherits(JSBlob::info()))
-            blobBuilder.append(toBlob(item));
+        if (Blob* blob = toBlob(item))
+            blobBuilder.append(blob);
         else {
             String string = item.toString(exec)->value(exec);
             if (exec->hadException())

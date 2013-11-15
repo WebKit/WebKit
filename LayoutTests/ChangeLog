@@ -1,3 +1,15 @@
+2013-11-14  Victor Costan  <costan@gmail.com>
+
+        Clean up sequence handling in Blob constructor
+        https://bugs.webkit.org/show_bug.cgi?id=124343
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/files/blob-constructor-expected.txt:
+        * fast/files/script-tests/blob-constructor.js:
+            Add test with sequence that throws an error on property access.
+        (get Object):
+
 2013-11-14  Tim Horton  <timothy_horton@apple.com>
 
         Change Fail->Failure in some recent expectations.

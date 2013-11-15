@@ -1,3 +1,17 @@
+2013-11-14  Victor Costan  <costan@gmail.com>
+
+        Clean up sequence handling in Blob constructor
+        https://bugs.webkit.org/show_bug.cgi?id=124343
+
+        Reviewed by Alexey Proskuryakov.
+
+        Added test case to LayoutTests/fast/files/blob-constructor.html
+
+        * bindings/js/JSBlobCustom.cpp:
+        (WebCore::JSBlobConstructor::constructJSBlob):
+            Handle exceptions in sequences, eliminate double type-checking for
+            ArrayBuffer, ArrayBufferView and Blob parts.
+
 2013-11-14  Oliver Hunt  <oliver@apple.com>
 
         Make CLoop easier to build, and make it work

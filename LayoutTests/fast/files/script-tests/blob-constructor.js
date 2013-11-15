@@ -106,3 +106,15 @@ shouldBe("new Blob({length: 1, 0: 'string'}).size", "6");
 shouldBe("new Blob({length: 2, 0: new Uint8Array(100), 1: new Int16Array(100)}).size", "300");
 shouldBe("new Blob({length: 1, 0: 'string'}, {type: 'text/html'}).type", "'text/html'");
 shouldThrow("new Blob({length: 0}, {endings:'illegal'})", "'TypeError: The endings property must be either \"transparent\" or \"native\"'");
+
+// Test passing blog parts in a sequence-like object that throws on property access.
+var throwingSequence = {length: 4, 0: 'hello', 3: 'world'};
+Object.defineProperty(throwingSequence, "1", {
+    get: function() { throw new Error("Misbehaving property"); },
+    enumerable: true, configurable: true
+});
+Object.defineProperty(throwingSequence, "2", {
+    get: function() { throw new Error("This should not be thrown"); },
+    enumerable: true, configurable: true
+});
+shouldThrow("new Blob(throwingSequence)", "'Error: Misbehaving property'");

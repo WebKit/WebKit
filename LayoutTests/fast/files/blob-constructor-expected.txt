@@ -78,6 +78,7 @@ PASS new Blob({length: 1, 0: 'string'}).size is 6
 PASS new Blob({length: 2, 0: new Uint8Array(100), 1: new Int16Array(100)}).size is 300
 PASS new Blob({length: 1, 0: 'string'}, {type: 'text/html'}).type is 'text/html'
 PASS new Blob({length: 0}, {endings:'illegal'}) threw exception TypeError: The endings property must be either "transparent" or "native".
+PASS new Blob(throwingSequence) threw exception Error: Misbehaving property.
 PASS successfullyParsed is true
 
 TEST COMPLETE
