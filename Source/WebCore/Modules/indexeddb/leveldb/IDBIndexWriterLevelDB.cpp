@@ -25,22 +25,23 @@
  */
 
 #include "config.h"
-#include "IDBIndexWriter.h"
+#include "IDBIndexWriterLevelDB.h"
 
 #include "IDBKey.h"
 #include <wtf/text/CString.h>
 
 #if ENABLE(INDEXED_DATABASE)
+#if USE(LEVELDB)
 
 namespace WebCore {
 
-IDBIndexWriter::IDBIndexWriter(const IDBIndexMetadata& metadata, const IndexKeys& keys)
+IDBIndexWriterLevelDB::IDBIndexWriterLevelDB(const IDBIndexMetadata& metadata, const IndexKeys& keys)
     : m_indexMetadata(metadata)
     , m_indexKeys(keys)
 {
 }
 
-void IDBIndexWriter::writeIndexKeys(const IDBRecordIdentifier* recordIdentifier, IDBBackingStoreInterface& backingStore, IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId) const
+void IDBIndexWriterLevelDB::writeIndexKeys(const IDBRecordIdentifier* recordIdentifier, IDBBackingStoreInterface& backingStore, IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId) const
 {
     ASSERT(recordIdentifier);
     int64_t indexId = m_indexMetadata.id;
@@ -51,7 +52,7 @@ void IDBIndexWriter::writeIndexKeys(const IDBRecordIdentifier* recordIdentifier,
     }
 }
 
-bool IDBIndexWriter::verifyIndexKeys(IDBBackingStoreInterface& backingStore, IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey, String* errorMessage) const
+bool IDBIndexWriterLevelDB::verifyIndexKeys(IDBBackingStoreInterface& backingStore, IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey, String* errorMessage) const
 {
     canAddKeys = false;
     for (size_t i = 0; i < m_indexKeys.size(); ++i) {
@@ -68,7 +69,7 @@ bool IDBIndexWriter::verifyIndexKeys(IDBBackingStoreInterface& backingStore, IDB
     return true;
 }
 
-bool IDBIndexWriter::addingKeyAllowed(IDBBackingStoreInterface& backingStore, IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const
+bool IDBIndexWriterLevelDB::addingKeyAllowed(IDBBackingStoreInterface& backingStore, IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const
 {
     allowed = false;
     if (!m_indexMetadata.unique) {
@@ -89,4 +90,5 @@ bool IDBIndexWriter::addingKeyAllowed(IDBBackingStoreInterface& backingStore, ID
 
 } // namespace WebCore
 
+#endif // USE(LEVELDB)
 #endif // ENABLE(INDEXED_DATABASE)

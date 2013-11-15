@@ -28,7 +28,6 @@
 
 #include "IDBCursorBackend.h"
 #include "IDBDatabaseCallbacks.h"
-#include "IDBIndexWriter.h"
 #include "IDBKeyRange.h"
 #include "IDBRecordIdentifier.h"
 #include "IDBServerConnection.h"

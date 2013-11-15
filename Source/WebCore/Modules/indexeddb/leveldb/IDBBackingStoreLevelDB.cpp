@@ -32,7 +32,7 @@
 #include "HistogramSupport.h"
 #include "IDBBackingStoreCursorLevelDB.h"
 #include "IDBBackingStoreTransactionLevelDB.h"
-#include "IDBIndexWriter.h"
+#include "IDBIndexWriterLevelDB.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
@@ -1383,7 +1383,7 @@ bool IDBBackingStoreLevelDB::keyExistsInIndex(IDBBackingStoreTransactionInterfac
 }
 
 
-bool IDBBackingStoreLevelDB::makeIndexWriters(int64_t transactionID, int64_t databaseID, const IDBObjectStoreMetadata& objectStore, IDBKey& primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIDs, const Vector<IndexKeys>& indexKeys, Vector<RefPtr<IDBIndexWriter>>& indexWriters, String* errorMessage, bool& completed)
+bool IDBBackingStoreLevelDB::makeIndexWriters(int64_t transactionID, int64_t databaseID, const IDBObjectStoreMetadata& objectStore, IDBKey& primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIDs, const Vector<IndexKeys>& indexKeys, Vector<RefPtr<IDBIndexWriterLevelDB>>& indexWriters, String* errorMessage, bool& completed)
 {
     ASSERT(indexIDs.size() == indexKeys.size());
     completed = false;
@@ -1400,7 +1400,7 @@ bool IDBBackingStoreLevelDB::makeIndexWriters(int64_t transactionID, int64_t dat
         if (keyWasGenerated && (index.keyPath == objectStore.keyPath))
             keys.append(&primaryKey);
 
-        RefPtr<IDBIndexWriter> indexWriter = IDBIndexWriter::create(index, keys);
+        RefPtr<IDBIndexWriterLevelDB> indexWriter = IDBIndexWriterLevelDB::create(index, keys);
         bool canAddKeys = false;
         ASSERT(m_backingStoreTransactions.contains(transactionID));
         bool backingStoreSuccess = indexWriter->verifyIndexKeys(*this, *m_backingStoreTransactions.get(transactionID), databaseID, objectStore.id, index.id, canAddKeys, &primaryKey, errorMessage);

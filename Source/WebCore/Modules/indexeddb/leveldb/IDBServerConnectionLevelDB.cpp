@@ -32,7 +32,7 @@
 #include "IDBBackingStoreLevelDB.h"
 #include "IDBBackingStoreTransactionLevelDB.h"
 #include "IDBCursorBackend.h"
-#include "IDBIndexWriter.h"
+#include "IDBIndexWriterLevelDB.h"
 #include <wtf/MainThread.h>
 
 #define ASYNC_COMPLETION_CALLBACK(callback, arg) \
@@ -162,7 +162,7 @@ void IDBServerConnectionLevelDB::setIndexKeys(int64_t transactionID, int64_t dat
         return;
     }
 
-    Vector<RefPtr<IDBIndexWriter>> indexWriters;
+    Vector<RefPtr<IDBIndexWriterLevelDB>> indexWriters;
     String errorMessage;
     bool obeysConstraints = false;
 
@@ -181,7 +181,7 @@ void IDBServerConnectionLevelDB::setIndexKeys(int64_t transactionID, int64_t dat
     }
 
     for (size_t i = 0; i < indexWriters.size(); ++i) {
-        IDBIndexWriter* indexWriter = indexWriters[i].get();
+        IDBIndexWriterLevelDB* indexWriter = indexWriters[i].get();
         indexWriter->writeIndexKeys(recordIdentifier.get(), *m_backingStore, *backingStoreTransaction, databaseID, objectStoreID);
     }
 
@@ -378,7 +378,7 @@ void IDBServerConnectionLevelDB::put(IDBTransactionBackend& transaction, const P
         }
     }
 
-    Vector<RefPtr<IDBIndexWriter>> indexWriters;
+    Vector<RefPtr<IDBIndexWriterLevelDB>> indexWriters;
     String errorMessage;
     bool obeysConstraints = false;
     bool backingStoreSuccess = m_backingStore->makeIndexWriters(transaction.id(), transaction.database().id(), operation.objectStore(), *key, keyWasGenerated, operation.indexIDs(), operation.indexKeys(), indexWriters, &errorMessage, obeysConstraints);
@@ -402,7 +402,7 @@ void IDBServerConnectionLevelDB::put(IDBTransactionBackend& transaction, const P
     }
 
     for (size_t i = 0; i < indexWriters.size(); ++i) {
-        IDBIndexWriter* indexWriter = indexWriters[i].get();
+        IDBIndexWriterLevelDB* indexWriter = indexWriters[i].get();
         indexWriter->writeIndexKeys(recordIdentifier.get(), *m_backingStore, *backingStoreTransaction, transaction.database().id(), operation.objectStore().id);
     }
 

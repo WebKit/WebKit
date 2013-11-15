@@ -24,8 +24,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBIndexWriter_h
-#define IDBIndexWriter_h
+#ifndef IDBIndexWriterLevelDB_h
+#define IDBIndexWriterLevelDB_h
 
 #include "IDBBackingStoreInterface.h"
 #include "IDBDatabaseBackend.h"
@@ -33,16 +33,17 @@
 #include <wtf/RefCounted.h>
 
 #if ENABLE(INDEXED_DATABASE)
+#if USE(LEVELDB)
 
 namespace WebCore {
 
 typedef Vector<RefPtr<IDBKey>> IndexKeys;
 
-class IDBIndexWriter : public RefCounted<IDBIndexWriter> {
+class IDBIndexWriterLevelDB : public RefCounted<IDBIndexWriterLevelDB> {
 public:
-    static PassRefPtr<IDBIndexWriter> create(const IDBIndexMetadata& indexMetadata, const IndexKeys& indexKeys)
+    static PassRefPtr<IDBIndexWriterLevelDB> create(const IDBIndexMetadata& indexMetadata, const IndexKeys& indexKeys)
     {
-        return adoptRef(new IDBIndexWriter(indexMetadata, indexKeys));
+        return adoptRef(new IDBIndexWriterLevelDB(indexMetadata, indexKeys));
     }
 
     bool verifyIndexKeys(IDBBackingStoreInterface&, IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey = 0, String* errorMessage = 0) const WARN_UNUSED_RETURN;
@@ -50,7 +51,7 @@ public:
     void writeIndexKeys(const IDBRecordIdentifier*, IDBBackingStoreInterface&, IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId) const;
 
 private:
-    IDBIndexWriter(const IDBIndexMetadata&, const IndexKeys&);
+    IDBIndexWriterLevelDB(const IDBIndexMetadata&, const IndexKeys&);
 
     bool addingKeyAllowed(IDBBackingStoreInterface&, IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const WARN_UNUSED_RETURN;
 
@@ -60,5 +61,6 @@ private:
 
 } // namespace WebCore
 
+#endif // #if USE(LEVELDB)
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBIndexWriter_h
+#endif // IDBIndexWriterLevelDB_h

@@ -1,3 +1,35 @@
+2013-11-15  Brady Eidson  <beidson@apple.com>
+
+        Make IDBIndexWriter a LevelDB specific concept
+        https://bugs.webkit.org/show_bug.cgi?id=124434
+
+        Reviewed by Tim Horton.
+
+        This includes renaming the class and moving it into the leveldb subdirectory.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/indexeddb/IDBBackingStoreInterface.h:
+        * Modules/indexeddb/IDBTransactionBackendOperations.cpp:
+
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        (WebCore::IDBBackingStoreLevelDB::makeIndexWriters):
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBIndexWriterLevelDB.cpp: Renamed from Source/WebCore/Modules/indexeddb/IDBIndexWriter.cpp.
+        (WebCore::IDBIndexWriterLevelDB::IDBIndexWriterLevelDB):
+        (WebCore::IDBIndexWriterLevelDB::writeIndexKeys):
+        (WebCore::IDBIndexWriterLevelDB::verifyIndexKeys):
+        (WebCore::IDBIndexWriterLevelDB::addingKeyAllowed):
+        * Modules/indexeddb/leveldb/IDBIndexWriterLevelDB.h: Renamed from Source/WebCore/Modules/indexeddb/IDBIndexWriter.h.
+        (WebCore::IDBIndexWriterLevelDB::create):
+
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.cpp:
+        (WebCore::IDBServerConnectionLevelDB::setIndexKeys):
+        (WebCore::IDBServerConnectionLevelDB::put):
+
 2013-11-15  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: DOM.performSearch should accept a list of context nodes
