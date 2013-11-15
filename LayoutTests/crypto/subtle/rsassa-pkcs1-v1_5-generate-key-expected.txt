@@ -8,12 +8,12 @@ PASS keyPair.toString() is '[object KeyPair]'
 PASS keyPair.publicKey.type is 'public'
 PASS keyPair.publicKey.algorithm.name is 'rsassa-pkcs1-v1_5'
 PASS keyPair.publicKey.algorithm.modulusLength is 2048
-PASS byteArrayToHexString(keyPair.publicKey.algorithm.publicExponent) is '[01 00 01]'
+PASS bytesToHexString(keyPair.publicKey.algorithm.publicExponent) is '010001'
 PASS keyPair.publicKey.algorithm.hash is undefined.
 PASS keyPair.privateKey.type is 'private'
 PASS keyPair.privateKey.algorithm.name is 'rsassa-pkcs1-v1_5'
 PASS keyPair.privateKey.algorithm.modulusLength is 2048
-PASS byteArrayToHexString(keyPair.privateKey.algorithm.publicExponent) is '[01 00 01]'
+PASS bytesToHexString(keyPair.privateKey.algorithm.publicExponent) is '010001'
 PASS keyPair.privateKey.algorithm.hash is undefined.
 
 Testing that custom attributes on keys survive garbage collection...

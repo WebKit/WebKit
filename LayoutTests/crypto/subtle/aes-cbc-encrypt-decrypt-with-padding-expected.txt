@@ -10,7 +10,7 @@ PASS key.algorithm.name is 'aes-cbc'
 PASS key.algorithm.length is 128
 PASS key.usages is ['encrypt', 'decrypt']
 Using the key to encrypt plaintext...
-    = [63 01 99 c5 f2 02 cc 71 67 bb 84 c6 c7 2b 34 9d]
+PASS bytesToHexString(new Uint8Array(cyphertext)) is '630199c5f202cc7167bb84c6c72b349d'
 Decrypting it back...
 PASS new Uint8Array(decryptionResult) is plaintext
 PASS successfullyParsed is true

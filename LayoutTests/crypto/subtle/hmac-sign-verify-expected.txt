@@ -11,7 +11,7 @@ PASS key.algorithm.length is 1
 PASS key.algorithm.hash.name is 'sha-1'
 PASS key.usages is ['sign', 'verify']
 Using the key to sign 'foo'...
-    = [be bb c0 2e 46 b0 f8 11 83 f4 0c 25 dc e2 3e 50 45 d6 55 19]
+PASS bytesToHexString(new Uint8Array(signature)) is 'bebbc02e46b0f81183f40c25dce23e5045d65519'
 Verifying the signature...
 PASS verificationResult is true
 PASS successfullyParsed is true

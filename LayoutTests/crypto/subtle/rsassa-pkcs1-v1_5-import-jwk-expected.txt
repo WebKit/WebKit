@@ -9,7 +9,7 @@ PASS publicKey.type is 'public'
 PASS publicKey.usages is ['sign','verify']
 PASS publicKey.algorithm.name is 'rsassa-pkcs1-v1_5'
 PASS publicKey.algorithm.modulusLength is 2048
-PASS byteArrayToHexString(publicKey.algorithm.publicExponent) is '[01 00 01]'
+PASS bytesToHexString(publicKey.algorithm.publicExponent) is '010001'
 PASS publicKey.algorithm.hash.name is 'sha-256'
 
 Importing a private key...
@@ -18,7 +18,7 @@ PASS privateKey.type is 'private'
 PASS privateKey.usages is ['sign','verify']
 PASS privateKey.algorithm.name is 'rsassa-pkcs1-v1_5'
 PASS privateKey.algorithm.modulusLength is 2048
-PASS byteArrayToHexString(privateKey.algorithm.publicExponent) is '[01 00 01]'
+PASS bytesToHexString(privateKey.algorithm.publicExponent) is '010001'
 PASS privateKey.algorithm.hash.name is 'sha-256'
 PASS successfullyParsed is true
 

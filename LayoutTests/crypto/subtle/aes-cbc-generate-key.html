@@ -13,9 +13,6 @@ description("Test generating an AES key using AES-CBC algorithm.");
 
 jsTestIsAsync = true;
 
-if (!window.subtle)
-    window.crypto.subtle = window.crypto.webkitSubtle;
-
 var extractable = true;
 
 shouldThrow('crypto.subtle.generateKey("aes-cbc", extractable, ["encrypt", "decrypt"])');

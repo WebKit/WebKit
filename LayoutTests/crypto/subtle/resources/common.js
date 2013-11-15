@@ -1,30 +1,47 @@
 function importTestKeys()
 {
-    var keyFormat = "spki";
-    var data = new Uint8Array([]);
-    var extractable = false;
+    var keyFormat = "raw";
+    var data = asciiToUint8Array("16 bytes of key!");
+    var extractable = true;
     var keyUsages = ['encrypt', 'decrypt', 'sign', 'verify'];
 
     var hmacPromise = crypto.subtle.importKey(keyFormat, data, {name: 'hmac', hash: {name: 'sha-1'}}, extractable, keyUsages);
-    var rsaSsaPromise = crypto.subtle.importKey(keyFormat, data, {name: 'RSASSA-PKCS1-v1_5', hash: {name: 'sha-1'}}, extractable, keyUsages);
     var aesCbcPromise = crypto.subtle.importKey(keyFormat, data, {name: 'AES-CBC'}, extractable, keyUsages);
-    var aesCbcJustDecrypt = crypto.subtle.importKey(keyFormat, data, {name: 'AES-CBC'}, extractable, ['decrypt']);
+    var aesCbcJustDecrypt = crypto.subtle.importKey(keyFormat, data, {name: 'AES-CBC'}, false, ['decrypt']);
 
-    return Promise.every(hmacPromise, rsaSsaPromise, aesCbcPromise, aesCbcJustDecrypt).then(function(results) {
+    return Promise.all([hmacPromise, aesCbcPromise, aesCbcJustDecrypt]).then(function(results) {
         return {
             hmacSha1: results[0],
-            rsaSsaSha1: results[1],
-            aesCbc: results[2],
-            aesCbcJustDecrypt: results[3],
+            aesCbc: results[1],
+            aesCbcJustDecrypt: results[2],
         };
     });
 }
 
-// Builds a hex string representation of any array-like input (array or
-// ArrayBufferView). The output looks like this:
-//    [ab 03 4c 99]
-function byteArrayToHexString(bytes)
+// Verifies that the given "bytes" holds the same value as "expectedHexString".
+// "bytes" can be anything recognized by "bytesToHexString()".
+function bytesShouldMatchHexString(testDescription, expectedHexString, bytes)
 {
+    expectedHexString = "[" + expectedHexString.toLowerCase() + "]";
+    var actualHexString = "[" + bytesToHexString(bytes) + "]";
+
+    if (actualHexString === expectedHexString) {
+        debug("PASS: " + testDescription + " should be " + expectedHexString + " and was");
+    } else {
+        debug("FAIL: " + testDescription + " should be " + expectedHexString + " but was " + actualHexString);
+    }
+}
+
+// Builds a hex string representation for an array-like input.
+// "bytes" can be an Array of bytes, an ArrayBuffer, or any TypedArray.
+// The output looks like this:
+//    ab034c99
+function bytesToHexString(bytes)
+{
+    if (!bytes)
+        return null;
+
+    bytes = new Uint8Array(bytes);
     var hexBytes = [];
 
     for (var i = 0; i < bytes.length; ++i) {
@@ -34,10 +51,26 @@ function byteArrayToHexString(bytes)
         hexBytes.push(byteString);
     }
 
-    return "[" + hexBytes.join(" ") + "]";
+    return hexBytes.join("");
 }
 
-function asciiToArrayBuffer(str)
+function hexStringToUint8Array(hexString)
+{
+    if (hexString.length % 2 != 0)
+        throw "Invalid hexString";
+    var arrayBuffer = new Uint8Array(hexString.length / 2);
+
+    for (var i = 0; i < hexString.length; i += 2) {
+        var byteValue = parseInt(hexString.substr(i, 2), 16);
+        if (byteValue == NaN)
+            throw "Invalid hexString";
+        arrayBuffer[i/2] = byteValue;
+    }
+
+    return arrayBuffer;
+}
+
+function asciiToUint8Array(str)
 {
     var chars = [];
     for (var i = 0; i < str.length; ++i)
@@ -45,14 +78,11 @@ function asciiToArrayBuffer(str)
     return new Uint8Array(chars);
 }
 
-function hexToArrayBuffer(str)
+function failAndFinishJSTest(error)
 {
-    if (str.length % 2)
-        throw "Hex string length must be even";
-    var chars = [];
-    for (var i = 0; i < str.length; i += 2)
-        chars.push(parseInt(str.substr(i, 2), 16));
-    return new Uint8Array(chars);
+    if (error)
+       debug(error);
+    finishJSTest();
 }
 
 var Base64URL = {
@@ -66,19 +96,23 @@ var Base64URL = {
     }
 };
 
-function printRejectedResult(value)
-{
-    debug("    rejected with value of " + value);
+if (!Promise.all) {
+    // A very simple temporary implementation only for WebCrypto tests.
+    Promise.all = function(promises) {
+        var results = [];
+        var resultCount = 0;
+        var resolver;
+        function next(result) {
+            results[resultCount++] = result;
+            if (resultCount < promises.length)
+                promises[resultCount].then(next);
+            else
+                resolver.fulfill(results);
+        }
+        promises[0].then(next, function() { resolver.reject(null) });
+        return new Promise(function(r) { resolver = r; });
+    }
 }
 
-function printAcceptedResult(result)
-{
-    debug("    = " + byteArrayToHexString(new Uint8Array(result)));
-}
-
-function failAndFinishJSTest(error)
-{
-    if (error)
-       debug(error);
-    finishJSTest();
-}
+if (!crypto.subtle)
+    crypto.subtle = crypto.webkitSubtle;

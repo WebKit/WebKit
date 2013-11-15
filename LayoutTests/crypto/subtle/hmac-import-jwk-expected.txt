@@ -12,7 +12,7 @@ PASS key.algorithm.length is 32
 PASS key.usages is ["sign", "verify"]
 
 Using the key to sign message 'foo'...
-PASS byteArrayToHexString(new Uint8Array(signature)) is '[e0 37 36 fe 09 88 92 b2 a2 da 77 81 24 31 f7 c0 14 d3 2e 2f d6 9f 3b cf f8 83 ac 92 3a 8f a2 da]'
+PASS bytesToHexString(new Uint8Array(signature)) is 'e03736fe098892b2a2da77812431f7c014d32e2fd69f3bcff883ac923a8fa2da'
 
 Verifying the signature...
 PASS verificationResult is true

@@ -13,12 +13,9 @@ description("Test an unsupported AES key length.");
 
 jsTestIsAsync = true;
 
-if (!window.subtle)
-    window.crypto.subtle = window.crypto.webkitSubtle;
-
-var keyData = hexToArrayBuffer("8e73b0f7da0e6452c810f32b809079e562f8ead2522c");
-var iv = hexToArrayBuffer("000102030405060708090a0b0c0d0e0f");
-var plaintext = hexToArrayBuffer("6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3710");
+var keyData = hexStringToUint8Array("8e73b0f7da0e6452c810f32b809079e562f8ead2522c");
+var iv = hexStringToUint8Array("000102030405060708090a0b0c0d0e0f");
+var plaintext = hexStringToUint8Array("6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3710");
 var extractable = true;
 
 debug("Importing a raw AES key from string literal...");
@@ -33,7 +30,7 @@ crypto.subtle.importKey("raw", keyData, "aes-cbc", extractable, ["encrypt", "dec
     debug("Using the key to encrypt plaintext...");
     return crypto.subtle.encrypt({name: "aes-cbc", iv: iv}, key, [plaintext]);
 }).then(undefined, function(result) {
-    debug("Failed, as expected. Note that the spec doesn't appear to clearly define which step should fail."
+    debug("Failed, as expected. Note that the spec doesn't appear to clearly define which step should fail.");
 
     finishJSTest();
 });

@@ -13,16 +13,15 @@ description("Test crypto.subtle argument conversion");
 
 jsTestIsAsync = true;
 
-if (!window.subtle)
-    window.crypto.subtle = window.crypto.webkitSubtle;
-
 Promise.fulfill(null).then(function() {
     // This looks like invalid input, but it actually isn't - Uint8Array is a sequence too,
     // so it's just an empty sequence, same as passing [].
     debug("SHA1 of new Uint8Array([]))");
     return crypto.subtle.digest('sha-1', new Uint8Array([]));
 }).then(function(result) {
-    printAcceptedResult(result);
+    digest = result;
+    shouldBe("bytesToHexString(new Uint8Array(digest))", "'da39a3ee5e6b4b0d3255bfef95601890afd80709'");
+
     debug("\nPassing algorithm name as a string object...");
     return crypto.subtle.digest(new String('sha-1'), []);
 }).then(function(result) {

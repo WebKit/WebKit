@@ -1,3 +1,65 @@
+2013-11-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Update WebCrypto tests
+        https://bugs.webkit.org/show_bug.cgi?id=124388
+
+        Reviewed by Anders Carlsson.
+
+        Updated tests for newer common.js. Changed some tests from just dumping results
+        to comparing them to known expected ones. Fixed a syntax error in
+        aes-cbc-invalid-length.html, so it now actually runs.
+
+        * crypto/subtle/resources/common.js: Update to a new version from Blink, because
+        it's much nicer than the old one, and it's good to be compatible at test level.
+        Moved crypto.subtle definition from webkitSubtle here to avoid repeating it in all
+        tests. Added a quick and dirty Promise.all implementation.
+
+        * crypto/subtle/aes-cbc-192-encrypt-decrypt-expected.txt:
+        * crypto/subtle/aes-cbc-192-encrypt-decrypt.html:
+        * crypto/subtle/aes-cbc-256-encrypt-decrypt-expected.txt:
+        * crypto/subtle/aes-cbc-256-encrypt-decrypt.html:
+        * crypto/subtle/aes-cbc-encrypt-decrypt-expected.txt:
+        * crypto/subtle/aes-cbc-encrypt-decrypt-with-padding-expected.txt:
+        * crypto/subtle/aes-cbc-encrypt-decrypt-with-padding.html:
+        * crypto/subtle/aes-cbc-encrypt-decrypt.html:
+        * crypto/subtle/aes-cbc-generate-key.html:
+        * crypto/subtle/aes-cbc-import-jwk-expected.txt:
+        * crypto/subtle/aes-cbc-import-jwk.html:
+        * crypto/subtle/aes-cbc-invalid-length-expected.txt:
+        * crypto/subtle/aes-cbc-invalid-length.html:
+        * crypto/subtle/aes-cbc-wrong-key-class.html:
+        * crypto/subtle/aes-export-key-expected.txt:
+        * crypto/subtle/aes-export-key.html:
+        * crypto/subtle/argument-conversion-expected.txt:
+        * crypto/subtle/argument-conversion.html:
+        * crypto/subtle/hmac-export-key-expected.txt:
+        * crypto/subtle/hmac-export-key.html:
+        * crypto/subtle/hmac-generate-key.html:
+        * crypto/subtle/hmac-import-jwk-expected.txt:
+        * crypto/subtle/hmac-import-jwk.html:
+        * crypto/subtle/hmac-sign-verify-empty-key-expected.txt:
+        * crypto/subtle/hmac-sign-verify-empty-key.html:
+        * crypto/subtle/hmac-sign-verify-expected.txt:
+        * crypto/subtle/hmac-sign-verify.html:
+        * crypto/subtle/import-jwk-expected.txt:
+        * crypto/subtle/import-jwk.html:
+        * crypto/subtle/rsassa-pkcs1-v1_5-generate-key-expected.txt:
+        * crypto/subtle/rsassa-pkcs1-v1_5-generate-key.html:
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-expected.txt:
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk.html:
+        * crypto/subtle/rsassa-pkcs1-v1_5-sign-verify-expected.txt:
+        * crypto/subtle/rsassa-pkcs1-v1_5-sign-verify.html:
+        * crypto/subtle/sha-1-expected.txt:
+        * crypto/subtle/sha-1.html:
+        * crypto/subtle/sha-224-expected.txt:
+        * crypto/subtle/sha-224.html:
+        * crypto/subtle/sha-256-expected.txt:
+        * crypto/subtle/sha-256.html:
+        * crypto/subtle/sha-384-expected.txt:
+        * crypto/subtle/sha-384.html:
+        * crypto/subtle/sha-512-expected.txt:
+        * crypto/subtle/sha-512.html:
+
 2013-11-14  Victor Costan  <costan@gmail.com>
 
         XMLSerializer escapes < > & correctly inside <script> and <style> tags.

@@ -13,9 +13,6 @@ description("Test exporting an AES key.");
 
 jsTestIsAsync = true;
 
-if (!window.subtle)
-    window.crypto.subtle = window.crypto.webkitSubtle;
-
 var extractable = true;
 
 var jwkKey = {
@@ -23,7 +20,7 @@ var jwkKey = {
     "k": "jnOw99oOZFLIEPMrgJB55WL46tJSLGt7"
 };
 
-var jwkKeyAsArrayBuffer = asciiToArrayBuffer(JSON.stringify(jwkKey));
+var jwkKeyAsArrayBuffer = asciiToUint8Array(JSON.stringify(jwkKey));
 
 debug("Importing a JWK key...");
 crypto.subtle.importKey("jwk", jwkKeyAsArrayBuffer, "AES-CBC", extractable, []).then(function(result) {
@@ -33,7 +30,7 @@ crypto.subtle.importKey("jwk", jwkKeyAsArrayBuffer, "AES-CBC", extractable, []).
     return crypto.subtle.exportKey("raw", key);
 }).then(function(result) {
     exportedData = result;
-    shouldBe("byteArrayToHexString(new Uint8Array(exportedData))", "'[8e 73 b0 f7 da 0e 64 52 c8 10 f3 2b 80 90 79 e5 62 f8 ea d2 52 2c 6b 7b]'");
+    shouldBe("bytesToHexString(new Uint8Array(exportedData))", "'8e73b0f7da0e6452c810f32b809079e562f8ead2522c6b7b'");
 
     finishJSTest();
 });

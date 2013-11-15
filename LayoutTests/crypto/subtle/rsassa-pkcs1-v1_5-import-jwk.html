@@ -13,9 +13,6 @@ description("Test importing an RSA key for RSASSA-PKCS1-v1_5.");
 
 jsTestIsAsync = true;
 
-if (!window.subtle)
-    window.crypto.subtle = window.crypto.webkitSubtle;
-
 var extractable = true;
 
 var publicKeyJSON = {
@@ -39,17 +36,17 @@ var privateKeyJSON = {
 };
 
 debug("Importing a public key...");
-crypto.subtle.importKey("jwk", asciiToArrayBuffer(JSON.stringify(publicKeyJSON)), null, extractable, ["sign", "verify"]).then(function(result) {
+crypto.subtle.importKey("jwk", asciiToUint8Array(JSON.stringify(publicKeyJSON)), null, extractable, ["sign", "verify"]).then(function(result) {
     publicKey = result;
     shouldBe("publicKey.toString()", "'[object Key]'");
     shouldBe("publicKey.type", "'public'");
     shouldBe("publicKey.usages", "['sign','verify']");
     shouldBe("publicKey.algorithm.name", "'rsassa-pkcs1-v1_5'");
     shouldBe("publicKey.algorithm.modulusLength", "2048");
-    shouldBe("byteArrayToHexString(publicKey.algorithm.publicExponent)", "'[01 00 01]'");
+    shouldBe("bytesToHexString(publicKey.algorithm.publicExponent)", "'010001'");
     shouldBe("publicKey.algorithm.hash.name", "'sha-256'");
     debug("\nImporting a private key...");
-    return crypto.subtle.importKey("jwk", asciiToArrayBuffer(JSON.stringify(privateKeyJSON)), null, extractable, ["sign", "verify"]);
+    return crypto.subtle.importKey("jwk", asciiToUint8Array(JSON.stringify(privateKeyJSON)), null, extractable, ["sign", "verify"]);
 }).then(function(result) {
     privateKey = result;
     shouldBe("privateKey.toString()", "'[object Key]'");
@@ -57,7 +54,7 @@ crypto.subtle.importKey("jwk", asciiToArrayBuffer(JSON.stringify(publicKeyJSON))
     shouldBe("privateKey.usages", "['sign','verify']");
     shouldBe("privateKey.algorithm.name", "'rsassa-pkcs1-v1_5'");
     shouldBe("privateKey.algorithm.modulusLength", "2048");
-    shouldBe("byteArrayToHexString(privateKey.algorithm.publicExponent)", "'[01 00 01]'");
+    shouldBe("bytesToHexString(privateKey.algorithm.publicExponent)", "'010001'");
     shouldBe("privateKey.algorithm.hash.name", "'sha-256'");
     finishJSTest();
 });

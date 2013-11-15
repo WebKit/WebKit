@@ -4,13 +4,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 SHA256 of []
-    = [e3 b0 c4 42 98 fc 1c 14 9a fb f4 c8 99 6f b9 24 27 ae 41 e4 64 9b 93 4c a4 95 99 1b 78 52 b8 55]
+PASS bytesToHexString(new Uint8Array(digest)) is 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
 SHA256 of [0x0]
-    = [6e 34 0b 9c ff b3 7a 98 9c a5 44 e6 bb 78 0a 2c 78 90 1d 3f b3 37 38 76 85 11 a3 06 17 af a0 1d]
+PASS bytesToHexString(new Uint8Array(digest)) is '6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d'
 SHA256 of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    = [78 a6 27 31 03 d1 7c 39 a0 b6 12 6e 22 6c ec 70 e3 33 37 f4 bc 6a 38 06 74 01 b5 4a 33 e7 8e ad]
+PASS bytesToHexString(new Uint8Array(digest)) is '78a6273103d17c39a0b6126e226cec70e33337f4bc6a38067401b54a33e78ead'
 SHA256 of [new Uint8Array([0, 1, 2, 3, 4]), new Uint8Array(5, 6, 7, 8, 9, 10])]
-    = [78 a6 27 31 03 d1 7c 39 a0 b6 12 6e 22 6c ec 70 e3 33 37 f4 bc 6a 38 06 74 01 b5 4a 33 e7 8e ad]
+PASS bytesToHexString(new Uint8Array(digest)) is '78a6273103d17c39a0b6126e226cec70e33337f4bc6a38067401b54a33e78ead'
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -13,10 +13,7 @@ description("Test HMAC sign and verify functions with an empty key.");
 
 jsTestIsAsync = true;
 
-if (!window.subtle)
-    window.crypto.subtle = window.crypto.webkitSubtle;
-
-var hmacKey = asciiToArrayBuffer('');
+var hmacKey = asciiToUint8Array('');
 var extractable = true;
 
 debug("Importing a raw HMAC key from string literal...");
@@ -30,13 +27,13 @@ crypto.subtle.importKey("raw", hmacKey, {name: 'hmac', hash: {name: 'sha-1'}}, e
     shouldBe("key.usages", "['sign', 'verify']");
 
     debug("Using the key to sign 'foo'...");
-    return crypto.subtle.sign(key.algorithm, key, [asciiToArrayBuffer('foo')]);
+    return crypto.subtle.sign(key.algorithm, key, [asciiToUint8Array('foo')]);
 }).then(function(result) {
     signature = result;
-    shouldBe("byteArrayToHexString(new Uint8Array(signature))", "'[a3 cc 77 0f c0 33 e2 cb 41 9d 42 b6 4e 00 81 a3 bd 3b e3 0e]'");
+    shouldBe("bytesToHexString(new Uint8Array(signature))", "'a3cc770fc033e2cb419d42b64e0081a3bd3be30e'");
 
     debug("Verifying the signature...");
-    return crypto.subtle.verify(key.algorithm, key, result, [asciiToArrayBuffer('foo')]);
+    return crypto.subtle.verify(key.algorithm, key, result, [asciiToUint8Array('foo')]);
 }).then(function(result) {
     verificationResult = result;
     shouldBe("verificationResult", "true");

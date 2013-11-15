@@ -13,9 +13,6 @@ description("Test generating a HMAC key.");
 
 jsTestIsAsync = true;
 
-if (!window.subtle)
-    window.crypto.subtle = window.crypto.webkitSubtle;
-
 var extractable = true;
 
 shouldThrow('crypto.subtle.generateKey("hmac", extractable, ["sign", "verify"])');

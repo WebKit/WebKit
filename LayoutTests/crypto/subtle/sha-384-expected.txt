@@ -4,13 +4,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 SHA384 of []
-    = [38 b0 60 a7 51 ac 96 38 4c d9 32 7e b1 b1 e3 6a 21 fd b7 11 14 be 07 43 4c 0c c7 bf 63 f6 e1 da 27 4e de bf e7 6f 65 fb d5 1a d2 f1 48 98 b9 5b]
+PASS bytesToHexString(new Uint8Array(digest)) is '38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b'
 SHA384 of [0x0]
-    = [be c0 21 b4 f3 68 e3 06 91 34 e0 12 c2 b4 30 70 83 d3 a9 bd d2 06 e2 4e 5f 0d 86 e1 3d 66 36 65 59 33 ec 2b 41 34 65 96 68 17 a9 c2 08 a1 17 17]
+PASS bytesToHexString(new Uint8Array(digest)) is 'bec021b4f368e3069134e012c2b4307083d3a9bdd206e24e5f0d86e13d6636655933ec2b413465966817a9c208a11717'
 SHA384 of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    = [89 bf cf 56 9a e4 af 71 85 10 da 78 c6 74 14 10 9f 57 39 bb 5c 40 d5 1c 9c 8c 50 e2 b2 ce e8 6f 2f 80 c8 b9 d6 8f 7c 01 20 1a 07 14 57 2f e6 02]
+PASS bytesToHexString(new Uint8Array(digest)) is '89bfcf569ae4af718510da78c67414109f5739bb5c40d51c9c8c50e2b2cee86f2f80c8b9d68f7c01201a0714572fe602'
 SHA384 of [new Uint8Array([0, 1, 2, 3, 4]), new Uint8Array(5, 6, 7, 8, 9, 10])]
-    = [89 bf cf 56 9a e4 af 71 85 10 da 78 c6 74 14 10 9f 57 39 bb 5c 40 d5 1c 9c 8c 50 e2 b2 ce e8 6f 2f 80 c8 b9 d6 8f 7c 01 20 1a 07 14 57 2f e6 02]
+PASS bytesToHexString(new Uint8Array(digest)) is '89bfcf569ae4af718510da78c67414109f5739bb5c40d51c9c8c50e2b2cee86f2f80c8b9d68f7c01201a0714572fe602'
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -13,12 +13,9 @@ description("Test AES-CBC encrypt and decrypt functions on a plaintext that is n
 
 jsTestIsAsync = true;
 
-if (!window.subtle)
-    window.crypto.subtle = window.crypto.webkitSubtle;
-
-var keyData = hexToArrayBuffer("2b7e151628aed2a6abf7158809cf4f3c");
-var iv = hexToArrayBuffer("000102030405060708090a0b0c0d0e0f");
-var plaintext = asciiToArrayBuffer("test");
+var keyData = hexStringToUint8Array("2b7e151628aed2a6abf7158809cf4f3c");
+var iv = hexStringToUint8Array("000102030405060708090a0b0c0d0e0f");
+var plaintext = asciiToUint8Array("test");
 var extractable = true;
 
 debug("Importing a raw AES key from string literal...");
@@ -33,7 +30,8 @@ crypto.subtle.importKey("raw", keyData, "aes-cbc", extractable, ["encrypt", "dec
     debug("Using the key to encrypt plaintext...");
     return crypto.subtle.encrypt({name: "aes-cbc", iv: iv}, key, [plaintext]);
 }).then(function(result) {
-    printAcceptedResult(result);
+    cyphertext = result;
+    shouldBe("bytesToHexString(new Uint8Array(cyphertext))", "'630199c5f202cc7167bb84c6c72b349d'");
 
     debug("Decrypting it back...");
     return crypto.subtle.decrypt({name: "aes-cbc", iv: iv}, key, [result]);
