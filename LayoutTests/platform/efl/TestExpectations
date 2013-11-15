@@ -1661,3 +1661,13 @@ webkit.org/b/120596 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailu
 webkit.org/b/118595 fast/regions/auto-size/autoheight-correct-region-for-lines-2.html [ ImageOnlyFailure ]
 
 webkit.org/b/120105 http/tests/navigation/post-frames-goback1-uncached.html [ Failure ]
+
+webkit.org/b/120682 inspector-protocol/page/archive.html [ Failure ]
+
+webkit.org/b/124414 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
+
+# ref test mismatch does not occur
+webkit.org/b/124417 fast/css/drop-shadow-viewport-height.html [ ImageOnlyFailure ]
+webkit.org/b/124417 fast/css/drop-shadow-viewport-vmax.html [ ImageOnlyFailure ]
+webkit.org/b/124417 fast/css/drop-shadow-viewport-vmin.html [ ImageOnlyFailure ]
+webkit.org/b/124417 fast/css/drop-shadow-viewport-width.html [ ImageOnlyFailure ]

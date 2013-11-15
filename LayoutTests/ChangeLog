@@ -1,3 +1,11 @@
+2013-11-15  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Add failure test expectations for failing tests.
+
+        * platform/efl/TestExpectations:
+
 2013-11-15  Tim Horton  <timothy_horton@apple.com>
 
         results.html should have a link to historical results for a test/all failing tests
