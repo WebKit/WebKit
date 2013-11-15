@@ -187,7 +187,7 @@ inline void FindNextFloatLogicalBottomAdapter::collectIfNeeded(const IntervalTyp
 
     // All the objects returned from the tree should be already placed.
     ASSERT(floatingObject->isPlaced());
-    ASSERT(rangesIntersect(m_renderer.pixelSnappedLogicalTopForFloat(floatingObject), m_renderer.pixelSnappedLogicalBottomForFloat(floatingObject), m_belowLogicalHeight, m_aboveLogicalHeight));
+    ASSERT(rangesIntersect(m_renderer.logicalTopForFloat(floatingObject), m_renderer.logicalBottomForFloat(floatingObject), m_belowLogicalHeight, m_aboveLogicalHeight));
 
     LayoutUnit floatBottom = m_renderer.logicalBottomForFloat(floatingObject);
     if (m_nextLogicalBottom < floatBottom)
@@ -460,7 +460,7 @@ inline void ComputeFloatOffsetAdapter<FloatTypeValue>::collectIfNeeded(const Int
 
     // All the objects returned from the tree should be already placed.
     ASSERT(floatingObject->isPlaced());
-    ASSERT(rangesIntersect(m_renderer.pixelSnappedLogicalTopForFloat(floatingObject), m_renderer.pixelSnappedLogicalBottomForFloat(floatingObject), m_lineTop, m_lineBottom));
+    ASSERT(rangesIntersect(m_renderer.logicalTopForFloat(floatingObject), m_renderer.logicalBottomForFloat(floatingObject), m_lineTop, m_lineBottom));
 
     bool floatIsNewExtreme = updateOffsetIfNeeded(floatingObject);
     if (floatIsNewExtreme)

@@ -1,3 +1,20 @@
+2013-11-14  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        ASSERTION FAILED: rangesIntersect(m_renderer.pixelSnappedLogicalTopForFloat(floatingObject), m_renderer.pixelSnappedLogicalBottomForFloat(floatingObject), m_lineTop, m_lineBottom) ../../Source/WebCore/rendering/FloatingObjects.cpp(463)
+        https://bugs.webkit.org/show_bug.cgi?id=124375
+
+        Reviewed by Alexandru Chiculita.
+
+        When moving the placed floats tree over to LayoutUnit, I forgot to
+        update these asserts, which causes issues on ports with subpixel
+        layout enabled. 
+
+        No new tests, no behavior change.
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::FindNextFloatLogicalBottomAdapter::collectIfNeeded):
+        (WebCore::::collectIfNeeded):
+
 2013-11-14  Victor Costan  <costan@gmail.com>
 
         Clean up sequence handling in Blob constructor
