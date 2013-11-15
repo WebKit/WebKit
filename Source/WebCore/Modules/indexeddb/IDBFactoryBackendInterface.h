@@ -28,7 +28,8 @@
 #ifndef IDBFactoryBackendInterface_h
 #define IDBFactoryBackendInterface_h
 
-#include "IDBBackingStoreInterface.h"
+#include "IDBBackingStoreCursorInterface.h"
+#include "IDBDatabaseBackend.h"
 #include "IndexedDB.h"
 
 #include <wtf/PassRefPtr.h>

@@ -29,7 +29,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBBackingStoreInterface.h"
 #include "IDBDatabaseBackend.h"
 #include "IDBTransactionBackend.h"
 #include "SharedBuffer.h"

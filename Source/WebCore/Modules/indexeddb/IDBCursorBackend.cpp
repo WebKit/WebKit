@@ -28,7 +28,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBBackingStoreInterface.h"
 #include "IDBCallbacks.h"
 #include "IDBDatabaseBackend.h"
 #include "IDBDatabaseCallbacks.h"
