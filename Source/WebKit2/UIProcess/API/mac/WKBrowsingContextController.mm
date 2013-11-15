@@ -631,7 +631,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
                 WKActionNavigationTypeKey: @(navigationType),
                 WKActionModifierFlagsKey: @(modifiers),
                 WKActionMouseButtonKey: @(mouseButton),
-                WKActionURLRequestKey: autoreleased(request)
+                WKActionURLRequestKey: adoptNS(WKURLRequestCopyNSURLRequest(request)).get()
             };
             
             [browsingContext.policyDelegate browsingContextController:browsingContext decidePolicyForNavigationAction:actionDictionary decisionHandler:makePolicyDecisionBlock(listener)];
@@ -648,7 +648,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
                 WKActionNavigationTypeKey: @(navigationType),
                 WKActionModifierFlagsKey: @(modifiers),
                 WKActionMouseButtonKey: @(mouseButton),
-                WKActionURLRequestKey: autoreleased(request),
+                WKActionURLRequestKey: adoptNS(WKURLRequestCopyNSURLRequest(request)).get(),
                 WKActionFrameNameKey: toImpl(frameName)->wrapper()
             };
             
@@ -663,8 +663,8 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
         if ([browsingContext.policyDelegate respondsToSelector:@selector(browsingContextController:decidePolicyForResponseAction:decisionHandler:)]) {
             NSDictionary *actionDictionary = @{
                 WKActionIsMainFrameKey: @(WKFrameIsMainFrame(frame)),
-                WKActionURLRequestKey: autoreleased(request),
-                WKActionURLResponseKey: autoreleased(response)
+                WKActionURLRequestKey: adoptNS(WKURLRequestCopyNSURLRequest(request)).get(),
+                WKActionURLResponseKey: adoptNS(WKURLResponseCopyNSURLResponse(response)).get()
             };
 
             [browsingContext.policyDelegate browsingContextController:browsingContext decidePolicyForResponseAction:actionDictionary decisionHandler:makePolicyDecisionBlock(listener)];

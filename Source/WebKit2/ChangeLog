@@ -1,3 +1,15 @@
+2013-11-14  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] WKBrowsingContextController's policy client implementation over-releases WKURLRequests and WKURLResponses
+        https://bugs.webkit.org/show_bug.cgi?id=124386
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (setUpPagePolicyClient): Changed to release the Cocoa objects we copy out of the WK objects
+        passed into the client callbacks, but not the WK objects themselves, which are not owned by
+        the callbacks.
+
 2013-11-14  Andy Estes  <aestes@apple.com>
 
         Replace calls to deprecated CFPropertyList functions in WebKit2
