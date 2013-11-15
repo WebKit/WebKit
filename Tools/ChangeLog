@@ -1,3 +1,19 @@
+2013-11-15  Tim Horton  <timothy_horton@apple.com>
+
+        Occasionally, hundreds of tests fail with small text diffs on Mavericks
+        https://bugs.webkit.org/show_bug.cgi?id=124312
+
+        Reviewed by Alexey Proskuryakov.
+
+        Try reverting the part of r158652 that deleted all of the persistent
+        defaults, in the thought that there might be some sort of race between
+        processes causing some settings to be left in the wrong state.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setDefaultsToConsistentValuesForTesting):
+        * WebKitTestRunner/mac/main.mm:
+        (setDefaultsToConsistentValuesForTesting):
+
 2013-11-15  Dan Bernstein  <mitz@apple.com>
 
         Give the policy client the originating frame of a navigation action

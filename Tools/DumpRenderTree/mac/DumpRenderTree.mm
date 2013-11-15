@@ -679,8 +679,6 @@ static void setDefaultsToConsistentValuesForTesting()
     static const int NoFontSmoothing = 0;
     static const int BlueTintedAppearance = 1;
 
-    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:@"DumpRenderTree"];
-
     NSString *libraryPath = libraryPathForDumpRenderTree();
 
     NSDictionary *dict = @{
