@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DFGCapabilities.h"
 
+#if ENABLE(DFG_JIT)
+
 #include "CodeBlock.h"
 #include "DFGCommon.h"
 #include "Interpreter.h"
@@ -242,3 +244,4 @@ CapabilityLevel capabilityLevel(CodeBlock* codeBlock)
 
 } } // namespace JSC::DFG
 
+#endif

@@ -126,6 +126,11 @@ macro doCallToJavaScript()
         const previousCFR = t4  
         const entry = a0
         const newCallFrame = a1
+    elsif C_LOOP
+        const extraStackSpace = 0
+        const previousCFR = t4  
+        const entry = a0
+        const newCallFrame = a1
     end
 
     move cfr, previousCFR

@@ -333,6 +333,10 @@ static void computeUsesForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecode
             setForOperand(codeBlock, uses, instruction[2].u.operand);
         return;
     }
+#define LLINT_HELPER_OPCODES(opcode, length) case opcode:
+    FOR_EACH_LLINT_OPCODE_EXTENSION(LLINT_HELPER_OPCODES)
+        return;
+#undef LLINT_HELPER_OPCODES
     }
 }
 
@@ -391,6 +395,9 @@ static void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecode
     case op_put_by_index:
     case op_del_by_id:
     case op_del_by_val:
+#define LLINT_HELPER_OPCODES(opcode, length) case opcode:
+        FOR_EACH_LLINT_OPCODE_EXTENSION(LLINT_HELPER_OPCODES);
+#undef LLINT_HELPER_OPCODES
         return;
     // These all have a single destination for the first argument.
     case op_next_pname:

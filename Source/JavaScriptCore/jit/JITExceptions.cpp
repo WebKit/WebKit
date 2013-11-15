@@ -32,9 +32,12 @@
 #include "Interpreter.h"
 #include "JITStubs.h"
 #include "JSCJSValue.h"
+#include "LLIntData.h"
+#include "LLIntOpcode.h"
 #include "LLIntThunks.h"
-#include "VM.h"
+#include "Opcode.h"
 #include "Operations.h"
+#include "VM.h"
 
 #if ENABLE(JIT) || ENABLE(LLINT)
 
@@ -50,8 +53,13 @@ void genericUnwind(VM* vm, ExecState* callFrame, JSValue exceptionValue)
     if (handler) {
         catchPCForInterpreter = &callFrame->codeBlock()->instructions()[handler->target];
         catchRoutine = ExecutableBase::catchRoutineFor(handler, catchPCForInterpreter);
-    } else
+    } else {
+#if ENABLE(LLINT_C_LOOP)
+        catchRoutine = LLInt::getCodePtr(ctiOpThrowNotCaught);
+#else
         catchRoutine = FunctionPtr(LLInt::getCodePtr(returnFromJavaScript)).value();
+#endif
+    }
     
     vm->callFrameForThrow = callFrame;
     vm->targetMachinePCForThrow = catchRoutine;

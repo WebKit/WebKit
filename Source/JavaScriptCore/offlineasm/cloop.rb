@@ -68,6 +68,22 @@ C_LOOP_SCRATCH_FPR = SpecialRegister.new("d6")
 class RegisterID
     def clDump
         case name
+        when "a0"
+            "a0"
+        when "a1"
+            "a1"
+        when "a2"
+            "a2"
+        when "a3"
+            "a3"
+        when "a4"
+            "a4"
+        when "a5"
+            "a5"
+        when "a6"
+            "a6"
+        when "a6"
+            "a6"
         when "t0"
             "t0"
         when "t1"
@@ -1075,6 +1091,10 @@ class Instruction
             cloopEmitOpAndBranch(operands, "|", :int32, "== 0")
         when "borrinz"
             cloopEmitOpAndBranch(operands, "|", :int32, "!= 0")
+
+        when "pushCalleeSaves"
+        when "popCalleeSaves"
+
 
         # A convenience and compact call to crash because we don't want to use
         # the generic llint crash mechanism which relies on the availability

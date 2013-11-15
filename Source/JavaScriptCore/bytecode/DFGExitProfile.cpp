@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DFGExitProfile.h"
 
+#if ENABLE(DFG_JIT)
+
 #include <wtf/PassOwnPtr.h>
 
 namespace JSC { namespace DFG {
@@ -95,3 +97,5 @@ void QueryableExitProfile::initialize(const ConcurrentJITLocker&, const ExitProf
 }
 
 } } // namespace JSC::DFG
+
+#endif

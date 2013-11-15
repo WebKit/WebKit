@@ -38,6 +38,7 @@ use POSIX;
 my $coverageSupport = 0;
 my $showHelp = 0;
 my $ftlJIT = 0;
+my $forceCLoop = 0;
 
 my $programName = basename($0);
 my $usage = <<EOF;
@@ -45,12 +46,14 @@ Usage: $programName [options] [options to pass to build system]
   --help                        Show this help message
   --[no-]coverage               Toggle code coverage support (default: $coverageSupport)
   --[no-]ftl-jit                Toggle FTL JIT support (default: $ftlJIT)
+  --cloop                       Use C Loop interpreter (default: $forceCLoop)
 EOF
 
 GetOptions(
     'coverage!' => \$coverageSupport,
     'help' => \$showHelp,
-    'ftl-jit!' => \$ftlJIT
+    'ftl-jit!' => \$ftlJIT,
+    'cloop!' => \$forceCLoop
 );
 
 if ($showHelp) {
@@ -73,6 +76,10 @@ if (isAppleMacWebKit()) {
     if ($ftlJIT) {
         $ENV{ENABLE_FTL_JIT} = 1;
         push @options, "ENABLE_FTL_JIT=ENABLE_FTL_JIT";
+    }
+    if ($forceCLoop) {
+        $ENV{ENABLE_LLINT_C_LOOP} = 1;
+        push @options, "ENABLE_LLINT_C_LOOP=ENABLE_LLINT_C_LOOP";
     }
     (system("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory", productDir()) == 0) or die;
 }

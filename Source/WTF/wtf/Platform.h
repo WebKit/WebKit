@@ -683,6 +683,13 @@
 #endif
 #endif /* !defined(WTF_USE_JSVALUE64) && !defined(WTF_USE_JSVALUE32_64) */
 
+/* Disable the JITs if we're forcing the cloop to be enabled */
+#if defined(ENABLE_LLINT_C_LOOP) && ENABLE_LLINT_C_LOOP
+#define ENABLE_JIT 0
+#define ENABLE_DFG_JIT 0
+#define ENABLE_FTL_JIT 0
+#endif
+
 /* Disable the JIT on versions of GCC prior to 4.1 */
 #if !defined(ENABLE_JIT) && COMPILER(GCC) && !GCC_VERSION_AT_LEAST(4, 1, 0)
 #define ENABLE_JIT 0

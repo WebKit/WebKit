@@ -28,6 +28,8 @@
 
 #include "CodeBlock.h"
 
+#if ENABLE(DFG_JIT)
+
 namespace JSC { namespace DFG {
 
 void CompilationKey::dump(PrintStream& out) const
@@ -42,3 +44,4 @@ void CompilationKey::dump(PrintStream& out) const
 } } // namespace JSC::DFG
 
 
+#endif

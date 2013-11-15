@@ -176,6 +176,7 @@ if (!-d "WebKitLibraries") {
 
 my @options = ();
 my $hasFTLJIT = 0;
+my $forceCLoop = 0;
 
 if (isAppleMacWebKit()) {
     push @options, XcodeOptions();
@@ -189,9 +190,11 @@ if (isAppleMacWebKit()) {
     foreach (@features) {
         my $option = option($_->{define}, ${$_->{value}}, $_->{default});
         $hasFTLJIT = 1 if ($_->{define} eq "ENABLE_FTL_JIT") and (${$_->{value}});
+        $forceCLoop = 1 if ($_->{define} eq "ENABLE_LLINT_C_LOOP") and (${$_->{value}});
         push @options, $option unless $option eq "";
     }
     $ENV{ENABLE_FTL_JIT} = 1 if $hasFTLJIT;
+    $ENV{ENABLE_LLINT_C_LOOP} = 1 if $forceCLoop;
 
     # ANGLE must come before WebCore
     splice @projects, 0, 0, "Source/ThirdParty/ANGLE";

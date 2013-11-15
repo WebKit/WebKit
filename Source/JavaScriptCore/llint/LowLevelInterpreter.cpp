@@ -309,7 +309,7 @@ JSValue CLoop::execute(CallFrame* callFrame, OpcodeID bootstrapOpcodeId,
     // 2. 32 bit result values will be in the low 32-bit of t0.
     // 3. 64 bit result values will be in t0.
 
-    CLoopRegister t0, t1, t2, t3;
+    CLoopRegister t0, t1, t2, t3, a1;
 #if USE(JSVALUE64)
     CLoopRegister rBasePC, tagTypeNumber, tagMask;
 #endif

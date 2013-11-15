@@ -1,3 +1,27 @@
+2013-11-14  Oliver Hunt  <oliver@apple.com>
+
+        Make CLoop easier to build, and make it work
+        https://bugs.webkit.org/show_bug.cgi?id=124359
+
+        Reviewed by Geoffrey Garen.
+
+        Add --cloop to build-jsc, build-webkit and friends.
+
+        Also make CLoop build and work again - This meant adding a
+        couple of missing ENABLE(DFG_JIT) blocks, and fixing a few 
+        other references.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/DFGExitProfile.cpp:
+        * dfg/DFGCapabilities.cpp:
+        * dfg/DFGCompilationKey.cpp:
+        * dfg/DFGCompilationMode.cpp:
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+
 2013-11-14  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (r159276): Fix lots of crashes for arm_traditional architecture.
