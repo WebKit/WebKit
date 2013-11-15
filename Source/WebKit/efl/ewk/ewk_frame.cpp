@@ -1699,9 +1699,7 @@ Ewk_Certificate_Status ewk_frame_certificate_status_get(Evas_Object* ewkFrame)
     if (frameLoader.subframeIsLoading())
         return EWK_CERTIFICATE_STATUS_NO_CERTIFICATE;
 
-    SoupMessage* soupMessage = documentLoader->request().toSoupMessage();
-
-    if (soupMessage && (soup_message_get_flags(soupMessage) & SOUP_MESSAGE_CERTIFICATE_TRUSTED))
+    if (documentLoader->request().soupMessageFlags() & SOUP_MESSAGE_CERTIFICATE_TRUSTED)
         return EWK_CERTIFICATE_STATUS_TRUSTED;
 
     return EWK_CERTIFICATE_STATUS_UNTRUSTED;
