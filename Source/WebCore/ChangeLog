@@ -1,3 +1,78 @@
+2013-11-15  Stephane Jadaud  <sjadaud@sii.fr>
+
+        [GStreamer] Add support for Media Source API
+        https://bugs.webkit.org/show_bug.cgi?id=99065
+
+        The patch integrate a Media Source player for the GStreamer backend. The implementented architecture is:
+        - MediaPlayerPrivateGStreamer engine is modified to support Media Source URIs (change blob:// to mediasourceblob://), in addition to the existing support for web (http/https/blob) URIs
+        - Similar to the existing WebKitWebSrc gstreamer element that handles web URIs, a new gstreamer element named WebKitMediaSrc is implemented to handle Media Source URIs
+        - WebKitMediaSrc registers its URI protocol handler, allowing uridecodebin to dynamically create the appropriate source element.
+        - The WebKitMediaSrc element creates a bin with 2 appsrc: One for Audio and One for Video. Pads are dynamically linked at the reception of first video and audio buffers.
+
+        Reviewed by Philippe Normand.
+
+        Tests: Activate http/tests/media/media-source and media/media-source tests
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::initializeGStreamerAndRegisterWebKitElements):
+        (WebCore::MediaPlayerPrivateGStreamer::load):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/MediaSourceGStreamer.cpp: Added.
+        (WebCore::MediaSourceGStreamer::open):
+        (WebCore::MediaSourceGStreamer::MediaSourceGStreamer):
+        (WebCore::MediaSourceGStreamer::~MediaSourceGStreamer):
+        (WebCore::MediaSourceGStreamer::addSourceBuffer):
+        (WebCore::MediaSourceGStreamer::setDuration):
+        (WebCore::MediaSourceGStreamer::markEndOfStream):
+        (WebCore::MediaSourceGStreamer::unmarkEndOfStream):
+        * platform/graphics/gstreamer/MediaSourceGStreamer.h: Added.
+        * platform/graphics/gstreamer/SourceBufferPrivateGStreamer.cpp: Added.
+        (WebCore::SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer):
+        (WebCore::SourceBufferPrivateGStreamer::append):
+        (WebCore::SourceBufferPrivateGStreamer::abort):
+        (WebCore::SourceBufferPrivateGStreamer::removedFromMediaSource):
+        * platform/graphics/gstreamer/SourceBufferPrivateGStreamer.h: Added.
+        * platform/graphics/gstreamer/WebKitMediaSourceGStreamer.cpp: Added.
+        (webKitMediaSrcAddSrc):
+        (webkit_media_src_init):
+        (webKitMediaSrcFinalize):
+        (webKitMediaSrcSetProperty):
+        (webKitMediaSrcGetProperty):
+        (webKitMediaVideoSrcStop):
+        (webKitMediaAudioSrcStop):
+        (webKitMediaVideoSrcStart):
+        (webKitMediaAudioSrcStart):
+        (webKitMediaSrcChangeState):
+        (webKitMediaSrcQueryWithParent):
+        (webKitMediaSrcUriGetType):
+        (webKitMediaSrcGetProtocols):
+        (webKitMediaSrcGetUri):
+        (webKitMediaSrcSetUri):
+        (webKitMediaSrcUriHandlerInit):
+        (webKitMediaVideoSrcNeedDataMainCb):
+        (webKitMediaAudioSrcNeedDataMainCb):
+        (webKitMediaVideoSrcNeedDataCb):
+        (webKitMediaAudioSrcNeedDataCb):
+        (webKitMediaVideoSrcEnoughDataMainCb):
+        (webKitMediaAudioSrcEnoughDataMainCb):
+        (webKitMediaVideoSrcEnoughDataCb):
+        (webKitMediaAudioSrcEnoughDataCb):
+        (webKitMediaVideoSrcSeekMainCb):
+        (webKitMediaAudioSrcSeekMainCb):
+        (webKitMediaVideoSrcSeekDataCb):
+        (webKitMediaAudioSrcSeekDataCb):
+        (webKitMediaSrcSetMediaPlayer):
+        (webKitMediaSrcSetPlayBin):
+        (MediaSourceClientGstreamer::MediaSourceClientGstreamer):
+        (MediaSourceClientGstreamer::~MediaSourceClientGstreamer):
+        (MediaSourceClientGstreamer::didReceiveDuration):
+        (MediaSourceClientGstreamer::didReceiveData):
+        (MediaSourceClientGstreamer::didFinishLoading):
+        (MediaSourceClientGstreamer::didFail):
+        * platform/graphics/gstreamer/WebKitMediaSourceGStreamer.h: Added.
+
 2013-11-14  Victor Costan  <costan@gmail.com>
 
         XMLSerializer escapes < > & correctly inside <script> and <style> tags.

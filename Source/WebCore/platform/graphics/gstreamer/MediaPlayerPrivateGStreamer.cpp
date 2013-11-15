@@ -56,6 +56,11 @@
 #include <gst/interfaces/streamvolume.h>
 #endif
 
+#if ENABLE(MEDIA_SOURCE)
+#include "MediaSource.h"
+#include "WebKitMediaSourceGStreamer.h"
+#endif
+
 // GstPlayFlags flags from playbin2. It is the policy of GStreamer to
 // not publicly expose element-specific enums. That's why this
 // GstPlayFlags enum has been copied here.
@@ -229,9 +234,14 @@ bool initializeGStreamerAndRegisterWebKitElements()
     GRefPtr<GstElementFactory> srcFactory = gst_element_factory_find("webkitwebsrc");
     if (!srcFactory) {
         GST_DEBUG_CATEGORY_INIT(webkit_media_player_debug, "webkitmediaplayer", 0, "WebKit media player");
-        return gst_element_register(0, "webkitwebsrc", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_WEB_SRC);
+        gst_element_register(0, "webkitwebsrc", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_WEB_SRC);
     }
 
+#if ENABLE(MEDIA_SOURCE)
+    GRefPtr<GstElementFactory> WebKitMediaSrcFactory = gst_element_factory_find("webkitmediasrc");
+    if (!WebKitMediaSrcFactory)
+        gst_element_register(0, "webkitmediasrc", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_MEDIA_SRC);
+#endif
     return true;
 }
 
@@ -388,9 +398,11 @@ void MediaPlayerPrivateGStreamer::load(const String& url)
 }
 
 #if ENABLE(MEDIA_SOURCE)
-void MediaPlayerPrivateGStreamer::load(const String& url, PassRefPtr<MediaSource>)
+void MediaPlayerPrivateGStreamer::load(const String& url, PassRefPtr<HTMLMediaSource> mediaSource)
 {
-    notImplemented();
+    String mediasourceUri = String::format("mediasource%s", url.utf8().data());
+    m_mediaSource = mediaSource;
+    load(mediasourceUri);
 }
 #endif
 
@@ -1309,6 +1321,12 @@ void MediaPlayerPrivateGStreamer::sourceChanged()
 
     if (WEBKIT_IS_WEB_SRC(m_source.get()))
         webKitWebSrcSetMediaPlayer(WEBKIT_WEB_SRC(m_source.get()), m_player);
+#if ENABLE(MEDIA_SOURCE)
+    if (m_mediaSource && WEBKIT_IS_MEDIA_SRC(m_source.get())) {
+        MediaSourceGStreamer::open(m_mediaSource.get(), WEBKIT_MEDIA_SRC(m_source.get()));
+        webKitMediaSrcSetPlayBin(WEBKIT_MEDIA_SRC(m_source.get()), m_playBin.get());
+    }
+#endif
 }
 
 void MediaPlayerPrivateGStreamer::cancelLoad()

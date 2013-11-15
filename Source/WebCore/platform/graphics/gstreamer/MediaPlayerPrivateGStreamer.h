@@ -33,6 +33,10 @@
 #include <gst/pbutils/install-plugins.h>
 #include <wtf/Forward.h>
 
+#if ENABLE(MEDIA_SOURCE)
+#include "MediaSourceGStreamer.h"
+#endif
+
 typedef struct _GstBuffer GstBuffer;
 typedef struct _GstMessage GstMessage;
 typedef struct _GstElement GstElement;
@@ -55,7 +59,7 @@ public:
 
     void load(const String &url);
 #if ENABLE(MEDIA_SOURCE)
-    void load(const String& url, PassRefPtr<MediaSource>);
+    void load(const String& url, PassRefPtr<HTMLMediaSource>);
 #endif
     void commitLoad();
     void cancelLoad();
@@ -199,6 +203,9 @@ private:
     Vector<RefPtr<InbandTextTrackPrivateGStreamer>> m_textTracks;
     Vector<RefPtr<VideoTrackPrivateGStreamer>> m_videoTracks;
     RefPtr<InbandTextTrackPrivate> m_chaptersTrack;
+#endif
+#if ENABLE(MEDIA_SOURCE)
+    RefPtr<HTMLMediaSource> m_mediaSource;
 #endif
 };
 }

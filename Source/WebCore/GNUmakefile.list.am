@@ -3420,6 +3420,8 @@ webcore_sources += \
 	Source/WebCore/html/HTMLMapElement.h \
 	Source/WebCore/html/HTMLMarqueeElement.cpp \
 	Source/WebCore/html/HTMLMarqueeElement.h \
+	Source/WebCore/html/HTMLMediaSource.cpp \
+	Source/WebCore/html/HTMLMediaSource.h \
 	Source/WebCore/html/HTMLMediaElement.cpp \
 	Source/WebCore/html/HTMLMediaElement.h \
 	Source/WebCore/html/HTMLMenuElement.cpp \
@@ -5439,6 +5441,16 @@ webcore_platform_sources += \
 	Source/WebCore/platform/mock/RTCPeerConnectionHandlerMock.h \
 	Source/WebCore/platform/mock/ScrollbarThemeMock.cpp \
 	Source/WebCore/platform/mock/ScrollbarThemeMock.h \
+	Source/WebCore/platform/mock/mediasource/MockBox.cpp \
+	Source/WebCore/platform/mock/mediasource/MockBox.h \
+	Source/WebCore/platform/mock/mediasource/MockMediaPlayerMediaSource.cpp \
+	Source/WebCore/platform/mock/mediasource/MockMediaPlayerMediaSource.h \
+	Source/WebCore/platform/mock/mediasource/MockMediaSourcePrivate.cpp \
+	Source/WebCore/platform/mock/mediasource/MockMediaSourcePrivate.h \
+	Source/WebCore/platform/mock/mediasource/MockSourceBufferPrivate.cpp \
+	Source/WebCore/platform/mock/mediasource/MockSourceBufferPrivate.h \
+	Source/WebCore/platform/mock/mediasource/MockTracks.cpp \
+	Source/WebCore/platform/mock/mediasource/MockTracks.h \
 	Source/WebCore/platform/network/BlobData.cpp \
 	Source/WebCore/platform/network/BlobData.h \
 	Source/WebCore/platform/network/BlobRegistry.h \
@@ -6308,6 +6320,13 @@ platform_sources += \
 	Source/WebCore/platform/graphics/gstreamer/TrackPrivateBaseGStreamer.h \
 	Source/WebCore/platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp \
 	Source/WebCore/platform/graphics/gstreamer/VideoTrackPrivateGStreamer.h
+webcore_platform_sources += \
+	Source/WebCore/platform/graphics/gstreamer/SourceBufferPrivateGStreamer.cpp \
+	Source/WebCore/platform/graphics/gstreamer/SourceBufferPrivateGStreamer.h \
+	Source/WebCore/platform/graphics/gstreamer/MediaSourceGStreamer.cpp \
+	Source/WebCore/platform/graphics/gstreamer/MediaSourceGStreamer.h \
+	Source/WebCore/platform/graphics/gstreamer/WebKitMediaSourceGStreamer.cpp \
+	Source/WebCore/platform/graphics/gstreamer/WebKitMediaSourceGStreamer.h
 endif
 
 # ---
