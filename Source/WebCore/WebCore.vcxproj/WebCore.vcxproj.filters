@@ -4473,6 +4473,9 @@
     <ClCompile Include="..\bindings\js\JSSQLTransactionSyncCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
+    <ClCompile Include="..\bindings\js\JSRTCIceCandidateCustom.cpp">
+      <Filter>bindings\js</Filter>
+    </ClCompile>
     <ClCompile Include="..\bindings\js\JSRTCPeerConnectionCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>

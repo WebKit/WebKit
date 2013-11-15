@@ -1,3 +1,18 @@
+2013-11-15  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Modifying RTCIceCandidate object construction to match the spec
+        https://bugs.webkit.org/show_bug.cgi?id=124369
+
+        Reviewed by Eric Carlson.
+
+        According to the spec the RTCIceCandidateInit parameter in RTCSessionDescription constructor is optional,
+        which must not be nullable, and, if passed, must be a valid Dictionary. If the keys are not present, the string
+        object that stores them in the RTCIceCandidate class, must be null in those cases. Also, if a key is present
+        and its value is not valid an exception must be raised.
+
+        * fast/mediastream/RTCIceCandidate-expected.txt:
+        * fast/mediastream/RTCIceCandidate.html:
+
 2013-11-15  Tim Horton  <timothy_horton@apple.com>
 
         Layout Test webgl/1.0.2/conformance/ogles/GL/tan/tan_001_to_006.html fails on Intel

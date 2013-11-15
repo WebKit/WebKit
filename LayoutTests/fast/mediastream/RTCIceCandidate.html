@@ -23,12 +23,31 @@
             shouldBe('candidate.sdpMid', '"bar"');
             shouldBe('candidate.sdpMLineIndex', '6');
 
-            shouldThrow('new RTCIceCandidate({});');
+            shouldNotThrow('new RTCIceCandidate({});');
+            shouldNotThrow('new RTCIceCandidate({candidate:"foo"});');
+            shouldNotThrow('new RTCIceCandidate({sdpMid:"bar"});');
+            shouldNotThrow('new RTCIceCandidate({sdpMLineIndex:6});');
+
+            shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMid:"bar", sdpMLineIndex:"a"});');
+            shouldThrow('new RTCIceCandidate({sdpMid:"bar", sdpMLineIndex:"a"});');
+            shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMLineIndex:"a"});');
+            shouldThrow('new RTCIceCandidate({sdpMLineIndex:"a"});');
+
+            shouldThrow('new RTCIceCandidate({candidate:"", sdpMid:"bar", sdpMLineIndex:6});');
+            shouldThrow('new RTCIceCandidate({candidate:"", sdpMLineIndex:6});');
+            shouldThrow('new RTCIceCandidate({candidate:"", sdpMid:"bar"});');
+            shouldThrow('new RTCIceCandidate({candidate:""});');
+
+            shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMid:"", sdpMLineIndex:6});');
+            shouldThrow('new RTCIceCandidate({sdpMid:"", sdpMLineIndex:6});');
+            shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMid:""});');
+            shouldThrow('new RTCIceCandidate({sdpMid:""});');
+
+            shouldThrow('new RTCIceCandidate({candidate:"", sdpMid:"", sdpMLineIndex:"a"});');
+
             shouldThrow('new RTCIceCandidate(5);');
             shouldThrow('new RTCIceCandidate("foobar");');
             shouldThrow('new RTCIceCandidate(candidate:"");');
-
-            shouldNotThrow('new RTCIceCandidate({candidate:"x"});');
 
             window.successfullyParsed = true;
         </script>
