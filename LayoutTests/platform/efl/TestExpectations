@@ -1021,7 +1021,7 @@ webkit.org/b/84773 ietestcenter/css3/multicolumn/column-width-applies-to-012.htm
 webkit.org/b/84777 ietestcenter/css3/multicolumn/column-width-applies-to-015.htm [ ImageOnlyFailure ]
 
 # Expando properties on attribute nodes disappear
-webkit.org/b/88045 fast/dom/gc-attribute-node.html [ Failure ]
+webkit.org/b/88045 fast/dom/gc-attribute-node.html [ Failure Pass ]
 
 # Requires WebP support.
 Bug(EFL) fast/canvas/canvas-toDataURL-webp.html
@@ -1259,8 +1259,6 @@ webkit.org/b/98564 fast/table/colspanMinWidth-vertical.html [ Missing Failure ]
 # Fails on the bots.
 webkit.org/b/97968 media/unsupported-rtsp.html [ Failure ]
 
-webkit.org/b/98587 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
-
 webkit.org/b/99878 css3/flexbox/flexbox-baseline-margins.html [ Missing ImageOnlyFailure ]
 
 # css3-conditionals support is not yet enabled.
@@ -1482,7 +1480,7 @@ webkit.org/b/111172 compositing/overlap-blending/children-opacity-no-overlap.htm
 webkit.org/b/114338 compositing/overlap-blending/nested-overlap-overflow.html [ ImageOnlyFailure ]
 
 # Select element popup is not shown.
-webkit.org/b/114154 fast/forms/select/popup-closes-on-blur.html [ Failure ]
+webkit.org/b/114154 fast/forms/select/popup-closes-on-blur.html [ Pass ]
 
 webkit.org/b/114159 fast/events/popup-blocking-timers3.html [ Failure ]
 

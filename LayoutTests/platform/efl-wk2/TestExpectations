@@ -359,7 +359,7 @@ compositing/tiling/rotated-tiled-clamped.html [ Missing ]
 compositing/tiling/rotated-tiled-preserve3d-clamped.html [ Missing ]
 
 # Failing after r142758.
-webkit.org/b/109948 fast/dom/Window/mozilla-focus-blur.html [ Failure ]
+webkit.org/b/109948 fast/dom/Window/mozilla-focus-blur.html [ Failure Pass ]
 
 webkit.org/b/119789 fast/events/touch/frame-hover-update.html [ Crash ]
 webkit.org/b/119789 fast/events/touch/multi-touch-inside-iframes.html [ Crash ]
@@ -367,7 +367,7 @@ webkit.org/b/119789 fast/events/touch/multi-touch-inside-nested-iframes.html [ C
 webkit.org/b/119789 fast/events/touch/touch-before-pressing-spin-button.html [ Crash ]
 webkit.org/b/119789 fast/events/touch/touch-coords-in-zoom-and-scroll.html [ Crash ]
 webkit.org/b/119789 fast/events/touch/touch-inside-iframe.html [ Crash ]
-webkit.org/b/119789 fast/events/touch/touch-slider-no-js-touch-listener.html [ Crash ]
+webkit.org/b/119789 fast/events/touch/touch-slider-no-js-touch-listener.html [ Crash Pass ]
 
 # WKTR / Do not support setViewModeMediaFeature().
 Bug(EFL) fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
