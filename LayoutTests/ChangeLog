@@ -1,3 +1,15 @@
+2013-11-15  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes][CSS Regions] Simplify shape-inside-on-multiple-regions-with-negative-shape-top.html
+        https://bugs.webkit.org/show_bug.cgi?id=123808
+
+        Reviewed by Mihnea Ovidenie.
+
+        Use a rectangle instead of a complex polygon in the test.
+
+        * fast/regions/shape-inside/shape-inside-on-multiple-regions-with-negative-shape-top-expected.html:
+        * fast/regions/shape-inside/shape-inside-on-multiple-regions-with-negative-shape-top.html:
+
 2013-11-15  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening
