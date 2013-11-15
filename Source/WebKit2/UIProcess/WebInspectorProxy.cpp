@@ -372,7 +372,7 @@ static bool isMainInspectorPage(const WebInspectorProxy* webInspectorProxy, WKUR
     return WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal(requestURL.protocol()) && decodeURLEscapeSequences(requestURL.path()) == decodeURLEscapeSequences(inspectorURL.path());
 }
 
-static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef frameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef requestRef, WKFramePolicyListenerRef listenerRef, WKTypeRef, const void* clientInfo)
+static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef frameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKFrameRef, WKURLRequestRef requestRef, WKFramePolicyListenerRef listenerRef, WKTypeRef, const void* clientInfo)
 {
     // Allow non-main frames to navigate anywhere.
     if (!toImpl(frameRef)->isMainFrame()) {
@@ -441,10 +441,11 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
     WKPagePolicyClient policyClient = {
         kWKPagePolicyClientCurrentVersion,
         this, /* clientInfo */
-        decidePolicyForNavigationAction,
+        0, /* decidePolicyForNavigationAction_deprecatedForUseWithV0 */
         0, /* decidePolicyForNewWindowAction */
         0, /* decidePolicyForResponse */
-        0 /* unableToImplementPolicy */
+        0, /* unableToImplementPolicy */
+        decidePolicyForNavigationAction
     };
 
     inspectorPage->initializePolicyClient(&policyClient);

@@ -1,3 +1,29 @@
+2013-11-15  Dan Bernstein  <mitz@apple.com>
+
+        Give the policy client the originating frame of a navigation action
+        https://bugs.webkit.org/show_bug.cgi?id=124431
+
+        Reviewed by Anders Carlsson.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (decidePolicyForNavigationAction): Added originatingFrame parameter.
+        (-[WK2BrowserWindowController awakeFromNib]): Updated for the new version of the policy
+        client.
+
+        * TestWebKitAPI/Tests/WebKit2/DownloadDecideDestinationCrash.cpp:
+        (TestWebKitAPI::decidePolicyForNavigationAction): Added originatingFrame parameter.
+        (TestWebKitAPI::setPagePolicyClient): Updated for the new version of the policy client.
+
+        * TestWebKitAPI/Tests/WebKit2/PageLoadBasic.cpp:
+        (TestWebKitAPI::decidePolicyForNavigationAction): Added originatingFrame parameter.
+        (TestWebKitAPI::TEST): Updated for the new version of the policy client.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions): Updated for the new version of the policy
+        client.
+        (WTR::TestController::decidePolicyForNavigationAction): Added originatingFrame parameter.
+        * WebKitTestRunner/TestController.h:
+
 2013-11-15  Tim Horton  <timothy_horton@apple.com>
 
         build.webkit.org/dashboard should provide a way to focus on a subset of bots

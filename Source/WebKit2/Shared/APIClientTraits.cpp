@@ -71,6 +71,11 @@ const size_t APIClientTraits<WKPageLoaderClient>::interfaceSizesByVersion[] = {
     sizeof(WKPageLoaderClient)
 };
 
+const size_t APIClientTraits<WKPagePolicyClient>::interfaceSizesByVersion[] = {
+    offsetof(WKPagePolicyClient, decidePolicyForNavigationAction),
+    sizeof(WKPagePolicyClient)
+};
+
 const size_t APIClientTraits<WKPageUIClient>::interfaceSizesByVersion[] = {
     offsetof(WKPageUIClient, createNewPage),
     offsetof(WKPageUIClient, showColorPicker),

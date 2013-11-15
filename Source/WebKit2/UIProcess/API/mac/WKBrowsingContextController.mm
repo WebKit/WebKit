@@ -81,6 +81,7 @@ NSString * const WKActionModifierFlagsKey = @"WKActionModifierFlagsKey";
 NSString * const WKActionURLRequestKey = @"WKActionURLRequestKey";
 NSString * const WKActionURLResponseKey = @"WKActionURLResponseKey";
 NSString * const WKActionFrameNameKey = @"WKActionFrameNameKey";
+NSString * const WKActionOriginatingFrameURLKey = @"WKActionOriginatingFrameURLKey";
 
 @interface WKBrowsingContextControllerData : NSObject {
 @public
@@ -622,7 +623,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
     policyClient.version = kWKPagePolicyClientCurrentVersion;
     policyClient.clientInfo = browsingContext;
 
-    policyClient.decidePolicyForNavigationAction = [](WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+    policyClient.decidePolicyForNavigationAction = [](WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKFrameRef originatingFrame, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
     {
         WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
         if ([browsingContext.policyDelegate respondsToSelector:@selector(browsingContextController:decidePolicyForNavigationAction:decisionHandler:)]) {
@@ -633,6 +634,11 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
                 WKActionMouseButtonKey: @(mouseButton),
                 WKActionURLRequestKey: adoptNS(WKURLRequestCopyNSURLRequest(request)).get()
             };
+
+            if (originatingFrame) {
+                actionDictionary = [[actionDictionary mutableCopy] autorelease];
+                [(NSMutableDictionary *)actionDictionary setObject:[NSURL _web_URLWithWTFString:toImpl(originatingFrame)->url() relativeToURL:nil] forKey:WKActionOriginatingFrameURLKey];
+            }
             
             [browsingContext.policyDelegate browsingContextController:browsingContext decidePolicyForNavigationAction:actionDictionary decisionHandler:makePolicyDecisionBlock(listener)];
         } else

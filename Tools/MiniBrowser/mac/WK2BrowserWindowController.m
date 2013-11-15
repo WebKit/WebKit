@@ -414,7 +414,7 @@ static void didChangeBackForwardList(WKPageRef page, WKBackForwardListItemRef ad
 
 // MARK: Policy Client Callbacks
 
-static void decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+static void decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKFrameRef originatingFrame, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
 {
     LOG(@"decidePolicyForNavigationAction");
     WKFramePolicyListenerUse(listener);
@@ -670,10 +670,11 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     WKPagePolicyClient policyClient = {
         kWKPagePolicyClientCurrentVersion,
         self,       /* clientInfo */
-        decidePolicyForNavigationAction,
+        0,          /* decidePolicyForNavigationAction_deprecatedForUseWithV0 */
         decidePolicyForNewWindowAction,
         decidePolicyForResponse,
-        0           /* unableToImplementPolicy */
+        0,          /* unableToImplementPolicy */
+        decidePolicyForNavigationAction,
     };
     WKPageSetPagePolicyClient(_webView.pageRef, &policyClient);
 

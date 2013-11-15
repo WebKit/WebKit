@@ -1,3 +1,49 @@
+2013-11-15  Dan Bernstein  <mitz@apple.com>
+
+        Give the policy client the originating frame of a navigation action
+        https://bugs.webkit.org/show_bug.cgi?id=124431
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction): Added a seventh message parameter to this template.
+
+        * Shared/APIClientTraits.cpp: Defined API traits for WKPagePolicyClient, which now has two
+        versions.
+        * Shared/APIClientTraits.h: Declared APIClientTraits<WKPagePolicyClient>.
+
+        * UIProcess/API/C/WKPage.h: Added an originatingFrame parameter to
+        WKPageDecidePolicyForNavigationActionCallback and deprecated the old version. Bumped the
+        policy client version to 1.
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (setUpPagePolicyClient): Include the originating frame’s URL under the a new key in the
+        action information dictionary.
+        * UIProcess/API/mac/WKBrowsingContextPolicyDelegate.h: Declared
+        WKActionOriginatingFrameURLKey.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::decidePolicyForNavigationAction): Added originatingFrame parameter.
+        (WebKit::WebInspectorProxy::createInspectorPage): Updated to the new version of the policy
+        client interface.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction): Added originatingFrameID parameter
+        and passing the originating frame to the policy client.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in: Added originatingFrameID paremeter to
+        DecidePolicyForNavigationAction.
+
+        * UIProcess/WebPolicyClient.cpp:
+        (WebKit::WebPolicyClient::decidePolicyForNavigationAction): Added originatingFrame
+        parameter, which is passed to the client callback.
+        * UIProcess/WebPolicyClient.h:
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction): Determine the
+        originating frame for link activation and form submission actions and send its ID in the
+        DecidePolicyForNavigationAction message.
+
 2013-11-15  Brady Eidson  <beidson@apple.com>
 
         Move execution of IDBTransactionBackendOperations to the IDBServerConnection

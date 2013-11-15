@@ -85,7 +85,7 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
     test1Done = true;
 }
 
-static void decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+static void decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKFrameRef originatingFrame, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
 {
     State* state = reinterpret_cast<State*>(const_cast<void*>(clientInfo));
     EXPECT_FALSE(state->didStartProvisionalLoadForFrame);
@@ -128,7 +128,7 @@ TEST(WebKit2, PageLoadBasic)
     WKPagePolicyClient policyClient;
     memset(&policyClient, 0, sizeof(policyClient));
 
-    policyClient.version = 0;
+    policyClient.version = 1;
     policyClient.clientInfo = &state;
     policyClient.decidePolicyForNavigationAction = decidePolicyForNavigationAction;
     policyClient.decidePolicyForNewWindowAction = decidePolicyForNewWindowAction;

@@ -2403,7 +2403,7 @@ void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
 }
 
 // PolicyClient
-void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t opaqueNavigationType, uint32_t opaqueModifiers, int32_t opaqueMouseButton, const ResourceRequest& request, uint64_t listenerID, CoreIPC::MessageDecoder& decoder, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID)
+void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t opaqueNavigationType, uint32_t opaqueModifiers, int32_t opaqueMouseButton, uint64_t originatingFrameID, const ResourceRequest& request, uint64_t listenerID, CoreIPC::MessageDecoder& decoder, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID)
 {
     RefPtr<API::Object> userData;
     WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
@@ -2420,6 +2420,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t op
     NavigationType navigationType = static_cast<NavigationType>(opaqueNavigationType);
     WebEvent::Modifiers modifiers = static_cast<WebEvent::Modifiers>(opaqueModifiers);
     WebMouseEvent::Button mouseButton = static_cast<WebMouseEvent::Button>(opaqueMouseButton);
+    WebFrameProxy* originatingFrame = m_process->webFrame(originatingFrameID);
     
     RefPtr<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
 
@@ -2428,7 +2429,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t op
     m_inDecidePolicyForNavigationAction = true;
     m_syncNavigationActionPolicyActionIsValid = false;
     
-    if (!m_policyClient.decidePolicyForNavigationAction(this, frame, navigationType, modifiers, mouseButton, request, listener.get(), userData.get()))
+    if (!m_policyClient.decidePolicyForNavigationAction(this, frame, navigationType, modifiers, mouseButton, originatingFrame, request, listener.get(), userData.get()))
         listener->use();
 
     m_inDecidePolicyForNavigationAction = false;

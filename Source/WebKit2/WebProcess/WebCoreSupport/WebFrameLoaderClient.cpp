@@ -676,7 +676,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
     webPage->send(Messages::WebPageProxy::DecidePolicyForNewWindowAction(m_frame->frameID(), action->navigationType(), action->modifiers(), action->mouseButton(), request, frameName, listenerID, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, PassRefPtr<FormState> formState, FramePolicyFunction function)
+void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, PassRefPtr<FormState> prpFormState, FramePolicyFunction function)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
@@ -689,6 +689,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     }
 
     RefPtr<API::Object> userData;
+    RefPtr<FormState> formState = prpFormState;
 
     RefPtr<InjectedBundleNavigationAction> action = InjectedBundleNavigationAction::create(m_frame, navigationAction, formState);
 
@@ -704,8 +705,26 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     uint64_t policyAction;
     uint64_t downloadID;
 
+    RefPtr<WebFrame> originatingFrame;
+    switch (action->navigationType()) {
+    case NavigationTypeLinkClicked:
+        originatingFrame = action->hitTestResult()->frame();
+        break;
+    case NavigationTypeFormSubmitted:
+    case NavigationTypeFormResubmitted:
+        if (formState) {
+            if (WebFrameLoaderClient* originatingFrameLoaderClient = toWebFrameLoaderClient(formState->sourceDocument()->frame()->loader().client()))
+                originatingFrame = originatingFrameLoaderClient->webFrame();
+        }
+        break;
+    case NavigationTypeBackForward:
+    case NavigationTypeReload:
+    case NavigationTypeOther:
+        break;
+    }
+
     // Notify the UIProcess.
-    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), action->navigationType(), action->modifiers(), action->mouseButton(), request, listenerID, InjectedBundleUserMessageEncoder(userData.get())), Messages::WebPageProxy::DecidePolicyForNavigationAction::Reply(receivedPolicyAction, policyAction, downloadID)))
+    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), action->navigationType(), action->modifiers(), action->mouseButton(), originatingFrame ? originatingFrame->frameID() : 0, request, listenerID, InjectedBundleUserMessageEncoder(userData.get())), Messages::WebPageProxy::DecidePolicyForNavigationAction::Reply(receivedPolicyAction, policyAction, downloadID)))
         return;
 
     // We call this synchronously because WebCore cannot gracefully handle a frame load without a synchronous navigation policy reply.

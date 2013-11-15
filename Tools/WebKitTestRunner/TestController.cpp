@@ -488,10 +488,11 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
     WKPagePolicyClient pagePolicyClient = {
         kWKPagePolicyClientCurrentVersion,
         this,
-        decidePolicyForNavigationAction,
+        0, // decidePolicyForNavigationAction_deprecatedForUseWithV0
         0, // decidePolicyForNewWindowAction
         decidePolicyForResponse,
         0, // unableToImplementPolicy
+        decidePolicyForNavigationAction,
     };
     WKPageSetPagePolicyClient(m_mainWebView->page(), &pagePolicyClient);
 
@@ -1216,7 +1217,7 @@ void TestController::unavailablePluginButtonClicked(WKPageRef, WKPluginUnavailab
     printf("MISSING PLUGIN BUTTON PRESSED\n");
 }
 
-void TestController::decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef, const void* clientInfo)
+void TestController::decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKFrameRef, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef, const void* clientInfo)
 {
     static_cast<TestController*>(const_cast<void*>(clientInfo))->decidePolicyForNavigationAction(listener);
 }

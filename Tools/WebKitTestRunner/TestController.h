@@ -152,7 +152,7 @@ private:
     void didReceiveAuthenticationChallengeInFrame(WKPageRef, WKFrameRef, WKAuthenticationChallengeRef);
 
     // WKPagePolicyClient
-    static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
+    static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKFrameRef, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
     void decidePolicyForNavigationAction(WKFramePolicyListenerRef);
 
     static void decidePolicyForResponse(WKPageRef, WKFrameRef, WKURLResponseRef, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef, const void*);

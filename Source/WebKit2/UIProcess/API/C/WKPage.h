@@ -148,22 +148,28 @@ typedef struct WKPageLoaderClient WKPageLoaderClient;
 enum { kWKPageLoaderClientCurrentVersion = 3 };
 
 // Policy Client.
-typedef void (*WKPageDecidePolicyForNavigationActionCallback)(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo);
+typedef void (*WKPageDecidePolicyForNavigationActionCallback)(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKFrameRef originatingFrame, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo);
 typedef void (*WKPageDecidePolicyForNewWindowActionCallback)(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo);
 typedef void (*WKPageDecidePolicyForResponseCallback)(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo);
 typedef void (*WKPageUnableToImplementPolicyCallback)(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo);
 
+// Deprecated
+typedef void (*WKPageDecidePolicyForNavigationActionCallback_deprecatedForUseWithV0)(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo);
+
 struct WKPagePolicyClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-    WKPageDecidePolicyForNavigationActionCallback                       decidePolicyForNavigationAction;
-    WKPageDecidePolicyForNewWindowActionCallback                        decidePolicyForNewWindowAction;
-    WKPageDecidePolicyForResponseCallback                               decidePolicyForResponse;
-    WKPageUnableToImplementPolicyCallback                               unableToImplementPolicy;
+    int                                                                  version;
+    const void *                                                         clientInfo;
+    WKPageDecidePolicyForNavigationActionCallback_deprecatedForUseWithV0 decidePolicyForNavigationAction_deprecatedForUseWithV0;
+    WKPageDecidePolicyForNewWindowActionCallback                         decidePolicyForNewWindowAction;
+    WKPageDecidePolicyForResponseCallback                                decidePolicyForResponse;
+    WKPageUnableToImplementPolicyCallback                                unableToImplementPolicy;
+
+    // Version 1
+    WKPageDecidePolicyForNavigationActionCallback                        decidePolicyForNavigationAction;
 };
 typedef struct WKPagePolicyClient WKPagePolicyClient;
 
-enum { kWKPagePolicyClientCurrentVersion = 0 };
+enum { kWKPagePolicyClientCurrentVersion = 1 };
 
 // Form Client.
 typedef void (*WKPageWillSubmitFormCallback)(WKPageRef page, WKFrameRef frame, WKFrameRef sourceFrame, WKDictionaryRef values, WKTypeRef userData, WKFormSubmissionListenerRef listener, const void* clientInfo);

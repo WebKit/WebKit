@@ -34,14 +34,18 @@ using namespace WebCore;
 
 namespace WebKit {
 
-bool WebPolicyClient::decidePolicyForNavigationAction(WebPageProxy* page, WebFrameProxy* frame, NavigationType type, WebEvent::Modifiers modifiers, WebMouseEvent::Button mouseButton, const ResourceRequest& resourceRequest, WebFramePolicyListenerProxy* listener, API::Object* userData)
+bool WebPolicyClient::decidePolicyForNavigationAction(WebPageProxy* page, WebFrameProxy* frame, NavigationType type, WebEvent::Modifiers modifiers, WebMouseEvent::Button mouseButton, WebFrameProxy* originatingFrame, const ResourceRequest& resourceRequest, WebFramePolicyListenerProxy* listener, API::Object* userData)
 {
-    if (!m_client.decidePolicyForNavigationAction)
+    if (!m_client.decidePolicyForNavigationAction_deprecatedForUseWithV0 && !m_client.decidePolicyForNavigationAction)
         return false;
 
     RefPtr<WebURLRequest> request = WebURLRequest::create(resourceRequest);
 
-    m_client.decidePolicyForNavigationAction(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.clientInfo);
+    if (m_client.decidePolicyForNavigationAction_deprecatedForUseWithV0)
+        m_client.decidePolicyForNavigationAction_deprecatedForUseWithV0(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.clientInfo);
+    else
+        m_client.decidePolicyForNavigationAction(toAPI(page), toAPI(frame), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toAPI(originatingFrame), toAPI(request.get()), toAPI(listener), toAPI(userData), m_client.clientInfo);
+
     return true;
 }
 

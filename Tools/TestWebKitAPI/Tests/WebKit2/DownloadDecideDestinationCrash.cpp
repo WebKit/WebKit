@@ -32,7 +32,7 @@ namespace TestWebKitAPI {
 
 static bool didDecideDestination;
 
-static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef, const void*)
+static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKFrameRef, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef, const void*)
 {
     WKFramePolicyListenerDownload(listener);
 }
@@ -57,6 +57,7 @@ static void setPagePolicyClient(WKPageRef page)
 {
     WKPagePolicyClient policyClient;
     memset(&policyClient, 0, sizeof(policyClient));
+    policyClient.version = 1;
     policyClient.decidePolicyForNavigationAction = decidePolicyForNavigationAction;
 
     WKPageSetPagePolicyClient(page, &policyClient);
