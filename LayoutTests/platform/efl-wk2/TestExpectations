@@ -103,7 +103,6 @@ webkit.org/b/72698 media/audio-garbage-collect.html
 webkit.org/b/102370 fast/writing-mode/japanese-ruby-horizontal-bt.html [ Failure Pass ]
 webkit.org/b/102370 fast/writing-mode/japanese-ruby-vertical-lr.html [ Failure Pass ]
 webkit.org/b/102370 fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure Pass ]
-webkit.org/b/102370 fast/text/international/002.html [ Failure Pass ]
 
 webkit.org/b/102204 http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html [ Crash Pass ]
 

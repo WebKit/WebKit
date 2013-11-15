@@ -1,3 +1,23 @@
+2013-11-15  Sun-woo Nam  <sunny.nam@samsung.com>
+
+        [EFL] Layout tests with international text properties need to be rebaselined.
+        https://bugs.webkit.org/show_bug.cgi?id=124389
+
+        Unreviewed, EFL rabaseline.
+
+        EFL international text rebaselined after r147668.
+        Move some expectation files to efl common place because those files in wk1 are
+        in exact accordance with files in wk2, and then delete the files in wk1 and wk2.
+
+        * platform/efl-wk1/fast/text/international/003-expected.txt: Removed.
+        * platform/efl-wk1/fast/text/international/bidi-layout-across-linebreak-expected.txt: Removed.
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/fast/text/international/002-expected.txt:
+        * platform/efl/fast/text/international/003-expected.txt:
+        Renamed from LayoutTests/platform/efl-wk2/fast/text/international/003-expected.txt.
+        * platform/efl/fast/text/international/bidi-layout-across-linebreak-expected.txt:
+        Renamed from LayoutTests/platform/efl-wk2/fast/text/international/bidi-layout-across-linebreak-expected.txt.
+
 2013-11-14  Alexey Proskuryakov  <ap@apple.com>
 
         Update WebCrypto tests
