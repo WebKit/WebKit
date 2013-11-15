@@ -1,3 +1,10 @@
+2013-11-15  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed Win build fix; setCurrentTime() no longer takes an exception parameter.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::setCurrentTime):
+
 2013-11-12  Alex Christensen  <achristensen@webkit.org>
 
         [WinCairo] Preparation for ENABLE(VIDEO).
