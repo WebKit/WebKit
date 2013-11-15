@@ -276,9 +276,10 @@ String RenderText::originalText() const
 
 void RenderText::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    // FIXME: These will go away when simple layout can do everything.
-    const_cast<RenderText&>(*this).ensureLineBoxes();
-
+    if (auto layout = simpleLineLayout()) {
+        rects.appendVector(collectTextAbsoluteRects(*this, *layout, accumulatedOffset));
+        return;
+    }
     rects.appendVector(m_lineBoxes.absoluteRects(accumulatedOffset));
 }
 
@@ -301,15 +302,19 @@ Vector<IntRect> RenderText::absoluteRectsForRange(unsigned start, unsigned end, 
 
 Vector<FloatQuad> RenderText::absoluteQuadsClippedToEllipsis() const
 {
-    const_cast<RenderText&>(*this).ensureLineBoxes();
-
+    if (auto layout = simpleLineLayout()) {
+        ASSERT(style().textOverflow() != TextOverflowEllipsis);
+        return collectTextAbsoluteQuads(*this, *layout, nullptr);
+    }
     return m_lineBoxes.absoluteQuads(*this, nullptr, RenderTextLineBoxes::ClipToEllipsis);
 }
 
 void RenderText::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-    const_cast<RenderText&>(*this).ensureLineBoxes();
-
+    if (auto layout = simpleLineLayout()) {
+        quads.appendVector(collectTextAbsoluteQuads(*this, *layout, wasFixed));
+        return;
+    }
     quads.appendVector(m_lineBoxes.absoluteQuads(*this, wasFixed, RenderTextLineBoxes::NoClipping));
 }
 

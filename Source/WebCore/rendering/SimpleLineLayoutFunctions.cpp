@@ -155,5 +155,29 @@ IntRect computeTextBoundingBox(const RenderText& textRenderer, const Layout& lay
     return enclosingIntRect(FloatRect(x, y, width, height));
 }
 
+Vector<IntRect> collectTextAbsoluteRects(const RenderText& textRenderer, const Layout& layout, const LayoutPoint& accumulatedOffset)
+{
+    Vector<IntRect> rects;
+    auto resolver = runResolver(toRenderBlockFlow(*textRenderer.parent()), layout);
+    for (auto it = resolver.begin(), end = resolver.end(); it != end; ++it) {
+        auto run = *it;
+        auto rect = run.rect();
+        rects.append(enclosingIntRect(FloatRect(accumulatedOffset + rect.location(), rect.size())));
+    }
+    return rects;
+}
+
+Vector<FloatQuad> collectTextAbsoluteQuads(const RenderText& textRenderer, const Layout& layout, bool* wasFixed)
+{
+    Vector<FloatQuad> quads;
+    auto resolver = runResolver(toRenderBlockFlow(*textRenderer.parent()), layout);
+    for (auto it = resolver.begin(), end = resolver.end(); it != end; ++it) {
+        auto run = *it;
+        auto rect = run.rect();
+        quads.append(textRenderer.localToAbsoluteQuad(FloatQuad(rect), 0, wasFixed));
+    }
+    return quads;
+}
+
 }
 }

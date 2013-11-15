@@ -1,3 +1,32 @@
+2013-11-15  Antti Koivisto  <antti@apple.com>
+
+        Hovering over text using simple line path should not cause switch to line boxes
+        https://bugs.webkit.org/show_bug.cgi?id=124418
+
+        Reviewed by Anders Carlsson.
+
+        Test: fast/text/simple-lines-hover.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteRects):
+        (WebCore::RenderText::absoluteQuadsClippedToEllipsis):
+        (WebCore::RenderText::absoluteQuads):
+        
+            Collect quads and rects directly from simple lines without requiring the line box switch.
+
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::collectTextAbsoluteRects):
+        (WebCore::SimpleLineLayout::collectTextAbsoluteQuads):
+        
+            Add these.
+
+        * rendering/SimpleLineLayoutFunctions.h:
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::Run::start):
+        (WebCore::SimpleLineLayout::RunResolver::Run::end):
+        
+            For future use.
+
 2013-11-15  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Implement visual overflow for first & last regions

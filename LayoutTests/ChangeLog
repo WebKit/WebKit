@@ -1,3 +1,13 @@
+2013-11-15  Antti Koivisto  <antti@apple.com>
+
+        Hovering over text using simple line path should not cause switch to line boxes
+        https://bugs.webkit.org/show_bug.cgi?id=124418
+
+        Reviewed by Anders Carlsson.
+
+        * fast/text/simple-lines-hover-expected.html: Added.
+        * fast/text/simple-lines-hover.html: Added.
+
 2013-11-15  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes][CSS Regions] Simplify shape-inside-on-multiple-regions-with-negative-shape-top.html

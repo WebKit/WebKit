@@ -44,6 +44,9 @@ public:
     public:
         explicit Run(const Iterator&);
 
+        unsigned start() const;
+        unsigned end() const;
+
         LayoutRect rect() const;
         FloatPoint baseline() const;
         String text() const;
@@ -123,6 +126,16 @@ LineResolver lineResolver(const RenderBlockFlow&, const Layout&);
 inline RunResolver::Run::Run(const Iterator& iterator)
     : m_iterator(iterator)
 {
+}
+
+inline unsigned RunResolver::Run::start() const
+{
+    return m_iterator.simpleRun().start;
+}
+
+inline unsigned RunResolver::Run::end() const
+{
+    return m_iterator.simpleRun().end;
 }
 
 inline LayoutRect RunResolver::Run::rect() const
