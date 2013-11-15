@@ -1,3 +1,19 @@
+2013-11-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed. Rebaselines branch after r158468
+
+        * platform/mac/mathml/presentation/fenced-expected.png:
+        * platform/mac/mathml/presentation/fenced-expected.txt:
+        * platform/mac/mathml/presentation/fenced-mi-expected.png:
+        * platform/mac/mathml/presentation/fenced-mi-expected.txt:
+        * platform/mac/mathml/presentation/mo-stretch-expected.png:
+        * platform/mac/mathml/presentation/mo-stretch-expected.txt:
+        * platform/mac/mathml/presentation/over-expected.txt:
+        * platform/mac/mathml/presentation/row-alignment-expected.png:
+        * platform/mac/mathml/presentation/row-alignment-expected.txt:
+        * platform/mac/mathml/presentation/sub-expected.txt:
+        * platform/mac/mathml/presentation/subsup-expected.txt:
+
 2013-11-13  Oliver Hunt  <oliver@apple.com>
 
         Change testcase to not rely on functions that are only available on trunk
