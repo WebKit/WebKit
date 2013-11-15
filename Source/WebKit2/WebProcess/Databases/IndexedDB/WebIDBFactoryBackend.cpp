@@ -106,12 +106,6 @@ PassRefPtr<IDBTransactionBackend> WebIDBFactoryBackend::maybeCreateTransactionBa
     return 0;
 }
 
-PassRefPtr<IDBCursorBackend> WebIDBFactoryBackend::createCursorBackend(IDBTransactionBackend&, IDBBackingStoreCursorInterface&, IndexedDB::CursorType, IDBDatabaseBackend::TaskType, int64_t)
-{
-    notImplemented();
-    return 0;
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(DATABASE_PROCESS)

@@ -200,12 +200,6 @@ PassRefPtr<IDBTransactionBackend> IDBFactoryBackendLevelDB::maybeCreateTransacti
     return IDBTransactionBackend::create(static_cast<IDBDatabaseBackend*>(backend), transactionId, databaseCallbacks, objectStoreIds, mode);
 }
 
-PassRefPtr<IDBCursorBackend> IDBFactoryBackendLevelDB::createCursorBackend(IDBTransactionBackend& transactionBackend, IDBBackingStoreCursorInterface& backingStoreCursor, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, int64_t objectStoreId)
-{
-    return IDBCursorBackend::create(&backingStoreCursor, cursorType, taskType, &transactionBackend, objectStoreId);
-}
-
-
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE) && USE(LEVELDB)

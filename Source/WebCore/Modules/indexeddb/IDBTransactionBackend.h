@@ -28,7 +28,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBBackingStoreCursorInterface.h"
 #include "IDBDatabaseBackend.h"
 #include "IDBDatabaseError.h"
 #include "IDBOperation.h"
@@ -78,8 +77,6 @@ public:
     void scheduleCountOperation(int64_t objectStoreId, int64_t indexId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>);
     void scheduleDeleteRangeOperation(int64_t objectStoreId, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>);
     void scheduleClearObjectStoreOperation(int64_t objectStoreId, PassRefPtr<IDBCallbacks>);
-
-    PassRefPtr<IDBCursorBackend> createCursorBackend(IDBBackingStoreCursorInterface&, IndexedDB::CursorType, IDBDatabaseBackend::TaskType, int64_t objectStoreId);
 
     int64_t id() const { return m_id; }
 

@@ -352,11 +352,6 @@ void IDBTransactionBackend::scheduleClearObjectStoreOperation(int64_t objectStor
     scheduleTask(ClearObjectStoreOperation::create(this, objectStoreId, callbacks));
 }
 
-PassRefPtr<IDBCursorBackend> IDBTransactionBackend::createCursorBackend(IDBBackingStoreCursorInterface& cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, int64_t objectStoreId)
-{
-    return m_database->factoryBackend().createCursorBackend(*this, cursor, cursorType, taskType, objectStoreId);
-}
-
 };
 
 #endif // ENABLE(INDEXED_DATABASE)

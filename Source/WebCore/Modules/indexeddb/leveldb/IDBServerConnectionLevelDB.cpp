@@ -32,6 +32,7 @@
 #include "IDBBackingStoreLevelDB.h"
 #include "IDBBackingStoreTransactionLevelDB.h"
 #include "IDBCursorBackend.h"
+#include "IDBFactoryBackendLevelDB.h"
 #include "IDBIndexWriterLevelDB.h"
 #include <wtf/MainThread.h>
 
@@ -453,7 +454,8 @@ void IDBServerConnectionLevelDB::openCursor(IDBTransactionBackend& transaction, 
 
     IDBDatabaseBackend::TaskType taskType(static_cast<IDBDatabaseBackend::TaskType>(operation.taskType()));
 
-    RefPtr<IDBCursorBackend> cursor = transaction.createCursorBackend(*backingStoreCursor, operation.cursorType(), taskType, operation.objectStoreID());
+    RefPtr<IDBCursorBackend> cursor = IDBCursorBackend::create(backingStoreCursor, operation.cursorType(), taskType, &transaction, operation.objectStoreID());
+
     operation.callbacks()->onSuccess(cursor, cursor->key(), cursor->primaryKey(), cursor->value());
 
     EMPTY_ASYNC_COMPLETION_CALLBACK(completionCallback);
