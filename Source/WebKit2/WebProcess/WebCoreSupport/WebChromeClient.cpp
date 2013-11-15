@@ -193,6 +193,8 @@ Page* WebChromeClient::createWindow(Frame* frame, const FrameLoadRequest& reques
 #if ENABLE(FULLSCREEN_API)
     if (frame->document() && frame->document()->webkitCurrentFullScreenElement())
         frame->document()->webkitCancelFullScreen();
+#else
+    UNUSED_PARAM(frame);
 #endif
 
     uint64_t newPageID = 0;

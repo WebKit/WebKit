@@ -214,6 +214,7 @@ WKBatteryManagerRef WKContextGetBatteryManager(WKContextRef contextRef)
 #if ENABLE(BATTERY_STATUS)
     return toAPI(toImpl(contextRef)->supplement<WebBatteryManagerProxy>());
 #else
+    UNUSED_PARAM(contextRef);
     return 0;
 #endif
 }
@@ -223,6 +224,7 @@ WKDatabaseManagerRef WKContextGetDatabaseManager(WKContextRef contextRef)
 #if ENABLE(SQL_DATABASE)
     return toAPI(toImpl(contextRef)->supplement<WebDatabaseManagerProxy>());
 #else
+    UNUSED_PARAM(contextRef);
     return 0;
 #endif
 }
@@ -237,6 +239,7 @@ WKNetworkInfoManagerRef WKContextGetNetworkInfoManager(WKContextRef contextRef)
 #if ENABLE(NETWORK_INFO)
     return toAPI(toImpl(contextRef)->supplement<WebNetworkInfoManagerProxy>());
 #else
+    UNUSED_PARAM(contextRef);
     return 0;
 #endif
 }

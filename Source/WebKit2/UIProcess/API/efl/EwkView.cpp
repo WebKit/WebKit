@@ -1075,7 +1075,7 @@ EwkWindowFeatures* EwkView::windowFeatures()
     return m_windowFeatures.get();
 }
 
-WKPageRef EwkView::createNewPage(PassRefPtr<EwkUrlRequest> request, WKDictionaryRef windowFeatures)
+WKPageRef EwkView::createNewPage(PassRefPtr<EwkUrlRequest>, WKDictionaryRef windowFeatures)
 {
     Ewk_View_Smart_Data* sd = smartData();
     ASSERT(sd->api);

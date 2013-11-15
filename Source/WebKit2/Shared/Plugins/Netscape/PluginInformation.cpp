@@ -114,6 +114,9 @@ void getPluginModuleInformation(const PluginModuleInfo& plugin, ImmutableDiction
     map.set(pluginInformationDefaultLoadPolicyKey(), WebUInt64::create(toWKPluginLoadPolicy(PluginInfoStore::defaultLoadPolicyForPlugin(plugin))));
 
     getPlatformPluginModuleInformation(plugin, map);
+#else
+    UNUSED_PARAM(plugin);
+    UNUSED_PARAM(map);
 #endif
 }
 

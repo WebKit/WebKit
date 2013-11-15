@@ -47,5 +47,8 @@ void WKVibrationSetProvider(WKVibrationRef vibrationRef, const WKVibrationProvid
 {
 #if ENABLE(VIBRATION)
     toImpl(vibrationRef)->initializeProvider(wkProvider);
+#else
+    UNUSED_PARAM(vibrationRef);
+    UNUSED_PARAM(wkProvider);
 #endif
 }

@@ -48,6 +48,8 @@ WKNetworkInfoRef WKNetworkInfoCreate(double bandwidth, bool isMetered)
     RefPtr<WebNetworkInfo> networkInfo = WebNetworkInfo::create(bandwidth, isMetered);
     return toAPI(networkInfo.release().leakRef());
 #else
+    UNUSED_PARAM(bandwidth);
+    UNUSED_PARAM(isMetered);
     return 0;
 #endif
 }

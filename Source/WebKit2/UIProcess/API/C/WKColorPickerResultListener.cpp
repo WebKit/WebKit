@@ -44,5 +44,8 @@ void WKColorPickerResultListenerSetColor(WKColorPickerResultListenerRef listener
 {
 #if ENABLE(INPUT_TYPE_COLOR)
     toImpl(listenerRef)->setColor(toWTFString(color));
+#else
+    UNUSED_PARAM(listenerRef);
+    UNUSED_PARAM(color);
 #endif
 }

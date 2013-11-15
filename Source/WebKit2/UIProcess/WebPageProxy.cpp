@@ -1741,6 +1741,9 @@ void WebPageProxy::setVisibilityState(WebCore::PageVisibilityState visibilitySta
         m_visibilityState = visibilityState;
         m_process->send(Messages::WebPage::SetVisibilityState(visibilityState, isInitialState), m_pageID);
     }
+#else
+    UNUSED_PARAM(visibilityState);
+    UNUSED_PARAM(isInitialState);
 #endif
 }
 
@@ -2643,6 +2646,8 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
     String newMimeType = mimeType;
     PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, URL(URL(), pluginURLString));
     pluginInformation = createPluginInformationDictionary(plugin, frameURLString, mimeType, pageURLString, pluginspageAttributeURLString, pluginURLString);
+#else
+    UNUSED_PARAM(mimeType);
 #endif
 
     WKPluginUnavailabilityReason pluginUnavailabilityReason = kWKPluginUnavailabilityReasonPluginMissing;

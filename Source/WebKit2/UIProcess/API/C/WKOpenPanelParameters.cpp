@@ -53,6 +53,7 @@ WKStringRef WKOpenPanelParametersCopyCapture(WKOpenPanelParametersRef parameters
 #if ENABLE(MEDIA_CAPTURE)
     return toCopiedAPI(toImpl(parametersRef)->capture());
 #else
+    UNUSED_PARAM(parametersRef);
     return 0;
 #endif
 }

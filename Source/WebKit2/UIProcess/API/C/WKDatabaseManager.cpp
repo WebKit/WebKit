@@ -126,6 +126,9 @@ void WKDatabaseManagerSetClient(WKDatabaseManagerRef databaseManagerRef, const W
     if (wkClient && wkClient->version)
         return;
     toImpl(databaseManagerRef)->initializeClient(wkClient);
+#else
+    UNUSED_PARAM(databaseManagerRef);
+    UNUSED_PARAM(wkClient);
 #endif
 }
 
@@ -133,6 +136,10 @@ void WKDatabaseManagerGetDatabasesByOrigin(WKDatabaseManagerRef databaseManagerR
 {
 #if ENABLE(SQL_DATABASE)
     toImpl(databaseManagerRef)->getDatabasesByOrigin(ArrayCallback::create(context, callback));
+#else
+    UNUSED_PARAM(databaseManagerRef);
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(callback);
 #endif
 }
 
@@ -140,6 +147,10 @@ void WKDatabaseManagerGetDatabaseOrigins(WKDatabaseManagerRef databaseManagerRef
 {
 #if ENABLE(SQL_DATABASE)
     toImpl(databaseManagerRef)->getDatabaseOrigins(ArrayCallback::create(context, callback));
+#else
+    UNUSED_PARAM(databaseManagerRef);
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(callback);
 #endif
 }
 
@@ -147,6 +158,10 @@ void WKDatabaseManagerDeleteDatabasesWithNameForOrigin(WKDatabaseManagerRef data
 {
 #if ENABLE(SQL_DATABASE)
     toImpl(databaseManagerRef)->deleteDatabaseWithNameForOrigin(toWTFString(databaseNameRef), toImpl(originRef));
+#else
+    UNUSED_PARAM(databaseManagerRef);
+    UNUSED_PARAM(databaseNameRef);
+    UNUSED_PARAM(originRef);
 #endif
 }
 
@@ -154,6 +169,9 @@ void WKDatabaseManagerDeleteDatabasesForOrigin(WKDatabaseManagerRef databaseMana
 {
 #if ENABLE(SQL_DATABASE)
     toImpl(databaseManagerRef)->deleteDatabasesForOrigin(toImpl(originRef));
+#else
+    UNUSED_PARAM(databaseManagerRef);
+    UNUSED_PARAM(originRef);
 #endif
 }
 
@@ -161,6 +179,8 @@ void WKDatabaseManagerDeleteAllDatabases(WKDatabaseManagerRef databaseManagerRef
 {
 #if ENABLE(SQL_DATABASE)
     toImpl(databaseManagerRef)->deleteAllDatabases();
+#else
+    UNUSED_PARAM(databaseManagerRef);
 #endif
 }
 
@@ -168,5 +188,9 @@ void WKDatabaseManagerSetQuotaForOrigin(WKDatabaseManagerRef databaseManagerRef,
 {
 #if ENABLE(SQL_DATABASE)
     toImpl(databaseManagerRef)->setQuotaForOrigin(toImpl(originRef), quota);
+#else
+    UNUSED_PARAM(databaseManagerRef);
+    UNUSED_PARAM(originRef);
+    UNUSED_PARAM(quota);
 #endif
 }

@@ -49,6 +49,10 @@ WKBatteryStatusRef WKBatteryStatusCreate(bool isCharging, double chargingTime, d
     RefPtr<WebBatteryStatus> status = WebBatteryStatus::create(isCharging, chargingTime, dischargingTime, level);
     return toAPI(status.release().leakRef());
 #else
+    UNUSED_PARAM(isCharging);
+    UNUSED_PARAM(chargingTime);
+    UNUSED_PARAM(dischargingTime);
+    UNUSED_PARAM(level);
     return 0;
 #endif
 }

@@ -366,6 +366,8 @@ void InjectedBundle::setDatabaseQuota(uint64_t quota)
     // Historically, we've used the following (somewhat non-sensical) string
     // for the databaseIdentifier of local files.
     WebProcess::shared().supplement<WebDatabaseManager>()->setQuotaForOrigin("file__0", quota);
+#else
+    UNUSED_PARAM(quota);
 #endif
 }
 

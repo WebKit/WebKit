@@ -44,6 +44,9 @@ void WKNetworkInfoManagerSetProvider(WKNetworkInfoManagerRef networkInfoManager,
 {
 #if ENABLE(NETWORK_INFO)
     toImpl(networkInfoManager)->initializeProvider(provider);
+#else
+    UNUSED_PARAM(networkInfoManager);
+    UNUSED_PARAM(provider);
 #endif
 }
 
@@ -51,5 +54,9 @@ void WKNetworkInfoManagerProviderDidChangeNetworkInformation(WKNetworkInfoManage
 {
 #if ENABLE(NETWORK_INFO)
     toImpl(networkInfoManager)->providerDidChangeNetworkInformation(AtomicString(toImpl(eventType)->string()), toImpl(networkInfo));
+#else
+    UNUSED_PARAM(networkInfoManager);
+    UNUSED_PARAM(eventType);
+    UNUSED_PARAM(networkInfo);
 #endif
 }
