@@ -383,6 +383,8 @@ webkit.org/b/122238 fast/layers/no-clipping-overflow-hidden-added-after-transfor
 
 webkit.org/b/122456 css3/images/cross-fade-svg-with-opacity.html [ ImageOnlyFailure ]
 
+webkit.org/b/124425 fast/dom/Geolocation/notimer-after-unload.html [ Pass Crash Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
