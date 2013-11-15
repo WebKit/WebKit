@@ -1422,6 +1422,8 @@ webkit.org/b/122147 fast/css/drop-shadow-viewport-width.html [ ImageOnlyFailure 
 
 webkit.org/b/122150 fast/css3-text/css3-text-indent/getComputedStyle/getComputedStyle-text-indent.html [ Failure ]
 
+webkit.org/b/124360 media/video-canvas-drawing-output.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
