@@ -1,3 +1,19 @@
+2013-11-15  Tim Horton  <timothy_horton@apple.com>
+
+        results.html should have a link to historical results for a test/all failing tests
+        https://bugs.webkit.org/show_bug.cgi?id=124402
+
+        Reviewed by Simon Fraser.
+
+        * fast/harness/results.html:
+        Add a new rightmost column, 'history'.
+        Clicking on the column header will open the flakiness dashboard
+        for the entire set of failing tests; clicking on the link
+        in a particular test's row will open it just for that single test.
+
+        * fast/harness/resources/results-test.js:
+        Update the harness test to expect the new number of columns.
+
 2013-11-15  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Implement visual overflow for first & last regions

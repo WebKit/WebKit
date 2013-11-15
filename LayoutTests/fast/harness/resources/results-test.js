@@ -344,10 +344,10 @@ function runTests()
     results.uses_expectations_file = false;
     runTest(results, function() {
         assertTrue(window.getComputedStyle(document.getElementById('results-table').parentNode, null)['display'] != 'none');
-        assertTrue(document.querySelectorAll('#results-table tbody td').length == 3);
+        assertTrue(document.querySelectorAll('#results-table tbody td').length == 4);
         assertTrue(!document.querySelector('tbody.expected'));
         assertTrue(!document.getElementById('passes-table'));
-        assertTrue(document.querySelectorAll('#flaky-tests-table tbody td').length == 4);
+        assertTrue(document.querySelectorAll('#flaky-tests-table tbody td').length == 5);
     });
 
     results = mockResults();

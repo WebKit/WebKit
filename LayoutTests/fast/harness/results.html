@@ -607,6 +607,19 @@ function imageResultsCell(testObject, testPrefix, actual) {
     return row;
 }
 
+function flakinessDashboardURLForTests(testObjects)
+{
+    var testList = "";
+    for (var i = 0; i < testObjects.length; ++i) {
+        testList += testObjects[i].name;
+
+        if (i != testObjects.length - 1)
+            testList += ",";
+    }
+
+    return 'http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=' + encodeURIComponent(testList);
+}
+
 function tableRow(testObject)
 {    
     var row = '<tbody'
@@ -651,6 +664,8 @@ function tableRow(testObject)
 
     if (globalState().results.uses_expectations_file)
         row += '<td>' + (actual.indexOf('MISSING') == -1 ? testObject.expected : '') + '</td>';
+
+    row += '<td><a href="' + flakinessDashboardURLForTests([testObject]) + '">history</a></td>';
 
     row += '</tr></tbody>';
     return row;
@@ -1313,6 +1328,8 @@ function failingTestsTable(tests, title, id)
 
     if (globalState().results.uses_expectations_file)
         header += '<th>actual failure</th><th>expected failure</th>';
+
+    header += '<th><a href="' + flakinessDashboardURLForTests(tests) + '">history</a></th>';
 
     if (id == 'flaky-tests-table')
         header += '<th>failures</th>';
