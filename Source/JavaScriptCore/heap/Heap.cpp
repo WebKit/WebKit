@@ -295,11 +295,6 @@ void Heap::lastChanceToFinalize()
     RELEASE_ASSERT(m_operationInProgress == NoOperation);
 
     m_objectSpace.lastChanceToFinalize();
-
-#if ENABLE(SIMPLE_HEAP_PROFILING)
-    m_slotVisitor.m_visitedTypeCounts.dump(WTF::dataFile(), "Visited Type Counts");
-    m_destroyedTypeCounts.dump(WTF::dataFile(), "Destroyed Type Counts");
-#endif
 }
 
 void Heap::reportExtraMemoryCostSlowCase(size_t cost)

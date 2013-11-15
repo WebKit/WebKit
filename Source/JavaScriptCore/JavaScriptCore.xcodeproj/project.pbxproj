@@ -381,8 +381,6 @@
 		0FC712E317CD8793008CC93C /* JITToDFGDeferredCompilationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC712E117CD878F008CC93C /* JITToDFGDeferredCompilationCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FC8150A14043BF500CFA603 /* WriteBarrierSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC8150914043BD200CFA603 /* WriteBarrierSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FC8150B14043C0E00CFA603 /* WriteBarrierSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC8150814043BCA00CFA603 /* WriteBarrierSupport.cpp */; };
-		0FC815151405119B00CFA603 /* VTableSpectrum.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC815141405118D00CFA603 /* VTableSpectrum.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FC81516140511B500CFA603 /* VTableSpectrum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC815121405118600CFA603 /* VTableSpectrum.cpp */; };
 		0FC97F33182020D7002C9B26 /* CodeBlockJettisoningWatchpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC97F2F182020D7002C9B26 /* CodeBlockJettisoningWatchpoint.cpp */; };
 		0FC97F34182020D7002C9B26 /* CodeBlockJettisoningWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC97F30182020D7002C9B26 /* CodeBlockJettisoningWatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FC97F35182020D7002C9B26 /* ProfiledCodeBlockJettisoningWatchpoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC97F31182020D7002C9B26 /* ProfiledCodeBlockJettisoningWatchpoint.cpp */; };
@@ -1681,8 +1679,6 @@
 		0FC712E117CD878F008CC93C /* JITToDFGDeferredCompilationCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JITToDFGDeferredCompilationCallback.h; sourceTree = "<group>"; };
 		0FC8150814043BCA00CFA603 /* WriteBarrierSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WriteBarrierSupport.cpp; sourceTree = "<group>"; };
 		0FC8150914043BD200CFA603 /* WriteBarrierSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WriteBarrierSupport.h; sourceTree = "<group>"; };
-		0FC815121405118600CFA603 /* VTableSpectrum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VTableSpectrum.cpp; sourceTree = "<group>"; };
-		0FC815141405118D00CFA603 /* VTableSpectrum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VTableSpectrum.h; sourceTree = "<group>"; };
 		0FC97F2F182020D7002C9B26 /* CodeBlockJettisoningWatchpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CodeBlockJettisoningWatchpoint.cpp; sourceTree = "<group>"; };
 		0FC97F30182020D7002C9B26 /* CodeBlockJettisoningWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeBlockJettisoningWatchpoint.h; sourceTree = "<group>"; };
 		0FC97F31182020D7002C9B26 /* ProfiledCodeBlockJettisoningWatchpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProfiledCodeBlockJettisoningWatchpoint.cpp; sourceTree = "<group>"; };
@@ -3080,8 +3076,6 @@
 				C2DF442E1707AC0100A5CA96 /* SuperRegion.h */,
 				141448CC13A1783700F5BA1A /* TinyBloomFilter.h */,
 				0F5F08CE146C762F000472A9 /* UnconditionalFinalizer.h */,
-				0FC815121405118600CFA603 /* VTableSpectrum.cpp */,
-				0FC815141405118D00CFA603 /* VTableSpectrum.h */,
 				1ACF7376171CA6FB00C9BB1E /* Weak.cpp */,
 				142E3133134FF0A600AFADB5 /* Weak.h */,
 				14E84F9914EE1ACC00D6D5D4 /* WeakBlock.cpp */,
@@ -4821,7 +4815,6 @@
 				BC18C4200E16F5CD00B34460 /* VM.h in Headers */,
 				FE4A332015BD2E07006F54F3 /* VMInspector.h in Headers */,
 				FE6617281774E03500495B00 /* VMStackBounds.h in Headers */,
-				0FC815151405119B00CFA603 /* VTableSpectrum.h in Headers */,
 				FED94F2F171E3E2300BE77A4 /* Watchdog.h in Headers */,
 				0F919D2615853CE3004A4E7D /* Watchpoint.h in Headers */,
 				142E313C134FF0A600AFADB5 /* Weak.h in Headers */,
@@ -5695,7 +5688,6 @@
 				0F24E55817F74EDB00ABB217 /* ValueRecovery.cpp in Sources */,
 				E18E3A590DF9278C00D90B34 /* VM.cpp in Sources */,
 				FE4A331F15BD2E07006F54F3 /* VMInspector.cpp in Sources */,
-				0FC81516140511B500CFA603 /* VTableSpectrum.cpp in Sources */,
 				FED94F2E171E3E2300BE77A4 /* Watchdog.cpp in Sources */,
 				FED94F30171E3E2300BE77A4 /* WatchdogMac.cpp in Sources */,
 				0F919D2515853CE0004A4E7D /* Watchpoint.cpp in Sources */,

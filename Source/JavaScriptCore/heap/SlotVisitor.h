@@ -90,10 +90,6 @@ public:
     
     void reportExtraMemoryUsage(size_t size);
     
-#if ENABLE(SIMPLE_HEAP_PROFILING)
-    VTableSpectrum m_visitedTypeCounts;
-#endif
-
     void addWeakReferenceHarvester(WeakReferenceHarvester*);
     void addUnconditionalFinalizer(UnconditionalFinalizer*);
 

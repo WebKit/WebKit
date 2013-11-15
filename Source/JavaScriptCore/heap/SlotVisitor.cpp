@@ -75,9 +75,6 @@ void SlotVisitor::append(ConservativeRoots& conservativeRoots)
 ALWAYS_INLINE static void visitChildren(SlotVisitor& visitor, const JSCell* cell)
 {
     StackStats::probe();
-#if ENABLE(SIMPLE_HEAP_PROFILING)
-    m_visitedTypeCounts.count(cell);
-#endif
 
     ASSERT(Heap::isMarked(cell));
     

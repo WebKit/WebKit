@@ -445,7 +445,6 @@
     <ClCompile Include="..\heap\MarkStack.cpp" />
     <ClCompile Include="..\heap\SlotVisitor.cpp" />
     <ClCompile Include="..\heap\SuperRegion.cpp" />
-    <ClCompile Include="..\heap\VTableSpectrum.cpp" />
     <ClCompile Include="..\heap\Weak.cpp" />
     <ClCompile Include="..\heap\WeakBlock.cpp" />
     <ClCompile Include="..\heap\WeakHandleOwner.cpp" />
@@ -972,7 +971,6 @@
     <ClInclude Include="..\heap\SuperRegion.h" />
     <ClInclude Include="..\heap\TinyBloomFilter.h" />
     <ClInclude Include="..\heap\UnconditionalFinalizer.h" />
-    <ClInclude Include="..\heap\VTableSpectrum.h" />
     <ClInclude Include="..\heap\Weak.h" />
     <ClInclude Include="..\heap\WeakBlock.h" />
     <ClInclude Include="..\heap\WeakHandleOwner.h" />

@@ -59,10 +59,6 @@ inline void MarkedBlock::callDestructor(JSCell* cell)
     if (cell->isZapped())
         return;
 
-#if ENABLE(SIMPLE_HEAP_PROFILING)
-    m_heap->m_destroyedTypeCounts.countVPtr(vptr);
-#endif
-
     cell->methodTableForDestruction()->destroy(cell);
     cell->zap();
 }

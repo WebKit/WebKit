@@ -205,7 +205,6 @@ set(JavaScriptCore_SOURCES
     heap/MarkedSpace.cpp
     heap/SlotVisitor.cpp
     heap/SuperRegion.cpp
-    heap/VTableSpectrum.cpp
     heap/Weak.cpp
     heap/WeakBlock.cpp
     heap/WeakHandleOwner.cpp

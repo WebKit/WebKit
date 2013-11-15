@@ -547,8 +547,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/SuperRegion.cpp \
 	Source/JavaScriptCore/heap/SuperRegion.h \
 	Source/JavaScriptCore/heap/UnconditionalFinalizer.h \
-	Source/JavaScriptCore/heap/VTableSpectrum.cpp \
-	Source/JavaScriptCore/heap/VTableSpectrum.h \
 	Source/JavaScriptCore/heap/Weak.cpp \
 	Source/JavaScriptCore/heap/Weak.h \
 	Source/JavaScriptCore/heap/WeakBlock.cpp \

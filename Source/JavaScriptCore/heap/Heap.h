@@ -265,10 +265,6 @@ namespace JSC {
         GCIncomingRefCountedSet<ArrayBuffer> m_arrayBuffers;
         size_t m_extraMemoryUsage;
 
-#if ENABLE(SIMPLE_HEAP_PROFILING)
-        VTableSpectrum m_destroyedTypeCounts;
-#endif
-
         ProtectCountSet m_protectedValues;
         Vector<Vector<ValueStringPair, 0, UnsafeVectorOverflow>* > m_tempSortingVectors;
         OwnPtr<HashSet<MarkedArgumentBuffer*>> m_markListSet;
