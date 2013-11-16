@@ -3,6 +3,17 @@
         WebCrypto no longer uses sequences of ArrayBuffers
         https://bugs.webkit.org/show_bug.cgi?id=124451
 
+        Build fix.
+
+        * crypto/mac/CryptoAlgorithmHMACMac.cpp: (WebCore::calculateSignature):
+        Now that the function became shorter, clang realized that a variable was used
+        uninitialized in an impossible code path.
+
+2013-11-16  Alexey Proskuryakov  <ap@apple.com>
+
+        WebCrypto no longer uses sequences of ArrayBuffers
+        https://bugs.webkit.org/show_bug.cgi?id=124451
+
         Reviewed by Sam Weinig.
 
         Covered by existing tests.

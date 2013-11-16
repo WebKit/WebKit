@@ -80,6 +80,7 @@ static Vector<unsigned char> calculateSignature(CCHmacAlgorithm algorithm, const
         break;
     default:
         ASSERT_NOT_REACHED();
+        return Vector<unsigned char>();
     }
 
     Vector<unsigned char> result(digestLength);
