@@ -473,6 +473,50 @@ end
 
 
 #
+# Lowering of misplaced special registers for SH4. For example:
+#
+# storep pr, foo
+#
+# becomes:
+#
+# stspr tmp
+# storep tmp, foo
+#
+
+def sh4LowerMisplacedSpecialRegisters(list)
+    newList = []
+    list.each {
+        | node |
+        if node.is_a? Instruction
+            case node.opcode
+            when "loadi", "loadis", "loadp"
+                if node.operands[1].is_a? RegisterID and node.operands[1].sh4Operand == "pr"
+                    tmp = Tmp.new(codeOrigin, :gpr)
+                    newList << Instruction.new(codeOrigin, node.opcode, [node.operands[0], tmp])
+                    newList << Instruction.new(codeOrigin, "ldspr", [tmp])
+                else
+                    newList << node
+                end
+            when "storei", "storep"
+                if node.operands[0].is_a? RegisterID and node.operands[0].sh4Operand == "pr"
+                    tmp = Tmp.new(codeOrigin, :gpr)
+                    newList << Instruction.new(codeOrigin, "stspr", [tmp])
+                    newList << Instruction.new(codeOrigin, node.opcode, [tmp, node.operands[1]])
+                else
+                    newList << node
+                end
+            else
+                newList << node
+            end
+        else
+            newList << node
+        end
+    }
+    newList
+end
+
+
+#
 # Group immediate values outside -128..127 range into constant pools for SH4.
 # These constant pools will be placed behind non-return opcodes jmp and ret, for example:
 #
@@ -680,6 +724,7 @@ class Sequence
         result = riscLowerMalformedImmediates(result, -128..127)
         result = sh4LowerMisplacedLabels(result)
         result = riscLowerMisplacedAddresses(result)
+        result = sh4LowerMisplacedSpecialRegisters(result)
 
         result = assignRegistersToTemporaries(result, :gpr, SH4_TMP_GPRS)
         result = assignRegistersToTemporaries(result, :gpr, SH4_TMP_FPRS)

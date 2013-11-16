@@ -1,3 +1,14 @@
+2013-11-16  Julien Brianceau  <jbriance@cisco.com>
+
+        [sh4] Fix build (broken since r159346).
+        https://bugs.webkit.org/show_bug.cgi?id=124455
+
+        Reviewed by Oliver Hunt.
+
+        Fix LLINT implementation for sh4 architecture to handle properly load and store operations with pr register.
+
+        * offlineasm/sh4.rb:
+
 2013-11-15  Alexey Proskuryakov  <ap@apple.com>
 
         Support exporting symmetric keys as JWK
