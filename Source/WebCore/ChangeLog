@@ -1,3 +1,15 @@
+2013-11-14  David Farler  <dfarler@apple.com>
+
+        Copy ASAN flag settings to WebCore and JavaScriptCore intermediate build tools
+        https://bugs.webkit.org/show_bug.cgi?id=124362
+
+        Reviewed by David Kilzer.
+
+        No new tests needed.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Use ASAN_C*FLAGS for WebCoreExportFileGenerator.
+
 2013-11-15  Jer Noble  <jer.noble@apple.com>
 
         [Mac][AVF] Allow video and audio tracks to be initialized with an AVAssetTrack.

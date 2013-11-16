@@ -1,3 +1,13 @@
+2013-11-14  David Farler  <dfarler@apple.com>
+
+        Copy ASAN flag settings to WebCore and JavaScriptCore intermediate build tools
+        https://bugs.webkit.org/show_bug.cgi?id=124362
+
+        Reviewed by David Kilzer.
+
+        * Configurations/ToolExecutable.xcconfig:
+        Use ASAN_C*FLAGS.
+
 2013-11-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove JSChunk
