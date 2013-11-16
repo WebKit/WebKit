@@ -41,7 +41,7 @@ public:
 
     virtual CryptoAlgorithmIdentifier identifier() const OVERRIDE;
 
-    virtual void digest(const CryptoAlgorithmParameters&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
+    virtual void digest(const CryptoAlgorithmParameters&, const CryptoOperationData&, std::unique_ptr<PromiseWrapper>, ExceptionCode&) OVERRIDE;
 
 private:
     CryptoAlgorithmSHA384();

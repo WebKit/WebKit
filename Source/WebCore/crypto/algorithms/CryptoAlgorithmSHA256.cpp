@@ -53,7 +53,7 @@ CryptoAlgorithmIdentifier CryptoAlgorithmSHA256::identifier() const
     return s_identifier;
 }
 
-void CryptoAlgorithmSHA256::digest(const CryptoAlgorithmParameters&, const Vector<CryptoOperationData>& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode&)
+void CryptoAlgorithmSHA256::digest(const CryptoAlgorithmParameters&, const CryptoOperationData& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode&)
 {
     std::unique_ptr<CryptoDigest> digest = CryptoDigest::create(CryptoAlgorithmIdentifier::SHA_256);
     if (!digest) {
@@ -61,8 +61,7 @@ void CryptoAlgorithmSHA256::digest(const CryptoAlgorithmParameters&, const Vecto
         return;
     }
 
-    for (size_t i = 0, size = data.size(); i < size; ++i)
-        digest->addBytes(data[i].first, data[i].second);
+    digest->addBytes(data.first, data.second);
 
     promise->fulfill(digest->computeHash());
 }

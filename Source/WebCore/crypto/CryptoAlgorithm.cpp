@@ -40,27 +40,27 @@ CryptoAlgorithm::~CryptoAlgorithm()
 {
 }
 
-void CryptoAlgorithm::encrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
+void CryptoAlgorithm::encrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
 {
     ec = NOT_SUPPORTED_ERR;
 }
 
-void CryptoAlgorithm::decrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
+void CryptoAlgorithm::decrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
 {
     ec = NOT_SUPPORTED_ERR;
 }
 
-void CryptoAlgorithm::sign(const CryptoAlgorithmParameters&, const CryptoKey&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
+void CryptoAlgorithm::sign(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
 {
     ec = NOT_SUPPORTED_ERR;
 }
 
-void CryptoAlgorithm::verify(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
+void CryptoAlgorithm::verify(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, const CryptoOperationData&, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
 {
     ec = NOT_SUPPORTED_ERR;
 }
 
-void CryptoAlgorithm::digest(const CryptoAlgorithmParameters&, const Vector<CryptoOperationData>&, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
+void CryptoAlgorithm::digest(const CryptoAlgorithmParameters&, const CryptoOperationData&, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
 {
     ec = NOT_SUPPORTED_ERR;
 }

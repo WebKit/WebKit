@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcParams& parameters, const CryptoKeyAES& key, const Vector<CryptoOperationData>& data, std::unique_ptr<PromiseWrapper> promise)
+static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcParams& parameters, const CryptoKeyAES& key, const CryptoOperationData& data, std::unique_ptr<PromiseWrapper> promise)
 {
     static_assert(sizeof(parameters.iv) == kCCBlockSizeAES128, "Initialization vector size must be the same as algorithm block size");
 
@@ -58,24 +58,18 @@ static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcP
         return;
     }
 
-    size_t inputSize = 0;
-    for (size_t i = 0, size = data.size(); i < size; ++i)
-        inputSize += data[i].second;
+    Vector<unsigned char> result(CCCryptorGetOutputLength(cryptor, data.second, true));
 
-    Vector<unsigned char> result(CCCryptorGetOutputLength(cryptor, inputSize, true));
-
-    unsigned char* p = result.data();
-    size_t resultChunkSize;
-    for (size_t i = 0, size = data.size(); i < size; ++i) {
-        status = CCCryptorUpdate(cryptor, data[i].first, data[i].second, p, result.end() - p, &resultChunkSize);
-        if (status) {
-            promise->reject(nullptr);
-            return;
-        }
-        p += resultChunkSize;
+    size_t bytesWritten;
+    status = CCCryptorUpdate(cryptor, data.first, data.second, result.data(), result.size(), &bytesWritten);
+    if (status) {
+        promise->reject(nullptr);
+        return;
     }
-    status = CCCryptorFinal(cryptor, p, result.end() - p, &resultChunkSize);
-    p += resultChunkSize;
+
+    unsigned char* p = result.data() + bytesWritten;
+    status = CCCryptorFinal(cryptor, p, result.end() - p, &bytesWritten);
+    p += bytesWritten;
     if (status) {
         promise->reject(nullptr);
         return;
@@ -89,7 +83,7 @@ static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcP
     promise->fulfill(result);
 }
 
-void CryptoAlgorithmAES_CBC::encrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<CryptoOperationData>& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
+void CryptoAlgorithmAES_CBC::encrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
 {
     const CryptoAlgorithmAesCbcParams& aesCBCParameters = toCryptoAlgorithmAesCbcParams(parameters);
 
@@ -102,7 +96,7 @@ void CryptoAlgorithmAES_CBC::encrypt(const CryptoAlgorithmParameters& parameters
     transformAES_CBC(kCCEncrypt, aesCBCParameters, aesKey, data, std::move(promise));
 }
 
-void CryptoAlgorithmAES_CBC::decrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<CryptoOperationData>& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
+void CryptoAlgorithmAES_CBC::decrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
 {
     const CryptoAlgorithmAesCbcParams& aesCBCParameters = toCryptoAlgorithmAesCbcParams(parameters);
 

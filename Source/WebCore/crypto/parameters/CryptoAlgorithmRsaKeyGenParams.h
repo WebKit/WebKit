@@ -27,6 +27,7 @@
 #define CryptoAlgorithmRsaKeyGenParams_h
 
 #include "CryptoAlgorithmParameters.h"
+#include <wtf/Vector.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 

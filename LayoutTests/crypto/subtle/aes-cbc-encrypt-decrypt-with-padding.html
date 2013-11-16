@@ -28,13 +28,13 @@ crypto.subtle.importKey("raw", keyData, "aes-cbc", extractable, ["encrypt", "dec
     shouldBe("key.usages", "['encrypt', 'decrypt']");
 
     debug("Using the key to encrypt plaintext...");
-    return crypto.subtle.encrypt({name: "aes-cbc", iv: iv}, key, [plaintext]);
+    return crypto.subtle.encrypt({name: "aes-cbc", iv: iv}, key, plaintext);
 }).then(function(result) {
     cyphertext = result;
     shouldBe("bytesToHexString(new Uint8Array(cyphertext))", "'630199c5f202cc7167bb84c6c72b349d'");
 
     debug("Decrypting it back...");
-    return crypto.subtle.decrypt({name: "aes-cbc", iv: iv}, key, [result]);
+    return crypto.subtle.decrypt({name: "aes-cbc", iv: iv}, key, result);
 }).then(function(result) {
     decryptionResult = result;
     shouldBe("new Uint8Array(decryptionResult)", "plaintext");

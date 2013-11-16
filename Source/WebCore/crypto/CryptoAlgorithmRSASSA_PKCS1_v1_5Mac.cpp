@@ -89,7 +89,7 @@ static bool getCommonCryptoDigestAlgorithm(CryptoAlgorithmIdentifier hashFunctio
     }
 }
 
-void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<CryptoOperationData>& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
+void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
 {
     const CryptoAlgorithmRsaSsaParams& rsaSSAParameters = toCryptoAlgorithmRsaSsaParams(parameters);
 
@@ -111,8 +111,7 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(const CryptoAlgorithmParameters& par
         return;
     }
 
-    for (size_t i = 0; i != data.size(); ++i)
-        digest->addBytes(data[i].first, data[i].second);
+    digest->addBytes(data.first, data.second);
 
     Vector<unsigned char> digestData = digest->computeHash();
 
@@ -129,7 +128,7 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(const CryptoAlgorithmParameters& par
     promise->fulfill(signature);
 }
 
-void CryptoAlgorithmRSASSA_PKCS1_v1_5::verify(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& signature, const Vector<CryptoOperationData>& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
+void CryptoAlgorithmRSASSA_PKCS1_v1_5::verify(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& signature, const CryptoOperationData& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
 {
     const CryptoAlgorithmRsaSsaParams& rsaSSAParameters = toCryptoAlgorithmRsaSsaParams(parameters);
 
@@ -151,8 +150,7 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::verify(const CryptoAlgorithmParameters& p
         return;
     }
 
-    for (size_t i = 0; i != data.size(); ++i)
-        digest->addBytes(data[i].first, data[i].second);
+    digest->addBytes(data.first, data.second);
 
     Vector<unsigned char> digestData = digest->computeHash();
 

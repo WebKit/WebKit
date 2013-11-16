@@ -27,13 +27,13 @@ crypto.subtle.importKey("raw", hmacKey, {name: 'hmac', hash: {name: 'sha-1'}}, e
     shouldBe("key.usages", "['sign', 'verify']");
 
     debug("Using the key to sign 'foo'...");
-    return crypto.subtle.sign(key.algorithm, key, [asciiToUint8Array('foo')]);
+    return crypto.subtle.sign(key.algorithm, key, asciiToUint8Array('foo'));
 }).then(function(result) {
     signature = result;
     shouldBe("bytesToHexString(new Uint8Array(signature))", "'bebbc02e46b0f81183f40c25dce23e5045d65519'");
 
     debug("Verifying the signature...");
-    return crypto.subtle.verify(key.algorithm, key, result, [asciiToUint8Array('foo')]);
+    return crypto.subtle.verify(key.algorithm, key, result, asciiToUint8Array('foo'));
 }).then(function(result) {
     verificationResult = result;
     shouldBe("verificationResult", "true");

@@ -155,8 +155,8 @@ JSValue JSSubtleCrypto::encrypt(ExecState* exec)
         return jsUndefined();
     }
 
-    Vector<CryptoOperationData> data;
-    if (!sequenceOfCryptoOperationDataFromJSValue(exec, exec->uncheckedArgument(2), data)) {
+    CryptoOperationData data;
+    if (!cryptoOperationDataFromJSValue(exec, exec->uncheckedArgument(2), data)) {
         ASSERT(exec->hadException());
         return jsUndefined();
     }
@@ -201,8 +201,8 @@ JSValue JSSubtleCrypto::decrypt(ExecState* exec)
         return jsUndefined();
     }
 
-    Vector<CryptoOperationData> data;
-    if (!sequenceOfCryptoOperationDataFromJSValue(exec, exec->uncheckedArgument(2), data)) {
+    CryptoOperationData data;
+    if (!cryptoOperationDataFromJSValue(exec, exec->uncheckedArgument(2), data)) {
         ASSERT(exec->hadException());
         return jsUndefined();
     }
@@ -247,8 +247,8 @@ JSValue JSSubtleCrypto::sign(ExecState* exec)
         return jsUndefined();
     }
 
-    Vector<CryptoOperationData> data;
-    if (!sequenceOfCryptoOperationDataFromJSValue(exec, exec->uncheckedArgument(2), data)) {
+    CryptoOperationData data;
+    if (!cryptoOperationDataFromJSValue(exec, exec->uncheckedArgument(2), data)) {
         ASSERT(exec->hadException());
         return jsUndefined();
     }
@@ -299,8 +299,8 @@ JSValue JSSubtleCrypto::verify(ExecState* exec)
         return jsUndefined();
     }
 
-    Vector<CryptoOperationData> data;
-    if (!sequenceOfCryptoOperationDataFromJSValue(exec, exec->uncheckedArgument(3), data)) {
+    CryptoOperationData data;
+    if (!cryptoOperationDataFromJSValue(exec, exec->uncheckedArgument(3), data)) {
         ASSERT(exec->hadException());
         return jsUndefined();
     }
@@ -335,8 +335,8 @@ JSValue JSSubtleCrypto::digest(ExecState* exec)
         return jsUndefined();
     }
 
-    Vector<CryptoOperationData> data;
-    if (!sequenceOfCryptoOperationDataFromJSValue(exec, exec->uncheckedArgument(1), data)) {
+    CryptoOperationData data;
+    if (!cryptoOperationDataFromJSValue(exec, exec->uncheckedArgument(1), data)) {
         ASSERT(exec->hadException());
         return jsUndefined();
     }

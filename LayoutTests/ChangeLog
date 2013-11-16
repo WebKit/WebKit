@@ -1,3 +1,37 @@
+2013-11-16  Alexey Proskuryakov  <ap@apple.com>
+
+        WebCrypto no longer uses sequences of ArrayBuffers
+        https://bugs.webkit.org/show_bug.cgi?id=124451
+
+        Reviewed by Sam Weinig.
+
+        Updated tests accordingly.
+
+        * crypto/subtle/aes-cbc-192-encrypt-decrypt.html:
+        * crypto/subtle/aes-cbc-256-encrypt-decrypt.html:
+        * crypto/subtle/aes-cbc-encrypt-decrypt-expected.txt:
+        * crypto/subtle/aes-cbc-encrypt-decrypt-with-padding.html:
+        * crypto/subtle/aes-cbc-encrypt-decrypt.html:
+        * crypto/subtle/aes-cbc-import-jwk.html:
+        * crypto/subtle/aes-cbc-wrong-key-class-expected.txt:
+        * crypto/subtle/aes-cbc-wrong-key-class.html:
+        * crypto/subtle/argument-conversion-expected.txt:
+        * crypto/subtle/argument-conversion.html:
+        * crypto/subtle/hmac-import-jwk.html:
+        * crypto/subtle/hmac-sign-verify-empty-key.html:
+        * crypto/subtle/hmac-sign-verify.html:
+        * crypto/subtle/rsassa-pkcs1-v1_5-sign-verify.html:
+        * crypto/subtle/sha-1-expected.txt:
+        * crypto/subtle/sha-1.html:
+        * crypto/subtle/sha-224-expected.txt:
+        * crypto/subtle/sha-224.html:
+        * crypto/subtle/sha-256-expected.txt:
+        * crypto/subtle/sha-256.html:
+        * crypto/subtle/sha-384-expected.txt:
+        * crypto/subtle/sha-384.html:
+        * crypto/subtle/sha-512-expected.txt:
+        * crypto/subtle/sha-512.html:
+
 2013-11-15  Alexey Proskuryakov  <ap@apple.com>
 
         Support exporting symmetric keys as JWK

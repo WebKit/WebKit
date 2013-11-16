@@ -14,10 +14,10 @@ PASS bytesToHexString(new Uint8Array(encryptionResult)) is '7649abac8119b246cee9
 Decrypting it back...
 PASS new Uint8Array(decryptionResult) is plaintext
 Testing initialization vector bindings...
-PASS crypto.subtle.encrypt({name: 'AES-CBC', iv: null}, key, [plaintext]) threw exception TypeError: Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData.
-PASS crypto.subtle.encrypt({name: 'AES-CBC'}, key, [plaintext]) threw exception TypeError: Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData.
-PASS crypto.subtle.encrypt({name: 'AES-CBC', iv: 3}, key, [plaintext]) threw exception TypeError: Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData.
-PASS crypto.subtle.encrypt({name: 'AES-CBC', iv: new Uint8Array([0])}, key, [plaintext]) threw exception Error: AES-CBC initialization data must be 16 bytes.
+PASS crypto.subtle.encrypt({name: 'AES-CBC', iv: null}, key, plaintext) threw exception TypeError: Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData.
+PASS crypto.subtle.encrypt({name: 'AES-CBC'}, key, plaintext) threw exception TypeError: Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData.
+PASS crypto.subtle.encrypt({name: 'AES-CBC', iv: 3}, key, plaintext) threw exception TypeError: Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData.
+PASS crypto.subtle.encrypt({name: 'AES-CBC', iv: new Uint8Array([0])}, key, plaintext) threw exception Error: AES-CBC initialization data must be 16 bytes.
 PASS successfullyParsed is true
 
 TEST COMPLETE

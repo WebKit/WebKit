@@ -26,8 +26,6 @@
 #ifndef JSCryptoOperationData_h
 #define JSCryptoOperationData_h
 
-#include <wtf/Vector.h>
-
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace JSC {
@@ -39,7 +37,6 @@ namespace WebCore {
 
 typedef std::pair<const char*, size_t> CryptoOperationData;
 
-bool sequenceOfCryptoOperationDataFromJSValue(JSC::ExecState*, JSC::JSValue, Vector<CryptoOperationData>&);
 bool cryptoOperationDataFromJSValue(JSC::ExecState*, JSC::JSValue, CryptoOperationData&);
 
 } // namespace WebCore

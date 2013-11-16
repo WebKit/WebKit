@@ -34,29 +34,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool sequenceOfCryptoOperationDataFromJSValue(ExecState* exec, JSValue value, Vector<CryptoOperationData>& result)
-{
-    unsigned sequenceLength;
-    JSObject* sequence = toJSSequence(exec, value, sequenceLength);
-    if (!sequence) {
-        ASSERT(exec->hadException());
-        return false;
-    }
-
-    for (unsigned i = 0; i < sequenceLength; ++i) {
-        JSValue item = sequence->get(exec, i);
-        if (ArrayBuffer* buffer = toArrayBuffer(item))
-            result.append(std::make_pair(static_cast<char*>(buffer->data()), buffer->byteLength()));
-        else if (RefPtr<ArrayBufferView> bufferView = toArrayBufferView(item))
-            result.append(std::make_pair(static_cast<char*>(bufferView->baseAddress()), bufferView->byteLength()));
-        else {
-            throwTypeError(exec, "Only ArrayBuffer and ArrayBufferView objects can be part of CryptoOperationData sequence");
-            return false;
-        }
-    }
-    return true;
-}
-
 bool cryptoOperationDataFromJSValue(ExecState* exec, JSValue value, CryptoOperationData& result)
 {
     if (ArrayBuffer* buffer = toArrayBuffer(value))

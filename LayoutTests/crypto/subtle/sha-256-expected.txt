@@ -9,8 +9,6 @@ SHA256 of [0x0]
 PASS bytesToHexString(new Uint8Array(digest)) is '6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d'
 SHA256 of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 PASS bytesToHexString(new Uint8Array(digest)) is '78a6273103d17c39a0b6126e226cec70e33337f4bc6a38067401b54a33e78ead'
-SHA256 of [new Uint8Array([0, 1, 2, 3, 4]), new Uint8Array(5, 6, 7, 8, 9, 10])]
-PASS bytesToHexString(new Uint8Array(digest)) is '78a6273103d17c39a0b6126e226cec70e33337f4bc6a38067401b54a33e78ead'
 PASS successfullyParsed is true
 
 TEST COMPLETE
