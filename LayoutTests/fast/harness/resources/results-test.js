@@ -171,7 +171,7 @@ function runTests()
         
         assertTrue(!document.querySelector('#passes-table .expand-button'));
 
-        var expectationTypes = document.querySelectorAll('#passes-table td:last-of-type');
+        var expectationTypes = document.querySelectorAll('#passes-table td:nth-last-of-type(2)');
         assertTrue(expectationTypes[0].textContent == 'TEXT');
         assertTrue(expectationTypes[1].textContent == 'CRASH');
         assertTrue(expectationTypes[2].textContent == 'IMAGE');

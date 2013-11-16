@@ -1,5 +1,16 @@
 2013-11-15  Tim Horton  <timothy_horton@apple.com>
 
+        results.html should have a link to historical results for a test/all failing tests
+        https://bugs.webkit.org/show_bug.cgi?id=124402
+
+        Reviewed by Simon Fraser.
+
+        * fast/harness/results.html:
+        * fast/harness/resources/results-test.js:
+        Add the link to timeout/crash results too.
+
+2013-11-15  Tim Horton  <timothy_horton@apple.com>
+
         http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html is slow, frequently > 30 second timeout
         https://bugs.webkit.org/show_bug.cgi?id=124373
 

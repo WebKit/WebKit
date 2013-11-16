@@ -752,8 +752,10 @@ function testList(tests, header, tableId)
             // FIXME: only include timeout actual/diff results here if we actually spit out results for timeout tests.
             html += textResultLinks(stripExtension(test));
         }
-        
-        html += '</td></tr></tbody>';
+
+        html += '</td><td><a href="' + flakinessDashboardURLForTests([testObject]) + '">history</a></td>';
+
+        html += '</tr></tbody>';
     }
     html += '</table></div>';
     return html;
