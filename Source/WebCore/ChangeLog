@@ -1,3 +1,35 @@
+2013-11-15  Brady Eidson  <beidson@apple.com>
+
+        Move IDBCursorBackend operations into their own files
+        https://bugs.webkit.org/show_bug.cgi?id=124444
+
+        Reviewed by Tim Horton.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/indexeddb/IDBCursorBackend.cpp:
+        * Modules/indexeddb/IDBCursorBackend.h:
+        (WebCore::IDBCursorBackend::cursorType):
+        (WebCore::IDBCursorBackend::deprecatedBackingStoreCursor):
+        (WebCore::IDBCursorBackend::deprecatedSetBackingStoreCursor):
+        (WebCore::IDBCursorBackend::deprecatedSetSavedBackingStoreCursor):
+
+        * Modules/indexeddb/IDBCursorBackendOperations.cpp: Added.
+        (WebCore::CallOnDestruct::CallOnDestruct):
+        (WebCore::CallOnDestruct::~CallOnDestruct):
+        (WebCore::CursorAdvanceOperation::perform):
+        (WebCore::CursorIterationOperation::perform):
+        (WebCore::CursorPrefetchIterationOperation::perform):
+        * Modules/indexeddb/IDBCursorBackendOperations.h: Added.
+        (WebCore::CursorIterationOperation::create):
+        (WebCore::CursorIterationOperation::CursorIterationOperation):
+        (WebCore::CursorAdvanceOperation::create):
+        (WebCore::CursorAdvanceOperation::CursorAdvanceOperation):
+        (WebCore::CursorPrefetchIterationOperation::create):
+        (WebCore::CursorPrefetchIterationOperation::CursorPrefetchIterationOperation):
+
 2013-11-14  David Farler  <dfarler@apple.com>
 
         Copy ASAN flag settings to WebCore and JavaScriptCore intermediate build tools

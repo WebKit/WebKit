@@ -789,6 +789,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/IDBAny.cpp
     Modules/indexeddb/IDBCursor.cpp
     Modules/indexeddb/IDBCursorBackend.cpp
+    Modules/indexeddb/IDBCursorBackendOperations.cpp
     Modules/indexeddb/IDBCursorWithValue.cpp
     Modules/indexeddb/IDBDatabase.cpp
     Modules/indexeddb/IDBDatabaseBackend.cpp

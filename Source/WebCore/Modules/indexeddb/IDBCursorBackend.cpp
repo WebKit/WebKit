@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBCallbacks.h"
+#include "IDBCursorBackendOperations.h"
 #include "IDBDatabaseBackend.h"
 #include "IDBDatabaseCallbacks.h"
 #include "IDBDatabaseError.h"
@@ -39,81 +40,6 @@
 #include "SharedBuffer.h"
 
 namespace WebCore {
-
-class CallOnDestruct {
-public:
-    CallOnDestruct(std::function<void()> callback)
-        : m_callback(callback)
-    { }
-
-    ~CallOnDestruct()
-    {
-        m_callback();
-    }
-
-private:
-    std::function<void()> m_callback;
-};
-
-class IDBCursorBackend::CursorIterationOperation : public IDBOperation {
-public:
-    static PassRefPtr<IDBOperation> create(PassRefPtr<IDBCursorBackend> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
-    {
-        return adoptRef(new CursorIterationOperation(cursor, key, callbacks));
-    }
-    virtual void perform(std::function<void()> completionCallback) OVERRIDE FINAL;
-private:
-    CursorIterationOperation(PassRefPtr<IDBCursorBackend> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
-        : m_cursor(cursor)
-        , m_key(key)
-        , m_callbacks(callbacks)
-    {
-    }
-
-    RefPtr<IDBCursorBackend> m_cursor;
-    RefPtr<IDBKey> m_key;
-    RefPtr<IDBCallbacks> m_callbacks;
-};
-
-class IDBCursorBackend::CursorAdvanceOperation : public IDBOperation {
-public:
-    static PassRefPtr<IDBOperation> create(PassRefPtr<IDBCursorBackend> cursor, unsigned long count, PassRefPtr<IDBCallbacks> callbacks)
-    {
-        return adoptRef(new CursorAdvanceOperation(cursor, count, callbacks));
-    }
-    virtual void perform(std::function<void()> completionCallback) OVERRIDE FINAL;
-private:
-    CursorAdvanceOperation(PassRefPtr<IDBCursorBackend> cursor, unsigned long count, PassRefPtr<IDBCallbacks> callbacks)
-        : m_cursor(cursor)
-        , m_count(count)
-        , m_callbacks(callbacks)
-    {
-    }
-
-    RefPtr<IDBCursorBackend> m_cursor;
-    unsigned long m_count;
-    RefPtr<IDBCallbacks> m_callbacks;
-};
-
-class IDBCursorBackend::CursorPrefetchIterationOperation : public IDBOperation {
-public:
-    static PassRefPtr<IDBOperation> create(PassRefPtr<IDBCursorBackend> cursor, int numberToFetch, PassRefPtr<IDBCallbacks> callbacks)
-    {
-        return adoptRef(new CursorPrefetchIterationOperation(cursor, numberToFetch, callbacks));
-    }
-    virtual void perform(std::function<void()> completionCallback) OVERRIDE FINAL;
-private:
-    CursorPrefetchIterationOperation(PassRefPtr<IDBCursorBackend> cursor, int numberToFetch, PassRefPtr<IDBCallbacks> callbacks)
-        : m_cursor(cursor)
-        , m_numberToFetch(numberToFetch)
-        , m_callbacks(callbacks)
-    {
-    }
-
-    RefPtr<IDBCursorBackend> m_cursor;
-    int m_numberToFetch;
-    RefPtr<IDBCallbacks> m_callbacks;
-};
 
 IDBCursorBackend::IDBCursorBackend(PassRefPtr<IDBBackingStoreCursorInterface> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, IDBTransactionBackend* transaction, int64_t objectStoreId)
     : m_taskType(taskType)
@@ -147,34 +73,6 @@ void IDBCursorBackend::advance(unsigned long count, PassRefPtr<IDBCallbacks> prp
     m_transaction->scheduleTask(CursorAdvanceOperation::create(this, count, callbacks));
 }
 
-void IDBCursorBackend::CursorAdvanceOperation::perform(std::function<void()> completionCallback)
-{
-    CallOnDestruct callOnDestruct(completionCallback);
-
-    LOG(StorageAPI, "CursorAdvanceOperation");
-    if (!m_cursor->m_cursor || !m_cursor->m_cursor->advance(m_count)) {
-        m_cursor->m_cursor = 0;
-        m_callbacks->onSuccess(static_cast<SharedBuffer*>(0));
-        return;
-    }
-
-    m_callbacks->onSuccess(m_cursor->key(), m_cursor->primaryKey(), m_cursor->value());
-}
-
-void IDBCursorBackend::CursorIterationOperation::perform(std::function<void()> completionCallback)
-{
-    CallOnDestruct callOnDestruct(completionCallback);
-
-    LOG(StorageAPI, "CursorIterationOperation");
-    if (!m_cursor->m_cursor || !m_cursor->m_cursor->continueFunction(m_key.get())) {
-        m_cursor->m_cursor = 0;
-        m_callbacks->onSuccess(static_cast<SharedBuffer*>(0));
-        return;
-    }
-
-    m_callbacks->onSuccess(m_cursor->key(), m_cursor->primaryKey(), m_cursor->value());
-}
-
 void IDBCursorBackend::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
 {
     LOG(StorageAPI, "IDBCursorBackend::delete");
@@ -188,57 +86,6 @@ void IDBCursorBackend::prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbac
     LOG(StorageAPI, "IDBCursorBackend::prefetchContinue");
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     m_transaction->scheduleTask(m_taskType, CursorPrefetchIterationOperation::create(this, numberToFetch, callbacks));
-}
-
-void IDBCursorBackend::CursorPrefetchIterationOperation::perform(std::function<void()> completionCallback)
-{
-    CallOnDestruct callOnDestruct(completionCallback);
-
-    LOG(StorageAPI, "CursorPrefetchIterationOperation");
-
-    Vector<RefPtr<IDBKey>> foundKeys;
-    Vector<RefPtr<IDBKey>> foundPrimaryKeys;
-    Vector<RefPtr<SharedBuffer>> foundValues;
-
-    if (m_cursor->m_cursor)
-        m_cursor->m_savedCursor = m_cursor->m_cursor->clone();
-
-    const size_t maxSizeEstimate = 10 * 1024 * 1024;
-    size_t sizeEstimate = 0;
-
-    for (int i = 0; i < m_numberToFetch; ++i) {
-        if (!m_cursor->m_cursor || !m_cursor->m_cursor->continueFunction(0)) {
-            m_cursor->m_cursor = 0;
-            break;
-        }
-
-        foundKeys.append(m_cursor->m_cursor->key());
-        foundPrimaryKeys.append(m_cursor->m_cursor->primaryKey());
-
-        switch (m_cursor->m_cursorType) {
-        case IndexedDB::CursorKeyOnly:
-            foundValues.append(SharedBuffer::create());
-            break;
-        case IndexedDB::CursorKeyAndValue:
-            sizeEstimate += m_cursor->m_cursor->value()->size();
-            foundValues.append(m_cursor->m_cursor->value());
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-        }
-        sizeEstimate += m_cursor->m_cursor->key()->sizeEstimate();
-        sizeEstimate += m_cursor->m_cursor->primaryKey()->sizeEstimate();
-
-        if (sizeEstimate > maxSizeEstimate)
-            break;
-    }
-
-    if (!foundKeys.size()) {
-        m_callbacks->onSuccess(static_cast<SharedBuffer*>(0));
-        return;
-    }
-
-    m_callbacks->onSuccessWithPrefetch(foundKeys, foundPrimaryKeys, foundValues);
 }
 
 void IDBCursorBackend::prefetchReset(int usedPrefetches, int)
