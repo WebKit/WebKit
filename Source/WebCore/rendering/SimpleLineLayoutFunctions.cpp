@@ -33,7 +33,6 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "InlineTextBox.h"
-#include "LineWidth.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
 #include "RenderStyle.h"

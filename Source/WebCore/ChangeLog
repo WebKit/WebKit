@@ -1,3 +1,16 @@
+2013-11-16  Zoltan Horvath  <zoltan@webkit.org>
+
+        Remove the include of LineWidth.h from SimpleLineLayoutFunctions.cpp
+        <https://webkit.org/b/124449>
+
+        Reviewed by Antti Koivisto.
+
+        I removed the include of LineWidth, since SimpleLineLayoutFunctions.cpp doesn't use it.
+
+        No new tests, no behavior change.
+
+        * rendering/SimpleLineLayoutFunctions.cpp:
+
 2013-11-15  Alexey Proskuryakov  <ap@apple.com>
 
         Support exporting symmetric keys as JWK
