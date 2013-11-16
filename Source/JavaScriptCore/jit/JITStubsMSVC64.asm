@@ -32,7 +32,7 @@ PUBLIC getHostCallReturnValue
 _TEXT   SEGMENT
 
 callToJavaScript PROC
-    mov r10, qword ptr[sp]
+    mov r10, qword ptr[rsp]
     push rbp
     mov rax, rbp ; Save previous frame pointer
     mov rbp, rsp
@@ -41,6 +41,8 @@ callToJavaScript PROC
     push r14
     push r15
     push rbx
+    push rsi
+    push rdi
 
     ; JIT operations can use up to 6 args (4 in registers and 2 on the stack).
     ; In addition, X86_64 ABI specifies that the worse case stack alignment
@@ -55,6 +57,8 @@ callToJavaScript PROC
     mov r15, 0FFFF000000000002h
     call rcx
     add rsp, 28h
+    pop rdi
+    pop rsi
     pop rbx
     pop r15
     pop r14
@@ -66,6 +70,8 @@ callToJavaScript ENDP
 
 returnFromJavaScript PROC
     add rsp, 28h
+    pop rdi
+    pop rsi
     pop rbx
     pop r15
     pop r14
@@ -76,8 +82,8 @@ returnFromJavaScript PROC
 returnFromJavaScript ENDP
 	
 getHostCallReturnValue PROC
-    sub r13, 40
-    mov r13, rdi
+    mov rbp, [rbp] ; CallFrame
+    mov rcx, rbp ; rcx is first argument register on Windows
     jmp getHostCallReturnValueWithExecState
 getHostCallReturnValue ENDP
 
