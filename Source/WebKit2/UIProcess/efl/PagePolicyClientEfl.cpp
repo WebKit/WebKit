@@ -45,7 +45,7 @@ static inline PagePolicyClientEfl* toPagePolicyClientEfl(const void* clientInfo)
     return static_cast<PagePolicyClientEfl*>(const_cast<void*>(clientInfo));
 }
 
-void PagePolicyClientEfl::decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef /*userData*/, const void* clientInfo)
+void PagePolicyClientEfl::decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKFrameRef, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef /*userData*/, const void* clientInfo)
 {
     PagePolicyClientEfl* policyClient = toPagePolicyClientEfl(clientInfo);
 

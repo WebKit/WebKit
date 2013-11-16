@@ -1,3 +1,11 @@
+2013-11-15  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed EFL build fix after r159358.
+
+        * UIProcess/efl/PagePolicyClientEfl.cpp:
+        (WebKit::PagePolicyClientEfl::decidePolicyForNavigationAction):
+        * UIProcess/efl/PagePolicyClientEfl.h:
+
 2013-11-15  Brady Eidson  <beidson@apple.com>
 
         Let IDBDatabaseBackend create IDBTransactionBackend's directly
