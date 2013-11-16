@@ -1,11 +1,41 @@
+CONSOLE MESSAGE: Key is not extractable
+CONSOLE MESSAGE: Key is not extractable
 Test exporting an AES key.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS crypto.subtle.exportKey("raw") threw exception TypeError: Not enough arguments.
+PASS crypto.subtle.exportKey("raw", null) threw exception TypeError: Type error.
+PASS crypto.subtle.exportKey("raw", undefined) threw exception TypeError: Type error.
+PASS crypto.subtle.exportKey("raw", {}) threw exception TypeError: Type error.
+PASS crypto.subtle.exportKey("raw", 1) threw exception TypeError: Type error.
+
 Importing a JWK key...
+PASS crypto.subtle.exportKey(null, key) threw exception TypeError: Unknown key format.
+PASS crypto.subtle.exportKey(undefined, key) threw exception TypeError: Unknown key format.
+PASS crypto.subtle.exportKey({}, key) threw exception TypeError: Unknown key format.
+PASS crypto.subtle.exportKey("", key) threw exception TypeError: Unknown key format.
+PASS crypto.subtle.exportKey("foobar", key) threw exception TypeError: Unknown key format.
+
 Exporting the key as raw data...
 PASS bytesToHexString(new Uint8Array(exportedData)) is '8e73b0f7da0e6452c810f32b809079e562f8ead2522c6b7b'
+Exporting the key as JWK...
+PASS exportedJWK.kty is 'oct'
+PASS exportedJWK.k is 'jnOw99oOZFLIEPMrgJB55WL46tJSLGt7'
+PASS exportedJWK.alg is 'A192CBC'
+PASS exportedJWK.extractable is true
+PASS exportedJWK.use is 'enc'
+
+Importing a key that's not extractable...
+
+Trying to export as raw...
+PASS Rejected, as expected
+Trying to export as jwk...
+PASS Rejected, as expected
+
+Importing a key with only encrypt+decrypt usage (this doesn't map to anything in JWK, as 'enc' also allows wrap/unwrap)...
+PASS crypto.subtle.exportKey("jwk", key) threw exception TypeError: Key usages cannot be represented in JWK. Only two variants are supported: sign+verify and encrypt+decrypt+wrapKey+unwrapKey.
 PASS successfullyParsed is true
 
 TEST COMPLETE

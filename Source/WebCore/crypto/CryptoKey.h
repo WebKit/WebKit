@@ -58,6 +58,8 @@ public:
     virtual void buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder&) const;
     Vector<String> usages() const;
 
+    CryptoAlgorithmIdentifier algorithmIdentifier() const { return m_algorithm; }
+    CryptoKeyUsage usagesBitmap() const { return m_usages; }
     bool allows(CryptoKeyUsage usage) const { return usage == (m_usages & usage); }
 
     virtual std::unique_ptr<CryptoKeyData> exportData() const = 0;

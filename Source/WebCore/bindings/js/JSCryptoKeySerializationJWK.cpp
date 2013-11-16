@@ -32,12 +32,17 @@
 #include "CryptoAlgorithmHmacParams.h"
 #include "CryptoAlgorithmRegistry.h"
 #include "CryptoAlgorithmRsaSsaKeyParams.h"
+#include "CryptoKey.h"
+#include "CryptoKeyAES.h"
 #include "CryptoKeyDataOctetSequence.h"
 #include "CryptoKeyDataRSAComponents.h"
+#include "CryptoKeyHMAC.h"
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include <heap/StrongInlines.h>
 #include <runtime/JSONObject.h>
+#include <runtime/ObjectConstructor.h>
+#include <runtime/Operations.h>
 #include <wtf/text/Base64.h>
 
 using namespace JSC;
@@ -236,7 +241,7 @@ void JSCryptoKeySerializationJWK::reconcileUsages(CryptoKeyUsage& suggestedUsage
     }
 
     // FIXME: CryptoKeyUsageDeriveKey, CryptoKeyUsageDeriveBits - should these be implicitly allowed by any JWK use value?
-    // FIXME: There is a mismatch between specs for wrap/unwrap usages, <http://lists.w3.org/Archives/Public/public-webcrypto/2013Nov/0016.html>.
+    // FIXME: "use" mapping is in flux, see <https://www.w3.org/Bugs/Public/show_bug.cgi?id=23796>.
     if (jwkUseString == "sig")
         suggestedUsage = suggestedUsage & (CryptoKeyUsageSign | CryptoKeyUsageVerify);
     else if (jwkUseString == "enc")
@@ -409,6 +414,122 @@ std::unique_ptr<CryptoKeyData> JSCryptoKeySerializationJWK::keyData() const
 
     throwTypeError(m_exec, "Unsupported JWK key type " + jwkKeyType);
     return nullptr;
+}
+
+void JSCryptoKeySerializationJWK::buildJSONForOctetSequence(ExecState* exec, const Vector<char>& keyData, JSObject* result)
+{
+    addToJSON(exec, result, "kty", "oct");
+    addToJSON(exec, result, "k", base64URLEncode(keyData));
+}
+
+void JSCryptoKeySerializationJWK::addToJSON(ExecState* exec, JSObject* json, const char* key, const String& value)
+{
+    VM& vm = exec->vm();
+    Identifier identifier(&vm, key);
+    json->putDirect(vm, identifier, jsString(exec, value));
+}
+
+void JSCryptoKeySerializationJWK::addBoolToJSON(ExecState* exec, JSObject* json, const char* key, bool value)
+{
+    VM& vm = exec->vm();
+    Identifier identifier(&vm, key);
+    json->putDirect(vm, identifier, jsBoolean(value));
+}
+
+void JSCryptoKeySerializationJWK::addJWKAlgorithmToJSON(ExecState* exec, JSObject* json, const CryptoKey& key)
+{
+    String jwkAlgorithm;
+    switch (key.algorithmIdentifier()) {
+    case CryptoAlgorithmIdentifier::HMAC:
+        switch (toCryptoKeyHMAC(key).hashAlgorithmIdentifier()) {
+        case CryptoAlgorithmIdentifier::SHA_256:
+            if (toCryptoKeyHMAC(key).key().size() * 8 >= 256)
+                jwkAlgorithm = "HS256";
+            break;
+        case CryptoAlgorithmIdentifier::SHA_384:
+            if (toCryptoKeyHMAC(key).key().size() * 8 >= 384)
+                jwkAlgorithm = "HS384";
+            break;
+        case CryptoAlgorithmIdentifier::SHA_512:
+            if (toCryptoKeyHMAC(key).key().size() * 8 >= 512)
+                jwkAlgorithm = "HS512";
+            break;
+        default:
+            break;
+        }
+        break;
+    case CryptoAlgorithmIdentifier::AES_CBC:
+        switch (toCryptoKeyAES(key).key().size() * 8) {
+        case 128:
+            jwkAlgorithm = "A128CBC";
+            break;
+        case 192:
+            jwkAlgorithm = "A192CBC";
+            break;
+        case 256:
+            jwkAlgorithm = "A256CBC";
+            break;
+        }
+        break;
+    default:
+        break;
+    }
+
+    if (jwkAlgorithm.isNull()) {
+        // The spec doesn't currently tell whether export should fail, or just skip "alg" (which is an optional key in JWK).
+        // Perhaps this should depend on whether the key is extractable?
+        throwTypeError(exec, "Key algorithm and size do not map to any JWK algorithm identifier");
+        return;
+    }
+
+    addToJSON(exec, json, "alg", jwkAlgorithm);
+}
+
+void JSCryptoKeySerializationJWK::addJWKUseToJSON(ExecState* exec, JSObject* json, CryptoKeyUsage usages)
+{
+    // FIXME: "use" mapping is in flux, see <https://www.w3.org/Bugs/Public/show_bug.cgi?id=23796>.
+    switch (usages) {
+    case CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey:
+        addToJSON(exec, json, "use", "enc");
+        break;
+    case CryptoKeyUsageSign | CryptoKeyUsageVerify:
+        addToJSON(exec, json, "use", "sig");
+        break;
+    default:
+        throwTypeError(exec, "Key usages cannot be represented in JWK. Only two variants are supported: sign+verify and encrypt+decrypt+wrapKey+unwrapKey");
+    }
+}
+
+String JSCryptoKeySerializationJWK::serialize(ExecState* exec, const CryptoKey& key)
+{
+    std::unique_ptr<CryptoKeyData> keyData = key.exportData();
+    if (!keyData) {
+        // FIXME: Shouldn't happen once all key types implement exportData().
+        throwTypeError(exec, "Key doesn't support exportKey");
+        return String();
+    }
+
+    JSObject* result = constructEmptyObject(exec);
+
+    addJWKAlgorithmToJSON(exec, result, key);
+    if (exec->hadException())
+        return String();
+
+    addBoolToJSON(exec, result, "extractable", key.extractable());
+
+    addJWKUseToJSON(exec, result, key.usagesBitmap());
+    if (exec->hadException())
+        return String();
+
+    if (isCryptoKeyDataOctetSequence(*keyData))
+        buildJSONForOctetSequence(exec, toCryptoKeyDataOctetSequence(*keyData).octetSequence(), result);
+    else {
+        throwTypeError(exec, "Key doesn't support exportKey");
+        return String();
+    }
+    ASSERT(!exec->hadException());
+
+    return JSONStringify(exec, result, 4);
 }
 
 } // namespace WebCore

@@ -32,8 +32,6 @@
 #include "CryptoAlgorithmParameters.h"
 #include "CryptoAlgorithmRegistry.h"
 #include "CryptoKeyData.h"
-#include "CryptoKeyDataOctetSequence.h"
-#include "CryptoKeyDataRSAComponents.h"
 #include "CryptoKeySerializationRaw.h"
 #include "Document.h"
 #include "ExceptionCode.h"
@@ -450,7 +448,7 @@ JSValue JSSubtleCrypto::importKey(JSC::ExecState* exec)
         break;
     }
     default:
-        throwTypeError(exec, "Unsupported key format");
+        throwTypeError(exec, "Unsupported key format for import");
         return jsUndefined();
     }
 
@@ -532,26 +530,29 @@ JSValue JSSubtleCrypto::exportKey(JSC::ExecState* exec)
         return promise;
     }
 
-    std::unique_ptr<CryptoKeyData> keyData = key->exportData();
-    if (!keyData) {
-        // FIXME: Shouldn't happen once all key types implement exportData().
-        promiseWrapper->reject(nullptr);
-        return promise;
-    }
-
     switch (keyFormat) {
-    case CryptoKeyFormat::Raw:
-        if (isCryptoKeyDataOctetSequence(*keyData)) {
-            Vector<unsigned char> result;
-            result.appendVector(toCryptoKeyDataOctetSequence(*keyData).octetSequence());
+    case CryptoKeyFormat::Raw: {
+        Vector<unsigned char> result;
+        if (CryptoKeySerializationRaw::serialize(*key, result))
             promiseWrapper->fulfill(result);
-        } else {
+        else {
             m_impl->document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "Key cannot be exported to raw format");
             promiseWrapper->reject(nullptr);
         }
         break;
+    }
+    case CryptoKeyFormat::JWK: {
+        String result = JSCryptoKeySerializationJWK::serialize(exec, *key);
+        if (exec->hadException())
+            return jsUndefined();
+        CString utf8String = result.utf8(StrictConversion);
+        Vector<unsigned char> resultBuffer;
+        resultBuffer.append(utf8String.data(), utf8String.length());
+        promiseWrapper->fulfill(result);
+        break;
+    }
     default:
-        throwTypeError(exec, "Unsupported key format");
+        throwTypeError(exec, "Unsupported key format for export");
         return jsUndefined();
     }
 

@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+class CryptoKey;
+
 class CryptoKeySerializationRaw FINAL : public CryptoKeySerialization {
     WTF_MAKE_NONCOPYABLE(CryptoKeySerializationRaw);
 public:
@@ -43,6 +45,8 @@ public:
     }
 
     virtual ~CryptoKeySerializationRaw();
+
+    static bool serialize(const CryptoKey&, Vector<unsigned char>&);
 
 private:
     CryptoKeySerializationRaw(const CryptoOperationData&);

@@ -41,6 +41,7 @@ class JSObject;
 namespace WebCore {
 
 class CryptoAlgorithmParameters;
+class CryptoKey;
 
 class JSCryptoKeySerializationJWK FINAL : public CryptoKeySerialization {
 WTF_MAKE_NONCOPYABLE(JSCryptoKeySerializationJWK);
@@ -52,6 +53,11 @@ public:
 
     virtual ~JSCryptoKeySerializationJWK();
 
+    static String serialize(JSC::ExecState* exec, const CryptoKey&);
+
+private:
+    JSCryptoKeySerializationJWK(JSC::ExecState*, const String&);
+
     virtual bool reconcileAlgorithm(std::unique_ptr<CryptoAlgorithm>&, std::unique_ptr<CryptoAlgorithmParameters>&) const OVERRIDE;
 
     virtual void reconcileUsages(CryptoKeyUsage&) const OVERRIDE;
@@ -59,8 +65,11 @@ public:
 
     virtual std::unique_ptr<CryptoKeyData> keyData() const OVERRIDE;
 
-private:
-    JSCryptoKeySerializationJWK(JSC::ExecState*, const String&);
+    static void buildJSONForOctetSequence(JSC::ExecState*, const Vector<char>&, JSC::JSObject* result);
+    static void addJWKAlgorithmToJSON(JSC::ExecState*, JSC::JSObject*, const CryptoKey& key);
+    static void addJWKUseToJSON(JSC::ExecState*, JSC::JSObject*, CryptoKeyUsage);
+    static void addToJSON(JSC::ExecState*, JSC::JSObject*, const char* key, const String& value);
+    static void addBoolToJSON(JSC::ExecState*, JSC::JSObject*, const char* key, bool value);
 
     bool keySizeIsValid(size_t sizeInBits) const;
     std::unique_ptr<CryptoKeyData> keyDataOctetSequence() const;

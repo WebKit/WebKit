@@ -35,7 +35,8 @@ namespace WTF {
 
 enum Base64EncodePolicy {
     Base64DoNotInsertLFs,
-    Base64InsertLFs
+    Base64InsertLFs,
+    Base64URLPolicy // No padding, no LFs.
 };
 
 enum Base64DecodePolicy {
@@ -81,35 +82,35 @@ inline String base64Encode(const CString& in, Base64EncodePolicy policy)
 // This format uses '-' and '_' instead of '+' and '/' respectively.
 // ======================================================================================
 
-WTF_EXPORT_PRIVATE void base64URLEncode(const char*, unsigned, Vector<char>&, Base64EncodePolicy = Base64DoNotInsertLFs);
-WTF_EXPORT_PRIVATE void base64URLEncode(const Vector<char>&, Vector<char>&, Base64EncodePolicy = Base64DoNotInsertLFs);
-WTF_EXPORT_PRIVATE void base64URLEncode(const CString&, Vector<char>&, Base64EncodePolicy = Base64DoNotInsertLFs);
-WTF_EXPORT_PRIVATE String base64URLEncode(const char*, unsigned, Base64EncodePolicy = Base64DoNotInsertLFs);
-WTF_EXPORT_PRIVATE String base64URLEncode(const Vector<char>&, Base64EncodePolicy = Base64DoNotInsertLFs);
-WTF_EXPORT_PRIVATE String base64URLEncode(const CString&, Base64EncodePolicy = Base64DoNotInsertLFs);
+WTF_EXPORT_PRIVATE void base64URLEncode(const char*, unsigned, Vector<char>&);
+WTF_EXPORT_PRIVATE void base64URLEncode(const Vector<char>&, Vector<char>&);
+WTF_EXPORT_PRIVATE void base64URLEncode(const CString&, Vector<char>&);
+WTF_EXPORT_PRIVATE String base64URLEncode(const char*, unsigned);
+WTF_EXPORT_PRIVATE String base64URLEncode(const Vector<char>&);
+WTF_EXPORT_PRIVATE String base64URLEncode(const CString&);
 
-WTF_EXPORT_PRIVATE bool base64URLDecode(const String&, Vector<char>&, Base64DecodePolicy = Base64FailOnInvalidCharacter);
-WTF_EXPORT_PRIVATE bool base64URLDecode(const Vector<char>&, Vector<char>&, Base64DecodePolicy = Base64FailOnInvalidCharacter);
-WTF_EXPORT_PRIVATE bool base64URLDecode(const char*, unsigned, Vector<char>&, Base64DecodePolicy = Base64FailOnInvalidCharacter);
+WTF_EXPORT_PRIVATE bool base64URLDecode(const String&, Vector<char>&);
+WTF_EXPORT_PRIVATE bool base64URLDecode(const Vector<char>&, Vector<char>&);
+WTF_EXPORT_PRIVATE bool base64URLDecode(const char*, unsigned, Vector<char>&);
 
-inline void base64URLEncode(const Vector<char>& in, Vector<char>& out, Base64EncodePolicy policy)
+inline void base64URLEncode(const Vector<char>& in, Vector<char>& out)
 {
-    base64URLEncode(in.data(), in.size(), out, policy);
+    base64URLEncode(in.data(), in.size(), out);
 }
 
-inline void base64URLEncode(const CString& in, Vector<char>& out, Base64EncodePolicy policy)
+inline void base64URLEncode(const CString& in, Vector<char>& out)
 {
-    base64URLEncode(in.data(), in.length(), out, policy);
+    base64URLEncode(in.data(), in.length(), out);
 }
 
-inline String base64URLEncode(const Vector<char>& in, Base64EncodePolicy policy)
+inline String base64URLEncode(const Vector<char>& in)
 {
-    return base64URLEncode(in.data(), in.size(), policy);
+    return base64URLEncode(in.data(), in.size());
 }
 
-inline String base64URLEncode(const CString& in, Base64EncodePolicy policy)
+inline String base64URLEncode(const CString& in)
 {
-    return base64URLEncode(in.data(), in.length(), policy);
+    return base64URLEncode(in.data(), in.length());
 }
 
 } // namespace WTF

@@ -14,23 +14,77 @@ description("Test exporting an AES key.");
 jsTestIsAsync = true;
 
 var extractable = true;
+var nonExtractable = false;
 
 var jwkKey = {
-    "kty": "oct",
-    "k": "jnOw99oOZFLIEPMrgJB55WL46tJSLGt7"
+    kty: "oct",
+    k: "jnOw99oOZFLIEPMrgJB55WL46tJSLGt7"
 };
 
 var jwkKeyAsArrayBuffer = asciiToUint8Array(JSON.stringify(jwkKey));
 
-debug("Importing a JWK key...");
-crypto.subtle.importKey("jwk", jwkKeyAsArrayBuffer, "AES-CBC", extractable, []).then(function(result) {
+shouldThrow('crypto.subtle.exportKey("raw")');
+shouldThrow('crypto.subtle.exportKey("raw", null)');
+shouldThrow('crypto.subtle.exportKey("raw", undefined)');
+shouldThrow('crypto.subtle.exportKey("raw", {})');
+shouldThrow('crypto.subtle.exportKey("raw", 1)');
+
+debug("\nImporting a JWK key...");
+crypto.subtle.importKey("jwk", jwkKeyAsArrayBuffer, "AES-CBC", extractable, ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']).then(function(result) {
     key = result;
 
-    debug("Exporting the key as raw data...");
+    shouldThrow('crypto.subtle.exportKey(null, key)');
+    shouldThrow('crypto.subtle.exportKey(undefined, key)');
+    shouldThrow('crypto.subtle.exportKey({}, key)');
+    shouldThrow('crypto.subtle.exportKey("", key)');
+    shouldThrow('crypto.subtle.exportKey("foobar", key)');
+
+    debug("\nExporting the key as raw data...");
     return crypto.subtle.exportKey("raw", key);
 }).then(function(result) {
     exportedData = result;
     shouldBe("bytesToHexString(new Uint8Array(exportedData))", "'8e73b0f7da0e6452c810f32b809079e562f8ead2522c6b7b'");
+
+    debug("Exporting the key as JWK...");
+    return crypto.subtle.exportKey("jwk", key);
+}).then(function(result) {
+    exportedJWK = JSON.parse(result);
+    shouldBe("exportedJWK.kty", "'oct'");
+    shouldBe("exportedJWK.k", "'jnOw99oOZFLIEPMrgJB55WL46tJSLGt7'");
+    shouldBe("exportedJWK.alg", "'A192CBC'");
+    shouldBe("exportedJWK.extractable", "true");
+    shouldBe("exportedJWK.use", "'enc'");
+
+    debug("\nImporting a key that's not extractable...");
+    return crypto.subtle.importKey("jwk", jwkKeyAsArrayBuffer, "AES-CBC", nonExtractable, ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey'])
+}).then(function(result) {
+    key = result;
+
+    debug("\nTrying to export as raw...");
+    return crypto.subtle.exportKey("raw", key);
+}).then(function(result) {
+    testFailed("Promise wasn't rejected");
+    finishJSTest();
+}, function() {
+    testPassed("Rejected, as expected");
+
+    debug("Trying to export as jwk...");
+    return crypto.subtle.exportKey("jwk", key);
+}).then(function(result) {
+    testFailed("Promise wasn't rejected");
+    finishJSTest();
+}, function() {
+    testPassed("Rejected, as expected");
+
+    // If this test starts to fail because a way to encode encrypt+decrypt is added to JWK, change to something that's not there.
+    // If all WebCrypto modes are added to JWK, then this test will be obsolete.
+    debug("\nImporting a key with only encrypt+decrypt usage (this doesn't map to anything in JWK, as 'enc' also allows wrap/unwrap)...");
+    return crypto.subtle.importKey("jwk", jwkKeyAsArrayBuffer, "AES-CBC", extractable, ['encrypt', 'decrypt'])
+}).then(function(result) {
+    key = result;
+
+    // Maybe this should be a rejected promise, not an exception. We'll need to find a way to provide meaningful error messages with such failures.
+    shouldThrow('crypto.subtle.exportKey("jwk", key)');
 
     finishJSTest();
 });

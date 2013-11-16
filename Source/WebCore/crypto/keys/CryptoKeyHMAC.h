@@ -48,6 +48,8 @@ public:
 
     const Vector<char>& key() const { return m_key; }
 
+    CryptoAlgorithmIdentifier hashAlgorithmIdentifier() const { return m_hash; }
+
 private:
     CryptoKeyHMAC(const Vector<char>& key, CryptoAlgorithmIdentifier hash, bool extractable, CryptoKeyUsage);
 

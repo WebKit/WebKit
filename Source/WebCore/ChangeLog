@@ -1,3 +1,42 @@
+2013-11-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Support exporting symmetric keys as JWK
+        https://bugs.webkit.org/show_bug.cgi?id=124442
+
+        Reviewed by Sam Weinig.
+
+        Error handling is not consistent yet - some errors cause exceptions, and others
+        result in rejected promises. This part of spec is incomplete, so I basically did
+        what was most straightforward in each case.
+
+        * bindings/js/JSCryptoKeySerializationJWK.h: 
+        * bindings/js/JSCryptoKeySerializationJWK.cpp:
+        (WebCore::JSCryptoKeySerializationJWK::reconcileUsages): Updated a comment with a better link.
+        (WebCore::JSCryptoKeySerializationJWK::buildJSONForOctetSequence): A helper to building JWK.
+        (WebCore::JSCryptoKeySerializationJWK::addToJSON): Ditto.
+        (WebCore::JSCryptoKeySerializationJWK::addBoolToJSON): Ditto.
+        (WebCore::JSCryptoKeySerializationJWK::addJWKAlgorithmToJSON): Ditto. The code for
+        mapping is my best guess, this all needs to be specified.
+        (WebCore::JSCryptoKeySerializationJWK::addJWKUseToJSON): A helper to building JWK.
+        (WebCore::JSCryptoKeySerializationJWK::serialize): Build a JSON string for the key.
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::JSSubtleCrypto::importKey): Updated a comment.
+        (WebCore::JSSubtleCrypto::exportKey): Use CryptoKeySerialization (also for raw keys,
+        for consistency).
+
+        * crypto/CryptoKey.h:
+        (WebCore::CryptoKey::algorithmIdentifier):
+        (WebCore::CryptoKey::usagesBitmap):
+        Exposed data needed for building JWK (it used to be only exposed in a form suitable
+        for DOM accessors).
+
+        * crypto/keys/CryptoKeyHMAC.h: Ditto, added an accessor for JWK.
+
+        * crypto/keys/CryptoKeySerializationRaw.cpp: (WebCore::CryptoKeySerializationRaw::serialize):
+        * crypto/keys/CryptoKeySerializationRaw.h:
+        Moved from JSSubtleCryptoCustom.cpp for consistency.
+
 2013-11-15  Brady Eidson  <beidson@apple.com>
 
         Move IDBCursorBackend operations into their own files

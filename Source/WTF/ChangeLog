@@ -1,3 +1,20 @@
+2013-11-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Support exporting symmetric keys as JWK
+        https://bugs.webkit.org/show_bug.cgi?id=124442
+
+        Reviewed by Sam Weinig.
+
+        Base64URL encoding doesn't use '=' padding, and doesn't need any other options.
+        Added this mode for encode, and removed policy arguments from exposed functions.
+
+        * wtf/text/Base64.cpp:
+        (WTF::base64EncodeInternal):
+        (WTF::base64URLEncode):
+        (WTF::base64URLDecode):
+        * wtf/text/Base64.h:
+        (WTF::base64URLEncode):
+
 2013-11-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove VTableSpectrum

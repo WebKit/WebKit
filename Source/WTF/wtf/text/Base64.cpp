@@ -147,9 +147,13 @@ inline void base64EncodeInternal(const char* data, unsigned len, Vector<char>& o
     }
 
     // Add padding
-    while (didx < out.size()) {
-        out[didx] = '=';
-        ++didx;
+    if (policy == Base64URLPolicy)
+        out.resize(didx);
+    else {
+        while (didx < out.size()) {
+            out[didx] = '=';
+            ++didx;
+        }
     }
 }
 
@@ -165,16 +169,16 @@ void base64Encode(const char* data, unsigned len, Vector<char>& out, Base64Encod
     base64EncodeInternal(data, len, out, policy, base64EncMap);
 }
 
-String base64URLEncode(const char* data, unsigned length, Base64EncodePolicy policy)
+String base64URLEncode(const char* data, unsigned length)
 {
     Vector<char> result;
-    base64EncodeInternal(data, length, result, policy, base64URLEncMap);
+    base64EncodeInternal(data, length, result, Base64URLPolicy, base64URLEncMap);
     return String(result.data(), result.size());
 }
 
-void base64URLEncode(const char* data, unsigned len, Vector<char>& out, Base64EncodePolicy policy)
+void base64URLEncode(const char* data, unsigned len, Vector<char>& out)
 {
-    base64EncodeInternal(data, len, out, policy, base64URLEncMap);
+    base64EncodeInternal(data, len, out, Base64URLPolicy, base64URLEncMap);
 }
 
 template<typename T>
@@ -265,12 +269,12 @@ bool base64Decode(const char* data, unsigned len, Vector<char>& out, Base64Decod
     return base64DecodeInternal<char>(data, len, out, policy, base64DecMap);
 }
 
-bool base64URLDecode(const String& in, Vector<char>& out, Base64DecodePolicy policy)
+bool base64URLDecode(const String& in, Vector<char>& out)
 {
-    return base64DecodeInternal<UChar>(in.characters(), in.length(), out, policy, base64URLDecMap);
+    return base64DecodeInternal<UChar>(in.characters(), in.length(), out, Base64FailOnInvalidCharacter, base64URLDecMap);
 }
 
-bool base64URLDecode(const Vector<char>& in, Vector<char>& out, Base64DecodePolicy policy)
+bool base64URLDecode(const Vector<char>& in, Vector<char>& out)
 {
     out.clear();
 
@@ -278,12 +282,12 @@ bool base64URLDecode(const Vector<char>& in, Vector<char>& out, Base64DecodePoli
     if (in.size() > UINT_MAX)
         return false;
 
-    return base64DecodeInternal<char>(in.data(), in.size(), out, policy, base64URLDecMap);
+    return base64DecodeInternal<char>(in.data(), in.size(), out, Base64FailOnInvalidCharacter, base64URLDecMap);
 }
 
-bool base64URLDecode(const char* data, unsigned len, Vector<char>& out, Base64DecodePolicy policy)
+bool base64URLDecode(const char* data, unsigned len, Vector<char>& out)
 {
-    return base64DecodeInternal<char>(data, len, out, policy, base64URLDecMap);
+    return base64DecodeInternal<char>(data, len, out, Base64FailOnInvalidCharacter, base64URLDecMap);
 }
 
 } // namespace WTF
