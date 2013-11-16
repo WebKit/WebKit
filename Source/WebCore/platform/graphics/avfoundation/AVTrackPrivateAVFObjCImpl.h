@@ -41,8 +41,10 @@ namespace WebCore {
 class AVTrackPrivateAVFObjCImpl {
 public:
     explicit AVTrackPrivateAVFObjCImpl(AVPlayerItemTrack*);
+    explicit AVTrackPrivateAVFObjCImpl(AVAssetTrack*);
 
     AVPlayerItemTrack* playerItemTrack() const { return m_playerItemTrack.get(); }
+    AVAssetTrack* assetTrack() const { return m_assetTrack.get(); }
 
     bool enabled() const;
     void setEnabled(bool);
@@ -54,10 +56,13 @@ public:
     AtomicString label() const;
     AtomicString language() const;
 
+    int trackID() const;
+
     static String languageForAVAssetTrack(AVAssetTrack*);
 
 private:
     RetainPtr<AVPlayerItemTrack> m_playerItemTrack;
+    RetainPtr<AVAssetTrack> m_assetTrack;
 };
 
 }

@@ -32,6 +32,7 @@
 #include <wtf/OwnPtr.h>
 
 OBJC_CLASS AVPlayerItemTrack;
+OBJC_CLASS AVAssetTrack;
 
 namespace WebCore {
 
@@ -45,13 +46,22 @@ public:
         return adoptRef(new AudioTrackPrivateAVFObjC(track));
     }
 
+    static RefPtr<AudioTrackPrivateAVFObjC> create(AVAssetTrack* track)
+    {
+        return adoptRef(new AudioTrackPrivateAVFObjC(track));
+    }
+
     virtual void setEnabled(bool);
 
     void setPlayerItemTrack(AVPlayerItemTrack*);
     AVPlayerItemTrack* playerItemTrack();
 
+    void setAssetTrack(AVAssetTrack*);
+    AVAssetTrack* assetTrack();
+
 private:
     AudioTrackPrivateAVFObjC(AVPlayerItemTrack*);
+    AudioTrackPrivateAVFObjC(AVAssetTrack*);
 
     void resetPropertiesFromTrack();
     std::unique_ptr<AVTrackPrivateAVFObjCImpl> m_impl;

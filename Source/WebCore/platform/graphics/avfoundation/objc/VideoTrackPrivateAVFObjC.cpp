@@ -37,6 +37,12 @@ VideoTrackPrivateAVFObjC::VideoTrackPrivateAVFObjC(AVPlayerItemTrack* track)
     resetPropertiesFromTrack();
 }
 
+VideoTrackPrivateAVFObjC::VideoTrackPrivateAVFObjC(AVAssetTrack* track)
+    : m_impl(std::make_unique<AVTrackPrivateAVFObjCImpl>(track))
+{
+    resetPropertiesFromTrack();
+}
+
 void VideoTrackPrivateAVFObjC::resetPropertiesFromTrack()
 {
     setSelected(m_impl->enabled());
@@ -55,6 +61,17 @@ void VideoTrackPrivateAVFObjC::setPlayerItemTrack(AVPlayerItemTrack *track)
 AVPlayerItemTrack* VideoTrackPrivateAVFObjC::playerItemTrack()
 {
     return m_impl->playerItemTrack();
+}
+
+void VideoTrackPrivateAVFObjC::setAssetTrack(AVAssetTrack *track)
+{
+    m_impl = std::make_unique<AVTrackPrivateAVFObjCImpl>(track);
+    resetPropertiesFromTrack();
+}
+
+AVAssetTrack* VideoTrackPrivateAVFObjC::assetTrack()
+{
+    return m_impl->assetTrack();
 }
 
 void VideoTrackPrivateAVFObjC::setSelected(bool enabled)

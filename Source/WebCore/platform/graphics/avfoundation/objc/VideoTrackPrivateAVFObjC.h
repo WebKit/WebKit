@@ -29,8 +29,8 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "VideoTrackPrivateAVF.h"
-#include <wtf/OwnPtr.h>
 
+OBJC_CLASS AVAssetTrack;
 OBJC_CLASS AVPlayerItemTrack;
 
 namespace WebCore {
@@ -45,13 +45,22 @@ public:
         return adoptRef(new VideoTrackPrivateAVFObjC(track));
     }
 
+    static RefPtr<VideoTrackPrivateAVFObjC> create(AVAssetTrack* track)
+    {
+        return adoptRef(new VideoTrackPrivateAVFObjC(track));
+    }
+
     virtual void setSelected(bool) OVERRIDE;
 
     void setPlayerItemTrack(AVPlayerItemTrack*);
     AVPlayerItemTrack* playerItemTrack();
 
+    void setAssetTrack(AVAssetTrack*);
+    AVAssetTrack* assetTrack();
+
 private:
     explicit VideoTrackPrivateAVFObjC(AVPlayerItemTrack*);
+    explicit VideoTrackPrivateAVFObjC(AVAssetTrack*);
 
     void resetPropertiesFromTrack();
     std::unique_ptr<AVTrackPrivateAVFObjCImpl> m_impl;

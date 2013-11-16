@@ -60,51 +60,57 @@ namespace WebCore {
 
 AVTrackPrivateAVFObjCImpl::AVTrackPrivateAVFObjCImpl(AVPlayerItemTrack* track)
     : m_playerItemTrack(track)
+    , m_assetTrack([track assetTrack])
+{
+}
+
+AVTrackPrivateAVFObjCImpl::AVTrackPrivateAVFObjCImpl(AVAssetTrack* track)
+    : m_assetTrack(track)
 {
 }
 
 bool AVTrackPrivateAVFObjCImpl::enabled() const
 {
-    return [m_playerItemTrack.get() isEnabled];
+    ASSERT(m_playerItemTrack);
+    return [m_playerItemTrack isEnabled];
 }
 
 void AVTrackPrivateAVFObjCImpl::setEnabled(bool enabled)
 {
-    [m_playerItemTrack.get() setEnabled:enabled];
+    ASSERT(m_playerItemTrack);
+    [m_playerItemTrack setEnabled:enabled];
 }
 
 AudioTrackPrivate::Kind AVTrackPrivateAVFObjCImpl::audioKind() const
 {
-    AVAssetTrack* assetTrack = [m_playerItemTrack.get() assetTrack];
-    if ([assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
+    if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
         return AudioTrackPrivate::Alternative;
-    else if ([assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
+    else if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
         return AudioTrackPrivate::Main;
     return AudioTrackPrivate::None;
 }
 
 VideoTrackPrivate::Kind AVTrackPrivateAVFObjCImpl::videoKind() const
 {
-    AVAssetTrack* assetTrack = [m_playerItemTrack.get() assetTrack];
-    if ([assetTrack hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
+    if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
         return VideoTrackPrivate::Sign;
-    else if ([assetTrack hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility])
+    else if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility])
         return VideoTrackPrivate::Captions;
-    else if ([assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
+    else if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
         return VideoTrackPrivate::Alternative;
-    else if ([assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
+    else if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
         return VideoTrackPrivate::Main;
     return VideoTrackPrivate::None;
 }
 
 AtomicString AVTrackPrivateAVFObjCImpl::id() const
 {
-    return String::format("%d", [[m_playerItemTrack.get() assetTrack] trackID]);
+    return String::format("%d", [m_assetTrack trackID]);
 }
 
 AtomicString AVTrackPrivateAVFObjCImpl::label() const
 {
-    NSArray *titles = [AVMetadataItem metadataItemsFromArray:[[m_playerItemTrack.get() assetTrack] commonMetadata] withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
+    NSArray *titles = [AVMetadataItem metadataItemsFromArray:[m_assetTrack commonMetadata] withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
     if (![titles count])
         return emptyAtom;
 
@@ -121,7 +127,7 @@ AtomicString AVTrackPrivateAVFObjCImpl::label() const
 
 AtomicString AVTrackPrivateAVFObjCImpl::language() const
 {
-    return languageForAVAssetTrack([m_playerItemTrack.get() assetTrack]);
+    return languageForAVAssetTrack(m_assetTrack.get());
 }
 
 String AVTrackPrivateAVFObjCImpl::languageForAVAssetTrack(AVAssetTrack* track)
@@ -139,6 +145,11 @@ String AVTrackPrivateAVFObjCImpl::languageForAVAssetTrack(AVAssetTrack* track)
         return emptyString();
 
     return language;
+}
+
+int AVTrackPrivateAVFObjCImpl::trackID() const
+{
+    return [m_assetTrack trackID];
 }
 
 }

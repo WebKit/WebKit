@@ -57,6 +57,23 @@ AVPlayerItemTrack* AudioTrackPrivateAVFObjC::playerItemTrack()
     return m_impl->playerItemTrack();
 }
 
+AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(AVAssetTrack* track)
+    : m_impl(std::make_unique<AVTrackPrivateAVFObjCImpl>(track))
+{
+    resetPropertiesFromTrack();
+}
+
+void AudioTrackPrivateAVFObjC::setAssetTrack(AVAssetTrack *track)
+{
+    m_impl = std::make_unique<AVTrackPrivateAVFObjCImpl>(track);
+    resetPropertiesFromTrack();
+}
+
+AVAssetTrack* AudioTrackPrivateAVFObjC::assetTrack()
+{
+    return m_impl->assetTrack();
+}
+
 void AudioTrackPrivateAVFObjC::setEnabled(bool enabled)
 {
     AudioTrackPrivateAVF::setEnabled(enabled);

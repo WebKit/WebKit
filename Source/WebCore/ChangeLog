@@ -1,3 +1,42 @@
+2013-11-15  Jer Noble  <jer.noble@apple.com>
+
+        [Mac][AVF] Allow video and audio tracks to be initialized with an AVAssetTrack.
+        https://bugs.webkit.org/show_bug.cgi?id=124421
+
+        Reviewed by Eric Carlson.
+
+        Currently, VideoTrackPrivateAVFObjC and AudioTrackPrivateAVFObjC are initialized with an
+        AVPlayerItemTrack, but most of its methods use the AVAssetTrack wrapped by the
+        AVPlayerItemTrack. Allow these objects to be alternatively initialized with an AVAssetTrack.
+
+        Add factory methods taking an AVAssetTrack:
+        * platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.h:
+        (WebCore::AudioTrackPrivateAVFObjC::create):
+        * platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm:
+        (WebCore::AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC):
+        (WebCore::AudioTrackPrivateAVFObjC::setAssetTrack):
+        (WebCore::AudioTrackPrivateAVFObjC::assetTrack):
+        * platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp:
+        (WebCore::VideoTrackPrivateAVFObjC::VideoTrackPrivateAVFObjC):
+        (WebCore::VideoTrackPrivateAVFObjC::setAssetTrack):
+        (WebCore::VideoTrackPrivateAVFObjC::assetTrack):
+        * platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.h:
+
+        Use m_assetTrack instead of [m_playerItemTrack assetTrack]:
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.h:
+        (WebCore::AVTrackPrivateAVFObjCImpl::assetTrack):
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm:
+        (WebCore::AVTrackPrivateAVFObjCImpl::AVTrackPrivateAVFObjCImpl):
+        (WebCore::AVTrackPrivateAVFObjCImpl::enabled):
+        (WebCore::AVTrackPrivateAVFObjCImpl::setEnabled):
+        (WebCore::AVTrackPrivateAVFObjCImpl::audioKind):
+        (WebCore::AVTrackPrivateAVFObjCImpl::videoKind):
+        (WebCore::AVTrackPrivateAVFObjCImpl::id):
+        (WebCore::AVTrackPrivateAVFObjCImpl::label):
+        (WebCore::AVTrackPrivateAVFObjCImpl::language):
+        (WebCore::AVTrackPrivateAVFObjCImpl::trackID):
+
+
 2013-11-15  Brady Eidson  <beidson@apple.com>
 
         Let IDBDatabaseBackend create IDBTransactionBackend's directly
