@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <g transform="translate(20 30) rotate(-45 30 17)" shape-rendering="crispEdges">
+        <rect y="5" width="10" height="25" fill="white" stroke="none" />
+        <rect y="20" width="60" height="10" fill="white" stroke="none" />
+    </g>
+</svg>

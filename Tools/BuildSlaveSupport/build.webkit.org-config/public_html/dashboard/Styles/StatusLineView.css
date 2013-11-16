@@ -64,8 +64,7 @@
 }
 
 .status-line.good .bubble.pictogram {
-    font-family: "MonotypeGurmukhi", sans-serif;
-    line-height: 29px;
+    background-image: url(../Images/checkmark.svg);
 }
 
 .status-line.danger .bubble {
