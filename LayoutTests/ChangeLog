@@ -1,3 +1,21 @@
+2013-11-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Make results.html more sane
+        https://bugs.webkit.org/show_bug.cgi?id=124446
+
+        Reviewed by Sam Weinig.
+        
+        Fix various issues with results.html:
+            * make it use page scrolling, not overflow scrolling
+            * remove -webkit-flex stuff that wasn't doing anything
+            * prettify the floating overlay for flagged tests
+            * pull some markup out of the JS and into the HTML
+            * remove the self-testing, which provides very little reward.
+
+        * fast/harness/resources/results-test.js: Removed.
+        * fast/harness/results-expected.txt:
+        * fast/harness/results.html:
+
 2013-11-15  Tim Horton  <timothy_horton@apple.com>
 
         results.html should have a link to historical results for a test/all failing tests
