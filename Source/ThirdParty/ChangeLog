@@ -1,3 +1,9 @@
+2013-11-15  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed, gtest project file cleanup.
+
+        * gtest/msvc/gtest-md.vcxproj:
+
 2013-10-24  Mark Rowe  <mrowe@apple.com>
 
         Remove references to OS X 10.7 from Xcode configuration settings.
