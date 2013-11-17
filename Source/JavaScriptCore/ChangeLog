@@ -1,5 +1,13 @@
 2013-11-16  Filip Pizlo  <fpizlo@apple.com>
 
+        Fix indentation of JSActivation.h.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * runtime/JSActivation.h:
+
+2013-11-16  Filip Pizlo  <fpizlo@apple.com>
+
         Fix indentation of JSVariableObject.h.
 
         Rubber stamped by Mark Hahnenberg.
