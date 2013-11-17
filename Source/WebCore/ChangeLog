@@ -1,3 +1,44 @@
+2013-11-17  Zoltan Horvath  <zoltan@webkit.org>
+
+        Move LineLayoutState.h into rendering/line
+        <https://webkit.org/b/124458>
+
+        Reviewed by Mihnea Ovidenie.
+
+        LineLayoutState is a helper class of RenderBlockLineLayout, so I'm moving it into line subdirectory.
+
+        No new tests, no behavior change.
+
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/line/LineLayoutState.h: Renamed from Source/WebCore/rendering/LineLayoutState.h.
+        (WebCore::FloatWithRect::FloatWithRect):
+        (WebCore::LineLayoutState::LineLayoutState):
+        (WebCore::LineLayoutState::lineInfo):
+        (WebCore::LineLayoutState::endLineLogicalTop):
+        (WebCore::LineLayoutState::setEndLineLogicalTop):
+        (WebCore::LineLayoutState::endLine):
+        (WebCore::LineLayoutState::setEndLine):
+        (WebCore::LineLayoutState::lastFloat):
+        (WebCore::LineLayoutState::setLastFloat):
+        (WebCore::LineLayoutState::floats):
+        (WebCore::LineLayoutState::floatIndex):
+        (WebCore::LineLayoutState::setFloatIndex):
+        (WebCore::LineLayoutState::adjustedLogicalLineTop):
+        (WebCore::LineLayoutState::setAdjustedLogicalLineTop):
+        (WebCore::LineLayoutState::flowThread):
+        (WebCore::LineLayoutState::setFlowThread):
+        (WebCore::LineLayoutState::endLineMatched):
+        (WebCore::LineLayoutState::setEndLineMatched):
+        (WebCore::LineLayoutState::checkForFloatsFromLastLine):
+        (WebCore::LineLayoutState::setCheckForFloatsFromLastLine):
+        (WebCore::LineLayoutState::markForFullLayout):
+        (WebCore::LineLayoutState::isFullLayout):
+        (WebCore::LineLayoutState::usesRepaintBounds):
+        (WebCore::LineLayoutState::setRepaintRange):
+        (WebCore::LineLayoutState::updateRepaintRangeFromBox):
+
 2013-11-17  Antti Koivisto  <antti@apple.com>
 
         Simple line path does not respect visibility:hidden

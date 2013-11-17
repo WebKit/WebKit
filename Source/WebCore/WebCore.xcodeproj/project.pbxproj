@@ -6306,6 +6306,7 @@
 		FFB698CF183402BB00158A31 /* LineInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFB698CD1833F17600158A31 /* LineInfo.cpp */; };
 		FFD5B97A135CC97800D5E92A /* PageVisibilityState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFD5B977135CC97800D5E92A /* PageVisibilityState.cpp */; };
 		FFD5B97B135CC97800D5E92A /* PageVisibilityState.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD5B978135CC97800D5E92A /* PageVisibilityState.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FFEFAB2A18380DA000514534 /* LineLayoutState.h in Headers */ = {isa = PBXBuildFile; fileRef = FFEFAB2918380DA000514534 /* LineLayoutState.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -10215,7 +10216,6 @@
 		A024574E16CEAA27000E5671 /* EXTDrawBuffers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EXTDrawBuffers.cpp; path = canvas/EXTDrawBuffers.cpp; sourceTree = "<group>"; };
 		A024574F16CEAA27000E5671 /* EXTDrawBuffers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTDrawBuffers.h; path = canvas/EXTDrawBuffers.h; sourceTree = "<group>"; };
 		A024575016CEAA27000E5671 /* EXTDrawBuffers.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = EXTDrawBuffers.idl; path = canvas/EXTDrawBuffers.idl; sourceTree = "<group>"; };
-		A0718BE817E26F1600F6BF44 /* LineLayoutState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineLayoutState.h; sourceTree = "<group>"; };
 		A07D3353152B630E001B6393 /* JSWebGLShaderPrecisionFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLShaderPrecisionFormat.cpp; sourceTree = "<group>"; };
 		A07D3354152B630E001B6393 /* JSWebGLShaderPrecisionFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLShaderPrecisionFormat.h; sourceTree = "<group>"; };
 		A07D3357152B632D001B6393 /* WebGLShaderPrecisionFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLShaderPrecisionFormat.h; path = canvas/WebGLShaderPrecisionFormat.h; sourceTree = "<group>"; };
@@ -13487,6 +13487,7 @@
 		FFB698CE1833F17600158A31 /* LineInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineInfo.h; sourceTree = "<group>"; };
 		FFD5B977135CC97800D5E92A /* PageVisibilityState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageVisibilityState.cpp; sourceTree = "<group>"; };
 		FFD5B978135CC97800D5E92A /* PageVisibilityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageVisibilityState.h; sourceTree = "<group>"; };
+		FFEFAB2918380DA000514534 /* LineLayoutState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineLayoutState.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -20967,7 +20968,6 @@
 				A120ACA013F9983700FE4AC7 /* LayoutRepainter.h */,
 				2D9066040BE141D400956998 /* LayoutState.cpp */,
 				2D9066050BE141D400956998 /* LayoutState.h */,
-				A0718BE817E26F1600F6BF44 /* LineLayoutState.h */,
 				A0CB002317DF81AC0017896B /* LineWidth.cpp */,
 				A0CB002117DE9CD00017896B /* LineWidth.h */,
 				9BA273F3172206BB0097CE47 /* LogicalSelectionOffsetCaches.h */,
@@ -21909,6 +21909,7 @@
 		FFB698C81832F10B00158A31 /* line */ = {
 			isa = PBXGroup;
 			children = (
+				FFEFAB2918380DA000514534 /* LineLayoutState.h */,
 				FFB698CD1833F17600158A31 /* LineInfo.cpp */,
 				FFB698CE1833F17600158A31 /* LineInfo.h */,
 				FFB698CA1833EC3800158A31 /* LineBreaker.cpp */,
@@ -22480,6 +22481,7 @@
 				858C382C0AA8E40500B187A4 /* DOMCSSPrimitiveValue.h in Headers */,
 				85909D290ACC7D5500DF01F1 /* DOMCSSPrimitiveValueInternal.h in Headers */,
 				85032DE10AA8C9BE007D3B7D /* DOMCSSRule.h in Headers */,
+				FFEFAB2A18380DA000514534 /* LineLayoutState.h in Headers */,
 				85B498ED0ADB32FB00925CBB /* DOMCSSRuleInternal.h in Headers */,
 				85032DE30AA8C9BE007D3B7D /* DOMCSSRuleList.h in Headers */,
 				85E711920AC5D5350053270F /* DOMCSSRuleListInternal.h in Headers */,
