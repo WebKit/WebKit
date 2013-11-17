@@ -36,6 +36,7 @@ WK_EXPORT extern NSString * const WKActionURLRequestKey;          // NSURLReques
 WK_EXPORT extern NSString * const WKActionURLResponseKey;         // NSURLResponse
 WK_EXPORT extern NSString * const WKActionFrameNameKey;           // NSString
 WK_EXPORT extern NSString * const WKActionOriginatingFrameURLKey; // NSURL
+WK_EXPORT extern NSString * const WKActionCanShowMIMETypeKey;     // NSNumber (BOOL)
 
 typedef NS_ENUM(NSUInteger, WKNavigationType) {
     WKNavigationTypeLinkClicked,

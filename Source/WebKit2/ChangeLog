@@ -1,3 +1,43 @@
+2013-11-16  Dan Bernstein  <mitz@apple.com>
+
+        No way for policy client to determine if a the response’s MIME type can be shown
+        https://bugs.webkit.org/show_bug.cgi?id=124445
+
+        Reviewed by Sam Weinig.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction): Added a fifth message parameter to this template.
+
+        * UIProcess/API/C/WKPage.h: Added a canShowMIMEType parameter to
+        WKPageDecidePolicyForResponseCallback and deprecated the old version.
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (setUpPagePolicyClient): Include whether the response MIME type can be shown under a new key
+        in the action information dictionary.
+        * UIProcess/API/mac/WKBrowsingContextPolicyDelegate.h: Declared
+        WKActionCanShowMIMETypeKey.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::createInspectorPage): Updated for changes in the policy client.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForResponse): Added canShowMIMEType parameter, which is
+        passed to the policy client.
+        (WebKit::WebPageProxy::decidePolicyForResponseSync): Added canShowMIMEType parameter, which
+        is passed to the above function.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in: Added canShowMIMEType paramter to
+        DecidePolicyForResponseSync.
+
+        * UIProcess/WebPolicyClient.cpp:
+        (WebKit::WebPolicyClient::decidePolicyForResponse): Added canShowMIMEType parameter, which
+        is passed to the client callback.
+        * UIProcess/WebPolicyClient.h:
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse): Determine if the response
+        MIME type can be shown and pass this information along in the message to the UI process.
+
 2013-11-15  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed EFL build fix after r159358.
@@ -46,7 +86,7 @@
         policy client version to 1.
 
         * UIProcess/API/mac/WKBrowsingContextController.mm:
-        (setUpPagePolicyClient): Include the originating frame’s URL under the a new key in the
+        (setUpPagePolicyClient): Include the originating frame’s URL under a new key in the
         action information dictionary.
         * UIProcess/API/mac/WKBrowsingContextPolicyDelegate.h: Declared
         WKActionOriginatingFrameURLKey.

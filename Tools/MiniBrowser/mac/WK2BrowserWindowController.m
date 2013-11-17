@@ -426,7 +426,7 @@ static void decidePolicyForNewWindowAction(WKPageRef page, WKFrameRef frame, WKF
     WKFramePolicyListenerUse(listener);
 }
 
-static void decidePolicyForResponse(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+static void decidePolicyForResponse(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, bool canShowMIMEType, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
 {
     WKFramePolicyListenerUse(listener);
 }
@@ -672,9 +672,10 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         self,       /* clientInfo */
         0,          /* decidePolicyForNavigationAction_deprecatedForUseWithV0 */
         decidePolicyForNewWindowAction,
-        decidePolicyForResponse,
+        0,          /* decidePolicyForResponse_deprecatedForUseWithV */
         0,          /* unableToImplementPolicy */
         decidePolicyForNavigationAction,
+        decidePolicyForResponse,
     };
     WKPageSetPagePolicyClient(_webView.pageRef, &policyClient);
 

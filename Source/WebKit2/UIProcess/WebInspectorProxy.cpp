@@ -443,9 +443,10 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
         this, /* clientInfo */
         0, /* decidePolicyForNavigationAction_deprecatedForUseWithV0 */
         0, /* decidePolicyForNewWindowAction */
-        0, /* decidePolicyForResponse */
+        0, /* decidePolicyForResponse_deprecatedForUseWithV0 */
         0, /* unableToImplementPolicy */
-        decidePolicyForNavigationAction
+        decidePolicyForNavigationAction,
+        0, /* decidePolicyForResponse */
     };
 
     inspectorPage->initializePolicyClient(&policyClient);

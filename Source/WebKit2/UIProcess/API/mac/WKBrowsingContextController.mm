@@ -82,6 +82,7 @@ NSString * const WKActionURLRequestKey = @"WKActionURLRequestKey";
 NSString * const WKActionURLResponseKey = @"WKActionURLResponseKey";
 NSString * const WKActionFrameNameKey = @"WKActionFrameNameKey";
 NSString * const WKActionOriginatingFrameURLKey = @"WKActionOriginatingFrameURLKey";
+NSString * const WKActionCanShowMIMETypeKey = @"WKActionCanShowMIMETypeKey";
 
 @interface WKBrowsingContextControllerData : NSObject {
 @public
@@ -663,14 +664,15 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
             WKFramePolicyListenerUse(listener);
     };
 
-    policyClient.decidePolicyForResponse = [](WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+    policyClient.decidePolicyForResponse = [](WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, bool canShowMIMEType, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
     {
         WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
         if ([browsingContext.policyDelegate respondsToSelector:@selector(browsingContextController:decidePolicyForResponseAction:decisionHandler:)]) {
             NSDictionary *actionDictionary = @{
                 WKActionIsMainFrameKey: @(WKFrameIsMainFrame(frame)),
                 WKActionURLRequestKey: adoptNS(WKURLRequestCopyNSURLRequest(request)).get(),
-                WKActionURLResponseKey: adoptNS(WKURLResponseCopyNSURLResponse(response)).get()
+                WKActionURLResponseKey: adoptNS(WKURLResponseCopyNSURLResponse(response)).get(),
+                WKActionCanShowMIMETypeKey: @(canShowMIMEType),
             };
 
             [browsingContext.policyDelegate browsingContextController:browsingContext decidePolicyForResponseAction:actionDictionary decisionHandler:makePolicyDecisionBlock(listener)];

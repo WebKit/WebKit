@@ -61,7 +61,7 @@ void PagePolicyClientEfl::decidePolicyForNewWindowAction(WKPageRef, WKFrameRef, 
     policyClient->m_view->smartCallback<NewWindowPolicyDecision>().call(decision.get());
 }
 
-void PagePolicyClientEfl::decidePolicyForResponseCallback(WKPageRef, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef /*userData*/, const void* /*clientInfo*/)
+void PagePolicyClientEfl::decidePolicyForResponseCallback(WKPageRef, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef, bool canShowMIMEType, WKFramePolicyListenerRef listener, WKTypeRef /*userData*/, const void* /*clientInfo*/)
 {
     // Ignore responses with an HTTP status code of 204 (No Content)
     if (WKURLResponseHTTPStatusCode(response) == WebCore::HTTPNoContent) {

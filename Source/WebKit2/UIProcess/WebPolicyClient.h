@@ -52,7 +52,7 @@ class WebPolicyClient : public APIClient<WKPagePolicyClient, kWKPagePolicyClient
 public:
     bool decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, WebFrameProxy* originatingFrame, const WebCore::ResourceRequest&, WebFramePolicyListenerProxy*, API::Object* userData);
     bool decidePolicyForNewWindowAction(WebPageProxy*, WebFrameProxy*, WebCore::NavigationType, WebEvent::Modifiers, WebMouseEvent::Button, const WebCore::ResourceRequest&, const String& frameName, WebFramePolicyListenerProxy*, API::Object* userData);
-    bool decidePolicyForResponse(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, WebFramePolicyListenerProxy*, API::Object* userData);
+    bool decidePolicyForResponse(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, WebFramePolicyListenerProxy*, API::Object* userData);
     void unableToImplementPolicy(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceError&, API::Object* userData);
 };
 

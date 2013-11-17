@@ -155,7 +155,7 @@ private:
     static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKFrameRef, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
     void decidePolicyForNavigationAction(WKFramePolicyListenerRef);
 
-    static void decidePolicyForResponse(WKPageRef, WKFrameRef, WKURLResponseRef, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
+    static void decidePolicyForResponse(WKPageRef, WKFrameRef, WKURLResponseRef, WKURLRequestRef, bool canShowMIMEType, WKFramePolicyListenerRef, WKTypeRef, const void*);
     void decidePolicyForResponse(WKFrameRef, WKURLResponseRef, WKFramePolicyListenerRef);
 
     static WKPageRef createOtherPage(WKPageRef oldPage, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*);

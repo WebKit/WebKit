@@ -346,10 +346,10 @@ void callMemberFunction(std::tuple<P1, P2, P3, P4, P5, P6, P7>&& args, MessageDe
 
 // Variadic dispatch functions with non-variadic reply arguments.
 
-template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename R1, typename R2, typename R3>
-void callMemberFunction(std::tuple<P1, P2, P3, P4>&& args, MessageDecoder& decoder, std::tuple<R1, R2, R3>& replyArgs, C* object, MF function)
+template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename R1, typename R2, typename R3>
+void callMemberFunction(std::tuple<P1, P2, P3, P4, P5>&& args, MessageDecoder& decoder, std::tuple<R1, R2, R3>& replyArgs, C* object, MF function)
 {
-    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), decoder, std::get<0>(replyArgs), std::get<1>(replyArgs), std::get<2>(replyArgs));
+    (object->*function)(std::get<0>(args), std::get<1>(args), std::get<2>(args), std::get<3>(args), std::get<4>(args), decoder, std::get<0>(replyArgs), std::get<1>(replyArgs), std::get<2>(replyArgs));
 }
 
 template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename R1, typename R2>

@@ -2462,7 +2462,7 @@ void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, uint32_t opa
         listener->use();
 }
 
-void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const ResourceResponse& response, const ResourceRequest& request, uint64_t listenerID, CoreIPC::MessageDecoder& decoder)
+void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, uint64_t listenerID, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
     WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
@@ -2476,11 +2476,11 @@ void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const ResourceRespo
 
     RefPtr<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
 
-    if (!m_policyClient.decidePolicyForResponse(this, frame, response, request, listener.get(), userData.get()))
+    if (!m_policyClient.decidePolicyForResponse(this, frame, response, request, canShowMIMEType, listener.get(), userData.get()))
         listener->use();
 }
 
-void WebPageProxy::decidePolicyForResponseSync(uint64_t frameID, const ResourceResponse& response, const ResourceRequest& request, uint64_t listenerID, CoreIPC::MessageDecoder& decoder, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID)
+void WebPageProxy::decidePolicyForResponseSync(uint64_t frameID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, uint64_t listenerID, CoreIPC::MessageDecoder& decoder, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID)
 {
     ASSERT(!m_inDecidePolicyForResponseSync);
 
@@ -2488,7 +2488,7 @@ void WebPageProxy::decidePolicyForResponseSync(uint64_t frameID, const ResourceR
     m_decidePolicyForResponseRequest = &request;
     m_syncMimeTypePolicyActionIsValid = false;
 
-    decidePolicyForResponse(frameID, response, request, listenerID, decoder);
+    decidePolicyForResponse(frameID, response, request, canShowMIMEType, listenerID, decoder);
 
     m_inDecidePolicyForResponseSync = false;
     m_decidePolicyForResponseRequest = 0;
