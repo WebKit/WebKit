@@ -354,6 +354,11 @@ Element* HTMLCollection::collectionTraverseBackward(Element& current, unsigned c
     // FIXME: This should be optimized similarly to the forward case.
     auto& root = rootNode();
     Element* element = &current;
+    if (m_shouldOnlyIncludeDirectChildren) {
+        for (; count && element ; --count)
+            element = iterateForPreviousElement(ElementTraversal::previousSibling(element));
+        return element;
+    }
     for (; count && element ; --count)
         element = iterateForPreviousElement(ElementTraversal::previous(element, &root));
     return element;
