@@ -1,3 +1,13 @@
+2013-11-17  Antti Koivisto  <antti@apple.com>
+
+        Simple line path does not respect visibility:hidden
+        https://bugs.webkit.org/show_bug.cgi?id=124467
+
+        Reviewed by Anders Carlsson.
+
+        * fast/text/text-visibility-expected.html: Added.
+        * fast/text/text-visibility.html: Added.
+
 2013-11-16  Alexey Proskuryakov  <ap@apple.com>
 
         WebCrypto no longer uses sequences of ArrayBuffers
