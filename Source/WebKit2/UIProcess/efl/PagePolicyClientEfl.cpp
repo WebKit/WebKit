@@ -77,7 +77,6 @@ void PagePolicyClientEfl::decidePolicyForResponseCallback(WKPageRef, WKFrameRef 
     }
 
     WKRetainPtr<WKStringRef> mimeType = adoptWK(WKURLResponseCopyMIMEType(response));
-    bool canShowMIMEType = WKFrameCanShowMIMEType(frame, mimeType.get());
     if (WKFrameIsMainFrame(frame)) {
         if (canShowMIMEType) {
             WKFramePolicyListenerUse(listener);

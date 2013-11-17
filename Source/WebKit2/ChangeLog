@@ -1,3 +1,11 @@
+2013-11-17  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix the EFL build.
+
+        * UIProcess/efl/PagePolicyClientEfl.cpp:
+        (WebKit::PagePolicyClientEfl::decidePolicyForResponseCallback): No need to call
+        WKFrameCanShowMIMEType now that this information is passed in as a parameter.
+
 2013-11-16  Dan Bernstein  <mitz@apple.com>
 
         No way for policy client to determine if a the response’s MIME type can be shown
