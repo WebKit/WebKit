@@ -36,40 +36,39 @@
 
 namespace JSC {
 
-    class LLIntOffsetsExtractor;
-    class Register;
+class LLIntOffsetsExtractor;
+class Register;
 
-    class JSVariableObject : public JSSymbolTableObject {
-        friend class JIT;
-        friend class LLIntOffsetsExtractor;
+class JSVariableObject : public JSSymbolTableObject {
+    friend class JIT;
+    friend class LLIntOffsetsExtractor;
 
-    public:
-        typedef JSSymbolTableObject Base;
+public:
+    typedef JSSymbolTableObject Base;
 
-        WriteBarrierBase<Unknown>& registerAt(int index) const { return m_registers[index]; }
+    WriteBarrierBase<Unknown>& registerAt(int index) const { return m_registers[index]; }
 
-        WriteBarrierBase<Unknown>* const * addressOfRegisters() const { return &m_registers; }
-        static size_t offsetOfRegisters() { return OBJECT_OFFSETOF(JSVariableObject, m_registers); }
+    WriteBarrierBase<Unknown>* const * addressOfRegisters() const { return &m_registers; }
+    static size_t offsetOfRegisters() { return OBJECT_OFFSETOF(JSVariableObject, m_registers); }
 
-        DECLARE_INFO;
+    DECLARE_INFO;
 
-    protected:
-        static const unsigned StructureFlags = Base::StructureFlags;
+protected:
+    static const unsigned StructureFlags = Base::StructureFlags;
 
-        JSVariableObject(
-            VM& vm,
-            Structure* structure,
-            Register* registers,
-            JSScope* scope,
-            SharedSymbolTable* symbolTable = 0
-        )
-            : Base(vm, structure, scope, symbolTable)
-            , m_registers(reinterpret_cast<WriteBarrierBase<Unknown>*>(registers))
-        {
-        }
+    JSVariableObject(
+        VM& vm,
+        Structure* structure,
+        Register* registers,
+        JSScope* scope,
+        SharedSymbolTable* symbolTable = 0)
+        : Base(vm, structure, scope, symbolTable)
+        , m_registers(reinterpret_cast<WriteBarrierBase<Unknown>*>(registers))
+    {
+    }
 
-        WriteBarrierBase<Unknown>* m_registers; // "r" in the stack.
-    };
+    WriteBarrierBase<Unknown>* m_registers; // "r" in the stack.
+};
 
 } // namespace JSC
 

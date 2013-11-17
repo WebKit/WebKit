@@ -1,3 +1,13 @@
+2013-11-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Fix indentation of JSVariableObject.h.
+
+        Rubber stamped by Mark Hahnenberg.
+        
+        I'm about to do some damage to this file. I wanted to give it some sanity first.
+
+        * runtime/JSVariableObject.h:
+
 2013-11-16  Julien Brianceau  <jbriance@cisco.com>
 
         [sh4] Fix build (broken since r159346).
