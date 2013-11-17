@@ -41,22 +41,22 @@ public:
     };
 
     struct PrimeInfo {
-        Vector<char> primeFactor;
-        Vector<char> factorCRTExponent;
-        Vector<char> factorCRTCoefficient;
+        Vector<uint8_t> primeFactor;
+        Vector<uint8_t> factorCRTExponent;
+        Vector<uint8_t> factorCRTCoefficient;
     };
 
-    static std::unique_ptr<CryptoKeyDataRSAComponents> createPublic(const Vector<char>& modulus, const Vector<char>& exponent)
+    static std::unique_ptr<CryptoKeyDataRSAComponents> createPublic(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent)
     {
         return std::unique_ptr<CryptoKeyDataRSAComponents>(new CryptoKeyDataRSAComponents(modulus, exponent));
     }
 
-    static std::unique_ptr<CryptoKeyDataRSAComponents> createPrivate(const Vector<char>& modulus, const Vector<char>& exponent, const Vector<char>& privateExponent)
+    static std::unique_ptr<CryptoKeyDataRSAComponents> createPrivate(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent, const Vector<uint8_t>& privateExponent)
     {
         return std::unique_ptr<CryptoKeyDataRSAComponents>(new CryptoKeyDataRSAComponents(modulus, exponent, privateExponent));
     }
 
-    static std::unique_ptr<CryptoKeyDataRSAComponents> createPrivateWithAdditionalData(const Vector<char>& modulus, const Vector<char>& exponent, const Vector<char>& privateExponent, const PrimeInfo& firstPrimeInfo, const PrimeInfo& secondPrimeInfo, const Vector<PrimeInfo>& otherPrimeInfos)
+    static std::unique_ptr<CryptoKeyDataRSAComponents> createPrivateWithAdditionalData(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent, const Vector<uint8_t>& privateExponent, const PrimeInfo& firstPrimeInfo, const PrimeInfo& secondPrimeInfo, const Vector<PrimeInfo>& otherPrimeInfos)
     {
         return std::unique_ptr<CryptoKeyDataRSAComponents>(new CryptoKeyDataRSAComponents(modulus, exponent, privateExponent, firstPrimeInfo, secondPrimeInfo, otherPrimeInfos));
     }
@@ -66,29 +66,29 @@ public:
     Type type() const { return m_type; }
 
     // Private and public keys.
-    const Vector<char>& modulus() const { return m_modulus; }
-    const Vector<char>& exponent() const { return m_exponent; }
+    const Vector<uint8_t>& modulus() const { return m_modulus; }
+    const Vector<uint8_t>& exponent() const { return m_exponent; }
 
     // Only private keys.
-    const Vector<char>& privateExponent() const { return m_privateExponent; }
+    const Vector<uint8_t>& privateExponent() const { return m_privateExponent; }
     bool hasAdditionalPrivateKeyParameters() const { return m_hasAdditionalPrivateKeyParameters; }
     const PrimeInfo& firstPrimeInfo() const { return m_firstPrimeInfo; }
     const PrimeInfo& secondPrimeInfo() const { return m_secondPrimeInfo; }
     const Vector<PrimeInfo>& otherPrimeInfos() const { return m_otherPrimeInfos; }
 
 private:
-    CryptoKeyDataRSAComponents(const Vector<char>& modulus, const Vector<char>& exponent);
-    CryptoKeyDataRSAComponents(const Vector<char>& modulus, const Vector<char>& exponent, const Vector<char>& privateExponent);
-    CryptoKeyDataRSAComponents(const Vector<char>& modulus, const Vector<char>& exponent, const Vector<char>& privateExponent, const PrimeInfo& firstPrimeInfo, const PrimeInfo& secondPrimeInfo, const Vector<PrimeInfo>& otherPrimeInfos);
+    CryptoKeyDataRSAComponents(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent);
+    CryptoKeyDataRSAComponents(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent, const Vector<uint8_t>& privateExponent);
+    CryptoKeyDataRSAComponents(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent, const Vector<uint8_t>& privateExponent, const PrimeInfo& firstPrimeInfo, const PrimeInfo& secondPrimeInfo, const Vector<PrimeInfo>& otherPrimeInfos);
 
     Type m_type;
 
     // Private and public keys.
-    Vector<char> m_modulus;
-    Vector<char> m_exponent;
+    Vector<uint8_t> m_modulus;
+    Vector<uint8_t> m_exponent;
 
     // Only private keys.
-    Vector<char> m_privateExponent;
+    Vector<uint8_t> m_privateExponent;
     bool m_hasAdditionalPrivateKeyParameters;
     PrimeInfo m_firstPrimeInfo;
     PrimeInfo m_secondPrimeInfo;

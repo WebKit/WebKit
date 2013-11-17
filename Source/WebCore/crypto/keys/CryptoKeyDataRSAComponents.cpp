@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(const Vector<char>& modulus, const Vector<char>& exponent)
+CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent)
     : CryptoKeyData(CryptoKeyData::Format::RSAComponents)
     , m_type(Type::Public)
     , m_modulus(modulus)
@@ -38,7 +38,7 @@ CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(const Vector<char>& modul
 {
 }
 
-CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(const Vector<char>& modulus, const Vector<char>& exponent, const Vector<char>& privateExponent)
+CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent, const Vector<uint8_t>& privateExponent)
     : CryptoKeyData(CryptoKeyData::Format::RSAComponents)
     , m_type(Type::Private)
     , m_modulus(modulus)
@@ -48,7 +48,7 @@ CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(const Vector<char>& modul
 {
 }
 
-CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(const Vector<char>& modulus, const Vector<char>& exponent, const Vector<char>& privateExponent, const PrimeInfo& firstPrimeInfo, const PrimeInfo& secondPrimeInfo, const Vector<PrimeInfo>& otherPrimeInfos)
+CryptoKeyDataRSAComponents::CryptoKeyDataRSAComponents(const Vector<uint8_t>& modulus, const Vector<uint8_t>& exponent, const Vector<uint8_t>& privateExponent, const PrimeInfo& firstPrimeInfo, const PrimeInfo& secondPrimeInfo, const Vector<PrimeInfo>& otherPrimeInfos)
     : CryptoKeyData(CryptoKeyData::Format::RSAComponents)
     , m_type(Type::Private)
     , m_modulus(modulus)

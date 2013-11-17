@@ -58,7 +58,7 @@ static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcP
         return;
     }
 
-    Vector<unsigned char> result(CCCryptorGetOutputLength(cryptor, data.second, true));
+    Vector<uint8_t> result(CCCryptorGetOutputLength(cryptor, data.second, true));
 
     size_t bytesWritten;
     status = CCCryptorUpdate(cryptor, data.first, data.second, result.data(), result.size(), &bytesWritten);
@@ -67,7 +67,7 @@ static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcP
         return;
     }
 
-    unsigned char* p = result.data() + bytesWritten;
+    uint8_t* p = result.data() + bytesWritten;
     status = CCCryptorFinal(cryptor, p, result.end() - p, &bytesWritten);
     p += bytesWritten;
     if (status) {

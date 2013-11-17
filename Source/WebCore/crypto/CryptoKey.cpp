@@ -89,9 +89,9 @@ Vector<String> CryptoKey::usages() const
 }
 
 #if !PLATFORM(MAC)
-Vector<char> CryptoKey::randomData(size_t size)
+Vector<uint8_t> CryptoKey::randomData(size_t size)
 {
-    Vector<char> result(size);
+    Vector<uint8_t> result(size);
     cryptographicallyRandomValues(result.data(), result.size());
     return result;
 }

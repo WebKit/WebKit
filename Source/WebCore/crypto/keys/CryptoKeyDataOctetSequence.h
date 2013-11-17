@@ -35,18 +35,18 @@ namespace WebCore {
 
 class CryptoKeyDataOctetSequence FINAL : public CryptoKeyData {
 public:
-    static std::unique_ptr<CryptoKeyDataOctetSequence> create(const Vector<char>& keyData)
+    static std::unique_ptr<CryptoKeyDataOctetSequence> create(const Vector<uint8_t>& keyData)
     {
         return std::unique_ptr<CryptoKeyDataOctetSequence>(new CryptoKeyDataOctetSequence(keyData));
     }
     virtual ~CryptoKeyDataOctetSequence();
 
-    const Vector<char>& octetSequence() const { return m_keyData; }
+    const Vector<uint8_t>& octetSequence() const { return m_keyData; }
 
 private:
-    CryptoKeyDataOctetSequence(const Vector<char>&);
+    CryptoKeyDataOctetSequence(const Vector<uint8_t>&);
 
-    Vector<char> m_keyData;
+    Vector<uint8_t> m_keyData;
 };
 
 inline bool isCryptoKeyDataOctetSequence(const CryptoKeyData& data)

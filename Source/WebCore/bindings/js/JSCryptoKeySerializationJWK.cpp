@@ -109,7 +109,7 @@ static bool getBooleanFromJSON(ExecState* exec, JSObject* json, const char* key,
     return true;
 }
 
-static bool getBigIntegerVectorFromJSON(ExecState* exec, JSObject* json, const char* key, Vector<char>& result)
+static bool getBigIntegerVectorFromJSON(ExecState* exec, JSObject* json, const char* key, Vector<uint8_t>& result)
 {
     String base64urlEncodedNumber;
     if (!getStringFromJSON(exec, json, key, base64urlEncodedNumber))
@@ -289,7 +289,7 @@ std::unique_ptr<CryptoKeyData> JSCryptoKeySerializationJWK::keyDataOctetSequence
         return nullptr;
     }
 
-    Vector<char> octetSequence;
+    Vector<uint8_t> octetSequence;
     if (!base64URLDecode(keyBase64URL, octetSequence)) {
         throwTypeError(m_exec, "Cannot decode base64url key data in JWK");
         return nullptr;
@@ -305,9 +305,9 @@ std::unique_ptr<CryptoKeyData> JSCryptoKeySerializationJWK::keyDataOctetSequence
 
 std::unique_ptr<CryptoKeyData> JSCryptoKeySerializationJWK::keyDataRSAComponents() const
 {
-    Vector<char> modulus;
-    Vector<char> exponent;
-    Vector<char> privateExponent;
+    Vector<uint8_t> modulus;
+    Vector<uint8_t> exponent;
+    Vector<uint8_t> privateExponent;
 
     if (!getBigIntegerVectorFromJSON(m_exec, m_json.get(), "n", modulus)) {
         if (!m_exec->hadException())
@@ -416,7 +416,7 @@ std::unique_ptr<CryptoKeyData> JSCryptoKeySerializationJWK::keyData() const
     return nullptr;
 }
 
-void JSCryptoKeySerializationJWK::buildJSONForOctetSequence(ExecState* exec, const Vector<char>& keyData, JSObject* result)
+void JSCryptoKeySerializationJWK::buildJSONForOctetSequence(ExecState* exec, const Vector<uint8_t>& keyData, JSObject* result)
 {
     addToJSON(exec, result, "kty", "oct");
     addToJSON(exec, result, "k", base64URLEncode(keyData));

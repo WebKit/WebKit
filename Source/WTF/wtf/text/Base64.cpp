@@ -157,28 +157,28 @@ inline void base64EncodeInternal(const char* data, unsigned len, Vector<char>& o
     }
 }
 
-String base64Encode(const char* data, unsigned length, Base64EncodePolicy policy)
+String base64Encode(const void* data, unsigned length, Base64EncodePolicy policy)
 {
     Vector<char> result;
-    base64EncodeInternal(data, length, result, policy, base64EncMap);
+    base64EncodeInternal(static_cast<const char*>(data), length, result, policy, base64EncMap);
     return String(result.data(), result.size());
 }
 
-void base64Encode(const char* data, unsigned len, Vector<char>& out, Base64EncodePolicy policy)
+void base64Encode(const void* data, unsigned len, Vector<char>& out, Base64EncodePolicy policy)
 {
-    base64EncodeInternal(data, len, out, policy, base64EncMap);
+    base64EncodeInternal(static_cast<const char*>(data), len, out, policy, base64EncMap);
 }
 
-String base64URLEncode(const char* data, unsigned length)
+String base64URLEncode(const void* data, unsigned length)
 {
     Vector<char> result;
-    base64EncodeInternal(data, length, result, Base64URLPolicy, base64URLEncMap);
+    base64EncodeInternal(static_cast<const char*>(data), length, result, Base64URLPolicy, base64URLEncMap);
     return String(result.data(), result.size());
 }
 
-void base64URLEncode(const char* data, unsigned len, Vector<char>& out)
+void base64URLEncode(const void* data, unsigned len, Vector<char>& out)
 {
-    base64EncodeInternal(data, len, out, Base64URLPolicy, base64URLEncMap);
+    base64EncodeInternal(static_cast<const char*>(data), len, out, Base64URLPolicy, base64URLEncMap);
 }
 
 template<typename T>
@@ -201,6 +201,7 @@ static inline bool base64DecodeInternal(const T* data, unsigned length, Vector<c
             if (policy == Base64FailOnInvalidCharacterOrExcessPadding && (length % 4 || equalsSignCount > 2))
                 return false;
         } else {
+            ASSERT(static_cast<size_t>(ch) < 128);
             char decodedCharacter = decodeMap[ch];
             if (decodedCharacter != nonAlphabet) {
                 if (equalsSignCount)
@@ -248,12 +249,12 @@ static inline bool base64DecodeInternal(const T* data, unsigned length, Vector<c
     return true;
 }
 
-bool base64Decode(const String& in, Vector<char>& out, Base64DecodePolicy policy)
+bool base64Decode(const String& in, SignedOrUnsignedCharVectorAdapter out, Base64DecodePolicy policy)
 {
     return base64DecodeInternal<UChar>(in.characters(), in.length(), out, policy, base64DecMap);
 }
 
-bool base64Decode(const Vector<char>& in, Vector<char>& out, Base64DecodePolicy policy)
+bool base64Decode(const Vector<char>& in, SignedOrUnsignedCharVectorAdapter out, Base64DecodePolicy policy)
 {
     out.clear();
 
@@ -264,17 +265,17 @@ bool base64Decode(const Vector<char>& in, Vector<char>& out, Base64DecodePolicy 
     return base64DecodeInternal<char>(in.data(), in.size(), out, policy, base64DecMap);
 }
 
-bool base64Decode(const char* data, unsigned len, Vector<char>& out, Base64DecodePolicy policy)
+bool base64Decode(const char* data, unsigned len, SignedOrUnsignedCharVectorAdapter out, Base64DecodePolicy policy)
 {
     return base64DecodeInternal<char>(data, len, out, policy, base64DecMap);
 }
 
-bool base64URLDecode(const String& in, Vector<char>& out)
+bool base64URLDecode(const String& in, SignedOrUnsignedCharVectorAdapter out)
 {
     return base64DecodeInternal<UChar>(in.characters(), in.length(), out, Base64FailOnInvalidCharacter, base64URLDecMap);
 }
 
-bool base64URLDecode(const Vector<char>& in, Vector<char>& out)
+bool base64URLDecode(const Vector<char>& in, SignedOrUnsignedCharVectorAdapter out)
 {
     out.clear();
 
@@ -285,7 +286,7 @@ bool base64URLDecode(const Vector<char>& in, Vector<char>& out)
     return base64DecodeInternal<char>(in.data(), in.size(), out, Base64FailOnInvalidCharacter, base64URLDecMap);
 }
 
-bool base64URLDecode(const char* data, unsigned len, Vector<char>& out)
+bool base64URLDecode(const char* data, unsigned len, SignedOrUnsignedCharVectorAdapter out)
 {
     return base64DecodeInternal<char>(data, len, out, Base64FailOnInvalidCharacter, base64URLDecMap);
 }

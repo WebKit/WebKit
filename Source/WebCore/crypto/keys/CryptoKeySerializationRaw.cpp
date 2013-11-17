@@ -61,7 +61,7 @@ std::unique_ptr<CryptoKeyData> CryptoKeySerializationRaw::keyData() const
     return CryptoKeyDataOctetSequence::create(m_data);
 }
 
-bool CryptoKeySerializationRaw::serialize(const CryptoKey& key, Vector<unsigned char>& result)
+bool CryptoKeySerializationRaw::serialize(const CryptoKey& key, Vector<uint8_t>& result)
 {
     std::unique_ptr<CryptoKeyData> keyData = key.exportData();
     if (!keyData) {

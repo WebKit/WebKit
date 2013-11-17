@@ -1,3 +1,30 @@
+2013-11-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Use uint8_t vectors for WebCrypto data
+        https://bugs.webkit.org/show_bug.cgi?id=124466
+
+        Reviewed by Sam Weinig.
+
+        Binary data can be UTF-8, in which case "char*" is idiomatic, or it can be arbitrary
+        binary data, in which case "uint8_t*" is more common.
+
+        Changed encode functions that took "const char *" to "const void*", and decode
+        functions that took "Vector<char>&" now take an adapter class.
+
+        The adapter relies on Vector<char> and Vector<uint8_t> classes having an identical layout.
+
+        * wtf/text/Base64.cpp:
+        (WTF::base64Encode):
+        (WTF::base64URLEncode):
+        (WTF::base64DecodeInternal):
+        (WTF::base64Decode):
+        (WTF::base64URLDecode):
+        * wtf/text/Base64.h:
+        (WTF::SignedOrUnsignedCharVectorAdapter):
+        (WTF::ConstSignedOrUnsignedCharVectorAdapter):
+        (WTF::base64Encode):
+        (WTF::base64URLEncode):
+
 2013-11-15  Alexey Proskuryakov  <ap@apple.com>
 
         Support exporting symmetric keys as JWK

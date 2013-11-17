@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-CryptoKeyAES::CryptoKeyAES(CryptoAlgorithmIdentifier algorithm, const Vector<char>& key, bool extractable, CryptoKeyUsage usage)
+CryptoKeyAES::CryptoKeyAES(CryptoAlgorithmIdentifier algorithm, const Vector<uint8_t>& key, bool extractable, CryptoKeyUsage usage)
     : CryptoKey(algorithm, CryptoKeyType::Secret, extractable, usage)
     , m_key(key)
 {

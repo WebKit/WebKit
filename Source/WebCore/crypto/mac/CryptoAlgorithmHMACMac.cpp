@@ -59,7 +59,7 @@ static bool getCommonCryptoAlgorithm(CryptoAlgorithmIdentifier hashFunction, CCH
     }
 }
 
-static Vector<unsigned char> calculateSignature(CCHmacAlgorithm algorithm, const Vector<char>& key, const CryptoOperationData& data)
+static Vector<uint8_t> calculateSignature(CCHmacAlgorithm algorithm, const Vector<uint8_t>& key, const CryptoOperationData& data)
 {
     size_t digestLength;
     switch (algorithm) {
@@ -80,11 +80,11 @@ static Vector<unsigned char> calculateSignature(CCHmacAlgorithm algorithm, const
         break;
     default:
         ASSERT_NOT_REACHED();
-        return Vector<unsigned char>();
+        return Vector<uint8_t>();
     }
 
-    Vector<unsigned char> result(digestLength);
-    const char* keyData = key.data() ? key.data() : ""; // <rdar://problem/15467425> HMAC crashes when key pointer is null.
+    Vector<uint8_t> result(digestLength);
+    const void* keyData = key.data() ? key.data() : reinterpret_cast<const uint8_t*>(""); // <rdar://problem/15467425> HMAC crashes when key pointer is null.
     CCHmac(algorithm, keyData, key.size(), data.first, data.second, result.data());
     return result;
 }
@@ -105,7 +105,7 @@ void CryptoAlgorithmHMAC::sign(const CryptoAlgorithmParameters& parameters, cons
         return;
     }
 
-    Vector<unsigned char> signature = calculateSignature(algorithm, hmacKey.key(), data);
+    Vector<uint8_t> signature = calculateSignature(algorithm, hmacKey.key(), data);
 
     promise->fulfill(signature);
 }
@@ -126,7 +126,7 @@ void CryptoAlgorithmHMAC::verify(const CryptoAlgorithmParameters& parameters, co
         return;
     }
 
-    Vector<unsigned char> signature = calculateSignature(algorithm, hmacKey.key(), data);
+    Vector<uint8_t> signature = calculateSignature(algorithm, hmacKey.key(), data);
 
     bool result = signature.size() == expectedSignature.second && !memcmp(signature.data(), expectedSignature.first, signature.size());
 

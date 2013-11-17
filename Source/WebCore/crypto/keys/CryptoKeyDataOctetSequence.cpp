@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-CryptoKeyDataOctetSequence::CryptoKeyDataOctetSequence(const Vector<char>& data)
+CryptoKeyDataOctetSequence::CryptoKeyDataOctetSequence(const Vector<uint8_t>& data)
     : CryptoKeyData(CryptoKeyData::Format::OctetSequence)
     , m_keyData(data)
 {

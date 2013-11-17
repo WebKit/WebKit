@@ -1284,7 +1284,7 @@ void InspectorPageAgent::archive(ErrorString* errorString, String* data)
     }
 
     RetainPtr<CFDataRef> buffer = archive->rawDataRepresentation();
-    *data = base64Encode(reinterpret_cast<const char*>(CFDataGetBytePtr(buffer.get())), CFDataGetLength(buffer.get()));
+    *data = base64Encode(CFDataGetBytePtr(buffer.get()), CFDataGetLength(buffer.get()));
 #else
     UNUSED_PARAM(data);
     *errorString = "No support for creating archives";

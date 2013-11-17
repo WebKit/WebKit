@@ -52,7 +52,7 @@ public:
 
     void restrictToHash(CryptoAlgorithmIdentifier);
 
-    static void generatePair(CryptoAlgorithmIdentifier, unsigned modulusLength, const Vector<char>& publicExponent, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>);
+    static void generatePair(CryptoAlgorithmIdentifier, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>);
 
     virtual CryptoKeyClass keyClass() const OVERRIDE { return CryptoKeyClass::RSA; }
 

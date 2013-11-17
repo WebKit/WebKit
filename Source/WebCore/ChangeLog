@@ -1,3 +1,53 @@
+2013-11-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Use uint8_t vectors for WebCrypto data
+        https://bugs.webkit.org/show_bug.cgi?id=124466
+
+        Reviewed by Sam Weinig.
+
+        Using Vector<char> for crypto key data is somewhat non-idiomatic, and it gets simply
+        dangerous for bignums, because signed arithmetic is not appropriate for bignum digits.
+
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::generateSecWebSocketKey):
+        (WebCore::WebSocketHandshake::getExpectedWebSocketAccept):
+        No longer need to cast data to char* here.
+
+        * bindings/js/JSCryptoKeySerializationJWK.cpp:
+        * bindings/js/JSCryptoKeySerializationJWK.h:
+        * crypto/CryptoDigest.h:
+        * crypto/CryptoKey.h:
+        * crypto/keys/CryptoKeyAES.cpp:
+        * crypto/keys/CryptoKeyAES.h:
+        * crypto/keys/CryptoKeyDataOctetSequence.h:
+        * crypto/keys/CryptoKeyDataRSAComponents.cpp:
+        * crypto/keys/CryptoKeyDataRSAComponents.h:
+        * crypto/keys/CryptoKeyHMAC.cpp:
+        * crypto/keys/CryptoKeyHMAC.h:
+        * crypto/keys/CryptoKeyRSA.h:
+        * crypto/keys/CryptoKeySerializationRaw.cpp:
+        * crypto/keys/CryptoKeySerializationRaw.h:
+        * crypto/mac/CryptoAlgorithmAES_CBCMac.cpp:
+        * crypto/mac/CryptoAlgorithmHMACMac.cpp:
+        * crypto/mac/CryptoDigestMac.cpp:
+        * crypto/mac/CryptoKeyMac.cpp:
+        * crypto/parameters/CryptoAlgorithmRsaKeyGenParams.h:
+        Switched to Vector<uint8_t>.
+
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::getPublicKeyComponents): Extracted from buildAlgorithmDescription() and simplified.
+        (WebCore::CryptoKeyRSA::create): Switched to Vector<uint8_t>.
+        (WebCore::CryptoKeyRSA::buildAlgorithmDescription): No longer need to copy data just
+        to change type from Vector<char> to Vector<unsigned char>.
+        (WebCore::bigIntegerToUInt32): Ditto. No longer need to cast types when dealing with the bignum.
+        (WebCore::CryptoKeyRSA::generatePair): Improved an error message a little.
+
+        * fileapi/FileReaderLoader.cpp: (WebCore::FileReaderLoader::convertToDataURL):
+        * inspector/DOMPatchSupport.cpp: (WebCore::DOMPatchSupport::createDigest):
+        * inspector/InspectorPageAgent.cpp: (WebCore::InspectorPageAgent::archive):
+        * platform/graphics/cg/ImageBufferCG.cpp: (WebCore::CGImageToDataURL):
+        No longer need to cast data to char* here.
+
 2013-11-17  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r158774): Iteration over element children is broken

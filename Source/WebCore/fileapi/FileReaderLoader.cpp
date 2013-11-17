@@ -341,7 +341,7 @@ void FileReaderLoader::convertToDataURL()
     builder.append(";base64,");
 
     Vector<char> out;
-    base64Encode(static_cast<const char*>(m_rawData->data()), m_bytesLoaded, out);
+    base64Encode(m_rawData->data(), m_bytesLoaded, out);
     out.append('\0');
     builder.append(out.data());
 

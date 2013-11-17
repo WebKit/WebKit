@@ -156,9 +156,9 @@ void CryptoDigest::addBytes(const void* input, size_t length)
     }
 }
 
-Vector<unsigned char> CryptoDigest::computeHash()
+Vector<uint8_t> CryptoDigest::computeHash()
 {
-    Vector<unsigned char> result;
+    Vector<uint8_t> result;
     switch (m_context->algorithm) {
     case CryptoAlgorithmIdentifier::SHA_1:
         result.resize(CC_SHA1_DIGEST_LENGTH);

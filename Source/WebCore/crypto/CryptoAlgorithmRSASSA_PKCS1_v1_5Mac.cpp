@@ -113,9 +113,9 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(const CryptoAlgorithmParameters& par
 
     digest->addBytes(data.first, data.second);
 
-    Vector<unsigned char> digestData = digest->computeHash();
+    Vector<uint8_t> digestData = digest->computeHash();
 
-    Vector<unsigned char> signature(512);
+    Vector<uint8_t> signature(512);
     size_t signatureSize = signature.size();
 
     CCCryptorStatus status = CCRSACryptorSign(rsaKey.platformKey(), ccPKCS1Padding, digestData.data(), digestData.size(), digestAlgorithm, 0, signature.data(), &signatureSize);
@@ -152,7 +152,7 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::verify(const CryptoAlgorithmParameters& p
 
     digest->addBytes(data.first, data.second);
 
-    Vector<unsigned char> digestData = digest->computeHash();
+    Vector<uint8_t> digestData = digest->computeHash();
 
     CCCryptorStatus status = CCRSACryptorVerify(rsaKey.platformKey(), ccPKCS1Padding, digestData.data(), digestData.size(), digestAlgorithm, 0, signature.first, signature.second);
     if (!status)

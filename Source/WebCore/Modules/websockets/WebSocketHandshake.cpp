@@ -103,7 +103,7 @@ static String generateSecWebSocketKey()
     static const size_t nonceSize = 16;
     unsigned char key[nonceSize];
     cryptographicallyRandomValues(key, nonceSize);
-    return base64Encode(reinterpret_cast<char*>(key), nonceSize);
+    return base64Encode(key, nonceSize);
 }
 
 String WebSocketHandshake::getExpectedWebSocketAccept(const String& secWebSocketKey)
@@ -116,7 +116,7 @@ String WebSocketHandshake::getExpectedWebSocketAccept(const String& secWebSocket
     sha1.addBytes(reinterpret_cast<const uint8_t*>(webSocketKeyGUID), strlen(webSocketKeyGUID));
     Vector<uint8_t, sha1HashSize> hash;
     sha1.computeHash(hash);
-    return base64Encode(reinterpret_cast<const char*>(hash.data()), sha1HashSize);
+    return base64Encode(hash.data(), sha1HashSize);
 }
 
 WebSocketHandshake::WebSocketHandshake(const URL& url, const String& protocol, ScriptExecutionContext* context)

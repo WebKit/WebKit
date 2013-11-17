@@ -43,7 +43,7 @@ public:
     ~CryptoDigest();
 
     void addBytes(const void* input, size_t length);
-    Vector<unsigned char> computeHash();
+    Vector<uint8_t> computeHash();
 
 private:
     CryptoDigest();

@@ -40,9 +40,9 @@ extern "C" int CCRandomCopyBytes(CCRandomRef rnd, void *bytes, size_t count);
 
 namespace WebCore {
 
-Vector<char> CryptoKey::randomData(size_t size)
+Vector<uint8_t> CryptoKey::randomData(size_t size)
 {
-    Vector<char> result(size);
+    Vector<uint8_t> result(size);
     CCRandomCopyBytes(kCCRandomDefault, result.data(), result.size());
     return result;
 }

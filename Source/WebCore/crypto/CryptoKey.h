@@ -64,7 +64,7 @@ public:
 
     virtual std::unique_ptr<CryptoKeyData> exportData() const = 0;
 
-    static Vector<char> randomData(size_t);
+    static Vector<uint8_t> randomData(size_t);
 
 private:
     CryptoAlgorithmIdentifier m_algorithm;

@@ -442,14 +442,14 @@ PassOwnPtr<DOMPatchSupport::Digest> DOMPatchSupport::createDigest(Node* node, Un
             }
             Vector<uint8_t, 20> attrsHash;
             attrsSHA1.computeHash(attrsHash);
-            digest->m_attrsSHA1 = base64Encode(reinterpret_cast<const char*>(attrsHash.data()), 10);
+            digest->m_attrsSHA1 = base64Encode(attrsHash.data(), 10);
             addStringToSHA1(sha1, digest->m_attrsSHA1);
         }
     }
 
     Vector<uint8_t, 20> hash;
     sha1.computeHash(hash);
-    digest->m_sha1 = base64Encode(reinterpret_cast<const char*>(hash.data()), 10);
+    digest->m_sha1 = base64Encode(hash.data(), 10);
     if (unusedNodesMap)
         unusedNodesMap->add(digest->m_sha1, digest);
     return adoptPtr(digest);
