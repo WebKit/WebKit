@@ -29,6 +29,7 @@
 #include "EwkView.h"
 #include "WKAPICast.h"
 #include "WebViewEfl.h"
+#include <Evas.h>
 #include <WebKit2/WKImageCairo.h>
 
 using namespace WebKit;
@@ -57,4 +58,19 @@ void WKViewSendTouchEvent(WKViewRef viewRef, WKTouchEventRef touchEventRef)
     UNUSED_PARAM(viewRef);
     UNUSED_PARAM(touchEventRef);
 #endif
+}
+
+void WKViewSendMouseDownEvent(WKViewRef viewRef, Evas_Event_Mouse_Down* event)
+{
+    static_cast<WebViewEfl*>(toImpl(viewRef))->sendMouseEvent(event);
+}
+
+void WKViewSendMouseUpEvent(WKViewRef viewRef, Evas_Event_Mouse_Up* event)
+{
+    static_cast<WebViewEfl*>(toImpl(viewRef))->sendMouseEvent(event);
+}
+
+void WKViewSendMouseMoveEvent(WKViewRef viewRef, Evas_Event_Mouse_Move* event)
+{
+    static_cast<WebViewEfl*>(toImpl(viewRef))->sendMouseEvent(event);
 }

@@ -28,6 +28,9 @@
 
 #include <WebKit2/WKBase.h>
 
+typedef struct _Evas_Event_Mouse_Down Evas_Event_Mouse_Down;
+typedef struct _Evas_Event_Mouse_Move Evas_Event_Mouse_Move;
+typedef struct _Evas_Event_Mouse_Up Evas_Event_Mouse_Up;
 typedef struct _cairo_surface cairo_surface_t;
 
 #ifdef __cplusplus
@@ -41,6 +44,10 @@ WK_EXPORT WKImageRef WKViewCreateSnapshot(WKViewRef);
 WK_EXPORT void WKViewSetThemePath(WKViewRef, WKStringRef);
 
 WK_EXPORT void WKViewSendTouchEvent(WKViewRef, WKTouchEventRef);
+
+WK_EXPORT void WKViewSendMouseDownEvent(WKViewRef, Evas_Event_Mouse_Down*);
+WK_EXPORT void WKViewSendMouseUpEvent(WKViewRef, Evas_Event_Mouse_Up*);
+WK_EXPORT void WKViewSendMouseMoveEvent(WKViewRef, Evas_Event_Mouse_Move*);
 
 #ifdef __cplusplus
 }

@@ -47,6 +47,9 @@ public:
 #if ENABLE(TOUCH_EVENTS)
     void sendTouchEvent(EwkTouchEvent*);
 #endif
+    void sendMouseEvent(const Evas_Event_Mouse_Down*);
+    void sendMouseEvent(const Evas_Event_Mouse_Up*);
+    void sendMouseEvent(const Evas_Event_Mouse_Move*);
 
 private:
     WebViewEfl(WebContext*, WebPageGroup*);

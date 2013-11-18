@@ -29,6 +29,7 @@
 #include "DownloadManagerEfl.h"
 #include "EwkView.h"
 #include "InputMethodContextEfl.h"
+#include "NativeWebMouseEvent.h"
 #include "WebContextMenuProxyEfl.h"
 #include "WebPopupMenuListenerEfl.h"
 #include "ewk_context_private.h"
@@ -123,5 +124,23 @@ void WebViewEfl::sendTouchEvent(EwkTouchEvent* touchEvent)
     m_page->handleTouchEvent(NativeWebTouchEvent(touchEvent, transformFromScene()));
 }
 #endif
+
+void WebViewEfl::sendMouseEvent(const Evas_Event_Mouse_Down* event)
+{
+    ASSERT(event);
+    m_page->handleMouseEvent(NativeWebMouseEvent(event, transformFromScene(), m_userViewportTransform.toAffineTransform()));
+}
+
+void WebViewEfl::sendMouseEvent(const Evas_Event_Mouse_Up* event)
+{
+    ASSERT(event);
+    m_page->handleMouseEvent(NativeWebMouseEvent(event, transformFromScene(), m_userViewportTransform.toAffineTransform()));
+}
+
+void WebViewEfl::sendMouseEvent(const Evas_Event_Mouse_Move* event)
+{
+    ASSERT(event);
+    m_page->handleMouseEvent(NativeWebMouseEvent(event, transformFromScene(), m_userViewportTransform.toAffineTransform()));
+}
 
 } // namespace WebKit

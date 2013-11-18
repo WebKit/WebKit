@@ -31,6 +31,7 @@
 #include "EwkView.h"
 #include "NotImplemented.h"
 #include "WKSharedAPICast.h"
+#include "WKViewEfl.h"
 
 #if ENABLE(TOUCH_EVENTS)
 
@@ -115,9 +116,51 @@ void GestureHandler::reset()
     }
 }
 
-void GestureHandler::handleSingleTap(const IntPoint&)
+void GestureHandler::handleSingleTap(const IntPoint& position)
 {
-    notImplemented();
+    Evas* evas = evas_object_evas_get(m_ewkView->evasObject());
+    ASSERT(evas);
+
+    // Send mouse move, down and up event to create fake click event.
+    Evas_Event_Mouse_Move mouseMove;
+    mouseMove.buttons = 0;
+    mouseMove.prev.output.x = mouseMove.prev.canvas.x = position.x();
+    mouseMove.prev.output.y = mouseMove.prev.canvas.y = position.y();
+    mouseMove.cur.output.x = mouseMove.cur.canvas.x = position.x();
+    mouseMove.cur.output.y = mouseMove.cur.canvas.y = position.y();
+    mouseMove.data = 0;
+    mouseMove.modifiers = const_cast<Evas_Modifier*>(evas_key_modifier_get(evas));
+    mouseMove.locks = const_cast<Evas_Lock*>(evas_key_lock_get(evas));
+    mouseMove.timestamp = ecore_loop_time_get();
+    mouseMove.event_flags = EVAS_EVENT_FLAG_NONE;
+    mouseMove.dev = 0;
+    WKViewSendMouseMoveEvent(m_ewkView->wkView(), &mouseMove);
+
+    Evas_Event_Mouse_Down mouseDown;
+    mouseDown.button = 1;
+    mouseDown.output.x = mouseDown.canvas.x = position.x();
+    mouseDown.output.y = mouseDown.canvas.y = position.y();
+    mouseDown.data = 0;
+    mouseDown.modifiers = const_cast<Evas_Modifier*>(evas_key_modifier_get(evas));
+    mouseDown.locks = const_cast<Evas_Lock*>(evas_key_lock_get(evas));
+    mouseDown.flags = EVAS_BUTTON_NONE;
+    mouseDown.timestamp = ecore_loop_time_get();
+    mouseDown.event_flags = EVAS_EVENT_FLAG_NONE;
+    mouseDown.dev = 0;
+    WKViewSendMouseDownEvent(m_ewkView->wkView(), &mouseDown);
+
+    Evas_Event_Mouse_Up mouseUp;
+    mouseUp.button = 1;
+    mouseUp.output.x = mouseUp.canvas.x = position.x();
+    mouseUp.output.y = mouseUp.canvas.y = position.y();
+    mouseUp.data = 0;
+    mouseUp.modifiers = const_cast<Evas_Modifier*>(evas_key_modifier_get(evas));
+    mouseUp.locks = const_cast<Evas_Lock*>(evas_key_lock_get(evas));
+    mouseUp.flags = EVAS_BUTTON_NONE;
+    mouseUp.timestamp = ecore_loop_time_get();
+    mouseUp.event_flags = EVAS_EVENT_FLAG_NONE;
+    mouseUp.dev = 0;
+    WKViewSendMouseUpEvent(m_ewkView->wkView(), &mouseUp);
 }
 
 void GestureHandler::handleDoubleTap(const IntPoint&)
