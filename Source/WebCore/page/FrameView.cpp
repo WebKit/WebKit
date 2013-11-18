@@ -1246,7 +1246,7 @@ void FrameView::layout(bool allowSubtree)
         bool disableLayoutState = false;
         if (subtree) {
             disableLayoutState = root->view().shouldDisableLayoutStateForSubtree(root);
-            root->view().pushLayoutState(root);
+            root->view().pushLayoutState(*root);
         }
         LayoutStateDisabler layoutStateDisabler(disableLayoutState ? &root->view() : 0);
 
@@ -1278,7 +1278,7 @@ void FrameView::layout(bool allowSubtree)
         ASSERT(m_layoutPhase == InLayout);
 
         if (subtree)
-            root->view().popLayoutState(root);
+            root->view().popLayoutState(*root);
 
         m_layoutRoot = 0;
 

@@ -1028,7 +1028,7 @@ float RenderView::zoomFactor() const
     return frameView().frame().pageZoomFactor();
 }
 
-void RenderView::pushLayoutState(RenderObject* root)
+void RenderView::pushLayoutState(RenderObject& root)
 {
     ASSERT(m_layoutStateDisableCount == 0);
     ASSERT(m_layoutState == 0);
@@ -1155,7 +1155,7 @@ FlowThreadController& RenderView::flowThreadController()
     return *m_flowThreadController;
 }
 
-void RenderView::pushLayoutStateForCurrentFlowThread(const RenderObject* object)
+void RenderView::pushLayoutStateForCurrentFlowThread(const RenderObject& object)
 {
     if (!m_flowThreadController)
         return;

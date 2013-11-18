@@ -142,8 +142,8 @@ public:
     bool doingFullRepaint() const { return frameView().needsFullRepaint(); }
 
     // Subtree push/pop
-    void pushLayoutState(RenderObject*);
-    void popLayoutState(RenderObject*) { return popLayoutState(); } // Just doing this to keep popLayoutState() private and to make the subtree calls symmetrical.
+    void pushLayoutState(RenderObject&);
+    void popLayoutState(RenderObject&) { return popLayoutState(); } // Just doing this to keep popLayoutState() private and to make the subtree calls symmetrical.
 
     bool shouldDisableLayoutStateForSubtree(RenderObject*) const;
 
@@ -249,18 +249,18 @@ private:
     bool shouldRepaint(const LayoutRect&) const;
 
     // These functions may only be accessed by LayoutStateMaintainer.
-    bool pushLayoutState(RenderBox* renderer, const LayoutSize& offset, LayoutUnit pageHeight = 0, bool pageHeightChanged = false, ColumnInfo* colInfo = 0)
+    bool pushLayoutState(RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageHeight = 0, bool pageHeightChanged = false, ColumnInfo* colInfo = nullptr)
     {
         // We push LayoutState even if layoutState is disabled because it stores layoutDelta too.
-        if (!doingFullRepaint() || m_layoutState->isPaginated() || renderer->hasColumns() || renderer->flowThreadContainingBlock()
-            || m_layoutState->lineGrid() || (renderer->style().lineGrid() != RenderStyle::initialLineGrid() && renderer->isRenderBlockFlow())
+        if (!doingFullRepaint() || m_layoutState->isPaginated() || renderer.hasColumns() || renderer.flowThreadContainingBlock()
+            || m_layoutState->lineGrid() || (renderer.style().lineGrid() != RenderStyle::initialLineGrid() && renderer.isRenderBlockFlow())
 #if ENABLE(CSS_SHAPES)
-            || (renderer->isRenderBlock() && toRenderBlock(renderer)->shapeInsideInfo())
-            || (m_layoutState->shapeInsideInfo() && renderer->isRenderBlock() && !toRenderBlock(renderer)->allowsShapeInsideInfoSharing())
+            || (renderer.isRenderBlock() && toRenderBlock(renderer).shapeInsideInfo())
+            || (m_layoutState->shapeInsideInfo() && renderer.isRenderBlock() && !toRenderBlock(renderer).allowsShapeInsideInfoSharing())
 #endif
             ) {
             pushLayoutStateForCurrentFlowThread(renderer);
-            m_layoutState = std::make_unique<LayoutState>(std::move(m_layoutState), renderer, offset, pageHeight, pageHeightChanged, colInfo);
+            m_layoutState = std::make_unique<LayoutState>(std::move(m_layoutState), &renderer, offset, pageHeight, pageHeightChanged, colInfo);
             return true;
         }
         return false;
@@ -287,7 +287,7 @@ private:
     void checkLayoutState(const LayoutState&);
 #endif
 
-    void pushLayoutStateForCurrentFlowThread(const RenderObject*);
+    void pushLayoutStateForCurrentFlowThread(const RenderObject&);
     void popLayoutStateForCurrentFlowThread();
     
     friend class LayoutStateMaintainer;
@@ -354,8 +354,8 @@ RENDER_OBJECT_TYPE_CASTS(RenderView, isRenderView());
 class LayoutStateMaintainer {
     WTF_MAKE_NONCOPYABLE(LayoutStateMaintainer);
 public:
-    // ctor to push now
-    LayoutStateMaintainer(RenderView* view, RenderBox* root, LayoutSize offset, bool disableState = false, LayoutUnit pageHeight = 0, bool pageHeightChanged = false, ColumnInfo* colInfo = 0)
+    // Constructor to push now.
+    explicit LayoutStateMaintainer(RenderView& view, RenderBox& root, LayoutSize offset, bool disableState = false, LayoutUnit pageHeight = 0, bool pageHeightChanged = false, ColumnInfo* colInfo = nullptr)
         : m_view(view)
         , m_disabled(disableState)
         , m_didStart(false)
@@ -364,9 +364,9 @@ public:
     {
         push(root, offset, pageHeight, pageHeightChanged, colInfo);
     }
-    
-    // ctor to maybe push later
-    LayoutStateMaintainer(RenderView* view)
+
+    // Constructor to maybe push later.
+    explicit LayoutStateMaintainer(RenderView& view)
         : m_view(view)
         , m_disabled(false)
         , m_didStart(false)
@@ -380,13 +380,13 @@ public:
         ASSERT(m_didStart == m_didEnd);   // if this fires, it means that someone did a push(), but forgot to pop().
     }
 
-    void push(RenderBox* root, LayoutSize offset, LayoutUnit pageHeight = 0, bool pageHeightChanged = false, ColumnInfo* colInfo = 0)
+    void push(RenderBox& root, LayoutSize offset, LayoutUnit pageHeight = 0, bool pageHeightChanged = false, ColumnInfo* colInfo = nullptr)
     {
         ASSERT(!m_didStart);
         // We push state even if disabled, because we still need to store layoutDelta
-        m_didCreateLayoutState = m_view->pushLayoutState(root, offset, pageHeight, pageHeightChanged, colInfo);
+        m_didCreateLayoutState = m_view.pushLayoutState(root, offset, pageHeight, pageHeightChanged, colInfo);
         if (m_disabled && m_didCreateLayoutState)
-            m_view->disableLayoutState();
+            m_view.disableLayoutState();
         m_didStart = true;
     }
 
@@ -395,9 +395,9 @@ public:
         if (m_didStart) {
             ASSERT(!m_didEnd);
             if (m_didCreateLayoutState) {
-                m_view->popLayoutState();
+                m_view.popLayoutState();
                 if (m_disabled)
-                    m_view->enableLayoutState();
+                    m_view.enableLayoutState();
             }
             
             m_didEnd = true;
@@ -407,7 +407,7 @@ public:
     bool didPush() const { return m_didStart; }
 
 private:
-    RenderView* m_view;
+    RenderView& m_view;
     bool m_disabled : 1;        // true if the offset and clip part of layoutState is disabled
     bool m_didStart : 1;        // true if we did a push or disable
     bool m_didEnd : 1;          // true if we popped or re-enabled

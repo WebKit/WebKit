@@ -136,7 +136,7 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
     // FIXME: <http://bugs.webkit.org/show_bug.cgi?id=13443> Apply control clip if present.
 }
 
-LayoutState::LayoutState(RenderObject* root)
+LayoutState::LayoutState(RenderObject& root)
     : m_clipped(false)
     , m_isPaginated(false)
     , m_pageLogicalHeightChanged(false)
@@ -151,10 +151,10 @@ LayoutState::LayoutState(RenderObject* root)
 #endif
     , m_pageLogicalHeight(0)
 #ifndef NDEBUG
-    , m_renderer(root)
+    , m_renderer(&root)
 #endif
 {
-    RenderElement* container = root->container();
+    RenderElement* container = root.container();
     FloatPoint absContentPoint = container->localToAbsolute(FloatPoint(), UseTransforms);
     m_paintOffset = LayoutSize(absContentPoint.x(), absContentPoint.y());
 

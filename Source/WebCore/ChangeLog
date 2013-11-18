@@ -1,3 +1,52 @@
+2013-11-17  Sam Weinig  <sam@webkit.org>
+
+        LayoutStateMaintainer should use references where possible
+        https://bugs.webkit.org/show_bug.cgi?id=124471
+
+        Reviewed by Dan Bernstein.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/LayoutState.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::simplifiedLayout):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutBlock):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::layout):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::layout):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::pushFlowThreadLayoutState):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::layout):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::layout):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+        (WebCore::RenderTableSection::layout):
+        (WebCore::RenderTableSection::layoutRows):
+        * rendering/RenderTextTrackCue.cpp:
+        (WebCore::RenderTextTrackCue::layout):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::pushLayoutState):
+        (WebCore::RenderView::pushLayoutStateForCurrentFlowThread):
+        * rendering/RenderView.h:
+        (WebCore::LayoutStateMaintainer::LayoutStateMaintainer):
+        (WebCore::LayoutStateMaintainer::push):
+        (WebCore::LayoutStateMaintainer::pop):
+
 2013-11-16  Alexey Proskuryakov  <ap@apple.com>
 
         Use uint8_t vectors for WebCrypto data

@@ -1213,7 +1213,7 @@ const RenderBox* RenderFlowThread::currentActiveRenderBox() const
     return currentObject->isBox() ? toRenderBox(currentObject) : 0;
 }
 
-void RenderFlowThread::pushFlowThreadLayoutState(const RenderObject* object)
+void RenderFlowThread::pushFlowThreadLayoutState(const RenderObject& object)
 {
     if (const RenderBox* currentBoxDescendant = currentActiveRenderBox()) {
         LayoutState* layoutState = currentBoxDescendant->view().layoutState();
@@ -1224,7 +1224,7 @@ void RenderFlowThread::pushFlowThreadLayoutState(const RenderObject* object)
         }
     }
 
-    m_activeObjectsStack.add(object);
+    m_activeObjectsStack.add(&object);
 }
 
 void RenderFlowThread::popFlowThreadLayoutState()

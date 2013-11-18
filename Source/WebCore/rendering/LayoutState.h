@@ -65,7 +65,7 @@ public:
     }
 
     LayoutState(std::unique_ptr<LayoutState> state, RenderBox*, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, ColumnInfo*);
-    explicit LayoutState(RenderObject*);
+    explicit LayoutState(RenderObject&);
 
     void clearPaginationInformation();
     bool isPaginatingColumns() const { return m_columnInfo && m_columnInfo->paginationUnit() == ColumnInfo::Column; }

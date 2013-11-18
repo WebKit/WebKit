@@ -200,7 +200,7 @@ public:
 #endif
     virtual bool collectsGraphicsLayersUnderRegions() const;
 
-    void pushFlowThreadLayoutState(const RenderObject*);
+    void pushFlowThreadLayoutState(const RenderObject&);
     void popFlowThreadLayoutState();
     LayoutUnit offsetFromLogicalTopOfFirstRegion(const RenderBlock*) const;
     void clearRenderBoxRegionInfoAndCustomStyle(const RenderBox*, const RenderRegion*, const RenderRegion*, const RenderRegion*, const RenderRegion*);
