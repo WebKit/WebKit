@@ -1910,7 +1910,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         loadp ScopeChain[cfr], t3
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
-    elsif ARM or ARMv7 or ARMv7_TRADITIONAL
+    elsif ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
         loadp ScopeChain[cfr], t3
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
@@ -1922,24 +1922,9 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         loadi Callee + PayloadOffset[cfr], t1
         loadp JSFunction::m_executable[t1], t1
         move t2, cfr
-        call executableOffsetToFunction[t1]
-        restoreReturnAddressBeforeReturn(t3)
-        loadp ScopeChain[cfr], t3
-        andp MarkedBlockMask, t3
-        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
-    elsif MIPS or SH4
-        loadp ScopeChain[cfr], t3
-        andp MarkedBlockMask, t3
-        loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
-        storep cfr, VM::topCallFrame[t3]
-        move t0, t2
-        preserveReturnAddressAfterCall(t3)
-        storep t3, ReturnPC[cfr]
-        move cfr, t0
-        loadi Callee + PayloadOffset[cfr], t1
-        loadp JSFunction::m_executable[t1], t1
-        move t2, cfr
-        move t0, a0
+        if MIPS or SH4
+            move t0, a0
+        end
         call executableOffsetToFunction[t1]
         restoreReturnAddressBeforeReturn(t3)
         loadp ScopeChain[cfr], t3

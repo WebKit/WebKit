@@ -489,6 +489,14 @@ def sh4LowerMisplacedSpecialRegisters(list)
         | node |
         if node.is_a? Instruction
             case node.opcode
+            when "move"
+                if node.operands[0].is_a? RegisterID and node.operands[0].sh4Operand == "pr"
+                    newList << Instruction.new(codeOrigin, "stspr", [node.operands[1]])
+                elsif node.operands[1].is_a? RegisterID and node.operands[1].sh4Operand == "pr"
+                    newList << Instruction.new(codeOrigin, "ldspr", [node.operands[0]])
+                else
+                    newList << node
+                end
             when "loadi", "loadis", "loadp"
                 if node.operands[1].is_a? RegisterID and node.operands[1].sh4Operand == "pr"
                     tmp = Tmp.new(codeOrigin, :gpr)
