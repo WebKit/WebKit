@@ -1719,6 +1719,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setDiagnosticLoggingEnabled([preferences diagnosticLoggingEnabled]);
     settings.setLowPowerVideoAudioBufferSizeEnabled([preferences lowPowerVideoAudioBufferSizeEnabled]);
 
+    settings.setUseLegacyTextAlignPositionedElementBehavior([preferences useLegacyTextAlignPositionedElementBehavior]);
+
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     settings->setVideoPluginProxyEnabled([preferences isVideoPluginProxyEnabled]);
 #endif
