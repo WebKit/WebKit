@@ -1503,9 +1503,13 @@ public:
     static void replaceWithJump(void *instructionStart, void *to)
     {
         SH4Word* instruction = reinterpret_cast<SH4Word*>(instructionStart);
-        intptr_t difference = reinterpret_cast<intptr_t>(to) - (reinterpret_cast<intptr_t>(instruction) + 2 * sizeof(SH4Word));
+        intptr_t difference = reinterpret_cast<intptr_t>(to) - (reinterpret_cast<intptr_t>(instruction) + 3 * sizeof(SH4Word));
 
         if ((instruction[0] & 0xf000) == MOVL_READ_OFFPC_OPCODE) {
+            // We have an entry in constant pool and we potentially replace a branchPtrWithPatch, so let's backup what would be the
+            // condition (CMP/xx and Bx opcodes) for later use in revertJumpReplacementToBranchPtrWithPatch before putting the jump.
+            instruction[4] = instruction[1];
+            instruction[5] = instruction[2];
             instruction[1] = (BRAF_OPCODE | (instruction[0] & 0x0f00));
             instruction[2] = NOP_OPCODE;
             cacheFlush(&instruction[1], 2 * sizeof(SH4Word));
@@ -1516,22 +1520,32 @@ public:
             cacheFlush(instruction, 3 * sizeof(SH4Word));
         }
 
-        changePCrelativeAddress(instruction[0] & 0x00ff, instruction, difference - 2);
+        changePCrelativeAddress(instruction[0] & 0x00ff, instruction, difference);
     }
 
-    static void revertJumpToMove(void* instructionStart, RegisterID rd, int imm)
+    static void revertJumpReplacementToBranchPtrWithPatch(void* instructionStart, RegisterID rd, int imm)
     {
         SH4Word *insn = reinterpret_cast<SH4Word*>(instructionStart);
         ASSERT((insn[0] & 0xf000) == MOVL_READ_OFFPC_OPCODE);
+        ASSERT((insn[0] & 0x00ff) != 1);
 
-        if ((insn[1] & 0xf000) == CMPEQ_OPCODE) {
-            insn[0] = getOpcodeGroup3(MOVL_READ_OFFPC_OPCODE, SH4Registers::r13, insn[0] & 0x00ff);
+        insn[0] = getOpcodeGroup3(MOVL_READ_OFFPC_OPCODE, SH4Registers::r13, insn[0] & 0x00ff);
+        if ((insn[1] & 0xf0ff) == BRAF_OPCODE) {
+            insn[1] = (insn[4] & 0xf00f) | (rd << 8) | (SH4Registers::r13 << 4); // Restore CMP/xx opcode.
+            insn[2] = insn[5];
+            ASSERT(((insn[2] & 0xff00) == BT_OPCODE) || ((insn[2] & 0xff00) == BF_OPCODE));
+            ASSERT((insn[3] & 0xf000) == MOVL_READ_OFFPC_OPCODE);
+            insn[4] = (BRAF_OPCODE | (insn[3] & 0x0f00));
+            insn[5] = NOP_OPCODE;
+            cacheFlush(insn, 6 * sizeof(SH4Word));
+        } else {
+            // The branchPtrWithPatch has already been restored, so we just patch the immediate value and ASSERT all is as expected.
+            ASSERT((insn[1] & 0xf000) == 0x3000);
             insn[1] = (insn[1] & 0xf00f) | (rd << 8) | (SH4Registers::r13 << 4);
             cacheFlush(insn, 2 * sizeof(SH4Word));
-        } else {
-            insn[1] = getOpcodeGroup6(BRA_OPCODE, 3);
-            insn[2] = NOP_OPCODE;
-            cacheFlush(&insn[1], 2 * sizeof(SH4Word));
+            ASSERT(((insn[2] & 0xff00) == BT_OPCODE) || ((insn[2] & 0xff00) == BF_OPCODE));
+            ASSERT((insn[3] & 0xf000) == MOVL_READ_OFFPC_OPCODE);
+            ASSERT(insn[5] == NOP_OPCODE);
         }
 
         changePCrelativeAddress(insn[0] & 0x00ff, insn, imm);

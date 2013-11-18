@@ -2447,7 +2447,7 @@ public:
 
     static void revertJumpReplacementToBranchPtrWithPatch(CodeLocationLabel instructionStart, RegisterID rd, void* initialValue)
     {
-        SH4Assembler::revertJumpToMove(instructionStart.dataLocation(), rd, reinterpret_cast<int>(initialValue));
+        SH4Assembler::revertJumpReplacementToBranchPtrWithPatch(instructionStart.dataLocation(), rd, reinterpret_cast<int>(initialValue));
     }
 
     static CodeLocationLabel startOfPatchableBranchPtrWithPatchOnAddress(CodeLocationDataLabelPtr)
