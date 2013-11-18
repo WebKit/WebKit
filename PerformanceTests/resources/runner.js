@@ -236,11 +236,15 @@ if (window.testRunner) {
             ignoreWarmUpAndLog(measuredValue);
         } catch (exception) {
             logFatalError("Got an exception while logging the result with name=" + exception.name + ", message=" + exception.message);
-            return;
+            return false;
         }
 
-        if (completedIterations >= iterationCount)
+        if (completedIterations >= iterationCount) {
             finish();
+            return false;
+        }
+
+        return true;
     }
 
     PerfTestRunner.measureTime = function (test) {

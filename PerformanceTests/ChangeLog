@@ -1,3 +1,18 @@
+2013-11-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [Performance tests] Interactive/SelectAll.html throws an exception
+        https://bugs.webkit.org/show_bug.cgi?id=124495
+
+        Reviewed by Antti Koivisto
+
+        Return a boolean indicating whether more values are needed or not in
+        PerfTestRunner.measureValueAsync so that runTest can terminate gracefully.
+
+        * Interactive/SelectAll.html:
+        (runTest): Don't schedule a timer for runTest if we've got enough values.
+        * resources/runner.js:
+        (PerfTestRunner.measureValueAsync): Returns true iff more values are needed.
+
 2013-11-13  Antti Koivisto  <antti@apple.com>
 
         This was supposed to test overflow-wrap:break-word instead of word-break:break-all.

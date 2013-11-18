@@ -22,10 +22,11 @@ function runTest() {
         iframe.contentDocument.execCommand('SelectAll');
         iframe.contentDocument.body.offsetTop;
         setTimeout(function () {
-            PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime);
+            if (!PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime))
+                return;
             PerfTestRunner.gc();
             setTimeout(runTest, 0);
-        }, 0);        
+        }, 0);
     }, 0);
 }
 
