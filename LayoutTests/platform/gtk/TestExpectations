@@ -251,7 +251,7 @@ webkit.org/b/117039 media/track/video-track.html [ Skip ]
 
 # Tests for MediaSource API. Feature is not totally functional.
 webkit.org/b/99065 http/tests/media/media-source/mediasource-addsourcebuffer.html [ Failure Timeout ]
-webkit.org/b/99065 http/tests/media/media-source/mediasource-append-buffer.html [ Crash ]
+webkit.org/b/99065 http/tests/media/media-source/mediasource-append-buffer.html [ Crash Timeout ]
 webkit.org/b/99065 http/tests/media/media-source/mediasource-buffered.html [ Timeout ]
 webkit.org/b/99065 http/tests/media/media-source/mediasource-closed.html [ Failure ]
 webkit.org/b/99065 http/tests/media/media-source/mediasource-config-change-mp4-a-bitrate.html [ Failure ]
@@ -332,6 +332,7 @@ webkit.org/b/71849 http/tests/canvas/webgl [ Skip ]
 webkit.org/b/71849 http/tests/security/webgl-remote-read-remote-image-allowed.html [ Skip ]
 webkit.org/b/71849 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Skip ]
 webkit.org/b/71849 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
+webkit.org/b/71849 webkit.org/b/124486 http/tests/webgl [ Skip ]
 webkit.org/b/71849 webkit.org/b/111477 inspector-protocol/layers [ Skip ]
 webkit.org/b/71849 transforms/3d [ Skip ]
 webkit.org/b/71849 webgl [ Skip ]
@@ -735,6 +736,12 @@ webkit.org/b/119253 [ Debug ] js/regress/new-array-buffer-dead.html [ Timeout Pa
 webkit.org/b/119253 [ Debug ] fast/media/update-media-query-css-parser.html [ Timeout Pass ]
 webkit.org/b/119253 fast/workers/dedicated-worker-lifecycle.html [ Timeout Pass ]
 
+webkit.org/b/124511 media/video-played-reset.html [ Failure Pass ]
+
+webkit.org/b/124512 media/video-seek-with-negative-playback.html [ Failure Pass ]
+
+webkit.org/b/124513 media/video-ended-event-negative-playback.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -882,9 +889,6 @@ webkit.org/b/122571 inspector-protocol/page/frameStartedLoading.html [ Timeout P
 webkit.org/b/122571 inspector-protocol/page/frameScheduledNavigation.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/page/setEmulatedMedia.html [ Timeout Pass ]
 webkit.org/b/122571 inspector-protocol/css/getSupportedCSSProperties.html [ Timeout Pass ]
-
-webkit.org/b/124486 http/tests/webgl/1.0.2/texSubImage2DHTML.html [ Timeout ]
-webkit.org/b/124486 http/tests/webgl/1.0.2/texImage2DHTML.html [ Timeout ]
 
 webkit.org/b/124487 [ Release ] media/video-duration-known-after-eos.html [ Timeout ]
 
@@ -1460,6 +1464,16 @@ webkit.org/b/122147 fast/css/drop-shadow-viewport-vmin.html [ ImageOnlyFailure ]
 webkit.org/b/122147 fast/css/drop-shadow-viewport-width.html [ ImageOnlyFailure ]
 
 webkit.org/b/124360 media/video-canvas-drawing-output.html [ Failure ]
+
+webkit.org/b/124503 mathml/presentation/mspace-units.html [ ImageOnlyFailure ]
+
+webkit.org/b/124504 fast/text/break-word-pre-wrap.html [ ImageOnlyFailure ]
+
+webkit.org/b/124507 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html [ ImageOnlyFailure ]
+webkit.org/b/124507 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-non-intersecting-underline.html [ ImageOnlyFailure ]
+
+webkit.org/b/124509 media/video-controls-captions-trackmenu-hide-on-click-outside.html [ Failure ]
+webkit.org/b/124509 media/video-controls-captions-trackmenu-hide-on-click.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

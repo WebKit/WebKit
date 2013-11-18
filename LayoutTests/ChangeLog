@@ -1,6 +1,13 @@
 2013-11-18  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Adding failure expectations for the current set
+        of untriaged failures on the 64-bit WK2 builder.
+
+2013-11-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
         Cleaning up expectations for unexpectedly passing tests, either removing or updating them
         to reflect the current status of the test.
 
