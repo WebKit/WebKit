@@ -38,9 +38,8 @@ Watchpoint::~Watchpoint()
         remove();
 }
 
-WatchpointSet::WatchpointSet(InitialWatchpointSetMode mode)
-    : m_isWatched(mode == InitializedWatching)
-    , m_isInvalidated(false)
+WatchpointSet::WatchpointSet(WatchpointState state)
+    : m_state(state)
 {
 }
 
@@ -57,19 +56,19 @@ WatchpointSet::~WatchpointSet()
 void WatchpointSet::add(Watchpoint* watchpoint)
 {
     ASSERT(!isCompilationThread());
+    ASSERT(state() != IsInvalidated);
     if (!watchpoint)
         return;
     m_set.push(watchpoint);
-    m_isWatched = true;
+    m_state = IsWatched;
 }
 
 void WatchpointSet::notifyWriteSlow()
 {
-    ASSERT(m_isWatched);
+    ASSERT(state() == IsWatched);
     
     fireAllWatchpoints();
-    m_isWatched = false;
-    m_isInvalidated = true;
+    m_state = IsInvalidated;
     WTF::storeStoreFence();
 }
 
@@ -88,11 +87,7 @@ WatchpointSet* InlineWatchpointSet::inflateSlow()
 {
     ASSERT(isThin());
     ASSERT(!isCompilationThread());
-    WatchpointSet* fat = adoptRef(new WatchpointSet(InitializedBlind)).leakRef();
-    if (m_data & IsInvalidatedFlag)
-        fat->m_isInvalidated = true;
-    if (m_data & IsWatchedFlag)
-        fat->m_isWatched = true;
+    WatchpointSet* fat = adoptRef(new WatchpointSet(decodeState(m_data))).leakRef();
     WTF::storeStoreFence();
     m_data = bitwise_cast<uintptr_t>(fat);
     return fat;

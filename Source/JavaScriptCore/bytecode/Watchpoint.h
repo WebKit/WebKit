@@ -45,15 +45,21 @@ protected:
     virtual void fireInternal() = 0;
 };
 
-enum InitialWatchpointSetMode { InitializedWatching, InitializedBlind };
+enum WatchpointState {
+    ClearWatchpoint,
+    IsWatched,
+    IsInvalidated
+};
 
 class InlineWatchpointSet;
 
 class WatchpointSet : public ThreadSafeRefCounted<WatchpointSet> {
     friend class LLIntOffsetsExtractor;
 public:
-    WatchpointSet(InitialWatchpointSetMode);
+    WatchpointSet(WatchpointState);
     ~WatchpointSet(); // Note that this will not fire any of the watchpoints; if you need to know when a WatchpointSet dies then you need a separate mechanism for this.
+    
+    WatchpointState state() const { return static_cast<WatchpointState>(m_state); }
     
     // It is safe to call this from another thread.  It may return true
     // even if the set actually had been invalidated, but that ought to happen
@@ -64,7 +70,7 @@ public:
     bool isStillValid() const
     {
         WTF::loadLoadFence();
-        return !m_isInvalidated;
+        return state() != IsInvalidated;
     }
     // Like isStillValid(), may be called from another thread.
     bool hasBeenInvalidated() const { return !isStillValid(); }
@@ -79,17 +85,20 @@ public:
     // watchpoint would have fired. That's a pretty good indication that you
     // probably don't want to set watchpoints, since we typically don't want to
     // set watchpoints that we believe will actually be fired.
-    void startWatching() { m_isWatched = true; }
+    void startWatching()
+    {
+        ASSERT(state() != IsInvalidated);
+        m_state = IsWatched;
+    }
     
     void notifyWrite()
     {
-        if (!m_isWatched)
+        if (state() != IsWatched)
             return;
         notifyWriteSlow();
     }
-    
-    bool* addressOfIsWatched() { return &m_isWatched; }
-    bool* addressOfIsInvalidated() { return &m_isInvalidated; }
+
+    int8_t* addressOfState() { return &m_state; }
     
     JS_EXPORT_PRIVATE void notifyWriteSlow(); // Call only if you've checked isWatched.
     
@@ -99,8 +108,7 @@ private:
     friend class InlineWatchpointSet;
     
     SentinelLinkedList<Watchpoint, BasicRawSentinelNode<Watchpoint>> m_set;
-    bool m_isWatched;
-    bool m_isInvalidated;
+    int8_t m_state;
 };
 
 // InlineWatchpointSet is a low-overhead, non-copyable watchpoint set in which
@@ -125,8 +133,8 @@ private:
 class InlineWatchpointSet {
     WTF_MAKE_NONCOPYABLE(InlineWatchpointSet);
 public:
-    InlineWatchpointSet(InitialWatchpointSetMode mode)
-        : m_data((mode == InitializedWatching ? IsWatchedFlag : 0) | IsThinFlag)
+    InlineWatchpointSet(WatchpointState state)
+        : m_data(encodeState(state))
     {
     }
     
@@ -148,7 +156,7 @@ public:
             WTF::loadLoadFence();
             return fat(data)->hasBeenInvalidated();
         }
-        return data & IsInvalidatedFlag;
+        return decodeState(data) == IsInvalidated;
     }
     
     // Like hasBeenInvalidated(), may be called from another thread.
@@ -165,7 +173,8 @@ public:
             fat()->startWatching();
             return;
         }
-        m_data |= IsWatchedFlag;
+        ASSERT(decodeState(m_data) != IsInvalidated);
+        m_data = encodeState(IsWatched);
     }
     
     void notifyWrite()
@@ -174,19 +183,30 @@ public:
             fat()->notifyWrite();
             return;
         }
-        if (!(m_data & IsWatchedFlag))
+        if (decodeState(m_data) == ClearWatchpoint)
             return;
-        m_data |= IsInvalidatedFlag;
+        m_data = encodeState(IsInvalidated);
         WTF::storeStoreFence();
     }
     
 private:
     static const uintptr_t IsThinFlag        = 1;
-    static const uintptr_t IsInvalidatedFlag = 2;
-    static const uintptr_t IsWatchedFlag     = 4;
+    static const uintptr_t StateMask         = 6;
+    static const uintptr_t StateShift        = 1;
     
     static bool isThin(uintptr_t data) { return data & IsThinFlag; }
     static bool isFat(uintptr_t data) { return !isThin(data); }
+    
+    static WatchpointState decodeState(uintptr_t data)
+    {
+        ASSERT(isThin(data));
+        return static_cast<WatchpointState>((data & StateMask) >> StateShift);
+    }
+    
+    static uintptr_t encodeState(WatchpointState state)
+    {
+        return (state << StateShift) | IsThinFlag;
+    }
     
     bool isThin() const { return isThin(m_data); }
     bool isFat() const { return isFat(m_data); };

@@ -1638,6 +1638,13 @@ public:
         return branch32(cond, memoryTempRegister, right);
     }
     
+    Jump branch8(RelationalCondition cond, AbsoluteAddress left, TrustedImm32 right)
+    {
+        ASSERT(!(0xffffff00 & right.m_value));
+        load8(left, getCachedMemoryTempRegisterIDAndInvalidate());
+        return branch32(cond, memoryTempRegister, right);
+    }
+    
     Jump branchTest32(ResultCondition cond, RegisterID reg, RegisterID mask)
     {
         m_assembler.tst<32>(reg, mask);

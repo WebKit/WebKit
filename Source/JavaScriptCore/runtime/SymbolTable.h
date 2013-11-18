@@ -230,8 +230,6 @@ struct SymbolTableEntry {
     // immediately after a call to attemptToWatch().
     void attemptToWatch();
     
-    bool* addressOfIsWatched();
-    
     void addWatchpoint(Watchpoint*);
     
     WatchpointSet* watchpointSet()

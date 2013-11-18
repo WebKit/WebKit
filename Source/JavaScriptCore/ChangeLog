@@ -1,5 +1,64 @@
 2013-11-16  Filip Pizlo  <fpizlo@apple.com>
 
+        Simplify WatchpointSet state tracking
+        https://bugs.webkit.org/show_bug.cgi?id=124465
+
+        Reviewed by Sam Weinig.
+        
+        We previously represented the state of watchpoint sets using two booleans. But that
+        makes it awkward to case over the state.
+        
+        We also previously supported a watchpoint set being both watched and invalidated. We
+        never used that capability, and its presence was just purely confusing.
+        
+        This turns the whole thing into an enum.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::branch8):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branch8):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::branch8):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::branch8):
+        * bytecode/Watchpoint.cpp:
+        (JSC::WatchpointSet::WatchpointSet):
+        (JSC::WatchpointSet::add):
+        (JSC::WatchpointSet::notifyWriteSlow):
+        (JSC::InlineWatchpointSet::inflateSlow):
+        * bytecode/Watchpoint.h:
+        (JSC::WatchpointSet::state):
+        (JSC::WatchpointSet::isStillValid):
+        (JSC::WatchpointSet::startWatching):
+        (JSC::WatchpointSet::notifyWrite):
+        (JSC::WatchpointSet::addressOfState):
+        (JSC::InlineWatchpointSet::InlineWatchpointSet):
+        (JSC::InlineWatchpointSet::hasBeenInvalidated):
+        (JSC::InlineWatchpointSet::startWatching):
+        (JSC::InlineWatchpointSet::notifyWrite):
+        (JSC::InlineWatchpointSet::decodeState):
+        (JSC::InlineWatchpointSet::encodeState):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitVarInjectionCheck):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitVarInjectionCheck):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::JSFunction):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTableEntry::attemptToWatch):
+        * runtime/SymbolTable.h:
+
+2013-11-16  Filip Pizlo  <fpizlo@apple.com>
+
         FTL should have an explicit notion of bytecode liveness
         https://bugs.webkit.org/show_bug.cgi?id=124181
 

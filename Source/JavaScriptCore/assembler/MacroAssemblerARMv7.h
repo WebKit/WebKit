@@ -1377,6 +1377,12 @@ public:
         return branch32(cond, addressTempRegister, right);
     }
     
+    Jump branch8(RelationalCondition cond, AbsoluteAddress left, TrustedImm32 right)
+    {
+        load8(left, addressTempRegister);
+        return branch32(cond, addressTempRegister, right);
+    }
+    
     Jump branchTest32(ResultCondition cond, RegisterID reg, RegisterID mask)
     {
         m_assembler.tst(reg, mask);

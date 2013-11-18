@@ -71,6 +71,11 @@ const DeletedValueTag = -7
 const LowestTag = DeletedValueTag
 end
 
+# Watchpoint states
+const ClearWatchpoint = 0
+const IsWatched = 1
+const IsInvalidated = 2
+
 # Some register conventions.
 if JSVALUE64
     # - Use a pair of registers to represent the PC: one register for the

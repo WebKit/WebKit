@@ -1987,7 +1987,7 @@ macro varInjectionCheck(slowPath)
     loadp CodeBlock[cfr], t0
     loadp CodeBlock::m_globalObject[t0], t0
     loadp JSGlobalObject::m_varInjectionWatchpoint[t0], t0
-    btbnz WatchpointSet::m_isInvalidated[t0], slowPath
+    bbeq WatchpointSet::m_state[t0], IsInvalidated, slowPath
 end
 
 macro resolveScope()

@@ -96,7 +96,7 @@ JSFunction::JSFunction(VM& vm, JSGlobalObject* globalObject, Structure* structur
     // was clobbered exactly once, but that seems like overkill. In almost all cases it will be
     // clobbered once, and if it's clobbered more than once, that will probably only occur
     // before we started optimizing, anyway.
-    , m_allocationProfileWatchpoint(InitializedBlind)
+    , m_allocationProfileWatchpoint(ClearWatchpoint)
 {
 }
 
