@@ -1,3 +1,11 @@
+2013-11-17  Tim Horton  <timothy_horton@apple.com>
+
+        Layout Test platform/mac-wk2/plugins/slow/asynchronous-plugin-initialization-multiple.html is extremely flaky on Mac WK2 bots, especially debug
+        https://bugs.webkit.org/show_bug.cgi?id=124476
+
+        * platform/mac-wk2/TestExpectations:
+        Mark test as flaky.
+
 2013-11-17  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should have an explicit notion of bytecode liveness
