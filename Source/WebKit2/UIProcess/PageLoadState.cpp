@@ -53,7 +53,29 @@ void PageLoadState::clearPendingAPIRequestURL()
 
 void PageLoadState::didStartProvisionalLoad(const String& url, const String& unreachableURL)
 {
-    // FIXME: Implement this.
+    ASSERT(m_provisionalURL.isEmpty());
+
+    m_provisionalURL = url;
+
+    // FIXME: Do something with the unreachable URL.
 }
+
+void PageLoadState::didReceiveServerRedirectForProvisionalLoad(const String& url)
+{
+    m_provisionalURL = url;
+}
+
+void PageLoadState::didFailProvisionalLoad()
+{
+    m_provisionalURL = String();
+}
+
+void PageLoadState::didCommitLoad()
+{
+    ASSERT(!m_provisionalURL.isEmpty());
+
+    m_provisionalURL = String();
+}
+
 
 } // namespace WebKit

@@ -2166,6 +2166,9 @@ void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t f
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK_URL(url);
 
+    if (frame->isMainFrame())
+        m_pageLoadState.didReceiveServerRedirectForProvisionalLoad(url);
+
     frame->didReceiveServerRedirectForProvisionalLoad(url);
 
     m_loaderClient.didReceiveServerRedirectForProvisionalLoadForFrame(this, frame, userData.get());
@@ -2180,6 +2183,9 @@ void WebPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, const Resour
 
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
+
+    if (frame->isMainFrame())
+        m_pageLoadState.didFailProvisionalLoad();
 
     frame->didFailProvisionalLoad();
 
@@ -2208,6 +2214,9 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeTyp
 
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
+
+    if (frame->isMainFrame())
+        m_pageLoadState.didCommitLoad();
 
 #if PLATFORM(MAC)
     // FIXME (bug 59111): didCommitLoadForFrame comes too late when restoring a page from b/f cache, making us disable secure event mode in password fields.

@@ -40,9 +40,14 @@ public:
     void clearPendingAPIRequestURL();
 
     void didStartProvisionalLoad(const String& url, const String& unreachableURL);
+    void didReceiveServerRedirectForProvisionalLoad(const String& url);
+    void didFailProvisionalLoad();
+    void didCommitLoad();
 
 private:
     String m_pendingAPIRequestURL;
+
+    String m_provisionalURL;
 };
 
 } // namespace WebKit
