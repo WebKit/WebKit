@@ -1,3 +1,9 @@
+2013-11-18  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL build fix after r159444
+
+        * CMakeLists.txt: Added PageLoadState.cpp.
+
 2013-11-18  Anders Carlsson  <andersca@apple.com>
 
         Add PageLoadState class
