@@ -81,10 +81,10 @@ public:
     virtual bool createIndex(IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath&, bool isUnique, bool isMultiEntry) = 0;
     virtual bool deleteIndex(IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId, int64_t indexId) = 0;
 
-    virtual PassRefPtr<IDBBackingStoreCursorInterface> openObjectStoreKeyCursor(IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange*, IndexedDB::CursorDirection) = 0;
-    virtual PassRefPtr<IDBBackingStoreCursorInterface> openObjectStoreCursor(IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange*, IndexedDB::CursorDirection) = 0;
-    virtual PassRefPtr<IDBBackingStoreCursorInterface> openIndexKeyCursor(IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IndexedDB::CursorDirection) = 0;
-    virtual PassRefPtr<IDBBackingStoreCursorInterface> openIndexCursor(IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IndexedDB::CursorDirection) = 0;
+    virtual PassRefPtr<IDBBackingStoreCursorInterface> openObjectStoreKeyCursor(int64_t cursorID, IDBBackingStoreTransactionInterface&, int64_t databaseID, int64_t objectStoreId, const IDBKeyRange*, IndexedDB::CursorDirection) = 0;
+    virtual PassRefPtr<IDBBackingStoreCursorInterface> openObjectStoreCursor(int64_t cursorID, IDBBackingStoreTransactionInterface&, int64_t databaseID, int64_t objectStoreId, const IDBKeyRange*, IndexedDB::CursorDirection) = 0;
+    virtual PassRefPtr<IDBBackingStoreCursorInterface> openIndexKeyCursor(int64_t cursorID, IDBBackingStoreTransactionInterface&, int64_t databaseID, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IndexedDB::CursorDirection) = 0;
+    virtual PassRefPtr<IDBBackingStoreCursorInterface> openIndexCursor(int64_t cursorID, IDBBackingStoreTransactionInterface&, int64_t databaseID, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IndexedDB::CursorDirection) = 0;
 
     virtual bool getPrimaryKeyViaIndex(IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&, RefPtr<IDBKey>& primaryKey) = 0;
 

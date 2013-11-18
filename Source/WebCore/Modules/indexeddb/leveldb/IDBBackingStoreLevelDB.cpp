@@ -1443,12 +1443,12 @@ bool IDBBackingStoreLevelDB::updateKeyGenerator(IDBTransactionBackend& transacti
 
 class ObjectStoreKeyCursorImpl : public IDBBackingStoreCursorLevelDB {
 public:
-    static PassRefPtr<ObjectStoreKeyCursorImpl> create(LevelDBTransaction* transaction, const IDBBackingStoreCursorLevelDB::CursorOptions& cursorOptions)
+    static PassRefPtr<ObjectStoreKeyCursorImpl> create(int64_t cursorID, LevelDBTransaction* transaction, const IDBBackingStoreCursorLevelDB::CursorOptions& cursorOptions)
     {
-        return adoptRef(new ObjectStoreKeyCursorImpl(transaction, cursorOptions));
+        return adoptRef(new ObjectStoreKeyCursorImpl(cursorID, transaction, cursorOptions));
     }
 
-    virtual PassRefPtr<IDBBackingStoreCursorInterface> clone()
+    virtual PassRefPtr<IDBBackingStoreCursorLevelDB> clone()
     {
         return adoptRef(new ObjectStoreKeyCursorImpl(this));
     }
@@ -1464,8 +1464,8 @@ protected:
     }
 
 private:
-    ObjectStoreKeyCursorImpl(LevelDBTransaction* transaction, const IDBBackingStoreCursorLevelDB::CursorOptions& cursorOptions)
-        : IDBBackingStoreCursorLevelDB(transaction, cursorOptions)
+    ObjectStoreKeyCursorImpl(int64_t cursorID, LevelDBTransaction* transaction, const IDBBackingStoreCursorLevelDB::CursorOptions& cursorOptions)
+        : IDBBackingStoreCursorLevelDB(cursorID, transaction, cursorOptions)
     {
     }
 
@@ -1504,12 +1504,12 @@ bool ObjectStoreKeyCursorImpl::loadCurrentRow()
 
 class ObjectStoreCursorImpl : public IDBBackingStoreCursorLevelDB {
 public:
-    static PassRefPtr<ObjectStoreCursorImpl> create(LevelDBTransaction* transaction, const IDBBackingStoreCursorLevelDB::CursorOptions& cursorOptions)
+    static PassRefPtr<ObjectStoreCursorImpl> create(int64_t cursorID, LevelDBTransaction* transaction, const IDBBackingStoreCursorLevelDB::CursorOptions& cursorOptions)
     {
-        return adoptRef(new ObjectStoreCursorImpl(transaction, cursorOptions));
+        return adoptRef(new ObjectStoreCursorImpl(cursorID, transaction, cursorOptions));
     }
 
-    virtual PassRefPtr<IDBBackingStoreCursorInterface> clone()
+    virtual PassRefPtr<IDBBackingStoreCursorLevelDB> clone()
     {
         return adoptRef(new ObjectStoreCursorImpl(this));
     }
@@ -1525,8 +1525,8 @@ protected:
     }
 
 private:
-    ObjectStoreCursorImpl(LevelDBTransaction* transaction, const IDBBackingStoreCursorLevelDB::CursorOptions& cursorOptions)
-        : IDBBackingStoreCursorLevelDB(transaction, cursorOptions)
+    ObjectStoreCursorImpl(int64_t cursorID, LevelDBTransaction* transaction, const IDBBackingStoreCursorLevelDB::CursorOptions& cursorOptions)
+        : IDBBackingStoreCursorLevelDB(cursorID, transaction, cursorOptions)
     {
     }
 
@@ -1571,12 +1571,12 @@ bool ObjectStoreCursorImpl::loadCurrentRow()
 
 class IndexKeyCursorImpl FINAL : public IDBBackingStoreCursorLevelDB {
 public:
-    static PassRefPtr<IndexKeyCursorImpl> create(LevelDBTransaction* transaction, const IDBBackingStoreCursorLevelDB::CursorOptions& cursorOptions)
+    static PassRefPtr<IndexKeyCursorImpl> create(int64_t cursorID, LevelDBTransaction* transaction, const IDBBackingStoreCursorLevelDB::CursorOptions& cursorOptions)
     {
-        return adoptRef(new IndexKeyCursorImpl(transaction, cursorOptions));
+        return adoptRef(new IndexKeyCursorImpl(cursorID, transaction, cursorOptions));
     }
 
-    virtual PassRefPtr<IDBBackingStoreCursorInterface> clone()
+    virtual PassRefPtr<IDBBackingStoreCursorLevelDB> clone()
     {
         return adoptRef(new IndexKeyCursorImpl(this));
     }
@@ -1594,8 +1594,8 @@ protected:
     }
 
 private:
-    IndexKeyCursorImpl(LevelDBTransaction* transaction, const IDBBackingStoreCursorLevelDB::CursorOptions& cursorOptions)
-        : IDBBackingStoreCursorLevelDB(transaction, cursorOptions)
+    IndexKeyCursorImpl(int64_t cursorID, LevelDBTransaction* transaction, const IDBBackingStoreCursorLevelDB::CursorOptions& cursorOptions)
+        : IDBBackingStoreCursorLevelDB(cursorID, transaction, cursorOptions)
     {
     }
 
@@ -1662,12 +1662,12 @@ bool IndexKeyCursorImpl::loadCurrentRow()
 
 class IndexCursorImpl FINAL : public IDBBackingStoreCursorLevelDB {
 public:
-    static PassRefPtr<IndexCursorImpl> create(LevelDBTransaction* transaction, const IDBBackingStoreCursorLevelDB::CursorOptions& cursorOptions)
+    static PassRefPtr<IndexCursorImpl> create(int64_t cursorID, LevelDBTransaction* transaction, const IDBBackingStoreCursorLevelDB::CursorOptions& cursorOptions)
     {
-        return adoptRef(new IndexCursorImpl(transaction, cursorOptions));
+        return adoptRef(new IndexCursorImpl(cursorID, transaction, cursorOptions));
     }
 
-    virtual PassRefPtr<IDBBackingStoreCursorInterface> clone()
+    virtual PassRefPtr<IDBBackingStoreCursorLevelDB> clone()
     {
         return adoptRef(new IndexCursorImpl(this));
     }
@@ -1685,8 +1685,8 @@ protected:
     }
 
 private:
-    IndexCursorImpl(LevelDBTransaction* transaction, const IDBBackingStoreCursorLevelDB::CursorOptions& cursorOptions)
-        : IDBBackingStoreCursorLevelDB(transaction, cursorOptions)
+    IndexCursorImpl(int64_t cursorID, LevelDBTransaction* transaction, const IDBBackingStoreCursorLevelDB::CursorOptions& cursorOptions)
+        : IDBBackingStoreCursorLevelDB(cursorID, transaction, cursorOptions)
     {
     }
 
@@ -1859,57 +1859,57 @@ static bool indexCursorOptions(LevelDBTransaction* transaction, int64_t database
 
     return true;
 }
-PassRefPtr<IDBBackingStoreCursorInterface> IDBBackingStoreLevelDB::openObjectStoreCursor(IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange* range, IndexedDB::CursorDirection direction)
+PassRefPtr<IDBBackingStoreCursorInterface> IDBBackingStoreLevelDB::openObjectStoreCursor(int64_t cursorID, IDBBackingStoreTransactionInterface& transaction, int64_t databaseID, int64_t objectStoreId, const IDBKeyRange* range, IndexedDB::CursorDirection direction)
 
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::openObjectStoreCursor");
     LevelDBTransaction* levelDBTransaction = IDBBackingStoreTransactionLevelDB::levelDBTransactionFrom(transaction);
     IDBBackingStoreCursorLevelDB::CursorOptions cursorOptions;
-    if (!objectStoreCursorOptions(levelDBTransaction, databaseId, objectStoreId, range, direction, cursorOptions))
+    if (!objectStoreCursorOptions(levelDBTransaction, databaseID, objectStoreId, range, direction, cursorOptions))
         return 0;
-    RefPtr<ObjectStoreCursorImpl> cursor = ObjectStoreCursorImpl::create(levelDBTransaction, cursorOptions);
+    RefPtr<ObjectStoreCursorImpl> cursor = ObjectStoreCursorImpl::create(cursorID, levelDBTransaction, cursorOptions);
     if (!cursor->firstSeek())
         return 0;
 
     return cursor.release();
 }
 
-PassRefPtr<IDBBackingStoreCursorInterface> IDBBackingStoreLevelDB::openObjectStoreKeyCursor(IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange* range, IndexedDB::CursorDirection direction)
+PassRefPtr<IDBBackingStoreCursorInterface> IDBBackingStoreLevelDB::openObjectStoreKeyCursor(int64_t cursorID, IDBBackingStoreTransactionInterface& transaction, int64_t databaseID, int64_t objectStoreId, const IDBKeyRange* range, IndexedDB::CursorDirection direction)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::openObjectStoreKeyCursor");
     LevelDBTransaction* levelDBTransaction = IDBBackingStoreTransactionLevelDB::levelDBTransactionFrom(transaction);
     IDBBackingStoreCursorLevelDB::CursorOptions cursorOptions;
-    if (!objectStoreCursorOptions(levelDBTransaction, databaseId, objectStoreId, range, direction, cursorOptions))
+    if (!objectStoreCursorOptions(levelDBTransaction, databaseID, objectStoreId, range, direction, cursorOptions))
         return 0;
-    RefPtr<ObjectStoreKeyCursorImpl> cursor = ObjectStoreKeyCursorImpl::create(levelDBTransaction, cursorOptions);
+    RefPtr<ObjectStoreKeyCursorImpl> cursor = ObjectStoreKeyCursorImpl::create(cursorID, levelDBTransaction, cursorOptions);
     if (!cursor->firstSeek())
         return 0;
 
     return cursor.release();
 }
 
-PassRefPtr<IDBBackingStoreCursorInterface> IDBBackingStoreLevelDB::openIndexKeyCursor(IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange* range, IndexedDB::CursorDirection direction)
+PassRefPtr<IDBBackingStoreCursorInterface> IDBBackingStoreLevelDB::openIndexKeyCursor(int64_t cursorID, IDBBackingStoreTransactionInterface& transaction, int64_t databaseID, int64_t objectStoreId, int64_t indexId, const IDBKeyRange* range, IndexedDB::CursorDirection direction)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::openIndexKeyCursor");
     LevelDBTransaction* levelDBTransaction = IDBBackingStoreTransactionLevelDB::levelDBTransactionFrom(transaction);
     IDBBackingStoreCursorLevelDB::CursorOptions cursorOptions;
-    if (!indexCursorOptions(levelDBTransaction, databaseId, objectStoreId, indexId, range, direction, cursorOptions))
+    if (!indexCursorOptions(levelDBTransaction, databaseID, objectStoreId, indexId, range, direction, cursorOptions))
         return 0;
-    RefPtr<IndexKeyCursorImpl> cursor = IndexKeyCursorImpl::create(levelDBTransaction, cursorOptions);
+    RefPtr<IndexKeyCursorImpl> cursor = IndexKeyCursorImpl::create(cursorID, levelDBTransaction, cursorOptions);
     if (!cursor->firstSeek())
         return 0;
 
     return cursor.release();
 }
 
-PassRefPtr<IDBBackingStoreCursorInterface> IDBBackingStoreLevelDB::openIndexCursor(IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange* range, IndexedDB::CursorDirection direction)
+PassRefPtr<IDBBackingStoreCursorInterface> IDBBackingStoreLevelDB::openIndexCursor(int64_t cursorID, IDBBackingStoreTransactionInterface& transaction, int64_t databaseID, int64_t objectStoreId, int64_t indexId, const IDBKeyRange* range, IndexedDB::CursorDirection direction)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::openIndexCursor");
     LevelDBTransaction* levelDBTransaction = IDBBackingStoreTransactionLevelDB::levelDBTransactionFrom(transaction);
     IDBBackingStoreCursorLevelDB::CursorOptions cursorOptions;
-    if (!indexCursorOptions(levelDBTransaction, databaseId, objectStoreId, indexId, range, direction, cursorOptions))
+    if (!indexCursorOptions(levelDBTransaction, databaseID, objectStoreId, indexId, range, direction, cursorOptions))
         return 0;
-    RefPtr<IndexCursorImpl> cursor = IndexCursorImpl::create(levelDBTransaction, cursorOptions);
+    RefPtr<IndexCursorImpl> cursor = IndexCursorImpl::create(cursorID, levelDBTransaction, cursorOptions);
     if (!cursor->firstSeek())
         return 0;
 

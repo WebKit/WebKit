@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class IDBBackingStoreCursorLevelDB;
 class IDBBackingStoreLevelDB;
 class IDBBackingStoreTransactionLevelDB;
 
@@ -75,11 +76,21 @@ public:
     virtual void clearObjectStore(IDBTransactionBackend&, const ClearObjectStoreOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) OVERRIDE;
     virtual void deleteObjectStore(IDBTransactionBackend&, const DeleteObjectStoreOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) OVERRIDE;
     virtual void changeDatabaseVersion(IDBTransactionBackend&, const IDBDatabaseBackend::VersionChangeOperation&, std::function<void(PassRefPtr<IDBDatabaseError>)> completionCallback) OVERRIDE;
+
+    // Cursor-level operations
+    virtual void cursorAdvance(IDBCursorBackend&, const CursorAdvanceOperation&, std::function<void()> completionCallback) OVERRIDE;
+    virtual void cursorIterate(IDBCursorBackend&, const CursorIterationOperation&, std::function<void()> completionCallback) OVERRIDE;
+    virtual void cursorPrefetchIteration(IDBCursorBackend&, const CursorPrefetchIterationOperation&, std::function<void()> completionCallback) OVERRIDE;
+    virtual void cursorPrefetchReset(IDBCursorBackend&, int usedPrefetches) OVERRIDE;
+
 private:
     IDBServerConnectionLevelDB(IDBBackingStoreLevelDB*);
 
     RefPtr<IDBBackingStoreLevelDB> m_backingStore;
     HashMap<int64_t, RefPtr<IDBBackingStoreTransactionLevelDB>> m_backingStoreTransactions;
+    HashMap<int64_t, RefPtr<IDBBackingStoreCursorLevelDB>> m_backingStoreCursors;
+
+    int64_t m_nextCursorID;
 
     bool m_closed;
 };

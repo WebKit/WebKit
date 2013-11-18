@@ -58,7 +58,8 @@ public:
     virtual bool advance(unsigned long) OVERRIDE;
     bool firstSeek();
 
-    virtual PassRefPtr<IDBBackingStoreCursorInterface> clone() OVERRIDE = 0;
+    virtual PassRefPtr<IDBBackingStoreCursorLevelDB> clone() = 0;
+
     virtual PassRefPtr<IDBKey> primaryKey() const OVERRIDE { return m_currentKey; }
     virtual PassRefPtr<SharedBuffer> value() const OVERRIDE = 0;
     virtual const IDBRecordIdentifier& recordIdentifier() const OVERRIDE { return *m_recordIdentifier; }
@@ -66,8 +67,9 @@ public:
     virtual bool loadCurrentRow() = 0;
 
 protected:
-    IDBBackingStoreCursorLevelDB(LevelDBTransaction* transaction, const CursorOptions& cursorOptions)
-        : m_transaction(transaction)
+    IDBBackingStoreCursorLevelDB(int64_t cursorID, LevelDBTransaction* transaction, const CursorOptions& cursorOptions)
+        : m_cursorID(cursorID)
+        , m_transaction(transaction)
         , m_cursorOptions(cursorOptions)
         , m_recordIdentifier(IDBRecordIdentifier::create())
     {
@@ -79,6 +81,7 @@ protected:
     bool isPastBounds() const;
     bool haveEnteredRange() const;
 
+    int64_t m_cursorID;
     LevelDBTransaction* m_transaction;
     const CursorOptions m_cursorOptions;
     OwnPtr<LevelDBIterator> m_iterator;

@@ -1,3 +1,87 @@
+2013-11-18  Brady Eidson  <beidson@apple.com>
+
+        Move execution of IDBCursorBackendOperations to the IDBServerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=124463
+
+        Reviewed by Tim Horton.
+
+        This almost entirely removes knowledge of the backing store from the front end.
+
+        The primary change here is to give cursors a unique ID.
+
+        This way the IDBCursorBackend can reference itself by ID, while the 
+        IDBServerConnection can handle mapping that ID to a backing store.
+
+        * Modules/indexeddb/IDBBackingStoreCursorInterface.h:
+
+        * Modules/indexeddb/IDBBackingStoreInterface.h:
+
+        * Modules/indexeddb/IDBCursorBackend.cpp:
+        (WebCore::IDBCursorBackend::IDBCursorBackend):
+        (WebCore::IDBCursorBackend::deleteFunction):
+        (WebCore::IDBCursorBackend::prefetchReset):
+        (WebCore::IDBCursorBackend::close):
+        (WebCore::IDBCursorBackend::updateCursorData):
+        (WebCore::IDBCursorBackend::clearCursorData):
+        * Modules/indexeddb/IDBCursorBackend.h:
+        (WebCore::IDBCursorBackend::create):
+        (WebCore::IDBCursorBackend::key):
+        (WebCore::IDBCursorBackend::primaryKey):
+        (WebCore::IDBCursorBackend::value):
+        (WebCore::IDBCursorBackend::id):
+        (WebCore::IDBCursorBackend::transaction):
+        (WebCore::IDBCursorBackend::setSavedCursorID):
+
+        * Modules/indexeddb/IDBCursorBackendOperations.cpp:
+        (WebCore::CursorAdvanceOperation::perform):
+        (WebCore::CursorIterationOperation::perform):
+        (WebCore::CursorPrefetchIterationOperation::perform):
+        * Modules/indexeddb/IDBCursorBackendOperations.h:
+        (WebCore::CursorIterationOperation::key):
+        (WebCore::CursorIterationOperation::callbacks):
+        (WebCore::CursorAdvanceOperation::count):
+        (WebCore::CursorAdvanceOperation::callbacks):
+        (WebCore::CursorPrefetchIterationOperation::numberToFetch):
+        (WebCore::CursorPrefetchIterationOperation::callbacks):
+
+        * Modules/indexeddb/IDBServerConnection.h:
+
+        * Modules/indexeddb/leveldb/IDBBackingStoreCursorLevelDB.h:
+        (WebCore::IDBBackingStoreCursorLevelDB::IDBBackingStoreCursorLevelDB):
+
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        (WebCore::ObjectStoreKeyCursorImpl::create):
+        (WebCore::ObjectStoreKeyCursorImpl::clone):
+        (WebCore::ObjectStoreKeyCursorImpl::ObjectStoreKeyCursorImpl):
+        (WebCore::ObjectStoreCursorImpl::create):
+        (WebCore::ObjectStoreCursorImpl::clone):
+        (WebCore::ObjectStoreCursorImpl::ObjectStoreCursorImpl):
+        (WebCore::IDBBackingStoreLevelDB::openObjectStoreCursor):
+        (WebCore::IDBBackingStoreLevelDB::openObjectStoreKeyCursor):
+        (WebCore::IDBBackingStoreLevelDB::openIndexKeyCursor):
+        (WebCore::IDBBackingStoreLevelDB::openIndexCursor):
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.cpp:
+        (WebCore::IDBServerConnectionLevelDB::IDBServerConnectionLevelDB):
+        (WebCore::IDBServerConnectionLevelDB::setIndexKeys):
+        (WebCore::IDBServerConnectionLevelDB::createObjectStore):
+        (WebCore::IDBServerConnectionLevelDB::createIndex):
+        (WebCore::IDBServerConnectionLevelDB::deleteIndex):
+        (WebCore::IDBServerConnectionLevelDB::get):
+        (WebCore::IDBServerConnectionLevelDB::put):
+        (WebCore::IDBServerConnectionLevelDB::openCursor):
+        (WebCore::IDBServerConnectionLevelDB::count):
+        (WebCore::IDBServerConnectionLevelDB::deleteRange):
+        (WebCore::IDBServerConnectionLevelDB::clearObjectStore):
+        (WebCore::IDBServerConnectionLevelDB::deleteObjectStore):
+        (WebCore::IDBServerConnectionLevelDB::changeDatabaseVersion):
+        (WebCore::IDBServerConnectionLevelDB::cursorAdvance):
+        (WebCore::IDBServerConnectionLevelDB::cursorIterate):
+        (WebCore::IDBServerConnectionLevelDB::cursorPrefetchIteration):
+        (WebCore::IDBServerConnectionLevelDB::cursorPrefetchReset):
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.h:
+
 2013-11-17  Jer Noble  <jer.noble@apple.com>
 
         [WTF] Media time should not have a constructor which accepts a single int or float.

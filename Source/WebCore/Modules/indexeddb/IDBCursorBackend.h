@@ -29,7 +29,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBBackingStoreCursorInterface.h"
 #include "IDBDatabaseBackend.h"
 #include "IDBTransactionBackend.h"
 #include "SharedBuffer.h"
@@ -43,13 +42,13 @@ class IDBKeyRange;
 
 class IDBCursorBackend : public RefCounted<IDBCursorBackend> {
 public:
-    static PassRefPtr<IDBCursorBackend> create(PassRefPtr<IDBBackingStoreCursorInterface> cursor, IndexedDB::CursorType cursorType, IDBTransactionBackend* transaction, int64_t objectStoreId)
+    static PassRefPtr<IDBCursorBackend> create(int64_t cursorID, IndexedDB::CursorType cursorType, IDBTransactionBackend& transaction, int64_t objectStoreID)
     {
-        return adoptRef(new IDBCursorBackend(cursor, cursorType, IDBDatabaseBackend::NormalTask, transaction, objectStoreId));
+        return adoptRef(new IDBCursorBackend(cursorID, cursorType, IDBDatabaseBackend::NormalTask, transaction, objectStoreID));
     }
-    static PassRefPtr<IDBCursorBackend> create(PassRefPtr<IDBBackingStoreCursorInterface> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, IDBTransactionBackend* transaction, int64_t objectStoreId)
+    static PassRefPtr<IDBCursorBackend> create(int64_t cursorID, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, IDBTransactionBackend& transaction, int64_t objectStoreID)
     {
-        return adoptRef(new IDBCursorBackend(cursor, cursorType, taskType, transaction, objectStoreId));
+        return adoptRef(new IDBCursorBackend(cursorID, cursorType, taskType, transaction, objectStoreID));
     }
     ~IDBCursorBackend();
 
@@ -60,29 +59,36 @@ public:
     void prefetchReset(int usedPrefetches, int unusedPrefetches);
     void postSuccessHandlerCallback() { }
 
-    IDBKey* key() const { return m_cursor->key().get(); }
-    IDBKey* primaryKey() const { return m_cursor->primaryKey().get(); }
-    SharedBuffer* value() const { return (m_cursorType == IndexedDB::CursorKeyOnly) ? 0 : m_cursor->value().get(); }
+    IDBKey* key() const { return m_currentKey.get(); }
+    IDBKey* primaryKey() const { return m_currentPrimaryKey.get(); }
+    SharedBuffer* value() const { return (m_cursorType == IndexedDB::CursorKeyOnly) ? 0 : m_currentValue.get(); }
+    void updateCursorData(IDBKey*, IDBKey* primaryKey, SharedBuffer* value);
 
     void close();
 
     IndexedDB::CursorType cursorType() const { return m_cursorType; }
 
-    IDBBackingStoreCursorInterface* deprecatedBackingStoreCursor() { return m_cursor.get(); }
-    void deprecatedSetBackingStoreCursor(PassRefPtr<IDBBackingStoreCursorInterface> cursor) { m_cursor = cursor; }
-    void deprecatedSetSavedBackingStoreCursor(PassRefPtr<IDBBackingStoreCursorInterface> cursor) { m_savedCursor = cursor; }
+    int64_t id() const { return m_cursorID; }
+
+    IDBTransactionBackend& transaction() { return *m_transaction; }
+
+    void clear();
+    void setSavedCursorID(int64_t cursorID) { m_savedCursorID = cursorID; }
 
 private:
-    IDBCursorBackend(PassRefPtr<IDBBackingStoreCursorInterface>, IndexedDB::CursorType, IDBDatabaseBackend::TaskType, IDBTransactionBackend*, int64_t objectStoreId);
+    IDBCursorBackend(int64_t cursorID, IndexedDB::CursorType, IDBDatabaseBackend::TaskType, IDBTransactionBackend&, int64_t objectStoreID);
 
     IDBDatabaseBackend::TaskType m_taskType;
     IndexedDB::CursorType m_cursorType;
-    const RefPtr<IDBDatabaseBackend> m_database;
     RefPtr<IDBTransactionBackend> m_transaction;
-    const int64_t m_objectStoreId;
+    const int64_t m_objectStoreID;
 
-    RefPtr<IDBBackingStoreCursorInterface> m_cursor; // Must be destroyed before m_transaction.
-    RefPtr<IDBBackingStoreCursorInterface> m_savedCursor; // Must be destroyed before m_transaction.
+    int64_t m_cursorID;
+    int64_t m_savedCursorID;
+
+    RefPtr<IDBKey> m_currentKey;
+    RefPtr<IDBKey> m_currentPrimaryKey;
+    RefPtr<SharedBuffer> m_currentValue;
 
     bool m_closed;
 };

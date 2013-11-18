@@ -50,7 +50,6 @@ public:
     virtual bool continueFunction(const IDBKey* = 0, IteratorState = Seek) = 0;
     virtual bool advance(unsigned long) = 0;
 
-    virtual PassRefPtr<IDBBackingStoreCursorInterface> clone() = 0;
     virtual PassRefPtr<IDBKey> primaryKey() const = 0;
     virtual PassRefPtr<SharedBuffer> value() const = 0;
     virtual const IDBRecordIdentifier& recordIdentifier() const = 0;

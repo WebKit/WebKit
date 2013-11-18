@@ -36,18 +36,19 @@
 #include "IDBDatabaseException.h"
 #include "IDBKeyRange.h"
 #include "IDBOperation.h"
+#include "IDBServerConnection.h"
 #include "Logging.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
 
-IDBCursorBackend::IDBCursorBackend(PassRefPtr<IDBBackingStoreCursorInterface> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, IDBTransactionBackend* transaction, int64_t objectStoreId)
+IDBCursorBackend::IDBCursorBackend(int64_t cursorID, IndexedDB::CursorType cursorType, IDBDatabaseBackend::TaskType taskType, IDBTransactionBackend& transaction, int64_t objectStoreID)
     : m_taskType(taskType)
     , m_cursorType(cursorType)
-    , m_database(&(transaction->database()))
-    , m_transaction(transaction)
-    , m_objectStoreId(objectStoreId)
-    , m_cursor(cursor)
+    , m_transaction(&transaction)
+    , m_objectStoreID(objectStoreID)
+    , m_cursorID(cursorID)
+    , m_savedCursorID(0)
     , m_closed(false)
 {
     m_transaction->registerOpenCursor(this);
@@ -57,7 +58,6 @@ IDBCursorBackend::~IDBCursorBackend()
 {
     m_transaction->unregisterOpenCursor(this);
 }
-
 
 void IDBCursorBackend::continueFunction(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
 {
@@ -77,8 +77,8 @@ void IDBCursorBackend::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks, Exc
 {
     LOG(StorageAPI, "IDBCursorBackend::delete");
     ASSERT(m_transaction->mode() != IndexedDB::TransactionReadOnly);
-    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::create(m_cursor->primaryKey());
-    m_database->deleteRange(m_transaction.get()->id(), m_objectStoreId, keyRange.release(), prpCallbacks);
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::create(primaryKey());
+    m_transaction->database().deleteRange(m_transaction->id(), m_objectStoreID, keyRange.release(), prpCallbacks);
 }
 
 void IDBCursorBackend::prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
@@ -91,25 +91,36 @@ void IDBCursorBackend::prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbac
 void IDBCursorBackend::prefetchReset(int usedPrefetches, int)
 {
     LOG(StorageAPI, "IDBCursorBackend::prefetchReset");
-    m_cursor = m_savedCursor;
-    m_savedCursor = 0;
+    m_cursorID = m_savedCursorID;
+    m_savedCursorID = 0;
 
     if (m_closed)
         return;
-    if (m_cursor) {
-        for (int i = 0; i < usedPrefetches; ++i) {
-            bool ok = m_cursor->continueFunction();
-            ASSERT_UNUSED(ok, ok);
-        }
-    }
+    if (m_cursorID)
+        m_transaction->database().serverConnection().cursorPrefetchReset(*this, usedPrefetches);
 }
 
 void IDBCursorBackend::close()
 {
     LOG(StorageAPI, "IDBCursorBackend::close");
+    clear();
     m_closed = true;
-    m_cursor.clear();
-    m_savedCursor.clear();
+    m_savedCursorID = 0;
+}
+
+void IDBCursorBackend::updateCursorData(IDBKey* key, IDBKey* primaryKey, SharedBuffer* value)
+{
+    m_currentKey = key;
+    m_currentPrimaryKey = primaryKey;
+    m_currentValue = value;
+}
+
+void IDBCursorBackend::clear()
+{
+    m_cursorID = 0;
+    m_currentKey = 0;
+    m_currentPrimaryKey = 0;
+    m_currentValue = 0;
 }
 
 } // namespace WebCore

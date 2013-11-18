@@ -27,104 +27,30 @@
 #include "config.h"
 #include "IDBCursorBackendOperations.h"
 
+#include "IDBServerConnection.h"
+
 #if ENABLE(INDEXED_DATABASE)
 
 #include "Logging.h"
 
 namespace WebCore {
 
-class CallOnDestruct {
-public:
-    CallOnDestruct(std::function<void()> callback)
-        : m_callback(callback)
-    { }
-
-    ~CallOnDestruct()
-    {
-        m_callback();
-    }
-
-private:
-    std::function<void()> m_callback;
-};
-
 void CursorAdvanceOperation::perform(std::function<void()> completionCallback)
 {
-    CallOnDestruct callOnDestruct(completionCallback);
-
     LOG(StorageAPI, "CursorAdvanceOperation");
-    if (!m_cursor->deprecatedBackingStoreCursor() || !m_cursor->deprecatedBackingStoreCursor()->advance(m_count)) {
-        m_cursor->deprecatedSetBackingStoreCursor(0);
-        m_callbacks->onSuccess(static_cast<SharedBuffer*>(0));
-        return;
-    }
-
-    m_callbacks->onSuccess(m_cursor->key(), m_cursor->primaryKey(), m_cursor->value());
+    m_cursor->transaction().database().serverConnection().cursorAdvance(*m_cursor, *this, completionCallback);
 }
 
 void CursorIterationOperation::perform(std::function<void()> completionCallback)
 {
-    CallOnDestruct callOnDestruct(completionCallback);
-
     LOG(StorageAPI, "CursorIterationOperation");
-    if (!m_cursor->deprecatedBackingStoreCursor() || !m_cursor->deprecatedBackingStoreCursor()->continueFunction(m_key.get())) {
-        m_cursor->deprecatedSetBackingStoreCursor(0);
-        m_callbacks->onSuccess(static_cast<SharedBuffer*>(0));
-        return;
-    }
-
-    m_callbacks->onSuccess(m_cursor->key(), m_cursor->primaryKey(), m_cursor->value());
+    m_cursor->transaction().database().serverConnection().cursorIterate(*m_cursor, *this, completionCallback);
 }
 
 void CursorPrefetchIterationOperation::perform(std::function<void()> completionCallback)
 {
-    CallOnDestruct callOnDestruct(completionCallback);
-
     LOG(StorageAPI, "CursorPrefetchIterationOperation");
-
-    Vector<RefPtr<IDBKey>> foundKeys;
-    Vector<RefPtr<IDBKey>> foundPrimaryKeys;
-    Vector<RefPtr<SharedBuffer>> foundValues;
-
-    if (m_cursor->deprecatedBackingStoreCursor())
-        m_cursor->deprecatedSetSavedBackingStoreCursor(m_cursor->deprecatedBackingStoreCursor()->clone());
-
-    const size_t maxSizeEstimate = 10 * 1024 * 1024;
-    size_t sizeEstimate = 0;
-
-    for (int i = 0; i < m_numberToFetch; ++i) {
-        if (!m_cursor->deprecatedBackingStoreCursor() || !m_cursor->deprecatedBackingStoreCursor()->continueFunction(0)) {
-            m_cursor->deprecatedSetBackingStoreCursor(0);
-            break;
-        }
-
-        foundKeys.append(m_cursor->deprecatedBackingStoreCursor()->key());
-        foundPrimaryKeys.append(m_cursor->deprecatedBackingStoreCursor()->primaryKey());
-
-        switch (m_cursor->cursorType()) {
-        case IndexedDB::CursorKeyOnly:
-            foundValues.append(SharedBuffer::create());
-            break;
-        case IndexedDB::CursorKeyAndValue:
-            sizeEstimate += m_cursor->deprecatedBackingStoreCursor()->value()->size();
-            foundValues.append(m_cursor->deprecatedBackingStoreCursor()->value());
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-        }
-        sizeEstimate += m_cursor->deprecatedBackingStoreCursor()->key()->sizeEstimate();
-        sizeEstimate += m_cursor->deprecatedBackingStoreCursor()->primaryKey()->sizeEstimate();
-
-        if (sizeEstimate > maxSizeEstimate)
-            break;
-    }
-
-    if (!foundKeys.size()) {
-        m_callbacks->onSuccess(static_cast<SharedBuffer*>(0));
-        return;
-    }
-
-    m_callbacks->onSuccessWithPrefetch(foundKeys, foundPrimaryKeys, foundValues);
+    m_cursor->transaction().database().serverConnection().cursorPrefetchIteration(*m_cursor, *this, completionCallback);
 }
 
 } // namespace WebCore

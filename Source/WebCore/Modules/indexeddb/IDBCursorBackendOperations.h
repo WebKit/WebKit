@@ -42,6 +42,9 @@ public:
     }
     virtual void perform(std::function<void()> completionCallback) OVERRIDE FINAL;
 
+    IDBKey* key() const { return m_key.get(); }
+    IDBCallbacks* callbacks() const { return m_callbacks.get(); }
+
 private:
     CursorIterationOperation(PassRefPtr<IDBCursorBackend> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
         : m_cursor(cursor)
@@ -63,6 +66,9 @@ public:
     }
     virtual void perform(std::function<void()> completionCallback) OVERRIDE FINAL;
 
+    unsigned long count() const { return m_count; }
+    IDBCallbacks* callbacks() const { return m_callbacks.get(); }
+
 private:
     CursorAdvanceOperation(PassRefPtr<IDBCursorBackend> cursor, unsigned long count, PassRefPtr<IDBCallbacks> callbacks)
         : m_cursor(cursor)
@@ -83,6 +89,9 @@ public:
         return adoptRef(new CursorPrefetchIterationOperation(cursor, numberToFetch, callbacks));
     }
     virtual void perform(std::function<void()> completionCallback) OVERRIDE FINAL;
+
+    int numberToFetch() const { return m_numberToFetch; }
+    IDBCallbacks* callbacks() const { return m_callbacks.get(); }
 
 private:
     CursorPrefetchIterationOperation(PassRefPtr<IDBCursorBackend> cursor, int numberToFetch, PassRefPtr<IDBCallbacks> callbacks)
