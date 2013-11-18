@@ -1,3 +1,27 @@
+2013-11-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening. Rebaselining CSS tests' expectations.
+
+        * platform/gtk/css1/box_properties/margin_right-expected.png:
+        * platform/gtk/css1/box_properties/margin_right-expected.txt:
+        * platform/gtk/css1/box_properties/padding-expected.png:
+        * platform/gtk/css1/box_properties/padding-expected.txt:
+        * platform/gtk/css1/box_properties/padding_left-expected.png:
+        * platform/gtk/css1/box_properties/padding_left-expected.txt:
+        * platform/gtk/css1/box_properties/padding_right-expected.png:
+        * platform/gtk/css1/box_properties/padding_right-expected.txt:
+        * platform/gtk/css1/box_properties/padding_top-expected.png:
+        * platform/gtk/css1/box_properties/padding_top-expected.txt:
+        * platform/gtk/css1/formatting_model/vertical_formatting-expected.png:
+        * platform/gtk/css1/formatting_model/vertical_formatting-expected.txt:
+        * platform/gtk/css2.1/t080301-c411-vt-mrgn-00-b-expected.txt:
+        * platform/gtk/css2.1/t0804-c5507-padn-r-00-c-ag-expected.png:
+        * platform/gtk/css2.1/t0804-c5507-padn-r-00-c-ag-expected.txt:
+        * platform/gtk/css2.1/t0804-c5509-padn-l-00-b-ag-expected.txt:
+        * platform/gtk/css2.1/t0804-c5510-padn-00-b-ag-expected.txt:
+        * platform/gtk/css2.1/t0905-c414-flt-wrap-00-e-expected.png:
+        * platform/gtk/css2.1/t0905-c414-flt-wrap-00-e-expected.txt:
+
 2013-11-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed EFL gardening. Add webgl crash tests because webgl is not supported

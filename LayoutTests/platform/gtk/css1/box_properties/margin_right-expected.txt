@@ -34,9 +34,9 @@ layer at (0,0) size 785x972
         RenderText {#text} at (375,0) size 314x17
           text run at (375,0) width 314: "This sentence should have a right margin of 5 em."
       RenderBlock {P} at (0,286) size 577x34 [bgcolor=#00FFFF]
-        RenderText {#text} at (21,0) size 555x34
-          text run at (21,0) width 555: "This sentence should have a right margin of 25%, which is calculated with respect to the"
-          text run at (400,17) width 176: "width of the parent element."
+        RenderText {#text} at (21,0) size 556x34
+          text run at (21,0) width 556: "This sentence should have a right margin of 25%, which is calculated with respect to the"
+          text run at (400,17) width 177: "width of the parent element."
       RenderBlock {UL} at (0,336) size 744x85 [bgcolor=#808080]
         RenderListItem {LI} at (40,0) size 704x17
           RenderListMarker at (-17,0) size 7x17: bullet
@@ -88,9 +88,9 @@ layer at (0,0) size 785x972
                 RenderText {#text} at (353,0) size 314x17
                   text run at (353,0) width 314: "This sentence should have a right margin of 5 em."
               RenderBlock {P} at (4,136) size 561x34 [bgcolor=#00FFFF]
-                RenderText {#text} at (5,0) size 555x34
-                  text run at (5,0) width 555: "This sentence should have a right margin of 25%, which is calculated with respect to the"
-                  text run at (384,17) width 176: "width of the parent element."
+                RenderText {#text} at (5,0) size 556x34
+                  text run at (5,0) width 556: "This sentence should have a right margin of 25%, which is calculated with respect to the"
+                  text run at (384,17) width 177: "width of the parent element."
               RenderBlock {UL} at (4,186) size 722x102 [bgcolor=#808080]
                 RenderListItem {LI} at (40,0) size 682x34
                   RenderListMarker at (-17,0) size 7x17: bullet
