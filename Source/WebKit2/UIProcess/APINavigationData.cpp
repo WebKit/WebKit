@@ -23,35 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebNavigationData_h
-#define WebNavigationData_h
+#include "config.h"
+#include "APINavigationData.h"
 
-#include "APIObject.h"
-#include "WebNavigationDataStore.h"
-#include <wtf/PassRefPtr.h>
+namespace API {
 
-namespace WebKit {
+NavigationData::NavigationData(const WebKit::WebNavigationDataStore& store)
+    : m_store(store)
+{
+}
 
-class WebNavigationData : public API::TypedObject<API::Object::Type::NavigationData> {
-public:
-    static PassRefPtr<WebNavigationData> create(const WebNavigationDataStore& store)
-    {
-        return adoptRef(new WebNavigationData(store));
-    }
-
-    virtual ~WebNavigationData();
-
-    String title() const { return m_store.title; }
-    String url() const { return m_store.url; }
-    const WebCore::ResourceRequest& originalRequest() const { return m_store.originalRequest; }
-    const WebCore::ResourceResponse& response() const { return m_store.response; }
-
-private:
-    explicit WebNavigationData(const WebNavigationDataStore&);
-
-    WebNavigationDataStore m_store;
-};
+NavigationData::~NavigationData()
+{
+}
 
 } // namespace WebKit
-
-#endif // WebNavigationData_h

@@ -27,6 +27,7 @@
 #import "WKProcessGroup.h"
 #import "WKProcessGroupPrivate.h"
 
+#import "APINavigationData.h"
 #import "ObjCObjectGraph.h"
 #import "WKAPICast.h"
 #import "WKBrowsingContextControllerInternal.h"
@@ -39,7 +40,6 @@
 #import "WKRetainPtr.h"
 #import "WKStringCF.h"
 #import "WebFrameProxy.h"
-#import "WebNavigationData.h"
 #import <wtf/RetainPtr.h>
 
 using namespace WebKit;

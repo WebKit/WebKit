@@ -26,8 +26,8 @@
 #include "config.h"
 #include "WebHistoryClient.h"
 
+#include "APINavigationData.h"
 #include "WKAPICast.h"
-#include "WebNavigationData.h"
 #include <wtf/RefPtr.h>
 
 using namespace WebCore;
@@ -39,7 +39,7 @@ void WebHistoryClient::didNavigateWithNavigationData(WebContext* context, WebPag
     if (!m_client.didNavigateWithNavigationData)
         return;
 
-    RefPtr<WebNavigationData> navigationData = WebNavigationData::create(navigationDataStore); 
+    RefPtr<API::NavigationData> navigationData = API::NavigationData::create(navigationDataStore);
     m_client.didNavigateWithNavigationData(toAPI(context), toAPI(page), toAPI(navigationData.get()), toAPI(frame), m_client.clientInfo);
 }
 

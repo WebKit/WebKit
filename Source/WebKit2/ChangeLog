@@ -1,3 +1,35 @@
+2013-11-18  Anders Carlsson  <andersca@apple.com>
+
+        Rename WebNavigationData to API::NavigationData
+        https://bugs.webkit.org/show_bug.cgi?id=124542
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKNavigationDataRef.cpp:
+        (WKNavigationDataGetTypeID):
+        * UIProcess/API/Cocoa/WKNavigationData.mm:
+        (-[WKNavigationData dealloc]):
+        (-[WKNavigationData title]):
+        (-[WKNavigationData originalRequest]):
+        (-[WKNavigationData destinationURL]):
+        (-[WKNavigationData response]):
+        * UIProcess/API/Cocoa/WKNavigationDataInternal.h:
+        (WebKit::wrapper):
+        * UIProcess/API/mac/WKProcessGroup.mm:
+        * UIProcess/APINavigationData.cpp: Renamed from Source/WebKit2/UIProcess/WebNavigationData.cpp.
+        (API::NavigationData::NavigationData):
+        (API::NavigationData::~NavigationData):
+        * UIProcess/APINavigationData.h: Renamed from Source/WebKit2/UIProcess/WebNavigationData.h.
+        (API::NavigationData::create):
+        (API::NavigationData::title):
+        (API::NavigationData::url):
+        (API::NavigationData::originalRequest):
+        (API::NavigationData::response):
+        * UIProcess/WebHistoryClient.cpp:
+        (WebKit::WebHistoryClient::didNavigateWithNavigationData):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-11-18  David Hyatt  <hyatt@apple.com>
 
         Add a quirk to not respect center text-align when positioning

@@ -27,11 +27,18 @@
 
 #if WK_API_ENABLED
 
+#import "APINavigationData.h"
 #import "WKObject.h"
-#import "WebNavigationData.h"
 
 namespace WebKit {
-inline WKNavigationData *wrapper(WebNavigationData& data) { ASSERT([data.wrapper() isKindOfClass:[WKNavigationData class]]); return (WKNavigationData *)data.wrapper(); }
+
+inline WKNavigationData *wrapper(API::NavigationData& data)
+{
+    ASSERT([data.wrapper() isKindOfClass:[WKNavigationData class]]);
+
+    return (WKNavigationData *)data.wrapper();
+}
+
 }
 
 @interface WKNavigationData () <WKObject>

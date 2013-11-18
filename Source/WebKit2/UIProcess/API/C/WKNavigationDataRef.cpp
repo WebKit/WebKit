@@ -26,15 +26,15 @@
 #include "config.h"
 #include "WKNavigationDataRef.h"
 
+#include "APINavigationData.h"
 #include "WKAPICast.h"
-#include "WebNavigationData.h"
 #include "WebURLRequest.h"
 
 using namespace WebKit;
 
 WKTypeID WKNavigationDataGetTypeID()
 {
-    return toAPI(WebNavigationData::APIType);
+    return toAPI(API::NavigationData::APIType);
 }
 
 WKStringRef WKNavigationDataCopyTitle(WKNavigationDataRef navigationDataRef)
