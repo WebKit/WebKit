@@ -10,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -24,26 +24,37 @@
  */
 
 #include "config.h"
-#include "DumpContext.h"
+#include "DFGAvailability.h"
 
-namespace JSC {
+#if ENABLE(DFG_JIT)
 
-DumpContext::DumpContext()
-    : graph(0)
+#include "DFGNode.h"
+
+namespace JSC { namespace DFG {
+
+void Availability::dump(PrintStream& out) const
 {
+    out.print(m_flushedAt, "/");
+    
+    if (nodeIsUndecided()) {
+        out.print("Undecided");
+        return;
+    }
+    
+    if (nodeIsUnavailable()) {
+        out.print("Unavailable");
+        return;
+    }
+    
+    out.print(node());
 }
 
-DumpContext::~DumpContext() { }
-
-bool DumpContext::isEmpty() const
+void Availability::dumpInContext(PrintStream& out, DumpContext*) const
 {
-    return structures.isEmpty();
+    dump(out);
 }
 
-void DumpContext::dump(PrintStream& out, const char* prefix) const
-{
-    structures.dump(out, prefix);
-}
+} } // namespace JSC::DFG
 
-} // namespace JSC
+#endif // ENABLE(DFG_JIT)
 

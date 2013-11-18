@@ -100,10 +100,11 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/ArrayProfile.cpp \
 	Source/JavaScriptCore/bytecode/ArrayProfile.h \
 	Source/JavaScriptCore/bytecode/ByValInfo.h \
-    Source/JavaScriptCore/bytecode/BytecodeBasicBlock.cpp \
-    Source/JavaScriptCore/bytecode/BytecodeBasicBlock.h \
-    Source/JavaScriptCore/bytecode/BytecodeLivenessAnalysis.cpp \
-    Source/JavaScriptCore/bytecode/BytecodeLivenessAnalysis.h \
+	Source/JavaScriptCore/bytecode/BytecodeBasicBlock.cpp \
+	Source/JavaScriptCore/bytecode/BytecodeBasicBlock.h \
+	Source/JavaScriptCore/bytecode/BytecodeLivenessAnalysis.cpp \
+	Source/JavaScriptCore/bytecode/BytecodeLivenessAnalysis.h \
+	Source/JavaScriptCore/bytecode/BytecodeLivenessAnalysisInlines.h \
 	Source/JavaScriptCore/bytecode/BytecodeConventions.h \
 	Source/JavaScriptCore/bytecode/CallLinkInfo.cpp \
 	Source/JavaScriptCore/bytecode/CallLinkInfo.h \
@@ -132,6 +133,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/ExitKind.cpp \
 	Source/JavaScriptCore/bytecode/ExitKind.h \
 	Source/JavaScriptCore/bytecode/ExpressionRangeInfo.h \
+	Source/JavaScriptCore/bytecode/FullBytecodeLiveness.h \
 	Source/JavaScriptCore/bytecode/GetByIdStatus.cpp \
 	Source/JavaScriptCore/bytecode/GetByIdStatus.h \
 	Source/JavaScriptCore/bytecode/HandlerInfo.h \
@@ -207,6 +209,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGArrayifySlowPathGenerator.h \
 	Source/JavaScriptCore/dfg/DFGAtTailAbstractState.cpp \
 	Source/JavaScriptCore/dfg/DFGAtTailAbstractState.h \
+	Source/JavaScriptCore/dfg/DFGAvailability.cpp \
+	Source/JavaScriptCore/dfg/DFGAvailability.h \
 	Source/JavaScriptCore/dfg/DFGBackwardsPropagationPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGBackwardsPropagationPhase.h \
 	Source/JavaScriptCore/dfg/DFGBasicBlock.cpp \
@@ -358,6 +362,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGPredictionPropagationPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGPredictionPropagationPhase.h \
 	Source/JavaScriptCore/dfg/DFGRegisterBank.h \
+	Source/JavaScriptCore/dfg/DFGResurrectionForValidationPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGResurrectionForValidationPhase.h \
 	Source/JavaScriptCore/dfg/DFGSafeToExecute.h \
 	Source/JavaScriptCore/dfg/DFGSaneStringGetByValSlowPathGenerator.h \
 	Source/JavaScriptCore/dfg/DFGScoreBoard.h \
@@ -469,8 +475,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/ftl/FTLValueFormat.cpp \
 	Source/JavaScriptCore/ftl/FTLValueFormat.h \
 	Source/JavaScriptCore/ftl/FTLValueFromBlock.h \
-	Source/JavaScriptCore/ftl/FTLValueSource.cpp \
-	Source/JavaScriptCore/ftl/FTLValueSource.h \
 	Source/JavaScriptCore/heap/CodeBlockSet.cpp \
 	Source/JavaScriptCore/heap/CodeBlockSet.h \
 	Source/JavaScriptCore/heap/CopiedAllocator.h \

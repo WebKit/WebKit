@@ -38,6 +38,7 @@ namespace JSC { namespace DFG {
 Disassembler::Disassembler(Graph& graph)
     : m_graph(graph)
 {
+    m_dumpContext.graph = &m_graph;
     m_labelForBlockIndex.resize(graph.numBlocks());
 }
 

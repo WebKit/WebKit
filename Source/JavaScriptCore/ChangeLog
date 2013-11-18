@@ -1,5 +1,145 @@
 2013-11-16  Filip Pizlo  <fpizlo@apple.com>
 
+        FTL should have an explicit notion of bytecode liveness
+        https://bugs.webkit.org/show_bug.cgi?id=124181
+
+        Reviewed by Sam Weinig.
+        
+        This makes FTL OSR exit use bytecode liveness analysis to determine which variables
+        to include values for. The decision of how to get the values of variables is based on
+        forward propagation of MovHints and SetLocals.
+        
+        This fixes a bunch of bugs (like https://bugs.webkit.org/show_bug.cgi?id=124138 but
+        also others that I noticed when I started writing more targetted tests) and allows us
+        to remove some sketchy code.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeBasicBlock.h:
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::isValidRegisterForLiveness):
+        (JSC::setForOperand):
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        (JSC::stepOverInstruction):
+        (JSC::computeLocalLivenessForBytecodeOffset):
+        (JSC::BytecodeLivenessAnalysis::runLivenessFixpoint):
+        (JSC::BytecodeLivenessAnalysis::operandIsLiveAtBytecodeOffset):
+        (JSC::getLivenessInfo):
+        (JSC::BytecodeLivenessAnalysis::getLivenessInfoAtBytecodeOffset):
+        (JSC::BytecodeLivenessAnalysis::computeFullLiveness):
+        * bytecode/BytecodeLivenessAnalysis.h:
+        * bytecode/BytecodeLivenessAnalysisInlines.h: Added.
+        (JSC::operandIsAlwaysLive):
+        (JSC::operandThatIsNotAlwaysLiveIsLive):
+        (JSC::operandIsLive):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::captureCount):
+        (JSC::CodeBlock::captureStart):
+        (JSC::CodeBlock::captureEnd):
+        * bytecode/CodeOrigin.cpp:
+        (JSC::InlineCallFrame::dumpInContext):
+        * bytecode/FullBytecodeLiveness.h: Added.
+        (JSC::FullBytecodeLiveness::FullBytecodeLiveness):
+        (JSC::FullBytecodeLiveness::getOut):
+        (JSC::FullBytecodeLiveness::operandIsLive):
+        (JSC::FullBytecodeLiveness::getLiveness):
+        * dfg/DFGAvailability.cpp: Added.
+        (JSC::DFG::Availability::dump):
+        (JSC::DFG::Availability::dumpInContext):
+        * dfg/DFGAvailability.h: Added.
+        (JSC::DFG::Availability::Availability):
+        (JSC::DFG::Availability::unavailable):
+        (JSC::DFG::Availability::withFlush):
+        (JSC::DFG::Availability::withNode):
+        (JSC::DFG::Availability::withUnavailableNode):
+        (JSC::DFG::Availability::nodeIsUndecided):
+        (JSC::DFG::Availability::nodeIsUnavailable):
+        (JSC::DFG::Availability::hasNode):
+        (JSC::DFG::Availability::node):
+        (JSC::DFG::Availability::flushedAt):
+        (JSC::DFG::Availability::operator!):
+        (JSC::DFG::Availability::operator==):
+        (JSC::DFG::Availability::merge):
+        (JSC::DFG::Availability::mergeNodes):
+        (JSC::DFG::Availability::unavailableMarker):
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::Disassembler):
+        * dfg/DFGFlushFormat.cpp:
+        (WTF::printInternal):
+        * dfg/DFGFlushFormat.h:
+        (JSC::DFG::resultFor):
+        (JSC::DFG::useKindFor):
+        (JSC::DFG::dataFormatFor):
+        * dfg/DFGFlushedAt.cpp:
+        (JSC::DFG::FlushedAt::dump):
+        * dfg/DFGFlushedAt.h:
+        (JSC::DFG::FlushedAt::FlushedAt):
+        (JSC::DFG::FlushedAt::merge):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::livenessFor):
+        (JSC::DFG::Graph::isLiveInBytecode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::baselineCodeBlockFor):
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::OSRAvailabilityAnalysisPhase::run):
+        * dfg/DFGOSRAvailabilityAnalysisPhase.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGResurrectionForValidationPhase.cpp: Added.
+        (JSC::DFG::ResurrectionForValidationPhase::ResurrectionForValidationPhase):
+        (JSC::DFG::ResurrectionForValidationPhase::run):
+        (JSC::DFG::performResurrectionForValidation):
+        * dfg/DFGResurrectionForValidationPhase.h: Added.
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGValueSource.h:
+        (JSC::DFG::ValueSource::forFlushFormat):
+        * dfg/DFGVariableAccessData.h:
+        * ftl/FTLExitValue.cpp:
+        (JSC::FTL::ExitValue::dumpInContext):
+        * ftl/FTLInlineCacheSize.cpp:
+        (JSC::FTL::sizeOfGetById):
+        * ftl/FTLLocation.cpp:
+        (JSC::FTL::Location::gpr):
+        (JSC::FTL::Location::fpr):
+        (JSC::FTL::Location::directGPR):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::compileBlock):
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileSetLocal):
+        (JSC::FTL::LowerDFGToLLVM::compileZombieHint):
+        (JSC::FTL::LowerDFGToLLVM::compilePutById):
+        (JSC::FTL::LowerDFGToLLVM::compileInvalidationPoint):
+        (JSC::FTL::LowerDFGToLLVM::initializeOSRExitStateForBlock):
+        (JSC::FTL::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::LowerDFGToLLVM::emitOSRExitCall):
+        (JSC::FTL::LowerDFGToLLVM::buildExitArguments):
+        (JSC::FTL::LowerDFGToLLVM::addExitArgumentForNode):
+        (JSC::FTL::LowerDFGToLLVM::observeMovHint):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::alloca):
+        * ftl/FTLValueSource.cpp: Removed.
+        * ftl/FTLValueSource.h: Removed.
+        * llvm/LLVMAPIFunctions.h:
+        * runtime/DumpContext.cpp:
+        (JSC::DumpContext::DumpContext):
+        * runtime/DumpContext.h:
+        * runtime/Options.h:
+        * runtime/SymbolTable.h:
+        (JSC::SharedSymbolTable::captureStart):
+        (JSC::SharedSymbolTable::captureEnd):
+        (JSC::SharedSymbolTable::captureCount):
+
+2013-11-16  Filip Pizlo  <fpizlo@apple.com>
+
         Fix indentation of JSActivation.h.
 
         Rubber stamped by Mark Hahnenberg.

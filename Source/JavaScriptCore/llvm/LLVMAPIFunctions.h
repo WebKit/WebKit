@@ -535,7 +535,6 @@
     macro(LLVMBool, TargetHasJIT, (LLVMTargetRef T)) \
     macro(LLVMBool, TargetHasTargetMachine, (LLVMTargetRef T)) \
     macro(LLVMBool, TargetHasAsmBackend, (LLVMTargetRef T)) \
-    macro(LLVMTargetMachineRef, CreateTargetMachine, (LLVMTargetRef T, char *Triple, char *CPU, char *Features, LLVMCodeGenOptLevel Level, LLVMRelocMode Reloc, LLVMCodeModel CodeModel)) \
     macro(void, DisposeTargetMachine, (LLVMTargetMachineRef T)) \
     macro(LLVMTargetRef, GetTargetMachineTarget, (LLVMTargetMachineRef T)) \
     macro(char *, GetTargetMachineTriple, (LLVMTargetMachineRef T)) \

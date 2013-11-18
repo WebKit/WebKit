@@ -158,13 +158,35 @@ public:
                         for (unsigned j = block->predecessors.size(); j--;) {
                             BasicBlock* predecessor = block->predecessors[j];
                             predecessor->appendNonTerminal(
-                                m_graph, SpecNone, Upsilon, block->last()->codeOrigin,
+                                m_graph, SpecNone, Upsilon, predecessor->last()->codeOrigin,
                                 OpInfo(node), Edge(predecessor->variablesAtTail[i], useKind));
                         }
                         
-                        m_insertionSet.insertNode(
-                            0, SpecNone, MovHint, node->codeOrigin, OpInfo(variable),
-                            Edge(node));
+                        if (m_flushedLocalOps.contains(node)) {
+                            // Do nothing. For multiple reasons.
+                            
+                            // Reason #1: If the local is flushed then we don't need to bother
+                            // with a MovHint since every path to this point in the code will
+                            // have flushed the bytecode variable using a SetLocal and hence
+                            // the Availability::flushedAt() will agree, and that will be
+                            // sufficient for figuring out how to recover the variable's value.
+                            
+                            // Reason #2: If we had inserted a MovHint and the Phi function had
+                            // died (because the only user of the value was the "flush" - i.e.
+                            // some asynchronous runtime thingy) then the MovHint would turn
+                            // into a ZombieHint, which would fool us into thinking that the
+                            // variable is dead.
+                            
+                            // Reason #3: If we had inserted a MovHint then even if the Phi
+                            // stayed alive, we would still end up generating inefficient code
+                            // since we would be telling the OSR exit compiler to use some SSA
+                            // value for the bytecode variable rather than just telling it that
+                            // the value was already on the stack.
+                        } else {
+                            m_insertionSet.insertNode(
+                                0, SpecNone, MovHint, node->codeOrigin, OpInfo(variable),
+                                Edge(node));
+                        }
                     }
                 }
                 

@@ -48,16 +48,16 @@ void ExitValue::dumpInContext(PrintStream& out, DumpContext* context) const
         out.print("Constant(", inContext(constant(), context), ")");
         return;
     case ExitValueInJSStack:
-        out.print("InJSStack");
+        out.print("InJSStack:r", virtualRegister());
         return;
     case ExitValueInJSStackAsInt32:
-        out.print("InJSStackAsInt32");
+        out.print("InJSStackAsInt32:r", virtualRegister());
         return;
     case ExitValueInJSStackAsInt52:
-        out.print("InJSStackAsInt52");
+        out.print("InJSStackAsInt52:r", virtualRegister());
         return;
     case ExitValueInJSStackAsDouble:
-        out.print("InJSStackAsDouble");
+        out.print("InJSStackAsDouble:r", virtualRegister());
         return;
     }
     

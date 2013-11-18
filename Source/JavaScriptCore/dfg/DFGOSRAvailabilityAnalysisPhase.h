@@ -36,9 +36,8 @@ namespace JSC { namespace DFG {
 
 class Graph;
 
-// Computes BasicBlock::ssa->availabiltiyAtHead/Tail. This relies on liveness
-// analysis phase having been run and the graph not having been transformed
-// after that.
+// Computes BasicBlock::ssa->availabiltiyAtHead/Tail. This is a forward flow type inference
+// over MovHints and SetLocals.
 
 bool performOSRAvailabilityAnalysis(Graph&);
 

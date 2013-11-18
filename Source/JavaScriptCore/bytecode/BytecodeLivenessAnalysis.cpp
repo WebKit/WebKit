@@ -26,7 +26,9 @@
 #include "config.h"
 #include "BytecodeLivenessAnalysis.h"
 
+#include "BytecodeLivenessAnalysisInlines.h"
 #include "CodeBlock.h"
+#include "FullBytecodeLiveness.h"
 #include "PreciseJumpTargets.h"
 
 namespace JSC {
@@ -38,44 +40,23 @@ BytecodeLivenessAnalysis::BytecodeLivenessAnalysis(CodeBlock* codeBlock)
     compute();
 }
 
-static int numberOfCapturedVariables(CodeBlock* codeBlock)
-{
-    if (!codeBlock->symbolTable())
-        return 0;
-    return codeBlock->symbolTable()->captureCount();
-}
-
-static int captureStart(CodeBlock* codeBlock)
-{
-    if (!codeBlock->symbolTable())
-        return 0;
-    return codeBlock->symbolTable()->captureStart();
-}
-
-static int captureEnd(CodeBlock* codeBlock)
-{
-    if (!codeBlock->symbolTable())
-        return 0;
-    return codeBlock->symbolTable()->captureEnd();
-}
-
 static bool isValidRegisterForLiveness(CodeBlock* codeBlock, int operand)
 {
     VirtualRegister virtualReg(operand);
     return !codeBlock->isConstantRegisterIndex(operand) // Don't care about constants.
         && virtualReg.isLocal() // Don't care about arguments.
-        && (!numberOfCapturedVariables(codeBlock) // If we have no captured variables, we're good to go.
-            || (virtualReg.offset() > captureStart(codeBlock) || (virtualReg.offset() <= captureEnd(codeBlock))));
+        && (!codeBlock->captureCount() // If we have no captured variables, we're good to go.
+            || (virtualReg.offset() > codeBlock->captureStart() || (virtualReg.offset() <= codeBlock->captureEnd())));
 }
 
 static void setForOperand(CodeBlock* codeBlock, FastBitVector& bits, int operand)
 {
     ASSERT(isValidRegisterForLiveness(codeBlock, operand));
     VirtualRegister virtualReg(operand);
-    if (virtualReg.offset() > captureStart(codeBlock))
+    if (virtualReg.offset() > codeBlock->captureStart())
         bits.set(virtualReg.toLocal());
     else
-        bits.set(virtualReg.toLocal() - numberOfCapturedVariables(codeBlock));
+        bits.set(virtualReg.toLocal() - codeBlock->captureCount());
 }
 
 static void computeUsesForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset, FastBitVector& uses)
@@ -303,8 +284,8 @@ static void computeUsesForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecode
         int base = instruction[2].u.operand;
         int count = instruction[3].u.operand;
         for (int i = 0; i < count; i++) {
-            if (isValidRegisterForLiveness(codeBlock, base + i))
-                setForOperand(codeBlock, uses, base + i);
+            if (isValidRegisterForLiveness(codeBlock, base - i))
+                setForOperand(codeBlock, uses, base - i);
         }
         return;
     }
@@ -315,11 +296,11 @@ static void computeUsesForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecode
         if (isValidRegisterForLiveness(codeBlock, instruction[2].u.operand))
             setForOperand(codeBlock, uses, instruction[2].u.operand);
         int argCount = instruction[3].u.operand;
-        int registerOffset = instruction[4].u.operand;
+        int registerOffset = -instruction[4].u.operand;
         int lastArg = registerOffset + CallFrame::thisArgumentOffset();
-        for (int i = 0; i < argCount; i++) {
-            if (isValidRegisterForLiveness(codeBlock, lastArg - i))
-                setForOperand(codeBlock, uses, lastArg - i);
+        for (int i = opcodeID == op_construct ? 1 : 0; i < argCount; i++) {
+            if (isValidRegisterForLiveness(codeBlock, lastArg + i))
+                setForOperand(codeBlock, uses, lastArg + i);
         }
         return;
     }
@@ -333,10 +314,9 @@ static void computeUsesForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecode
             setForOperand(codeBlock, uses, instruction[2].u.operand);
         return;
     }
-#define LLINT_HELPER_OPCODES(opcode, length) case opcode:
-    FOR_EACH_LLINT_OPCODE_EXTENSION(LLINT_HELPER_OPCODES)
-        return;
-#undef LLINT_HELPER_OPCODES
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
     }
 }
 
@@ -492,8 +472,7 @@ static void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecode
     case op_enter: {
         defs.setAll();
         return;
-    }
-    }
+    } }
 }
 
 static unsigned getLeaderOffsetForBasicBlock(RefPtr<BytecodeBasicBlock>* basicBlock)
@@ -540,13 +519,32 @@ static BytecodeBasicBlock* findBasicBlockForBytecodeOffset(Vector<RefPtr<Bytecod
     return basicBlock[1].get();
 }
 
+static void stepOverInstruction(CodeBlock* codeBlock, Vector<RefPtr<BytecodeBasicBlock>>& basicBlocks, unsigned bytecodeOffset, FastBitVector& uses, FastBitVector& defs, FastBitVector& out)
+{
+    uses.clearAll();
+    defs.clearAll();
+    
+    computeUsesForBytecodeOffset(codeBlock, bytecodeOffset, uses);
+    computeDefsForBytecodeOffset(codeBlock, bytecodeOffset, defs);
+    
+    out.exclude(defs);
+    out.merge(uses);
+    
+    // If we have an exception handler, we want the live-in variables of the 
+    // exception handler block to be included in the live-in of this particular bytecode.
+    if (HandlerInfo* handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset)) {
+        BytecodeBasicBlock* handlerBlock = findBasicBlockWithLeaderOffset(basicBlocks, handler->target);
+        ASSERT(handlerBlock);
+        out.merge(handlerBlock->in());
+    }
+}
+
 static void computeLocalLivenessForBytecodeOffset(CodeBlock* codeBlock, BytecodeBasicBlock* block, Vector<RefPtr<BytecodeBasicBlock> >& basicBlocks, unsigned targetOffset, FastBitVector& result)
 {
     ASSERT(!block->isExitBlock());
     ASSERT(!block->isEntryBlock());
 
     FastBitVector out = block->out();
-    HandlerInfo* handler = 0;
 
     FastBitVector uses;
     FastBitVector defs;
@@ -557,23 +555,8 @@ static void computeLocalLivenessForBytecodeOffset(CodeBlock* codeBlock, Bytecode
         unsigned bytecodeOffset = block->bytecodeOffsets()[i];
         if (targetOffset > bytecodeOffset)
             break;
-
-        uses.clearAll();
-        defs.clearAll();
-
-        computeUsesForBytecodeOffset(codeBlock, bytecodeOffset, uses);
-        computeDefsForBytecodeOffset(codeBlock, bytecodeOffset, defs);
-
-        out.exclude(defs);
-        out.merge(uses);
-
-        // If we have an exception handler, we want the live-in variables of the 
-        // exception handler block to be included in the live-in of this particular bytecode.
-        if ((handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset))) {
-            BytecodeBasicBlock* handlerBlock = findBasicBlockWithLeaderOffset(basicBlocks, handler->target);
-            ASSERT(handlerBlock);
-            out.merge(handlerBlock->in());
-        }
+        
+        stepOverInstruction(codeBlock, basicBlocks, bytecodeOffset, uses, defs, out);
     }
 
     result.set(out);
@@ -590,7 +573,7 @@ void BytecodeLivenessAnalysis::runLivenessFixpoint()
 {
     UnlinkedCodeBlock* unlinkedCodeBlock = m_codeBlock->unlinkedCodeBlock();
     unsigned numberOfVariables = unlinkedCodeBlock->m_numVars + 
-        unlinkedCodeBlock->m_numCalleeRegisters - numberOfCapturedVariables(m_codeBlock);
+        unlinkedCodeBlock->m_numCalleeRegisters - m_codeBlock->captureCount();
 
     for (unsigned i = 0; i < m_basicBlocks.size(); i++) {
         BytecodeBasicBlock* block = m_basicBlocks[i].get();
@@ -629,36 +612,30 @@ void BytecodeLivenessAnalysis::getLivenessInfoForNonCapturedVarsAtBytecodeOffset
 
 bool BytecodeLivenessAnalysis::operandIsLiveAtBytecodeOffset(int operand, unsigned bytecodeOffset)
 {
-    int numCapturedVars = numberOfCapturedVariables(m_codeBlock);
-    if (VirtualRegister(operand).isArgument())
-        return true;
-    if (operand <= captureStart(m_codeBlock) && operand > captureEnd(m_codeBlock))
+    if (operandIsAlwaysLive(m_codeBlock, operand))
         return true;
     FastBitVector result;
     getLivenessInfoForNonCapturedVarsAtBytecodeOffset(bytecodeOffset, result);
-    return result.get(operand - numCapturedVars);
+    return operandThatIsNotAlwaysLiveIsLive(m_codeBlock, result, operand);
 }
 
-FastBitVector BytecodeLivenessAnalysis::getLivenessInfoAtBytecodeOffset(unsigned bytecodeOffset)
+FastBitVector getLivenessInfo(CodeBlock* codeBlock, const FastBitVector& out)
 {
-    FastBitVector temp;
     FastBitVector result;
 
-    getLivenessInfoForNonCapturedVarsAtBytecodeOffset(bytecodeOffset, temp);
-
-    unsigned numCapturedVars = numberOfCapturedVariables(m_codeBlock);
+    unsigned numCapturedVars = codeBlock->captureCount();
     if (numCapturedVars) {
-        int firstCapturedLocal = VirtualRegister(captureStart(m_codeBlock)).toLocal();
-        result.resize(temp.numBits() + numCapturedVars);
+        int firstCapturedLocal = VirtualRegister(codeBlock->captureStart()).toLocal();
+        result.resize(out.numBits() + numCapturedVars);
         for (unsigned i = 0; i < numCapturedVars; ++i)
             result.set(firstCapturedLocal + i);
     } else
-        result.resize(temp.numBits());
+        result.resize(out.numBits());
 
-    int tempLength = temp.numBits();
-    ASSERT(tempLength >= 0);
-    for (int i = 0; i < tempLength; i++) {
-        if (!temp.get(i))
+    int outLength = out.numBits();
+    ASSERT(outLength >= 0);
+    for (int i = 0; i < outLength; i++) {
+        if (!out.get(i))
             continue;
 
         if (!numCapturedVars) {
@@ -666,12 +643,45 @@ FastBitVector BytecodeLivenessAnalysis::getLivenessInfoAtBytecodeOffset(unsigned
             continue;
         }
 
-        if (virtualRegisterForLocal(i).offset() > captureStart(m_codeBlock))
+        if (virtualRegisterForLocal(i).offset() > codeBlock->captureStart())
             result.set(i);
         else 
             result.set(numCapturedVars + i);
     }
     return result;
+}
+
+FastBitVector BytecodeLivenessAnalysis::getLivenessInfoAtBytecodeOffset(unsigned bytecodeOffset)
+{
+    FastBitVector out;
+    getLivenessInfoForNonCapturedVarsAtBytecodeOffset(bytecodeOffset, out);
+    return getLivenessInfo(m_codeBlock, out);
+}
+
+void BytecodeLivenessAnalysis::computeFullLiveness(FullBytecodeLiveness& result)
+{
+    FastBitVector out;
+    FastBitVector uses;
+    FastBitVector defs;
+    
+    result.m_codeBlock = m_codeBlock;
+    result.m_map.clear();
+    
+    for (unsigned i = m_basicBlocks.size(); i--;) {
+        BytecodeBasicBlock* block = m_basicBlocks[i].get();
+        if (block->isEntryBlock() || block->isExitBlock())
+            continue;
+        
+        out = block->out();
+        uses.resize(out.numBits());
+        defs.resize(out.numBits());
+        
+        for (unsigned i = block->bytecodeOffsets().size(); i--;) {
+            unsigned bytecodeOffset = block->bytecodeOffsets()[i];
+            stepOverInstruction(m_codeBlock, m_basicBlocks, bytecodeOffset, uses, defs, out);
+            result.m_map.add(bytecodeOffset, out);
+        }
+    }
 }
 
 void BytecodeLivenessAnalysis::dumpResults()

@@ -32,6 +32,8 @@
 
 namespace JSC {
 
+namespace DFG { class Graph; }
+
 struct DumpContext {
     DumpContext();
     ~DumpContext();
@@ -41,6 +43,7 @@ struct DumpContext {
     void dump(PrintStream&, const char* prefix = "") const;
     
     StringHashDumpContext<Structure> structures;
+    DFG::Graph* graph;
 };
 
 } // namespace JSC

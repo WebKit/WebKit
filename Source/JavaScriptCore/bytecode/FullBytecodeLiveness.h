@@ -23,45 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BytecodeLivenessAnalysis_h
-#define BytecodeLivenessAnalysis_h
+#ifndef FullBytecodeLiveness_h
+#define FullBytecodeLiveness_h
 
-#include "BytecodeBasicBlock.h"
 #include <wtf/FastBitVector.h>
-#include <wtf/HashMap.h>
-#include <wtf/Vector.h>
 
 namespace JSC {
 
-class CodeBlock;
-class FullBytecodeLiveness;
+class BytecodeLivenessAnalysis;
 
-class BytecodeLivenessAnalysis {
+typedef HashMap<unsigned, FastBitVector, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> BytecodeToBitmapMap;
+
+class FullBytecodeLiveness {
 public:
-    BytecodeLivenessAnalysis(CodeBlock*);
+    FullBytecodeLiveness() : m_codeBlock(0) { }
     
-    bool operandIsLiveAtBytecodeOffset(int operand, unsigned bytecodeOffset);
-    FastBitVector getLivenessInfoAtBytecodeOffset(unsigned bytecodeOffset);
+    // We say "out" to refer to the bitvector that contains raw results for a bytecode
+    // instruction.
+    const FastBitVector& getOut(unsigned bytecodeIndex) const
+    {
+        BytecodeToBitmapMap::const_iterator iter = m_map.find(bytecodeIndex);
+        ASSERT(iter != m_map.end());
+        return iter->value;
+    }
     
-    void computeFullLiveness(FullBytecodeLiveness& result);
-
+    bool operandIsLive(int operand, unsigned bytecodeIndex) const
+    {
+        return operandIsAlwaysLive(m_codeBlock, operand) || operandThatIsNotAlwaysLiveIsLive(m_codeBlock, getOut(bytecodeIndex), operand);
+    }
+    
+    FastBitVector getLiveness(unsigned bytecodeIndex) const
+    {
+        return getLivenessInfo(m_codeBlock, getOut(bytecodeIndex));
+    }
+    
 private:
-    void compute();
-    void runLivenessFixpoint();
-    void dumpResults();
-
-    void getLivenessInfoForNonCapturedVarsAtBytecodeOffset(unsigned bytecodeOffset, FastBitVector&);
-
+    friend class BytecodeLivenessAnalysis;
+    
     CodeBlock* m_codeBlock;
-    Vector<RefPtr<BytecodeBasicBlock> > m_basicBlocks;
+    BytecodeToBitmapMap m_map;
 };
-
-inline bool operandIsAlwaysLive(CodeBlock*, int operand);
-inline bool operandThatIsNotAlwaysLiveIsLive(CodeBlock*, const FastBitVector& out, int operand);
-inline bool operandIsLive(CodeBlock*, const FastBitVector& out, int operand);
-
-FastBitVector getLivenessInfo(CodeBlock*, const FastBitVector& out);
 
 } // namespace JSC
 
-#endif // BytecodeLivenessAnalysis_h
+#endif // FullBytecodeLiveness_h
+

@@ -199,6 +199,7 @@ public:
     LValue intToPtr(LValue value, LType type) { return buildIntToPtr(m_builder, value, type); }
     LValue bitCast(LValue value, LType type) { return buildBitCast(m_builder, value, type); }
     
+    LValue alloca(LType type) { return buildAlloca(m_builder, type); }
     LValue get(LValue reference) { return buildLoad(m_builder, reference); }
     LValue set(LValue value, LValue reference) { return buildStore(m_builder, value, reference); }
     

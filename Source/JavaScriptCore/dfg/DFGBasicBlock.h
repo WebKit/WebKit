@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGAbstractValue.h"
+#include "DFGAvailability.h"
 #include "DFGBranchDirection.h"
 #include "DFGFlushedAt.h"
 #include "DFGNode.h"
@@ -140,8 +141,8 @@ struct BasicBlock : RefCounted<BasicBlock> {
     struct SSAData {
         Operands<FlushedAt> flushAtHead;
         Operands<FlushedAt> flushAtTail;
-        Operands<Node*> availabilityAtHead;
-        Operands<Node*> availabilityAtTail;
+        Operands<Availability> availabilityAtHead;
+        Operands<Availability> availabilityAtTail;
         HashSet<Node*> liveAtHead;
         HashSet<Node*> liveAtTail;
         HashMap<Node*, AbstractValue> valuesAtHead;

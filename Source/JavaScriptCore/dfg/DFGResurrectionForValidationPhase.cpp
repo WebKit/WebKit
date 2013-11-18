@@ -24,47 +24,56 @@
  */
 
 #include "config.h"
-#include "FTLValueSource.h"
+#include "DFGResurrectionForValidationPhase.h"
 
-#if ENABLE(FTL_JIT)
+#if ENABLE(DFG_JIT)
 
-namespace JSC { namespace FTL {
+#include "DFGBasicBlockInlines.h"
+#include "DFGGraph.h"
+#include "DFGInsertionSet.h"
+#include "DFGPhase.h"
+#include "Operations.h"
 
-void ValueSource::dump(PrintStream& out) const
-{
-    switch (kind()) {
-    case SourceNotSet:
-        out.print("SourceNotSet");
-        return;
-    case ValueInJSStack:
-        out.print("ValueInJSStack:", virtualRegister());
-        return;
-    case Int32InJSStack:
-        out.print("Int32InJSStack:", virtualRegister());
-        return;
-    case Int52InJSStack:
-        out.print("Int52InJSStack:", virtualRegister());
-        return;
-    case DoubleInJSStack:
-        out.print("DoubleInJSStack:", virtualRegister());
-        return;
-    case SourceIsDead:
-        out.print("SourceIsDead");
-        return;
-    case HaveNode:
-        out.print("Node(", node(), ")");
-        return;
+namespace JSC { namespace DFG {
+
+class ResurrectionForValidationPhase : public Phase {
+public:
+    ResurrectionForValidationPhase(Graph& graph)
+        : Phase(graph, "resurrection for validation")
+    {
     }
     
-    RELEASE_ASSERT_NOT_REACHED();
-}
+    bool run()
+    {
+        InsertionSet insertionSet(m_graph);
+        
+        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
+            BasicBlock* block = m_graph.block(blockIndex);
+            if (!block)
+                continue;
 
-void ValueSource::dumpInContext(PrintStream& out, DumpContext*) const
+            for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
+                Node* node = block->at(nodeIndex);
+                if (!node->hasResult())
+                    continue;
+                insertionSet.insertNode(
+                    nodeIndex + 1, SpecNone, Phantom, node->codeOrigin, Edge(node));
+            }
+            
+            insertionSet.execute(block);
+        }
+        
+        return true;
+    }
+};
+
+bool performResurrectionForValidation(Graph& graph)
 {
-    dump(out);
+    SamplingRegion samplingRegion("DFG Resurrection For Validation Phase");
+    return runPhase<ResurrectionForValidationPhase>(graph);
 }
 
-} } // namespace JSC::FTL
+} } // namespace JSC::DFG
 
-#endif // ENABLE(FTL_JIT)
+#endif // ENABLE(DFG_JIT)
 

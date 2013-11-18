@@ -145,6 +145,7 @@ public:
     {
         switch (format) {
         case DeadFlush:
+        case ConflictingFlush:
             return ValueSource(SourceIsDead);
         case FlushedJSValue:
             return ValueSource(ValueInJSStack, where);

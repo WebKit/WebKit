@@ -47,77 +47,96 @@ public:
     {
         ASSERT(m_graph.m_form == SSA);
         
-        Vector<BasicBlock*> depthFirst;
-        m_graph.getBlocksInDepthFirstOrder(depthFirst);
-        
-        for (unsigned i = 0; i < depthFirst.size(); ++i) {
-            BasicBlock* block = depthFirst[i];
-            block->ssa->availabilityAtHead.fill(0);
-            block->ssa->availabilityAtTail.fill(0);
+        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
+            BasicBlock* block = m_graph.block(blockIndex);
+            if (!block)
+                continue;
+            block->ssa->availabilityAtHead.fill(Availability());
+            block->ssa->availabilityAtTail.fill(Availability());
         }
         
-        for (unsigned i = 0; i < depthFirst.size(); ++i) {
-            BasicBlock* block = depthFirst[i];
-            
-            // We edit availabilityAtTail in-place, but first initialize it to
-            // availabilityAtHead.
-            Operands<Node*>& availability = block->ssa->availabilityAtTail;
-            availability = block->ssa->availabilityAtHead;
-            
-            for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
-                Node* node = block->at(nodeIndex);
-                switch (node->op()) {
-                case SetLocal:
-                case MovHint:
-                case MovHintAndCheck: {
-                    availability.operand(node->local()) = node->child1().node();
-                    break;
-                }
-                    
-                case ZombieHint: {
-                    availability.operand(node->local()) = 0;
-                    break;
-                }
-                    
-                case GetArgument: {
-                    availability.operand(node->local()) = node;
-                    break;
-                }
-                    
-                default:
-                    break;
-                }
-            }
-            
-            for (unsigned j = block->numSuccessors(); j--;) {
-                BasicBlock* successor = block->successor(j);
-                Operands<Node*>& successorAvailability = successor->ssa->availabilityAtHead;
-                for (unsigned k = availability.size(); k--;) {
-                    Node* myNode = availability[k];
-                    if (!myNode)
-                        continue;
-                    
-                    if (!successor->ssa->liveAtHead.contains(myNode))
-                        continue;
-                    
-                    // Note that this may overwrite availability with a bogus node
-                    // at merge points. This is fine, since merge points have
-                    // MovHint(Phi)'s to work around this. The outcome of this is
-                    // you might have a program in which a node happens to remain
-                    // live into some block B, and separately (due to copy
-                    // propagation) just one of the predecessors of B issued a
-                    // MovHint putting that node into some local. Then in B we might
-                    // think that that node is a valid value for that local. Of
-                    // course if that local was actually live in B, B would have a
-                    // Phi for it. So essentially we'll have OSR exit dropping this
-                    // node's value into the local when we otherwise (in the DFG)
-                    // would have dropped undefined into the local. This seems
-                    // harmless.
-                    
-                    successorAvailability[k] = myNode;
-                }
+        BasicBlock* root = m_graph.block(0);
+        for (unsigned argument = root->ssa->availabilityAtHead.numberOfArguments(); argument--;) {
+            root->ssa->availabilityAtHead.argument(argument) =
+                Availability::unavailable().withFlush(
+                    FlushedAt(FlushedJSValue, virtualRegisterForArgument(argument)));
+        }
+        for (unsigned local = root->ssa->availabilityAtHead.numberOfLocals(); local--;)
+            root->ssa->availabilityAtHead.local(local) = Availability::unavailable();
+        
+        if (m_graph.m_plan.mode == FTLForOSREntryMode) {
+            for (unsigned local = m_graph.m_profiledBlock->m_numCalleeRegisters; local--;) {
+                root->ssa->availabilityAtHead.local(local) =
+                    Availability::unavailable().withFlush(
+                        FlushedAt(FlushedJSValue, virtualRegisterForLocal(local)));
             }
         }
+        
+        // This could be made more efficient by processing blocks in reverse postorder.
+        Operands<Availability> availability;
+        bool changed;
+        do {
+            changed = false;
+            
+            for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+                BasicBlock* block = m_graph.block(blockIndex);
+                if (!block)
+                    continue;
+                
+                availability = block->ssa->availabilityAtHead;
+                
+                for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
+                    Node* node = block->at(nodeIndex);
+                    
+                    switch (node->op()) {
+                    case SetLocal: {
+                        VariableAccessData* variable = node->variableAccessData();
+                        availability.operand(variable->local()) =
+                            Availability(node->child1().node(), variable->flushedAt());
+                        break;
+                    }
+                        
+                    case GetArgument: {
+                        VariableAccessData* variable = node->variableAccessData();
+                        availability.operand(variable->local()) =
+                            Availability(node, variable->flushedAt());
+                        break;
+                    }
+                        
+                    case MovHint:
+                    case MovHintAndCheck: {
+                        VariableAccessData* variable = node->variableAccessData();
+                        availability.operand(variable->local()) =
+                            Availability(node->child1().node());
+                        break;
+                    }
+                        
+                    case ZombieHint: {
+                        VariableAccessData* variable = node->variableAccessData();
+                        availability.operand(variable->local()) = Availability::unavailable();
+                        break;
+                    }
+                        
+                    default:
+                        break;
+                    }
+                }
+                
+                if (availability == block->ssa->availabilityAtTail)
+                    continue;
+                
+                block->ssa->availabilityAtTail = availability;
+                changed = true;
+                
+                for (unsigned successorIndex = block->numSuccessors(); successorIndex--;) {
+                    BasicBlock* successor = block->successor(successorIndex);
+                    for (unsigned i = availability.size(); i--;) {
+                        successor->ssa->availabilityAtHead[i] = availability[i].merge(
+                            successor->ssa->availabilityAtHead[i]);
+                    }
+                }
+            }
+        } while (changed);
         
         return true;
     }

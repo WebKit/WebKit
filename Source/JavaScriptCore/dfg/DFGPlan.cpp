@@ -50,6 +50,7 @@
 #include "DFGOSREntrypointCreationPhase.h"
 #include "DFGPredictionInjectionPhase.h"
 #include "DFGPredictionPropagationPhase.h"
+#include "DFGResurrectionForValidationPhase.h"
 #include "DFGSSAConversionPhase.h"
 #include "DFGStackLayoutPhase.h"
 #include "DFGTierUpCheckInjectionPhase.h"
@@ -268,6 +269,8 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performLICM(dfg);
         performLivenessAnalysis(dfg);
         performCFA(dfg);
+        if (Options::validateFTLOSRExitLiveness())
+            performResurrectionForValidation(dfg);
         performDCE(dfg); // We rely on this to convert dead SetLocals into the appropriate hint, and to kill dead code that won't be recognized as dead by LLVM.
         performStackLayout(dfg);
         performLivenessAnalysis(dfg);

@@ -36,8 +36,6 @@ namespace JSC {
 
 class CodeBlock;
 
-typedef HashMap<unsigned, FastBitVector, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned> > BytecodeToBitmapMap;
-
 class BytecodeBasicBlock : public RefCounted<BytecodeBasicBlock> {
 public:
     enum SpecialBlockType { EntryBlock, ExitBlock };

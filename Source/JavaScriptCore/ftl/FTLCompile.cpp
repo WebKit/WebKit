@@ -160,6 +160,10 @@ static void fixFunctionBasedOnStackMaps(
         for (unsigned i = 0; i < state.jitCode->osrExit.size(); ++i) {
             OSRExitCompilationInfo& info = state.finalizer->osrExit[i];
             OSRExit& exit = jitCode->osrExit[i];
+            
+            if (Options::verboseCompilation())
+                dataLog("Handling OSR stackmap #", exit.m_stackmapID, "\n");
+            
             StackMaps::RecordMap::iterator iter = recordMap.find(exit.m_stackmapID);
             if (iter == recordMap.end()) {
                 // It was optimized out.
@@ -179,6 +183,9 @@ static void fixFunctionBasedOnStackMaps(
         
         for (unsigned i = state.getByIds.size(); i--;) {
             GetByIdDescriptor& getById = state.getByIds[i];
+            
+            if (Options::verboseCompilation())
+                dataLog("Handling GetById stackmap #", getById.stackmapID(), "\n");
             
             StackMaps::RecordMap::iterator iter = recordMap.find(getById.stackmapID());
             if (iter == recordMap.end()) {
@@ -213,6 +220,9 @@ static void fixFunctionBasedOnStackMaps(
         
         for (unsigned i = state.putByIds.size(); i--;) {
             PutByIdDescriptor& putById = state.putByIds[i];
+            
+            if (Options::verboseCompilation())
+                dataLog("Handling PutById stackmap #", putById.stackmapID(), "\n");
             
             StackMaps::RecordMap::iterator iter = recordMap.find(putById.stackmapID());
             if (iter == recordMap.end()) {

@@ -1,3 +1,12 @@
+2013-11-15  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should have an explicit notion of bytecode liveness
+        https://bugs.webkit.org/show_bug.cgi?id=124181
+
+        Reviewed by Mark Hahnenberg.
+
+        * Scripts/run-jsc-stress-tests:
+
 2013-11-16  Dan Bernstein  <mitz@apple.com>
 
         No way for policy client to determine if a the response’s MIME type can be shown

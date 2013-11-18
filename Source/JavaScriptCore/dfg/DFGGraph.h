@@ -416,6 +416,13 @@ public:
         return executableFor(codeOrigin.inlineCallFrame);
     }
     
+    CodeBlock* baselineCodeBlockFor(InlineCallFrame* inlineCallFrame)
+    {
+        if (!inlineCallFrame)
+            return m_profiledBlock;
+        return baselineCodeBlockForInlineCallFrame(inlineCallFrame);
+    }
+    
     CodeBlock* baselineCodeBlockFor(const CodeOrigin& codeOrigin)
     {
         return baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, m_profiledBlock);
@@ -776,6 +783,10 @@ public:
     DesiredWatchpoints& watchpoints() { return m_plan.watchpoints; }
     DesiredStructureChains& chains() { return m_plan.chains; }
     
+    FullBytecodeLiveness& livenessFor(CodeBlock*);
+    FullBytecodeLiveness& livenessFor(InlineCallFrame*);
+    bool isLiveInBytecode(VirtualRegister, CodeOrigin);
+    
     VM& m_vm;
     Plan& m_plan;
     CodeBlock* m_codeBlock;
@@ -797,6 +808,7 @@ public:
     SegmentedVector<SwitchData, 4> m_switchData;
     Vector<InlineVariableData, 4> m_inlineVariableData;
     OwnPtr<InlineCallFrameSet> m_inlineCallFrames;
+    HashMap<CodeBlock*, std::unique_ptr<FullBytecodeLiveness>> m_bytecodeLiveness;
     bool m_hasArguments;
     HashSet<ExecutableBase*> m_executablesWhoseArgumentsEscaped;
     BitVector m_lazyVars;

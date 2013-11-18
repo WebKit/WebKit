@@ -413,6 +413,10 @@ def runFTLNoCJIT
     run("ftl-no-cjit", "--enableConcurrentJIT=false", "--useExperimentalFTL=true")
 end
 
+def runFTLNoCJITOSRValidation
+    run("ftl-no-cjit-osr-validation", "--enableConcurrentJIT=false", "--useExperimentalFTL=true", "--validateFTLOSRExitLiveness=true")
+end
+
 def runDFGEager
     run("dfg-eager", *EAGER_OPTIONS)
 end
@@ -429,6 +433,10 @@ def runFTLEagerNoCJIT
     run("ftl-eager-no-cjit", "--useExperimentalFTL=true", "--enableConcurrentJIT=false", *EAGER_OPTIONS)
 end
 
+def runFTLEagerNoCJITOSRValidation
+    run("ftl-eager-no-cjit-osr-validation", "--useExperimentalFTL=true", "--enableConcurrentJIT=false", "--validateFTLOSRExitLiveness=true", *EAGER_OPTIONS)
+end
+
 def runAlwaysTriggerCopyPhase
     run("always-trigger-copy-phase", "--minHeapUtilization=2.0", "--minCopiedBlockUtilization=2.0")
 end
@@ -443,8 +451,10 @@ def defaultRun
     if $enableFTL
         runDefaultFTL
         runFTLNoCJIT
+        runFTLNoCJITOSRValidation
         runFTLEager
         runFTLEagerNoCJIT
+        runFTLEagerNoCJITOSRValidation
     end
 end
 

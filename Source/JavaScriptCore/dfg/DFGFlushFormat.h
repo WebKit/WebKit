@@ -45,7 +45,8 @@ enum FlushFormat {
     FlushedDouble,
     FlushedCell,
     FlushedBoolean,
-    FlushedJSValue
+    FlushedJSValue,
+    ConflictingFlush
 };
 
 inline NodeFlags resultFor(FlushFormat format)
@@ -54,6 +55,7 @@ inline NodeFlags resultFor(FlushFormat format)
     case DeadFlush:
     case FlushedJSValue:
     case FlushedCell:
+    case ConflictingFlush:
         return NodeResultJS;
     case FlushedInt32:
         return NodeResultInt32;
@@ -73,6 +75,7 @@ inline UseKind useKindFor(FlushFormat format)
     switch (format) {
     case DeadFlush:
     case FlushedJSValue:
+    case ConflictingFlush:
         return UntypedUse;
     case FlushedCell:
         return CellUse;
@@ -93,6 +96,7 @@ inline DataFormat dataFormatFor(FlushFormat format)
 {
     switch (format) {
     case DeadFlush:
+    case ConflictingFlush:
         return DataFormatDead;
     case FlushedJSValue:
         return DataFormatJS;

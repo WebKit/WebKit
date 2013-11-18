@@ -32,7 +32,7 @@ namespace JSC { namespace DFG {
 
 void FlushedAt::dump(PrintStream& out) const
 {
-    if (m_format == DeadFlush)
+    if (m_format == DeadFlush || m_format == ConflictingFlush)
         out.print(m_format);
     else
         out.print("r", m_virtualRegister, ":", m_format);

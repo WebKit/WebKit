@@ -1,3 +1,22 @@
+2013-11-17  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should have an explicit notion of bytecode liveness
+        https://bugs.webkit.org/show_bug.cgi?id=124181
+
+        Reviewed by Mark Hahnenberg or Sam Weinig.
+        
+        I totally added this test after the rest of the patch was r+'d. Under the right tier-up
+        modes this triggers one of the bugs that the rest of the patch is trying to avoid.
+
+        * js/regress/script-tests/weird-inlining-const-prop.js: Added.
+        (foo):
+        (bar):
+        (fuzz):
+        (testImpl):
+        (test):
+        * js/regress/weird-inlining-const-prop-expected.txt: Added.
+        * js/regress/weird-inlining-const-prop.html: Added.
+
 2013-11-17  Alexey Proskuryakov  <ap@apple.com>
 
         RSASSA-PKCS1-v1_5 JWK import doesn't check key size

@@ -38,7 +38,6 @@
 #include "FTLLoweredNodeValue.h"
 #include "FTLOutput.h"
 #include "FTLThunks.h"
-#include "FTLValueSource.h"
 #include "LinkBuffer.h"
 #include "OperandsInlines.h"
 #include "Operations.h"
@@ -70,7 +69,7 @@ public:
         , m_ftlState(state)
         , m_heaps(state.context)
         , m_out(state.context)
-        , m_valueSources(OperandsLike, state.graph.block(0)->variablesAtHead)
+        , m_availability(OperandsLike, state.graph.block(0)->variablesAtHead)
         , m_state(state.graph)
         , m_interpreter(state.graph, m_state)
         , m_stackmapIDs(0)
@@ -203,8 +202,6 @@ private:
         }
         
         initializeOSRExitStateForBlock();
-        
-        m_live = block->ssa->liveAtHead;
         
         m_state.reset();
         m_state.beginBasicBlock(m_highBlock);
@@ -475,12 +472,6 @@ private:
             break;
         }
         
-        if (m_node->shouldGenerate())
-            DFG_NODE_DO_TO_CHILDREN(m_graph, m_node, use);
-        
-        if (m_node->adjustedRefCount())
-            m_live.add(m_node);
-        
         if (shouldExecuteEffects)
             m_interpreter.executeEffects(nodeIndex);
         
@@ -619,36 +610,31 @@ private:
         case FlushedJSValue: {
             LValue value = lowJSValue(m_node->child1());
             m_out.store64(value, addressFor(variable->machineLocal()));
-            m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack, variable->machineLocal());
-            return;
+            break;
         }
             
         case FlushedDouble: {
             LValue value = lowDouble(m_node->child1());
             m_out.storeDouble(value, addressFor(variable->machineLocal()));
-            m_valueSources.operand(variable->local()) = ValueSource(DoubleInJSStack, variable->machineLocal());
-            return;
+            break;
         }
             
         case FlushedInt32: {
             LValue value = lowInt32(m_node->child1());
             m_out.store32(value, payloadFor(variable->machineLocal()));
-            m_valueSources.operand(variable->local()) = ValueSource(Int32InJSStack, variable->machineLocal());
-            return;
+            break;
         }
             
         case FlushedInt52: {
             LValue value = lowInt52(m_node->child1());
             m_out.store64(value, addressFor(variable->machineLocal()));
-            m_valueSources.operand(variable->local()) = ValueSource(Int52InJSStack, variable->machineLocal());
-            return;
+            break;
         }
             
         case FlushedCell: {
             LValue value = lowCell(m_node->child1());
             m_out.store64(value, addressFor(variable->machineLocal()));
-            m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack, variable->machineLocal());
-            return;
+            break;
         }
             
         case FlushedBoolean: {
@@ -656,15 +642,15 @@ private:
             m_out.store64(
                 lowJSValue(m_node->child1(), ManualOperandSpeculation),
                 addressFor(variable->machineLocal()));
-            m_valueSources.operand(variable->local()) = ValueSource(ValueInJSStack, variable->machineLocal());
-            return;
+            break;
         }
             
-        case DeadFlush:
+        default:
             RELEASE_ASSERT_NOT_REACHED();
+            break;
         }
         
-        RELEASE_ASSERT_NOT_REACHED();
+        m_availability.operand(variable->local()) = Availability(variable->flushedAt());
     }
     
     void compileMovHint()
@@ -675,7 +661,7 @@ private:
     void compileZombieHint()
     {
         VariableAccessData* data = m_node->variableAccessData();
-        m_valueSources.operand(data->local()) = ValueSource(SourceIsDead);
+        m_availability.operand(data->local()) = Availability::unavailable();
     }
     
     void compileMovHintAndCheck()
@@ -1273,6 +1259,10 @@ private:
 
         // Arguments: id, bytes, target, numArgs, args...
         unsigned stackmapID = m_stackmapIDs++;
+        
+        if (Options::verboseCompilation())
+            dataLog("    Emitting GetById patchpoint with stackmap #", stackmapID, "\n");
+        
         LValue call = m_out.call(
             m_out.patchpointInt64Intrinsic(),
             m_out.constInt32(stackmapID), m_out.constInt32(sizeOfGetById()),
@@ -1287,13 +1277,17 @@ private:
     {
         // See above; CellUse is easier so we do only that for now.
         ASSERT(m_node->child1().useKind() == CellUse);
-
+        
         LValue base = lowCell(m_node->child1());
         LValue value = lowJSValue(m_node->child2());
         StringImpl* uid = m_graph.identifiers()[m_node->identifierNumber()];
 
         // Arguments: id, bytes, target, numArgs, args...
         unsigned stackmapID = m_stackmapIDs++;
+
+        if (Options::verboseCompilation())
+            dataLog("    Emitting PutById patchpoint with stackmap #", stackmapID, "\n");
+        
         LValue call = m_out.call(
             m_out.patchpointVoidIntrinsic(),
             m_out.constInt32(stackmapID), m_out.constInt32(sizeOfPutById()),
@@ -2544,12 +2538,12 @@ private:
     void compileInvalidationPoint()
     {
         if (verboseCompilationEnabled())
-            dataLog("    Invalidation point with value sources: ", m_valueSources, "\n");
+            dataLog("    Invalidation point with availability: ", m_availability, "\n");
         
         m_ftlState.jitCode->osrExit.append(OSRExit(
             UncountableInvalidation, InvalidValueFormat, MethodOfGettingAValueProfile(),
             m_codeOriginForExitTarget, m_codeOriginForExitProfile,
-            m_valueSources.numberOfArguments(), m_valueSources.numberOfLocals()));
+            m_availability.numberOfArguments(), m_availability.numberOfLocals()));
         m_ftlState.finalizer->osrExit.append(OSRExitCompilationInfo());
         
         OSRExit& exit = m_ftlState.jitCode->osrExit.last();
@@ -2557,7 +2551,7 @@ private:
         
         ExitArgumentList arguments;
         
-        buildExitArguments(exit, arguments, FormattedValue());
+        buildExitArguments(exit, arguments, FormattedValue(), exit.m_codeOrigin);
         callStackmap(exit, arguments);
         
         info.m_isInvalidationPoint = true;
@@ -3822,25 +3816,6 @@ private:
         m_out.appendTo(continuation, lastNext);
     }
     
-    bool isLive(Node* node)
-    {
-        return m_live.contains(node);
-    }
-    
-    void use(Edge edge)
-    {
-        ASSERT(edge->hasResult());
-        if (!edge.doesKill())
-            return;
-        m_live.remove(edge.node());
-    }
-    
-    // Wrapper used only for DFG_NODE_DO_TO_CHILDREN
-    void use(Node*, Edge edge)
-    {
-        use(edge);
-    }
-    
     LBasicBlock lowBlock(BasicBlock* block)
     {
         return m_blocks.get(block);
@@ -3848,40 +3823,7 @@ private:
     
     void initializeOSRExitStateForBlock()
     {
-        for (unsigned i = m_valueSources.size(); i--;) {
-            FlushedAt flush = m_highBlock->ssa->flushAtHead[i];
-            switch (flush.format()) {
-            case DeadFlush: {
-                // Must consider available nodes instead.
-                Node* node = m_highBlock->ssa->availabilityAtHead[i];
-                if (!node) {
-                    m_valueSources[i] = ValueSource(SourceIsDead);
-                    break;
-                }
-                
-                m_valueSources[i] = ValueSource(node);
-                break;
-            }
-                
-            case FlushedInt32:
-                m_valueSources[i] = ValueSource(Int32InJSStack, flush.virtualRegister());
-                break;
-                
-            case FlushedInt52:
-                m_valueSources[i] = ValueSource(Int52InJSStack, flush.virtualRegister());
-                break;
-                
-            case FlushedDouble:
-                m_valueSources[i] = ValueSource(DoubleInJSStack, flush.virtualRegister());
-                break;
-                
-            case FlushedCell:
-            case FlushedBoolean:
-            case FlushedJSValue:
-                m_valueSources[i] = ValueSource(ValueInJSStack, flush.virtualRegister());
-                break;
-            }
-        }
+        m_availability = m_highBlock->ssa->availabilityAtHead;
     }
     
     void appendOSRExit(
@@ -3889,14 +3831,14 @@ private:
         SpeculationDirection direction, FormattedValue recovery)
     {
         if (verboseCompilationEnabled())
-            dataLog("    OSR exit with value sources: ", m_valueSources, "\n");
-        
+            dataLog("    OSR exit #", m_ftlState.jitCode->osrExit.size(), " with availability: ", m_availability, "\n");
+
         ASSERT(m_ftlState.jitCode->osrExit.size() == m_ftlState.finalizer->osrExit.size());
         
         m_ftlState.jitCode->osrExit.append(OSRExit(
             kind, lowValue.format(), m_graph.methodOfGettingAValueProfileFor(highValue),
             m_codeOriginForExitTarget, m_codeOriginForExitProfile,
-            m_valueSources.numberOfArguments(), m_valueSources.numberOfLocals()));
+            m_availability.numberOfArguments(), m_availability.numberOfLocals()));
         m_ftlState.finalizer->osrExit.append(OSRExitCompilationInfo());
         
         OSRExit& exit = m_ftlState.jitCode->osrExit.last();
@@ -3924,10 +3866,23 @@ private:
     {
         ExitArgumentList arguments;
         
-        buildExitArguments(exit, arguments, lowValue);
+        CodeOrigin codeOrigin = exit.m_codeOrigin;
         
-        if (direction == ForwardSpeculation) {
-            ASSERT(m_node);
+        if (direction == BackwardSpeculation)
+            buildExitArguments(exit, arguments, lowValue, codeOrigin);
+        else {
+            ASSERT(direction == ForwardSpeculation);
+            if (!recovery) {
+                for (unsigned nodeIndex = m_nodeIndex; nodeIndex < m_highBlock->size(); ++nodeIndex) {
+                    Node* node = m_highBlock->at(nodeIndex);
+                    if (node->codeOriginForExitTarget == codeOrigin)
+                        continue;
+                    codeOrigin = node->codeOriginForExitTarget;
+                    break;
+                }
+            }
+            
+            buildExitArguments(exit, arguments, lowValue, codeOrigin);
             exit.convertToForward(m_highBlock, m_node, m_nodeIndex, recovery, arguments);
         }
         
@@ -3935,36 +3890,59 @@ private:
     }
     
     void buildExitArguments(
-        OSRExit& exit, ExitArgumentList& arguments, FormattedValue lowValue)
+        OSRExit& exit, ExitArgumentList& arguments, FormattedValue lowValue,
+        CodeOrigin codeOrigin)
     {
         arguments.append(m_callFrame);
         if (!!lowValue)
             arguments.append(lowValue.value());
         
         for (unsigned i = 0; i < exit.m_values.size(); ++i) {
-            ValueSource source = m_valueSources[i];
+            int operand = exit.m_values.operandForIndex(i);
+            bool isLive = m_graph.isLiveInBytecode(VirtualRegister(operand), codeOrigin);
+            if (!isLive) {
+                exit.m_values[i] = ExitValue::dead();
+                continue;
+            }
             
-            switch (source.kind()) {
-            case ValueInJSStack:
-                exit.m_values[i] = ExitValue::inJSStack(source.virtualRegister());
-                break;
-            case Int32InJSStack:
-                exit.m_values[i] = ExitValue::inJSStackAsInt32(source.virtualRegister());
-                break;
-            case Int52InJSStack:
-                exit.m_values[i] = ExitValue::inJSStackAsInt52(source.virtualRegister());
-                break;
-            case DoubleInJSStack:
-                exit.m_values[i] = ExitValue::inJSStackAsDouble(source.virtualRegister());
-                break;
-            case SourceIsDead:
+            Availability availability = m_availability[i];
+            FlushedAt flush = availability.flushedAt();
+            switch (flush.format()) {
+            case DeadFlush:
+            case ConflictingFlush:
+                if (availability.hasNode()) {
+                    addExitArgumentForNode(exit, arguments, i, availability.node());
+                    break;
+                }
+                
+                if (Options::validateFTLOSRExitLiveness()) {
+                    dataLog("Expected r", operand, " to be available but it wasn't.\n");
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+                
+                // This means that the DFG's DCE proved that the value is dead in bytecode
+                // even though the bytecode liveness analysis thinks it's live. This is
+                // acceptable since the DFG's DCE is by design more aggressive while still
+                // being sound.
                 exit.m_values[i] = ExitValue::dead();
                 break;
-            case HaveNode:
-                addExitArgumentForNode(exit, arguments, i, source.node());
+
+            case FlushedJSValue:
+            case FlushedCell:
+            case FlushedBoolean:
+                exit.m_values[i] = ExitValue::inJSStack(flush.virtualRegister());
                 break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
+                
+            case FlushedInt32:
+                exit.m_values[i] = ExitValue::inJSStackAsInt32(flush.virtualRegister());
+                break;
+                
+            case FlushedInt52:
+                exit.m_values[i] = ExitValue::inJSStackAsInt52(flush.virtualRegister());
+                break;
+                
+            case FlushedDouble:
+                exit.m_values[i] = ExitValue::inJSStackAsDouble(flush.virtualRegister());
                 break;
             }
         }
@@ -3991,53 +3969,6 @@ private:
         if (tryToSetConstantExitArgument(exit, index, node))
             return;
         
-        if (!isLive(node)) {
-            bool found = false;
-            
-            if (permitsOSRBackwardRewiring(node->op())) {
-                node = node->child1().node();
-                if (tryToSetConstantExitArgument(exit, index, node))
-                    return;
-                if (isLive(node))
-                    found = true;
-            }
-            
-            if (!found) {
-                Node* bestNode = 0;
-                unsigned bestScore = 0;
-                
-                HashSet<Node*>::iterator iter = m_live.begin();
-                HashSet<Node*>::iterator end = m_live.end();
-                for (; iter != end; ++iter) {
-                    Node* candidate = *iter;
-                    if (candidate->flags() & NodeHasVarArgs)
-                        continue;
-                    if (!candidate->child1())
-                        continue;
-                    if (candidate->child1() != node)
-                        continue;
-                    unsigned myScore = forwardRewiringSelectionScore(candidate->op());
-                    if (myScore <= bestScore)
-                        continue;
-                    bestNode = candidate;
-                    bestScore = myScore;
-                }
-                
-                if (bestNode) {
-                    ASSERT(isLive(bestNode));
-                    node = bestNode;
-                    found = true;
-                }
-            }
-            
-            if (!found) {
-                exit.m_values[index] = ExitValue::dead();
-                return;
-            }
-        }
-        
-        ASSERT(isLive(node));
-
         LoweredNodeValue value = m_int32Values.get(node);
         if (isValid(value)) {
             addExitArgument(exit, arguments, index, ValueFormatInt32, value.value());
@@ -4114,7 +4045,7 @@ private:
         
         VirtualRegister operand = node->local();
         
-        m_valueSources.operand(operand) = ValueSource(node->child1().node());
+        m_availability.operand(operand) = Availability(node->child1().node());
     }
     
     void setInt32(Node* node, LValue value)
@@ -4272,11 +4203,10 @@ private:
     HashMap<Node*, LoweredNodeValue> m_booleanValues;
     HashMap<Node*, LoweredNodeValue> m_storageValues;
     HashMap<Node*, LoweredNodeValue> m_doubleValues;
-    HashSet<Node*> m_live;
     
     HashMap<Node*, LValue> m_phis;
     
-    Operands<ValueSource> m_valueSources;
+    Operands<Availability> m_availability;
     
     InPlaceAbstractState m_state;
     AbstractInterpreter<InPlaceAbstractState> m_interpreter;

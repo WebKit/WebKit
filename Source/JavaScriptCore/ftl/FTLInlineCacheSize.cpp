@@ -39,7 +39,7 @@ namespace JSC { namespace FTL {
 
 size_t sizeOfGetById()
 {
-    return 29;
+    return 30;
 }
 
 size_t sizeOfPutById()

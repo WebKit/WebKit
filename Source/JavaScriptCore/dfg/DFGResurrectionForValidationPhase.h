@@ -10,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -23,27 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DumpContext.h"
+#ifndef DFGResurrectionForValidationPhase_h
+#define DFGResurrectionForValidationPhase_h
 
-namespace JSC {
+#include <wtf/Platform.h>
 
-DumpContext::DumpContext()
-    : graph(0)
-{
-}
+#if ENABLE(DFG_JIT)
 
-DumpContext::~DumpContext() { }
+#include "DFGCommon.h"
 
-bool DumpContext::isEmpty() const
-{
-    return structures.isEmpty();
-}
+namespace JSC { namespace DFG {
 
-void DumpContext::dump(PrintStream& out, const char* prefix) const
-{
-    structures.dump(out, prefix);
-}
+class Graph;
 
-} // namespace JSC
+// Places a Phantom after every value-producing node, thereby disabling DCE from killing it.
+// This is useful for validating our OSR exit machinery by instituting the requirement that
+// any live-in-bytecode variable should be OSR-available. Without this phase, it's impossible
+// to make such an assertion because our DCE is more aggressive than the bytecode liveness
+// analysis.
+
+bool performResurrectionForValidation(Graph&);
+
+} } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)
+
+#endif // DFGResurrectionForValidationPhase_h
 

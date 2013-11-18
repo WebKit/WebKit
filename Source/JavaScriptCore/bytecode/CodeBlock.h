@@ -354,6 +354,27 @@ public:
     {
         return m_needsActivation;
     }
+    
+    unsigned captureCount() const
+    {
+        if (!symbolTable())
+            return 0;
+        return symbolTable()->captureCount();
+    }
+    
+    int captureStart() const
+    {
+        if (!symbolTable())
+            return 0;
+        return symbolTable()->captureStart();
+    }
+    
+    int captureEnd() const
+    {
+        if (!symbolTable())
+            return 0;
+        return symbolTable()->captureEnd();
+    }
 
     bool isCaptured(VirtualRegister operand, InlineCallFrame* = 0) const;
     

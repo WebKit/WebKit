@@ -26,6 +26,7 @@
 #ifndef DFGVariableAccessData_h
 #define DFGVariableAccessData_h
 
+#include "DFGCommon.h"
 #include "DFGDoubleFormatState.h"
 #include "DFGFlushFormat.h"
 #include "DFGFlushedAt.h"
@@ -38,6 +39,8 @@
 #include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {
+
+struct Node;
 
 enum DoubleBallot { VoteValue, VoteDouble };
 
