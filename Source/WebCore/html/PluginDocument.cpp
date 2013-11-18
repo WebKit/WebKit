@@ -69,7 +69,7 @@ void PluginDocumentParser::createDocumentStructure()
 {
     RefPtr<Element> rootElement = document()->createElement(htmlTag, false);
     document()->appendChild(rootElement, IGNORE_EXCEPTION);
-    static_cast<HTMLHtmlElement*>(rootElement.get())->insertedByParser();
+    toHTMLHtmlElement(rootElement.get())->insertedByParser();
 
     if (document()->frame())
         document()->frame()->loader().dispatchDocumentElementAvailable();
@@ -83,7 +83,7 @@ void PluginDocumentParser::createDocumentStructure()
         
     RefPtr<Element> embedElement = document()->createElement(embedTag, false);
         
-    m_embedElement = static_cast<HTMLEmbedElement*>(embedElement.get());
+    m_embedElement = toHTMLEmbedElement(embedElement.get());
     m_embedElement->setAttribute(widthAttr, "100%");
     m_embedElement->setAttribute(heightAttr, "100%");
     

@@ -1598,7 +1598,7 @@ HTMLDataListElement* HTMLInputElement::dataList() const
     if (!element->hasTagName(datalistTag))
         return 0;
 
-    return static_cast<HTMLDataListElement*>(element);
+    return toHTMLDataListElement(element);
 }
 
 void HTMLInputElement::resetListAttributeTargetObserver()

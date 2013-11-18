@@ -859,7 +859,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
         Style::attachRenderTree(*newElement);
 
     if (newElement->hasTagName(HTMLNames::htmlTag))
-        static_cast<HTMLHtmlElement*>(newElement.get())->insertedByParser();
+        toHTMLHtmlElement(newElement.get())->insertedByParser();
 
     if (!m_parsingFragment && isFirstElement && document()->frame())
         document()->frame()->loader().dispatchDocumentElementAvailable();

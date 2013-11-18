@@ -195,7 +195,7 @@ void ImageDocument::createDocumentStructure()
 {
     RefPtr<Element> rootElement = Document::createElement(htmlTag, false);
     appendChild(rootElement, IGNORE_EXCEPTION);
-    static_cast<HTMLHtmlElement*>(rootElement.get())->insertedByParser();
+    toHTMLHtmlElement(rootElement.get())->insertedByParser();
 
     if (frame())
         frame()->loader().dispatchDocumentElementAvailable();

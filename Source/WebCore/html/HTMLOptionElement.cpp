@@ -269,7 +269,7 @@ HTMLDataListElement* HTMLOptionElement::ownerDataListElement() const
 {
     for (ContainerNode* parent = parentNode(); parent ; parent = parent->parentNode()) {
         if (parent->hasTagName(datalistTag))
-            return static_cast<HTMLDataListElement*>(parent);
+            return toHTMLDataListElement(parent);
     }
     return 0;
 }

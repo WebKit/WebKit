@@ -1,5 +1,37 @@
 2013-11-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Generate toHTMLDataList|Html|EmbedElement
+        https://bugs.webkit.org/show_bug.cgi?id=124482
+
+        Reviewed by Tim Horton.
+
+        To clean up static_cast<HTMLFoo*>, toHTMLEmbedElement, toHTMLHtmlElement, toHTMLDataListElement
+        are generated.
+
+        No new tests, no behavior changes.
+
+        * html/HTMLDataListElement.h:
+        * html/HTMLEmbedElement.h:
+        * html/HTMLHtmlElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::dataList):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::ownerDataListElement):
+        * html/HTMLTagNames.in:
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::createDocumentStructure):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure):
+        (WebCore::MediaDocument::replaceMediaElementTimerFired):
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::createDocumentStructure):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paintSliderTicks):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::startElementNs):
+
+2013-11-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Clean up static_cast<HTMLFoo*> usage
         https://bugs.webkit.org/show_bug.cgi?id=124480
 

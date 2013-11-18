@@ -50,6 +50,8 @@ private:
     HTMLDataListElement(const QualifiedName&, Document&);
 };
 
+NODE_TYPE_CASTS(HTMLDataListElement)
+
 } // namespace WebCore
 #endif // ENABLE(DATALIST_ELEMENT)
 

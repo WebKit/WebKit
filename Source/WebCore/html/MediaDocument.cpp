@@ -76,7 +76,7 @@ void MediaDocumentParser::createDocumentStructure()
     RefPtr<Element> rootElement = document()->createElement(htmlTag, false);
     document()->appendChild(rootElement, IGNORE_EXCEPTION);
     document()->setCSSTarget(rootElement.get());
-    static_cast<HTMLHtmlElement*>(rootElement.get())->insertedByParser();
+    toHTMLHtmlElement(rootElement.get())->insertedByParser();
 
     if (document()->frame())
         document()->frame()->loader().dispatchDocumentElementAvailable();
@@ -221,7 +221,7 @@ void MediaDocument::replaceMediaElementTimerFired(Timer<MediaDocument>*)
 
     if (HTMLVideoElement* videoElement = descendentVideoElement(*htmlBody)) {
         RefPtr<Element> element = Document::createElement(embedTag, false);
-        HTMLEmbedElement* embedElement = static_cast<HTMLEmbedElement*>(element.get());
+        HTMLEmbedElement* embedElement = toHTMLEmbedElement(element.get());
 
         embedElement->setAttribute(widthAttr, "100%");
         embedElement->setAttribute(heightAttr, "100%");

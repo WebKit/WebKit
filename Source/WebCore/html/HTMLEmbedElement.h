@@ -52,6 +52,8 @@ private:
     void parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues);
 };
 
+NODE_TYPE_CASTS(HTMLEmbedElement)
+
 }
 
 #endif
