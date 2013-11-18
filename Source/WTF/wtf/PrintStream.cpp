@@ -89,6 +89,16 @@ void printInternal(PrintStream& out, unsigned value)
     out.printf("%u", value);
 }
 
+void printInternal(PrintStream& out, signed char value)
+{
+    out.printf("%d", static_cast<int>(value));
+}
+
+void printInternal(PrintStream& out, unsigned char value)
+{
+    out.printf("%u", static_cast<unsigned>(value));
+}
+
 void printInternal(PrintStream& out, short value)
 {
     out.printf("%d", static_cast<int>(value));

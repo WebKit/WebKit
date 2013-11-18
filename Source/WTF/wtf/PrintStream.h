@@ -257,6 +257,8 @@ inline void printInternal(PrintStream& out, CString& value) { printInternal(out,
 inline void printInternal(PrintStream& out, String& value) { printInternal(out, static_cast<const String&>(value)); }
 inline void printInternal(PrintStream& out, StringImpl* value) { printInternal(out, static_cast<const StringImpl*>(value)); }
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, bool);
+WTF_EXPORT_PRIVATE void printInternal(PrintStream&, signed char); // NOTE: this prints as a number, not as a character; use CharacterDump if you want the character
+WTF_EXPORT_PRIVATE void printInternal(PrintStream&, unsigned char); // NOTE: see above.
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, short);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, unsigned short);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, int);

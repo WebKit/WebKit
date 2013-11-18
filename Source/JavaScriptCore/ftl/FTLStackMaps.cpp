@@ -56,14 +56,14 @@ void StackMaps::Constant::dump(PrintStream& out) const
 void StackMaps::Location::parse(DataView* view, unsigned& offset)
 {
     kind = static_cast<Kind>(view->read<uint8_t>(offset, true));
-    view->read<uint8_t>(offset, true); // reserved
+    size = view->read<uint8_t>(offset, true);
     dwarfRegNum = view->read<uint16_t>(offset, true);
     this->offset = view->read<int32_t>(offset, true);
 }
 
 void StackMaps::Location::dump(PrintStream& out) const
 {
-    out.print("(", kind, ", reg", dwarfRegNum, ", ", offset, ")");
+    out.print("(", kind, ", reg", dwarfRegNum, ", off:", offset, ", size:", size, ")");
 }
 
 GPRReg StackMaps::Location::directGPR() const

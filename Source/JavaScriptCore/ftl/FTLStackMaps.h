@@ -49,7 +49,7 @@ struct StackMaps {
     };
     
     struct Location {
-        enum Kind {
+        enum Kind : int8_t {
             Unprocessed,
             Register,
             Direct,
@@ -59,6 +59,7 @@ struct StackMaps {
         };
         
         uint16_t dwarfRegNum; // Represented as a 12-bit int in the section.
+        int8_t size;
         Kind kind;
         int16_t offset;
         
