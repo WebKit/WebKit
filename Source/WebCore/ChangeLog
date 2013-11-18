@@ -1,3 +1,15 @@
+2013-11-18  Brendan Long  <b.long@cablelabs.com>
+
+        [GStreamer] Crash when using media source
+        https://bugs.webkit.org/show_bug.cgi?id=124525
+
+        Reviewed by Philippe Normand.
+
+        No new tests because this is already covered by tests in media/media-source (which aren't enabled because the feature isn't done).
+
+        * platform/graphics/gstreamer/MediaSourceGStreamer.cpp:
+        (WebCore::MediaSourceGStreamer::MediaSourceGStreamer): Add missing adoptRef()
+
 2013-11-18  Brady Eidson  <beidson@apple.com>
 
         Remove unneeded BackingStore-related #include from IDBFactoryBackendInterface

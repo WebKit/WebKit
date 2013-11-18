@@ -46,7 +46,7 @@ void MediaSourceGStreamer::open(PassRefPtr<HTMLMediaSource> mediaSource, WebKitM
 }
 
 MediaSourceGStreamer::MediaSourceGStreamer(WebKitMediaSrc* src)
-    : m_client(new MediaSourceClientGstreamer(src))
+    : m_client(adoptRef(new MediaSourceClientGstreamer(src)))
     , m_duration(0.0)
     , m_readyState(MediaPlayer::HaveNothing)
 {
