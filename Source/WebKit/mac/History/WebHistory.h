@@ -125,7 +125,10 @@ extern NSString *WebHistoryItemsKey;
     @param calendarDate A date identifying the unique day of interest.
     @result Returns an array of WebHistoryItems last visited on the indicated day.
 */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (NSArray *)orderedItemsLastVisitedOnDay:(NSCalendarDate *)calendarDate;
+#pragma clang diagnostic pop
 
 /*!
     @method itemForURL:
