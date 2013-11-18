@@ -1,3 +1,13 @@
+2013-11-18  Julien Brianceau  <jbriance@cisco.com>
+
+        [arm] Add missing implementation in MacroAssembler to fix build (broken since r159395).
+        https://bugs.webkit.org/show_bug.cgi?id=124488
+
+        Reviewed by Zoltan Herczeg.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::branch8):
+
 2013-11-17  Julien Brianceau  <jbriance@cisco.com>
 
         [sh4] Fix revertJumpReplacementToBranchPtrWithPatch in MacroAssembler.

@@ -570,6 +570,13 @@ public:
         return branch32(cond, ARMRegisters::S1, right);
     }
 
+    Jump branch8(RelationalCondition cond, AbsoluteAddress left, TrustedImm32 right)
+    {
+        move(TrustedImmPtr(left.m_ptr), ARMRegisters::S1);
+        load8(Address(ARMRegisters::S1), ARMRegisters::S1);
+        return branch32(cond, ARMRegisters::S1, right);
+    }
+
     Jump branch32(RelationalCondition cond, RegisterID left, RegisterID right, int useConstantPool = 0)
     {
         m_assembler.cmp(left, right);
