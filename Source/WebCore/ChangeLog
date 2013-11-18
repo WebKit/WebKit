@@ -1,3 +1,15 @@
+2013-11-17  Jer Noble  <jer.noble@apple.com>
+
+        [WTF] Media time should not have a constructor which accepts a single int or float.
+        https://bugs.webkit.org/show_bug.cgi?id=124470
+
+        Reviewed by Eric Carlson.
+
+        Fix the compile error exposed by removing the default parameter in the MediaTime constructor.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::setTimestampOffset):
+
 2013-11-18  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         Change webaudio to use nullptr for null pointers

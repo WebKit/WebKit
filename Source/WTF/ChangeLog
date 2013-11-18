@@ -1,3 +1,15 @@
+2013-11-17  Jer Noble  <jer.noble@apple.com>
+
+        [WTF] Media time should not have a constructor which accepts a single int or float.
+        https://bugs.webkit.org/show_bug.cgi?id=124470
+
+        Having a constructor taking a single number value, as it's very easy to accidentially mis-
+        initialize a MediaTime with a double (automatically casted to a int64_t).
+
+        Reviewed by Eric Carlson.
+
+        * wtf/MediaTime.h:
+
 2013-11-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r159432 to make WinCairo build happy.

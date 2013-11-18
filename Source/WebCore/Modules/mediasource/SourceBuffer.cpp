@@ -160,7 +160,7 @@ void SourceBuffer::setTimestampOffset(double offset, ExceptionCode& ec)
     }
 
     // 6. Update the attribute to the new value.
-    m_timestampOffset = offset;
+    m_timestampOffset = MediaTime::createWithDouble(offset);
 }
 
 void SourceBuffer::appendBuffer(PassRefPtr<ArrayBuffer> data, ExceptionCode& ec)
