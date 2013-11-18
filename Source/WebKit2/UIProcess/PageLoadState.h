@@ -35,7 +35,14 @@ public:
     PageLoadState();
     ~PageLoadState();
 
+    const String& pendingAPIRequestURL() const;
+    void setPendingAPIRequestURL(const String&);
+    void clearPendingAPIRequestURL();
+
     void didStartProvisionalLoad(const String& url, const String& unreachableURL);
+
+private:
+    String m_pendingAPIRequestURL;
 };
 
 } // namespace WebKit

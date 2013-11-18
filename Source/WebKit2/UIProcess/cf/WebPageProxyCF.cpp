@@ -61,7 +61,7 @@ PassRefPtr<WebData> WebPageProxy::sessionStateData(WebPageProxySessionStateFilte
 
     RetainPtr<CFStringRef> provisionalURLString;
     if (m_mainFrame) {
-        String provisionalURL = pendingAPIRequestURL();
+        String provisionalURL = m_pageLoadState.pendingAPIRequestURL();
         if (provisionalURL.isEmpty())
             provisionalURL = m_mainFrame->provisionalURL();
         if (!provisionalURL.isEmpty()) {
@@ -165,7 +165,7 @@ void WebPageProxy::restoreFromSessionStateData(WebData* webData)
                     process()->send(Messages::WebPage::RestoreSession(state), m_pageID);
                 else {
                     if (WebBackForwardListItem* item = m_backForwardList->currentItem())
-                        setPendingAPIRequestURL(item->url());
+                        m_pageLoadState.setPendingAPIRequestURL(item->url());
 
                     process()->send(Messages::WebPage::RestoreSessionAndNavigateToCurrentItem(state), m_pageID);
                 }

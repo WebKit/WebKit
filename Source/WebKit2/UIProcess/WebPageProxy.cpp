@@ -603,7 +603,7 @@ bool WebPageProxy::maybeInitializeSandboxExtensionHandle(const URL& url, Sandbox
 
 void WebPageProxy::loadURL(const String& url, API::Object* userData)
 {
-    setPendingAPIRequestURL(url);
+    m_pageLoadState.setPendingAPIRequestURL(url);
 
     if (!isValid())
         reattachToWebProcess();
@@ -618,7 +618,7 @@ void WebPageProxy::loadURL(const String& url, API::Object* userData)
 
 void WebPageProxy::loadURLRequest(WebURLRequest* urlRequest, API::Object* userData)
 {
-    setPendingAPIRequestURL(urlRequest->resourceRequest().url());
+    m_pageLoadState.setPendingAPIRequestURL(urlRequest->resourceRequest().url());
 
     if (!isValid())
         reattachToWebProcess();
@@ -724,7 +724,7 @@ void WebPageProxy::reload(bool reloadFromOrigin)
 
     if (m_backForwardList->currentItem()) {
         String url = m_backForwardList->currentItem()->url();
-        setPendingAPIRequestURL(url);
+        m_pageLoadState.setPendingAPIRequestURL(url);
 
         // We may not have an extension yet if back/forward list was reinstated after a WebProcess crash or a browser relaunch
         bool createdExtension = maybeInitializeSandboxExtensionHandle(URL(URL(), url), sandboxExtensionHandle);
@@ -750,7 +750,7 @@ void WebPageProxy::goForward()
     if (!forwardItem)
         return;
 
-    setPendingAPIRequestURL(forwardItem->url());
+    m_pageLoadState.setPendingAPIRequestURL(forwardItem->url());
 
     if (!isValid()) {
         reattachToWebProcessWithItem(forwardItem);
@@ -775,7 +775,7 @@ void WebPageProxy::goBack()
     if (!backItem)
         return;
 
-    setPendingAPIRequestURL(backItem->url());
+    m_pageLoadState.setPendingAPIRequestURL(backItem->url());
 
     if (!isValid()) {
         reattachToWebProcessWithItem(backItem);
@@ -798,7 +798,7 @@ void WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
         return;
     }
     
-    setPendingAPIRequestURL(item->url());
+    m_pageLoadState.setPendingAPIRequestURL(item->url());
 
     m_process->send(Messages::WebPage::GoToBackForwardItem(item->itemID()), m_pageID);
     m_process->responsivenessTimer()->start();
@@ -839,8 +839,8 @@ String WebPageProxy::activeURL() const
     // If there is a currently pending url, it is the active URL,
     // even when there's no main frame yet, as it might be the
     // first API request.
-    if (!m_pendingAPIRequestURL.isNull())
-        return m_pendingAPIRequestURL;
+    if (!m_pageLoadState.pendingAPIRequestURL().isNull())
+        return m_pageLoadState.pendingAPIRequestURL();
 
     if (!m_mainFrame)
         return String();
@@ -1456,7 +1456,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
         return;
 
     if (action == PolicyIgnore)
-        clearPendingAPIRequestURL();
+        m_pageLoadState.clearPendingAPIRequestURL();
 
     uint64_t downloadID = 0;
     if (action == PolicyDownload) {
@@ -2106,8 +2106,9 @@ static const double initialProgressValue = 0.1;
 
 double WebPageProxy::estimatedProgress() const
 {
-    if (!pendingAPIRequestURL().isNull())
+    if (!m_pageLoadState.pendingAPIRequestURL().isNull())
         return initialProgressValue;
+
     return m_estimatedProgress; 
 }
 
@@ -2134,7 +2135,7 @@ void WebPageProxy::didFinishProgress()
 
 void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, const String& url, const String& unreachableURL, CoreIPC::MessageDecoder& decoder)
 {
-    clearPendingAPIRequestURL();
+    m_pageLoadState.clearPendingAPIRequestURL();
 
     RefPtr<API::Object> userData;
     WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
@@ -2286,7 +2287,7 @@ void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint32_t 
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK_URL(url);
 
-    clearPendingAPIRequestURL();
+    m_pageLoadState.clearPendingAPIRequestURL();
     frame->didSameDocumentNavigation(url);
 
     m_loaderClient.didSameDocumentNavigationForFrame(this, frame, static_cast<SameDocumentNavigationType>(opaqueSameDocumentNavigationType), userData.get());
@@ -2413,8 +2414,8 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t op
     if (!decoder.decode(messageDecoder))
         return;
 
-    if (request.url() != pendingAPIRequestURL())
-        clearPendingAPIRequestURL();
+    if (request.url() != m_pageLoadState.pendingAPIRequestURL())
+        m_pageLoadState.clearPendingAPIRequestURL();
 
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);

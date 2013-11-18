@@ -672,7 +672,7 @@ public:
     void drawPagesForPrinting(WebFrameProxy*, const PrintInfo&, PassRefPtr<PrintFinishedCallback>);
 #endif
 
-    const String& pendingAPIRequestURL() const { return m_pendingAPIRequestURL; }
+    PageLoadState& pageLoadState() { return m_pageLoadState; }
 
 #if PLATFORM(MAC)
     void handleAlternativeTextUIResult(const String& result);
@@ -972,9 +972,6 @@ private:
     void setPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, uint64_t complexTextInputState);
 #endif
 
-    void clearPendingAPIRequestURL() { m_pendingAPIRequestURL = String(); }
-    void setPendingAPIRequestURL(const String& pendingAPIRequestURL) { m_pendingAPIRequestURL = pendingAPIRequestURL; }
-
     bool maybeInitializeSandboxExtensionHandle(const WebCore::URL&, SandboxExtension::Handle&);
 
 #if PLATFORM(MAC)
@@ -1182,7 +1179,6 @@ private:
 #endif
 
     PageLoadState m_pageLoadState;
-    String m_pendingAPIRequestURL;
 
     bool m_mainFrameHasHorizontalScrollbar;
     bool m_mainFrameHasVerticalScrollbar;

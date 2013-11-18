@@ -36,6 +36,21 @@ PageLoadState::~PageLoadState()
 {
 }
 
+const String& PageLoadState::pendingAPIRequestURL() const
+{
+    return m_pendingAPIRequestURL;
+}
+
+void PageLoadState::setPendingAPIRequestURL(const String& pendingAPIRequestURL)
+{
+    m_pendingAPIRequestURL = pendingAPIRequestURL;
+}
+
+void PageLoadState::clearPendingAPIRequestURL()
+{
+    m_pendingAPIRequestURL = String();
+}
+
 void PageLoadState::didStartProvisionalLoad(const String& url, const String& unreachableURL)
 {
     // FIXME: Implement this.
