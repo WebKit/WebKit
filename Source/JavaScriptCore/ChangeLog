@@ -1,3 +1,34 @@
+2013-11-18  Michael Saboff  <msaboff@apple.com>
+
+        Crash in virtualForThunkGenerator generated code on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=124447
+
+        Reviewed by Geoffrey Garen.
+
+        The baseline JIT generates slow path call code with the caller in regT0.  The DFG
+        generates call code with the caller in nonArgGPR0.  The virtualForThunkGenerator
+        generates code with the caller in nonArgGPR0.  For X86 and X86_64, regT0 and nonArgGPR0
+        are the same CPU register, eax.  For other platforms this isn't the case.  The same
+        issue exists for JSVALUE32_64 ports as well, where there also is an issue with the callee
+        tag registers being regT1 and nonArgGPR1 in the various locations.
+
+        Changed nonArgGPR0, nonArgGPR1 and nonArgGPR2 for X86 and X86_64 to not match up with
+        regT0-2.  Changing these registers will cause a crash on all ports should we have a
+        similar problem in the future.  Changed the DFG call generating code to use regT0 and
+        regT1.  Now all slow path call code is generated using regT0 and for JSVALUE32_64 regT1.
+        Added r12 to X86_64 as a new temp register (regT9) and moved r13 down to regT10.
+        The new temp register decreases the likelihood of inadvertant register overlap.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::toRegister):
+        (JSC::GPRInfo::toIndex):
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualForThunkGenerator):
+
 2013-11-18  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         Add missing load8/branch8 with AbsoluteAddress parameter to MIPS port.

@@ -147,6 +147,7 @@ MacroAssemblerCodeRef linkClosureCallThunkGenerator(VM* vm)
 static MacroAssemblerCodeRef virtualForThunkGenerator(
     VM* vm, CodeSpecializationKind kind)
 {
+    // The callee is in regT0 (for JSVALUE32_64, the tag is in regT1).
     // The return address is on the stack, or in the link register. We will hence
     // jump to the callee, or save the return address to the call frame while we
     // make a C++ function call to the appropriate JIT operation.
@@ -161,14 +162,14 @@ static MacroAssemblerCodeRef virtualForThunkGenerator(
 #if USE(JSVALUE64)
     slowCase.append(
         jit.branchTest64(
-            CCallHelpers::NonZero, GPRInfo::nonArgGPR0, GPRInfo::tagMaskRegister));
+            CCallHelpers::NonZero, GPRInfo::regT0, GPRInfo::tagMaskRegister));
 #else
     slowCase.append(
         jit.branch32(
-            CCallHelpers::NotEqual, GPRInfo::nonArgGPR1,
+            CCallHelpers::NotEqual, GPRInfo::regT1,
             CCallHelpers::TrustedImm32(JSValue::CellTag)));
 #endif
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::nonArgGPR0, JSCell::structureOffset()), GPRInfo::nonArgGPR2);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, JSCell::structureOffset()), GPRInfo::nonArgGPR2);
     slowCase.append(
         jit.branchPtr(
             CCallHelpers::NotEqual,
@@ -178,7 +179,7 @@ static MacroAssemblerCodeRef virtualForThunkGenerator(
     // Now we know we have a JSFunction.
     
     jit.loadPtr(
-        CCallHelpers::Address(GPRInfo::nonArgGPR0, JSFunction::offsetOfExecutable()),
+        CCallHelpers::Address(GPRInfo::regT0, JSFunction::offsetOfExecutable()),
         GPRInfo::nonArgGPR2);
     slowCase.append(
         jit.branch32(
@@ -191,17 +192,17 @@ static MacroAssemblerCodeRef virtualForThunkGenerator(
     // call.
     
     jit.loadPtr(
-        CCallHelpers::Address(GPRInfo::nonArgGPR0, JSFunction::offsetOfScopeChain()),
-        GPRInfo::nonArgGPR1);
+        CCallHelpers::Address(GPRInfo::regT0, JSFunction::offsetOfScopeChain()),
+        GPRInfo::regT1);
 #if USE(JSVALUE64)
     jit.store64(
-        GPRInfo::nonArgGPR1,
+        GPRInfo::regT1,
         CCallHelpers::Address(
             GPRInfo::callFrameRegister,
             static_cast<ptrdiff_t>(sizeof(Register)) * JSStack::ScopeChain));
 #else
     jit.storePtr(
-        GPRInfo::nonArgGPR1,
+        GPRInfo::regT1,
         CCallHelpers::Address(
             GPRInfo::callFrameRegister,
             static_cast<ptrdiff_t>(sizeof(Register)) * JSStack::ScopeChain +

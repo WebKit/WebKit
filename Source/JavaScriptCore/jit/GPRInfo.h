@@ -305,9 +305,9 @@ public:
     // These constants provide the names for the general purpose argument & return value registers.
     static const GPRReg argumentGPR0 = X86Registers::ecx; // regT2
     static const GPRReg argumentGPR1 = X86Registers::edx; // regT1
-    static const GPRReg nonArgGPR0 = X86Registers::eax; // regT0
-    static const GPRReg nonArgGPR1 = X86Registers::ebx; // regT3
-    static const GPRReg nonArgGPR2 = X86Registers::esi; // regT4
+    static const GPRReg nonArgGPR0 = X86Registers::esi; // regT4
+    static const GPRReg nonArgGPR1 = X86Registers::eax; // regT0
+    static const GPRReg nonArgGPR2 = X86Registers::ebx; // regT3
     static const GPRReg returnValueGPR = X86Registers::eax; // regT0
     static const GPRReg returnValueGPR2 = X86Registers::edx; // regT1
     static const GPRReg nonPreservedNonReturnGPR = X86Registers::ecx;
@@ -355,7 +355,7 @@ public:
 class GPRInfo {
 public:
     typedef GPRReg RegisterType;
-    static const unsigned numberOfRegisters = 10;
+    static const unsigned numberOfRegisters = 11;
     static const unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
     // Note: regT3 is required to be callee-preserved.
@@ -375,7 +375,8 @@ public:
     static const GPRReg regT6 = X86Registers::r8;
     static const GPRReg regT7 = X86Registers::r9;
     static const GPRReg regT8 = X86Registers::r10;
-    static const GPRReg regT9 = X86Registers::r13;
+    static const GPRReg regT9 = X86Registers::r12;
+    static const GPRReg regT10 = X86Registers::r13;
     // These constants provide the names for the general purpose argument & return value registers.
 #if !OS(WINDOWS)
     static const GPRReg argumentGPR0 = X86Registers::edi; // regT4
@@ -390,9 +391,9 @@ public:
     static const GPRReg argumentGPR2 = X86Registers::r8; // regT6
     static const GPRReg argumentGPR3 = X86Registers::r9; // regT7
 #endif
-    static const GPRReg nonArgGPR0 = X86Registers::eax; // regT0
+    static const GPRReg nonArgGPR0 = X86Registers::r10; // regT8
     static const GPRReg nonArgGPR1 = X86Registers::ebx; // regT3
-    static const GPRReg nonArgGPR2 = X86Registers::r10; // regT8
+    static const GPRReg nonArgGPR2 = X86Registers::r12; // regT9
     static const GPRReg returnValueGPR = X86Registers::eax; // regT0
     static const GPRReg returnValueGPR2 = X86Registers::edx; // regT1
     static const GPRReg nonPreservedNonReturnGPR = X86Registers::esi;
@@ -400,7 +401,7 @@ public:
     static GPRReg toRegister(unsigned index)
     {
         ASSERT(index < numberOfRegisters);
-        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6, regT7, regT8, regT9 };
+        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6, regT7, regT8, regT9, regT10 };
         return registerForIndex[index];
     }
     
@@ -419,7 +420,7 @@ public:
     {
         ASSERT(reg != InvalidGPRReg);
         ASSERT(static_cast<int>(reg) < 16);
-        static const unsigned indexForRegister[16] = { 0, 2, 1, 3, InvalidIndex, InvalidIndex, 5, 4, 6, 7, 8, InvalidIndex, InvalidIndex, 9, InvalidIndex, InvalidIndex };
+        static const unsigned indexForRegister[16] = { 0, 2, 1, 3, InvalidIndex, InvalidIndex, 5, 4, 6, 7, 8, InvalidIndex, 9, 10, InvalidIndex, InvalidIndex };
         return indexForRegister[reg];
     }
 
