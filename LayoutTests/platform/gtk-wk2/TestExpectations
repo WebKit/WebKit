@@ -186,17 +186,6 @@ webkit.org/b/85463 editing/inserting/smart-link-when-caret-is-moved-before-URL.h
 webkit.org/b/120401 fast/events [ Skip ]
 webkit.org/b/120401 editing/selection [ Skip ]
 
-# Several regions/selection tests are failing as ClickCounter is not reset between test runs
-webkit.org/b/120401 fast/regions/selection/selecting-text-ignoring-region-horiz-bt.html [ ImageOnlyFailure ]
-webkit.org/b/120401 fast/regions/selection/selecting-text-ignoring-region-vert-lr.html [ ImageOnlyFailure ]
-webkit.org/b/120401 fast/regions/selection/selecting-text-ignoring-region-vert-rl.html [ ImageOnlyFailure ]
-webkit.org/b/120401 fast/regions/selection/selecting-text-ignoring-region.html [ ImageOnlyFailure ]
-webkit.org/b/120401 fast/regions/selection/selecting-text-in-2-regions-horiz-bt.html [ ImageOnlyFailure ]
-webkit.org/b/120401 fast/regions/selection/selecting-text-in-2-regions-vert-lr.html [ ImageOnlyFailure ]
-webkit.org/b/120401 fast/regions/selection/selecting-text-in-2-regions-vert-rl.html [ ImageOnlyFailure ]
-webkit.org/b/120401 fast/regions/selection/selecting-text-in-2-regions.html [ ImageOnlyFailure ]
-webkit.org/b/120401 fast/regions/selection/selection-direction.html [ ImageOnlyFailure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -207,12 +196,7 @@ webkit.org/b/120401 fast/regions/selection/selection-direction.html [ ImageOnlyF
 
 Bug(GTK) plugins/document-open.html [ Crash Timeout ]
 
-# Fix for https://bugs.webkit.org/show_bug.cgi?id=97192 introduces this regression
-webkit.org/b/102776 media/track/track-cue-container-rendering-position.html [ Crash ]
-
 webkit.org/b/82020 plugins/netscape-dom-access-and-reload.html [ Crash Pass ]
-
-Bug(GTK) media/restore-from-page-cache.html [ Crash ]
 
 Bug(GTK) fast/parser/document-write-basic.html [ Crash ]
 
@@ -287,7 +271,6 @@ Bug(GTK) fast/workers/storage/sql-data-types-sync.html [ Failure Pass ]
 Bug(GTK) fast/workers/storage/test-authorizer.html [ Failure Pass ]
 Bug(GTK) fast/workers/storage/test-authorizer-sync.html [ Failure Pass ]
 Bug(GTK) fast/workers/storage/transaction-in-transaction-sync.html [ Failure Pass ]
-Bug(GTK) http/tests/security/cross-origin-plugin-allowed.html [ Failure Pass ]
 Bug(GTK) http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html [ Failure Pass ]
 Bug(GTK) media/video-transformed.html [ Failure Pass ]
 Bug(GTK) media/W3C/audio/networkState/networkState_during_loadstart.html [ Failure Pass ]
@@ -355,31 +338,15 @@ Bug(GTK) svg/custom/pointer-events-on-svg-with-pointer.xhtml [ Failure Pass ]
 Bug(GTK) svg/custom/pointer-events-on-svg-without-pointer.xhtml [ Failure Pass ]
 Bug(WK2) svg/hixie/cascade/002.xml [ Failure ]
 Bug(GTK) svg/stroke/non-scaling-stroke-pattern.svg [ ImageOnlyFailure Pass ]
-Bug(GTK) svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg [ Failure ]
-Bug(GTK) svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg [ Failure ]
-Bug(GTK) svg/text/select-textLength-spacing-squeeze-3.svg [ Failure ]
-Bug(GTK) svg/text/select-textLength-spacing-stretch-1.svg [ Failure ]
-Bug(GTK) svg/text/select-x-list-1.svg [ Failure ]
-Bug(GTK) svg/text/select-x-list-with-tspans-1.svg [ Failure ]
+Bug(GTK) svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg [ Failure Pass ]
+Bug(GTK) svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg [ Failure Pass ]
+Bug(GTK) svg/text/select-textLength-spacing-squeeze-3.svg [ Failure Pass ]
+Bug(GTK) svg/text/select-textLength-spacing-stretch-1.svg [ Failure Pass ]
+Bug(GTK) svg/text/select-x-list-1.svg [ Failure Pass ]
+Bug(GTK) svg/text/select-x-list-with-tspans-1.svg [ Failure Pass ]
 
 # tables/ failures
 Bug(WK2) tables/mozilla_expected_failures/bugs/bug8499.html [ Failure ]
-
-# RenderDeprecatedFlexibleBox showing 20-pixel diffs in WK2 bot
-# http://webkit.org/b/93981
-webkit.org/b/93981 media/controls-strict.html [ Failure ]
-webkit.org/b/93981 media/controls-styling-strict.html [ Failure ]
-webkit.org/b/93981 media/controls-without-preload.html [ Failure ]
-webkit.org/b/93981 media/media-document-audio-repaint.html [ Failure ]
-webkit.org/b/93981 media/video-controls-rendering.html [ Failure ]
-webkit.org/b/93981 media/video-display-toggle.html [ Failure ]
-webkit.org/b/93981 media/video-no-audio.html [ Failure ]
-webkit.org/b/93981 media/video-volume-slider.html [ Failure ]
-
-# Animations behave weirdly if AC is enabled.
-webkit.org/b/93984 animations/combo-transform-translate+scale.html [ Failure ]
-webkit.org/b/93984 animations/play-state-suspend.html [ Failure ]
-webkit.org/b/93984 animations/suspend-resume-animation.html [ Failure ]
 
 # Assertion failure in replaySavedEvents
 # http://webkit.org/b/21796
@@ -402,10 +369,6 @@ webkit.org/b/97655 fast/regions/style-scoped/style-scoped-in-flow.html [ ImageOn
 webkit.org/b/122535 fast/dom/Window/open-window-min-size.html [ Failure ]
 
 # Unexplained failures
-Bug(GTK) editing/deleting/delete-ligature-003.html [ Failure ]
-Bug(GTK) editing/deleting/paragraph-in-preserveNewline.html [ Failure ]
-Bug(GTK) editing/deleting/whitespace-pre-1.html [ Failure ]
-Bug(GTK) editing/execCommand/delete-selection-has-style.html [ Failure ]
 Bug(GTK) editing/selection/5136696.html [ Failure ]
 Bug(GTK) editing/selection/inactive-selection.html [ Failure ]
 Bug(GTK) editing/selection/programmatic-selection-on-mac-is-directionless.html [ Failure ]
@@ -453,10 +416,8 @@ Bug(GTK) http/tests/security/cross-origin-xsl-BLOCKED.html [ Failure ]
 Bug(GTK) http/tests/security/cross-origin-xsl-redirect-BLOCKED.html [ Failure ]
 Bug(GTK) http/tests/security/storage-blocking-strengthened-plugin.html [ Failure ]
 Bug(GTK) http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Failure ]
-Bug(GTK) http/tests/xmlhttprequest/cache-override.html [ Failure ]
 Bug(GTK) media/track/track-cue-rendering-horizontal.html [ Failure ]
 Bug(GTK) media/track/track-cue-rendering-vertical.html [ Failure ]
-Bug(GTK) media/video-zoom-controls.html [ Failure ]
 Bug(GTK) platform/gtk/fast/events/event-sender-metakey.html [ Failure ]
 Bug(GTK) platform/gtk/fast/forms/menulist-typeahead-find.html [ Failure ]
 Bug(GTK) plugins/keyboard-events.html [ Failure ]
@@ -477,11 +438,6 @@ webkit.org/b/118416 [ Release ] storage/websql/sql-error-codes.html [ Failure ]
 
 Bug(GTK) editing/spelling/spellcheck-paste-continuous-disabled.html [ Failure ]
 
-Bug(GTK) http/tests/xmlhttprequest/access-control-allow-lists-starting-with-comma.html [ Failure ]
-
-Bug(GTK) http/tests/xmlhttprequest/post-blob-content-type-async.html [ Failure ]
-Bug(GTK) http/tests/xmlhttprequest/post-blob-content-type-sync.html [ Failure ]
-
 Bug(GTK) http/tests/misc/iframe-beforeunload-dialog-matching-ancestor-securityorigin.html [ Failure ]
 
 Bug(GTK) http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
@@ -490,8 +446,6 @@ Bug(GTK) http/tests/security/xssAuditor/xss-filter-bypass-big5.html [ Failure ]
 Bug(GTK) http/tests/security/xssAuditor/xss-filter-bypass-sjis.html [ Failure ]
 
 Bug(GTK) http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
-
-Bug(GTK) media/video-object-fit.html [ ImageOnlyFailure ]
 
 Bug(GTK) fast/backgrounds/background-position-parsing.html [ Failure ]
 

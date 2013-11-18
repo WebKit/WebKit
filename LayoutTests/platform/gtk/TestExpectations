@@ -157,10 +157,10 @@ media/media-fullscreen-not-in-document.html [ WontFix Timeout ]
 fast/parser/pre-html5-parser-quirks.html [ WontFix Failure ]
 
 # Text rendering overflowing region it should not
-webkit.org/b/122511 fast/regions/selection/selecting-text-ignoring-region-horiz-bt.html [ ImageOnlyFailure ]
-webkit.org/b/122511 fast/regions/selection/selecting-text-ignoring-region-vert-lr.html [ ImageOnlyFailure ]
-webkit.org/b/122511 fast/regions/selection/selecting-text-in-2-regions-horiz-bt.html [ ImageOnlyFailure ]
-webkit.org/b/122511 fast/regions/selection/selecting-text-in-2-regions-vert-lr.html [ ImageOnlyFailure ]
+webkit.org/b/122511 webkit.org/b/120401 fast/regions/selection/selecting-text-ignoring-region-horiz-bt.html [ ImageOnlyFailure ]
+webkit.org/b/122511 webkit.org/b/120401 fast/regions/selection/selecting-text-ignoring-region-vert-lr.html [ ImageOnlyFailure ]
+webkit.org/b/122511 webkit.org/b/120401 fast/regions/selection/selecting-text-in-2-regions-horiz-bt.html [ ImageOnlyFailure ]
+webkit.org/b/122511 webkit.org/b/120401 fast/regions/selection/selecting-text-in-2-regions-vert-lr.html [ ImageOnlyFailure ]
 
 # Features that we want eventually:
 # DeviceMotion and DeviceOrientation are not enabled by default.
@@ -444,7 +444,6 @@ webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_ev
 
 # No support for exposing in-band text tracks
 webkit.org/b/103771 media/track/track-forced-subtitles-in-band.html [ Timeout Failure ]
-webkit.org/b/103771 media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Failure ]
 webkit.org/b/103771 media/track/track-in-band.html [ Failure ]
 webkit.org/b/103771 media/track/track-in-band-cues-added-once.html [ Timeout ]
 webkit.org/b/103771 media/track/track-in-band-style.html [ Timeout ]
@@ -497,9 +496,6 @@ webkit.org/b/107194 http/tests/security/cross-origin-indexeddb.html [ Skip ]
 webkit.org/b/107194 http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Skip ]
 webkit.org/b/107194 http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 webkit.org/b/107194 http/tests/security/no-indexeddb-from-sandbox.html [ Skip ]
-
-# Needs to update the gtk databaseQuotaExceeded() test function to handle quota expansion requests.
-storage/websql/open-database-expand-quota.html [ Failure ]
 
 # crypto.subtle is not yet enabled
 crypto/subtle [ Skip ]
@@ -993,9 +989,6 @@ Bug(GTK) media/video-size-intrinsic-scale.html [ Failure ]
 # eventSender.keyDown call does not get executed from the TestNetscapePlugin
 webkit.org/b/90383 http/tests/plugins/plugin-document-has-focus.html [ Skip ]
 
-# Needs to make sure the redirect-chain scenario in https://bugs.webkit.org/show_bug.cgi?id=31410 works
-webkit.org/b/35300 http/tests/loading/307-after-303-after-post.html [ Failure ]
-
 # Missing resource load callback ability in DRT
 webkit.org/b/27905 http/tests/loading/redirect-methods.html [ Failure ]
 
@@ -1082,7 +1075,6 @@ Bug(GTK) canvas/philip/tests/2d.text.draw.space.collapse.other.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.text.draw.space.collapse.space.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.text.draw.space.collapse.start.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
-Bug(GTK) canvas/philip/tests/type.prototype.html [ Failure ]
 
 # Tests that fail because they assume a certain number of mouse
 # movements during drags or fail only in Xvfb
@@ -1267,8 +1259,6 @@ webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html [ Ima
 
 webkit.org/b/49142 fast/regions/style-scoped/style-scoped-in-flow-override-region-styling-multiple-regions.html [ ImageOnlyFailure ]
 
-webkit.org/b/98587 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
-
 webkit.org/b/98613 css3/masking/clip-path-reference-userSpaceOnUse.html [ ImageOnlyFailure ]
 webkit.org/b/98613 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
 
@@ -1313,8 +1303,6 @@ webkit.org/b/103927 http/tests/w3c/webperf/submission/Google/resource-timing/htm
 
 # Test fails on JSC platforms due to GC timing issues
 webkit.org/b/106957 svg/dom/SVGViewSpec-invalid-ref-crash.html [ Failure ]
-
-webkit.org/b/106563 fast/css/image-orientation/image-orientation.html [ Failure ]
 
 webkit.org/b/108169 fast/dom/shadow/gesture-tap.html [ Failure ]
 webkit.org/b/108169 fast/dom/shadow/touch-event.html [ Failure ]
@@ -1403,8 +1391,6 @@ webkit.org/b/115437 fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
 
 webkit.org/b/115440 svg/stroke/animated-non-scaling-stroke.html [ ImageOnlyFailure ]
 
-webkit.org/b/115441 media/video-poster-background.html [ ImageOnlyFailure ]
-
 webkit.org/b/115633 accessibility/meter-element.html [ Failure ]
 
 webkit.org/b/116153 fast/css/text-overflow-ellipsis-full-truncate-rtl.html [ ImageOnlyFailure ]
@@ -1424,7 +1410,7 @@ webkit.org/b/118221 fast/text/complex-first-glyph-with-initial-advance.html [ Im
 
 webkit.org/b/118222 fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
 
-webkit.org/b/118416 [ Debug ] storage/websql/sql-error-codes.html [ Failure ]
+webkit.org/b/118416 storage/websql/sql-error-codes.html [ Failure ]
 
 webkit.org/b/118418 accessibility/img-fallsback-to-title.html [ Failure ]
 
@@ -1472,8 +1458,6 @@ webkit.org/b/122147 fast/css/drop-shadow-viewport-height.html [ ImageOnlyFailure
 webkit.org/b/122147 fast/css/drop-shadow-viewport-vmax.html [ ImageOnlyFailure ]
 webkit.org/b/122147 fast/css/drop-shadow-viewport-vmin.html [ ImageOnlyFailure ]
 webkit.org/b/122147 fast/css/drop-shadow-viewport-width.html [ ImageOnlyFailure ]
-
-webkit.org/b/122150 fast/css3-text/css3-text-indent/getComputedStyle/getComputedStyle-text-indent.html [ Failure ]
 
 webkit.org/b/124360 media/video-canvas-drawing-output.html [ Failure ]
 

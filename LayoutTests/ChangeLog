@@ -1,6 +1,16 @@
 2013-11-18  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.
+        Cleaning up expectations for unexpectedly passing tests, either removing or updating them
+        to reflect the current status of the test.
+
+        * platform/gtk-wk1/TestExpectations:
+        * platform/gtk-wk2/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2013-11-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
 
         * platform/gtk/TestExpectations: Addressing the current set of timing-out tests. Timeout expectations
         are added where appropriate, with one js/regress/ test speculatively marked as slow.
