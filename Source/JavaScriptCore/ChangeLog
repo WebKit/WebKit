@@ -1,3 +1,16 @@
+2013-11-18  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        Add missing load8/branch8 with AbsoluteAddress parameter to MIPS port.
+
+        [MIPS] Build fails since r159395.
+        https://bugs.webkit.org/show_bug.cgi?id=124491
+
+        Reviewed by Michael Saboff.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::load8):
+        (JSC::MacroAssemblerMIPS::branch8):
+
 2013-11-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r159351): It made zillion tests assert on !CF platforms
