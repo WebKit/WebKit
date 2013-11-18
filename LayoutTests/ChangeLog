@@ -1,5 +1,23 @@
 2013-11-18  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed GTK gardening.
+
+        Update the global constructors' attibutes baseline for the WK2 flavor of the GTK port.
+        Update baselines for tests under media/.
+
+        * platform/gtk-wk2/js/dom/global-constructors-attributes-expected.txt:
+        * platform/gtk/media/W3C/video/canPlayType/canPlayType_codecs_order_1-expected.txt:
+        * platform/gtk/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_1-expected.txt:
+        * platform/gtk/media/W3C/video/canPlayType/canPlayType_two_implies_one_1-expected.txt:
+        * platform/gtk/media/W3C/video/canPlayType/canPlayType_two_implies_one_2-expected.txt:
+        * platform/gtk/media/media-can-play-ogg-expected.txt:
+        * platform/gtk/media/video-controls-captions-trackmenu-localized-expected.txt:
+        * platform/gtk/media/video-controls-captions-trackmenu-only-captions-descriptions-and-subtitles-expected.txt: Added.
+        * platform/gtk/media/video-controls-captions-trackmenu-sorted-expected.txt:
+        * platform/gtk/media/volume-bar-empty-when-muted-expected.txt: Added.
+
+2013-11-18  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed GTK gardening. Updating GTK-specific baselines for tests under editing/, scrollingcoordinator/ and tables/.
 
         * platform/gtk/editing/deleting/smart-delete-003-expected.txt:
