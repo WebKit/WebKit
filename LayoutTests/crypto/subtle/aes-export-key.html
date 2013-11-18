@@ -48,7 +48,7 @@ crypto.subtle.importKey("jwk", jwkKeyAsArrayBuffer, "AES-CBC", extractable, ['en
     debug("Exporting the key as JWK...");
     return crypto.subtle.exportKey("jwk", key);
 }).then(function(result) {
-    exportedJWK = JSON.parse(result);
+    exportedJWK = JSON.parse(bytesToASCIIString(result));
     shouldBe("exportedJWK.kty", "'oct'");
     shouldBe("exportedJWK.k", "'jnOw99oOZFLIEPMrgJB55WL46tJSLGt7'");
     shouldBe("exportedJWK.alg", "'A192CBC'");

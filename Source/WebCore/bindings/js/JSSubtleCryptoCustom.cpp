@@ -548,7 +548,7 @@ JSValue JSSubtleCrypto::exportKey(JSC::ExecState* exec)
         CString utf8String = result.utf8(StrictConversion);
         Vector<unsigned char> resultBuffer;
         resultBuffer.append(utf8String.data(), utf8String.length());
-        promiseWrapper->fulfill(result);
+        promiseWrapper->fulfill(resultBuffer);
         break;
     }
     default:

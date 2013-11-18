@@ -54,6 +54,11 @@ function bytesToHexString(bytes)
     return hexBytes.join("");
 }
 
+function bytesToASCIIString(bytes)
+{
+    return String.fromCharCode.apply(null, new Uint8Array(bytes));
+}
+
 function hexStringToUint8Array(hexString)
 {
     if (hexString.length % 2 != 0)
