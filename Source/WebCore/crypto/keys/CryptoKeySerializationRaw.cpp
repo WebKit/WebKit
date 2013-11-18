@@ -65,7 +65,7 @@ bool CryptoKeySerializationRaw::serialize(const CryptoKey& key, Vector<uint8_t>&
 {
     std::unique_ptr<CryptoKeyData> keyData = key.exportData();
     if (!keyData) {
-        // FIXME: Shouldn't happen once all key types implement exportData().
+        // This generally shouldn't happen as long as all key types implement exportData(), but as underlying libraries return errors, there may be some rare failure conditions.
         return false;
     }
 

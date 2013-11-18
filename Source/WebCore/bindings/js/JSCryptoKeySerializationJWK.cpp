@@ -277,6 +277,12 @@ bool JSCryptoKeySerializationJWK::keySizeIsValid(size_t sizeInBits) const
         return sizeInBits == 192;
     if (m_jwkAlgorithmName == "A256CBC")
         return sizeInBits == 256;
+    if (m_jwkAlgorithmName == "RS256")
+        return sizeInBits >= 2048;
+    if (m_jwkAlgorithmName == "RS384")
+        return sizeInBits >= 2048;
+    if (m_jwkAlgorithmName == "RS512")
+        return sizeInBits >= 2048;
     return true;
 }
 
@@ -312,6 +318,11 @@ std::unique_ptr<CryptoKeyData> JSCryptoKeySerializationJWK::keyDataRSAComponents
     if (!getBigIntegerVectorFromJSON(m_exec, m_json.get(), "n", modulus)) {
         if (!m_exec->hadException())
             throwTypeError(m_exec, "Required JWK \"n\" member is missing");
+        return nullptr;
+    }
+
+    if (!keySizeIsValid(modulus.size() * 8)) {
+        throwTypeError(m_exec, "Key size is not valid for " + m_jwkAlgorithmName);
         return nullptr;
     }
 
@@ -504,8 +515,8 @@ String JSCryptoKeySerializationJWK::serialize(ExecState* exec, const CryptoKey& 
 {
     std::unique_ptr<CryptoKeyData> keyData = key.exportData();
     if (!keyData) {
-        // FIXME: Shouldn't happen once all key types implement exportData().
-        throwTypeError(exec, "Key doesn't support exportKey");
+        // This generally shouldn't happen as long as all key types implement exportData(), but as underlying libraries return errors, there may be some rare failure conditions.
+        throwTypeError(exec, "Couldn't export key material");
         return String();
     }
 
