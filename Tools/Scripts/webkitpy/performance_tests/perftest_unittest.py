@@ -165,21 +165,6 @@ max 1120 ms""", image=None, image_hash=None, audio=None)
         self._assert_results_are_correct(test, output)
         self.assertEqual(test.description(), 'this is a test description.')
 
-    def test_ignored_stderr_lines(self):
-        test = PerfTest(MockPort(), 'some-test', '/path/some-dir/some-test')
-        output_with_lines_to_ignore = DriverOutput('', image=None, image_hash=None, audio=None, error="""
-Unknown option: --foo-bar
-Should not be ignored
-[WARNING:proxy_service.cc] bad moon a-rising
-[WARNING:chrome.cc] Something went wrong
-[INFO:SkFontHost_android.cpp(1158)] Use Test Config File Main /data/local/tmp/drt/android_main_fonts.xml, Fallback /data/local/tmp/drt/android_fallback_fonts.xml, Font Dir /data/local/tmp/drt/fonts/
-[ERROR:main.cc] The sky has fallen""")
-        test._filter_output(output_with_lines_to_ignore)
-        self.assertEqual(output_with_lines_to_ignore.error,
-            "Should not be ignored\n"
-            "[WARNING:chrome.cc] Something went wrong\n"
-            "[ERROR:main.cc] The sky has fallen")
-
     def test_parse_output_with_subtests(self):
         output = DriverOutput("""
 Running 20 times

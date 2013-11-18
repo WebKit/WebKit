@@ -230,15 +230,6 @@ class PerfTest(object):
                 return True
         return False
 
-    _lines_to_ignore_in_stderr = [
-        re.compile(r'^Unknown option:'),
-        re.compile(r'^\[WARNING:proxy_service.cc'),
-        re.compile(r'^\[INFO:'),
-        # These stderr messages come from content_shell on chromium-linux.
-        re.compile(r'INFO:SkFontHost_fontconfig.cpp'),
-        re.compile(r'Running without the SUID sandbox'),
-    ]
-
     _lines_to_ignore_in_parser_result = [
         re.compile(r'^Running \d+ times$'),
         re.compile(r'^Ignoring warm-up '),
@@ -257,8 +248,6 @@ class PerfTest(object):
     ]
 
     def _filter_output(self, output):
-        if output.error:
-            output.error = '\n'.join([line for line in re.split('\n', output.error) if not self._should_ignore_line(self._lines_to_ignore_in_stderr, line)])
         if output.text:
             output.text = '\n'.join([line for line in re.split('\n', output.text) if not self._should_ignore_line(self._lines_to_ignore_in_parser_result, line)])
 

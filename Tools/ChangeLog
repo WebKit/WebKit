@@ -1,3 +1,17 @@
+2013-11-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove _lines_to_ignore_in_stderr, which was only used in Chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=124499
+
+        Reviewed by Csaba Osztrogonác.
+
+        Removed the code. I didn't like this hack back when it was added, and I don't like it today.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest._should_ignore_line):
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (TestPerfTest): Removed the unit test.
+
 2013-11-17  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix this script for older Rubies where Pathname doesn't coerce to String
