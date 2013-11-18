@@ -1,4 +1,20 @@
 =================
+WebKitGTK+  2.3.2
+=================
+
+What's new in WebKitGTK+ 2.3.2?
+
+  - Add enable-media-stream setting to WebKit2 GTK+ API.
+  - Fix a crash when load fails due to SSL errors in WebKit2.
+  - Fix a crash when printing via JavaScript in WebKit2.
+  - Add support audio and video tracks to GStreamer media backend.
+  - Properly expose video and audio elements to accessibility.
+  - Fix invalid cairo matrix when drawing too small surfaces.
+  - Avoid extra copy when drawing images using cairo.
+  - Do not omit playback rate when seeking in GStreamer media backend.
+  - Several build fixes on non-linux platforms.
+
+=================
 WebKitGTK+  2.3.1
 =================
 
