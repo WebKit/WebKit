@@ -153,6 +153,8 @@ class Manager(object):
         self._printer.write_update("Starting helper ...")
         self._port.start_helper(self._options.pixel_tests)
 
+        self._port.reset_preferences()
+
         # Check that the system dependencies (themes, fonts, ...) are correct.
         if not self._options.nocheck_sys_deps:
             self._printer.write_update("Checking system dependencies ...")

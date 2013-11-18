@@ -930,6 +930,11 @@ class Port(object):
         method."""
         pass
 
+    def reset_preferences(self):
+        """If a port needs to reset platform-specific persistent preference
+        storage, it should override this method."""
+        pass
+
     def start_http_server(self, additional_dirs=None, number_of_servers=None):
         """Start a web server. Raise an error if it can't start or is already running.
 

@@ -1,5 +1,21 @@
 2013-11-18  Tim Horton  <timothy_horton@apple.com>
 
+        Occasionally, hundreds of tests fail with small text diffs on Mavericks
+        https://bugs.webkit.org/show_bug.cgi?id=124312
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._set_up_run):
+        * Scripts/webkitpy/port/base.py:
+        (Port.to.reset_preferences):
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.reset_preferences):
+        Delete DumpRenderTree and WebKitTestRunner defaults domains before running tests,
+        returning some of the functionality of 158652 after 159364 removed it.
+
+2013-11-18  Tim Horton  <timothy_horton@apple.com>
+
         Checkmarks are shifted down on iPhone at build.webkit.org/dashboard
         https://bugs.webkit.org/show_bug.cgi?id=122909
 

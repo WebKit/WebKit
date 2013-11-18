@@ -284,6 +284,17 @@ class MacPort(ApplePort):
             if not is_ready.startswith('ready'):
                 _log.error("LayoutTestHelper failed to be ready")
 
+    def reset_preferences(self):
+        _log.debug("Resetting persistent preferences")
+
+        for domain in ["DumpRenderTree", "WebKitTestRunner"]:
+            try:
+                self._executive.run_command(["defaults", "delete", domain])
+            except ScriptError, e:
+                # 'defaults' returns 1 if the domain did not exist
+                if e.exit_code != 1:
+                    raise e
+
     def stop_helper(self):
         if self._helper:
             _log.debug("Stopping LayoutTestHelper")
