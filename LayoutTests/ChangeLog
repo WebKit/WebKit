@@ -2,6 +2,13 @@
 
         Unreviewed GTK gardening.
 
+        * platform/gtk/TestExpectations: Addressing the current set of timing-out tests. Timeout expectations
+        are added where appropriate, with one js/regress/ test speculatively marked as slow.
+
+2013-11-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
         Update the global constructors' attibutes baseline for the WK2 flavor of the GTK port.
         Update baselines for tests under media/.
 
