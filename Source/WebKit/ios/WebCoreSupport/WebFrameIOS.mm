@@ -33,7 +33,7 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameSelection.h>
-#import <WebCore/FrameSnapshottingMac.h>
+#import <WebCore/FrameSnapshotting.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/htmlediting.h>

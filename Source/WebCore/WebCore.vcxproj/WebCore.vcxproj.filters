@@ -717,6 +717,9 @@
     <ClCompile Include="..\page\FrameDestructionObserver.cpp">
       <Filter>page</Filter>
     </ClCompile>
+    <ClCompile Include="..\page\FrameSnapshotting.cpp">
+      <Filter>page</Filter>
+    </ClCompile>
     <ClCompile Include="..\page\FrameTree.cpp">
       <Filter>page</Filter>
     </ClCompile>
@@ -7621,6 +7624,9 @@
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\FrameDestructionObserver.h">
+      <Filter>page</Filter>
+    </ClInclude>
+    <ClInclude Include="..\page\FrameSnapshotting.h">
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\FrameTree.h">

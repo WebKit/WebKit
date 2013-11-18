@@ -35,7 +35,7 @@ class Frame;
 class IntRect;
 
 GDIObject<HBITMAP> imageFromRect(const Frame*, IntRect&);
-GDIObject<HBITMAP> imageFromSelection(Frame*, bool forceWhiteText);
+GDIObject<HBITMAP> imageFromSelection(Frame*, bool forceBlackText);
 void computePageRectsForFrame(Frame*, const IntRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, Vector<IntRect>& outPages, int& outPageHeight);
 
 } // namespace WebCore

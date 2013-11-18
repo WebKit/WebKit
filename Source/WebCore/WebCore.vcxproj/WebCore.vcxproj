@@ -6983,6 +6983,7 @@
     <ClCompile Include="..\page\FocusController.cpp" />
     <ClCompile Include="..\page\Frame.cpp" />
     <ClCompile Include="..\page\FrameDestructionObserver.cpp" />
+    <ClCompile Include="..\page\FrameSnapshotting.cpp" />
     <ClCompile Include="..\page\FrameTree.cpp" />
     <ClCompile Include="..\page\FrameView.cpp" />
     <ClCompile Include="..\page\GroupSettings.cpp" />
@@ -18824,6 +18825,7 @@
     <ClInclude Include="..\page\FocusDirection.h" />
     <ClInclude Include="..\page\Frame.h" />
     <ClInclude Include="..\page\FrameDestructionObserver.h" />
+    <ClInclude Include="..\page\FrameSnapshotting.h" />
     <ClInclude Include="..\page\FrameTree.h" />
     <ClInclude Include="..\page\FrameView.h" />
     <ClInclude Include="..\page\GroupSettings.h" />

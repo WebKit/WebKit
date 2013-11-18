@@ -1726,6 +1726,7 @@ set(WebCore_SOURCES
     page/FocusController.cpp
     page/Frame.cpp
     page/FrameDestructionObserver.cpp
+    page/FrameSnapshotting.cpp
     page/FrameTree.cpp
     page/FrameView.cpp
     page/GestureTapHighlighter.cpp

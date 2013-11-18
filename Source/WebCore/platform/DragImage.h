@@ -26,10 +26,11 @@
 #ifndef DragImage_h
 #define DragImage_h
 
+#include "FloatSize.h"
 #include "FontRenderingMode.h"
+#include "FrameSnapshotting.h"
 #include "ImageOrientation.h"
 #include "IntSize.h"
-#include "FloatSize.h"
 #include <wtf/Forward.h>
 
 #if PLATFORM(MAC)
@@ -41,38 +42,46 @@ typedef struct HBITMAP__* HBITMAP;
 typedef struct _cairo_surface cairo_surface_t;
 #endif
 
-//We need to #define YOffset as it needs to be shared with WebKit
+// We need to #define YOffset as it needs to be shared with WebKit
 #define DragLabelBorderYOffset 2
 
 namespace WebCore {
 
-    class Image;
-    class URL;
+class Frame;
+class Image;
+class IntRect;
+class Node;
+class Range;
+class URL;
 
 #if PLATFORM(MAC)
-    typedef RetainPtr<NSImage> DragImageRef;
+typedef RetainPtr<NSImage> DragImageRef;
 #elif PLATFORM(WIN)
-    typedef HBITMAP DragImageRef;
+typedef HBITMAP DragImageRef;
 #elif PLATFORM(GTK) || PLATFORM(NIX)
-    typedef cairo_surface_t* DragImageRef;
+typedef cairo_surface_t* DragImageRef;
 #elif PLATFORM(EFL) || PLATFORM(BLACKBERRY)
-    typedef void* DragImageRef;
+typedef void* DragImageRef;
 #endif
-    
-    IntSize dragImageSize(DragImageRef);
-    
-    //These functions should be memory neutral, eg. if they return a newly allocated image, 
-    //they should release the input image.  As a corollary these methods don't guarantee
-    //the input image ref will still be valid after they have been called
-    DragImageRef fitDragImageToMaxSize(DragImageRef image, const IntSize& srcSize, const IntSize& size);
-    DragImageRef scaleDragImage(DragImageRef, FloatSize scale);
-    DragImageRef dissolveDragImageToFraction(DragImageRef image, float delta);
-    
-    DragImageRef createDragImageFromImage(Image*, ImageOrientationDescription);
-    DragImageRef createDragImageIconForCachedImageFilename(const String&);
-    DragImageRef createDragImageForLink(URL&, const String& label, FontRenderingMode);
-    void deleteDragImage(DragImageRef);
+
+IntSize dragImageSize(DragImageRef);
+
+// These functions should be memory neutral, eg. if they return a newly allocated image,
+// they should release the input image. As a corollary these methods don't guarantee
+// the input image ref will still be valid after they have been called.
+DragImageRef fitDragImageToMaxSize(DragImageRef, const IntSize& srcSize, const IntSize& dstSize);
+DragImageRef scaleDragImage(DragImageRef, FloatSize scale);
+DragImageRef dissolveDragImageToFraction(DragImageRef, float delta);
+
+DragImageRef createDragImageFromImage(Image*, ImageOrientationDescription);
+DragImageRef createDragImageIconForCachedImageFilename(const String&);
+
+DragImageRef createDragImageForNode(Frame&, Node&);
+DragImageRef createDragImageForSelection(Frame&, bool forceBlackText = false);
+DragImageRef createDragImageForRange(Frame&, Range&, bool forceBlackText = false);
+DragImageRef createDragImageForImage(Frame&, Node&, IntRect& imageRect, IntRect& elementRect);
+DragImageRef createDragImageForLink(URL&, const String& label, FontRenderingMode);
+void deleteDragImage(DragImageRef);
 }
 
-
-#endif //!DragImage_h
+#endif // DragImage_h

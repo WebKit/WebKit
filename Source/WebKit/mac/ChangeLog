@@ -1,3 +1,16 @@
+2013-11-18  Brian J. Burg  <burg@cs.washington.edu>
+
+        Consolidate various frame snapshot capabilities.
+        https://bugs.webkit.org/show_bug.cgi?id=124325
+
+        Reviewed by Timothy Hatcher.
+
+        Use new platform-independent methods instead of Mac methods.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _selectionDraggingImage]):
+        (-[WebHTMLView selectionImageForcingBlackText:]):
+
 2013-11-18  Anders Carlsson  <andersca@apple.com>
 
         Remove unnecessary COMPILER(CLANG) #ifdefs in Mac-only code
