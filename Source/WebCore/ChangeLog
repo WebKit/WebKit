@@ -1,3 +1,22 @@
+2013-11-18  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        Change webaudio to use nullptr for null pointers
+        https://bugs.webkit.org/show_bug.cgi?id=124526
+
+        Reviewed by Anders Carlsson.
+
+        No new tests needed, no behavior change.
+
+        * Modules/webaudio/AudioBuffer.cpp:
+        * Modules/webaudio/AudioContext.cpp:
+        * Modules/webaudio/AudioNode.cpp:
+        * Modules/webaudio/ChannelMergerNode.cpp:
+        * Modules/webaudio/ChannelSplitterNode.cpp:
+        * Modules/webaudio/MediaStreamAudioSource.cpp:
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        * Modules/webaudio/PeriodicWave.cpp:
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+
 2013-11-18  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] Basic authentication is not reused.

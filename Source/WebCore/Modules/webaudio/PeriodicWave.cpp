@@ -56,7 +56,7 @@ PassRefPtr<PeriodicWave> PeriodicWave::create(float sampleRate, Float32Array* re
         waveTable->createBandLimitedTables(real->data(), imag->data(), numberOfComponents);
         return waveTable;
     }
-    return 0;
+    return nullptr;
 }
 
 PassRefPtr<PeriodicWave> PeriodicWave::createSine(float sampleRate)

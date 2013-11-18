@@ -112,14 +112,14 @@ AudioNodeInput* AudioNode::input(unsigned i)
 {
     if (i < m_inputs.size())
         return m_inputs[i].get();
-    return 0;
+    return nullptr;
 }
 
 AudioNodeOutput* AudioNode::output(unsigned i)
 {
     if (i < m_outputs.size())
         return m_outputs[i].get();
-    return 0;
+    return nullptr;
 }
 
 void AudioNode::connect(AudioNode* destination, unsigned outputIndex, unsigned inputIndex, ExceptionCode& ec)

@@ -53,17 +53,17 @@ PassRefPtr<ScriptProcessorNode> ScriptProcessorNode::create(AudioContext* contex
     case 16384:
         break;
     default:
-        return 0;
+        return nullptr;
     }
 
     if (!numberOfInputChannels && !numberOfOutputChannels)
-        return 0;
+        return nullptr;
 
     if (numberOfInputChannels > AudioContext::maxNumberOfChannels())
-        return 0;
+        return nullptr;
 
     if (numberOfOutputChannels > AudioContext::maxNumberOfChannels())
-        return 0;
+        return nullptr;
 
     return adoptRef(new ScriptProcessorNode(context, sampleRate, bufferSize, numberOfInputChannels, numberOfOutputChannels));
 }

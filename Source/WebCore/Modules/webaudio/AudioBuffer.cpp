@@ -43,7 +43,7 @@ namespace WebCore {
 PassRefPtr<AudioBuffer> AudioBuffer::create(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
 {
     if (sampleRate < 22050 || sampleRate > 96000 || numberOfChannels > AudioContext::maxNumberOfChannels() || !numberOfFrames)
-        return 0;
+        return nullptr;
     
     return adoptRef(new AudioBuffer(numberOfChannels, numberOfFrames, sampleRate));
 }
@@ -54,7 +54,7 @@ PassRefPtr<AudioBuffer> AudioBuffer::createFromAudioFileData(const void* data, s
     if (bus.get())
         return adoptRef(new AudioBuffer(bus.get()));
 
-    return 0;
+    return nullptr;
 }
 
 AudioBuffer::AudioBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
@@ -96,7 +96,7 @@ PassRefPtr<Float32Array> AudioBuffer::getChannelData(unsigned channelIndex, Exce
 {
     if (channelIndex >= m_channels.size()) {
         ec = SYNTAX_ERR;
-        return 0;
+        return nullptr;
     }
 
     Float32Array* channelData = m_channels[channelIndex].get();
@@ -106,7 +106,7 @@ PassRefPtr<Float32Array> AudioBuffer::getChannelData(unsigned channelIndex, Exce
 Float32Array* AudioBuffer::getChannelData(unsigned channelIndex)
 {
     if (channelIndex >= m_channels.size())
-        return 0;
+        return nullptr;
 
     return m_channels[channelIndex].get();
 }

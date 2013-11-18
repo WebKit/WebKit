@@ -113,7 +113,7 @@ PassRefPtr<AudioContext> AudioContext::create(Document& document, ExceptionCode&
 
     ASSERT(isMainThread());
     if (s_hardwareContextCount >= MaxHardwareContexts)
-        return 0;
+        return nullptr;
 
     RefPtr<AudioContext> audioContext(adoptRef(new AudioContext(document)));
     audioContext->suspendIfNeeded();
@@ -330,7 +330,7 @@ PassRefPtr<AudioBuffer> AudioContext::createBuffer(unsigned numberOfChannels, si
     RefPtr<AudioBuffer> audioBuffer = AudioBuffer::create(numberOfChannels, numberOfFrames, sampleRate);
     if (!audioBuffer.get()) {
         ec = NOT_SUPPORTED_ERR;
-        return 0;
+        return nullptr;
     }
 
     return audioBuffer;
@@ -341,13 +341,13 @@ PassRefPtr<AudioBuffer> AudioContext::createBuffer(ArrayBuffer* arrayBuffer, boo
     ASSERT(arrayBuffer);
     if (!arrayBuffer) {
         ec = SYNTAX_ERR;
-        return 0;
+        return nullptr;
     }
 
     RefPtr<AudioBuffer> audioBuffer = AudioBuffer::createFromAudioFileData(arrayBuffer->data(), arrayBuffer->byteLength(), mixToMono, sampleRate());
     if (!audioBuffer.get()) {
         ec = SYNTAX_ERR;
-        return 0;
+        return nullptr;
     }
 
     return audioBuffer;
@@ -381,7 +381,7 @@ PassRefPtr<MediaElementAudioSourceNode> AudioContext::createMediaElementSource(H
     ASSERT(mediaElement);
     if (!mediaElement) {
         ec = INVALID_STATE_ERR;
-        return 0;
+        return nullptr;
     }
         
     ASSERT(isMainThread());
@@ -390,7 +390,7 @@ PassRefPtr<MediaElementAudioSourceNode> AudioContext::createMediaElementSource(H
     // First check if this media element already has a source node.
     if (mediaElement->audioSourceNode()) {
         ec = INVALID_STATE_ERR;
-        return 0;
+        return nullptr;
     }
         
     RefPtr<MediaElementAudioSourceNode> node = MediaElementAudioSourceNode::create(this, mediaElement);
@@ -408,7 +408,7 @@ PassRefPtr<MediaStreamAudioSourceNode> AudioContext::createMediaStreamSource(Med
     ASSERT(mediaStream);
     if (!mediaStream) {
         ec = INVALID_STATE_ERR;
-        return 0;
+        return nullptr;
     }
 
     ASSERT(isMainThread());
@@ -468,7 +468,7 @@ PassRefPtr<ScriptProcessorNode> AudioContext::createScriptProcessor(size_t buffe
 
     if (!node.get()) {
         ec = INDEX_SIZE_ERR;
-        return 0;
+        return nullptr;
     }
 
     refNode(node.get()); // context keeps reference until we stop making javascript rendering callbacks
@@ -536,7 +536,7 @@ PassRefPtr<DelayNode> AudioContext::createDelay(double maxDelayTime, ExceptionCo
     lazyInitialize();
     RefPtr<DelayNode> node = DelayNode::create(this, m_destinationNode->sampleRate(), maxDelayTime, ec);
     if (ec)
-        return 0;
+        return nullptr;
     return node;
 }
 
@@ -555,7 +555,7 @@ PassRefPtr<ChannelSplitterNode> AudioContext::createChannelSplitter(size_t numbe
 
     if (!node.get()) {
         ec = SYNTAX_ERR;
-        return 0;
+        return nullptr;
     }
 
     return node;
@@ -576,7 +576,7 @@ PassRefPtr<ChannelMergerNode> AudioContext::createChannelMerger(size_t numberOfI
 
     if (!node.get()) {
         ec = SYNTAX_ERR;
-        return 0;
+        return nullptr;
     }
 
     return node;
@@ -602,7 +602,7 @@ PassRefPtr<PeriodicWave> AudioContext::createPeriodicWave(Float32Array* real, Fl
     
     if (!real || !imag || (real->length() != imag->length() || (real->length() > MaxPeriodicWaveLength) || (real->length() <= 0))) {
         ec = SYNTAX_ERR;
-        return 0;
+        return nullptr;
     }
     
     lazyInitialize();
