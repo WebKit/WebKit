@@ -373,7 +373,7 @@ public:
 
     WTF_EXPORT_STRING_API int toInt(bool* ok = 0) const;
     WTF_EXPORT_STRING_API unsigned toUInt(bool* ok = 0) const;
-    int64_t toInt64(bool* ok = 0) const;
+    WTF_EXPORT_STRING_API int64_t toInt64(bool* ok = 0) const;
     WTF_EXPORT_STRING_API uint64_t toUInt64(bool* ok = 0) const;
     WTF_EXPORT_STRING_API intptr_t toIntPtr(bool* ok = 0) const;
 

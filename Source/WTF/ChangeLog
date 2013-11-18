@@ -1,3 +1,9 @@
+2013-11-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r159432 to make WinCairo build happy.
+
+        * wtf/text/WTFString.h:
+
 2013-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
