@@ -2229,11 +2229,9 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
             break;
         }
         case WM_ERASEBKGND:
-            if (webView->usesLayeredWindow()) {
-                // Don't perform a background erase for transparent views.
-                handled = true;
-                lResult = 1;
-            }
+            // Don't perform a background erase.
+            handled = true;
+            lResult = 1;
             break;
         case WM_PRINTCLIENT:
             webView->paint((HDC)wParam, lParam);
