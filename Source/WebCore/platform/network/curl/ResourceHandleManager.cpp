@@ -9,6 +9,7 @@
  * Copyright (C) 2009 Brent Fulgham <bfulgham@webkit.org>
  * Copyright (C) 2013 Peter Gal <galpeter@inf.u-szeged.hu>, University of Szeged
  * Copyright (C) 2013 Alex Christensen <achristensen@webkit.org>
+ * Copyright (C) 2013 University of Szeged
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,6 +38,7 @@
 #include "ResourceHandleManager.h"
 
 #include "CredentialStorage.h"
+#include "CurlCacheManager.h"
 #include "DataURL.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
@@ -268,8 +270,10 @@ static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* data)
 
     if (d->m_multipartHandle)
         d->m_multipartHandle->contentReceived(static_cast<const char*>(ptr), totalSize);
-    else if (d->client())
+    else if (d->client()) {
         d->client()->didReceiveData(job, static_cast<char*>(ptr), totalSize, 0);
+        CurlCacheManager::getInstance().didReceiveData(job->firstRequest().url().string(), static_cast<char*>(ptr), totalSize);
+    }
 
     return totalSize;
 }
@@ -459,8 +463,10 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
             }
         }
 
-        if (client)
+        if (client) {
             client->didReceiveResponse(job, d->m_response);
+            CurlCacheManager::getInstance().didReceiveResponse(job, d->m_response);
+        }
         d->m_response.setResponseFired(true);
 
     } else {
@@ -605,16 +611,20 @@ void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* 
             if (d->m_multipartHandle)
                 d->m_multipartHandle->contentEnded();
 
-            if (d->client())
+            if (d->client()) {
                 d->client()->didFinishLoading(job, 0);
+                CurlCacheManager::getInstance().didFinishLoading(job->firstRequest().url().string());
+            }
         } else {
             char* url = 0;
             curl_easy_getinfo(d->m_handle, CURLINFO_EFFECTIVE_URL, &url);
 #ifndef NDEBUG
             fprintf(stderr, "Curl ERROR for url='%s', error: '%s'\n", url, curl_easy_strerror(msg->data.result));
 #endif
-            if (d->client())
+            if (d->client()) {
                 d->client()->didFail(job, ResourceError(String(), msg->data.result, String(url), String(curl_easy_strerror(msg->data.result))));
+                CurlCacheManager::getInstance().didFail(job->firstRequest().url().string());
+            }
         }
 
         removeFromCurl(job);
@@ -969,6 +979,19 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
     struct curl_slist* headers = 0;
     if (job->firstRequest().httpHeaderFields().size() > 0) {
         HTTPHeaderMap customHeaders = job->firstRequest().httpHeaderFields();
+
+        if (CurlCacheManager::getInstance().isCached(url)) {
+            HTTPHeaderMap& requestHeaders = CurlCacheManager::getInstance().requestHeaders(url);
+
+            // append additional cache information
+            HTTPHeaderMap::const_iterator it = requestHeaders.begin();
+            HTTPHeaderMap::const_iterator end = requestHeaders.end();
+            while (it != end) {
+                customHeaders.set(it->key, it->value);
+                ++it;
+            }
+        }
+
         HTTPHeaderMap::const_iterator end = customHeaders.end();
         for (HTTPHeaderMap::const_iterator it = customHeaders.begin(); it != end; ++it) {
             String key = it->key;

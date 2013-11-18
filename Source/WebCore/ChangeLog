@@ -1,3 +1,57 @@
+2013-11-18  Mátyás Mustoha  <mmatyas@inf.u-szeged.hu>
+
+        [curl] Add file cache
+        https://bugs.webkit.org/show_bug.cgi?id=123333
+
+        Reviewed by Brent Fulgham.
+
+        Implementation of on disc file cache
+        for the curl network backend.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * platform/network/curl/CurlCacheEntry.cpp: Added.
+        (WebCore::CurlCacheEntry::CurlCacheEntry):
+        (WebCore::CurlCacheEntry::~CurlCacheEntry):
+        (WebCore::CurlCacheEntry::isCached):
+        (WebCore::CurlCacheEntry::requestHeaders):
+        (WebCore::CurlCacheEntry::saveCachedData):
+        (WebCore::CurlCacheEntry::loadCachedData):
+        (WebCore::CurlCacheEntry::saveResponseHeaders):
+        (WebCore::CurlCacheEntry::loadResponseHeaders):
+        (WebCore::CurlCacheEntry::setResponseFromCachedHeaders):
+        (WebCore::CurlCacheEntry::didFail):
+        (WebCore::CurlCacheEntry::didFinishLoading):
+        (WebCore::CurlCacheEntry::generateBaseFilename):
+        (WebCore::CurlCacheEntry::loadFileToBuffer):
+        (WebCore::CurlCacheEntry::invalidate):
+        (WebCore::CurlCacheEntry::parseResponseHeaders):
+        * platform/network/curl/CurlCacheEntry.h: Added.
+        (WebCore::CurlCacheEntry::isInMemory):
+        * platform/network/curl/CurlCacheManager.cpp: Added.
+        (WebCore::CurlCacheManager::getInstance):
+        (WebCore::CurlCacheManager::CurlCacheManager):
+        (WebCore::CurlCacheManager::~CurlCacheManager):
+        (WebCore::CurlCacheManager::setCacheDirectory):
+        (WebCore::CurlCacheManager::loadIndex):
+        (WebCore::CurlCacheManager::saveIndex):
+        (WebCore::CurlCacheManager::didReceiveResponse):
+        (WebCore::CurlCacheManager::didFinishLoading):
+        (WebCore::CurlCacheManager::isCached):
+        (WebCore::CurlCacheManager::requestHeaders):
+        (WebCore::CurlCacheManager::didReceiveData):
+        (WebCore::CurlCacheManager::saveResponseHeaders):
+        (WebCore::CurlCacheManager::invalidateCacheEntry):
+        (WebCore::CurlCacheManager::didFail):
+        (WebCore::CurlCacheManager::loadCachedData):
+        * platform/network/curl/CurlCacheManager.h: Added.
+        (WebCore::CurlCacheManager::getCacheDirectory):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::writeCallback):
+        (WebCore::headerCallback):
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+        (WebCore::ResourceHandleManager::initializeHandle):
+
 2013-11-18  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] WebKit version in user agent string is incorrect.
