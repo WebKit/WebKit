@@ -661,6 +661,7 @@ EXTRA_DIST += \
 	$(wildcard $(srcdir)/Source/WebCore/testing/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/workers/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/xml/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/inspector/protocol/*.json) \
 	Source/ThirdParty/ANGLE/src/compiler/glslang.l \
 	Source/ThirdParty/ANGLE/src/compiler/glslang.y \
 	Source/WebCore/bindings/scripts/CodeGeneratorGObject.pm \
@@ -688,7 +689,6 @@ EXTRA_DIST += \
 	Source/WebCore/css/make-css-file-arrays.pl \
 	Source/WebCore/css/makegrammar.pl \
 	Source/WebCore/css/makeprop.pl \
-	Source/WebCore/css/maketokenizer \
 	Source/WebCore/css/makevalues.pl \
 	Source/WebCore/css/mathml.css \
 	Source/WebCore/css/mediaControls.css \

@@ -1,3 +1,9 @@
+2013-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header file.
+
 2013-11-16  Alexey Proskuryakov  <ap@apple.com>
 
         Use uint8_t vectors for WebCrypto data

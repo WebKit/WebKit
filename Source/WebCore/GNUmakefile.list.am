@@ -5856,7 +5856,7 @@ platform_sources += \
 	Source/WebCore/platform/graphics/TextTrackRepresentation.cpp \
 	Source/WebCore/platform/graphics/TextTrackRepresentation.h \
 	Source/WebCore/platform/graphics/TiledBacking.h \
-	Source/WebCore/platform/graphics/TrackBasePrivate.h \
+	Source/WebCore/platform/graphics/TrackPrivateBase.h \
 	Source/WebCore/platform/graphics/TypesettingFeatures.h \
 	Source/WebCore/platform/graphics/UnitBezier.h \
 	Source/WebCore/platform/graphics/VideoTrackPrivate.h \
@@ -6004,9 +6004,9 @@ platform_sources += \
 	Source/WebCore/platform/DateTimeChooserClient.h \
 	Source/WebCore/platform/Decimal.cpp \
 	Source/WebCore/platform/Decimal.h \
-    Source/WebCore/platform/FileChooser.cpp \
-    Source/WebCore/platform/FileChooser.h \
-    Source/WebCore/platform/FileMetadata.h \
+	Source/WebCore/platform/FileChooser.cpp \
+	Source/WebCore/platform/FileChooser.h \
+	Source/WebCore/platform/FileMetadata.h \
 	Source/WebCore/platform/FileStreamClient.h \
 	Source/WebCore/platform/FileStream.cpp \
 	Source/WebCore/platform/FileStream.h \
@@ -6020,6 +6020,7 @@ platform_sources += \
 	Source/WebCore/platform/URL.cpp \
 	Source/WebCore/platform/URL.h \
 	Source/WebCore/platform/URLHash.h \
+	Source/WebCore/platform/KeyedCoding.h \
 	Source/WebCore/platform/KillRing.h \
 	Source/WebCore/platform/KillRingNone.cpp \
 	Source/WebCore/platform/Language.cpp \
@@ -6176,6 +6177,8 @@ platformgtk_sources += \
 	Source/WebCore/platform/graphics/gtk/ImageGtk.cpp \
 	Source/WebCore/platform/graphics/gtk/IntPointGtk.cpp \
 	Source/WebCore/platform/graphics/gtk/IntRectGtk.cpp \
+	Source/WebCore/platform/graphics/opentype/OpenTypeSanitizer.h \
+	Source/WebCore/platform/graphics/opentype/OpenTypeTypes.h \
 	Source/WebCore/platform/graphics/opentype/OpenTypeVerticalData.cpp \
 	Source/WebCore/platform/graphics/opentype/OpenTypeVerticalData.h \
 	Source/WebCore/platform/gtk/CompositionResults.h \

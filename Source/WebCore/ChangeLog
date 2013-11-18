@@ -1,3 +1,11 @@
+2013-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Add inspector json files to EXTRA_DIST and
+        remove maketokenizer from EXTRA_DIST.
+        * GNUmakefile.list.am: Add missing header files.
+
 2013-11-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Generate toHTMLDataList|Html|EmbedElement
