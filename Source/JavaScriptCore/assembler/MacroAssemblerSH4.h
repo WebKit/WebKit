@@ -700,6 +700,13 @@ public:
         releaseScratch(scr);
     }
 
+    void load8(AbsoluteAddress address, RegisterID dest)
+    {
+        move(TrustedImmPtr(address.m_ptr), dest);
+        m_assembler.movbMemReg(dest, dest);
+        m_assembler.extub(dest, dest);
+    }
+
     void load8PostInc(RegisterID base, RegisterID dest)
     {
         m_assembler.movbMemRegIn(base, dest);
@@ -1571,6 +1578,15 @@ public:
     }
 
     Jump branch8(RelationalCondition cond, Address left, TrustedImm32 right)
+    {
+        RegisterID addressTempRegister = claimScratch();
+        load8(left, addressTempRegister);
+        Jump jmp = branch32(cond, addressTempRegister, right);
+        releaseScratch(addressTempRegister);
+        return jmp;
+    }
+
+    Jump branch8(RelationalCondition cond, AbsoluteAddress left, TrustedImm32 right)
     {
         RegisterID addressTempRegister = claimScratch();
         load8(left, addressTempRegister);
