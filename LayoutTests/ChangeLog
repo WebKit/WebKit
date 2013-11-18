@@ -1,3 +1,10 @@
+2013-11-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed EFL gardening. Add webgl crash tests because webgl is not supported
+        by EFL WK2 fully yet as well as not fully supported by Intel and AMD hardware.
+
+        * platform/efl-wk2/TestExpectations:
+
 2013-11-17  Tim Horton  <timothy_horton@apple.com>
 
         Layout Test platform/mac-wk2/plugins/slow/asynchronous-plugin-initialization-multiple.html is extremely flaky on Mac WK2 bots, especially debug
