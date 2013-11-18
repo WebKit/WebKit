@@ -20,6 +20,7 @@
 #include "WebKitDOMCustom.h"
 
 #include "JSMainThreadExecState.h"
+#include "WebKitDOMAudioTrackPrivate.h"
 #include "WebKitDOMBlob.h"
 #include "WebKitDOMDOMStringList.h"
 #include "WebKitDOMHTMLCollection.h"
@@ -34,7 +35,10 @@
 #include "WebKitDOMObject.h"
 #include "WebKitDOMPrivate.h"
 #include "WebKitDOMProcessingInstruction.h"
+#include "WebKitDOMTextTrackPrivate.h"
+#include "WebKitDOMVideoTrackPrivate.h"
 #include "WebKitDOMWebKitNamedFlow.h"
+#include "gobject/ConvertToUTF8String.h"
 
 using namespace WebKit;
 
@@ -62,6 +66,90 @@ void webkit_dom_html_media_element_set_current_time(WebKitDOMHTMLMediaElement* s
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Video")
 #endif /* ENABLE(VIDEO) */
+}
+
+gchar* webkit_dom_audio_track_get_kind(WebKitDOMAudioTrack* self)
+{
+#if ENABLE(VIDEO_TRACK)
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_AUDIO_TRACK(self), 0);
+    WebCore::AudioTrack* item = WebKit::core(self);
+    gchar* result = convertToUTF8String(item->kind());
+    return result;
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Video Track")
+    return 0;
+#endif /* ENABLE(VIDEO_TRACK) */
+}
+
+gchar* webkit_dom_audio_track_get_language(WebKitDOMAudioTrack* self)
+{
+#if ENABLE(VIDEO_TRACK)
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_AUDIO_TRACK(self), 0);
+    WebCore::AudioTrack* item = WebKit::core(self);
+    gchar* result = convertToUTF8String(item->language());
+    return result;
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Video Track")
+    return 0;
+#endif /* ENABLE(VIDEO_TRACK) */
+}
+
+gchar* webkit_dom_text_track_get_kind(WebKitDOMTextTrack* self)
+{
+#if ENABLE(VIDEO_TRACK)
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEXT_TRACK(self), 0);
+    WebCore::TextTrack* item = WebKit::core(self);
+    gchar* result = convertToUTF8String(item->kind());
+    return result;
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Video Track")
+    return 0;
+#endif /* ENABLE(VIDEO_TRACK) */
+}
+
+gchar* webkit_dom_text_track_get_language(WebKitDOMTextTrack* self)
+{
+#if ENABLE(VIDEO_TRACK)
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEXT_TRACK(self), 0);
+    WebCore::TextTrack* item = WebKit::core(self);
+    gchar* result = convertToUTF8String(item->language());
+    return result;
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Video Track")
+    return 0;
+#endif /* ENABLE(VIDEO_TRACK) */
+}
+
+gchar* webkit_dom_video_track_get_kind(WebKitDOMVideoTrack* self)
+{
+#if ENABLE(VIDEO_TRACK)
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_VIDEO_TRACK(self), 0);
+    WebCore::VideoTrack* item = WebKit::core(self);
+    gchar* result = convertToUTF8String(item->kind());
+    return result;
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Video Track")
+    return 0;
+#endif /* ENABLE(VIDEO_TRACK) */
+}
+
+gchar* webkit_dom_video_track_get_language(WebKitDOMVideoTrack* self)
+{
+#if ENABLE(VIDEO_TRACK)
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_VIDEO_TRACK(self), 0);
+    WebCore::VideoTrack* item = WebKit::core(self);
+    gchar* result = convertToUTF8String(item->language());
+    return result;
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Video Track")
+    return 0;
+#endif /* ENABLE(VIDEO_TRACK) */
 }
 
 /* Compatibility */
