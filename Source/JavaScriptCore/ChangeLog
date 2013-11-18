@@ -1,3 +1,31 @@
+2013-11-18  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        APIEntryShims need some love
+        https://bugs.webkit.org/show_bug.cgi?id=124540
+
+        Reviewed by Filip Pizlo.
+
+        We were missing them in key places which some other hacking revealed. These could have manifested as
+        race conditions for VMs being used in multithreaded environments.
+
+        * API/JSContext.mm:
+        (-[JSContext setException:]):
+        (-[JSContext wrapperForObjCObject:]):
+        (-[JSContext wrapperForJSObject:]):
+        * API/JSContextRef.cpp:
+        (JSContextGroupRelease):
+        (JSGlobalContextRelease):
+        * API/JSManagedValue.mm:
+        (-[JSManagedValue initWithValue:]):
+        (-[JSManagedValue value]):
+        * API/JSObjectRef.cpp:
+        (JSObjectIsFunction):
+        (JSObjectCopyPropertyNames):
+        * API/JSValue.mm:
+        (containerValueToObject):
+        * API/JSWrapperMap.mm:
+        (tryUnwrapObjcObject):
+
 2013-11-18  Filip Pizlo  <fpizlo@apple.com>
 
         Allow the FTL debug dumps to include the new size field

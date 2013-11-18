@@ -102,6 +102,7 @@
 
 - (void)setException:(JSValue *)value
 {
+    JSC::APIEntryShim entryShim(toJS(m_context));
     if (value)
         m_exception.set(toJS(m_context)->vm(), toJS(JSValueToObject(m_context, valueInternalValue(value), 0)));
     else
@@ -244,14 +245,13 @@
 
 - (JSValue *)wrapperForObjCObject:(id)object
 {
-    // Lock access to m_wrapperMap
-    JSC::JSLockHolder lock(toJS(m_context));
+    JSC::APIEntryShim entryShim(toJS(m_context));
     return [m_wrapperMap jsWrapperForObject:object];
 }
 
 - (JSValue *)wrapperForJSObject:(JSValueRef)value
 {
-    JSC::JSLockHolder lock(toJS(m_context));
+    JSC::APIEntryShim entryShim(toJS(m_context));
     return [m_wrapperMap objcWrapperForJSValueRef:value];
 }
 

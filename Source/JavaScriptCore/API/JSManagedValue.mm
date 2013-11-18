@@ -30,6 +30,7 @@
 #if JSC_OBJC_API_ENABLED
 
 #import "APICast.h"
+#import "APIShims.h"
 #import "Heap.h"
 #import "JSContextInternal.h"
 #import "JSValueInternal.h"
@@ -191,6 +192,7 @@ private:
         return self;
 
     JSC::ExecState* exec = toJS([value.context JSGlobalContextRef]);
+    JSC::APIEntryShim entryShim(exec);
     JSC::JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     JSC::Weak<JSC::JSGlobalObject> weak(globalObject, managedValueHandleOwner(), self);
     m_globalObject.swap(weak);
@@ -212,6 +214,7 @@ private:
     if (m_weakValue.isClear())
         return nil;
     JSC::ExecState* exec = m_globalObject->globalExec();
+    JSC::APIEntryShim entryShim(exec);
     JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(exec)];
     JSC::JSValue value;
     if (m_weakValue.isPrimitive())
