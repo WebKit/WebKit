@@ -326,44 +326,32 @@ bool NetscapePluginHostProxy::processRequests()
 
 void NetscapePluginHostProxy::makeCurrentProcessFrontProcess()
 {
-#if COMPILER(CLANG)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#endif
     ProcessSerialNumber psn;
     GetCurrentProcess(&psn);
     SetFrontProcess(&psn);
-#if COMPILER(CLANG)
 #pragma clang diagnostic pop
-#endif
 }
 
 void NetscapePluginHostProxy::makePluginHostProcessFrontProcess() const
 {
-#if COMPILER(CLANG)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#endif
     SetFrontProcess(&m_pluginHostPSN);
-#if COMPILER(CLANG)
 #pragma clang diagnostic pop
-#endif
 }
 
 bool NetscapePluginHostProxy::isPluginHostProcessFrontProcess() const
 {
-#if COMPILER(CLANG)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#endif
     ProcessSerialNumber frontProcess;
     GetFrontProcess(&frontProcess);
 
     Boolean isSameProcess = 0;
     SameProcess(&frontProcess, &m_pluginHostPSN, &isSameProcess);
-#if COMPILER(CLANG)
 #pragma clang diagnostic pop
-#endif
 
     return isSameProcess;
 }

@@ -55,10 +55,8 @@ static PluginProcessShimCallbacks pluginProcessShimCallbacks;
 
 #ifndef __LP64__
 
-#if COMPILER(CLANG)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#endif
 
 static void shimDebugger(void)
 {
@@ -129,9 +127,7 @@ DYLD_INTERPOSE(shimShowWindow, ShowWindow);
 DYLD_INTERPOSE(shimHideWindow, HideWindow);
 DYLD_INTERPOSE(shimLSOpenCFURLRef, LSOpenCFURLRef);
 
-#if COMPILER(CLANG)
 #pragma clang diagnostic pop
-#endif
 
 #endif
 

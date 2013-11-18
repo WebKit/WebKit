@@ -1,3 +1,22 @@
+2013-11-18  Anders Carlsson  <andersca@apple.com>
+
+        Remove unnecessary COMPILER(CLANG) #ifdefs in Mac-only code
+        https://bugs.webkit.org/show_bug.cgi?id=124523
+
+        Reviewed by Dan Bernstein.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::beginModal):
+        * PluginProcess/mac/PluginProcessShim.mm:
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::tryLoad):
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::getPluginProcessSerialNumber):
+        (WebKit::PluginProcessProxy::makePluginProcessTheFrontProcess):
+        (WebKit::PluginProcessProxy::makeUIProcessTheFrontProcess):
+        (WebKit::PluginProcessProxy::exitFullscreen):
+
 2013-11-18  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Add EWebKitConfig.cmake and EWebKit2Config.cmake

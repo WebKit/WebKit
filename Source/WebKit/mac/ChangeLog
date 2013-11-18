@@ -1,5 +1,20 @@
 2013-11-18  Anders Carlsson  <andersca@apple.com>
 
+        Remove unnecessary COMPILER(CLANG) #ifdefs in Mac-only code
+        https://bugs.webkit.org/show_bug.cgi?id=124523
+
+        Reviewed by Dan Bernstein.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+        (WebKit::NetscapePluginHostManager::didCreateWindow):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::makeCurrentProcessFrontProcess):
+        (WebKit::NetscapePluginHostProxy::makePluginHostProcessFrontProcess):
+        (WebKit::NetscapePluginHostProxy::isPluginHostProcessFrontProcess):
+
+2013-11-18  Anders Carlsson  <andersca@apple.com>
+
         Ignore deprecation warnings for now.
 
         * History/WebHistory.h:
