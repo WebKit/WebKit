@@ -840,6 +840,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/GeolocationPermissionRequestManagerProxy.h \
 	Source/WebKit2/UIProcess/GeolocationPermissionRequestProxy.cpp \
 	Source/WebKit2/UIProcess/GeolocationPermissionRequestProxy.h \
+	Source/WebKit2/UIProcess/PageLoadState.cpp \
+	Source/WebKit2/UIProcess/PageLoadState.h \
 	Source/WebKit2/UIProcess/cairo/BackingStoreCairo.cpp \
 	Source/WebKit2/UIProcess/gtk/ExperimentalFeatures.cpp \
 	Source/WebKit2/UIProcess/gtk/ExperimentalFeatures.h \
