@@ -64,7 +64,7 @@
 }
 
 .status-line.good .bubble.pictogram {
-    background-image: url(../Images/checkmark.svg);
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDIwIDMwKSByb3RhdGUoLTQ1IDMwIDE3KSIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj4KICAgICAgICA8cmVjdCB5PSI1IiB3aWR0aD0iMTAiIGhlaWdodD0iMjUiIGZpbGw9IndoaXRlIiBzdHJva2U9Im5vbmUiIC8+CiAgICAgICAgPHJlY3QgeT0iMjAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIxMCIgZmlsbD0id2hpdGUiIHN0cm9rZT0ibm9uZSIgLz4KICAgIDwvZz4KPC9zdmc+Cg==);
 }
 
 .status-line.danger .bubble {

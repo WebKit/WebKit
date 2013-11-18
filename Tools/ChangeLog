@@ -1,3 +1,16 @@
+2013-11-18  Tim Horton  <timothy_horton@apple.com>
+
+        Checkmarks are shifted down on iPhone at build.webkit.org/dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=122909
+
+        Reviewed by Alexey Proskuryakov.
+
+        Put the checkmark SVG in the CSS file as a data URI so it loads immediately.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/StatusLineView.css:
+        (.status-line .bubble):
+        (.status-line.good .bubble.pictogram):
+
 2013-11-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove _lines_to_ignore_in_stderr, which was only used in Chromium port
