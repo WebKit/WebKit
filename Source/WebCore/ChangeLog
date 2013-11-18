@@ -1,5 +1,12 @@
 2013-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update GObject DOM symbols file after r158760.
+
+        * bindings/gobject/webkitdom.symbols: Add
+        webkit_dom_text_track_get_id prototype.
+
+2013-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r158821): [GTK] API break due to removed properties in GObject DOM bindings
         https://bugs.webkit.org/show_bug.cgi?id=124489
 

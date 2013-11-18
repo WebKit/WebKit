@@ -1645,6 +1645,7 @@ gulong webkit_dom_html_video_element_get_webkit_dropped_frame_count(WebKitDOMHTM
 void webkit_dom_text_track_add_cue(WebKitDOMTextTrack*, WebKitDOMTextTrackCue*)
 void webkit_dom_text_track_remove_cue(WebKitDOMTextTrack*, WebKitDOMTextTrackCue*, GError**)
 gboolean webkit_dom_text_track_dispatch_event(WebKitDOMTextTrack*, WebKitDOMEvent*, GError**)
+gchar* webkit_dom_text_track_get_id(WebKitDOMTextTrack*)
 gchar* webkit_dom_text_track_get_kind(WebKitDOMTextTrack*)
 gchar* webkit_dom_text_track_get_label(WebKitDOMTextTrack*)
 gchar* webkit_dom_text_track_get_language(WebKitDOMTextTrack*)
