@@ -28,7 +28,6 @@
 #ifndef IDBFactoryBackendInterface_h
 #define IDBFactoryBackendInterface_h
 
-#include "IDBBackingStoreCursorInterface.h"
 #include "IDBDatabaseBackend.h"
 #include "IndexedDB.h"
 
