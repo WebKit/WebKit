@@ -2263,6 +2263,9 @@ void WebPageProxy::didFinishLoadForFrame(uint64_t frameID, CoreIPC::MessageDecod
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
+    if (frame->isMainFrame())
+        m_pageLoadState.didFinishLoad();
+
     frame->didFinishLoad();
 
     m_loaderClient.didFinishLoadForFrame(this, frame, userData.get());
@@ -2280,6 +2283,9 @@ void WebPageProxy::didFailLoadForFrame(uint64_t frameID, const ResourceError& er
 
     clearLoadDependentCallbacks();
 
+    if (frame->isMainFrame())
+        m_pageLoadState.didFailLoad();
+
     frame->didFailLoad();
 
     m_loaderClient.didFailLoadWithErrorForFrame(this, frame, error, userData.get());
@@ -2295,6 +2301,9 @@ void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint32_t 
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK_URL(url);
+
+    if (frame->isMainFrame())
+        m_pageLoadState.didSameDocumentNavigation(url);
 
     m_pageLoadState.clearPendingAPIRequestURL();
     frame->didSameDocumentNavigation(url);

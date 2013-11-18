@@ -74,8 +74,28 @@ void PageLoadState::didCommitLoad()
 {
     ASSERT(!m_provisionalURL.isEmpty());
 
+    m_url = m_provisionalURL;
     m_provisionalURL = String();
 }
 
+void PageLoadState::didFinishLoad()
+{
+    ASSERT(m_provisionalURL.isEmpty());
+    ASSERT(!m_url.isEmpty());
+}
+
+void PageLoadState::didFailLoad()
+{
+    ASSERT(m_provisionalURL.isEmpty());
+    ASSERT(!m_url.isEmpty());
+}
+
+void PageLoadState::didSameDocumentNavigation(const String& url)
+{
+    ASSERT(m_provisionalURL.isEmpty());
+    ASSERT(!m_url.isEmpty());
+
+    m_url = url;
+}
 
 } // namespace WebKit

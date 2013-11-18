@@ -1,3 +1,21 @@
+2013-11-18  Anders Carlsson  <andersca@apple.com>
+
+        The PageLoadState object should keep track of the current URL
+        https://bugs.webkit.org/show_bug.cgi?id=124536
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::didCommitLoad):
+        (WebKit::PageLoadState::didFinishLoad):
+        (WebKit::PageLoadState::didFailLoad):
+        (WebKit::PageLoadState::didSameDocumentNavigation):
+        * UIProcess/PageLoadState.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame):
+
 2013-11-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r159444.

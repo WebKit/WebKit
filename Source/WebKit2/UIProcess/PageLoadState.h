@@ -42,12 +42,18 @@ public:
     void didStartProvisionalLoad(const String& url, const String& unreachableURL);
     void didReceiveServerRedirectForProvisionalLoad(const String& url);
     void didFailProvisionalLoad();
+
     void didCommitLoad();
+    void didFinishLoad();
+    void didFailLoad();
+
+    void didSameDocumentNavigation(const String& url);
 
 private:
     String m_pendingAPIRequestURL;
 
     String m_provisionalURL;
+    String m_url;
 };
 
 } // namespace WebKit
