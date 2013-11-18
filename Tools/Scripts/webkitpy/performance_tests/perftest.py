@@ -1,4 +1,5 @@
-# Copyright (C) 2012 Google Inc. All rights reserved.
+# Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2012, 2013 Google Inc. All rights reserved.
 # Copyright (C) 2012 Zoltan Horvath, Adobe Systems Incorporated. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -165,9 +166,7 @@ class PerfTest(object):
             (median, unit, stdev, unit, sorted_values[0], unit, sorted_values[-1], unit))
 
     _description_regex = re.compile(r'^Description: (?P<description>.*)$', re.IGNORECASE)
-    _metrics_regex = re.compile(r'^(?P<metric>Time|Malloc|JS Heap):')
-    _statistics_keys = ['avg', 'median', 'stdev', 'min', 'max', 'unit', 'values']
-    _score_regex = re.compile(r'^(?P<key>' + r'|'.join(_statistics_keys) + r')\s+(?P<value>([0-9\.]+(,\s+)?)+)\s*(?P<unit>.*)')
+    _metrics_regex = re.compile(r'^:(?P<metric>Time|Malloc|JSHeap) -> \[(?P<values>(\d+(\.\d+)?)(, \d+(\.\d+)?)+)\] (?P<unit>[a-z/]+)')
 
     def _run_with_driver(self, driver, time_out_ms):
         output = self.run_single(driver, self.test_path(), time_out_ms)
@@ -178,22 +177,17 @@ class PerfTest(object):
         current_metric = None
         for line in re.split('\n', output.text):
             description_match = self._description_regex.match(line)
-            metric_match = self._metrics_regex.match(line)
-            score = self._score_regex.match(line)
-
             if description_match:
                 self._description = description_match.group('description')
-            elif metric_match:
-                current_metric = metric_match.group('metric').replace(' ', '')
-            elif score:
-                if score.group('key') != 'values':
-                    continue
+                continue
 
-                metric = self._ensure_metrics(current_metric, score.group('unit'))
-                metric.append_group(map(lambda value: float(value), score.group('value').split(', ')))
-            else:
+            metric_match = self._metrics_regex.match(line)
+            if not metric_match:
                 _log.error('ERROR: ' + line)
                 return False
+
+            metric = self._ensure_metrics(metric_match.group('metric'), metric_match.group('unit'))
+            metric.append_group(map(lambda value: float(value), metric_match.group('values').split(', ')))
 
         return True
 
@@ -231,10 +225,6 @@ class PerfTest(object):
         return False
 
     _lines_to_ignore_in_parser_result = [
-        re.compile(r'^Running \d+ times$'),
-        re.compile(r'^Ignoring warm-up '),
-        re.compile(r'^Info:'),
-        re.compile(r'^\d+(.\d+)?(\s*(runs\/s|ms|fps))?$'),
         # Following are for handle existing test like Dromaeo
         re.compile(re.escape("""main frame - has 1 onunload handler(s)""")),
         re.compile(re.escape("""frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)""")),
@@ -244,7 +234,8 @@ class PerfTest(object):
         re.compile(r"CONSOLE MESSAGE: (line \d+: )?Blocked script execution in '[A-Za-z0-9\-\.:]+' because the document's frame is sandboxed and the 'allow-scripts' permission is not set."),
         re.compile(r"CONSOLE MESSAGE: (line \d+: )?Not allowed to load local resource"),
         # Dromaeo reports values for subtests. Ignore them for now.
-        re.compile(r'(?P<name>.+): \[(?P<values>(\d+(.\d+)?,\s+)*\d+(.\d+)?)\]'),
+        # FIXME: Remove once subtests are supported
+        re.compile(r'^[A-Za-z0-9\. =]+( -> )(\[?[0-9\., ]+\])( [a-z/]+)?$'),
     ]
 
     def _filter_output(self, output):

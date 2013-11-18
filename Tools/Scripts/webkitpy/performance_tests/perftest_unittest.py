@@ -98,16 +98,7 @@ class TestPerfTest(unittest.TestCase):
 
     def test_parse_output(self):
         output = DriverOutput("""
-Running 20 times
-Ignoring warm-up run (1115)
-
-Time:
-values 1080, 1120, 1095, 1101, 1104 ms
-avg 1100 ms
-median 1101 ms
-stdev 14.50862 ms
-min 1080 ms
-max 1120 ms
+:Time -> [1080, 1120, 1095, 1101, 1104] ms
 """, image=None, image_hash=None, audio=None)
         output_capture = OutputCapture()
         output_capture.capture_output()
@@ -120,21 +111,8 @@ max 1120 ms
         self.assertEqual(actual_stderr, '')
         self.assertEqual(actual_logs, '')
 
-    def test_parse_output_with_failing_line(self):
-        output = DriverOutput("""
-Running 20 times
-Ignoring warm-up run (1115)
-
-some-unrecognizable-line
-
-Time:
-values 1080, 1120, 1095, 1101, 1104 ms
-avg 1100 ms
-median 1101 ms
-stdev 14.50862 ms
-min 1080 ms
-max 1120 ms
-""", image=None, image_hash=None, audio=None)
+    def _assert_failed_on_line(self, output_text, expected_log):
+        output = DriverOutput(output_text, image=None, image_hash=None, audio=None)
         output_capture = OutputCapture()
         output_capture.capture_output()
         try:
@@ -145,40 +123,43 @@ max 1120 ms
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
         self.assertEqual(actual_stdout, '')
         self.assertEqual(actual_stderr, '')
-        self.assertEqual(actual_logs, 'ERROR: some-unrecognizable-line\n')
+        self.assertEqual(actual_logs, expected_log)
+
+    def test_parse_output_with_running_five_times(self):
+        self._assert_failed_on_line("""
+Running 5 times
+:Time -> [1080, 1120, 1095, 1101, 1104] ms
+""", 'ERROR: Running 5 times\n')
+
+    def test_parse_output_with_detailed_info(self):
+        self._assert_failed_on_line("""
+    1: 1080 ms
+:Time -> [1080, 1120, 1095, 1101, 1104] ms
+""", 'ERROR:     1: 1080 ms\n')
+
+    def test_parse_output_with_statistics(self):
+        self._assert_failed_on_line("""
+:Time -> [1080, 1120, 1095, 1101, 1104] ms
+    mean: 105 ms
+""", 'ERROR:     mean: 105 ms\n')
 
     def test_parse_output_with_description(self):
         output = DriverOutput("""
 Description: this is a test description.
 
-Running 20 times
-Ignoring warm-up run (1115)
-
-Time:
-values 1080, 1120, 1095, 1101, 1104 ms
-avg 1100 ms
-median 1101 ms
-stdev 14.50862 ms
-min 1080 ms
-max 1120 ms""", image=None, image_hash=None, audio=None)
+:Time -> [1080, 1120, 1095, 1101, 1104] ms
+""", image=None, image_hash=None, audio=None)
         test = PerfTest(MockPort(), 'some-test', '/path/some-dir/some-test')
         self._assert_results_are_correct(test, output)
         self.assertEqual(test.description(), 'this is a test description.')
 
     def test_parse_output_with_subtests(self):
         output = DriverOutput("""
-Running 20 times
-some test: [1, 2, 3, 4, 5]
-other test = else: [6, 7, 8, 9, 10]
-Ignoring warm-up run (1115)
+Description: this is a test description.
+some test -> [1, 2, 3, 4, 5]
+some other test = else -> [6, 7, 8, 9, 10]
 
-Time:
-values 1080, 1120, 1095, 1101, 1104 ms
-avg 1100 ms
-median 1101 ms
-stdev 14.50862 ms
-min 1080 ms
-max 1120 ms
+:Time -> [1080, 1120, 1095, 1101, 1104] ms
 """, image=None, image_hash=None, audio=None)
         output_capture = OutputCapture()
         output_capture.capture_output()
@@ -199,16 +180,9 @@ class TestSingleProcessPerfTest(unittest.TestCase):
         def run_single(driver, path, time_out_ms):
             called[0] += 1
             return DriverOutput("""
-Running 20 times
-Ignoring warm-up run (1115)
-
-Time:
-values 1080, 1120, 1095, 1101, 1104 ms
-avg 1100 ms
-median 1101 ms
-stdev 14.50862 ms
-min 1080 ms
-max 1120 ms""", image=None, image_hash=None, audio=None)
+Description: this is a test description.
+:Time -> [1080, 1120, 1095, 1101, 1104] ms
+""", image=None, image_hash=None, audio=None)
 
         test = SingleProcessPerfTest(MockPort(), 'some-test', '/path/some-dir/some-test')
         test.run_single = run_single

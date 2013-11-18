@@ -1,3 +1,14 @@
+2013-11-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Simplify and reformat the output of performance tests inside test runners
+        https://bugs.webkit.org/show_bug.cgi?id=124496
+
+        Reviewed by Antti Koivisto.
+
+        Rebaseline the expected result now that the output has been simplified.
+
+        * fast/harness/perftests/runs-per-second-log-expected.txt:
+
 2013-11-18  David Hyatt  <hyatt@apple.com>
 
         Add a quirk to not respect center text-align when positioning

@@ -43,36 +43,7 @@ from webkitpy.performance_tests.perftestsrunner import PerfTestsRunner
 
 
 class EventTargetWrapperTestData:
-    text = """Running 20 times
-Ignoring warm-up run (1502)
-1504
-1505
-1510
-1504
-1507
-1509
-1510
-1487
-1488
-1472
-1472
-1488
-1473
-1472
-1475
-1487
-1486
-1486
-1475
-1471
-
-Time:
-values 1486, 1471, 1510, 1505, 1478, 1490 ms
-avg 1490 ms
-median 1488 ms
-stdev 15.13935 ms
-min 1471 ms
-max 1510 ms
+    text = """:Time -> [1486, 1471, 1510, 1505, 1478, 1490] ms
 """
 
     output = """Running Bindings/event-target-wrapper.html (1 of 2)
@@ -87,16 +58,7 @@ Finished: 0.1 s
 
 
 class SomeParserTestData:
-    text = """Running 20 times
-Ignoring warm-up run (1115)
-
-Time:
-values 1080, 1120, 1095, 1101, 1104 ms
-avg 1100 ms
-median 1101 ms
-stdev 14.50861 ms
-min 1080 ms
-max 1120 ms
+    text = """:Time -> [1080, 1120, 1095, 1101, 1104] ms
 """
 
     output = """Running Parser/some-parser.html (2 of 2)
@@ -111,32 +73,11 @@ Finished: 0.1 s
 
 
 class MemoryTestData:
-    text = """Running 20 times
-Ignoring warm-up run (1115)
+    text = """:Time -> [1080, 1120, 1095, 1101, 1104] ms
 
-Time:
-values 1080, 1120, 1095, 1101, 1104 ms
-avg 1100 ms
-median 1101 ms
-stdev 14.50861 ms
-min 1080 ms
-max 1120 ms
+:JSHeap -> [825000, 811000, 848000, 837000, 829000] bytes
 
-JS Heap:
-values 825000, 811000, 848000, 837000, 829000 bytes
-avg 830000 bytes
-median 829000 bytes
-stdev 13784.04875 bytes
-min 811000 bytes
-max 848000 bytes
-
-Malloc:
-values 529000, 511000, 548000, 536000, 521000 bytes
-avg 529000 bytes
-median 529000 bytes
-stdev 14124.44689 bytes
-min 511000 bytes
-max 548000 bytes
+:Malloc -> [529000, 511000, 548000, 536000, 521000] bytes
 """
 
     output = """Running 1 tests

@@ -1,5 +1,52 @@
 2013-11-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Simplify and reformat the output of performance tests inside test runners
+        https://bugs.webkit.org/show_bug.cgi?id=124496
+
+        Reviewed by Antti Koivisto.
+
+        As a preparation to support subtests for Dromaeo and DoYouEvenBench, simplify the output performance tests generate.
+        Also modernize the output to better support "metric" concept we introduced a while ago.
+
+        New output on Dromaeo/dom-attr looks like this:
+        -----------------------------------------------
+        Running 5 times
+        getAttribute -> [1105, 1108, 1134, 1137, 1154]
+        element.property -> [1634, 1655, 1685, 1696, 1723]
+        setAttribute -> [646.3536463536464, 651, 651, 656.3436563436563, 658]
+        element.property = value -> [934, 949, 963, 964, 974]
+        element.expando = value -> [419, 419.5804195804196, 421.57842157842157, 425.57442557442556, 429]
+        element.expando -> [501, 517, 519.4805194805194, 521.4785214785214, 525]
+
+            1: 117.40644785571585 runs/s
+            2: 118.84720469666297 runs/s
+            3: 119.80547640905021 runs/s
+            4: 120.51886194758805 runs/s
+            5: 121.51924380569295 runs/s
+
+        :Time -> [117.40644785571585, 118.84720469666297, 119.80547640905021, 120.51886194758805, 121.51924380569295] runs/s
+            mean: 119.619446942942 runs/s
+            median: 119.80547640905021 runs/s
+            stdev: 1.5769040458730506 runs/s
+            min: 117.40644785571585 runs/s
+            max: 121.51924380569295 runs/s
+        -----------------------------------------------
+
+        * Dromaeo/resources/dromaeorunner.js:
+        (DRT.progress): Use the new format for subtest reports.
+        * resources/runner.js:
+        (.): Declare verboseLogging, which is set to true outside of test runners.
+        (PerfTestRunner.logInfo): Use verboseLogging instead of directly checking window.testRunner.
+        (PerfTestRunner.logDetail): Added. Logs informative text with a label such as "mean: 123 s" with 4-space indentation.
+        (PerfTestRunner.logStatistics): Use logDetail.
+        (.start): Initialize verboseLogging. Also log "Running 20 times" as an informative log using logDetail.
+        (.ignoreWarmUpAndLog): Use logDetail for showing the progress. These logs were useless inside test runners anyway
+        because perftest didn't get to see any output until the test finished running.
+        (.finish): Call logStatistics with metric name as opposed to a label. Each metric name is now prefixed with ':' to be
+        distinguishable from subtests, making the new format forward compatible.
+
+2013-11-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         [Performance tests] Interactive/SelectAll.html throws an exception
         https://bugs.webkit.org/show_bug.cgi?id=124495
 

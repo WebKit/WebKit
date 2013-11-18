@@ -38,9 +38,9 @@
          },
 
          progress: function(message) {
-             var score = message.status.score;
-             if (score)
-                 DRT.log(score.name + ': [' + score.times.join(', ') + ']');
+            var score = message.status.score;
+            if (score)
+                DRT.log(score.name + ' -> [' + score.times.join(', ') + ']');
          },
 
          teardown: function(data) {

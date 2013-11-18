@@ -7,6 +7,7 @@ if (window.testRunner) {
 
 (function () {
     var logLines = null;
+    var verboseLogging = false;
     var completedIterations = -1;
     var callsPerIteration = 1;
     var currentTest = null;
@@ -41,8 +42,13 @@ if (window.testRunner) {
     PerfTestRunner.now = window.performance && window.performance.now ? function () { return window.performance.now(); } : Date.now;
 
     PerfTestRunner.logInfo = function (text) {
-        if (!window.testRunner)
+        if (verboseLogging)
             this.log(text);
+    }
+
+    PerfTestRunner.logDetail = function (label, value) {
+        if (verboseLogging)
+            this.log('    ' + label + ': ' + value);
     }
 
     PerfTestRunner.loadFile = function (path) {
@@ -86,14 +92,10 @@ if (window.testRunner) {
     PerfTestRunner.logStatistics = function (values, unit, title) {
         var statistics = this.computeStatistics(values, unit);
         this.log("");
-        this.log(title);
-        if (statistics.values)
-            this.log("values " + statistics.values.join(", ") + " " + statistics.unit);
-        this.log("avg " + statistics.mean + " " + statistics.unit);
-        this.log("median " + statistics.median + " " + statistics.unit);
-        this.log("stdev " + statistics.stdev + " " + statistics.unit);
-        this.log("min " + statistics.min + " " + statistics.unit);
-        this.log("max " + statistics.max + " " + statistics.unit);
+        this.log(title + " -> [" + statistics.values.join(", ") + "] " + statistics.unit);
+        ["mean", "median", "stdev", "min", "max"].forEach(function (name) {
+            PerfTestRunner.logDetail(name, statistics[name] + ' ' + statistics.unit);
+        });
     }
 
     function getUsedMallocHeap() {
@@ -153,7 +155,8 @@ if (window.testRunner) {
         // FIXME: Don't hard code the number of in-process iterations to use inside a test runner.
         iterationCount = test.dromaeoIterationCount || (window.testRunner ? 5 : 20);
         logLines = window.testRunner ? [] : null;
-        PerfTestRunner.log("Running " + iterationCount + " times");
+        verboseLogging = !window.testRunner;
+        PerfTestRunner.logInfo("Running " + iterationCount + " times");
         if (test.doNotIgnoreInitialRun)
             completedIterations++;
         if (runner)
@@ -192,14 +195,14 @@ if (window.testRunner) {
     function ignoreWarmUpAndLog(measuredValue) {
         var labeledResult = measuredValue + " " + PerfTestRunner.unit;
         if (completedIterations <= 0)
-            PerfTestRunner.log("Ignoring warm-up run (" + labeledResult + ")");
+            PerfTestRunner.logDetail(completedIterations, labeledResult + " (Ignored warm-up run)");
         else {
             results.push(measuredValue);
             if (window.internals && !currentTest.doNotMeasureMemoryUsage) {
                 jsHeapResults.push(getUsedJSHeap());
                 mallocHeapResults.push(getUsedMallocHeap());
             }
-            PerfTestRunner.log(labeledResult);
+            PerfTestRunner.logDetail(completedIterations, labeledResult);
         }
     }
 
@@ -207,10 +210,10 @@ if (window.testRunner) {
         try {
             if (currentTest.description)
                 PerfTestRunner.log("Description: " + currentTest.description);
-            PerfTestRunner.logStatistics(results, PerfTestRunner.unit, "Time:");
+            PerfTestRunner.logStatistics(results, PerfTestRunner.unit, ":Time");
             if (jsHeapResults.length) {
-                PerfTestRunner.logStatistics(jsHeapResults, "bytes", "JS Heap:");
-                PerfTestRunner.logStatistics(mallocHeapResults, "bytes", "Malloc:");
+                PerfTestRunner.logStatistics(jsHeapResults, "bytes", ":JSHeap");
+                PerfTestRunner.logStatistics(mallocHeapResults, "bytes", ":Malloc");
             }
             if (logLines)
                 logLines.forEach(logInDocument);

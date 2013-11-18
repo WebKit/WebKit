@@ -1,3 +1,46 @@
+2013-11-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Simplify and reformat the output of performance tests inside test runners
+        https://bugs.webkit.org/show_bug.cgi?id=124496
+
+        Reviewed by Antti Koivisto.
+
+        As a preparation to support subtests for Dromaeo and DoYouEvenBench, simplify the output
+        performance tests generate. Instead of spitting out noise in PerfTestRunner (runner.js)
+        and ignoring it in PerfTest._filter_output (perftest.py), simply avoid generating it in
+        the first place.
+
+        Also modernize the output to adopt "metric" concept better and make it forward compatible
+        with subtests.
+
+        With this patch, performance tests written using runner.js only produces empty lines or
+        lines of the following format inside test runners (DumpRenderTree and WebKitTestRunner):
+        <subtest name> -> [<value 1>, <value 2>, ...]
+        :<metric name> -> [<value 1>, <value 2>, ...]
+
+        This greatly simplifies the parsing logic inside PerfTest._run_with_driver.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest): Removed a bunch of regular expressions that are no longer used.
+        (PerfTest._run_with_driver): Just parse the values and description and treat everything
+        else as errors.
+
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (TestPerfTest.test_parse_output): Removed the junk.
+        (TestPerfTest._assert_failed_on_line): Extracted from test_parse_output_with_failing_line,
+        which was removed in favor of the tests below.
+        (TestPerfTest.test_parse_output_with_running_five_times): Added.
+        (TestPerfTest.test_parse_output_with_detailed_info): Added.
+        (TestPerfTest.test_parse_output_with_statistics): Added.
+        (TestPerfTest.test_parse_output_with_description): Removed the junk.
+        (TestPerfTest.test_parse_output_with_subtests): Ditto.
+        (TestSingleProcessPerfTest.test_use_only_one_process): Ditto.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner_integrationtest.py:
+        (EventTargetWrapperTestData): Ditto.
+        (SomeParserTestData): Ditto.
+        (MemoryTestData): Ditto.
+
 2013-11-18  Tim Horton  <timothy_horton@apple.com>
 
         Occasionally, hundreds of tests fail with small text diffs on Mavericks
