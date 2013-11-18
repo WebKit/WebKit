@@ -144,6 +144,7 @@
 #include <WebCore/Settings.h>
 #include <WebCore/SimpleFontData.h>
 #include <WebCore/SystemInfo.h>
+#include <WebCore/WebKitVersion.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <WebCore/WindowsTouch.h>
 #include <wtf/MainThread.h>
@@ -2491,8 +2492,10 @@ bool WebView::developerExtrasEnabled() const
 static String webKitVersionString()
 {
     LPWSTR buildNumberStringPtr;
-    if (!::LoadStringW(gInstance, BUILD_NUMBER, reinterpret_cast<LPWSTR>(&buildNumberStringPtr), 0) || !buildNumberStringPtr)
-        return "534+";
+    if (!::LoadStringW(gInstance, BUILD_NUMBER, reinterpret_cast<LPWSTR>(&buildNumberStringPtr), 0) || !buildNumberStringPtr) {
+        String webKitVersion = String::format("%d.%d", WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION);
+        return webKitVersion;
+    }
 
     return buildNumberStringPtr;
 }
