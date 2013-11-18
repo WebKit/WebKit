@@ -29,6 +29,7 @@
 namespace WebKit {
 
 PageLoadState::PageLoadState()
+    : m_state(State::Finished)
 {
 }
 
@@ -55,6 +56,7 @@ void PageLoadState::didStartProvisionalLoad(const String& url, const String& unr
 {
     ASSERT(m_provisionalURL.isEmpty());
 
+    m_state = State::Provisional;
     m_provisionalURL = url;
 
     // FIXME: Do something with the unreachable URL.
@@ -62,26 +64,36 @@ void PageLoadState::didStartProvisionalLoad(const String& url, const String& unr
 
 void PageLoadState::didReceiveServerRedirectForProvisionalLoad(const String& url)
 {
+    ASSERT(m_state == State::Provisional);
+
     m_provisionalURL = url;
 }
 
 void PageLoadState::didFailProvisionalLoad()
 {
+    ASSERT(m_state == State::Provisional);
+
+    m_state = State::Finished;
     m_provisionalURL = String();
 }
 
 void PageLoadState::didCommitLoad()
 {
+    ASSERT(m_state == State::Provisional);
     ASSERT(!m_provisionalURL.isEmpty());
 
+    m_state = State::Committed;
     m_url = m_provisionalURL;
     m_provisionalURL = String();
 }
 
 void PageLoadState::didFinishLoad()
 {
+    ASSERT(m_state == State::Committed);
     ASSERT(m_provisionalURL.isEmpty());
     ASSERT(!m_url.isEmpty());
+
+    m_state = State::Finished;
 }
 
 void PageLoadState::didFailLoad()
@@ -92,7 +104,6 @@ void PageLoadState::didFailLoad()
 
 void PageLoadState::didSameDocumentNavigation(const String& url)
 {
-    ASSERT(m_provisionalURL.isEmpty());
     ASSERT(!m_url.isEmpty());
 
     m_url = url;

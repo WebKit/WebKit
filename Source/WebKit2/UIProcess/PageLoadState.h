@@ -35,6 +35,12 @@ public:
     PageLoadState();
     ~PageLoadState();
 
+    enum class State {
+        Provisional,
+        Committed,
+        Finished
+    };
+
     const String& pendingAPIRequestURL() const;
     void setPendingAPIRequestURL(const String&);
     void clearPendingAPIRequestURL();
@@ -50,6 +56,8 @@ public:
     void didSameDocumentNavigation(const String& url);
 
 private:
+    State m_state;
+
     String m_pendingAPIRequestURL;
 
     String m_provisionalURL;
