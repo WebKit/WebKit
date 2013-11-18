@@ -1,3 +1,23 @@
+2013-11-18  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        Change mediasource and mediastream modules to use nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=124530
+
+        Reviewed by Tim Horton.
+
+        No new tests needed, no behavior change.
+
+        * Modules/mediasource/MediaSource.cpp:
+        * Modules/mediasource/SourceBuffer.cpp:
+        * Modules/mediastream/MediaStream.cpp:
+        * Modules/mediastream/RTCDTMFSender.cpp:
+        * Modules/mediastream/RTCDataChannel.cpp:
+        * Modules/mediastream/RTCIceCandidate.cpp:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        * Modules/mediastream/RTCSessionDescription.cpp:
+        * Modules/mediastream/RTCStatsResponse.cpp:
+        * Modules/mediastream/UserMediaRequest.cpp:
+
 2013-11-18  Brady Eidson  <beidson@apple.com>
 
         Move execution of IDBCursorBackendOperations to the IDBServerConnection

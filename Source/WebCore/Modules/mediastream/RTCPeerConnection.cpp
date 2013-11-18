@@ -68,20 +68,20 @@ namespace WebCore {
 PassRefPtr<RTCConfiguration> RTCPeerConnection::parseConfiguration(const Dictionary& configuration, ExceptionCode& ec)
 {
     if (configuration.isUndefinedOrNull())
-        return 0;
+        return nullptr;
 
     ArrayValue iceServers;
     bool ok = configuration.get("iceServers", iceServers);
     if (!ok || iceServers.isUndefinedOrNull()) {
         ec = TYPE_MISMATCH_ERR;
-        return 0;
+        return nullptr;
     }
 
     size_t numberOfServers;
     ok = iceServers.length(numberOfServers);
     if (!ok) {
         ec = TYPE_MISMATCH_ERR;
-        return 0;
+        return nullptr;
     }
 
     RefPtr<RTCConfiguration> rtcConfiguration = RTCConfiguration::create();
@@ -91,19 +91,19 @@ PassRefPtr<RTCConfiguration> RTCPeerConnection::parseConfiguration(const Diction
         ok = iceServers.get(i, iceServer);
         if (!ok) {
             ec = TYPE_MISMATCH_ERR;
-            return 0;
+            return nullptr;
         }
 
         String urlString, credential, username;
         ok = iceServer.get("url", urlString);
         if (!ok) {
             ec = TYPE_MISMATCH_ERR;
-            return 0;
+            return nullptr;
         }
         URL url(URL(), urlString);
         if (!url.isValid() || !(url.protocolIs("turn") || url.protocolIs("stun"))) {
             ec = TYPE_MISMATCH_ERR;
-            return 0;
+            return nullptr;
         }
 
         iceServer.get("credential", credential);
@@ -119,16 +119,16 @@ PassRefPtr<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext& 
 {
     RefPtr<RTCConfiguration> configuration = parseConfiguration(rtcConfiguration, ec);
     if (ec)
-        return 0;
+        return nullptr;
 
     RefPtr<MediaConstraints> constraints = MediaConstraintsImpl::create(mediaConstraints, ec);
     if (ec)
-        return 0;
+        return nullptr;
 
     RefPtr<RTCPeerConnection> peerConnection = adoptRef(new RTCPeerConnection(context, configuration.release(), constraints.release(), ec));
     peerConnection->suspendIfNeeded();
     if (ec)
-        return 0;
+        return nullptr;
 
     return peerConnection.release();
 }
@@ -229,7 +229,7 @@ PassRefPtr<RTCSessionDescription> RTCPeerConnection::localDescription(ExceptionC
     RefPtr<RTCSessionDescriptionDescriptor> descriptor = m_peerHandler->localDescription();
     if (!descriptor) {
         ec = INVALID_STATE_ERR;
-        return 0;
+        return nullptr;
     }
 
     RefPtr<RTCSessionDescription> sessionDescription = RTCSessionDescription::create(descriptor.release());
@@ -258,7 +258,7 @@ PassRefPtr<RTCSessionDescription> RTCPeerConnection::remoteDescription(Exception
     RefPtr<RTCSessionDescriptionDescriptor> descriptor = m_peerHandler->remoteDescription();
     if (!descriptor) {
         ec = INVALID_STATE_ERR;
-        return 0;
+        return nullptr;
     }
 
     RefPtr<RTCSessionDescription> desc = RTCSessionDescription::create(descriptor.release());
@@ -435,7 +435,7 @@ MediaStream* RTCPeerConnection::getStreamById(const String& streamId)
             return iter->get();
     }
 
-    return 0;
+    return nullptr;
 }
 
 void RTCPeerConnection::getStats(PassRefPtr<RTCStatsCallback> successCallback, PassRefPtr<MediaStreamTrack> selector)
@@ -449,12 +449,12 @@ PassRefPtr<RTCDataChannel> RTCPeerConnection::createDataChannel(String label, co
 {
     if (m_signalingState == SignalingStateClosed) {
         ec = INVALID_STATE_ERR;
-        return 0;
+        return nullptr;
     }
 
     RefPtr<RTCDataChannel> channel = RTCDataChannel::create(scriptExecutionContext(), m_peerHandler.get(), label, options, ec);
     if (ec)
-        return 0;
+        return nullptr;
 
     m_dataChannels.append(channel);
     return channel.release();
@@ -473,24 +473,24 @@ PassRefPtr<RTCDTMFSender> RTCPeerConnection::createDTMFSender(PassRefPtr<MediaSt
 {
     if (m_signalingState == SignalingStateClosed) {
         ec = INVALID_STATE_ERR;
-        return 0;
+        return nullptr;
     }
 
     if (!prpTrack) {
         ec = TypeError;
-        return 0;
+        return nullptr;
     }
 
     RefPtr<MediaStreamTrack> track = prpTrack;
 
     if (!hasLocalStreamWithTrackId(track->id())) {
         ec = SYNTAX_ERR;
-        return 0;
+        return nullptr;
     }
 
     RefPtr<RTCDTMFSender> dtmfSender = RTCDTMFSender::create(scriptExecutionContext(), m_peerHandler.get(), track.release(), ec);
     if (ec)
-        return 0;
+        return nullptr;
     return dtmfSender.release();
 }
 

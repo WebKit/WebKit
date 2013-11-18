@@ -244,7 +244,7 @@ MediaStreamTrack* MediaStream::getTrackById(String id)
             return (*iter).get();
     }
 
-    return 0;
+    return nullptr;
 }
 
 void MediaStream::trackDidEnd()

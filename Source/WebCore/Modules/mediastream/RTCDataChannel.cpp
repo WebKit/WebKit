@@ -67,7 +67,7 @@ PassRefPtr<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext* contex
     OwnPtr<RTCDataChannelHandler> handler = peerConnectionHandler->createDataChannel(label, initData);
     if (!handler) {
         ec = NOT_SUPPORTED_ERR;
-        return 0;
+        return nullptr;
     }
     return adoptRef(new RTCDataChannel(context, handler.release()));
 }

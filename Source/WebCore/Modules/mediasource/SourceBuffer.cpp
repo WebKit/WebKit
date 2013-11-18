@@ -114,7 +114,7 @@ PassRefPtr<TimeRanges> SourceBuffer::buffered(ExceptionCode& ec) const
     //    INVALID_STATE_ERR exception and abort these steps.
     if (isRemoved()) {
         ec = INVALID_STATE_ERR;
-        return 0;
+        return nullptr;
     }
 
     // 2. Return a new static normalized TimeRanges object for the media segments buffered.
@@ -386,7 +386,7 @@ const AtomicString& SourceBuffer::networkError()
 VideoTrackList* SourceBuffer::videoTracks()
 {
     if (!m_source->mediaElement())
-        return 0;
+        return nullptr;
 
     if (!m_videoTracks)
         m_videoTracks = VideoTrackList::create(m_source->mediaElement(), ActiveDOMObject::scriptExecutionContext());
@@ -397,7 +397,7 @@ VideoTrackList* SourceBuffer::videoTracks()
 AudioTrackList* SourceBuffer::audioTracks()
 {
     if (!m_source->mediaElement())
-        return 0;
+        return nullptr;
 
     if (!m_audioTracks)
         m_audioTracks = AudioTrackList::create(m_source->mediaElement(), ActiveDOMObject::scriptExecutionContext());
@@ -408,7 +408,7 @@ AudioTrackList* SourceBuffer::audioTracks()
 TextTrackList* SourceBuffer::textTracks()
 {
     if (!m_source->mediaElement())
-        return 0;
+        return nullptr;
 
     if (!m_textTracks)
         m_textTracks = TextTrackList::create(m_source->mediaElement(), ActiveDOMObject::scriptExecutionContext());

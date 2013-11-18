@@ -50,7 +50,7 @@ PassRefPtr<RTCDTMFSender> RTCDTMFSender::create(ScriptExecutionContext* context,
     OwnPtr<RTCDTMFSenderHandler> handler = peerConnectionHandler->createDTMFSender(track->source());
     if (!handler) {
         ec = NOT_SUPPORTED_ERR;
-        return 0;
+        return nullptr;
     }
 
     RefPtr<RTCDTMFSender> dtmfSender = adoptRef(new RTCDTMFSender(context, track, handler.release()));

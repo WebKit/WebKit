@@ -75,14 +75,14 @@ PassRefPtr<UserMediaRequest> UserMediaRequest::create(ScriptExecutionContext* co
 
     RefPtr<MediaConstraints> audioConstraints = parseOptions(options, AtomicString("audio", AtomicString::ConstructFromLiteral), ec);
     if (ec)
-        return 0;
+        return nullptr;
 
     RefPtr<MediaConstraints> videoConstraints = parseOptions(options, AtomicString("video", AtomicString::ConstructFromLiteral), ec);
     if (ec)
-        return 0;
+        return nullptr;
 
     if (!audioConstraints && !videoConstraints)
-        return 0;
+        return nullptr;
 
     return adoptRef(new UserMediaRequest(context, controller, audioConstraints.release(), videoConstraints.release(), successCallback, errorCallback));
 }
@@ -105,8 +105,8 @@ SecurityOrigin* UserMediaRequest::securityOrigin() const
 {
     if (m_scriptExecutionContext)
         return m_scriptExecutionContext->securityOrigin();
-    
-    return 0;
+
+    return nullptr;
 }
     
 void UserMediaRequest::start()

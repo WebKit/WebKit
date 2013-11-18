@@ -84,21 +84,21 @@ SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec
     // abort these steps.
     if (type.isNull() || type.isEmpty()) {
         ec = INVALID_ACCESS_ERR;
-        return 0;
+        return nullptr;
     }
 
     // 2. If type contains a MIME type that is not supported ..., then throw a
     // NOT_SUPPORTED_ERR exception and abort these steps.
     if (!isTypeSupported(type)) {
         ec = NOT_SUPPORTED_ERR;
-        return 0;
+        return nullptr;
     }
 
     // 4. If the readyState attribute is not in the "open" state then throw an
     // INVALID_STATE_ERR exception and abort these steps.
     if (!isOpen()) {
         ec = INVALID_STATE_ERR;
-        return 0;
+        return nullptr;
     }
 
     // 5. Create a new SourceBuffer object and associated resources.
@@ -109,7 +109,7 @@ SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec
         ASSERT(ec == NOT_SUPPORTED_ERR || ec == QUOTA_EXCEEDED_ERR);
         // 2. If type contains a MIME type that is not supported ..., then throw a NOT_SUPPORTED_ERR exception and abort these steps.
         // 3. If the user agent can't handle any more SourceBuffer objects then throw a QUOTA_EXCEEDED_ERR exception and abort these steps
-        return 0;
+        return nullptr;
     }
 
     RefPtr<SourceBuffer> buffer = SourceBuffer::create(sourceBufferPrivate.releaseNonNull(), this);

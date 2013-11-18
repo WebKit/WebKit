@@ -43,7 +43,7 @@ PassRefPtr<RTCStatsReport> RTCStatsResponse::namedItem(const AtomicString& name)
 {
     if (m_idmap.find(name) != m_idmap.end())
         return m_result[m_idmap.get(name)];
-    return 0;
+    return nullptr;
 }
 
 bool RTCStatsResponse::canGetItemsForName(const AtomicString& name)
