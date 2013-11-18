@@ -34,6 +34,7 @@
 #include "GeolocationPermissionRequestManagerProxy.h"
 #include "LayerTreeContext.h"
 #include "NotificationPermissionRequestManagerProxy.h"
+#include "PageLoadState.h"
 #include "PlatformProcessIdentifier.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
@@ -1180,6 +1181,7 @@ private:
     WebCore::DragSession m_currentDragSession;
 #endif
 
+    PageLoadState m_pageLoadState;
     String m_pendingAPIRequestURL;
 
     bool m_mainFrameHasHorizontalScrollbar;

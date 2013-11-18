@@ -2145,9 +2145,12 @@ void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, const Strin
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK_URL(url);
 
-    frame->setUnreachableURL(unreachableURL);
+    if (frame->isMainFrame())
+        m_pageLoadState.didStartProvisionalLoad(url, unreachableURL);
 
+    frame->setUnreachableURL(unreachableURL);
     frame->didStartProvisionalLoad(url);
+
     m_loaderClient.didStartProvisionalLoadForFrame(this, frame, userData.get());
 }
 
