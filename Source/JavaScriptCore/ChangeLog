@@ -1,3 +1,13 @@
+2013-11-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r159351): It made zillion tests assert on !CF platforms
+        https://bugs.webkit.org/show_bug.cgi?id=124490
+
+        Reviewed by Mark Hahnenberg.
+
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::sweep):
+
 2013-11-18  Julien Brianceau  <jbriance@cisco.com>
 
         Remove architecture specific code in LowLevelInterpreter.
