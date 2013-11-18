@@ -1,3 +1,10 @@
+2013-11-18  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix attempt on GTK and EFL port after r159461
+
+        * CMakeLists.txt: Added APINavigationData.cpp and removed WebNavigationData.cpp
+        * GNUmakefile.list.am: Ditto.
+
 2013-11-18  Anders Carlsson  <andersca@apple.com>
 
         Rename WebNavigationData to API::NavigationData

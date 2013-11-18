@@ -819,6 +819,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/Authentication/WebCredential.h \
 	Source/WebKit2/UIProcess/Authentication/WebProtectionSpace.cpp \
 	Source/WebKit2/UIProcess/Authentication/WebProtectionSpace.h \
+	Source/WebKit2/UIProcess/APINavigationData.cpp \
+	Source/WebKit2/UIProcess/APINavigationData.h \
 	Source/WebKit2/UIProcess/BackingStore.cpp \
 	Source/WebKit2/UIProcess/BackingStore.h \
 	Source/WebKit2/UIProcess/DefaultUndoController.cpp \
@@ -981,8 +983,6 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/WebMediaCacheManagerProxy.h \
 	Source/WebKit2/UIProcess/WebLoaderClient.cpp \
 	Source/WebKit2/UIProcess/WebLoaderClient.h \
-	Source/WebKit2/UIProcess/WebNavigationData.cpp \
-	Source/WebKit2/UIProcess/WebNavigationData.h \
 	Source/WebKit2/UIProcess/WebNetworkInfoManagerProxy.cpp \
 	Source/WebKit2/UIProcess/WebNetworkInfoManagerProxy.h \
 	Source/WebKit2/UIProcess/WebNetworkInfoProvider.cpp \
