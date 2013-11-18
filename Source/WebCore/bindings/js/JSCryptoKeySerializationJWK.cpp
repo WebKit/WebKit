@@ -37,6 +37,7 @@
 #include "CryptoKeyDataOctetSequence.h"
 #include "CryptoKeyDataRSAComponents.h"
 #include "CryptoKeyHMAC.h"
+#include "CryptoKeyRSA.h"
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include <heap/StrongInlines.h>
@@ -433,6 +434,40 @@ void JSCryptoKeySerializationJWK::buildJSONForOctetSequence(ExecState* exec, con
     addToJSON(exec, result, "k", base64URLEncode(keyData));
 }
 
+void JSCryptoKeySerializationJWK::buildJSONForRSAComponents(JSC::ExecState* exec, const CryptoKeyDataRSAComponents& data, JSC::JSObject* result)
+{
+    addToJSON(exec, result, "kty", "RSA");
+    addToJSON(exec, result, "n", base64URLEncode(data.modulus()));
+    addToJSON(exec, result, "e", base64URLEncode(data.exponent()));
+
+    if (data.type() == CryptoKeyDataRSAComponents::Type::Public)
+        return;
+
+    addToJSON(exec, result, "d", base64URLEncode(data.privateExponent()));
+
+    if (!data.hasAdditionalPrivateKeyParameters())
+        return;
+
+    addToJSON(exec, result, "p", base64URLEncode(data.firstPrimeInfo().primeFactor));
+    addToJSON(exec, result, "q", base64URLEncode(data.secondPrimeInfo().primeFactor));
+    addToJSON(exec, result, "dp", base64URLEncode(data.firstPrimeInfo().factorCRTExponent));
+    addToJSON(exec, result, "dq", base64URLEncode(data.secondPrimeInfo().factorCRTExponent));
+    addToJSON(exec, result, "qi", base64URLEncode(data.secondPrimeInfo().factorCRTCoefficient));
+
+    if (data.otherPrimeInfos().isEmpty())
+        return;
+
+    JSArray* oth = constructEmptyArray(exec, 0, exec->lexicalGlobalObject(), data.otherPrimeInfos().size());
+    for (size_t i = 0, size = data.otherPrimeInfos().size(); i < size; ++i) {
+        JSObject* jsPrimeInfo = constructEmptyObject(exec);
+        addToJSON(exec, jsPrimeInfo, "r", base64URLEncode(data.otherPrimeInfos()[i].primeFactor));
+        addToJSON(exec, jsPrimeInfo, "d", base64URLEncode(data.otherPrimeInfos()[i].factorCRTExponent));
+        addToJSON(exec, jsPrimeInfo, "t", base64URLEncode(data.otherPrimeInfos()[i].factorCRTCoefficient));
+        oth->putDirectIndex(exec, i, jsPrimeInfo);
+    }
+    result->putDirect(exec->vm(), Identifier(exec, "oth"), oth);
+}
+
 void JSCryptoKeySerializationJWK::addToJSON(ExecState* exec, JSObject* json, const char* key, const String& value)
 {
     VM& vm = exec->vm();
@@ -482,6 +517,28 @@ void JSCryptoKeySerializationJWK::addJWKAlgorithmToJSON(ExecState* exec, JSObjec
             break;
         }
         break;
+    case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5: {
+        const CryptoKeyRSA& rsaKey = toCryptoKeyRSA(key);
+        CryptoAlgorithmIdentifier hash;
+        if (!rsaKey.isRestrictedToHash(hash))
+            break;
+        if (rsaKey.keySizeInBits() < 2048)
+            break;
+        switch (hash) {
+        case CryptoAlgorithmIdentifier::SHA_256:
+            jwkAlgorithm = "RS256";
+            break;
+        case CryptoAlgorithmIdentifier::SHA_384:
+            jwkAlgorithm = "RS384";
+            break;
+        case CryptoAlgorithmIdentifier::SHA_512:
+            jwkAlgorithm = "RS512";
+            break;
+        default:
+            break;
+        }
+        break;
+    }
     default:
         break;
     }
@@ -534,11 +591,14 @@ String JSCryptoKeySerializationJWK::serialize(ExecState* exec, const CryptoKey& 
 
     if (isCryptoKeyDataOctetSequence(*keyData))
         buildJSONForOctetSequence(exec, toCryptoKeyDataOctetSequence(*keyData).octetSequence(), result);
+    else if (isCryptoKeyDataRSAComponents(*keyData))
+        buildJSONForRSAComponents(exec, toCryptoKeyDataRSAComponents(*keyData), result);
     else {
         throwTypeError(exec, "Key doesn't support exportKey");
         return String();
     }
-    ASSERT(!exec->hadException());
+    if (exec->hadException())
+        return String();
 
     return JSONStringify(exec, result, 4);
 }

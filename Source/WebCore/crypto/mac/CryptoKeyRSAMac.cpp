@@ -60,13 +60,19 @@ namespace WebCore {
 
 static CCCryptorStatus getPublicKeyComponents(CCRSACryptorRef rsaKey, Vector<uint8_t>& modulus, Vector<uint8_t>& publicExponent)
 {
-    ASSERT(CCRSAGetKeyType(rsaKey) == ccRSAKeyPublic);
+    ASSERT(CCRSAGetKeyType(rsaKey) == ccRSAKeyPublic || CCRSAGetKeyType(rsaKey) == ccRSAKeyPrivate);
+    bool keyIsPublic = CCRSAGetKeyType(rsaKey) == ccRSAKeyPublic;
+    CCRSACryptorRef publicKey = keyIsPublic ? rsaKey : CCRSACryptorGetPublicKeyFromPrivateKey(rsaKey);
 
     modulus.resize(16384);
     size_t modulusLength = modulus.size();
     publicExponent.resize(16384);
     size_t exponentLength = publicExponent.size();
-    CCCryptorStatus status = CCRSAGetKeyComponents(rsaKey, modulus.data(), &modulusLength, publicExponent.data(), &exponentLength, 0, 0, 0, 0);
+    CCCryptorStatus status = CCRSAGetKeyComponents(publicKey, modulus.data(), &modulusLength, publicExponent.data(), &exponentLength, 0, 0, 0, 0);
+    if (!keyIsPublic) {
+        // CCRSACryptorGetPublicKeyFromPrivateKey has "Get" in the name, but its result needs to be released (see <rdar://problem/15449697>).
+        CCRSACryptorRelease(publicKey);
+    }
     if (status)
         return status;
 
@@ -122,21 +128,35 @@ void CryptoKeyRSA::restrictToHash(CryptoAlgorithmIdentifier identifier)
     m_hash = identifier;
 }
 
+bool CryptoKeyRSA::isRestrictedToHash(CryptoAlgorithmIdentifier& identifier) const
+{
+    if (!m_restrictedToSpecificHash)
+        return false;
+
+    identifier = m_hash;
+    return true;
+}
+
+size_t CryptoKeyRSA::keySizeInBits() const
+{
+    Vector<uint8_t> modulus;
+    Vector<uint8_t> publicExponent;
+    CCCryptorStatus status = getPublicKeyComponents(m_platformKey, modulus, publicExponent);
+    if (status) {
+        WTFLogAlways("Couldn't get RSA key components, status %d", status);
+        return 0;
+    }
+
+    return modulus.size() * 8;
+}
+
 void CryptoKeyRSA::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& builder) const
 {
     CryptoKey::buildAlgorithmDescription(builder);
 
-    ASSERT(CCRSAGetKeyType(m_platformKey) == ccRSAKeyPublic || CCRSAGetKeyType(m_platformKey) == ccRSAKeyPrivate);
-    bool platformKeyIsPublic = CCRSAGetKeyType(m_platformKey) == ccRSAKeyPublic;
-    CCRSACryptorRef publicKey = platformKeyIsPublic ? m_platformKey : CCRSACryptorGetPublicKeyFromPrivateKey(m_platformKey);
-
     Vector<uint8_t> modulus;
     Vector<uint8_t> publicExponent;
-    CCCryptorStatus status = getPublicKeyComponents(publicKey, modulus, publicExponent);
-    if (!platformKeyIsPublic) {
-        // CCRSACryptorGetPublicKeyFromPrivateKey has "Get" in the name, but its result needs to be released (see <rdar://problem/15449697>).
-        CCRSACryptorRelease(publicKey);
-    }
+    CCCryptorStatus status = getPublicKeyComponents(m_platformKey, modulus, publicExponent);
     if (status) {
         WTFLogAlways("Couldn't get RSA key components, status %d", status);
         return;
@@ -154,9 +174,24 @@ void CryptoKeyRSA::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& 
 
 std::unique_ptr<CryptoKeyData> CryptoKeyRSA::exportData() const
 {
-    // Not implemented yet.
     ASSERT(extractable());
-    return nullptr;
+
+    switch (CCRSAGetKeyType(m_platformKey)) {
+    case ccRSAKeyPublic: {
+        Vector<uint8_t> modulus;
+        Vector<uint8_t> publicExponent;
+        CCCryptorStatus status = getPublicKeyComponents(m_platformKey, modulus, publicExponent);
+        if (status) {
+            WTFLogAlways("Couldn't get RSA key components, status %d", status);
+            return nullptr;
+        }
+        return CryptoKeyDataRSAComponents::createPublic(modulus, publicExponent);
+    }
+    case ccRSAKeyPrivate:
+        // Not supported yet.
+    default:
+        return nullptr;
+    }
 }
 
 static bool bigIntegerToUInt32(const Vector<uint8_t>& bigInteger, uint32_t& result)
