@@ -1,3 +1,17 @@
+2013-11-18  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Add EWebKitConfig.cmake and EWebKit2Config.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=124478
+
+        Reviewed by Gyuyoung Kim.
+
+        EWebKit is built using CMake but applications use *.pc to use it.
+        This patch provides EWebKitConfig.cmake and EWebKit2Config.cmake
+        for applications which use EWebkit and is compiled by CMake.
+
+        * PlatformEfl.cmake:
+        Configure and install EWebKitConfig.cmake and EWebKitConfigVersion.cmake
+
 2013-11-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed rollout of r159271, broke Mountain Lion build.

@@ -1,3 +1,17 @@
+2013-11-18  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Add EWebKitConfig.cmake and EWebKit2Config.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=124478
+
+        Reviewed by Gyuyoung Kim.
+
+        EWebKit is built using CMake but applications use *.pc to use it.
+        This patch provides EWebKitConfig.cmake and EWebKit2Config.cmake
+        for applications which use EWebkit and is compiled by CMake.
+
+        * EWebKitConfig.cmake.in: Added.
+        * EWebKitConfigVersion.cmake.in: Added.
+
 2013-11-15  Alberto Garcia  <berto@igalia.com>
 
         [EFL] Leak in ewk_frame_certificate_status_get()
