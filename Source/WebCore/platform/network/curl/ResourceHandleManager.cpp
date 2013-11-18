@@ -897,6 +897,7 @@ void ResourceHandleManager::applyAuthenticationToRequest(ResourceHandle* handle,
     if (!d->m_initialCredential.isEmpty()) {
         user = d->m_initialCredential.user();
         password = d->m_initialCredential.password();
+        curl_easy_setopt(d->m_handle, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     }
 
     // It seems we need to set CURLOPT_USERPWD even if username and password is empty.

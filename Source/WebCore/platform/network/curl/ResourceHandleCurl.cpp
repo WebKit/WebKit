@@ -189,6 +189,23 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
 
 void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
 {
+    if (!d->m_user.isNull() && !d->m_pass.isNull()) {
+        Credential credential(d->m_user, d->m_pass, CredentialPersistenceNone);
+
+        URL urlToStore;
+        if (challenge.failureResponse().httpStatusCode() == 401)
+            urlToStore = challenge.failureResponse().url();
+        CredentialStorage::set(credential, challenge.protectionSpace(), urlToStore);
+        
+        String userpass = credential.user() + ":" + credential.password();
+        curl_easy_setopt(d->m_handle, CURLOPT_USERPWD, userpass.utf8().data());
+
+        d->m_user = String();
+        d->m_pass = String();
+        // FIXME: Per the specification, the user shouldn't be asked for credentials if there were incorrect ones provided explicitly.
+        return;
+    }
+
     if (shouldUseCredentialStorage()) {
         if (!d->m_initialCredential.isEmpty() || challenge.previousFailureCount()) {
             // The stored credential wasn't accepted, stop using it.

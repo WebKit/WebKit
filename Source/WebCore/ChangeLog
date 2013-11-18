@@ -1,3 +1,21 @@
+2013-11-18  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Basic authentication is not reused.
+        https://bugs.webkit.org/show_bug.cgi?id=124452
+
+        Reviewed by Brent Fulgham.
+
+        After a successful basic authentication, the credentials are not reused for later requests.
+        In the CFNetwork port, this is solved by trying basic authentication first, if credentials exists.
+        Also, when a 401 response is received, the first thing the CFNetwork port does, is to use
+        m_user/m_pass as credentials in the following request if they are set.
+        This can be done the same way for the Curl version.
+
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge): Try using m_user/m_pass as credentials first, if they are set.
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::applyAuthenticationToRequest): Try basic authentication first, if credentials exists.
+
 2013-11-18  Mátyás Mustoha  <mmatyas@inf.u-szeged.hu>
 
         [curl] Add file cache
