@@ -1,3 +1,27 @@
+2013-11-18  Filip Pizlo  <fpizlo@apple.com>
+
+        put_to_scope[5] should not point to the structure if it's a variable access, but it should point to the WatchpointSet
+        https://bugs.webkit.org/show_bug.cgi?id=124539
+
+        Reviewed by Mark Hahnenberg.
+        
+        This is in preparation for getting put_to_scope to directly invalidate the watchpoint set
+        on stores, which will allow us to run constant inference on all globals.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        * bytecode/Instruction.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * runtime/JSScope.cpp:
+        (JSC::abstractAccess):
+        (JSC::JSScope::abstractResolve):
+        * runtime/JSScope.h:
+        (JSC::ResolveOp::ResolveOp):
+        * runtime/SymbolTable.h:
+        (JSC::SymbolTableEntry::watchpointSet):
+
 2013-11-18  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         APIEntryShims need some love

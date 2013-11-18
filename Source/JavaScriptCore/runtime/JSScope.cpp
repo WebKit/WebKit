@@ -53,19 +53,19 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
     if (JSActivation* activation = jsDynamicCast<JSActivation*>(scope)) {
         if (ident == exec->propertyNames().arguments) {
             // We know the property will be at this activation scope, but we don't know how to cache it.
-            op = ResolveOp(Dynamic, 0, 0, 0);
+            op = ResolveOp(Dynamic, 0, 0, 0, 0);
             return true;
         }
 
         SymbolTableEntry entry = activation->symbolTable()->get(ident.impl());
         if (entry.isReadOnly() && getOrPut == Put) {
             // We know the property will be at this activation scope, but we don't know how to cache it.
-            op = ResolveOp(Dynamic, 0, 0, 0);
+            op = ResolveOp(Dynamic, 0, 0, 0, 0);
             return true;
         }
 
         if (!entry.isNull()) {
-            op = ResolveOp(makeType(ClosureVar, needsVarInjectionChecks), depth, activation->structure(), entry.getIndex());
+            op = ResolveOp(makeType(ClosureVar, needsVarInjectionChecks), depth, activation->structure(), 0, entry.getIndex());
             return true;
         }
 
@@ -80,7 +80,7 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
             if (getOrPut == Put) {
                 if (entry.isReadOnly()) {
                     // We know the property will be at global scope, but we don't know how to cache it.
-                    op = ResolveOp(Dynamic, 0, 0, 0);
+                    op = ResolveOp(Dynamic, 0, 0, 0, 0);
                     return true;
                 }
 
@@ -88,7 +88,8 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
                 entry.notifyWrite();
             }
 
-            op = ResolveOp(makeType(GlobalVar, needsVarInjectionChecks), depth, globalObject->structure(), 
+            op = ResolveOp(
+                makeType(GlobalVar, needsVarInjectionChecks), depth, 0, entry.watchpointSet(),
                 reinterpret_cast<uintptr_t>(globalObject->registerAt(entry.getIndex()).slot()));
             return true;
         }
@@ -100,15 +101,15 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
             || (globalObject->structure()->hasReadOnlyOrGetterSetterPropertiesExcludingProto() && getOrPut == Put)) {
             // We know the property will be at global scope, but we don't know how to cache it.
             ASSERT(!scope->next());
-            op = ResolveOp(makeType(GlobalProperty, needsVarInjectionChecks), depth, 0, 0);
+            op = ResolveOp(makeType(GlobalProperty, needsVarInjectionChecks), depth, 0, 0, 0);
             return true;
         }
 
-        op = ResolveOp(makeType(GlobalProperty, needsVarInjectionChecks), depth, globalObject->structure(), slot.cachedOffset());
+        op = ResolveOp(makeType(GlobalProperty, needsVarInjectionChecks), depth, globalObject->structure(), 0, slot.cachedOffset());
         return true;
     }
 
-    op = ResolveOp(Dynamic, 0, 0, 0);
+    op = ResolveOp(Dynamic, 0, 0, 0, 0);
     return true;
 }
 
@@ -146,7 +147,7 @@ JSValue JSScope::resolve(ExecState* exec, JSScope* scope, const Identifier& iden
 
 ResolveOp JSScope::abstractResolve(ExecState* exec, JSScope* scope, const Identifier& ident, GetOrPut getOrPut, ResolveType unlinkedType)
 {
-    ResolveOp op(Dynamic, 0, 0, 0);
+    ResolveOp op(Dynamic, 0, 0, 0, 0);
     if (unlinkedType == Dynamic)
         return op;
 

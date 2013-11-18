@@ -234,6 +234,8 @@ struct SymbolTableEntry {
     
     WatchpointSet* watchpointSet()
     {
+        if (!isFat())
+            return 0;
         return fatEntry()->m_watchpoints.get();
     }
     

@@ -3127,7 +3127,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             uintptr_t operand;
             {
                 ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-                structure = currentInstruction[5].u.structure.get();
+                if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks)
+                    structure = 0;
+                else
+                    structure = currentInstruction[5].u.structure.get();
                 operand = reinterpret_cast<uintptr_t>(currentInstruction[6].u.pointer);
             }
 

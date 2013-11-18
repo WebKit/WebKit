@@ -31,6 +31,7 @@
 namespace JSC {
 
 class ScopeChainIterator;
+class WatchpointSet;
 
 enum ResolveMode {
     ThrowIfNotFound,
@@ -95,10 +96,11 @@ inline bool needsVarInjectionChecks(ResolveType type)
 }
 
 struct ResolveOp {
-    ResolveOp(ResolveType type, size_t depth, Structure* structure, uintptr_t operand)
+    ResolveOp(ResolveType type, size_t depth, Structure* structure, WatchpointSet* watchpointSet, uintptr_t operand)
         : type(type)
         , depth(depth)
         , structure(structure)
+        , watchpointSet(watchpointSet)
         , operand(operand)
     {
     }
@@ -106,6 +108,7 @@ struct ResolveOp {
     ResolveType type;
     size_t depth;
     Structure* structure;
+    WatchpointSet* watchpointSet;
     uintptr_t operand;
 };
 

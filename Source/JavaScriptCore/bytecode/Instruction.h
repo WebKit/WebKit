@@ -115,6 +115,7 @@ struct Instruction {
         ArrayProfile* arrayProfile;
         ArrayAllocationProfile* arrayAllocationProfile;
         ObjectAllocationProfile* objectAllocationProfile;
+        WatchpointSet* watchpointSet;
         void* pointer;
         bool* predicatePointer;
     } u;

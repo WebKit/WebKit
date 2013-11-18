@@ -1882,7 +1882,10 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), scope, ident, Put, modeAndType.type());
 
             instructions[i + 4].u.operand = ResolveModeAndType(modeAndType.mode(), op.type).operand();
-            if (op.structure)
+            if (op.type == GlobalVar || op.type == GlobalVarWithVarInjectionChecks) {
+                ASSERT(!op.structure);
+                instructions[i + 5].u.watchpointSet = op.watchpointSet;
+            } else if (op.structure)
                 instructions[i + 5].u.structure.set(*vm(), ownerExecutable, op.structure);
             instructions[i + 6].u.pointer = reinterpret_cast<void*>(op.operand);
             break;
@@ -2274,6 +2277,10 @@ void CodeBlock::finalizeUnconditionally()
                 break;
             case op_get_from_scope:
             case op_put_to_scope: {
+                ResolveModeAndType modeAndType =
+                    ResolveModeAndType(curInstruction[4].u.operand);
+                if (modeAndType.type() == GlobalVar || modeAndType.type() == GlobalVarWithVarInjectionChecks)
+                    continue;
                 WriteBarrierBase<Structure>& structure = curInstruction[5].u.structure;
                 if (!structure || Heap::isMarked(structure.get()))
                     break;
