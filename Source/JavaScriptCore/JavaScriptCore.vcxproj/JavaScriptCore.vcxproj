@@ -376,9 +376,11 @@
     <ClCompile Include="..\dfg\DFGFlushLivenessAnalysisPhase.cpp" />
     <ClCompile Include="..\dfg\DFGGraph.cpp" />
     <ClCompile Include="..\dfg\DFGInPlaceAbstractState.cpp" />
+    <ClCompile Include="..\dfg\DFGInvalidationPointInjectionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGJITCode.cpp" />
     <ClCompile Include="..\dfg\DFGJITCompiler.cpp" />
     <ClCompile Include="..\dfg\DFGJITFinalizer.cpp" />
+    <ClCompile Include="..\dfg\DFGJumpReplacement.cpp" />
     <ClCompile Include="..\dfg\DFGLazyJSValue.cpp" />
     <ClCompile Include="..\dfg\DFGLICMPhase.cpp" />
     <ClCompile Include="..\dfg\DFGLivenessAnalysisPhase.cpp" />
@@ -423,6 +425,7 @@
     <ClCompile Include="..\dfg\DFGVariableEvent.cpp" />
     <ClCompile Include="..\dfg\DFGVariableEventStream.cpp" />
     <ClCompile Include="..\dfg\DFGVirtualRegisterAllocationPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGWatchpointCollectionPhase.cpp" />
     <ClCompile Include="..\dfg\DFGWorklist.cpp" />
     <ClCompile Include="..\disassembler\Disassembler.cpp" />
     <ClCompile Include="..\heap\BlockAllocator.cpp" />
@@ -865,9 +868,11 @@
     <ClInclude Include="..\dfg\DFGGraph.h" />
     <ClInclude Include="..\dfg\DFGInPlaceAbstractState.h" />
     <ClInclude Include="..\dfg\DFGInsertionSet.h" />
+    <ClInclude Include="..\dfg\DFGInvalidationPointInjectionPhase.h" />
     <ClInclude Include="..\dfg\DFGJITCode.h" />
     <ClInclude Include="..\dfg\DFGJITCompiler.h" />
     <ClInclude Include="..\dfg\DFGJITFinalizer.h" />
+    <ClInclude Include="..\dfg\DFGJumpReplacement.h" />
     <ClInclude Include="..\dfg\DFGLazyJSValue.h" />
     <ClInclude Include="..\dfg\DFGLICMPhase.h" />
     <ClInclude Include="..\dfg\DFGLivenessAnalysisPhase.h" />
@@ -926,6 +931,7 @@
     <ClInclude Include="..\dfg\DFGVariableEventStream.h" />
     <ClInclude Include="..\dfg\DFGVariadicFunction.h" />
     <ClInclude Include="..\dfg\DFGVirtualRegisterAllocationPhase.h" />
+    <ClInclude Include="..\dfg\DFGWatchpointCollectionPhase.h" />
     <ClInclude Include="..\dfg\DFGWorklist.h" />
     <ClInclude Include="..\disassembler\Disassembler.h" />
     <ClInclude Include="..\heap\BlockAllocator.h" />
