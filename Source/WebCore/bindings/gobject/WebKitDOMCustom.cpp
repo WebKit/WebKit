@@ -19,6 +19,7 @@
 #include "config.h"
 #include "WebKitDOMCustom.h"
 
+#include "JSMainThreadExecState.h"
 #include "WebKitDOMBlob.h"
 #include "WebKitDOMDOMStringList.h"
 #include "WebKitDOMHTMLCollection.h"
@@ -26,6 +27,7 @@
 #include "WebKitDOMHTMLHeadElement.h"
 #include "WebKitDOMHTMLInputElement.h"
 #include "WebKitDOMHTMLInputElementPrivate.h"
+#include "WebKitDOMHTMLMediaElementPrivate.h"
 #include "WebKitDOMHTMLTextAreaElement.h"
 #include "WebKitDOMHTMLTextAreaElementPrivate.h"
 #include "WebKitDOMNodeList.h"
@@ -48,6 +50,18 @@ gboolean webkit_dom_html_input_element_is_edited(WebKitDOMHTMLInputElement* inpu
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(input), FALSE);
 
     return core(input)->lastChangeWasUserEdit();
+}
+
+void webkit_dom_html_media_element_set_current_time(WebKitDOMHTMLMediaElement* self, gdouble value, GError**)
+{
+#if ENABLE(VIDEO)
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_HTML_MEDIA_ELEMENT(self));
+    WebCore::HTMLMediaElement* item = WebKit::core(self);
+    item->setCurrentTime(value);
+#else
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Video")
+#endif /* ENABLE(VIDEO) */
 }
 
 /* Compatibility */

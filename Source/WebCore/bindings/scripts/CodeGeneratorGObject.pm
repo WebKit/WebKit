@@ -278,6 +278,11 @@ sub SkipFunction {
         }
     }
 
+    # Skip functions for which we have a custom implementation due to API breaks
+    if ($functionName eq "webkit_dom_html_media_element_set_current_time") {
+        return 1;
+    }
+
     # This is for DataTransferItemList.idl add(File) method
     if ($functionName eq "webkit_dom_data_transfer_item_list_add" && @{$function->parameters} == 1) {
         return 1;
