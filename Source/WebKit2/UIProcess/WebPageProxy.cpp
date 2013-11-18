@@ -238,7 +238,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_estimatedProgress(0)
     , m_viewState(ViewState::NoFlags)
     , m_backForwardList(WebBackForwardList::create(this))
-    , m_loadStateAtProcessExit(FrameLoadState::LoadStateFinished)
+    , m_loadStateAtProcessExit(FrameLoadState::State::Finished)
     , m_temporarilyClosedComposition(false)
     , m_textZoomFactor(1)
     , m_pageZoomFactor(1)
@@ -848,11 +848,11 @@ String WebPageProxy::activeURL() const
     if (!m_mainFrame->unreachableURL().isEmpty())
         return m_mainFrame->unreachableURL();
 
-    switch (m_mainFrame->frameLoadState().m_loadState) {
-    case FrameLoadState::LoadStateProvisional:
+    switch (m_mainFrame->frameLoadState().m_state) {
+    case FrameLoadState::State::Provisional:
         return m_mainFrame->provisionalURL();
-    case FrameLoadState::LoadStateCommitted:
-    case FrameLoadState::LoadStateFinished:
+    case FrameLoadState::State::Committed:
+    case FrameLoadState::State::Finished:
         return m_mainFrame->url();
     }
 
@@ -3795,7 +3795,7 @@ void WebPageProxy::resetStateAfterProcessExited()
 
     if (m_mainFrame) {
         m_urlAtProcessExit = m_mainFrame->url();
-        m_loadStateAtProcessExit = m_mainFrame->loadState();
+        m_loadStateAtProcessExit = m_mainFrame->frameLoadState().m_state;
     }
 
     resetState();

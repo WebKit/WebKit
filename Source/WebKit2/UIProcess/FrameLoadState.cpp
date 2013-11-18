@@ -29,7 +29,7 @@
 namespace WebKit {
 
 FrameLoadState::FrameLoadState()
-    : m_loadState(LoadStateFinished)
+    : m_state(State::Finished)
 {
 }
 
@@ -41,49 +41,49 @@ void FrameLoadState::didStartProvisionalLoad(const String& url)
 {
     ASSERT(m_provisionalURL.isEmpty());
 
-    m_loadState = LoadStateProvisional;
+    m_state = State::Provisional;
     m_provisionalURL = url;
 }
 
 void FrameLoadState::didReceiveServerRedirectForProvisionalLoad(const String& url)
 {
-    ASSERT(m_loadState == LoadStateProvisional);
+    ASSERT(m_state == State::Provisional);
 
     m_provisionalURL = url;
 }
 
 void FrameLoadState::didFailProvisionalLoad()
 {
-    ASSERT(m_loadState == LoadStateProvisional);
+    ASSERT(m_state == State::Provisional);
 
-    m_loadState = LoadStateFinished;
+    m_state = State::Finished;
     m_provisionalURL = String();
     m_unreachableURL = m_lastUnreachableURL;
 }
 
 void FrameLoadState::didCommitLoad()
 {
-    ASSERT(m_loadState == LoadStateProvisional);
+    ASSERT(m_state == State::Provisional);
 
-    m_loadState = LoadStateCommitted;
+    m_state = State::Committed;
     m_url = m_provisionalURL;
     m_provisionalURL = String();
 }
 
 void FrameLoadState::didFinishLoad()
 {
-    ASSERT(m_loadState == LoadStateCommitted);
+    ASSERT(m_state == State::Committed);
     ASSERT(m_provisionalURL.isEmpty());
 
-    m_loadState = LoadStateFinished;
+    m_state = State::Finished;
 }
 
 void FrameLoadState::didFailLoad()
 {
-    ASSERT(m_loadState == LoadStateCommitted);
+    ASSERT(m_state == State::Committed);
     ASSERT(m_provisionalURL.isEmpty());
 
-    m_loadState = LoadStateFinished;
+    m_state = State::Finished;
 }
 
 void FrameLoadState::didSameDocumentNotification(const String& url)

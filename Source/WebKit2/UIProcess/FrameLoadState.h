@@ -35,10 +35,10 @@ public:
     FrameLoadState();
     ~FrameLoadState();
 
-    enum LoadState {
-        LoadStateProvisional,
-        LoadStateCommitted,
-        LoadStateFinished
+    enum class State {
+        Provisional,
+        Committed,
+        Finished
     };
 
     void didStartProvisionalLoad(const String& url);
@@ -55,7 +55,7 @@ public:
 
     // FIXME: These should all be private, and FrameLoadState should
     // provide state transition member functions.
-    LoadState m_loadState;
+    State m_state;
     String m_url;
     String m_provisionalURL;
     String m_unreachableURL;

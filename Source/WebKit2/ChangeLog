@@ -1,5 +1,31 @@
 2013-11-18  Anders Carlsson  <andersca@apple.com>
 
+        Use a strong enum for frame load states
+        https://bugs.webkit.org/show_bug.cgi?id=124524
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameGetFrameLoadState):
+        * UIProcess/FrameLoadState.cpp:
+        (WebKit::FrameLoadState::FrameLoadState):
+        (WebKit::FrameLoadState::didStartProvisionalLoad):
+        (WebKit::FrameLoadState::didReceiveServerRedirectForProvisionalLoad):
+        (WebKit::FrameLoadState::didFailProvisionalLoad):
+        (WebKit::FrameLoadState::didCommitLoad):
+        (WebKit::FrameLoadState::didFinishLoad):
+        (WebKit::FrameLoadState::didFailLoad):
+        * UIProcess/FrameLoadState.h:
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::activeURL):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::loadStateAtProcessExit):
+
+2013-11-18  Anders Carlsson  <andersca@apple.com>
+
         Remove unnecessary COMPILER(CLANG) #ifdefs in Mac-only code
         https://bugs.webkit.org/show_bug.cgi?id=124523
 

@@ -71,8 +71,6 @@ public:
 
     FrameLoadState& frameLoadState() { return m_frameLoadState; }
 
-    FrameLoadState::LoadState loadState() const { return m_frameLoadState.m_loadState; }
-    
     void stopLoading() const;
 
     const String& url() const { return m_frameLoadState.m_url; }
