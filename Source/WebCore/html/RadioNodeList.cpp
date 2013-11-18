@@ -87,9 +87,9 @@ bool RadioNodeList::checkElementMatchesRadioNodeListFilter(Element* testElement)
     if (isHTMLFormElement(ownerNode())) {
         HTMLFormElement* formElement = 0;
         if (testElement->hasTagName(objectTag))
-            formElement = static_cast<HTMLObjectElement*>(testElement)->form();
+            formElement = toHTMLObjectElement(testElement)->form();
         else
-            formElement = static_cast<HTMLFormControlElement*>(testElement)->form();
+            formElement = toHTMLFormControlElement(testElement)->form();
         if (!formElement || formElement != &ownerNode())
             return false;
     }

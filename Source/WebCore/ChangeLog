@@ -1,3 +1,60 @@
+2013-11-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Clean up static_cast<HTMLFoo*> usage
+        https://bugs.webkit.org/show_bug.cgi?id=124480
+
+        Reviewed by Tim Horton.
+
+        Though there are toHTMLFoo(), some places are still using static_cast<>.
+        Additionally, toHTMLBodyElement() is supported from now.
+
+        No new tests, no behavior changes.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::isRequired):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isDataTable):
+        * bindings/js/JSHTMLFrameSetElementCustom.cpp:
+        (WebCore::JSHTMLFrameSetElement::nameGetter):
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::pluginInstance):
+        * dom/Document.cpp:
+        (WebCore::Document::openSearchDescriptionURL):
+        (WebCore::Document::iconURLs):
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::collectActiveStyleSheets):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuilder):
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::setTextAlignmentForChangedBaseWritingDirection):
+        * html/HTMLBodyElement.h:
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::bgColor):
+        (WebCore::HTMLDocument::setBgColor):
+        (WebCore::HTMLDocument::fgColor):
+        (WebCore::HTMLDocument::setFgColor):
+        (WebCore::HTMLDocument::alinkColor):
+        (WebCore::HTMLDocument::setAlinkColor):
+        (WebCore::HTMLDocument::linkColor):
+        (WebCore::HTMLDocument::setLinkColor):
+        (WebCore::HTMLDocument::vlinkColor):
+        (WebCore::HTMLDocument::setVlinkColor):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::rendererIsNeeded):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::updateAncestorDisabledState):
+        (WebCore::HTMLFormControlElement::enclosingFormControlElement):
+        * html/HTMLFormElement.cpp:
+        (WebCore::submitElementFromEvent):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::notifyFinished):
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::virtualForm):
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::checkElementMatchesRadioNodeListFilter):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+
 2013-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update GObject DOM symbols file after r158760.

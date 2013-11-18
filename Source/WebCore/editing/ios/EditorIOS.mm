@@ -161,11 +161,11 @@ void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection dir
 
     Element* focusedElement = frame()->document()->focusedElement();
     if (focusedElement && (focusedElement->hasTagName(textareaTag) || (focusedElement->hasTagName(inputTag) &&
-        (static_cast<HTMLInputElement*>(focusedElement)->isTextField() ||
-         static_cast<HTMLInputElement*>(focusedElement)->isSearchField())))) {
+        (toHTMLInputElement(focusedElement)->isTextField() ||
+         toHTMLInputElement(focusedElement)->isSearchField())))) {
         if (direction == NaturalWritingDirection)
             return;
-        static_cast<HTMLElement*>(focusedElement)->setAttribute(alignAttr, newValue);
+        toHTMLElement(focusedElement)->setAttribute(alignAttr, newValue);
         frame()->document()->updateStyleIfNeeded();
         return;
     }

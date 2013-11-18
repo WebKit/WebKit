@@ -1308,7 +1308,7 @@ PassRefPtr<TypeBuilder::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* n
         Element* element = toElement(node);
         value->setAttributes(buildArrayForElementAttributes(element));
         if (node->isFrameOwnerElement()) {
-            HTMLFrameOwnerElement* frameOwner = static_cast<HTMLFrameOwnerElement*>(node);
+            HTMLFrameOwnerElement* frameOwner = toHTMLFrameOwnerElement(node);
             Frame* frame = frameOwner->contentFrame();
             if (frame)
                 value->setFrameId(m_pageAgent->frameId(frame));
@@ -1325,7 +1325,7 @@ PassRefPtr<TypeBuilder::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* n
 
 #if ENABLE(TEMPLATE_ELEMENT)
         if (element->hasTagName(HTMLNames::templateTag))
-            value->setTemplateContent(buildObjectForNode(static_cast<HTMLTemplateElement*>(element)->content(), 0, nodesMap));
+            value->setTemplateContent(buildObjectForNode(toHTMLTemplateElement(element)->content(), 0, nodesMap));
 #endif
 
     } else if (node->isDocumentNode()) {

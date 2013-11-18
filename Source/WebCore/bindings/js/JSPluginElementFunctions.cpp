@@ -45,7 +45,7 @@ Instance* pluginInstance(HTMLElement& element)
     // The plugin element holds an owning reference, so we don't have to.
     if (!isPluginElement(element))
         return 0;
-    Instance* instance = static_cast<HTMLPlugInElement&>(element).getInstance().get();
+    Instance* instance = toHTMLPlugInElement(element).getInstance().get();
     if (!instance || !instance->rootObject())
         return 0;
     return instance;

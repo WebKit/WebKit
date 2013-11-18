@@ -107,7 +107,7 @@ void HTMLFormControlElement::updateAncestorDisabledState() const
         if (!legendAncestor && ancestor->hasTagName(legendTag))
             legendAncestor = ancestor;
         if (ancestor->hasTagName(fieldsetTag)) {
-            fieldSetAncestor = static_cast<HTMLFieldSetElement*>(ancestor);
+            fieldSetAncestor = toHTMLFieldSetElement(ancestor);
             break;
         }
     }
@@ -473,7 +473,7 @@ HTMLFormControlElement* HTMLFormControlElement::enclosingFormControlElement(Node
 {
     for (; node; node = node->parentNode()) {
         if (node->isElementNode() && toElement(node)->isFormControlElement())
-            return static_cast<HTMLFormControlElement*>(node);
+            return toHTMLFormControlElement(node);
     }
     return 0;
 }

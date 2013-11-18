@@ -186,7 +186,7 @@ bool HTMLEmbedElement::rendererIsNeeded(const RenderStyle& style)
     if (p && p->hasTagName(objectTag)) {
         if (!p->renderer())
             return false;
-        if (!static_cast<HTMLObjectElement*>(p)->useFallbackContent()) {
+        if (!toHTMLObjectElement(p)->useFallbackContent()) {
             ASSERT(!p->renderer()->isEmbeddedObject());
             return false;
         }

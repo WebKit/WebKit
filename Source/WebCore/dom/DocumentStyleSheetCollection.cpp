@@ -287,7 +287,7 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
             bool enabledViaScript = false;
             if (e->hasTagName(linkTag)) {
                 // <LINK> element
-                HTMLLinkElement* linkElement = static_cast<HTMLLinkElement*>(n);
+                HTMLLinkElement* linkElement = toHTMLLinkElement(n);
                 if (linkElement->isDisabled())
                     continue;
                 enabledViaScript = linkElement->isEnabledViaScript();
