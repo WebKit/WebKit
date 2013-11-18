@@ -1,0 +1,10 @@
+On success, the text inside the region should not be clipped
+This text should not get clipped
+(repaint rects
+  (rect 0 17 800 50)
+  (rect 0 217 800 50)
+  (rect 0 217 800 50)
+  (rect 0 17 400 200)
+  (rect 0 67 400 200)
+)
+

@@ -73,19 +73,19 @@ layer at (0,0) size 785x1601
               RenderText {#text} at (0,0) size 4x17
                 text run at (0,0) width 4: "."
           RenderBlock {PRE} at (16,70) size 584x118 [bgcolor=#FFFFFF]
-            RenderText {#text} at (7,7) size 224x105
-              text run at (7,7) width 136: "div :only-child {"
-              text run at (143,7) width 0: " "
-              text run at (7,22) width 8: "}"
-              text run at (15,22) width 0: " "
-              text run at (7,37) width 0: " "
-              text run at (7,52) width 40: "<div>"
-              text run at (47,52) width 0: " "
-              text run at (7,67) width 112: "   <div></div>"
-              text run at (119,67) width 0: " "
-              text run at (7,82) width 224: "   How about regular text..."
-              text run at (231,82) width 0: " "
-              text run at (7,97) width 48: "</div>"
+            RenderText {#text} at (6,6) size 225x106
+              text run at (6,6) width 137: "div :only-child {"
+              text run at (142,6) width 1: " "
+              text run at (6,21) width 9: "}"
+              text run at (14,21) width 1: " "
+              text run at (6,36) width 1: " "
+              text run at (6,51) width 41: "<div>"
+              text run at (46,51) width 1: " "
+              text run at (6,66) width 113: "   <div></div>"
+              text run at (118,66) width 1: " "
+              text run at (6,81) width 225: "   How about regular text..."
+              text run at (230,81) width 1: " "
+              text run at (6,96) width 49: "</div>"
           RenderBlock {P} at (16,204) size 584x34
             RenderText {#text} at (0,0) size 572x34
               text run at (0,0) width 572: "The CSS selector should match the inner div element, because it is the only child"

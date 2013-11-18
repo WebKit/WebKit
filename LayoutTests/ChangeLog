@@ -1,3 +1,29 @@
+2013-11-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening. Rebaselining various tests under fast/.
+
+        * platform/gtk/fast/backgrounds/size/contain-and-cover-zoomed-expected.png:
+        * platform/gtk/fast/backgrounds/size/contain-and-cover-zoomed-expected.txt: Added.
+        * platform/gtk/fast/block/float/016-expected.png:
+        * platform/gtk/fast/block/float/016-expected.txt:
+        * platform/gtk/fast/block/lineboxcontain/block-with-ideographs-expected.png: Added.
+        * platform/gtk/fast/block/lineboxcontain/block-with-ideographs-expected.txt:
+        * platform/gtk/fast/css/empty-pseudo-class-expected.txt:
+        * platform/gtk/fast/css/fieldset-display-row-expected.png:
+        * platform/gtk/fast/css/fieldset-display-row-expected.txt:
+        * platform/gtk/fast/css/first-child-pseudo-class-expected.txt:
+        * platform/gtk/fast/css/last-child-pseudo-class-expected.txt:
+        * platform/gtk/fast/css/only-child-pseudo-class-expected.txt:
+        * platform/gtk/fast/forms/basic-textareas-expected.png:
+        * platform/gtk/fast/forms/basic-textareas-expected.txt:
+        * platform/gtk/fast/forms/basic-textareas-quirks-expected.png:
+        * platform/gtk/fast/forms/basic-textareas-quirks-expected.txt:
+        * platform/gtk/fast/forms/textAreaLineHeight-expected.png:
+        * platform/gtk/fast/forms/textAreaLineHeight-expected.txt:
+        * platform/gtk/fast/parser/entity-comment-in-textarea-expected.png:
+        * platform/gtk/fast/parser/entity-comment-in-textarea-expected.txt:
+        * platform/gtk/fast/repaint/increasing-region-content-height-expected.txt: Added.
+
 2013-11-17  Alexey Proskuryakov  <ap@apple.com>
 
         Support exporting public RSASSA-PKCS1-v1_5 keys
