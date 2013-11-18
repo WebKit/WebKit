@@ -1,3 +1,19 @@
+2013-11-14  David Farler  <dfarler@apple.com>
+
+        [ASAN] WebKit2: Remove calls to dead DownloadAuthenticationClient code
+        https://bugs.webkit.org/show_bug.cgi?id=124367
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Shared/Downloads/DownloadAuthenticationClient.cpp:
+        (WebKit::DownloadAuthenticationClient::receivedCredential):
+        (WebKit::DownloadAuthenticationClient::receivedRequestToContinueWithoutCredential):
+        (WebKit::DownloadAuthenticationClient::receivedCancellation):
+        Remove calls to nowhere:
+        WebKit::Download::cancelAuthenticationChallenge(WebCore::AuthenticationChallenge const&)
+        WebKit::Download::continueWithoutCredential(WebCore::AuthenticationChallenge const&)
+        WebKit::Download::useCredential(WebCore::AuthenticationChallenge const&, WebCore::Credential const&)
+
 2013-11-18  Anders Carlsson  <andersca@apple.com>
 
         Use a strong enum for frame load states

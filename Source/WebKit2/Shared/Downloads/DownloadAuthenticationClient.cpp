@@ -40,23 +40,17 @@ DownloadAuthenticationClient::DownloadAuthenticationClient(Download* download)
 
 void DownloadAuthenticationClient::receivedCredential(const AuthenticationChallenge& challenge, const Credential& credential)
 {
-    if (!m_download)
-        return;
-    m_download->useCredential(challenge, credential);
+    // FIXME (119667): This can probably be just removed.
 }
 
 void DownloadAuthenticationClient::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge& challenge)
 {
-    if (!m_download)
-        return;
-    m_download->continueWithoutCredential(challenge);
+    // FIXME (119667): This can probably be just removed.
 }
 
 void DownloadAuthenticationClient::receivedCancellation(const AuthenticationChallenge& challenge)
 {
-    if (!m_download)
-        return;
-    m_download->cancelAuthenticationChallenge(challenge);
+    // FIXME (119667): This can probably be just removed.
 }
 
 } // namespace WebKit
