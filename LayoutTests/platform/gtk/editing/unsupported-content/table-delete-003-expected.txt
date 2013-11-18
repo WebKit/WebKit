@@ -77,8 +77,9 @@ AfterDeletion:
 | <div>
 |   class="editing"
 |   id="test"
+|   <#selection-caret>
 |   <br>
-|   "<#selection-caret>Second
+|   "Second
 "
 | "
 "

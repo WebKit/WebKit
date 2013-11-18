@@ -1,5 +1,24 @@
 2013-11-18  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed GTK gardening. Updating GTK-specific baselines for tests under editing/, scrollingcoordinator/ and tables/.
+
+        * platform/gtk/editing/deleting/smart-delete-003-expected.txt:
+        * platform/gtk/editing/deleting/smart-delete-004-expected.txt:
+        * platform/gtk/editing/spelling/centering-misspelling-dots-expected.png: Added.
+        * platform/gtk/editing/spelling/centering-misspelling-dots-expected.txt: Added.
+        * platform/gtk/editing/spelling/misspelling-dots-dont-extend-beyond-words-expected.png: Added.
+        * platform/gtk/editing/spelling/misspelling-dots-dont-extend-beyond-words-expected.txt: Added.
+        * platform/gtk/editing/unsupported-content/table-delete-001-expected.txt:
+        * platform/gtk/editing/unsupported-content/table-delete-003-expected.txt:
+        * platform/gtk/scrollingcoordinator: Added.
+        * platform/gtk/scrollingcoordinator/non-fast-scrollable-region-scaled-iframe-expected.png: Added.
+        * platform/gtk/scrollingcoordinator/non-fast-scrollable-region-scaled-iframe-expected.txt: Added.
+        * platform/gtk/scrollingcoordinator/non-fast-scrollable-region-transformed-iframe-expected.png: Added.
+        * platform/gtk/scrollingcoordinator/non-fast-scrollable-region-transformed-iframe-expected.txt: Added.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug91057-expected.txt:
+
+2013-11-18  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed GTK gardening. Rebaselining various tests under fast/.
 
         * platform/gtk/fast/backgrounds/size/contain-and-cover-zoomed-expected.png:

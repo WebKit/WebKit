@@ -79,9 +79,9 @@ AfterDeletion:
 |   class="editing"
 |   id="test"
 |   "
-First"
+First<#selection-caret>"
 |   <br>
-|   "<#selection-caret>Second
+|   "Second
 "
 | "
 "
