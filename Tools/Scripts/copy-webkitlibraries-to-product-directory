@@ -143,7 +143,7 @@ if ($ENV{ENABLE_FTL_JIT}) {
 
         print("Building LLVM.\n");
         chdir $ownLLVMDirectory;
-        (system("make -j `sysctl -n hw.availcpu`") == 0) or die;
+        (system("make -j `sysctl -n hw.activecpu`") == 0) or die;
         chdirWebKit();
         
         my $ownLLVMBuildMode = "";

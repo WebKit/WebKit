@@ -71,7 +71,7 @@ def mysys(*cmd)
     raise "Command failed: #{$?.inspect}" unless system(*cmd)
 end
 
-$numProcessors = `sysctl -n hw.availcpu`.to_i
+$numProcessors = `sysctl -n hw.activecpu`.to_i
 if $numProcessors == 0
     $numProcessors = `nproc --all 2>/dev/null`.to_i
 end

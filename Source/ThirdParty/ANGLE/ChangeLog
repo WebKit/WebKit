@@ -1,3 +1,14 @@
+2013-11-18  Mark Rowe  <mrowe@apple.com>
+
+        Use hw.activecpu for determining how many processes to spawn.
+
+        It's documented as the preferred way to determine the number of threads
+        or processes to create in a SMP aware application.
+
+        Rubber-stamped by Tim Horton.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+
 2013-11-06  Dean Jackson  <dino@apple.com>
 
         kTraceBufferLen is unused in default builds

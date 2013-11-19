@@ -1,3 +1,16 @@
+2013-11-18  Mark Rowe  <mrowe@apple.com>
+
+        Use hw.activecpu for determining how many processes to spawn.
+
+        It's documented as the preferred way to determine the number of threads
+        or processes to create in a SMP aware application.
+
+        Rubber-stamped by Tim Horton.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+        * Scripts/run-jsc-stress-tests:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2013-11-18  Tim Horton  <timothy_horton@apple.com>
 
         build.webkit.org/dashboard builder headers should link to the builder page
