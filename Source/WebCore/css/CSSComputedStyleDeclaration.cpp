@@ -2892,6 +2892,8 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyWebkitShapeInside:
             if (!style->shapeInside())
                 return cssValuePool().createIdentifierValue(CSSValueAuto);
+            if (style->shapeInside()->type() == ShapeValue::Box)
+                return cssValuePool().createIdentifierValue(style->shapeInside()->box());
             if (style->shapeInside()->type() == ShapeValue::Outside)
                 return cssValuePool().createIdentifierValue(CSSValueOutsideShape);
             if (style->shapeInside()->type() == ShapeValue::Image) {

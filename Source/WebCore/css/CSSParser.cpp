@@ -3021,8 +3021,11 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitClipPath:
         if (id == CSSValueNone)
             validPrimitive = true;
-        else if (value->unit == CSSParserValue::Function)
-            return parseBasicShape(propId, important);
+        else if (value->unit == CSSParserValue::Function) {
+            RefPtr<CSSBasicShape> shapeValue =  parseBasicShape();
+            if (shapeValue)
+                parsedValue = cssValuePool().createValue(shapeValue.release());
+        }
 #if ENABLE(SVG)
         else if (value->unit == CSSPrimitiveValue::CSS_URI) {
             parsedValue = CSSPrimitiveValue::create(value->string, CSSPrimitiveValue::CSS_URI);
@@ -3034,21 +3037,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 #if ENABLE(CSS_SHAPES)
     case CSSPropertyWebkitShapeInside:
     case CSSPropertyWebkitShapeOutside:
-        if (!RuntimeEnabledFeatures::sharedFeatures().cssShapesEnabled())
-            return false;
-        if (id == CSSValueAuto)
-            validPrimitive = true;
-        else if (propId == CSSPropertyWebkitShapeOutside
-            && (id == CSSValueContentBox || id == CSSValueBorderBox || id== CSSValuePaddingBox || id == CSSValueMarginBox))
-            validPrimitive = true;
-        else if (propId == CSSPropertyWebkitShapeInside && id == CSSValueOutsideShape)
-            validPrimitive = true;
-        else if (value->unit == CSSParserValue::Function)
-            return parseBasicShape(propId, important);
-        else if (value->unit == CSSPrimitiveValue::CSS_URI) {
-            parsedValue = CSSImageValue::create(completeURL(value->string));
-            m_valueList->next();
-        }
+        parsedValue = parseShapeProperty(propId);
         break;
     case CSSPropertyWebkitShapeMargin:
     case CSSPropertyWebkitShapePadding:
@@ -5689,14 +5678,80 @@ PassRefPtr<CSSBasicShape> CSSParser::parseBasicShapePolygon(CSSParserValueList* 
     return shape;
 }
 
-bool CSSParser::parseBasicShape(CSSPropertyID propId, bool important)
+#if ENABLE(CSS_SHAPES)
+static bool isBoxValue(CSSValueID valueId)
+{
+    switch (valueId) {
+    case CSSValueContentBox:
+    case CSSValuePaddingBox:
+    case CSSValueBorderBox:
+    case CSSValueMarginBox:
+        return true;
+    default: break;
+    }
+
+    return false;
+}
+
+PassRefPtr<CSSValue> CSSParser::parseShapeProperty(CSSPropertyID propId)
+{
+    if (!RuntimeEnabledFeatures::sharedFeatures().cssShapesEnabled())
+        return nullptr;
+
+    CSSParserValue* value = m_valueList->current();
+    CSSValueID valueId = value->id;
+    RefPtr<CSSPrimitiveValue> keywordValue;
+    RefPtr<CSSBasicShape> shapeValue;
+
+    if (valueId == CSSValueAuto
+        || (valueId == CSSValueOutsideShape && propId == CSSPropertyWebkitShapeInside)) {
+        keywordValue = parseValidPrimitive(valueId, value);
+        m_valueList->next();
+        return keywordValue.release();
+    }
+
+    if (value->unit == CSSPrimitiveValue::CSS_URI) {
+        RefPtr<CSSImageValue> imageValue = CSSImageValue::create(completeURL(value->string));
+        m_valueList->next();
+        return imageValue.release();
+    }
+
+    if (value->unit == CSSParserValue::Function) {
+        shapeValue = parseBasicShape();
+    } else if (isBoxValue(valueId)) {
+        keywordValue = parseValidPrimitive(valueId, value);
+        m_valueList->next();
+    } else
+        return nullptr;
+
+    value = m_valueList->current();
+
+    if (value) {
+        valueId = value->id;
+        if (keywordValue && value->unit == CSSParserValue::Function) {
+            shapeValue = parseBasicShape();
+        } else if (shapeValue && isBoxValue(valueId)) {
+            keywordValue = parseValidPrimitive(valueId, value);
+            m_valueList->next();
+        } else
+            return nullptr;
+    }
+
+    if (shapeValue && keywordValue)
+        shapeValue->setBox(keywordValue.release());
+
+    return shapeValue ? cssValuePool().createValue(shapeValue.release()) : keywordValue.release();
+}
+#endif
+
+PassRefPtr<CSSBasicShape> CSSParser::parseBasicShape()
 {
     CSSParserValue* value = m_valueList->current();
     ASSERT(value->unit == CSSParserValue::Function);
     CSSParserValueList* args = value->function->args.get();
 
     if (!args)
-        return false;
+        return nullptr;
 
     RefPtr<CSSBasicShape> shape;
     if (equalIgnoringCase(value->function->name, "rectangle("))
@@ -5711,11 +5766,10 @@ bool CSSParser::parseBasicShape(CSSPropertyID propId, bool important)
         shape = parseBasicShapeInsetRectangle(args);
 
     if (!shape)
-        return false;
+        return nullptr;
 
-    addProperty(propId, cssValuePool().createValue(shape.release()), important);
     m_valueList->next();
-    return true;
+    return shape.release();
 }
 
 // [ 'font-style' || 'font-variant' || 'font-weight' ]? 'font-size' [ / 'line-height' ]? 'font-family'

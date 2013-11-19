@@ -53,6 +53,14 @@ public:
         BasicShapeInsetRectangleType = 5
     };
 
+    enum ReferenceBox {
+        None,
+        ContentBox,
+        PaddingBox,
+        BorderBox,
+        MarginBox
+    };
+
     bool canBlend(const BasicShape*) const;
 
     virtual void path(Path&, const FloatRect&) = 0;
@@ -60,8 +68,18 @@ public:
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const = 0;
 
     virtual Type type() const = 0;
+
+    ReferenceBox box() const { return m_box; }
+    void setBox(ReferenceBox box) { m_box = box; }
+
 protected:
-    BasicShape() { }
+    BasicShape()
+    : m_box(None)
+    {
+    }
+
+private:
+    ReferenceBox m_box;
 };
 
 class BasicShapeRectangle : public BasicShape {

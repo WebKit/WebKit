@@ -38,6 +38,44 @@
 
 namespace WebCore {
 
+PassRefPtr<CSSPrimitiveValue> valueForBox(BasicShape::ReferenceBox box)
+{
+    switch (box) {
+    case BasicShape::ContentBox:
+        return cssValuePool().createIdentifierValue(CSSValueContentBox);
+    case BasicShape::PaddingBox:
+        return cssValuePool().createIdentifierValue(CSSValuePaddingBox);
+    case BasicShape::BorderBox:
+        return cssValuePool().createIdentifierValue(CSSValueBorderBox);
+    case BasicShape::MarginBox:
+        return cssValuePool().createIdentifierValue(CSSValueMarginBox);
+    case BasicShape::None:
+        return nullptr;
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+BasicShape::ReferenceBox boxForValue(const CSSPrimitiveValue* value)
+{
+    if (!value)
+        return BasicShape::None;
+
+    switch (value->getValueID()) {
+    case CSSValueContentBox:
+        return BasicShape::ContentBox;
+    case CSSValuePaddingBox:
+        return BasicShape::PaddingBox;
+    case CSSValueBorderBox:
+        return BasicShape::BorderBox;
+    case CSSValueMarginBox:
+        return BasicShape::MarginBox;
+    default:
+        ASSERT_NOT_REACHED();
+        return BasicShape::None;
+    }
+}
+
 PassRefPtr<CSSValue> valueForBasicShape(const RenderStyle* style, const BasicShape* basicShape)
 {
     CSSValuePool& pool = cssValuePool();
@@ -110,6 +148,9 @@ PassRefPtr<CSSValue> valueForBasicShape(const RenderStyle* style, const BasicSha
     default:
         break;
     }
+
+    basicShapeValue->setBox(valueForBox(basicShape->box()));
+
     return pool.createValue(basicShapeValue.release());
 }
 
@@ -205,6 +246,9 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
     default:
         break;
     }
+
+    basicShape->setBox(boxForValue(basicShapeValue->box()));
+
     return basicShape.release();
 }
 }

@@ -52,6 +52,9 @@ public:
     virtual String cssText() const = 0;
     virtual bool equals(const CSSBasicShape&) const = 0;
 
+    CSSPrimitiveValue* box() const { return m_box.get(); }
+    void setBox(PassRefPtr<CSSPrimitiveValue> box) { m_box = box; }
+
 #if ENABLE(CSS_VARIABLES)
     virtual String serializeResolvingVariables(const HashMap<AtomicString, String>&) const = 0;
     virtual bool hasVariableReference() const = 0;
@@ -62,6 +65,7 @@ public:
 
 protected:
     CSSBasicShape() { }
+    RefPtr<CSSPrimitiveValue> m_box;
 };
 
 class CSSBasicShapeRectangle : public CSSBasicShape {

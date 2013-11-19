@@ -1,3 +1,58 @@
+2013-11-19  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Parse [<box> || <shape>] values
+        https://bugs.webkit.org/show_bug.cgi?id=124426
+
+        Reviewed by Dirk Schulze.
+
+        Shape values can now have an optional box specifying the coordinate sytem to use
+        for sizing and positioning the shape. This patch adds the functionality to support
+        parsing these new values.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForBox): Added function to convert between BasicShape::ReferenceBox
+        and CSSPrimitiveValue (which wraps a CSSValueID).
+        (WebCore::boxForValue): Ditto.
+        (WebCore::valueForBasicShape): Translations between CSSBasicShape and BasicShape
+        must now include the reference box.
+        (WebCore::basicShapeForValue): Ditto.
+        * css/BasicShapeFunctions.h:
+        * css/CSSBasicShapes.cpp:
+        (WebCore::buildRectangleString): Include the box in the built CSS string.
+        (WebCore::CSSBasicShapeRectangle::cssText): Ditto.
+        (WebCore::CSSBasicShapeRectangle::equals): Include the box in comparisions.
+        (WebCore::buildCircleString):
+        (WebCore::CSSBasicShapeCircle::cssText):
+        (WebCore::CSSBasicShapeCircle::equals):
+        (WebCore::buildEllipseString):
+        (WebCore::CSSBasicShapeEllipse::cssText):
+        (WebCore::CSSBasicShapeEllipse::equals):
+        (WebCore::buildPolygonString):
+        (WebCore::CSSBasicShapePolygon::cssText):
+        (WebCore::CSSBasicShapePolygon::equals):
+        (WebCore::buildInsetRectangleString):
+        (WebCore::CSSBasicShapeInsetRectangle::cssText):
+        (WebCore::CSSBasicShapeInsetRectangle::equals):
+        * css/CSSBasicShapes.h:
+        (WebCore::CSSBasicShape::box): BasicShapes now have an reference box.
+        (WebCore::CSSBasicShape::setBox): Ditto.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue): Shape-inside can also
+        parse the box values.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): The shape properties use parseShapeProperty,
+        while minor adjustments were made to parseBasicShape's return type.
+        (WebCore::isBoxValue): Is the CSSValueID one of  the box values.
+        (WebCore::CSSParser::parseShapeProperty): Parse one of the shape properties
+        and return an appropriate CSSValue.
+        (WebCore::CSSParser::parseBasicShape): Return a CSSBasicShape rather than
+        adding a ShapeValue to the style.
+        * css/CSSParser.h:
+        * rendering/style/BasicShapes.h:
+        (WebCore::BasicShape::box): Add a box to BasicShape and getters/setters.
+        (WebCore::BasicShape::setBox): Ditto.
+        (WebCore::BasicShape::BasicShape): Ditto.
+
 2013-11-19  Jer Noble  <jer.noble@apple.com>
 
         [Mac] 9 WebGL conformance failures after r159518.

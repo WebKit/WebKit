@@ -30,17 +30,20 @@
 #ifndef BasicShapeFunctions_h
 #define BasicShapeFunctions_h
 
+#include "BasicShapes.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-class BasicShape;
 class CSSBasicShape;
+class CSSPrimitiveValue;
 class CSSValue;
 class RenderStyle;
 
 PassRefPtr<CSSValue> valueForBasicShape(const RenderStyle*, const BasicShape*);
 PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle*, const RenderStyle* rootStyle, const CSSBasicShape*);
 
+PassRefPtr<CSSPrimitiveValue> valueForBox(BasicShape::ReferenceBox);
+BasicShape::ReferenceBox boxForValue(const CSSPrimitiveValue*);
 }
 #endif
