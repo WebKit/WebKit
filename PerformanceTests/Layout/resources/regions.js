@@ -88,5 +88,49 @@
         };
     }
 
+    function mouseMoveToRegionCenter(region) {
+        var rect = region.getBoundingClientRect();
+        eventSender.mouseMoveTo(rect.left + (rect.width / 2), rect.top + (rect.height / 2));
+    }
+
+    function performSelection(regionCount) {
+        var regions = document.getElementsByClassName("region");
+
+        if (window.eventSender) {
+            mouseMoveToRegionCenter(regions[0]);
+            eventSender.mouseDown();
+
+            for (var i = 1; i < regionCount; i++)
+                mouseMoveToRegionCenter(regions[i]);
+
+            eventSender.mouseUp();
+        }
+    }
+
+    function createRegionsSelectionTest(regionCount) {
+        var article = createArticle(regionCount, 1);
+        article.className = "articleInFlow";
+        var regions = createRegions("600px", "auto", regionCount, "auto");
+        document.body.appendChild(article);
+        document.body.appendChild(regions);
+        return {
+            description: "Testing selection with " + regionCount + " regions. Select text from first region to last one passing through all the regions.",
+            run: function() {
+                performSelection(regionCount);
+            },
+            setup: function() {
+                window.getSelection().removeAllRanges();
+            },
+            done: function() {
+                document.body.removeChild(article);
+                document.body.removeChild(regions);
+                templateParagraph = null;
+                templateRegion = null;
+            }
+        };
+    }
+
     window.createRegionsTest = createRegionsTest;
+    window.createRegionsSelectionTest = createRegionsSelectionTest;
+
 })();

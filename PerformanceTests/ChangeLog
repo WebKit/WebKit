@@ -1,3 +1,22 @@
+2013-11-19  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Regions] Add performance test for selection
+        https://bugs.webkit.org/show_bug.cgi?id=119230
+
+        Reviewed by Ryosuke Niwa.
+
+        Add new performance test for selection in CSS Regions. It checks a
+        selection from the first region to the last one, passing through all the
+        regions.
+
+        Test is skipped for now while implementation of selection in CSS Regions
+        is still evolving.
+
+        * Layout/RegionsSelection.html: Added.
+        * Layout/resources/regions.js:
+        (.):
+        * Skipped:
+
 2013-11-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Simplify and reformat the output of performance tests inside test runners
