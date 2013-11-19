@@ -812,7 +812,7 @@ Object.defineProperty(Number, "bytesToString",
             return WebInspector.UIString("%.0f B").format(bytes);
 
         var kilobytes = bytes / 1024;
-        if (higherResolution || kilobytes < 10)
+        if (kilobytes < 10 || (higherResolution && kilobytes < 1024))
             return WebInspector.UIString("%.2f KB").format(kilobytes);
         else if (kilobytes < 1024)
             return WebInspector.UIString("%.1f KB").format(kilobytes);

@@ -1,5 +1,19 @@
 2013-11-19  Antoine Quint  <graouts@apple.com>
 
+        Web Inspector: layer info sidebar should convert to MB for very large layers
+        https://bugs.webkit.org/show_bug.cgi?id=124570
+
+        Reviewed by Timothy Hatcher.
+
+        Setting higherResolution to true (its default value if omitted) when calling
+        Number.bytesToString() would always result in a KB-formatted string instead
+        since it didn't check for a < 1024 value as well.
+
+        * UserInterface/Utilities.js:
+        (Number.bytesToString):
+
+2013-11-19  Antoine Quint  <graouts@apple.com>
+
         Remove some unused utilities from Utilities.js
         https://bugs.webkit.org/show_bug.cgi?id=124590
 
