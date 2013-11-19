@@ -1,3 +1,66 @@
+2013-11-19  Brady Eidson  <beidson@apple.com>
+
+        Consolidate IDBBackingStore*Interface and IDBBackingStore*LevelDB
+        https://bugs.webkit.org/show_bug.cgi?id=124597
+
+        Reviewed by Alexey Proskuryakov.
+
+        The Interface abstraction doesn’t make sense anymore, as LevelDB will be the only implementor.
+
+        * Modules/indexeddb/IDBBackingStoreCursorInterface.h: Removed.
+        * Modules/indexeddb/IDBBackingStoreInterface.h: Removed.
+        * Modules/indexeddb/IDBBackingStoreTransactionInterface.h: Removed.
+
+        * Modules/indexeddb/IDBServerConnection.h:
+
+        * Modules/indexeddb/leveldb/IDBBackingStoreCursorLevelDB.h:
+        (WebCore::IDBBackingStoreCursorLevelDB::key):
+        (WebCore::IDBBackingStoreCursorLevelDB::primaryKey):
+        (WebCore::IDBBackingStoreCursorLevelDB::recordIdentifier):
+
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        (WebCore::IDBBackingStoreLevelDB::getOrEstablishIDBDatabaseMetadata):
+        (WebCore::IDBBackingStoreLevelDB::updateIDBDatabaseVersion):
+        (WebCore::IDBBackingStoreLevelDB::deleteDatabase):
+        (WebCore::IDBBackingStoreLevelDB::createObjectStore):
+        (WebCore::IDBBackingStoreLevelDB::deleteObjectStore):
+        (WebCore::IDBBackingStoreLevelDB::getRecord):
+        (WebCore::IDBBackingStoreLevelDB::putRecord):
+        (WebCore::IDBBackingStoreLevelDB::clearObjectStore):
+        (WebCore::IDBBackingStoreLevelDB::deleteRecord):
+        (WebCore::IDBBackingStoreLevelDB::getKeyGeneratorCurrentNumber):
+        (WebCore::IDBBackingStoreLevelDB::maybeUpdateKeyGeneratorCurrentNumber):
+        (WebCore::IDBBackingStoreLevelDB::keyExistsInObjectStore):
+        (WebCore::IDBBackingStoreLevelDB::createIndex):
+        (WebCore::IDBBackingStoreLevelDB::deleteIndex):
+        (WebCore::IDBBackingStoreLevelDB::putIndexDataForRecord):
+        (WebCore::IDBBackingStoreLevelDB::findKeyInIndex):
+        (WebCore::IDBBackingStoreLevelDB::getPrimaryKeyViaIndex):
+        (WebCore::IDBBackingStoreLevelDB::keyExistsInIndex):
+        (WebCore::IDBBackingStoreLevelDB::makeIndexWriters):
+        (WebCore::IDBBackingStoreLevelDB::openObjectStoreCursor):
+        (WebCore::IDBBackingStoreLevelDB::openObjectStoreKeyCursor):
+        (WebCore::IDBBackingStoreLevelDB::openIndexKeyCursor):
+        (WebCore::IDBBackingStoreLevelDB::openIndexCursor):
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBBackingStoreTransactionLevelDB.h:
+        (WebCore::IDBBackingStoreTransactionLevelDB::levelDBTransactionFrom):
+
+        * Modules/indexeddb/leveldb/IDBIndexWriterLevelDB.cpp:
+        (WebCore::IDBIndexWriterLevelDB::writeIndexKeys):
+        (WebCore::IDBIndexWriterLevelDB::verifyIndexKeys):
+        (WebCore::IDBIndexWriterLevelDB::addingKeyAllowed):
+        * Modules/indexeddb/leveldb/IDBIndexWriterLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.cpp:
+        (WebCore::IDBServerConnectionLevelDB::get):
+        (WebCore::IDBServerConnectionLevelDB::openCursor):
+        (WebCore::IDBServerConnectionLevelDB::count):
+        (WebCore::IDBServerConnectionLevelDB::deleteRange):
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2013-11-19  Sergio Correia  <sergio.correia@openbossa.org>
 
         Get rid of bare new in SVGAnimatedColorAnimator::constructFromString()

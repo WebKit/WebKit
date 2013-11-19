@@ -39,8 +39,6 @@
 
 namespace WebCore {
 
-class IDBBackingStoreInterface;
-class IDBBackingStoreTransactionInterface;
 class IDBDatabaseError;
 class IDBKey;
 class IDBTransactionBackend;

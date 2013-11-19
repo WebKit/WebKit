@@ -27,7 +27,7 @@
 #ifndef IDBIndexWriterLevelDB_h
 #define IDBIndexWriterLevelDB_h
 
-#include "IDBBackingStoreInterface.h"
+#include "IDBBackingStoreLevelDB.h"
 #include "IDBDatabaseBackend.h"
 #include "IDBMetadata.h"
 #include <wtf/RefCounted.h>
@@ -46,14 +46,14 @@ public:
         return adoptRef(new IDBIndexWriterLevelDB(indexMetadata, indexKeys));
     }
 
-    bool verifyIndexKeys(IDBBackingStoreInterface&, IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey = 0, String* errorMessage = 0) const WARN_UNUSED_RETURN;
+    bool verifyIndexKeys(IDBBackingStoreLevelDB&, IDBBackingStoreTransactionLevelDB&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey = 0, String* errorMessage = 0) const WARN_UNUSED_RETURN;
 
-    void writeIndexKeys(const IDBRecordIdentifier*, IDBBackingStoreInterface&, IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId) const;
+    void writeIndexKeys(const IDBRecordIdentifier*, IDBBackingStoreLevelDB&, IDBBackingStoreTransactionLevelDB&, int64_t databaseId, int64_t objectStoreId) const;
 
 private:
     IDBIndexWriterLevelDB(const IDBIndexMetadata&, const IndexKeys&);
 
-    bool addingKeyAllowed(IDBBackingStoreInterface&, IDBBackingStoreTransactionInterface&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const WARN_UNUSED_RETURN;
+    bool addingKeyAllowed(IDBBackingStoreLevelDB&, IDBBackingStoreTransactionLevelDB&, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const WARN_UNUSED_RETURN;
 
     const IDBIndexMetadata m_indexMetadata;
     IndexKeys m_indexKeys;

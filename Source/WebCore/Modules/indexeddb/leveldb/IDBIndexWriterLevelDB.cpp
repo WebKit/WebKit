@@ -41,7 +41,7 @@ IDBIndexWriterLevelDB::IDBIndexWriterLevelDB(const IDBIndexMetadata& metadata, c
 {
 }
 
-void IDBIndexWriterLevelDB::writeIndexKeys(const IDBRecordIdentifier* recordIdentifier, IDBBackingStoreInterface& backingStore, IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId) const
+void IDBIndexWriterLevelDB::writeIndexKeys(const IDBRecordIdentifier* recordIdentifier, IDBBackingStoreLevelDB& backingStore, IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseId, int64_t objectStoreId) const
 {
     ASSERT(recordIdentifier);
     int64_t indexId = m_indexMetadata.id;
@@ -52,7 +52,7 @@ void IDBIndexWriterLevelDB::writeIndexKeys(const IDBRecordIdentifier* recordIden
     }
 }
 
-bool IDBIndexWriterLevelDB::verifyIndexKeys(IDBBackingStoreInterface& backingStore, IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey, String* errorMessage) const
+bool IDBIndexWriterLevelDB::verifyIndexKeys(IDBBackingStoreLevelDB& backingStore, IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys, const IDBKey* primaryKey, String* errorMessage) const
 {
     canAddKeys = false;
     for (size_t i = 0; i < m_indexKeys.size(); ++i) {
@@ -69,7 +69,7 @@ bool IDBIndexWriterLevelDB::verifyIndexKeys(IDBBackingStoreInterface& backingSto
     return true;
 }
 
-bool IDBIndexWriterLevelDB::addingKeyAllowed(IDBBackingStoreInterface& backingStore, IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const
+bool IDBIndexWriterLevelDB::addingKeyAllowed(IDBBackingStoreLevelDB& backingStore, IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const
 {
     allowed = false;
     if (!m_indexMetadata.unique) {

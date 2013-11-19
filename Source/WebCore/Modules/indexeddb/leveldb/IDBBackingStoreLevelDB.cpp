@@ -30,8 +30,6 @@
 
 #include "FileSystem.h"
 #include "HistogramSupport.h"
-#include "IDBBackingStoreCursorLevelDB.h"
-#include "IDBBackingStoreTransactionLevelDB.h"
 #include "IDBIndexWriterLevelDB.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
@@ -544,7 +542,7 @@ bool IDBBackingStoreLevelDB::getIDBDatabaseMetaData(const String& name, IDBDatab
     return true;
 }
 
-void IDBBackingStoreLevelDB::getOrEstablishIDBDatabaseMetadata(const String& name, GetIDBDatabaseMetadataFunction metadataFunction)
+void IDBBackingStoreLevelDB::getOrEstablishIDBDatabaseMetadata(const String& name, std::function<void (const IDBDatabaseMetadata&, bool success)> metadataFunction)
 {
     const Vector<char> key = DatabaseNameKey::encode(m_identifier, name);
     bool found = false;
@@ -647,7 +645,7 @@ bool IDBBackingStoreLevelDB::createIDBDatabaseMetaData(IDBDatabaseMetadata& meta
     return true;
 }
 
-bool IDBBackingStoreLevelDB::updateIDBDatabaseVersion(IDBBackingStoreTransactionInterface& transaction, int64_t rowId, uint64_t version)
+bool IDBBackingStoreLevelDB::updateIDBDatabaseVersion(IDBBackingStoreTransactionLevelDB& transaction, int64_t rowId, uint64_t version)
 {
     if (version == IDBDatabaseMetadata::NoIntVersion)
         version = IDBDatabaseMetadata::DefaultIntVersion;
@@ -662,7 +660,7 @@ static void deleteRange(LevelDBTransaction* transaction, const Vector<char>& beg
         transaction->remove(it->key());
 }
 
-void IDBBackingStoreLevelDB::deleteDatabase(const String& name, BoolCallbackFunction boolCallbackFunction)
+void IDBBackingStoreLevelDB::deleteDatabase(const String& name, std::function<void (bool success)> boolCallbackFunction)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::deleteDatabase");
     OwnPtr<LevelDBWriteOnlyTransaction> transaction = LevelDBWriteOnlyTransaction::create(m_db.get());
@@ -828,7 +826,7 @@ WARN_UNUSED_RETURN static bool setMaxObjectStoreId(LevelDBTransaction* transacti
     return true;
 }
 
-bool IDBBackingStoreLevelDB::createObjectStore(IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
+bool IDBBackingStoreLevelDB::createObjectStore(IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::createObjectStore");
     if (!KeyPrefix::validIds(databaseId, objectStoreId))
@@ -859,7 +857,7 @@ bool IDBBackingStoreLevelDB::createObjectStore(IDBBackingStoreTransactionInterfa
     return true;
 }
 
-bool IDBBackingStoreLevelDB::deleteObjectStore(IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId)
+bool IDBBackingStoreLevelDB::deleteObjectStore(IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseId, int64_t objectStoreId)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::deleteObjectStore");
     if (!KeyPrefix::validIds(databaseId, objectStoreId))
@@ -888,7 +886,7 @@ bool IDBBackingStoreLevelDB::deleteObjectStore(IDBBackingStoreTransactionInterfa
     return clearObjectStore(transaction, databaseId, objectStoreId);
 }
 
-bool IDBBackingStoreLevelDB::getRecord(IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, Vector<char>& record)
+bool IDBBackingStoreLevelDB::getRecord(IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, Vector<char>& record)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::getRecord");
     if (!KeyPrefix::validIds(databaseId, objectStoreId))
@@ -946,7 +944,7 @@ WARN_UNUSED_RETURN static bool getNewVersionNumber(LevelDBTransaction* transacti
     return true;
 }
 
-bool IDBBackingStoreLevelDB::putRecord(IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, PassRefPtr<SharedBuffer> prpValue, IDBRecordIdentifier* recordIdentifier)
+bool IDBBackingStoreLevelDB::putRecord(IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, PassRefPtr<SharedBuffer> prpValue, IDBRecordIdentifier* recordIdentifier)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::putRecord");
     if (!KeyPrefix::validIds(databaseId, objectStoreId))
@@ -976,7 +974,7 @@ bool IDBBackingStoreLevelDB::putRecord(IDBBackingStoreTransactionInterface& tran
     return true;
 }
 
-bool IDBBackingStoreLevelDB::clearObjectStore(IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId)
+bool IDBBackingStoreLevelDB::clearObjectStore(IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseId, int64_t objectStoreId)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::clearObjectStore");
     if (!KeyPrefix::validIds(databaseId, objectStoreId))
@@ -989,7 +987,7 @@ bool IDBBackingStoreLevelDB::clearObjectStore(IDBBackingStoreTransactionInterfac
     return true;
 }
 
-bool IDBBackingStoreLevelDB::deleteRecord(IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, const IDBRecordIdentifier& recordIdentifier)
+bool IDBBackingStoreLevelDB::deleteRecord(IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseId, int64_t objectStoreId, const IDBRecordIdentifier& recordIdentifier)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::deleteRecord");
 
@@ -1006,7 +1004,7 @@ bool IDBBackingStoreLevelDB::deleteRecord(IDBBackingStoreTransactionInterface& t
 }
 
 
-bool IDBBackingStoreLevelDB::getKeyGeneratorCurrentNumber(IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, int64_t& keyGeneratorCurrentNumber)
+bool IDBBackingStoreLevelDB::getKeyGeneratorCurrentNumber(IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseId, int64_t objectStoreId, int64_t& keyGeneratorCurrentNumber)
 {
     if (!KeyPrefix::validIds(databaseId, objectStoreId))
         return false;
@@ -1056,7 +1054,7 @@ bool IDBBackingStoreLevelDB::getKeyGeneratorCurrentNumber(IDBBackingStoreTransac
     return keyGeneratorCurrentNumber;
 }
 
-bool IDBBackingStoreLevelDB::maybeUpdateKeyGeneratorCurrentNumber(IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, int64_t newNumber, bool checkCurrent)
+bool IDBBackingStoreLevelDB::maybeUpdateKeyGeneratorCurrentNumber(IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseId, int64_t objectStoreId, int64_t newNumber, bool checkCurrent)
 {
     if (!KeyPrefix::validIds(databaseId, objectStoreId))
         return false;
@@ -1076,7 +1074,7 @@ bool IDBBackingStoreLevelDB::maybeUpdateKeyGeneratorCurrentNumber(IDBBackingStor
     return true;
 }
 
-bool IDBBackingStoreLevelDB::keyExistsInObjectStore(IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, RefPtr<IDBRecordIdentifier>& foundIDBRecordIdentifier)
+bool IDBBackingStoreLevelDB::keyExistsInObjectStore(IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, RefPtr<IDBRecordIdentifier>& foundIDBRecordIdentifier)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::keyExistsInObjectStore");
     if (!KeyPrefix::validIds(databaseId, objectStoreId))
@@ -1197,7 +1195,7 @@ WARN_UNUSED_RETURN static bool setMaxIndexId(LevelDBTransaction* transaction, in
     return true;
 }
 
-bool IDBBackingStoreLevelDB::createIndex(IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath& keyPath, bool isUnique, bool isMultiEntry)
+bool IDBBackingStoreLevelDB::createIndex(IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath& keyPath, bool isUnique, bool isMultiEntry)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::createIndex");
     if (!KeyPrefix::validIds(databaseId, objectStoreId, indexId))
@@ -1218,7 +1216,7 @@ bool IDBBackingStoreLevelDB::createIndex(IDBBackingStoreTransactionInterface& tr
     return true;
 }
 
-bool IDBBackingStoreLevelDB::deleteIndex(IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId)
+bool IDBBackingStoreLevelDB::deleteIndex(IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::deleteIndex");
     if (!KeyPrefix::validIds(databaseId, objectStoreId, indexId))
@@ -1235,7 +1233,7 @@ bool IDBBackingStoreLevelDB::deleteIndex(IDBBackingStoreTransactionInterface& tr
     return true;
 }
 
-bool IDBBackingStoreLevelDB::putIndexDataForRecord(IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key, const IDBRecordIdentifier* recordIdentifier)
+bool IDBBackingStoreLevelDB::putIndexDataForRecord(IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key, const IDBRecordIdentifier* recordIdentifier)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::putIndexDataForRecord");
     ASSERT(key.isValid());
@@ -1299,7 +1297,7 @@ static bool versionExists(LevelDBTransaction* transaction, int64_t databaseId, i
     return true;
 }
 
-bool IDBBackingStoreLevelDB::findKeyInIndex(IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key, Vector<char>& foundEncodedPrimaryKey, bool& found)
+bool IDBBackingStoreLevelDB::findKeyInIndex(IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key, Vector<char>& foundEncodedPrimaryKey, bool& found)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::findKeyInIndex");
     ASSERT(KeyPrefix::validIds(databaseId, objectStoreId, indexId));
@@ -1341,7 +1339,7 @@ bool IDBBackingStoreLevelDB::findKeyInIndex(IDBBackingStoreTransactionInterface&
     }
 }
 
-bool IDBBackingStoreLevelDB::getPrimaryKeyViaIndex(IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key, RefPtr<IDBKey>& primaryKey)
+bool IDBBackingStoreLevelDB::getPrimaryKeyViaIndex(IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key, RefPtr<IDBKey>& primaryKey)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::getPrimaryKeyViaIndex");
     if (!KeyPrefix::validIds(databaseId, objectStoreId, indexId))
@@ -1362,7 +1360,7 @@ bool IDBBackingStoreLevelDB::getPrimaryKeyViaIndex(IDBBackingStoreTransactionInt
     return true;
 }
 
-bool IDBBackingStoreLevelDB::keyExistsInIndex(IDBBackingStoreTransactionInterface& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& indexKey, RefPtr<IDBKey>& foundPrimaryKey, bool& exists)
+bool IDBBackingStoreLevelDB::keyExistsInIndex(IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& indexKey, RefPtr<IDBKey>& foundPrimaryKey, bool& exists)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::keyExistsInIndex");
     if (!KeyPrefix::validIds(databaseId, objectStoreId, indexId))
@@ -1383,7 +1381,7 @@ bool IDBBackingStoreLevelDB::keyExistsInIndex(IDBBackingStoreTransactionInterfac
 }
 
 
-bool IDBBackingStoreLevelDB::makeIndexWriters(int64_t transactionID, int64_t databaseID, const IDBObjectStoreMetadata& objectStore, IDBKey& primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIDs, const Vector<IndexKeys>& indexKeys, Vector<RefPtr<IDBIndexWriterLevelDB>>& indexWriters, String* errorMessage, bool& completed)
+bool IDBBackingStoreLevelDB::makeIndexWriters(int64_t transactionID, int64_t databaseID, const IDBObjectStoreMetadata& objectStore, IDBKey& primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIDs, const Vector<Vector<RefPtr<IDBKey>>>& indexKeys, Vector<RefPtr<IDBIndexWriterLevelDB>>& indexWriters, String* errorMessage, bool& completed)
 {
     ASSERT(indexIDs.size() == indexKeys.size());
     completed = false;
@@ -1859,7 +1857,7 @@ static bool indexCursorOptions(LevelDBTransaction* transaction, int64_t database
 
     return true;
 }
-PassRefPtr<IDBBackingStoreCursorInterface> IDBBackingStoreLevelDB::openObjectStoreCursor(int64_t cursorID, IDBBackingStoreTransactionInterface& transaction, int64_t databaseID, int64_t objectStoreId, const IDBKeyRange* range, IndexedDB::CursorDirection direction)
+PassRefPtr<IDBBackingStoreCursorLevelDB> IDBBackingStoreLevelDB::openObjectStoreCursor(int64_t cursorID, IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseID, int64_t objectStoreId, const IDBKeyRange* range, IndexedDB::CursorDirection direction)
 
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::openObjectStoreCursor");
@@ -1874,7 +1872,7 @@ PassRefPtr<IDBBackingStoreCursorInterface> IDBBackingStoreLevelDB::openObjectSto
     return cursor.release();
 }
 
-PassRefPtr<IDBBackingStoreCursorInterface> IDBBackingStoreLevelDB::openObjectStoreKeyCursor(int64_t cursorID, IDBBackingStoreTransactionInterface& transaction, int64_t databaseID, int64_t objectStoreId, const IDBKeyRange* range, IndexedDB::CursorDirection direction)
+PassRefPtr<IDBBackingStoreCursorLevelDB> IDBBackingStoreLevelDB::openObjectStoreKeyCursor(int64_t cursorID, IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseID, int64_t objectStoreId, const IDBKeyRange* range, IndexedDB::CursorDirection direction)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::openObjectStoreKeyCursor");
     LevelDBTransaction* levelDBTransaction = IDBBackingStoreTransactionLevelDB::levelDBTransactionFrom(transaction);
@@ -1888,7 +1886,7 @@ PassRefPtr<IDBBackingStoreCursorInterface> IDBBackingStoreLevelDB::openObjectSto
     return cursor.release();
 }
 
-PassRefPtr<IDBBackingStoreCursorInterface> IDBBackingStoreLevelDB::openIndexKeyCursor(int64_t cursorID, IDBBackingStoreTransactionInterface& transaction, int64_t databaseID, int64_t objectStoreId, int64_t indexId, const IDBKeyRange* range, IndexedDB::CursorDirection direction)
+PassRefPtr<IDBBackingStoreCursorLevelDB> IDBBackingStoreLevelDB::openIndexKeyCursor(int64_t cursorID, IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseID, int64_t objectStoreId, int64_t indexId, const IDBKeyRange* range, IndexedDB::CursorDirection direction)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::openIndexKeyCursor");
     LevelDBTransaction* levelDBTransaction = IDBBackingStoreTransactionLevelDB::levelDBTransactionFrom(transaction);
@@ -1902,7 +1900,7 @@ PassRefPtr<IDBBackingStoreCursorInterface> IDBBackingStoreLevelDB::openIndexKeyC
     return cursor.release();
 }
 
-PassRefPtr<IDBBackingStoreCursorInterface> IDBBackingStoreLevelDB::openIndexCursor(int64_t cursorID, IDBBackingStoreTransactionInterface& transaction, int64_t databaseID, int64_t objectStoreId, int64_t indexId, const IDBKeyRange* range, IndexedDB::CursorDirection direction)
+PassRefPtr<IDBBackingStoreCursorLevelDB> IDBBackingStoreLevelDB::openIndexCursor(int64_t cursorID, IDBBackingStoreTransactionLevelDB& transaction, int64_t databaseID, int64_t objectStoreId, int64_t indexId, const IDBKeyRange* range, IndexedDB::CursorDirection direction)
 {
     LOG(StorageAPI, "IDBBackingStoreLevelDB::openIndexCursor");
     LevelDBTransaction* levelDBTransaction = IDBBackingStoreTransactionLevelDB::levelDBTransactionFrom(transaction);
