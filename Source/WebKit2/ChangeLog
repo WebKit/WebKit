@@ -1,3 +1,74 @@
+2013-11-19  Brady Eidson  <beidson@apple.com>
+
+        Add WebIDBServerConnection and DatabaseProcessIDBConnection stubs
+        https://bugs.webkit.org/show_bug.cgi?id=124562
+
+        Reviewed by Alexey Proskuryakov.
+
+        Also remove Web/DatabaseProcessDatabaseBackend stubs, as that is no longer the abstraction layer.
+
+        * DatabaseProcess/DatabaseToWebProcessConnection.cpp:
+        (WebKit::DatabaseToWebProcessConnection::didReceiveMessage):
+        (WebKit::DatabaseToWebProcessConnection::establishIDBConnection):
+        * DatabaseProcess/DatabaseToWebProcessConnection.h:
+        * DatabaseProcess/DatabaseToWebProcessConnection.messages.in:
+
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp: Renamed from Source/WebKit2/DatabaseProcess/IndexedDB/DatabaseProcessIDBDatabaseBackend.cpp.
+        (WebKit::DatabaseProcessIDBConnection::DatabaseProcessIDBConnection):
+        (WebKit::DatabaseProcessIDBConnection::~DatabaseProcessIDBConnection):
+        (WebKit::DatabaseProcessIDBConnection::establishConnection):
+        (WebKit::DatabaseProcessIDBConnection::messageSenderConnection):
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h: Renamed from Source/WebKit2/DatabaseProcess/IndexedDB/DatabaseProcessIDBDatabaseBackend.h.
+        (WebKit::DatabaseProcessIDBConnection::create):
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in: Renamed from Source/WebKit2/DatabaseProcess/IndexedDB/DatabaseProcessIDBDatabaseBackend.messages.in.
+
+        * Shared/Databases/IndexedDB/IDBUtilities.cpp:
+        (WebKit::uniqueDatabaseIdentifier): Modified to take two security origin arguments.
+        * Shared/Databases/IndexedDB/IDBUtilities.h:
+
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.cpp:
+        (WebKit::WebIDBFactoryBackend::open):
+
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp: Added. Stubbed out all the pure virtual methods.
+        (WebKit::generateBackendIdentifier):
+        (WebKit::WebIDBServerConnection::WebIDBServerConnection):
+        (WebKit::WebIDBServerConnection::~WebIDBServerConnection):
+        (WebKit::WebIDBServerConnection::isClosed):
+        (WebKit::WebIDBServerConnection::getOrEstablishIDBDatabaseMetadata):
+        (WebKit::WebIDBServerConnection::deleteDatabase):
+        (WebKit::WebIDBServerConnection::close):
+        (WebKit::WebIDBServerConnection::openTransaction):
+        (WebKit::WebIDBServerConnection::beginTransaction):
+        (WebKit::WebIDBServerConnection::commitTransaction):
+        (WebKit::WebIDBServerConnection::resetTransaction):
+        (WebKit::WebIDBServerConnection::rollbackTransaction):
+        (WebKit::WebIDBServerConnection::setIndexKeys):
+        (WebKit::WebIDBServerConnection::createObjectStore):
+        (WebKit::WebIDBServerConnection::createIndex):
+        (WebKit::WebIDBServerConnection::deleteIndex):
+        (WebKit::WebIDBServerConnection::get):
+        (WebKit::WebIDBServerConnection::put):
+        (WebKit::WebIDBServerConnection::openCursor):
+        (WebKit::WebIDBServerConnection::count):
+        (WebKit::WebIDBServerConnection::deleteRange):
+        (WebKit::WebIDBServerConnection::clearObjectStore):
+        (WebKit::WebIDBServerConnection::deleteObjectStore):
+        (WebKit::WebIDBServerConnection::changeDatabaseVersion):
+        (WebKit::WebIDBServerConnection::cursorAdvance):
+        (WebKit::WebIDBServerConnection::cursorIterate):
+        (WebKit::WebIDBServerConnection::cursorPrefetchIteration):
+        (WebKit::WebIDBServerConnection::cursorPrefetchReset):
+        (WebKit::WebIDBServerConnection::messageSenderConnection):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h: Added.
+
+        * WebProcess/Databases/IndexedDB/WebProcessIDBDatabaseBackend.cpp: Removed.
+        * WebProcess/Databases/IndexedDB/WebProcessIDBDatabaseBackend.h: Removed.
+
+        * WebProcess/Databases/WebToDatabaseProcessConnection.cpp:
+
+        * DerivedSources.make:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-11-19  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL and GTK build fix attempt after r159507

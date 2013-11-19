@@ -1650,9 +1650,9 @@
 		510194401836D20800925523 /* IDBIndexWriterLevelDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5101943E1836D20800925523 /* IDBIndexWriterLevelDB.cpp */; };
 		510194411836D20800925523 /* IDBIndexWriterLevelDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 5101943F1836D20800925523 /* IDBIndexWriterLevelDB.h */; };
 		510194441836F7E400925523 /* IDBCursorBackendOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510194421836F7E400925523 /* IDBCursorBackendOperations.cpp */; };
-		510194451836F7E500925523 /* IDBCursorBackendOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 510194431836F7E400925523 /* IDBCursorBackendOperations.h */; };
+		510194451836F7E500925523 /* IDBCursorBackendOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 510194431836F7E400925523 /* IDBCursorBackendOperations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51059DDD1820B17600DFF9B1 /* IDBTransactionBackendOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51059DD91820B17600DFF9B1 /* IDBTransactionBackendOperations.cpp */; };
-		51059DDE1820B17600DFF9B1 /* IDBTransactionBackendOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 51059DDA1820B17600DFF9B1 /* IDBTransactionBackendOperations.h */; };
+		51059DDE1820B17600DFF9B1 /* IDBTransactionBackendOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 51059DDA1820B17600DFF9B1 /* IDBTransactionBackendOperations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510A326F18318431003C5326 /* IDBServerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A326E18318431003C5326 /* IDBServerConnection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510B7DB7182D9F5D009BF957 /* IDBTransactionBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510B7DB5182D9F5D009BF957 /* IDBTransactionBackend.cpp */; };
 		510B7DB8182D9F5D009BF957 /* IDBTransactionBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 510B7DB6182D9F5D009BF957 /* IDBTransactionBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };

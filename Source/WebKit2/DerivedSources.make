@@ -64,7 +64,7 @@ MESSAGE_RECEIVERS = \
     CustomProtocolManager \
     CustomProtocolManagerProxy \
     DatabaseProcess \
-    DatabaseProcessIDBDatabaseBackend \
+    DatabaseProcessIDBConnection \
     DatabaseProcessProxy \
     DatabaseToWebProcessConnection \
     DrawingArea \

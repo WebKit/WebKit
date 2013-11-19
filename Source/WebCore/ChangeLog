@@ -1,3 +1,15 @@
+2013-11-19  Brady Eidson  <beidson@apple.com>
+
+        Add WebIDBServerConnection and DatabaseProcessIDBConnection stubs
+        https://bugs.webkit.org/show_bug.cgi?id=124562
+
+        Reviewed by Alexey Proskuryakov.
+
+        Export some more symbols and headers for WK2 to use.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2013-11-19  Frédéric Wang  <fred.wang@free.fr>
 
         Map the dir attribute to the CSS direction property.

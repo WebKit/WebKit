@@ -35,7 +35,7 @@
 
 namespace WebKit {
 
-class DatabaseProcessIDBDatabaseBackend;
+class DatabaseProcessIDBConnection;
 
 class DatabaseToWebProcessConnection : public RefCounted<DatabaseToWebProcessConnection>, public CoreIPC::Connection::Client, public CoreIPC::MessageSender {
 public:
@@ -59,10 +59,10 @@ private:
 
 #if ENABLE(INDEXED_DATABASE)
     // Messages handlers
-    void establishIDBDatabaseBackend(uint64_t backendIdentifier);
+    void establishIDBConnection(uint64_t backendIdentifier);
 
-    typedef HashMap<uint64_t, RefPtr<DatabaseProcessIDBDatabaseBackend>> IDBDatabaseBackendMap;
-    IDBDatabaseBackendMap m_idbDatabaseBackends;
+    typedef HashMap<uint64_t, RefPtr<DatabaseProcessIDBConnection>> IDBConnectionMap;
+    IDBConnectionMap m_idbConnections;
 #endif // ENABLE(INDEXED_DATABASE)
 
     RefPtr<CoreIPC::Connection> m_connection;

@@ -22,8 +22,8 @@
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
-messages -> DatabaseProcessIDBDatabaseBackend LegacyReceiver {
-    OpenConnection()
+messages -> DatabaseProcessIDBConnection LegacyReceiver {
+    EstablishConnection()
 }
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)

@@ -28,14 +28,31 @@
 #include "IDBUtilities.h"
 
 #include <WebCore/SecurityOrigin.h>
+#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebKit {
 
-String uniqueDatabaseIdentifier(const String& databaseName, const WebCore::SecurityOrigin& securityOrigin)
+String uniqueDatabaseIdentifier(const String& databaseName, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin)
 {
-    return securityOrigin.databaseIdentifier() + databaseName;
+    StringBuilder stringBuilder;
+
+    String originString = openingOrigin.toString();
+    if (originString == "null")
+        return String();
+    stringBuilder.append(originString);
+    stringBuilder.append("_");
+
+    originString = mainFrameOrigin.toString();
+    if (originString == "null")
+        return String();
+    stringBuilder.append(originString);
+
+    stringBuilder.append("_");
+    stringBuilder.append(databaseName);
+
+    return stringBuilder.toString();
 }
 
 } // namespace WebKit

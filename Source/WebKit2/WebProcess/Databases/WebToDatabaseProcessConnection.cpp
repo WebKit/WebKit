@@ -29,7 +29,6 @@
 
 #include "DatabaseToWebProcessConnectionMessages.h"
 #include "WebProcess.h"
-#include "WebProcessIDBDatabaseBackend.h"
 #include <wtf/RunLoop.h>
 
 #if ENABLE(INDEXED_DATABASE)

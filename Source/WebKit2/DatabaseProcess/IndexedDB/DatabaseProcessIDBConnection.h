@@ -23,35 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DatabaseProcessIDBDatabaseBackend.h"
+#ifndef DatabaseProcessIDBConnection_h
+#define DatabaseProcessIDBConnection_h
 
-#include "DatabaseToWebProcessConnection.h"
+#include "MessageSender.h"
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
 namespace WebKit {
 
-DatabaseProcessIDBDatabaseBackend::DatabaseProcessIDBDatabaseBackend(uint64_t backendIdentifier)
-    : m_backendIdentifier(backendIdentifier)
-{
-}
+class DatabaseToWebProcessConnection;
 
-DatabaseProcessIDBDatabaseBackend::~DatabaseProcessIDBDatabaseBackend()
-{
-}
+class DatabaseProcessIDBConnection : public RefCounted<DatabaseProcessIDBConnection>, public CoreIPC::MessageSender {
+public:
+    static RefPtr<DatabaseProcessIDBConnection> create(uint64_t backendIdentifier)
+    {
+        return adoptRef(new DatabaseProcessIDBConnection(backendIdentifier));
+    }
 
-void DatabaseProcessIDBDatabaseBackend::openConnection()
-{
-    // FIXME: This method is successfully called by messaging from the WebProcess.
-    // Now implement it.
-}
+    virtual ~DatabaseProcessIDBConnection();
 
-CoreIPC::Connection* DatabaseProcessIDBDatabaseBackend::messageSenderConnection()
-{
-    return m_connection->connection();
-}
+    // Message handlers.
+    void didReceiveDatabaseProcessIDBConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
+
+private:
+    DatabaseProcessIDBConnection(uint64_t backendIdentifier);
+
+    // CoreIPC::MessageSender
+    virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
+    virtual uint64_t messageSenderDestinationID() OVERRIDE { return m_backendIdentifier; }
+
+    // Message handlers.
+    void establishConnection();
+
+    RefPtr<DatabaseToWebProcessConnection> m_connection;
+    uint64_t m_backendIdentifier;
+};
 
 } // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
+#endif // DatabaseProcessIDBConnection_h

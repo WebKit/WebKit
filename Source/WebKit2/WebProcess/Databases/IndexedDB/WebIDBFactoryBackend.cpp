@@ -29,8 +29,8 @@
 
 #include "IDBUtilities.h"
 #include "Logging.h"
+#include "WebIDBServerConnection.h"
 #include "WebProcess.h"
-#include "WebProcessIDBDatabaseBackend.h"
 #include "WebToDatabaseProcessConnection.h"
 #include <WebCore/IDBCallbacks.h>
 #include <WebCore/IDBCursorBackend.h>
@@ -47,7 +47,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-typedef HashMap<String, RefPtr<WebProcessIDBDatabaseBackend>> IDBDatabaseBackendMap;
+typedef HashMap<String, RefPtr<IDBDatabaseBackend>> IDBDatabaseBackendMap;
 
 static IDBDatabaseBackendMap& sharedDatabaseBackendMap()
 {
@@ -70,24 +70,28 @@ void WebIDBFactoryBackend::getDatabaseNames(PassRefPtr<IDBCallbacks>, PassRefPtr
     notImplemented();
 }
 
-void WebIDBFactoryBackend::open(const String& databaseName, uint64_t version, int64_t transactionId, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, const SecurityOrigin& securityOrigin, const SecurityOrigin&)
+void WebIDBFactoryBackend::open(const String& databaseName, uint64_t version, int64_t transactionId, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, const SecurityOrigin& openingOrigin, const SecurityOrigin& mainFrameOrigin)
 {
     ASSERT(isMainThread());
     LOG(StorageAPI, "WebIDBFactoryBackend::open");
 
-    String databaseIdentifier = uniqueDatabaseIdentifier(databaseName, securityOrigin);
-    
-    RefPtr<WebProcessIDBDatabaseBackend> webProcessDatabaseBackend;
+    String databaseIdentifier = uniqueDatabaseIdentifier(databaseName, openingOrigin, mainFrameOrigin);
+    if (databaseIdentifier.isNull()) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::InvalidAccessError, "Document is not allowed to use Indexed Databases"));
+        return;
+    }
+
     IDBDatabaseBackendMap::iterator it = sharedDatabaseBackendMap().find(databaseIdentifier);
 
+    RefPtr<IDBDatabaseBackend> databaseBackend;
     if (it == sharedDatabaseBackendMap().end()) {
-        webProcessDatabaseBackend = WebProcessIDBDatabaseBackend::create(*this, databaseName);
-        webProcessDatabaseBackend->establishDatabaseProcessBackend();
-        sharedDatabaseBackendMap().set(databaseIdentifier, webProcessDatabaseBackend.get());
+        RefPtr<IDBServerConnection> serverConnection = WebIDBServerConnection::create(databaseName, openingOrigin, mainFrameOrigin);
+        databaseBackend = IDBDatabaseBackend::create(databaseName, databaseIdentifier, this, *serverConnection);
+        sharedDatabaseBackendMap().set(databaseIdentifier, databaseBackend);
     } else
-        webProcessDatabaseBackend = it->value;
+        databaseBackend = it->value;
 
-    webProcessDatabaseBackend->openConnection(callbacks, databaseCallbacks, transactionId, version);
+    databaseBackend->openConnection(callbacks, databaseCallbacks, transactionId, version);
 }
 
 void WebIDBFactoryBackend::deleteDatabase(const String&, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String&)

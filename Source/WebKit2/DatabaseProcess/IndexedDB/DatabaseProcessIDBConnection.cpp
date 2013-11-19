@@ -23,49 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DatabaseProcessIDBDatabaseBackend_h
-#define DatabaseProcessIDBDatabaseBackend_h
+#include "config.h"
+#include "DatabaseProcessIDBConnection.h"
 
-#include "MessageSender.h"
-#include <WebCore/IDBDatabaseBackend.h>
+#include "DatabaseToWebProcessConnection.h"
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
 namespace WebKit {
 
-class DatabaseToWebProcessConnection;
+DatabaseProcessIDBConnection::DatabaseProcessIDBConnection(uint64_t backendIdentifier)
+    : m_backendIdentifier(backendIdentifier)
+{
+}
 
-// FIXME: When adding actual IDB logic, this class will inherit from WebCore::IDBDatabaseBackend
-// instead of inheriting from RefCounted directly.
-// Doing so will also add a large number of interface methods to implement which is why I'm holding off for now.
+DatabaseProcessIDBConnection::~DatabaseProcessIDBConnection()
+{
+}
 
-class DatabaseProcessIDBDatabaseBackend : public RefCounted<DatabaseProcessIDBDatabaseBackend>, public CoreIPC::MessageSender {
-public:
-    static RefPtr<DatabaseProcessIDBDatabaseBackend> create(uint64_t backendIdentifier)
-    {
-        return adoptRef(new DatabaseProcessIDBDatabaseBackend(backendIdentifier));
-    }
+void DatabaseProcessIDBConnection::establishConnection()
+{
+    // FIXME: This method is successfully called by messaging from the WebProcess.
+    // Now implement it.
+}
 
-    virtual ~DatabaseProcessIDBDatabaseBackend();
-
-    // Message handlers.
-    void didReceiveDatabaseProcessIDBDatabaseBackendMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
-
-private:
-    DatabaseProcessIDBDatabaseBackend(uint64_t backendIdentifier);
-
-    // CoreIPC::MessageSender
-    virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
-    virtual uint64_t messageSenderDestinationID() OVERRIDE { return m_backendIdentifier; }
-
-    // Message handlers.
-    void openConnection();
-
-    RefPtr<DatabaseToWebProcessConnection> m_connection;
-    uint64_t m_backendIdentifier;
-};
+CoreIPC::Connection* DatabaseProcessIDBConnection::messageSenderConnection()
+{
+    return m_connection->connection();
+}
 
 } // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
-#endif // DatabaseProcessIDBDatabaseBackend_h
