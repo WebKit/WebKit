@@ -46,7 +46,7 @@ class TreeScope;
 
 class DocumentOrderedMap {
 public:
-    void add(const AtomicStringImpl&, Element&);
+    void add(const AtomicStringImpl&, Element&, const TreeScope&);
     void remove(const AtomicStringImpl&, Element&);
     void clear();
 

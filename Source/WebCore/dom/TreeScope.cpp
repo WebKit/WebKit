@@ -154,7 +154,7 @@ void TreeScope::addElementById(const AtomicStringImpl& elementId, Element& eleme
 {
     if (!m_elementsById)
         m_elementsById = adoptPtr(new DocumentOrderedMap);
-    m_elementsById->add(elementId, element);
+    m_elementsById->add(elementId, element, *this);
     m_idTargetObserverRegistry->notifyObservers(elementId);
 }
 
@@ -179,7 +179,7 @@ void TreeScope::addElementByName(const AtomicStringImpl& name, Element& element)
 {
     if (!m_elementsByName)
         m_elementsByName = adoptPtr(new DocumentOrderedMap);
-    m_elementsByName->add(name, element);
+    m_elementsByName->add(name, element, *this);
 }
 
 void TreeScope::removeElementByName(const AtomicStringImpl& name, Element& element)
@@ -207,7 +207,7 @@ void TreeScope::addImageMap(HTMLMapElement& imageMap)
         return;
     if (!m_imageMapsByName)
         m_imageMapsByName = adoptPtr(new DocumentOrderedMap);
-    m_imageMapsByName->add(*name, imageMap);
+    m_imageMapsByName->add(*name, imageMap, *this);
 }
 
 void TreeScope::removeImageMap(HTMLMapElement& imageMap)
@@ -276,7 +276,7 @@ Element* TreeScope::elementFromPoint(int x, int y) const
 void TreeScope::addLabel(const AtomicStringImpl& forAttributeValue, HTMLLabelElement& element)
 {
     ASSERT(m_labelsByForAttribute);
-    m_labelsByForAttribute->add(forAttributeValue, element);
+    m_labelsByForAttribute->add(forAttributeValue, element, *this);
 }
 
 void TreeScope::removeLabel(const AtomicStringImpl& forAttributeValue, HTMLLabelElement& element)

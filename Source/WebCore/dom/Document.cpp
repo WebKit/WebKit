@@ -675,7 +675,7 @@ void Document::invalidateAccessKeyMap()
 
 void Document::addImageElementByLowercasedUsemap(const AtomicStringImpl& name, HTMLImageElement& element)
 {
-    return m_imagesByUsemap.add(name, element);
+    return m_imagesByUsemap.add(name, element, *this);
 }
 
 void Document::removeImageElementByLowercasedUsemap(const AtomicStringImpl& name, HTMLImageElement& element)

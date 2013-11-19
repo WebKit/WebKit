@@ -357,7 +357,7 @@ static HashSet<AtomicStringImpl*>* createHtmlCaseInsensitiveAttributesSet()
 
 void HTMLDocument::addDocumentNamedItem(const AtomicStringImpl& name, Element& item)
 {
-    m_documentNamedItem.add(name, item);
+    m_documentNamedItem.add(name, item, *this);
 }
 
 void HTMLDocument::removeDocumentNamedItem(const AtomicStringImpl& name, Element& item)
@@ -367,7 +367,7 @@ void HTMLDocument::removeDocumentNamedItem(const AtomicStringImpl& name, Element
 
 void HTMLDocument::addWindowNamedItem(const AtomicStringImpl& name, Element& item)
 {
-    m_windowNamedItem.add(name, item);
+    m_windowNamedItem.add(name, item, *this);
 }
 
 void HTMLDocument::removeWindowNamedItem(const AtomicStringImpl& name, Element& item)

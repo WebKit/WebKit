@@ -218,12 +218,12 @@ Node::InsertionNotificationRequest HTMLImageElement::insertedInto(ContainerNode&
             m_form->registerImgElement(this);
     }
 
-    if (insertionPoint.inDocument() && !m_lowercasedUsemap.isNull())
-        document().addImageElementByLowercasedUsemap(*m_lowercasedUsemap.impl(), *this);
-
     // Insert needs to complete first, before we start updating the loader. Loader dispatches events which could result
     // in callbacks back to this node.
     Node::InsertionNotificationRequest insertNotificationRequest = HTMLElement::insertedInto(insertionPoint);
+
+    if (insertionPoint.inDocument() && !m_lowercasedUsemap.isNull())
+        document().addImageElementByLowercasedUsemap(*m_lowercasedUsemap.impl(), *this);
 
     // If we have been inserted from a renderer-less document,
     // our loader may have not fetched the image, so do it now.

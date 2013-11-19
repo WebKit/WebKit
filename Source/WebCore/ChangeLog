@@ -1,3 +1,40 @@
+2013-11-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add more assertions with security implications in DocumentOrderedMap
+        https://bugs.webkit.org/show_bug.cgi?id=124559
+
+        Reviewed by Antti Koivisto.
+
+        Assert that newly added elements and existing elements in the document ordered map are in the same tree scope
+        as the document ordered map. Also exit early if we're about to add an element in a wrong document to the map.
+        We don't exit early in get() because the damage has already been done at that point (the element may have been
+        deleted already).
+
+        * dom/Document.cpp:
+        (WebCore::Document::addImageElementByLowercasedUsemap):
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::DocumentOrderedMap::add): Assert that the newly added element is in the current tree scope.
+        Also exit early if either the element is not in the tree scope or not in the right document.
+        While this doesn't make the function completely fault safe, it'll catch when we try to add a detached node.
+        (WebCore::DocumentOrderedMap::remove): Convert existing assertions to ones with security implication.
+        (WebCore::DocumentOrderedMap::get): Assert with security implication that the element we're about to return
+        is in the current tree scope. The element may have already been deleted if we ever hit these assertions.
+        (WebCore::DocumentOrderedMap::getAllElementsById):  Convert an existing assertion to an assertion with security
+        implication.
+        * dom/DocumentOrderedMap.h:
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::addElementById):
+        (WebCore::TreeScope::addElementByName):
+        (WebCore::TreeScope::addImageMap):
+        (WebCore::TreeScope::addLabel):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::addDocumentNamedItem):
+        (WebCore::HTMLDocument::addWindowNamedItem):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::insertedInto): Set InTreeScope flag before calling addImageElementByLowercasedUsemap.
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::insertedInto): Ditto for addImageMap.
+
 2013-11-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r159455.
