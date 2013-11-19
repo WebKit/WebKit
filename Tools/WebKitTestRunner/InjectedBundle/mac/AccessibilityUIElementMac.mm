@@ -226,6 +226,15 @@ void AccessibilityUIElement::getDocumentLinks(Vector<RefPtr<AccessibilityUIEleme
     END_AX_OBJC_EXCEPTIONS
 }
 
+void AccessibilityUIElement::getUIElementsWithAttribute(JSStringRef attribute, Vector<RefPtr<AccessibilityUIElement> >& elements) const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id value = [m_element accessibilityAttributeValue:[NSString stringWithJSStringRef:attribute]];
+    if ([value isKindOfClass:[NSArray class]])
+        convertNSArrayToVector(value, elements);
+    END_AX_OBJC_EXCEPTIONS
+}
+
 void AccessibilityUIElement::getChildren(Vector<RefPtr<AccessibilityUIElement> >& elementVector)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
@@ -440,6 +449,22 @@ double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
     END_AX_OBJC_EXCEPTIONS
     
     return 0;
+}
+
+JSValueRef AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef attribute) const
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+    
+    Vector<RefPtr<AccessibilityUIElement> > elements;
+    getUIElementsWithAttribute(attribute, elements);
+    
+    size_t elementCount = elements.size();
+    auto valueElements = std::make_unique<JSValueRef[]>(elementCount);
+    for (size_t i = 0; i < elementCount; ++i)
+        valueElements[i] = JSObjectMake(context, elements[i]->wrapperClass(), elements[i].get());
+    
+    return JSObjectMakeArray(context, elementCount, valueElements.get(), 0);
 }
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementAttributeValue(JSStringRef attribute) const

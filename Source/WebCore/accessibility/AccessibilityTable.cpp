@@ -421,22 +421,6 @@ AccessibilityObject::AccessibilityChildrenVector& AccessibilityTable::rows()
     
     return m_rows;
 }
-    
-void AccessibilityTable::rowHeaders(AccessibilityChildrenVector& headers)
-{
-    if (!m_renderer)
-        return;
-    
-    updateChildrenIfNecessary();
-    
-    unsigned rowCount = m_rows.size();
-    for (unsigned k = 0; k < rowCount; ++k) {
-        AccessibilityObject* header = toAccessibilityTableRow(m_rows[k].get())->headerObject();
-        if (!header)
-            continue;
-        headers.append(header);
-    }
-}
 
 void AccessibilityTable::columnHeaders(AccessibilityChildrenVector& headers)
 {
@@ -445,15 +429,42 @@ void AccessibilityTable::columnHeaders(AccessibilityChildrenVector& headers)
     
     updateChildrenIfNecessary();
     
-    unsigned colCount = m_columns.size();
-    for (unsigned k = 0; k < colCount; ++k) {
-        AccessibilityObject* header = toAccessibilityTableColumn(m_columns[k].get())->headerObject();
-        if (!header)
-            continue;
-        headers.append(header);
+    size_t columnCount = m_columns.size();
+    for (size_t i = 0; i < columnCount; ++i) {
+        if (AccessibilityObject* header = toAccessibilityTableColumn(m_columns[i].get())->headerObject())
+            headers.append(header);
     }
 }
+
+void AccessibilityTable::rowHeaders(AccessibilityChildrenVector& headers)
+{
+    if (!m_renderer)
+        return;
     
+    updateChildrenIfNecessary();
+    
+    size_t rowCount = m_rows.size();
+    for (size_t i = 0; i < rowCount; ++i) {
+        if (AccessibilityObject* header = toAccessibilityTableRow(m_rows[i].get())->headerObject())
+            headers.append(header);
+    }
+}
+
+void AccessibilityTable::visibleRows(AccessibilityChildrenVector& rows)
+{
+    if (!m_renderer)
+        return;
+    
+    updateChildrenIfNecessary();
+    
+    size_t rowCount = m_rows.size();
+    for (size_t i = 0; i < rowCount; ++i) {
+        AccessibilityObject* row = m_rows[i].get();
+        if (row && !row->isOffScreen())
+            rows.append(row);
+    }
+}
+
 void AccessibilityTable::cells(AccessibilityObject::AccessibilityChildrenVector& cells)
 {
     if (!m_renderer)

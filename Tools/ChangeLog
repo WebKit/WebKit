@@ -1,3 +1,33 @@
+2013-11-18  Samuel White  <samuel_white@apple.com>
+
+        AX: Add ability to fetch only visible table rows.
+        https://bugs.webkit.org/show_bug.cgi?id=124430
+
+        Reviewed by Chris Fleizach.
+
+        Adding method to fetch array of AccessibilityUIElements to help with test brevity and test breakage. Specifically, we
+        have a good deal of churn any time we add or update an element attribute. This happens because the number of tests
+        that rely on a simple element description text dump to verify a single attribute is non trivial. So any time you
+        change add an attribute, you have to update all the tests that are now implicitly verifying this new attribute. But
+        as the test guidelines state, our tests should be more focused and specific about what they test.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (uiElementArrayAttributeValueCallback):
+        (AccessibilityUIElement::uiElementArrayAttributeValue):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::uiElementArrayAttributeValue):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::uiElementArrayAttributeValue):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::uiElementArrayAttributeValue):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::getUIElementsWithAttribute):
+        (WTR::AccessibilityUIElement::uiElementArrayAttributeValue):
+
 2013-11-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Simplify and reformat the output of performance tests inside test runners

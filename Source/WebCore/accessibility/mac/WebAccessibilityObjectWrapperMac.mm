@@ -2353,11 +2353,15 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     }
     
     if (m_object->isAccessibilityTable()) {
-        // TODO: distinguish between visible and non-visible rows
-        if ([attributeName isEqualToString:NSAccessibilityRowsAttribute] ||
-            [attributeName isEqualToString:NSAccessibilityVisibleRowsAttribute]) {
+        if ([attributeName isEqualToString:NSAccessibilityRowsAttribute])
             return convertToNSArray(toAccessibilityTable(m_object)->rows());
+        
+        if ([attributeName isEqualToString:NSAccessibilityVisibleRowsAttribute]) {
+            AccessibilityObject::AccessibilityChildrenVector visibleRows;
+            toAccessibilityTable(m_object)->visibleRows(visibleRows);
+            return convertToNSArray(visibleRows);
         }
+        
         // TODO: distinguish between visible and non-visible columns
         if ([attributeName isEqualToString:NSAccessibilityColumnsAttribute] ||
             [attributeName isEqualToString:NSAccessibilityVisibleColumnsAttribute]) {

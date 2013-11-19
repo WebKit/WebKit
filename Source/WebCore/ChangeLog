@@ -1,3 +1,23 @@
+2013-11-18  Samuel White  <samuel_white@apple.com>
+
+        AX: Add ability to fetch only visible table rows.
+        https://bugs.webkit.org/show_bug.cgi?id=124430
+
+        Reviewed by Chris Fleizach.
+
+        Adding AccessibilityTable::visibleRows method to support AXVisibleRows attribute mac platform.
+
+        Test: platform/mac/accessibility/table-visible-rows.html
+
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::columnHeaders):
+        (WebCore::AccessibilityTable::rowHeaders):
+        (WebCore::AccessibilityTable::visibleRows):
+        * accessibility/AccessibilityTable.h:
+        * accessibility/AccessibilityTableRow.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2013-11-18  Simon Fraser  <simon.fraser@apple.com>
 
         At some scales, opaque compositing layers have garbage pixels around the edges

@@ -416,6 +416,15 @@ JSStringRef AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
     return nullptr;
 }
 
+void AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef attribute, Vector<AccessibilityUIElement>& elements) const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id value = [m_element accessibilityAttributeValue:[NSString stringWithJSStringRef:attribute]];
+    if ([value isKindOfClass:[NSArray class]])
+        convertNSArrayToVector(value, elements);
+    END_AX_OBJC_EXCEPTIONS
+}
+
 AccessibilityUIElement AccessibilityUIElement::uiElementAttributeValue(JSStringRef attribute) const
 {
     BEGIN_AX_OBJC_EXCEPTIONS

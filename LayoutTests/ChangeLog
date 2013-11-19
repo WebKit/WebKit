@@ -1,3 +1,15 @@
+2013-11-18  Samuel White  <samuel_white@apple.com>
+
+        AX: Add ability to fetch only visible table rows.
+        https://bugs.webkit.org/show_bug.cgi?id=124430
+
+        Reviewed by Chris Fleizach.
+
+        Adding test to make sure AXVisibleRows behaves correctly.
+
+        * platform/mac/accessibility/table-visible-rows-expected.txt: Added.
+        * platform/mac/accessibility/table-visible-rows.html: Added.
+
 2013-11-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Simplify and reformat the output of performance tests inside test runners

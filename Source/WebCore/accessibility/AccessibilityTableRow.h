@@ -65,7 +65,7 @@ private:
 }; 
 
 ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityTableRow, isTableRow())
-   
+
 } // namespace WebCore 
 
 #endif // AccessibilityTableRow_h

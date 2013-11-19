@@ -69,7 +69,8 @@ public:
     
     void columnHeaders(AccessibilityChildrenVector&);
     void rowHeaders(AccessibilityChildrenVector&);
-
+    void visibleRows(AccessibilityChildrenVector&);
+    
     // an object that contains, as children, all the objects that act as headers
     AccessibilityObject* headerContainer();
 
@@ -98,7 +99,7 @@ private:
 };
 
 ACCESSIBILITY_OBJECT_TYPE_CASTS(AccessibilityTable, isTable())
-    
+
 } // namespace WebCore 
 
 #endif // AccessibilityTable_h

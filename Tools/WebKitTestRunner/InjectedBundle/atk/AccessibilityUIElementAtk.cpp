@@ -731,6 +731,12 @@ double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
     return 0;
 }
 
+JSValueRef AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef attribute) const
+{
+    // FIXME: implement
+    return nullptr;
+}
+
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementAttributeValue(JSStringRef attribute) const
 {
     // FIXME: implement

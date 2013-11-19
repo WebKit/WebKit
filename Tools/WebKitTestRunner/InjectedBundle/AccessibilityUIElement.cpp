@@ -80,6 +80,7 @@ void AccessibilityUIElement::decrement() { }
 void AccessibilityUIElement::showMenu() { }
 void AccessibilityUIElement::press() { }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRef) { return 0; }
+JSValueRef AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef) const { return nullptr; }
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementAttributeValue(JSStringRef) const { return 0; }
 double AccessibilityUIElement::numberAttributeValue(JSStringRef) { return 0; }
 bool AccessibilityUIElement::boolAttributeValue(JSStringRef) { return false; }

@@ -462,6 +462,24 @@ static JSValueRef stringAttributeValueCallback(JSContextRef context, JSObjectRef
     return result;
 }
 
+static JSValueRef uiElementArrayAttributeValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount != 1)
+        return JSValueMakeUndefined(context);
+    
+    JSRetainPtr<JSStringRef> attribute(Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    
+    Vector<AccessibilityUIElement> elements;
+    toAXElement(thisObject)->uiElementArrayAttributeValue(attribute.get(), elements);
+    
+    size_t elementCount = elements.size();
+    auto valueElements = std::make_unique<JSValueRef[]>(elementCount);
+    for (size_t i = 0; i < elementCount; ++i)
+        valueElements[i] = AccessibilityUIElement::makeJSAccessibilityUIElement(context, elements[i]);
+    
+    return JSObjectMakeArray(context, elementCount, valueElements.get(), exception);
+}
+
 static JSValueRef uiElementAttributeValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     JSRetainPtr<JSStringRef> attribute;
@@ -1161,6 +1179,10 @@ AccessibilityUIElement AccessibilityUIElement::uiElementAttributeValue(JSStringR
 JSStringRef AccessibilityUIElement::pathDescription() const { return 0; }
 #endif
 
+#if !PLATFORM(MAC)
+void AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef, Vector<AccessibilityUIElement>&) const { }
+#endif
+
 #if !PLATFORM(WIN)
 bool AccessibilityUIElement::isEqual(AccessibilityUIElement* otherElement)
 {
@@ -1386,6 +1408,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "titleUIElement", titleUIElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setSelectedTextRange", setSelectedTextRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "stringAttributeValue", stringAttributeValueCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "uiElementArrayAttributeValue", uiElementArrayAttributeValueCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "uiElementAttributeValue", uiElementAttributeValueCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "numberAttributeValue", numberAttributeValueCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "boolAttributeValue", boolAttributeValueCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

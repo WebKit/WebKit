@@ -56,6 +56,7 @@ interface AccessibilityUIElement {
 
     DOMString stringAttributeValue(DOMString attr);
     double numberAttributeValue(DOMString attr);
+    object uiElementArrayAttributeValue(DOMString attr);
     AccessibilityUIElement uiElementAttributeValue(DOMString attr);  
     boolean boolAttributeValue(DOMString attr);
     boolean isAttributeSupported(DOMString attr);
