@@ -41,23 +41,22 @@ DEFINE_ANIMATED_PROPERTY(AnimatedIntegerOptionalInteger, OwnerType, DOMAttribute
 
 class SVGAnimationElement;
 
-class SVGAnimatedIntegerAnimator : public SVGAnimatedTypeAnimator {
+class SVGAnimatedIntegerAnimator FINAL : public SVGAnimatedTypeAnimator {
 public:
     SVGAnimatedIntegerAnimator(SVGAnimationElement*, SVGElement*);
-    virtual ~SVGAnimatedIntegerAnimator() { }
 
     static void calculateAnimatedInteger(SVGAnimationElement*, float percentage, unsigned repeatCount, int fromInteger, int toInteger, int toAtEndOfDurationInteger, int& animatedInteger);
 
-    virtual std::unique_ptr<SVGAnimatedType> constructFromString(const String&);
-    virtual std::unique_ptr<SVGAnimatedType> startAnimValAnimation(const SVGElementAnimatedPropertyList&);
-    virtual void stopAnimValAnimation(const SVGElementAnimatedPropertyList&);
-    virtual void resetAnimValToBaseVal(const SVGElementAnimatedPropertyList&, SVGAnimatedType*);
-    virtual void animValWillChange(const SVGElementAnimatedPropertyList&);
-    virtual void animValDidChange(const SVGElementAnimatedPropertyList&);
+    virtual std::unique_ptr<SVGAnimatedType> constructFromString(const String&) OVERRIDE;
+    virtual std::unique_ptr<SVGAnimatedType> startAnimValAnimation(const SVGElementAnimatedPropertyList&) OVERRIDE;
+    virtual void stopAnimValAnimation(const SVGElementAnimatedPropertyList&) OVERRIDE;
+    virtual void resetAnimValToBaseVal(const SVGElementAnimatedPropertyList&, SVGAnimatedType*) OVERRIDE;
+    virtual void animValWillChange(const SVGElementAnimatedPropertyList&) OVERRIDE;
+    virtual void animValDidChange(const SVGElementAnimatedPropertyList&) OVERRIDE;
 
-    virtual void addAnimatedTypes(SVGAnimatedType*, SVGAnimatedType*);
-    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*);
-    virtual float calculateDistance(const String& fromString, const String& toString);
+    virtual void addAnimatedTypes(SVGAnimatedType*, SVGAnimatedType*) OVERRIDE;
+    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*) OVERRIDE;
+    virtual float calculateDistance(const String& fromString, const String& toString) OVERRIDE;
 };
 
 } // namespace WebCore

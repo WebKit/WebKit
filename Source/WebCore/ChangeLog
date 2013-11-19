@@ -1,3 +1,33 @@
+2013-11-19  Sergio Correia  <sergio.correia@openbossa.org>
+
+        Mark classes deriving from SVGAnimatedTypeAnimator as FINAL
+        https://bugs.webkit.org/show_bug.cgi?id=124456
+
+        Reviewed by Darin Adler.
+
+        Also add OVERRIDE to their virtual methods appropriately and remove
+        existing empty virtual destructors.
+
+        No new tests, covered by existing ones.
+
+        * svg/SVGAnimatedAngle.h:
+        * svg/SVGAnimatedBoolean.h:
+        * svg/SVGAnimatedColor.h:
+        * svg/SVGAnimatedEnumeration.h:
+        * svg/SVGAnimatedInteger.h:
+        * svg/SVGAnimatedIntegerOptionalInteger.h:
+        * svg/SVGAnimatedLength.h:
+        * svg/SVGAnimatedLengthList.h:
+        * svg/SVGAnimatedNumber.h:
+        * svg/SVGAnimatedNumberList.h:
+        * svg/SVGAnimatedNumberOptionalNumber.h:
+        * svg/SVGAnimatedPath.h:
+        * svg/SVGAnimatedPointList.h:
+        * svg/SVGAnimatedPreserveAspectRatio.h:
+        * svg/SVGAnimatedRect.h:
+        * svg/SVGAnimatedString.h:
+        * svg/SVGAnimatedTransformList.h:
+
 2013-11-19  Brady Eidson  <beidson@apple.com>
 
         Add WebIDBServerConnection and DatabaseProcessIDBConnection stubs

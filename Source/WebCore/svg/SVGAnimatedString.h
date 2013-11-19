@@ -38,10 +38,9 @@ DEFINE_ANIMATED_PROPERTY(AnimatedString, OwnerType, DOMAttribute, DOMAttribute.l
 
 class SVGAnimationElement;
 
-class SVGAnimatedStringAnimator : public SVGAnimatedTypeAnimator {
+class SVGAnimatedStringAnimator FINAL : public SVGAnimatedTypeAnimator {
 public:
     SVGAnimatedStringAnimator(SVGAnimationElement*, SVGElement*);
-    virtual ~SVGAnimatedStringAnimator() { }
 
     virtual std::unique_ptr<SVGAnimatedType> constructFromString(const String&) OVERRIDE;
     virtual std::unique_ptr<SVGAnimatedType> startAnimValAnimation(const SVGElementAnimatedPropertyList&) OVERRIDE;
