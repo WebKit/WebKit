@@ -1377,9 +1377,11 @@ public:
         return branch32(cond, addressTempRegister, right);
     }
     
-    Jump branch8(RelationalCondition cond, AbsoluteAddress left, TrustedImm32 right)
+    Jump branch8(RelationalCondition cond, AbsoluteAddress address, TrustedImm32 right)
     {
-        load8(left, addressTempRegister);
+        // Use addressTempRegister instead of dataTempRegister, since branch32 uses dataTempRegister.
+        move(TrustedImmPtr(address.m_ptr), addressTempRegister);
+        load8(Address(addressTempRegister), addressTempRegister);
         return branch32(cond, addressTempRegister, right);
     }
     
