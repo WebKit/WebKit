@@ -1,3 +1,21 @@
+2013-11-19  Chris Fleizach  <cfleizach@apple.com>
+
+        Web Speech API crashes onboundary event handling with reload
+        https://bugs.webkit.org/show_bug.cgi?id=124607
+
+        Reviewed by Tim Horton.
+
+        If the page goes away, we need to cleanup the Mac platform synthesizer object, because
+        NSSpeechSynthesizer is retained elsewhere to handle the callbacks (so it doesn't automatically
+        get torn down).
+
+        The layout tests for speech rely on a Mock synthesizer, so there is no good way to test this
+        Mac platform specific behavior.       
+
+        * platform/mac/PlatformSpeechSynthesizerMac.mm:
+        (-[WebSpeechSynthesisWrapper invalidate]):
+        (WebCore::PlatformSpeechSynthesizer::~PlatformSpeechSynthesizer):
+
 2013-11-19  Mark Lam  <mark.lam@apple.com>
 
         Add tracking of endColumn for Executables.

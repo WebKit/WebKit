@@ -167,6 +167,13 @@
     m_utterance = 0;
 }
 
+- (void)invalidate
+{
+    m_utterance = 0;
+    [m_synthesizer setDelegate:nil];
+    [m_synthesizer stopSpeakingAtBoundary:NSSpeechImmediateBoundary];
+}
+
 - (void)speechSynthesizer:(NSSpeechSynthesizer *)sender didFinishSpeaking:(BOOL)finishedSpeaking
 {
     if (!m_utterance)
@@ -208,6 +215,7 @@ PlatformSpeechSynthesizer::PlatformSpeechSynthesizer(PlatformSpeechSynthesizerCl
 
 PlatformSpeechSynthesizer::~PlatformSpeechSynthesizer()
 {
+    [m_platformSpeechWrapper.get() invalidate];
 }
 
 void PlatformSpeechSynthesizer::initializeVoiceList()
