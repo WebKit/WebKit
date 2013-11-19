@@ -1146,9 +1146,6 @@ webkit.org/b/85463 editing/inserting/smart-link-when-caret-is-moved-before-URL.h
 # Tests failing due to rounding problems in colors inside pixman
 webkit.org/b/49964 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
 
-# EFL's LayoutTestController does not support setSubpixelTextPositioning()
-webkit.org/b/91341 fast/text/descent-clip-in-scaled-page.html [ ImageOnlyFailure ]
-
 # Failing after r119268 on GTK and EFL
 webkit.org/b/88138 http/tests/media/video-buffered.html [ Failure ]
 
