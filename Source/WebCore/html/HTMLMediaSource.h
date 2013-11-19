@@ -33,6 +33,7 @@
 
 #include "URLRegistry.h"
 #include <wtf/Forward.h>
+#include <wtf/MediaTime.h>
 
 namespace WebCore {
 
@@ -61,6 +62,7 @@ public:
     virtual PassRefPtr<TimeRanges> buffered() const = 0;
     virtual void refHTMLMediaSource() = 0;
     virtual void derefHTMLMediaSource() = 0;
+    virtual void monitorSourceBuffers() = 0;
 
     // URLRegistrable
     virtual URLRegistry& registry() const OVERRIDE { return *s_registry; }

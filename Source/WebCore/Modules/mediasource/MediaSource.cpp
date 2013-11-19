@@ -452,8 +452,6 @@ void MediaSource::monitorSourceBuffers()
     // 4. Abort these steps.
 }
 
-
-
 } // namespace WebCore
 
 #endif

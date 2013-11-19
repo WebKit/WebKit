@@ -1879,6 +1879,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediasource/SourceBufferList.h \
 	Source/WebCore/Modules/mediasource/DOMURLMediaSource.cpp \
 	Source/WebCore/Modules/mediasource/DOMURLMediaSource.h \
+	Source/WebCore/Modules/mediasource/SampleMap.cpp \
+	Source/WebCore/Modules/mediasource/SampleMap.h \
 	Source/WebCore/Modules/mediastream/AllAudioCapabilities.h \
 	Source/WebCore/Modules/mediastream/AllVideoCapabilities.h \
 	Source/WebCore/Modules/mediastream/AudioStreamTrack.cpp \

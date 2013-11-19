@@ -107,6 +107,10 @@ private:
     virtual void sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, PassRefPtr<MediaSample>) OVERRIDE;
     virtual bool sourceBufferPrivateHasAudio(const SourceBufferPrivate*) const OVERRIDE;
     virtual bool sourceBufferPrivateHasVideo(const SourceBufferPrivate*) const OVERRIDE;
+    virtual void sourceBufferPrivateDidBecomeReadyForMoreSamples(SourceBufferPrivate*) OVERRIDE;
+    virtual void sourceBufferPrivateSeekToTime(SourceBufferPrivate*, const MediaTime&);
+    virtual MediaTime sourceBufferPrivateFastSeekTimeForMediaTime(SourceBufferPrivate*, const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
+
 
     // AudioTrackClient
     virtual void audioTrackEnabledChanged(AudioTrack*) OVERRIDE;
@@ -134,6 +138,8 @@ private:
     void setActive(bool);
 
     bool validateInitializationSegment(const InitializationSegment&);
+
+    void provideMediaData();
 
     RefPtr<SourceBufferPrivate> m_private;
     MediaSource* m_source;

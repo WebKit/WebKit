@@ -8,6 +8,11 @@ function stringToArray(string) {
     return string.split("").map(function(c){ return c.charCodeAt(0); });
 }
 
+var SAMPLE_FLAG = {
+    NONE: 0,
+    SYNC: 1 << 0,
+};
+
 function makeASample(presentationTime, decodeTime, duration, trackID, flags) {
     var byteLength = 29;
     var buffer = new ArrayBuffer(byteLength);
@@ -24,6 +29,22 @@ function makeASample(presentationTime, decodeTime, duration, trackID, flags) {
     view.setInt32(20, duration * timeScale, true);
     view.setInt32(24, trackID, true);
     view.setUint8(28, flags);
+
+    return buffer;
+}
+
+function concatenateSamples(samples) {
+    var byteLength = 0;
+    samples.forEach(function(sample) { byteLength += sample.byteLength; });
+    var buffer = new ArrayBuffer(byteLength);
+
+    var offset = 0;
+    samples.forEach(function(sample){
+        var sourceArray = new Uint8Array(sample);
+        var destArray = new Uint8Array(buffer, offset, sourceArray.byteLength);
+        destArray.set(sourceArray);
+        offset += sourceArray.byteLength;
+    });
 
     return buffer;
 }

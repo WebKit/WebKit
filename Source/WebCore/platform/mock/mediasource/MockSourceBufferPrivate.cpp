@@ -51,7 +51,7 @@ public:
     virtual MediaTime duration() const OVERRIDE { return m_box.duration(); }
     virtual AtomicString trackID() const OVERRIDE { return m_id; }
 
-    virtual SampleFlags flags() const OVERRIDE { return None; }
+    virtual SampleFlags flags() const OVERRIDE;
     virtual PlatformSample platformSample() OVERRIDE;
 
 protected:
@@ -64,6 +64,14 @@ protected:
     MockSampleBox m_box;
     AtomicString m_id;
 };
+
+MediaSample::SampleFlags MockMediaSample::flags() const
+{
+    unsigned flags = None;
+    if (m_box.flags() & MockSampleBox::IsSync)
+        flags |= IsSync;
+    return SampleFlags(flags);
+}
 
 PlatformSample MockMediaSample::platformSample()
 {
@@ -202,6 +210,11 @@ bool MockSourceBufferPrivate::isFull()
     return false;
 }
 
+void MockSourceBufferPrivate::setActive(bool isActive)
+{
+    m_parent->sourceBufferPrivateDidChangeActiveState(this, isActive);
+}
+
 bool MockSourceBufferPrivate::hasVideo() const
 {
     if (!m_client)
@@ -216,6 +229,20 @@ bool MockSourceBufferPrivate::hasAudio() const
         return false;
 
     return m_client->sourceBufferPrivateHasAudio(this);
+}
+
+
+MediaTime MockSourceBufferPrivate::fastSeekTimeForMediaTime(const MediaTime& time, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
+{
+    if (m_client)
+        return m_client->sourceBufferPrivateFastSeekTimeForMediaTime(this, time, negativeThreshold, positiveThreshold);
+    return time;
+}
+
+void MockSourceBufferPrivate::seekToTime(const MediaTime& time)
+{
+    if (m_client)
+        m_client->sourceBufferPrivateSeekToTime(this, time);
 }
 
 }

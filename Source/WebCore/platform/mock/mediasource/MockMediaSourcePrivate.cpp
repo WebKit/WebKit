@@ -145,6 +145,27 @@ bool MockMediaSourcePrivate::hasVideo() const
     return std::any_of(m_activeSourceBuffers.begin(), m_activeSourceBuffers.end(), MockSourceBufferPrivateHasVideo);
 }
 
+void MockMediaSourcePrivate::seekToTime(const MediaTime& time)
+{
+    for (auto it = m_activeSourceBuffers.begin(), end = m_activeSourceBuffers.end(); it != end; ++it)
+        (*it)->seekToTime(time);
+}
+
+MediaTime MockMediaSourcePrivate::seekToTime(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
+{
+    MediaTime seekTime = targetTime;
+    for (auto it = m_activeSourceBuffers.begin(), end = m_activeSourceBuffers.end(); it != end; ++it) {
+        MediaTime sourceSeekTime = (*it)->fastSeekTimeForMediaTime(targetTime, negativeThreshold, positiveThreshold);
+        if (abs(targetTime - sourceSeekTime) > abs(targetTime - seekTime))
+            seekTime = sourceSeekTime;
+    }
+
+    for (auto it = m_activeSourceBuffers.begin(), end = m_activeSourceBuffers.end(); it != end; ++it)
+        (*it)->seekToTime(seekTime);
+    
+    return seekTime;
+}
+
 };
 
 #endif

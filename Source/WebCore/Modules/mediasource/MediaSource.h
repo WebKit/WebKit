@@ -61,7 +61,7 @@ public:
 
     void sourceBufferDidChangeAcitveState(SourceBuffer*, bool);
 
-    void monitorSourceBuffers();
+    virtual void monitorSourceBuffers() OVERRIDE;
 
 private:
     explicit MediaSource(ScriptExecutionContext&);

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var samples;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        testExpected('source.readyState', 'closed');
+
+        waitForEventOn(source, 'sourceopen', sourceOpen);
+        var videoSource = document.createElement('source');
+        videoSource.type = 'video/mock; codecs=mock';
+        videoSource.src = URL.createObjectURL(source);
+        video.appendChild(videoSource);
+    }
+
+    function sourceOpen() {
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        waitForEventOn(sourceBuffer, 'updateend', loadSamples, false, true);
+        initSegment = makeAInit(8, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+    }
+
+    function loadSamples() {
+        samples = concatenateSamples([
+            makeASample(0, 0, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(1, 1, 1, 1, SAMPLE_FLAG.NONE),
+            makeASample(2, 2, 1, 1, SAMPLE_FLAG.NONE),
+            makeASample(3, 3, 1, 1, SAMPLE_FLAG.NONE),
+            makeASample(4, 4, 1, 1, SAMPLE_FLAG.SYNC),
+            makeASample(5, 5, 1, 1, SAMPLE_FLAG.NONE),
+            makeASample(6, 6, 1, 1, SAMPLE_FLAG.NONE),
+            makeASample(7, 7, 1, 1, SAMPLE_FLAG.NONE),
+        ]);
+        waitForEventOn(sourceBuffer, 'updateend', play, false, true);
+        run('sourceBuffer.appendBuffer(samples)');
+    }
+
+    function play() {
+        waitForEvent('ended', endTest);
+        run('source.duration = 8');
+        run('source.endOfStream()');
+        waitForEventOnce('seeked', seeked1);
+        run('video.currentTime = 1');
+    }
+
+    function seeked1() {
+        testExpected('video.currentTime.toFixed(1)', 1);
+        waitForEventOnce('seeked', seeked2);
+        run('video.fastSeek(2)');
+    }
+
+    function seeked2() {
+        testExpected('video.currentTime.toFixed(1)', 4);
+        waitForEventOnce('seeked', seeked3);
+        run('video.currentTime = 3');
+    }
+
+    function seeked3() {
+        testExpected('video.currentTime.toFixed(1)', 3);
+        waitForEventOnce('seeked', seeked4);
+        run('video.fastSeek(2)');
+    }
+
+    function seeked4() {
+        testExpected('video.currentTime.toFixed(1)', 0);
+        endTest();
+    }
+    
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

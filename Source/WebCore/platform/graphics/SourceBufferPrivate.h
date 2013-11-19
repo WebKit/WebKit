@@ -35,9 +35,11 @@
 #include "MediaPlayer.h"
 #include "TimeRanges.h"
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
+class MediaSample;
 class SourceBufferPrivateClient;
 class TimeRanges;
 
@@ -60,6 +62,11 @@ public:
     virtual void setReadyState(MediaPlayer::ReadyState) = 0;
     virtual void evictCodedFrames() = 0;
     virtual bool isFull() = 0;
+
+    virtual void flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AtomicString) { }
+    virtual void enqueueSample(PassRefPtr<MediaSample>, AtomicString) { }
+    virtual bool isReadyForMoreSamples() { return false; }
+    virtual void setActive(bool) { }
 };
 
 }

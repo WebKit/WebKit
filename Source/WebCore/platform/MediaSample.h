@@ -28,6 +28,7 @@
 
 #include <wtf/MediaTime.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

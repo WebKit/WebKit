@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "MediaSourcePrivate.h"
+#include <wtf/MediaTime.h>
 
 namespace WebCore {
 
@@ -47,6 +48,9 @@ public:
     bool hasVideo() const;
 
     MockMediaPlayerMediaSource* player() const { return m_player; }
+
+    void seekToTime(const MediaTime&);
+    MediaTime seekToTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
 
 private:
     MockMediaSourcePrivate(MockMediaPlayerMediaSource*);

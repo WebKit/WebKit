@@ -2272,6 +2272,11 @@ void HTMLMediaElement::finishSeek()
 {
     LOG(Media, "HTMLMediaElement::finishSeek");
 
+#if ENABLE(MEDIA_SOURCE)
+    if (m_mediaSource)
+        m_mediaSource->monitorSourceBuffers();
+#endif
+
     // 4.8.10.9 Seeking
     // 14 - Set the seeking IDL attribute to false.
     m_seeking = false;
@@ -3547,6 +3552,9 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
             parameters.url = mediaURL;
 #if ENABLE(ENCRYPTED_MEDIA)
             parameters.keySystem = system;
+#endif
+#if ENABLE(MEDIA_SOURCE)
+            parameters.isMediaSource = mediaURL.protocolIs(mediaSourceBlobProtocol);
 #endif
             if (!MediaPlayer::supportsType(parameters, this))
                 goto check_again;

@@ -1,3 +1,93 @@
+2013-11-15  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Support fastSeek() in MediaSource.
+        https://bugs.webkit.org/show_bug.cgi?id=124422
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-fastseek.html
+
+        * Modules/mediasource/MediaSource.cpp:
+        * Modules/mediasource/MediaSource.h:
+
+        Add support for "seek to the next fastest time" in MediaSource by
+        returning the time of the nearest Sync sample.
+
+        Move the data structure logic out of SourceBuffer and into it's own
+        class:
+        * Modules/mediasource/SampleMap.cpp: Added.
+        (WebCore::SampleIsLessThanMediaTimeComparator::operator()):
+        (WebCore::SampleIsGreaterThanMediaTimeComparator::operator()):
+        (WebCore::SampleIsRandomAccess::operator()):
+        (WebCore::SamplePresentationTimeIsWithinRangeComparator::operator()):
+        (WebCore::SampleMap::addSample):
+        (WebCore::SampleMap::removeSample):
+        (WebCore::SampleMap::findSampleContainingPresentationTime):
+        (WebCore::SampleMap::findSampleAfterPresentationTime):
+        (WebCore::SampleMap::findSampleWithDecodeTime):
+        (WebCore::SampleMap::reverseFindSampleContainingPresentationTime):
+        (WebCore::SampleMap::reverseFindSampleBeforePresentationTime):
+        (WebCore::SampleMap::reverseFindSampleWithDecodeTime):
+        (WebCore::SampleMap::findSyncSamplePriorToPresentationTime):
+        (WebCore::SampleMap::findSyncSamplePriorToDecodeIterator):
+        (WebCore::SampleMap::findSyncSampleAfterPresentationTime):
+        (WebCore::SampleMap::findSyncSampleAfterDecodeIterator):
+        (WebCore::SampleMap::findSamplesBetweenPresentationTimes):
+        (WebCore::SampleMap::findDependentSamples):
+        * Modules/mediasource/SampleMap.h: Added.
+        (WebCore::SampleMap::presentationBegin):
+        (WebCore::SampleMap::presentationEnd):
+        (WebCore::SampleMap::decodeBegin):
+        (WebCore::SampleMap::decodeEnd):
+        (WebCore::SampleMap::reversePresentationBegin):
+        (WebCore::SampleMap::reversePresentationEnd):
+        (WebCore::SampleMap::reverseDecodeBegin):
+        (WebCore::SampleMap::reverseDecodeEnd):
+
+        Add logic to find and return the time of the next & previous sync
+        sample, within the threshold provided:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::TrackBuffer::TrackBuffer):
+        (WebCore::SourceBuffer::sourceBufferPrivateSeekToTime):
+        (WebCore::SourceBuffer::sourceBufferPrivateFastSeekTimeForMediaTime):
+        (WebCore::SourceBuffer::appendBufferTimerFired):
+        (WebCore::SourceBuffer::setActive):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidBecomeReadyForMoreSamples):
+        (WebCore::SourceBuffer::provideMediaData):
+        * Modules/mediasource/SourceBuffer.h:
+        * platform/graphics/SourceBufferPrivate.h:
+        (WebCore::SourceBufferPrivate::setActive):
+        * platform/graphics/SourceBufferPrivateClient.h:
+        (WebCore::SourceBufferPrivateClient::sourceBufferPrivateFastSeekTimeForMediaTime):
+        (WebCore::SourceBufferPrivateClient::sourceBufferPrivateSeekToTime):
+
+        Add new files to the project:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Drive-by fixes in HTMLMediaElement:
+        * html/HTMLMediaSource.h:
+        * html/HTMLMediaElement.cpp:
+        (HTMLMediaElement::finishSeek): Cause the MediaSource to check the ready state of all its buffers.
+        (HTMLMediaElement::selectNextSourceChild): Pass in whether the source element has a MediaSource URL.
+
+        Implement the seekWithTolerance behavior in MockMediaPlayerMediaSource:
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::MockMediaPlayerMediaSource::maxTimeSeekableDouble):
+        (WebCore::MockMediaPlayerMediaSource::currentTimeDouble):
+        (WebCore::MockMediaPlayerMediaSource::seekWithTolerance):
+        (WebCore::MockMediaPlayerMediaSource::advanceCurrentTime):
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.h:
+        * platform/mock/mediasource/MockMediaSourcePrivate.cpp:
+        (WebCore::MockMediaSourcePrivate::seekToTime):
+        * platform/mock/mediasource/MockMediaSourcePrivate.h:
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+        (WebCore::MockMediaSample::flags):
+        (WebCore::MockSourceBufferPrivate::setActive):
+        (WebCore::MockSourceBufferPrivate::fastSeekTimeForMediaTime):
+        (WebCore::MockSourceBufferPrivate::seekToTime):
+        * platform/mock/mediasource/MockSourceBufferPrivate.h:
+
 2013-11-19  Jer Noble  <jer.noble@apple.com>
 
         [Mac] 10X slower than Chrome when drawing a video into a canvas
