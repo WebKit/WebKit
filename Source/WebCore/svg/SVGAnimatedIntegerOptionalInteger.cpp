@@ -35,7 +35,7 @@ SVGAnimatedIntegerOptionalIntegerAnimator::SVGAnimatedIntegerOptionalIntegerAnim
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedIntegerOptionalIntegerAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createIntegerOptionalInteger(new pair<int, int>);
+    auto animatedType = SVGAnimatedType::createIntegerOptionalInteger(std::make_unique<pair<int, int>>());
     pair<int, int>& animatedInteger = animatedType->integerOptionalInteger();
     float firstNumber = 0;
     float secondNumber = 0;

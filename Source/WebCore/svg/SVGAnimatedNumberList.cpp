@@ -34,7 +34,7 @@ SVGAnimatedNumberListAnimator::SVGAnimatedNumberListAnimator(SVGAnimationElement
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedNumberListAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createNumberList(new SVGNumberList);
+    auto animatedType = SVGAnimatedType::createNumberList(std::make_unique<SVGNumberList>());
     animatedType->numberList().parse(string);
     return animatedType;
 }

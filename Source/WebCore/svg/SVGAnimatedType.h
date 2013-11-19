@@ -42,24 +42,23 @@ public:
     SVGAnimatedType(AnimatedPropertyType);
     virtual ~SVGAnimatedType();
 
-    // FIXME: These functions should all take std::unique_ptr arguments instead of bare pointers.
-    static std::unique_ptr<SVGAnimatedType> createAngleAndEnumeration(std::pair<SVGAngle, unsigned>*);
-    static std::unique_ptr<SVGAnimatedType> createBoolean(bool*);
-    static std::unique_ptr<SVGAnimatedType> createColor(Color*);
-    static std::unique_ptr<SVGAnimatedType> createEnumeration(unsigned*);
-    static std::unique_ptr<SVGAnimatedType> createInteger(int*);
-    static std::unique_ptr<SVGAnimatedType> createIntegerOptionalInteger(std::pair<int, int>*);
-    static std::unique_ptr<SVGAnimatedType> createLength(SVGLength*);
-    static std::unique_ptr<SVGAnimatedType> createLengthList(SVGLengthList*);
-    static std::unique_ptr<SVGAnimatedType> createNumber(float*);
-    static std::unique_ptr<SVGAnimatedType> createNumberList(SVGNumberList*);
-    static std::unique_ptr<SVGAnimatedType> createNumberOptionalNumber(std::pair<float, float>*);
+    static std::unique_ptr<SVGAnimatedType> createAngleAndEnumeration(std::unique_ptr<std::pair<SVGAngle, unsigned>>);
+    static std::unique_ptr<SVGAnimatedType> createBoolean(std::unique_ptr<bool>);
+    static std::unique_ptr<SVGAnimatedType> createColor(std::unique_ptr<Color>);
+    static std::unique_ptr<SVGAnimatedType> createEnumeration(std::unique_ptr<unsigned>);
+    static std::unique_ptr<SVGAnimatedType> createInteger(std::unique_ptr<int>);
+    static std::unique_ptr<SVGAnimatedType> createIntegerOptionalInteger(std::unique_ptr<std::pair<int, int>>);
+    static std::unique_ptr<SVGAnimatedType> createLength(std::unique_ptr<SVGLength>);
+    static std::unique_ptr<SVGAnimatedType> createLengthList(std::unique_ptr<SVGLengthList>);
+    static std::unique_ptr<SVGAnimatedType> createNumber(std::unique_ptr<float>);
+    static std::unique_ptr<SVGAnimatedType> createNumberList(std::unique_ptr<SVGNumberList>);
+    static std::unique_ptr<SVGAnimatedType> createNumberOptionalNumber(std::unique_ptr<std::pair<float, float>>);
     static std::unique_ptr<SVGAnimatedType> createPath(std::unique_ptr<SVGPathByteStream>);
-    static std::unique_ptr<SVGAnimatedType> createPointList(SVGPointList*);
-    static std::unique_ptr<SVGAnimatedType> createPreserveAspectRatio(SVGPreserveAspectRatio*);
-    static std::unique_ptr<SVGAnimatedType> createRect(FloatRect*);
-    static std::unique_ptr<SVGAnimatedType> createString(String*);
-    static std::unique_ptr<SVGAnimatedType> createTransformList(SVGTransformList*);
+    static std::unique_ptr<SVGAnimatedType> createPointList(std::unique_ptr<SVGPointList>);
+    static std::unique_ptr<SVGAnimatedType> createPreserveAspectRatio(std::unique_ptr<SVGPreserveAspectRatio>);
+    static std::unique_ptr<SVGAnimatedType> createRect(std::unique_ptr<FloatRect>);
+    static std::unique_ptr<SVGAnimatedType> createString(std::unique_ptr<String>);
+    static std::unique_ptr<SVGAnimatedType> createTransformList(std::unique_ptr<SVGTransformList>);
     static bool supportsAnimVal(AnimatedPropertyType);
 
     AnimatedPropertyType type() const { return m_type; }

@@ -35,7 +35,7 @@ SVGAnimatedNumberOptionalNumberAnimator::SVGAnimatedNumberOptionalNumberAnimator
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedNumberOptionalNumberAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createNumberOptionalNumber(new pair<float, float>);
+    auto animatedType = SVGAnimatedType::createNumberOptionalNumber(std::make_unique<pair<float, float>>());
     pair<float, float>& animatedNumber = animatedType->numberOptionalNumber();
     if (!parseNumberOptionalNumber(string, animatedNumber.first, animatedNumber.second)) {
         animatedNumber.first = 0;

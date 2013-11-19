@@ -33,7 +33,7 @@ SVGAnimatedPreserveAspectRatioAnimator::SVGAnimatedPreserveAspectRatioAnimator(S
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedPreserveAspectRatioAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createPreserveAspectRatio(new SVGPreserveAspectRatio);
+    auto animatedType = SVGAnimatedType::createPreserveAspectRatio(std::make_unique<SVGPreserveAspectRatio>());
     animatedType->preserveAspectRatio().parse(string);
     return animatedType;
 }

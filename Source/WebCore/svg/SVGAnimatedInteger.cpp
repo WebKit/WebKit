@@ -35,7 +35,7 @@ SVGAnimatedIntegerAnimator::SVGAnimatedIntegerAnimator(SVGAnimationElement* anim
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedIntegerAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createInteger(new int);
+    auto animatedType = SVGAnimatedType::createInteger(std::make_unique<int>());
     animatedType->integer() = string.toIntStrict();
     return animatedType;
 }

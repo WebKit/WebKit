@@ -110,7 +110,7 @@ SVGAnimatedEnumerationAnimator::SVGAnimatedEnumerationAnimator(SVGAnimationEleme
 std::unique_ptr<SVGAnimatedType> SVGAnimatedEnumerationAnimator::constructFromString(const String& string)
 {
     ASSERT(m_animationElement);
-    auto animatedType = SVGAnimatedType::createEnumeration(new unsigned);
+    auto animatedType = SVGAnimatedType::createEnumeration(std::make_unique<unsigned>());
     animatedType->enumeration() = enumerationValueForTargetAttribute(m_animationElement->targetElement(), m_animationElement->attributeName(), string);
     return animatedType;
 }

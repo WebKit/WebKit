@@ -34,7 +34,7 @@ SVGAnimatedNumberAnimator::SVGAnimatedNumberAnimator(SVGAnimationElement* animat
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedNumberAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createNumber(new float);
+    auto animatedType = SVGAnimatedType::createNumber(std::make_unique<float>());
     float& animatedNumber = animatedType->number();
     if (!parseNumberFromString(string, animatedNumber))
         animatedNumber = 0;

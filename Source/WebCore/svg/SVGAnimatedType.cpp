@@ -92,91 +92,91 @@ SVGAnimatedType::~SVGAnimatedType()
     }
 }
 
-std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createAngleAndEnumeration(std::pair<SVGAngle, unsigned>* angleAndEnumeration)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createAngleAndEnumeration(std::unique_ptr<std::pair<SVGAngle, unsigned>> angleAndEnumeration)
 {
     ASSERT(angleAndEnumeration);
     auto animatedType = std::make_unique<SVGAnimatedType>(AnimatedAngle);
-    animatedType->m_data.angleAndEnumeration = angleAndEnumeration;
+    animatedType->m_data.angleAndEnumeration = angleAndEnumeration.release();
     return animatedType;
 }
 
-std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createBoolean(bool* boolean)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createBoolean(std::unique_ptr<bool> boolean)
 {
     ASSERT(boolean);
     auto animatedType = std::make_unique<SVGAnimatedType>(AnimatedBoolean);
-    animatedType->m_data.boolean = boolean;
+    animatedType->m_data.boolean = boolean.release();
     return animatedType;
 }
 
-std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createColor(Color* color)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createColor(std::unique_ptr<Color> color)
 {
     ASSERT(color);
     auto animatedType = std::make_unique<SVGAnimatedType>(AnimatedColor);
-    animatedType->m_data.color = color;
+    animatedType->m_data.color = color.release();
     return animatedType;
 }
 
-std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createEnumeration(unsigned* enumeration)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createEnumeration(std::unique_ptr<unsigned> enumeration)
 {
     ASSERT(enumeration);
     auto animatedType = std::make_unique<SVGAnimatedType>(AnimatedEnumeration);
-    animatedType->m_data.enumeration = enumeration;
+    animatedType->m_data.enumeration = enumeration.release();
     return animatedType;
 }
 
-std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createInteger(int* integer)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createInteger(std::unique_ptr<int> integer)
 {
     ASSERT(integer);
     auto animatedType = std::make_unique<SVGAnimatedType>(AnimatedInteger);
-    animatedType->m_data.integer = integer;
+    animatedType->m_data.integer = integer.release();
     return animatedType;
 }
 
-std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createIntegerOptionalInteger(pair<int, int>* integerOptionalInteger)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createIntegerOptionalInteger(std::unique_ptr<pair<int, int>> integerOptionalInteger)
 {
     ASSERT(integerOptionalInteger);
     auto animatedType = std::make_unique<SVGAnimatedType>(AnimatedIntegerOptionalInteger);
-    animatedType->m_data.integerOptionalInteger = integerOptionalInteger;
+    animatedType->m_data.integerOptionalInteger = integerOptionalInteger.release();
     return animatedType;
 }
 
-std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createLength(SVGLength* length)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createLength(std::unique_ptr<SVGLength> length)
 {
     ASSERT(length);
     auto animatedType = std::make_unique<SVGAnimatedType>(AnimatedLength);
-    animatedType->m_data.length = length;
+    animatedType->m_data.length = length.release();
     return animatedType;
 }
 
-std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createLengthList(SVGLengthList* lengthList)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createLengthList(std::unique_ptr<SVGLengthList> lengthList)
 {
     ASSERT(lengthList);
     auto animatedType = std::make_unique<SVGAnimatedType>(AnimatedLengthList);
-    animatedType->m_data.lengthList = lengthList;
+    animatedType->m_data.lengthList = lengthList.release();
     return animatedType;
 }
 
-std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createNumber(float* number)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createNumber(std::unique_ptr<float> number)
 {
     ASSERT(number);
     auto animatedType = std::make_unique<SVGAnimatedType>(AnimatedNumber);
-    animatedType->m_data.number = number;
+    animatedType->m_data.number = number.release();
     return animatedType;
 }
 
-std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createNumberList(SVGNumberList* numberList)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createNumberList(std::unique_ptr<SVGNumberList> numberList)
 {
     ASSERT(numberList);
     auto animatedType = std::make_unique<SVGAnimatedType>(AnimatedNumberList);
-    animatedType->m_data.numberList = numberList;
+    animatedType->m_data.numberList = numberList.release();
     return animatedType;
 }
 
-std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createNumberOptionalNumber(pair<float, float>* numberOptionalNumber)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createNumberOptionalNumber(std::unique_ptr<pair<float, float>> numberOptionalNumber)
 {
     ASSERT(numberOptionalNumber);
     auto animatedType = std::make_unique<SVGAnimatedType>(AnimatedNumberOptionalNumber);
-    animatedType->m_data.numberOptionalNumber = numberOptionalNumber;
+    animatedType->m_data.numberOptionalNumber = numberOptionalNumber.release();
     return animatedType;
 }
 
@@ -188,43 +188,43 @@ std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createPath(std::unique_ptr<SVG
     return animatedType;
 }
 
-std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createPointList(SVGPointList* pointList)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createPointList(std::unique_ptr<SVGPointList> pointList)
 {
     ASSERT(pointList);
     auto animatedType = std::make_unique<SVGAnimatedType>(AnimatedPoints);
-    animatedType->m_data.pointList = pointList;
+    animatedType->m_data.pointList = pointList.release();
     return animatedType;
 }
 
-std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createPreserveAspectRatio(SVGPreserveAspectRatio* preserveAspectRatio)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createPreserveAspectRatio(std::unique_ptr<SVGPreserveAspectRatio> preserveAspectRatio)
 {
     ASSERT(preserveAspectRatio);
     auto animatedType = std::make_unique<SVGAnimatedType>(AnimatedPreserveAspectRatio);
-    animatedType->m_data.preserveAspectRatio = preserveAspectRatio;
+    animatedType->m_data.preserveAspectRatio = preserveAspectRatio.release();
     return animatedType;
 }
 
-std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createRect(FloatRect* rect)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createRect(std::unique_ptr<FloatRect> rect)
 {
     ASSERT(rect);
     auto animatedType = std::make_unique<SVGAnimatedType>(AnimatedRect);
-    animatedType->m_data.rect = rect;
+    animatedType->m_data.rect = rect.release();
     return animatedType;
 }
 
-std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createString(String* string)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createString(std::unique_ptr<String> string)
 {
     ASSERT(string);
     auto animatedType = std::make_unique<SVGAnimatedType>(AnimatedString);
-    animatedType->m_data.string = string;
+    animatedType->m_data.string = string.release();
     return animatedType;
 }
 
-std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createTransformList(SVGTransformList* transformList)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedType::createTransformList(std::unique_ptr<SVGTransformList> transformList)
 {
     ASSERT(transformList);
     auto animatedType = std::make_unique<SVGAnimatedType>(AnimatedTransformList);
-    animatedType->m_data.transformList = transformList;
+    animatedType->m_data.transformList = transformList.release();
     return animatedType;
 }
 

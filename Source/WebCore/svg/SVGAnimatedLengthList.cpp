@@ -35,7 +35,7 @@ SVGAnimatedLengthListAnimator::SVGAnimatedLengthListAnimator(SVGAnimationElement
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedLengthListAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createLengthList(new SVGLengthList);
+    auto animatedType = SVGAnimatedType::createLengthList(std::make_unique<SVGLengthList>());
     animatedType->lengthList().parse(string, m_lengthMode);
     return animatedType;
 }

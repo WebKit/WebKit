@@ -43,7 +43,7 @@ SVGAnimatedTransformListAnimator::SVGAnimatedTransformListAnimator(SVGAnimationE
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createTransformList(new SVGTransformList);
+    auto animatedType = SVGAnimatedType::createTransformList(std::make_unique<SVGTransformList>());
     animatedType->transformList().parse(m_transformTypeString + string + ')');
     ASSERT(animatedType->transformList().size() <= 1);
     return animatedType;

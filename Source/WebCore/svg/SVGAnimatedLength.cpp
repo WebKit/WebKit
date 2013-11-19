@@ -42,7 +42,7 @@ static inline SVGLength& sharedSVGLength(SVGLengthMode mode, const String& value
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedLengthAnimator::constructFromString(const String& string)
 {
-    return SVGAnimatedType::createLength(new SVGLength(m_lengthMode, string));
+    return SVGAnimatedType::createLength(std::make_unique<SVGLength>(m_lengthMode, string));
 }
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedLengthAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)

@@ -33,7 +33,7 @@ SVGAnimatedBooleanAnimator::SVGAnimatedBooleanAnimator(SVGAnimationElement* anim
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedBooleanAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createBoolean(new bool);
+    auto animatedType = SVGAnimatedType::createBoolean(std::make_unique<bool>());
     animatedType->boolean() = (string == "true"); // wat?
     return animatedType;
 }

@@ -36,7 +36,7 @@ SVGAnimatedColorAnimator::SVGAnimatedColorAnimator(SVGAnimationElement* animatio
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedColorAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createColor(new Color);
+    auto animatedType = SVGAnimatedType::createColor(std::make_unique<Color>());
     animatedType->color() = string.isEmpty() ? Color() : SVGColor::colorFromRGBColorString(string);
     return animatedType;
 }

@@ -70,13 +70,13 @@ protected:
 
     // Helpers for animators that operate on single types, eg. just one SVGAnimatedInteger.
     template<typename AnimValType>
-    typename AnimValType::ContentType* constructFromBaseValue(const SVGElementAnimatedPropertyList& animatedTypes)
+    std::unique_ptr<typename AnimValType::ContentType> constructFromBaseValue(const SVGElementAnimatedPropertyList& animatedTypes)
     {
         ASSERT(animatedTypes[0].properties.size() == 1);
         const typename AnimValType::ContentType& animatedType = castAnimatedPropertyToActualType<AnimValType>(animatedTypes[0].properties[0].get())->currentBaseValue();
 
-        typename AnimValType::ContentType* copy = new typename AnimValType::ContentType(animatedType);
-        executeAction<AnimValType>(StartAnimationAction, animatedTypes, 0, copy);
+        auto copy = std::make_unique<typename AnimValType::ContentType>(animatedType);
+        executeAction<AnimValType>(StartAnimationAction, animatedTypes, 0, copy.get());
         return copy;
     }
 
@@ -115,13 +115,13 @@ protected:
 
     // Helpers for animators that operate on pair types, eg. a pair of SVGAnimatedIntegers.
     template<typename AnimValType1, typename AnimValType2>
-    pair<typename AnimValType1::ContentType, typename AnimValType2::ContentType>* constructFromBaseValues(const SVGElementAnimatedPropertyList& animatedTypes)
+    std::unique_ptr<pair<typename AnimValType1::ContentType, typename AnimValType2::ContentType>> constructFromBaseValues(const SVGElementAnimatedPropertyList& animatedTypes)
     {
         ASSERT(animatedTypes[0].properties.size() == 2);
         const typename AnimValType1::ContentType& firstType = castAnimatedPropertyToActualType<AnimValType1>(animatedTypes[0].properties[0].get())->currentBaseValue();
         const typename AnimValType2::ContentType& secondType = castAnimatedPropertyToActualType<AnimValType2>(animatedTypes[0].properties[1].get())->currentBaseValue();
 
-        pair<typename AnimValType1::ContentType, typename AnimValType2::ContentType>* copy = new pair<typename AnimValType1::ContentType, typename AnimValType2::ContentType>(firstType, secondType);
+        auto copy = std::make_unique<pair<typename AnimValType1::ContentType, typename AnimValType2::ContentType>>(firstType, secondType);
         executeAction<AnimValType1>(StartAnimationAction, animatedTypes, 0, &copy->first);
         executeAction<AnimValType2>(StartAnimationAction, animatedTypes, 1, &copy->second);
         return copy;

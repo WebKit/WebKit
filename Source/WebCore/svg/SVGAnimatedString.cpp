@@ -33,7 +33,7 @@ SVGAnimatedStringAnimator::SVGAnimatedStringAnimator(SVGAnimationElement* animat
 
 std::unique_ptr<SVGAnimatedType> SVGAnimatedStringAnimator::constructFromString(const String& string)
 {
-    auto animatedType = SVGAnimatedType::createString(new String);
+    auto animatedType = SVGAnimatedType::createString(std::make_unique<String>());
     animatedType->string() = string;
     return animatedType;
 }
