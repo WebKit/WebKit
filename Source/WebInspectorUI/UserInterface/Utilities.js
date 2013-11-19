@@ -101,16 +101,6 @@ Object.defineProperty(Node.prototype, "enclosingNodeOrSelfWithClass",
     }
 });
 
-Object.defineProperty(Node.prototype, "enclosingNodeWithClass",
-{
-    value: function(className)
-    {
-        if (!this.parentNode)
-            return null;
-        return this.parentNode.enclosingNodeOrSelfWithClass(className);
-    }
-});
-
 Object.defineProperty(Node.prototype, "enclosingNodeOrSelfWithNodeNameInArray",
 {
     value: function(nameArray)
@@ -219,37 +209,6 @@ Object.defineProperty(Node.prototype, "traversePreviousNode",
     }
 });
 
-
-Object.defineProperty(Node.prototype, "traverseNextTextNode",
-{
-    value: function(stayWithin)
-    {
-        var node = this.traverseNextNode(stayWithin);
-        if (!node)
-            return;
-
-        while (node && node.nodeType !== Node.TEXT_NODE)
-            node = node.traverseNextNode(stayWithin);
-
-        return node;
-    }
-});
-
-Object.defineProperty(Node.prototype, "rangeBoundaryForOffset",
-{
-    value: function(offset)
-    {
-        var textNode = this.traverseNextTextNode(this);
-        while (textNode && offset > textNode.data.length) {
-            offset -= textNode.data.length;
-            textNode = textNode.traverseNextTextNode(this);
-        }
-
-        if (!textNode)
-            return {container: this, offset: 0};
-        return {container: textNode, offset: offset};
-    }
-});
 
 Object.defineProperty(Node.prototype, "rangeOfWord",
 {
@@ -402,55 +361,6 @@ Object.defineProperty(Element.prototype, "createChild",
     }
 });
 
-function AnchorBox(x, y, width, height)
-{
-    this.x = x || 0;
-    this.y = y || 0;
-    this.width = width || 0;
-    this.height = height || 0;
-}
-
-Object.defineProperty(Element.prototype, "boxInWindow",
-{
-    value: function()
-    {
-        var anchorBox = new AnchorBox;
-
-        var clientRect = this.getBoundingClientRect();
-        console.assert(clientRect);
-
-        anchorBox.x = clientRect.left;
-        anchorBox.y = clientRect.top;
-        anchorBox.width = clientRect.width;
-        anchorBox.height = clientRect.height;
-
-        return anchorBox;
-    }
-});
-
-Object.defineProperty(Element.prototype, "positionAt",
-{
-    value: function(x, y)
-    {
-        this.style.left = x + "px";
-        this.style.top = y + "px";
-    }
-});
-
-Object.defineProperty(Element.prototype, "pruneEmptyTextNodes",
-{
-    value: function()
-    {
-        var sibling = this.firstChild;
-        while (sibling) {
-            var nextSibling = sibling.nextSibling;
-            if (sibling.nodeType === this.TEXT_NODE && sibling.nodeValue === "")
-                this.removeChild(sibling);
-            sibling = nextSibling;
-        }
-    }
-});
-
 Object.defineProperty(Element.prototype, "isScrolledToBottom",
 {
     value: function()
@@ -532,14 +442,6 @@ Object.defineProperty(Array.prototype, "upperBound",
               count = step;
         }
         return first;
-    }
-});
-
-Object.defineProperty(Array, "convert",
-{
-    value: function(list, startIndex, endIndex)
-    {
-        return Array.prototype.slice.call(list, startIndex, endIndex);
     }
 });
 
