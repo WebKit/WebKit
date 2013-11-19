@@ -94,6 +94,11 @@ int ewk_init(void)
         goto error_ecore_evas;
     }
 
+    if (!efreet_init()) {
+        CRITICAL("could not init efreet.");
+        goto error_efreet;
+    }
+
     if (!edje_init()) {
         CRITICAL("could not init edje.");
         goto error_edje;
@@ -118,6 +123,8 @@ error_ecore_x:
     edje_shutdown();
 #endif
 error_edje:
+    efreet_shutdown();
+error_efreet:
     ecore_evas_shutdown();
 error_ecore_evas:
     ecore_shutdown();
@@ -142,6 +149,7 @@ int ewk_shutdown(void)
     ecore_x_shutdown();
 #endif
     edje_shutdown();
+    efreet_shutdown();
     ecore_evas_shutdown();
     ecore_shutdown();
     evas_shutdown();

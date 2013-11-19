@@ -1,5 +1,19 @@
 2013-11-18  Ryuan Choi  <ryuan.choi@samsung.com>
 
+        [EFL] Initialize efreet before getting directories
+        https://bugs.webkit.org/show_bug.cgi?id=124560
+
+        Reviewed by Gyuyoung Kim.
+
+        efreet is used to get several directories including home dierectory since
+        r123731, but it does not call efreet_init/efreet_shutdown explicitly.
+
+        * ewk/ewk_main.cpp: Call efreet_init()/efreet_shutdown() explicitly.
+        (ewk_init):
+        (ewk_shutdown):
+
+2013-11-18  Ryuan Choi  <ryuan.choi@samsung.com>
+
         [EFL] Add EWebKitConfig.cmake and EWebKit2Config.cmake
         https://bugs.webkit.org/show_bug.cgi?id=124478
 

@@ -27,6 +27,7 @@
 #include <Ecore_Evas.h>
 #include <Ecore_IMF.h>
 #include <Edje.h>
+#include <Efreet.h>
 #include <Eina.h>
 #include <Evas.h>
 #include <glib-object.h>
@@ -78,6 +79,11 @@ int ewk_init(void)
         goto error_ecore_imf;
     }
 
+    if (!efreet_init()) {
+        CRITICAL("could not init efreet.");
+        goto error_efreet;
+    }
+
 #ifdef HAVE_ECORE_X
     if (!ecore_x_init(0)) {
         CRITICAL("could not init ecore_x.");
@@ -106,8 +112,10 @@ error_edje:
     ecore_x_shutdown();
 error_ecore_x:
 #else
-    ecore_imf_shutdown();
+    efreet_shutdown();
 #endif
+error_efreet:
+    ecore_imf_shutdown();
 error_ecore_imf:
     ecore_evas_shutdown();
 error_ecore_evas:
@@ -132,6 +140,7 @@ int ewk_shutdown(void)
 #ifdef HAVE_ECORE_X
     ecore_x_shutdown();
 #endif
+    efreet_shutdown();
     ecore_imf_shutdown();
     ecore_evas_shutdown();
     ecore_shutdown();
