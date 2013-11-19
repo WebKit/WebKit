@@ -107,15 +107,15 @@ SVGAnimatedEnumerationAnimator::SVGAnimatedEnumerationAnimator(SVGAnimationEleme
 {
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedEnumerationAnimator::constructFromString(const String& string)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedEnumerationAnimator::constructFromString(const String& string)
 {
     ASSERT(m_animationElement);
-    OwnPtr<SVGAnimatedType> animatedType = SVGAnimatedType::createEnumeration(new unsigned);
+    auto animatedType = SVGAnimatedType::createEnumeration(new unsigned);
     animatedType->enumeration() = enumerationValueForTargetAttribute(m_animationElement->targetElement(), m_animationElement->attributeName(), string);
-    return animatedType.release();
+    return animatedType;
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedEnumerationAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedEnumerationAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
     return SVGAnimatedType::createEnumeration(constructFromBaseValue<SVGAnimatedEnumeration>(animatedTypes));
 }

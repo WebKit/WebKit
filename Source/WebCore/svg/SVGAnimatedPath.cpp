@@ -33,14 +33,14 @@ SVGAnimatedPathAnimator::SVGAnimatedPathAnimator(SVGAnimationElement* animationE
 {
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedPathAnimator::constructFromString(const String& string)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedPathAnimator::constructFromString(const String& string)
 {
     auto byteStream = std::make_unique<SVGPathByteStream>();
     buildSVGPathByteStreamFromString(string, byteStream.get(), UnalteredParsing);
     return SVGAnimatedType::createPath(std::move(byteStream));
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedPathAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedPathAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
     ASSERT(animatedTypes.size() >= 1);
     SVGAnimatedPathSegListPropertyTearOff* property = castAnimatedPropertyToActualType<SVGAnimatedPathSegListPropertyTearOff>(animatedTypes[0].properties[0].get());
@@ -138,7 +138,7 @@ void SVGAnimatedPathAnimator::calculateAnimatedValue(float percentage, unsigned 
     if (m_animationElement->isAccumulated() && repeatCount)
         addToSVGPathByteStream(animatedPath, toAtEndOfDurationPath, repeatCount);
 }
-   
+
 float SVGAnimatedPathAnimator::calculateDistance(const String&, const String&)
 {
     // FIXME: Support paced animations.

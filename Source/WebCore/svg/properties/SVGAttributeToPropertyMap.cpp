@@ -24,7 +24,6 @@
 
 #include "SVGAnimatedProperty.h"
 #include "SVGPropertyInfo.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -54,9 +53,9 @@ void SVGAttributeToPropertyMap::addProperty(const SVGPropertyInfo* info)
         return;
     }
     // FIXME: This does a second hash table lookup, but with HashMap::add we could instead do only one.
-    OwnPtr<PropertiesVector> vector = adoptPtr(new PropertiesVector);
+    auto vector = std::make_unique<PropertiesVector>();
     vector->append(info);
-    m_map.set(info->attributeName, vector.release());
+    m_map.set(info->attributeName, std::move(vector));
 }
 
 void SVGAttributeToPropertyMap::animatedPropertiesForAttribute(SVGElement* ownerType, const QualifiedName& attributeName, Vector<RefPtr<SVGAnimatedProperty>>& properties)

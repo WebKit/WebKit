@@ -34,11 +34,11 @@ SVGAnimatedColorAnimator::SVGAnimatedColorAnimator(SVGAnimationElement* animatio
 {
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedColorAnimator::constructFromString(const String& string)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedColorAnimator::constructFromString(const String& string)
 {
-    OwnPtr<SVGAnimatedType> animtedType = SVGAnimatedType::createColor(new Color);
-    animtedType->color() = string.isEmpty() ? Color() : SVGColor::colorFromRGBColorString(string);
-    return animtedType.release();
+    auto animatedType = SVGAnimatedType::createColor(new Color);
+    animatedType->color() = string.isEmpty() ? Color() : SVGColor::colorFromRGBColorString(string);
+    return animatedType;
 }
 
 void SVGAnimatedColorAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimatedType* to)

@@ -325,14 +325,14 @@ void SVGAnimateElement::clearAnimatedType(SVGElement* targetElement)
         return;
 
     if (!targetElement) {
-        m_animatedType.clear();
+        m_animatedType = nullptr;
         return;
     }
 
     if (m_animatedProperties.isEmpty()) {
         // CSS properties animation code-path.
         removeCSSPropertyFromTargetAndInstances(targetElement, attributeName());
-        m_animatedType.clear();
+        m_animatedType = nullptr;
         return;
     }
 
@@ -343,7 +343,7 @@ void SVGAnimateElement::clearAnimatedType(SVGElement* targetElement)
     }
 
     m_animatedProperties.clear();
-    m_animatedType.clear();
+    m_animatedType = nullptr;
 }
 
 void SVGAnimateElement::applyResultsToTarget()
@@ -434,10 +434,10 @@ void SVGAnimateElement::setAttributeName(const QualifiedName& attributeName)
 void SVGAnimateElement::resetAnimatedPropertyType()
 {
     ASSERT(!m_animatedType);
-    m_fromType.clear();
-    m_toType.clear();
-    m_toAtEndOfDurationType.clear();
-    m_animator.clear();
+    m_fromType = nullptr;
+    m_toType = nullptr;
+    m_toAtEndOfDurationType = nullptr;
+    m_animator = nullptr;
     m_animatedPropertyType = targetElement() ? determineAnimatedPropertyType(targetElement()) : AnimatedString;
 }
 

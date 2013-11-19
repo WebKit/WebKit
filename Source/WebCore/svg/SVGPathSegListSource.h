@@ -25,21 +25,15 @@
 #include "SVGPathSeg.h"
 #include "SVGPathSegList.h"
 #include "SVGPathSource.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class SVGPathSegListSource : public SVGPathSource {
 public:
-    static PassOwnPtr<SVGPathSegListSource> create(const SVGPathSegList& pathSegList)
-    {
-        return adoptPtr(new SVGPathSegListSource(pathSegList));
-    }
+    explicit SVGPathSegListSource(const SVGPathSegList&);
 
 private:
-    SVGPathSegListSource(const SVGPathSegList&);
-
     virtual bool hasMoreData() const;
     virtual bool moveToNextToken() { return true; }
     virtual bool parseSVGSegmentType(SVGPathSegType&);

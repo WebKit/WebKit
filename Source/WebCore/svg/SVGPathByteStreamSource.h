@@ -24,20 +24,14 @@
 #include "FloatPoint.h"
 #include "SVGPathByteStream.h"
 #include "SVGPathSource.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 class SVGPathByteStreamSource : public SVGPathSource {
 public:
-    static PassOwnPtr<SVGPathByteStreamSource> create(SVGPathByteStream* stream)
-    {
-        return adoptPtr(new SVGPathByteStreamSource(stream));
-    }
+    explicit SVGPathByteStreamSource(SVGPathByteStream*);
 
 private:
-    SVGPathByteStreamSource(SVGPathByteStream*);
-
     virtual bool hasMoreData() const;
     virtual bool moveToNextToken() { return true; }
     virtual bool parseSVGSegmentType(SVGPathSegType&);

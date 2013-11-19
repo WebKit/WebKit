@@ -53,8 +53,8 @@ struct SVGKerningPair : public SVGKerning {
 typedef Vector<SVGKerning> SVGKerningVector;
 
 struct SVGKerningMap {
-    HashMap<String, OwnPtr<SVGKerningVector>> unicodeMap;
-    HashMap<String, OwnPtr<SVGKerningVector>> glyphMap;
+    HashMap<String, std::unique_ptr<SVGKerningVector>> unicodeMap;
+    HashMap<String, std::unique_ptr<SVGKerningVector>> glyphMap;
     Vector<SVGKerningPair> kerningUnicodeRangeMap;
 
     bool isEmpty() const { return unicodeMap.isEmpty() && glyphMap.isEmpty() && kerningUnicodeRangeMap.isEmpty(); }
@@ -62,7 +62,7 @@ struct SVGKerningMap {
     void insert(const SVGKerningPair&);
 };
 
-class SVGMissingGlyphElement;    
+class SVGMissingGlyphElement;
 
 class SVGFontElement FINAL : public SVGElement
                            , public SVGExternalResourcesRequired {

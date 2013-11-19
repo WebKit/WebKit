@@ -44,7 +44,7 @@ namespace WebCore {
 
 SVGDocumentExtensions::SVGDocumentExtensions(Document* document)
     : m_document(document)
-    , m_resourcesCache(adoptPtr(new SVGResourcesCache))
+    , m_resourcesCache(std::make_unique<SVGResourcesCache>())
 {
 }
 
@@ -97,23 +97,23 @@ void SVGDocumentExtensions::startAnimations()
     // In the future we should refactor the use-element to avoid this. See https://webkit.org/b/53704
     Vector<RefPtr<SVGSVGElement>> timeContainers;
     timeContainers.appendRange(m_timeContainers.begin(), m_timeContainers.end());
-    Vector<RefPtr<SVGSVGElement>>::iterator end = timeContainers.end();
-    for (Vector<RefPtr<SVGSVGElement>>::iterator itr = timeContainers.begin(); itr != end; ++itr)
-        (*itr)->timeContainer()->begin();
+    auto end = timeContainers.end();
+    for (auto it = timeContainers.begin(); it != end; ++it)
+        (*it)->timeContainer()->begin();
 }
-    
+
 void SVGDocumentExtensions::pauseAnimations()
 {
-    HashSet<SVGSVGElement*>::iterator end = m_timeContainers.end();
-    for (HashSet<SVGSVGElement*>::iterator itr = m_timeContainers.begin(); itr != end; ++itr)
-        (*itr)->pauseAnimations();
+    auto end = m_timeContainers.end();
+    for (auto it = m_timeContainers.begin(); it != end; ++it)
+        (*it)->pauseAnimations();
 }
 
 void SVGDocumentExtensions::unpauseAnimations()
 {
-    HashSet<SVGSVGElement*>::iterator end = m_timeContainers.end();
-    for (HashSet<SVGSVGElement*>::iterator itr = m_timeContainers.begin(); itr != end; ++itr)
-        (*itr)->unpauseAnimations();
+    auto end = m_timeContainers.end();
+    for (auto it = m_timeContainers.begin(); it != end; ++it)
+        (*it)->unpauseAnimations();
 }
 
 void SVGDocumentExtensions::dispatchSVGLoadEventToOutermostSVGElements()
@@ -121,8 +121,8 @@ void SVGDocumentExtensions::dispatchSVGLoadEventToOutermostSVGElements()
     Vector<RefPtr<SVGSVGElement>> timeContainers;
     timeContainers.appendRange(m_timeContainers.begin(), m_timeContainers.end());
 
-    Vector<RefPtr<SVGSVGElement>>::iterator end = timeContainers.end();
-    for (Vector<RefPtr<SVGSVGElement>>::iterator it = timeContainers.begin(); it != end; ++it) {
+    auto end = timeContainers.end();
+    for (auto it = timeContainers.begin(); it != end; ++it) {
         SVGSVGElement* outerSVG = (*it).get();
         if (!outerSVG->isOutermostSVGSVGElement())
             continue;
@@ -153,9 +153,9 @@ void SVGDocumentExtensions::addPendingResource(const AtomicString& id, Element* 
     if (id.isEmpty())
         return;
 
-    HashMap<AtomicString, OwnPtr<SVGPendingElements>>::AddResult result = m_pendingResources.add(id, nullptr);
+    auto result = m_pendingResources.add(id, nullptr);
     if (result.isNewEntry)
-        result.iterator->value = adoptPtr(new SVGPendingElements);
+        result.iterator->value = std::make_unique<SVGPendingElements>();
     result.iterator->value->add(element);
 
     element->setHasPendingResources();
@@ -176,8 +176,8 @@ bool SVGDocumentExtensions::isElementPendingResources(Element* element) const
 
     ASSERT(element);
 
-    HashMap<AtomicString, OwnPtr<SVGPendingElements>>::const_iterator end = m_pendingResources.end();
-    for (HashMap<AtomicString, OwnPtr<SVGPendingElements>>::const_iterator it = m_pendingResources.begin(); it != end; ++it) {
+    auto end = m_pendingResources.end();
+    for (auto it = m_pendingResources.begin(); it != end; ++it) {
         SVGPendingElements* elements = it->value.get();
         ASSERT(elements);
 
@@ -210,8 +210,8 @@ void SVGDocumentExtensions::removeElementFromPendingResources(Element* element)
     // Remove the element from pending resources.
     if (!m_pendingResources.isEmpty() && element->hasPendingResources()) {
         Vector<AtomicString> toBeRemoved;
-        HashMap<AtomicString, OwnPtr<SVGPendingElements>>::iterator end = m_pendingResources.end();
-        for (HashMap<AtomicString, OwnPtr<SVGPendingElements>>::iterator it = m_pendingResources.begin(); it != end; ++it) {
+        auto end = m_pendingResources.end();
+        for (auto it = m_pendingResources.begin(); it != end; ++it) {
             SVGPendingElements* elements = it->value.get();
             ASSERT(elements);
             ASSERT(!elements->isEmpty());
@@ -224,16 +224,16 @@ void SVGDocumentExtensions::removeElementFromPendingResources(Element* element)
         clearHasPendingResourcesIfPossible(element);
 
         // We use the removePendingResource function here because it deals with set lifetime correctly.
-        Vector<AtomicString>::iterator vectorEnd = toBeRemoved.end();
-        for (Vector<AtomicString>::iterator it = toBeRemoved.begin(); it != vectorEnd; ++it)
+        auto vectorEnd = toBeRemoved.end();
+        for (auto it = toBeRemoved.begin(); it != vectorEnd; ++it)
             removePendingResource(*it);
     }
 
     // Remove the element from pending resources that were scheduled for removal.
     if (!m_pendingResourcesForRemoval.isEmpty()) {
         Vector<AtomicString> toBeRemoved;
-        HashMap<AtomicString, OwnPtr<SVGPendingElements>>::iterator end = m_pendingResourcesForRemoval.end();
-        for (HashMap<AtomicString, OwnPtr<SVGPendingElements>>::iterator it = m_pendingResourcesForRemoval.begin(); it != end; ++it) {
+        auto end = m_pendingResourcesForRemoval.end();
+        for (auto it = m_pendingResourcesForRemoval.begin(); it != end; ++it) {
             SVGPendingElements* elements = it->value.get();
             ASSERT(elements);
             ASSERT(!elements->isEmpty());
@@ -244,19 +244,19 @@ void SVGDocumentExtensions::removeElementFromPendingResources(Element* element)
         }
 
         // We use the removePendingResourceForRemoval function here because it deals with set lifetime correctly.
-        Vector<AtomicString>::iterator vectorEnd = toBeRemoved.end();
-        for (Vector<AtomicString>::iterator it = toBeRemoved.begin(); it != vectorEnd; ++it)
+        auto vectorEnd = toBeRemoved.end();
+        for (auto it = toBeRemoved.begin(); it != vectorEnd; ++it)
             removePendingResourceForRemoval(*it);
     }
 }
 
-OwnPtr<SVGDocumentExtensions::SVGPendingElements> SVGDocumentExtensions::removePendingResource(const AtomicString& id)
+std::unique_ptr<SVGDocumentExtensions::SVGPendingElements> SVGDocumentExtensions::removePendingResource(const AtomicString& id)
 {
     ASSERT(m_pendingResources.contains(id));
     return m_pendingResources.take(id);
 }
 
-OwnPtr<SVGDocumentExtensions::SVGPendingElements> SVGDocumentExtensions::removePendingResourceForRemoval(const AtomicString& id)
+std::unique_ptr<SVGDocumentExtensions::SVGPendingElements> SVGDocumentExtensions::removePendingResourceForRemoval(const AtomicString& id)
 {
     ASSERT(m_pendingResourcesForRemoval.contains(id));
     return m_pendingResourcesForRemoval.take(id);
@@ -269,9 +269,9 @@ void SVGDocumentExtensions::markPendingResourcesForRemoval(const AtomicString& i
 
     ASSERT(!m_pendingResourcesForRemoval.contains(id));
 
-    OwnPtr<SVGPendingElements> existing = m_pendingResources.take(id);
+    std::unique_ptr<SVGPendingElements> existing = m_pendingResources.take(id);
     if (existing && !existing->isEmpty())
-        m_pendingResourcesForRemoval.add(id, existing.release());
+        m_pendingResourcesForRemoval.add(id, std::move(existing));
 }
 
 Element* SVGDocumentExtensions::removeElementFromPendingResourcesForRemoval(const AtomicString& id)
@@ -283,7 +283,7 @@ Element* SVGDocumentExtensions::removeElementFromPendingResourcesForRemoval(cons
     if (!resourceSet || resourceSet->isEmpty())
         return 0;
 
-    SVGPendingElements::iterator firstElement = resourceSet->begin();
+    auto firstElement = resourceSet->begin();
     Element* element = *firstElement;
 
     resourceSet->remove(firstElement);
@@ -297,7 +297,7 @@ Element* SVGDocumentExtensions::removeElementFromPendingResourcesForRemoval(cons
 HashSet<SVGElement*>* SVGDocumentExtensions::setOfElementsReferencingTarget(SVGElement* referencedElement) const
 {
     ASSERT(referencedElement);
-    const HashMap<SVGElement*, OwnPtr<HashSet<SVGElement*>>>::const_iterator it = m_elementDependencies.find(referencedElement);
+    const auto it = m_elementDependencies.find(referencedElement);
     if (it == m_elementDependencies.end())
         return 0;
     return it->value.get();
@@ -313,9 +313,9 @@ void SVGDocumentExtensions::addElementReferencingTarget(SVGElement* referencingE
         return;
     }
 
-    OwnPtr<HashSet<SVGElement*>> elements = adoptPtr(new HashSet<SVGElement*>);
+    auto elements = std::make_unique<HashSet<SVGElement*>>();
     elements->add(referencingElement);
-    m_elementDependencies.set(referencedElement, elements.release());
+    m_elementDependencies.set(referencedElement, std::move(elements));
 }
 
 void SVGDocumentExtensions::removeAllTargetReferencesForElement(SVGElement* referencingElement)
@@ -331,28 +331,28 @@ void SVGDocumentExtensions::removeAllTargetReferencesForElement(SVGElement* refe
             toBeRemoved.append(referencedElement);
     }
 
-    Vector<SVGElement*>::iterator vectorEnd = toBeRemoved.end();
-    for (Vector<SVGElement*>::iterator it = toBeRemoved.begin(); it != vectorEnd; ++it)
+    auto vectorEnd = toBeRemoved.end();
+    for (auto it = toBeRemoved.begin(); it != vectorEnd; ++it)
         m_elementDependencies.remove(*it);
 }
 
 void SVGDocumentExtensions::rebuildAllElementReferencesForTarget(SVGElement* referencedElement)
 {
     ASSERT(referencedElement);
-    HashMap<SVGElement*, OwnPtr<HashSet<SVGElement*>>>::iterator it = m_elementDependencies.find(referencedElement);
+    auto it = m_elementDependencies.find(referencedElement);
     if (it == m_elementDependencies.end())
         return;
     ASSERT(it->key == referencedElement);
     Vector<SVGElement*> toBeNotified;
 
     HashSet<SVGElement*>* referencingElements = it->value.get();
-    HashSet<SVGElement*>::iterator setEnd = referencingElements->end();
-    for (HashSet<SVGElement*>::iterator setIt = referencingElements->begin(); setIt != setEnd; ++setIt)
+    auto setEnd = referencingElements->end();
+    for (auto setIt = referencingElements->begin(); setIt != setEnd; ++setIt)
         toBeNotified.append(*setIt);
 
     // Force rebuilding the referencingElement so it knows about this change.
-    Vector<SVGElement*>::iterator vectorEnd = toBeNotified.end();
-    for (Vector<SVGElement*>::iterator vectorIt = toBeNotified.begin(); vectorIt != vectorEnd; ++vectorIt) {
+    auto vectorEnd = toBeNotified.end();
+    for (auto vectorIt = toBeNotified.begin(); vectorIt != vectorEnd; ++vectorIt) {
         // Before rebuilding referencingElement ensure it was not removed from under us.
         if (HashSet<SVGElement*>* referencingElements = setOfElementsReferencingTarget(referencedElement)) {
             if (referencingElements->contains(*vectorIt))

@@ -32,8 +32,8 @@ public:
     SVGAnimatedPathAnimator(SVGAnimationElement*, SVGElement*);
     virtual ~SVGAnimatedPathAnimator() { }
 
-    virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
-    virtual PassOwnPtr<SVGAnimatedType> startAnimValAnimation(const SVGElementAnimatedPropertyList&);
+    virtual std::unique_ptr<SVGAnimatedType> constructFromString(const String&);
+    virtual std::unique_ptr<SVGAnimatedType> startAnimValAnimation(const SVGElementAnimatedPropertyList&);
     virtual void stopAnimValAnimation(const SVGElementAnimatedPropertyList&);
     virtual void resetAnimValToBaseVal(const SVGElementAnimatedPropertyList&, SVGAnimatedType*);
     virtual void animValWillChange(const SVGElementAnimatedPropertyList&);

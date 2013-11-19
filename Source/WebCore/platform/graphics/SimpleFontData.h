@@ -85,9 +85,9 @@ public:
     }
 
     // Used to create SVG Fonts.
-    static PassRefPtr<SimpleFontData> create(PassOwnPtr<AdditionalFontData> fontData, float fontSize, bool syntheticBold, bool syntheticItalic)
+    static PassRefPtr<SimpleFontData> create(std::unique_ptr<AdditionalFontData> fontData, float fontSize, bool syntheticBold, bool syntheticItalic)
     {
-        return adoptRef(new SimpleFontData(fontData, fontSize, syntheticBold, syntheticItalic));
+        return adoptRef(new SimpleFontData(std::move(fontData), fontSize, syntheticBold, syntheticItalic));
     }
 
     virtual ~SimpleFontData();
@@ -130,7 +130,7 @@ public:
     FontMetrics& fontMetrics() { return m_fontMetrics; }
     const FontMetrics& fontMetrics() const { return m_fontMetrics; }
     float sizePerUnit() const { return platformData().size() / (fontMetrics().unitsPerEm() ? fontMetrics().unitsPerEm() : 1); }
-    
+
     float maxCharWidth() const { return m_maxCharWidth; }
     void setMaxCharWidth(float maxCharWidth) { m_maxCharWidth = maxCharWidth; }
 
@@ -167,7 +167,7 @@ public:
     Pitch pitch() const { return m_treatAsFixedPitch ? FixedPitch : VariablePitch; }
 
     AdditionalFontData* fontData() const { return m_fontData.get(); }
-    bool isSVGFont() const { return m_fontData; }
+    bool isSVGFont() const { return m_fontData != nullptr; }
 
     virtual bool isCustomFont() const OVERRIDE { return m_isCustomFont; }
     virtual bool isLoading() const OVERRIDE { return m_isLoading; }
@@ -223,13 +223,13 @@ public:
 private:
     SimpleFontData(const FontPlatformData&, bool isCustomFont = false, bool isLoading = false, bool isTextOrientationFallback = false);
 
-    SimpleFontData(PassOwnPtr<AdditionalFontData> , float fontSize, bool syntheticBold, bool syntheticItalic);
+    SimpleFontData(std::unique_ptr<AdditionalFontData>, float fontSize, bool syntheticBold, bool syntheticItalic);
 
     void platformInit();
     void platformGlyphInit();
     void platformCharWidthInit();
     void platformDestroy();
-    
+
     void initCharWidths();
 
     PassRefPtr<SimpleFontData> createScaledFontData(const FontDescription&, float scaleFactor) const;
@@ -245,9 +245,9 @@ private:
     FontMetrics m_fontMetrics;
     float m_maxCharWidth;
     float m_avgCharWidth;
-    
+
     FontPlatformData m_platformData;
-    OwnPtr<AdditionalFontData> m_fontData;
+    std::unique_ptr<AdditionalFontData> m_fontData;
 
     mutable OwnPtr<GlyphMetricsMap<FloatRect>> m_glyphToBoundsMap;
     mutable GlyphMetricsMap<float> m_glyphToWidthMap;
@@ -255,14 +255,14 @@ private:
     bool m_treatAsFixedPitch;
     bool m_isCustomFont;  // Whether or not we are custom font loaded via @font-face
     bool m_isLoading; // Whether or not this custom font is still in the act of loading.
-    
+
     bool m_isTextOrientationFallback;
     bool m_isBrokenIdeographFallback;
 #if ENABLE(OPENTYPE_VERTICAL)
     RefPtr<OpenTypeVerticalData> m_verticalData;
 #endif
     bool m_hasVerticalGlyphs;
-    
+
     Glyph m_spaceGlyph;
     float m_spaceWidth;
     Glyph m_zeroGlyph;
@@ -286,7 +286,7 @@ private:
 #if PLATFORM(MAC)
         mutable RetainPtr<CFMutableDictionaryRef> compositeFontReferences;
 #endif
-        
+
     private:
         DerivedFontData(bool custom)
             : forCustomFont(custom)

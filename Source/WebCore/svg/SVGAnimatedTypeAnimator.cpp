@@ -48,13 +48,13 @@ SVGAnimatedTypeAnimator::SVGAnimatedTypeAnimator(AnimatedPropertyType type, SVGA
 SVGAnimatedTypeAnimator::~SVGAnimatedTypeAnimator()
 { }
 
-void SVGAnimatedTypeAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
+void SVGAnimatedTypeAnimator::calculateFromAndToValues(std::unique_ptr<SVGAnimatedType>& from, std::unique_ptr<SVGAnimatedType>& to, const String& fromString, const String& toString)
 {
     from = constructFromString(fromString);
     to = constructFromString(toString);
 }
 
-void SVGAnimatedTypeAnimator::calculateFromAndByValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& byString)
+void SVGAnimatedTypeAnimator::calculateFromAndByValues(std::unique_ptr<SVGAnimatedType>& from, std::unique_ptr<SVGAnimatedType>& to, const String& fromString, const String& byString)
 {
     from = constructFromString(fromString);
     to = constructFromString(byString);

@@ -40,12 +40,12 @@ static inline SVGLength& sharedSVGLength(SVGLengthMode mode, const String& value
     return sharedLength;
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthAnimator::constructFromString(const String& string)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedLengthAnimator::constructFromString(const String& string)
 {
     return SVGAnimatedType::createLength(new SVGLength(m_lengthMode, string));
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedLengthAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
     return SVGAnimatedType::createLength(constructFromBaseValue<SVGAnimatedLength>(animatedTypes));
 }

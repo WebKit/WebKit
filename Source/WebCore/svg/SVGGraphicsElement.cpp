@@ -87,7 +87,7 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 AffineTransform* SVGGraphicsElement::supplementalTransform()
 {
     if (!m_supplementalTransform)
-        m_supplementalTransform = adoptPtr(new AffineTransform);
+        m_supplementalTransform = std::make_unique<AffineTransform>();
     return m_supplementalTransform.get();
 }
 

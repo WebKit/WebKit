@@ -1,3 +1,83 @@
+2013-11-19  Sergio Correia  <sergio.correia@openbossa.org>
+
+        [SVG] Convert OwnPtr/PassOwnPtr to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=124382
+
+        Reviewed by Darin Adler.
+
+        The files modified are mostly under WebCore/svg/; in a few cases, some
+        "external" files needed changes as well.
+
+        No new tests, covered by existing ones.
+
+        * css/CSSFontFaceSource.cpp:
+        * loader/cache/CachedImage.cpp:
+        * loader/cache/CachedImage.h:
+        * platform/graphics/SimpleFontData.cpp:
+        * platform/graphics/SimpleFontData.h:
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        * svg/SVGAnimateElement.cpp:
+        * svg/SVGAnimateElement.h:
+        * svg/SVGAnimatedAngle.cpp:
+        * svg/SVGAnimatedAngle.h:
+        * svg/SVGAnimatedBoolean.cpp:
+        * svg/SVGAnimatedBoolean.h:
+        * svg/SVGAnimatedColor.cpp:
+        * svg/SVGAnimatedColor.h:
+        * svg/SVGAnimatedEnumeration.cpp:
+        * svg/SVGAnimatedEnumeration.h:
+        * svg/SVGAnimatedInteger.cpp:
+        * svg/SVGAnimatedInteger.h:
+        * svg/SVGAnimatedIntegerOptionalInteger.cpp:
+        * svg/SVGAnimatedIntegerOptionalInteger.h:
+        * svg/SVGAnimatedLength.cpp:
+        * svg/SVGAnimatedLength.h:
+        * svg/SVGAnimatedLengthList.cpp:
+        * svg/SVGAnimatedLengthList.h:
+        * svg/SVGAnimatedNumber.cpp:
+        * svg/SVGAnimatedNumber.h:
+        * svg/SVGAnimatedNumberList.cpp:
+        * svg/SVGAnimatedNumberList.h:
+        * svg/SVGAnimatedNumberOptionalNumber.cpp:
+        * svg/SVGAnimatedNumberOptionalNumber.h:
+        * svg/SVGAnimatedPath.cpp:
+        * svg/SVGAnimatedPath.h:
+        * svg/SVGAnimatedPointList.cpp:
+        * svg/SVGAnimatedPointList.h:
+        * svg/SVGAnimatedPreserveAspectRatio.cpp:
+        * svg/SVGAnimatedPreserveAspectRatio.h:
+        * svg/SVGAnimatedRect.cpp:
+        * svg/SVGAnimatedRect.h:
+        * svg/SVGAnimatedString.cpp:
+        * svg/SVGAnimatedString.h:
+        * svg/SVGAnimatedTransformList.cpp:
+        * svg/SVGAnimatedTransformList.h:
+        * svg/SVGAnimatedType.cpp:
+        * svg/SVGAnimatedType.h:
+        * svg/SVGAnimatedTypeAnimator.cpp:
+        * svg/SVGAnimatedTypeAnimator.h:
+        * svg/SVGAnimatorFactory.h:
+        * svg/SVGDocumentExtensions.cpp:
+        * svg/SVGDocumentExtensions.h:
+        * svg/SVGFontData.h:
+        * svg/SVGFontElement.cpp:
+        * svg/SVGFontElement.h:
+        * svg/SVGGraphicsElement.cpp:
+        * svg/SVGGraphicsElement.h:
+        * svg/SVGPathByteStreamSource.h:
+        * svg/SVGPathParser.h:
+        * svg/SVGPathSegListSource.h:
+        * svg/SVGPathStringSource.h:
+        * svg/SVGPathUtilities.cpp:
+        * svg/SVGPathUtilities.h:
+        * svg/animation/SMILTimeContainer.cpp:
+        * svg/animation/SMILTimeContainer.h:
+        * svg/graphics/SVGImage.cpp:
+        * svg/graphics/SVGImage.h:
+        * svg/graphics/SVGImageCache.h:
+        * svg/properties/SVGAttributeToPropertyMap.cpp:
+        * svg/properties/SVGAttributeToPropertyMap.h:
+
 2013-11-19  Zoltan Horvath  <zoltan@webkit.org>
 
         Add LineInlineHeaders.h to WebCore.xcodeproj

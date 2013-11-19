@@ -49,7 +49,7 @@ private:
     PassRefPtr<SVGAnimatedProperty> animatedProperty(SVGElement* contextElement, const QualifiedName& attributeName, const SVGPropertyInfo*);
 
     typedef Vector<const SVGPropertyInfo*> PropertiesVector;
-    typedef HashMap<QualifiedName, OwnPtr<PropertiesVector>> AttributeToPropertiesMap;
+    typedef HashMap<QualifiedName, std::unique_ptr<PropertiesVector>> AttributeToPropertiesMap;
     AttributeToPropertiesMap m_map;
 };
 

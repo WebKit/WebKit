@@ -33,10 +33,10 @@ SVGAnimatedIntegerOptionalIntegerAnimator::SVGAnimatedIntegerOptionalIntegerAnim
 {
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedIntegerOptionalIntegerAnimator::constructFromString(const String& string)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedIntegerOptionalIntegerAnimator::constructFromString(const String& string)
 {
-    OwnPtr<SVGAnimatedType> animtedType = SVGAnimatedType::createIntegerOptionalInteger(new pair<int, int>);
-    pair<int, int>& animatedInteger = animtedType->integerOptionalInteger();
+    auto animatedType = SVGAnimatedType::createIntegerOptionalInteger(new pair<int, int>);
+    pair<int, int>& animatedInteger = animatedType->integerOptionalInteger();
     float firstNumber = 0;
     float secondNumber = 0;
     if (!parseNumberOptionalNumber(string, firstNumber, secondNumber)) {
@@ -46,10 +46,10 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedIntegerOptionalIntegerAnimator::construct
         animatedInteger.first = static_cast<int>(roundf(firstNumber));
         animatedInteger.second = static_cast<int>(roundf(secondNumber));
     }
-    return animtedType.release();
+    return animatedType;
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedIntegerOptionalIntegerAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedIntegerOptionalIntegerAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
     return SVGAnimatedType::createIntegerOptionalInteger(constructFromBaseValues<SVGAnimatedInteger, SVGAnimatedInteger>(animatedTypes));
 }

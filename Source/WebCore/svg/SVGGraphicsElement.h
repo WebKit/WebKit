@@ -71,7 +71,7 @@ private:
     virtual void synchronizeSystemLanguage() OVERRIDE { SVGTests::synchronizeSystemLanguage(this); }
 
     // Used by <animateMotion>
-    OwnPtr<AffineTransform> m_supplementalTransform;
+    std::unique_ptr<AffineTransform> m_supplementalTransform;
 };
 
 void isSVGGraphicsElement(const SVGGraphicsElement&); // Catch unnecessary runtime check of type known at compile time.

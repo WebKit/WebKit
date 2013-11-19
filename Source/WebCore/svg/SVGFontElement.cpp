@@ -46,7 +46,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFontElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGFontElement::SVGFontElement(const QualifiedName& tagName, Document& document)
-    : SVGElement(tagName, document) 
+    : SVGElement(tagName, document)
     , m_missingGlyph(0)
     , m_isGlyphCacheValid(false)
 {
@@ -102,7 +102,7 @@ void SVGFontElement::registerLigaturesInGlyphCache(Vector<String>& ligatures)
                 glyphs.clear();
                 continue;
             }
-                
+
             // This glyph is never meant to be used for rendering, only as identifier as a part of a ligature.
             SVGGlyph newGlyphPart;
             newGlyphPart.isPartOfLigature = true;
@@ -179,9 +179,9 @@ void SVGKerningMap::insert(const SVGKerningPair& kerningPair)
         if (unicodeMap.contains(*uIt))
             unicodeMap.get(*uIt)->append(svgKerning);
         else {
-            OwnPtr<SVGKerningVector> newVector = adoptPtr(new SVGKerningVector);
+            auto newVector = std::make_unique<SVGKerningVector>();
             newVector->append(svgKerning);
-            unicodeMap.add(*uIt, newVector.release());
+            unicodeMap.add(*uIt, std::move(newVector));
         }
     }
 
@@ -191,9 +191,9 @@ void SVGKerningMap::insert(const SVGKerningPair& kerningPair)
         if (glyphMap.contains(*gIt))
             glyphMap.get(*gIt)->append(svgKerning);
         else {
-            OwnPtr<SVGKerningVector> newVector = adoptPtr(new SVGKerningVector);
+            auto newVector = std::make_unique<SVGKerningVector>();
             newVector->append(svgKerning);
-            glyphMap.add(*gIt, newVector.release());
+            glyphMap.add(*gIt, std::move(newVector));
         }
     }
 
@@ -281,7 +281,7 @@ static inline float kerningForPairOfStringsAndGlyphs(const SVGKerningMap& kernin
 
     return 0;
 }
-    
+
 float SVGFontElement::horizontalKerningForPairOfStringsAndGlyphs(const String& u1, const String& g1, const String& u2, const String& g2) const
 {
     if (m_horizontalKerningMap.isEmpty())
@@ -316,7 +316,7 @@ SVGGlyph SVGFontElement::svgGlyphForGlyph(Glyph glyph)
     ensureGlyphCache();
     return m_glyphMap.svgGlyphForGlyph(glyph);
 }
-    
+
 Glyph SVGFontElement::missingGlyph()
 {
     ensureGlyphCache();

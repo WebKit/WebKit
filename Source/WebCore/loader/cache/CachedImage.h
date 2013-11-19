@@ -135,7 +135,7 @@ private:
 
     RefPtr<Image> m_image;
 #if ENABLE(SVG)
-    OwnPtr<SVGImageCache> m_svgImageCache;
+    std::unique_ptr<SVGImageCache> m_svgImageCache;
 #endif
     bool m_shouldPaintBrokenImage;
 };

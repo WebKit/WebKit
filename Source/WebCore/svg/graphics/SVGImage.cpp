@@ -57,7 +57,7 @@ SVGImage::~SVGImage()
 {
     if (m_page) {
         // Store m_page in a local variable, clearing m_page, so that SVGImageChromeClient knows we're destructed.
-        OwnPtr<Page> currentPage = m_page.release();
+        std::unique_ptr<Page> currentPage = std::move(m_page);
         currentPage->mainFrame().loader().frameDetached(); // Break both the loader and view references to the frame
     }
 
@@ -346,7 +346,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
     if (allDataReceived) {
         Page::PageClients pageClients;
         fillWithEmptyClients(pageClients);
-        m_chromeClient = adoptPtr(new SVGImageChromeClient(this));
+        m_chromeClient = std::make_unique<SVGImageChromeClient>(this);
         pageClients.chromeClient = m_chromeClient.get();
 
         // FIXME: If this SVG ends up loading itself, we might leak the world.
@@ -355,7 +355,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
         // This will become an issue when SVGImage will be able to load other
         // SVGImage objects, but we're safe now, because SVGImage can only be
         // loaded by a top-level document.
-        m_page = adoptPtr(new Page(pageClients));
+        m_page = std::make_unique<Page>(pageClients);
         m_page->settings().setMediaEnabled(false);
         m_page->settings().setScriptEnabled(false);
         m_page->settings().setPluginsEnabled(false);
@@ -379,7 +379,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
         m_intrinsicSize = containerSize();
     }
 
-    return m_page;
+    return m_page != nullptr;
 }
 
 String SVGImage::filenameExtension() const

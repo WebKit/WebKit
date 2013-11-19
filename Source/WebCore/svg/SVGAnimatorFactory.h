@@ -45,46 +45,46 @@ class SVGAnimationElement;
 
 class SVGAnimatorFactory {
 public:
-    static PassOwnPtr<SVGAnimatedTypeAnimator> create(SVGAnimationElement* animationElement, SVGElement* contextElement, AnimatedPropertyType attributeType)
+    static std::unique_ptr<SVGAnimatedTypeAnimator> create(SVGAnimationElement* animationElement, SVGElement* contextElement, AnimatedPropertyType attributeType)
     {
         ASSERT(animationElement);
         ASSERT(contextElement);
 
         switch (attributeType) {
         case AnimatedAngle:
-            return adoptPtr(new SVGAnimatedAngleAnimator(animationElement, contextElement));
+            return std::make_unique<SVGAnimatedAngleAnimator>(animationElement, contextElement);
         case AnimatedBoolean:
-            return adoptPtr(new SVGAnimatedBooleanAnimator(animationElement, contextElement));
+            return std::make_unique<SVGAnimatedBooleanAnimator>(animationElement, contextElement);
         case AnimatedColor:
-            return adoptPtr(new SVGAnimatedColorAnimator(animationElement, contextElement));
+            return std::make_unique<SVGAnimatedColorAnimator>(animationElement, contextElement);
         case AnimatedEnumeration:
-            return adoptPtr(new SVGAnimatedEnumerationAnimator(animationElement, contextElement));
+            return std::make_unique<SVGAnimatedEnumerationAnimator>(animationElement, contextElement);
         case AnimatedInteger:
-            return adoptPtr(new SVGAnimatedIntegerAnimator(animationElement, contextElement));
+            return std::make_unique<SVGAnimatedIntegerAnimator>(animationElement, contextElement);
         case AnimatedIntegerOptionalInteger:
-            return adoptPtr(new SVGAnimatedIntegerOptionalIntegerAnimator(animationElement, contextElement));
+            return std::make_unique<SVGAnimatedIntegerOptionalIntegerAnimator>(animationElement, contextElement);
         case AnimatedLength:
-            return adoptPtr(new SVGAnimatedLengthAnimator(animationElement, contextElement));
+            return std::make_unique<SVGAnimatedLengthAnimator>(animationElement, contextElement);
         case AnimatedLengthList:
-            return adoptPtr(new SVGAnimatedLengthListAnimator(animationElement, contextElement));
+            return std::make_unique<SVGAnimatedLengthListAnimator>(animationElement, contextElement);
         case AnimatedNumber:
-            return adoptPtr(new SVGAnimatedNumberAnimator(animationElement, contextElement));
+            return std::make_unique<SVGAnimatedNumberAnimator>(animationElement, contextElement);
         case AnimatedNumberList:
-            return adoptPtr(new SVGAnimatedNumberListAnimator(animationElement, contextElement));
+            return std::make_unique<SVGAnimatedNumberListAnimator>(animationElement, contextElement);
         case AnimatedNumberOptionalNumber:
-            return adoptPtr(new SVGAnimatedNumberOptionalNumberAnimator(animationElement, contextElement));
+            return std::make_unique<SVGAnimatedNumberOptionalNumberAnimator>(animationElement, contextElement);
         case AnimatedPath:
-            return adoptPtr(new SVGAnimatedPathAnimator(animationElement, contextElement));
+            return std::make_unique<SVGAnimatedPathAnimator>(animationElement, contextElement);
         case AnimatedPoints:
-            return adoptPtr(new SVGAnimatedPointListAnimator(animationElement, contextElement));
+            return std::make_unique<SVGAnimatedPointListAnimator>(animationElement, contextElement);
         case AnimatedPreserveAspectRatio:
-            return adoptPtr(new SVGAnimatedPreserveAspectRatioAnimator(animationElement, contextElement));
+            return std::make_unique<SVGAnimatedPreserveAspectRatioAnimator>(animationElement, contextElement);
         case AnimatedRect:
-            return adoptPtr(new SVGAnimatedRectAnimator(animationElement, contextElement));
+            return std::make_unique<SVGAnimatedRectAnimator>(animationElement, contextElement);
         case AnimatedString:
-            return adoptPtr(new SVGAnimatedStringAnimator(animationElement, contextElement));
+            return std::make_unique<SVGAnimatedStringAnimator>(animationElement, contextElement);
         case AnimatedTransformList:
-            return adoptPtr(new SVGAnimatedTransformListAnimator(animationElement, contextElement));
+            return std::make_unique<SVGAnimatedTransformListAnimator>(animationElement, contextElement);
         case AnimatedUnknown:
             break;
         }
@@ -95,9 +95,8 @@ public:
 
 private:
     SVGAnimatorFactory() { }
-
 };
-    
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

@@ -32,14 +32,14 @@ SVGAnimatedRectAnimator::SVGAnimatedRectAnimator(SVGAnimationElement* animationE
 {
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedRectAnimator::constructFromString(const String& string)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedRectAnimator::constructFromString(const String& string)
 {
-    OwnPtr<SVGAnimatedType> animatedType = SVGAnimatedType::createRect(new FloatRect);
+    auto animatedType = SVGAnimatedType::createRect(new FloatRect);
     parseRect(string, animatedType->rect());
-    return animatedType.release();
+    return animatedType;
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedRectAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedRectAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
     return SVGAnimatedType::createRect(constructFromBaseValue<SVGAnimatedRect>(animatedTypes));
 }
@@ -99,7 +99,7 @@ float SVGAnimatedRectAnimator::calculateDistance(const String&, const String&)
     // FIXME: Distance calculation is not possible for SVGRect right now. We need the distance of for every single value.
     return -1;
 }
-    
+
 }
 
 #endif // ENABLE(SVG)

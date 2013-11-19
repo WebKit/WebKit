@@ -25,7 +25,7 @@
 #include "SVGAnimatedProperty.h"
 #include "SVGAnimatedType.h"
 #include "SVGElementInstance.h"
-#include <wtf/PassOwnPtr.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -45,9 +45,9 @@ class SVGAnimatedTypeAnimator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~SVGAnimatedTypeAnimator();
-    virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&) = 0;
+    virtual std::unique_ptr<SVGAnimatedType> constructFromString(const String&) = 0;
 
-    virtual PassOwnPtr<SVGAnimatedType> startAnimValAnimation(const SVGElementAnimatedPropertyList&) = 0;
+    virtual std::unique_ptr<SVGAnimatedType> startAnimValAnimation(const SVGElementAnimatedPropertyList&) = 0;
     virtual void stopAnimValAnimation(const SVGElementAnimatedPropertyList&) = 0;
     virtual void resetAnimValToBaseVal(const SVGElementAnimatedPropertyList&, SVGAnimatedType*) = 0;
     virtual void animValWillChange(const SVGElementAnimatedPropertyList&) = 0;
@@ -57,8 +57,8 @@ public:
     virtual void calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*) = 0;
     virtual float calculateDistance(const String& fromString, const String& toString) = 0;
 
-    void calculateFromAndToValues(OwnPtr<SVGAnimatedType>&, OwnPtr<SVGAnimatedType>&, const String& fromString, const String& toString);
-    void calculateFromAndByValues(OwnPtr<SVGAnimatedType>&, OwnPtr<SVGAnimatedType>&, const String& fromString, const String& byString);
+    void calculateFromAndToValues(std::unique_ptr<SVGAnimatedType>&, std::unique_ptr<SVGAnimatedType>&, const String& fromString, const String& toString);
+    void calculateFromAndByValues(std::unique_ptr<SVGAnimatedType>&, std::unique_ptr<SVGAnimatedType>&, const String& fromString, const String& byString);
 
     void setContextElement(SVGElement* contextElement) { m_contextElement = contextElement; }
     AnimatedPropertyType type() const { return m_type; }

@@ -23,21 +23,15 @@
 
 #if ENABLE(SVG)
 #include "SVGPathSource.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class SVGPathStringSource : public SVGPathSource {
 public:
-    static PassOwnPtr<SVGPathStringSource> create(const String& string)
-    {
-        return adoptPtr(new SVGPathStringSource(string));
-    }
+    explicit SVGPathStringSource(const String&);
 
 private:
-    SVGPathStringSource(const String&);
-
     virtual bool hasMoreData() const;
     virtual bool moveToNextToken();
     virtual bool parseSVGSegmentType(SVGPathSegType&);

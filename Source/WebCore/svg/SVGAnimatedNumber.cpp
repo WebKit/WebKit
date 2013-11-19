@@ -32,16 +32,16 @@ SVGAnimatedNumberAnimator::SVGAnimatedNumberAnimator(SVGAnimationElement* animat
 {
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberAnimator::constructFromString(const String& string)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedNumberAnimator::constructFromString(const String& string)
 {
-    OwnPtr<SVGAnimatedType> animtedType = SVGAnimatedType::createNumber(new float);
-    float& animatedNumber = animtedType->number();
+    auto animatedType = SVGAnimatedType::createNumber(new float);
+    float& animatedNumber = animatedType->number();
     if (!parseNumberFromString(string, animatedNumber))
         animatedNumber = 0;
-    return animtedType.release();
+    return animatedType;
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedNumberAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
     return SVGAnimatedType::createNumber(constructFromBaseValue<SVGAnimatedNumber>(animatedTypes));
 }

@@ -96,8 +96,8 @@ private:
     void drawPatternForContainer(GraphicsContext*, const FloatSize, float, const FloatRect&, const AffineTransform&, const FloatPoint&, ColorSpace,
         CompositeOperator, const FloatRect&);
 
-    OwnPtr<SVGImageChromeClient> m_chromeClient;
-    OwnPtr<Page> m_page;
+    std::unique_ptr<SVGImageChromeClient> m_chromeClient;
+    std::unique_ptr<Page> m_page;
     IntSize m_intrinsicSize;
 };
 

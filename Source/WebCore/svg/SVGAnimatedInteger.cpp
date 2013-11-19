@@ -33,14 +33,14 @@ SVGAnimatedIntegerAnimator::SVGAnimatedIntegerAnimator(SVGAnimationElement* anim
 {
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedIntegerAnimator::constructFromString(const String& string)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedIntegerAnimator::constructFromString(const String& string)
 {
-    OwnPtr<SVGAnimatedType> animtedType = SVGAnimatedType::createInteger(new int);
-    animtedType->integer() = string.toIntStrict();
-    return animtedType.release();
+    auto animatedType = SVGAnimatedType::createInteger(new int);
+    animatedType->integer() = string.toIntStrict();
+    return animatedType;
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedIntegerAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedIntegerAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
     return SVGAnimatedType::createInteger(constructFromBaseValue<SVGAnimatedInteger>(animatedTypes));
 }
@@ -100,7 +100,7 @@ float SVGAnimatedIntegerAnimator::calculateDistance(const String& fromString, co
     int to = toString.toIntStrict();
     return abs(to - from);
 }
-    
+
 }
 
 #endif // ENABLE(SVG)

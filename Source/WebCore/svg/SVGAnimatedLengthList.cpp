@@ -33,14 +33,14 @@ SVGAnimatedLengthListAnimator::SVGAnimatedLengthListAnimator(SVGAnimationElement
 {
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthListAnimator::constructFromString(const String& string)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedLengthListAnimator::constructFromString(const String& string)
 {
-    OwnPtr<SVGAnimatedType> animateType = SVGAnimatedType::createLengthList(new SVGLengthList);
-    animateType->lengthList().parse(string, m_lengthMode);
-    return animateType.release();
+    auto animatedType = SVGAnimatedType::createLengthList(new SVGLengthList);
+    animatedType->lengthList().parse(string, m_lengthMode);
+    return animatedType;
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthListAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
+std::unique_ptr<SVGAnimatedType> SVGAnimatedLengthListAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
     return SVGAnimatedType::createLengthList(constructFromBaseValue<SVGAnimatedLengthList>(animatedTypes));
 }

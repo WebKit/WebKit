@@ -25,7 +25,6 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
@@ -84,10 +83,10 @@ private:
     HashSet<SVGFontFaceElement*> m_svgFontFaceElements;
 #endif
     HashMap<AtomicString, RenderSVGResourceContainer*> m_resources;
-    HashMap<AtomicString, OwnPtr<SVGPendingElements>> m_pendingResources; // Resources that are pending.
-    HashMap<AtomicString, OwnPtr<SVGPendingElements>> m_pendingResourcesForRemoval; // Resources that are pending and scheduled for removal.
-    HashMap<SVGElement*, OwnPtr<HashSet<SVGElement*>>> m_elementDependencies;
-    OwnPtr<SVGResourcesCache> m_resourcesCache;
+    HashMap<AtomicString, std::unique_ptr<SVGPendingElements>> m_pendingResources; // Resources that are pending.
+    HashMap<AtomicString, std::unique_ptr<SVGPendingElements>> m_pendingResourcesForRemoval; // Resources that are pending and scheduled for removal.
+    HashMap<SVGElement*, std::unique_ptr<HashSet<SVGElement*>>> m_elementDependencies;
+    std::unique_ptr<SVGResourcesCache> m_resourcesCache;
 
 public:
     // This HashMap contains a list of pending resources. Pending resources, are such
@@ -99,14 +98,14 @@ public:
     bool isElementPendingResource(Element*, const AtomicString& id) const;
     void clearHasPendingResourcesIfPossible(Element*);
     void removeElementFromPendingResources(Element*);
-    OwnPtr<SVGPendingElements> removePendingResource(const AtomicString& id);
+    std::unique_ptr<SVGPendingElements> removePendingResource(const AtomicString& id);
 
     // The following two functions are used for scheduling a pending resource to be removed.
     void markPendingResourcesForRemoval(const AtomicString&);
     Element* removeElementFromPendingResourcesForRemoval(const AtomicString&);
 
 private:
-    OwnPtr<SVGPendingElements> removePendingResourceForRemoval(const AtomicString&);
+    std::unique_ptr<SVGPendingElements> removePendingResourceForRemoval(const AtomicString&);
 };
 
 }

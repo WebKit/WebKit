@@ -28,10 +28,9 @@
 #include "SVGAnimatedTypeAnimator.h"
 #include "SVGAnimationElement.h"
 #include "SVGNames.h"
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
-    
+
 class SVGAnimatedProperty;
 
 class SVGAnimateElement : public SVGAnimationElement {
@@ -40,7 +39,7 @@ public:
     virtual ~SVGAnimateElement();
 
     AnimatedPropertyType determineAnimatedPropertyType(SVGElement*) const;
-    
+
 protected:
     SVGAnimateElement(const QualifiedName&, Document&);
 
@@ -67,13 +66,13 @@ private:
 
     virtual bool hasValidAttributeType() OVERRIDE;
 
-    OwnPtr<SVGAnimatedType> m_fromType;
-    OwnPtr<SVGAnimatedType> m_toType;
-    OwnPtr<SVGAnimatedType> m_toAtEndOfDurationType;
-    OwnPtr<SVGAnimatedType> m_animatedType;
+    std::unique_ptr<SVGAnimatedType> m_fromType;
+    std::unique_ptr<SVGAnimatedType> m_toType;
+    std::unique_ptr<SVGAnimatedType> m_toAtEndOfDurationType;
+    std::unique_ptr<SVGAnimatedType> m_animatedType;
 
     SVGElementAnimatedPropertyList m_animatedProperties;
-    OwnPtr<SVGAnimatedTypeAnimator> m_animator;
+    std::unique_ptr<SVGAnimatedTypeAnimator> m_animator;
 };
 
 void isSVGAnimateElement(const SVGAnimateElement&); // Catch unnecessary runtime check of type known at compile time.

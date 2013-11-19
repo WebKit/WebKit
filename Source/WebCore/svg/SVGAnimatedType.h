@@ -39,25 +39,27 @@ class SVGPathByteStream;
 class SVGAnimatedType {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    SVGAnimatedType(AnimatedPropertyType);
     virtual ~SVGAnimatedType();
 
-    static PassOwnPtr<SVGAnimatedType> createAngleAndEnumeration(std::pair<SVGAngle, unsigned>*);
-    static PassOwnPtr<SVGAnimatedType> createBoolean(bool*);
-    static PassOwnPtr<SVGAnimatedType> createColor(Color*);
-    static PassOwnPtr<SVGAnimatedType> createEnumeration(unsigned*);
-    static PassOwnPtr<SVGAnimatedType> createInteger(int*);
-    static PassOwnPtr<SVGAnimatedType> createIntegerOptionalInteger(std::pair<int, int>*);
-    static PassOwnPtr<SVGAnimatedType> createLength(SVGLength*);
-    static PassOwnPtr<SVGAnimatedType> createLengthList(SVGLengthList*);
-    static PassOwnPtr<SVGAnimatedType> createNumber(float*);
-    static PassOwnPtr<SVGAnimatedType> createNumberList(SVGNumberList*);
-    static PassOwnPtr<SVGAnimatedType> createNumberOptionalNumber(std::pair<float, float>*);
-    static PassOwnPtr<SVGAnimatedType> createPath(std::unique_ptr<SVGPathByteStream>);
-    static PassOwnPtr<SVGAnimatedType> createPointList(SVGPointList*);
-    static PassOwnPtr<SVGAnimatedType> createPreserveAspectRatio(SVGPreserveAspectRatio*);
-    static PassOwnPtr<SVGAnimatedType> createRect(FloatRect*);
-    static PassOwnPtr<SVGAnimatedType> createString(String*);
-    static PassOwnPtr<SVGAnimatedType> createTransformList(SVGTransformList*);
+    // FIXME: These functions should all take std::unique_ptr arguments instead of bare pointers.
+    static std::unique_ptr<SVGAnimatedType> createAngleAndEnumeration(std::pair<SVGAngle, unsigned>*);
+    static std::unique_ptr<SVGAnimatedType> createBoolean(bool*);
+    static std::unique_ptr<SVGAnimatedType> createColor(Color*);
+    static std::unique_ptr<SVGAnimatedType> createEnumeration(unsigned*);
+    static std::unique_ptr<SVGAnimatedType> createInteger(int*);
+    static std::unique_ptr<SVGAnimatedType> createIntegerOptionalInteger(std::pair<int, int>*);
+    static std::unique_ptr<SVGAnimatedType> createLength(SVGLength*);
+    static std::unique_ptr<SVGAnimatedType> createLengthList(SVGLengthList*);
+    static std::unique_ptr<SVGAnimatedType> createNumber(float*);
+    static std::unique_ptr<SVGAnimatedType> createNumberList(SVGNumberList*);
+    static std::unique_ptr<SVGAnimatedType> createNumberOptionalNumber(std::pair<float, float>*);
+    static std::unique_ptr<SVGAnimatedType> createPath(std::unique_ptr<SVGPathByteStream>);
+    static std::unique_ptr<SVGAnimatedType> createPointList(SVGPointList*);
+    static std::unique_ptr<SVGAnimatedType> createPreserveAspectRatio(SVGPreserveAspectRatio*);
+    static std::unique_ptr<SVGAnimatedType> createRect(FloatRect*);
+    static std::unique_ptr<SVGAnimatedType> createString(String*);
+    static std::unique_ptr<SVGAnimatedType> createTransformList(SVGTransformList*);
     static bool supportsAnimVal(AnimatedPropertyType);
 
     AnimatedPropertyType type() const { return m_type; }
@@ -270,10 +272,8 @@ public:
 
     String valueAsString();
     bool setValueAsString(const QualifiedName&, const String&);
-    
-private:
-    SVGAnimatedType(AnimatedPropertyType);
 
+private:
     AnimatedPropertyType m_type;
 
     union DataUnion {
@@ -301,7 +301,7 @@ private:
         SVGTransformList* transformList;
     } m_data;
 };
-    
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
