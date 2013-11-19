@@ -66,11 +66,6 @@ IDBServerConnectionLevelDB::~IDBServerConnectionLevelDB()
 {
 }
 
-IDBBackingStoreInterface* IDBServerConnectionLevelDB::deprecatedBackingStore()
-{
-    return m_backingStore.get();
-}
-
 bool IDBServerConnectionLevelDB::isClosed()
 {
     return m_closed;

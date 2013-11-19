@@ -46,10 +46,6 @@ public:
 
     virtual ~IDBServerConnectionLevelDB();
 
-    // FIXME: For now, server connection provides a synchronous accessor to the in-process backing store objects.
-    // This is temporary and will be removed soon.
-    virtual IDBBackingStoreInterface* deprecatedBackingStore() OVERRIDE;
-
     virtual bool isClosed() OVERRIDE;
 
     // Database-level operations

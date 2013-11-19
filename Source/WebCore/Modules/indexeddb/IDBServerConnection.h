@@ -55,10 +55,6 @@ class IDBServerConnection : public RefCounted<IDBServerConnection> {
 public:
     virtual ~IDBServerConnection() { }
 
-    // FIXME: For now, server connection provides a synchronous accessor to the in-process backing store objects.
-    // This is temporary and will be removed soon.
-    virtual IDBBackingStoreInterface* deprecatedBackingStore() = 0;
-
     virtual bool isClosed() = 0;
 
     typedef std::function<void (bool success)> BoolCallbackFunction;
