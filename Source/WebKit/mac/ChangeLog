@@ -1,3 +1,17 @@
+2013-11-18  Mark Rowe  <mrowe@apple.com>
+
+        Disable deprecation warnings related to NSCalendarDate in WebHistory.
+
+        Reviewed by Anders Carlsson.
+
+        * History/WebHistory.h: Use a #pragma to have the compiler treat this header as
+        a system header, even when not included from a system location. This has the effect
+        of suppressing warnings when including this header. It's a more general effect than
+        we're after but is also less invasive than disabling deprecation warnings around
+        the APIs that are defined in terms of NSCalendarDate. We'll hopefully revisit this
+        in the future.
+        * History/WebHistory.mm: Disable deprecation warnings around uses of NSCalendarDate.
+
 2013-11-18  David Hyatt  <hyatt@apple.com>
 
         Add a quirk to not respect center text-align when positioning

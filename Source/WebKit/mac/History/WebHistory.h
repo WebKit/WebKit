@@ -28,6 +28,8 @@
 
 #import <Foundation/Foundation.h>
 
+#pragma GCC system_header
+
 @class NSError;
 
 @class WebHistoryItem;
