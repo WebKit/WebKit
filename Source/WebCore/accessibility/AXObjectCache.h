@@ -54,14 +54,10 @@ struct TextMarkerData {
 
 class AXComputedObjectAttributeCache {
 public:
-    static PassOwnPtr<AXComputedObjectAttributeCache> create() { return adoptPtr(new AXComputedObjectAttributeCache()); }
-
     AccessibilityObjectInclusion getIgnored(AXID) const;
     void setIgnored(AXID, AccessibilityObjectInclusion);
 
 private:
-    AXComputedObjectAttributeCache() { }
-
     struct CachedAXObjectAttributes {
         CachedAXObjectAttributes() : ignored(DefaultBehavior) { }
 
@@ -229,7 +225,7 @@ private:
     HashMap<Widget*, AXID> m_widgetObjectMapping;
     HashMap<Node*, AXID> m_nodeObjectMapping;
     HashSet<Node*> m_textMarkerNodes;
-    OwnPtr<AXComputedObjectAttributeCache> m_computedObjectAttributeCache;
+    std::unique_ptr<AXComputedObjectAttributeCache> m_computedObjectAttributeCache;
     static bool gAccessibilityEnabled;
     static bool gAccessibilityEnhancedUserInterfaceEnabled;
     

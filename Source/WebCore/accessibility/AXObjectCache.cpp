@@ -866,13 +866,12 @@ void AXObjectCache::recomputeIsIgnored(RenderObject* renderer)
 void AXObjectCache::startCachingComputedObjectAttributesUntilTreeMutates()
 {
     if (!m_computedObjectAttributeCache)
-        m_computedObjectAttributeCache = AXComputedObjectAttributeCache::create();
+        m_computedObjectAttributeCache = std::make_unique<AXComputedObjectAttributeCache>();
 }
 
 void AXObjectCache::stopCachingComputedObjectAttributes()
 {
-    if (m_computedObjectAttributeCache)
-        m_computedObjectAttributeCache.clear();
+    m_computedObjectAttributeCache = nullptr;
 }
 
 VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(TextMarkerData& textMarkerData)

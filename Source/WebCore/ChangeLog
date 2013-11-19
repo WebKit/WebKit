@@ -1,3 +1,18 @@
+2013-11-19  Krzysztof Czech  <k.czech@samsung.com>
+
+        [AX] Use std::unique_ptr to manage AXComputedObjectAttributeCache
+        https://bugs.webkit.org/show_bug.cgi?id=124404
+
+        Reviewed by Mario Sanchez Prada.
+
+        Convert OwnPtr/PassOwnPtr to std::unique_ptr.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::startCachingComputedObjectAttributesUntilTreeMutates):
+        (WebCore::AXObjectCache::stopCachingComputedObjectAttributes):
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXComputedObjectAttributeCache::AXComputedObjectAttributeCache):
+
 2013-11-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add more assertions with security implications in DocumentOrderedMap
