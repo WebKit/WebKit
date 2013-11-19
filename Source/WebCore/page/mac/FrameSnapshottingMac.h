@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,24 +20,25 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FrameWin_h
-#define FrameWin_h
+#ifndef FrameSnapshottingMac_h
+#define FrameSnapshottingMac_h
 
-#include <wtf/Vector.h>
-#include <wtf/win/GDIObject.h>
+OBJC_CLASS NSImage;
 
 namespace WebCore {
 
 class Frame;
-class IntRect;
+class Range;
+class Node;
 
-GDIObject<HBITMAP> imageFromRect(const Frame*, IntRect&);
-GDIObject<HBITMAP> imageFromSelection(Frame*, bool forceWhiteText);
-void computePageRectsForFrame(Frame*, const IntRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, Vector<IntRect>& outPages, int& outPageHeight);
+NSImage* selectionImage(Frame*, bool forceBlackText = false);
+NSImage* rangeImage(Frame*, Range*, bool forceBlackText = false);
+NSImage* snapshotDragImage(Frame*, Node*, NSRect* imageRect, NSRect* elementRect);
+NSImage* imageFromRect(Frame*, NSRect);
 
-} // namespace WebCore
+}
 
-#endif // FrameWin_h
+#endif // FrameSnapshottingMac_h

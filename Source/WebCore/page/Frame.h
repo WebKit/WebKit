@@ -29,6 +29,7 @@
 #define Frame_h
 
 #include "AdjustViewSizeOrNot.h"
+#include "DragImage.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "IntRect.h"
@@ -57,13 +58,11 @@ namespace WebCore {
     class Editor;
     class Element;
     class EventHandler;
-    class FloatSize;
     class FrameDestructionObserver;
     class FrameSelection;
     class FrameView;
     class HTMLFrameOwnerElement;
     class HTMLTableCellElement;
-    class ImageBuffer;
     class IntRect;
     class MainFrame;
     class Node;
@@ -177,6 +176,9 @@ namespace WebCore {
         static void clearTimers(FrameView*, Document*);
 
         String displayStringModifiedByEncoding(const String&) const;
+
+        DragImageRef nodeImage(Node*);
+        DragImageRef dragImageForSelection();
 
         VisiblePosition visiblePositionForPoint(const IntPoint& framePoint);
         Document* documentAtPoint(const IntPoint& windowPoint);

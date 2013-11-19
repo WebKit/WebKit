@@ -85,7 +85,6 @@
 #import <WebCore/DocumentFragment.h>
 #import <WebCore/DocumentMarkerController.h>
 #import <WebCore/DragController.h>
-#import <WebCore/DragImage.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EditorDeleteAction.h>
 #import <WebCore/Element.h>
@@ -96,6 +95,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameSelection.h>
+#import <WebCore/FrameSnapshottingMac.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/HTMLNames.h>
@@ -1820,12 +1820,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
 {
     if (![self _hasSelection])
         return nil;
-
-    Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return nil;
-
-    NSImage *dragImage = [[createDragImageForSelection(*coreFrame) retain] autorelease];
+    NSImage *dragImage = selectionImage(core([self _frame]));
     [dragImage _web_dissolveToFraction:WebDragImageAlpha];
     return dragImage;
 }
@@ -5970,11 +5965,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 {
     if (![self _hasSelection])
         return nil;
-
-    Frame* coreFrame = core([self _frame]);
-    if (!coreFrame)
-        return nil;
-    return [[createDragImageForSelection(*coreFrame, forceBlackText) retain] autorelease];
+    return selectionImage(core([self _frame]), forceBlackText);
 }
 
 - (NSRect)selectionImageRect

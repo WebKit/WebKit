@@ -36,9 +36,9 @@
 #import "DOMNodeInternal.h"
 #import "DOMPrivate.h"
 #import "DOMRangeInternal.h"
-#import "DragImage.h"
 #import "Font.h"
 #import "Frame.h"
+#import "FrameSnapshottingMac.h"
 #import "HTMLElement.h"
 #import "HTMLNames.h"
 #import "HTMLParserIdioms.h"
@@ -287,9 +287,9 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     // FIXME: Could we move this function to WebCore::Node and autogenerate?
     WebCore::Node* node = core(self);
     WebCore::Frame* frame = node->document().frame();
-    if (!frame || !node)
+    if (!frame)
         return nil;
-    return [[createDragImageForNode(*frame, *node) retain] autorelease];
+    return frame->nodeImage(node).get();
 }
 
 - (NSArray *)textRects
@@ -332,10 +332,10 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 {
     WebCore::Range* range = core(self);
     WebCore::Frame* frame = range->ownerDocument().frame();
-    if (!frame || !range)
+    if (!frame)
         return nil;
 
-    return [[createDragImageForRange(*frame, *range, forceBlackText) retain] autorelease];
+    return WebCore::rangeImage(frame, range, forceBlackText);
 }
 
 - (NSArray *)textRects

@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
+ * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +25,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FrameWin_h
-#define FrameWin_h
+#import "config.h"
+#import "Frame.h"
 
-#include <wtf/Vector.h>
-#include <wtf/win/GDIObject.h>
+#import "Document.h"
+#import "FrameLoaderClient.h"
+#import "FrameSelection.h"
+#import "FrameSnapshottingMac.h"
+#import "FrameView.h"
+#import "RenderObject.h"
 
 namespace WebCore {
 
-class Frame;
-class IntRect;
+DragImageRef Frame::nodeImage(Node* node)
+{
+    m_doc->updateLayout(); // forces style recalc
 
-GDIObject<HBITMAP> imageFromRect(const Frame*, IntRect&);
-GDIObject<HBITMAP> imageFromSelection(Frame*, bool forceWhiteText);
-void computePageRectsForFrame(Frame*, const IntRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, Vector<IntRect>& outPages, int& outPageHeight);
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
+        return nil;
+    LayoutRect topLevelRect;
+    NSRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
+
+    m_view->setNodeToDraw(node); // invoke special sub-tree drawing mode
+    NSImage* result = imageFromRect(this, paintingRect);
+    m_view->setNodeToDraw(0);
+
+    return result;
+}
+
+DragImageRef Frame::dragImageForSelection()
+{
+    if (!selection().isRange())
+        return nil;
+    return selectionImage(this);
+}
 
 } // namespace WebCore
-
-#endif // FrameWin_h

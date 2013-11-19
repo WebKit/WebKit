@@ -1,3 +1,53 @@
+2013-11-18  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r159455.
+        http://trac.webkit.org/changeset/159455
+        https://bugs.webkit.org/show_bug.cgi?id=124568
+
+        broke two api tests (see bug 124564) (Requested by thorton on
+        #webkit).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        (-[DOMNode renderedImage]):
+        (-[DOMRange renderedImageForcingBlackText:]):
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::createDragImage):
+        * dom/ClipboardMac.mm:
+        (WebCore::Clipboard::createDragImage):
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        * page/Frame.cpp:
+        (WebCore::ScopedFramePaintingState::ScopedFramePaintingState):
+        (WebCore::ScopedFramePaintingState::~ScopedFramePaintingState):
+        (WebCore::Frame::nodeImage):
+        (WebCore::Frame::dragImageForSelection):
+        * page/Frame.h:
+        * page/FrameSnapshotting.cpp: Removed.
+        * page/FrameSnapshotting.h: Removed.
+        * page/mac/FrameMac.mm: Copied from Source/WebCore/page/win/FrameWin.h.
+        (WebCore::Frame::nodeImage):
+        (WebCore::Frame::dragImageForSelection):
+        * page/mac/FrameSnapshottingMac.h: Copied from Source/WebCore/page/win/FrameWin.h.
+        * page/mac/FrameSnapshottingMac.mm: Added.
+        (WebCore::imageFromRect):
+        (WebCore::selectionImage):
+        (WebCore::rangeImage):
+        (WebCore::snapshotDragImage):
+        * page/win/FrameWin.cpp:
+        (WebCore::Frame::dragImageForSelection):
+        (WebCore::Frame::nodeImage):
+        * page/win/FrameWin.h:
+        * platform/DragImage.cpp:
+        (WebCore::fitDragImageToMaxSize):
+        (WebCore::createDragImageForLink):
+        * platform/DragImage.h:
+
 2013-11-18  Mark Rowe  <mrowe@apple.com>
 
         Use hw.activecpu for determining how many processes to spawn.

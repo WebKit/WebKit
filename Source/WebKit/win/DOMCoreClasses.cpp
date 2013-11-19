@@ -36,10 +36,10 @@
 #include <WebCore/COMPtr.h>
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Document.h>
-#include <WebCore/DragImage.h>
 #include <WebCore/Element.h>
 #include <WebCore/Font.h>
 #include <WebCore/Frame.h>
+#include <WebCore/SimpleFontData.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
@@ -49,7 +49,6 @@
 #include <WebCore/NodeList.h>
 #include <WebCore/RenderElement.h>
 #include <WebCore/RenderTreeAsText.h>
-#include <WebCore/SimpleFontData.h>
 
 #include <initguid.h>
 // {3B0C0EFF-478B-4b0b-8290-D2321E08E23E}
@@ -1280,7 +1279,7 @@ HRESULT STDMETHODCALLTYPE DOMElement::renderedImage(HBITMAP* image)
     if (!frame)
         return E_FAIL;
 
-    *image = createDragImageForNode(*frame, *m_element);
+    *image = frame->nodeImage(m_element);
     if (!*image)
         return E_FAIL;
 

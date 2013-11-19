@@ -37,7 +37,6 @@
 #include "DragActions.h"
 #include "DragClient.h"
 #include "DragData.h"
-#include "DragImage.h"
 #include "DragSession.h"
 #include "DragState.h"
 #include "Editor.h"
@@ -781,7 +780,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         }
         m_client.willPerformDragSourceAction(DragSourceActionSelection, dragOrigin, clipboard);
         if (!dragImage) {
-            dragImage = dissolveDragImageToFraction(createDragImageForSelection(src), DragImageAlpha);
+            dragImage = dissolveDragImageToFraction(src.dragImageForSelection(), DragImageAlpha);
             dragLoc = dragLocForSelectionDrag(src);
             m_dragOffset = IntPoint(dragOrigin.x() - dragLoc.x(), dragOrigin.y() - dragLoc.y());
         }
