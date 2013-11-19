@@ -1,5 +1,13 @@
 2013-11-19  Anders Carlsson  <andersca@apple.com>
 
+        Move DataReference to Platform/IPC.
+
+        * Platform/IPC/DataReference.cpp: Renamed from Source/WebKit2/Platform/CoreIPC/DataReference.cpp.
+        * Platform/IPC/DataReference.h: Renamed from Source/WebKit2/Platform/CoreIPC/DataReference.h.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2013-11-19  Anders Carlsson  <andersca@apple.com>
+
         Add and call PageLoadState::reset
         https://bugs.webkit.org/show_bug.cgi?id=124591
 
