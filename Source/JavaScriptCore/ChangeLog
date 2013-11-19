@@ -1,3 +1,16 @@
+2013-11-18  Michael Saboff  <msaboff@apple.com>
+
+        ARM64: Update getHostCallReturnValue() to use architected frame pointer register
+        https://bugs.webkit.org/show_bug.cgi?id=124520
+
+        Reviewed by Filip Pizlo.
+
+        Changed from using the prior JSC specific x25 callframe register to the ARM64
+        architected x29 (fp) register.  This change should have been done as part of
+        https://bugs.webkit.org/show_bug.cgi?id=123956.
+
+        * jit/JITOperations.cpp:
+
 2013-11-18  Filip Pizlo  <fpizlo@apple.com>
 
         put_to_scope[5] should not point to the structure if it's a variable access, but it should point to the WatchpointSet
