@@ -1,3 +1,17 @@
+2013-11-18  Samuel White  <samuel_white@apple.com>
+
+        AX: aria-labelledby should be used in preference to aria-labeledby
+        https://bugs.webkit.org/show_bug.cgi?id=62351
+
+        Reviewed by Chris Fleizach.
+
+        Making sure aria-labelled by overrides the incorrectly spelled aria-labeledby attribute.
+
+        Test: accessibility/aria-labelledby-overrides-aria-labeledby.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::ariaLabeledByElements):
+
 2013-11-18  Zalan Bujtas  <zalan@apple.com>
 
         use after free in WebCore::DocumentOrderedMap::remove / WebCore::TreeScope::removeElementById

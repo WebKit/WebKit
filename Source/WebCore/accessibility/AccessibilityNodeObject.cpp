@@ -1900,9 +1900,9 @@ void AccessibilityNodeObject::elementsFromAttribute(Vector<Element*>& elements, 
 
 void AccessibilityNodeObject::ariaLabeledByElements(Vector<Element*>& elements) const
 {
-    elementsFromAttribute(elements, aria_labeledbyAttr);
+    elementsFromAttribute(elements, aria_labelledbyAttr);
     if (!elements.size())
-        elementsFromAttribute(elements, aria_labelledbyAttr);
+        elementsFromAttribute(elements, aria_labeledbyAttr);
 }
 
 
