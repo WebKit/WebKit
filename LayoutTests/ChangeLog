@@ -1,5 +1,11 @@
 2013-11-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed, EFL gardening. Adding a crash expectation.
+
+        * platform/efl/TestExpectations:
+
+2013-11-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Unreviewed, EFL gardening. Adding a crash expectation for a test regarding
         object-fit. 
 

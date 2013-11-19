@@ -527,6 +527,8 @@ webkit.org/b/116025 compositing/video/video-background-color.html [ Crash Pass ]
 
 webkit.org/b/124574 fast/css/object-fit/object-fit-embed.html [ Crash Pass ]
 
+webkit.org/b/124575 fast/forms/select-live-pseudo-selectors.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
