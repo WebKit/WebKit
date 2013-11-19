@@ -1,3 +1,156 @@
+2013-11-19  Mark Lam  <mark.lam@apple.com>
+
+        Add tracking of endColumn for Executables.
+        https://bugs.webkit.org/show_bug.cgi?id=124245.
+
+        Reviewed by Geoffrey Garen.
+
+        1. Fixed computation of columns to take into account the startColumn from
+           <script> tags. Previously, we were only computing the column relative
+           to the char after the <script> tag. Now, the column number that JSC
+           computes is always the column number you'll see when viewing the source
+           in a text editor (assuming the first column position is 1, not 0).
+
+        2. Previously, unlinkedExecutables kept the a base-1 startColumn for
+           ProgramExecutables and EvalExecutables, but uses base-0 columns for
+           FunctionExecutables. This has been fixed so that they all use base-0
+           columns. When the executable gets linked, the column is adjusted into
+           a base-1 value.
+
+        3. In the UnlinkedFunctionExecutable, renamed m_functionStartOffset to
+           m_unlinkedFunctionNameStart because it actually points to the start
+           column in the name part of the function declaration.
+
+           Similarly, renamed m_functionStartColumn to m_unlinkedBodyStartColumn
+           because it points to the first character in the function body. This is
+           usually '{' except for functions created from "global code" which
+           excludes its braces. See FunctionExecutable::fromGlobalCode().
+
+               The exclusion of braces for the global code case is needed so that
+           computed start and end columns will more readily map to what a JS
+           developer would expect them to be. Otherwise, the first column of the
+           function source will not be 1 (includes prepended characters added in
+           constructFunctionSkippingEvalEnabledCheck()).
+
+           Also, similarly, a m_unlinkedBodyEndColumn has been added to track the
+           end column of the UnlinkedFunctionExecutable.
+
+        4. For unlinked executables, end column values are either:
+           a. Relative to the start of the last line if (last line != first line).
+           b. Relative to the start column position if (last line == first line).
+
+           The second case is needed so that we can add an appropriate adjustment
+           to the end column value (just like we do for the start column) when we
+           link the executable.
+
+        5. This is not new to this patch, but it worth noting that the lineCount
+           values used through this patch has the following meaning:
+           - a lineCount of 0 means the source for this code block is on 1 line.
+           - a lineCount of N means there are N + l lines of source.
+
+           This interpretation is janky, but was present before this patch. We can
+           clean that up later in another patch.
+
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        - In order to implement WebCore::Internals::parserMetaData(), we need to
+          move some seemingly unrelated header files from the Project section to
+          the Private section so that they can be #include'd by the forwarding
+          CodeBlock.h from WebCore.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::sourceCodeForTools):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::generateFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        - m_isFromGlobalCode is needed to support the exclusion of the open brace /
+          prepended code for functions created from "global code".
+        (JSC::UnlinkedFunctionExecutable::link):
+        (JSC::UnlinkedFunctionExecutable::fromGlobalCode):
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedFunctionExecutable::create):
+        (JSC::UnlinkedFunctionExecutable::unlinkedFunctionNameStart):
+        (JSC::UnlinkedFunctionExecutable::unlinkedBodyStartColumn):
+        (JSC::UnlinkedFunctionExecutable::unlinkedBodyEndColumn):
+        (JSC::UnlinkedFunctionExecutable::recordParse):
+        (JSC::UnlinkedCodeBlock::recordParse):
+        (JSC::UnlinkedCodeBlock::endColumn):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionBodyNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFunctionBody):
+        (JSC::ASTBuilder::setFunctionNameStart):
+        * parser/Lexer.cpp:
+        (JSC::::shiftLineTerminator):
+        - Removed an unused SourceCode Lexer<T>::sourceCode() function.
+        * parser/Lexer.h:
+        (JSC::Lexer::positionBeforeLastNewline):
+        (JSC::Lexer::prevTerminator):
+        - Added tracking of m_positionBeforeLastNewline in the Lexer to enable us
+          to exclude the close brace / appended code for functions created from "global
+          code".
+        * parser/Nodes.cpp:
+        (JSC::ProgramNode::ProgramNode):
+        (JSC::ProgramNode::create):
+        (JSC::EvalNode::EvalNode):
+        (JSC::EvalNode::create):
+        (JSC::FunctionBodyNode::FunctionBodyNode):
+        (JSC::FunctionBodyNode::create):
+        (JSC::FunctionBodyNode::setEndPosition):
+        - setEndPosition() is needed to fixed up the end position so that we can
+          exclude the close brace / appended code for functions created from "global
+          code".
+        * parser/Nodes.h:
+        (JSC::ProgramNode::startColumn):
+        (JSC::ProgramNode::endColumn):
+        (JSC::EvalNode::startColumn):
+        (JSC::EvalNode::endColumn):
+        (JSC::FunctionBodyNode::setFunctionNameStart):
+        (JSC::FunctionBodyNode::functionNameStart):
+        (JSC::FunctionBodyNode::endColumn):
+        * parser/Parser.cpp:
+        (JSC::::parseFunctionBody):
+        (JSC::::parseFunctionInfo):
+        * parser/Parser.h:
+        (JSC::Parser::positionBeforeLastNewline):
+        (JSC::::parse):
+        - Subtracted 1 from startColumn here to keep the node column values consistently
+          base-0. See note 2 above.
+        (JSC::parse):
+        * parser/SourceProviderCacheItem.h:
+        (JSC::SourceProviderCacheItem::SourceProviderCacheItem):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createFunctionBody):
+        (JSC::SyntaxChecker::setFunctionNameStart):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getProgramCodeBlock):
+        (JSC::CodeCache::getEvalCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/CodeCache.h:
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        (JSC::FunctionExecutable::fromGlobalCode):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::isEvalExecutable):
+        (JSC::ExecutableBase::isProgramExecutable):
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::ScriptExecutable::endColumn):
+        (JSC::ScriptExecutable::recordParse):
+        (JSC::FunctionExecutable::create):
+        (JSC::FunctionExecutable::bodyIncludesBraces):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::insertSemicolonIfNeeded):
+        (JSC::functionProtoFuncToString):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::createProgramCodeBlock):
+        (JSC::JSGlobalObject::createEvalCodeBlock):
+
 2013-11-19  Dean Jackson  <dino@apple.com>
 
         MarkedSpace::resumeAllocating needs to delay release

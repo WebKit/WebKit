@@ -153,8 +153,8 @@ public:
     ExpressionType createConditionalExpr(const JSTokenLocation&, ExpressionType, ExpressionType, ExpressionType) { return ConditionalExpr; }
     ExpressionType createAssignResolve(const JSTokenLocation&, const Identifier&, ExpressionType, int, int, int) { return AssignmentExpr; }
     ExpressionType createFunctionExpr(const JSTokenLocation&, const Identifier*, int, int, int, int, int, int, int) { return FunctionExpr; }
-    int createFunctionBody(const JSTokenLocation&, const JSTokenLocation&, int, bool) { return 1; }
-    void setFunctionStart(int, int) { }
+    int createFunctionBody(const JSTokenLocation&, const JSTokenLocation&, int, int, bool) { return 1; }
+    void setFunctionNameStart(int, int) { }
     int createArguments() { return 1; }
     int createArguments(int) { return 1; }
     ExpressionType createSpreadExpression(const JSTokenLocation&, ExpressionType, int, int, int) { return 1; }

@@ -83,9 +83,9 @@ class UnlinkedFunctionExecutable : public JSCell {
 public:
     friend class CodeCache;
     typedef JSCell Base;
-    static UnlinkedFunctionExecutable* create(VM* vm, const SourceCode& source, FunctionBodyNode* node)
+    static UnlinkedFunctionExecutable* create(VM* vm, const SourceCode& source, FunctionBodyNode* node, bool isFromGlobalCode = false)
     {
-        UnlinkedFunctionExecutable* instance = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(vm->heap)) UnlinkedFunctionExecutable(vm, vm->unlinkedFunctionExecutableStructure.get(), source, node);
+        UnlinkedFunctionExecutable* instance = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(vm->heap)) UnlinkedFunctionExecutable(vm, vm->unlinkedFunctionExecutableStructure.get(), source, node, isFromGlobalCode);
         instance->finishCreation(*vm);
         return instance;
     }
@@ -103,8 +103,9 @@ public:
 
     unsigned firstLineOffset() const { return m_firstLineOffset; }
     unsigned lineCount() const { return m_lineCount; }
-    unsigned functionStartOffset() const { return m_functionStartOffset; }
-    unsigned functionStartColumn() const { return m_functionStartColumn; }
+    unsigned unlinkedFunctionNameStart() const { return m_unlinkedFunctionNameStart; }
+    unsigned unlinkedBodyStartColumn() const { return m_unlinkedBodyStartColumn; }
+    unsigned unlinkedBodyEndColumn() const { return m_unlinkedBodyEndColumn; }
     unsigned startOffset() const { return m_startOffset; }
     unsigned sourceLength() { return m_sourceLength; }
 
@@ -126,11 +127,10 @@ public:
 
     FunctionParameters* parameters() { return m_parameters.get(); }
 
-    void recordParse(CodeFeatures features, bool hasCapturedVariables, int firstLine, int lastLine)
+    void recordParse(CodeFeatures features, bool hasCapturedVariables)
     {
         m_features = features;
         m_hasCapturedVariables = hasCapturedVariables;
-        m_lineCount = lastLine - firstLine;
     }
 
     bool forceUsesArguments() const { return m_forceUsesArguments; }
@@ -143,7 +143,7 @@ public:
     static void destroy(JSCell*);
 
 private:
-    UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, FunctionBodyNode*);
+    UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, FunctionBodyNode*, bool isFromGlobalCode);
     WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForCall;
     WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForConstruct;
 
@@ -151,6 +151,7 @@ private:
     bool m_forceUsesArguments : 1;
     bool m_isInStrictContext : 1;
     bool m_hasCapturedVariables : 1;
+    bool m_isFromGlobalCode : 1;
 
     Identifier m_name;
     Identifier m_inferredName;
@@ -160,8 +161,9 @@ private:
     RefPtr<FunctionParameters> m_parameters;
     unsigned m_firstLineOffset;
     unsigned m_lineCount;
-    unsigned m_functionStartOffset;
-    unsigned m_functionStartColumn;
+    unsigned m_unlinkedFunctionNameStart;
+    unsigned m_unlinkedBodyStartColumn;
+    unsigned m_unlinkedBodyEndColumn;
     unsigned m_startOffset;
     unsigned m_sourceLength;
 
@@ -186,7 +188,7 @@ public:
 
     static const unsigned StructureFlags = OverridesVisitChildren | JSCell::StructureFlags;
 
-    DECLARE_INFO;
+    DECLARE_EXPORT_INFO;
 };
 
 struct UnlinkedStringJumpTable {
@@ -441,18 +443,22 @@ public:
     void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot,
         int& startOffset, int& endOffset, unsigned& line, unsigned& column);
 
-    void recordParse(CodeFeatures features, bool hasCapturedVariables, unsigned firstLine, unsigned lineCount)
+    void recordParse(CodeFeatures features, bool hasCapturedVariables, unsigned firstLine, unsigned lineCount, unsigned endColumn)
     {
         m_features = features;
         m_hasCapturedVariables = hasCapturedVariables;
         m_firstLine = firstLine;
         m_lineCount = lineCount;
+        // For the UnlinkedCodeBlock, startColumn is always 0.
+        m_endColumn = endColumn;
     }
 
     CodeFeatures codeFeatures() const { return m_features; }
     bool hasCapturedVariables() const { return m_hasCapturedVariables; }
     unsigned firstLine() const { return m_firstLine; }
     unsigned lineCount() const { return m_lineCount; }
+    ALWAYS_INLINE unsigned startColumn() const { return 0; }
+    unsigned endColumn() const { return m_endColumn; }
 
 protected:
     UnlinkedCodeBlock(VM*, Structure*, CodeType, const ExecutableInfo&);
@@ -492,6 +498,7 @@ private:
     bool m_hasCapturedVariables : 1;
     unsigned m_firstLine;
     unsigned m_lineCount;
+    unsigned m_endColumn;
 
     CodeFeatures m_features;
     CodeType m_codeType;

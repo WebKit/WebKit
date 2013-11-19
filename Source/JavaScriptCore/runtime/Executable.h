@@ -93,9 +93,17 @@ public:
         
     CodeBlockHash hashFor(CodeSpecializationKind) const;
 
+    bool isEvalExecutable()
+    {
+        return structure()->typeInfo().type() == EvalExecutableType;
+    }
     bool isFunctionExecutable()
     {
         return structure()->typeInfo().type() == FunctionExecutableType;
+    }
+    bool isProgramExecutable()
+    {
+        return structure()->typeInfo().type() == ProgramExecutableType;
     }
 
     bool isHostFunction() const
@@ -355,6 +363,8 @@ public:
         , m_source(source)
         , m_features(isInStrictContext ? StrictModeFeature : 0)
         , m_neverInline(false)
+        , m_startColumn(UINT_MAX)
+        , m_endColumn(UINT_MAX)
     {
     }
 
@@ -363,6 +373,8 @@ public:
         , m_source(source)
         , m_features(isInStrictContext ? StrictModeFeature : 0)
         , m_neverInline(false)
+        , m_startColumn(UINT_MAX)
+        , m_endColumn(UINT_MAX)
     {
     }
 
@@ -378,6 +390,7 @@ public:
     int lineNo() const { return m_firstLine; }
     int lastLine() const { return m_lastLine; }
     unsigned startColumn() const { return m_startColumn; }
+    unsigned endColumn() const { return m_endColumn; }
 
     bool usesEval() const { return m_features & EvalFeature; }
     bool usesArguments() const { return m_features & ArgumentsFeature; }
@@ -395,13 +408,16 @@ public:
         
     DECLARE_INFO;
 
-    void recordParse(CodeFeatures features, bool hasCapturedVariables, int firstLine, int lastLine, unsigned startColumn)
+    void recordParse(CodeFeatures features, bool hasCapturedVariables, int firstLine, int lastLine, unsigned startColumn, unsigned endColumn)
     {
         m_features = features;
         m_hasCapturedVariables = hasCapturedVariables;
         m_firstLine = firstLine;
         m_lastLine = lastLine;
+        ASSERT(startColumn != UINT_MAX);
         m_startColumn = startColumn;
+        ASSERT(endColumn != UINT_MAX);
+        m_endColumn = endColumn;
     }
 
     void installCode(CodeBlock*);
@@ -437,6 +453,7 @@ protected:
     int m_firstLine;
     int m_lastLine;
     unsigned m_startColumn;
+    unsigned m_endColumn;
 };
 
 class EvalExecutable : public ScriptExecutable {
@@ -549,9 +566,9 @@ class FunctionExecutable : public ScriptExecutable {
 public:
     typedef ScriptExecutable Base;
 
-    static FunctionExecutable* create(VM& vm, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, unsigned firstLine, unsigned lastLine, unsigned startColumn)
+    static FunctionExecutable* create(VM& vm, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, unsigned firstLine, unsigned lastLine, unsigned startColumn, unsigned endColumn, bool bodyIncludesBraces = true)
     {
-        FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(vm.heap)) FunctionExecutable(vm, source, unlinkedExecutable, firstLine, lastLine, startColumn);
+        FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(vm.heap)) FunctionExecutable(vm, source, unlinkedExecutable, firstLine, lastLine, startColumn, endColumn, bodyIncludesBraces);
         executable->finishCreation(vm);
         return executable;
     }
@@ -638,8 +655,10 @@ public:
 
     void clearCode();
 
+    bool bodyIncludesBraces() const { return m_bodyIncludesBraces; }
+
 private:
-    FunctionExecutable(VM&, const SourceCode&, UnlinkedFunctionExecutable*, unsigned firstLine, unsigned lastLine, unsigned startColumn);
+    FunctionExecutable(VM&, const SourceCode&, UnlinkedFunctionExecutable*, unsigned firstLine, unsigned lastLine, unsigned startColumn, unsigned endColumn, bool bodyIncludesBraces);
 
     bool isCompiling()
     {
@@ -658,6 +677,7 @@ private:
     WriteBarrier<UnlinkedFunctionExecutable> m_unlinkedExecutable;
     RefPtr<FunctionCodeBlock> m_codeBlockForCall;
     RefPtr<FunctionCodeBlock> m_codeBlockForConstruct;
+    bool m_bodyIncludesBraces;
 };
 
 inline bool isHostFunction(JSValue value, NativeFunction nativeFunction)

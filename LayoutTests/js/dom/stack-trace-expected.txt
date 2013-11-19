@@ -38,13 +38,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     2   global code at stack-trace.js:47:18
 
 --> Stack Trace:
-    0   htmlInner at stack-trace.html:10:39
+    0   htmlInner at stack-trace.html:10:51
     1   scripterInner at stack-trace.js:32:37
     2   global code at stack-trace.js:49:20
 
 --> Stack Trace:
-    0   htmlInner at stack-trace.html:10:39
-    1   htmlOuter at stack-trace.html:11:33
+    0   htmlInner at stack-trace.html:10:51
+    1   htmlOuter at stack-trace.html:11:45
     2   scripterOuter at stack-trace.js:33:37
     3   global code at stack-trace.js:50:20
 

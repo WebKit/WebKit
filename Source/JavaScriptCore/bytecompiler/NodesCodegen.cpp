@@ -2254,8 +2254,8 @@ void FunctionBodyNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     // If there is no return we must automatically insert one.
     if (!returnNode) {
         RegisterID* r0 = generator.isConstructor() ? generator.thisRegister() : generator.emitLoad(0, jsUndefined());
-        ASSERT((startOffset() -  1) >= lineStartOffset());
-        generator.emitDebugHook(WillLeaveCallFrame, lastLine(), startOffset() - 1, lineStartOffset());
+        ASSERT(startOffset() >= lineStartOffset());
+        generator.emitDebugHook(WillLeaveCallFrame, lastLine(), startOffset(), lineStartOffset());
         generator.emitReturn(r0);
         return;
     }

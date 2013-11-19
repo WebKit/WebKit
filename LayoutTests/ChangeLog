@@ -1,3 +1,20 @@
+2013-11-19  Mark Lam  <mark.lam@apple.com>
+
+        Add tracking of endColumn for Executables.
+        https://bugs.webkit.org/show_bug.cgi?id=124245.
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/events/window-onerror2-expected.txt:
+        * inspector-protocol/debugger/setBreakpoint-actions-expected.txt:
+        * js/dom/script-start-end-locations-expected.txt: Added.
+        * js/dom/script-start-end-locations.html: Added.
+        * js/dom/script-tests/script-start-end-locations.js: Added.
+        * js/dom/stack-trace-expected.txt:
+        * js/dom/stack-trace.html:
+        - Changed tabs to spaces. The tabs were making it hard to visually confirm
+          the exected column values for 2 functions.
+
 2013-11-15  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Support fastSeek() in MediaSource.

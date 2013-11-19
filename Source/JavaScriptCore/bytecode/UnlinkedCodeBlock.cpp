@@ -59,7 +59,7 @@ static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(VM& vm, UnlinkedFunc
     if (executable->forceUsesArguments())
         body->setUsesArguments();
     body->finishParsing(executable->parameters(), executable->name(), executable->functionNameIsInScopeToggle());
-    executable->recordParse(body->features(), body->hasCapturedVariables(), body->lineNo(), body->lastLine());
+    executable->recordParse(body->features(), body->hasCapturedVariables());
     
     UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(&vm, FunctionCode, ExecutableInfo(body->needsActivation(), body->usesEval(), body->isStrictMode(), kind == CodeForConstruct));
     OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(vm, body.get(), result, debuggerMode, profilerMode)));
@@ -80,19 +80,21 @@ unsigned UnlinkedCodeBlock::addOrFindConstant(JSValue v)
     return addConstant(v);
 }
 
-UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* structure, const SourceCode& source, FunctionBodyNode* node)
+UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* structure, const SourceCode& source, FunctionBodyNode* node, bool isFromGlobalCode)
     : Base(*vm, structure)
     , m_numCapturedVariables(node->capturedVariableCount())
     , m_forceUsesArguments(node->usesArguments())
     , m_isInStrictContext(node->isStrictMode())
     , m_hasCapturedVariables(node->hasCapturedVariables())
+    , m_isFromGlobalCode(isFromGlobalCode)
     , m_name(node->ident())
     , m_inferredName(node->inferredName())
     , m_parameters(node->parameters())
     , m_firstLineOffset(node->firstLine() - source.firstLine())
     , m_lineCount(node->lastLine() - node->firstLine())
-    , m_functionStartOffset(node->functionStart() - source.startOffset())
-    , m_functionStartColumn(node->startColumn())
+    , m_unlinkedFunctionNameStart(node->functionNameStart() - source.startOffset())
+    , m_unlinkedBodyStartColumn(node->startColumn())
+    , m_unlinkedBodyEndColumn(m_lineCount ? node->endColumn() : node->endColumn() - node->startColumn())
     , m_startOffset(node->source().startOffset() - source.startOffset())
     , m_sourceLength(node->source().length())
     , m_features(node->features())
@@ -123,16 +125,20 @@ FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& s
 {
     unsigned firstLine = lineOffset + m_firstLineOffset;
     unsigned startOffset = sourceOffset + m_startOffset;
-    unsigned startColumn = m_functionStartColumn + 1; // startColumn should start from 1, not 0.
+    bool startColumnIsOnFirstSourceLine = !m_firstLineOffset;
+    unsigned startColumn = m_unlinkedBodyStartColumn + (startColumnIsOnFirstSourceLine ? source.startColumn() : 1);
+    bool endColumnIsOnStartLine = !m_lineCount;
+    unsigned endColumn = m_unlinkedBodyEndColumn + (endColumnIsOnStartLine ? startColumn : 1);
     SourceCode code(source.provider(), startOffset, startOffset + m_sourceLength, firstLine, startColumn);
-    return FunctionExecutable::create(vm, code, this, firstLine, firstLine + m_lineCount, startColumn);
+    return FunctionExecutable::create(vm, code, this, firstLine, firstLine + m_lineCount, startColumn, endColumn);
 }
 
 UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(const Identifier& name, ExecState* exec, Debugger*, const SourceCode& source, JSObject** exception)
 {
     ParserError error;
-    CodeCache* codeCache = exec->vm().codeCache();
-    UnlinkedFunctionExecutable* executable = codeCache->getFunctionExecutableFromGlobalCode(exec->vm(), name, source, error);
+    VM& vm = exec->vm();
+    CodeCache* codeCache = vm.codeCache();
+    UnlinkedFunctionExecutable* executable = codeCache->getFunctionExecutableFromGlobalCode(vm, name, source, error);
 
     if (exec->lexicalGlobalObject()->hasDebugger())
         exec->lexicalGlobalObject()->debugger()->sourceParsed(exec, source.provider(), error.m_line, error.m_message);
@@ -204,6 +210,7 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType code
     , m_hasCapturedVariables(false)
     , m_firstLine(0)
     , m_lineCount(0)
+    , m_endColumn(UINT_MAX)
     , m_features(0)
     , m_codeType(codeType)
     , m_arrayProfileCount(0)

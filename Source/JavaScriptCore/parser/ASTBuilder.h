@@ -283,14 +283,14 @@ public:
         return result;
     }
 
-    FunctionBodyNode* createFunctionBody(const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, bool inStrictContext)
+    FunctionBodyNode* createFunctionBody(const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, bool inStrictContext)
     {
-        return FunctionBodyNode::create(m_vm, startLocation, endLocation, startColumn, inStrictContext);
+        return FunctionBodyNode::create(m_vm, startLocation, endLocation, startColumn, endColumn, inStrictContext);
     }
 
-    void setFunctionStart(FunctionBodyNode* body, int functionStart)
+    void setFunctionNameStart(FunctionBodyNode* body, int functionNameStart)
     {
-        body->setFunctionStart(functionStart);
+        body->setFunctionNameStart(functionNameStart);
     }
     
     template <bool> PropertyNode* createGetterOrSetterProperty(const JSTokenLocation& location, PropertyNode::Type type, const Identifier* name, ParameterNode* params, FunctionBodyNode* body, unsigned openBraceOffset, unsigned closeBraceOffset, int bodyStartLine, int bodyEndLine, unsigned bodyStartColumn)

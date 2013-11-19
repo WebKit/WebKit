@@ -85,8 +85,11 @@ CallType FunctionPrototype::getCallData(JSCell*, CallData& callData)
 // Functions
 
 // Compatibility hack for the Optimost JavaScript library. (See <rdar://problem/6595040>.)
-static inline void insertSemicolonIfNeeded(String& functionBody)
+static inline void insertSemicolonIfNeeded(String& functionBody, bool bodyIncludesBraces)
 {
+    if (!bodyIncludesBraces)
+        functionBody = makeString("{ ", functionBody, "}");
+
     ASSERT(functionBody[0] == '{');
     ASSERT(functionBody[functionBody.length() - 1] == '}');
 
@@ -109,7 +112,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
             return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(exec), "() {\n    [native code]\n}"));
         FunctionExecutable* executable = function->jsExecutable();
         String sourceString = executable->source().toString();
-        insertSemicolonIfNeeded(sourceString);
+        insertSemicolonIfNeeded(sourceString, executable->bodyIncludesBraces());
         return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(exec), "(", executable->paramString(), ") ", sourceString));
     }
 

@@ -95,10 +95,10 @@ public:
     {
         return JSTextPosition(m_lineNumber, currentOffset(), currentLineStartOffset());
     }
+    JSTextPosition positionBeforeLastNewline() const { return m_positionBeforeLastNewline; }
     void setLastLineNumber(int lastLineNumber) { m_lastLineNumber = lastLineNumber; }
     int lastLineNumber() const { return m_lastLineNumber; }
     bool prevTerminator() const { return m_terminator; }
-    SourceCode sourceCode(int openBrace, int closeBrace, int firstLine, unsigned startColumn);
     bool scanRegExp(const Identifier*& pattern, const Identifier*& flags, UChar patternPrefix = 0);
     bool skipRegExp();
 
@@ -227,6 +227,7 @@ private:
     const T* m_codeEnd;
     const T* m_codeStartPlusOffset;
     const T* m_lineStart;
+    JSTextPosition m_positionBeforeLastNewline;
     bool m_isReparsing;
     bool m_atLineStart;
     bool m_error;

@@ -462,3 +462,4 @@ EXPORTS
         symbolWithPointer(?storeUpdatedQuotaForOrigin@ApplicationCacheStorage@WebCore@@QAE_NPBVSecurityOrigin@2@_J@Z, ?storeUpdatedQuotaForOrigin@ApplicationCacheStorage@WebCore@@QEAA_NPEBVSecurityOrigin@2@_J@Z)
         symbolWithPointer(?cacheStorage@WebCore@@YAAAVApplicationCacheStorage@1@XZ, ?cacheStorage@WebCore@@YAAEAVApplicationCacheStorage@1@XZ)
         symbolWithPointer(?setDefaultOriginQuota@ApplicationCacheStorage@WebCore@@QAEX_J@Z, ?setDefaultOriginQuota@ApplicationCacheStorage@WebCore@@QEAAX_J@Z)
+        symbolWithPointer(?vm@ScriptExecutionContext@WebCore@@QAEPAVVM@JSC@@XZ, ?vm@ScriptExecutionContext@WebCore@@QAEPAVVM@JSC@@XZ)

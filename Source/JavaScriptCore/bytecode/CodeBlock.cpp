@@ -114,7 +114,7 @@ CString CodeBlock::sourceCodeForTools() const
     unsigned unlinkedStartOffset = unlinked->startOffset();
     unsigned linkedStartOffset = executable->source().startOffset();
     int delta = linkedStartOffset - unlinkedStartOffset;
-    unsigned rangeStart = delta + unlinked->functionStartOffset();
+    unsigned rangeStart = delta + unlinked->unlinkedFunctionNameStart();
     unsigned rangeEnd = delta + unlinked->startOffset() + unlinked->sourceLength();
     return toCString(
         "function ",
@@ -1638,12 +1638,14 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionDecl(i);
         unsigned lineCount = unlinkedExecutable->lineCount();
         unsigned firstLine = ownerExecutable->lineNo() + unlinkedExecutable->firstLineOffset();
-        unsigned startColumn = unlinkedExecutable->functionStartColumn();
-        startColumn += (unlinkedExecutable->firstLineOffset() ? 1 : ownerExecutable->startColumn());
+        bool startColumnIsOnOwnerStartLine = !unlinkedExecutable->firstLineOffset();
+        unsigned startColumn = unlinkedExecutable->unlinkedBodyStartColumn() + (startColumnIsOnOwnerStartLine ? ownerExecutable->startColumn() : 1);
+        bool endColumnIsOnStartLine = !lineCount;
+        unsigned endColumn = unlinkedExecutable->unlinkedBodyEndColumn() + (endColumnIsOnStartLine ? startColumn : 1);
         unsigned startOffset = sourceOffset + unlinkedExecutable->startOffset();
         unsigned sourceLength = unlinkedExecutable->sourceLength();
         SourceCode code(m_source, startOffset, startOffset + sourceLength, firstLine, startColumn);
-        FunctionExecutable* executable = FunctionExecutable::create(*m_vm, code, unlinkedExecutable, firstLine, firstLine + lineCount, startColumn);
+        FunctionExecutable* executable = FunctionExecutable::create(*m_vm, code, unlinkedExecutable, firstLine, firstLine + lineCount, startColumn, endColumn);
         m_functionDecls[i].set(*m_vm, ownerExecutable, executable);
     }
 
@@ -1652,12 +1654,14 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionExpr(i);
         unsigned lineCount = unlinkedExecutable->lineCount();
         unsigned firstLine = ownerExecutable->lineNo() + unlinkedExecutable->firstLineOffset();
-        unsigned startColumn = unlinkedExecutable->functionStartColumn();
-        startColumn += (unlinkedExecutable->firstLineOffset() ? 1 : ownerExecutable->startColumn());
+        bool startColumnIsOnOwnerStartLine = !unlinkedExecutable->firstLineOffset();
+        unsigned startColumn = unlinkedExecutable->unlinkedBodyStartColumn() + (startColumnIsOnOwnerStartLine ? ownerExecutable->startColumn() : 1);
+        bool endColumnIsOnStartLine = !lineCount;
+        unsigned endColumn = unlinkedExecutable->unlinkedBodyEndColumn() + (endColumnIsOnStartLine ? startColumn : 1);
         unsigned startOffset = sourceOffset + unlinkedExecutable->startOffset();
         unsigned sourceLength = unlinkedExecutable->sourceLength();
         SourceCode code(m_source, startOffset, startOffset + sourceLength, firstLine, startColumn);
-        FunctionExecutable* executable = FunctionExecutable::create(*m_vm, code, unlinkedExecutable, firstLine, firstLine + lineCount, startColumn);
+        FunctionExecutable* executable = FunctionExecutable::create(*m_vm, code, unlinkedExecutable, firstLine, firstLine + lineCount, startColumn, endColumn);
         m_functionExprs[i].set(*m_vm, ownerExecutable, executable);
     }
 

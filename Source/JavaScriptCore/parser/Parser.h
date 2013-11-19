@@ -414,6 +414,8 @@ public:
     template <class ParsedNode>
     PassRefPtr<ParsedNode> parse(ParserError&);
 
+    JSTextPosition positionBeforeLastNewline() const { return m_lexer->positionBeforeLastNewline(); }
+
 private:
     struct AllowInOverride {
         AllowInOverride(Parser* parser)
@@ -881,7 +883,8 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
     errMsg = String();
 
     JSTokenLocation startLocation(tokenLocation());
-    unsigned startColumn = m_source->startColumn();
+    ASSERT(m_source->startColumn() > 0);
+    unsigned startColumn = m_source->startColumn() - 1;
 
     String parseError = parseInner();
 
@@ -900,13 +903,15 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
     RefPtr<ParsedNode> result;
     if (m_sourceElements) {
         JSTokenLocation endLocation;
-        endLocation.line = m_lexer->lastLineNumber();
+        endLocation.line = m_lexer->lineNumber();
         endLocation.lineStartOffset = m_lexer->currentLineStartOffset();
         endLocation.startOffset = m_lexer->currentOffset();
+        unsigned endColumn = endLocation.startOffset - endLocation.lineStartOffset;
         result = ParsedNode::create(m_vm,
                                     startLocation,
                                     endLocation,
                                     startColumn,
+                                    endColumn,
                                     m_sourceElements,
                                     m_varDeclarations ? &m_varDeclarations->data : 0,
                                     m_funcDeclarations ? &m_funcDeclarations->data : 0,
@@ -914,7 +919,7 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
                                     *m_source,
                                     m_features,
                                     m_numConstants);
-        result->setLoc(m_source->firstLine(), m_lastTokenEndPosition.line, m_lexer->currentOffset(), m_lexer->currentLineStartOffset());
+        result->setLoc(m_source->firstLine(), m_lexer->lineNumber(), m_lexer->currentOffset(), m_lexer->currentLineStartOffset());
     } else {
         // We can never see a syntax error when reparsing a function, since we should have
         // reported the error when parsing the containing program or eval code. So if we're
@@ -944,17 +949,23 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
 }
 
 template <class ParsedNode>
-PassRefPtr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode, ParserError& error)
+PassRefPtr<ParsedNode> parse(VM* vm, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode, ParserError& error, JSTextPosition* positionBeforeLastNewline = 0)
 {
     SamplingRegion samplingRegion("Parsing");
 
     ASSERT(!source.provider()->source().isNull());
     if (source.provider()->source().is8Bit()) {
         Parser<Lexer<LChar>> parser(vm, source, parameters, name, strictness, parserMode);
-        return parser.parse<ParsedNode>(error);
+        RefPtr<ParsedNode> result = parser.parse<ParsedNode>(error);
+        if (positionBeforeLastNewline)
+            *positionBeforeLastNewline = parser.positionBeforeLastNewline();
+        return result.release();
     }
     Parser<Lexer<UChar>> parser(vm, source, parameters, name, strictness, parserMode);
-    return parser.parse<ParsedNode>(error);
+    RefPtr<ParsedNode> result = parser.parse<ParsedNode>(error);
+    if (positionBeforeLastNewline)
+        *positionBeforeLastNewline = parser.positionBeforeLastNewline();
+    return result.release();
 }
 
 } // namespace

@@ -1,3 +1,15 @@
+2013-11-19  Mark Lam  <mark.lam@apple.com>
+
+        Add tracking of endColumn for Executables.
+        https://bugs.webkit.org/show_bug.cgi?id=124245.
+
+        Reviewed by Geoffrey Garen.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        - Added an exported symbol to make the Win32 build happy. The Win64 symbol
+          is currently a copy of the Win32 one. It'll need to be updated if the
+          mangled symbol is different for Win64.
+
 2013-11-18  Mark Rowe  <mrowe@apple.com>
 
         Use hw.activecpu for determining how many processes to spawn.

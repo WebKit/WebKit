@@ -180,7 +180,9 @@ PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
     VM* vm = scope->vm();
 
     ASSERT(vm->heap.isDeferred());
-    
+    ASSERT(startColumn() != UINT_MAX);
+    ASSERT(endColumn() != UINT_MAX);
+
     if (classInfo() == EvalExecutable::info()) {
         EvalExecutable* executable = jsCast<EvalExecutable*>(this);
         RELEASE_ASSERT(kind == CodeForCall);
@@ -209,7 +211,7 @@ PassRefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
     UnlinkedFunctionCodeBlock* unlinkedCodeBlock =
         executable->m_unlinkedExecutable->codeBlockFor(
             *vm, executable->m_source, kind, debuggerMode, profilerMode, error);
-    recordParse(executable->m_unlinkedExecutable->features(), executable->m_unlinkedExecutable->hasCapturedVariables(), lineNo(), lastLine(), startColumn()); 
+    recordParse(executable->m_unlinkedExecutable->features(), executable->m_unlinkedExecutable->hasCapturedVariables(), lineNo(), lastLine(), startColumn(), endColumn()); 
     if (!unlinkedCodeBlock) {
         exception = vm->throwException(
             globalObject->globalExec(),
@@ -362,15 +364,19 @@ void ProgramExecutable::destroy(JSCell* cell)
 
 const ClassInfo FunctionExecutable::s_info = { "FunctionExecutable", &ScriptExecutable::s_info, 0, 0, CREATE_METHOD_TABLE(FunctionExecutable) };
 
-FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, unsigned firstLine, unsigned lastLine, unsigned startColumn)
+FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, unsigned firstLine, unsigned lastLine, unsigned startColumn, unsigned endColumn, bool bodyIncludesBraces)
     : ScriptExecutable(vm.functionExecutableStructure.get(), vm, source, unlinkedExecutable->isInStrictContext())
     , m_unlinkedExecutable(vm, this, unlinkedExecutable)
+    , m_bodyIncludesBraces(bodyIncludesBraces)
 {
     RELEASE_ASSERT(!source.isNull());
     ASSERT(source.length());
     m_firstLine = firstLine;
     m_lastLine = lastLine;
+    ASSERT(startColumn != UINT_MAX);
+    ASSERT(endColumn != UINT_MAX);
     m_startColumn = startColumn;
+    m_endColumn = endColumn;
 }
 
 void FunctionExecutable::destroy(JSCell* cell)
@@ -454,16 +460,16 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
     ASSERT(&globalObject->vm() == &vm);
 
     JSObject* exception = 0;
-    UnlinkedProgramCodeBlock* unlinkedCode = globalObject->createProgramCodeBlock(callFrame, this, &exception);
+    UnlinkedProgramCodeBlock* unlinkedCodeBlock = globalObject->createProgramCodeBlock(callFrame, this, &exception);
     if (exception)
         return exception;
 
-    m_unlinkedProgramCodeBlock.set(vm, this, unlinkedCode);
+    m_unlinkedProgramCodeBlock.set(vm, this, unlinkedCodeBlock);
 
     BatchedTransitionOptimizer optimizer(vm, globalObject);
 
-    const UnlinkedProgramCodeBlock::VariableDeclations& variableDeclarations = unlinkedCode->variableDeclarations();
-    const UnlinkedProgramCodeBlock::FunctionDeclations& functionDeclarations = unlinkedCode->functionDeclarations();
+    const UnlinkedProgramCodeBlock::VariableDeclations& variableDeclarations = unlinkedCodeBlock->variableDeclarations();
+    const UnlinkedProgramCodeBlock::FunctionDeclations& functionDeclarations = unlinkedCodeBlock->functionDeclarations();
 
     for (size_t i = 0; i < functionDeclarations.size(); ++i) {
         UnlinkedFunctionExecutable* unlinkedFunctionExecutable = functionDeclarations[i].second.get();
@@ -564,15 +570,27 @@ void FunctionExecutable::unlinkCalls()
 
 FunctionExecutable* FunctionExecutable::fromGlobalCode(const Identifier& name, ExecState* exec, Debugger* debugger, const SourceCode& source, JSObject** exception)
 {
-    UnlinkedFunctionExecutable* unlinkedFunction = UnlinkedFunctionExecutable::fromGlobalCode(name, exec, debugger, source, exception);
-    if (!unlinkedFunction)
+    UnlinkedFunctionExecutable* unlinkedExecutable = UnlinkedFunctionExecutable::fromGlobalCode(name, exec, debugger, source, exception);
+    if (!unlinkedExecutable)
         return 0;
-    unsigned firstLine = source.firstLine() + unlinkedFunction->firstLineOffset();
-    unsigned startOffset = source.startOffset() + unlinkedFunction->startOffset();
-    unsigned startColumn = source.startColumn();
-    unsigned sourceLength = unlinkedFunction->sourceLength();
-    SourceCode functionSource(source.provider(), startOffset, startOffset + sourceLength, firstLine, startColumn);
-    return FunctionExecutable::create(exec->vm(), functionSource, unlinkedFunction, firstLine, unlinkedFunction->lineCount(), startColumn);
+    unsigned lineCount = unlinkedExecutable->lineCount();
+    unsigned firstLine = source.firstLine() + unlinkedExecutable->firstLineOffset();
+    unsigned startOffset = source.startOffset() + unlinkedExecutable->startOffset();
+
+    // We don't have any owner executable. The source string is effectively like a global
+    // string (like in the handling of eval). Hence, the startColumn is always 1.
+    unsigned startColumn = 1;
+    unsigned sourceLength = unlinkedExecutable->sourceLength();
+    bool endColumnIsOnStartLine = !lineCount;
+    // The unlinkedBodyEndColumn is based-0. Hence, we need to add 1 to it. But if the
+    // endColumn is on the startLine, then we need to subtract back the adjustment for
+    // the open brace resulting in an adjustment of 0.
+    unsigned endColumnExcludingBraces = unlinkedExecutable->unlinkedBodyEndColumn() + (endColumnIsOnStartLine ? 0 : 1);
+    unsigned startOffsetExcludingOpenBrace = startOffset + 1;
+    unsigned endOffsetExcludingCloseBrace = startOffset + sourceLength - 1;
+    SourceCode bodySource(source.provider(), startOffsetExcludingOpenBrace, endOffsetExcludingCloseBrace, firstLine, startColumn);
+
+    return FunctionExecutable::create(exec->vm(), bodySource, unlinkedExecutable, firstLine, firstLine + lineCount, startColumn, endColumnExcludingBraces, false);
 }
 
 String FunctionExecutable::paramString() const

@@ -95,6 +95,8 @@
 #include "TypeConversions.h"
 #include "ViewportArguments.h"
 #include "WorkerThread.h"
+#include <bytecode/CodeBlock.h>
+#include <runtime/JSCJSValue.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuffer.h>
 
@@ -157,6 +159,13 @@
 #if ENABLE(MEDIA_SOURCE)
 #include "MockMediaPlayerMediaSource.h"
 #endif
+
+using JSC::CodeBlock;
+using JSC::FunctionExecutable;
+using JSC::JSFunction;
+using JSC::JSValue;
+using JSC::ScriptExecutable;
+using JSC::StackVisitor;
 
 namespace WebCore {
 
@@ -1250,6 +1259,82 @@ void Internals::emitInspectorDidCancelFrame()
     InspectorController* inspectorController = contextDocument()->frame()->page()->inspectorController();
     inspectorController->didCancelFrame();
 #endif
+}
+
+class GetCallerCodeBlockFunctor {
+public:
+    GetCallerCodeBlockFunctor()
+        : m_iterations(0)
+        , m_codeBlock(0)
+    {
+    }
+
+    StackVisitor::Status operator()(StackVisitor& visitor)
+    {
+        ++m_iterations;
+        if (m_iterations < 2)
+            return StackVisitor::Continue;
+
+        m_codeBlock = visitor->codeBlock();
+        return StackVisitor::Done;
+    }
+
+    CodeBlock* codeBlock() const { return m_codeBlock; }
+
+private:
+    int m_iterations;
+    CodeBlock* m_codeBlock;
+};
+
+String Internals::parserMetaData(ScriptValue value)
+{
+    JSC::VM* vm = contextDocument()->vm();
+    JSC::ExecState* exec = vm->topCallFrame;
+    JSC::JSValue code = value.jsValue();
+    ScriptExecutable* executable;
+
+    if (!code || code.isNull() || code.isUndefined()) {
+        GetCallerCodeBlockFunctor iter;
+        exec->iterate(iter);
+        CodeBlock* codeBlock = iter.codeBlock();
+        executable = codeBlock->ownerExecutable(); 
+    } else if (code.isFunction()) {
+        JSFunction* funcObj = JSC::jsCast<JSFunction*>(code.toObject(exec));
+        executable = funcObj->jsExecutable();
+    } else
+        return String();
+
+    unsigned startLine = executable->lineNo();
+    unsigned startColumn = executable->startColumn();
+    unsigned endLine = executable->lastLine();
+    unsigned endColumn = executable->endColumn();
+
+    StringBuilder result;
+
+    if (executable->isFunctionExecutable()) {
+        FunctionExecutable* funcExecutable = reinterpret_cast<FunctionExecutable*>(executable);
+        String inferredName = funcExecutable->inferredName().string();
+        result.append("function \"");
+        result.append(inferredName);
+        result.append("\"");
+    } else if (executable->isEvalExecutable())
+        result.append("eval");
+    else {
+        ASSERT(executable->isProgramExecutable());
+        result.append("program");
+    }
+
+    result.append(" { ");
+    result.appendNumber(startLine);
+    result.append(":");
+    result.appendNumber(startColumn);
+    result.append(" - ");
+    result.appendNumber(endLine);
+    result.append(":");
+    result.appendNumber(endColumn);
+    result.append(" }");
+
+    return result.toString();
 }
 
 void Internals::setBatteryStatus(const String& eventType, bool charging, double chargingTime, double dischargingTime, double level, ExceptionCode& ec)

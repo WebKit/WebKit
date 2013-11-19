@@ -34,7 +34,7 @@
 namespace JSC {
 
 struct SourceProviderCacheItemCreationParameters {
-    unsigned functionStart;
+    unsigned functionNameStart;
     unsigned closeBraceLine;
     unsigned closeBraceOffset;
     unsigned closeBraceLineStartOffset;
@@ -70,7 +70,7 @@ public:
         return token;
     }
 
-    unsigned functionStart : 31;
+    unsigned functionNameStart : 31;
     bool needsFullActivation : 1;
     
     unsigned closeBraceLine : 31;
@@ -107,7 +107,7 @@ inline std::unique_ptr<SourceProviderCacheItem> SourceProviderCacheItem::create(
 }
 
 inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCacheItemCreationParameters& parameters)
-    : functionStart(parameters.functionStart)
+    : functionNameStart(parameters.functionNameStart)
     , needsFullActivation(parameters.needsFullActivation)
     , closeBraceLine(parameters.closeBraceLine)
     , usesEval(parameters.usesEval)

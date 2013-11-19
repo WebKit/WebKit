@@ -1162,13 +1162,16 @@ template <class TreeBuilder> TreeFunctionBody Parser<LexerType>::parseFunctionBo
     unsigned startColumn = tokenColumn();
     next();
 
-    if (match(CLOSEBRACE))
-        return context.createFunctionBody(startLocation, tokenLocation(), startColumn, strictMode());
+    if (match(CLOSEBRACE)) {
+        unsigned endColumn = tokenColumn();
+        return context.createFunctionBody(startLocation, tokenLocation(), startColumn, endColumn, strictMode());
+    }
     DepthManager statementDepth(&m_statementDepth);
     m_statementDepth = 0;
     typename TreeBuilder::FunctionBodyBuilder bodyBuilder(const_cast<VM*>(m_vm), m_lexer.get());
     failIfFalse(parseSourceElements<CheckForStrictMode>(bodyBuilder), "Cannot parse body of this function");
-    return context.createFunctionBody(startLocation, tokenLocation(), startColumn, strictMode());
+    unsigned endColumn = tokenColumn();
+    return context.createFunctionBody(startLocation, tokenLocation(), startColumn, endColumn, strictMode());
 }
 
 static const char* stringForFunctionMode(FunctionParseMode mode)
@@ -1190,7 +1193,7 @@ template <FunctionRequirements requirements, FunctionParseMode mode, bool nameIs
 {
     AutoPopScopeRef functionScope(this, pushScope());
     functionScope->setIsFunction();
-    int functionStart = m_token.m_location.startOffset;
+    int functionNameStart = m_token.m_location.startOffset;
     const Identifier* lastFunctionName = m_lastFunctionName;
     m_lastFunctionName = nullptr;
     if (match(IDENT)) {
@@ -1231,16 +1234,21 @@ template <FunctionRequirements requirements, FunctionParseMode mode, bool nameIs
         endLocation.line = cachedInfo->closeBraceLine;
         endLocation.startOffset = cachedInfo->closeBraceOffset;
         endLocation.lineStartOffset = cachedInfo->closeBraceLineStartOffset;
-        ASSERT(endLocation.startOffset >= endLocation.lineStartOffset);
 
-        body = context.createFunctionBody(startLocation, endLocation, bodyStartColumn, cachedInfo->strictMode);
+        bool endColumnIsOnStartLine = (endLocation.line == bodyStartLine);
+        ASSERT(endLocation.startOffset >= endLocation.lineStartOffset);
+        unsigned bodyEndColumn = endColumnIsOnStartLine ?
+            endLocation.startOffset - m_token.m_data.lineStartOffset :
+            endLocation.startOffset - endLocation.lineStartOffset;
+
+        body = context.createFunctionBody(startLocation, endLocation, bodyStartColumn, bodyEndColumn, cachedInfo->strictMode);
         
         functionScope->restoreFromSourceProviderCache(cachedInfo);
         failIfFalse(popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo), "Parser error");
         
         closeBraceOffset = cachedInfo->closeBraceOffset;
 
-        context.setFunctionStart(body, functionStart);
+        context.setFunctionNameStart(body, functionNameStart);
         m_token = cachedInfo->closeBraceToken();
 
         m_lexer->setOffset(m_token.m_location.endOffset, m_token.m_location.lineStartOffset);
@@ -1270,7 +1278,7 @@ template <FunctionRequirements requirements, FunctionParseMode mode, bool nameIs
     int functionLength = closeBraceOffset - openBraceOffset;
     if (TreeBuilder::CanUseFunctionCache && m_functionCache && functionLength > minimumFunctionLengthToCache) {
         SourceProviderCacheItemCreationParameters parameters;
-        parameters.functionStart = functionStart;
+        parameters.functionNameStart = functionNameStart;
         parameters.closeBraceLine = closeBraceLine;
         parameters.closeBraceOffset = closeBraceOffset;
         parameters.closeBraceLineStartOffset = closeBraceLineStartOffset;
@@ -1278,7 +1286,7 @@ template <FunctionRequirements requirements, FunctionParseMode mode, bool nameIs
         newInfo = SourceProviderCacheItem::create(parameters);
 
     }
-    context.setFunctionStart(body, functionStart);
+    context.setFunctionNameStart(body, functionNameStart);
     
     failIfFalse(popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo), "Parser error");
     matchOrFail(CLOSEBRACE, "Expected a closing '}' after a ", stringForFunctionMode(mode), " body");

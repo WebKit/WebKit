@@ -618,6 +618,7 @@ void Lexer<T>::shiftLineTerminator()
 {
     ASSERT(isLineTerminator(m_current));
 
+    m_positionBeforeLastNewline = currentPosition();
     T prev = m_current;
     shift();
 
@@ -1851,14 +1852,6 @@ void Lexer<T>::clear()
     m_buffer16.swap(newBuffer16);
 
     m_isReparsing = false;
-}
-
-template <typename T>
-SourceCode Lexer<T>::sourceCode(int openBrace, int closeBrace, int firstLine, unsigned startColumn)
-{
-    ASSERT(m_source->provider()->source()[openBrace] == '{');
-    ASSERT(m_source->provider()->source()[closeBrace] == '}');
-    return SourceCode(m_source->provider(), openBrace, closeBrace + 1, firstLine, startColumn);
 }
 
 // Instantiate the two flavors of Lexer we need instead of putting most of this file in Lexer.h
