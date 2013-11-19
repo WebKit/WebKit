@@ -1,3 +1,12 @@
+2013-11-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. Subtest names need to be more permissive.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest._lines_to_ignore_in_parser_result):
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (TestPerfTest.test_parse_output_with_subtests)
+
 2013-11-18  Mark Rowe  <mrowe@apple.com>
 
         Use hw.activecpu for determining how many processes to spawn.

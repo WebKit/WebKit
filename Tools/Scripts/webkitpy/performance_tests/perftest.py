@@ -235,7 +235,7 @@ class PerfTest(object):
         re.compile(r"CONSOLE MESSAGE: (line \d+: )?Not allowed to load local resource"),
         # Dromaeo reports values for subtests. Ignore them for now.
         # FIXME: Remove once subtests are supported
-        re.compile(r'^[A-Za-z0-9\. =]+( -> )(\[?[0-9\., ]+\])( [a-z/]+)?$'),
+        re.compile(r'^[A-Za-z0-9\., =\-\*\(\)\[\]]+( -> )(\[?[0-9\., ]+\])( [a-z/]+)?$'),
     ]
 
     def _filter_output(self, output):
