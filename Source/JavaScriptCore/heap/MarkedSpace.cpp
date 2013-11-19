@@ -198,6 +198,7 @@ struct ResumeAllocatingFunctor {
 void MarkedSpace::resumeAllocating()
 {
     ASSERT(isIterating());
+    DelayedReleaseScope scope(*this);
     forEachAllocator<ResumeAllocatingFunctor>();
 }
 
