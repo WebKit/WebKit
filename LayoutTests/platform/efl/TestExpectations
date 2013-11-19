@@ -525,6 +525,8 @@ webkit.org/b/111521 editing/selection/selection-invalid-offset.html [ Crash Pass
 # Sometimes crashes in PlatformContextCairo::drawSurfaceToContext().
 webkit.org/b/116025 compositing/video/video-background-color.html [ Crash Pass ]
 
+webkit.org/b/124574 fast/css/object-fit/object-fit-embed.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
