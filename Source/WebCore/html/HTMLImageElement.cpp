@@ -221,12 +221,16 @@ Node::InsertionNotificationRequest HTMLImageElement::insertedInto(ContainerNode&
     if (insertionPoint.inDocument() && !m_lowercasedUsemap.isNull())
         document().addImageElementByLowercasedUsemap(*m_lowercasedUsemap.impl(), *this);
 
+    // Insert needs to complete first, before we start updating the loader. Loader dispatches events which could result
+    // in callbacks back to this node.
+    Node::InsertionNotificationRequest insertNotificationRequest = HTMLElement::insertedInto(insertionPoint);
+
     // If we have been inserted from a renderer-less document,
     // our loader may have not fetched the image, so do it now.
     if (insertionPoint.inDocument() && !m_imageLoader.image())
         m_imageLoader.updateFromElement();
 
-    return HTMLElement::insertedInto(insertionPoint);
+    return insertNotificationRequest;
 }
 
 void HTMLImageElement::removedFrom(ContainerNode& insertionPoint)

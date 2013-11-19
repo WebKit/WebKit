@@ -105,6 +105,9 @@ void DocumentOrderedMap::remove(const AtomicStringImpl& key, Element& element)
     m_map.checkConsistency();
     auto it = m_map.find(&key);
     ASSERT(it != m_map.end());
+    if (it == m_map.end())
+        return;
+
     MapEntry& entry = it->value;
 
     ASSERT(entry.count);
