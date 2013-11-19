@@ -1,3 +1,15 @@
+2013-11-18  Sun-woo Nam  <sunny.nam@samsung.com>
+
+        [EFL] Layout tests need to be rebaselined.
+        https://bugs.webkit.org/show_bug.cgi?id=124477
+
+        Unreviewed, EFL rebaseline.
+
+        EFL tests are rebaselined after r126683 and r140149.
+
+        * platform/efl/fast/block/float/016-expected.txt:
+        * platform/efl/fast/forms/textAreaLineHeight-expected.txt:
+
 2013-11-18  Samuel White  <samuel_white@apple.com>
 
         AX: Add ability to fetch only visible table rows.
