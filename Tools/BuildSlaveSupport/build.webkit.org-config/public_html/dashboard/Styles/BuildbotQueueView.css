@@ -29,13 +29,14 @@
     padding: 10px 20px;
 }
 
-.queue-view label {
+.queue-view .queueLabel {
     display: block;
     font-family: "HelveticaNeue-Light", "Helvetica Neue", sans-serif;
     color: rgb(145, 135, 95);
     text-align: left;
+    text-decoration: none;
 }
 
-.queue-view label:not(:first-child) {
+.queue-view .queueLabel:not(:first-child) {
     margin-top: 10px;
 }

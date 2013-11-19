@@ -106,21 +106,23 @@ BuildbotTesterQueueView.prototype = {
             }
 
             if (!appendedStatus) {
-                var status = new StatusLineView("unknown", StatusLineView.Status.Neutral, "last passing build");            
+                var status = new StatusLineView("unknown", StatusLineView.Status.Neutral, "last passing build");
                 this.element.appendChild(status.element);
             }
         }
 
         function appendBuild(queues, label)
         {
-            if (!queues.length)
-                return;
+            queues.forEach(function(queue) {
+                var releaseLabel = document.createElement("a");
+                releaseLabel.classList.add("queueLabel");
+                releaseLabel.textContent = label;
+                releaseLabel.href = queue.overviewURL;
+                releaseLabel.target = "_blank";
+                this.element.appendChild(releaseLabel);
 
-            var releaseLabel = document.createElement("label");
-            releaseLabel.textContent = label;
-            this.element.appendChild(releaseLabel);
-
-            queues.forEach(appendBuilderQueueStatus.bind(this));
+                appendBuilderQueueStatus.call(this, queue);
+            }.bind(this));
         }
 
         appendBuild.call(this, this.releaseQueues, "Release");

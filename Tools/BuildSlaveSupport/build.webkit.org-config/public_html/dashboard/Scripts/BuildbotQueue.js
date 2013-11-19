@@ -63,6 +63,11 @@ BuildbotQueue.prototype = {
         return this.buildbot.baseURL + "json/builders/" + encodeURIComponent(this.id);
     },
 
+    get overviewURL()
+    {
+        return this.buildbot.baseURL + "builders/" + encodeURIComponent(this.id) + "?numbuilds=50";
+    },
+
     get pendingIterationsCount()
     {
         var firstFinishedIteration = this.mostRecentFinishedIteration;

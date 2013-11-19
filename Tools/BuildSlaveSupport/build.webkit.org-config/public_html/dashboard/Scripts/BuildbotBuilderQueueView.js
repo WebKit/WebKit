@@ -96,14 +96,16 @@ BuildbotBuilderQueueView.prototype = {
 
         function appendBuildArchitecture(queues, label)
         {
-            if (!queues.length)
-                return;
+            queues.forEach(function(queue) {
+                var releaseLabel = document.createElement("a");
+                releaseLabel.classList.add("queueLabel");
+                releaseLabel.textContent = label;
+                releaseLabel.href = queue.overviewURL;
+                releaseLabel.target = "_blank";
+                this.element.appendChild(releaseLabel);
 
-            var releaseLabel = document.createElement("label");
-            releaseLabel.textContent = label;
-            this.element.appendChild(releaseLabel);
-
-            queues.forEach(appendBuilderQueueStatus.bind(this));
+                appendBuilderQueueStatus.call(this, queue);
+            }.bind(this));
         }
 
         appendBuildArchitecture.call(this, this.universalReleaseQueues, this.hasMultipleReleaseBuilds ? "Release (Universal)" : "Release");

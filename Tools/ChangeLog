@@ -1,3 +1,26 @@
+2013-11-18  Tim Horton  <timothy_horton@apple.com>
+
+        build.webkit.org/dashboard builder headers should link to the builder page
+        https://bugs.webkit.org/show_bug.cgi?id=124553
+
+        Reviewed by Timothy Hatcher.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        (BuildbotQueue.prototype.get overviewURL):
+        Add overviewURL(), which returns the URL to the builder overview page, with the last 50 builds shown.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotBuilderQueueView.js:
+        (BuildbotBuilderQueueView.prototype.update.appendBuildArchitecture):
+        (BuildbotBuilderQueueView.prototype.update):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+        (BuildbotTesterQueueView.prototype.update.appendBuilderQueueStatus):
+        (BuildbotTesterQueueView.prototype.update.appendBuild):
+        (BuildbotTesterQueueView.prototype.update):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/BuildbotQueueView.css:
+        (.queue-view .queueLabel):
+        (.queue-view .queueLabel:not(:first-child)):
+        Make the header a link instead of a label, and wire it up to overviewURL.
+
 2013-11-18  Samuel White  <samuel_white@apple.com>
 
         AX: Add ability to fetch only visible table rows.
