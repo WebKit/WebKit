@@ -1,3 +1,14 @@
+2013-11-18  Anders Carlsson  <andersca@apple.com>
+
+        TestWebKitAPI crashes when running under GuardMalloc
+        https://bugs.webkit.org/show_bug.cgi?id=124546
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        (WebKit::DownloadProxyMap::downloadFinished):
+        Grab the download ID before removing the DownloadProxy from the map.
+
 2013-11-18  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix attempt on GTK and EFL port after r159461
