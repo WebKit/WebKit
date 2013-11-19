@@ -1,3 +1,16 @@
+2013-11-19  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] 9 WebGL conformance failures after r159518.
+        https://bugs.webkit.org/show_bug.cgi?id=124608
+
+        Reviewed by Dean Jackson.
+
+        Once we removed the CIImage drawing path, there was no longer any reason to flip the
+        CGImageRef before drawing to the provided GraphicsContext.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput):
+
 2013-11-19  Chris Fleizach  <cfleizach@apple.com>
 
         Web Speech API crashes onboundary event handling with reload

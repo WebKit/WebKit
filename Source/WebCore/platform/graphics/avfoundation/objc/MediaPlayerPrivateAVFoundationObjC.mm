@@ -1375,19 +1375,16 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage()
         m_lastImage = createImageFromPixelBuffer(pixelBuffer.get());
 }
 
-void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext* context, const IntRect& rect)
+void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext* context, const IntRect& outputRect)
 {
     updateLastImage();
 
     if (m_lastImage) {
         GraphicsContextStateSaver stateSaver(*context);
-        context->translate(rect.x(), rect.y() + rect.height());
-        context->scale(FloatSize(1.0f, -1.0f));
 
-        CGRect outputRect = { CGPointZero, rect.size() };
-        CGRect imageRect = CGRectMake(0, 0, CGImageGetWidth(m_lastImage.get()), CGImageGetHeight(m_lastImage.get()));
+        IntRect imageRect(0, 0, CGImageGetWidth(m_lastImage.get()), CGImageGetHeight(m_lastImage.get()));
 
-        context->drawNativeImage(m_lastImage.get(), FloatSize(imageRect.size), ColorSpaceDeviceRGB, FloatRect(outputRect), FloatRect(imageRect));
+        context->drawNativeImage(m_lastImage.get(), imageRect.size(), ColorSpaceDeviceRGB, outputRect, imageRect);
 
         // If we have created an AVAssetImageGenerator in the past due to m_videoOutput not having an available
         // video frame, destroy it now that it is no longer needed.
