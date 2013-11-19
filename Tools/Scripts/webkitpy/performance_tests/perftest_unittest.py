@@ -162,6 +162,9 @@ Array Construction, [] -> [11, 12, 13, 14, 15]
 Concat String -> [15163, 15304, 15386, 15608, 15622]
 jQuery - addClass -> [2785, 2815, 2826, 2841, 2861]
 Dojo - div:only-child -> [7825, 7910, 7950, 7958, 7970]
+Dojo - div:nth-child(2n+1) -> [3620, 3623, 3633, 3641, 3658]
+Dojo - div > div -> [10158, 10172, 10180, 10183, 10231]
+Dojo - div ~ div -> [6673, 6675, 6714, 6848, 6902]
 
 :Time -> [1080, 1120, 1095, 1101, 1104] ms
 """, image=None, image_hash=None, audio=None)
