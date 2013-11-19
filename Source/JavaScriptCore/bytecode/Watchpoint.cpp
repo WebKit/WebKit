@@ -63,7 +63,7 @@ void WatchpointSet::add(Watchpoint* watchpoint)
     m_state = IsWatched;
 }
 
-void WatchpointSet::notifyWriteSlow()
+void WatchpointSet::fireAllSlow()
 {
     ASSERT(state() == IsWatched);
     

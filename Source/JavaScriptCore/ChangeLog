@@ -1,3 +1,31 @@
+2013-11-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Rename WatchpointSet::notifyWrite() should be renamed to WatchpointSet::fireAll()
+        https://bugs.webkit.org/show_bug.cgi?id=124609
+
+        Rubber stamped by Mark Lam.
+        
+        notifyWrite() is a thing that SymbolTable does. WatchpointSet uses that terminology
+        because it was original designed to match exactly SymbolTable's semantics. But now
+        it's a confusing term.
+
+        * bytecode/Watchpoint.cpp:
+        (JSC::WatchpointSet::fireAllSlow):
+        * bytecode/Watchpoint.h:
+        (JSC::WatchpointSet::fireAll):
+        (JSC::InlineWatchpointSet::fireAll):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::haveABadTime):
+        * runtime/Structure.h:
+        (JSC::Structure::notifyTransitionFromThisStructure):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTableEntry::notifyWriteSlow):
+
 2013-11-18  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (r159395): Error compiling for ARMv7

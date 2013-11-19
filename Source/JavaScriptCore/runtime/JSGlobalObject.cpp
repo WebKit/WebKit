@@ -521,7 +521,7 @@ void JSGlobalObject::haveABadTime(VM& vm)
     // Make sure that all allocations or indexed storage transitions that are inlining
     // the assumption that it's safe to transition to a non-SlowPut array storage don't
     // do so anymore.
-    m_havingABadTimeWatchpoint->notifyWrite();
+    m_havingABadTimeWatchpoint->fireAll();
     ASSERT(isHavingABadTime()); // The watchpoint is what tells us that we're having a bad time.
     
     // Make sure that all JSArray allocations that load the appropriate structure from

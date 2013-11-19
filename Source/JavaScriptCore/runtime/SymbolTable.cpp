@@ -86,7 +86,7 @@ void SymbolTableEntry::notifyWriteSlow()
     WatchpointSet* watchpoints = fatEntry()->m_watchpoints.get();
     if (!watchpoints)
         return;
-    watchpoints->notifyWrite();
+    watchpoints->fireAll();
 }
 
 SymbolTableEntry::FatEntry* SymbolTableEntry::inflateSlow()

@@ -1197,7 +1197,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     if (numVariables || numFunctions) {
         BatchedTransitionOptimizer optimizer(vm, variableObject);
         if (variableObject->next())
-            variableObject->globalObject()->varInjectionWatchpoint()->notifyWrite();
+            variableObject->globalObject()->varInjectionWatchpoint()->fireAll();
 
         for (unsigned i = 0; i < numVariables; ++i) {
             const Identifier& ident = codeBlock->variable(i);

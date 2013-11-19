@@ -351,7 +351,7 @@ public:
         
     void notifyTransitionFromThisStructure() const
     {
-        m_transitionWatchpointSet.notifyWrite();
+        m_transitionWatchpointSet.fireAll();
     }
     
     InlineWatchpointSet& transitionWatchpointSet() const

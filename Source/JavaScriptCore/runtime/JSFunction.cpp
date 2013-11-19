@@ -387,7 +387,7 @@ void JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
         PropertySlot slot(thisObject);
         thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, propertyName, slot);
         thisObject->m_allocationProfile.clear();
-        thisObject->m_allocationProfileWatchpoint.notifyWrite();
+        thisObject->m_allocationProfileWatchpoint.fireAll();
         // Don't allow this to be cached, since a [[Put]] must clear m_allocationProfile.
         PutPropertySlot dontCache;
         Base::put(thisObject, exec, propertyName, value, dontCache);
@@ -434,7 +434,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
         PropertySlot slot(thisObject);
         thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, propertyName, slot);
         thisObject->m_allocationProfile.clear();
-        thisObject->m_allocationProfileWatchpoint.notifyWrite();
+        thisObject->m_allocationProfileWatchpoint.fireAll();
         return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
     }
 

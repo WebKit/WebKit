@@ -91,16 +91,16 @@ public:
         m_state = IsWatched;
     }
     
-    void notifyWrite()
+    void fireAll()
     {
         if (state() != IsWatched)
             return;
-        notifyWriteSlow();
+        fireAllSlow();
     }
 
     int8_t* addressOfState() { return &m_state; }
     
-    JS_EXPORT_PRIVATE void notifyWriteSlow(); // Call only if you've checked isWatched.
+    JS_EXPORT_PRIVATE void fireAllSlow(); // Call only if you've checked isWatched.
     
 private:
     void fireAllWatchpoints();
@@ -177,10 +177,10 @@ public:
         m_data = encodeState(IsWatched);
     }
     
-    void notifyWrite()
+    void fireAll()
     {
         if (isFat()) {
-            fat()->notifyWrite();
+            fat()->fireAll();
             return;
         }
         if (decodeState(m_data) == ClearWatchpoint)
