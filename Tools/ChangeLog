@@ -1,3 +1,13 @@
+2013-11-19  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/15139479> Reenable the JSC Objective-C API tests on Mountain Lion once the bots are running Xcode 5
+
+        Rubber-stamped by Mark Rowe.
+
+        Reverted r156840.
+
+        * TestWebKitAPI/Tests/mac/WebViewDidCreateJavaScriptContext.mm:
+
 2013-11-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Yet another build fix. Just allow any character.

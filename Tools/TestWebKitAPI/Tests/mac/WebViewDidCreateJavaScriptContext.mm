@@ -30,8 +30,7 @@
 #import <WebKit/WebFrameLoadDelegatePrivate.h>
 #import <wtf/RetainPtr.h>
 
-// FIXME <rdar://problem/15139479> Reenable the JSC Objective-C API tests on Mountain Lion once the bots are running Xcode 5
-#if JSC_OBJC_API_ENABLED && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if JSC_OBJC_API_ENABLED
 
 @class MyConsole;
 
