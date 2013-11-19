@@ -1,3 +1,12 @@
+2013-11-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another build fix. Allow ':' in subtest names.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest._lines_to_ignore_in_parser_result):
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (TestPerfTest.test_parse_output_with_subtests)
+
 2013-11-19  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Use Config mode of find_package for EFL 1.8
