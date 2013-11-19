@@ -46,44 +46,44 @@ static inline float ellipseYIntercept(float x, float rx, float ry)
     return ry * sqrt(1 - (x * x) / (rx * rx));
 }
 
-FloatRoundedRect FloatRoundedRect::paddingBounds(float padding) const
+RectangleShape::ShapeBounds RectangleShape::ShapeBounds::paddingBounds(float shapePadding) const
 {
-    ASSERT(padding >= 0);
-    if (!padding || isEmpty())
+    ASSERT(shapePadding >= 0);
+    if (!shapePadding || isEmpty())
         return *this;
 
-    float boundsX = x() + std::min(width() / 2, padding);
-    float boundsY = y() + std::min(height() / 2, padding);
-    float boundsWidth = std::max(0.0f, width() - padding * 2);
-    float boundsHeight = std::max(0.0f, height() - padding * 2);
-    float boundsRadiusX = std::max(0.0f, rx() - padding);
-    float boundsRadiusY = std::max(0.0f, ry() - padding);
-    return FloatRoundedRect(FloatRect(boundsX, boundsY, boundsWidth, boundsHeight), FloatSize(boundsRadiusX, boundsRadiusY));
+    float boundsX = x() + std::min(width() / 2, shapePadding);
+    float boundsY = y() + std::min(height() / 2, shapePadding);
+    float boundsWidth = std::max(0.0f, width() - shapePadding * 2);
+    float boundsHeight = std::max(0.0f, height() - shapePadding * 2);
+    float boundsRadiusX = std::max(0.0f, rx() - shapePadding);
+    float boundsRadiusY = std::max(0.0f, ry() - shapePadding);
+    return RectangleShape::ShapeBounds(FloatRect(boundsX, boundsY, boundsWidth, boundsHeight), FloatSize(boundsRadiusX, boundsRadiusY));
 }
 
-FloatRoundedRect FloatRoundedRect::marginBounds(float margin) const
+RectangleShape::ShapeBounds RectangleShape::ShapeBounds::marginBounds(float shapeMargin) const
 {
-    ASSERT(margin >= 0);
-    if (!margin)
+    ASSERT(shapeMargin >= 0);
+    if (!shapeMargin)
         return *this;
 
-    float boundsX = x() - margin;
-    float boundsY = y() - margin;
-    float boundsWidth = width() + margin * 2;
-    float boundsHeight = height() + margin * 2;
-    float boundsRadiusX = rx() + margin;
-    float boundsRadiusY = ry() + margin;
-    return FloatRoundedRect(FloatRect(boundsX, boundsY, boundsWidth, boundsHeight), FloatSize(boundsRadiusX, boundsRadiusY));
+    float boundsX = x() - shapeMargin;
+    float boundsY = y() - shapeMargin;
+    float boundsWidth = width() + shapeMargin * 2;
+    float boundsHeight = height() + shapeMargin * 2;
+    float boundsRadiusX = rx() + shapeMargin;
+    float boundsRadiusY = ry() + shapeMargin;
+    return RectangleShape::ShapeBounds(FloatRect(boundsX, boundsY, boundsWidth, boundsHeight), FloatSize(boundsRadiusX, boundsRadiusY));
 }
 
-FloatPoint FloatRoundedRect::cornerInterceptForWidth(float widthAtIntercept) const
+FloatPoint RectangleShape::ShapeBounds::cornerInterceptForWidth(float widthAtIntercept) const
 {
     float xi = (width() - widthAtIntercept) / 2;
     float yi = ry() - ellipseYIntercept(rx() - xi, rx(), ry());
     return FloatPoint(xi, yi);
 }
 
-FloatRoundedRect RectangleShape::shapePaddingBounds() const
+RectangleShape::ShapeBounds RectangleShape::shapePaddingBounds() const
 {
     if (!m_haveInitializedPaddingBounds) {
         m_haveInitializedPaddingBounds = true;
@@ -92,7 +92,7 @@ FloatRoundedRect RectangleShape::shapePaddingBounds() const
     return m_paddingBounds;
 }
 
-FloatRoundedRect RectangleShape::shapeMarginBounds() const
+RectangleShape::ShapeBounds RectangleShape::shapeMarginBounds() const
 {
     if (!m_haveInitializedMarginBounds) {
         m_haveInitializedMarginBounds = true;
@@ -103,7 +103,7 @@ FloatRoundedRect RectangleShape::shapeMarginBounds() const
 
 void RectangleShape::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
 {
-    const FloatRoundedRect& bounds = shapeMarginBounds();
+    const RectangleShape::ShapeBounds& bounds = shapeMarginBounds();
     if (bounds.isEmpty())
         return;
 
@@ -135,7 +135,7 @@ void RectangleShape::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logi
 
 void RectangleShape::getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
 {
-    const FloatRoundedRect& bounds = shapePaddingBounds();
+    const RectangleShape::ShapeBounds& bounds = shapePaddingBounds();
     if (bounds.isEmpty())
         return;
 
@@ -184,7 +184,7 @@ bool RectangleShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalInterv
     float minIntervalHeight = minLogicalIntervalSize.height();
     float minIntervalWidth = minLogicalIntervalSize.width();
 
-    const FloatRoundedRect& bounds = shapePaddingBounds();
+    const RectangleShape::ShapeBounds& bounds = shapePaddingBounds();
     if (bounds.isEmpty() || minIntervalWidth > bounds.width())
         return false;
 

@@ -39,25 +39,6 @@
 
 namespace WebCore {
 
-class FloatRoundedRect : public FloatRect {
-public:
-    FloatRoundedRect() { }
-    FloatRoundedRect(const FloatRect& bounds, const FloatSize& radii)
-        : FloatRect(bounds)
-        , m_radii(radii)
-    {
-    }
-
-    float rx() const { return m_radii.width(); }
-    float ry() const { return m_radii.height(); }
-    FloatRoundedRect marginBounds(float margin) const;
-    FloatRoundedRect paddingBounds(float padding) const;
-    FloatPoint cornerInterceptForWidth(float width) const;
-
-private:
-    FloatSize m_radii;
-};
-
 class RectangleShape : public Shape {
 public:
     RectangleShape(const FloatRect& bounds, const FloatSize& radii)
@@ -81,12 +62,31 @@ public:
     virtual ShapeType type() const OVERRIDE { return Shape::RoundedRectangleType; }
 
 private:
-    FloatRoundedRect shapeMarginBounds() const;
-    FloatRoundedRect shapePaddingBounds() const;
+    class ShapeBounds : public FloatRect {
+    public:
+        ShapeBounds() { }
+        ShapeBounds(const FloatRect& bounds, const FloatSize& radii)
+            : FloatRect(bounds)
+            , m_radii(radii)
+        {
+        }
 
-    FloatRoundedRect m_bounds;
-    mutable FloatRoundedRect m_marginBounds;
-    mutable FloatRoundedRect m_paddingBounds;
+        float rx() const { return m_radii.width(); }
+        float ry() const { return m_radii.height(); }
+        ShapeBounds marginBounds(float shapeMargin) const;
+        ShapeBounds paddingBounds(float shapePadding) const;
+        FloatPoint cornerInterceptForWidth(float width) const;
+
+    private:
+        FloatSize m_radii;
+    };
+
+    ShapeBounds shapeMarginBounds() const;
+    ShapeBounds shapePaddingBounds() const;
+
+    ShapeBounds m_bounds;
+    mutable ShapeBounds m_marginBounds;
+    mutable ShapeBounds m_paddingBounds;
     mutable bool m_haveInitializedMarginBounds : 1;
     mutable bool m_haveInitializedPaddingBounds : 1;
 };

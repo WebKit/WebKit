@@ -1,3 +1,31 @@
+2013-11-19  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Refactor RectangleShape
+        https://bugs.webkit.org/show_bug.cgi?id=124416
+
+        Privatize and rename the FloatRoundedRect class defined in RectangleShape.h.
+        The new class is called RectangleShape::ShapeBounds. This change enables
+        creating a proper FloatRoundedRect analog of the existing RoundedRect class;
+        part of adding support for box shapes, per the latest CSS spec.
+
+        Reviewed by Dean Jackson.
+
+        No new tests, just refactoring.
+
+        * rendering/shapes/RectangleShape.cpp:
+        (WebCore::RectangleShape::ShapeBounds::paddingBounds):
+        (WebCore::RectangleShape::ShapeBounds::marginBounds):
+        (WebCore::RectangleShape::ShapeBounds::cornerInterceptForWidth):
+        (WebCore::RectangleShape::shapePaddingBounds):
+        (WebCore::RectangleShape::shapeMarginBounds):
+        (WebCore::RectangleShape::getExcludedIntervals):
+        (WebCore::RectangleShape::getIncludedIntervals):
+        (WebCore::RectangleShape::firstIncludedIntervalLogicalTop):
+        * rendering/shapes/RectangleShape.h:
+        (WebCore::RectangleShape::ShapeBounds::ShapeBounds):
+        (WebCore::RectangleShape::ShapeBounds::rx):
+        (WebCore::RectangleShape::ShapeBounds::ry):
+
 2013-11-19  Sergio Correia  <sergio.correia@openbossa.org>
 
         Mark classes deriving from SVGAnimatedTypeAnimator as FINAL
