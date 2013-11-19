@@ -47,9 +47,9 @@ inline void emitPointerValidation(CCallHelpers& jit, GPRReg pointerGPR)
     CCallHelpers::Jump isNonZero = jit.branchTestPtr(CCallHelpers::NonZero, pointerGPR);
     jit.breakpoint();
     isNonZero.link(&jit);
-    jit.push(pointerGPR);
+    jit.pushToSave(pointerGPR);
     jit.load8(pointerGPR, pointerGPR);
-    jit.pop(pointerGPR);
+    jit.popToRestore(pointerGPR);
 #else
     UNUSED_PARAM(jit);
     UNUSED_PARAM(pointerGPR);
