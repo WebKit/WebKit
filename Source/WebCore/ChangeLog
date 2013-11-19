@@ -1,3 +1,14 @@
+2013-11-18  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r159430.
+        http://trac.webkit.org/changeset/159430
+        https://bugs.webkit.org/show_bug.cgi?id=124548
+
+        WebCore can know nothing about nor use files from WebKit/
+        (Requested by thorton on #webkit).
+
+        * DerivedSources.make:
+
 2013-11-18  Brady Eidson  <beidson@apple.com>
 
         Remove IDBServerConnection's deprecatedBackingStore()

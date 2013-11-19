@@ -723,7 +723,6 @@ all : \
     MathMLElementFactory.cpp \
     MathMLNames.cpp \
     XPathGrammar.cpp \
-    WebKitVersion.h \
 #
 
 # --------
@@ -843,12 +842,6 @@ CSSGrammar.cpp : css/CSSGrammar.y.in $(PLATFORM_FEATURE_DEFINES)
 # XPath grammar
 XPathGrammar.cpp : xml/XPathGrammar.y $(PROJECT_FILE)
 	perl $(WebCore)/css/makegrammar.pl --outputDir . --bison "$(BISON)" --symbolsPrefix xpathyy $<
-
-# --------
-
-# WebKitVersion
-WebKitVersion.h : $(WebCore)/../WebKit/mac/Configurations/Version.xcconfig
-	perl $(WebCore)/../WebKit/scripts/generate-webkitversion.pl --config $(WebCore)/../WebKit/mac/Configurations/Version.xcconfig --outputDir .
 
 # --------
 
