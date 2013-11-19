@@ -164,12 +164,12 @@ set(WebKit2_SOURCES
     Platform/CoreIPC/ArgumentEncoder.cpp
     Platform/CoreIPC/Attachment.cpp
     Platform/CoreIPC/Connection.cpp
-    Platform/CoreIPC/DataReference.cpp
     Platform/CoreIPC/MessageDecoder.cpp
     Platform/CoreIPC/MessageEncoder.cpp
     Platform/CoreIPC/MessageReceiverMap.cpp
     Platform/CoreIPC/MessageSender.cpp
 
+    Platform/IPC/DataReference.cpp
     Platform/IPC/StringReference.cpp
 
     PluginProcess/PluginControllerProxy.cpp

@@ -272,8 +272,6 @@ webkit2platform_sources += \
 	Source/WebKit2/Platform/CoreIPC/Attachment.h \
 	Source/WebKit2/Platform/CoreIPC/Connection.cpp \
 	Source/WebKit2/Platform/CoreIPC/Connection.h \
-	Source/WebKit2/Platform/CoreIPC/DataReference.cpp \
-	Source/WebKit2/Platform/CoreIPC/DataReference.h \
 	Source/WebKit2/Platform/CoreIPC/HandleMessage.h \
 	Source/WebKit2/Platform/CoreIPC/MessageDecoder.cpp \
 	Source/WebKit2/Platform/CoreIPC/MessageDecoder.h \
@@ -287,6 +285,8 @@ webkit2platform_sources += \
 	Source/WebKit2/Platform/CoreIPC/MessageSender.h \
 	Source/WebKit2/Platform/CoreIPC/unix/AttachmentUnix.cpp \
 	Source/WebKit2/Platform/CoreIPC/unix/ConnectionUnix.cpp \
+	Source/WebKit2/Platform/IPC/DataReference.cpp \
+	Source/WebKit2/Platform/IPC/DataReference.h \
 	Source/WebKit2/Platform/IPC/StringReference.cpp \
 	Source/WebKit2/Platform/IPC/StringReference.h \
 	Source/WebKit2/Platform/gtk/LoggingGtk.cpp \
