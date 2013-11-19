@@ -1,3 +1,22 @@
+2013-11-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        IncrementalSweeper needs to use DelayedReleaseScope too
+        https://bugs.webkit.org/show_bug.cgi?id=124558
+
+        Reviewed by Filip Pizlo.
+
+        It does sweeping too, so it needs to use it. Also refactored an
+        ASSERT that should have caught this sooner.
+
+        * heap/DelayedReleaseScope.h:
+        (JSC::DelayedReleaseScope::isInEffectFor):
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::doSweep):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::sweep):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::sweep):
+
 2013-11-18  Michael Saboff  <msaboff@apple.com>
 
         ARM64 CRASH: Debug builds crash in emitPointerValidation()

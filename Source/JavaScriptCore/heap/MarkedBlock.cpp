@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MarkedBlock.h"
 
+#include "DelayedReleaseScope.h"
 #include "IncrementalSweeper.h"
 #include "JSCell.h"
 #include "JSDestructibleObject.h"
@@ -102,6 +103,7 @@ MarkedBlock::FreeList MarkedBlock::specializedSweep()
 
 MarkedBlock::FreeList MarkedBlock::sweep(SweepMode sweepMode)
 {
+    ASSERT(DelayedReleaseScope::isInEffectFor(heap()->m_objectSpace));
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);
 
     m_weakSet.sweep();

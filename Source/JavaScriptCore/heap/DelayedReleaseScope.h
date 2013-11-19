@@ -57,6 +57,11 @@ public:
         m_delayedReleaseObjects.append(std::move(object));
     }
 
+    static bool isInEffectFor(MarkedSpace& markedSpace)
+    {
+        return markedSpace.m_currentDelayedReleaseScope;
+    }
+
 private:
     MarkedSpace& m_markedSpace;
     Vector<RetainPtr<CFTypeRef>> m_delayedReleaseObjects;
@@ -75,6 +80,11 @@ class DelayedReleaseScope {
 public:
     DelayedReleaseScope(MarkedSpace&)
     {
+    }
+
+    static bool isInEffectFor(MarkedSpace&)
+    {
+        return true;
     }
 };
 
