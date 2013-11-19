@@ -52,6 +52,13 @@ WebInspector.ContentFlowDOMTreeContentView.prototype = {
         WebInspector.DOMTreeContentView.prototype.closed.call(this);
     },
 
+    getSearchContextNodes: function(callback)
+    {
+        callback(this.domTreeOutline.children.map(function(treeOutline) {
+            return treeOutline.representedObject.id;
+        }));
+    },
+
     // Private
 
     _createContentTrees: function()

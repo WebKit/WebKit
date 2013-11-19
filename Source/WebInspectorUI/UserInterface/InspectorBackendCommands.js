@@ -148,7 +148,7 @@ InspectorBackend.registerCommand("DOM.removeAttribute", [{"name": "nodeId", "typ
 InspectorBackend.registerCommand("DOM.getEventListenersForNode", [{"name": "nodeId", "type": "number", "optional": false}, {"name": "objectGroup", "type": "string", "optional": true}], ["listeners"]);
 InspectorBackend.registerCommand("DOM.getOuterHTML", [{"name": "nodeId", "type": "number", "optional": false}], ["outerHTML"]);
 InspectorBackend.registerCommand("DOM.setOuterHTML", [{"name": "nodeId", "type": "number", "optional": false}, {"name": "outerHTML", "type": "string", "optional": false}], []);
-InspectorBackend.registerCommand("DOM.performSearch", [{"name": "query", "type": "string", "optional": false}], ["searchId", "resultCount"]);
+InspectorBackend.registerCommand("DOM.performSearch", [{"name": "query", "type": "string", "optional": false}, {"name": "nodeIds", "type": "object", "optional": true}], ["searchId", "resultCount"]);
 InspectorBackend.registerCommand("DOM.getSearchResults", [{"name": "searchId", "type": "string", "optional": false}, {"name": "fromIndex", "type": "number", "optional": false}, {"name": "toIndex", "type": "number", "optional": false}], ["nodeIds"]);
 InspectorBackend.registerCommand("DOM.discardSearchResults", [{"name": "searchId", "type": "string", "optional": false}], []);
 InspectorBackend.registerCommand("DOM.requestNode", [{"name": "objectId", "type": "string", "optional": false}], ["nodeId"]);

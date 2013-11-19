@@ -209,7 +209,19 @@ WebInspector.DOMTreeContentView.prototype = {
                 this.revealNextSearchResult();
         }
 
-        DOMAgent.performSearch(query, searchResultsReady.bind(this));
+        function contextNodesReady(nodeIds)
+        {
+            DOMAgent.performSearch(query, nodeIds, searchResultsReady.bind(this));
+        }
+
+        this.getSearchContextNodes(contextNodesReady.bind(this));
+    },
+
+    getSearchContextNodes: function(callback)
+    {
+        // Overwrite this to limit the search to just a subtree.
+        // Passing undefined will make DOMAgent.performSearch search through all the documents.
+        callback(undefined);
     },
 
     searchCleared: function()

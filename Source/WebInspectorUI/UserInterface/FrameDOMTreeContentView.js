@@ -53,6 +53,13 @@ WebInspector.FrameDOMTreeContentView.prototype = {
         WebInspector.DOMTreeContentView.prototype.closed.call(this);
     },
 
+    getSearchContextNodes: function(callback)
+    {
+        this._domTree.requestRootDOMNode(function(rootDOMNode) {
+            callback([rootDOMNode.id]);
+        });
+    },
+
     // Private
 
     _rootDOMNodeAvailable: function(rootDOMNode)
