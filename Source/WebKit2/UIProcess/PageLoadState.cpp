@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#undef ASSERT_DISABLED
-#define ASSERT_DISABLED 1
-
 #include "config.h"
 #include "PageLoadState.h"
+
+#undef ASSERT
+#define ASSERT(x) ((void)0)
 
 namespace WebKit {
 
