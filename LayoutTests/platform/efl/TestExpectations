@@ -1679,3 +1679,18 @@ webkit.org/b/124517 fast/filter-image/filter-image-blur.html [ ImageOnlyFailure 
 webkit.org/b/124518 fast/filter-image/filter-image-svg.html [ ImageOnlyFailure ]
 webkit.org/b/124519 fast/filter-image/filter-image.html [ ImageOnlyFailure ]
 webkit.org/b/124519 fast/filter-image/parse-filter-image.html [ Failure ]
+
+webkit.org/b/124582 fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]
+
+webkit.org/b/124583 fast/images/pdf-as-image-with-annotations.html [ ImageOnlyFailure ]
+
+webkit.org/b/124584 fast/regions/overflow-moving-below-floats-in-variable-width-regions.html [ ImageOnlyFailure ]
+
+webkit.org/b/124585 fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
+
+webkit.org/b/124586 fast/text/complex-first-glyph-with-initial-advance.html [ ImageOnlyFailure ]
+
+webkit.org/b/124587 fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
+
+webkit.org/b/124589 http/tests/cache/partitioned-cache-iframe.html [ Failure ]
+webkit.org/b/124589 http/tests/cache/partitioned-cache.html [ Failure ]
