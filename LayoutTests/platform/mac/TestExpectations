@@ -1313,3 +1313,5 @@ webkit.org/b/124321 [ Mavericks ] animations/resume-after-page-cache.html [ Pass
 webkit.org/b/124373 [ MountainLion Release ] http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html [ Pass Failure Timeout ]
 
 webkit.org/b/124424 webgl/1.0.2/conformance/ogles/GL/tan/tan_001_to_006.html [ Pass Failure ]
+
+webkit.org/b/124593 fast/forms/form-associated-element-crash.html [ Pass Timeout ]
