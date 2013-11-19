@@ -1,3 +1,20 @@
+2013-11-19  Frédéric Wang  <fred.wang@free.fr>
+
+        Map the dir attribute to the CSS direction property.
+        https://bugs.webkit.org/show_bug.cgi?id=124572.
+
+        Reviewed by Darin Adler.
+
+        Tests: mathml/presentation/direction-overall.html
+               mathml/presentation/direction-token.html
+               mathml/presentation/direction.html
+
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::isPresentationAttribute): add dir
+        (WebCore::MathMLElement::collectStyleForPresentationAttribute): map dir
+        * mathml/mathattrs.in: add the dir attribute
+        * mathml/mathtags.in: add the mstyle tag (needed to use mstyleTag)
+
 2013-11-19  Sergio Correia  <sergio.correia@openbossa.org>
 
         [SVG] Convert OwnPtr/PassOwnPtr to std::unique_ptr

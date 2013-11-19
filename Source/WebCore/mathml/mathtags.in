@@ -8,6 +8,7 @@ mfrac interfaceName=MathMLInlineContainerElement
 mfenced interfaceName=MathMLInlineContainerElement
 msubsup interfaceName=MathMLInlineContainerElement
 mrow interfaceName=MathMLInlineContainerElement
+mstyle interfaceName=MathMLElement
 mover interfaceName=MathMLInlineContainerElement
 munder interfaceName=MathMLInlineContainerElement
 munderover interfaceName=MathMLInlineContainerElement
