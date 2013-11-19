@@ -1,3 +1,16 @@
+2013-11-19  Zoltan Horvath  <zoltan@webkit.org>
+
+        Add LineInlineHeaders.h to WebCore.xcodeproj
+        <https://webkit.org/b/124460>
+
+        Reviewed by Csaba Osztrogonác.
+
+        LineInlineHeaders.h (r159354) hasn't been added to WebCore.xcodeproj. This patch adds to it.
+
+        No new tests, no behavior change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2013-11-19  Krzysztof Czech  <k.czech@samsung.com>
 
         [AX] Use std::unique_ptr to manage AXComputedObjectAttributeCache
