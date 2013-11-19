@@ -43,6 +43,7 @@ OBJC_CLASS AVPlayerLayer;
 OBJC_CLASS AVURLAsset;
 OBJC_CLASS NSArray;
 OBJC_CLASS WebCoreAVFMovieObserver;
+OBJC_CLASS WebCoreAVFPullDelegate;
 
 typedef struct objc_object* id;
 
@@ -105,6 +106,10 @@ public:
     void presentationSizeDidChange(FloatSize);
     void durationDidChange(double);
     void rateDidChange(double);
+
+#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
+    void outputMediaDataWillChange(AVPlayerItemVideoOutput*);
+#endif
 
 private:
     MediaPlayerPrivateAVFoundationObjC(MediaPlayer*);
@@ -176,8 +181,11 @@ private:
     void createVideoOutput();
     void destroyVideoOutput();
     RetainPtr<CVPixelBufferRef> createPixelBuffer();
+    void updateLastImage();
     bool videoOutputHasAvailableFrame();
     void paintWithVideoOutput(GraphicsContext*, const IntRect&);
+    virtual PassNativeImagePtr nativeImageForCurrentTime() OVERRIDE;
+    void waitForVideoOutputMediaDataWillChange();
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -218,7 +226,9 @@ private:
     RetainPtr<AVAssetImageGenerator> m_imageGenerator;
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     RetainPtr<AVPlayerItemVideoOutput> m_videoOutput;
-    RetainPtr<CVPixelBufferRef> m_lastImage;
+    RetainPtr<WebCoreAVFPullDelegate> m_videoOutputDelegate;
+    RetainPtr<CGImageRef> m_lastImage;
+    dispatch_semaphore_t m_videoOutputSemaphore;
 #endif
 
 #if USE(VIDEOTOOLBOX)

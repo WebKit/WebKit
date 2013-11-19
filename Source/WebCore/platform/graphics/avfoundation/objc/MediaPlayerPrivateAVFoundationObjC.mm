@@ -115,7 +115,6 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeZero, CMTime)
 
 #define AVPlayer getAVPlayerClass()
 #define AVPlayerItem getAVPlayerItemClass()
-#define AVPlayerItemVideoOutput getAVPlayerItemVideoOutputClass()
 #define AVPlayerLayer getAVPlayerLayerClass()
 #define AVURLAsset getAVURLAssetClass()
 #define AVAssetImageGenerator getAVAssetImageGeneratorClass()
@@ -195,6 +194,17 @@ enum MediaPlayerAVFoundationObservationContext {
 @end
 #endif
 
+#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
+@interface WebCoreAVFPullDelegate : NSObject<AVPlayerItemOutputPullDelegate> {
+    MediaPlayerPrivateAVFoundationObjC* m_callback;
+    dispatch_semaphore_t m_semaphore;
+}
+- (id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC*)callback;
+- (void)outputMediaDataWillChange:(AVPlayerItemOutput *)sender;
+- (void)outputSequenceWasFlushed:(AVPlayerItemOutput *)output;
+@end
+#endif
+
 namespace WebCore {
 
 static NSArray *assetMetadataKeyNames();
@@ -228,6 +238,18 @@ static dispatch_queue_t globalLoaderDelegateQueue()
 }
 #endif
 
+#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
+static dispatch_queue_t globalPullDelegateQueue()
+{
+    static dispatch_queue_t globalQueue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        globalQueue = dispatch_queue_create("WebCoreAVFPullDelegate queue", DISPATCH_QUEUE_SERIAL);
+    });
+    return globalQueue;
+}
+#endif
+
 PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateAVFoundationObjC::create(MediaPlayer* player)
 { 
     return adoptPtr(new MediaPlayerPrivateAVFoundationObjC(player));
@@ -244,6 +266,10 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     , m_objcObserver(adoptNS([[WebCoreAVFMovieObserver alloc] initWithCallback:this]))
     , m_videoFrameHasDrawn(false)
     , m_haveCheckedPlayability(false)
+#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
+    , m_videoOutputDelegate(adoptNS([[WebCoreAVFPullDelegate alloc] initWithCallback:this]))
+    , m_videoOutputSemaphore(0)
+#endif
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     , m_loaderDelegate(adoptNS([[WebCoreAVFLoaderDelegate alloc] initWithCallback:this]))
 #endif
@@ -1222,10 +1248,14 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
     NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInt:kCVPixelFormatType_32BGRA], kCVPixelBufferPixelFormatTypeKey,
                                 nil];
 #endif
-    m_videoOutput = adoptNS([[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:attributes]);
+    m_videoOutput = adoptNS([[getAVPlayerItemVideoOutputClass() alloc] initWithPixelBufferAttributes:attributes]);
     ASSERT(m_videoOutput);
 
+    [m_videoOutput setDelegate:m_videoOutputDelegate.get() queue:globalPullDelegateQueue()];
+
     [m_avPlayerItem.get() addOutput:m_videoOutput.get()];
+
+    waitForVideoOutputMediaDataWillChange();
 
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createVideoOutput(%p) - returning %p", this, m_videoOutput.get());
 }
@@ -1297,7 +1327,44 @@ bool MediaPlayerPrivateAVFoundationObjC::videoOutputHasAvailableFrame()
     return [m_videoOutput hasNewPixelBufferForItemTime:[m_avPlayerItem currentTime]];
 }
 
-void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext* context, const IntRect& rect)
+static const void* CVPixelBufferGetBytePointerCallback(void* info)
+{
+    CVPixelBufferRef pixelBuffer = (CVPixelBufferRef)info;
+    CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
+    return CVPixelBufferGetBaseAddress(pixelBuffer);
+}
+
+static void CVPixelBufferReleaseBytePointerCallback(void *info, const void *)
+{
+    CVPixelBufferRef pixelBuffer = (CVPixelBufferRef)info;
+    CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
+}
+
+static void CVPixelBufferReleaseInfoCallback(void *info)
+{
+    CVPixelBufferRef pixelBuffer = (CVPixelBufferRef)info;
+    CFRelease(pixelBuffer);
+}
+
+static RetainPtr<CGImageRef> createImageFromPixelBuffer(CVPixelBufferRef pixelBuffer)
+{
+    // pixelBuffer will be of type kCVPixelFormatType_32BGRA.
+    ASSERT(CVPixelBufferGetPixelFormatType(pixelBuffer) == kCVPixelFormatType_32BGRA);
+
+    size_t width = CVPixelBufferGetWidth(pixelBuffer);
+    size_t height = CVPixelBufferGetHeight(pixelBuffer);
+    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);
+    size_t byteLength = CVPixelBufferGetDataSize(pixelBuffer);
+    CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little | kCGImageAlphaFirst;
+
+    CFRetain(pixelBuffer); // Balanced by CVPixelBufferReleaseInfoCallback in providerCallbacks.
+    CGDataProviderDirectCallbacks providerCallbacks = { 0, CVPixelBufferGetBytePointerCallback, CVPixelBufferReleaseBytePointerCallback, 0, CVPixelBufferReleaseInfoCallback };
+    RetainPtr<CGDataProviderRef> provider = adoptCF(CGDataProviderCreateDirect(pixelBuffer, byteLength, &providerCallbacks));
+
+    return adoptCF(CGImageCreate(width, height, 8, 32, bytesPerRow, deviceRGBColorSpaceRef(), bitmapInfo, provider.get(), NULL, false, kCGRenderingIntentDefault));
+}
+
+void MediaPlayerPrivateAVFoundationObjC::updateLastImage()
 {
     RetainPtr<CVPixelBufferRef> pixelBuffer = createPixelBuffer();
 
@@ -1305,7 +1372,12 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext* c
     // for the requested time has already been retrieved. In this case, the last valid image (if any)
     // should be displayed.
     if (pixelBuffer)
-        m_lastImage = pixelBuffer;
+        m_lastImage = createImageFromPixelBuffer(pixelBuffer.get());
+}
+
+void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext* context, const IntRect& rect)
+{
+    updateLastImage();
 
     if (m_lastImage) {
         GraphicsContextStateSaver stateSaver(*context);
@@ -1313,28 +1385,40 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext* c
         context->scale(FloatSize(1.0f, -1.0f));
 
         CGRect outputRect = { CGPointZero, rect.size() };
-        CGRect imageRect = CGRectMake(0, 0, CVPixelBufferGetWidth(m_lastImage.get()), CVPixelBufferGetHeight(m_lastImage.get()));
-#if PLATFORM(IOS)
-        // ciContext does not use a RetainPtr for results of contextWithCGContext:, as the returned value
-        // is autoreleased, and there is no non-autoreleased version of that function.
-        CIContext* ciContext = [getCIContextClass() contextWithOptions:nil];
-        RetainPtr<CIImage> image = adoptNS([[getCIImageClass() alloc] initWithCVPixelBuffer:m_lastImage.get()]);
-        RetainPtr<CGImage> cgImage = adoptCF([ciContext createCGImage:image.get() fromRect:imageRect]);
-        context->drawNativeImage(cgImage.get(), FloatSize(imageRect.size), ColorSpaceDeviceRGB, FloatRect(outputRect), FloatRect(imageRect), 1);
-#else
+        CGRect imageRect = CGRectMake(0, 0, CGImageGetWidth(m_lastImage.get()), CGImageGetHeight(m_lastImage.get()));
 
-        // ciContext does not use a RetainPtr for results of contextWithCGContext:, as the returned value
-        // is autoreleased, and there is no non-autoreleased version of that function.
-        CIContext* ciContext = [CIContext contextWithCGContext:context->platformContext() options:nil];
-        RetainPtr<CIImage> image = adoptNS([[CIImage alloc] initWithCVImageBuffer:m_lastImage.get() options:@{ kCIImageColorSpace: (id)deviceRGBColorSpaceRef() }]);
-        [ciContext drawImage:image.get() inRect:outputRect fromRect:imageRect];
-#endif
+        context->drawNativeImage(m_lastImage.get(), FloatSize(imageRect.size), ColorSpaceDeviceRGB, FloatRect(outputRect), FloatRect(imageRect));
 
         // If we have created an AVAssetImageGenerator in the past due to m_videoOutput not having an available
         // video frame, destroy it now that it is no longer needed.
         if (m_imageGenerator)
             destroyImageGenerator();
     }
+}
+
+PassNativeImagePtr MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTime()
+{
+    updateLastImage();
+    return m_lastImage.get();
+}
+
+void MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()
+{
+    if (!m_videoOutputSemaphore)
+        m_videoOutputSemaphore = dispatch_semaphore_create(0);
+
+    [m_videoOutput requestNotificationOfMediaDataChangeWithAdvanceInterval:0];
+
+    // Wait for 1 second.
+    long result = dispatch_semaphore_wait(m_videoOutputSemaphore, dispatch_time(0, 1 * NSEC_PER_SEC));
+
+    if (result)
+        LOG(Media, "MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange(%p) timed out", this);
+}
+
+void MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange(AVPlayerItemVideoOutput*)
+{
+    dispatch_semaphore_signal(m_videoOutputSemaphore);
 }
 #endif
 
@@ -1983,6 +2067,29 @@ NSArray* itemKVOProperties()
 - (void)setCallback:(MediaPlayerPrivateAVFoundationObjC*)callback
 {
     m_callback = callback;
+}
+@end
+#endif
+
+#if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
+@implementation WebCoreAVFPullDelegate
+- (id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC*)callback
+{
+    self = [super init];
+    if (self)
+        m_callback = callback;
+    return self;
+}
+
+- (void)outputMediaDataWillChange:(AVPlayerItemVideoOutput *)output
+{
+    m_callback->outputMediaDataWillChange(output);
+}
+
+- (void)outputSequenceWasFlushed:(AVPlayerItemVideoOutput *)output
+{
+    UNUSED_PARAM(output);
+    // No-op.
 }
 @end
 #endif

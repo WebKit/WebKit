@@ -1450,6 +1450,18 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, const FloatRec
 
     checkOrigin(video);
 
+#if USE(CG)
+    if (PassNativeImagePtr image = video->nativeImageForCurrentTime()) {
+        c->drawNativeImage(image, FloatSize(video->videoWidth(), video->videoHeight()), ColorSpaceDeviceRGB, dstRect, srcRect);
+        if (rectContainsCanvas(dstRect))
+            didDrawEntireCanvas();
+        else
+            didDraw(dstRect);
+
+        return;
+    }
+#endif
+
     GraphicsContextStateSaver stateSaver(*c);
     c->clip(dstRect);
     c->translate(dstRect.x(), dstRect.y());

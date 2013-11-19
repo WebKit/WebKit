@@ -1,3 +1,48 @@
+2013-11-19  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] 10X slower than Chrome when drawing a video into a canvas
+        https://bugs.webkit.org/show_bug.cgi?id=124599
+
+        Reviewed by Dean Jackson.
+
+        Improve performance by creating a CGImageRef which directly references the CVPixelBuffer provided
+        by AVPlayerItemVideoOutput:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::CVPixelBufferGetBytePointerCallback):
+        (WebCore::CVPixelBufferReleaseBytePointerCallback):
+        (WebCore::CVPixelBufferReleaseInfoCallback):
+        (WebCore::createImageFromPixelBuffer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateLastImage):
+
+        Additionally, when asked to paint with an AVPlayerItemVideoOutput, block until the output notifies
+        its delegate that a pixel buffer is available:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::globalPullDelegateQueue):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoOutput):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTime):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange):
+        (-[WebCoreAVFPullDelegate initWithCallback:]):
+        (-[WebCoreAVFPullDelegate outputMediaDataWillChange:]):
+        (-[WebCoreAVFPullDelegate outputSequenceWasFlushed:]):
+        
+        To further optimize video -> canvas drawing, add a method which can return a PassNativeImage to be
+        drawn directly onto the canvas, rather than rendering into an intermediary context:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::nativeImageForCurrentTime):
+        * html/HTMLVideoElement.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::nativeImageForCurrentTime):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::nativeImageForCurrentTime):
+
 2013-11-19  Brady Eidson  <beidson@apple.com>
 
         Consolidate IDBBackingStore*Interface and IDBBackingStore*LevelDB

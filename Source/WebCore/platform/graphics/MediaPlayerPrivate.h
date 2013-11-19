@@ -121,6 +121,7 @@ public:
 
     virtual void paintCurrentFrameInContext(GraphicsContext* c, const IntRect& r) { paint(c, r); }
     virtual bool copyVideoTextureToPlatformTexture(GraphicsContext3D*, Platform3DObject, GC3Dint, GC3Denum, GC3Denum, bool, bool) { return false; }
+    virtual PassNativeImagePtr nativeImageForCurrentTime() { return 0; }
 
     virtual void setPreload(MediaPlayer::Preload) { }
 
