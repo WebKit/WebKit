@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,10 @@
 #include "ResourceLoadPriority.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
+
+#if USE(QUICK_LOOK)
+#include "QuickLook.h"
+#endif // USE(QUICK_LOOK)
 
 #if USE(SOUP)
 typedef struct _GTlsCertificate GTlsCertificate;
@@ -68,6 +72,7 @@ typedef struct objc_object *id;
 typedef struct _CFURLConnection* CFURLConnectionRef;
 typedef int CFHTTPCookieStorageAcceptPolicy;
 typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
+typedef struct CFURLConnectionClient_V6 CFURLConnectionClient_V6;
 #endif
 
 #if PLATFORM(MAC) || USE(CFNETWORK)
@@ -134,9 +139,17 @@ public:
     CFURLStorageSessionRef storageSession() const;
     CFURLConnectionRef connection() const;
     CFURLConnectionRef releaseConnectionForDownload();
+    const ResourceRequest& currentRequest() const;
     static void setHostAllowsAnyHTTPSCertificate(const String&);
     static void setClientCertificate(const String& host, CFDataRef);
-#endif
+    static CFURLConnectionClient_V6* connectionClientCallbacks();
+
+#if USE(QUICK_LOOK)
+    QuickLookHandle* quickLookHandle() { return m_quickLook.get(); }
+    void setQuickLookHandle(PassOwnPtr<QuickLookHandle> handle) { m_quickLook = handle; }
+#endif // USE(QUICK_LOOK)
+
+#endif // USE(CFNETWORK)
 
 #if PLATFORM(WIN) && USE(CURL)
     static void setHostAllowsAnyHTTPSCertificate(const String&);
@@ -227,6 +240,9 @@ public:
 #if PLATFORM(MAC) || USE(CFNETWORK)
     static CFStringRef synchronousLoadRunLoopMode();
 #endif
+#if PLATFORM(IOS) && USE(CFNETWORK)
+    static CFMutableDictionaryRef createSSLPropertiesFromNSURLRequest(const ResourceRequest&);
+#endif
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     void handleDataArray(CFArrayRef dataArray);
@@ -261,11 +277,15 @@ private:
 #if PLATFORM(MAC) && !USE(CFNETWORK)
     void createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff);
 #elif USE(CFNETWORK)
-    void createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff);
+    void createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff, CFDictionaryRef clientProperties);
 #endif
 
     friend class ResourceHandleInternal;
     OwnPtr<ResourceHandleInternal> d;
+
+#if USE(QUICK_LOOK)
+    OwnPtr<QuickLookHandle> m_quickLook;
+#endif // USE(QUICK_LOOK)
 };
 
 }

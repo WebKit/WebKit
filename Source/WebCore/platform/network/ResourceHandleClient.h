@@ -32,6 +32,7 @@
 #if USE(CFNETWORK)
 #include <CFNetwork/CFURLCachePriv.h>
 #include <CFNetwork/CFURLResponsePriv.h>
+#include <wtf/RetainPtr.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -88,7 +89,7 @@ namespace WebCore {
         // Client will pass an updated request using ResourceHandle::continueCanAuthenticateAgainstProtectionSpace() when ready.
         virtual void canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&);
 #endif
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !USE(CFNETWORK)
         // Client will pass an updated request using ResourceHandle::continueWillCacheResponse() when ready.
         virtual void willCacheResponseAsync(ResourceHandle*, NSCachedURLResponse *);
 #endif
@@ -110,16 +111,16 @@ namespace WebCore {
 #endif
         virtual void receivedCancellation(ResourceHandle*, const AuthenticationChallenge&) { }
 
-#if PLATFORM(MAC)
 #if USE(CFNETWORK)
         virtual CFCachedURLResponseRef willCacheResponse(ResourceHandle*, CFCachedURLResponseRef response) { return response; }
-#else
-        virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse *response) { return response; }
-#endif
-        virtual void willStopBufferingData(ResourceHandle*, const char*, int) { }
-#endif // PLATFORM(MAC)
-#if PLATFORM(WIN) && USE(CFNETWORK)
+        virtual RetainPtr<CFDictionaryRef> connectionProperties(ResourceHandle*) { return nullptr; }
+#if PLATFORM(WIN)
         virtual bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) { return true; }
+#endif // PLATFORM(WIN)
+
+#elif PLATFORM(MAC)
+        virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse *response) { return response; }
+        virtual void willStopBufferingData(ResourceHandle*, const char*, int) { }
 #endif
 
     };
