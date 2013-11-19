@@ -1,3 +1,18 @@
+2013-11-19  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Use Config mode of find_package for EFL 1.8
+        https://bugs.webkit.org/show_bug.cgi?id=124555
+
+        Reviewed by Gyuyoung Kim.
+
+        EFL 1.8 changed VERSION macro so it's difficult to use tricky approach
+        which parses header file to know the version. Instead, EFL 1.8 supports
+        Config mode of find_package using XXXConfig.cmake such as EinaConfig.cmake.
+
+        This patch tries to use Config mode if it is available after checking Eo.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2013-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update NEWS and Versions.m4 for 2.3.2 release.

@@ -123,20 +123,22 @@ if (ENABLE_ECORE_X)
     add_definitions(-DMOZ_X11)
 endif ()
 
-find_package(Eina 1.7 REQUIRED)
-find_package(Evas 1.7 REQUIRED)
-find_package(Ecore 1.7 COMPONENTS Evas File Input Imf Imf_Evas ${ECORE_ADDITIONAL_COMPONENTS})
-find_package(Edje 1.7 REQUIRED)
-find_package(Eet 1.7 REQUIRED)
-find_package(Eeze 1.7 REQUIRED)
-find_package(Efreet 1.7 REQUIRED)
-find_package(E_DBus 1.7 COMPONENTS EUKit)
-
-# Add Eo dependency if EFL version is 1.8
-if (${EVAS_VERSION} VERSION_EQUAL 1.8 AND ${ECORE_VERSION} VERSION_EQUAL 1.8)
-    find_package(Eo)
+find_package(Eo CONFIG)
+if (EO_FOUND)
     add_definitions(-DWTF_USE_EO=1)
+
+    # EFL 1.8 provides FooConfig.cmake
+    set(EFL_CONFIG_MODE CONFIG)
 endif ()
+
+find_package(Eina 1.7 REQUIRED ${EFL_CONFIG_MODE})
+find_package(Evas 1.7 REQUIRED ${EFL_CONFIG_MODE})
+find_package(Ecore 1.7 COMPONENTS Evas File Input Imf Imf_Evas ${ECORE_ADDITIONAL_COMPONENTS} ${EFL_CONFIG_MODE})
+find_package(Edje 1.7 REQUIRED ${EFL_CONFIG_MODE})
+find_package(Eet 1.7 REQUIRED ${EFL_CONFIG_MODE})
+find_package(Eeze 1.7 REQUIRED ${EFL_CONFIG_MODE})
+find_package(Efreet 1.7 REQUIRED ${EFL_CONFIG_MODE})
+find_package(E_DBus 1.7 COMPONENTS EUKit)
 
 find_package(Freetype 2.4.2 REQUIRED)
 find_package(HarfBuzz 0.9.2 REQUIRED)
