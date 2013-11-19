@@ -3723,6 +3723,10 @@ void WebPageProxy::processDidCrash()
 
     resetStateAfterProcessExited();
 
+    // FIXME: Consider calling reset after calling out to the loader client,
+    // having the page load state available could be useful.
+    m_pageLoadState.reset();
+
     m_pageClient->processDidCrash();
     m_loaderClient.processDidCrash(this);
 }

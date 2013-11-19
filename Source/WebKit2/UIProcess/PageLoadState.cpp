@@ -40,6 +40,14 @@ PageLoadState::~PageLoadState()
 {
 }
 
+void PageLoadState::reset()
+{
+    m_state = State::Finished;
+    m_pendingAPIRequestURL = String();
+    m_provisionalURL = String();
+    m_url = String();
+}
+
 const String& PageLoadState::pendingAPIRequestURL() const
 {
     return m_pendingAPIRequestURL;

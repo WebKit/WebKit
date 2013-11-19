@@ -41,6 +41,8 @@ public:
         Finished
     };
 
+    void reset();
+
     const String& pendingAPIRequestURL() const;
     void setPendingAPIRequestURL(const String&);
     void clearPendingAPIRequestURL();

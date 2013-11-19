@@ -1,3 +1,16 @@
+2013-11-19  Anders Carlsson  <andersca@apple.com>
+
+        Add and call PageLoadState::reset
+        https://bugs.webkit.org/show_bug.cgi?id=124591
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::reset):
+        * UIProcess/PageLoadState.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::processDidCrash):
+
 2013-11-18  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Initialize efreet before getting directories
