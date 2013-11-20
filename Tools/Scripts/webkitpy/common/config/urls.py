@@ -51,6 +51,11 @@ direct_attachment_url = r"https?://bug-(?P<bug_id>\d+)-attachments.%s/attachment
 
 buildbot_url = "http://build.webkit.org"
 
+svn_server_host = "svn.webkit.org"
+svn_server_realm = "<http://svn.webkit.org:80> Mac OS Forge"
+
+statusserver_default_host = "webkit-queues.appspot.com"
+
 def parse_bug_id(string):
     if not string:
         return None

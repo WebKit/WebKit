@@ -30,19 +30,16 @@
 
 from webkitpy.common.net.networktransaction import NetworkTransaction
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
+from webkitpy.common.config.urls import statusserver_default_host
 
 import logging
 import urllib2
-
 
 _log = logging.getLogger(__name__)
 
 
 class StatusServer:
-    # FIXME: This should probably move to common.config.urls.
-    default_host = "webkit-queues.appspot.com"
-
-    def __init__(self, host=default_host, browser=None, bot_id=None):
+    def __init__(self, host=statusserver_default_host, browser=None, bot_id=None):
         self.set_host(host)
         from webkitpy.thirdparty.autoinstalled.mechanize import Browser
         self._browser = browser or Browser()

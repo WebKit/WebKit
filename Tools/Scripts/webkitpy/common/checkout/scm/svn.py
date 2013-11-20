@@ -38,6 +38,7 @@ import tempfile
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import Executive, ScriptError
+from webkitpy.common.config.urls import svn_server_host, svn_server_realm
 
 from .scm import AuthenticationError, SCM, commit_error_handler
 
@@ -46,9 +47,8 @@ _log = logging.getLogger(__name__)
 
 # A mixin class that represents common functionality for SVN and Git-SVN.
 class SVNRepository(object):
-    # FIXME: These belong in common.config.urls
-    svn_server_host = "svn.webkit.org"
-    svn_server_realm = "<http://svn.webkit.org:80> Mac OS Forge"
+    svn_server_host = svn_server_host
+    svn_server_realm = svn_server_realm
 
     def has_authorization_for_realm(self, realm, home_directory=os.getenv("HOME")):
         # If we are working on a file:// repository realm will be None
