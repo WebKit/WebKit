@@ -35,7 +35,7 @@
 #include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
 #include "IDBLevelDBCoding.h"
-#include "IDBMetadata.h"
+#include "IDBDatabaseMetadata.h"
 #include "IDBTransactionBackend.h"
 #include "LevelDBComparator.h"
 #include "LevelDBDatabase.h"

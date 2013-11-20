@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBMetadata_h
-#define IDBMetadata_h
+#ifndef IDBDatabaseMetadata_h
+#define IDBDatabaseMetadata_h
 
 #include "IDBKeyPath.h"
 #include <stdint.h>
@@ -126,4 +126,4 @@ struct IDBDatabaseMetadata {
 
 #endif // ENABLE(INDEXED_DATABASE)
 
-#endif // IDBMetadata_h
+#endif // IDBDatabaseMetadata_h

@@ -1,3 +1,30 @@
+2013-11-20  Brady Eidson  <beidson@apple.com>
+
+        Rename IDBMetadata.h to IDBDatabaseMetadata.h
+        https://bugs.webkit.org/show_bug.cgi?id=124668
+
+        Reviewed by Dean Jackson.
+
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/indexeddb/IDBDatabase.h:
+        * Modules/indexeddb/IDBDatabaseBackend.h:
+
+        * Modules/indexeddb/IDBDatabaseMetadata.h: Renamed from Source/WebCore/Modules/indexeddb/IDBMetadata.h.
+        (WebCore::IDBIndexMetadata::IDBIndexMetadata):
+        (WebCore::IDBObjectStoreMetadata::IDBObjectStoreMetadata):
+        (WebCore::IDBDatabaseMetadata::IDBDatabaseMetadata):
+
+        * Modules/indexeddb/IDBIndex.h:
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/IDBServerConnection.h:
+        * Modules/indexeddb/IDBTransaction.h:
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.h:
+        * Modules/indexeddb/leveldb/IDBIndexWriterLevelDB.h:
+        * inspector/InspectorIndexedDBAgent.cpp:
+
 2013-11-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove bogus assertions in updateNameForTreeScope and updateNameForDocument

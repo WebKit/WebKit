@@ -34,7 +34,7 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
-#include "IDBMetadata.h"
+#include "IDBDatabaseMetadata.h"
 #include "IndexedDB.h"
 #include "ScriptWrappable.h"
 #include <wtf/HashSet.h>

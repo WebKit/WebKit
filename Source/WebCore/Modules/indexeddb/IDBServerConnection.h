@@ -27,7 +27,7 @@
 #define IDBServerConnection_h
 
 #include "IDBCursorBackendOperations.h"
-#include "IDBMetadata.h"
+#include "IDBDatabaseMetadata.h"
 #include "IDBTransactionBackendOperations.h"
 #include "IndexedDB.h"
 #include <functional>

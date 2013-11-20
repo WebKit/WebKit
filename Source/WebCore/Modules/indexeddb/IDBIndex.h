@@ -30,7 +30,7 @@
 #include "IDBDatabase.h"
 #include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
-#include "IDBMetadata.h"
+#include "IDBDatabaseMetadata.h"
 #include "IDBObjectStore.h"
 #include "IDBRequest.h"
 #include "ScriptWrappable.h"

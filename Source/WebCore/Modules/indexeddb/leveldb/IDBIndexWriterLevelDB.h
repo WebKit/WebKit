@@ -29,7 +29,7 @@
 
 #include "IDBBackingStoreLevelDB.h"
 #include "IDBDatabaseBackend.h"
-#include "IDBMetadata.h"
+#include "IDBDatabaseMetadata.h"
 #include <wtf/RefCounted.h>
 
 #if ENABLE(INDEXED_DATABASE)

@@ -31,7 +31,7 @@
 #include "IDBBackingStoreCursorLevelDB.h"
 #include "IDBBackingStoreTransactionLevelDB.h"
 #include "IDBKey.h"
-#include "IDBMetadata.h"
+#include "IDBDatabaseMetadata.h"
 #include "IDBRecordIdentifier.h"
 #include "IndexedDB.h"
 #include "LevelDBIterator.h"

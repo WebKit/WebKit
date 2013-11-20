@@ -32,7 +32,7 @@
 #include "Event.h"
 #include "EventTarget.h"
 #include "IDBDatabaseCallbacks.h"
-#include "IDBMetadata.h"
+#include "IDBDatabaseMetadata.h"
 #include "IDBObjectStore.h"
 #include "IDBTransaction.h"
 #include "IndexedDB.h"
