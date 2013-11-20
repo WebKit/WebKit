@@ -338,17 +338,10 @@ fast/multicol/seamless-flowed-through-columns.html
 
 # ENABLE(SHADOW_DOM) is disabled.
 fast/dom/shadow
+fast/dom/HTMLTemplateElement/cycles-in-shadow.html
 editing/shadow
 accessibility/corresponding-control-deleted-crash.html
 editing/text-iterator/basic-iteration-shadowdom.html
-
-# ENABLE(TEMPLATE_ELEMENT) is disabled.
-fast/dom/HTMLTemplateElement
-html5lib/generated/run-template-data.html
-html5lib/generated/run-template-write.html
-fast/xsl/xslt-xhtml-template.xml
-fast/xpath/xpath-template-element.html
-fast/xsl/xslt-processor-template.html
 
 # JSC does not support setIsolatedWorldSecurityOrigin
 webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html
