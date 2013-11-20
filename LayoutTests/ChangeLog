@@ -1,3 +1,18 @@
+2013-11-20  Antoine Quint  <graouts@apple.com>
+
+        Cannot animate "points" attribute for <svg:polygon>
+        https://bugs.webkit.org/show_bug.cgi?id=21371
+
+        Reviewed by Antti Koivisto.
+
+        New tests covering the actual application of the animated value
+        for the "points" attribute of the SVG <polygon> and <polyline> elements.
+
+        * svg/animations/polygon-set-expected.svg: Added.
+        * svg/animations/polygon-set.svg: Added.
+        * svg/animations/polyline-set-expected.svg: Added.
+        * svg/animations/polyline-set.svg: Added.
+
 2013-11-20  Zan Dobersek  <zdobersek@igalia.com>
 
         Configurability test of prototype's properties in fast/dom/webidl-operations-on-node-prototype.html is wrong

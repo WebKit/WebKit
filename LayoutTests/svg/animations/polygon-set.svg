@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <desc>This test checks that we correctly handle animated values for the "points" attribute of a polygon element.</desc>
+    <polygon points="0,0 200,0 200,200 0,200" fill="red" />
+    <polygon points="0,0 100,0 100,100 0,100" fill="green">
+        <set attributeName="points" to="0,0 200,0 200,200 0,200" />
+    </polygon>
+</svg>

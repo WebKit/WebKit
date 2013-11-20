@@ -1,3 +1,21 @@
+2013-11-20  Antoine Quint  <graouts@apple.com>
+
+        Cannot animate "points" attribute for <svg:polygon>
+        https://bugs.webkit.org/show_bug.cgi?id=21371
+
+        Reviewed by Antti Koivisto.
+
+        Ensure we use animated list of points for SVG <polygon> and <polyline> elements
+        when we build the path used to draw them, otherwise the animated changes won't
+        be rendered and the base value will be used.
+
+        Tests: svg/animations/polygon-set.svg
+               svg/animations/polyline-set.svg
+
+        * rendering/svg/SVGPathData.cpp:
+        (WebCore::updatePathFromPolygonElement):
+        (WebCore::updatePathFromPolylineElement):
+
 2013-11-20  Andrei Bucur  <abucur@adobe.com>
 
         [CSSRegions] Move region styling code into RenderNamedFlowFragment
