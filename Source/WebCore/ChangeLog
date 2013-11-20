@@ -1,3 +1,49 @@
+2013-11-20  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r159551.
+        http://trac.webkit.org/changeset/159551
+        https://bugs.webkit.org/show_bug.cgi?id=124669
+
+        made many tests asserts (Requested by anttik on #webkit).
+
+        * html/HTMLDetailsElement.h:
+        * html/HTMLMediaElement.cpp:
+        (HTMLMediaElement::selectNextSourceChild):
+        * html/HTMLMetaElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::shouldAllowQuickTimeClassIdQuirk):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::isDisabledFormControl):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::updateWidgetCallback):
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::detailsElement):
+        * html/HTMLSummaryElement.h:
+        * html/HTMLTableCaptionElement.h:
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::caption):
+        (WebCore::HTMLTableElement::tHead):
+        (WebCore::HTMLTableElement::tFoot):
+        (WebCore::HTMLTableElement::lastBody):
+        * html/HTMLTableRowElement.cpp:
+        (WebCore::HTMLTableRowElement::rowIndex):
+        * html/HTMLTableSectionElement.h:
+        * html/HTMLTagNames.in:
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure):
+        * html/shadow/DetailsMarkerControl.cpp:
+        (WebCore::DetailsMarkerControl::summaryElement):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::handleFallbackContent):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::dispatchPendingBeforeLoadEvent):
+        * page/DragController.cpp:
+        (WebCore::DragController::canProcessDrag):
+        * page/Frame.cpp:
+        (WebCore::Frame::searchForLabelsBeforeElement):
+        * page/SpatialNavigation.cpp:
+        (WebCore::frameOwnerElement):
+
 2013-11-20  Zoltan Horvath  <zoltan@webkit.org>
 
         Move LineWidth.{h,cpp} into rendering/line

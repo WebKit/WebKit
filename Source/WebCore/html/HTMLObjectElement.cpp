@@ -243,8 +243,9 @@ bool HTMLObjectElement::shouldAllowQuickTimeClassIdQuirk()
     RefPtr<NodeList> metaElements = document().getElementsByTagName(HTMLNames::metaTag.localName());
     unsigned length = metaElements->length();
     for (unsigned i = 0; i < length; ++i) {
-        HTMLMetaElement& metaElement = toHTMLMetaElement(*metaElements->item(i));
-        if (equalIgnoringCase(metaElement.name(), "generator") && metaElement.content().startsWith("Mac OS X Server Web Services Server", false))
+        ASSERT_WITH_SECURITY_IMPLICATION(metaElements->item(i)->isHTMLElement());
+        HTMLMetaElement* metaElement = static_cast<HTMLMetaElement*>(metaElements->item(i));
+        if (equalIgnoringCase(metaElement->name(), "generator") && metaElement->content().startsWith("Mac OS X Server Web Services Server", false))
             return true;
     }
     

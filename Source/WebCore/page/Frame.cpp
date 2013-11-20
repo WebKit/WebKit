@@ -386,7 +386,7 @@ String Frame::searchForLabelsBeforeElement(const Vector<String>& labels, Element
             break;
 
         if (n->hasTagName(tdTag) && !startingTableCell) {
-            startingTableCell = toHTMLTableCellElement(n);
+            startingTableCell = static_cast<HTMLTableCellElement*>(n);
         } else if (n->hasTagName(trTag) && startingTableCell) {
             String result = searchForLabelsAboveCell(regExp.get(), startingTableCell, resultDistance);
             if (!result.isEmpty()) {

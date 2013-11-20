@@ -552,7 +552,8 @@ bool DragController::canProcessDrag(DragData& dragData)
         return true;
 
     if (result.innerNonSharedNode()->isPluginElement()) {
-        if (!toHTMLPlugInElement(result.innerNonSharedNode())->canProcessDrag() && !result.innerNonSharedNode()->rendererIsEditable())
+        HTMLPlugInElement* plugin = static_cast<HTMLPlugInElement*>(result.innerNonSharedNode());
+        if (!plugin->canProcessDrag() && !result.innerNonSharedNode()->rendererIsEditable())
             return false;
     } else if (!result.innerNonSharedNode()->rendererIsEditable())
         return false;

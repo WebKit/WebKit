@@ -44,8 +44,6 @@ private:
     bool m_isOpen;
 };
 
-NODE_TYPE_CASTS(HTMLDetailsElement)
-
 } // namespace WebCore
 
 #endif // HTMLDetailsElement_h

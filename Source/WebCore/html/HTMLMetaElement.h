@@ -44,8 +44,6 @@ private:
     void process();
 };
 
-NODE_TYPE_CASTS(HTMLMetaElement)
-
 } // namespace WebCore
 
 #endif
