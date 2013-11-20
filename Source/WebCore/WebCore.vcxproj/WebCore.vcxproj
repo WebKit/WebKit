@@ -7615,6 +7615,7 @@
     <ClCompile Include="..\platform\graphics\FloatPolygon.cpp" />
     <ClCompile Include="..\platform\graphics\FloatQuad.cpp" />
     <ClCompile Include="..\platform\graphics\FloatRect.cpp" />
+    <ClCompile Include="..\platform\graphics\FloatRoundedRect.cpp" />
     <ClCompile Include="..\platform\graphics\FloatSize.cpp" />
     <ClCompile Include="..\platform\graphics\Font.cpp" />
     <ClCompile Include="..\platform\graphics\FontCache.cpp" />
@@ -11064,6 +11065,7 @@
     <ClCompile Include="..\rendering\line\LineBreaker.cpp" />
     <ClCompile Include="..\rendering\line\LineInfo.cpp" />
     <ClCompile Include="..\rendering\line\LineWidth.cpp" />
+    <ClCompile Include="..\rendering\shapes\BoxShape.cpp" />
     <ClCompile Include="..\rendering\shapes\PolygonShape.cpp" />
     <ClCompile Include="..\rendering\shapes\RasterShape.cpp" />
     <ClCompile Include="..\rendering\shapes\RectangleShape.cpp" />
@@ -19179,6 +19181,7 @@
     <ClInclude Include="..\platform\graphics\FloatPolygon.h" />
     <ClInclude Include="..\platform\graphics\FloatQuad.h" />
     <ClInclude Include="..\platform\graphics\FloatRect.h" />
+    <ClInclude Include="..\platform\graphics\FloatRoundedRect.h" />
     <ClInclude Include="..\platform\graphics\FloatSize.h" />
     <ClInclude Include="..\platform\graphics\Font.h" />
     <ClInclude Include="..\platform\graphics\FontCache.h" />
@@ -19891,6 +19894,7 @@
     <ClInclude Include="..\rendering\line\LineInlineHeaders.h" />
     <ClInclude Include="..\rendering\line\LineLayoutState.h" />
     <ClInclude Include="..\rendering\line\LineWidth.h" />
+    <ClInclude Include="..\rendering\shapes\BoxShape.h" />
     <ClInclude Include="..\rendering\shapes\PolygonShape.h" />
     <ClInclude Include="..\rendering\shapes\RasterShape.h" />
     <ClInclude Include="..\rendering\shapes\RectangleShape.h" />

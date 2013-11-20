@@ -1,3 +1,71 @@
+2013-11-20  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Add BoxShape and FloatRoundingRect classes
+        https://bugs.webkit.org/show_bug.cgi?id=124368
+
+        Reviewed by Dean Jackson.
+
+        Added the BoxShape class. It's now used to represent shape-outside box
+        values: [margin/border/padding/content]-box. BoxShape depends on a new
+        FloatRoundedRect class, which is a float analog of the existing (int)
+        RoundedRect class. The FloatRoundedRect class contains the same basic
+        methods and accessors as BorderRect and adds a set of four methods,
+        for example topLeftCorner(), that return a FloatRect that represents the
+        bounds of one elliptical corner. I also added a method, xInterceptsAtY()
+        that returns two X coordinates of the intersection between a horizontal
+        line and the rounded rectangle.
+
+        No new tests, this is just an internal refactoring.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/FloatRoundedRect.cpp: Added.
+        (WebCore::FloatRoundedRect::FloatRoundedRect):
+        (WebCore::FloatRoundedRect::Radii::isZero):
+        (WebCore::FloatRoundedRect::Radii::scale):
+        (WebCore::FloatRoundedRect::Radii::expand):
+        (WebCore::cornerRectIntercept):
+        (WebCore::FloatRoundedRect::xInterceptsAtY):
+        * platform/graphics/FloatRoundedRect.h: Added.
+        (WebCore::FloatRoundedRect::Radii::Radii):
+        (WebCore::FloatRoundedRect::Radii::setTopLeft):
+        (WebCore::FloatRoundedRect::Radii::setTopRight):
+        (WebCore::FloatRoundedRect::Radii::setBottomLeft):
+        (WebCore::FloatRoundedRect::Radii::setBottomRight):
+        (WebCore::FloatRoundedRect::Radii::topLeft):
+        (WebCore::FloatRoundedRect::Radii::topRight):
+        (WebCore::FloatRoundedRect::Radii::bottomLeft):
+        (WebCore::FloatRoundedRect::Radii::bottomRight):
+        (WebCore::FloatRoundedRect::Radii::expand):
+        (WebCore::FloatRoundedRect::Radii::shrink):
+        (WebCore::FloatRoundedRect::rect):
+        (WebCore::FloatRoundedRect::radii):
+        (WebCore::FloatRoundedRect::isRounded):
+        (WebCore::FloatRoundedRect::isEmpty):
+        (WebCore::FloatRoundedRect::setRect):
+        (WebCore::FloatRoundedRect::setRadii):
+        (WebCore::FloatRoundedRect::move):
+        (WebCore::FloatRoundedRect::inflate):
+        (WebCore::FloatRoundedRect::expandRadii):
+        (WebCore::FloatRoundedRect::shrinkRadii):
+        (WebCore::FloatRoundedRect::topLeftCorner):
+        (WebCore::FloatRoundedRect::topRightCorner):
+        (WebCore::FloatRoundedRect::bottomLeftCorner):
+        (WebCore::FloatRoundedRect::bottomRightCorner):
+        (WebCore::operator==):
+        * rendering/shapes/BoxShape.cpp: Added.
+        (WebCore::BoxShape::BoxShape):
+        (WebCore::BoxShape::getExcludedIntervals):
+        (WebCore::BoxShape::getIncludedIntervals):
+        (WebCore::BoxShape::firstIncludedIntervalLogicalTop):
+        * rendering/shapes/BoxShape.h: Added.
+        * rendering/shapes/Shape.cpp:
+        (WebCore::createBoxShape):
+        (WebCore::Shape::createShape):
+
 2013-11-20  Antti Koivisto  <antti@apple.com>
 
         Simple line layout should support floats

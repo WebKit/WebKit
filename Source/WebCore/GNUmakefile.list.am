@@ -4539,6 +4539,8 @@ webcore_sources += \
 	Source/WebCore/rendering/mathml/RenderMathMLScripts.h \
 	Source/WebCore/rendering/mathml/RenderMathMLUnderOver.cpp \
 	Source/WebCore/rendering/mathml/RenderMathMLUnderOver.h \
+	Source/WebCore/rendering/shapes/BoxShape.cpp \
+	Source/WebCore/rendering/shapes/BoxShape.h \
 	Source/WebCore/rendering/shapes/PolygonShape.cpp \
 	Source/WebCore/rendering/shapes/PolygonShape.h \
 	Source/WebCore/rendering/shapes/RasterShape.cpp \
@@ -5758,6 +5760,8 @@ platform_sources += \
 	Source/WebCore/platform/graphics/FloatQuad.h \
 	Source/WebCore/platform/graphics/FloatRect.cpp \
 	Source/WebCore/platform/graphics/FloatRect.h \
+	Source/WebCore/platform/graphics/FloatRoundedRect.cpp \
+	Source/WebCore/platform/graphics/FloatRoundedRect.h \
 	Source/WebCore/platform/graphics/FloatSize.cpp \
 	Source/WebCore/platform/graphics/FloatSize.h \
 	Source/WebCore/platform/graphics/FontBaseline.h \

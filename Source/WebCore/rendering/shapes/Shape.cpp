@@ -31,6 +31,7 @@
 #include "Shape.h"
 
 #include "BasicShapeFunctions.h"
+#include "BoxShape.h"
 #include "CachedImage.h"
 #include "FloatSize.h"
 #include "ImageBuffer.h"
@@ -44,6 +45,12 @@
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
+
+static PassOwnPtr<Shape> createBoxShape(const FloatRoundedRect& bounds)
+{
+    ASSERT(bounds.rect().width() >= 0 && bounds.rect().height() >= 0);
+    return adoptPtr(new BoxShape(bounds));
+}
 
 static PassOwnPtr<Shape> createRectangleShape(const FloatRect& bounds, const FloatSize& radii)
 {
@@ -248,10 +255,11 @@ PassOwnPtr<Shape> Shape::createShape(const StyleImage* styleImage, float thresho
 
 PassOwnPtr<Shape> Shape::createShape(const LayoutSize& logicalSize, const LayoutSize& logicalRadii, WritingMode writingMode, Length margin, Length padding)
 {
-    FloatRect bounds(0, 0, logicalSize.width(), logicalSize.height());
+    FloatRect rect(0, 0, logicalSize.width(), logicalSize.height());
     FloatSize radii(logicalRadii.width(), logicalRadii.height());
+    FloatRoundedRect bounds(rect, radii, radii, radii, radii);
 
-    OwnPtr<Shape> shape = createRectangleShape(bounds, radii);
+    OwnPtr<Shape> shape = createBoxShape(bounds);
     shape->m_writingMode = writingMode;
     shape->m_margin = floatValueForLength(margin, 0);
     shape->m_padding = floatValueForLength(padding, 0);

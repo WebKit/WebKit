@@ -1876,6 +1876,7 @@ set(WebCore_SOURCES
     platform/graphics/FloatPolygon.cpp
     platform/graphics/FloatQuad.cpp
     platform/graphics/FloatRect.cpp
+    platform/graphics/FloatRoundedRect.cpp
     platform/graphics/FloatSize.cpp
     platform/graphics/Font.cpp
     platform/graphics/FontCache.cpp
@@ -2227,6 +2228,7 @@ set(WebCore_SOURCES
     rendering/mathml/RenderMathMLSquareRoot.cpp
     rendering/mathml/RenderMathMLUnderOver.cpp
 
+    rendering/shapes/BoxShape.cpp
     rendering/shapes/PolygonShape.cpp
     rendering/shapes/RasterShape.cpp
     rendering/shapes/RectangleShape.cpp

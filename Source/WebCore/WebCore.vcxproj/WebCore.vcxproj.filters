@@ -5016,6 +5016,9 @@
     <ClCompile Include="..\platform\graphics\FloatRect.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\graphics\FloatRoundedRect.cpp">
+      <Filter>platform\graphics</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\graphics\FloatSize.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
@@ -6890,6 +6893,9 @@
       <Filter>rendering\shapes</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\shapes\ShapeOutsideInfo.cpp">
+      <Filter>rendering\shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\shapes\BoxShape.cpp">
       <Filter>rendering\shapes</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\shapes\PolygonShape.cpp">
@@ -12799,6 +12805,9 @@
     <ClInclude Include="..\platform\graphics\FloatRect.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
+    <ClInclude Include="..\platform\graphics\FloatRoundedRect.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
     <ClInclude Include="..\platform\graphics\FloatSize.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
@@ -14676,6 +14685,9 @@
       <Filter>rendering\shapes</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\shapes\ShapeInterval.h">
+      <Filter>rendering\shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\shapes\BoxShape.h">
       <Filter>rendering\shapes</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\shapes\RasterShape.h">

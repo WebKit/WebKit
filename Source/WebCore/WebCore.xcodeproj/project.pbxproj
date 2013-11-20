@@ -2042,6 +2042,8 @@
 		6C638895A96CCEE50C8C946C /* CachedResourceRequestInitiators.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C638893A96CCEE50C8C946C /* CachedResourceRequestInitiators.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6C638896A96CCEE50C8C946C /* CachedResourceRequestInitiators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C638894A96CCEE50C8C946C /* CachedResourceRequestInitiators.cpp */; };
 		6CDDE8D01770BB220016E072 /* RegionOversetState.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C70A81417707C49009A446E /* RegionOversetState.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6E0E569B183BFFE600E0E8D5 /* FloatRoundedRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E0E5699183BFFE600E0E8D5 /* FloatRoundedRect.cpp */; };
+		6E0E569C183BFFE600E0E8D5 /* FloatRoundedRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E0E569A183BFFE600E0E8D5 /* FloatRoundedRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6E21C6C01126338500A7BE02 /* GraphicsContext3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C6BF1126338500A7BE02 /* GraphicsContext3D.cpp */; };
 		6E21C6C21126339900A7BE02 /* GraphicsContext3DCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C6C11126339900A7BE02 /* GraphicsContext3DCG.cpp */; };
 		6E3FAD3814733F4000E42306 /* JSWebGLCompressedTextureS3TC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E3FAD3614733F4000E42306 /* JSWebGLCompressedTextureS3TC.cpp */; };
@@ -2081,6 +2083,8 @@
 		6EC480A216EA638A00A48DCB /* FloatPolygon.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EC480A016EA638A00A48DCB /* FloatPolygon.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6ED878C4147493F4004C3597 /* RenderTableCaption.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6ED878C2147493F4004C3597 /* RenderTableCaption.cpp */; };
 		6ED878C5147493F4004C3597 /* RenderTableCaption.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED878C3147493F4004C3597 /* RenderTableCaption.h */; };
+		6ED8C379183BFF8C009E53BD /* BoxShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6ED8C377183BFF8C009E53BD /* BoxShape.cpp */; };
+		6ED8C37A183BFF8C009E53BD /* BoxShape.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED8C378183BFF8C009E53BD /* BoxShape.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EE8A77210F803F3005A4A24 /* JSWebGLContextAttributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */; };
 		6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */; };
 		6FA4454E898F2FC168BC38C1 /* JSBeforeUnloadEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 29E04A27BED2F81F98E9022B /* JSBeforeUnloadEvent.h */; };
@@ -8778,6 +8782,8 @@
 		6C638893A96CCEE50C8C946C /* CachedResourceRequestInitiators.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedResourceRequestInitiators.h; sourceTree = "<group>"; };
 		6C638894A96CCEE50C8C946C /* CachedResourceRequestInitiators.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedResourceRequestInitiators.cpp; sourceTree = "<group>"; };
 		6C70A81417707C49009A446E /* RegionOversetState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegionOversetState.h; sourceTree = "<group>"; };
+		6E0E5699183BFFE600E0E8D5 /* FloatRoundedRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatRoundedRect.cpp; sourceTree = "<group>"; };
+		6E0E569A183BFFE600E0E8D5 /* FloatRoundedRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatRoundedRect.h; sourceTree = "<group>"; };
 		6E21C6BF1126338500A7BE02 /* GraphicsContext3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3D.cpp; sourceTree = "<group>"; };
 		6E21C6C11126339900A7BE02 /* GraphicsContext3DCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3DCG.cpp; sourceTree = "<group>"; };
 		6E3FAD3614733F4000E42306 /* JSWebGLCompressedTextureS3TC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLCompressedTextureS3TC.cpp; sourceTree = "<group>"; };
@@ -8821,6 +8827,8 @@
 		6EC480A016EA638A00A48DCB /* FloatPolygon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatPolygon.h; sourceTree = "<group>"; };
 		6ED878C2147493F4004C3597 /* RenderTableCaption.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTableCaption.cpp; sourceTree = "<group>"; };
 		6ED878C3147493F4004C3597 /* RenderTableCaption.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTableCaption.h; sourceTree = "<group>"; };
+		6ED8C377183BFF8C009E53BD /* BoxShape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoxShape.cpp; sourceTree = "<group>"; };
+		6ED8C378183BFF8C009E53BD /* BoxShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoxShape.h; sourceTree = "<group>"; };
 		6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLContextAttributes.cpp; sourceTree = "<group>"; };
 		6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLContextAttributes.h; sourceTree = "<group>"; };
 		7117445614BC34E200EE5FC8 /* SVGTextMetricsBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextMetricsBuilder.cpp; sourceTree = "<group>"; };
@@ -19141,6 +19149,8 @@
 		B2A015910AF6CD53006BCE0E /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				6E0E5699183BFFE600E0E8D5 /* FloatRoundedRect.cpp */,
+				6E0E569A183BFFE600E0E8D5 /* FloatRoundedRect.h */,
 				CD641EB11818F5ED00EE4C41 /* MediaSourcePrivate.h */,
 				CD641EB21818F5ED00EE4C41 /* SourceBufferPrivate.h */,
 				076F0D0812B8192700C26AA4 /* avfoundation */,
@@ -21598,6 +21608,8 @@
 		FD08A879175D3926002CD360 /* shapes */ = {
 			isa = PBXGroup;
 			children = (
+				6ED8C377183BFF8C009E53BD /* BoxShape.cpp */,
+				6ED8C378183BFF8C009E53BD /* BoxShape.h */,
 				FD08A87A175D3926002CD360 /* PolygonShape.cpp */,
 				FD08A87B175D3926002CD360 /* PolygonShape.h */,
 				6E84E9DE17668BAD00815B68 /* RasterShape.cpp */,
@@ -21944,6 +21956,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6ED8C37A183BFF8C009E53BD /* BoxShape.h in Headers */,
+				6E0E569C183BFFE600E0E8D5 /* FloatRoundedRect.h in Headers */,
 				9A1142041832D135000BB8AD /* ValueToString.h in Headers */,
 				932AD70617EFA2C40038F8FF /* MainFrame.h in Headers */,
 				FEDBFF16182B7A8D0017FA64 /* BreakpointID.h in Headers */,
@@ -26203,6 +26217,7 @@
 				26C17A3F1491D2D400D12BA2 /* FileSystemIOS.mm in Sources */,
 				CD3A495417A9CC9000274E42 /* MediaSourceBase.cpp in Sources */,
 				514B3F760C722055000530DF /* FileSystemMac.mm in Sources */,
+				6ED8C379183BFF8C009E53BD /* BoxShape.cpp in Sources */,
 				5160300B0CC4251200C8AC25 /* FileSystemPOSIX.cpp in Sources */,
 				976D6C8D122B8A3D001FD1F7 /* FileThread.cpp in Sources */,
 				BC5EB69E0E81DAEB00B25965 /* FillLayer.cpp in Sources */,
@@ -28080,6 +28095,7 @@
 				49E911C30EF86D47009D0CAF /* TransformationMatrix.cpp in Sources */,
 				494BC40D12AEDD9E00743BD2 /* TransformationMatrixCA.cpp in Sources */,
 				B27535580B053814002CE64F /* TransformationMatrixCG.cpp in Sources */,
+				6E0E569B183BFFE600E0E8D5 /* FloatRoundedRect.cpp in Sources */,
 				FB484F4C171F821E00040755 /* TransformFunctions.cpp in Sources */,
 				49E911CF0EF86D47009D0CAF /* TransformOperations.cpp in Sources */,
 				5DB1BC6B10715A6400EFAA49 /* TransformSourceLibxslt.cpp in Sources */,
