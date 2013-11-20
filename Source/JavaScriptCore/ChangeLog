@@ -1,5 +1,12 @@
 2013-11-19  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, remove completely bogus assertion.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::addFunction):
+
+2013-11-19  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, debug build fix.
 
         * runtime/JSGlobalObject.cpp:

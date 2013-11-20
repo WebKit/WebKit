@@ -233,10 +233,8 @@ void JSGlobalObject::addFunction(ExecState* exec, const Identifier& propertyName
     removeDirect(exec->vm(), propertyName); // Newly declared functions overwrite existing properties.
     NewGlobalVar var = addGlobalVar(propertyName, IsVariable);
     registerAt(var.registerNumber).set(exec->vm(), this, value);
-    if (var.set) {
-        ASSERT(var.set->state() == ClearWatchpoint);
+    if (var.set)
         var.set->notifyWrite();
-    }
 }
 
 static inline JSObject* lastInPrototypeChain(JSObject* object)
