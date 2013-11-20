@@ -37,14 +37,12 @@
 // ASSERT_VALID_CODE_POINTER checks that ptr is a non-null pointer, and that it is a valid
 // instruction address on the platform (for example, check any alignment requirements).
 #if CPU(ARM_THUMB2) && !ENABLE(LLINT_C_LOOP)
-// ARM/thumb instructions must be 16-bit aligned, but all code pointers to be loaded
-// into the processor are decorated with the bottom bit set, indicating that this is
-// thumb code (as oposed to 32-bit traditional ARM).  The first test checks for both
-// decorated and undectorated null, and the second test ensures that the pointer is
-// decorated.
+// ARM instructions must be 16-bit aligned. Thumb2 code pointers to be loaded into
+// into the processor are decorated with the bottom bit set, while traditional ARM has
+// the lower bit clear. Since we don't know what kind of pointer, we check for both
+// decorated and undecorated null.
 #define ASSERT_VALID_CODE_POINTER(ptr) \
-    ASSERT(reinterpret_cast<intptr_t>(ptr) & ~1); \
-    ASSERT(reinterpret_cast<intptr_t>(ptr) & 1)
+    ASSERT(reinterpret_cast<intptr_t>(ptr) & ~1)
 #define ASSERT_VALID_CODE_OFFSET(offset) \
     ASSERT(!(offset & 1)) // Must be multiple of 2.
 #else
