@@ -6904,7 +6904,7 @@
     <ClCompile Include="..\Modules\indexeddb\leveldb\IDBFactoryBackendLevelDB.cpp">
       <Filter>Modules\indexeddb\leveldb</Filter>
     </ClCompile>
-    <ClCompile Include="..\rendering\LineWidth.cpp">
+    <ClCompile Include="..\rendering\line\LineWidth.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSBeforeUnloadEvent.cpp">
@@ -14657,6 +14657,9 @@
     <ClInclude Include="..\rendering\RenderElement.h">
       <Filter>rendering</Filter>
     </ClInclude>
+    <ClInclude Include="..\rendering\line\LineWidth.h">
+      <Filter>rendering\line</Filter>
+    </ClInclude>
     <ClInclude Include="..\platform\graphics\FloatPolygon.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
@@ -14683,9 +14686,6 @@
     </ClInclude>
     <ClInclude Include="..\rendering\shapes\RectangleShape.h">
       <Filter>rendering\shapes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\LineWidth.h">
-      <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\LineLayoutState.h">
       <Filter>rendering</Filter>

@@ -2115,7 +2115,6 @@ set(WebCore_SOURCES
     rendering/InlineTextBox.cpp
     rendering/LayoutRepainter.cpp
     rendering/LayoutState.cpp
-    rendering/LineWidth.cpp
     rendering/OrderIterator.cpp
     rendering/PointerEventsHitRules.cpp
     rendering/RenderBlock.cpp
@@ -2214,6 +2213,7 @@ set(WebCore_SOURCES
 
     rendering/line/LineBreaker.cpp
     rendering/line/LineInfo.cpp
+    rendering/line/LineWidth.cpp
 
     rendering/mathml/RenderMathMLBlock.cpp
     rendering/mathml/RenderMathMLFenced.cpp

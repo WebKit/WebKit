@@ -1,3 +1,41 @@
+2013-11-20  Zoltan Horvath  <zoltan@webkit.org>
+
+        Move LineWidth.{h,cpp} into rendering/line
+        <https://webkit.org/b/124448>
+
+        Reviewed by David Hyatt.
+
+        In r159354 I introduced line directory. Now it's time to move the helper classes of RenderBlockLineLayout into 'line' subdirectory.
+
+        No new tests, no behavior change.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/line/LineWidth.cpp: Renamed from Source/WebCore/rendering/LineWidth.cpp.
+        (WebCore::LineWidth::LineWidth):
+        (WebCore::LineWidth::fitsOnLine):
+        (WebCore::LineWidth::fitsOnLineIncludingExtraWidth):
+        (WebCore::LineWidth::fitsOnLineExcludingTrailingWhitespace):
+        (WebCore::LineWidth::updateAvailableWidth):
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded):
+        (WebCore::LineWidth::commit):
+        (WebCore::LineWidth::applyOverhang):
+        (WebCore::LineWidth::fitBelowFloats):
+        (WebCore::LineWidth::setTrailingWhitespaceWidth):
+        (WebCore::LineWidth::updateCurrentShapeSegment):
+        (WebCore::LineWidth::computeAvailableWidthFromLeftAndRight):
+        (WebCore::LineWidth::fitsOnLineExcludingTrailingCollapsedWhitespace):
+        * rendering/line/LineWidth.h: Renamed from Source/WebCore/rendering/LineWidth.h.
+        (WebCore::LineWidth::currentWidth):
+        (WebCore::LineWidth::uncommittedWidth):
+        (WebCore::LineWidth::committedWidth):
+        (WebCore::LineWidth::availableWidth):
+        (WebCore::LineWidth::addUncommittedWidth):
+        (WebCore::LineWidth::shouldIndentText):
+
 2013-11-20  Brady Eidson  <beidson@apple.com>
 
         Alphabetization followup to r159567

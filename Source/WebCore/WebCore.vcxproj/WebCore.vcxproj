@@ -9698,7 +9698,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\rendering\LineWidth.cpp" />
     <ClCompile Include="..\rendering\OrderIterator.cpp" />
     <ClCompile Include="..\rendering\PointerEventsHitRules.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -11064,6 +11063,7 @@
     <ClCompile Include="..\rendering\TextPaintStyle.cpp" />
     <ClCompile Include="..\rendering\line\LineBreaker.cpp" />
     <ClCompile Include="..\rendering\line\LineInfo.cpp" />
+    <ClCompile Include="..\rendering\line\LineWidth.cpp" />
     <ClCompile Include="..\rendering\shapes\PolygonShape.cpp" />
     <ClCompile Include="..\rendering\shapes\RasterShape.cpp" />
     <ClCompile Include="..\rendering\shapes\RectangleShape.cpp" />
@@ -19813,7 +19813,6 @@
     <ClInclude Include="..\rendering\InlineTextBox.h" />
     <ClInclude Include="..\rendering\LayoutRepainter.h" />
     <ClInclude Include="..\rendering\LayoutState.h" />
-    <ClInclude Include="..\rendering\LineWidth.h" />
     <ClInclude Include="..\rendering\OrderIterator.h" />
     <ClInclude Include="..\rendering\PaintInfo.h" />
     <ClInclude Include="..\rendering\PaintPhase.h" />
@@ -19891,6 +19890,7 @@
     <ClInclude Include="..\rendering\line\LineInfo.h" />
     <ClInclude Include="..\rendering\line\LineInlineHeaders.h" />
     <ClInclude Include="..\rendering\line\LineLayoutState.h" />
+    <ClInclude Include="..\rendering\line\LineWidth.h" />
     <ClInclude Include="..\rendering\shapes\PolygonShape.h" />
     <ClInclude Include="..\rendering\shapes\RasterShape.h" />
     <ClInclude Include="..\rendering\shapes\RectangleShape.h" />
