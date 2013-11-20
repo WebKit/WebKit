@@ -1,3 +1,37 @@
+2013-11-20  Robert Sipka  <sipka@inf.u-szeged.hu>
+
+        [curl] Improve detecting and handling of SSL related errors
+        https://bugs.webkit.org/show_bug.cgi?id=119436
+
+        Reviewed by Brent Fulgham.
+
+        Set the exact SSL verification error on CURL
+        and store the enabled domain with certificate.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/curl/ResourceError.h:
+        (WebCore::ResourceError::ResourceError):
+        (WebCore::ResourceError::sslErrors):
+        (WebCore::ResourceError::setSSLErrors):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::setHostAllowsAnyHTTPSCertificate):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+        (WebCore::ResourceHandleManager::initializeHandle):
+        * platform/network/curl/SSLHandle.cpp: Added.
+        (WebCore::allowsAnyHTTPSCertificateHosts):
+        (WebCore::sslIgnoreHTTPSCertificate):
+        (WebCore::sslCertificateFlag):
+        (WebCore::pemData):
+        (WebCore::certVerifyCallback):
+        (WebCore::sslctxfun):
+        (WebCore::setSSLVerifyOptions):
+        * platform/network/curl/SSLHandle.h: Added.
+
 2013-11-20  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [css shapes] Parse new circle shape syntax

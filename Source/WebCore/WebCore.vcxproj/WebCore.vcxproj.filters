@@ -1926,6 +1926,9 @@
     <ClCompile Include="..\platform\network\curl\SocketStreamHandleCurl.cpp">
       <Filter>platform\network\curl</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\network\curl\SSLHandle.cpp">
+      <Filter>platform\network\curl</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\sql\SQLiteAuthorizer.cpp">
       <Filter>platform\sql</Filter>
     </ClCompile>
@@ -15096,6 +15099,9 @@
       <Filter>platform\network\curl</Filter>
     </CustomBuildStep>
     <CustomBuildStep Include="..\platform\network\curl\ResourceResponse.h">
+      <Filter>platform\network\curl</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\platform\network\curl\SSLHandle.h">
       <Filter>platform\network\curl</Filter>
     </CustomBuildStep>
     <CustomBuildStep Include="..\platform\image-decoders\gif\GIFImageDecoder.h">

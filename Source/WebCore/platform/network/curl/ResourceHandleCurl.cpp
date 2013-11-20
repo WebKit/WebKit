@@ -34,6 +34,7 @@
 #include "NotImplemented.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceHandleManager.h"
+#include "SSLHandle.h"
 
 #if PLATFORM(WIN) && USE(CF)
 #include <wtf/PassRefPtr.h>
@@ -115,19 +116,10 @@ void ResourceHandle::cancel()
     ResourceHandleManager::sharedInstance()->cancel(this);
 }
 
-#if PLATFORM(WIN) && USE(CF)
-static HashSet<String>& allowsAnyHTTPSCertificateHosts()
-{
-    static HashSet<String> hosts;
-
-    return hosts;
-}
-
 void ResourceHandle::setHostAllowsAnyHTTPSCertificate(const String& host)
 {
-    allowsAnyHTTPSCertificateHosts().add(host.lower());
+    allowsAnyHTTPSCertificateHosts(host.lower());
 }
-#endif
 
 #if PLATFORM(WIN) && USE(CF)
 // FIXME:  The CFDataRef will need to be something else when

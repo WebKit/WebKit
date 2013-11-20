@@ -102,6 +102,7 @@ namespace WebCore {
             , m_cancelled(false)
             , m_authFailureCount(0)
             , m_formDataStream(loader)
+            , m_sslErrors(0)
 #endif
 #if USE(SOUP)
             , m_cancelled(false)
@@ -180,6 +181,7 @@ namespace WebCore {
         unsigned short m_authFailureCount;
 
         FormDataStream m_formDataStream;
+        unsigned m_sslErrors;
         Vector<char> m_postBytes;
 
         OwnPtr<MultipartHandle> m_multipartHandle;

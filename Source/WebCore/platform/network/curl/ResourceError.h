@@ -33,14 +33,20 @@ namespace WebCore {
 class ResourceError : public ResourceErrorBase
 {
 public:
-    ResourceError()
+    ResourceError() : m_sslErrors(0)
     {
     }
 
     ResourceError(const String& domain, int errorCode, const String& failingURL, const String& localizedDescription)
-        : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription)
+        : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription), m_sslErrors(0)
     {
     }
+
+    unsigned sslErrors() const { return m_sslErrors; }
+    void setSSLErrors(unsigned sslVerifyResult) { m_sslErrors = sslVerifyResult; }
+
+private:
+    unsigned m_sslErrors;
 };
 
 }
