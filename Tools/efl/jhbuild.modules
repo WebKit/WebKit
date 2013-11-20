@@ -332,9 +332,9 @@
   </autotools> 
 
   <autotools id="libseccomp" autogen-sh="configure">
-      <branch module="libseccomp/libseccomp-2.0.0.tar.gz" version="2.0.0"
+      <branch module="libseccomp/libseccomp-2.1.0.tar.gz" version="2.1.0"
           repo="downloads.sourceforge.net"
-          hash="sha256:07d8308502bb87ced8f03aa84e9de598940ff6b0c7235d1654712678821f9d76"/>
+          hash="sha256:b0d6e4f0984e6632a04f0cf33c6babdb011674ba15ff208e196f037e0e09905e"/>
   </autotools>
 
   <autotools id="atk"
