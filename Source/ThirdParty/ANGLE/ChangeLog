@@ -6,6 +6,17 @@
 
 2013-11-19  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Build fix for Mac.
+
+        * src/compiler/glslang_tab.cpp:
+        (yysyntax_error):
+        (yyerror):
+        * src/compiler/glslang_tab.h:
+        * src/compiler/preprocessor/ExpressionParser.cpp:
+        (yysyntax_error):
+
+2013-11-19  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Prospective build fix for GTK port following r159533.
 
         * GNUmakefile.am:
