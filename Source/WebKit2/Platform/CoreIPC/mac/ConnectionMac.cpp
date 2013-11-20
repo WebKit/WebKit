@@ -179,7 +179,7 @@ static inline size_t machMessageSize(size_t bodySize, size_t numberOfPortDescrip
         if (numberOfPortDescriptors)
             size += (numberOfPortDescriptors * sizeof(mach_msg_port_descriptor_t));
         if (numberOfOOLMemoryDescriptors)
-            size += (numberOfOOLMemoryDescriptors * sizeof(mach_msg_ool_ports_descriptor_t));
+            size += (numberOfOOLMemoryDescriptors * sizeof(mach_msg_ool_descriptor_t));
     }
     return round_msg(size);
 }

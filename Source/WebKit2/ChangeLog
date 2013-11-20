@@ -1,3 +1,16 @@
+2013-11-20  Tim Horton  <timothy_horton@apple.com>
+
+        machMessageSize uses sizeof(mach_msg_ool_ports_descriptor_t) for out-of-line *memory*
+        https://bugs.webkit.org/show_bug.cgi?id=124644
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::machMessageSize):
+        mach_msg_ool_descriptor_t is the correct type, given that
+        out-of-line memory descriptors use the mach_msg_ool_descriptor_t
+        member of the mach_msg_descriptor_t union.
+
 2013-11-20  Brady Eidson  <beidson@apple.com>
 
         Cleanup getOrEstablishIDBDatabaseMetadata and stub it out in WK2
