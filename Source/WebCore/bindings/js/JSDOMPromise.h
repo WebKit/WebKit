@@ -33,18 +33,15 @@
 #include <runtime/JSPromise.h>
 #include <runtime/JSPromiseResolver.h>
 #include <heap/StrongInlines.h>
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
-// FIXME: Using this class in DOM code makes it dependent on JS bindings.
 class PromiseWrapper {
-    WTF_MAKE_NONCOPYABLE(PromiseWrapper)
 public:
-    static std::unique_ptr<PromiseWrapper> create(JSDOMGlobalObject* globalObject, JSC::JSPromise* promise)
-    {
-        return std::unique_ptr<PromiseWrapper>(new PromiseWrapper(globalObject, promise));
-    }
+    PromiseWrapper(JSDOMGlobalObject*, JSC::JSPromise*);
+
+    PromiseWrapper(const PromiseWrapper&);
+    PromiseWrapper& operator=(const PromiseWrapper&);
 
     template<class FulfillResultType>
     void fulfill(const FulfillResultType&);
@@ -53,8 +50,6 @@ public:
     void reject(const RejectResultType&);
 
 private:
-    PromiseWrapper(JSDOMGlobalObject*, JSC::JSPromise*);
-
     JSC::Strong<JSDOMGlobalObject> m_globalObject;
     JSC::Strong<JSC::JSPromise> m_promise;
 };

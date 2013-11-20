@@ -40,47 +40,47 @@ CryptoAlgorithm::~CryptoAlgorithm()
 {
 }
 
-void CryptoAlgorithm::encrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
+void CryptoAlgorithm::encrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, VectorCallback, VoidCallback, ExceptionCode& ec)
 {
     ec = NOT_SUPPORTED_ERR;
 }
 
-void CryptoAlgorithm::decrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
+void CryptoAlgorithm::decrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, VectorCallback, VoidCallback, ExceptionCode& ec)
 {
     ec = NOT_SUPPORTED_ERR;
 }
 
-void CryptoAlgorithm::sign(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
+void CryptoAlgorithm::sign(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, VectorCallback, VoidCallback, ExceptionCode& ec)
 {
     ec = NOT_SUPPORTED_ERR;
 }
 
-void CryptoAlgorithm::verify(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, const CryptoOperationData&, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
+void CryptoAlgorithm::verify(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, const CryptoOperationData&, BoolCallback, VoidCallback, ExceptionCode& ec)
 {
     ec = NOT_SUPPORTED_ERR;
 }
 
-void CryptoAlgorithm::digest(const CryptoAlgorithmParameters&, const CryptoOperationData&, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
+void CryptoAlgorithm::digest(const CryptoAlgorithmParameters&, const CryptoOperationData&, VectorCallback, VoidCallback, ExceptionCode& ec)
 {
     ec = NOT_SUPPORTED_ERR;
 }
 
-void CryptoAlgorithm::generateKey(const CryptoAlgorithmParameters&, bool, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
+void CryptoAlgorithm::generateKey(const CryptoAlgorithmParameters&, bool, CryptoKeyUsage, KeyOrKeyPairCallback, VoidCallback, ExceptionCode& ec)
 {
     ec = NOT_SUPPORTED_ERR;
 }
 
-void CryptoAlgorithm::deriveKey(const CryptoAlgorithmParameters&, const CryptoKey&, CryptoAlgorithm*, bool, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
+void CryptoAlgorithm::deriveKey(const CryptoAlgorithmParameters&, const CryptoKey&, CryptoAlgorithm*, bool, CryptoKeyUsage, KeyCallback, VoidCallback, ExceptionCode& ec)
 {
     ec = NOT_SUPPORTED_ERR;
 }
 
-void CryptoAlgorithm::deriveBits(const CryptoAlgorithmParameters&, const CryptoKey&, unsigned long, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
+void CryptoAlgorithm::deriveBits(const CryptoAlgorithmParameters&, const CryptoKey&, unsigned long, VectorCallback, VoidCallback, ExceptionCode& ec)
 {
     ec = NOT_SUPPORTED_ERR;
 }
 
-void CryptoAlgorithm::importKey(const CryptoAlgorithmParameters&, const CryptoKeyData&, bool, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode& ec)
+void CryptoAlgorithm::importKey(const CryptoAlgorithmParameters&, const CryptoKeyData&, bool, CryptoKeyUsage, KeyCallback, VoidCallback, ExceptionCode& ec)
 {
     ec = NOT_SUPPORTED_ERR;
 }

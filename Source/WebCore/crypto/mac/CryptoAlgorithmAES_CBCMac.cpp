@@ -31,18 +31,17 @@
 #include "CryptoAlgorithmAesCbcParams.h"
 #include "CryptoKeyAES.h"
 #include "ExceptionCode.h"
-#include "JSDOMPromise.h"
 #include <CommonCrypto/CommonCrypto.h>
 
 namespace WebCore {
 
-static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcParams& parameters, const CryptoKeyAES& key, const CryptoOperationData& data, std::unique_ptr<PromiseWrapper> promise)
+static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcParams& parameters, const CryptoKeyAES& key, const CryptoOperationData& data, CryptoAlgorithm::VectorCallback callback, CryptoAlgorithm::VoidCallback failureCallback)
 {
     static_assert(sizeof(parameters.iv) == kCCBlockSizeAES128, "Initialization vector size must be the same as algorithm block size");
 
     size_t keyLengthInBytes = key.key().size();
     if (keyLengthInBytes != 16 && keyLengthInBytes != 24 && keyLengthInBytes != 32) {
-        promise->reject(nullptr);
+        failureCallback();
         return;
     }
 
@@ -54,7 +53,7 @@ static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcP
 #endif
     CCCryptorStatus status = CCCryptorCreate(operation, aesAlgorithm, kCCOptionPKCS7Padding, key.key().data(), keyLengthInBytes, parameters.iv.data(), &cryptor);
     if (status) {
-        promise->reject(nullptr);
+        failureCallback();
         return;
     }
 
@@ -63,7 +62,7 @@ static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcP
     size_t bytesWritten;
     status = CCCryptorUpdate(cryptor, data.first, data.second, result.data(), result.size(), &bytesWritten);
     if (status) {
-        promise->reject(nullptr);
+        failureCallback();
         return;
     }
 
@@ -71,7 +70,7 @@ static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcP
     status = CCCryptorFinal(cryptor, p, result.end() - p, &bytesWritten);
     p += bytesWritten;
     if (status) {
-        promise->reject(nullptr);
+        failureCallback();
         return;
     }
 
@@ -80,10 +79,10 @@ static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcP
 
     CCCryptorRelease(cryptor);
 
-    promise->fulfill(result);
+    callback(result);
 }
 
-void CryptoAlgorithmAES_CBC::encrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
+void CryptoAlgorithmAES_CBC::encrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
 {
     const CryptoAlgorithmAesCbcParams& aesCBCParameters = toCryptoAlgorithmAesCbcParams(parameters);
 
@@ -93,10 +92,10 @@ void CryptoAlgorithmAES_CBC::encrypt(const CryptoAlgorithmParameters& parameters
     }
     const CryptoKeyAES& aesKey = toCryptoKeyAES(key);
 
-    transformAES_CBC(kCCEncrypt, aesCBCParameters, aesKey, data, std::move(promise));
+    transformAES_CBC(kCCEncrypt, aesCBCParameters, aesKey, data, std::move(callback), std::move(failureCallback));
 }
 
-void CryptoAlgorithmAES_CBC::decrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
+void CryptoAlgorithmAES_CBC::decrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
 {
     const CryptoAlgorithmAesCbcParams& aesCBCParameters = toCryptoAlgorithmAesCbcParams(parameters);
 
@@ -106,7 +105,7 @@ void CryptoAlgorithmAES_CBC::decrypt(const CryptoAlgorithmParameters& parameters
     }
     const CryptoKeyAES& aesKey = toCryptoKeyAES(key);
 
-    transformAES_CBC(kCCDecrypt, aesCBCParameters, aesKey, data, std::move(promise));
+    transformAES_CBC(kCCDecrypt, aesCBCParameters, aesKey, data, std::move(callback), std::move(failureCallback));
 }
 
 } // namespace WebCore

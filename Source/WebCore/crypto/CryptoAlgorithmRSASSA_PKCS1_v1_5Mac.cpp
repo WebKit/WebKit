@@ -32,7 +32,6 @@
 #include "CryptoDigest.h"
 #include "CryptoKeyRSA.h"
 #include "ExceptionCode.h"
-#include "JSDOMPromise.h"
 #include <CommonCrypto/CommonCryptor.h>
 
 #if defined(__has_include)
@@ -89,7 +88,7 @@ static bool getCommonCryptoDigestAlgorithm(CryptoAlgorithmIdentifier hashFunctio
     }
 }
 
-void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
+void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
 {
     const CryptoAlgorithmRsaSsaParams& rsaSSAParameters = toCryptoAlgorithmRsaSsaParams(parameters);
 
@@ -120,15 +119,15 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(const CryptoAlgorithmParameters& par
 
     CCCryptorStatus status = CCRSACryptorSign(rsaKey.platformKey(), ccPKCS1Padding, digestData.data(), digestData.size(), digestAlgorithm, 0, signature.data(), &signatureSize);
     if (status) {
-        promise->reject(nullptr);
+        failureCallback();
         return;
     }
 
     signature.resize(signatureSize);
-    promise->fulfill(signature);
+    callback(signature);
 }
 
-void CryptoAlgorithmRSASSA_PKCS1_v1_5::verify(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& signature, const CryptoOperationData& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
+void CryptoAlgorithmRSASSA_PKCS1_v1_5::verify(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& signature, const CryptoOperationData& data, BoolCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
 {
     const CryptoAlgorithmRsaSsaParams& rsaSSAParameters = toCryptoAlgorithmRsaSsaParams(parameters);
 
@@ -156,11 +155,11 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::verify(const CryptoAlgorithmParameters& p
 
     CCCryptorStatus status = CCRSACryptorVerify(rsaKey.platformKey(), ccPKCS1Padding, digestData.data(), digestData.size(), digestAlgorithm, 0, signature.first, signature.second);
     if (!status)
-        promise->fulfill(true);
+        callback(true);
     else if (status == kCCNotVerified || kCCDecodeError) // <rdar://problem/15464982> CCRSACryptorVerify returns kCCDecodeError instead of kCCNotVerified sometimes
-        promise->fulfill(false);
+        callback(false);
     else
-        promise->reject(nullptr);
+        failureCallback();
 }
 
 } // namespace WebCore

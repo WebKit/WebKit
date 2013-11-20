@@ -33,7 +33,6 @@
 #include "CryptoKeyDataOctetSequence.h"
 #include "CryptoKeyHMAC.h"
 #include "ExceptionCode.h"
-#include "JSDOMPromise.h"
 
 namespace WebCore {
 
@@ -57,20 +56,20 @@ CryptoAlgorithmIdentifier CryptoAlgorithmHMAC::identifier() const
     return s_identifier;
 }
 
-void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, std::unique_ptr<PromiseWrapper> promise, ExceptionCode&)
+void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback callback, VoidCallback failureCallback, ExceptionCode&)
 {
     const CryptoAlgorithmHmacKeyParams& hmacParameters = toCryptoAlgorithmHmacKeyParams(parameters);
 
     RefPtr<CryptoKeyHMAC> result = CryptoKeyHMAC::generate(hmacParameters.hasLength ? hmacParameters.length : 0, hmacParameters.hash, extractable, usages);
     if (!result) {
-        promise->reject(nullptr);
+        failureCallback();
         return;
     }
 
-    promise->fulfill(result.release());
+    callback(result.get(), nullptr);
 }
 
-void CryptoAlgorithmHMAC::importKey(const CryptoAlgorithmParameters& parameters, const CryptoKeyData& keyData, bool extractable, CryptoKeyUsage usage, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
+void CryptoAlgorithmHMAC::importKey(const CryptoAlgorithmParameters& parameters, const CryptoKeyData& keyData, bool extractable, CryptoKeyUsage usage, KeyCallback callback, VoidCallback, ExceptionCode& ec)
 {
     if (keyData.format() != CryptoKeyData::Format::OctetSequence) {
         ec = NOT_SUPPORTED_ERR;
@@ -81,7 +80,7 @@ void CryptoAlgorithmHMAC::importKey(const CryptoAlgorithmParameters& parameters,
     const CryptoAlgorithmHmacParams& hmacParameters = toCryptoAlgorithmHmacParams(parameters);
 
     RefPtr<CryptoKeyHMAC> result = CryptoKeyHMAC::create(keyDataOctetSequence.octetSequence(), hmacParameters.hash, extractable, usage);
-    promise->fulfill(result.release());
+    callback(*result);
 }
 
 }

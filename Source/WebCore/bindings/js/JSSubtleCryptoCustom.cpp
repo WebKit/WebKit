@@ -162,10 +162,16 @@ JSValue JSSubtleCrypto::encrypt(ExecState* exec)
     }
 
     JSPromise* promise = JSPromise::createWithResolver(exec->vm(), globalObject());
-    auto promiseWrapper = PromiseWrapper::create(globalObject(), promise);
+    PromiseWrapper promiseWrapper(globalObject(), promise);
+    auto successCallback = [promiseWrapper](const Vector<uint8_t>& result) mutable {
+        promiseWrapper.fulfill(result);
+    };
+    auto failureCallback = [promiseWrapper]() mutable {
+        promiseWrapper.reject(nullptr);
+    };
 
     ExceptionCode ec = 0;
-    algorithm->encrypt(*parameters, *key, data, std::move(promiseWrapper), ec);
+    algorithm->encrypt(*parameters, *key, data, std::move(successCallback), std::move(failureCallback), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -208,10 +214,16 @@ JSValue JSSubtleCrypto::decrypt(ExecState* exec)
     }
 
     JSPromise* promise = JSPromise::createWithResolver(exec->vm(), globalObject());
-    auto promiseWrapper = PromiseWrapper::create(globalObject(), promise);
+    PromiseWrapper promiseWrapper(globalObject(), promise);
+    auto successCallback = [promiseWrapper](const Vector<uint8_t>& result) mutable {
+        promiseWrapper.fulfill(result);
+    };
+    auto failureCallback = [promiseWrapper]() mutable {
+        promiseWrapper.reject(nullptr);
+    };
 
     ExceptionCode ec = 0;
-    algorithm->decrypt(*parameters, *key, data, std::move(promiseWrapper), ec);
+    algorithm->decrypt(*parameters, *key, data, std::move(successCallback), std::move(failureCallback), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -254,10 +266,16 @@ JSValue JSSubtleCrypto::sign(ExecState* exec)
     }
 
     JSPromise* promise = JSPromise::createWithResolver(exec->vm(), globalObject());
-    auto promiseWrapper = PromiseWrapper::create(globalObject(), promise);
+    PromiseWrapper promiseWrapper(globalObject(), promise);
+    auto successCallback = [promiseWrapper](const Vector<uint8_t>& result) mutable {
+        promiseWrapper.fulfill(result);
+    };
+    auto failureCallback = [promiseWrapper]() mutable {
+        promiseWrapper.reject(nullptr);
+    };
 
     ExceptionCode ec = 0;
-    algorithm->sign(*parameters, *key, data, std::move(promiseWrapper), ec);
+    algorithm->sign(*parameters, *key, data, std::move(successCallback), std::move(failureCallback), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -306,10 +324,16 @@ JSValue JSSubtleCrypto::verify(ExecState* exec)
     }
 
     JSPromise* promise = JSPromise::createWithResolver(exec->vm(), globalObject());
-    auto promiseWrapper = PromiseWrapper::create(globalObject(), promise);
+    PromiseWrapper promiseWrapper(globalObject(), promise);
+    auto successCallback = [promiseWrapper](bool result) mutable {
+        promiseWrapper.fulfill(result);
+    };
+    auto failureCallback = [promiseWrapper]() mutable {
+        promiseWrapper.reject(nullptr);
+    };
 
     ExceptionCode ec = 0;
-    algorithm->verify(*parameters, *key, signature, data, std::move(promiseWrapper), ec);
+    algorithm->verify(*parameters, *key, signature, data, std::move(successCallback), std::move(failureCallback), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -342,10 +366,16 @@ JSValue JSSubtleCrypto::digest(ExecState* exec)
     }
 
     JSPromise* promise = JSPromise::createWithResolver(exec->vm(), globalObject());
-    std::unique_ptr<PromiseWrapper> promiseWrapper = PromiseWrapper::create(globalObject(), promise);
+    PromiseWrapper promiseWrapper(globalObject(), promise);
+    auto successCallback = [promiseWrapper](const Vector<uint8_t>& result) mutable {
+        promiseWrapper.fulfill(result);
+    };
+    auto failureCallback = [promiseWrapper]() mutable {
+        promiseWrapper.reject(nullptr);
+    };
 
     ExceptionCode ec = 0;
-    algorithm->digest(*parameters, data, std::move(promiseWrapper), ec);
+    algorithm->digest(*parameters, data, std::move(successCallback), std::move(failureCallback), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -387,10 +417,21 @@ JSValue JSSubtleCrypto::generateKey(JSC::ExecState* exec)
     }
 
     JSPromise* promise = JSPromise::createWithResolver(exec->vm(), globalObject());
-    auto promiseWrapper = PromiseWrapper::create(globalObject(), promise);
+    PromiseWrapper promiseWrapper(globalObject(), promise);
+    auto successCallback = [promiseWrapper](CryptoKey* key, CryptoKeyPair* keyPair) mutable {
+        ASSERT(key || keyPair);
+        ASSERT(!key || !keyPair);
+        if (key)
+            promiseWrapper.fulfill(key);
+        else
+            promiseWrapper.fulfill(keyPair);
+    };
+    auto failureCallback = [promiseWrapper]() mutable {
+        promiseWrapper.reject(nullptr);
+    };
 
     ExceptionCode ec = 0;
-    algorithm->generateKey(*parameters, extractable, keyUsages, std::move(promiseWrapper), ec);
+    algorithm->generateKey(*parameters, extractable, keyUsages, std::move(successCallback), std::move(failureCallback), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -494,10 +535,16 @@ JSValue JSSubtleCrypto::importKey(JSC::ExecState* exec)
         return jsUndefined();
 
     JSPromise* promise = JSPromise::createWithResolver(exec->vm(), globalObject());
-    auto promiseWrapper = PromiseWrapper::create(globalObject(), promise);
+    PromiseWrapper promiseWrapper(globalObject(), promise);
+    auto successCallback = [promiseWrapper](CryptoKey& result) mutable {
+        promiseWrapper.fulfill(&result);
+    };
+    auto failureCallback = [promiseWrapper]() mutable {
+        promiseWrapper.reject(nullptr);
+    };
 
     ExceptionCode ec = 0;
-    algorithm->importKey(*parameters, *keyData, extractable, keyUsages, std::move(promiseWrapper), ec);
+    algorithm->importKey(*parameters, *keyData, extractable, keyUsages, std::move(successCallback), std::move(failureCallback), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -522,11 +569,11 @@ JSValue JSSubtleCrypto::exportKey(JSC::ExecState* exec)
         return throwTypeError(exec);
 
     JSPromise* promise = JSPromise::createWithResolver(exec->vm(), globalObject());
-    auto promiseWrapper = PromiseWrapper::create(globalObject(), promise);
+    PromiseWrapper promiseWrapper(globalObject(), promise);
 
     if (!key->extractable()) {
         m_impl->document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "Key is not extractable");
-        promiseWrapper->reject(nullptr);
+        promiseWrapper.reject(nullptr);
         return promise;
     }
 
@@ -534,10 +581,10 @@ JSValue JSSubtleCrypto::exportKey(JSC::ExecState* exec)
     case CryptoKeyFormat::Raw: {
         Vector<unsigned char> result;
         if (CryptoKeySerializationRaw::serialize(*key, result))
-            promiseWrapper->fulfill(result);
+            promiseWrapper.fulfill(result);
         else {
             m_impl->document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "Key cannot be exported to raw format");
-            promiseWrapper->reject(nullptr);
+            promiseWrapper.reject(nullptr);
         }
         break;
     }
@@ -548,7 +595,7 @@ JSValue JSSubtleCrypto::exportKey(JSC::ExecState* exec)
         CString utf8String = result.utf8(StrictConversion);
         Vector<unsigned char> resultBuffer;
         resultBuffer.append(utf8String.data(), utf8String.length());
-        promiseWrapper->fulfill(resultBuffer);
+        promiseWrapper.fulfill(resultBuffer);
         break;
     }
     default:

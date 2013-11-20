@@ -27,6 +27,7 @@
 #define CryptoKeyRSA_h
 
 #include "CryptoKey.h"
+#include <functional>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
@@ -55,7 +56,9 @@ public:
 
     size_t keySizeInBits() const;
 
-    static void generatePair(CryptoAlgorithmIdentifier, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>);
+    typedef std::function<void(CryptoKeyPair&)> KeyPairCallback;
+    typedef std::function<void()> VoidCallback;
+    static void generatePair(CryptoAlgorithmIdentifier, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsage, KeyPairCallback, VoidCallback failureCallback);
 
     PlatformRSAKey platformKey() const { return m_platformKey; }
 

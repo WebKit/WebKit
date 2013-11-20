@@ -31,7 +31,6 @@
 #include "CryptoAlgorithmHmacParams.h"
 #include "CryptoKeyHMAC.h"
 #include "ExceptionCode.h"
-#include "JSDOMPromise.h"
 #include <CommonCrypto/CommonHMAC.h>
 
 namespace WebCore {
@@ -89,7 +88,7 @@ static Vector<uint8_t> calculateSignature(CCHmacAlgorithm algorithm, const Vecto
     return result;
 }
 
-void CryptoAlgorithmHMAC::sign(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
+void CryptoAlgorithmHMAC::sign(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback, ExceptionCode& ec)
 {
     const CryptoAlgorithmHmacParams& hmacParameters = toCryptoAlgorithmHmacParams(parameters);
 
@@ -107,10 +106,10 @@ void CryptoAlgorithmHMAC::sign(const CryptoAlgorithmParameters& parameters, cons
 
     Vector<uint8_t> signature = calculateSignature(algorithm, hmacKey.key(), data);
 
-    promise->fulfill(signature);
+    callback(signature);
 }
 
-void CryptoAlgorithmHMAC::verify(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, std::unique_ptr<PromiseWrapper> promise, ExceptionCode& ec)
+void CryptoAlgorithmHMAC::verify(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback callback, VoidCallback, ExceptionCode& ec)
 {
     const CryptoAlgorithmHmacParams& hmacParameters = toCryptoAlgorithmHmacParams(parameters);
 
@@ -130,7 +129,7 @@ void CryptoAlgorithmHMAC::verify(const CryptoAlgorithmParameters& parameters, co
 
     bool result = signature.size() == expectedSignature.second && !memcmp(signature.data(), expectedSignature.first, signature.size());
 
-    promise->fulfill(result);
+    callback(result);
 }
 
 }

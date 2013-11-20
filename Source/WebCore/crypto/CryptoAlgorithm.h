@@ -28,7 +28,9 @@
 
 #include "CryptoAlgorithmIdentifier.h"
 #include "CryptoKeyUsage.h"
+#include <functional>
 #include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
@@ -38,8 +40,8 @@ typedef int ExceptionCode;
 
 class CryptoAlgorithmParameters;
 class CryptoKey;
+class CryptoKeyPair;
 class CryptoKeyData;
-class PromiseWrapper;
 
 // Data is mutable, so async operations should copy it first.
 typedef std::pair<const char*, size_t> CryptoOperationData;
@@ -51,15 +53,21 @@ public:
 
     virtual CryptoAlgorithmIdentifier identifier() const = 0;
 
-    virtual void encrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, std::unique_ptr<PromiseWrapper>, ExceptionCode&);
-    virtual void decrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, std::unique_ptr<PromiseWrapper>, ExceptionCode&);
-    virtual void sign(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, std::unique_ptr<PromiseWrapper>, ExceptionCode&);
-    virtual void verify(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData& signature, const CryptoOperationData& data, std::unique_ptr<PromiseWrapper>, ExceptionCode&);
-    virtual void digest(const CryptoAlgorithmParameters&, const CryptoOperationData&, std::unique_ptr<PromiseWrapper>, ExceptionCode&);
-    virtual void generateKey(const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&);
-    virtual void deriveKey(const CryptoAlgorithmParameters&, const CryptoKey& baseKey, CryptoAlgorithm* derivedKeyType, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&);
-    virtual void deriveBits(const CryptoAlgorithmParameters&, const CryptoKey& baseKey, unsigned long length, std::unique_ptr<PromiseWrapper>, ExceptionCode&);
-    virtual void importKey(const CryptoAlgorithmParameters&, const CryptoKeyData&, bool extractable, CryptoKeyUsage, std::unique_ptr<PromiseWrapper>, ExceptionCode&);
+    typedef std::function<void(bool)> BoolCallback;
+    typedef std::function<void(CryptoKey&)> KeyCallback;
+    typedef std::function<void(CryptoKey*, CryptoKeyPair*)> KeyOrKeyPairCallback;
+    typedef std::function<void(const Vector<uint8_t>&)> VectorCallback;
+    typedef std::function<void()> VoidCallback;
+
+    virtual void encrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, VectorCallback, VoidCallback failureCallback, ExceptionCode&);
+    virtual void decrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, VectorCallback, VoidCallback failureCallback, ExceptionCode&);
+    virtual void sign(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, VectorCallback, VoidCallback failureCallback, ExceptionCode&);
+    virtual void verify(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData& signature, const CryptoOperationData& data, BoolCallback, VoidCallback failureCallback, ExceptionCode&);
+    virtual void digest(const CryptoAlgorithmParameters&, const CryptoOperationData&, VectorCallback, VoidCallback failureCallback, ExceptionCode&);
+    virtual void generateKey(const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsage, KeyOrKeyPairCallback, VoidCallback failureCallback, ExceptionCode&);
+    virtual void deriveKey(const CryptoAlgorithmParameters&, const CryptoKey& baseKey, CryptoAlgorithm* derivedKeyType, bool extractable, CryptoKeyUsage, KeyCallback, VoidCallback failureCallback, ExceptionCode&);
+    virtual void deriveBits(const CryptoAlgorithmParameters&, const CryptoKey& baseKey, unsigned long length, VectorCallback, VoidCallback failureCallback, ExceptionCode&);
+    virtual void importKey(const CryptoAlgorithmParameters&, const CryptoKeyData&, bool extractable, CryptoKeyUsage, KeyCallback, VoidCallback failureCallback, ExceptionCode&);
 
 protected:
     CryptoAlgorithm();

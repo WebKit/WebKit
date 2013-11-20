@@ -1,3 +1,88 @@
+2013-11-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Use std::function callbacks in CryptoAlgorithm instead of JS promises
+        https://bugs.webkit.org/show_bug.cgi?id=124673
+
+        Reviewed by Anders Carlsson.
+
+        To implement key wrapping/unwrapping, we'll need to chain existing operations.
+        It's much easier to do with C++ callbacks than with functions fulfilling JS
+        promises directly.
+
+        Also, this will decouple CryptoAlgorithm from JS, which is nice.
+
+        SubtleCrypto IDL says that all functions return Promise<any>, but in reality,
+        there is very little polymorphism, the only function whose return type depends
+        on algorithm is generateKey (it can create a Key or a KeyPair).
+
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::PromiseWrapper::PromiseWrapper):
+        (WebCore::PromiseWrapper::operator=):
+        * bindings/js/JSDOMPromise.h:
+        Made it copyable, as each crypto function wraps the promise in success and failure
+        functional objects now.
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::JSSubtleCrypto::encrypt):
+        (WebCore::JSSubtleCrypto::decrypt):
+        (WebCore::JSSubtleCrypto::sign):
+        (WebCore::JSSubtleCrypto::verify):
+        (WebCore::JSSubtleCrypto::digest):
+        (WebCore::JSSubtleCrypto::generateKey):
+        (WebCore::JSSubtleCrypto::importKey):
+        (WebCore::JSSubtleCrypto::exportKey):
+        * crypto/CryptoAlgorithm.cpp:
+        (WebCore::CryptoAlgorithm::encrypt):
+        (WebCore::CryptoAlgorithm::decrypt):
+        (WebCore::CryptoAlgorithm::sign):
+        (WebCore::CryptoAlgorithm::verify):
+        (WebCore::CryptoAlgorithm::digest):
+        (WebCore::CryptoAlgorithm::generateKey):
+        (WebCore::CryptoAlgorithm::deriveKey):
+        (WebCore::CryptoAlgorithm::deriveBits):
+        (WebCore::CryptoAlgorithm::importKey):
+        * crypto/CryptoAlgorithm.h:
+        * crypto/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::sign):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::verify):
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::generateKey):
+        (WebCore::CryptoAlgorithmAES_CBC::importKey):
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.h:
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        (WebCore::CryptoAlgorithmHMAC::generateKey):
+        (WebCore::CryptoAlgorithmHMAC::importKey):
+        * crypto/algorithms/CryptoAlgorithmHMAC.h:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::generateKey):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey):
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmSHA1.cpp:
+        (WebCore::CryptoAlgorithmSHA1::digest):
+        * crypto/algorithms/CryptoAlgorithmSHA1.h:
+        * crypto/algorithms/CryptoAlgorithmSHA224.cpp:
+        (WebCore::CryptoAlgorithmSHA224::digest):
+        * crypto/algorithms/CryptoAlgorithmSHA224.h:
+        * crypto/algorithms/CryptoAlgorithmSHA256.cpp:
+        (WebCore::CryptoAlgorithmSHA256::digest):
+        * crypto/algorithms/CryptoAlgorithmSHA256.h:
+        * crypto/algorithms/CryptoAlgorithmSHA384.cpp:
+        (WebCore::CryptoAlgorithmSHA384::digest):
+        * crypto/algorithms/CryptoAlgorithmSHA384.h:
+        * crypto/algorithms/CryptoAlgorithmSHA512.cpp:
+        (WebCore::CryptoAlgorithmSHA512::digest):
+        * crypto/algorithms/CryptoAlgorithmSHA512.h:
+        * crypto/keys/CryptoKeyRSA.h:
+        * crypto/mac/CryptoAlgorithmAES_CBCMac.cpp:
+        (WebCore::transformAES_CBC):
+        (WebCore::CryptoAlgorithmAES_CBC::encrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::decrypt):
+        * crypto/mac/CryptoAlgorithmHMACMac.cpp:
+        (WebCore::CryptoAlgorithmHMAC::sign):
+        (WebCore::CryptoAlgorithmHMAC::verify):
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::CryptoKeyRSA::generatePair):
+
 2013-11-20  Robert Hogan  <robert@webkit.org>
 
         REGRESSION(r127163): Respect clearance set on ancestors when placing floats
