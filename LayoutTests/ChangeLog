@@ -1,3 +1,20 @@
+2013-11-20  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r159481
+
+    2013-11-18  Zalan Bujtas  <zalan@apple.com>
+
+            use after free in WebCore::DocumentOrderedMap::remove / WebCore::TreeScope::removeElementById
+            https://bugs.webkit.org/show_bug.cgi?id=121324
+
+            Reviewed by Ryosuke Niwa.
+
+            Update the document ordered map for an image element before dispatching load or error events
+            when it's inserted into a document.
+
+            * fast/dom/modify-node-and-while-in-the-callback-too-crash-expected.txt: Added.
+            * fast/dom/modify-node-and-while-in-the-callback-too-crash.html: Added.
+
 2013-11-14  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed. Rebaselines branch after r158468
