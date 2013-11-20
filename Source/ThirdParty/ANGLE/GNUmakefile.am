@@ -31,7 +31,7 @@ libANGLE_la_SOURCES = \
 	Source/ThirdParty/ANGLE/src/compiler/BaseTypes.h \
 	Source/ThirdParty/ANGLE/src/compiler/BuiltInFunctionEmulator.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/BuiltInFunctionEmulator.h \
-	Source/ThirdParty/ANGLE/src/compiler/CodeGenGLSL.cpp \
+	Source/ThirdParty/ANGLE/src/compiler/CodeGen.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/Common.h \
 	Source/ThirdParty/ANGLE/src/compiler/Compiler.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/ConstantUnion.h \
@@ -52,6 +52,8 @@ libANGLE_la_SOURCES = \
 	Source/ThirdParty/ANGLE/src/compiler/Diagnostics.h \
 	Source/ThirdParty/ANGLE/src/compiler/DirectiveHandler.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/DirectiveHandler.h \
+	Source/ThirdParty/ANGLE/src/compiler/DetectDiscontinuity.cpp \
+	Source/ThirdParty/ANGLE/src/compiler/DetectDiscontinuity.h \
 	Source/ThirdParty/ANGLE/src/compiler/ExtensionBehavior.h \
 	Source/ThirdParty/ANGLE/src/compiler/ForLoopUnroll.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/ForLoopUnroll.h \
@@ -63,6 +65,8 @@ libANGLE_la_SOURCES = \
 	Source/ThirdParty/ANGLE/src/compiler/InitializeDll.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/InitializeDll.h \
 	Source/ThirdParty/ANGLE/src/compiler/InitializeGlobals.h \
+	Source/ThirdParty/ANGLE/src/compiler/InitializeGLPosition.cpp \
+	Source/ThirdParty/ANGLE/src/compiler/InitializeGLPosition.h \
 	Source/ThirdParty/ANGLE/src/compiler/Initialize.h \
 	Source/ThirdParty/ANGLE/src/compiler/InitializeParseContext.h \
 	Source/ThirdParty/ANGLE/src/compiler/InitializeParseContext.cpp \
@@ -74,6 +78,7 @@ libANGLE_la_SOURCES = \
 	Source/ThirdParty/ANGLE/src/compiler/MapLongVariableNames.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/MapLongVariableNames.h \
 	Source/ThirdParty/ANGLE/src/compiler/MMap.h \
+	Source/ThirdParty/ANGLE/src/compiler/NodeSearch.h \	
 	Source/ThirdParty/ANGLE/src/compiler/osinclude.h \
 	Source/ThirdParty/ANGLE/src/compiler/ossource_posix.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/OutputESSL.cpp \
@@ -85,8 +90,8 @@ libANGLE_la_SOURCES = \
 	Source/ThirdParty/ANGLE/src/compiler/OutputHLSL.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/OutputHLSL.h \
 	Source/ThirdParty/ANGLE/src/compiler/parseConst.cpp \
-	Source/ThirdParty/ANGLE/src/compiler/ParseHelper.cpp \
-	Source/ThirdParty/ANGLE/src/compiler/ParseHelper.h \
+	Source/ThirdParty/ANGLE/src/compiler/ParseContext.cpp \
+	Source/ThirdParty/ANGLE/src/compiler/ParseContext.h \
 	Source/ThirdParty/ANGLE/src/compiler/PoolAlloc.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/PoolAlloc.h \
 	Source/ThirdParty/ANGLE/src/compiler/Pragma.h \
@@ -127,7 +132,10 @@ libANGLE_la_SOURCES = \
 	Source/ThirdParty/ANGLE/src/compiler/ShHandle.h \
 	Source/ThirdParty/ANGLE/src/compiler/SymbolTable.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/SymbolTable.h \
+	Source/ThirdParty/ANGLE/src/compiler/Uniform.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/Uniform.h \
+	Source/ThirdParty/ANGLE/src/compiler/UnfoldShortCircuitAST.cpp \
+	Source/ThirdParty/ANGLE/src/compiler/UnfoldShortCircuitAST.h \
 	Source/ThirdParty/ANGLE/src/compiler/VariablePacker.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/VariablePacker.h \
 	Source/ThirdParty/ANGLE/src/compiler/VersionGLSL.cpp \

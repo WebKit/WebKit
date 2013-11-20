@@ -1,5 +1,11 @@
 2013-11-19  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Prospective build fix for GTK port following r159533.
+
+        * GNUmakefile.am:
+
+2013-11-19  Roger Fong  <roger_fong@apple.com>
+
         Update ANGLE sources.
         https://bugs.webkit.org/show_bug.cgi?id=124615.
 
