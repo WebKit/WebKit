@@ -36,6 +36,19 @@
 namespace WebCore {
 namespace SimpleLineLayout {
 
+template <class IteratorType>
+class Range {
+public:
+    Range(IteratorType begin, IteratorType end) : m_begin(begin), m_end(end) { }
+
+    IteratorType begin() const { return m_begin; }
+    IteratorType end() const { return m_end; }
+
+private:
+    IteratorType m_begin;
+    IteratorType m_end;
+};
+
 class RunResolver {
 public:
     class Iterator;
@@ -59,13 +72,17 @@ public:
 
     class Iterator {
     public:
-        Iterator(const RunResolver&, unsigned lineIndex);
+        Iterator(const RunResolver&, unsigned runIndex, unsigned lineIndex);
 
         Iterator& operator++();
+
         bool operator==(const Iterator&) const;
         bool operator!=(const Iterator&) const;
 
         Run operator*() const;
+
+        Iterator& advance();
+        Iterator& advanceLines(unsigned);
 
         const RunResolver& resolver() const { return m_resolver; }
         const SimpleLineLayout::Run& simpleRun() const;
@@ -82,7 +99,11 @@ public:
     Iterator begin() const;
     Iterator end() const;
 
+    Range<Iterator> rangeForRect(const LayoutRect&) const;
+
 private:
+    unsigned lineIndexForHeight(LayoutUnit) const;
+
     const Layout& m_layout;
     const String m_string;
     const LayoutUnit m_lineHeight;
@@ -115,6 +136,8 @@ public:
 
     Iterator begin() const;
     Iterator end() const;
+
+    Range<Iterator> rangeForRect(const LayoutRect&) const;
 
 private:
     RunResolver m_runResolver;
@@ -169,19 +192,16 @@ inline unsigned RunResolver::Run::lineIndex() const
     return m_iterator.lineIndex();
 }
 
-inline RunResolver::Iterator::Iterator(const RunResolver& resolver, unsigned runIndex)
+inline RunResolver::Iterator::Iterator(const RunResolver& resolver, unsigned runIndex, unsigned lineIndex)
     : m_resolver(resolver)
     , m_runIndex(runIndex)
-    , m_lineIndex(0)
+    , m_lineIndex(lineIndex)
 {
 }
 
 inline RunResolver::Iterator& RunResolver::Iterator::operator++()
 {
-    if (simpleRun().isEndOfLine)
-        ++m_lineIndex;
-    ++m_runIndex;
-    return *this;
+    return advance();
 }
 
 inline bool RunResolver::Iterator::operator==(const Iterator& other) const
@@ -198,6 +218,29 @@ inline bool RunResolver::Iterator::operator!=(const Iterator& other) const
 inline RunResolver::Run RunResolver::Iterator::operator*() const
 {
     return Run(*this);
+}
+
+inline RunResolver::Iterator& RunResolver::Iterator::advance()
+{
+    if (simpleRun().isEndOfLine)
+        ++m_lineIndex;
+    ++m_runIndex;
+    return *this;
+}
+
+inline RunResolver::Iterator& RunResolver::Iterator::advanceLines(unsigned lineCount)
+{
+    unsigned runCount = m_resolver.m_layout.runCount();
+    if (runCount == m_resolver.m_layout.lineCount()) {
+        m_runIndex = std::min(runCount, m_runIndex + lineCount);
+        m_lineIndex = m_runIndex;
+        return *this;
+    }
+    unsigned target = m_lineIndex + lineCount;
+    while (m_lineIndex < target && m_runIndex < runCount)
+        advance();
+
+    return *this;
 }
 
 inline const SimpleLineLayout::Run& RunResolver::Iterator::simpleRun() const
@@ -218,12 +261,35 @@ inline RunResolver::RunResolver(const RenderBlockFlow& flow, const Layout& layou
 
 inline RunResolver::Iterator RunResolver::begin() const
 {
-    return Iterator(*this, 0);
+    return Iterator(*this, 0, 0);
 }
 
 inline RunResolver::Iterator RunResolver::end() const
 {
-    return Iterator(*this, m_layout.runCount());
+    return Iterator(*this, m_layout.runCount(), m_layout.lineCount());
+}
+
+inline unsigned RunResolver::lineIndexForHeight(LayoutUnit height) const
+{
+    ASSERT(m_lineHeight);
+    float y = std::max<float>(height - m_contentOffset.y() - m_baseline + m_ascent, 0);
+    return std::min<unsigned>(y / m_lineHeight, m_layout.lineCount() - 1);
+}
+
+inline Range<RunResolver::Iterator> RunResolver::rangeForRect(const LayoutRect& rect) const
+{
+    if (!m_lineHeight)
+        return Range<Iterator>(begin(), end());
+
+    unsigned firstLine = lineIndexForHeight(rect.y());
+    unsigned lastLine = lineIndexForHeight(rect.maxY());
+
+    auto rangeBegin = begin().advanceLines(firstLine);
+    if (rangeBegin == end())
+        return Range<Iterator>(end(), end());
+    auto rangeEnd = rangeBegin;
+    rangeEnd.advanceLines(lastLine - firstLine + 1);
+    return Range<Iterator>(rangeBegin, rangeEnd);
 }
 
 inline LineResolver::Iterator::Iterator(RunResolver::Iterator runIterator)
@@ -233,9 +299,7 @@ inline LineResolver::Iterator::Iterator(RunResolver::Iterator runIterator)
 
 inline LineResolver::Iterator& LineResolver::Iterator::operator++()
 {
-    unsigned previousLine = m_runIterator.lineIndex();
-    while ((++m_runIterator).lineIndex() == previousLine) { }
-
+    m_runIterator.advanceLines(1);
     return *this;
 }
 
@@ -254,7 +318,7 @@ inline const LayoutRect LineResolver::Iterator::operator*() const
     unsigned currentLine = m_runIterator.lineIndex();
     auto it = m_runIterator;
     LayoutRect rect = (*it).rect();
-    while ((++it).lineIndex() == currentLine)
+    while (it.advance().lineIndex() == currentLine)
         rect.unite((*it).rect());
 
     return rect;
@@ -273,6 +337,12 @@ inline LineResolver::Iterator LineResolver::begin() const
 inline LineResolver::Iterator LineResolver::end() const
 {
     return Iterator(m_runResolver.end());
+}
+
+inline Range<LineResolver::Iterator> LineResolver::rangeForRect(const LayoutRect& rect) const
+{
+    auto runRange = m_runResolver.rangeForRect(rect);
+    return Range<Iterator>(Iterator(runRange.begin()), Iterator(runRange.end()));
 }
 
 inline RunResolver runResolver(const RenderBlockFlow& flow, const Layout& layout)

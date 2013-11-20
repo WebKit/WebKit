@@ -1,3 +1,48 @@
+2013-11-20  Antti Koivisto  <antti@apple.com>
+
+        Don't paint simple text runs outside the paint rect
+        https://bugs.webkit.org/show_bug.cgi?id=124651
+
+        Reviewed by Anders Carlsson.
+        
+        This speeds up partial paints for long text paragraphs. 
+        Also add the same optimization for hit testing.
+
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+        
+            Iterate over the run range that needs painting.
+
+        (WebCore::SimpleLineLayout::hitTestFlow):
+        
+            Iterate over the line range that needs painting.
+
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::Range::Range):
+        (WebCore::SimpleLineLayout::Range::begin):
+        (WebCore::SimpleLineLayout::Range::end):
+        
+            Add Range type.
+
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::Iterator):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::operator++):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::advance):
+        (WebCore::SimpleLineLayout::RunResolver::Iterator::advanceLines):
+        
+            Optimize case where runCount==lineCount. In this case we can just directly jump
+            to the right run/line.
+
+        (WebCore::SimpleLineLayout::RunResolver::begin):
+        (WebCore::SimpleLineLayout::RunResolver::end):
+        (WebCore::SimpleLineLayout::RunResolver::lineIndexForHeight):
+        (WebCore::SimpleLineLayout::RunResolver::rangeForRect):
+        
+            Get the range corresponding to a rect. This currently cares about y coordinates only.
+
+        (WebCore::SimpleLineLayout::LineResolver::Iterator::operator++):
+        (WebCore::SimpleLineLayout::LineResolver::Iterator::operator*):
+        (WebCore::SimpleLineLayout::LineResolver::rangeForRect):
+
 2013-11-20  Antoine Quint  <graouts@apple.com>
 
         Cannot animate "points" attribute for <svg:polygon>

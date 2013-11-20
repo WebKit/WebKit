@@ -81,9 +81,15 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
 
     updateGraphicsContext(context, textPaintStyle);
 
+    LayoutRect paintRect = paintInfo.rect;
+    paintRect.moveBy(-paintOffset);
+
     auto resolver = runResolver(flow, layout);
-    for (auto it = resolver.begin(), end = resolver.end(); it != end; ++it) {
-        auto run = *it;
+    auto range = resolver.rangeForRect(paintRect);
+    for (auto it = range.begin(), end = range.end(); it != end; ++it) {
+        const auto& run = *it;
+        if (!run.rect().intersects(paintRect))
+            continue;
         TextRun textRun(run.text());
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         context.drawText(font, textRun, run.baseline() + paintOffset);
@@ -106,8 +112,12 @@ bool hitTestFlow(const RenderBlockFlow& flow, const Layout& layout, const HitTes
 
     RenderText& textRenderer = toRenderText(*flow.firstChild());
 
+    LayoutRect rangeRect = locationInContainer.boundingBox();
+    rangeRect.moveBy(-accumulatedOffset);
+
     auto resolver = lineResolver(flow, layout);
-    for (auto it = resolver.begin(), end = resolver.end(); it != end; ++it) {
+    auto range = resolver.rangeForRect(rangeRect);
+    for (auto it = range.begin(), end = range.end(); it != end; ++it) {
         auto lineRect = *it;
         lineRect.moveBy(accumulatedOffset);
         if (!locationInContainer.intersects(lineRect))
@@ -162,7 +172,7 @@ Vector<IntRect> collectTextAbsoluteRects(const RenderText& textRenderer, const L
     Vector<IntRect> rects;
     auto resolver = runResolver(toRenderBlockFlow(*textRenderer.parent()), layout);
     for (auto it = resolver.begin(), end = resolver.end(); it != end; ++it) {
-        auto run = *it;
+        const auto& run = *it;
         auto rect = run.rect();
         rects.append(enclosingIntRect(FloatRect(accumulatedOffset + rect.location(), rect.size())));
     }
@@ -174,7 +184,7 @@ Vector<FloatQuad> collectTextAbsoluteQuads(const RenderText& textRenderer, const
     Vector<FloatQuad> quads;
     auto resolver = runResolver(toRenderBlockFlow(*textRenderer.parent()), layout);
     for (auto it = resolver.begin(), end = resolver.end(); it != end; ++it) {
-        auto run = *it;
+        const auto& run = *it;
         auto rect = run.rect();
         quads.append(textRenderer.localToAbsoluteQuad(FloatQuad(rect), 0, wasFixed));
     }
