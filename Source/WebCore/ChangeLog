@@ -1,3 +1,23 @@
+2013-11-20  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION(r127163): Respect clearance set on ancestors when placing floats
+        https://bugs.webkit.org/show_bug.cgi?id=119979
+
+        Reviewed by David Hyatt.
+
+        Refactor the way self-collapsing blocks with clearance are positioned so that they
+        get the correct logical-top position during margin-collapsing.
+
+        Test: fast/block/margin-collapse/self-collapsing-block-with-float-descendants.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::clearFloats):
+        (WebCore::RenderBlockFlow::marginOffsetForSelfCollapsingBlock):
+        (WebCore::RenderBlockFlow::collapseMargins):
+        (WebCore::RenderBlockFlow::clearFloatsIfNeeded):
+        (WebCore::RenderBlockFlow::handleAfterSideOfBlock):
+        * rendering/RenderBlockFlow.h:
+
 2013-11-20  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GTK] Remove Chromium as user agent and claim to be Safari in OS X

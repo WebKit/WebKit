@@ -215,9 +215,10 @@ void RenderBlockFlow::clearFloats()
         prev = prev->previousSibling();
     }
 
-    // First add in floats from the parent.
+    // First add in floats from the parent. Self-collapsing blocks let their parent track any floats that intrude into
+    // them (as opposed to floats they contain themselves) so check for those here too.
     LayoutUnit logicalTopOffset = logicalTop();
-    if (parentHasFloats)
+    if (parentHasFloats || (parentBlock->lowestFloatLogicalBottom() > logicalTopOffset && prev && toRenderBlockFlow(prev)->isSelfCollapsingBlock()))
         addIntrudingFloats(parentBlock, parentBlock->logicalLeftOffsetForContent(), logicalTopOffset);
     
     LayoutUnit logicalLeftOffset = 0;
@@ -708,6 +709,16 @@ void RenderBlockFlow::adjustPositionedBlock(RenderBox& child, const MarginInfo& 
     }
 }
 
+LayoutUnit RenderBlockFlow::marginOffsetForSelfCollapsingBlock()
+{
+    ASSERT(isSelfCollapsingBlock());
+    RenderBlockFlow* parentBlock = toRenderBlockFlow(parent());
+    if (parentBlock && style().clear() && parentBlock->getClearDelta(*this, logicalHeight()))
+        return marginValuesForChild(*this).positiveMarginBefore();
+    return LayoutUnit();
+}
+
+
 void RenderBlockFlow::adjustFloatingBlock(const MarginInfo& marginInfo)
 {
     // The float should be positioned taking into account the bottom margin
@@ -873,6 +884,17 @@ LayoutUnit RenderBlockFlow::collapseMargins(RenderBox& child, MarginInfo& margin
 
     LayoutUnit beforeCollapseLogicalTop = logicalHeight();
     LayoutUnit logicalTop = beforeCollapseLogicalTop;
+
+    LayoutUnit clearanceForSelfCollapsingBlock;
+    RenderObject* prev = child.previousSibling();
+    // If the child's previous sibling is a self-collapsing block that cleared a float then its top border edge has been set at the bottom border edge
+    // of the float. Since we want to collapse the child's top margin with the self-collapsing block's top and bottom margins we need to adjust our parent's height to match the 
+    // margin top of the self-collapsing block. If the resulting collapsed margin leaves the child still intruding into the float then we will want to clear it.
+    if (!marginInfo.canCollapseWithMarginBefore() && prev && prev->isRenderBlockFlow() && toRenderBlockFlow(prev)->isSelfCollapsingBlock()) {
+        clearanceForSelfCollapsingBlock = toRenderBlockFlow(prev)->marginOffsetForSelfCollapsingBlock();
+        setLogicalHeight(logicalHeight() - clearanceForSelfCollapsingBlock);
+    }
+
     if (childIsSelfCollapsing) {
         // For a self collapsing block both the before and after margins get discarded. The block doesn't contribute anything to the height of the block.
         // Also, the child's top position equals the logical height of the container.
@@ -936,18 +958,23 @@ LayoutUnit RenderBlockFlow::collapseMargins(RenderBox& child, MarginInfo& margin
         setLogicalHeight(logicalHeight() + (logicalTop - oldLogicalTop));
     }
 
-    // If we have collapsed into a previous sibling and so reduced the height of the parent, ensure any floats that now
-    // overhang from the previous sibling are added to our parent. If the child's previous sibling itself is a float the child will avoid
-    // or clear it anyway, so don't worry about any floating children it may contain.
-    LayoutUnit oldLogicalHeight = logicalHeight();
-    setLogicalHeight(logicalTop);
-    RenderObject* prev = child.previousSibling();
     if (prev && prev->isRenderBlockFlow() && !prev->isFloatingOrOutOfFlowPositioned()) {
+        // If |child| is a self-collapsing block it may have collapsed into a previous sibling and although it hasn't reduced the height of the parent yet
+        // any floats from the parent will now overhang.
         RenderBlockFlow& block = toRenderBlockFlow(*prev);
+        LayoutUnit oldLogicalHeight = logicalHeight();
+        setLogicalHeight(logicalTop);
         if (block.containsFloats() && !block.avoidsFloats() && (block.logicalTop() + block.lowestFloatLogicalBottom()) > logicalTop)
             addOverhangingFloats(block, false);
+        setLogicalHeight(oldLogicalHeight);
+
+        // If |child|'s previous sibling is a self-collapsing block that cleared a float and margin collapsing resulted in |child| moving up
+        // into the margin area of the self-collapsing block then the float it clears is now intruding into |child|. Layout again so that we can look for
+        // floats in the parent that overhang |child|'s new logical top.
+        bool logicalTopIntrudesIntoFloat = clearanceForSelfCollapsingBlock > 0 && logicalTop < beforeCollapseLogicalTop;
+        if (logicalTopIntrudesIntoFloat && containsFloats() && !child.avoidsFloats() && lowestFloatLogicalBottom() > logicalTop)
+            child.setNeedsLayout();
     }
-    setLogicalHeight(oldLogicalHeight);
 
     return logicalTop;
 }
@@ -965,8 +992,8 @@ LayoutUnit RenderBlockFlow::clearFloatsIfNeeded(RenderBox& child, MarginInfo& ma
         // margins with following siblings. Reset the current margins to represent
         // the self-collapsing block's margins only.
         // If DISCARD is specified for -webkit-margin-collapse, reset the margin values.
+        MarginValues childMargins = marginValuesForChild(child);
         if (!childDiscardMargin) {
-            MarginValues childMargins = marginValuesForChild(child);
             marginInfo.setPositiveMargin(std::max(childMargins.positiveMarginBefore(), childMargins.positiveMarginAfter()));
             marginInfo.setNegativeMargin(std::max(childMargins.negativeMarginBefore(), childMargins.negativeMarginAfter()));
         } else
@@ -986,12 +1013,14 @@ LayoutUnit RenderBlockFlow::clearFloatsIfNeeded(RenderBox& child, MarginInfo& ma
         if (wouldCollapseMarginsWithParent)
             marginInfo.setCanCollapseMarginAfterWithChildren(false);
 
-        // CSS2.1: "the amount of clearance is set so that clearance + margin-top = [height of float], i.e., clearance = [height of float] - margin-top"
-        // Move the top of the child box to the bottom of the float ignoring the child's top margin.
-        LayoutUnit collapsedMargin = collapsedMarginBeforeForChild(child);
-        setLogicalHeight(child.logicalTop() - collapsedMargin);
-        // A negative collapsed margin-top value cancels itself out as it has already been factored into |yPos| above.
-        heightIncrease -= std::max(LayoutUnit(), collapsedMargin);
+        // For now set the border-top of |child| flush with the bottom border-edge of the float so it can layout any floating or positioned children of
+        // its own at the correct vertical position. If subsequent siblings attempt to collapse with |child|'s margins in |collapseMargins| we will
+        // adjust the height of the parent to |child|'s margin top (which if it is positive sits up 'inside' the float it's clearing) so that all three 
+        // margins can collapse at the correct vertical position.
+        // Per CSS2.1 we need to ensure that any negative margin-top clears |child| beyond the bottom border-edge of the float so that the top border edge of the child
+        // (i.e. its clearance)  is at a position that satisfies the equation: "the amount of clearance is set so that clearance + margin-top = [height of float],
+        // i.e., clearance = [height of float] - margin-top".
+        setLogicalHeight(child.logicalTop() + childMargins.negativeMarginBefore());
     } else
         // Increase our height by the amount we had to clear.
         setLogicalHeight(logicalHeight() + heightIncrease);
@@ -1009,13 +1038,7 @@ LayoutUnit RenderBlockFlow::clearFloatsIfNeeded(RenderBox& child, MarginInfo& ma
         setMustDiscardMarginBefore(style().marginBeforeCollapse() == MDISCARD);
     }
 
-    LayoutUnit logicalTop = yPos + heightIncrease;
-    // After margin collapsing, one of our floats may now intrude into the child. If the child doesn't contain floats of its own it
-    // won't get picked up for relayout even though the logical top estimate was wrong - so add the newly intruding float now.
-    if (containsFloats() && child.isRenderBlockFlow() && !toRenderBlockFlow(child).containsFloats() && !child.avoidsFloats() && lowestFloatLogicalBottom() > logicalTop)
-        toRenderBlockFlow(child).addIntrudingFloats(this, logicalLeftOffsetForContent(), logicalTop);
-
-    return logicalTop;
+    return yPos + heightIncrease;
 }
 
 void RenderBlockFlow::marginBeforeEstimateForChild(RenderBox& child, LayoutUnit& positiveMarginBefore, LayoutUnit& negativeMarginBefore, bool& discardMarginBefore) const
@@ -1153,6 +1176,13 @@ void RenderBlockFlow::setCollapsedBottomMargin(const MarginInfo& marginInfo)
 void RenderBlockFlow::handleAfterSideOfBlock(LayoutUnit beforeSide, LayoutUnit afterSide, MarginInfo& marginInfo)
 {
     marginInfo.setAtAfterSideOfBlock(true);
+
+    // If our last child was a self-collapsing block with clearance then our logical height is flush with the
+    // bottom edge of the float that the child clears. The correct vertical position for the margin-collapsing we want
+    // to perform now is at the child's margin-top - so adjust our height to that position.
+    RenderObject* lastBlock = lastChild();
+    if (lastBlock && lastBlock->isRenderBlockFlow() && toRenderBlockFlow(lastBlock)->isSelfCollapsingBlock())
+        setLogicalHeight(logicalHeight() - toRenderBlockFlow(lastBlock)->marginOffsetForSelfCollapsingBlock());
 
     // If we can't collapse with children then go ahead and add in the bottom margin.
     if (!marginInfo.discardMargin() && (!marginInfo.canCollapseWithMarginAfter() && !marginInfo.canCollapseWithMarginBefore()

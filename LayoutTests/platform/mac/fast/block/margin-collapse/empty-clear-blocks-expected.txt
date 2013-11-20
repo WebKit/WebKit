@@ -11,7 +11,7 @@ layer at (0,0) size 785x1130
             text run at (0,36) width 32: "high."
         RenderText {#text} at (100,0) size 284x18
           text run at (100,0) width 284: "This paragraph has a bottom margin of 50px."
-      RenderBlock {SPAN} at (0,75) size 769x0
+      RenderBlock {SPAN} at (0,100) size 769x0
       RenderBlock {SPAN} at (0,105) size 769x18
         RenderText {#text} at (0,0) size 300x18
           text run at (0,0) width 300: "This text should be immediately under the float."
@@ -24,7 +24,7 @@ layer at (0,0) size 785x1130
             text run at (0,36) width 32: "high."
         RenderText {#text} at (100,0) size 284x18
           text run at (100,0) width 284: "This paragraph has a bottom margin of 50px."
-      RenderBlock {SPAN} at (0,216) size 769x0
+      RenderBlock {SPAN} at (0,241) size 769x0
       RenderBlock {SPAN} at (0,256) size 769x18
         RenderText {#text} at (0,0) size 255x18
           text run at (0,0) width 255: "This text should be 10px under the float."
@@ -37,10 +37,10 @@ layer at (0,0) size 785x1130
             text run at (0,36) width 32: "high."
         RenderText {#text} at (100,0) size 284x18
           text run at (100,0) width 284: "This paragraph has a bottom margin of 50px."
-      RenderBlock {SPAN} at (0,362) size 769x0
+      RenderBlock {SPAN} at (0,392) size 769x0
       RenderBlock {SPAN} at (0,362) size 769x18
-        RenderText {#text} at (100,0) size 268x18
-          text run at (100,0) width 268: "This text should be to the right of the float."
+        RenderText {#text} at (0,0) size 268x18
+          text run at (0,0) width 268: "This text should be to the right of the float."
       RenderBlock {HR} at (100,388) size 669x2 [border: (1px inset #000000)]
       RenderBlock {SPAN} at (0,398) size 769x18
         RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#00FF00]
@@ -50,7 +50,7 @@ layer at (0,0) size 785x1130
             text run at (0,36) width 32: "high."
         RenderText {#text} at (100,0) size 284x18
           text run at (100,0) width 284: "This paragraph has a bottom margin of 50px."
-      RenderBlock {SPAN} at (0,473) size 769x0
+      RenderBlock {SPAN} at (0,498) size 769x0
       RenderBlock {SPAN} at (0,503) size 769x18
         RenderText {#text} at (0,0) size 300x18
           text run at (0,0) width 300: "This text should be immediately under the float."
@@ -63,7 +63,7 @@ layer at (0,0) size 785x1130
             text run at (0,36) width 32: "high."
         RenderText {#text} at (100,0) size 284x18
           text run at (100,0) width 284: "This paragraph has a bottom margin of 50px."
-      RenderBlock {SPAN} at (0,609) size 769x0
+      RenderBlock {SPAN} at (0,639) size 769x0
       RenderBlock {SPAN} at (0,649) size 769x18
         RenderText {#text} at (0,0) size 255x18
           text run at (0,0) width 255: "This text should be 10px under the float."
@@ -90,7 +90,7 @@ layer at (0,0) size 785x1130
               text run at (0,36) width 32: "high."
           RenderText {#text} at (100,0) size 284x18
             text run at (100,0) width 284: "This paragraph has a bottom margin of 50px."
-        RenderBlock {SPAN} at (10,85) size 749x0
+        RenderBlock {SPAN} at (10,110) size 749x0
       RenderBlock {HR} at (0,984) size 769x2 [border: (1px inset #000000)]
       RenderBlock {SPAN} at (0,994) size 769x120 [border: (10px dotted #000000)]
         RenderBlock {SPAN} at (10,10) size 749x18
