@@ -31,12 +31,12 @@
 #include "InlineTextBox.h"
 #include "Page.h"
 #include "RenderBlock.h"
-#include "RenderFlowThread.h"
 #include "RenderFullScreen.h"
 #include "RenderGeometryMap.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLineBreak.h"
+#include "RenderNamedFlowThread.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
@@ -217,7 +217,7 @@ void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
         || style().textEmphasisMark() != TextEmphasisMarkNone
         || (checkFonts && (!parentStyle->font().fontMetrics().hasIdenticalAscentDescentAndLineGap(style().font().fontMetrics())
         || parentStyle->lineHeight() != style().lineHeight()))
-        || (flowThread && flowThread->hasRegionsWithStyling());
+        || (flowThread && flowThread->isRenderNamedFlowThread() && toRenderNamedFlowThread(flowThread)->hasRegionsWithStyling());
 
     if (!alwaysCreateLineBoxes && checkFonts && document().styleSheetCollection().usesFirstLineRules()) {
         // Have to check the first line style as well.

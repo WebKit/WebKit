@@ -1,3 +1,57 @@
+2013-11-20  Andrei Bucur  <abucur@adobe.com>
+
+        [CSSRegions] Move region styling code into RenderNamedFlowFragment
+        https://bugs.webkit.org/show_bug.cgi?id=122957
+
+        Reviewed by Mihnea Ovidenie.
+
+        The patch moves all the region styling functionality outside of RenderRegion
+        to RenderNamedFlowFragment and outside of RenderFlowThread to RenderNamedFlowThread.
+        This generates a couple of undesired casts that will be removed in later patches
+        when everything CSS Regions specific will be located inside RenderNamedFlowThread
+        and RenderNamedFlowFragment (e.g. the move of the isValid flag, the auto-height
+        code etc.).
+
+        The painting function was also moved from RenderRegion to RenderNamedFlowFragment. It
+        was only used by the CSS Regions code. The new multi-column implementation has its own
+        painting mechanism.
+
+        Tests: No changed functionality, just refactorings.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        (WebCore::RenderFlowThread::removeFlowChildInfo):
+        (WebCore::RenderFlowThread::clearRenderBoxRegionInfoAndCustomStyle):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::updateAlwaysCreateLineBoxes):
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::RenderNamedFlowFragment):
+        (WebCore::RenderNamedFlowFragment::styleDidChange):
+        (WebCore::RenderNamedFlowFragment::checkRegionStyle):
+        (WebCore::RenderNamedFlowFragment::computeStyleInRegion):
+        (WebCore::RenderNamedFlowFragment::computeChildrenStyleInRegion):
+        (WebCore::RenderNamedFlowFragment::setObjectStyleInRegion):
+        (WebCore::RenderNamedFlowFragment::clearObjectStyleInRegion):
+        (WebCore::RenderNamedFlowFragment::setRegionObjectsRegionStyle):
+        (WebCore::RenderNamedFlowFragment::restoreRegionObjectsOriginalStyle):
+        (WebCore::shouldPaintRegionContentsInPhase):
+        (WebCore::RenderNamedFlowFragment::paintObject):
+        * rendering/RenderNamedFlowFragment.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::RenderNamedFlowThread):
+        (WebCore::RenderNamedFlowThread::checkRegionsWithStyling):
+        (WebCore::RenderNamedFlowThread::clearRenderObjectCustomStyle):
+        (WebCore::RenderNamedFlowThread::removeFlowChildInfo):
+        * rendering/RenderNamedFlowThread.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::RenderRegion):
+        (WebCore::RenderRegion::styleDidChange):
+        (WebCore::RenderRegion::attachRegion):
+        * rendering/RenderRegion.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeRenderRegionList):
+
 2013-11-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Generate toHTMLFooElement() to clean up static_cast<>

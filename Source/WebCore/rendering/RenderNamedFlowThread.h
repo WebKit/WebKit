@@ -84,6 +84,14 @@ public:
     virtual bool collectsGraphicsLayersUnderRegions() const OVERRIDE;
 #endif
 
+    // Check if the content is flown into at least a region with region styling rules.
+    bool hasRegionsWithStyling() const { return m_hasRegionsWithStyling; }
+    void checkRegionsWithStyling();
+
+    void clearRenderObjectCustomStyle(const RenderObject*);
+
+    virtual void removeFlowChildInfo(RenderObject*) OVERRIDE FINAL;
+
 protected:
     void setMarkForDestruction();
     void resetMarkForDestruction();
@@ -130,6 +138,7 @@ private:
     RenderRegionList m_invalidRegionList;
 
     bool m_overset : 1;
+    bool m_hasRegionsWithStyling : 1;
 
     // The DOM Object that represents a named flow.
     RefPtr<WebKitNamedFlow> m_namedFlow;

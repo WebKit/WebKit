@@ -67,9 +67,6 @@ public:
     bool isValid() const { return m_isValid; }
     void setIsValid(bool valid) { m_isValid = valid; }
 
-    bool hasCustomRegionStyle() const { return m_hasCustomRegionStyle; }
-    void setHasCustomRegionStyle(bool hasCustomRegionStyle) { m_hasCustomRegionStyle = hasCustomRegionStyle; }
-
     RenderBoxRegionInfo* renderBoxRegionInfo(const RenderBox*) const;
     RenderBoxRegionInfo* setRenderBoxRegionInfo(const RenderBox*, LayoutUnit logicalLeftInset, LayoutUnit logicalRightInset,
         bool containingBlockChainIsInset);
@@ -80,8 +77,6 @@ public:
 
     bool isFirstRegion() const;
     bool isLastRegion() const;
-
-    void clearObjectStyleInRegion(const RenderObject*);
 
     RegionOversetState regionOversetState() const;
     void setRegionOversetState(RegionOversetState);
@@ -160,9 +155,6 @@ protected:
 
     RenderOverflow* ensureOverflowForBox(const RenderBox*);
 
-    void setRegionObjectsRegionStyle();
-    void restoreRegionObjectsOriginalStyle();
-
     virtual void computePreferredLogicalWidths() OVERRIDE;
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
 
@@ -186,15 +178,9 @@ private:
     virtual void willBeRemovedFromTree() OVERRIDE;
 
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE;
-    virtual void paintObject(PaintInfo&, const LayoutPoint&) OVERRIDE;
 
     virtual void installFlowThread();
 
-    PassRefPtr<RenderStyle> computeStyleInRegion(const RenderObject*);
-    void computeChildrenStyleInRegion(const RenderElement*);
-    void setObjectStyleInRegion(RenderObject*, PassRefPtr<RenderStyle>, bool objectRegionStyleCached);
-
-    void checkRegionStyle();
     void updateRegionHasAutoLogicalHeightFlag();
 
     void incrementAutoLogicalHeightCount();
@@ -219,21 +205,7 @@ private:
     typedef HashMap<const RenderBox*, OwnPtr<RenderBoxRegionInfo>> RenderBoxRegionInfoMap;
     RenderBoxRegionInfoMap m_renderBoxRegionInfo;
 
-    struct ObjectRegionStyleInfo {
-        // Used to store the original style of the object in region
-        // so that the original style is properly restored after paint.
-        // Also used to store computed style of the object in region between
-        // region paintings, so that the style in region is computed only
-        // when necessary.
-        RefPtr<RenderStyle> style;
-        // True if the computed style in region is cached.
-        bool cached;
-    };
-    typedef HashMap<const RenderObject*, ObjectRegionStyleInfo > RenderObjectRegionStyleMap;
-    RenderObjectRegionStyleMap m_renderObjectRegionStyle;
-
     bool m_isValid : 1;
-    bool m_hasCustomRegionStyle : 1;
     bool m_hasAutoLogicalHeight : 1;
     bool m_hasComputedAutoHeight : 1;
 

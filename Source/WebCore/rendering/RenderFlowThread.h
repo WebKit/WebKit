@@ -71,7 +71,7 @@ public:
     // can easily avoid drawing the children directly.
     virtual bool requiresLayer() const OVERRIDE FINAL { return true; }
     
-    void removeFlowChildInfo(RenderObject*);
+    virtual void removeFlowChildInfo(RenderObject*);
 #ifndef NDEBUG
     bool hasChildInfo(RenderObject* child) const { return child && child->isBox() && m_regionRangeMap.contains(toRenderBox(child)); }
 #endif
@@ -88,9 +88,6 @@ public:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
     bool hasRegions() const { return m_regionList.size(); }
-    // Check if the content is flown into at least a region with region styling rules.
-    bool hasRegionsWithStyling() const { return m_hasRegionsWithStyling; }
-    void checkRegionsWithStyling();
     virtual void regionChangedWritingMode(RenderRegion*) { }
 
     void validateRegions();
@@ -140,8 +137,6 @@ public:
 
     void setRegionRangeForBox(const RenderBox*, RenderRegion*, RenderRegion*);
     void getRegionRangeForBox(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
-
-    void clearRenderObjectCustomStyle(const RenderObject*);
 
     // Check if the object is in region and the region is part of this flow thread.
     bool objectInFlowRegion(const RenderObject*, const RenderRegion*) const;
@@ -348,7 +343,6 @@ protected:
     bool m_regionsInvalidated : 1;
     bool m_regionsHaveUniformLogicalWidth : 1;
     bool m_regionsHaveUniformLogicalHeight : 1;
-    bool m_hasRegionsWithStyling : 1;
     bool m_dispatchRegionLayoutUpdateEvent : 1;
     bool m_dispatchRegionOversetChangeEvent : 1;
     bool m_pageLogicalSizeChanged : 1;

@@ -58,7 +58,6 @@ RenderFlowThread::RenderFlowThread(Document& document, PassRef<RenderStyle> styl
     , m_regionsInvalidated(false)
     , m_regionsHaveUniformLogicalWidth(true)
     , m_regionsHaveUniformLogicalHeight(true)
-    , m_hasRegionsWithStyling(false)
     , m_dispatchRegionLayoutUpdateEvent(false)
     , m_dispatchRegionOversetChangeEvent(false)
     , m_pageLogicalSizeChanged(false)
@@ -98,7 +97,6 @@ void RenderFlowThread::removeFlowChildInfo(RenderObject* child)
 {
     if (child->isBox())
         removeRenderBoxRegionInfo(toRenderBox(child));
-    clearRenderObjectCustomStyle(child);
 }
 
 void RenderFlowThread::addRegionToThread(RenderRegion* renderRegion)
@@ -817,16 +815,6 @@ RenderRegion* RenderFlowThread::lastRegion() const
     return m_regionList.last();
 }
 
-void RenderFlowThread::clearRenderObjectCustomStyle(const RenderObject* object)
-{
-    // Clear the styles for the object in the regions.
-    // FIXME: Region styling is not computed only for the region range of the object so this is why we need to walk the whole chain.
-    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
-        RenderRegion* region = *iter;
-        region->clearObjectStyleInRegion(object);
-    }
-}
-
 void RenderFlowThread::clearRenderBoxRegionInfoAndCustomStyle(const RenderBox* box,
     const RenderRegion* newStartRegion, const RenderRegion* newEndRegion,
     const RenderRegion* oldStartRegion, const RenderRegion* oldEndRegion)
@@ -844,7 +832,8 @@ void RenderFlowThread::clearRenderBoxRegionInfoAndCustomStyle(const RenderBox* b
             insideNewRegionRange = true;
 
         if (!(insideOldRegionRange && insideNewRegionRange)) {
-            region->clearObjectStyleInRegion(box);
+            if (region->isRenderNamedFlowFragment())
+                toRenderNamedFlowFragment(region)->clearObjectStyleInRegion(box);
             if (region->renderBoxRegionInfo(box))
                 region->removeRenderBoxRegionInfo(box);
         }
@@ -910,20 +899,6 @@ bool RenderFlowThread::regionInRange(const RenderRegion* targetRegion, const Ren
     }
 
     return false;
-}
-
-// Check if the content is flown into at least a region with region styling rules.
-void RenderFlowThread::checkRegionsWithStyling()
-{
-    bool hasRegionsWithStyling = false;
-    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
-        RenderRegion* region = *iter;
-        if (region->hasCustomRegionStyle()) {
-            hasRegionsWithStyling = true;
-            break;
-        }
-    }
-    m_hasRegionsWithStyling = hasRegionsWithStyling;
 }
 
 bool RenderFlowThread::objectInFlowRegion(const RenderObject* object, const RenderRegion* region) const

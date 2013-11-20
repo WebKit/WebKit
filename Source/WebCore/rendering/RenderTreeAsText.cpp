@@ -46,6 +46,7 @@
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
+#include "RenderNamedFlowFragment.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
 #include "RenderTableCell.h"
@@ -657,19 +658,19 @@ static void write(TextStream& ts, RenderLayer& l,
 static void writeRenderRegionList(const RenderRegionList& flowThreadRegionList, TextStream& ts, int indent)
 {
     for (RenderRegionList::const_iterator itRR = flowThreadRegionList.begin(); itRR != flowThreadRegionList.end(); ++itRR) {
-        RenderRegion* renderRegion = (*itRR);
+        RenderRegion* renderRegion = *itRR;
 
         writeIndent(ts, indent);
         ts << static_cast<const RenderObject*>(renderRegion)->renderName();
 
         Element* generatingElement = renderRegion->generatingElement();
         if (generatingElement) {
-            if (renderRegion->hasCustomRegionStyle())
+            bool isRenderNamedFlowFragment = renderRegion->isRenderNamedFlowFragment();
+            if (isRenderNamedFlowFragment && toRenderNamedFlowFragment(renderRegion)->hasCustomRegionStyle())
                 ts << " region style: 1";
             if (renderRegion->hasAutoLogicalHeight())
                 ts << " hasAutoLogicalHeight";
 
-            bool isRenderNamedFlowFragment = renderRegion->isRenderNamedFlowFragment();
             if (isRenderNamedFlowFragment)
                 ts << " (anonymous child of";
 

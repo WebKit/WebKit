@@ -68,9 +68,42 @@ public:
     RenderLayerModelObject* layerOwner() const { return parent() && parent()->isRenderLayerModelObject() ?
         toRenderLayerModelObject(parent()) : nullptr; }
 
+    bool hasCustomRegionStyle() const { return m_hasCustomRegionStyle; }
+    void setHasCustomRegionStyle(bool hasCustomRegionStyle) { m_hasCustomRegionStyle = hasCustomRegionStyle; }
+    void clearObjectStyleInRegion(const RenderObject*);
+
+// FIXME: Temporarily public until we move all the CSSRegions functionality from RenderRegion to here.
+public:
+    void checkRegionStyle();
+
 private:
     virtual bool shouldHaveAutoLogicalHeight() const OVERRIDE;
     virtual const char* renderName() const OVERRIDE { return "RenderNamedFlowFragment"; }
+
+    void setRegionObjectsRegionStyle();
+    void restoreRegionObjectsOriginalStyle();
+
+    PassRefPtr<RenderStyle> computeStyleInRegion(const RenderObject*);
+    void computeChildrenStyleInRegion(const RenderElement*);
+    void setObjectStyleInRegion(RenderObject*, PassRefPtr<RenderStyle>, bool objectRegionStyleCached);
+
+    virtual void paintObject(PaintInfo&, const LayoutPoint&) OVERRIDE;
+
+    struct ObjectRegionStyleInfo {
+        // Used to store the original style of the object in region
+        // so that the original style is properly restored after paint.
+        // Also used to store computed style of the object in region between
+        // region paintings, so that the style in region is computed only
+        // when necessary.
+        RefPtr<RenderStyle> style;
+        // True if the computed style in region is cached.
+        bool cached;
+    };
+
+    typedef HashMap<const RenderObject*, ObjectRegionStyleInfo > RenderObjectRegionStyleMap;
+    RenderObjectRegionStyleMap m_renderObjectRegionStyle;
+
+    bool m_hasCustomRegionStyle : 1;
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderNamedFlowFragment, isRenderNamedFlowFragment())

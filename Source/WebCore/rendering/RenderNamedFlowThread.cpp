@@ -35,6 +35,7 @@
 #include "Position.h"
 #include "Range.h"
 #include "RenderInline.h"
+#include "RenderNamedFlowFragment.h"
 #include "RenderRegion.h"
 #include "RenderText.h"
 #include "RenderView.h"
@@ -48,6 +49,7 @@ RenderNamedFlowThread::RenderNamedFlowThread(Document& document, PassRef<RenderS
     : RenderFlowThread(document, std::move(style))
     , m_flowThreadChildList(adoptPtr(new FlowThreadChildList()))
     , m_overset(true)
+    , m_hasRegionsWithStyling(false)
     , m_namedFlow(namedFlow)
     , m_regionLayoutUpdateEventTimer(this, &RenderNamedFlowThread::regionLayoutUpdateEventTimerFired)
     , m_regionOversetChangeEventTimer(this, &RenderNamedFlowThread::regionOversetChangeEventTimerFired)
@@ -737,5 +739,35 @@ bool RenderNamedFlowThread::collectsGraphicsLayersUnderRegions() const
     return true;
 }
 #endif
+
+// Check if the content is flown into at least a region with region styling rules.
+void RenderNamedFlowThread::checkRegionsWithStyling()
+{
+    bool hasRegionsWithStyling = false;
+    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
+        RenderNamedFlowFragment* region = toRenderNamedFlowFragment(*iter);
+        if (region->hasCustomRegionStyle()) {
+            hasRegionsWithStyling = true;
+            break;
+        }
+    }
+    m_hasRegionsWithStyling = hasRegionsWithStyling;
+}
+
+void RenderNamedFlowThread::clearRenderObjectCustomStyle(const RenderObject* object)
+{
+    // Clear the styles for the object in the regions.
+    // FIXME: Region styling is not computed only for the region range of the object so this is why we need to walk the whole chain.
+    for (auto iter = m_regionList.begin(), end = m_regionList.end(); iter != end; ++iter) {
+        RenderNamedFlowFragment* region = toRenderNamedFlowFragment(*iter);
+        region->clearObjectStyleInRegion(object);
+    }
+}
+
+void RenderNamedFlowThread::removeFlowChildInfo(RenderObject* child)
+{
+    RenderFlowThread::removeFlowChildInfo(child);
+    clearRenderObjectCustomStyle(child);
+}
 
 }
