@@ -71,6 +71,9 @@ void SwapChain9::release()
 
 static DWORD convertInterval(EGLint interval)
 {
+#if ANGLE_FORCE_VSYNC_OFF
+    return D3DPRESENT_INTERVAL_IMMEDIATE;
+#else
     switch(interval)
     {
       case 0: return D3DPRESENT_INTERVAL_IMMEDIATE;
@@ -82,6 +85,7 @@ static DWORD convertInterval(EGLint interval)
     }
 
     return D3DPRESENT_INTERVAL_DEFAULT;
+#endif
 }
 
 EGLint SwapChain9::resize(int backbufferWidth, int backbufferHeight)

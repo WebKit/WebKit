@@ -155,7 +155,7 @@ class Renderer11 : public Renderer
 
     // Shader operations
     virtual ShaderExecutable *loadExecutable(const void *function, size_t length, rx::ShaderType type);
-    virtual ShaderExecutable *compileToExecutable(gl::InfoLog &infoLog, const char *shaderHLSL, rx::ShaderType type);
+    virtual ShaderExecutable *compileToExecutable(gl::InfoLog &infoLog, const char *shaderHLSL, rx::ShaderType type, D3DWorkaroundType workaround);
 
     // Image operations
     virtual Image *createImage();
@@ -235,7 +235,7 @@ class Renderer11 : public Renderer
         unsigned int qualityLevels[D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT];
     };
 
-    typedef std::unordered_map<DXGI_FORMAT, MultisampleSupportInfo> MultisampleSupportMap;
+    typedef std::unordered_map<DXGI_FORMAT, MultisampleSupportInfo, std::hash<int> > MultisampleSupportMap;
     MultisampleSupportMap mMultisampleSupportMap;
 
     unsigned int mMaxSupportedSamples;
@@ -288,6 +288,9 @@ class Renderer11 : public Renderer
     float mCurNear;
     float mCurFar;
 
+    // Currently applied primitive topology
+    D3D11_PRIMITIVE_TOPOLOGY mCurrentPrimitiveTopology;
+
     unsigned int mAppliedIBSerial;
     unsigned int mAppliedStorageIBSerial;
     unsigned int mAppliedIBOffset;
@@ -298,10 +301,14 @@ class Renderer11 : public Renderer
     dx_VertexConstants mVertexConstants;
     dx_VertexConstants mAppliedVertexConstants;
     ID3D11Buffer *mDriverConstantBufferVS;
+    ID3D11Buffer *mCurrentVertexConstantBuffer;
 
     dx_PixelConstants mPixelConstants;
     dx_PixelConstants mAppliedPixelConstants;
     ID3D11Buffer *mDriverConstantBufferPS;
+    ID3D11Buffer *mCurrentPixelConstantBuffer;
+
+    ID3D11Buffer *mCurrentGeometryConstantBuffer;
 
     // Vertex, index and input layouts
     VertexDataManager *mVertexDataManager;

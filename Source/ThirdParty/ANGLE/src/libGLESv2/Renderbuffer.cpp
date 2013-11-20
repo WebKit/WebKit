@@ -129,6 +129,11 @@ unsigned int RenderbufferTexture2D::getSerial() const
     return mTexture2D->getRenderTargetSerial(mTarget);
 }
 
+unsigned int RenderbufferTexture2D::getTextureSerial() const
+{
+    return mTexture2D->getTextureSerial();
+}
+
 ///// RenderbufferTextureCubeMap Implementation ////////
 
 RenderbufferTextureCubeMap::RenderbufferTextureCubeMap(TextureCubeMap *texture, GLenum target) : mTarget(target)
@@ -191,6 +196,11 @@ GLsizei RenderbufferTextureCubeMap::getSamples() const
 unsigned int RenderbufferTextureCubeMap::getSerial() const
 {
     return mTextureCubeMap->getRenderTargetSerial(mTarget);
+}
+
+unsigned int RenderbufferTextureCubeMap::getTextureSerial() const
+{
+    return mTextureCubeMap->getTextureSerial();
 }
 
 ////// Renderbuffer Implementation //////
@@ -290,6 +300,11 @@ GLsizei Renderbuffer::getSamples() const
 unsigned int Renderbuffer::getSerial() const
 {
     return mInstance->getSerial();
+}
+
+unsigned int Renderbuffer::getTextureSerial() const
+{
+    return mInstance->getTextureSerial();
 }
 
 void Renderbuffer::setStorage(RenderbufferStorage *newStorage)

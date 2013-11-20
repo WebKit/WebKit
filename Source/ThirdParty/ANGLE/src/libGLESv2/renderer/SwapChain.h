@@ -12,6 +12,10 @@
 
 #include "common/angleutils.h"
 
+#if !defined(ANGLE_FORCE_VSYNC_OFF)
+#define ANGLE_FORCE_VSYNC_OFF 0
+#endif
+
 namespace rx
 {
 

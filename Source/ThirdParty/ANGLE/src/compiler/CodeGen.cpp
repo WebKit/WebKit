@@ -4,8 +4,9 @@
 // found in the LICENSE file.
 //
 
-#include "compiler/TranslatorGLSL.h"
 #include "compiler/TranslatorESSL.h"
+#include "compiler/TranslatorGLSL.h"
+#include "compiler/TranslatorHLSL.h"
 
 //
 // This function must be provided to create the actual
@@ -16,10 +17,13 @@ TCompiler* ConstructCompiler(
     ShShaderType type, ShShaderSpec spec, ShShaderOutput output)
 {
     switch (output) {
-      case SH_GLSL_OUTPUT:
-        return new TranslatorGLSL(type, spec);
       case SH_ESSL_OUTPUT:
         return new TranslatorESSL(type, spec);
+      case SH_GLSL_OUTPUT:
+        return new TranslatorGLSL(type, spec);
+      case SH_HLSL9_OUTPUT:
+      case SH_HLSL11_OUTPUT:
+        return new TranslatorHLSL(type, spec, output);
       default:
         return NULL;
     }

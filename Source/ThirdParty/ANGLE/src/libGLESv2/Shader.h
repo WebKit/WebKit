@@ -107,6 +107,7 @@ class Shader
     bool mUsesPointCoord;
     bool mUsesDepthRange;
     bool mUsesFragDepth;
+    bool mUsesDiscardRewriting;
 
     static void *mFragmentCompiler;
     static void *mVertexCompiler;

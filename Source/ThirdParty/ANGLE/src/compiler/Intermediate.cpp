@@ -19,11 +19,13 @@
 
 bool CompareStructure(const TType& leftNodeType, ConstantUnion* rightUnionArray, ConstantUnion* leftUnionArray);
 
-static TPrecision GetHigherPrecision( TPrecision left, TPrecision right ){
+static TPrecision GetHigherPrecision(TPrecision left, TPrecision right)
+{
     return left > right ? left : right;
 }
 
-const char* getOperatorString(TOperator op) {
+const char* getOperatorString(TOperator op)
+{
     switch (op) {
       case EOpInitialize: return "=";
       case EOpAssign: return "=";
@@ -742,12 +744,67 @@ void TIntermediate::remove(TIntermNode* root)
 //
 ////////////////////////////////////////////////////////////////
 
+#define REPLACE_IF_IS(node, type, original, replacement) \
+    if (node == original) { \
+        node = static_cast<type *>(replacement); \
+        return true; \
+    }
+
+bool TIntermLoop::replaceChildNode(
+    TIntermNode *original, TIntermNode *replacement)
+{
+    REPLACE_IF_IS(init, TIntermNode, original, replacement);
+    REPLACE_IF_IS(cond, TIntermTyped, original, replacement);
+    REPLACE_IF_IS(expr, TIntermTyped, original, replacement);
+    REPLACE_IF_IS(body, TIntermNode, original, replacement);
+    return false;
+}
+
+bool TIntermBranch::replaceChildNode(
+    TIntermNode *original, TIntermNode *replacement)
+{
+    REPLACE_IF_IS(expression, TIntermTyped, original, replacement);
+    return false;
+}
+
+bool TIntermBinary::replaceChildNode(
+    TIntermNode *original, TIntermNode *replacement)
+{
+    REPLACE_IF_IS(left, TIntermTyped, original, replacement);
+    REPLACE_IF_IS(right, TIntermTyped, original, replacement);
+    return false;
+}
+
+bool TIntermUnary::replaceChildNode(
+    TIntermNode *original, TIntermNode *replacement)
+{
+    REPLACE_IF_IS(operand, TIntermTyped, original, replacement);
+    return false;
+}
+
+bool TIntermAggregate::replaceChildNode(
+    TIntermNode *original, TIntermNode *replacement)
+{
+    for (size_t ii = 0; ii < sequence.size(); ++ii)
+    {
+        REPLACE_IF_IS(sequence[ii], TIntermNode, original, replacement);
+    }
+    return false;
+}
+
+bool TIntermSelection::replaceChildNode(
+    TIntermNode *original, TIntermNode *replacement)
+{
+    REPLACE_IF_IS(condition, TIntermTyped, original, replacement);
+    REPLACE_IF_IS(trueBlock, TIntermNode, original, replacement);
+    REPLACE_IF_IS(falseBlock, TIntermNode, original, replacement);
+    return false;
+}
+
 //
 // Say whether or not an operation node changes the value of a variable.
 //
-// Returns true if state is modified.
-//
-bool TIntermOperator::modifiesState() const
+bool TIntermOperator::isAssignment() const
 {
     switch (op) {
         case EOpPostIncrement:
@@ -796,6 +853,7 @@ bool TIntermOperator::isConstructor() const
             return false;
     }
 }
+
 //
 // Make sure the type of a unary operator is appropriate for its
 // combination of operation and operand type.
@@ -1366,18 +1424,18 @@ TIntermTyped* TIntermediate::promoteConstantUnion(TBasicType promoteTo, TIntermC
     ConstantUnion *leftUnionArray = new ConstantUnion[size];
 
     for (size_t i = 0; i < size; i++) {
-
+        int index = static_cast<int>(i);
         switch (promoteTo) {
             case EbtFloat:
                 switch (node->getType().getBasicType()) {
                     case EbtInt:
-                        leftUnionArray[i].setFConst(static_cast<float>(node->getIConst(i)));
+                        leftUnionArray[i].setFConst(static_cast<float>(node->getIConst(index)));
                         break;
                     case EbtBool:
-                        leftUnionArray[i].setFConst(static_cast<float>(node->getBConst(i)));
+                        leftUnionArray[i].setFConst(static_cast<float>(node->getBConst(index)));
                         break;
                     case EbtFloat:
-                        leftUnionArray[i].setFConst(static_cast<float>(node->getFConst(i)));
+                        leftUnionArray[i].setFConst(static_cast<float>(node->getFConst(index)));
                         break;
                     default:
                         infoSink.info.message(EPrefixInternalError, node->getLine(), "Cannot promote");
@@ -1387,13 +1445,13 @@ TIntermTyped* TIntermediate::promoteConstantUnion(TBasicType promoteTo, TIntermC
             case EbtInt:
                 switch (node->getType().getBasicType()) {
                     case EbtInt:
-                        leftUnionArray[i].setIConst(static_cast<int>(node->getIConst(i)));
+                        leftUnionArray[i].setIConst(static_cast<int>(node->getIConst(index)));
                         break;
                     case EbtBool:
-                        leftUnionArray[i].setIConst(static_cast<int>(node->getBConst(i)));
+                        leftUnionArray[i].setIConst(static_cast<int>(node->getBConst(index)));
                         break;
                     case EbtFloat:
-                        leftUnionArray[i].setIConst(static_cast<int>(node->getFConst(i)));
+                        leftUnionArray[i].setIConst(static_cast<int>(node->getFConst(index)));
                         break;
                     default:
                         infoSink.info.message(EPrefixInternalError, node->getLine(), "Cannot promote");
@@ -1403,13 +1461,13 @@ TIntermTyped* TIntermediate::promoteConstantUnion(TBasicType promoteTo, TIntermC
             case EbtBool:
                 switch (node->getType().getBasicType()) {
                     case EbtInt:
-                        leftUnionArray[i].setBConst(node->getIConst(i) != 0);
+                        leftUnionArray[i].setBConst(node->getIConst(index) != 0);
                         break;
                     case EbtBool:
-                        leftUnionArray[i].setBConst(node->getBConst(i));
+                        leftUnionArray[i].setBConst(node->getBConst(index));
                         break;
                     case EbtFloat:
-                        leftUnionArray[i].setBConst(node->getFConst(i) != 0.0f);
+                        leftUnionArray[i].setBConst(node->getFConst(index) != 0.0f);
                         break;
                     default:
                         infoSink.info.message(EPrefixInternalError, node->getLine(), "Cannot promote");

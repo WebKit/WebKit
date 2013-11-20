@@ -28,11 +28,29 @@
 		49951C0A14B7AAD80060E96E /* BuiltInFunctionEmulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 49951C0614B7AAD80060E96E /* BuiltInFunctionEmulator.h */; };
 		5CB13FD4179DB3FD001F851D /* DetectCallDepth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB13FD2179DB3FD001F851D /* DetectCallDepth.cpp */; };
 		5CB13FD5179DB3FD001F851D /* DetectCallDepth.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB13FD3179DB3FD001F851D /* DetectCallDepth.h */; };
-		5CB13FE4179F4658001F851D /* ExpressionParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB13FDF179F4658001F851D /* ExpressionParser.cpp */; };
-		5CB13FE5179F4658001F851D /* glslang_lex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB13FE0179F4658001F851D /* glslang_lex.cpp */; };
-		5CB13FE6179F4658001F851D /* glslang_tab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB13FE1179F4658001F851D /* glslang_tab.cpp */; };
-		5CB13FE7179F4658001F851D /* glslang_tab.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB13FE2179F4658001F851D /* glslang_tab.h */; };
-		5CB13FE8179F4658001F851D /* Tokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB13FE3179F4658001F851D /* Tokenizer.cpp */; };
+		72309A4D183C259300370B93 /* CodeGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72650930183AA21300D28B48 /* CodeGen.cpp */; };
+		72309A4E183C259C00370B93 /* UnfoldShortCircuitAST.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72650936183AA3C600D28B48 /* UnfoldShortCircuitAST.cpp */; };
+		72309A4F183C259E00370B93 /* UnfoldShortCircuitAST.h in Headers */ = {isa = PBXBuildFile; fileRef = 72650937183AA3C600D28B48 /* UnfoldShortCircuitAST.h */; };
+		72309A50183C25A100370B93 /* ParseContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72650934183AA3B200D28B48 /* ParseContext.cpp */; };
+		72309A51183C25A500370B93 /* ParseContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 72650935183AA3B200D28B48 /* ParseContext.h */; };
+		72309A52183C25A700370B93 /* NodeSearch.h in Headers */ = {isa = PBXBuildFile; fileRef = 72650933183AA28900D28B48 /* NodeSearch.h */; };
+		72309A53183C25AA00370B93 /* InitializeGLPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72650931183AA24600D28B48 /* InitializeGLPosition.cpp */; };
+		72309A54183C25AD00370B93 /* InitializeGLPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 72650932183AA24600D28B48 /* InitializeGLPosition.h */; };
+		72309A56183C27DE00370B93 /* Tokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72309A55183C27DB00370B93 /* Tokenizer.cpp */; };
+		72309A58183C27F300370B93 /* ExpressionParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72309A57183C27F100370B93 /* ExpressionParser.cpp */; };
+		72309A5C183C285300370B93 /* glslang_lex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72309A59183C284E00370B93 /* glslang_lex.cpp */; };
+		72309A5D183C285300370B93 /* glslang_tab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72309A5A183C284E00370B93 /* glslang_tab.cpp */; };
+		72309A5E183C285300370B93 /* glslang_tab.h in Headers */ = {isa = PBXBuildFile; fileRef = 72309A5B183C284E00370B93 /* glslang_tab.h */; };
+		72309A61183C2A7400370B93 /* TranslatorHLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72309A5F183C2A6400370B93 /* TranslatorHLSL.cpp */; };
+		72309A62183C2A7400370B93 /* TranslatorHLSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 72309A60183C2A6400370B93 /* TranslatorHLSL.h */; };
+		72309A65183C2AE500370B93 /* OutputHLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72309A63183C2AE500370B93 /* OutputHLSL.cpp */; };
+		72309A66183C2AE500370B93 /* OutputHLSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 72309A64183C2AE500370B93 /* OutputHLSL.h */; };
+		72309A6D183C2BE800370B93 /* DetectDiscontinuity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72309A67183C2BE800370B93 /* DetectDiscontinuity.cpp */; };
+		72309A6E183C2BE800370B93 /* DetectDiscontinuity.h in Headers */ = {isa = PBXBuildFile; fileRef = 72309A68183C2BE800370B93 /* DetectDiscontinuity.h */; };
+		72309A6F183C2BE800370B93 /* UnfoldShortCircuit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72309A69183C2BE800370B93 /* UnfoldShortCircuit.cpp */; };
+		72309A70183C2BE800370B93 /* UnfoldShortCircuit.h in Headers */ = {isa = PBXBuildFile; fileRef = 72309A6A183C2BE800370B93 /* UnfoldShortCircuit.h */; };
+		72309A71183C2BE800370B93 /* Uniform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72309A6B183C2BE800370B93 /* Uniform.cpp */; };
+		72309A72183C2BE800370B93 /* Uniform.h in Headers */ = {isa = PBXBuildFile; fileRef = 72309A6C183C2BE800370B93 /* Uniform.h */; };
 		90D9B10212E11DCB002D4255 /* Compiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D9B0F912E11DCB002D4255 /* Compiler.cpp */; };
 		90D9B10312E11DCB002D4255 /* ExtensionBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D9B0FA12E11DCB002D4255 /* ExtensionBehavior.h */; };
 		90D9B10712E11DCB002D4255 /* glslang.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D9B0FE12E11DCB002D4255 /* glslang.h */; };
@@ -103,7 +121,6 @@
 		A2656841159C23E100398539 /* RestrictFragmentShaderTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = A2656836159C23E100398539 /* RestrictFragmentShaderTiming.h */; };
 		A2656842159C23E100398539 /* RestrictVertexShaderTiming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2656837159C23E100398539 /* RestrictVertexShaderTiming.cpp */; };
 		A2656843159C23E100398539 /* RestrictVertexShaderTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = A2656838159C23E100398539 /* RestrictVertexShaderTiming.h */; };
-		FB39D2711200F35A00088E69 /* CodeGenGLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D2221200F35A00088E69 /* CodeGenGLSL.cpp */; };
 		FB39D2751200F35A00088E69 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D2261200F35A00088E69 /* debug.cpp */; };
 		FB39D2791200F35A00088E69 /* InfoSink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D22A1200F35A00088E69 /* InfoSink.cpp */; };
 		FB39D27B1200F35A00088E69 /* Initialize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D22C1200F35A00088E69 /* Initialize.cpp */; };
@@ -114,7 +131,6 @@
 		FB39D2881200F35A00088E69 /* ossource_posix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D2391200F35A00088E69 /* ossource_posix.cpp */; };
 		FB39D28A1200F35A00088E69 /* OutputGLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D23B1200F35A00088E69 /* OutputGLSL.cpp */; };
 		FB39D28E1200F35A00088E69 /* parseConst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D23F1200F35A00088E69 /* parseConst.cpp */; };
-		FB39D28F1200F35A00088E69 /* ParseHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D2401200F35A00088E69 /* ParseHelper.cpp */; };
 		FB39D2911200F35A00088E69 /* PoolAlloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D2421200F35A00088E69 /* PoolAlloc.cpp */; };
 		FB39D2A41200F35A00088E69 /* QualifierAlive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D2561200F35A00088E69 /* QualifierAlive.cpp */; };
 		FB39D2A61200F35A00088E69 /* RemoveTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D2581200F35A00088E69 /* RemoveTree.cpp */; };
@@ -166,15 +182,33 @@
 		49951C0614B7AAD80060E96E /* BuiltInFunctionEmulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltInFunctionEmulator.h; sourceTree = "<group>"; };
 		5CB13FD2179DB3FD001F851D /* DetectCallDepth.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DetectCallDepth.cpp; sourceTree = "<group>"; };
 		5CB13FD3179DB3FD001F851D /* DetectCallDepth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetectCallDepth.h; sourceTree = "<group>"; };
-		5CB13FDF179F4658001F851D /* ExpressionParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExpressionParser.cpp; sourceTree = "<group>"; };
-		5CB13FE0179F4658001F851D /* glslang_lex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = glslang_lex.cpp; sourceTree = "<group>"; };
-		5CB13FE1179F4658001F851D /* glslang_tab.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = glslang_tab.cpp; sourceTree = "<group>"; };
-		5CB13FE2179F4658001F851D /* glslang_tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glslang_tab.h; sourceTree = "<group>"; };
-		5CB13FE3179F4658001F851D /* Tokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tokenizer.cpp; sourceTree = "<group>"; };
 		5D7C59C51208C68B001C873E /* ANGLE.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ANGLE.xcconfig; sourceTree = "<group>"; };
 		5D7C59C61208C68B001C873E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
-		90D9B0F912E11DCB002D4255 /* Compiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Compiler.cpp; sourceTree = "<group>"; };
+		72309A55183C27DB00370B93 /* Tokenizer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Tokenizer.cpp; sourceTree = "<group>"; };
+		72309A57183C27F100370B93 /* ExpressionParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExpressionParser.cpp; sourceTree = "<group>"; };
+		72309A59183C284E00370B93 /* glslang_lex.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = glslang_lex.cpp; sourceTree = "<group>"; };
+		72309A5A183C284E00370B93 /* glslang_tab.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = glslang_tab.cpp; sourceTree = "<group>"; };
+		72309A5B183C284E00370B93 /* glslang_tab.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = glslang_tab.h; sourceTree = "<group>"; };
+		72309A5F183C2A6400370B93 /* TranslatorHLSL.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TranslatorHLSL.cpp; sourceTree = "<group>"; };
+		72309A60183C2A6400370B93 /* TranslatorHLSL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TranslatorHLSL.h; sourceTree = "<group>"; };
+		72309A63183C2AE500370B93 /* OutputHLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OutputHLSL.cpp; sourceTree = "<group>"; };
+		72309A64183C2AE500370B93 /* OutputHLSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutputHLSL.h; sourceTree = "<group>"; };
+		72309A67183C2BE800370B93 /* DetectDiscontinuity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DetectDiscontinuity.cpp; sourceTree = "<group>"; };
+		72309A68183C2BE800370B93 /* DetectDiscontinuity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetectDiscontinuity.h; sourceTree = "<group>"; };
+		72309A69183C2BE800370B93 /* UnfoldShortCircuit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnfoldShortCircuit.cpp; sourceTree = "<group>"; };
+		72309A6A183C2BE800370B93 /* UnfoldShortCircuit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnfoldShortCircuit.h; sourceTree = "<group>"; };
+		72309A6B183C2BE800370B93 /* Uniform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Uniform.cpp; sourceTree = "<group>"; };
+		72309A6C183C2BE800370B93 /* Uniform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uniform.h; sourceTree = "<group>"; };
+		72650930183AA21300D28B48 /* CodeGen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CodeGen.cpp; sourceTree = "<group>"; };
+		72650931183AA24600D28B48 /* InitializeGLPosition.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InitializeGLPosition.cpp; sourceTree = "<group>"; };
+		72650932183AA24600D28B48 /* InitializeGLPosition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InitializeGLPosition.h; sourceTree = "<group>"; };
+		72650933183AA28900D28B48 /* NodeSearch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NodeSearch.h; sourceTree = "<group>"; };
+		72650934183AA3B200D28B48 /* ParseContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ParseContext.cpp; sourceTree = "<group>"; };
+		72650935183AA3B200D28B48 /* ParseContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParseContext.h; sourceTree = "<group>"; };
+		72650936183AA3C600D28B48 /* UnfoldShortCircuitAST.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnfoldShortCircuitAST.cpp; sourceTree = "<group>"; };
+		72650937183AA3C600D28B48 /* UnfoldShortCircuitAST.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnfoldShortCircuitAST.h; sourceTree = "<group>"; };
+		90D9B0F912E11DCB002D4255 /* Compiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Compiler.cpp; sourceTree = "<group>"; usesTabs = 0; };
 		90D9B0FA12E11DCB002D4255 /* ExtensionBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionBehavior.h; sourceTree = "<group>"; };
 		90D9B0FE12E11DCB002D4255 /* glslang.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glslang.h; sourceTree = "<group>"; };
 		90D9B10012E11DCB002D4255 /* SearchSymbol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SearchSymbol.cpp; sourceTree = "<group>"; };
@@ -246,7 +280,6 @@
 		A2656838159C23E100398539 /* RestrictVertexShaderTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestrictVertexShaderTiming.h; sourceTree = "<group>"; };
 		FB39D0D11200F0E300088E69 /* libANGLE.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libANGLE.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB39D2211200F35A00088E69 /* BaseTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = BaseTypes.h; sourceTree = "<group>"; };
-		FB39D2221200F35A00088E69 /* CodeGenGLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CodeGenGLSL.cpp; sourceTree = "<group>"; };
 		FB39D2241200F35A00088E69 /* Common.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = Common.h; sourceTree = "<group>"; };
 		FB39D2251200F35A00088E69 /* ConstantUnion.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = ConstantUnion.h; sourceTree = "<group>"; };
 		FB39D2261200F35A00088E69 /* debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = debug.cpp; sourceTree = "<group>"; };
@@ -271,8 +304,6 @@
 		FB39D23B1200F35A00088E69 /* OutputGLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OutputGLSL.cpp; sourceTree = "<group>"; };
 		FB39D23C1200F35A00088E69 /* OutputGLSL.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = OutputGLSL.h; sourceTree = "<group>"; };
 		FB39D23F1200F35A00088E69 /* parseConst.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = parseConst.cpp; sourceTree = "<group>"; };
-		FB39D2401200F35A00088E69 /* ParseHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParseHelper.cpp; sourceTree = "<group>"; };
-		FB39D2411200F35A00088E69 /* ParseHelper.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = ParseHelper.h; sourceTree = "<group>"; };
 		FB39D2421200F35A00088E69 /* PoolAlloc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PoolAlloc.cpp; sourceTree = "<group>"; };
 		FB39D2431200F35A00088E69 /* PoolAlloc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = PoolAlloc.h; sourceTree = "<group>"; };
 		FB39D2561200F35A00088E69 /* QualifierAlive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifierAlive.cpp; sourceTree = "<group>"; };
@@ -308,19 +339,6 @@
 			);
 			name = misc;
 			sourceTree = "<group>";
-		};
-		5CB13FDE179F457B001F851D /* Derived Sources */ = {
-			isa = PBXGroup;
-			children = (
-				5CB13FDF179F4658001F851D /* ExpressionParser.cpp */,
-				5CB13FE0179F4658001F851D /* glslang_lex.cpp */,
-				5CB13FE1179F4658001F851D /* glslang_tab.cpp */,
-				5CB13FE2179F4658001F851D /* glslang_tab.h */,
-				5CB13FE3179F4658001F851D /* Tokenizer.cpp */,
-			);
-			name = "Derived Sources";
-			path = DerivedSources/ANGLE;
-			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		5D7C59C41208C68B001C873E /* Configurations */ = {
 			isa = PBXGroup;
@@ -396,7 +414,6 @@
 		FB39D06E1200ED9200088E69 = {
 			isa = PBXGroup;
 			children = (
-				5CB13FDE179F457B001F851D /* Derived Sources */,
 				5D7C59C41208C68B001C873E /* Configurations */,
 				A29B15E916978B7D00111D97 /* include */,
 				312BDB0715FEC8E60097EBC7 /* misc */,
@@ -430,8 +447,21 @@
 				A2656834159C23E100398539 /* timing */,
 				FB39D2211200F35A00088E69 /* BaseTypes.h */,
 				49951C0514B7AAD70060E96E /* BuiltInFunctionEmulator.cpp */,
+				72650936183AA3C600D28B48 /* UnfoldShortCircuitAST.cpp */,
+				72650937183AA3C600D28B48 /* UnfoldShortCircuitAST.h */,
+				72650934183AA3B200D28B48 /* ParseContext.cpp */,
+				72309A67183C2BE800370B93 /* DetectDiscontinuity.cpp */,
+				72309A68183C2BE800370B93 /* DetectDiscontinuity.h */,
+				72309A69183C2BE800370B93 /* UnfoldShortCircuit.cpp */,
+				72309A6A183C2BE800370B93 /* UnfoldShortCircuit.h */,
+				72309A6B183C2BE800370B93 /* Uniform.cpp */,
+				72309A6C183C2BE800370B93 /* Uniform.h */,
+				72650935183AA3B200D28B48 /* ParseContext.h */,
+				72650933183AA28900D28B48 /* NodeSearch.h */,
+				72650931183AA24600D28B48 /* InitializeGLPosition.cpp */,
+				72650932183AA24600D28B48 /* InitializeGLPosition.h */,
 				49951C0614B7AAD80060E96E /* BuiltInFunctionEmulator.h */,
-				FB39D2221200F35A00088E69 /* CodeGenGLSL.cpp */,
+				72650930183AA21300D28B48 /* CodeGen.cpp */,
 				FB39D2241200F35A00088E69 /* Common.h */,
 				90D9B0F912E11DCB002D4255 /* Compiler.cpp */,
 				FB39D2251200F35A00088E69 /* ConstantUnion.h */,
@@ -447,6 +477,9 @@
 				A0AABE2A13AFE81000F2EBD1 /* ForLoopUnroll.cpp */,
 				A0AABE2B13AFE81000F2EBD1 /* ForLoopUnroll.h */,
 				90D9B0FE12E11DCB002D4255 /* glslang.h */,
+				72309A59183C284E00370B93 /* glslang_lex.cpp */,
+				72309A5A183C284E00370B93 /* glslang_tab.cpp */,
+				72309A5B183C284E00370B93 /* glslang_tab.h */,
 				A264F8C516974E2A006FAA5A /* HashNames.h */,
 				FB39D22A1200F35A00088E69 /* InfoSink.cpp */,
 				FB39D22B1200F35A00088E69 /* InfoSink.h */,
@@ -474,9 +507,9 @@
 				FB39D23C1200F35A00088E69 /* OutputGLSL.h */,
 				A0AABE3213AFE84700F2EBD1 /* OutputGLSLBase.cpp */,
 				A0AABE3313AFE84700F2EBD1 /* OutputGLSLBase.h */,
+				72309A63183C2AE500370B93 /* OutputHLSL.cpp */,
+				72309A64183C2AE500370B93 /* OutputHLSL.h */,
 				FB39D23F1200F35A00088E69 /* parseConst.cpp */,
-				FB39D2401200F35A00088E69 /* ParseHelper.cpp */,
-				FB39D2411200F35A00088E69 /* ParseHelper.h */,
 				FB39D2421200F35A00088E69 /* PoolAlloc.cpp */,
 				FB39D2431200F35A00088E69 /* PoolAlloc.h */,
 				A26567B5159C21B100398539 /* Pragma.h */,
@@ -495,6 +528,8 @@
 				A0AABE4713AFE96100F2EBD1 /* TranslatorESSL.h */,
 				FB39D2681200F35A00088E69 /* TranslatorGLSL.cpp */,
 				FB39D2691200F35A00088E69 /* TranslatorGLSL.h */,
+				72309A5F183C2A6400370B93 /* TranslatorHLSL.cpp */,
+				72309A60183C2A6400370B93 /* TranslatorHLSL.h */,
 				FB39D26C1200F35A00088E69 /* Types.h */,
 				90D9B10B12E11DD6002D4255 /* util.cpp */,
 				90D9B10C12E11DD6002D4255 /* util.h */,
@@ -514,6 +549,8 @@
 		FB39D2441200F35A00088E69 /* preprocessor */ = {
 			isa = PBXGroup;
 			children = (
+				72309A57183C27F100370B93 /* ExpressionParser.cpp */,
+				72309A55183C27DB00370B93 /* Tokenizer.cpp */,
 				A264F89316974DED006FAA5A /* DiagnosticsBase.cpp */,
 				A264F89416974DED006FAA5A /* DiagnosticsBase.h */,
 				A264F89516974DED006FAA5A /* DirectiveHandlerBase.cpp */,
@@ -569,25 +606,34 @@
 				A264F8AF16974DED006FAA5A /* DirectiveHandlerBase.h in Headers */,
 				A264F8B116974DED006FAA5A /* DirectiveParser.h in Headers */,
 				A264F8B316974DED006FAA5A /* ExpressionParser.h in Headers */,
+				72309A4F183C259E00370B93 /* UnfoldShortCircuitAST.h in Headers */,
 				90D9B10312E11DCB002D4255 /* ExtensionBehavior.h in Headers */,
+				72309A5E183C285300370B93 /* glslang_tab.h in Headers */,
+				72309A72183C2BE800370B93 /* Uniform.h in Headers */,
+				72309A66183C2AE500370B93 /* OutputHLSL.h in Headers */,
 				A0AABE2D13AFE81000F2EBD1 /* ForLoopUnroll.h in Headers */,
 				90D9B10712E11DCB002D4255 /* glslang.h in Headers */,
 				A264F8C816974E2A006FAA5A /* HashNames.h in Headers */,
+				72309A62183C2A7400370B93 /* TranslatorHLSL.h in Headers */,
 				A264F8B516974DED006FAA5A /* Input.h in Headers */,
 				A264F8CD169762AA006FAA5A /* khrplatform.h in Headers */,
 				49951C0314B7AAB30060E96E /* length_limits.h in Headers */,
 				A264F8B716974DED006FAA5A /* Lexer.h in Headers */,
 				A264F8B916974DED006FAA5A /* Macro.h in Headers */,
 				A264F8BB16974DED006FAA5A /* MacroExpander.h in Headers */,
+				72309A54183C25AD00370B93 /* InitializeGLPosition.h in Headers */,
 				A0AABE3113AFE83000F2EBD1 /* MapLongVariableNames.h in Headers */,
 				A264F8BC16974DED006FAA5A /* numeric_lex.h in Headers */,
 				A0AABE4513AFE94500F2EBD1 /* OutputESSL.h in Headers */,
+				72309A70183C2BE800370B93 /* UnfoldShortCircuit.h in Headers */,
 				A0AABE3513AFE84700F2EBD1 /* OutputGLSLBase.h in Headers */,
 				A264F8BD16974DED006FAA5A /* pp_utils.h in Headers */,
 				A26567C0159C21B100398539 /* Pragma.h in Headers */,
 				A264F8BF16974DED006FAA5A /* Preprocessor.h in Headers */,
 				A26567C1159C21B100398539 /* RenameFunction.h in Headers */,
+				72309A52183C25A700370B93 /* NodeSearch.h in Headers */,
 				A2656841159C23E100398539 /* RestrictFragmentShaderTiming.h in Headers */,
+				72309A6E183C2BE800370B93 /* DetectDiscontinuity.h in Headers */,
 				A2656843159C23E100398539 /* RestrictVertexShaderTiming.h in Headers */,
 				90D9B10A12E11DCB002D4255 /* SearchSymbol.h in Headers */,
 				FB39D76E120110FC00088E69 /* ShaderLang.h in Headers */,
@@ -597,11 +643,11 @@
 				A0AABE4913AFE96100F2EBD1 /* TranslatorESSL.h in Headers */,
 				90D9B11412E11DD6002D4255 /* util.h in Headers */,
 				90D9B11612E11DD6002D4255 /* ValidateLimitations.h in Headers */,
+				72309A51183C25A500370B93 /* ParseContext.h in Headers */,
 				90D9B11812E11DD6002D4255 /* VariableInfo.h in Headers */,
 				A264F8CA16974E2A006FAA5A /* VariablePacker.h in Headers */,
 				90D9B11A12E11DD6002D4255 /* VersionGLSL.h in Headers */,
 				5CB13FD5179DB3FD001F851D /* DetectCallDepth.h in Headers */,
-				5CB13FE7179F4658001F851D /* glslang_tab.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -668,7 +714,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/ANGLE\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/ANGLE\"\n\n/bin/ln -sfh \"${SRCROOT}\" ANGLE\nexport ANGLE=\"ANGLE\"\n\nmake  --no-builtin-rules -f \"ANGLE/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.activecpu`";
+			shellScript = "";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -679,7 +725,7 @@
 			files = (
 				A08C3CDC16D6CB61003F0B83 /* ArrayBoundsClamper.cpp in Sources */,
 				49951C0914B7AAD80060E96E /* BuiltInFunctionEmulator.cpp in Sources */,
-				FB39D2711200F35A00088E69 /* CodeGenGLSL.cpp in Sources */,
+				72309A5D183C285300370B93 /* glslang_tab.cpp in Sources */,
 				90D9B10212E11DCB002D4255 /* Compiler.cpp in Sources */,
 				FB39D2751200F35A00088E69 /* debug.cpp in Sources */,
 				A2656839159C23E100398539 /* DependencyGraph.cpp in Sources */,
@@ -687,14 +733,19 @@
 				A265683D159C23E100398539 /* DependencyGraphOutput.cpp in Sources */,
 				A265683F159C23E100398539 /* DependencyGraphTraverse.cpp in Sources */,
 				A26567BB159C21B100398539 /* Diagnostics.cpp in Sources */,
+				72309A56183C27DE00370B93 /* Tokenizer.cpp in Sources */,
+				72309A50183C25A100370B93 /* ParseContext.cpp in Sources */,
+				72309A71183C2BE800370B93 /* Uniform.cpp in Sources */,
 				A264F8AC16974DED006FAA5A /* DiagnosticsBase.cpp in Sources */,
 				A26567BD159C21B100398539 /* DirectiveHandler.cpp in Sources */,
 				A264F8AE16974DED006FAA5A /* DirectiveHandlerBase.cpp in Sources */,
 				A264F8B016974DED006FAA5A /* DirectiveParser.cpp in Sources */,
 				A0AABE2C13AFE81000F2EBD1 /* ForLoopUnroll.cpp in Sources */,
 				FB39D2791200F35A00088E69 /* InfoSink.cpp in Sources */,
+				72309A61183C2A7400370B93 /* TranslatorHLSL.cpp in Sources */,
 				FB39D27B1200F35A00088E69 /* Initialize.cpp in Sources */,
 				FB39D27D1200F35A00088E69 /* InitializeDll.cpp in Sources */,
+				72309A58183C27F300370B93 /* ExpressionParser.cpp in Sources */,
 				A26567BF159C21B100398539 /* InitializeParseContext.cpp in Sources */,
 				A264F8B416974DED006FAA5A /* Input.cpp in Sources */,
 				FB39D2811200F35A00088E69 /* Intermediate.cpp in Sources */,
@@ -709,9 +760,14 @@
 				FB39D28A1200F35A00088E69 /* OutputGLSL.cpp in Sources */,
 				A0AABE3413AFE84700F2EBD1 /* OutputGLSLBase.cpp in Sources */,
 				FB39D28E1200F35A00088E69 /* parseConst.cpp in Sources */,
-				FB39D28F1200F35A00088E69 /* ParseHelper.cpp in Sources */,
+				72309A65183C2AE500370B93 /* OutputHLSL.cpp in Sources */,
 				FB39D2911200F35A00088E69 /* PoolAlloc.cpp in Sources */,
+				72309A53183C25AA00370B93 /* InitializeGLPosition.cpp in Sources */,
+				72309A6D183C2BE800370B93 /* DetectDiscontinuity.cpp in Sources */,
+				72309A6F183C2BE800370B93 /* UnfoldShortCircuit.cpp in Sources */,
+				72309A5C183C285300370B93 /* glslang_lex.cpp in Sources */,
 				A264F8BE16974DED006FAA5A /* Preprocessor.cpp in Sources */,
+				72309A4D183C259300370B93 /* CodeGen.cpp in Sources */,
 				FB39D2A41200F35A00088E69 /* QualifierAlive.cpp in Sources */,
 				FB39D2A61200F35A00088E69 /* RemoveTree.cpp in Sources */,
 				A2656840159C23E100398539 /* RestrictFragmentShaderTiming.cpp in Sources */,
@@ -728,10 +784,7 @@
 				A264F8C916974E2A006FAA5A /* VariablePacker.cpp in Sources */,
 				90D9B11912E11DD6002D4255 /* VersionGLSL.cpp in Sources */,
 				5CB13FD4179DB3FD001F851D /* DetectCallDepth.cpp in Sources */,
-				5CB13FE4179F4658001F851D /* ExpressionParser.cpp in Sources */,
-				5CB13FE5179F4658001F851D /* glslang_lex.cpp in Sources */,
-				5CB13FE6179F4658001F851D /* glslang_tab.cpp in Sources */,
-				5CB13FE8179F4658001F851D /* Tokenizer.cpp in Sources */,
+				72309A4E183C259C00370B93 /* UnfoldShortCircuitAST.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

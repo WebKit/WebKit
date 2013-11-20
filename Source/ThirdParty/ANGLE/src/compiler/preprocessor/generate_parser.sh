@@ -24,3 +24,4 @@ script_dir=$(dirname $0)
 # Generate preprocessor
 run_flex Tokenizer.l Tokenizer.cpp
 run_bison ExpressionParser.y ExpressionParser.cpp
+patch --silent --forward < 64bit-tokenizer-safety.patch

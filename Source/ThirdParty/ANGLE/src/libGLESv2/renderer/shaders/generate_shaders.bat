@@ -5,7 +5,7 @@ REM Use of this source code is governed by a BSD-style license that can be
 REM found in the LICENSE file.
 REM
 
-PATH %PATH%;%DXSDK_DIR%\Utilities\bin\x86
+PATH %PATH%;%ProgramFiles(x86)%\Windows Kits\8.0\bin\x86;%DXSDK_DIR%\Utilities\bin\x86
 
 fxc /E standardvs /T vs_2_0 /Fh compiled/standardvs.h Blit.vs
 fxc /E flipyvs /T vs_2_0 /Fh compiled/flipyvs.h Blit.vs

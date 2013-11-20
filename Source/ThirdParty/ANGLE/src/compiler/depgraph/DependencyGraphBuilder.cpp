@@ -94,7 +94,7 @@ void TDependencyGraphBuilder::visitSymbol(TIntermSymbol* intermSymbol)
 bool TDependencyGraphBuilder::visitBinary(Visit visit, TIntermBinary* intermBinary)
 {
     TOperator op = intermBinary->getOp();
-    if (op == EOpInitialize || intermBinary->modifiesState())
+    if (op == EOpInitialize || intermBinary->isAssignment())
         visitAssignment(intermBinary);
     else if (op == EOpLogicalAnd || op == EOpLogicalOr)
         visitLogicalOp(intermBinary);

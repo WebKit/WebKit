@@ -30,6 +30,7 @@ class InputLayoutCache
 
     void initialize(ID3D11Device *device, ID3D11DeviceContext *context);
     void clear();
+    void markDirty();
 
     GLenum applyVertexBuffers(TranslatedAttribute attributes[gl::MAX_VERTEX_ATTRIBS],
                               gl::ProgramBinary *programBinary);
@@ -37,11 +38,26 @@ class InputLayoutCache
   private:
     DISALLOW_COPY_AND_ASSIGN(InputLayoutCache);
 
+    struct InputLayoutElement
+    {
+        D3D11_INPUT_ELEMENT_DESC desc;
+        GLenum glslElementType;
+    };
+
     struct InputLayoutKey
     {
         unsigned int elementCount;
-        D3D11_INPUT_ELEMENT_DESC elements[gl::MAX_VERTEX_ATTRIBS];
-        GLenum glslElementType[gl::MAX_VERTEX_ATTRIBS];
+        InputLayoutElement elements[gl::MAX_VERTEX_ATTRIBS];
+
+        const char *begin() const
+        {
+            return reinterpret_cast<const char*>(&elementCount);
+        }
+
+        const char *end() const
+        {
+            return reinterpret_cast<const char*>(&elements[elementCount]);
+        }
     };
 
     struct InputLayoutCounterPair
@@ -49,6 +65,11 @@ class InputLayoutCache
         ID3D11InputLayout *inputLayout;
         unsigned long long lastUsedTime;
     };
+
+    ID3D11InputLayout *mCurrentIL;
+    unsigned int mCurrentBuffers[gl::MAX_VERTEX_ATTRIBS];
+    UINT mCurrentVertexStrides[gl::MAX_VERTEX_ATTRIBS];
+    UINT mCurrentVertexOffsets[gl::MAX_VERTEX_ATTRIBS];
 
     static std::size_t hashInputLayout(const InputLayoutKey &inputLayout);
     static bool compareInputLayouts(const InputLayoutKey &a, const InputLayoutKey &b);

@@ -15,20 +15,25 @@
 #include "compiler/preprocessor/length_limits.h"
 #include "compiler/ShHandle.h"
 #include "compiler/TranslatorHLSL.h"
+#include "compiler/VariablePacker.h"
 
 //
 // This is the platform independent interface between an OGL driver
 // and the shading language compiler.
 //
 
-static bool checkActiveUniformAndAttribMaxLengths(const ShHandle handle,
-                                                  size_t expectedValue)
+static bool checkVariableMaxLengths(const ShHandle handle,
+                                    size_t expectedValue)
 {
     size_t activeUniformLimit = 0;
     ShGetInfo(handle, SH_ACTIVE_UNIFORM_MAX_LENGTH, &activeUniformLimit);
     size_t activeAttribLimit = 0;
     ShGetInfo(handle, SH_ACTIVE_ATTRIBUTE_MAX_LENGTH, &activeAttribLimit);
-    return (expectedValue == activeUniformLimit && expectedValue == activeAttribLimit);
+    size_t varyingLimit = 0;
+    ShGetInfo(handle, SH_VARYING_MAX_LENGTH, &varyingLimit);
+    return (expectedValue == activeUniformLimit &&
+            expectedValue == activeAttribLimit &&
+            expectedValue == varyingLimit);
 }
 
 static bool checkMappedNameMaxLength(const ShHandle handle, size_t expectedValue)
@@ -38,62 +43,14 @@ static bool checkMappedNameMaxLength(const ShHandle handle, size_t expectedValue
     return (expectedValue == mappedNameMaxLength);
 }
 
-static void getVariableInfo(ShShaderInfo varType,
-                            const ShHandle handle,
-                            int index,
-                            size_t* length,
-                            int* size,
-                            ShDataType* type,
-                            char* name,
-                            char* mappedName)
-{
-    if (!handle || !size || !type || !name)
-        return;
-    ASSERT((varType == SH_ACTIVE_ATTRIBUTES) ||
-           (varType == SH_ACTIVE_UNIFORMS));
-
-    TShHandleBase* base = reinterpret_cast<TShHandleBase*>(handle);
-    TCompiler* compiler = base->getAsCompiler();
-    if (compiler == 0)
-        return;
-
-    const TVariableInfoList& varList = varType == SH_ACTIVE_ATTRIBUTES ?
-        compiler->getAttribs() : compiler->getUniforms();
-    if (index < 0 || index >= static_cast<int>(varList.size()))
-        return;
-
-    const TVariableInfo& varInfo = varList[index];
-    if (length) *length = varInfo.name.size();
-    *size = varInfo.size;
-    *type = varInfo.type;
-
-    // This size must match that queried by
-    // SH_ACTIVE_UNIFORM_MAX_LENGTH and SH_ACTIVE_ATTRIBUTE_MAX_LENGTH
-    // in ShGetInfo, below.
-    size_t activeUniformAndAttribLength = 1 + MAX_SYMBOL_NAME_LEN;
-    ASSERT(checkActiveUniformAndAttribMaxLengths(handle, activeUniformAndAttribLength));
-    strncpy(name, varInfo.name.c_str(), activeUniformAndAttribLength);
-    name[activeUniformAndAttribLength - 1] = 0;
-    if (mappedName) {
-        // This size must match that queried by
-        // SH_MAPPED_NAME_MAX_LENGTH in ShGetInfo, below.
-        size_t maxMappedNameLength = 1 + MAX_SYMBOL_NAME_LEN;
-        ASSERT(checkMappedNameMaxLength(handle, maxMappedNameLength));
-        strncpy(mappedName, varInfo.mappedName.c_str(), maxMappedNameLength);
-        mappedName[maxMappedNameLength - 1] = 0;
-    }
-}
-
 //
-// Driver must call this first, once, before doing any other
-// compiler operations.
+// Driver must call this first, once, before doing any other compiler operations.
+// Subsequent calls to this function are no-op.
 //
 int ShInitialize()
 {
-    if (!InitProcess())
-        return 0;
-
-    return 1;
+    static const bool kInitialized = InitProcess();
+    return kInitialized ? 1 : 0;
 }
 
 //
@@ -101,9 +58,7 @@ int ShInitialize()
 //
 int ShFinalize()
 {
-    if (!DetachProcess())
-        return 0;
-
+    DetachProcess();
     return 1;
 }
 
@@ -145,9 +100,6 @@ ShHandle ShConstructCompiler(ShShaderType type, ShShaderSpec spec,
                              ShShaderOutput output,
                              const ShBuiltInResources* resources)
 {
-    if (!InitThread())
-        return 0;
-
     TShHandleBase* base = static_cast<TShHandleBase*>(ConstructCompiler(type, spec, output));
     TCompiler* compiler = base->getAsCompiler();
     if (compiler == 0)
@@ -186,9 +138,6 @@ int ShCompile(
     size_t numStrings,
     int compileOptions)
 {
-    if (!InitThread())
-        return 0;
-
     if (handle == 0)
         return 0;
 
@@ -228,6 +177,12 @@ void ShGetInfo(const ShHandle handle, ShShaderInfo pname, size_t* params)
         *params = compiler->getAttribs().size();
         break;
     case SH_ACTIVE_ATTRIBUTE_MAX_LENGTH:
+        *params = 1 + MAX_SYMBOL_NAME_LEN;
+        break;
+    case SH_VARYINGS:
+        *params = compiler->getVaryings().size();
+        break;
+    case SH_VARYING_MAX_LENGTH:
         *params = 1 + MAX_SYMBOL_NAME_LEN;
         break;
     case SH_MAPPED_NAME_MAX_LENGTH:
@@ -287,28 +242,71 @@ void ShGetObjectCode(const ShHandle handle, char* objCode)
     strcpy(objCode, infoSink.obj.c_str());
 }
 
-void ShGetActiveAttrib(const ShHandle handle,
+void ShGetVariableInfo(const ShHandle handle,
+                       ShShaderInfo varType,
                        int index,
                        size_t* length,
                        int* size,
                        ShDataType* type,
+                       ShPrecisionType* precision,
+                       int* staticUse,
                        char* name,
                        char* mappedName)
 {
-    getVariableInfo(SH_ACTIVE_ATTRIBUTES,
-                    handle, index, length, size, type, name, mappedName);
-}
+    if (!handle || !size || !type || !precision || !staticUse || !name)
+        return;
+    ASSERT((varType == SH_ACTIVE_ATTRIBUTES) ||
+           (varType == SH_ACTIVE_UNIFORMS) ||
+           (varType == SH_VARYINGS));
 
-void ShGetActiveUniform(const ShHandle handle,
-                        int index,
-                        size_t* length,
-                        int* size,
-                        ShDataType* type,
-                        char* name,
-                        char* mappedName)
-{
-    getVariableInfo(SH_ACTIVE_UNIFORMS,
-                    handle, index, length, size, type, name, mappedName);
+    TShHandleBase* base = reinterpret_cast<TShHandleBase*>(handle);
+    TCompiler* compiler = base->getAsCompiler();
+    if (compiler == 0)
+        return;
+
+    const TVariableInfoList& varList =
+        varType == SH_ACTIVE_ATTRIBUTES ? compiler->getAttribs() :
+            (varType == SH_ACTIVE_UNIFORMS ? compiler->getUniforms() :
+                compiler->getVaryings());
+    if (index < 0 || index >= static_cast<int>(varList.size()))
+        return;
+
+    const TVariableInfo& varInfo = varList[index];
+    if (length) *length = varInfo.name.size();
+    *size = varInfo.size;
+    *type = varInfo.type;
+    switch (varInfo.precision) {
+    case EbpLow:
+        *precision = SH_PRECISION_LOWP;
+        break;
+    case EbpMedium:
+        *precision = SH_PRECISION_MEDIUMP;
+        break;
+    case EbpHigh:
+        *precision = SH_PRECISION_HIGHP;
+        break;
+    default:
+        // Some types does not support precision, for example, boolean.
+        *precision = SH_PRECISION_UNDEFINED;
+        break;
+    }
+    *staticUse = varInfo.staticUse ? 1 : 0;
+
+    // This size must match that queried by
+    // SH_ACTIVE_UNIFORM_MAX_LENGTH, SH_ACTIVE_ATTRIBUTE_MAX_LENGTH, SH_VARYING_MAX_LENGTH
+    // in ShGetInfo, below.
+    size_t variableLength = 1 + MAX_SYMBOL_NAME_LEN;
+    ASSERT(checkVariableMaxLengths(handle, variableLength));
+    strncpy(name, varInfo.name.c_str(), variableLength);
+    name[variableLength - 1] = 0;
+    if (mappedName) {
+        // This size must match that queried by
+        // SH_MAPPED_NAME_MAX_LENGTH in ShGetInfo, below.
+        size_t maxMappedNameLength = 1 + MAX_SYMBOL_NAME_LEN;
+        ASSERT(checkMappedNameMaxLength(handle, maxMappedNameLength));
+        strncpy(mappedName, varInfo.mappedName.c_str(), maxMappedNameLength);
+        mappedName[maxMappedNameLength - 1] = 0;
+    }
 }
 
 void ShGetNameHashingEntry(const ShHandle handle,
@@ -370,4 +368,20 @@ void ShGetInfoPointer(const ShHandle handle, ShShaderInfo pname, void** params)
         break;
     default: UNREACHABLE();
     }
+}
+
+int ShCheckVariablesWithinPackingLimits(
+    int maxVectors, ShVariableInfo* varInfoArray, size_t varInfoArraySize)
+{
+    if (varInfoArraySize == 0)
+        return 1;
+    ASSERT(varInfoArray);
+    TVariableInfoList variables;
+    for (size_t ii = 0; ii < varInfoArraySize; ++ii)
+    {
+        TVariableInfo var(varInfoArray[ii].type, varInfoArray[ii].size);
+        variables.push_back(var);
+    }
+    VariablePacker packer;
+    return packer.CheckVariablesWithinPackingLimits(maxVectors, variables) ? 1 : 0;
 }

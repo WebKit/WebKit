@@ -4,7 +4,7 @@
 // found in the LICENSE file.
 //
 
-#include "compiler/ParseHelper.h"
+#include "compiler/ParseContext.h"
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -895,7 +895,7 @@ bool TParseContext::supportsExtension(const char* extension)
 bool TParseContext::isExtensionEnabled(const char* extension) const
 {
     const TExtensionBehavior& extbehavior = extensionBehavior();
-    std::map<std::string, TBehavior>::const_iterator iter = extbehavior.find(extension);
+    TExtensionBehavior::const_iterator iter = extbehavior.find(extension);
 
     if (iter == extbehavior.end())
     {
@@ -1429,11 +1429,13 @@ bool TParseContext::structNestingErrorCheck(const TSourceLoc& line, const TField
     // We're already inside a structure definition at this point, so add
     // one to the field's struct nesting.
     if (1 + field.type()->getDeepestStructNesting() > kWebGLMaxStructNesting) {
-        std::stringstream extraInfoStream;
-        extraInfoStream << "Reference of struct type " << field.name()
-                        << " exceeds maximum struct nesting of " << kWebGLMaxStructNesting;
-        std::string extraInfo = extraInfoStream.str();
-        error(line, "", "", extraInfo.c_str());
+        std::stringstream reasonStream;
+        reasonStream << "Reference of struct type "
+                     << field.type()->getStruct()->name().c_str()
+                     << " exceeds maximum allowed nesting level of "
+                     << kWebGLMaxStructNesting;
+        std::string reason = reasonStream.str();
+        error(line, reason.c_str(), field.name().c_str(), "");
         return true;
     }
 

@@ -34,6 +34,7 @@ int ComputePixelSize(GLint internalformat);
 GLsizei ComputePitch(GLsizei width, GLint internalformat, GLint alignment);
 GLsizei ComputeCompressedPitch(GLsizei width, GLenum format);
 GLsizei ComputeCompressedSize(GLsizei width, GLsizei height, GLenum format);
+GLsizei ComputeTypeSize(GLenum type);
 bool IsCompressed(GLenum format);
 bool IsDepthTexture(GLenum format);
 bool IsStencilTexture(GLenum format);

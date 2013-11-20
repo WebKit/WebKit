@@ -33,6 +33,12 @@ WHICH GENERATES THE GLSL ES preprocessor expression parser.
 
 #include "ExpressionParser.h"
 
+#if defined(_MSC_VER)
+#include <malloc.h>
+#else
+#include <stdlib.h>
+#endif
+
 #include <cassert>
 #include <sstream>
 

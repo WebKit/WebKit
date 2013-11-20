@@ -28,6 +28,13 @@ InputLayoutCache::InputLayoutCache() : mInputLayoutMap(kMaxInputLayouts, hashInp
     mCounter = 0;
     mDevice = NULL;
     mDeviceContext = NULL;
+    mCurrentIL = NULL;
+    for (unsigned int i = 0; i < gl::MAX_VERTEX_ATTRIBS; i++)
+    {
+        mCurrentBuffers[i] = -1;
+        mCurrentVertexStrides[i] = -1;
+        mCurrentVertexOffsets[i] = -1;
+    }
 }
 
 InputLayoutCache::~InputLayoutCache()
@@ -49,6 +56,18 @@ void InputLayoutCache::clear()
         i->second.inputLayout->Release();
     }
     mInputLayoutMap.clear();
+    markDirty();
+}
+
+void InputLayoutCache::markDirty()
+{
+    mCurrentIL = NULL;
+    for (unsigned int i = 0; i < gl::MAX_VERTEX_ATTRIBS; i++)
+    {
+        mCurrentBuffers[i] = -1;
+        mCurrentVertexStrides[i] = -1;
+        mCurrentVertexOffsets[i] = -1;
+    }
 }
 
 GLenum InputLayoutCache::applyVertexBuffers(TranslatedAttribute attributes[gl::MAX_VERTEX_ATTRIBS],
@@ -66,6 +85,7 @@ GLenum InputLayoutCache::applyVertexBuffers(TranslatedAttribute attributes[gl::M
     InputLayoutKey ilKey = { 0 };
 
     ID3D11Buffer *vertexBuffers[gl::MAX_VERTEX_ATTRIBS] = { NULL };
+    unsigned int vertexBufferSerials[gl::MAX_VERTEX_ATTRIBS] = { 0 };
     UINT vertexStrides[gl::MAX_VERTEX_ATTRIBS] = { 0 };
     UINT vertexOffsets[gl::MAX_VERTEX_ATTRIBS] = { 0 };
 
@@ -83,18 +103,19 @@ GLenum InputLayoutCache::applyVertexBuffers(TranslatedAttribute attributes[gl::M
             // Record the type of the associated vertex shader vector in our key
             // This will prevent mismatched vertex shaders from using the same input layout
             GLint attributeSize;
-            programBinary->getActiveAttribute(ilKey.elementCount, 0, NULL, &attributeSize, &ilKey.glslElementType[ilKey.elementCount], NULL);
+            programBinary->getActiveAttribute(ilKey.elementCount, 0, NULL, &attributeSize, &ilKey.elements[ilKey.elementCount].glslElementType, NULL);
 
-            ilKey.elements[ilKey.elementCount].SemanticName = semanticName;
-            ilKey.elements[ilKey.elementCount].SemanticIndex = sortedSemanticIndices[i];
-            ilKey.elements[ilKey.elementCount].Format = attributes[i].attribute->mArrayEnabled ? vertexBuffer->getDXGIFormat(*attributes[i].attribute) : DXGI_FORMAT_R32G32B32A32_FLOAT;
-            ilKey.elements[ilKey.elementCount].InputSlot = i;
-            ilKey.elements[ilKey.elementCount].AlignedByteOffset = 0;
-            ilKey.elements[ilKey.elementCount].InputSlotClass = inputClass;
-            ilKey.elements[ilKey.elementCount].InstanceDataStepRate = attributes[i].divisor;
+            ilKey.elements[ilKey.elementCount].desc.SemanticName = semanticName;
+            ilKey.elements[ilKey.elementCount].desc.SemanticIndex = sortedSemanticIndices[i];
+            ilKey.elements[ilKey.elementCount].desc.Format = attributes[i].attribute->mArrayEnabled ? vertexBuffer->getDXGIFormat(*attributes[i].attribute) : DXGI_FORMAT_R32G32B32A32_FLOAT;
+            ilKey.elements[ilKey.elementCount].desc.InputSlot = i;
+            ilKey.elements[ilKey.elementCount].desc.AlignedByteOffset = 0;
+            ilKey.elements[ilKey.elementCount].desc.InputSlotClass = inputClass;
+            ilKey.elements[ilKey.elementCount].desc.InstanceDataStepRate = attributes[i].divisor;
             ilKey.elementCount++;
 
             vertexBuffers[i] = bufferStorage ? bufferStorage->getBuffer() : vertexBuffer->getBuffer();
+            vertexBufferSerials[i] = bufferStorage ? bufferStorage->getSerial() : vertexBuffer->getSerial();
             vertexStrides[i] = attributes[i].stride;
             vertexOffsets[i] = attributes[i].offset;
         }
@@ -112,7 +133,13 @@ GLenum InputLayoutCache::applyVertexBuffers(TranslatedAttribute attributes[gl::M
     {
         ShaderExecutable11 *shader = ShaderExecutable11::makeShaderExecutable11(programBinary->getVertexExecutable());
 
-        HRESULT result = mDevice->CreateInputLayout(ilKey.elements, ilKey.elementCount, shader->getFunction(), shader->getLength(), &inputLayout);
+        D3D11_INPUT_ELEMENT_DESC descs[gl::MAX_VERTEX_ATTRIBS];
+        for (unsigned int j = 0; j < ilKey.elementCount; ++j)
+        {
+            descs[j] = ilKey.elements[j].desc;
+        }
+
+        HRESULT result = mDevice->CreateInputLayout(descs, ilKey.elementCount, shader->getFunction(), shader->getLength(), &inputLayout);
         if (FAILED(result))
         {
             ERR("Failed to crate input layout, result: 0x%08x", result);
@@ -143,8 +170,23 @@ GLenum InputLayoutCache::applyVertexBuffers(TranslatedAttribute attributes[gl::M
         mInputLayoutMap.insert(std::make_pair(ilKey, inputCounterPair));
     }
 
-    mDeviceContext->IASetInputLayout(inputLayout);
-    mDeviceContext->IASetVertexBuffers(0, gl::MAX_VERTEX_ATTRIBS, vertexBuffers, vertexStrides, vertexOffsets);
+    if (inputLayout != mCurrentIL)
+    {
+        mDeviceContext->IASetInputLayout(inputLayout);
+        mCurrentIL = inputLayout;
+    }
+
+    for (unsigned int i = 0; i < gl::MAX_VERTEX_ATTRIBS; i++)
+    {
+        if (vertexBufferSerials[i] != mCurrentBuffers[i] || vertexStrides[i] != mCurrentVertexStrides[i] ||
+            vertexOffsets[i] != mCurrentVertexOffsets[i])
+        {
+            mDeviceContext->IASetVertexBuffers(i, 1, &vertexBuffers[i], &vertexStrides[i], &vertexOffsets[i]);
+            mCurrentBuffers[i] = vertexBufferSerials[i];
+            mCurrentVertexStrides[i] = vertexStrides[i];
+            mCurrentVertexOffsets[i] = vertexOffsets[i];
+        }
+    }
 
     return GL_NO_ERROR;
 }
@@ -154,13 +196,18 @@ std::size_t InputLayoutCache::hashInputLayout(const InputLayoutKey &inputLayout)
     static const unsigned int seed = 0xDEADBEEF;
 
     std::size_t hash = 0;
-    MurmurHash3_x86_32(&inputLayout, sizeof(InputLayoutKey), seed, &hash);
+    MurmurHash3_x86_32(inputLayout.begin(), inputLayout.end() - inputLayout.begin(), seed, &hash);
     return hash;
 }
 
 bool InputLayoutCache::compareInputLayouts(const InputLayoutKey &a, const InputLayoutKey &b)
 {
-    return memcmp(&a, &b, sizeof(InputLayoutKey)) == 0;
+    if (a.elementCount != b.elementCount)
+    {
+        return false;
+    }
+
+    return std::equal(a.begin(), a.end(), b.begin());
 }
 
 }

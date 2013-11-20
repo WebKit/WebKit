@@ -11,6 +11,7 @@
 #define LIBGLESV2_RENDERER_INDEXBUFFER_H_
 
 #include "common/angleutils.h"
+#include "libGLESv2/renderer/IndexRangeCache.h"
 
 namespace rx
 {
@@ -58,7 +59,7 @@ class IndexBufferInterface
 
     unsigned int getSerial() const;
 
-    int mapBuffer(unsigned int size, void** outMappedMemory);
+    bool mapBuffer(unsigned int size, void** outMappedMemory, unsigned int *streamOffset);
     bool unmapBuffer();
 
     IndexBuffer *getIndexBuffer() const;
@@ -99,37 +100,10 @@ class StaticIndexBufferInterface : public IndexBufferInterface
 
     virtual bool reserveBufferSpace(unsigned int size, GLenum indexType);
 
-    unsigned int lookupRange(intptr_t offset, GLsizei count, unsigned int *minIndex, unsigned int *maxIndex);   // Returns the offset into the index buffer, or -1 if not found
-    void addRange(intptr_t offset, GLsizei count, unsigned int minIndex, unsigned int maxIndex, unsigned int streamOffset);
+    IndexRangeCache *getIndexRangeCache();
 
   private:
-    struct IndexRange
-    {
-        intptr_t offset;
-        GLsizei count;
-
-        bool operator<(const IndexRange& rhs) const
-        {
-            if (offset != rhs.offset)
-            {
-                return offset < rhs.offset;
-            }
-            if (count != rhs.count)
-            {
-                return count < rhs.count;
-            }
-            return false;
-        }
-    };
-
-    struct IndexResult
-    {
-        unsigned int minIndex;
-        unsigned int maxIndex;
-        unsigned int streamOffset;
-    };
-
-    std::map<IndexRange, IndexResult> mCache;
+    IndexRangeCache mIndexRangeCache;
 };
 
 }

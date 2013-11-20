@@ -19,12 +19,6 @@
 #pragma warning(disable: 4701)
 #endif
 
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma clang diagnostic ignored "-Wdeprecated-register"
-#endif
-
 
 
 #line 25 "./glslang_lex.cpp"
@@ -788,7 +782,7 @@ WHICH GENERATES THE GLSL ES LEXER (glslang_lex.cpp).
 */
 
 #include "compiler/glslang.h"
-#include "compiler/ParseHelper.h"
+#include "compiler/ParseContext.h"
 #include "compiler/preprocessor/Token.h"
 #include "compiler/util.h"
 #include "glslang_tab.h"
@@ -808,6 +802,8 @@ WHICH GENERATES THE GLSL ES LEXER (glslang_lex.cpp).
 static yy_size_t string_input(char* buf, yy_size_t max_size, yyscan_t yyscanner);
 static int check_type(yyscan_t yyscanner);
 static int reserved_word(yyscan_t yyscanner);
+static int int_constant(yyscan_t yyscanner);
+static int float_constant(yyscan_t yyscanner);
 
 #define INITIAL 0
 
@@ -1506,27 +1502,27 @@ YY_RULE_SETUP
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-{ yylval->lex.i = static_cast<int>(strtol(yytext, 0, 0)); return INTCONSTANT; }
+{ return int_constant(yyscanner); }
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-{ yylval->lex.i = static_cast<int>(strtol(yytext, 0, 0)); return INTCONSTANT; }
+{ return int_constant(yyscanner); }
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-{ yylval->lex.i = static_cast<int>(strtol(yytext, 0, 0)); return INTCONSTANT; }
+{ return int_constant(yyscanner); }
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-{ yylval->lex.f = static_cast<float>(atof_dot(yytext)); return FLOATCONSTANT; }
+{ return float_constant(yyscanner); }
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-{ yylval->lex.f = static_cast<float>(atof_dot(yytext)); return FLOATCONSTANT; }
+{ return float_constant(yyscanner); }
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-{ yylval->lex.f = static_cast<float>(atof_dot(yytext)); return FLOATCONSTANT; }
+{ return float_constant(yyscanner); }
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
@@ -2103,7 +2099,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 				case EOB_ACT_END_OF_FILE:
 					{
 					if ( yywrap(yyscanner ) )
-						return 0;
+						return EOF;
 
 					if ( ! yyg->yy_did_buffer_switch_on_eof )
 						YY_NEW_FILE;
@@ -2865,10 +2861,6 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif
-
 yy_size_t string_input(char* buf, yy_size_t max_size, yyscan_t yyscanner) {
     pp::Token token;
     yyget_extra(yyscanner)->preprocessor.lex(&token);
@@ -2907,6 +2899,27 @@ int reserved_word(yyscan_t yyscanner) {
     return 0;
 }
 
+void yyerror(YYLTYPE* lloc, TParseContext* context, const char* reason) {
+    context->error(*lloc, reason, yyget_text(context->scanner));
+    context->recover();
+}
+
+int int_constant(yyscan_t yyscanner) {
+    struct yyguts_t* yyg = (struct yyguts_t*) yyscanner;
+
+    if (!atoi_clamp(yytext, &(yylval->lex.i)))
+        yyextra->warning(*yylloc, "Integer overflow", yytext, "");
+    return INTCONSTANT;
+}
+
+int float_constant(yyscan_t yyscanner) {
+    struct yyguts_t* yyg = (struct yyguts_t*) yyscanner;
+
+    if (!atof_clamp(yytext, &(yylval->lex.f)))
+        yyextra->warning(*yylloc, "Float overflow", yytext, "");
+    return FLOATCONSTANT;
+}
+
 int glslang_initialize(TParseContext* context) {
     yyscan_t scanner = NULL;
     if (yylex_init_extra(context,&scanner))
@@ -2935,6 +2948,7 @@ int glslang_scan(size_t count, const char* const string[], const int length[],
     // Initialize preprocessor.
     if (!context->preprocessor.init(count, string, length))
         return 1;
+    context->preprocessor.setMaxTokenLength(SH_MAX_TOKEN_LENGTH);
 
     // Define extension macros.
     const TExtensionBehavior& extBehavior = context->extensionBehavior();

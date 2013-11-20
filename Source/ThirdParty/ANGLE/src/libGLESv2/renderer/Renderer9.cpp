@@ -30,6 +30,8 @@
 
 #include "libEGL/Display.h"
 
+#include "third_party/trace_event/trace_event.h"
+
 // Can also be enabled by defining FORCE_REF_RAST in the project's predefined macros
 #define REF_RAST 0
 
@@ -184,10 +186,12 @@ EGLint Renderer9::initialize()
 
     if (mSoftwareDevice)
     {
+        TRACE_EVENT0("gpu", "GetModuleHandle_swiftshader");
         mD3d9Module = GetModuleHandle(TEXT("swiftshader_d3d9.dll"));
     }
     else
     {
+        TRACE_EVENT0("gpu", "GetModuleHandle_d3d9");
         mD3d9Module = GetModuleHandle(TEXT("d3d9.dll"));
     }
 
@@ -205,12 +209,14 @@ EGLint Renderer9::initialize()
     // desktop. Direct3D9Ex is available in Windows Vista and later if suitable drivers are available.
     if (ANGLE_ENABLE_D3D9EX && Direct3DCreate9ExPtr && SUCCEEDED(Direct3DCreate9ExPtr(D3D_SDK_VERSION, &mD3d9Ex)))
     {
+        TRACE_EVENT0("gpu", "D3d9Ex_QueryInterface");
         ASSERT(mD3d9Ex);
         mD3d9Ex->QueryInterface(IID_IDirect3D9, reinterpret_cast<void**>(&mD3d9));
         ASSERT(mD3d9);
     }
     else
     {
+        TRACE_EVENT0("gpu", "Direct3DCreate9");
         mD3d9 = Direct3DCreate9(D3D_SDK_VERSION);
     }
 
@@ -228,21 +234,24 @@ EGLint Renderer9::initialize()
     HRESULT result;
 
     // Give up on getting device caps after about one second.
-    for (int i = 0; i < 10; ++i)
     {
-        result = mD3d9->GetDeviceCaps(mAdapter, mDeviceType, &mDeviceCaps);
-        if (SUCCEEDED(result))
+        TRACE_EVENT0("gpu", "GetDeviceCaps");
+        for (int i = 0; i < 10; ++i)
         {
-            break;
-        }
-        else if (result == D3DERR_NOTAVAILABLE)
-        {
-            Sleep(100);   // Give the driver some time to initialize/recover
-        }
-        else if (FAILED(result))   // D3DERR_OUTOFVIDEOMEMORY, E_OUTOFMEMORY, D3DERR_INVALIDDEVICE, or another error we can't recover from
-        {
-            ERR("failed to get device caps (0x%x)\n", result);
-            return EGL_NOT_INITIALIZED;
+            result = mD3d9->GetDeviceCaps(mAdapter, mDeviceType, &mDeviceCaps);
+            if (SUCCEEDED(result))
+            {
+                break;
+            }
+            else if (result == D3DERR_NOTAVAILABLE)
+            {
+                Sleep(100);   // Give the driver some time to initialize/recover
+            }
+            else if (FAILED(result))   // D3DERR_OUTOFVIDEOMEMORY, E_OUTOFMEMORY, D3DERR_INVALIDDEVICE, or another error we can't recover from
+            {
+                ERR("failed to get device caps (0x%x)\n", result);
+                return EGL_NOT_INITIALIZED;
+            }
         }
     }
 
@@ -260,7 +269,10 @@ EGLint Renderer9::initialize()
         return EGL_NOT_INITIALIZED;
     }
 
-    mD3d9->GetAdapterIdentifier(mAdapter, 0, &mAdapterIdentifier);
+    {
+        TRACE_EVENT0("gpu", "GetAdapterIdentifier");
+        mD3d9->GetAdapterIdentifier(mAdapter, 0, &mAdapterIdentifier);
+    }
 
     // ATI cards on XP have problems with non-power-of-two textures.
     mSupportsNonPower2Textures = !(mDeviceCaps.TextureCaps & D3DPTEXTURECAPS_POW2) &&
@@ -301,35 +313,41 @@ EGLint Renderer9::initialize()
     }
 
     int max = 0;
-    for (unsigned int i = 0; i < ArraySize(RenderTargetFormats); ++i)
     {
-        bool *multisampleArray = new bool[D3DMULTISAMPLE_16_SAMPLES + 1];
-        getMultiSampleSupport(RenderTargetFormats[i], multisampleArray);
-        mMultiSampleSupport[RenderTargetFormats[i]] = multisampleArray;
-
-        for (int j = D3DMULTISAMPLE_16_SAMPLES; j >= 0; --j)
+        TRACE_EVENT0("gpu", "getMultiSampleSupport");
+        for (unsigned int i = 0; i < ArraySize(RenderTargetFormats); ++i)
         {
-            if (multisampleArray[j] && j != D3DMULTISAMPLE_NONMASKABLE && j > max)
+            bool *multisampleArray = new bool[D3DMULTISAMPLE_16_SAMPLES + 1];
+            getMultiSampleSupport(RenderTargetFormats[i], multisampleArray);
+            mMultiSampleSupport[RenderTargetFormats[i]] = multisampleArray;
+
+            for (int j = D3DMULTISAMPLE_16_SAMPLES; j >= 0; --j)
             {
-                max = j;
+                if (multisampleArray[j] && j != D3DMULTISAMPLE_NONMASKABLE && j > max)
+                {
+                    max = j;
+                }
             }
         }
     }
 
-    for (unsigned int i = 0; i < ArraySize(DepthStencilFormats); ++i)
     {
-        if (DepthStencilFormats[i] == D3DFMT_UNKNOWN)
-            continue;
-
-        bool *multisampleArray = new bool[D3DMULTISAMPLE_16_SAMPLES + 1];
-        getMultiSampleSupport(DepthStencilFormats[i], multisampleArray);
-        mMultiSampleSupport[DepthStencilFormats[i]] = multisampleArray;
-
-        for (int j = D3DMULTISAMPLE_16_SAMPLES; j >= 0; --j)
+        TRACE_EVENT0("gpu", "getMultiSampleSupport2");
+        for (unsigned int i = 0; i < ArraySize(DepthStencilFormats); ++i)
         {
-            if (multisampleArray[j] && j != D3DMULTISAMPLE_NONMASKABLE && j > max)
+            if (DepthStencilFormats[i] == D3DFMT_UNKNOWN)
+                continue;
+
+            bool *multisampleArray = new bool[D3DMULTISAMPLE_16_SAMPLES + 1];
+            getMultiSampleSupport(DepthStencilFormats[i], multisampleArray);
+            mMultiSampleSupport[DepthStencilFormats[i]] = multisampleArray;
+
+            for (int j = D3DMULTISAMPLE_16_SAMPLES; j >= 0; --j)
             {
-                max = j;
+                if (multisampleArray[j] && j != D3DMULTISAMPLE_NONMASKABLE && j > max)
+                {
+                    max = j;
+                }
             }
         }
     }
@@ -339,12 +357,18 @@ EGLint Renderer9::initialize()
     static const TCHAR windowName[] = TEXT("AngleHiddenWindow");
     static const TCHAR className[] = TEXT("STATIC");
 
-    mDeviceWindow = CreateWindowEx(WS_EX_NOACTIVATE, className, windowName, WS_DISABLED | WS_POPUP, 0, 0, 1, 1, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
+    {
+        TRACE_EVENT0("gpu", "CreateWindowEx");
+        mDeviceWindow = CreateWindowEx(WS_EX_NOACTIVATE, className, windowName, WS_DISABLED | WS_POPUP, 0, 0, 1, 1, HWND_MESSAGE, NULL, GetModuleHandle(NULL), NULL);
+    }
 
     D3DPRESENT_PARAMETERS presentParameters = getDefaultPresentParameters();
     DWORD behaviorFlags = D3DCREATE_FPU_PRESERVE | D3DCREATE_NOWINDOWCHANGES;
 
-    result = mD3d9->CreateDevice(mAdapter, mDeviceType, mDeviceWindow, behaviorFlags | D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_PUREDEVICE, &presentParameters, &mDevice);
+    {
+        TRACE_EVENT0("gpu", "D3d9_CreateDevice");
+        result = mD3d9->CreateDevice(mAdapter, mDeviceType, mDeviceWindow, behaviorFlags | D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_PUREDEVICE, &presentParameters, &mDevice);
+    }
     if (result == D3DERR_OUTOFVIDEOMEMORY || result == E_OUTOFMEMORY || result == D3DERR_DEVICELOST)
     {
         return EGL_BAD_ALLOC;
@@ -352,6 +376,7 @@ EGLint Renderer9::initialize()
 
     if (FAILED(result))
     {
+        TRACE_EVENT0("gpu", "D3d9_CreateDevice2");
         result = mD3d9->CreateDevice(mAdapter, mDeviceType, mDeviceWindow, behaviorFlags | D3DCREATE_SOFTWARE_VERTEXPROCESSING, &presentParameters, &mDevice);
 
         if (FAILED(result))
@@ -363,35 +388,45 @@ EGLint Renderer9::initialize()
 
     if (mD3d9Ex)
     {
+        TRACE_EVENT0("gpu", "mDevice_QueryInterface");
         result = mDevice->QueryInterface(IID_IDirect3DDevice9Ex, (void**) &mDeviceEx);
         ASSERT(SUCCEEDED(result));
     }
 
-    mVertexShaderCache.initialize(mDevice);
-    mPixelShaderCache.initialize(mDevice);
+    {
+        TRACE_EVENT0("gpu", "ShaderCache initialize");
+        mVertexShaderCache.initialize(mDevice);
+        mPixelShaderCache.initialize(mDevice);
+    }
 
     // Check occlusion query support
     IDirect3DQuery9 *occlusionQuery = NULL;
-    if (SUCCEEDED(mDevice->CreateQuery(D3DQUERYTYPE_OCCLUSION, &occlusionQuery)) && occlusionQuery)
     {
-        occlusionQuery->Release();
-        mOcclusionQuerySupport = true;
-    }
-    else
-    {
-        mOcclusionQuerySupport = false;
+        TRACE_EVENT0("gpu", "device_CreateQuery");
+        if (SUCCEEDED(mDevice->CreateQuery(D3DQUERYTYPE_OCCLUSION, &occlusionQuery)) && occlusionQuery)
+        {
+            occlusionQuery->Release();
+            mOcclusionQuerySupport = true;
+        }
+        else
+        {
+            mOcclusionQuerySupport = false;
+        }
     }
 
     // Check event query support
     IDirect3DQuery9 *eventQuery = NULL;
-    if (SUCCEEDED(mDevice->CreateQuery(D3DQUERYTYPE_EVENT, &eventQuery)) && eventQuery)
     {
-        eventQuery->Release();
-        mEventQuerySupport = true;
-    }
-    else
-    {
-        mEventQuerySupport = false;
+        TRACE_EVENT0("gpu", "device_CreateQuery2");
+        if (SUCCEEDED(mDevice->CreateQuery(D3DQUERYTYPE_EVENT, &eventQuery)) && eventQuery)
+        {
+            eventQuery->Release();
+            mEventQuerySupport = true;
+        }
+        else
+        {
+            mEventQuerySupport = false;
+        }
     }
 
     D3DDISPLAYMODE currentDisplayMode;
@@ -1076,8 +1111,10 @@ bool Renderer9::setViewport(const gl::Rectangle &viewport, float zNear, float zF
         return false;   // Nothing to render
     }
 
+    float depthFront = !gl::IsTriangleMode(drawMode) ? 0.0f : (frontFace == GL_CCW ? 1.0f : -1.0f);
+
     bool viewportChanged = mForceSetViewport || memcmp(&actualViewport, &mCurViewport, sizeof(gl::Rectangle)) != 0 ||
-                           actualZNear != mCurNear || actualZFar != mCurFar;
+                           actualZNear != mCurNear || actualZFar != mCurFar || mCurDepthFront != depthFront;
     if (viewportChanged)
     {
         mDevice->SetViewport(&dxViewport);
@@ -1085,6 +1122,7 @@ bool Renderer9::setViewport(const gl::Rectangle &viewport, float zNear, float zF
         mCurViewport = actualViewport;
         mCurNear = actualZNear;
         mCurFar = actualZFar;
+        mCurDepthFront = depthFront;
 
         dx_VertexConstants vc = {0};
         dx_PixelConstants pc = {0};
@@ -1101,7 +1139,7 @@ bool Renderer9::setViewport(const gl::Rectangle &viewport, float zNear, float zF
 
         pc.depthFront[0] = (actualZFar - actualZNear) * 0.5f;
         pc.depthFront[1] = (actualZNear + actualZFar) * 0.5f;
-        pc.depthFront[2] = !gl::IsTriangleMode(drawMode) ? 0.0f : (frontFace == GL_CCW ? 1.0f : -1.0f);;
+        pc.depthFront[2] = depthFront;
 
         vc.depthRange[0] = actualZNear;
         vc.depthRange[1] = actualZFar;
@@ -1454,7 +1492,7 @@ void Renderer9::drawLineLoop(GLsizei count, GLenum type, const GLvoid *indices, 
         indices = static_cast<const GLubyte*>(storage->getData()) + offset;
     }
 
-    UINT startIndex = 0;
+    unsigned int startIndex = 0;
 
     if (get32BitIndexSupport())
     {
@@ -1471,13 +1509,16 @@ void Renderer9::drawLineLoop(GLsizei count, GLenum type, const GLvoid *indices, 
             }
         }
 
-        if (static_cast<unsigned int>(count + 1) > (std::numeric_limits<unsigned int>::max() / sizeof(unsigned int)))
+        if (static_cast<unsigned int>(count) + 1 > (std::numeric_limits<unsigned int>::max() / sizeof(unsigned int)))
         {
             ERR("Could not create a 32-bit looping index buffer for GL_LINE_LOOP, too many indices required.");
             return gl::error(GL_OUT_OF_MEMORY);
         }
 
-        const unsigned int spaceNeeded = (count + 1) * sizeof(unsigned int);
+        // Checked by Renderer9::applyPrimitiveType
+        ASSERT(count >= 0);
+
+        const unsigned int spaceNeeded = (static_cast<unsigned int>(count) + 1) * sizeof(unsigned int);
         if (!mLineLoopIB->reserveBufferSpace(spaceNeeded, GL_UNSIGNED_INT))
         {
             ERR("Could not reserve enough space in looping index buffer for GL_LINE_LOOP.");
@@ -1485,14 +1526,14 @@ void Renderer9::drawLineLoop(GLsizei count, GLenum type, const GLvoid *indices, 
         }
 
         void* mappedMemory = NULL;
-        int offset = mLineLoopIB->mapBuffer(spaceNeeded, &mappedMemory);
-        if (offset == -1 || mappedMemory == NULL)
+        unsigned int offset = 0;
+        if (!mLineLoopIB->mapBuffer(spaceNeeded, &mappedMemory, &offset))
         {
             ERR("Could not map index buffer for GL_LINE_LOOP.");
             return gl::error(GL_OUT_OF_MEMORY);
         }
 
-        startIndex = static_cast<UINT>(offset) / 4;
+        startIndex = static_cast<unsigned int>(offset) / 4;
         unsigned int *data = reinterpret_cast<unsigned int*>(mappedMemory);
 
         switch (type)
@@ -1549,13 +1590,16 @@ void Renderer9::drawLineLoop(GLsizei count, GLenum type, const GLvoid *indices, 
             }
         }
 
-        if (static_cast<unsigned int>(count + 1) > (std::numeric_limits<unsigned short>::max() / sizeof(unsigned short)))
+        // Checked by Renderer9::applyPrimitiveType
+        ASSERT(count >= 0);
+
+        if (static_cast<unsigned int>(count) + 1 > (std::numeric_limits<unsigned short>::max() / sizeof(unsigned short)))
         {
             ERR("Could not create a 16-bit looping index buffer for GL_LINE_LOOP, too many indices required.");
             return gl::error(GL_OUT_OF_MEMORY);
         }
 
-        const int spaceNeeded = (count + 1) * sizeof(unsigned short);
+        const unsigned int spaceNeeded = (static_cast<unsigned int>(count) + 1) * sizeof(unsigned short);
         if (!mLineLoopIB->reserveBufferSpace(spaceNeeded, GL_UNSIGNED_SHORT))
         {
             ERR("Could not reserve enough space in looping index buffer for GL_LINE_LOOP.");
@@ -1563,14 +1607,14 @@ void Renderer9::drawLineLoop(GLsizei count, GLenum type, const GLvoid *indices, 
         }
 
         void* mappedMemory = NULL;
-        int offset = mLineLoopIB->mapBuffer(spaceNeeded, &mappedMemory);
-        if (offset == -1 || mappedMemory == NULL)
+        unsigned int offset;
+        if (mLineLoopIB->mapBuffer(spaceNeeded, &mappedMemory, &offset))
         {
             ERR("Could not map index buffer for GL_LINE_LOOP.");
             return gl::error(GL_OUT_OF_MEMORY);
         }
 
-        startIndex = static_cast<UINT>(offset) / 2;
+        startIndex = static_cast<unsigned int>(offset) / 2;
         unsigned short *data = reinterpret_cast<unsigned short*>(mappedMemory);
 
         switch (type)
@@ -3085,7 +3129,7 @@ ShaderExecutable *Renderer9::loadExecutable(const void *function, size_t length,
     return executable;
 }
 
-ShaderExecutable *Renderer9::compileToExecutable(gl::InfoLog &infoLog, const char *shaderHLSL, rx::ShaderType type)
+ShaderExecutable *Renderer9::compileToExecutable(gl::InfoLog &infoLog, const char *shaderHLSL, rx::ShaderType type, D3DWorkaroundType workaround)
 {
     const char *profile = NULL;
 
@@ -3102,7 +3146,11 @@ ShaderExecutable *Renderer9::compileToExecutable(gl::InfoLog &infoLog, const cha
         return NULL;
     }
 
-    ID3DBlob *binary = (ID3DBlob*)compileToBinary(infoLog, shaderHLSL, profile, ANGLE_COMPILE_OPTIMIZATION_LEVEL, true);
+    // ANGLE issue 486:
+    // Work-around a D3D9 compiler bug that presents itself when using conditional discard, by disabling optimization
+    UINT optimizationFlags = (workaround == ANGLE_D3D_WORKAROUND_SM3_OPTIMIZER ? D3DCOMPILE_SKIP_OPTIMIZATION : ANGLE_COMPILE_OPTIMIZATION_LEVEL);
+
+    ID3DBlob *binary = (ID3DBlob*)compileToBinary(infoLog, shaderHLSL, profile, optimizationFlags, true);
     if (!binary)
         return NULL;
 

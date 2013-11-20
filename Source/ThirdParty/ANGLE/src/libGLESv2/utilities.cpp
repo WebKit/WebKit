@@ -218,6 +218,29 @@ GLsizei ComputeCompressedSize(GLsizei width, GLsizei height, GLenum internalform
     }
 }
 
+GLsizei ComputeTypeSize(GLenum type)
+{
+    switch (type)
+    {
+      case GL_BYTE:                            return 1;
+      case GL_UNSIGNED_BYTE:                   return 1;
+      case GL_SHORT:                           return 2;
+      case GL_UNSIGNED_SHORT:                  return 2;
+      case GL_INT:                             return 4;
+      case GL_UNSIGNED_INT:                    return 4;
+      case GL_FLOAT:                           return 4;
+      case GL_HALF_FLOAT_OES:                  return 2;
+      case GL_UNSIGNED_SHORT_5_6_5:            return 2;
+      case GL_UNSIGNED_SHORT_4_4_4_4:          return 2;
+      case GL_UNSIGNED_SHORT_5_5_5_1:          return 2;
+      case GL_UNSIGNED_SHORT_4_4_4_4_REV_EXT:  return 2;
+      case GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT:  return 2;
+      case GL_UNSIGNED_INT_2_10_10_10_REV_EXT: return 4;
+      case GL_UNSIGNED_INT_24_8_OES:           return 4;
+      default: UNREACHABLE();                  return 0;
+    }
+}
+
 bool IsCompressed(GLenum format)
 {
     if(format == GL_COMPRESSED_RGB_S3TC_DXT1_EXT ||

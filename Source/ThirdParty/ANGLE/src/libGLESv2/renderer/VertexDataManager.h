@@ -31,8 +31,8 @@ struct TranslatedAttribute
     bool active;
 
     const gl::VertexAttribute *attribute;
-    UINT offset;
-    UINT stride;   // 0 means not to advance the read pointer at all
+    unsigned int offset;
+    unsigned int stride;   // 0 means not to advance the read pointer at all
 
     VertexBuffer *vertexBuffer;
     BufferStorage *storage;

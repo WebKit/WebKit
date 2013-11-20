@@ -33,12 +33,6 @@ IF YOU MODIFY THIS FILE YOU ALSO NEED TO RUN generate_parser.sh.
 #pragma GCC diagnostic ignored "-Wmissing-noreturn"
 #endif
 
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma clang diagnostic ignored "-Wdeprecated-register"
-#endif
-
 typedef std::string YYSTYPE;
 typedef pp::SourceLocation YYLTYPE;
 
@@ -71,8 +65,6 @@ typedef pp::SourceLocation YYLTYPE;
 
 #define YY_INPUT(buf, result, maxSize) \
     result = yyextra->input.read(buf, maxSize);
-
-#define YY_NO_INPUT
 
 %}
 
@@ -273,17 +265,11 @@ FRACTIONAL_CONSTANT  ({DIGIT}*"."{DIGIT}+)|({DIGIT}+".")
 
 %%
 
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif
-
 namespace pp {
 
-// TODO(alokp): Maximum token length should ideally be specified by
-// the preprocessor client, i.e., the compiler.
-const size_t Tokenizer::kMaxTokenLength = 256;
-
-Tokenizer::Tokenizer(Diagnostics* diagnostics) : mHandle(0)
+Tokenizer::Tokenizer(Diagnostics* diagnostics)
+    : mHandle(0),
+      mMaxTokenLength(256)
 {
     mContext.diagnostics = diagnostics;
 }
@@ -316,11 +302,11 @@ void Tokenizer::setLineNumber(int line)
 void Tokenizer::lex(Token* token)
 {
     token->type = yylex(&token->text, &token->location, mHandle);
-    if (token->text.size() > kMaxTokenLength)
+    if (token->text.size() > mMaxTokenLength)
     {
         mContext.diagnostics->report(Diagnostics::TOKEN_TOO_LONG,
                                      token->location, token->text);
-        token->text.erase(kMaxTokenLength);
+        token->text.erase(mMaxTokenLength);
     }
 
     token->flags = 0;

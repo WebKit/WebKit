@@ -152,18 +152,40 @@ bool VertexBuffer11::storeRawData(const void* data, unsigned int size, unsigned 
     }
 }
 
-unsigned int VertexBuffer11::getSpaceRequired(const gl::VertexAttribute &attrib, GLsizei count,
-                                              GLsizei instances) const
+bool VertexBuffer11::getSpaceRequired(const gl::VertexAttribute &attrib, GLsizei count,
+                                      GLsizei instances, unsigned int *outSpaceRequired) const
 {
     unsigned int elementSize = getVertexConversion(attrib).outputElementSize;
 
+    unsigned int elementCount = 0;
     if (instances == 0 || attrib.mDivisor == 0)
     {
-        return elementSize * count;
+        elementCount = count;
     }
     else
     {
-        return elementSize * ((instances + attrib.mDivisor - 1) / attrib.mDivisor);
+        if (static_cast<unsigned int>(instances) < std::numeric_limits<unsigned int>::max() - (attrib.mDivisor - 1))
+        {
+            // Round up
+            elementCount = (static_cast<unsigned int>(instances) + (attrib.mDivisor - 1)) / attrib.mDivisor;
+        }
+        else
+        {
+            elementCount = instances / attrib.mDivisor;
+        }
+    }
+
+    if (elementSize <= std::numeric_limits<unsigned int>::max() / elementCount)
+    {
+        if (outSpaceRequired)
+        {
+            *outSpaceRequired = elementSize * elementCount;
+        }
+        return true;
+    }
+    else
+    {
+        return false;
     }
 }
 

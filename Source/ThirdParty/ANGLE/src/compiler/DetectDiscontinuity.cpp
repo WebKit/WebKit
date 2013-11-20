@@ -10,7 +10,7 @@
 
 #include "compiler/DetectDiscontinuity.h"
 
-#include "compiler/ParseHelper.h"
+#include "compiler/ParseContext.h"
 
 namespace sh
 {

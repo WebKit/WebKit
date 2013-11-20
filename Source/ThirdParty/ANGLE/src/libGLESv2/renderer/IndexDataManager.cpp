@@ -13,6 +13,7 @@
 
 #include "libGLESv2/Buffer.h"
 #include "libGLESv2/main.h"
+#include "libGLESv2/utilities.h"
 #include "libGLESv2/renderer/IndexBuffer.h"
 
 namespace rx
@@ -51,17 +52,6 @@ IndexDataManager::~IndexDataManager()
     delete mStreamingBufferShort;
     delete mStreamingBufferInt;
     delete mCountingBuffer;
-}
-
-static unsigned int indexTypeSize(GLenum type)
-{
-    switch (type)
-    {
-      case GL_UNSIGNED_INT:   return sizeof(GLuint);
-      case GL_UNSIGNED_SHORT: return sizeof(GLushort);
-      case GL_UNSIGNED_BYTE:  return sizeof(GLubyte);
-      default: UNREACHABLE(); return sizeof(GLushort);
-    }
 }
 
 static void convertIndices(GLenum type, const void *input, GLsizei count, void *output)
@@ -125,13 +115,19 @@ GLenum IndexDataManager::prepareIndexData(GLenum type, GLsizei count, gl::Buffer
     }
 
     GLenum destinationIndexType = (type == GL_UNSIGNED_INT) ? GL_UNSIGNED_INT : GL_UNSIGNED_SHORT;
-    intptr_t offset = reinterpret_cast<intptr_t>(indices);
+    unsigned int offset = 0;
     bool alignedOffset = false;
 
     BufferStorage *storage = NULL;
 
     if (buffer != NULL)
     {
+        if (reinterpret_cast<uintptr_t>(indices) > std::numeric_limits<unsigned int>::max())
+        {
+            return GL_OUT_OF_MEMORY;
+        }
+        offset = static_cast<unsigned int>(reinterpret_cast<uintptr_t>(indices));
+
         storage = buffer->getStorage();
 
         switch (type)
@@ -142,7 +138,16 @@ GLenum IndexDataManager::prepareIndexData(GLenum type, GLsizei count, gl::Buffer
           default: UNREACHABLE(); alignedOffset = false;
         }
 
-        if (indexTypeSize(type) * count + offset > storage->getSize())
+        unsigned int typeSize = gl::ComputeTypeSize(type);
+
+        // check for integer overflows
+        if (static_cast<unsigned int>(count) > (std::numeric_limits<unsigned int>::max() / typeSize) ||
+            typeSize * static_cast<unsigned int>(count) + offset < offset)
+        {
+            return GL_OUT_OF_MEMORY;
+        }
+
+        if (typeSize * static_cast<unsigned int>(count) + offset > storage->getSize())
         {
             return GL_INVALID_OPERATION;
         }
@@ -156,37 +161,44 @@ GLenum IndexDataManager::prepareIndexData(GLenum type, GLsizei count, gl::Buffer
     IndexBufferInterface *indexBuffer = streamingBuffer;
     bool directStorage = alignedOffset && storage && storage->supportsDirectBinding() &&
                          destinationIndexType == type;
-    UINT streamOffset = 0;
+    unsigned int streamOffset = 0;
 
     if (directStorage)
     {
         indexBuffer = streamingBuffer;
         streamOffset = offset;
         storage->markBufferUsage();
-        computeRange(type, indices, count, &translated->minIndex, &translated->maxIndex);
+
+        if (!buffer->getIndexRangeCache()->findRange(type, offset, count, &translated->minIndex,
+                                                     &translated->maxIndex, NULL))
+        {
+            computeRange(type, indices, count, &translated->minIndex, &translated->maxIndex);
+            buffer->getIndexRangeCache()->addRange(type, offset, count, translated->minIndex,
+                                                   translated->maxIndex, offset);
+        }
     }
     else if (staticBuffer && staticBuffer->getBufferSize() != 0 && staticBuffer->getIndexType() == type && alignedOffset)
     {
         indexBuffer = staticBuffer;
-        streamOffset = staticBuffer->lookupRange(offset, count, &translated->minIndex, &translated->maxIndex);
-
-        if (streamOffset == -1)
+        if (!staticBuffer->getIndexRangeCache()->findRange(type, offset, count, &translated->minIndex,
+                                                           &translated->maxIndex, &streamOffset))
         {
-            streamOffset = (offset / indexTypeSize(type)) * indexTypeSize(destinationIndexType);
+            streamOffset = (offset / gl::ComputeTypeSize(type)) * gl::ComputeTypeSize(destinationIndexType);
             computeRange(type, indices, count, &translated->minIndex, &translated->maxIndex);
-            staticBuffer->addRange(offset, count, translated->minIndex, translated->maxIndex, streamOffset);
+            staticBuffer->getIndexRangeCache()->addRange(type, offset, count, translated->minIndex,
+                                                         translated->maxIndex, streamOffset);
         }
     }
     else
     {
-        int convertCount = count;
+        unsigned int convertCount = count;
 
         if (staticBuffer)
         {
             if (staticBuffer->getBufferSize() == 0 && alignedOffset)
             {
                 indexBuffer = staticBuffer;
-                convertCount = storage->getSize() / indexTypeSize(type);
+                convertCount = storage->getSize() / gl::ComputeTypeSize(type);
             }
             else
             {
@@ -201,12 +213,22 @@ GLenum IndexDataManager::prepareIndexData(GLenum type, GLsizei count, gl::Buffer
             return GL_INVALID_OPERATION;
         }
 
-        unsigned int bufferSizeRequired = convertCount * indexTypeSize(destinationIndexType);
-        indexBuffer->reserveBufferSpace(bufferSizeRequired, type);
+        unsigned int indexTypeSize = gl::ComputeTypeSize(destinationIndexType);
+        if (convertCount > std::numeric_limits<unsigned int>::max() / indexTypeSize)
+        {
+            ERR("Reserving %u indicies of %u bytes each exceeds the maximum buffer size.", convertCount, indexTypeSize);
+            return GL_OUT_OF_MEMORY;
+        }
+
+        unsigned int bufferSizeRequired = convertCount * indexTypeSize;
+        if (!indexBuffer->reserveBufferSpace(bufferSizeRequired, type))
+        {
+            ERR("Failed to reserve %u bytes in an index buffer.", bufferSizeRequired);
+            return GL_OUT_OF_MEMORY;
+        }
 
         void* output = NULL;
-        streamOffset = indexBuffer->mapBuffer(bufferSizeRequired, &output);
-        if (streamOffset == -1 || output == NULL)
+        if (!indexBuffer->mapBuffer(bufferSizeRequired, &output, &streamOffset))
         {
             ERR("Failed to map index buffer.");
             return GL_OUT_OF_MEMORY;
@@ -224,20 +246,21 @@ GLenum IndexDataManager::prepareIndexData(GLenum type, GLsizei count, gl::Buffer
 
         if (staticBuffer)
         {
-            streamOffset = (offset / indexTypeSize(type)) * indexTypeSize(destinationIndexType);
-            staticBuffer->addRange(offset, count, translated->minIndex, translated->maxIndex, streamOffset);
+            streamOffset = (offset / gl::ComputeTypeSize(type)) * gl::ComputeTypeSize(destinationIndexType);
+            staticBuffer->getIndexRangeCache()->addRange(type, offset, count, translated->minIndex,
+                                                         translated->maxIndex, streamOffset);
         }
     }
 
     translated->storage = directStorage ? storage : NULL;
     translated->indexBuffer = indexBuffer->getIndexBuffer();
     translated->serial = directStorage ? storage->getSerial() : indexBuffer->getSerial();
-    translated->startIndex = streamOffset / indexTypeSize(destinationIndexType);
+    translated->startIndex = streamOffset / gl::ComputeTypeSize(destinationIndexType);
     translated->startOffset = streamOffset;
 
     if (buffer)
     {
-        buffer->promoteStaticUsage(count * indexTypeSize(type));
+        buffer->promoteStaticUsage(count * gl::ComputeTypeSize(type));
     }
 
     return GL_NO_ERROR;
@@ -256,7 +279,7 @@ StaticIndexBufferInterface *IndexDataManager::getCountingIndices(GLsizei count)
             mCountingBuffer->reserveBufferSpace(spaceNeeded, GL_UNSIGNED_SHORT);
 
             void* mappedMemory = NULL;
-            if (mCountingBuffer->mapBuffer(spaceNeeded, &mappedMemory) == -1 || mappedMemory == NULL)
+            if (!mCountingBuffer->mapBuffer(spaceNeeded, &mappedMemory, NULL))
             {
                 ERR("Failed to map counting buffer.");
                 return NULL;
@@ -286,7 +309,7 @@ StaticIndexBufferInterface *IndexDataManager::getCountingIndices(GLsizei count)
             mCountingBuffer->reserveBufferSpace(spaceNeeded, GL_UNSIGNED_INT);
 
             void* mappedMemory = NULL;
-            if (mCountingBuffer->mapBuffer(spaceNeeded, &mappedMemory) == -1 || mappedMemory == NULL)
+            if (!mCountingBuffer->mapBuffer(spaceNeeded, &mappedMemory, NULL))
             {
                 ERR("Failed to map counting buffer.");
                 return NULL;

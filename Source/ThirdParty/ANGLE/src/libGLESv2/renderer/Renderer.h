@@ -93,6 +93,12 @@ enum ShaderType
     SHADER_GEOMETRY
 };
 
+enum D3DWorkaroundType
+{
+    ANGLE_D3D_WORKAROUND_NONE,
+    ANGLE_D3D_WORKAROUND_SM3_OPTIMIZER
+};
+
 class Renderer
 {
   public:
@@ -207,7 +213,7 @@ class Renderer
 
     // Shader operations
     virtual ShaderExecutable *loadExecutable(const void *function, size_t length, rx::ShaderType type) = 0;
-    virtual ShaderExecutable *compileToExecutable(gl::InfoLog &infoLog, const char *shaderHLSL, rx::ShaderType type) = 0;
+    virtual ShaderExecutable *compileToExecutable(gl::InfoLog &infoLog, const char *shaderHLSL, rx::ShaderType type, D3DWorkaroundType workaround) = 0;
 
     // Image operations
     virtual Image *createImage() = 0;

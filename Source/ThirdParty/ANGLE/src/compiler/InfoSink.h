@@ -8,6 +8,7 @@
 #define _INFOSINK_INCLUDED_
 
 #include <math.h>
+#include <stdlib.h>
 #include "compiler/Common.h"
 
 // Returns the fractional part of the given floating-point number.

@@ -33,17 +33,11 @@ WHICH GENERATES THE GLSL ES LEXER (glslang_lex.cpp).
 #pragma warning(disable: 4505)
 #pragma warning(disable: 4701)
 #endif
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma clang diagnostic ignored "-Wdeprecated-register"
-#endif
 }
 
 %{
 #include "compiler/glslang.h"
-#include "compiler/ParseHelper.h"
+#include "compiler/ParseContext.h"
 #include "compiler/preprocessor/Token.h"
 #include "compiler/util.h"
 #include "glslang_tab.h"
@@ -63,6 +57,8 @@ WHICH GENERATES THE GLSL ES LEXER (glslang_lex.cpp).
 static yy_size_t string_input(char* buf, yy_size_t max_size, yyscan_t yyscanner);
 static int check_type(yyscan_t yyscanner);
 static int reserved_word(yyscan_t yyscanner);
+static int int_constant(yyscan_t yyscanner);
+static int float_constant(yyscan_t yyscanner);
 %}
 
 %option noyywrap nounput never-interactive
@@ -195,13 +191,13 @@ O           [0-7]
    return check_type(yyscanner);
 }
 
-0[xX]{H}+         { yylval->lex.i = static_cast<int>(strtol(yytext, 0, 0)); return INTCONSTANT; }
-0{O}+             { yylval->lex.i = static_cast<int>(strtol(yytext, 0, 0)); return INTCONSTANT; }
-{D}+              { yylval->lex.i = static_cast<int>(strtol(yytext, 0, 0)); return INTCONSTANT; }
+0[xX]{H}+         { return int_constant(yyscanner); }
+0{O}+             { return int_constant(yyscanner); }
+{D}+              { return int_constant(yyscanner); }
 
-{D}+{E}           { yylval->lex.f = static_cast<float>(atof_dot(yytext)); return FLOATCONSTANT; }
-{D}+"."{D}*({E})? { yylval->lex.f = static_cast<float>(atof_dot(yytext)); return FLOATCONSTANT; }
-"."{D}+({E})?     { yylval->lex.f = static_cast<float>(atof_dot(yytext)); return FLOATCONSTANT; }
+{D}+{E}           { return float_constant(yyscanner); }
+{D}+"."{D}*({E})? { return float_constant(yyscanner); }
+"."{D}+({E})?     { return float_constant(yyscanner); }
 
 "+="            { return ADD_ASSIGN; }
 "-="            { return SUB_ASSIGN; }
@@ -256,10 +252,6 @@ O           [0-7]
 
 %%
 
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif
-
 yy_size_t string_input(char* buf, yy_size_t max_size, yyscan_t yyscanner) {
     pp::Token token;
     yyget_extra(yyscanner)->preprocessor.lex(&token);
@@ -298,6 +290,27 @@ int reserved_word(yyscan_t yyscanner) {
     return 0;
 }
 
+void yyerror(YYLTYPE* lloc, TParseContext* context, const char* reason) {
+    context->error(*lloc, reason, yyget_text(context->scanner));
+    context->recover();
+}
+
+int int_constant(yyscan_t yyscanner) {
+    struct yyguts_t* yyg = (struct yyguts_t*) yyscanner;
+
+    if (!atoi_clamp(yytext, &(yylval->lex.i)))
+        yyextra->warning(*yylloc, "Integer overflow", yytext, "");
+    return INTCONSTANT;
+}
+
+int float_constant(yyscan_t yyscanner) {
+    struct yyguts_t* yyg = (struct yyguts_t*) yyscanner;
+
+    if (!atof_clamp(yytext, &(yylval->lex.f)))
+        yyextra->warning(*yylloc, "Float overflow", yytext, "");
+    return FLOATCONSTANT;
+}
+
 int glslang_initialize(TParseContext* context) {
     yyscan_t scanner = NULL;
     if (yylex_init_extra(context, &scanner))
@@ -326,6 +339,7 @@ int glslang_scan(size_t count, const char* const string[], const int length[],
     // Initialize preprocessor.
     if (!context->preprocessor.init(count, string, length))
         return 1;
+    context->preprocessor.setMaxTokenLength(SH_MAX_TOKEN_LENGTH);
 
     // Define extension macros.
     const TExtensionBehavior& extBehavior = context->extensionBehavior();

@@ -206,3 +206,11 @@ void TSymbolTableLevel::relateToExtension(const char* name, const TString& ext)
             symbol->relateToExtension(ext);
     }
 }
+
+TSymbolTable::~TSymbolTable()
+{
+    for (size_t i = 0; i < table.size(); ++i)
+        delete table[i];
+    for (size_t i = 0; i < precisionStack.size(); ++i)
+        delete precisionStack[i];
+}

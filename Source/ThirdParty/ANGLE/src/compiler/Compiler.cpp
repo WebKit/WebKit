@@ -8,11 +8,13 @@
 #include "compiler/DetectCallDepth.h"
 #include "compiler/ForLoopUnroll.h"
 #include "compiler/Initialize.h"
+#include "compiler/InitializeGLPosition.h"
 #include "compiler/InitializeParseContext.h"
 #include "compiler/MapLongVariableNames.h"
-#include "compiler/ParseHelper.h"
+#include "compiler/ParseContext.h"
 #include "compiler/RenameFunction.h"
 #include "compiler/ShHandle.h"
+#include "compiler/UnfoldShortCircuitAST.h"
 #include "compiler/ValidateLimitations.h"
 #include "compiler/VariablePacker.h"
 #include "compiler/depgraph/DependencyGraph.h"
@@ -29,19 +31,32 @@ bool isWebGLBasedSpec(ShShaderSpec spec)
 namespace {
 class TScopedPoolAllocator {
 public:
-    TScopedPoolAllocator(TPoolAllocator* allocator, bool pushPop)
-        : mAllocator(allocator), mPushPopAllocator(pushPop) {
-        if (mPushPopAllocator) mAllocator->push();
+    TScopedPoolAllocator(TPoolAllocator* allocator) : mAllocator(allocator) {
+        mAllocator->push();
         SetGlobalPoolAllocator(mAllocator);
     }
     ~TScopedPoolAllocator() {
         SetGlobalPoolAllocator(NULL);
-        if (mPushPopAllocator) mAllocator->pop();
+        mAllocator->pop();
     }
 
 private:
     TPoolAllocator* mAllocator;
-    bool mPushPopAllocator;
+};
+
+class TScopedSymbolTableLevel {
+public:
+    TScopedSymbolTableLevel(TSymbolTable* table) : mTable(table) {
+        ASSERT(mTable->atBuiltInLevel());
+        mTable->push();
+    }
+    ~TScopedSymbolTableLevel() {
+        while (!mTable->atBuiltInLevel())
+            mTable->pop();
+    }
+
+private:
+    TSymbolTable* mTable;
 };
 }  // namespace
 
@@ -81,7 +96,8 @@ bool TCompiler::Init(const ShBuiltInResources& resources)
         resources.MaxFragmentUniformVectors;
     maxExpressionComplexity = resources.MaxExpressionComplexity;
     maxCallStackDepth = resources.MaxCallStackDepth;
-    TScopedPoolAllocator scopedAlloc(&allocator, false);
+
+    SetGlobalPoolAllocator(&allocator);
 
     // Generate built-in symbol table.
     if (!InitBuiltInSymbolTable(resources))
@@ -101,7 +117,7 @@ bool TCompiler::compile(const char* const shaderStrings[],
                         size_t numStrings,
                         int compileOptions)
 {
-    TScopedPoolAllocator scopedAlloc(&allocator, true);
+    TScopedPoolAllocator scopedAlloc(&allocator);
     clearResults();
 
     if (numStrings == 0)
@@ -125,15 +141,11 @@ bool TCompiler::compile(const char* const shaderStrings[],
                                shaderType, shaderSpec, compileOptions, true,
                                sourcePath, infoSink);
     parseContext.fragmentPrecisionHigh = fragmentPrecisionHigh;
-    GlobalParseContext = &parseContext;
+    SetGlobalParseContext(&parseContext);
 
     // We preserve symbols at the built-in level from compile-to-compile.
     // Start pushing the user-defined symbols at global level.
-    symbolTable.push();
-    if (!symbolTable.atGlobalLevel()) {
-        infoSink.info.prefix(EPrefixInternalError);
-        infoSink.info << "Wrong symbol table level";
-    }
+    TScopedSymbolTableLevel scopedSymbolLevel(&symbolTable);
 
     // Parse shader.
     bool success =
@@ -178,8 +190,19 @@ bool TCompiler::compile(const char* const shaderStrings[],
         if (success && (compileOptions & SH_MAP_LONG_VARIABLE_NAMES) && hashFunction == NULL)
             mapLongVariableNames(root);
 
-        if (success && (compileOptions & SH_ATTRIBUTES_UNIFORMS)) {
-            collectAttribsUniforms(root);
+        if (success && shaderType == SH_VERTEX_SHADER && (compileOptions & SH_INIT_GL_POSITION)) {
+            InitializeGLPosition initGLPosition;
+            root->traverse(&initGLPosition);
+        }
+
+    if (success && (compileOptions & SH_UNFOLD_SHORT_CIRCUIT)) {
+            UnfoldShortCircuitAST unfoldShortCircuit;
+            root->traverse(&unfoldShortCircuit);
+            unfoldShortCircuit.updateTree();
+    }
+
+        if (success && (compileOptions & SH_VARIABLES)) {
+            collectVariables(root);
             if (compileOptions & SH_ENFORCE_PACKING_RESTRICTIONS) {
                 success = enforcePackingRestrictions();
                 if (!success) {
@@ -198,10 +221,6 @@ bool TCompiler::compile(const char* const shaderStrings[],
 
     // Cleanup memory.
     intermediate.remove(parseContext.treeRoot);
-    // Ensure symbol table is returned to the built-in level,
-    // throwing away all but the built-ins.
-    while (!symbolTable.atBuiltInLevel())
-        symbolTable.pop();
 
     return success;
 }
@@ -225,6 +244,11 @@ bool TCompiler::InitBuiltInSymbolTable(const ShBuiltInResources &resources)
     floatingPoint.matrix = false;
     floatingPoint.array = false;
 
+    TPublicType sampler;
+    sampler.size = 1;
+    sampler.matrix = false;
+    sampler.array = false;
+
     switch(shaderType)
     {
       case SH_FRAGMENT_SHADER:
@@ -235,6 +259,13 @@ bool TCompiler::InitBuiltInSymbolTable(const ShBuiltInResources &resources)
         symbolTable.setDefaultPrecision(floatingPoint, EbpHigh);
         break;
       default: assert(false && "Language not supported");
+    }
+    // We set defaults for all the sampler types, even those that are
+    // only available if an extension exists.
+    for (int samplerType = EbtGuardSamplerBegin + 1;
+         samplerType < EbtGuardSamplerEnd; ++samplerType) {
+        sampler.type = static_cast<TBasicType>(samplerType);
+        symbolTable.setDefaultPrecision(sampler, EbpLow);
     }
 
     InsertBuiltInFunctions(shaderType, shaderSpec, resources, symbolTable);
@@ -253,6 +284,7 @@ void TCompiler::clearResults()
 
     attribs.clear();
     uniforms.clear();
+    varyings.clear();
 
     builtInFunctionEmulator.Cleanup();
 
@@ -358,9 +390,9 @@ bool TCompiler::enforceVertexShaderTimingRestrictions(TIntermNode* root)
     return restrictor.numErrors() == 0;
 }
 
-void TCompiler::collectAttribsUniforms(TIntermNode* root)
+void TCompiler::collectVariables(TIntermNode* root)
 {
-    CollectAttribsUniforms collect(attribs, uniforms, hashFunction);
+    CollectVariables collect(attribs, uniforms, varyings, hashFunction);
     root->traverse(&collect);
 }
 

@@ -10,7 +10,7 @@
 #define COMPILER_SEARCHSYMBOL_H_
 
 #include "compiler/intermediate.h"
-#include "compiler/ParseHelper.h"
+#include "compiler/ParseContext.h"
 
 namespace sh
 {
