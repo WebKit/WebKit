@@ -66,8 +66,6 @@ public:
 
     const Vector<Element*>* getAllElementsById(const AtomicStringImpl&, const TreeScope&) const;
 
-    void checkConsistency() const;
-
 private:
     template<bool keyMatches(const AtomicStringImpl&, Element*)> Element* get(const AtomicStringImpl&, const TreeScope&) const;
 
