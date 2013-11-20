@@ -1,3 +1,19 @@
+2013-11-20  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GTK] Remove Chromium as user agent and claim to be Safari in OS X
+        https://bugs.webkit.org/show_bug.cgi?id=124229
+
+        Reviewed by Martin Robinson.
+
+        http://www.duolingo.com/ doesn't get render correctly because it uses
+        Chrome/Chromium specific variables, added after it was forked. Because
+        of this, it is necessary to remove the Chrome/Chromium identification
+        in the user agent. Also, from now on, by default, The GTK+ port will
+        claim to be Safari in OS X to avoid loading wrong resources.
+
+        * platform/gtk/UserAgentGtk.cpp:
+        (WebCore::standardUserAgent):
+
 2013-11-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r159551.
