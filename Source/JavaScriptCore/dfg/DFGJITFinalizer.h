@@ -39,7 +39,7 @@ namespace JSC { namespace DFG {
 
 class JITFinalizer : public Finalizer {
 public:
-    JITFinalizer(Plan&, PassRefPtr<JITCode>, PassOwnPtr<LinkBuffer>, MacroAssembler::Label arityCheck = MacroAssembler::Label());
+    JITFinalizer(Plan&, PassRefPtr<JITCode>, PassOwnPtr<LinkBuffer>, MacroAssemblerCodePtr withArityCheck = MacroAssemblerCodePtr(MacroAssemblerCodePtr::EmptyValue));
     virtual ~JITFinalizer();
     
     virtual bool finalize() OVERRIDE;
@@ -50,7 +50,7 @@ private:
     
     RefPtr<JITCode> m_jitCode;
     OwnPtr<LinkBuffer> m_linkBuffer;
-    MacroAssembler::Label m_arityCheck;
+    MacroAssemblerCodePtr m_withArityCheck;
 };
 
 } } // namespace JSC::DFG

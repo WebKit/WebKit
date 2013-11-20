@@ -402,9 +402,11 @@ void JITCompiler::linkFunction()
     linkBuffer->link(m_callArityFixup, FunctionPtr((m_vm->getCTIStub(arityFixup)).code().executableAddress()));
     
     disassemble(*linkBuffer);
-    
+
+    MacroAssemblerCodePtr withArityCheck = linkBuffer->locationOf(m_arityCheck);
+
     m_graph.m_plan.finalizer = adoptPtr(new JITFinalizer(
-        m_graph.m_plan, m_jitCode.release(), linkBuffer.release(), m_arityCheck));
+        m_graph.m_plan, m_jitCode.release(), linkBuffer.release(), withArityCheck));
 }
 
 void JITCompiler::disassemble(LinkBuffer& linkBuffer)

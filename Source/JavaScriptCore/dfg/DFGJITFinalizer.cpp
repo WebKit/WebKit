@@ -34,11 +34,11 @@
 
 namespace JSC { namespace DFG {
 
-JITFinalizer::JITFinalizer(Plan& plan, PassRefPtr<JITCode> jitCode, PassOwnPtr<LinkBuffer> linkBuffer, MacroAssembler::Label arityCheck)
+JITFinalizer::JITFinalizer(Plan& plan, PassRefPtr<JITCode> jitCode, PassOwnPtr<LinkBuffer> linkBuffer, MacroAssemblerCodePtr withArityCheck)
     : Finalizer(plan)
     , m_jitCode(jitCode)
     , m_linkBuffer(linkBuffer)
-    , m_arityCheck(arityCheck)
+    , m_withArityCheck(withArityCheck)
 {
 }
 
@@ -58,9 +58,9 @@ bool JITFinalizer::finalize()
 
 bool JITFinalizer::finalizeFunction()
 {
-    MacroAssemblerCodePtr withArityCheck = m_linkBuffer->locationOf(m_arityCheck);
+    RELEASE_ASSERT(!m_withArityCheck.isEmptyValue());
     m_jitCode->initializeCodeRef(m_linkBuffer->finalizeCodeWithoutDisassembly());
-    m_plan.codeBlock->setJITCode(m_jitCode, withArityCheck);
+    m_plan.codeBlock->setJITCode(m_jitCode, m_withArityCheck);
     
     finalizeCommon();
     
