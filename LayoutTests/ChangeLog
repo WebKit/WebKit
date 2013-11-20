@@ -1,3 +1,11 @@
+2013-11-20  Dean Jackson  <dino@apple.com>
+
+        Unreviewed. Updated expected result following
+        https://bugs.webkit.org/show_bug.cgi?id=124666
+
+        * platform/mac/fast/block/margin-collapse/empty-clear-blocks-expected.png:
+        * platform/mac/fast/block/margin-collapse/empty-clear-blocks-expected.txt:
+
 2013-11-20  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [css shapes] Parse new circle shape syntax
