@@ -1,3 +1,92 @@
+2013-11-20  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [css shapes] Parse new circle shape syntax
+        https://bugs.webkit.org/show_bug.cgi?id=124618
+
+        Reviewed by Antti Koivisto.
+
+        Implement parsing of the new cicle shape syntax. The implementation of
+        the old syntax has been move aside as deprecated, and will be removed
+        once the new syntax is stable.
+
+        Updated existing parsing tests to cover this.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForCenterCoordinate): Create a CSSPrimitiveValue from a
+            BasicShapeCenterCoordinate.
+        (WebCore::valueForBasicShape): Convert new basic shape and rename old
+            one.
+        (WebCore::convertToCenterCoordinate): Create a
+            BasicShapeCenterCoordinate from a CSSPrimitiveValue.
+        (WebCore::basicShapeForValue): Convert new shape value and rename old
+            one.
+        * css/CSSBasicShapes.cpp:
+        (WebCore::buildCircleString): Build a new circle string.
+        (WebCore::CSSBasicShapeCircle::cssText): Serialize the new circle
+            shape.
+        (WebCore::CSSBasicShapeCircle::equals): Compare new circle shapes.
+        (WebCore::CSSBasicShapeCircle::serializeResolvingVariables):
+        * css/CSSBasicShapes.h:
+        (WebCore::CSSBasicShapeCircle::CSSBasicShapeCircle): Add class for new
+            circle shape.
+        (WebCore::CSSDeprecatedBasicShapeCircle::create): Renamed to move out
+            of the way of the new circle implementation.
+        (WebCore::CSSDeprecatedBasicShapeCircle::centerX): Ditto.
+        (WebCore::CSSDeprecatedBasicShapeCircle::centerY): Ditto.
+        (WebCore::CSSDeprecatedBasicShapeCircle::radius): Ditto.
+        (WebCore::CSSDeprecatedBasicShapeCircle::setCenterX): Ditto.
+        (WebCore::CSSDeprecatedBasicShapeCircle::setCenterY): Ditto.
+        (WebCore::CSSDeprecatedBasicShapeCircle::setRadius): Ditto.
+        (WebCore::CSSDeprecatedBasicShapeCircle::CSSDeprecatedBasicShapeCircle): Ditto.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseShapeRadius): Parse the radius for the new
+            circle syntax. Will also be used by the new ellipse syntax.
+        (WebCore::CSSParser::parseBasicShapeCircle): Parse the new circle
+            syntax.
+        (WebCore::CSSParser::parseDeprecatedBasicShapeCircle): Rename to make
+            way for the new implementation.
+        (WebCore::isDeprecatedBasicShape): Check if we have a new circle or an
+            old circle.
+        (WebCore::CSSParser::parseBasicShape): Update to parse the new circle
+            syntax.
+        * css/CSSParser.h:
+        * css/CSSValueKeywords.in: Add support for the new circle keywords.
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createShape): 
+        * rendering/style/BasicShapes.cpp: Deprecate old circle and add stub
+            for layout code.
+        (WebCore::DeprecatedBasicShapeCircle::path): Rename to make way for
+            the new implementation.
+        (WebCore::DeprecatedBasicShapeCircle::blend): Rename to make way for
+            the new implementation.
+        (WebCore::BasicShapeCircle::path): Create path for new circle shape.
+        (WebCore::BasicShapeCircle::blend): Interpolate the new circle shape.
+        * rendering/style/BasicShapes.h:
+        (WebCore::BasicShapeCenterCoordinate::BasicShapeCenterCoordinate):
+            Represent an x or y coordinate for the center of a new circle,
+            since it can be either a keyword along with an offset that cannot
+            be resolved until layout time or an ordinary Length. This will
+            also be used by the new ellipse implementation.
+        (WebCore::BasicShapeCenterCoordinate::keyword):
+        (WebCore::BasicShapeCenterCoordinate::length):
+        (WebCore::BasicShapeCenterCoordinate::blend): Interpolate.
+        (WebCore::BasicShapeRadius::BasicShapeRadius): Represent the radius of
+            a new circle shape since it can either be a straightforward Length or
+            a keyword that cannot be resolved until layout time.
+        (WebCore::BasicShapeRadius::value):
+        (WebCore::BasicShapeRadius::type):
+        (WebCore::BasicShapeRadius::blend): Interpolate.
+        (WebCore::BasicShapeCircle::centerX):
+        (WebCore::BasicShapeCircle::centerY):
+        (WebCore::BasicShapeCircle::radius):
+        (WebCore::BasicShapeCircle::setCenterX):
+        (WebCore::BasicShapeCircle::setCenterY):
+        (WebCore::BasicShapeCircle::setRadius):
+        (WebCore::BasicShapeCircle::BasicShapeCircle): New circle class.
+        (WebCore::DeprecatedBasicShapeCircle::create): Rename to make room for
+            new circle implementation.
+        (WebCore::DeprecatedBasicShapeCircle::DeprecatedBasicShapeCircle): Ditto.
+
 2013-11-20  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Add BoxShape and FloatRoundingRect classes

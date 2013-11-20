@@ -120,7 +120,74 @@ bool CSSBasicShapeRectangle::hasVariableReference() const
 }
 #endif
 
-static String buildCircleString(const String& x, const String& y, const String& radius, const String& box)
+static String buildCircleString(const String& radius, const String& centerX, const String& centerY, const String& box)
+{
+    char opening[] = "circle(";
+    char at[] = "at";
+    char separator[] = " ";
+    StringBuilder result;
+    // Compute the required capacity in advance to reduce allocations.
+    result.reserveCapacity((sizeof(opening) - 1) + (3 * (sizeof(separator) - 1)) + 1 + radius.length() + sizeof(at) + centerX.length() + centerY.length());
+    result.append(opening);
+    if (!radius.isNull()) 
+        result.append(radius);
+
+    if (!centerX.isNull() || !centerY.isNull()) {
+        if (!radius.isNull())
+            result.append(separator);
+        result.append(at);
+        result.append(separator);
+        result.append(centerX);
+        result.append(separator);
+        result.append(centerY);
+    }
+    result.append(")");
+    if (box.length()) {
+        result.append(separator);
+        result.append(box);
+    }
+    return result.toString();
+}
+
+String CSSBasicShapeCircle::cssText() const
+{
+    return buildCircleString(m_radius ? m_radius->cssText() : String(),
+        m_centerX ? m_centerX->cssText() : String(),
+        m_centerY ? m_centerY->cssText() : String(),
+        m_box ? m_box->cssText() : String());
+}
+
+bool CSSBasicShapeCircle::equals(const CSSBasicShape& shape) const
+{
+    if (shape.type() != CSSBasicShapeCircleType)
+        return false;
+
+    const CSSBasicShapeCircle& other = static_cast<const CSSBasicShapeCircle&>(shape);
+    return compareCSSValuePtr(m_centerX, other.m_centerX)
+        && compareCSSValuePtr(m_centerY, other.m_centerY)
+        && compareCSSValuePtr(m_radius, other.m_radius)
+        && compareCSSValuePtr(m_box, other.m_box);
+}
+
+#if ENABLE(CSS_VARIABLES)
+String CSSBasicShapeCircle::serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
+{
+    return buildCircleString(m_radius ? m_radius->serializeResolvingVariables(variables) : String(),
+        m_centerX ? m_centerX->serializeResolvingVariables(variables) : String(),
+        m_centerY ? m_centerY->serializeResolvingVariables(variables) : String(),
+        m_box ? m_box->serializeResolvingVariables(variables) : String());
+}
+
+bool CSSBasicShapeCircle::hasVariableReference() const
+{
+    return (m_centerX && m_centerX->hasVariableReference())
+        || (m_centerY && m_centerY->hasVariableReference())
+        || (m_radius && m_radius->hasVariableReference())
+        || (m_box && m_box->hasVariableReference());
+}
+#endif
+
+static String buildDeprecatedCircleString(const String& x, const String& y, const String& radius, const String& box)
 {
     StringBuilder result;
     char opening[] = "circle(";
@@ -139,17 +206,17 @@ static String buildCircleString(const String& x, const String& y, const String& 
     return result.toString();
 }
 
-String CSSBasicShapeCircle::cssText() const
+String CSSDeprecatedBasicShapeCircle::cssText() const
 {
-    return buildCircleString(m_centerX->cssText(), m_centerY->cssText(), m_radius->cssText(), m_box ? m_box->cssText() : String());
+    return buildDeprecatedCircleString(m_centerX->cssText(), m_centerY->cssText(), m_radius->cssText(), m_box ? m_box->cssText() : String());
 }
 
-bool CSSBasicShapeCircle::equals(const CSSBasicShape& shape) const
+bool CSSDeprecatedBasicShapeCircle::equals(const CSSBasicShape& shape) const
 {
-    if (shape.type() != CSSBasicShapeCircleType)
+    if (shape.type() != CSSDeprecatedBasicShapeCircleType)
         return false;
 
-    const CSSBasicShapeCircle& other = static_cast<const CSSBasicShapeCircle&>(shape);
+    const CSSDeprecatedBasicShapeCircle& other = static_cast<const CSSDeprecatedBasicShapeCircle&>(shape);
     return compareCSSValuePtr(m_centerX, other.m_centerX)
         && compareCSSValuePtr(m_centerY, other.m_centerY)
         && compareCSSValuePtr(m_radius, other.m_radius)
@@ -157,15 +224,15 @@ bool CSSBasicShapeCircle::equals(const CSSBasicShape& shape) const
 }
 
 #if ENABLE(CSS_VARIABLES)
-String CSSBasicShapeCircle::serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
+String CSSDeprecatedBasicShapeCircle::serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
 {
-    return buildCircleString(m_centerX->serializeResolvingVariables(variables),
+    return buildDeprecatedCircleString(m_centerX->serializeResolvingVariables(variables),
         m_centerY->serializeResolvingVariables(variables),
         m_radius->serializeResolvingVariables(variables),
         m_box ? m_box->serializeResolvingVariables(variables) : String());
 }
 
-bool CSSBasicShapeCircle::hasVariableReference() const
+bool CSSDeprecatedBasicShapeCircle::hasVariableReference() const
 {
     return m_centerX->hasVariableReference()
         || m_centerY->hasVariableReference()

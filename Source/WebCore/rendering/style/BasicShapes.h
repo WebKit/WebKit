@@ -47,10 +47,11 @@ public:
 
     enum Type {
         BasicShapeRectangleType = 1,
-        BasicShapeCircleType = 2,
+        DeprecatedBasicShapeCircleType = 2,
         BasicShapeEllipseType = 3,
         BasicShapePolygonType = 4,
-        BasicShapeInsetRectangleType = 5
+        BasicShapeInsetRectangleType = 5,
+        BasicShapeCircleType = 6
     };
 
     enum ReferenceBox {
@@ -123,9 +124,92 @@ private:
     Length m_cornerRadiusY;
 };
 
+class BasicShapeCenterCoordinate {
+public:
+    enum Keyword {
+        None,
+        Top,
+        Right,
+        Bottom,
+        Left
+    };
+    BasicShapeCenterCoordinate() : m_keyword(None), m_length(Undefined) { }
+    explicit BasicShapeCenterCoordinate(Length length) : m_keyword(None), m_length(length) { }
+    BasicShapeCenterCoordinate(Keyword keyword, Length length) : m_keyword(keyword), m_length(length) { }
+    BasicShapeCenterCoordinate(const BasicShapeCenterCoordinate& other) : m_keyword(other.keyword()), m_length(other.length()) { }
+
+    Keyword keyword() const { return m_keyword; }
+    const Length& length() const { return m_length; }
+
+    BasicShapeCenterCoordinate blend(const BasicShapeCenterCoordinate& other, double progress) const
+    {
+        if (m_keyword != None || other.keyword() != None)
+            return BasicShapeCenterCoordinate(other);
+
+        return BasicShapeCenterCoordinate(m_length.blend(other.length(), progress));
+    }
+
+private:
+    Keyword m_keyword;
+    Length m_length;
+};
+
+class BasicShapeRadius {
+public:
+    enum Type {
+        Value,
+        ClosestSide,
+        FarthestSide
+    };
+    BasicShapeRadius() : m_value(Undefined), m_type(ClosestSide) { }
+    explicit BasicShapeRadius(Length v) : m_value(v), m_type(Value) { }
+    explicit BasicShapeRadius(Type t) : m_value(Undefined), m_type(t) { }
+    BasicShapeRadius(const BasicShapeRadius& other) : m_value(other.value()), m_type(other.type()) { }
+
+    const Length& value() const { return m_value; }
+    Type type() const { return m_type; }
+
+    BasicShapeRadius blend(const BasicShapeRadius& other, double progress) const
+    {
+        if (m_type != Value || other.type() != Value)
+            return BasicShapeRadius(other);
+
+        return BasicShapeRadius(m_value.blend(other.value(), progress));
+    }
+
+private:
+    Length m_value;
+    Type m_type;
+
+};
+
 class BasicShapeCircle : public BasicShape {
 public:
     static PassRefPtr<BasicShapeCircle> create() { return adoptRef(new BasicShapeCircle); }
+
+    const BasicShapeCenterCoordinate& centerX() const { return m_centerX; }
+    const BasicShapeCenterCoordinate& centerY() const { return m_centerY; }
+    const BasicShapeRadius& radius() const { return m_radius; }
+
+    void setCenterX(BasicShapeCenterCoordinate centerX) { m_centerX = std::move(centerX); }
+    void setCenterY(BasicShapeCenterCoordinate centerY) { m_centerY = std::move(centerY); }
+    void setRadius(BasicShapeRadius radius) { m_radius = std::move(radius); }
+
+    virtual void path(Path&, const FloatRect&) OVERRIDE;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
+
+    virtual Type type() const OVERRIDE { return BasicShapeCircleType; }
+private:
+    BasicShapeCircle() { }
+
+    BasicShapeCenterCoordinate m_centerX;
+    BasicShapeCenterCoordinate m_centerY;
+    BasicShapeRadius m_radius;
+};
+
+class DeprecatedBasicShapeCircle : public BasicShape {
+public:
+    static PassRefPtr<DeprecatedBasicShapeCircle> create() { return adoptRef(new DeprecatedBasicShapeCircle); }
 
     const Length& centerX() const { return m_centerX; }
     const Length& centerY() const { return m_centerY; }
@@ -138,9 +222,9 @@ public:
     virtual void path(Path&, const FloatRect&) OVERRIDE;
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
 
-    virtual Type type() const OVERRIDE { return BasicShapeCircleType; }
+    virtual Type type() const OVERRIDE { return DeprecatedBasicShapeCircleType; }
 private:
-    BasicShapeCircle() { }
+    DeprecatedBasicShapeCircle() { }
 
     Length m_centerX;
     Length m_centerY;

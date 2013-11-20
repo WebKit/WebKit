@@ -953,6 +953,9 @@ optimizeQuality
 nonzero
 evenodd
 outside-shape
+at
+// closest-side
+// farthest-side
 
 // -webkit-region-fragment
 // auto
