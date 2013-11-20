@@ -46,9 +46,6 @@ libANGLE_la_SOURCES = \
 	Source/ThirdParty/ANGLE/src/compiler/depgraph/DependencyGraphTraverse.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/DetectCallDepth.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/DetectCallDepth.h \
-	Source/ThirdParty/ANGLE/src/compiler/DetectDiscontinuity.cpp \
-	Source/ThirdParty/ANGLE/src/compiler/DetectDiscontinuity.h \
-	Source/ThirdParty/ANGLE/src/compiler/DetectDiscontinuity.h \
 	Source/ThirdParty/ANGLE/src/compiler/Diagnostics.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/Diagnostics.h \
 	Source/ThirdParty/ANGLE/src/compiler/DirectiveHandler.cpp \

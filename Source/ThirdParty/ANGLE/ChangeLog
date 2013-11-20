@@ -1,3 +1,9 @@
+2013-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK build.
+
+        * GNUmakefile.am: Remove duplicated entries.
+
 2013-11-19  Martin Robinson  <mrobinson@igalia.com>
 
         Fix the GTK+ build after the ANGLE update in r159533
