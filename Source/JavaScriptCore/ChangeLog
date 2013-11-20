@@ -1,5 +1,21 @@
 2013-11-20  Julien Brianceau  <jbriance@cisco.com>
 
+        Fix CPU(ARM_TRADITIONAL) build after r159545.
+        https://bugs.webkit.org/show_bug.cgi?id=124649
+
+        Reviewed by Michael Saboff.
+
+        Add missing memoryFence, load8 and store8 implementations in macro assembler.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::dmbSY):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::load8):
+        (JSC::MacroAssemblerARM::store8):
+        (JSC::MacroAssemblerARM::memoryFence):
+
+2013-11-20  Julien Brianceau  <jbriance@cisco.com>
+
         [armv7][arm64] Speculative build fix after r159545.
         https://bugs.webkit.org/show_bug.cgi?id=124646
 

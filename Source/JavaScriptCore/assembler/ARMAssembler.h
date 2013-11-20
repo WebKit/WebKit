@@ -230,6 +230,7 @@ namespace JSC {
             MOVT = 0x03400000,
 #endif
             NOP = 0xe1a00000,
+            DMB_SY = 0xf57ff05f,
         };
 
         enum {
@@ -694,6 +695,11 @@ namespace JSC {
         void nop()
         {
             m_buffer.putInt(NOP);
+        }
+
+        void dmbSY()
+        {
+            m_buffer.putInt(DMB_SY);
         }
 
         void bx(int rm, Condition cc = AL)
