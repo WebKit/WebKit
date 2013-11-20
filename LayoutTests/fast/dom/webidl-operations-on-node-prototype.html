@@ -32,7 +32,7 @@ Object.getOwnPropertyNames(Node.prototype).forEach(function(property) {
             test: function() {
                 var propertyValue = Node.prototype[property];
                 delete Node.prototype[property];
-                if (Node.prototype[property] !== undefined)
+                if (Node.prototype[property] === propertyValue)
                     testFailed("Property " + property  + " should be configurable.");
                 Node.prototype[property] = propertyValue;
             }

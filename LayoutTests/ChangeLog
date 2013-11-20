@@ -1,3 +1,20 @@
+2013-11-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        Configurability test of prototype's properties in fast/dom/webidl-operations-on-node-prototype.html is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=124602
+
+        Reviewed by Darin Adler.
+
+        The test case landed in r159100 checks, among other tests, for configurability of properties on the Node's
+        interface prototype object. The test deletes the tested property from the prototype object and checks that
+        the property is undefined. This works for the Node's prototype object but is not technically correct since
+        there might be a property with the same identifier that's located upwards on the prototype chain.
+
+        Rather than testing that the property on the prototype object is undefined after it is deleted, a failure
+        should be reported if the value of the property remains the same even after it's deleted from the object.
+
+        * fast/dom/webidl-operations-on-node-prototype.html:
+
 2013-11-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Enable HTMLTemplateElement on Mac port
