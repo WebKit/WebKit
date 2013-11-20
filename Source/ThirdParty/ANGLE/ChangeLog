@@ -1,3 +1,16 @@
+2013-11-20  Sergio Correia  <sergio.correia@openbossa.org>
+
+        ANGLE doesn't build with bison 3.0
+        https://bugs.webkit.org/show_bug.cgi?id=124642
+
+        Reviewed by Gyuyoung Kim.
+
+        This is a reedition of r154109, now that ANGLE source has been updated
+        in r159533.
+
+        * src/compiler/glslang.y: Use %lex-param to set YYLEX_PARAM and stop
+        using the deprecated YYID macro.
+
 2013-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK build.
