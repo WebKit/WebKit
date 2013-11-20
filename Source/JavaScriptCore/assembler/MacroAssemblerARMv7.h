@@ -1237,7 +1237,7 @@ public:
         m_assembler.nop();
     }
     
-    void memfence()
+    void memoryFence()
     {
         m_assembler.dmbSY();
     }
