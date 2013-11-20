@@ -1,3 +1,22 @@
+2013-11-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        run-jsc-stress-tests should be able to package its tests and move them places
+        https://bugs.webkit.org/show_bug.cgi?id=124549
+
+        Reviewed by Geoff Garen and Filip Pizlo.
+
+        * Scripts/jsc-stress-test-helpers/check-mozilla-failure: Removed. This script was just a ruby reimplementation 
+        of grep -i -q 
+        * Scripts/run-javascriptcore-tests: Pass through the --make-bundle flag.
+        * Scripts/run-jsc-stress-tests: Added the new concept of a "bundle", which is a collection of all tests and any
+        other files that those tests require to run in any environment along with a fixed root directory into which these
+        files and their expected directory structure are cloned. The default Bundle class is basically 
+        a no-op so that it functions like run-jsc-stress-tests prior to this patch. MovableBundle is a Bundle that knows 
+        how to translate local paths to bundle paths and does all the work of moving each test file into the right place 
+        inside the .tests directory. After all the test files have been created in jsc-stress-results MovableBundle 
+        creates a tarball of the entire directory for easy relocation. The --make-bundle flag causes run-jsc-stress-tests 
+        to use MovableBundle instead of just Bundle. 
+
 2013-11-19  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/15139479> Reenable the JSC Objective-C API tests on Mountain Lion once the bots are running Xcode 5
