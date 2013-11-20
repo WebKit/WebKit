@@ -1,3 +1,18 @@
+2013-11-19  Sun-woo Nam  <sunny.nam@samsung.com>
+
+        [EFL] Layout tests need to be rebaselined.
+        https://bugs.webkit.org/show_bug.cgi?id=124622
+
+        Unreviewed, EFL rebaseline.
+
+        EFL tests are rebaselined after r106181, r128728 and r133754.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/fast/replaced/applet-disabled-positioned-expected.txt:
+        * platform/efl/fast/replaced/applet-rendering-java-disabled-expected.txt:
+        * platform/efl/fast/text/shaping/shaping-script-order-expected.txt:
+        * platform/efl/fast/writing-mode/japanese-ruby-horizontal-bt-expected.txt:
+
 2013-11-19  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Parse [<box> || <shape>] values

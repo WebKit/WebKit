@@ -105,7 +105,6 @@ webkit.org/b/81797 fast/history/visited-link-background-color.html [ Failure  Pa
 webkit.org/b/72698 media/audio-garbage-collect.html
 
 # window.internals does not reset font family mappings (done in other tests), leading to these failures
-webkit.org/b/102370 fast/writing-mode/japanese-ruby-horizontal-bt.html [ Failure Pass ]
 webkit.org/b/102370 fast/writing-mode/japanese-ruby-vertical-lr.html [ Failure Pass ]
 webkit.org/b/102370 fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure Pass ]
 
