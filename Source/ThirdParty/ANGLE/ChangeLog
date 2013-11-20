@@ -1,3 +1,9 @@
+2013-11-19  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the GTK+ build after the ANGLE update in r159533
+
+        * GNUmakefile.am: Update the source list.
+
 2013-11-19  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Prospective build fix for GTK port following r159533.
