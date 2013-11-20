@@ -1,3 +1,56 @@
+2013-11-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Generate toHTMLFooElement() to clean up static_cast<>
+        https://bugs.webkit.org/show_bug.cgi?id=124571
+
+        Reviewed by Darin Adler.
+
+        Though there are a lot of clean up commits before, there are still
+        use of static_cast<HTMLFooElement*>. To clean up them, we need to generate
+        toHTMLDetails|Meta|Summary|TableSection|TableCaptionElement().
+
+        Additionally, other static_cast<> are removed as well.
+
+        No new tests, no behavior changes.
+
+        * html/HTMLDetailsElement.h:
+        * html/HTMLMediaElement.cpp:
+        (HTMLMediaElement::selectNextSourceChild):
+        * html/HTMLMetaElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::shouldAllowQuickTimeClassIdQuirk):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::isDisabledFormControl):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::updateWidgetCallback):
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::detailsElement):
+        * html/HTMLSummaryElement.h:
+        * html/HTMLTableCaptionElement.h:
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::caption):
+        (WebCore::HTMLTableElement::tHead):
+        (WebCore::HTMLTableElement::tFoot):
+        (WebCore::HTMLTableElement::lastBody):
+        * html/HTMLTableRowElement.cpp:
+        (WebCore::HTMLTableRowElement::rowIndex):
+        * html/HTMLTableSectionElement.h:
+        * html/HTMLTagNames.in:
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure):
+        * html/shadow/DetailsMarkerControl.cpp:
+        (WebCore::DetailsMarkerControl::summaryElement):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::handleFallbackContent):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::dispatchPendingBeforeLoadEvent):
+        * page/DragController.cpp:
+        (WebCore::DragController::canProcessDrag):
+        * page/Frame.cpp:
+        (WebCore::Frame::searchForLabelsBeforeElement):
+        * page/SpatialNavigation.cpp:
+        (WebCore::frameOwnerElement):
+
 2013-11-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Enable HTMLTemplateElement on Mac port

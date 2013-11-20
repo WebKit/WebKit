@@ -93,11 +93,11 @@ void MediaDocumentParser::createDocumentStructure()
     m_mediaElement->setAttribute(nameAttr, "media");
 
     RefPtr<Element> sourceElement = document()->createElement(sourceTag, false);
-    HTMLSourceElement* source = static_cast<HTMLSourceElement*>(sourceElement.get());
-    source->setSrc(document()->url());
+    HTMLSourceElement& source = toHTMLSourceElement(*sourceElement);
+    source.setSrc(document()->url());
 
     if (DocumentLoader* loader = document()->loader())
-        source->setType(loader->responseMIMEType());
+        source.setType(loader->responseMIMEType());
 
     m_mediaElement->appendChild(sourceElement, IGNORE_EXCEPTION);
     body->appendChild(mediaElement, IGNORE_EXCEPTION);

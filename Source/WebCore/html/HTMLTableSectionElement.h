@@ -59,6 +59,8 @@ private:
     virtual const StylePropertySet* additionalPresentationAttributeStyle() OVERRIDE;
 };
 
+NODE_TYPE_CASTS(HTMLTableSectionElement)
+
 } //namespace
 
 #endif

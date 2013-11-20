@@ -3514,7 +3514,7 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
         if (node.parentNode() != this)
             continue;
 
-        source = static_cast<HTMLSourceElement*>(&node);
+        source = toHTMLSourceElement(&node);
 
         // If candidate does not have a src attribute, or if its src attribute's value is the empty string ... jump down to the failed step below
         mediaURL = source->getNonEmptyURLAttribute(srcAttr);

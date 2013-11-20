@@ -88,7 +88,7 @@ HTMLDetailsElement* HTMLSummaryElement::detailsElement() const
     Node* mayDetails = NodeRenderingTraversal::parent(this);
     if (!mayDetails || !mayDetails->hasTagName(detailsTag))
         return 0;
-    return static_cast<HTMLDetailsElement*>(mayDetails);
+    return toHTMLDetailsElement(mayDetails);
 }
 
 bool HTMLSummaryElement::isMainSummary() const
