@@ -456,9 +456,50 @@ String AXListItemActionVerb()
 }
 
 #if ENABLE(VIDEO)
-String localizedMediaControlElementString(const String&)
+String localizedMediaControlElementString(const String& name)
 {
-    notImplemented();
+    if (name == "AudioElement")
+        return String::fromUTF8("audio playback");
+    if (name == "VideoElement")
+        return String::fromUTF8("video playback");
+    if (name == "MuteButton")
+        return String::fromUTF8("mute");
+    if (name == "UnMuteButton")
+        return String::fromUTF8("unmute");
+    if (name == "PlayButton")
+        return String::fromUTF8("play");
+    if (name == "PauseButton")
+        return String::fromUTF8("pause");
+    if (name == "Slider")
+        return String::fromUTF8("movie time");
+    if (name == "SliderThumb")
+        return String::fromUTF8("timeline slider thumb");
+    if (name == "RewindButton")
+        return String::fromUTF8("back 30 seconds");
+    if (name == "ReturnToRealtimeButton")
+        return String::fromUTF8("return to realtime");
+    if (name == "CurrentTimeDisplay")
+        return String::fromUTF8("elapsed time");
+    if (name == "TimeRemainingDisplay")
+        return String::fromUTF8("remaining time");
+    if (name == "StatusDisplay")
+        return String::fromUTF8("status");
+    if (name == "EnterFullscreenButton")
+        return String::fromUTF8("enter fullscreen");
+    if (name == "ExitFullscreenButton")
+        return String::fromUTF8("exit fullscreen");
+    if (name == "SeekForwardButton")
+        return String::fromUTF8("fast forward");
+    if (name == "SeekBackButton")
+        return String::fromUTF8("fast reverse");
+    if (name == "ShowClosedCaptionsButton")
+        return String::fromUTF8("show closed captions");
+    if (name == "HideClosedCaptionsButton")
+        return String::fromUTF8("hide closed captions");
+    if (name == "ControlsPanel")
+        return String::fromUTF8("media controls");
+
+    ASSERT_NOT_REACHED();
     return String();
 }
 

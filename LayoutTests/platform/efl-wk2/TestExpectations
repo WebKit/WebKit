@@ -174,7 +174,6 @@ webkit.org/b/98348  accessibility/internal-link-anchors2.html [ Missing ]
 webkit.org/b/116970 accessibility/multiselect-list-reports-active-option.html [ Missing ]
 webkit.org/b/98348  accessibility/radio-button-group-members.html [ Missing ]
 
-accessibility/media-element.html [ Missing ]
 accessibility/negative-tabindex-does-not-expose-label.html [ Missing ]
 
 # EFL port doesn't support webarchives.

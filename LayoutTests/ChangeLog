@@ -1,3 +1,16 @@
+2013-11-20  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [EFL] <video> and <audio> should be accessible.
+        https://bugs.webkit.org/show_bug.cgi?id=124494
+
+        Reviewed by Gyuyoung Kim.
+
+        Added new accessibility baseline for accessibility/media-elemen.html.
+
+        * platform/efl-wk1/TestExpectations: test is no longer failing.
+        * platform/efl-wk2/TestExpectations: test is no longer failing.
+        * platform/efl/accessibility/media-element-expected.txt: Added.
+
 2013-11-20  Antoine Quint  <graouts@apple.com>
 
         Cannot animate "points" attribute for <svg:polygon>

@@ -1,3 +1,15 @@
+2013-11-20  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [EFL] <video> and <audio> should be accessible.
+        https://bugs.webkit.org/show_bug.cgi?id=124494
+
+        Reviewed by Gyuyoung Kim.
+
+        Adding descriptions of media-element controls.
+
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::localizedMediaControlElementString):
+
 2013-11-20  Antti Koivisto  <antti@apple.com>
 
         Don't paint simple text runs outside the paint rect
