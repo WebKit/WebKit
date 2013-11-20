@@ -683,6 +683,8 @@ void WebPageProxy::loadAlternateHTMLString(const String& htmlString, const Strin
     if (!isValid())
         reattachToWebProcess();
 
+    m_pageLoadState.setUnreachableURL(unreachableURL);
+
     if (m_mainFrame)
         m_mainFrame->setUnreachableURL(unreachableURL);
 

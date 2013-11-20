@@ -1,3 +1,19 @@
+2013-11-20  Anders Carlsson  <andersca@apple.com>
+
+        PageLoadState should keep track of unreachable URLs
+        https://bugs.webkit.org/show_bug.cgi?id=124677
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::reset):
+        (WebKit::PageLoadState::didStartProvisionalLoad):
+        (WebKit::PageLoadState::didFailProvisionalLoad):
+        (WebKit::PageLoadState::setUnreachableURL):
+        * UIProcess/PageLoadState.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadAlternateHTMLString):
+
 2013-11-20  Tim Horton  <timothy_horton@apple.com>
 
         Remote Layer Tree: 100% repro crasher on the IPC thread when creating lots of layers

@@ -46,6 +46,9 @@ void PageLoadState::reset()
     m_pendingAPIRequestURL = String();
     m_provisionalURL = String();
     m_url = String();
+
+    m_unreachableURL = String();
+    m_lastUnreachableURL = String();
 }
 
 const String& PageLoadState::pendingAPIRequestURL() const
@@ -70,7 +73,7 @@ void PageLoadState::didStartProvisionalLoad(const String& url, const String& unr
     m_state = State::Provisional;
     m_provisionalURL = url;
 
-    // FIXME: Do something with the unreachable URL.
+    setUnreachableURL(unreachableURL);
 }
 
 void PageLoadState::didReceiveServerRedirectForProvisionalLoad(const String& url)
@@ -86,6 +89,7 @@ void PageLoadState::didFailProvisionalLoad()
 
     m_state = State::Finished;
     m_provisionalURL = String();
+    m_unreachableURL = m_lastUnreachableURL;
 }
 
 void PageLoadState::didCommitLoad()
@@ -118,6 +122,12 @@ void PageLoadState::didSameDocumentNavigation(const String& url)
     ASSERT(!m_url.isEmpty());
 
     m_url = url;
+}
+
+void PageLoadState::setUnreachableURL(const String& unreachableURL)
+{
+    m_lastUnreachableURL = m_unreachableURL;
+    m_unreachableURL = unreachableURL;
 }
 
 } // namespace WebKit

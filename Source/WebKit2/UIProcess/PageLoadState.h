@@ -57,6 +57,8 @@ public:
 
     void didSameDocumentNavigation(const String& url);
 
+    void setUnreachableURL(const String&);
+
 private:
     State m_state;
 
@@ -64,6 +66,9 @@ private:
 
     String m_provisionalURL;
     String m_url;
+
+    String m_unreachableURL;
+    String m_lastUnreachableURL;
 };
 
 } // namespace WebKit
