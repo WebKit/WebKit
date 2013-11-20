@@ -59,7 +59,18 @@ public:
     WatchpointSet(WatchpointState);
     ~WatchpointSet(); // Note that this will not fire any of the watchpoints; if you need to know when a WatchpointSet dies then you need a separate mechanism for this.
     
-    WatchpointState state() const { return static_cast<WatchpointState>(m_state); }
+    // It is safe to call this from another thread. It may return an old
+    // state. Guarantees that if *first* read the state() of the thing being
+    // watched and it returned IsWatched and *second* you actually read its
+    // value then it's safe to assume that if the state being watched changes
+    // then also the watchpoint state() will change to IsInvalidated.
+    WatchpointState state() const
+    {
+        WTF::loadLoadFence();
+        WatchpointState result = static_cast<WatchpointState>(m_state);
+        WTF::loadLoadFence();
+        return result;
+    }
     
     // It is safe to call this from another thread.  It may return true
     // even if the set actually had been invalidated, but that ought to happen
@@ -69,7 +80,6 @@ public:
     // issuing a load-load fence prior to querying the state.
     bool isStillValid() const
     {
-        WTF::loadLoadFence();
         return state() != IsInvalidated;
     }
     // Like isStillValid(), may be called from another thread.
@@ -97,8 +107,17 @@ public:
             return;
         fireAllSlow();
     }
-
+    
+    void notifyWrite()
+    {
+        if (state() == ClearWatchpoint)
+            startWatching();
+        else
+            fireAll();
+    }
+    
     int8_t* addressOfState() { return &m_state; }
+    int8_t* addressOfSetIsNotEmpty() { return &m_setIsNotEmpty; }
     
     JS_EXPORT_PRIVATE void fireAllSlow(); // Call only if you've checked isWatched.
     
@@ -109,6 +128,7 @@ private:
     
     SentinelLinkedList<Watchpoint, BasicRawSentinelNode<Watchpoint>> m_set;
     int8_t m_state;
+    int8_t m_setIsNotEmpty;
 };
 
 // InlineWatchpointSet is a low-overhead, non-copyable watchpoint set in which

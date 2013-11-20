@@ -771,10 +771,36 @@ void JIT::emitPutGlobalProperty(uintptr_t* operandSlot, int value)
     storePtr(regT2, BaseIndex(regT0, regT1, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)));
 }
 
-void JIT::emitPutGlobalVar(uintptr_t operand, int value)
+void JIT::emitPutGlobalVar(uintptr_t operand, int value, WatchpointSet* set)
 {
+    if (set && set->state() != IsInvalidated) {
+        load8(set->addressOfState(), regT1);
+        
+        JumpList ready;
+        
+        ready.append(branch32(Equal, regT1, TrustedImm32(IsInvalidated)));
+        
+        if (set->state() == ClearWatchpoint) {
+            Jump isWatched = branch32(NotEqual, regT1, TrustedImm32(ClearWatchpoint));
+            
+            move(TrustedImm32(IsWatched), regT1);
+            ready.append(jump());
+            
+            isWatched.link(this);
+        }
+        
+        addSlowCase(branchTest8(NonZero, AbsoluteAddress(set->addressOfSetIsNotEmpty())));
+        move(TrustedImm32(IsInvalidated), regT1);
+        ready.link(this);
+    }
+    
     emitGetVirtualRegister(value, regT0);
     storePtr(regT0, reinterpret_cast<void*>(operand));
+    
+    if (set && set->state() != IsInvalidated) {
+        memoryFence();
+        store8(regT1, set->addressOfState());
+    }
 }
 
 void JIT::emitPutClosureVar(int scope, uintptr_t operand, int value)
@@ -802,7 +828,7 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
     case GlobalVar:
     case GlobalVarWithVarInjectionChecks:
         emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
-        emitPutGlobalVar(*operandSlot, value);
+        emitPutGlobalVar(*operandSlot, value, currentInstruction[5].u.watchpointSet);
         break;
     case ClosureVar:
     case ClosureVarWithVarInjectionChecks:
@@ -818,10 +844,16 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
 void JIT::emitSlow_op_put_to_scope(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     ResolveType resolveType = ResolveModeAndType(currentInstruction[4].u.operand).type();
-    if (resolveType == GlobalVar || resolveType == ClosureVar)
+    unsigned linkCount = 0;
+    if (resolveType != GlobalVar && resolveType != ClosureVar)
+        linkCount++;
+    if ((resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks)
+        && currentInstruction[5].u.watchpointSet->state() != IsInvalidated)
+        linkCount++;
+    if (!linkCount)
         return;
-
-    linkSlowCase(iter);
+    while (linkCount--)
+        linkSlowCase(iter);
     callOperation(operationPutToScope, currentInstruction);
 }
 

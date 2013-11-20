@@ -344,6 +344,9 @@ public:
     LValue select(LValue value, LValue taken, LValue notTaken) { return buildSelect(m_builder, value, taken, notTaken); }
     LValue extractValue(LValue aggVal, unsigned index) { return buildExtractValue(m_builder, aggVal, index); }
     
+    LValue fence(LAtomicOrdering ordering = LLVMAtomicOrderingSequentiallyConsistent, SynchronizationScope scope = CrossThread) { return buildFence(m_builder, ordering, scope); }
+    LValue fenceAcqRel() { return fence(LLVMAtomicOrderingAcquireRelease); }
+    
     template<typename VectorType>
     LValue call(LValue function, const VectorType& vector) { return buildCall(m_builder, function, vector); }
     LValue call(LValue function) { return buildCall(m_builder, function); }

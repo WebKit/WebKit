@@ -489,6 +489,7 @@
     macro(LLVMValueRef, BuildIsNull, (LLVMBuilderRef, LLVMValueRef Val, const char *Name)) \
     macro(LLVMValueRef, BuildIsNotNull, (LLVMBuilderRef, LLVMValueRef Val, const char *Name)) \
     macro(LLVMValueRef, BuildPtrDiff, (LLVMBuilderRef, LLVMValueRef LHS, LLVMValueRef RHS, const char *Name)) \
+    macro(LLVMValueRef, BuildFence, (LLVMBuilderRef B, LLVMAtomicOrdering Ordering, LLVMBool isSingleThread, const char *Name)) \
     macro(LLVMValueRef, BuildAtomicRMW, (LLVMBuilderRef B, LLVMAtomicRMWBinOp op, LLVMValueRef PTR, LLVMValueRef Val, LLVMAtomicOrdering ordering, LLVMBool singleThread)) \
     macro(LLVMModuleProviderRef, CreateModuleProviderForExistingModule, (LLVMModuleRef M)) \
     macro(void, DisposeModuleProvider, (LLVMModuleProviderRef M)) \

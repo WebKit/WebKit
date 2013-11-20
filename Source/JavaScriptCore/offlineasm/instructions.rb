@@ -250,7 +250,8 @@ MACRO_INSTRUCTIONS =
      "leai",
      "leap",
      "pushCalleeSaves",
-     "popCalleeSaves"
+     "popCalleeSaves",
+     "memfence"
     ]
 
 X86_INSTRUCTIONS =

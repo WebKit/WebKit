@@ -34,6 +34,7 @@
 
 namespace JSC { namespace FTL {
 
+typedef LLVMAtomicOrdering LAtomicOrdering;
 typedef LLVMBasicBlockRef LBasicBlock;
 typedef LLVMBuilderRef LBuilder;
 typedef LLVMCallConv LCallConv;

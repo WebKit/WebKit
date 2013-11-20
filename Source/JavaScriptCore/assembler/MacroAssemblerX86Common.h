@@ -606,6 +606,15 @@ public:
         return X86Registers::ecx;
     }
 
+    static ALWAYS_INLINE RegisterID getUnusedRegister(Address address)
+    {
+        if (address.base != X86Registers::eax)
+            return X86Registers::eax;
+
+        ASSERT(address.base != X86Registers::edx);
+        return X86Registers::edx;
+    }
+
     void store8(RegisterID src, BaseIndex address)
     {
 #if CPU(X86)
@@ -623,6 +632,25 @@ public:
         }
 #endif
         m_assembler.movb_rm(src, address.offset, address.base, address.index, address.scale);
+    }
+    
+    void store8(RegisterID src, Address address)
+    {
+#if CPU(X86)
+        // On 32-bit x86 we can only store from the first 4 registers;
+        // esp..edi are mapped to the 'h' registers!
+        if (src >= 4) {
+            // Pick a temporary register.
+            RegisterID temp = getUnusedRegister(address);
+
+            // Swap to the temporary register to perform the store.
+            swap(src, temp);
+            m_assembler.movb_rm(temp, address.offset, address.base);
+            swap(src, temp);
+            return;
+        }
+#endif
+        m_assembler.movb_rm(src, address.offset, address.base);
     }
 
     void store16(RegisterID src, BaseIndex address)
@@ -1418,6 +1446,11 @@ public:
     void nop()
     {
         m_assembler.nop();
+    }
+    
+    void memoryFence()
+    {
+        m_assembler.mfence();
     }
 
     static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)

@@ -123,6 +123,7 @@ inline bool symbolTablePut(
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(object));
     
     WriteBarrierBase<Unknown>* reg;
+    WatchpointSet* set = 0;
     {
         SymbolTable& symbolTable = *object->symbolTable();
         GCSafeConcurrentJITLocker locker(symbolTable.m_lock, exec->vm().heap);
@@ -137,14 +138,15 @@ inline bool symbolTablePut(
                 throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
             return true;
         }
-        if (UNLIKELY(wasFat))
-            iter->value.notifyWrite();
+        set = iter->value.watchpointSet();
         reg = &object->registerAt(fastEntry.getIndex());
     }
     // I'd prefer we not hold lock while executing barriers, since I prefer to reserve
     // the right for barriers to be able to trigger GC. And I don't want to hold VM
     // locks while GC'ing.
     reg->set(vm, object, value);
+    if (set)
+        set->notifyWrite();
     return true;
 }
 
@@ -156,6 +158,7 @@ inline bool symbolTablePutWithAttributes(
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(object));
 
     WriteBarrierBase<Unknown>* reg;
+    WatchpointSet* set = 0;
     {
         SymbolTable& symbolTable = *object->symbolTable();
         ConcurrentJITLocker locker(symbolTable.m_lock);
@@ -164,11 +167,13 @@ inline bool symbolTablePutWithAttributes(
             return false;
         SymbolTableEntry& entry = iter->value;
         ASSERT(!entry.isNull());
-        entry.notifyWrite();
+        set = entry.watchpointSet();
         entry.setAttributes(attributes);
         reg = &object->registerAt(entry.getIndex());
     }
     reg->set(vm, object, value);
+    if (set)
+        set->notifyWrite();
     return true;
 }
 

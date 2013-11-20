@@ -998,6 +998,14 @@ char* JIT_OPERATION operationSwitchString(ExecState* exec, size_t tableIndex, JS
     return static_cast<char*>(exec->codeBlock()->stringSwitchJumpTable(tableIndex).ctiForValue(string->value(exec).impl()).executableAddress());
 }
 
+void JIT_OPERATION operationNotifyWrite(ExecState* exec, WatchpointSet* set)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    set->notifyWrite();
+}
+
 double JIT_OPERATION operationFModOnInts(int32_t a, int32_t b)
 {
     return fmod(a, b);

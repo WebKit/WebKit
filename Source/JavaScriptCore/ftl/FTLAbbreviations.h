@@ -217,6 +217,13 @@ static inline LValue buildPtrToInt(LBuilder builder, LValue value, LType type) {
 static inline LValue buildBitCast(LBuilder builder, LValue value, LType type) { return llvm->BuildBitCast(builder, value, type, ""); }
 static inline LValue buildICmp(LBuilder builder, LIntPredicate cond, LValue left, LValue right) { return llvm->BuildICmp(builder, cond, left, right, ""); }
 static inline LValue buildFCmp(LBuilder builder, LRealPredicate cond, LValue left, LValue right) { return llvm->BuildFCmp(builder, cond, left, right, ""); }
+
+enum SynchronizationScope { SingleThread, CrossThread };
+static inline LValue buildFence(LBuilder builder, LAtomicOrdering ordering, SynchronizationScope scope = CrossThread)
+{
+    return llvm->BuildFence(builder, ordering, scope == SingleThread, "");
+}
+
 static inline LValue buildCall(LBuilder builder, LValue function, const LValue* args, unsigned numArgs)
 {
     return llvm->BuildCall(builder, function, const_cast<LValue*>(args), numArgs, "");

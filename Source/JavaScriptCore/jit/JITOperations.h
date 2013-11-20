@@ -154,7 +154,7 @@ typedef void JIT_OPERATION (*V_JITOperation_EOZJ)(ExecState*, JSObject*, int32_t
 typedef void JIT_OPERATION (*V_JITOperation_EPc)(ExecState*, Instruction*);
 typedef void JIT_OPERATION (*V_JITOperation_EPZJ)(ExecState*, void*, int32_t, EncodedJSValue);
 typedef void JIT_OPERATION (*V_JITOperation_ESsiJJI)(ExecState*, StructureStubInfo*, EncodedJSValue, EncodedJSValue, StringImpl*);
-typedef void JIT_OPERATION (*V_JITOperation_W)(WatchpointSet*);
+typedef void JIT_OPERATION (*V_JITOperation_EW)(ExecState*, WatchpointSet*);
 typedef void JIT_OPERATION (*V_JITOperation_EZ)(ExecState*, int32_t);
 typedef void JIT_OPERATION (*V_JITOperation_EVm)(ExecState*, VM*);
 typedef char* JIT_OPERATION (*P_JITOperation_E)(ExecState*);

@@ -1091,7 +1091,8 @@ class Instruction
             cloopEmitOpAndBranch(operands, "|", :int32, "== 0")
         when "borrinz"
             cloopEmitOpAndBranch(operands, "|", :int32, "!= 0")
-
+            
+        when "memfence"
         when "pushCalleeSaves"
         when "popCalleeSaves"
 

@@ -359,7 +359,8 @@ struct Node {
     
     bool isStronglyProvedConstantIn(InlineCallFrame* inlineCallFrame)
     {
-        return isConstant() && codeOrigin.inlineCallFrame == inlineCallFrame;
+        return !!(flags() & NodeIsStaticConstant)
+            && codeOrigin.inlineCallFrame == inlineCallFrame;
     }
     
     bool isStronglyProvedConstantIn(const CodeOrigin& codeOrigin)
@@ -749,7 +750,7 @@ struct Node {
     
     bool hasIdentifierNumberForCheck()
     {
-        return op() == GlobalVarWatchpoint;
+        return op() == GlobalVarWatchpoint || op() == NotifyPutGlobalVar;
     }
     
     unsigned identifierNumberForCheck()
@@ -760,7 +761,7 @@ struct Node {
     
     bool hasRegisterPointer()
     {
-        return op() == GetGlobalVar || op() == PutGlobalVar || op() == GlobalVarWatchpoint;
+        return op() == GetGlobalVar || op() == PutGlobalVar || op() == GlobalVarWatchpoint || op() == NotifyPutGlobalVar;
     }
     
     WriteBarrier<Unknown>* registerPointer()

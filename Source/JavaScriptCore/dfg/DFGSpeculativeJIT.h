@@ -1084,9 +1084,9 @@ public:
         return appendCallWithExceptionCheck(operation);
     }
 
-    JITCompiler::Call callOperation(V_JITOperation_W operation, WatchpointSet* watchpointSet)
+    JITCompiler::Call callOperation(V_JITOperation_EW operation, WatchpointSet* watchpointSet)
     {
-        m_jit.setupArguments(TrustedImmPtr(watchpointSet));
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(watchpointSet));
         return appendCall(operation);
     }
 
@@ -2044,6 +2044,8 @@ public:
     void compileNewFunctionNoCheck(Node*);
     void compileNewFunctionExpression(Node*);
     bool compileRegExpExec(Node*);
+    
+    void compileNotifyPutGlobalVar(Node*);
     
     // size can be an immediate or a register, and must be in bytes. If size is a register,
     // it must be a different register than resultGPR. Emits code that place a pointer to

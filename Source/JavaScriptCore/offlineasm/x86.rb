@@ -1363,6 +1363,8 @@ class Instruction
             $asm.puts "leal #{operands[0].x86AddressOperand(:int)}, #{operands[1].x86Operand(:int)}"
         when "leap"
             $asm.puts "lea#{x86Suffix(:ptr)} #{operands[0].x86AddressOperand(:ptr)}, #{operands[1].x86Operand(:ptr)}"
+        when "memfence"
+            $asm.puts "mfence"
         else
             lowerDefault
         end

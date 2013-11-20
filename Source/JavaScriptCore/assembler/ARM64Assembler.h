@@ -1595,6 +1595,11 @@ public:
     {
         insn(nopPseudo());
     }
+    
+    ALWAYS_INLINE void dmbSY()
+    {
+        insn(0xd5033fbf);
+    }
 
     template<int datasize>
     ALWAYS_INLINE void orn(RegisterID rd, RegisterID rn, RegisterID rm)

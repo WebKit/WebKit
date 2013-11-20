@@ -903,6 +903,7 @@ private:
         case GetClosureVar:
         case GetGlobalVar:
         case PutGlobalVar:
+        case NotifyPutGlobalVar:
         case GlobalVarWatchpoint:
         case VarInjectionWatchpoint:
         case AllocationProfileWatchpoint:

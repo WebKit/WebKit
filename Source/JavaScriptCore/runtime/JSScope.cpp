@@ -77,15 +77,10 @@ static inline bool abstractAccess(ExecState* exec, JSScope* scope, const Identif
     if (JSGlobalObject* globalObject = jsDynamicCast<JSGlobalObject*>(scope)) {
         SymbolTableEntry entry = globalObject->symbolTable()->get(ident.impl());
         if (!entry.isNull()) {
-            if (getOrPut == Put) {
-                if (entry.isReadOnly()) {
-                    // We know the property will be at global scope, but we don't know how to cache it.
-                    op = ResolveOp(Dynamic, 0, 0, 0, 0);
-                    return true;
-                }
-
-                // It's likely that we'll write to this var, so notify now and avoid the overhead of doing so at runtime.
-                entry.notifyWrite();
+            if (getOrPut == Put && entry.isReadOnly()) {
+                // We know the property will be at global scope, but we don't know how to cache it.
+                op = ResolveOp(Dynamic, 0, 0, 0, 0);
+                return true;
             }
 
             op = ResolveOp(

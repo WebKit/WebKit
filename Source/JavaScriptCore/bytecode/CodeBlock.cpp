@@ -1841,9 +1841,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             if (entry.isNull())
                 break;
 
-            // It's likely that we'll write to this var, so notify now and avoid the overhead of doing so at runtime.
-            entry.notifyWrite();
-
             instructions[i + 0] = vm()->interpreter->getOpcode(op_init_global_const);
             instructions[i + 1] = &m_globalObject->registerAt(entry.getIndex());
             break;

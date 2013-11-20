@@ -1,3 +1,224 @@
+2013-11-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Infer constant global variables
+        https://bugs.webkit.org/show_bug.cgi?id=124464
+
+        Reviewed by Sam Weinig.
+        
+        All global variables that are candidates for watchpoint-based constant inference (i.e.
+        not 'const' variables) will now have WatchpointSet's associated with them and those
+        are used to drive the inference by tracking three states of each variable:
+        
+        Uninitialized: the variable's value is Undefined and the WatchpointSet state is
+            ClearWatchpoint.
+        
+        Initialized: the variable's value was set to something (could even be explicitly set
+            to Undefined) and the WatchpointSet state is IsWatching.
+        
+        Invalidated: the variable's value was set to something else (could even be the same
+            thing as before but the point is that a put operation did execute again) and the
+            WatchpointSet is IsInvalidated.
+        
+        If the compiler tries to compile a GetGlobalVar and the WatchpointSet state is
+        IsWatching, then the current value of the variable can be folded in place of the get,
+        and a watchpoint on the variable can be registered.
+        
+        We handle race conditions between the mutator and compiler by mandating that:
+        
+        - The mutator changes the WatchpointSet state after executing the put.
+        
+        - There is no opportunity to install code or call functions between when the mutator
+          executes a put and changes the WatchpointSet state.
+        
+        - The compiler checks the WatchpointSet state prior to reading the value.
+        
+        The concrete algorithm used by the mutator is:
+        
+            1. Store the new value into the variable.
+            --- Execute a store-store fence.
+            2. Bump the state (ClearWatchpoing becomes IsWatching, IsWatching becomes
+               IsInvalidated); the IsWatching->IsInvalidated transition may end up firing
+               watchpoints.
+        
+        The concrete algorithm that the compiler uses is:
+        
+            1. Load the state. If it's *not* IsWatching, then give up on constant inference.
+            --- Execute a load-load fence.
+            2. Load the value of the variable and use that for folding, while also registering
+               a DesiredWatchpoint. The various parts of this step can be done in any order.
+        
+        The desired watchpoint registration will fail if the watchpoint set is already
+        invalidated. Now consider the following interesting interleavings:
+        
+        Uninitialized->M1->M2->C1->C2: Compiler sees IsWatching because of the mutator's store
+            operation, and the variable is folded. The fencing ensures that C2 sees the value
+            stored in M1 - i.e. we fold on the value that will actually be watchpointed. If
+            before the compilation is installed the mutator executes another store then we
+            will be sure that it will be a complete sequence of M1+M2 since compilations get
+            installed at safepoints and never "in the middle" of a put_to_scope. Hence that
+            compilation installation will be invalidated. If the M1+M2 sequence happens after
+            the code is installed, then the code will be invalidated by triggering a jettison.
+        
+        Uninitialized->M1->C1->C2->M2: Compiler sees Uninitialized and will not fold. This is
+            a sensible outcome since if the compiler read the variable's value, it would have
+            seen Undefined.
+        
+        Uninitialized->C1->C2->M1->M2: Compiler sees Uninitialized and will not fold.
+        Uninitialized->C1->M1->C2->M2: Compiler sees Uninitialized and will not fold.
+        Uninitialized->C1->M1->M2->C2: Compiler sees Uninitialized and will not fold.
+        Uninitialized->M1->C1->M2->C2: Compiler sees Uninitialized and will not fold.
+        
+        IsWatched->M1->M2->C1->C2: Compiler sees IsInvalidated and will not fold.
+        
+        IsWatched->M1->C1->C2->M2: Compiler will fold, but will also register a desired
+            watchpoint, and that watchpoint will get invalidated before the code is installed.
+        
+        IsWatched->M1->C1->M2->C2: As above, will fold but the code will get invalidated.
+        IsWatched->C1->C2->M1->M2: As above, will fold but the code will get invalidated.
+        IsWatched->C1->M1->C2->M2: As above, will fold but the code will get invalidated.
+        IsWatched->C1->M1->M2->C2: As above, will fold but the code will get invalidated.
+        
+        Note that this kind of reasoning shows why having the mutator first bump the state and
+        then store the new value would be wrong. If we had done that (M1 = bump state, M2 =
+        execute put) then we could have the following deadly interleavings:
+        
+        Uninitialized->M1->C1->C2->M2:
+        Uninitialized->M1->C1->M2->C2: Mutator bumps the state to IsWatched and then the
+            compiler folds Undefined, since M2 hasn't executed yet. Although C2 will set the
+            watchpoint, M1 didn't notify it - it mearly initiated watching. M2 then stores a
+            value other than Undefined, and you're toast.
+        
+        You could fix this sort of thing by making the Desired Watchpoints machinery more
+        sophisticated, for example having it track the value that was folded; if the global
+        variable's value was later found to be different then we could invalidate the
+        compilation. You could also fix it by having the compiler also check that the value of
+        the variable is not Undefined before folding. While those all sound great, I decided
+        to instead just use the right interleaving since that results in less code and feels
+        more intuitive.
+        
+        This is a 0.5% speed-up on SunSpider, mostly due to a 20% speed-up on math-cordic.
+        It's a 0.6% slow-down on LongSpider, mostly due to a 25% slow-down on 3d-cube. This is
+        because 3d-cube takes global variable assignment slow paths very often. Note that this
+        3d-cube slow-down doesn't manifest as much in SunSpider (only 6% there). This patch is
+        also a 1.5% speed-up on V8v7 and a 2.8% speed-up on Octane v1, mostly due to deltablue
+        (3.7%), richards (4%), and mandreel (26%). This is a 2% speed-up on Kraken, mostly due
+        to a 17.5% speed-up on imaging-gaussian-blur. Something that really illustrates the
+        slam-dunk-itude of this patch is the wide range of speed-ups on JSRegress. Casual JS
+        programming often leads to global-var-based idioms and those variables tend to be
+        assigned once, leading to excellent constant folding opportunities in an optimizing
+        JIT. This is very evident in the speed-ups on JSRegress.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::dmbSY):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::dmbSY):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::memfence):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::load8):
+        (JSC::MacroAssemblerARMv7::memfence):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::load8):
+        (JSC::MacroAssemblerX86::store8):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::getUnusedRegister):
+        (JSC::MacroAssemblerX86Common::store8):
+        (JSC::MacroAssemblerX86Common::memoryFence):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::load8):
+        (JSC::MacroAssemblerX86_64::store8):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movb_rm):
+        (JSC::X86Assembler::movzbl_mr):
+        (JSC::X86Assembler::mfence):
+        (JSC::X86Assembler::X86InstructionFormatter::threeByteOp):
+        (JSC::X86Assembler::X86InstructionFormatter::oneByteOp8):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/Watchpoint.cpp:
+        (JSC::WatchpointSet::WatchpointSet):
+        (JSC::WatchpointSet::add):
+        (JSC::WatchpointSet::notifyWriteSlow):
+        * bytecode/Watchpoint.h:
+        (JSC::WatchpointSet::state):
+        (JSC::WatchpointSet::isStillValid):
+        (JSC::WatchpointSet::addressOfSetIsNotEmpty):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getJSConstantForValue):
+        (JSC::DFG::ByteCodeParser::getJSConstant):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isStronglyProvedConstantIn):
+        (JSC::DFG::Node::hasIdentifierNumberForCheck):
+        (JSC::DFG::Node::hasRegisterPointer):
+        * dfg/DFGNodeFlags.h:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNotifyPutGlobalVar):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLAbbreviatedTypes.h:
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::buildFence):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileNotifyPutGlobalVar):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::fence):
+        * jit/JIT.h:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitPutGlobalVar):
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitPutGlobalVar):
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * llvm/LLVMAPIFunctions.h:
+        * offlineasm/arm.rb:
+        * offlineasm/arm64.rb:
+        * offlineasm/cloop.rb:
+        * offlineasm/instructions.rb:
+        * offlineasm/x86.rb:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::addGlobalVar):
+        (JSC::JSGlobalObject::addFunction):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::addVar):
+        (JSC::JSGlobalObject::addConst):
+        * runtime/JSScope.cpp:
+        (JSC::abstractAccess):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTablePut):
+        (JSC::symbolTablePutWithAttributes):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTableEntry::couldBeWatched):
+        (JSC::SymbolTableEntry::prepareToWatch):
+        (JSC::SymbolTableEntry::notifyWriteSlow):
+        * runtime/SymbolTable.h:
+
 2013-11-19  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(158384) ARMv7 point checks too restrictive for native calls to traditional ARM code

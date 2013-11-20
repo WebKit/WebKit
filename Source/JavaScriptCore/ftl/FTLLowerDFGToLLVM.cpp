@@ -394,6 +394,9 @@ private:
         case PutGlobalVar:
             compilePutGlobalVar();
             break;
+        case NotifyPutGlobalVar:
+            compileNotifyPutGlobalVar();
+            break;
         case GlobalVarWatchpoint:
             compileGlobalVarWatchpoint();
             break;
@@ -2112,6 +2115,59 @@ private:
     {
         m_out.store64(
             lowJSValue(m_node->child1()), m_out.absolute(m_node->registerPointer()));
+    }
+    
+    void compileNotifyPutGlobalVar()
+    {
+        WatchpointSet* set = m_graph.globalObjectFor(m_node->codeOrigin)->symbolTable()->get(
+            m_graph.identifiers()[m_node->identifierNumberForCheck()]).watchpointSet();
+        
+        LBasicBlock isNotInvalidated = FTL_NEW_BLOCK(m_out, ("NotifyPutGlobalVar not invalidated case"));
+        LBasicBlock isClear = FTL_NEW_BLOCK(m_out, ("NotifyPutGlobalVar clear case"));
+        LBasicBlock isWatched = FTL_NEW_BLOCK(m_out, ("NotifyPutGlobalVar watched case"));
+        LBasicBlock isWatchedFast = FTL_NEW_BLOCK(m_out, ("NotifyPutGlobalVar watched fast case"));
+        LBasicBlock isWatchedSlow = FTL_NEW_BLOCK(m_out, ("NotifyPutGlobalVar watched slow case"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("NotifyPutGlobalVar continuation"));
+        
+        LValue state = m_out.load8(m_out.absolute(set->addressOfState()));
+        
+        m_out.branch(
+            m_out.equal(state, m_out.constInt8(IsInvalidated)),
+            continuation, isNotInvalidated);
+        
+        LBasicBlock lastNext = m_out.appendTo(isNotInvalidated, isClear);
+
+        m_out.fenceAcqRel();
+        
+        LValue isClearValue;
+        if (set->state() == ClearWatchpoint)
+            isClearValue = m_out.equal(state, m_out.constInt8(ClearWatchpoint));
+        else
+            isClearValue = m_out.booleanFalse;
+        m_out.branch(isClearValue, isClear, isWatched);
+        
+        m_out.appendTo(isClear, isWatched);
+        
+        m_out.store8(m_out.constInt8(IsWatched), m_out.absolute(set->addressOfState()));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(isWatched, isWatchedFast);
+        
+        m_out.branch(
+            m_out.notZero8(m_out.load8(m_out.absolute(set->addressOfSetIsNotEmpty()))),
+            isWatchedSlow, isWatchedFast);
+        
+        m_out.appendTo(isWatchedFast, isWatchedSlow);
+        
+        m_out.store8(m_out.constInt8(IsInvalidated), m_out.absolute(set->addressOfState()));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(isWatchedSlow, continuation);
+        
+        vmCall(m_out.operation(operationNotifyWrite), m_callFrame, m_out.constIntPtr(set));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
     }
     
     void compileGlobalVarWatchpoint()

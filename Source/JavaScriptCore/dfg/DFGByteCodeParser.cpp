@@ -516,7 +516,7 @@ private:
     // constant folding. I.e. creating constants using this if we had constant
     // field inference would be a bad idea, since the bytecode parser's folding
     // doesn't handle liveness preservation.
-    Node* getJSConstantForValue(JSValue constantValue)
+    Node* getJSConstantForValue(JSValue constantValue, NodeFlags flags = NodeIsStaticConstant)
     {
         unsigned constantIndex;
         if (!m_codeBlock->findConstant(constantValue, constantIndex)) {
@@ -526,16 +526,17 @@ private:
         
         ASSERT(m_constants.size() == m_codeBlock->numberOfConstantRegisters());
         
-        return getJSConstant(constantIndex);
+        return getJSConstant(constantIndex, flags);
     }
 
-    Node* getJSConstant(unsigned constant)
+    Node* getJSConstant(unsigned constant, NodeFlags flags = NodeIsStaticConstant)
     {
         Node* node = m_constants[constant].asJSValue;
         if (node)
             return node;
 
         Node* result = addToGraph(JSConstant, OpInfo(constant));
+        result->mergeFlags(flags);
         m_constants[constant].asJSValue = result;
         return result;
     }
@@ -3100,7 +3101,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
                 addToGraph(GlobalVarWatchpoint, OpInfo(operand), OpInfo(identifierNumber));
                 JSValue specificValue = globalObject->registerAt(entry.getIndex()).get();
-                set(VirtualRegister(dst), cellConstant(specificValue.asCell()));
+                if (specificValue.isCell())
+                    set(VirtualRegister(dst), cellConstant(specificValue.asCell()));
+                else
+                    set(VirtualRegister(dst), getJSConstantForValue(specificValue, 0));
                 break;
             }
             case ClosureVar:
@@ -3123,12 +3127,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             ResolveType resolveType = ResolveModeAndType(currentInstruction[4].u.operand).type();
             StringImpl* uid = m_graph.identifiers()[identifierNumber];
 
-            Structure* structure;
+            Structure* structure = 0;
+            WatchpointSet* watchpoints = 0;
             uintptr_t operand;
             {
                 ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
                 if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks)
-                    structure = 0;
+                    watchpoints = currentInstruction[5].u.watchpointSet;
                 else
                     structure = currentInstruction[5].u.structure.get();
                 operand = reinterpret_cast<uintptr_t>(currentInstruction[6].u.pointer);
@@ -3153,10 +3158,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             }
             case GlobalVar:
             case GlobalVarWithVarInjectionChecks: {
-                addToGraph(Phantom, get(VirtualRegister(scope)));
                 SymbolTableEntry entry = globalObject->symbolTable()->get(uid);
-                ASSERT(!entry.couldBeWatched() || !m_graph.watchpoints().isStillValid(entry.watchpointSet()));
+                ASSERT(watchpoints == entry.watchpointSet());
                 addToGraph(PutGlobalVar, OpInfo(operand), get(VirtualRegister(value)));
+                if (watchpoints->state() != IsInvalidated)
+                    addToGraph(NotifyPutGlobalVar, OpInfo(operand), OpInfo(identifierNumber));
                 // Keep scope alive until after put.
                 addToGraph(Phantom, get(VirtualRegister(scope)));
                 break;

@@ -1511,6 +1511,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
             
     case PutGlobalVar:
+    case NotifyPutGlobalVar:
         break;
             
     case CheckHasInstance:

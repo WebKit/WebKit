@@ -69,6 +69,7 @@ inline CapabilityLevel canCompile(Node* node)
     case PutByOffset:
     case GetGlobalVar:
     case PutGlobalVar:
+    case NotifyPutGlobalVar:
     case ValueAdd:
     case ArithAdd:
     case ArithSub:

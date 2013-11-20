@@ -210,21 +210,33 @@ bool JSGlobalObject::defineOwnProperty(JSObject* object, ExecState* exec, Proper
     return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 }
 
-int JSGlobalObject::addGlobalVar(const Identifier& ident, ConstantMode constantMode, FunctionMode functionMode)
+JSGlobalObject::NewGlobalVar JSGlobalObject::addGlobalVar(const Identifier& ident, ConstantMode constantMode)
 {
     ConcurrentJITLocker locker(symbolTable()->m_lock);
     int index = symbolTable()->size(locker);
     SymbolTableEntry newEntry(index, (constantMode == IsConstant) ? ReadOnly : 0);
-    if (functionMode == IsFunctionToSpecialize)
-        newEntry.attemptToWatch();
+    if (constantMode == IsVariable)
+        newEntry.prepareToWatch(SymbolTableEntry::NotInitialized);
     SymbolTable::Map::AddResult result = symbolTable()->add(locker, ident.impl(), newEntry);
     if (result.isNewEntry)
         addRegisters(1);
-    else {
-        result.iterator->value.notifyWrite();
+    else
         index = result.iterator->value.getIndex();
+    NewGlobalVar var;
+    var.registerNumber = index;
+    var.set = result.iterator->value.watchpointSet();
+    return var;
+}
+
+void JSGlobalObject::addFunction(ExecState* exec, const Identifier& propertyName, JSValue value)
+{
+    removeDirect(exec->vm(), propertyName); // Newly declared functions overwrite existing properties.
+    NewGlobalVar var = addGlobalVar(propertyName, IsVariable);
+    registerAt(var.registerNumber).set(exec->vm(), this, value);
+    if (var.set) {
+        ASSERT(var.set->state() == ClearWatchpoint());
+        var.set->notifyWrite();
     }
-    return index;
 }
 
 static inline JSObject* lastInPrototypeChain(JSObject* object)

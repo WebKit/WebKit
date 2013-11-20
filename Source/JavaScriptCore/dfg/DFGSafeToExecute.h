@@ -242,6 +242,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case Int52ToDouble:
     case Int52ToValue:
     case InvalidationPoint:
+    case NotifyPutGlobalVar:
         return true;
         
     case GetByVal:

@@ -713,6 +713,7 @@ private:
         OP_MOVT         = 0xF2C0,
         OP_UBFX_T1      = 0xF3C0,
         OP_NOP_T2a      = 0xF3AF,
+        OP_DMB_SY_T2a   = 0xF3BF,
         OP_STRB_imm_T3  = 0xF800,
         OP_STRB_reg_T2  = 0xF800,
         OP_LDRB_imm_T3  = 0xF810,
@@ -769,6 +770,7 @@ private:
         OP_VCVTSD_T1b   = 0x0A40,
         OP_VCVTDS_T1b   = 0x0A40,
         OP_NOP_T2b      = 0x8000,
+        OP_DMB_SY_T2a   = 0x8F5F,
         OP_B_T3b        = 0x8000,
         OP_B_T4b        = 0x9000,
     } OpcodeID2;
@@ -1979,6 +1981,11 @@ public:
     void nopw()
     {
         m_formatter.twoWordOp16Op16(OP_NOP_T2a, OP_NOP_T2b);
+    }
+    
+    void dmbSY()
+    {
+        m_formatter.twoWordOp16Op16(OP_DMB_SY_T2a, OP_DMB_SY_T2b);
     }
 
     AssemblerLabel labelIgnoringWatchpoints()

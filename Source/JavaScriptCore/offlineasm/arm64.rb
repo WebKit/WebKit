@@ -807,6 +807,8 @@ class Instruction
             operands[0].arm64EmitLea(operands[1], :ptr)
         when "smulli"
             $asm.puts "smaddl #{operands[2].arm64Operand(:ptr)}, #{operands[0].arm64Operand(:int)}, #{operands[1].arm64Operand(:int)}, xzr"
+        when "memfence"
+            $asm.puts "dmb sy"
         else
             lowerDefault
         end

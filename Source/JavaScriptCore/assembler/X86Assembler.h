@@ -267,6 +267,7 @@ private:
         OP2_MOVD_EdVd       = 0x7E,
         OP2_JCC_rel32       = 0x80,
         OP_SETCC            = 0x90,
+        OP2_3BYTE_ESCAPE    = 0xAE,
         OP2_IMUL_GvEv       = 0xAF,
         OP2_MOVZX_GvEb      = 0xB6,
         OP2_MOVSX_GvEb      = 0xBE,
@@ -277,6 +278,10 @@ private:
         OP2_PSRLQ_UdqIb     = 0x73,
         OP2_POR_VdqWdq      = 0XEB,
     } TwoByteOpcodeID;
+    
+    typedef enum {
+        OP3_MFENCE          = 0xF0,
+    } ThreeByteOpcodeID;
 
     TwoByteOpcodeID jccRel32(Condition cond)
     {
@@ -1302,6 +1307,18 @@ public:
         m_formatter.oneByteOp(OP_GROUP11_EvIb, GROUP11_MOV, base, index, scale, offset);
         m_formatter.immediate8(imm);
     }
+
+#if !CPU(X86_64)
+    void movb_rm(RegisterID src, const void* addr)
+    {
+        m_formatter.oneByteOp(OP_MOV_EbGb, src, addr);
+    }
+#endif
+    
+    void movb_rm(RegisterID src, int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp8(OP_MOV_EbGb, src, base, offset);
+    }
     
     void movb_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
     {
@@ -1448,6 +1465,13 @@ public:
     {
         m_formatter.twoByteOp(OP2_MOVZX_GvEb, dst, base, index, scale, offset);
     }
+
+#if !CPU(X86_64)
+    void movzbl_mr(const void* address, RegisterID dst)
+    {
+        m_formatter.twoByteOp(OP2_MOVZX_GvEb, dst, address);
+    }
+#endif
 
     void movsbl_mr(int offset, RegisterID base, RegisterID dst)
     {
@@ -1873,7 +1897,7 @@ public:
         m_formatter.prefix(PRE_SSE_F2);
         m_formatter.twoByteOp(OP2_SQRTSD_VsdWsd, (RegisterID)dst, (RegisterID)src);
     }
-
+    
     // Misc instructions:
 
     void int3()
@@ -1889,6 +1913,11 @@ public:
     void predictNotTaken()
     {
         m_formatter.prefix(PRE_PREDICT_BRANCH_NOT_TAKEN);
+    }
+    
+    void mfence()
+    {
+        m_formatter.threeByteOp(OP3_MFENCE);
     }
 
     // Assembler admin methods:
@@ -2301,6 +2330,14 @@ private:
         }
 #endif
 
+        void threeByteOp(ThreeByteOpcodeID opcode)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            m_buffer.putByteUnchecked(OP2_3BYTE_ESCAPE);
+            m_buffer.putByteUnchecked(opcode);
+        }
+
 #if CPU(X86_64)
         // Quad-word-sized operands:
         //
@@ -2411,6 +2448,14 @@ private:
             emitRexIf(byteRegRequiresRex(reg) || byteRegRequiresRex(rm), reg, 0, rm);
             m_buffer.putByteUnchecked(opcode);
             registerModRM(reg, rm);
+        }
+
+        void oneByteOp8(OneByteOpcodeID opcode, int reg, RegisterID base, int offset)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexIf(byteRegRequiresRex(reg) || byteRegRequiresRex(base), reg, 0, base);
+            m_buffer.putByteUnchecked(opcode);
+            memoryModRM(reg, base, offset);
         }
 
         void oneByteOp8(OneByteOpcodeID opcode, int reg, RegisterID base, RegisterID index, int scale, int offset)

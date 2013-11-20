@@ -47,6 +47,7 @@ public:
     using MacroAssemblerX86Common::branchAdd32;
     using MacroAssemblerX86Common::or32;
     using MacroAssemblerX86Common::sub32;
+    using MacroAssemblerX86Common::load8;
     using MacroAssemblerX86Common::load32;
     using MacroAssemblerX86Common::store32;
     using MacroAssemblerX86Common::store8;
@@ -91,6 +92,12 @@ public:
         move(TrustedImmPtr(address.m_ptr), scratchRegister);
         sub32(imm, Address(scratchRegister));
     }
+    
+    void load8(const void* address, RegisterID dest)
+    {
+        move(TrustedImmPtr(address), dest);
+        load8(dest, dest);
+    }
 
     void load32(const void* address, RegisterID dest)
     {
@@ -124,6 +131,12 @@ public:
     {
         move(TrustedImmPtr(address), scratchRegister);
         store8(imm, Address(scratchRegister));
+    }
+
+    void store8(RegisterID reg, void* address)
+    {
+        move(TrustedImmPtr(address), scratchRegister);
+        store8(reg, Address(scratchRegister));
     }
 
     Call call()

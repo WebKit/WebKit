@@ -4368,6 +4368,11 @@ void SpeculativeJIT::compile(Node* node)
         noResult(node);
         break;
     }
+        
+    case NotifyPutGlobalVar: {
+        compileNotifyPutGlobalVar(node);
+        break;
+    }
 
     case VarInjectionWatchpoint: {
         noResult(node);

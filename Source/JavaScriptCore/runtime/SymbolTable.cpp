@@ -65,14 +65,15 @@ bool SymbolTableEntry::couldBeWatched()
     WatchpointSet* watchpoints = fatEntry()->m_watchpoints.get();
     if (!watchpoints)
         return false;
-    return watchpoints->isStillValid();
+    return watchpoints->state() == IsWatched;
 }
 
-void SymbolTableEntry::attemptToWatch()
+void SymbolTableEntry::prepareToWatch(WatchState state)
 {
     FatEntry* entry = inflate();
-    if (!entry->m_watchpoints)
-        entry->m_watchpoints = adoptRef(new WatchpointSet(IsWatched));
+    ASSERT(!entry->m_watchpoints);
+    entry->m_watchpoints = adoptRef(
+        new WatchpointSet(state == AlreadyInitialized ? IsWatched : ClearWatchpoint));
 }
 
 void SymbolTableEntry::addWatchpoint(Watchpoint* watchpoint)
@@ -86,7 +87,8 @@ void SymbolTableEntry::notifyWriteSlow()
     WatchpointSet* watchpoints = fatEntry()->m_watchpoints.get();
     if (!watchpoints)
         return;
-    watchpoints->fireAll();
+    
+    watchpoints->notifyWrite();
 }
 
 SymbolTableEntry::FatEntry* SymbolTableEntry::inflateSlow()

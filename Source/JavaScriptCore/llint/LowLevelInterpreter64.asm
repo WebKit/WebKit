@@ -1955,10 +1955,22 @@ macro putProperty()
 end
 
 macro putGlobalVar()
+    loadpFromInstruction(5, t2)
+    loadb WatchpointSet::m_state[t2], t3
+    bieq t3, IsInvalidated, .ready
+    bineq t3, ClearWatchpoint, .needToInvalidate
+    move IsWatched, t3
+    jmp .ready
+.needToInvalidate:
+    btbnz WatchpointSet::m_setIsNotEmpty[t2], .pDynamic
+    move IsInvalidated, t3
+.ready:
     loadisFromInstruction(3, t0)
     loadConstantOrVariable(t0, t1)
     loadpFromInstruction(6, t0)
     storeq t1, [t0]
+    memfence
+    storeb t3, WatchpointSet::m_state[t2]
 end
 
 macro putClosureVar()

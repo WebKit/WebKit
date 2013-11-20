@@ -597,6 +597,8 @@ class Instruction
         when "smulli"
             raise "Wrong number of arguments to smull in #{self.inspect} at #{codeOriginString}" unless operands.length == 4
             $asm.puts "smull #{operands[2].armOperand}, #{operands[3].armOperand}, #{operands[0].armOperand}, #{operands[1].armOperand}"
+        when "memfence"
+            $asm.puts "dmb sy"
         else
             lowerDefault
         end

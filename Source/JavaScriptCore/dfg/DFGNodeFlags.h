@@ -70,6 +70,8 @@ namespace JSC { namespace DFG {
 
 #define NodeExitsForward                 0x8000
 
+#define NodeIsStaticConstant            0x10000 // Used only by the parser, to determine if a constant arose statically and hence could be folded at parse-time.
+
 typedef uint32_t NodeFlags;
 
 static inline bool bytecodeUsesAsNumber(NodeFlags flags)

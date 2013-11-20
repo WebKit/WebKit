@@ -47,6 +47,7 @@ public:
     using MacroAssemblerX86Common::sub32;
     using MacroAssemblerX86Common::or32;
     using MacroAssemblerX86Common::load32;
+    using MacroAssemblerX86Common::load8;
     using MacroAssemblerX86Common::store32;
     using MacroAssemblerX86Common::store8;
     using MacroAssemblerX86Common::branch32;
@@ -104,6 +105,11 @@ public:
     {
         m_assembler.movl_mr(address, dest);
     }
+    
+    void load8(const void* address, RegisterID dest)
+    {
+        m_assembler.movzbl_mr(address, dest);
+    }
 
     ConvertibleLoadLabel convertibleLoadPtr(Address address, RegisterID dest)
     {
@@ -137,6 +143,11 @@ public:
     void store32(RegisterID src, void* address)
     {
         m_assembler.movl_rm(src, address);
+    }
+    
+    void store8(RegisterID src, void* address)
+    {
+        m_assembler.movb_rm(src, address);
     }
 
     void store8(TrustedImm32 imm, void* address)

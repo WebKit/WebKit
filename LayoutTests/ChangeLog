@@ -1,3 +1,23 @@
+2013-11-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Infer constant global variables
+        https://bugs.webkit.org/show_bug.cgi?id=124464
+
+        Reviewed by Sam Weinig.
+
+        * js/regress/global-var-const-infer-expected.txt: Added.
+        * js/regress/global-var-const-infer-fire-from-opt-expected.txt: Added.
+        * js/regress/global-var-const-infer-fire-from-opt.html: Added.
+        * js/regress/global-var-const-infer.html: Added.
+        * js/regress/script-tests/global-var-const-infer-fire-from-opt.js: Added.
+        (foo):
+        (setA):
+        (setB):
+        (check):
+        * js/regress/script-tests/global-var-const-infer.js: Added.
+        (foo):
+        (check):
+
 2013-11-19  Sun-woo Nam  <sunny.nam@samsung.com>
 
         [EFL] Layout tests need to be rebaselined.

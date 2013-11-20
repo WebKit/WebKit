@@ -142,6 +142,10 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case InvalidationPoint:
         write(SideState);
         return;
+        
+    case NotifyPutGlobalVar:
+        write(Watchpoint_fire);
+        return;
 
     case CreateActivation:
     case CreateArguments:

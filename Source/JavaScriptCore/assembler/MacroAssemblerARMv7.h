@@ -652,6 +652,12 @@ public:
         load8Signed(setupArmAddress(address), dest);
     }
 
+    void load8(const void* address, RegisterID dest)
+    {
+        move(TrustedImmPtr(address), dest);
+        load8(dest, dest);
+    }
+
     DataLabel32 load32WithAddressOffsetPatch(Address address, RegisterID dest)
     {
         DataLabel32 label = moveWithPatch(TrustedImm32(address.offset), dataTempRegister);
@@ -1229,6 +1235,11 @@ public:
     void nop()
     {
         m_assembler.nop();
+    }
+    
+    void memfence()
+    {
+        m_assembler.dmbSY();
     }
     
     static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)

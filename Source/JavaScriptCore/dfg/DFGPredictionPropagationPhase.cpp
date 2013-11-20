@@ -515,7 +515,9 @@ private:
         case CheckTierUpInLoop:
         case CheckTierUpAtReturn:
         case CheckTierUpAndOSREnter:
-        case InvalidationPoint: {
+        case InvalidationPoint:
+        case Int52ToValue:
+        case Int52ToDouble: {
             // This node should never be visible at this stage of compilation. It is
             // inserted by fixup(), which follows this phase.
             RELEASE_ASSERT_NOT_REACHED();
@@ -580,8 +582,7 @@ private:
         case CheckWatchdogTimer:
         case Unreachable:
         case LoopHint:
-        case Int52ToValue:
-        case Int52ToDouble:
+        case NotifyPutGlobalVar:
             break;
             
         // This gets ignored because it already has a prediction.

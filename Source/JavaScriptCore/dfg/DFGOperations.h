@@ -125,6 +125,7 @@ JSCell* JIT_OPERATION operationMakeRope2(ExecState*, JSString*, JSString*);
 JSCell* JIT_OPERATION operationMakeRope3(ExecState*, JSString*, JSString*, JSString*);
 char* JIT_OPERATION operationFindSwitchImmTargetForDouble(ExecState*, EncodedJSValue, size_t tableIndex);
 char* JIT_OPERATION operationSwitchString(ExecState*, size_t tableIndex, JSString*);
+void JIT_OPERATION operationNotifyWrite(ExecState*, WatchpointSet*);
 
 #if ENABLE(FTL_JIT)
 // FIXME: Make calls work well. Currently they're a pure regression.

@@ -807,11 +807,37 @@ void JIT::emitPutGlobalProperty(uintptr_t* operandSlot, int value)
     store32(regT2, BaseIndex(regT0, regT1, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
 }
 
-void JIT::emitPutGlobalVar(uintptr_t operand, int value)
+void JIT::emitPutGlobalVar(uintptr_t operand, int value, WatchpointSet* set)
 {
+    if (set && set->state() != IsInvalidated) {
+        load8(set->addressOfState(), regT2);
+        
+        JumpList ready;
+        
+        ready.append(branch32(Equal, regT2, TrustedImm32(IsInvalidated)));
+        
+        if (set->state() == ClearWatchpoint) {
+            Jump isWatched = branch32(NotEqual, regT2, TrustedImm32(ClearWatchpoint));
+            
+            move(TrustedImm32(IsWatched), regT2);
+            ready.append(jump());
+            
+            isWatched.link(this);
+        }
+        
+        addSlowCase(branchTest8(NonZero, AbsoluteAddress(set->addressOfSetIsNotEmpty())));
+        move(TrustedImm32(IsInvalidated), regT2);
+        ready.link(this);
+    }
+    
     emitLoad(value, regT1, regT0);
     store32(regT1, reinterpret_cast<char*>(operand) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
     store32(regT0, reinterpret_cast<char*>(operand) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+    
+    if (set && set->state() != IsInvalidated) {
+        memoryFence();
+        store8(regT1, set->addressOfState());
+    }
 }
 
 void JIT::emitPutClosureVar(int scope, uintptr_t operand, int value)
@@ -840,7 +866,7 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
     case GlobalVar:
     case GlobalVarWithVarInjectionChecks:
         emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
-        emitPutGlobalVar(*operandSlot, value);
+        emitPutGlobalVar(*operandSlot, value, currentInstruction[5].u.watchpointSet);
         break;
     case ClosureVar:
     case ClosureVarWithVarInjectionChecks:
@@ -856,11 +882,16 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
 void JIT::emitSlow_op_put_to_scope(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     ResolveType resolveType = ResolveModeAndType(currentInstruction[4].u.operand).type();
-
-    if (resolveType == GlobalVar || resolveType == ClosureVar)
+    unsigned linkCount = 0;
+    if (resolveType != GlobalVar && resolveType != ClosureVar)
+        linkCount++;
+    if ((resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks)
+        && currentInstruction[5].u.watchpointSet->state() != IsInvalidated)
+        linkCount++;
+    if (!linkCount)
         return;
-
-    linkSlowCase(iter);
+    while (linkCount--)
+        linkSlowCase(iter);
     callOperation(operationPutToScope, currentInstruction);
 }
 
