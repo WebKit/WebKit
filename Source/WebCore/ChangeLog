@@ -1,3 +1,9 @@
+2013-11-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Fix build break after r159533.
+
+        * CMakeLists.txt: Update ANGLE files.
+
 2013-11-19  Zhuang Zhigang  <zhuangzg@cn.fujitsu.com>
 
         Implement spin control on WinCE port.
