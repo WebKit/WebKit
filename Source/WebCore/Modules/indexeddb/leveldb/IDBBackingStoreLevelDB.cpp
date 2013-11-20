@@ -30,12 +30,12 @@
 
 #include "FileSystem.h"
 #include "HistogramSupport.h"
+#include "IDBDatabaseMetadata.h"
 #include "IDBIndexWriterLevelDB.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
 #include "IDBLevelDBCoding.h"
-#include "IDBDatabaseMetadata.h"
 #include "IDBTransactionBackend.h"
 #include "LevelDBComparator.h"
 #include "LevelDBDatabase.h"

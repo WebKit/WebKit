@@ -28,9 +28,9 @@
 
 #include "IDBCursor.h"
 #include "IDBDatabase.h"
+#include "IDBDatabaseMetadata.h"
 #include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
-#include "IDBDatabaseMetadata.h"
 #include "IDBObjectStore.h"
 #include "IDBRequest.h"
 #include "ScriptWrappable.h"

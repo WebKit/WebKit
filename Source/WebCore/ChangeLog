@@ -1,5 +1,18 @@
 2013-11-20  Brady Eidson  <beidson@apple.com>
 
+        Alphabetization followup to r159567
+
+        Reviewed by style-bot  :(
+
+        * Modules/indexeddb/IDBDatabaseBackend.h:
+        * Modules/indexeddb/IDBIndex.h:
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.cpp:
+        * Modules/indexeddb/leveldb/IDBBackingStoreLevelDB.h:
+        * inspector/InspectorIndexedDBAgent.cpp:
+
+2013-11-20  Brady Eidson  <beidson@apple.com>
+
         Rename IDBMetadata.h to IDBDatabaseMetadata.h
         https://bugs.webkit.org/show_bug.cgi?id=124668
 

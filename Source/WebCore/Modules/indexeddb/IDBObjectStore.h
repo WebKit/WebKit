@@ -28,10 +28,10 @@
 
 #include "Dictionary.h"
 #include "IDBCursor.h"
+#include "IDBDatabaseMetadata.h"
 #include "IDBIndex.h"
 #include "IDBKey.h"
 #include "IDBKeyRange.h"
-#include "IDBDatabaseMetadata.h"
 #include "IDBRequest.h"
 #include "IDBTransaction.h"
 #include "ScriptWrappable.h"
