@@ -45,16 +45,6 @@ static char *webKitAppPath;
 static bool extensionBundlesWereLoaded = NO;
 static NSSet *extensionPaths = nil;
 
-static int32_t systemVersion()
-{
-    static SInt32 version = 0;
-    if (!version)
-        Gestalt(gestaltSystemVersion, &version);
-
-    return version;
-}
-
-
 static void myBundleDidLoad(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
 {
     NSBundle *bundle = (NSBundle *)object;
@@ -116,7 +106,6 @@ NSBundle *webKitLauncherBundle()
     return [NSBundle bundleWithPath:appPath];
 }
 
-extern char **_CFGetProcessPath() __attribute__((weak));
 extern OSStatus _RegisterApplication(CFDictionaryRef additionalAppInfoRef, ProcessSerialNumber* myPSN) __attribute__((weak));
 
 static void poseAsWebKitApp()
@@ -130,60 +119,21 @@ static void poseAsWebKitApp()
     // Set up the main bundle early so it points at Safari.app
     CFBundleGetMainBundle();
 
-    if (systemVersion() < 0x1060) {
-        if (!_CFGetProcessPath)
-            return;
+    if (!_RegisterApplication)
+        return;
 
-        // Fiddle with CoreFoundation to have it pick up the executable path as being within WebKit.app
-        char **processPath = _CFGetProcessPath();
-        *processPath = NULL;
-        setenv("CFProcessPath", webKitAppPath, 1);
-        _CFGetProcessPath();
-        unsetenv("CFProcessPath");
-    } else {
-        if (!_RegisterApplication)
-            return;
-
-        // Register the application with LaunchServices, passing a customized registration dictionary that
-        // uses the WebKit launcher as the application bundle.
-        NSBundle *bundle = webKitLauncherBundle();
-        NSMutableDictionary *checkInDictionary = [[bundle infoDictionary] mutableCopy];
-        [checkInDictionary setObject:[bundle bundlePath] forKey:@"LSBundlePath"];
-        [checkInDictionary setObject:[checkInDictionary objectForKey:(NSString *)kCFBundleNameKey] forKey:@"LSDisplayName"];
-        _RegisterApplication((CFDictionaryRef)checkInDictionary, 0);
-        [checkInDictionary release];
-    }
-}
-
-static BOOL insideSafari4OnTigerTrampoline()
-{
-    // If we're not on Tiger then we can't be in the trampoline state.
-    if ((systemVersion() & 0xFFF0) != 0x1040)
-        return NO;
-
-    // If we're running Safari < 4.0 then we can't be in the trampoline state.
-    CFBundleRef safariBundle = CFBundleGetMainBundle();
-    CFStringRef safariVersion = CFBundleGetValueForInfoDictionaryKey(safariBundle, CFSTR("CFBundleShortVersionString"));
-    if ([(NSString *)safariVersion intValue] < 4)
-        return NO;
-
-    const char* frameworkPath = getenv("DYLD_FRAMEWORK_PATH");
-    if (!frameworkPath)
-        frameworkPath = "";
-
-    // If the framework search path is empty or otherwise does not contain the Safari
-    // framework's Frameworks directory then we are in the trampoline state.
-    const char safariFrameworkSearchPath[] = "/System/Library/PrivateFrameworks/Safari.framework/Frameworks";
-    return strstr(frameworkPath, safariFrameworkSearchPath) == 0;
+    // Register the application with LaunchServices, passing a customized registration dictionary that
+    // uses the WebKit launcher as the application bundle.
+    NSBundle *bundle = webKitLauncherBundle();
+    NSMutableDictionary *checkInDictionary = [[bundle infoDictionary] mutableCopy];
+    [checkInDictionary setObject:[bundle bundlePath] forKey:@"LSBundlePath"];
+    [checkInDictionary setObject:[checkInDictionary objectForKey:(NSString *)kCFBundleNameKey] forKey:@"LSDisplayName"];
+    _RegisterApplication((CFDictionaryRef)checkInDictionary, 0);
+    [checkInDictionary release];
 }
 
 static void enableWebKitNightlyBehaviour()
 {
-    // If we're inside Safari in its trampoline state, it will very shortly relaunch itself.
-    // We bail out here so that we'll be called again in the freshly-launched Safari process.
-    if (insideSafari4OnTigerTrampoline())
-        return;
-
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     unsetenv("DYLD_INSERT_LIBRARIES");

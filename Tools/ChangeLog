@@ -1,3 +1,13 @@
+2013-11-20  Mark Rowe  <mrowe@apple.com>
+
+        Remove some obsolete logic from WebKit.app.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKitLauncher/WebKitNightlyEnabler.m:
+        (poseAsWebKitApp): Remove a pre-10.6 codepath.
+        (enableWebKitNightlyBehaviour): Remove a 10.4-specific codepath.
+
 2013-11-20  Dániel Bátyai  <Batyai.Daniel@stud.u-szeged.hu>
 
         Moved stray urls from svn.py and statusserver.py into common.config.urls
