@@ -105,7 +105,7 @@ void IDBDatabaseBackend::removeIndex(int64_t objectStoreId, int64_t indexId)
 void IDBDatabaseBackend::openInternalAsync()
 {
     RefPtr<IDBDatabaseBackend> self = this;
-    m_serverConnection->getOrEstablishIDBDatabaseMetadata(m_metadata.name, [self](const IDBDatabaseMetadata& metadata, bool success) {
+    m_serverConnection->getOrEstablishIDBDatabaseMetadata([self](const IDBDatabaseMetadata& metadata, bool success) {
         self->didOpenInternalAsync(metadata, success);
     });
 }

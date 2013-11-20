@@ -39,18 +39,20 @@ class IDBBackingStoreTransactionLevelDB;
 
 class IDBServerConnectionLevelDB FINAL : public IDBServerConnection {
 public:
-    static PassRefPtr<IDBServerConnection> create(IDBBackingStoreLevelDB* backingStore)
+    static PassRefPtr<IDBServerConnection> create(const String& databaseName, IDBBackingStoreLevelDB* backingStore)
     {
-        return adoptRef(new IDBServerConnectionLevelDB(backingStore));
+        return adoptRef(new IDBServerConnectionLevelDB(databaseName, backingStore));
     }
 
     virtual ~IDBServerConnectionLevelDB();
 
     virtual bool isClosed() OVERRIDE;
 
-    // Database-level operations
-    virtual void getOrEstablishIDBDatabaseMetadata(const String& name, GetIDBDatabaseMetadataFunction) OVERRIDE;
+    // Factory-level operations
     virtual void deleteDatabase(const String& name, BoolCallbackFunction successCallback) OVERRIDE;
+
+    // Database-level operations
+    virtual void getOrEstablishIDBDatabaseMetadata(GetIDBDatabaseMetadataFunction) OVERRIDE;
     virtual void close() OVERRIDE;
 
     // Transaction-level operations
@@ -80,7 +82,7 @@ public:
     virtual void cursorPrefetchReset(IDBCursorBackend&, int usedPrefetches) OVERRIDE;
 
 private:
-    IDBServerConnectionLevelDB(IDBBackingStoreLevelDB*);
+    IDBServerConnectionLevelDB(const String& databaseName, IDBBackingStoreLevelDB*);
 
     RefPtr<IDBBackingStoreLevelDB> m_backingStore;
     HashMap<int64_t, RefPtr<IDBBackingStoreTransactionLevelDB>> m_backingStoreTransactions;
@@ -89,6 +91,8 @@ private:
     int64_t m_nextCursorID;
 
     bool m_closed;
+
+    String m_databaseName;
 };
 
 } // namespace WebCore

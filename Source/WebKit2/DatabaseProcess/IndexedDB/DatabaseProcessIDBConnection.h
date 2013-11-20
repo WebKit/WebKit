@@ -34,6 +34,8 @@ namespace WebKit {
 
 class DatabaseToWebProcessConnection;
 
+struct SecurityOriginData;
+
 class DatabaseProcessIDBConnection : public RefCounted<DatabaseProcessIDBConnection>, public CoreIPC::MessageSender {
 public:
     static RefPtr<DatabaseProcessIDBConnection> create(uint64_t backendIdentifier)
@@ -54,7 +56,8 @@ private:
     virtual uint64_t messageSenderDestinationID() OVERRIDE { return m_backendIdentifier; }
 
     // Message handlers.
-    void establishConnection();
+    void establishConnection(const String& databaseName, const SecurityOriginData& openingOrigin, const SecurityOriginData& mainFrameOrigin);
+    void getOrEstablishIDBDatabaseMetadata();
 
     RefPtr<DatabaseToWebProcessConnection> m_connection;
     uint64_t m_backendIdentifier;

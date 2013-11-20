@@ -1,3 +1,28 @@
+2013-11-20  Brady Eidson  <beidson@apple.com>
+
+        Cleanup getOrEstablishIDBDatabaseMetadata and stub it out in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=124635
+
+        Reviewed by Tim Horton.
+
+        Stub out the message for getOrEstablishIDBDatabaseMetadata in the DatabaseProcess.
+
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::establishConnection):
+        (WebKit::DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata):
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in:
+
+        * Shared/SecurityOriginData.cpp:
+        (WebKit::SecurityOriginData::fromSecurityOrigin):
+        * Shared/SecurityOriginData.h:
+
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::WebIDBServerConnection):
+        (WebKit::WebIDBServerConnection::deleteDatabase):
+        (WebKit::WebIDBServerConnection::getOrEstablishIDBDatabaseMetadata):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+
 2013-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Do not use deprecated callbacks in WebKitPolicyClient

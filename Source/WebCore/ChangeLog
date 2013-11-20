@@ -1,3 +1,26 @@
+2013-11-20  Brady Eidson  <beidson@apple.com>
+
+        Cleanup getOrEstablishIDBDatabaseMetadata and stub it out in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=124635
+
+        Reviewed by Tim Horton.
+
+        getOrEstablishIDBDatabaseMetadata() should not have to take a database name parameter because the 
+        server connection should already know what database name it represents.
+
+        * Modules/indexeddb/IDBDatabaseBackend.cpp:
+        (WebCore::IDBDatabaseBackend::openInternalAsync):
+
+        * Modules/indexeddb/IDBServerConnection.h:
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.cpp:
+        (WebCore::IDBServerConnectionLevelDB::IDBServerConnectionLevelDB):
+        (WebCore::IDBServerConnectionLevelDB::getOrEstablishIDBDatabaseMetadata):
+        * Modules/indexeddb/leveldb/IDBServerConnectionLevelDB.h:
+
+        * Modules/indexeddb/leveldb/IDBFactoryBackendLevelDB.cpp:
+        (WebCore::IDBFactoryBackendLevelDB::deleteDatabase):
+        (WebCore::IDBFactoryBackendLevelDB::open):
+
 2013-11-20  Andrzej Badowski  <a.badowski@samsung.com>
 
         [EFL] <video> and <audio> should be accessible.

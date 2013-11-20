@@ -34,7 +34,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-SecurityOriginData SecurityOriginData::fromSecurityOrigin(SecurityOrigin* securityOrigin)
+SecurityOriginData SecurityOriginData::fromSecurityOrigin(const SecurityOrigin* securityOrigin)
 {
     SecurityOriginData securityOriginData;
 

@@ -123,7 +123,7 @@ void IDBFactoryBackendLevelDB::deleteDatabase(const String& name, PassRefPtr<IDB
         return;
     }
 
-    RefPtr<IDBServerConnection> serverConnection = IDBServerConnectionLevelDB::create(backingStore.get());
+    RefPtr<IDBServerConnection> serverConnection = IDBServerConnectionLevelDB::create(name, backingStore.get());
     RefPtr<IDBDatabaseBackend> databaseBackend = IDBDatabaseBackend::create(name, uniqueIdentifier, this, *serverConnection);
     if (databaseBackend) {
         m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());
@@ -178,7 +178,7 @@ void IDBFactoryBackendLevelDB::open(const String& name, uint64_t version, int64_
             return;
         }
 
-        RefPtr<IDBServerConnection> serverConnection = IDBServerConnectionLevelDB::create(backingStore.get());
+        RefPtr<IDBServerConnection> serverConnection = IDBServerConnectionLevelDB::create(name, backingStore.get());
         databaseBackend = IDBDatabaseBackend::create(name, uniqueIdentifier, this, *serverConnection);
         if (databaseBackend)
             m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());

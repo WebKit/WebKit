@@ -55,10 +55,11 @@
 
 namespace WebCore {
 
-IDBServerConnectionLevelDB::IDBServerConnectionLevelDB(IDBBackingStoreLevelDB* backingStore)
+IDBServerConnectionLevelDB::IDBServerConnectionLevelDB(const String& databaseName, IDBBackingStoreLevelDB* backingStore)
     : m_backingStore(backingStore)
     , m_nextCursorID(1)
     , m_closed(false)
+    , m_databaseName(databaseName)
 {
 }
 
@@ -71,10 +72,10 @@ bool IDBServerConnectionLevelDB::isClosed()
     return m_closed;
 }
 
-void IDBServerConnectionLevelDB::getOrEstablishIDBDatabaseMetadata(const String& name, GetIDBDatabaseMetadataFunction callback)
+void IDBServerConnectionLevelDB::getOrEstablishIDBDatabaseMetadata(GetIDBDatabaseMetadataFunction callback)
 {
     RefPtr<IDBServerConnection> self(this);
-    m_backingStore->getOrEstablishIDBDatabaseMetadata(name, [self, this, callback](const IDBDatabaseMetadata& metadata, bool success) {
+    m_backingStore->getOrEstablishIDBDatabaseMetadata(m_databaseName, [self, this, callback](const IDBDatabaseMetadata& metadata, bool success) {
         callback(metadata, success);
     });
 }

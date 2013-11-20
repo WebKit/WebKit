@@ -31,8 +31,11 @@
 
 #include "DatabaseProcessIDBConnectionMessages.h"
 #include "DatabaseToWebProcessConnectionMessages.h"
+#include "SecurityOriginData.h"
 #include "WebProcess.h"
 #include "WebToDatabaseProcessConnection.h"
+
+#include <WebCore/SecurityOrigin.h>
 
 namespace WebKit {
 
@@ -45,9 +48,12 @@ static uint64_t generateBackendIdentifier()
 
 WebIDBServerConnection::WebIDBServerConnection(const String& databaseName, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin)
     : m_backendIdentifier(generateBackendIdentifier())
+    , m_databaseName(databaseName)
+    , m_openingOrigin(*openingOrigin.isolatedCopy())
+    , m_mainFrameOrigin(*mainFrameOrigin.isolatedCopy())
 {
     send(Messages::DatabaseToWebProcessConnection::EstablishIDBConnection(m_backendIdentifier));
-    send(Messages::DatabaseProcessIDBConnection::EstablishConnection());
+    send(Messages::DatabaseProcessIDBConnection::EstablishConnection(databaseName, SecurityOriginData::fromSecurityOrigin(&openingOrigin), SecurityOriginData::fromSecurityOrigin(&mainFrameOrigin)));
 }
 
 WebIDBServerConnection::~WebIDBServerConnection()
@@ -59,12 +65,13 @@ bool WebIDBServerConnection::isClosed()
     return true;
 }
 
-void WebIDBServerConnection::getOrEstablishIDBDatabaseMetadata(const String& name, GetIDBDatabaseMetadataFunction)
+void WebIDBServerConnection::deleteDatabase(const String& name, BoolCallbackFunction successCallback)
 {
 }
 
-void WebIDBServerConnection::deleteDatabase(const String& name, BoolCallbackFunction successCallback)
+void WebIDBServerConnection::getOrEstablishIDBDatabaseMetadata(GetIDBDatabaseMetadataFunction completionCallback)
 {
+    send(Messages::DatabaseProcessIDBConnection::GetOrEstablishIDBDatabaseMetadata());
 }
 
 void WebIDBServerConnection::close()

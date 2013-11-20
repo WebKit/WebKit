@@ -41,7 +41,13 @@ DatabaseProcessIDBConnection::~DatabaseProcessIDBConnection()
 {
 }
 
-void DatabaseProcessIDBConnection::establishConnection()
+void DatabaseProcessIDBConnection::establishConnection(const String& databaseName, const SecurityOriginData& openingOrigin, const SecurityOriginData& mainFrameOrigin)
+{
+    // FIXME: This method is successfully called by messaging from the WebProcess.
+    // Now implement it.
+}
+
+void DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata()
 {
     // FIXME: This method is successfully called by messaging from the WebProcess.
     // Now implement it.

@@ -47,10 +47,11 @@ public:
 
     typedef std::function<void (bool success)> BoolCallbackFunction;
 
-    // Database-level operations
-    typedef std::function<void (const WebCore::IDBDatabaseMetadata&, bool success)> GetIDBDatabaseMetadataFunction;
-    virtual void getOrEstablishIDBDatabaseMetadata(const String& name, GetIDBDatabaseMetadataFunction) OVERRIDE;
+    // Factory-level operations
     virtual void deleteDatabase(const String& name, BoolCallbackFunction successCallback) OVERRIDE;
+
+    // Database-level operations
+    virtual void getOrEstablishIDBDatabaseMetadata(GetIDBDatabaseMetadataFunction) OVERRIDE;
     virtual void close() OVERRIDE;
 
     // Transaction-level operations
@@ -88,6 +89,10 @@ private:
     virtual uint64_t messageSenderDestinationID() OVERRIDE { return m_backendIdentifier; }
 
     uint64_t m_backendIdentifier;
+
+    String m_databaseName;
+    Ref<WebCore::SecurityOrigin> m_openingOrigin;
+    Ref<WebCore::SecurityOrigin> m_mainFrameOrigin;
 };
 
 } // namespace WebKit
