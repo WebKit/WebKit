@@ -114,6 +114,9 @@ namespace WebCore {
         virtual void adjustTextFieldStyle(StyleResolver*, RenderStyle* style, Element*) const { }
         virtual void adjustTextAreaStyle(StyleResolver*, RenderStyle* style, Element*) const { }
 
+        virtual void adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
+        virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&);
+
         static void setWebKitIsBeingUnloaded();
 
         virtual bool supportsFocusRing(const RenderStyle*) const;

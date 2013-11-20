@@ -649,4 +649,44 @@ bool RenderThemeWinCE::paintMediaSliderThumb(RenderObject* o, const PaintInfo& p
 }
 #endif
 
+void RenderThemeWinCE::adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle* style, Element*) const
+{
+    int width = ::GetSystemMetrics(SM_CXVSCROLL);
+    if (width <= 0)
+        width = 17; // Vista's default.
+    style->setWidth(Length(width, Fixed));
+    style->setMinWidth(Length(width, Fixed));
+}
+
+bool RenderThemeWinCE::paintInnerSpinButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
+{
+    // We split the specified rectangle into two vertically. We can't draw a
+    // spin button of which height is less than 2px.
+    if (r.height() < 2)
+        return false;
+    IntRect upRect(r);
+    upRect.setHeight(r.height() / 2);
+    IntRect downRect(r);
+    downRect.setY(upRect.maxY());
+    downRect.setHeight(r.height() - upRect.height());
+
+    unsigned stateUp = DFCS_SCROLLUP;
+    unsigned stateDown = DFCS_SCROLLDOWN;
+
+    if (!isEnabled(o) || isReadOnlyControl(o)) {
+        stateUp |= DFCS_INACTIVE;
+        stateDown |= DFCS_INACTIVE;
+    } else if (isPressed(o)) {
+        if (isSpinUpButtonPartPressed(o))
+            stateUp |= DFCS_PUSHED;
+        else
+            stateDown |= DFCS_PUSHED;
+    }
+
+    paintInfo.context->drawFrameControl(upRect, DFC_SCROLL, stateUp);
+    paintInfo.context->drawFrameControl(downRect, DFC_SCROLL, stateDown);
+
+    return false;
+}
+
 } // namespace WebCore
