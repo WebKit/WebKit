@@ -1,3 +1,17 @@
+2013-11-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove bogus assertions in updateNameForTreeScope and updateNameForDocument
+        https://bugs.webkit.org/show_bug.cgi?id=124639
+
+        Reviewed by Darin Adler.
+
+        Removed assertions. We can't assert that the element in a tree scope or a document
+        since these two functions are called from removedFrom.
+
+        * dom/Element.cpp:
+        (WebCore::Element::updateNameForTreeScope):
+        (WebCore::Element::updateNameForDocument):
+
 2013-11-20  Brady Eidson  <beidson@apple.com>
 
         Cleanup getOrEstablishIDBDatabaseMetadata and stub it out in WK2
