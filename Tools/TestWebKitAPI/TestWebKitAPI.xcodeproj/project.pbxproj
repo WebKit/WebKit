@@ -19,6 +19,7 @@
 		1A02C84F125D4A8400E3F4BD /* Find.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A02C84E125D4A8400E3F4BD /* Find.cpp */; };
 		1A02C870125D4CFD00E3F4BD /* find.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1A02C84B125D4A5E00E3F4BD /* find.html */; };
 		1A5FEFDD1270E2A3000E2921 /* EvaluateJavaScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A5FEFDC1270E2A3000E2921 /* EvaluateJavaScript.cpp */; };
+		1A63479F183D72A4005B1707 /* all-content-in-one-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93D3D19B17B1A7B000C7C415 /* all-content-in-one-iframe.html */; };
 		1A7BFC0C171A0BDB00BC5F64 /* WillSendSubmitEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A7BFC0A171A0BDB00BC5F64 /* WillSendSubmitEvent.mm */; };
 		1A7E8B34181208DE00AEB74A /* FragmentNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A7E8B33181208DE00AEB74A /* FragmentNavigation.mm */; };
 		1A7E8B3618120B2F00AEB74A /* FragmentNavigation.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1A7E8B351812093600AEB74A /* FragmentNavigation.html */; };
@@ -282,6 +283,7 @@
 				F6B7BE9717469B96008A3445 /* associate-form-controls.html in Copy Resources */,
 				379028B914FAC24C007E6B43 /* acceptsFirstMouse.html in Copy Resources */,
 				B55F11BE15191A0600915916 /* Ahem.ttf in Copy Resources */,
+				1A63479F183D72A4005B1707 /* all-content-in-one-iframe.html in Copy Resources */,
 				B55F11B71517D03300915916 /* attributedStringCustomFont.html in Copy Resources */,
 				7C9ED98B17A19F4B00E4DC33 /* attributedStringStrikethrough.html in Copy Resources */,
 				76E182DF154767E600F1FADD /* auto-submitting-form.html in Copy Resources */,

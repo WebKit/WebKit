@@ -26,9 +26,6 @@
 #include "config.h"
 #include "PageLoadState.h"
 
-#undef ASSERT
-#define ASSERT(x) ((void)0)
-
 namespace WebKit {
 
 PageLoadState::PageLoadState()
@@ -95,7 +92,6 @@ void PageLoadState::didFailProvisionalLoad()
 void PageLoadState::didCommitLoad()
 {
     ASSERT(m_state == State::Provisional);
-    ASSERT(!m_provisionalURL.isEmpty());
 
     m_state = State::Committed;
     m_url = m_provisionalURL;
@@ -106,7 +102,6 @@ void PageLoadState::didFinishLoad()
 {
     ASSERT(m_state == State::Committed);
     ASSERT(m_provisionalURL.isEmpty());
-    ASSERT(!m_url.isEmpty());
 
     m_state = State::Finished;
 }
@@ -114,7 +109,8 @@ void PageLoadState::didFinishLoad()
 void PageLoadState::didFailLoad()
 {
     ASSERT(m_provisionalURL.isEmpty());
-    ASSERT(!m_url.isEmpty());
+
+    m_state = State::Finished;
 }
 
 void PageLoadState::didSameDocumentNavigation(const String& url)

@@ -1,5 +1,24 @@
 2013-11-20  Anders Carlsson  <andersca@apple.com>
 
+        Enable PageLoadTest assertions again
+        https://bugs.webkit.org/show_bug.cgi?id=124681
+
+        Reviewed by Tim Horton.
+
+        Remove an overzealous assertion and re-enable assertions in PageLoadState again.
+
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::didCommitLoad):
+        Remove assertion - it's fine for a page to have a null URL.
+
+        (WebKit::PageLoadState::didFinishLoad):
+        Ditto.
+
+        (WebKit::PageLoadState::didFailLoad):
+        Update the state.
+
+2013-11-20  Anders Carlsson  <andersca@apple.com>
+
         PageLoadState should keep track of unreachable URLs
         https://bugs.webkit.org/show_bug.cgi?id=124677
 
