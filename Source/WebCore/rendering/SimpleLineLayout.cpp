@@ -42,7 +42,7 @@
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "Settings.h"
-#include "SimpleLineLayoutResolver.h"
+#include "SimpleLineLayoutFunctions.h"
 #include "Text.h"
 #include "TextPaintStyle.h"
 #include "break_lines.h"
@@ -104,9 +104,6 @@ bool canUseFor(const RenderBlockFlow& flow)
     if (flow.firstChild() != flow.lastChild())
         return false;
     if (!flow.firstChild()->isText())
-        return false;
-    // Supporting floats would be very beneficial.
-    if (flow.containsFloats())
         return false;
     if (!flow.isHorizontalWritingMode())
         return false;
@@ -182,6 +179,12 @@ bool canUseFor(const RenderBlockFlow& flow)
     if (style.borderFit() == BorderFitLines)
         return false;
     const RenderText& textRenderer = toRenderText(*flow.firstChild());
+    if (flow.containsFloats()) {
+        // We can't use the code path if any lines would need to be shifted below floats. This is because we don't keep per-line y coordinates.
+        // It is enough to test the first line width only as currently all floats must be overhanging.
+        if (textRenderer.minLogicalWidth() > LineWidth(const_cast<RenderBlockFlow&>(flow), false, DoNotIndentText).availableWidth())
+            return false;
+    }
     if (textRenderer.isCombineText() || textRenderer.isCounter() || textRenderer.isQuote() || textRenderer.isTextFragment()
 #if ENABLE(SVG)
         || textRenderer.isSVGInlineText()
@@ -373,20 +376,22 @@ Vector<Run, 4> createLineRuns(unsigned lineStart, LineWidth& lineWidth, LazyLine
     return lineRuns;
 }
 
-static float computeLineLeft(ETextAlign textAlign, float remainingWidth)
+static float computeLineLeft(ETextAlign textAlign, const LineWidth& lineWidth)
 {
+    float remainingWidth = lineWidth.availableWidth() - lineWidth.committedWidth();
+    float left = lineWidth.logicalLeftOffset();
     switch (textAlign) {
     case LEFT:
     case WEBKIT_LEFT:
     case TASTART:
-        return 0;
+        return left;
     case RIGHT:
     case WEBKIT_RIGHT:
     case TAEND:
-        return std::max<float>(remainingWidth, 0);
+        return left + std::max<float>(remainingWidth, 0);
     case CENTER:
     case WEBKIT_CENTER:
-        return std::max<float>(remainingWidth / 2, 0);
+        return left + std::max<float>(remainingWidth / 2, 0);
     case JUSTIFY:
         break;
     }
@@ -412,6 +417,9 @@ void createTextRuns(Layout::RunVector& runs, unsigned& lineCount, RenderBlockFlo
     const CharacterType* text = textRenderer.text()->getCharacters<CharacterType>();
     const unsigned textLength = textRenderer.textLength();
 
+    LayoutUnit borderAndPaddingBefore = flow.borderAndPaddingBefore();
+    LayoutUnit lineHeight = lineHeightFromFlow(flow);
+
     LazyLineBreakIterator lineBreakIterator(textRenderer.text(), flow.style().locale());
 
     unsigned lineEnd = 0;
@@ -421,7 +429,10 @@ void createTextRuns(Layout::RunVector& runs, unsigned& lineCount, RenderBlockFlo
 
         unsigned lineStart = lineEnd;
 
+        // LineWidth reads the current y position from the flow so keep it updated.
+        flow.setLogicalHeight(lineHeight * lineCount + borderAndPaddingBefore);
         LineWidth lineWidth(flow, false, DoNotIndentText);
+
         auto lineRuns = createLineRuns(lineStart, lineWidth, lineBreakIterator, style, text, textLength, textRenderer);
 
         lineEnd = lineRuns.last().end;
@@ -430,7 +441,7 @@ void createTextRuns(Layout::RunVector& runs, unsigned& lineCount, RenderBlockFlo
 
         lineRuns.last().isEndOfLine = true;
 
-        float lineLeft = computeLineLeft(style.textAlign, lineWidth.availableWidth() - lineWidth.committedWidth());
+        float lineLeft = computeLineLeft(style.textAlign, lineWidth);
         adjustRunOffsets(lineRuns, lineLeft);
 
         for (unsigned i = 0; i < lineRuns.size(); ++i)

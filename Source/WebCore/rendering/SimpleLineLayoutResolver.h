@@ -108,9 +108,9 @@ private:
     const String m_string;
     const LayoutUnit m_lineHeight;
     const LayoutUnit m_baseline;
+    const LayoutUnit m_borderAndPaddingBefore;
     const float m_ascent;
     const float m_descent;
-    const LayoutPoint m_contentOffset;
 };
 
 class LineResolver {
@@ -166,9 +166,10 @@ inline LayoutRect RunResolver::Run::rect() const
     auto& resolver = m_iterator.resolver();
     auto& run = m_iterator.simpleRun();
 
-    LayoutPoint linePosition(floor(run.left), resolver.m_lineHeight * m_iterator.lineIndex() + resolver.m_baseline - resolver.m_ascent);
+    float baselinePosition = resolver.m_lineHeight * m_iterator.lineIndex() + resolver.m_baseline;
+    LayoutPoint linePosition(floor(run.left), baselinePosition - resolver.m_ascent + resolver.m_borderAndPaddingBefore);
     LayoutSize lineSize(ceil(run.right) - floor(run.left), resolver.m_ascent + resolver.m_descent);
-    return LayoutRect(linePosition + resolver.m_contentOffset, lineSize);
+    return LayoutRect(linePosition, lineSize);
 }
 
 inline FloatPoint RunResolver::Run::baseline() const
@@ -176,8 +177,8 @@ inline FloatPoint RunResolver::Run::baseline() const
     auto& resolver = m_iterator.resolver();
     auto& run = m_iterator.simpleRun();
 
-    float baselineY = resolver.m_lineHeight * m_iterator.lineIndex() + resolver.m_baseline;
-    return FloatPoint(run.left, baselineY) + resolver.m_contentOffset;
+    float baselinePosition = resolver.m_lineHeight * m_iterator.lineIndex() + resolver.m_baseline;
+    return FloatPoint(run.left, baselinePosition + resolver.m_borderAndPaddingBefore);
 }
 
 inline String RunResolver::Run::text() const
@@ -253,9 +254,9 @@ inline RunResolver::RunResolver(const RenderBlockFlow& flow, const Layout& layou
     , m_string(toRenderText(*flow.firstChild()).text())
     , m_lineHeight(lineHeightFromFlow(flow))
     , m_baseline(baselineFromFlow(flow))
+    , m_borderAndPaddingBefore(flow.borderAndPaddingBefore())
     , m_ascent(flow.style().font().fontMetrics().ascent())
     , m_descent(flow.style().font().fontMetrics().descent())
-    , m_contentOffset(flow.borderLeft() + flow.paddingLeft(), flow.borderTop() + flow.paddingTop())
 {
 }
 
@@ -272,7 +273,7 @@ inline RunResolver::Iterator RunResolver::end() const
 inline unsigned RunResolver::lineIndexForHeight(LayoutUnit height) const
 {
     ASSERT(m_lineHeight);
-    float y = std::max<float>(height - m_contentOffset.y() - m_baseline + m_ascent, 0);
+    float y = std::max<float>(height - m_borderAndPaddingBefore - m_baseline + m_ascent, 0);
     return std::min<unsigned>(y / m_lineHeight, m_layout.lineCount() - 1);
 }
 

@@ -56,6 +56,7 @@ public:
     float uncommittedWidth() const { return m_uncommittedWidth; }
     float committedWidth() const { return m_committedWidth; }
     float availableWidth() const { return m_availableWidth; }
+    float logicalLeftOffset() const { return m_left; }
 
     void updateAvailableWidth(LayoutUnit minimumHeight = 0);
     void shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject*);

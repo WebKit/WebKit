@@ -1,3 +1,36 @@
+2013-11-20  Antti Koivisto  <antti@apple.com>
+
+        Simple line layout should support floats
+        https://bugs.webkit.org/show_bug.cgi?id=124666
+
+        Reviewed by Dave Hyatt.
+
+        Tests: fast/text/simple-lines-float-compare.html
+               fast/text/simple-lines-float.html
+
+        * rendering/line/LineWidth.h:
+        (WebCore::LineWidth::logicalLeftOffset):
+        
+            Expose the left offset so we don't need to recompute it.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+        (WebCore::SimpleLineLayout::computeLineLeft):
+        
+            Include the left offset from floats.
+
+        (WebCore::SimpleLineLayout::createTextRuns):
+        
+            Keep the flow height updated during the loop as LineWidth reads the current position from there.
+
+        * rendering/SimpleLineLayoutResolver.h:
+        (WebCore::SimpleLineLayout::RunResolver::Run::rect):
+        (WebCore::SimpleLineLayout::RunResolver::Run::baseline):
+        (WebCore::SimpleLineLayout::RunResolver::RunResolver):
+        (WebCore::SimpleLineLayout::RunResolver::lineIndexForHeight):
+        
+            We now bake the border and the padding to the line left offset. No need to add it during resolve.
+
 2013-11-20  Alexey Proskuryakov  <ap@apple.com>
 
         Use std::function callbacks in CryptoAlgorithm instead of JS promises
