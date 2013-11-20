@@ -588,6 +588,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'HTMLTableSectionElement').hasOwnPr
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLTableSectionElement').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLTableSectionElement').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLTableSectionElement').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLTemplateElement').value is HTMLTemplateElement
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLTemplateElement').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLTemplateElement').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLTemplateElement').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLTemplateElement').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLTextAreaElement').value is HTMLTextAreaElement
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLTextAreaElement').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLTextAreaElement').hasOwnProperty('set') is false
