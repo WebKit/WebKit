@@ -1,5 +1,16 @@
 2013-11-20  Tim Horton  <timothy_horton@apple.com>
 
+        Remote Layer Tree: 100% repro crasher on the IPC thread when creating lots of layers
+        https://bugs.webkit.org/show_bug.cgi?id=124643
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::sendOutgoingMessage):
+        Dynamically allocate storage for the message if needed.
+
+2013-11-20  Tim Horton  <timothy_horton@apple.com>
+
         machMessageSize uses sizeof(mach_msg_ool_ports_descriptor_t) for out-of-line *memory*
         https://bugs.webkit.org/show_bug.cgi?id=124644
 
