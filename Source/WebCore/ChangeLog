@@ -1,3 +1,15 @@
+2013-11-19  Seokju Kwon  <seokju@webkit.org>
+
+        Removal of redundant function call in Editor::insertTextWithoutSendingTextEvent
+        https://bugs.webkit.org/show_bug.cgi?id=124563
+
+        Reviewed by Brent Fulgham.
+
+        No new tests needed, no behavior change.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::insertTextWithoutSendingTextEvent):
+
 2013-11-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Fix build break after r159533.
