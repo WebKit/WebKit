@@ -1,5 +1,12 @@
 2013-11-19  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, debug build fix.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::addFunction):
+
+2013-11-19  Filip Pizlo  <fpizlo@apple.com>
+
         Infer constant global variables
         https://bugs.webkit.org/show_bug.cgi?id=124464
 

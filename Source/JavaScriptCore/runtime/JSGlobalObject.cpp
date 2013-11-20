@@ -234,7 +234,7 @@ void JSGlobalObject::addFunction(ExecState* exec, const Identifier& propertyName
     NewGlobalVar var = addGlobalVar(propertyName, IsVariable);
     registerAt(var.registerNumber).set(exec->vm(), this, value);
     if (var.set) {
-        ASSERT(var.set->state() == ClearWatchpoint());
+        ASSERT(var.set->state() == ClearWatchpoint);
         var.set->notifyWrite();
     }
 }
