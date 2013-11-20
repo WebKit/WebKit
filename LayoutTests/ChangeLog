@@ -1,5 +1,14 @@
 2013-11-20  Dean Jackson  <dino@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=124637
+
+        Unreviewed. Adding HTMLTemplateElement to global constructor
+        test after r159550.
+
+        * js/dom/global-constructors-attributes-expected.txt:
+
+2013-11-20  Dean Jackson  <dino@apple.com>
+
         Unreviewed. Trying to fix tests added in r159545.
 
         * js/regress/global-var-const-infer-fire-from-opt.html:
