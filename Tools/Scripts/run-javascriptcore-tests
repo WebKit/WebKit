@@ -78,7 +78,6 @@ my $runMozilla = 0;
 my $runJSCStress = !isAppleWinWebKit() && !isWinCairo();
 
 my $enableFTL = 0;
-my $makeBundle = 0;
 
 my $programName = basename($0);
 my $buildJSCDefault = $buildJSC ? "will check" : "will not check";
@@ -95,7 +94,6 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]build                  Check (or don't check) to see if the jsc build is up-to-date (default: $buildJSCDefault)
   --[no-]testapi                Run (or don't run) testapi (default: $testapiDefault)
   --[no-]jsc-stress             Run (or don't run) the JSC stress tests (default: $jscStressDefault)
-  --make-bundle                 Package the resulting test files emitted by the JSC stress tests (default: $makeBundle)
 EOF
 
 GetOptions(
@@ -106,7 +104,6 @@ GetOptions(
     'ftl-jit!' => \$enableFTL,
     'testapi!' => \$runTestAPI,
     'jsc-stress!' => \$runJSCStress,
-    'make-bundle!' => \$makeBundle,
     'help' => \$showHelp
 );
 
@@ -124,10 +121,6 @@ my @jsArgs = split(" ", $jsDriverArgs);
 if ($showHelp) {
    print STDERR $usage;
    exit 1;
-}
-
-if (!$runJSCStress) {
-    $makeBundle = 0;
 }
 
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
@@ -251,9 +244,6 @@ if ($runJSCStress) {
     }
     if (defined($ENV{"EXTRA_JSC_TESTS"})) {
         push(@jscStressDriverCmd, $ENV{"EXTRA_JSC_TESTS"});
-    }
-    if ($makeBundle) {
-        push(@jscStressDriverCmd, "--make-bundle");
     }
     print "Running: " . join(" ", @jscStressDriverCmd) . "\n";
     my $result = system(@jscStressDriverCmd);

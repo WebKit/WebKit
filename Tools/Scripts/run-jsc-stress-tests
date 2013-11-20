@@ -23,7 +23,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-require 'fileutils'
 require 'getoptlong'
 require 'pathname'
 require 'yaml'
@@ -31,7 +30,7 @@ require 'yaml'
 THIS_SCRIPT_PATH = Pathname.new(__FILE__).realpath
 SCRIPTS_PATH = THIS_SCRIPT_PATH.dirname
 WEBKIT_PATH = SCRIPTS_PATH.dirname.dirname
-LAYOUTTESTS_RELATIVE_PATH = Pathname.new(__FILE__) + ".." + ".." + ".." + "LayoutTests"
+LAYOUTTESTS_PATH = WEBKIT_PATH + "LayoutTests"
 raise unless SCRIPTS_PATH.basename.to_s == "Scripts"
 raise unless SCRIPTS_PATH.dirname.basename.to_s == "Tools"
 
@@ -86,7 +85,6 @@ $collections = []
 $outputDir = Pathname.new("results")
 $verbosity = 0
 $errorOnFailure = false
-$createBundle = false
 
 def usage
     puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
@@ -95,7 +93,6 @@ def usage
     puts "--ftl-jit                   Indicate that we have the FTL JIT."
     puts "--output-dir         (-o)   Path where to put results. Default is #{$outputDir}."
     puts "--[no-]error-on-failure     Exit with exit code 1 if any tests fail. Default is #{$errorOnFailure}."
-    puts "--make-bundle               Packages up the output of the script so that it can be run in arbitrary locations."
     puts "--verbose            (-v)   Print more things while running."
     puts "--help               (-h)   Print this message."
     exit 1
@@ -107,7 +104,6 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--output-dir', '-o', GetoptLong::REQUIRED_ARGUMENT],
                ['--verbose', '-v', GetoptLong::NO_ARGUMENT],
                ['--error-on-failure', GetoptLong::NO_ARGUMENT],
-               ['--make-bundle', GetoptLong::NO_ARGUMENT],
                ['--no-error-on-failure', GetoptLong::NO_ARGUMENT]).each {
     | opt, arg |
     case opt
@@ -123,8 +119,6 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $errorOnFailure = true
     when '--no-error-on-failure'
         $errorOnFailure = false
-    when '--make-bundle'
-        $createBundle = true
     when '--verbose'
         $verbosity += 1
     end
@@ -135,10 +129,6 @@ $progressMeter = ($verbosity == 0 and $stdin.tty?)
 unless $jscPath
     $stderr.puts "Error: must specify -j <path>."
     exit 1
-end
-
-if $createBundle
-    $canRunDisplayProfilerOutput = false
 end
 
 $numFailures = 0
@@ -224,7 +214,7 @@ def mozillaErrorHandler
         outp.puts "then"
         outp.puts "    (cat #{outputFilename} && echo ERROR: Unexpected exit code: `cat #{plan.failFile}`) | " + prefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
-        outp.puts "elif grep -i -q failed! #{outputFilename}"
+        outp.puts "elif ruby " + Shellwords.shellescape((HELPERS_PATH + "check-mozilla-failure").to_s) + " #{outputFilename}"
         outp.puts "then"
         outp.puts "    (echo Detected failures: && cat #{outputFilename}) | " + prefixCommand(plan.name)
         outp.puts "    " + plan.failCommand
@@ -244,7 +234,7 @@ def mozillaFailErrorHandler
         outp.puts "if test -e #{plan.failFile}"
         outp.puts "then"
         outp.puts "    " + plan.successCommand
-        outp.puts "elif grep -i -q failed! #{outputFilename}"
+        outp.puts "elif ruby " + Shellwords.shellescape((HELPERS_PATH + "check-mozilla-failure").to_s) + " #{outputFilename}"
         outp.puts "then"
         outp.puts "    " + plan.successCommand
         outp.puts "else"
@@ -265,7 +255,7 @@ def mozillaExit3ErrorHandler
         outp.puts "then"
         outp.puts "    if [ `cat #{plan.failFile}` -eq 3 ]"
         outp.puts "    then"
-        outp.puts "        if grep -i -q failed! #{outputFilename}"
+        outp.puts "        if ruby " + Shellwords.shellescape((HELPERS_PATH + "check-mozilla-failure").to_s) + " #{outputFilename}"
         outp.puts "        then"
         outp.puts "            (echo Detected failures: && cat #{outputFilename}) | " + prefixCommand(plan.name)
         outp.puts "            " + plan.failCommand
@@ -284,89 +274,6 @@ def mozillaExit3ErrorHandler
 end
 
 $runCommandOptions = {}
-
-class Bundle
-    attr_accessor :baseForExtraFiles
-    def add(localTestPath, testName)
-    end
-
-    def willStartLoadingTests
-        $stderr.puts "Not creating test bundle."
-    end
-
-    def didFinishLoadingTests
-    end
-
-    def addExtraFiles(extraFiles)
-    end
-
-    def package!
-    end
-
-    def localPathToBundlePath(localPath)
-        localPath
-    end
-end
-
-class MovableBundle < Bundle
-    def initialize(bundleRoot)
-        @bundleRoot = bundleRoot
-        @bundledFileCount = 0
-    end
-
-    def willStartLoadingTests
-        $stderr.puts "Copying tests into bundle..."
-        addLayoutTestFiles
-    end
-
-    def didFinishLoadingTests
-        $stderr.puts "Done copying tests into bundle."
-    end
-
-    def add(localTestPath, testName)
-        bundleTestPath = localPathToBundlePath(localTestPath)
-        localFullPath = localTestPath + testName
-        bundleFullPath = bundleTestPath + testName
-
-        FileUtils.mkdir_p bundleTestPath
-        FileUtils.cp localFullPath, bundleFullPath
-
-        @bundledFileCount += 1
-        print("\r    " + @bundledFileCount.to_s + "\r")
-    end
-
-    def addLayoutTestFiles
-        add(LAYOUTTESTS_RELATIVE_PATH + "resources", "standalone-pre.js")
-        add(LAYOUTTESTS_RELATIVE_PATH + "resources", "standalone-post.js")
-    end
-
-    def addExtraFiles(extraFiles)
-        extraFiles.each {
-            | file |
-            add(@baseForExtraFiles, file)
-        }
-    end
-
-    def package!
-        $stderr.puts "Creating tarball for bundle..."
-        Dir.chdir($outputDir + "..") {
-            cmd = "tar -czf payload.tar.gz #{$outputDir.basename}"
-            $stderr.puts ">> #{cmd}" if $verbosity >= 2
-            raise unless system(cmd)
-        }
-        $stderr.puts("Done.")
-    end
-
-    def localPathToBundlePath(localPath)
-        @bundleRoot + localPath
-    end
-end
-
-if $createBundle
-    $testBundle = MovableBundle.new($outputDir + ".tests")
-else
-    $testBundle = Bundle.new
-end
 
 class Plan
     attr_reader :directory, :arguments, :name, :outputHandler, :errorHandler
@@ -578,13 +485,11 @@ def runLayoutTest(kind, *options)
     else
         kind = "layout"
     end
-    bundleLayoutTestsPath = $testBundle.localPathToBundlePath(LAYOUTTESTS_RELATIVE_PATH)
-    $testBundle.addExtraFiles([Pathname.new("../#{testName}-expected.txt")])
     args =
         [$jscPath.to_s] + options +
-        [(bundleLayoutTestsPath + "resources" + "standalone-pre.js").to_s,
+        [(LAYOUTTESTS_PATH + "resources" + "standalone-pre.js").to_s,
          $benchmark.to_s,
-         (bundleLayoutTestsPath + "resources" + "standalone-post.js").to_s]
+         (LAYOUTTESTS_PATH + "resources" + "standalone-post.js").to_s]
     addRunCommand(kind, args, noisyOutputHandler, diffErrorHandler(($benchmarkDirectory.dirname + "#{testName}-expected.txt").to_s))
 end
 
@@ -617,7 +522,6 @@ def runMozillaTest(kind, mode, extraFiles, *options)
     else
         kind = "mozilla"
     end
-    $testBundle.addExtraFiles(extraFiles)
     args = [$jscPath.to_s] + options + extraFiles.map{|v| ($benchmarkDirectory + v).to_s} + [$benchmark.to_s]
     case mode
     when :normal
@@ -762,13 +666,10 @@ def handleCollectionFile(collection)
         allJSFiles(subCollection).each {
             | path |
             
-            $testBundle.add(path.dirname, path.basename)
-            $testBundle.baseForExtraFiles = path.dirname
-
-            path = $testBundle.localPathToBundlePath(path).realpath
-
-            $benchmarkDirectory = path.dirname 
+            path = path.realpath
+            
             $benchmark = path.basename
+            $benchmarkDirectory = path.dirname
             
             $runCommandOptions = {}
             eval entry["cmd"]
@@ -788,14 +689,11 @@ def handleCollectionDirectory(collection)
     
     $collection = collection
     $collectionName = collectionName
-    localBenchmarkDirectory = $collection
-    $benchmarkDirectory = $testBundle.localPathToBundlePath(localBenchmarkDirectory)
-    $testBundle.baseForExtraFiles = localBenchmarkDirectory
+    $benchmarkDirectory = $collection
     allJSFiles($collection).each {
         | path |
         
         $benchmark = path.basename
-        $testBundle.add(localBenchmarkDirectory, $benchmark)
         
         $runCommandOptions = {}
         defaultRun unless parseRunCommands
@@ -812,14 +710,10 @@ def handleCollection(collection)
     end
 end
 
-$testBundle.willStartLoadingTests
-
 ARGV.each {
     | collection |
     handleCollection(collection)
 }
-
-$testBundle.didFinishLoadingTests
 
 def appendFailure(plan)
     File.open($outputDir + "failed", "a") {
@@ -915,11 +809,6 @@ File.open(parallelDir + "Makefile", "w") {
         outp.puts "\tsh test_script_#{plan.index}"
     }
 }
-
-if $createBundle
-    $testBundle.package!
-    exit 0
-end
 
 Dir.chdir(parallelDir) {
     unless $progressMeter
