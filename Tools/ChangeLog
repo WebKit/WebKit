@@ -1,3 +1,21 @@
+2013-11-20  Jozsef Berta  <jberta@inf.u-szeged.hu>
+
+        Delete baseline optimizer
+        https://bugs.webkit.org/show_bug.cgi?id=122333
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer.py: Removed.
+        * Scripts/webkitpy/common/checkout/baselineoptimizer_unittest.py: Removed.
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest.execute):
+        (AbstractParallelRebaselineCommand._files_to_add):
+        (AbstractParallelRebaselineCommand._rebaseline):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaselineJson.test_rebaseline_all):
+        (TestRebaselineJson.test_rebaseline_debug):
+        (TestRebaselineExpectations.disabled_test_overrides_are_included_correctly):
+
 2013-11-20  Anders Carlsson  <andersca@apple.com>
 
         Enable PageLoadTest assertions again
