@@ -1,5 +1,13 @@
 2013-11-21  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, preemptive build fix.
+
+        * runtime/StackAlignment.h:
+        (JSC::stackAlignmentBytes):
+        (JSC::stackAlignmentRegisters):
+
+2013-11-21  Filip Pizlo  <fpizlo@apple.com>
+
         JSC should know what the stack alignment conventions are
         https://bugs.webkit.org/show_bug.cgi?id=124736
 
