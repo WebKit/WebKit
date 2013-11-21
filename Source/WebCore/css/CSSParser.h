@@ -113,7 +113,8 @@ public:
     bool parse4Values(CSSPropertyID, const CSSPropertyID* properties, bool important);
     bool parseContent(CSSPropertyID, bool important);
     bool parseQuotes(CSSPropertyID, bool important);
-
+    bool parseAlt(CSSPropertyID, bool important);
+    
 #if ENABLE(CSS_VARIABLES)
     static bool parseValue(MutableStylePropertySet*, CSSPropertyID, const String&, bool important, Document&);
     bool cssVariablesEnabled() const;

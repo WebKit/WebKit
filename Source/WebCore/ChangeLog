@@ -1,3 +1,50 @@
+2013-11-20  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Implement CSS -webkit-alt property (text alternative for generated content pseudo-elements ::before and ::after)
+        https://bugs.webkit.org/show_bug.cgi?id=120188
+
+        Reviewed by Dean Jackson.
+
+        Add a -webkit-alt CSS property that can be used to label Image content or Text content for accessibility clients.
+
+        To accomplish this, it sets the string in the RenderStyle. Then when the ContentData creates an anonymous renderer,
+        it sets that string on the TextFragment or RenderImage, which can be queried by accessibility code.
+
+        Test: platform/mac/accessibility/webkit-alt-for-css-content.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::alternativeText):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::textUnderElement):
+        (WebCore::objectInclusionFromAltText):
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::altTextToCSSValue):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseAlt):
+        * css/CSSParser.h:
+        * css/CSSPropertyNames.in:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * rendering/RenderImage.h:
+        (WebCore::RenderImage::altText):
+        (WebCore::RenderImage::setAltText):
+        * rendering/RenderTextFragment.h:
+        * rendering/style/ContentData.cpp:
+        (WebCore::ImageContentData::createRenderer):
+        (WebCore::TextContentData::createRenderer):
+        * rendering/style/ContentData.h:
+        (WebCore::ContentData::setAltText):
+        (WebCore::ContentData::altText):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setContent):
+        (WebCore::RenderStyle::setContentAltText):
+        (WebCore::RenderStyle::contentAltText):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2013-11-20  Roger Fong  <roger_fong@apple.com>
 
         Use compile flag SH_UNFOLD_SHORT_CIRCUIT when compiling shaders.

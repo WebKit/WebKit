@@ -2214,7 +2214,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
                     const AtomicString& value = state.element()->getAttribute(attr);
                     state.style()->setContent(value.isNull() ? emptyAtom : value.impl(), didSet);
                     didSet = true;
-                    // register the fact that the attribute value affects the style
+                    // Register the fact that the attribute value affects the style.
                     m_ruleSets.features().attrsInRules.add(attr.localName().impl());
                 } else if (contentValue->isCounter()) {
                     Counter* counterValue = contentValue->getCounterValue();
@@ -2252,6 +2252,28 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             if (!didSet)
                 state.style()->clearContent();
             return;
+        }
+    case CSSPropertyWebkitAlt:
+        {
+            bool didSet = false;
+            if (primitiveValue->isString()) {
+                state.style()->setContentAltText(primitiveValue->getStringValue().impl());
+                didSet = true;
+            } else if (primitiveValue->isAttr()) {
+                // FIXME: Can a namespace be specified for an attr(foo)?
+                if (state.style()->styleType() == NOPSEUDO)
+                    state.style()->setUnique();
+                else
+                    state.parentStyle()->setUnique();
+                QualifiedName attr(nullAtom, primitiveValue->getStringValue().impl(), nullAtom);
+                const AtomicString& value = state.element()->getAttribute(attr);
+                state.style()->setContentAltText(value.isNull() ? emptyAtom : value.impl());
+                didSet = true;
+                // Register the fact that the attribute value affects the style.
+                m_ruleSets.features().attrsInRules.add(attr.localName().impl());
+            }
+            if (!didSet)
+                state.style()->setContentAltText(emptyAtom);
         }
     case CSSPropertyQuotes:
         if (isInherit) {

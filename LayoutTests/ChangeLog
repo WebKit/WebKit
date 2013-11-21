@@ -1,3 +1,13 @@
+2013-11-20  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Implement CSS -webkit-alt property (text alternative for generated content pseudo-elements ::before and ::after)
+        https://bugs.webkit.org/show_bug.cgi?id=120188
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac/accessibility/webkit-alt-for-css-content-expected.txt: Added.
+        * platform/mac/accessibility/webkit-alt-for-css-content.html: Added.
+
 2013-11-20  Dean Jackson  <dino@apple.com>
 
         Unreviewed. Updated expected result following

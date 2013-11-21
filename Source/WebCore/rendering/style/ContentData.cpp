@@ -52,6 +52,7 @@ RenderObject* ImageContentData::createRenderer(Document& document, RenderStyle& 
     // FIXME: We should find a way to avoid setting the style twice here.
     RenderImage* image = new RenderImage(document, pseudoStyle);
     image->setPseudoStyle(&pseudoStyle);
+    image->setAltText(altText());
     if (m_image)
         image->setImageResource(RenderImageResourceStyleImage::create(*m_image));
     else
@@ -61,7 +62,9 @@ RenderObject* ImageContentData::createRenderer(Document& document, RenderStyle& 
 
 RenderObject* TextContentData::createRenderer(Document& document, RenderStyle&) const
 {
-    return new RenderTextFragment(document, m_text);
+    RenderTextFragment* fragment = new RenderTextFragment(document, m_text);
+    fragment->setAltText(altText());
+    return fragment;
 }
 
 RenderObject* CounterContentData::createRenderer(Document& document, RenderStyle&) const

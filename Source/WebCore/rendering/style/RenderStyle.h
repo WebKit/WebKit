@@ -1569,6 +1569,8 @@ public:
     void setContent(PassRefPtr<StyleImage>, bool add = false);
     void setContent(std::unique_ptr<CounterContent>, bool add = false);
     void setContent(QuoteType, bool add = false);
+    void setContentAltText(const String&);
+    const String& contentAltText() const;
 
     const CounterDirectiveMap* counterDirectives() const;
     CounterDirectiveMap& accessCounterDirectives();

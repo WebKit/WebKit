@@ -52,12 +52,16 @@ public:
     ContentData* next() const { return m_next.get(); }
     void setNext(std::unique_ptr<ContentData> next) { m_next = std::move(next); }
 
+    void setAltText(const String& alt) { m_altText = alt; }
+    const String& altText() const { return m_altText; }
+    
     virtual bool equals(const ContentData&) const = 0;
 
 private:
     virtual std::unique_ptr<ContentData> cloneInternal() const = 0;
 
     std::unique_ptr<ContentData> m_next;
+    String m_altText;
 };
 
 class ImageContentData FINAL : public ContentData {

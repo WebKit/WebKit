@@ -222,6 +222,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyZIndex,
     CSSPropertyZoom,
 
+    CSSPropertyWebkitAlt,
     CSSPropertyWebkitAnimationDelay,
     CSSPropertyWebkitAnimationDirection,
     CSSPropertyWebkitAnimationDuration,
@@ -1507,6 +1508,11 @@ static PassRefPtr<CSSValue> fillSizeToCSSValue(const FillSize& fillSize, const R
     return list.release();
 }
 
+static PassRefPtr<CSSValue> altTextToCSSValue(const RenderStyle* style)
+{
+    return cssValuePool().createValue(style->contentAltText(), CSSPrimitiveValue::CSS_STRING);
+}
+    
 static PassRefPtr<CSSValue> contentToCSSValue(const RenderStyle* style)
 {
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
@@ -2846,6 +2852,8 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             return CSSPrimitiveValue::create(style->textOrientation());
         case CSSPropertyWebkitLineBoxContain:
             return createLineBoxContainValue(style->lineBoxContain());
+        case CSSPropertyWebkitAlt:
+            return altTextToCSSValue(style.get());
         case CSSPropertyContent:
             return contentToCSSValue(style.get());
         case CSSPropertyCounterIncrement:

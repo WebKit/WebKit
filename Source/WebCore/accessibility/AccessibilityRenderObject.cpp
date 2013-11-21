@@ -690,8 +690,14 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
         // CSS content is used to insert text or when a RenderCounter is used.)
         if (m_renderer->isText()) {
             RenderText* renderTextObject = toRenderText(m_renderer);
-            if (renderTextObject->isTextFragment())
+            if (renderTextObject->isTextFragment()) {
+                
+                // The alt attribute may be set on a text fragment through CSS, which should be honored.
+                const String& altText = toRenderTextFragment(renderTextObject)->altText();
+                if (!altText.isEmpty())
+                    return altText;
                 return String(static_cast<RenderTextFragment*>(m_renderer)->contentString());
+            }
 
             return String(renderTextObject->text());
         }
@@ -1114,6 +1120,19 @@ bool AccessibilityRenderObject::isAllowedChildOfTree() const
     return true;
 }
     
+static AccessibilityObjectInclusion objectInclusionFromAltText(const String& altText)
+{
+    // Don't ignore an image that has an alt tag.
+    if (!altText.containsOnlyWhitespace())
+        return IncludeObject;
+    
+    // The informal standard is to ignore images with zero-length alt strings.
+    if (!altText.isNull())
+        return IgnoreObject;
+    
+    return DefaultBehavior;
+}
+
 AccessibilityObjectInclusion AccessibilityRenderObject::defaultObjectInclusion() const
 {
     // The following cases can apply to any element that's a subclass of AccessibilityRenderObject.
@@ -1192,6 +1211,15 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
             if (parent->roleValue() == TextFieldRole)
                 return true;
         }
+        
+        // The alt attribute may be set on a text fragment through CSS, which should be honored.
+        if (renderText.isTextFragment()) {
+            AccessibilityObjectInclusion altTextInclusion = objectInclusionFromAltText(toRenderTextFragment(&renderText)->altText());
+            if (altTextInclusion == IgnoreObject)
+                return true;
+            if (altTextInclusion == IncludeObject)
+                return false;
+        }
 
         // text elements that are just empty whitespace should not be returned
         return renderText.text()->containsOnlyWhitespace();
@@ -1253,21 +1281,25 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
         if (canSetFocusAttribute())
             return false;
         
-        if (node && node->isElementNode()) {
-            Element* elt = toElement(node);
-            const AtomicString& alt = elt->getAttribute(altAttr);
-            // don't ignore an image that has an alt tag
-            if (!alt.string().containsOnlyWhitespace())
-                return false;
-            // informal standard is to ignore images with zero-length alt strings
-            if (!alt.isNull())
-                return true;
-            // If an image has a title attribute on it, accessibility should be lenient and allow it to appear in the hierarchy (according to WAI-ARIA).
-            if (!getAttribute(titleAttr).isEmpty())
-                return false;
-        }
+        // First check the RenderImage's altText (which can be set through a style sheet, or come from the Element).
+        // However, if this is not a native image, fallback to the attribute on the Element.
+        AccessibilityObjectInclusion altTextInclusion = DefaultBehavior;
+        bool isRenderImage = m_renderer && m_renderer->isRenderImage();
+        if (isRenderImage)
+            altTextInclusion = objectInclusionFromAltText(toRenderImage(m_renderer)->altText());
+        else
+            altTextInclusion = objectInclusionFromAltText(getAttribute(altAttr).string());
+
+        if (altTextInclusion == IgnoreObject)
+            return true;
+        if (altTextInclusion == IncludeObject)
+            return false;
         
-        if (isNativeImage()) {
+        // If an image has a title attribute on it, accessibility should be lenient and allow it to appear in the hierarchy (according to WAI-ARIA).
+        if (!getAttribute(titleAttr).isEmpty())
+            return false;
+    
+        if (isRenderImage) {
             // check for one-dimensional image
             RenderImage* image = toRenderImage(m_renderer);
             if (image->height() <= 1 || image->width() <= 1)

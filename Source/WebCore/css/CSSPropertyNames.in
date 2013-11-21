@@ -213,6 +213,7 @@ word-break [Inherited]
 word-spacing [Inherited]
 word-wrap [Inherited]
 z-index
+-webkit-alt
 -webkit-animation
 -webkit-animation-delay
 -webkit-animation-direction

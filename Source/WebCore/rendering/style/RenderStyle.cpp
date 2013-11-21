@@ -916,6 +916,8 @@ void RenderStyle::setContent(PassRefPtr<StyleImage> image, bool add)
     }
 
     rareNonInheritedData.access()->m_content = std::make_unique<ImageContentData>(image);
+    if (!rareNonInheritedData.access()->m_altText.isNull())
+        rareNonInheritedData.access()->m_content->setAltText(rareNonInheritedData.access()->m_altText);
 }
 
 void RenderStyle::setContent(const String& string, bool add)
@@ -934,11 +936,15 @@ void RenderStyle::setContent(const String& string, bool add)
             } else
                 lastContent->setNext(std::make_unique<TextContentData>(string));
 
+            if (!rareNonInheritedData.access()->m_altText.isNull())
+                lastContent->setAltText(rareNonInheritedData.access()->m_altText);
             return;
         }
     }
 
     content = std::make_unique<TextContentData>(string);
+    if (!rareNonInheritedData.access()->m_altText.isNull())
+        content->setAltText(rareNonInheritedData.access()->m_altText);
 }
 
 void RenderStyle::setContent(std::unique_ptr<CounterContent> counter, bool add)
@@ -963,7 +969,20 @@ void RenderStyle::setContent(QuoteType quote, bool add)
 
     rareNonInheritedData.access()->m_content = std::make_unique<QuoteContentData>(quote);
 }
+
+void RenderStyle::setContentAltText(const String& string)
+{
+    rareNonInheritedData.access()->m_altText = string;
     
+    if (rareNonInheritedData.access()->m_content)
+        rareNonInheritedData.access()->m_content->setAltText(string);
+}
+
+const String& RenderStyle::contentAltText() const
+{
+    return rareNonInheritedData->m_altText;
+}
+
 inline bool requireTransformOrigin(const Vector<RefPtr<TransformOperation>>& transformOperations, RenderStyle::ApplyTransformOrigin applyOrigin)
 {
     // transform-origin brackets the transform with translate operations.

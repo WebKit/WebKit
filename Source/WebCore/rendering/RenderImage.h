@@ -61,8 +61,9 @@ public:
 
     bool isGeneratedContent() const { return m_isGeneratedContent; }
 
-    String altText() const { return m_altText; }
-
+    const String& altText() const { return m_altText; }
+    void setAltText(const String& altText) { m_altText = altText; }
+    
 protected:
     virtual bool needsPreferredWidthsRecalculation() const OVERRIDE FINAL;
     virtual RenderBox* embeddedContentBox() const OVERRIDE FINAL;

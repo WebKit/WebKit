@@ -125,6 +125,7 @@ public:
 
     std::unique_ptr<ContentData> m_content;
     OwnPtr<CounterDirectiveMap> m_counterDirectives;
+    String m_altText;
 
     OwnPtr<ShadowData> m_boxShadow;  // For box-shadow decorations.
     
