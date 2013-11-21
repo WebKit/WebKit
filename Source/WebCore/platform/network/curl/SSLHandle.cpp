@@ -32,30 +32,35 @@
 #include <openssl/pem.h>
 #include <openssl/ssl.h>
 #include <openssl/x509_vfy.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
-static HashMap<String, String> allowedHosts;
+static HashMap<String, HashSet<String>> allowedHosts;
 
 void allowsAnyHTTPSCertificateHosts(const String& host)
 {
-    HashMap<String, String>::iterator it = allowedHosts.find(host);
-    if (it != allowedHosts.end())
-        it->value = String();
-    else
-        allowedHosts.add(host, String());
+    HashSet<String> certificates;
+    allowedHosts.set(host, certificates);
 }
 
-bool sslIgnoreHTTPSCertificate(const String& host, const String& cert)
+bool sslIgnoreHTTPSCertificate(const String& host, const HashSet<String>& certificates)
 {
-    HashMap<String, String>::iterator it = allowedHosts.find(host);
+    HashMap<String, HashSet<String>>::iterator it = allowedHosts.find(host);
     if (it != allowedHosts.end()) {
         if ((it->value).isEmpty()) {
-            it->value = cert;
+            it->value = certificates;
             return true;
         }
-        if (it->value == cert)
-            return true;
+        if (certificates.size() != it->value.size())
+            return false;
+        HashSet<String>::const_iterator certsIter = certificates.begin();
+        HashSet<String>::iterator valueIter = (it->value).begin();
+        for (; valueIter != (it->value).end(); ++valueIter, ++certsIter) {
+            if (*certsIter != *valueIter)
+                return false;
+        }
+        return true;
     }
     return false;
 }
@@ -118,31 +123,36 @@ unsigned sslCertificateFlag(const unsigned& sslError)
 }
 
 #if !PLATFORM(WIN)
-// success of certificate extraction
-bool pemData(X509_STORE_CTX* ctx, String& certificate)
+// success of certificates extraction
+bool pemData(X509_STORE_CTX* ctx, HashSet<String>& certificates)
 {
-    X509* errCert = X509_STORE_CTX_get_current_cert(ctx);
+    bool ok = true;
+    STACK_OF(X509)* certs = X509_STORE_CTX_get1_chain(ctx);
+    for (int i = 0; i < sk_X509_num(certs); i++) {
+        X509* uCert = sk_X509_value(certs, i);
+        BIO* bio = BIO_new(BIO_s_mem());
+        int res = PEM_write_bio_X509(bio, uCert);
+        if (!res) {
+            ok = false;
+            BIO_free(bio);
+            break;
+        }
 
-    // get the cert in PEM format
-    BIO* bio = BIO_new(BIO_s_mem());
+        unsigned char* certificateData;
+        long length = BIO_get_mem_data(bio, &certificateData);
+        if (length < 0) {
+            ok = false;
+            BIO_free(bio);
+            break;
+        }
 
-    int res = PEM_write_bio_X509(bio, errCert);
-    if (!res) {
+        certificateData[length] = '\0';
+        String certificate = certificateData;
+        certificates.add(certificate);
         BIO_free(bio);
-        return false;
     }
-
-    unsigned char* data;
-    long len = BIO_get_mem_data(bio, &data);
-    if (len < 0) {
-        BIO_free(bio);
-        return false;
-    }
-
-    data[len] = '\0';
-    certificate = data;
-    BIO_free(bio);
-    return true;
+        sk_X509_pop_free(certs, X509_free);
+        return ok;
 }
 #endif
 
@@ -166,10 +176,10 @@ static int certVerifyCallback(int ok, X509_STORE_CTX* ctx)
     HashMap<String, String>::iterator it = allowedHosts.find(host);
     ok = (it != allowedHosts.end());
 #else
-    String certificate;
-    if (!pemData(ctx, certificate))
+    HashSet<String> certificates;
+    if (!pemData(ctx, certificates))
         return 0;
-    ok = sslIgnoreHTTPSCertificate(host.lower(), certificate);
+    ok = sslIgnoreHTTPSCertificate(host.lower(), certificates);
 #endif
 
     if (ok) {
