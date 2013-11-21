@@ -1,3 +1,19 @@
+2013-11-21  Sergio Correia  <sergio.correia@openbossa.org>
+
+        [EFL][GTK][WK2] Build fix after r159641
+        https://bugs.webkit.org/show_bug.cgi?id=124742
+
+        Reviewed by Csaba Osztrogonác.
+
+        Should fetch activeURL from page load state.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewUpdateURI):
+        * UIProcess/InspectorServer/efl/WebInspectorServerEfl.cpp:
+        (WebKit::WebInspectorServer::buildPageList):
+        * UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp:
+        (WebKit::WebInspectorServer::buildPageList):
+
 2013-11-21  Anders Carlsson  <andersca@apple.com>
 
         Fetch all page loading related URLs from the page load state

@@ -1584,7 +1584,7 @@ void webkitWebViewSetEstimatedLoadProgress(WebKitWebView* webView, double estima
 
 void webkitWebViewUpdateURI(WebKitWebView* webView)
 {
-    CString activeURI = getPage(webView)->activeURL().utf8();
+    CString activeURI = getPage(webView)->pageLoadState().activeURL().utf8();
     if (webView->priv->activeURI == activeURI)
         return;
 
