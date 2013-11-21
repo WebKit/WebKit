@@ -5,6 +5,7 @@
     #content {
         -webkit-flow-into: flow1;
         padding: 5px;
+        border: 1px solid red;
     }
   
     #float1 {
@@ -18,41 +19,36 @@
         float:right;
         width:200px;
         height:30px;
-        background-color:orange
+        background-color:orange;
     }
 
     #region1, #region2, #region3 {
+        margin: 10px;
         border: 1px solid black;
         -webkit-flow-from: flow1;
     }
 
     #region1 {
+        margin-left: 30px;
         width: 180px;
         height: 90px;
     }
     
     #region2 {
-        width: 400px;
-        height: 90px;
-    }
-    
-    #region3 {
+        margin-top: 80px;
         width: 400px;
         height: 90px;
     }
 </style>
 
-<p>In the example below, the green float should be at the top of the first region and on the left. It should spill into region two.
-The orange float should be right aligned under the green float because their containing block is flown only in the first region</p>
+<p>In the example below, the green float should be at the top of the first region and on the left. It should overflow the first region.
+The orange float should be right aligned under the green float and should overflow the first region because their containing block (red border) is flowed only in the first region.</p>
+<p>No content should be displayed in the second region.</p>
 
 <div id="content">
     <div id="first-box">
         <div id="second-box">
-            <p><img id="float1"><img id="float2"><p/>
-            <p>This line of text should not get out of the region.</p>
-	    <p>This line of text should not get out of the region. This line of text should not get out of the region.</p>
-            <p>This line of text should not get out of the region.</p>
-            
+            <img id="float1"><img id="float2">
         </div>
     </div>
 </div>
@@ -60,5 +56,4 @@ The orange float should be right aligned under the green float because their con
 <div id="container">
     <div id="region1"></div>
     <div id="region2"></div>
-    <div id="region3"></div>
 </div>

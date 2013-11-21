@@ -72,6 +72,11 @@ public:
     void setHasCustomRegionStyle(bool hasCustomRegionStyle) { m_hasCustomRegionStyle = hasCustomRegionStyle; }
     void clearObjectStyleInRegion(const RenderObject*);
 
+    void setRegionObjectsRegionStyle();
+    void restoreRegionObjectsOriginalStyle();
+
+    RenderNamedFlowThread* namedFlowThread() const;
+
 // FIXME: Temporarily public until we move all the CSSRegions functionality from RenderRegion to here.
 public:
     void checkRegionStyle();
@@ -80,14 +85,9 @@ private:
     virtual bool shouldHaveAutoLogicalHeight() const OVERRIDE;
     virtual const char* renderName() const OVERRIDE { return "RenderNamedFlowFragment"; }
 
-    void setRegionObjectsRegionStyle();
-    void restoreRegionObjectsOriginalStyle();
-
     PassRefPtr<RenderStyle> computeStyleInRegion(const RenderObject*);
     void computeChildrenStyleInRegion(const RenderElement*);
     void setObjectStyleInRegion(RenderObject*, PassRefPtr<RenderStyle>, bool objectRegionStyleCached);
-
-    virtual void paintObject(PaintInfo&, const LayoutPoint&) OVERRIDE;
 
     struct ObjectRegionStyleInfo {
         // Used to store the original style of the object in region

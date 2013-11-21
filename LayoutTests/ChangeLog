@@ -1,3 +1,71 @@
+2013-11-20  Radu Stavila  <stavila@adobe.com>
+
+        [CSS Regions] Implement visual overflow for first & last regions
+        https://bugs.webkit.org/show_bug.cgi?id=118665
+
+        Rebased some tests due to regions layers changes.
+        Updated some tests to increase clarity. Some of them were only passing because two
+        regions were close together and the fact that an element was being painted
+        inside the wrong region was not visible. Floats are now also unsplittable.
+                - bottom-overflow-out-of-first-region
+                - float-pushed-width-change-2
+                - float-pushed-width-change
+                - webkit-flow-float-unable-to-push
+
+        Changed top-overflow-out-of-second-region to reftest.
+
+        Added new tests for testing the visual overflow in different situations 
+        (transformed, inline, opacity, floating).
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/bottom-overflow-out-of-first-region-expected.html:
+        * fast/regions/bottom-overflow-out-of-first-region.html:
+        * fast/regions/counters/extract-ordered-lists-in-regions-explicit-counters-005-expected.html:
+        * fast/regions/counters/extract-ordered-lists-in-regions-explicit-counters-005.html:
+        * fast/regions/element-in-named-flow-absolute-from-fixed-expected.txt:
+        * fast/regions/element-in-named-flow-fixed-from-absolute-expected.txt:
+        * fast/regions/element-inflow-fixed-from-outflow-static-expected.txt:
+        * fast/regions/element-outflow-static-from-inflow-fixed-expected.txt:
+        * fast/regions/float-pushed-width-change-2-expected.html:
+        * fast/regions/float-pushed-width-change-2.html:
+        * fast/regions/float-pushed-width-change-expected.html:
+        * fast/regions/float-pushed-width-change.html:
+        * fast/regions/layers/dynamic-layer-added-with-no-layout-expected.txt: Added.
+        * fast/regions/layers/dynamic-layer-removed-with-no-layout-expected.txt: Added.
+        * fast/regions/layers/regions-promoted-to-layers-expected.txt: Added.
+        * fast/regions/layers/regions-promoted-to-layers-horizontal-bt-expected.txt: Added.
+        * fast/regions/layers/regions-promoted-to-layers-vertical-lr-expected.txt: Added.
+        * fast/regions/layers/regions-promoted-to-layers-vertical-rl-expected.txt: Added.
+        * fast/regions/outline-sides-in-region-expected.html:
+        * fast/regions/outline-sides-in-region.html:
+        * fast/regions/overflow-first-and-last-regions-expected.html: Added.
+        * fast/regions/overflow-first-and-last-regions-in-container-hidden-expected.html: Added.
+        * fast/regions/overflow-first-and-last-regions-in-container-hidden.html: Added.
+        * fast/regions/overflow-first-and-last-regions.html: Added.
+        * fast/regions/overflow-last-region-expected.html: Removed.
+        * fast/regions/overflow-last-region.html: Removed.
+        * fast/regions/overflow-nested-regions-expected.html: Added.
+        * fast/regions/overflow-nested-regions.html: Added.
+        * fast/regions/overflow-region-float-expected.html: Added.
+        * fast/regions/overflow-region-float.html: Added.
+        * fast/regions/overflow-region-inline-expected.html: Added.
+        * fast/regions/overflow-region-inline.html: Added.
+        * fast/regions/overflow-region-transform-expected.html: Added.
+        * fast/regions/overflow-region-transform.html: Added.
+        * fast/regions/overflow-scrollable-rotated-fragment-expected.html:
+        * fast/regions/overflow-scrollable-rotated-fragment.html:
+        * fast/regions/top-overflow-out-of-second-region-expected.html: Copied from LayoutTests/fast/regions/top-overflow-out-of-second-region.html.
+        * fast/regions/top-overflow-out-of-second-region.html:
+        * fast/regions/webkit-flow-float-unable-to-push-expected.html:
+        * fast/regions/webkit-flow-float-unable-to-push.html:
+        * platform/gtk/fast/regions/text-region-split-vertical-rl-expected.txt: Removed.
+        * platform/gtk/TestExpectations: Add new test expectations for failing tests.
+        * platform/efl/TestExpectations: Add new test expectations for failing tests.
+        * platform/mac-wk2/TestExpectations: 
+        * platform/mac/fast/regions/top-overflow-out-of-second-region-expected.png: Removed.
+        * platform/mac/fast/regions/top-overflow-out-of-second-region-expected.txt: Removed.
+
 2013-11-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Test a template element appearing after a closing body tag in html5lib

@@ -62,6 +62,7 @@ class RenderGeometryMap;
 class RenderLayerBacking;
 class RenderLayerCompositor;
 class RenderMarquee;
+class RenderNamedFlowFragment;
 class RenderReplica;
 class RenderScrollbarPart;
 class RenderStyle;
@@ -113,6 +114,10 @@ public:
     bool isEmpty() const { return m_rect.isEmpty(); }
     bool intersects(const LayoutRect& rect) const { return m_rect.intersects(rect); }
     bool intersects(const HitTestLocation&) const;
+
+    void inflateX(LayoutUnit dx) { m_rect.inflateX(dx); }
+    void inflateY(LayoutUnit dy) { m_rect.inflateY(dy); }
+    void inflate(LayoutUnit d) { inflateX(d); inflateY(d); }
 
 private:
     LayoutRect m_rect;
@@ -528,6 +533,9 @@ public:
     // Update our normal and z-index lists.
     void updateLayerListsIfNeeded();
 
+    // Update the normal and z-index lists of our descendants.
+    void updateDescendantsLayerListsIfNeeded(bool recursive);
+
     // FIXME: We should ASSERT(!m_visibleContentStatusDirty) here, but see https://bugs.webkit.org/show_bug.cgi?id=71044
     // ditto for hasVisibleDescendant(), see https://bugs.webkit.org/show_bug.cgi?id=71277
     bool hasVisibleContent() const { return m_hasVisibleContent; }
@@ -629,6 +637,8 @@ public:
     bool hitTest(const HitTestRequest&, const HitTestLocation&, HitTestResult&);
     void paintOverlayScrollbars(GraphicsContext*, const LayoutRect& damageRect, PaintBehavior, RenderObject* subtreePaintRoot = 0);
 
+    void paintNamedFlowThreadInsideRegion(GraphicsContext*, RenderNamedFlowFragment*, LayoutRect, LayoutPoint, PaintBehavior = PaintBehaviorNormal, PaintLayerFlags = 0);
+
     struct ClipRectsContext {
         ClipRectsContext(const RenderLayer* inRootLayer, RenderRegion* inRegion, ClipRectsType inClipRectsType, OverlayScrollbarSizeRelevancy inOverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, ShouldRespectOverflowClip inRespectOverflowClip = RespectOverflowClip)
             : rootLayer(inRootLayer)
@@ -668,7 +678,7 @@ public:
     LayoutRect localClipRect() const; // Returns the background clip rect of the layer in the local coordinate space.
 
     // Pass offsetFromRoot if known.
-    bool intersectsDamageRect(const LayoutRect& layerBounds, const LayoutRect& damageRect, const RenderLayer* rootLayer, const LayoutPoint* offsetFromRoot = 0) const;
+    bool intersectsDamageRect(const LayoutRect& layerBounds, const LayoutRect& damageRect, const RenderLayer* rootLayer, const LayoutPoint* offsetFromRoot = 0, RenderRegion* = 0) const;
 
     enum CalculateLayerBoundsFlag {
         IncludeSelfTransform = 1 << 0,
@@ -1131,6 +1141,12 @@ private:
     LayoutUnit horizontalScrollbarStart(int minX) const;
 
     bool overflowControlsIntersectRect(const IntRect& localRect) const;
+
+    RenderLayer* hitTestFlowThreadIfRegion(RenderLayer*, const HitTestRequest&, HitTestResult&,
+        const LayoutRect&, const HitTestLocation&,
+        const HitTestingTransformState*, double*);
+    void paintFlowThreadIfRegion(GraphicsContext*, const LayerPaintingInfo&, PaintLayerFlags, LayoutPoint, LayoutRect, bool);
+    void mapLayerClipRectsToFragmentationLayer(RenderRegion*, ClipRects&) const;
 
 private:
     // The bitfields are up here so they will fall into the padding from ScrollableArea on 64-bit.

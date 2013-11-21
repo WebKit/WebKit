@@ -312,8 +312,8 @@ void RenderListItem::layout()
 
 void RenderListItem::addOverflowFromChildren()
 {
-    RenderBlockFlow::addOverflowFromChildren();
     positionListMarker();
+    RenderBlockFlow::addOverflowFromChildren();
 }
 
 void RenderListItem::computePreferredLogicalWidths()

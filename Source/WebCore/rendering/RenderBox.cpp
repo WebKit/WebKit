@@ -164,17 +164,12 @@ LayoutRect RenderBox::borderBoxRectInRegion(RenderRegion* region, RenderBoxRegio
     RenderRegion* startRegion = 0;
     RenderRegion* endRegion = 0;
     flowThread->getRegionRangeForBox(this, startRegion, endRegion);
-
+    
     // FIXME: In a perfect world this condition should never happen.
     if (!startRegion || !endRegion)
         return borderBoxRect();
 
-    // FIXME: Once overflow is implemented this assertion needs to be enabled. Right now the overflow content is painted
-    // in regions outside the box range so the assert is disabled.
-    // ASSERT(clampToStartAndEndRegions(region) == region);
-
-    // FIXME: Remove once boxes are painted inside their region range.
-    region = clampToStartAndEndRegions(region);
+    ASSERT(flowThread->regionInRange(region, startRegion, endRegion));
 
     // Compute the logical width and placement in this region.
     RenderBoxRegionInfo* boxInfo = renderBoxRegionInfo(region, cacheFlag);
@@ -2065,6 +2060,14 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
     auto o = container(repaintContainer, &containerSkipped);
     if (!o)
         return;
+
+    if (o->isRenderFlowThread()) {
+        RenderRegion* firstRegion = 0;
+        RenderRegion* lastRegion = 0;
+        toRenderFlowThread(o)->getRegionRangeForBox(this, firstRegion, lastRegion);
+        if (firstRegion)
+            rect.moveBy(firstRegion->flowThreadPortionRect().location());
+    }
 
     if (isWritingModeRoot() && !isOutOfFlowPositioned())
         flipForWritingMode(rect);
@@ -4274,7 +4277,7 @@ void RenderBox::addLayoutOverflow(const LayoutRect& rect)
     }
 
     if (!m_overflow)
-        m_overflow = adoptPtr(new RenderOverflow(clientBox, borderBoxRect()));
+        m_overflow = adoptRef(new RenderOverflow(clientBox, borderBoxRect()));
     
     m_overflow->addLayoutOverflow(overflowRect);
 }
@@ -4286,7 +4289,7 @@ void RenderBox::addVisualOverflow(const LayoutRect& rect)
         return;
         
     if (!m_overflow)
-        m_overflow = adoptPtr(new RenderOverflow(clientBoxRect(), borderBox));
+        m_overflow = adoptRef(new RenderOverflow(clientBoxRect(), borderBox));
     
     m_overflow->addVisualOverflow(rect);
 }
@@ -4367,7 +4370,10 @@ bool RenderBox::hasUnsplittableScrollingOverflow() const
 
 bool RenderBox::isUnsplittableForPagination() const
 {
-    return isReplaced() || hasUnsplittableScrollingOverflow() || (parent() && isWritingModeRoot());
+    return isReplaced() || hasUnsplittableScrollingOverflow() || (parent() && isWritingModeRoot())
+        // FIXME: Treat multi-column elements as unsplittable for now. Remove once we implement the correct
+        // fragmentation model for multicolumn.
+        || isRenderMultiColumnBlock();
 }
 
 LayoutUnit RenderBox::lineHeight(bool /*firstLine*/, LineDirectionMode direction, LinePositionMode /*linePositionMode*/) const
@@ -4474,9 +4480,25 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(RenderStyle* parentStyle)
     return rect;
 }
 
-LayoutRect RenderBox::overflowRectForPaintRejection() const
+LayoutRect RenderBox::overflowRectForPaintRejection(RenderRegion* region) const
 {
     LayoutRect overflowRect = visualOverflowRect();
+    
+    // When using regions, some boxes might have their frame rect relative to the flow thread, which could
+    // cause the paint rejection algorithm to prevent them from painting when using different width regions.
+    // e.g. an absolutely positioned box with bottom:0px and right:0px would have it's frameRect.x relative
+    // to the flow thread, not the last region (in which it will end up because of bottom:0px)
+    if (region) {
+        if (RenderFlowThread* flowThread = region->flowThread()) {
+            RenderRegion* startRegion = 0;
+            RenderRegion* endRegion = 0;
+            flowThread->getRegionRangeForBox(this, startRegion, endRegion);
+
+            if (startRegion && endRegion)
+                overflowRect.unite(region->visualOverflowRectForBox(this));
+        }
+    }
+    
     if (!m_overflow || !usesCompositedScrolling())
         return overflowRect;
 

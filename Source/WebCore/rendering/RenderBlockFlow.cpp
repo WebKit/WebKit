@@ -1600,12 +1600,19 @@ bool RenderBlockFlow::hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule pag
 
     // See if we're in the last region.
     LayoutUnit pageOffset = offsetFromLogicalTopOfFirstPage() + logicalOffset;
-    RenderRegion* region = flowThread->regionAtBlockOffset(this, pageOffset, this);
+    RenderRegion* region = flowThread->regionAtBlockOffset(this, pageOffset, true);
     if (!region)
         return false;
     if (region->isLastRegion())
         return region->isRenderRegionSet() || region->style().regionFragment() == BreakRegionFragment
             || (pageBoundaryRule == IncludePageBoundary && pageOffset == region->logicalTopForFlowThreadContent());
+
+    RenderRegion* startRegion = 0;
+    RenderRegion* endRegion = 0;
+    flowThread->getRegionRangeForBox(this, startRegion, endRegion);
+
+    if (region == endRegion)
+        return false;
     return true;
 }
 
@@ -3121,7 +3128,7 @@ bool RenderBlockFlow::relayoutForPagination(bool hasSpecifiedPageLogicalHeight, 
     if (!hasColumns())
         return false;
 
-    OwnPtr<RenderOverflow> savedOverflow = m_overflow.release();
+    RefPtr<RenderOverflow> savedOverflow = m_overflow.release();
     if (childrenInline())
         addOverflowFromInlineChildren();
     else

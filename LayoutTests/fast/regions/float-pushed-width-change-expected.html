@@ -1,20 +1,21 @@
 <!doctype html>
 
  <style>
+
+    #content {
+        padding: 5px;
+        border: 1px solid red;
+    }
    
     #float1 {
         float: left;
-        position:absolute;
         width: 150px;
-        height: 102px;
+        height: 100px;
         background-color:green;
-        z-index:-1;
     }
     
     #float2 {
-        margin-top: 30px;
-        margin-left: -30px;
-        float:left;
+        float:right;
         width:200px;
         height:30px;
         background-color:orange
@@ -22,30 +23,21 @@
 
     #region1, #region2, #region3 {
         border: 1px solid black;
+        margin: 10px;
     }
  
     #region1 {
-        width: 170px;
-        height: 80px;
-        padding: 5px;
+        margin-left: 30px;
+        width: 180px;
+        height: 90px;
     }
     
     #region2 {
-        width: 390px;
-        height: 89px;
-        padding-top:1px;
-        padding-left:5px;
-        padding-right:5px;
+        margin-top: 80px;
+        width: 400px;
+        height: 90px;
     }
-    
-    #region3 {
-        width: 385px;
-        height: 80px;
-        padding-left:5px;
-        padding-right:10px;
-        padding-bottom:10px;
-    }
-	
+
    	p.flow1 {
 		clear:both;
 		margin-bottom: 0px;
@@ -57,18 +49,14 @@
 	
 </style>
 
-<p>In the example below, the green float should be at the top of the first region and on the left. It should spill into region two.
-The orange float should be right aligned under the green float because their containing block is flown only in the first region</p>
+<p>In the example below, the green float should be at the top of the first region and on the left. It should overflow the first region.
+The orange float should be right aligned under the green float and should overflow the first region because their containing block (red border) is flowed only in the first region.</p>
+<p>No content should be displayed in the second region.</p>
 
 <div id="region1">
-     <p><img id="float1"></p>
+    <div id="content">
+        <img id="float1"><img id="float2">
+    </div>
 </div>
-<div id="region2">
-    <img id="float2">
-    <p class="flow1">This line of text should not get out of the region.</p>
-</div>
-<div id="region3">
-<p class="flow2">This line of text should not get out of the region. This line of text should not get out of the region.</p>
-<p>This line of text should not get out of the region.</p>
-</div>
+<div id="region2"></div>
 

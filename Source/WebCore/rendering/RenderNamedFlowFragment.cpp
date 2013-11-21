@@ -57,6 +57,8 @@ PassRef<RenderStyle> RenderNamedFlowFragment::createStyle(const RenderStyle& par
     style.get().setFlowThread(parentStyle.flowThread());
     style.get().setRegionThread(parentStyle.regionThread());
     style.get().setRegionFragment(parentStyle.regionFragment());
+    style.get().setOverflowX(parentStyle.overflowX());
+    style.get().setOverflowY(parentStyle.overflowY());
 #if ENABLE(CSS_SHAPES)
     style.get().setShapeInside(parentStyle.shapeInside());
 #endif
@@ -259,35 +261,9 @@ void RenderNamedFlowFragment::restoreRegionObjectsOriginalStyle()
     m_renderObjectRegionStyle.swap(temp);
 }
 
-static bool shouldPaintRegionContentsInPhase(PaintPhase phase)
+RenderNamedFlowThread* RenderNamedFlowFragment::namedFlowThread() const
 {
-    return phase == PaintPhaseBlockBackground
-        || phase == PaintPhaseChildBlockBackground
-        || phase == PaintPhaseSelection
-        || phase == PaintPhaseTextClip;
-}
-
-void RenderNamedFlowFragment::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    if (style().visibility() != VISIBLE)
-        return;
-
-    RenderRegion::paintObject(paintInfo, paintOffset);
-
-    if (!isValid())
-        return;
-
-    // We do not want to paint a region's contents multiple times (for each paint phase of the region object).
-    // Thus, we only paint the region's contents in certain phases.
-    if (!shouldPaintRegionContentsInPhase(paintInfo.phase))
-        return;
-
-    // Delegate the painting of a region's contents to RenderFlowThread.
-    // RenderFlowThread is a self painting layer because it's a positioned object.
-    // RenderFlowThread paints its children, the collected objects.
-    setRegionObjectsRegionStyle();
-    m_flowThread->paintFlowThreadPortionInRegion(paintInfo, this, flowThreadPortionRect(), flowThreadPortionOverflowRect(), LayoutPoint(paintOffset.x(), paintOffset.y()));
-    restoreRegionObjectsOriginalStyle();
+    return toRenderNamedFlowThread(flowThread());
 }
 
 } // namespace WebCore

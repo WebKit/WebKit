@@ -153,12 +153,33 @@ LayoutUnit RenderRegion::logicalHeightOfAllFlowThreadContent() const
     return m_flowThread->isHorizontalWritingMode() ? contentHeight() : contentWidth();
 }
 
-LayoutRect RenderRegion::flowThreadPortionOverflowRect() const
+LayoutRect RenderRegion::flowThreadPortionOverflowRect()
 {
     return overflowRectForFlowThreadPortion(flowThreadPortionRect(), isFirstRegion(), isLastRegion(), VisualOverflow);
 }
 
-LayoutRect RenderRegion::overflowRectForFlowThreadPortion(const LayoutRect& flowThreadPortionRect, bool isFirstPortion, bool isLastPortion, OverflowType overflowType) const
+LayoutPoint RenderRegion::flowThreadPortionLocation() const
+{
+    LayoutPoint portionLocation;
+    LayoutRect portionRect = flowThreadPortionRect();
+
+    if (flowThread()->style().isFlippedBlocksWritingMode()) {
+        LayoutRect flippedFlowThreadPortionRect(portionRect);
+        flowThread()->flipForWritingMode(flippedFlowThreadPortionRect);
+        portionLocation = flippedFlowThreadPortionRect.location();
+    } else
+        portionLocation = portionRect.location();
+
+    return portionLocation;
+}
+
+RenderLayer* RenderRegion::regionContainerLayer() const
+{
+    ASSERT(parent() && parent()->isRenderNamedFlowFragmentContainer());
+    return toRenderBlockFlow(parent())->layer();
+}
+
+LayoutRect RenderRegion::overflowRectForFlowThreadPortion(const LayoutRect& flowThreadPortionRect, bool isFirstPortion, bool isLastPortion, OverflowType overflowType)
 {
     ASSERT(isValid());
 
@@ -170,7 +191,7 @@ LayoutRect RenderRegion::overflowRectForFlowThreadPortion(const LayoutRect& flow
     if ((clipX && clipY) || isLastRegionWithRegionFragmentBreak)
         return flowThreadPortionRect;
 
-    LayoutRect flowThreadOverflow = overflowType == VisualOverflow ? m_flowThread->visualOverflowRect() : m_flowThread->layoutOverflowRect();
+    LayoutRect flowThreadOverflow = overflowType == VisualOverflow ? visualOverflowRectForBox(m_flowThread) : layoutOverflowRectForBox(m_flowThread);
 
     // We are interested about the outline size only when computing the visual overflow.
     LayoutUnit outlineSize = overflowType == VisualOverflow ? LayoutUnit(maximalOutlineSize(PaintPhaseOutline)) : LayoutUnit();
@@ -226,23 +247,6 @@ bool RenderRegion::isLastRegion() const
     ASSERT(isValid());
 
     return m_flowThread->lastRegion() == this;
-}
-
-// Hit Testing
-bool RenderRegion::hitTestContents(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
-{
-    if (!isValid() || action != HitTestForeground)
-        return false;
-
-    LayoutRect boundsRect = borderBoxRectInRegion(locationInContainer.region());
-    boundsRect.moveBy(accumulatedOffset);
-    if (visibleToHitTesting() && locationInContainer.intersects(boundsRect)) {
-        if (m_flowThread->hitTestFlowThreadPortionInRegion(this, flowThreadPortionRect(), flowThreadPortionOverflowRect(), request, result,
-            locationInContainer, LayoutPoint(accumulatedOffset.x() + borderLeft() + paddingLeft(), accumulatedOffset.y() + borderTop() + paddingTop())))
-            return true;
-    }
-
-    return false;
 }
 
 void RenderRegion::incrementAutoLogicalHeightCount()
@@ -338,8 +342,14 @@ void RenderRegion::layoutBlock(bool relayoutChildren, LayoutUnit)
 void RenderRegion::computeOverflowFromFlowThread()
 {
     ASSERT(isValid());
-
-    LayoutRect layoutRect = layoutOverflowRectForBox(m_flowThread);
+    
+    LayoutRect layoutRect;
+    {
+        // When getting the overflow from the flow thread we need to temporarly reset the current flow thread because
+        // we're changing flows.
+        CurrentRenderFlowThreadMaintainer flowThreadMaintainer(m_flowThread);
+        layoutRect = layoutOverflowRectForBox(m_flowThread);
+    }
 
     layoutRect.setLocation(contentBoxRect().location() + (layoutRect.location() - m_flowThreadPortionRect.location()));
 
@@ -353,23 +363,27 @@ void RenderRegion::computeOverflowFromFlowThread()
     updateScrollInfoAfterLayout();
 }
 
-void RenderRegion::repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate) const
+void RenderRegion::repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate)
 {
-    repaintFlowThreadContentRectangle(repaintRect, immediate, flowThreadPortionRect(), flowThreadPortionOverflowRect(), contentBoxRect().location());
+    repaintFlowThreadContentRectangle(repaintRect, immediate, flowThreadPortionRect(), contentBoxRect().location());
 }
 
-void RenderRegion::repaintFlowThreadContentRectangle(const LayoutRect& repaintRect, bool immediate, const LayoutRect& flowThreadPortionRect, const LayoutRect& flowThreadPortionOverflowRect, const LayoutPoint& regionLocation) const
+void RenderRegion::repaintFlowThreadContentRectangle(const LayoutRect& repaintRect, bool immediate, const LayoutRect& flowThreadPortionRect, const LayoutPoint& regionLocation, const LayoutRect* flowThreadPortionClipRect)
 {
     ASSERT(isValid());
 
     // We only have to issue a repaint in this region if the region rect intersects the repaint rect.
     LayoutRect flippedFlowThreadPortionRect(flowThreadPortionRect);
-    LayoutRect flippedFlowThreadPortionOverflowRect(flowThreadPortionOverflowRect);
     flowThread()->flipForWritingMode(flippedFlowThreadPortionRect); // Put the region rects into physical coordinates.
-    flowThread()->flipForWritingMode(flippedFlowThreadPortionOverflowRect);
 
     LayoutRect clippedRect(repaintRect);
-    clippedRect.intersect(flippedFlowThreadPortionOverflowRect);
+
+    if (flowThreadPortionClipRect) {
+        LayoutRect flippedFlowThreadPortionClipRect(*flowThreadPortionClipRect);
+        flowThread()->flipForWritingMode(flippedFlowThreadPortionClipRect);
+        clippedRect.intersect(flippedFlowThreadPortionClipRect);
+    }
+
     if (clippedRect.isEmpty())
         return;
 
@@ -492,9 +506,9 @@ LayoutUnit RenderRegion::logicalBottomOfFlowThreadContentRect(const LayoutRect& 
 
 void RenderRegion::insertedIntoTree()
 {
-    RenderBlockFlow::insertedIntoTree();
-
     attachRegion();
+    if (isValid())
+        RenderBlockFlow::insertedIntoTree();
 }
 
 void RenderRegion::willBeRemovedFromTree()
@@ -595,25 +609,39 @@ void RenderRegion::adjustRegionBoundsFromFlowThreadPortionRect(const IntPoint& l
     UNUSED_PARAM(layerOffset);
 }
 
-
-RenderOverflow* RenderRegion::ensureOverflowForBox(const RenderBox* box)
+void RenderRegion::ensureOverflowForBox(const RenderBox* box, RefPtr<RenderOverflow>& overflow, bool forceCreation)
 {
+    RenderFlowThread* flowThread = this->flowThread();
+    ASSERT(flowThread);
+    
     RenderBoxRegionInfo* boxInfo = renderBoxRegionInfo(box);
-    if (!boxInfo)
-        return 0;
+    if (!boxInfo && !forceCreation)
+        return;
 
-    if (boxInfo->overflow())
-        return boxInfo->overflow();
-
+    if (boxInfo && boxInfo->overflow()) {
+        overflow = boxInfo->overflow();
+        return;
+    }
+    
     LayoutRect borderBox = box->borderBoxRectInRegion(this);
-    borderBox = rectFlowPortionForBox(box, borderBox);
+    LayoutRect clientBox;
+    ASSERT(flowThread->objectShouldPaintInFlowRegion(box, this));
 
-    LayoutRect clientBox = box->clientBoxRectInRegion(this);
-    clientBox = rectFlowPortionForBox(box, clientBox);
+    if (!borderBox.isEmpty()) {
+        borderBox = rectFlowPortionForBox(box, borderBox);
+        
+        clientBox = box->clientBoxRectInRegion(this);
+        clientBox = rectFlowPortionForBox(box, clientBox);
+        
+        flowThread->flipForWritingModeLocalCoordinates(borderBox);
+        flowThread->flipForWritingModeLocalCoordinates(clientBox);
+    }
 
-    boxInfo->createOverflow(clientBox, borderBox);
-
-    return boxInfo->overflow();
+    if (boxInfo) {
+        boxInfo->createOverflow(clientBox, borderBox);
+        overflow = boxInfo->overflow();
+    } else
+        overflow = adoptRef(new RenderOverflow(clientBox, borderBox));
 }
 
 LayoutRect RenderRegion::rectFlowPortionForBox(const RenderBox* box, const LayoutRect& rect) const
@@ -622,12 +650,20 @@ LayoutRect RenderRegion::rectFlowPortionForBox(const RenderBox* box, const Layou
     RenderRegion* endRegion = 0;
     m_flowThread->getRegionRangeForBox(box, startRegion, endRegion);
 
-    // FIXME: Is this writing mode friendly?
     LayoutRect mappedRect = m_flowThread->mapFromLocalToFlowThread(box, rect);
-    if (this != startRegion)
-        mappedRect.shiftYEdgeTo(std::max<LayoutUnit>(logicalTopForFlowThreadContent(), mappedRect.y()));
-    if (this != endRegion)
-        mappedRect.setHeight(std::max<LayoutUnit>(0, std::min<LayoutUnit>(logicalBottomForFlowThreadContent() - mappedRect.y(), mappedRect.height())));
+    if (flowThread()->isHorizontalWritingMode()) {
+        if (this != startRegion)
+            mappedRect.shiftYEdgeTo(std::max<LayoutUnit>(logicalTopForFlowThreadContent(), mappedRect.y()));
+
+        if (this != endRegion)
+            mappedRect.setHeight(std::max<LayoutUnit>(0, std::min<LayoutUnit>(logicalBottomForFlowThreadContent() - mappedRect.y(), mappedRect.height())));
+    } else {
+        if (this != startRegion)
+            mappedRect.shiftXEdgeTo(std::max<LayoutUnit>(logicalTopForFlowThreadContent(), mappedRect.x()));
+            
+        if (this != endRegion)
+            mappedRect.setWidth(std::max<LayoutUnit>(0, std::min<LayoutUnit>(logicalBottomForFlowThreadContent() - mappedRect.x(), mappedRect.width())));
+    }
 
     bool clipX = style().overflowX() != OVISIBLE;
     bool clipY = style().overflowY() != OVISIBLE;
@@ -635,12 +671,16 @@ LayoutRect RenderRegion::rectFlowPortionForBox(const RenderBox* box, const Layou
     if ((clipX && clipY) || isLastRegionWithRegionFragmentBreak)
         mappedRect.intersect(flowThreadPortionRect());
 
-    return m_flowThread->mapFromFlowThreadToLocal(box, mappedRect);
+    return mappedRect.isEmpty() ? mappedRect : m_flowThread->mapFromFlowThreadToLocal(box, mappedRect);
 }
 
 void RenderRegion::addLayoutOverflowForBox(const RenderBox* box, const LayoutRect& rect)
 {
-    RenderOverflow* regionOverflow = ensureOverflowForBox(box);
+    if (rect.isEmpty())
+        return;
+
+    RefPtr<RenderOverflow> regionOverflow;
+    ensureOverflowForBox(box, regionOverflow, false);
 
     if (!regionOverflow)
         return;
@@ -650,29 +690,35 @@ void RenderRegion::addLayoutOverflowForBox(const RenderBox* box, const LayoutRec
 
 void RenderRegion::addVisualOverflowForBox(const RenderBox* box, const LayoutRect& rect)
 {
-    RenderOverflow* regionOverflow = ensureOverflowForBox(box);
+    if (rect.isEmpty())
+        return;
+
+    RefPtr<RenderOverflow> regionOverflow;
+    ensureOverflowForBox(box, regionOverflow, false);
 
     if (!regionOverflow)
         return;
 
-    regionOverflow->addVisualOverflow(rect);
+    LayoutRect flippedRect = rect;
+    flowThread()->flipForWritingModeLocalCoordinates(flippedRect);
+    regionOverflow->addVisualOverflow(flippedRect);
 }
 
 LayoutRect RenderRegion::layoutOverflowRectForBox(const RenderBox* box)
 {
-    RenderOverflow* overflow = ensureOverflowForBox(box);
-    if (!overflow)
-        return box->layoutOverflowRect();
-
+    RefPtr<RenderOverflow> overflow;
+    ensureOverflowForBox(box, overflow, true);
+    
+    ASSERT(overflow);
     return overflow->layoutOverflowRect();
 }
 
 LayoutRect RenderRegion::visualOverflowRectForBox(const RenderBox* box)
 {
-    RenderOverflow* overflow = ensureOverflowForBox(box);
-    if (!overflow)
-        return box->visualOverflowRect();
-
+    RefPtr<RenderOverflow> overflow;
+    ensureOverflowForBox(box, overflow, true);
+    
+    ASSERT(overflow);
     return overflow->visualOverflowRect();
 }
 
@@ -697,10 +743,11 @@ LayoutRect RenderRegion::layoutOverflowRectForBoxForPropagation(const RenderBox*
     return rect;
 }
 
-// FIXME: This doesn't work for writing modes.
 LayoutRect RenderRegion::visualOverflowRectForBoxForPropagation(const RenderBox* box)
 {
     LayoutRect rect = visualOverflowRectForBox(box);
+    flowThread()->flipForWritingModeLocalCoordinates(rect);
+
     return rect;
 }
 

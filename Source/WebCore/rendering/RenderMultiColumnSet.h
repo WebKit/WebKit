@@ -114,7 +114,7 @@ private:
     // balancing. That's why we have an override of this function that is distinct from RenderRegionSet's override.
     virtual bool shouldHaveAutoLogicalHeight() const OVERRIDE { return false; }
     
-    virtual void repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate) const OVERRIDE;
+    virtual void repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate) OVERRIDE;
 
     virtual void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect) OVERRIDE;
 
@@ -129,7 +129,7 @@ private:
     unsigned columnCount() const;
 
     LayoutRect flowThreadPortionRectAt(unsigned index) const;
-    LayoutRect flowThreadPortionOverflowRect(const LayoutRect& flowThreadPortion, unsigned index, unsigned colCount, LayoutUnit colGap) const;
+    LayoutRect flowThreadPortionOverflowRect(const LayoutRect& flowThreadPortion, unsigned index, unsigned colCount, LayoutUnit colGap);
 
     enum ColumnIndexCalculationMode {
         ClampToExistingColumns, // Stay within the range of already existing columns.

@@ -2,9 +2,9 @@
 
  <style>
     #content {
-        -webkit-flow-into: flow1;
         text-align: justify;
         padding: 5px;
+        margin-top: -105px;
     }
     
     #first-box {
@@ -20,7 +20,6 @@
     
     #region1, #region2 {
         border: 1px solid red;
-        -webkit-flow-from: flow1;
     }
 
     #region1 {
@@ -34,11 +33,6 @@
         margin-left: 300px;
         margin-top: 50px;
     }
-
-    #region3 {
-        width: 0px;
-        height: 0px;
-    }
 </style>
 
 <body>
@@ -48,19 +42,20 @@ It is overflowing upwards out of the blue block, and so the portion that overflo
 containing block width. The blue block does not exist in region one, so using some hypothetical made-up width is incorrect.
 The overflow should be spilling out of the top of region two and be painted in region one. 
 
-<div id="content">
-    <div id="first-box">
-        <div id="second-box">
-            <p>These lines should all fit to the width of the block in the second region and spill out of the top of the second
-            region.</P>
-             <p>These lines should all fit to the width of the block in the second region and spill out of the top of the second
-            region.</P>
-        </div>
-    </div>
-</div>
+
 
 <div id="container">
     <div id="region1"></div>
-    <div id="region2"></div>
-    <div id="region3"></div>
+    <div id="region2">
+        <div id="content">
+            <div id="first-box">
+                <div id="second-box">
+                    <p>These lines should all fit to the width of the block in the second region and spill out of the top of the second
+                    region.</P>
+                     <p>These lines should all fit to the width of the block in the second region and spill out of the top of the second
+                    region.</P>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

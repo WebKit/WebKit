@@ -953,7 +953,7 @@ Bug(EFL) fast/images/pdf-as-tiled-background.html
 Bug(EFL) fast/replaced/pdf-as-image.html
 
 # Started failing after sub-pixel layout was enabled.
-Bug(EFL) fast/regions/overflow-last-region-vert-lr.html [ ImageOnlyFailure ]
+Bug(EFL) fast/regions/overflow-last-region-vert-lr.html [ ImageOnlyFailure Pass ]
 Bug(EFL) fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
 
 # Missing showModalDialog implementation
@@ -1546,6 +1546,14 @@ fast/text/international/synthesized-italic-vertical-latin.html [ Skip ]
 # vibration api doesn't support visibilitychange event.
 webkit.org/b/118378 vibration/cancelVibration-after-pagevisibility-changed-to-hidden.html [ Skip ]
 
+# Some tests will fail after the visual overflow patch, they will be fixed shortly.
+webkit.org/b/118665 fast/regions/floats-basic-in-variable-width-regions.html [ ImageOnlyFailure Pass ]
+webkit.org/b/118665 fast/regions/hover-in-second-region.html [ ImageOnlyFailure Pass ]
+webkit.org/b/118665 fast/regions/overflow-not-moving-below-floats-in-variable-width-regions.html [ ImageOnlyFailure Pass ]
+webkit.org/b/118665 fast/regions/overflow-region-transform.html [ ImageOnlyFailure Pass ]
+webkit.org/b/118665 fast/regions/top-overflow-out-of-second-region.html [ ImageOnlyFailure Pass Missing ]
+webkit.org/b/118665 fast/regions/webkit-flow-float-unable-to-push.html [ ImageOnlyFailure Pass ]
+
 webkit.org/b/119782 fast/forms/search-styled.html [ Failure ]
 
 webkit.org/b/15602 fast/css/first-letter-block-change.html [ Missing ]
@@ -1573,7 +1581,6 @@ webkit.org/b/122963 fast/regions/multiple-directionality-changes-in-variable-wid
 webkit.org/b/122963 fast/regions/region-dynamic-after-before.html [ Missing ]
 webkit.org/b/122963 fast/regions/region-generated-content-before-after.html [ Missing ]
 webkit.org/b/122963 fast/regions/text-region-split-small-pagination.html [ Missing ]
-webkit.org/b/122963 fast/regions/top-overflow-out-of-second-region.html [ Missing ]
 
 webkit.org/b/122963 fast/repaint/line-flow-with-floats-in-regions.html [ Missing ]
 webkit.org/b/122963 fast/repaint/overflow-flipped-writing-mode-block-in-regions.html [ Missing ]

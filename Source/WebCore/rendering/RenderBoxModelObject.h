@@ -51,8 +51,9 @@ enum ContentChangeType {
     FullScreenChanged
 };
 
-class KeyframeList;
+class ImageBuffer;
 class InlineFlowBox;
+class KeyframeList;
 class RenderTextFragment;
 class StickyPositionViewportConstraints;
 
@@ -179,7 +180,6 @@ public:
     virtual void setSelectionState(SelectionState) OVERRIDE;
 
     bool canHaveBoxInfoInRegion() const { return !isFloating() && !isReplaced() && !isInline() && !hasColumns() && !isTableCell() && isRenderBlock() && !isRenderSVGBlock(); }
-
 
     void getGeometryForBackgroundImage(const RenderLayerModelObject* paintContainer, IntRect& destRect, IntPoint& phase, IntSize& tileSize) const;
 #if USE(ACCELERATED_COMPOSITING)
@@ -342,6 +342,7 @@ private:
     void drawBoxSideFromPath(GraphicsContext*, const LayoutRect&, const Path&, const class BorderEdge[],
                             float thickness, float drawThickness, BoxSide, const RenderStyle*, 
                             Color, EBorderStyle, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
+    void paintMaskForTextFillBox(ImageBuffer*, const IntRect&, InlineFlowBox*, const LayoutRect&, RenderRegion*);
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderBoxModelObject, isBoxModelObject())

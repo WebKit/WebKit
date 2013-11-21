@@ -49,7 +49,6 @@ webkit.org/b/122963 fast/regions/multiple-directionality-changes-in-variable-wid
 webkit.org/b/122963 fast/regions/region-dynamic-after-before.html [ Missing ]
 webkit.org/b/122963 fast/regions/region-generated-content-before-after.html [ Missing ]
 webkit.org/b/122963 fast/regions/text-region-split-small-pagination.html [ Missing ]
-webkit.org/b/122963 fast/regions/top-overflow-out-of-second-region.html [ Missing ]
 
 webkit.org/b/122963 fast/repaint/japanese-rl-selection-repaint-in-regions.html [ Missing ]
 webkit.org/b/122963 fast/repaint/line-flow-with-floats-in-regions.html [ Missing ]
@@ -483,6 +482,17 @@ webkit.org/b/117975 fast/text/international/synthesized-italic-vertical-latin.ht
 
 # .webkitClosedCaptionsVisible doesn't work with "Automatic" caption mode
 webkit.org/b/118459 media/track/track-legacyapi-with-automatic-mode.html [ Skip ]
+
+# Some tests will fail after the visual overflow patch, they will be fixed shortly.
+webkit.org/b/118665 fast/regions/counters/extract-ordered-lists-in-regions-explicit-counters-005.html [ ImageOnlyFailure Pass ]
+webkit.org/b/118665 fast/regions/floats-basic-in-variable-width-regions.html [ ImageOnlyFailure Pass ]
+webkit.org/b/118665 fast/regions/overflow-nested-regions.html [ ImageOnlyFailure Pass ]
+webkit.org/b/118665 fast/regions/overflow-not-moving-below-floats-in-variable-width-regions.html [ ImageOnlyFailure Pass ]
+webkit.org/b/118665 fast/regions/overflow-region-transform.html [ ImageOnlyFailure Pass ]
+webkit.org/b/118665 fast/regions/shape-inside/shape-inside-on-multiple-regions-with-negative-shape-top.html [ ImageOnlyFailure Pass ]
+webkit.org/b/118665 fast/regions/top-overflow-out-of-second-region.html [ ImageOnlyFailure Pass Missing ]
+webkit.org/b/118665 fast/regions/webkit-flow-float-unable-to-push.html [ ImageOnlyFailure Pass ]
+webkit.org/b/118665 fast/regions/auto-size/autoheight-correct-region-for-lines-2.html [ ImageOnlyFailure Crash Pass ]
 
 # The feature is enabled at build-time, but the whole test set is failing.
 webkit.org/b/120665 media/track/in-band [ Skip ]
