@@ -172,13 +172,6 @@ EncodedJSValue JSC_HOST_CALL jsTestCustomNamedGetterPrototypeFunctionAnotherFunc
     return JSValue::encode(jsUndefined());
 }
 
-static inline bool isObservable(JSTestCustomNamedGetter* jsTestCustomNamedGetter)
-{
-    if (jsTestCustomNamedGetter->hasCustomProperties())
-        return true;
-    return false;
-}
-
 bool JSTestCustomNamedGetterOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     UNUSED_PARAM(handle);

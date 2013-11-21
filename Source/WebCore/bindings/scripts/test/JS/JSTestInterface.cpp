@@ -700,13 +700,6 @@ JSValue jsTestInterfaceSUPPLEMENTALCONSTANT2(ExecState* exec, JSValue, PropertyN
 }
 
 #endif
-static inline bool isObservable(JSTestInterface* jsTestInterface)
-{
-    if (jsTestInterface->hasCustomProperties())
-        return true;
-    return false;
-}
-
 bool JSTestInterfaceOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     JSTestInterface* jsTestInterface = jsCast<JSTestInterface*>(handle.get().asCell());

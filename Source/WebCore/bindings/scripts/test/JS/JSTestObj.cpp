@@ -3306,13 +3306,6 @@ JSValue jsTestObjReadonly(ExecState* exec, JSValue, PropertyName)
     return jsNumber(static_cast<int>(0));
 }
 
-static inline bool isObservable(JSTestObj* jsTestObj)
-{
-    if (jsTestObj->hasCustomProperties())
-        return true;
-    return false;
-}
-
 bool JSTestObjOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     UNUSED_PARAM(handle);

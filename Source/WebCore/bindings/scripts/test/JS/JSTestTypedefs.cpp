@@ -559,13 +559,6 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithException(
     return JSValue::encode(jsUndefined());
 }
 
-static inline bool isObservable(JSTestTypedefs* jsTestTypedefs)
-{
-    if (jsTestTypedefs->hasCustomProperties())
-        return true;
-    return false;
-}
-
 bool JSTestTypedefsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     UNUSED_PARAM(handle);

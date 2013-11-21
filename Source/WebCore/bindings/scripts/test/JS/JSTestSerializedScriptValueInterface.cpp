@@ -238,13 +238,6 @@ void JSTestSerializedScriptValueInterface::visitChildren(JSCell* cell, SlotVisit
     visitor.append(&thisObject->m_cachedReadonlyValue);
 }
 
-static inline bool isObservable(JSTestSerializedScriptValueInterface* jsTestSerializedScriptValueInterface)
-{
-    if (jsTestSerializedScriptValueInterface->hasCustomProperties())
-        return true;
-    return false;
-}
-
 bool JSTestSerializedScriptValueInterfaceOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     UNUSED_PARAM(handle);

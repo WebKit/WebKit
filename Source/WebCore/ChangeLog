@@ -1,3 +1,45 @@
+2013-11-21  Daniel Bates  <dabates@apple.com>
+
+        Only generate isObservable() when IDL specifies GenerateIsReachable
+        https://bugs.webkit.org/show_bug.cgi?id=124729
+
+        Reviewed by Geoffrey Garen.
+
+        We should only generate the static inline function isObservable() when the IDL
+        specifies GenerateIsReachable. Otherwise, this function is unused.
+
+        Added a new test IDL TestGenerateIsReachable.idl and expected results to test that
+        we generate isObservable() when an IDL specifies GenerateIsReachable. Additionally,
+        rebased existing test results.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/CPP/WebDOMTestGenerateIsReachable.cpp: Added.
+        * bindings/scripts/test/CPP/WebDOMTestGenerateIsReachable.h: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestGenerateIsReachable.cpp: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestGenerateIsReachable.h: Added.
+        * bindings/scripts/test/GObject/WebKitDOMTestGenerateIsReachablePrivate.h: Added.
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp: Removed unused function isObservable().
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestException.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp: Added.
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.h: Added.
+        * bindings/scripts/test/JS/JSTestInterface.cpp: Removed unused function isObservable().
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestObj.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp: Ditto.
+        * bindings/scripts/test/JS/JSattribute.cpp: Ditto.
+        * bindings/scripts/test/JS/JSreadonly.cpp: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestGenerateIsReachable.h: Added.
+        * bindings/scripts/test/ObjC/DOMTestGenerateIsReachable.mm: Added.
+        * bindings/scripts/test/ObjC/DOMTestGenerateIsReachableInternal.h: Added.
+        * bindings/scripts/test/TestGenerateIsReachable.idl: Added.
+
 2013-11-21  Beth Dakin  <bdakin@apple.com>
 
         Add a new mode to extend the tile cache beyond the page

@@ -191,13 +191,6 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionPostMessage(E
     return JSValue::encode(jsUndefined());
 }
 
-static inline bool isObservable(JSTestActiveDOMObject* jsTestActiveDOMObject)
-{
-    if (jsTestActiveDOMObject->hasCustomProperties())
-        return true;
-    return false;
-}
-
 bool JSTestActiveDOMObjectOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     UNUSED_PARAM(handle);

@@ -279,15 +279,6 @@ JSValue JSTestEventTarget::indexGetter(ExecState* exec, JSValue slotBase, unsign
     return toJS(exec, thisObj->globalObject(), thisObj->impl().item(index));
 }
 
-static inline bool isObservable(JSTestEventTarget* jsTestEventTarget)
-{
-    if (jsTestEventTarget->hasCustomProperties())
-        return true;
-    if (jsTestEventTarget->impl().hasEventListeners())
-        return true;
-    return false;
-}
-
 bool JSTestEventTargetOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     JSTestEventTarget* jsTestEventTarget = jsCast<JSTestEventTarget*>(handle.get().asCell());

@@ -156,13 +156,6 @@ EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod
     return JSValue::encode(jsUndefined());
 }
 
-static inline bool isObservable(JSTestMediaQueryListListener* jsTestMediaQueryListListener)
-{
-    if (jsTestMediaQueryListListener->hasCustomProperties())
-        return true;
-    return false;
-}
-
 bool JSTestMediaQueryListListenerOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     UNUSED_PARAM(handle);

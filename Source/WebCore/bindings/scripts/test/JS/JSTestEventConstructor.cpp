@@ -198,13 +198,6 @@ JSValue JSTestEventConstructor::getConstructor(VM& vm, JSGlobalObject* globalObj
     return getDOMConstructor<JSTestEventConstructorConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
-static inline bool isObservable(JSTestEventConstructor* jsTestEventConstructor)
-{
-    if (jsTestEventConstructor->hasCustomProperties())
-        return true;
-    return false;
-}
-
 bool JSTestEventConstructorOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     UNUSED_PARAM(handle);

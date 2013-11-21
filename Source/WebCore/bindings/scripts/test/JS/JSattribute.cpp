@@ -141,13 +141,6 @@ JSValue JSattribute::getConstructor(VM& vm, JSGlobalObject* globalObject)
     return getDOMConstructor<JSattributeConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
-static inline bool isObservable(JSattribute* jsattribute)
-{
-    if (jsattribute->hasCustomProperties())
-        return true;
-    return false;
-}
-
 bool JSattributeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     UNUSED_PARAM(handle);
