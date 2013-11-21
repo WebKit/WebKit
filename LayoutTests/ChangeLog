@@ -1,3 +1,15 @@
+2013-11-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Hoist <template> to head when found between </head> and <body> for consistency with <script>
+        https://bugs.webkit.org/show_bug.cgi?id=123949
+
+        Reviewed by Antti Koivisto.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/835fb468fd211054a920fb7612a6dc5043662495
+        and added two more test cases discussed in https://www.w3.org/Bugs/Public/show_bug.cgi?id=23002.
+
+        * html5lib/resources/template.dat:
+
 2013-11-20  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Implement visual overflow for first & last regions

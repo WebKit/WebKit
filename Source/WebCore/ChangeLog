@@ -1,3 +1,40 @@
+2013-11-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Hoist <template> to head when found between </head> and <body> for consistency with <script>
+        https://bugs.webkit.org/show_bug.cgi?id=123949
+
+        Reviewed by Antti Koivisto.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/835fb468fd211054a920fb7612a6dc5043662495
+
+        Move template elements between head and body elements into the head to be consistent with script elements.
+        The HTML5 specification was changed in http://html5.org/tools/web-apps-tracker?from=8217&to=8218.
+
+        Inline comments below are cited from https://www.w3.org/Bugs/Public/show_bug.cgi?id=23002
+        and https://codereview.chromium.org/25900003 for clarity.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag): Add the template element to the list of elements to be hoisted into
+        the head element.
+        (WebCore::HTMLTreeBuilder::resetInsertionModeAppropriately):
+
+        Replace the assertion that isParsingFragment is true when item->node() == m_tree.openElements()->rootNode() since,
+        with this change, we can now invoke resetInsertionMode when parsing a normal document (not fragment) and there is
+        only the html element on the stack of open elements.
+
+        For the second change, consider: <head></head><template>
+
+        This example breaks in the old HTML parser because the template element is handled by "after head" state which
+        pushes the head element back on, processes the template element for "in head", then pops the head element off.
+        EOF is reached, which processes a fake close tag for the template element, which pops the template element off
+        and resets the insertion mode appropriately
+
+        The problem here is that "reset the insertion mode" is going to inspect the bottom-most element on the stack which
+        is now the html element and it will set the mode to "before head". Nothing good happens after this.
+
+        We fix this problem by having the reset algorithm check if the head element pointer is set, and if so, go to after
+        head instead of before head.
+
 2013-11-20  Radu Stavila  <stavila@adobe.com>
 
         [CSS Regions] Implement visual overflow for first & last regions
