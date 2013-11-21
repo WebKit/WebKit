@@ -847,7 +847,7 @@ sub checkForArgumentAndRemoveFromARGVGettingValue($$)
 {
     my ($argToCheck, $valueRef) = @_;
     my @matchingIndices = findMatchingArguments($argToCheck, \@ARGV);
-    return 0 unless ($#matchingIndices != 1);
+    return 0 if ($#matchingIndices != 1);
     splice(@ARGV, $matchingIndices[0], 1);
     return $$valueRef = splice(@ARGV, $matchingIndices[0], 1);
 }

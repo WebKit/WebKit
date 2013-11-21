@@ -1,3 +1,14 @@
+2013-11-21  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        REGRESSION(r159599): webkitdirs.pm spits out warnings at lines 851 and 852
+        https://bugs.webkit.org/show_bug.cgi?id=124697
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitdirs.pm:
+        (checkForArgumentAndRemoveFromARGVGettingValue): Fix check of array size
+        before trying to access to the first element.
+
 2013-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Mark all deprecated symbols in GObject DOM bindings
