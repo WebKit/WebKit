@@ -1,3 +1,14 @@
+2013-11-21  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening.
+
+        Update baselines after r159575.
+
+        * platform/efl/fast/block/float/024-expected.txt:
+        * platform/efl/fast/block/margin-collapse/025-expected.txt:
+        * platform/efl/fast/block/margin-collapse/block-inside-inline/025-expected.txt:
+        * platform/efl/fast/block/margin-collapse/empty-clear-blocks-expected.txt:
+
 2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix Range.insertNode when the inserted node is in the same container as the Range
