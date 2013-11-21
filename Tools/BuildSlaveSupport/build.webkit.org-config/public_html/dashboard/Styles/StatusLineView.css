@@ -139,3 +139,7 @@
 .status-line.bad .message {
     color: rgb(191, 67, 41);
 }
+
+.status-line.linked .label:hover {
+    text-decoration: underline;
+}

@@ -37,6 +37,10 @@
     text-decoration: none;
 }
 
+.queue-view .queueLabel:hover {
+    text-decoration: underline;
+}
+
 .queue-view .queueLabel:not(:first-child) {
     margin-top: 10px;
 }
