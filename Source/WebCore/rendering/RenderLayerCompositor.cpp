@@ -696,6 +696,8 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, CompositingChangeR
                     updateLayerForFooter(page->footerHeight());
                 }
 #endif
+                if (mainFrameBackingIsTiledWithMargin())
+                    m_rootContentLayer->setMasksToBounds(false);
             }
 
             // This layer and all of its descendants have cached repaints rects that are relative to
@@ -2518,6 +2520,19 @@ bool RenderLayerCompositor::mainFrameBackingIsTiled() const
         return false;
 
     return backing->usingTiledBacking();
+}
+
+bool RenderLayerCompositor::mainFrameBackingIsTiledWithMargin() const
+{
+    RenderLayer* layer = m_renderView.layer();
+    if (!layer)
+        return false;
+
+    RenderLayerBacking* backing = layer->backing();
+    if (!backing)
+        return false;
+
+    return backing->tiledBackingHasMargin();
 }
 
 bool RenderLayerCompositor::shouldCompositeOverflowControls() const

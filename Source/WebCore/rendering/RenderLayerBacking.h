@@ -150,6 +150,7 @@ public:
     bool hasUnpositionedOverflowControlsLayers() const;
 
     bool usingTiledBacking() const { return m_usingTiledCacheLayer; }
+    bool tiledBackingHasMargin() const;
     TiledBacking* tiledBacking() const;
     void adjustTiledBackingCoverage();
     
@@ -208,6 +209,8 @@ private:
     void destroyGraphicsLayers();
     
     void willDestroyLayer(const GraphicsLayer*);
+
+    LayoutRect compositedBoundsIncludingMargin() const;
     
     std::unique_ptr<GraphicsLayer> createGraphicsLayer(const String&);
 

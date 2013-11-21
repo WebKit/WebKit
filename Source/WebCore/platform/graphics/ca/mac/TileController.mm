@@ -57,6 +57,10 @@ TileController::TileController(PlatformCALayer* rootPlatformLayer)
     , m_scale(1)
     , m_deviceScaleFactor(1)
     , m_tileCoverage(CoverageForVisibleArea)
+    , m_marginTop(0)
+    , m_marginBottom(0)
+    , m_marginLeft(0)
+    , m_marginRight(0)
     , m_isInWindow(false)
     , m_scrollingPerformanceLoggingEnabled(false)
     , m_aggressivelyRetainsTiles(false)
@@ -281,7 +285,7 @@ bool TileController::tilesWouldChangeForVisibleRect(const FloatRect& newVisibleR
     scaledRect.scale(m_scale);
     IntRect currentCoverageRectInTileCoords(enclosingIntRect(scaledRect));
 
-    IntSize newTileSize = tileSizeForCoverageRect(currentTileCoverageRect);
+    IntSize newTileSize = computeTileSize();
     bool tileSizeChanged = newTileSize != m_tileSize;
     if (tileSizeChanged)
         return true;
@@ -388,7 +392,42 @@ void TileController::setTileDebugBorderColor(Color borderColor)
 
 IntRect TileController::bounds() const
 {
-    return IntRect(IntPoint(), expandedIntSize(m_tileCacheLayer->bounds().size()));
+    IntPoint boundsOriginIncludingMargin(-leftMarginWidth(), -topMarginHeight());
+    IntSize boundsSizeIncludingMargin = expandedIntSize(m_tileCacheLayer->bounds().size());
+    boundsSizeIncludingMargin.expand(leftMarginWidth() + rightMarginWidth(), topMarginHeight() + bottomMarginHeight());
+
+    return IntRect(boundsOriginIncludingMargin, boundsSizeIncludingMargin);
+}
+
+void TileController::adjustRectAtTileIndexForMargin(const TileIndex& tileIndex, IntRect& rect) const
+{
+    if (!hasMargins())
+        return;
+
+    // This is a tile in the top margin.
+    if (m_marginTop && tileIndex.y() < 0) {
+        rect.setY(tileIndex.y() * topMarginHeight());
+        rect.setHeight(topMarginHeight());
+    }
+
+    // This is a tile in the left margin.
+    if (m_marginLeft && tileIndex.x() < 0) {
+        rect.setX(tileIndex.x() * leftMarginWidth());
+        rect.setWidth(leftMarginWidth());
+    }
+
+    IntRect boundsWithoutMargin = IntRect(IntPoint(), expandedIntSize(m_tileCacheLayer->bounds().size()));
+    TileIndex contentTopLeft;
+    TileIndex contentBottomRight;
+    getTileIndexRangeForRect(boundsWithoutMargin, contentTopLeft, contentBottomRight);
+
+    // This is a tile in the bottom margin.
+    if (m_marginBottom && tileIndex.y() > contentBottomRight.y())
+        rect.setHeight(bottomMarginHeight());
+
+    // This is a tile in the right margin.
+    if (m_marginRight && tileIndex.x() > contentBottomRight.x())
+        rect.setWidth(rightMarginWidth());
 }
 
 IntRect TileController::rectForTileIndex(const TileIndex& tileIndex) const
@@ -399,6 +438,11 @@ IntRect TileController::rectForTileIndex(const TileIndex& tileIndex) const
 
     rect.intersect(scaledBounds);
 
+    // These rect computations assume m_tileSize is the correct size to use. However, a tile in the margin area
+    // might be a different size depending on the size of the margins. So adjustRectAtTileIndexForMargin() will
+    // fix the rect we've computed to match the margin sizes if this tile is in the margins.
+    adjustRectAtTileIndexForMargin(tileIndex, rect);
+
     return rect;
 }
 
@@ -408,8 +452,15 @@ void TileController::getTileIndexRangeForRect(const IntRect& rect, TileIndex& to
     clampedRect.scale(m_scale);
     clampedRect.intersect(rect);
 
-    topLeft.setX(std::max(clampedRect.x() / m_tileSize.width(), 0));
-    topLeft.setY(std::max(clampedRect.y() / m_tileSize.height(), 0));
+    if (clampedRect.x() >= 0)
+        topLeft.setX(clampedRect.x() / m_tileSize.width());
+    else
+        topLeft.setX(clampedRect.x() / leftMarginWidth());
+
+    if (clampedRect.y() >= 0)
+        topLeft.setY(clampedRect.y() / m_tileSize.height());
+    else
+        topLeft.setY(clampedRect.y() / topMarginHeight());
 
     int bottomXRatio = ceil((float)clampedRect.maxX() / m_tileSize.width());
     bottomRight.setX(std::max(bottomXRatio - 1, 0));
@@ -426,10 +477,40 @@ FloatRect TileController::computeTileCoverageRect(const FloatRect& previousVisib
         visibleRect.intersect(m_exposedRect);
 
     // If the page is not in a window (for example if it's in a background tab), we limit the tile coverage rect to the visible rect.
-    // Furthermore, if the page can't have scrollbars (for example if its body element has overflow:hidden) it's very unlikely that the
-    // page will ever be scrolled so we limit the tile coverage rect as well.
-    if (!m_isInWindow || m_tileCoverage & CoverageForSlowScrolling)
+    if (!m_isInWindow)
         return visibleRect;
+
+    // If our tile coverage is just for slow-scrolling, then we want to limit the tile coverage to the visible rect, but
+    // we should include the margin tiles if we're close to an edge.
+    if (m_tileCoverage & CoverageForSlowScrolling) {
+        FloatSize coverageSize = visibleRect.size();
+        FloatPoint coverageOrigin = visibleRect.location();
+        float tileWidth = visibleRect.width();
+        float tileHeight = visibleRect.height();
+
+        // We're within one tile from the top, so we should make sure we have a top-margin tile.
+        if (visibleRect.y() < tileHeight) {
+            coverageSize.setHeight(coverageSize.height() + topMarginHeight());
+            coverageOrigin.setY(coverageOrigin.y() - topMarginHeight());
+        }
+
+        // We're within one tile from the left edge, so we should make sure we have a left-margin tile.
+        if (visibleRect.x() < tileWidth) {
+            coverageSize.setWidth(coverageSize.width() + leftMarginWidth());
+            coverageOrigin.setX(coverageOrigin.x() - leftMarginWidth());
+        }
+
+        IntSize layerSize = expandedIntSize(m_tileCacheLayer->bounds().size());
+        // We're within one tile from the bottom edge, so we should make sure we have a bottom-margin tile.
+        if (visibleRect.y() + tileHeight > layerSize.height() - tileHeight)
+            coverageSize.setHeight(coverageSize.height() + bottomMarginHeight());
+
+        // We're within one tile from the right edge, so we should make sure we have a right-margin tile.
+        if (visibleRect.x() + tileWidth > layerSize.width() - tileWidth)
+            coverageSize.setWidth(coverageSize.width() + rightMarginWidth());
+
+        return FloatRect(coverageOrigin, coverageSize);
+    }
 
     bool largeVisibleRectChange = !previousVisibleRect.isEmpty() && !visibleRect.intersects(previousVisibleRect);
     
@@ -445,8 +526,10 @@ FloatRect TileController::computeTileCoverageRect(const FloatRect& previousVisib
 
     if (m_tileCoverage & CoverageForVerticalScrolling && !largeVisibleRectChange)
         coverageVerticalSize *= 3;
+    
+    coverageVerticalSize += topMarginHeight() + bottomMarginHeight();
+    coverageHorizontalSize += leftMarginWidth() + rightMarginWidth();
 
-    // Don't extend coverage before 0 or after the end.
     FloatRect coverageBounds = bounds();
     float coverageLeft = visibleRect.x() - (coverageHorizontalSize - visibleRect.width()) / 2;
     coverageLeft = std::min(coverageLeft, coverageBounds.maxX() - coverageHorizontalSize);
@@ -459,10 +542,10 @@ FloatRect TileController::computeTileCoverageRect(const FloatRect& previousVisib
     return FloatRect(coverageLeft, coverageTop, coverageHorizontalSize, coverageVerticalSize);
 }
 
-IntSize TileController::tileSizeForCoverageRect(const FloatRect& coverageRect) const
+IntSize TileController::computeTileSize() const
 {
     if (m_tileCoverage & CoverageForSlowScrolling) {
-        FloatSize tileSize = coverageRect.size();
+        FloatSize tileSize = m_visibleRect.size();
         tileSize.scale(m_scale);
         return expandedIntSize(tileSize);
     }
@@ -604,7 +687,7 @@ void TileController::revalidateTiles(TileValidationPolicyFlags foregroundValidat
     IntRect coverageRectInTileCoords(enclosingIntRect(scaledRect));
 
     IntSize oldTileSize = m_tileSize;
-    m_tileSize = tileSizeForCoverageRect(tileCoverageRect);
+    m_tileSize = computeTileSize();
     bool tileSizeChanged = m_tileSize != oldTileSize;
 
     if (tileSizeChanged) {
@@ -923,6 +1006,39 @@ void TileController::setScrollingModeIndication(ScrollingModeIndication scrollin
 
     if (m_tiledScrollingIndicatorLayer)
         updateTileCoverageMap();
+}
+
+void TileController::setTileMargins(int marginTop, int marginBottom, int marginLeft, int marginRight)
+{
+    m_marginTop = marginTop;
+    m_marginBottom = marginBottom;
+    m_marginLeft = marginLeft;
+    m_marginRight = marginRight;
+}
+
+bool TileController::hasMargins() const
+{
+    return m_marginTop || m_marginBottom || m_marginLeft || m_marginRight;
+}
+
+int TileController::topMarginHeight() const
+{
+    return m_marginTop;
+}
+
+int TileController::bottomMarginHeight() const
+{
+    return m_marginBottom;
+}
+
+int TileController::leftMarginWidth() const
+{
+    return m_marginLeft;
+}
+
+int TileController::rightMarginWidth() const
+{
+    return m_marginRight;
 }
 
 RefPtr<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect)

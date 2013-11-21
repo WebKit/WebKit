@@ -289,6 +289,8 @@ public:
     
     void didPaintBacking(RenderLayerBacking*);
 
+    bool mainFrameBackingIsTiledWithMargin() const;
+
 private:
     class OverlapMap;
 

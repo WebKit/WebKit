@@ -83,6 +83,14 @@ public:
     
     virtual double retainedTileBackingStoreMemory() const = 0;
 
+    virtual void setTileMargins(int marginTop, int marginBottom, int marginLeft, int marginRight) = 0;
+    virtual bool hasMargins() const = 0;
+
+    virtual int topMarginHeight() const = 0;
+    virtual int bottomMarginHeight() const = 0;
+    virtual int leftMarginWidth() const = 0;
+    virtual int rightMarginWidth() const = 0;
+
     // Exposed for testing
     virtual IntRect tileCoverageRect() const = 0;
     virtual IntRect tileGridExtent() const = 0;

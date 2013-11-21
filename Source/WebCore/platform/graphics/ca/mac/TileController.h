@@ -123,6 +123,12 @@ private:
     virtual IntRect tileCoverageRect() const OVERRIDE;
     virtual PlatformCALayer* tiledScrollingIndicatorLayer() OVERRIDE;
     virtual void setScrollingModeIndication(ScrollingModeIndication) OVERRIDE;
+    virtual void setTileMargins(int marginTop, int marginBottom, int marginLeft, int marginRight) OVERRIDE;
+    virtual bool hasMargins() const OVERRIDE;
+    virtual int topMarginHeight() const OVERRIDE;
+    virtual int bottomMarginHeight() const OVERRIDE;
+    virtual int leftMarginWidth() const OVERRIDE;
+    virtual int rightMarginWidth() const OVERRIDE;
 
     // PlatformCALayerClient
     virtual void platformCALayerLayoutSublayersOfLayer(PlatformCALayer*) OVERRIDE { }
@@ -144,10 +150,11 @@ private:
     IntRect bounds() const;
 
     IntRect rectForTileIndex(const TileIndex&) const;
+    void adjustRectAtTileIndexForMargin(const TileIndex&, IntRect&) const;
     void getTileIndexRangeForRect(const IntRect&, TileIndex& topLeft, TileIndex& bottomRight) const;
 
     FloatRect computeTileCoverageRect(const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect) const;
-    IntSize tileSizeForCoverageRect(const FloatRect&) const;
+    IntSize computeTileSize() const;
 
     void scheduleTileRevalidation(double interval);
     void tileRevalidationTimerFired(Timer<TileController>*);
@@ -220,6 +227,16 @@ private:
     float m_deviceScaleFactor;
 
     TileCoverage m_tileCoverage;
+
+    // m_marginTop and m_marginBottom are the height in pixels of the top and bottom margin tiles. The width
+    // of those tiles will be equivalent to the width of the other tiles in the grid. m_marginRight and
+    // m_marginLeft are the width in pixels of the right and left margin tiles, respectively. The height of
+    // those tiles will be equivalent to the height of the other tiles in the grid.
+    int m_marginTop;
+    int m_marginBottom;
+    int m_marginLeft;
+    int m_marginRight;
+
     bool m_isInWindow;
     bool m_scrollingPerformanceLoggingEnabled;
     bool m_aggressivelyRetainsTiles;

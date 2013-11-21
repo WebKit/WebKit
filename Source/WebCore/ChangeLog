@@ -1,3 +1,72 @@
+2013-11-21  Beth Dakin  <bdakin@apple.com>
+
+        Add a new mode to extend the tile cache beyond the page
+        https://bugs.webkit.org/show_bug.cgi?id=124216
+
+        Reviewed by Simon Fraser.
+
+        This patch makes it possible to give the tile cache a margin of tiles. If there is 
+        a margin of tiles, this patch paints those tiles with the background color. Note 
+        that this patch does not actually give the tile cache a margin at this time.
+
+        You opt into a margined tiled cache by called setTileMargins() with number of 
+        pixels that the margin on that side should be. 
+        * platform/graphics/TiledBacking.h:
+        * platform/graphics/ca/mac/TileController.h:
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::TileController):
+        (WebCore::TileController::tilesWouldChangeForVisibleRect):
+
+        TileController::bounds() now computes the bounds INCLUDING the margin.
+        (WebCore::TileController::bounds):
+
+        adjustRectAtTileIndexForMargin() is a new function that is required to get the 
+        rect size for tiles in the margin right. rectForTileIndex() assumes all tiles 
+        strive to be the size of m_tileSize, but now margin tiles will be whatever the 
+        margin sizes were set to.
+        (WebCore::TileController::adjustRectAtTileIndexForMargin):
+        (WebCore::TileController::rectForTileIndex):
+
+        This is another instance where m_tileSize is not always the right size to use.
+        (WebCore::TileController::getTileIndexRangeForRect):
+
+        The tile coverage rect now might include the margin tiles. Only include them in 
+        slow-scrolling mode if the current position is within one tile of the edge.
+        (WebCore::TileController::computeTileCoverageRect):
+
+        tileSizeForCoverageRect() does not make sense in a world where the coverage rect 
+        will include margin. Instead, this patch implements the current strategy more 
+        explicitly by returning the visibleRect in the slow scrolling case, and in the 
+        process this patch also re-names tileSizeForCoverageRect() to computeTileSize() 
+        since it no longer takes a coverageRect.
+        (WebCore::TileController::computeTileSize):
+        (WebCore::TileController::revalidateTiles):
+
+        New setters and getters for the tile margins on each side.
+        (WebCore::TileController::setTileMargins):
+        (WebCore::TileController::hasMargins):
+        (WebCore::TileController::topMarginHeight):
+        (WebCore::TileController::bottomMarginHeight):
+        (WebCore::TileController::leftMarginWidth):
+        (WebCore::TileController::rightMarginWidth):
+
+        New function to add margin onto the composited bounds if there is one.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::tiledBackingHasMargin):
+        (WebCore::RenderLayerBacking::paintContents):
+        (WebCore::RenderLayerBacking::compositedBoundsIncludingMargin):
+        * rendering/RenderLayerBacking.h:
+
+        Do not set masks to bounds if there is a margin on the root layer.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore::RenderLayerCompositor::mainFrameBackingIsTiledWithMargin):
+        * rendering/RenderLayerCompositor.h:
+
+        Allow background color to paint into the margin tiles.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+
 2013-11-21  Alexey Proskuryakov  <ap@apple.com>
 
         Implement WebCrypto wrapKey
