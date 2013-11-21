@@ -707,6 +707,11 @@ public:
         m_assembler.extub(dest, dest);
     }
 
+    void load8(const void* address, RegisterID dest)
+    {
+        load8(AbsoluteAddress(address), dest);
+    }
+
     void load8PostInc(RegisterID base, RegisterID dest)
     {
         m_assembler.movbMemRegIn(base, dest);
@@ -904,6 +909,14 @@ public:
         }
 
         releaseScratch(scr);
+    }
+
+    void store8(RegisterID src, void* address)
+    {
+        RegisterID destptr = claimScratch();
+        move(TrustedImmPtr(address), destptr);
+        m_assembler.movbRegMem(src, destptr);
+        releaseScratch(destptr);
     }
 
     void store8(TrustedImm32 imm, void* address)
@@ -2437,6 +2450,11 @@ public:
     void nop()
     {
         m_assembler.nop();
+    }
+
+    void memoryFence()
+    {
+        m_assembler.synco();
     }
 
     static FunctionPtr readCallTarget(CodeLocationCall call)

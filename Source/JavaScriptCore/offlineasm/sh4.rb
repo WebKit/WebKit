@@ -1037,6 +1037,8 @@ class Instruction
             $asm.puts "lds #{sh4Operands(operands)}, pr"
         when "stspr"
             $asm.puts "sts pr, #{sh4Operands(operands)}"
+        when "memfence"
+            $asm.puts "synco"
         when "popCalleeSaves"
             $asm.puts "mov.l @r15+, r8"
             $asm.puts "mov.l @r15+, r9"
