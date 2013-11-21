@@ -1094,12 +1094,12 @@ void WebContext::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* 
 {
 #if ENABLE(NETWORK_PROCESS)
     if (m_usesNetworkProcess && m_networkProcess) {
-        m_networkProcess->send(Messages::NetworkProcess::AllowSpecificHTTPSCertificateForHost(certificate->platformCertificateInfo(), host), 0);
+        m_networkProcess->send(Messages::NetworkProcess::AllowSpecificHTTPSCertificateForHost(certificate->certificateInfo(), host), 0);
         return;
     }
 #else
 #if USE(SOUP)
-    m_processes[0]->send(Messages::WebProcess::AllowSpecificHTTPSCertificateForHost(certificate->platformCertificateInfo(), host), 0);
+    m_processes[0]->send(Messages::WebProcess::AllowSpecificHTTPSCertificateForHost(certificate->certificateInfo(), host), 0);
     return;
 #else
     UNUSED_PARAM(certificate);

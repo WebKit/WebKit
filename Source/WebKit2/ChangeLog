@@ -1,3 +1,88 @@
+2013-11-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rename PlatformCertificateInfo to CertificateInfo
+        https://bugs.webkit.org/show_bug.cgi?id=124150
+
+        Reviewed by Darin Adler.
+
+        * GNUmakefile.list.am:
+        * NetworkProcess/AsynchronousNetworkLoaderClient.cpp:
+        (WebKit::AsynchronousNetworkLoaderClient::didReceiveResponse):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::allowSpecificHTTPSCertificateForHost):
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::allowSpecificHTTPSCertificateForHost):
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * Shared/API/c/mac/WKCertificateInfoMac.mm:
+        (WKCertificateInfoCreateWithCertficateChain):
+        (WKCertificateInfoGetCertificateChain):
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::tryUseCertificateInfoForChallenge):
+        (WebKit::AuthenticationManager::useCredentialForChallenge):
+        * Shared/Authentication/AuthenticationManager.h:
+        * Shared/Authentication/AuthenticationManager.messages.in:
+        * Shared/Authentication/mac/AuthenticationManager.mac.mm:
+        (WebKit::AuthenticationManager::tryUseCertificateInfoForChallenge):
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+        * Shared/WebCertificateInfo.h:
+        (WebKit::WebCertificateInfo::create):
+        (WebKit::WebCertificateInfo::certificateInfo):
+        (WebKit::WebCertificateInfo::WebCertificateInfo):
+        * Shared/mac/CertificateInfo.h: Renamed from Source/WebKit2/Shared/mac/PlatformCertificateInfo.h.
+        (WebKit::CertificateInfo::certificateChain):
+        * Shared/mac/CertificateInfo.mm: Renamed from Source/WebKit2/Shared/mac/PlatformCertificateInfo.mm.
+        (WebKit::CertificateInfo::CertificateInfo):
+        (WebKit::CertificateInfo::encode):
+        (WebKit::CertificateInfo::decode):
+        (WebKit::CertificateInfo::dump):
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (CoreIPC::::encodePlatformData):
+        (CoreIPC::::decodePlatformData):
+        * Shared/soup/CertificateInfo.cpp: Renamed from Source/WebKit2/Shared/soup/PlatformCertificateInfo.cpp.
+        (WebKit::CertificateInfo::CertificateInfo):
+        (WebKit::CertificateInfo::~CertificateInfo):
+        (WebKit::CertificateInfo::encode):
+        (WebKit::CertificateInfo::decode):
+        * Shared/soup/CertificateInfo.h: Renamed from Source/WebKit2/Shared/soup/PlatformCertificateInfo.h.
+        (WebKit::CertificateInfo::certificate):
+        (WebKit::CertificateInfo::tlsErrors):
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (CoreIPC::::encodePlatformData):
+        (CoreIPC::::decodePlatformData):
+        * UIProcess/API/gtk/WebKitCertificateInfo.cpp:
+        (webkitCertificateInfoGetCertificateInfo):
+        * UIProcess/API/gtk/WebKitCertificateInfoPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_get_tls_info):
+        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp:
+        (WebKit::AuthenticationChallengeProxy::useCredential):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::allowSpecificHTTPSCertificateForHost):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didCommitLoad):
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResponseWithCertificateInfo):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::allowSpecificHTTPSCertificateForHost):
+
 2013-11-21  Sergio Correia  <sergio.correia@openbossa.org>
 
         [EFL][GTK][WK2] Build fix after r159641

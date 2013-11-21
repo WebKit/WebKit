@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PlatformCertificateInfo.h"
+#include "CertificateInfo.h"
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
@@ -37,34 +37,34 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PlatformCertificateInfo::PlatformCertificateInfo()
+CertificateInfo::CertificateInfo()
     : m_tlsErrors(static_cast<GTlsCertificateFlags>(0))
 {
 }
 
-PlatformCertificateInfo::PlatformCertificateInfo(const ResourceResponse& response)
+CertificateInfo::CertificateInfo(const ResourceResponse& response)
     : m_certificate(response.soupMessageCertificate())
     , m_tlsErrors(response.soupMessageTLSErrors())
 {
 }
 
-PlatformCertificateInfo::PlatformCertificateInfo(const ResourceError& resourceError)
+CertificateInfo::CertificateInfo(const ResourceError& resourceError)
     : m_certificate(resourceError.certificate())
     , m_tlsErrors(static_cast<GTlsCertificateFlags>(resourceError.tlsErrors()))
 {
 }
 
-PlatformCertificateInfo::PlatformCertificateInfo(GTlsCertificate* certificate, GTlsCertificateFlags tlsErrors)
+CertificateInfo::CertificateInfo(GTlsCertificate* certificate, GTlsCertificateFlags tlsErrors)
     : m_certificate(certificate)
     , m_tlsErrors(tlsErrors)
 {
 }
 
-PlatformCertificateInfo::~PlatformCertificateInfo()
+CertificateInfo::~CertificateInfo()
 {
 }
 
-void PlatformCertificateInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
+void CertificateInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     if (!m_certificate) {
         encoder << false;
@@ -84,7 +84,7 @@ void PlatformCertificateInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << static_cast<uint32_t>(m_tlsErrors);
 }
 
-bool PlatformCertificateInfo::decode(CoreIPC::ArgumentDecoder& decoder, PlatformCertificateInfo& certificateInfo)
+bool CertificateInfo::decode(CoreIPC::ArgumentDecoder& decoder, CertificateInfo& certificateInfo)
 {
     bool hasCertificate;
     if (!decoder.decode(hasCertificate))
@@ -102,8 +102,8 @@ bool PlatformCertificateInfo::decode(CoreIPC::ArgumentDecoder& decoder, Platform
     GRefPtr<GByteArray> certificate = adoptGRef(certificateData);
 
     GTlsBackend* backend = g_tls_backend_get_default();
-    certificateInfo.m_certificate = adoptGRef(G_TLS_CERTIFICATE(g_initable_new(g_tls_backend_get_certificate_type(backend), 0, 0,
-                                                                               "certificate", certificate.get(), NULL)));
+    certificateInfo.m_certificate = adoptGRef(G_TLS_CERTIFICATE(g_initable_new(
+        g_tls_backend_get_certificate_type(backend), 0, 0, "certificate", certificate.get(), nullptr)));
 
     uint32_t tlsErrors;
     if (!decoder.decode(tlsErrors))

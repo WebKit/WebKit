@@ -28,7 +28,7 @@
 
 #import "ArgumentCodersCF.h"
 #import "DataReference.h"
-#import "PlatformCertificateInfo.h"
+#import "CertificateInfo.h"
 #import "WebKitSystemInterface.h"
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/ResourceError.h>
@@ -170,7 +170,7 @@ void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder& encoder, 
 
     id peerCertificateChain = [userInfo objectForKey:@"NSErrorPeerCertificateChainKey"];
     ASSERT(!peerCertificateChain || [peerCertificateChain isKindOfClass:[NSArray class]]);
-    encoder << PlatformCertificateInfo((CFArrayRef)peerCertificateChain);
+    encoder << CertificateInfo((CFArrayRef)peerCertificateChain);
 }
 
 bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder& decoder, ResourceError& resourceError)
@@ -196,7 +196,7 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder& decoder, 
     if (!decoder.decode(stringUserInfoMap))
         return false;
 
-    PlatformCertificateInfo certificate;
+    CertificateInfo certificate;
     if (!decoder.decode(certificate))
         return false;
 

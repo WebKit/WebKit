@@ -30,6 +30,7 @@
 
 #include "AsynchronousNetworkLoaderClient.h"
 #include "AuthenticationManager.h"
+#include "CertificateInfo.h"
 #include "DataReference.h"
 #include "Logging.h"
 #include "NetworkBlobRegistry.h"
@@ -37,7 +38,6 @@
 #include "NetworkProcess.h"
 #include "NetworkProcessConnectionMessages.h"
 #include "NetworkResourceLoadParameters.h"
-#include "PlatformCertificateInfo.h"
 #include "RemoteNetworkingContext.h"
 #include "ShareableResource.h"
 #include "SharedMemory.h"

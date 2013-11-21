@@ -27,7 +27,7 @@
 #include "config.h"
 #include "WebCoreArgumentCoders.h"
 
-#include "PlatformCertificateInfo.h"
+#include "CertificateInfo.h"
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -70,12 +70,12 @@ bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder& decode
 
 void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder& encoder, const ResourceError& resourceError)
 {
-    encoder << PlatformCertificateInfo(resourceError);
+    encoder << CertificateInfo(resourceError);
 }
 
 bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder& decoder, ResourceError& resourceError)
 {
-    PlatformCertificateInfo certificateInfo;
+    CertificateInfo certificateInfo;
     if (!decoder.decode(certificateInfo))
         return false;
 

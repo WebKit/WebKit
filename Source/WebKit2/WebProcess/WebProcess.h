@@ -74,7 +74,7 @@ class NetworkProcessConnection;
 class WebResourceLoadScheduler;
 #else
 #if USE(SOUP)
-class PlatformCertificateInfo;
+class CertificateInfo;
 #endif
 #endif
 
@@ -174,7 +174,7 @@ public:
     void updateActivePages();
 
 #if !ENABLE(NETWORK_PROCESS) && USE(SOUP)
-    void allowSpecificHTTPSCertificateForHost(const PlatformCertificateInfo&, const String& host);
+    void allowSpecificHTTPSCertificateForHost(const CertificateInfo&, const String& host);
 #endif
 
 private:

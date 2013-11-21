@@ -40,9 +40,9 @@ namespace WebCore {
 
 namespace WebKit {
 
+class CertificateInfo;
 class ChildProcess;
 class Download;
-class PlatformCertificateInfo;
 class WebFrame;
 
 class AuthenticationManager : public WebProcessSupplement, public NetworkProcessSupplement, public CoreIPC::MessageReceiver {
@@ -59,7 +59,7 @@ public:
     // Called for downloads with or without the NetworkProcess
     void didReceiveAuthenticationChallenge(Download*, const WebCore::AuthenticationChallenge&);
 
-    void useCredentialForChallenge(uint64_t challengeID, const WebCore::Credential&, const PlatformCertificateInfo&);
+    void useCredentialForChallenge(uint64_t challengeID, const WebCore::Credential&, const CertificateInfo&);
     void continueWithoutCredentialForChallenge(uint64_t challengeID);
     void cancelChallenge(uint64_t challengeID);
     
@@ -69,7 +69,7 @@ private:
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
-    bool tryUsePlatformCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const PlatformCertificateInfo&);
+    bool tryUseCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const CertificateInfo&);
 
     uint64_t establishIdentifierForChallenge(const WebCore::AuthenticationChallenge&);
 

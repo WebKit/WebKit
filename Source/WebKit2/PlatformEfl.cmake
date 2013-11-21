@@ -49,7 +49,7 @@ list(APPEND WebKit2_SOURCES
     Shared/linux/SeccompFilters/Syscall.cpp
     Shared/linux/SeccompFilters/SyscallPolicy.cpp
 
-    Shared/soup/PlatformCertificateInfo.cpp
+    Shared/soup/CertificateInfo.cpp
     Shared/soup/WebCoreArgumentCodersSoup.cpp
 
     UIProcess/DefaultUndoController.cpp
