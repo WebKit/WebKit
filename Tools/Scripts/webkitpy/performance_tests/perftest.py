@@ -55,14 +55,22 @@ _log = logging.getLogger(__name__)
 
 
 class PerfTestMetric(object):
-    def __init__(self, metric, unit=None, iterations=None):
+    def __init__(self, path, test_file_name, metric, unit=None, iterations=None):
         # FIXME: Fix runner.js to report correct metric names
         self._iterations = iterations or []
         self._unit = unit or self.metric_to_unit(metric)
         self._metric = self.time_unit_to_metric(self._unit) if metric == 'Time' else metric
+        self._path = path
+        self._test_file_name = test_file_name
 
     def name(self):
         return self._metric
+
+    def path(self):
+        return self._path
+
+    def test_file_name(self):
+        return self._test_file_name
 
     def has_values(self):
         return bool(self._iterations)
@@ -132,10 +140,10 @@ class PerfTest(object):
         if should_log and self._description:
             _log.info('DESCRIPTION: %s' % self._description)
 
-        results = {}
+        results = []
         for metric_name in self._ordered_metrics_name:
             metric = self._metrics[metric_name]
-            results[metric.name()] = metric.grouped_iteration_values()
+            results.append(metric)
             if should_log:
                 legacy_chromium_bot_compatible_name = self.test_name_without_file_extension().replace('/', ': ')
                 self.log_statistics(legacy_chromium_bot_compatible_name + ': ' + metric.name(),
@@ -193,7 +201,7 @@ class PerfTest(object):
 
     def _ensure_metrics(self, metric_name, unit=None):
         if metric_name not in self._metrics:
-            self._metrics[metric_name] = PerfTestMetric(metric_name, unit)
+            self._metrics[metric_name] = PerfTestMetric(self.test_name_without_file_extension().split('/'), self._test_name, metric_name, unit)
             self._ordered_metrics_name.append(metric_name)
         return self._metrics[metric_name]
 

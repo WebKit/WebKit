@@ -50,22 +50,22 @@ class MockPort(TestPort):
 
 class TestPerfTestMetric(unittest.TestCase):
     def test_init_set_missing_unit(self):
-        self.assertEqual(PerfTestMetric('Time', iterations=[1, 2, 3, 4, 5]).unit(), 'ms')
-        self.assertEqual(PerfTestMetric('Malloc', iterations=[1, 2, 3, 4, 5]).unit(), 'bytes')
-        self.assertEqual(PerfTestMetric('JSHeap', iterations=[1, 2, 3, 4, 5]).unit(), 'bytes')
+        self.assertEqual(PerfTestMetric(['some', 'test'], 'some/test.html', 'Time', iterations=[1, 2, 3, 4, 5]).unit(), 'ms')
+        self.assertEqual(PerfTestMetric(['some', 'test'], 'some/test.html', 'Malloc', iterations=[1, 2, 3, 4, 5]).unit(), 'bytes')
+        self.assertEqual(PerfTestMetric(['some', 'test'], 'some/test.html', 'JSHeap', iterations=[1, 2, 3, 4, 5]).unit(), 'bytes')
 
     def test_init_set_time_metric(self):
-        self.assertEqual(PerfTestMetric('Time', 'ms').name(), 'Time')
-        self.assertEqual(PerfTestMetric('Time', 'fps').name(), 'FrameRate')
-        self.assertEqual(PerfTestMetric('Time', 'runs/s').name(), 'Runs')
+        self.assertEqual(PerfTestMetric(['some', 'test'], 'some/test.html', 'Time', 'ms').name(), 'Time')
+        self.assertEqual(PerfTestMetric(['some', 'test'], 'some/test.html', 'Time', 'fps').name(), 'FrameRate')
+        self.assertEqual(PerfTestMetric(['some', 'test'], 'some/test.html', 'Time', 'runs/s').name(), 'Runs')
 
     def test_has_values(self):
-        self.assertFalse(PerfTestMetric('Time').has_values())
-        self.assertTrue(PerfTestMetric('Time', iterations=[1]).has_values())
+        self.assertFalse(PerfTestMetric(['some', 'test'], 'some/test.html', 'Time').has_values())
+        self.assertTrue(PerfTestMetric(['some', 'test'], 'some/test.html', 'Time', iterations=[1]).has_values())
 
     def test_append(self):
-        metric = PerfTestMetric('Time')
-        metric2 = PerfTestMetric('Time')
+        metric = PerfTestMetric(['some', 'test'], 'some/test.html', 'Time')
+        metric2 = PerfTestMetric(['some', 'test'], 'some/test.html', 'Time')
         self.assertFalse(metric.has_values())
         self.assertFalse(metric2.has_values())
 

@@ -261,25 +261,21 @@ class PerfTestsRunner(object):
             if value:
                 contents[key] = value
 
-        for test, metrics in self._results:
-            for metric_name, iteration_values in metrics.iteritems():
-                if not isinstance(iteration_values, list):  # We can't reports results without individual measurements.
-                    continue
-
-                tests = contents['tests']
-                path = test.test_name_without_file_extension().split('/')
-                for i in range(0, len(path)):
-                    is_last_token = i + 1 == len(path)
-                    url = view_source_url('PerformanceTests/' + (test.test_name() if is_last_token else '/'.join(path[0:i + 1])))
-                    tests.setdefault(path[i], {'url': url})
-                    current_test = tests[path[i]]
-                    if is_last_token:
-                        current_test.setdefault('metrics', {})
-                        assert metric_name not in current_test['metrics']
-                        current_test['metrics'][metric_name] = {'current': iteration_values}
-                    else:
-                        current_test.setdefault('tests', {})
-                        tests = current_test['tests']
+        for metric in self._results:
+            tests = contents['tests']
+            path = metric.path()
+            for i in range(0, len(path)):
+                is_last_token = i + 1 == len(path)
+                url = view_source_url('PerformanceTests/' + (metric.test_file_name() if is_last_token else '/'.join(path[0:i + 1])))
+                tests.setdefault(path[i], {'url': url})
+                current_test = tests[path[i]]
+                if is_last_token:
+                    current_test.setdefault('metrics', {})
+                    assert metric.name() not in current_test['metrics']
+                    current_test['metrics'][metric.name()] = {'current': metric.grouped_iteration_values()}
+                else:
+                    current_test.setdefault('tests', {})
+                    tests = current_test['tests']
 
         return contents
 
@@ -348,7 +344,7 @@ class PerfTestsRunner(object):
             start_time = time.time()
             metrics = test.run(self._options.time_out_ms)
             if metrics:
-                self._results.append((test, metrics))
+                self._results += metrics
             else:
                 failures += 1
                 _log.error('FAILED')

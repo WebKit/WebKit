@@ -1,3 +1,31 @@
+2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        PerfTestRunner._generate_results_dict shouldn't depend on test objects
+        https://bugs.webkit.org/show_bug.cgi?id=124623
+
+        Removed the dependency on test objects from results JSON generation.
+        This allows single test.run to return metrics for multiple tests
+
+        Reviewed by Antti Koivisto.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTestMetric.__init__): Takes the test path and test name.
+        (PerfTestMetric.path): Added.
+        (PerfTestMetric.test_file_name): Added.
+        (PerfTest.run): Accumulate PerfTestMetric objects instead of raw values.
+        (PerfTest._ensure_metrics): Instantiate PerfTestMetric with the test path and test name.
+        The path is going to have the names of subtests at the end once we support them.
+
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (TestPerfTestMetric.test_init_set_missing_unit): Specify the test path and test name.
+        (TestPerfTestMetric.test_init_set_time_metric): Ditto.
+        (TestPerfTestMetric.test_has_values): Ditto.
+        (TestPerfTestMetric.test_append): Ditto.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (_generate_results_dict): Only use metrics.
+        (_run_tests_set): Accumulate metrics as supposed to (test, metrics) pairs.
+
 2013-11-21  Manuel Rego Casasnovas  <rego@igalia.com>
 
         REGRESSION(r159599): webkitdirs.pm spits out warnings at lines 851 and 852
