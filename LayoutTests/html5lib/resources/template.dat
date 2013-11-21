@@ -1269,3 +1269,21 @@
 |       <template>
 |         content
 |           <span>
+
+#data
+<body><table><tr><td><select><template>Foo</template><caption>A</table>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             <select>
+|               <template>
+|                 content
+|                   "Foo"
+|       <caption>
+|         "A"

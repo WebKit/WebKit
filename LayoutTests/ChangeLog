@@ -1,5 +1,14 @@
 2013-11-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        [HTML parser] reset insertion mode appropriate must check for "in select in table" mode
+        https://bugs.webkit.org/show_bug.cgi?id=123850
+
+        Reviewed by Antti Koivisto.
+
+        * html5lib/resources/template.dat:
+
+2013-11-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         Clear TemplateContentDocumentFragment::m_host when HTMLTemplateElement is destroyed
         https://bugs.webkit.org/show_bug.cgi?id=122806
 
