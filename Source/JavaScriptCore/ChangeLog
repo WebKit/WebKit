@@ -1,3 +1,19 @@
+2013-11-21  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        [MIPS] Build fails since r159545.
+        https://bugs.webkit.org/show_bug.cgi?id=124716
+
+        Reviewed by Michael Saboff.
+
+        Add missing implementations in MacroAssembler and LLInt for MIPS.
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::sync):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::store8):
+        (JSC::MacroAssemblerMIPS::memoryFence):
+        * offlineasm/mips.rb:
+
 2013-11-21  Julien Brianceau  <jbriance@cisco.com>
 
         Fix sh4 build after r159545.

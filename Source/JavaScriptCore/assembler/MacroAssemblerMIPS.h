@@ -992,6 +992,12 @@ public:
         }
     }
 
+    void store8(RegisterID src, void* address)
+    {
+        move(TrustedImmPtr(address), addrTempRegister);
+        m_assembler.sb(src, addrTempRegister, 0);
+    }
+
     void store8(TrustedImm32 imm, void* address)
     {
         /*
@@ -2721,6 +2727,11 @@ public:
     void nop()
     {
         m_assembler.nop();
+    }
+
+    void memoryFence()
+    {
+        m_assembler.sync();
     }
 
     static FunctionPtr readCallTarget(CodeLocationCall call)

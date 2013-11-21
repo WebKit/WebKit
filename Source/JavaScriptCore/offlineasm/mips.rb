@@ -905,6 +905,8 @@ class Instruction
         when "pichdrra"
             $asm.putStr("OFFLINE_ASM_CPLOAD($31)")
             $asm.puts "move $s4, $gp"
+        when "memfence"
+            $asm.puts "sync"
         else
             lowerDefault
         end

@@ -193,6 +193,11 @@ public:
         emitInst(0x00000000);
     }
 
+    void sync()
+    {
+        emitInst(0x0000000f);
+    }
+
     /* Need to insert one load data delay nop for mips1.  */
     void loadDelayNop()
     {
