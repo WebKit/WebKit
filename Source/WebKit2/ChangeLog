@@ -1,3 +1,50 @@
+2013-11-20  Brady Eidson  <beidson@apple.com>
+
+        Add more infrastructure for ServerConnection communication between Web and Database processes
+        https://bugs.webkit.org/show_bug.cgi?id=124693
+
+        Reviewed by Anders Carlsson.
+
+        * DatabaseProcess/DatabaseToWebProcessConnection.cpp:
+        (WebKit::DatabaseToWebProcessConnection::establishIDBConnection):
+        (WebKit::DatabaseToWebProcessConnection::removeDatabaseProcessIDBConnection): Added for WebProcess to be able
+          to invalidate the DatabaseProcess side of a server connection.
+        * DatabaseProcess/DatabaseToWebProcessConnection.h:
+        * DatabaseProcess/DatabaseToWebProcessConnection.messages.in:
+
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::DatabaseProcessIDBConnection):
+        (WebKit::DatabaseProcessIDBConnection::disconnectedFromWebProcess): Added for future cleanup.
+        (WebKit::DatabaseProcessIDBConnection::establishConnection):
+        (WebKit::DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata): Callback to the WebProcess, even if
+          it is just dummy data for now.
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+        (WebKit::DatabaseProcessIDBConnection::create):
+
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::create): Register the new object with the WebToDatabaseProcessConnection.
+        (WebKit::WebIDBServerConnection::~WebIDBServerConnection): Remove from the WebToDatabaseProcessConnection.
+        (WebKit::WebIDBServerConnection::getOrEstablishIDBDatabaseMetadata):
+        (WebKit::WebIDBServerConnection::didGetOrEstablishIDBDatabaseMetadata): Callback from the DatabaseProcess,
+          a no-op for now.
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.messages.in: Copied from Source/WebKit2/DatabaseProcess/DatabaseToWebProcessConnection.messages.in.
+
+        * WebProcess/Databases/WebToDatabaseProcessConnection.cpp:
+        (WebKit::WebToDatabaseProcessConnection::didReceiveMessage):
+        (WebKit::WebToDatabaseProcessConnection::didClose):
+        (WebKit::WebToDatabaseProcessConnection::registerWebIDBServerConnection): Hold a collection of all
+          server connections for messaging.
+        (WebKit::WebToDatabaseProcessConnection::removeWebIDBServerConnection): Remove a connection from the collection,
+          and also message the DatabaseProcess that it’s gone away.
+        * WebProcess/Databases/WebToDatabaseProcessConnection.h:
+
+        Project files, etc etc:
+        * DerivedSources.make:
+        * Scripts/webkit2/messages.py:
+        (struct_or_class):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-11-18  Sam Weinig  <sam@webkit.org>
 
         WebPageGroup's should keep track of what processes they are being used by

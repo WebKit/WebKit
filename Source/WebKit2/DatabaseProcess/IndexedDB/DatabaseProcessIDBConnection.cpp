@@ -26,14 +26,20 @@
 #include "config.h"
 #include "DatabaseProcessIDBConnection.h"
 
-#include "DatabaseToWebProcessConnection.h"
-
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
+
+#include "DatabaseToWebProcessConnection.h"
+#include "WebCoreArgumentCoders.h"
+#include "WebIDBServerConnectionMessages.h"
+#include <WebCore/IDBDatabaseMetadata.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
-DatabaseProcessIDBConnection::DatabaseProcessIDBConnection(uint64_t serverConnectionIdentifier)
-    : m_serverConnectionIdentifier(serverConnectionIdentifier)
+DatabaseProcessIDBConnection::DatabaseProcessIDBConnection(DatabaseToWebProcessConnection& connection, uint64_t serverConnectionIdentifier)
+    : m_connection(connection)
+    , m_serverConnectionIdentifier(serverConnectionIdentifier)
 {
 }
 
@@ -41,16 +47,30 @@ DatabaseProcessIDBConnection::~DatabaseProcessIDBConnection()
 {
 }
 
+void DatabaseProcessIDBConnection::disconnectedFromWebProcess()
+{
+    // Do any necessary cleanup work here.
+}
+
 void DatabaseProcessIDBConnection::establishConnection(const String& databaseName, const SecurityOriginData& openingOrigin, const SecurityOriginData& mainFrameOrigin)
 {
-    // FIXME: This method is successfully called by messaging from the WebProcess.
-    // Now implement it.
+    // This method should only be called once, so the stored database name should still be null.
+    // Also, it is invalid to set the stored database name to the null string.
+    ASSERT(m_databaseName.isNull());
+    ASSERT(!databaseName.isNull());
+
+    m_databaseName = databaseName;
+    m_openingOrigin = openingOrigin;
+    m_mainFrameOrigin = mainFrameOrigin;
 }
 
 void DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata()
 {
-    // FIXME: This method is successfully called by messaging from the WebProcess.
-    // Now implement it.
+    // FIXME: This method is successfully called by messaging from the WebProcess, and calls back with dummy data.
+    // Needs real implementation.
+
+    IDBDatabaseMetadata data;
+    send(Messages::WebIDBServerConnection::DidGetOrEstablishIDBDatabaseMetadata(false, data));
 }
 
 CoreIPC::Connection* DatabaseProcessIDBConnection::messageSenderConnection()

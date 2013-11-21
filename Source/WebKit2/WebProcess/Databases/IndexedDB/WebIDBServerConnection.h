@@ -30,16 +30,14 @@
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
 #include "MessageSender.h"
+#include <WebCore/IDBDatabaseMetadata.h>
 #include <WebCore/IDBServerConnection.h>
 
 namespace WebKit {
 
 class WebIDBServerConnection FINAL : public WebCore::IDBServerConnection, public CoreIPC::MessageSender {
 public:
-    static PassRefPtr<WebIDBServerConnection> create(const String& databaseName, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin)
-    {
-        return adoptRef(new WebIDBServerConnection(databaseName, openingOrigin, mainFrameOrigin));
-    }
+    static PassRefPtr<WebIDBServerConnection> create(const String& databaseName, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin);
 
     virtual ~WebIDBServerConnection();
 
@@ -81,12 +79,19 @@ public:
     virtual void cursorPrefetchIteration(WebCore::IDBCursorBackend&, const WebCore::CursorPrefetchIterationOperation&, std::function<void()> completionCallback) OVERRIDE;
     virtual void cursorPrefetchReset(WebCore::IDBCursorBackend&, int usedPrefetches) OVERRIDE;
 
+    // Message handlers.
+    void didReceiveWebIDBServerConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
+
+    // CoreIPC::MessageSender
+    virtual uint64_t messageSenderDestinationID() OVERRIDE { return m_serverConnectionIdentifier; }
+
 private:
     WebIDBServerConnection(const String& databaseName, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin);
 
     // CoreIPC::MessageSender
     virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
-    virtual uint64_t messageSenderDestinationID() OVERRIDE { return m_serverConnectionIdentifier; }
+
+    void didGetOrEstablishIDBDatabaseMetadata(bool success, const WebCore::IDBDatabaseMetadata&);
 
     uint64_t m_serverConnectionIdentifier;
 

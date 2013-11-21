@@ -35,6 +35,7 @@
 
 namespace WebKit {
 
+class WebIDBServerConnection;
 class WebProcessIDBDatabaseBackend;
 
 class WebToDatabaseProcessConnection : public RefCounted<WebToDatabaseProcessConnection>, public CoreIPC::Connection::Client, public CoreIPC::MessageSender {
@@ -47,7 +48,8 @@ public:
     
     CoreIPC::Connection* connection() const { return m_connection.get(); }
 
-    void didReceiveNetworkProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
+    void registerWebIDBServerConnection(WebIDBServerConnection&);
+    void removeWebIDBServerConnection(WebIDBServerConnection&);
 
 private:
     WebToDatabaseProcessConnection(CoreIPC::Connection::Identifier);
@@ -62,6 +64,8 @@ private:
     virtual uint64_t messageSenderDestinationID() OVERRIDE { return 0; }
 
     RefPtr<CoreIPC::Connection> m_connection;
+
+    HashMap<uint64_t, WebIDBServerConnection*> m_webIDBServerConnections;
 };
 
 } // namespace WebKit

@@ -1,3 +1,12 @@
+2013-11-20  Brady Eidson  <beidson@apple.com>
+
+        Add more infrastructure for ServerConnection communication between Web and Database processes
+        https://bugs.webkit.org/show_bug.cgi?id=124693
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in:
+
 2013-11-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Hoist <template> to head when found between </head> and <body> for consistency with <script>

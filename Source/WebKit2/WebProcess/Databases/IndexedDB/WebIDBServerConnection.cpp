@@ -35,6 +35,7 @@
 #include "WebProcess.h"
 #include "WebToDatabaseProcessConnection.h"
 
+#include <WebCore/IDBDatabaseMetadata.h>
 #include <WebCore/SecurityOrigin.h>
 
 using namespace WebCore;
@@ -46,6 +47,13 @@ static uint64_t generateServerConnectionIdentifier()
     ASSERT(isMainThread());
     DEFINE_STATIC_LOCAL(uint64_t, identifier, (0));
     return ++identifier;
+}
+
+PassRefPtr<WebIDBServerConnection> WebIDBServerConnection::create(const String& databaseName, const SecurityOrigin& openingOrigin, const SecurityOrigin& mainFrameOrigin)
+{
+    RefPtr<WebIDBServerConnection> result = adoptRef(new WebIDBServerConnection(databaseName, openingOrigin, mainFrameOrigin));
+    WebProcess::shared().webToDatabaseProcessConnection()->registerWebIDBServerConnection(*result);
+    return result.release();
 }
 
 WebIDBServerConnection::WebIDBServerConnection(const String& databaseName, const SecurityOrigin& openingOrigin, const SecurityOrigin& mainFrameOrigin)
@@ -60,6 +68,7 @@ WebIDBServerConnection::WebIDBServerConnection(const String& databaseName, const
 
 WebIDBServerConnection::~WebIDBServerConnection()
 {
+    WebProcess::shared().webToDatabaseProcessConnection()->removeWebIDBServerConnection(*this);
 }
 
 bool WebIDBServerConnection::isClosed()
@@ -73,7 +82,13 @@ void WebIDBServerConnection::deleteDatabase(const String& name, BoolCallbackFunc
 
 void WebIDBServerConnection::getOrEstablishIDBDatabaseMetadata(GetIDBDatabaseMetadataFunction completionCallback)
 {
+    // FIXME: Save the completionCallback to perform this request is complete.
     send(Messages::DatabaseProcessIDBConnection::GetOrEstablishIDBDatabaseMetadata());
+}
+
+void WebIDBServerConnection::didGetOrEstablishIDBDatabaseMetadata(bool, const IDBDatabaseMetadata&)
+{
+    // FIXME: Lookup the appropriate completionCallback to perform with these results.
 }
 
 void WebIDBServerConnection::close()

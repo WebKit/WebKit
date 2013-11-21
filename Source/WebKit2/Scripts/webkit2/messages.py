@@ -176,6 +176,7 @@ def struct_or_class(namespace, type):
         'WebCore::FloatPoint3D',
         'WebCore::FileChooserSettings',
         'WebCore::GrammarDetail',
+        'WebCore::IDBDatabaseMetadata',
         'WebCore::IdentityTransformOperation',
         'WebCore::KeypressCommand',
         'WebCore::Length',

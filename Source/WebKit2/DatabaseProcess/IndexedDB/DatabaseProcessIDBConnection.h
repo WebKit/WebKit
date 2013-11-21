@@ -30,17 +30,18 @@
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
+#include "SecurityOriginData.h"
+#include <wtf/text/WTFString.h>
+
 namespace WebKit {
 
 class DatabaseToWebProcessConnection;
 
-struct SecurityOriginData;
-
 class DatabaseProcessIDBConnection : public RefCounted<DatabaseProcessIDBConnection>, public CoreIPC::MessageSender {
 public:
-    static RefPtr<DatabaseProcessIDBConnection> create(uint64_t serverConnectionIdentifier)
+    static RefPtr<DatabaseProcessIDBConnection> create(DatabaseToWebProcessConnection& connection, uint64_t serverConnectionIdentifier)
     {
-        return adoptRef(new DatabaseProcessIDBConnection(serverConnectionIdentifier));
+        return adoptRef(new DatabaseProcessIDBConnection(connection, serverConnectionIdentifier));
     }
 
     virtual ~DatabaseProcessIDBConnection();
@@ -48,8 +49,10 @@ public:
     // Message handlers.
     void didReceiveDatabaseProcessIDBConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
+    void disconnectedFromWebProcess();
+
 private:
-    DatabaseProcessIDBConnection(uint64_t serverConnectionIdentifier);
+    DatabaseProcessIDBConnection(DatabaseToWebProcessConnection&, uint64_t idbConnectionIdentifier);
 
     // CoreIPC::MessageSender
     virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
@@ -59,8 +62,12 @@ private:
     void establishConnection(const String& databaseName, const SecurityOriginData& openingOrigin, const SecurityOriginData& mainFrameOrigin);
     void getOrEstablishIDBDatabaseMetadata();
 
-    RefPtr<DatabaseToWebProcessConnection> m_connection;
+    Ref<DatabaseToWebProcessConnection> m_connection;
     uint64_t m_serverConnectionIdentifier;
+
+    String m_databaseName;
+    SecurityOriginData m_openingOrigin;
+    SecurityOriginData m_mainFrameOrigin;
 };
 
 } // namespace WebKit

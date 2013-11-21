@@ -35,6 +35,7 @@ VPATH = \
     $(WebKit2)/Shared/Network/CustomProtocols \
     $(WebKit2)/WebProcess/ApplicationCache \
     $(WebKit2)/WebProcess/Cookies \
+    $(WebKit2)/WebProcess/Databases/IndexedDB \
     $(WebKit2)/WebProcess/FullScreen \
     $(WebKit2)/WebProcess/Geolocation \
     $(WebKit2)/WebProcess/IconDatabase \
@@ -67,39 +68,40 @@ MESSAGE_RECEIVERS = \
     DatabaseProcessIDBConnection \
     DatabaseProcessProxy \
     DatabaseToWebProcessConnection \
+    DownloadProxy \
     DrawingArea \
     DrawingAreaProxy \
-    DownloadProxy \
     EventDispatcher \
+    NPObjectMessageReceiver \
+    NetworkConnectionToWebProcess \
     NetworkProcess \
     NetworkProcessConnection \
     NetworkProcessProxy \
     NetworkResourceLoader \
-    NPObjectMessageReceiver \
     PluginControllerProxy \
     PluginProcess \
     PluginProcessConnection \
     PluginProcessConnectionManager \
     PluginProcessProxy \
     PluginProxy \
-    StorageManager \
-    WebApplicationCacheManager \
-    WebApplicationCacheManagerProxy \
-    WebCookieManager \
-    WebCookieManagerProxy \
-    WebConnection \
-    NetworkConnectionToWebProcess \
     RemoteLayerTreeHost \
     SecItemShim \
     SecItemShimProxy \
     StorageAreaMap \
+    StorageManager \
+    WebApplicationCacheManager \
+    WebApplicationCacheManagerProxy \
+    WebConnection \
     WebContext \
+    WebCookieManager \
+    WebCookieManagerProxy \
     WebDatabaseManager \
     WebDatabaseManagerProxy \
     WebFullScreenManager \
     WebFullScreenManagerProxy \
     WebGeolocationManager \
     WebGeolocationManagerProxy \
+    WebIDBServerConnection \
     WebIconDatabase \
     WebIconDatabaseProxy \
     WebInspector \

@@ -591,6 +591,8 @@
 		51B15A8513843A3900321AD8 /* EnvironmentUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */; };
 		51B3005012529D0E000B5CA0 /* WebBackForwardListCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B3004E12529D0E000B5CA0 /* WebBackForwardListCF.cpp */; };
 		51B3005112529D0E000B5CA0 /* WebPageProxyCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B3004F12529D0E000B5CA0 /* WebPageProxyCF.cpp */; };
+		51C96118183D294700D2002E /* WebIDBServerConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C96116183D294700D2002E /* WebIDBServerConnectionMessageReceiver.cpp */; };
+		51C96119183D294700D2002E /* WebIDBServerConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C96117183D294700D2002E /* WebIDBServerConnectionMessages.h */; };
 		51CBBA0F165219B6005BE8FD /* NetworkResourceLoadParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51CBBA0D165219B6005BE8FD /* NetworkResourceLoadParameters.cpp */; };
 		51CBBA10165219B6005BE8FD /* NetworkResourceLoadParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CBBA0E165219B6005BE8FD /* NetworkResourceLoadParameters.h */; };
 		51D02F64132EC5B900BEAA96 /* WebIconDatabaseMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D02F63132EC5B900BEAA96 /* WebIconDatabaseMessageReceiver.cpp */; };
@@ -2112,6 +2114,9 @@
 		51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EnvironmentUtilities.h; path = unix/EnvironmentUtilities.h; sourceTree = "<group>"; };
 		51B3004E12529D0E000B5CA0 /* WebBackForwardListCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebBackForwardListCF.cpp; path = cf/WebBackForwardListCF.cpp; sourceTree = "<group>"; };
 		51B3004F12529D0E000B5CA0 /* WebPageProxyCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPageProxyCF.cpp; path = cf/WebPageProxyCF.cpp; sourceTree = "<group>"; };
+		51C96115183C95FF00D2002E /* WebIDBServerConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebIDBServerConnection.messages.in; sourceTree = "<group>"; };
+		51C96116183D294700D2002E /* WebIDBServerConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebIDBServerConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
+		51C96117183D294700D2002E /* WebIDBServerConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIDBServerConnectionMessages.h; sourceTree = "<group>"; };
 		51CBBA0D165219B6005BE8FD /* NetworkResourceLoadParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkResourceLoadParameters.cpp; path = Network/NetworkResourceLoadParameters.cpp; sourceTree = "<group>"; };
 		51CBBA0E165219B6005BE8FD /* NetworkResourceLoadParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkResourceLoadParameters.h; path = Network/NetworkResourceLoadParameters.h; sourceTree = "<group>"; };
 		51D02F63132EC5B900BEAA96 /* WebIconDatabaseMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebIconDatabaseMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -3834,6 +3839,7 @@
 				51290991183ACEAF005522A6 /* WebIDBServerConnection.h */,
 				51E351F1180F5C7500E53BE9 /* WebIDBFactoryBackend.cpp */,
 				51E351F2180F5C7500E53BE9 /* WebIDBFactoryBackend.h */,
+				51C96115183C95FF00D2002E /* WebIDBServerConnection.messages.in */,
 			);
 			path = IndexedDB;
 			sourceTree = "<group>";
@@ -5230,10 +5236,6 @@
 		C0CE729D1247E71D00BC0EC4 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
-				75E749E5180DBB9800088BA6 /* WebOriginDataManagerMessageReceiver.cpp */,
-				75E749E6180DBB9800088BA6 /* WebOriginDataManagerMessages.h */,
-				75E749E7180DBB9800088BA6 /* WebOriginDataManagerProxyMessageReceiver.cpp */,
-				75E749E8180DBB9800088BA6 /* WebOriginDataManagerProxyMessages.h */,
 				512F58A012A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp */,
 				512F58A112A883AD00629530 /* AuthenticationManagerMessages.h */,
 				E17AE2C216B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb */,
@@ -5316,6 +5318,8 @@
 				BC0E606012D6BA910012A72A /* WebGeolocationManagerMessages.h */,
 				BC0E618012D6CB1D0012A72A /* WebGeolocationManagerProxyMessageReceiver.cpp */,
 				BC0E618112D6CB1D0012A72A /* WebGeolocationManagerProxyMessages.h */,
+				51C96116183D294700D2002E /* WebIDBServerConnectionMessageReceiver.cpp */,
+				51C96117183D294700D2002E /* WebIDBServerConnectionMessages.h */,
 				51D02F63132EC5B900BEAA96 /* WebIconDatabaseMessageReceiver.cpp */,
 				51D02F67132EC73700BEAA96 /* WebIconDatabaseMessages.h */,
 				51D02F68132EC73700BEAA96 /* WebIconDatabaseProxyMessageReceiver.cpp */,
@@ -5330,6 +5334,10 @@
 				33D3A3C71339617900709BE4 /* WebMediaCacheManagerProxyMessages.h */,
 				31BA9248148830810062EDB5 /* WebNotificationManagerMessageReceiver.cpp */,
 				31BA9249148830810062EDB5 /* WebNotificationManagerMessages.h */,
+				75E749E5180DBB9800088BA6 /* WebOriginDataManagerMessageReceiver.cpp */,
+				75E749E6180DBB9800088BA6 /* WebOriginDataManagerMessages.h */,
+				75E749E7180DBB9800088BA6 /* WebOriginDataManagerProxyMessageReceiver.cpp */,
+				75E749E8180DBB9800088BA6 /* WebOriginDataManagerProxyMessages.h */,
 				29D55DEF161BF9F10031A2E3 /* WebPageGroupProxyMessageReceiver.cpp */,
 				29D55DF0161BF9F10031A2E3 /* WebPageGroupProxyMessages.h */,
 				C0CE729E1247E71D00BC0EC4 /* WebPageMessageReceiver.cpp */,
@@ -5865,6 +5873,7 @@
 				BCA0EF7F12331E78007D3CFB /* WebUndoStep.h in Headers */,
 				1AC7537C183A9FDB0072CB15 /* PageLoadState.h in Headers */,
 				BCDB86C11200FB97007254BE /* WebURL.h in Headers */,
+				51C96119183D294700D2002E /* WebIDBServerConnectionMessages.h in Headers */,
 				BCE2315D122C30CA00D5C35A /* WebURLRequest.h in Headers */,
 				BC90A1D2122DD55E00CC8C50 /* WebURLResponse.h in Headers */,
 				F6113E25126CE1820057D0A7 /* WebUserContentURLPattern.h in Headers */,
@@ -7211,6 +7220,7 @@
 				29CD55AB128E294F00133C85 /* WKAccessibilityWebPageObject.mm in Sources */,
 				1AC7537F183BE50F0072CB15 /* DataReference.cpp in Sources */,
 				512E34E4130B4D0500ABD19A /* WKApplicationCacheManager.cpp in Sources */,
+				51C96118183D294700D2002E /* WebIDBServerConnectionMessageReceiver.cpp in Sources */,
 				BC4075F3124FF0270068F20A /* WKArray.cpp in Sources */,
 				512F58F512A88A5400629530 /* WKAuthenticationChallenge.cpp in Sources */,
 				51E351CA180F2CCC00E53BE9 /* IDBUtilities.cpp in Sources */,

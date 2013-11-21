@@ -28,6 +28,8 @@
 #include "WebToDatabaseProcessConnection.h"
 
 #include "DatabaseToWebProcessConnectionMessages.h"
+#include "WebIDBServerConnection.h"
+#include "WebIDBServerConnectionMessages.h"
 #include "WebProcess.h"
 #include <wtf/RunLoop.h>
 
@@ -47,17 +49,41 @@ WebToDatabaseProcessConnection::~WebToDatabaseProcessConnection()
 {
 }
 
-void WebToDatabaseProcessConnection::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&)
+void WebToDatabaseProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
 {
+    if (decoder.messageReceiverName() == Messages::WebIDBServerConnection::messageReceiverName()) {
+        HashMap<uint64_t, WebIDBServerConnection*>::iterator connectionIterator = m_webIDBServerConnections.find(decoder.destinationID());
+        if (connectionIterator != m_webIDBServerConnections.end())
+            connectionIterator->value->didReceiveWebIDBServerConnectionMessage(connection, decoder);
+        return;
+    }
+    
+    ASSERT_NOT_REACHED();
 }
 
-void WebToDatabaseProcessConnection::didClose(CoreIPC::Connection*)
+void WebToDatabaseProcessConnection::didClose(CoreIPC::Connection* connection)
 {
     WebProcess::shared().webToDatabaseProcessConnectionClosed(this);
 }
 
 void WebToDatabaseProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName)
 {
+}
+
+void WebToDatabaseProcessConnection::registerWebIDBServerConnection(WebIDBServerConnection& connection)
+{
+    ASSERT(!m_webIDBServerConnections.contains(connection.messageSenderDestinationID()));
+    m_webIDBServerConnections.set(connection.messageSenderDestinationID(), &connection);
+
+}
+
+void WebToDatabaseProcessConnection::removeWebIDBServerConnection(WebIDBServerConnection& connection)
+{
+    ASSERT(m_webIDBServerConnections.contains(connection.messageSenderDestinationID()));
+
+    send(Messages::DatabaseToWebProcessConnection::RemoveDatabaseProcessIDBConnection(connection.messageSenderDestinationID()));
+
+    m_webIDBServerConnections.remove(connection.messageSenderDestinationID());
 }
 
 } // namespace WebKit
