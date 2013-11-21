@@ -214,7 +214,6 @@ def struct_or_class(namespace, type):
         'WebKit::TextCheckerState',
         'WebKit::WebNavigationDataStore',
         'WebKit::WebPageCreationParameters',
-        'WebKit::WebPageGroupData',
         'WebKit::WebPreferencesStore',
         'WebKit::WebProcessCreationParameters',
         'WebKit::WindowGeometry',

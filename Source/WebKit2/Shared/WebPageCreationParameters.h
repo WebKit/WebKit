@@ -60,7 +60,7 @@ struct WebPageCreationParameters {
     
     WebPreferencesStore store;
     DrawingAreaType drawingAreaType;
-    uint64_t pageGroupID;
+    WebPageGroupData pageGroupData;
 
     bool drawsBackground;
     bool drawsTransparentBackground;

@@ -30,7 +30,6 @@
 #include "WebPageGroupProxyMessages.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
-#include "WebProcessMessages.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringConcatenate.h>
 
@@ -190,16 +189,6 @@ void WebPageGroup::removeAllUserContent()
     m_data.userStyleSheets.clear();
     m_data.userScripts.clear();
     sendToAllProcessesInGroup(Messages::WebPageGroupProxy::RemoveAllUserContent(), m_data.pageGroupID);
-}
-
-bool WebPageGroup::addProcess(WebProcessProxy& process)
-{
-    return m_processes.add(&process).isNewEntry;
-}
-
-void WebPageGroup::disconnectProcess(WebProcessProxy& process)
-{
-    m_processes.remove(&process);
 }
 
 } // namespace WebKit

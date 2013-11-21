@@ -38,12 +38,11 @@ class WebProcessProxy;
 
 class WebContextObjCObjectGraphEncoder {
 public:
-    explicit WebContextObjCObjectGraphEncoder(ObjCObjectGraph*, WebProcessProxy*);
+    explicit WebContextObjCObjectGraphEncoder(ObjCObjectGraph*);
     void encode(CoreIPC::ArgumentEncoder&) const;
 
 private:
     ObjCObjectGraph* m_objectGraph;
-    WebProcessProxy* m_process;
 };
 
 class WebContextObjCObjectGraphDecoder {

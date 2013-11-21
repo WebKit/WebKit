@@ -1,3 +1,68 @@
+2013-11-21  Dan Bernstein  <mitz@apple.com>
+
+        Reverted r159603, as it appears to have caused Safari’s Web processes to crash on launch.
+
+        Requested by Sam Weinig.
+
+        * Scripts/webkit2/messages.py:
+        (struct_or_class):
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/mac/ObjCObjectGraphCoders.h:
+        * Shared/mac/ObjCObjectGraphCoders.mm:
+        (WebKit::ObjCObjectGraphEncoder::baseEncode):
+        (WebKit::WebContextObjCObjectGraphEncoderImpl::WebContextObjCObjectGraphEncoderImpl):
+        (WebKit::WebContextObjCObjectGraphEncoderImpl::encode):
+        (WebKit::InjectedBundleObjCObjectGraphEncoderImpl::encode):
+        (WebKit::WebContextObjCObjectGraphEncoder::WebContextObjCObjectGraphEncoder):
+        (WebKit::WebContextObjCObjectGraphEncoder::encode):
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        (WebKit::WebConnectionToWebProcess::encodeMessageBody):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess):
+        (WebKit::WebContext::createWebPage):
+        (WebKit::WebContext::postMessageToInjectedBundle):
+        (WebKit::WebContext::didReceiveSyncMessage):
+        * UIProcess/WebContextUserMessageCoders.h:
+        (WebKit::WebContextUserMessageEncoder::WebContextUserMessageEncoder):
+        (WebKit::WebContextUserMessageEncoder::encode):
+        (WebKit::WebContextUserMessageDecoder::decode):
+        * UIProcess/WebPageGroup.cpp:
+        * UIProcess/WebPageGroup.h:
+        (WebKit::WebPageGroup::sendToAllProcessesInGroup):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::create):
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::loadURL):
+        (WebKit::WebPageProxy::loadURLRequest):
+        (WebKit::WebPageProxy::loadFile):
+        (WebKit::WebPageProxy::loadData):
+        (WebKit::WebPageProxy::loadHTMLString):
+        (WebKit::WebPageProxy::loadAlternateHTMLString):
+        (WebKit::WebPageProxy::loadPlainTextString):
+        (WebKit::WebPageProxy::loadWebArchiveData):
+        (WebKit::WebPageProxy::postMessageToInjectedBundle):
+        (WebKit::WebPageProxy::initializeCreationParameters):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::disconnect):
+        (WebKit::WebProcessProxy::createWebPage):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h:
+        (WebKit::InjectedBundleUserMessageEncoder::encode):
+        (WebKit::InjectedBundleUserMessageDecoder::decode):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::webPageGroup):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2013-11-20  Brady Eidson  <beidson@apple.com>
 
         Add more infrastructure for ServerConnection communication between Web and Database processes

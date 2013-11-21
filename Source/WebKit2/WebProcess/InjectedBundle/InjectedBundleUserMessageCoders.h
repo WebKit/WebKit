@@ -53,15 +53,10 @@ public:
     {
     }
 
-    InjectedBundleUserMessageEncoder(const InjectedBundleUserMessageEncoder&, API::Object* root)
-        : Base(root)
-    {
-    }
-
     void encode(CoreIPC::ArgumentEncoder& encoder) const
     {
         API::Object::Type type = API::Object::Type::Null;
-        if (baseEncode(encoder, *this, type))
+        if (baseEncode(encoder, type))
             return;
 
         switch (type) {
@@ -138,21 +133,10 @@ public:
             break;
         }
         case API::Object::Type::PageGroup: {
-            bool isNewPageGroup;
-            if (!decoder.decode(isNewPageGroup))
+            WebPageGroupData pageGroupData;
+            if (!decoder.decode(pageGroupData))
                 return false;
-            
-            if (isNewPageGroup) {
-                WebPageGroupData pageGroupData;
-                if (!decoder.decode(pageGroupData))
-                    return false;
-                coder.m_root = WebProcess::shared().createWebPageGroup(pageGroupData.pageGroupID, pageGroupData);
-            } else {
-                uint64_t pageGroupID;
-                if (!decoder.decode(pageGroupID))
-                    return false;
-                coder.m_root = WebProcess::shared().webPageGroup(pageGroupID);
-            }
+            coder.m_root = WebProcess::shared().webPageGroup(pageGroupData);
             break;
         }
 #if PLATFORM(MAC)
