@@ -324,7 +324,7 @@ PassRefPtr<RenderStyle> HTMLPlugInImageElement::customStyleForRenderer()
 
 void HTMLPlugInImageElement::updateWidgetCallback(Node* n, unsigned)
 {
-    static_cast<HTMLPlugInImageElement*>(n)->updateWidgetIfNecessary();
+    toHTMLPlugInImageElement(n)->updateWidgetIfNecessary();
 }
 
 void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)

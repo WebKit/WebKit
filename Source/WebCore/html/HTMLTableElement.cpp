@@ -71,7 +71,7 @@ HTMLTableCaptionElement* HTMLTableElement::caption() const
 {
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
         if (child->hasTagName(captionTag))
-            return static_cast<HTMLTableCaptionElement*>(child);
+            return toHTMLTableCaptionElement(child);
     }
     return 0;
 }
