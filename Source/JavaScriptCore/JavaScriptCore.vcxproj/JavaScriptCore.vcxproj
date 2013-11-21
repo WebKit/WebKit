@@ -1266,6 +1266,7 @@
     <ClInclude Include="..\runtime\SimpleTypedArrayController.h" />
     <ClInclude Include="..\runtime\SmallStrings.h" />
     <ClInclude Include="..\runtime\SparseArrayValueMap.h" />
+    <ClInclude Include="..\runtime\StackAlignment.h" />
     <ClInclude Include="..\runtime\StrictEvalActivation.h" />
     <ClInclude Include="..\runtime\StringConstructor.h" />
     <ClInclude Include="..\runtime\StringObject.h" />

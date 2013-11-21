@@ -1,3 +1,17 @@
+2013-11-21  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should know what the stack alignment conventions are
+        https://bugs.webkit.org/show_bug.cgi?id=124736
+
+        Reviewed by Mark Lam.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/StackAlignment.h: Added.
+        (JSC::stackAlignmentBytes):
+        (JSC::stackAlignmentRegisters):
+
 2013-11-21  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         [MIPS] Build fails since r159545.
