@@ -1,5 +1,17 @@
 2013-11-21  Radu Stavila  <stavila@adobe.com>
 
+        Created test for positioned fragmented content which overflows the regions.
+
+        [CSS Regions] Fragmented content that is relatively positioned get sliced (and overflows in the next region)
+        https://bugs.webkit.org/show_bug.cgi?id=117122
+
+        Reviewed by Antti Koivisto.
+
+        * fast/regions/positioned-fragmented-content-expected.html: Added.
+        * fast/regions/positioned-fragmented-content.html: Added.
+
+2013-11-21  Radu Stavila  <stavila@adobe.com>
+
         Added test for visual overflow with transformed content in regions.
 
         [CSS Regions] Transform applied to content node causes overflow to be hidden
