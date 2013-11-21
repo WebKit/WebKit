@@ -624,6 +624,11 @@ class FunctionDetectionTest(CppStyleTestBase):
             detection_line=2)
 
 
+class Cpp11StyleTest(CppStyleTestBase):
+    def test_rvaule_reference_at_end_of_line(self):
+        self.assert_lint('T&&', '')
+
+
 class CppStyleTest(CppStyleTestBase):
 
     def test_asm_lines_ignored(self):

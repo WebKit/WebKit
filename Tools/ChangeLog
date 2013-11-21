@@ -1,3 +1,16 @@
+2013-11-20  László Langó  <lango@inf.u-szeged.hu>
+
+        check-webkit-style should support C++11 rvalue references.
+        https://bugs.webkit.org/show_bug.cgi?id=123406
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_style):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (Cpp11StyleTest):
+        (Cpp11StyleTest.test_rvaule_reference_at_end_of_line):
+
 2013-11-20  Dean Jackson  <dino@apple.com>
 
         Allow settings to be shown/hidden on build.webkit.org/dashboard

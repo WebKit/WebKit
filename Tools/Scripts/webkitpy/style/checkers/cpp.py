@@ -2623,7 +2623,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
         error(line_number, 'whitespace/newline', 4,
               'More than one command on the same line')
 
-    if cleansed_line.strip().endswith('||') or cleansed_line.strip().endswith('&&'):
+    if cleansed_line.strip().endswith('||') or cleansed_line.strip().endswith(' &&'):
         error(line_number, 'whitespace/operators', 4,
               'Boolean expressions that span multiple lines should have their '
               'operators on the left side of the line instead of the right side.')
