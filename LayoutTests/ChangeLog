@@ -1,3 +1,14 @@
+2013-11-21  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [EFL] Fix accessibility media-element expectation
+        https://bugs.webkit.org/show_bug.cgi?id=124711
+
+        Unreviewed EFL gardening.
+
+        Changing main element AXRole AXUnknown -> AXEmbedded.
+
+        * platform/efl/accessibility/media-element-expected.txt:
+
 2013-11-21  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening.
