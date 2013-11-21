@@ -32,7 +32,6 @@
 #import <crt_externs.h>
 #import <mach-o/dyld.h>
 #import <mach/machine.h>
-#import <runtime/InitializeThreading.h>
 #import <servers/bootstrap.h>
 #import <spawn.h>
 #import <sys/param.h>

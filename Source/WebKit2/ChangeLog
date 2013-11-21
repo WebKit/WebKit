@@ -1,3 +1,22 @@
+2013-11-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up WebKit2 initialization
+        https://bugs.webkit.org/show_bug.cgi?id=124696
+
+        Reviewed by Sam Weinig.
+        
+        Call InitializeWebKit2() everywhere we need to do one-time
+        initialization in WebKit2, rather than having a hotch-potch
+        of init code.
+
+        * Shared/APIObject.cpp:
+        (API::Object::Object):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm: Removed an unused #include.
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::create):
+
 2013-11-21  Dan Bernstein  <mitz@apple.com>
 
         Reverted r159603, as it appears to have caused Safari’s Web processes to crash on launch.

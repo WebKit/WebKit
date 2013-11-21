@@ -46,6 +46,7 @@
 #include "WebGeolocationManagerProxy.h"
 #include "WebIconDatabase.h"
 #include "WebKeyValueStorageManager.h"
+#include "WebKit2Initialize.h"
 #include "WebMediaCacheManagerProxy.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebPluginSiteDataManager.h"
@@ -60,7 +61,6 @@
 #include <WebCore/LinkHash.h>
 #include <WebCore/Logging.h>
 #include <WebCore/ResourceRequest.h>
-#include <runtime/InitializeThreading.h>
 #include <runtime/Operations.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
@@ -102,9 +102,7 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webContextCounter, ("WebCon
 
 PassRefPtr<WebContext> WebContext::create(const String& injectedBundlePath)
 {
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
-    RunLoop::initializeMainRunLoop();
+    InitializeWebKit2();
     return adoptRef(new WebContext(ProcessModelSharedSecondaryProcess, injectedBundlePath));
 }
 
