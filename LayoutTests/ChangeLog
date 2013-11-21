@@ -1,3 +1,15 @@
+2013-11-21  Radu Stavila  <stavila@adobe.com>
+
+        Added test for visual overflow with transformed content in regions.
+
+        [CSS Regions] Transform applied to content node causes overflow to be hidden
+        https://bugs.webkit.org/show_bug.cgi?id=116242
+
+        Reviewed by Antti Koivisto.
+
+        * fast/regions/region-visual-overflow-transform-expected.html: Added.
+        * fast/regions/region-visual-overflow-transform.html: Added.
+
 2013-11-21  Andrzej Badowski  <a.badowski@samsung.com>
 
         [EFL] Fix accessibility media-element expectation
