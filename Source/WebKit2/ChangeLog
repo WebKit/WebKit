@@ -1,3 +1,16 @@
+2013-11-20  Anders Carlsson  <andersca@apple.com>
+
+        Move activeURL getter to PageLoadState
+        https://bugs.webkit.org/show_bug.cgi?id=124690
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::activeURL):
+        * UIProcess/PageLoadState.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::activeURL):
+
 2013-11-20  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up WebKit2 initialization

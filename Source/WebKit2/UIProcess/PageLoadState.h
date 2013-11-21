@@ -43,6 +43,8 @@ public:
 
     void reset();
 
+    String activeURL() const;
+
     const String& pendingAPIRequestURL() const;
     void setPendingAPIRequestURL(const String&);
     void clearPendingAPIRequestURL();

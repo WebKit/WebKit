@@ -838,28 +838,7 @@ void WebPageProxy::willGoToBackForwardListItem(uint64_t itemID, CoreIPC::Message
 
 String WebPageProxy::activeURL() const
 {
-    // If there is a currently pending url, it is the active URL,
-    // even when there's no main frame yet, as it might be the
-    // first API request.
-    if (!m_pageLoadState.pendingAPIRequestURL().isNull())
-        return m_pageLoadState.pendingAPIRequestURL();
-
-    if (!m_mainFrame)
-        return String();
-
-    if (!m_mainFrame->unreachableURL().isEmpty())
-        return m_mainFrame->unreachableURL();
-
-    switch (m_mainFrame->frameLoadState().m_state) {
-    case FrameLoadState::State::Provisional:
-        return m_mainFrame->provisionalURL();
-    case FrameLoadState::State::Committed:
-    case FrameLoadState::State::Finished:
-        return m_mainFrame->url();
-    }
-
-    ASSERT_NOT_REACHED();
-    return String();
+    return m_pageLoadState.activeURL();
 }
 
 String WebPageProxy::provisionalURL() const

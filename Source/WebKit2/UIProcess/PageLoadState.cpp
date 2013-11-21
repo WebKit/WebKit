@@ -48,6 +48,30 @@ void PageLoadState::reset()
     m_lastUnreachableURL = String();
 }
 
+String PageLoadState::activeURL() const
+{
+    // If there is a currently pending URL, it is the active URL,
+    // even when there's no main frame yet, as it might be the
+    // first API request.
+    if (!m_pendingAPIRequestURL.isNull())
+        return m_pendingAPIRequestURL;
+
+    if (!m_unreachableURL.isEmpty())
+        return m_unreachableURL;
+
+    switch (m_state) {
+    case State::Provisional:
+        return m_provisionalURL;
+    case State::Committed:
+    case State::Finished:
+        return m_url;
+    }
+
+    ASSERT_NOT_REACHED();
+    return String();
+
+}
+
 const String& PageLoadState::pendingAPIRequestURL() const
 {
     return m_pendingAPIRequestURL;
