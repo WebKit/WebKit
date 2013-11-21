@@ -41,6 +41,7 @@ class FloatPoint3D;
 class FloatRect;
 class FloatSize;
 class HTTPHeaderMap;
+class IDBKeyPath;
 class IntPoint;
 class IntRect;
 class IntSize;
@@ -60,6 +61,9 @@ struct Cookie;
 struct DictationAlternative;
 struct DragSession;
 struct FileChooserSettings;
+struct IDBDatabaseMetadata;
+struct IDBIndexMetadata;
+struct IDBObjectStoreMetadata;
 struct Length;
 struct GrammarDetail;
 struct MimeClassInfo;
@@ -295,6 +299,28 @@ template<> struct ArgumentCoder<WebCore::UserScript> {
 template<> struct ArgumentCoder<WebCore::FilterOperations> {
     static void encode(ArgumentEncoder&, const WebCore::FilterOperations&);
     static bool decode(ArgumentDecoder&, WebCore::FilterOperations&);
+};
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+template<> struct ArgumentCoder<WebCore::IDBDatabaseMetadata> {
+    static void encode(ArgumentEncoder&, const WebCore::IDBDatabaseMetadata&);
+    static bool decode(ArgumentDecoder&, WebCore::IDBDatabaseMetadata&);
+};
+
+template<> struct ArgumentCoder<WebCore::IDBIndexMetadata> {
+    static void encode(ArgumentEncoder&, const WebCore::IDBIndexMetadata&);
+    static bool decode(ArgumentDecoder&, WebCore::IDBIndexMetadata&);
+};
+
+template<> struct ArgumentCoder<WebCore::IDBKeyPath> {
+    static void encode(ArgumentEncoder&, const WebCore::IDBKeyPath&);
+    static bool decode(ArgumentDecoder&, WebCore::IDBKeyPath&);
+};
+
+template<> struct ArgumentCoder<WebCore::IDBObjectStoreMetadata> {
+    static void encode(ArgumentEncoder&, const WebCore::IDBObjectStoreMetadata&);
+    static bool decode(ArgumentDecoder&, WebCore::IDBObjectStoreMetadata&);
 };
 #endif
 

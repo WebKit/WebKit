@@ -40,6 +40,8 @@
 #include <WebCore/FilterOperations.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
+#include <WebCore/IDBDatabaseMetadata.h>
+#include <WebCore/IDBKeyPath.h>
 #include <WebCore/Image.h>
 #include <WebCore/Length.h>
 #include <WebCore/PluginData.h>
@@ -1307,5 +1309,135 @@ bool ArgumentCoder<FilterOperations>::decode(ArgumentDecoder& decoder, FilterOpe
     return true;
 }
 #endif // ENABLE(CSS_FILTERS) && !USE(COORDINATED_GRAPHICS)
+
+#if ENABLE(INDEXED_DATABASE)
+void ArgumentCoder<IDBDatabaseMetadata>::encode(ArgumentEncoder& encoder, const IDBDatabaseMetadata& metadata)
+{
+    encoder << metadata.name << metadata.id << metadata.version << metadata.maxObjectStoreId << metadata.objectStores;
+}
+
+bool ArgumentCoder<IDBDatabaseMetadata>::decode(ArgumentDecoder& decoder, IDBDatabaseMetadata& metadata)
+{
+    if (!decoder.decode(metadata.name))
+        return false;
+
+    if (!decoder.decode(metadata.id))
+        return false;
+
+    if (!decoder.decode(metadata.version))
+        return false;
+
+    if (!decoder.decode(metadata.maxObjectStoreId))
+        return false;
+
+    if (!decoder.decode(metadata.objectStores))
+        return false;
+
+    return true;
+}
+
+void ArgumentCoder<IDBIndexMetadata>::encode(ArgumentEncoder& encoder, const IDBIndexMetadata& metadata)
+{
+    encoder << metadata.name << metadata.id << metadata.keyPath << metadata.unique << metadata.multiEntry;
+}
+
+bool ArgumentCoder<IDBIndexMetadata>::decode(ArgumentDecoder& decoder, IDBIndexMetadata& metadata)
+{
+    if (!decoder.decode(metadata.name))
+        return false;
+
+    if (!decoder.decode(metadata.id))
+        return false;
+
+    if (!decoder.decode(metadata.keyPath))
+        return false;
+
+    if (!decoder.decode(metadata.unique))
+        return false;
+
+    if (!decoder.decode(metadata.multiEntry))
+        return false;
+
+    return true;
+}
+
+void ArgumentCoder<IDBKeyPath>::encode(ArgumentEncoder& encoder, const IDBKeyPath& keyPath)
+{
+    encoder.encodeEnum(keyPath.type());
+
+    switch (keyPath.type()) {
+    case IDBKeyPath::NullType:
+        break;
+    case IDBKeyPath::StringType:
+        encoder << keyPath.string();
+        break;
+    case IDBKeyPath::ArrayType:
+        encoder << keyPath.array();
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
+bool ArgumentCoder<IDBKeyPath>::decode(ArgumentDecoder& decoder, IDBKeyPath& keyPath)
+{
+    IDBKeyPath::Type type;
+    if (!decoder.decodeEnum(type))
+        return false;
+
+    switch (type) {
+    case IDBKeyPath::NullType:
+        keyPath = IDBKeyPath();
+        return true;
+
+    case IDBKeyPath::StringType: {
+        String string;
+        if (!decoder.decode(string))
+            return false;
+
+        keyPath = IDBKeyPath(string);
+        return true;
+    }
+    case IDBKeyPath::ArrayType: {
+        Vector<String> array;
+        if (!decoder.decode(array))
+            return false;
+
+        keyPath = IDBKeyPath(array);
+        return true;
+    }
+    default:
+        return false;
+    }
+}
+
+void ArgumentCoder<IDBObjectStoreMetadata>::encode(ArgumentEncoder& encoder, const IDBObjectStoreMetadata& metadata)
+{
+    encoder << metadata.name << metadata.id << metadata.keyPath << metadata.autoIncrement << metadata.maxIndexId << metadata.indexes;
+}
+
+bool ArgumentCoder<IDBObjectStoreMetadata>::decode(ArgumentDecoder& decoder, IDBObjectStoreMetadata& metadata)
+{
+    if (!decoder.decode(metadata.name))
+        return false;
+
+    if (!decoder.decode(metadata.id))
+        return false;
+
+    if (!decoder.decode(metadata.keyPath))
+        return false;
+
+    if (!decoder.decode(metadata.autoIncrement))
+        return false;
+
+    if (!decoder.decode(metadata.maxIndexId))
+        return false;
+
+    if (!decoder.decode(metadata.indexes))
+        return false;
+
+    return true;
+}
+#endif
 
 } // namespace CoreIPC
