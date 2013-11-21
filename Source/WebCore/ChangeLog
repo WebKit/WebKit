@@ -1,5 +1,21 @@
 2013-11-21  Daniel Bates  <dabates@apple.com>
 
+        Add !USE(NETWORK_CFDATA_ARRAY_CALLBACK)-guard
+        https://bugs.webkit.org/show_bug.cgi?id=124741
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add !USE(NETWORK_CFDATA_ARRAY_CALLBACK)-guard around code that is unused
+        when building with feature NETWORK_CFDATA_ARRAY_CALLBACK.
+
+        Additionally, add a declaration for allocateSegment() with attribute WARN_UNUSED_RETURN
+        to have the compiler warn when the return value of this function is unused. Together with
+        warnings treated as errors this change will prevent a memory leak.
+
+        * platform/SharedBuffer.cpp:
+
+2013-11-21  Daniel Bates  <dabates@apple.com>
+
         Remove unused functions from WebCore and WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=124739
 

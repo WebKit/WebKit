@@ -38,6 +38,7 @@
 
 namespace WebCore {
 
+#if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
 static const unsigned segmentSize = 0x1000;
 static const unsigned segmentPositionMask = 0x0FFF;
 
@@ -51,6 +52,7 @@ static inline unsigned offsetInSegment(unsigned position)
     return position & segmentPositionMask;
 }
 
+static inline char* allocateSegment() WARN_UNUSED_RETURN;
 static inline char* allocateSegment()
 {
     return static_cast<char*>(fastMalloc(segmentSize));
@@ -60,6 +62,7 @@ static inline void freeSegment(char* p)
 {
     fastFree(p);
 }
+#endif
 
 SharedBuffer::SharedBuffer()
     : m_size(0)
