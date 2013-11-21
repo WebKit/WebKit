@@ -35,8 +35,8 @@
 
 namespace WebKit {
 
-class WebPreferences;
 class WebPageProxy;
+class WebPreferences;
 
 class WebPageGroup : public API::TypedObject<API::Object::Type::PageGroup> {
 public:
@@ -56,12 +56,15 @@ public:
     void setPreferences(WebPreferences*);
     WebPreferences* preferences() const;
     void preferencesDidChange();
-    
+
     void addUserStyleSheet(const String& source, const String& baseURL, API::Array* whitelist, API::Array* blacklist, WebCore::UserContentInjectedFrames, WebCore::UserStyleLevel);
     void addUserScript(const String& source, const String& baseURL, API::Array* whitelist, API::Array* blacklist, WebCore::UserContentInjectedFrames, WebCore::UserScriptInjectionTime);
     void removeAllUserStyleSheets();
     void removeAllUserScripts();
     void removeAllUserContent();
+
+    bool addProcess(WebProcessProxy&);
+    void disconnectProcess(WebProcessProxy&);
 
 private:
     WebPageGroup(const String& identifier, bool visibleToInjectedBundle, bool visibleToHistoryClient);
@@ -71,20 +74,13 @@ private:
     WebPageGroupData m_data;
     mutable RefPtr<WebPreferences> m_preferences;
     HashSet<WebPageProxy*> m_pages;
+    HashSet<WebProcessProxy*> m_processes;
 };
     
 template<typename T>
 void WebPageGroup::sendToAllProcessesInGroup(const T& message, uint64_t destinationID)
 {
-    HashSet<WebProcessProxy*> processesSeen;
-
-    for (WebPageProxy* webPageProxy : m_pages) {
-        WebProcessProxy* webProcessProxy = webPageProxy->process();
-        ASSERT(webProcessProxy);
-
-        if (!processesSeen.add(webProcessProxy).isNewEntry)
-            continue;
-
+    for (auto webProcessProxy : m_processes) {
         if (webProcessProxy->canSendMessage())
             webProcessProxy->send(T(message), destinationID);
     }

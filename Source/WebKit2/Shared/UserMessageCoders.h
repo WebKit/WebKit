@@ -71,7 +71,7 @@ namespace WebKit {
 template<typename Owner>
 class UserMessageEncoder {
 public:
-    bool baseEncode(CoreIPC::ArgumentEncoder& encoder, API::Object::Type& type) const
+    bool baseEncode(CoreIPC::ArgumentEncoder& encoder, const Owner& coder, API::Object::Type& type) const
     {
         if (!m_root) {
             encoder << static_cast<uint32_t>(API::Object::Type::Null);
@@ -86,7 +86,7 @@ public:
             API::Array* array = static_cast<API::Array*>(m_root);
             encoder << static_cast<uint64_t>(array->size());
             for (size_t i = 0; i < array->size(); ++i)
-                encoder << Owner(array->at(i));
+                encoder << Owner(coder, array->at(i));
             return true;
         }
         case API::Object::Type::Dictionary: {
@@ -98,7 +98,7 @@ public:
             ImmutableDictionary::MapType::const_iterator end = map.end();
             for (; it != end; ++it) {
                 encoder << it->key;
-                encoder << Owner(it->value.get());
+                encoder << Owner(coder, it->value.get());
             }
             return true;
         }
@@ -149,15 +149,15 @@ public:
         }
         case API::Object::Type::RenderLayer: {
             WebRenderLayer* renderLayer = static_cast<WebRenderLayer*>(m_root);
-            encoder << Owner(renderLayer->renderer());
+            encoder << Owner(coder, renderLayer->renderer());
             encoder << renderLayer->isReflection();
             encoder << renderLayer->isClipping();
             encoder << renderLayer->isClipped();
             encoder << static_cast<uint32_t>(renderLayer->compositingLayerType());
             encoder << renderLayer->absoluteBoundingBox();
-            encoder << Owner(renderLayer->negativeZOrderList());
-            encoder << Owner(renderLayer->normalFlowList());
-            encoder << Owner(renderLayer->positiveZOrderList());
+            encoder << Owner(coder, renderLayer->negativeZOrderList());
+            encoder << Owner(coder, renderLayer->normalFlowList());
+            encoder << Owner(coder, renderLayer->positiveZOrderList());
             return true;
         }
         case API::Object::Type::RenderObject: {
@@ -165,10 +165,10 @@ public:
             encoder << renderObject->name();
             encoder << renderObject->elementTagName();
             encoder << renderObject->elementID();
-            encoder << Owner(renderObject->elementClassNames());
+            encoder << Owner(coder, renderObject->elementClassNames());
             encoder << renderObject->absolutePosition();
             encoder << renderObject->frameRect();
-            encoder << Owner(renderObject->children());
+            encoder << Owner(coder, renderObject->children());
             return true;
         }
         case API::Object::Type::URL: {

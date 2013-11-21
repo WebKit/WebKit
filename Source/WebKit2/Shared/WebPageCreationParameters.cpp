@@ -37,7 +37,7 @@ void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
 
     encoder << store;
     encoder.encodeEnum(drawingAreaType);
-    encoder << pageGroupData;
+    encoder << pageGroupID;
     encoder << drawsBackground;
     encoder << drawsTransparentBackground;
     encoder << underlayColor;
@@ -76,7 +76,7 @@ bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder, WebPag
         return false;
     if (!decoder.decodeEnum(parameters.drawingAreaType))
         return false;
-    if (!decoder.decode(parameters.pageGroupData))
+    if (!decoder.decode(parameters.pageGroupID))
         return false;
     if (!decoder.decode(parameters.drawsBackground))
         return false;

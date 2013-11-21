@@ -228,7 +228,7 @@ class WebPageProxy
     , public CoreIPC::MessageReceiver {
 public:
 
-    static PassRefPtr<WebPageProxy> create(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
+    static PassRefPtr<WebPageProxy> create(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup&, uint64_t pageID);
     virtual ~WebPageProxy();
 
     uint64_t pageID() const { return m_pageID; }
@@ -742,7 +742,7 @@ public:
     WebCore::ScrollPinningBehavior scrollPinningBehavior() { return m_scrollPinningBehavior; }
         
 private:
-    WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
+    WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup&, uint64_t pageID);
     void platformInitialize();
     void initializeCreationParameters();
 

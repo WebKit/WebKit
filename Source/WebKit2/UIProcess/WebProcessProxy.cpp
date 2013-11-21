@@ -37,6 +37,7 @@
 #include "WebContext.h"
 #include "WebNavigationDataStore.h"
 #include "WebNotificationManagerProxy.h"
+#include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPluginSiteDataManager.h"
 #include "WebProcessMessages.h"
@@ -152,6 +153,12 @@ void WebProcessProxy::disconnect()
     if (m_downloadProxyMap)
         m_downloadProxyMap->processDidClose();
 
+    Vector<WebPageGroup*> pageGroups;
+    copyValuesToVector(m_pageGroups, pageGroups);
+    for (size_t i = 0, size = frames.size(); i < size; ++i)
+        pageGroups[i]->disconnectProcess(*this);
+    m_pageGroups.clear();
+
     m_context->disconnectProcess(this);
 }
 
@@ -160,7 +167,7 @@ WebPageProxy* WebProcessProxy::webPage(uint64_t pageID)
     return globalPageMap().get(pageID);
 }
 
-PassRefPtr<WebPageProxy> WebProcessProxy::createWebPage(PageClient* pageClient, WebContext*, WebPageGroup* pageGroup)
+PassRefPtr<WebPageProxy> WebProcessProxy::createWebPage(PageClient* pageClient, WebPageGroup& pageGroup)
 {
     uint64_t pageID = generatePageID();
     RefPtr<WebPageProxy> webPage = WebPageProxy::create(pageClient, this, pageGroup, pageID);
@@ -207,6 +214,19 @@ Vector<WebPageProxy*> WebProcessProxy::pages() const
     Vector<WebPageProxy*> result;
     copyValuesToVector(m_pageMap, result);
     return result;
+}
+
+WebPageGroup* WebProcessProxy::webPageGroup(uint64_t pageGroupID)
+{
+    if (!HashMap<uint64_t, WebPageGroup*>::isValidKey(pageGroupID))
+        return nullptr;
+
+    return m_pageGroups.get(pageGroupID);
+}
+
+void WebProcessProxy::addWebPageGroup(WebPageGroup& pageGroup)
+{
+    m_pageGroups.add(pageGroup.pageGroupID(), &pageGroup);
 }
 
 WebBackForwardListItem* WebProcessProxy::webBackForwardItem(uint64_t itemID) const
