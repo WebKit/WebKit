@@ -1,3 +1,22 @@
+2013-11-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Clear TemplateContentDocumentFragment::m_host when HTMLTemplateElement is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=122806
+
+        Reviewed by Antti Koivisto.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/858ed5f6341de9d900768c1f4668fcfce870c52e
+
+        The document fragment of a template element outlives the element itself.
+        Clear the host property on the document fragment when that happens.
+
+        Test: fast/dom/HTMLTemplateElement/content-outlives-template-crash.html
+
+        * dom/TemplateContentDocumentFragment.h:
+        * html/HTMLTemplateElement.cpp:
+        (WebCore::HTMLTemplateElement::~HTMLTemplateElement):
+        * html/HTMLTemplateElement.h:
+
 2013-11-20  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Implement CSS -webkit-alt property (text alternative for generated content pseudo-elements ::before and ::after)

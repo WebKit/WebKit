@@ -1,3 +1,13 @@
+2013-11-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Clear TemplateContentDocumentFragment::m_host when HTMLTemplateElement is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=122806
+
+        Reviewed by Antti Koivisto.
+
+        * fast/dom/HTMLTemplateElement/content-outlives-template-crash-expected.txt: Added.
+        * fast/dom/HTMLTemplateElement/content-outlives-template-crash.html: Added.
+
 2013-11-20  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Implement CSS -webkit-alt property (text alternative for generated content pseudo-elements ::before and ::after)

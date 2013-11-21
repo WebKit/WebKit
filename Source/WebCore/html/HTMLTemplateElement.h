@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Google Inc. All rights reserved.
+ * Copyright (c) 2012, 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,10 +33,12 @@
 
 #if ENABLE(TEMPLATE_ELEMENT)
 
-#include "DocumentFragment.h"
 #include "HTMLElement.h"
 
 namespace WebCore {
+
+class DocumentFragment;
+class TemplateContentDocumentFragment;
 
 class HTMLTemplateElement FINAL : public HTMLElement {
 public:
@@ -51,7 +53,7 @@ private:
     virtual PassRefPtr<Node> cloneNode(bool deep) OVERRIDE;
     virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 
-    mutable RefPtr<DocumentFragment> m_content;
+    mutable RefPtr<TemplateContentDocumentFragment> m_content;
 };
 
 NODE_TYPE_CASTS(HTMLTemplateElement)
