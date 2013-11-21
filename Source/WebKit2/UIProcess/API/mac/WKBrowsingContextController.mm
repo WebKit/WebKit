@@ -64,16 +64,6 @@ static inline NSURL *autoreleased(WKURLRef url)
     return url ? CFBridgingRelease(WKURLCopyCFURL(kCFAllocatorDefault, adoptWK(url).get())) : nil;
 }
 
-static inline NSURLRequest *autoreleased(WKURLRequestRef urlRequest)
-{
-    return urlRequest ? CFBridgingRelease(WKURLRequestCopyNSURLRequest(adoptWK(urlRequest).get())) : nil;
-}
-
-static inline NSURLResponse *autoreleased(WKURLResponseRef urlResponse)
-{
-    return urlResponse ? CFBridgingRelease(WKURLResponseCopyNSURLResponse(adoptWK(urlResponse).get())) : nil;
-}
-
 NSString * const WKActionIsMainFrameKey = @"WKActionIsMainFrameKey";
 NSString * const WKActionNavigationTypeKey = @"WKActionNavigationTypeKey";
 NSString * const WKActionMouseButtonKey = @"WKActionMouseButtonKey";

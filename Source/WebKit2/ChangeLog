@@ -1,3 +1,14 @@
+2013-11-21  Daniel Bates  <dabates@apple.com>
+
+        Remove unused functions from WebCore and WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=124739
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove unused functions autoreleased({WKURLRequestRef, WKURLResponseRef}).
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+
 2013-11-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         Rename PlatformCertificateInfo to CertificateInfo

@@ -430,13 +430,6 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
     return lastClosed;
 }
 
-static bool isHTMLBlockElement(const Node* node)
-{
-    return node->hasTagName(tdTag)
-        || node->hasTagName(thTag)
-        || isNonTableCellHTMLBlockElement(node);
-}
-
 static Node* ancestorToRetainStructureAndAppearanceForBlock(Node* commonAncestorBlock)
 {
     if (!commonAncestorBlock)
@@ -459,12 +452,6 @@ static Node* ancestorToRetainStructureAndAppearanceForBlock(Node* commonAncestor
 static inline Node* ancestorToRetainStructureAndAppearance(Node* commonAncestor)
 {
     return ancestorToRetainStructureAndAppearanceForBlock(enclosingBlock(commonAncestor));
-}
-
-static inline Node* ancestorToRetainStructureAndAppearanceWithNoRenderer(Node* commonAncestor)
-{
-    Node* commonAncestorBlock = enclosingNodeOfType(firstPositionInOrBeforeNode(commonAncestor), isHTMLBlockElement);
-    return ancestorToRetainStructureAndAppearanceForBlock(commonAncestorBlock);
 }
 
 static bool propertyMissingOrEqualToNone(StylePropertySet* style, CSSPropertyID propertyID)
