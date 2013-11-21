@@ -109,7 +109,7 @@ static MacroAssemblerCodeRef linkForThunkGenerator(
     // The return address is on the stack or in the link register. We will hence
     // save the return address to the call frame while we make a C++ function call
     // to perform linking and lazy compilation if necessary. We expect the callee
-    // to be in nonArgGPR0/nonArgGPR1 (payload/tag), the CallFrame to have already
+    // to be in regT0/regT1 (payload/tag), the CallFrame to have already
     // been adjusted, and all other registers to be available for use.
     
     CCallHelpers jit(vm);

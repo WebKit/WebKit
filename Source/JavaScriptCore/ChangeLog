@@ -1,5 +1,20 @@
 2013-11-20  Michael Saboff  <msaboff@apple.com>
 
+        [Win] JavaScript JIT crash (with DFG enabled).
+        https://bugs.webkit.org/show_bug.cgi?id=124675
+
+        Reviewed by Geoffrey Garen.
+
+        Similar to the change in r159427, changed linkClosureCall to use regT0/regT1 (payload/tag) for the callee.
+        linkForThunkGenerator already expected the callee in regT0/regT1, but changed the comment to reflect that.
+
+        * jit/Repatch.cpp:
+        (JSC::linkClosureCall):
+        * jit/ThunkGenerators.cpp:
+        (JSC::linkForThunkGenerator):
+
+2013-11-20  Michael Saboff  <msaboff@apple.com>
+
         ARMv7: Crash due to use after free of AssemblerBuffer
         https://bugs.webkit.org/show_bug.cgi?id=124611
 

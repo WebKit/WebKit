@@ -1379,9 +1379,9 @@ void linkClosureCall(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* cal
     AssemblyHelpers::Jump done = stubJit.jump();
     
     slowPath.link(&stubJit);
-    stubJit.move(calleeGPR, GPRInfo::nonArgGPR0);
+    stubJit.move(calleeGPR, GPRInfo::regT0);
 #if USE(JSVALUE32_64)
-    stubJit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), GPRInfo::nonArgGPR1);
+    stubJit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), GPRInfo::regT1);
 #endif
     stubJit.move(CCallHelpers::TrustedImmPtr(callLinkInfo.callReturnLocation.executableAddress()), GPRInfo::nonArgGPR2);
     stubJit.restoreReturnAddressBeforeReturn(GPRInfo::nonArgGPR2);
