@@ -38,9 +38,9 @@ struct SecurityOriginData;
 
 class DatabaseProcessIDBConnection : public RefCounted<DatabaseProcessIDBConnection>, public CoreIPC::MessageSender {
 public:
-    static RefPtr<DatabaseProcessIDBConnection> create(uint64_t backendIdentifier)
+    static RefPtr<DatabaseProcessIDBConnection> create(uint64_t serverConnectionIdentifier)
     {
-        return adoptRef(new DatabaseProcessIDBConnection(backendIdentifier));
+        return adoptRef(new DatabaseProcessIDBConnection(serverConnectionIdentifier));
     }
 
     virtual ~DatabaseProcessIDBConnection();
@@ -49,18 +49,18 @@ public:
     void didReceiveDatabaseProcessIDBConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
 private:
-    DatabaseProcessIDBConnection(uint64_t backendIdentifier);
+    DatabaseProcessIDBConnection(uint64_t serverConnectionIdentifier);
 
     // CoreIPC::MessageSender
     virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
-    virtual uint64_t messageSenderDestinationID() OVERRIDE { return m_backendIdentifier; }
+    virtual uint64_t messageSenderDestinationID() OVERRIDE { return m_serverConnectionIdentifier; }
 
     // Message handlers.
     void establishConnection(const String& databaseName, const SecurityOriginData& openingOrigin, const SecurityOriginData& mainFrameOrigin);
     void getOrEstablishIDBDatabaseMetadata();
 
     RefPtr<DatabaseToWebProcessConnection> m_connection;
-    uint64_t m_backendIdentifier;
+    uint64_t m_serverConnectionIdentifier;
 };
 
 } // namespace WebKit

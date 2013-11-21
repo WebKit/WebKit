@@ -86,9 +86,9 @@ private:
 
     // CoreIPC::MessageSender
     virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
-    virtual uint64_t messageSenderDestinationID() OVERRIDE { return m_backendIdentifier; }
+    virtual uint64_t messageSenderDestinationID() OVERRIDE { return m_serverConnectionIdentifier; }
 
-    uint64_t m_backendIdentifier;
+    uint64_t m_serverConnectionIdentifier;
 
     String m_databaseName;
     Ref<WebCore::SecurityOrigin> m_openingOrigin;

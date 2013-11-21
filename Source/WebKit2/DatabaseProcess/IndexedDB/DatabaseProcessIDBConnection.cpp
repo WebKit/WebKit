@@ -32,8 +32,8 @@
 
 namespace WebKit {
 
-DatabaseProcessIDBConnection::DatabaseProcessIDBConnection(uint64_t backendIdentifier)
-    : m_backendIdentifier(backendIdentifier)
+DatabaseProcessIDBConnection::DatabaseProcessIDBConnection(uint64_t serverConnectionIdentifier)
+    : m_serverConnectionIdentifier(serverConnectionIdentifier)
 {
 }
 

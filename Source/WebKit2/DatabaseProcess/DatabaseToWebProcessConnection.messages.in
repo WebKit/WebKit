@@ -25,7 +25,7 @@
 messages -> DatabaseToWebProcessConnection LegacyReceiver {
 #if ENABLE(INDEXED_DATABASE)
     # Creates a connection for communication with a WebProcess
-    EstablishIDBConnection(uint64_t backendIdentifier)
+    EstablishIDBConnection(uint64_t serverConnectionIdentifier)
 #endif
 }
 

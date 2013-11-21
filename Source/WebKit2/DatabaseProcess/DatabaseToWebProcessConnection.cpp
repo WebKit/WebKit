@@ -79,10 +79,10 @@ void DatabaseToWebProcessConnection::didReceiveInvalidMessage(CoreIPC::Connectio
 
 }
 
-void DatabaseToWebProcessConnection::establishIDBConnection(uint64_t backendIdentifier)
+void DatabaseToWebProcessConnection::establishIDBConnection(uint64_t serverConnectionIdentifier)
 {
-    RefPtr<DatabaseProcessIDBConnection> connection = DatabaseProcessIDBConnection::create(backendIdentifier);
-    m_idbConnections.set(backendIdentifier, connection.release());
+    RefPtr<DatabaseProcessIDBConnection> connection = DatabaseProcessIDBConnection::create(serverConnectionIdentifier);
+    m_idbConnections.set(serverConnectionIdentifier, connection.release());
 }
 
 } // namespace WebKit

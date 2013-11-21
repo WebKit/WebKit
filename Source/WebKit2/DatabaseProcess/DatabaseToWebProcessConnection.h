@@ -59,7 +59,7 @@ private:
 
 #if ENABLE(INDEXED_DATABASE)
     // Messages handlers
-    void establishIDBConnection(uint64_t backendIdentifier);
+    void establishIDBConnection(uint64_t serverConnectionIdentifier);
 
     typedef HashMap<uint64_t, RefPtr<DatabaseProcessIDBConnection>> IDBConnectionMap;
     IDBConnectionMap m_idbConnections;
