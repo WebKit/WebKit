@@ -91,7 +91,7 @@ def get_webkit2_options():
     options = get_common_options().copy()
     options.update({
         'module_name' : 'webkit2gtk',
-        'namespace' : 'WebKit',
+        'namespace' : 'webkit',
         'doc_dir' : src_path('docs'),
         'output_dir' : common.build_path('Documentation', 'webkit2gtk'),
         'source_dirs' : [src_path(), derived_sources_path('webkit2gtk', 'webkit2'), injected_bundle_src_path()],
@@ -132,7 +132,7 @@ def get_webkit1_options(gtk_version):
     options = get_common_options().copy()
     options.update({
         'module_name' : 'webkitgtk',
-        'namespace' : 'WebKit',
+        'namespace' : 'webkit',
         'doc_dir' : src_path('docs'),
         'output_dir' : common.build_path('Documentation', 'webkitgtk'),
         'source_dirs' : [src_path('webkit'), common.build_path('Source', 'WebKit', 'gtk', 'webkit')],
@@ -159,7 +159,7 @@ def get_webkitdom_options():
     options = get_common_options().copy()
     options.update({
         'module_name' : 'webkitdomgtk',
-        'namespace' : 'WebKitDOM',
+        'namespace' : 'webkit_dom',
         'doc_dir' : derived_sources_path('docs'),
         'output_dir' : common.build_path('Documentation', 'webkitdomgtk'),
         'source_dirs' : [derived_sources_path()],

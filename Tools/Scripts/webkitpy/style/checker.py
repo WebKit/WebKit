@@ -152,6 +152,7 @@ _PATH_RULES_SPECIFIER = [
       # parens for function calls, and always having variable names.
       # Also, GTK+ allows the use of NULL.
       "Source/WebCore/bindings/gobject/WebKitDOMCustom.h",
+      "Source/WebCore/bindings/gobject/WebKitDOMDeprecated.h",
       "Source/WebCore/bindings/gobject/WebKitDOMEventTarget.h",
       "Source/WebCore/bindings/scripts/test/GObject",
       "Source/WebKit/gtk/webkit/",
@@ -222,6 +223,7 @@ _PATH_RULES_SPECIFIER = [
     ([# These files define GObjects, which implies some definitions of
       # variables and functions containing underscores.
       "Source/WebCore/bindings/gobject/WebKitDOMCustom.cpp",
+      "Source/WebCore/bindings/gobject/WebKitDOMDeprecated.cpp",
       "Source/WebCore/bindings/gobject/WebKitDOMEventTarget.cpp",
       "Source/WebCore/platform/graphics/gstreamer/VideoSinkGStreamer1.cpp",
       "Source/WebCore/platform/graphics/gstreamer/VideoSinkGStreamer.cpp",

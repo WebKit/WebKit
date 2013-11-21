@@ -80,9 +80,11 @@ if ($outType eq "defines") {
     print "#endif\n";
 
     foreach my $class (@classes) {
-        print "typedef struct _WebKitDOM${class} WebKitDOM${class};\n";
-        print "typedef struct _WebKitDOM${class}Class WebKitDOM${class}Class;\n";
-        print "\n";
+        if ($class ne "Deprecated" && $class ne "Custom") {
+            print "typedef struct _WebKitDOM${class} WebKitDOM${class};\n";
+            print "typedef struct _WebKitDOM${class}Class WebKitDOM${class}Class;\n";
+            print "\n";
+        }
     }
 } elsif ($outType eq "gdom") {
     print "#define __WEBKITDOM_H_INSIDE__\n\n";

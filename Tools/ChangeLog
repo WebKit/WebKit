@@ -1,3 +1,35 @@
+2013-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Mark all deprecated symbols in GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=124406
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Scripts/webkitpy/style/checker.py: Add special case for
+        WebKitDOMDeprecated.
+        * gtk/generate-gtkdoc:
+        (get_webkit2_options): Use the prefix of the methods as namespace,
+        since this is what gtkdoc expects to sort the index.
+        (get_webkit1_options): Ditto.
+        (get_webkitdom_options): Ditto.
+        * gtk/generate-webkitdom-doc-files:
+        (WebKitDOMDocGenerator): Add a global list of deleted objects.
+        (WebKitDOMDocGenerator.write_deleted_classes): New method to write
+        the documentation for classes that are deprecated because they
+        have been removed.
+        (WebKitDOMDocGeneratorDocs.write_deleted_classes): Add sections
+        for deleted classes too.
+        (WebKitDOMDocGeneratorSections.__init__): Build a list of
+        deprecated symbols using the given symbols file.
+        (WebKitDOMDocGeneratorSections._deleted_class): Returns the
+        deleted class corresponding to the given function.
+        (WebKitDOMDocGeneratorSections._deprecated_symbols): Builds a
+        dictionary of deprecated symbols for every class.
+        (WebKitDOMDocGeneratorSections.write_section): Add also the
+        deprecated symbols in every section.
+        (WebKitDOMDocGeneratorSections.write_deleted_classes): Add
+        sections for deleted classes too.
+
 2013-11-20  László Langó  <lango@inf.u-szeged.hu>
 
         check-webkit-style should support C++11 rvalue references.

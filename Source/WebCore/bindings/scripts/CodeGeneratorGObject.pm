@@ -1015,9 +1015,6 @@ sub GenerateFunction {
     }
     push(@hBody, "\n");
 
-    if ($deprecationVersion) {
-        push(@cBody, "#if !defined(WEBKIT_DISABLE_DEPRECATED)\n");
-    }
     push(@cBody, "$returnType $functionName($functionSig)\n{\n");
     push(@cBody, "#if ${parentConditionalString}\n") if $parentConditionalString;
     push(@cBody, "#if ${conditionalString}\n") if $conditionalString;
@@ -1233,13 +1230,7 @@ EOF
         push(@cBody, "#endif /* ${parentConditionalString} */\n");
     }
 
-    push(@cBody, "}\n");
-
-    if ($deprecationVersion) {
-        push(@cBody, "#endif // WEBKIT_DISABLE_DEPRECATED\n");
-    }
-
-    push(@cBody, "\n");
+    push(@cBody, "}\n\n");
 }
 
 sub ClassHasFunction {
