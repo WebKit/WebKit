@@ -33,6 +33,7 @@
 #include "HTMLNames.h"
 #include "Logging.h"
 #include "RuntimeEnabledFeatures.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

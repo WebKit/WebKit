@@ -1,3 +1,15 @@
+2013-11-21  Andres Gomez  <agomez@igalia.com>
+
+        [GTK] Release compilation fails when defining "LOG_DISABLED=0"
+        https://bugs.webkit.org/show_bug.cgi?id=124661
+
+        Reviewed by Mario Sanchez Prada.
+
+        In a "Debug" build the CString.h header comes from another
+        indirect dependency. Now, we explicitly add this missing include.
+
+        * html/HTMLTrackElement.cpp: Explicitly adding missing include.
+
 2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix Range.insertNode when the inserted node is in the same container as the Range
