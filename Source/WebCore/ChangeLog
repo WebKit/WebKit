@@ -1,3 +1,21 @@
+2013-11-21  Mihai Maerean  <mmaerean@adobe.com>
+
+        Fix hover area for divs with css transforms
+        https://bugs.webkit.org/show_bug.cgi?id=124647
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        Non transformed layers are now being hit last, not through or in-between transformed layers.
+        The paint order says that the divs creating stacking contexts (including transforms) are painted after the
+        other siblings so they should be hit tested in the reverse order. Also, a rotated div in a non-rotated parent
+        should be hit in its entire area, not hit its parent's background, even if the z-coordinate is negative where
+        the mouse is located.
+
+        Test: transforms/3d/hit-testing/hover-rotated-negative-z.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::computeZOffset):
+
 2013-11-21  Andres Gomez  <agomez@igalia.com>
 
         [GTK] Release compilation fails when defining "LOG_DISABLED=0"

@@ -4545,8 +4545,14 @@ bool RenderLayer::isFlowThreadCollectingGraphicsLayersUnderRegions() const
 static double computeZOffset(const HitTestingTransformState& transformState)
 {
     // We got an affine transform, so no z-offset
-    if (transformState.m_accumulatedTransform.isAffine())
-        return 0;
+    if (transformState.m_accumulatedTransform.isAffine()) {
+        // Non transformed layers are being hit last, not through or in-between transformed layers.
+        // The paint order says that the divs creating stacking contexts (including transforms) are painted after the
+        // other siblings so they should be hit tested in the reverse order. Also, a rotated div in a non-rotated parent
+        // should be hit in its entire area, not hit its parent's background, even if the z-coordinate is negative where
+        // the mouse is located.
+        return -std::numeric_limits<int>::max();
+    }
 
     // Flatten the point into the target plane
     FloatPoint targetPoint = transformState.mappedPoint();
