@@ -1,3 +1,32 @@
+2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTML parser should not associate elements inside templates with forms
+        https://bugs.webkit.org/show_bug.cgi?id=117779
+
+        Reviewed by Antti Koivisto.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/45aadf7ee7ee010327eb692066cf013315ef3ed7
+
+        When parsing <form><template><input>, the previous behavior was to associate the <input> with the <form>,
+        even though they're not in the same tree (or even the same document).
+
+        This patch changes that by checking, prior to creating a form control element, whether the element to be
+        created lives in a document with a browsing context.
+
+        We don't update m_form as needed to faithfully match the HTML5 specification's form element pointer
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#form-element-pointer
+        and its algorithm for creating and inserting nodes:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/tree-construction.html#creating-and-inserting-nodes
+
+        While this leaves isindex's reference to form element pointer stale:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/tree-construction.html#isindex
+        The HTML5 specification matches the behaviors of Chrome and Firefox so we leave it as is.
+
+        Test: fast/dom/HTMLTemplateElement/no-form-association.html
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::createHTMLElement):
+
 2013-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Cannot scroll in option menu when it larger than the screen

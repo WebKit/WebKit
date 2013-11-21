@@ -1,3 +1,13 @@
+2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTML parser should not associate elements inside templates with forms
+        https://bugs.webkit.org/show_bug.cgi?id=117779
+
+        Reviewed by Antti Koivisto.
+
+        * fast/dom/HTMLTemplateElement/no-form-association-expected.txt: Added.
+        * fast/dom/HTMLTemplateElement/no-form-association.html: Added.
+
 2013-11-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Hoist <template> to head when found between </head> and <body> for consistency with <script>

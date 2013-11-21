@@ -543,7 +543,10 @@ PassRefPtr<Element> HTMLConstructionSite::createHTMLElement(AtomicHTMLToken* tok
     // FIXME: This can't use HTMLConstructionSite::createElement because we
     // have to pass the current form element.  We should rework form association
     // to occur after construction to allow better code sharing here.
-    RefPtr<Element> element = HTMLElementFactory::createElement(tagName, ownerDocumentForCurrentNode(), form(), true);
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/tree-construction.html#create-an-element-for-the-token
+    Document& ownerDocument = ownerDocumentForCurrentNode();
+    bool openElementsContainTemplateElement = !ownerDocument.frame();
+    RefPtr<Element> element = HTMLElementFactory::createElement(tagName, ownerDocument, openElementsContainTemplateElement ? nullptr : form(), true);
     setAttributes(element.get(), token, m_parserContentPolicy);
     ASSERT(element->isHTMLElement());
     return element.release();
