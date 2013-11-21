@@ -40,9 +40,6 @@ class PromiseWrapper {
 public:
     PromiseWrapper(JSDOMGlobalObject*, JSC::JSPromise*);
 
-    PromiseWrapper(const PromiseWrapper&);
-    PromiseWrapper& operator=(const PromiseWrapper&);
-
     template<class FulfillResultType>
     void fulfill(const FulfillResultType&);
 

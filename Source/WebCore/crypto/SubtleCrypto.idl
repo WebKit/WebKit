@@ -37,4 +37,5 @@
     [Custom] Promise generateKey(AlgorithmIdentifier algorithm, optional boolean extractable, optional KeyUsage[] keyUsages);
     [Custom] Promise importKey(KeyFormat format, CryptoOperationData keyData, AlgorithmIdentifier? algorithm, optional boolean extractable, optional KeyUsage[] keyUsages);
     [Custom] Promise exportKey(KeyFormat format, Key key);
+    [Custom] Promise unwrapKey(KeyFormat format, CryptoOperationData wrappedKey, Key unwrappingKey, AlgorithmIdentifier unwrapAlgorithm, AlgorithmIdentifier? unwrappedKeyAlgorithm, optional boolean extractable, optional KeyUsage[] keyUsages);
 };

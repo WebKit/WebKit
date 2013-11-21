@@ -34,17 +34,4 @@ PromiseWrapper::PromiseWrapper(JSDOMGlobalObject* globalObject, JSC::JSPromise* 
 {
 }
 
-PromiseWrapper::PromiseWrapper(const PromiseWrapper& other)
-    : m_globalObject(other.m_globalObject)
-    , m_promise(other.m_promise)
-{
-}
-
-PromiseWrapper& PromiseWrapper::operator=(const PromiseWrapper& other)
-{
-    m_globalObject = other.m_globalObject;
-    m_promise = other.m_promise;
-    return *this;
-}
-
 }

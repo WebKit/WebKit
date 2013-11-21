@@ -53,8 +53,6 @@ public:
     static std::unique_ptr<CryptoAlgorithmParameters> createParametersForDeriveBits(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
     static std::unique_ptr<CryptoAlgorithmParameters> createParametersForImportKey(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
     static std::unique_ptr<CryptoAlgorithmParameters> createParametersForExportKey(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
-    static std::unique_ptr<CryptoAlgorithmParameters> createParametersForWrapKey(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
-    static std::unique_ptr<CryptoAlgorithmParameters> createParametersForUnwrapKey(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
 };
 
 }

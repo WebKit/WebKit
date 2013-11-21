@@ -37,9 +37,9 @@ namespace WebCore {
 bool cryptoOperationDataFromJSValue(ExecState* exec, JSValue value, CryptoOperationData& result)
 {
     if (ArrayBuffer* buffer = toArrayBuffer(value))
-        result = std::make_pair(static_cast<char*>(buffer->data()), buffer->byteLength());
+        result = std::make_pair(static_cast<uint8_t*>(buffer->data()), buffer->byteLength());
     else if (RefPtr<ArrayBufferView> bufferView = toArrayBufferView(value))
-        result = std::make_pair(static_cast<char*>(bufferView->baseAddress()), bufferView->byteLength());
+        result = std::make_pair(static_cast<uint8_t*>(bufferView->baseAddress()), bufferView->byteLength());
     else {
         throwTypeError(exec, "Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData");
         return false;

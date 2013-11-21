@@ -584,64 +584,6 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     }
 }
 
-std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForWrapKey(ExecState* exec, CryptoAlgorithmIdentifier algorithm, JSValue)
-{
-    switch (algorithm) {
-    case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
-    case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
-    case CryptoAlgorithmIdentifier::RSA_PSS:
-    case CryptoAlgorithmIdentifier::RSA_OAEP:
-    case CryptoAlgorithmIdentifier::ECDSA:
-    case CryptoAlgorithmIdentifier::ECDH:
-    case CryptoAlgorithmIdentifier::AES_CTR:
-    case CryptoAlgorithmIdentifier::AES_CBC:
-    case CryptoAlgorithmIdentifier::AES_CMAC:
-    case CryptoAlgorithmIdentifier::AES_GCM:
-    case CryptoAlgorithmIdentifier::AES_CFB:
-    case CryptoAlgorithmIdentifier::HMAC:
-    case CryptoAlgorithmIdentifier::DH:
-    case CryptoAlgorithmIdentifier::SHA_1:
-    case CryptoAlgorithmIdentifier::SHA_224:
-    case CryptoAlgorithmIdentifier::SHA_256:
-    case CryptoAlgorithmIdentifier::SHA_384:
-    case CryptoAlgorithmIdentifier::SHA_512:
-    case CryptoAlgorithmIdentifier::CONCAT:
-    case CryptoAlgorithmIdentifier::HKDF_CTR:
-    case CryptoAlgorithmIdentifier::PBKDF2:
-        setDOMException(exec, NOT_SUPPORTED_ERR);
-        return nullptr;
-    }
-}
-
-std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createParametersForUnwrapKey(ExecState* exec, CryptoAlgorithmIdentifier algorithm, JSValue)
-{
-    switch (algorithm) {
-    case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
-    case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
-    case CryptoAlgorithmIdentifier::RSA_PSS:
-    case CryptoAlgorithmIdentifier::RSA_OAEP:
-    case CryptoAlgorithmIdentifier::ECDSA:
-    case CryptoAlgorithmIdentifier::ECDH:
-    case CryptoAlgorithmIdentifier::AES_CTR:
-    case CryptoAlgorithmIdentifier::AES_CBC:
-    case CryptoAlgorithmIdentifier::AES_CMAC:
-    case CryptoAlgorithmIdentifier::AES_GCM:
-    case CryptoAlgorithmIdentifier::AES_CFB:
-    case CryptoAlgorithmIdentifier::HMAC:
-    case CryptoAlgorithmIdentifier::DH:
-    case CryptoAlgorithmIdentifier::SHA_1:
-    case CryptoAlgorithmIdentifier::SHA_224:
-    case CryptoAlgorithmIdentifier::SHA_256:
-    case CryptoAlgorithmIdentifier::SHA_384:
-    case CryptoAlgorithmIdentifier::SHA_512:
-    case CryptoAlgorithmIdentifier::CONCAT:
-    case CryptoAlgorithmIdentifier::HKDF_CTR:
-    case CryptoAlgorithmIdentifier::PBKDF2:
-        setDOMException(exec, NOT_SUPPORTED_ERR);
-        return nullptr;
-    }
-}
-
 }
 
 #endif // ENABLE(SUBTLE_CRYPTO)

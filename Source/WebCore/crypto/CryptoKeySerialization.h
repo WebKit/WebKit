@@ -37,7 +37,7 @@ class CryptoAlgorithm;
 class CryptoAlgorithmParameters;
 class CryptoKeyData;
 
-typedef std::pair<const char*, size_t> CryptoOperationData;
+typedef std::pair<const uint8_t*, size_t> CryptoOperationData;
 
 class CryptoKeySerialization {
     WTF_MAKE_NONCOPYABLE(CryptoKeySerialization);

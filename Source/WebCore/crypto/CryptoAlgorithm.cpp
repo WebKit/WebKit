@@ -85,6 +85,16 @@ void CryptoAlgorithm::importKey(const CryptoAlgorithmParameters&, const CryptoKe
     ec = NOT_SUPPORTED_ERR;
 }
 
+void CryptoAlgorithm::encryptForWrapKey(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
+{
+    encrypt(parameters, key, data, callback, failureCallback, ec);
+}
+
+void CryptoAlgorithm::decryptForUnwrapKey(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
+{
+    decrypt(parameters, key, data, callback, failureCallback, ec);
+}
+
 }
 
 #endif

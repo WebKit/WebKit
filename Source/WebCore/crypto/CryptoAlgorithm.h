@@ -44,7 +44,7 @@ class CryptoKeyPair;
 class CryptoKeyData;
 
 // Data is mutable, so async operations should copy it first.
-typedef std::pair<const char*, size_t> CryptoOperationData;
+typedef std::pair<const uint8_t*, size_t> CryptoOperationData;
 
 class CryptoAlgorithm {
     WTF_MAKE_NONCOPYABLE(CryptoAlgorithm)
@@ -68,6 +68,10 @@ public:
     virtual void deriveKey(const CryptoAlgorithmParameters&, const CryptoKey& baseKey, CryptoAlgorithm* derivedKeyType, bool extractable, CryptoKeyUsage, KeyCallback, VoidCallback failureCallback, ExceptionCode&);
     virtual void deriveBits(const CryptoAlgorithmParameters&, const CryptoKey& baseKey, unsigned long length, VectorCallback, VoidCallback failureCallback, ExceptionCode&);
     virtual void importKey(const CryptoAlgorithmParameters&, const CryptoKeyData&, bool extractable, CryptoKeyUsage, KeyCallback, VoidCallback failureCallback, ExceptionCode&);
+
+    // These are only different from encrypt/decrypt because some algorithms may not expose encrypt/decrypt.
+    virtual void encryptForWrapKey(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, VectorCallback, VoidCallback failureCallback, ExceptionCode&);
+    virtual void decryptForUnwrapKey(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, VectorCallback, VoidCallback failureCallback, ExceptionCode&);
 
 protected:
     CryptoAlgorithm();

@@ -1,3 +1,52 @@
+2013-11-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Implement WebCrypto unwrapKey
+        https://bugs.webkit.org/show_bug.cgi?id=124725
+
+        Reviewed by Anders Carlsson.
+
+        Tests: crypto/subtle/aes-cbc-unwrap-failure.html
+               crypto/subtle/aes-cbc-unwrap-rsa.html
+
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        * bindings/js/JSCryptoAlgorithmDictionary.h:
+        Removed calls for wrap/unwrap parameter parsing, these are just the same as encrypt/decrypt.
+
+        * bindings/js/JSCryptoOperationData.cpp:
+        (WebCore::cryptoOperationDataFromJSValue):
+        * bindings/js/JSCryptoOperationData.h:
+        * crypto/CryptoKeySerialization.h:
+        More Vector<char> elimination.
+
+        * bindings/js/JSDOMPromise.cpp:
+        * bindings/js/JSDOMPromise.h:
+        Removed unneccessary copy constructor and assignment operator, they are no diffdrent
+        than compiler generated ones.
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::cryptoKeyUsagesFromJSValue): Minor style fixes.
+        (WebCore::JSSubtleCrypto::encrypt): Ditto.
+        (WebCore::JSSubtleCrypto::decrypt): Ditto.
+        (WebCore::JSSubtleCrypto::sign): Ditto.
+        (WebCore::JSSubtleCrypto::verify): Ditto.
+        (WebCore::JSSubtleCrypto::generateKey): Ditto.
+        (WebCore::importKey): Separated actual import operation and the parts that read
+        arguments from ExecState, and call the promise. Logically, this should be outside
+        of bindings code even, but JWK makes that quite challenging.
+        (WebCore::JSSubtleCrypto::importKey): This only does the more mundane arguments
+        and return parts now.
+        (WebCore::JSSubtleCrypto::exportKey): Minor style fixes.
+        (WebCore::JSSubtleCrypto::unwrapKey): Chain decrypt and import.
+
+        * crypto/CryptoAlgorithm.cpp:
+        (WebCore::CryptoAlgorithm::encryptForWrapKey):
+        (WebCore::CryptoAlgorithm::decryptForUnwrapKey):
+        * crypto/CryptoAlgorithm.h:
+        There are algorithms that expose wrap/unwrap, but not encrypt/decrypt. These will
+        override these new functions, and leave encrypt/decrypt to raise NOT_SUPPORTED_ERR.
+
+        * crypto/SubtleCrypto.idl: Added unwrapKey.
+
 2013-11-21  Robert Sipka  <sipka@inf.u-szeged.hu>
 
         [curl]Improve ssl certificate storage and check

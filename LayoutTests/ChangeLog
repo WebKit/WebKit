@@ -1,3 +1,15 @@
+2013-11-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Implement WebCrypto unwrapKey
+        https://bugs.webkit.org/show_bug.cgi?id=124725
+
+        Reviewed by Anders Carlsson.
+
+        * crypto/subtle/aes-cbc-unwrap-failure-expected.txt: Added.
+        * crypto/subtle/aes-cbc-unwrap-failure.html: Added.
+        * crypto/subtle/aes-cbc-unwrap-rsa-expected.txt: Added.
+        * crypto/subtle/aes-cbc-unwrap-rsa.html: Added.
+
 2013-11-21  Radu Stavila  <stavila@adobe.com>
 
         Added test for the overflow of a region being painted across multiple tiles.

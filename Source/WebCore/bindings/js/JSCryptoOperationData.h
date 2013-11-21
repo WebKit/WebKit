@@ -35,7 +35,7 @@ class JSValue;
 
 namespace WebCore {
 
-typedef std::pair<const char*, size_t> CryptoOperationData;
+typedef std::pair<const uint8_t*, size_t> CryptoOperationData;
 
 bool cryptoOperationDataFromJSValue(JSC::ExecState*, JSC::JSValue, CryptoOperationData&);
 
