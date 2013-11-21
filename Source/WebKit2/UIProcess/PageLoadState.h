@@ -43,6 +43,10 @@ public:
 
     void reset();
 
+    const String& provisionalURL() const { return m_provisionalURL; }
+    const String& url() const { return m_url; }
+    const String& unreachableURL() const { return m_unreachableURL; }
+
     String activeURL() const;
 
     const String& pendingAPIRequestURL() const;

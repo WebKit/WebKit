@@ -295,11 +295,6 @@ public:
     void shouldGoToBackForwardListItem(uint64_t itemID, bool& shouldGoToBackForwardListItem);
     void willGoToBackForwardListItem(uint64_t itemID, CoreIPC::MessageDecoder&);
 
-    String activeURL() const;
-    String provisionalURL() const;
-    String committedURL() const;
-    String unreachableURL() const;
-
     bool willHandleHorizontalScrollEvents() const;
 
     bool canShowMIMEType(const String& mimeType) const;

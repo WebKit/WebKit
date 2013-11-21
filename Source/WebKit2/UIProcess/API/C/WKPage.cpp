@@ -734,17 +734,17 @@ WK_EXPORT WKURLRef WKPageCopyPendingAPIRequestURL(WKPageRef pageRef)
 
 WKURLRef WKPageCopyActiveURL(WKPageRef pageRef)
 {
-    return toCopiedURLAPI(toImpl(pageRef)->activeURL());
+    return toCopiedURLAPI(toImpl(pageRef)->pageLoadState().activeURL());
 }
 
 WKURLRef WKPageCopyProvisionalURL(WKPageRef pageRef)
 {
-    return toCopiedURLAPI(toImpl(pageRef)->provisionalURL());
+    return toCopiedURLAPI(toImpl(pageRef)->pageLoadState().provisionalURL());
 }
 
 WKURLRef WKPageCopyCommittedURL(WKPageRef pageRef)
 {
-    return toCopiedURLAPI(toImpl(pageRef)->committedURL());
+    return toCopiedURLAPI(toImpl(pageRef)->pageLoadState().url());
 }
 
 WKStringRef WKPageCopyStandardUserAgentWithApplicationName(WKStringRef applicationName)

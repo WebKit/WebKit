@@ -836,34 +836,6 @@ void WebPageProxy::willGoToBackForwardListItem(uint64_t itemID, CoreIPC::Message
         m_loaderClient.willGoToBackForwardListItem(this, item, userData.get());
 }
 
-String WebPageProxy::activeURL() const
-{
-    return m_pageLoadState.activeURL();
-}
-
-String WebPageProxy::provisionalURL() const
-{
-    if (!m_mainFrame)
-        return String();
-    return m_mainFrame->provisionalURL();
-}
-
-String WebPageProxy::committedURL() const
-{
-    if (!m_mainFrame)
-        return String();
-
-    return m_mainFrame->url();
-}
-
-String WebPageProxy::unreachableURL() const
-{
-    if (!m_mainFrame)
-        return String();
-
-    return m_mainFrame->unreachableURL();
-}
-
 bool WebPageProxy::canShowMIMEType(const String& mimeType) const
 {
     if (MIMETypeRegistry::canShowMIMEType(mimeType))

@@ -335,7 +335,7 @@ static void releaseNSData(unsigned char*, const void* data)
 
 - (NSURL *)unreachableURL
 {
-    return [NSURL _web_URLWithWTFString:toImpl(_data->_pageRef.get())->unreachableURL() relativeToURL:nil];
+    return [NSURL _web_URLWithWTFString:toImpl(_data->_pageRef.get())->pageLoadState().unreachableURL() relativeToURL:nil];
 }
 
 - (double)estimatedProgress
