@@ -1,3 +1,20 @@
+2013-11-20  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        Modify webkitdirs to reuse checkForArgumentAndRemoveFromARGV
+        https://bugs.webkit.org/show_bug.cgi?id=124581
+
+        Reviewed by Daniel Bates.
+
+        Some subroutines are replicating code from checkForArgument**
+        functions instead of reusing them as is being done by all other functions.
+
+        * Scripts/webkitdirs.pm:
+        (determineXcodeSDK): Added.
+        (determinePassedConfiguration): Added.
+        (determinePassedArchitecture): Added.
+        (checkForArgumentAndRemoveFromARGV): Added.
+        (checkForArgumentAndRemoveFromARGVGettingValue): Added.
+
 2013-11-20  Jozsef Berta  <jberta@inf.u-szeged.hu>
 
         Delete baseline optimizer

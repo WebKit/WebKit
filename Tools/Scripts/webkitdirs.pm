@@ -389,18 +389,14 @@ sub argumentsForConfiguration()
 sub determineXcodeSDK
 {
     return if defined $xcodeSDK;
-    for (my $i = 0; $i <= $#ARGV; $i++) {
-        my $opt = $ARGV[$i];
-        if ($opt =~ /^--sdk$/i) {
-            splice(@ARGV, $i, 1);
-            $xcodeSDK = splice(@ARGV, $i, 1);
-        } elsif ($opt =~ /^--device$/i) {
-            splice(@ARGV, $i, 1);
-            $xcodeSDK = 'iphoneos.internal';
-        } elsif ($opt =~ /^--sim(ulator)?/i) {
-            splice(@ARGV, $i, 1);
-            $xcodeSDK = 'iphonesimulator';
-        }
+    my $sdk;
+    if (checkForArgumentAndRemoveFromARGVGettingValue("--sdk", \$sdk)) {
+        $xcodeSDK = $sdk;
+    } elsif (checkForArgumentAndRemoveFromARGV("--device")) {
+        $xcodeSDK = 'iphoneos.internal';
+    } elsif (checkForArgumentAndRemoveFromARGV("--sim") ||
+        checkForArgumentAndRemoveFromARGV("--simulator")) {
+        $xcodeSDK = 'iphonesimulator';
     }
 }
 
@@ -613,29 +609,17 @@ sub determinePassedConfiguration
 {
     return if $searchedForPassedConfiguration;
     $searchedForPassedConfiguration = 1;
-
-    for my $i (0 .. $#ARGV) {
-        my $opt = $ARGV[$i];
-        if ($opt =~ /^--debug$/i) {
-            splice(@ARGV, $i, 1);
-            $passedConfiguration = "Debug";
-            $passedConfiguration .= "_WinCairo" if (isWinCairo() && isCygwin());
-            return;
-        }
-        if ($opt =~ /^--release$/i) {
-            splice(@ARGV, $i, 1);
-            $passedConfiguration = "Release";
-            $passedConfiguration .= "_WinCairo" if (isWinCairo() && isCygwin());
-            return;
-        }
-        if ($opt =~ /^--profil(e|ing)$/i) {
-            splice(@ARGV, $i, 1);
-            $passedConfiguration = "Profiling";
-            $passedConfiguration .= "_WinCairo" if (isWinCairo() && isCygwin());
-            return;
-        }
-    }
     $passedConfiguration = undef;
+
+    if (checkForArgumentAndRemoveFromARGV("--debug")) {
+        $passedConfiguration = "Debug";
+    } elsif(checkForArgumentAndRemoveFromARGV("--release")) {
+        $passedConfiguration = "Release";
+    } elsif (checkForArgumentAndRemoveFromARGV("--profile") || checkForArgumentAndRemoveFromARGV("--profiling")) {
+        $passedConfiguration = "Profiling";
+    }
+
+    $passedConfiguration .= "_WinCairo" if (defined($passedConfiguration) && isWinCairo() && isCygwin());
 }
 
 sub passedConfiguration
@@ -665,18 +649,13 @@ sub determinePassedArchitecture
     return if $searchedForPassedArchitecture;
     $searchedForPassedArchitecture = 1;
 
-    for my $i (0 .. $#ARGV) {
-        my $opt = $ARGV[$i];
-        if ($opt =~ /^--32-bit$/i) {
-            splice(@ARGV, $i, 1);
-            if (isAppleMacWebKit()) {
-                $passedArchitecture = `arch`;
-                chomp $passedArchitecture;
-            }
-            return;
+    $passedArchitecture = undef;
+    if (checkForArgumentAndRemoveFromARGV("--32-bit")) {
+        if (isAppleMacWebKit()) {
+            $passedArchitecture = `arch`;
+            chomp $passedArchitecture;
         }
     }
-    $passedArchitecture = undef;
 }
 
 sub passedArchitecture
@@ -858,10 +837,19 @@ sub commandExists($)
     return `$command --version 2> $devnull`;
 }
 
-sub checkForArgumentAndRemoveFromARGV
+sub checkForArgumentAndRemoveFromARGV($)
 {
     my $argToCheck = shift;
     return checkForArgumentAndRemoveFromArrayRef($argToCheck, \@ARGV);
+}
+
+sub checkForArgumentAndRemoveFromARGVGettingValue($$)
+{
+    my ($argToCheck, $valueRef) = @_;
+    my @matchingIndices = findMatchingArguments($argToCheck, \@ARGV);
+    return 0 unless ($#matchingIndices != 1);
+    splice(@ARGV, $matchingIndices[0], 1);
+    return $$valueRef = splice(@ARGV, $matchingIndices[0], 1);
 }
 
 sub findMatchingArguments($$)
