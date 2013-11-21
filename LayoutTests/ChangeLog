@@ -1,5 +1,20 @@
 2013-11-21  Radu Stavila  <stavila@adobe.com>
 
+        Added test for the overflow of a region being painted across multiple tiles.
+        Added test for correct repainting of a region's overflow.
+
+        [CSS Regions] Overflow areas from regions do not redraw
+        https://bugs.webkit.org/show_bug.cgi?id=117329
+
+        Reviewed by Antti Koivisto.
+
+        * fast/regions/regions-overflow-tile-expected.html: Added.
+        * fast/regions/regions-overflow-tile.html: Added.
+        * fast/repaint/repaint-regions-overflow-expected.txt: Added.
+        * fast/repaint/repaint-regions-overflow.html: Added.
+
+2013-11-21  Radu Stavila  <stavila@adobe.com>
+
         [CSS Regions] Float get sliced if its container has forced break and is less tall than float
         https://bugs.webkit.org/show_bug.cgi?id=124205
 
