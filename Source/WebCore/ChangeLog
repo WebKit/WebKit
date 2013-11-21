@@ -1,5 +1,28 @@
 2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        nextBoundary and previousBoundary are very slow when there is a password field
+        https://bugs.webkit.org/show_bug.cgi?id=123973
+
+        Reviewed by Antti Koivisto.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/57366eec5e3edea54062d4e74c0e047f8681dbad
+
+        When iterating through DOM nodes nextBoundary and previousBoundary convert the contents of nodes using
+        text security to a sequence of 'x' characters. The SimplifiedBackwardsTextIterator and TextIterator
+        may iterate past node boundaries. Before this patch, the transformation was done looking at the starting
+        node rather than the current node. In some situations, this replaced all boundaries with 'x' and caused
+        the text iterator to continue iterating and transforming until the extent of the document.
+
+        Test: editing/deleting/password-delete-performance.html
+
+        * editing/TextIterator.h:
+        (WebCore::SimplifiedBackwardsTextIterator::node):
+        * editing/VisibleUnits.cpp:
+        (WebCore::previousBoundary):
+        (WebCore::nextBoundary):
+
+2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         HTML parser should not associate elements inside templates with forms
         https://bugs.webkit.org/show_bug.cgi?id=117779
 

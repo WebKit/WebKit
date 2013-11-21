@@ -207,7 +207,8 @@ public:
     
     bool atEnd() const { return !m_positionNode || m_shouldStop; }
     void advance();
-    
+
+    Node* node() const { return m_node; }
     int length() const { return m_textLength; }
     const UChar* characters() const { return m_textCharacters; }
     

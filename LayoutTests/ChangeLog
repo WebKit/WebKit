@@ -1,5 +1,15 @@
 2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        nextBoundary and previousBoundary are very slow when there is a password field
+        https://bugs.webkit.org/show_bug.cgi?id=123973
+
+        Reviewed by Antti Koivisto.
+
+        * editing/deleting/password-delete-performance-expected.txt: Added.
+        * editing/deleting/password-delete-performance.html: Added.
+
+2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         HTML parser should not associate elements inside templates with forms
         https://bugs.webkit.org/show_bug.cgi?id=117779
 
