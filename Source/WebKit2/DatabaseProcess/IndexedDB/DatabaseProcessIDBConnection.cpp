@@ -64,13 +64,13 @@ void DatabaseProcessIDBConnection::establishConnection(const String& databaseNam
     m_mainFrameOrigin = mainFrameOrigin;
 }
 
-void DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata()
+void DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata(uint64_t requestID)
 {
     // FIXME: This method is successfully called by messaging from the WebProcess, and calls back with dummy data.
     // Needs real implementation.
 
     IDBDatabaseMetadata data;
-    send(Messages::WebIDBServerConnection::DidGetOrEstablishIDBDatabaseMetadata(false, data));
+    send(Messages::WebIDBServerConnection::DidGetOrEstablishIDBDatabaseMetadata(requestID, false, data));
 }
 
 CoreIPC::Connection* DatabaseProcessIDBConnection::messageSenderConnection()

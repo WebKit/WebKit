@@ -23,7 +23,7 @@
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
 messages -> WebIDBServerConnection LegacyReceiver {
-    DidGetOrEstablishIDBDatabaseMetadata(bool success, WebCore::IDBDatabaseMetadata metadata)
+    DidGetOrEstablishIDBDatabaseMetadata(uint64_t requestID, bool success, WebCore::IDBDatabaseMetadata metadata)
 }
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)

@@ -60,7 +60,7 @@ private:
 
     // Message handlers.
     void establishConnection(const String& databaseName, const SecurityOriginData& openingOrigin, const SecurityOriginData& mainFrameOrigin);
-    void getOrEstablishIDBDatabaseMetadata();
+    void getOrEstablishIDBDatabaseMetadata(uint64_t requestID);
 
     Ref<DatabaseToWebProcessConnection> m_connection;
     uint64_t m_serverConnectionIdentifier;

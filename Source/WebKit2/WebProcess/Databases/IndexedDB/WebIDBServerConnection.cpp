@@ -29,6 +29,7 @@
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
+#include "AsyncRequest.h"
 #include "DatabaseProcessIDBConnectionMessages.h"
 #include "DatabaseToWebProcessConnectionMessages.h"
 #include "SecurityOriginData.h"
@@ -82,13 +83,25 @@ void WebIDBServerConnection::deleteDatabase(const String& name, BoolCallbackFunc
 
 void WebIDBServerConnection::getOrEstablishIDBDatabaseMetadata(GetIDBDatabaseMetadataFunction completionCallback)
 {
-    // FIXME: Save the completionCallback to perform this request is complete.
-    send(Messages::DatabaseProcessIDBConnection::GetOrEstablishIDBDatabaseMetadata());
+    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<const IDBDatabaseMetadata&, bool>::create(completionCallback);
+
+    serverRequest->setAbortHandler([completionCallback]() {
+        IDBDatabaseMetadata metadata;
+        completionCallback(metadata, false);
+    });
+
+    uint64_t requestID = serverRequest->requestID();
+    m_serverRequests.set(requestID, serverRequest.release());
+
+    send(Messages::DatabaseProcessIDBConnection::GetOrEstablishIDBDatabaseMetadata(requestID));
 }
 
-void WebIDBServerConnection::didGetOrEstablishIDBDatabaseMetadata(bool, const IDBDatabaseMetadata&)
+void WebIDBServerConnection::didGetOrEstablishIDBDatabaseMetadata(uint64_t requestID, bool success, const IDBDatabaseMetadata& metadata)
 {
-    // FIXME: Lookup the appropriate completionCallback to perform with these results.
+    RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
+    ASSERT(serverRequest);
+
+    serverRequest->requestCompleted(metadata, success);
 }
 
 void WebIDBServerConnection::close()

@@ -1,3 +1,42 @@
+2013-11-20  Brady Eidson  <beidson@apple.com>
+
+        Hook up WebProcess-side of getOrEstablishIDBDatabaseMetadata
+        https://bugs.webkit.org/show_bug.cgi?id=124698
+
+        Reviewed by Anders Carlsson.
+
+        With this change the IDB API in WebKit2 using the DatabaseProcess finally does something observable:
+        window.indexedDB.open() sends an error to Javascript.
+
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata): Continue calling back to the
+          WebProcess with dummy data, but include the request ID for reference.
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in:
+
+        Add a new class that wraps a completion callback function and gives it a unique integer identifier.
+        It also allows for wrapping an abort callback function (in case a connection is lost, for example).
+        It is templated to flexibly handle any callback function signature.
+        * Shared/AsyncRequest.cpp: Added.
+        (WebKit::generateRequestID):
+        (WebKit::AsyncRequest::AsyncRequest):
+        (WebKit::AsyncRequest::~AsyncRequest):
+        (WebKit::AsyncRequest::setAbortHandler):
+        (WebKit::AsyncRequest::requestAborted):
+        (WebKit::AsyncRequest::clearAbortHandler):
+        * Shared/AsyncRequest.h: Added.
+        (WebKit::AsyncRequest::requestID):
+        (WebKit::AsyncRequest::requestCompleted):
+
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::getOrEstablishIDBDatabaseMetadata): Wrap the completion handler in an
+          AsyncRequest and save off the request for later use.
+        (WebKit::WebIDBServerConnection::didGetOrEstablishIDBDatabaseMetadata): Send the results to the AsyncRequest.
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.messages.in:
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-11-20  Anders Carlsson  <andersca@apple.com>
 
         Move activeURL getter to PageLoadState

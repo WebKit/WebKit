@@ -35,6 +35,8 @@
 
 namespace WebKit {
 
+class AsyncRequest;
+
 class WebIDBServerConnection FINAL : public WebCore::IDBServerConnection, public CoreIPC::MessageSender {
 public:
     static PassRefPtr<WebIDBServerConnection> create(const String& databaseName, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin);
@@ -91,13 +93,15 @@ private:
     // CoreIPC::MessageSender
     virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
 
-    void didGetOrEstablishIDBDatabaseMetadata(bool success, const WebCore::IDBDatabaseMetadata&);
+    void didGetOrEstablishIDBDatabaseMetadata(uint64_t requestID, bool success, const WebCore::IDBDatabaseMetadata&);
 
     uint64_t m_serverConnectionIdentifier;
 
     String m_databaseName;
     Ref<WebCore::SecurityOrigin> m_openingOrigin;
     Ref<WebCore::SecurityOrigin> m_mainFrameOrigin;
+
+    HashMap<uint64_t, RefPtr<AsyncRequest>> m_serverRequests;
 };
 
 } // namespace WebKit
