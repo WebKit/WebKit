@@ -1,3 +1,20 @@
+2013-11-20  Jae Hyun Park  <jae.park@company100.net>
+
+        [CoordinatedGraphics] Use std::unique_ptrs rather than OwnPtrs
+        https://bugs.webkit.org/show_bug.cgi?id=124692
+
+        Reviewed by Noam Rosenthal.
+
+        No new tests, covered by existing ones.
+
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::TiledBackingStore):
+        * platform/graphics/TiledBackingStore.h:
+        * platform/graphics/TiledBackingStoreBackend.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::createBackingStore):
+        * platform/graphics/texmap/coordinated/CoordinatedTile.h:
+
 2013-11-20  Brady Eidson  <beidson@apple.com>
 
         Add more infrastructure for ServerConnection communication between Web and Database processes

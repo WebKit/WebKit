@@ -41,7 +41,7 @@ class TiledBackingStoreClient;
 class TiledBackingStore {
     WTF_MAKE_NONCOPYABLE(TiledBackingStore); WTF_MAKE_FAST_ALLOCATED;
 public:
-    TiledBackingStore(TiledBackingStoreClient*, PassOwnPtr<TiledBackingStoreBackend> = TiledBackingStoreBackend::create());
+    TiledBackingStore(TiledBackingStoreClient*, std::unique_ptr<TiledBackingStoreBackend> = std::make_unique<TiledBackingStoreBackend>());
     ~TiledBackingStore();
 
     TiledBackingStoreClient* client() { return m_client; }
@@ -112,7 +112,7 @@ private:
 
 private:
     TiledBackingStoreClient* m_client;
-    OwnPtr<TiledBackingStoreBackend> m_backend;
+    std::unique_ptr<TiledBackingStoreBackend> m_backend;
 
     typedef HashMap<Tile::Coordinate, RefPtr<Tile> > TileMap;
     TileMap m_tiles;

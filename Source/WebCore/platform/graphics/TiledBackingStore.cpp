@@ -35,9 +35,9 @@ static IntPoint innerBottomRight(const IntRect& rect)
     return IntPoint(rect.maxX() - 1, rect.maxY() - 1);
 }
 
-TiledBackingStore::TiledBackingStore(TiledBackingStoreClient* client, PassOwnPtr<TiledBackingStoreBackend> backend)
+TiledBackingStore::TiledBackingStore(TiledBackingStoreClient* client, std::unique_ptr<TiledBackingStoreBackend> backend)
     : m_client(client)
-    , m_backend(backend)
+    , m_backend(std::move(backend))
     , m_tileBufferUpdateTimer(this, &TiledBackingStore::tileBufferUpdateTimerFired)
     , m_backingStoreUpdateTimer(this, &TiledBackingStore::backingStoreUpdateTimerFired)
     , m_tileSize(defaultTileDimension, defaultTileDimension)

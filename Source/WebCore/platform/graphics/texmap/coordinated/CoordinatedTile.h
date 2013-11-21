@@ -81,12 +81,11 @@ public:
 
 class CoordinatedTileBackend : public TiledBackingStoreBackend {
 public:
-    static PassOwnPtr<TiledBackingStoreBackend> create(CoordinatedTileClient* client) { return adoptPtr(new CoordinatedTileBackend(client)); }
+    explicit CoordinatedTileBackend(CoordinatedTileClient*);
     PassRefPtr<Tile> createTile(TiledBackingStore*, const Tile::Coordinate&);
     void paintCheckerPattern(GraphicsContext*, const FloatRect&);
 
 private:
-    explicit CoordinatedTileBackend(CoordinatedTileClient*);
     CoordinatedTileClient* m_client;
 };
 
