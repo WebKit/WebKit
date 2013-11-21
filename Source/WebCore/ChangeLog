@@ -1,5 +1,25 @@
 2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix Range.insertNode when the inserted node is in the same container as the Range
+        https://bugs.webkit.org/show_bug.cgi?id=123957
+
+        Reviewed by Antti Koivisto.
+
+        Inspired by https://chromium.googlesource.com/chromium/blink/+/fb6ca1f488703e8d4f20ce6449cc8ea210be6edb
+
+        When a node from the same container is inserted, we can't simply adjust m_end with the offset.
+        Compute m_start and m_end from the inserted nodes instead.
+
+        Also, don't adjust m_start and m_end to nodes outside of the document if the inserted nodes had been
+        removed by mutation events.
+
+        Test: fast/dom/Range/range-insertNode-same-container.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::insertNode):
+
+2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         nextBoundary and previousBoundary are very slow when there is a password field
         https://bugs.webkit.org/show_bug.cgi?id=123973
 

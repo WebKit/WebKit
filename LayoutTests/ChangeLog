@@ -1,5 +1,20 @@
 2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix Range.insertNode when the inserted node is in the same container as the Range
+        https://bugs.webkit.org/show_bug.cgi?id=123957
+
+        Reviewed by Antti Koivisto.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/fb6ca1f488703e8d4f20ce6449cc8ea210be6edb
+
+        Used better labels between divs, and added more evalAndLog and shouldBe so that
+        the expected result is self-explanatory.
+
+        * fast/dom/Range/range-insertNode-same-container-expected.txt: Added.
+        * fast/dom/Range/range-insertNode-same-container.html: Added.
+
+2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         nextBoundary and previousBoundary are very slow when there is a password field
         https://bugs.webkit.org/show_bug.cgi?id=123973
 

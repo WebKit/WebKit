@@ -1034,20 +1034,23 @@ void Range::insertNode(PassRefPtr<Node> prpNewNode, ExceptionCode& ec)
         if (ec)
             return;
 
-        if (collapsed)
+        if (collapsed && newText->parentNode() == container && &container->document() == &ownerDocument())
             m_end.setToBeforeChild(newText.get());
     } else {
-        RefPtr<Node> lastChild;
-        if (collapsed)
-            lastChild = (newNodeType == Node::DOCUMENT_FRAGMENT_NODE) ? newNode->lastChild() : newNode;
-
         container = m_start.container();
-        container->insertBefore(newNode.release(), container->childNode(m_start.offset()), ec);
+        RefPtr<Node> firstInsertedChild = newNodeType == Node::DOCUMENT_FRAGMENT_NODE ? newNode->firstChild() : newNode;
+        RefPtr<Node> lastInsertedChild = newNodeType == Node::DOCUMENT_FRAGMENT_NODE ? newNode->lastChild() : newNode;
+        RefPtr<Node> childAfterInsertedContent = container->childNode(m_start.offset());
+        container->insertBefore(newNode.release(), childAfterInsertedContent.get(), ec);
         if (ec)
             return;
 
-        if (collapsed && numNewChildren)
-            m_end.set(m_start.container(), m_start.offset() + numNewChildren, lastChild.get());
+        if (collapsed && numNewChildren && &container->document() == &ownerDocument()) {
+            if (firstInsertedChild->parentNode() == container)
+                m_start.setToBeforeChild(firstInsertedChild.get());
+            if (lastInsertedChild->parentNode() == container)
+                m_end.set(container, lastInsertedChild->nodeIndex() + 1, lastInsertedChild.get());
+        }
     }
 }
 
