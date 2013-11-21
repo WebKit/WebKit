@@ -62,6 +62,11 @@ Settings.prototype = {
             callbacks[i]();
     },
 
+    toggleSettingsDisplay: function()
+    {
+        document.body.classList.toggle("settings-visible");
+    },
+
     toggleHiddenPlatform: function(platform)
     {
         var hiddenPlatforms = this.getObject("hiddenPlatforms");

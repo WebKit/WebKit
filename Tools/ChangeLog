@@ -1,5 +1,27 @@
 2013-11-20  Dean Jackson  <dino@apple.com>
 
+        Allow settings to be shown/hidden on build.webkit.org/dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=124694
+
+        Reviewed by Tim Horton.
+
+        In preparation for more options/buttons, allow the page to
+        show or hide all the interactive things using a little gear icon
+        in the top left corner.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Main.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Settings.js:
+        (Settings.prototype.toggleSettingsDisplay):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        (div.cellButton.hide):
+        (div.cellButton.unhide):
+        (.settings-visible div.cellButton.hide, .settings-visible div.cellButton.unhide):
+        (.settings):
+        (.settings:hover):
+        (.settings-visible .settings):
+
+2013-11-20  Dean Jackson  <dino@apple.com>
+
         No need to base64 SVG on build.webkit.org/dashboard
         https://bugs.webkit.org/show_bug.cgi?id=124687
 
