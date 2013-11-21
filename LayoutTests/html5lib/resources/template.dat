@@ -1287,3 +1287,14 @@
 |                   "Foo"
 |       <caption>
 |         "A"
+
+
+#data
+<body></body><template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       content
