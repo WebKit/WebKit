@@ -32,6 +32,7 @@
 #include <runtime/Operations.h>
 #include <runtime/TypedArrays.h>
 #include <runtime/TypedArrayInlines.h>
+#include <runtime/VMEntryScope.h>
 
 using namespace JSC;
 
