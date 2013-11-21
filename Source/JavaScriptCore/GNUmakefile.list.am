@@ -913,6 +913,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSExportMacros.h \
 	Source/JavaScriptCore/runtime/VM.cpp \
 	Source/JavaScriptCore/runtime/VM.h \
+	Source/JavaScriptCore/runtime/VMEntryScope.cpp \
+	Source/JavaScriptCore/runtime/VMEntryScope.h \
 	Source/JavaScriptCore/runtime/JSFunctionInlines.h \
 	Source/JavaScriptCore/runtime/JSGenericTypedArrayView.h \
 	Source/JavaScriptCore/runtime/JSGenericTypedArrayViewConstructor.h \
@@ -1127,7 +1129,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/Uint32Array.h \
 	Source/JavaScriptCore/runtime/Uint8Array.h \
 	Source/JavaScriptCore/runtime/Uint8ClampedArray.h \
-	Source/JavaScriptCore/runtime/VMStackBounds.h \
 	Source/JavaScriptCore/runtime/Watchdog.cpp \
 	Source/JavaScriptCore/runtime/Watchdog.h \
 	Source/JavaScriptCore/runtime/WatchdogNone.cpp \

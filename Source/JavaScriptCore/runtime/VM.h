@@ -54,6 +54,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefCountedArray.h>
 #include <wtf/SimpleStats.h>
+#include <wtf/StackBounds.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/WTFThreadData.h>
@@ -90,6 +91,7 @@ namespace JSC {
     class UnlinkedEvalCodeBlock;
     class UnlinkedFunctionExecutable;
     class UnlinkedProgramCodeBlock;
+    class VMEntryScope;
 
 #if ENABLE(DFG_JIT)
     namespace DFG {
@@ -361,6 +363,19 @@ namespace JSC {
         JS_EXPORT_PRIVATE JSValue throwException(ExecState*, JSValue);
         JS_EXPORT_PRIVATE JSObject* throwException(ExecState*, JSObject*);
         
+        void** addressOfJSStackLimit() { return &m_jsStackLimit; }
+        void* jsStackLimit() { return m_jsStackLimit; }
+        void setJSStackLimit(void* limit) { m_jsStackLimit = limit; }
+
+        void* stackLimit() { return m_stackLimit; }
+        void setStackLimit(void* limit) { m_stackLimit = limit; }
+        bool isSafeToRecurse() const
+        {
+            ASSERT(wtfThreadData().stack().isGrowingDownward());
+            void* curr;
+            return &curr >= m_stackLimit;
+        }
+
         const ClassInfo* const jsArrayClassInfo;
         const ClassInfo* const jsFinalObjectClassInfo;
 
@@ -396,7 +411,7 @@ namespace JSC {
 
         void gatherConservativeRoots(ConservativeRoots&);
 
-        JSGlobalObject* dynamicGlobalObject;
+        VMEntryScope* entryScope;
 
         HashSet<JSObject*> stringRecursionCheckVisitedObjects;
 
@@ -474,6 +489,18 @@ namespace JSC {
 #endif
 #if ENABLE(GC_VALIDATION)
         const ClassInfo* m_initializingObjectClass;
+#endif
+
+#if USE(SEPARATE_C_AND_JS_STACK)
+        struct {
+            void* m_stackLimit;
+            void* m_jsStackLimit;
+        };
+#else
+        union {
+            void* m_stackLimit;
+            void* m_jsStackLimit;
+        };
 #endif
         JSValue m_exception;
         bool m_inDefineOwnProperty;

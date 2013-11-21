@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -155,7 +155,7 @@ JSGlobalContextRef JSGlobalContextRetain(JSGlobalContextRef ctx)
     APIEntryShim entryShim(exec);
 
     VM& vm = exec->vm();
-    gcProtect(exec->dynamicGlobalObject());
+    gcProtect(exec->vmEntryGlobalObject());
     vm.ref();
     return ctx;
 }
@@ -170,7 +170,7 @@ void JSGlobalContextRelease(JSGlobalContextRef ctx)
         VM& vm = exec->vm();
         savedIdentifierTable = wtfThreadData().setCurrentIdentifierTable(vm.identifierTable);
 
-        bool protectCountIsZero = Heap::heap(exec->dynamicGlobalObject())->unprotect(exec->dynamicGlobalObject());
+        bool protectCountIsZero = Heap::heap(exec->vmEntryGlobalObject())->unprotect(exec->vmEntryGlobalObject());
         if (protectCountIsZero)
             vm.heap.reportAbandonedObjectGraph();
         vm.deref();

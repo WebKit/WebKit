@@ -422,6 +422,7 @@ set(JavaScriptCore_SOURCES
     runtime/TypedArrayController.cpp
     runtime/TypedArrayType.cpp
     runtime/VM.cpp
+    runtime/VMEntryScope.cpp
     runtime/Watchdog.cpp
     runtime/WatchdogNone.cpp
     runtime/WeakMapConstructor.cpp

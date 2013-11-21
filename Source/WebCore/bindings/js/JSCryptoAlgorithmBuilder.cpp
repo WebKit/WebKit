@@ -71,7 +71,7 @@ void JSCryptoAlgorithmBuilder::add(const char* key, const Vector<uint8_t>& buffe
     VM& vm = m_exec->vm();
     Identifier identifier(&vm, key);
     RefPtr<Uint8Array> arrayView = Uint8Array::create(buffer.data(), buffer.size());
-    m_dictionary->putDirect(vm, identifier, arrayView->wrap(m_exec, vm.dynamicGlobalObject));
+    m_dictionary->putDirect(vm, identifier, arrayView->wrap(m_exec, vm.entryScope->globalObject()));
 }
 
 void JSCryptoAlgorithmBuilder::add(const char* key, const CryptoAlgorithmDescriptionBuilder& nestedBuilder)

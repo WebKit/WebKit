@@ -383,10 +383,9 @@ macro functionInitialization(profileArgSkip)
     loadi CodeBlock::m_numCalleeRegisters[t1], t0
     addi 1, t0 # Account that local0 goes at slot -1
     loadp CodeBlock::m_vm[t1], t2
-    loadp VM::interpreter[t2], t2
     lshiftp 3, t0
     subp cfr, t0, t0
-    bpbeq Interpreter::m_stack + JSStack::m_end[t2], t0, .stackHeightOK
+    bpbeq VM::m_jsStackLimit[t2], t0, .stackHeightOK
 
     # Stack height check failed - need to call a slow_path.
     callSlowPath(_llint_stack_check)

@@ -84,7 +84,7 @@ void link(State& state)
             GPRInfo::callFrameRegister, GPRInfo::regT1);
         CCallHelpers::Jump stackCheck = jit.branchPtr(
             CCallHelpers::Above,
-            CCallHelpers::AbsoluteAddress(state.graph.m_vm.interpreter->stack().addressOfEnd()),
+            CCallHelpers::AbsoluteAddress(state.graph.m_vm.addressOfJSStackLimit()),
             GPRInfo::regT1);
         CCallHelpers::Label fromStackCheck = jit.label();
         

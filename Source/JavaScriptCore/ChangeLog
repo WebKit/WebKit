@@ -1,3 +1,148 @@
+2013-11-20  Mark Lam  <mark.lam@apple.com>
+
+        Introducing VMEntryScope to update the VM stack limit.
+        https://bugs.webkit.org/show_bug.cgi?id=124634.
+
+        Reviewed by Geoffrey Garen.
+
+        1. Introduced USE(SEPARATE_C_AND_JS_STACK) (defined in Platform.h).
+           Currently, it is hardcoded to use separate C and JS stacks. Once we
+           switch to using the C stack for JS frames, we'll need to fix this to
+           only be enabled when ENABLE(LLINT_C_LOOP).
+
+        2. Stack limits are now tracked in the VM.
+
+           Logically, there are 2 stack limits:
+           a. m_stackLimit for the native C stack, and
+           b. m_jsStackLimit for the JS stack.
+
+           If USE(SEPARATE_C_AND_JS_STACK), then the 2 limits are the same
+           value, and are implemented as 2 fields in a union.
+
+        3. The VM native stackLimit is set as follows:
+           a. Initially, the VM sets it to the limit of the stack of the thread that
+              instantiated the VM. This allows the parser and bytecode generator to
+              run before we enter the VM to execute JS code.
+
+           b. Upon entry into the VM to execute JS code (via one of the
+              Interpreter::execute...() functions), we instantiate a VMEntryScope
+              that sets the VM's stackLimit to the limit of the current thread's
+              stack. The VMEntryScope will automatically restore the previous
+              entryScope and stack limit upon destruction.
+
+           If USE(SEPARATE_C_AND_JS_STACK), the JSStack's methods will set the VM's
+           jsStackLimit whenever it grows or shrinks.
+
+        4. The VM now provides a isSafeToRecurse() function that compares the
+           current stack pointer against its native stackLimit. This subsumes and
+           obsoletes the VMStackBounds class.
+
+        5. The VMEntryScope class also subsumes DynamicGlobalObjectScope for
+           tracking the JSGlobalObject that we last entered the VM with.
+
+        6. Renamed dynamicGlobalObject() to vmEntryGlobalObject() since that is
+           the value that the function retrieves.
+
+        7. Changed JIT and LLINT code to do stack checks against the jsStackLimit
+           in the VM class instead of the JSStack.
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        (JSCheckScriptSyntax):
+        * API/JSContextRef.cpp:
+        (JSGlobalContextRetain):
+        (JSGlobalContextRelease):
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitNode):
+        (JSC::BytecodeGenerator::emitNodeInConditionContext):
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::detach):
+        (JSC::Debugger::recompileAllJSFunctions):
+        (JSC::Debugger::pauseIfNeeded):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::vmEntryGlobalObject):
+        * debugger/DebuggerCallFrame.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGOSREntry.cpp:
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLOSREntry.cpp:
+        * heap/Heap.cpp:
+        (JSC::Heap::lastChanceToFinalize):
+        (JSC::Heap::deleteAllCompiledCode):
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::CachedCall):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::vmEntryGlobalObject):
+        * interpreter/CallFrame.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::unwindCallFrame):
+        (JSC::Interpreter::unwind):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        (JSC::Interpreter::debug):
+        * interpreter/JSStack.cpp:
+        (JSC::JSStack::JSStack):
+        (JSC::JSStack::growSlowCase):
+        * interpreter/JSStack.h:
+        * interpreter/JSStackInlines.h:
+        (JSC::JSStack::shrink):
+        (JSC::JSStack::grow):
+        - Moved these inlined functions here from JSStack.h. It reduces some
+          #include dependencies of JSSTack.h which had previously resulted
+          in some EWS bots' unhappiness with this patch.
+        (JSC::JSStack::updateStackLimit):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileLoadVarargs):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileLoadVarargs):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        * llint/LowLevelInterpreter.asm:
+        * parser/Parser.cpp:
+        (JSC::::Parser):
+        * parser/Parser.h:
+        (JSC::Parser::canRecurse):
+        * runtime/CommonSlowPaths.h:
+        * runtime/Completion.cpp:
+        (JSC::evaluate):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/StringRecursionChecker.h:
+        (JSC::StringRecursionChecker::performCheck):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::releaseExecutableMemory):
+        (JSC::VM::throwException):
+        * runtime/VM.h:
+        (JSC::VM::addressOfJSStackLimit):
+        (JSC::VM::jsStackLimit):
+        (JSC::VM::setJSStackLimit):
+        (JSC::VM::stackLimit):
+        (JSC::VM::setStackLimit):
+        (JSC::VM::isSafeToRecurse):
+        * runtime/VMEntryScope.cpp: Added.
+        (JSC::VMEntryScope::VMEntryScope):
+        (JSC::VMEntryScope::~VMEntryScope):
+        (JSC::VMEntryScope::requiredCapacity):
+        * runtime/VMEntryScope.h: Added.
+        (JSC::VMEntryScope::globalObject):
+        * runtime/VMStackBounds.h: Removed.
+
 2013-11-20  Michael Saboff  <msaboff@apple.com>
 
         [Win] JavaScript JIT crash (with DFG enabled).

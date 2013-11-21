@@ -35,7 +35,6 @@
 #include "SourceProvider.h"
 #include "SourceProviderCache.h"
 #include "SourceProviderCacheItem.h"
-#include "VMStackBounds.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -758,7 +757,7 @@ private:
     
     bool canRecurse()
     {
-        return m_stack.isSafeToRecurse();
+        return m_vm->isSafeToRecurse();
     }
     
     const JSTextPosition& lastTokenEndPosition() const
@@ -827,7 +826,6 @@ private:
     ParserArena* m_arena;
     OwnPtr<LexerType> m_lexer;
     
-    VMStackBounds m_stack;
     bool m_hasStackOverflow;
     String m_errorMessage;
     JSToken m_token;

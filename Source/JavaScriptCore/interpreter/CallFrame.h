@@ -51,7 +51,7 @@ namespace JSC  {
         }
 
         // Global object in which execution began.
-        JSGlobalObject* dynamicGlobalObject();
+        JS_EXPORT_PRIVATE JSGlobalObject* vmEntryGlobalObject();
 
         // Global object in which the currently executing code was defined.
         // Differs from dynamicGlobalObject() during function calls across web browser frames.

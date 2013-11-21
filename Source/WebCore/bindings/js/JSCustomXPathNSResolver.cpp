@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Alexey Proskuryakov (ap@nypop.com)
+ * Copyright (C) 2007, 2013 Alexey Proskuryakov (ap@nypop.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +52,7 @@ PassRefPtr<JSCustomXPathNSResolver> JSCustomXPathNSResolver::create(ExecState* e
         return 0;
     }
 
-    return adoptRef(new JSCustomXPathNSResolver(exec, resolverObject, asJSDOMWindow(exec->dynamicGlobalObject())));
+    return adoptRef(new JSCustomXPathNSResolver(exec, resolverObject, asJSDOMWindow(exec->vmEntryGlobalObject())));
 }
 
 JSCustomXPathNSResolver::JSCustomXPathNSResolver(ExecState* exec, JSObject* customResolver, JSDOMWindow* globalObject)

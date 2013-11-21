@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -115,7 +116,7 @@ void PageScriptDebugServer::recompileAllJSFunctions(Timer<ScriptDebugServer>*)
 {
     JSLockHolder lock(JSDOMWindow::commonVM());
     // If JavaScript stack is not empty postpone recompilation.
-    if (JSDOMWindow::commonVM()->dynamicGlobalObject)
+    if (JSDOMWindow::commonVM()->entryScope)
         recompileAllJSFunctionsSoon();
     else
         Debugger::recompileAllJSFunctions(JSDOMWindow::commonVM());

@@ -27,9 +27,11 @@
 #define CachedCall_h
 
 #include "CallFrameClosure.h"
+#include "ExceptionHelpers.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "Interpreter.h"
+#include "VMEntryScope.h"
 
 namespace JSC {
     class CachedCall {
@@ -38,10 +40,13 @@ namespace JSC {
         CachedCall(CallFrame* callFrame, JSFunction* function, int argumentCount)
             : m_valid(false)
             , m_interpreter(callFrame->interpreter())
-            , m_globalObjectScope(callFrame->vm(), function->scope()->globalObject())
+            , m_entryScope(callFrame->vm(), function->scope()->globalObject())
         {
             ASSERT(!function->isHostFunction());
-            m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, function, argumentCount + 1, function->scope());
+            if (callFrame->vm().isSafeToRecurse())
+                m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, function, argumentCount + 1, function->scope());
+            else
+                throwStackOverflowError(callFrame);
             m_valid = !callFrame->hadException();
         }
         
@@ -69,7 +74,7 @@ namespace JSC {
     private:
         bool m_valid;
         Interpreter* m_interpreter;
-        DynamicGlobalObjectScope m_globalObjectScope;
+        VMEntryScope m_entryScope;
         CallFrameClosure m_closure;
     };
 }

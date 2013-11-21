@@ -66,7 +66,7 @@
 #include "StackVisitor.h"
 #include "StrictEvalActivation.h"
 #include "StrongInlines.h"
-#include "VMStackBounds.h"
+#include "VMEntryScope.h"
 #include "VirtualRegister.h"
 
 #include <limits.h>
@@ -395,7 +395,7 @@ static bool unwindCallFrame(StackVisitor& visitor)
     CodeBlock* oldCodeBlock = codeBlock;
     JSScope* scope = callFrame->scope();
 
-    if (Debugger* debugger = callFrame->dynamicGlobalObject()->debugger()) {
+    if (Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger()) {
         if (callFrame->callee())
             debugger->returnEvent(callFrame);
         else
@@ -650,7 +650,7 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(CallFrame*& callFrame, JSValue& ex
     ASSERT(callFrame->vm().exceptionStack().size());
     ASSERT(!exceptionValue.isObject() || asObject(exceptionValue)->hasProperty(callFrame, callFrame->vm().propertyNames->stack));
 
-    Debugger* debugger = callFrame->dynamicGlobalObject()->debugger();
+    Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger();
     if (debugger && debugger->needsExceptionCallbacks()) {
         // We need to clear the exception and the exception stack here in order to see if a new exception happens.
         // Afterwards, the values are put back to continue processing this error.
@@ -739,15 +739,14 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
     if (vm.isCollectorBusy())
         return jsNull();
 
-    StackStats::CheckPoint stackCheckPoint;
-    const VMStackBounds vmStackBounds(vm, wtfThreadData().stack());
-    if (!vmStackBounds.isSafeToRecurse())
+    VMEntryScope entryScope(vm, scope->globalObject());
+    if (!vm.isSafeToRecurse())
         return checkedReturn(throwStackOverflowError(callFrame));
 
     // First check if the "program" is actually just a JSON object. If so,
     // we'll handle the JSON object here. Else, we'll handle real JS code
     // below at failedJSONP.
-    DynamicGlobalObjectScope globalObjectScope(vm, scope->globalObject());
+
     Vector<JSONPData> JSONPData;
     bool parseResult;
     const String programSource = program->source().toString();
@@ -900,11 +899,6 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     if (vm.isCollectorBusy())
         return jsNull();
 
-    StackStats::CheckPoint stackCheckPoint;
-    const VMStackBounds vmStackBounds(vm, wtfThreadData().stack());
-    if (!vmStackBounds.isSafeToRecurse())
-        return checkedReturn(throwStackOverflowError(callFrame));
-
     bool isJSCall = (callType == CallTypeJS);
     JSScope* scope;
     CodeBlock* newCodeBlock;
@@ -916,7 +910,10 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
         ASSERT(callType == CallTypeHost);
         scope = callFrame->scope();
     }
-    DynamicGlobalObjectScope globalObjectScope(vm, scope->globalObject());
+
+    VMEntryScope entryScope(vm, scope->globalObject());
+    if (!vm.isSafeToRecurse())
+        return checkedReturn(throwStackOverflowError(callFrame));
 
     if (isJSCall) {
         // Compile the callee:
@@ -978,11 +975,6 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     if (vm.isCollectorBusy())
         return checkedReturn(throwStackOverflowError(callFrame));
 
-    StackStats::CheckPoint stackCheckPoint;
-    const VMStackBounds vmStackBounds(vm, wtfThreadData().stack());
-    if (!vmStackBounds.isSafeToRecurse())
-        return checkedReturn(throwStackOverflowError(callFrame));
-
     bool isJSConstruct = (constructType == ConstructTypeJS);
     JSScope* scope;
     CodeBlock* newCodeBlock;
@@ -995,7 +987,9 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
         scope = callFrame->scope();
     }
 
-    DynamicGlobalObjectScope globalObjectScope(vm, scope->globalObject());
+    VMEntryScope entryScope(vm, scope->globalObject());
+    if (!vm.isSafeToRecurse())
+        return checkedReturn(throwStackOverflowError(callFrame));
 
     if (isJSConstruct) {
         // Compile the callee:
@@ -1064,13 +1058,6 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
     
     if (vm.isCollectorBusy())
         return CallFrameClosure();
-
-    StackStats::CheckPoint stackCheckPoint;
-    const VMStackBounds vmStackBounds(vm, wtfThreadData().stack());
-    if (!vmStackBounds.isSafeToRecurse()) {
-        throwStackOverflowError(callFrame);
-        return CallFrameClosure();
-    }
 
     // Compile the callee:
     JSObject* error = functionExecutable->prepareForExecution(callFrame, scope, CodeForCall);
@@ -1165,12 +1152,9 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     if (vm.isCollectorBusy())
         return jsNull();
 
-    DynamicGlobalObjectScope globalObjectScope(vm, scope->globalObject());
-
-    StackStats::CheckPoint stackCheckPoint;
-    const VMStackBounds vmStackBounds(vm, wtfThreadData().stack());
-    if (!vmStackBounds.isSafeToRecurse())
-        return checkedReturn(throwStackOverflowError(callFrame));
+    VMEntryScope entryScope(vm, scope->globalObject());
+    if (!vm.isSafeToRecurse())
+        return checkedReturn(throwStackOverflowError(callFrame));        
 
     unsigned numVariables = eval->numVariables();
     int numFunctions = eval->numberOfFunctionDecls();
@@ -1251,7 +1235,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 
 NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookID debugHookID)
 {
-    Debugger* debugger = callFrame->dynamicGlobalObject()->debugger();
+    Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger();
     if (!debugger || !debugger->needsOpDebugCallbacks())
         return;
 

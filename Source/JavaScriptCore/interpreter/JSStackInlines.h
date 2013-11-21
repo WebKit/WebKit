@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "CallFrame.h"
 #include "CodeBlock.h"
 #include "JSStack.h"
+#include "VM.h"
 
 namespace JSC {
 
@@ -135,6 +136,29 @@ inline void JSStack::popFrame(CallFrame* frame)
     installTrapsAfterFrame(callerFrame);
 }
 
+inline void JSStack::shrink(Register* newEnd)
+{
+    if (newEnd >= m_end)
+        return;
+    updateStackLimit(newEnd);
+    if (m_end == getBaseOfStack() && (m_commitEnd - getBaseOfStack()) >= maxExcessCapacity)
+        releaseExcessCapacity();
+}
+
+inline bool JSStack::grow(Register* newEnd)
+{
+    if (newEnd >= m_end)
+        return true;
+    return growSlowCase(newEnd);
+}
+
+inline void JSStack::updateStackLimit(Register* newEnd)
+{
+    m_end = newEnd;
+#if USE(SEPARATE_C_AND_JS_STACK)
+    m_vm.setJSStackLimit(newEnd);
+#endif
+}
 
 #if ENABLE(DEBUG_JSSTACK)
 inline JSValue JSStack::generateFenceValue(size_t argIndex)

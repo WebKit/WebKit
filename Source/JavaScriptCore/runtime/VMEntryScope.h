@@ -23,49 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef VMStackBounds_h
-#define VMStackBounds_h
+#ifndef VMEntryScope_h
+#define VMEntryScope_h
 
-#include "VM.h"
+#include "Interpreter.h"
 #include <wtf/StackBounds.h>
+#include <wtf/StackStats.h>
 
 namespace JSC {
 
-class VMStackBounds {
-public:
-    VMStackBounds(VM& vm, const StackBounds& bounds)
-        : m_vm(vm)
-        , m_bounds(bounds)
-    {
-    }
+class JSGlobalObject;
+class VM;
 
-    bool isSafeToRecurse() const { return m_bounds.isSafeToRecurse(requiredCapacity()); }
+class VMEntryScope {
+public:
+    JS_EXPORT_PRIVATE VMEntryScope(VM&, JSGlobalObject*);
+    JS_EXPORT_PRIVATE ~VMEntryScope();
+
+    JSGlobalObject* globalObject() const { return m_globalObject; }
 
 private:
-    inline size_t requiredCapacity() const
-    {
-        Interpreter* interpreter = m_vm.interpreter;
-
-        // We have two separate stack limits, one for regular JS execution, and one
-        // for when we're handling errors. We need the error stack to be smaller
-        // otherwise there would obviously not be any stack left to execute JS in when
-        // there's a stack overflow.
-        //
-        // These sizes were derived from the stack usage of a number of sites when
-        // layout occurs when we've already consumed most of the C stack.
-        const size_t requiredStack = 128 * KB;
-        const size_t errorModeRequiredStack = 64 * KB;
-
-        size_t requiredCapacity = interpreter->isInErrorHandlingMode() ? errorModeRequiredStack : requiredStack;
-        RELEASE_ASSERT(m_bounds.size() >= requiredCapacity);
-        return requiredCapacity; 
-    }
+    size_t requiredCapacity() const;
 
     VM& m_vm;
-    const StackBounds& m_bounds;
+    StackStats::CheckPoint m_stackCheckPoint;
+    StackBounds m_stack;
+    JSGlobalObject* m_globalObject;
+
+    // m_prev and m_prevStackLimit may belong to a different thread's stack.
+    VMEntryScope* m_prev;
+    void* m_prevStackLimit;
 };
 
 } // namespace JSC
 
-#endif // VMStackBounds_h
+#endif // VMEntryScope_h
 

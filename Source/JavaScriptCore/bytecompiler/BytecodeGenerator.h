@@ -44,7 +44,6 @@
 #include "Nodes.h"
 #include "StaticPropertyAnalyzer.h"
 #include "UnlinkedCodeBlock.h"
-#include "VMStackBounds.h"
 
 #include <functional>
 
@@ -233,7 +232,7 @@ namespace JSC {
         {
             // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
             ASSERT(!dst || dst == ignoredResult() || !dst->isTemporary() || dst->refCount());
-            if (!m_stack.isSafeToRecurse()) {
+            if (!m_vm->isSafeToRecurse()) {
                 emitThrowExpressionTooDeepException();
                 return;
             }
@@ -249,7 +248,7 @@ namespace JSC {
         {
             // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
             ASSERT(!dst || dst == ignoredResult() || !dst->isTemporary() || dst->refCount());
-            if (!m_stack.isSafeToRecurse())
+            if (!m_vm->isSafeToRecurse())
                 return emitThrowExpressionTooDeepException();
             return n->emitBytecode(*this, dst);
         }
@@ -261,7 +260,7 @@ namespace JSC {
 
         void emitNodeInConditionContext(ExpressionNode* n, Label* trueTarget, Label* falseTarget, FallThroughMode fallThroughMode)
         {
-            if (!m_stack.isSafeToRecurse()) {
+            if (!m_vm->isSafeToRecurse()) {
                 emitThrowExpressionTooDeepException();
                 return;
             }
@@ -638,8 +637,6 @@ namespace JSC {
 #ifndef NDEBUG
         size_t m_lastOpcodePosition;
 #endif
-
-        VMStackBounds m_stack;
 
         bool m_usesExceptions;
         bool m_expressionTooDeep;

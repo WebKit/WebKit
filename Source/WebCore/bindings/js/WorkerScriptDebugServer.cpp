@@ -67,7 +67,7 @@ void WorkerScriptDebugServer::recompileAllJSFunctions(Timer<ScriptDebugServer>*)
 
     JSC::JSLockHolder lock(vm);
     // If JavaScript stack is not empty postpone recompilation.
-    if (vm->dynamicGlobalObject)
+    if (vm->entryScope)
         recompileAllJSFunctionsSoon();
     else
         JSC::Debugger::recompileAllJSFunctions(vm);

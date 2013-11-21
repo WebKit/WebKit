@@ -29,6 +29,7 @@
 #include "CodeBlock.h"
 #include "CodeSpecializationKind.h"
 #include "ExceptionHelpers.h"
+#include "JSStackInlines.h"
 #include "NameInstance.h"
 #include <wtf/Platform.h>
 

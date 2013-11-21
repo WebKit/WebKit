@@ -58,7 +58,7 @@ public:
     int column() const { return m_position.m_column.zeroBasedInt(); }
     JS_EXPORT_PRIVATE const TextPosition& position() const { return m_position; }
 
-    JS_EXPORT_PRIVATE JSGlobalObject* dynamicGlobalObject() const;
+    JS_EXPORT_PRIVATE JSGlobalObject* vmEntryGlobalObject() const;
     JS_EXPORT_PRIVATE JSScope* scope() const;
     JS_EXPORT_PRIVATE String functionName() const;
     JS_EXPORT_PRIVATE Type type() const;

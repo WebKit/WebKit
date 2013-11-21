@@ -716,26 +716,6 @@ void JSGlobalObject::clearRareData(JSCell* cell)
     jsCast<JSGlobalObject*>(cell)->m_rareData.clear();
 }
 
-DynamicGlobalObjectScope::DynamicGlobalObjectScope(VM& vm, JSGlobalObject* dynamicGlobalObject)
-    : m_dynamicGlobalObjectSlot(vm.dynamicGlobalObject)
-    , m_savedDynamicGlobalObject(m_dynamicGlobalObjectSlot)
-{
-    if (!m_dynamicGlobalObjectSlot) {
-#if ENABLE(ASSEMBLER)
-        if (ExecutableAllocator::underMemoryPressure())
-            vm.heap.deleteAllCompiledCode();
-#endif
-
-        m_dynamicGlobalObjectSlot = dynamicGlobalObject;
-
-        // Reset the date cache between JS invocations to force the VM
-        // to observe time zone changes.
-        vm.resetDateCache();
-    }
-    // Clear the exception stack between entries
-    vm.clearExceptionStack();
-}
-
 void slowValidateCell(JSGlobalObject* globalObject)
 {
     RELEASE_ASSERT(globalObject->isGlobalObject());

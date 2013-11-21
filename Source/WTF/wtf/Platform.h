@@ -868,6 +868,14 @@
 #endif
 #endif
 
+/* FIXME: We currently unconditionally use spearate stacks. When we switch to using the
+   C stack for JS frames, we'll need to make the following conditional on ENABLE(LLINT_CLOOP)
+   only.
+*/
+#if ENABLE(LLINT_CLOOP) || 1
+#define WTF_USE_SEPARATE_C_AND_JS_STACK 1
+#endif
+
 /* Pick which allocator to use; we only need an executable allocator if the assembler is compiled in.
    On x86-64 we use a single fixed mmap, on other platforms we mmap on demand. */
 #if ENABLE(ASSEMBLER)

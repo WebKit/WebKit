@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2008, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -113,7 +113,7 @@ JSValue ObjcField::valueFromInstance(ExecState* exec, const Instance* instance) 
 
 static id convertValueToObjcObject(ExecState* exec, JSValue value)
 {
-    RefPtr<RootObject> rootObject = findRootObject(exec->dynamicGlobalObject());
+    RefPtr<RootObject> rootObject = findRootObject(exec->vmEntryGlobalObject());
     if (!rootObject)
         return nil;
     return [webScriptObjectClass() _convertValueToObjcValue:value originRootObject:rootObject.get() rootObject:rootObject.get()];

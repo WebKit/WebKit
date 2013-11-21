@@ -12655,6 +12655,9 @@
     <ClInclude Include="..\ForwardingHeaders\runtime\VM.h">
       <Filter>ForwardingHeaders\runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\ForwardingHeaders\runtime\VMEntryScope.h">
+      <Filter>ForwardingHeaders\runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\runtime\JSGlobalObject.h">
       <Filter>ForwardingHeaders\runtime</Filter>
     </ClInclude>

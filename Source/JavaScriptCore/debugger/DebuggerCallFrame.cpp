@@ -35,6 +35,7 @@
 #include "Operations.h"
 #include "Parser.h"
 #include "StackVisitor.h"
+#include "VMEntryScope.h"
 
 namespace JSC {
 
@@ -77,12 +78,12 @@ PassRefPtr<DebuggerCallFrame> DebuggerCallFrame::callerFrame()
     return m_caller;
 }
 
-JSC::JSGlobalObject* DebuggerCallFrame::dynamicGlobalObject() const
+JSC::JSGlobalObject* DebuggerCallFrame::vmEntryGlobalObject() const
 {
     ASSERT(isValid());
     if (!isValid())
         return 0;
-    return m_callFrame->dynamicGlobalObject();
+    return m_callFrame->vmEntryGlobalObject();
 }
 
 SourceID DebuggerCallFrame::sourceID() const

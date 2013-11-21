@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,7 +87,6 @@ namespace JSC {
             return highAddress() - 1;
         }
 
-        Register* getLimitOfStack() const { return m_end; }
         size_t size() const { return highAddress() - lowAddress(); }
 
         bool grow(Register*);
@@ -95,15 +94,9 @@ namespace JSC {
         static size_t committedByteCount();
         static void initializeThreading();
 
-        Register* const * addressOfEnd() const
-        {
-            return &m_end;
-        }
-
         Register* getTopOfFrame(CallFrame*);
         Register* getStartOfFrame(CallFrame*);
         Register* getTopOfStack();
-        Register* end() const { return m_end; }
 
         CallFrame* pushFrame(CallFrame* callerFrame, class CodeBlock*,
             JSScope*, int argsCount, JSObject* callee);
@@ -153,6 +146,9 @@ namespace JSC {
         void releaseExcessCapacity();
         void addToCommittedByteCount(long);
 
+        void updateStackLimit(Register* newEnd);
+
+        VM& m_vm;
         Register* m_end;
         Register* m_commitEnd;
         Register* m_useableEnd;
@@ -161,22 +157,6 @@ namespace JSC {
 
         friend class LLIntOffsetsExtractor;
     };
-
-    inline void JSStack::shrink(Register* newEnd)
-    {
-        if (newEnd >= m_end)
-            return;
-        m_end = newEnd;
-        if (m_end == getBaseOfStack() && (m_commitEnd - getBaseOfStack()) >= maxExcessCapacity)
-            releaseExcessCapacity();
-    }
-
-    inline bool JSStack::grow(Register* newEnd)
-    {
-        if (newEnd >= m_end)
-            return true;
-        return growSlowCase(newEnd);
-    }
 
 } // namespace JSC
 

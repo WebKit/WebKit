@@ -30,6 +30,7 @@
 #include "CodeBlock.h"
 #include "Interpreter.h"
 #include "Operations.h"
+#include "VMEntryScope.h"
 
 namespace JSC {
 
@@ -120,6 +121,17 @@ Register* CallFrame::frameExtentInternal()
     CodeBlock* codeBlock = this->codeBlock();
     ASSERT(codeBlock);
     return registers() + virtualRegisterForLocal(codeBlock->m_numCalleeRegisters).offset();
+}
+
+JSGlobalObject* CallFrame::vmEntryGlobalObject()
+{
+    if (this == lexicalGlobalObject()->globalExec())
+        return lexicalGlobalObject();
+
+    // For any ExecState that's not a globalExec, the 
+    // dynamic global object must be set since code is running
+    ASSERT(vm().entryScope);
+    return vm().entryScope->globalObject();
 }
 
 } // namespace JSC

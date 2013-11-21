@@ -18590,6 +18590,7 @@
     <ClInclude Include="..\ForwardingHeaders\runtime\JSExportMacros.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\JSFunction.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\VM.h" />
+    <ClInclude Include="..\ForwardingHeaders\runtime\VMEntryScope.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\JSGlobalObject.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\JSProxy.h" />
     <ClInclude Include="..\ForwardingHeaders\runtime\JSWithScope.h" />

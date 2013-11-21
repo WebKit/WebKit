@@ -1,3 +1,14 @@
+2013-11-20  Mark Lam  <mark.lam@apple.com>
+
+        Introducing VMEntryScope to update the VM stack limit.
+        https://bugs.webkit.org/show_bug.cgi?id=124634.
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/Platform.h:
+        * wtf/StackBounds.h:
+        (WTF::StackBounds::StackBounds):
+
 2013-11-18  Filip Pizlo  <fpizlo@apple.com>
 
         Allow the FTL debug dumps to include the new size field

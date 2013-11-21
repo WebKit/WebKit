@@ -92,7 +92,7 @@ void WebScriptDebugger::sourceParsed(ExecState* exec, SourceProvider* sourceProv
     NSURL *nsURL = toNSURL(sourceProvider->url());
     int firstLine = sourceProvider->startPosition().m_line.oneBasedInt();
 
-    WebFrame *webFrame = toWebFrame(exec->dynamicGlobalObject());
+    WebFrame *webFrame = toWebFrame(exec->vmEntryGlobalObject());
     WebView *webView = [webFrame webView];
     WebScriptDebugDelegateImplementationCache* implementations = WebViewGetScriptDebugDelegateImplementations(webView);
 

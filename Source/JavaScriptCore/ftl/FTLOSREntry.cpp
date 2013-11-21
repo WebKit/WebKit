@@ -30,6 +30,7 @@
 #include "CodeBlock.h"
 #include "DFGJITCode.h"
 #include "FTLForOSREntryJITCode.h"
+#include "JSStackInlines.h"
 
 #if ENABLE(FTL_JIT)
 

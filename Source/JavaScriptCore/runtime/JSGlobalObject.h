@@ -584,17 +584,6 @@ inline bool JSGlobalObject::symbolTableHasProperty(PropertyName propertyName)
     return !entry.isNull();
 }
 
-inline JSGlobalObject* ExecState::dynamicGlobalObject()
-{
-    if (this == lexicalGlobalObject()->globalExec())
-        return lexicalGlobalObject();
-
-    // For any ExecState that's not a globalExec, the 
-    // dynamic global object must be set since code is running
-    ASSERT(vm().dynamicGlobalObject);
-    return vm().dynamicGlobalObject;
-}
-
 inline JSArray* constructEmptyArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, unsigned initialLength = 0)
 {
     return ArrayAllocationProfile::updateLastAllocationFor(profile, JSArray::create(exec->vm(), initialLength >= MIN_SPARSE_ARRAY_INDEX ? globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithArrayStorage) : globalObject->arrayStructureForProfileDuringAllocation(profile), initialLength));
@@ -634,21 +623,6 @@ inline JSArray* constructArrayNegativeIndexed(ExecState* exec, ArrayAllocationPr
 {
     return constructArrayNegativeIndexed(exec, profile, exec->lexicalGlobalObject(), values, length);
 }
-
-class DynamicGlobalObjectScope {
-    WTF_MAKE_NONCOPYABLE(DynamicGlobalObjectScope);
-public:
-    JS_EXPORT_PRIVATE DynamicGlobalObjectScope(VM&, JSGlobalObject*);
-
-    ~DynamicGlobalObjectScope()
-    {
-        m_dynamicGlobalObjectSlot = m_savedDynamicGlobalObject;
-    }
-
-private:
-    JSGlobalObject*& m_dynamicGlobalObjectSlot;
-    JSGlobalObject* m_savedDynamicGlobalObject;
-};
 
 inline JSObject* JSScope::globalThis()
 { 

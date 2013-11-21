@@ -53,7 +53,7 @@ public:
     String functionName() const { return m_debuggerCallFrame->functionName(); }
     JSC::DebuggerCallFrame::Type type() const { return m_debuggerCallFrame->type(); }
     JSC::JSScope* scopeChain() const { return m_debuggerCallFrame->scope(); }
-    JSC::JSGlobalObject* dynamicGlobalObject() const { return m_debuggerCallFrame->dynamicGlobalObject(); }
+    JSC::JSGlobalObject* vmEntryGlobalObject() const { return m_debuggerCallFrame->vmEntryGlobalObject(); }
 
     JSC::JSValue thisValue() const { return m_debuggerCallFrame->thisValue(); }
     JSC::JSValue evaluate(const String& script, JSC::JSValue& exception) const  { return m_debuggerCallFrame->evaluate(script, exception); }

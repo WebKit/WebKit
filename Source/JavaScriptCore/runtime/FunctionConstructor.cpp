@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -112,7 +112,7 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(ExecState* exec, JSGlobalObj
 
     SourceCode source = makeSource(program, sourceURL, position);
     JSObject* exception = 0;
-    FunctionExecutable* function = FunctionExecutable::fromGlobalCode(functionName, exec, exec->dynamicGlobalObject()->debugger(), source, &exception);
+    FunctionExecutable* function = FunctionExecutable::fromGlobalCode(functionName, exec, exec->vmEntryGlobalObject()->debugger(), source, &exception);
     if (!function) {
         ASSERT(exception);
         return exec->vm().throwException(exec, exception);

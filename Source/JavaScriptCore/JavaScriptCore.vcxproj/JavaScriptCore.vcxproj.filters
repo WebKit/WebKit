@@ -801,6 +801,9 @@
     <ClCompile Include="..\runtime\VM.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\VMEntryScope.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\parser\SourceCode.cpp">
       <Filter>parser</Filter>
     </ClCompile>
@@ -2416,6 +2419,9 @@
       <Filter>Derived Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\VM.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\VMEntryScope.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\assembler\MacroAssemblerX86Common.cpp">
