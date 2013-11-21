@@ -129,7 +129,6 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
-    <ClCompile Include="..\src\compiler\CodeGenHLSL.cpp" />
     <ClCompile Include="..\src\compiler\DetectDiscontinuity.cpp" />
     <ClCompile Include="..\src\compiler\OutputHLSL.cpp" />
     <ClCompile Include="..\src\compiler\SearchSymbol.cpp" />

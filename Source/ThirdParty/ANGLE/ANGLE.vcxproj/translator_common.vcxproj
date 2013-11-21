@@ -130,6 +130,7 @@
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
     <ClCompile Include="..\src\compiler\BuiltInFunctionEmulator.cpp" />
+    <ClCompile Include="..\src\compiler\CodeGen.cpp" />
     <ClCompile Include="..\src\compiler\Compiler.cpp" />
     <ClCompile Include="..\src\compiler\debug.cpp" />
     <ClCompile Include="..\src\compiler\DetectCallDepth.cpp" />
@@ -139,6 +140,7 @@
     <ClCompile Include="..\src\compiler\InfoSink.cpp" />
     <ClCompile Include="..\src\compiler\Initialize.cpp" />
     <ClCompile Include="..\src\compiler\InitializeDll.cpp" />
+    <ClCompile Include="..\src\compiler\InitializeGLPosition.cpp" />
     <ClCompile Include="..\src\compiler\InitializeParseContext.cpp" />
     <ClCompile Include="..\src\compiler\Intermediate.cpp" />
     <ClCompile Include="..\src\compiler\intermOut.cpp" />
@@ -146,12 +148,13 @@
     <ClCompile Include="..\src\compiler\MapLongVariableNames.cpp" />
     <ClCompile Include="..\src\compiler\ossource_win.cpp" />
     <ClCompile Include="..\src\compiler\parseConst.cpp" />
-    <ClCompile Include="..\src\compiler\ParseHelper.cpp" />
+    <ClCompile Include="..\src\compiler\ParseContext.cpp" />
     <ClCompile Include="..\src\compiler\PoolAlloc.cpp" />
     <ClCompile Include="..\src\compiler\QualifierAlive.cpp" />
     <ClCompile Include="..\src\compiler\RemoveTree.cpp" />
     <ClCompile Include="..\src\compiler\ShaderLang.cpp" />
     <ClCompile Include="..\src\compiler\SymbolTable.cpp" />
+    <ClCompile Include="..\src\compiler\UnfoldShortCircuitAST.cpp" />
     <ClCompile Include="..\src\compiler\util.cpp" />
     <ClCompile Include="..\src\compiler\ValidateLimitations.cpp" />
     <ClCompile Include="..\src\compiler\VariableInfo.cpp" />
@@ -164,6 +167,7 @@
     <ClCompile Include="..\src\compiler\depgraph\DependencyGraphTraverse.cpp" />
     <ClCompile Include="..\src\compiler\timing\RestrictFragmentShaderTiming.cpp" />
     <ClCompile Include="..\src\compiler\timing\RestrictVertexShaderTiming.cpp" />
+    <ClCompile Include="..\src\compiler\VersionGLSL.cpp" />
     <ClCompile Include="..\src\third_party\compiler\ArrayBoundsClamper.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -187,13 +191,14 @@
     <ClInclude Include="..\src\compiler\Initialize.h" />
     <ClInclude Include="..\src\compiler\InitializeDll.h" />
     <ClInclude Include="..\src\compiler\InitializeGlobals.h" />
+    <ClInclude Include="..\src\compiler\InitializeGLPosition.h" />
     <ClInclude Include="..\src\compiler\InitializeParseContext.h" />
     <ClInclude Include="..\src\compiler\intermediate.h" />
     <ClInclude Include="..\src\compiler\localintermediate.h" />
     <ClInclude Include="..\src\compiler\MapLongVariableNames.h" />
     <ClInclude Include="..\src\compiler\MMap.h" />
     <ClInclude Include="..\src\compiler\osinclude.h" />
-    <ClInclude Include="..\src\compiler\ParseHelper.h" />
+    <ClInclude Include="..\src\compiler\ParseContext.h" />
     <ClInclude Include="..\src\compiler\PoolAlloc.h" />
     <ClInclude Include="..\src\compiler\QualifierAlive.h" />
     <ClInclude Include="..\src\compiler\RemoveTree.h" />
@@ -202,6 +207,7 @@
     <ClInclude Include="..\src\compiler\ShHandle.h" />
     <ClInclude Include="..\src\compiler\SymbolTable.h" />
     <ClInclude Include="..\src\compiler\Types.h" />
+    <ClInclude Include="..\src\compiler\UnfoldShortCircuitAST.h" />
     <ClInclude Include="..\src\compiler\util.h" />
     <ClInclude Include="..\src\compiler\ValidateLimitations.h" />
     <ClInclude Include="..\src\compiler\VariableInfo.h" />
@@ -212,6 +218,7 @@
     <ClInclude Include="..\src\compiler\depgraph\DependencyGraph.h" />
     <ClInclude Include="..\src\compiler\depgraph\DependencyGraphBuilder.h" />
     <ClInclude Include="..\src\compiler\depgraph\DependencyGraphOutput.h" />
+    <ClInclude Include="..\src\compiler\VersionGLSL.h" />
     <ClInclude Include="..\src\third_party\compiler\ArrayBoundsClamper.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

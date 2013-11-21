@@ -23,9 +23,6 @@
     <ClCompile Include="..\src\compiler\Uniform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\CodeGenHLSL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\compiler\OutputHLSL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -129,7 +129,6 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
-    <ClCompile Include="..\src\compiler\CodeGenGLSL.cpp" />
     <ClCompile Include="..\src\compiler\DetectDiscontinuity.cpp" />
     <ClCompile Include="..\src\compiler\OutputESSL.cpp" />
     <ClCompile Include="..\src\compiler\OutputGLSL.cpp" />
