@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Key is not extractable
-CONSOLE MESSAGE: Key is not extractable
 Test exporting an AES key.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

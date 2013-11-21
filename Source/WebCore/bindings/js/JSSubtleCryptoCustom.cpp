@@ -563,6 +563,38 @@ JSValue JSSubtleCrypto::importKey(ExecState* exec)
     return promise;
 }
 
+static void exportKey(ExecState* exec, CryptoKeyFormat keyFormat, const CryptoKey& key, CryptoAlgorithm::VectorCallback callback, CryptoAlgorithm::VoidCallback failureCallback)
+{
+    if (!key.extractable()) {
+        throwTypeError(exec, "Key is not extractable");
+        return;
+    }
+
+    switch (keyFormat) {
+    case CryptoKeyFormat::Raw: {
+        Vector<uint8_t> result;
+        if (CryptoKeySerializationRaw::serialize(key, result))
+            callback(result);
+        else
+            failureCallback();
+        break;
+    }
+    case CryptoKeyFormat::JWK: {
+        String result = JSCryptoKeySerializationJWK::serialize(exec, key);
+        if (exec->hadException())
+            return;
+        CString utf8String = result.utf8(StrictConversion);
+        Vector<uint8_t> resultBuffer;
+        resultBuffer.append(utf8String.data(), utf8String.length());
+        callback(resultBuffer);
+        break;
+    }
+    default:
+        throwTypeError(exec, "Unsupported key format for export");
+        break;
+    }
+}
+
 JSValue JSSubtleCrypto::exportKey(ExecState* exec)
 {
     if (exec->argumentCount() < 2)
@@ -581,35 +613,83 @@ JSValue JSSubtleCrypto::exportKey(ExecState* exec)
     JSPromise* promise = JSPromise::createWithResolver(exec->vm(), globalObject());
     PromiseWrapper promiseWrapper(globalObject(), promise);
 
-    if (!key->extractable()) {
-        m_impl->document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "Key is not extractable");
+    auto successCallback = [promiseWrapper](const Vector<uint8_t>& result) mutable {
+        promiseWrapper.fulfill(result);
+    };
+    auto failureCallback = [promiseWrapper]() mutable {
         promiseWrapper.reject(nullptr);
-        return promise;
+    };
+
+    WebCore::exportKey(exec, keyFormat, *key, successCallback, failureCallback);
+    if (exec->hadException())
+        return jsUndefined();
+
+    return promise;
+}
+
+JSValue JSSubtleCrypto::wrapKey(ExecState* exec)
+{
+    if (exec->argumentCount() < 4)
+        return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
+
+    CryptoKeyFormat keyFormat;
+    if (!cryptoKeyFormatFromJSValue(exec, exec->argument(0), keyFormat)) {
+        ASSERT(exec->hadException());
+        return jsUndefined();
     }
 
-    switch (keyFormat) {
-    case CryptoKeyFormat::Raw: {
-        Vector<uint8_t> result;
-        if (CryptoKeySerializationRaw::serialize(*key, result))
-            promiseWrapper.fulfill(result);
-        else {
-            m_impl->document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "Key cannot be exported to raw format");
+    RefPtr<CryptoKey> key = toCryptoKey(exec->uncheckedArgument(1));
+    if (!key)
+        return throwTypeError(exec);
+
+    RefPtr<CryptoKey> wrappingKey = toCryptoKey(exec->uncheckedArgument(2));
+    if (!key)
+        return throwTypeError(exec);
+
+
+    auto algorithm = createAlgorithmFromJSValue(exec, exec->uncheckedArgument(3));
+    if (!algorithm) {
+        ASSERT(exec->hadException());
+        return jsUndefined();
+    }
+
+    auto parameters = JSCryptoAlgorithmDictionary::createParametersForEncrypt(exec, algorithm->identifier(), exec->uncheckedArgument(3));
+    if (!parameters) {
+        ASSERT(exec->hadException());
+        return jsUndefined();
+    }
+
+    JSPromise* promise = JSPromise::createWithResolver(exec->vm(), globalObject());
+    PromiseWrapper promiseWrapper(globalObject(), promise);
+
+    CryptoAlgorithm* algorithmPtr = algorithm.release();
+    CryptoAlgorithmParameters* parametersPtr = parameters.release();
+
+    auto exportSuccessCallback = [keyFormat, algorithmPtr, parametersPtr, wrappingKey, promiseWrapper](const Vector<uint8_t>& exportedKeyData) mutable {
+        auto encryptSuccessCallback = [promiseWrapper](const Vector<uint8_t>& encryptedData) mutable {
+            promiseWrapper.fulfill(encryptedData);
+        };
+        auto encryptFailureCallback = [promiseWrapper]() mutable {
             promiseWrapper.reject(nullptr);
+        };
+        ExceptionCode ec = 0;
+        algorithmPtr->encryptForWrapKey(*parametersPtr, *wrappingKey, std::make_pair(exportedKeyData.data(), exportedKeyData.size()), std::move(encryptSuccessCallback), std::move(encryptFailureCallback), ec);
+        if (ec) {
+            // FIXME: Report failure details to console, and possibly to calling script once there is a standardized way to pass errors to WebCrypto promise reject functions.
+            encryptFailureCallback();
         }
-        break;
-    }
-    case CryptoKeyFormat::JWK: {
-        String result = JSCryptoKeySerializationJWK::serialize(exec, *key);
-        if (exec->hadException())
-            return jsUndefined();
-        CString utf8String = result.utf8(StrictConversion);
-        Vector<uint8_t> resultBuffer;
-        resultBuffer.append(utf8String.data(), utf8String.length());
-        promiseWrapper.fulfill(resultBuffer);
-        break;
-    }
-    default:
-        throwTypeError(exec, "Unsupported key format for export");
+    };
+
+    auto exportFailureCallback = [promiseWrapper, algorithmPtr, parametersPtr]() mutable {
+        delete algorithmPtr;
+        delete parametersPtr;
+        promiseWrapper.reject(nullptr);
+    };
+
+    ExceptionCode ec = 0;
+    WebCore::exportKey(exec, keyFormat, *key, exportSuccessCallback, exportFailureCallback);
+    if (ec) {
+        setDOMException(exec, ec);
         return jsUndefined();
     }
 
@@ -693,25 +773,30 @@ JSValue JSSubtleCrypto::unwrapKey(ExecState* exec)
     CryptoAlgorithm* unwrappedKeyAlgorithmPtr = unwrappedKeyAlgorithm.release();
     CryptoAlgorithmParameters* unwrappedKeyAlgorithmParametersPtr = unwrappedKeyAlgorithmParameters.release();
 
-    auto failureCallback = [promiseWrapper]() mutable {
-        promiseWrapper.reject(nullptr);
-    };
-
-    auto successCallback = [domGlobalObject, keyFormat, unwrappedKeyAlgorithmPtr, unwrappedKeyAlgorithmParametersPtr, extractable, keyUsages, promiseWrapper, failureCallback](const Vector<uint8_t>& result) mutable {
+    auto decryptSuccessCallback = [domGlobalObject, keyFormat, unwrappedKeyAlgorithmPtr, unwrappedKeyAlgorithmParametersPtr, extractable, keyUsages, promiseWrapper](const Vector<uint8_t>& result) mutable {
         auto importSuccessCallback = [promiseWrapper](CryptoKey& key) mutable {
             promiseWrapper.fulfill(&key);
         };
+        auto importFailureCallback = [promiseWrapper]() mutable {
+            promiseWrapper.reject(nullptr);
+        };
         ExecState* exec = domGlobalObject->globalExec();
-        WebCore::importKey(exec, keyFormat, std::make_pair(result.data(), result.size()), unwrappedKeyAlgorithmPtr, unwrappedKeyAlgorithmParametersPtr, extractable, keyUsages, importSuccessCallback, failureCallback);
+        WebCore::importKey(exec, keyFormat, std::make_pair(result.data(), result.size()), unwrappedKeyAlgorithmPtr, unwrappedKeyAlgorithmParametersPtr, extractable, keyUsages, importSuccessCallback, importFailureCallback);
         if (exec->hadException()) {
             // FIXME: Report exception details to console, and possibly to calling script once there is a standardized way to pass errors to WebCrypto promise reject functions.
             exec->clearException();
-            failureCallback();
+            importFailureCallback();
         }
     };
 
+    auto decryptFailureCallback = [promiseWrapper, unwrappedKeyAlgorithmPtr, unwrappedKeyAlgorithmParametersPtr]() mutable {
+        delete unwrappedKeyAlgorithmPtr;
+        delete unwrappedKeyAlgorithmParametersPtr;
+        promiseWrapper.reject(nullptr);
+    };
+
     ExceptionCode ec = 0;
-    unwrapAlgorithm->decryptForUnwrapKey(*unwrapAlgorithmParameters, *unwrappingKey, wrappedKeyData, std::move(successCallback), std::move(failureCallback), ec);
+    unwrapAlgorithm->decryptForUnwrapKey(*unwrapAlgorithmParameters, *unwrappingKey, wrappedKeyData, std::move(decryptSuccessCallback), std::move(decryptFailureCallback), ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
