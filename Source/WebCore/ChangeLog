@@ -1,3 +1,15 @@
+2013-11-20  Roger Fong  <roger_fong@apple.com>
+
+        Use compile flag SH_UNFOLD_SHORT_CIRCUIT when compiling shaders.
+        https://bugs.webkit.org/show_bug.cgi?id=124684.
+
+        Reviewed by Brent Fulgham.
+
+        Existing test webgl/1.0.2/conformance/glsl/misc/shader-with-short-circuiting-operators.html
+
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE):
+
 2013-11-20  Robert Sipka  <sipka@inf.u-szeged.hu>
 
         [curl] Improve detecting and handling of SSL related errors
