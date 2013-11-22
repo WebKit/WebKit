@@ -51,6 +51,8 @@ private:
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStylePropertySet&) OVERRIDE;
 
     virtual bool childShouldCreateRenderer(const Node&) const OVERRIDE;
+
+    inline bool isMathMLToken() const;
 };
 
 void isMathMLElement(const MathMLElement&); // Catch unnecessary runtime check of type known at compile time.

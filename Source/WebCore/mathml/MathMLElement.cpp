@@ -78,7 +78,7 @@ void MathMLElement::parseAttribute(const QualifiedName& name, const AtomicString
 
 bool MathMLElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (name == mathbackgroundAttr || name == mathsizeAttr || name == mathcolorAttr || name == fontsizeAttr || name == backgroundAttr || name == colorAttr || name == fontstyleAttr || name == fontweightAttr || name == fontfamilyAttr || name == dirAttr)
+    if (name == backgroundAttr || name == colorAttr || name == dirAttr || name == fontfamilyAttr || name == fontsizeAttr || name == fontstyleAttr || name == fontweightAttr || name == mathbackgroundAttr || name == mathcolorAttr || name == mathsizeAttr)
         return true;
     return StyledElement::isPresentationAttribute(name);
 }
@@ -107,7 +107,7 @@ void MathMLElement::collectStyleForPresentationAttribute(const QualifiedName& na
     else if (name == fontfamilyAttr)
         addPropertyToPresentationAttributeStyle(style, CSSPropertyFontFamily, value);
     else if (name == dirAttr) {
-        if (hasTagName(mathTag) || hasTagName(mstyleTag) || hasTagName(mrowTag) || hasTagName(mtextTag) || hasTagName(msTag) || hasTagName(moTag) || hasTagName(miTag) || hasTagName(mnTag))
+        if (hasTagName(mathTag) || hasTagName(mrowTag) || hasTagName(mstyleTag) || isMathMLToken())
             addPropertyToPresentationAttributeStyle(style, CSSPropertyDirection, value);
     }  else {
         ASSERT(!isPresentationAttribute(name));
@@ -120,6 +120,11 @@ bool MathMLElement::childShouldCreateRenderer(const Node& child) const
 {
     // Only create renderers for MathML elements or text. MathML prohibits non-MathML markup inside a <math> element.
     return child.isTextNode() || child.isMathMLElement();
+}
+
+bool MathMLElement::isMathMLToken() const
+{
+    return hasTagName(miTag) || hasTagName(mnTag) || hasTagName(moTag) || hasTagName(msTag) || hasTagName(mtextTag);
 }
 
 }

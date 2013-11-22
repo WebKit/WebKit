@@ -1,3 +1,20 @@
+2013-11-21  Frédéric Wang  <fred.wang@free.fr>
+
+        Map the dir attribute to the CSS direction property.
+        https://bugs.webkit.org/show_bug.cgi?id=124572.
+
+        Reviewed by Darin Adler.
+
+        Test: mathml/presentation/mstyle-css-attributes.html
+
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::isPresentationAttribute): reorder attributes
+        (WebCore::MathMLElement::collectStyleForPresentationAttribute): reorder tags that accept dir
+        (WebCore::MathMLElement::isMathMLToken): add an inline function to test that a tag corresponds to a MathML Token Element.
+        * mathml/MathMLElement.h:
+
+        Follow-up work to address Darin's comments.
+
 2013-11-21  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Remove ENABLE_WORKERS
