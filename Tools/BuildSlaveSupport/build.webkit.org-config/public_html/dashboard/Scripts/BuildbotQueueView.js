@@ -42,7 +42,9 @@ BuildbotQueueView = function(debugQueues, releaseQueues)
         queue.addEventListener(BuildbotQueue.Event.IterationsAdded, this._queueIterationsAdded, this);
     }.bind(this));
 
-    setInterval(this._updateQueues.bind(this), BuildbotQueueView.UpdateInterval);
+    this.lastUpdate = 0;
+    setTimeout(this._updateQueues.bind(this), BuildbotQueueView.UpdateInterval);
+    settings.addSettingListener("hiddenPlatforms", this._updateQueues.bind(this));
 };
 
 BaseObject.addConstructorFunctions(BuildbotQueueView);
@@ -105,8 +107,13 @@ BuildbotQueueView.prototype = {
 
     _updateQueues: function()
     {
+        var now = Date.now();
+        if (now - this.lastUpdate < BuildbotQueueView.UpdateInterval)
+            return;
         this.releaseQueues.forEach(function(queue) { queue.update(); });
         this.debugQueues.forEach(function(queue) { queue.update(); });
+        this.lastUpdate = now;
+        setTimeout(this._updateQueues.bind(this), BuildbotQueueView.UpdateInterval);
     },
 
     _queueIterationsAdded: function(event)
