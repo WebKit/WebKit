@@ -1,3 +1,9 @@
+2013-11-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed gardening to hide annoying *.user files when.
+
+        * ANGLE.vcxproj: Added property svn:ignore.
+
 2013-11-21  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Building ANGLE libraries fails.
