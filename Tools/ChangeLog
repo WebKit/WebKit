@@ -1,3 +1,11 @@
+2013-11-21  Lucas Forschler  <lforschler@apple.com>
+
+        Bring a new bot online, replacing the previous ones.
+        
+        Unreviewed.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2013-11-21  Dean Jackson  <dino@apple.com>
 
         Don't fetch hidden platforms on build.webkit.org/dashboard
