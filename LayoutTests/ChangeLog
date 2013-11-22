@@ -1,6 +1,22 @@
 2013-11-22  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.
+        Rebaselining after r159575 and r159579.
+
+        * platform/gtk/css1/formatting_model/vertical_formatting-expected.txt:
+        * platform/gtk/css2.1/t0905-c414-flt-wrap-00-e-expected.txt:
+        * platform/gtk/editing/deleting/delete-by-word-001-expected.txt: Added.
+        * platform/gtk/editing/deleting/delete-by-word-002-expected.txt: Added.
+        * platform/gtk/editing/input/option-page-up-down-expected.txt: Added.
+        * platform/gtk/editing/input/scroll-viewport-page-up-down-expected.txt: Added.
+        * platform/gtk/editing/undo/undo-deleteWord-expected.txt: Added.
+        * platform/gtk/fast/block/float/024-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/025-expected.txt:
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/025-expected.txt:
+
+2013-11-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
         Adding failure expectations for tests that regressed with r159572.
 
         * platform/gtk/TestExpectations:
