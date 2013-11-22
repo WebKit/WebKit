@@ -54,6 +54,8 @@
 
 using namespace WebKit;
 
+#if WK_API_ENABLED
+
 class PageLoadStateObserver : public PageLoadState::Observer {
 public:
     PageLoadStateObserver(WKBrowsingContextController *controller)
@@ -74,6 +76,8 @@ private:
 
     WKBrowsingContextController *m_controller;
 };
+
+#endif
 
 static inline NSString *autoreleased(WKStringRef string)
 {
@@ -119,7 +123,9 @@ NSString * const WKActionCanShowMIMETypeKey = @"WKActionCanShowMIMETypeKey";
 
 - (void)dealloc
 {
+#if WK_API_ENABLED
     toImpl(_data->_pageRef.get())->pageLoadState().removeObserver(*_data->_pageLoadStateObserver);
+#endif
 
     WKPageSetPageLoaderClient(_data->_pageRef.get(), nullptr);
 
@@ -709,8 +715,10 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
     _data = [[WKBrowsingContextControllerData alloc] init];
     _data->_pageRef = pageRef;
 
+#if WK_API_ENABLED
     _data->_pageLoadStateObserver = std::make_unique<PageLoadStateObserver>(self);
     toImpl(_data->_pageRef.get())->pageLoadState().addObserver(*_data->_pageLoadStateObserver);
+#endif
 
     setUpPageLoaderClient(self, pageRef);
 
