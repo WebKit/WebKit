@@ -44,6 +44,7 @@
 #include "TextTrackList.h"
 #include "UserStyleSheetTypes.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(IOS)

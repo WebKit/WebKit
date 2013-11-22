@@ -1,3 +1,16 @@
+2013-11-22  Andres Gomez  <agomez@igalia.com>
+
+        Several missing/incorrect guards for LOG_DISABLED=0 against Release build (Mac)
+        https://bugs.webkit.org/show_bug.cgi?id=78735
+
+        Reviewed by Mario Sanchez Prada.
+
+        In a "Debug" build the CString.h header comes from another
+        indirect dependency. Now, we explicitly add this missing include.
+
+        * page/CaptionUserPreferencesMediaAF.cpp: Explicitly adding
+        missing include.
+
 2013-11-22  Robert Sipka  <sipka@inf.u-szeged.hu>
 
         [curl] Fix of SSL certificate chain storage
