@@ -223,7 +223,7 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
             if (result != NSOKButton)
                 return;
 
-            NSURL *url = openPanel.URLs.firstObject;
+            NSURL *url = [openPanel.URLs objectAtIndex:0];
             [browserWindowController loadURLString:[url absoluteString]];
         }];
         return;
@@ -233,12 +233,12 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
     [openPanel beginWithCompletionHandler:^(NSInteger result) {
         if (result != NSOKButton)
             return;
-        
+
         // FIXME: add a way to open in WK1 also.
         BrowserWindowController *newBrowserWindowController = [[WK2BrowserWindowController alloc] initWithContext:_processContext pageGroup:_pageGroup];
         [newBrowserWindowController.window makeKeyAndOrderFront:self];
 
-        NSURL *url = openPanel.URLs.firstObject;
+        NSURL *url = [openPanel.URLs objectAtIndex:0];
         [newBrowserWindowController loadURLString:[url absoluteString]];
     }];
 }
