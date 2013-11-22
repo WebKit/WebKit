@@ -80,14 +80,13 @@ java/
         self.assertEqual(expected, port.name())
 
     def test_tests_for_other_platforms(self):
-        platforms = ['mac', 'chromium-linux', 'mac-snowleopard']
+        platforms = ['mac', 'mac-snowleopard']
         port = self.make_port(port_name='mac-snowleopard')
         platform_dir_paths = map(port._webkit_baseline_path, platforms)
         # Replace our empty mock file system with one which has our expected platform directories.
         port._filesystem = MockFileSystem(dirs=platform_dir_paths)
 
         dirs_to_skip = port._tests_for_other_platforms()
-        self.assertIn('platform/chromium-linux', dirs_to_skip)
         self.assertNotIn('platform/mac', dirs_to_skip)
         self.assertNotIn('platform/mac-snowleopard', dirs_to_skip)
 

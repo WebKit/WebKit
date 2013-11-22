@@ -919,12 +919,6 @@ class PortTest(unittest.TestCase):
     def assert_mock_port_works(self, port_name, args=[]):
         self.assertTrue(passing_run(args + ['--platform', 'mock-' + port_name, 'fast/harness/results.html'], tests_included=True, host=Host()))
 
-    def disabled_test_chromium_mac_lion(self):
-        self.assert_mock_port_works('chromium-mac-lion')
-
-    def disabled_test_chromium_mac_lion_in_test_shell_mode(self):
-        self.assert_mock_port_works('chromium-mac-lion', args=['--additional-drt-flag=--test-shell'])
-
     def disabled_test_mac_lion(self):
         self.assert_mock_port_works('mac-lion')
 

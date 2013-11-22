@@ -1,3 +1,23 @@
+2013-11-21  Peter Szanka  <h868064@stud.u-szeged.hu>
+
+        Remove chrome/chromium related things from webkitpy.
+        https://bugs.webkit.org/show_bug.cgi?id=124493
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (PortTest.assert_mock_port_works):
+        * Scripts/webkitpy/port/base.py:
+        (Port.to.setup_environ_for_server):
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (test_tests_for_other_platforms):
+        * Scripts/webkitpy/port/mock_drt.py:
+        (MockTestShell.output_for_test):
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Restart.execute):
+        * Scripts/webkitpy/tool/bot/ircbot_unittest.py:
+        (IRCBotTest.test_help):
+
 2013-11-21  Dániel Bátyai  <Batyai.Daniel@stud.u-szeged.hu>
 
         In filereader.py, process_file() should throw instead of exiting directly when the file doesn't exist

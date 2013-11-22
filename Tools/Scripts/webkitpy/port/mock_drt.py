@@ -271,8 +271,6 @@ class MockTestShell(MockDRT):
     def output_for_test(self, test_input, is_reftest):
         # FIXME: This is a hack to make virtual tests work. Need something more general.
         original_test_name = test_input.test_name
-        if '--enable-accelerated-2d-canvas' in self._args and 'canvas' in test_input.test_name:
-            test_input.test_name = 'platform/chromium/virtual/gpu/' + test_input.test_name
         output = super(MockTestShell, self).output_for_test(test_input, is_reftest)
         test_input.test_name = original_test_name
         return output

@@ -900,8 +900,6 @@ class Port(object):
             'WEBKIT_TESTFONTS',
             'WEBKIT_OUTPUTDIR',
 
-            # Chromium:
-            'CHROME_DEVEL_SANDBOX',
         ]
         for variable in variables_to_copy:
             self._copy_value_from_environ_if_set(clean_env, variable)
