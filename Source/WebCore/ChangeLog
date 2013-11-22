@@ -1,3 +1,11 @@
+2013-11-21  Alex Christensen  <achristensen@webkit.org>
+
+        [Win] Unreviewed build fix after r159632.
+
+        * platform/network/curl/SSLHandle.cpp:
+        (WebCore::certVerifyCallback):
+        Fixed template syntax.
+
 2013-11-21  Bear Travis  <betravis@adobe.com>
 
         Web Inspector: [CSS Shapes] Refactor highlighting code to decrease Shapes API surface

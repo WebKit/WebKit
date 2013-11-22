@@ -173,7 +173,7 @@ static int certVerifyCallback(int ok, X509_STORE_CTX* ctx)
     d->m_sslErrors = sslCertificateFlag(err);
 
 #if PLATFORM(WIN)
-    HashMap<String, String>::iterator it = allowedHosts.find(host);
+    HashMap<String, HashSet<String>>::iterator it = allowedHosts.find(host);
     ok = (it != allowedHosts.end());
 #else
     HashSet<String> certificates;
