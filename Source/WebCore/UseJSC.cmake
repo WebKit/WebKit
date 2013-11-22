@@ -184,7 +184,6 @@ if (ENABLE_INDEXED_DATABASE)
     )
 endif ()
 
-if (ENABLE_WORKERS)
     list(APPEND WebCore_SOURCES
         bindings/js/JSDedicatedWorkerGlobalScopeCustom.cpp
         bindings/js/JSWorkerGlobalScopeBase.cpp
@@ -193,7 +192,6 @@ if (ENABLE_WORKERS)
         bindings/js/WorkerScriptController.cpp
         bindings/js/WorkerScriptDebugServer.cpp
     )
-endif ()
 
 if (ENABLE_VIDEO_TRACK)
     list(APPEND WebCore_SOURCES

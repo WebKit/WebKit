@@ -33,10 +33,7 @@
 
 #include "ActiveDOMObject.h"
 #include "ScriptExecutionContext.h"
-
-#if ENABLE(WORKERS)
 #include "WorkerGlobalScope.h"
-#endif
 
 namespace WebCore {
 

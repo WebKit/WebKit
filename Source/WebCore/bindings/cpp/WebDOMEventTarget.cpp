@@ -33,9 +33,11 @@
 #include "ThreadCheck.h"
 #include "WebDOMDOMApplicationCache.h"
 #include "WebDOMDOMWindow.h"
+#include "WebDOMDedicatedWorkerGlobalScope.h"
 #include "WebDOMEventSource.h"
 #include "WebDOMMessagePort.h"
 #include "WebDOMNode.h"
+#include "WebDOMWorker.h"
 #include "WebDOMXMLHttpRequest.h"
 #include "WebDOMXMLHttpRequestUpload.h"
 #include "WebExceptionHandler.h"
@@ -45,11 +47,6 @@
 #include "XMLHttpRequestUpload.h"
 
 #include <wtf/RefPtr.h>
-
-#if ENABLE(WORKERS)
-#include "WebDOMDedicatedWorkerGlobalScope.h"
-#include "WebDOMWorker.h"
-#endif
 
 #if ENABLE(SHARED_WORKERS)
 #include "WebDOMSharedWorker.h"
@@ -112,11 +109,6 @@ WebDOM##type WebDOMEventTarget::to##type() \
 ConvertTo(Node)
 ConvertTo(DOMWindow)
 
-#if ENABLE(WORKERS) && 0
-ConvertTo(Worker)
-ConvertTo(DedicatedWorkerGlobalScope)
-#endif
-
 #if ENABLE(SHARED_WORKERS)
 ConvertTo(SharedWorker)
 ConvertTo(SharedWorkerGlobalScope)
@@ -148,14 +140,6 @@ WebDOMEventTarget toWebKit(WebCore::EventTarget* value)
     // SVGElementInstance supports both toSVGElementInstance and toNode since so much mouse handling code depends on toNode returning a valid node.
     if (WebCore::SVGElementInstance* instance = value->toSVGElementInstance())
         return toWebKit(instance);
-#endif
-
-#if ENABLE(WORKERS) && 0
-    if (WebCore::Worker* worker = value->toWorker())
-        return toWebKit(worker);
-
-    if (WebCore::DedicatedWorkerGlobalScope* workerGlobalScope = value->toDedicatedWorkerGlobalScope())
-        return toWebKit(workerGlobalScope);
 #endif
 
 #if ENABLE(SHARED_WORKERS)

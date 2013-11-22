@@ -27,8 +27,6 @@
 #ifndef JSWorkerGlobalScopeBase_h
 #define JSWorkerGlobalScopeBase_h
 
-#if ENABLE(WORKERS)
-
 #include "JSDOMGlobalObject.h"
 
 namespace WebCore {
@@ -84,7 +82,5 @@ namespace WebCore {
 #endif
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)
 
 #endif // JSWorkerGlobalScopeBase_h

@@ -31,8 +31,6 @@
 #ifndef DedicatedWorkerGlobalScope_h
 #define DedicatedWorkerGlobalScope_h
 
-#if ENABLE(WORKERS)
-
 #include "ContentSecurityPolicy.h"
 #include "MessagePort.h"
 #include "WorkerGlobalScope.h"
@@ -68,7 +66,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)
 
 #endif // DedicatedWorkerGlobalScope_h

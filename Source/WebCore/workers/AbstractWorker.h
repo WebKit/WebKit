@@ -31,8 +31,6 @@
 #ifndef AbstractWorker_h
 #define AbstractWorker_h
 
-#if ENABLE(WORKERS)
-
 #include "ActiveDOMObject.h"
 #include "EventListener.h"
 #include "EventNames.h"
@@ -71,7 +69,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)
 
 #endif // AbstractWorker_h

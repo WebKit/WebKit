@@ -29,9 +29,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WORKERS)
-
 #include "WorkerThreadableLoader.h"
 
 #include "Document.h"
@@ -246,5 +243,3 @@ void WorkerThreadableLoader::MainThreadBridge::didFailRedirectCheck()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)

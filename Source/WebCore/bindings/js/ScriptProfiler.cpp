@@ -68,12 +68,10 @@ void ScriptProfiler::startForPage(Page* inspectedPage, const String& title)
     start(scriptState, title);
 }
 
-#if ENABLE(WORKERS)
 void ScriptProfiler::startForWorkerGlobalScope(WorkerGlobalScope* context, const String& title)
 {
     start(execStateFromWorkerGlobalScope(context), title);
 }
-#endif
 
 PassRefPtr<ScriptProfile> ScriptProfiler::stop(JSC::ExecState* state, const String& title)
 {
@@ -87,12 +85,10 @@ PassRefPtr<ScriptProfile> ScriptProfiler::stopForPage(Page* inspectedPage, const
     return stop(scriptState, title);
 }
 
-#if ENABLE(WORKERS)
 PassRefPtr<ScriptProfile> ScriptProfiler::stopForWorkerGlobalScope(WorkerGlobalScope* context, const String& title)
 {
     return stop(execStateFromWorkerGlobalScope(context), title);
 }
-#endif
 
 } // namespace WebCore
 

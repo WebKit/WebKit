@@ -278,10 +278,6 @@
 #define ENABLE_WEB_TIMING 1
 #endif
 
-#if !defined(ENABLE_WORKERS)
-#define ENABLE_WORKERS 1
-#endif
-
 #if !defined(ENABLE_XHR_RESPONSE_BLOB)
 #define ENABLE_XHR_RESPONSE_BLOB 1
 #endif

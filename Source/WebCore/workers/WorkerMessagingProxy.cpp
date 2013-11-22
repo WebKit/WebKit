@@ -27,8 +27,6 @@
 
 #include "config.h"
 
-#if ENABLE(WORKERS)
-
 #include "WorkerMessagingProxy.h"
 
 #include "ContentSecurityPolicy.h"
@@ -535,5 +533,3 @@ bool WorkerMessagingProxy::hasPendingActivity() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)

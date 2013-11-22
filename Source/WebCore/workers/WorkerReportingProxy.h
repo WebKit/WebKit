@@ -31,8 +31,6 @@
 #ifndef WorkerReportingProxy_h
 #define WorkerReportingProxy_h
 
-#if ENABLE(WORKERS)
-
 #include "ConsoleTypes.h"
 #include <wtf/Forward.h>
 
@@ -57,7 +55,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)
 
 #endif // WorkerReportingProxy_h

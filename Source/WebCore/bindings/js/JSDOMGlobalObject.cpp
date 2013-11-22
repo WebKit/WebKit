@@ -30,11 +30,8 @@
 #include "Document.h"
 #include "JSDOMWindow.h"
 #include "JSEventListener.h"
-
-#if ENABLE(WORKERS)
 #include "JSWorkerGlobalScope.h"
 #include "WorkerGlobalScope.h"
-#endif
 
 using namespace JSC;
 
@@ -71,10 +68,8 @@ ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
 {
     if (inherits(JSDOMWindowBase::info()))
         return jsCast<const JSDOMWindowBase*>(this)->scriptExecutionContext();
-#if ENABLE(WORKERS)
     if (inherits(JSWorkerGlobalScopeBase::info()))
         return jsCast<const JSWorkerGlobalScopeBase*>(this)->scriptExecutionContext();
-#endif
     ASSERT_NOT_REACHED();
     return 0;
 }
@@ -116,10 +111,8 @@ JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext* scriptExecutionCo
     if (scriptExecutionContext->isDocument())
         return toJSDOMGlobalObject(toDocument(scriptExecutionContext), exec);
 
-#if ENABLE(WORKERS)
     if (scriptExecutionContext->isWorkerGlobalScope())
         return static_cast<WorkerGlobalScope*>(scriptExecutionContext)->script()->workerGlobalScopeWrapper();
-#endif
 
     ASSERT_NOT_REACHED();
     return 0;
@@ -135,10 +128,8 @@ JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext* scriptExecutionCo
     if (scriptExecutionContext->isDocument())
         return toJSDOMGlobalObject(toDocument(scriptExecutionContext), world);
 
-#if ENABLE(WORKERS)
     if (scriptExecutionContext->isWorkerGlobalScope())
         return static_cast<WorkerGlobalScope*>(scriptExecutionContext)->script()->workerGlobalScopeWrapper();
-#endif
 
     ASSERT_NOT_REACHED();
     return 0;

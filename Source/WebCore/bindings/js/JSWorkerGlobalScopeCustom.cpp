@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if ENABLE(WORKERS)
-
 #include "JSWorkerGlobalScope.h"
 
 #include "ExceptionCode.h"
@@ -118,5 +116,3 @@ JSValue JSWorkerGlobalScope::setInterval(ExecState* exec)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)

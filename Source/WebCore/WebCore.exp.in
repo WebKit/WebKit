@@ -241,6 +241,7 @@ __ZN7WebCore12TextIterator8subrangeEPNS_5RangeEii
 __ZN7WebCore12TextIteratorC1EPKNS_5RangeENS_20TextIteratorBehaviorE
 __ZN7WebCore12TextIteratorD1Ev
 __ZN7WebCore12UTF8EncodingEv
+__ZN7WebCore12WorkerThread17workerThreadCountEv
 __ZN7WebCore12cacheStorageEv
 __ZN7WebCore12deleteCookieERKNS_21NetworkStorageSessionERKNS_3URLERKN3WTF6StringE
 __ZN7WebCore12gcControllerEv
@@ -2879,10 +2880,6 @@ __ZNK7WebCore16HTMLMediaElement6pausedEv
 
 #if ENABLE(VIEW_MODE_CSS_MEDIA)
 __ZN7WebCore4Page11setViewModeENS0_8ViewModeE
-#endif
-
-#if ENABLE(WORKERS)
-__ZN7WebCore12WorkerThread17workerThreadCountEv
 #endif
 
 #if ENABLE(VIDEO_TRACK)

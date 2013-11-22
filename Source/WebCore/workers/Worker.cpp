@@ -27,8 +27,6 @@
 
 #include "config.h"
 
-#if ENABLE(WORKERS)
-
 #include "Worker.h"
 
 #include "DOMWindow.h"
@@ -178,5 +176,3 @@ void Worker::notifyFinished()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)

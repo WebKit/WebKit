@@ -26,8 +26,6 @@
 #ifndef WorkerNavigator_h
 #define WorkerNavigator_h
 
-#if ENABLE(WORKERS)
-
 #include "NavigatorBase.h"
 #include "Supplementable.h"
 #include <wtf/PassRefPtr.h>
@@ -51,7 +49,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)
 
 #endif // WorkerNavigator_h

@@ -59,10 +59,7 @@ JSC::ExecState* mainWorldExecState(Frame*);
 
 JSC::ExecState* execStateFromNode(DOMWrapperWorld&, Node*);
 JSC::ExecState* execStateFromPage(DOMWrapperWorld&, Page*);
-
-#if ENABLE(WORKERS)
 JSC::ExecState* execStateFromWorkerGlobalScope(WorkerGlobalScope*);
-#endif
 
 } // namespace WebCore
 

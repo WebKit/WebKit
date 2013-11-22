@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#if ENABLE(WEB_SOCKETS) && ENABLE(WORKERS)
+#if ENABLE(WEB_SOCKETS)
 #include "ThreadableWebSocketChannelClientWrapper.h"
 
 #include "CrossThreadCopier.h"

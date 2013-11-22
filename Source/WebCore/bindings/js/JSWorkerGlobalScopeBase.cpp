@@ -27,8 +27,6 @@
 
 #include "config.h"
 
-#if ENABLE(WORKERS)
-
 #include "JSWorkerGlobalScopeBase.h"
 
 #include "DOMWrapperWorld.h"
@@ -157,5 +155,3 @@ JSWorkerGlobalScope* toJSWorkerGlobalScope(JSValue value)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)

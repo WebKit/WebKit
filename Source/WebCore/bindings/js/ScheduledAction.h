@@ -61,9 +61,7 @@ namespace WebCore {
 
         void executeFunctionInContext(JSC::JSGlobalObject*, JSC::JSValue thisValue, ScriptExecutionContext*);
         void execute(Document*);
-#if ENABLE(WORKERS)
         void execute(WorkerGlobalScope*);
-#endif
 
         JSC::Strong<JSC::Unknown> m_function;
         Vector<JSC::Strong<JSC::Unknown>> m_args;

@@ -26,8 +26,6 @@
 
 #include "config.h"
 
-#if ENABLE(WORKERS)
-
 #include "JSWorker.h"
 
 #include "Document.h"
@@ -72,5 +70,3 @@ EncodedJSValue JSC_HOST_CALL JSWorkerConstructor::constructJSWorker(ExecState* e
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)

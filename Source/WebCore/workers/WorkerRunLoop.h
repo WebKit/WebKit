@@ -31,8 +31,6 @@
 #ifndef WorkerRunLoop_h
 #define WorkerRunLoop_h
 
-#if ENABLE(WORKERS)
-
 #include "ScriptExecutionContext.h"
 #include <wtf/MessageQueue.h>
 #include <wtf/OwnPtr.h>
@@ -98,7 +96,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)
 
 #endif // WorkerRunLoop_h

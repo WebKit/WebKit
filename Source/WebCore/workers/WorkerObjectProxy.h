@@ -31,8 +31,6 @@
 #ifndef WorkerObjectProxy_h
 #define WorkerObjectProxy_h
 
-#if ENABLE(WORKERS)
-
 #include "WorkerReportingProxy.h"
 #include "MessagePort.h"
 #include <wtf/PassOwnPtr.h>
@@ -54,7 +52,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)
 
 #endif // WorkerObjectProxy_h

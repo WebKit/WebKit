@@ -28,7 +28,6 @@
 
 [
     GlobalContext=WorkerGlobalScope,
-    Conditional=WORKERS,
     GenerateIsReachable=Impl,
     JSNoStaticTables,
     ImplementationLacksVTable,

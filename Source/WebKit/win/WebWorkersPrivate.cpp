@@ -73,11 +73,7 @@ HRESULT WebWorkersPrivate::workerThreadCount(UINT* number)
     if (!number)
         return E_POINTER;
 
-#if ENABLE(WORKERS)
     *number = WebCore::WorkerThread::workerThreadCount();
-#else
-    *number = 0;
-#endif
     return S_OK;
 }
 

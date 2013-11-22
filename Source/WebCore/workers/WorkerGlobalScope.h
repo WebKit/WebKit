@@ -27,8 +27,6 @@
 #ifndef WorkerGlobalScope_h
 #define WorkerGlobalScope_h
 
-#if ENABLE(WORKERS)
-
 #include "ContentSecurityPolicy.h"
 #include "EventListener.h"
 #include "EventNames.h"
@@ -182,7 +180,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)
 
 #endif // WorkerGlobalScope_h

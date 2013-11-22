@@ -27,8 +27,6 @@
 #ifndef WorkerThread_h
 #define WorkerThread_h
 
-#if ENABLE(WORKERS)
-
 #include "ContentSecurityPolicy.h"
 #include "GroupSettings.h"
 #include "WorkerRunLoop.h"
@@ -102,8 +100,6 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)
 
 #endif // WorkerThread_h
 

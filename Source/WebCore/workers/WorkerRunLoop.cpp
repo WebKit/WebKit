@@ -30,8 +30,6 @@
  
 #include "config.h"
 
-#if ENABLE(WORKERS)
-
 #include "ScriptExecutionContext.h"
 #include "SharedTimer.h"
 #include "ThreadGlobalData.h"
@@ -230,5 +228,3 @@ WorkerRunLoop::Task::Task(PassOwnPtr<ScriptExecutionContext::Task> task, const S
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)

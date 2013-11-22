@@ -31,8 +31,6 @@
 #ifndef WorkerLoaderProxy_h
 #define WorkerLoaderProxy_h
 
-#if ENABLE(WORKERS)
-
 #include "ScriptExecutionContext.h"
 #include <wtf/Forward.h>
 #include <wtf/PassOwnPtr.h>
@@ -58,7 +56,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)
 
 #endif // WorkerLoaderProxy_h

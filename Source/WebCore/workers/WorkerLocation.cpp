@@ -26,8 +26,6 @@
 
 #include "config.h"
 
-#if ENABLE(WORKERS)
-
 #include "WorkerLocation.h"
 
 #include <wtf/text/WTFString.h>
@@ -76,5 +74,3 @@ String WorkerLocation::hash() const
 
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)

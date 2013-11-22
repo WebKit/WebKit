@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if ENABLE(WORKERS)
-
 #include "DedicatedWorkerThread.h"
 
 #include "DedicatedWorkerGlobalScope.h"
@@ -68,5 +66,3 @@ void DedicatedWorkerThread::runEventLoop()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)

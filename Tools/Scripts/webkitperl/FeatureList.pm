@@ -152,7 +152,6 @@ my (
     $webAudioSupport,
     $webSocketsSupport,
     $webTimingSupport,
-    $workersSupport,
     $xhrTimeoutSupport,
     $xsltSupport,
     $ftlJITSupport,
@@ -477,9 +476,6 @@ my @features = (
 
     { option => "web-timing", desc => "Toggle Web Timing support",
       define => "ENABLE_WEB_TIMING", default => (isBlackBerry() || isGtk() || isEfl()), value => \$webTimingSupport },
-
-    { option => "workers", desc => "Toggle Workers support",
-      define => "ENABLE_WORKERS", default => (isAppleWebKit() || isGtk() || isBlackBerry() || isEfl()), value => \$workersSupport },
 
     { option => "xhr-timeout", desc => "Toggle XHR Timeout support",
       define => "ENABLE_XHR_TIMEOUT", default => (isEfl() || isGtk() || isAppleMacWebKit()), value => \$xhrTimeoutSupport },

@@ -26,8 +26,6 @@
 
 #include "config.h"
 
-#if ENABLE(WORKERS)
-
 #include "WorkerThread.h"
 
 #include "DedicatedWorkerGlobalScope.h"
@@ -281,5 +279,3 @@ void WorkerThread::releaseFastMallocFreeMemoryInAllThreads()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)

@@ -74,10 +74,6 @@ static bool isContextValid(ScriptExecutionContext* context)
         Document* document = toDocument(context);
         return document->frame() && document->page();
     }
-#if !ENABLE(WORKERS)
-    if (context->isWorkerGlobalScope())
-        return false;
-#endif
     return true;
 }
 
@@ -88,12 +84,10 @@ static String getIndexedDBDatabasePath(ScriptExecutionContext* context)
         Document* document = toDocument(context);
         return document->page()->group().groupSettings().indexedDBDatabasePath();
     }
-#if ENABLE(WORKERS)
     WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(context);
     const GroupSettings* groupSettings = workerGlobalScope->groupSettings();
     if (groupSettings)
         return groupSettings->indexedDBDatabasePath();
-#endif
     return String();
 }
 }

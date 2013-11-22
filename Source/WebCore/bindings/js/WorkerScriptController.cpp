@@ -26,9 +26,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WORKERS)
-
 #include "WorkerScriptController.h"
 
 #include "JSDOMBinding.h"
@@ -207,5 +204,3 @@ void WorkerScriptController::detachDebugger(JSC::Debugger* debugger)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)

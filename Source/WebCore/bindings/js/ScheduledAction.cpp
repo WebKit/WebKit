@@ -33,17 +33,14 @@
 #include "JSDOMWindow.h"
 #include "JSMainThreadExecState.h"
 #include "JSMainThreadExecStateInstrumentation.h"
+#include "JSWorkerGlobalScope.h"
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
-#include <runtime/JSLock.h>
-
-#if ENABLE(WORKERS)
-#include "JSWorkerGlobalScope.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
-#endif
+#include <runtime/JSLock.h>
 
 using namespace JSC;
 
@@ -79,14 +76,10 @@ void ScheduledAction::execute(ScriptExecutionContext* context)
 {
     if (context->isDocument())
         execute(toDocument(context));
-#if ENABLE(WORKERS)
     else {
         ASSERT_WITH_SECURITY_IMPLICATION(context->isWorkerGlobalScope());
         execute(static_cast<WorkerGlobalScope*>(context));
     }
-#else
-    ASSERT(context->isDocument());
-#endif
 }
 
 void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSValue thisValue, ScriptExecutionContext* context)
@@ -135,7 +128,6 @@ void ScheduledAction::execute(Document* document)
         frame->script().executeScriptInWorld(*m_isolatedWorld, m_code);
 }
 
-#if ENABLE(WORKERS)
 void ScheduledAction::execute(WorkerGlobalScope* workerGlobalScope)
 {
     // In a Worker, the execution should always happen on a worker thread.
@@ -151,6 +143,5 @@ void ScheduledAction::execute(WorkerGlobalScope* workerGlobalScope)
         scriptController->evaluate(code);
     }
 }
-#endif // ENABLE(WORKERS)
 
 } // namespace WebCore

@@ -1116,7 +1116,6 @@ void InspectorInstrumentation::didDispatchDOMStorageEventImpl(InstrumentingAgent
         domStorageAgent->didDispatchDOMStorageEvent(key, oldValue, newValue, storageType, securityOrigin, page);
 }
 
-#if ENABLE(WORKERS)
 bool InspectorInstrumentation::shouldPauseDedicatedWorkerOnStartImpl(InstrumentingAgents* instrumentingAgents)
 {
     if (InspectorWorkerAgent* workerAgent = instrumentingAgents->inspectorWorkerAgent())
@@ -1148,7 +1147,6 @@ void InspectorInstrumentation::workerGlobalScopeTerminatedImpl(InstrumentingAgen
     if (InspectorWorkerAgent* workerAgent = instrumentingAgents->inspectorWorkerAgent())
         workerAgent->workerGlobalScopeTerminated(proxy);
 }
-#endif
 
 #if ENABLE(WEB_SOCKETS)
 void InspectorInstrumentation::didCreateWebSocketImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, const URL& requestURL, const URL&, const String& protocol, Document* document)
@@ -1331,7 +1329,6 @@ InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForRenderer(Re
     return instrumentingAgentsForFrame(&renderer->frame());
 }
 
-#if ENABLE(WORKERS)
 InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForWorkerGlobalScope(WorkerGlobalScope* workerGlobalScope)
 {
     if (!workerGlobalScope)
@@ -1345,7 +1342,6 @@ InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForNonDocument
         return instrumentationForWorkerGlobalScope(static_cast<WorkerGlobalScope*>(context));
     return 0;
 }
-#endif
 
 #if ENABLE(GEOLOCATION)
 GeolocationPosition* InspectorInstrumentation::overrideGeolocationPositionImpl(InstrumentingAgents* instrumentingAgents, GeolocationPosition* position)

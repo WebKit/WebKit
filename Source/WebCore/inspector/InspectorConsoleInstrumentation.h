@@ -91,7 +91,6 @@ inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSou
 #endif
 }
 
-#if ENABLE(WORKERS)
 inline void InspectorInstrumentation::addMessageToConsole(WorkerGlobalScope* workerGlobalScope, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
 {
 #if ENABLE(INSPECTOR)
@@ -126,7 +125,6 @@ inline void InspectorInstrumentation::addMessageToConsole(WorkerGlobalScope* wor
     UNUSED_PARAM(requestIdentifier);
 #endif
 }
-#endif
 
 inline void InspectorInstrumentation::consoleCount(Page* page, JSC::ExecState* state, PassRefPtr<ScriptArguments> arguments)
 {

@@ -4,7 +4,7 @@ AudioNode conditional=WEB_AUDIO
 AudioContext conditional=WEB_AUDIO
 AudioTrackList conditional=VIDEO_TRACK
 BatteryManager conditional=BATTERY_STATUS
-DedicatedWorkerGlobalScope conditional=WORKERS
+DedicatedWorkerGlobalScope
 DOMApplicationCache
 DOMWindow
 EventSource
@@ -40,7 +40,7 @@ TextTrackList conditional=VIDEO_TRACK
 VideoTrackList conditional=VIDEO_TRACK
 WebKitNamedFlow
 WebSocket conditional=WEB_SOCKETS
-Worker conditional=WORKERS
+Worker
 XMLHttpRequest
 XMLHttpRequestUpload
 

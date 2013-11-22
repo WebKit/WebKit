@@ -313,9 +313,7 @@ void ewk_settings_memory_cache_clear()
 
     // FastMalloc has lock-free thread specific caches that can only be cleared from the thread itself.
     WebCore::StorageThread::releaseFastMallocFreeMemoryInAllThreads();
-#if ENABLE(WORKERS)
     WebCore::WorkerThread::releaseFastMallocFreeMemoryInAllThreads();
-#endif
     WTF::releaseFastMallocFreeMemory();
 }
 

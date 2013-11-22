@@ -31,7 +31,7 @@
 #ifndef WorkerInspectorController_h
 #define WorkerInspectorController_h
 
-#if ENABLE(INSPECTOR) && ENABLE(WORKERS)
+#if ENABLE(INSPECTOR)
 
 #include "InspectorAgentRegistry.h"
 #include "InspectorBaseAgent.h"
@@ -80,6 +80,6 @@ private:
 
 }
 
-#endif // ENABLE(WORKERS)
+#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(WorkerInspectorController_h)

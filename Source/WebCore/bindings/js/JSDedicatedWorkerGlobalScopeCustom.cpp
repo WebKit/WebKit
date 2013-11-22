@@ -30,9 +30,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WORKERS)
-
 #include "JSDedicatedWorkerGlobalScope.h"
 
 #include "JSDOMBinding.h"
@@ -48,5 +45,3 @@ JSC::JSValue JSDedicatedWorkerGlobalScope::postMessage(JSC::ExecState* exec)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)

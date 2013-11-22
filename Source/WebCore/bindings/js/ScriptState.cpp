@@ -33,6 +33,7 @@
 
 #include "Document.h"
 #include "JSDOMWindowBase.h"
+#include "JSWorkerGlobalScope.h"
 #include "MainFrame.h"
 #include "Node.h"
 #include "Page.h"
@@ -43,9 +44,6 @@
 #include <interpreter/CallFrame.h>
 #include <runtime/JSGlobalObject.h>
 
-#if ENABLE(WORKERS)
-#include "JSWorkerGlobalScope.h"
-#endif
 
 namespace WebCore {
 
@@ -90,11 +88,9 @@ JSC::ExecState* execStateFromPage(DOMWrapperWorld& world, Page* page)
     return page->mainFrame().script().globalObject(world)->globalExec();
 }
 
-#if ENABLE(WORKERS)
 JSC::ExecState* execStateFromWorkerGlobalScope(WorkerGlobalScope* workerGlobalScope)
 {
     return workerGlobalScope->script()->workerGlobalScopeWrapper()->globalExec();
 }
-#endif
 
 }

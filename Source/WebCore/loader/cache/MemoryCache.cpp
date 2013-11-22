@@ -751,13 +751,11 @@ void MemoryCache::removeUrlFromCache(ScriptExecutionContext* context, const Stri
 
 void MemoryCache::removeRequestFromCache(ScriptExecutionContext* context, const ResourceRequest& request)
 {
-#if ENABLE(WORKERS)
     if (context->isWorkerGlobalScope()) {
         WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(context);
         workerGlobalScope->thread()->workerLoaderProxy().postTaskToLoader(createCallbackTask(&crossThreadRemoveRequestFromCache, request));
         return;
     }
-#endif
 
     removeRequestFromCacheImpl(context, request);
 }

@@ -28,8 +28,6 @@
 #ifndef WorkerScriptLoaderClient_h
 #define WorkerScriptLoaderClient_h
 
-#if ENABLE(WORKERS)
-
 namespace WebCore {
 
     class ResourceResponse;
@@ -47,7 +45,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)
 
 #endif // WorkerScriptLoaderClient_h

@@ -31,7 +31,6 @@
 #include "config.h"
 #include "DedicatedWorkerGlobalScope.h"
 
-#if ENABLE(WORKERS)
 #include "DOMWindow.h"
 #include "DedicatedWorkerThread.h"
 #include "MessageEvent.h"
@@ -90,5 +89,3 @@ DedicatedWorkerThread* DedicatedWorkerGlobalScope::thread()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)

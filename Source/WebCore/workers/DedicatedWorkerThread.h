@@ -30,8 +30,6 @@
 #ifndef DedicatedWorkerThread_h
 #define DedicatedWorkerThread_h
 
-#if ENABLE(WORKERS)
-
 #include "ContentSecurityPolicy.h"
 #include "WorkerThread.h"
 
@@ -55,7 +53,5 @@ namespace WebCore {
         WorkerObjectProxy& m_workerObjectProxy;
     };
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)
 
 #endif // DedicatedWorkerThread_h

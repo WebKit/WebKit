@@ -31,7 +31,7 @@
 #ifndef WorkerRuntimeAgent_h
 #define WorkerRuntimeAgent_h
 
-#if ENABLE(INSPECTOR) && ENABLE(WORKERS)
+#if ENABLE(INSPECTOR)
 
 #include "InspectorRuntimeAgent.h"
 #include <wtf/PassOwnPtr.h>

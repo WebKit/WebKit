@@ -116,6 +116,7 @@ EXPORTS
         symbolWithPointer(??1HitTestResult@WebCore@@QAE@XZ, ??1HitTestResult@WebCore@@QEAA@XZ)
         symbolWithPointer(??1Mutex@WTF@@QAE@XZ, ??1Mutex@WTF@@QEAA@XZ)
         symbolWithPointer(??1ThreadCondition@WTF@@QAE@XZ, ??1ThreadCondition@WTF@@QEAA@XZ)
+        ?workerThreadCount@WorkerThread@WebCore@@SAIXZ
 #if USE(CAIRO)
         symbolWithPointer(??$derefIfNotNull@U_cairo_surface@@@WTF@@YAXPAU_cairo_surface@@@Z, ??$derefIfNotNull@U_cairo_surface@@@WTF@@YAXPEAU_cairo_surface@@@Z)
         symbolWithPointer(??$refIfNotNull@U_cairo_surface@@@WTF@@YAXPAU_cairo_surface@@@Z, ??$refIfNotNull@U_cairo_surface@@@WTF@@YAXPEAU_cairo_surface@@@Z)
@@ -437,10 +438,6 @@ EXPORTS
         symbolWithPointer(?toUInt32EnforceRange@WebCore@@YAIPAVExecState@JSC@@VJSValue@3@@Z, ?toUInt32EnforceRange@WebCore@@YAIPEAVExecState@JSC@@VJSValue@3@@Z)
         symbolWithPointer(?toUInt64@WebCore@@YA_KPAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z, ?toUInt64@WebCore@@YA_KPEAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z)
         symbolWithPointer(?commonVM@JSDOMWindowBase@WebCore@@SAPAVVM@JSC@@XZ, ?commonVM@JSDOMWindowBase@WebCore@@SAPEAVVM@JSC@@XZ)
-
-#if ENABLE(WORKERS)
-        ?workerThreadCount@WorkerThread@WebCore@@SAIXZ
-#endif
 
 #if ENABLE(VIDEO)
         symbolWithPointer(?toTimeRanges@WebCore@@YAPAVTimeRanges@1@VJSValue@JSC@@@Z, ?toTimeRanges@WebCore@@YAPEAVTimeRanges@1@VJSValue@JSC@@@Z)

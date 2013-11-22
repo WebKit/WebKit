@@ -1,3 +1,13 @@
+2013-11-21  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Remove ENABLE_WORKERS
+        https://bugs.webkit.org/show_bug.cgi?id=105784
+
+        Reviewed by Darin Adler.
+
+        * win/tools/vsprops/FeatureDefines.props:
+        * win/tools/vsprops/FeatureDefinesCairo.props:
+
 2013-11-17  Filip Pizlo  <fpizlo@apple.com>
 
         Update binary drops to include atrick's "Ran out of registers" fix in r194942.

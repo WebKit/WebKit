@@ -863,10 +863,6 @@
 #define ENABLE_WEB_TIMING 0
 #endif
 
-#if !defined(ENABLE_WORKERS)
-#define ENABLE_WORKERS 0
-#endif
-
 #if !defined(ENABLE_XHR_TIMEOUT)
 #define ENABLE_XHR_TIMEOUT 0
 #endif

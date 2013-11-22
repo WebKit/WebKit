@@ -31,14 +31,11 @@
 #include "JSHTMLOptionElement.h"
 #include "JSImageConstructor.h"
 #include "JSMessagePortCustom.h"
+#include "JSWorker.h"
 #include "Location.h"
 #include "ScheduledAction.h"
 #include "Settings.h"
 #include "SharedWorkerRepository.h"
-
-#if ENABLE(WORKERS)
-#include "JSWorker.h"
-#endif
 
 #if ENABLE(SHARED_WORKERS)
 #include "JSSharedWorker.h"

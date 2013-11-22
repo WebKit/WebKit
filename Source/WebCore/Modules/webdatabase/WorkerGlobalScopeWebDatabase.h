@@ -27,7 +27,7 @@
 #ifndef WorkerGlobalScopeWebDatabase_h
 #define WorkerGlobalScopeWebDatabase_h
 
-#if ENABLE(SQL_DATABASE) && ENABLE(WORKERS)
+#if ENABLE(SQL_DATABASE)
 
 #include "ExceptionCode.h"
 #include <wtf/Forward.h>
@@ -54,6 +54,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SQL_DATABASE) && ENABLE(WORKERS)
+#endif // ENABLE(SQL_DATABASE)
 
 #endif // WorkerGlobalScopeWebDatabase_h

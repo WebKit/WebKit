@@ -31,7 +31,6 @@
 
 [
     NoInterfaceObject,
-    Conditional=WORKERS,
 ] interface AbstractWorker {
     attribute EventListener onerror;
 };

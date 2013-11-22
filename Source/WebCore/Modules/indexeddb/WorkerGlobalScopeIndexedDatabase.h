@@ -27,7 +27,7 @@
 #ifndef WorkerGlobalScopeIndexedDatabase_h
 #define WorkerGlobalScopeIndexedDatabase_h
 
-#if ENABLE(WORKERS) && ENABLE(INDEXED_DATABASE)
+#if ENABLE(INDEXED_DATABASE)
 
 #include "Supplementable.h"
 #include <wtf/text/WTFString.h>
@@ -58,6 +58,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(WORKERS) && ENABLE(INDEXED_DATABASE)
+#endif // ENABLE(INDEXED_DATABASE)
 
 #endif // WorkerGlobalScopeIndexedDatabase_h

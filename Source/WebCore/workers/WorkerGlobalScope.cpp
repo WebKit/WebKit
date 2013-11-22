@@ -27,8 +27,6 @@
 
 #include "config.h"
 
-#if ENABLE(WORKERS)
-
 #include "WorkerGlobalScope.h"
 
 #include "ActiveDOMObject.h"
@@ -356,5 +354,3 @@ WorkerEventQueue& WorkerGlobalScope::eventQueue() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)

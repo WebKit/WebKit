@@ -121,7 +121,6 @@
 #cmakedefine01 ENABLE_WEB_AUDIO
 #cmakedefine01 ENABLE_WEB_SOCKETS
 #cmakedefine01 ENABLE_WEB_TIMING
-#cmakedefine01 ENABLE_WORKERS
 #cmakedefine01 ENABLE_XHR_TIMEOUT
 #cmakedefine01 ENABLE_XSLT
 #cmakedefine01 USE_SYSTEM_MALLOC

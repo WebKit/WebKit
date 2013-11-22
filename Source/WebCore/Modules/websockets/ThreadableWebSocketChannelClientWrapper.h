@@ -31,7 +31,7 @@
 #ifndef ThreadableWebSocketChannelClientWrapper_h
 #define ThreadableWebSocketChannelClientWrapper_h
 
-#if ENABLE(WEB_SOCKETS) && ENABLE(WORKERS)
+#if ENABLE(WEB_SOCKETS)
 
 #include "ScriptExecutionContext.h"
 #include "ThreadableWebSocketChannel.h"

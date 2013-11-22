@@ -30,8 +30,6 @@
 
 #include "config.h"
 
-#if ENABLE(WORKERS)
-
 #include "AbstractWorker.h"
 
 #include "ContentSecurityPolicy.h"
@@ -83,5 +81,3 @@ URL AbstractWorker::resolveURL(const String& url, ExceptionCode& ec)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)

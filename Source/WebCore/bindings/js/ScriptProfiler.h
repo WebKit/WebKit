@@ -61,14 +61,10 @@ public:
     static unsigned getHeapObjectId(const ScriptValue&);
     static void start(JSC::ExecState*, const String& title);
     static void startForPage(Page*, const String& title);
-#if ENABLE(WORKERS)
     static void startForWorkerGlobalScope(WorkerGlobalScope*, const String& title);
-#endif
     static PassRefPtr<ScriptProfile> stop(JSC::ExecState*, const String& title);
     static PassRefPtr<ScriptProfile> stopForPage(Page*, const String& title);
-#if ENABLE(WORKERS)
     static PassRefPtr<ScriptProfile> stopForWorkerGlobalScope(WorkerGlobalScope*, const String& title);
-#endif
     static PassRefPtr<ScriptHeapSnapshot> takeHeapSnapshot(const String&, HeapSnapshotProgress*) { return 0; }
     static bool causesRecompilation() { return true; }
     static bool isSampling() { return false; }

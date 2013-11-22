@@ -2605,7 +2605,7 @@ set(WebCore_LIBRARIES
     WTF
 )
 
-if (ENABLE_SQL_DATABASE AND ENABLE_WORKERS)
+if (ENABLE_SQL_DATABASE)
     list(APPEND WebCore_SOURCES
         Modules/webdatabase/WorkerGlobalScopeWebDatabase.cpp
     )

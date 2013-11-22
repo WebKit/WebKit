@@ -28,8 +28,6 @@
 #ifndef WorkerScriptLoader_h
 #define WorkerScriptLoader_h
 
-#if ENABLE(WORKERS)
-
 #include "URL.h"
 #include "ResourceRequest.h"
 #include "ThreadableLoader.h"
@@ -102,7 +100,5 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)
 
 #endif // WorkerScriptLoader_h

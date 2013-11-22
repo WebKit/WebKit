@@ -31,7 +31,7 @@
 #ifndef WorkerThreadableWebSocketChannel_h
 #define WorkerThreadableWebSocketChannel_h
 
-#if ENABLE(WEB_SOCKETS) && ENABLE(WORKERS)
+#if ENABLE(WEB_SOCKETS)
 
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannelClient.h"

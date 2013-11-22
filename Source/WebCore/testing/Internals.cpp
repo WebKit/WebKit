@@ -330,11 +330,7 @@ InternalSettings* Internals::settings() const
 
 unsigned Internals::workerThreadCount() const
 {
-#if ENABLE(WORKERS)
     return WorkerThread::workerThreadCount();
-#else
-    return 0;
-#endif
 }
 
 String Internals::address(Node* node)

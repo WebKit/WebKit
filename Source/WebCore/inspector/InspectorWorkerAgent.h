@@ -31,8 +31,6 @@
 #ifndef InspectorWorkerAgent_h
 #define InspectorWorkerAgent_h
 
-#if ENABLE(WORKERS)
-
 #include "InspectorBaseAgent.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -89,5 +87,3 @@ private:
 } // namespace WebCore
 
 #endif // !defined(InspectorWorkerAgent_h)
-
-#endif // ENABLE(WORKERS)

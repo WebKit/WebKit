@@ -137,13 +137,11 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
 
         globalObject->setCurrentEvent(savedEvent);
 
-#if ENABLE(WORKERS)
         if (scriptExecutionContext->isWorkerGlobalScope()) {
             bool terminatorCausedException = (exec->hadException() && isTerminatedExecutionException(exec->exception()));
             if (terminatorCausedException || vm.watchdog.didFire())
                 static_cast<WorkerGlobalScope*>(scriptExecutionContext)->script()->forbidExecution();
         }
-#endif
 
         if (exec->hadException()) {
             event->target()->uncaughtExceptionInEventHandler();

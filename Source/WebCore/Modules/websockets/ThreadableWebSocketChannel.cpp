@@ -55,7 +55,6 @@ PassRefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Script
     ASSERT(context);
     ASSERT(client);
 
-#if ENABLE(WORKERS)
     if (context->isWorkerGlobalScope()) {
         WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(context);
         WorkerRunLoop& runLoop = workerGlobalScope->thread()->runLoop();
@@ -63,7 +62,6 @@ PassRefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Script
         mode.append(String::number(runLoop.createUniqueId()));
         return WorkerThreadableWebSocketChannel::create(workerGlobalScope, client, mode);
     }
-#endif // ENABLE(WORKERS)
 
     return WebSocketChannel::create(toDocument(context), client);
 }
