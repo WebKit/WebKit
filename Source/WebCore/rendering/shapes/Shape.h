@@ -32,6 +32,7 @@
 
 #include "BasicShapes.h"
 #include "LayoutRect.h"
+#include "Path.h"
 #include "StyleImage.h"
 #include "WritingMode.h"
 #include <wtf/PassOwnPtr.h>
@@ -60,12 +61,6 @@ typedef Vector<LineSegment> SegmentList;
 
 class Shape {
 public:
-    enum ShapeType {
-        RoundedRectangleType,
-        PolygonType,
-        RasterType
-    };
-
     static PassOwnPtr<Shape> createShape(const BasicShape*, const LayoutSize& logicalBoxSize, WritingMode, Length margin, Length padding);
     static PassOwnPtr<Shape> createShape(const StyleImage*, float threshold, const LayoutSize& logicalBoxSize, WritingMode, Length margin, Length padding);
     static PassOwnPtr<Shape> createShape(const LayoutSize& logicalBoxSize, const LayoutSize& logicalRadii, WritingMode, Length margin, Length padding);
@@ -81,7 +76,7 @@ public:
     bool lineOverlapsShapeMarginBounds(LayoutUnit lineTop, LayoutUnit lineHeight) const { return lineOverlapsBoundingBox(lineTop, lineHeight, shapeMarginLogicalBoundingBox()); }
     bool lineOverlapsShapePaddingBounds(LayoutUnit lineTop, LayoutUnit lineHeight) const { return lineOverlapsBoundingBox(lineTop, lineHeight, shapePaddingLogicalBoundingBox()); }
 
-    virtual ShapeType type() const = 0;
+    virtual void buildPath(Path&) const = 0;
 
 protected:
     float shapeMargin() const { return m_margin; }

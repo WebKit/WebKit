@@ -548,6 +548,7 @@ struct PathApplyInfo {
     FrameView* view;
     InspectorArray* array;
     RenderObject* renderer;
+    const ShapeOutsideInfo* shapeOutsideInfo;
 };
 
 static void appendPathCommandAndPoints(PathApplyInfo* info, const String& command, const FloatPoint points[], unsigned length)
@@ -555,7 +556,8 @@ static void appendPathCommandAndPoints(PathApplyInfo* info, const String& comman
     FloatPoint point;
     info->array->pushString(command);
     for (unsigned i = 0; i < length; i++) {
-        point = localPointToRoot(info->renderer, info->rootView, info->view, points[i]);
+        point = info->shapeOutsideInfo->shapeToRendererPoint(points[i]);
+        point = localPointToRoot(info->renderer, info->rootView, info->view, point);
         info->array->pushNumber(point.x());
         info->array->pushNumber(point.y());
     }
@@ -602,39 +604,7 @@ static PassRefPtr<InspectorObject> buildObjectForShapeOutside(Frame* containingF
     shapeObject->setArray("bounds", buildArrayForQuad(shapeQuad));
 
     Path path;
-    switch (shapeOutsideInfo->computedShape()->type()) {
-    case Shape::RoundedRectangleType: {
-        const RectangleShape* shape = static_cast<const RectangleShape*>(shapeOutsideInfo->computedShape());
-        FloatSize radii(shape->logicalRx(), shape->logicalRy());
-        radii = shapeOutsideInfo->shapeToRendererSize(radii);
-        path.addRoundedRect(shapeBounds, radii, Path::PreferBezierRoundedRect);
-        break;
-    }
-
-    case Shape::PolygonType: {
-        const PolygonShape* shape = static_cast<const PolygonShape*>(shapeOutsideInfo->computedShape());
-        const FloatPolygon& polygon = shape->polygon();
-        FloatPoint vertex;
-
-        if (polygon.numberOfVertices()) {
-            vertex = shapeOutsideInfo->shapeToRendererPoint(polygon.vertexAt(0));
-            path.moveTo(vertex);
-        }
-
-        for (size_t i = 1; i < polygon.numberOfVertices(); i++) {
-            FloatPoint vertex = shapeOutsideInfo->shapeToRendererPoint(polygon.vertexAt(i));
-            path.addLineTo(vertex);
-        }
-
-        if (polygon.numberOfVertices())
-            path.closeSubpath();
-        break;
-    }
-
-    case Shape::RasterType:
-        // FIXME: Bug 124080 - RasterShapes are not yet supported and only display their shape bounds
-        break;
-    }
+    shapeOutsideInfo->computedShape()->buildPath(path);
 
     if (path.length()) {
         RefPtr<InspectorArray> shapePath = InspectorArray::create();
@@ -643,6 +613,7 @@ static PassRefPtr<InspectorObject> buildObjectForShapeOutside(Frame* containingF
         info.view = containingFrame->view();
         info.array = shapePath.get();
         info.renderer = renderer;
+        info.shapeOutsideInfo = shapeOutsideInfo;
 
         path.apply(&info, &appendPathSegment);
 

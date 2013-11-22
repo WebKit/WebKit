@@ -1,3 +1,20 @@
+2013-11-21  Bear Travis  <betravis@adobe.com>
+
+        Web Inspector: [CSS Shapes] Refactor highlighting code to decrease Shapes API surface
+        https://bugs.webkit.org/show_bug.cgi?id=124737
+
+        Reviewed by Timothy Hatcher.
+
+        The shapes paths are now drawn in shape-coordinate space before being translated to
+        renderer space. With different writing modes, shapes may have their coordinates
+        translated. For example, a rectangle specified as four points [top left, top right,
+        bottom right, bottom left] in vertical-lr space would appear as [top left, bottom left,
+        bottom right, top right] in horizontal-tb space. Adjusting the previous tests, and
+        adding a test for the new box value.
+
+        * inspector-protocol/model/highlight-shape-outside-expected.txt:
+        * inspector-protocol/model/highlight-shape-outside.html:
+
 2013-11-21  Sun-woo Nam  <sunny.nam@samsung.com>
 
         [EFL] Layout tests with editing need to be rebaselined.

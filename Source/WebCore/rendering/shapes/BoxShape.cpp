@@ -108,4 +108,11 @@ bool BoxShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop,
     return true;
 }
 
+void BoxShape::buildPath(Path& path) const
+{
+    const FloatRect& rect = m_bounds.rect();
+    const FloatRoundedRect::Radii& radii = m_bounds.radii();
+    path.addRoundedRect(rect, radii.topLeft(), radii.topRight(), radii.bottomLeft(), radii.bottomRight(), Path::PreferBezierRoundedRect);
+}
+
 } // namespace WebCore

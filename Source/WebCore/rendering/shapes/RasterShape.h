@@ -101,7 +101,8 @@ public:
     virtual void getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList&) const OVERRIDE;
     virtual bool firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalTop, const LayoutSize& minLogicalIntervalSize, LayoutUnit&) const OVERRIDE;
 
-    virtual ShapeType type() const OVERRIDE { return Shape::RasterType; }
+    // FIXME: Bug 124080 - RasterShapes are not yet supported and only display their shape bounds
+    virtual void buildPath(Path& path) const OVERRIDE { UNUSED_PARAM(path); }
 
 private:
     const RasterShapeIntervals& marginIntervals() const;

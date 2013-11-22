@@ -1,3 +1,33 @@
+2013-11-21  Bear Travis  <betravis@adobe.com>
+
+        Web Inspector: [CSS Shapes] Refactor highlighting code to decrease Shapes API surface
+        https://bugs.webkit.org/show_bug.cgi?id=124737
+
+        Reviewed by Timothy Hatcher.
+
+        Add a virtual method to Shapes, buildPath, that can be used to build the
+        path (in the Shape coordinate system) for display in the Inspector. This allows us
+        to remove methods such as type(), polygon(), and logicalRx/Ry() which exposed the
+        inner workings of the Shapes classes. Also covers the addition of the BoxShape type.
+
+        Refactoring, existing test is inspector-protocol/model/highlight-shape-outside.html.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::appendPathCommandAndPoints): Points need to be translated from shape space
+        to renderer space using ShapeInfo.
+        (WebCore::buildObjectForShapeOutside): Add the ShapeOutsideInfo to the path info struct.
+        * rendering/shapes/BoxShape.cpp:
+        (WebCore::BoxShape::buildPath): Build the path for a BoxShape.
+        * rendering/shapes/BoxShape.h:
+        * rendering/shapes/PolygonShape.cpp:
+        (WebCore::PolygonShape::buildPath): Build the path for a PolygonShape.
+        * rendering/shapes/PolygonShape.h:
+        * rendering/shapes/RasterShape.h:
+        * rendering/shapes/RectangleShape.cpp:
+        (WebCore::RectangleShape::buildPath): Build the path for a RectangleShape.
+        * rendering/shapes/RectangleShape.h:
+        * rendering/shapes/Shape.h:
+
 2013-11-21  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/124702> Stop overriding VALID_ARCHS.

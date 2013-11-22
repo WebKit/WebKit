@@ -30,6 +30,9 @@ body {
 .polygon {
     -webkit-shape-outside: polygon(50px 50px, 100px 50px, 100px 100px, 50px 100px);
 }
+.content-box {
+    -webkit-shape-outside: content-box;
+}
 </style>
 <script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
 <script type="text/javascript" src="../resources/shape-info-helper.js"></script>
@@ -54,19 +57,23 @@ function shapeTests() {
     },
     {
         'selector' : '.rectangle.vertical-lr',
-        'path' : ['M', 50, 50, 'L', 150, 50, 'L', 150, 100, 'L', 50, 100, 'L', 50, 50, 'Z']
+        'path' : ['M', 50, 50, 'L', 50, 100, 'L', 150, 100, 'L', 150, 50, 'L', 50, 50, 'Z']
     },
     {
         'selector' : '.rectangle.vertical-rl',
-        'path' : ['M', 50, 50, 'L', 150, 50, 'L', 150, 100, 'L', 50, 100, 'L', 50, 50, 'Z']
+        'path' : ['M', 150, 50, 'L', 150, 100, 'L', 50, 100, 'L', 50, 50, 'L', 150, 50, 'Z']
     },
     {
         'selector' : '.rectangle.padded.vertical-rl',
-        'path' : ['M', 75, 75, 'L', 175, 75, 'L', 175, 125, 'L', 75, 125, 'L', 75, 75, 'Z']
+        'path' : ['M', 175, 75, 'L', 175, 125, 'L', 75, 125, 'L', 75, 75, 'L', 175, 75, 'Z']
     },
     {
         'selector' : '.rectangle.padded.vertical-rl.border-box',
-        'path' : ['M', 50, 50, 'L', 150, 50, 'L', 150, 100, 'L', 50, 100, 'L', 50, 50, 'Z']
+        'path' : ['M', 150, 50, 'L', 150, 100, 'L', 50, 100, 'L', 50, 50, 'L', 150, 50, 'Z']
+    },
+    {
+        'selector' : '.content-box.padded',
+        'path' : ['M', 25, 25, 'L', 125, 25, 'L', 125, 125, 'L', 25, 125, 'L', 25, 25, 'Z']
     }
     ];
 
@@ -99,5 +106,6 @@ window.onload = function() { ShapeInfoHelper.runShapeTest(shapeTests); }
     <div class='shape rectangle vertical-rl'></div>
     <div class='shape padded rectangle vertical-rl'></div>
     <div class='shape padded rectangle vertical-rl border-box'></div>
+    <div class='shape padded content-box'></div>
 </body>
 </html>

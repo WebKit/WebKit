@@ -523,4 +523,19 @@ bool PolygonShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalInterval
     return firstFitFound;
 }
 
+void PolygonShape::buildPath(Path& path) const
+{
+    FloatPoint vertex;
+
+    if (!m_polygon.numberOfVertices())
+        return;
+
+    path.moveTo(m_polygon.vertexAt(0));
+
+    for (size_t i = 1; i < m_polygon.numberOfVertices(); i++)
+        path.addLineTo(m_polygon.vertexAt(i));
+
+    path.closeSubpath();
+}
+
 } // namespace WebCore

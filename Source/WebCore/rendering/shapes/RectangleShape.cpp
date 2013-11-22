@@ -228,4 +228,9 @@ bool RectangleShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalInterv
     return false;
 }
 
+void RectangleShape::buildPath(Path& path) const
+{
+    path.addRoundedRect(m_bounds, FloatSize(m_bounds.rx(), m_bounds.ry()), Path::PreferBezierRoundedRect);
+}
+
 } // namespace WebCore
