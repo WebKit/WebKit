@@ -68,8 +68,7 @@ add_completion_callback(function (tests, harness_status){
 		}			
 	}
 
-	// Set results element's innerHTML to the results string
-	results.innerHTML = resultStr;
+	results.innerText = resultStr;
 
 	// Add results element to document
 	document.body.appendChild(results);

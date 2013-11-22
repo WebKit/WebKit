@@ -1,5 +1,64 @@
 2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Import more W3C tests for parsing template elements
+        https://bugs.webkit.org/show_bug.cgi?id=124763
+
+        Reviewed by Antti Koivisto.
+
+        Imported more W3c tests for HTML template element at 12a1164ae919f29f6ba2d0c8a63f0eafb6b599aa
+        after applying fixes proposed at https://github.com/w3c/web-platform-tests/pull/442.
+
+        * html-templates/definitions/template-contents-expected.txt: Added.
+        * html-templates/definitions/template-contents-owner-document-type-expected.txt: Added.
+        * html-templates/definitions/template-contents-owner-document-type.html: Added.
+        * html-templates/definitions/template-contents-owner-test-001-expected.txt: Added.
+        * html-templates/definitions/template-contents-owner-test-001.html: Added.
+        * html-templates/definitions/template-contents-owner-test-002-expected.txt: Added.
+        * html-templates/definitions/template-contents-owner-test-002.html: Added.
+        * html-templates/definitions/template-contents.html: Added.
+        * html-templates/innerhtml-on-templates/innerhtml-expected.txt: Added.
+        * html-templates/innerhtml-on-templates/innerhtml.html: Added.
+        * html-templates/parsing-html-templates/additions-to-foster-parenting/template-is-a-foster-parent-element-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-foster-parenting/template-is-a-foster-parent-element.html: Added.
+        * html-templates/parsing-html-templates/additions-to-foster-parenting/template-is-not-a-foster-parent-element-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-foster-parenting/template-is-not-a-foster-parent-element.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/generating-of-implied-end-tags-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/generating-of-implied-end-tags.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/ignore-body-token-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/ignore-body-token.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/ignore-frameset-token-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/ignore-frameset-token.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/ignore-head-token-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/ignore-head-token.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/ignore-html-token-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/ignore-html-token.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/start-tag-body-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/start-tag-body.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/start-tag-html-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/start-tag-html.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/template-end-tag-without-start-one-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/template-end-tag-without-start-one.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-frameset-insertion-mode/end-tag-frameset-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-frameset-insertion-mode/end-tag-frameset.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-head-insertion-mode/generating-of-implied-end-tags-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-head-insertion-mode/generating-of-implied-end-tags.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-head-insertion-mode/template-end-tag-without-start-one-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-head-insertion-mode/template-end-tag-without-start-one.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-table-insertion-mode/end-tag-table-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-table-insertion-mode/end-tag-table.html: Added.
+        * html-templates/parsing-html-templates/appending-to-a-template/template-child-nodes-expected.txt: Added.
+        * html-templates/parsing-html-templates/appending-to-a-template/template-child-nodes.html: Added.
+        * html-templates/parsing-html-templates/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-body-context-expected.txt: Added.
+        * html-templates/parsing-html-templates/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-body-context.html: Added.
+        * html-templates/parsing-html-templates/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-context-expected.txt: Added.
+        * html-templates/parsing-html-templates/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-context.html: Added.
+        * html-templates/parsing-html-templates/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-row-context-expected.txt: Added.
+        * html-templates/parsing-html-templates/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-row-context.html: Added.
+        * html-templates/parsing-html-templates/creating-an-element-for-the-token/template-owner-document-expected.txt: Added.
+        * html-templates/parsing-html-templates/creating-an-element-for-the-token/template-owner-document.html: Added.
+
+2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         Import some W3C tests for HTML template element
         https://bugs.webkit.org/show_bug.cgi?id=124699
 

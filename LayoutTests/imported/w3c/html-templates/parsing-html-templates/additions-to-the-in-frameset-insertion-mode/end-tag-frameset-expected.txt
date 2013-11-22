@@ -1,0 +1,3 @@
+
+PASS </frameset> tag should be ignored if there's TEMPLATE element in the stack of open elements 
+
