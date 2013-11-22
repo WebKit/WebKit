@@ -94,6 +94,8 @@ public:
 
     GridTrackSizeType type() const { return m_type; }
 
+    bool isContentSized() const { return m_minTrackBreadth.isContentSized() || m_maxTrackBreadth.isContentSized(); }
+
     bool operator==(const GridTrackSize& other) const
     {
         return m_type == other.m_type && m_minTrackBreadth == other.m_minTrackBreadth && m_maxTrackBreadth == other.m_maxTrackBreadth;

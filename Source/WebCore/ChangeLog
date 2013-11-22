@@ -1,3 +1,42 @@
+2013-11-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Run the content-sized tracks sizing algorithm only when required
+        https://bugs.webkit.org/show_bug.cgi?id=124039
+
+        Reviewed by Dean Jackson.
+
+        The current code runs the content sized track sizing algorithm all
+        the time, which forces a layout even when the track is not
+        content-sized. This change improves the situation by applying two
+        optimizations. In the first one, we bail out the algorithm if we
+        detect that we don't need to run it. And by the second one we
+        reduce the amount of recomputations by only iterating over the
+        content sized tracks instead of all of them. Both changes follow
+        the ideas introduced in Blink r156028 and r156168 by
+        <jchaffraix@chromium.org>.
+
+        As we changed the way we iterate over children (we use the
+        GridIterator now) the way they're stored in the RenderGrid changes
+        too. If a item spans through several "cells" inside the grid, we
+        will have a reference to it on each of them.
+
+        These two changes account for a ~3200% improvement on a i7 M620 in
+        the test that accompanies this change (15.5 vs 520 run/s).
+
+        New perf test: PerformanceTests/Layout/fixed-grid-lots-of-data.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computedUsedBreadthOfGridTracks): Keep track
+        of content sized tracks and only iterate over them.
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctions):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForItems):
+        Early return if there are no tracks to pass to the algorithm.
+        * rendering/RenderGrid.h:
+        * rendering/style/GridLength.h:
+        (WebCore::GridLength::isContentSized):
+        * rendering/style/GridTrackSize.h:
+        (WebCore::GridTrackSize::isContentSized):
+
 2013-11-22  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Regions] Move code after early break in RenderRegion::repaintFlowThreadContentRectangle

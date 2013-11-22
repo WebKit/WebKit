@@ -73,6 +73,8 @@ public:
         return m_type == o.m_type && m_flex == o.m_flex && m_length == o.m_length;
     }
 
+    bool isContentSized() const { return m_type == LengthType && (m_length.isAuto() || m_length.isMinContent() || m_length.isMaxContent()); }
+
 private:
     // Ideally we would put the 2 following fields in a union, but Length has a constructor,
     // a destructor and a copy assignment which isn't allowed.

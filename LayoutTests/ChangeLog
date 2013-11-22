@@ -1,3 +1,19 @@
+2013-11-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Run the content-sized tracks sizing algorithm only when required
+        https://bugs.webkit.org/show_bug.cgi?id=124039
+
+        Reviewed by Dean Jackson.
+
+        From Blink r156028 and r156168 by <jchaffraix@chromium.org>.
+
+        Subtle baseline change due to grids triggering less layouts, which
+        changes the frame rects between 2 subsequent layouts thus changing
+        the repaint rectangles.
+
+        * fast/css-grid-layout/grid-item-change-column-repaint-expected.txt:
+        * fast/css-grid-layout/grid-item-change-row-repaint-expected.txt:
+
 2013-11-21  Frédéric Wang  <fred.wang@free.fr>
 
         Map the dir attribute to the CSS direction property.
