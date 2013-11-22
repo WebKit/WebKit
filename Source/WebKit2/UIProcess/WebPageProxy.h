@@ -409,7 +409,6 @@ public:
     void scrollBy(WebCore::ScrollDirection, WebCore::ScrollGranularity);
     void centerSelectionInVisibleArea();
 
-    String pageTitle() const;
     const String& toolTip() const { return m_toolTip; }
 
     void setUserAgent(const String&);

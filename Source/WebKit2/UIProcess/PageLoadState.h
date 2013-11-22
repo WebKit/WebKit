@@ -41,6 +41,11 @@ public:
         Finished
     };
 
+    class Observer {
+    public:
+        virtual ~Observer() { }
+
+    }
     void reset();
 
     const String& provisionalURL() const { return m_provisionalURL; }
@@ -65,6 +70,9 @@ public:
 
     void setUnreachableURL(const String&);
 
+    const String& title() const;
+    void setTitle(const String&);
+
 private:
     State m_state;
 
@@ -75,6 +83,8 @@ private:
 
     String m_unreachableURL;
     String m_lastUnreachableURL;
+
+    String m_title;
 };
 
 } // namespace WebKit

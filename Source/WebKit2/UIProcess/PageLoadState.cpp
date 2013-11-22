@@ -46,6 +46,8 @@ void PageLoadState::reset()
 
     m_unreachableURL = String();
     m_lastUnreachableURL = String();
+
+    m_title = String();
 }
 
 String PageLoadState::activeURL() const
@@ -120,6 +122,8 @@ void PageLoadState::didCommitLoad()
     m_state = State::Committed;
     m_url = m_provisionalURL;
     m_provisionalURL = String();
+
+    m_title = String();
 }
 
 void PageLoadState::didFinishLoad()
@@ -148,6 +152,16 @@ void PageLoadState::setUnreachableURL(const String& unreachableURL)
 {
     m_lastUnreachableURL = m_unreachableURL;
     m_unreachableURL = unreachableURL;
+}
+
+const String& PageLoadState::title() const
+{
+    return m_title;
+}
+
+void PageLoadState::setTitle(const String& title)
+{
+    m_title = title;
 }
 
 } // namespace WebKit

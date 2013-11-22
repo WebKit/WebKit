@@ -215,7 +215,7 @@ bool WKPageWillHandleHorizontalScrollEvents(WKPageRef pageRef)
 
 WKStringRef WKPageCopyTitle(WKPageRef pageRef)
 {
-    return toCopiedAPI(toImpl(pageRef)->pageTitle());
+    return toCopiedAPI(toImpl(pageRef)->pageLoadState().title());
 }
 
 WKFrameRef WKPageGetMainFrame(WKPageRef pageRef)

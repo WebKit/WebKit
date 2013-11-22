@@ -1443,16 +1443,6 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
     m_process->send(Messages::WebPage::DidReceivePolicyDecision(frame->frameID(), listenerID, action, downloadID), m_pageID);
 }
 
-String WebPageProxy::pageTitle() const
-{
-    // Return the null string if there is no main frame (e.g. nothing has been loaded in the page yet, WebProcess has
-    // crashed, page has been closed).
-    if (!m_mainFrame)
-        return String();
-
-    return m_mainFrame->title();
-}
-
 void WebPageProxy::setUserAgent(const String& userAgent)
 {
     if (m_userAgent == userAgent)
@@ -2273,6 +2263,9 @@ void WebPageProxy::didReceiveTitleForFrame(uint64_t frameID, const String& title
 
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
+
+    if (frame->isMainFrame())
+        m_pageLoadState.setTitle(title);
 
     frame->didChangeTitle(title);
     

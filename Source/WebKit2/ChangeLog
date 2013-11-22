@@ -1,3 +1,22 @@
+2013-11-21  Anders Carlsson  <andersca@apple.com>
+
+        Move page title handling to the page load state
+        https://bugs.webkit.org/show_bug.cgi?id=124748
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageCopyTitle):
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::reset):
+        (WebKit::PageLoadState::didCommitLoad):
+        (WebKit::PageLoadState::title):
+        (WebKit::PageLoadState::setTitle):
+        * UIProcess/PageLoadState.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveTitleForFrame):
+        * UIProcess/WebPageProxy.h:
+
 2013-11-21  Daniel Bates  <dabates@apple.com>
 
         Remove unused functions from WebCore and WebKit2
