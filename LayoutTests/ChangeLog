@@ -1,3 +1,10 @@
+2013-11-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+        Adding failure expectations for tests that regressed with r159572.
+
+        * platform/gtk/TestExpectations:
+
 2013-11-18  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Improve content-sized track layout
