@@ -514,7 +514,10 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
         rootObscuresBackground = rendererObscuresBackground(rootRenderer);
     }
 
-    bool hasTiledMargin = compositor().mainFrameBackingIsTiledWithMargin();
+    bool hasTiledMargin = false;
+#if USE(ACCELERATED_COMPOSITING)
+    hasTiledMargin = compositor().mainFrameBackingIsTiledWithMargin();
+#endif
 
     Page* page = document().page();
     float pageScaleFactor = page ? page->pageScaleFactor() : 1;
