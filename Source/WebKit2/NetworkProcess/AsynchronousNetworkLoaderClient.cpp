@@ -68,7 +68,7 @@ void AsynchronousNetworkLoaderClient::didReceiveResponse(NetworkResourceLoader* 
 
 void AsynchronousNetworkLoaderClient::didReceiveBuffer(NetworkResourceLoader* loader, SharedBuffer* buffer, int encodedDataLength)
 {
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
     ShareableResource::Handle shareableResourceHandle;
     NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(shareableResourceHandle, buffer);
     if (!shareableResourceHandle.isNull()) {

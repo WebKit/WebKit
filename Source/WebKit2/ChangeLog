@@ -1,3 +1,16 @@
+2013-11-22  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2] Fix the build of the NetworkProcess on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=124794
+
+        Reviewed by Alexey Proskuryakov.
+
+        * NetworkProcess/AsynchronousNetworkLoaderClient.cpp:
+        (WebKit::AsynchronousNetworkLoaderClient::didReceiveBuffer):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/SynchronousNetworkLoaderClient.cpp:
+        (WebKit::SynchronousNetworkLoaderClient::willSendRequest):
+
 2013-11-22  Anders Carlsson  <andersca@apple.com>
 
         Move the remaining page loader clients out into separate files

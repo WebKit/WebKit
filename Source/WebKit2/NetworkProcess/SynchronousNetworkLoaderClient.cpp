@@ -59,7 +59,7 @@ void SynchronousNetworkLoaderClient::willSendRequest(NetworkResourceLoader* load
     if (!protocolHostAndPortAreEqual(m_originalRequest.url(), proposedRequest.url())) {
         ASSERT(m_error.isNull());
         m_error = SynchronousLoaderClient::platformBadResponseError();
-        proposedRequest = 0;
+        proposedRequest = ResourceRequest();
     }
     
     m_currentRequest = proposedRequest;
