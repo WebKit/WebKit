@@ -439,18 +439,14 @@ size_t RenderGrid::explicitGridSizeForSide(GridPositionSide side) const
 
 LayoutUnit RenderGrid::logicalContentHeightForChild(RenderBox* child, Vector<GridTrack>& columnTracks)
 {
-    // FIXME: We shouldn't force a layout every time this function is called but
-    // 1) Return computeLogicalHeight's value if it's available. Unfortunately computeLogicalHeight
-    // doesn't return if the logical height is available so would need to be changed.
-    // 2) Relayout if the column track's used breadth changed OR the logical height is unavailable.
-    if (!child->needsLayout())
+    if (child->style().logicalHeight().isPercent())
         child->setNeedsLayout(MarkOnlyThis);
 
     child->setOverrideContainingBlockContentLogicalWidth(gridAreaBreadthForChild(child, ForColumns, columnTracks));
     // If |child| has a percentage logical height, we shouldn't let it override its intrinsic height, which is
     // what we are interested in here. Thus we need to set the override logical height to -1 (no possible resolution).
     child->setOverrideContainingBlockContentLogicalHeight(-1);
-    child->layout();
+    child->layoutIfNeeded();
     return child->logicalHeight();
 }
 
@@ -783,7 +779,7 @@ void RenderGrid::layoutGridItems()
         // in minContentForChild / maxContentForChild which means that we will always relayout the child.
         LayoutUnit overrideContainingBlockContentLogicalWidth = gridAreaBreadthForChild(child, ForColumns, columnTracks);
         LayoutUnit overrideContainingBlockContentLogicalHeight = gridAreaBreadthForChild(child, ForRows, rowTracks);
-        if (oldOverrideContainingBlockContentLogicalWidth != overrideContainingBlockContentLogicalWidth || oldOverrideContainingBlockContentLogicalHeight != overrideContainingBlockContentLogicalHeight)
+        if (oldOverrideContainingBlockContentLogicalWidth != overrideContainingBlockContentLogicalWidth || (oldOverrideContainingBlockContentLogicalHeight != overrideContainingBlockContentLogicalHeight && (child->hasRelativeLogicalHeight() || child->hasViewportPercentageLogicalHeight())))
             child->setNeedsLayout(MarkOnlyThis);
 
         child->setOverrideContainingBlockContentLogicalWidth(overrideContainingBlockContentLogicalWidth);
