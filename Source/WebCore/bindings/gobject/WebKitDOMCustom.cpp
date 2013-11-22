@@ -26,6 +26,7 @@
 #include "WebKitDOMHTMLMediaElementPrivate.h"
 #include "WebKitDOMHTMLTextAreaElement.h"
 #include "WebKitDOMHTMLTextAreaElementPrivate.h"
+#include "WebKitDOMPrivate.h"
 #include "WebKitDOMTextTrackPrivate.h"
 #include "WebKitDOMVideoTrackPrivate.h"
 #include "gobject/ConvertToUTF8String.h"

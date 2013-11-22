@@ -1,3 +1,10 @@
+2013-11-21  Gwang Yoon Hwang  <ryumiel@company100.net>
+
+        [GTK] Unreviewed buildfix after r159614 and r159656.
+
+        * UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp:
+        (WebKit::WebInspectorServer::buildPageList): Use the page load state to get page title.
+
 2013-11-21  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/124701> Fix an error in a few Xcode configuration setting files.

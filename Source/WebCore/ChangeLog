@@ -1,3 +1,9 @@
+2013-11-21  Gwang Yoon Hwang  <ryumiel@company100.net>
+
+        [GTK] Unreviewed buildfix after r159614 and r159656.
+
+        * bindings/gobject/WebKitDOMCustom.cpp: Add missing header
+
 2013-11-21  Laszlo Vidacs  <lac@inf.u-szeged.hu>
 
         Fix WinCairo unreachable code warnings in SimpleLineLayout.cpp
