@@ -54,6 +54,27 @@
 
 using namespace WebKit;
 
+class PageLoadStateObserver : public PageLoadState::Observer {
+public:
+    PageLoadStateObserver(WKBrowsingContextController *controller)
+        : m_controller(controller)
+    {
+    }
+
+private:
+    virtual void willChangeTitle() OVERRIDE
+    {
+        [m_controller willChangeValueForKey:@"title"];
+    }
+
+    virtual void didChangeTitle() OVERRIDE
+    {
+        [m_controller didChangeValueForKey:@"title"];
+    }
+
+    WKBrowsingContextController *m_controller;
+};
+
 static inline NSString *autoreleased(WKStringRef string)
 {
     return string ? CFBridgingRelease(WKStringCopyCFString(kCFAllocatorDefault, adoptWK(string).get())) : nil;
@@ -85,6 +106,8 @@ NSString * const WKActionCanShowMIMETypeKey = @"WKActionCanShowMIMETypeKey";
 #if WK_API_ENABLED
     // Delegate for policy callbacks.
     id<WKBrowsingContextPolicyDelegate> _policyDelegate;
+
+    std::unique_ptr<PageLoadStateObserver> _pageLoadStateObserver;
 #endif
 }
 @end
@@ -92,11 +115,12 @@ NSString * const WKActionCanShowMIMETypeKey = @"WKActionCanShowMIMETypeKey";
 @implementation WKBrowsingContextControllerData
 @end
 
-
 @implementation WKBrowsingContextController
 
 - (void)dealloc
 {
+    toImpl(_data->_pageRef.get())->pageLoadState().removeObserver(*_data->_pageLoadStateObserver);
+
     WKPageSetPageLoaderClient(_data->_pageRef.get(), nullptr);
 
 #if WK_API_ENABLED
@@ -684,6 +708,9 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 
     _data = [[WKBrowsingContextControllerData alloc] init];
     _data->_pageRef = pageRef;
+
+    _data->_pageLoadStateObserver = std::make_unique<PageLoadStateObserver>(self);
+    toImpl(_data->_pageRef.get())->pageLoadState().addObserver(*_data->_pageLoadStateObserver);
 
     setUpPageLoaderClient(self, pageRef);
 

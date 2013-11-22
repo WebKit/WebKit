@@ -41,6 +41,17 @@ public:
         Finished
     };
 
+    class Observer {
+    public:
+        virtual ~Observer() { }
+
+        virtual void willChangeTitle() = 0;
+        virtual void didChangeTitle() = 0;
+    };
+
+    void addObserver(Observer&);
+    void removeObserver(Observer&);
+
     void reset();
 
     const String& provisionalURL() const { return m_provisionalURL; }
@@ -69,6 +80,10 @@ public:
     void setTitle(const String&);
 
 private:
+    void callObserverCallback(void (Observer::*)());
+
+    Vector<Observer*> m_observers;
+
     State m_state;
 
     String m_pendingAPIRequestURL;

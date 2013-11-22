@@ -35,6 +35,22 @@ PageLoadState::PageLoadState()
 
 PageLoadState::~PageLoadState()
 {
+    ASSERT(m_observers.isEmpty());
+}
+
+void PageLoadState::addObserver(Observer& observer)
+{
+    ASSERT(!m_observers.contains(&observer));
+
+    m_observers.append(&observer);
+}
+
+void PageLoadState::removeObserver(Observer& observer)
+{
+    ASSERT(m_observers.contains(&observer));
+
+    size_t index = m_observers.find(&observer);
+    m_observers.remove(index);
 }
 
 void PageLoadState::reset()
@@ -47,7 +63,9 @@ void PageLoadState::reset()
     m_unreachableURL = String();
     m_lastUnreachableURL = String();
 
+    callObserverCallback(&Observer::willChangeTitle);
     m_title = String();
+    callObserverCallback(&Observer::didChangeTitle);
 }
 
 String PageLoadState::activeURL() const
@@ -161,7 +179,15 @@ const String& PageLoadState::title() const
 
 void PageLoadState::setTitle(const String& title)
 {
+    callObserverCallback(&Observer::willChangeTitle);
     m_title = title;
+    callObserverCallback(&Observer::didChangeTitle);
+}
+
+void PageLoadState::callObserverCallback(void (Observer::*callback)())
+{
+    for (auto* observer : m_observers)
+        (observer->*callback)();
 }
 
 } // namespace WebKit

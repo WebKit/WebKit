@@ -1,3 +1,42 @@
+2013-11-21  Anders Carlsson  <andersca@apple.com>
+
+        Send out the right KVO callbacks when the page title changes
+        https://bugs.webkit.org/show_bug.cgi?id=124753
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (PageLoadStateObserver::PageLoadStateObserver):
+        New class that sends the right KVO notifications when the load state changes.
+
+        (-[WKBrowsingContextController dealloc]):
+        Remove the observer.
+
+        (-[WKBrowsingContextController _initWithPageRef:]):
+        Allocate the observer and add it.
+
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::~PageLoadState):
+        Assert that we don't have any observers left.
+
+        (WebKit::PageLoadState::addObserver):
+        Add the observer to the list.
+
+        (WebKit::PageLoadState::removeObserver):
+        Remove the observer from the list.
+
+        (WebKit::PageLoadState::reset):
+        Call title change callbacks.
+
+        (WebKit::PageLoadState::setTitle):
+        Ditto.
+
+        (WebKit::PageLoadState::callObserverCallback):
+        Helper function to dispatch callbacks to observers.
+
+        * UIProcess/PageLoadState.h:
+        Add new members.
+
 2013-11-21  Sergio Correia  <sergio.correia@openbossa.org>
 
         [EFL][WK2] Fix build after r159656
