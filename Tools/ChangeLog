@@ -1,3 +1,20 @@
+2013-11-21  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        webkitdirs::checkForArgumentAndRemoveFromArrayRef() removed wrong element
+        https://bugs.webkit.org/show_bug.cgi?id=124676
+
+        Reviewed by Daniel Bates.
+
+        checkForArgumentAndRemoveFromArrayRef functions was removing wrong
+        elements when there were more then one occurrence of that argument.
+        E.g: Checking for 'a' in {a, b, a, c}, the resulting array would be
+        {b, a}, when it should be {b, c}.
+
+        * Scripts/webkitdirs.pm:
+        (checkForArgumentAndRemoveFromArrayRef): bugfix mentioned above.
+        * Scripts/webkitperl/webkitdirs_unittest/checkForArgumentAndRemoveFromArrayRef.pl:
+        Added; Unit tests for webkitdirs::checkForArgumentAndRemoveFromArrayRef function.
+
 2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update build-webkit after r159550.

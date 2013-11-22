@@ -876,8 +876,9 @@ sub checkForArgumentAndRemoveFromArrayRef
 {
     my ($argToCheck, $arrayRef) = @_;
     my @indicesToRemove = findMatchingArguments($argToCheck, $arrayRef);
+    my $removeOffset = 0;
     foreach my $index (@indicesToRemove) {
-        splice(@$arrayRef, $index, 1);
+        splice(@$arrayRef, $index - $removeOffset++, 1);
     }
     return scalar @indicesToRemove > 0;
 }
