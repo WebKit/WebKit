@@ -56,6 +56,39 @@ CryptoAlgorithmIdentifier CryptoAlgorithmHMAC::identifier() const
     return s_identifier;
 }
 
+bool CryptoAlgorithmHMAC::keyAlgorithmMatches(const CryptoAlgorithmHmacParams&, const CryptoKey& key) const
+{
+    if (key.algorithmIdentifier() != s_identifier)
+        return false;
+    ASSERT(isCryptoKeyHMAC(key));
+
+    return true;
+}
+
+void CryptoAlgorithmHMAC::sign(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
+{
+    const CryptoAlgorithmHmacParams& hmacParameters = toCryptoAlgorithmHmacParams(parameters);
+
+    if (!keyAlgorithmMatches(hmacParameters, key)) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
+    platformSign(hmacParameters, toCryptoKeyHMAC(key), data, std::move(callback), std::move(failureCallback), ec);
+}
+
+void CryptoAlgorithmHMAC::verify(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
+{
+    const CryptoAlgorithmHmacParams& hmacParameters = toCryptoAlgorithmHmacParams(parameters);
+
+    if (!keyAlgorithmMatches(hmacParameters, key)) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
+    platformVerify(hmacParameters, toCryptoKeyHMAC(key), expectedSignature, data, std::move(callback), std::move(failureCallback), ec);
+}
+
 void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback callback, VoidCallback failureCallback, ExceptionCode&)
 {
     const CryptoAlgorithmHmacKeyParams& hmacParameters = toCryptoAlgorithmHmacKeyParams(parameters);

@@ -32,6 +32,9 @@
 
 namespace WebCore {
 
+class CryptoAlgorithmHmacParams;
+class CryptoKeyHMAC;
+
 class CryptoAlgorithmHMAC FINAL : public CryptoAlgorithm {
 public:
     static const char* const s_name;
@@ -49,6 +52,10 @@ public:
 private:
     CryptoAlgorithmHMAC();
     virtual ~CryptoAlgorithmHMAC();
+
+    bool keyAlgorithmMatches(const CryptoAlgorithmHmacParams& algorithmParameters, const CryptoKey&) const;
+    void platformSign(const CryptoAlgorithmHmacParams&, const CryptoKeyHMAC&, const CryptoOperationData&, VectorCallback, VoidCallback failureCallback, ExceptionCode&);
+    void platformVerify(const CryptoAlgorithmHmacParams&, const CryptoKeyHMAC&, const CryptoOperationData& signature, const CryptoOperationData& data, BoolCallback, VoidCallback failureCallback, ExceptionCode&);
 };
 
 }

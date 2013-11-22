@@ -88,23 +88,15 @@ static bool getCommonCryptoDigestAlgorithm(CryptoAlgorithmIdentifier hashFunctio
     }
 }
 
-void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
+void CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(const CryptoAlgorithmRsaSsaParams& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
 {
-    const CryptoAlgorithmRsaSsaParams& rsaSSAParameters = toCryptoAlgorithmRsaSsaParams(parameters);
-
-    if (!isCryptoKeyRSA(key)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-    const CryptoKeyRSA& rsaKey = toCryptoKeyRSA(key);
-
     CCDigestAlgorithm digestAlgorithm;
-    if (!getCommonCryptoDigestAlgorithm(rsaSSAParameters.hash, digestAlgorithm)) {
+    if (!getCommonCryptoDigestAlgorithm(parameters.hash, digestAlgorithm)) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
 
-    std::unique_ptr<CryptoDigest> digest = CryptoDigest::create(rsaSSAParameters.hash);
+    std::unique_ptr<CryptoDigest> digest = CryptoDigest::create(parameters.hash);
     if (!digest) {
         ec = NOT_SUPPORTED_ERR;
         return;
@@ -117,7 +109,7 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(const CryptoAlgorithmParameters& par
     Vector<uint8_t> signature(512);
     size_t signatureSize = signature.size();
 
-    CCCryptorStatus status = CCRSACryptorSign(rsaKey.platformKey(), ccPKCS1Padding, digestData.data(), digestData.size(), digestAlgorithm, 0, signature.data(), &signatureSize);
+    CCCryptorStatus status = CCRSACryptorSign(key.platformKey(), ccPKCS1Padding, digestData.data(), digestData.size(), digestAlgorithm, 0, signature.data(), &signatureSize);
     if (status) {
         failureCallback();
         return;
@@ -127,23 +119,15 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(const CryptoAlgorithmParameters& par
     callback(signature);
 }
 
-void CryptoAlgorithmRSASSA_PKCS1_v1_5::verify(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& signature, const CryptoOperationData& data, BoolCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
+void CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify(const CryptoAlgorithmRsaSsaParams& parameters, const CryptoKeyRSA& key, const CryptoOperationData& signature, const CryptoOperationData& data, BoolCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
 {
-    const CryptoAlgorithmRsaSsaParams& rsaSSAParameters = toCryptoAlgorithmRsaSsaParams(parameters);
-
-    if (!isCryptoKeyRSA(key)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-    const CryptoKeyRSA& rsaKey = toCryptoKeyRSA(key);
-
     CCDigestAlgorithm digestAlgorithm;
-    if (!getCommonCryptoDigestAlgorithm(rsaSSAParameters.hash, digestAlgorithm)) {
+    if (!getCommonCryptoDigestAlgorithm(parameters.hash, digestAlgorithm)) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
 
-    std::unique_ptr<CryptoDigest> digest = CryptoDigest::create(rsaSSAParameters.hash);
+    std::unique_ptr<CryptoDigest> digest = CryptoDigest::create(parameters.hash);
     if (!digest) {
         ec = NOT_SUPPORTED_ERR;
         return;
@@ -153,7 +137,7 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::verify(const CryptoAlgorithmParameters& p
 
     Vector<uint8_t> digestData = digest->computeHash();
 
-    CCCryptorStatus status = CCRSACryptorVerify(rsaKey.platformKey(), ccPKCS1Padding, digestData.data(), digestData.size(), digestAlgorithm, 0, signature.first, signature.second);
+    CCCryptorStatus status = CCRSACryptorVerify(key.platformKey(), ccPKCS1Padding, digestData.data(), digestData.size(), digestAlgorithm, 0, signature.first, signature.second);
     if (!status)
         callback(true);
     else if (status == kCCNotVerified || kCCDecodeError) // <rdar://problem/15464982> CCRSACryptorVerify returns kCCDecodeError instead of kCCNotVerified sometimes

@@ -28,6 +28,7 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#include "CryptoAlgorithmAesCbcParams.h"
 #include "CryptoAlgorithmAesKeyGenParams.h"
 #include "CryptoKeyAES.h"
 #include "CryptoKeyDataOctetSequence.h"
@@ -53,6 +54,39 @@ std::unique_ptr<CryptoAlgorithm> CryptoAlgorithmAES_CBC::create()
 CryptoAlgorithmIdentifier CryptoAlgorithmAES_CBC::identifier() const
 {
     return s_identifier;
+}
+
+bool CryptoAlgorithmAES_CBC::keyAlgorithmMatches(const CryptoAlgorithmAesCbcParams&, const CryptoKey& key) const
+{
+    if (key.algorithmIdentifier() != s_identifier)
+        return false;
+    ASSERT(isCryptoKeyAES(key));
+
+    return true;
+}
+
+void CryptoAlgorithmAES_CBC::encrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
+{
+    const CryptoAlgorithmAesCbcParams& aesCBCParameters = toCryptoAlgorithmAesCbcParams(parameters);
+
+    if (!keyAlgorithmMatches(aesCBCParameters, key)) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
+    platformEncrypt(aesCBCParameters, toCryptoKeyAES(key), data, std::move(callback), std::move(failureCallback), ec);
+}
+
+void CryptoAlgorithmAES_CBC::decrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
+{
+    const CryptoAlgorithmAesCbcParams& aesCBCParameters = toCryptoAlgorithmAesCbcParams(parameters);
+
+    if (!keyAlgorithmMatches(aesCBCParameters, key)) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
+    platformDecrypt(aesCBCParameters, toCryptoKeyAES(key), data, std::move(callback), std::move(failureCallback), ec);
 }
 
 void CryptoAlgorithmAES_CBC::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback callback, VoidCallback failureCallback, ExceptionCode&)

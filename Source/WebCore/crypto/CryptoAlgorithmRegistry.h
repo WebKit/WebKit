@@ -57,6 +57,11 @@ private:
 
     typedef std::unique_ptr<CryptoAlgorithm> (*CryptoAlgorithmConstructor)();
 
+    template<typename AlgorithmClass> void registerAlgorithm()
+    {
+        registerAlgorithm(AlgorithmClass::s_name, AlgorithmClass::s_identifier, AlgorithmClass::create);
+    }
+
     void registerAlgorithm(const String& name, CryptoAlgorithmIdentifier, CryptoAlgorithmConstructor);
     HashMap<String, CryptoAlgorithmIdentifier> m_nameToIdentifierMap;
     HashMap<unsigned, String> m_identifierToNameMap;

@@ -32,6 +32,9 @@
 
 namespace WebCore {
 
+class CryptoAlgorithmRsaSsaParams;
+class CryptoKeyRSA;
+
 class CryptoAlgorithmRSASSA_PKCS1_v1_5 FINAL : public CryptoAlgorithm {
 public:
     static const char* const s_name;
@@ -49,6 +52,10 @@ public:
 private:
     CryptoAlgorithmRSASSA_PKCS1_v1_5();
     virtual ~CryptoAlgorithmRSASSA_PKCS1_v1_5();
+
+    bool keyAlgorithmMatches(const CryptoAlgorithmRsaSsaParams& algorithmParameters, const CryptoKey&) const;
+    void platformSign(const CryptoAlgorithmRsaSsaParams&, const CryptoKeyRSA&, const CryptoOperationData&, VectorCallback, VoidCallback failureCallback, ExceptionCode&);
+    void platformVerify(const CryptoAlgorithmRsaSsaParams&, const CryptoKeyRSA&, const CryptoOperationData& signature, const CryptoOperationData& data, BoolCallback, VoidCallback failureCallback, ExceptionCode&);
 };
 
 }

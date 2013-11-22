@@ -34,7 +34,7 @@
 #include "CryptoAlgorithmHmacParams.h"
 #include "CryptoAlgorithmRegistry.h"
 #include "CryptoAlgorithmRsaKeyGenParams.h"
-#include "CryptoAlgorithmRsaSsaKeyParams.h"
+#include "CryptoAlgorithmRsaKeyParamsWithHash.h"
 #include "CryptoAlgorithmRsaSsaParams.h"
 #include "ExceptionCode.h"
 #include "JSCryptoOperationData.h"
@@ -238,10 +238,10 @@ static std::unique_ptr<CryptoAlgorithmParameters> createRsaKeyGenParams(ExecStat
     return std::move(result);
 }
 
-static std::unique_ptr<CryptoAlgorithmParameters> createRsaSsaKeyParams(ExecState*, JSValue)
+static std::unique_ptr<CryptoAlgorithmParameters> createRsaKeyParamsWithHash(ExecState*, JSValue)
 {
-    // WebCrypto RSASSA-PKCS1-v1_5 algorithm currently does not take any parameters to importKey.
-    return std::make_unique<CryptoAlgorithmRsaSsaKeyParams>();
+    // WebCrypto RSA algorithms currently do not take any parameters to importKey.
+    return std::make_unique<CryptoAlgorithmRsaKeyParamsWithHash>();
 }
 
 static std::unique_ptr<CryptoAlgorithmParameters> createRsaSsaParams(ExecState* exec, JSValue value)
@@ -526,7 +526,7 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
         return std::make_unique<CryptoAlgorithmParameters>();
     case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
-        return createRsaSsaKeyParams(exec, value);
+        return createRsaKeyParamsWithHash(exec, value);
     case CryptoAlgorithmIdentifier::RSA_PSS:
     case CryptoAlgorithmIdentifier::RSA_OAEP:
     case CryptoAlgorithmIdentifier::ECDSA:

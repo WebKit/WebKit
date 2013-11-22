@@ -5681,7 +5681,7 @@
 		E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */; };
 		E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */; };
 		E1C266D818317AB4003F8B33 /* CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C266D618317AB4003F8B33 /* CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp */; };
-		E1C266DB18319935003F8B33 /* CryptoAlgorithmRsaSsaKeyParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C266DA18319935003F8B33 /* CryptoAlgorithmRsaSsaKeyParams.h */; };
+		E1C266DB18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHash.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C266DA18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHash.h */; };
 		E1C266DE18319F31003F8B33 /* CryptoKeyDataRSAComponents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C266DC18319F31003F8B33 /* CryptoKeyDataRSAComponents.cpp */; };
 		E1C266DF18319F31003F8B33 /* CryptoKeyDataRSAComponents.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C266DD18319F31003F8B33 /* CryptoKeyDataRSAComponents.h */; };
 		E1C2F24A1533A2120083F974 /* SettingsMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1C2F2481533A2120083F974 /* SettingsMac.mm */; };
@@ -12789,8 +12789,8 @@
 		E1BD331D182D8F4200C05D9F /* CryptoAlgorithmRsaKeyGenParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CryptoAlgorithmRsaKeyGenParams.h; path = parameters/CryptoAlgorithmRsaKeyGenParams.h; sourceTree = "<group>"; };
 		E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTUnicodeSort.cpp; sourceTree = "<group>"; };
 		E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTUnicodeSort.h; sourceTree = "<group>"; };
-		E1C266D618317AB4003F8B33 /* CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp; sourceTree = "<group>"; };
-		E1C266DA18319935003F8B33 /* CryptoAlgorithmRsaSsaKeyParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CryptoAlgorithmRsaSsaKeyParams.h; path = parameters/CryptoAlgorithmRsaSsaKeyParams.h; sourceTree = "<group>"; };
+		E1C266D618317AB4003F8B33 /* CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp; path = mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp; sourceTree = "<group>"; };
+		E1C266DA18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CryptoAlgorithmRsaKeyParamsWithHash.h; path = parameters/CryptoAlgorithmRsaKeyParamsWithHash.h; sourceTree = "<group>"; };
 		E1C266DC18319F31003F8B33 /* CryptoKeyDataRSAComponents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoKeyDataRSAComponents.cpp; path = keys/CryptoKeyDataRSAComponents.cpp; sourceTree = "<group>"; };
 		E1C266DD18319F31003F8B33 /* CryptoKeyDataRSAComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CryptoKeyDataRSAComponents.h; path = keys/CryptoKeyDataRSAComponents.h; sourceTree = "<group>"; };
 		E1C2F2481533A2120083F974 /* SettingsMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SettingsMac.mm; sourceTree = "<group>"; };
@@ -20434,7 +20434,8 @@
 				E19DA29B18189ADD00088BC8 /* CryptoAlgorithmHmacKeyParams.h */,
 				E1C6571E1816E50300256CDD /* CryptoAlgorithmHmacParams.h */,
 				E1BD331D182D8F4200C05D9F /* CryptoAlgorithmRsaKeyGenParams.h */,
-				E1C266DA18319935003F8B33 /* CryptoAlgorithmRsaSsaKeyParams.h */,
+				E1C266DA18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHash.h */,
+				E1FE136C183FE21D00892F13 /* CryptoAlgorithmRsaOaepParams.h */,
 				E1BD331B182D8EE900C05D9F /* CryptoAlgorithmRsaSsaParams.h */,
 			);
 			name = parameters;
@@ -23752,7 +23753,7 @@
 				B2FA3DDD0AB75A6F000E5AC4 /* JSSVGPathSegMovetoAbs.h in Headers */,
 				B2FA3DDF0AB75A6F000E5AC4 /* JSSVGPathSegMovetoRel.h in Headers */,
 				0705852117FDC140005F2BCB /* MediaTrackConstraint.h in Headers */,
-				E1C266DB18319935003F8B33 /* CryptoAlgorithmRsaSsaKeyParams.h in Headers */,
+				E1C266DB18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHash.h in Headers */,
 				CD8B5A46180DFF4E008B8E65 /* VideoTrackMediaSource.h in Headers */,
 				B2FA3DE10AB75A6F000E5AC4 /* JSSVGPatternElement.h in Headers */,
 				8542A7950AE5C94100DF58DF /* JSSVGPoint.h in Headers */,

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmRsaSsaKeyParams_h
+#ifndef CryptoAlgorithmRsaKeyParamsWithHash_h
 #define CryptoAlgorithmRsaSsaKey
 
 #include "CryptoAlgorithmIdentifier.h"
@@ -36,9 +36,9 @@ namespace WebCore {
 // This parameters class is currently not specified in WebCrypto.
 // It is necessary to support import from JWK, which treats hash function as part of algorithm
 // identifier, so we need to remember it to compare with one passed to sign or verify functions.
-class CryptoAlgorithmRsaSsaKeyParams FINAL : public CryptoAlgorithmParameters {
+class CryptoAlgorithmRsaKeyParamsWithHash FINAL : public CryptoAlgorithmParameters {
 public:
-    CryptoAlgorithmRsaSsaKeyParams()
+    CryptoAlgorithmRsaKeyParamsWithHash()
         : hasHash(false)
     {
     }
@@ -47,10 +47,10 @@ public:
     bool hasHash;
     CryptoAlgorithmIdentifier hash;
 
-    virtual Class parametersClass() const OVERRIDE { return Class::RsaSsaKeyParams; }
+    virtual Class parametersClass() const OVERRIDE { return Class::RsaKeyParamsWithHash; }
 };
 
-CRYPTO_ALGORITHM_PARAMETERS_CASTS(RsaSsaKeyParams)
+CRYPTO_ALGORITHM_PARAMETERS_CASTS(RsaKeyParamsWithHash)
 
 }
 

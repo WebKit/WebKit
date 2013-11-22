@@ -88,44 +88,28 @@ static Vector<uint8_t> calculateSignature(CCHmacAlgorithm algorithm, const Vecto
     return result;
 }
 
-void CryptoAlgorithmHMAC::sign(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback, ExceptionCode& ec)
+void CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParams& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback, ExceptionCode& ec)
 {
-    const CryptoAlgorithmHmacParams& hmacParameters = toCryptoAlgorithmHmacParams(parameters);
-
-    if (!isCryptoKeyHMAC(key)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-    const CryptoKeyHMAC& hmacKey = toCryptoKeyHMAC(key);
-
     CCHmacAlgorithm algorithm;
-    if (!getCommonCryptoAlgorithm(hmacParameters.hash, algorithm)) {
+    if (!getCommonCryptoAlgorithm(parameters.hash, algorithm)) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
 
-    Vector<uint8_t> signature = calculateSignature(algorithm, hmacKey.key(), data);
+    Vector<uint8_t> signature = calculateSignature(algorithm, key.key(), data);
 
     callback(signature);
 }
 
-void CryptoAlgorithmHMAC::verify(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback callback, VoidCallback, ExceptionCode& ec)
+void CryptoAlgorithmHMAC::platformVerify(const CryptoAlgorithmHmacParams& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback callback, VoidCallback, ExceptionCode& ec)
 {
-    const CryptoAlgorithmHmacParams& hmacParameters = toCryptoAlgorithmHmacParams(parameters);
-
-    if (!isCryptoKeyHMAC(key)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-    const CryptoKeyHMAC& hmacKey = toCryptoKeyHMAC(key);
-
     CCHmacAlgorithm algorithm;
-    if (!getCommonCryptoAlgorithm(hmacParameters.hash, algorithm)) {
+    if (!getCommonCryptoAlgorithm(parameters.hash, algorithm)) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
 
-    Vector<uint8_t> signature = calculateSignature(algorithm, hmacKey.key(), data);
+    Vector<uint8_t> signature = calculateSignature(algorithm, key.key(), data);
 
     bool result = signature.size() == expectedSignature.second && !memcmp(signature.data(), expectedSignature.first, signature.size());
 

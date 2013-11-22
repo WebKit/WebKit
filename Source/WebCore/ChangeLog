@@ -1,3 +1,68 @@
+2013-11-22  Alexey Proskuryakov  <ap@apple.com>
+
+        WebCrypto algorithms should check that key algorithm matches
+        https://bugs.webkit.org/show_bug.cgi?id=123628
+
+        Reviewed by Anders Carlsson.
+
+        No change in behavior yet, because we have one algorithm per key class.
+        Will be tested once more algorithms are added.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated for file renames.
+
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::createRsaKeyParamsWithHash):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForImportKey):
+        * bindings/js/JSCryptoKeySerializationJWK.cpp:
+        (WebCore::createRSAKeyParametersWithHash):
+        (WebCore::JSCryptoKeySerializationJWK::reconcileAlgorithm):
+        * crypto/CryptoAlgorithmParameters.h:
+        (WebCore::CryptoAlgorithmParameters::ENUM_CLASS):
+        * crypto/parameters/CryptoAlgorithmRsaKeyParamsWithHash.h: Copied from Source/WebCore/crypto/parameters/CryptoAlgorithmRsaSsaKeyParams.h.
+        * crypto/parameters/CryptoAlgorithmRsaSsaKeyParams.h: Removed.
+        Renamed RsaSsaKeyParams to RsaKeyParamsWithHash, because other algorithms (like RSA-OAEP)
+        are in the same boat. Depending on where the spec goes, we might need to introduce
+        algorithm specific RSA parameter classes later, but let's reduce copy/pasted code at
+        least for now.
+
+        * crypto/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp: Moved to the correct directory.
+        * crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp: Copied from Source/WebCore/crypto/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp.
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign): Factored out Mac specific
+        code, leaving type casting to cross-platform files.
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify): Ditto.
+
+        * crypto/CryptoAlgorithmRegistry.h:
+        (WebCore::CryptoAlgorithmRegistry::registerAlgorithm):
+        * crypto/mac/CryptoAlgorithmRegistryMac.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms):
+        Reduce copy/pasting in registration code.
+
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::keyAlgorithmMatches): Check key type and algorithm.
+        (WebCore::CryptoAlgorithmAES_CBC::encrypt): Cross platform type casting code.
+        Maybe we'll find a way to autogenerate or eliminate it one day.
+        (WebCore::CryptoAlgorithmAES_CBC::decrypt): Ditto.
+
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.h:
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        (WebCore::CryptoAlgorithmHMAC::keyAlgorithmMatches):
+        (WebCore::CryptoAlgorithmHMAC::sign):
+        (WebCore::CryptoAlgorithmHMAC::verify):
+        * crypto/algorithms/CryptoAlgorithmHMAC.h:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::keyAlgorithmMatches):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::sign):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::verify):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey):
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.h:
+        * crypto/mac/CryptoAlgorithmAES_CBCMac.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CBC::platformDecrypt):
+        * crypto/mac/CryptoAlgorithmHMACMac.cpp:
+        (WebCore::CryptoAlgorithmHMAC::platformSign):
+        (WebCore::CryptoAlgorithmHMAC::platformVerify):
+        Same changes for all algorithms that have keys.
+
 2013-11-22  Brendan Long  <b.long@cablelabs.com>
 
         Fire "change" event on TextTrackList when a TextTrack's mode changes

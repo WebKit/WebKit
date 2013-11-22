@@ -32,6 +32,9 @@
 
 namespace WebCore {
 
+class CryptoAlgorithmAesCbcParams;
+class CryptoKeyAES;
+
 class CryptoAlgorithmAES_CBC FINAL : public CryptoAlgorithm {
 public:
     static const char* const s_name;
@@ -49,6 +52,10 @@ public:
 private:
     CryptoAlgorithmAES_CBC();
     virtual ~CryptoAlgorithmAES_CBC();
+
+    bool keyAlgorithmMatches(const CryptoAlgorithmAesCbcParams& algorithmParameters, const CryptoKey&) const;
+    void platformEncrypt(const CryptoAlgorithmAesCbcParams&, const CryptoKeyAES&, const CryptoOperationData&, VectorCallback, VoidCallback failureCallback, ExceptionCode&);
+    void platformDecrypt(const CryptoAlgorithmAesCbcParams&, const CryptoKeyAES&, const CryptoOperationData&, VectorCallback, VoidCallback failureCallback, ExceptionCode&);
 };
 
 }

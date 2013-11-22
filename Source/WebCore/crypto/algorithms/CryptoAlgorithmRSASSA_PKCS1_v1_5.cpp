@@ -29,9 +29,11 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoAlgorithmRsaKeyGenParams.h"
-#include "CryptoAlgorithmRsaSsaKeyParams.h"
+#include "CryptoAlgorithmRsaKeyParamsWithHash.h"
+#include "CryptoAlgorithmRsaSsaParams.h"
 #include "CryptoKeyDataRSAComponents.h"
 #include "CryptoKeyRSA.h"
+#include "ExceptionCode.h"
 
 namespace WebCore {
 
@@ -55,6 +57,43 @@ CryptoAlgorithmIdentifier CryptoAlgorithmRSASSA_PKCS1_v1_5::identifier() const
     return s_identifier;
 }
 
+bool CryptoAlgorithmRSASSA_PKCS1_v1_5::keyAlgorithmMatches(const CryptoAlgorithmRsaSsaParams& algorithmParameters, const CryptoKey& key) const
+{
+    if (key.algorithmIdentifier() != s_identifier)
+        return false;
+    ASSERT(isCryptoKeyRSA(key));
+
+    CryptoAlgorithmIdentifier keyHash;
+    if (toCryptoKeyRSA(key).isRestrictedToHash(keyHash) && keyHash != algorithmParameters.hash)
+        return false;
+
+    return true;
+}
+
+void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
+{
+    const CryptoAlgorithmRsaSsaParams& rsaSSAParameters = toCryptoAlgorithmRsaSsaParams(parameters);
+
+    if (!keyAlgorithmMatches(rsaSSAParameters, key)) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
+    platformSign(rsaSSAParameters, toCryptoKeyRSA(key), data, std::move(callback), std::move(failureCallback), ec);
+}
+
+void CryptoAlgorithmRSASSA_PKCS1_v1_5::verify(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& signature, const CryptoOperationData& data, BoolCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
+{
+    const CryptoAlgorithmRsaSsaParams& rsaSSAParameters = toCryptoAlgorithmRsaSsaParams(parameters);
+
+    if (!keyAlgorithmMatches(rsaSSAParameters, key)) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
+    platformVerify(rsaSSAParameters, toCryptoKeyRSA(key), signature, data, std::move(callback), std::move(failureCallback), ec);
+}
+
 void CryptoAlgorithmRSASSA_PKCS1_v1_5::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback callback, VoidCallback failureCallback, ExceptionCode&)
 {
     const CryptoAlgorithmRsaKeyGenParams& rsaParameters = toCryptoAlgorithmRsaKeyGenParams(parameters);
@@ -68,7 +107,7 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::generateKey(const CryptoAlgorithmParamete
 
 void CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey(const CryptoAlgorithmParameters& parameters, const CryptoKeyData& keyData, bool extractable, CryptoKeyUsage usage, KeyCallback callback, VoidCallback failureCallback, ExceptionCode&)
 {
-    const CryptoAlgorithmRsaSsaKeyParams& rsaSSAParameters = toCryptoAlgorithmRsaSsaKeyParams(parameters);
+    const CryptoAlgorithmRsaKeyParamsWithHash& rsaKeyParameters = toCryptoAlgorithmRsaKeyParamsWithHash(parameters);
     const CryptoKeyDataRSAComponents& rsaComponents = toCryptoKeyDataRSAComponents(keyData);
 
     RefPtr<CryptoKeyRSA> result = CryptoKeyRSA::create(CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5, rsaComponents, extractable, usage);
@@ -77,8 +116,8 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey(const CryptoAlgorithmParameters
         return;
     }
 
-    if (rsaSSAParameters.hasHash)
-        result->restrictToHash(rsaSSAParameters.hash);
+    if (rsaKeyParameters.hasHash)
+        result->restrictToHash(rsaKeyParameters.hash);
 
     callback(*result);
 }

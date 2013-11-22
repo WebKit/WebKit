@@ -82,30 +82,14 @@ static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcP
     callback(result);
 }
 
-void CryptoAlgorithmAES_CBC::encrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
+void CryptoAlgorithmAES_CBC::platformEncrypt(const CryptoAlgorithmAesCbcParams& parameters, const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode&)
 {
-    const CryptoAlgorithmAesCbcParams& aesCBCParameters = toCryptoAlgorithmAesCbcParams(parameters);
-
-    if (!isCryptoKeyAES(key)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-    const CryptoKeyAES& aesKey = toCryptoKeyAES(key);
-
-    transformAES_CBC(kCCEncrypt, aesCBCParameters, aesKey, data, std::move(callback), std::move(failureCallback));
+    transformAES_CBC(kCCEncrypt, parameters, key, data, std::move(callback), std::move(failureCallback));
 }
 
-void CryptoAlgorithmAES_CBC::decrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
+void CryptoAlgorithmAES_CBC::platformDecrypt(const CryptoAlgorithmAesCbcParams& parameters, const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode&)
 {
-    const CryptoAlgorithmAesCbcParams& aesCBCParameters = toCryptoAlgorithmAesCbcParams(parameters);
-
-    if (!isCryptoKeyAES(key)) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-    const CryptoKeyAES& aesKey = toCryptoKeyAES(key);
-
-    transformAES_CBC(kCCDecrypt, aesCBCParameters, aesKey, data, std::move(callback), std::move(failureCallback));
+    transformAES_CBC(kCCDecrypt, parameters, key, data, std::move(callback), std::move(failureCallback));
 }
 
 } // namespace WebCore

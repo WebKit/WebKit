@@ -31,7 +31,7 @@
 #include "CryptoAlgorithm.h"
 #include "CryptoAlgorithmHmacParams.h"
 #include "CryptoAlgorithmRegistry.h"
-#include "CryptoAlgorithmRsaSsaKeyParams.h"
+#include "CryptoAlgorithmRsaKeyParamsWithHash.h"
 #include "CryptoKey.h"
 #include "CryptoKeyAES.h"
 #include "CryptoKeyDataOctetSequence.h"
@@ -155,14 +155,13 @@ static std::unique_ptr<CryptoAlgorithmParameters> createHMACParameters(CryptoAlg
     return std::move(hmacParameters);
 }
 
-static std::unique_ptr<CryptoAlgorithmParameters> createRSASSAKeyParameters(CryptoAlgorithmIdentifier hashFunction)
+static std::unique_ptr<CryptoAlgorithmParameters> createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier hashFunction)
 {
-    std::unique_ptr<CryptoAlgorithmRsaSsaKeyParams> rsaSSAParameters = std::make_unique<CryptoAlgorithmRsaSsaKeyParams>();
-    rsaSSAParameters->hasHash = true;
-    rsaSSAParameters->hash = hashFunction;
-    return std::move(rsaSSAParameters);
+    std::unique_ptr<CryptoAlgorithmRsaKeyParamsWithHash> rsaKeyParameters = std::make_unique<CryptoAlgorithmRsaKeyParamsWithHash>();
+    rsaKeyParameters->hasHash = true;
+    rsaKeyParameters->hash = hashFunction;
+    return std::move(rsaKeyParameters);
 }
-
 
 bool JSCryptoKeySerializationJWK::reconcileAlgorithm(std::unique_ptr<CryptoAlgorithm>& suggestedAlgorithm, std::unique_ptr<CryptoAlgorithmParameters>& suggestedParameters) const
 {
@@ -184,13 +183,13 @@ bool JSCryptoKeySerializationJWK::reconcileAlgorithm(std::unique_ptr<CryptoAlgor
         parameters = createHMACParameters(CryptoAlgorithmIdentifier::SHA_512);
     } else if (m_jwkAlgorithmName == "RS256") {
         algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5);
-        parameters = createRSASSAKeyParameters(CryptoAlgorithmIdentifier::SHA_256);
+        parameters = createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier::SHA_256);
     } else if (m_jwkAlgorithmName == "RS384") {
         algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5);
-        parameters = createRSASSAKeyParameters(CryptoAlgorithmIdentifier::SHA_384);
+        parameters = createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier::SHA_384);
     } else if (m_jwkAlgorithmName == "RS512") {
         algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5);
-        parameters = createRSASSAKeyParameters(CryptoAlgorithmIdentifier::SHA_512);
+        parameters = createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier::SHA_512);
     } else if (m_jwkAlgorithmName == "A128CBC") {
         algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::AES_CBC);
         parameters = std::make_unique<CryptoAlgorithmParameters>();
@@ -220,13 +219,13 @@ bool JSCryptoKeySerializationJWK::reconcileAlgorithm(std::unique_ptr<CryptoAlgor
     if (algorithm->identifier() == CryptoAlgorithmIdentifier::HMAC)
         return toCryptoAlgorithmHmacParams(*parameters).hash == toCryptoAlgorithmHmacParams(*suggestedParameters).hash;
     if (algorithm->identifier() == CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5) {
-        CryptoAlgorithmRsaSsaKeyParams& rsaSSAParameters = toCryptoAlgorithmRsaSsaKeyParams(*parameters);
-        CryptoAlgorithmRsaSsaKeyParams& suggestedRSASSAParameters = toCryptoAlgorithmRsaSsaKeyParams(*suggestedParameters);
-        ASSERT(rsaSSAParameters.hasHash);
-        if (suggestedRSASSAParameters.hasHash)
-            return suggestedRSASSAParameters.hash == rsaSSAParameters.hash;
-        suggestedRSASSAParameters.hasHash = true;
-        suggestedRSASSAParameters.hash = rsaSSAParameters.hash;
+        CryptoAlgorithmRsaKeyParamsWithHash& rsaKeyParameters = toCryptoAlgorithmRsaKeyParamsWithHash(*parameters);
+        CryptoAlgorithmRsaKeyParamsWithHash& suggestedRSAKeyParameters = toCryptoAlgorithmRsaKeyParamsWithHash(*suggestedParameters);
+        ASSERT(rsaKeyParameters.hasHash);
+        if (suggestedRSAKeyParameters.hasHash)
+            return suggestedRSAKeyParameters.hash == rsaKeyParameters.hash;
+        suggestedRSAKeyParameters.hasHash = true;
+        suggestedRSAKeyParameters.hash = rsaKeyParameters.hash;
     }
 
     // Other algorithms don't have parameters.
