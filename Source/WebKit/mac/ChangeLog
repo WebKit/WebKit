@@ -1,3 +1,16 @@
+2013-11-21  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/124700> Fix some deprecation warnings.
+
+        Reviewed by Anders Carlsson.
+
+        * Plugins/WebNetscapePluginStream.mm:
+        (WebNetscapePluginStream::startStream): Move off a deprecated NSData method.
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _fileWrapperForURL:]): Move off a deprecated NSFileWrapper method.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]): Ditto.
+
 2013-11-20  Mark Lam  <mark.lam@apple.com>
 
         Introducing VMEntryScope to update the VM stack limit.

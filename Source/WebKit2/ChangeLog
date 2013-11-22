@@ -1,3 +1,12 @@
+2013-11-21  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/124700> Fix some deprecation warnings.
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView namesOfPromisedFilesDroppedAtDestination:]): Move off a deprecated NSFileWrapper method.
+
 2013-11-21  Anders Carlsson  <andersca@apple.com>
 
         Didn't mean to commit this.

@@ -166,11 +166,9 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL
 {
-    if ([URL isFileURL]) {
-        NSString *path = [[URL path] stringByResolvingSymlinksInPath];
-        return [[[NSFileWrapper alloc] initWithPath:path] autorelease];
-    }
-    
+    if ([URL isFileURL])
+        return [[[NSFileWrapper alloc] initWithURL:[URL URLByResolvingSymlinksInPath] options:0 error:nullptr] autorelease];
+
     WebResource *resource = [self subresourceForURL:URL];
     if (resource)
         return [resource _fileWrapperRepresentation];

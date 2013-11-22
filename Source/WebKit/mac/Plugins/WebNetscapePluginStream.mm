@@ -231,7 +231,7 @@ void WebNetscapePluginStream::startStream(NSURL *url, long long expectedContentL
     if (headers) {
         unsigned len = [headers length];
         m_headers = (char*) malloc(len + 1);
-        [headers getBytes:m_headers];
+        [headers getBytes:m_headers length:len];
         m_headers[len] = 0;
         m_stream.headers = m_headers;
     }

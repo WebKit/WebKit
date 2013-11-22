@@ -2537,11 +2537,9 @@ static NSInteger _colCompare(id block1, id block2, void *)
 #if !PLATFORM(IOS)
 static NSFileWrapper *fileWrapperForURL(DocumentLoader *dataSource, NSURL *URL)
 {
-    if ([URL isFileURL]) {
-        NSString *path = [[URL path] stringByResolvingSymlinksInPath];
-        return [[[NSFileWrapper alloc] initWithPath:path] autorelease];
-    }
-    
+    if ([URL isFileURL])
+        return [[[NSFileWrapper alloc] initWithURL:[URL URLByResolvingSymlinksInPath] options:0 error:nullptr] autorelease];
+
     RefPtr<ArchiveResource> resource = dataSource->subresource(URL);
     if (resource) {
         NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:resource->data()->createNSData().get()] autorelease];
