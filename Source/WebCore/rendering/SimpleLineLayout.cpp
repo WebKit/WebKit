@@ -94,7 +94,7 @@ bool canUseFor(const RenderBlockFlow& flow)
     // FIXME: Non-mac platforms are hitting ASSERT(run.charactersLength() >= run.length())
     // https://bugs.webkit.org/show_bug.cgi?id=123338
     return false;
-#endif
+#else
     if (!flow.frame().settings().simpleLineLayoutEnabled())
         return false;
     if (!flow.firstChild())
@@ -204,6 +204,7 @@ bool canUseFor(const RenderBlockFlow& flow)
         return false;
 
     return true;
+#endif
 }
 
 struct Style {

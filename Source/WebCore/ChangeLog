@@ -1,3 +1,15 @@
+2013-11-21  Laszlo Vidacs  <lac@inf.u-szeged.hu>
+
+        Fix WinCairo unreachable code warnings in SimpleLineLayout.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=124704
+
+        Reviewed by Antti Koivisto.
+
+        Fix unreachable code warnings using conditional directives.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+
 2013-11-21  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/124701> Fix an error in a few Xcode configuration setting files.
