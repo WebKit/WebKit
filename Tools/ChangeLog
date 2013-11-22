@@ -1,3 +1,14 @@
+2013-11-21  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/124702> Stop overriding VALID_ARCHS.
+
+        All modern versions of Xcode set it appropriately for our needs.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * MiniBrowser/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+
 2013-11-21  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         webkitdirs::checkForArgumentAndRemoveFromArrayRef() removed wrong element

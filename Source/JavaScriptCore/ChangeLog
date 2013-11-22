@@ -1,5 +1,15 @@
 2013-11-21  Mark Rowe  <mrowe@apple.com>
 
+        <https://webkit.org/b/124702> Stop overriding VALID_ARCHS.
+
+        All modern versions of Xcode set it appropriately for our needs.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/Base.xcconfig:
+
+2013-11-21  Mark Rowe  <mrowe@apple.com>
+
         <https://webkit.org/b/124701> Fix an error in a few Xcode configuration setting files.
 
         Reviewed by Alexey Proskuryakov.
