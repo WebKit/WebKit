@@ -369,11 +369,12 @@ namespace JSC {
 
         void* stackLimit() { return m_stackLimit; }
         void setStackLimit(void* limit) { m_stackLimit = limit; }
-        bool isSafeToRecurse() const
+        bool isSafeToRecurse(size_t neededStackInBytes = 0) const
         {
             ASSERT(wtfThreadData().stack().isGrowingDownward());
-            void* curr;
-            return &curr >= m_stackLimit;
+            int8_t* curr = reinterpret_cast<int8_t*>(&curr);
+            int8_t* limit = reinterpret_cast<int8_t*>(m_stackLimit);
+            return curr >= limit && static_cast<size_t>(curr - limit) >= neededStackInBytes;
         }
 
         const ClassInfo* const jsArrayClassInfo;

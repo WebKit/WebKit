@@ -1,3 +1,25 @@
+2013-11-22  Mark Lam  <mark.lam@apple.com>
+
+        Ensure that arity fixups honor stack alignment requirements.
+        https://bugs.webkit.org/show_bug.cgi?id=124756.
+
+        Reviewed by Geoffrey Garen.
+
+        The LLINT and all the JITs rely on CommonSlowPaths::arityCheckFor() to
+        compute the arg count adjustment for the arity fixup. We take advantage
+        of this choke point and introduce the stack alignment padding there in
+        the guise of additional args.
+
+        The only cost of this approach is that the padding will also be
+        initialized to undefined values as if they were args. Since arity fixups
+        are considered a slow path that is rarely taken, this cost is not a
+        concern.
+
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::arityCheckFor):
+        * runtime/VM.h:
+        (JSC::VM::isSafeToRecurse):
+
 2013-11-21  Filip Pizlo  <fpizlo@apple.com>
 
         BytecodeGenerator should align the stack according to native conventions

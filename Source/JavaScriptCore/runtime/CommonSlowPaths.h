@@ -31,7 +31,10 @@
 #include "ExceptionHelpers.h"
 #include "JSStackInlines.h"
 #include "NameInstance.h"
+#include "StackAlignment.h"
+#include "VM.h"
 #include <wtf/Platform.h>
+#include <wtf/StdLibExtras.h>
 
 #if ENABLE(JIT) || ENABLE(LLINT)
 
@@ -53,15 +56,20 @@ ALWAYS_INLINE int arityCheckFor(ExecState* exec, JSStack* stack, CodeSpecializat
     CodeBlock* newCodeBlock = callee->jsExecutable()->codeBlockFor(kind);
     int argumentCountIncludingThis = exec->argumentCountIncludingThis();
     
-    // This ensures enough space for the worst case scenario of zero arguments passed by the caller.
-    if (!stack->grow(exec->registers() - newCodeBlock->numParameters() + virtualRegisterForLocal(newCodeBlock->m_numCalleeRegisters).offset()))
-        return -1;
-    
     ASSERT(argumentCountIncludingThis < newCodeBlock->numParameters());
-    
-    // Too few arguments, return the number of missing arguments so the caller can
-    // grow the frame in place and fill in undefined values for the missing args.
-    return(newCodeBlock->numParameters() - argumentCountIncludingThis);
+    int missingArgumentCount = newCodeBlock->numParameters() - argumentCountIncludingThis;
+    int paddedMissingArgumentCount = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), missingArgumentCount);
+
+#if USE(SEPARATE_C_AND_JS_STACK)
+    if (!stack->grow(exec->registers() - paddedMissingArgumentCount))
+        return -1;
+#else
+    UNUSED_PARAM(stack);
+    if (!exec->vm().isSafeToRecurse(paddedMissingArgumentCount * sizeof(Register)))
+        return -1;
+#endif // USE(SEPARATE_C_AND_JS_STACK)
+
+    return paddedMissingArgumentCount;
 }
 
 inline bool opIn(ExecState* exec, JSValue propName, JSValue baseVal)
