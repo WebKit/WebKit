@@ -199,10 +199,12 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
 
 - (BrowserWindowController *)frontmostBrowserWindowController
 {
-    NSArray* windows = [NSApp windows];
-    for (NSWindow* window in windows) {
+    for (NSWindow* window in [NSApp windows]) {
         id delegate = [window delegate];
-        assert([delegate isKindOfClass:[BrowserWindowController class]]);
+
+        if (![delegate isKindOfClass:[BrowserWindowController class]])
+            continue;
+
         BrowserWindowController *controller = (BrowserWindowController *)delegate;
         assert([_browserWindows containsObject:[controller window]]);
         return controller;
@@ -213,30 +215,32 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
 
 - (IBAction)openDocument:(id)sender
 {
-    NSOpenPanel *openPanel = [[NSOpenPanel openPanel] retain];
-    [openPanel beginForDirectory:nil
-        file:nil
-        types:nil
-        modelessDelegate:self
-        didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:)
-        contextInfo:0];
-}
+    BrowserWindowController *browserWindowController = [self frontmostBrowserWindowController];
 
-- (void)openPanelDidEnd:(NSOpenPanel *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
-{
-    [sheet autorelease];
-    if (returnCode != NSOKButton || ![[sheet filenames] count])
+    if (browserWindowController) {
+        NSOpenPanel *openPanel = [[NSOpenPanel openPanel] retain];
+        [openPanel beginSheetModalForWindow:browserWindowController.window completionHandler:^(NSInteger result) {
+            if (result != NSModalResponseOK)
+                return;
+
+            NSURL *url = openPanel.URLs.firstObject;
+            [browserWindowController loadURLString:[url absoluteString]];
+        }];
         return;
-    
-    NSString* filePath = [[sheet filenames] objectAtIndex:0];
-
-    BrowserWindowController *controller = [self frontmostBrowserWindowController];
-    if (!controller) {
-        controller = [[WK2BrowserWindowController alloc] initWithContext:_processContext pageGroup:_pageGroup]; // FIXME: add a way to open in WK1 also.
-        [[controller window] makeKeyAndOrderFront:self];
     }
-    
-    [controller loadURLString:[[NSURL fileURLWithPath:filePath] absoluteString]];
+
+    NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+    [openPanel beginWithCompletionHandler:^(NSInteger result) {
+        if (result != NSModalResponseOK)
+            return;
+        
+        // FIXME: add a way to open in WK1 also.
+        BrowserWindowController *newBrowserWindowController = [[WK2BrowserWindowController alloc] initWithContext:_processContext pageGroup:_pageGroup];
+        [newBrowserWindowController.window makeKeyAndOrderFront:self];
+
+        NSURL *url = openPanel.URLs.firstObject;
+        [newBrowserWindowController loadURLString:[url absoluteString]];
+    }];
 }
 
 @end
