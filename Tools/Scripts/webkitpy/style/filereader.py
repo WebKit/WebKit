@@ -113,7 +113,7 @@ class TextFileReader(object):
 
         if not self.filesystem.exists(file_path) and file_path != "-":
             _log.error("File does not exist: '%s'" % file_path)
-            sys.exit(1)  # FIXME: This should throw or return instead of exiting directly.
+            raise IOError("File does not exist")
 
         if not self._processor.should_process(file_path):
             _log.debug("Skipping file: '%s'" % file_path)

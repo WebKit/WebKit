@@ -1,3 +1,15 @@
+2013-11-21  Dániel Bátyai  <Batyai.Daniel@stud.u-szeged.hu>
+
+        In filereader.py, process_file() should throw instead of exiting directly when the file doesn't exist
+        https://bugs.webkit.org/show_bug.cgi?id=124717
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/style/filereader.py:
+        (TextFileReader.process_file):
+        * Scripts/webkitpy/style/filereader_unittest.py:
+        (TextFileReaderTest.test_process_file__does_not_exist):
+
 2013-11-21  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/124702> Stop overriding VALID_ARCHS.
