@@ -1,3 +1,10 @@
+2013-11-21  Darin Adler  <darin@apple.com>
+
+        Try to fix buildbot Dashboard for people who have not hidden anything.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotQueue.js:
+        Add a null check for hidden platforms.
+
 2013-11-21  Peter Szanka  <h868064@stud.u-szeged.hu>
 
         Remove chrome/chromium related things from webkitpy.
