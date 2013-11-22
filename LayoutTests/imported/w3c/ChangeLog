@@ -1,0 +1,53 @@
+2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Import some W3C tests for HTML template element
+        https://bugs.webkit.org/show_bug.cgi?id=124699
+
+        Reviewed by Antti Koivisto.
+
+        Imported the shared resources for web-platform-tests/html-templates as well as tests under
+        serializing-html-templates and template-element at a274ad93ef5dc02ac042e0a5d58327d4135178ac.
+
+        * ChangeLog: Added.
+        * html-templates/resources/end-template-tag-in-body.html: Added.
+        * html-templates/resources/end-template-tag-in-head.html: Added.
+        * html-templates/resources/frameset-end-tag.html: Added.
+        * html-templates/resources/head-template-contents-div-no-end-tag.html: Added.
+        * html-templates/resources/head-template-contents-table-no-end-tag.html: Added.
+        * html-templates/resources/html-start-tag.html: Added.
+        * html-templates/resources/template-child-nodes-div.xhtml: Added.
+        * html-templates/resources/template-child-nodes-nested.xhtml: Added.
+        * html-templates/resources/template-contents-attribute.html: Added.
+        * html-templates/resources/template-contents-body.html: Added.
+        * html-templates/resources/template-contents-div-no-end-tag.html: Added.
+        * html-templates/resources/template-contents-empty.html: Added.
+        * html-templates/resources/template-contents-frameset.html: Added.
+        * html-templates/resources/template-contents-head.html: Added.
+        * html-templates/resources/template-contents-html.html: Added.
+        * html-templates/resources/template-contents-nested.html: Added.
+        * html-templates/resources/template-contents-table-no-end-tag.html: Added.
+        * html-templates/resources/template-contents-text.html: Added.
+        * html-templates/resources/template-contents.html: Added.
+        * html-templates/resources/template-descendant-body.html: Added.
+        * html-templates/resources/template-descendant-frameset.html: Added.
+        * html-templates/resources/template-descendant-head.html: Added.
+        * html-templates/resources/two-templates.html: Added.
+        * html-templates/serializing-html-templates/outerhtml-expected.txt: Added.
+        * html-templates/serializing-html-templates/outerhtml.html: Added.
+        * html-templates/template-element/content-attribute-expected.txt: Added.
+        * html-templates/template-element/content-attribute.html: Added.
+        * html-templates/template-element/node-document-changes-expected.txt: Added.
+        * html-templates/template-element/node-document-changes.html: Added.
+        * html-templates/template-element/template-as-a-descendant-expected.txt: Added.
+        * html-templates/template-element/template-as-a-descendant.html: Added.
+        * html-templates/template-element/template-content-expected.txt: Added.
+        * html-templates/template-element/template-content-node-document-expected.txt: Added.
+        * html-templates/template-element/template-content-node-document.html: Added.
+        * html-templates/template-element/template-content.html: Added.
+        * html-templates/template-element/template-descendant-body-expected.txt: Added.
+        * html-templates/template-element/template-descendant-body.html: Added.
+        * html-templates/template-element/template-descendant-frameset-expected.txt: Added.
+        * html-templates/template-element/template-descendant-frameset.html: Added.
+        * html-templates/template-element/template-descendant-head-expected.txt: Added.
+        * html-templates/template-element/template-descendant-head.html: Added.
+        * html-templates/testcommon.js: Added.
