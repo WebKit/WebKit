@@ -38,6 +38,7 @@
 #include "LowLevelInterpreter.h"
 #include "Operations.h"
 #include "Options.h"
+#include "StackAlignment.h"
 #include "StrongInlines.h"
 #include "UnlinkedCodeBlock.h"
 #include <wtf/StdLibExtras.h>
@@ -545,7 +546,9 @@ RegisterID* BytecodeGenerator::createLazyRegisterIfNecessary(RegisterID* reg)
 RegisterID* BytecodeGenerator::newRegister()
 {
     m_calleeRegisters.append(virtualRegisterForLocal(m_calleeRegisters.size()));
-    m_codeBlock->m_numCalleeRegisters = max<int>(m_codeBlock->m_numCalleeRegisters, m_calleeRegisters.size());
+    int numCalleeRegisters = max<int>(m_codeBlock->m_numCalleeRegisters, m_calleeRegisters.size());
+    numCalleeRegisters = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), numCalleeRegisters);
+    m_codeBlock->m_numCalleeRegisters = numCalleeRegisters;
     return &m_calleeRegisters.last();
 }
 

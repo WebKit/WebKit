@@ -31,6 +31,8 @@
 #include "DFGGraph.h"
 #include "DFGScoreBoard.h"
 #include "JSCellInlines.h"
+#include "StackAlignment.h"
+#include <wtf/StdLibExtras.h>
 
 namespace JSC { namespace DFG {
 
@@ -132,6 +134,7 @@ public:
             if (requiredCalleeRegisters > calleeRegisters)
                 calleeRegisters = requiredCalleeRegisters;
         }
+        calleeRegisters = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), calleeRegisters);
         if ((unsigned)codeBlock()->m_numCalleeRegisters < calleeRegisters)
             codeBlock()->m_numCalleeRegisters = calleeRegisters;
 #if DFG_ENABLE(DEBUG_VERBOSE)
