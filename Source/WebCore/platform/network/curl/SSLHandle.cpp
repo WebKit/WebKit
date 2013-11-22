@@ -32,21 +32,21 @@
 #include <openssl/pem.h>
 #include <openssl/ssl.h>
 #include <openssl/x509_vfy.h>
-#include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 
 namespace WebCore {
 
-static HashMap<String, HashSet<String>> allowedHosts;
+static HashMap<String, ListHashSet<String>> allowedHosts;
 
 void allowsAnyHTTPSCertificateHosts(const String& host)
 {
-    HashSet<String> certificates;
+    ListHashSet<String> certificates;
     allowedHosts.set(host, certificates);
 }
 
-bool sslIgnoreHTTPSCertificate(const String& host, const HashSet<String>& certificates)
+bool sslIgnoreHTTPSCertificate(const String& host, const ListHashSet<String>& certificates)
 {
-    HashMap<String, HashSet<String>>::iterator it = allowedHosts.find(host);
+    HashMap<String, ListHashSet<String>>::iterator it = allowedHosts.find(host);
     if (it != allowedHosts.end()) {
         if ((it->value).isEmpty()) {
             it->value = certificates;
@@ -54,8 +54,8 @@ bool sslIgnoreHTTPSCertificate(const String& host, const HashSet<String>& certif
         }
         if (certificates.size() != it->value.size())
             return false;
-        HashSet<String>::const_iterator certsIter = certificates.begin();
-        HashSet<String>::iterator valueIter = (it->value).begin();
+        ListHashSet<String>::const_iterator certsIter = certificates.begin();
+        ListHashSet<String>::iterator valueIter = (it->value).begin();
         for (; valueIter != (it->value).end(); ++valueIter, ++certsIter) {
             if (*certsIter != *valueIter)
                 return false;
@@ -124,7 +124,7 @@ unsigned sslCertificateFlag(const unsigned& sslError)
 
 #if !PLATFORM(WIN)
 // success of certificates extraction
-bool pemData(X509_STORE_CTX* ctx, HashSet<String>& certificates)
+bool pemData(X509_STORE_CTX* ctx, ListHashSet<String>& certificates)
 {
     bool ok = true;
     STACK_OF(X509)* certs = X509_STORE_CTX_get1_chain(ctx);
@@ -173,10 +173,10 @@ static int certVerifyCallback(int ok, X509_STORE_CTX* ctx)
     d->m_sslErrors = sslCertificateFlag(err);
 
 #if PLATFORM(WIN)
-    HashMap<String, HashSet<String>>::iterator it = allowedHosts.find(host);
+    HashMap<String, ListHashSet<String>>::iterator it = allowedHosts.find(host);
     ok = (it != allowedHosts.end());
 #else
-    HashSet<String> certificates;
+    ListHashSet<String> certificates;
     if (!pemData(ctx, certificates))
         return 0;
     ok = sslIgnoreHTTPSCertificate(host.lower(), certificates);

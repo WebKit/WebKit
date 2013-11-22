@@ -1,3 +1,21 @@
+2013-11-22  Robert Sipka  <sipka@inf.u-szeged.hu>
+
+        [curl] Fix of SSL certificate chain storage
+        https://bugs.webkit.org/show_bug.cgi?id=124768
+
+        Reviewed by Brent Fulgham.
+
+        Change the certificates storage type into ListHashSet
+        from HashSet to keep the chain order in each case.
+        This ensures that there is no difference between the stored
+        and the recieved certificate chain.
+
+        * platform/network/curl/SSLHandle.cpp:
+        (WebCore::allowsAnyHTTPSCertificateHosts):
+        (WebCore::sslIgnoreHTTPSCertificate):
+        (WebCore::pemData):
+        (WebCore::certVerifyCallback):
+
 2013-11-22  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Avoid deadlock when interacting with some AVFoundationCF content
