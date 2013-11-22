@@ -371,9 +371,6 @@ void RenderRegion::repaintFlowThreadContentRectangle(const LayoutRect& repaintRe
     ASSERT(isValid());
 
     // We only have to issue a repaint in this region if the region rect intersects the repaint rect.
-    LayoutRect flippedFlowThreadPortionRect(flowThreadPortionRect);
-    flowThread()->flipForWritingMode(flippedFlowThreadPortionRect); // Put the region rects into physical coordinates.
-
     LayoutRect clippedRect(repaintRect);
 
     if (flowThreadPortionClipRect) {
@@ -384,6 +381,9 @@ void RenderRegion::repaintFlowThreadContentRectangle(const LayoutRect& repaintRe
 
     if (clippedRect.isEmpty())
         return;
+
+    LayoutRect flippedFlowThreadPortionRect(flowThreadPortionRect);
+    flowThread()->flipForWritingMode(flippedFlowThreadPortionRect); // Put the region rects into physical coordinates.
 
     // Put the region rect into the region's physical coordinate space.
     clippedRect.setLocation(regionLocation + (clippedRect.location() - flippedFlowThreadPortionRect.location()));
