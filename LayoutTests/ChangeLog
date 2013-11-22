@@ -1,3 +1,17 @@
+2013-11-21  Sun-woo Nam  <sunny.nam@samsung.com>
+
+        [EFL] Layout tests with editing need to be rebaselined.
+        https://bugs.webkit.org/show_bug.cgi?id=124751
+
+        Unreviewed, EFL rebaseline.
+
+        editing/input/reveal-caret-of-multiline-contenteditable.html test is rebaselined after r137239.
+        editing/selection/5354455-2.html test is rebaselined after r133000.
+        Rebaseline the expected results to suit editing-related performance in EFL.
+
+        * platform/efl-wk1/editing/input/reveal-caret-of-multiline-contenteditable-expected.txt:
+        * platform/efl/editing/selection/5354455-2-expected.txt:
+
 2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Import some W3C tests for HTML template element
