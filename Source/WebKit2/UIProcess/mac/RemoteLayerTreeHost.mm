@@ -26,6 +26,7 @@
 #import "config.h"
 #import "RemoteLayerTreeHost.h"
 
+#import "Logging.h"
 #import "RemoteLayerTreeHostMessages.h"
 #import "RemoteLayerTreePropertyApplier.h"
 #import "RemoteLayerTreeTransaction.h"
@@ -55,9 +56,7 @@ RemoteLayerTreeHost::~RemoteLayerTreeHost()
 
 void RemoteLayerTreeHost::commit(const RemoteLayerTreeTransaction& transaction)
 {
-#if !defined(NDEBUG)
-    transaction.dump();
-#endif
+    LOG(RemoteLayerTree, "%s", transaction.description().data());
 
     for (auto createdLayer : transaction.createdLayers())
         createLayer(createdLayer);

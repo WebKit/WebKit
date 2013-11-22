@@ -141,7 +141,8 @@ public:
     void setCreatedLayers(Vector<LayerCreationProperties>);
     void setDestroyedLayerIDs(Vector<LayerID>);
 
-#if !defined(NDEBUG)
+#if !defined(NDEBUG) || !LOG_DISABLED
+    WTF::CString description() const;
     void dump() const;
 #endif
 

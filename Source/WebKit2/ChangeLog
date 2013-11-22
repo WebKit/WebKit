@@ -1,3 +1,17 @@
+2013-11-22  Dan Bernstein  <mitz@apple.com>
+
+        Debug builds unconditionally dump remote layer tree transactions to stderr.
+
+        Reviewed by Sam Weinig.
+
+        * Platform/Logging.h: Declared RemoteLayerTree logging channel.
+        * Shared/mac/RemoteLayerTreeTransaction.h: Declared description().
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::dump): Changed to use description().
+        (WebKit::RemoteLayerTreeTransaction::description): Returns a CString with the description.
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::commit): Changed to use logging instead of calling dump().
+
 2013-11-21  Anders Carlsson  <andersca@apple.com>
 
         Send out the right KVO callbacks when the page title changes

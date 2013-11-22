@@ -360,7 +360,7 @@ void RemoteLayerTreeTransaction::setDestroyedLayerIDs(Vector<LayerID> destroyedL
     m_destroyedLayerIDs = std::move(destroyedLayerIDs);
 }
 
-#if !defined(NDEBUG)
+#if !defined(NDEBUG) || !LOG_DISABLED
 
 class RemoteLayerTreeTextStream : public TextStream
 {
@@ -648,6 +648,11 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const HashMap<Remot
 
 void RemoteLayerTreeTransaction::dump() const
 {
+    fprintf(stderr, "%s", description().data());
+}
+
+CString RemoteLayerTreeTransaction::description() const
+{
     RemoteLayerTreeTextStream ts;
 
     ts << "(\n";
@@ -708,9 +713,9 @@ void RemoteLayerTreeTransaction::dump() const
 
     ts << ")\n";
 
-    fprintf(stderr, "%s", ts.release().utf8().data());
+    return ts.release().utf8();
 }
 
-#endif // NDEBUG
+#endif // !defined(NDEBUG) || !LOG_DISABLED
 
 } // namespace WebKit

@@ -45,6 +45,7 @@ namespace WebKit {
     M(Network) \
     M(NetworkScheduling) \
     M(Plugins) \
+    M(RemoteLayerTree) \
     M(SessionState) \
     M(StorageAPI) \
     M(TextInput) \
