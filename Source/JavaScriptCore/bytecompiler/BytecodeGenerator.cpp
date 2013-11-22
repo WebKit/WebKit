@@ -1739,10 +1739,10 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
     UnlinkedValueProfile profile = emitProfiledOpcode(opcodeID);
     ASSERT(dst);
     ASSERT(dst != ignoredResult());
-    instructions().append(dst->index());
-    instructions().append(func->index());
-    instructions().append(callArguments.argumentCountIncludingThis());
-    instructions().append(callArguments.stackOffset());
+    instructions().append(dst->index()); // result
+    instructions().append(func->index()); // func
+    instructions().append(callArguments.argumentCountIncludingThis()); // argCount
+    instructions().append(callArguments.registerOffset()); // registerOffset
 #if ENABLE(LLINT)
     instructions().append(m_codeBlock->addLLIntCallLinkInfo());
 #else
@@ -1853,9 +1853,9 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
     UnlinkedValueProfile profile = emitProfiledOpcode(op_construct);
     ASSERT(dst != ignoredResult());
     instructions().append(dst->index());
-    instructions().append(func->index());
-    instructions().append(callArguments.argumentCountIncludingThis());
-    instructions().append(callArguments.stackOffset());
+    instructions().append(func->index()); // func
+    instructions().append(callArguments.argumentCountIncludingThis()); // argCount
+    instructions().append(callArguments.registerOffset()); // registerOffset
 #if ENABLE(LLINT)
     instructions().append(m_codeBlock->addLLIntCallLinkInfo());
 #else

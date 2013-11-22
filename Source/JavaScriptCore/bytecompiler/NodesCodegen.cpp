@@ -44,7 +44,6 @@
 #include "RegExpCache.h"
 #include "RegExpObject.h"
 #include "SamplingTool.h"
-#include "StackAlignment.h"
 #include <wtf/Assertions.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/Threading.h>
@@ -421,7 +420,6 @@ RegisterID* NewExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
 
 CallArguments::CallArguments(BytecodeGenerator& generator, ArgumentsNode* argumentsNode, unsigned additionalArguments)
     : m_argumentsNode(argumentsNode)
-    , m_padding(0)
 {
     if (generator.shouldEmitProfileHooks())
         m_profileHookRegister = generator.newTemporary();
@@ -437,11 +435,13 @@ CallArguments::CallArguments(BytecodeGenerator& generator, ArgumentsNode* argume
         m_argv[i] = generator.newTemporary();
         ASSERT(static_cast<size_t>(i) == m_argv.size() - 1 || m_argv[i]->index() == m_argv[i + 1]->index() - 1);
     }
-    
-    while (stackOffset() % stackAlignmentRegisters()) {
-        m_argv.insert(0, generator.newTemporary());
-        m_padding++;
-    }
+}
+
+inline void CallArguments::newArgument(BytecodeGenerator& generator)
+{
+    RefPtr<RegisterID> tmp = generator.newTemporary();
+    ASSERT(m_argv.isEmpty() || tmp->index() == m_argv.last()->index() + 1); // Calling convention assumes that all arguments are contiguous.
+    m_argv.append(tmp.release());
 }
 
 // ------------------------------ EvalFunctionCallNode ----------------------------------
