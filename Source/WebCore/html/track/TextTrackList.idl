@@ -34,6 +34,7 @@
     TextTrack getTrackById(DOMString id);
 
     attribute EventListener onaddtrack;
+    attribute EventListener onchange;
     attribute EventListener onremovetrack;
 
     void addEventListener(DOMString type,

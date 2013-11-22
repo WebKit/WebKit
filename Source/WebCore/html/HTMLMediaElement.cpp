@@ -1473,6 +1473,9 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
 #endif
     
     configureTextTrackDisplay(AssumeTextTrackVisibilityChanged);
+
+    if (m_textTracks && m_textTracks->contains(track))
+        m_textTracks->scheduleChangeEvent();
 }
 
 void HTMLMediaElement::videoTrackSelectedChanged(VideoTrack* track)
