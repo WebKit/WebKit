@@ -1,3 +1,18 @@
+2013-11-22  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r159690.
+        http://trac.webkit.org/changeset/159690
+        https://bugs.webkit.org/show_bug.cgi?id=124782
+
+        Broke webkitpy tests (Requested by ap on #webkit).
+
+        * Scripts/webkitpy/tool/bot/queueengine.py:
+        (QueueEngine.run):
+        (QueueEngine._open_work_log):
+        (QueueEngine._ensure_work_log_closed):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem.review_patch):
+
 2013-11-22  László Langó  <lango@inf.u-szeged.hu>
 
         EWS creates 0 byte sized log files

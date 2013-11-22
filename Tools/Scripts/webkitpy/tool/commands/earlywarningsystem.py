@@ -92,7 +92,10 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
             if results_archive:
                 self._upload_results_archive_for_patch(patch, results_archive)
             self._did_fail(patch)
-            raise e
+            # FIXME: We're supposed to be able to raise e again here and have
+            # one of our base classes mark the patch as fail, but there seems
+            # to be an issue with the exit_code.
+            return False
 
     # EarlyWarningSystemDelegate methods
 
