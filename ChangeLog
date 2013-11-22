@@ -1,3 +1,17 @@
+2013-11-22  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK] Review enabled/disabled CSS features for release builds
+        https://bugs.webkit.org/show_bug.cgi?id=124791
+
+        Reviewed by Martin Robinson.
+
+        Enable and disable some CSS features according to what last versions of
+        Safari ship or not.
+
+        * Source/autotools/SetupWebKitFeatures.m4: Enable ENABLE_CSS_REGIONS and
+        ENABLE_CSS_STICKY_POSITION. Disable ENABLE_CSS_EXCLUSIONS and
+        ENABLE_CSS_SHAPES.
+
 2013-11-21  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Remove ENABLE_WORKERS
