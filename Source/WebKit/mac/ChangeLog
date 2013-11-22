@@ -1,5 +1,13 @@
 2013-11-21  Mark Rowe  <mrowe@apple.com>
 
+        <https://webkit.org/b/124701> Fix an error in a few Xcode configuration setting files.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/Base.xcconfig:
+
+2013-11-21  Mark Rowe  <mrowe@apple.com>
+
         <https://webkit.org/b/124700> Fix some deprecation warnings.
 
         Reviewed by Anders Carlsson.
