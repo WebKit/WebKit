@@ -1,5 +1,22 @@
 2013-11-21  Filip Pizlo  <fpizlo@apple.com>
 
+        BytecodeGenerator should align the stack according to native conventions
+        https://bugs.webkit.org/show_bug.cgi?id=124735
+
+        Reviewed by Mark Lam.
+        
+        Rolling this back in because it actually fixed fast/dom/gc-attribute-node.html, but
+        our infrastructure misleads peole into thinking that fixing a test constitutes
+        breaking it.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::CallArguments::registerOffset):
+        (JSC::CallArguments::argumentCountIncludingThis):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::CallArguments::CallArguments):
+
+2013-11-21  Filip Pizlo  <fpizlo@apple.com>
+
         Get rid of CodeBlock::dumpStatistics()
         https://bugs.webkit.org/show_bug.cgi?id=124762
 
