@@ -31,6 +31,7 @@
 ] interface TextTrackList {
     readonly attribute unsigned long length;
     getter TextTrack item(unsigned long index);
+    TextTrack getTrackById(DOMString id);
 
     attribute EventListener onaddtrack;
     attribute EventListener onremovetrack;

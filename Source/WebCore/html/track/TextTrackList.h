@@ -48,6 +48,7 @@ public:
     virtual bool contains(TrackBase*) const OVERRIDE;
 
     TextTrack* item(unsigned index) const;
+    TextTrack* getTrackById(const AtomicString&);
     TextTrack* lastItem() const { return item(length() - 1); }
 
     void append(PassRefPtr<TextTrack>);

@@ -127,6 +127,22 @@ TextTrack* TextTrackList::item(unsigned index) const
     return 0;
 }
 
+TextTrack* TextTrackList::getTrackById(const AtomicString& id)
+{
+    // 4.8.10.12.5 Text track API
+    // The getTrackById(id) method must return the first TextTrack in the
+    // TextTrackList object whose id IDL attribute would return a value equal
+    // to the value of the id argument.
+    for (unsigned i = 0; i < length(); ++i) {
+        TextTrack* track = item(i);
+        if (track->id() == id)
+            return track;
+    }
+
+    // When no tracks match the given argument, the method must return null.
+    return nullptr;
+}
+
 void TextTrackList::invalidateTrackIndexesAfterTrack(TextTrack* track)
 {
     Vector<RefPtr<TrackBase>>* tracks = 0;
