@@ -206,8 +206,6 @@ MACRO_INSTRUCTIONS =
      "tqs",
      "tqz",
      "tqnz",
-     "peekq",
-     "pokeq",
      "bqeq",
      "bqneq",
      "bqa",

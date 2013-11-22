@@ -1286,15 +1286,9 @@ class Instruction
         when "peek"
             sp = RegisterID.new(nil, "sp")
             $asm.puts "mov#{x86Suffix(:ptr)} #{operands[0].value * x86Bytes(:ptr)}(#{sp.x86Operand(:ptr)}), #{operands[1].x86Operand(:ptr)}"
-        when "peekq"
-            sp = RegisterID.new(nil, "sp")
-            $asm.puts "mov#{x86Suffix(:quad)} #{operands[0].value * x86Bytes(:quad)}(#{sp.x86Operand(:ptr)}), #{operands[1].x86Operand(:quad)}"
         when "poke"
             sp = RegisterID.new(nil, "sp")
             $asm.puts "mov#{x86Suffix(:ptr)} #{operands[0].x86Operand(:ptr)}, #{operands[1].value * x86Bytes(:ptr)}(#{sp.x86Operand(:ptr)})"
-        when "pokeq"
-            sp = RegisterID.new(nil, "sp")
-            $asm.puts "mov#{x86Suffix(:quad)} #{operands[0].x86Operand(:quad)}, #{operands[1].value * x86Bytes(:quad)}(#{sp.x86Operand(:ptr)})"
         when "cdqi"
             $asm.puts "cdq"
         when "idivi"

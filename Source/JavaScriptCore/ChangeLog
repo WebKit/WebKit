@@ -1,5 +1,17 @@
 2013-11-21  Michael Saboff  <msaboff@apple.com>
 
+        JSC: Removed unused opcodes from offline assembler
+        https://bugs.webkit.org/show_bug.cgi?id=124749
+
+        Reviewed by Mark Hahnenberg.
+
+        Removed the unused, X86 only peekq and pokeq.
+
+        * offlineasm/instructions.rb:
+        * offlineasm/x86.rb:
+
+2013-11-21  Michael Saboff  <msaboff@apple.com>
+
         REGRESSION(159395) Fix branch8(…, AbsoluteAddress, …) in ARM64 MacroAssembler
         https://bugs.webkit.org/show_bug.cgi?id=124688
 
