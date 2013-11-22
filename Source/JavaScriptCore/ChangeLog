@@ -1,3 +1,9 @@
+2013-11-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Fix a typo (requriements->requirements).
+
+        * runtime/StackAlignment.h:
+
 2013-11-21  Mark Lam  <mark.lam@apple.com>
 
         CodeBlock::m_numCalleeRegisters need to honor native stack alignment.
