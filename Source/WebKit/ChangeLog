@@ -1,3 +1,13 @@
+2013-11-21  Alex Christensen  <achristensen@webkit.org>
+
+        Remove ANGLEGenerated from Windows build.
+        https://bugs.webkit.org/show_bug.cgi?id=124759
+
+        Reviewed by Darin Adler.
+
+        * WebKit.vcxproj/WebKit.sln:
+        Remove references to ANGLEGenerated.vcxproj.
+
 2013-11-21  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Remove ENABLE_WORKERS

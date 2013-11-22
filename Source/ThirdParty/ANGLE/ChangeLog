@@ -1,5 +1,15 @@
 2013-11-21  Alex Christensen  <achristensen@webkit.org>
 
+        Remove ANGLEGenerated from Windows build.
+        https://bugs.webkit.org/show_bug.cgi?id=124759
+
+        Reviewed by Darin Adler.
+
+        * ANGLE.vcxproj/ANGLEGenerated.vcxproj: Removed.
+        * ANGLE.vcxproj/ANGLEGenerated.vcxproj.filters: Removed.
+
+2013-11-21  Alex Christensen  <achristensen@webkit.org>
+
         Unreviewed build fix.
 
         * src/libGLESv2/Constants.h: Added from checkout a60e0805721f62c28a55faf2df74472cc5fc91fc.
