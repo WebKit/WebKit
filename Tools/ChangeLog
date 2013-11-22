@@ -1,5 +1,12 @@
 2013-11-22  Anders Carlsson  <andersca@apple.com>
 
+        Fix Mountain Lion bug.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate openDocument:]):
+
+2013-11-22  Anders Carlsson  <andersca@apple.com>
+
         MiniBrowser should use the blocks-based NSOpenPanel API
         https://bugs.webkit.org/show_bug.cgi?id=124786
 

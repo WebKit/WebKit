@@ -220,7 +220,7 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
     if (browserWindowController) {
         NSOpenPanel *openPanel = [[NSOpenPanel openPanel] retain];
         [openPanel beginSheetModalForWindow:browserWindowController.window completionHandler:^(NSInteger result) {
-            if (result != NSModalResponseOK)
+            if (result != NSOKButton)
                 return;
 
             NSURL *url = openPanel.URLs.firstObject;
@@ -231,7 +231,7 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
 
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
     [openPanel beginWithCompletionHandler:^(NSInteger result) {
-        if (result != NSModalResponseOK)
+        if (result != NSOKButton)
             return;
         
         // FIXME: add a way to open in WK1 also.
