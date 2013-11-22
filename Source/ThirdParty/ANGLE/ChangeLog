@@ -1,3 +1,9 @@
+2013-11-21  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed build fix.
+
+        * src/libGLESv2/Constants.h: Added from checkout a60e0805721f62c28a55faf2df74472cc5fc91fc.
+
 2013-11-21  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/124701> Fix an error in a few Xcode configuration setting files.
