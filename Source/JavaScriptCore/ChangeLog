@@ -1,5 +1,22 @@
 2013-11-21  Michael Saboff  <msaboff@apple.com>
 
+        ARM64: Implement push/pop equivalents in LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=124721
+
+        Reviewed by Filip Pizlo.
+
+        Added pushLRAndFP and popLRAndFP that push and pop the link register and frame pointer register.
+        These ops emit code just like what the compiler emits in the prologue and epilogue.  Also changed
+        pushCalleeSaves and popCalleeSaves to use the same store pair and load pair instructions to do
+        the actually pushing and popping.  Finally changed the implementation of push and pop to raise
+        an exception since we don't have (or need) a single register push or pop.
+
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/arm64.rb:
+        * offlineasm/instructions.rb:
+
+2013-11-21  Michael Saboff  <msaboff@apple.com>
+
         JSC: Removed unused opcodes from offline assembler
         https://bugs.webkit.org/show_bug.cgi?id=124749
 

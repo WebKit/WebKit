@@ -566,31 +566,27 @@ class Instruction
             # FIXME: Remove it or support it.
             raise "ARM64 does not support this opcode yet, #{codeOriginString}"
         when "pop"
-            emitARM64Unflipped("pop", operands, :ptr)
+            # FIXME: Remove it or support it.
+            raise "ARM64 does not support this opcode yet, #{codeOriginString}"
         when "push"
-            emitARM64Unflipped("push", operands, :ptr)
+            # FIXME: Remove it or support it.
+            raise "ARM64 does not support this opcode yet, #{codeOriginString}"
+        when "popLRAndFP"
+            $asm.puts "ldp fp, lr, [sp], #16"
+        when "pushLRAndFP"
+            $asm.puts "stp fp, lr, [sp, #-16]!"
         when "popCalleeSaves"
-            emitARM64Unflipped("pop", "x28", :ptr)
-            emitARM64Unflipped("pop", "x27", :ptr)
-            emitARM64Unflipped("pop", "x26", :ptr)
-            emitARM64Unflipped("pop", "x25", :ptr)
-            emitARM64Unflipped("pop", "x24", :ptr)
-            emitARM64Unflipped("pop", "x23", :ptr)
-            emitARM64Unflipped("pop", "x22", :ptr)
-            emitARM64Unflipped("pop", "x21", :ptr)
-            emitARM64Unflipped("pop", "x20", :ptr)
-            emitARM64Unflipped("pop", "x19", :ptr)
+            $asm.puts "ldp x28, x27, [sp], #16"
+            $asm.puts "ldp x26, x25, [sp], #16"
+            $asm.puts "ldp x24, x23, [sp], #16"
+            $asm.puts "ldp x22, x21, [sp], #16"
+            $asm.puts "ldp x20, x19, [sp], #16"
         when "pushCalleeSaves"
-            emitARM64Unflipped("push", "x19", :ptr)
-            emitARM64Unflipped("push", "x20", :ptr)
-            emitARM64Unflipped("push", "x21", :ptr)
-            emitARM64Unflipped("push", "x22", :ptr)
-            emitARM64Unflipped("push", "x23", :ptr)
-            emitARM64Unflipped("push", "x24", :ptr)
-            emitARM64Unflipped("push", "x25", :ptr)
-            emitARM64Unflipped("push", "x26", :ptr)
-            emitARM64Unflipped("push", "x27", :ptr)
-            emitARM64Unflipped("push", "x28", :ptr)
+            $asm.puts "stp x20, x19, [sp, #-16]!"
+            $asm.puts "stp x22, x21, [sp, #-16]!"
+            $asm.puts "stp x24, x23, [sp, #-16]!"
+            $asm.puts "stp x26, x25, [sp, #-16]!"
+            $asm.puts "stp x28, x27, [sp, #-16]!"
         when "move"
             if operands[0].immediate?
                 emitARM64MoveImmediate(operands[0].value, operands[1])

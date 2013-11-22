@@ -93,13 +93,11 @@ macro functionPrologue(extraStackSpace)
         push cfr
         move sp, cfr
     elsif ARM64
-        push lr
+        pushLRAndFP
     end
     pushCalleeSaves
     if X86_64
         subp extraStackSpace, sp
-    elsif ARM64
-        push cfr
     end
 end
 
@@ -111,7 +109,7 @@ macro functionEpilogue(extraStackSpace)
     if X86_64
         pop cfr
     elsif ARM64
-        pop lr
+        popLRAndFP
     end
 end
 
