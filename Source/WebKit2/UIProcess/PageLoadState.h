@@ -41,11 +41,6 @@ public:
         Finished
     };
 
-    class Observer {
-    public:
-        virtual ~Observer() { }
-
-    }
     void reset();
 
     const String& provisionalURL() const { return m_provisionalURL; }
