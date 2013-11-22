@@ -99,7 +99,7 @@ public:
     }
     FloatRect bottomLeftCorner() const
     {
-        return FloatRect(m_rect.maxX() - m_radii.topRight().width(), m_rect.y(), m_radii.topRight().width(), m_radii.topRight().height());
+        return FloatRect(m_rect.x(), m_rect.maxY() - m_radii.bottomLeft().height(), m_radii.bottomLeft().width(), m_radii.bottomLeft().height());
     }
     FloatRect bottomRightCorner() const
     {

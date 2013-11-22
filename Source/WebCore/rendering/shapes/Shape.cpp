@@ -259,11 +259,10 @@ PassOwnPtr<Shape> Shape::createShape(const StyleImage* styleImage, float thresho
     return rasterShape.release();
 }
 
-PassOwnPtr<Shape> Shape::createShape(const LayoutSize& logicalSize, const LayoutSize& logicalRadii, WritingMode writingMode, Length margin, Length padding)
+PassOwnPtr<Shape> Shape::createShape(const RoundedRect& roundedRect, WritingMode writingMode, Length margin, Length padding)
 {
-    FloatRect rect(0, 0, logicalSize.width(), logicalSize.height());
-    FloatSize radii(logicalRadii.width(), logicalRadii.height());
-    FloatRoundedRect bounds(rect, radii, radii, radii, radii);
+    FloatRect rect(0, 0, roundedRect.rect().width(), roundedRect.rect().height());
+    FloatRoundedRect bounds(rect, roundedRect.radii().topLeft(), roundedRect.radii().topRight(), roundedRect.radii().bottomLeft(), roundedRect.radii().bottomRight());
 
     OwnPtr<Shape> shape = createBoxShape(bounds);
     shape->m_writingMode = writingMode;

@@ -78,8 +78,8 @@ const Shape* ShapeInfo<RenderType>::computedShape() const
         break;
     case ShapeValue::Box: {
         ASSERT(shapeValue->box());
-        // Bug 124228: Need to derive proper radii from border-radii
-        m_shape = Shape::createShape(m_shapeLogicalSize, LayoutSize(), writingMode, margin, padding);
+        const RoundedRect& shapeRect = m_renderer->style().getRoundedBorderFor(LayoutRect(LayoutPoint(), m_shapeLogicalSize), &(m_renderer->view()));
+        m_shape = Shape::createShape(shapeRect, writingMode, margin, padding);
         break;
     }
     case ShapeValue::Outside:

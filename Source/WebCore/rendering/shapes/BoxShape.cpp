@@ -77,7 +77,7 @@ void BoxShape::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHei
         x2 = std::max<float>(x2, maxXIntercept);
     }
 
-    if (m_marginBounds.xInterceptsAtY(y1, minXIntercept, maxXIntercept)) {
+    if (m_marginBounds.xInterceptsAtY(y2, minXIntercept, maxXIntercept)) {
         x1 = std::min<float>(x1, minXIntercept);
         x2 = std::max<float>(x2, maxXIntercept);
     }
