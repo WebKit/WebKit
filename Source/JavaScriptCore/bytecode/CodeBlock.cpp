@@ -65,8 +65,6 @@
 #include "FTLJITCode.h"
 #endif
 
-#define DUMP_CODE_BLOCK_STATISTICS 0
-
 namespace JSC {
 
 CString CodeBlock::inferredName() const
@@ -1422,10 +1420,6 @@ void CodeBlock::dumpBytecode(PrintStream& out, unsigned bytecodeOffset)
     dumpBytecode(out, exec, instructions().begin(), it);
 }
 
-#if DUMP_CODE_BLOCK_STATISTICS
-static HashSet<CodeBlock*> liveCodeBlockSet;
-#endif
-
 #define FOR_EACH_MEMBER_VECTOR(macro) \
     macro(instructions) \
     macro(callLinkInfos) \
@@ -1449,98 +1443,6 @@ template<typename T>
 static size_t sizeInBytes(const Vector<T>& vector)
 {
     return vector.capacity() * sizeof(T);
-}
-
-void CodeBlock::dumpStatistics()
-{
-#if DUMP_CODE_BLOCK_STATISTICS
-    #define DEFINE_VARS(name) size_t name##IsNotEmpty = 0; size_t name##TotalSize = 0;
-        FOR_EACH_MEMBER_VECTOR(DEFINE_VARS)
-        FOR_EACH_MEMBER_VECTOR_RARE_DATA(DEFINE_VARS)
-    #undef DEFINE_VARS
-
-    // Non-vector data members
-    size_t evalCodeCacheIsNotEmpty = 0;
-
-    size_t symbolTableIsNotEmpty = 0;
-    size_t symbolTableTotalSize = 0;
-
-    size_t hasRareData = 0;
-
-    size_t isFunctionCode = 0;
-    size_t isGlobalCode = 0;
-    size_t isEvalCode = 0;
-
-    HashSet<CodeBlock*>::const_iterator end = liveCodeBlockSet.end();
-    for (HashSet<CodeBlock*>::const_iterator it = liveCodeBlockSet.begin(); it != end; ++it) {
-        CodeBlock* codeBlock = *it;
-
-        #define GET_STATS(name) if (!codeBlock->m_##name.isEmpty()) { name##IsNotEmpty++; name##TotalSize += sizeInBytes(codeBlock->m_##name); }
-            FOR_EACH_MEMBER_VECTOR(GET_STATS)
-        #undef GET_STATS
-
-        if (codeBlock->symbolTable() && !codeBlock->symbolTable()->isEmpty()) {
-            symbolTableIsNotEmpty++;
-            symbolTableTotalSize += (codeBlock->symbolTable()->capacity() * (sizeof(SymbolTable::KeyType) + sizeof(SymbolTable::MappedType)));
-        }
-
-        if (codeBlock->m_rareData) {
-            hasRareData++;
-            #define GET_STATS(name) if (!codeBlock->m_rareData->m_##name.isEmpty()) { name##IsNotEmpty++; name##TotalSize += sizeInBytes(codeBlock->m_rareData->m_##name); }
-                FOR_EACH_MEMBER_VECTOR_RARE_DATA(GET_STATS)
-            #undef GET_STATS
-
-            if (!codeBlock->m_rareData->m_evalCodeCache.isEmpty())
-                evalCodeCacheIsNotEmpty++;
-        }
-
-        switch (codeBlock->codeType()) {
-            case FunctionCode:
-                ++isFunctionCode;
-                break;
-            case GlobalCode:
-                ++isGlobalCode;
-                break;
-            case EvalCode:
-                ++isEvalCode;
-                break;
-        }
-    }
-
-    size_t totalSize = 0;
-
-    #define GET_TOTAL_SIZE(name) totalSize += name##TotalSize;
-        FOR_EACH_MEMBER_VECTOR(GET_TOTAL_SIZE)
-        FOR_EACH_MEMBER_VECTOR_RARE_DATA(GET_TOTAL_SIZE)
-    #undef GET_TOTAL_SIZE
-
-    totalSize += symbolTableTotalSize;
-    totalSize += (liveCodeBlockSet.size() * sizeof(CodeBlock));
-
-    dataLogF("Number of live CodeBlocks: %d\n", liveCodeBlockSet.size());
-    dataLogF("Size of a single CodeBlock [sizeof(CodeBlock)]: %zu\n", sizeof(CodeBlock));
-    dataLogF("Size of all CodeBlocks: %zu\n", totalSize);
-    dataLogF("Average size of a CodeBlock: %zu\n", totalSize / liveCodeBlockSet.size());
-
-    dataLogF("Number of FunctionCode CodeBlocks: %zu (%.3f%%)\n", isFunctionCode, static_cast<double>(isFunctionCode) * 100.0 / liveCodeBlockSet.size());
-    dataLogF("Number of GlobalCode CodeBlocks: %zu (%.3f%%)\n", isGlobalCode, static_cast<double>(isGlobalCode) * 100.0 / liveCodeBlockSet.size());
-    dataLogF("Number of EvalCode CodeBlocks: %zu (%.3f%%)\n", isEvalCode, static_cast<double>(isEvalCode) * 100.0 / liveCodeBlockSet.size());
-
-    dataLogF("Number of CodeBlocks with rare data: %zu (%.3f%%)\n", hasRareData, static_cast<double>(hasRareData) * 100.0 / liveCodeBlockSet.size());
-
-    #define PRINT_STATS(name) dataLogF("Number of CodeBlocks with " #name ": %zu\n", name##IsNotEmpty); dataLogF("Size of all " #name ": %zu\n", name##TotalSize); 
-        FOR_EACH_MEMBER_VECTOR(PRINT_STATS)
-        FOR_EACH_MEMBER_VECTOR_RARE_DATA(PRINT_STATS)
-    #undef PRINT_STATS
-
-    dataLogF("Number of CodeBlocks with evalCodeCache: %zu\n", evalCodeCacheIsNotEmpty);
-    dataLogF("Number of CodeBlocks with symbolTable: %zu\n", symbolTableIsNotEmpty);
-
-    dataLogF("Size of all symbolTables: %zu\n", symbolTableTotalSize);
-
-#else
-    dataLogF("Dumping CodeBlock statistics is not enabled.\n");
-#endif
 }
 
 CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
@@ -1625,10 +1527,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
 
     ASSERT(m_source);
     setNumParameters(unlinkedCodeBlock->numParameters());
-
-#if DUMP_CODE_BLOCK_STATISTICS
-    liveCodeBlockSet.add(this);
-#endif
 
     setConstantRegisters(unlinkedCodeBlock->constantRegisters());
     if (unlinkedCodeBlock->usesGlobalObject())
@@ -1958,10 +1856,6 @@ CodeBlock::~CodeBlock()
     for (Bag<StructureStubInfo>::iterator iter = m_stubInfos.begin(); !!iter; ++iter)
         (*iter)->deref();
 #endif // ENABLE(JIT)
-
-#if DUMP_CODE_BLOCK_STATISTICS
-    liveCodeBlockSet.remove(this);
-#endif
 }
 
 void CodeBlock::setNumParameters(int newValue)

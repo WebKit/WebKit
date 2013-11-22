@@ -146,8 +146,6 @@ public:
 
     void visitAggregate(SlotVisitor&);
 
-    static void dumpStatistics();
-
     void dumpBytecode(PrintStream& = WTF::dataFile());
     void dumpBytecode(PrintStream&, unsigned bytecodeOffset);
     void printStructures(PrintStream&, const Instruction*);
