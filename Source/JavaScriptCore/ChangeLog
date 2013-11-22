@@ -1,3 +1,16 @@
+2013-11-21  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(159395) Fix branch8(…, AbsoluteAddress, …) in ARM64 MacroAssembler
+        https://bugs.webkit.org/show_bug.cgi?id=124688
+
+        Reviewed by Geoffrey Garen.
+
+        Changed handling of the address for the load8() in the branch8(AbsoluteAddress) to be like
+        the rest of the branchXX(AbsoluteAddress) fucntions.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::branch8):
+
 2013-11-21  Filip Pizlo  <fpizlo@apple.com>
 
         BytecodeGenerator should align the stack according to native conventions

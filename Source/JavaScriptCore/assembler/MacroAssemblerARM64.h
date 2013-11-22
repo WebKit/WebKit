@@ -1641,7 +1641,7 @@ public:
     Jump branch8(RelationalCondition cond, AbsoluteAddress left, TrustedImm32 right)
     {
         ASSERT(!(0xffffff00 & right.m_value));
-        load8(left, getCachedMemoryTempRegisterIDAndInvalidate());
+        load8(left.m_ptr, getCachedDataTempRegisterIDAndInvalidate());
         return branch32(cond, memoryTempRegister, right);
     }
     
