@@ -97,14 +97,13 @@ class QueueEngine:
                     self._sleep("No work item.")
                     continue
 
-                # FIXME: Work logs should not depend on bug_id specificaly.
-                #        This looks fixed, no?
-                self._open_work_log(work_item)
                 try:
                     if not self._delegate.process_work_item(work_item):
                         _log.warning("Unable to process work item.")
                         continue
                 except ScriptError, e:
+                    self._open_work_log(work_item)
+                    self._work_log.write(e.message_with_output())
                     # Use a special exit code to indicate that the error was already
                     # handled in the child process and we should just keep looping.
                     if e.exit_code == self.handled_error_code:
@@ -139,12 +138,12 @@ class QueueEngine:
         work_item_log_path = self._delegate.work_item_log_path(work_item)
         if not work_item_log_path:
             return
-        self._work_log = self._output_tee.add_log(work_item_log_path)
+        self._work_log = self._output_tee._open_log_file(work_item_log_path)
 
     def _ensure_work_log_closed(self):
         # If we still have a bug log open, close it.
         if self._work_log:
-            self._output_tee.remove_log(self._work_log)
+            self._work_log.close()
             self._work_log = None
 
     def _now(self):
