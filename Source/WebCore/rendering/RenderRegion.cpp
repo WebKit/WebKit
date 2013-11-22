@@ -183,12 +183,8 @@ LayoutRect RenderRegion::overflowRectForFlowThreadPortion(const LayoutRect& flow
 {
     ASSERT(isValid());
 
-    // FIXME: Would like to just use hasOverflowClip() but we aren't a block yet. When RenderRegion is eliminated and
-    // folded into RenderBlock, switch to hasOverflowClip().
-    bool clipX = style().overflowX() != OVISIBLE;
-    bool clipY = style().overflowY() != OVISIBLE;
     bool isLastRegionWithRegionFragmentBreak = (isLastPortion && (style().regionFragment() == BreakRegionFragment));
-    if ((clipX && clipY) || isLastRegionWithRegionFragmentBreak)
+    if (hasOverflowClip() || isLastRegionWithRegionFragmentBreak)
         return flowThreadPortionRect;
 
     LayoutRect flowThreadOverflow = overflowType == VisualOverflow ? visualOverflowRectForBox(m_flowThread) : layoutOverflowRectForBox(m_flowThread);
@@ -199,12 +195,14 @@ LayoutRect RenderRegion::overflowRectForFlowThreadPortion(const LayoutRect& flow
     if (m_flowThread->isHorizontalWritingMode()) {
         LayoutUnit minY = isFirstPortion ? (flowThreadOverflow.y() - outlineSize) : flowThreadPortionRect.y();
         LayoutUnit maxY = isLastPortion ? std::max(flowThreadPortionRect.maxY(), flowThreadOverflow.maxY()) + outlineSize : flowThreadPortionRect.maxY();
+        bool clipX = style().overflowX() != OVISIBLE;
         LayoutUnit minX = clipX ? flowThreadPortionRect.x() : std::min(flowThreadPortionRect.x(), flowThreadOverflow.x() - outlineSize);
         LayoutUnit maxX = clipX ? flowThreadPortionRect.maxX() : std::max(flowThreadPortionRect.maxX(), (flowThreadOverflow.maxX() + outlineSize));
         clipRect = LayoutRect(minX, minY, maxX - minX, maxY - minY);
     } else {
         LayoutUnit minX = isFirstPortion ? (flowThreadOverflow.x() - outlineSize) : flowThreadPortionRect.x();
         LayoutUnit maxX = isLastPortion ? std::max(flowThreadPortionRect.maxX(), flowThreadOverflow.maxX()) + outlineSize : flowThreadPortionRect.maxX();
+        bool clipY = style().overflowY() != OVISIBLE;
         LayoutUnit minY = clipY ? flowThreadPortionRect.y() : std::min(flowThreadPortionRect.y(), (flowThreadOverflow.y() - outlineSize));
         LayoutUnit maxY = clipY ? flowThreadPortionRect.maxY() : std::max(flowThreadPortionRect.y(), (flowThreadOverflow.maxY() + outlineSize));
         clipRect = LayoutRect(minX, minY, maxX - minX, maxY - minY);
@@ -665,10 +663,8 @@ LayoutRect RenderRegion::rectFlowPortionForBox(const RenderBox* box, const Layou
             mappedRect.setWidth(std::max<LayoutUnit>(0, std::min<LayoutUnit>(logicalBottomForFlowThreadContent() - mappedRect.x(), mappedRect.width())));
     }
 
-    bool clipX = style().overflowX() != OVISIBLE;
-    bool clipY = style().overflowY() != OVISIBLE;
     bool isLastRegionWithRegionFragmentBreak = (isLastRegion() && (style().regionFragment() == BreakRegionFragment));
-    if ((clipX && clipY) || isLastRegionWithRegionFragmentBreak)
+    if (hasOverflowClip() || isLastRegionWithRegionFragmentBreak)
         mappedRect.intersect(flowThreadPortionRect());
 
     return mappedRect.isEmpty() ? mappedRect : m_flowThread->mapFromFlowThreadToLocal(box, mappedRect);
