@@ -4630,7 +4630,7 @@ void SpeculativeJIT::compile(Node* node)
 
         JITCompiler::Jump notCreated = m_jit.branchTest64(JITCompiler::Zero, activationValueGPR);
 
-        SharedSymbolTable* symbolTable = m_jit.symbolTableFor(node->codeOrigin);
+        SymbolTable* symbolTable = m_jit.symbolTableFor(node->codeOrigin);
         int registersOffset = JSActivation::registersOffset(symbolTable);
 
         int bytecodeCaptureStart = symbolTable->captureStart();

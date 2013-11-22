@@ -29,13 +29,13 @@
 #include "config.h"
 #include "SymbolTable.h"
 
-#include "JSCellInlines.h"
 #include "JSDestructibleObject.h"
+#include "Operations.h"
 #include "SlotVisitorInlines.h"
 
 namespace JSC {
 
-const ClassInfo SharedSymbolTable::s_info = { "SharedSymbolTable", 0, 0, 0, CREATE_METHOD_TABLE(SharedSymbolTable) };
+const ClassInfo SymbolTable::s_info = { "SymbolTable", 0, 0, 0, CREATE_METHOD_TABLE(SymbolTable) };
 
 SymbolTableEntry& SymbolTableEntry::copySlow(const SymbolTableEntry& other)
 {
@@ -46,10 +46,10 @@ SymbolTableEntry& SymbolTableEntry::copySlow(const SymbolTableEntry& other)
     return *this;
 }
 
-void SharedSymbolTable::destroy(JSCell* cell)
+void SymbolTable::destroy(JSCell* cell)
 {
-    SharedSymbolTable* thisObject = jsCast<SharedSymbolTable*>(cell);
-    thisObject->SharedSymbolTable::~SharedSymbolTable();
+    SymbolTable* thisObject = jsCast<SymbolTable*>(cell);
+    thisObject->SymbolTable::~SymbolTable();
 }
 
 void SymbolTableEntry::freeFatEntrySlow()
@@ -98,7 +98,15 @@ SymbolTableEntry::FatEntry* SymbolTableEntry::inflateSlow()
     return entry;
 }
 
-SymbolTable::SymbolTable() { }
+SymbolTable::SymbolTable(VM& vm)
+    : JSCell(vm, vm.symbolTableStructure.get())
+    , m_parameterCountIncludingThis(0)
+    , m_usesNonStrictEval(false)
+    , m_captureStart(0)
+    , m_captureEnd(0)
+{
+}
+
 SymbolTable::~SymbolTable() { }
 
 } // namespace JSC

@@ -61,7 +61,7 @@ protected:
         Structure* structure,
         Register* registers,
         JSScope* scope,
-        SharedSymbolTable* symbolTable = 0)
+        SymbolTable* symbolTable = 0)
         : Base(vm, structure, scope, symbolTable)
         , m_registers(reinterpret_cast<WriteBarrierBase<Unknown>*>(registers))
     {

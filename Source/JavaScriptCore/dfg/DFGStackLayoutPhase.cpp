@@ -46,7 +46,7 @@ public:
     
     bool run()
     {
-        SharedSymbolTable* symbolTable = codeBlock()->symbolTable();
+        SymbolTable* symbolTable = codeBlock()->symbolTable();
 
         // This enumerates the locals that we actually care about and packs them. So for example
         // if we use local 1, 3, 4, 5, 7, then we remap them: 1->0, 3->1, 4->2, 5->3, 7->4. We

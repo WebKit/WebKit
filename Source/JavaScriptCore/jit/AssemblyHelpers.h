@@ -435,7 +435,7 @@ public:
         return baselineArgumentsRegisterFor(codeOrigin.inlineCallFrame);
     }
     
-    SharedSymbolTable* symbolTableFor(const CodeOrigin& codeOrigin)
+    SymbolTable* symbolTableFor(const CodeOrigin& codeOrigin)
     {
         return baselineCodeBlockFor(codeOrigin)->symbolTable();
     }

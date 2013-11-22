@@ -39,7 +39,7 @@ class JSSymbolTableObject : public JSScope {
 public:
     typedef JSScope Base;
     
-    SharedSymbolTable* symbolTable() const { return m_symbolTable.get(); }
+    SymbolTable* symbolTable() const { return m_symbolTable.get(); }
     
     JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, ExecState*, PropertyName);
     JS_EXPORT_PRIVATE static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
@@ -47,7 +47,7 @@ public:
 protected:
     static const unsigned StructureFlags = IsEnvironmentRecord | OverridesVisitChildren | OverridesGetPropertyNames | Base::StructureFlags;
     
-    JSSymbolTableObject(VM& vm, Structure* structure, JSScope* scope, SharedSymbolTable* symbolTable = 0)
+    JSSymbolTableObject(VM& vm, Structure* structure, JSScope* scope, SymbolTable* symbolTable = 0)
         : Base(vm, structure, scope)
     {
         if (symbolTable)
@@ -58,12 +58,12 @@ protected:
     {
         Base::finishCreation(vm);
         if (!m_symbolTable)
-            m_symbolTable.set(vm, this, SharedSymbolTable::create(vm));
+            m_symbolTable.set(vm, this, SymbolTable::create(vm));
     }
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    WriteBarrier<SharedSymbolTable> m_symbolTable;
+    WriteBarrier<SymbolTable> m_symbolTable;
 };
 
 template<typename SymbolTableObjectType>

@@ -251,7 +251,7 @@ inline void Arguments::finishCreation(CallFrame* callFrame)
 
     CodeBlock* codeBlock = callFrame->codeBlock();
     if (codeBlock->hasSlowArguments()) {
-        SharedSymbolTable* symbolTable = codeBlock->symbolTable();
+        SymbolTable* symbolTable = codeBlock->symbolTable();
         const SlowArgument* slowArguments = codeBlock->machineSlowArguments();
         allocateSlowArguments();
         size_t count = std::min<unsigned>(m_numArguments, symbolTable->parameterCount());

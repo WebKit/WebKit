@@ -55,7 +55,7 @@ struct ParserError;
 class ScriptExecutable;
 class SourceCode;
 class SourceProvider;
-class SharedSymbolTable;
+class SymbolTable;
 class UnlinkedCodeBlock;
 class UnlinkedFunctionCodeBlock;
 
@@ -93,7 +93,7 @@ public:
     const Identifier& name() const { return m_name; }
     const Identifier& inferredName() const { return m_inferredName; }
     JSString* nameValue() const { return m_nameValue.get(); }
-    SharedSymbolTable* symbolTable(CodeSpecializationKind kind)
+    SymbolTable* symbolTable(CodeSpecializationKind kind)
     {
         return (kind == CodeForCall) ? m_symbolTableForCall.get() : m_symbolTableForConstruct.get();
     }
@@ -156,8 +156,8 @@ private:
     Identifier m_name;
     Identifier m_inferredName;
     WriteBarrier<JSString> m_nameValue;
-    WriteBarrier<SharedSymbolTable> m_symbolTableForCall;
-    WriteBarrier<SharedSymbolTable> m_symbolTableForConstruct;
+    WriteBarrier<SymbolTable> m_symbolTableForCall;
+    WriteBarrier<SymbolTable> m_symbolTableForConstruct;
     RefPtr<FunctionParameters> m_parameters;
     unsigned m_firstLineOffset;
     unsigned m_lineCount;
@@ -383,7 +383,7 @@ public:
     void addExceptionHandler(const UnlinkedHandlerInfo& hanler) { createRareDataIfNecessary(); return m_rareData->m_exceptionHandlers.append(hanler); }
     UnlinkedHandlerInfo& exceptionHandler(int index) { ASSERT(m_rareData); return m_rareData->m_exceptionHandlers[index]; }
 
-    SharedSymbolTable* symbolTable() const { return m_symbolTable.get(); }
+    SymbolTable* symbolTable() const { return m_symbolTable.get(); }
 
     VM* vm() const { return m_vm; }
 
@@ -469,7 +469,7 @@ protected:
         Base::finishCreation(vm);
         if (codeType() == GlobalCode)
             return;
-        m_symbolTable.set(vm, this, SharedSymbolTable::create(vm));
+        m_symbolTable.set(vm, this, SymbolTable::create(vm));
     }
 
 private:
@@ -512,7 +512,7 @@ private:
     FunctionExpressionVector m_functionDecls;
     FunctionExpressionVector m_functionExprs;
 
-    WriteBarrier<SharedSymbolTable> m_symbolTable;
+    WriteBarrier<SymbolTable> m_symbolTable;
 
     Vector<unsigned> m_propertyAccessInstructions;
 

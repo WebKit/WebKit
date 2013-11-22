@@ -722,7 +722,7 @@ public:
     StringJumpTable& stringSwitchJumpTable(int tableIndex) { RELEASE_ASSERT(m_rareData); return m_rareData->m_stringSwitchJumpTables[tableIndex]; }
 
 
-    SharedSymbolTable* symbolTable() const { return m_unlinkedCode->symbolTable(); }
+    SymbolTable* symbolTable() const { return m_unlinkedCode->symbolTable(); }
 
     EvalCodeCache& evalCodeCache() { createRareDataIfNecessary(); return m_rareData->m_evalCodeCache; }
 

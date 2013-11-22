@@ -1,3 +1,54 @@
+2013-11-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Combine SymbolTable and SharedSymbolTable
+        https://bugs.webkit.org/show_bug.cgi?id=124761
+
+        Reviewed by Geoffrey Garen.
+        
+        SymbolTable was never used directly; we now always used SharedSymbolTable. So, this
+        gets rid of SymbolTable and renames SharedSymbolTable to SymbolTable.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::symbolTable):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedFunctionExecutable::symbolTable):
+        (JSC::UnlinkedCodeBlock::symbolTable):
+        (JSC::UnlinkedCodeBlock::finishCreation):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::symbolTable):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::symbolTableFor):
+        * runtime/Arguments.h:
+        (JSC::Arguments::finishCreation):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::symbolTable):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::create):
+        (JSC::JSActivation::JSActivation):
+        (JSC::JSActivation::registersOffset):
+        (JSC::JSActivation::allocationSize):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::JSSymbolTableObject::symbolTable):
+        (JSC::JSSymbolTableObject::JSSymbolTableObject):
+        (JSC::JSSymbolTableObject::finishCreation):
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::JSVariableObject):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::destroy):
+        (JSC::SymbolTable::SymbolTable):
+        * runtime/SymbolTable.h:
+        (JSC::SymbolTable::create):
+        (JSC::SymbolTable::createStructure):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2013-11-22  Mark Lam  <mark.lam@apple.com>
 
         Remove residual references to "dynamicGlobalObject".

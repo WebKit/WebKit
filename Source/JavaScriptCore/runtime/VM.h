@@ -264,7 +264,7 @@ namespace JSC {
         Strong<Structure> programExecutableStructure;
         Strong<Structure> functionExecutableStructure;
         Strong<Structure> regExpStructure;
-        Strong<Structure> sharedSymbolTableStructure;
+        Strong<Structure> symbolTableStructure;
         Strong<Structure> structureChainStructure;
         Strong<Structure> sparseArrayValueMapStructure;
         Strong<Structure> withScopeStructure;

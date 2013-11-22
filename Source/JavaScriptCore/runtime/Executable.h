@@ -639,7 +639,7 @@ public:
     JSString* nameValue() const { return m_unlinkedExecutable->nameValue(); }
     size_t parameterCount() const { return m_unlinkedExecutable->parameterCount(); } // Excluding 'this'!
     String paramString() const;
-    SharedSymbolTable* symbolTable(CodeSpecializationKind kind) const { return m_unlinkedExecutable->symbolTable(kind); }
+    SymbolTable* symbolTable(CodeSpecializationKind kind) const { return m_unlinkedExecutable->symbolTable(kind); }
 
     void clearCodeIfNotCompiling();
     void clearUnlinkedCodeForRecompilationIfNotCompiling();

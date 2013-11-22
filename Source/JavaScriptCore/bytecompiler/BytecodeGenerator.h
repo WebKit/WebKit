@@ -534,7 +534,7 @@ namespace JSC {
 
         Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow>& instructions() { return m_instructions; }
 
-        SharedSymbolTable& symbolTable() { return *m_symbolTable; }
+        SymbolTable& symbolTable() { return *m_symbolTable; }
 
         bool shouldOptimizeLocals()
         {
@@ -577,7 +577,7 @@ namespace JSC {
         bool m_shouldEmitDebugHooks;
         bool m_shouldEmitProfileHooks;
 
-        SharedSymbolTable* m_symbolTable;
+        SymbolTable* m_symbolTable;
 
         ScopeNode* m_scopeNode;
         Strong<UnlinkedCodeBlock> m_codeBlock;
