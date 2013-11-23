@@ -103,7 +103,7 @@ public:
 
     WebPageProxy* page() { return m_page.get(); }
 
-    void didChangeContentsSize(const WebCore::IntSize&);
+    void didChangeContentSize(const WebCore::IntSize&);
     const WebCore::IntSize& contentsSize() const { return m_contentsSize; }
     WebCore::FloatSize visibleContentsSize() const;
     void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);

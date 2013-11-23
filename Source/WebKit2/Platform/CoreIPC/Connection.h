@@ -33,6 +33,7 @@
 #include "MessageEncoder.h"
 #include "MessageReceiver.h"
 #include "WorkQueue.h"
+#include <atomic>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>

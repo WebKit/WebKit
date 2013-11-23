@@ -211,7 +211,7 @@ void WebView::initializeClient(const WKViewClient* client)
     m_client.initialize(client);
 }
 
-void WebView::didChangeContentsSize(const WebCore::IntSize& size)
+void WebView::didChangeContentSize(const WebCore::IntSize& size)
 {
     if (m_contentsSize == size)
         return;

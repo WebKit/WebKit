@@ -1,3 +1,16 @@
+2013-11-22  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Build break after r159724
+        https://bugs.webkit.org/show_bug.cgi?id=124806
+
+        Reviewed by Tim Horton.
+
+        * Platform/CoreIPC/Connection.h: Include atomic header.
+        * UIProcess/CoordinatedGraphics/WebView.cpp: Rename didChangeContentsSize to didChangeContentSize.
+        (WebKit::WebView::didChangeContentSize):
+        * UIProcess/CoordinatedGraphics/WebView.h: Ditto.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h: Adjust TARGET_OS_IPHONE macro.
+
 2013-11-22  Tim Horton  <timothy_horton@apple.com>
 
         Attempt build fixes for 32-bit after 159724.
