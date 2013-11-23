@@ -100,7 +100,7 @@ public:
     void notifyPlayerOfVideoCaps();
     void notifyPlayerOfAudio();
 
-#if ENABLE(VIDEO_TRACK) && defined(GST_API_VERSION_1)
+#if ENABLE(VIDEO_TRACK)
     void textChanged();
     void notifyPlayerOfText();
 
@@ -143,7 +143,7 @@ private:
 
     void setDownloadBuffering();
     void processBufferingStats(GstMessage*);
-#if ENABLE(VIDEO_TRACK) && defined(GST_API_VERSION_1)
+#if ENABLE(VIDEO_TRACK)
     void processTableOfContents(GstMessage*);
     void processTableOfContentsEntry(GstTocEntry*, GstTocEntry* parent);
 #endif
@@ -154,7 +154,7 @@ private:
 private:
     GRefPtr<GstElement> m_playBin;
     GRefPtr<GstElement> m_source;
-#if ENABLE(VIDEO_TRACK) && defined(GST_API_VERSION_1)
+#if ENABLE(VIDEO_TRACK)
     GRefPtr<GstElement> m_textAppSink;
     GRefPtr<GstPad> m_textAppSinkPad;
 #endif
@@ -198,7 +198,7 @@ private:
     GstState m_requestedState;
     GRefPtr<GstElement> m_autoAudioSink;
     bool m_missingPlugins;
-#if ENABLE(VIDEO_TRACK) && defined(GST_API_VERSION_1)
+#if ENABLE(VIDEO_TRACK)
     Vector<RefPtr<AudioTrackPrivateGStreamer>> m_audioTracks;
     Vector<RefPtr<InbandTextTrackPrivateGStreamer>> m_textTracks;
     Vector<RefPtr<VideoTrackPrivateGStreamer>> m_videoTracks;

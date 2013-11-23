@@ -1,3 +1,167 @@
+2013-11-23  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] Remove 0.10 codepath
+        https://bugs.webkit.org/show_bug.cgi?id=124534
+
+        Reviewed by Philippe Normand.
+
+        All GStreamer ports are using 1.0 now so we remove the 0.10
+        codepath.
+
+        * GNUmakefile.list.am:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Removed
+        GStreamerVersioning.
+        * platform/audio/gstreamer/AudioDestinationGStreamer.cpp:
+        (onGStreamerWavparsePadAddedCallback): Removed.
+        (WebCore::AudioDestinationGStreamer::AudioDestinationGStreamer):
+        Replaced webkitGstPipelineGetBus and removed 0.10 codepath.
+        (WebCore::AudioDestinationGStreamer::~AudioDestinationGStreamer):
+        Replaced webkitGstPipelineGetBus.
+        * platform/audio/gstreamer/AudioFileReaderGStreamer.cpp:
+        (WebCore::copyGstreamerBuffersToAudioChannel):
+        (WebCore::onAppsinkPullRequiredCallback): Removed 0.10 codepath.
+        (WebCore::AudioFileReader::~AudioFileReader): Replaced
+        webkitGstPipelineGetBus and removed 0.10 codepath.
+        (WebCore::AudioFileReader::handleSample): Left as only codepath.
+        (WebCore::AudioFileReader::handleBuffer): Removed.
+        (WebCore::AudioFileReader::handleNewDeinterleavePad): Removed 0.10
+        codepath.
+        (WebCore::AudioFileReader::plugDeinterleave): Replaced
+        getGstAudioCaps.
+        (WebCore::AudioFileReader::decodeAudioForBusCreation): Replaced
+        webkitGstPipelineGetBus.
+        (WebCore::AudioFileReader::createBus): Removed 0.10 codepath.
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (getGStreamerMonoAudioCaps):
+        (webKitWebAudioGStreamerChannelPosition): Removed 0.10 codepath.
+        (webkit_web_audio_src_class_init): Replaced
+        setGstElementClassMetadata.
+        (webkit_web_audio_src_init):
+        (webKitWebAudioSrcConstructed):
+        (webKitWebAudioSrcFinalize):
+        (webKitWebAudioSrcLoop): Removed 0.10 codepath.
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp:
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.h:
+        Removed checks for 1.0 as it is the only codepath now.
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::GstElement):
+        (WTF::GstPad):
+        (WTF::GstPadTemplate):
+        (WTF::GstTask):
+        (WTF::GstBus):
+        (WTF::GstElementFactory):
+        (WTF::adoptGRef): Replaced gstObjectIsFloating.
+        (WTF::refGRef): Replaced webkitGstObjectRefSink.
+        (WTF::GstTagList):
+        (WTF::GstSample): Removed checks for 1.0 as it is the only
+        codepath now.
+        * platform/graphics/gstreamer/GRefPtrGStreamer.h: Removed checks
+        for 1.0 as it is the only codepath now.
+        * platform/graphics/gstreamer/GStreamerUtilities.cpp:
+        (WebCore::webkitGstGhostPadFromStaticTemplate):
+        (WebCore::getVideoSizeAndFormatFromCaps):
+        (WebCore::createGstBuffer):
+        (WebCore::createGstBufferForData):
+        (WebCore::getGstBufferDataPointer):
+        (WebCore::mapGstBuffer):
+        (WebCore::unmapGstBuffer): Moved here from GstVersioning and added
+        to WebCore namespace.
+        * platform/graphics/gstreamer/GStreamerUtilities.h:
+        (WebCore::webkitGstCheckVersion): Moved here from GstVersioning
+        and added to WebCore namespace.
+        * platform/graphics/gstreamer/GStreamerVersioning.cpp: Removed.
+        * platform/graphics/gstreamer/GStreamerVersioning.h: Removed.
+        * platform/graphics/gstreamer/ImageGStreamer.h: Removed checks for
+        1.0 as it is the only codepath now.
+        * platform/graphics/gstreamer/ImageGStreamerCairo.cpp:
+        (ImageGStreamer::ImageGStreamer): Removed 0.10 codepath.
+        (ImageGStreamer::~ImageGStreamer): Removed checks for 1.0 as it is
+        the only codepath now.
+        * platform/graphics/gstreamer/InbandMetadataTextTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp:
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.h:
+        Removed checks for 1.0 as it is the only codepath now.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::setAudioStreamPropertiesCallback): Removed 0.10 codepath.
+        (WebCore::mediaPlayerPrivateTextChangedCallback): Removed checks
+        for 1.0 as it is the only codepath now.
+        (WebCore::MediaPlayerPrivateGStreamer::isAvailable): Replaced
+        gPlaybinName.
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        Removed checks for 1.0 and replaced webkitGstPipelineGetBus.
+        (WebCore::MediaPlayerPrivateGStreamer::duration): Removed 0.10
+        codepath.
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideo):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfAudio):
+        (WebCore::MediaPlayerPrivateGStreamer::textChanged):
+        Removed checks for 1.0 as it is the only codepath now.
+        (WebCore::MediaPlayerPrivateGStreamer::buffered): Replaced
+        gPercentMax.
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage): Removed
+        0.10 codepath.
+        (WebCore::MediaPlayerPrivateGStreamer::processTableOfContents):
+        Removed checks for 1.0 as it is the only codepath now.
+        (WebCore::MediaPlayerPrivateGStreamer::totalBytes): Removed 0.10
+        codepath.
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin): Replaced
+        gPlaybinName and webkitGstPipelineGetBus and removed checks for
+        1.0.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        Removed checks for 1.0 as it is the only codepath now.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::naturalSize):
+        (WebCore::MediaPlayerPrivateGStreamerBase::updateTexture):
+        (WebCore::MediaPlayerPrivateGStreamerBase::paint): Removed 0.10
+        codepath.
+        * platform/graphics/gstreamer/TextCombinerGStreamer.cpp:
+        * platform/graphics/gstreamer/TextCombinerGStreamer.h:
+        * platform/graphics/gstreamer/TextSinkGStreamer.cpp:
+        * platform/graphics/gstreamer/TextSinkGStreamer.h:
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.h: Removed
+        checks for 1.0 as it is the only codepath now.
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (webkitVideoSinkRender): Removed 0.10 codepath and added WebCore
+        as createGstBuffer namespace.
+        (webkitVideoSinkSetCaps): Removed 0.10 codepath.
+        (webkitVideoSinkProposeAllocation): Removed checks for 1.0 as it
+        is the only codepath now.
+        (webkitVideoSinkMarshalVoidAndMiniObject): Removed as it was 0.10.
+        (webkit_video_sink_class_init): Removed 0.10 codepath and replaced
+        setGstElementClassMetadata.
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp:
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.h:
+        Removed checks for 1.0 as it is the only codepath now.
+        * platform/graphics/gstreamer/WebKitMediaSourceGStreamer.cpp:
+        (webkit_media_src_class_init): Replaced
+        setGstElementClassMetadata.
+        (webKitMediaSrcAddSrc): Added WebCore namespace to
+        webkitGstGhostPadFromStaticTemplate.
+        (MediaSourceClientGstreamer::didReceiveData): Added WebCore
+        namespace to createGstBufferForData.
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        Removed 0.10 codepath.
+        (webKitWebSrcQuery): Removed as it was 0.10 only.
+        (void webkit_web_src_class_init): Replaced setGstElementClassMetadata.
+        (webkit_web_src_init): Removed haveAppSrc27 private attribute and
+        0.10 codepath.
+        (webKitWebSrcStop): Removed checks for 1.0 as it is the only
+        codepath now.
+        (webKitWebSrcSetProperty):
+        (webKitWebSrcUriGetType):
+        (webKitWebSrcGetProtocols):
+        (webKitWebSrcGetUri):
+        (webKitWebSrcSetUri): Removed 0.10 codepath.
+        (StreamingClient::createReadBuffer): Removed checks for 1.0 and
+        replaced getGstBufferSize.
+        (StreamingClient::handleResponseReceived): Removed 0.10 codepath
+        and replaced notifyGstTagsOnPad.
+        (StreamingClient::handleDataReceived): Removed 0.10 codepath and
+        replaced setGstBufferSize and gst_buffer_get_size.
+
 2013-11-22  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Can't drag full-screen video to another monitor

@@ -28,7 +28,6 @@
 
 #include "ColorSpace.h"
 #include "GStreamerUtilities.h"
-#include "GStreamerVersioning.h"
 #include "GraphicsContext.h"
 #include "GraphicsTypes.h"
 #include "ImageGStreamer.h"
@@ -41,11 +40,7 @@
 #include <gst/gst.h>
 #include <wtf/text/CString.h>
 
-#ifdef GST_API_VERSION_1
 #include <gst/audio/streamvolume.h>
-#else
-#include <gst/interfaces/streamvolume.h>
-#endif
 
 #if GST_CHECK_VERSION(1, 1, 0) && USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
 #include "TextureMapperGL.h"
@@ -164,13 +159,7 @@ IntSize MediaPlayerPrivateGStreamerBase::naturalSize() const
     if (!m_videoSize.isEmpty())
         return m_videoSize;
 
-#ifdef GST_API_VERSION_1
     GRefPtr<GstCaps> caps = currentVideoSinkCaps();
-#else
-    g_mutex_lock(m_bufferMutex);
-    GRefPtr<GstCaps> caps = m_buffer ? GST_BUFFER_CAPS(m_buffer) : 0;
-    g_mutex_unlock(m_bufferMutex);
-#endif
     if (!caps)
         return IntSize();
 
@@ -324,11 +313,7 @@ PassRefPtr<BitmapTexture> MediaPlayerPrivateGStreamerBase::updateTexture(Texture
     }
 
     const void* srcData = 0;
-#ifdef GST_API_VERSION_1
     GRefPtr<GstCaps> caps = currentVideoSinkCaps();
-#else
-    GRefPtr<GstCaps> caps = GST_BUFFER_CAPS(m_buffer);
-#endif
     if (!caps) {
         g_mutex_unlock(m_bufferMutex);
         return 0;
@@ -359,19 +344,13 @@ PassRefPtr<BitmapTexture> MediaPlayerPrivateGStreamerBase::updateTexture(Texture
     }
 #endif
 
-#ifdef GST_API_VERSION_1
     GstMapInfo srcInfo;
     gst_buffer_map(m_buffer, &srcInfo, GST_MAP_READ);
     srcData = srcInfo.data;
-#else
-    srcData = GST_BUFFER_DATA(m_buffer);
-#endif
 
     texture->updateContents(srcData, WebCore::IntRect(WebCore::IntPoint(0, 0), size), WebCore::IntPoint(0, 0), stride, BitmapTexture::UpdateCannotModifyOriginalImageData);
 
-#ifdef GST_API_VERSION_1
     gst_buffer_unmap(m_buffer, &srcInfo);
-#endif
 
     g_mutex_unlock(m_bufferMutex);
     return texture;
@@ -420,11 +399,7 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext* context, const IntR
         return;
     }
 
-#ifdef GST_API_VERSION_1
     GRefPtr<GstCaps> caps = currentVideoSinkCaps();
-#else
-    GRefPtr<GstCaps> caps = GST_BUFFER_CAPS(m_buffer);
-#endif
     if (!caps) {
         g_mutex_unlock(m_bufferMutex);
         return;

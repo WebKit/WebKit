@@ -18,6 +18,9 @@
 
 #include "Logging.h"
 
+#include <gst/gst.h>
+#include <gst/video/video.h>
+
 #define LOG_MEDIA_MESSAGE(...) do { \
     GST_DEBUG(__VA_ARGS__); \
     LOG_VERBOSE(Media, __VA_ARGS__); } while (0)
@@ -35,5 +38,39 @@
     LOG_VERBOSE(Media, __VA_ARGS__); } while (0)
 
 namespace WebCore {
+
+class IntSize;
+
+inline bool webkitGstCheckVersion(guint major, guint minor, guint micro)
+{
+    guint currentMajor, currentMinor, currentMicro, currentNano;
+    gst_version(&currentMajor, &currentMinor, &currentMicro, &currentNano);
+
+    if (currentMajor < major)
+        return false;
+    if (currentMajor > major)
+        return true;
+
+    if (currentMinor < minor)
+        return false;
+    if (currentMinor > minor)
+        return true;
+
+    if (currentMicro < micro)
+        return false;
+
+    return true;
+}
+
+GstPad* webkitGstGhostPadFromStaticTemplate(GstStaticPadTemplate*, const gchar* name, GstPad* target);
+#if ENABLE(VIDEO)
+bool getVideoSizeAndFormatFromCaps(GstCaps*, WebCore::IntSize&, GstVideoFormat&, int& pixelAspectRatioNumerator, int& pixelAspectRatioDenominator, int& stride);
+#endif
+GstBuffer* createGstBuffer(GstBuffer*);
+GstBuffer* createGstBufferForData(const char* data, int length);
+char* getGstBufferDataPointer(GstBuffer*);
+void mapGstBuffer(GstBuffer*);
+void unmapGstBuffer(GstBuffer*);
 bool initializeGStreamer();
+
 }

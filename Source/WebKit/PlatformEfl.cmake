@@ -113,7 +113,6 @@ list(APPEND WebKit_SOURCES
     efl/WebCoreSupport/EditorClientEfl.cpp
     efl/WebCoreSupport/FrameLoaderClientEfl.cpp
     efl/WebCoreSupport/FrameNetworkingContextEfl.cpp
-    efl/WebCoreSupport/FullscreenVideoControllerEfl.cpp
     efl/WebCoreSupport/IconDatabaseClientEfl.cpp
     efl/WebCoreSupport/InspectorClientEfl.cpp
     efl/WebCoreSupport/NavigatorContentUtilsClientEfl.cpp

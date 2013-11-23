@@ -7072,9 +7072,6 @@
     <ClCompile Include="..\platform\graphics\gstreamer\GStreamerUtilities.cpp">
       <Filter>platform\graphics\gstreamer</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\gstreamer\GStreamerVersioning.cpp">
-      <Filter>platform\graphics\gstreamer</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\graphics\gstreamer\ImageGStreamerCairo.cpp">
       <Filter>platform\graphics\gstreamer</Filter>
     </ClCompile>
@@ -14904,9 +14901,6 @@
       <Filter>platform\graphics\gstreamer</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\gstreamer\GStreamerUtilities.h">
-      <Filter>platform\graphics\gstreamer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\gstreamer\GStreamerVersioning.h">
       <Filter>platform\graphics\gstreamer</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\gstreamer\ImageGStreamer.h">

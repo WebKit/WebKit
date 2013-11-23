@@ -26,7 +26,7 @@
 #ifndef TextSinkGStreamer_h
 #define TextSinkGStreamer_h
 
-#if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK) && defined(GST_API_VERSION_1)
+#if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)
 
 #include <glib-object.h>
 #include <gst/app/gstappsink.h>
@@ -61,5 +61,5 @@ struct _WebKitTextSinkClass {
 
 GstElement* webkitTextSinkNew();
 
-#endif // ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK) && defined(GST_API_VERSION_1)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)
 #endif

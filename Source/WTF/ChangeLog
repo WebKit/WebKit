@@ -1,3 +1,13 @@
+2013-11-23  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] Remove 0.10 codepath
+        https://bugs.webkit.org/show_bug.cgi?id=124534
+
+        Reviewed by Philippe Normand.
+
+        * wtf/Platform.h: Removed macro for GStreamer 1.0 as it is the
+        only codepath now.
+
 2013-11-21  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Remove ENABLE_WORKERS

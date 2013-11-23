@@ -28,7 +28,7 @@
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "GRefPtrGStreamer.h"
-#include "GStreamerVersioning.h"
+#include "GStreamerUtilities.h"
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
 #include "ResourceHandle.h"
@@ -138,10 +138,6 @@ struct _WebKitWebSrcPrivate {
     gchar* iradioGenre;
     gchar* iradioUrl;
     gchar* iradioTitle;
-
-    // TRUE if appsrc's version is >= 0.10.27, see
-    // https://bugzilla.gnome.org/show_bug.cgi?id=609423
-    gboolean haveAppSrc27;
 };
 
 enum {
@@ -170,9 +166,6 @@ static void webKitWebSrcGetProperty(GObject*, guint propertyID, GValue*, GParamS
 static GstStateChangeReturn webKitWebSrcChangeState(GstElement*, GstStateChange);
 
 static gboolean webKitWebSrcQueryWithParent(GstPad*, GstObject*, GstQuery*);
-#ifndef GST_API_VERSION_1
-static gboolean webKitWebSrcQuery(GstPad*, GstQuery*);
-#endif
 
 static void webKitWebSrcNeedDataCb(GstAppSrc*, guint length, gpointer userData);
 static void webKitWebSrcEnoughDataCb(GstAppSrc*, gpointer userData);
@@ -204,7 +197,7 @@ static void webkit_web_src_class_init(WebKitWebSrcClass* klass)
 
     gst_element_class_add_pad_template(eklass,
                                        gst_static_pad_template_get(&srcTemplate));
-    setGstElementClassMetadata(eklass, "WebKit Web source element", "Source", "Handles HTTP/HTTPS uris",
+    gst_element_class_set_metadata(eklass, "WebKit Web source element", "Source", "Handles HTTP/HTTPS uris",
                                "Sebastian Dröge <sebastian.droege@collabora.co.uk>");
 
     // icecast stuff
@@ -275,9 +268,6 @@ static void webkit_web_src_init(WebKitWebSrc* src)
         return;
     }
 
-    GstElementFactory* factory = GST_ELEMENT_FACTORY(GST_ELEMENT_GET_CLASS(priv->appsrc)->elementfactory);
-    priv->haveAppSrc27 = gst_plugin_feature_check_version(GST_PLUGIN_FEATURE(factory), 0, 10, 27);
-
     gst_bin_add(GST_BIN(src), GST_ELEMENT(priv->appsrc));
 
 
@@ -286,12 +276,8 @@ static void webkit_web_src_init(WebKitWebSrc* src)
 
     gst_element_add_pad(GST_ELEMENT(src), priv->srcpad);
 
-#ifdef GST_API_VERSION_1
     GST_OBJECT_FLAG_SET(priv->srcpad, GST_PAD_FLAG_NEED_PARENT);
     gst_pad_set_query_function(priv->srcpad, webKitWebSrcQueryWithParent);
-#else
-    gst_pad_set_query_function(priv->srcpad, webKitWebSrcQuery);
-#endif
 
     gst_app_src_set_callbacks(priv->appsrc, &appsrcCallbacks, src, 0);
     gst_app_src_set_emit_signals(priv->appsrc, FALSE);
@@ -314,8 +300,7 @@ static void webkit_web_src_init(WebKitWebSrc* src)
     // likely that libsoup already provides new data before
     // the queue is really empty.
     // This might need tweaking for ports not using libsoup.
-    if (priv->haveAppSrc27)
-        g_object_set(priv->appsrc, "min-percent", 20, NULL);
+    g_object_set(priv->appsrc, "min-percent", 20, NULL);
 
     gst_app_src_set_caps(priv->appsrc, 0);
     gst_app_src_set_size(priv->appsrc, -1);
@@ -353,11 +338,7 @@ static void webKitWebSrcSetProperty(GObject* object, guint propID, const GValue*
         break;
     }
     case PROP_LOCATION:
-#ifdef GST_API_VERSION_1
         gst_uri_handler_set_uri(reinterpret_cast<GstURIHandler*>(src), g_value_get_string(value), 0);
-#else
-        gst_uri_handler_set_uri(reinterpret_cast<GstURIHandler*>(src), g_value_get_string(value));
-#endif
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, pspec);
@@ -436,9 +417,7 @@ static gboolean webKitWebSrcStop(WebKitWebSrc* src)
     }
 
     if (priv->buffer) {
-#ifdef GST_API_VERSION_1
         unmapGstBuffer(priv->buffer.get());
-#endif
         priv->buffer.clear();
     }
 
@@ -638,14 +617,6 @@ static gboolean webKitWebSrcQueryWithParent(GstPad* pad, GstObject* parent, GstQ
     return result;
 }
 
-#ifndef GST_API_VERSION_1
-static gboolean webKitWebSrcQuery(GstPad* pad, GstQuery* query)
-{
-    GRefPtr<GstElement> src = adoptGRef(gst_pad_get_parent_element(pad));
-    return webKitWebSrcQueryWithParent(pad, GST_OBJECT(src.get()), query);
-}
-#endif
-
 static bool urlHasSupportedProtocol(const URL& url)
 {
     return url.isValid() && (url.protocolIsInHTTPFamily() || url.protocolIs("blob"));
@@ -653,7 +624,6 @@ static bool urlHasSupportedProtocol(const URL& url)
 
 // uri handler interface
 
-#ifdef GST_API_VERSION_1
 static GstURIType webKitWebSrcUriGetType(GType)
 {
     return GST_URI_SRC;
@@ -702,57 +672,6 @@ static gboolean webKitWebSrcSetUri(GstURIHandler* handler, const gchar* uri, GEr
     priv->uri = g_strdup(url.string().utf8().data());
     return TRUE;
 }
-
-#else
-static GstURIType webKitWebSrcUriGetType(void)
-{
-    return GST_URI_SRC;
-}
-
-static gchar** webKitWebSrcGetProtocols(void)
-{
-    static gchar* protocols[] = {(gchar*) "http", (gchar*) "https", (gchar*) "blob", 0 };
-    return protocols;
-}
-
-static const gchar* webKitWebSrcGetUri(GstURIHandler* handler)
-{
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(handler);
-    gchar* ret;
-
-    GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
-    ret = g_strdup(src->priv->uri);
-    return ret;
-}
-
-static gboolean webKitWebSrcSetUri(GstURIHandler* handler, const gchar* uri)
-{
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(handler);
-    WebKitWebSrcPrivate* priv = src->priv;
-
-    if (GST_STATE(src) >= GST_STATE_PAUSED) {
-        GST_ERROR_OBJECT(src, "URI can only be set in states < PAUSED");
-        return FALSE;
-    }
-
-    GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
-
-    g_free(priv->uri);
-    priv->uri = 0;
-
-    if (!uri)
-        return TRUE;
-
-    URL url(URL(), uri);
-    if (!urlHasSupportedProtocol(url)) {
-        GST_ERROR_OBJECT(src, "Invalid URI '%s'", uri);
-        return FALSE;
-    }
-
-    priv->uri = g_strdup(url.string().utf8().data());
-    return TRUE;
-}
-#endif
 
 static void webKitWebSrcUriHandlerInit(gpointer gIface, gpointer)
 {
@@ -901,15 +820,13 @@ char* StreamingClient::createReadBuffer(size_t requestedSize, size_t& actualSize
 
     GstBuffer* buffer = gst_buffer_new_and_alloc(requestedSize);
 
-#ifdef GST_API_VERSION_1
     mapGstBuffer(buffer);
-#endif
 
     GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
     priv->buffer = adoptGRef(buffer);
     locker.unlock();
 
-    actualSize = getGstBufferSize(buffer);
+    actualSize = gst_buffer_get_size(buffer);
     return getGstBufferDataPointer(buffer);
 }
 
@@ -938,11 +855,7 @@ void StreamingClient::handleResponseReceived(const ResourceResponse& response)
     priv->size = length >= 0 ? length : 0;
     priv->seekable = length > 0 && g_ascii_strcasecmp("none", response.httpHeaderField("Accept-Ranges").utf8().data());
 
-#ifdef GST_API_VERSION_1
     GstTagList* tags = gst_tag_list_new_empty();
-#else
-    GstTagList* tags = gst_tag_list_new();
-#endif
     String value = response.httpHeaderField("icy-name");
     if (!value.isEmpty()) {
         g_free(priv->iradioName);
@@ -977,15 +890,6 @@ void StreamingClient::handleResponseReceived(const ResourceResponse& response)
     // notify size/duration
     if (length > 0) {
         gst_app_src_set_size(priv->appsrc, length);
-
-#ifndef GST_API_VERSION_1
-        if (!priv->haveAppSrc27) {
-            gst_segment_set_duration(&GST_BASE_SRC(priv->appsrc)->segment, GST_FORMAT_BYTES, length);
-            gst_element_post_message(GST_ELEMENT(priv->appsrc),
-                gst_message_new_duration(GST_OBJECT(priv->appsrc),
-                    GST_FORMAT_BYTES, length));
-        }
-#endif
     } else
         gst_app_src_set_size(priv->appsrc, -1);
 
@@ -1005,13 +909,9 @@ void StreamingClient::handleResponseReceived(const ResourceResponse& response)
 
     // notify tags
     if (gst_tag_list_is_empty(tags))
-#ifdef GST_API_VERSION_1
         gst_tag_list_unref(tags);
-#else
-        gst_tag_list_free(tags);
-#endif
     else
-        notifyGstTagsOnPad(GST_ELEMENT(src), priv->srcpad, tags);
+        gst_pad_push_event(priv->srcpad, gst_event_new_tag(tags));
 }
 
 void StreamingClient::handleDataReceived(const char* data, int length)
@@ -1021,14 +921,12 @@ void StreamingClient::handleDataReceived(const char* data, int length)
 
     GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
 
-    GST_LOG_OBJECT(src, "Have %d bytes of data", priv->buffer ? getGstBufferSize(priv->buffer.get()) : length);
+    GST_LOG_OBJECT(src, "Have %ld bytes of data", priv->buffer ? gst_buffer_get_size(priv->buffer.get()) : length);
 
     ASSERT(!priv->buffer || data == getGstBufferDataPointer(priv->buffer.get()));
 
-#ifdef GST_API_VERSION_1
     if (priv->buffer)
         unmapGstBuffer(priv->buffer.get());
-#endif
 
     if (priv->seekID) {
         GST_DEBUG_OBJECT(src, "Seek in progress, ignoring data");
@@ -1041,7 +939,7 @@ void StreamingClient::handleDataReceived(const char* data, int length)
     if (!priv->buffer)
         priv->buffer = adoptGRef(createGstBufferForData(data, length));
     else
-        setGstBufferSize(priv->buffer.get(), length);
+        gst_buffer_set_size(priv->buffer.get(), static_cast<gssize>(length));
 
     GST_BUFFER_OFFSET(priv->buffer.get()) = priv->offset;
     if (priv->requestedOffset == priv->offset)
@@ -1058,11 +956,7 @@ void StreamingClient::handleDataReceived(const char* data, int length)
     locker.unlock();
 
     GstFlowReturn ret = gst_app_src_push_buffer(priv->appsrc, priv->buffer.leakRef());
-#ifdef GST_API_VERSION_1
     if (ret != GST_FLOW_OK && ret != GST_FLOW_EOS)
-#else
-    if (ret != GST_FLOW_OK && ret != GST_FLOW_UNEXPECTED)
-#endif
         GST_ELEMENT_ERROR(src, CORE, FAILED, (0), (0));
 }
 
