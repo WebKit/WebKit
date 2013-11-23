@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -82,13 +82,15 @@ CGColorSpaceRef deviceRGBColorSpaceRef()
 
 CGColorSpaceRef sRGBColorSpaceRef()
 {
-    // FIXME: Windows should be able to use kCGColorSpaceSRGB, this is tracked by http://webkit.org/b/31363.
-#if PLATFORM(WIN)
-    return deviceRGBColorSpaceRef();
-#else
     static CGColorSpaceRef sRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-    return sRGBSpace;
+#if PLATFORM(WIN)
+    // Out-of-date CG installations will not honor kCGColorSpaceSRGB. This logic avoids
+    // causing a crash under those conditions. Since the default color space in Windows
+    // is sRGB, this all works out nicely.
+    if (!sRGBSpace)
+        sRGBSpace = deviceRGBColorSpaceRef();
 #endif
+    return sRGBSpace;
 }
 
 #if PLATFORM(WIN)

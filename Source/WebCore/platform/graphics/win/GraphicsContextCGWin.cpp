@@ -82,8 +82,8 @@ void GraphicsContext::platformInit(HDC hdc, bool hasAlpha)
     setPaintingDisabled(!m_data->m_cgContext);
     if (m_data->m_cgContext) {
         // Make sure the context starts in sync with our state.
-        setPlatformFillColor(fillColor(), ColorSpaceDeviceRGB);
-        setPlatformStrokeColor(strokeColor(), ColorSpaceDeviceRGB);
+        setPlatformFillColor(fillColor(), fillColorSpace());
+        setPlatformStrokeColor(strokeColor(), strokeColorSpace());
     }
 }
 

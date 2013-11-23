@@ -1,3 +1,22 @@
+2013-11-22  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Clean up ColorSpace handling in Windows code
+        https://bugs.webkit.org/show_bug.cgi?id=124795
+
+        Reviewed by Tim Horton.
+
+        Functionality covered by existing fast/css/color test suite.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::safeRGBColorSpaceRef): Handle case of Windows CG implementation not
+        handling sRGB correctly.
+        (WebCore::sRGBColorSpaceRef): Use new helper function.
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::Font::drawGlyphs): Pass correct color space to fill functions.
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::platformInit): Initialize color space to value passed
+        via the style to the constructor.
+
 2013-11-22  Alexey Proskuryakov  <ap@apple.com>
 
         WebCrypto algorithms should check that key algorithm matches
