@@ -1,3 +1,16 @@
+2013-11-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Layout Test editing/deleting/password-delete-performance.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=124781
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a new performance test to replace editing/deleting/password-delete-performance.html.
+        We skip this test by default since it's a micro benchmark.
+
+        * Interactive/DeletingInPasswordField.html: Added.
+        * Skipped:
+
 2013-11-18  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Improve content-sized track layout
