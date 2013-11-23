@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DatabaseProcess.h"
 
+#include "DatabaseProcessCreationParameters.h"
 #include "DatabaseProcessProxyMessages.h"
 #include "DatabaseToWebProcessConnection.h"
 
@@ -65,6 +66,11 @@ void DatabaseProcess::didClose(CoreIPC::Connection*)
 void DatabaseProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)
 {
     RunLoop::current()->stop();
+}
+
+void DatabaseProcess::initializeDatabaseProcess(const DatabaseProcessCreationParameters& parameters)
+{
+    m_indexedDatabaseDirectory = parameters.indexedDatabaseDirectory;
 }
 
 void DatabaseProcess::createDatabaseToWebProcessConnection()

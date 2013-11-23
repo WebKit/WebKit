@@ -23,6 +23,9 @@
 #if ENABLE(DATABASE_PROCESS)
 
 messages -> DatabaseProcess {
+    # Initializes the DatabaseProcess with the correct parameters
+    InitializeDatabaseProcess(WebKit::DatabaseProcessCreationParameters processCreationParameters)
+
     # Creates a connection for communication with a WebProcess
     CreateDatabaseToWebProcessConnection()
 }

@@ -537,6 +537,8 @@
 		51578B831209ECEF00A37C4A /* WebData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51578B821209ECEF00A37C4A /* WebData.h */; };
 		515E7727183DD6F60007203F /* AsyncRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515E7725183DD6F60007203F /* AsyncRequest.cpp */; };
 		515E7728183DD6F60007203F /* AsyncRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 515E7726183DD6F60007203F /* AsyncRequest.h */; };
+		515E772B184008B90007203F /* DatabaseProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515E7729184008B90007203F /* DatabaseProcessCreationParameters.cpp */; };
+		515E772C184008B90007203F /* DatabaseProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 515E772A184008B90007203F /* DatabaseProcessCreationParameters.h */; };
 		5160BFE113381DF900918999 /* Logging.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160BFE013381DF900918999 /* Logging.mac.mm */; };
 		516319921628980A00E22F00 /* NetworkProcessProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 516319911628980A00E22F00 /* NetworkProcessProxyMac.mm */; };
 		5163199416289A6000E22F00 /* NetworkProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51ACC9341628064800342550 /* NetworkProcessMessageReceiver.cpp */; };
@@ -2065,6 +2067,8 @@
 		51578B821209ECEF00A37C4A /* WebData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebData.h; sourceTree = "<group>"; };
 		515E7725183DD6F60007203F /* AsyncRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncRequest.cpp; sourceTree = "<group>"; };
 		515E7726183DD6F60007203F /* AsyncRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncRequest.h; sourceTree = "<group>"; };
+		515E7729184008B90007203F /* DatabaseProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseProcessCreationParameters.cpp; sourceTree = "<group>"; };
+		515E772A184008B90007203F /* DatabaseProcessCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseProcessCreationParameters.h; sourceTree = "<group>"; };
 		5160BFE013381DF900918999 /* Logging.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Logging.mac.mm; sourceTree = "<group>"; };
 		516319911628980A00E22F00 /* NetworkProcessProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkProcessProxyMac.mm; path = mac/NetworkProcessProxyMac.mm; sourceTree = "<group>"; };
 		5167EE9E170377BF007681CA /* DiskCacheMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiskCacheMonitor.h; sourceTree = "<group>"; };
@@ -4032,6 +4036,8 @@
 			isa = PBXGroup;
 			children = (
 				51E351C3180F2C8A00E53BE9 /* IndexedDB */,
+				515E7729184008B90007203F /* DatabaseProcessCreationParameters.cpp */,
+				515E772A184008B90007203F /* DatabaseProcessCreationParameters.h */,
 			);
 			path = Databases;
 			sourceTree = "<group>";
@@ -5779,6 +5785,7 @@
 				330934501315B94D0097A7BC /* WebCookieManager.h in Headers */,
 				330934481315B9220097A7BC /* WebCookieManagerMessages.h in Headers */,
 				330934561315B9750097A7BC /* WebCookieManagerProxy.h in Headers */,
+				515E772C184008B90007203F /* DatabaseProcessCreationParameters.h in Headers */,
 				33AA1067131F060000D4A575 /* WebCookieManagerProxyClient.h in Headers */,
 				3309344A1315B9220097A7BC /* WebCookieManagerProxyMessages.h in Headers */,
 				BC1DD7B2114DC396005ADAF3 /* WebCoreArgumentCoders.h in Headers */,
@@ -7037,6 +7044,7 @@
 				E18E6917169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp in Sources */,
 				33152975130D0CB200ED2483 /* SecurityOriginData.cpp in Sources */,
 				518D2CCA12D51DFB003BB93B /* SessionState.cpp in Sources */,
+				515E772B184008B90007203F /* DatabaseProcessCreationParameters.cpp in Sources */,
 				1A6420E412DCE2FF00CAAE2C /* ShareableBitmap.cpp in Sources */,
 				C01A260112662F2100C9ED55 /* ShareableBitmapCG.cpp in Sources */,
 				51217460164C20E30037A5C1 /* ShareableResource.cpp in Sources */,

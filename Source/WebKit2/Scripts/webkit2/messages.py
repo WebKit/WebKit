@@ -202,6 +202,7 @@ def struct_or_class(namespace, type):
         'WebKit::AttributedString',
         'WebKit::ColorSpaceData',
         'WebKit::ContextMenuState',
+        'WebKit::DatabaseProcessCreationParameters',
         'WebKit::DictionaryPopupInfo',
         'WebKit::DrawingAreaInfo',
         'WebKit::EditorState',

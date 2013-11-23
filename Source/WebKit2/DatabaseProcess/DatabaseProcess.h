@@ -41,6 +41,8 @@ class DatabaseProcess : public ChildProcess  {
 public:
     static DatabaseProcess& shared();
 
+    const String& indexedDatabaseDirectory() const { return m_indexedDatabaseDirectory; }
+
 private:
     DatabaseProcess();
     ~DatabaseProcess();
@@ -58,9 +60,12 @@ private:
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
 
     // Message Handlers
+    void initializeDatabaseProcess(const DatabaseProcessCreationParameters&);
     void createDatabaseToWebProcessConnection();
 
     Vector<RefPtr<DatabaseToWebProcessConnection>> m_databaseToWebProcessConnections;
+
+    String m_indexedDatabaseDirectory;
 };
 
 } // namespace WebKit
