@@ -1,3 +1,11 @@
+2013-11-23  Robert Hogan  <robert@webkit.org>
+
+        Rebaseline empty-clear-blocks.html after r159575
+
+        Unreviewed, rebaselining.
+
+        * platform/gtk/fast/block/margin-collapse/empty-clear-blocks-expected.txt:
+
 2013-11-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Layout Test editing/deleting/password-delete-performance.html is failing
