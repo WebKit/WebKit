@@ -1,5 +1,13 @@
 2013-11-23  Robert Hogan  <robert@webkit.org>
 
+        Remove lint from expected result.
+
+        Unreviewed.
+
+        * platform/gtk/fast/block/margin-collapse/empty-clear-blocks-expected.txt:
+
+2013-11-23  Robert Hogan  <robert@webkit.org>
+
         Rebaseline empty-clear-blocks.html after r159575
 
         Unreviewed, rebaselining.

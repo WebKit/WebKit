@@ -1,4 +1,3 @@
-NPP_Initialize
 layer at (0,0) size 785x1124
   RenderView at (0,0) size 785x600
 layer at (0,0) size 785x1124
