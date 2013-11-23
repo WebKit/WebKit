@@ -34,6 +34,7 @@
 #include "DFGVariableAccessDataDump.h"
 #include "FullBytecodeLiveness.h"
 #include "FunctionExecutableDump.h"
+#include "JIT.h"
 #include "OperandsInlines.h"
 #include "Operations.h"
 #include <wtf/CommaPrinter.h>
@@ -698,7 +699,29 @@ bool Graph::isLiveInBytecode(VirtualRegister operand, CodeOrigin codeOrigin)
     
     return true;
 }
-    
+
+unsigned Graph::frameRegisterCount()
+{
+    return m_nextMachineLocal + m_parameterSlots;
+}
+
+unsigned Graph::requiredRegisterCountForExit()
+{
+    unsigned count = JIT::frameRegisterCountFor(m_profiledBlock);
+    for (InlineCallFrameSet::iterator iter = m_inlineCallFrames->begin(); !!iter; ++iter) {
+        InlineCallFrame* inlineCallFrame = *iter;
+        CodeBlock* codeBlock = baselineCodeBlockForInlineCallFrame(inlineCallFrame);
+        unsigned requiredCount = VirtualRegister(inlineCallFrame->stackOffset).toLocal() + 1 + JIT::frameRegisterCountFor(codeBlock);
+        count = std::max(count, requiredCount);
+    }
+    return count;
+}
+
+unsigned Graph::requiredRegisterCountForExecutionAndExit()
+{
+    return std::max(frameRegisterCount(), requiredRegisterCountForExit());
+}
+
 } } // namespace JSC::DFG
 
 #endif

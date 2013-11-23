@@ -787,6 +787,10 @@ public:
     FullBytecodeLiveness& livenessFor(InlineCallFrame*);
     bool isLiveInBytecode(VirtualRegister, CodeOrigin);
     
+    unsigned frameRegisterCount();
+    unsigned requiredRegisterCountForExit();
+    unsigned requiredRegisterCountForExecutionAndExit();
+    
     VM& m_vm;
     Plan& m_plan;
     CodeBlock* m_codeBlock;

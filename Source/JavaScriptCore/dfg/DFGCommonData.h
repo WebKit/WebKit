@@ -74,6 +74,8 @@ public:
     CommonData()
         : isStillValid(true)
         , machineCaptureStart(std::numeric_limits<int>::max())
+        , frameRegisterCount(std::numeric_limits<unsigned>::max())
+        , requiredRegisterCountForExit(std::numeric_limits<unsigned>::max())
     { }
     
     void notifyCompilingStructureTransition(Plan&, CodeBlock*, Node*);
@@ -82,6 +84,11 @@ public:
     void shrinkToFit();
     
     bool invalidate(); // Returns true if we did invalidate, or false if the code block was already invalidated.
+    
+    unsigned requiredRegisterCountForExecutionAndExit() const
+    {
+        return std::max(frameRegisterCount, requiredRegisterCountForExit);
+    }
 
     OwnPtr<InlineCallFrameSet> inlineCallFrames;
     Vector<CodeOrigin, 0, UnsafeVectorOverflow> codeOrigins;
@@ -100,6 +107,9 @@ public:
     
     int machineCaptureStart;
     std::unique_ptr<SlowArgument[]> slowArguments;
+    
+    unsigned frameRegisterCount;
+    unsigned requiredRegisterCountForExit;
 };
 
 } } // namespace JSC::DFG

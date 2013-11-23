@@ -119,6 +119,11 @@ void setEntrypoint(VM& vm, CodeBlock* codeBlock)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+unsigned frameRegisterCountFor(CodeBlock* codeBlock)
+{
+    return codeBlock->m_numCalleeRegisters;
+}
+
 } } // namespace JSC::LLInt
 
 #endif // ENABLE(LLINT)

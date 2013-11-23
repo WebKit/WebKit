@@ -39,11 +39,13 @@
 #include "DFGWorklist.h"
 #include "Debugger.h"
 #include "Interpreter.h"
+#include "JIT.h"
 #include "JITStubs.h"
 #include "JSActivation.h"
 #include "JSCJSValue.h"
 #include "JSFunction.h"
 #include "JSNameScope.h"
+#include "LLIntEntrypoint.h"
 #include "LowLevelInterpreter.h"
 #include "Operations.h"
 #include "PolymorphicPutByIdList.h"
@@ -3298,6 +3300,31 @@ void CodeBlock::dumpValueProfiles()
     }
 }
 #endif // ENABLE(VERBOSE_VALUE_PROFILE)
+
+unsigned CodeBlock::frameRegisterCount()
+{
+    switch (jitType()) {
+#if ENABLE(LLINT)
+    case JITCode::InterpreterThunk:
+        return LLInt::frameRegisterCountFor(this);
+#endif // ENABLE(LLINT)
+
+#if ENABLE(JIT)
+    case JITCode::BaselineJIT:
+        return JIT::frameRegisterCountFor(this);
+#endif // ENABLE(JIT)
+
+#if ENABLE(DFG_JIT)
+    case JITCode::DFGJIT:
+    case JITCode::FTLJIT:
+        return jitCode()->dfgCommon()->frameRegisterCount;
+#endif // ENABLE(DFG_JIT)
+        
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
 
 size_t CodeBlock::predictedMachineCodeSize()
 {

@@ -57,6 +57,9 @@ void link(State& state)
     // LLVM will create its own jump tables as needed.
     codeBlock->clearSwitchJumpTables();
     
+    state.jitCode->common.frameRegisterCount = state.graph.frameRegisterCount();
+    state.jitCode->common.requiredRegisterCountForExit = state.graph.requiredRegisterCountForExit();
+    
     if (!state.graph.m_inlineCallFrames->isEmpty())
         state.jitCode->common.inlineCallFrames = std::move(state.graph.m_inlineCallFrames);
     
@@ -80,7 +83,7 @@ void link(State& state)
         // Plant a check that sufficient space is available in the JSStack.
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=56291
         jit.addPtr(
-            CCallHelpers::TrustedImm32(virtualRegisterForLocal(codeBlock->m_numCalleeRegisters).offset() * sizeof(Register)),
+            CCallHelpers::TrustedImm32(virtualRegisterForLocal(state.jitCode->common.requiredRegisterCountForExit).offset() * sizeof(Register)),
             GPRInfo::callFrameRegister, GPRInfo::regT1);
         CCallHelpers::Jump stackCheck = jit.branchPtr(
             CCallHelpers::Above,

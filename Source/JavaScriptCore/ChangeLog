@@ -1,3 +1,63 @@
+2013-11-22  Filip Pizlo  <fpizlo@apple.com>
+
+        CodeBlock::m_numCalleeRegisters shouldn't also mean frame size, frame size needed for exit, or any other unrelated things
+        https://bugs.webkit.org/show_bug.cgi?id=124793
+
+        Reviewed by Mark Hahnenberg.
+        
+        Now m_numCalleeRegisters always refers to the number of locals that the attached
+        bytecode uses. It never means anything else.
+        
+        For frame size, we now have it lazily computed from m_numCalleeRegisters for the
+        baseline engines and we have it stored in DFG::CommonData for the optimizing JITs.
+        
+        For frame-size-needed-at-exit, we store that in DFG::CommonData, too.
+        
+        The code no longer implies that there is any arithmetic relationship between
+        m_numCalleeRegisters and frameSize. Previously it implied that the latter is greater
+        than the former.
+        
+        The code no longer implies that there is any arithmetic relationship between the
+        frame Size and the frame-size-needed-at-exit. Previously it implied that the latter
+        is greater that the former.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::frameRegisterCount):
+        * bytecode/CodeBlock.h:
+        * dfg/DFGCommonData.h:
+        (JSC::DFG::CommonData::CommonData):
+        (JSC::DFG::CommonData::requiredRegisterCountForExecutionAndExit):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::frameRegisterCount):
+        (JSC::DFG::Graph::requiredRegisterCountForExit):
+        (JSC::DFG::Graph::requiredRegisterCountForExecutionAndExit):
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        (JSC::DFG::VirtualRegisterAllocationPhase::run):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileCallOrConstruct):
+        * ftl/FTLOSREntry.cpp:
+        (JSC::FTL::prepareOSREntry):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::frameExtentInternal):
+        * interpreter/JSStackInlines.h:
+        (JSC::JSStack::pushFrame):
+        * jit/JIT.h:
+        (JSC::JIT::frameRegisterCountFor):
+        * jit/JITOperations.cpp:
+        * llint/LLIntEntrypoint.cpp:
+        (JSC::LLInt::frameRegisterCountFor):
+        * llint/LLIntEntrypoint.h:
+
 2013-11-21  Filip Pizlo  <fpizlo@apple.com>
 
         Combine SymbolTable and SharedSymbolTable

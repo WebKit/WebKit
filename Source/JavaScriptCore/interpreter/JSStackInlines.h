@@ -73,7 +73,7 @@ inline CallFrame* JSStack::pushFrame(CallFrame* callerFrame,
 
     Register* newEnd = newCallFrameSlot;
     if (!!codeBlock)
-        newEnd += virtualRegisterForLocal(codeBlock->m_numCalleeRegisters).offset();
+        newEnd += virtualRegisterForLocal(codeBlock->frameRegisterCount()).offset();
 
     // Ensure that we have the needed stack capacity to push the new frame:
     if (!grow(newEnd))

@@ -119,28 +119,6 @@ public:
         // to figure out where to put the parameters.
         m_graph.m_nextMachineLocal = scoreBoard.highWatermark();
 
-        // 'm_numCalleeRegisters' is the number of locals and temporaries allocated
-        // for the function (and checked for on entry). Since we perform a new and
-        // different allocation of temporaries, more registers may now be required.
-        // This also accounts for the number of temporaries that may be needed if we
-        // OSR exit, due to inlining. Hence this computes the number of temporaries
-        // that could be used by this code block even if it exits; it may be more
-        // than what this code block needs if it never exits.
-        unsigned calleeRegisters = scoreBoard.highWatermark() + m_graph.m_parameterSlots;
-        for (InlineCallFrameSet::iterator iter = m_graph.m_inlineCallFrames->begin(); !!iter; ++iter) {
-            InlineCallFrame* inlineCallFrame = *iter;
-            CodeBlock* codeBlock = baselineCodeBlockForInlineCallFrame(inlineCallFrame);
-            unsigned requiredCalleeRegisters = VirtualRegister(inlineCallFrame->stackOffset).toLocal() + 1 + codeBlock->m_numCalleeRegisters;
-            if (requiredCalleeRegisters > calleeRegisters)
-                calleeRegisters = requiredCalleeRegisters;
-        }
-        calleeRegisters = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), calleeRegisters);
-        if ((unsigned)codeBlock()->m_numCalleeRegisters < calleeRegisters)
-            codeBlock()->m_numCalleeRegisters = calleeRegisters;
-#if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("Num callee registers: %u\n", calleeRegisters);
-#endif
-        
         return true;
     }
 };

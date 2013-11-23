@@ -41,6 +41,8 @@ namespace LLInt {
 
 void setEntrypoint(VM&, CodeBlock*);
 
+unsigned frameRegisterCountFor(CodeBlock*);
+
 } } // namespace JSC::LLInt
 
 #endif // ENABLE(LLINT)

@@ -78,10 +78,10 @@ void* prepareOSREntry(
     for (int local = values.numberOfLocals(); local--;)
         scratch[local] = JSValue::encode(values.local(local));
     
-    int stackFrameSize = entryCodeBlock->m_numCalleeRegisters;
+    int stackFrameSize = entryCode->common.requiredRegisterCountForExecutionAndExit();
     if (!vm.interpreter->stack().grow(&exec->registers()[virtualRegisterForLocal(stackFrameSize).offset()])) {
         if (Options::verboseOSR())
-            dataLog("    OSR failed bcause stack growth failed.\n");
+            dataLog("    OSR failed because stack growth failed.\n");
         return 0;
     }
     

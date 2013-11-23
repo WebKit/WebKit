@@ -243,6 +243,11 @@ namespace JSC {
 
         static void linkFor(ExecState*, JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, CodePtr, CallLinkInfo*, VM*, CodeSpecializationKind);
         static void linkSlowCall(CodeBlock* callerCodeBlock, CallLinkInfo*);
+        
+        static unsigned frameRegisterCountFor(CodeBlock* codeBlock)
+        {
+            return codeBlock->m_numCalleeRegisters;
+        }
 
     private:
         JIT(VM*, CodeBlock* = 0);

@@ -154,6 +154,9 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     dataLogF("JIT code for %p start at [%p, %p). Size = %zu.\n", m_codeBlock, linkBuffer.debugAddress(), static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize(), linkBuffer.debugSize());
 #endif
     
+    m_jitCode->common.frameRegisterCount = m_graph.frameRegisterCount();
+    m_jitCode->common.requiredRegisterCountForExit = m_graph.requiredRegisterCountForExit();
+
     if (!m_graph.m_inlineCallFrames->isEmpty())
         m_jitCode->common.inlineCallFrames = m_graph.m_inlineCallFrames.release();
     
@@ -331,7 +334,7 @@ void JITCompiler::compileFunction()
     // so enter after this.
     Label fromArityCheck(this);
     // Plant a check that sufficient space is available in the JSStack.
-    addPtr(TrustedImm32(virtualRegisterForLocal(m_codeBlock->m_numCalleeRegisters).offset() * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::regT1);
+    addPtr(TrustedImm32(virtualRegisterForLocal(m_graph.requiredRegisterCountForExecutionAndExit()).offset() * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::regT1);
     Jump stackCheck = branchPtr(Above, AbsoluteAddress(m_vm->addressOfJSStackLimit()), GPRInfo::regT1);
     // Return here after stack check.
     Label fromStackCheck = label();

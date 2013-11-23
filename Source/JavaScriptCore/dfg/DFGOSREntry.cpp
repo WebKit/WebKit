@@ -77,7 +77,8 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
         return 0;
     }
     
-    OSREntryData* entry = codeBlock->jitCode()->dfg()->osrEntryDataForBytecodeIndex(bytecodeIndex);
+    JITCode* jitCode = codeBlock->jitCode()->dfg();
+    OSREntryData* entry = jitCode->osrEntryDataForBytecodeIndex(bytecodeIndex);
     
     if (!entry) {
         if (Options::verboseOSR())
@@ -180,7 +181,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     //    it seems silly: you'd be diverting the program to error handling when it
     //    would have otherwise just kept running albeit less quickly.
     
-    if (!vm->interpreter->stack().grow(&exec->registers()[virtualRegisterForLocal(codeBlock->m_numCalleeRegisters).offset()])) {
+    if (!vm->interpreter->stack().grow(&exec->registers()[virtualRegisterForLocal(jitCode->common.requiredRegisterCountForExecutionAndExit()).offset()])) {
         if (Options::verboseOSR())
             dataLogF("    OSR failed because stack growth failed.\n");
         return 0;

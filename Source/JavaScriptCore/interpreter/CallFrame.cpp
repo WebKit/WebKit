@@ -120,7 +120,7 @@ Register* CallFrame::frameExtentInternal()
 {
     CodeBlock* codeBlock = this->codeBlock();
     ASSERT(codeBlock);
-    return registers() + virtualRegisterForLocal(codeBlock->m_numCalleeRegisters).offset();
+    return registers() + virtualRegisterForLocal(codeBlock->frameRegisterCount()).offset();
 }
 
 JSGlobalObject* CallFrame::vmEntryGlobalObject()

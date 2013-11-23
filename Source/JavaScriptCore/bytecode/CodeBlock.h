@@ -897,6 +897,8 @@ public:
 #if ENABLE(VERBOSE_VALUE_PROFILE)
     void dumpValueProfiles();
 #endif
+    
+    unsigned frameRegisterCount();
 
     // FIXME: Make these remaining members private.
 

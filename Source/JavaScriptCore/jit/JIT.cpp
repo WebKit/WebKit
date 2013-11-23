@@ -567,7 +567,7 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         }
 #endif
 
-        addPtr(TrustedImm32(virtualRegisterForLocal(m_codeBlock->m_numCalleeRegisters).offset() * sizeof(Register)), callFrameRegister, regT1);
+        addPtr(TrustedImm32(virtualRegisterForLocal(frameRegisterCountFor(m_codeBlock)).offset() * sizeof(Register)), callFrameRegister, regT1);
         stackCheck = branchPtr(Above, AbsoluteAddress(m_vm->addressOfJSStackLimit()), regT1);
     }
 

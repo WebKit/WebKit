@@ -2405,7 +2405,7 @@ private:
         
         LValue calleeFrame = m_out.add(
             m_callFrame,
-            m_out.constIntPtr(sizeof(Register) * virtualRegisterForLocal(codeBlock()->m_numCalleeRegisters).offset()));
+            m_out.constIntPtr(sizeof(Register) * virtualRegisterForLocal(m_graph.frameRegisterCount()).offset()));
         
         m_out.store32(
             m_out.constInt32(numPassedArgs + dummyThisArgument),
