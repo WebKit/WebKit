@@ -44,8 +44,10 @@ void DatabaseProcess::initializeProcess(const ChildProcessInitializationParamete
 
 void DatabaseProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
 {
+#if !PLATFORM(IOS)
     NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Database Storage", "visible name of the database process. The argument is the application name."), (NSString *)parameters.uiProcessName];
     WKSetVisibleApplicationName((CFStringRef)applicationName);
+#endif
 }
 
 void DatabaseProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)

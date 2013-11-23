@@ -344,7 +344,7 @@ std::unique_ptr<MessageEncoder> Connection::createSyncMessageEncoder(StringRefer
 
     // Encode the sync request ID.
     COMPILE_ASSERT(sizeof(m_syncRequestID) == sizeof(int64_t), CanUseAtomicIncrement);
-    syncRequestID = atomicIncrement(reinterpret_cast<int64_t volatile*>(&m_syncRequestID));
+    syncRequestID = ++m_syncRequestID;
     *encoder << syncRequestID;
 
     return encoder;

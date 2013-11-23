@@ -397,7 +397,7 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
         }
 
         default:
-            [NSException raise:NSInvalidArgumentException format:@"Unsupported invocation argument type '%s' for argument %zu", type, i];
+            [NSException raise:NSInvalidArgumentException format:@"Unsupported invocation argument type '%s' for argument %zu", type, (unsigned long)i];
         }
     }
 }

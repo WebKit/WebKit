@@ -582,9 +582,11 @@ void PluginView::didFailToInitializePlugin()
 {
     m_plugin = 0;
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     String frameURLString = frame()->loader().documentLoader()->responseURL().string();
     String pageURLString = m_webPage->corePage()->mainFrame().loader().documentLoader()->responseURL().string();
     m_webPage->send(Messages::WebPageProxy::DidFailToInitializePlugin(m_parameters.mimeType, frameURLString, pageURLString));
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 }
 
 void PluginView::didInitializePlugin()

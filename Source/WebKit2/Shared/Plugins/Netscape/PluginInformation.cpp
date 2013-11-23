@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PluginInformation.h"
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #include "PluginInfoStore.h"
 #include "PluginModuleInfo.h"
 #include "WKAPICast.h"
@@ -169,3 +171,5 @@ void getPlatformPluginModuleInformation(const PluginModuleInfo&, ImmutableDictio
 #endif
 
 } // namespace WebKit
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

@@ -43,6 +43,10 @@ OBJC_CLASS CALayer;
 OBJC_CLASS WKView;
 OBJC_CLASS NSTextAlternatives;
 #endif
+
+#if PLATFORM(IOS)
+OBJC_CLASS UIWKView;
+#endif
 #endif
 
 namespace WebCore {
@@ -133,8 +137,8 @@ public:
     virtual void handleDownloadRequest(DownloadProxy*) = 0;
 #endif // PLATFORM(EFL) || PLATFORM(GTK)
 
-#if PLATFORM(EFL)
-    virtual void didChangeContentsSize(const WebCore::IntSize&) = 0;
+#if PLATFORM(EFL) || PLATFORM(IOS)
+    virtual void didChangeContentSize(const WebCore::IntSize&) = 0;
 #endif
 
 #if PLATFORM(GTK)
@@ -158,9 +162,13 @@ public:
     virtual void resetSecureInputState() = 0;
     virtual void notifyInputContextAboutDiscardedComposition() = 0;
     virtual void makeFirstResponder() = 0;
+#endif
+
+#if USE(APPKIT)
     virtual void setPromisedData(const String& pasteboardName, PassRefPtr<WebCore::SharedBuffer> imageBuffer, const String& filename, const String& extension, const String& title,
                                  const String& url, const String& visibleUrl, PassRefPtr<WebCore::SharedBuffer> archiveBuffer) = 0;
 #endif
+
 #if PLATFORM(GTK)
     virtual void getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent&, const AtomicString&, Vector<WTF::String>&) = 0;
 #endif
@@ -189,7 +197,7 @@ public:
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) = 0;
 #endif
 
-#if PLATFORM(MAC)
+#if !PLATFORM(IOS) && PLATFORM(MAC)
     virtual void pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus) = 0;
     virtual void setPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, PluginComplexTextInputState) = 0;
     virtual void didPerformDictionaryLookup(const AttributedString&, const DictionaryPopupInfo&) = 0;

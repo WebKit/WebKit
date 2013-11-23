@@ -64,8 +64,12 @@ using namespace WebKit;
     if (!_plugin)
         return NO;
 
+#if !PLATFORM(IOS)
     _plugin->openPluginPreferencePane();
     return YES;
+#else
+    return NO;
+#endif
 }
 
 @end

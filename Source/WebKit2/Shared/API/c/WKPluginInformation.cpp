@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WKPluginInformation.h"
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #include "PluginInformation.h"
 #include "WKSharedAPICast.h"
 #include "WebString.h"
@@ -115,3 +117,4 @@ WKStringRef WKPlugInInformationReplacementObscuredKey()
     static WebString* key = WebString::create(plugInInformationReplacementObscuredKey()).leakRef();
     return toAPI(key);
 }
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

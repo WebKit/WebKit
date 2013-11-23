@@ -31,6 +31,11 @@
 #import "XPCServiceEntryPoint.h"
 #import <wtf/RunLoop.h>
 
+#if PLATFORM(IOS)
+#import <GraphicsServices/GraphicsServices.h>
+#import <WebCore/WebCoreThreadSystemInterface.h>
+#endif // PLATFORM(IOS)
+
 using namespace WebCore;
 using namespace WebKit;
 
@@ -41,6 +46,11 @@ void WebContentServiceInitializer(xpc_connection_t connection, xpc_object_t init
     // Remove the WebProcessShim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
     // the this process don't try to insert the shim and crash.
     EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebProcessShim.dylib");
+
+#if PLATFORM(IOS)
+    GSInitialize();
+    InitWebCoreThreadSystemInterface();
+#endif // PLATFORM(IOS)
 
     XPCServiceInitializer<WebProcess, XPCServiceInitializerDelegate>(connection, initializerMessage);
 }

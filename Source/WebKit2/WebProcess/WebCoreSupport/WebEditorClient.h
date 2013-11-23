@@ -152,6 +152,20 @@ private:
 #if PLATFORM(GTK)
     virtual bool shouldShowUnicodeMenu() OVERRIDE;
 #endif
+#if PLATFORM(IOS)
+    virtual void suppressSelectionNotifications() OVERRIDE;
+    virtual void restoreSelectionNotifications() OVERRIDE;
+    virtual void startDelayingAndCoalescingContentChangeNotifications() OVERRIDE;
+    virtual void stopDelayingAndCoalescingContentChangeNotifications() OVERRIDE;
+    virtual void writeDataToPasteboard(NSDictionary*) OVERRIDE;
+    virtual NSArray *supportedPasteboardTypesForCurrentSelection() OVERRIDE;
+    virtual NSArray *readDataFromPasteboard(NSString* type, int index) OVERRIDE;
+    virtual bool hasRichlyEditableSelection() OVERRIDE;
+    virtual int getPasteboardItemsCount() OVERRIDE;
+    virtual WebCore::DocumentFragment* documentFragmentFromDelegate(int index) OVERRIDE;
+    virtual bool performsTwoStepPaste(WebCore::DocumentFragment*) OVERRIDE;
+    virtual int pasteboardChangeCount() OVERRIDE;
+#endif
 
     virtual bool supportsGlobalSelection() OVERRIDE;
 

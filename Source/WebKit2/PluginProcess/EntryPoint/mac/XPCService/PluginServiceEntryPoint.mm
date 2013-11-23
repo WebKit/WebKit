@@ -31,6 +31,8 @@
 #import "XPCServiceEntryPoint.h"
 #import <wtf/RunLoop.h>
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 namespace WebKit {
 
 class PluginServiceInitializerDelegate : public XPCServiceInitializerDelegate {
@@ -61,10 +63,13 @@ public:
 
 using namespace WebKit;
 
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
+
 extern "C" WK_EXPORT void PluginServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage);
 
 void PluginServiceInitializer(xpc_connection_t connection, xpc_object_t initializerMessage)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     // FIXME: Add support for teardown from PluginProcessMain.mm
 
     // Remove the PluginProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes
@@ -72,4 +77,5 @@ void PluginServiceInitializer(xpc_connection_t connection, xpc_object_t initiali
     EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/PluginProcessShim.dylib");
 
     XPCServiceInitializer<PluginProcess, PluginServiceInitializerDelegate>(connection, initializerMessage);
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 }

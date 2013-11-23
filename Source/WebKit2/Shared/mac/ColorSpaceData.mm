@@ -40,6 +40,7 @@ enum EncodedDataType {
 
 void ColorSpaceData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
+#if !PLATFORM(IOS)
     if (cgColorSpace) {
         // Try to encode the name.
         if (RetainPtr<CFStringRef> name = adoptCF(CGColorSpaceCopyName(cgColorSpace.get()))) {
@@ -55,6 +56,7 @@ void ColorSpaceData::encode(CoreIPC::ArgumentEncoder& encoder) const
             return;
         }
     }
+#endif // !PLATFORM(IOS)
 
     // The color space was null or failed to be encoded.
     encoder.encodeEnum(Null);

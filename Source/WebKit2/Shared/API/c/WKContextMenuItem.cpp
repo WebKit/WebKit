@@ -84,6 +84,7 @@ WKContextMenuItemRef WKContextMenuItemSeparatorItem()
 #endif
 }
 
+#if ENABLE(CONTEXT_MENUS)
 #if PLATFORM(MAC)
 static WKContextMenuItemTag compatibleContextMenuItemTag(WKContextMenuItemTag tag)
 {
@@ -105,6 +106,7 @@ static WKContextMenuItemTag compatibleContextMenuItemTag(WKContextMenuItemTag ta
     return tag;
 }
 #endif
+#endif // ENABLE(CONTEXT_MENUS)
 
 WKContextMenuItemTag WKContextMenuItemGetTag(WKContextMenuItemRef itemRef)
 {

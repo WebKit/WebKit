@@ -65,6 +65,10 @@ public:
 
     WebCore::SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
 
+#if PLATFORM(IOS)
+    WebCore::SecurityOrigin* securityOrigin() { return m_securityOrigin.get(); }
+#endif // PLATFORM(IOS)
+
 private:
     WebSecurityOrigin(PassRefPtr<WebCore::SecurityOrigin> securityOrigin)
         : m_securityOrigin(securityOrigin)

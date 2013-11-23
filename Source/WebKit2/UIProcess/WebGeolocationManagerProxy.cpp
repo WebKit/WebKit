@@ -92,6 +92,13 @@ void WebGeolocationManagerProxy::providerDidFailToDeterminePosition(const String
     context()->sendToAllProcesses(Messages::WebGeolocationManager::DidFailToDeterminePosition(errorMessage));
 }
 
+#if PLATFORM(IOS)
+void WebGeolocationManagerProxy::resetPermissions()
+{
+    context()->sendToAllProcesses(Messages::WebGeolocationManager::ResetPermissions());
+}
+#endif
+
 void WebGeolocationManagerProxy::startUpdating(CoreIPC::Connection* connection)
 {
     bool wasUpdating = isUpdating();

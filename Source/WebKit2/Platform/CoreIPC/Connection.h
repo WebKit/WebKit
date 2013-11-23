@@ -205,7 +205,7 @@ private:
 
     Client* m_client;
     bool m_isServer;
-    uint64_t m_syncRequestID;
+    std::atomic<uint64_t> m_syncRequestID;
 
     bool m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage;
     bool m_shouldExitOnSyncMessageSendFailure;

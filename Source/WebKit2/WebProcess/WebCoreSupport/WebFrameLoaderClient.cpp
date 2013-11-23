@@ -1211,7 +1211,11 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     bool shouldUseFixedLayout = isMainFrame && webPage->useFixedLayout();
     bool shouldDisableScrolling = isMainFrame && !webPage->mainFrameIsScrollable();
     bool shouldHideScrollbars = shouldUseFixedLayout || shouldDisableScrolling;
+#if PLATFORM(IOS)
+    IntRect currentFixedVisibleContentRect = IntRect();
+#else
     IntRect currentFixedVisibleContentRect = m_frame->coreFrame()->view() ? m_frame->coreFrame()->view()->fixedVisibleContentRect() : IntRect();
+#endif
 
     m_frameCameFromPageCache = false;
 
@@ -1230,7 +1234,10 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 
     m_frame->coreFrame()->view()->setProhibitsScrolling(shouldDisableScrolling);
     m_frame->coreFrame()->view()->setVisualUpdatesAllowedByClient(!webPage->shouldExtendIncrementalRenderingSuppression());
-    
+#if PLATFORM(IOS)
+    m_frame->coreFrame()->view()->setDelegatesScrolling(true);
+#endif
+
     if (webPage->scrollPinningBehavior() != DoNotPin)
         m_frame->coreFrame()->view()->setScrollPinningBehavior(webPage->scrollPinningBehavior());
 
@@ -1366,6 +1373,7 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 
 PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& pluginSize, HTMLAppletElement* appletElement, const URL&, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
+#if !PLATFORM(IOS)
     RefPtr<Widget> plugin = createPlugin(pluginSize, appletElement, URL(), paramNames, paramValues, appletElement->serviceType(), false);
     if (!plugin) {
         if (WebPage* webPage = m_frame->page()) {
@@ -1375,6 +1383,9 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& p
         }
     }
     return plugin.release();
+#else
+    return 0;
+#endif // !PLATFORM(IOS)
 }
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)

@@ -141,10 +141,14 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
         layer.timeOffset = properties.timeOffset;
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged) {
+#if USE(IOSURFACE)
         if (properties.backingStore.acceleratesDrawing())
             layer.contents = (id)properties.backingStore.surface().get();
         else
-            layer.contents = (id)properties.backingStore.image().get();
+#else
+            ASSERT(!properties.backingStore.acceleratesDrawing());
+#endif
+        layer.contents = (id)properties.backingStore.image().get();
     }
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::FiltersChanged)

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "PluginInformation.h"
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 #import "PluginModuleInfo.h"
 #import "PluginSandboxProfile.h"
 #import "StringUtilities.h"
@@ -45,3 +47,5 @@ void getPlatformPluginModuleInformation(const PluginModuleInfo& plugin, Immutabl
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

@@ -267,6 +267,8 @@ void WebLoaderClient::willGoToBackForwardListItem(WebPageProxy* page, WebBackFor
         m_client.willGoToBackForwardListItem(toAPI(page), toAPI(item), toAPI(userData), m_client.clientInfo);
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 void WebLoaderClient::didFailToInitializePlugin(WebPageProxy* page, ImmutableDictionary* pluginInformation)
 {
     if (m_client.didFailToInitializePlugin_deprecatedForUseWithV0)
@@ -328,5 +330,7 @@ PluginModuleLoadPolicy WebLoaderClient::pluginLoadPolicy(WebPageProxy* page, Plu
     
     return loadPolicy;
 }
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 } // namespace WebKit

@@ -224,11 +224,16 @@ void WebProcess::platformTerminate()
 
 void WebProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
+#if PLATFORM(IOS)
+    UNUSED_PARAM(parameters);
+    UNUSED_PARAM(sandboxParameters);
+#else
     // Need to overide the default, because service has a different bundle ID.
     NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
     sandboxParameters.setOverrideSandboxProfilePath([webkit2Bundle pathForResource:@"com.apple.WebProcess" ofType:@"sb"]);
 
     ChildProcess::initializeSandbox(parameters, sandboxParameters);
+#endif
 }
 
 void WebProcess::updateActivePages()

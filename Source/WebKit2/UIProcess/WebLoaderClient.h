@@ -93,9 +93,11 @@ public:
     bool shouldGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*);
     void willGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*, API::Object*);
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     PluginModuleLoadPolicy pluginLoadPolicy(WebPageProxy*, PluginModuleLoadPolicy currentPluginLoadPolicy, ImmutableDictionary*, String& unavailabilityDescriptionOutParameter);
     void didFailToInitializePlugin(WebPageProxy*, ImmutableDictionary*);
     void didBlockInsecurePluginVersion(WebPageProxy*, ImmutableDictionary*);
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 };
 
 } // namespace WebKit

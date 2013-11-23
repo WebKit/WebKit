@@ -56,8 +56,14 @@ void WKContextSetProcessSuppressionEnabled(WKContextRef contextRef, bool enabled
 
 bool WKContextIsPlugInUpdateAvailable(WKContextRef contextRef, WKStringRef plugInBundleIdentifierRef)
 {
+#if PLATFORM(IOS)
+    return false;
+#else
     return WKIsPluginUpdateAvailable((NSString *)adoptCF(WKStringCopyCFString(kCFAllocatorDefault, plugInBundleIdentifierRef)).get());
+#endif
 }
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
 
 WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRef contextRef, WKStringRef plugInBundleIdentifierRef)
 {
@@ -126,3 +132,5 @@ WKStringRef WKPlugInInfoIsSandboxedKey()
 {
     return WKPluginInformationHasSandboxProfileKey();
 }
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

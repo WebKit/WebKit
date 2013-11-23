@@ -176,6 +176,7 @@ void WebUIClient::mouseDidMoveOverElement(WebPageProxy* page, const WebHitTestRe
     m_client.mouseDidMoveOverElement(toAPI(page), toAPI(webHitTestResult.get()), toAPI(modifiers), toAPI(userData), m_client.clientInfo);
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 void WebUIClient::unavailablePluginButtonClicked(WebPageProxy* page, WKPluginUnavailabilityReason pluginUnavailabilityReason, ImmutableDictionary* pluginInformation)
 {
     if (pluginUnavailabilityReason == kWKPluginUnavailabilityReasonPluginMissing) {
@@ -204,6 +205,7 @@ void WebUIClient::unavailablePluginButtonClicked(WebPageProxy* page, WKPluginUna
             toAPI(pluginInformation),
             m_client.clientInfo);
 }
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 bool WebUIClient::implementsDidNotHandleKeyEvent() const
 {

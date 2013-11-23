@@ -239,6 +239,72 @@ private:
 };
 
 #if ENABLE(TOUCH_EVENTS)
+#if PLATFORM(IOS)
+class WebPlatformTouchPoint {
+public:
+    enum TouchPointState {
+        TouchReleased,
+        TouchPressed,
+        TouchMoved,
+        TouchStationary,
+        TouchCancelled
+    };
+
+    WebPlatformTouchPoint() { }
+    WebPlatformTouchPoint(unsigned identifier, WebCore::IntPoint location, TouchPointState phase)
+        : m_identifier(identifier)
+        , m_location(location)
+        , m_phase(phase)
+    {
+    }
+
+    unsigned identifier() const { return m_identifier; }
+    WebCore::IntPoint location() const { return m_location; }
+    TouchPointState phase() const { return static_cast<TouchPointState>(m_phase); }
+
+    void encode(CoreIPC::ArgumentEncoder&) const;
+    static bool decode(CoreIPC::ArgumentDecoder&, WebPlatformTouchPoint&);
+
+private:
+    unsigned m_identifier;
+    WebCore::IntPoint m_location;
+    uint32_t m_phase;
+};
+
+class WebTouchEvent : public WebEvent {
+public:
+    WebTouchEvent() { }
+    WebTouchEvent(WebEvent::Type type, Modifiers modifiers, double timestamp, const Vector<WebPlatformTouchPoint>& touchPoints, WebCore::IntPoint position, bool isGesture, float gestureScale, float gestureRotation)
+        : WebEvent(type, modifiers, timestamp)
+        , m_touchPoints(touchPoints)
+        , m_position(position)
+        , m_isGesture(isGesture)
+        , m_gestureScale(gestureScale)
+        , m_gestureRotation(gestureRotation)
+    {
+        ASSERT(type == TouchStart || type == TouchMove || type == TouchEnd || type == TouchCancel);
+    }
+
+    const Vector<WebPlatformTouchPoint>& touchPoints() const { return m_touchPoints; }
+
+    WebCore::IntPoint position() const { return m_position; }
+
+    bool isGesture() const { return m_isGesture; }
+    float gestureScale() const { return m_gestureScale; }
+    float gestureRotation() const { return m_gestureRotation; }
+
+    void encode(CoreIPC::ArgumentEncoder&) const;
+    static bool decode(CoreIPC::ArgumentDecoder&, WebTouchEvent&);
+    
+private:
+    Vector<WebPlatformTouchPoint> m_touchPoints;
+    
+    WebCore::IntPoint m_position;
+    bool m_isGesture;
+    float m_gestureScale;
+    float m_gestureRotation;
+};
+#else
 // FIXME: Move this class to its own header file.
 // FIXME: Having "Platform" in the name makes it sound like this event is platform-specific or low-
 // level in some way. That doesn't seem to be the case.
@@ -301,6 +367,7 @@ private:
     Vector<WebPlatformTouchPoint> m_touchPoints;
 };
 
+#endif // PLATFORM(IOS)
 #endif // ENABLE(TOUCH_EVENTS)
 
 } // namespace WebKit

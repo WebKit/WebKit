@@ -40,6 +40,11 @@
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
+#if PLATFORM(IOS)
+#import <GraphicsServices/GraphicsServices.h>
+#import <WebCore/WebCoreThreadSystemInterface.h>
+#endif // PLATFORM(IOS)
+
 #if USE(APPKIT)
 @interface NSApplication (WebNSApplicationDetails)
 -(void)_installAutoreleasePoolsOnCurrentThreadIfNecessary;
@@ -73,6 +78,11 @@ public:
         // FIXME: Remove when <rdar://problem/8929426> is fixed.
         [NSApp _installAutoreleasePoolsOnCurrentThreadIfNecessary];
 #endif
+
+#if PLATFORM(IOS)
+        GSInitialize();
+        InitWebCoreThreadSystemInterface();
+#endif // PLATFORM(IOS)
     }
 
     virtual bool getConnectionIdentifier(CoreIPC::Connection::Identifier& identifier)
@@ -167,8 +177,12 @@ public:
 
     virtual void startRunLoop() OVERRIDE
     {
+#if USE(APPKIT)
         ASSERT(NSApp);
         [NSApp run];
+#else
+        RunLoop::run();
+#endif
     }
 };
 

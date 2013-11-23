@@ -37,6 +37,18 @@ messages -> WebPage LegacyReceiver {
     MouseEvent(WebKit::WebMouseEvent event)
     MouseEventSyncForTesting(WebKit::WebMouseEvent event) -> (bool handled)
     WheelEventSyncForTesting(WebKit::WebWheelEvent event) -> (bool handled)
+#if PLATFORM(IOS)
+    HandleTap(WebCore::IntPoint point)
+    TapHighlightAtPosition(uint64_t requestID, WebCore::FloatPoint point)
+    BlurAssistedNode()
+    SelectWithGesture(WebCore::IntPoint point, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, uint64_t callbackID)
+    UpdateSelectionWithTouches(WebCore::IntPoint point, uint32_t touches, bool baseIsStart, uint64_t callbackID)
+    SelectWithTwoTouches(WebCore::IntPoint from, WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, uint64_t callbackID)
+    ExtendSelection(uint32_t granularity)
+    RequestAutocorrectionData(String textForAutocorrection, uint64_t callbackID)
+    ApplyAutocorrection(String correction, String originalText, uint64_t callbackID)
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
     TouchEvent(WebKit::WebTouchEvent event)
     TouchEventSyncForTesting(WebKit::WebTouchEvent event) -> (bool handled)
@@ -288,6 +300,11 @@ messages -> WebPage LegacyReceiver {
 
 #if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
     SetVisibilityState(uint32_t visibilityState, bool isInitialState)
+#endif
+
+#if PLATFORM(IOS)
+    DidFinishScrolling(WebCore::FloatPoint contentOffset);
+    DidFinishZooming(float scale);
 #endif
 
 #if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)

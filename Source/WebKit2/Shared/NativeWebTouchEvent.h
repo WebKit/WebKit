@@ -38,12 +38,19 @@ namespace WebKit {
 
 class NativeWebTouchEvent : public WebTouchEvent {
 public:
+#if PLATFORM(IOS)
+    explicit NativeWebTouchEvent(UIWebTouchEventsGestureRecognizer *);
+    const UIWebTouchEventsGestureRecognizer* nativeEvent() const { return m_nativeEvent.get(); }
+#endif
 #if PLATFORM(EFL)
     NativeWebTouchEvent(EwkTouchEvent*, const WebCore::AffineTransform&);
     const EwkTouchEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #endif
 
 private:
+#if PLATFORM(IOS)
+    RetainPtr<UIWebTouchEventsGestureRecognizer> m_nativeEvent;
+#endif
 #if PLATFORM(EFL)
     RefPtr<EwkTouchEvent> m_nativeEvent;
 #endif

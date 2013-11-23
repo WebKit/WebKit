@@ -196,6 +196,7 @@ def struct_or_class(namespace, type):
         'WebCore::TransformOperation',
         'WebCore::TransformOperations',
         'WebCore::TranslateTransformOperation',
+        'WebCore::ViewportArguments',
         'WebCore::ViewportAttributes',
         'WebCore::WindowFeatures',
         'WebKit::AttributedString',

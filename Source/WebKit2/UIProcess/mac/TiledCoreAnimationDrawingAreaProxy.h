@@ -26,6 +26,8 @@
 #ifndef TiledCoreAnimationDrawingAreaProxy_h
 #define TiledCoreAnimationDrawingAreaProxy_h
 
+#if !PLATFORM(IOS)
+
 #include "DrawingAreaProxy.h"
 
 namespace WebKit {
@@ -66,5 +68,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // !PLATFORM(IOS)
 
 #endif // TiledCoreAnimationDrawingAreaProxy_h

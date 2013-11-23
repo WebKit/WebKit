@@ -1,3 +1,11 @@
+2013-11-22  Enrica Casucci  <enrica@apple.com>
+
+        Upstream iOS WebKit2 to OpenSource (part 3).
+        https://bugs.webkit.org/show_bug.cgi?id=124803
+
+        Reviewed by Anders Carlsson and Tim Horton.
+
+
 2013-11-22  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Can't drag full-screen video to another monitor

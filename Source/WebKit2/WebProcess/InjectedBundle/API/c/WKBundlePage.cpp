@@ -345,7 +345,7 @@ void WKBundlePageUninstallPageOverlayWithAnimation(WKBundlePageRef pageRef, WKBu
 
 void WKBundlePageSetTopOverhangImage(WKBundlePageRef pageRef, WKImageRef imageRef)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     toImpl(pageRef)->setTopOverhangImage(toImpl(imageRef));
 #else
     UNUSED_PARAM(pageRef);
@@ -355,7 +355,7 @@ void WKBundlePageSetTopOverhangImage(WKBundlePageRef pageRef, WKImageRef imageRe
 
 void WKBundlePageSetBottomOverhangImage(WKBundlePageRef pageRef, WKImageRef imageRef)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     toImpl(pageRef)->setBottomOverhangImage(toImpl(imageRef));
 #else
     UNUSED_PARAM(pageRef);
@@ -363,6 +363,7 @@ void WKBundlePageSetBottomOverhangImage(WKBundlePageRef pageRef, WKImageRef imag
 #endif
 }
 
+#if !PLATFORM(IOS)
 void WKBundlePageSetHeaderBanner(WKBundlePageRef pageRef, WKBundlePageBannerRef bannerRef)
 {
     toImpl(pageRef)->setHeaderPageBanner(toImpl(bannerRef));
@@ -372,6 +373,7 @@ void WKBundlePageSetFooterBanner(WKBundlePageRef pageRef, WKBundlePageBannerRef 
 {
     toImpl(pageRef)->setFooterPageBanner(toImpl(bannerRef));
 }
+#endif // !PLATFORM(IOS)
 
 bool WKBundlePageHasLocalDataForURL(WKBundlePageRef pageRef, WKURLRef urlRef)
 {

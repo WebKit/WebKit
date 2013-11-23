@@ -26,6 +26,8 @@
 #import "config.h"
 #import "NetworkResourceLoader.h"
 
+#if ENABLE(NETWORK_PROCESS)
+
 #import "DiskCacheMonitor.h"
 #import "ShareableResource.h"
 #import <WebCore/ResourceHandle.h>
@@ -42,7 +44,7 @@ using namespace WebCore;
 #endif
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 typedef const struct _CFURLCache* CFURLCacheRef;
 typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
 extern "C" CFURLCacheRef CFURLCacheCopySharedURLCache();
@@ -57,7 +59,7 @@ extern "C" CFBooleanRef _CFURLCacheIsResponseDataMemMapped(CFURLCacheRef, CFData
 
 namespace WebKit {
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 
 static void tryGetShareableHandleFromCFData(ShareableResource::Handle& handle, CFDataRef data)
 {
@@ -101,6 +103,7 @@ size_t NetworkResourceLoader::fileBackedResourceMinimumSize()
     return SharedMemory::systemPageSize();
 }
 
+#if !PLATFORM(IOS)
 void NetworkResourceLoader::willCacheResponseAsync(ResourceHandle* handle, NSCachedURLResponse *nsResponse)
 {
     ASSERT_UNUSED(handle, handle == m_handle);
@@ -112,5 +115,9 @@ void NetworkResourceLoader::willCacheResponseAsync(ResourceHandle* handle, NSCac
 
     m_handle->continueWillCacheResponse(nsResponse);
 }
+#endif // !PLATFORM(IOS)
 
 } // namespace WebKit
+
+#endif // ENABLE(NETWORK_PROCESS)
+

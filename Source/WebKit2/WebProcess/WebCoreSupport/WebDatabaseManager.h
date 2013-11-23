@@ -64,6 +64,12 @@ private:
     virtual void dispatchDidModifyOrigin(WebCore::SecurityOrigin*) OVERRIDE;
     virtual void dispatchDidModifyDatabase(WebCore::SecurityOrigin*, const String& databaseIdentifier) OVERRIDE;
 
+#if PLATFORM(IOS)
+    virtual void dispatchDidAddNewOrigin(WebCore::SecurityOrigin*) OVERRIDE;
+    virtual void dispatchDidDeleteDatabase() OVERRIDE;
+    virtual void dispatchDidDeleteDatabaseOrigin() OVERRIDE;
+#endif
+
     WebProcess* m_process;
 };
 

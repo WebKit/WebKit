@@ -54,6 +54,8 @@ public:
 #elif PLATFORM(EFL)
     NativeWebKeyboardEvent(const Evas_Event_Key_Down*, bool);
     NativeWebKeyboardEvent(const Evas_Event_Key_Up*);
+#elif PLATFORM(IOS)
+    NativeWebKeyboardEvent(WebIOSEvent *);
 #endif
 
 #if USE(APPKIT)
@@ -65,6 +67,8 @@ public:
 #elif PLATFORM(EFL)
     const void* nativeEvent() const { return m_nativeEvent; }
     bool isFiltered() const { return m_isFiltered; }
+#elif PLATFORM(IOS)
+    WebIOSEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #endif
 
 private:
@@ -77,6 +81,8 @@ private:
 #elif PLATFORM(EFL)
     const void* m_nativeEvent;
     bool m_isFiltered;
+#elif PLATFORM(IOS)
+    RetainPtr<WebIOSEvent> m_nativeEvent;
 #endif
 };
 

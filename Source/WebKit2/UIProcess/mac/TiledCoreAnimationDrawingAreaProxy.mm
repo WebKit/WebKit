@@ -26,6 +26,8 @@
 #import "config.h"
 #import "TiledCoreAnimationDrawingAreaProxy.h"
 
+#if !PLATFORM(IOS)
+
 #import "ColorSpaceData.h"
 #import "DrawingAreaMessages.h"
 #import "DrawingAreaProxyMessages.h"
@@ -147,3 +149,5 @@ void TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry()
 }
 
 } // namespace WebKit
+
+#endif // !PLATFORM(IOS)

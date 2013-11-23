@@ -888,14 +888,14 @@ void WKPageSetScrollPinningBehavior(WKPageRef page, WKScrollPinningBehavior pinn
     toImpl(page)->setScrollPinningBehavior(corePinning);
 }
 
-
-
-// -- DEPRECATED --
-
 void WKPageSetInvalidMessageFunction(WKPageInvalidMessageFunction)
 {
     // FIXME: Remove this function when doing so won't break WebKit nightlies.
 }
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
+// -- DEPRECATED --
 
 WKStringRef WKPageGetPluginInformationBundleIdentifierKey()
 {
@@ -939,3 +939,4 @@ WKStringRef WKPageGetPluginInformationPluginURLKey()
 
 // -- DEPRECATED --
 
+#endif // ENABLE(NETSCAPE_PLUGIN_API)

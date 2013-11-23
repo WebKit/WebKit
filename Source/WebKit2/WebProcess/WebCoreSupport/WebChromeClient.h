@@ -155,11 +155,38 @@ private:
     virtual PassOwnPtr<WebCore::ColorChooser> createColorChooser(WebCore::ColorChooserClient*, const WebCore::Color&) OVERRIDE;
 #endif
 
+#if PLATFORM(IOS)
+#if ENABLE(TOUCH_EVENTS)
+    virtual void didPreventDefaultForEvent() OVERRIDE;
+#endif
+    virtual void didReceiveMobileDocType() OVERRIDE;
+    virtual void setNeedsScrollNotifications(WebCore::Frame*, bool) OVERRIDE;
+    virtual void observedContentChange(WebCore::Frame*) OVERRIDE;
+    virtual void clearContentChangeObservers(WebCore::Frame*) OVERRIDE;
+    virtual void notifyRevealedSelectionByScrollingFrame(WebCore::Frame*) OVERRIDE;
+    virtual bool isStopping() OVERRIDE;
+
+    virtual void didLayout(LayoutType = NormalLayout) OVERRIDE;
+    virtual void didStartOverflowScroll() OVERRIDE;
+    virtual void didEndOverflowScroll() OVERRIDE;
+
+    // FIXME: See <rdar://problem/5975559>
+    virtual void suppressFormNotifications() OVERRIDE;
+    virtual void restoreFormNotifications() OVERRIDE;
+
+    virtual void addOrUpdateScrollingLayer(WebCore::Node*, PlatformLayer* scrollingLayer, PlatformLayer* contentsLayer, const WebCore::IntSize& scrollSize, bool allowHorizontalScrollbar, bool allowVerticalScrollbar) OVERRIDE;
+    virtual void removeScrollingLayer(WebCore::Node*, PlatformLayer* scrollingLayer, PlatformLayer* contentsLayer) OVERRIDE;
+
+    virtual void webAppOrientationsUpdated() OVERRIDE;
+#endif
+
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>) OVERRIDE;
     virtual void loadIconForFiles(const Vector<String>&, WebCore::FileIconLoader*) OVERRIDE;
 
+#if !PLATFORM(IOS)
     virtual void setCursor(const WebCore::Cursor&) OVERRIDE;
     virtual void setCursorHiddenUntilMouseMoves(bool) OVERRIDE;
+#endif
 #if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
     virtual void scheduleAnimation() OVERRIDE;
 #endif
@@ -190,6 +217,9 @@ private:
             VideoTrigger |
             PluginTrigger| 
             CanvasTrigger |
+#if PLATFORM(IOS)
+            AnimatedOpacityTrigger | // Allow opacity animations to trigger compositing mode for iPhone: <rdar://problem/7830677>
+#endif
             AnimationTrigger);
     }
 
@@ -198,6 +228,11 @@ private:
 
 #if ENABLE(TOUCH_EVENTS)
     virtual void needTouchEvents(bool) OVERRIDE;
+#endif
+
+#if PLATFORM(IOS)
+    virtual void elementDidFocus(const WebCore::Node*) OVERRIDE;
+    virtual void elementDidBlur(const WebCore::Node*) OVERRIDE;
 #endif
 
 #if ENABLE(FULLSCREEN_API)

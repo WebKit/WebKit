@@ -48,7 +48,7 @@ extern "C" int sandbox_init_with_parameters(const char *profile, uint64_t flags,
 #endif
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 typedef bool (^LSServerConnectionAllowedBlock) ( CFDictionaryRef optionsRef );
 extern "C" void _LSSetApplicationLaunchServicesServerConnectionStatus(uint64_t flags, LSServerConnectionAllowedBlock block);
 extern "C" CFDictionaryRef _LSApplicationCheckIn(int sessionID, CFDictionaryRef applicationInfo);
@@ -64,7 +64,7 @@ static const double kSuspensionHysteresisSeconds = 5.0;
 
 void ChildProcess::setProcessSuppressionEnabledInternal(bool processSuppressionEnabled)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     if (this->processSuppressionEnabled() == processSuppressionEnabled)
         return;
 
@@ -122,7 +122,7 @@ void ChildProcess::suspensionHysteresisTimerFired()
     setProcessSuppressionEnabledInternal(true);
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 static void initializeTimerCoalescingPolicy()
 {
     // Set task_latency and task_throughput QOS tiers as appropriate for a visible application.
@@ -134,6 +134,7 @@ static void initializeTimerCoalescingPolicy()
 
 void ChildProcess::setApplicationIsDaemon()
 {
+#if !PLATFORM(IOS)
     OSStatus error = SetApplicationIsDaemon(true);
     ASSERT_UNUSED(error, error == noErr);
 
@@ -141,11 +142,12 @@ void ChildProcess::setApplicationIsDaemon()
     _LSSetApplicationLaunchServicesServerConnectionStatus(0, 0);
     RetainPtr<CFDictionaryRef> unused = _LSApplicationCheckIn(-2, CFBundleGetInfoDictionary(CFBundleGetMainBundle()));
 #endif
+#endif // !PLATFORM(IOS)
 }
 
 void ChildProcess::platformInitialize()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     initializeTimerCoalescingPolicy();
 #endif
     // Starting with process suppression disabled.  The proxy for this process will
@@ -179,7 +181,7 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     osVersion.append(osVersionParts[1]);
     sandboxParameters.addParameter("_OS_VERSION", osVersion.utf8().data());
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     // Use private temporary and cache directories.
     setenv("DIRHELPER_USER_DIR_SUFFIX", fileSystemRepresentation(sandboxParameters.systemDirectorySuffix()).data(), 0);
     char temporaryDirectory[PATH_MAX];
@@ -244,14 +246,17 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     }
     }
 
+#if !PLATFORM(IOS)
     // This will override LSFileQuarantineEnabled from Info.plist unless sandbox quarantine is globally disabled.
     OSStatus error = WKEnableSandboxStyleFileQuarantine();
     if (error) {
         WTFLogAlways("%s: Couldn't enable sandbox style file quarantine: %ld\n", getprogname(), (long)error);
         exit(EX_NOPERM);
     }
+#endif
 }
 
+#if USE(APPKIT)
 void ChildProcess::stopNSAppRunLoop()
 {
     ASSERT([NSApp isRunning]);
@@ -260,5 +265,6 @@ void ChildProcess::stopNSAppRunLoop()
     NSEvent *event = [NSEvent otherEventWithType:NSApplicationDefined location:NSMakePoint(0, 0) modifierFlags:0 timestamp:0.0 windowNumber:0 context:nil subtype:0 data1:0 data2:0];
     [NSApp postEvent:event atStart:true];
 }
+#endif
 
 } // namespace WebKit

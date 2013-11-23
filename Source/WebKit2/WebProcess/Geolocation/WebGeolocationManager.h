@@ -65,6 +65,9 @@ private:
 
     void didChangePosition(const WebGeolocationPosition::Data&);
     void didFailToDeterminePosition(const String& errorMessage);
+#if PLATFORM(IOS)
+    void resetPermissions();
+#endif // PLATFORM(IOS)
 
     WebProcess* m_process;
     HashSet<WebPage*> m_pageSet;

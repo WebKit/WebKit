@@ -23,11 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <TargetConditionals.h>
+
 #import <WebKit2/WKProcessGroup.h>
 #import <WebKit2/WKBase.h>
+
+#if TARGET_OS_IPHONE
+@class WKGeolocationProviderIOS;
+#endif
 
 @interface WKProcessGroup (Private)
 
 @property(readonly) WKContextRef _contextRef;
+#if TARGET_OS_IPHONE
+@property(readonly) WKGeolocationProviderIOS *_geolocationProvider;
+#endif
 
 @end

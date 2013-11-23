@@ -197,6 +197,33 @@ WebCore::PlatformKeyboardEvent platform(const WebKeyboardEvent& webEvent)
 }
 
 #if ENABLE(TOUCH_EVENTS)
+
+#if PLATFORM(IOS)
+static WebCore::PlatformTouchPoint::TouchPhaseType touchEventType(const WebPlatformTouchPoint& webTouchPoint)
+{
+    switch (webTouchPoint.phase()) {
+    case WebPlatformTouchPoint::TouchReleased:
+        return WebCore::PlatformTouchPoint::TouchPhaseEnded;
+    case WebPlatformTouchPoint::TouchPressed:
+        return WebCore::PlatformTouchPoint::TouchPhaseBegan;
+    case WebPlatformTouchPoint::TouchMoved:
+        return WebCore::PlatformTouchPoint::TouchPhaseMoved;
+    case WebPlatformTouchPoint::TouchStationary:
+        return WebCore::PlatformTouchPoint::TouchPhaseStationary;
+    case WebPlatformTouchPoint::TouchCancelled:
+        return WebCore::PlatformTouchPoint::TouchPhaseCancelled;
+    }
+}
+
+class WebKit2PlatformTouchPoint : public WebCore::PlatformTouchPoint {
+public:
+WebKit2PlatformTouchPoint(const WebPlatformTouchPoint& webTouchPoint)
+    : PlatformTouchPoint(webTouchPoint.identifier(), webTouchPoint.location(), touchEventType(webTouchPoint))
+{
+}
+};
+#else
+
 class WebKit2PlatformTouchPoint : public WebCore::PlatformTouchPoint {
 public:
     WebKit2PlatformTouchPoint(const WebPlatformTouchPoint& webTouchPoint)
@@ -231,6 +258,7 @@ public:
         m_rotationAngle = webTouchPoint.rotationAngle();
     }
 };
+#endif // PLATFORM(IOS)
 
 class WebKit2PlatformTouchEvent : public WebCore::PlatformTouchEvent {
 public:
@@ -266,9 +294,22 @@ public:
 
         m_timestamp = webEvent.timestamp();
 
+#if PLATFORM(IOS)
+        unsigned touchCount = webEvent.touchPoints().size();
+        m_touchPoints.reserveInitialCapacity(touchCount);
+        for (unsigned i = 0; i < touchCount; ++i)
+            m_touchPoints.uncheckedAppend(WebKit2PlatformTouchPoint(webEvent.touchPoints().at(i)));
+
+        m_gestureScale = webEvent.gestureScale();
+        m_gestureRotation = webEvent.gestureRotation();
+        m_isGesture = webEvent.isGesture();
+        m_position = webEvent.position();
+        m_globalPosition = webEvent.position();
+#else
         // PlatformTouchEvent
         for (size_t i = 0; i < webEvent.touchPoints().size(); ++i)
             m_touchPoints.append(WebKit2PlatformTouchPoint(webEvent.touchPoints().at(i)));
+#endif //PLATFORM(IOS)
     }
 };
 

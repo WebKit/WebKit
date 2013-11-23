@@ -33,7 +33,9 @@
 #import "WebKitSystemInterface.h"
 #import "WebProcessCreationParameters.h"
 #import "WebProcessMessages.h"
+#if !PLATFORM(IOS)
 #import <QuartzCore/CARemoteLayerServer.h>
+#endif
 #import <WebCore/Color.h>
 #import <WebCore/FileSystem.h>
 #import <WebCore/NotImplemented.h>
@@ -47,7 +49,7 @@
 #endif
 
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 
 #if __has_include(<CFNetwork/CFURLProtocolPriv.h>)
 #include <CFNetwork/CFURLProtocolPriv.h>
@@ -65,7 +67,9 @@ NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
 NSString *WebStorageDirectoryDefaultsKey = @"WebKitLocalStorageDatabasePathPreferenceKey";
 NSString *WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey = @"WebKitKerningAndLigaturesEnabledByDefault";
 
+#if !PLATFORM(IOS)
 static NSString *WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification = @"NSApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification";
+#endif
 
 // FIXME: <rdar://problem/9138817> - After this "backwards compatibility" radar is removed, this code should be removed to only return an empty String.
 NSString *WebIconDatabaseDirectoryDefaultsKey = @"WebIconDatabaseDirectoryDefaultsKey";
@@ -94,7 +98,7 @@ static void registerUserDefaultsIfNeeded()
     didRegister = true;
     NSMutableDictionary *registrationDictionary = [NSMutableDictionary dictionary];
     
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     [registrationDictionary setObject:[NSNumber numberWithBool:YES] forKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey];
 #endif
 
@@ -113,7 +117,7 @@ static void updateProcessSuppressionStateOfGlobalChildProcesses()
 #endif
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 static void applicationOcclusionStateChanged()
 {
     const Vector<WebContext*>& contexts = WebContext::allContexts();
@@ -175,7 +179,7 @@ static const OcclusionNotificationHandler occlusionNotificationHandlers[] = {
 
 static void registerOcclusionNotificationHandlers()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     for (const OcclusionNotificationHandler& occlusionNotificationHandler : occlusionNotificationHandlers) {
         bool result = WKRegisterOcclusionNotificationHandler(occlusionNotificationHandler.notificationType, occlusionNotificationHandler.handler);
         UNUSED_PARAM(result);
@@ -186,7 +190,7 @@ static void registerOcclusionNotificationHandlers()
 
 static void unregisterOcclusionNotificationHandlers()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     for (const OcclusionNotificationHandler& occlusionNotificationHandler : occlusionNotificationHandlers) {
         bool result = WKUnregisterOcclusionNotificationHandler(occlusionNotificationHandler.notificationType, occlusionNotificationHandler.handler);
         UNUSED_PARAM(result);
@@ -274,21 +278,27 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 {
     parameters.presenterApplicationPid = getpid();
 
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     parameters.accessibilityEnhancedUserInterfaceEnabled = [[NSApp accessibilityAttributeValue:@"AXEnhancedUserInterface"] boolValue];
+#else
+    parameters.accessibilityEnhancedUserInterfaceEnabled = false;
+#endif
 
     NSURLCache *urlCache = [NSURLCache sharedURLCache];
     parameters.nsURLCacheMemoryCapacity = [urlCache memoryCapacity];
     parameters.nsURLCacheDiskCapacity = [urlCache diskCapacity];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     parameters.shouldForceScreenFontSubstitution = [[NSUserDefaults standardUserDefaults] boolForKey:@"NSFontDefaultScreenFontSubstitutionEnabled"];
 #endif
     parameters.shouldEnableKerningAndLigaturesByDefault = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey];
 
 #if USE(ACCELERATED_COMPOSITING) && HAVE(HOSTED_CORE_ANIMATION)
+#if !PLATFORM(IOS)
     mach_port_t renderServerPort = [[CARemoteLayerServer sharedServer] serverPort];
     if (renderServerPort != MACH_PORT_NULL)
         parameters.acceleratedCompositingPort = CoreIPC::MachPort(renderServerPort, MACH_MSG_TYPE_COPY_SEND);
+#endif
 #endif
 
     // FIXME: This should really be configurable; we shouldn't just blindly allow read access to the UI process bundle.
@@ -300,8 +310,10 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if ENABLE(NETWORK_PROCESS)
     if (!m_usesNetworkProcess) {
 #endif
+#if ENABLE(CUSTOM_PROTOCOLS)
         for (NSString *scheme in [WKBrowsingContextController customSchemes])
             parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
+#endif
 #if ENABLE(NETWORK_PROCESS)
     }
 #endif
@@ -558,6 +570,7 @@ void WebContext::processSuppressionEnabledChanged()
 
 void WebContext::registerNotificationObservers()
 {
+#if !PLATFORM(IOS)
     m_customSchemeRegisteredObserver = [[NSNotificationCenter defaultCenter] addObserverForName:WebKit::SchemeForCustomProtocolRegisteredNotificationName object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
         NSString *scheme = [notification object];
         ASSERT([scheme isKindOfClass:[NSString class]]);
@@ -596,10 +609,12 @@ void WebContext::registerNotificationObservers()
         textCheckerStateChanged();
     }];
 #endif
+#endif // !PLATFORM(IOS)
 }
 
 void WebContext::unregisterNotificationObservers()
 {
+#if !PLATFORM(IOS)
     [[NSNotificationCenter defaultCenter] removeObserver:m_customSchemeRegisteredObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_customSchemeUnregisteredObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_enhancedAccessibilityObserver.get()];
@@ -610,9 +625,10 @@ void WebContext::unregisterNotificationObservers()
     [[NSNotificationCenter defaultCenter] removeObserver:m_automaticQuoteSubstitutionNotificationObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_automaticDashSubstitutionNotificationObserver.get()];
 #endif
+#endif // !PLATFORM(IOS)
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 static CFURLStorageSessionRef privateBrowsingSession()
 {
     static CFURLStorageSessionRef session;
@@ -629,7 +645,7 @@ static CFURLStorageSessionRef privateBrowsingSession()
 
 bool WebContext::isURLKnownHSTSHost(const String& urlString, bool privateBrowsingEnabled) const
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     RetainPtr<CFURLRef> url = URL(URL(), urlString).createCFURL();
 
     return _CFNetworkIsKnownHSTSHostWithSession(url.get(), privateBrowsingEnabled ? privateBrowsingSession() : nullptr);
@@ -640,7 +656,7 @@ bool WebContext::isURLKnownHSTSHost(const String& urlString, bool privateBrowsin
 
 void WebContext::resetHSTSHosts()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     _CFNetworkResetHSTSHostsWithSession(nullptr);
     _CFNetworkResetHSTSHostsWithSession(privateBrowsingSession());
 #endif

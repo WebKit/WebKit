@@ -26,11 +26,15 @@
 #ifndef WKNativeEvent_h
 #define WKNativeEvent_h
 
+#ifdef __APPLE__
+#include <TargetConditionals.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifdef __APPLE__
+#if defined(__APPLE__) && !TARGET_OS_IPHONE
 #ifdef __OBJC__
 @class NSEvent;
 #elif __cplusplus

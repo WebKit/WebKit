@@ -98,6 +98,9 @@ class WebContext : public API::TypedObject<API::Object::Type::Context>, private 
 public:
     static PassRefPtr<WebContext> create(const String& injectedBundlePath);
     virtual ~WebContext();
+#if PLATFORM(IOS)
+    static WebContext *sharedProcessContext();
+#endif
 
     static const Vector<WebContext*>& allContexts();
 
@@ -472,7 +475,7 @@ private:
 
     RetainPtr<NSObject> m_automaticTextReplacementNotificationObserver;
     RetainPtr<NSObject> m_automaticSpellingCorrectionNotificationObserver;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     RetainPtr<NSObject> m_automaticQuoteSubstitutionNotificationObserver;
     RetainPtr<NSObject> m_automaticDashSubstitutionNotificationObserver;
 #endif

@@ -1,0 +1,756 @@
+/*
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "WebPage.h"
+
+#import "EditorState.h"
+#import "WebChromeClient.h"
+#import "WebCoreArgumentCoders.h"
+#import "WebFrame.h"
+#import "WebPageProxyMessages.h"
+#import "WebProcess.h"
+#import "WKGestureTypes.h"
+#import <CoreText/CTFont.h>
+#import <WebCore/Chrome.h>
+#import <WebCore/Element.h>
+#import <WebCore/EventHandler.h>
+#import <WebCore/FocusController.h>
+#import <WebCore/FloatQuad.h>
+#import <WebCore/Frame.h>
+#import <WebCore/FrameView.h>
+#import <WebCore/MainFrame.h>
+#import <WebCore/NotImplemented.h>
+#import <WebCore/Page.h>
+#import <WebCore/PlatformKeyboardEvent.h>
+#import <WebCore/PlatformMouseEvent.h>
+#import <WebCore/SharedBuffer.h>
+#import <WebCore/TextIterator.h>
+#import <WebCore/VisibleUnits.h>
+#import <WebCore/WebEvent.h>
+
+using namespace WebCore;
+
+namespace WebKit {
+
+void WebPage::platformInitialize()
+{
+    notImplemented();
+}
+
+void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)
+{
+    notImplemented();
+}
+
+bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressCommand>&, KeyboardEvent*)
+{
+    notImplemented();
+    return false;
+}
+
+bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event, bool)
+{
+    bool eventWasHandled = false;
+    bool sendResult = WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::InterpretKeyEvent(editorState(), event->keyEvent()->type() == PlatformKeyboardEvent::Char),
+                                                                               Messages::WebPageProxy::InterpretKeyEvent::Reply(eventWasHandled), m_pageID);
+    if (!sendResult)
+        return false;
+
+    return eventWasHandled;
+}
+
+void WebPage::sendComplexTextInputToPlugin(uint64_t, const String&)
+{
+    notImplemented();
+}
+
+void WebPage::setComposition(const String&, Vector<CompositionUnderline>, uint64_t, uint64_t, uint64_t, uint64_t, EditorState&)
+{
+    notImplemented();
+}
+
+void WebPage::confirmComposition(EditorState&)
+{
+    notImplemented();
+}
+
+void WebPage::cancelComposition(EditorState&)
+{
+    notImplemented();
+}
+
+static PassRefPtr<Range> convertToRange(Frame* frame, NSRange nsrange)
+{
+    if (nsrange.location > INT_MAX)
+        return 0;
+    if (nsrange.length > INT_MAX || nsrange.location + nsrange.length > INT_MAX)
+        nsrange.length = INT_MAX - nsrange.location;
+    
+    // our critical assumption is that we are only called by input methods that
+    // concentrate on a given area containing the selection
+    // We have to do this because of text fields and textareas. The DOM for those is not
+    // directly in the document DOM, so serialization is problematic. Our solution is
+    // to use the root editable element of the selection start as the positional base.
+    // That fits with AppKit's idea of an input context.
+    return TextIterator::rangeFromLocationAndLength(frame->selection().rootEditableElementOrDocumentElement(), nsrange.location, nsrange.length);
+}
+
+void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, bool& handled, EditorState& newState)
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    
+    if (replacementRangeStart != NSNotFound) {
+        RefPtr<Range> replacementRange = convertToRange(&frame, NSMakeRange(replacementRangeStart, replacementRangeEnd - replacementRangeStart));
+        if (replacementRange)
+            frame.selection().setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
+    }
+    
+    if (!frame.editor().hasComposition()) {
+        // An insertText: might be handled by other responders in the chain if we don't handle it.
+        // One example is space bar that results in scrolling down the page.
+        handled = frame.editor().insertText(text, 0);
+    } else {
+        handled = true;
+        frame.editor().confirmComposition(text);
+    }
+    
+    newState = editorState();
+}
+
+void WebPage::insertDictatedText(const String&, uint64_t, uint64_t, const Vector<WebCore::DictationAlternative>&, bool&, EditorState&)
+{
+    notImplemented();
+}
+
+void WebPage::getMarkedRange(uint64_t&, uint64_t&)
+{
+    notImplemented();
+}
+
+void WebPage::getSelectedRange(uint64_t&, uint64_t&)
+{
+    notImplemented();
+}
+
+void WebPage::getAttributedSubstringFromRange(uint64_t, uint64_t, AttributedString&)
+{
+    notImplemented();
+}
+
+void WebPage::characterIndexForPoint(IntPoint, uint64_t&)
+{
+    notImplemented();
+}
+
+void WebPage::firstRectForCharacterRange(uint64_t, uint64_t, WebCore::IntRect&)
+{
+    notImplemented();
+}
+
+void WebPage::executeKeypressCommands(const Vector<WebCore::KeypressCommand>&, bool&, EditorState&)
+{
+    notImplemented();
+}
+
+void WebPage::performDictionaryLookupAtLocation(const FloatPoint&)
+{
+    notImplemented();
+}
+
+void WebPage::performDictionaryLookupForSelection(Frame*, const VisibleSelection&)
+{
+    notImplemented();
+}
+
+void WebPage::performDictionaryLookupForRange(Frame*, Range*, NSDictionary *)
+{
+    notImplemented();
+}
+
+bool WebPage::performNonEditingBehaviorForSelector(const String&, WebCore::KeyboardEvent*)
+{
+    notImplemented();
+    return false;
+}
+
+bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&)
+{
+    notImplemented();
+    return false;
+}
+
+void WebPage::registerUIProcessAccessibilityTokens(const CoreIPC::DataReference&, const CoreIPC::DataReference&)
+{
+    notImplemented();
+}
+
+void WebPage::readSelectionFromPasteboard(const String&, bool&)
+{
+    notImplemented();
+}
+
+void WebPage::getStringSelectionForPasteboard(String&)
+{
+    notImplemented();
+}
+
+void WebPage::getDataSelectionForPasteboard(const String, SharedMemory::Handle&, uint64_t&)
+{
+    notImplemented();
+}
+
+WKAccessibilityWebPageObject* WebPage::accessibilityRemoteObject()
+{
+    notImplemented();
+    return 0;
+}
+
+bool WebPage::platformHasLocalDataForURL(const WebCore::URL&)
+{
+    notImplemented();
+    return false;
+}
+
+String WebPage::cachedSuggestedFilenameForURL(const URL&)
+{
+    notImplemented();
+    return String();
+}
+
+String WebPage::cachedResponseMIMETypeForURL(const URL&)
+{
+    notImplemented();
+    return String();
+}
+
+PassRefPtr<SharedBuffer> WebPage::cachedResponseDataForURL(const URL&)
+{
+    notImplemented();
+    return 0;
+}
+
+bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest&)
+{
+    notImplemented();
+    return false;
+}
+
+void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent&, bool&)
+{
+    notImplemented();
+}
+
+void WebPage::acceptsFirstMouse(int, const WebKit::WebMouseEvent&, bool&)
+{
+    notImplemented();
+}
+
+void WebPage::setLayerHostingMode(LayerHostingMode)
+{
+    notImplemented();
+}
+
+void WebPage::computePagesForPrintingPDFDocument(uint64_t, const PrintInfo&, Vector<IntRect>&)
+{
+    notImplemented();
+}
+
+void WebPage::drawPagesToPDFFromPDFDocument(CGContextRef, PDFDocument *, const PrintInfo&, uint32_t, uint32_t)
+{
+    notImplemented();
+}
+
+void WebPage::advanceToNextMisspelling(bool)
+{
+    notImplemented();
+}
+
+void WebPage::handleTap(const IntPoint& point)
+{
+    Frame& mainframe = m_page->mainFrame();
+    FloatPoint adjustedPoint;
+    mainframe.nodeRespondingToClickEvents(point, adjustedPoint);
+    IntPoint roundedAdjustedPoint = roundedIntPoint(adjustedPoint);
+
+    mainframe.eventHandler().mouseMoved(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, NoButton, PlatformEvent::MouseMoved, 0, false, false, false, false, 0));
+    mainframe.eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MousePressed, 1, false, false, false, false, 0));
+    mainframe.eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MouseReleased, 1, false, false, false, false, 0));
+}
+
+void WebPage::tapHighlightAtPosition(uint64_t requestID, const FloatPoint& position)
+{
+    Frame& mainframe = m_page->mainFrame();
+    FloatPoint adjustedPoint;
+    Node* node = mainframe.nodeRespondingToClickEvents(position, adjustedPoint);
+
+    if (!node)
+        return;
+
+    RenderObject *renderer = node->renderer();
+
+    Vector<FloatQuad> quads;
+    if (renderer) {
+        renderer->absoluteQuads(quads);
+        Color highlightColor = node->computedStyle()->tapHighlightColor();
+
+        RoundedRect::Radii borderRadii;
+        if (renderer->isBox()) {
+            RenderBox* box = toRenderBox(renderer);
+            borderRadii = box->borderRadii();
+        }
+
+        send(Messages::WebPageProxy::DidGetTapHighlightGeometries(requestID, highlightColor, quads, borderRadii.topLeft(), borderRadii.topRight(), borderRadii.bottomLeft(), borderRadii.bottomRight()));
+    }
+}
+
+void WebPage::blurAssistedNode()
+{
+    if (m_assistedNode && m_assistedNode->isElementNode())
+        toElement(m_assistedNode.get())->blur();
+}
+
+static FloatQuad innerFrameQuad(Frame* frame, Node* assistedNode)
+{
+    frame->document()->updateLayoutIgnorePendingStylesheets();
+    RenderObject* renderer;
+    if (assistedNode->hasTagName(HTMLNames::textareaTag) || assistedNode->hasTagName(HTMLNames::inputTag))
+        renderer = assistedNode->renderer();
+    else
+        renderer = assistedNode->rootEditableElement()->renderer();
+    
+    if (!renderer)
+        return FloatQuad();
+
+    RenderStyle& style = renderer->style();
+    IntRect boundingBox = renderer->absoluteBoundingBoxRect(true /* use transforms*/);
+
+    boundingBox.move(style.borderLeftWidth(), style.borderTopWidth());
+    boundingBox.setWidth(boundingBox.width() - style.borderLeftWidth() - style.borderRightWidth());
+    boundingBox.setHeight(boundingBox.height() - style.borderBottomWidth() - style.borderTopWidth());
+
+    return FloatQuad(boundingBox);
+}
+
+static IntPoint constrainPoint(const IntPoint& point, Frame* frame, Node* assistedNode)
+{
+    const int DEFAULT_CONSTRAIN_INSET = 2;
+    IntRect innerFrame = innerFrameQuad(frame, assistedNode).enclosingBoundingBox();
+    IntPoint constrainedPoint = point;
+
+    int minX = innerFrame.x() + DEFAULT_CONSTRAIN_INSET;
+    int maxX = innerFrame.maxX() - DEFAULT_CONSTRAIN_INSET;
+    int minY = innerFrame.y() + DEFAULT_CONSTRAIN_INSET;
+    int maxY = innerFrame.maxY() - DEFAULT_CONSTRAIN_INSET;
+
+    if (point.x() < minX)
+        constrainedPoint.setX(minX);
+    else if (point.x() > maxX)
+        constrainedPoint.setX(maxX);
+
+    if (point.y() < minY)
+        constrainedPoint.setY(minY);
+    else if (point.y() >= maxY)
+        constrainedPoint.setY(maxY);
+                    
+    return constrainedPoint;
+}
+
+void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, uint64_t callbackID)
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    FloatPoint adjustedPoint(point);
+    Node* node = frame.nodeRespondingToClickEvents(FloatPoint(point), adjustedPoint);
+    if (node && node != m_assistedNode.get()) {
+        handleTap(IntPoint(adjustedPoint));
+        if (!m_assistedNode) {
+            send(Messages::WebPageProxy::GestureCallback(point, gestureType, gestureState, 0, callbackID));
+            return;
+        }
+    }
+    IntPoint constrainedPoint = constrainPoint(point, &frame, m_assistedNode.get());
+    VisiblePosition position = frame.visiblePositionForPoint(constrainedPoint);
+    if (position.isNull()) {
+        send(Messages::WebPageProxy::GestureCallback(point, gestureType, gestureState, 0, callbackID));
+        return;
+    }
+    RefPtr<Range> range;
+    switch (static_cast<WKGestureType>(gestureType)) {
+    case WKGestureOneFingerTap:
+    {
+        VisiblePosition result;
+        // move the the position at the end of the word
+        if (atBoundaryOfGranularity(position, LineGranularity, DirectionForward)) {
+            // Don't cross line boundaries.
+            result = position;
+        } else if (withinTextUnitOfGranularity(position, WordGranularity, DirectionForward)) {
+            // The position lies within a word.
+            RefPtr<Range> wordRange = enclosingTextUnitOfGranularity(position, WordGranularity, DirectionForward);
+
+            result = wordRange->startPosition();
+            if (distanceBetweenPositions(position, result) > 1)
+                result = wordRange->endPosition();
+        } else if (atBoundaryOfGranularity(position, WordGranularity, DirectionBackward)) {
+            // The position is at the end of a word.
+            result = position;
+        } else {
+            // The position is not within a word.
+            // Go to the next boundary.
+            result = positionOfNextBoundaryOfGranularity(position, WordGranularity, DirectionForward);
+
+            // If there is no such boundary we go to the end of the element.
+            if (result.isNull())
+                result = endOfEditableContent(position);
+        }
+        if (result.isNotNull())
+            range = Range::create(*frame.document(), result, result);
+        if (range)
+            m_shouldReturnWordAtSelection = true;
+    }
+        break;
+
+    case WKGestureLoupe:
+        range = Range::create(*frame.document(), position, position);
+        break;
+
+    case WKGestureTapAndAHalf:
+        switch (static_cast<WKGestureRecognizerState>(gestureState)) {
+        case WKGestureRecognizerStateBegan:
+            range = wordRangeFromPosition(position);
+            m_currentWordRange = Range::create(*frame.document(), range->startPosition(), range->endPosition());
+            break;
+        case WKGestureRecognizerStateChanged:
+        {
+            range = Range::create(*frame.document(), m_currentWordRange->startPosition(), m_currentWordRange->endPosition());
+            ExceptionCode ec;
+            if (position < range->startPosition())
+                range->setStart(position.deepEquivalent(), ec);
+            if (position > range->endPosition())
+                range->setEnd(position.deepEquivalent(), ec);
+        }
+            break;
+        case WKGestureRecognizerStateEnded:
+        case WKGestureRecognizerStateCancelled:
+            m_currentWordRange = nullptr;
+            break;
+        case WKGestureRecognizerStateFailed:
+        case WKGestureRecognizerStatePossible:
+            ASSERT_NOT_REACHED();
+        }
+        break;
+
+    case WKGestureOneFingerDoubleTap:
+        if (atBoundaryOfGranularity(position, LineGranularity, DirectionForward)) {
+            // Double-tap at end of line only places insertion point there.
+            // This helps to get the callout for pasting at ends of lines,
+            // paragraphs, and documents.
+            range = Range::create(*frame.document(), position, position);
+         } else
+            range = wordRangeFromPosition(position);
+        break;
+
+    case WKGestureTwoFingerSingleTap:
+        // Single tap with two fingers selects the entire paragraph.
+        range = enclosingTextUnitOfGranularity(position, ParagraphGranularity, DirectionForward);
+        break;
+
+    case WKGestureOneFingerTripleTap:
+        if (atBoundaryOfGranularity(position, LineGranularity, DirectionForward)) {
+            // Triple-tap at end of line only places insertion point there.
+            // This helps to get the callout for pasting at ends of lines,
+            // paragraphs, and documents.
+            range = Range::create(*frame.document(), position, position);
+        } else
+            range = enclosingTextUnitOfGranularity(position, ParagraphGranularity, DirectionForward);
+        break;
+        
+    default:
+        break;
+    }
+    if (range)
+        frame.selection().setSelectedRange(range.get(), position.affinity(), true);
+
+    send(Messages::WebPageProxy::GestureCallback(point, gestureType, gestureState, 0, callbackID));
+    m_shouldReturnWordAtSelection = false;
+}
+
+static PassRefPtr<Range> rangeForPosition(Frame* frame, const VisiblePosition& position, bool baseIsStart)
+{
+    RefPtr<Range> range;
+    VisiblePosition result = position;
+
+    if (baseIsStart) {
+        VisiblePosition selectionStart = frame->selection().selection().visibleStart();
+        bool wouldFlip = position <= selectionStart;
+
+        if (wouldFlip)
+            result = selectionStart.next();
+
+        if (result.isNotNull())
+            range = Range::create(*frame->document(), selectionStart, result);
+    } else {
+        VisiblePosition selectionEnd = frame->selection().selection().visibleEnd();
+        bool wouldFlip = position >= selectionEnd;
+
+        if (wouldFlip)
+            result = selectionEnd.previous();
+
+        if (result.isNotNull())
+            range = Range::create(*frame->document(), result, selectionEnd);
+    }
+
+    return range.release();
+}
+
+static PassRefPtr<Range> rangeAtWordBoundaryForPosition(Frame* frame, const VisiblePosition& position, bool baseIsStart, SelectionDirection direction)
+{
+    SelectionDirection sameDirection = baseIsStart ? DirectionForward : DirectionBackward;
+    SelectionDirection oppositeDirection = baseIsStart ? DirectionBackward : DirectionForward;
+    VisiblePosition base = baseIsStart ? frame->selection().selection().visibleStart() : frame->selection().selection().visibleEnd();
+    VisiblePosition extent = baseIsStart ? frame->selection().selection().visibleEnd() : frame->selection().selection().visibleStart();
+    VisiblePosition initialExtent = position;
+
+    if (atBoundaryOfGranularity(extent, WordGranularity, sameDirection)) {
+        // This is a word boundary. Leave selection where it is.
+        return 0;
+    }
+
+    if (atBoundaryOfGranularity(extent, WordGranularity, oppositeDirection)) {
+        // This is a word boundary in the wrong direction. Nudge the selection to a character before proceeding.
+        extent = baseIsStart ? extent.previous() : extent.next();
+    }
+
+    // Extend to the boundary of the word.
+
+    VisiblePosition wordBoundary = positionOfNextBoundaryOfGranularity(extent, WordGranularity, sameDirection);
+    if (wordBoundary.isNotNull()
+        && atBoundaryOfGranularity(wordBoundary, WordGranularity, sameDirection)
+        && initialExtent != wordBoundary) {
+        extent = wordBoundary;
+        return (base < extent) ? Range::create(*frame->document(), base, extent) : Range::create(*frame->document(), extent, base);
+    }
+    // Conversely, if the initial extent equals the current word boundary, then
+    // run the rest of this function to see if the selection should extend
+    // the other direction to the other word.
+
+    // If this is where the extent was initially, then iterate in the other direction in the document until we hit the next word.
+    while (extent.isNotNull()
+           && !atBoundaryOfGranularity(extent, WordGranularity, sameDirection)
+           && extent != base
+           && !atBoundaryOfGranularity(extent, LineBoundary, sameDirection)
+           && !atBoundaryOfGranularity(extent, LineBoundary, oppositeDirection)) {
+        extent = baseIsStart ? extent.next() : extent.previous();
+    }
+
+    // Don't let the smart extension make the extent equal the base.
+    // Expand out to word boundary.
+    if (extent.isNull() || extent == base)
+        extent = wordBoundary;
+    if (extent.isNull())
+        return 0;
+
+    return (base < extent) ? Range::create(*frame->document(), base, extent) : Range::create(*frame->document(), extent, base);
+}
+
+void WebPage::updateSelectionWithTouches(const IntPoint& point, uint32_t touches, bool baseIsStart, uint64_t callbackID)
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    VisiblePosition position = frame.visiblePositionForPoint(point);
+    if (position.isNull()) {
+        send(Messages::WebPageProxy::TouchesCallback(point, touches, callbackID));
+        return;
+    }
+
+    RefPtr<Range> range;
+    VisiblePosition result;
+    
+    switch (static_cast<WKSelectionTouch>(touches)) {
+        case WKSelectionTouchStarted:
+        case WKSelectionTouchEndedNotMoving:
+            break;
+        
+        case WKSelectionTouchEnded:
+            result = closestWordBoundaryForPosition(position);
+            if (result.isNotNull())
+                range = Range::create(*frame.document(), result, result);
+            break;
+
+        case WKSelectionTouchEndedMovingForward:
+            range = rangeAtWordBoundaryForPosition(&frame, position, baseIsStart, DirectionForward);
+            break;
+            
+        case WKSelectionTouchEndedMovingBackward:
+            range = rangeAtWordBoundaryForPosition(&frame, position, baseIsStart, DirectionBackward);
+            break;
+
+        case WKSelectionTouchMoved:
+            range = rangeForPosition(&frame, position, baseIsStart);
+            break;
+    }
+    if (range)
+        frame.selection().setSelectedRange(range.get(), position.affinity(), true);
+
+    send(Messages::WebPageProxy::TouchesCallback(point, touches, callbackID));
+}
+
+void WebPage::selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore::IntPoint& to, uint32_t gestureType, uint32_t gestureState, uint64_t callbackID)
+{
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    VisiblePosition fromPosition = frame.visiblePositionForPoint(from);
+    VisiblePosition toPosition = frame.visiblePositionForPoint(to);
+    RefPtr<Range> range;
+    if (fromPosition.isNotNull() && toPosition.isNotNull()) {
+        if (fromPosition < toPosition)
+            range = Range::create(*frame.document(), fromPosition, toPosition);
+        else
+            range = Range::create(*frame.document(), toPosition, fromPosition);
+        frame.selection().setSelectedRange(range.get(), fromPosition.affinity(), true);
+    }
+
+    // We can use the same callback for the gestures with one point.
+    send(Messages::WebPageProxy::GestureCallback(from, gestureType, gestureState, 0, callbackID));
+}
+
+void WebPage::extendSelection(uint32_t granularity)
+{
+    // For the moment we handle only WordGranularity.
+    if (granularity != WordGranularity)
+        return;
+
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    ASSERT(frame.selection().isCaret());
+    VisiblePosition position = frame.selection().selection().start();
+    frame.selection().setSelectedRange(wordRangeFromPosition(position).get(), position.affinity(), true);
+}
+
+void WebPage::requestAutocorrectionData(const String& textForAutocorrection, uint64_t callbackID)
+{
+    RefPtr<Range> range;
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    ASSERT(frame.selection().isCaret());
+    VisiblePosition position = frame.selection().selection().start();
+    Vector<SelectionRect> selectionRects;
+
+    range = wordRangeFromPosition(position);
+    String textForRange = plainText(range.get());
+    const unsigned maxSearchAttempts = 5;
+    for (size_t i = 0;  i < maxSearchAttempts && textForRange != textForAutocorrection; ++i)
+    {
+        position = range->startPosition().previous();
+        if (position.isNull() || position == range->startPosition())
+            break;
+        range = Range::create(*frame.document(), wordRangeFromPosition(position)->startPosition(), range->endPosition());
+        textForRange = plainText(range.get());
+    }
+    if (textForRange == textForAutocorrection)
+        range->collectSelectionRects(selectionRects);
+
+    Vector<FloatRect> rectsForText;
+    rectsForText.resize(selectionRects.size());
+
+    for (size_t i = 0; i < selectionRects.size(); i++)
+        rectsForText[i] = selectionRects[i].rect();
+
+    bool multipleFonts = false;
+    CTFontRef font = nil;
+    if (const SimpleFontData* fontData = frame.editor().fontForSelection(multipleFonts))
+        font = fontData->getCTFont();
+
+    CGFloat fontSize = CTFontGetSize(font);
+    uint64_t fontTraits = CTFontGetSymbolicTraits(font);
+    RetainPtr<NSString> fontName = adoptNS((NSString *)CTFontCopyFamilyName(font));
+    send(Messages::WebPageProxy::AutocorrectionDataCallback(rectsForText, fontName.get(), fontSize, fontTraits, callbackID));
+}
+
+void WebPage::applyAutocorrection(const String& correction, const String& originalText, uint64_t callbackID)
+{
+    RefPtr<Range> range;
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    ASSERT(frame.selection().isCaret());
+    VisiblePosition position = frame.selection().selection().start();
+
+    range = wordRangeFromPosition(position);
+    String textForRange = plainText(range.get());
+    if (textForRange != originalText) {
+        for (size_t i = 0; i < originalText.length(); ++i)
+            position = position.previous();
+        if (position.isNull())
+            position = startOfDocument(static_cast<Node*>(frame.document()->documentElement()));
+        range = Range::create(*frame.document(), position, frame.selection().selection().start());
+        if (range)
+            textForRange = (range) ? plainText(range.get()) : emptyString();
+        unsigned loopCount = 0;
+        const unsigned maxPositionsAttempts = 10;
+        while (textForRange.length() && textForRange.length() > originalText.length() && loopCount < maxPositionsAttempts) {
+            position = position.next();
+            if (position.isNotNull() && position >= frame.selection().selection().start())
+                range = NULL;
+            else
+                range = Range::create(*frame.document(), position, frame.selection().selection().start());
+            textForRange = (range) ? plainText(range.get()) : emptyString();
+            loopCount++;
+        }
+    }
+    if (textForRange != originalText) {
+        send(Messages::WebPageProxy::StringCallback(String(), callbackID));
+        return;
+    }
+
+    frame.selection().setSelectedRange(range.get(), UPSTREAM, true);
+    if (correction.length())
+        frame.editor().insertText(correction, 0);
+    else
+        frame.editor().deleteWithDirection(DirectionBackward, CharacterGranularity, false, true);
+
+    send(Messages::WebPageProxy::StringCallback(correction, callbackID));
+}
+
+void WebPage::elementDidFocus(WebCore::Node* node)
+{
+    m_assistedNode = node;
+    if (node->hasTagName(WebCore::HTMLNames::inputTag) || node->hasTagName(WebCore::HTMLNames::textareaTag) || node->rendererIsEditable())
+        send(Messages::WebPageProxy::StartAssistingNode(WebCore::IntRect(), true, true));    
+}
+
+void WebPage::elementDidBlur(WebCore::Node* node)
+{
+    if (m_assistedNode == node) {
+        send(Messages::WebPageProxy::StopAssistingNode());
+        m_assistedNode = 0;
+    }
+}
+
+void WebPage::didFinishScrolling(const WebCore::FloatPoint& contentOffset)
+{
+    m_page->mainFrame().view()->setScrollOffset(WebCore::IntPoint(contentOffset));
+}
+
+void WebPage::didFinishZooming(float newScale)
+{
+    m_page->mainFrame().setDocumentScale(newScale);
+    m_page->setPageScaleFactor(newScale, m_page->mainFrame().view()->scrollPosition());
+}
+
+} // namespace WebKit

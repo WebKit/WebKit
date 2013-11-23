@@ -1,0 +1,407 @@
+/*
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "WebPageProxy.h"
+
+#import "NativeWebKeyboardEvent.h"
+#import "WebPageMessages.h"
+#import "WebProcessProxy.h"
+#import <WebCore/NotImplemented.h>
+#import <WebCore/SharedBuffer.h>
+#import "PageClientImplIOS.h"
+
+using namespace WebCore;
+
+namespace WebKit {
+
+void WebPageProxy::platformInitialize()
+{
+    notImplemented();
+}
+
+String WebPageProxy::standardUserAgent(const String&)
+{
+    notImplemented();
+
+    // Just return the iOS 5.1 user agent for now.
+    return "Mozilla/5.0 (iPad; CPU OS 5_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9B176 Safari/7534.48.3";
+}
+
+void WebPageProxy::getIsSpeaking(bool&)
+{
+    notImplemented();
+}
+
+void WebPageProxy::speak(const String&)
+{
+    notImplemented();
+}
+
+void WebPageProxy::stopSpeaking()
+{
+    notImplemented();
+}
+
+void WebPageProxy::searchWithSpotlight(const String&)
+{
+    notImplemented();
+}
+
+void WebPageProxy::searchTheWeb(const String&)
+{
+    notImplemented();
+}
+
+void WebPageProxy::windowAndViewFramesChanged(const FloatRect&, const FloatPoint&)
+{
+    notImplemented();
+}
+
+void WebPageProxy::setComposition(const String&, Vector<CompositionUnderline>, uint64_t, uint64_t, uint64_t, uint64_t)
+{
+    notImplemented();
+
+}
+
+void WebPageProxy::confirmComposition()
+{
+    notImplemented();
+}
+
+void WebPageProxy::cancelComposition()
+{
+    notImplemented();
+
+}
+
+bool WebPageProxy::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
+{
+    if (!isValid())
+        return true;
+    
+    bool handled = true;
+    process()->sendSync(Messages::WebPage::InsertText(text, replacementRangeStart, replacementRangeEnd), Messages::WebPage::InsertText::Reply(handled, m_editorState), m_pageID);
+    return handled;
+}
+
+bool WebPageProxy::insertDictatedText(const String&, uint64_t, uint64_t, const Vector<WebCore::TextAlternativeWithRange>&)
+{
+    notImplemented();
+    return false;
+}
+
+void WebPageProxy::getMarkedRange(uint64_t&, uint64_t&)
+{
+    notImplemented();
+}
+
+void WebPageProxy::getSelectedRange(uint64_t&, uint64_t&)
+{
+    notImplemented();
+}
+
+void WebPageProxy::getAttributedSubstringFromRange(uint64_t, uint64_t, AttributedString&)
+{
+    notImplemented();
+}
+
+uint64_t WebPageProxy::characterIndexForPoint(const IntPoint)
+{
+    notImplemented();
+    return 0;
+}
+
+IntRect WebPageProxy::firstRectForCharacterRange(uint64_t, uint64_t)
+{
+    notImplemented();
+    return IntRect();
+}
+
+bool WebPageProxy::executeKeypressCommands(const Vector<WebCore::KeypressCommand>&)
+{
+    notImplemented();
+    return false;
+}
+
+String WebPageProxy::stringSelectionForPasteboard()
+{
+    notImplemented();
+    return String();
+}
+
+PassRefPtr<WebCore::SharedBuffer> WebPageProxy::dataSelectionForPasteboard(const String&)
+{
+    notImplemented();
+    return 0;
+}
+
+bool WebPageProxy::readSelectionFromPasteboard(const String&)
+{
+    notImplemented();
+    return false;
+}
+
+void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint&)
+{
+    notImplemented();
+}
+
+void WebPageProxy::gestureCallback(const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, uint64_t callbackID)
+{
+    RefPtr<GestureCallback> callback = m_gestureCallbacks.take(callbackID);
+    if (!callback) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    
+    callback->performCallbackWithReturnValue(point, gestureType, gestureState, flags);
+}
+
+void WebPageProxy::touchesCallback(const WebCore::IntPoint& point, uint32_t touches, uint64_t callbackID)
+{
+    RefPtr<TouchesCallback> callback = m_touchesCallbacks.take(callbackID);
+    if (!callback) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    callback->performCallbackWithReturnValue(point, touches);
+}
+
+void WebPageProxy::autocorrectionDataCallback(const Vector<WebCore::FloatRect>& rects, const String& fontName, float fontSize, uint64_t fontTraits, uint64_t callbackID)
+{
+    RefPtr<AutocorrectionDataCallback> callback = m_autocorrectionCallbacks.take(callbackID);
+    if (!callback) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    callback->performCallbackWithReturnValue(rects, fontName, fontSize, fontTraits);
+}
+
+void WebPageProxy::selectWithGesture(const WebCore::IntPoint point, WebCore::TextGranularity granularity, uint32_t gestureType, uint32_t gestureState, PassRefPtr<GestureCallback> callback)
+{
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+    
+    uint64_t callbackID = callback->callbackID();
+    m_gestureCallbacks.set(callbackID, callback);
+    m_process->send(Messages::WebPage::SelectWithGesture(point, (uint32_t)granularity, gestureType, gestureState, callbackID), m_pageID);
+}
+
+void WebPageProxy::updateSelectionWithTouches(const WebCore::IntPoint point, uint32_t touches, bool baseIsStart, PassRefPtr<TouchesCallback> callback)
+{
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+
+    uint64_t callbackID = callback->callbackID();
+    m_touchesCallbacks.set(callbackID, callback);
+    m_process->send(Messages::WebPage::UpdateSelectionWithTouches(point, touches, baseIsStart, callbackID), m_pageID);
+}
+
+void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection, PassRefPtr<AutocorrectionDataCallback> callback)
+{
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+
+    uint64_t callbackID = callback->callbackID();
+    m_autocorrectionCallbacks.set(callbackID, callback);
+    m_process->send(Messages::WebPage::RequestAutocorrectionData(textForAutocorrection, callbackID), m_pageID);
+}
+
+void WebPageProxy::applyAutocorrection(const String& correction, const String& originalText, PassRefPtr<StringCallback> callback)
+{
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+
+    uint64_t callbackID = callback->callbackID();
+    m_stringCallbacks.set(callbackID, callback);
+    m_process->send(Messages::WebPage::ApplyAutocorrection(correction, originalText, callbackID), m_pageID);
+}
+
+void WebPageProxy::selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, PassRefPtr<GestureCallback> callback)
+{
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+
+    uint64_t callbackID = callback->callbackID();
+    m_gestureCallbacks.set(callbackID, callback);
+    m_process->send(Messages::WebPage::SelectWithTwoTouches(from, to, gestureType, gestureState, callbackID), m_pageID);
+}
+
+void WebPageProxy::extendSelection(WebCore::TextGranularity granularity)
+{
+    m_process->send(Messages::WebPage::ExtendSelection(static_cast<uint32_t>(granularity)), m_pageID);
+}
+
+void WebPageProxy::interpretQueuedKeyEvent(const EditorState&, bool&, Vector<WebCore::KeypressCommand>&)
+{
+    notImplemented();
+}
+
+void WebPageProxy::interpretKeyEvent(const EditorState& state, bool isCharEvent, bool& handled)
+{
+    m_editorState = state;
+    handled = m_pageClient->interpretKeyEvent(m_keyEventQueue.first(), isCharEvent);
+}
+
+// Complex text input support for plug-ins.
+void WebPageProxy::sendComplexTextInputToPlugin(uint64_t, const String&)
+{
+    notImplemented();
+}
+
+void WebPageProxy::setSmartInsertDeleteEnabled(bool)
+{
+    notImplemented();
+}
+
+void WebPageProxy::registerWebProcessAccessibilityToken(const CoreIPC::DataReference&)
+{
+    notImplemented();
+}    
+
+void WebPageProxy::makeFirstResponder()
+{
+    notImplemented();
+}
+
+void WebPageProxy::registerUIProcessAccessibilityTokens(const CoreIPC::DataReference&, const CoreIPC::DataReference&)
+{
+    notImplemented();
+}
+
+void WebPageProxy::pluginFocusOrWindowFocusChanged(uint64_t, bool)
+{
+    notImplemented();
+}
+
+void WebPageProxy::setPluginComplexTextInputState(uint64_t, uint64_t)
+{
+    notImplemented();
+}
+
+void WebPageProxy::executeSavedCommandBySelector(const String&, bool&)
+{
+    notImplemented();
+}
+
+bool WebPageProxy::shouldDelayWindowOrderingForEvent(const WebKit::WebMouseEvent&)
+{
+    notImplemented();
+    return false;
+}
+
+bool WebPageProxy::acceptsFirstMouse(int, const WebKit::WebMouseEvent&)
+{
+    notImplemented();
+    return false;
+}
+
+void WebPageProxy::didFinishScrolling(const WebCore::FloatPoint& contentOffset)
+{
+    process()->send(Messages::WebPage::DidFinishScrolling(contentOffset), m_pageID);
+}
+
+void WebPageProxy::didFinishZooming(float newScale)
+{
+    process()->send(Messages::WebPage::DidFinishZooming(newScale), m_pageID);
+}
+
+void WebPageProxy::tapHighlightAtPosition(const WebCore::FloatPoint& position, uint64_t& requestID)
+{
+    static uint64_t uniqueRequestID = 0;
+    requestID = ++uniqueRequestID;
+
+    process()->send(Messages::WebPage::TapHighlightAtPosition(requestID, position), m_pageID);
+}
+
+void WebPageProxy::blurAssistedNode()
+{
+    process()->send(Messages::WebPage::BlurAssistedNode(), m_pageID);
+}
+
+void WebPageProxy::mainDocumentDidReceiveMobileDocType()
+{
+    m_pageClient->mainDocumentDidReceiveMobileDocType();
+}
+
+void WebPageProxy::didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius)
+{
+    m_pageClient->didGetTapHighlightGeometries(requestID, color, highlightedQuads, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
+}
+
+void WebPageProxy::didChangeViewportArguments(const WebCore::ViewportArguments& viewportArguments)
+{
+    m_pageClient->didChangeViewportArguments(viewportArguments);
+}
+
+void WebPageProxy::startAssistingNode(const WebCore::IntRect& scrollRect, bool hasNextFocusable, bool hasPreviousFocusable)
+{
+    m_pageClient->startAssistingNode(scrollRect, hasNextFocusable, hasPreviousFocusable);
+}
+
+void WebPageProxy::stopAssistingNode()
+{
+    m_pageClient->stopAssistingNode();
+}
+
+void WebPageProxy::didPerformDictionaryLookup(const AttributedString&, const DictionaryPopupInfo&)
+{
+    notImplemented();
+}
+
+void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String&, const String&, const CoreIPC::DataReference&, const String&)
+{
+    notImplemented();
+}
+
+void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplicationRaw(const String&, const String&, const uint8_t*, unsigned long, const String&)
+{
+    notImplemented();
+}
+
+void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String&)
+{
+    notImplemented();
+}
+
+void WebPageProxy::setAcceleratedCompositingRootLayer(PlatformLayer* rootLayer)
+{
+    m_pageClient->setAcceleratedCompositingRootLayer(rootLayer);
+}
+
+} // namespace WebKit

@@ -49,6 +49,9 @@ private:
     
     virtual void makeRepresentation(WebCore::DocumentLoader*) OVERRIDE;
     virtual void forceLayout() OVERRIDE;
+#if PLATFORM(IOS)
+    virtual void forceLayoutWithoutRecalculatingStyles() OVERRIDE;
+#endif
     virtual void forceLayoutForNonHTML() OVERRIDE;
     
     virtual void setCopiesOnScroll() OVERRIDE;
@@ -64,6 +67,9 @@ private:
     virtual void dispatchDidCancelAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::AuthenticationChallenge&) OVERRIDE;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     virtual bool canAuthenticateAgainstProtectionSpace(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ProtectionSpace&) OVERRIDE;
+#endif
+#if PLATFORM(IOS)
+    virtual RetainPtr<CFDictionaryRef> connectionProperties(WebCore::DocumentLoader*, unsigned long identifier) OVERRIDE;
 #endif
     virtual void dispatchDidReceiveResponse(WebCore::DocumentLoader*, unsigned long identifier, const WebCore::ResourceResponse&) OVERRIDE;
     virtual void dispatchDidReceiveContentLength(WebCore::DocumentLoader*, unsigned long identifier, int dataLength) OVERRIDE;
@@ -167,6 +173,9 @@ private:
     
     virtual void savePlatformDataToCachedFrame(WebCore::CachedFrame*) OVERRIDE;
     virtual void transitionToCommittedFromCachedFrame(WebCore::CachedFrame*) OVERRIDE;
+#if PLATFORM(IOS)
+    virtual void didRestoreFrameHierarchyForCachedFrame() OVERRIDE;
+#endif
     virtual void transitionToCommittedForNewPage() OVERRIDE;
 
     virtual void didSaveToPageCache() OVERRIDE;

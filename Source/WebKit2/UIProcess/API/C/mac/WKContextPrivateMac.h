@@ -37,6 +37,8 @@ WK_EXPORT void WKContextSetProcessSuppressionEnabled(WKContextRef context, bool 
 
 WK_EXPORT bool WKContextIsPlugInUpdateAvailable(WKContextRef context, WKStringRef plugInBundleIdentifier);
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+
 WK_EXPORT WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRef context, WKStringRef plugInBundleIdentifier);
 
 typedef void (^WKContextGetInfoForInstalledPlugInsBlock)(WKArrayRef, WKErrorRef);
@@ -63,6 +65,8 @@ WK_EXPORT WKStringRef WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailableKe
 
 /* Value type: WKBooleanRef */
 WK_EXPORT WKStringRef WKPlugInInfoIsSandboxedKey();
+
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #ifdef __cplusplus
 }

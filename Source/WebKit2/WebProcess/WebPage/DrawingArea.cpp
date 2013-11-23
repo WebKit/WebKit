@@ -28,6 +28,10 @@
 #include <wtf/Functional.h>
 
 // Subclasses
+#if PLATFORM(IOS)
+#include "TiledCoreAnimationDrawingAreaIOS.h"
+#endif
+
 #if PLATFORM(MAC)
 #include "RemoteLayerTreeDrawingArea.h"
 #include "TiledCoreAnimationDrawingArea.h"
@@ -47,8 +51,13 @@ std::unique_ptr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPage
 {
     switch (parameters.drawingAreaType) {
 #if PLATFORM(MAC)
+#if PLATFORM(IOS)
+    case DrawingAreaTypeTiledCoreAnimationIOS:
+        return std::make_unique<TiledCoreAnimationDrawingAreaIOS>(webPage, parameters);
+#else
     case DrawingAreaTypeTiledCoreAnimation:
         return std::make_unique<TiledCoreAnimationDrawingArea>(webPage, parameters);
+#endif
     case DrawingAreaTypeRemoteLayerTree:
         return std::make_unique<RemoteLayerTreeDrawingArea>(webPage, parameters);
 #else

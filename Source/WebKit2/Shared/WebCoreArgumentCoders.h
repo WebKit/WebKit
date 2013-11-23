@@ -81,6 +81,16 @@ struct KeypressCommand;
 }
 #endif
 
+#if PLATFORM(IOS)
+namespace WebCore {
+class FloatQuad;
+class SelectionRect;
+struct PasteboardImage;
+struct PasteboardWebContent;
+struct ViewportArguments;
+}
+#endif
+
 namespace CoreIPC {
 
 template<> struct ArgumentCoder<WebCore::AffineTransform> {
@@ -112,6 +122,18 @@ template<> struct ArgumentCoder<WebCore::FloatSize> {
     static void encode(ArgumentEncoder&, const WebCore::FloatSize&);
     static bool decode(ArgumentDecoder&, WebCore::FloatSize&);
 };
+
+#if PLATFORM(IOS)
+template<> struct ArgumentCoder<WebCore::FloatQuad> {
+    static void encode(ArgumentEncoder&, const WebCore::FloatQuad&);
+    static bool decode(ArgumentDecoder&, WebCore::FloatQuad&);
+};
+
+template<> struct ArgumentCoder<WebCore::ViewportArguments> {
+    static void encode(ArgumentEncoder&, const WebCore::ViewportArguments&);
+    static bool decode(ArgumentDecoder&, WebCore::ViewportArguments&);
+};
+#endif // PLATFORM(IOS)
 
 template<> struct ArgumentCoder<WebCore::IntPoint> {
     static void encode(ArgumentEncoder&, const WebCore::IntPoint&);
@@ -224,6 +246,11 @@ template<> struct ArgumentCoder<WebCore::KeypressCommand> {
 #endif
 
 #if PLATFORM(IOS)
+template<> struct ArgumentCoder<WebCore::SelectionRect> {
+    static void encode(ArgumentEncoder&, const WebCore::SelectionRect&);
+    static bool decode(ArgumentDecoder&, WebCore::SelectionRect&);
+};
+
 template<> struct ArgumentCoder<WebCore::PasteboardWebContent> {
     static void encode(ArgumentEncoder&, const WebCore::PasteboardWebContent&);
     static bool decode(ArgumentDecoder&, WebCore::PasteboardWebContent&);

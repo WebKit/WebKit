@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebFullScreenManagerProxy.h"
 
-#if ENABLE(FULLSCREEN_API)
+#if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS)
 
 #import "LayerTreeContext.h"
 #import "WKFullScreenWindowController.h"

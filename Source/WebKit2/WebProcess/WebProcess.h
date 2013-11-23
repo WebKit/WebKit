@@ -177,6 +177,10 @@ public:
     void allowSpecificHTTPSCertificateForHost(const CertificateInfo&, const String& host);
 #endif
 
+#if PLATFORM(IOS)
+    void resetAllGeolocationPermissions();
+#endif // PLATFORM(IOS)
+
 private:
     WebProcess();
 
@@ -245,7 +249,7 @@ private:
     virtual bool shouldTerminate() OVERRIDE;
     virtual void terminate() OVERRIDE;
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     virtual void stopRunLoop() OVERRIDE;
 #endif
 

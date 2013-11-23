@@ -26,6 +26,8 @@
 #import "config.h"
 #import "TiledCoreAnimationDrawingArea.h"
 
+#if !PLATFORM(IOS)
+
 #import "ColorSpaceData.h"
 #import "DrawingAreaProxyMessages.h"
 #import "LayerHostingContext.h"
@@ -252,7 +254,9 @@ void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&
     }
 
     // Fixed position elements need to be composited and create stacking contexts
-    // in order to be scrolled by the ScrollingCoordinator.
+    // in order to be scrolled by the ScrollingCoordinator. We also want to keep
+    // Settings:setFixedPositionCreatesStackingContext() enabled for iOS. See
+    // <rdar://problem/9813262> for more details.
     settings.setAcceleratedCompositingForFixedPositionEnabled(true);
     settings.setFixedPositionCreatesStackingContext(true);
 
@@ -694,3 +698,5 @@ bool TiledCoreAnimationDrawingArea::shouldUseTiledBackingForFrameView(const Fram
 }
 
 } // namespace WebKit
+
+#endif // !PLATFORM(IOS)

@@ -306,7 +306,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_mediaVolume(1)
     , m_mayStartMediaWhenInWindow(true)
     , m_waitingForDidUpdateViewState(false)
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     , m_exposedRectChangedTimer(this, &WebPageProxy::exposedRectChangedTimerFired)
     , m_clipsToExposedRect(false)
     , m_lastSentClipsToExposedRect(false)
@@ -565,7 +565,7 @@ void WebPageProxy::close()
     m_contextMenuClient.initialize(0);
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     m_exposedRectChangedTimer.stop();
 #endif
 
@@ -2161,7 +2161,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeTyp
     if (frame->isMainFrame())
         m_pageLoadState.didCommitLoad();
 
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     // FIXME (bug 59111): didCommitLoadForFrame comes too late when restoring a page from b/f cache, making us disable secure event mode in password fields.
     // FIXME: A load going on in one frame shouldn't affect text editing in other frames on the page.
     m_pageClient->resetSecureInputState();
@@ -2603,6 +2603,7 @@ void WebPageProxy::connectionWillClose(CoreIPC::Connection* connection)
     m_process->context()->storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, 0);
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailabilityReason, const String& mimeType, const String& pluginURLString, const String& pluginspageAttributeURLString, const String& frameURLString, const String& pageURLString)
 {
     MESSAGE_CHECK_URL(pluginURLString);
@@ -2611,13 +2612,9 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
     MESSAGE_CHECK_URL(pageURLString);
 
     RefPtr<ImmutableDictionary> pluginInformation;
-#if ENABLE(NETSCAPE_PLUGIN_API)
     String newMimeType = mimeType;
     PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, URL(URL(), pluginURLString));
     pluginInformation = createPluginInformationDictionary(plugin, frameURLString, mimeType, pageURLString, pluginspageAttributeURLString, pluginURLString);
-#else
-    UNUSED_PARAM(mimeType);
-#endif
 
     WKPluginUnavailabilityReason pluginUnavailabilityReason = kWKPluginUnavailabilityReasonPluginMissing;
     switch (static_cast<RenderEmbeddedObject::PluginUnavailabilityReason>(opaquePluginUnavailabilityReason)) {
@@ -2636,6 +2633,7 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
 
     m_uiClient.unavailablePluginButtonClicked(this, pluginUnavailabilityReason, pluginInformation.get());
 }
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 void WebPageProxy::setToolbarsAreVisible(bool toolbarsAreVisible)
 {
@@ -2734,7 +2732,7 @@ void WebPageProxy::didChangeViewportProperties(const ViewportAttributes& attr)
 void WebPageProxy::pageDidScroll()
 {
     m_uiClient.pageDidScroll(this);
-#if PLATFORM(MAC)
+#if !PLATFORM(IOS) && PLATFORM(MAC)
     dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);
 #endif
 }
@@ -2811,10 +2809,10 @@ void WebPageProxy::handleDownloadRequest(DownloadProxy* download)
 }
 #endif // PLATFORM(EFL) || PLATFORM(GTK)
 
-#if PLATFORM(EFL)
-void WebPageProxy::didChangeContentsSize(const IntSize& size)
+#if PLATFORM(EFL) || PLATFORM(IOS)
+void WebPageProxy::didChangeContentSize(const IntSize& size)
 {
-    m_pageClient->didChangeContentsSize(size);
+    m_pageClient->didChangeContentSize(size);
 }
 #endif
 
@@ -2960,6 +2958,12 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
         cancelComposition();
         m_pageClient->notifyInputContextAboutDiscardedComposition();
     }
+#if PLATFORM(IOS)
+    else {
+        // We need to notify the client on iOS to make sure the selection is redrawn.
+        m_pageClient->selectionDidChange();
+    }
+#endif
 #elif PLATFORM(EFL) || PLATFORM(GTK)
     m_pageClient->updateTextInputState();
 #endif
@@ -3738,6 +3742,11 @@ void WebPageProxy::resetState()
     invalidateCallbackMap(m_scriptValueCallbacks);
     invalidateCallbackMap(m_computedPagesCallbacks);
     invalidateCallbackMap(m_validateCommandCallbacks);
+#if PLATFORM(IOS)
+    invalidateCallbackMap(m_gestureCallbacks);
+    invalidateCallbackMap(m_touchesCallbacks);
+    invalidateCallbackMap(m_autocorrectionCallbacks);
+#endif
 #if PLATFORM(GTK)
     invalidateCallbackMap(m_printFinishedCallbacks);
 #endif
@@ -3794,7 +3803,7 @@ void WebPageProxy::resetStateAfterProcessExited()
     // FIXME: Notify input methods about abandoned composition.
     m_temporarilyClosedComposition = false;
 
-#if PLATFORM(MAC)
+#if !PLATFORM(IOS) && PLATFORM(MAC)
     dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);
     m_pageClient->dismissDictionaryLookupPanel();
 #endif
@@ -3832,7 +3841,9 @@ void WebPageProxy::initializeCreationParameters()
 
 #if PLATFORM(MAC)
     m_creationParameters.layerHostingMode = m_layerHostingMode;
+#if !PLATFORM(IOS)
     m_creationParameters.colorSpace = m_pageClient->colorSpace();
+#endif // !PLATFORM(IOS)
 #endif
 }
 
@@ -4005,7 +4016,7 @@ void WebPageProxy::notifyScrollerThumbIsVisibleInRect(const IntRect& scrollerThu
 
 void WebPageProxy::recommendedScrollbarStyleDidChange(int32_t newStyle)
 {
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     m_pageClient->recommendedScrollbarStyleDidChange(newStyle);
 #else
     UNUSED_PARAM(newStyle);
@@ -4031,6 +4042,7 @@ void WebPageProxy::didChangePageCount(unsigned pageCount)
     m_pageCount = pageCount;
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 void WebPageProxy::didFailToInitializePlugin(const String& mimeType, const String& frameURLString, const String& pageURLString)
 {
     m_loaderClient.didFailToInitializePlugin(this, createPluginInformationDictionary(mimeType, frameURLString, pageURLString).get());
@@ -4054,6 +4066,7 @@ void WebPageProxy::didBlockInsecurePluginVersion(const String& mimeType, const S
 
     m_loaderClient.didBlockInsecurePluginVersion(this, pluginInformation.get());
 }
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 bool WebPageProxy::willHandleHorizontalScrollEvents() const
 {
@@ -4203,7 +4216,7 @@ void WebPageProxy::setMinimumLayoutSize(const IntSize& minimumLayoutSize)
     m_process->send(Messages::WebPage::SetMinimumLayoutSize(minimumLayoutSize), m_pageID, 0);
     m_drawingArea->minimumLayoutSizeDidChange();
 
-#if PLATFORM(MAC)
+#if USE(APPKIT)
     if (m_minimumLayoutSize.width() <= 0)
         intrinsicContentSizeDidChange(IntSize(-1, -1));
 #endif
@@ -4222,7 +4235,7 @@ void WebPageProxy::setAutoSizingShouldExpandToViewHeight(bool shouldExpand)
     m_process->send(Messages::WebPage::SetAutoSizingShouldExpandToViewHeight(shouldExpand), m_pageID, 0);
 }
 
-#if PLATFORM(MAC)
+#if !PLATFORM(IOS) && PLATFORM(MAC)
 
 void WebPageProxy::substitutionsPanelIsShowing(bool& isShowing)
 {

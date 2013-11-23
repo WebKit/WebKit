@@ -26,6 +26,8 @@
 #ifndef TiledCoreAnimationDrawingArea_h
 #define TiledCoreAnimationDrawingArea_h
 
+#if !PLATFORM(IOS)
+
 #include "DrawingArea.h"
 #include "LayerTreeContext.h"
 #include <WebCore/FloatRect.h>
@@ -144,5 +146,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // !PLATFORM(IOS)
 
 #endif // TiledCoreAnimationDrawingArea_h

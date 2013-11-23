@@ -1146,7 +1146,18 @@ void WebProcess::updateActivePages()
 }
 
 #endif
-    
+
+#if PLATFORM(IOS)
+void WebProcess::resetAllGeolocationPermissions()
+{
+    for (auto it = m_pageMap.begin(), end = m_pageMap.end(); it != end; ++it) {
+        WebPage* page = (*it).value.get();
+        if (Frame* mainFrame = page->mainFrame())
+            mainFrame->resetAllGeolocationPermission();
+    }
+}
+#endif // PLATFORM(IOS)
+
 void WebProcess::pageDidEnterWindow(uint64_t pageID)
 {
     m_pagesInWindows.add(pageID);

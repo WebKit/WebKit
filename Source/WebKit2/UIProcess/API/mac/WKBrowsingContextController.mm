@@ -106,6 +106,9 @@ NSString * const WKActionCanShowMIMETypeKey = @"WKActionCanShowMIMETypeKey";
     
     // Delegate for load callbacks.
     id<WKBrowsingContextLoadDelegate> _loadDelegate;
+#if PLATFORM(IOS)
+    id <WKBrowsingContextLoadDelegateInternal> _loadDelegateInternal;
+#endif // PLATFORM(IOS)
 
 #if WK_API_ENABLED
     // Delegate for policy callbacks.
@@ -527,6 +530,10 @@ static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
         return;
 
     WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
+#if PLATFORM(IOS)
+    if ([browsingContext.loadDelegateInternal respondsToSelector:@selector(browsingContextControllerDidCommitLoad:)])
+        [browsingContext.loadDelegateInternal browsingContextControllerDidCommitLoad:browsingContext];
+#endif // PLATFORM(IOS)
     if ([browsingContext.loadDelegate respondsToSelector:@selector(browsingContextControllerDidCommitLoad:)])
         [browsingContext.loadDelegate browsingContextControllerDidCommitLoad:browsingContext];
 }
@@ -703,6 +710,18 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
     WKPageSetPagePolicyClient(pageRef, &policyClient);
 }
 #endif
+
+#if PLATFORM(IOS)
+- (id <WKBrowsingContextLoadDelegateInternal>)loadDelegateInternal
+{
+    return _data->_loadDelegateInternal;
+}
+
+- (void)setLoadDelegateInternal:(id <WKBrowsingContextLoadDelegateInternal>)loadDelegateInternal
+{
+    _data->_loadDelegateInternal = loadDelegateInternal;
+}
+#endif // PLATFORM(IOS)
 
 /* This should only be called from associate view. */
 

@@ -488,7 +488,10 @@ void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) con
     if (m_page->useFixedLayout())
         m_page->drawingArea()->layerTreeHost()->sizeDidChange(size);
 
-    m_page->send(Messages::WebPageProxy::DidChangeContentsSize(size));
+    m_page->send(Messages::WebPageProxy::DidChangeContentSize(size));
+#endif
+#if PLATFORM(IOS)
+    m_page->send(Messages::WebPageProxy::DidChangeContentSize(size));
 #endif
 
     m_page->drawingArea()->mainFrameContentSizeChanged(size);
@@ -533,6 +536,7 @@ bool WebChromeClient::shouldUnavailablePluginMessageBeButton(RenderEmbeddedObjec
     
 void WebChromeClient::unavailablePluginButtonClicked(Element* element, RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason) const
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     ASSERT(element->hasTagName(objectTag) || element->hasTagName(embedTag) || element->hasTagName(appletTag));
     ASSERT(pluginUnavailabilityReason == RenderEmbeddedObject::PluginMissing || pluginUnavailabilityReason == RenderEmbeddedObject::InsecurePluginVersion || pluginUnavailabilityReason);
 
@@ -545,6 +549,7 @@ void WebChromeClient::unavailablePluginButtonClicked(Element* element, RenderEmb
     if (!pluginspageAttributeURL.protocolIsInHTTPFamily())
         pluginspageAttributeURL = URL();
     m_page->send(Messages::WebPageProxy::UnavailablePluginButtonClicked(pluginUnavailabilityReason, pluginElement->serviceType(), pluginURLString, pluginspageAttributeURL.string(), frameURLString, pageURLString));
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 }
 
 void WebChromeClient::scrollbarsModeDidChange() const
@@ -684,6 +689,7 @@ void WebChromeClient::loadIconForFiles(const Vector<String>& filenames, FileIcon
     loader->notifyFinished(Icon::createIconForFiles(filenames));
 }
 
+#if !PLATFORM(IOS)
 void WebChromeClient::setCursor(const WebCore::Cursor& cursor)
 {
 #if USE(LAZY_NATIVE_CURSOR)
@@ -695,6 +701,7 @@ void WebChromeClient::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
 {
     m_page->send(Messages::WebPageProxy::SetCursorHiddenUntilMouseMoves(hiddenUntilMouseMoves));
 }
+#endif
 
 #if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
 void WebChromeClient::scheduleAnimation()
@@ -809,8 +816,13 @@ void WebChromeClient::exitFullScreenForElement(WebCore::Element* element)
 }
 #endif
 
-void WebChromeClient::dispatchViewportPropertiesDidChange(const ViewportArguments&) const
+void WebChromeClient::dispatchViewportPropertiesDidChange(const ViewportArguments& viewportArguments) const
 {
+#if PLATFORM(IOS)
+    m_page->send(Messages::WebPageProxy::DidChangeViewportArguments(viewportArguments));
+#else
+    UNUSED_PARAM(viewportArguments);
+#endif
 #if USE(TILED_BACKING_STORE)
     if (!m_page->useFixedLayout())
         return;
@@ -879,14 +891,18 @@ void WebChromeClient::disableSuddenTermination()
 
 void WebChromeClient::didAddHeaderLayer(GraphicsLayer* headerParent)
 {
+#if ENABLE(RUBBER_BANDING)
     if (PageBanner* banner = m_page->headerPageBanner())
         banner->didAddParentLayer(headerParent);
+#endif
 }
 
 void WebChromeClient::didAddFooterLayer(GraphicsLayer* footerParent)
 {
+#if ENABLE(RUBBER_BANDING)
     if (PageBanner* banner = m_page->footerPageBanner())
         banner->didAddParentLayer(footerParent);
+#endif
 }
 
 bool WebChromeClient::shouldUseTiledBackingForFrameView(const FrameView* frameView) const

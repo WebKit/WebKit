@@ -36,12 +36,18 @@
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/WebLayer.h>
 
+#if USE(IOSURFACE)
+#import <mach/mach_port.h>
+#endif
+
 #if defined(__has_include) && __has_include(<ApplicationServices/ApplicationServicesPriv.h>)
 #import <ApplicationServices/ApplicationServicesPriv.h>
 #endif
 
 extern "C" {
+#if USE(IOSURFACE)
 CGContextRef CGIOSurfaceContextCreate(IOSurfaceRef, size_t, size_t, size_t, size_t, CGColorSpaceRef, CGBitmapInfo);
+#endif
 CGImageRef CGIOSurfaceContextCreateImage(CGContextRef);
 }
 
@@ -63,7 +69,9 @@ void RemoteLayerBackingStore::ensureBackingStore(PlatformCALayerRemote* layer, I
     m_scale = scale;
     m_acceleratesDrawing = acceleratesDrawing;
 
+#if USE(IOSURFACE)
     m_frontSurface = nullptr;
+#endif
     m_frontBuffer = nullptr;
 }
 
@@ -73,14 +81,19 @@ void RemoteLayerBackingStore::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << m_scale;
     encoder << m_acceleratesDrawing;
 
+#if USE(IOSURFACE)
     if (m_acceleratesDrawing) {
         mach_port_t port = IOSurfaceCreateMachPort(m_frontSurface.get());
         encoder << CoreIPC::MachPort(port, MACH_MSG_TYPE_MOVE_SEND);
-    } else {
-        ShareableBitmap::Handle handle;
-        m_frontBuffer->createHandle(handle);
-        encoder << handle;
+        return;
     }
+#else
+    ASSERT(!m_acceleratesDrawing);
+#endif
+
+    ShareableBitmap::Handle handle;
+    m_frontBuffer->createHandle(handle);
+    encoder << handle;
 }
 
 bool RemoteLayerBackingStore::decode(CoreIPC::ArgumentDecoder& decoder, RemoteLayerBackingStore& result)
@@ -94,18 +107,23 @@ bool RemoteLayerBackingStore::decode(CoreIPC::ArgumentDecoder& decoder, RemoteLa
     if (!decoder.decode(result.m_acceleratesDrawing))
         return false;
 
+#if USE(IOSURFACE)
     if (result.m_acceleratesDrawing) {
         CoreIPC::MachPort machPort;
         if (!decoder.decode(machPort))
             return false;
         result.m_frontSurface = adoptCF(IOSurfaceLookupFromMachPort(machPort.port()));
         mach_port_deallocate(mach_task_self(), machPort.port());
-    } else {
-        ShareableBitmap::Handle handle;
-        if (!decoder.decode(handle))
-            return false;
-        result.m_frontBuffer = ShareableBitmap::create(handle);
+        return true;
     }
+#else
+    ASSERT(!result.m_acceleratesDrawing);
+#endif
+
+    ShareableBitmap::Handle handle;
+    if (!decoder.decode(handle))
+        return false;
+    result.m_frontBuffer = ShareableBitmap::create(handle);
 
     return true;
 }
@@ -120,6 +138,7 @@ void RemoteLayerBackingStore::setNeedsDisplay()
     setNeedsDisplay(IntRect(IntPoint(), m_size));
 }
 
+#if USE(IOSURFACE)
 static RetainPtr<CGContextRef> createIOSurfaceContext(IOSurfaceRef surface, IntSize size, CGColorSpaceRef colorSpace)
 {
     if (!surface)
@@ -155,6 +174,7 @@ static RetainPtr<IOSurfaceRef> createIOSurface(IntSize size)
 
     return adoptCF(IOSurfaceCreate((CFDictionaryRef)dict));
 }
+#endif // USE(IOSURFACE)
 
 RetainPtr<CGImageRef> RemoteLayerBackingStore::image() const
 {
@@ -176,7 +196,9 @@ bool RemoteLayerBackingStore::display()
         bool previouslyDrewContents = hasFrontBuffer();
 
         m_frontBuffer = nullptr;
+#if USE(IOSURFACE)
         m_frontSurface = nullptr;
+#endif
 
         return previouslyDrewContents;
     }
@@ -196,6 +218,7 @@ bool RemoteLayerBackingStore::display()
     scaledSize.scale(m_scale);
     IntSize expandedScaledSize = expandedIntSize(scaledSize);
 
+#if USE(IOSURFACE)
     if (m_acceleratesDrawing) {
         RetainPtr<IOSurfaceRef> backSurface = createIOSurface(expandedScaledSize);
         RetainPtr<CGContextRef> cgContext = createIOSurfaceContext(backSurface.get(), expandedScaledSize, sRGBColorSpaceRef());
@@ -221,13 +244,18 @@ bool RemoteLayerBackingStore::display()
             frontImage = nullptr;
             ASSERT(frontContext);
         }
-    } else {
-        RetainPtr<CGImageRef> frontImage = image();
-        m_frontBuffer = ShareableBitmap::createShareable(expandedScaledSize, ShareableBitmap::SupportsAlpha);
-        std::unique_ptr<GraphicsContext> context = m_frontBuffer->createGraphicsContext();
-        drawInContext(*context, frontImage.get());
-    }
 
+        return true;
+    }
+#else
+    ASSERT(!m_acceleratesDrawing);
+#endif
+
+    RetainPtr<CGImageRef> frontImage = image();
+    m_frontBuffer = ShareableBitmap::createShareable(expandedScaledSize, ShareableBitmap::SupportsAlpha);
+    std::unique_ptr<GraphicsContext> context = m_frontBuffer->createGraphicsContext();
+    drawInContext(*context, frontImage.get());
+    
     return true;
 }
 

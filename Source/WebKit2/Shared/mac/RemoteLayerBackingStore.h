@@ -53,7 +53,9 @@ public:
     bool display();
 
     RetainPtr<CGImageRef> image() const;
+#if USE(IOSURFACE)
     RetainPtr<IOSurfaceRef> surface() const { return m_frontSurface; }
+#endif
     WebCore::IntSize size() const { return m_size; }
     float scale() const { return m_scale; }
     bool acceleratesDrawing() const { return m_acceleratesDrawing; }
@@ -66,7 +68,13 @@ public:
     void enumerateRectsBeingDrawn(CGContextRef, void (^)(CGRect));
 
 private:
-    bool hasFrontBuffer() { return m_acceleratesDrawing ? !!m_frontSurface : !!m_frontBuffer; }
+    bool hasFrontBuffer()
+    {
+#if USE(IOSURFACE)
+        return m_acceleratesDrawing ? !!m_frontSurface : !!m_frontBuffer;
+#endif
+        return !!m_frontBuffer;
+    }
 
     void drawInContext(WebCore::GraphicsContext&, CGImageRef frontImage);
 
@@ -78,7 +86,9 @@ private:
     WebCore::Region m_dirtyRegion;
 
     RefPtr<ShareableBitmap> m_frontBuffer;
+#if USE(IOSURFACE)
     RetainPtr<IOSurfaceRef> m_frontSurface;
+#endif
 
     bool m_acceleratesDrawing;
 

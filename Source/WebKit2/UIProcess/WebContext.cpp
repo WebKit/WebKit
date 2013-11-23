@@ -118,6 +118,14 @@ const Vector<WebContext*>& WebContext::allContexts()
     return contexts();
 }
 
+#if PLATFORM(IOS)
+WebContext* WebContext::sharedProcessContext()
+{
+    static WKContextRef sharedContextRef = WKContextCreate();
+    return toImpl(sharedContextRef);
+}
+#endif
+
 WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePath)
     : m_processModel(processModel)
     , m_webProcessCountLimit(UINT_MAX)
@@ -1107,7 +1115,9 @@ void WebContext::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* 
 #endif
 #endif
 
+#if !PLATFORM(IOS)
     ASSERT_NOT_REACHED();
+#endif
 }
 
 void WebContext::setHTTPPipeliningEnabled(bool enabled)

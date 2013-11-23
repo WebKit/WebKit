@@ -23,7 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if TARGET_OS_IPHONE
+#import <UIKit/UIKit.h>
+#else
 #import <Cocoa/Cocoa.h>
+#endif
 #import <WebKit2/WKDeclarationSpecifiers.h>
 
 @class WKBrowsingContextController;
@@ -31,15 +35,20 @@
 @class WKProcessGroup;
 @class WKViewData;
 
+#if TARGET_OS_IPHONE
+WK_EXPORT
+@interface WKView : UIView {
+#else
 WK_EXPORT
 @interface WKView : NSView <NSTextInputClient> {
+#endif
 @private
     WKViewData *_data;
     unsigned _unused;
 }
 
-- (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup;
-- (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup relatedToView:(WKView *)relatedView;
+- (id)initWithFrame:(CGRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup;
+- (id)initWithFrame:(CGRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup relatedToView:(WKView *)relatedView;
 
 @property(readonly) WKBrowsingContextController *browsingContextController;
 
