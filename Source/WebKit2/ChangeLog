@@ -1,3 +1,11 @@
+2013-11-22  Tim Horton  <timothy_horton@apple.com>
+
+        Attempt build fixes for 32-bit after 159724.
+
+        There's probably a better fix, but this will work for now.
+
+        * UIProcess/API/mac/WKView.h:
+
 2013-11-22  Enrica Casucci  <enrica@apple.com>
 
         Upstream iOS WebKit2 to OpenSource (part 3).
