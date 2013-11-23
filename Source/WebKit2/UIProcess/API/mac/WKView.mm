@@ -3235,7 +3235,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 #else
     NSRect contentRect = [[NSScreen mainScreen] frame];
 #endif
-    return [[[WebCoreFullScreenWindow alloc] initWithContentRect:contentRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO] autorelease];
+    return [[[WebCoreFullScreenWindow alloc] initWithContentRect:contentRect styleMask:(NSBorderlessWindowMask | NSResizableWindowMask) backing:NSBackingStoreBuffered defer:NO] autorelease];
 #else
     return nil;
 #endif

@@ -1,3 +1,18 @@
+2013-11-22  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Can't drag full-screen video to another monitor
+        https://bugs.webkit.org/show_bug.cgi?id=124798
+
+        Reviewed by Geoffrey Garen.
+
+        Make full screen windows movable by default. Previously, we wanted non-movable full screen
+        windows since they were in the same space and were just placed atop non-full screen windows.
+        Now that all our supported Mac platforms have explicit full screen support, we can remove this
+        non-movable restriction.
+
+        * platform/mac/WebCoreFullScreenWindow.mm:
+        (-[WebCoreFullScreenWindow initWithContentRect:styleMask:backing:defer:]):
+
 2013-11-22  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Clean up ColorSpace handling in Windows code

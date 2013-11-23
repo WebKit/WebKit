@@ -42,7 +42,6 @@
     [self setAcceptsMouseMovedEvents:YES];
     [self setReleasedWhenClosed:NO];
     [self setHasShadow:NO];
-    [self setMovable:NO];
 
     return self;
 }
