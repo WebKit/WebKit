@@ -1,3 +1,26 @@
+2013-11-24  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r156291): TileController tiles don't always repaint when they resize
+        https://bugs.webkit.org/show_bug.cgi?id=124796
+
+        Reviewed by Simon Fraser.
+
+        In removing platformCALayerDidCreateTiles, r156291 also removed
+        the call to setNeedsDisplay when tiles are resized, without
+        putting it somewhere else.
+
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::setNeedsDisplay):
+        Use hasStaleContent when invalidating a whole tile, just
+        like we do for partial tile repaints.
+
+        (WebCore::TileController::setTileNeedsDisplayInRect):
+        Mark hasStaleContent for any unparented layers, so they'll be painted
+        when they are reparented.
+
+        (WebCore::TileController::ensureTilesForRect):
+        Invalidate the whole tile when it changes size.
+
 2013-11-23  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Remove 0.10 codepath

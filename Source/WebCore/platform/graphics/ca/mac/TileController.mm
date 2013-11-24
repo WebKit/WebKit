@@ -98,9 +98,14 @@ void TileController::tileCacheLayerBoundsChanged()
 
 void TileController::setNeedsDisplay()
 {
-    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-        const TileInfo& tileInfo = it->value;
-        tileInfo.layer->setNeedsDisplay();
+    for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
+        TileInfo& tileInfo = it->value;
+        IntRect tileRect = rectForTileIndex(it->key);
+
+        if (tileRect.intersects(m_primaryTileCoverageRect) && tileInfo.layer->superlayer())
+            tileInfo.layer->setNeedsDisplay();
+        else
+            tileInfo.hasStaleContent = true;
     }
 }
 
@@ -149,7 +154,7 @@ void TileController::setTileNeedsDisplayInRect(const TileIndex& tileIndex, TileI
     
     // We could test for intersection with the visible rect. This would reduce painting yet more,
     // but may make scrolling stale tiles into view more frequent.
-    if (tileRect.intersects(coverageRectInTileCoords)) {
+    if (tileRect.intersects(coverageRectInTileCoords) && tileLayer->superlayer()) {
         tileLayer->setNeedsDisplay(&tileRepaintRect);
 
         if (owningGraphicsLayer()->platformCALayerShowRepaintCounter(0)) {
@@ -869,6 +874,7 @@ IntRect TileController::ensureTilesForRect(const FloatRect& rect, CoverageType n
                 if (shouldChangeTileLayerFrame) {
                     tileInfo.layer->setBounds(FloatRect(FloatPoint(), tileRect.size()));
                     tileInfo.layer->setPosition(tileRect.location());
+                    tileInfo.layer->setNeedsDisplay();
                 }
             }
 
