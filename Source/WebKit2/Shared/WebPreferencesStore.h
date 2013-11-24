@@ -176,6 +176,7 @@ namespace WebKit {
     macro(MediaStreamEnabled, mediaStreamEnabled, Bool, bool, false) \
     macro(VideoPluginProxyEnabled, isVideoPluginProxyEnabled, Bool, bool, DEFAULT_VIDEO_PLUGIN_PROXY_ENABLED) \
     macro(UseLegacyTextAlignPositionedElementBehavior, useLegacyTextAlignPositionedElementBehavior, Bool, bool, false) \
+    macro(SpatialNavigationEnabled, spatialNavigationEnabled, Bool, bool, false) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

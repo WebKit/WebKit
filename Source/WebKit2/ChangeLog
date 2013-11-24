@@ -1,3 +1,31 @@
+2013-11-24  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>, Arunprasad Rajkumar  <arurajku@cisco.com>
+
+        [WK2][GTK] Adding SpatialNavigation setting to webkit2
+        https://bugs.webkit.org/show_bug.cgi?id=114298
+
+        Reviewed by Anders Carlsson.
+
+        Adding SpatialNavigation support to WebPreferencesStore allows us
+        to toggle that feature on WebKitSettings.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetSpatialNavigationEnabled):
+        (WKPreferencesGetSpatialNavigationEnabled):
+        * UIProcess/API/C/WKPreferences.h:
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsSetProperty):
+        (webKitSettingsGetProperty):
+        (webkit_settings_class_init):
+        (webkit_settings_set_enable_spatial_navigation):
+        (webkit_settings_get_enable_spatial_navigation):
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2013-11-22  Brady Eidson  <beidson@apple.com>
 
         Add DatabaseProcessCreationParameters, starting with the database path.
