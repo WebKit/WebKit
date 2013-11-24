@@ -539,6 +539,10 @@
 		515E7728183DD6F60007203F /* AsyncRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 515E7726183DD6F60007203F /* AsyncRequest.h */; };
 		515E772B184008B90007203F /* DatabaseProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515E7729184008B90007203F /* DatabaseProcessCreationParameters.cpp */; };
 		515E772C184008B90007203F /* DatabaseProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 515E772A184008B90007203F /* DatabaseProcessCreationParameters.h */; };
+		515E772F184015800007203F /* UniqueIDBDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515E772D184015800007203F /* UniqueIDBDatabase.cpp */; };
+		515E7730184015800007203F /* UniqueIDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 515E772E184015800007203F /* UniqueIDBDatabase.h */; };
+		515E773318402D510007203F /* UniqueIDBDatabaseIdentifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515E773118402D510007203F /* UniqueIDBDatabaseIdentifier.cpp */; };
+		515E773418402D510007203F /* UniqueIDBDatabaseIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 515E773218402D510007203F /* UniqueIDBDatabaseIdentifier.h */; };
 		5160BFE113381DF900918999 /* Logging.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160BFE013381DF900918999 /* Logging.mac.mm */; };
 		516319921628980A00E22F00 /* NetworkProcessProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 516319911628980A00E22F00 /* NetworkProcessProxyMac.mm */; };
 		5163199416289A6000E22F00 /* NetworkProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51ACC9341628064800342550 /* NetworkProcessMessageReceiver.cpp */; };
@@ -2069,6 +2073,10 @@
 		515E7726183DD6F60007203F /* AsyncRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncRequest.h; sourceTree = "<group>"; };
 		515E7729184008B90007203F /* DatabaseProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseProcessCreationParameters.cpp; sourceTree = "<group>"; };
 		515E772A184008B90007203F /* DatabaseProcessCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseProcessCreationParameters.h; sourceTree = "<group>"; };
+		515E772D184015800007203F /* UniqueIDBDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueIDBDatabase.cpp; sourceTree = "<group>"; };
+		515E772E184015800007203F /* UniqueIDBDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniqueIDBDatabase.h; sourceTree = "<group>"; };
+		515E773118402D510007203F /* UniqueIDBDatabaseIdentifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueIDBDatabaseIdentifier.cpp; sourceTree = "<group>"; };
+		515E773218402D510007203F /* UniqueIDBDatabaseIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniqueIDBDatabaseIdentifier.h; sourceTree = "<group>"; };
 		5160BFE013381DF900918999 /* Logging.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Logging.mac.mm; sourceTree = "<group>"; };
 		516319911628980A00E22F00 /* NetworkProcessProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkProcessProxyMac.mm; path = mac/NetworkProcessProxyMac.mm; sourceTree = "<group>"; };
 		5167EE9E170377BF007681CA /* DiskCacheMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiskCacheMonitor.h; sourceTree = "<group>"; };
@@ -4057,6 +4065,10 @@
 				51D0D42E183B34130097041D /* DatabaseProcessIDBConnection.cpp */,
 				51D0D42F183B34130097041D /* DatabaseProcessIDBConnection.h */,
 				51D0D430183B34130097041D /* DatabaseProcessIDBConnection.messages.in */,
+				515E772D184015800007203F /* UniqueIDBDatabase.cpp */,
+				515E772E184015800007203F /* UniqueIDBDatabase.h */,
+				515E773118402D510007203F /* UniqueIDBDatabaseIdentifier.cpp */,
+				515E773218402D510007203F /* UniqueIDBDatabaseIdentifier.h */,
 			);
 			path = IndexedDB;
 			sourceTree = "<group>";
@@ -5536,6 +5548,7 @@
 				BC032DAB10F437D10058C15A /* Connection.h in Headers */,
 				5136183E163126DA00A99DDE /* ConnectionStack.h in Headers */,
 				CDC3830C17212282008A2FC3 /* CookieStorageShimLibrary.h in Headers */,
+				515E7730184015800007203F /* UniqueIDBDatabase.h in Headers */,
 				B878B615133428DC006888E9 /* CorrectionPanel.h in Headers */,
 				2989A414167D184B004F96D2 /* CustomProtocolManager.h in Headers */,
 				865E0485181A094A001F72F2 /* ViewState.h in Headers */,
@@ -5758,6 +5771,7 @@
 				BC72B9FB11E6476B001EB4EA /* WebBackForwardListProxy.h in Headers */,
 				BCF50728124329AA005955AE /* WebCertificateInfo.h in Headers */,
 				BC032D7510F4378D0058C15A /* WebChromeClient.h in Headers */,
+				515E773418402D510007203F /* UniqueIDBDatabaseIdentifier.h in Headers */,
 				3F87B9BE158940190090FF62 /* WebColorChooser.h in Headers */,
 				3F87B9C0158940D80090FF62 /* WebColorPicker.h in Headers */,
 				BC4A6290147312BE006C681A /* WebConnection.h in Headers */,
@@ -6842,8 +6856,10 @@
 				BC032DAA10F437D10058C15A /* Connection.cpp in Sources */,
 				1A30EAC6115D7DA30053E937 /* ConnectionMac.cpp in Sources */,
 				5136183D163126DA00A99DDE /* ConnectionStack.cpp in Sources */,
+				515E773318402D510007203F /* UniqueIDBDatabaseIdentifier.cpp in Sources */,
 				2DA049B7180CCD0A00AAFA9E /* GraphicsLayerCARemote.cpp in Sources */,
 				378E1A4D18208D700031007A /* WKNSURL.mm in Sources */,
+				515E772F184015800007203F /* UniqueIDBDatabase.cpp in Sources */,
 				2DA049B3180CCCD300AAFA9E /* PlatformCALayerRemote.cpp in Sources */,
 				CDC3831017212440008A2FC3 /* CookieStorageShim.cpp in Sources */,
 				B878B616133428DC006888E9 /* CorrectionPanel.mm in Sources */,

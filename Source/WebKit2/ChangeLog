@@ -1,3 +1,65 @@
+2013-11-24  Brady Eidson  <beidson@apple.com>
+
+        DatabaseProcess: Add "UniqueIDBDatabase" that multiple WebProcesses can connect to
+        https://bugs.webkit.org/show_bug.cgi?id=124819
+
+        Reviewed by Dan Bernstein.
+
+        UniqueIDBDatabase instances are per-DatabaseProcess, so it manages the set of them.
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::getOrCreateUniqueIDBDatabase):
+        (WebKit::DatabaseProcess::removeUniqueIDBDatabase):
+        * DatabaseProcess/DatabaseProcess.h:
+
+        * DatabaseProcess/DatabaseToWebProcessConnection.h:
+
+        Start forwarding things along to the appropriate UniqueIDBDatabase.
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::~DatabaseProcessIDBConnection):
+        (WebKit::DatabaseProcessIDBConnection::disconnectedFromWebProcess):
+        (WebKit::DatabaseProcessIDBConnection::establishConnection):
+        (WebKit::DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata):
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+
+        A class that represents a single concrete IDB database that multiple WebProcesses can connect to.
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::UniqueIDBDatabase):
+        (WebKit::UniqueIDBDatabase::~UniqueIDBDatabase):
+        (WebKit::UniqueIDBDatabase::registerConnection):
+        (WebKit::UniqueIDBDatabase::unregisterConnection):
+        (WebKit::UniqueIDBDatabase::getIDBDatabaseMetadata):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+        (WebKit::UniqueIDBDatabase::create):
+        (WebKit::UniqueIDBDatabase::identifier):
+
+        A class to help uniquely identify an IDBDatabase that can be expanded as needed.
+        Importantly, it knows how to be used as a key in a HashMap.
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseIdentifier.cpp: Added.
+        (WebKit::UniqueIDBDatabaseIdentifier::UniqueIDBDatabaseIdentifier):
+        (WebKit::UniqueIDBDatabaseIdentifier::isHashTableDeletedValue):
+        (WebKit::UniqueIDBDatabaseIdentifier::hash):
+        (WebKit::UniqueIDBDatabaseIdentifier::isNull):
+        (WebKit::operator==):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseIdentifier.h: Added.
+        (WebKit::UniqueIDBDatabaseIdentifier::databaseName):
+        (WebKit::UniqueIDBDatabaseIdentifier::openingOrigin):
+        (WebKit::UniqueIDBDatabaseIdentifier::mainFrameOrigin):
+        (WebKit::UniqueIDBDatabaseIdentifierHash::hash):
+        (WebKit::UniqueIDBDatabaseIdentifierHash::equal):
+        (WebKit::UniqueIDBDatabaseIdentifierHashTraits::isEmptyValue):
+
+        * Shared/SecurityOriginData.cpp:
+        (WebKit::operator==):
+        * Shared/SecurityOriginData.h:
+
+        * UIProcess/WebContext.cpp:
+
+        * WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.cpp:
+        (WebKit::WebIDBFactoryBackend::open):
+        (WebKit::WebIDBFactoryBackend::removeIDBDatabaseBackend):
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-11-24  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>, Arunprasad Rajkumar  <arurajku@cisco.com>
 
         [WK2][GTK] Adding SpatialNavigation setting to webkit2

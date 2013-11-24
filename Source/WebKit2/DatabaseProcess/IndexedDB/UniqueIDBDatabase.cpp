@@ -24,57 +24,49 @@
  */
 
 #include "config.h"
-#include "DatabaseProcessIDBConnection.h"
+#include "UniqueIDBDatabase.h"
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
 #include "DatabaseProcess.h"
-#include "DatabaseToWebProcessConnection.h"
-#include "UniqueIDBDatabase.h"
-#include "WebCoreArgumentCoders.h"
-#include "WebIDBServerConnectionMessages.h"
+#include "DatabaseProcessIDBConnection.h"
 #include <WebCore/IDBDatabaseMetadata.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-DatabaseProcessIDBConnection::DatabaseProcessIDBConnection(DatabaseToWebProcessConnection& connection, uint64_t serverConnectionIdentifier)
-    : m_connection(connection)
-    , m_serverConnectionIdentifier(serverConnectionIdentifier)
+UniqueIDBDatabase::UniqueIDBDatabase(const UniqueIDBDatabaseIdentifier& identifier)
+    : m_identifier(identifier)
 {
 }
 
-DatabaseProcessIDBConnection::~DatabaseProcessIDBConnection()
+UniqueIDBDatabase::~UniqueIDBDatabase()
 {
-    ASSERT(!m_uniqueIDBDatabase);
 }
 
-void DatabaseProcessIDBConnection::disconnectedFromWebProcess()
+void UniqueIDBDatabase::registerConnection(DatabaseProcessIDBConnection& connection)
 {
-    m_uniqueIDBDatabase->unregisterConnection(*this);
-    m_uniqueIDBDatabase.clear();
+    ASSERT(!m_connections.contains(&connection));
+    m_connections.add(&connection);
 }
 
-void DatabaseProcessIDBConnection::establishConnection(const String& databaseName, const SecurityOriginData& openingOrigin, const SecurityOriginData& mainFrameOrigin)
+void UniqueIDBDatabase::unregisterConnection(DatabaseProcessIDBConnection& connection)
 {
-    m_uniqueIDBDatabase = DatabaseProcess::shared().getOrCreateUniqueIDBDatabase(UniqueIDBDatabaseIdentifier(databaseName, openingOrigin, mainFrameOrigin));
-    m_uniqueIDBDatabase->registerConnection(*this);
+    ASSERT(m_connections.contains(&connection));
+    m_connections.remove(&connection);
+
+    if (m_connections.isEmpty())
+        DatabaseProcess::shared().removeUniqueIDBDatabase(*this);
 }
 
-void DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata(uint64_t requestID)
+void UniqueIDBDatabase::getIDBDatabaseMetadata(std::function<void(bool, const WebCore::IDBDatabaseMetadata&)> completionCallback)
 {
-    ASSERT(m_uniqueIDBDatabase);
+    // FIXME: This method is successfully called by messaging from the WebProcess, and calls back with dummy data.
+    // Needs real implementation.
 
-    RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->getIDBDatabaseMetadata([connection, requestID](bool success, const IDBDatabaseMetadata& metadata) {
-        connection->send(Messages::WebIDBServerConnection::DidGetOrEstablishIDBDatabaseMetadata(requestID, success, metadata));
-    });
-}
-
-CoreIPC::Connection* DatabaseProcessIDBConnection::messageSenderConnection()
-{
-    return m_connection->connection();
+    IDBDatabaseMetadata metadata;
+    completionCallback(false, metadata);
 }
 
 } // namespace WebKit

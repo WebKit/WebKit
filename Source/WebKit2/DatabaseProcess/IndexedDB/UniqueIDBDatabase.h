@@ -23,54 +23,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DatabaseProcessIDBConnection_h
-#define DatabaseProcessIDBConnection_h
-
-#include "MessageSender.h"
+#ifndef UniqueIDBDatabase_h
+#define UniqueIDBDatabase_h
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
-#include "SecurityOriginData.h"
 #include "UniqueIDBDatabaseIdentifier.h"
+#include <functional>
+#include <wtf/HashSet.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
+
+namespace WebCore {
+struct IDBDatabaseMetadata;
+}
 
 namespace WebKit {
 
-class DatabaseToWebProcessConnection;
-class UniqueIDBDatabase;
+class DatabaseProcessIDBConnection;
 
-class DatabaseProcessIDBConnection : public RefCounted<DatabaseProcessIDBConnection>, public CoreIPC::MessageSender {
+struct SecurityOriginData;
+
+class UniqueIDBDatabase : public RefCounted<UniqueIDBDatabase> {
 public:
-    static RefPtr<DatabaseProcessIDBConnection> create(DatabaseToWebProcessConnection& connection, uint64_t serverConnectionIdentifier)
+    static PassRefPtr<UniqueIDBDatabase> create(const UniqueIDBDatabaseIdentifier& identifier)
     {
-        return adoptRef(new DatabaseProcessIDBConnection(connection, serverConnectionIdentifier));
+        return adoptRef(new UniqueIDBDatabase(identifier));
     }
 
-    virtual ~DatabaseProcessIDBConnection();
+    ~UniqueIDBDatabase();
 
-    // Message handlers.
-    void didReceiveDatabaseProcessIDBConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
+    const UniqueIDBDatabaseIdentifier& identifier() const { return m_identifier; }
 
-    void disconnectedFromWebProcess();
+    void registerConnection(DatabaseProcessIDBConnection&);
+    void unregisterConnection(DatabaseProcessIDBConnection&);
+
+    void getIDBDatabaseMetadata(std::function<void(bool, const WebCore::IDBDatabaseMetadata&)> completionCallback);
 
 private:
-    DatabaseProcessIDBConnection(DatabaseToWebProcessConnection&, uint64_t idbConnectionIdentifier);
+    UniqueIDBDatabase(const UniqueIDBDatabaseIdentifier&);
 
-    // CoreIPC::MessageSender
-    virtual CoreIPC::Connection* messageSenderConnection() OVERRIDE;
-    virtual uint64_t messageSenderDestinationID() OVERRIDE { return m_serverConnectionIdentifier; }
+    UniqueIDBDatabaseIdentifier m_identifier;
 
-    // Message handlers.
-    void establishConnection(const String& databaseName, const SecurityOriginData& openingOrigin, const SecurityOriginData& mainFrameOrigin);
-    void getOrEstablishIDBDatabaseMetadata(uint64_t requestID);
-
-    Ref<DatabaseToWebProcessConnection> m_connection;
-    uint64_t m_serverConnectionIdentifier;
-
-    RefPtr<UniqueIDBDatabase> m_uniqueIDBDatabase;
+    HashSet<RefPtr<DatabaseProcessIDBConnection>> m_connections;
 };
 
 } // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
-#endif // DatabaseProcessIDBConnection_h
+#endif // UniqueIDBDatabase_h

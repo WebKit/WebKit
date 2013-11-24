@@ -47,7 +47,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-typedef HashMap<String, RefPtr<IDBDatabaseBackend>> IDBDatabaseBackendMap;
+typedef HashMap<String, IDBDatabaseBackend*> IDBDatabaseBackendMap;
 
 static IDBDatabaseBackendMap& sharedDatabaseBackendMap()
 {
@@ -87,7 +87,7 @@ void WebIDBFactoryBackend::open(const String& databaseName, uint64_t version, in
     if (it == sharedDatabaseBackendMap().end()) {
         RefPtr<IDBServerConnection> serverConnection = WebIDBServerConnection::create(databaseName, openingOrigin, mainFrameOrigin);
         databaseBackend = IDBDatabaseBackend::create(databaseName, databaseIdentifier, this, *serverConnection);
-        sharedDatabaseBackendMap().set(databaseIdentifier, databaseBackend);
+        sharedDatabaseBackendMap().set(databaseIdentifier, databaseBackend.get());
     } else
         databaseBackend = it->value;
 
@@ -99,9 +99,9 @@ void WebIDBFactoryBackend::deleteDatabase(const String&, PassRefPtr<IDBCallbacks
     notImplemented();
 }
 
-void WebIDBFactoryBackend::removeIDBDatabaseBackend(const String&)
+void WebIDBFactoryBackend::removeIDBDatabaseBackend(const String& identifier)
 {
-    notImplemented();
+    sharedDatabaseBackendMap().remove(identifier);
 }
 
 } // namespace WebKit

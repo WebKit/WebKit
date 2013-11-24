@@ -89,4 +89,14 @@ void performAPICallbackWithSecurityOriginDataVector(const Vector<SecurityOriginD
     callback->performCallbackWithReturnValue(API::Array::create(std::move(securityOrigins)).get());
 }
 
+bool operator==(const SecurityOriginData& a, const SecurityOriginData& b)
+{
+    if (&a == &b)
+        return true;
+
+    return a.protocol == b.protocol
+        && a.host == b.host
+        && a.port == b.port;
+}
+
 } // namespace WebKit

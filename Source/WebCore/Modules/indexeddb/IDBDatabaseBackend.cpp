@@ -124,6 +124,7 @@ void IDBDatabaseBackend::didOpenInternalAsync(const IDBDatabaseMetadata& metadat
 
 IDBDatabaseBackend::~IDBDatabaseBackend()
 {
+    m_factory->removeIDBDatabaseBackend(m_identifier);
 }
 
 void IDBDatabaseBackend::createObjectStore(int64_t transactionId, int64_t objectStoreId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
@@ -446,7 +447,6 @@ void IDBDatabaseBackend::openConnection(PassRefPtr<IDBCallbacks> prpCallbacks, P
 
     processPendingCalls();
 }
-
 
 void IDBDatabaseBackend::openConnectionInternal(PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> prpDatabaseCallbacks, int64_t transactionId, uint64_t version)
 {

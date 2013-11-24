@@ -56,6 +56,8 @@ struct SecurityOriginData {
 
 void performAPICallbackWithSecurityOriginDataVector(const Vector<SecurityOriginData>&, ArrayCallback*);
 
+bool operator==(const SecurityOriginData&, const SecurityOriginData&);
+
 } // namespace WebKit
 
 #endif // SecurityOriginData_h

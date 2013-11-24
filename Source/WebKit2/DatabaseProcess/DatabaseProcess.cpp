@@ -29,6 +29,7 @@
 #include "DatabaseProcessCreationParameters.h"
 #include "DatabaseProcessProxyMessages.h"
 #include "DatabaseToWebProcessConnection.h"
+#include "UniqueIDBDatabase.h"
 
 #if ENABLE(DATABASE_PROCESS)
 
@@ -66,6 +67,27 @@ void DatabaseProcess::didClose(CoreIPC::Connection*)
 void DatabaseProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)
 {
     RunLoop::current()->stop();
+}
+
+PassRefPtr<UniqueIDBDatabase> DatabaseProcess::getOrCreateUniqueIDBDatabase(const UniqueIDBDatabaseIdentifier& identifier)
+{
+    auto addResult = m_idbDatabases.add(identifier, nullptr);
+
+    if (!addResult.isNewEntry)
+        return addResult.iterator->value;
+
+    RefPtr<UniqueIDBDatabase> database = UniqueIDBDatabase::create(identifier);
+    addResult.iterator->value = database.get();
+    return database.release();
+}
+
+void DatabaseProcess::removeUniqueIDBDatabase(const UniqueIDBDatabase& database)
+{
+    const UniqueIDBDatabaseIdentifier& identifier = database.identifier();
+    ASSERT(m_idbDatabases.contains(identifier));
+
+    // FIXME: Perform necessary shut down of the unique database before it is actually destroyed.
+    m_idbDatabases.remove(identifier);
 }
 
 void DatabaseProcess::initializeDatabaseProcess(const DatabaseProcessCreationParameters& parameters)
