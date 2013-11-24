@@ -1,3 +1,15 @@
+2013-11-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Fix more fallout from failed attempts at div/mod DFG strength reductions
+        https://bugs.webkit.org/show_bug.cgi?id=124813
+
+        Reviewed by Geoffrey Garen.
+
+        * js/dfg-mod-1-int.html: Added.
+        * js/dfg-mod-1-int-expected.txt: Added.
+        * js/script-tests/dfg-mod-1-int.js: Added.
+        (foo):
+
 2013-11-23  Robert Hogan  <robert@webkit.org>
 
         Remove lint from expected result.

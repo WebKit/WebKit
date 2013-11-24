@@ -1,3 +1,13 @@
+2013-11-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Fix more fallout from failed attempts at div/mod DFG strength reductions
+        https://bugs.webkit.org/show_bug.cgi?id=124813
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+
 2013-11-22  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSC Obj-C API should have real documentation

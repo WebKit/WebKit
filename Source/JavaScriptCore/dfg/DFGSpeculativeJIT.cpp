@@ -3539,8 +3539,7 @@ void SpeculativeJIT::compileArithMod(Node* node)
         
         if (isInt32Constant(node->child2().node())) {
             int32_t divisor = valueOfInt32Constant(node->child2().node());
-            if (divisor > 0 && hasOneBitSet(divisor)) {
-                ASSERT(divisor != 1);
+            if (divisor > 1 && hasOneBitSet(divisor)) {
                 unsigned logarithm = WTF::fastLog2(divisor);
                 GPRReg dividendGPR = op1.gpr();
                 GPRTemporary result(this);
