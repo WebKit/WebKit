@@ -1,3 +1,15 @@
+2013-11-24  Tim Horton  <timothy_horton@apple.com>
+
+        Upstream USE(IOSURFACE) from the iOS port
+        https://bugs.webkit.org/show_bug.cgi?id=124814
+
+        Reviewed by Sam Weinig.
+
+        Some code guarded by USE(IOSURFACE) was recently upstreamed,
+        but not the definition of WTF_USE_IOSURFACE itself.
+
+        * wtf/Platform.h:
+
 2013-11-23  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Remove 0.10 codepath
