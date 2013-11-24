@@ -64,6 +64,8 @@ private:
     RenderMarquee* renderMarquee() const;
 };
 
+NODE_TYPE_CASTS(HTMLMarqueeElement)
+
 } // namespace WebCore
 
 #endif // HTMLMarqueeElement_h

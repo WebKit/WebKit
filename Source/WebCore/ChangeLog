@@ -1,3 +1,51 @@
+2013-11-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Generate toHTMLMarquee|OListElement() to cleanup static_cast<>
+        https://bugs.webkit.org/show_bug.cgi?id=124707
+
+        Reviewed by Darin Adler.
+
+        As a step to use toFoo(), we need to generate toHTMLMarquee|OListElement().
+        Besides this patch cleans up remaining static_cast<> usage.
+
+        No new tests, no behavior changes.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::initElement):
+        (WebCore::StyleResolver::locateCousinList):
+        (WebCore::StyleResolver::findSiblingForStyleSharing):
+        * dom/Attr.cpp:
+        (WebCore::Attr::style):
+        * dom/Element.cpp:
+        (WebCore::Element::removeAttribute):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock):
+        (WebCore::ApplyStyleCommand::pushDownInlineStyleAroundNode):
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::wrappingStyleForSerialization):
+        * editing/Editor.cpp:
+        (WebCore::Editor::applyEditingStyleToElement):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline):
+        * html/HTMLMarqueeElement.h:
+        * html/HTMLOListElement.h:
+        * html/HTMLTagNames.in:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildObjectForAttributesStyle):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForElementInfo):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::serializeFrame):
+        * rendering/RenderCounter.cpp:
+        (WebCore::planCounter):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::resize):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::calcValue):
+        (WebCore::RenderListItem::updateListMarkerNumbers):
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::marqueeSpeed):
+
 2013-11-24  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r156291): TileController tiles don't always repaint when they resize

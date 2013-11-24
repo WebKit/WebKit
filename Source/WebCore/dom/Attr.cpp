@@ -189,7 +189,7 @@ CSSStyleDeclaration* Attr::style()
     if (!m_element || !m_element->isStyledElement())
         return nullptr;
     m_style = MutableStylePropertySet::create();
-    static_cast<StyledElement*>(m_element)->collectStyleForPresentationAttribute(qualifiedName(), value(), *m_style);
+    toStyledElement(m_element)->collectStyleForPresentationAttribute(qualifiedName(), value(), *m_style);
     return m_style->ensureCSSStyleDeclaration();
 }
 

@@ -229,7 +229,7 @@ void PageSerializer::serializeFrame(Frame* frame)
         Element* element = toElement(node);
         // We have to process in-line style as it might contain some resources (typically background images).
         if (element->isStyledElement())
-            retrieveResourcesForProperties(static_cast<StyledElement*>(element)->inlineStyle(), document);
+            retrieveResourcesForProperties(toStyledElement(element)->inlineStyle(), document);
 
         if (isHTMLImageElement(element)) {
             HTMLImageElement* imageElement = toHTMLImageElement(element);
@@ -237,7 +237,7 @@ void PageSerializer::serializeFrame(Frame* frame)
             CachedImage* cachedImage = imageElement->cachedImage();
             addImageToResources(cachedImage, imageElement->renderer(), url);
         } else if (element->hasTagName(HTMLNames::linkTag)) {
-            HTMLLinkElement* linkElement = static_cast<HTMLLinkElement*>(element);
+            HTMLLinkElement* linkElement = toHTMLLinkElement(element);
             if (CSSStyleSheet* sheet = linkElement->sheet()) {
                 URL url = document->completeURL(linkElement->getAttribute(HTMLNames::hrefAttr));
                 serializeCSSStyleSheet(sheet, url);

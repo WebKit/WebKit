@@ -2550,8 +2550,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOff
     
     LayoutSize difference = (currentSize + newOffset - adjustedOldOffset).expandedTo(minimumSize) - currentSize;
 
-    ASSERT_WITH_SECURITY_IMPLICATION(element->isStyledElement());
-    StyledElement* styledElement = static_cast<StyledElement*>(element);
+    StyledElement* styledElement = toStyledElement(element);
     bool isBoxSizingBorder = renderer->style().boxSizing() == BORDER_BOX;
 
     EResize resize = renderer->style().resize();

@@ -511,7 +511,7 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
         if (!n->isStyledElement())
             continue;
 
-        StyledElement* element = static_cast<StyledElement*>(n);
+        StyledElement* element = toStyledElement(n);
         int unicodeBidi = toIdentifier(ComputedStyleExtractor(element).propertyValue(CSSPropertyUnicodeBidi));
         if (!unicodeBidi || unicodeBidi == CSSValueNormal)
             continue;
@@ -1042,7 +1042,7 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
 
         RefPtr<StyledElement> styledElement;
         if (current->isStyledElement() && isStyledInlineElementToRemove(toElement(current.get()))) {
-            styledElement = static_cast<StyledElement*>(current.get());
+            styledElement = toStyledElement(current.get());
             elementsToPushDown.append(*styledElement);
         }
 

@@ -1899,7 +1899,7 @@ void Element::removeAttribute(const AtomicString& name)
     unsigned index = elementData()->findAttributeIndexByName(localName, false);
     if (index == ElementData::attributeNotFound) {
         if (UNLIKELY(localName == styleAttr) && elementData()->m_styleAttributeIsDirty && isStyledElement())
-            static_cast<StyledElement*>(this)->removeAllInlineStyleProperties();
+            toStyledElement(this)->removeAllInlineStyleProperties();
         return;
     }
 

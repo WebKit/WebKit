@@ -638,7 +638,7 @@ static PassRefPtr<InspectorObject> buildObjectForElementInfo(Node* node)
     HashSet<AtomicString> usedClassNames;
     if (element->hasClass() && element->isStyledElement()) {
         StringBuilder classNames;
-        const SpaceSplitString& classNamesString = static_cast<StyledElement*>(element)->classNames();
+        const SpaceSplitString& classNamesString = toStyledElement(element)->classNames();
         size_t classNameCount = classNamesString.size();
         for (size_t i = 0; i < classNameCount; ++i) {
             const AtomicString& className = classNamesString[i];

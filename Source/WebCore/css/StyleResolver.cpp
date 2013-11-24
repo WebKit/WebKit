@@ -410,7 +410,7 @@ bool StyleResolver::classNamesAffectedByRules(const SpaceSplitString& classNames
 inline void StyleResolver::State::initElement(Element* e)
 {
     m_element = e;
-    m_styledElement = e && e->isStyledElement() ? static_cast<StyledElement*>(e) : 0;
+    m_styledElement = e && e->isStyledElement() ? toStyledElement(e) : nullptr;
     m_elementLinkState = e ? e->document().visitedLinkState().determineLinkState(e) : NotInsideLink;
 }
 
@@ -465,7 +465,7 @@ Node* StyleResolver::locateCousinList(Element* parent, unsigned& visitedNodeCoun
         return 0;
     if (!parent || !parent->isStyledElement())
         return 0;
-    StyledElement* p = static_cast<StyledElement*>(parent);
+    StyledElement* p = toStyledElement(parent);
     if (p->inlineStyle())
         return 0;
 #if ENABLE(SVG)
@@ -713,12 +713,12 @@ inline StyledElement* StyleResolver::findSiblingForStyleSharing(Node* node, unsi
     for (; node; node = node->previousSibling()) {
         if (!node->isStyledElement())
             continue;
-        if (canShareStyleWithElement(static_cast<StyledElement*>(node)))
+        if (canShareStyleWithElement(toStyledElement(node)))
             break;
         if (count++ == cStyleSearchThreshold)
             return 0;
     }
-    return static_cast<StyledElement*>(node);
+    return toStyledElement(node);
 }
 
 RenderStyle* StyleResolver::locateSharedStyle()

@@ -80,7 +80,7 @@ listing interfaceName=HTMLPreElement
 main interfaceName=HTMLElement
 map generateTypeHelpers
 mark interfaceName=HTMLElement
-marquee
+marquee generateTypeHelpers
 menu
 meta generateTypeHelpers
 meter interfaceName=HTMLMeterElement, conditional=METER_ELEMENT, generateTypeHelpers
@@ -90,7 +90,7 @@ noembed interfaceName=HTMLElement
 noframes interfaceName=HTMLElement
 nolayer interfaceName=HTMLElement
 object constructorNeedsFormElement, constructorNeedsCreatedByParser, generateTypeHelpers
-ol interfaceName=HTMLOListElement
+ol interfaceName=HTMLOListElement, generateTypeHelpers
 optgroup interfaceName=HTMLOptGroupElement, generateTypeHelpers
 option generateTypeHelpers
 output constructorNeedsFormElement
