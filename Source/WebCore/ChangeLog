@@ -1,3 +1,17 @@
+2013-11-25  Laszlo Vidacs  <lac@inf.u-szeged.hu>
+
+        Vertical border spacing is doubled between table row groups
+        https://bugs.webkit.org/show_bug.cgi?id=20040
+
+        Reviewed by Csaba Osztrogonác.
+
+        Based on Chromium fix https://chromium.googlesource.com/chromium/blink/+/eb615069267f895c59bc576f9d65b3fa5add41e9
+
+        Rebaseline needed for table related tests (100+).
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+
 2013-11-25  Andres Gomez  <agomez@igalia.com>
 
         [GStreamer] Seeking fails on media content provided by servers not supporting Range requests

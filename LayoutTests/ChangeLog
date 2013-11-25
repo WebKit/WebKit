@@ -1,3 +1,43 @@
+2013-11-25  Laszlo Vidacs  <lac@inf.u-szeged.hu>
+
+        Vertical border spacing is doubled between table row groups
+        https://bugs.webkit.org/show_bug.cgi?id=20040
+
+        Reviewed by Csaba Osztrogonác.
+
+        First tuple of rebaselined tests for mac. Rebaseline needed for table related tests (100+).
+
+        * fast/table/anonymous-table-section-removed.html:
+        * platform/mac/accessibility/table-detection-expected.txt:
+        * platform/mac/editing/deleting/deletionUI-single-instance-expected.txt:
+        * platform/mac/fast/forms/input-value-expected.txt:
+        * platform/mac/fast/table/011-expected.txt:
+        * platform/mac/fast/table/border-collapsing/004-expected.txt:
+        * platform/mac/fast/table/border-collapsing/004-vertical-expected.txt:
+        * platform/mac/fast/table/floating-th-expected.txt:
+        * platform/mac/fast/table/frame-and-rules-expected.txt:
+        * platform/mac/fast/table/multiple-captions-display-expected.txt:
+        * platform/mac/fast/table/rowindex-expected.txt:
+        * platform/mac/fast/table/table-display-types-expected.txt:
+        * platform/mac/fast/table/table-display-types-strict-expected.txt:
+        * platform/mac/fast/table/table-display-types-vertical-expected.txt:
+        * platform/mac/fast/table/tableInsideCaption-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug10296-1-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug13118-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug19061-1-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug3263-expected.txt:
+        * platform/mac/tables/mozilla/dom/appendTbodyExpand1-expected.txt:
+        * platform/mac/tables/mozilla/marvin/backgr_layers-opacity-expected.txt:
+        * platform/mac/tables/mozilla/marvin/backgr_position-table-expected.txt:
+        * platform/mac/tables/mozilla/marvin/backgr_simple-table-cell-expected.txt:
+        * platform/mac/tables/mozilla/marvin/backgr_simple-table-column-expected.txt:
+        * platform/mac/tables/mozilla/marvin/backgr_simple-table-column-group-expected.txt:
+        * platform/mac/tables/mozilla/marvin/backgr_simple-table-expected.txt:
+        * platform/mac/tables/mozilla/marvin/backgr_simple-table-row-expected.txt:
+        * platform/mac/tables/mozilla/marvin/backgr_simple-table-row-group-expected.txt:
+        * platform/mac/tables/mozilla/marvin/body_tfoot-expected.txt:
+        * platform/mac/tables/mozilla/marvin/body_thead-expected.txt:
+
 2013-11-25  Andres Gomez  <agomez@igalia.com>
 
         [GStreamer] Seeking fails on media content provided by servers not supporting Range requests

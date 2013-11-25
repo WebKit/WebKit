@@ -276,7 +276,10 @@ int RenderTableSection::calcRowLogicalHeight()
 
     RenderTableCell* cell;
 
-    int spacing = table()->vBorderSpacing();
+    // We ignore the border-spacing on any non-top section as it is already included in the previous section's last row position.
+    int spacing = 0;
+    if (this == table()->topSection())
+        spacing = table()->vBorderSpacing();
 
     LayoutStateMaintainer statePusher(view());
 
