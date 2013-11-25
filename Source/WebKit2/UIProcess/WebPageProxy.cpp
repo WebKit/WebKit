@@ -222,15 +222,15 @@ static const char* webKeyboardEventTypeString(WebEvent::Type type)
 }
 #endif // !LOG_DISABLED
 
-PassRefPtr<WebPageProxy> WebPageProxy::create(PageClient* pageClient, PassRefPtr<WebProcessProxy> process, WebPageGroup& pageGroup, uint64_t pageID)
+PassRefPtr<WebPageProxy> WebPageProxy::create(PageClient* pageClient, PassRefPtr<WebProcessProxy> process, WebPageGroup* pageGroup, uint64_t pageID)
 {
     return adoptRef(new WebPageProxy(pageClient, process, pageGroup, pageID));
 }
 
-WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> process, WebPageGroup& pageGroup, uint64_t pageID)
+WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> process, WebPageGroup* pageGroup, uint64_t pageID)
     : m_pageClient(pageClient)
     , m_process(process)
-    , m_pageGroup(&pageGroup)
+    , m_pageGroup(pageGroup)
     , m_mainFrame(0)
     , m_userAgent(standardUserAgent())
     , m_geolocationPermissionRequestManager(this)
@@ -524,11 +524,6 @@ void WebPageProxy::initializeWebPage()
         inspector()->enableRemoteInspection();
 #endif
 
-    if (m_pageGroup->addProcess(*m_process)) {
-        m_process->addWebPageGroup(*m_pageGroup);
-        m_process->send(Messages::WebProcess::CreateWebPageGroup(m_pageGroup->pageGroupID(), m_pageGroup->data()), 0);
-    }
-
     initializeCreationParameters();
     m_process->send(Messages::WebProcess::CreateWebPage(m_pageID, m_creationParameters), 0);
 
@@ -617,7 +612,7 @@ void WebPageProxy::loadURL(const String& url, API::Object* userData)
     bool createdExtension = maybeInitializeSandboxExtensionHandle(URL(URL(), url), sandboxExtensionHandle);
     if (createdExtension)
         m_process->willAcquireUniversalFileReadSandboxExtension();
-    m_process->send(Messages::WebPage::LoadURL(url, sandboxExtensionHandle, WebContextUserMessageEncoder(userData, m_process.get())), m_pageID);
+    m_process->send(Messages::WebPage::LoadURL(url, sandboxExtensionHandle, WebContextUserMessageEncoder(userData)), m_pageID);
     m_process->responsivenessTimer()->start();
 }
 
@@ -632,7 +627,7 @@ void WebPageProxy::loadURLRequest(WebURLRequest* urlRequest, API::Object* userDa
     bool createdExtension = maybeInitializeSandboxExtensionHandle(urlRequest->resourceRequest().url(), sandboxExtensionHandle);
     if (createdExtension)
         m_process->willAcquireUniversalFileReadSandboxExtension();
-    m_process->send(Messages::WebPage::LoadURLRequest(urlRequest->resourceRequest(), sandboxExtensionHandle, WebContextUserMessageEncoder(userData, m_process.get())), m_pageID);
+    m_process->send(Messages::WebPage::LoadURLRequest(urlRequest->resourceRequest(), sandboxExtensionHandle, WebContextUserMessageEncoder(userData)), m_pageID);
     m_process->responsivenessTimer()->start();
 }
 
@@ -659,7 +654,7 @@ void WebPageProxy::loadFile(const String& fileURLString, const String& resourceD
     SandboxExtension::Handle sandboxExtensionHandle;
     SandboxExtension::createHandle(resourceDirectoryPath, SandboxExtension::ReadOnly, sandboxExtensionHandle);
     m_process->assumeReadAccessToBaseURL(resourceDirectoryURL);
-    m_process->send(Messages::WebPage::LoadURL(fileURL, sandboxExtensionHandle, WebContextUserMessageEncoder(userData, m_process.get())), m_pageID);
+    m_process->send(Messages::WebPage::LoadURL(fileURL, sandboxExtensionHandle, WebContextUserMessageEncoder(userData)), m_pageID);
     m_process->responsivenessTimer()->start();
 }
 
@@ -669,7 +664,7 @@ void WebPageProxy::loadData(WebData* data, const String& MIMEType, const String&
         reattachToWebProcess();
 
     m_process->assumeReadAccessToBaseURL(baseURL);
-    m_process->send(Messages::WebPage::LoadData(data->dataReference(), MIMEType, encoding, baseURL, WebContextUserMessageEncoder(userData, m_process.get())), m_pageID);
+    m_process->send(Messages::WebPage::LoadData(data->dataReference(), MIMEType, encoding, baseURL, WebContextUserMessageEncoder(userData)), m_pageID);
     m_process->responsivenessTimer()->start();
 }
 
@@ -679,7 +674,7 @@ void WebPageProxy::loadHTMLString(const String& htmlString, const String& baseUR
         reattachToWebProcess();
 
     m_process->assumeReadAccessToBaseURL(baseURL);
-    m_process->send(Messages::WebPage::LoadHTMLString(htmlString, baseURL, WebContextUserMessageEncoder(userData, m_process.get())), m_pageID);
+    m_process->send(Messages::WebPage::LoadHTMLString(htmlString, baseURL, WebContextUserMessageEncoder(userData)), m_pageID);
     m_process->responsivenessTimer()->start();
 }
 
@@ -694,7 +689,7 @@ void WebPageProxy::loadAlternateHTMLString(const String& htmlString, const Strin
         m_mainFrame->setUnreachableURL(unreachableURL);
 
     m_process->assumeReadAccessToBaseURL(baseURL);
-    m_process->send(Messages::WebPage::LoadAlternateHTMLString(htmlString, baseURL, unreachableURL, WebContextUserMessageEncoder(userData, m_process.get())), m_pageID);
+    m_process->send(Messages::WebPage::LoadAlternateHTMLString(htmlString, baseURL, unreachableURL, WebContextUserMessageEncoder(userData)), m_pageID);
     m_process->responsivenessTimer()->start();
 }
 
@@ -703,7 +698,7 @@ void WebPageProxy::loadPlainTextString(const String& string, API::Object* userDa
     if (!isValid())
         reattachToWebProcess();
 
-    m_process->send(Messages::WebPage::LoadPlainTextString(string, WebContextUserMessageEncoder(userData, m_process.get())), m_pageID);
+    m_process->send(Messages::WebPage::LoadPlainTextString(string, WebContextUserMessageEncoder(userData)), m_pageID);
     m_process->responsivenessTimer()->start();
 }
 
@@ -712,7 +707,7 @@ void WebPageProxy::loadWebArchiveData(const WebData* webArchiveData, API::Object
     if (!isValid())
         reattachToWebProcess();
 
-    m_process->send(Messages::WebPage::LoadWebArchiveData(webArchiveData->dataReference(), WebContextUserMessageEncoder(userData, m_process.get())), m_pageID);
+    m_process->send(Messages::WebPage::LoadWebArchiveData(webArchiveData->dataReference(), WebContextUserMessageEncoder(userData)), m_pageID);
     m_process->responsivenessTimer()->start();
 }
 
@@ -3058,7 +3053,7 @@ NativeWebMouseEvent* WebPageProxy::currentlyProcessedMouseDownEvent()
 
 void WebPageProxy::postMessageToInjectedBundle(const String& messageName, API::Object* messageBody)
 {
-    process()->send(Messages::WebPage::PostInjectedBundleMessage(messageName, WebContextUserMessageEncoder(messageBody, process())), m_pageID);
+    process()->send(Messages::WebPage::PostInjectedBundleMessage(messageName, WebContextUserMessageEncoder(messageBody)), m_pageID);
 }
 
 #if PLATFORM(GTK)
@@ -3820,7 +3815,7 @@ void WebPageProxy::initializeCreationParameters()
     m_creationParameters.viewState = m_viewState;
     m_creationParameters.drawingAreaType = m_drawingArea->type();
     m_creationParameters.store = m_pageGroup->preferences()->store();
-    m_creationParameters.pageGroupID = m_pageGroup->pageGroupID();
+    m_creationParameters.pageGroupData = m_pageGroup->data();
     m_creationParameters.drawsBackground = m_drawsBackground;
     m_creationParameters.drawsTransparentBackground = m_drawsTransparentBackground;
     m_creationParameters.underlayColor = m_underlayColor;

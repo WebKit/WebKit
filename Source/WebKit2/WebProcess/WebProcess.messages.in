@@ -27,9 +27,6 @@ messages -> WebProcess LegacyReceiver {
     # Create a new page.
     CreateWebPage(uint64_t newPageID, WebKit::WebPageCreationParameters pageCreationParameters)
 
-    # Create a new page group.
-    CreateWebPageGroup(uint64_t newPageGroupID, WebKit::WebPageGroupData pageGroupData)
-
     # Visited link tracking.
     SetVisitedLinkTable(WebKit::SharedMemory::Handle handle)
     VisitedLinkStateChanged(Vector<WebCore::LinkHash> linkHashes)

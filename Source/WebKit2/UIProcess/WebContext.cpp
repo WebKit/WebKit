@@ -594,7 +594,7 @@ WebProcessProxy* WebContext::createNewWebProcess()
     RefPtr<API::Object> injectedBundleInitializationUserData = m_injectedBundleClient.getInjectedBundleInitializationUserData(this);
     if (!injectedBundleInitializationUserData)
         injectedBundleInitializationUserData = m_injectedBundleInitializationUserData;
-    process->send(Messages::WebProcess::InitializeWebProcess(parameters, WebContextUserMessageEncoder(injectedBundleInitializationUserData.get(), process.get())), 0);
+    process->send(Messages::WebProcess::InitializeWebProcess(parameters, WebContextUserMessageEncoder(injectedBundleInitializationUserData.get())), 0);
 
     if (WebPreferences::anyPageGroupsAreUsingPrivateBrowsing())
         process->send(Messages::WebProcess::EnsurePrivateBrowsingSession(), 0);
@@ -608,7 +608,7 @@ WebProcessProxy* WebContext::createNewWebProcess()
             CoreIPC::ArgumentEncoder messageData;
 
             messageData.encode(message.first);
-            messageData.encode(WebContextUserMessageEncoder(message.second.get(), process.get()));
+            messageData.encode(WebContextUserMessageEncoder(message.second.get()));
             process->send(Messages::WebProcess::PostInjectedBundleMessage(CoreIPC::DataReference(messageData.buffer(), messageData.bufferSize())), 0);
         }
         m_messagesToInjectedBundlePostedToEmptyContext.clear();
@@ -759,7 +759,7 @@ PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient* pageClient, WebPa
     if (!pageGroup)
         pageGroup = m_defaultPageGroup.get();
 
-    return process->createWebPage(pageClient, *pageGroup);
+    return process->createWebPage(pageClient, this, pageGroup);
 }
 
 DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const ResourceRequest& request)
@@ -789,13 +789,12 @@ void WebContext::postMessageToInjectedBundle(const String& messageName, API::Obj
 
     // FIXME: Return early if the message body contains any references to WKPageRefs/WKFrameRefs etc. since they're local to a process.
 
-    for (size_t i = 0; i < m_processes.size(); ++i) {
-        CoreIPC::ArgumentEncoder messageData;
-        messageData.encode(messageName);
-        messageData.encode(WebContextUserMessageEncoder(messageBody, m_processes[i].get()));
+    CoreIPC::ArgumentEncoder messageData;
+    messageData.encode(messageName);
+    messageData.encode(WebContextUserMessageEncoder(messageBody));
 
+    for (size_t i = 0; i < m_processes.size(); ++i)
         m_processes[i]->send(Messages::WebProcess::PostInjectedBundleMessage(CoreIPC::DataReference(messageData.buffer(), messageData.bufferSize())), 0);
-    }
 }
 
 // InjectedBundle client
@@ -993,7 +992,7 @@ void WebContext::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC:
 
         RefPtr<API::Object> returnData;
         didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody.get(), returnData);
-        replyEncoder->encode(WebContextUserMessageEncoder(returnData.get(), WebProcessProxy::fromConnection(connection)));
+        replyEncoder->encode(WebContextUserMessageEncoder(returnData.get()));
         return;
     }
 
