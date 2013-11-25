@@ -1,3 +1,24 @@
+2013-11-25  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        Mark URLRegistry's lookup() as const and its child classes as final
+        https://bugs.webkit.org/show_bug.cgi?id=124865
+
+        Reviewed by Eric Carlson.
+
+        No new tests needed. No behavior changes.
+
+        * Modules/mediasource/MediaSourceRegistry.cpp:
+        (WebCore::MediaSourceRegistry::lookup): marked as const.
+        * Modules/mediasource/MediaSourceRegistry.h: MediaSourceRegistry
+        marked as final.
+        * Modules/mediastream/MediaStreamRegistry.cpp:
+        (WebCore::MediaStreamRegistry::lookup): marked as const.
+        * Modules/mediastream/MediaStreamRegistry.h: MediaStreamRegistry
+        marked as final.
+        * fileapi/Blob.cpp:
+        * html/URLRegistry.h: lookup() marked as const.
+        (WebCore::URLRegistry::lookup): marked as const.
+
 2013-11-25  Sergio Correia  <sergio.correia@openbossa.org>
 
         [MediaStream] Use std::unique_ptr instead of OwnPtr/PassOwnPtr

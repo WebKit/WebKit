@@ -68,7 +68,7 @@ void MediaSourceRegistry::unregisterURL(const URL& url)
     source->removedFromRegistry();
 }
 
-URLRegistrable* MediaSourceRegistry::lookup(const String& url)
+URLRegistrable* MediaSourceRegistry::lookup(const String& url) const
 {
     ASSERT(isMainThread());
     return m_mediaSources.get(url);

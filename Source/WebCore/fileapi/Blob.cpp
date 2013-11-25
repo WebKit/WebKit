@@ -52,7 +52,7 @@ enum SliceHistogramEnum {
 
 } // namespace
 
-class BlobURLRegistry : public URLRegistry {
+class BlobURLRegistry FINAL : public URLRegistry {
 public:
     virtual void registerURL(SecurityOrigin*, const URL&, URLRegistrable*) OVERRIDE;
     virtual void unregisterURL(const URL&) OVERRIDE;
