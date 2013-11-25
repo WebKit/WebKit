@@ -33,7 +33,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -78,7 +77,7 @@ public:
     virtual void didChangeIceConnectionState(IceConnectionState) = 0;
     virtual void didAddRemoteStream(PassRefPtr<MediaStreamPrivate>) = 0;
     virtual void didRemoveRemoteStream(MediaStreamPrivate*) = 0;
-    virtual void didAddRemoteDataChannel(PassOwnPtr<RTCDataChannelHandler>) = 0;
+    virtual void didAddRemoteDataChannel(std::unique_ptr<RTCDataChannelHandler>) = 0;
 };
 
 } // namespace WebCore

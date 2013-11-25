@@ -34,7 +34,6 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaStreamPrivate.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -68,7 +67,7 @@ public:
     int id;
 };
 
-typedef PassOwnPtr<RTCPeerConnectionHandler> (*CreatePeerConnectionHandler)(RTCPeerConnectionHandlerClient*);
+typedef std::unique_ptr<RTCPeerConnectionHandler> (*CreatePeerConnectionHandler)(RTCPeerConnectionHandlerClient*);
 
 class RTCPeerConnectionHandler {
 public:
@@ -88,12 +87,9 @@ public:
     virtual bool addStream(PassRefPtr<MediaStreamPrivate>, PassRefPtr<MediaConstraints>) = 0;
     virtual void removeStream(PassRefPtr<MediaStreamPrivate>) = 0;
     virtual void getStats(PassRefPtr<RTCStatsRequest>) = 0;
-    virtual PassOwnPtr<RTCDataChannelHandler> createDataChannel(const String& label, const RTCDataChannelInit&) = 0;
-    virtual PassOwnPtr<RTCDTMFSenderHandler> createDTMFSender(PassRefPtr<MediaStreamSource>) = 0;
+    virtual std::unique_ptr<RTCDataChannelHandler> createDataChannel(const String& label, const RTCDataChannelInit&) = 0;
+    virtual std::unique_ptr<RTCDTMFSenderHandler> createDTMFSender(PassRefPtr<MediaStreamSource>) = 0;
     virtual void stop() = 0;
-
-protected:
-    RTCPeerConnectionHandler() { }
 };
 
 } // namespace WebCore

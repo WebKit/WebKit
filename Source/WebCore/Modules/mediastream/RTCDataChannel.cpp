@@ -64,23 +64,23 @@ PassRefPtr<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext* contex
     options.get("maxRetransmitTime", initData.maxRetransmitTime);
     options.get("protocol", initData.protocol);
 
-    OwnPtr<RTCDataChannelHandler> handler = peerConnectionHandler->createDataChannel(label, initData);
+    std::unique_ptr<RTCDataChannelHandler> handler = peerConnectionHandler->createDataChannel(label, initData);
     if (!handler) {
         ec = NOT_SUPPORTED_ERR;
         return nullptr;
     }
-    return adoptRef(new RTCDataChannel(context, handler.release()));
+    return adoptRef(new RTCDataChannel(context, std::move(handler)));
 }
 
-PassRefPtr<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext* context, PassOwnPtr<RTCDataChannelHandler> handler)
+PassRefPtr<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext* context, std::unique_ptr<RTCDataChannelHandler> handler)
 {
     ASSERT(handler);
-    return adoptRef(new RTCDataChannel(context, handler));
+    return adoptRef(new RTCDataChannel(context, std::move(handler)));
 }
 
-RTCDataChannel::RTCDataChannel(ScriptExecutionContext* context, PassOwnPtr<RTCDataChannelHandler> handler)
+RTCDataChannel::RTCDataChannel(ScriptExecutionContext* context, std::unique_ptr<RTCDataChannelHandler> handler)
     : m_scriptExecutionContext(context)
-    , m_handler(handler)
+    , m_handler(std::move(handler))
     , m_stopped(false)
     , m_readyState(ReadyStateConnecting)
     , m_binaryType(BinaryTypeArrayBuffer)

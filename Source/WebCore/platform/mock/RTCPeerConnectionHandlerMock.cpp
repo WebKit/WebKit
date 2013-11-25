@@ -40,11 +40,6 @@
 
 namespace WebCore {
 
-PassOwnPtr<RTCPeerConnectionHandler> RTCPeerConnectionHandlerMock::create(RTCPeerConnectionHandlerClient* client)
-{
-    return adoptPtr(new RTCPeerConnectionHandlerMock(client));
-}
-
 RTCPeerConnectionHandlerMock::RTCPeerConnectionHandlerMock(RTCPeerConnectionHandlerClient* client)
     : m_client(client)
 {
@@ -153,19 +148,19 @@ void RTCPeerConnectionHandlerMock::getStats(PassRefPtr<RTCStatsRequest>)
     notImplemented();
 }
 
-PassOwnPtr<RTCDataChannelHandler> RTCPeerConnectionHandlerMock::createDataChannel(const String& label, const RTCDataChannelInit& init)
+std::unique_ptr<RTCDataChannelHandler> RTCPeerConnectionHandlerMock::createDataChannel(const String& label, const RTCDataChannelInit& init)
 {
     RefPtr<RemoteDataChannelNotifier> notifier = adoptRef(new RemoteDataChannelNotifier(m_client));
     m_timerEvents.append(adoptRef(new TimerEvent(this, notifier)));
-    return adoptPtr(new RTCDataChannelHandlerMock(label, init));
+    return std::make_unique<RTCDataChannelHandlerMock>(label, init);
 }
 
-PassOwnPtr<RTCDTMFSenderHandler> RTCPeerConnectionHandlerMock::createDTMFSender(PassRefPtr<MediaStreamSource>)
+std::unique_ptr<RTCDTMFSenderHandler> RTCPeerConnectionHandlerMock::createDTMFSender(PassRefPtr<MediaStreamSource>)
 {
     // Requires a mock implementation of RTCDTMFSenderHandler.
     // This must be implemented once the mock implementation of RTCDataChannelHandler is ready.
     notImplemented();
-    return 0;
+    return nullptr;
 }
 
 void RTCPeerConnectionHandlerMock::stop()

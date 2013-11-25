@@ -69,7 +69,7 @@ public:
     using RefCounted<RTCDTMFSender>::deref;
 
 private:
-    RTCDTMFSender(ScriptExecutionContext*, PassRefPtr<MediaStreamTrack>, PassOwnPtr<RTCDTMFSenderHandler>);
+    RTCDTMFSender(ScriptExecutionContext*, PassRefPtr<MediaStreamTrack>, std::unique_ptr<RTCDTMFSenderHandler>);
 
     void scheduleDispatchEvent(PassRefPtr<Event>);
     void scheduledEventTimerFired(Timer<RTCDTMFSender>*);
@@ -85,7 +85,7 @@ private:
     long m_duration;
     long m_interToneGap;
 
-    OwnPtr<RTCDTMFSenderHandler> m_handler;
+    std::unique_ptr<RTCDTMFSenderHandler> m_handler;
 
     bool m_stopped;
 

@@ -1,3 +1,29 @@
+2013-11-25  Sergio Correia  <sergio.correia@openbossa.org>
+
+        [MediaStream] Use std::unique_ptr instead of OwnPtr/PassOwnPtr
+        https://bugs.webkit.org/show_bug.cgi?id=124858
+
+        Reviewed by Eric Carlson.
+
+        Another step of the OwnPtr/PassOwnPtr => std::unique_ptr conversion,
+        now targeting mediastream-related code.
+
+        No new tests, covered by existing ones.
+
+        * Modules/mediastream/RTCDTMFSender.cpp:
+        * Modules/mediastream/RTCDTMFSender.h:
+        * Modules/mediastream/RTCDataChannel.cpp:
+        * Modules/mediastream/RTCDataChannel.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        * Modules/mediastream/RTCPeerConnection.h:
+        * platform/mediastream/MediaStreamSource.cpp:
+        * platform/mediastream/RTCPeerConnectionHandler.cpp:
+        * platform/mediastream/RTCPeerConnectionHandler.h:
+        * platform/mediastream/RTCPeerConnectionHandlerClient.h:
+        * platform/mock/RTCNotifiersMock.cpp:
+        * platform/mock/RTCPeerConnectionHandlerMock.cpp:
+        * platform/mock/RTCPeerConnectionHandlerMock.h:
+
 2013-11-25  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         MediaStreamRegistry should store MediaStreams instead of MediaStreamPrivates

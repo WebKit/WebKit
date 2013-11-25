@@ -34,12 +34,10 @@
 
 #include "RTCPeerConnectionHandler.h"
 
-#include <wtf/PassOwnPtr.h>
-
 namespace WebCore {
 class RTCPeerConnectionHandlerClient;
 
-static PassOwnPtr<RTCPeerConnectionHandler> createHandler(RTCPeerConnectionHandlerClient*)
+static std::unique_ptr<RTCPeerConnectionHandler> createHandler(RTCPeerConnectionHandlerClient*)
 {
     return nullptr;
 }

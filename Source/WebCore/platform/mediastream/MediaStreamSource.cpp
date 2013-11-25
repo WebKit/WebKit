@@ -40,8 +40,6 @@
 #include "MediaStreamSourceCapabilities.h"
 #include "UUID.h"
 
-#include <wtf/PassOwnPtr.h>
-
 namespace WebCore {
 
 MediaStreamSource::MediaStreamSource(const String& id, Type type, const String& name)
