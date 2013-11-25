@@ -1,5 +1,11 @@
 2013-11-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Followup fix after r159752
+
+        * Scripts/run-jsc-stress-tests: We need to handle Release builds too.
+
+2013-11-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         run-jsc-stress-tests should be able to package its tests and move them places
         https://bugs.webkit.org/show_bug.cgi?id=124549
 

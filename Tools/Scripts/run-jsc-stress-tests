@@ -147,8 +147,13 @@ $runlist = []
 def frameworkFromJSCPath(jscPath)
     if jscPath.dirname.basename.to_s == "Resources" and jscPath.dirname.dirname.basename.to_s == "JavaScriptCore.framework"
         jscPath.dirname.dirname
-    elsif jscPath.dirname.basename.to_s == "Debug" and jscPath.dirname.dirname.basename.to_s == "WebKitBuild"
-        jscPath.dirname + "JavaScriptCore.framework"
+    elsif jscPath.dirname.dirname.basename.to_s == "WebKitBuild"
+        parentDirName = jscPath.dirname.basename.to_s
+        if parentDirName == "Debug" or parentDirName == "Release"
+            jscPath.dirname + "JavaScriptCore.framework"
+        else
+            raise "Unknown JSC path, cannot copy full framework: #{jscPath}"
+        end
     else
         raise "Unknown JSC path, cannot copy full framework: #{jscPath}"
     end
