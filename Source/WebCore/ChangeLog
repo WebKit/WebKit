@@ -1,3 +1,21 @@
+2013-11-25  Andreas Kling  <akling@apple.com>
+
+        Deduplicate shortish Text node strings during tree construction.
+        <https://webkit.org/b/124855>
+
+        Let HTMLConstructionSite keep a hash set of already seen strings over
+        its lifetime. Use this to deduplicate the strings inside Text nodes
+        for any string up to 64 characters of length.
+
+        This optimization already sort-of existed for whitespace-only Texts,
+        but those are laundered in the AtomicString table which we definitely
+        don't want to pollute with every single Text. It might be a good idea
+        to stop using the AtomicString table for all-whitespace Text too.
+
+        3.82 MB progression on HTML5-8266 locally.
+
+        Reviewed by Anders Carlsson.
+
 2013-11-25  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         Remove unnecessary MediaStreamTrackDescriptor forward declaration

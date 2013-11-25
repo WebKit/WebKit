@@ -170,6 +170,8 @@ private:
     void mergeAttributesFromTokenIntoElement(AtomicHTMLToken*, Element*);
     void dispatchDocumentElementAvailableIfNeeded();
 
+    String stringForTextNode(const String&, bool shouldUseAtomicString);
+
     Document* m_document;
     
     // This is the root ContainerNode to which the parser attaches all newly
@@ -196,6 +198,8 @@ private:
     unsigned m_maximumDOMTreeDepth;
 
     bool m_inQuirksMode;
+
+    HashSet<String> m_stringsForDeduplication;
 };
 
 } // namespace WebCore
