@@ -1,3 +1,9 @@
+2013-11-25  Dan Bernstein  <mitz@apple.com>
+
+        Set the svn:ignore property on the Xcode project to ignore the workspace and user data.
+
+        * WebInspectorUI.xcodeproj: Added property svn:ignore.
+
 2013-11-21  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/124702> Stop overriding VALID_ARCHS.
