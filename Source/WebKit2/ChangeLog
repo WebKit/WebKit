@@ -5,7 +5,7 @@
 
         Reviewed by Brady Eidson.
 
-        Guarded all Cocoa API headers and implementatiosn with WK_API_ENABLED. Left the WKView class
+        Guarded all Cocoa API headers and implementations with WK_API_ENABLED. Left the WKView class
         unguarded, but limited its API.
 
         * Shared/API/Cocoa/WKFoundation.h: Replaced OBJ_VISIBLE with an explicit attribute.
