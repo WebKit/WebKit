@@ -1,3 +1,11 @@
+2013-11-25  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed GTK gardening. Removed expectations for test that is no
+        longer failing for the GTK bots, according to the flakiness dashboard.
+
+        * platform/gtk-wk2/TestExpectations: Removed expectation.
+        * platform/gtk/TestExpectations: Ditto.
+
 2013-11-25  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.
