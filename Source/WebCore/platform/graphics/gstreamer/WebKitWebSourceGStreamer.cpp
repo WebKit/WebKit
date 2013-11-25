@@ -839,17 +839,28 @@ void StreamingClient::handleResponseReceived(const ResourceResponse& response)
 
     GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
 
-    // If we seeked we need 206 == PARTIAL_CONTENT
-    if (priv->requestedOffset && response.httpStatusCode() != 206) {
-        locker.unlock();
-        GST_ELEMENT_ERROR(src, RESOURCE, READ, (0), (0));
-        gst_app_src_end_of_stream(priv->appsrc);
-        webKitWebSrcStop(src);
+    if (priv->seekID) {
+        GST_DEBUG_OBJECT(src, "Seek in progress, ignoring response");
         return;
     }
 
+    if (priv->requestedOffset) {
+        // Seeking ... we expect a 206 == PARTIAL_CONTENT
+        if (response.httpStatusCode() == 200) {
+            // Range request didn't have a ranged response; resetting offset.
+            priv->offset = 0;
+        } else if (response.httpStatusCode() != 206) {
+            // Range request completely failed.
+            locker.unlock();
+            GST_ELEMENT_ERROR(src, RESOURCE, READ, ("Received unexpected %d HTTP status code", response.httpStatusCode()), (0));
+            gst_app_src_end_of_stream(priv->appsrc);
+            webKitWebSrcStop(src);
+            return;
+        }
+    }
+
     long long length = response.expectedContentLength();
-    if (length > 0)
+    if (length > 0 && priv->requestedOffset && response.httpStatusCode() == 206)
         length += priv->requestedOffset;
 
     priv->size = length >= 0 ? length : 0;
@@ -932,6 +943,27 @@ void StreamingClient::handleDataReceived(const char* data, int length)
         GST_DEBUG_OBJECT(src, "Seek in progress, ignoring data");
         priv->buffer.clear();
         return;
+    }
+
+    if (priv->offset < priv->requestedOffset) {
+        // Range request failed; seeking manually.
+        if (priv->offset + length <= priv->requestedOffset) {
+            // Discard all the buffers coming before the requested seek position.
+            priv->offset += length;
+            priv->buffer.clear();
+            return;
+        }
+
+        if (priv->offset + length > priv->requestedOffset) {
+            guint64 offset = priv->requestedOffset - priv->offset;
+            data += offset;
+            length -= offset;
+            if (priv->buffer)
+                gst_buffer_resize(priv->buffer.get(), offset, -1);
+            priv->offset = priv->requestedOffset;
+        }
+
+        priv->requestedOffset = 0;
     }
 
     // Ports using the GStreamer backend but not the soup implementation of ResourceHandle

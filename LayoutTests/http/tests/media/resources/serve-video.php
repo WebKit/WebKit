@@ -2,14 +2,17 @@
 
     $fileName = $_GET["name"];
     $type = $_GET["type"];
+    if (array_key_exists("ranges", $_GET))
+        $ranges = $_GET["ranges"];
 
     $fileSize = filesize($fileName);
     $start = 0;
     $end = $fileSize - 1;
-    $contentRange = $_SERVER["HTTP_RANGE"];
+    if ($ranges != "no")
+        $contentRange = $_SERVER["HTTP_RANGE"];
     if (isset($contentRange)) {
-        $range = explode("-", substr($contentRange, strlen("bytes="))); 
-        $start = intval($range[0]); 
+        $range = explode("-", substr($contentRange, strlen("bytes=")));
+        $start = intval($range[0]);
         if (!empty($range[1]))
             $end = intval($range[1]);
         $httpStatus = "206 Partial Content";
@@ -22,10 +25,11 @@
     header("Pragma: no-cache");
     header("Etag: " . '"' . $fileSize . "-" . filemtime($fileName) . '"');
     header("Content-Type: " . $type);
-    header("Accept-Ranges: bytes");
+    if ($ranges != "no")
+        header("Accept-Ranges: bytes");
     header("Content-Length: " . ($end - $start + 1));
-    if ($contentRange)
-		header("Content-Range: bytes " . $start . "-" . $end . "/" . $fileSize); 
+    if (isset($contentRange))
+        header("Content-Range: bytes " . $start . "-" . $end . "/" . $fileSize);
     header("Connection: close");
 
     $chunkSize = 1024 * 256;

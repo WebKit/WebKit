@@ -1,3 +1,26 @@
+2013-11-25  Andres Gomez  <agomez@igalia.com>
+
+        [GStreamer] Seeking fails on media content provided by servers not supporting Range requests
+        https://bugs.webkit.org/show_bug.cgi?id=85994
+
+        Reviewed by Philippe Normand.
+
+        Added test to check that seeking media files on http servers not
+        supporting "Range" requests doesn't trigger an error.
+
+        * http/tests/media/media-seeking-no-ranges-server-expected.txt: Added.
+        * http/tests/media/media-seeking-no-ranges-server.html: Added.
+        * http/tests/media/resources/load-video.php: Added support for new
+        "ranges" paramenter.
+        * http/tests/media/resources/serve-video.php: Added support for
+        new "ranges" paramenter. When "ranges" is "no" we always answer
+        the HTTP status "200 OK" and send the whole file.
+        * platform/mac/TestExpectations: New test skipped in Mac port as
+        media playback download control is passed to AVFoundation that
+        doesn't like fancy PHP URLs like the one used in the test and, in
+        addition, they won't care about HTTP servers not supporting
+        "Range" requests.
+
 2013-11-25  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Unreviewed GTK gardening. Removed expectations for test that is no

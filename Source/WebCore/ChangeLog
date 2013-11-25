@@ -1,3 +1,27 @@
+2013-11-25  Andres Gomez  <agomez@igalia.com>
+
+        [GStreamer] Seeking fails on media content provided by servers not supporting Range requests
+        https://bugs.webkit.org/show_bug.cgi?id=85994
+
+        Reviewed by Philippe Normand.
+
+        Based on the patch written by Andre Moreira Magalhaes.
+
+        When the GStreamer web source was doing a "Range" request we were
+        expecting to receive a 206 status reply with the "Content-Range"
+        header and just the requested data. Supporting "Range" requests is
+        not mandatory so, for the servers not supporting it they will be
+        replying with a 200 status and the whole content of the media
+        element. Now, we are properly handling these replies too.
+
+        Test: http/tests/media/media-seeking-no-ranges-server.html
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (StreamingClient::handleResponseReceived): Do not fail when
+        receiving 200 as response for HTTP range requests.
+        (StreamingClient::handleDataReceived): Manually seek on stream
+        when receiving the full data after a seek.
+
 2013-11-25  Radu Stavila  <stavila@adobe.com>
 
         Removed obsolete FIXME after the landing of visual overflow patch (https://bugs.webkit.org/show_bug.cgi?id=118665).
