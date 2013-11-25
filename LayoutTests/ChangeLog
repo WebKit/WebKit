@@ -5,6 +5,35 @@
 
         Reviewed by Csaba Osztrogonác.
 
+        Rebaseline the rest of EFL and GTK tests.
+
+        * platform/efl/tables/mozilla/bugs/bug10296-1-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug26178-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug27038-1-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug278385-expected.txt:
+        * platform/efl/tables/mozilla/bugs/bug55789-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug106966-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug85016-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/bugs/bug91057-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/core/backgrounds-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/core/captions1-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/dom/insertTbodyExpand1-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/dom/insertTbodyRebuild1-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/marvin/backgr_layers-show-expected.txt:
+        * platform/efl/tables/mozilla_expected_failures/other/test4-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/thead_valign_bottom-expected.png:
+        * platform/gtk/tables/mozilla/marvin/thead_valign_bottom-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/x_thead_valign_bottom-expected.png:
+        * platform/gtk/tables/mozilla/marvin/x_thead_valign_bottom-expected.txt:
+
+2013-11-25  Laszlo Vidacs  <lac@inf.u-szeged.hu>
+
+        Vertical border spacing is doubled between table row groups
+        https://bugs.webkit.org/show_bug.cgi?id=20040
+
+        Reviewed by Csaba Osztrogonác.
+
         Rebaseline efl tests (+mac corrections).
 
         * platform/efl/fast/forms/input-align-expected.png:
