@@ -202,6 +202,8 @@ Bug(GTK) fast/parser/document-write-basic.html [ Crash ]
 
 Bug(GTK) fast/forms/select-live-pseudo-selectors.html [ Crash ]
 
+webkit.org/b/124556 http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html [ Crash Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////

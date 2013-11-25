@@ -1,3 +1,13 @@
+2013-11-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+        Managing current failures and removing redundant baselines.
+
+        * platform/gtk-wk2/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/dom/gc-attribute-node-expected.txt: Removed.
+        * platform/gtk/fast/repaint/increasing-region-content-height-expected.txt: Removed.
+
 2013-11-25  Jongwoo Choi  <jw0330.choi@samsung.com>
 
         [EFL] Need to update EFL TestExpectations file

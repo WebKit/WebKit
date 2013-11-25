@@ -1494,6 +1494,7 @@ webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure
 
 webkit.org/b/124567 inspector-protocol/model/highlight-shape-outside.html [ Failure ]
 
+webkit.org/b/124770 fast/dom/access-key-iframe.html [ Failure ]
 webkit.org/b/124770 fast/forms/ValidityState-valueMissing-002.html [ Failure ]
 webkit.org/b/124770 fast/forms/access-key-for-all-elements.html [ Failure ]
 webkit.org/b/124770 fast/forms/access-key.html [ Failure ]
@@ -1501,6 +1502,10 @@ webkit.org/b/124770 fast/forms/focus-selection-input.html [ Failure ]
 webkit.org/b/124770 fast/forms/focus-selection-textarea.html [ Failure ]
 webkit.org/b/124770 fast/forms/legend-access-key.html [ Failure ]
 webkit.org/b/124770 fast/forms/select-accesskey.html [ Failure ]
+
+webkit.org/b/124834 fast/block/float/clear-negative-margin-top.html [ ImageOnlyFailure ]
+
+webkit.org/b/124835 fast/repaint/repaint-regions-overflow.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
