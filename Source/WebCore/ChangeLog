@@ -1,3 +1,20 @@
+2013-11-25  Simon Pena  <simon.pena@samsung.com>
+
+        [EFL] X11Helper::createPixmap doesn't initialise out value handleId
+        https://bugs.webkit.org/show_bug.cgi?id=124722
+
+        Reviewed by Gyuyoung Kim.
+
+        The overloaded functions X11Helper::createPixmap don't initialise out
+        value handleId, and they do early returns on error situations. Since
+        the functions are void and they don't communicate their failure in any
+        way, returning an out value without initialising it could make the
+        error go farther unnoticed. With the variable being initialised, it can
+        be reliably checked for errors when the function returns.
+
+        * platform/graphics/surfaces/glx/X11Helper.cpp:
+        (WebCore::X11Helper::createPixmap): Initialise handleId to 0.
+
 2013-11-25  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         Mark URLRegistry's lookup() as const and its child classes as final

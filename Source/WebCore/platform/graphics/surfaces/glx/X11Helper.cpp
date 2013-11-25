@@ -142,6 +142,7 @@ void X11Helper::resizeWindow(const IntRect& newRect, const uint32_t windowId)
 
 void X11Helper::createPixmap(Pixmap* handleId, const XVisualInfo& visualInfo, const IntSize& size)
 {
+    *handleId = 0;
     Display* display = nativeDisplay();
     if (!display)
         return;
@@ -265,6 +266,7 @@ void X11Helper::createOffScreenWindow(uint32_t* handleId, const EGLint id, bool 
 
 void X11Helper::createPixmap(Pixmap* handleId, const EGLint id, bool hasAlpha, const IntSize& size)
 {
+    *handleId = 0;
     VisualID visualId = static_cast<VisualID>(id);
 
     if (!visualId)
