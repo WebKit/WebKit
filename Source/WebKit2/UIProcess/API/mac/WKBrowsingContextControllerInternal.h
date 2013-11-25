@@ -25,6 +25,8 @@
 
 #import "WKBrowsingContextControllerPrivate.h"
 
+#if WK_API_ENABLED
+
 #if PLATFORM(IOS)
 @protocol WKBrowsingContextLoadDelegateInternal <NSObject>
 @optional
@@ -47,3 +49,5 @@
 + (NSMutableSet *)customSchemes;
 
 @end
+
+#endif // WK_API_ENABLED

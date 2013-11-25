@@ -23,11 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit2/WKBase.h>
 #import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
+
+#import <Foundation/Foundation.h>
+#import <WebKit2/WKBase.h>
 
 @class WKConnection;
 @class WKWebProcessPlugInController;
@@ -43,7 +44,7 @@
 
 @end
 
-WK_EXPORT
+WK_API_CLASS
 @interface WKWebProcessPlugInController : NSObject
 
 @property(readonly) WKConnection *connection;

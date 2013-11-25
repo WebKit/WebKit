@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <TargetConditionals.h>
-
 #import <WebKit2/WKProcessGroup.h>
+
+#if WK_API_ENABLED
+
 #import <WebKit2/WKBase.h>
 
 #if TARGET_OS_IPHONE
@@ -40,3 +41,5 @@
 #endif
 
 @end
+
+#endif // WK_API_ENABLED

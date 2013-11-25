@@ -23,9 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit2/WKDeclarationSpecifiers.h>
 #import <WebKit2/WKFoundation.h>
+
+#if WK_API_ENABLED
+
+#import <Foundation/Foundation.h>
 
 @class WKConnection;
 @class WKConnectionData;
@@ -38,7 +40,7 @@
 
 @end
 
-WK_EXPORT
+WK_API_CLASS
 @interface WKConnection : NSObject {
 @private
     WKConnectionData *_data;
@@ -48,10 +50,8 @@ WK_EXPORT
 
 @property(assign) id <WKConnectionDelegate> delegate;
 
-#if WK_API_ENABLED
-
 @property (nonatomic, readonly) WKRemoteObjectRegistry *remoteObjectRegistry;
 
-#endif
-
 @end
+
+#endif // WK_API_ENABLED

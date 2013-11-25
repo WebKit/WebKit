@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <TargetConditionals.h>
+#import <WebKit2/WKFoundation.h>
 
 #if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
@@ -49,6 +49,8 @@ WK_EXPORT
     unsigned _unused;
 }
 
+#if WK_API_ENABLED
+
 #if TARGET_OS_IPHONE
 - (id)initWithFrame:(CGRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup;
 - (id)initWithFrame:(CGRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup relatedToView:(WKView *)relatedView;
@@ -58,6 +60,8 @@ WK_EXPORT
 #endif
 
 @property(readonly) WKBrowsingContextController *browsingContextController;
+
+#endif // WK_API_ENABLED
 
 @property BOOL drawsBackground;
 @property BOOL drawsTransparentBackground;

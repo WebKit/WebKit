@@ -1,3 +1,92 @@
+2013-11-25  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Put most of the Cocoa API behind WK_API_ENABLED guards
+        https://bugs.webkit.org/show_bug.cgi?id=124850
+
+        Reviewed by Brady Eidson.
+
+        Guarded all Cocoa API headers and implementatiosn with WK_API_ENABLED. Left the WKView class
+        unguarded, but limited its API.
+
+        * Shared/API/Cocoa/WKFoundation.h: Replaced OBJ_VISIBLE with an explicit attribute.
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm: Moved #if WK_API_ENABLED before the rest of the
+        imports.
+        * Shared/API/Cocoa/WKRemoteObjectInterface.mm: Ditto.
+        * Shared/API/Cocoa/WKRemoteObjectRegistry.mm: Ditto.
+        * Shared/API/Cocoa/WKRemoteObjectRegistryPrivate.h: Ditto.
+        * UIProcess/API/mac/WKBrowsingContextController.h: Guarded all declarations with
+        WK_API_ENABLED, changed to use WK_API_CLASS instead of WK_EXPORT.
+        * UIProcess/API/mac/WKBrowsingContextController.mm: Guarded everything with WK_API_ENABLED.
+        (-[WKBrowsingContextController dealloc]):
+        (-[WKBrowsingContextController setPolicyDelegate:]):
+        (-[WKBrowsingContextController backForwardList]):
+        (didChangeBackForwardList):
+        (setUpPageLoaderClient):
+        (setUpPagePolicyClient):
+        (-[WKBrowsingContextController _initWithPageRef:]):
+        * UIProcess/API/mac/WKBrowsingContextControllerInternal.h: Ditto.
+        * UIProcess/API/mac/WKBrowsingContextControllerPrivate.h: Ditto.
+        * UIProcess/API/mac/WKBrowsingContextGroup.h: Guarded all declarations with WK_API_ENABLED,
+        chanegd to use WK_API_CLASS instead of WK_EXPORT.
+        * UIProcess/API/mac/WKBrowsingContextGroup.mm: Removed redundant import, guarded everything
+        with WK_API_ENABLED.
+        * UIProcess/API/mac/WKBrowsingContextGroupPrivate.h: Guarded with WK_API_ENABLED.
+        * UIProcess/API/mac/WKBrowsingContextPolicyDelegate.h: Added necessary import.
+        * UIProcess/API/mac/WKConnection.h: Guarded all declarations with WK_API_ENABLED, chanegd to
+        use WK_API_CLASS instead of WK_EXPORT.
+        * UIProcess/API/mac/WKConnection.mm: Guarded everything with WK_API_ENABLED.
+        (-[WKConnection remoteObjectRegistry]):
+        (didReceiveMessage):
+        * UIProcess/API/mac/WKConnectionInternal.h: Guarded the delcarations with WK_API_ENABLED.
+        * UIProcess/API/mac/WKProcessGroup.h: Ditto. Also changed to use WK_API_CLASS instead of
+        WK_EXPORT.
+        * UIProcess/API/mac/WKProcessGroup.mm: Guarded everything with WK_API_ENABLED.
+        (-[WKProcessGroup initWithInjectedBundleURL:]):
+        * UIProcess/API/mac/WKProcessGroupPrivate.h: Guarded the declarations with WK_API_ENABLED.
+        * UIProcess/API/mac/WKTypeRefWrapper.h: Moved #if WK_API_ENABLED before the rest of the
+        imports, changed to use WK_API_CLASS instead of WK_EXPORT.
+        * UIProcess/API/mac/WKTypeRefWrapper.mm: Removed empty line after #import "config.h".
+        * UIProcess/API/mac/WKView.h: Added #if WK_API_ENABLED around API that uses other Cocoa API
+        types.
+        * UIProcess/API/mac/WKView.mm: Added #if WK_API_ENABLED around implementations of methods
+        that are only declared when the API is enabled.
+        * UIProcess/API/mac/WKViewInternal.h: Reordered imports.
+        * UIProcess/mac/WKFullScreenWindowController.mm: Added comment to #endif.
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess): Guarded use of
+        WKBrowsingContextController with WK_API_ENABLED.
+        (WebKit::WebContext::platformInitializeNetworkProcess): Ditto.
+        * UIProcess/mac/WebContextMenuProxyMac.mm: Removed newline between imports.
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.h: Moved #if WK_API_ENABLED before the
+        rest of the imports, and changed to use WK_API_CLASS instead of WK_EXPORT.
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.mm: Removed newline after #import
+        "config.h".
+        * WebProcess/InjectedBundle/API/mac/WKDOMElement.h: Moved #if WK_API_ENABLED before the
+        rest of the imports, and changed to use WK_API_CLASS instead of WK_EXPORT.
+        * WebProcess/InjectedBundle/API/mac/WKDOMElement.mm: Removed newline after #import
+        "config.h".
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.mm: Ditto.
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.h: Moved #if WK_API_ENABLED before the
+        rest of the imports, and changed to use WK_API_CLASS instead of WK_EXPORT.
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.mm: Removed redundant import.
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.h:  Moved #if WK_API_ENABLED before the
+        rest of the imports, and changed to use WK_API_CLASS instead of WK_EXPORT.
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm: Removed newline and redundant import.
+        * WebProcess/InjectedBundle/API/mac/WKDOMText.h: Moved #if WK_API_ENABLED before the
+        rest of the imports, and changed to use WK_API_CLASS instead of WK_EXPORT.
+        * WebProcess/InjectedBundle/API/mac/WKDOMTextIterator.h: Ditto.
+        * WebProcess/InjectedBundle/API/mac/WKDOMTextIterator.mm: Removed newline after
+        #import "config.h".
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.h: Moved #if WK_API_ENABLED before
+        the rest of the imports, and changed to use WK_API_CLASS instead of WK_EXPORT.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.mm: Removed newline and redundant
+        imports.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.h:  Moved #if
+        WK_API_ENABLED before the rest of the imports, and changed to use WK_API_CLASS instead of
+        WK_EXPORT.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm: Removed
+        newline after #import "config.h".
+
 2013-11-22  Sam Weinig  <sam@webkit.org>
 
         WebPageGroup's should keep track of what processes they are being used by

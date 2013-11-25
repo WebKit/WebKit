@@ -24,8 +24,9 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WebKit2/WKDeclarationSpecifiers.h>
 #import <WebKit2/WKFoundation.h>
+
+#if WK_API_ENABLED
 
 @class WKBrowsingContextControllerData;
 @class WKBackForwardList;
@@ -34,7 +35,7 @@
 @protocol WKBrowsingContextLoadDelegate;
 @protocol WKBrowsingContextPolicyDelegate;
 
-WK_EXPORT
+WK_API_CLASS
 @interface WKBrowsingContextController : NSObject {
 @private
     WKBrowsingContextControllerData *_data;
@@ -44,10 +45,8 @@ WK_EXPORT
 
 @property (assign) id <WKBrowsingContextLoadDelegate> loadDelegate;
 
-#if WK_API_ENABLED
 @property (assign) id <WKBrowsingContextPolicyDelegate> policyDelegate;
 @property (assign) id <WKBrowsingContextHistoryDelegate> historyDelegate;
-#endif
 
 #pragma mark Loading
 
@@ -99,11 +98,9 @@ WK_EXPORT
 /* Whether there is a previous page in the back/forward list. */
 @property(readonly) BOOL canGoBack;
 
-#if WK_API_ENABLED
 - (void)goToBackForwardListItem:(WKBackForwardListItem *)item;
 
 @property(readonly) WKBackForwardList *backForwardList;
-#endif // WK_API_ENABLED
 
 #pragma mark Active Load Introspection
 
@@ -135,3 +132,5 @@ WK_EXPORT
 @property CGFloat pageZoom;
 
 @end
+
+#endif // WK_API_ENABLED

@@ -31,6 +31,6 @@
 #define WK_API_CLASS NS_CLASS_AVAILABLE_IOS(7_0)
 #else
 #define WK_API_ENABLED (defined(__clang__) && defined(__APPLE__) && !defined(__i386__))
-#define WK_API_CLASS OBJC_VISIBLE
+#define WK_API_CLASS __attribute__((visibility("default")))
 #endif
 #endif

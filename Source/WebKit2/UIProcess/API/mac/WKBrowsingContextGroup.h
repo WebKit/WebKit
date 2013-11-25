@@ -23,13 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebKit2/WKFoundation.h>
+
+#if WK_API_ENABLED
+
 #import <Foundation/Foundation.h>
-#import <WebKit2/WKDeclarationSpecifiers.h>
 #import <WebKit2/WKUserScriptInjectionTime.h>
 
 @class WKBrowsingContextGroupData;
 
-WK_EXPORT
+WK_API_CLASS
 @interface WKBrowsingContextGroup : NSObject {
 @private
     WKBrowsingContextGroupData *_data;
@@ -59,3 +62,5 @@ WK_EXPORT
 @property BOOL allowsPlugIns;
 
 @end
+
+#endif // WK_API_ENABLED

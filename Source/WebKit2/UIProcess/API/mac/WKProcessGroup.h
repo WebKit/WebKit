@@ -23,8 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebKit2/WKFoundation.h>
+
+#if WK_API_ENABLED
+
 #import <Foundation/Foundation.h>
-#import <WebKit2/WKDeclarationSpecifiers.h>
 
 @class WKProcessGroup, WKProcessGroupData, WKConnection;
 
@@ -39,7 +42,7 @@
 
 @end
 
-WK_EXPORT
+WK_API_CLASS
 @interface WKProcessGroup : NSObject {
 @private
     WKProcessGroupData *_data;
@@ -53,3 +56,5 @@ WK_EXPORT
 @property(assign) id<WKProcessGroupDelegate> delegate;
 
 @end
+
+#endif // WK_API_ENABLED

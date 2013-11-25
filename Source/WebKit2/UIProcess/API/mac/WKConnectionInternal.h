@@ -23,7 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKConnection.h>
+#import "WKConnection.h"
+
+#if WK_API_ENABLED
+
 #import <WebKit2/WKBase.h>
 
 @interface WKConnection (Internal)
@@ -31,3 +34,5 @@
 - (id)_initWithConnectionRef:(WKConnectionRef)connectionRef;
 
 @end
+
+#endif // WK_API_ENABLED

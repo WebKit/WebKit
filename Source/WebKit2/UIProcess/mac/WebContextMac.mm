@@ -310,7 +310,7 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if ENABLE(NETWORK_PROCESS)
     if (!m_usesNetworkProcess) {
 #endif
-#if ENABLE(CUSTOM_PROTOCOLS)
+#if ENABLE(CUSTOM_PROTOCOLS) && WK_API_ENABLED
         for (NSString *scheme in [WKBrowsingContextController customSchemes])
             parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
 #endif
@@ -329,8 +329,10 @@ void WebContext::platformInitializeNetworkProcess(NetworkProcessCreationParamete
     parameters.parentProcessName = [[NSProcessInfo processInfo] processName];
     parameters.uiProcessBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
 
+#if WK_API_ENABLED
     for (NSString *scheme in [WKBrowsingContextController customSchemes])
         parameters.urlSchemesRegisteredForCustomProtocols.append(scheme);
+#endif
 
     parameters.httpProxy = [[NSUserDefaults standardUserDefaults] stringForKey:WebKit2HTTPProxyDefaultsKey];
     parameters.httpsProxy = [[NSUserDefaults standardUserDefaults] stringForKey:WebKit2HTTPSProxyDefaultsKey];

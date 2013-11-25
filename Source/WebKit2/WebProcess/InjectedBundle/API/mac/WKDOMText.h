@@ -23,12 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKDOMNode.h>
 #import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-WK_EXPORT
+#import <WebKit2/WKDOMNode.h>
+
+WK_API_CLASS
 @interface WKDOMText : WKDOMNode
 
 @property(nonatomic, copy) NSString *data;

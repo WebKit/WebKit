@@ -35,6 +35,8 @@
 
 #import "PlatformUtilities.h"
 
+#if WK_API_ENABLED
+
 namespace {
 
 class WKBrowsingContextLoadDelegateTest : public ::testing::Test { 
@@ -227,3 +229,5 @@ TEST_F(WKBrowsingContextLoadDelegateTest, SimpleLoadFail)
     view.browsingContextController.loadDelegate = nil;
     [loadDelegate release];
 }
+
+#endif // WK_API_ENABLED

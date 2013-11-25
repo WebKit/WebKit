@@ -24,11 +24,11 @@
  */
 
 #import <WebKit2/WKFoundation.h>
-#import <WebKit2/WKRemoteObjectRegistry.h>
-
-#import <WebKit2/WKBase.h>
 
 #if WK_API_ENABLED
+
+#import <WebKit2/WKBase.h>
+#import <WebKit2/WKRemoteObjectRegistry.h>
 
 @interface WKRemoteObjectRegistry (WKPrivate)
 
@@ -37,4 +37,4 @@
 
 @end
 
-#endif
+#endif // WK_API_ENABLED

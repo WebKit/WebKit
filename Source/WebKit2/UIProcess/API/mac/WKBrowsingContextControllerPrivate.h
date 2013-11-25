@@ -24,6 +24,9 @@
  */
 
 #import <WebKit2/WKBrowsingContextController.h>
+
+#if WK_API_ENABLED
+
 #import <WebKit2/WKBase.h>
 
 typedef NS_ENUM(NSUInteger, WKBrowsingContextPaginationMode) {
@@ -52,8 +55,8 @@ typedef NS_ENUM(NSUInteger, WKBrowsingContextPaginationMode) {
 
 @property (readonly) NSUInteger pageCount;
 
-#if WK_API_ENABLED
 @property (nonatomic, readonly) WKBrowsingContextHandle *handle;
-#endif
 
 @end
+
+#endif // WK_API_ENABLED

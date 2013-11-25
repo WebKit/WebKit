@@ -23,13 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit2/WKBase.h>
 #import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-WK_EXPORT
+#import <Foundation/Foundation.h>
+#import <WebKit2/WKBase.h>
+
+WK_API_CLASS
 @interface WKTypeRefWrapper : NSObject
 
 - (id)initWithObject:(WKTypeRef)object;

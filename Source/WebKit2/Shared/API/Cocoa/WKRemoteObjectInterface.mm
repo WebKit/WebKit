@@ -26,12 +26,12 @@
 #import "config.h"
 #import "WKRemoteObjectInterface.h"
 
+#if WK_API_ENABLED
+
 #import <objc/runtime.h>
 #import <wtf/HashMap.h>
 #import <wtf/Vector.h>
 #import <wtf/RetainPtr.h>
-
-#if WK_API_ENABLED
 
 extern "C"
 const char *_protocol_getMethodTypeEncoding(Protocol *p, SEL sel, BOOL isRequiredMethod, BOOL isInstanceMethod);

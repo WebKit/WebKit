@@ -33,6 +33,8 @@
 #import <WebKit2/WebKit2.h>
 #import <WebKit2/WKViewPrivate.h>
 
+#if WK_API_ENABLED
+
 static bool testFinished = false;
 
 namespace TestWebKitAPI {
@@ -55,3 +57,5 @@ TEST(WebKit2, PreventImageLoadWithAutoResizingTest)
 }
 
 } // namespace TestWebKitAPI
+
+#endif // WK_API_ENABLED

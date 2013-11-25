@@ -24,8 +24,9 @@
  */
 
 #import "config.h"
-#import "WKBrowsingContextGroup.h"
 #import "WKBrowsingContextGroupPrivate.h"
+
+#if WK_API_ENABLED
 
 #import "APIArray.h"
 #import "WKArray.h"
@@ -172,3 +173,5 @@ static WKRetainPtr<WKArrayRef> createWKArray(NSArray *array)
 }
 
 @end
+
+#endif // WK_API_ENABLED

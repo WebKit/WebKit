@@ -37,6 +37,8 @@
 #import <WebKit2/WKViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
+#if WK_API_ENABLED
+
 static bool testFinished = false;
 
 namespace TestWebKitAPI {
@@ -67,3 +69,5 @@ TEST(WebKit2CustomProtocolsTest, SyncXHR)
 }
 
 } // namespace TestWebKitAPI
+
+#endif // WK_API_ENABLED

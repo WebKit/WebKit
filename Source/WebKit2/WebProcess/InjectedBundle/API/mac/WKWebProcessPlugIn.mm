@@ -24,9 +24,6 @@
  */
 
 #import "config.h"
-
-#import "WKWebProcessPlugIn.h"
-#import "WKWebProcessPlugInPrivate.h"
 #import "WKWebProcessPlugInInternal.h"
 
 #if WK_API_ENABLED

@@ -23,15 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKDOMNode.h>
 #import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
+#import <WebKit2/WKDOMNode.h>
+
 @class WKDOMElement;
 @class WKDOMText;
 
-WK_EXPORT
+WK_API_CLASS
 @interface WKDOMDocument : WKDOMNode
 
 - (WKDOMElement *)createElement:(NSString *)tagName;
@@ -42,4 +43,3 @@ WK_EXPORT
 @end
 
 #endif // WK_API_ENABLED
-

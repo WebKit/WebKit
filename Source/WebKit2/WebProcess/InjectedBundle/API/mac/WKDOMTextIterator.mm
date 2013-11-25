@@ -24,7 +24,6 @@
  */
 
 #import "config.h"
-
 #import "WKDOMTextIterator.h"
 
 #if WK_API_ENABLED

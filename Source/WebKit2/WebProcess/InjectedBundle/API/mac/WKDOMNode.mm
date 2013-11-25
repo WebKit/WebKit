@@ -24,8 +24,6 @@
  */
 
 #import "config.h"
-
-#import "WKDOMNode.h"
 #import "WKDOMNodePrivate.h"
 
 #if WK_API_ENABLED

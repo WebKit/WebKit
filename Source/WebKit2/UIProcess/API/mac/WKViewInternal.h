@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "PluginComplexTextInputState.h"
 #import "WKView.h"
+
+#import "PluginComplexTextInputState.h"
 #import "WebFindOptions.h"
 #import <wtf/Forward.h>
 #import <wtf/Vector.h>

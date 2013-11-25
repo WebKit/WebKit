@@ -24,8 +24,9 @@
  */
 
 #import "config.h"
-#import "WKProcessGroup.h"
 #import "WKProcessGroupPrivate.h"
+
+#if WK_API_ENABLED
 
 #import "APINavigationData.h"
 #import "ObjCObjectGraph.h"
@@ -114,8 +115,6 @@ static void setUpInectedBundleClient(WKProcessGroup *processGroup, WKContextRef 
     WKContextSetInjectedBundleClient(contextRef, &injectedBundleClient);
 }
 
-#if WK_API_ENABLED
-
 static void didNavigateWithNavigationData(WKContextRef, WKPageRef pageRef, WKNavigationDataRef navigationDataRef, WKFrameRef frameRef, const void*)
 {
     if (!toImpl(frameRef)->isMainFrame())
@@ -171,8 +170,6 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
     WKContextSetHistoryClient(contextRef, &historyClient);
 }
 
-#endif // WK_API_ENABLED
-
 - (id)init
 {
     return [self initWithInjectedBundleURL:nil];
@@ -198,9 +195,7 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
 
     setUpConnectionClient(self, _data->_contextRef.get());
     setUpInectedBundleClient(self, _data->_contextRef.get());
-#if WK_API_ENABLED
     setUpHistoryClient(self, _data->_contextRef.get());
-#endif
 
     return self;
 }
@@ -244,3 +239,5 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
 #endif // PLATFORM(IOS)
 
 @end
+
+#endif // WK_API_ENABLED

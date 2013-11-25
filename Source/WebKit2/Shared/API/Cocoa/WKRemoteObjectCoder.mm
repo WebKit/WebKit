@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKRemoteObjectCoder.h"
 
+#if WK_API_ENABLED
+
 #import "APIArray.h"
 #import "MutableDictionary.h"
 #import "WKRemoteObjectInterfaceInternal.h"
@@ -36,8 +38,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/TemporaryChange.h>
 #import <wtf/text/CString.h>
-
-#if WK_API_ENABLED
 
 static const char* const classNameKey = "$class";
 static const char* const objectStreamKey = "$objectStream";

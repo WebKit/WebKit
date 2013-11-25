@@ -34,6 +34,7 @@
 #import <WebKit2/WKViewPrivate.h>
 #import <WebKit2/WebKit2.h>
 
+#if WK_API_ENABLED
 
 static bool testFinished = false;
 static NSString *htmlString = @"<body style='background-color: red'>";
@@ -228,3 +229,5 @@ TEST_F(WebKit2UserContentTest, RemoveAllUserScripts)
     
     TestWebKitAPI::Util::run(&testFinished);
 }
+
+#endif // WK_API_ENABLED

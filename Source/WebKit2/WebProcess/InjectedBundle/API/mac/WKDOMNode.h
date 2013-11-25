@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit2/WKDeclarationSpecifiers.h>
 #import <WebKit2/WKFoundation.h>
 
 #if WK_API_ENABLED
 
+#import <Foundation/Foundation.h>
+
 @class WKDOMDocument;
 
-WK_EXPORT
+WK_API_CLASS
 @interface WKDOMNode : NSObject
 
 - (void)insertNode:(WKDOMNode *)node before:(WKDOMNode *)refNode;

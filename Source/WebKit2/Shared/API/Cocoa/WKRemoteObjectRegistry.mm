@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WKRemoteObjectRegistryInternal.h"
 
+#if WK_API_ENABLED
+
 #import "Connection.h"
 #import "ImmutableDictionary.h"
 #import "MutableDictionary.h"
@@ -35,8 +37,6 @@
 #import "WKRemoteObjectInterface.h"
 #import "WKSharedAPICast.h"
 #import "WebConnection.h"
-
-#if WK_API_ENABLED
 
 const char* const messageName = "WKRemoteObjectRegistryMessage";
 

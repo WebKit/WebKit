@@ -24,8 +24,9 @@
  */
 
 #import "config.h"
-#import "WKConnection.h"
 #import "WKConnectionInternal.h"
+
+#if WK_API_ENABLED
 
 #import "ObjCObjectGraph.h"
 #import "WKConnectionRef.h"
@@ -46,9 +47,7 @@ using namespace WebKit;
     // Delegate for callbacks.
     id<WKConnectionDelegate> _delegate;
 
-#if WK_API_ENABLED
     RetainPtr<WKRemoteObjectRegistry> _remoteObjectRegistry;
-#endif
 }
 @end
 
@@ -83,7 +82,6 @@ using namespace WebKit;
     _data->_delegate = delegate;
 }
 
-#if WK_API_ENABLED
 - (WKRemoteObjectRegistry *)remoteObjectRegistry
 {
     if (!_data->_remoteObjectRegistry)
@@ -91,7 +89,6 @@ using namespace WebKit;
 
     return _data->_remoteObjectRegistry.get();
 }
-#endif
 
 @end
 
@@ -101,10 +98,8 @@ static void didReceiveMessage(WKConnectionRef, WKStringRef messageName, WKTypeRe
 {
     WKConnection *connection = (WKConnection *)clientInfo;
 
-#if WK_API_ENABLED
     if ([connection->_data->_remoteObjectRegistry _handleMessageWithName:messageName body:messageBody])
         return;
-#endif
 
     if ([connection.delegate respondsToSelector:@selector(connection:didReceiveMessageWithName:body:)]) {
         RetainPtr<CFStringRef> nsMessageName = adoptCF(WKStringCopyCFString(kCFAllocatorDefault, messageName));
@@ -150,3 +145,5 @@ static void setUpClient(WKConnection *connection, WKConnectionRef connectionRef)
 }
 
 @end
+
+#endif // WK_API_ENABLED

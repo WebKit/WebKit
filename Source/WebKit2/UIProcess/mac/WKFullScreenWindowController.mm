@@ -659,4 +659,4 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
 }
 @end
 
-#endif
+#endif // ENABLE(FULLSCREEN_API) && !PLATFORM(IOS)

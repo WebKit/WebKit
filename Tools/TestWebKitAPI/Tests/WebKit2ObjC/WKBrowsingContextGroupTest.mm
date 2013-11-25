@@ -28,6 +28,8 @@
 
 #import <WebKit2/WKBrowsingContextGroup.h>
 
+#if WK_API_ENABLED
+
 TEST(WKBrowsingContextGroupTest, GetSetJavaScriptEnabled)
 {
     WKBrowsingContextGroup *browsingContextGroup = [[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"];
@@ -53,3 +55,5 @@ TEST(WKBrowsingContextGroupTest, GetSetPluginsEnabled)
 
     [browsingContextGroup release];
 }
+
+#endif // WK_API_ENABLED

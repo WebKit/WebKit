@@ -24,8 +24,6 @@
  */
 
 #import "config.h"
-
-#import "WKDOMRange.h"
 #import "WKDOMRangePrivate.h"
 
 #if WK_API_ENABLED

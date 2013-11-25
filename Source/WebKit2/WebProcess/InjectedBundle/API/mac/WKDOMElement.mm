@@ -24,7 +24,6 @@
  */
 
 #import "config.h"
-
 #import "WKDOMElement.h"
 
 #if WK_API_ENABLED

@@ -265,6 +265,8 @@ struct WKViewInterpretKeyEventsParameters {
 
 @implementation WKView
 
+#if WK_API_ENABLED
+
 - (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup
 {
     return [self initWithFrame:frame contextRef:processGroup._contextRef pageGroupRef:browsingContextGroup._pageGroupRef relatedToPage:nil];
@@ -274,6 +276,8 @@ struct WKViewInterpretKeyEventsParameters {
 {
     return [self initWithFrame:frame contextRef:processGroup._contextRef pageGroupRef:browsingContextGroup._pageGroupRef relatedToPage:relatedView ? toAPI(relatedView->_data->_page.get()) : nil];
 }
+
+#endif // WK_API_ENABLED
 
 - (void)dealloc
 {
@@ -292,12 +296,16 @@ struct WKViewInterpretKeyEventsParameters {
     [super dealloc];
 }
 
+#if WK_API_ENABLED
+
 - (WKBrowsingContextController *)browsingContextController
 {
     if (!_data->_browsingContextController)
         _data->_browsingContextController = adoptNS([[WKBrowsingContextController alloc] _initWithPageRef:[self pageRef]]);
     return _data->_browsingContextController.get();
 }
+
+#endif // WK_API_ENABLED
 
 - (void)setDrawsBackground:(BOOL)drawsBackground
 {
