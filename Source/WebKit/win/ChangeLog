@@ -1,3 +1,13 @@
+2013-11-25  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win] WebKit version in user agent string is incorrect.
+        https://bugs.webkit.org/show_bug.cgi?id=124454
+
+        Reviewed by Brent Fulgham.
+
+        * WebView.cpp: Use WebKit version from WebKitVersion.h in user agent.
+        (webKitVersionString):
+
 2013-11-21  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
 
         Remove ENABLE_WORKERS

@@ -58,6 +58,7 @@
 #include "WebKitLogging.h"
 #include "WebKitStatisticsPrivate.h"
 #include "WebKitSystemBits.h"
+#include "WebKitVersion.h"
 #include "WebMutableURLRequest.h"
 #include "WebNotificationCenter.h"
 #include "WebPlatformStrategies.h"
@@ -2488,11 +2489,12 @@ bool WebView::developerExtrasEnabled() const
 
 static String webKitVersionString()
 {
+#if !USE(CAIRO)
     LPWSTR buildNumberStringPtr;
-    if (!::LoadStringW(gInstance, BUILD_NUMBER, reinterpret_cast<LPWSTR>(&buildNumberStringPtr), 0) || !buildNumberStringPtr)
-        return "534+";
-
-    return buildNumberStringPtr;
+    if (::LoadStringW(gInstance, BUILD_NUMBER, reinterpret_cast<LPWSTR>(&buildNumberStringPtr), 0) && buildNumberStringPtr)
+        return buildNumberStringPtr;
+#endif
+    return String::format("%d.%d", WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION);
 }
 
 const String& WebView::userAgentForKURL(const URL&)

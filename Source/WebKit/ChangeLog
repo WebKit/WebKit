@@ -1,3 +1,16 @@
+2013-11-25  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win] WebKit version in user agent string is incorrect.
+        https://bugs.webkit.org/show_bug.cgi?id=124454
+
+        Reviewed by Brent Fulgham.
+
+        Generate WebKitVersion.h file from mac's Version.xcconfig file.
+
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj:
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj.filters:
+        * WebKit.vcxproj/WebKit/WebKitVersion.cmd: Added.
+
 2013-11-23  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Remove 0.10 codepath

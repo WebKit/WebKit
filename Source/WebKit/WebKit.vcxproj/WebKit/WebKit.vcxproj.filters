@@ -622,10 +622,14 @@
     <None Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebKitExportGenerator\WebKitExports.def">
       <Filter>Generated</Filter>
     </None>
+    <None Include="WebKitVersion.cmd" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\win\WebKit.resources\WebKit.rc">
       <Filter>Resources</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\mac\Configurations\Version.xcconfig" />
   </ItemGroup>
 </Project>
