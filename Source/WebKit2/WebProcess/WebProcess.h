@@ -127,9 +127,9 @@ public:
     void addWebFrame(uint64_t, WebFrame*);
     void removeWebFrame(uint64_t);
 
+    WebPageGroupProxy* createWebPageGroup(uint64_t pageGroupID, const WebPageGroupData&);
     WebPageGroupProxy* webPageGroup(WebCore::PageGroup*);
     WebPageGroupProxy* webPageGroup(uint64_t pageGroupID);
-    WebPageGroupProxy* webPageGroup(const WebPageGroupData&);
 
 #if PLATFORM(MAC)
     pid_t presenterApplicationPid() const { return m_presenterApplicationPid; }

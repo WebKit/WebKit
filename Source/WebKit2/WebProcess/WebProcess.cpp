@@ -704,6 +704,12 @@ void WebProcess::removeWebFrame(uint64_t frameID)
     parentProcessConnection()->send(Messages::WebProcessProxy::DidDestroyFrame(frameID), 0);
 }
 
+WebPageGroupProxy* WebProcess::createWebPageGroup(uint64_t pageGroupID, const WebPageGroupData& pageGroupData)
+{
+    ASSERT(!m_pageGroupMap.contains(pageGroupID));
+    return m_pageGroupMap.add(pageGroupID, WebPageGroupProxy::create(pageGroupData)).iterator->value.get();
+}
+
 WebPageGroupProxy* WebProcess::webPageGroup(PageGroup* pageGroup)
 {
     for (HashMap<uint64_t, RefPtr<WebPageGroupProxy>>::const_iterator it = m_pageGroupMap.begin(), end = m_pageGroupMap.end(); it != end; ++it) {
@@ -717,17 +723,6 @@ WebPageGroupProxy* WebProcess::webPageGroup(PageGroup* pageGroup)
 WebPageGroupProxy* WebProcess::webPageGroup(uint64_t pageGroupID)
 {
     return m_pageGroupMap.get(pageGroupID);
-}
-
-WebPageGroupProxy* WebProcess::webPageGroup(const WebPageGroupData& pageGroupData)
-{
-    HashMap<uint64_t, RefPtr<WebPageGroupProxy>>::AddResult result = m_pageGroupMap.add(pageGroupData.pageGroupID, nullptr);
-    if (result.isNewEntry) {
-        ASSERT(!result.iterator->value);
-        result.iterator->value = WebPageGroupProxy::create(pageGroupData);
-    }
-
-    return result.iterator->value.get();
 }
 
 void WebProcess::clearResourceCaches(ResourceCachesToClear resourceCachesToClear)

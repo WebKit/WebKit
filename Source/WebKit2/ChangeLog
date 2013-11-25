@@ -1,3 +1,45 @@
+2013-11-22  Sam Weinig  <sam@webkit.org>
+
+        WebPageGroup's should keep track of what processes they are being used by
+        https://bugs.webkit.org/show_bug.cgi?id=124556
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/webkit2/messages.py:
+        (struct_or_class):
+        Mark WebPageGroupData as a struct.
+
+        * Shared/UserMessageCoders.h:
+        * Shared/mac/ObjCObjectGraphCoders.h:
+        * Shared/mac/ObjCObjectGraphCoders.mm:
+        * WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h:
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        * UIProcess/WebContext.cpp:
+        * UIProcess/WebContextUserMessageCoders.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        Pass the WebProcess/WebProcessProxy to both encode and decode.
+
+        * Shared/WebPageCreationParameters.h:
+        Pass the page group by ID when creating a page, as it will have had its own
+        creation message sent already.
+
+        * UIProcess/WebPageGroup.cpp:
+        * UIProcess/WebPageGroup.h:
+        Keep track of processes.
+
+        * UIProcess/WebProcessProxy.cpp:
+        * UIProcess/WebProcessProxy.h:
+        Keep track of the page groups used by the process.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        Get the already create page group on creation.
+
+        * WebProcess/WebProcess.cpp:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        Explicitly create page groups in the WebProcess.
+
 2013-11-24  Brady Eidson  <beidson@apple.com>
 
         DatabaseProcess: Add "UniqueIDBDatabase" that multiple WebProcesses can connect to

@@ -45,15 +45,22 @@ class WebContextUserMessageEncoder : public UserMessageEncoder<WebContextUserMes
 public:
     typedef UserMessageEncoder<WebContextUserMessageEncoder> Base;
 
-    explicit WebContextUserMessageEncoder(API::Object* root) 
+    explicit WebContextUserMessageEncoder(API::Object* root, WebProcessProxy* process)
         : Base(root)
+        , m_process(process)
+    {
+    }
+
+    WebContextUserMessageEncoder(const WebContextUserMessageEncoder& userMessageEncoder, API::Object* root)
+        : Base(root)
+        , m_process(userMessageEncoder.m_process)
     {
     }
 
     void encode(CoreIPC::ArgumentEncoder& encoder) const
     {
         API::Object::Type type = API::Object::Type::Null;
-        if (baseEncode(encoder, type))
+        if (baseEncode(encoder, *this, type))
             return;
 
         switch (type) {
@@ -69,13 +76,21 @@ public:
         }
         case API::Object::Type::PageGroup: {
             WebPageGroup* pageGroup = static_cast<WebPageGroup*>(m_root);
-            encoder << pageGroup->data();
+            if (pageGroup->addProcess(*m_process)) {
+                m_process->addWebPageGroup(*pageGroup);
+            
+                encoder << true;
+                encoder << pageGroup->data();
+            } else {
+                encoder << false;
+                encoder << pageGroup->pageGroupID();
+            }
             break;
         }
 #if PLATFORM(MAC)
         case API::Object::Type::ObjCObjectGraph: {
             ObjCObjectGraph* objectGraph = static_cast<ObjCObjectGraph*>(m_root);
-            encoder << WebContextObjCObjectGraphEncoder(objectGraph);
+            encoder << WebContextObjCObjectGraphEncoder(objectGraph, m_process);
             break;
         }
 #endif
@@ -84,6 +99,9 @@ public:
             break;
         }
     }
+
+private:
+    WebProcessProxy* m_process;
 };
 
 // Adds
@@ -135,7 +153,7 @@ public:
             uint64_t pageGroupID;
             if (!decoder.decode(pageGroupID))
                 return false;
-            coder.m_root = WebPageGroup::get(pageGroupID);
+            coder.m_root = coder.m_process->webPageGroup(pageGroupID);
             break;
         }
 #if PLATFORM(MAC)
