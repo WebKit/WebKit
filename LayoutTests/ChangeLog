@@ -1,3 +1,11 @@
+2013-11-24  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed EFL gardening. Rebaselining after r159579.
+
+        * platform/efl/css1/formatting_model/vertical_formatting-expected.txt:
+        * platform/efl/css2.1/t080301-c411-vt-mrgn-00-b-expected.txt:
+        * platform/efl/css2.1/t0905-c414-flt-wrap-00-e-expected.txt:
+
 2013-11-23  Filip Pizlo  <fpizlo@apple.com>
 
         Fix more fallout from failed attempts at div/mod DFG strength reductions
