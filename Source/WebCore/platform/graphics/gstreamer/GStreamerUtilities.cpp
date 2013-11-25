@@ -18,9 +18,9 @@
 
 
 #include "config.h"
-#include "GStreamerUtilities.h"
 
 #if USE(GSTREAMER)
+#include "GStreamerUtilities.h"
 
 #include "IntSize.h"
 
