@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x342
-  RenderBlock {html} at (0,0) size 800x342
-    RenderBody {body} at (8,16) size 784x318
+layer at (0,0) size 800x334
+  RenderBlock {html} at (0,0) size 800x334
+    RenderBody {body} at (8,16) size 784x310
       RenderBlock {p} at (0,0) size 784x17
         RenderText {#text} at (0,0) size 208x17
           text run at (0,0) width 208: "TFOOT VALIGN=BASELINE"
-      RenderTable {table} at (0,33) size 784x285 [border: (1px outset #808080)]
+      RenderTable {table} at (0,33) size 784x277 [border: (1px outset #808080)]
         RenderTableSection {thead} at (1,1) size 782x25
           RenderTableRow {tr} at (0,2) size 782x21
             RenderTableCell {td} at (2,2) size 213x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -15,9 +15,9 @@ layer at (0,0) size 800x342
             RenderTableCell {td} at (217,2) size 563x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 56x17
                 text run at (2,2) width 56: "THEAD"
-        RenderTableSection {tfoot} at (1,51) size 782x233
-          RenderTableRow {tr} at (0,2) size 782x229
-            RenderTableCell {td} at (2,24) size 213x89 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {tfoot} at (1,47) size 782x229
+          RenderTableRow {tr} at (0,0) size 782x227
+            RenderTableCell {td} at (2,22) size 213x89 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 206x85
                 text run at (2,2) width 204: "Compare the baseline of the first"
                 text run at (2,19) width 139: "line of text in this cell "
@@ -26,7 +26,7 @@ layer at (0,0) size 800x342
                 text run at (2,53) width 115: "the next cell: they "
                 text run at (117,53) width 61: "should be"
                 text run at (2,70) width 108: "vertically aligned"
-            RenderTableCell {td} at (217,2) size 563x229 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (217,0) size 563x229 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 532x225
                 text run at (2,2) width 524: "Compare the baseline of the first"
                 text run at (2,47) width 70: "line "
@@ -34,11 +34,11 @@ layer at (0,0) size 800x342
                 text run at (2,92) width 532: "baseline of the first line of text in"
                 text run at (2,137) width 520: "the previous cell: they should be"
                 text run at (2,182) width 279: "vertically aligned"
-        RenderTableSection {tbody} at (1,26) size 782x25
-          RenderTableRow {tr} at (0,2) size 782x21
-            RenderTableCell {td} at (2,2) size 213x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTableSection {tbody} at (1,26) size 782x21
+          RenderTableRow {tr} at (0,0) size 782x19
+            RenderTableCell {td} at (2,-1) size 213x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 57x17
                 text run at (2,2) width 57: "TBODY"
-            RenderTableCell {td} at (217,2) size 563x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (217,-1) size 563x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 57x17
                 text run at (2,2) width 57: "TBODY"

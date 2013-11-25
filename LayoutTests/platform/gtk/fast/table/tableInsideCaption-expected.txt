@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 202x77
-        RenderTableSection {TBODY} at (0,0) size 202x77
-          RenderTableRow {TR} at (0,2) size 202x73
-            RenderTableCell {TD} at (2,2) size 198x73 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 202x73
+        RenderTableSection {TBODY} at (0,0) size 202x73
+          RenderTableRow {TR} at (0,2) size 202x69
+            RenderTableCell {TD} at (2,2) size 198x69 [r=0 c=0 rs=1 cs=1]
               RenderTable {TABLE} at (1,1) size 196x23
                 RenderTableSection {TBODY} at (0,0) size 196x23
                   RenderTableRow {TR} at (0,2) size 196x19
                     RenderTableCell {TD} at (2,2) size 192x19 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 190x17
                         text run at (1,1) width 190: "This should all be on one line."
-              RenderTable {TABLE} at (1,24) size 84x48
+              RenderTable {TABLE} at (1,24) size 84x44
                 RenderTableSection {THEAD} at (0,23) size 84x2
                 RenderBlock {CAPTION} at (0,0) size 84x23
                   RenderTable {TABLE} at (14,0) size 56x23
@@ -22,11 +22,11 @@ layer at (0,0) size 800x600
                         RenderTableCell {TD} at (2,2) size 52x19 [r=0 c=0 rs=1 cs=1]
                           RenderText {#text} at (1,1) size 50x17
                             text run at (1,1) width 50: "Caption"
-                RenderTableSection {TBODY} at (0,25) size 84x23
-                  RenderTableRow {TR} at (0,2) size 84x19
-                    RenderTableCell {TD} at (2,2) size 49x19 [r=0 c=0 rs=1 cs=1]
+                RenderTableSection {TBODY} at (0,25) size 84x19
+                  RenderTableRow {TR} at (0,0) size 84x17
+                    RenderTableCell {TD} at (2,-1) size 49x19 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 47x17
                         text run at (1,1) width 47: "Bottom"
-                    RenderTableCell {TD} at (53,2) size 29x19 [r=0 c=1 rs=1 cs=1]
+                    RenderTableCell {TD} at (53,-1) size 29x19 [r=0 c=1 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 27x17
                         text run at (1,1) width 27: "line."
