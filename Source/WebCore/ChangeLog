@@ -1,3 +1,23 @@
+2013-11-25  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        MediaStreamRegistry should store MediaStreams instead of MediaStreamPrivates
+        https://bugs.webkit.org/show_bug.cgi?id=124860
+
+        Reviewed by Eric Carlson.
+
+        MediaStreamRegistry::lookup() should return a MediaStream instead of MediaStreamPrivate.
+
+        No new tests needed. No behavior changes.
+
+        * Modules/mediastream/MediaStreamRegistry.cpp:
+        (WebCore::MediaStreamRegistry::registerURL): m_privateStreams -> m_mediaStreams
+        (WebCore::MediaStreamRegistry::unregisterURL): Ditto.
+        (WebCore::MediaStreamRegistry::lookup): Override URLRegistry::lookup() instead of add a
+        new method MediaStream::lookupMediaStreamPrivate().
+        * Modules/mediastream/MediaStreamRegistry.h:
+        * html/HTMLMediaElement.cpp:
+        (HTMLMediaElement::loadResource): call lookup() instead of lookupMediaStreamPrivate()
+
 2013-11-25  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Compile fails when GSTREAMER is not used.

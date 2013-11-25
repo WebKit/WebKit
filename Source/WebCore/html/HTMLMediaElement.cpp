@@ -1087,7 +1087,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
     LOG(Media, "HTMLMediaElement::loadResource - m_currentSrc -> %s", urlForLoggingMedia(m_currentSrc).utf8().data());
 
 #if ENABLE(MEDIA_STREAM)
-    if (MediaStreamRegistry::registry().lookupMediaStreamPrivate(url.string()))
+    if (MediaStreamRegistry::registry().lookup(url.string()))
         removeBehaviorRestriction(RequireUserGestureForRateChangeRestriction);
 #endif
 

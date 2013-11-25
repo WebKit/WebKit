@@ -37,7 +37,6 @@ namespace WebCore {
 
 class URL;
 class MediaStream;
-class MediaStreamPrivate;
 
 class MediaStreamRegistry : public URLRegistry {
 public:
@@ -48,10 +47,10 @@ public:
     virtual void registerURL(SecurityOrigin*, const URL&, URLRegistrable*) OVERRIDE;
     virtual void unregisterURL(const URL&) OVERRIDE;
 
-    MediaStreamPrivate* lookupMediaStreamPrivate(const String& url);
+    virtual URLRegistrable* lookup(const String&) OVERRIDE;
 
 private:
-    HashMap<String, RefPtr<MediaStreamPrivate>> m_privateStreams;
+    HashMap<String, RefPtr<MediaStream>> m_mediaStreams;
 };
 
 } // namespace WebCore
