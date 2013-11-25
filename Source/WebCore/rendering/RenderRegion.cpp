@@ -324,17 +324,6 @@ void RenderRegion::layoutBlock(bool relayoutChildren, LayoutUnit)
             // This can happen even if we are in the inConstrainedLayoutPhase and it will trigger a pathological layout of the flow thread.
             m_flowThread->invalidateRegions();
     }
-
-    // FIXME: We need to find a way to set up overflow properly. Our flow thread hasn't gotten a layout
-    // yet, so we can't look to it for correct information. It's possible we could wait until after the RenderFlowThread
-    // gets a layout, and then try to propagate overflow information back to the region, and then mark for a second layout.
-    // That second layout would then be able to use the information from the RenderFlowThread to set up overflow.
-    //
-    // The big problem though is that overflow needs to be region-specific. We can't simply use the RenderFlowThread's global
-    // overflow values, since then we'd always think any narrow region had huge overflow (all the way to the width of the
-    // RenderFlowThread itself).
-    //
-    // We'll need to expand RenderBoxRegionInfo to also hold left and right overflow values.
 }
 
 void RenderRegion::computeOverflowFromFlowThread()

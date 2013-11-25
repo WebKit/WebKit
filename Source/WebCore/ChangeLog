@@ -1,3 +1,13 @@
+2013-11-25  Radu Stavila  <stavila@adobe.com>
+
+        Removed obsolete FIXME after the landing of visual overflow patch (https://bugs.webkit.org/show_bug.cgi?id=118665).
+        https://bugs.webkit.org/show_bug.cgi?id=124833
+
+        Reviewed by Mihnea Ovidenie.
+
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::layoutBlock):
+
 2013-11-18  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Cache several vectors to avoid malloc/free churn
