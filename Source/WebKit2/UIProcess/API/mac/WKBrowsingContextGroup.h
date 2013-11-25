@@ -30,13 +30,8 @@
 #import <Foundation/Foundation.h>
 #import <WebKit2/WKUserScriptInjectionTime.h>
 
-@class WKBrowsingContextGroupData;
-
 WK_API_CLASS
-@interface WKBrowsingContextGroup : NSObject {
-@private
-    WKBrowsingContextGroupData *_data;
-}
+@interface WKBrowsingContextGroup : NSObject
 
 - (id)initWithIdentifier:(NSString *)identifier;
 

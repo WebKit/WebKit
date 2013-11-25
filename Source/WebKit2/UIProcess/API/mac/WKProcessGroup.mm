@@ -51,24 +51,14 @@
 
 using namespace WebKit;
 
-@interface WKProcessGroupData : NSObject {
-@public
+@implementation WKProcessGroup {
     // Underlying context object.
     WKRetainPtr<WKContextRef> _contextRef;
 
 #if PLATFORM(IOS)
     RetainPtr<WKGeolocationProviderIOS> _geolocationProvider;
 #endif // PLATFORM(IOS)
-
-    // Delegate for callbacks.
-    id<WKProcessGroupDelegate> _delegate;
 }
-@end
-
-@implementation WKProcessGroupData
-@end
-
-@implementation WKProcessGroup
 
 static void didCreateConnection(WKContextRef, WKConnectionRef connectionRef, const void* clientInfo)
 {
@@ -181,43 +171,30 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
     if (!self)
         return nil;
 
-    _data = [[WKProcessGroupData alloc] init];
-    
 #if PLATFORM(IOS)
-    // FIXME: Remove once <rdar://problem/15256572>  is fixed.
+    // FIXME: Remove once <rdar://problem/15256572> is fixed.
     InitWebCoreThreadSystemInterface();
 #endif
 
     if (bundleURL)
-        _data->_contextRef = adoptWK(WKContextCreateWithInjectedBundlePath(adoptWK(WKStringCreateWithCFString((CFStringRef)[bundleURL path])).get()));
+        _contextRef = adoptWK(WKContextCreateWithInjectedBundlePath(adoptWK(WKStringCreateWithCFString((CFStringRef)[bundleURL path])).get()));
     else
-        _data->_contextRef = adoptWK(WKContextCreate());
+        _contextRef = adoptWK(WKContextCreate());
 
-    setUpConnectionClient(self, _data->_contextRef.get());
-    setUpInectedBundleClient(self, _data->_contextRef.get());
-    setUpHistoryClient(self, _data->_contextRef.get());
+    setUpConnectionClient(self, _contextRef.get());
+    setUpInectedBundleClient(self, _contextRef.get());
+    setUpHistoryClient(self, _contextRef.get());
 
     return self;
 }
 
 - (void)dealloc
 {
-    WKContextSetConnectionClient(_data->_contextRef.get(), 0);
-    WKContextSetInjectedBundleClient(_data->_contextRef.get(), 0);
-    WKContextSetHistoryClient(_data->_contextRef.get(), 0);
+    WKContextSetConnectionClient(_contextRef.get(), 0);
+    WKContextSetInjectedBundleClient(_contextRef.get(), 0);
+    WKContextSetHistoryClient(_contextRef.get(), 0);
 
-    [_data release];
     [super dealloc];
-}
-
-- (id<WKProcessGroupDelegate>)delegate
-{
-    return _data->_delegate;
-}
-
-- (void)setDelegate:(id<WKProcessGroupDelegate>)delegate
-{
-    _data->_delegate = delegate;
 }
 
 @end
@@ -226,15 +203,15 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
 
 - (WKContextRef)_contextRef
 {
-    return _data->_contextRef.get();
+    return _contextRef.get();
 }
 
 #if PLATFORM(IOS)
 - (WKGeolocationProviderIOS *)_geolocationProvider
 {
-    if (!_data->_geolocationProvider)
-        _data->_geolocationProvider = adoptNS([[WKGeolocationProviderIOS alloc] initWithContext:toImpl(_data->_contextRef.get())]);
-    return _data->_geolocationProvider.get();
+    if (!_geolocationProvider)
+        _geolocationProvider = adoptNS([[WKGeolocationProviderIOS alloc] initWithContext:toImpl(_contextRef.get())]);
+    return _geolocationProvider.get();
 }
 #endif // PLATFORM(IOS)
 

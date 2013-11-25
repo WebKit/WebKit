@@ -42,16 +42,9 @@
 
 using namespace WebKit;
 
-@interface WKBrowsingContextGroupData : NSObject {
-@public
+@implementation WKBrowsingContextGroup {
     WKRetainPtr<WKPageGroupRef> _pageGroupRef;
 }
-@end
-
-@implementation WKBrowsingContextGroupData
-@end
-
-@implementation WKBrowsingContextGroup
 
 - (id)initWithIdentifier:(NSString *)identifier
 {
@@ -59,52 +52,45 @@ using namespace WebKit;
     if (!self)
         return nil;
 
-    _data = [[WKBrowsingContextGroupData alloc] init];
-    _data->_pageGroupRef = adoptWK(WKPageGroupCreateWithIdentifier(adoptWK(WKStringCreateWithCFString((CFStringRef)identifier)).get()));
+    _pageGroupRef = adoptWK(WKPageGroupCreateWithIdentifier(adoptWK(WKStringCreateWithCFString((CFStringRef)identifier)).get()));
 
     // Give the WKBrowsingContextGroup a identifier-less preferences, so that they
     // don't get automatically written to the disk. The automatic writing has proven
     // confusing to users of the API.
     WKRetainPtr<WKPreferencesRef> preferences = adoptWK(WKPreferencesCreate());
-    WKPageGroupSetPreferences(_data->_pageGroupRef.get(), preferences.get());
+    WKPageGroupSetPreferences(_pageGroupRef.get(), preferences.get());
 
     return self;
 }
 
-- (void)dealloc
-{
-    [_data release];
-    [super dealloc];
-}
-
 - (BOOL)allowsJavaScript
 {
-    return WKPreferencesGetJavaScriptEnabled(WKPageGroupGetPreferences(self._pageGroupRef));
+    return WKPreferencesGetJavaScriptEnabled(WKPageGroupGetPreferences(_pageGroupRef.get()));
 }
 
 - (void)setAllowsJavaScript:(BOOL)allowsJavaScript
 {
-    WKPreferencesSetJavaScriptEnabled(WKPageGroupGetPreferences(self._pageGroupRef), allowsJavaScript);
+    WKPreferencesSetJavaScriptEnabled(WKPageGroupGetPreferences(_pageGroupRef.get()), allowsJavaScript);
 }
 
 - (BOOL)allowsJavaScriptMarkup
 {
-    return WKPreferencesGetJavaScriptMarkupEnabled(WKPageGroupGetPreferences(self._pageGroupRef));
+    return WKPreferencesGetJavaScriptMarkupEnabled(WKPageGroupGetPreferences(_pageGroupRef.get()));
 }
 
 - (void)setAllowsJavaScriptMarkup:(BOOL)allowsJavaScriptMarkup
 {
-    WKPreferencesSetJavaScriptMarkupEnabled(WKPageGroupGetPreferences(self._pageGroupRef), allowsJavaScriptMarkup);
+    WKPreferencesSetJavaScriptMarkupEnabled(WKPageGroupGetPreferences(_pageGroupRef.get()), allowsJavaScriptMarkup);
 }
 
 - (BOOL)allowsPlugIns
 {
-    return WKPreferencesGetPluginsEnabled(WKPageGroupGetPreferences(self._pageGroupRef));
+    return WKPreferencesGetPluginsEnabled(WKPageGroupGetPreferences(_pageGroupRef.get()));
 }
 
 - (void)setAllowsPlugIns:(BOOL)allowsPlugIns
 {
-    WKPreferencesSetPluginsEnabled(WKPageGroupGetPreferences(self._pageGroupRef), allowsPlugIns);
+    WKPreferencesSetPluginsEnabled(WKPageGroupGetPreferences(_pageGroupRef.get()), allowsPlugIns);
 }
 
 static WKRetainPtr<WKArrayRef> createWKArray(NSArray *array)
@@ -136,12 +122,12 @@ static WKRetainPtr<WKArrayRef> createWKArray(NSArray *array)
     auto wkBlacklist = createWKArray(blacklist);
     WKUserContentInjectedFrames injectedFrames = mainFrameOnly ? kWKInjectInTopFrameOnly : kWKInjectInAllFrames;
 
-    WKPageGroupAddUserStyleSheet(self._pageGroupRef, wkSource.get(), wkBaseURL.get(), wkWhitelist.get(), wkBlacklist.get(), injectedFrames);
+    WKPageGroupAddUserStyleSheet(_pageGroupRef.get(), wkSource.get(), wkBaseURL.get(), wkWhitelist.get(), wkBlacklist.get(), injectedFrames);
 }
 
 - (void)removeAllUserStyleSheets
 {
-    WKPageGroupRemoveAllUserStyleSheets(self._pageGroupRef);
+    WKPageGroupRemoveAllUserStyleSheets(_pageGroupRef.get());
 }
 
 - (void)addUserScript:(NSString *)source baseURL:(NSURL *)baseURL whitelistedURLPatterns:(NSArray *)whitelist blacklistedURLPatterns:(NSArray *)blacklist injectionTime:(WKUserScriptInjectionTime)injectionTime mainFrameOnly:(BOOL)mainFrameOnly
@@ -155,12 +141,12 @@ static WKRetainPtr<WKArrayRef> createWKArray(NSArray *array)
     auto wkBlacklist = createWKArray(blacklist);
     WKUserContentInjectedFrames injectedFrames = mainFrameOnly ? kWKInjectInTopFrameOnly : kWKInjectInAllFrames;
 
-    WKPageGroupAddUserScript(self._pageGroupRef, wkSource.get(), wkBaseURL.get(), wkWhitelist.get(), wkBlacklist.get(), injectedFrames, injectionTime);
+    WKPageGroupAddUserScript(_pageGroupRef.get(), wkSource.get(), wkBaseURL.get(), wkWhitelist.get(), wkBlacklist.get(), injectedFrames, injectionTime);
 }
 
 - (void)removeAllUserScripts
 {
-    WKPageGroupRemoveAllUserScripts(self._pageGroupRef);
+    WKPageGroupRemoveAllUserScripts(_pageGroupRef.get());
 }
 
 @end
@@ -169,7 +155,7 @@ static WKRetainPtr<WKArrayRef> createWKArray(NSArray *array)
 
 - (WKPageGroupRef)_pageGroupRef
 {
-    return _data->_pageGroupRef.get();
+    return _pageGroupRef.get();
 }
 
 @end

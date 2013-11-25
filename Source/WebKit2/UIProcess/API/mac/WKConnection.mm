@@ -32,35 +32,23 @@
 #import "WKConnectionRef.h"
 #import "WKData.h"
 #import "WKRetainPtr.h"
-#import "WKString.h"
 #import "WKStringCF.h"
 #import "WKRemoteObjectRegistryInternal.h"
 #import <wtf/RetainPtr.h>
 
 using namespace WebKit;
 
-@interface WKConnectionData : NSObject {
-@public
+@implementation WKConnection {
     // Underlying connection object.
     WKRetainPtr<WKConnectionRef> _connectionRef;
 
-    // Delegate for callbacks.
-    id<WKConnectionDelegate> _delegate;
-
     RetainPtr<WKRemoteObjectRegistry> _remoteObjectRegistry;
 }
-@end
-
-@implementation WKConnectionData
-@end
-
-@implementation WKConnection
 
 - (void)dealloc
 {
-    WKConnectionSetConnectionClient(_data->_connectionRef.get(), 0);
+    WKConnectionSetConnectionClient(_connectionRef.get(), 0);
 
-    [_data release];
     [super dealloc];
 }
 
@@ -69,25 +57,15 @@ using namespace WebKit;
     WKRetainPtr<WKStringRef> wkMessageName = adoptWK(WKStringCreateWithCFString((CFStringRef)messageName));
     RefPtr<ObjCObjectGraph> wkMessageBody = ObjCObjectGraph::create(messageBody);
 
-    WKConnectionPostMessage(_data->_connectionRef.get(), wkMessageName.get(), (WKTypeRef)wkMessageBody.get());
-}
-
-- (id <WKConnectionDelegate>)delegate
-{
-    return _data->_delegate;
-}
-
-- (void)setDelegate:(id <WKConnectionDelegate>)delegate
-{
-    _data->_delegate = delegate;
+    WKConnectionPostMessage(_connectionRef.get(), wkMessageName.get(), (WKTypeRef)wkMessageBody.get());
 }
 
 - (WKRemoteObjectRegistry *)remoteObjectRegistry
 {
-    if (!_data->_remoteObjectRegistry)
-        _data->_remoteObjectRegistry = adoptNS([[WKRemoteObjectRegistry alloc] _initWithConnectionRef:_data->_connectionRef.get()]);
+    if (!_remoteObjectRegistry)
+        _remoteObjectRegistry = adoptNS([[WKRemoteObjectRegistry alloc] _initWithConnectionRef:_connectionRef.get()]);
 
-    return _data->_remoteObjectRegistry.get();
+    return _remoteObjectRegistry.get();
 }
 
 @end
@@ -98,7 +76,7 @@ static void didReceiveMessage(WKConnectionRef, WKStringRef messageName, WKTypeRe
 {
     WKConnection *connection = (WKConnection *)clientInfo;
 
-    if ([connection->_data->_remoteObjectRegistry _handleMessageWithName:messageName body:messageBody])
+    if ([connection->_remoteObjectRegistry _handleMessageWithName:messageName body:messageBody])
         return;
 
     if ([connection.delegate respondsToSelector:@selector(connection:didReceiveMessageWithName:body:)]) {
@@ -136,10 +114,9 @@ static void setUpClient(WKConnection *connection, WKConnectionRef connectionRef)
     if (!self)
         return nil;
 
-    _data = [[WKConnectionData alloc] init];
-    _data->_connectionRef = connectionRef;
+    _connectionRef = connectionRef;
 
-    setUpClient(self, _data->_connectionRef.get());
+    setUpClient(self, _connectionRef.get());
 
     return self;
 }

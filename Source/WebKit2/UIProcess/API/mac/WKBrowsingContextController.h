@@ -28,7 +28,6 @@
 
 #if WK_API_ENABLED
 
-@class WKBrowsingContextControllerData;
 @class WKBackForwardList;
 @class WKBackForwardListItem;
 @protocol WKBrowsingContextHistoryDelegate;
@@ -36,10 +35,7 @@
 @protocol WKBrowsingContextPolicyDelegate;
 
 WK_API_CLASS
-@interface WKBrowsingContextController : NSObject {
-@private
-    WKBrowsingContextControllerData *_data;
-}
+@interface WKBrowsingContextController : NSObject
 
 #pragma mark Delegates
 

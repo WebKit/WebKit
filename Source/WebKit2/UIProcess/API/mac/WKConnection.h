@@ -30,7 +30,6 @@
 #import <Foundation/Foundation.h>
 
 @class WKConnection;
-@class WKConnectionData;
 @class WKRemoteObjectRegistry;
 
 @protocol WKConnectionDelegate <NSObject>
@@ -41,14 +40,11 @@
 @end
 
 WK_API_CLASS
-@interface WKConnection : NSObject {
-@private
-    WKConnectionData *_data;
-}
+@interface WKConnection : NSObject
 
 - (void)sendMessageWithName:(NSString *)messageName body:(id)messageBody;
 
-@property(assign) id <WKConnectionDelegate> delegate;
+@property (assign) id <WKConnectionDelegate> delegate;
 
 @property (nonatomic, readonly) WKRemoteObjectRegistry *remoteObjectRegistry;
 
