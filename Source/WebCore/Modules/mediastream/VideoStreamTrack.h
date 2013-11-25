@@ -36,7 +36,6 @@ namespace WebCore {
 
 class MediaStreamSource;
 class ScriptExecutionContext;
-class MediaStremTrackDescriptor;
 
 class VideoStreamTrack FINAL : public MediaStreamTrack {
 public:
