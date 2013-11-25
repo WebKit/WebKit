@@ -50,8 +50,8 @@ class LoggingDelegate(QueueEngineDelegate):
         'begin_work_queue',
         'should_continue_work_queue',
         'next_work_item',
-        'work_item_log_path',
         'process_work_item',
+        'work_item_log_path',
         'should_continue_work_queue',
         'stop_work_queue',
     ]
@@ -119,20 +119,21 @@ class FastQueueEngine(QueueEngine):
 class QueueEngineTest(unittest.TestCase):
     def test_trivial(self):
         delegate = LoggingDelegate(self)
+        expected_callbacks = LoggingDelegate.expected_callbacks[:]
+        expected_callbacks.remove('work_item_log_path')
         self._run_engine(delegate)
         self.assertEqual(delegate.stop_message, "Delegate terminated queue.")
-        self.assertEqual(delegate._callbacks, LoggingDelegate.expected_callbacks)
+        self.assertEqual(delegate._callbacks, expected_callbacks)
         self.assertTrue(os.path.exists(os.path.join(self.temp_dir, "queue_log_path")))
-        self.assertTrue(os.path.exists(os.path.join(self.temp_dir, "work_log_path", "work_item.log")))
 
     def test_unexpected_error(self):
         delegate = RaisingDelegate(self, ScriptError(exit_code=3))
         self._run_engine(delegate)
         expected_callbacks = LoggingDelegate.expected_callbacks[:]
-        work_item_index = expected_callbacks.index('process_work_item')
+        work_item_log_path_index = expected_callbacks.index('work_item_log_path')
         # The unexpected error should be handled right after process_work_item starts
         # but before any other callback.  Otherwise callbacks should be normal.
-        expected_callbacks.insert(work_item_index + 1, 'handle_unexpected_error')
+        expected_callbacks.insert(work_item_log_path_index + 1, 'handle_unexpected_error')
         self.assertEqual(delegate._callbacks, expected_callbacks)
 
     def test_handled_error(self):

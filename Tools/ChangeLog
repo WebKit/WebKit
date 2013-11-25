@@ -1,3 +1,38 @@
+2013-11-25  László Langó  <lango@inf.u-szeged.hu>
+
+        EWS creates 0 byte sized log files
+        https://bugs.webkit.org/show_bug.cgi?id=107606
+
+        Reviewed by Ryosuke Niwa.
+
+        There was a modification in r138264, that tried to make less log,
+        because some of the messeges were duplicated. After this the EWS
+        created the log file (with the same name as the bugID) but doesn't
+        write anything into it, even if there were errors during the build.
+        From now only creates the log file only if there is some error.
+
+        * Scripts/webkitpy/tool/bot/queueengine.py:
+        (QueueEngine.run): If the build and tests pass, there is no ScriptError raised,
+        there is nothing to log. Open the log file only if a ScriptError was raised to
+        avoid to make empty log files for bugs.
+        (QueueEngine._open_work_log): Does not need to tee STDOUT to log file anymore,
+        because of changes in r138264. Teeing is used for locally testing purposes and
+        this feature is not used anymore.
+        (QueueEngine._ensure_work_log_closed): Close the logfile. We don't use output
+        teeing anymore. It is a necessary change because of QueueEngine._open_work_log
+        change.
+        * Scripts/webkitpy/tool/bot/queueengine_unittest.py:
+        (LoggingDelegate): The order of the callbacks was changed by this patch.
+        (QueueEngineTest.test_trivial): Won't create log file if the queue was terminated,
+        so we have to update this test.
+        (QueueEngineTest.test_unexpected_error): The order of the callbacks was changed by
+        this patch.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem.review_patch): Raise again the captured ScriptError
+        to be able to handle it in QueueEngine.run. Without this change, the existing
+        exception handler never run (the process_work_item method never raise ScriptError)
+        We can get the error message only from the ScriptError at this point.
+
 2013-11-22  Dean Jackson  <dino@apple.com>
 
         Speculative Mountain Lion build fix.
