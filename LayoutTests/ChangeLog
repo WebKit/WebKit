@@ -1,3 +1,14 @@
+2013-11-25  Dean Jackson  <dino@apple.com>
+
+        RenderTableSection Blink merge asserting
+        https://bugs.webkit.org/show_bug.cgi?id=124857
+
+        Skipping these tests for now, since Ossy + Laszlo checked
+        in a lot of rebaselines and I didn't want to roll
+        everything out.
+
+        * TestExpectations:
+
 2013-11-25  Robert Hogan  <robert@webkit.org>
 
         Add complex line layout path version of empty-clear-blocks.html
