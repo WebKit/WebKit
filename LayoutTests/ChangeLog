@@ -1,5 +1,23 @@
 2013-11-24  Jinwoo Song  <jinwoo7.song@samsung.com>
 
+        Unreviewed EFL gardening. Rebaselining various tests under fast/
+
+        * platform/efl/fast/backgrounds/background-position-parsing-expected.png:
+        * platform/efl/fast/backgrounds/background-position-parsing-expected.txt:
+        * platform/efl/fast/backgrounds/size/contain-and-cover-zoomed-expected.png:
+        * platform/efl/fast/backgrounds/size/contain-and-cover-zoomed-expected.txt: Added.
+        * platform/efl/fast/css/empty-pseudo-class-expected.png:
+        * platform/efl/fast/css/empty-pseudo-class-expected.txt:
+        * platform/efl/fast/css/fieldset-display-row-expected.txt:
+        * platform/efl/fast/css/first-child-pseudo-class-expected.png:
+        * platform/efl/fast/css/first-child-pseudo-class-expected.txt:
+        * platform/efl/fast/css/last-child-pseudo-class-expected.png:
+        * platform/efl/fast/css/last-child-pseudo-class-expected.txt:
+        * platform/efl/fast/css/only-child-pseudo-class-expected.png:
+        * platform/efl/fast/css/only-child-pseudo-class-expected.txt:
+
+2013-11-24  Jinwoo Song  <jinwoo7.song@samsung.com>
+
         Unreviewed EFL gardening. Rebaselining after r159579.
 
         * platform/efl/css1/formatting_model/vertical_formatting-expected.txt:
