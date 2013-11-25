@@ -1,3 +1,41 @@
+2013-11-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Cache several vectors to avoid malloc/free churn
+        https://bugs.webkit.org/show_bug.cgi?id=123995
+
+        Reviewed by Dean Jackson.
+
+        From Blink r158228 by <jchaffraix@chromium.org>
+
+        Laying-out the grid items means a lot of calls to
+        distributeSpaceToTracks() and
+        resolveContentBasedTrackSizingFunctionsForItems() as they're
+        called in a loop. This means that there is a lot of malloc/free
+        going on there. By moving the vectors used by these methods to a
+        new class which is kept during the whole layout process we save a
+        lot of those calls.
+
+        This obviously mean that the price we pay for a significant
+        perfomance improvement is that we keep the maximum allocation till
+        the end of each layout, but it's an amount of memory that we have
+        to allocate anyway. The improvement in the
+        auto-grid-lots-of-data.html perf test is ~24% (165 runs/s vs 207
+        runs/s).
+
+        No new tests required as we're just refactoring code to a new
+        helper class. Nevertheless the performance improvement is backed
+        by the perf test mentioned above.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::GridSizingData::GridSizingData):
+        (WebCore::RenderGrid::computedUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctions):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForItems):
+        (WebCore::RenderGrid::distributeSpaceToTracks):
+        (WebCore::RenderGrid::layoutGridItems):
+        (WebCore::RenderGrid::findChildLogicalPosition):
+        * rendering/RenderGrid.h:
+
 2013-11-24  Brady Eidson  <beidson@apple.com>
 
         DatabaseProcess: Add "UniqueIDBDatabase" that multiple WebProcesses can connect to
