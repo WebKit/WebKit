@@ -815,6 +815,7 @@ void HTMLMediaElement::prepareForLoad()
     m_completelyLoaded = false;
     m_havePreparedToPlay = false;
     m_displayMode = Unknown;
+    m_currentSrc = URL();
 
     // 1 - Abort any already-running instance of the resource selection algorithm for this element.
     m_loadState = WaitingForSource;

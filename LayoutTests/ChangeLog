@@ -1,3 +1,13 @@
+2013-11-26  Eric Carlson  <eric.carlson@apple.com>
+
+        video.currentSrc should return empty when no resource is loaded
+        https://bugs.webkit.org/show_bug.cgi?id=124898
+
+        Reviewed by Dan Bernstein.
+
+        * media/video-currentsrc-cleared-expected.txt: Added.
+        * media/video-currentsrc-cleared.html: Added.
+
 2013-11-26  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Support for shape-margin in BoxShape
