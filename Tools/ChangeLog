@@ -1,3 +1,13 @@
+2013-11-25  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Use Config mode of find_package for EFL 1.8
+        https://bugs.webkit.org/show_bug.cgi?id=124555
+
+        Reviewed by Gyuyoung Kim.
+
+        * MiniBrowser/efl/CMakeLists.txt:
+        Added optional config mode and made version requirement optional.
+
 2013-11-25  Andres Gomez  <agomez@igalia.com>
 
         [GTK] Search functionality in MiniBrowser provides feedback on search fail

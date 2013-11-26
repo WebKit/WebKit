@@ -1,3 +1,22 @@
+2013-11-25  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Use Config mode of find_package for EFL 1.8
+        https://bugs.webkit.org/show_bug.cgi?id=124555
+
+        Reviewed by Gyuyoung Kim.
+
+        EFL 1.8 changed VERSION macro so it's difficult to use tricky approach
+        which parses header files to know the version. Instead, EFL 1.8 supports
+        FooConfig.cmake such as EinaConfig.cmake.
+
+        This patch tries to use a config mode if it is available.
+        If config mode is not available with Eo, FindFoo.cmake will be used without
+        version requirement.
+
+        * Source/cmake/FindEo.cmake: Removed.
+        EoConfig.cmake is only preffered for EFL 1.8.
+        * Source/cmake/OptionsEfl.cmake:
+
 2013-11-23  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Remove 0.10 codepath

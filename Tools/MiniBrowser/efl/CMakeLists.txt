@@ -1,7 +1,7 @@
 set(MiniBrowser_DIR "${TOOLS_DIR}/MiniBrowser/efl")
 
 # Elementary is needed to build MiniBrowser
-find_package(Elementary 1.7)
+find_package(Elementary ${EFL_REQUIRED_VERSION} ${EFL_CONFIG_MODE})
 
 set(MiniBrowser_SOURCES
     ${TOOLS_DIR}/EWebLauncher/url_utils.c
