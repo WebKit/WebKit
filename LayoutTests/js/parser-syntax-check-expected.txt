@@ -704,6 +704,32 @@ PASS Valid:   "( function(){ return this || eval('this'); }().x = 'y' )"
 PASS Valid:   "function f() { ( function(){ return this || eval('this'); }().x = 'y' ) }"
 PASS Invalid: "function(){ return this || eval('this'); }().x = 'y'"
 PASS Invalid: "function f() { function(){ return this || eval('this'); }().x = 'y' }"
+PASS Invalid: "1 % +"
+PASS Invalid: "function f() { 1 % + }"
+PASS Invalid: "1 % -"
+PASS Invalid: "function f() { 1 % - }"
+PASS Invalid: "1 % typeof"
+PASS Invalid: "function f() { 1 % typeof }"
+PASS Invalid: "1 % void"
+PASS Invalid: "function f() { 1 % void }"
+PASS Invalid: "1 % !"
+PASS Invalid: "function f() { 1 % ! }"
+PASS Invalid: "1 % ~"
+PASS Invalid: "function f() { 1 % ~ }"
+PASS Invalid: "1 % delete"
+PASS Invalid: "function f() { 1 % delete }"
+PASS Invalid: "1 % ++"
+PASS Invalid: "function f() { 1 % ++ }"
+PASS Invalid: "1 % --"
+PASS Invalid: "function f() { 1 % -- }"
+PASS Invalid: "1 % 
+++"
+PASS Invalid: "function f() { 1 % 
+++ }"
+PASS Invalid: "1 % 
+--"
+PASS Invalid: "function f() { 1 % 
+-- }"
 PASS e.line is 1
 PASS foo is 'PASS'
 PASS bar is 'PASS'

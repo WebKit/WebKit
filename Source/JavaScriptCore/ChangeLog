@@ -1,3 +1,17 @@
+2013-11-26  Oliver Hunt  <oliver@apple.com>
+
+        Crash in JSC::ASTBuilder::Expression JSC::Parser<JSC::Lexer<unsigned char> >::parseUnaryExpression<JSC::ASTBuilder>(JSC::ASTBuilder&)
+        https://bugs.webkit.org/show_bug.cgi?id=124886
+
+        Reviewed by Sam Weinig.
+
+        Make sure the error macros propagate an existing error before
+        trying to create a new error message.  We need to do this as
+        the parser state may not be safe for any specific error message
+        if we are already unwinding due to an error.
+
+        * parser/Parser.cpp:
+
 2013-11-26  Nadav Rotem  <nrotem@apple.com>
 
         Optimize away OR with zero - a common ASM.js pattern.

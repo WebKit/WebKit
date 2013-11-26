@@ -1,3 +1,15 @@
+2013-11-26  Oliver Hunt  <oliver@apple.com>
+
+        Crash in JSC::ASTBuilder::Expression JSC::Parser<JSC::Lexer<unsigned char> >::parseUnaryExpression<JSC::ASTBuilder>(JSC::ASTBuilder&)
+        https://bugs.webkit.org/show_bug.cgi?id=124886
+
+        Reviewed by Sam Weinig.
+
+        Add tests
+
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/parser-syntax-check.js:
+
 2013-11-26  Eric Carlson  <eric.carlson@apple.com>
 
         video.currentSrc should return empty when no resource is loaded

@@ -39,6 +39,7 @@
 
 
 #define updateErrorMessage(shouldPrintToken, ...) do {\
+    propagateError(); \
     logError(shouldPrintToken, __VA_ARGS__); \
 } while (0)
 

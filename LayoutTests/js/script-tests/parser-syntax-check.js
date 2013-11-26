@@ -435,6 +435,17 @@ invalid("({set [x](){}})")
 invalid("({[...x]: 1})")
 valid("( function(){ return this || eval('this'); }().x = 'y' )");
 invalid("function(){ return this || eval('this'); }().x = 'y'");
+invalid("1 % +");
+invalid("1 % -");
+invalid("1 % typeof");
+invalid("1 % void");
+invalid("1 % !");
+invalid("1 % ~");
+invalid("1 % delete");
+invalid("1 % ++");
+invalid("1 % --");
+invalid("1 % \n++");
+invalid("1 % \n--");
 
 
 
