@@ -123,7 +123,7 @@ public:
     LayoutUnit m_pageLogicalOffset;
 
 #if ENABLE(CSS_SHAPES)
-    OwnPtr<ShapeInsideInfo> m_shapeInsideInfo;
+    std::unique_ptr<ShapeInsideInfo> m_shapeInsideInfo;
 #endif
 };
 
@@ -1400,8 +1400,8 @@ void RenderBlock::imageChanged(WrappedImagePtr image, const IntRect*)
 
     ShapeValue* shapeValue = style().shapeInside();
     if (shapeValue && shapeValue->image() && shapeValue->image()->data() == image) {
-        ShapeInsideInfo* shapeInsideInfo = ensureShapeInsideInfo();
-        shapeInsideInfo->dirtyShapeSize();
+        ShapeInsideInfo& shapeInsideInfo = ensureShapeInsideInfo();
+        shapeInsideInfo.dirtyShapeSize();
         markShapeInsideDescendantsForLayout();
     }
 
@@ -1417,32 +1417,32 @@ void RenderBlock::updateShapeInsideInfoAfterStyleChange(const ShapeValue* shapeI
         return;
 
     if (shapeInside) {
-        ShapeInsideInfo* shapeInsideInfo = ensureShapeInsideInfo();
-        shapeInsideInfo->dirtyShapeSize();
+        ShapeInsideInfo& shapeInsideInfo = ensureShapeInsideInfo();
+        shapeInsideInfo.dirtyShapeSize();
     } else
         setShapeInsideInfo(nullptr);
     markShapeInsideDescendantsForLayout();
 }
 
-ShapeInsideInfo* RenderBlock::ensureShapeInsideInfo()
+ShapeInsideInfo& RenderBlock::ensureShapeInsideInfo()
 {
     RenderBlockRareData& rareData = ensureRareData(this);
     if (!rareData.m_shapeInsideInfo)
-        setShapeInsideInfo(ShapeInsideInfo::createInfo(this));
-    return rareData.m_shapeInsideInfo.get();
+        setShapeInsideInfo(std::make_unique<ShapeInsideInfo>(*this));
+    return *rareData.m_shapeInsideInfo;
 }
 
 ShapeInsideInfo* RenderBlock::shapeInsideInfo() const
 {
     RenderBlockRareData* rareData = getRareData(this);
     if (!rareData || !rareData->m_shapeInsideInfo)
-        return 0;
-    return ShapeInsideInfo::isEnabledFor(this) ? rareData->m_shapeInsideInfo.get() : 0;
+        return nullptr;
+    return ShapeInsideInfo::isEnabledFor(*this) ? rareData->m_shapeInsideInfo.get() : nullptr;
 }
 
-void RenderBlock::setShapeInsideInfo(PassOwnPtr<ShapeInsideInfo> value)
+void RenderBlock::setShapeInsideInfo(std::unique_ptr<ShapeInsideInfo> value)
 {
-    ensureRareData(this).m_shapeInsideInfo = value;
+    ensureRareData(this).m_shapeInsideInfo = std::move(value);
 }
     
 void RenderBlock::markShapeInsideDescendantsForLayout()

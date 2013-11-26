@@ -589,7 +589,7 @@ inline void updateSegmentsForShapes(RenderBlockFlow& block, const FloatingObject
         return;
 
     bool isHorizontalWritingMode = block.isHorizontalWritingMode();
-    LayoutUnit logicalOffsetFromShapeContainer = block.logicalOffsetFromShapeAncestorContainer(shapeInsideInfo->owner()).height();
+    LayoutUnit logicalOffsetFromShapeContainer = block.logicalOffsetFromShapeAncestorContainer(&shapeInsideInfo->owner()).height();
 
     LayoutUnit lineLogicalTop = block.logicalHeight() + logicalOffsetFromShapeContainer;
     LayoutUnit lineLogicalHeight = block.lineHeight(isFirstLine, isHorizontalWritingMode ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);

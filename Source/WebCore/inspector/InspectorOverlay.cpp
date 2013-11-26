@@ -604,7 +604,7 @@ static PassRefPtr<InspectorObject> buildObjectForShapeOutside(Frame* containingF
     shapeObject->setArray("bounds", buildArrayForQuad(shapeQuad));
 
     Path path;
-    shapeOutsideInfo->computedShape()->buildPath(path);
+    shapeOutsideInfo->computedShape().buildPath(path);
 
     if (path.length()) {
         RefPtr<InspectorArray> shapePath = InspectorArray::create();

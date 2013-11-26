@@ -1,3 +1,28 @@
+2013-11-25  Sam Weinig  <sam@webkit.org>
+
+        Convert some Shape code to use references
+        https://bugs.webkit.org/show_bug.cgi?id=124876
+
+        Reviewed by Andreas Kling.
+
+        * inspector/InspectorOverlay.cpp:
+        * rendering/FloatingObjects.cpp:
+        * rendering/LayoutState.cpp:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        * rendering/RenderBox.cpp:
+        * rendering/RenderBox.h:
+        * rendering/line/BreakingContextInlineHeaders.h:
+        * rendering/line/LineWidth.cpp:
+        * rendering/shapes/ShapeInfo.cpp:
+        * rendering/shapes/ShapeInfo.h:
+        * rendering/shapes/ShapeInsideInfo.cpp:
+        * rendering/shapes/ShapeInsideInfo.h:
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        * rendering/shapes/ShapeOutsideInfo.h:
+        Replace yet more pointers with references.
+
 2013-11-25  Simon Pena  <simon.pena@samsung.com>
 
         [EFL] X11Helper::createPixmap doesn't initialise out value handleId

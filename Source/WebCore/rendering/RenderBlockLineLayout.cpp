@@ -1134,7 +1134,7 @@ static inline void pushShapeContentOverflowBelowTheContentBox(RenderBlockFlow* b
     LayoutUnit shapeLogicalBottom = shapeInsideInfo->shapeLogicalBottom();
     LayoutUnit shapeContainingBlockLogicalHeight = shapeInsideInfo->shapeContainingBlockLogicalHeight();
 
-    bool isOverflowPositionedAlready = (shapeContainingBlockLogicalHeight - shapeInsideInfo->owner()->borderAndPaddingAfter() + lineHeight) <= lineTop;
+    bool isOverflowPositionedAlready = (shapeContainingBlockLogicalHeight - shapeInsideInfo->owner().borderAndPaddingAfter() + lineHeight) <= lineTop;
 
     // If the last line overlaps with the shape, we don't need the segments anymore
     if (lineTop < shapeLogicalBottom && shapeLogicalBottom < logicalLineBottom)
@@ -1143,7 +1143,7 @@ static inline void pushShapeContentOverflowBelowTheContentBox(RenderBlockFlow* b
     if (logicalLineBottom <= shapeLogicalBottom || !shapeContainingBlockLogicalHeight || isOverflowPositionedAlready)
         return;
 
-    LayoutUnit newLogicalHeight = block->logicalHeight() + (shapeContainingBlockLogicalHeight - (lineTop + shapeInsideInfo->owner()->borderAndPaddingAfter()));
+    LayoutUnit newLogicalHeight = block->logicalHeight() + (shapeContainingBlockLogicalHeight - (lineTop + shapeInsideInfo->owner().borderAndPaddingAfter()));
     block->setLogicalHeight(newLogicalHeight);
 }
 
@@ -1301,17 +1301,17 @@ void RenderBlockFlow::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, I
     LayoutSize logicalOffsetFromShapeContainer;
     ShapeInsideInfo* shapeInsideInfo = layoutShapeInsideInfo();
     if (shapeInsideInfo) {
-        ASSERT(shapeInsideInfo->owner() == this || allowsShapeInsideInfoSharing());
+        ASSERT(&shapeInsideInfo->owner() == this || allowsShapeInsideInfoSharing());
         if (shapeInsideInfo != this->shapeInsideInfo()) {
             // FIXME Bug 100284: If subsequent LayoutStates are pushed, we will have to add
             // their offsets from the original shape-inside container.
-            logicalOffsetFromShapeContainer = logicalOffsetFromShapeAncestorContainer(shapeInsideInfo->owner());
+            logicalOffsetFromShapeContainer = logicalOffsetFromShapeAncestorContainer(&shapeInsideInfo->owner());
         }
         // Begin layout at the logical top of our shape inside.
         if (logicalHeight() + logicalOffsetFromShapeContainer.height() < shapeInsideInfo->shapeLogicalTop()) {
             LayoutUnit logicalHeight = shapeInsideInfo->shapeLogicalTop() - logicalOffsetFromShapeContainer.height();
             if (layoutState.flowThread())
-                logicalHeight -= shapeInsideInfo->owner()->borderAndPaddingBefore();
+                logicalHeight -= shapeInsideInfo->owner().borderAndPaddingBefore();
             setLogicalHeight(logicalHeight);
         }
     }

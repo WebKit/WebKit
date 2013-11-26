@@ -220,7 +220,7 @@ void RenderBox::willBeDestroyed()
     RenderBlock::removePercentHeightDescendantIfNeeded(*this);
 
 #if ENABLE(CSS_SHAPES)
-    ShapeOutsideInfo::removeInfo(this);
+    ShapeOutsideInfo::removeInfo(*this);
 #endif
 
     RenderBoxModelObject::willBeDestroyed();
@@ -400,9 +400,9 @@ void RenderBox::updateShapeOutsideInfoAfterStyleChange(const RenderStyle& style,
         return;
 
     if (!shapeOutside)
-        ShapeOutsideInfo::removeInfo(this);
+        ShapeOutsideInfo::removeInfo(*this);
     else
-        ShapeOutsideInfo::ensureInfo(this)->dirtyShapeSize();
+        ShapeOutsideInfo::ensureInfo(*this).dirtyShapeSize();
 
     if (shapeOutside || shapeOutside != oldShapeOutside)
         markShapeOutsideDependentsForLayout();

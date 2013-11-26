@@ -43,29 +43,30 @@ class FloatingObject;
 
 class ShapeOutsideInfo FINAL : public ShapeInfo<RenderBox>, public MappedInfo<RenderBox, ShapeOutsideInfo> {
 public:
+    ShapeOutsideInfo(const RenderBox& renderer)
+        : ShapeInfo<RenderBox>(renderer)
+    {
+    }
+
+    static bool isEnabledFor(const RenderBox&);
+
     LayoutUnit leftMarginBoxDelta() const { return m_leftMarginBoxDelta; }
     LayoutUnit rightMarginBoxDelta() const { return m_rightMarginBoxDelta; }
 
-    void updateDeltasForContainingBlockLine(const RenderBlockFlow*, const FloatingObject*, LayoutUnit lineTop, LayoutUnit lineHeight);
-
-    static PassOwnPtr<ShapeOutsideInfo> createInfo(const RenderBox* renderer) { return adoptPtr(new ShapeOutsideInfo(renderer)); }
-    static bool isEnabledFor(const RenderBox*);
+    void updateDeltasForContainingBlockLine(const RenderBlockFlow&, const FloatingObject&, LayoutUnit lineTop, LayoutUnit lineHeight);
 
     virtual bool lineOverlapsShapeBounds() const OVERRIDE
     {
-        return computedShape()->lineOverlapsShapeMarginBounds(m_shapeLineTop, m_lineHeight);
-    }
-
-protected:
-    virtual LayoutRect computedShapeLogicalBoundingBox() const OVERRIDE { return computedShape()->shapeMarginLogicalBoundingBox(); }
-    virtual ShapeValue* shapeValue() const OVERRIDE;
-    virtual void getIntervals(LayoutUnit lineTop, LayoutUnit lineHeight, SegmentList& segments) const OVERRIDE
-    {
-        return computedShape()->getExcludedIntervals(lineTop, lineHeight, segments);
+        return computedShape().lineOverlapsShapeMarginBounds(m_shapeLineTop, m_lineHeight);
     }
 
 private:
-    ShapeOutsideInfo(const RenderBox* renderer) : ShapeInfo<RenderBox>(renderer) { }
+    virtual LayoutRect computedShapeLogicalBoundingBox() const OVERRIDE { return computedShape().shapeMarginLogicalBoundingBox(); }
+    virtual ShapeValue* shapeValue() const OVERRIDE;
+    virtual void getIntervals(LayoutUnit lineTop, LayoutUnit lineHeight, SegmentList& segments) const OVERRIDE
+    {
+        return computedShape().getExcludedIntervals(lineTop, lineHeight, segments);
+    }
 
     LayoutUnit m_leftMarginBoxDelta;
     LayoutUnit m_rightMarginBoxDelta;

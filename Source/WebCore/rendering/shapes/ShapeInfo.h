@@ -45,18 +45,19 @@ namespace WebCore {
 template<class KeyType, class InfoType>
 class MappedInfo {
 public:
-    static InfoType* ensureInfo(const KeyType* key)
+    static InfoType& ensureInfo(const KeyType& key)
     {
         InfoMap& infoMap = MappedInfo<KeyType, InfoType>::infoMap();
-        if (InfoType* info = infoMap.get(key))
-            return info;
-        typename InfoMap::AddResult result = infoMap.add(key, InfoType::createInfo(key));
-        return result.iterator->value.get();
+        if (InfoType* info = infoMap.get(&key))
+            return *info;
+        typename InfoMap::AddResult result = infoMap.add(&key, std::make_unique<InfoType>(key));
+        return *result.iterator->value;
     }
-    static void removeInfo(const KeyType* key) { infoMap().remove(key); }
-    static InfoType* info(const KeyType* key) { return infoMap().get(key); }
+    static void removeInfo(const KeyType& key) { infoMap().remove(&key); }
+    static InfoType* info(const KeyType& key) { return infoMap().get(&key); }
+
 private:
-    typedef HashMap<const KeyType*, OwnPtr<InfoType>> InfoMap;
+    typedef HashMap<const KeyType*, std::unique_ptr<InfoType>> InfoMap;
     static InfoMap& infoMap()
     {
         DEFINE_STATIC_LOCAL(InfoMap, staticInfoMap, ());
@@ -75,23 +76,23 @@ public:
         if (shapeValue()->type() == ShapeValue::Box) {
             switch (shapeValue()->box()) {
             case CSSValueMarginBox:
-                logicalHeight += m_renderer->marginLogicalHeight();
-                logicalWidth += m_renderer->marginLogicalWidth();
+                logicalHeight += m_renderer.marginLogicalHeight();
+                logicalWidth += m_renderer.marginLogicalWidth();
                 break;
             case CSSValueBorderBox:
                 break;
             case CSSValuePaddingBox:
-                logicalHeight -= m_renderer->borderLogicalHeight();
-                logicalWidth -= m_renderer->borderLogicalWidth();
+                logicalHeight -= m_renderer.borderLogicalHeight();
+                logicalWidth -= m_renderer.borderLogicalWidth();
                 break;
             default:
-                logicalHeight -= m_renderer->borderAndPaddingLogicalHeight();
-                logicalWidth -= m_renderer->borderAndPaddingLogicalWidth();
+                logicalHeight -= m_renderer.borderAndPaddingLogicalHeight();
+                logicalWidth -= m_renderer.borderAndPaddingLogicalWidth();
                 break;
             }
-        } else if (m_renderer->style().boxSizing() == CONTENT_BOX) {
-            logicalHeight -= m_renderer->borderAndPaddingLogicalHeight();
-            logicalWidth -= m_renderer->borderAndPaddingLogicalWidth();
+        } else if (m_renderer.style().boxSizing() == CONTENT_BOX) {
+            logicalHeight -= m_renderer.borderAndPaddingLogicalHeight();
+            logicalWidth -= m_renderer.borderAndPaddingLogicalWidth();
         }
 
         LayoutSize newLogicalSize(logicalWidth, logicalHeight);
@@ -114,13 +115,13 @@ public:
     LayoutUnit logicalLineBottom() const { return m_shapeLineTop + m_lineHeight + logicalTopOffset(); }
     LayoutUnit logicalLineBottom(LayoutUnit lineHeight) const { return m_shapeLineTop + lineHeight + logicalTopOffset(); }
 
-    LayoutUnit shapeContainingBlockLogicalHeight() const { return (m_renderer->style().boxSizing() == CONTENT_BOX) ? (m_shapeLogicalSize.height() + m_renderer->borderAndPaddingLogicalHeight()) : m_shapeLogicalSize.height(); }
+    LayoutUnit shapeContainingBlockLogicalHeight() const { return (m_renderer.style().boxSizing() == CONTENT_BOX) ? (m_shapeLogicalSize.height() + m_renderer.borderAndPaddingLogicalHeight()) : m_shapeLogicalSize.height(); }
 
     virtual bool lineOverlapsShapeBounds() const = 0;
 
     void dirtyShapeSize() { m_shape.clear(); }
     bool shapeSizeDirty() { return !m_shape.get(); }
-    const RenderType* owner() const { return m_renderer; }
+    const RenderType& owner() const { return m_renderer; }
     LayoutSize shapeSize() const { return m_shapeLogicalSize; }
 
     LayoutRect computedShapePhysicalBoundingBox() const
@@ -128,9 +129,9 @@ public:
         LayoutRect physicalBoundingBox = computedShapeLogicalBoundingBox();
         physicalBoundingBox.setX(physicalBoundingBox.x() + logicalLeftOffset());
         physicalBoundingBox.setY(physicalBoundingBox.y() + logicalTopOffset());
-        if (m_renderer->style().isFlippedBlocksWritingMode())
-            physicalBoundingBox.setY(m_renderer->logicalHeight() - physicalBoundingBox.maxY());
-        if (!m_renderer->style().isHorizontalWritingMode())
+        if (m_renderer.style().isFlippedBlocksWritingMode())
+            physicalBoundingBox.setY(m_renderer.logicalHeight() - physicalBoundingBox.maxY());
+        if (!m_renderer.style().isHorizontalWritingMode())
             physicalBoundingBox = physicalBoundingBox.transposedRect();
         return physicalBoundingBox;
     }
@@ -138,24 +139,27 @@ public:
     FloatPoint shapeToRendererPoint(FloatPoint point) const
     {
         FloatPoint result = FloatPoint(point.x() + logicalLeftOffset(), point.y() + logicalTopOffset());
-        if (m_renderer->style().isFlippedBlocksWritingMode())
-            result.setY(m_renderer->logicalHeight() - result.y());
-        if (!m_renderer->style().isHorizontalWritingMode())
+        if (m_renderer.style().isFlippedBlocksWritingMode())
+            result.setY(m_renderer.logicalHeight() - result.y());
+        if (!m_renderer.style().isHorizontalWritingMode())
             result = result.transposedPoint();
         return result;
     }
 
     FloatSize shapeToRendererSize(FloatSize size) const
     {
-        if (!m_renderer->style().isHorizontalWritingMode())
+        if (!m_renderer.style().isHorizontalWritingMode())
             return size.transposedSize();
         return size;
     }
 
-    const Shape* computedShape() const;
+    const Shape& computedShape() const;
 
 protected:
-    explicit ShapeInfo(const RenderType* renderer): m_renderer(renderer) { }
+    explicit ShapeInfo(const RenderType& renderer)
+        : m_renderer(renderer)
+    {
+    }
 
     virtual LayoutRect computedShapeLogicalBoundingBox() const = 0;
     virtual ShapeValue* shapeValue() const = 0;
@@ -165,32 +169,32 @@ protected:
     {
         if (shapeValue()->type() == ShapeValue::Box) {
             switch (shapeValue()->box()) {
-            case CSSValueMarginBox: return -m_renderer->marginBefore();
+            case CSSValueMarginBox: return -m_renderer.marginBefore();
             case CSSValueBorderBox: return LayoutUnit();
-            case CSSValuePaddingBox: return m_renderer->borderBefore();
-            default: return m_renderer->borderAndPaddingBefore();
+            case CSSValuePaddingBox: return m_renderer.borderBefore();
+            default: return m_renderer.borderAndPaddingBefore();
             }
         }
-        return m_renderer->style().boxSizing() == CONTENT_BOX ? m_renderer->borderAndPaddingBefore() : LayoutUnit();
+        return m_renderer.style().boxSizing() == CONTENT_BOX ? m_renderer.borderAndPaddingBefore() : LayoutUnit();
     }
 
     LayoutUnit logicalLeftOffset() const
     {
         if (shapeValue()->type() == ShapeValue::Box) {
             switch (shapeValue()->box()) {
-            case CSSValueMarginBox: return -m_renderer->marginStart();
+            case CSSValueMarginBox: return -m_renderer.marginStart();
             case CSSValueBorderBox: return LayoutUnit();
-            case CSSValuePaddingBox: return m_renderer->borderStart();
-            default: return m_renderer->borderAndPaddingStart();
+            case CSSValuePaddingBox: return m_renderer.borderStart();
+            default: return m_renderer.borderAndPaddingStart();
             }
         }
-        return (m_renderer->style().boxSizing() == CONTENT_BOX && !m_renderer->isRenderRegion()) ? m_renderer->borderAndPaddingStart() : LayoutUnit();
+        return (m_renderer.style().boxSizing() == CONTENT_BOX && !m_renderer.isRenderRegion()) ? m_renderer.borderAndPaddingStart() : LayoutUnit();
     }
 
     LayoutUnit m_shapeLineTop;
     LayoutUnit m_lineHeight;
 
-    const RenderType* m_renderer;
+    const RenderType& m_renderer;
 
 private:
     mutable OwnPtr<Shape> m_shape;

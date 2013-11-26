@@ -386,9 +386,9 @@ public:
 #endif
 
 #if ENABLE(CSS_SHAPES)
-    ShapeInsideInfo* ensureShapeInsideInfo();
+    ShapeInsideInfo& ensureShapeInsideInfo();
     ShapeInsideInfo* shapeInsideInfo() const;
-    void setShapeInsideInfo(PassOwnPtr<ShapeInsideInfo> value);
+    void setShapeInsideInfo(std::unique_ptr<ShapeInsideInfo>);
     
     void markShapeInsideDescendantsForLayout();
     ShapeInsideInfo* layoutShapeInsideInfo() const;

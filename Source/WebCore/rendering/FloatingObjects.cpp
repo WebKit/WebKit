@@ -360,12 +360,12 @@ static inline ShapeOutsideInfo* shapeInfoForFloat(const FloatingObject* floating
 {
     if (floatingObject) {
         if (ShapeOutsideInfo* shapeOutside = floatingObject->renderer().shapeOutsideInfo()) {
-            shapeOutside->updateDeltasForContainingBlockLine(&containingBlock, floatingObject, lineTop, lineBottom - lineTop);
+            shapeOutside->updateDeltasForContainingBlockLine(containingBlock, *floatingObject, lineTop, lineBottom - lineTop);
             return shapeOutside;
         }
     }
 
-    return 0;
+    return nullptr;
 }
 #endif
 

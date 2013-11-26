@@ -101,7 +101,7 @@ void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject* newFloat
     // when we add a subsequent float on the same line, we need to undo the shape delta in order to position
     // based on the margin box. In order to do this, we need to walk back through the floating object list to find
     // the first previous float that is on the same side as our newFloat.
-    ShapeOutsideInfo* previousShapeOutsideInfo = 0;
+    ShapeOutsideInfo* previousShapeOutsideInfo = nullptr;
     const FloatingObjectSet& floatingObjectSet = m_block.m_floatingObjects->set();
     auto it = floatingObjectSet.end();
     auto begin = floatingObjectSet.begin();
@@ -111,14 +111,14 @@ void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject* newFloat
         if (previousFloat != newFloat && previousFloat->type() == newFloat->type()) {
             previousShapeOutsideInfo = previousFloat->renderer().shapeOutsideInfo();
             if (previousShapeOutsideInfo)
-                previousShapeOutsideInfo->updateDeltasForContainingBlockLine(&m_block, previousFloat, m_block.logicalHeight(), lineHeight);
+                previousShapeOutsideInfo->updateDeltasForContainingBlockLine(m_block, *previousFloat, m_block.logicalHeight(), lineHeight);
             break;
         }
     }
 
     ShapeOutsideInfo* shapeOutsideInfo = newFloat->renderer().shapeOutsideInfo();
     if (shapeOutsideInfo)
-        shapeOutsideInfo->updateDeltasForContainingBlockLine(&m_block, newFloat, m_block.logicalHeight(), lineHeight);
+        shapeOutsideInfo->updateDeltasForContainingBlockLine(m_block, *newFloat, m_block.logicalHeight(), lineHeight);
 #endif
 
     if (newFloat->type() == FloatingObject::FloatLeft) {
@@ -194,7 +194,7 @@ void LineWidth::fitBelowFloats()
         // FIXME: This code should be refactored to incorporate with the code above.
         ShapeInsideInfo* shapeInsideInfo = m_block.layoutShapeInsideInfo();
         if (shapeInsideInfo) {
-            LayoutUnit logicalOffsetFromShapeContainer = m_block.logicalOffsetFromShapeAncestorContainer(shapeInsideInfo->owner()).height();
+            LayoutUnit logicalOffsetFromShapeContainer = m_block.logicalOffsetFromShapeAncestorContainer(&shapeInsideInfo->owner()).height();
             LayoutUnit lineHeight = m_block.lineHeight(false, m_block.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
             shapeInsideInfo->updateSegmentsForLine(lastFloatLogicalBottom + logicalOffsetFromShapeContainer, lineHeight);
             updateCurrentShapeSegment();
