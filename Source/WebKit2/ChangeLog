@@ -1,5 +1,13 @@
 2013-11-25  Dan Bernstein  <mitz@apple.com>
 
+        Fixed the iOS build.
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController loadDelegateInternal]):
+        (-[WKBrowsingContextController setLoadDelegateInternal:]):
+
+2013-11-25  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Remove some indirection that was only necessary for supporting the legacy Objective-C runtime
         https://bugs.webkit.org/show_bug.cgi?id=123065
 

@@ -102,6 +102,10 @@ NSString * const WKActionCanShowMIMETypeKey = @"WKActionCanShowMIMETypeKey";
     WKRetainPtr<WKPageRef> _pageRef;
 
     std::unique_ptr<PageLoadStateObserver> _pageLoadStateObserver;
+
+#if PLATFORM(IOS)
+    id <WKBrowsingContextLoadDelegateInternal> _loadDelegateInternal;
+#endif // PLATFORM(IOS)
 }
 
 - (void)dealloc
@@ -646,6 +650,18 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 
     WKPageSetPagePolicyClient(pageRef, &policyClient);
 }
+
+#if PLATFORM(IOS)
+- (id <WKBrowsingContextLoadDelegateInternal>)loadDelegateInternal
+{
+    return _loadDelegateInternal;
+}
+
+- (void)setLoadDelegateInternal:(id <WKBrowsingContextLoadDelegateInternal>)loadDelegateInternal
+{
+    _loadDelegateInternal = loadDelegateInternal;
+}
+#endif // PLATFORM(IOS)
 
 /* This should only be called from associate view. */
 
