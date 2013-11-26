@@ -1,3 +1,13 @@
+2013-11-26  Nadav Rotem  <nrotem@apple.com>
+
+        Optimize away OR with zero - a common ASM.js pattern.
+        https://bugs.webkit.org/show_bug.cgi?id=124869
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
 2013-11-25  Julien Brianceau  <jbriance@cisco.com>
 
         [arm][mips] Fix crash in dfg-arrayify-elimination layout jsc test.
