@@ -1,3 +1,24 @@
+2013-11-26  Andreas Kling  <akling@apple.com>
+
+        Avoid unnecessary copy-on-write in FillLayer style application.
+        <https://webkit.org/b/124878>
+
+        We ended up with a lot of cloned StyleBackgroundData objects on
+        HTML5-8266. This happened because we always forced a copy-on-write
+        when applying background-image:inherit / background-image:initial.
+
+        This patch adds early returns to both functions. In the "inherit"
+        case, we bail early if the target style already has the same fill
+        layer data as its parent style.
+
+        In the "initial" case, we optimize for the single-FillLayer case
+        and add an early return if the relevant value is either unset or
+        equal to the templatized initial value.
+
+        2.46 MB progression on HTML5-8266 locally.
+
+        Reviewed by Antti Koivisto.
+
 2013-11-26  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: Allow showing a context menu on all mouse events.

@@ -515,6 +515,10 @@ class ApplyPropertyFillLayer {
 public:
     static void applyInheritValue(CSSPropertyID, StyleResolver* styleResolver)
     {
+        // Check for no-op before copying anything.
+        if (*(styleResolver->parentStyle()->*layersFunction)() == *(styleResolver->style()->*layersFunction)())
+            return;
+
         FillLayer* currChild = (styleResolver->style()->*accessLayersFunction)();
         FillLayer* prevChild = 0;
         const FillLayer* currParent = (styleResolver->parentStyle()->*layersFunction)();
@@ -539,6 +543,12 @@ public:
 
     static void applyInitialValue(CSSPropertyID, StyleResolver* styleResolver)
     {
+        // Check for (single-layer) no-op before clearing anything.
+        const FillLayer& layers = *(styleResolver->style()->*layersFunction)();
+        bool firstLayerHasValue = (layers.*testFunction)();
+        if (!layers.next() && (!firstLayerHasValue || (layers.*getFunction)() == (*initialFunction)(fillLayerType)))
+            return;
+
         FillLayer* currChild = (styleResolver->style()->*accessLayersFunction)();
         (currChild->*setFunction)((*initialFunction)(fillLayerType));
         for (currChild = currChild->next(); currChild; currChild = currChild->next())
