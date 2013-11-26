@@ -1,5 +1,13 @@
 2013-11-26  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
+        Unreviewed EFL gardening
+
+        Add test expectations for failing accessibility tests.
+
+        * platform/efl/TestExpectations:
+
+2013-11-26  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
         Unreviewed ATK gardening
 
         Rebaseline accessibility tests after r159747.

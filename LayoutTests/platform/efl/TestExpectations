@@ -496,6 +496,9 @@ webkit.org/b/105542 fast/canvas/canvas-blend-solid.html [ Skip ]
 # No concept of secure text input
 editing/secure-input [ Failure ]
 
+# ATK does not support helpText/aria-help
+accessibility/aria-help.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1726,3 +1729,7 @@ webkit.org/b/124663 media/track/track-legacyapi-with-automatic-mode.html [ Skip 
 webkit.org/b/124664 media/video-seek-with-negative-playback.html [ Failure Crash ]
 
 webkit.org/b/124665 media/video-ended-event-negative-playback.html [ Failure Pass ]
+
+webkit.org/b/124890 platform/efl/accessibility/media-emits-object-replacement.html [ Failure ]
+
+webkit.org/b/124894 accessibility/fieldset-element.html [ Missing ]
