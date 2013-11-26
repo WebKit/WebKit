@@ -27,6 +27,7 @@
 #define WKPagePrivateMac_h
 
 #include <WebKit2/WKBase.h>
+#include <sys/types.h>
 
 #ifdef __cplusplus
 extern "C" {

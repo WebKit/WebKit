@@ -28,6 +28,7 @@
 
 #include <JavaScriptCore/JavaScript.h>
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKGeometry.h>
 
 #ifndef __cplusplus
 #include <stdbool.h>

@@ -63,20 +63,23 @@ bool WKContextIsPlugInUpdateAvailable(WKContextRef contextRef, WKStringRef plugI
 #endif
 }
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-
 WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRef contextRef, WKStringRef plugInBundleIdentifierRef)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     PluginModuleInfo plugin = toImpl(contextRef)->pluginInfoStore().findPluginWithBundleIdentifier(toWTFString(plugInBundleIdentifierRef));
     if (plugin.path.isNull())
         return 0;
 
     RefPtr<ImmutableDictionary> dictionary = createPluginInformationDictionary(plugin);
     return toAPI(dictionary.release().leakRef());
+#else
+    return 0;
+#endif
 }
 
 void WKContextGetInfoForInstalledPlugIns(WKContextRef contextRef, WKContextGetInfoForInstalledPlugInsBlock block)
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     Vector<PluginModuleInfo> plugins = toImpl(contextRef)->pluginInfoStore().plugins();
 
     Vector<RefPtr<API::Object>> pluginInfoDictionaries;
@@ -93,6 +96,7 @@ void WKContextGetInfoForInstalledPlugIns(WKContextRef contextRef, WKContextGetIn
     
         toImpl(contextRef)->deref();
     });
+#endif
 }
 
 void WKContextResetHSTSHosts(WKContextRef context)
@@ -132,5 +136,3 @@ WKStringRef WKPlugInInfoIsSandboxedKey()
 {
     return WKPluginInformationHasSandboxProfileKey();
 }
-
-#endif // ENABLE(NETSCAPE_PLUGIN_API)

@@ -27,6 +27,8 @@
 
 #if WK_API_ENABLED
 
+#import <Foundation/Foundation.h>
+
 @class WKRemoteObjectInterface;
 
 WK_API_CLASS

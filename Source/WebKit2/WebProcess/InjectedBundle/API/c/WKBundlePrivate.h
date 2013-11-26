@@ -32,6 +32,7 @@
 #include <stdbool.h>
 #endif
 
+#include <JavaScriptCore/JSBase.h>
 #include <WebKit2/WKUserContentInjectedFrames.h>
 #include <WebKit2/WKUserScriptInjectionTime.h>
 

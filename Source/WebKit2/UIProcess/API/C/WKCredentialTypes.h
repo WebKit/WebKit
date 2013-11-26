@@ -26,6 +26,8 @@
 #ifndef WKCredentialTypes_h
 #define WKCredentialTypes_h
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

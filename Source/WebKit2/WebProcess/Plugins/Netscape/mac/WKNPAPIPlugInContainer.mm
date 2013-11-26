@@ -64,7 +64,7 @@ using namespace WebKit;
     if (!_plugin)
         return NO;
 
-#if !PLATFORM(IOS)
+#if ENABLE(NETSCAPE_PLUGIN_API)
     _plugin->openPluginPreferencePane();
     return YES;
 #else

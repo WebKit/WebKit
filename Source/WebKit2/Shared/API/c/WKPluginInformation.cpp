@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WKPluginInformation.h"
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-
 #include "PluginInformation.h"
 #include "WKSharedAPICast.h"
 #include "WebString.h"
@@ -36,85 +34,140 @@ using namespace WebKit;
 
 WKStringRef WKPluginInformationBundleIdentifierKey()
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     static WebString* key = WebString::create(pluginInformationBundleIdentifierKey()).leakRef();
     return toAPI(key);
+#else
+    return 0;
+#endif
 }
 
 WKStringRef WKPluginInformationBundleVersionKey()
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     static WebString* key = WebString::create(pluginInformationBundleVersionKey()).leakRef();
     return toAPI(key);
+#else
+    return 0;
+#endif
 }
 
 WKStringRef WKPluginInformationBundleShortVersionKey()
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     static WebString* key = WebString::create(pluginInformationBundleShortVersionKey()).leakRef();
     return toAPI(key);
+#else
+    return 0;
+#endif
 }
 
 WKStringRef WKPluginInformationPathKey()
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     static WebString* key = WebString::create(pluginInformationPathKey()).leakRef();
     return toAPI(key);
+#else
+    return 0;
+#endif
 }
 
 WKStringRef WKPluginInformationDisplayNameKey()
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     static WebString* key = WebString::create(pluginInformationDisplayNameKey()).leakRef();
     return toAPI(key);
+#else
+    return 0;
+#endif
 }
 
 WKStringRef WKPluginInformationDefaultLoadPolicyKey()
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     static WebString* key = WebString::create(pluginInformationDefaultLoadPolicyKey()).leakRef();
     return toAPI(key);
+#else
+    return 0;
+#endif
 }
 
 WKStringRef WKPluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey()
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     static WebString* key = WebString::create(pluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey()).leakRef();
     return toAPI(key);
+#else
+    return 0;
+#endif
 }
 
 WKStringRef WKPluginInformationHasSandboxProfileKey()
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     static WebString* key = WebString::create(pluginInformationHasSandboxProfileKey()).leakRef();
     return toAPI(key);
+#else
+    return 0;
+#endif
 }
 
 WKStringRef WKPluginInformationFrameURLKey()
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     static WebString* key = WebString::create(pluginInformationFrameURLKey()).leakRef();
     return toAPI(key);
+#else
+    return 0;
+#endif
 }
 
 WKStringRef WKPluginInformationMIMETypeKey()
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     static WebString* key = WebString::create(pluginInformationMIMETypeKey()).leakRef();
     return toAPI(key);
+#else
+    return 0;
+#endif
 }
 
 WKStringRef WKPluginInformationPageURLKey()
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     static WebString* key = WebString::create(pluginInformationPageURLKey()).leakRef();
     return toAPI(key);
+#else
+    return 0;
+#endif
 }
 
 WKStringRef WKPluginInformationPluginspageAttributeURLKey()
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     static WebString* key = WebString::create(pluginInformationPluginspageAttributeURLKey()).leakRef();
     return toAPI(key);
+#else
+    return 0;
+#endif
 }
 
 WKStringRef WKPluginInformationPluginURLKey()
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     static WebString* key = WebString::create(pluginInformationPluginURLKey()).leakRef();
     return toAPI(key);
+#else
+    return 0;
+#endif
 }
 
 WKStringRef WKPlugInInformationReplacementObscuredKey()
 {
+#if ENABLE(NETSCAPE_PLUGIN_API)
     static WebString* key = WebString::create(plugInInformationReplacementObscuredKey()).leakRef();
     return toAPI(key);
+#else
+    return 0;
+#endif
 }
-#endif // ENABLE(NETSCAPE_PLUGIN_API)

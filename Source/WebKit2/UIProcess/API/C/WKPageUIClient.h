@@ -27,6 +27,9 @@
 #define WKPageUIClient_h
 
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKEvent.h>
+#include <WebKit2/WKGeometry.h>
+#include <WebKit2/WKNativeEvent.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -41,7 +41,7 @@ WKTypeID WKPluginSiteDataManagerGetTypeID()
 #if ENABLE(NETSCAPE_PLUGIN_API)
     return toAPI(WebPluginSiteDataManager::APIType);
 #else
-    return API::Object::Type::Null;
+    return toAPI(API::Object::Type::Null);
 #endif
 }
 

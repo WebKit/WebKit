@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKInspectorPrivateMac_h
-#define WKInspectorPrivateMac_h
+#import <AppKit/NSWindow.h>
+#import <WebKit2/WKDeclarationSpecifiers.h>
+#import <WebKit2/WKInspector.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -45,5 +46,3 @@ WK_EXPORT @interface WKWebInspectorProxyObjCAdapter : NSObject <NSWindowDelegate
 #ifdef __cplusplus
 }
 #endif
-
-#endif // WKInspectorPrivateMac_h

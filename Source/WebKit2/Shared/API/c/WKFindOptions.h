@@ -26,6 +26,8 @@
 #ifndef WKFindOptions_h
 #define WKFindOptions_h
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

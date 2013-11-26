@@ -27,6 +27,7 @@
 #define WKMutableArray_h
 
 #include <WebKit2/WKBase.h>
+#include <stddef.h>
 
 #ifndef __cplusplus
 #include <stdbool.h>

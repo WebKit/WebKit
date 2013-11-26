@@ -28,8 +28,6 @@
 
 #include <WebKit2/WKBase.h>
 
-#if ENABLE(INSPECTOR)
-
 #ifndef __cplusplus
 #include <stdbool.h>
 #endif
@@ -49,8 +47,6 @@ WK_EXPORT void WKBundleInspectorSetPageProfilingEnabled(WKBundleInspectorRef ins
 #ifdef __cplusplus
 }
 #endif
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // WKBundleInspector_h
 

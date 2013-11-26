@@ -26,6 +26,8 @@
 #ifndef WKPageVisibilityTypes_h
 #define WKPageVisibilityTypes_h
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

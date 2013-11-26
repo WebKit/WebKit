@@ -27,6 +27,8 @@
 #define WKPagePolicyClient_h
 
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKEvent.h>
+#include <WebKit2/WKPageLoadTypes.h>
 
 #ifdef __cplusplus
 extern "C" {

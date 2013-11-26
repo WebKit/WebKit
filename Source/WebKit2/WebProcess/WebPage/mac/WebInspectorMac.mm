@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebInspector.h"
 
+#if ENABLE(INSPECTOR)
+
 #import <WebCore/SoftLinking.h>
 
 SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
@@ -54,3 +56,5 @@ String WebInspector::localizedStringsURL() const
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(INSPECTOR)

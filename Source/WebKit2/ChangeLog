@@ -1,3 +1,82 @@
+2013-11-26  Dan Bernstein  <mitz@apple.com>
+
+        Some WebKit2 headers are not self-contained
+        https://bugs.webkit.org/show_bug.cgi?id=124884
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/Cocoa/WKRemoteObjectInterface.h: Added import.
+        * Shared/API/Cocoa/WKRemoteObjectRegistry.h: Ditto.
+        * Shared/API/c/WKContextMenuItemTypes.h: Added include.
+        * Shared/API/c/WKFindOptions.h: Ditto.
+        * Shared/API/c/WKMutableArray.h: Ditto.
+        * Shared/API/c/WKPageLoadTypes.h: Ditto.
+        * Shared/API/c/WKPageVisibilityTypes.h: Ditto.
+
+        * Shared/API/c/WKPluginInformation.cpp:
+        (WKPluginInformationBundleIdentifierKey): Made this API function always be defined. When
+        the Netscape plug-in API is not enabled, it returns 0.
+        (WKPluginInformationBundleVersionKey): Ditto.
+        (WKPluginInformationBundleShortVersionKey): Ditto.
+        (WKPluginInformationPathKey): Ditto.
+        (WKPluginInformationDisplayNameKey): Ditto.
+        (WKPluginInformationDefaultLoadPolicyKey): Ditto.
+        (WKPluginInformationUpdatePastLastBlockedVersionIsKnownAvailableKey): Ditto.
+        (WKPluginInformationHasSandboxProfileKey): Ditto.
+        (WKPluginInformationFrameURLKey): Ditto.
+        (WKPluginInformationMIMETypeKey): Ditto.
+        (WKPluginInformationPageURLKey): Ditto.
+        (WKPluginInformationPluginspageAttributeURLKey): Ditto.
+        (WKPluginInformationPluginURLKey): Ditto.
+        (WKPlugInInformationReplacementObscuredKey): Ditto.
+
+        * Shared/API/c/WKString.h: Added include.
+        * UIProcess/API/C/WKCredentialTypes.h: Ditto.
+        * UIProcess/API/C/WKPageContextMenuClient.h: Ditto.
+        * UIProcess/API/C/WKPageLoaderClient.h: Added includes.
+        * UIProcess/API/C/WKPagePolicyClient.h: Ditto.
+        * UIProcess/API/C/WKPageUIClient.h: Ditto.
+
+        * UIProcess/API/C/WKPluginSiteDataManager.cpp:
+        (WKPluginSiteDataManagerGetTypeID): Fixed the !ENABLE(NETSCAPE_PLUGIN_API) build.
+
+        * UIProcess/API/C/mac/WKContextPrivateMac.h: Removed use of ENABLE() from this private
+        header.
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextCopyPlugInInfoForBundleIdentifier): Made this API function always be defined.
+        When the Netscape plug-in API is not enabled, it returns 0.
+        (WKContextGetInfoForInstalledPlugIns): Made this API function always be defined.
+
+        * UIProcess/API/C/mac/WKInspectorPrivateMac.h: Added imports.
+        * UIProcess/API/C/mac/WKPagePrivateMac.h: Added include.
+        * UIProcess/API/Cocoa/WKBackForwardListItem.h: Added import.
+        * UIProcess/API/Cocoa/WKNavigationData.h: Ditto.
+        * UIProcess/API/cpp/WKRetainPtr.h: Replaced use of WARN_UNUSED_RETURN in this private header
+        with an equivalent macro defined in the header.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFramePrivate.h: Added include.
+        * WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp:
+        (WKBundleInspectorGetTypeID): Made this API function always be defined. When the Inspector
+        is not enabled, it returns the Null type.
+        (WKBundleInspectorShow): Made this API function always be defined.
+        (WKBundleInspectorClose): Ditto.
+        (WKBundleInspectorEvaluateScriptForTest): Ditto.
+        (WKBundleInspectorSetPageProfilingEnabled): Ditto.
+        * WebProcess/InjectedBundle/API/c/WKBundleInspector.h: Removed use of ENABLE() from this
+        private header.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h: Added includes.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h: Added include.
+
+        * WebProcess/Plugins/Netscape/mac/WKNPAPIPlugInContainer.mm:
+        (-[WKNPAPIPlugInContainer openPlugInPreferencePane]): Fixed the !ENABLE(NETSCAPE_PLUGIN_API)
+        build.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createJavaAppletWidget): Ditto.
+
+        * WebProcess/WebPage/mac/WebInspectorMac.mm: Fixed the !ENABLE(INSPECTOR) build.
+
 2013-11-25  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Use class extensions for IPI

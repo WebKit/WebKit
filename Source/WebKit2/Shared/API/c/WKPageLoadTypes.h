@@ -26,6 +26,8 @@
 #ifndef WKPageLoadTypes_h
 #define WKPageLoadTypes_h
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

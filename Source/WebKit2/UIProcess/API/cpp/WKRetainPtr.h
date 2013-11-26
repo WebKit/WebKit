@@ -229,7 +229,15 @@ template<typename T, typename U> inline bool operator!=(T* a, const WKRetainPtr<
     return a != b.get(); 
 }
 
-template<typename T> inline WKRetainPtr<T> adoptWK(T) WARN_UNUSED_RETURN;
+#if defined(__GNUC__) && !(defined(__CC_ARM) || defined(__ARMCC__))
+#define WK_WARN_UNUSED_RETURN __attribute__((warn_unused_result))
+#else
+#define WK_WARN_UNUSED_RETURN
+#endif
+
+template<typename T> inline WKRetainPtr<T> adoptWK(T) WK_WARN_UNUSED_RETURN;
+
+#undef WK_WARN_UNUSED_RETURN
 
 template<typename T> inline WKRetainPtr<T> adoptWK(T o) 
 {
