@@ -601,6 +601,11 @@ WebInspector.DOMTreeManager.prototype = {
         var contentFlow = this._flows.get(flowKey);
         console.assert(contentFlow);
         this._flows.delete(flowKey);
+
+        // Remove any back links to this flow from the content nodes.
+        for (var contentNode of contentFlow.contentNodes)
+            this._contentNodesToFlowsMap.delete(contentNode.id);
+
         this.dispatchEventToListeners(WebInspector.DOMTreeManager.Event.ContentFlowWasRemoved, {flow: contentFlow});
     },
 

@@ -1,3 +1,22 @@
+2013-11-25  Alexandru Chiculita  <achicu@adobe.com>
+
+        Web Inspector: [CSS Regions] A page with many flows should collapse the resources tree
+        https://bugs.webkit.org/show_bug.cgi?id=122926
+
+        Reviewed by Timothy Hatcher.
+
+        Refactored the code in FrameTreeElement._shouldGroupIntoFolders to make it easy to track
+        more types of resources. Added the content flows as another type of resource that would trigger the
+        collapsing.
+
+        * UserInterface/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager.prototype.namedFlowRemoved): Added code to remove the content nodes from
+        a flow that has been removed.
+        * UserInterface/FrameTreeElement.js:
+        (WebInspector.FrameTreeElement.prototype._shouldGroupIntoFolders.pushCategory):
+        (WebInspector.FrameTreeElement.prototype._shouldGroupIntoFolders.pushResourceType):
+        (WebInspector.FrameTreeElement.prototype._shouldGroupIntoFolders):
+
 2013-11-25  Dan Bernstein  <mitz@apple.com>
 
         Set the svn:ignore property on the Xcode project to ignore the workspace and user data.

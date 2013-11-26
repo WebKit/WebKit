@@ -433,7 +433,7 @@ WebInspector.FrameTreeElement.prototype = {
             // When both components are not resources then just compare the titles.
             return a.mainTitle.localeCompare(b.mainTitle);
         }
-        
+
         // Non-resources should appear before the resources.
         // FIXME: There should be a better way to group the elements by their type.
         return aIsResource ? 1 : -1;
@@ -536,35 +536,28 @@ WebInspector.FrameTreeElement.prototype = {
         var numberOfSmallCategories = 0;
         var numberOfMediumCategories = 0;
         var foundLargeCategory = false;
+        var frame = this._frame;
 
-        // FIXME: Use this._frame.domTree.flowsCount to count the number of flows in a frame.
-        // https://bugs.webkit.org/show_bug.cgi?id=122926
-
-        if (this._frame.childFrames.length >= WebInspector.FrameTreeElement.LargeChildCountThreshold)
-            foundLargeCategory = true;
-        else if (this._frame.childFrames.length >= WebInspector.FrameTreeElement.MediumChildCountThreshold)
-            ++numberOfMediumCategories;
-        else if (this._frame.childFrames.length)
-            ++numberOfSmallCategories;
-
-        // Iterate over all the available resource types. There are some other properties on
-        // WebInspector.Resource.Type that we need to skip, like private data and functions.
-        for (var type in WebInspector.Resource.Type) {
-            // Skip private data.
+        function pushResourceType(type) {
+            // There are some other properties on WebInspector.Resource.Type that we need to skip, like private data and functions
             if (type.charAt(0) === "_")
-                continue;
+                return false;
 
             // Only care about the values that are strings, not functions, etc.
             var typeValue = WebInspector.Resource.Type[type];
             if (typeof typeValue !== "string")
-                continue;
+                return false;
 
-            var resourceCount = this._frame.resourcesWithType(typeValue).length;
+            return pushCategory(frame.resourcesWithType(typeValue).length);
+        }
+
+        function pushCategory(resourceCount)
+        {
             if (!resourceCount)
-                continue;
+                return false;
 
             // If this type has any resources and there is a known large category, make folders.
-            if (resourceCount && foundLargeCategory)
+            if (foundLargeCategory)
                 return true;
 
             // If there are lots of this resource type, then count it as a large category.
@@ -574,24 +567,22 @@ WebInspector.FrameTreeElement.prototype = {
                     return true;
 
                 foundLargeCategory = true;
-                continue;
+                return false;
             }
 
             // Check if this is a medium category.
             if (resourceCount >= WebInspector.FrameTreeElement.MediumChildCountThreshold) {
-                ++numberOfMediumCategories;
-
                 // If this is the medium category that puts us over the maximum allowed, make folders.
-                if (numberOfMediumCategories >= WebInspector.FrameTreeElement.NumberOfMediumCategoriesThreshold)
-                    return true;
-                continue;
+                return ++numberOfMediumCategories >= WebInspector.FrameTreeElement.NumberOfMediumCategoriesThreshold;
             }
 
             // This is a small category.
             ++numberOfSmallCategories;
+            return false;
         }
 
-        return false;
+        // Iterate over all the available resource types.
+        return pushCategory(frame.childFrames.length) || pushCategory(frame.domTree.flowsCount) || Object.keys(WebInspector.Resource.Type).some(pushResourceType);
     },
 
     _reloadPageClicked: function(event)
