@@ -1,3 +1,12 @@
+2013-11-26  Enrico Nicoletto  <liverig@gmail.com>
+
+        Updated Brazilian Portuguese translation of WebKitGTK+ - November 02, 2013
+        https://bugs.webkit.org/show_bug.cgi?id=123694
+
+        Reviewed by Gustavo Noronha.
+
+        * pt_BR.po: updated.
+
 2013-11-12  Shantha kumar  <shkumar@redhat.com>
 
         Webkit - Updated Tamil translation
