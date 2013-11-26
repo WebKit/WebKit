@@ -1,3 +1,23 @@
+2013-11-26  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: Allow showing a context menu on all mouse events.
+        https://bugs.webkit.org/show_bug.cgi?id=124747
+
+        Reviewed by Joseph Pecoraro.
+
+        Add a new InspectorFrontendHost::dispatchEventAsContextMenuEvent(Event*) method
+        to let the inspector front-end dispatch a native contextmenu event that will allow
+        for a context menu to be shown from within a non-contextmenu event handler.
+
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::dispatchEventAsContextMenuEvent):
+        Check that we're dealing with a mouse event, get the frame for the event target
+        and the event's location to call ContextMenuController::showContextMenuAt()
+        which will handle the new contextmenu event dispatch to the original event target.
+
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+
 2013-11-25  Sam Weinig  <sam@webkit.org>
 
         Convert some Shape code to use references

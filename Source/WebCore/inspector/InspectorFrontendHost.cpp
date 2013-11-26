@@ -39,6 +39,7 @@
 #include "ContextMenuProvider.h"
 #include "DOMWrapperWorld.h"
 #include "Element.h"
+#include "Event.h"
 #include "FrameLoader.h"
 #include "HitTestResult.h"
 #include "HTMLFrameOwnerElement.h"
@@ -46,6 +47,7 @@
 #include "InspectorController.h"
 #include "InspectorFrontendClient.h"
 #include "MainFrame.h"
+#include "MouseEvent.h"
 #include "Page.h"
 #include "Pasteboard.h"
 #include "ResourceError.h"
@@ -278,6 +280,22 @@ void InspectorFrontendHost::showContextMenu(Event* event, const Vector<ContextMe
     RefPtr<FrontendMenuProvider> menuProvider = FrontendMenuProvider::create(this, frontendApiObject, items);
     m_frontendPage->contextMenuController().showContextMenu(event, menuProvider);
     m_menuProvider = menuProvider.get();
+}
+
+void InspectorFrontendHost::dispatchEventAsContextMenuEvent(Event* event)
+{
+#if USE(ACCESSIBILITY_CONTEXT_MENUS)
+    if (!event || !event->isMouseEvent())
+        return;
+
+    Frame* frame = event->target()->toNode()->document().frame();
+    MouseEvent* mouseEvent = toMouseEvent(event);
+    IntPoint mousePoint = IntPoint(mouseEvent->clientX(), mouseEvent->clientY());
+
+    m_frontendPage->contextMenuController().showContextMenuAt(frame, mousePoint);
+#else
+    UNUSED_PARAM(event);
+#endif
 }
 #endif
 

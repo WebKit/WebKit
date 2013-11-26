@@ -80,6 +80,7 @@ public:
     // Called from [Custom] implementations.
     void showContextMenu(Event*, const Vector<ContextMenuItem>& items);
     void sendMessageToBackend(const String& message);
+    void dispatchEventAsContextMenuEvent(Event*);
 
     String loadResourceSynchronously(const String& url);
 

@@ -185,6 +185,9 @@ WebInspector.ContextMenu = function(event) {
 }
 
 WebInspector.ContextMenu.prototype = {
+
+    // Public
+
     nextId: function()
     {
         return this._id++;
@@ -192,15 +195,35 @@ WebInspector.ContextMenu.prototype = {
 
     show: function()
     {
+        console.assert(this._event instanceof MouseEvent);
+
         var menuObject = this._buildDescriptor();
 
         if (menuObject.length) {
             WebInspector._contextMenu = this;
-            InspectorFrontendHost.showContextMenu(this._event, menuObject);
+            if (this._event.type !== "contextmenu" && typeof InspectorFrontendHost.dispatchEventAsContextMenuEvent === "function") {
+                this._menuObject = menuObject;
+                this._event.target.addEventListener("contextmenu", this, true);
+                InspectorFrontendHost.dispatchEventAsContextMenuEvent(this._event);
+            } else
+                InspectorFrontendHost.showContextMenu(this._event, menuObject);
         }
         if (this._event)
             this._event.stopImmediatePropagation();
     },
+
+    // Protected
+
+    handleEvent: function(event)
+    {
+        this._event.target.removeEventListener("contextmenu", this, true);
+        InspectorFrontendHost.showContextMenu(event, this._menuObject);
+        delete this._menuObject;
+
+        event.stopImmediatePropagation();
+    },
+
+    // Private
 
     _setHandler: function(id, handler)
     {

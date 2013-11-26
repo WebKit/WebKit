@@ -1,3 +1,24 @@
+2013-11-26  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: Allow showing a context menu on all mouse events.
+        https://bugs.webkit.org/show_bug.cgi?id=124747
+
+        Reviewed by Joseph Pecoraro.
+
+        Automatically dispatch a contextmenu event in case WebInspector.ContextMenu.prototype.show()
+        is called outside of a contextmenu event handler and would therefore not show the expected
+        context menu (except in the Remote Web Inspector where this already works). 
+
+        * UserInterface/ContextMenu.js:
+        (WebInspector.ContextMenu.prototype.show):
+        Check whether the event is a contextmenu event, and if not, add an event listener for a manually
+        dispatched contextmenu event such that we may then call InspectorFrontendHost.showContextMenu()
+        in a contextmenu event handler.
+
+        (WebInspector.ContextMenu.prototype.handleEvent):
+        Call InspectorFrontendHost.showContextMenu() now that we received the manually dispatched
+        contextmenu event.
+
 2013-11-25  Alexandru Chiculita  <achicu@adobe.com>
 
         Web Inspector: [CSS Regions] A page with many flows should collapse the resources tree
