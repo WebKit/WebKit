@@ -36,7 +36,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "AudioDestinationConsumer.h"
 #include "MediaConstraints.h"
 #include "MediaStreamSourceCapabilities.h"
 #include <wtf/RefCounted.h>

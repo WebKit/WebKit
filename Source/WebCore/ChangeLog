@@ -1,3 +1,15 @@
+2013-11-26  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        Remove unnecessary webaudio include from MediaStreamSource header
+        https://bugs.webkit.org/show_bug.cgi?id=124897
+
+        Reviewed by Eric Carlson.
+
+        AudioDestinationConsumer.h is included but not used anywhere in
+        MediaStreamSource implementation.
+
+        * platform/mediastream/MediaStreamSource.h:
+
 2013-11-26  Andreas Kling  <akling@apple.com>
 
         Avoid unnecessary copy-on-write in FillLayer style application.
