@@ -1,5 +1,15 @@
 2013-11-26  Andreas Kling  <akling@apple.com>
 
+        Use child iterator to find operators in RenderMathMLRow::layout().
+        <https://webkit.org/b/124108>
+
+        Replace manual children walk with childrenOfType<RenderMathMLBlock>.
+        Minor update to fix build.
+
+        Reviewed by Martin Robinson.
+
+2013-11-26  Andreas Kling  <akling@apple.com>
+
         RenderObject: Inline isBody() and isHR().
         <https://webkit.org/b/124901>
 

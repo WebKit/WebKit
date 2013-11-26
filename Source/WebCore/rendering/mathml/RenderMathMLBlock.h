@@ -74,6 +74,7 @@ private:
     bool m_ignoreInAccessibilityTree;
 };
 
+template<> inline bool isRendererOfType<const RenderMathMLBlock>(const RenderObject& renderer) { return renderer.isRenderMathMLBlock(); }
 RENDER_OBJECT_TYPE_CASTS(RenderMathMLBlock, isRenderMathMLBlock())
 
 class RenderMathMLTable FINAL : public RenderTable {
