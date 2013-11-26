@@ -2085,7 +2085,7 @@ public:
                 || primitiveValue->getValueID() == CSSValueBorderBox
                 || primitiveValue->getValueID() == CSSValuePaddingBox
                 || primitiveValue->getValueID() == CSSValueMarginBox)
-                setValue(styleResolver->style(), ShapeValue::createBoxValue(primitiveValue->getValueID()));
+                setValue(styleResolver->style(), ShapeValue::createBoxValue(boxForValue(primitiveValue)));
             else if (primitiveValue->getValueID() == CSSValueOutsideShape)
                 setValue(styleResolver->style(), ShapeValue::createOutsideValue());
             else if (primitiveValue->isShape()) {

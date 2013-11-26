@@ -25,10 +25,16 @@ body {
     -webkit-writing-mode: vertical-rl;
 }
 .rectangle {
-    -webkit-shape-outside: rectangle(50px, 50px, 100px, 50px);
+    -webkit-shape-outside: rectangle(50px, 50px, 100px, 50px) content-box;
+}
+.rectangle.border-box {
+    -webkit-shape-outside: rectangle(50px, 50px, 100px, 50px) border-box;
 }
 .polygon {
-    -webkit-shape-outside: polygon(50px 50px, 100px 50px, 100px 100px, 50px 100px);
+    -webkit-shape-outside: polygon(50px 50px, 100px 50px, 100px 100px, 50px 100px) content-box;
+}
+.polygon.border-box {
+    -webkit-shape-outside: polygon(50px 50px, 100px 50px, 100px 100px, 50px 100px) border-box;
 }
 .content-box {
     -webkit-shape-outside: content-box;

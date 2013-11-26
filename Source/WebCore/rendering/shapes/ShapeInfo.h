@@ -73,26 +73,25 @@ public:
 
     void setShapeSize(LayoutUnit logicalWidth, LayoutUnit logicalHeight)
     {
-        if (shapeValue()->type() == ShapeValue::Box) {
-            switch (shapeValue()->box()) {
-            case CSSValueMarginBox:
-                logicalHeight += m_renderer.marginLogicalHeight();
-                logicalWidth += m_renderer.marginLogicalWidth();
-                break;
-            case CSSValueBorderBox:
-                break;
-            case CSSValuePaddingBox:
-                logicalHeight -= m_renderer.borderLogicalHeight();
-                logicalWidth -= m_renderer.borderLogicalWidth();
-                break;
-            default:
-                logicalHeight -= m_renderer.borderAndPaddingLogicalHeight();
-                logicalWidth -= m_renderer.borderAndPaddingLogicalWidth();
-                break;
-            }
-        } else if (m_renderer.style().boxSizing() == CONTENT_BOX) {
+        BasicShape::ReferenceBox box = resolvedBox();
+        switch (box) {
+        case BasicShape::MarginBox:
+            logicalHeight += m_renderer.marginLogicalHeight();
+            logicalWidth += m_renderer.marginLogicalWidth();
+            break;
+        case BasicShape::BorderBox:
+            break;
+        case BasicShape::PaddingBox:
+            logicalHeight -= m_renderer.borderLogicalHeight();
+            logicalWidth -= m_renderer.borderLogicalWidth();
+            break;
+        case BasicShape::ContentBox:
             logicalHeight -= m_renderer.borderAndPaddingLogicalHeight();
             logicalWidth -= m_renderer.borderAndPaddingLogicalWidth();
+            break;
+        case BasicShape::None:
+            ASSERT_NOT_REACHED();
+            break;
         }
 
         LayoutSize newLogicalSize(logicalWidth, logicalHeight);
@@ -161,34 +160,39 @@ protected:
     {
     }
 
+    virtual BasicShape::ReferenceBox resolvedBox() const = 0;
     virtual LayoutRect computedShapeLogicalBoundingBox() const = 0;
     virtual ShapeValue* shapeValue() const = 0;
     virtual void getIntervals(LayoutUnit, LayoutUnit, SegmentList&) const = 0;
 
     LayoutUnit logicalTopOffset() const
     {
-        if (shapeValue()->type() == ShapeValue::Box) {
-            switch (shapeValue()->box()) {
-            case CSSValueMarginBox: return -m_renderer.marginBefore();
-            case CSSValueBorderBox: return LayoutUnit();
-            case CSSValuePaddingBox: return m_renderer.borderBefore();
-            default: return m_renderer.borderAndPaddingBefore();
-            }
+        BasicShape::ReferenceBox box = resolvedBox();
+        switch (box) {
+        case BasicShape::MarginBox: return -m_renderer.marginBefore();
+        case BasicShape::BorderBox: return LayoutUnit();
+        case BasicShape::PaddingBox: return m_renderer.borderBefore();
+        case BasicShape::ContentBox: return m_renderer.borderAndPaddingBefore();
+        case BasicShape::None: break;
         }
-        return m_renderer.style().boxSizing() == CONTENT_BOX ? m_renderer.borderAndPaddingBefore() : LayoutUnit();
+        ASSERT_NOT_REACHED();
+        return LayoutUnit();
     }
 
     LayoutUnit logicalLeftOffset() const
     {
-        if (shapeValue()->type() == ShapeValue::Box) {
-            switch (shapeValue()->box()) {
-            case CSSValueMarginBox: return -m_renderer.marginStart();
-            case CSSValueBorderBox: return LayoutUnit();
-            case CSSValuePaddingBox: return m_renderer.borderStart();
-            default: return m_renderer.borderAndPaddingStart();
-            }
+        if (m_renderer.isRenderRegion())
+            return LayoutUnit();
+        BasicShape::ReferenceBox box = resolvedBox();
+        switch (box) {
+        case BasicShape::MarginBox: return -m_renderer.marginStart();
+        case BasicShape::BorderBox: return LayoutUnit();
+        case BasicShape::PaddingBox: return m_renderer.borderStart();
+        case BasicShape::ContentBox: return m_renderer.borderAndPaddingStart();
+        case BasicShape::None: break;
         }
-        return (m_renderer.style().boxSizing() == CONTENT_BOX && !m_renderer.isRenderRegion()) ? m_renderer.borderAndPaddingStart() : LayoutUnit();
+        ASSERT_NOT_REACHED();
+        return LayoutUnit();
     }
 
     LayoutUnit m_shapeLineTop;

@@ -4,13 +4,12 @@
 <style>
     #rectangles div {
         width: 800px;
-        height: 40px;
+        height: 0px;
         line-height: 20px;
         margin-top: 50px;
-        border: solid green;
-        box-sizing: border-box;
+        border-top: 40px solid green;
     }
-    #rectangles p { margin-top: 34px; }
+    #rectangles p { margin-top: 0; }
 </style>
 </head>
 <body>
@@ -25,7 +24,7 @@
         <p>This text should be pushed down below the green rectangle. (There is a circle(0px, 0px, 0px) shape-inside CSS property on the green rectangle.)</p>
     </div>
     <div>
-        <p>This text should be pushed down below the green rectangle. (There is an ellipseX0(0px, 0px, 0px, 1em) shape-inside CSS property on the green rectangle.)</p>
+        <p>This text should be pushed down below the green rectangle. (There is an ellipse(0px, 0px, 0px, 1em) shape-inside CSS property on the green rectangle.)</p>
     </div>
     <div>
         <p>This text should be pushed down below the green rectangle. (There is an ellipse(0px, 0px, 1em, 0px) shape-inside CSS property on the green rectangle.)</p>

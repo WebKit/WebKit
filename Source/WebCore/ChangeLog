@@ -1,3 +1,38 @@
+2013-11-26  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Layout using [<box> || <shape>] value
+        https://bugs.webkit.org/show_bug.cgi?id=124428
+
+        Reviewed by David Hyatt.
+
+        When a box value is supplied, use it to size and position the shape. Otherwise,
+        use a default value (content-box for shape-inside, margin-box for shape-outside).
+        This patch extends the sizing and positioning code used for the box patch (Bug 124227)
+        to also apply to shapes. With this patch, we also no longer use the box-sizing
+        property to size and position shapes.
+
+        Tests: fast/shapes/shape-outside-floats/shape-outside-shape-boxes-001.html
+               fast/shapes/shape-outside-floats/shape-outside-shape-boxes-002.html
+               fast/shapes/shape-outside-floats/shape-outside-shape-boxes-003.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue): Adjust for ShapeValues storing
+        BasicShape::ReferenceBox as their box value, rather than a CSSValueID.
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyShape::applyValue): Ditto.
+        * rendering/shapes/ShapeInfo.h:
+        (WebCore::ShapeInfo::setShapeSize): Adjust for BasicShapes with reference boxes
+        as well as plain box values. Also, remove old box-sizing code.
+        (WebCore::ShapeInfo::logicalTopOffset): Ditto.
+        (WebCore::ShapeInfo::logicalLeftOffset): Ditto.
+        * rendering/shapes/ShapeInsideInfo.h:
+        * rendering/shapes/ShapeOutsideInfo.h:
+        * rendering/style/ShapeValue.h:
+        (WebCore::ShapeValue::createBoxValue): Adjust for boxes being stored as
+        BasicShape::ReferenceBoxes.
+        (WebCore::ShapeValue::box): Ditto.
+        (WebCore::ShapeValue::ShapeValue): Ditto.
+
 2013-11-26  Brian J. Burg  <burg@cs.washington.edu>
 
         ImageBuffer::create should return a std::unique_ptr instead of OwnPtr.

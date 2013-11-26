@@ -1,3 +1,51 @@
+2013-11-26  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Layout using [<box> || <shape>] value
+        https://bugs.webkit.org/show_bug.cgi?id=124428
+
+        Reviewed by David Hyatt.
+
+        Adding tests to make sure that shapes properly size and position themselves across box values
+        and writing modes. Some shape-outside tests needed to be updated to explicitly size themselves
+        to content-box, as they were relying on that being the default value. Some shape-inside tests
+        needed to be adjusted as box-sizing no longer affects the shape size and position.
+
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-circle-001.html:
+        Explicitly size to content-box.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-001.html: Ditto.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-002.html: Ditto.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-003.html: Ditto.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-004.html: Ditto.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-010.html: Ditto.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-011.html: Ditto.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-012.html: Ditto.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-014.html: Ditto.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-015.html: Ditto.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-016.html: Ditto.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-017.html: Ditto.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-018.html: Ditto.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-margin-021.html: Ditto.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-001.html: Ditto.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-002.html: Ditto.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-003.html: Ditto.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-padding-004.html: Ditto.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-polygon-000.html: Ditto.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-polygon-001.html: Ditto.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-polygon-002.html: Ditto.
+        * csswg/contributors/adobe/submitted/shapes/shape-outside/shape-outside-floats-square-border-000.html: Ditto.
+        * fast/shapes/shape-inside/shape-inside-box-sizing-expected.html: Small test cleanup.
+        * fast/shapes/shape-inside/shape-inside-box-sizing.html: Modify shapes to provide their sizing box.
+        * fast/shapes/shape-inside/shape-inside-empty-expected.html: Small test cleanup.
+        * fast/shapes/shape-inside/shape-inside-empty.html: Modify shapes to provide their sizing box.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-different-writing-modes.html: Ditto.
+        * fast/shapes/shape-outside-floats/shape-outside-shape-boxes-001-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-shape-boxes-001.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-shape-boxes-002-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-shape-boxes-002.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-shape-boxes-003-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-shape-boxes-003.html: Added.
+        * inspector-protocol/model/highlight-shape-outside.html: Modify shapes to provide their sizing box.
+
 2013-11-26  Oliver Hunt  <oliver@apple.com>
 
         Crash in JSC::ASTBuilder::Expression JSC::Parser<JSC::Lexer<unsigned char> >::parseUnaryExpression<JSC::ASTBuilder>(JSC::ASTBuilder&)

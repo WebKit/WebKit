@@ -2901,7 +2901,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             if (!style->shapeInside())
                 return cssValuePool().createIdentifierValue(CSSValueAuto);
             if (style->shapeInside()->type() == ShapeValue::Box)
-                return cssValuePool().createIdentifierValue(style->shapeInside()->box());
+                return valueForBox(style->shapeInside()->box());
             if (style->shapeInside()->type() == ShapeValue::Outside)
                 return cssValuePool().createIdentifierValue(CSSValueOutsideShape);
             if (style->shapeInside()->type() == ShapeValue::Image) {
@@ -2915,7 +2915,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             if (!style->shapeOutside())
                 return cssValuePool().createIdentifierValue(CSSValueAuto);
             if (style->shapeOutside()->type() == ShapeValue::Box)
-                return cssValuePool().createIdentifierValue(style->shapeOutside()->box());
+                return valueForBox(style->shapeOutside()->box());
             if (style->shapeOutside()->type() == ShapeValue::Image) {
                 if (style->shapeOutside()->image())
                     return style->shapeOutside()->image()->cssValue();

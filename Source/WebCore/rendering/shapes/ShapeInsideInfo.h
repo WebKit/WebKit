@@ -106,6 +106,15 @@ public:
         return computedShape().lineOverlapsShapePaddingBounds(m_shapeLineTop, m_lineHeight);
     }
 
+protected:
+    virtual BasicShape::ReferenceBox resolvedBox() const OVERRIDE
+    {
+        if (shapeValue()->box() == BasicShape::None)
+            return BasicShape::ContentBox;
+
+        return shapeValue()->box();
+    }
+
 private:
     virtual LayoutRect computedShapeLogicalBoundingBox() const OVERRIDE { return computedShape().shapePaddingLogicalBoundingBox(); }
     virtual ShapeValue* shapeValue() const OVERRIDE;

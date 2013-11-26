@@ -32,10 +32,10 @@
         color: green;
     }
     .border-box.shape-inside {
-        -webkit-shape-inside: rectangle(10px, 20px, 30px, 40px);
+        -webkit-shape-inside: rectangle(10px, 20px, 30px, 40px) border-box;
     }
     .border-box.border.padding.shape-inside {
-        -webkit-shape-inside: rectangle(15px, 30px, 30px, 40px);
+        -webkit-shape-inside: rectangle(15px, 30px, 30px, 40px) border-box;
     }
     .vertical-lr {
         -webkit-writing-mode: vertical-lr;
@@ -49,7 +49,7 @@
     </style>
 </head>
 <body>
-    <p>These tests check that shape inside correctly offsets from the correct box-sizing box. They require the Ahem font.</p>
+    <p>These tests check that shape inside offsets from the correct box. They require the Ahem font.</p>
     <p>The following tests check writing modes on a box with a 5 10 15 20px blue border, and 5 10 15 20px shape offsets.</p>
     <div class='border shape-inside horizontal-tb'>
     xxx xxx xxx xxx

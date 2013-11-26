@@ -60,6 +60,17 @@ public:
         return computedShape().lineOverlapsShapeMarginBounds(m_shapeLineTop, m_lineHeight);
     }
 
+protected:
+    virtual BasicShape::ReferenceBox resolvedBox() const OVERRIDE
+    {
+        if (shapeValue()->box() == BasicShape::None) {
+            if (shapeValue()->type() == ShapeValue::Image)
+                return BasicShape::ContentBox;
+            return BasicShape::MarginBox;
+        }
+        return shapeValue()->box();
+    }
+
 private:
     virtual LayoutRect computedShapeLogicalBoundingBox() const OVERRIDE { return computedShape().shapeMarginLogicalBoundingBox(); }
     virtual ShapeValue* shapeValue() const OVERRIDE;
