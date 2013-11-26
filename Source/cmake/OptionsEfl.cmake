@@ -148,7 +148,6 @@ find_package(Edje ${EFL_REQUIRED_VERSION} REQUIRED ${EFL_CONFIG_MODE})
 find_package(Eet ${EFL_REQUIRED_VERSION} REQUIRED ${EFL_CONFIG_MODE})
 find_package(Eeze ${EFL_REQUIRED_VERSION} REQUIRED ${EFL_CONFIG_MODE})
 find_package(Efreet ${EFL_REQUIRED_VERSION} REQUIRED ${EFL_CONFIG_MODE})
-find_package(E_DBus 1.7 COMPONENTS EUKit)
 
 find_package(Freetype 2.4.2 REQUIRED)
 find_package(HarfBuzz 0.9.2 REQUIRED)
@@ -165,6 +164,7 @@ endif ()
 
 if (ENABLE_BATTERY_STATUS)
     find_package(DBus REQUIRED)
+    find_package(E_DBus 1.7 COMPONENTS EUKit)
 endif ()
 
 if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
