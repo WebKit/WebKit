@@ -1,3 +1,13 @@
+2013-11-26  Andreas Kling  <akling@apple.com>
+
+        RenderObject: Inline isBody() and isHR().
+        <https://webkit.org/b/124901>
+
+        Together these account for ~0.3% of samples on HTML5-8266.
+        Almost all of it is call overhead.
+
+        Reviewed by Anders Carlsson.
+
 2013-11-26  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Layout using [<box> || <shape>] value

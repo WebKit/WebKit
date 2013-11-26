@@ -368,8 +368,8 @@ public:
     virtual bool isRenderScrollbarPart() const { return false; }
 
     bool isRoot() const { return document().documentElement() == &m_node; }
-    bool isBody() const;
-    bool isHR() const;
+    bool isBody() const { return node() && node()->hasTagName(HTMLNames::bodyTag); }
+    bool isHR() const { return node() && node()->hasTagName(HTMLNames::hrTag); }
     bool isLegend() const;
 
     bool isHTMLMarquee() const;

@@ -142,16 +142,6 @@ bool RenderObject::isDescendantOf(const RenderObject* obj) const
     return false;
 }
 
-bool RenderObject::isBody() const
-{
-    return node() && node()->hasTagName(bodyTag);
-}
-
-bool RenderObject::isHR() const
-{
-    return node() && node()->hasTagName(hrTag);
-}
-
 bool RenderObject::isLegend() const
 {
     return node() && node()->hasTagName(legendTag);
