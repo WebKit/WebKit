@@ -1,3 +1,13 @@
+2013-11-26  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed ATK gardening
+
+        Rebaseline accessibility tests after r159747.
+
+        * platform/efl-wk1/accessibility/table-detection-expected.txt:
+        * platform/efl-wk2/accessibility/table-detection-expected.txt:
+        * platform/gtk/accessibility/table-detection-expected.txt:
+
 2013-11-25  Dean Jackson  <dino@apple.com>
 
         RenderTableSection Blink merge asserting

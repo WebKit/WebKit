@@ -5,7 +5,7 @@ AXRole: AXTable
 AXParent: AXWebArea
 AXChildren: 4
 AXPosition: { 0.000000, 0.000000 }
-AXSize: { 62.000000, 49.000000 }
+AXSize: { 62.000000, 45.000000 }
 AXTitle: 
 AXDescription: 
 AXFocusable: 0
