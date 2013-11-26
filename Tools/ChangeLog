@@ -1,3 +1,30 @@
+2013-11-25  Andres Gomez  <agomez@igalia.com>
+
+        [GTK] Search functionality in MiniBrowser provides feedback on search fail
+        https://bugs.webkit.org/show_bug.cgi?id=122681
+
+        Reviewed by Mario Sanchez Prada.
+
+        When using the search functionality in MiniBrowser, if the search
+        fails, the entry background color gets red to report the user
+        about the failing condition. When the entry is cleaned or the
+        search is again succesful the background turns back to its
+        original color.
+
+        * MiniBrowser/gtk/BrowserSearchBar.c:
+        (setFailedStyleForEntry): Added.
+        (doSearch): Sets the entry's background to its original style if
+        there is no text to search.
+        (findControllerFailedToFindTextCallback): Added.
+        (findControllerFoundTextCallback): Added.
+        (browser_search_bar_init): Creates and adds a new CSS provider to
+        the text entry so we can change its style based on the success
+        condition of the search.
+        (browserSearchBarFinalize): Frees the new CSS provider.
+        (browser_search_bar_new): Connects the two new handlers to the
+        "failed-to-find-text" and "found-text" signals emitted by the
+        WebKitFindController.
+
 2013-11-25  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Put most of the Cocoa API behind WK_API_ENABLED guards

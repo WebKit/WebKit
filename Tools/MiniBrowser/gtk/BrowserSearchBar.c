@@ -26,11 +26,14 @@
 #include "BrowserSearchBar.h"
 
 
+static const char *searchEntryFailedStyle = "GtkEntry#searchEntry {background-color: #ff6666;}";
+
 struct _BrowserSearchBar {
     GtkToolbar parent;
 
     WebKitWebView *webView;
     GtkWidget *entry;
+    GtkCssProvider *cssProvider;
     GtkWidget *prevButton;
     GtkWidget *nextButton;
     GtkWidget *optionsMenu;
@@ -41,6 +44,11 @@ struct _BrowserSearchBar {
 
 G_DEFINE_TYPE(BrowserSearchBar, browser_search_bar, GTK_TYPE_TOOLBAR)
 
+static void setFailedStyleForEntry(BrowserSearchBar *searchBar, gboolean failedSearch)
+{
+    gtk_css_provider_load_from_data(searchBar->cssProvider, failedSearch ? searchEntryFailedStyle : "", -1, NULL);
+}
+
 static void doSearch(BrowserSearchBar *searchBar)
 {
     GtkEntry *entry = GTK_ENTRY(searchBar->entry);
@@ -48,6 +56,7 @@ static void doSearch(BrowserSearchBar *searchBar)
     if (!gtk_entry_get_text_length(entry)) {
         webkit_find_controller_search_finish(webkit_web_view_get_find_controller(searchBar->webView));
         gtk_entry_set_icon_from_stock(entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+        setFailedStyleForEntry(searchBar, FALSE);
         return;
     }
 
@@ -120,6 +129,16 @@ static void searchMenuCheckButtonToggledCallback(BrowserSearchBar *searchBar)
     doSearch(searchBar);
 }
 
+static void findControllerFailedToFindTextCallback(BrowserSearchBar *searchBar)
+{
+    setFailedStyleForEntry(searchBar, TRUE);
+}
+
+static void findControllerFoundTextCallback(BrowserSearchBar *searchBar)
+{
+    setFailedStyleForEntry(searchBar, FALSE);
+}
+
 static void browser_search_bar_init(BrowserSearchBar *searchBar)
 {
     gtk_widget_set_hexpand(GTK_WIDGET(searchBar), TRUE);
@@ -139,6 +158,9 @@ static void browser_search_bar_init(BrowserSearchBar *searchBar)
     gtk_entry_set_placeholder_text(GTK_ENTRY(searchBar->entry), "Search");
     gtk_entry_set_icon_from_stock(GTK_ENTRY(searchBar->entry), GTK_ENTRY_ICON_PRIMARY, GTK_STOCK_FIND);
     gtk_box_pack_start(hBox, searchBar->entry, TRUE, TRUE, 0);
+
+    searchBar->cssProvider = gtk_css_provider_new();
+    gtk_style_context_add_provider(gtk_widget_get_style_context(searchBar->entry), GTK_STYLE_PROVIDER(searchBar->cssProvider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
     GtkBox *hBoxButtons = GTK_BOX(gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0));
     gtk_box_pack_start(hBox, GTK_WIDGET(hBoxButtons), TRUE, TRUE, 0);
@@ -202,6 +224,11 @@ static void browserSearchBarFinalize(GObject *gObject)
         searchBar->webView = NULL;
     }
 
+    if (searchBar->cssProvider) {
+        g_object_unref(searchBar->cssProvider);
+        searchBar->cssProvider = NULL;
+    }
+
     if (searchBar->optionsMenu) {
         g_object_unref(searchBar->optionsMenu);
         searchBar->optionsMenu = NULL;
@@ -223,6 +250,10 @@ GtkWidget *browser_search_bar_new(WebKitWebView *webView)
 
     GtkWidget *searchBar = GTK_WIDGET(g_object_new(BROWSER_TYPE_SEARCH_BAR, NULL));
     BROWSER_SEARCH_BAR(searchBar)->webView = g_object_ref(webView);
+
+    WebKitFindController *controller = webkit_web_view_get_find_controller(webView);
+    g_signal_connect_swapped(controller, "failed-to-find-text", G_CALLBACK(findControllerFailedToFindTextCallback), searchBar);
+    g_signal_connect_swapped(controller, "found-text", G_CALLBACK(findControllerFoundTextCallback), searchBar);
 
     return searchBar;
 }
