@@ -701,7 +701,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     }
     
     GraphicsContextStateSaver backgroundClipStateSaver(*context, false);
-    OwnPtr<ImageBuffer> maskImage;
+    std::unique_ptr<ImageBuffer> maskImage;
     IntRect maskRect;
 
     if (bgLayer->clip() == PaddingFillBox || bgLayer->clip() == ContentFillBox) {

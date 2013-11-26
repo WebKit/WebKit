@@ -1061,7 +1061,7 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FloatPoint& 
 
             FloatRect underlineRect = boundingBoxForAllActiveDecorations(*this, context, decoration, textDecorationThickness, width, doubleOffset, decorationStyle, localOrigin, lineStyle, isPrinting, baseline);
             IntRect enclosingDeviceRect = enclosingIntRect(underlineRect);
-            OwnPtr<ImageBuffer> imageBuffer = context.createCompatibleBuffer(enclosingDeviceRect.size());
+            std::unique_ptr<ImageBuffer> imageBuffer = context.createCompatibleBuffer(enclosingDeviceRect.size());
 
             if (imageBuffer.get()) {
                 GraphicsContext& maskContext = *imageBuffer->context();

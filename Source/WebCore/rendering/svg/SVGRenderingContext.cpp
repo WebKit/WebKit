@@ -223,7 +223,7 @@ void SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(con
     absoluteTransform.scale(deviceScaleFactor);
 }
 
-bool SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const AffineTransform& absoluteTransform, OwnPtr<ImageBuffer>& imageBuffer, ColorSpace colorSpace, RenderingMode renderingMode)
+bool SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const AffineTransform& absoluteTransform, std::unique_ptr<ImageBuffer>& imageBuffer, ColorSpace colorSpace, RenderingMode renderingMode)
 {
     IntRect paintRect = calculateImageBufferRect(targetRect, absoluteTransform);
     // Don't create empty ImageBuffers.
@@ -231,7 +231,7 @@ bool SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const A
         return false;
 
     IntSize clampedSize = clampedAbsoluteSize(paintRect.size());
-    OwnPtr<ImageBuffer> image = ImageBuffer::create(clampedSize, 1, colorSpace, renderingMode);
+    std::unique_ptr<ImageBuffer> image = ImageBuffer::create(clampedSize, 1, colorSpace, renderingMode);
     if (!image)
         return false;
 
@@ -243,11 +243,11 @@ bool SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const A
     imageContext->translate(-paintRect.x(), -paintRect.y());
     imageContext->concatCTM(absoluteTransform);
 
-    imageBuffer = image.release();
+    imageBuffer = std::move(image);
     return true;
 }
 
-bool SVGRenderingContext::createImageBufferForPattern(const FloatRect& absoluteTargetRect, const FloatRect& clampedAbsoluteTargetRect, OwnPtr<ImageBuffer>& imageBuffer, ColorSpace colorSpace, RenderingMode renderingMode)
+bool SVGRenderingContext::createImageBufferForPattern(const FloatRect& absoluteTargetRect, const FloatRect& clampedAbsoluteTargetRect, std::unique_ptr<ImageBuffer>& imageBuffer, ColorSpace colorSpace, RenderingMode renderingMode)
 {
     IntSize imageSize(roundedIntSize(clampedAbsoluteTargetRect.size()));
     IntSize unclampedImageSize(roundedIntSize(absoluteTargetRect.size()));
@@ -256,7 +256,7 @@ bool SVGRenderingContext::createImageBufferForPattern(const FloatRect& absoluteT
     if (imageSize.isEmpty())
         return false;
 
-    OwnPtr<ImageBuffer> image = ImageBuffer::create(imageSize, 1, colorSpace, renderingMode);
+    std::unique_ptr<ImageBuffer> image = ImageBuffer::create(imageSize, 1, colorSpace, renderingMode);
     if (!image)
         return false;
 
@@ -266,7 +266,7 @@ bool SVGRenderingContext::createImageBufferForPattern(const FloatRect& absoluteT
     // Compensate rounding effects, as the absolute target rect is using floating-point numbers and the image buffer size is integer.
     imageContext->scale(FloatSize(unclampedImageSize.width() / absoluteTargetRect.width(), unclampedImageSize.height() / absoluteTargetRect.height()));
 
-    imageBuffer = image.release();
+    imageBuffer = std::move(image);
     return true;
 }
 
@@ -287,7 +287,7 @@ void SVGRenderingContext::renderSubtreeToImageBuffer(ImageBuffer* image, RenderE
     contentTransformation = savedContentTransformation;
 }
 
-void SVGRenderingContext::clipToImageBuffer(GraphicsContext* context, const AffineTransform& absoluteTransform, const FloatRect& targetRect, OwnPtr<ImageBuffer>& imageBuffer, bool safeToClear)
+void SVGRenderingContext::clipToImageBuffer(GraphicsContext* context, const AffineTransform& absoluteTransform, const FloatRect& targetRect, std::unique_ptr<ImageBuffer>& imageBuffer, bool safeToClear)
 {
     ASSERT(context);
     ASSERT(imageBuffer);
@@ -303,7 +303,7 @@ void SVGRenderingContext::clipToImageBuffer(GraphicsContext* context, const Affi
     // When nesting resources, with objectBoundingBox as content unit types, there's no use in caching the
     // resulting image buffer as the parent resource already caches the result.
     if (safeToClear && !currentContentTransformation().isIdentity())
-        imageBuffer.clear();
+        imageBuffer.reset();
 }
 
 FloatRect SVGRenderingContext::clampedAbsoluteTargetRect(const FloatRect& absoluteTargetRect)
@@ -326,7 +326,7 @@ void SVGRenderingContext::clear2DRotation(AffineTransform& transform)
     transform.recompose(decomposition);
 }
 
-bool SVGRenderingContext::bufferForeground(OwnPtr<ImageBuffer>& imageBuffer)
+bool SVGRenderingContext::bufferForeground(std::unique_ptr<ImageBuffer>& imageBuffer)
 {
     ASSERT(m_paintInfo);
     ASSERT(m_renderer->isSVGImage());
@@ -338,7 +338,7 @@ bool SVGRenderingContext::bufferForeground(OwnPtr<ImageBuffer>& imageBuffer)
         IntSize expandedBoundingBox = expandedIntSize(boundingBox.size());
         IntSize bufferSize(static_cast<int>(ceil(expandedBoundingBox.width() * transform.xScale())), static_cast<int>(ceil(expandedBoundingBox.height() * transform.yScale())));
         if (bufferSize != imageBuffer->internalSize())
-            imageBuffer.clear();
+            imageBuffer.reset();
     }
 
     // Create a new buffer and paint the foreground into it.

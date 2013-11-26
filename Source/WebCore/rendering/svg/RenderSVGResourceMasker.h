@@ -30,12 +30,11 @@
 #include "SVGUnitTypes.h"
 
 #include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
 struct MaskerData {
-    OwnPtr<ImageBuffer> maskImage;
+    std::unique_ptr<ImageBuffer> maskImage;
 };
 
 class RenderSVGResourceMasker FINAL : public RenderSVGResourceContainer {

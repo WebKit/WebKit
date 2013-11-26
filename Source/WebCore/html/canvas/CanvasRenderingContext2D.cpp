@@ -1544,7 +1544,7 @@ template<class T> IntRect CanvasRenderingContext2D::calculateCompositingBufferRe
     return bufferRect;
 }
 
-OwnPtr<ImageBuffer> CanvasRenderingContext2D::createCompositingBuffer(const IntRect& bufferRect)
+std::unique_ptr<ImageBuffer> CanvasRenderingContext2D::createCompositingBuffer(const IntRect& bufferRect)
 {
     RenderingMode renderMode = isAccelerated() ? Accelerated : Unaccelerated;
     return ImageBuffer::create(bufferRect.size(), 1, ColorSpaceDeviceRGB, renderMode);
@@ -1593,7 +1593,7 @@ template<class T> void  CanvasRenderingContext2D::fullCanvasCompositedDrawImage(
         return;
     }
 
-    OwnPtr<ImageBuffer> buffer = createCompositingBuffer(bufferRect);
+    std::unique_ptr<ImageBuffer> buffer = createCompositingBuffer(bufferRect);
     if (!buffer)
         return;
 
@@ -1623,7 +1623,7 @@ template<class T> void CanvasRenderingContext2D::fullCanvasCompositedFill(const 
         return;
     }
 
-    OwnPtr<ImageBuffer> buffer = createCompositingBuffer(bufferRect);
+    std::unique_ptr<ImageBuffer> buffer = createCompositingBuffer(bufferRect);
     if (!buffer)
         return;
 
@@ -2234,7 +2234,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     if (drawStyle.canvasGradient() || drawStyle.canvasPattern()) {
         IntRect maskRect = enclosingIntRect(textRect);
 
-        OwnPtr<ImageBuffer> maskImage = c->createCompatibleBuffer(maskRect.size());
+        std::unique_ptr<ImageBuffer> maskImage = c->createCompatibleBuffer(maskRect.size());
 
         GraphicsContext* maskImageContext = maskImage->context();
 

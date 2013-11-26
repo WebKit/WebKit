@@ -57,7 +57,7 @@ protected:
 
 private:
     RefPtr<Gradient> m_gradient;
-    OwnPtr<ImageBuffer> m_cachedImageBuffer;
+    std::unique_ptr<ImageBuffer> m_cachedImageBuffer;
     IntSize m_cachedAdjustedSize;
     unsigned m_cachedGeneratorHash;
 };

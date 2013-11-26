@@ -76,12 +76,12 @@ public:
     void prepareToRenderSVGContent(RenderElement&, PaintInfo&, NeedsGraphicsContextSave = DontSaveGraphicsContext);
     bool isRenderingPrepared() const { return m_renderingFlags & RenderingPrepared; }
 
-    static bool createImageBuffer(const FloatRect& paintRect, const AffineTransform& absoluteTransform, OwnPtr<ImageBuffer>&, ColorSpace, RenderingMode);
+    static bool createImageBuffer(const FloatRect& paintRect, const AffineTransform& absoluteTransform, std::unique_ptr<ImageBuffer>&, ColorSpace, RenderingMode);
     // Patterns need a different float-to-integer coordinate mapping.
-    static bool createImageBufferForPattern(const FloatRect& absoluteTargetRect, const FloatRect& clampedAbsoluteTargetRect, OwnPtr<ImageBuffer>&, ColorSpace, RenderingMode);
+    static bool createImageBufferForPattern(const FloatRect& absoluteTargetRect, const FloatRect& clampedAbsoluteTargetRect, std::unique_ptr<ImageBuffer>&, ColorSpace, RenderingMode);
 
     static void renderSubtreeToImageBuffer(ImageBuffer*, RenderElement&, const AffineTransform&);
-    static void clipToImageBuffer(GraphicsContext*, const AffineTransform& absoluteTransform, const FloatRect& targetRect, OwnPtr<ImageBuffer>&, bool safeToClear);
+    static void clipToImageBuffer(GraphicsContext*, const AffineTransform& absoluteTransform, const FloatRect& targetRect, std::unique_ptr<ImageBuffer>&, bool safeToClear);
 
     static float calculateScreenFontSizeScalingFactor(const RenderObject*);
     static void calculateTransformationToOutermostCoordinateSystem(const RenderObject*, AffineTransform& absoluteTransform);
@@ -95,7 +95,7 @@ public:
     }
 
     // Support for the buffered-rendering hint.
-    bool bufferForeground(OwnPtr<ImageBuffer>&);
+    bool bufferForeground(std::unique_ptr<ImageBuffer>&);
 
 private:
     // To properly revert partially successful initializtions in the destructor, we record all successful steps.

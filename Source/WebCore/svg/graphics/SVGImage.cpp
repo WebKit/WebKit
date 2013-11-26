@@ -170,7 +170,7 @@ PassNativeImagePtr SVGImage::nativeImageForCurrentFrame()
     if (!m_page)
         return 0;
 
-    OwnPtr<ImageBuffer> buffer = ImageBuffer::create(size(), 1);
+    std::unique_ptr<ImageBuffer> buffer = ImageBuffer::create(size(), 1);
     if (!buffer) // failed to allocate image
         return 0;
 
@@ -196,7 +196,7 @@ void SVGImage::drawPatternForContainer(GraphicsContext* context, const FloatSize
     FloatRect imageBufferSize = zoomedContainerRect;
     imageBufferSize.scale(imageBufferScale.width(), imageBufferScale.height());
 
-    OwnPtr<ImageBuffer> buffer = ImageBuffer::create(expandedIntSize(imageBufferSize.size()), 1);
+    std::unique_ptr<ImageBuffer> buffer = ImageBuffer::create(expandedIntSize(imageBufferSize.size()), 1);
     if (!buffer) // Failed to allocate buffer.
         return;
     drawForContainer(buffer->context(), containerSize, zoom, imageBufferSize, zoomedContainerRect, ColorSpaceDeviceRGB, CompositeSourceOver, BlendModeNormal);

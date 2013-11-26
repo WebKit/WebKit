@@ -186,7 +186,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderElement& renderer, c
             succeeded = drawContentIntoMaskImage(clipperData, objectBoundingBox);
 
         if (!succeeded)
-            clipperData->clipMaskImage.clear();
+            clipperData->clipMaskImage.reset();
     }
 
     if (!clipperData->clipMaskImage)

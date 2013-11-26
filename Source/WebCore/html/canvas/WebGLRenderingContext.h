@@ -471,7 +471,7 @@ private:
         ImageBuffer* imageBuffer(const IntSize& size);
     private:
         void bubbleToFront(int idx);
-        std::unique_ptr<OwnPtr<ImageBuffer>[]> m_buffers;
+        std::unique_ptr<std::unique_ptr<ImageBuffer>[]> m_buffers;
         int m_capacity;
     };
     LRUImageBufferCache m_generatedImageCache;

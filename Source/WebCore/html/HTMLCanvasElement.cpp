@@ -447,7 +447,7 @@ void HTMLCanvasElement::setSurfaceSize(const IntSize& size)
     m_size = size;
     m_hasCreatedImageBuffer = false;
     m_contextStateSaver.clear();
-    m_imageBuffer.clear();
+    m_imageBuffer.reset();
     clearCopiedImage();
 }
 

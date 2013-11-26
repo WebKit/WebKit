@@ -1022,7 +1022,7 @@ DragImageRef Frame::nodeImage(Node* node)
     paintingRect.setWidth(paintingRect.width() * deviceScaleFactor);
     paintingRect.setHeight(paintingRect.height() * deviceScaleFactor);
 
-    OwnPtr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size(), deviceScaleFactor, ColorSpaceDeviceRGB));
+    std::unique_ptr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size(), deviceScaleFactor, ColorSpaceDeviceRGB));
     if (!buffer)
         return nullptr;
     buffer->context()->translate(-paintingRect.x(), -paintingRect.y());
@@ -1056,7 +1056,7 @@ DragImageRef Frame::dragImageForSelection()
     paintingRect.setWidth(paintingRect.width() * deviceScaleFactor);
     paintingRect.setHeight(paintingRect.height() * deviceScaleFactor);
 
-    OwnPtr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size(), deviceScaleFactor, ColorSpaceDeviceRGB));
+    std::unique_ptr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size(), deviceScaleFactor, ColorSpaceDeviceRGB));
     if (!buffer)
         return 0;
     buffer->context()->translate(-paintingRect.x(), -paintingRect.y());

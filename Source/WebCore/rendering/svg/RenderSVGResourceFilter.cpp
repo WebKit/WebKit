@@ -213,7 +213,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     effectiveTransform.scale(scale.width(), scale.height());
     effectiveTransform.multiply(filterData->shearFreeAbsoluteTransform);
 
-    OwnPtr<ImageBuffer> sourceGraphic;
+    std::unique_ptr<ImageBuffer> sourceGraphic;
     RenderingMode renderingMode = renderer.frame().settings().acceleratedFiltersEnabled() ? Accelerated : Unaccelerated;
     if (!SVGRenderingContext::createImageBuffer(filterData->drawingRegion, effectiveTransform, sourceGraphic, ColorSpaceLinearRGB, renderingMode)) {
         ASSERT(!m_filter.contains(&renderer));
@@ -228,7 +228,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     GraphicsContext* sourceGraphicContext = sourceGraphic->context();
     ASSERT(sourceGraphicContext);
   
-    filterData->sourceGraphicBuffer = sourceGraphic.release();
+    filterData->sourceGraphicBuffer = std::move(sourceGraphic);
     filterData->savedContext = context;
 
     context = sourceGraphicContext;
@@ -282,7 +282,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
         // initial filtering process. We just take the stored filter result on a
         // second drawing.
         if (filterData->state != FilterData::Built)
-            filterData->filter->setSourceImage(filterData->sourceGraphicBuffer.release());
+            filterData->filter->setSourceImage(std::move(filterData->sourceGraphicBuffer));
 
         // Always true if filterData is just built (filterData->state == FilterData::Built).
         if (!lastEffect->hasResult()) {
@@ -304,7 +304,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
             context->concatCTM(filterData->shearFreeAbsoluteTransform);
         }
     }
-    filterData->sourceGraphicBuffer.clear();
+    filterData->sourceGraphicBuffer.reset();
 }
 
 FloatRect RenderSVGResourceFilter::resourceBoundingBox(const RenderObject& object)

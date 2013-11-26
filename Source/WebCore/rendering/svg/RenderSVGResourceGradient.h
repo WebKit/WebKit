@@ -74,7 +74,7 @@ private:
 
 #if USE(CG)
     GraphicsContext* m_savedContext;
-    OwnPtr<ImageBuffer> m_imageBuffer;
+    std::unique_ptr<ImageBuffer> m_imageBuffer;
 #endif
 };
 

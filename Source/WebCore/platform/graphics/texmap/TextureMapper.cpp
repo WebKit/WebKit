@@ -150,7 +150,7 @@ TextureMapper::~TextureMapper()
 
 void BitmapTexture::updateContents(TextureMapper* textureMapper, GraphicsLayer* sourceLayer, const IntRect& targetRect, const IntPoint& offset, UpdateContentsFlag updateContentsFlag)
 {
-    OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(targetRect.size());
+    std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(targetRect.size());
     GraphicsContext* context = imageBuffer->context();
     context->setImageInterpolationQuality(textureMapper->imageInterpolationQuality());
     context->setTextDrawingMode(textureMapper->textDrawingMode());

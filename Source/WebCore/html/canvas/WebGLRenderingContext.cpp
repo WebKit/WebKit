@@ -5931,7 +5931,7 @@ String WebGLRenderingContext::ensureNotNull(const String& text) const
 }
 
 WebGLRenderingContext::LRUImageBufferCache::LRUImageBufferCache(int capacity)
-    : m_buffers(std::make_unique<OwnPtr<ImageBuffer>[]>(capacity))
+    : m_buffers(std::make_unique<std::unique_ptr<ImageBuffer>[]>(capacity))
     , m_capacity(capacity)
 {
 }
@@ -5949,11 +5949,11 @@ ImageBuffer* WebGLRenderingContext::LRUImageBufferCache::imageBuffer(const IntSi
         return buf;
     }
 
-    OwnPtr<ImageBuffer> temp = ImageBuffer::create(size, 1);
+    std::unique_ptr<ImageBuffer> temp = ImageBuffer::create(size, 1);
     if (!temp)
         return 0;
     i = std::min(m_capacity - 1, i);
-    m_buffers[i] = temp.release();
+    m_buffers[i] = std::move(temp);
 
     ImageBuffer* buf = m_buffers[i].get();
     bubbleToFront(i);

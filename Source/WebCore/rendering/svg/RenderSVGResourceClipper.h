@@ -31,14 +31,13 @@
 #include "SVGUnitTypes.h"
 
 #include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
 struct ClipperData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    OwnPtr<ImageBuffer> clipMaskImage;
+    std::unique_ptr<ImageBuffer> clipMaskImage;
 };
 
 class RenderSVGResourceClipper FINAL : public RenderSVGResourceContainer {

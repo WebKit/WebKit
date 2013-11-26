@@ -110,7 +110,7 @@ bool ImageBuffer::copyToPlatformTexture(GraphicsContext3D&, Platform3DObject, GC
     return false;
 }
 
-PassOwnPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const IntSize& size, float resolutionScale, ColorSpace colorSpace, const GraphicsContext* context, bool)
+std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const IntSize& size, float resolutionScale, ColorSpace colorSpace, const GraphicsContext* context, bool)
 {
     return create(size, resolutionScale, colorSpace, context->isAcceleratedContext() ? Accelerated : Unaccelerated);
 }

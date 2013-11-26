@@ -1,3 +1,102 @@
+2013-11-26  Brian J. Burg  <burg@cs.washington.edu>
+
+        ImageBuffer::create should return a std::unique_ptr instead of OwnPtr.
+        https://bugs.webkit.org/show_bug.cgi?id=124822
+
+        Reviewed by Andreas Kling.
+
+        Replace all uses of OwnPtr<ImageBuffer> and PassOwnPtr<ImageBuffer> with
+        std::unique_ptr<ImageBuffer>. Replace calls to OwnPtr::clear() and
+        OwnPtr::release() with reset() and std::move(). Remove unnecessary includes.
+
+        No new tests. This is a mechanical refactoring.
+
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::image):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::setSurfaceSize):
+        * html/HTMLCanvasElement.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createCompositingBuffer):
+        (WebCore::CanvasRenderingContext2D::fullCanvasCompositedDrawImage):
+        (WebCore::CanvasRenderingContext2D::fullCanvasCompositedFill):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::LRUImageBufferCache::LRUImageBufferCache):
+        (WebCore::WebGLRenderingContext::LRUImageBufferCache::imageBuffer):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::createTextTrackRepresentationImage):
+        * page/Frame.cpp:
+        (WebCore::Frame::nodeImage):
+        (WebCore::Frame::dragImageForSelection):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::drawPattern):
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::CrossfadeGeneratedImage::drawPattern):
+        * platform/graphics/GradientImage.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::createCompatibleBuffer):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::createCompatibleBuffer):
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::create):
+        * platform/graphics/ShadowBlur.cpp:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::putByteArray):
+        * platform/graphics/cg/PDFDocumentImage.h:
+        * platform/graphics/filters/FETile.cpp:
+        (WebCore::FETile::platformApplySoftware):
+        * platform/graphics/filters/Filter.h:
+        (WebCore::Filter::setSourceImage):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::clearResult):
+        * platform/graphics/filters/FilterEffect.h:
+        * platform/graphics/texmap/TextureMapper.cpp:
+        (WebCore::BitmapTexture::updateContents):
+        * platform/graphics/texmap/TextureMapperImageBuffer.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDecoration):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintProgressBar):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createShape):
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::invalidateBufferedForeground):
+        * rendering/svg/RenderSVGImage.h:
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyClippingToContext):
+        * rendering/svg/RenderSVGResourceClipper.h:
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        * rendering/svg/RenderSVGResourceFilter.h:
+        * rendering/svg/RenderSVGResourceGradient.cpp: Remove method parameter wrapping/indentation.
+        (WebCore::createMaskAndSwapContextForTextGradient):
+        (WebCore::clipToTextMask):
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/svg/RenderSVGResourceGradient.h:
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applyResource):
+        * rendering/svg/RenderSVGResourceMasker.h:
+        * rendering/svg/RenderSVGResourcePattern.cpp: Remove method parameter wrapping/indentation.
+        (WebCore::RenderSVGResourcePattern::buildPattern):
+        (WebCore::RenderSVGResourcePattern::createTileImage):
+        * rendering/svg/RenderSVGResourcePattern.h: Remove method parameter wrapping/indentation.
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::createImageBuffer):
+        (WebCore::SVGRenderingContext::createImageBufferForPattern):
+        (WebCore::SVGRenderingContext::clipToImageBuffer):
+        (WebCore::SVGRenderingContext::bufferForeground):
+        * rendering/svg/SVGRenderingContext.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::nativeImageForCurrentFrame):
+        (WebCore::SVGImage::drawPatternForContainer):
+
 2013-11-26  Eric Carlson  <eric.carlson@apple.com>
 
         video.currentSrc should return empty when no resource is loaded

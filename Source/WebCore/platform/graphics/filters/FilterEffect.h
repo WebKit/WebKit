@@ -29,7 +29,6 @@
 
 #include <runtime/Uint8ClampedArray.h>
 
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -179,7 +178,7 @@ protected:
     void forceValidPreMultipliedPixels();
 
 private:
-    OwnPtr<ImageBuffer> m_imageBufferResult;
+    std::unique_ptr<ImageBuffer> m_imageBufferResult;
     RefPtr<Uint8ClampedArray> m_unmultipliedImageResult;
     RefPtr<Uint8ClampedArray> m_premultipliedImageResult;
     FilterEffectVector m_inputEffects;

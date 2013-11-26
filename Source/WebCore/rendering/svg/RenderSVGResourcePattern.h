@@ -64,9 +64,7 @@ private:
 
     bool buildTileImageTransform(RenderObject*, const PatternAttributes&, const SVGPatternElement&, FloatRect& patternBoundaries, AffineTransform& tileImageTransform) const;
 
-    PassOwnPtr<ImageBuffer> createTileImage(const PatternAttributes&, const FloatRect& tileBoundaries,
-                                            const FloatRect& absoluteTileBoundaries, const AffineTransform& tileImageTransform,
-                                            FloatRect& clampedAbsoluteTileBoundaries) const;
+    std::unique_ptr<ImageBuffer> createTileImage(const PatternAttributes&, const FloatRect& tileBoundaries, const FloatRect& absoluteTileBoundaries, const AffineTransform& tileImageTransform, FloatRect& clampedAbsoluteTileBoundaries) const;
 
     PatternData* buildPattern(RenderObject*, unsigned short resourceMode);
 

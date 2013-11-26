@@ -58,10 +58,7 @@ void RenderSVGResourceGradient::removeClientFromCache(RenderObject* client, bool
 }
 
 #if USE(CG)
-static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& context,
-                                                           GraphicsContext*& savedContext,
-                                                           OwnPtr<ImageBuffer>& imageBuffer,
-                                                           RenderObject* object)
+static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& context, GraphicsContext*& savedContext, std::unique_ptr<ImageBuffer>& imageBuffer, RenderObject* object)
 {
     RenderObject* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(object);
     ASSERT(textRootBlock);
@@ -70,7 +67,7 @@ static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& con
     SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(textRootBlock, absoluteTransform);
 
     FloatRect repaintRect = textRootBlock->repaintRectInLocalCoordinates();
-    OwnPtr<ImageBuffer> maskImage;
+    std::unique_ptr<ImageBuffer> maskImage;
     if (!SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, maskImage, ColorSpaceDeviceRGB, Unaccelerated))
         return false;
 
@@ -79,16 +76,11 @@ static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& con
     ASSERT(maskImage);
     savedContext = context;
     context = maskImageContext;
-    imageBuffer = maskImage.release();
+    imageBuffer = std::move(maskImage);
     return true;
 }
 
-static inline AffineTransform clipToTextMask(GraphicsContext* context,
-                                             OwnPtr<ImageBuffer>& imageBuffer,
-                                             FloatRect& targetRect,
-                                             RenderObject* object,
-                                             bool boundingBoxMode,
-                                             const AffineTransform& gradientTransform)
+static inline AffineTransform clipToTextMask(GraphicsContext* context, std::unique_ptr<ImageBuffer>& imageBuffer, FloatRect& targetRect, RenderObject* object, bool boundingBoxMode, const AffineTransform& gradientTransform)
 {
     RenderObject* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(object);
     ASSERT(textRootBlock);
@@ -225,7 +217,7 @@ void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, Graph
             context->setFillGradient(gradientData->gradient);
 
             context->fillRect(targetRect);
-            m_imageBuffer.clear();
+            m_imageBuffer.reset();
         }
 #else
         UNUSED_PARAM(renderer);

@@ -1415,7 +1415,7 @@ PassRefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresen
 
     IntRect paintingRect = IntRect(IntPoint(), layer->size());
 
-    OwnPtr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size(), deviceScaleFactor, ColorSpaceDeviceRGB));
+    std::unique_ptr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size(), deviceScaleFactor, ColorSpaceDeviceRGB));
     if (!buffer)
         return nullptr;
 

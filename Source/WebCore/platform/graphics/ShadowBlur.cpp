@@ -141,7 +141,7 @@ private:
         m_lastRadius = FloatSize();
     }
 
-    OwnPtr<ImageBuffer> m_imageBuffer;
+    std::unique_ptr<ImageBuffer> m_imageBuffer;
     Timer<ScratchBuffer> m_purgeTimer;
     
     FloatRect m_lastInsetBounds;

@@ -113,13 +113,13 @@ PassRefPtr<Image> CSSFilterImageValue::image(RenderElement* renderer, const IntS
         return Image::nullImage();
 
     // Transform Image into ImageBuffer.
-    OwnPtr<ImageBuffer> texture = ImageBuffer::create(size);
+    std::unique_ptr<ImageBuffer> texture = ImageBuffer::create(size);
     if (!texture)
         return Image::nullImage();
     texture->context()->drawImage(image, ColorSpaceDeviceRGB, IntPoint());
 
     RefPtr<FilterEffectRenderer> filterRenderer = FilterEffectRenderer::create();
-    filterRenderer->setSourceImage(texture.release());
+    filterRenderer->setSourceImage(std::move(texture));
     filterRenderer->setSourceImageRect(FloatRect(FloatPoint(), size));
     filterRenderer->setFilterRegion(FloatRect(FloatPoint(), size));
     if (!filterRenderer->build(renderer, m_filterOperations, FilterFunction))

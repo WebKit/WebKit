@@ -225,7 +225,7 @@ PassOwnPtr<Shape> Shape::createShape(const StyleImage* styleImage, float thresho
 
     OwnPtr<RasterShapeIntervals> intervals = adoptPtr(new RasterShapeIntervals(imageSize.height()));
 
-    OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(imageSize);
+    std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(imageSize);
     if (imageBuffer) {
         GraphicsContext* graphicsContext = imageBuffer->context();
         graphicsContext->drawImage(image, ColorSpaceDeviceRGB, IntPoint());

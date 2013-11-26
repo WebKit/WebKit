@@ -90,7 +90,7 @@ private:
     FloatRect m_repaintBoundingBoxExcludingShadow;
     OwnPtr<RenderImageResource> m_imageResource;
 
-    OwnPtr<ImageBuffer> m_bufferedForeground;
+    std::unique_ptr<ImageBuffer> m_bufferedForeground;
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderSVGImage, isSVGImage())

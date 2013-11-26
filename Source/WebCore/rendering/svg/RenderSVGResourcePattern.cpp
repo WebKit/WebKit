@@ -102,7 +102,7 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderObject* object, unsign
         static_cast<float>(m_attributes.patternTransform().yScale()));
 
     // Build tile image.
-    OwnPtr<ImageBuffer> tileImage = createTileImage(m_attributes, tileBoundaries, absoluteTileBoundaries, tileImageTransform, clampedAbsoluteTileBoundaries);
+    std::unique_ptr<ImageBuffer> tileImage = createTileImage(m_attributes, tileBoundaries, absoluteTileBoundaries, tileImageTransform, clampedAbsoluteTileBoundaries);
     if (!tileImage)
         return 0;
 
@@ -240,15 +240,11 @@ bool RenderSVGResourcePattern::buildTileImageTransform(RenderObject* renderer,
     return true;
 }
 
-PassOwnPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const PatternAttributes& attributes,
-                                                                  const FloatRect& tileBoundaries,
-                                                                  const FloatRect& absoluteTileBoundaries,
-                                                                  const AffineTransform& tileImageTransform,
-                                                                  FloatRect& clampedAbsoluteTileBoundaries) const
+std::unique_ptr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const PatternAttributes& attributes, const FloatRect& tileBoundaries, const FloatRect& absoluteTileBoundaries, const AffineTransform& tileImageTransform, FloatRect& clampedAbsoluteTileBoundaries) const
 {
     clampedAbsoluteTileBoundaries = SVGRenderingContext::clampedAbsoluteTargetRect(absoluteTileBoundaries);
 
-    OwnPtr<ImageBuffer> tileImage;
+    std::unique_ptr<ImageBuffer> tileImage;
 
     if (!SVGRenderingContext::createImageBufferForPattern(absoluteTileBoundaries, clampedAbsoluteTileBoundaries, tileImage, ColorSpaceDeviceRGB, Unaccelerated))
         return nullptr;
@@ -279,7 +275,7 @@ PassOwnPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const PatternA
         SVGRenderingContext::renderSubtreeToImageBuffer(tileImage.get(), *child.renderer(), contentTransformation);
     }
 
-    return tileImage.release();
+    return tileImage;
 }
 
 }

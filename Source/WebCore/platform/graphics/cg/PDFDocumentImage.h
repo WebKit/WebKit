@@ -91,7 +91,7 @@ private:
     RetainPtr<CGPDFDocumentRef> m_document;
 #endif
 
-    OwnPtr<ImageBuffer> m_cachedImageBuffer;
+    std::unique_ptr<ImageBuffer> m_cachedImageBuffer;
     AffineTransform m_cachedTransform;
     FloatSize m_cachedDestinationSize;
     FloatRect m_cachedSourceRect;

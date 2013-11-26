@@ -66,7 +66,7 @@ void FETile::platformApplySoftware()
         tileRect.scale(filter->filterResolution().width(), filter->filterResolution().height());
     }
 
-    OwnPtr<ImageBuffer> tileImage;
+    std::unique_ptr<ImageBuffer> tileImage;
     if (!SVGRenderingContext::createImageBufferForPattern(tileRect, tileRect, tileImage, ColorSpaceDeviceRGB, filter()->renderingMode()))
         return;
 
