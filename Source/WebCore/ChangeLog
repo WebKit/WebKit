@@ -1,3 +1,24 @@
+2013-11-26  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Support for shape-margin in BoxShape
+        https://bugs.webkit.org/show_bug.cgi?id=124788
+
+        Reviewed by Andreas Kling.
+
+        Corrected BoxShape's internal shape-margin/padding bounds FloatRoundedRect
+        initialization. Tests for the padding bounds will be added when the rest of
+        shape-padding for box shapes implementation is ready.
+
+        Tests: fast/shapes/shape-outside-floats/shape-outside-margin-boxes-001.html
+               fast/shapes/shape-outside-floats/shape-outside-margin-boxes-002.html
+
+        * rendering/shapes/BoxShape.cpp: Use constructor shape-margin,shape-padding parameters.
+        (WebCore::BoxShape::BoxShape):
+        * rendering/shapes/BoxShape.h:
+        * rendering/shapes/Shape.cpp:
+        (WebCore::createBoxShape): Pass the shape-margin and shape-padding values along to the BoxShape constructor.
+        (WebCore::Shape::createShape): Ditto.
+
 2013-11-26  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         Remove unnecessary webaudio include from MediaStreamSource header

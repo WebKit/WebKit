@@ -34,19 +34,19 @@
 
 namespace WebCore {
 
-BoxShape::BoxShape(const FloatRoundedRect& bounds)
+BoxShape::BoxShape(const FloatRoundedRect& bounds, float shapeMargin, float shapePadding)
     : Shape()
     , m_bounds(bounds)
     , m_marginBounds(bounds)
     , m_paddingBounds(bounds)
 {
-    if (shapeMargin() > 0) {
-        m_marginBounds.inflate(shapeMargin());
-        m_marginBounds.expandRadii(shapeMargin());
+    if (shapeMargin > 0) {
+        m_marginBounds.inflate(shapeMargin);
+        m_marginBounds.expandRadii(shapeMargin);
     }
-    if (shapePadding() > 0) {
-        m_paddingBounds.inflate(-shapePadding());
-        m_paddingBounds.expandRadii(-shapePadding());
+    if (shapePadding > 0) {
+        m_paddingBounds.inflate(-shapePadding);
+        m_paddingBounds.expandRadii(-shapePadding);
     }
 }
 

@@ -37,7 +37,7 @@ namespace WebCore {
 
 class BoxShape : public Shape {
 public:
-    BoxShape(const FloatRoundedRect& bounds);
+    BoxShape(const FloatRoundedRect& bounds, float shapeMargin, float shapePadding);
 
     virtual LayoutRect shapeMarginLogicalBoundingBox() const OVERRIDE { return static_cast<LayoutRect>(m_marginBounds.rect()); }
     virtual LayoutRect shapePaddingLogicalBoundingBox() const OVERRIDE { return static_cast<LayoutRect>(m_paddingBounds.rect()); }

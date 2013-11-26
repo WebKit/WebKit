@@ -1,3 +1,18 @@
+2013-11-26  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Support for shape-margin in BoxShape
+        https://bugs.webkit.org/show_bug.cgi?id=124788
+
+        Verify that shape-margin has the expected effect on the four possible shape-outside box values
+        for left and right floats.
+
+        Reviewed by Andreas Kling.
+
+        * fast/shapes/shape-outside-floats/shape-outside-margin-boxes-001-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-margin-boxes-001.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-margin-boxes-002-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-margin-boxes-002.html: Added.
+
 2013-11-26  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         Unreviewed EFL gardening
