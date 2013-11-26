@@ -1,5 +1,34 @@
 2013-11-25  Dan Bernstein  <mitz@apple.com>
 
+        [Cocoa] Use class extensions for IPI
+        https://bugs.webkit.org/show_bug.cgi?id=124870
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm: Reordered methods so that the Private
+        cateogry isn’t stuck between the API methods and the internal methods.
+        (-[WKBrowsingContextController setPaginationMode:]):
+        (-[WKBrowsingContextController paginationMode]):
+        (-[WKBrowsingContextController setPaginationBehavesLikeColumns:]):
+        (-[WKBrowsingContextController paginationBehavesLikeColumns]):
+        (-[WKBrowsingContextController setPageLength:]):
+        (-[WKBrowsingContextController pageLength]):
+        (-[WKBrowsingContextController setGapBetweenPages:]):
+        (-[WKBrowsingContextController gapBetweenPages]):
+        (-[WKBrowsingContextController pageCount]):
+        (-[WKBrowsingContextController handle]):
+        * UIProcess/API/mac/WKBrowsingContextControllerInternal.h: Changed Internal category into
+        a class extension.
+
+        * UIProcess/API/mac/WKConnection.mm:
+        * UIProcess/API/mac/WKConnectionInternal.h: Changed Internal category into a class
+        extension.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.mm:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInInternal.h: Ditto.
+
+2013-11-25  Dan Bernstein  <mitz@apple.com>
+
         Fixed the iOS build.
 
         * UIProcess/API/mac/WKBrowsingContextController.mm:

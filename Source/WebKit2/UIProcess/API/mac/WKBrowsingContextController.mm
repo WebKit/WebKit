@@ -102,10 +102,6 @@ NSString * const WKActionCanShowMIMETypeKey = @"WKActionCanShowMIMETypeKey";
     WKRetainPtr<WKPageRef> _pageRef;
 
     std::unique_ptr<PageLoadStateObserver> _pageLoadStateObserver;
-
-#if PLATFORM(IOS)
-    id <WKBrowsingContextLoadDelegateInternal> _loadDelegateInternal;
-#endif // PLATFORM(IOS)
 }
 
 - (void)dealloc
@@ -346,99 +342,6 @@ static void releaseNSData(unsigned char*, const void* data)
     return WKPageSetPageZoomFactor(_pageRef.get(), pageZoom);
 }
 
-@end
-
-@implementation WKBrowsingContextController (Private)
-
-- (void)setPaginationMode:(WKBrowsingContextPaginationMode)paginationMode
-{
-    WKPaginationMode mode;
-    switch (paginationMode) {
-    case WKPaginationModeUnpaginated:
-        mode = kWKPaginationModeUnpaginated;
-        break;
-    case WKPaginationModeLeftToRight:
-        mode = kWKPaginationModeLeftToRight;
-        break;
-    case WKPaginationModeRightToLeft:
-        mode = kWKPaginationModeRightToLeft;
-        break;
-    case WKPaginationModeTopToBottom:
-        mode = kWKPaginationModeTopToBottom;
-        break;
-    case WKPaginationModeBottomToTop:
-        mode = kWKPaginationModeBottomToTop;
-        break;
-    default:
-        return;
-    }
-
-    WKPageSetPaginationMode(_pageRef.get(), mode);
-}
-
-- (WKBrowsingContextPaginationMode)paginationMode
-{
-    switch (WKPageGetPaginationMode(_pageRef.get())) {
-    case kWKPaginationModeUnpaginated:
-        return WKPaginationModeUnpaginated;
-    case kWKPaginationModeLeftToRight:
-        return WKPaginationModeLeftToRight;
-    case kWKPaginationModeRightToLeft:
-        return WKPaginationModeRightToLeft;
-    case kWKPaginationModeTopToBottom:
-        return WKPaginationModeTopToBottom;
-    case kWKPaginationModeBottomToTop:
-        return WKPaginationModeBottomToTop;
-    }
-
-    ASSERT_NOT_REACHED();
-    return WKPaginationModeUnpaginated;
-}
-
-- (void)setPaginationBehavesLikeColumns:(BOOL)behavesLikeColumns
-{
-    WKPageSetPaginationBehavesLikeColumns(_pageRef.get(), behavesLikeColumns);
-}
-
-- (BOOL)paginationBehavesLikeColumns
-{
-    return WKPageGetPaginationBehavesLikeColumns(_pageRef.get());
-}
-
-- (void)setPageLength:(CGFloat)pageLength
-{
-    WKPageSetPageLength(_pageRef.get(), pageLength);
-}
-
-- (CGFloat)pageLength
-{
-    return WKPageGetPageLength(_pageRef.get());
-}
-
-- (void)setGapBetweenPages:(CGFloat)gapBetweenPages
-{
-    WKPageSetGapBetweenPages(_pageRef.get(), gapBetweenPages);
-}
-
-- (CGFloat)gapBetweenPages
-{
-    return WKPageGetGapBetweenPages(_pageRef.get());
-}
-
-- (NSUInteger)pageCount
-{
-    return WKPageGetPageCount(_pageRef.get());
-}
-
-- (WKBrowsingContextHandle *)handle
-{
-    return [[[WKBrowsingContextHandle alloc] _initWithPageID:toImpl(_pageRef.get())->pageID()] autorelease];
-}
-
-@end
-
-@implementation WKBrowsingContextController (Internal)
-
 static void didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
@@ -651,18 +554,6 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
     WKPageSetPagePolicyClient(pageRef, &policyClient);
 }
 
-#if PLATFORM(IOS)
-- (id <WKBrowsingContextLoadDelegateInternal>)loadDelegateInternal
-{
-    return _loadDelegateInternal;
-}
-
-- (void)setLoadDelegateInternal:(id <WKBrowsingContextLoadDelegateInternal>)loadDelegateInternal
-{
-    _loadDelegateInternal = loadDelegateInternal;
-}
-#endif // PLATFORM(IOS)
-
 /* This should only be called from associate view. */
 
 - (id)_initWithPageRef:(WKPageRef)pageRef
@@ -693,6 +584,95 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
     return customSchemes;
 }
  
+@end
+
+@implementation WKBrowsingContextController (Private)
+
+- (void)setPaginationMode:(WKBrowsingContextPaginationMode)paginationMode
+{
+    WKPaginationMode mode;
+    switch (paginationMode) {
+    case WKPaginationModeUnpaginated:
+        mode = kWKPaginationModeUnpaginated;
+        break;
+    case WKPaginationModeLeftToRight:
+        mode = kWKPaginationModeLeftToRight;
+        break;
+    case WKPaginationModeRightToLeft:
+        mode = kWKPaginationModeRightToLeft;
+        break;
+    case WKPaginationModeTopToBottom:
+        mode = kWKPaginationModeTopToBottom;
+        break;
+    case WKPaginationModeBottomToTop:
+        mode = kWKPaginationModeBottomToTop;
+        break;
+    default:
+        return;
+    }
+
+    WKPageSetPaginationMode(_pageRef.get(), mode);
+}
+
+- (WKBrowsingContextPaginationMode)paginationMode
+{
+    switch (WKPageGetPaginationMode(_pageRef.get())) {
+    case kWKPaginationModeUnpaginated:
+        return WKPaginationModeUnpaginated;
+    case kWKPaginationModeLeftToRight:
+        return WKPaginationModeLeftToRight;
+    case kWKPaginationModeRightToLeft:
+        return WKPaginationModeRightToLeft;
+    case kWKPaginationModeTopToBottom:
+        return WKPaginationModeTopToBottom;
+    case kWKPaginationModeBottomToTop:
+        return WKPaginationModeBottomToTop;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WKPaginationModeUnpaginated;
+}
+
+- (void)setPaginationBehavesLikeColumns:(BOOL)behavesLikeColumns
+{
+    WKPageSetPaginationBehavesLikeColumns(_pageRef.get(), behavesLikeColumns);
+}
+
+- (BOOL)paginationBehavesLikeColumns
+{
+    return WKPageGetPaginationBehavesLikeColumns(_pageRef.get());
+}
+
+- (void)setPageLength:(CGFloat)pageLength
+{
+    WKPageSetPageLength(_pageRef.get(), pageLength);
+}
+
+- (CGFloat)pageLength
+{
+    return WKPageGetPageLength(_pageRef.get());
+}
+
+- (void)setGapBetweenPages:(CGFloat)gapBetweenPages
+{
+    WKPageSetGapBetweenPages(_pageRef.get(), gapBetweenPages);
+}
+
+- (CGFloat)gapBetweenPages
+{
+    return WKPageGetGapBetweenPages(_pageRef.get());
+}
+
+- (NSUInteger)pageCount
+{
+    return WKPageGetPageCount(_pageRef.get());
+}
+
+- (WKBrowsingContextHandle *)handle
+{
+    return [[[WKBrowsingContextHandle alloc] _initWithPageID:toImpl(_pageRef.get())->pageID()] autorelease];
+}
+
 @end
 
 #endif // WK_API_ENABLED

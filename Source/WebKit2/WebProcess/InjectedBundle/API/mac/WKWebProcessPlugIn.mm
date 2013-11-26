@@ -46,7 +46,7 @@ typedef HashMap<WKBundlePageRef, RetainPtr<WKWebProcessPlugInBrowserContextContr
 }
 @end
 
-@implementation WKWebProcessPlugInController (Internal)
+@implementation WKWebProcessPlugInController
 
 static void didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo)
 {
@@ -126,10 +126,6 @@ static WKWebProcessPlugInController *sharedInstance;
     ASSERT(_bundlePageWrapperCache.contains(pageRef));
     return _bundlePageWrapperCache.get(pageRef).get();
 }
-
-@end
-
-@implementation WKWebProcessPlugInController
 
 - (WKConnection *)connection
 {

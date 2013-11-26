@@ -34,7 +34,7 @@
 @end
 #endif // PLATFORM(IOS)
 
-@interface WKBrowsingContextController (Internal)
+@interface WKBrowsingContextController ()
 
 #if PLATFORM(IOS)
 @property (assign) id <WKBrowsingContextLoadDelegateInternal> loadDelegateInternal;

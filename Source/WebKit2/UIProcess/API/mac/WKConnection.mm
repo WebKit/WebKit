@@ -68,10 +68,6 @@ using namespace WebKit;
     return _remoteObjectRegistry.get();
 }
 
-@end
-
-@implementation WKConnection (Internal)
-
 static void didReceiveMessage(WKConnectionRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
 {
     WKConnection *connection = (WKConnection *)clientInfo;

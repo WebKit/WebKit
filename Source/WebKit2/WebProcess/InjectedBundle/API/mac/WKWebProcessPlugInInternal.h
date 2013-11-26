@@ -27,7 +27,7 @@
 
 #if WK_API_ENABLED
 
-@interface WKWebProcessPlugInController (Internal)
+@interface WKWebProcessPlugInController ()
 
 + (WKWebProcessPlugInController *)_shared;
 - (id)_initWithPrincipalClassInstance:(id<WKWebProcessPlugIn>)principalClassInstance bundleRef:(WKBundleRef)bundleRef;

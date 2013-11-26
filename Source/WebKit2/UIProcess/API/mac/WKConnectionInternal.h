@@ -29,7 +29,7 @@
 
 #import <WebKit2/WKBase.h>
 
-@interface WKConnection (Internal)
+@interface WKConnection ()
 
 - (id)_initWithConnectionRef:(WKConnectionRef)connectionRef;
 
