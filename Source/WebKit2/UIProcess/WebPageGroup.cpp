@@ -51,11 +51,7 @@ static WebPageGroupMap& webPageGroupMap()
 
 PassRefPtr<WebPageGroup> WebPageGroup::create(const String& identifier, bool visibleToInjectedBundle, bool visibleToHistoryClient)
 {
-    RefPtr<WebPageGroup> pageGroup = adoptRef(new WebPageGroup(identifier, visibleToInjectedBundle, visibleToHistoryClient));
-
-    webPageGroupMap().set(pageGroup->pageGroupID(), pageGroup.get());
-
-    return pageGroup.release();
+    return adoptRef(new WebPageGroup(identifier, visibleToInjectedBundle, visibleToHistoryClient));
 }
 
 WebPageGroup* WebPageGroup::get(uint64_t pageGroupID)
@@ -74,6 +70,8 @@ WebPageGroup::WebPageGroup(const String& identifier, bool visibleToInjectedBundl
 
     m_data.visibleToInjectedBundle = visibleToInjectedBundle;
     m_data.visibleToHistoryClient = visibleToHistoryClient;
+    
+    webPageGroupMap().set(m_data.pageGroupID, this);
 }
 
 WebPageGroup::~WebPageGroup()

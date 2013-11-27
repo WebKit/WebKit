@@ -691,6 +691,7 @@
 		7C3F8C90173AF52D007B7F39 /* PluginInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3F8C8E173AF52D007B7F39 /* PluginInformation.cpp */; };
 		7C3F8C91173AF52D007B7F39 /* PluginInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3F8C8F173AF52D007B7F39 /* PluginInformation.h */; };
 		7C6D37FC172F555F009D2847 /* PageBannerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C6D37FA172F555F009D2847 /* PageBannerMac.mm */; };
+		7C9D1537184584DA009D3918 /* WKBrowsingContextGroupInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9D1536184584DA009D3918 /* WKBrowsingContextGroupInternal.h */; };
 		7CA254EB182993CE00FC8A41 /* WKBrowsingContextPolicyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CA254EA182993CE00FC8A41 /* WKBrowsingContextPolicyDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7CB16FEF1724BA23007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE21724B9B5007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb */; };
 		7CB16FF01724BA24007A0A95 /* com.apple.QuickTime Plugin.plugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE31724B9B5007A0A95 /* com.apple.QuickTime Plugin.plugin.sb */; };
@@ -2241,6 +2242,7 @@
 		7C3F8C8E173AF52D007B7F39 /* PluginInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInformation.cpp; sourceTree = "<group>"; };
 		7C3F8C8F173AF52D007B7F39 /* PluginInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInformation.h; sourceTree = "<group>"; };
 		7C6D37FA172F555F009D2847 /* PageBannerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageBannerMac.mm; sourceTree = "<group>"; };
+		7C9D1536184584DA009D3918 /* WKBrowsingContextGroupInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextGroupInternal.h; sourceTree = "<group>"; };
 		7CA254EA182993CE00FC8A41 /* WKBrowsingContextPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextPolicyDelegate.h; sourceTree = "<group>"; };
 		7CB16FE21724B9B5007A0A95 /* com.apple.ist.ds.appleconnect.webplugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.ist.ds.appleconnect.webplugin.sb; sourceTree = "<group>"; };
 		7CB16FE31724B9B5007A0A95 /* com.apple.QuickTime Plugin.plugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "com.apple.QuickTime Plugin.plugin.sb"; sourceTree = "<group>"; };
@@ -4640,6 +4642,7 @@
 				3788A05B14743C90006319E5 /* WKBrowsingContextControllerPrivate.h */,
 				BCBAACEE145232430053F82F /* WKBrowsingContextGroup.h */,
 				BCBAACEF145232440053F82F /* WKBrowsingContextGroup.mm */,
+				7C9D1536184584DA009D3918 /* WKBrowsingContextGroupInternal.h */,
 				BCBAACF0145232480053F82F /* WKBrowsingContextGroupPrivate.h */,
 				BCBAAD0A14560A430053F82F /* WKBrowsingContextLoadDelegate.h */,
 				7CA254EA182993CE00FC8A41 /* WKBrowsingContextPolicyDelegate.h */,
@@ -6078,6 +6081,7 @@
 				F67DD7BA125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h in Headers */,
 				BCDDB32B124EC2AB0048D13C /* WKSharedAPICast.h in Headers */,
 				BC407606124FF0270068F20A /* WKString.h in Headers */,
+				7C9D1537184584DA009D3918 /* WKBrowsingContextGroupInternal.h in Headers */,
 				BC40761A124FF0370068F20A /* WKStringCF.h in Headers */,
 				759CCD591808F1690078E8A8 /* WebOriginDataManagerProxyChangeClient.h in Headers */,
 				BC9099801256A98200083756 /* WKStringPrivate.h in Headers */,

@@ -30,6 +30,7 @@
 
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
+#import "WKBrowsingContextGroupInternal.h"
 #import "WKNSArray.h"
 #import "WKNSDictionary.h"
 #import "WKNSError.h"
@@ -82,6 +83,10 @@ void* Object::newObject(size_t size, Type type)
         wrapper = [WKNavigationData alloc];
         break;
 
+    case Type::PageGroup:
+        wrapper = [WKBrowsingContextGroup alloc];
+        break;
+
     case Type::String:
         wrapper = NSAllocateObject([WKNSString class], size, nullptr);
         break;
@@ -95,11 +100,12 @@ void* Object::newObject(size_t size, Type type)
         break;
     }
 
-    Object* object = &wrapper._apiObject;
-    object->m_wrapper = wrapper;
-    return object;
+    Object& object = wrapper._apiObject;
+    object.m_wrapper = wrapper;
+
+    return &object;
 }
 
-} // namespace WebKit
+} // namespace API
 
 #endif // WK_API_ENABLED

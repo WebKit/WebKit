@@ -40,6 +40,7 @@ class WebPageProxy;
 
 class WebPageGroup : public API::TypedObject<API::Object::Type::PageGroup> {
 public:
+    WebPageGroup(const String& identifier = String(), bool visibleToInjectedBundle = true, bool visibleToHistoryClient = true);
     static PassRefPtr<WebPageGroup> create(const String& identifier = String(), bool visibleToInjectedBundle = true, bool visibleToHistoryClient = true);
     static WebPageGroup* get(uint64_t pageGroupID);
 
@@ -64,8 +65,6 @@ public:
     void removeAllUserContent();
 
 private:
-    WebPageGroup(const String& identifier, bool visibleToInjectedBundle, bool visibleToHistoryClient);
-
     template<typename T> void sendToAllProcessesInGroup(const T&, uint64_t destinationID);
 
     WebPageGroupData m_data;

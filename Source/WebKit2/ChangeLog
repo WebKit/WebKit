@@ -1,3 +1,56 @@
+2013-11-27  Sam Weinig  <sam@webkit.org>
+
+        Make WKBrowsingContextGroup work with WKObject wrapping
+        https://bugs.webkit.org/show_bug.cgi?id=124948
+
+        Reviewed by Dan Bernstein.
+
+        - Adds mechanism to use the inline data wrapping mechanism when the Objective-C wrapper is created
+          by the caller (rather than by Object::newObject).
+        - Adopts the mechanism for WKBrowsingContextGroup.
+
+        * Shared/APIObject.h:
+        (API::Object::constructInWrapper):
+        Add a helper which does a forwarding placement-new into the API::Object of the passed in wrapper, after which it sets up m_wrapper.
+
+        (API::TypedObject::operator new):
+        Add a operator new to for placement-new. Also make TypedObject friends with Object so that constructInWrapper can call this.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        Add support for WKBrowsingContextGroup.
+
+        * UIProcess/API/mac/WKBrowsingContextGroup.mm:
+        (-[WKBrowsingContextGroup API::]):
+        (-[WKBrowsingContextGroup dealloc]):
+        (-[WKBrowsingContextGroup initWithIdentifier:]):
+        (-[WKBrowsingContextGroup allowsJavaScript]):
+        (-[WKBrowsingContextGroup setAllowsJavaScript:]):
+        (-[WKBrowsingContextGroup allowsJavaScriptMarkup]):
+        (-[WKBrowsingContextGroup setAllowsJavaScriptMarkup:]):
+        (-[WKBrowsingContextGroup allowsPlugIns]):
+        (-[WKBrowsingContextGroup setAllowsPlugIns:]):
+        (-[WKBrowsingContextGroup addUserStyleSheet:baseURL:whitelistedURLPatterns:blacklistedURLPatterns:mainFrameOnly:]):
+        (-[WKBrowsingContextGroup removeAllUserStyleSheets]):
+        (-[WKBrowsingContextGroup addUserScript:baseURL:whitelistedURLPatterns:blacklistedURLPatterns:injectionTime:mainFrameOnly:]):
+        (-[WKBrowsingContextGroup removeAllUserScripts]):
+        (-[WKBrowsingContextGroup _pageGroupRef]):
+        Convert from wrapping the C-SPI type to storing the bits of the wrapped object inline (modeled on WKBackForwardList).
+
+        * UIProcess/API/mac/WKBrowsingContextGroupInternal.h: Added.
+        (WebKit::wrapper):
+        Add wrapper() helper and declare conformance to the WKObject protocol.
+
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::create):
+        (WebKit::WebPageGroup::WebPageGroup):
+        * UIProcess/WebPageGroup.h:
+        Make the WebPageGroup constructor public (for use with Object::constructInWrapper) and move being set in the webPageGroupMap()
+        to the constructor.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new file.
+
 2013-11-27  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         Remove Qt-specific .qrc files
