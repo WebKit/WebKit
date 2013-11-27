@@ -1,3 +1,14 @@
+2013-11-27  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        Remove Qt-specific .qrc files
+        https://bugs.webkit.org/show_bug.cgi?id=124944
+
+        Reviewed by Andreas Kling.
+
+        No new tests needed.
+
+        * WebCore.qrc: Removed.
+
 2013-11-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Invalid command line error when visiting www.chessbase.com

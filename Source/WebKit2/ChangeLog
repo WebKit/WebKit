@@ -1,3 +1,12 @@
+2013-11-27  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        Remove Qt-specific .qrc files
+        https://bugs.webkit.org/show_bug.cgi?id=124944
+
+        Reviewed by Andreas Kling.
+
+        * WebKit2.qrc: Removed.
+
 2013-11-27  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Programs/WebKit2APITests/TestWebKitSettings unit test is failing
