@@ -1,5 +1,15 @@
 2013-11-27  Andreas Kling  <akling@apple.com>
 
+        Structure::m_staticFunctionReified should be a single bit.
+        <https://webkit.org/b/124912>
+
+        Shave 8 bytes off of JSC::Structure by jamming m_staticFunctionReified
+        into the bitfield just above.
+
+        Reviewed by Antti Koivisto.
+
+2013-11-27  Andreas Kling  <akling@apple.com>
+
         JSActivation constructor should use NotNull placement new.
         <https://webkit.org/b/124909>
 
