@@ -1,3 +1,26 @@
+2013-11-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Import W3C tests for cloning template elements and default stylesheet for template element
+        https://bugs.webkit.org/show_bug.cgi?id=124882
+
+        Reviewed by Andreas Kling.
+
+        Imported tests under html-templates/additions-to-the-steps-to-clone-a-node and
+        html-templates/additions-to-the-css-user-agent-style-sheet at d38dbd5b492808811bc0fe04a8cc49f28863c5cc.
+
+        Renamed and replicated css-user-agent-style-sheet-test-001-ref.html as -00*-expected.html for ref testing.
+
+        * html-templates/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-001-expected.html: Added.
+        * html-templates/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-001.html: Added.
+        * html-templates/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-002-expected.html: Added.
+        * html-templates/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-002.html: Added.
+        * html-templates/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-003-expected.html: Added.
+        * html-templates/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-003.html: Added.
+        * html-templates/additions-to-the-steps-to-clone-a-node/template-clone-children-expected.txt: Added.
+        * html-templates/additions-to-the-steps-to-clone-a-node/template-clone-children.html: Added.
+        * html-templates/additions-to-the-steps-to-clone-a-node/templates-copy-document-owner-expected.txt: Added.
+        * html-templates/additions-to-the-steps-to-clone-a-node/templates-copy-document-owner.html: Added.
+
 2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Import more W3C tests for parsing template elements
