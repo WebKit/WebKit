@@ -76,7 +76,7 @@ webgl/1.0.2/conformance/uniforms/uniform-default-values.html [ Crash ]
 webkit.org/b/111612 animations/animation-delay-changed.html [ Failure Pass ]
 
 Bug(EFL) editing/selection/first-letter-selection-crash.html [ Crash Pass ]
-Bug(EFL) http/tests/security/contentSecurityPolicy/connect-src-websocket-blocked.html [ Crash Pass ]
+Bug(EFL) http/tests/security/contentSecurityPolicy/connect-src-websocket-blocked.html [ Crash Pass Failure ]
 Bug(EFL) media/video-played-reset.html [ Failure Pass ]
 Bug(EFL) fast/loader/fragment-after-redirect-gets-back-entry.html [ Failure Pass ]
 Bug(EFL) fast/loader/child-frame-add-after-back-forward.html [ Failure Pass ]

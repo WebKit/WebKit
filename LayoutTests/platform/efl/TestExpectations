@@ -503,9 +503,6 @@ accessibility/aria-help.html [ Skip ]
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////
 
-# Sometimes hit !m_isolatedWorld->isNormal() || m_wrapper || !m_jsFunction assertion.
-webkit.org/b/105299 webaudio/javascriptaudionode-upmix2-8channel-input.html [ Pass Crash ]
-
 # Sometimes hit !m_finishedNodes.size() assertion in AudioContext destructor.
 webkit.org/b/105870 webaudio/audiobuffersource.html [ Pass Crash ]
 webkit.org/b/105870 webaudio/audionode.html [ Pass Crash ]
@@ -643,7 +640,8 @@ webkit.org/b/105296 webaudio/delaynode-maxdelay.html [ Failure Pass ]
 webkit.org/b/105296 webaudio/delaynode-max-nondefault-delay.html [ Failure Pass ]
 webkit.org/b/105296 webaudio/delaynode-scheduling.html [ Failure Pass ]
 
-webkit.org/b/120148 webaudio/javascriptaudionode-upmix2-8channel-input.html [ Failure Pass ]
+# Sometimes hit !m_isolatedWorld->isNormal() || m_wrapper || !m_jsFunction assertion.
+webkit.org/b/120148 webaudio/javascriptaudionode-upmix2-8channel-input.html [ Failure Pass Crash ]
 
 webkit.org/b/106551 media/video-src-source.html [ Crash Pass ]
 webkit.org/b/106551 media/video-source-moved.html [ Crash Pass ]
@@ -660,6 +658,38 @@ webkit.org/b/78819 fast/workers/shared-worker-load-error.html [ Failure Pass ]
 # Libsoup 2.42.0 regressions
 webkit.org/b/114918 http/tests/xmlhttprequest/cache-override.html [ Failure Pass ]
 webkit.org/b/114918 http/tests/xmlhttprequest/range-test.html [ Failure Pass ]
+
+webkit.org/b/115440 svg/stroke/animated-non-scaling-stroke.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/119042 animations/resume-after-page-cache.html [ Failure Pass ]
+
+webkit.org/b/124655 css3/masking/clip-path-animation.html [ Failure Pass ]
+
+webkit.org/b/124664 media/video-seek-with-negative-playback.html [ Failure Crash ]
+
+webkit.org/b/124665 media/video-ended-event-negative-playback.html [ Failure Pass ]
+
+webkit.org/b/124925 fast/css/hover-display-block-none.html [ Failure Pass ]
+
+webkit.org/b/124926 fast/events/popup-allowed-from-gesture-initiated-event.html [ Failure Pass ]
+
+# Fail after r139145 on MAC, EFL, QT, GTK.
+webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ]
+webkit.org/b/106415 fast/workers/worker-document-leak.html [ Pass Failure ]
+webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
+
+webkit.org/b/124929 http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_attributes_order.html [ Failure Pass ]
+
+webkit.org/b/124931 media/track/audio/audio-track-mkv-vorbis-enabled.html [ Failure Pass ]
+
+webkit.org/b/124932 media/video-size.html [ Failure Pass ]
+
+webkit.org/b/124933 svg/animations/getCurrentTime-pause-unpause.html [ Failure Pass ]
+
+webkit.org/b/124934 svg/animations/svglengthlist-animation-3.html [ Failure Pass ]
+
+webkit.org/b/124935 webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Failure Pass ]
+webkit.org/b/124935 webgl/1.0.2/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
@@ -1406,9 +1436,6 @@ webkit.org/b/109353 fast/flexbox/line-clamp-link-after-ellipsis.html [ Failure ]
 # Leaking state into the next test.
 webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
 
-# Fail after r139145 on MAC, EFL, QT, GTK.
-webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ]
-
 # Newly added test at r139002 is failing.
 webkit.org/b/106316 accessibility/render-counter-text.html [ Failure ]
 
@@ -1533,7 +1560,6 @@ webkit.org/b/115419 media/media-can-play-ogg.html [ Failure ]
 webkit.org/b/115419 media/track/track-automatic-subtitles.html [ Failure ]
 
 webkit.org/b/115439 fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
-webkit.org/b/115440 svg/stroke/animated-non-scaling-stroke.html [ ImageOnlyFailure ]
 
 webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
 
@@ -1703,11 +1729,7 @@ webkit.org/b/124587 fast/text/international/synthesized-italic-vertical.html [ I
 webkit.org/b/124589 http/tests/cache/partitioned-cache-iframe.html [ Failure ]
 webkit.org/b/124589 http/tests/cache/partitioned-cache.html [ Failure ]
 
-webkit.org/b/119042 animations/resume-after-page-cache.html [ Failure Pass ]
-
 webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
-
-webkit.org/b/124655 css3/masking/clip-path-animation.html [ Failure Pass ]
 
 webkit.org/b/124506 fast/block/float/float-with-fractional-height-vertical-lr.html [ ImageOnlyFailure ]
 webkit.org/b/124506 fast/block/float/float-with-fractional-height.html [ ImageOnlyFailure ]
@@ -1725,10 +1747,6 @@ webkit.org/b/124660 inspector-protocol/model/highlight-shape-outside.html [ Fail
 webkit.org/b/124662 mathml/presentation/mspace-units.html [ ImageOnlyFailure ]
 
 webkit.org/b/124663 media/track/track-legacyapi-with-automatic-mode.html [ Skip ]
-
-webkit.org/b/124664 media/video-seek-with-negative-playback.html [ Failure Crash ]
-
-webkit.org/b/124665 media/video-ended-event-negative-playback.html [ Failure Pass ]
 
 webkit.org/b/124890 platform/efl/accessibility/media-emits-object-replacement.html [ Failure ]
 
