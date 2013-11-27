@@ -1,3 +1,9 @@
+2013-11-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r159805.
+
+        * resources/runner.js:
+
 2013-11-26  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Support grid-definition-{rows|columns} repeat() syntax

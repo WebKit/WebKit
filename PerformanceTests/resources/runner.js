@@ -226,11 +226,10 @@ if (window.testRunner) {
                 PerfTestRunner.logStatistics(jsHeapResults, "bytes", prefix + ":JSHeap");
                 PerfTestRunner.logStatistics(mallocHeapResults, "bytes", prefix + ":Malloc");
             }
-            if (currentTest.done)
-                currentTest.done();
-
             if (logLines && !currentTest.continueTesting)
                 logLines.forEach(logInDocument);
+            if (currentTest.done)
+                currentTest.done();
         } catch (exception) {
             logInDocument("Got an exception while finalizing the test with name=" + exception.name + ", message=" + exception.message);
         }
