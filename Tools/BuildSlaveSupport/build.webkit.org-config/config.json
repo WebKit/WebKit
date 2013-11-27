@@ -158,7 +158,7 @@
                       "slavenames": ["gtk-linux-slave-4"]
                     },
                     {
-                      "name": "WinCairo Release", "type": "BuildAndTest", "builddir": "win-cairo-release",
+                      "name": "WinCairo Release", "type": "BuildAndNonLayoutTest", "builddir": "win-cairo-release",
                       "platform": "wincairo", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["wincairo-1"]
                     },

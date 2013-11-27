@@ -1,3 +1,13 @@
+2013-11-27  Jozsef Berta  <jberta@inf.u-szeged.hu>
+
+        run_webkit_tests.py: error: no such option: --wincairo
+        https://bugs.webkit.org/show_bug.cgi?id=124927
+
+        Reviewed by Ryosuke Niwa.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: The run_webkit_tests.py doesn't supports
+        the layout testing on wincairo, so it is turned off.
+
 2013-11-26  Marcelo Lira  <marcelo.lira@openbossa.org>
 
         Nix upstreaming - Adding build files and supporting scripts
