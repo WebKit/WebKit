@@ -339,15 +339,15 @@ Test 16, RTL:
 
 
 Test 17, LTR:
-  Extending right:    "?car DEF ABC.?"[(0,0), (0,14)]
-  Extending left:     "?car DEF ABC.?"[(0,14), (0,0)]
-  Extending forward:  "?car DEF ABC.?"[(0,0), (0,14)]
-  Extending backward: "?car DEF ABC.?"[(0,14), (0,0)]
+  Extending right:    "᪜car DEF ABC.᪝"[(0,0), (0,14)]
+  Extending left:     "᪜car DEF ABC.᪝"[(0,14), (0,0)]
+  Extending forward:  "᪜car DEF ABC.᪝"[(0,0), (0,14)]
+  Extending backward: "᪜car DEF ABC.᪝"[(0,14), (0,0)]
 Test 17, RTL:
-  Extending left:     "?car DEF ABC.?"[(0,0), (0,14)]
-  Extending right:    "?car DEF ABC.?"[(0,14), (0,0)]
-  Extending forward:  "?car DEF ABC.?"[(0,0), (0,14)]
-  Extending backward: "?car DEF ABC.?"[(0,14), (0,0)]
+  Extending left:     "᪜car DEF ABC.᪝"[(0,0), (0,14)]
+  Extending right:    "᪜car DEF ABC.᪝"[(0,14), (0,0)]
+  Extending forward:  "᪜car DEF ABC.᪝"[(0,0), (0,14)]
+  Extending backward: "᪜car DEF ABC.᪝"[(0,14), (0,0)]
 
 
   validating ltrRight and ltrLeft
@@ -360,15 +360,15 @@ Test 17, RTL:
 
 
 Test 18, LTR:
-  Extending right:    "he said "?car DEF ABC?.""[(0,0), (0,24)]
-  Extending left:     "he said "?car DEF ABC?.""[(0,24), (0,0)]
-  Extending forward:  "he said "?car DEF ABC?.""[(0,0), (0,24)]
-  Extending backward: "he said "?car DEF ABC?.""[(0,24), (0,0)]
+  Extending right:    "he said "᪜car DEF ABC᪝.""[(0,0), (0,24)]
+  Extending left:     "he said "᪜car DEF ABC᪝.""[(0,24), (0,0)]
+  Extending forward:  "he said "᪜car DEF ABC᪝.""[(0,0), (0,24)]
+  Extending backward: "he said "᪜car DEF ABC᪝.""[(0,24), (0,0)]
 Test 18, RTL:
-  Extending left:     "he said "?car DEF ABC?.""[(0,0), (0,24)]
-  Extending right:    "he said "?car DEF ABC?.""[(0,24), (0,0)]
-  Extending forward:  "he said "?car DEF ABC?.""[(0,0), (0,24)]
-  Extending backward: "he said "?car DEF ABC?.""[(0,24), (0,0)]
+  Extending left:     "he said "᪜car DEF ABC᪝.""[(0,0), (0,24)]
+  Extending right:    "he said "᪜car DEF ABC᪝.""[(0,24), (0,0)]
+  Extending forward:  "he said "᪜car DEF ABC᪝.""[(0,0), (0,24)]
+  Extending backward: "he said "᪜car DEF ABC᪝.""[(0,24), (0,0)]
 
 
   validating ltrRight and ltrLeft
@@ -381,15 +381,15 @@ Test 18, RTL:
 
 
 Test 19, LTR:
-  Extending right:    "GHI JKL MNO '?he said "?car DEF ABC?"?'?"[(0,0), (0,40)]
-  Extending left:     "GHI JKL MNO '?he said "?car DEF ABC?"?'?"[(0,40), (0,0)]
-  Extending forward:  "GHI JKL MNO '?he said "?car DEF ABC?"?'?"[(0,0), (0,40)]
-  Extending backward: "GHI JKL MNO '?he said "?car DEF ABC?"?'?"[(0,40), (0,0)]
+  Extending right:    "GHI JKL MNO '᪛he said "᪜car DEF ABC᪝"᪝'?"[(0,0), (0,40)]
+  Extending left:     "GHI JKL MNO '᪛he said "᪜car DEF ABC᪝"᪝'?"[(0,40), (0,0)]
+  Extending forward:  "GHI JKL MNO '᪛he said "᪜car DEF ABC᪝"᪝'?"[(0,0), (0,40)]
+  Extending backward: "GHI JKL MNO '᪛he said "᪜car DEF ABC᪝"᪝'?"[(0,40), (0,0)]
 Test 19, RTL:
-  Extending left:     "GHI JKL MNO '?he said "?car DEF ABC?"?'?"[(0,0), (0,40)]
-  Extending right:    "GHI JKL MNO '?he said "?car DEF ABC?"?'?"[(0,40), (0,0)]
-  Extending forward:  "GHI JKL MNO '?he said "?car DEF ABC?"?'?"[(0,0), (0,40)]
-  Extending backward: "GHI JKL MNO '?he said "?car DEF ABC?"?'?"[(0,40), (0,0)]
+  Extending left:     "GHI JKL MNO '᪛he said "᪜car DEF ABC᪝"᪝'?"[(0,0), (0,40)]
+  Extending right:    "GHI JKL MNO '᪛he said "᪜car DEF ABC᪝"᪝'?"[(0,40), (0,0)]
+  Extending forward:  "GHI JKL MNO '᪛he said "᪜car DEF ABC᪝"᪝'?"[(0,0), (0,40)]
+  Extending backward: "GHI JKL MNO '᪛he said "᪜car DEF ABC᪝"᪝'?"[(0,40), (0,0)]
 
 
   validating ltrRight and ltrLeft
@@ -462,4 +462,6 @@ Test 22, RTL:
   validating ltrBackward and rtlBackward
   validating ltrRight and rtlLeft
   validating ltrLeft and rtlRight
+
+
 

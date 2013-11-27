@@ -1,5 +1,13 @@
 2013-11-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Windows rebaselines after r158547.
+
+        * platform/win/editing/selection/collapse-selection-in-bidi-expected.txt: Added.
+        * platform/win/editing/selection/drag-text-delay-expected.txt: Added.
+        * platform/win/editing/selection/extend-selection-home-end-expected.txt:
+
+2013-11-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         Record subtest values in Dromaeo tests
         https://bugs.webkit.org/show_bug.cgi?id=124498
 
