@@ -1,3 +1,35 @@
+2013-11-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Fix positioning of grid items with margins
+        https://bugs.webkit.org/show_bug.cgi?id=124345
+
+        Reviewed by David Hyatt.
+
+        From Blink r157925 and r158041 by <jchaffraix@chromium.org>
+
+        Test: fast/css-grid-layout/grid-item-margin-resolution.html
+
+        Adds margin start/before to the positions of grid items (removing
+        several FIXME's in the current code). This means calling
+        findChildLogicalPosition() after the layout in order to have the
+        right values for the margins.
+
+        In order to match flexbox and author's intents we're also
+        including the margins of grid items in the intrinsic size of the
+        grid. That's why flexbox's marginLogicalPositionForChild() is
+        moved up to RenderBlock in order to share it with RenderGrid.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::marginIntrinsicLogicalWidthForChild): Moved
+        from RenderFlexibleBox::marginLogicalWidthForChild().
+        * rendering/RenderBlock.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeIntrinsicLogicalWidths):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computePreferredTrackWidth):
+        (WebCore::RenderGrid::layoutGridItems):
+        (WebCore::RenderGrid::findChildLogicalPosition):
+
 2013-11-26  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Support grid-definition-{rows|columns} repeat() syntax

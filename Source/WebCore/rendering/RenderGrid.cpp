@@ -272,20 +272,18 @@ LayoutUnit RenderGrid::computePreferredTrackWidth(const GridLength& gridLength, 
     if (length.isMinContent()) {
         LayoutUnit minContentSize = 0;
         GridIterator iterator(m_grid, ForColumns, trackIndex);
-        while (RenderBox* gridItem = iterator.nextGridItem()) {
-            // FIXME: We should include the child's fixed margins like RenderFlexibleBox.
-            minContentSize = std::max(minContentSize, gridItem->minPreferredLogicalWidth());
-        }
+        while (RenderBox* gridItem = iterator.nextGridItem())
+            minContentSize = std::max(minContentSize, gridItem->minPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(*gridItem));
+
         return minContentSize;
     }
 
     if (length.isMaxContent()) {
         LayoutUnit maxContentSize = 0;
         GridIterator iterator(m_grid, ForColumns, trackIndex);
-        while (RenderBox* gridItem = iterator.nextGridItem()) {
-            // FIXME: We should include the child's fixed margins like RenderFlexibleBox.
-            maxContentSize = std::max(maxContentSize, gridItem->maxPreferredLogicalWidth());
-        }
+        while (RenderBox* gridItem = iterator.nextGridItem())
+            maxContentSize = std::max(maxContentSize, gridItem->maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(*gridItem));
+
         return maxContentSize;
     }
 
@@ -785,15 +783,11 @@ void RenderGrid::layoutGridItems()
     ASSERT(tracksAreWiderThanMinTrackBreadth(ForRows, sizingData.rowTracks));
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        LayoutPoint childPosition = findChildLogicalPosition(child, sizingData);
-
         // Because the grid area cannot be styled, we don't need to adjust
         // the grid breadth to account for 'box-sizing'.
         LayoutUnit oldOverrideContainingBlockContentLogicalWidth = child->hasOverrideContainingBlockLogicalWidth() ? child->overrideContainingBlockContentLogicalWidth() : LayoutUnit();
         LayoutUnit oldOverrideContainingBlockContentLogicalHeight = child->hasOverrideContainingBlockLogicalHeight() ? child->overrideContainingBlockContentLogicalHeight() : LayoutUnit();
 
-        // FIXME: For children in a content sized track, we clear the overrideContainingBlockContentLogicalHeight
-        // in minContentForChild / maxContentForChild which means that we will always relayout the child.
         LayoutUnit overrideContainingBlockContentLogicalWidth = gridAreaBreadthForChild(child, ForColumns, sizingData.columnTracks);
         LayoutUnit overrideContainingBlockContentLogicalHeight = gridAreaBreadthForChild(child, ForRows, sizingData.rowTracks);
         if (oldOverrideContainingBlockContentLogicalWidth != overrideContainingBlockContentLogicalWidth || (oldOverrideContainingBlockContentLogicalHeight != overrideContainingBlockContentLogicalHeight && (child->hasRelativeLogicalHeight() || child->hasViewportPercentageLogicalHeight())))
@@ -809,8 +803,7 @@ void RenderGrid::layoutGridItems()
         // now, just size as if we were a regular child.
         child->layoutIfNeeded();
 
-        // FIXME: Handle border & padding on the grid element.
-        child->setLogicalLocation(childPosition);
+        child->setLogicalLocation(findChildLogicalPosition(child, sizingData));
 
         // If the child moved, we have to repaint it as well as any floating/positioned
         // descendants. An exception is if we need a layout. In this case, we know we're going to
@@ -1055,14 +1048,13 @@ LayoutPoint RenderGrid::findChildLogicalPosition(RenderBox* child, const GridSiz
     const GridCoordinate& coordinate = cachedGridCoordinate(child);
 
     // The grid items should be inside the grid container's border box, that's why they need to be shifted.
-    LayoutPoint offset(borderAndPaddingStart(), borderAndPaddingBefore());
+    LayoutPoint offset(borderAndPaddingStart() + marginStartForChild(*child), borderAndPaddingBefore() + marginBeforeForChild(*child));
     // FIXME: |columnTrack| and |rowTrack| should be smaller than our column / row count.
     for (size_t i = 0; i < coordinate.columns.initialPositionIndex && i < sizingData.columnTracks.size(); ++i)
         offset.setX(offset.x() + sizingData.columnTracks[i].m_usedBreadth);
     for (size_t i = 0; i < coordinate.rows.initialPositionIndex && i < sizingData.rowTracks.size(); ++i)
         offset.setY(offset.y() + sizingData.rowTracks[i].m_usedBreadth);
 
-    // FIXME: Handle margins on the grid item.
     return offset;
 }
 

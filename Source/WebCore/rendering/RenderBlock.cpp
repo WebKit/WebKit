@@ -2083,6 +2083,21 @@ void RenderBlock::markFixedPositionObjectForLayoutIfNeeded(RenderObject& child)
     }
 }
 
+LayoutUnit RenderBlock::marginIntrinsicLogicalWidthForChild(RenderBox& child) const
+{
+    // A margin has three types: fixed, percentage, and auto (variable).
+    // Auto and percentage margins become 0 when computing min/max width.
+    // Fixed margins can be added in as is.
+    Length marginLeft = child.style().marginStartUsing(&style());
+    Length marginRight = child.style().marginEndUsing(&style());
+    LayoutUnit margin = 0;
+    if (marginLeft.isFixed())
+        margin += marginLeft.value();
+    if (marginRight.isFixed())
+        margin += marginRight.value();
+    return margin;
+}
+
 void RenderBlock::layoutPositionedObjects(bool relayoutChildren, bool fixedPositionObjectsOnly)
 {
     TrackedRendererListHashSet* positionedDescendants = positionedObjects();

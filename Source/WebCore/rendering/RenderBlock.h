@@ -409,6 +409,8 @@ protected:
     void layoutPositionedObjects(bool relayoutChildren, bool fixedPositionObjectsOnly = false);
     void markFixedPositionObjectForLayoutIfNeeded(RenderObject& child);
 
+    LayoutUnit marginIntrinsicLogicalWidthForChild(RenderBox&) const;
+
     virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
     virtual void paintObject(PaintInfo&, const LayoutPoint&) OVERRIDE;
     virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect);

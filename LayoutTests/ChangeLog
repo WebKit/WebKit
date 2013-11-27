@@ -1,3 +1,20 @@
+2013-11-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Fix positioning of grid items with margins
+        https://bugs.webkit.org/show_bug.cgi?id=124345
+
+        Reviewed by David Hyatt.
+
+        From Blink r157925 and r158041 by <jchaffraix@chromium.org>
+
+        New test case for grid items margin resolution. Extended the
+        preferred logical widths checks with grid items with margins.
+
+        * fast/css-grid-layout/grid-item-margin-resolution-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-margin-resolution.html: Added.
+        * fast/css-grid-layout/grid-preferred-logical-widths-expected.txt:
+        * fast/css-grid-layout/grid-preferred-logical-widths.html:
+
 2013-11-26  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Support grid-definition-{rows|columns} repeat() syntax

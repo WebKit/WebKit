@@ -91,21 +91,6 @@ const char* RenderFlexibleBox::renderName() const
     return "RenderFlexibleBox";
 }
 
-static LayoutUnit marginLogicalWidthForChild(RenderBox& child, RenderStyle* parentStyle)
-{
-    // A margin has three types: fixed, percentage, and auto (variable).
-    // Auto and percentage margins become 0 when computing min/max width.
-    // Fixed margins can be added in as is.
-    Length marginLeft = child.style().marginStartUsing(parentStyle);
-    Length marginRight = child.style().marginEndUsing(parentStyle);
-    LayoutUnit margin = 0;
-    if (marginLeft.isFixed())
-        margin += marginLeft.value();
-    if (marginRight.isFixed())
-        margin += marginRight.value();
-    return margin;
-}
-
 void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
     // FIXME: We're ignoring flex-basis here and we shouldn't. We can't start honoring it though until
@@ -115,7 +100,7 @@ void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
         if (child->isOutOfFlowPositioned())
             continue;
 
-        LayoutUnit margin = marginLogicalWidthForChild(*child, &style());
+        LayoutUnit margin = marginIntrinsicLogicalWidthForChild(*child);
         bool hasOrthogonalWritingMode = child->isHorizontalWritingMode() != isHorizontalWritingMode();
         LayoutUnit minPreferredLogicalWidth = hasOrthogonalWritingMode ? child->logicalHeight() : child->minPreferredLogicalWidth();
         LayoutUnit maxPreferredLogicalWidth = hasOrthogonalWritingMode ? child->logicalHeight() : child->maxPreferredLogicalWidth();

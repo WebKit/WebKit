@@ -36,6 +36,10 @@
     -webkit-grid-definition-rows: 10px;
     font: 10px/1 Ahem;
 }
+
+.margins {
+    margin: 10px 20px 30px 40px;
+}
 </style>
 </head>
 <script src="../../resources/check-layout.js"></script>
@@ -74,6 +78,32 @@
 </div>
 <div class="grid gridAutoContent max-content" data-expected-height="10" data-expected-width="160">
     <div class="firstRowFirstColumn">XX XX XX</div>
+    <div class="firstRowSecondColumn">XX XX XX</div>
+</div>
+
+<!-- Now with margin on one of the grid items. -->
+<div class="grid gridMinContentFixed min-content" data-expected-height="10" data-expected-width="100">
+    <div class="firstRowFirstColumn">XX XX XX</div>
+    <div class="firstRowSecondColumn margins">XX XX XX</div>
+</div>
+<div class="grid gridMinContentFixed max-content" data-expected-height="10" data-expected-width="120">
+    <div class="firstRowFirstColumn margins">XX XX XX</div>
+    <div class="firstRowSecondColumn">XX XX XX</div>
+</div>
+<div class="grid gridFixedMinContent min-content" data-expected-height="10" data-expected-width="60">
+    <div class="firstRowFirstColumn">XXXXX XXXXX</div>
+    <div class="firstRowSecondColumn margins">XXXXX XXXXX</div>
+</div>
+<div class="grid gridFixedMinContent max-content" data-expected-height="10" data-expected-width="160">
+    <div class="firstRowFirstColumn margins">XXXXX XXXXX</div>
+    <div class="firstRowSecondColumn">XXXXX XXXXX</div>
+</div>
+<div class="grid gridFixedMaxContent min-content" data-expected-height="10" data-expected-width="80">
+    <div class="firstRowFirstColumn">XX XX XX</div>
+    <div class="firstRowSecondColumn margins">XX XX XX</div>
+</div>
+<div class="grid gridFixedMaxContent max-content" data-expected-height="10" data-expected-width="220">
+    <div class="firstRowFirstColumn margins">XX XX XX</div>
     <div class="firstRowSecondColumn">XX XX XX</div>
 </div>
 
