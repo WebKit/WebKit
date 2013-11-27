@@ -76,7 +76,6 @@ TileController::TileController(PlatformCALayer* rootPlatformLayer)
 #ifndef NDEBUG
     m_tileContainerLayer->setName("TileController Container Layer");
 #endif
-    rootPlatformLayer->appendSublayer(m_tileContainerLayer.get());
 }
 
 TileController::~TileController()

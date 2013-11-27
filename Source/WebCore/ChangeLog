@@ -1,3 +1,16 @@
+2013-11-26  Tim Horton  <timothy_horton@apple.com>
+
+        Don't parent the TileController root layer in two places
+        https://bugs.webkit.org/show_bug.cgi?id=124873
+
+        Reviewed by Brent Fulgham.
+
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::TileController):
+        The TileController's layer is already parented by callers of
+        TileController::create, and in a special way. TileController
+        shouldn't parent itself, anyway...
+
 2013-11-26  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         [MediaStream API] HTMLMediaElement should be able to use MediaStream as source
