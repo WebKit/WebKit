@@ -1,3 +1,17 @@
+2013-11-27  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] shape-inside rectangle layout can fail
+        https://bugs.webkit.org/show_bug.cgi?id=124784
+
+        Reviewed by Andreas Kling.
+
+        Apply LayoutUnit::fromFloatCeil() consistently in RectangleShape::firstIncludedIntervalLogicalTop().
+
+        Test: fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top.html
+
+        * rendering/shapes/RectangleShape.cpp:
+        (WebCore::RectangleShape::firstIncludedIntervalLogicalTop):
+
 2013-11-27  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         Remove Qt-specific .qrc files

@@ -188,7 +188,7 @@ bool RectangleShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalInterv
     if (bounds.isEmpty() || minIntervalWidth > bounds.width())
         return false;
 
-    float minY = std::max(bounds.y(), minIntervalTop);
+    float minY = LayoutUnit::fromFloatCeil(std::max(bounds.y(), minIntervalTop));
     float maxY = minY + minIntervalHeight;
 
     if (maxY > bounds.maxY())
@@ -213,7 +213,7 @@ bool RectangleShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalInterv
             return true;
         }
         if (minIntervalHeight < bounds.height() - (2 * cornerIntercept.y())) {
-            result = ceiledLayoutUnit(bounds.y() + cornerIntercept.y());
+            result = LayoutUnit::fromFloatCeil(bounds.y() + cornerIntercept.y());
             return true;
         }
     }
