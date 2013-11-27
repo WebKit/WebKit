@@ -1,3 +1,78 @@
+2013-11-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove replay performance tests as it's not actively maintained
+        https://bugs.webkit.org/show_bug.cgi?id=124764
+
+        Reviewed by Andreas Kling.
+
+        Removed the replay performance tests. We can add them back when time comes.
+
+        * Replay/Chinese/chinaz.com.replay: Removed.
+        * Replay/Chinese/www.163.com.replay: Removed.
+        * Replay/Chinese/www.alipay.com.replay: Removed.
+        * Replay/Chinese/www.baidu.com.replay: Removed.
+        * Replay/Chinese/www.csdn.net.replay: Removed.
+        * Replay/Chinese/www.douban.com.replay: Removed.
+        * Replay/Chinese/www.hao123.com.replay: Removed.
+        * Replay/Chinese/www.xinhuanet.com.replay: Removed.
+        * Replay/Chinese/www.xunlei.com.replay: Removed.
+        * Replay/Chinese/www.youku.com.replay: Removed.
+        * Replay/English/beatonna.livejournal.com.replay: Removed.
+        * Replay/English/cakewrecks.blogspot.com.replay: Removed.
+        * Replay/English/chemistry.about.com.replay: Removed.
+        * Replay/English/digg.com.replay: Removed.
+        * Replay/English/en.wikipedia.org-rorschach_test.replay: Removed.
+        * Replay/English/icanhascheezburger.com.replay: Removed.
+        * Replay/English/imgur.com-gallery.replay: Removed.
+        * Replay/English/online.wsj.com.replay: Removed.
+        * Replay/English/stockoverflow.com-best-comment.replay: Removed.
+        * Replay/English/www.alibaba.com.replay: Removed.
+        * Replay/English/www.amazon.com-kindle.replay: Removed.
+        * Replay/English/www.apple.com.replay: Removed.
+        * Replay/English/www.cnet.com.replay: Removed.
+        * Replay/English/www.dailymotion.com.replay: Removed.
+        * Replay/English/www.ehow.com-prevent-fire.replay: Removed.
+        * Replay/English/www.filestube.com-amy-adams.replay: Removed.
+        * Replay/English/www.foxnews.replay: Removed.
+        * Replay/English/www.huffingtonpost.com.replay: Removed.
+        * Replay/English/www.imdb.com-twilight.replay: Removed.
+        * Replay/English/www.mozilla.com-all-order.replay: Removed.
+        * Replay/English/www.php.net.replay: Removed.
+        * Replay/English/www.reddit.com.replay: Removed.
+        * Replay/English/www.telegraph.co.uk.replay: Removed.
+        * Replay/English/www.w3.org-htmlcss.replay: Removed.
+        * Replay/English/www.w3schools.com-html.replay: Removed.
+        * Replay/English/www.youtube.com-music.replay: Removed.
+        * Replay/French/www.orange.fr.replay: Removed.
+        * Replay/Italian/www.repubblica.it.replay: Removed.
+        * Replay/Japanese/2ch.net-newsplus.replay: Removed.
+        * Replay/Japanese/entameblog.seesaa.net.replay: Removed.
+        * Replay/Japanese/ja.wikipedia.org.replay: Removed.
+        * Replay/Japanese/www.hatena.ne.jp.replay: Removed.
+        * Replay/Japanese/www.livedoor.com.replay: Removed.
+        * Replay/Japanese/www.nicovideo.jp.replay: Removed.
+        * Replay/Japanese/www.rakuten.co.jp.replay: Removed.
+        * Replay/Japanese/www.yahoo.co.jp.replay: Removed.
+        * Replay/Korean/www.naver.com.replay: Removed.
+        * Replay/Persian/blogfa.com.replay: Removed.
+        * Replay/Polish/www.wp.pl.replay: Removed.
+        * Replay/Portuguese/www.uol.com.br.replay: Removed.
+        * Replay/Russian/lenta.ru.replay: Removed.
+        * Replay/Russian/vkontakte.ru-help.replay: Removed.
+        * Replay/Russian/www.ixbt.com.replay: Removed.
+        * Replay/Russian/www.kp.ru.replay: Removed.
+        * Replay/Russian/www.liveinternet.ru.replay: Removed.
+        * Replay/Russian/www.pravda.ru.replay: Removed.
+        * Replay/Russian/www.rambler.ru.replay: Removed.
+        * Replay/Russian/www.ucoz.ru.replay: Removed.
+        * Replay/Russian/www.yandex.ru.replay: Removed.
+        * Replay/Spanish/www.taringa.net.replay: Removed.
+        * Replay/Swedish/www.flashback.se.replay: Removed.
+        * Replay/Swedish/www.tradera.com.replay: Removed.
+        * Replay/www.google.com.replay: Removed.
+        * Replay/www.techcrunch.com.replay: Removed.
+        * Replay/www.youtube.com.replay: Removed.
+
 2013-11-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Layout Test editing/deleting/password-delete-performance.html is failing

@@ -112,8 +112,6 @@ class PerfTestsRunner(object):
                 help="Upload the generated JSON file to the specified server when --output-json-path is present."),
             optparse.make_option("--webkit-test-runner", "-2", action="store_true",
                 help="Use WebKitTestRunner rather than DumpRenderTree."),
-            optparse.make_option("--replay", dest="replay", action="store_true", default=False,
-                help="Run replay tests."),
             optparse.make_option("--force", dest="use_skipped_list", action="store_false", default=True,
                 help="Run all tests, including the ones in the Skipped list."),
             optparse.make_option("--profile", action="store_true",
@@ -134,8 +132,6 @@ class PerfTestsRunner(object):
 
     def _collect_tests(self):
         test_extensions = ['.html', '.svg']
-        if self._options.replay:
-            test_extensions.append('.replay')
 
         def _is_test_file(filesystem, dirname, filename):
             return filesystem.splitext(filename)[1] in test_extensions

@@ -1,3 +1,28 @@
+2013-11-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove replay performance tests as it's not actively maintained
+        https://bugs.webkit.org/show_bug.cgi?id=124764
+
+        Reviewed by Andreas Kling.
+
+        Removed the feature.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (SingleProcessPerfTest.__init__):
+        (PerfTestFactory):
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args):
+        (PerfTestsRunner._collect_tests):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (MainTest.test_collect_tests_with_ignored_skipped_list):
+        (MainTest.test_default_args):
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module):
+        (AutoinstallImportHook._install_unittest2):
+        * Scripts/webkitpy/thirdparty/__init___unittest.py:
+        (ThirdpartyTest.test_imports):
+
 2013-11-26  Filip Pizlo  <fpizlo@apple.com>
 
         Enable aggressive DFG validation in testing

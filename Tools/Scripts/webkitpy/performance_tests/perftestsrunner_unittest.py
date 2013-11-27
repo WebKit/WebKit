@@ -111,18 +111,6 @@ class MainTest(unittest.TestCase):
         port.skipped_perf_tests = lambda: ['inspector/unsupported_test1.html', 'unsupported']
         self.assertItemsEqual(self._collect_tests_and_sort_test_name(runner), ['inspector/test1.html', 'inspector/test2.html', 'inspector/unsupported_test1.html', 'unsupported/unsupported_test2.html'])
 
-    def test_collect_tests_should_ignore_replay_tests_by_default(self):
-        runner, port = self.create_runner()
-        self._add_file(runner, 'Replay', 'www.webkit.org.replay')
-        self.assertItemsEqual(runner._collect_tests(), [])
-
-    def test_collect_tests_with_replay_tests(self):
-        runner, port = self.create_runner(args=['--replay'])
-        self._add_file(runner, 'Replay', 'www.webkit.org.replay')
-        tests = runner._collect_tests()
-        self.assertEqual(len(tests), 1)
-        self.assertEqual(tests[0].__class__.__name__, 'ReplayPerfTest')
-
     def test_default_args(self):
         runner, port = self.create_runner()
         options, args = PerfTestsRunner._parse_args([])
@@ -130,7 +118,6 @@ class MainTest(unittest.TestCase):
         self.assertEqual(options.time_out_ms, 600 * 1000)
         self.assertTrue(options.generate_results)
         self.assertTrue(options.show_results)
-        self.assertFalse(options.replay)
         self.assertTrue(options.use_skipped_list)
         self.assertEqual(options.repeat, 1)
         self.assertEqual(options.test_runner_count, DEFAULT_TEST_RUNNER_COUNT)

@@ -40,11 +40,6 @@ import subprocess
 import sys
 import time
 
-# Import for auto-install
-if sys.platform not in ('cygwin', 'win32'):
-    # FIXME: webpagereplay doesn't work on win32. See https://bugs.webkit.org/show_bug.cgi?id=88279.
-    import webkitpy.thirdparty.autoinstalled.webpagereplay.replay
-
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.port.driver import DriverInput
 from webkitpy.port.driver import DriverOutput
@@ -256,161 +251,10 @@ class SingleProcessPerfTest(PerfTest):
         super(SingleProcessPerfTest, self).__init__(port, test_name, test_path, test_runner_count)
 
 
-class ReplayServer(object):
-    def __init__(self, archive, record):
-        self._process = None
-
-        # FIXME: Should error if local proxy isn't set to forward requests to localhost:8080 and localhost:8443
-
-        replay_path = webkitpy.thirdparty.autoinstalled.webpagereplay.replay.__file__
-        args = ['python', replay_path, '--no-dns_forwarding', '--port', '8080', '--ssl_port', '8443', '--use_closest_match', '--log_level', 'warning']
-        if record:
-            args.append('--record')
-        args.append(archive)
-
-        self._process = subprocess.Popen(args)
-
-    def wait_until_ready(self):
-        for i in range(0, 3):
-            try:
-                connection = socket.create_connection(('localhost', '8080'), timeout=1)
-                connection.close()
-                return True
-            except socket.error:
-                time.sleep(1)
-                continue
-        return False
-
-    def stop(self):
-        if self._process:
-            self._process.send_signal(signal.SIGINT)
-            self._process.wait()
-        self._process = None
-
-    def __del__(self):
-        self.stop()
-
-
-class ReplayPerfTest(PerfTest):
-    _FORCE_GC_FILE = 'resources/force-gc.html'
-
-    def __init__(self, port, test_name, test_path, test_runner_count=DEFAULT_TEST_RUNNER_COUNT):
-        super(ReplayPerfTest, self).__init__(port, test_name, test_path, test_runner_count)
-        self.force_gc_test = self._port.host.filesystem.join(self._port.perf_tests_dir(), self._FORCE_GC_FILE)
-
-    def _start_replay_server(self, archive, record):
-        try:
-            return ReplayServer(archive, record)
-        except OSError as error:
-            if error.errno == errno.ENOENT:
-                _log.error("Replay tests require web-page-replay.")
-            else:
-                raise error
-
-    def prepare(self, time_out_ms):
-        filesystem = self._port.host.filesystem
-        path_without_ext = filesystem.splitext(self.test_path())[0]
-
-        self._archive_path = filesystem.join(path_without_ext + '.wpr')
-        self._expected_image_path = filesystem.join(path_without_ext + '-expected.png')
-        self._url = filesystem.read_text_file(self.test_path()).split('\n')[0]
-
-        if filesystem.isfile(self._archive_path) and filesystem.isfile(self._expected_image_path):
-            _log.info("Replay ready for %s" % self._archive_path)
-            return True
-
-        _log.info("Preparing replay for %s" % self.test_name())
-
-        driver = self._port.create_driver(worker_number=0, no_timeout=True)
-        try:
-            output = self.run_single(driver, self._archive_path, time_out_ms, record=True)
-        finally:
-            driver.stop()
-
-        if not output or not filesystem.isfile(self._archive_path):
-            _log.error("Failed to prepare a replay for %s" % self.test_name())
-            return False
-
-        _log.info("Prepared replay for %s" % self.test_name())
-
-        return True
-
-    def _run_with_driver(self, driver, time_out_ms):
-        times = []
-        malloc = []
-        js_heap = []
-
-        for i in range(0, 6):
-            output = self.run_single(driver, self.test_path(), time_out_ms)
-            if not output or self.run_failed(output):
-                return False
-            if i == 0:
-                continue
-
-            times.append(output.test_time * 1000)
-
-            if not output.measurements:
-                continue
-
-            for metric, result in output.measurements.items():
-                assert metric == 'Malloc' or metric == 'JSHeap'
-                if metric == 'Malloc':
-                    malloc.append(result)
-                else:
-                    js_heap.append(result)
-
-        if times:
-            self._ensure_metrics('Time').append_group(times)
-        if malloc:
-            self._ensure_metrics('Malloc').append_group(malloc)
-        if js_heap:
-            self._ensure_metrics('JSHeap').append_group(js_heap)
-
-        return True
-
-    def run_single(self, driver, url, time_out_ms, record=False):
-        server = self._start_replay_server(self._archive_path, record)
-        if not server:
-            _log.error("Web page replay didn't start.")
-            return None
-
-        try:
-            _log.debug("Waiting for Web page replay to start.")
-            if not server.wait_until_ready():
-                _log.error("Web page replay didn't start.")
-                return None
-
-            _log.debug("Web page replay started. Loading the page.")
-            # Force GC to prevent pageload noise. See https://bugs.webkit.org/show_bug.cgi?id=98203
-            super(ReplayPerfTest, self).run_single(driver, self.force_gc_test, time_out_ms, False)
-            output = super(ReplayPerfTest, self).run_single(driver, self._url, time_out_ms, should_run_pixel_test=True)
-            if self.run_failed(output):
-                return None
-
-            if not output.image:
-                _log.error("Loading the page did not generate image results")
-                _log.error(output.text)
-                return None
-
-            filesystem = self._port.host.filesystem
-            dirname = filesystem.dirname(self._archive_path)
-            filename = filesystem.split(self._archive_path)[1]
-            writer = TestResultWriter(filesystem, self._port, dirname, filename)
-            if record:
-                writer.write_image_files(actual_image=None, expected_image=output.image)
-            else:
-                writer.write_image_files(actual_image=output.image, expected_image=None)
-
-            return output
-        finally:
-            server.stop()
-
-
 class PerfTestFactory(object):
 
     _pattern_map = [
         (re.compile(r'^Dromaeo/'), SingleProcessPerfTest),
-        (re.compile(r'(.+)\.replay$'), ReplayPerfTest),
     ]
 
     @classmethod
