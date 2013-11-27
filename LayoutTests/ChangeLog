@@ -1,3 +1,16 @@
+2013-11-26  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        [MediaStream API] HTMLMediaElement should be able to use MediaStream as source
+        https://bugs.webkit.org/show_bug.cgi?id=121943
+
+        Reviewed by Eric Carlson.
+
+        Add layout tests to MediaStream direct assignment to HTMLMediaElement
+        using brand new srcObject attribute.
+
+        * fast/mediastream/MediaStream-MediaElement-srcObject-expected.txt: Added.
+        * fast/mediastream/MediaStream-MediaElement-srcObject.html: Added.
+
 2013-11-26  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Layout using [<box> || <shape>] value

@@ -180,6 +180,8 @@
 		076970861463AD8700F502CF /* TextTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076970841463AD8700F502CF /* TextTrackList.cpp */; };
 		076970871463AD8700F502CF /* TextTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = 076970851463AD8700F502CF /* TextTrackList.h */; };
 		076F0D0E12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */; };
+		0779BF0D18453168000B6AE7 /* HTMLMediaElementMediaStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0779BF0A18453168000B6AE7 /* HTMLMediaElementMediaStream.cpp */; };
+		0779BF0E18453168000B6AE7 /* HTMLMediaElementMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 0779BF0B18453168000B6AE7 /* HTMLMediaElementMediaStream.h */; };
 		0783228418013ED800999E0C /* MediaStreamAudioSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0783228218013ED700999E0C /* MediaStreamAudioSource.cpp */; };
 		0783228518013ED800999E0C /* MediaStreamAudioSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 0783228318013ED800999E0C /* MediaStreamAudioSource.h */; };
 		07846342145B151A00A58DF1 /* JSTrackEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07846340145B151A00A58DF1 /* JSTrackEvent.cpp */; };
@@ -6796,6 +6798,9 @@
 		076970851463AD8700F502CF /* TextTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackList.h; sourceTree = "<group>"; };
 		076F0D0912B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaPlayerPrivateAVFoundation.cpp; sourceTree = "<group>"; };
 		076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateAVFoundation.h; sourceTree = "<group>"; };
+		0779BF0A18453168000B6AE7 /* HTMLMediaElementMediaStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLMediaElementMediaStream.cpp; sourceTree = "<group>"; };
+		0779BF0B18453168000B6AE7 /* HTMLMediaElementMediaStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLMediaElementMediaStream.h; sourceTree = "<group>"; };
+		0779BF0C18453168000B6AE7 /* HTMLMediaElementMediaStream.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLMediaElementMediaStream.idl; sourceTree = "<group>"; };
 		0783228218013ED700999E0C /* MediaStreamAudioSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamAudioSource.cpp; sourceTree = "<group>"; };
 		0783228318013ED800999E0C /* MediaStreamAudioSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamAudioSource.h; sourceTree = "<group>"; };
 		07846340145B151A00A58DF1 /* JSTrackEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTrackEvent.cpp; sourceTree = "<group>"; };
@@ -13579,6 +13584,9 @@
 		07221B4617CEC32700848E51 /* mediastream */ = {
 			isa = PBXGroup;
 			children = (
+				0779BF0A18453168000B6AE7 /* HTMLMediaElementMediaStream.cpp */,
+				0779BF0B18453168000B6AE7 /* HTMLMediaElementMediaStream.h */,
+				0779BF0C18453168000B6AE7 /* HTMLMediaElementMediaStream.idl */,
 				0705853917FE0770005F2BCB /* MediaTrackConstraint.cpp */,
 				0705853717FE044F005F2BCB /* MediaTrackConstraintSet.cpp */,
 				0705852617FDE02B005F2BCB /* MediaTrackConstraintSet.h */,
@@ -22811,6 +22819,7 @@
 				51FA2D78152132B300C1BA0B /* DOMWindowExtension.h in Headers */,
 				97B38E27151C4271004622E9 /* DOMWindowNotifications.h in Headers */,
 				97D2AD0414B823A60093DF32 /* DOMWindowProperty.h in Headers */,
+				0779BF0E18453168000B6AE7 /* HTMLMediaElementMediaStream.h in Headers */,
 				89F60B11157F686E0075E157 /* DOMWindowQuota.h in Headers */,
 				AA2A5AD616A4861600975A25 /* DOMWindowSpeechSynthesis.h in Headers */,
 				A8CCBB49151F831600AB7CE9 /* DOMWindowWebDatabase.h in Headers */,
@@ -26215,6 +26224,7 @@
 				2EF1BFEA121C9F4200C27627 /* FileStream.cpp in Sources */,
 				C57FEDE11212EE9C0097BE65 /* FileSystem.cpp in Sources */,
 				5160306C0CC4362300C8AC25 /* FileSystemCF.cpp in Sources */,
+				0779BF0D18453168000B6AE7 /* HTMLMediaElementMediaStream.cpp in Sources */,
 				26C17A3F1491D2D400D12BA2 /* FileSystemIOS.mm in Sources */,
 				CD3A495417A9CC9000274E42 /* MediaSourceBase.cpp in Sources */,
 				514B3F760C722055000530DF /* FileSystemMac.mm in Sources */,

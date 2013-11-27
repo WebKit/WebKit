@@ -355,6 +355,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSHTMLMarqueeElement.h \
 	DerivedSources/WebCore/JSHTMLMediaElement.cpp \
 	DerivedSources/WebCore/JSHTMLMediaElement.h \
+	DerivedSources/WebCore/JSHTMLMediaElementMediaStream.cpp \
+	DerivedSources/WebCore/JSHTMLMediaElementMediaStream.h \
 	DerivedSources/WebCore/JSHTMLMenuElement.cpp \
 	DerivedSources/WebCore/JSHTMLMenuElement.h \
 	DerivedSources/WebCore/JSHTMLMetaElement.cpp \
@@ -1887,6 +1889,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediastream/AudioStreamTrack.h \
 	Source/WebCore/Modules/mediastream/CapabilityRange.cpp \
 	Source/WebCore/Modules/mediastream/CapabilityRange.h \
+	Source/WebCore/Modules/mediastream/HTMLMediaElementMediaStream.cpp \
+	Source/WebCore/Modules/mediastream/HTMLMediaElementMediaStream.h \
 	Source/WebCore/Modules/mediastream/MediaConstraintsImpl.cpp \
 	Source/WebCore/Modules/mediastream/MediaConstraintsImpl.h \
 	Source/WebCore/Modules/mediastream/MediaSourceStates.cpp \

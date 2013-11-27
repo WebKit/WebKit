@@ -112,6 +112,7 @@
 #endif
 
 #if ENABLE(MEDIA_STREAM)
+#include "MediaStream.h"
 #include "MediaStreamRegistry.h"
 #endif
 
@@ -320,6 +321,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_audioSessionManagerToken(AudioSessionManagerToken::create(tagName == videoTag ? AudioSessionManager::Video : AudioSessionManager::Audio))
 #endif
     , m_reportedExtraMemoryCost(0)
+#if ENABLE(MEDIA_STREAM)
+    , m_mediaStreamSrcObject(nullptr)
+#endif
 {
     LOG(Media, "HTMLMediaElement::HTMLMediaElement");
     setHasCustomStyleResolveCallbacks();
@@ -745,6 +749,20 @@ void HTMLMediaElement::setSrc(const String& url)
 {
     setAttribute(srcAttr, url);
 }
+
+#if ENABLE(MEDIA_STREAM)
+void HTMLMediaElement::setSrcObject(MediaStream* mediaStream)
+{
+    // FIXME: Setting the srcObject attribute may cause other changes to the media element's internal state:
+    // Specifically, if srcObject is specified, the UA must use it as the source of media, even if the src
+    // attribute is also set or children are present. If the value of srcObject is replaced or set to null
+    // the UA must re-run the media element load algorithm.
+    //
+    // https://bugs.webkit.org/show_bug.cgi?id=124896
+
+    m_mediaStreamSrcObject = mediaStream;
+}
+#endif
 
 HTMLMediaElement::NetworkState HTMLMediaElement::networkState() const
 {

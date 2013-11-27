@@ -1,3 +1,30 @@
+2013-11-26  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        [MediaStream API] HTMLMediaElement should be able to use MediaStream as source
+        https://bugs.webkit.org/show_bug.cgi?id=121943
+
+        Reviewed by Eric Carlson.
+
+        Implement MediaStream direct assignment to Media Elements using the new 'srcObject'
+        attribute: http://www.w3.org/TR/mediacapture-streams/#direct-assignment-to-media-elements
+
+        Test: fast/mediastream/MediaStream-MediaElement-srcObject.html
+
+        * CMakeLists.txt: Added new HTMLMediaElementMediaStream.h and .cpp to cmake build.
+        * DerivedSources.make: Added HTMLMediaElementMediaStream.idl.
+        * GNUmakefile.list.am: Added new HTMLMediaElementMediaStream* to autotools build.
+        * WebCore.xcodeproj/project.pbxproj: Added new files.
+        * Modules/mediastream/HTMLMediaElementMediaStream.cpp: Added.
+        (WebCore::HTMLMediaElementMediaStream::srcObject): implements srcObject getter.
+        (WebCore::HTMLMediaElementMediaStream::setSrcObject): implements srcObject setter.
+        * Modules/mediastream/HTMLMediaElementMediaStream.h: Added.
+        * Modules/mediastream/HTMLMediaElementMediaStream.idl: Added.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setSrcObject): This is an initial implementation, and
+        is still incomplete, that will be addressed in a separate bug: https://webkit.org/b/124896
+        * html/HTMLMediaElement.h: Added m_mediaStreamSrcObject class variable
+        and its corresponding getter.
+
 2013-11-26  Andreas Kling  <akling@apple.com>
 
         Use child iterator to find operators in RenderMathMLRow::layout().

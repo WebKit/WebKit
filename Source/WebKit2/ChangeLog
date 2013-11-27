@@ -1,3 +1,14 @@
+2013-11-26  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        [MediaStream API] HTMLMediaElement should be able to use MediaStream as source
+        https://bugs.webkit.org/show_bug.cgi?id=121943
+
+        Reviewed by Eric Carlson.
+
+        Add mediastream module and platform to cmake include directories.
+
+        * CMakeLists.txt:
+
 2013-11-26  Dan Bernstein  <mitz@apple.com>
 
         Some WebKit2 headers are not self-contained
