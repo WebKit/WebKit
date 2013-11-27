@@ -405,12 +405,20 @@ def runNoCJIT
     run("no-cjit", "--enableConcurrentJIT=false")
 end
 
+def runNoCJITValidatePhases
+    run("no-cjit-validate-phases", "--enableConcurrentJIT=false", "--validateGraphAtEachPhase=true")
+end
+
 def runDefaultFTL
     run("default-ftl", "--useExperimentalFTL=true")
 end
 
 def runFTLNoCJIT
     run("ftl-no-cjit", "--enableConcurrentJIT=false", "--useExperimentalFTL=true")
+end
+
+def runFTLNoCJITValidate
+    run("ftl-no-cjit-validate", "--enableConcurrentJIT=false", "--useExperimentalFTL=true", "--validateGraph=true")
 end
 
 def runFTLNoCJITOSRValidation
@@ -421,16 +429,16 @@ def runDFGEager
     run("dfg-eager", *EAGER_OPTIONS)
 end
 
-def runDFGEagerNoCJIT
-    run("dfg-eager-no-cjit", "--enableConcurrentJIT=false", *EAGER_OPTIONS)
+def runDFGEagerNoCJITValidate
+    run("dfg-eager-no-cjit-validate", "--enableConcurrentJIT=false", "--validateGraph=true", *EAGER_OPTIONS)
 end
 
 def runFTLEager
     run("ftl-eager", "--useExperimentalFTL=true", *EAGER_OPTIONS)
 end
 
-def runFTLEagerNoCJIT
-    run("ftl-eager-no-cjit", "--useExperimentalFTL=true", "--enableConcurrentJIT=false", *EAGER_OPTIONS)
+def runFTLEagerNoCJITValidate
+    run("ftl-eager-no-cjit", "--useExperimentalFTL=true", "--enableConcurrentJIT=false", "--validateGraph=true", *EAGER_OPTIONS)
 end
 
 def runFTLEagerNoCJITOSRValidation
@@ -445,15 +453,15 @@ def defaultRun
     runDefault
     runNoLLInt
     runAlwaysTriggerCopyPhase
-    runNoCJIT
+    runNoCJITValidatePhases
     runDFGEager
-    runDFGEagerNoCJIT
+    runDFGEagerNoCJITValidate
     if $enableFTL
         runDefaultFTL
-        runFTLNoCJIT
+        runFTLNoCJITValidate
         runFTLNoCJITOSRValidation
         runFTLEager
-        runFTLEagerNoCJIT
+        runFTLEagerNoCJITValidate
         runFTLEagerNoCJITOSRValidation
     end
 end
