@@ -1,3 +1,17 @@
+2013-11-27  Andres Gomez  <agomez@igalia.com>
+
+        [GTK] Tools/Scripts/update-webkitgtk-libs unsorted and fails because of missing "git"
+        https://bugs.webkit.org/show_bug.cgi?id=124938
+
+        Reviewed by Philippe Normand.
+
+        Added needed git dependency for building the gtk port with
+        jhbuild. Also, the dependencies needed for building the gtk port
+        are now sorted alphabetically.
+
+        * gtk/install-dependencies: Added git as jhbuild dependency and
+        sorted dependencies alphabetically.
+
 2013-11-27  Jozsef Berta  <jberta@inf.u-szeged.hu>
 
         run_webkit_tests.py: error: no such option: --wincairo

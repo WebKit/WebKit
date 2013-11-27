@@ -90,39 +90,40 @@ function installDependenciesWithApt {
 
     # These are dependencies necessary for building the jhbuild.
     apt-get install \
+        git \
         gobject-introspection \
         icon-naming-utils \
+        libcroco3-dev \
         libegl1-mesa-dev \
         libgcrypt11-dev \
         libgpg-error-dev \
         libp11-kit-dev \
-        libtiff5-dev \
-        libcroco3-dev \
-        ragel \
-        xutils-dev \
-        xtrans-dev \
-        libxfont-dev \
         libpciaccess-dev \
+        libtiff5-dev \
+        libxfont-dev \
+        libxkbfile-dev \
+        ragel \
         x11proto-bigreqs-dev \
         x11proto-composite-dev \
         x11proto-gl-dev \
         x11proto-input-dev \
-        x11proto-video-dev \
-        x11proto-scrnsaver-dev \
+        x11proto-randr-dev \
         x11proto-resource-dev \
+        x11proto-scrnsaver-dev \
+        x11proto-video-dev \
         x11proto-xcmisc-dev \
         x11proto-xf86dri-dev \
-        x11proto-randr-dev \
-        libxkbfile-dev
+        xtrans-dev \
+        xutils-dev
 }
 
 function installDependenciesWithYum {
     # These are dependencies necessary for building WebKitGTK+.
     yum install \
+        atk-devel \
         autoconf \
         automake \
         bison \
-        atk-devel \
         cairo-devel \
         enchant-devel \
         flex \
@@ -135,57 +136,58 @@ function installDependenciesWithYum {
         gperf \
         gstreamer1-devel \
         gstreamer1-plugins-base-devel \
+        gtk-doc \
         gtk2-devel \
         gtk3-devel \
-        gtk-doc \
         harfbuzz-devel \
-        libsoup-devel \
+        libXt-devel \
+        libXtst-devel \
+        libgudev1-devel \
         libicu-devel \
         libjpeg-turbo-devel \
         libpng-devel \
         libsecret-devel \
+        libsoup-devel \
         libwebp-devel \
         libxslt-devel \
-        libXt-devel \
-        libXtst-devel \
-        libgudev1-devel \
         mesa-libGL-devel \
         pcre-devel \
-        ruby \
-        sqlite-devel \
         perl-Switch \
         perl-version \
-        python-devel
+        python-devel \
+        ruby \
+        sqlite-devel
 
     # These are dependencies necessary for running tests.
     yum install \
+        curl \
         httpd \
+        libgpg-error-devel \
         mod_bw \
         mod_ssl \
         php \
-        curl \
-        libgpg-error-devel \
         pulseaudio-utils \
         pygobject3-base \
         ruby
 
     # These are dependencies necessary for building the jhbuild.
     yum install \
+        git \
         gobject-introspection \
         icon-naming-utils \
+        libXfont-devel \
+        libcroco-devel \
         libgcrypt-devel \
         libgpg-error-devel \
         libp11-devel \
+        libpciaccess-devel \
         libtiff-devel \
-        libcroco-devel \
+        libxkbfile-devel \
         mesa-libEGL-devel \
         ragel \
-        xorg-x11-util-macros \
-        xorg-x11-xtrans-devel \
         xorg-x11-proto-devel \
-        libXfont-devel \
-        libxkbfile-devel \
-        libpciaccess-devel
+        xorg-x11-util-macros \
+        xorg-x11-xtrans-devel
 }
 
 checkInstaller
