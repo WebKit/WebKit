@@ -170,9 +170,11 @@ public:
     bool parseGridAreaShorthand(bool important);
     bool parseSingleGridAreaLonghand(RefPtr<CSSValue>&);
     bool parseGridTrackList(CSSPropertyID, bool important);
-    PassRefPtr<CSSPrimitiveValue> parseGridTrackSize();
+    bool parseGridTrackRepeatFunction(CSSValueList&);
+    PassRefPtr<CSSPrimitiveValue> parseGridTrackSize(CSSParserValueList& inputList);
     PassRefPtr<CSSPrimitiveValue> parseGridBreadth(CSSParserValue*);
     PassRefPtr<CSSValue> parseGridTemplate();
+    void parseGridTrackNames(CSSParserValueList& inputList, CSSValueList& values);
 
     bool parseDashboardRegions(CSSPropertyID, bool important);
 

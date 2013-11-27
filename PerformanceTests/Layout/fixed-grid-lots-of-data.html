@@ -12,10 +12,9 @@ html, body {
 }
 
 body {
-    /* FIXME: replace by repeat() syntax when available */
     display: -webkit-grid;
-    -webkit-grid-definition-rows: 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px;
-    -webkit-grid-definition-columns: 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px 200px;
+    -webkit-grid-definition-rows: repeat(100, 200px);
+    -webkit-grid-definition-columns: repeat(20, 200px);
 }
 
 .gridItem {

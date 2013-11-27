@@ -2697,7 +2697,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitGridAutoRows:
         if (!cssGridLayoutEnabled())
             return false;
-        parsedValue = parseGridTrackSize();
+        parsedValue = parseGridTrackSize(*m_valueList);
         break;
 
     case CSSPropertyWebkitGridDefinitionColumns:
@@ -5030,6 +5030,15 @@ bool CSSParser::parseSingleGridAreaLonghand(RefPtr<CSSValue>& property)
     return true;
 }
 
+void CSSParser::parseGridTrackNames(CSSParserValueList& parserValues, CSSValueList& values)
+{
+    do {
+        RefPtr<CSSPrimitiveValue> name = createPrimitiveStringValue(parserValues.current());
+        values.append(name.release());
+        parserValues.next();
+    } while (parserValues.current() && parserValues.current()->unit == CSSPrimitiveValue::CSS_STRING);
+}
+
 bool CSSParser::parseGridTrackList(CSSPropertyID propId, bool important)
 {
     CSSParserValue* value = m_valueList->current();
@@ -5043,39 +5052,72 @@ bool CSSParser::parseGridTrackList(CSSPropertyID propId, bool important)
 
     RefPtr<CSSValueList> values = CSSValueList::createSpaceSeparated();
     // Handle leading track names
-    while (m_valueList->current() && m_valueList->current()->unit == CSSPrimitiveValue::CSS_STRING) {
-        RefPtr<CSSPrimitiveValue> name = createPrimitiveStringValue(m_valueList->current());
-        values->append(name.release());
-        m_valueList->next();
-    }
+    if (m_valueList->current() && m_valueList->current()->unit == CSSPrimitiveValue::CSS_STRING)
+        parseGridTrackNames(*m_valueList, *values);
 
-    bool seenTrackSize = false;
-    while (m_valueList->current()) {
-        RefPtr<CSSPrimitiveValue> primitiveValue = parseGridTrackSize();
-        if (!primitiveValue)
-            return false;
-
-        seenTrackSize = true;
-        values->append(primitiveValue.release());
-
-        while (m_valueList->current() && m_valueList->current()->unit == CSSPrimitiveValue::CSS_STRING) {
-            RefPtr<CSSPrimitiveValue> name = createPrimitiveStringValue(m_valueList->current());
-            values->append(name.release());
-            m_valueList->next();
+    bool seenTrackSizeOrRepeatFunction = false;
+    while (CSSParserValue* currentValue = m_valueList->current()) {
+        if (currentValue->unit == CSSParserValue::Function && equalIgnoringCase(currentValue->function->name, "repeat(")) {
+            if (!parseGridTrackRepeatFunction(*values))
+                return false;
+        } else {
+            RefPtr<CSSPrimitiveValue> primitiveValue = parseGridTrackSize(*m_valueList);
+            if (!primitiveValue)
+                return false;
+            values->append(primitiveValue.release());
         }
+        seenTrackSizeOrRepeatFunction = true;
+
+        if (m_valueList->current() && m_valueList->current()->unit == CSSPrimitiveValue::CSS_STRING)
+            parseGridTrackNames(*m_valueList, *values);
     }
 
-    if (!seenTrackSize)
+    if (!seenTrackSizeOrRepeatFunction)
         return false;
 
     addProperty(propId, values.release(), important);
     return true;
 }
 
-PassRefPtr<CSSPrimitiveValue> CSSParser::parseGridTrackSize()
+bool CSSParser::parseGridTrackRepeatFunction(CSSValueList& list)
 {
-    CSSParserValue* currentValue = m_valueList->current();
+    CSSParserValueList* arguments = m_valueList->current()->function->args.get();
+    if (!arguments || arguments->size() < 3 || !validUnit(arguments->valueAt(0), FPositiveInteger) || !isComma(arguments->valueAt(1)))
+        return false;
+
+    ASSERT_WITH_SECURITY_IMPLICATION(arguments->valueAt(0)->fValue > 0);
+    size_t repetitions = arguments->valueAt(0)->fValue;
+    RefPtr<CSSValueList> repeatedValues = CSSValueList::createSpaceSeparated();
+    arguments->next(); // Skip the repetition count.
+    arguments->next(); // Skip the comma.
+
+    while (arguments->current()) {
+        if (arguments->current()->unit == CSSPrimitiveValue::CSS_STRING)
+            parseGridTrackNames(*arguments, *repeatedValues);
+
+        if (!arguments->current())
+            break;
+
+        RefPtr<CSSPrimitiveValue> trackSize = parseGridTrackSize(*arguments);
+        if (!trackSize)
+            return false;
+
+        repeatedValues->append(trackSize.release());
+    }
+
+    for (size_t i = 0; i < repetitions; ++i) {
+        for (size_t j = 0; j < repeatedValues->length(); ++j)
+            list.append(repeatedValues->itemWithoutBoundsCheck(j));
+    }
+
     m_valueList->next();
+    return true;
+}
+
+PassRefPtr<CSSPrimitiveValue> CSSParser::parseGridTrackSize(CSSParserValueList& inputList)
+{
+    CSSParserValue* currentValue = inputList.current();
+    inputList.next();
 
     if (currentValue->id == CSSValueAuto)
         return cssValuePool().createIdentifierValue(CSSValueAuto);
@@ -5097,10 +5139,7 @@ PassRefPtr<CSSPrimitiveValue> CSSParser::parseGridTrackSize()
         return createPrimitiveValuePair(minTrackBreadth, maxTrackBreadth);
     }
 
-    if (PassRefPtr<CSSPrimitiveValue> trackBreadth = parseGridBreadth(currentValue))
-        return trackBreadth;
-
-    return 0;
+    return parseGridBreadth(currentValue);
 }
 
 PassRefPtr<CSSPrimitiveValue> CSSParser::parseGridBreadth(CSSParserValue* currentValue)

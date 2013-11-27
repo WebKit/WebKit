@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+#singleSingleTrackRepeat {
+    -webkit-grid-definition-rows: repeat(1, 18px);
+    -webkit-grid-definition-columns: repeat(1, 15%);
+}
+
+#twoSingleTrackRepeat {
+    -webkit-grid-definition-rows: repeat(2, auto);
+    -webkit-grid-definition-columns: repeat(2, minmax(15px, 50%));
+}
+
+#twoDoubleTrackRepeat {
+    -webkit-grid-definition-rows: repeat(2, minmax(5px, 10px)  auto);
+    -webkit-grid-definition-columns: repeat(2, auto minmax(100px, 120px));
+}
+
+#twoDoubleTrackWithNamedGridLineRepeat {
+    -webkit-grid-definition-rows: repeat(2, 10px 'start' auto 'end');
+    -webkit-grid-definition-columns: repeat(2, auto 'middle' 250px 'end');
+}
+
+#twoDoubleTrackWithTrailingNamedGridLineRepeat {
+    -webkit-grid-definition-rows: repeat(2, 'before' 10px);
+    -webkit-grid-definition-columns: repeat(2, 'before' auto);
+}
+
+#trailingNamedGridLineRepeat {
+    -webkit-grid-definition-rows: repeat(1, 10px) 'end';
+    -webkit-grid-definition-columns: repeat(1, 250px) 'end';
+}
+
+#leadingNamedGridLineRepeat {
+    -webkit-grid-definition-rows: 'start' repeat(2, 10px);
+    -webkit-grid-definition-columns: 'start' repeat(2, 250px);
+}
+
+#mixRepeatAfterNonRepeat {
+    -webkit-grid-definition-rows: auto repeat(2, 10px);
+    -webkit-grid-definition-columns: 'start' 140px repeat(2, 250px);
+}
+
+#mixNonRepeatAfterRepeat {
+    -webkit-grid-definition-rows: repeat(2, 10px) 'end' auto;
+    -webkit-grid-definition-columns: repeat(2, 250px) 15% 'last';
+}
+</style>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div class="grid" id="singleSingleTrackRepeat"></div>
+<div class="grid" id="twoSingleTrackRepeat"></div>
+<div class="grid" id="twoDoubleTrackRepeat"></div>
+<div class="grid" id="twoDoubleTrackWithNamedGridLineRepeat"></div>
+<div class="grid" id="twoDoubleTrackWithTrailingNamedGridLineRepeat"></div>
+<div class="grid" id="trailingNamedGridLineRepeat"></div>
+<div class="grid" id="leadingNamedGridLineRepeat"></div>
+<div class="grid" id="mixRepeatAfterNonRepeat"></div>
+<div class="grid" id="mixNonRepeatAfterRepeat"></div>
+<script>
+    description('Test that setting and getting grid-definition-columns and grid-definition-rows with repeat() works as expected');
+
+    function testGridDefinitionsValues(element, columnValue, rowValue)
+    {
+        window.element = element;
+        var elementID = element.id || "element";
+        shouldBeEqualToString("window.getComputedStyle(" + elementID + ", '').getPropertyValue('-webkit-grid-definition-columns')", columnValue);
+        shouldBeEqualToString("window.getComputedStyle(" + elementID + ", '').getPropertyValue('-webkit-grid-definition-rows')", rowValue);
+    }
+
+    debug("Test getting grid-definition-columns and grid-definition-rows set through CSS");
+    testGridDefinitionsValues(document.getElementById("singleSingleTrackRepeat"), "15%", "18px");
+    testGridDefinitionsValues(document.getElementById("twoSingleTrackRepeat"), "minmax(15px, 50%) minmax(15px, 50%)", "auto auto");
+    testGridDefinitionsValues(document.getElementById("twoDoubleTrackRepeat"), "auto minmax(100px, 120px) auto minmax(100px, 120px)", "minmax(5px, 10px) auto minmax(5px, 10px) auto");
+    testGridDefinitionsValues(document.getElementById("twoDoubleTrackWithNamedGridLineRepeat"), "auto middle 250px end auto middle 250px end", "10px start auto end 10px start auto end");
+    testGridDefinitionsValues(document.getElementById("twoDoubleTrackWithTrailingNamedGridLineRepeat"), "before auto before auto", "before 10px before 10px");
+    testGridDefinitionsValues(document.getElementById("trailingNamedGridLineRepeat"), "250px end", "10px end");
+    testGridDefinitionsValues(document.getElementById("leadingNamedGridLineRepeat"), "start 250px 250px", "start 10px 10px");
+    testGridDefinitionsValues(document.getElementById("mixRepeatAfterNonRepeat"), "start 140px 250px 250px", "auto 10px 10px");
+    testGridDefinitionsValues(document.getElementById("mixNonRepeatAfterRepeat"), "250px 250px 15% last", "10px 10px end auto");
+
+    debug("");
+    debug("Test invalid repeat syntax.");
+    function testInvalidSyntax(gridColumn) {
+        element = document.createElement("div");
+        document.body.appendChild(element);
+        element.style.gridColumns = gridColumn;
+        shouldBeEqualToString("window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "none");
+        document.body.removeChild(element);
+    }
+    testInvalidSyntax("repeat(");
+    testInvalidSyntax("repeat()");
+    testInvalidSyntax("repeat(3 / auto)");
+    testInvalidSyntax("repeat(3 , ,)");
+    testInvalidSyntax("repeat(0, 15px)");
+    testInvalidSyntax("repeat(-1, auto)");
+    // Nesting is no allowed.
+    testInvalidSyntax("repeat(2, repeat(1, auto))");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
