@@ -5449,6 +5449,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/mock/DeviceOrientationClientMock.h \
 	Source/WebCore/platform/mock/GeolocationClientMock.cpp \
 	Source/WebCore/platform/mock/GeolocationClientMock.h \
+	Source/WebCore/platform/mock/MediaConstraintsMock.cpp \
+	Source/WebCore/platform/mock/MediaConstraintsMock.h \
 	Source/WebCore/platform/mock/MockMediaStreamCenter.cpp \
 	Source/WebCore/platform/mock/MockMediaStreamCenter.h \
 	Source/WebCore/platform/mock/RTCDataChannelHandlerMock.cpp \

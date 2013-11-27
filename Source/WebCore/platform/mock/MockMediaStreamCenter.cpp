@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
  * Copyright (C) 2013 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +26,12 @@
  */
 
 #include "config.h"
-#include "MockMediaStreamCenter.h"
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "MockMediaStreamCenter.h"
+
+#include "MediaConstraintsMock.h"
 #include "MediaStream.h"
 #include "MediaStreamCreationClient.h"
 #include "MediaStreamPrivate.h"
@@ -125,43 +128,6 @@ void MockMediaStreamCenter::registerMockMediaStreamCenter()
     }
 }
 
-static bool isSupportedMockConstraint(const String& constraintName)
-{
-    return notFound != constraintName.find("_and_supported_");
-}
-
-static bool isValidMockConstraint(const String& constraintName)
-{
-    if (isSupportedMockConstraint(constraintName))
-        return true;
-    return notFound != constraintName.find("_but_unsupported_");
-}
-
-static String verifyConstraints(MediaConstraints* constraints)
-{
-    Vector<MediaConstraint> mandatoryConstraints;
-    constraints->getMandatoryConstraints(mandatoryConstraints);
-    if (mandatoryConstraints.size()) {
-        for (size_t i = 0; i < mandatoryConstraints.size(); ++i) {
-            const MediaConstraint& constraint = mandatoryConstraints[i];
-            if (!isSupportedMockConstraint(constraint.m_name) || constraint.m_value != "1")
-                return constraint.m_name;
-        }
-    }
-    
-    Vector<MediaConstraint> optionalConstraints;
-    constraints->getOptionalConstraints(optionalConstraints);
-    if (optionalConstraints.size()) {
-        for (size_t i = 0; i < optionalConstraints.size(); ++i) {
-            const MediaConstraint& constraint = optionalConstraints[i];
-            if (!isValidMockConstraint(constraint.m_name) || constraint.m_value != "0")
-                return constraint.m_name;
-        }
-    }
-    
-    return emptyString();
-}
-
 void MockMediaStreamCenter::validateRequestConstraints(PassRefPtr<MediaStreamCreationClient> prpQueryClient, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints)
 {
     RefPtr<MediaStreamCreationClient> client = prpQueryClient;
@@ -169,7 +135,7 @@ void MockMediaStreamCenter::validateRequestConstraints(PassRefPtr<MediaStreamCre
     ASSERT(client);
     
     if (audioConstraints) {
-        String invalidQuery = verifyConstraints(audioConstraints.get());
+        String invalidQuery = MediaConstraintsMock::verifyConstraints(audioConstraints);
         if (!invalidQuery.isEmpty()) {
             client->constraintsInvalid(invalidQuery);
             return;
@@ -177,7 +143,7 @@ void MockMediaStreamCenter::validateRequestConstraints(PassRefPtr<MediaStreamCre
     }
     
     if (videoConstraints) {
-        String invalidQuery = verifyConstraints(videoConstraints.get());
+        String invalidQuery = MediaConstraintsMock::verifyConstraints(videoConstraints);
         if (!invalidQuery.isEmpty()) {
             client->constraintsInvalid(invalidQuery);
             return;
@@ -198,7 +164,7 @@ void MockMediaStreamCenter::createMediaStream(PassRefPtr<MediaStreamCreationClie
     MockSourceMap& map = mockSourceMap();
 
     if (audioConstraints) {
-        String invalidQuery = verifyConstraints(audioConstraints.get());
+        String invalidQuery = MediaConstraintsMock::verifyConstraints(audioConstraints);
         if (!invalidQuery.isEmpty()) {
             client->failedToCreateStreamWithConstraintsError(invalidQuery);
             return;
@@ -214,7 +180,7 @@ void MockMediaStreamCenter::createMediaStream(PassRefPtr<MediaStreamCreationClie
     }
 
     if (videoConstraints) {
-        String invalidQuery = verifyConstraints(videoConstraints.get());
+        String invalidQuery = MediaConstraintsMock::verifyConstraints(videoConstraints);
         if (!invalidQuery.isEmpty()) {
             client->failedToCreateStreamWithConstraintsError(invalidQuery);
             return;

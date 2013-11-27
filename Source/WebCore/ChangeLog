@@ -1,3 +1,24 @@
+2013-11-27  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Adding MediaConstraintsMock class
+        https://bugs.webkit.org/show_bug.cgi?id=124902
+
+        Reviewed by Eric Carlson.
+
+        Validate constraints used in RTCPeerConnection LayoutTests
+
+        Existing test was updated.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * platform/mock/MediaConstraintsMock.cpp: Added.
+        * platform/mock/MediaConstraintsMock.h: Added.
+        * platform/mock/MockMediaStreamCenter.cpp:
+        (WebCore::MockMediaStreamCenter::validateRequestConstraints): Now using MediaConstraintsMock
+        (WebCore::MockMediaStreamCenter::createMediaStream): Ditto.
+        * platform/mock/RTCPeerConnectionHandlerMock.cpp:
+        (WebCore::RTCPeerConnectionHandlerMock::initialize): Ditto.
+
 2013-11-27  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Shape-Inside Should Default to 'auto'
