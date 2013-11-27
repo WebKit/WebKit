@@ -1854,14 +1854,6 @@ void RenderStyle::setBorderImageOutset(LengthBox outset)
     surround.access()->border.m_image.setOutset(outset);
 }
 
-#if ENABLE(CSS_SHAPES)
-ShapeValue* RenderStyle::initialShapeInside()
-{
-    static ShapeValue* outsideValue = ShapeValue::createOutsideValue().leakRef();
-    return outsideValue;
-}
-#endif
-
 void RenderStyle::setColumnStylesFromPaginationMode(const Pagination::Mode& paginationMode)
 {
     if (paginationMode == Pagination::Unpaginated)

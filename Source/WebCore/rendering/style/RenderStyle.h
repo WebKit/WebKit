@@ -1532,7 +1532,7 @@ public:
     }
     ShapeValue* shapeOutside() const { return rareNonInheritedData->m_shapeOutside.get(); }
 
-    static ShapeValue* initialShapeInside();
+    static ShapeValue* initialShapeInside() { return 0; }
     static ShapeValue* initialShapeOutside() { return 0; }
 
     const Length& shapePadding() const { return rareNonInheritedData->m_shapePadding; }

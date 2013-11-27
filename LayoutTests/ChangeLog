@@ -1,3 +1,19 @@
+2013-11-27  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Shape-Inside Should Default to 'auto'
+        https://bugs.webkit.org/show_bug.cgi?id=124851
+
+        Reviewed by Alexandru Chiculita.
+
+        Update tests to reflect a default shape-inside value of 'auto'.
+
+        * fast/shapes/css-shapes-disabled-expected.txt:
+        * fast/shapes/css-shapes-disabled.html:
+        * fast/shapes/parsing/parsing-shape-inside-expected.txt:
+        * fast/shapes/parsing/parsing-shape-inside.html:
+        * fast/shapes/parsing/parsing-shape-lengths-expected.txt:
+        * fast/shapes/parsing/parsing-shape-lengths.html:
+
 2013-11-27  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] shape-inside rectangle layout can fail
