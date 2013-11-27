@@ -136,9 +136,10 @@ Second part of this complicated change by me, Tor Arne Vestb\u00f8!
 
         mock_scm = MockSCM()
         mock_scm.run = mock_run
-        mock_scm.script_path = real_scm.script_path
 
+        real_checkout = Checkout(real_scm)
         checkout = Checkout(mock_scm)
+        checkout.script_path = real_checkout.script_path
         checkout.modified_changelogs = lambda git_commit, changed_files=None: self.changelogs
         commit_message = checkout.commit_message_for_this_commit(git_commit=None, return_stderr=True)
         # Throw away the first line - a warning about unknown VCS root.
@@ -252,7 +253,7 @@ class CheckoutTest(unittest.TestCase):
     def test_apply_patch(self):
         checkout = self._make_checkout()
         checkout._executive = MockExecutive(should_log=True)
-        checkout._scm.script_path = lambda script: script
+        checkout.script_path = lambda script: script
         mock_patch = Mock()
         mock_patch.contents = lambda: "foo"
         mock_patch.reviewer = lambda: None

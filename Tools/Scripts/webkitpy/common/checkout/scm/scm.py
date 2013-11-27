@@ -82,14 +82,6 @@ class SCM:
     def absolute_path(self, repository_relative_path):
         return self._filesystem.join(self.checkout_root, repository_relative_path)
 
-    # FIXME: This belongs in Checkout, not SCM.
-    def scripts_directory(self):
-        return self._filesystem.join(self.checkout_root, "Tools", "Scripts")
-
-    # FIXME: This belongs in Checkout, not SCM.
-    def script_path(self, script_name):
-        return self._filesystem.join(self.scripts_directory(), script_name)
-
     def run_status_and_extract_filenames(self, status_command, status_regexp):
         filenames = []
         # We run with cwd=self.checkout_root so that returned-paths are root-relative.

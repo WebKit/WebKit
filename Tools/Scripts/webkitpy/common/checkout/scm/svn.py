@@ -272,7 +272,8 @@ class SVN(SCM, SVNRepository):
             return ""
         elif changed_files == None:
             changed_files = []
-        return self.run([self.script_path("svn-create-patch")] + changed_files,
+        script_path = self._filesystem.join(self.checkout_root, "Tools", "Scripts", "svn-create-patch")
+        return self.run([script_path] + changed_files,
             cwd=self.checkout_root, return_stderr=False,
             decode_output=False)
 

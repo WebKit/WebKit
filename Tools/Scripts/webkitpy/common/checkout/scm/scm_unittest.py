@@ -290,8 +290,8 @@ class SCMTest(unittest.TestCase):
 
     def _setup_webkittools_scripts_symlink(self, local_scm):
         webkit_scm = detect_scm_system(os.path.dirname(os.path.abspath(__file__)))
-        webkit_scripts_directory = webkit_scm.scripts_directory()
-        local_scripts_directory = local_scm.scripts_directory()
+        webkit_scripts_directory = Checkout(webkit_scm, webkit_scm._executive, webkit_scm._filesystem).scripts_directory()
+        local_scripts_directory = Checkout(local_scm, local_scm._executive, local_scm._filesystem).scripts_directory()
         os.mkdir(os.path.dirname(local_scripts_directory))
         os.symlink(webkit_scripts_directory, local_scripts_directory)
 
