@@ -1,3 +1,12 @@
+2013-11-27  Andreas Kling  <akling@apple.com>
+
+        JSActivation constructor should use NotNull placement new.
+        <https://webkit.org/b/124909>
+
+        Knock a null check outta the storage initialization loop.
+
+        Reviewed by Antti Koivisto.
+
 2013-11-26  Filip Pizlo  <fpizlo@apple.com>
 
         Restructure global variable constant inference so that it could work for any kind of symbol table variable

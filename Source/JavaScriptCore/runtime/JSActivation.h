@@ -122,7 +122,7 @@ inline JSActivation::JSActivation(VM& vm, CallFrame* callFrame, Register* regist
     WriteBarrier<Unknown>* storage = this->storage();
     size_t captureCount = symbolTable->captureCount();
     for (size_t i = 0; i < captureCount; ++i)
-        new(&storage[i]) WriteBarrier<Unknown>;
+        new (NotNull, &storage[i]) WriteBarrier<Unknown>;
 }
 
 JSActivation* asActivation(JSValue);
