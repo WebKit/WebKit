@@ -91,9 +91,12 @@ class TestPerfTestMetric(unittest.TestCase):
 class TestPerfTest(unittest.TestCase):
     def _assert_results_are_correct(self, test, output):
         test.run_single = lambda driver, path, time_out_ms: output
-        self.assertTrue(test._run_with_driver(None, None))
-        self.assertEqual(test._metrics.keys(), ['Time'])
-        self.assertEqual(test._metrics['Time'].flattened_iteration_values(), [1080, 1120, 1095, 1101, 1104])
+        self.assertTrue(test.run(10))
+        subtests = test._metrics
+        self.assertEqual(map(lambda test: test['name'], subtests), [None])
+        metrics = subtests[0]['metrics']
+        self.assertEqual(map(lambda metric: metric.name(), metrics), ['Time'])
+        self.assertEqual(metrics[0].flattened_iteration_values(), [1080, 1120, 1095, 1101, 1104] * 4)
 
     def test_parse_output(self):
         output = DriverOutput("""
@@ -108,7 +111,9 @@ class TestPerfTest(unittest.TestCase):
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
         self.assertEqual(actual_stdout, '')
         self.assertEqual(actual_stderr, '')
-        self.assertEqual(actual_logs, '')
+        self.assertEqual(actual_logs, """RESULT some-test: Time= 1100.0 ms
+median= 1101.0 ms, stdev= 13.3140211016 ms, min= 1080.0 ms, max= 1120.0 ms
+""")
 
     def _assert_failed_on_line(self, output_text, expected_log):
         output = DriverOutput(output_text, image=None, image_hash=None, audio=None)
@@ -155,28 +160,56 @@ Description: this is a test description.
     def test_parse_output_with_subtests(self):
         output = DriverOutput("""
 Description: this is a test description.
-some test -> [1, 2, 3, 4, 5]
-some other test = else -> [6, 7, 8, 9, 10]
-Array Construction, [] -> [11, 12, 13, 14, 15]
-Concat String -> [15163, 15304, 15386, 15608, 15622]
-jQuery - addClass -> [2785, 2815, 2826, 2841, 2861]
-Dojo - div:only-child -> [7825, 7910, 7950, 7958, 7970]
-Dojo - div:nth-child(2n+1) -> [3620, 3623, 3633, 3641, 3658]
-Dojo - div > div -> [10158, 10172, 10180, 10183, 10231]
-Dojo - div ~ div -> [6673, 6675, 6714, 6848, 6902]
+some test:Time -> [1, 2, 3, 4, 5] ms
+some other test = else:Time -> [6, 7, 8, 9, 10] ms
+some other test = else:Malloc -> [11, 12, 13, 14, 15] bytes
+Array Construction, []:Time -> [11, 12, 13, 14, 15] ms
+Concat String:Time -> [15163, 15304, 15386, 15608, 15622] ms
+jQuery - addClass:Time -> [2785, 2815, 2826, 2841, 2861] ms
+Dojo - div:only-child:Time -> [7825, 7910, 7950, 7958, 7970] ms
+Dojo - div:nth-child(2n+1):Time -> [3620, 3623, 3633, 3641, 3658] ms
+Dojo - div > div:Time -> [10158, 10172, 10180, 10183, 10231] ms
+Dojo - div ~ div:Time -> [6673, 6675, 6714, 6848, 6902] ms
 
 :Time -> [1080, 1120, 1095, 1101, 1104] ms
 """, image=None, image_hash=None, audio=None)
         output_capture = OutputCapture()
         output_capture.capture_output()
         try:
-            test = PerfTest(MockPort(), 'some-test', '/path/some-dir/some-test')
-            self._assert_results_are_correct(test, output)
+            test = PerfTest(MockPort(), 'some-dir/some-test', '/path/some-dir/some-test')
+            test.run_single = lambda driver, path, time_out_ms: output
+            self.assertTrue(test.run(10))
         finally:
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
+
+        subtests = test._metrics
+        self.assertEqual(map(lambda test: test['name'], subtests), ['some test', 'some other test = else',
+            'Array Construction, []', 'Concat String', 'jQuery - addClass', 'Dojo - div:only-child',
+            'Dojo - div:nth-child(2n+1)', 'Dojo - div > div', 'Dojo - div ~ div', None])
+
+        some_test_metrics = subtests[0]['metrics']
+        self.assertEqual(map(lambda metric: metric.name(), some_test_metrics), ['Time'])
+        self.assertEqual(some_test_metrics[0].path(), ['some-dir', 'some-test', 'some test'])
+        self.assertEqual(some_test_metrics[0].flattened_iteration_values(), [1, 2, 3, 4, 5] * 4)
+
+        some_other_test_metrics = subtests[1]['metrics']
+        self.assertEqual(map(lambda metric: metric.name(), some_other_test_metrics), ['Time', 'Malloc'])
+        self.assertEqual(some_other_test_metrics[0].path(), ['some-dir', 'some-test', 'some other test = else'])
+        self.assertEqual(some_other_test_metrics[0].flattened_iteration_values(), [6, 7, 8, 9, 10] * 4)
+        self.assertEqual(some_other_test_metrics[1].path(), ['some-dir', 'some-test', 'some other test = else'])
+        self.assertEqual(some_other_test_metrics[1].flattened_iteration_values(), [11, 12, 13, 14, 15] * 4)
+
+        main_metrics = subtests[len(subtests) - 1]['metrics']
+        self.assertEqual(map(lambda metric: metric.name(), main_metrics), ['Time'])
+        self.assertEqual(main_metrics[0].path(), ['some-dir', 'some-test'])
+        self.assertEqual(main_metrics[0].flattened_iteration_values(), [1080, 1120, 1095, 1101, 1104] * 4)
+
         self.assertEqual(actual_stdout, '')
         self.assertEqual(actual_stderr, '')
-        self.assertEqual(actual_logs, '')
+        self.assertEqual(actual_logs, """DESCRIPTION: this is a test description.
+RESULT some-dir: some-test: Time= 1100.0 ms
+median= 1101.0 ms, stdev= 13.3140211016 ms, min= 1080.0 ms, max= 1120.0 ms
+""")
 
 
 class TestSingleProcessPerfTest(unittest.TestCase):

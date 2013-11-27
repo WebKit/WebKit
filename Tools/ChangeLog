@@ -1,5 +1,39 @@
 2013-11-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Record subtest values in Dromaeo tests
+        https://bugs.webkit.org/show_bug.cgi?id=124498
+
+        Reviewed by Andreas Kling.
+
+        Supported parsing subtest results.
+
+        * Scripts/webkitpy/performance_tests/perftest.py: Replaced _metrics with an ordered list of subtests, each of
+        which contains a dictionary with its name and an ordered list of subtest's metrics.
+        (PerfTest.__init__): Initialize _metrics as a list.
+        (PerfTest.run): Go through each subtest and its metrics to create a list of TestMetrics.
+        (PerfTest._run_with_driver):
+        (PerfTest._ensure_metrics): Look for a subtest then a metric in _metrics.
+
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (TestPerfTest._assert_results_are_correct): Updated the assertions per changes to _metrics.
+        (TestPerfTest.test_parse_output): Ditto.
+        (TestPerfTest.test_parse_output_with_subtests): Added the metric and the unit on each subtest result as well as
+        assertions to ensure subtest results are parsed properly.
+        (TestReplayPerfTest.test_run_with_driver_accumulates_results): Updated the assertions per changes to _metrics.
+        (TestReplayPerfTest.test_run_with_driver_accumulates_memory_results): Dittp.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (_generate_results_dict): When the metric for a subtest is processed before that of the main test, the url is
+        incorrectly suffixed with '/'. Fix this later by re-computing the url with TestPerfMetric.test_file_name when
+        adding new results.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner_integrationtest.py:
+        (TestWithSubtestsData): Added.
+        (TestDriver.run_test):
+        (MainTest.test_run_test_with_subtests): Added.
+
+2013-11-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         Enable HTML template element on Windows ports
         https://bugs.webkit.org/show_bug.cgi?id=124758
 

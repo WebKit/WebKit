@@ -96,6 +96,26 @@ Finished: 0.1 s
     malloc_results = {'current': [[529000, 511000, 548000, 536000, 521000]] * 4}
 
 
+class TestWithSubtestsData:
+    text = """subtest:Time -> [1, 2, 3, 4, 5] ms
+:Time -> [1080, 1120, 1095, 1101, 1104] ms
+"""
+
+    output = """Running 1 tests
+Running Parser/test-with-subtests.html (1 of 1)
+RESULT Parser: test-with-subtests: Time= 1100.0 ms
+median= 1101.0 ms, stdev= 13.31402 ms, min= 1080.0 ms, max= 1120.0 ms
+Finished: 0.1 s
+"""
+
+    results = {'url': 'http://trac.webkit.org/browser/trunk/PerformanceTests/Parser/test-with-subtests.html',
+        'metrics': {'Time': {'current': [[1080.0, 1120.0, 1095.0, 1101.0, 1104.0]] * 4}},
+        'tests': {
+            'subtest': {
+                'url': 'http://trac.webkit.org/browser/trunk/PerformanceTests/Parser/test-with-subtests.html',
+                'metrics': {'Time': {'current': [[1.0, 2.0, 3.0, 4.0, 5.0]] * 4}}}}}
+
+
 class TestDriver:
     def run_test(self, driver_input, stop_when_done):
         text = ''
@@ -117,6 +137,8 @@ class TestDriver:
             text = SomeParserTestData.text
         elif driver_input.test_name.endswith('memory-test.html'):
             text = MemoryTestData.text
+        elif driver_input.test_name.endswith('test-with-subtests.html'):
+            text = TestWithSubtestsData.text
         return DriverOutput(text, '', '', '', crash=crash, timeout=timeout)
 
     def start(self):
@@ -222,6 +244,24 @@ class MainTest(unittest.TestCase):
         self.assertEqual(parser_tests['memory-test']['metrics']['Time'], MemoryTestData.results)
         self.assertEqual(parser_tests['memory-test']['metrics']['JSHeap'], MemoryTestData.js_heap_results)
         self.assertEqual(parser_tests['memory-test']['metrics']['Malloc'], MemoryTestData.malloc_results)
+
+    def test_run_test_with_subtests(self):
+        runner, port = self.create_runner_and_setup_results_template()
+        runner._timestamp = 123456789
+        port.host.filesystem.write_text_file(runner._base_path + '/Parser/test-with-subtests.html', 'some content')
+
+        output = OutputCapture()
+        output.capture_output()
+        try:
+            unexpected_result_count = runner.run()
+        finally:
+            stdout, stderr, log = output.restore_output()
+
+        self.assertEqual(unexpected_result_count, 0)
+        self.assertEqual(self._normalize_output(log), TestWithSubtestsData.output + '\nMOCK: user.open_url: file://...\n')
+        parser_tests = self._load_output_json(runner)[0]['tests']['Parser']['tests']
+        self.maxDiff = None
+        self.assertEqual(parser_tests['test-with-subtests'], TestWithSubtestsData.results)
 
     def _test_run_with_json_output(self, runner, filesystem, upload_succeeds=False, results_shown=True, expected_exit_code=0, repeat=1, compare_logs=True):
         filesystem.write_text_file(runner._base_path + '/Parser/some-parser.html', 'some content')

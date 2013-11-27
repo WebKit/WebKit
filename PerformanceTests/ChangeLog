@@ -1,5 +1,32 @@
 2013-11-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Record subtest values in Dromaeo tests
+        https://bugs.webkit.org/show_bug.cgi?id=124498
+
+        Reviewed by Andreas Kling.
+
+        Made Dromaeo's test runner report values in DRT.progress via newly added PerfTestRunner.reportValues.
+
+        * Dromaeo/resources/dromaeorunner.js:
+        (.): Moved the definition out of DRT.setup.
+        (DRT.setup): Ditto.
+        (DRT.testObject): Extracted from DRT.setup. Set the subtest name and continueTesting.
+        continueTesting is set true for subtests; i.e. when name is specified.
+        (DRT.progress): Call PerfTestRunner.reportValues to report subtest results.
+        (DRT.teardown): Call PerfTestRunner.reportValues instead of measureValueAsync.
+
+        * resources/runner.js: Made various changes for newly added PerfTestRunner.reportValues.
+        (.): Moved the initialization of completedIterations, results, jsHeapResults, and mallocHeapResults into
+        start since they need to be initialized before running each subtest. Initialize logLines here since we
+        need to use the same logger for all subtests.
+        (.start): Initialize the variables mentioned above here. Also respect doNotLogStart used by reportValues.
+        (ignoreWarmUpAndLog): Added doNotLogProgress. Used by reportValues since it reports all values at once.
+        (finish): Compute the metric name such as FrameFrame and Runs from unit. Also don't log or notify done
+        when continueTesting is set on the test object.
+        (PerfTestRunner.reportValues): Added. Reports all values for the main/sub test.
+
+2013-11-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         Remove replay performance tests as it's not actively maintained
         https://bugs.webkit.org/show_bug.cgi?id=124764
 

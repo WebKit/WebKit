@@ -262,10 +262,11 @@ class PerfTestsRunner(object):
             path = metric.path()
             for i in range(0, len(path)):
                 is_last_token = i + 1 == len(path)
-                url = view_source_url('PerformanceTests/' + (metric.test_file_name() if is_last_token else '/'.join(path[0:i + 1])))
+                url = view_source_url('PerformanceTests/' + '/'.join(path[0:i + 1]))
                 tests.setdefault(path[i], {'url': url})
                 current_test = tests[path[i]]
                 if is_last_token:
+                    current_test['url'] = view_source_url('PerformanceTests/' + metric.test_file_name())
                     current_test.setdefault('metrics', {})
                     assert metric.name() not in current_test['metrics']
                     current_test['metrics'][metric.name()] = {'current': metric.grouped_iteration_values()}

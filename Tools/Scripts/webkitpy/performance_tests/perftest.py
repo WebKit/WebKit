@@ -100,8 +100,7 @@ class PerfTest(object):
         self._test_name = test_name
         self._test_path = test_path
         self._description = None
-        self._metrics = {}
-        self._ordered_metrics_name = []
+        self._metrics = []
         self._test_runner_count = test_runner_count
 
     def test_name(self):
@@ -136,13 +135,13 @@ class PerfTest(object):
             _log.info('DESCRIPTION: %s' % self._description)
 
         results = []
-        for metric_name in self._ordered_metrics_name:
-            metric = self._metrics[metric_name]
-            results.append(metric)
-            if should_log:
-                legacy_chromium_bot_compatible_name = self.test_name_without_file_extension().replace('/', ': ')
-                self.log_statistics(legacy_chromium_bot_compatible_name + ': ' + metric.name(),
-                    metric.flattened_iteration_values(), metric.unit())
+        for subtest in self._metrics:
+            for metric in subtest['metrics']:
+                results.append(metric)
+                if should_log and not subtest['name']:
+                    legacy_chromium_bot_compatible_name = self.test_name_without_file_extension().replace('/', ': ')
+                    self.log_statistics(legacy_chromium_bot_compatible_name + ': ' + metric.name(),
+                        metric.flattened_iteration_values(), metric.unit())
 
         return results
 
@@ -169,7 +168,7 @@ class PerfTest(object):
             (median, unit, stdev, unit, sorted_values[0], unit, sorted_values[-1], unit))
 
     _description_regex = re.compile(r'^Description: (?P<description>.*)$', re.IGNORECASE)
-    _metrics_regex = re.compile(r'^:(?P<metric>Time|Malloc|JSHeap) -> \[(?P<values>(\d+(\.\d+)?)(, \d+(\.\d+)?)+)\] (?P<unit>[a-z/]+)')
+    _metrics_regex = re.compile(r'^(?P<subtest>[A-Za-z0-9\(\[].+)?:(?P<metric>[A-Z][A-Za-z]+) -> \[(?P<values>(\d+(\.\d+)?)(, \d+(\.\d+)?)+)\] (?P<unit>[a-z/]+)?$')
 
     def _run_with_driver(self, driver, time_out_ms):
         output = self.run_single(driver, self.test_path(), time_out_ms)
@@ -189,16 +188,27 @@ class PerfTest(object):
                 _log.error('ERROR: ' + line)
                 return False
 
-            metric = self._ensure_metrics(metric_match.group('metric'), metric_match.group('unit'))
+            metric = self._ensure_metrics(metric_match.group('metric'), metric_match.group('subtest'), metric_match.group('unit'))
             metric.append_group(map(lambda value: float(value), metric_match.group('values').split(', ')))
 
         return True
 
-    def _ensure_metrics(self, metric_name, unit=None):
-        if metric_name not in self._metrics:
-            self._metrics[metric_name] = PerfTestMetric(self.test_name_without_file_extension().split('/'), self._test_name, metric_name, unit)
-            self._ordered_metrics_name.append(metric_name)
-        return self._metrics[metric_name]
+    def _ensure_metrics(self, metric_name, subtest_name='', unit=None):
+        try:
+            subtest = next(subtest for subtest in self._metrics if subtest['name'] == subtest_name)
+        except StopIteration:
+            subtest = {'name': subtest_name, 'metrics': []}
+            self._metrics.append(subtest)
+
+        try:
+            return next(metric for metric in subtest['metrics'] if metric.name() == metric_name)
+        except StopIteration:
+            path = self.test_name_without_file_extension().split('/')
+            if subtest_name:
+                path += [subtest_name]
+            metric = PerfTestMetric(path, self._test_name, metric_name, unit)
+            subtest['metrics'].append(metric)
+            return metric
 
     def run_single(self, driver, test_path, time_out_ms, should_run_pixel_test=False):
         return driver.run_test(DriverInput(test_path, time_out_ms, image_hash=None, should_run_pixel_test=should_run_pixel_test), stop_when_done=False)
@@ -236,9 +246,6 @@ class PerfTest(object):
         re.compile(re.escape("""Blocked access to external URL http://www.whatwg.org/specs/web-apps/current-work/""")),
         re.compile(r"CONSOLE MESSAGE: (line \d+: )?Blocked script execution in '[A-Za-z0-9\-\.:]+' because the document's frame is sandboxed and the 'allow-scripts' permission is not set."),
         re.compile(r"CONSOLE MESSAGE: (line \d+: )?Not allowed to load local resource"),
-        # Dromaeo reports values for subtests. Ignore them for now.
-        # FIXME: Remove once subtests are supported
-        re.compile(r'^[A-Za-z0-9\(\[].+( -> )(\[?[0-9\., ]+\])( [a-z/]+)?$'),
     ]
 
     def _filter_output(self, output):

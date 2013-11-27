@@ -1,5 +1,5 @@
 This test verifies PerfTestRunner.runPerSecond() outputs log as expected.
 
 
-:Time -> [2, 4, 5, 8, 10] runs/s
+:Runs -> [2, 4, 5, 8, 10] runs/s
 
