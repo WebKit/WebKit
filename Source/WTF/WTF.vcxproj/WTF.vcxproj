@@ -70,6 +70,7 @@
     <ClCompile Include="..\wtf\dtoa\fixed-dtoa.cc" />
     <ClCompile Include="..\wtf\dtoa\strtod.cc" />
     <ClCompile Include="..\wtf\DynamicAnnotations.cpp" />
+    <ClCompile Include="..\wtf\FastBitVector.cpp" />
     <ClCompile Include="..\wtf\FastMalloc.cpp" />
     <ClCompile Include="..\wtf\FilePrintStream.cpp" />
     <ClCompile Include="..\wtf\FunctionDispatcher.cpp" />

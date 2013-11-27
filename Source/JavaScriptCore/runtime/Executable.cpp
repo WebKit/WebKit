@@ -298,6 +298,9 @@ JSObject* ScriptExecutable::prepareForExecutionImpl(
         return exception;
     }
     
+    if (Options::validateBytecode())
+        codeBlock->validate();
+    
     bool shouldUseLLInt;
 #if !ENABLE(JIT)
     // No JIT implies use of the C Loop LLINT. Override the options to reflect this. 

@@ -44,7 +44,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     ASSERT(codeBlock->alternative());
     ASSERT(codeBlock->alternative()->jitType() == JITCode::BaselineJIT);
     ASSERT(!codeBlock->jitCodeMap());
-
+    
     if (Options::verboseOSR()) {
         dataLog(
             "DFG OSR in ", *codeBlock->alternative(), " -> ", *codeBlock,

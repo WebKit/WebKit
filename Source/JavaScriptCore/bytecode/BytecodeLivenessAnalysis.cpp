@@ -42,11 +42,19 @@ BytecodeLivenessAnalysis::BytecodeLivenessAnalysis(CodeBlock* codeBlock)
 
 static bool isValidRegisterForLiveness(CodeBlock* codeBlock, int operand)
 {
+    if (codeBlock->isConstantRegisterIndex(operand))
+        return false;
+    
     VirtualRegister virtualReg(operand);
-    return !codeBlock->isConstantRegisterIndex(operand) // Don't care about constants.
-        && virtualReg.isLocal() // Don't care about arguments.
-        && (!codeBlock->captureCount() // If we have no captured variables, we're good to go.
-            || (virtualReg.offset() > codeBlock->captureStart() || (virtualReg.offset() <= codeBlock->captureEnd())));
+    if (!virtualReg.isLocal())
+        return false;
+    
+    if (codeBlock->captureCount()
+        && operand <= codeBlock->captureStart()
+        && operand > codeBlock->captureEnd())
+        return false;
+    
+    return true;
 }
 
 static void setForOperand(CodeBlock* codeBlock, FastBitVector& bits, int operand)
@@ -465,14 +473,17 @@ static void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecode
         return;
     }
     case op_tear_off_arguments: {
-        if (isValidRegisterForLiveness(codeBlock, instruction[1].u.operand - 1))
-            setForOperand(codeBlock, defs, instruction[1].u.operand - 1);
+        int operand = unmodifiedArgumentsRegister(
+            VirtualRegister(instruction[1].u.operand)).offset();
+        if (isValidRegisterForLiveness(codeBlock, operand))
+            setForOperand(codeBlock, defs, operand);
         return;
     }
     case op_enter: {
         defs.setAll();
         return;
     } }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static unsigned getLeaderOffsetForBasicBlock(RefPtr<BytecodeBasicBlock>* basicBlock)
@@ -572,7 +583,7 @@ static void computeLocalLivenessForBlock(CodeBlock* codeBlock, BytecodeBasicBloc
 void BytecodeLivenessAnalysis::runLivenessFixpoint()
 {
     UnlinkedCodeBlock* unlinkedCodeBlock = m_codeBlock->unlinkedCodeBlock();
-    unsigned numberOfVariables = unlinkedCodeBlock->m_numVars + 
+    unsigned numberOfVariables =
         unlinkedCodeBlock->m_numCalleeRegisters - m_codeBlock->captureCount();
 
     for (unsigned i = 0; i < m_basicBlocks.size(); i++) {

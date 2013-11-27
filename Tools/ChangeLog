@@ -1,3 +1,12 @@
+2013-11-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Do bytecode validation as part of testing
+        https://bugs.webkit.org/show_bug.cgi?id=124913
+
+        Reviewed by Oliver Hunt.
+
+        * Scripts/run-jsc-stress-tests:
+
 2013-11-27  Andres Gomez  <agomez@igalia.com>
 
         [GTK] Tools/Scripts/update-webkitgtk-libs fails due to missing fontutils dependencies for building the "xserver" module

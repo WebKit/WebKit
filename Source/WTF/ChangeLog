@@ -1,3 +1,21 @@
+2013-11-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Do bytecode validation as part of testing
+        https://bugs.webkit.org/show_bug.cgi?id=124913
+
+        Reviewed by Oliver Hunt.
+
+        * GNUmakefile.list.am:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/FastBitVector.cpp: Added.
+        (WTF::FastBitVector::dump):
+        * wtf/FastBitVector.h:
+        (WTF::FastBitVector::resize):
+        (WTF::FastBitVector::bitCount):
+        (WTF::FastBitVector::arrayLength):
+
 2013-11-27  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         Remove Sparc specific code.

@@ -704,6 +704,8 @@ public:
             m_livenessAnalysis = std::make_unique<BytecodeLivenessAnalysis>(this);
         return *m_livenessAnalysis;
     }
+    
+    void validate();
 
     // Jump Tables
 
@@ -1028,6 +1030,9 @@ private:
         if (!m_rareData)
             m_rareData = adoptPtr(new RareData);
     }
+    
+    void beginValidationDidFail();
+    NO_RETURN_DUE_TO_CRASH void endValidationDidFail();
 
 #if ENABLE(JIT)
     void resetStubInternal(RepatchBuffer&, StructureStubInfo&);

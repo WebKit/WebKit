@@ -3422,4 +3422,58 @@ String CodeBlock::nameForRegister(VirtualRegister virtualRegister)
     return "";
 }
 
+void CodeBlock::validate()
+{
+    BytecodeLivenessAnalysis liveness(this); // Compute directly from scratch so it doesn't effect CodeBlock footprint.
+    
+    FastBitVector liveAtHead = liveness.getLivenessInfoAtBytecodeOffset(0);
+    
+    if (liveAtHead.numBits() != static_cast<size_t>(m_numCalleeRegisters)) {
+        beginValidationDidFail();
+        dataLog("    Wrong number of bits in result!\n");
+        dataLog("    Result: ", liveAtHead, "\n");
+        dataLog("    Bit count: ", liveAtHead.numBits(), "\n");
+        endValidationDidFail();
+    }
+    
+    for (unsigned i = m_numCalleeRegisters; i--;) {
+        bool isCaptured = false;
+        VirtualRegister reg = virtualRegisterForLocal(i);
+        
+        if (captureCount())
+            isCaptured = reg.offset() <= captureStart() && reg.offset() > captureEnd();
+        
+        if (isCaptured) {
+            if (!liveAtHead.get(i)) {
+                beginValidationDidFail();
+                dataLog("    Variable loc", i, " is expected to be live because it is captured, but it isn't live.\n");
+                dataLog("    Result: ", liveAtHead, "\n");
+                endValidationDidFail();
+            }
+        } else {
+            if (liveAtHead.get(i)) {
+                beginValidationDidFail();
+                dataLog("    Variable loc", i, " is expected to be dead.\n");
+                dataLog("    Result: ", liveAtHead, "\n");
+                endValidationDidFail();
+            }
+        }
+    }
+}
+
+void CodeBlock::beginValidationDidFail()
+{
+    dataLog("Validation failure in ", *this, ":\n");
+    dataLog("\n");
+}
+
+void CodeBlock::endValidationDidFail()
+{
+    dataLog("\n");
+    dumpBytecode();
+    dataLog("\n");
+    dataLog("Validation failure.\n");
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 } // namespace JSC

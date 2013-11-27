@@ -100,6 +100,7 @@ typedef OptionRange optionRange;
     \
     v(bool, dumpGeneratedBytecodes, false) \
     v(bool, dumpBytecodeLivenessResults, false) \
+    v(bool, validateBytecode, false) \
     \
     /* showDisassembly implies showDFGDisassembly. */ \
     v(bool, showDisassembly, false) \

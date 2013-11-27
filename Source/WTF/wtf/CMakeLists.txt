@@ -156,6 +156,7 @@ set(WTF_SOURCES
     DateMath.cpp
     DecimalNumber.cpp
     DynamicAnnotations.cpp
+    FastBitVector.cpp
     FastMalloc.cpp
     FilePrintStream.cpp
     FunctionDispatcher.cpp

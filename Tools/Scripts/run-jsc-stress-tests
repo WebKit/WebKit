@@ -401,12 +401,12 @@ def runNoLLInt
     run("no-llint", "--useLLInt=false")
 end
 
-def runNoCJIT
-    run("no-cjit", "--enableConcurrentJIT=false")
+def runNoCJITValidate
+    run("no-cjit", "--enableConcurrentJIT=false", "--validateBytecode=true", "--validateGraph=true")
 end
 
 def runNoCJITValidatePhases
-    run("no-cjit-validate-phases", "--enableConcurrentJIT=false", "--validateGraphAtEachPhase=true")
+    run("no-cjit-validate-phases", "--enableConcurrentJIT=false", "--validateBytecode=true", "--validateGraphAtEachPhase=true")
 end
 
 def runDefaultFTL
@@ -468,7 +468,7 @@ end
 
 def defaultQuickRun
     runDefault
-    runNoCJIT
+    runNoCJITValidate
     if $enableFTL
         runDefaultFTL
         runFTLNoCJIT
@@ -558,15 +558,15 @@ def runMozillaTestBaselineJIT(mode, *extraFiles)
     runMozillaTest("baseline", mode, extraFiles, "--useLLInt=false", "--useDFGJIT=false")
 end
 
-def runMozillaTestDFGEagerNoCJIT(mode, *extraFiles)
-    runMozillaTest("dfg-eager-no-cjit", mode, extraFiles, "--enableConcurrentJIT=false", *EAGER_OPTIONS)
+def runMozillaTestDFGEagerNoCJITValidatePhases(mode, *extraFiles)
+    runMozillaTest("dfg-eager-no-cjit-validate-phases", mode, extraFiles, "--enableConcurrentJIT=false", "--validateBytecode=true", "--validateGraphAtEachPhase=true", *EAGER_OPTIONS)
 end
 
 def defaultRunMozillaTest(mode, *extraFiles)
     runMozillaTestDefault(mode, *extraFiles)
     runMozillaTestLLInt(mode, *extraFiles)
     runMozillaTestBaselineJIT(mode, *extraFiles)
-    runMozillaTestDFGEagerNoCJIT(mode, *extraFiles)
+    runMozillaTestDFGEagerNoCJITValidatePhases(mode, *extraFiles)
 end
 
 def skip
