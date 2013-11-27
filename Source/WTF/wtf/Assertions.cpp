@@ -346,6 +346,20 @@ void WTFCrash()
     ((void(*)())0)();
 #endif
 }
+    
+void WTFCrashWithSecurityImplication()
+{
+    if (globalHook)
+        globalHook();
+    WTFReportBacktrace();
+    *(int *)(uintptr_t)0xfbadbeef = 0;
+    // More reliable, but doesn't say fbadbeef.
+#if COMPILER(CLANG)
+    __builtin_trap();
+#else
+    ((void(*)())0)();
+#endif
+}
 
 #if HAVE(SIGNAL_H)
 static NO_RETURN void dumpBacktraceSignalHandler(int sig)

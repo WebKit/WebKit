@@ -168,6 +168,18 @@ WTF_EXPORT_PRIVATE void WTFCrash() NO_RETURN_DUE_TO_CRASH;
 }
 #endif
 
+#ifndef CRASH_WITH_SECURITY_IMPLICATION
+#define CRASH_WITH_SECURITY_IMPLICATION() WTFCrashWithSecurityImplication()
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+    WTF_EXPORT_PRIVATE void WTFCrashWithSecurityImplication() NO_RETURN_DUE_TO_CRASH;
+#ifdef __cplusplus
+}
+#endif
+
 /* BACKTRACE
 
   Print a backtrace to the same location as ASSERT messages.
@@ -219,6 +231,17 @@ inline void assertUnused(T& x) { (void)x; }
 #define ASSERT_UNUSED(variable, assertion) ((void)variable)
 #endif
 
+#ifdef ADDRESS_SANITIZER
+#define ASSERT_WITH_SECURITY_IMPLICATION(assertion) \
+    (!(assertion) ? \
+        (WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion), \
+         CRASH_WITH_SECURITY_IMPLICATION()) : \
+        (void)0)
+
+#else
+#define ASSERT_WITH_SECURITY_IMPLICATION(assertion) ((void)0)
+#endif
+
 #else
 
 #define ASSERT(assertion) \
@@ -242,28 +265,19 @@ inline void assertUnused(T& x) { (void)x; }
 
 #define NO_RETURN_DUE_TO_ASSERT NO_RETURN_DUE_TO_CRASH
 
-#endif
-
 /* ASSERT_WITH_SECURITY_IMPLICATION
-   
+ 
    Failure of this assertion indicates a possible security vulnerability.
    Class of vulnerabilities that it tests include bad casts, out of bounds
    accesses, use-after-frees, etc. Please file a bug using the security
    template - https://bugs.webkit.org/enter_bug.cgi?product=Security.
-
+ 
 */
-#ifdef ADDRESS_SANITIZER
-
 #define ASSERT_WITH_SECURITY_IMPLICATION(assertion) \
     (!(assertion) ? \
         (WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion), \
-         CRASH()) : \
+         CRASH_WITH_SECURITY_IMPLICATION()) : \
         (void)0)
-
-#else
-
-#define ASSERT_WITH_SECURITY_IMPLICATION(assertion) ASSERT(assertion)
-
 #endif
 
 /* ASSERT_WITH_MESSAGE */
