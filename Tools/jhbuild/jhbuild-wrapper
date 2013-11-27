@@ -2,6 +2,7 @@
 # Copyright (C) 2011 Igalia S.L.
 # Copyright (C) 2012 Gustavo Noronha Silva <gns@gnome.org>
 # Copyright (C) 2012 Intel Corporation
+# Copyright (C) 2012, 2013 Nokia Corporation and/or its subsidiary(-ies).
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -97,6 +98,8 @@ def determine_platform():
         return "efl";
     if '--gtk' in sys.argv:
         return "gtk";
+    if '--nix' in sys.argv:
+        return "nix";
     raise ValueError('No platform specified for jhbuild-wrapper.')
 
 

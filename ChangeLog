@@ -1,3 +1,17 @@
+2013-11-26  Marcelo Lira  <marcelo.lira@openbossa.org>
+
+        Nix upstreaming - Adding build files and supporting scripts
+        https://bugs.webkit.org/show_bug.cgi?id=118367
+
+        Reviewed by Ryosuke Niwa.
+
+        * CMakeLists.txt:
+        * Source/CMakeLists.txt:
+        * Source/cmake/FindEGL.cmake:
+        * Source/cmake/FindOpenGLES2.cmake: Added.
+        * Source/cmake/OptionsCommon.cmake:
+        * Source/cmake/OptionsNix.cmake: Added.
+
 2013-11-25  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] E_DBus should be an optional

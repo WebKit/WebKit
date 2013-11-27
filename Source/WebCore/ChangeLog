@@ -1,3 +1,15 @@
+2013-11-26  Marcelo Lira  <marcelo.lira@openbossa.org>
+
+        Nix upstreaming - Adding build files and supporting scripts
+        https://bugs.webkit.org/show_bug.cgi?id=118367
+
+        Reviewed by Ryosuke Niwa.
+
+        No new tests needed.
+
+        * CMakeLists.txt:
+        * PlatformNix.cmake: Added.
+
 2013-11-26  Tim Horton  <timothy_horton@apple.com>
 
         Don't parent the TileController root layer in two places

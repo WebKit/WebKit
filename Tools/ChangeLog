@@ -1,3 +1,71 @@
+2013-11-26  Marcelo Lira  <marcelo.lira@openbossa.org>
+
+        Nix upstreaming - Adding build files and supporting scripts
+        https://bugs.webkit.org/show_bug.cgi?id=118367
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/build-webkit:
+        * Scripts/run-nix-tests: Added.
+        * Scripts/run-webkit-tests:
+        * Scripts/update-webkit-libs-jhbuild:
+        * Scripts/update-webkitnix-libs: Added.
+        * Scripts/webkitdirs.pm:
+        (determineArchitecture):
+        (argumentsForConfiguration):
+        (jscProductDir):
+        (builtDylibPathForName):
+        (determineIsNix):
+        (isNix):
+        (isAppleWebKit):
+        (launcherPath):
+        (launcherName):
+        (checkRequiredSystemConfig):
+        (copyInspectorFrontendFiles):
+        (jhbuildWrapperPrefixIfNeeded):
+        (buildCMakeProjectOrExit):
+        (cmakeBasedPortName):
+        * Scripts/webkitpy/common/config/ports.py:
+        (DeprecatedPort.port):
+        (EflWK2Port.build_webkit_command):
+        (NixPort):
+        (NixPort.build_webkit_command):
+        * Scripts/webkitpy/port/factory.py:
+        (platform_options):
+        (PortFactory):
+        * Scripts/webkitpy/port/nix.py: Added.
+        (NixPort):
+        (NixPort._wk2_port_name):
+        (NixPort.determine_full_port_name):
+        (NixPort.__init__):
+        (NixPort._port_flag_for_scripts):
+        (NixPort.setup_test_run):
+        (NixPort.setup_environ_for_server):
+        (NixPort.default_timeout_ms):
+        (NixPort.clean_up_test_run):
+        (NixPort._generate_all_test_configurations):
+        (NixPort._path_to_driver):
+        (NixPort._path_to_image_diff):
+        (NixPort._image_diff_command):
+        (NixPort._search_paths):
+        (NixPort.show_results_html_file):
+        (NixPort._port_specific_expectations_files):
+        (NixPort.default_baseline_search_path):
+        * Scripts/webkitpy/port/nix_unittest.py: Added.
+        (NixPortTest):
+        (NixPortTest._assert_search_path):
+        (NixPortTest._assert_expectations_files):
+        (NixPortTest.test_baseline_search_path):
+        (NixPortTest.test_expectations_files):
+        (NixPortTest.test_default_timeout_ms):
+        * jhbuild/jhbuild-wrapper:
+        (determine_platform):
+        * nix/common.py: Added.
+        (script_path):
+        (top_level_path):
+        * nix/jhbuild.modules: Added.
+        * nix/jhbuildrc: Added.
+
 2013-11-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Record subtest values in Dromaeo tests

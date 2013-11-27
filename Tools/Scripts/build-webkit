@@ -4,6 +4,7 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2010 moiji-mobile.com All rights reserved.
 # Copyright (C) 2011 Research In Motion Limited. All rights reserved.
+# Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -36,7 +37,7 @@ use File::Basename;
 use File::Find;
 use File::Spec;
 use FindBin;
-use Getopt::Long qw(:config pass_through);
+use Getopt::Long qw(:config pass_through no_auto_abbrev);
 use lib $FindBin::Bin;
 use webkitdirs;
 use webkitperl::FeatureList qw(getFeatureOptionList);
@@ -62,8 +63,42 @@ my $noWebKit1 = 0;
 my $noWebKit2 = 0;
 my $coverageSupport = 0;
 my $startTime = time();
+my $curl = 0;
+my $opengles2 = 0;
 
 my @features = getFeatureOptionList();
+
+# Update defaults for the Nix port
+if (isNix()) {
+    # Instead of use FeatureList.pm to list enabled features, tell the compiler to
+    # parse Source/WTF/wtf/Platform.h and get the default values of all feature flags
+    # from the result.
+    my $portDefine = "BUILDING_".uc(cmakeBasedPortName())."__";
+    my $definitions = `gcc -E -P -dM -D$portDefine -I Source/WTF Source/WTF/wtf/Platform.h | grep '^#define ENABLE_\\w\\+ \[01\]\$\\|^#define WTF_USE_\\w\\+ \[01\]\$' | cut -d' ' -f2-3`;
+
+    my %featureDefaults;
+    foreach (split(/\n/, $definitions)) {
+        my @macroDefinition = split(/ /);
+        $featureDefaults{$macroDefinition[0]} = $macroDefinition[1];
+    }
+
+    @features = ();
+    foreach (sort keys %featureDefaults) {
+        next if (!/^ENABLE/);
+        my $optionName = lc $_;
+        $optionName =~ s/^enable_//;
+        $optionName =~ s/_/-/g;
+        my $descName = $optionName;
+        $descName =~ s/-/ /g;
+
+        push @features, {
+            option => $optionName,
+            desc => "Toggle $descName support",
+            define => $_,
+            default => $featureDefaults{$_}
+        };
+    }
+}
 
 # Additional environment parameters
 push @ARGV, split(/ /, $ENV{'BUILD_WEBKIT_ARGS'}) if ($ENV{'BUILD_WEBKIT_ARGS'});
@@ -94,6 +129,7 @@ Usage: $programName [options] [options to pass to build system]
 
   --blackberry                      Build the BlackBerry port on Mac/Linux
   --efl                             Build the EFL port
+  --nix                             Build the Nix port
   --gtk                             Build the GTK+ port
   --wincairo                        Build using Cairo (rather than CoreGraphics) on Windows
   --wince                           Build the WinCE port
@@ -110,6 +146,9 @@ Usage: $programName [options] [options to pass to build system]
   --no-webkit1                      Omit WebKit1 code from the build (EFL/GTK only)
   --no-webkit2                      Omit WebKit2 code from the build
 
+  --curl                            Use libCurl as network backend (Nix only)
+  --opengles2                       Use EGL and OpenGLES2 instead of GLX (Nix only)
+
 EOF
 
 my %options = (
@@ -125,6 +164,8 @@ my %options = (
     'no-webkit1' => \$noWebKit1,
     'no-webkit2' => \$noWebKit2,
     'coverage' => \$coverageSupport,
+    'curl' => \$curl,
+    'opengles2' => \$opengles2,
 );
 
 # Build usage text and options list from features
@@ -229,6 +270,24 @@ if (isInspectorFrontend()) {
     $result = copyInspectorFrontendFiles();
     exit exitStatus($result) if exitStatus($result);
     @projects = ("Source/WebInspectorUI");
+}
+
+if (isNix()) {
+    if ($noWebKit2) {
+        print STDERR "Nix is a WebKit2 port, you can't disable WebKit2 on it!\n";
+        exit 1;
+    }
+
+    # By default we build using all of the available CPUs.
+    $makeArgs .= ($makeArgs ? " " : "") . "-j" . numberOfCPUs() if $makeArgs !~ /-j\s*\d+/;
+    $cmakeArgs = "-DWTF_USE_CURL=ON " . $cmakeArgs if $curl;
+    $cmakeArgs = "-DWTF_USE_OPENGL_ES_2=ON " . $cmakeArgs if $opengles2;
+
+    # We remove CMakeCache to avoid the bots to reuse cached flags when
+    # we enable new features. This forces a reconfiguration.
+    removeCMakeCache();
+
+    buildCMakeProjectOrExit($clean, "Nix", $prefixPath, $makeArgs, (cmakeBasedPortArguments(), cMakeArgsFromFeatures()), $cmakeArgs);
 }
 
 if (isEfl()) {

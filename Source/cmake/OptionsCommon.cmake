@@ -1,5 +1,8 @@
-add_definitions(-DBUILDING_WITH_CMAKE=1)
-add_definitions(-DHAVE_CONFIG_H=1)
+# Nix doesn't use cmakeconfig.h
+if (NOT PORT STREQUAL "Nix")
+    add_definitions(-DBUILDING_WITH_CMAKE=1)
+    add_definitions(-DHAVE_CONFIG_H=1)
+endif ()
 
 if (WTF_OS_UNIX)
     add_definitions(-DXP_UNIX)

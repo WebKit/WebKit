@@ -35,3 +35,7 @@ find_library(EGL_LIBRARY NAMES ${EGL_NAMES})
 
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(EGL DEFAULT_MSG EGL_INCLUDE_DIR EGL_LIBRARY)
+
+if (PORT STREQUAL "Nix")
+   mark_as_advanced(EGL_INCLUDE_DIR EGL_LIBRARY)
+endif ()

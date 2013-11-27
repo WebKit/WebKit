@@ -1,3 +1,14 @@
+2013-11-26  Marcelo Lira  <marcelo.lira@openbossa.org>
+
+        Nix upstreaming - Adding build files and supporting scripts
+        https://bugs.webkit.org/show_bug.cgi?id=118367
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/FeatureDefines.h:
+        * wtf/Platform.h:
+        * wtf/PlatformNix.cmake: Added.
+
 2013-11-26  Drew Yao  <ayao@apple.com>
 
         ASSERT_WITH_SECURITY_IMPLICATION should crash in a distinct way.

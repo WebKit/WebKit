@@ -2857,14 +2857,15 @@ if (WTF_USE_3D_GRAPHICS)
         "${THIRDPARTY_DIR}/ANGLE/include/GLSLANG"
         "${WEBCORE_DIR}/platform/graphics/gpu"
     )
-    if (OPENGL_FOUND)
+    # Nix may use either OpenGL or OpenGLES2 headers, so we handle this at PlatformNix.cmake.
+    if (OPENGL_FOUND AND NOT PORT STREQUAL "Nix")
         list(APPEND WebCore_INCLUDE_DIRECTORIES
             ${OPENGL_INCLUDE_DIR}
         )
         list(APPEND WebCore_LIBRARIES
             ${OPENGL_gl_LIBRARY}
         )
-    elseif (OPENGLES2_FOUND)
+    elseif (OPENGLES2_FOUND AND NOT PORT STREQUAL "Nix")
         list(APPEND WebCore_INCLUDE_DIRECTORIES
             ${OPENGLES2_INCLUDE_DIR}
         )

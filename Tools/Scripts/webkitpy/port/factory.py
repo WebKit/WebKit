@@ -1,5 +1,6 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
 # Copyright (C) 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -46,6 +47,8 @@ def platform_options(use_globs=False):
         optparse.make_option('--efl', action='store_const', dest='platform',
             const=('efl*' if use_globs else 'efl'),
             help=('Alias for --platform=efl*' if use_globs else 'Alias for --platform=efl')),
+        optparse.make_option('--nix', action='store_const', dest='platform',
+            const=('nix'), help=('Alias for --platform=nix')),
         optparse.make_option('--gtk', action='store_const', dest='platform',
             const=('gtk*' if use_globs else 'gtk'),
             help=('Alias for --platform=gtk*' if use_globs else 'Alias for --platform=gtk')),
@@ -75,6 +78,7 @@ def _builder_options(builder_name):
 class PortFactory(object):
     PORT_CLASSES = (
         'efl.EflPort',
+        'nix.NixPort',
         'gtk.GtkPort',
         'mac.MacPort',
         'mock_drt.MockDRTPort',

@@ -452,6 +452,8 @@
 #define WTF_PLATFORM_GTK 1
 #elif defined(BUILDING_BLACKBERRY__)
 #define WTF_PLATFORM_BLACKBERRY 1
+#elif defined(BUILDING_NIX__)
+#include "nix/PlatformNix.h"
 #elif OS(DARWIN)
 #define WTF_PLATFORM_MAC 1
 #elif OS(WINDOWS)
