@@ -1,3 +1,22 @@
+2013-11-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] Invalid command line error when visiting www.chessbase.com
+        https://bugs.webkit.org/show_bug.cgi?id=124715
+
+        Reviewed by Philippe Normand.
+
+        We were not handling the HTTP errors in the WebKit GStreamer
+        source and therefore the 404 error page was being 'decoded'. As no
+        decoder could be found (for obvious reasons), playback failed, but
+        it should be failing for the source not being found instead of the
+        decoding problem.
+
+        Test: http/tests/media/video-error-does-not-exist.html
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (StreamingClient::handleResponseReceived): Handle HTTP errors in
+        the source and raise a GStreamer error to the pipeline.
+
 2013-11-14  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Fix positioning of grid items with margins

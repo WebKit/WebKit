@@ -1,3 +1,16 @@
+2013-11-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] Invalid command line error when visiting www.chessbase.com
+        https://bugs.webkit.org/show_bug.cgi?id=124715
+
+        Reviewed by Philippe Normand.
+
+        Copied and adapted for HTTP from
+        media/video-error-does-not-exist.html.
+
+        * http/tests/media/video-error-does-not-exist-expected.txt: Added.
+        * http/tests/media/video-error-does-not-exist.html: Added.
+
 2013-11-14  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Fix positioning of grid items with margins

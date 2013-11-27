@@ -837,6 +837,14 @@ void StreamingClient::handleResponseReceived(const ResourceResponse& response)
 
     GST_DEBUG_OBJECT(src, "Received response: %d", response.httpStatusCode());
 
+    if (response.httpStatusCode() >= 400) {
+        // Received error code
+        GST_ELEMENT_ERROR(src, RESOURCE, READ, ("Received %d HTTP error code", response.httpStatusCode()), (0));
+        gst_app_src_end_of_stream(priv->appsrc);
+        webKitWebSrcStop(src);
+        return;
+    }
+
     GMutexLocker locker(GST_OBJECT_GET_LOCK(src));
 
     if (priv->seekID) {
