@@ -618,7 +618,12 @@ namespace JSC {
         void emitGetGlobalVar(uintptr_t operand);
         void emitGetClosureVar(int scope, uintptr_t operand);
         void emitPutGlobalProperty(uintptr_t* operandSlot, int value);
-        void emitPutGlobalVar(uintptr_t operand, int value, WatchpointSet*);
+#if USE(JSVALUE64)
+        void emitNotifyWrite(RegisterID value, RegisterID scratch, VariableWatchpointSet*);
+#else
+        void emitNotifyWrite(RegisterID tag, RegisterID payload, RegisterID scratch, VariableWatchpointSet*);
+#endif
+        void emitPutGlobalVar(uintptr_t operand, int value, VariableWatchpointSet*);
         void emitPutClosureVar(int scope, uintptr_t operand, int value);
 
         void emitInitRegister(int dst);

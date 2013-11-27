@@ -31,15 +31,12 @@
 
 #include "ConcurrentJITLock.h"
 #include "JSObject.h"
-#include "Watchpoint.h"
+#include "VariableWatchpointSet.h"
 #include <memory>
 #include <wtf/HashTraits.h>
 #include <wtf/text/StringImpl.h>
 
 namespace JSC {
-
-class Watchpoint;
-class WatchpointSet;
 
 struct SlowArgument {
     enum Status {
@@ -79,11 +76,11 @@ static ALWAYS_INLINE int missingSymbolMarker() { return std::numeric_limits<int>
 // counted pointer to a shared WatchpointSet. Thus, in-place edits of the
 // WatchpointSet will manifest in all copies. Here's a picture:
 //
-// SymbolTableEntry --> FatEntry --> WatchpointSet
+// SymbolTableEntry --> FatEntry --> VariableWatchpointSet
 //
 // If you make a copy of a SymbolTableEntry, you will have:
 //
-// original: SymbolTableEntry --> FatEntry --> WatchpointSet
+// original: SymbolTableEntry --> FatEntry --> VariableWatchpointSet
 // copy:     SymbolTableEntry --> FatEntry -----^
 
 struct SymbolTableEntry {
@@ -218,25 +215,24 @@ struct SymbolTableEntry {
         return bits() & ReadOnlyFlag;
     }
     
-    bool couldBeWatched();
+    JSValue inferredValue();
     
-    enum WatchState { NotInitialized, AlreadyInitialized };
-    void prepareToWatch(WatchState);
+    void prepareToWatch();
     
     void addWatchpoint(Watchpoint*);
     
-    WatchpointSet* watchpointSet()
+    VariableWatchpointSet* watchpointSet()
     {
         if (!isFat())
             return 0;
         return fatEntry()->m_watchpoints.get();
     }
     
-    ALWAYS_INLINE void notifyWrite()
+    ALWAYS_INLINE void notifyWrite(JSValue value)
     {
         if (LIKELY(!isFat()))
             return;
-        notifyWriteSlow();
+        notifyWriteSlow(value);
     }
     
 private:
@@ -256,11 +252,11 @@ private:
         
         intptr_t m_bits; // always has FatFlag set and exactly matches what the bits would have been if this wasn't fat.
         
-        RefPtr<WatchpointSet> m_watchpoints;
+        RefPtr<VariableWatchpointSet> m_watchpoints;
     };
     
     SymbolTableEntry& copySlow(const SymbolTableEntry&);
-    JS_EXPORT_PRIVATE void notifyWriteSlow();
+    JS_EXPORT_PRIVATE void notifyWriteSlow(JSValue);
     
     bool isFat() const
     {
@@ -468,9 +464,23 @@ public:
     
     SymbolTable* clone(VM&);
 
+    static void visitChildren(JSCell*, SlotVisitor&);
+
     DECLARE_EXPORT_INFO;
 
 private:
+    class WatchpointCleanup : public UnconditionalFinalizer {
+    public:
+        WatchpointCleanup(SymbolTable*);
+        virtual ~WatchpointCleanup();
+        
+    protected:
+        virtual void finalizeUnconditionally() OVERRIDE;
+
+    private:
+        SymbolTable* m_symbolTable;
+    };
+    
     JS_EXPORT_PRIVATE SymbolTable(VM&);
     ~SymbolTable();
 
@@ -483,6 +493,8 @@ private:
     int m_captureEnd;
 
     std::unique_ptr<SlowArgument[]> m_slowArguments;
+    
+    std::unique_ptr<WatchpointCleanup> m_watchpointCleanup;
 
 public:
     mutable ConcurrentJITLock m_lock;

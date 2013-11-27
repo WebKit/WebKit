@@ -4071,33 +4071,64 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case GlobalVarWatchpoint: {
-#if DFG_ENABLE(JIT_ASSERT)
-        GPRTemporary scratch(this);
-        GPRReg scratchGPR = scratch.gpr();
-        m_jit.load32(node->registerPointer()->tagPointer(), scratchGPR);
-        JITCompiler::Jump notOK = m_jit.branch32(
-            JITCompiler::NotEqual, scratchGPR,
-            TrustedImm32(node->registerPointer()->get().tag()));
-        m_jit.load32(node->registerPointer()->payloadPointer(), scratchGPR);
-        JITCompiler::Jump ok = m_jit.branch32(
-            JITCompiler::Equal, scratchGPR,
-            TrustedImm32(node->registerPointer()->get().payload()));
-        notOK.link(&m_jit);
-        m_jit.breakpoint();
-        ok.link(&m_jit);
-#endif
+    case NotifyWrite: {
+        VariableWatchpointSet* set = node->variableWatchpointSet();
+    
+        JSValueOperand value(this, node->child1());
+        GPRReg valueTagGPR = value.tagGPR();
+        GPRReg valuePayloadGPR = value.payloadGPR();
+    
+        GPRTemporary temp(this);
+        GPRReg tempGPR = temp.gpr();
+    
+        m_jit.load8(set->addressOfState(), tempGPR);
+    
+        JITCompiler::JumpList ready;
+    
+        ready.append(m_jit.branch32(JITCompiler::Equal, tempGPR, TrustedImm32(IsInvalidated)));
+    
+        if (set->state() == ClearWatchpoint) {
+            JITCompiler::Jump isWatched =
+                m_jit.branch32(JITCompiler::NotEqual, tempGPR, TrustedImm32(ClearWatchpoint));
         
+            m_jit.store32(valueTagGPR, &set->addressOfInferredValue()->u.asBits.tag);
+            m_jit.store32(valuePayloadGPR, &set->addressOfInferredValue()->u.asBits.payload);
+            m_jit.store8(TrustedImm32(IsWatched), set->addressOfState());
+            ready.append(m_jit.jump());
+        
+            isWatched.link(&m_jit);
+        }
+
+        JITCompiler::Jump definitelyNotEqual = m_jit.branch32(
+            JITCompiler::NotEqual,
+            JITCompiler::AbsoluteAddress(&set->addressOfInferredValue()->u.asBits.payload),
+            valuePayloadGPR);
+        ready.append(m_jit.branch32(
+            JITCompiler::Equal, 
+            JITCompiler::AbsoluteAddress(&set->addressOfInferredValue()->u.asBits.tag),
+            valueTagGPR));
+        definitelyNotEqual.link(&m_jit);
+    
+        JITCompiler::Jump slowCase = m_jit.branchTest8(
+            JITCompiler::NonZero, JITCompiler::AbsoluteAddress(set->addressOfSetIsNotEmpty()));
+        m_jit.store8(TrustedImm32(IsInvalidated), set->addressOfState());
+        m_jit.store32(
+            TrustedImm32(JSValue::EmptyValueTag),
+            &set->addressOfInferredValue()->u.asBits.tag);
+        m_jit.store32(
+            TrustedImm32(0), &set->addressOfInferredValue()->u.asBits.payload);
+
+        ready.link(&m_jit);
+    
+        addSlowPathGenerator(
+            slowPathCall(slowCase, this, operationInvalidate, NoResult, set));
+    
         noResult(node);
         break;
     }
 
-    case NotifyPutGlobalVar: {
-        compileNotifyPutGlobalVar(node);
-        break;
-    }
-
-    case VarInjectionWatchpoint: {
+    case VarInjectionWatchpoint:
+    case VariableWatchpoint: {
         noResult(node);
         break;
     }

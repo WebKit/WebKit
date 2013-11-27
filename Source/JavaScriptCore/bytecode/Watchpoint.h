@@ -108,14 +108,6 @@ public:
         fireAllSlow();
     }
     
-    void notifyWrite()
-    {
-        if (state() == ClearWatchpoint)
-            startWatching();
-        else
-            fireAll();
-    }
-    
     int8_t* addressOfState() { return &m_state; }
     int8_t* addressOfSetIsNotEmpty() { return &m_setIsNotEmpty; }
     

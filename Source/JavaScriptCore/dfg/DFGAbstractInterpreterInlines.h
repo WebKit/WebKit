@@ -1505,13 +1505,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).makeHeapTop();
         break;
         
-    case GlobalVarWatchpoint:
+    case VariableWatchpoint:
     case VarInjectionWatchpoint:
         node->setCanExit(true);
         break;
             
     case PutGlobalVar:
-    case NotifyPutGlobalVar:
+    case NotifyWrite:
         break;
             
     case CheckHasInstance:

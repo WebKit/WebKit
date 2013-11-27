@@ -748,20 +748,9 @@ struct Node {
         return m_opInfo;
     }
     
-    bool hasIdentifierNumberForCheck()
-    {
-        return op() == GlobalVarWatchpoint || op() == NotifyPutGlobalVar;
-    }
-    
-    unsigned identifierNumberForCheck()
-    {
-        ASSERT(hasIdentifierNumberForCheck());
-        return m_opInfo2;
-    }
-    
     bool hasRegisterPointer()
     {
-        return op() == GetGlobalVar || op() == PutGlobalVar || op() == GlobalVarWatchpoint || op() == NotifyPutGlobalVar;
+        return op() == GetGlobalVar || op() == PutGlobalVar;
     }
     
     WriteBarrier<Unknown>* registerPointer()
@@ -972,6 +961,16 @@ struct Node {
     ExecutableBase* executable()
     {
         return jsCast<ExecutableBase*>(reinterpret_cast<JSCell*>(m_opInfo));
+    }
+    
+    bool hasVariableWatchpointSet()
+    {
+        return op() == NotifyWrite || op() == VariableWatchpoint;
+    }
+    
+    VariableWatchpointSet* variableWatchpointSet()
+    {
+        return reinterpret_cast<VariableWatchpointSet*>(m_opInfo);
     }
 
     bool hasStructureTransitionData()

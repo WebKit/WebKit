@@ -771,36 +771,41 @@ void JIT::emitPutGlobalProperty(uintptr_t* operandSlot, int value)
     storePtr(regT2, BaseIndex(regT0, regT1, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)));
 }
 
-void JIT::emitPutGlobalVar(uintptr_t operand, int value, WatchpointSet* set)
+void JIT::emitNotifyWrite(RegisterID value, RegisterID scratch, VariableWatchpointSet* set)
 {
-    if (set && set->state() != IsInvalidated) {
-        load8(set->addressOfState(), regT1);
+    if (!set || set->state() == IsInvalidated)
+        return;
+    
+    load8(set->addressOfState(), scratch);
+    
+    JumpList ready;
+    
+    ready.append(branch32(Equal, scratch, TrustedImm32(IsInvalidated)));
+    
+    if (set->state() == ClearWatchpoint) {
+        Jump isWatched = branch32(NotEqual, scratch, TrustedImm32(ClearWatchpoint));
         
-        JumpList ready;
+        store64(value, set->addressOfInferredValue());
+        store8(TrustedImm32(IsWatched), set->addressOfState());
+        ready.append(jump());
         
-        ready.append(branch32(Equal, regT1, TrustedImm32(IsInvalidated)));
-        
-        if (set->state() == ClearWatchpoint) {
-            Jump isWatched = branch32(NotEqual, regT1, TrustedImm32(ClearWatchpoint));
-            
-            move(TrustedImm32(IsWatched), regT1);
-            ready.append(jump());
-            
-            isWatched.link(this);
-        }
-        
-        addSlowCase(branchTest8(NonZero, AbsoluteAddress(set->addressOfSetIsNotEmpty())));
-        move(TrustedImm32(IsInvalidated), regT1);
-        ready.link(this);
+        isWatched.link(this);
     }
     
+    ready.append(branch64(Equal, AbsoluteAddress(set->addressOfInferredValue()), value));
+    addSlowCase(branchTest8(NonZero, AbsoluteAddress(set->addressOfSetIsNotEmpty())));
+    store8(TrustedImm32(IsInvalidated), set->addressOfState());
+    move(TrustedImm64(JSValue::encode(JSValue())), scratch);
+    store64(scratch, set->addressOfInferredValue());
+    
+    ready.link(this);
+}
+
+void JIT::emitPutGlobalVar(uintptr_t operand, int value, VariableWatchpointSet* set)
+{
     emitGetVirtualRegister(value, regT0);
+    emitNotifyWrite(regT0, regT1, set);
     storePtr(regT0, reinterpret_cast<void*>(operand));
-    
-    if (set && set->state() != IsInvalidated) {
-        memoryFence();
-        store8(regT1, set->addressOfState());
-    }
 }
 
 void JIT::emitPutClosureVar(int scope, uintptr_t operand, int value)

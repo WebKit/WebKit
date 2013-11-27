@@ -43,6 +43,7 @@ namespace JSC {
 class ArrayAllocationProfile;
 class ArrayProfile;
 class ObjectAllocationProfile;
+class VariableWatchpointSet;
 struct LLIntCallLinkInfo;
 struct ValueProfile;
 
@@ -115,7 +116,7 @@ struct Instruction {
         ArrayProfile* arrayProfile;
         ArrayAllocationProfile* arrayAllocationProfile;
         ObjectAllocationProfile* objectAllocationProfile;
-        WatchpointSet* watchpointSet;
+        VariableWatchpointSet* watchpointSet;
         void* pointer;
         bool* predicatePointer;
     } u;

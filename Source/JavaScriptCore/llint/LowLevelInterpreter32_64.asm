@@ -2132,25 +2132,35 @@ macro putProperty()
     storePropertyAtVariableOffset(t1, t0, t2, t3)
 end
 
+macro notifyWrite(set, valueTag, valuePayload, scratch, slow)
+    loadb VariableWatchpointSet::m_state[set], scratch
+    bieq scratch, IsInvalidated, .done
+    bineq scratch, ClearWatchpoint, .overwrite
+    storei valueTag, VariableWatchpointSet::m_inferredValue + TagOffset[set]
+    storei valuePayload, VariableWatchpointSet::m_inferredValue + PayloadOffset[set]
+    storeb IsWatched, VariableWatchpointSet::m_state[set]
+    jmp .done
+
+.overwrite:
+    bineq valuePayload, VariableWatchpointSet::m_inferredValue + PayloadOffset[set], .definitelyDifferent
+    bieq valueTag, VariableWatchpointSet::m_inferredValue + TagOffset[set], .done
+.definitelyDifferent:
+    btbnz VariableWatchpointSet::m_setIsNotEmpty[set], slow
+    storei EmptyValueTag, VariableWatchpointSet::m_inferredValue + TagOffset[set]
+    storei 0, VariableWatchpointSet::m_inferredValue + PayloadOffset[set]
+    storeb IsInvalidated, VariableWatchpointSet::m_state[set]
+
+.done:
+end
+
 macro putGlobalVar()
-    loadpFromInstruction(5, t2)
-    loadb WatchpointSet::m_state[t2], t3
-    bieq t3, IsInvalidated, .ready
-    bineq t3, ClearWatchpoint, .needToInvalidate
-    move IsWatched, t3
-    jmp .ready
-.needToInvalidate:
-    btbnz WatchpointSet::m_setIsNotEmpty[t2], .pDynamic
-    move IsInvalidated, t3
-.ready:
     loadisFromInstruction(3, t0)
     loadConstantOrVariable(t0, t1, t2)
+    loadpFromInstruction(5, t3)
+    notifyWrite(t3, t1, t2, t0, .pDynamic)
     loadpFromInstruction(6, t0)
     storei t1, TagOffset[t0]
     storei t2, PayloadOffset[t0]
-    memfence
-    loadpFromInstruction(5, t2)
-    storeb t3, WatchpointSet::m_state[t2]
 end
 
 macro putClosureVar()

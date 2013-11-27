@@ -184,8 +184,8 @@ namespace JSC { namespace DFG {
     macro(PutClosureVar, NodeMustGenerate) \
     macro(GetGlobalVar, NodeResultJS) \
     macro(PutGlobalVar, NodeMustGenerate) \
-    macro(NotifyPutGlobalVar, NodeMustGenerate) \
-    macro(GlobalVarWatchpoint, NodeMustGenerate) \
+    macro(NotifyWrite, NodeMustGenerate) \
+    macro(VariableWatchpoint, NodeMustGenerate) \
     macro(VarInjectionWatchpoint, NodeMustGenerate) \
     macro(CheckFunction, NodeMustGenerate) \
     macro(AllocationProfileWatchpoint, NodeMustGenerate) \

@@ -143,8 +143,13 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         write(SideState);
         return;
         
-    case NotifyPutGlobalVar:
+    case VariableWatchpoint:
+        read(Watchpoint_fire);
+        return;
+        
+    case NotifyWrite:
         write(Watchpoint_fire);
+        write(SideState);
         return;
 
     case CreateActivation:
@@ -520,7 +525,6 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         return;
         
     case GetGlobalVar:
-    case GlobalVarWatchpoint:
         read(AbstractHeap(Absolute, node->registerPointer()));
         return;
         

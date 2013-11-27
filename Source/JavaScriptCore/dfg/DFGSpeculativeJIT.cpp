@@ -5600,44 +5600,6 @@ void SpeculativeJIT::emitSwitch(Node* node)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void SpeculativeJIT::compileNotifyPutGlobalVar(Node* node)
-{
-    WatchpointSet* set = m_jit.globalObjectFor(node->codeOrigin)->symbolTable()->get(
-        m_jit.graph().identifiers()[node->identifierNumberForCheck()]).watchpointSet();
-    
-    GPRTemporary temp(this);
-    GPRReg tempGPR = temp.gpr();
-    
-    m_jit.load8(set->addressOfState(), tempGPR);
-    
-    JITCompiler::JumpList ready;
-    
-    ready.append(m_jit.branch32(JITCompiler::Equal, tempGPR, TrustedImm32(IsInvalidated)));
-    
-    m_jit.memoryFence();
-
-    if (set->state() == ClearWatchpoint) {
-        JITCompiler::Jump isWatched =
-            m_jit.branch32(JITCompiler::NotEqual, tempGPR, TrustedImm32(ClearWatchpoint));
-        
-        m_jit.store8(TrustedImm32(IsWatched), set->addressOfState());
-        ready.append(m_jit.jump());
-        
-        isWatched.link(&m_jit);
-    }
-    
-    JITCompiler::Jump slowCase = m_jit.branchTest8(
-        JITCompiler::NonZero, JITCompiler::AbsoluteAddress(set->addressOfSetIsNotEmpty()));
-    m_jit.store8(TrustedImm32(IsInvalidated), set->addressOfState());
-
-    ready.link(&m_jit);
-    
-    addSlowPathGenerator(
-        slowPathCall(slowCase, this, operationNotifyWrite, NoResult, set));
-    
-    noResult(node);
-}
-
 void SpeculativeJIT::addBranch(const MacroAssembler::JumpList& jump, BasicBlock* destination)
 {
     for (unsigned i = jump.jumps().size(); i--;)

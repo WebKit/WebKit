@@ -1,3 +1,152 @@
+2013-11-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Restructure global variable constant inference so that it could work for any kind of symbol table variable
+        https://bugs.webkit.org/show_bug.cgi?id=124760
+
+        Reviewed by Oliver Hunt.
+        
+        This changes the way global variable constant inference works so that it can be reused
+        for closure variable constant inference. Some of the premises that originally motivated
+        this patch are somewhat wrong, but it led to some simplifications anyway and I suspect
+        that we'll be able to fix those premises in the future. The main point of this patch is
+        to make it easy to reuse global variable constant inference for closure variable
+        constant inference, and this will be possible provided we can also either (a) infer
+        one-shot closures (easy) or (b) infer closure variables that are always assigned prior
+        to first use.
+        
+        One of the things that this patch is meant to enable is constant inference for closure
+        variables that may be part of a multi-shot closure. Closure variables may be
+        instantiated multiple times, like:
+        
+            function foo() {
+                var WIDTH = 45;
+                function bar() {
+                    ... use WIDTH ...
+                }
+                ...
+            }
+        
+        Even if foo() is called many times and WIDTH is assigned to multiple times, that
+        doesn't change the fact that it's a constant. The goal of closure variable constant
+        inference is to catch any case where a closure variable has been assigned at least once
+        and its value has never changed. This patch doesn't implement that, but it does change
+        global variable constant inference to have most of the powers needed to do that. Note
+        that most likely we will use this functionality only to implement constant inference
+        for one-shot closures, but the resulting machinery is still simpler than what we had
+        before.
+        
+        This involves three changes:
+        
+            - The watchpoint object now contains the inferred value. This involves creating a
+              new kind of watchpoint set, the VariableWatchpointSet. We will reuse this object
+              for closure variables.
+        
+            - Writing to a variable that is watchpointed still involves these three states that
+              we proceed through monotonically (Uninitialized->Initialized->Invalidated) but
+              now, the Initialized->Invalidated state transition only happens if we change the
+              variable's value, rather than store to the variable. Repeatedly storing the same
+              value won't change the variable's state.
+        
+            - On 64-bit systems (the only systems on which we do concurrent JIT), you no longer
+              need fancy fencing to get a consistent view of the watchpoint in the JIT. The
+              state of the VariableWatchpointSet for the purposes of constant folding is
+              entirely encapsulated in the VariableWatchpointSet::m_inferredValue. If that is
+              JSValue() then you cannot fold (either because the set is uninitialized or
+              because it's invalidated - doesn't matter which); on the other hand if the value
+              is anything other than JSValue() then you can fold, and that's the value you fold
+              to. Simple!
+        
+        This also changes the way that DFG IR deals with variable watchpoints. It's now
+        oblivious to global variables. You install a watchpoint using VariableWatchpoint and
+        you notify write using NotifyWrite. Easy!
+        
+        Note that this will requires some more tweaks because of the fact that op_enter will
+        store Undefined into every captured variable. Hence it won't even work for one-shot
+        closures. One-shot closures are easily fixed by introducing another state (so we'll
+        have Uninitialized->Undefined->Initialized->Invalidated). Multi-shot closures will
+        require static analysis. One-shot closures are clearly a higher priority.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/Instruction.h:
+        * bytecode/VariableWatchpointSet.h: Added.
+        (JSC::VariableWatchpointSet::VariableWatchpointSet):
+        (JSC::VariableWatchpointSet::~VariableWatchpointSet):
+        (JSC::VariableWatchpointSet::inferredValue):
+        (JSC::VariableWatchpointSet::notifyWrite):
+        (JSC::VariableWatchpointSet::invalidate):
+        (JSC::VariableWatchpointSet::finalizeUnconditionally):
+        (JSC::VariableWatchpointSet::addressOfInferredValue):
+        * bytecode/Watchpoint.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasRegisterPointer):
+        (JSC::DFG::Node::hasVariableWatchpointSet):
+        (JSC::DFG::Node::variableWatchpointSet):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::WatchpointCollectionPhase::handle):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileNotifyWrite):
+        * jit/JIT.h:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitNotifyWrite):
+        (JSC::JIT::emitPutGlobalVar):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitNotifyWrite):
+        (JSC::JIT::emitPutGlobalVar):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::addGlobalVar):
+        (JSC::JSGlobalObject::addFunction):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSScope.h:
+        (JSC::ResolveOp::ResolveOp):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTablePut):
+        (JSC::symbolTablePutWithAttributes):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTableEntry::inferredValue):
+        (JSC::SymbolTableEntry::prepareToWatch):
+        (JSC::SymbolTableEntry::addWatchpoint):
+        (JSC::SymbolTableEntry::notifyWriteSlow):
+        (JSC::SymbolTable::visitChildren):
+        (JSC::SymbolTable::WatchpointCleanup::WatchpointCleanup):
+        (JSC::SymbolTable::WatchpointCleanup::~WatchpointCleanup):
+        (JSC::SymbolTable::WatchpointCleanup::finalizeUnconditionally):
+        * runtime/SymbolTable.h:
+        (JSC::SymbolTableEntry::watchpointSet):
+        (JSC::SymbolTableEntry::notifyWrite):
+
 2013-11-24  Filip Pizlo  <fpizlo@apple.com>
 
         Create a new SymbolTable every time code is loaded so that the watchpoints don't get reused

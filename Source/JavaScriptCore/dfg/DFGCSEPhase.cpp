@@ -260,28 +260,6 @@ private:
         return 0;
     }
     
-    bool globalVarWatchpointElimination(WriteBarrier<Unknown>* registerPointer)
-    {
-        for (unsigned i = m_indexInBlock; i--;) {
-            Node* node = m_currentBlock->at(i);
-            switch (node->op()) {
-            case GlobalVarWatchpoint:
-                if (node->registerPointer() == registerPointer)
-                    return true;
-                break;
-            case PutGlobalVar:
-                if (node->registerPointer() == registerPointer)
-                    return false;
-                break;
-            default:
-                break;
-            }
-            if (m_graph.clobbersWorld(node))
-                break;
-        }
-        return false;
-    }
-
     bool varInjectionWatchpointElimination()
     {
         for (unsigned i = m_indexInBlock; i--;) {
@@ -1229,13 +1207,6 @@ private:
             break;
         }
 
-        case GlobalVarWatchpoint:
-            if (cseMode == StoreElimination)
-                break;
-            if (globalVarWatchpointElimination(node->registerPointer()))
-                eliminate();
-            break;
-            
         case VarInjectionWatchpoint:
             if (cseMode == StoreElimination)
                 break;

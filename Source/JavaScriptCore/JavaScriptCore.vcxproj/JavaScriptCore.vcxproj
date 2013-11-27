@@ -795,6 +795,7 @@
     <ClInclude Include="..\bytecode\UnlinkedCodeBlock.h" />
     <ClInclude Include="..\bytecode\ValueProfile.h" />
     <ClInclude Include="..\bytecode\ValueRecovery.h" />
+    <ClInclude Include="..\bytecode\VariableWatchpointSet.h" />
     <ClInclude Include="..\bytecode\VirtualRegister.h" />
     <ClInclude Include="..\bytecode\Watchpoint.h" />
     <ClInclude Include="..\bytecompiler\BytecodeGenerator.h" />

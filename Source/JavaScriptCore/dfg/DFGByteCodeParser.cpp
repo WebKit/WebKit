@@ -3094,13 +3094,15 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case GlobalVarWithVarInjectionChecks: {
                 addToGraph(Phantom, get(VirtualRegister(scope)));
                 SymbolTableEntry entry = globalObject->symbolTable()->get(uid);
-                if (!entry.couldBeWatched() || !m_graph.watchpoints().isStillValid(entry.watchpointSet())) {
+                VariableWatchpointSet* watchpointSet = entry.watchpointSet();
+                JSValue specificValue =
+                    watchpointSet ? watchpointSet->inferredValue() : JSValue();
+                if (!specificValue) {
                     set(VirtualRegister(dst), addToGraph(GetGlobalVar, OpInfo(operand), OpInfo(prediction)));
                     break;
                 }
 
-                addToGraph(GlobalVarWatchpoint, OpInfo(operand), OpInfo(identifierNumber));
-                JSValue specificValue = globalObject->registerAt(entry.getIndex()).get();
+                addToGraph(VariableWatchpoint, OpInfo(watchpointSet));
                 if (specificValue.isCell())
                     set(VirtualRegister(dst), cellConstant(specificValue.asCell()));
                 else
@@ -3128,7 +3130,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             StringImpl* uid = m_graph.identifiers()[identifierNumber];
 
             Structure* structure = 0;
-            WatchpointSet* watchpoints = 0;
+            VariableWatchpointSet* watchpoints = 0;
             uintptr_t operand;
             {
                 ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
@@ -3160,9 +3162,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case GlobalVarWithVarInjectionChecks: {
                 SymbolTableEntry entry = globalObject->symbolTable()->get(uid);
                 ASSERT(watchpoints == entry.watchpointSet());
-                addToGraph(PutGlobalVar, OpInfo(operand), get(VirtualRegister(value)));
+                Node* valueNode = get(VirtualRegister(value));
+                addToGraph(PutGlobalVar, OpInfo(operand), valueNode);
                 if (watchpoints->state() != IsInvalidated)
-                    addToGraph(NotifyPutGlobalVar, OpInfo(operand), OpInfo(identifierNumber));
+                    addToGraph(NotifyWrite, OpInfo(watchpoints), valueNode);
                 // Keep scope alive until after put.
                 addToGraph(Phantom, get(VirtualRegister(scope)));
                 break;

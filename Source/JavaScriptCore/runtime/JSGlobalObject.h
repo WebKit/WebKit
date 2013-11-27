@@ -291,7 +291,7 @@ protected:
     enum ConstantMode { IsConstant, IsVariable };
     struct NewGlobalVar {
         int registerNumber;
-        WatchpointSet* set;
+        VariableWatchpointSet* set;
     };
     NewGlobalVar addGlobalVar(const Identifier&, ConstantMode);
 

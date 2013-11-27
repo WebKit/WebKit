@@ -574,7 +574,7 @@ private:
         case TearOffActivation:
         case TearOffArguments:
         case CheckArgumentsNotCreated:
-        case GlobalVarWatchpoint:
+        case VariableWatchpoint:
         case VarInjectionWatchpoint:
         case AllocationProfileWatchpoint:
         case Phantom:
@@ -582,7 +582,7 @@ private:
         case CheckWatchdogTimer:
         case Unreachable:
         case LoopHint:
-        case NotifyPutGlobalVar:
+        case NotifyWrite:
             break;
             
         // This gets ignored because it already has a prediction.

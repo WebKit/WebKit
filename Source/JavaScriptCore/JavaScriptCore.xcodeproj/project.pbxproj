@@ -300,6 +300,7 @@
 		0F8F94421667633500D61971 /* CodeType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F8F943F1667632D00D61971 /* CodeType.cpp */; };
 		0F8F94441667635400D61971 /* JITCode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F8F94431667635200D61971 /* JITCode.cpp */; };
 		0F8F9446166764F100D61971 /* CodeOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F8F9445166764EE00D61971 /* CodeOrigin.cpp */; };
+		0F9181C718415CA50057B669 /* VariableWatchpointSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9181C618415CA50057B669 /* VariableWatchpointSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F919D0C157EE09F004A4E7D /* JSSymbolTableObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F919D09157EE09D004A4E7D /* JSSymbolTableObject.cpp */; };
 		0F919D0D157EE0A2004A4E7D /* JSSymbolTableObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F919D0A157EE09D004A4E7D /* JSSymbolTableObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F919D10157F3329004A4E7D /* JSSegmentedVariableObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F919D0E157F3327004A4E7D /* JSSegmentedVariableObject.cpp */; };
@@ -1593,6 +1594,7 @@
 		0F8F943F1667632D00D61971 /* CodeType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CodeType.cpp; sourceTree = "<group>"; };
 		0F8F94431667635200D61971 /* JITCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITCode.cpp; sourceTree = "<group>"; };
 		0F8F9445166764EE00D61971 /* CodeOrigin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CodeOrigin.cpp; sourceTree = "<group>"; };
+		0F9181C618415CA50057B669 /* VariableWatchpointSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableWatchpointSet.h; sourceTree = "<group>"; };
 		0F919D09157EE09D004A4E7D /* JSSymbolTableObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSymbolTableObject.cpp; sourceTree = "<group>"; };
 		0F919D0A157EE09D004A4E7D /* JSSymbolTableObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSymbolTableObject.h; sourceTree = "<group>"; };
 		0F919D0E157F3327004A4E7D /* JSSegmentedVariableObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSegmentedVariableObject.cpp; sourceTree = "<group>"; };
@@ -4132,6 +4134,7 @@
 				0F963B3613FC6FDE0002D9B2 /* ValueProfile.h */,
 				0F24E55717F74EDB00ABB217 /* ValueRecovery.cpp */,
 				0F426A451460CBAB00131F8F /* ValueRecovery.h */,
+				0F9181C618415CA50057B669 /* VariableWatchpointSet.h */,
 				0F426A461460CBAB00131F8F /* VirtualRegister.h */,
 				0F919D2215853CDE004A4E7D /* Watchpoint.cpp */,
 				0F919D2315853CDE004A4E7D /* Watchpoint.h */,
@@ -4375,6 +4378,7 @@
 				0FC097A2146B28CC00CF2442 /* DFGThunks.h in Headers */,
 				0FD8A32817D51F5700CA2C40 /* DFGTierUpCheckInjectionPhase.h in Headers */,
 				0FD8A32A17D51F5700CA2C40 /* DFGToFTLDeferredCompilationCallback.h in Headers */,
+				0F9181C718415CA50057B669 /* VariableWatchpointSet.h in Headers */,
 				0FD8A32C17D51F5700CA2C40 /* DFGToFTLForOSREntryDeferredCompilationCallback.h in Headers */,
 				0F63943F15C75F19006A597C /* DFGTypeCheckHoistingPhase.h in Headers */,
 				0FBE0F7716C1DB120082C5E8 /* DFGUnificationPhase.h in Headers */,

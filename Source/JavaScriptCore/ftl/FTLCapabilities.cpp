@@ -69,7 +69,6 @@ inline CapabilityLevel canCompile(Node* node)
     case PutByOffset:
     case GetGlobalVar:
     case PutGlobalVar:
-    case NotifyPutGlobalVar:
     case ValueAdd:
     case ArithAdd:
     case ArithSub:
@@ -92,7 +91,6 @@ inline CapabilityLevel canCompile(Node* node)
     case LoopHint:
     case Call:
     case Construct:
-    case GlobalVarWatchpoint:
     case GetMyScope:
     case SkipScope:
     case GetClosureRegisters:
@@ -104,6 +102,8 @@ inline CapabilityLevel canCompile(Node* node)
     case CheckFunction:
     case StringCharCodeAt:
     case AllocatePropertyStorage:
+    case VariableWatchpoint:
+    case NotifyWrite:
         // These are OK.
         break;
     case GetById:

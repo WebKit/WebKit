@@ -58,37 +58,32 @@ void SymbolTableEntry::freeFatEntrySlow()
     delete fatEntry();
 }
 
-bool SymbolTableEntry::couldBeWatched()
+JSValue SymbolTableEntry::inferredValue()
 {
     if (!isFat())
-        return false;
-    WatchpointSet* watchpoints = fatEntry()->m_watchpoints.get();
-    if (!watchpoints)
-        return false;
-    return watchpoints->state() == IsWatched;
+        return JSValue();
+    return fatEntry()->m_watchpoints->inferredValue();
 }
 
-void SymbolTableEntry::prepareToWatch(WatchState state)
+void SymbolTableEntry::prepareToWatch()
 {
     FatEntry* entry = inflate();
     ASSERT(!entry->m_watchpoints);
-    entry->m_watchpoints = adoptRef(
-        new WatchpointSet(state == AlreadyInitialized ? IsWatched : ClearWatchpoint));
+    entry->m_watchpoints = adoptRef(new VariableWatchpointSet());
 }
 
 void SymbolTableEntry::addWatchpoint(Watchpoint* watchpoint)
 {
-    ASSERT(couldBeWatched());
     fatEntry()->m_watchpoints->add(watchpoint);
 }
 
-void SymbolTableEntry::notifyWriteSlow()
+void SymbolTableEntry::notifyWriteSlow(JSValue value)
 {
-    WatchpointSet* watchpoints = fatEntry()->m_watchpoints.get();
+    VariableWatchpointSet* watchpoints = fatEntry()->m_watchpoints.get();
     if (!watchpoints)
         return;
     
-    watchpoints->notifyWrite();
+    watchpoints->notifyWrite(value);
 }
 
 SymbolTableEntry::FatEntry* SymbolTableEntry::inflateSlow()
@@ -108,6 +103,34 @@ SymbolTable::SymbolTable(VM& vm)
 }
 
 SymbolTable::~SymbolTable() { }
+
+void SymbolTable::visitChildren(JSCell* thisCell, SlotVisitor& visitor)
+{
+    SymbolTable* thisSymbolTable = jsCast<SymbolTable*>(thisCell);
+    if (!thisSymbolTable->m_watchpointCleanup) {
+        thisSymbolTable->m_watchpointCleanup =
+            std::make_unique<WatchpointCleanup>(thisSymbolTable);
+    }
+    
+    visitor.addUnconditionalFinalizer(thisSymbolTable->m_watchpointCleanup.get());
+}
+
+SymbolTable::WatchpointCleanup::WatchpointCleanup(SymbolTable* symbolTable)
+    : m_symbolTable(symbolTable)
+{
+}
+
+SymbolTable::WatchpointCleanup::~WatchpointCleanup() { }
+
+void SymbolTable::WatchpointCleanup::finalizeUnconditionally()
+{
+    Map::iterator iter = m_symbolTable->m_map.begin();
+    Map::iterator end = m_symbolTable->m_map.end();
+    for (; iter != end; ++iter) {
+        if (VariableWatchpointSet* set = iter->value.watchpointSet())
+            set->finalizeUnconditionally();
+    }
+}
 
 SymbolTable* SymbolTable::clone(VM& vm)
 {
