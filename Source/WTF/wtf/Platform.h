@@ -124,23 +124,6 @@
 #define WTF_CPU_SH4 1
 #endif
 
-/* CPU(SPARC32) - SPARC 32-bit */
-#if defined(__sparc) && !defined(__arch64__) || defined(__sparcv8)
-#define WTF_CPU_SPARC32 1
-#define WTF_CPU_BIG_ENDIAN 1
-#endif
-
-/* CPU(SPARC64) - SPARC 64-bit */
-#if defined(__sparc__) && defined(__arch64__) || defined (__sparcv9)
-#define WTF_CPU_SPARC64 1
-#define WTF_CPU_BIG_ENDIAN 1
-#endif
-
-/* CPU(SPARC) - any SPARC, true for CPU(SPARC32) and CPU(SPARC64) */
-#if CPU(SPARC32) || CPU(SPARC64)
-#define WTF_CPU_SPARC 1
-#endif
-
 /* CPU(S390X) - S390 64-bit */
 #if defined(__s390x__)
 #define WTF_CPU_S390X 1
@@ -330,7 +313,7 @@
 
 #endif /* ARM */
 
-#if CPU(ARM) || CPU(MIPS) || CPU(SH4) || CPU(SPARC)
+#if CPU(ARM) || CPU(MIPS) || CPU(SH4)
 #define WTF_CPU_NEEDS_ALIGNED_ACCESS 1
 #endif
 
@@ -675,7 +658,6 @@
     || (CPU(IA64) && !CPU(IA64_32)) \
     || CPU(ALPHA) \
     || CPU(ARM64) \
-    || CPU(SPARC64) \
     || CPU(S390X) \
     || CPU(PPC64)
 #define WTF_USE_JSVALUE64 1

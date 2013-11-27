@@ -1,3 +1,15 @@
+2013-11-27  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        Remove Sparc specific code.
+        https://bugs.webkit.org/show_bug.cgi?id=124941
+
+        Reviewed by Michael Saboff.
+
+        Sparc is not supported, remove leftover code.
+
+        * wtf/Platform.h:
+        * wtf/dtoa/utils.h:
+
 2013-11-26  Marcelo Lira  <marcelo.lira@openbossa.org>
 
         Nix upstreaming - Adding build files and supporting scripts
