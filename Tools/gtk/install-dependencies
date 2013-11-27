@@ -113,6 +113,7 @@ function installDependenciesWithApt {
         x11proto-video-dev \
         x11proto-xcmisc-dev \
         x11proto-xf86dri-dev \
+        xfonts-utils \
         xtrans-dev \
         xutils-dev
 }
@@ -185,6 +186,7 @@ function installDependenciesWithYum {
         libxkbfile-devel \
         mesa-libEGL-devel \
         ragel \
+        xorg-x11-font-utils \
         xorg-x11-proto-devel \
         xorg-x11-util-macros \
         xorg-x11-xtrans-devel

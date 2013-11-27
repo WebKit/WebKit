@@ -1,5 +1,18 @@
 2013-11-27  Andres Gomez  <agomez@igalia.com>
 
+        [GTK] Tools/Scripts/update-webkitgtk-libs fails due to missing fontutils dependencies for building the "xserver" module
+        https://bugs.webkit.org/show_bug.cgi?id=124940
+
+        Reviewed by Martin Robinson.
+
+        xserver-font-utils is needed for building gtk port dependencies
+        with jhbuild.
+
+        * gtk/install-dependencies: Added xserver-font-utils to jhbuild
+        dependecies.
+
+2013-11-27  Andres Gomez  <agomez@igalia.com>
+
         [GTK] Tools/Scripts/update-webkitgtk-libs unsorted and fails because of missing "git"
         https://bugs.webkit.org/show_bug.cgi?id=124938
 
