@@ -1481,6 +1481,10 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
 #endif
 {
     ASSERT(m_heap->isDeferred());
+    
+    if (SymbolTable* symbolTable = other.symbolTable())
+        m_symbolTable.set(*m_vm, m_ownerExecutable.get(), symbolTable);
+    
     setNumParameters(other.numParameters());
     optimizeAfterWarmUp();
     jitAfterWarmUp();
@@ -1527,6 +1531,13 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
 {
     ASSERT(m_heap->isDeferred());
 
+    if (SymbolTable* symbolTable = unlinkedCodeBlock->symbolTable()) {
+        if (codeType() == FunctionCode && symbolTable->captureCount())
+            m_symbolTable.set(*m_vm, m_ownerExecutable.get(), symbolTable->clone(*m_vm));
+        else
+            m_symbolTable.set(*m_vm, m_ownerExecutable.get(), symbolTable);
+    }
+    
     ASSERT(m_source);
     setNumParameters(unlinkedCodeBlock->numParameters());
 
@@ -2338,6 +2349,7 @@ void CodeBlock::stronglyVisitStrongReferences(SlotVisitor& visitor)
 {
     visitor.append(&m_globalObject);
     visitor.append(&m_ownerExecutable);
+    visitor.append(&m_symbolTable);
     visitor.append(&m_unlinkedCode);
     if (m_rareData)
         m_rareData->m_evalCodeCache.visitAggregate(visitor);

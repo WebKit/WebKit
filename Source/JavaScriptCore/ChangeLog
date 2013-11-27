@@ -1,3 +1,27 @@
+2013-11-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Create a new SymbolTable every time code is loaded so that the watchpoints don't get reused
+        https://bugs.webkit.org/show_bug.cgi?id=124824
+
+        Reviewed by Oliver Hunt.
+        
+        This helps with one shot closure inference as well as closure variable constant
+        inference, since without this, if code was reloaded from the cache then we would
+        think that the first run was actually an Nth run. This would cause us to think that
+        the watchpoint(s) should all be invalidated.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::symbolTable):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::symbolTable):
+        * runtime/Executable.h:
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::clone):
+        * runtime/SymbolTable.h:
+
 2013-11-26  Oliver Hunt  <oliver@apple.com>
 
         Crash in JSC::ASTBuilder::Expression JSC::Parser<JSC::Lexer<unsigned char> >::parseUnaryExpression<JSC::ASTBuilder>(JSC::ASTBuilder&)

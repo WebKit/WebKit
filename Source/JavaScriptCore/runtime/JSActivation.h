@@ -49,6 +49,7 @@ public:
     static JSActivation* create(VM& vm, CallFrame* callFrame, Register* registers, CodeBlock* codeBlock)
     {
         SymbolTable* symbolTable = codeBlock->symbolTable();
+        ASSERT(codeBlock->codeType() == FunctionCode);
         JSActivation* activation = new (
             NotNull,
             allocateCell<JSActivation>(

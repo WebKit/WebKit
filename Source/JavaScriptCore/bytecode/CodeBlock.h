@@ -722,7 +722,7 @@ public:
     StringJumpTable& stringSwitchJumpTable(int tableIndex) { RELEASE_ASSERT(m_rareData); return m_rareData->m_stringSwitchJumpTables[tableIndex]; }
 
 
-    SymbolTable* symbolTable() const { return m_unlinkedCode->symbolTable(); }
+    SymbolTable* symbolTable() const { return m_symbolTable.get(); }
 
     EvalCodeCache& evalCodeCache() { createRareDataIfNecessary(); return m_rareData->m_evalCodeCache; }
 
@@ -1039,6 +1039,7 @@ private:
     VM* m_vm;
 
     RefCountedArray<Instruction> m_instructions;
+    WriteBarrier<SymbolTable> m_symbolTable;
     VirtualRegister m_thisRegister;
     VirtualRegister m_argumentsRegister;
     VirtualRegister m_activationRegister;

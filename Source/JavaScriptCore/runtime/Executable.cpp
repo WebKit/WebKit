@@ -533,6 +533,11 @@ void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_unlinkedExecutable);
 }
 
+SymbolTable* FunctionExecutable::symbolTable(CodeSpecializationKind kind)
+{
+    return codeBlockFor(kind)->symbolTable();
+}
+
 void FunctionExecutable::clearCodeIfNotCompiling()
 {
     if (isCompiling())

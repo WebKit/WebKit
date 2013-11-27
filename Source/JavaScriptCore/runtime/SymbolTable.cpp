@@ -109,5 +109,31 @@ SymbolTable::SymbolTable(VM& vm)
 
 SymbolTable::~SymbolTable() { }
 
+SymbolTable* SymbolTable::clone(VM& vm)
+{
+    SymbolTable* result = SymbolTable::create(vm);
+    
+    result->m_parameterCountIncludingThis = m_parameterCountIncludingThis;
+    result->m_usesNonStrictEval = m_usesNonStrictEval;
+    result->m_captureStart = m_captureStart;
+    result->m_captureEnd = m_captureEnd;
+    
+    Map::iterator iter = m_map.begin();
+    Map::iterator end = m_map.end();
+    for (; iter != end; ++iter) {
+        result->m_map.add(
+            iter->key,
+            SymbolTableEntry(iter->value.getIndex(), iter->value.getAttributes()));
+    }
+    
+    if (m_slowArguments) {
+        result->m_slowArguments = std::make_unique<SlowArgument[]>(parameterCount());
+        for (unsigned i = parameterCount(); i--;)
+            result->m_slowArguments[i] = m_slowArguments[i];
+    }
+    
+    return result;
+}
+
 } // namespace JSC
 

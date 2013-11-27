@@ -465,6 +465,8 @@ public:
     // 0 if we don't capture any arguments; parameterCount() in length if we do.
     const SlowArgument* slowArguments() { return m_slowArguments.get(); }
     void setSlowArguments(std::unique_ptr<SlowArgument[]> slowArguments) { m_slowArguments = std::move(slowArguments); }
+    
+    SymbolTable* clone(VM&);
 
     DECLARE_EXPORT_INFO;
 
