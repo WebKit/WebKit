@@ -30,10 +30,12 @@
 #import <UIKit/UIWebGeolocationPolicyDecider.h>
 #import <UIKit/UIWindow.h>
 #import <WebCore/SecurityOrigin.h>
-#import <WebKit/WebSecurityOriginPrivate.h>
-#import <WebKit/WebUIDelegatePrivate.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
+
+// FIXME: Remove use of WebKit1 from WebKit2
+#import <WebKit/WebAllowDenyPolicyListener.h>
+#import <WebKit/WebSecurityOriginPrivate.h>
 
 @interface WebSecurityOrigin (WebInternal)
 - (id)_initWithWebCoreSecurityOrigin:(WebCore::SecurityOrigin *)origin;

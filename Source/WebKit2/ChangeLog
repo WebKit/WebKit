@@ -1,5 +1,12 @@
 2013-11-27  Sam Weinig  <sam@webkit.org>
 
+        Fix the iOS build.
+
+        * UIProcess/API/ios/WKGeolocationProviderIOS.mm:
+        * UIProcess/API/ios/WKGeolocationProviderIOSObjCSecurityOrigin.mm:
+
+2013-11-27  Sam Weinig  <sam@webkit.org>
+
         Add accessors for the WKProcessGroup and WKBrowsingContextGroup on the WKBrowsingContextController
         https://bugs.webkit.org/show_bug.cgi?id=124953
 
