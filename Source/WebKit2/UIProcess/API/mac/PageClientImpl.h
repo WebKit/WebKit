@@ -69,6 +69,7 @@ private:
     virtual void didRelaunchProcess();
     virtual void preferencesDidChange() OVERRIDE;
     virtual void toolTipChanged(const String& oldToolTip, const String& newToolTip);
+    virtual void didCommitLoadForMainFrame() OVERRIDE;
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setCursorHiddenUntilMouseMoves(bool);
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&);

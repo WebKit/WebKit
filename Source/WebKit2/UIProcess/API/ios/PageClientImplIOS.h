@@ -35,12 +35,10 @@ namespace WebKit {
     
 class PageClientImpl : public PageClient {
 public:
-    static PassOwnPtr<PageClientImpl> create(WKContentView *);
+    explicit PageClientImpl(WKContentView *);
     virtual ~PageClientImpl();
     
 private:
-    explicit PageClientImpl(WKContentView *);
-    
     virtual std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy() OVERRIDE;
     virtual void setViewNeedsDisplay(const WebCore::IntRect&) OVERRIDE;
     virtual void displayView() OVERRIDE;
@@ -58,6 +56,7 @@ private:
     virtual void preferencesDidChange() OVERRIDE;
     virtual void toolTipChanged(const String&, const String&) OVERRIDE;
     virtual bool decidePolicyForGeolocationPermissionRequest(WebFrameProxy&, WebSecurityOrigin&, GeolocationPermissionRequestProxy&) OVERRIDE;
+    virtual void didCommitLoadForMainFrame() OVERRIDE;
     virtual void didChangeContentSize(const WebCore::IntSize&) OVERRIDE;
     virtual void setCursor(const WebCore::Cursor&) OVERRIDE;
     virtual void setCursorHiddenUntilMouseMoves(bool) OVERRIDE;

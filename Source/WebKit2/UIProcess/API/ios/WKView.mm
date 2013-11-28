@@ -24,9 +24,12 @@
  */
 
 #import "config.h"
-#import "WKView.h"
+#import "WKViewPrivate.h"
 
+#import "WKBrowsingContextGroupPrivate.h"
 #import "WKContentView.h"
+#import "WKContentViewPrivate.h"
+#import "WKProcessGroupPrivate.h"
 #import "WKScrollView.h"
 #import <UIKit/UIScreen.h>
 #import <UIKit/UIScrollView_Private.h>
@@ -52,31 +55,22 @@ static struct _UIWebViewportConfiguration standardViewportConfiguration = { { UI
 - (id)initWithCoder:(NSCoder *)coder
 {
     // FIXME: Implement.
+    [self release];
     return nil;
-}
-
-- (id)initWithFrame:(CGRect)frame
-{
-    if (!(self = [super initWithFrame:frame]))
-        return nil;
-
-    [self _commonInitializationWithProcessGroup:nil browsingContextGroup:nil];
-    return self;
 }
 
 - (id)initWithFrame:(CGRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup
 {
-    if (!(self = [super initWithFrame:frame]))
-        return nil;
-
-    [self _commonInitializationWithProcessGroup:processGroup browsingContextGroup:browsingContextGroup];
-    return self;
+    return [self initWithFrame:frame processGroup:processGroup browsingContextGroup:browsingContextGroup relatedToView:nil];
 }
 
 - (id)initWithFrame:(CGRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup relatedToView:(WKView *)relatedView
 {
-    // FIXME: Implement.
-    return nil;
+    if (!(self = [super initWithFrame:frame]))
+        return nil;
+
+    [self _commonInitializationWithContextRef:processGroup._contextRef pageGroupRef:browsingContextGroup._pageGroupRef relatedToPage:relatedView ? [relatedView pageRef] : nullptr];
+    return self;
 }
 
 - (void)setFrame:(CGRect)frame
@@ -115,7 +109,7 @@ static struct _UIWebViewportConfiguration standardViewportConfiguration = { { UI
     }];
 }
 
-- (void)contentViewdidCommitLoadForMainFrame:(WKContentView *)contentView
+- (void)contentViewDidCommitLoadForMainFrame:(WKContentView *)contentView
 {
     _userHasChangedPageScale = NO;
 
@@ -156,6 +150,7 @@ static struct _UIWebViewportConfiguration standardViewportConfiguration = { { UI
 }
 
 #pragma mark - _UIWebViewportHandlerDelegate
+
 - (void)viewportHandlerDidChangeScales:(_UIWebViewportHandler *)viewportHandler
 {
     ASSERT(viewportHandler == _viewportHandler);
@@ -180,6 +175,7 @@ static struct _UIWebViewportConfiguration standardViewportConfiguration = { { UI
 
 
 #pragma mark - UIScrollViewDelegate
+
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
 {
     ASSERT(_scrollView == scrollView);
@@ -217,7 +213,7 @@ static struct _UIWebViewportConfiguration standardViewportConfiguration = { { UI
 
 #pragma mark Internal
 
-- (void)_commonInitializationWithProcessGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup
+- (void)_commonInitializationWithContextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage
 {
     ASSERT(!_scrollView);
     ASSERT(!_contentView);
@@ -230,7 +226,7 @@ static struct _UIWebViewportConfiguration standardViewportConfiguration = { { UI
 
     [self addSubview:_scrollView.get()];
 
-    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds processGroup:processGroup browsingContextGroup:browsingContextGroup]);
+    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:relatedPage]);
     [_contentView setDelegate:self];
     [[_contentView layer] setAnchorPoint:CGPointZero];
     [_contentView setFrame:bounds];
@@ -261,6 +257,29 @@ static struct _UIWebViewportConfiguration standardViewportConfiguration = { { UI
 
     CGPoint contentOffset = [_scrollView convertPoint:contentOffsetInDocumentCoordinates fromView:_contentView.get()];
     [_scrollView setContentOffset:contentOffset];
+}
+
+@end
+
+@implementation WKView (Private)
+
+- (WKPageRef)pageRef
+{
+    return [_contentView _pageRef];
+}
+
+- (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef
+{
+    return [self initWithFrame:frame contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:nil];
+}
+
+- (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage
+{
+    if (!(self = [super initWithFrame:frame]))
+        return nil;
+
+    [self _commonInitializationWithContextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:relatedPage];
+    return self;
 }
 
 @end

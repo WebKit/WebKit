@@ -125,6 +125,8 @@ public:
         return false;
     }
 
+    virtual void didCommitLoadForMainFrame() = 0;
+
 #if USE(TILED_BACKING_STORE)
     virtual void pageDidRequestScroll(const WebCore::IntPoint&) = 0;
     virtual void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect) = 0;

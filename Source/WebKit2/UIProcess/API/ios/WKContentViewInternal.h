@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKContentView.h"
-
+#import "WKContentViewPrivate.h"
 #import <wtf/Forward.h>
 #import <wtf/Vector.h>
 
@@ -50,10 +49,12 @@ class WebSecurityOrigin;
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
 - (void)_processDidCrash;
 - (void)_didRelaunchProcess;
-- (void)_didChangeContentSize:(CGSize)contentsSize;
 - (void)_setAcceleratedCompositingRootLayer:(CALayer *)rootLayer;
 
-- (void)_mainDocumentDidReceiveMobileDocType;
+- (void)_didCommitLoadForMainFrame;
+- (void)_didChangeContentSize:(CGSize)contentsSize;
+- (void)_didReceiveMobileDocTypeForMainFrame;
+- (void)_didChangeViewportArguments:(const WebCore::ViewportArguments&)viewportArguments;
 
 - (void)_didGetTapHighlightForRequest:(uint64_t)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius;
 
@@ -61,7 +62,6 @@ class WebSecurityOrigin;
 - (void)_stopAssistingNode;
 - (void)_selectionChanged;
 - (BOOL)_interpretKeyEvent:(WebIOSEvent *)theEvent isCharEvent:(BOOL)isCharEvent;
-- (void)_didChangeViewportArguments:(const WebCore::ViewportArguments&)viewportArguments;
 
 - (void)_decidePolicyForGeolocationRequestFromOrigin:(WebKit::WebSecurityOrigin&)origin frame:(WebKit::WebFrameProxy&)frame request:(WebKit::GeolocationPermissionRequestProxy&)permissionRequest;
 

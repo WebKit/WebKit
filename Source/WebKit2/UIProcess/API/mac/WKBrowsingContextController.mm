@@ -398,10 +398,6 @@ static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
         return;
 
     WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
-#if PLATFORM(IOS)
-    if ([browsingContext.loadDelegateInternal respondsToSelector:@selector(browsingContextControllerDidCommitLoad:)])
-        [browsingContext.loadDelegateInternal browsingContextControllerDidCommitLoad:browsingContext];
-#endif // PLATFORM(IOS)
     if ([browsingContext.loadDelegate respondsToSelector:@selector(browsingContextControllerDidCommitLoad:)])
         [browsingContext.loadDelegate browsingContextControllerDidCommitLoad:browsingContext];
 }

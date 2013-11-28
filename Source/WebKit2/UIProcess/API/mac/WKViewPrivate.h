@@ -23,8 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKView.h>
 #import <WebKit2/WKBase.h>
+#import <WebKit2/WKView.h>
+
+#if !TARGET_OS_IPHONE
 
 typedef enum {
     WKContentAnchorTopLeft,
@@ -33,15 +35,25 @@ typedef enum {
     WKContentAnchorBottomRight,
 } WKContentAnchor;
 
+#endif
+
 @interface WKView (Private)
 
 /* C SPI support. */
 
-@property(readonly) WKPageRef pageRef;
-@property WKContentAnchor contentAnchor;
+@property (readonly) WKPageRef pageRef;
 
+#if TARGET_OS_IPHONE
+- (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef;
+- (id)initWithFrame:(CGRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage;
+#else
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef;
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage;
+#endif
+
+#if !TARGET_OS_IPHONE
+
+@property WKContentAnchor contentAnchor;
 
 - (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef;
 - (BOOL)canChangeFrameLayout:(WKFrameRef)frameRef;
@@ -81,5 +93,7 @@ typedef enum {
 
 - (void)forceAsyncDrawingAreaSizeUpdate:(NSSize)size;
 - (void)waitForAsyncDrawingAreaSizeUpdate;
+
+#endif
 
 @end

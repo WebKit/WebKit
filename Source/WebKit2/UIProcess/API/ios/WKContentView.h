@@ -38,10 +38,9 @@ typedef NS_ENUM(unsigned, WKContentType)
 };
 
 @protocol WKContentViewDelegate <NSObject>
-
 @optional
 - (void)contentView:(WKContentView *)contentView contentsSizeDidChange:(CGSize)newSize;
-- (void)contentViewdidCommitLoadForMainFrame:(WKContentView *)contentView;
+- (void)contentViewDidCommitLoadForMainFrame:(WKContentView *)contentView;
 - (void)contentViewDidReceiveMobileDocType:(WKContentView *)contentView;
 - (void)contentView:(WKContentView *)contentView didChangeViewportArgumentsSize:(CGSize)newSize initialScale:(float)initialScale minimumScale:(float)minimumScale maximumScale:(float)maximumScale allowsUserScaling:(float)allowsUserScaling;
 
@@ -49,6 +48,7 @@ typedef NS_ENUM(unsigned, WKContentType)
 
 WK_API_CLASS
 @interface WKContentView : UIView
+
 @property (readonly, nonatomic) WKBrowsingContextController *browsingContextController;
 
 @property (nonatomic, assign) id <WKContentViewDelegate> delegate;

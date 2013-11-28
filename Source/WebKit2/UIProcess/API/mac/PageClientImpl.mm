@@ -264,6 +264,10 @@ void PageClientImpl::toolTipChanged(const String& oldToolTip, const String& newT
     [m_wkView _toolTipChangedFrom:nsStringFromWebCoreString(oldToolTip) to:nsStringFromWebCoreString(newToolTip)];
 }
 
+void PageClientImpl::didCommitLoadForMainFrame()
+{
+}
+
 void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
 {
     if (![NSApp _cursorRectCursor])

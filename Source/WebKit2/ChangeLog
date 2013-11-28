@@ -1,3 +1,60 @@
+2013-11-27  Sam Weinig  <sam@webkit.org>
+
+        Perform some spring cleaning to WKContentView and WKView
+        https://bugs.webkit.org/show_bug.cgi?id=124961
+
+        Reviewed by Dan Bernstein.
+
+        - Store the PageClientImpl in a std::unique_ptr.
+        - Remove the WKBrowsingContextController internal load delegate. Replace its use with
+          a new PageClient function, didCommitLoadForMainFrame.
+        - Fix typo in the WKContentViewDelegate. contentViewdidCommitLoadForMainFrame -> contentViewDidCommitLoadForMainFrame.
+        - Add initializers for WKContentView and WKView that take WKContextRefs and WKPageGroupRefs to match the Mac WKView.
+          These are needed for WebKitTestRunner.
+        - Require a WKProcessGroup (or WKContextRef) and a WKBrowsingContextGroup (or WKPageGroupRef).
+        - Stop caching the WKProcessGroup and WKBrowsingContextGroup on the WKContentView.
+        - Remove incorrect implementations of initWithCoder.
+        - Make WKContentView lazily create its WKBrowsingContextController wrapper.
+
+        * UIProcess/API/ios/PageClientImplIOS.h:
+        * UIProcess/API/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+        (WebKit::PageClientImpl::mainDocumentDidReceiveMobileDocType):
+        * UIProcess/API/ios/WKContentView.h:
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView initWithCoder:]):
+        (-[WKContentView initWithFrame:processGroup:browsingContextGroup:]):
+        (-[WKContentView browsingContextController]):
+        (-[WKContentView _commonInitializationWithContextRef:pageGroupRef:relatedToPage:]):
+        (-[WKContentView _didCommitLoadForMainFrame]):
+        (-[WKContentView _didReceiveMobileDocTypeForMainFrame]):
+        (-[WKContentView _didChangeViewportArguments:WebCore::]):
+        (-[WKContentView _decidePolicyForGeolocationRequestFromOrigin:frame:request:]):
+        (-[WKContentView _pageRef]):
+        (-[WKContentView initWithFrame:contextRef:pageGroupRef:]):
+        (-[WKContentView initWithFrame:contextRef:pageGroupRef:relatedToPage:]):
+        * UIProcess/API/ios/WKContentViewInternal.h:
+        * UIProcess/API/ios/WKContentViewPrivate.h: Added.
+        * UIProcess/API/ios/WKView.mm:
+        (-[WKView initWithFrame:processGroup:browsingContextGroup:]):
+        (-[WKView initWithFrame:processGroup:browsingContextGroup:relatedToView:]):
+        (-[WKView contentViewDidCommitLoadForMainFrame:]):
+        (-[WKView _commonInitializationWithContextRef:pageGroupRef:relatedToPage:]):
+        (-[WKView pageRef]):
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]):
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]):
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (didCommitLoadForFrame):
+        * UIProcess/API/mac/WKBrowsingContextControllerInternal.h:
+        * UIProcess/API/mac/WKViewPrivate.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+
 2013-11-28  Éva Balázsfalvi  <balazsfalvi.eva@stud.u-szeged.hu>
 
         Buildfix after r159824 for GCC 4.6
