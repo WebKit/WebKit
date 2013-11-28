@@ -366,6 +366,8 @@ int RenderTableSection::calcRowLogicalHeight()
         }
 
         // Add the border-spacing to our final position.
+        // Use table border-spacing even in non-top sections
+        spacing = table()->vBorderSpacing();
         m_rowPos[r + 1] += m_grid[r].rowRenderer ? spacing : 0;
         m_rowPos[r + 1] = std::max(m_rowPos[r + 1], m_rowPos[r]);
     }

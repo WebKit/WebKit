@@ -1,3 +1,15 @@
+2013-11-28  Laszlo Vidacs  <lac@inf.u-szeged.hu>
+
+        RenderTableSection Blink merge asserting
+        https://bugs.webkit.org/show_bug.cgi?id=124857
+
+        Reviewed by Csaba Osztrogonác.
+
+        Use border spacing at the end of all sections.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+
 2013-11-28  Antti Koivisto  <antti@apple.com>
 
         Remove feature: CSS variables

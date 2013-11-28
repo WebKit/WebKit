@@ -69,7 +69,3 @@ fast/mediastream/MediaStream-clone.html [ Skip ]
 # The spec is not clear if the MediaStream ended event should be fired if stop is called on each MediaStream's track
 # Skipping it for now, then put it again when the spec decides it
 fast/mediastream/MediaStream-onended.html [ Skip ]
-
-# Recent Blink merge has caused these tests to crash
-webkit.org/b/124857 tables/mozilla/bugs/bug46268-3.html [ Skip ]
-webkit.org/b/124857 tables/mozilla_expected_failures/bugs/bug46268-4.html [ Skip ]
