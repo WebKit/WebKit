@@ -38,7 +38,7 @@ class InlineIterator {
 public:
     InlineIterator()
         : m_root(0)
-        , m_obj(0)
+        , m_renderer(0)
         , m_pos(0)
         , m_nextBreakablePosition(-1)
     {
@@ -46,7 +46,7 @@ public:
 
     InlineIterator(RenderElement* root, RenderObject* o, unsigned p)
         : m_root(root)
-        , m_obj(o)
+        , m_renderer(o)
         , m_pos(p)
         , m_nextBreakablePosition(-1)
     {
@@ -61,12 +61,13 @@ public:
 
     void moveTo(RenderObject* object, unsigned offset, int nextBreak = -1)
     {
-        m_obj = object;
+        m_renderer = object;
         m_pos = offset;
         m_nextBreakablePosition = nextBreak;
     }
 
-    RenderObject* object() const { return m_obj; }
+    RenderObject* renderer() const { return m_renderer; }
+    void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
     unsigned offset() const { return m_pos; }
     RenderElement* root() const { return m_root; }
 
@@ -76,13 +77,13 @@ public:
 
     inline bool atTextParagraphSeparator()
     {
-        return m_obj && m_obj->preservesNewline() && m_obj->isText() && toRenderText(m_obj)->textLength()
-            && toRenderText(m_obj)->characterAt(m_pos) == '\n';
+        return m_renderer && m_renderer->preservesNewline() && m_renderer->isText() && toRenderText(m_renderer)->textLength()
+            && toRenderText(m_renderer)->characterAt(m_pos) == '\n';
     }
     
     inline bool atParagraphSeparator()
     {
-        return (m_obj && m_obj->isBR()) || atTextParagraphSeparator();
+        return (m_renderer && m_renderer->isBR()) || atTextParagraphSeparator();
     }
 
     UChar characterAt(unsigned) const;
@@ -92,22 +93,22 @@ public:
 
 private:
     RenderElement* m_root;
+    RenderObject* m_renderer;
 
-    // FIXME: These should be private.
+// FIXME: These should be private.
 public:
-    RenderObject* m_obj;
     unsigned m_pos;
     int m_nextBreakablePosition;
 };
 
 inline bool operator==(const InlineIterator& it1, const InlineIterator& it2)
 {
-    return it1.m_pos == it2.m_pos && it1.m_obj == it2.m_obj;
+    return it1.m_pos == it2.m_pos && it1.renderer() == it2.renderer();
 }
 
 inline bool operator!=(const InlineIterator& it1, const InlineIterator& it2)
 {
-    return it1.m_pos != it2.m_pos || it1.m_obj != it2.m_obj;
+    return it1.m_pos != it2.m_pos || it1.renderer() != it2.renderer();
 }
 
 static inline UCharDirection embedCharFromDirection(TextDirection direction, EUnicodeBidi unicodeBidi)
@@ -313,9 +314,9 @@ static inline RenderObject* bidiFirstIncludingEmptyInlines(RenderElement& root)
 
 inline void InlineIterator::fastIncrementInTextNode()
 {
-    ASSERT(m_obj);
-    ASSERT(m_obj->isText());
-    ASSERT(m_pos <= toRenderText(m_obj)->textLength());
+    ASSERT(m_renderer);
+    ASSERT(m_renderer->isText());
+    ASSERT(m_pos <= toRenderText(m_renderer)->textLength());
     m_pos++;
 }
 
@@ -352,28 +353,28 @@ private:
 
 inline void InlineIterator::increment(InlineBidiResolver* resolver)
 {
-    if (!m_obj)
+    if (!m_renderer)
         return;
-    if (m_obj->isText()) {
+    if (m_renderer->isText()) {
         fastIncrementInTextNode();
-        if (m_pos < toRenderText(m_obj)->textLength())
+        if (m_pos < toRenderText(m_renderer)->textLength())
             return;
     }
     // bidiNext can return 0, so use moveTo instead of moveToStartOf
-    moveTo(bidiNextSkippingEmptyInlines(*m_root, m_obj, resolver), 0);
+    moveTo(bidiNextSkippingEmptyInlines(*m_root, m_renderer, resolver), 0);
 }
 
 inline bool InlineIterator::atEnd() const
 {
-    return !m_obj;
+    return !m_renderer;
 }
 
 inline UChar InlineIterator::characterAt(unsigned index) const
 {
-    if (!m_obj || !m_obj->isText())
+    if (!m_renderer || !m_renderer->isText())
         return 0;
 
-    RenderText* text = toRenderText(m_obj);
+    RenderText* text = toRenderText(m_renderer);
     if (index >= text->textLength())
         return 0;
 
@@ -398,8 +399,8 @@ ALWAYS_INLINE UCharDirection InlineIterator::direction() const
     if (UChar character = current())
         return u_charDirection(character);
 
-    if (m_obj && m_obj->isListMarker())
-        return m_obj->style().isLeftToRightDirection() ? U_LEFT_TO_RIGHT : U_RIGHT_TO_LEFT;
+    if (m_renderer && m_renderer->isListMarker())
+        return m_renderer->style().isLeftToRightDirection() ? U_LEFT_TO_RIGHT : U_RIGHT_TO_LEFT;
 
     return U_OTHER_NEUTRAL;
 }
@@ -434,7 +435,7 @@ static inline RenderObject* containingIsolate(RenderObject* object, RenderObject
 
 static inline unsigned numberOfIsolateAncestors(const InlineIterator& iter)
 {
-    RenderObject* object = iter.object();
+    RenderObject* object = iter.renderer();
     if (!object)
         return 0;
     unsigned count = 0;
@@ -495,7 +496,7 @@ public:
         // For now, if we enter an isolate between midpoints, we increment our current midpoint or else
         // we'll leave the isolate and ignore the content that follows.
         MidpointState<InlineIterator>& midpointState = resolver.midpointState();
-        if (midpointState.betweenMidpoints && midpointState.midpoints[midpointState.currentMidpoint].object() == &obj) {
+        if (midpointState.betweenMidpoints && midpointState.midpoints[midpointState.currentMidpoint].renderer() == &obj) {
             midpointState.betweenMidpoints = false;
             ++midpointState.currentMidpoint;
         }
@@ -515,8 +516,8 @@ inline void InlineBidiResolver::appendRun()
         // FIXME: Could this initialize from this->inIsolate() instead of walking up the render tree?
         IsolateTracker isolateTracker(numberOfIsolateAncestors(m_sor));
         int start = m_sor.m_pos;
-        RenderObject* obj = m_sor.m_obj;
-        while (obj && obj != m_eor.m_obj && obj != endOfLine.m_obj) {
+        RenderObject* obj = m_sor.renderer();
+        while (obj && obj != m_eor.renderer() && obj != endOfLine.renderer()) {
             if (isolateTracker.inIsolate())
                 isolateTracker.addFakeRunIfNecessary(*obj, start, *this);
             else
@@ -526,8 +527,8 @@ inline void InlineBidiResolver::appendRun()
             obj = bidiNextSkippingEmptyInlines(*m_sor.root(), obj, &isolateTracker);
         }
         if (obj) {
-            unsigned pos = obj == m_eor.m_obj ? m_eor.m_pos : UINT_MAX;
-            if (obj == endOfLine.m_obj && endOfLine.m_pos <= pos) {
+            unsigned pos = obj == m_eor.renderer() ? m_eor.m_pos : UINT_MAX;
+            if (obj == endOfLine.renderer() && endOfLine.m_pos <= pos) {
                 m_reachedEndOfLine = true;
                 pos = endOfLine.m_pos;
             }

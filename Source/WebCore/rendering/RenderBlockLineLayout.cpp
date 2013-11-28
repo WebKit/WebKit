@@ -88,7 +88,7 @@ void RenderBlockFlow::appendRunsForObject(BidiRunList<BidiRun>& runs, int start,
     if (haveNextMidpoint)
         nextMidpoint = lineMidpointState.midpoints[lineMidpointState.currentMidpoint];
     if (lineMidpointState.betweenMidpoints) {
-        if (!(haveNextMidpoint && nextMidpoint.m_obj == obj))
+        if (!(haveNextMidpoint && nextMidpoint.renderer() == obj))
             return;
         // This is a new start point. Stop ignoring objects and
         // adjust our start.
@@ -98,7 +98,7 @@ void RenderBlockFlow::appendRunsForObject(BidiRunList<BidiRun>& runs, int start,
         if (start < end)
             return appendRunsForObject(runs, start, end, obj, resolver);
     } else {
-        if (!haveNextMidpoint || (obj != nextMidpoint.m_obj)) {
+        if (!haveNextMidpoint || (obj != nextMidpoint.renderer())) {
             runs.addRun(createRun(start, end, obj, resolver));
             return;
         }
@@ -962,8 +962,8 @@ static inline void constructBidiRunsForLine(const RenderBlockFlow* block, Inline
         iterator = segmentRanges[i].end;
         InlineIterator segmentEnd(iterator.root, iterator.object, iterator.offset);
         if (i) {
-            ASSERT(segmentStart.m_obj);
-            BidiRun* segmentMarker = createRun(segmentStart.m_pos, segmentStart.m_pos, segmentStart.m_obj, topResolver);
+            ASSERT(segmentStart.renderer());
+            BidiRun* segmentMarker = createRun(segmentStart.m_pos, segmentStart.m_pos, segmentStart.renderer(), topResolver);
             segmentMarker->m_startsSegment = true;
             bidiRuns.addRun(segmentMarker);
             // Do not collapse midpoints between segments
@@ -984,7 +984,7 @@ RootInlineBox* RenderBlockFlow::createLineBoxesFromBidiRuns(BidiRunList<BidiRun>
         return 0;
 
     // FIXME: Why is this only done when we had runs?
-    lineInfo.setLastLine(!end.m_obj);
+    lineInfo.setLastLine(!end.renderer());
 
     RootInlineBox* lineBox = constructLine(bidiRuns, lineInfo);
     if (!lineBox)
@@ -1361,7 +1361,7 @@ void RenderBlockFlow::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, I
         // This is a short-cut for empty lines.
         if (layoutState.lineInfo().isEmpty()) {
             if (lastRootBox())
-                lastRootBox()->setLineBreakInfo(end.m_obj, end.m_pos, resolver.status());
+                lastRootBox()->setLineBreakInfo(end.renderer(), end.m_pos, resolver.status());
         } else {
             VisualDirectionOverride override = (styleToUse.rtlOrdering() == VisualOrder ? (styleToUse.direction() == LTR ? VisualLeftToRightOverride : VisualRightToLeftOverride) : NoVisualOverride);
 
@@ -1394,7 +1394,7 @@ void RenderBlockFlow::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, I
             resolver.markCurrentRunEmpty(); // FIXME: This can probably be replaced by an ASSERT (or just removed).
 
             if (lineBox) {
-                lineBox->setLineBreakInfo(end.m_obj, end.m_pos, resolver.status());
+                lineBox->setLineBreakInfo(end.renderer(), end.m_pos, resolver.status());
                 if (layoutState.usesRepaintBounds())
                     layoutState.updateRepaintRangeFromBox(lineBox);
 
@@ -1972,7 +1972,7 @@ bool RenderBlockFlow::matchedEndLine(LineLayoutState& layoutState, const InlineB
     RootInlineBox* originalEndLine = layoutState.endLine();
     RootInlineBox* line = originalEndLine;
     for (int i = 0; i < numLines && line; i++, line = line->nextRootBox()) {
-        if (line->lineBreakObj() == resolver.position().m_obj && line->lineBreakPos() == resolver.position().m_pos) {
+        if (line->lineBreakObj() == resolver.position().renderer() && line->lineBreakPos() == resolver.position().m_pos) {
             // We have a match.
             if (line->lineBreakBidiStatus() != resolver.status())
                 return false; // ...but the bidi state doesn't match.

@@ -1,3 +1,51 @@
+2013-11-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Rename InlineIterator::m_obj and make it private
+        https://bugs.webkit.org/show_bug.cgi?id=124837
+
+        Reviewed by Antti Koivisto.
+
+        InlineIterator has been exported m_obj as public though there is a getter function.
+        Besides *object* name isn't ambigious. So, changed it with m_renderer and renderer().
+        Additionally, setRenderer() is added as well.
+
+        No new tests, no behavior changes.
+
+        * rendering/InlineIterator.h:
+        (WebCore::InlineIterator::setObject):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::InlineBidiResolver::appendRun):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::appendRunsForObject):
+        (WebCore::constructBidiRunsForLine):
+        (WebCore::RenderBlockFlow::createLineBoxesFromBidiRuns):
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlockFlow::matchedEndLine):
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::TrailingObjects::updateMidpointsForTrailingBoxes):
+        (WebCore::BreakingContext::BreakingContext):
+        (WebCore::BreakingContext::currentObject):
+        (WebCore::BreakingContext::initializeForCurrentObject):
+        (WebCore::BreakingContext::handleBR):
+        (WebCore::BreakingContext::handleOutOfFlowPositioned):
+        (WebCore::BreakingContext::handleFloat):
+        (WebCore::BreakingContext::handleEmptyInline):
+        (WebCore::BreakingContext::handleReplaced):
+        (WebCore::iteratorIsBeyondEndOfRenderCombineText):
+        (WebCore::ensureCharacterGetsLineBox):
+        (WebCore::BreakingContext::handleText):
+        (WebCore::BreakingContext::canBreakAtThisPosition):
+        (WebCore::BreakingContext::commitAndUpdateLineBreakIfNeeded):
+        (WebCore::checkMidpoints):
+        (WebCore::BreakingContext::handleEndOfLine):
+        * rendering/line/LineBreaker.cpp:
+        (WebCore::LineBreaker::skipTrailingWhitespace):
+        (WebCore::LineBreaker::skipLeadingWhitespace):
+        * rendering/line/LineInlineHeaders.h:
+        (WebCore::skipNonBreakingSpace):
+        (WebCore::requiresLineBox):
+
 2013-11-28  Antti Koivisto  <antti@apple.com>
 
         Rename StylePropertySet to StyleProperties

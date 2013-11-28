@@ -74,7 +74,7 @@ inline bool shouldCollapseWhiteSpace(const RenderStyle* style, const LineInfo& l
 
 inline bool skipNonBreakingSpace(const InlineIterator& it, const LineInfo& lineInfo)
 {
-    if (it.m_obj->style().nbspMode() != SPACE || it.current() != noBreakSpace)
+    if (it.renderer()->style().nbspMode() != SPACE || it.current() != noBreakSpace)
         return false;
 
     // FIXME: This is bad. It makes nbsp inconsistent with space and won't work correctly
@@ -98,25 +98,25 @@ inline bool alwaysRequiresLineBox(const RenderInline& flow)
 
 inline bool requiresLineBox(const InlineIterator& it, const LineInfo& lineInfo = LineInfo(), WhitespacePosition whitespacePosition = LeadingWhitespace)
 {
-    if (it.m_obj->isFloatingOrOutOfFlowPositioned())
+    if (it.renderer()->isFloatingOrOutOfFlowPositioned())
         return false;
 
-    if (it.m_obj->isBR())
+    if (it.renderer()->isBR())
         return true;
 
     bool rendererIsEmptyInline = false;
-    if (it.m_obj->isRenderInline()) {
-        const RenderInline& inlineRenderer = toRenderInline(*it.m_obj);
+    if (it.renderer()->isRenderInline()) {
+        const RenderInline& inlineRenderer = toRenderInline(*it.renderer());
         if (!alwaysRequiresLineBox(inlineRenderer) && !requiresLineBoxForContent(inlineRenderer, lineInfo))
             return false;
         rendererIsEmptyInline = isEmptyInline(inlineRenderer);
     }
 
-    if (!shouldCollapseWhiteSpace(&it.m_obj->style(), lineInfo, whitespacePosition))
+    if (!shouldCollapseWhiteSpace(&it.renderer()->style(), lineInfo, whitespacePosition))
         return true;
 
     UChar current = it.current();
-    bool notJustWhitespace = current != ' ' && current != '\t' && current != softHyphen && (current != '\n' || it.m_obj->preservesNewline()) && !skipNonBreakingSpace(it, lineInfo);
+    bool notJustWhitespace = current != ' ' && current != '\t' && current != softHyphen && (current != '\n' || it.renderer()->preservesNewline()) && !skipNonBreakingSpace(it, lineInfo);
     return notJustWhitespace || rendererIsEmptyInline;
 }
 

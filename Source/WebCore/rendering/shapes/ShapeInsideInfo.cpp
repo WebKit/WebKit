@@ -38,8 +38,8 @@
 namespace WebCore {
 
 LineSegmentRange::LineSegmentRange(const InlineIterator& start, const InlineIterator& end)
-    : start(start.root(), start.object(), start.offset())
-    , end(end.root(), end.object(), end.offset())
+    : start(start.root(), start.renderer(), start.offset())
+    , end(end.root(), end.renderer(), end.offset())
     {
     }
 

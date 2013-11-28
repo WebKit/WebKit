@@ -45,7 +45,7 @@ void LineBreaker::reset()
 void LineBreaker::skipTrailingWhitespace(InlineIterator& iterator, const LineInfo& lineInfo)
 {
     while (!iterator.atEnd() && !requiresLineBox(iterator, lineInfo, TrailingWhitespace)) {
-        RenderObject& object = *iterator.m_obj;
+        RenderObject& object = *iterator.renderer();
         if (object.isOutOfFlowPositioned())
             setStaticPositions(m_block, toRenderBox(object));
         else if (object.isFloating())
@@ -57,7 +57,7 @@ void LineBreaker::skipTrailingWhitespace(InlineIterator& iterator, const LineInf
 void LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolver, LineInfo& lineInfo, FloatingObject* lastFloatFromPreviousLine, LineWidth& width)
 {
     while (!resolver.position().atEnd() && !requiresLineBox(resolver.position(), lineInfo, LeadingWhitespace)) {
-        RenderObject& object = *resolver.position().m_obj;
+        RenderObject& object = *resolver.position().renderer();
         if (object.isOutOfFlowPositioned()) {
             setStaticPositions(m_block, toRenderBox(object));
             if (object.style().isOriginalDisplayInlineType()) {
