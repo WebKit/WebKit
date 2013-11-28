@@ -207,7 +207,7 @@ public:
     }
 
 protected:
-    friend Object;
+    friend class Object;
 
     TypedObject()
     {
