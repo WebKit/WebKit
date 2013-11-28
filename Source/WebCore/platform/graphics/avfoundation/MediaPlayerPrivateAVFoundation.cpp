@@ -921,7 +921,8 @@ size_t MediaPlayerPrivateAVFoundation::extraMemoryCost() const
     if (!duration)
         return 0;
 
-    return totalBytes() * buffered()->totalDuration() / duration;
+    unsigned long long extra = totalBytes() * buffered()->totalDuration() / duration;
+    return static_cast<unsigned>(extra);
 }
 
 void MediaPlayerPrivateAVFoundation::clearTextTracks()

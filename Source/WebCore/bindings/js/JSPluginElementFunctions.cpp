@@ -82,7 +82,11 @@ JSObject* pluginScriptObject(ExecState* exec, JSHTMLElement* jsHTMLElement)
 
     HTMLPlugInElement& pluginElement = toHTMLPlugInElement(element);
 
-    // First, see if we can ask the plug-in view for its script object.
+    // First, see if the element has a plug-in replacement with a script.
+    if (JSObject* scriptObject = pluginElement.scriptObjectForPluginReplacement())
+        return scriptObject;
+    
+    // Next, see if we can ask the plug-in view for its script object.
     if (JSObject* scriptObject = pluginScriptObjectFromPluginViewBase(pluginElement, jsHTMLElement->globalObject()))
         return scriptObject;
 

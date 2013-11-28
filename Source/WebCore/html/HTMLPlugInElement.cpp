@@ -35,17 +35,28 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "HTMLNames.h"
+#include "Logging.h"
+#include "MIMETypeRegistry.h"
 #include "Page.h"
+#include "PluginData.h"
+#include "PluginReplacement.h"
 #include "PluginViewBase.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderSnapshottedPlugIn.h"
 #include "RenderWidget.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
+#include "SubframeLoader.h"
 #include "Widget.h"
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #include "npruntime_impl.h"
+#endif
+
+#if PLATFORM(MAC)
+#include "QuickTimePluginReplacement.h"
 #endif
 
 namespace WebCore {
@@ -55,6 +66,7 @@ using namespace HTMLNames;
 HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document& document)
     : HTMLFrameOwnerElement(tagName, document)
     , m_inBeforeLoadEventHandler(false)
+    , m_swapRendererTimer(this, &HTMLPlugInElement::swapRendererTimerFired)
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_NPObject(0)
 #endif
@@ -261,5 +273,139 @@ NPObject* HTMLPlugInElement::getNPObject()
 }
 
 #endif /* ENABLE(NETSCAPE_PLUGIN_API) */
+
+RenderElement* HTMLPlugInElement::createRenderer(PassRef<RenderStyle> style)
+{
+    if (m_pluginReplacement && m_pluginReplacement->willCreateRenderer())
+        return m_pluginReplacement->createRenderer(*this, std::move(style));
+
+    return new RenderEmbeddedObject(*this, std::move(style));
+}
+
+void HTMLPlugInElement::swapRendererTimerFired(Timer<HTMLPlugInElement>*)
+{
+    ASSERT(displayState() == PreparingPluginReplacement || displayState() == DisplayingSnapshot);
+    if (userAgentShadowRoot())
+        return;
+    
+    // Create a shadow root, which will trigger the code to add a snapshot container
+    // and reattach, thus making a new Renderer.
+    ensureUserAgentShadowRoot();
+}
+
+void HTMLPlugInElement::setDisplayState(DisplayState state)
+{
+    m_displayState = state;
+    
+    if ((state == DisplayingSnapshot || displayState() == PreparingPluginReplacement) && !m_swapRendererTimer.isActive())
+        m_swapRendererTimer.startOneShot(0);
+}
+
+void HTMLPlugInElement::didAddUserAgentShadowRoot(ShadowRoot* root)
+{
+    if (!m_pluginReplacement || !document().page() || displayState() != PreparingPluginReplacement)
+        return;
+    
+    root->setResetStyleInheritance(true);
+    if (m_pluginReplacement->installReplacement(root)) {
+        setDisplayState(DisplayingPluginReplacement);
+        Style::reattachRenderTree(*this);
+    }
+}
+
+#if PLATFORM(MAC)
+static void registrar(const ReplacementPlugin&);
+#endif
+
+static Vector<ReplacementPlugin*>& registeredPluginReplacements()
+{
+    DEFINE_STATIC_LOCAL(Vector<ReplacementPlugin*>, registeredReplacements, ());
+    static bool enginesQueried = false;
+    
+    if (enginesQueried)
+        return registeredReplacements;
+    enginesQueried = true;
+
+#if PLATFORM(MAC)
+    QuickTimePluginReplacement::registerPluginReplacement(registrar);
+#endif
+    
+    return registeredReplacements;
+}
+
+#if PLATFORM(MAC)
+static void registrar(const ReplacementPlugin& replacement)
+{
+    registeredPluginReplacements().append(new ReplacementPlugin(replacement));
+}
+#endif
+
+static ReplacementPlugin* pluginReplacementForType(const URL& url, const String& mimeType)
+{
+    Vector<ReplacementPlugin*>& replacements = registeredPluginReplacements();
+    if (replacements.isEmpty())
+        return nullptr;
+
+    String extension;
+    String lastPathComponent = url.lastPathComponent();
+    size_t dotOffset = lastPathComponent.reverseFind('.');
+    if (dotOffset != notFound)
+        extension = lastPathComponent.substring(dotOffset + 1);
+
+    String type = mimeType;
+    if (type.isEmpty() && url.protocolIsData())
+        type = mimeTypeFromDataURL(url.string());
+    
+    if (type.isEmpty() && !extension.isEmpty()) {
+        for (size_t i = 0; i < replacements.size(); i++)
+            if (replacements[i]->supportsFileExtension(extension))
+                return replacements[i];
+    }
+    
+    if (type.isEmpty()) {
+        if (extension.isEmpty())
+            return nullptr;
+        type = MIMETypeRegistry::getMediaMIMETypeForExtension(extension);
+    }
+
+    if (type.isEmpty())
+        return nullptr;
+
+    for (unsigned i = 0; i < replacements.size(); i++)
+        if (replacements[i]->supportsType(type))
+            return replacements[i];
+
+    return nullptr;
+}
+
+bool HTMLPlugInElement::requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
+{
+    if (!RuntimeEnabledFeatures::sharedFeatures().pluginReplacementEnabled())
+        return false;
+
+    if (m_pluginReplacement)
+        return true;
+
+    URL completedURL;
+    if (!url.isEmpty())
+        completedURL = document().completeURL(url);
+
+    ReplacementPlugin* replacement = pluginReplacementForType(completedURL, mimeType);
+    if (!replacement)
+        return false;
+
+    LOG(Plugins, "%p - Found plug-in replacement for %s.", this, completedURL.string().utf8().data());
+
+    m_pluginReplacement = replacement->create(*this, paramNames, paramValues);
+    setDisplayState(PreparingPluginReplacement);
+    return true;
+}
+
+JSC::JSObject* HTMLPlugInElement::scriptObjectForPluginReplacement()
+{
+    if (m_pluginReplacement)
+        return m_pluginReplacement->scriptObject();
+    return nullptr;
+}
 
 }

@@ -1,3 +1,109 @@
+2013-11-27  Eric Carlson  <eric.carlson@apple.com>
+
+        Allow the QuickTime plug-in to be replaced by script in an isolated word
+        https://bugs.webkit.org/show_bug.cgi?id=124900
+
+        Reviewed by Dean Jackson.
+
+        Test: plugins/quicktime-plugin-replacement.html
+
+        * CMakeLists.txt: Add new Modules path.
+        * DerivedSources.make: Add new files.
+        * GNUmakefile.am: Add new Modules path.
+        * GNUmakefile.list.am: Add new header.
+        * WebCore.vcxproj/WebCore.vcxproj: Add new header.
+        * WebCore.vcxproj/WebCoreCommon.props: Add new Modules path.
+        * WebCore.xcodeproj/project.pbxproj: Add new files.
+
+        * Modules/plugins: Added.
+        * Modules/plugins/PluginReplacement.h: Added. Defines the interface for a plug-in replacement.
+
+        Create a replacement for the QuickTime plug-in.
+        * Modules/plugins/QuickTimePluginReplacement.cpp: Added.
+        * Modules/plugins/QuickTimePluginReplacement.css: Added.
+        * Modules/plugins/QuickTimePluginReplacement.h: Added.
+        * Modules/plugins/QuickTimePluginReplacement.idl: Added.
+        * Modules/plugins/QuickTimePluginReplacement.js: Added.
+
+        Allow plug-in replacement to be enabled at runtime.
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setPluginReplacementEnabled):
+        (WebCore::RuntimeEnabledFeatures::pluginReplacementEnabled):
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toJS): Add toJS(... const String& ...).
+
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::pluginScriptObject): Give a plug-in replacement a first shot at defining the
+            script interface.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget): Call base class requestObject.
+
+        * html/HTMLMediaElement.cpp:
+        (HTMLMediaElement::fileSize): New, passthrough to media engine.
+        * html/HTMLMediaElement.h:
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateWidget): Call base class requestObject.
+
+        Moved some logic that was previously used only for creating a plug-in snapshot to the base
+        class so it can be shared by a plug-in replacement.
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::HTMLPlugInElement): Initialize timer used to swap renderers.
+        (WebCore::HTMLPlugInElement::createRenderer): Allow plug-in replacement to create the renderer.
+        (WebCore::HTMLPlugInElement::swapRendererTimerFired): Create a shadow root.
+        (WebCore::HTMLPlugInElement::setDisplayState): Set the new state, prime the swap renderer 
+            timer if necessary.
+        (WebCore::HTMLPlugInElement::didAddUserAgentShadowRoot): Tell the plug-in replacement to
+            install itself in the new shadow DOM.
+        (WebCore::registeredPluginReplacements): Return vector of all registered plug-in replacements.
+        (WebCore::registerPluginReplacement): Add a plug-in replacement.
+        (WebCore::pluginReplacementForType): Find a plug-in replacement for a MIME type.
+        (WebCore::HTMLPlugInElement::requestObject): If there is a plug-in replacement for the MIME type,
+            create it and set the display state.
+        (WebCore::HTMLPlugInElement::scriptObjectForPluginReplacement): Return the script object for 
+            the current plug-in replacement, if any.
+        * html/HTMLPlugInElement.h:
+
+        Move some plug-in snapshot code into the base class.
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::HTMLPlugInImageElement): No need to initialize timer.
+        (WebCore::HTMLPlugInImageElement::setDisplayState): Call base class.
+        (WebCore::HTMLPlugInImageElement::createRenderer): Ditto.
+        (WebCore::HTMLPlugInImageElement::didAddUserAgentShadowRoot): Ditto.
+        (WebCore::HTMLPlugInImageElement::userDidClickSnapshot): Remove unnecessary class name.
+        (WebCore::HTMLPlugInImageElement::requestObject): New.
+        * html/HTMLPlugInImageElement.h:
+
+        * html/HTMLVideoElement.h: Make createRenderer public so the QuickTime plug-in replacement can
+            call it.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::fileSize): New.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::extraMemoryCost): totalBytes returns an unsigned long long.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::fileSize):
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::totalBytes): Return an unsigned long long.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::totalBytes): Ditto.
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup): Backup the plug-in replacement runtime setting.
+        (WebCore::InternalSettings::Backup::restoreTo): Restore it.
+        (WebCore::InternalSettings::setPluginReplacementEnabled): Set it.
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2013-11-27  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Adding MediaConstraintsMock class

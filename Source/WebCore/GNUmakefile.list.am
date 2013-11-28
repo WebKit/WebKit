@@ -1977,6 +1977,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/notifications/NotificationPermissionCallback.h \
 	Source/WebCore/Modules/notifications/WorkerGlobalScopeNotifications.cpp \
 	Source/WebCore/Modules/notifications/WorkerGlobalScopeNotifications.h \
+	Source/WebCore/Modules/plugins/PluginReplacement.h \
 	Source/WebCore/Modules/proximity/DeviceProximityClient.h \
 	Source/WebCore/Modules/proximity/DeviceProximityController.cpp \
 	Source/WebCore/Modules/proximity/DeviceProximityController.h \

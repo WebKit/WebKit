@@ -94,6 +94,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_originalTimeWithoutMouseMovementBeforeHidingControls(settings.timeWithoutMouseMovementBeforeHidingControls())
     , m_useLegacyBackgroundSizeShorthandBehavior(settings.useLegacyBackgroundSizeShorthandBehavior())
     , m_autoscrollForDragAndDropEnabled(settings.autoscrollForDragAndDropEnabled())
+    , m_pluginReplacementEnabled(RuntimeEnabledFeatures::sharedFeatures().pluginReplacementEnabled())
 {
 }
 
@@ -156,6 +157,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setTimeWithoutMouseMovementBeforeHidingControls(m_originalTimeWithoutMouseMovementBeforeHidingControls);
     settings.setUseLegacyBackgroundSizeShorthandBehavior(m_useLegacyBackgroundSizeShorthandBehavior);
     settings.setAutoscrollForDragAndDropEnabled(m_autoscrollForDragAndDropEnabled);
+    RuntimeEnabledFeatures::sharedFeatures().setPluginReplacementEnabled(m_pluginReplacementEnabled);
 }
 
 // We can't use RefCountedSupplement because that would try to make InternalSettings RefCounted
@@ -526,6 +528,11 @@ void InternalSettings::setFontFallbackPrefersPictographs(bool preferPictographs,
 {
     InternalSettingsGuardForSettings();
     settings()->setFontFallbackPrefersPictographs(preferPictographs);
+}
+
+void InternalSettings::setPluginReplacementEnabled(bool enabled)
+{
+    RuntimeEnabledFeatures::sharedFeatures().setPluginReplacementEnabled(enabled);
 }
 
 }

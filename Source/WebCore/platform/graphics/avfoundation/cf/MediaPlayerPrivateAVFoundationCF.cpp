@@ -721,7 +721,7 @@ float MediaPlayerPrivateAVFoundationCF::platformMaxTimeLoaded() const
     return maxTimeLoaded;   
 }
 
-unsigned MediaPlayerPrivateAVFoundationCF::totalBytes() const
+unsigned long long MediaPlayerPrivateAVFoundationCF::totalBytes() const
 {
     if (!metaDataAvailable() || !avAsset(m_avfWrapper))
         return 0;
@@ -734,8 +734,7 @@ unsigned MediaPlayerPrivateAVFoundationCF::totalBytes() const
         totalMediaSize += AVCFAssetTrackGetTotalSampleDataLength(assetTrack);
     }
 
-    // FIXME: It doesn't seem safe to cast an int64_t to unsigned.
-    return static_cast<unsigned>(totalMediaSize);
+    return static_cast<unsigned long long>(totalMediaSize);
 }
 
 MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationCF::assetStatus() const

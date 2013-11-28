@@ -5300,6 +5300,14 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 }
 #endif
 
+unsigned long long HTMLMediaElement::fileSize() const
+{
+    if (m_player)
+        return m_player->fileSize();
+    
+    return 0;
+}
+
 }
 
 #endif

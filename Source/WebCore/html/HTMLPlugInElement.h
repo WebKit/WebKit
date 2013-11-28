@@ -38,6 +38,7 @@ class Instance;
 
 namespace WebCore {
 
+class PluginReplacement;
 class RenderEmbeddedObject;
 class RenderWidget;
 class Widget;
@@ -57,13 +58,17 @@ public:
         DisplayingSnapshot,
         Restarting,
         RestartingWithPendingMouseClick,
-        Playing
+        Playing,
+        PreparingPluginReplacement,
+        DisplayingPluginReplacement,
     };
     DisplayState displayState() const { return m_displayState; }
-    virtual void setDisplayState(DisplayState state) { m_displayState = state; }
+    virtual void setDisplayState(DisplayState);
     virtual void updateSnapshot(PassRefPtr<Image>) { }
     virtual void dispatchPendingMouseClick() { }
     virtual bool isRestartedPlugin() const { return false; }
+
+    JSC::JSObject* scriptObjectForPluginReplacement();
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* getNPObject();
@@ -91,12 +96,19 @@ protected:
 
     virtual void defaultEventHandler(Event*) OVERRIDE;
 
+    virtual bool requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues);
+    virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
+    virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
+
     // Subclasses should use guardedDispatchBeforeLoadEvent instead of calling dispatchBeforeLoadEvent directly.
     bool guardedDispatchBeforeLoadEvent(const String& sourceURL);
 
     bool m_inBeforeLoadEventHandler;
 
 private:
+    void swapRendererTimerFired(Timer<HTMLPlugInElement>*);
+    bool shouldOverridePlugin(const String& url, const String& mimeType);
+
     bool dispatchBeforeLoadEvent(const String& sourceURL); // Not implemented, generates a compile error if subclasses call this by mistake.
 
     virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
@@ -109,6 +121,8 @@ private:
     virtual bool isPluginElement() const OVERRIDE FINAL;
 
     RefPtr<JSC::Bindings::Instance> m_instance;
+    Timer<HTMLPlugInElement> m_swapRendererTimer;
+    RefPtr<PluginReplacement> m_pluginReplacement;
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* m_NPObject;
 #endif

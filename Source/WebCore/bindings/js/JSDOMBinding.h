@@ -392,6 +392,11 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, 
     return array;
 }
 
+inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject*, const String& value)
+{
+    return jsStringOrNull(exec, value);
+}
+
 template <class T>
 struct JSValueTraits {
     static inline JSC::JSValue arrayJSValue(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const T& value)

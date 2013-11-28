@@ -228,6 +228,9 @@ public:
     // The lang attribute support is incomplete and should only be turned on for tests.
     void setLangAttributeAwareFormControlUIEnabled(bool isEnabled) { m_isLangAttributeAwareFormControlUIEnabled = isEnabled; }
 
+    void setPluginReplacementEnabled(bool isEnabled) { m_isPluginReplacementEnabled = isEnabled; }
+    bool pluginReplacementEnabled() const { return m_isPluginReplacementEnabled; }
+
     static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -250,6 +253,8 @@ private:
     bool m_isCSSRegionsEnabled;
     bool m_isCSSCompositingEnabled;
     bool m_isLangAttributeAwareFormControlUIEnabled;
+    bool m_isPluginReplacementEnabled;
+
 #if ENABLE(SCRIPTED_SPEECH)
     bool m_isScriptedSpeechEnabled;
 #endif

@@ -77,7 +77,7 @@ private:
     virtual void updateRate();
     virtual float rate() const;
     virtual void seekToTime(double time, double negativeTolerance, double positiveTolerance);
-    virtual unsigned totalBytes() const;
+    virtual unsigned long long totalBytes() const;
     virtual PassRefPtr<TimeRanges> platformBufferedTimeRanges() const;
     virtual double platformMinTimeSeekable() const;
     virtual double platformMaxTimeSeekable() const;

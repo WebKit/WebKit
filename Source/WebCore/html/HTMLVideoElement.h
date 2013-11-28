@@ -72,12 +72,12 @@ public:
     bool shouldDisplayPosterImage() const { return displayMode() == Poster || displayMode() == PosterWaitingForVideo; }
 
     URL posterImageURL() const;
+    virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
 
 private:
     HTMLVideoElement(const QualifiedName&, Document&, bool);
 
     virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE;
-    virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
     virtual void didAttachRenderers() OVERRIDE;
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;

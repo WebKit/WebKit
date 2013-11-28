@@ -29,6 +29,7 @@
 namespace WebCore {
 
 class HTMLImageLoader;
+class HTMLVideoElement;
 class FrameLoader;
 class Image;
 class MouseEvent;
@@ -123,6 +124,7 @@ protected:
     virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
 
     virtual bool isRestartedPlugin() const OVERRIDE { return m_isRestartedPlugin; }
+    virtual bool requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues) OVERRIDE;
 
 private:
     virtual RenderElement* createRenderer(PassRef<RenderStyle>) OVERRIDE;
@@ -138,8 +140,6 @@ private:
     virtual void dispatchPendingMouseClick() OVERRIDE;
     void simulatedMouseClickTimerFired(DeferrableOneShotTimer<HTMLPlugInImageElement>*);
 
-    void swapRendererTimerFired(Timer<HTMLPlugInImageElement>*);
-
     void restartSimilarPlugIns();
 
     virtual bool isPlugInImageElement() const OVERRIDE { return true; }
@@ -154,7 +154,6 @@ private:
     RefPtr<RenderStyle> m_customStyleForPageCache;
     RefPtr<MouseEvent> m_pendingClickEventFromSnapshot;
     DeferrableOneShotTimer<HTMLPlugInImageElement> m_simulatedMouseClickTimer;
-    Timer<HTMLPlugInImageElement> m_swapRendererTimer;
     Timer<HTMLPlugInImageElement> m_removeSnapshotTimer;
     RefPtr<Image> m_snapshotImage;
     bool m_createdDuringUserGesture;

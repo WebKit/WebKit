@@ -91,6 +91,7 @@ public:
         bool m_originalTimeWithoutMouseMovementBeforeHidingControls;
         bool m_useLegacyBackgroundSizeShorthandBehavior;
         bool m_autoscrollForDragAndDropEnabled;
+        bool m_pluginReplacementEnabled;
     };
 
     static PassRefPtr<InternalSettings> create(Page* page)
@@ -136,6 +137,7 @@ public:
     void setUseLegacyBackgroundSizeShorthandBehavior(bool enabled, ExceptionCode&);
     void setAutoscrollForDragAndDropEnabled(bool enabled, ExceptionCode&);
     void setFontFallbackPrefersPictographs(bool preferPictographs, ExceptionCode&);
+    void setPluginReplacementEnabled(bool);
 
 private:
     explicit InternalSettings(Page*);

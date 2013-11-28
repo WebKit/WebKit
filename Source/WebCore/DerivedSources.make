@@ -36,6 +36,7 @@ VPATH = \
     $(WebCore)/Modules/mediasource \
     $(WebCore)/Modules/mediastream \
     $(WebCore)/Modules/notifications \
+    $(WebCore)/Modules/plugins \
     $(WebCore)/Modules/quota \
     $(WebCore)/Modules/speech \
     $(WebCore)/Modules/webaudio \
@@ -141,6 +142,7 @@ BINDING_IDLS = \
     $(WebCore)/Modules/notifications/NotificationCenter.idl \
     $(WebCore)/Modules/notifications/NotificationPermissionCallback.idl \
     $(WebCore)/Modules/notifications/WorkerGlobalScopeNotifications.idl \
+    $(WebCore)/Modules/plugins/QuickTimePluginReplacement.idl \
     $(WebCore)/Modules/quota/DOMWindowQuota.idl \
     $(WebCore)/Modules/quota/NavigatorStorageQuota.idl \
     $(WebCore)/Modules/quota/StorageInfo.idl \
@@ -870,6 +872,10 @@ ifeq ($(findstring ENABLE_MEDIA_CONTROLS_SCRIPT,$(FEATURE_DEFINES)), ENABLE_MEDI
 	USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/Modules/mediacontrols/mediaControlsApple.css
 endif
 
+ifeq ($(OS),MACOS)
+	USER_AGENT_STYLE_SHEETS := $(USER_AGENT_STYLE_SHEETS) $(WebCore)/Modules/plugins/QuickTimePluginReplacement.css
+endif
+
 UserAgentStyleSheets.h : css/make-css-file-arrays.pl bindings/scripts/preprocessor.pm $(USER_AGENT_STYLE_SHEETS) $(PLATFORM_FEATURE_DEFINES)
 	perl -I$(WebCore)/bindings/scripts $< --defines "$(FEATURE_DEFINES)" $@ UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
 
@@ -883,6 +889,9 @@ ifeq ($(findstring ENABLE_MEDIA_CONTROLS_SCRIPT,$(FEATURE_DEFINES)), ENABLE_MEDI
 	USER_AGENT_SCRIPTS := $(USER_AGENT_SCRIPTS) $(WebCore)/Modules/mediacontrols/mediaControlsApple.js
 endif
 
+ifeq ($(OS),MACOS)
+	USER_AGENT_SCRIPTS := $(USER_AGENT_SCRIPTS) $(WebCore)/Modules/plugins/QuickTimePluginReplacement.js
+endif
 
 UserAgentScripts.h : css/make-css-file-arrays.pl bindings/scripts/preprocessor.pm $(USER_AGENT_SCRIPTS) $(PLATFORM_FEATURE_DEFINES)
 	perl -I$(WebCore)/bindings/scripts $< --defines "$(FEATURE_DEFINES)" $@ UserAgentScriptsData.cpp $(USER_AGENT_SCRIPTS)

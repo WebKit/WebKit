@@ -19,6 +19,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/Modules/mediastream \
 	-I$(srcdir)/Source/WebCore/Modules/navigatorcontentutils \
 	-I$(srcdir)/Source/WebCore/Modules/notifications \
+	-I$(srcdir)/Source/WebCore/Modules/plugins \
 	-I$(srcdir)/Source/WebCore/Modules/proximity \
 	-I$(srcdir)/Source/WebCore/Modules/quota \
 	-I$(srcdir)/Source/WebCore/Modules/webaudio \

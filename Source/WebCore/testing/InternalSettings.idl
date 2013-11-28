@@ -60,4 +60,5 @@
     [RaisesException] void setUseLegacyBackgroundSizeShorthandBehavior(boolean enabled);
     [RaisesException] void setAutoscrollForDragAndDropEnabled(boolean enabled);
     [RaisesException] void setFontFallbackPrefersPictographs(boolean preferPictographs);
+    void setPluginReplacementEnabled(boolean enabled);
 };

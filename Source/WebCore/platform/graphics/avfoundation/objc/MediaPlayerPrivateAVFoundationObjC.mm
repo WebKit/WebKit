@@ -803,7 +803,7 @@ float MediaPlayerPrivateAVFoundationObjC::platformMaxTimeLoaded() const
     return maxTimeLoaded;   
 }
 
-unsigned MediaPlayerPrivateAVFoundationObjC::totalBytes() const
+unsigned long long MediaPlayerPrivateAVFoundationObjC::totalBytes() const
 {
     if (!metaDataAvailable())
         return 0;
@@ -812,7 +812,7 @@ unsigned MediaPlayerPrivateAVFoundationObjC::totalBytes() const
     for (AVPlayerItemTrack *thisTrack in m_cachedTracks.get())
         totalMediaSize += [[thisTrack assetTrack] totalSampleDataLength];
 
-    return static_cast<unsigned>(totalMediaSize);
+    return totalMediaSize;
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setAsset(id asset)

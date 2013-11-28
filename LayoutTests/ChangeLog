@@ -1,3 +1,18 @@
+2013-11-27  Eric Carlson  <eric.carlson@apple.com>
+
+        Allow the QuickTime plug-in to be replaced by script in an isolated word
+        https://bugs.webkit.org/show_bug.cgi?id=124900
+
+        Reviewed by Dean Jackson.
+
+        * platform/efl/TestExpectations: Skip the new test.
+        * platform/gtk/TestExpectations: Ditto.
+        * platform/wincairo/TestExpectations: Ditto.
+        * plugins/quicktime-plugin-replacement.html: Added.
+        * plugins/quicktime-plugin-replacement-expected.txt: Added.
+        * plugins/resources/orange.mov: Replace movie compressed with ancient (and deprecated) 
+            animated gif codec with one compressed with H.264 codec.
+
 2013-11-27  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Adding MediaConstraintsMock class

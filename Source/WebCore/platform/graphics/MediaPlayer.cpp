@@ -1225,6 +1225,14 @@ size_t MediaPlayer::extraMemoryCost() const
     return m_private->extraMemoryCost();
 }
 
+unsigned long long MediaPlayer::fileSize() const
+{
+    if (!m_private)
+        return 0;
+    
+    return m_private->fileSize();
+}
+
 void MediaPlayerFactorySupport::callRegisterMediaEngine(MediaEngineRegister registerMediaEngine)
 {
     registerMediaEngine(addMediaEngine);

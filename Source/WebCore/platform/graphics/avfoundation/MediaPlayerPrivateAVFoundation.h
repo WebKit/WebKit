@@ -190,6 +190,7 @@ protected:
 
     virtual bool supportsFullscreen() const;
     virtual bool supportsScanning() const { return true; }
+    unsigned long long fileSize() const { return totalBytes(); }
 
     // Required interfaces for concrete derived classes.
     virtual void createAVAssetForURL(const String&) = 0;
@@ -225,7 +226,7 @@ protected:
     virtual void updateRate() = 0;
     virtual float rate() const = 0;
     virtual void seekToTime(double time, double negativeTolerance, double positiveTolerance) = 0;
-    virtual unsigned totalBytes() const = 0;
+    virtual unsigned long long totalBytes() const = 0;
     virtual PassRefPtr<TimeRanges> platformBufferedTimeRanges() const = 0;
     virtual double platformMaxTimeSeekable() const = 0;
     virtual double platformMinTimeSeekable() const = 0;

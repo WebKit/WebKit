@@ -2853,3 +2853,6 @@ editing/secure-input [ Failure ]
 
 # crypto.subtle is not yet enabled
 crypto/subtle [ Skip ]
+
+# QuickTime plug-in not relevant to this port
+plugins/quicktime-plugin-replacement.html [ Skip ]

@@ -508,6 +508,8 @@ public:
 
     size_t extraMemoryCost() const;
 
+    unsigned long long fileSize() const;
+
 private:
     MediaPlayer(MediaPlayerClient*);
     MediaPlayerFactory* nextBestMediaEngine(MediaPlayerFactory*) const;

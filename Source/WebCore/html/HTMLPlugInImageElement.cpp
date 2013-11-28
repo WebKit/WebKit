@@ -108,7 +108,6 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
     , m_shouldPreferPlugInsForImages(preferPlugInsForImagesOption == ShouldPreferPlugInsForImages)
     , m_needsDocumentActivationCallbacks(false)
     , m_simulatedMouseClickTimer(this, &HTMLPlugInImageElement::simulatedMouseClickTimerFired, simulatedMouseClickTimerDelay)
-    , m_swapRendererTimer(this, &HTMLPlugInImageElement::swapRendererTimerFired)
     , m_removeSnapshotTimer(this, &HTMLPlugInImageElement::removeSnapshotTimerFired)
     , m_createdDuringUserGesture(ScriptController::processingUserGesture())
     , m_isRestartedPlugin(false)
@@ -139,9 +138,6 @@ void HTMLPlugInImageElement::setDisplayState(DisplayState state)
 #endif
 
     HTMLPlugInElement::setDisplayState(state);
-
-    if (state == DisplayingSnapshot)
-        m_swapRendererTimer.startOneShot(0);
 }
 
 RenderEmbeddedObject* HTMLPlugInImageElement::renderEmbeddedObject() const
@@ -196,6 +192,9 @@ bool HTMLPlugInImageElement::wouldLoadAsNetscapePlugin(const String& url, const 
 
 RenderElement* HTMLPlugInImageElement::createRenderer(PassRef<RenderStyle> style)
 {
+    if (displayState() >= PreparingPluginReplacement)
+        return HTMLPlugInElement::createRenderer(std::move(style));
+
     // Once a PlugIn Element creates its renderer, it needs to be told when the Document goes
     // inactive or reactivates so it can clear the renderer before going into the page cache.
     if (!m_needsDocumentActivationCallbacks) {
@@ -221,7 +220,7 @@ RenderElement* HTMLPlugInImageElement::createRenderer(PassRef<RenderStyle> style
         return image;
     }
 
-    return new RenderEmbeddedObject(*this, std::move(style));
+    return HTMLPlugInElement::createRenderer(std::move(style));
 }
 
 bool HTMLPlugInImageElement::willRecalcStyle(Style::Change)
@@ -363,8 +362,12 @@ static DOMWrapperWorld& plugInImageElementIsolatedWorld()
 
 void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
+    HTMLPlugInElement::didAddUserAgentShadowRoot(root);
+    if (displayState() >= PreparingPluginReplacement)
+        return;
+
     Page* page = document().page();
-    if (!page)
+    if (page)
         return;
 
     // Reset any author styles that may apply as we only want explicit
@@ -407,17 +410,6 @@ bool HTMLPlugInImageElement::partOfSnapshotOverlay(Node* node)
     DEFINE_STATIC_LOCAL(AtomicString, selector, (".snapshot-overlay", AtomicString::ConstructFromLiteral));
     RefPtr<Element> snapshotLabel = ensureUserAgentShadowRoot().querySelector(selector, ASSERT_NO_EXCEPTION);
     return node && snapshotLabel && (node == snapshotLabel.get() || node->isDescendantOf(snapshotLabel.get()));
-}
-
-void HTMLPlugInImageElement::swapRendererTimerFired(Timer<HTMLPlugInImageElement>*)
-{
-    ASSERT(displayState() == DisplayingSnapshot);
-    if (userAgentShadowRoot())
-        return;
-
-    // Create a shadow root, which will trigger the code to add a snapshot container
-    // and reattach, thus making a new Renderer.
-    ensureUserAgentShadowRoot();
 }
 
 void HTMLPlugInImageElement::removeSnapshotTimerFired(Timer<HTMLPlugInImageElement>*)
@@ -496,7 +488,7 @@ void HTMLPlugInImageElement::userDidClickSnapshot(PassRefPtr<MouseEvent> event, 
     LOG(Plugins, "%p User clicked on snapshotted plug-in. Restart.", this);
     restartSnapshottedPlugIn();
     if (forwardEvent)
-        setDisplayState(HTMLPlugInElement::RestartingWithPendingMouseClick);
+        setDisplayState(RestartingWithPendingMouseClick);
     restartSimilarPlugIns();
 }
 
@@ -730,6 +722,15 @@ void HTMLPlugInImageElement::defaultEventHandler(Event* event)
         }
     }
     HTMLPlugInElement::defaultEventHandler(event);
+}
+
+bool HTMLPlugInImageElement::requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
+{
+    if (HTMLPlugInElement::requestObject(url, mimeType, paramNames, paramValues))
+        return true;
+    
+    SubframeLoader& loader = document().frame()->loader().subframeLoader();
+    return loader.requestObject(*this, url, getNameAttribute(), mimeType, paramNames, paramValues);
 }
 
 } // namespace WebCore

@@ -213,6 +213,8 @@ public:
     virtual String languageOfPrimaryAudioTrack() const { return emptyString(); }
 
     virtual size_t extraMemoryCost() const { return 0; }
+    
+    virtual unsigned long long fileSize() const { return 0; }
 };
 
 }

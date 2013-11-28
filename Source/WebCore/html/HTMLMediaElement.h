@@ -393,6 +393,8 @@ public:
     bool shouldUseVideoPluginProxy() const;
 #endif
 
+    unsigned long long fileSize() const;
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool);
     virtual ~HTMLMediaElement();

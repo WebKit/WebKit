@@ -18695,6 +18695,7 @@
     <ClInclude Include="..\Modules\notifications\NotificationCenter.h" />
     <ClInclude Include="..\Modules\notifications\NotificationClient.h" />
     <ClInclude Include="..\Modules\notifications\WorkerGlobalScopeNotifications.h" />
+    <ClInclude Include="..\Modules\plugins\PluginReplacement.h" />
     <ClInclude Include="..\Modules\webdatabase\AbstractDatabaseServer.h" />
     <ClInclude Include="..\Modules\webdatabase\AbstractSQLStatement.h" />
     <ClInclude Include="..\Modules\webdatabase\AbstractSQLStatementBackend.h" />
