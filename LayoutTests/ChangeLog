@@ -1,3 +1,12 @@
+2013-11-28  Antti Koivisto  <antti@apple.com>
+
+        Remove an oddly named css variables test
+        
+        Rubber-stamped by Andreas Kling.
+
+        * css3/filters/reference-filter-update-after-remove-expected.txt: Removed.
+        * css3/filters/reference-filter-update-after-remove.html: Removed.
+
 2013-11-28  Laszlo Vidacs  <lac@inf.u-szeged.hu>
 
         RenderTableSection Blink merge asserting
