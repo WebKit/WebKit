@@ -50,9 +50,11 @@
 #import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 
+#import "WKBrowsingContextGroupInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKBrowsingContextLoadDelegate.h"
 #import "WKBrowsingContextPolicyDelegate.h"
+#import "WKProcessGroupInternal.h"
 
 using namespace WebKit;
 
@@ -111,6 +113,22 @@ NSString * const WKActionCanShowMIMETypeKey = @"WKActionCanShowMIMETypeKey";
     WKPageSetPagePolicyClient(_pageRef.get(), nullptr);
 
     [super dealloc];
+}
+
+- (WKProcessGroup *)processGroup
+{
+    WebContext* context = toImpl(_pageRef.get())->process()->context();
+    if (!context)
+        return nil;
+    return wrapper(*context);
+}
+
+- (WKBrowsingContextGroup *)browsingContextGroup
+{
+    WebPageGroup* pageGroup = toImpl(_pageRef.get())->pageGroup();
+    if (!pageGroup)
+        return nil;
+    return wrapper(*pageGroup);
 }
 
 - (WKPageRef)_pageRef

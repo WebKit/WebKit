@@ -24,7 +24,9 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <WebKit2/WKBrowsingContextGroup.h>
 #import <WebKit2/WKFoundation.h>
+#import <WebKit2/WKProcessGroup.h>
 
 #if WK_API_ENABLED
 
@@ -37,10 +39,12 @@
 WK_API_CLASS
 @interface WKBrowsingContextController : NSObject
 
+@property (readonly) WKProcessGroup *processGroup;
+@property (readonly) WKBrowsingContextGroup *browsingContextGroup;
+
 #pragma mark Delegates
 
 @property (assign) id <WKBrowsingContextLoadDelegate> loadDelegate;
-
 @property (assign) id <WKBrowsingContextPolicyDelegate> policyDelegate;
 @property (assign) id <WKBrowsingContextHistoryDelegate> historyDelegate;
 
