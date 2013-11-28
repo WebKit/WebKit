@@ -41,6 +41,11 @@
 
 namespace WebCore {
 
+std::unique_ptr<RTCPeerConnectionHandler> RTCPeerConnectionHandlerMock::create(RTCPeerConnectionHandlerClient* client)
+{
+    return std::make_unique<RTCPeerConnectionHandlerMock>(client);
+}
+
 RTCPeerConnectionHandlerMock::RTCPeerConnectionHandlerMock(RTCPeerConnectionHandlerClient* client)
     : m_client(client)
 {

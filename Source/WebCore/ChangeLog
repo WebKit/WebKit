@@ -1,3 +1,18 @@
+2013-11-28  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Updating RTCPeerConnectionHandlerMock after r159769
+        https://bugs.webkit.org/show_bug.cgi?id=124947
+
+        Reviewed by Philippe Normand.
+
+        Adding its create function back, in order to run RTCPeerConnection LayoutTests.
+
+        No new tests needed.
+
+        * platform/mock/RTCPeerConnectionHandlerMock.cpp:
+        (WebCore::RTCPeerConnectionHandlerMock::create):
+        * platform/mock/RTCPeerConnectionHandlerMock.h:
+
 2013-11-27  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK] Support custom types for drag and drop data
