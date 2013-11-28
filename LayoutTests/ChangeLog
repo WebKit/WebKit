@@ -1,3 +1,16 @@
+2013-11-28  Jongwoo Choi  <jw0330.choi@samsung.com>
+
+        [EFL] Layout tests need to be rebaselined.
+        https://bugs.webkit.org/show_bug.cgi?id=124879
+
+        Unreviewed, EFL rebaseline.
+
+        EFL tests need to be rebaselined after r159747
+
+        * platform/efl/fast/table/011-expected.txt:
+        * platform/efl/fast/table/border-collapsing/004-expected.txt:
+        * platform/efl/fast/table/tableInsideCaption-expected.txt:
+
 2013-11-27  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK] Support custom types for drag and drop data
