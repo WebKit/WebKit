@@ -24,7 +24,7 @@
 
 #include "CSSSelectorList.h"
 #include "MediaList.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -32,8 +32,8 @@ namespace WebCore {
 class CSSRule;
 class CSSStyleRule;
 class CSSStyleSheet;
-class MutableStylePropertySet;
-class StylePropertySet;
+class MutableStyleProperties;
+class StyleProperties;
 
 class StyleRuleBase : public WTF::RefCountedBase {
     WTF_MAKE_FAST_ALLOCATED;
@@ -118,7 +118,7 @@ private:
 class StyleRule : public StyleRuleBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRef<StyleRule> create(int sourceLine, PassRef<StylePropertySet> properties)
+    static PassRef<StyleRule> create(int sourceLine, PassRef<StyleProperties> properties)
     {
         return adoptRef(*new StyleRule(sourceLine, std::move(properties)));
     }
@@ -126,8 +126,8 @@ public:
     ~StyleRule();
 
     const CSSSelectorList& selectorList() const { return m_selectorList; }
-    const StylePropertySet& properties() const { return m_properties.get(); }
-    MutableStylePropertySet& mutableProperties();
+    const StyleProperties& properties() const { return m_properties.get(); }
+    MutableStyleProperties& mutableProperties();
     
     void parserAdoptSelectorVector(Vector<OwnPtr<CSSParserSelector>>& selectors) { m_selectorList.adoptSelectorVector(selectors); }
     void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
@@ -140,12 +140,12 @@ public:
     static unsigned averageSizeInBytes();
 
 private:
-    StyleRule(int sourceLine, PassRef<StylePropertySet>);
+    StyleRule(int sourceLine, PassRef<StyleProperties>);
     StyleRule(const StyleRule&);
 
-    static PassRef<StyleRule> create(int sourceLine, const Vector<const CSSSelector*>&, PassRef<StylePropertySet>);
+    static PassRef<StyleRule> create(int sourceLine, const Vector<const CSSSelector*>&, PassRef<StyleProperties>);
 
-    Ref<StylePropertySet> m_properties;
+    Ref<StyleProperties> m_properties;
     CSSSelectorList m_selectorList;
 };
 
@@ -157,32 +157,32 @@ inline const StyleRule* toStyleRule(const StyleRuleBase* rule)
 
 class StyleRuleFontFace : public StyleRuleBase {
 public:
-    static PassRef<StyleRuleFontFace> create(PassRef<StylePropertySet> properties) { return adoptRef(*new StyleRuleFontFace(std::move(properties))); }
+    static PassRef<StyleRuleFontFace> create(PassRef<StyleProperties> properties) { return adoptRef(*new StyleRuleFontFace(std::move(properties))); }
     
     ~StyleRuleFontFace();
 
-    const StylePropertySet& properties() const { return m_properties.get(); }
-    MutableStylePropertySet& mutableProperties();
+    const StyleProperties& properties() const { return m_properties.get(); }
+    MutableStyleProperties& mutableProperties();
 
     PassRef<StyleRuleFontFace> copy() const { return adoptRef(*new StyleRuleFontFace(*this)); }
 
 
 private:
-    StyleRuleFontFace(PassRef<StylePropertySet>);
+    StyleRuleFontFace(PassRef<StyleProperties>);
     StyleRuleFontFace(const StyleRuleFontFace&);
 
-    Ref<StylePropertySet> m_properties;
+    Ref<StyleProperties> m_properties;
 };
 
 class StyleRulePage : public StyleRuleBase {
 public:
-    static PassRef<StyleRulePage> create(PassRef<StylePropertySet> properties) { return adoptRef(*new StyleRulePage(std::move(properties))); }
+    static PassRef<StyleRulePage> create(PassRef<StyleProperties> properties) { return adoptRef(*new StyleRulePage(std::move(properties))); }
 
     ~StyleRulePage();
 
     const CSSSelector* selector() const { return m_selectorList.first(); }    
-    const StylePropertySet& properties() const { return m_properties.get(); }
-    MutableStylePropertySet& mutableProperties();
+    const StyleProperties& properties() const { return m_properties.get(); }
+    MutableStyleProperties& mutableProperties();
 
     void parserAdoptSelectorVector(Vector<OwnPtr<CSSParserSelector>>& selectors) { m_selectorList.adoptSelectorVector(selectors); }
     void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
@@ -190,10 +190,10 @@ public:
     PassRef<StyleRulePage> copy() const { return adoptRef(*new StyleRulePage(*this)); }
 
 private:
-    StyleRulePage(PassRef<StylePropertySet>);
+    StyleRulePage(PassRef<StyleProperties>);
     StyleRulePage(const StyleRulePage&);
     
-    Ref<StylePropertySet> m_properties;
+    Ref<StyleProperties> m_properties;
     CSSSelectorList m_selectorList;
 };
 
@@ -288,20 +288,20 @@ private:
 #if ENABLE(CSS_DEVICE_ADAPTATION)
 class StyleRuleViewport : public StyleRuleBase {
 public:
-    static PassRef<StyleRuleViewport> create(PassRef<StylePropertySet> properties) { return adoptRef(*new StyleRuleViewport(std::move(properties))); }
+    static PassRef<StyleRuleViewport> create(PassRef<StyleProperties> properties) { return adoptRef(*new StyleRuleViewport(std::move(properties))); }
 
     ~StyleRuleViewport();
 
-    const StylePropertySet& properties() const { return m_properties.get(); }
-    MutableStylePropertySet& mutableProperties();
+    const StyleProperties& properties() const { return m_properties.get(); }
+    MutableStyleProperties& mutableProperties();
 
     PassRef<StyleRuleViewport> copy() const { return adoptRef(*new StyleRuleViewport(*this)); }
 
 private:
-    StyleRuleViewport(PassRef<StylePropertySet>);
+    StyleRuleViewport(PassRef<StyleProperties>);
     StyleRuleViewport(const StyleRuleViewport&);
 
-    Ref<StylePropertySet> m_properties;
+    Ref<StyleProperties> m_properties;
 };
 #endif // ENABLE(CSS_DEVICE_ADAPTATION)
 
@@ -328,7 +328,7 @@ inline const StyleRuleRegion* toStyleRuleRegion(const StyleRuleGroup* rule)
 #if ENABLE(CSS_SHADERS)
 class StyleRuleFilter : public StyleRuleBase {
 public:
-    static PassRef<StyleRuleFilter> create(const String& filterName, PassRef<StylePropertySet> properties)
+    static PassRef<StyleRuleFilter> create(const String& filterName, PassRef<StyleProperties> properties)
     {
         return adoptRef(*new StyleRuleFilter(filterName, std::move(properties)));
     }
@@ -337,17 +337,17 @@ public:
 
     const String& filterName() const { return m_filterName; }
 
-    const StylePropertySet& properties() const { return m_properties.get(); }
-    MutableStylePropertySet& mutableProperties();
+    const StyleProperties& properties() const { return m_properties.get(); }
+    MutableStyleProperties& mutableProperties();
 
     PassRef<StyleRuleFilter> copy() const { return adoptRef(*new StyleRuleFilter(*this)); }
 
 private:
-    StyleRuleFilter(const String&, PassRef<StylePropertySet>);
+    StyleRuleFilter(const String&, PassRef<StyleProperties>);
     StyleRuleFilter(const StyleRuleFilter&);
 
     String m_filterName;
-    Ref<StylePropertySet> m_properties;
+    Ref<StyleProperties> m_properties;
 };
 #endif // ENABLE(CSS_SHADERS)
 

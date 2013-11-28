@@ -759,14 +759,14 @@ PassRefPtr<RenderStyle> SVGElement::customStyleForRenderer()
     return document().ensureStyleResolver().styleForElement(correspondingElement(), style, DisallowStyleSharing);
 }
 
-MutableStylePropertySet* SVGElement::animatedSMILStyleProperties() const
+MutableStyleProperties* SVGElement::animatedSMILStyleProperties() const
 {
     if (m_svgRareData)
         return m_svgRareData->animatedSMILStyleProperties();
     return 0;
 }
 
-MutableStylePropertySet& SVGElement::ensureAnimatedSMILStyleProperties()
+MutableStyleProperties& SVGElement::ensureAnimatedSMILStyleProperties()
 {
     return ensureSVGRareData().ensureAnimatedSMILStyleProperties();
 }
@@ -966,7 +966,7 @@ bool SVGElement::isPresentationAttribute(const QualifiedName& name) const
     return StyledElement::isPresentationAttribute(name);
 }
 
-void SVGElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet& style)
+void SVGElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
 {
     CSSPropertyID propertyID = cssPropertyIdForSVGAttributeName(name);
     if (propertyID > 0)
@@ -1054,7 +1054,7 @@ PassRefPtr<CSSValue> SVGElement::getPresentationAttribute(const String& name)
     if (!attribute)
         return 0;
 
-    RefPtr<MutableStylePropertySet> style = MutableStylePropertySet::create(SVGAttributeMode);
+    RefPtr<MutableStyleProperties> style = MutableStyleProperties::create(SVGAttributeMode);
     CSSPropertyID propertyID = cssPropertyIdForSVGAttributeName(attribute->name());
     style->setProperty(propertyID, attribute->value());
     RefPtr<CSSValue> cssValue = style->getPropertyCSSValue(propertyID);

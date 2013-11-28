@@ -64,9 +64,9 @@ public:
     bool shouldDeleteRange(WebCore::Range*);
 
     bool shouldInsertNode(WebCore::Node*, WebCore::Range* replacingRange, WebCore::EditorInsertAction);
-    bool shouldApplyStyle(WebCore::StylePropertySet*, WebCore::Range*);
+    bool shouldApplyStyle(WebCore::StyleProperties*, WebCore::Range*);
     bool shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*);
-    bool shouldChangeTypingStyle(WebCore::StylePropertySet* currentStyle, WebCore::StylePropertySet* toProposedStyle);
+    bool shouldChangeTypingStyle(WebCore::StyleProperties* currentStyle, WebCore::StyleProperties* toProposedStyle);
 
     void webViewDidChangeTypingStyle(WebNotification*);
     void webViewDidChangeSelection(WebNotification*);

@@ -416,7 +416,7 @@ public:
     virtual bool shouldInsertText(const String&, Range*, EditorInsertAction) OVERRIDE { return false; }
     virtual bool shouldChangeSelectedRange(Range*, Range*, EAffinity, bool) OVERRIDE { return false; }
 
-    virtual bool shouldApplyStyle(StylePropertySet*, Range*) OVERRIDE { return false; }
+    virtual bool shouldApplyStyle(StyleProperties*, Range*) OVERRIDE { return false; }
     virtual bool shouldMoveRangeAfterDelete(Range*, Range*) OVERRIDE { return false; }
 
     virtual void didBeginEditing() OVERRIDE { }

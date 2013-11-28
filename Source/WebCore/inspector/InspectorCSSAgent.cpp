@@ -51,7 +51,7 @@
 #include "NodeList.h"
 #include "RenderRegion.h"
 #include "SVGStyleElement.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
@@ -1348,12 +1348,12 @@ PassRefPtr<TypeBuilder::CSS::CSSStyle> InspectorCSSAgent::buildObjectForAttribut
         return 0;
 
     // FIXME: Ugliness below.
-    StylePropertySet* attributeStyle = const_cast<StylePropertySet*>(toStyledElement(element)->presentationAttributeStyle());
+    StyleProperties* attributeStyle = const_cast<StyleProperties*>(toStyledElement(element)->presentationAttributeStyle());
     if (!attributeStyle)
         return 0;
 
     ASSERT_WITH_SECURITY_IMPLICATION(attributeStyle->isMutable());
-    MutableStylePropertySet* mutableAttributeStyle = static_cast<MutableStylePropertySet*>(attributeStyle);
+    MutableStyleProperties* mutableAttributeStyle = static_cast<MutableStyleProperties*>(attributeStyle);
 
     RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), mutableAttributeStyle->ensureCSSStyleDeclaration(), 0);
     return inspectorStyle->buildObjectForStyle();

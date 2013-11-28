@@ -173,7 +173,7 @@
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityPolicy.h>
 #import <WebCore/Settings.h>
-#import <WebCore/StylePropertySet.h>
+#import <WebCore/StyleProperties.h>
 #import <WebCore/SystemVersionMac.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebCore/ThreadCheck.h>
@@ -5955,7 +5955,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
     WebFrame *webFrame = [self _selectedOrMainFrame];
     if (Frame* coreFrame = core(webFrame)) {
         // FIXME: We shouldn't have to make a copy here.
-        Ref<MutableStylePropertySet> properties(core(style)->copyProperties());
+        Ref<MutableStyleProperties> properties(core(style)->copyProperties());
         coreFrame->editor().applyStyle(&properties.get());
     }
 }

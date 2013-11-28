@@ -73,7 +73,7 @@ public:
 
 private:
     Document& document() { return m_state.document(); }
-    void addElementStyleProperties(const StylePropertySet*, bool isCacheable = true);
+    void addElementStyleProperties(const StyleProperties*, bool isCacheable = true);
 
     void matchUARules(RuleSet*);
 

@@ -89,7 +89,7 @@
 #include "ScriptValue.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "TextIterator.h"
 #include "TextNodeTraversal.h"
 #include "TextResourceDecoder.h"

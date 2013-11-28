@@ -28,7 +28,7 @@
 #include "InspectorInstrumentation.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StyledElement.h"
 
 namespace WebCore {
@@ -288,12 +288,12 @@ StyleSheetContents* PropertySetCSSStyleDeclaration::contextStyleSheet() const
     return cssStyleSheet ? &cssStyleSheet->contents() : 0;
 }
 
-PassRef<MutableStylePropertySet> PropertySetCSSStyleDeclaration::copyProperties() const
+PassRef<MutableStyleProperties> PropertySetCSSStyleDeclaration::copyProperties() const
 {
     return m_propertySet->mutableCopy();
 }
     
-StyleRuleCSSStyleDeclaration::StyleRuleCSSStyleDeclaration(MutableStylePropertySet& propertySet, CSSRule& parentRule)
+StyleRuleCSSStyleDeclaration::StyleRuleCSSStyleDeclaration(MutableStyleProperties& propertySet, CSSRule& parentRule)
     : PropertySetCSSStyleDeclaration(&propertySet)
     , m_refCount(1)
     , m_parentRule(&parentRule)
@@ -339,7 +339,7 @@ CSSStyleSheet* StyleRuleCSSStyleDeclaration::parentStyleSheet() const
     return m_parentRule ? m_parentRule->parentStyleSheet() : 0;
 }
 
-void StyleRuleCSSStyleDeclaration::reattach(MutableStylePropertySet& propertySet)
+void StyleRuleCSSStyleDeclaration::reattach(MutableStyleProperties& propertySet)
 {
     m_propertySet->deref();
     m_propertySet = &propertySet;

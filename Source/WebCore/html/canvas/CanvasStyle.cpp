@@ -35,7 +35,7 @@
 #include "CanvasPattern.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 
 #if USE(CG)
 #include <CoreGraphics/CGContext.h>

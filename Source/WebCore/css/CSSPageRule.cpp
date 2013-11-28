@@ -27,7 +27,7 @@
 #include "CSSStyleSheet.h"
 #include "Document.h"
 #include "PropertySetCSSStyleDeclaration.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StyleRule.h"
 #include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>

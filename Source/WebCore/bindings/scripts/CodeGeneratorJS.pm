@@ -3478,7 +3478,7 @@ sub NativeToJSValue
     }
 
     if ($type eq "CSSStyleDeclaration") {
-        AddToImplIncludes("StylePropertySet.h", $conditional);
+        AddToImplIncludes("StyleProperties.h", $conditional);
     }
 
     if ($type eq "NodeList") {

@@ -35,7 +35,7 @@
 #include "EditorInsertAction.h"
 #include "Node.h"
 #include "Range.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "TestRunner.h"
 #include "TextAffinity.h"
 #include <wtf/text/CString.h>

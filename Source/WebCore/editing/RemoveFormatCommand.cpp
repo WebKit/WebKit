@@ -32,7 +32,7 @@
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLNames.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 
 namespace WebCore {
 

@@ -51,7 +51,7 @@ bool HTMLTableCaptionElement::isPresentationAttribute(const QualifiedName& name)
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLTableCaptionElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet& style)
+void HTMLTableCaptionElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
 {
     if (name == alignAttr) {
         if (!value.isEmpty())

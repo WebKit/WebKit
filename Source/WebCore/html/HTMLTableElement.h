@@ -65,19 +65,19 @@ public:
     String rules() const;
     String summary() const;
 
-    const StylePropertySet* additionalCellStyle();
-    const StylePropertySet* additionalGroupStyle(bool rows);
+    const StyleProperties* additionalCellStyle();
+    const StyleProperties* additionalGroupStyle(bool rows);
 
 private:
     HTMLTableElement(const QualifiedName&, Document&);
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStylePropertySet&) OVERRIDE;
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) OVERRIDE;
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 
     // Used to obtain either a solid or outset border decl and to deal with the frame and rules attributes.
-    virtual const StylePropertySet* additionalPresentationAttributeStyle() OVERRIDE;
+    virtual const StyleProperties* additionalPresentationAttributeStyle() OVERRIDE;
 
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const OVERRIDE;
 
@@ -86,7 +86,7 @@ private:
 
     CellBorders cellBorders() const;
 
-    PassRefPtr<StylePropertySet> createSharedCellStyle();
+    PassRefPtr<StyleProperties> createSharedCellStyle();
 
     HTMLTableSectionElement* lastBody() const;
 
@@ -97,7 +97,7 @@ private:
                                 // are present, to none otherwise).
 
     unsigned short m_padding;
-    RefPtr<StylePropertySet> m_sharedCellStyle;
+    RefPtr<StyleProperties> m_sharedCellStyle;
 };
 
 NODE_TYPE_CASTS(HTMLTableElement)

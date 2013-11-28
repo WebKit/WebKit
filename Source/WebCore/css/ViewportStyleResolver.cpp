@@ -36,7 +36,7 @@
 #include "Document.h"
 #include "Page.h"
 #include "RenderView.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StyleRule.h"
 #include "ViewportArguments.h"
 
@@ -54,7 +54,7 @@ ViewportStyleResolver::~ViewportStyleResolver()
 
 void ViewportStyleResolver::addViewportRule(StyleRuleViewport* viewportRule)
 {
-    StylePropertySet& propertySet = viewportRule->mutableProperties();
+    StyleProperties& propertySet = viewportRule->mutableProperties();
 
     unsigned propertyCount = propertySet.propertyCount();
     if (!propertyCount)

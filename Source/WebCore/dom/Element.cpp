@@ -67,7 +67,7 @@
 #include "RenderWidget.h"
 #include "SelectorQuery.h"
 #include "Settings.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "TextIterator.h"
 #include "VoidCallback.h"

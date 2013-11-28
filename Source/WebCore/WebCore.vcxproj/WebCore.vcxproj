@@ -9409,7 +9409,7 @@
     <ClCompile Include="..\css\SelectorChecker.cpp" />
     <ClCompile Include="..\css\StyleInvalidationAnalysis.cpp" />
     <ClCompile Include="..\css\StyleMedia.cpp" />
-    <ClCompile Include="..\css\StylePropertySet.cpp">
+    <ClCompile Include="..\css\StyleProperties.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
@@ -19784,7 +19784,7 @@
     <ClInclude Include="..\css\SelectorChecker.h" />
     <ClInclude Include="..\css\StyleInvalidationAnalysis.h" />
     <ClInclude Include="..\css\StyleMedia.h" />
-    <ClInclude Include="..\css\StylePropertySet.h" />
+    <ClInclude Include="..\css\StyleProperties.h" />
     <ClInclude Include="..\css\StylePropertyShorthand.h" />
     <ClInclude Include="..\css\StyleResolver.h" />
     <ClInclude Include="..\css\StyleRule.h" />

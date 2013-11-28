@@ -39,7 +39,7 @@
 #include "SVGFontFaceSrcElement.h"
 #include "SVGGlyphElement.h"
 #include "SVGNames.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
 #include <math.h>
@@ -50,7 +50,7 @@ using namespace SVGNames;
 
 inline SVGFontFaceElement::SVGFontFaceElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
-    , m_fontFaceRule(StyleRuleFontFace::create(MutableStylePropertySet::create(CSSStrictMode)))
+    , m_fontFaceRule(StyleRuleFontFace::create(MutableStyleProperties::create(CSSStrictMode)))
     , m_fontElement(0)
 {
     ASSERT(hasTagName(font_faceTag));

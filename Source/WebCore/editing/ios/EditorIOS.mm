@@ -50,7 +50,7 @@
 #include "RenderImage.h"
 #include "SharedBuffer.h"
 #include "SoftLinking.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "Text.h"
 #include "TypingCommand.h"
 #include "WAKAppKitStubs.h"
@@ -170,7 +170,7 @@ void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection dir
         return;
     }
 
-    RefPtr<MutableStylePropertySet> style = MutableStylePropertySet::create();
+    RefPtr<MutableStyleProperties> style = MutableStyleProperties::create();
     style->setProperty(CSSPropertyTextAlign, newValue);
     applyParagraphStyle(style.get());
 }
@@ -277,7 +277,7 @@ void Editor::removeUnchangeableStyles()
     // This function removes styles that the user cannot modify by applying their default values.
     
     RefPtr<EditingStyle> editingStyle = EditingStyle::create(m_frame.document()->body());
-    RefPtr<MutableStylePropertySet> defaultStyle = editingStyle.get()->style()->mutableCopy();
+    RefPtr<MutableStyleProperties> defaultStyle = editingStyle.get()->style()->mutableCopy();
     
     // Text widgets implement background color via the UIView property. Their body element will not have one.
     defaultStyle->setProperty(CSSPropertyBackgroundColor, "rgba(255, 255, 255, 0.0)");

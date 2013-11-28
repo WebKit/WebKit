@@ -53,7 +53,7 @@ class KeyboardEvent;
 class Node;
 class Range;
 class SharedBuffer;
-class StylePropertySet;
+class StyleProperties;
 class TextCheckerClient;
 class VisibleSelection;
 class VisiblePosition;
@@ -80,7 +80,7 @@ public:
     virtual bool shouldInsertText(const String&, Range*, EditorInsertAction) = 0;
     virtual bool shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity, bool stillSelecting) = 0;
     
-    virtual bool shouldApplyStyle(StylePropertySet*, Range*) = 0;
+    virtual bool shouldApplyStyle(StyleProperties*, Range*) = 0;
     virtual bool shouldMoveRangeAfterDelete(Range*, Range*) = 0;
 
     virtual void didBeginEditing() = 0;

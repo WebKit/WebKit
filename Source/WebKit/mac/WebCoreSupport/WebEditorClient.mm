@@ -63,7 +63,7 @@
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/Settings.h>
 #import <WebCore/SpellChecker.h>
-#import <WebCore/StylePropertySet.h>
+#import <WebCore/StyleProperties.h>
 #import <WebCore/UndoStep.h>
 #import <WebCore/UserTypingGestureIndicator.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -244,9 +244,9 @@ bool WebEditorClient::isSelectTrailingWhitespaceEnabled()
     return page->settings().selectTrailingWhitespaceEnabled();
 }
 
-bool WebEditorClient::shouldApplyStyle(StylePropertySet* style, Range* range)
+bool WebEditorClient::shouldApplyStyle(StyleProperties* style, Range* range)
 {
-    Ref<MutableStylePropertySet> mutableStyle(style->isMutable() ? static_cast<MutableStylePropertySet&>(*style) : style->mutableCopy());
+    Ref<MutableStyleProperties> mutableStyle(style->isMutable() ? static_cast<MutableStyleProperties&>(*style) : style->mutableCopy());
     return [[m_webView _editingDelegateForwarder] webView:m_webView
         shouldApplyStyle:kit(mutableStyle->ensureCSSStyleDeclaration()) toElementsInDOMRange:kit(range)];
 }

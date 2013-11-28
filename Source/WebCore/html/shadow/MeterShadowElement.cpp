@@ -38,7 +38,7 @@
 #include "RenderMeter.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 
 namespace WebCore {
 

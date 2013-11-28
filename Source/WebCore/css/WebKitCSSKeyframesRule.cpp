@@ -29,7 +29,7 @@
 #include "CSSParser.h"
 #include "CSSRuleList.h"
 #include "CSSStyleSheet.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StyleSheet.h"
 #include "WebKitCSSKeyframeRule.h"
 #include <wtf/text/StringBuilder.h>

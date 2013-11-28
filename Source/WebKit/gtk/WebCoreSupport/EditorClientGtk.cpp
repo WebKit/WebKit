@@ -38,7 +38,7 @@
 #include "PasteboardHelper.h"
 #include "PlatformKeyboardEvent.h"
 #include "Settings.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "UndoStep.h"
 #include "WebKitDOMCSSStyleDeclarationPrivate.h"
 #include "WebKitDOMHTMLElementPrivate.h"
@@ -177,10 +177,10 @@ bool EditorClient::shouldChangeSelectedRange(Range* fromRange, Range* toRange, E
     return accept;
 }
 
-bool EditorClient::shouldApplyStyle(WebCore::StylePropertySet* set, WebCore::Range* range)
+bool EditorClient::shouldApplyStyle(WebCore::StyleProperties* set, WebCore::Range* range)
 {
     gboolean accept = TRUE;
-    Ref<MutableStylePropertySet> mutableStyle(set->mutableCopy());
+    Ref<MutableStyleProperties> mutableStyle(set->mutableCopy());
     GRefPtr<WebKitDOMCSSStyleDeclaration> kitDeclaration(kit(mutableStyle->ensureCSSStyleDeclaration()));
     GRefPtr<WebKitDOMRange> kitRange(adoptGRef(kit(range)));
     g_signal_emit_by_name(m_webView, "should-apply-style", kitDeclaration.get(), kitRange.get(), &accept);

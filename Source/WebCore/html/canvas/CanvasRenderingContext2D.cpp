@@ -50,7 +50,7 @@
 #include "RenderElement.h"
 #include "SecurityOrigin.h"
 #include "StrokeStyleApplier.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "TextMetrics.h"
 #include "TextRun.h"
@@ -1993,7 +1993,7 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     if (newFont == state().m_unparsedFont && state().m_realizedFont)
         return;
 
-    RefPtr<MutableStylePropertySet> parsedStyle = MutableStylePropertySet::create();
+    RefPtr<MutableStyleProperties> parsedStyle = MutableStyleProperties::create();
     CSSParser::parseValue(parsedStyle.get(), CSSPropertyFont, newFont, true, strictToCSSParserMode(!m_usesCSSCompatibilityParseMode), 0);
     if (parsedStyle->isEmpty())
         return;

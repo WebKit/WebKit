@@ -58,7 +58,7 @@
 #include "RenderedPosition.h"
 #include "Settings.h"
 #include "SpatialNavigation.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "TypingCommand.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"
@@ -1906,7 +1906,7 @@ void DragCaretController::paintDragCaret(Frame* frame, GraphicsContext* p, const
 #endif
 }
 
-PassRefPtr<MutableStylePropertySet> FrameSelection::copyTypingStyle() const
+PassRefPtr<MutableStyleProperties> FrameSelection::copyTypingStyle() const
 {
     if (!m_typingStyle || !m_typingStyle->style())
         return 0;

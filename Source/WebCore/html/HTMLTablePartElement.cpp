@@ -33,7 +33,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLTableElement.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 
 namespace WebCore {
 
@@ -46,7 +46,7 @@ bool HTMLTablePartElement::isPresentationAttribute(const QualifiedName& name) co
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLTablePartElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet& style)
+void HTMLTablePartElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
 {
     if (name == bgcolorAttr)
         addHTMLColorToStyle(style, CSSPropertyBackgroundColor, value);

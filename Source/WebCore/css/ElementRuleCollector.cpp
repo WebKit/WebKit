@@ -40,24 +40,24 @@
 #include "RenderRegion.h"
 #include "SVGElement.h"
 #include "SelectorCheckerFastPath.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StyledElement.h"
 
 #include <wtf/TemporaryChange.h>
 
 namespace WebCore {
 
-static const StylePropertySet& leftToRightDeclaration()
+static const StyleProperties& leftToRightDeclaration()
 {
-    static NeverDestroyed<Ref<MutableStylePropertySet>> leftToRightDecl(MutableStylePropertySet::create());
+    static NeverDestroyed<Ref<MutableStyleProperties>> leftToRightDecl(MutableStyleProperties::create());
     if (leftToRightDecl.get()->isEmpty())
         leftToRightDecl.get()->setProperty(CSSPropertyDirection, CSSValueLtr);
     return leftToRightDecl.get().get();
 }
 
-static const StylePropertySet& rightToLeftDeclaration()
+static const StyleProperties& rightToLeftDeclaration()
 {
-    static NeverDestroyed<Ref<MutableStylePropertySet>> rightToLeftDecl(MutableStylePropertySet::create());
+    static NeverDestroyed<Ref<MutableStyleProperties>> rightToLeftDecl(MutableStyleProperties::create());
     if (rightToLeftDecl.get()->isEmpty())
         rightToLeftDecl.get()->setProperty(CSSPropertyDirection, CSSValueRtl);
     return rightToLeftDecl.get().get();
@@ -100,7 +100,7 @@ inline void ElementRuleCollector::clearMatchedRules()
     m_matchedRules->clear();
 }
 
-inline void ElementRuleCollector::addElementStyleProperties(const StylePropertySet* propertySet, bool isCacheable)
+inline void ElementRuleCollector::addElementStyleProperties(const StyleProperties* propertySet, bool isCacheable)
 {
     if (!propertySet)
         return;
@@ -360,7 +360,7 @@ void ElementRuleCollector::doCollectMatchingRulesForList(const Vector<RuleData>*
             }
 
             // If the rule has no properties to apply, then ignore it in the non-debug mode.
-            const StylePropertySet& properties = rule->properties();
+            const StyleProperties& properties = rule->properties();
             if (properties.isEmpty() && !matchRequest.includeEmptyRules) {
                 if (hasInspectorFrontends)
                     InspectorInstrumentation::didMatchRule(cookie, false);

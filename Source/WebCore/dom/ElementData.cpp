@@ -27,7 +27,7 @@
 #include "ElementData.h"
 
 #include "Attr.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 
 namespace WebCore {
 
@@ -144,7 +144,7 @@ UniqueElementData::UniqueElementData(const UniqueElementData& other)
 UniqueElementData::UniqueElementData(const ShareableElementData& other)
     : ElementData(other, true)
 {
-    // An ShareableElementData should never have a mutable inline StylePropertySet attached.
+    // An ShareableElementData should never have a mutable inline StyleProperties attached.
     ASSERT(!other.m_inlineStyle || !other.m_inlineStyle->isMutable());
     m_inlineStyle = other.m_inlineStyle;
 

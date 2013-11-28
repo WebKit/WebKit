@@ -27,13 +27,13 @@
 #include "WebKitCSSKeyframeRule.h"
 
 #include "PropertySetCSSStyleDeclaration.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "WebKitCSSKeyframesRule.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-StyleKeyframe::StyleKeyframe(PassRef<StylePropertySet> properties)
+StyleKeyframe::StyleKeyframe(PassRef<StyleProperties> properties)
     : m_properties(std::move(properties))
 {
 }
@@ -42,11 +42,11 @@ StyleKeyframe::~StyleKeyframe()
 {
 }
 
-MutableStylePropertySet& StyleKeyframe::mutableProperties()
+MutableStyleProperties& StyleKeyframe::mutableProperties()
 {
     if (!m_properties->isMutable())
         m_properties = m_properties->mutableCopy();
-    return static_cast<MutableStylePropertySet&>(m_properties.get());
+    return static_cast<MutableStyleProperties&>(m_properties.get());
 }
 
 /* static */

@@ -59,7 +59,7 @@
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include "WebKitCSSTransformValue.h"
@@ -1709,7 +1709,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
     return ComputedStyleExtractor(m_node, m_allowVisitedStyle, m_pseudoElementSpecifier).propertyValue(propertyID, updateLayout);
 }
 
-PassRef<MutableStylePropertySet> CSSComputedStyleDeclaration::copyProperties() const
+PassRef<MutableStyleProperties> CSSComputedStyleDeclaration::copyProperties() const
 {
     return ComputedStyleExtractor(m_node, m_allowVisitedStyle, m_pseudoElementSpecifier).copyProperties();
 }
@@ -3180,7 +3180,7 @@ bool ComputedStyleExtractor::propertyMatches(CSSPropertyID propertyID, const CSS
     return computedValue && value && computedValue->equals(*value);
 }
 
-PassRef<MutableStylePropertySet> ComputedStyleExtractor::copyProperties() const
+PassRef<MutableStyleProperties> ComputedStyleExtractor::copyProperties() const
 {
     return copyPropertiesInSet(computedProperties, numComputedProperties);
 }
@@ -3233,7 +3233,7 @@ PassRefPtr<CSSValueList> ComputedStyleExtractor::getCSSPropertyValuesForGridShor
     return list.release();
 }
 
-PassRef<MutableStylePropertySet> ComputedStyleExtractor::copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const
+PassRef<MutableStyleProperties> ComputedStyleExtractor::copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const
 {
     Vector<CSSProperty, 256> list;
     list.reserveInitialCapacity(length);
@@ -3242,7 +3242,7 @@ PassRef<MutableStylePropertySet> ComputedStyleExtractor::copyPropertiesInSet(con
         if (value)
             list.append(CSSProperty(set[i], value.release(), false));
     }
-    return MutableStylePropertySet::create(list.data(), list.size());
+    return MutableStyleProperties::create(list.data(), list.size());
 }
 
 CSSRule* CSSComputedStyleDeclaration::parentRule() const

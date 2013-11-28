@@ -40,7 +40,7 @@
 #include "NodeTraversal.h"
 #include "RenderObject.h"
 #include "RenderText.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "Text.h"
 #include "TextNodeTraversal.h"
@@ -299,10 +299,10 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle *style)
         updateStartEnd(startRange->startPosition(), endRange->startPosition());
 }
 
-static PassRefPtr<MutableStylePropertySet> copyStyleOrCreateEmpty(const StylePropertySet* style)
+static PassRefPtr<MutableStyleProperties> copyStyleOrCreateEmpty(const StyleProperties* style)
 {
     if (!style)
-        return MutableStylePropertySet::create();
+        return MutableStyleProperties::create();
     return style->mutableCopy();
 }
 
@@ -396,7 +396,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
         }
         lastStyledNode = node;
 
-        RefPtr<MutableStylePropertySet> inlineStyle = copyStyleOrCreateEmpty(element->inlineStyle());
+        RefPtr<MutableStyleProperties> inlineStyle = copyStyleOrCreateEmpty(element->inlineStyle());
         float currentFontSize = computedFontSize(node);
         float desiredFontSize = std::max(MinimumFontSize, startingFontSizes.get(node) + style->fontSizeDelta());
         RefPtr<CSSValue> value = inlineStyle->getPropertyCSSValue(CSSPropertyFontSize);
@@ -525,7 +525,7 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
             // other attributes, like we (should) do with B and I elements.
             removeNodeAttribute(element, dirAttr);
         } else {
-            RefPtr<MutableStylePropertySet> inlineStyle = copyStyleOrCreateEmpty(element->inlineStyle());
+            RefPtr<MutableStyleProperties> inlineStyle = copyStyleOrCreateEmpty(element->inlineStyle());
             inlineStyle->setProperty(CSSPropertyUnicodeBidi, CSSValueNormal);
             inlineStyle->removeProperty(CSSPropertyDirection);
             setNodeAttribute(element, styleAttr, inlineStyle->asText());
@@ -769,8 +769,8 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, PassRef
                 break;
             // Add to this element's inline style and skip over its contents.
             HTMLElement* element = toHTMLElement(node.get());
-            RefPtr<MutableStylePropertySet> inlineStyle = copyStyleOrCreateEmpty(element->inlineStyle());
-            if (MutableStylePropertySet* otherStyle = style->style())
+            RefPtr<MutableStyleProperties> inlineStyle = copyStyleOrCreateEmpty(element->inlineStyle());
+            if (MutableStyleProperties* otherStyle = style->style())
                 inlineStyle->mergeAndOverrideOnConflict(*otherStyle);
             setNodeAttribute(element, styleAttr, inlineStyle->asText());
             next = NodeTraversal::nextSkippingChildren(node.get());
@@ -1387,7 +1387,7 @@ void ApplyStyleCommand::addBlockStyle(const StyleChange& styleChange, HTMLElemen
     String cssStyle = styleChange.cssStyle();
     StringBuilder cssText;
     cssText.append(cssStyle);
-    if (const StylePropertySet* decl = block->inlineStyle()) {
+    if (const StyleProperties* decl = block->inlineStyle()) {
         if (!cssStyle.isEmpty())
             cssText.append(' ');
         cssText.append(decl->asText());
@@ -1467,7 +1467,7 @@ void ApplyStyleCommand::applyInlineStyleChange(PassRefPtr<Node> passedStart, Pas
 
     if (styleChange.cssStyle().length()) {
         if (styleContainer) {
-            if (const StylePropertySet* existingStyle = styleContainer->inlineStyle()) {
+            if (const StyleProperties* existingStyle = styleContainer->inlineStyle()) {
                 String existingText = existingStyle->asText();
                 StringBuilder cssText;
                 cssText.append(existingText);

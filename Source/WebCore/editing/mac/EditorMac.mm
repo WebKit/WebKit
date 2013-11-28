@@ -54,7 +54,7 @@
 #import "ResourceBuffer.h"
 #import "RuntimeApplicationChecks.h"
 #import "Sound.h"
-#import "StylePropertySet.h"
+#import "StyleProperties.h"
 #import "Text.h"
 #import "TypingCommand.h"
 #import "UUID.h"

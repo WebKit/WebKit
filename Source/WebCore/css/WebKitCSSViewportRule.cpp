@@ -34,7 +34,7 @@
 #if ENABLE(CSS_DEVICE_ADAPTATION)
 
 #include "PropertySetCSSStyleDeclaration.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>
 

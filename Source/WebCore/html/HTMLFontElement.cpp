@@ -31,7 +31,7 @@
 #include "CSSValuePool.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include <wtf/text/StringBuilder.h>
 
 using namespace WTF;
@@ -186,7 +186,7 @@ bool HTMLFontElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLFontElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet& style)
+void HTMLFontElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
 {
     if (name == sizeAttr) {
         CSSValueID size = CSSValueInvalid;

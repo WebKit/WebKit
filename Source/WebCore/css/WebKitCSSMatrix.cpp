@@ -30,7 +30,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "ExceptionCode.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "TransformFunctions.h"
 #include <wtf/MathExtras.h>
 
@@ -55,7 +55,7 @@ void WebKitCSSMatrix::setMatrixValue(const String& string, ExceptionCode& ec)
     if (string.isEmpty())
         return;
 
-    RefPtr<MutableStylePropertySet> styleDeclaration = MutableStylePropertySet::create();
+    RefPtr<MutableStyleProperties> styleDeclaration = MutableStyleProperties::create();
     if (CSSParser::parseValue(styleDeclaration.get(), CSSPropertyWebkitTransform, string, true, CSSStrictMode, 0)) {
         // Convert to TransformOperations. This can fail if a property
         // requires style (i.e., param uses 'ems' or 'exs')

@@ -1087,7 +1087,7 @@ set(WebCore_SOURCES
     css/SelectorFilter.cpp
     css/StyleInvalidationAnalysis.cpp
     css/StyleMedia.cpp
-    css/StylePropertySet.cpp
+    css/StyleProperties.cpp
     css/StylePropertyShorthand.cpp
     css/StyleResolver.cpp
     css/StyleRule.cpp

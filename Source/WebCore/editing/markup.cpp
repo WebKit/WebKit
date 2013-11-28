@@ -52,7 +52,7 @@
 #include "MarkupAccumulator.h"
 #include "Range.h"
 #include "RenderBlock.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "TextIterator.h"
 #include "VisibleSelection.h"
 #include "VisibleUnits.h"
@@ -68,7 +68,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static bool propertyMissingOrEqualToNone(StylePropertySet*, CSSPropertyID);
+static bool propertyMissingOrEqualToNone(StyleProperties*, CSSPropertyID);
 
 class AttributeChange {
 public:
@@ -124,13 +124,13 @@ public:
 
     Node* serializeNodes(Node* startNode, Node* pastEnd);
     void wrapWithNode(Node&, bool convertBlocksToInlines = false, RangeFullySelectsNode = DoesFullySelectNode);
-    void wrapWithStyleNode(StylePropertySet*, Document&, bool isBlock = false);
+    void wrapWithStyleNode(StyleProperties*, Document&, bool isBlock = false);
     String takeResults();
 
     using MarkupAccumulator::appendString;
 
 private:
-    void appendStyleNodeOpenTag(StringBuilder&, StylePropertySet*, Document&, bool isBlock = false);
+    void appendStyleNodeOpenTag(StringBuilder&, StyleProperties*, Document&, bool isBlock = false);
     const String& styleNodeCloseTag(bool isBlock = false);
 
     String renderedText(const Node&, const Range*);
@@ -184,7 +184,7 @@ void StyledMarkupAccumulator::wrapWithNode(Node& node, bool convertBlocksToInlin
         m_nodes->append(&node);
 }
 
-void StyledMarkupAccumulator::wrapWithStyleNode(StylePropertySet* style, Document& document, bool isBlock)
+void StyledMarkupAccumulator::wrapWithStyleNode(StyleProperties* style, Document& document, bool isBlock)
 {
     StringBuilder openTag;
     appendStyleNodeOpenTag(openTag, style, document, isBlock);
@@ -192,7 +192,7 @@ void StyledMarkupAccumulator::wrapWithStyleNode(StylePropertySet* style, Documen
     appendString(styleNodeCloseTag(isBlock));
 }
 
-void StyledMarkupAccumulator::appendStyleNodeOpenTag(StringBuilder& out, StylePropertySet* style, Document& document, bool isBlock)
+void StyledMarkupAccumulator::appendStyleNodeOpenTag(StringBuilder& out, StyleProperties* style, Document& document, bool isBlock)
 {
     // wrappingStyleForSerialization should have removed -webkit-text-decorations-in-effect
     ASSERT(propertyMissingOrEqualToNone(style, CSSPropertyWebkitTextDecorationsInEffect));
@@ -454,7 +454,7 @@ static inline Node* ancestorToRetainStructureAndAppearance(Node* commonAncestor)
     return ancestorToRetainStructureAndAppearanceForBlock(enclosingBlock(commonAncestor));
 }
 
-static bool propertyMissingOrEqualToNone(StylePropertySet* style, CSSPropertyID propertyID)
+static bool propertyMissingOrEqualToNone(StyleProperties* style, CSSPropertyID propertyID)
 {
     if (!style)
         return false;

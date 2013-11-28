@@ -49,7 +49,7 @@
 #include "RenderText.h"
 #include "SimplifyMarkupCommand.h"
 #include "SmartReplace.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
@@ -483,7 +483,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
 
         StyledElement* element = toStyledElement(node.get());
 
-        const StylePropertySet* inlineStyle = element->inlineStyle();
+        const StyleProperties* inlineStyle = element->inlineStyle();
         RefPtr<EditingStyle> newInlineStyle = EditingStyle::create(inlineStyle);
         if (inlineStyle) {
             if (element->isHTMLElement()) {

@@ -81,7 +81,7 @@
 #include "RuleSet.cpp"
 #include "SelectorCheckerFastPath.cpp"
 #include "SelectorFilter.cpp"
-#include "StylePropertySet.cpp"
+#include "StyleProperties.cpp"
 #include "StylePropertyShorthand.cpp"
 #include "StyleResolver.cpp"
 #include "StyleScopeResolver.cpp"

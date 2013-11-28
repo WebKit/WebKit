@@ -677,7 +677,7 @@ sub AddIncludesForType
 
     # FIXME: won't compile without these
     $implIncludes{"CSSImportRule.h"} = 1 if $type eq "CSSRule";
-    $implIncludes{"StylePropertySet.h"} = 1 if $type eq "CSSStyleDeclaration";
+    $implIncludes{"StyleProperties.h"} = 1 if $type eq "CSSStyleDeclaration";
     $implIncludes{"NameNodeList.h"} = 1 if $type eq "NodeList";
 
     # Default, include the same named file (the implementation) and the same name prefixed with "DOM". 

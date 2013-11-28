@@ -53,7 +53,7 @@
 #include "Node.h"
 #include "RegularExpression.h"
 #include "SVGNames.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
@@ -366,7 +366,7 @@ bool InspectorStyle::setPropertyText(unsigned index, const String& propertyText,
     }
 
     if (propertyText.stripWhiteSpace().length()) {
-        RefPtr<MutableStylePropertySet> tempMutableStyle = MutableStylePropertySet::create();
+        RefPtr<MutableStyleProperties> tempMutableStyle = MutableStyleProperties::create();
         RefPtr<CSSRuleSourceData> sourceData = CSSRuleSourceData::create(CSSRuleSourceData::STYLE_RULE);
         Document* ownerDocument = m_parentStyleSheet->pageStyleSheet() ? m_parentStyleSheet->pageStyleSheet()->ownerDocument() : 0;
         createCSSParser(ownerDocument)->parseDeclaration(tempMutableStyle.get(), propertyText + " " + bogusPropertyName + ": none", sourceData, &m_style->parentStyleSheet()->contents());
@@ -1547,7 +1547,7 @@ bool InspectorStyleSheetForInlineStyle::getStyleAttributeRanges(CSSRuleSourceDat
         return true;
     }
 
-    RefPtr<MutableStylePropertySet> tempDeclaration = MutableStylePropertySet::create();
+    RefPtr<MutableStyleProperties> tempDeclaration = MutableStyleProperties::create();
     createCSSParser(&m_element->document())->parseDeclaration(tempDeclaration.get(), m_styleText, result, &m_element->document().elementSheet().contents());
     return true;
 }

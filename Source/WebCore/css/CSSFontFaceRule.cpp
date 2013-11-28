@@ -23,7 +23,7 @@
 #include "CSSFontFaceRule.h"
 
 #include "PropertySetCSSStyleDeclaration.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>
 

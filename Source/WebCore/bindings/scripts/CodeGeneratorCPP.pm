@@ -316,7 +316,7 @@ sub AddIncludesForType
     }
 
     $implIncludes{"Node.h"} = 1 if $type eq "NodeList";
-    $implIncludes{"StylePropertySet.h"} = 1 if $type eq "CSSStyleDeclaration";
+    $implIncludes{"StyleProperties.h"} = 1 if $type eq "CSSStyleDeclaration";
 
     # Default, include the same named file (the implementation) and the same name prefixed with "WebDOM". 
     $implIncludes{"$type.h"} = 1 unless $type eq "any";

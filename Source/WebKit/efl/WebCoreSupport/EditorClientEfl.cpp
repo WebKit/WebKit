@@ -106,7 +106,7 @@ bool EditorClientEfl::shouldChangeSelectedRange(Range* fromRange, Range* toRange
     return true;
 }
 
-bool EditorClientEfl::shouldApplyStyle(StylePropertySet* style, Range* range)
+bool EditorClientEfl::shouldApplyStyle(StyleProperties* style, Range* range)
 {
     Ewk_Should_Apply_Style_Event shouldApplyStyleEvent = { style, range };
     evas_object_smart_callback_call(m_view, "editorclient,style,apply", &shouldApplyStyleEvent);

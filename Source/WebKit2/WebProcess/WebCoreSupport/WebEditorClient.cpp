@@ -46,7 +46,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/SpellChecker.h>
-#include <WebCore/StylePropertySet.h>
+#include <WebCore/StyleProperties.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/UndoStep.h>
 #include <WebCore/UserTypingGestureIndicator.h>
@@ -153,9 +153,9 @@ bool WebEditorClient::shouldChangeSelectedRange(Range* fromRange, Range* toRange
     return result;
 }
     
-bool WebEditorClient::shouldApplyStyle(StylePropertySet* style, Range* range)
+bool WebEditorClient::shouldApplyStyle(StyleProperties* style, Range* range)
 {
-    Ref<MutableStylePropertySet> mutableStyle(style->isMutable() ? static_cast<MutableStylePropertySet&>(*style) : style->mutableCopy());
+    Ref<MutableStyleProperties> mutableStyle(style->isMutable() ? static_cast<MutableStyleProperties&>(*style) : style->mutableCopy());
     bool result = m_page->injectedBundleEditorClient().shouldApplyStyle(m_page, mutableStyle->ensureCSSStyleDeclaration(), range);
     notImplemented();
     return result;

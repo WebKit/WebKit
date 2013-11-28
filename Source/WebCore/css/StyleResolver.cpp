@@ -108,7 +108,7 @@
 #include "StyleFontSizeFunctions.h"
 #include "StyleGeneratedImage.h"
 #include "StylePendingImage.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
@@ -232,11 +232,11 @@ inline void StyleResolver::State::clear()
 #endif
 }
 
-void StyleResolver::MatchResult::addMatchedProperties(const StylePropertySet& properties, StyleRule* rule, unsigned linkMatchType, PropertyWhitelistType propertyWhitelistType)
+void StyleResolver::MatchResult::addMatchedProperties(const StyleProperties& properties, StyleRule* rule, unsigned linkMatchType, PropertyWhitelistType propertyWhitelistType)
 {
     matchedProperties.grow(matchedProperties.size() + 1);
     StyleResolver::MatchedProperties& newProperties = matchedProperties.last();
-    newProperties.properties = const_cast<StylePropertySet*>(&properties);
+    newProperties.properties = const_cast<StyleProperties*>(&properties);
     newProperties.linkMatchType = linkMatchType;
     newProperties.whitelistType = propertyWhitelistType;
     matchedRules.append(rule);
@@ -946,7 +946,7 @@ void StyleResolver::keyframeStylesForAnimation(Element* e, const RenderStyle* el
     if (initialListSize > 0 && list[0].key()) {
         static StyleKeyframe* zeroPercentKeyframe;
         if (!zeroPercentKeyframe) {
-            zeroPercentKeyframe = StyleKeyframe::create(MutableStylePropertySet::create()).leakRef();
+            zeroPercentKeyframe = StyleKeyframe::create(MutableStyleProperties::create()).leakRef();
             zeroPercentKeyframe->setKeyText("0%");
         }
         KeyframeValue keyframeValue(0, 0);
@@ -958,7 +958,7 @@ void StyleResolver::keyframeStylesForAnimation(Element* e, const RenderStyle* el
     if (initialListSize > 0 && (list[list.size() - 1].key() != 1)) {
         static StyleKeyframe* hundredPercentKeyframe;
         if (!hundredPercentKeyframe) {
-            hundredPercentKeyframe = StyleKeyframe::create(MutableStylePropertySet::create()).leakRef();
+            hundredPercentKeyframe = StyleKeyframe::create(MutableStyleProperties::create()).leakRef();
             hundredPercentKeyframe->setKeyText("100%");
         }
         KeyframeValue keyframeValue(1, 0);
@@ -1521,14 +1521,14 @@ Length StyleResolver::convertToFloatLength(const CSSPrimitiveValue* primitiveVal
 }
 
 template <StyleResolver::StyleApplicationPass pass>
-void StyleResolver::applyProperties(const StylePropertySet* properties, StyleRule* rule, bool isImportant, bool inheritedOnly, PropertyWhitelistType propertyWhitelistType)
+void StyleResolver::applyProperties(const StyleProperties* properties, StyleRule* rule, bool isImportant, bool inheritedOnly, PropertyWhitelistType propertyWhitelistType)
 {
     ASSERT((propertyWhitelistType != PropertyWhitelistRegion) || m_state.regionForStyling());
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willProcessRule(&document(), rule, *this);
 
     unsigned propertyCount = properties->propertyCount();
     for (unsigned i = 0; i < propertyCount; ++i) {
-        StylePropertySet::PropertyReference current = properties->propertyAt(i);
+        StyleProperties::PropertyReference current = properties->propertyAt(i);
         if (isImportant != current.isImportant())
             continue;
         if (inheritedOnly && !current.isInherited()) {

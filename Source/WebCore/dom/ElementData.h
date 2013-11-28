@@ -34,7 +34,7 @@ namespace WebCore {
 
 class Attr;
 class ShareableElementData;
-class StylePropertySet;
+class StyleProperties;
 class UniqueElementData;
 
 class ElementData : public RefCounted<ElementData> {
@@ -53,8 +53,8 @@ public:
     const AtomicString& idForStyleResolution() const { return m_idForStyleResolution; }
     void setIdForStyleResolution(const AtomicString& newId) const { m_idForStyleResolution = newId; }
 
-    const StylePropertySet* inlineStyle() const { return m_inlineStyle.get(); }
-    const StylePropertySet* presentationAttributeStyle() const;
+    const StyleProperties* inlineStyle() const { return m_inlineStyle.get(); }
+    const StyleProperties* presentationAttributeStyle() const;
 
     unsigned length() const;
     bool isEmpty() const { return !length(); }
@@ -87,7 +87,7 @@ protected:
     mutable unsigned m_animatedSVGAttributesAreDirty : 1;
 #endif
 
-    mutable RefPtr<StylePropertySet> m_inlineStyle;
+    mutable RefPtr<StyleProperties> m_inlineStyle;
     mutable SpaceSplitString m_classNames;
     mutable AtomicString m_idForStyleResolution;
 
@@ -145,7 +145,7 @@ public:
     explicit UniqueElementData(const ShareableElementData&);
     explicit UniqueElementData(const UniqueElementData&);
 
-    mutable RefPtr<StylePropertySet> m_presentationAttributeStyle;
+    mutable RefPtr<StyleProperties> m_presentationAttributeStyle;
     Vector<Attribute, 4> m_attributeVector;
 };
 
@@ -170,7 +170,7 @@ inline const Attribute* ElementData::attributeBase() const
     return static_cast<const ShareableElementData*>(this)->m_attributeArray;
 }
 
-inline const StylePropertySet* ElementData::presentationAttributeStyle() const
+inline const StyleProperties* ElementData::presentationAttributeStyle() const
 {
     if (!m_isUnique)
         return 0;

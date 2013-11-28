@@ -88,7 +88,7 @@
 #include "ScriptState.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "StyleSheetList.h"
 #include "Text.h"

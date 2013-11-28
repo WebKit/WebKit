@@ -27,7 +27,7 @@
 #define WebKitCSSKeyframeRule_h
 
 #include "CSSRule.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 
 namespace WebCore {
 
@@ -38,7 +38,7 @@ class WebKitCSSKeyframesRule;
 class StyleKeyframe : public RefCounted<StyleKeyframe> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<StyleKeyframe> create(PassRef<StylePropertySet> properties)
+    static PassRefPtr<StyleKeyframe> create(PassRef<StyleProperties> properties)
     {
         return adoptRef(new StyleKeyframe(std::move(properties)));
     }
@@ -49,17 +49,17 @@ public:
 
     void getKeys(Vector<double>& keys) const   { parseKeyString(m_key, keys); }
     
-    const StylePropertySet& properties() const { return m_properties.get(); }
-    MutableStylePropertySet& mutableProperties();
+    const StyleProperties& properties() const { return m_properties.get(); }
+    MutableStyleProperties& mutableProperties();
     
     String cssText() const;
 
 private:
-    explicit StyleKeyframe(PassRef<StylePropertySet>);
+    explicit StyleKeyframe(PassRef<StyleProperties>);
     
     static void parseKeyString(const String&, Vector<double>& keys);
     
-    Ref<StylePropertySet> m_properties;
+    Ref<StyleProperties> m_properties;
     // FIXME: This should be a parsed vector of floats.
     // comma separated list of keys
     String m_key;

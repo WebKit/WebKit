@@ -2674,8 +2674,8 @@ webcore_sources += \
 	Source/WebCore/css/StyleInvalidationAnalysis.h \
 	Source/WebCore/css/StyleMedia.cpp \
 	Source/WebCore/css/StyleMedia.h \
-	Source/WebCore/css/StylePropertySet.cpp \
-	Source/WebCore/css/StylePropertySet.h \
+	Source/WebCore/css/StyleProperties.cpp \
+	Source/WebCore/css/StyleProperties.h \
 	Source/WebCore/css/StylePropertyShorthand.cpp \
 	Source/WebCore/css/StylePropertyShorthand.h \
 	Source/WebCore/css/StyleResolver.cpp \

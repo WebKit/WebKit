@@ -39,7 +39,7 @@
 #include "Page.h"
 #include "RemoveNodeCommand.h"
 #include "RenderBox.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 
 namespace WebCore {
 

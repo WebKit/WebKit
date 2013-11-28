@@ -51,12 +51,12 @@ class CSSValue;
 class Document;
 class Element;
 class HTMLElement;
-class MutableStylePropertySet;
+class MutableStyleProperties;
 class Node;
 class Position;
 class QualifiedName;
 class RenderStyle;
-class StylePropertySet;
+class StyleProperties;
 class StyledElement;
 class VisibleSelection;
 
@@ -84,7 +84,7 @@ public:
         return adoptRef(new EditingStyle(position, propertiesToInclude));
     }
 
-    static PassRefPtr<EditingStyle> create(const StylePropertySet* style)
+    static PassRefPtr<EditingStyle> create(const StyleProperties* style)
     {
         return adoptRef(new EditingStyle(style));
     }
@@ -96,11 +96,11 @@ public:
 
     ~EditingStyle();
 
-    MutableStylePropertySet* style() { return m_mutableStyle.get(); }
+    MutableStyleProperties* style() { return m_mutableStyle.get(); }
     bool textDirection(WritingDirection&) const;
     bool isEmpty() const;
-    void setStyle(PassRefPtr<MutableStylePropertySet>);
-    void overrideWithStyle(const StylePropertySet*);
+    void setStyle(PassRefPtr<MutableStyleProperties>);
+    void overrideWithStyle(const StyleProperties*);
     void clear();
     PassRefPtr<EditingStyle> copy() const;
     PassRefPtr<EditingStyle> extractAndRemoveBlockProperties();
@@ -147,7 +147,7 @@ private:
     EditingStyle();
     EditingStyle(Node*, PropertiesToInclude);
     EditingStyle(const Position&, PropertiesToInclude);
-    explicit EditingStyle(const StylePropertySet*);
+    explicit EditingStyle(const StyleProperties*);
     EditingStyle(CSSPropertyID, const String& value);
     void init(Node*, PropertiesToInclude);
     void removeTextFillAndStrokeColorsIfNeeded(RenderStyle*);
@@ -157,9 +157,9 @@ private:
     TriState triStateOfStyle(T* styleToCompare, ShouldIgnoreTextOnlyProperties) const;
     bool conflictsWithInlineStyleOfElement(StyledElement*, EditingStyle* extractedStyle, Vector<CSSPropertyID>* conflictingProperties) const;
     void mergeInlineAndImplicitStyleOfElement(StyledElement*, CSSPropertyOverrideMode, PropertiesToInclude);
-    void mergeStyle(const StylePropertySet*, CSSPropertyOverrideMode);
+    void mergeStyle(const StyleProperties*, CSSPropertyOverrideMode);
 
-    RefPtr<MutableStylePropertySet> m_mutableStyle;
+    RefPtr<MutableStyleProperties> m_mutableStyle;
     bool m_shouldUseFixedDefaultFontSize;
     float m_fontSizeDelta;
 
@@ -213,7 +213,7 @@ public:
         return !(*this == other);
     }
 private:
-    void extractTextStyles(Document*, MutableStylePropertySet*, bool shouldUseFixedFontDefaultSize);
+    void extractTextStyles(Document*, MutableStyleProperties*, bool shouldUseFixedFontDefaultSize);
 
     String m_cssStyle;
     bool m_applyBold;

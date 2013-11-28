@@ -33,7 +33,7 @@
 #if ENABLE(CSS3_CONDITIONAL_RULES)
 
 #include "CSSParser.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -73,7 +73,7 @@ bool DOMWindowCSS::supports(const String& property, const String& value) const
     if (normalizedValue.isEmpty())
         return false;
 
-    RefPtr<MutableStylePropertySet> dummyStyle = MutableStylePropertySet::create();
+    RefPtr<MutableStyleProperties> dummyStyle = MutableStyleProperties::create();
     return CSSParser::parseValue(dummyStyle.get(), propertyID, normalizedValue, false, CSSStrictMode, 0);
 }
 

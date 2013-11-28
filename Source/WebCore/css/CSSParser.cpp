@@ -74,7 +74,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "SVGParserUtilities.h"
 #include "Settings.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
@@ -507,7 +507,7 @@ static inline bool isColorPropertyID(CSSPropertyID propertyId)
     }
 }
 
-static bool parseColorValue(MutableStylePropertySet* declaration, CSSPropertyID propertyId, const String& string, bool important, CSSParserMode cssParserMode)
+static bool parseColorValue(MutableStyleProperties* declaration, CSSPropertyID propertyId, const String& string, bool important, CSSParserMode cssParserMode)
 {
     ASSERT(!string.isEmpty());
     bool strict = isStrictParserMode(cssParserMode);
@@ -605,7 +605,7 @@ static inline bool parseSimpleLength(const CharacterType* characters, unsigned& 
     return ok;
 }
 
-static bool parseSimpleLengthValue(MutableStylePropertySet* declaration, CSSPropertyID propertyId, const String& string, bool important, CSSParserMode cssParserMode)
+static bool parseSimpleLengthValue(MutableStyleProperties* declaration, CSSPropertyID propertyId, const String& string, bool important, CSSParserMode cssParserMode)
 {
     ASSERT(!string.isEmpty());
     bool acceptsNegativeNumbers;
@@ -1170,7 +1170,7 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     }
 }
 
-static bool parseKeywordValue(MutableStylePropertySet* declaration, CSSPropertyID propertyId, const String& string, bool important, const CSSParserContext& parserContext)
+static bool parseKeywordValue(MutableStyleProperties* declaration, CSSPropertyID propertyId, const String& string, bool important, const CSSParserContext& parserContext)
 {
     ASSERT(!string.isEmpty());
 
@@ -1227,7 +1227,7 @@ static bool parseTransformArguments(WebKitCSSTransformValue* transformValue, Cha
     return true;
 }
 
-static bool parseTranslateTransformValue(MutableStylePropertySet* properties, CSSPropertyID propertyID, const String& string, bool important)
+static bool parseTranslateTransformValue(MutableStyleProperties* properties, CSSPropertyID propertyID, const String& string, bool important)
 {
     if (propertyID != CSSPropertyWebkitTransform)
         return false;
@@ -1278,7 +1278,7 @@ PassRefPtr<CSSValueList> CSSParser::parseFontFaceValue(const AtomicString& strin
 {
     if (string.isEmpty())
         return 0;
-    RefPtr<MutableStylePropertySet> dummyStyle = MutableStylePropertySet::create();
+    RefPtr<MutableStyleProperties> dummyStyle = MutableStyleProperties::create();
     if (!parseValue(dummyStyle.get(), CSSPropertyFontFamily, string, false, CSSQuirksMode, 0))
         return 0;
 
@@ -1288,7 +1288,7 @@ PassRefPtr<CSSValueList> CSSParser::parseFontFaceValue(const AtomicString& strin
     return static_pointer_cast<CSSValueList>(fontFamily.release());
 }
 
-bool CSSParser::parseValue(MutableStylePropertySet* declaration, CSSPropertyID propertyID, const String& string, bool important, CSSParserMode cssParserMode, StyleSheetContents* contextStyleSheet)
+bool CSSParser::parseValue(MutableStyleProperties* declaration, CSSPropertyID propertyID, const String& string, bool important, CSSParserMode cssParserMode, StyleSheetContents* contextStyleSheet)
 {
     ASSERT(!string.isEmpty());
     if (parseSimpleLengthValue(declaration, propertyID, string, important, cssParserMode))
@@ -1311,7 +1311,7 @@ bool CSSParser::parseValue(MutableStylePropertySet* declaration, CSSPropertyID p
     return parser.parseValue(declaration, propertyID, string, important, contextStyleSheet);
 }
 
-bool CSSParser::parseValue(MutableStylePropertySet* declaration, CSSPropertyID propertyID, const String& string, bool important, StyleSheetContents* contextStyleSheet)
+bool CSSParser::parseValue(MutableStyleProperties* declaration, CSSPropertyID propertyID, const String& string, bool important, StyleSheetContents* contextStyleSheet)
 {
     setStyleSheet(contextStyleSheet);
 
@@ -1397,14 +1397,14 @@ void CSSParser::parseSelector(const String& string, CSSSelectorList& selectorLis
     m_selectorListForParseSelector = 0;
 }
 
-PassRef<ImmutableStylePropertySet> CSSParser::parseInlineStyleDeclaration(const String& string, Element* element)
+PassRef<ImmutableStyleProperties> CSSParser::parseInlineStyleDeclaration(const String& string, Element* element)
 {
     CSSParserContext context = element->document().elementSheet().contents().parserContext();
     context.mode = strictToCSSParserMode(element->isHTMLElement() && !element->document().inQuirksMode());
     return CSSParser(context).parseDeclaration(string, &element->document().elementSheet().contents());
 }
 
-PassRef<ImmutableStylePropertySet> CSSParser::parseDeclaration(const String& string, StyleSheetContents* contextStyleSheet)
+PassRef<ImmutableStyleProperties> CSSParser::parseDeclaration(const String& string, StyleSheetContents* contextStyleSheet)
 {
     setStyleSheet(contextStyleSheet);
 
@@ -1415,13 +1415,13 @@ PassRef<ImmutableStylePropertySet> CSSParser::parseDeclaration(const String& str
     if (m_hasFontFaceOnlyValues)
         deleteFontFaceOnlyValues();
 
-    PassRef<ImmutableStylePropertySet> style = createStylePropertySet();
+    PassRef<ImmutableStyleProperties> style = createStyleProperties();
     clearProperties();
     return style;
 }
 
 
-bool CSSParser::parseDeclaration(MutableStylePropertySet* declaration, const String& string, PassRefPtr<CSSRuleSourceData> prpRuleSourceData, StyleSheetContents* contextStyleSheet)
+bool CSSParser::parseDeclaration(MutableStyleProperties* declaration, const String& string, PassRefPtr<CSSRuleSourceData> prpRuleSourceData, StyleSheetContents* contextStyleSheet)
 {
     // Length of the "@-webkit-decls{" prefix.
     static const unsigned prefixLength = 15;
@@ -1494,7 +1494,7 @@ static inline void filterProperties(bool important, const CSSParser::ParsedPrope
     }
 }
 
-PassRef<ImmutableStylePropertySet> CSSParser::createStylePropertySet()
+PassRef<ImmutableStyleProperties> CSSParser::createStyleProperties()
 {
     BitArray<numCSSProperties> seenProperties;
     size_t unusedEntries = m_parsedProperties.size();
@@ -1506,7 +1506,7 @@ PassRef<ImmutableStylePropertySet> CSSParser::createStylePropertySet()
     if (unusedEntries)
         results.remove(0, unusedEntries);
 
-    return ImmutableStylePropertySet::create(results.data(), results.size(), m_context.mode);
+    return ImmutableStyleProperties::create(results.data(), results.size(), m_context.mode);
 }
 
 void CSSParser::addPropertyWithPrefixingVariant(CSSPropertyID propId, PassRefPtr<CSSValue> value, bool important, bool implicit)
@@ -9485,7 +9485,7 @@ bool CSSParser::parseFilterRuleParameters()
 
 PassRefPtr<StyleRuleBase> CSSParser::createFilterRule(const CSSParserString& filterName)
 {
-    RefPtr<StyleRuleFilter> rule = StyleRuleFilter::create(filterName, createStylePropertySet());
+    RefPtr<StyleRuleFilter> rule = StyleRuleFilter::create(filterName, createStyleProperties());
     clearProperties();
     processAndAddNewRuleToSourceTreeIfNeeded();
     return rule.release();
@@ -11902,7 +11902,7 @@ PassRefPtr<StyleRuleBase> CSSParser::createStyleRule(Vector<OwnPtr<CSSParserSele
         m_allowNamespaceDeclarations = false;
         if (m_hasFontFaceOnlyValues)
             deleteFontFaceOnlyValues();
-        rule = StyleRule::create(m_lastSelectorLineNumber, createStylePropertySet());
+        rule = StyleRule::create(m_lastSelectorLineNumber, createStyleProperties());
         rule->parserAdoptSelectorVector(*selectors);
         processAndAddNewRuleToSourceTreeIfNeeded();
     } else
@@ -11928,7 +11928,7 @@ PassRefPtr<StyleRuleBase> CSSParser::createFontFaceRule()
             return 0;
         }
     }
-    RefPtr<StyleRuleFontFace> rule = StyleRuleFontFace::create(createStylePropertySet());
+    RefPtr<StyleRuleFontFace> rule = StyleRuleFontFace::create(createStyleProperties());
     clearProperties();
     processAndAddNewRuleToSourceTreeIfNeeded();
     return rule.release();
@@ -12034,7 +12034,7 @@ PassRefPtr<StyleRuleBase> CSSParser::createPageRule(PassOwnPtr<CSSParserSelector
     m_allowImportRules = m_allowNamespaceDeclarations = false;
     RefPtr<StyleRulePage> rule;
     if (pageSelector) {
-        rule = StyleRulePage::create(createStylePropertySet());
+        rule = StyleRulePage::create(createStyleProperties());
         Vector<OwnPtr<CSSParserSelector>> selectorVector;
         selectorVector.append(pageSelector);
         rule->parserAdoptSelectorVector(selectorVector);
@@ -12139,7 +12139,7 @@ PassRefPtr<StyleKeyframe> CSSParser::createKeyframe(CSSParserValueList& keys)
         keyString.append('%');
     }
 
-    RefPtr<StyleKeyframe> keyframe = StyleKeyframe::create(createStylePropertySet());
+    RefPtr<StyleKeyframe> keyframe = StyleKeyframe::create(createStyleProperties());
     keyframe->setKeyText(keyString.toString());
 
     clearProperties();
@@ -12356,7 +12356,7 @@ PassRefPtr<StyleRuleBase> CSSParser::createViewportRule()
 {
     m_allowImportRules = m_allowNamespaceDeclarations = false;
 
-    RefPtr<StyleRuleViewport> rule = StyleRuleViewport::create(createStylePropertySet());
+    RefPtr<StyleRuleViewport> rule = StyleRuleViewport::create(createStyleProperties());
     clearProperties();
 
     processAndAddNewRuleToSourceTreeIfNeeded();

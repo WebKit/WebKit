@@ -39,7 +39,7 @@
 #include "HTMLTableRowsCollection.h"
 #include "HTMLTableSectionElement.h"
 #include "RenderTable.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -299,7 +299,7 @@ static bool getBordersFromFrameAttributeValue(const AtomicString& value, bool& b
     return true;
 }
 
-void HTMLTableElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet& style)
+void HTMLTableElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
 {
     if (name == widthAttr)
         addHTMLLengthToStyle(style, CSSPropertyWidth, value);
@@ -412,9 +412,9 @@ void HTMLTableElement::parseAttribute(const QualifiedName& name, const AtomicStr
     }
 }
 
-static StylePropertySet* leakBorderStyle(CSSValueID value)
+static StyleProperties* leakBorderStyle(CSSValueID value)
 {
-    RefPtr<MutableStylePropertySet> style = MutableStylePropertySet::create();
+    RefPtr<MutableStyleProperties> style = MutableStyleProperties::create();
     style->setProperty(CSSPropertyBorderTopStyle, value);
     style->setProperty(CSSPropertyBorderBottomStyle, value);
     style->setProperty(CSSPropertyBorderLeftStyle, value);
@@ -422,7 +422,7 @@ static StylePropertySet* leakBorderStyle(CSSValueID value)
     return style.release().leakRef();
 }
 
-const StylePropertySet* HTMLTableElement::additionalPresentationAttributeStyle()
+const StyleProperties* HTMLTableElement::additionalPresentationAttributeStyle()
 {
     if (m_frameAttr)
         return 0;
@@ -431,17 +431,17 @@ const StylePropertySet* HTMLTableElement::additionalPresentationAttributeStyle()
         // Setting the border to 'hidden' allows it to win over any border
         // set on the table's cells during border-conflict resolution.
         if (m_rulesAttr != UnsetRules) {
-            static StylePropertySet* solidBorderStyle = leakBorderStyle(CSSValueHidden);
+            static StyleProperties* solidBorderStyle = leakBorderStyle(CSSValueHidden);
             return solidBorderStyle;
         }
         return 0;
     }
 
     if (m_borderColorAttr) {
-        static StylePropertySet* solidBorderStyle = leakBorderStyle(CSSValueSolid);
+        static StyleProperties* solidBorderStyle = leakBorderStyle(CSSValueSolid);
         return solidBorderStyle;
     }
-    static StylePropertySet* outsetBorderStyle = leakBorderStyle(CSSValueOutset);
+    static StyleProperties* outsetBorderStyle = leakBorderStyle(CSSValueOutset);
     return outsetBorderStyle;
 }
 
@@ -468,9 +468,9 @@ HTMLTableElement::CellBorders HTMLTableElement::cellBorders() const
     return NoBorders;
 }
 
-PassRefPtr<StylePropertySet> HTMLTableElement::createSharedCellStyle()
+PassRefPtr<StyleProperties> HTMLTableElement::createSharedCellStyle()
 {
-    RefPtr<MutableStylePropertySet> style = MutableStylePropertySet::create();
+    RefPtr<MutableStyleProperties> style = MutableStyleProperties::create();
 
     switch (cellBorders()) {
     case SolidBordersColsOnly:
@@ -508,16 +508,16 @@ PassRefPtr<StylePropertySet> HTMLTableElement::createSharedCellStyle()
     return style.release();
 }
 
-const StylePropertySet* HTMLTableElement::additionalCellStyle()
+const StyleProperties* HTMLTableElement::additionalCellStyle()
 {
     if (!m_sharedCellStyle)
         m_sharedCellStyle = createSharedCellStyle();
     return m_sharedCellStyle.get();
 }
 
-static StylePropertySet* leakGroupBorderStyle(int rows)
+static StyleProperties* leakGroupBorderStyle(int rows)
 {
-    RefPtr<MutableStylePropertySet> style = MutableStylePropertySet::create();
+    RefPtr<MutableStyleProperties> style = MutableStyleProperties::create();
     if (rows) {
         style->setProperty(CSSPropertyBorderTopWidth, CSSValueThin);
         style->setProperty(CSSPropertyBorderBottomWidth, CSSValueThin);
@@ -532,16 +532,16 @@ static StylePropertySet* leakGroupBorderStyle(int rows)
     return style.release().leakRef();
 }
 
-const StylePropertySet* HTMLTableElement::additionalGroupStyle(bool rows)
+const StyleProperties* HTMLTableElement::additionalGroupStyle(bool rows)
 {
     if (m_rulesAttr != GroupsRules)
         return 0;
 
     if (rows) {
-        static StylePropertySet* rowBorderStyle = leakGroupBorderStyle(true);
+        static StyleProperties* rowBorderStyle = leakGroupBorderStyle(true);
         return rowBorderStyle;
     }
-    static StylePropertySet* columnBorderStyle = leakGroupBorderStyle(false);
+    static StyleProperties* columnBorderStyle = leakGroupBorderStyle(false);
     return columnBorderStyle;
 }
 

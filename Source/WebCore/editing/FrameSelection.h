@@ -41,7 +41,7 @@ class CharacterData;
 class Frame;
 class GraphicsContext;
 class HTMLFormElement;
-class MutableStylePropertySet;
+class MutableStyleProperties;
 class RenderObject;
 class RenderView;
 class Settings;
@@ -237,7 +237,7 @@ public:
     void paintDragCaret(GraphicsContext*, const LayoutPoint&, const LayoutRect& clipRect) const;
 
     EditingStyle* typingStyle() const;
-    PassRefPtr<MutableStylePropertySet> copyTypingStyle() const;
+    PassRefPtr<MutableStyleProperties> copyTypingStyle() const;
     void setTypingStyle(PassRefPtr<EditingStyle>);
     void clearTypingStyle();
 

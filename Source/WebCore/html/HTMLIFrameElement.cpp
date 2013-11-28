@@ -56,7 +56,7 @@ bool HTMLIFrameElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLFrameElementBase::isPresentationAttribute(name);
 }
 
-void HTMLIFrameElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet& style)
+void HTMLIFrameElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
 {
     if (name == widthAttr)
         addHTMLLengthToStyle(style, CSSPropertyWidth, value);

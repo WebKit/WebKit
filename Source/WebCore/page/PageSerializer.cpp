@@ -53,7 +53,7 @@
 #include "RenderElement.h"
 #include "StyleCachedImage.h"
 #include "StyleImage.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
 #include "Text.h"
@@ -317,7 +317,7 @@ void PageSerializer::retrieveResourcesForRule(StyleRule* rule, Document* documen
     retrieveResourcesForProperties(&rule->properties(), document);
 }
 
-void PageSerializer::retrieveResourcesForProperties(const StylePropertySet* styleDeclaration, Document* document)
+void PageSerializer::retrieveResourcesForProperties(const StyleProperties* styleDeclaration, Document* document)
 {
     if (!styleDeclaration)
         return;

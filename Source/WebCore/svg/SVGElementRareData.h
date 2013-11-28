@@ -20,7 +20,7 @@
 #ifndef SVGElementRareData_h
 #define SVGElementRareData_h
 
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StyleResolver.h"
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -61,11 +61,11 @@ public:
     CSSCursorImageValue* cursorImageValue() const { return m_cursorImageValue; }
     void setCursorImageValue(CSSCursorImageValue* cursorImageValue) { m_cursorImageValue = cursorImageValue; }
 
-    MutableStylePropertySet* animatedSMILStyleProperties() const { return m_animatedSMILStyleProperties.get(); }
-    MutableStylePropertySet& ensureAnimatedSMILStyleProperties()
+    MutableStyleProperties* animatedSMILStyleProperties() const { return m_animatedSMILStyleProperties.get(); }
+    MutableStyleProperties& ensureAnimatedSMILStyleProperties()
     {
         if (!m_animatedSMILStyleProperties)
-            m_animatedSMILStyleProperties = MutableStylePropertySet::create(SVGAttributeMode);
+            m_animatedSMILStyleProperties = MutableStyleProperties::create(SVGAttributeMode);
         return *m_animatedSMILStyleProperties;
     }
 
@@ -100,7 +100,7 @@ private:
     bool m_instancesUpdatesBlocked : 1;
     bool m_useOverrideComputedStyle : 1;
     bool m_needsOverrideComputedStyleUpdate : 1;
-    RefPtr<MutableStylePropertySet> m_animatedSMILStyleProperties;
+    RefPtr<MutableStyleProperties> m_animatedSMILStyleProperties;
     RefPtr<RenderStyle> m_overrideComputedStyle;
 };
 

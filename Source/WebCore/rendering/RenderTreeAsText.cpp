@@ -54,7 +54,7 @@
 #include "RenderWidget.h"
 #include "ShadowRoot.h"
 #include "SimpleLineLayoutResolver.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include <wtf/HexNumber.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -139,7 +139,7 @@ static bool isEmptyOrUnstyledAppleStyleSpan(const Node* node)
     if (!node->hasChildNodes())
         return true;
 
-    const StylePropertySet* inlineStyleDecl = elem->inlineStyle();
+    const StyleProperties* inlineStyleDecl = elem->inlineStyle();
     return (!inlineStyleDecl || inlineStyleDecl->isEmpty());
 }
 

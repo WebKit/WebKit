@@ -31,8 +31,8 @@ class CSSProperty;
 class CSSRule;
 class CSSStyleSheet;
 class CSSValue;
-class MutableStylePropertySet;
-class StylePropertySet;
+class MutableStyleProperties;
+class StyleProperties;
 class StyledElement;
 
 typedef int ExceptionCode;
@@ -65,7 +65,7 @@ public:
     virtual String getPropertyValueInternal(CSSPropertyID) = 0;
     virtual void setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) = 0;
 
-    virtual PassRef<MutableStylePropertySet> copyProperties() const = 0;
+    virtual PassRef<MutableStyleProperties> copyProperties() const = 0;
 
     virtual CSSStyleSheet* parentStyleSheet() const { return 0; }
 

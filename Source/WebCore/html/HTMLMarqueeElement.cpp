@@ -65,7 +65,7 @@ bool HTMLMarqueeElement::isPresentationAttribute(const QualifiedName& name) cons
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLMarqueeElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet& style)
+void HTMLMarqueeElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
 {
     if (name == widthAttr) {
         if (!value.isEmpty())

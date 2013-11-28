@@ -114,7 +114,7 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SimpleFontData.h>
-#import <WebCore/StylePropertySet.h>
+#import <WebCore/StyleProperties.h>
 #import <WebCore/Text.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/WebCoreObjCExtras.h>
@@ -4369,8 +4369,8 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 - (void)_applyStyleToSelection:(DOMCSSStyleDeclaration *)style withUndoAction:(EditAction)undoAction
 {
     if (Frame* coreFrame = core([self _frame])) {
-        // FIXME: We shouldn't have to make a copy here. We want callers of this function to work directly with StylePropertySet eventually.
-        Ref<MutableStylePropertySet> properties(core(style)->copyProperties());
+        // FIXME: We shouldn't have to make a copy here. We want callers of this function to work directly with StyleProperties eventually.
+        Ref<MutableStyleProperties> properties(core(style)->copyProperties());
         coreFrame->editor().applyStyleToSelection(&properties.get(), undoAction);
     }
 }
@@ -4673,7 +4673,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
     if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:range]) {
         if (Frame* coreFrame = core([self _frame])) {
             // FIXME: We shouldn't have to make a copy here.
-            Ref<MutableStylePropertySet> properties(core(style)->copyProperties());
+            Ref<MutableStyleProperties> properties(core(style)->copyProperties());
             coreFrame->editor().applyStyle(&properties.get(), [self _undoActionFromColorPanelWithSelector:selector]);
         }
     }

@@ -66,7 +66,7 @@ class SharedBuffer;
 class SimpleFontData;
 class SpellCheckRequest;
 class SpellChecker;
-class StylePropertySet;
+class StyleProperties;
 class Text;
 class TextCheckerClient;
 class TextEvent;
@@ -139,7 +139,7 @@ public:
     bool shouldInsertFragment(PassRefPtr<DocumentFragment>, PassRefPtr<Range>, EditorInsertAction);
     bool shouldInsertText(const String&, Range*, EditorInsertAction) const;
     bool shouldDeleteRange(Range*) const;
-    bool shouldApplyStyle(StylePropertySet*, Range*);
+    bool shouldApplyStyle(StyleProperties*, Range*);
 
     void respondToChangedContents(const VisibleSelection& endingSelection);
 
@@ -166,10 +166,10 @@ public:
     void deleteSelectionWithSmartDelete(bool smartDelete);
     bool dispatchCPPEvent(const AtomicString&, ClipboardAccessPolicy);
     
-    void applyStyle(StylePropertySet*, EditAction = EditActionUnspecified);
-    void applyParagraphStyle(StylePropertySet*, EditAction = EditActionUnspecified);
-    void applyStyleToSelection(StylePropertySet*, EditAction);
-    void applyParagraphStyleToSelection(StylePropertySet*, EditAction);
+    void applyStyle(StyleProperties*, EditAction = EditActionUnspecified);
+    void applyParagraphStyle(StyleProperties*, EditAction = EditActionUnspecified);
+    void applyStyleToSelection(StyleProperties*, EditAction);
+    void applyParagraphStyleToSelection(StyleProperties*, EditAction);
 
     void appliedEditing(PassRefPtr<CompositeEditCommand>);
     void unappliedEditing(PassRefPtr<EditCommandComposition>);
@@ -332,7 +332,7 @@ public:
     const VisibleSelection& mark() const; // Mark, to be used as emacs uses it.
     void setMark(const VisibleSelection&);
 
-    void computeAndSetTypingStyle(StylePropertySet* , EditAction = EditActionUnspecified);
+    void computeAndSetTypingStyle(StyleProperties* , EditAction = EditActionUnspecified);
     void applyEditingStyleToBodyElement() const;
     void applyEditingStyleToElement(Element*) const;
 

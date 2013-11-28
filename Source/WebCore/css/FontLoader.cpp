@@ -36,7 +36,7 @@
 #include "Dictionary.h"
 #include "Document.h"
 #include "FrameView.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
@@ -261,7 +261,7 @@ bool FontLoader::checkFont(const String& fontString, const String&)
     return true;
 }
 
-static void applyPropertyToCurrentStyle(StyleResolver* styleResolver, CSSPropertyID id, const RefPtr<StylePropertySet>& parsedStyle)
+static void applyPropertyToCurrentStyle(StyleResolver* styleResolver, CSSPropertyID id, const RefPtr<StyleProperties>& parsedStyle)
 {
     styleResolver->applyPropertyToCurrentStyle(id, parsedStyle->getPropertyCSSValue(id).get());
 }
@@ -269,7 +269,7 @@ static void applyPropertyToCurrentStyle(StyleResolver* styleResolver, CSSPropert
 bool FontLoader::resolveFontStyle(const String& fontString, Font& font)
 {
     // Interpret fontString in the same way as the 'font' attribute of CanvasRenderingContext2D.
-    RefPtr<MutableStylePropertySet> parsedStyle = MutableStylePropertySet::create();
+    RefPtr<MutableStyleProperties> parsedStyle = MutableStyleProperties::create();
     CSSParser::parseValue(parsedStyle.get(), CSSPropertyFont, fontString, true, CSSStrictMode, 0);
     if (parsedStyle->isEmpty())
         return false;

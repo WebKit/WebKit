@@ -92,7 +92,7 @@
 #import <WebCore/ScriptValue.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SmartReplace.h>
-#import <WebCore/StylePropertySet.h>
+#import <WebCore/StyleProperties.h>
 #import <WebCore/SubframeLoader.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/ThreadCheck.h>
@@ -781,7 +781,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     if (!_private->coreFrame)
         return nil;
-    RefPtr<MutableStylePropertySet> typingStyle = _private->coreFrame->selection().copyTypingStyle();
+    RefPtr<MutableStyleProperties> typingStyle = _private->coreFrame->selection().copyTypingStyle();
     if (!typingStyle)
         return nil;
     return kit(typingStyle->ensureCSSStyleDeclaration());
@@ -792,7 +792,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!_private->coreFrame || !style)
         return;
     // FIXME: We shouldn't have to create a copy here.
-    Ref<MutableStylePropertySet> properties(core(style)->copyProperties());
+    Ref<MutableStyleProperties> properties(core(style)->copyProperties());
     _private->coreFrame->editor().computeAndSetTypingStyle(&properties.get(), undoAction);
 }
 

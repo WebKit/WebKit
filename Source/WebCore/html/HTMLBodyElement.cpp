@@ -35,7 +35,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "Page.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 
 namespace WebCore {
 
@@ -68,7 +68,7 @@ bool HTMLBodyElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLBodyElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet& style)
+void HTMLBodyElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
 {
     if (name == backgroundAttr) {
         String url = stripLeadingAndTrailingHTMLSpaces(value);

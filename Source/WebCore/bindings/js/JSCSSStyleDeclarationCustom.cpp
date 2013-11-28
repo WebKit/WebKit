@@ -35,7 +35,7 @@
 #include "JSNode.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include <runtime/StringPrototype.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/text/AtomicString.h>

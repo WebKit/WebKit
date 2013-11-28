@@ -1,3 +1,12 @@
+2013-11-28  Antti Koivisto  <antti@apple.com>
+
+        Rename StylePropertySet to StyleProperties
+        https://bugs.webkit.org/show_bug.cgi?id=124990
+        
+        Reviewed by Andreas Kling.
+
+        "Set" does not add useful information here. Use less clunky plural name.
+
 2013-11-28  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Nix Upstream: Adding EditorNix to WebCore

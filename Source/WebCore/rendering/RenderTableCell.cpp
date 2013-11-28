@@ -33,7 +33,7 @@
 #include "PaintInfo.h"
 #include "RenderTableCol.h"
 #include "RenderView.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "TransformState.h"
 #include <wtf/StackStats.h>
 

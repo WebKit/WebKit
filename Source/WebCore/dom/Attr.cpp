@@ -25,7 +25,7 @@
 
 #include "ExceptionCode.h"
 #include "ScopedEventQueue.h"
-#include "StylePropertySet.h"
+#include "StyleProperties.h"
 #include "StyledElement.h"
 #include "TextNodeTraversal.h"
 #include "XMLNSNames.h"
@@ -188,7 +188,7 @@ CSSStyleDeclaration* Attr::style()
     // This function only exists to support the Obj-C bindings.
     if (!m_element || !m_element->isStyledElement())
         return nullptr;
-    m_style = MutableStylePropertySet::create();
+    m_style = MutableStyleProperties::create();
     toStyledElement(m_element)->collectStyleForPresentationAttribute(qualifiedName(), value(), *m_style);
     return m_style->ensureCSSStyleDeclaration();
 }
