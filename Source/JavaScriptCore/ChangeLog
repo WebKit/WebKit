@@ -1,3 +1,25 @@
+2013-11-28  Nadav Rotem  <nrotem@apple.com>
+
+        Revert the X86 assembler peephole changes
+        https://bugs.webkit.org/show_bug.cgi?id=124988
+
+        Reviewed by Csaba Osztrogonác.
+
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::add32):
+        (JSC::MacroAssemblerX86::add64):
+        (JSC::MacroAssemblerX86::or32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::add32):
+        (JSC::MacroAssemblerX86Common::or32):
+        (JSC::MacroAssemblerX86Common::branchAdd32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::add32):
+        (JSC::MacroAssemblerX86_64::or32):
+        (JSC::MacroAssemblerX86_64::add64):
+        (JSC::MacroAssemblerX86_64::or64):
+        (JSC::MacroAssemblerX86_64::xor64):
+
 2013-11-28  Antti Koivisto  <antti@apple.com>
 
         Remove feature: CSS variables
