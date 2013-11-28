@@ -24,6 +24,8 @@ list(APPEND WebCore_SOURCES
 
     editing/SmartReplaceICU.cpp
 
+    editing/nix/EditorNix.cpp
+
     html/shadow/MediaControlsNix.cpp
 
     page/TouchAdjustment.cpp

@@ -1,3 +1,15 @@
+2013-11-28  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Nix Upstream: Adding EditorNix to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=124984
+
+        Reviewed by Csaba Osztrogonác.
+
+        No new tests needed.
+
+        * PlatformNix.cmake:
+        * editing/nix/EditorNix.cpp: Added.
+
 2013-11-28  Zoltan Horvath  <zoltan@webkit.org>
 
         [Win] Update vcxproj.filters, since LineInfo.h and LineLayoutState.h have been moved to rendering/line
