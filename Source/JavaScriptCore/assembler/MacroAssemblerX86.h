@@ -62,12 +62,14 @@ public:
 
     void add32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
-        m_assembler.leal_mr(imm.m_value, src, dest);
+        if (imm.m_value)
+            m_assembler.leal_mr(imm.m_value, src, dest);
     }
 
     void add32(TrustedImm32 imm, AbsoluteAddress address)
     {
-        m_assembler.addl_im(imm.m_value, address.m_ptr);
+        if (imm.m_value)
+            m_assembler.addl_im(imm.m_value, address.m_ptr);
     }
     
     void add32(AbsoluteAddress address, RegisterID dest)
@@ -77,6 +79,8 @@ public:
     
     void add64(TrustedImm32 imm, AbsoluteAddress address)
     {
+        if (!imm.m_value)
+            return;
         m_assembler.addl_im(imm.m_value, address.m_ptr);
         m_assembler.adcl_im(imm.m_value >> 31, reinterpret_cast<const char*>(address.m_ptr) + sizeof(int32_t));
     }
@@ -88,7 +92,8 @@ public:
     
     void or32(TrustedImm32 imm, AbsoluteAddress address)
     {
-        m_assembler.orl_im(imm.m_value, address.m_ptr);
+        if (imm.m_value)
+            m_assembler.orl_im(imm.m_value, address.m_ptr);
     }
     
     void or32(RegisterID reg, AbsoluteAddress address)

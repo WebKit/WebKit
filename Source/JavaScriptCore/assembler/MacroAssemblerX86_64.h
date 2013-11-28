@@ -59,6 +59,8 @@ public:
 
     void add32(TrustedImm32 imm, AbsoluteAddress address)
     {
+        if (!imm.m_value)
+            return;
         move(TrustedImmPtr(address.m_ptr), scratchRegister);
         add32(imm, Address(scratchRegister));
     }
@@ -77,6 +79,8 @@ public:
     
     void or32(TrustedImm32 imm, AbsoluteAddress address)
     {
+        if (!imm.m_value)
+            return;
         move(TrustedImmPtr(address.m_ptr), scratchRegister);
         or32(imm, Address(scratchRegister));
     }
@@ -196,6 +200,8 @@ public:
 
     void add64(TrustedImm32 imm, RegisterID srcDest)
     {
+        if (!imm.m_value)
+            return;
         if (imm.m_value == 1)
             m_assembler.incq_r(srcDest);
         else
@@ -204,6 +210,8 @@ public:
 
     void add64(TrustedImm64 imm, RegisterID dest)
     {
+        if (!imm.m_value)
+            return;
         if (imm.m_value == 1)
             m_assembler.incq_r(dest);
         else {
@@ -214,16 +222,20 @@ public:
 
     void add64(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
-        m_assembler.leaq_mr(imm.m_value, src, dest);
+        if (imm.m_value)
+            m_assembler.leaq_mr(imm.m_value, src, dest);
     }
 
     void add64(TrustedImm32 imm, Address address)
     {
-        m_assembler.addq_im(imm.m_value, address.offset, address.base);
+        if (imm.m_value)
+            m_assembler.addq_im(imm.m_value, address.offset, address.base);
     }
 
     void add64(TrustedImm32 imm, AbsoluteAddress address)
     {
+        if (!imm.m_value)
+            return;
         move(TrustedImmPtr(address.m_ptr), scratchRegister);
         add64(imm, Address(scratchRegister));
     }
@@ -271,13 +283,16 @@ public:
 
     void or64(TrustedImm64 imm, RegisterID dest)
     {
+        if (!imm.m_value)
+            return;
         move(imm, scratchRegister);
         or64(scratchRegister, dest);
     }
 
     void or64(TrustedImm32 imm, RegisterID dest)
     {
-        m_assembler.orq_ir(imm.m_value, dest);
+        if (imm.m_value)
+            m_assembler.orq_ir(imm.m_value, dest);
     }
 
     void or64(RegisterID op1, RegisterID op2, RegisterID dest)
@@ -294,6 +309,8 @@ public:
 
     void or64(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
+        if (!imm.m_value)
+            return;
         move(src, dest);
         or64(imm, dest);
     }
@@ -338,7 +355,8 @@ public:
 
     void xor64(TrustedImm32 imm, RegisterID srcDest)
     {
-        m_assembler.xorq_ir(imm.m_value, srcDest);
+        if (imm.m_value)
+            m_assembler.xorq_ir(imm.m_value, srcDest);
     }
 
     void load64(ImplicitAddress address, RegisterID dest)

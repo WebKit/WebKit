@@ -114,11 +114,14 @@ public:
 
     void add32(TrustedImm32 imm, Address address)
     {
-        m_assembler.addl_im(imm.m_value, address.offset, address.base);
+        if (imm.m_value)
+            m_assembler.addl_im(imm.m_value, address.offset, address.base);
     }
 
     void add32(TrustedImm32 imm, RegisterID dest)
     {
+        if (!imm.m_value)
+            return;
         if (imm.m_value == 1)
             m_assembler.inc_r(dest);
         else
@@ -137,7 +140,8 @@ public:
 
     void add32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
-        m_assembler.leal_mr(imm.m_value, src, dest);
+        if (imm.m_value)
+            m_assembler.leal_mr(imm.m_value, src, dest);
     }
     
     void and32(RegisterID src, RegisterID dest)
@@ -252,7 +256,8 @@ public:
 
     void or32(TrustedImm32 imm, RegisterID dest)
     {
-        m_assembler.orl_ir(imm.m_value, dest);
+        if (imm.m_value)
+            m_assembler.orl_ir(imm.m_value, dest);
     }
 
     void or32(RegisterID src, Address dest)
@@ -267,7 +272,8 @@ public:
 
     void or32(TrustedImm32 imm, Address address)
     {
-        m_assembler.orl_im(imm.m_value, address.offset, address.base);
+        if (imm.m_value)
+            m_assembler.orl_im(imm.m_value, address.offset, address.base);
     }
 
     void or32(RegisterID op1, RegisterID op2, RegisterID dest)
@@ -1237,31 +1243,34 @@ public:
     
     Jump branchAdd32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
-        add32(src, dest);
+        m_assembler.addl_rr(src, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
     {
-        add32(imm, dest);
+        if (imm.m_value == 1)
+            m_assembler.inc_r(dest);
+        else
+            m_assembler.addl_ir(imm.m_value, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
     Jump branchAdd32(ResultCondition cond, TrustedImm32 src, Address dest)
     {
-        add32(src, dest);
+        m_assembler.addl_im(src.m_value, dest.offset, dest.base);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branchAdd32(ResultCondition cond, RegisterID src, Address dest)
     {
-        add32(src, dest);
+        m_assembler.addl_rm(src, dest.offset, dest.base);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
     Jump branchAdd32(ResultCondition cond, Address src, RegisterID dest)
     {
-        add32(src, dest);
+        m_assembler.addl_mr(src.offset, src.base, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 

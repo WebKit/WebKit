@@ -1,3 +1,24 @@
+2013-11-27  Nadav Rotem  <nrotem@apple.com>
+
+        Add a bunch of early exits and local optimizations to the x86 assembler.
+        https://bugs.webkit.org/show_bug.cgi?id=124904
+
+        Reviewed by Filip Pizlo.
+
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::add32):
+        (JSC::MacroAssemblerX86::add64):
+        (JSC::MacroAssemblerX86::or32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::add32):
+        (JSC::MacroAssemblerX86Common::or32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::add32):
+        (JSC::MacroAssemblerX86_64::or32):
+        (JSC::MacroAssemblerX86_64::add64):
+        (JSC::MacroAssemblerX86_64::or64):
+        (JSC::MacroAssemblerX86_64::xor64):
+
 2013-11-27  Filip Pizlo  <fpizlo@apple.com>
 
         Infer one-time scopes
