@@ -48,8 +48,6 @@ class Host(SystemHost):
         SystemHost.__init__(self)
         self.web = web.Web()
 
-        # FIXME: Checkout should own the scm object.
-        self._scm = None
         self._checkout = None
 
         # Everything below this line is WebKit-specific and belongs on a higher-level object.
@@ -80,11 +78,10 @@ class Host(SystemHost):
 
     def initialize_scm(self, patch_directories=None):
         detector = SCMDetector(self.filesystem, self.executive)
-        self._scm = detector.default_scm(patch_directories)
-        self._checkout = Checkout(self.scm())
+        self._checkout = Checkout(detector.default_scm(patch_directories))
 
     def scm(self):
-        return self._scm
+        return self._checkout._scm
 
     def checkout(self):
         return self._checkout

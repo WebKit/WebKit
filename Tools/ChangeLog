@@ -1,3 +1,15 @@
+2013-11-28  Dániel Bátyai  <Batyai.Daniel@stud.u-szeged.hu>
+
+        Checkout should own the scm object in Host
+        https://bugs.webkit.org/show_bug.cgi?id=124943
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/common/host.py:
+        (Host.__init__):
+        (Host.initialize_scm):
+        (Host.scm):
+
 2013-11-26  Filip Pizlo  <fpizlo@apple.com>
 
         Do bytecode validation as part of testing
