@@ -14669,6 +14669,12 @@
     <ClInclude Include="..\rendering\RenderElement.h">
       <Filter>rendering</Filter>
     </ClInclude>
+    <ClInclude Include="..\rendering\line\LineInfo.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\line\LineLayoutState.h">
+      <Filter>rendering</Filter>
+    </ClInclude>
     <ClInclude Include="..\rendering\line\LineWidth.h">
       <Filter>rendering\line</Filter>
     </ClInclude>
@@ -14701,12 +14707,6 @@
     </ClInclude>
     <ClInclude Include="..\rendering\shapes\RectangleShape.h">
       <Filter>rendering\shapes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\LineLayoutState.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\LineInfo.h">
-      <Filter>rendering</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HTMLElementTypeHelpers.h">
       <Filter>DerivedSources</Filter>

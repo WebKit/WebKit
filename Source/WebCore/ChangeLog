@@ -1,3 +1,16 @@
+2013-11-28  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Win] Update vcxproj.filters, since LineInfo.h and LineLayoutState.h have been moved to rendering/line
+        https://bugs.webkit.org/show_bug.cgi?id=124959
+
+        Reviewed by Brent Fulgham.
+
+        Update WebCore.vcxproj.filters, since LineInfo.h (r155628) and LineLayoutState.h (158121) have been moved to rendering/line.
+
+        No new tests, no behavior change.
+
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+
 2013-11-28  Laszlo Vidacs  <lac@inf.u-szeged.hu>
 
         RenderTableSection Blink merge asserting
