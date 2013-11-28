@@ -1,5 +1,35 @@
 2013-11-28  Dániel Bátyai  <Batyai.Daniel@stud.u-szeged.hu>
 
+        Move PrettyPatch related code to prettypatch.py
+        https://bugs.webkit.org/show_bug.cgi?id=124937
+
+        Reviewed by Ryosuke Niwa.
+
+        This code seems to have a better place here than in Port, since PrettyPatch already knows
+        pretty_patch_path, and this also unifies the usage of PrettyPatch
+
+        * Scripts/webkitpy/common/prettypatch.py:
+        (PrettyPatch.__init__):
+        (PrettyPatch.pretty_diff):
+        (PrettyPatch):
+        (PrettyPatch.pretty_patch_available):
+        (PrettyPatch.check_pretty_patch):
+        (PrettyPatch.pretty_patch_text):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (TestResultWriter.create_text_diff_and_write_result):
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (summarize_results):
+        * Scripts/webkitpy/port/base.py:
+        (Port.__init__):
+        (Port.wdiff_available):
+        (Port.check_image_diff):
+        (Port.wdiff_text):
+        * Scripts/webkitpy/port/base_unittest.py:
+        (PortTest.test_pretty_patch_os_error):
+        (PortTest.test_pretty_patch_script_error):
+
+2013-11-28  Dániel Bátyai  <Batyai.Daniel@stud.u-szeged.hu>
+
         Checkout should own the scm object in Host
         https://bugs.webkit.org/show_bug.cgi?id=124943
 

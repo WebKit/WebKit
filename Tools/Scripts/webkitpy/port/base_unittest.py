@@ -90,24 +90,24 @@ class PortTest(unittest.TestCase):
         port = self.make_port(executive=executive_mock.MockExecutive2(exception=OSError))
         oc = OutputCapture()
         oc.capture_output()
-        self.assertEqual(port.pretty_patch_text("patch.txt"),
-                         port._pretty_patch_error_html)
+        self.assertEqual(port.pretty_patch.pretty_patch_text("patch.txt"),
+                         port.pretty_patch.pretty_patch_error_html)
 
         # This tests repeated calls to make sure we cache the result.
-        self.assertEqual(port.pretty_patch_text("patch.txt"),
-                         port._pretty_patch_error_html)
+        self.assertEqual(port.pretty_patch.pretty_patch_text("patch.txt"),
+                         port.pretty_patch.pretty_patch_error_html)
         oc.restore_output()
 
     def test_pretty_patch_script_error(self):
         # FIXME: This is some ugly white-box test hacking ...
         port = self.make_port(executive=executive_mock.MockExecutive2(exception=ScriptError))
-        port._pretty_patch_available = True
-        self.assertEqual(port.pretty_patch_text("patch.txt"),
-                         port._pretty_patch_error_html)
+        port.pretty_patch.ppatch_available = True
+        self.assertEqual(port.pretty_patch.pretty_patch_text("patch.txt"),
+                         port.pretty_patch.pretty_patch_error_html)
 
         # This tests repeated calls to make sure we cache the result.
-        self.assertEqual(port.pretty_patch_text("patch.txt"),
-                         port._pretty_patch_error_html)
+        self.assertEqual(port.pretty_patch.pretty_patch_text("patch.txt"),
+                         port.pretty_patch.pretty_patch_error_html)
 
     def integration_test_run_wdiff(self):
         executive = Executive()
