@@ -1754,3 +1754,9 @@ webkit.org/b/124894 accessibility/fieldset-element.html [ Missing ]
 
 # QuickTime plug-in not relevant to this port
 plugins/quicktime-plugin-replacement.html [ Skip ]
+
+webkit.org/b/124970 compositing/geometry/fixed-position-flipped-writing-mode.html [ Failure ]
+
+webkit.org/b/124971 compositing/repaint/repaint-on-layer-grouping-change.html [ Failure ]
+
+webkit.org/b/124971 fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top.html [ ImageOnlyFailure ]
