@@ -193,14 +193,6 @@ public:
     bool cssStickyPositionEnabled() const { return false; }
 #endif
 
-#if ENABLE(CSS_VARIABLES)
-    void setCSSVariablesEnabled(bool enabled) { m_cssVariablesEnabled = enabled; }
-    bool cssVariablesEnabled() const { return m_cssVariablesEnabled; }
-#else
-    void setCSSVariablesEnabled(bool) { }
-    bool cssVariablesEnabled() const { return false; }
-#endif
-
     void setShowTiledScrollingIndicator(bool);
     bool showTiledScrollingIndicator() const { return m_showTiledScrollingIndicator; }
 
@@ -306,9 +298,6 @@ private:
     bool m_isCSSCustomFilterEnabled : 1;
 #if ENABLE(CSS_STICKY_POSITION)
     bool m_cssStickyPositionEnabled : 1;
-#endif
-#if ENABLE(CSS_VARIABLES)
-    bool m_cssVariablesEnabled : 1;
 #endif
     bool m_showTiledScrollingIndicator : 1;
     bool m_tiledBackingStoreEnabled : 1;

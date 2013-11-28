@@ -161,10 +161,6 @@
 #include "CachedResourceLoader.h"
 #endif
 
-#if ENABLE(CSS_VARIABLES)
-#include "CSSVariableValue.h"
-#endif
-
 #if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"
 #endif
@@ -1037,9 +1033,6 @@ PassRef<RenderStyle> StyleResolver::styleForPage(int pageIndex)
     bool inheritedOnly = false;
 
     MatchResult& result = collector.matchedResult();
-#if ENABLE(CSS_VARIABLES)
-    applyMatchedProperties<VariableDefinitions>(result, false, 0, result.matchedProperties.size() - 1, inheritedOnly);
-#endif
     applyMatchedProperties<HighPriorityProperties>(result, false, 0, result.matchedProperties.size() - 1, inheritedOnly);
 
     // If our font got dirtied, go ahead and update it now.
@@ -1554,13 +1547,6 @@ void StyleResolver::applyProperties(const StylePropertySet* properties, StyleRul
             continue;
 #endif
         switch (pass) {
-#if ENABLE(CSS_VARIABLES)
-        case VariableDefinitions:
-            COMPILE_ASSERT(CSSPropertyVariable < firstCSSProperty, CSS_variable_is_before_first_property);
-            if (property == CSSPropertyVariable)
-                applyProperty(current.id(), current.value());
-            break;
-#endif
         case HighPriorityProperties:
             COMPILE_ASSERT(firstCSSProperty == CSSPropertyColor, CSS_color_is_first_property);
 #if ENABLE(IOS_TEXT_AUTOSIZING)
@@ -1569,10 +1555,6 @@ void StyleResolver::applyProperties(const StylePropertySet* properties, StyleRul
             COMPILE_ASSERT(CSSPropertyZoom == CSSPropertyColor + 17, CSS_zoom_is_end_of_first_prop_range);
 #endif
             COMPILE_ASSERT(CSSPropertyLineHeight == CSSPropertyZoom + 1, CSS_line_height_is_after_zoom);
-#if ENABLE(CSS_VARIABLES)
-            if (property == CSSPropertyVariable)
-                continue;
-#endif
             // give special priority to font-xxx, color properties, etc
             if (property < CSSPropertyLineHeight)
                 applyProperty(current.id(), current.value());
@@ -1735,14 +1717,6 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         }
         applyInheritedOnly = true; 
     }
-
-#if ENABLE(CSS_VARIABLES)
-    // First apply all variable definitions, as they may be used during application of later properties.
-    applyMatchedProperties<VariableDefinitions>(matchResult, false, 0, matchResult.matchedProperties.size() - 1, applyInheritedOnly);
-    applyMatchedProperties<VariableDefinitions>(matchResult, true, matchResult.ranges.firstAuthorRule, matchResult.ranges.lastAuthorRule, applyInheritedOnly);
-    applyMatchedProperties<VariableDefinitions>(matchResult, true, matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, applyInheritedOnly);
-    applyMatchedProperties<VariableDefinitions>(matchResult, true, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
-#endif
 
     // Now we have all of the matched rules in the appropriate order. Walk the rules and apply
     // high-priority properties first, i.e., those properties that other properties depend on.
@@ -2051,67 +2025,8 @@ static bool createGridPosition(CSSValue* value, GridPosition& position)
     return true;
 }
 
-#if ENABLE(CSS_VARIABLES)
-static bool hasVariableReference(CSSValue* value)
-{
-    if (value->isPrimitiveValue()) {
-        CSSPrimitiveValue* primitiveValue = toCSSPrimitiveValue(value);
-        return primitiveValue->hasVariableReference();
-    }
-
-    if (value->isCalcValue())
-        return toCSSCalcValue(value)->hasVariableReference();
-
-    if (value->isReflectValue()) {
-        CSSReflectValue* reflectValue = toCSSReflectValue(value);
-        CSSPrimitiveValue* direction = reflectValue->direction();
-        CSSPrimitiveValue* offset = reflectValue->offset();
-        CSSValue* mask = reflectValue->mask();
-        return (direction && hasVariableReference(direction)) || (offset && hasVariableReference(offset)) || (mask && hasVariableReference(mask));
-    }
-
-    for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
-        if (hasVariableReference(i.value()))
-            return true;
-    }
-
-    return false;
-}
-
-void StyleResolver::resolveVariables(CSSPropertyID id, CSSValue* value, Vector<std::pair<CSSPropertyID, String>>& knownExpressions)
-{
-    std::pair<CSSPropertyID, String> expression(id, value->serializeResolvingVariables(*m_state.style()->variables()));
-
-    if (knownExpressions.contains(expression))
-        return; // cycle detected.
-
-    knownExpressions.append(expression);
-
-    // FIXME: It would be faster not to re-parse from strings, but for now CSS property validation lives inside the parser so we do it there.
-    RefPtr<MutableStylePropertySet> resultSet = MutableStylePropertySet::create();
-    if (!CSSParser::parseValue(resultSet.get(), id, expression.second, false, document()))
-        return; // expression failed to parse.
-
-    for (unsigned i = 0; i < resultSet->propertyCount(); i++) {
-        StylePropertySet::PropertyReference property = resultSet->propertyAt(i);
-        if (property.id() != CSSPropertyVariable && hasVariableReference(property.value()))
-            resolveVariables(property.id(), property.value(), knownExpressions);
-        else
-            applyProperty(property.id(), property.value());
-    }
-}
-#endif
-
 void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 {
-#if ENABLE(CSS_VARIABLES)
-    if (id != CSSPropertyVariable && hasVariableReference(value)) {
-        Vector<std::pair<CSSPropertyID, String>> knownExpressions;
-        resolveVariables(id, value, knownExpressions);
-        return;
-    }
-#endif
-
     // CSS variables don't resolve shorthands at parsing time, so this should be *after* handling variables.
     ASSERT_WITH_MESSAGE(!isExpandedShorthand(id), "Shorthand property id = %d wasn't expanded at parsing time", id);
 
@@ -2129,16 +2044,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 
     if (isInherit && !state.parentStyle()->hasExplicitlyInheritedProperties() && !CSSProperty::isInheritedProperty(id))
         state.parentStyle()->setHasExplicitlyInheritedProperties();
-
-#if ENABLE(CSS_VARIABLES)
-    if (id == CSSPropertyVariable) {
-        CSSVariableValue* variable = toCSSVariableValue(value);
-        ASSERT(!variable->name().isEmpty());
-        ASSERT(!variable->value().isEmpty());
-        state.style()->setVariable(variable->name(), variable->value());
-        return;
-    }
-#endif
 
     // Check lookup table for implementations and use when available.
     const PropertyHandler& handler = m_deprecatedStyleBuilder.propertyHandler(id);
@@ -3001,9 +2906,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyTextTransform:
     case CSSPropertyTop:
     case CSSPropertyUnicodeBidi:
-#if ENABLE(CSS_VARIABLES)
-    case CSSPropertyVariable:
-#endif
     case CSSPropertyVerticalAlign:
     case CSSPropertyVisibility:
     case CSSPropertyWebkitAnimationDelay:

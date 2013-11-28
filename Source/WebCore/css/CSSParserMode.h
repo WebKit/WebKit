@@ -69,9 +69,6 @@ public:
     bool isCSSRegionsEnabled;
     bool isCSSCompositingEnabled;
     bool isCSSGridLayoutEnabled;
-#if ENABLE(CSS_VARIABLES)
-    bool isCSSVariablesEnabled;
-#endif
     bool needsSiteSpecificQuirks;
     bool enforcesCSSMIMETypeInNoQuirksMode;
     bool useLegacyBackgroundSizeShorthandBehavior;

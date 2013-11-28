@@ -96,30 +96,6 @@ bool CSSBasicShapeRectangle::equals(const CSSBasicShape& shape) const
         && compareCSSValuePtr(m_box, other.m_box);
 }
 
-#if ENABLE(CSS_VARIABLES)
-String CSSBasicShapeRectangle::serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
-{
-    return buildRectangleString(m_x->serializeResolvingVariables(variables),
-        m_y->serializeResolvingVariables(variables),
-        m_width->serializeResolvingVariables(variables),
-        m_height->serializeResolvingVariables(variables),
-        m_radiusX.get() ? m_radiusX->serializeResolvingVariables(variables) : String(),
-        m_radiusY.get() ? m_radiusY->serializeResolvingVariables(variables) : String(),
-        m_box ? m_box->serializeResolvingVariables(variables) : String());
-}
-
-bool CSSBasicShapeRectangle::hasVariableReference() const
-{
-    return m_x->hasVariableReference()
-        || m_y->hasVariableReference()
-        || m_width->hasVariableReference()
-        || m_height->hasVariableReference()
-        || (m_radiusX.get() && m_radiusX->hasVariableReference())
-        || (m_radiusY.get() && m_radiusY->hasVariableReference())
-        || (m_box && m_box->hasVariableReference());
-}
-#endif
-
 static String buildCircleString(const String& radius, const String& centerX, const String& centerY, const String& box)
 {
     char opening[] = "circle(";
@@ -169,24 +145,6 @@ bool CSSBasicShapeCircle::equals(const CSSBasicShape& shape) const
         && compareCSSValuePtr(m_box, other.m_box);
 }
 
-#if ENABLE(CSS_VARIABLES)
-String CSSBasicShapeCircle::serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
-{
-    return buildCircleString(m_radius ? m_radius->serializeResolvingVariables(variables) : String(),
-        m_centerX ? m_centerX->serializeResolvingVariables(variables) : String(),
-        m_centerY ? m_centerY->serializeResolvingVariables(variables) : String(),
-        m_box ? m_box->serializeResolvingVariables(variables) : String());
-}
-
-bool CSSBasicShapeCircle::hasVariableReference() const
-{
-    return (m_centerX && m_centerX->hasVariableReference())
-        || (m_centerY && m_centerY->hasVariableReference())
-        || (m_radius && m_radius->hasVariableReference())
-        || (m_box && m_box->hasVariableReference());
-}
-#endif
-
 static String buildDeprecatedCircleString(const String& x, const String& y, const String& radius, const String& box)
 {
     StringBuilder result;
@@ -222,24 +180,6 @@ bool CSSDeprecatedBasicShapeCircle::equals(const CSSBasicShape& shape) const
         && compareCSSValuePtr(m_radius, other.m_radius)
         && compareCSSValuePtr(m_box, other.m_box);
 }
-
-#if ENABLE(CSS_VARIABLES)
-String CSSDeprecatedBasicShapeCircle::serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
-{
-    return buildDeprecatedCircleString(m_centerX->serializeResolvingVariables(variables),
-        m_centerY->serializeResolvingVariables(variables),
-        m_radius->serializeResolvingVariables(variables),
-        m_box ? m_box->serializeResolvingVariables(variables) : String());
-}
-
-bool CSSDeprecatedBasicShapeCircle::hasVariableReference() const
-{
-    return m_centerX->hasVariableReference()
-        || m_centerY->hasVariableReference()
-        || m_radius->hasVariableReference()
-        || (m_box && m_box->hasVariableReference());
-}
-#endif
 
 static String buildEllipseString(const String& x, const String& y, const String& radiusX, const String& radiusY, const String& box)
 {
@@ -279,26 +219,6 @@ bool CSSBasicShapeEllipse::equals(const CSSBasicShape& shape) const
         && compareCSSValuePtr(m_radiusY, other.m_radiusY)
         && compareCSSValuePtr(m_box, other.m_box);
 }
-
-#if ENABLE(CSS_VARIABLES)
-String CSSBasicShapeEllipse::serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
-{
-    return buildEllipseString(m_centerX->serializeResolvingVariables(variables),
-        m_centerY->serializeResolvingVariables(variables),
-        m_radiusX->serializeResolvingVariables(variables),
-        m_radiusY->serializeResolvingVariables(variables),
-        m_box ? m_box->serializeResolvingVariables(variables) : String());
-}
-
-bool CSSBasicShapeEllipse::hasVariableReference() const
-{
-    return m_centerX->hasVariableReference()
-        || m_centerY->hasVariableReference()
-        || m_radiusX->hasVariableReference()
-        || m_radiusY->hasVariableReference()
-        || (m_box && m_box->hasVariableReference());
-}
-#endif
 
 static String buildPolygonString(const WindRule& windRule, const Vector<String>& points, const String& box)
 {
@@ -368,34 +288,6 @@ bool CSSBasicShapePolygon::equals(const CSSBasicShape& shape) const
         && compareCSSValueVector<CSSPrimitiveValue>(m_values, rhs.m_values);
 }
 
-#if ENABLE(CSS_VARIABLES)
-String CSSBasicShapePolygon::serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
-{
-    Vector<String> points;
-    points.reserveInitialCapacity(m_values.size());
-
-    for (size_t i = 0; i < m_values.size(); ++i)
-        points.append(m_values.at(i)->serializeResolvingVariables(variables));
-
-    return buildPolygonString(m_windRule,
-        points,
-        m_box ? m_box->serializeResolvingVariables(variables) : String());
-}
-
-bool CSSBasicShapePolygon::hasVariableReference() const
-{
-    if (m_box && m_box->hasVariableReference())
-        return true;
-
-    for (size_t i = 0; i < m_values.size(); ++i) {
-        if (m_values.at(i)->hasVariableReference())
-            return true;
-    }
-
-    return false;
-}
-#endif
-
 static String buildInsetRectangleString(const String& top, const String& right, const String& bottom, const String& left, const String& radiusX, const String& radiusY, const String& box)
 {
     char opening[] = "inset-rectangle(";
@@ -452,30 +344,6 @@ bool CSSBasicShapeInsetRectangle::equals(const CSSBasicShape& shape) const
         && compareCSSValuePtr(m_radiusY, other.m_radiusY)
         && compareCSSValuePtr(m_box, other.m_box);
 }
-
-#if ENABLE(CSS_VARIABLES)
-String CSSBasicShapeInsetRectangle::serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
-{
-    return buildInsetRectangleString(m_top->serializeResolvingVariables(variables),
-        m_right->serializeResolvingVariables(variables),
-        m_bottom->serializeResolvingVariables(variables),
-        m_left->serializeResolvingVariables(variables),
-        m_radiusX.get() ? m_radiusX->serializeResolvingVariables(variables) : String(),
-        m_radiusY.get() ? m_radiusY->serializeResolvingVariables(variables) : String(),
-        m_box ? m_box->serializeResolvingVariables(variables) : String());
-}
-
-bool CSSBasicShapeInsetRectangle::hasVariableReference() const
-{
-    return m_top->hasVariableReference()
-        || m_right->hasVariableReference()
-        || m_bottom->hasVariableReference()
-        || m_left->hasVariableReference()
-        || (m_radiusX.get() && m_radiusX->hasVariableReference())
-        || (m_radiusY.get() && m_radiusY->hasVariableReference())
-        || (m_box && m_box->hasVariableReference());
-}
-#endif
 
 } // namespace WebCore
 

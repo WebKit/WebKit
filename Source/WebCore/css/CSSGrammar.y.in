@@ -59,7 +59,6 @@ static inline bool isCSSTokenAString(int yytype)
     case CALCFUNCTION:
     case MINFUNCTION:
     case MAXFUNCTION:
-    case VAR_DEFINITION:
     case UNICODERANGE:
         return true;
     default:
@@ -72,9 +71,9 @@ static inline bool isCSSTokenAString(int yytype)
 %}
 
 #if ENABLE_SHADOW_DOM
-%expect 31
-#else
 %expect 30
+#else
+%expect 29
 #endif
 
 %nonassoc LOWEST_PREC
@@ -109,7 +108,6 @@ static inline bool isCSSTokenAString(int yytype)
 %token FONT_FACE_SYM
 %token CHARSET_SYM
 %token NAMESPACE_SYM
-%token VARFUNCTION
 %token WEBKIT_RULE_SYM
 %token WEBKIT_DECLS_SYM
 %token WEBKIT_KEYFRAME_RULE_SYM
@@ -183,7 +181,6 @@ static inline bool isCSSTokenAString(int yytype)
 %token <string> CALCFUNCTION
 %token <string> MINFUNCTION
 %token <string> MAXFUNCTION
-%token <string> VAR_DEFINITION
 
 %token <string> UNICODERANGE
 
@@ -1392,17 +1389,7 @@ decl_list_recovery:
     ;
 
 declaration:
-    VAR_DEFINITION maybe_space ':' maybe_space expr priority {
-#if ENABLE_CSS_VARIABLES
-        parser->storeVariableDeclaration($1, adoptPtr($5), $6);
-        $$ = true;
-        parser->markPropertyEnd($6, true);
-#else
-        delete $5;
-        $$ = false;
-#endif
-    }
-    | property ':' maybe_space expr priority {
+    property ':' maybe_space expr priority {
         $$ = false;
         bool isPropertyParsed = false;
         OwnPtr<CSSParserValueList> propertyValue = adoptPtr($4);
@@ -1486,16 +1473,6 @@ term:
   | UNICODERANGE maybe_space { $$.id = CSSValueInvalid; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_UNICODE_RANGE; }
   | HEX maybe_space { $$.id = CSSValueInvalid; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_PARSER_HEXCOLOR; }
   | '#' maybe_space { $$.id = CSSValueInvalid; $$.string = CSSParserString(); $$.unit = CSSPrimitiveValue::CSS_PARSER_HEXCOLOR; } /* Handle error case: "color: #;" */
-  | VARFUNCTION maybe_space IDENT closing_parenthesis maybe_space {
-#if ENABLE_CSS_VARIABLES
-      $$.id = CSSValueInvalid;
-      $$.string = $3;
-      $$.unit = CSSPrimitiveValue::CSS_VARIABLE_NAME;
-#else
-      $$.id = CSSValueInvalid;
-      $$.unit = 0;
-#endif
-  }
   /* FIXME: according to the specs a function can have a unary_operator in front. I know no case where this makes sense */
   | function maybe_space
   | calc_function maybe_space
@@ -1573,16 +1550,6 @@ function:
 
 calc_func_term:
   unary_term
-  | VARFUNCTION maybe_space IDENT closing_parenthesis {
-#if ENABLE_CSS_VARIABLES
-      $$.id = CSSValueInvalid;
-      $$.string = $3;
-      $$.unit = CSSPrimitiveValue::CSS_VARIABLE_NAME;
-#else
-      $$.id = CSSValueInvalid;
-      $$.unit = 0;
-#endif
-  }
   | unary_operator unary_term { $$ = $2; $$.fValue *= $1; }
   ;
 
@@ -1732,7 +1699,7 @@ invalid_square_brackets_block: '[' error_recovery ']' | '[' error_recovery TOKEN
 invalid_parentheses_block: opening_parenthesis error_recovery closing_parenthesis;
 
 opening_parenthesis:
-    '(' | FUNCTION | CALCFUNCTION | VARFUNCTION | MINFUNCTION | MAXFUNCTION | ANYFUNCTION | NOTFUNCTION
+    '(' | FUNCTION | CALCFUNCTION | MINFUNCTION | MAXFUNCTION | ANYFUNCTION | NOTFUNCTION
 #if ENABLE_VIDEO_TRACK
     | CUEFUNCTION
 #endif

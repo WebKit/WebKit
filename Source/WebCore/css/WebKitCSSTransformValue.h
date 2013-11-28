@@ -67,9 +67,6 @@ public:
 
     String customCSSText() const;
     bool equals(const WebKitCSSTransformValue& other) const { return m_type == other.m_type && CSSValueList::equals(other); }
-#if ENABLE(CSS_VARIABLES)
-    String customSerializeResolvingVariables(const HashMap<AtomicString, String>&) const;
-#endif
 
     TransformOperationType operationType() const { return m_type; }
     

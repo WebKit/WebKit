@@ -25,10 +25,6 @@
 #include "RenderStyleConstants.h"
 #include "StylePropertyShorthand.h"
 
-#if ENABLE(CSS_VARIABLES)
-#include "CSSVariableValue.h"
-#endif
-
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

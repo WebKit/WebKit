@@ -70,10 +70,6 @@ static CalculationCategory unitCategory(CSSPrimitiveValue::UnitTypes type)
     case CSSPrimitiveValue::CSS_REMS:
     case CSSPrimitiveValue::CSS_CHS:
         return CalcLength;
-#if ENABLE(CSS_VARIABLES)
-    case CSSPrimitiveValue::CSS_VARIABLE_NAME:
-        return CalcVariable;
-#endif
     default:
         return CalcOther;
     }
@@ -132,9 +128,6 @@ static bool hasDoubleValue(CSSPrimitiveValue::UnitTypes type)
     case CSSPrimitiveValue::CSS_CALC:
     case CSSPrimitiveValue::CSS_CALC_PERCENTAGE_WITH_NUMBER:
     case CSSPrimitiveValue::CSS_CALC_PERCENTAGE_WITH_LENGTH:
-#if ENABLE(CSS_VARIABLES)
-    case CSSPrimitiveValue::CSS_VARIABLE_NAME:
-#endif
     case CSSPrimitiveValue::CSS_PROPERTY_ID:
     case CSSPrimitiveValue::CSS_VALUE_ID:
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -168,18 +161,6 @@ bool CSSCalcValue::equals(const CSSCalcValue& other) const
 {
     return compareCSSValuePtr(m_expression, other.m_expression);
 }
-
-#if ENABLE(CSS_VARIABLES)
-String CSSCalcValue::customSerializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
-{
-    return buildCssText(m_expression->serializeResolvingVariables(variables));
-}
-
-bool CSSCalcValue::hasVariableReference() const
-{
-    return m_expression->hasVariableReference();
-}
-#endif
 
 double CSSCalcValue::clampToPermittedRange(double value) const
 {
@@ -226,18 +207,6 @@ public:
         return m_value->cssText();
     }
 
-#if ENABLE(CSS_VARIABLES)
-    virtual String serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
-    {
-        return m_value->customSerializeResolvingVariables(variables);
-    }
-
-    virtual bool hasVariableReference() const
-    {
-        return m_value->isVariableName();
-    }
-#endif
-
     virtual PassOwnPtr<CalcExpressionNode> toCalcValue(const RenderStyle* style, const RenderStyle* rootStyle, double zoom) const
     {
         switch (m_category) {
@@ -255,9 +224,6 @@ public:
         // Only types that could be part of a Length expression can be converted
         // to a CalcExpressionNode. CalcPercentNumber makes no sense as a Length.
         case CalcPercentNumber:
-#if ENABLE(CSS_VARIABLES)
-        case CalcVariable:
-#endif
         case CalcOther:
             ASSERT_NOT_REACHED();
         }
@@ -282,9 +248,6 @@ public:
             return m_value->getDoubleValue();
         case CalcPercentLength:
         case CalcPercentNumber:
-#if ENABLE(CSS_VARIABLES)
-        case CalcVariable:
-#endif
         case CalcOther:
             ASSERT_NOT_REACHED();
             break;
@@ -333,11 +296,6 @@ static CalculationCategory determineCategory(const CSSCalcExpressionNode& leftSi
 
     if (leftCategory == CalcOther || rightCategory == CalcOther)
         return CalcOther;
-
-#if ENABLE(CSS_VARIABLES)
-    if (leftCategory == CalcVariable || rightCategory == CalcVariable)
-        return CalcVariable;
-#endif
 
     switch (op) {
     case CalcAdd:
@@ -483,17 +441,6 @@ public:
         return buildCssText(m_leftSide->customCSSText(), m_rightSide->customCSSText(), m_operator);
     }
 
-#if ENABLE(CSS_VARIABLES)
-    virtual String serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
-    {
-        return buildCssText(m_leftSide->serializeResolvingVariables(variables), m_rightSide->serializeResolvingVariables(variables), m_operator);
-    }
-
-    virtual bool hasVariableReference() const
-    {
-        return m_leftSide->hasVariableReference() || m_rightSide->hasVariableReference();
-    }
-#endif
 
     virtual bool equals(const CSSCalcExpressionNode& exp) const
     {
@@ -527,10 +474,6 @@ public:
                 return leftType;
             return CSSPrimitiveValue::CSS_UNKNOWN;
         }
-#if ENABLE(CSS_VARIABLES)
-        case CalcVariable:
-            return CSSPrimitiveValue::CSS_VARIABLE_NAME;
-#endif
         case CalcPercentLength:
         case CalcPercentNumber:
         case CalcOther:

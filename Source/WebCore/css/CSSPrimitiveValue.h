@@ -134,9 +134,6 @@ public:
         CSS_CALC_PERCENTAGE_WITH_NUMBER = 114,
         CSS_CALC_PERCENTAGE_WITH_LENGTH = 115,
 
-#if ENABLE(CSS_VARIABLES)
-        CSS_VARIABLE_NAME = 116,
-#endif
         CSS_PROPERTY_ID = 117,
         CSS_VALUE_ID = 118
     };
@@ -200,9 +197,6 @@ public:
         return type >= CSS_DPPX && type <= CSS_DPCM;
     }
 
-#if ENABLE(CSS_VARIABLES)
-    bool isVariableName() const { return primitiveType() == CSS_VARIABLE_NAME; }
-#endif
     bool isViewportPercentageLength() const { return m_primitiveUnitType >= CSS_VW && m_primitiveUnitType <= CSS_VMAX; }
     bool isViewportPercentageWidth() const { return m_primitiveUnitType == CSS_VW; }
     bool isViewportPercentageHeight() const { return m_primitiveUnitType == CSS_VH; }
@@ -327,10 +321,6 @@ public:
     template<typename T> inline operator T() const; // Defined in CSSPrimitiveValueMappings.h
 
     String customCSSText() const;
-#if ENABLE(CSS_VARIABLES)
-    String customSerializeResolvingVariables(const HashMap<AtomicString, String>&) const;
-    bool hasVariableReference() const;
-#endif
 
     bool isQuirkValue() { return m_isQuirkValue; }
 

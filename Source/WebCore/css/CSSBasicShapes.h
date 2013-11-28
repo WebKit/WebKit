@@ -56,11 +56,6 @@ public:
     CSSPrimitiveValue* box() const { return m_box.get(); }
     void setBox(PassRefPtr<CSSPrimitiveValue> box) { m_box = box; }
 
-#if ENABLE(CSS_VARIABLES)
-    virtual String serializeResolvingVariables(const HashMap<AtomicString, String>&) const = 0;
-    virtual bool hasVariableReference() const = 0;
-#endif
-
 public:
     virtual ~CSSBasicShape() { }
 
@@ -90,11 +85,6 @@ public:
     virtual Type type() const OVERRIDE { return CSSBasicShapeRectangleType; }
     virtual String cssText() const OVERRIDE;
     virtual bool equals(const CSSBasicShape&) const OVERRIDE;
-
-#if ENABLE(CSS_VARIABLES)
-    virtual String serializeResolvingVariables(const HashMap<AtomicString, String>&) const;
-    virtual bool hasVariableReference() const;
-#endif
 
 private:
     CSSBasicShapeRectangle() { }
@@ -129,11 +119,6 @@ public:
     virtual String cssText() const OVERRIDE;
     virtual bool equals(const CSSBasicShape&) const OVERRIDE;
 
-#if ENABLE(CSS_VARIABLES)
-    virtual String serializeResolvingVariables(const HashMap<AtomicString, String>&) const;
-    virtual bool hasVariableReference() const;
-#endif
-
 private:
     CSSBasicShapeInsetRectangle() { }
 
@@ -161,11 +146,6 @@ public:
     void setCenterY(PassRefPtr<CSSPrimitiveValue> centerY) { m_centerY = centerY; }
     void setRadius(PassRefPtr<CSSPrimitiveValue> radius) { m_radius = radius; }
 
-#if ENABLE(CSS_VARIABLES)
-    virtual String serializeResolvingVariables(const HashMap<AtomicString, String>&) const;
-    virtual bool hasVariableReference() const;
-#endif
-
 private:
     CSSBasicShapeCircle() { }
 
@@ -189,11 +169,6 @@ public:
     virtual Type type() const OVERRIDE { return CSSDeprecatedBasicShapeCircleType; }
     virtual String cssText() const OVERRIDE;
     virtual bool equals(const CSSBasicShape&) const OVERRIDE;
-
-#if ENABLE(CSS_VARIABLES)
-    virtual String serializeResolvingVariables(const HashMap<AtomicString, String>&) const;
-    virtual bool hasVariableReference() const;
-#endif
 
 private:
     CSSDeprecatedBasicShapeCircle() { }
@@ -220,11 +195,6 @@ public:
     virtual Type type() const OVERRIDE { return CSSBasicShapeEllipseType; }
     virtual String cssText() const OVERRIDE;
     virtual bool equals(const CSSBasicShape&) const OVERRIDE;
-
-#if ENABLE(CSS_VARIABLES)
-    virtual String serializeResolvingVariables(const HashMap<AtomicString, String>&) const;
-    virtual bool hasVariableReference() const;
-#endif
 
 private:
     CSSBasicShapeEllipse() { }
@@ -255,10 +225,6 @@ public:
     virtual Type type() const OVERRIDE { return CSSBasicShapePolygonType; }
     virtual String cssText() const OVERRIDE;
     virtual bool equals(const CSSBasicShape&) const OVERRIDE;
-#if ENABLE(CSS_VARIABLES)
-    virtual String serializeResolvingVariables(const HashMap<AtomicString, String>&) const;
-    virtual bool hasVariableReference() const;
-#endif
 
 private:
     CSSBasicShapePolygon()

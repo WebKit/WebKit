@@ -54,9 +54,6 @@ enum CalculationCategory {
     CalcPercent,
     CalcPercentNumber,
     CalcPercentLength,
-#if ENABLE(CSS_VARIABLES)
-    CalcVariable,
-#endif
     CalcOther
 };
 
@@ -73,10 +70,6 @@ public:
     virtual double doubleValue() const = 0;
     virtual double computeLengthPx(const RenderStyle* currentStyle, const RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false) const = 0;
     virtual String customCSSText() const = 0;
-#if ENABLE(CSS_VARIABLES)
-    virtual String serializeResolvingVariables(const HashMap<AtomicString, String>&) const = 0;
-    virtual bool hasVariableReference() const = 0;
-#endif
     virtual bool equals(const CSSCalcExpressionNode& other) const { return m_category == other.m_category && m_isInteger == other.m_isInteger; }
     virtual Type type() const = 0;
 
@@ -120,10 +113,6 @@ public:
 
     String customCSSText() const;
     bool equals(const CSSCalcValue&) const;
-#if ENABLE(CSS_VARIABLES)
-    String customSerializeResolvingVariables(const HashMap<AtomicString, String>&) const;
-    bool hasVariableReference() const;
-#endif
 
 private:
     CSSCalcValue(PassRefPtr<CSSCalcExpressionNode> expression, CalculationPermittedValueRange range)

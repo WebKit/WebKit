@@ -165,9 +165,6 @@ Settings::Settings(Page* page)
 #if ENABLE(CSS_STICKY_POSITION)
     , m_cssStickyPositionEnabled(true)
 #endif
-#if ENABLE(CSS_VARIABLES)
-    , m_cssVariablesEnabled(false)
-#endif
     , m_showTiledScrollingIndicator(false)
     , m_tiledBackingStoreEnabled(false)
     , m_dnsPrefetchingEnabled(false)

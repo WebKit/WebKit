@@ -94,10 +94,6 @@
 #define ENABLE_CSS_SHADERS 1
 #endif
 
-#if !defined(ENABLE_CSS_VARIABLES)
-#define ENABLE_CSS_VARIABLES 1
-#endif
-
 #if !defined(ENABLE_DATALIST_ELEMENT)
 #define ENABLE_DATALIST_ELEMENT 1
 #endif

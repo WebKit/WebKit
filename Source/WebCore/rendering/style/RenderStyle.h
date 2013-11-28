@@ -369,11 +369,6 @@ public:
 
     const PseudoStyleCache* cachedPseudoStyles() const { return m_cachedPseudoStyles.get(); }
 
-#if ENABLE(CSS_VARIABLES)
-    void setVariable(const AtomicString& name, const String& value) { rareInheritedData.access()->m_variables.access()->setVariable(name, value); }
-    const HashMap<AtomicString, String>* variables() { return &(rareInheritedData->m_variables->m_data); }
-#endif
-
     bool affectedByHover() const { return noninherited_flags.affectedByHover(); }
     bool affectedByActive() const { return noninherited_flags.affectedByActive(); }
     bool affectedByDrag() const { return noninherited_flags.affectedByDrag(); }

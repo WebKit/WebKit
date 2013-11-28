@@ -115,12 +115,6 @@ public:
     bool parseQuotes(CSSPropertyID, bool important);
     bool parseAlt(CSSPropertyID, bool important);
     
-#if ENABLE(CSS_VARIABLES)
-    static bool parseValue(MutableStylePropertySet*, CSSPropertyID, const String&, bool important, Document&);
-    bool cssVariablesEnabled() const;
-    void storeVariableDeclaration(const CSSParserString&, PassOwnPtr<CSSParserValueList>, bool important);
-#endif
-
     PassRefPtr<CSSValue> parseAttr(CSSParserValueList* args);
 
     PassRefPtr<CSSValue> parseBackgroundColor();
@@ -431,9 +425,6 @@ public:
 
     PassRefPtr<CSSPrimitiveValue> createPrimitiveNumericValue(CSSParserValue*);
     PassRefPtr<CSSPrimitiveValue> createPrimitiveStringValue(CSSParserValue*);
-#if ENABLE(CSS_VARIABLES)
-    PassRefPtr<CSSPrimitiveValue> createPrimitiveVariableNameValue(CSSParserValue*);
-#endif
 
     static URL completeURL(const CSSParserContext&, const String& url);
 

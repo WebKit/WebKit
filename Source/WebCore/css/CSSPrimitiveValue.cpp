@@ -123,9 +123,6 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::Unit
     case CSSPrimitiveValue::CSS_UNICODE_RANGE:
     case CSSPrimitiveValue::CSS_UNKNOWN:
     case CSSPrimitiveValue::CSS_URI:
-#if ENABLE(CSS_VARIABLES)
-    case CSSPrimitiveValue::CSS_VARIABLE_NAME:
-#endif
         return false;
     }
 
@@ -202,10 +199,6 @@ unsigned short CSSPrimitiveValue::primitiveType() const
         return CSSPrimitiveValue::CSS_CALC_PERCENTAGE_WITH_NUMBER;
     case CalcPercentLength:
         return CSSPrimitiveValue::CSS_CALC_PERCENTAGE_WITH_LENGTH;
-#if ENABLE(CSS_VARIABLES)
-    case CalcVariable:
-        return CSSPrimitiveValue::CSS_UNKNOWN; // The type of a calculation containing a variable cannot be known until the value of the variable is determined.
-#endif
     case CalcOther:
         return CSSPrimitiveValue::CSS_UNKNOWN;
     }
@@ -448,9 +441,6 @@ void CSSPrimitiveValue::cleanup()
     case CSS_URI:
     case CSS_ATTR:
     case CSS_COUNTER_NAME:
-#if ENABLE(CSS_VARIABLES)
-    case CSS_VARIABLE_NAME:
-#endif
     case CSS_PARSER_HEXCOLOR:
         if (m_value.string)
             m_value.string->deref();
@@ -838,9 +828,6 @@ String CSSPrimitiveValue::getStringValue(ExceptionCode& ec) const
     case CSS_STRING:
     case CSS_ATTR:
     case CSS_URI:
-#if ENABLE(CSS_VARIABLES)
-    case CSS_VARIABLE_NAME:
-#endif
         return m_value.string;
     case CSS_VALUE_ID:
         return valueName(m_value.valueID);
@@ -860,9 +847,6 @@ String CSSPrimitiveValue::getStringValue() const
     case CSS_STRING:
     case CSS_ATTR:
     case CSS_URI:
-#if ENABLE(CSS_VARIABLES)
-    case CSS_VARIABLE_NAME:
-#endif
         return m_value.string;
     case CSS_VALUE_ID:
         return valueName(m_value.valueID);
@@ -1199,11 +1183,6 @@ String CSSPrimitiveValue::customCSSText() const
         case CSS_VMAX:
             text = formatNumber(m_value.num, "vmax");
             break;
-#if ENABLE(CSS_VARIABLES)
-        case CSS_VARIABLE_NAME:
-            text = "-webkit-var(" + String(m_value.string) + ')';
-            break;
-#endif
     }
 
     ASSERT(!cssTextCache().contains(this));
@@ -1211,40 +1190,6 @@ String CSSPrimitiveValue::customCSSText() const
     m_hasCachedCSSText = true;
     return text;
 }
-
-#if ENABLE(CSS_VARIABLES)
-String CSSPrimitiveValue::customSerializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
-{
-    if (isVariableName() && variables.contains(m_value.string))
-        return variables.get(m_value.string);
-    if (CSSCalcValue* calcValue = cssCalcValue())
-        return calcValue->customSerializeResolvingVariables(variables);
-    if (Pair* pairValue = getPairValue())
-        return pairValue->serializeResolvingVariables(variables);
-    if (Rect* rectVal = getRectValue())
-        return rectVal->serializeResolvingVariables(variables);
-    if (Quad* quadVal = getQuadValue())
-        return quadVal->serializeResolvingVariables(variables);
-    if (CSSBasicShape* shapeValue = getShapeValue())
-        return shapeValue->serializeResolvingVariables(variables);
-    return customCSSText();
-}
-
-bool CSSPrimitiveValue::hasVariableReference() const
-{
-    if (CSSCalcValue* calcValue = cssCalcValue())
-        return calcValue->hasVariableReference();
-    if (Pair* pairValue = getPairValue())
-        return pairValue->hasVariableReference();
-    if (Quad* quadValue = getQuadValue())
-        return quadValue->hasVariableReference();
-    if (Rect* rectValue = getRectValue())
-        return rectValue->hasVariableReference();
-    if (CSSBasicShape* shapeValue = getShapeValue())
-        return shapeValue->hasVariableReference();
-    return isVariableName();
-}
-#endif
 
 void CSSPrimitiveValue::addSubresourceStyleURLs(ListHashSet<URL>& urls, const StyleSheetContents* styleSheet) const
 {
@@ -1418,9 +1363,6 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
     case CSS_COUNTER_NAME:
     case CSS_PARSER_IDENTIFIER:
     case CSS_PARSER_HEXCOLOR:
-#if ENABLE(CSS_VARIABLES)
-    case CSS_VARIABLE_NAME:
-#endif
         return equal(m_value.string, other.m_value.string);
     case CSS_COUNTER:
         return m_value.counter && other.m_value.counter && m_value.counter->equals(*other.m_value.counter);

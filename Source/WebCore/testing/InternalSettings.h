@@ -54,7 +54,6 @@ public:
 
         bool m_originalCSSExclusionsEnabled;
         bool m_originalCSSShapesEnabled;
-        bool m_originalCSSVariablesEnabled;
 #if ENABLE(SHADOW_DOM)
         bool m_originalShadowDOMEnabled;
         bool m_originalAuthorShadowDOMForAnyElementEnabled;
@@ -122,8 +121,6 @@ public:
     void setMediaTypeOverride(const String& mediaType, ExceptionCode&);
     void setCSSExclusionsEnabled(bool enabled, ExceptionCode&);
     void setCSSShapesEnabled(bool enabled, ExceptionCode&);
-    void setCSSVariablesEnabled(bool enabled, ExceptionCode&);
-    bool cssVariablesEnabled(ExceptionCode&);
     void setCanStartMedia(bool, ExceptionCode&);
     void setEditingBehavior(const String&, ExceptionCode&);
     void setShouldDisplayTrackKind(const String& kind, bool enabled, ExceptionCode&);

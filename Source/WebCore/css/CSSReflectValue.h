@@ -48,9 +48,6 @@ public:
     CSSValue* mask() const { return m_mask.get(); }
 
     String customCSSText() const;
-#if ENABLE(CSS_VARIABLES)
-    String customSerializeResolvingVariables(const HashMap<AtomicString, String>&) const;
-#endif
 
     void addSubresourceStyleURLs(ListHashSet<URL>&, const StyleSheetContents*) const;
 

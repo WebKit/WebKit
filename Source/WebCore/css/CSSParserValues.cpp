@@ -25,9 +25,6 @@
 #include "CSSFunctionValue.h"
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
-#if ENABLE(CSS_VARIABLES)
-#include "CSSVariableValue.h"
-#endif
 
 namespace WebCore {
 
@@ -92,9 +89,6 @@ PassRefPtr<CSSValue> CSSParserValue::createCSSValue()
         return CSSPrimitiveValue::create(fValue, isInt ? CSSPrimitiveValue::CSS_PARSER_INTEGER : CSSPrimitiveValue::CSS_NUMBER);
     case CSSPrimitiveValue::CSS_STRING:
     case CSSPrimitiveValue::CSS_URI:
-#if ENABLE(CSS_VARIABLES)
-    case CSSPrimitiveValue::CSS_VARIABLE_NAME:
-#endif
     case CSSPrimitiveValue::CSS_PARSER_HEXCOLOR:
         return CSSPrimitiveValue::create(string, primitiveUnit);
     case CSSPrimitiveValue::CSS_PERCENTAGE:

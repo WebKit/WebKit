@@ -68,7 +68,6 @@ namespace WebCore {
 InternalSettings::Backup::Backup(Settings& settings)
     : m_originalCSSExclusionsEnabled(RuntimeEnabledFeatures::sharedFeatures().cssExclusionsEnabled())
     , m_originalCSSShapesEnabled(RuntimeEnabledFeatures::sharedFeatures().cssShapesEnabled())
-    , m_originalCSSVariablesEnabled(settings.cssVariablesEnabled())
 #if ENABLE(SHADOW_DOM)
     , m_originalShadowDOMEnabled(RuntimeEnabledFeatures::sharedFeatures().shadowDOMEnabled())
     , m_originalAuthorShadowDOMForAnyElementEnabled(RuntimeEnabledFeatures::sharedFeatures().authorShadowDOMForAnyElementEnabled())
@@ -102,7 +101,6 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 {
     RuntimeEnabledFeatures::sharedFeatures().setCSSExclusionsEnabled(m_originalCSSExclusionsEnabled);
     RuntimeEnabledFeatures::sharedFeatures().setCSSShapesEnabled(m_originalCSSShapesEnabled);
-    settings.setCSSVariablesEnabled(m_originalCSSVariablesEnabled);
 #if ENABLE(SHADOW_DOM)
     RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(m_originalShadowDOMEnabled);
     RuntimeEnabledFeatures::sharedFeatures().setAuthorShadowDOMForAnyElementEnabled(m_originalAuthorShadowDOMForAnyElementEnabled);
@@ -389,18 +387,6 @@ void InternalSettings::setCSSShapesEnabled(bool enabled, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
     RuntimeEnabledFeatures::sharedFeatures().setCSSShapesEnabled(enabled);
-}
-
-void InternalSettings::setCSSVariablesEnabled(bool enabled, ExceptionCode& ec)
-{
-    InternalSettingsGuardForSettings();
-    settings()->setCSSVariablesEnabled(enabled);
-}
-
-bool InternalSettings::cssVariablesEnabled(ExceptionCode& ec)
-{
-    InternalSettingsGuardForSettingsReturn(false);
-    return settings()->cssVariablesEnabled();
 }
 
 void InternalSettings::setCanStartMedia(bool enabled, ExceptionCode& ec)

@@ -62,10 +62,6 @@
 #include "WebKitCSSShaderValue.h"
 #include "WebKitCSSTransformValue.h"
 
-#if ENABLE(CSS_VARIABLES)
-#include "CSSVariableValue.h"
-#endif
-
 #if ENABLE(SVG)
 #include "WebKitCSSSVGDocumentValue.h"
 #endif
@@ -239,10 +235,6 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<WebKitCSSShaderValue>(*this, other);
 #endif
 #endif
-#if ENABLE(CSS_VARIABLES)
-        case VariableClass:
-            return compareCSSValues<CSSVariableValue>(*this, other);
-#endif
 #if ENABLE(SVG)
         case SVGColorClass:
             return compareCSSValues<SVGColor>(*this, other);
@@ -343,10 +335,6 @@ String CSSValue::cssText() const
         return toWebKitCSSShaderValue(this)->customCSSText();
 #endif
 #endif
-#if ENABLE(CSS_VARIABLES)
-    case VariableClass:
-        return toCSSVariableValue(this)->value();
-#endif
 #if ENABLE(SVG)
     case SVGColorClass:
         return toSVGColor(this)->customCSSText();
@@ -359,24 +347,6 @@ String CSSValue::cssText() const
     ASSERT_NOT_REACHED();
     return String();
 }
-
-#if ENABLE(CSS_VARIABLES)
-String CSSValue::serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
-{
-    switch (classType()) {
-    case PrimitiveClass:
-        return toCSSPrimitiveValue(this)->customSerializeResolvingVariables(variables);
-    case ReflectClass:
-        return toCSSReflectValue(this)->customSerializeResolvingVariables(variables);
-    case ValueListClass:
-        return toCSSValueList(this)->customSerializeResolvingVariables(variables);
-    case WebKitCSSTransformClass:
-        return toWebKitCSSTransformValue(this)->customSerializeResolvingVariables(variables);
-    default:
-        return cssText();
-    }
-}
-#endif
 
 void CSSValue::destroy()
 {
@@ -489,11 +459,6 @@ void CSSValue::destroy()
         delete toWebKitCSSShaderValue(this);
         return;
 #endif
-#endif
-#if ENABLE(CSS_VARIABLES)
-    case VariableClass:
-        delete toCSSVariableValue(this);
-        return;
 #endif
 #if ENABLE(SVG)
     case SVGColorClass:

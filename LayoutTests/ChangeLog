@@ -1,3 +1,82 @@
+2013-11-28  Antti Koivisto  <antti@apple.com>
+
+        Remove feature: CSS variables
+        https://bugs.webkit.org/show_bug.cgi?id=114119
+
+        Reviewed by Andreas Kling.
+
+        * fast/css/variables: Removed.
+        * fast/css/variables/border-width-expected.html: Removed.
+        * fast/css/variables/border-width.html: Removed.
+        * fast/css/variables/build-supports-variables-expected.txt: Removed.
+        * fast/css/variables/build-supports-variables.html: Removed.
+        * fast/css/variables/calc-expected.html: Removed.
+        * fast/css/variables/calc-inside-calc-expected.html: Removed.
+        * fast/css/variables/calc-inside-calc.html: Removed.
+        * fast/css/variables/calc-invalid-value-expected.html: Removed.
+        * fast/css/variables/calc-invalid-value.html: Removed.
+        * fast/css/variables/calc-invalid-variable-expected.html: Removed.
+        * fast/css/variables/calc-invalid-variable.html: Removed.
+        * fast/css/variables/calc-negated-variable-expected.html: Removed.
+        * fast/css/variables/calc-negated-variable.html: Removed.
+        * fast/css/variables/calc-vw-crash-expected.txt: Removed.
+        * fast/css/variables/calc-vw-crash.html: Removed.
+        * fast/css/variables/calc.html: Removed.
+        * fast/css/variables/case-sensitive-expected.html: Removed.
+        * fast/css/variables/case-sensitive.html: Removed.
+        * fast/css/variables/colors-test-expected.html: Removed.
+        * fast/css/variables/colors-test.html: Removed.
+        * fast/css/variables/complex-cycle-expected.html: Removed.
+        * fast/css/variables/complex-cycle.html: Removed.
+        * fast/css/variables/computed-style-expected.html: Removed.
+        * fast/css/variables/computed-style.html: Removed.
+        * fast/css/variables/deferred-image-load-from-variable-expected.txt: Removed.
+        * fast/css/variables/deferred-image-load-from-variable.html: Removed.
+        * fast/css/variables/inherited-values-expected.html: Removed.
+        * fast/css/variables/inherited-values.html: Removed.
+        * fast/css/variables/inline-styles-expected.html: Removed.
+        * fast/css/variables/inline-styles.html: Removed.
+        * fast/css/variables/invalid-font-reference-expected.txt: Removed.
+        * fast/css/variables/invalid-font-reference.html: Removed.
+        * fast/css/variables/invalid-shorthand-expected.html: Removed.
+        * fast/css/variables/invalid-shorthand.html: Removed.
+        * fast/css/variables/invalid-value-list-crash-expected.txt: Removed.
+        * fast/css/variables/invalid-value-list-crash.html: Removed.
+        * fast/css/variables/invalid-variable-value-expected.html: Removed.
+        * fast/css/variables/invalid-variable-value.html: Removed.
+        * fast/css/variables/multi-level-cycle-expected.html: Removed.
+        * fast/css/variables/multi-level-cycle.html: Removed.
+        * fast/css/variables/redefinition-expected.html: Removed.
+        * fast/css/variables/redefinition.html: Removed.
+        * fast/css/variables/root-background-size-expected.html: Removed.
+        * fast/css/variables/root-background-size.html: Removed.
+        * fast/css/variables/shorthand-expected.html: Removed.
+        * fast/css/variables/shorthand.html: Removed.
+        * fast/css/variables/simple-cycle-expected.html: Removed.
+        * fast/css/variables/simple-cycle.html: Removed.
+        * fast/css/variables/transform-test-expected.html: Removed.
+        * fast/css/variables/transform-test.html: Removed.
+        * fast/css/variables/undefined-expected.html: Removed.
+        * fast/css/variables/undefined.html: Removed.
+        * fast/css/variables/use-before-defined-expected.html: Removed.
+        * fast/css/variables/use-before-defined.html: Removed.
+        * fast/css/variables/var-filter-expected.txt: Removed.
+        * fast/css/variables/var-filter.html: Removed.
+        * fast/css/variables/var-inside-box-reflect-expected.html: Removed.
+        * fast/css/variables/var-inside-box-reflect.html: Removed.
+        * fast/css/variables/var-inside-pair-expected.html: Removed.
+        * fast/css/variables/var-inside-pair.html: Removed.
+        * fast/css/variables/var-inside-quad-expected.html: Removed.
+        * fast/css/variables/var-inside-quad.html: Removed.
+        * fast/css/variables/var-inside-shape-expected.html: Removed.
+        * fast/css/variables/var-inside-shape.html: Removed.
+        * fast/css/variables/var-inside-shorthand-expected.html: Removed.
+        * fast/css/variables/var-inside-shorthand.html: Removed.
+        * fast/css/variables/variable-chain-expected.html: Removed.
+        * fast/css/variables/variable-chain.html: Removed.
+        * fast/css/variables/variable-unparseable-value-crash-expected.txt: Removed.
+        * fast/css/variables/variable-unparseable-value-crash.html: Removed.
+
 2013-11-28  Jongwoo Choi  <jw0330.choi@samsung.com>
 
         [EFL] Layout tests need to be rebaselined.

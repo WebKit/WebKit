@@ -60,10 +60,6 @@ struct SameSizeAsStyleRareInheritedData : public RefCounted<SameSizeAsStyleRareI
 #if ENABLE(TOUCH_EVENTS)
     Color touchColors;
 #endif
-
-#if ENABLE(CSS_VARIABLES)
-    void* variableDataRefs[1];
-#endif
 };
 
 COMPILE_ASSERT(sizeof(StyleRareInheritedData) == sizeof(SameSizeAsStyleRareInheritedData), StyleRareInheritedData_should_bit_pack);
@@ -135,9 +131,6 @@ StyleRareInheritedData::StyleRareInheritedData()
 #endif
 #if ENABLE(TOUCH_EVENTS)
     , tapHighlightColor(RenderStyle::initialTapHighlightColor())
-#endif
-#if ENABLE(CSS_VARIABLES)
-    , m_variables(StyleVariableData::create())
 #endif
 {
 }
@@ -222,9 +215,6 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
 #endif
 #if ENABLE(TOUCH_EVENTS)
     , tapHighlightColor(o.tapHighlightColor)
-#endif
-#if ENABLE(CSS_VARIABLES)
-    , m_variables(o.m_variables)
 #endif
 {
 }
@@ -329,9 +319,6 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
 #endif
         && m_rubyPosition == o.m_rubyPosition
         && m_lineSnap == o.m_lineSnap
-#if ENABLE(CSS_VARIABLES)
-        && m_variables == o.m_variables
-#endif
         && m_lineAlign == o.m_lineAlign
         && StyleImage::imagesEquivalent(listStyleImage.get(), o.listStyleImage.get());
 }

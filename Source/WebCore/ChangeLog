@@ -1,3 +1,102 @@
+2013-11-28  Antti Koivisto  <antti@apple.com>
+
+        Remove feature: CSS variables
+        https://bugs.webkit.org/show_bug.cgi?id=114119
+
+        Reviewed by Andreas Kling.
+        
+        The feature is unmaintained and it is getting in the way of refactoring. Code quality is not up to
+        WebKit standards either.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.list.am:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSBasicShapes.cpp:
+        * css/CSSBasicShapes.h:
+        * css/CSSCalculationValue.cpp:
+        (WebCore::unitCategory):
+        (WebCore::hasDoubleValue):
+        (WebCore::CSSCalcPrimitiveValue::toCalcValue):
+        (WebCore::CSSCalcPrimitiveValue::computeLengthPx):
+        (WebCore::determineCategory):
+        (WebCore::CSSCalcBinaryOperation::primitiveType):
+        * css/CSSCalculationValue.h:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::operator==):
+        (WebCore::filterProperties):
+        (WebCore::CSSParser::createStylePropertySet):
+        (WebCore::CSSParser::addProperty):
+        (WebCore::CSSParser::validCalculationUnit):
+        (WebCore::CSSParser::validUnit):
+        (WebCore::CSSParser::createPrimitiveNumericValue):
+        (WebCore::CSSParser::parseValidPrimitive):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseReflect):
+        (WebCore::CSSParser::detectDashToken):
+        (WebCore::CSSParser::realLex):
+        * css/CSSParser.h:
+        * css/CSSParserMode.h:
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserValue::createCSSValue):
+        * css/CSSParserValues.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::isValidCSSUnitTypeForDoubleConversion):
+        (WebCore::CSSPrimitiveValue::primitiveType):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::getStringValue):
+        (WebCore::CSSPrimitiveValue::customCSSText):
+        (WebCore::CSSPrimitiveValue::equals):
+        * css/CSSPrimitiveValue.h:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::convertToLength):
+        * css/CSSProperty.cpp:
+        * css/CSSProperty.h:
+        (WebCore::CSSProperty::CSSProperty):
+        * css/CSSReflectValue.cpp:
+        * css/CSSReflectValue.h:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::setCssText):
+        * css/CSSValueList.cpp:
+        * css/CSSValueList.h:
+        * css/CSSVariableValue.h: Removed.
+        * css/Pair.h:
+        * css/Rect.h:
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::asText):
+        (WebCore::StylePropertySet::PropertyReference::cssName):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForPage):
+        (WebCore::StyleResolver::applyProperties):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        (WebCore::StyleResolver::applyProperty):
+        * css/StyleResolver.h:
+        * css/WebKitCSSTransformValue.cpp:
+        * css/WebKitCSSTransformValue.h:
+        (WebCore::WebKitCSSTransformValue::equals):
+        * css/makeprop.pl:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/style/StyleVariableData.h: Removed.
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2013-11-28  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Updating RTCPeerConnectionHandlerMock after r159769

@@ -44,8 +44,6 @@
     [RaisesException] void setMediaTypeOverride(DOMString mediaTypeOverride);
     [RaisesException] void setCSSExclusionsEnabled(boolean enabled);
     [RaisesException] void setCSSShapesEnabled(boolean enabled);
-    [RaisesException] void setCSSVariablesEnabled(boolean enabled);
-    [RaisesException] boolean cssVariablesEnabled();
     [RaisesException] void setCanStartMedia(boolean enabled);
     [RaisesException] void setEditingBehavior(DOMString behavior);
     void setLangAttributeAwareFormControlUIEnabled(boolean enabled);

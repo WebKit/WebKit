@@ -62,9 +62,6 @@ public:
     String customCSSText() const;
     bool equals(const CSSValueList&) const;
     bool equals(const CSSValue&) const;
-#if ENABLE(CSS_VARIABLES)
-    String customSerializeResolvingVariables(const HashMap<AtomicString, String>&) const;
-#endif
 
     void addSubresourceStyleURLs(ListHashSet<URL>&, const StyleSheetContents*) const;
 

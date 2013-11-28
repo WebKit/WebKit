@@ -58,16 +58,6 @@ public:
 
     bool equals(const Pair& other) const { return compareCSSValuePtr(m_first, other.m_first) && compareCSSValuePtr(m_second, other.m_second); }
 
-#if ENABLE(CSS_VARIABLES)
-    String serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
-    {
-        return generateCSSString(first()->customSerializeResolvingVariables(variables),
-                                 second()->customSerializeResolvingVariables(variables));
-    }
-    
-    bool hasVariableReference() const { return first()->hasVariableReference() || second()->hasVariableReference(); }
-#endif
-
 private:
     Pair() : m_first(0), m_second(0) { }
     Pair(PassRefPtr<CSSPrimitiveValue> first, PassRefPtr<CSSPrimitiveValue> second)

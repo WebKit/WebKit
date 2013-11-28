@@ -35,10 +35,6 @@
 #include <wtf/BitArray.h>
 #include <wtf/text/StringBuilder.h>
 
-#if ENABLE(CSS_VARIABLES)
-#include "CSSVariableValue.h"
-#endif
-
 #ifndef NDEBUG
 #include <stdio.h>
 #include <wtf/ASCIICType.h>
@@ -793,13 +789,6 @@ String StylePropertySet::asText() const
         String value;
 
         switch (propertyID) {
-#if ENABLE(CSS_VARIABLES)
-        case CSSPropertyVariable:
-            if (numDecls++)
-                result.append(' ');
-            result.append(property.cssText());
-            continue;
-#endif
         case CSSPropertyBackgroundPositionX:
             positionXPropertyIndex = n;
             continue;
@@ -1265,14 +1254,6 @@ PassRef<MutableStylePropertySet> MutableStylePropertySet::create(const CSSProper
 
 String StylePropertySet::PropertyReference::cssName() const
 {
-#if ENABLE(CSS_VARIABLES)
-    if (id() == CSSPropertyVariable) {
-        ASSERT(propertyValue()->isVariableValue());
-        if (!propertyValue()->isVariableValue())
-            return emptyString(); // Should not happen, but if it does, avoid a bad cast.
-        return "-webkit-var-" + toCSSVariableValue(propertyValue())->name();
-    }
-#endif
     return getPropertyNameString(id());
 }
 

@@ -1788,9 +1788,6 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
 
     switch (propertyID) {
         case CSSPropertyInvalid:
-#if ENABLE(CSS_VARIABLES)
-        case CSSPropertyVariable:
-#endif
             break;
 
         case CSSPropertyBackgroundColor:
