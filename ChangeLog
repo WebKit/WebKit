@@ -1,3 +1,16 @@
+2013-11-27  László Langó  <lango@inf.u-szeged.hu>
+
+        [EFL] The remote inspector does not show the base page.
+        https://bugs.webkit.org/show_bug.cgi?id=124942
+
+        Reviewed by Gyuyoung Kim.
+
+        On EFL the remote inspector does not show the base page about
+        which pages are available for debug. This should be fixed for
+        further inspector development.
+
+        * Source/PlatformEfl.cmake:
+
 2013-11-26  Marcelo Lira  <marcelo.lira@openbossa.org>
 
         Nix upstreaming - Adding build files and supporting scripts
