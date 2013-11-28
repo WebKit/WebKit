@@ -1,5 +1,26 @@
 2013-11-27  Sam Weinig  <sam@webkit.org>
 
+        Give the PageClient a chance to handle geolocation permission requests if the UIClient doesn't handle it
+        https://bugs.webkit.org/show_bug.cgi?id=124955
+
+        Reviewed by Dan Bernstein.
+
+        Use the new PageClient function to remove the need for WKContentView to take over the WKPageUIClient.
+
+        * UIProcess/API/ios/PageClientImplIOS.h:
+        * UIProcess/API/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::decidePolicyForGeolocationPermissionRequest):
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView _decidePolicyForGeolocationRequestFromOrigin:frame:request:]):
+        (-[WKContentView _commonInitWithProcessGroup:browsingContextGroup:]):
+        * UIProcess/API/ios/WKContentViewInternal.h:
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::decidePolicyForGeolocationPermissionRequest):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestGeolocationPermissionForFrame):
+
+2013-11-27  Sam Weinig  <sam@webkit.org>
+
         Fix the iOS build.
 
         * UIProcess/API/ios/WKGeolocationProviderIOS.mm:

@@ -144,6 +144,12 @@ void PageClientImpl::toolTipChanged(const String&, const String&)
     notImplemented();
 }
 
+bool PageClientImpl::decidePolicyForGeolocationPermissionRequest(WebFrameProxy& frame, WebSecurityOrigin& origin, GeolocationPermissionRequestProxy& request)
+{
+    [m_view _decidePolicyForGeolocationRequestFromOrigin:origin frame:frame request:request];
+    return true;
+}
+
 void PageClientImpl::didChangeContentSize(const IntSize& contentsSize)
 {
     [m_view _didChangeContentSize:contentsSize];

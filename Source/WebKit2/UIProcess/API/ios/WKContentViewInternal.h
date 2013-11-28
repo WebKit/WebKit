@@ -37,7 +37,10 @@ struct ViewportArguments;
 
 namespace WebKit {
 class DrawingAreaProxy;
+class GeolocationPermissionRequestProxy;
 class LayerTreeContext;
+class WebFrameProxy;
+class WebSecurityOrigin;
 }
 
 @class WebIOSEvent;
@@ -59,5 +62,7 @@ class LayerTreeContext;
 - (void)_selectionChanged;
 - (BOOL)_interpretKeyEvent:(WebIOSEvent *)theEvent isCharEvent:(BOOL)isCharEvent;
 - (void)_didChangeViewportArguments:(const WebCore::ViewportArguments&)viewportArguments;
+
+- (void)_decidePolicyForGeolocationRequestFromOrigin:(WebKit::WebSecurityOrigin&)origin frame:(WebKit::WebFrameProxy&)frame request:(WebKit::GeolocationPermissionRequestProxy&)permissionRequest;
 
 @end

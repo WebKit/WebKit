@@ -57,6 +57,7 @@ private:
     virtual void pageClosed() OVERRIDE;
     virtual void preferencesDidChange() OVERRIDE;
     virtual void toolTipChanged(const String&, const String&) OVERRIDE;
+    virtual bool decidePolicyForGeolocationPermissionRequest(WebFrameProxy&, WebSecurityOrigin&, GeolocationPermissionRequestProxy&) OVERRIDE;
     virtual void didChangeContentSize(const WebCore::IntSize&) OVERRIDE;
     virtual void setCursor(const WebCore::Cursor&) OVERRIDE;
     virtual void setCursorHiddenUntilMouseMoves(bool) OVERRIDE;

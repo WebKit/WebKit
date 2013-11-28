@@ -33,9 +33,10 @@
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextGroupPrivate.h"
 #import "WKGeolocationProviderIOS.h"
-#import "WKProcessGroupPrivate.h"
 #import "WKInteractionView.h"
+#import "WKProcessGroupPrivate.h"
 #import "WebContext.h"
+#import "WebFrameProxy.h"
 #import "WebPageGroup.h"
 #import "WebSystemInterface.h"
 #import <QuartzCore/CALayerHost.h>
@@ -147,12 +148,9 @@ using namespace WebKit;
     _page->didFinishZooming(scale);
 }
 
-static void decidePolicyForGeolocationPermissionRequest(WKPageRef page, WKFrameRef frame, WKSecurityOriginRef origin, WKGeolocationPermissionRequestRef permissionRequest, const void* clientInfo)
+- (void)_decidePolicyForGeolocationRequestFromOrigin:(WebSecurityOrigin&)origin frame:(WebFrameProxy&)frame request:(GeolocationPermissionRequestProxy&)permissionRequest
 {
-    WKContentView *view = reinterpret_cast<WKContentView *>(const_cast<void*>(clientInfo));
-    ASSERT([view isKindOfClass:[WKContentView class]]);
-
-    [[view->_processGroup _geolocationProvider] decidePolicyForGeolocationRequestFromOrigin:origin frame:frame request:permissionRequest window:[view window]];
+    [[_processGroup _geolocationProvider] decidePolicyForGeolocationRequestFromOrigin:toAPI(&origin) frame:toAPI(&frame) request:toAPI(&permissionRequest) window:[self window]];
 }
 
 - (void)_commonInitWithProcessGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup
@@ -173,58 +171,6 @@ static void decidePolicyForGeolocationPermissionRequest(WKPageRef page, WKFrameR
     _page->initializeWebPage();
     _page->setIntrinsicDeviceScaleFactor([UIScreen mainScreen].scale);
     _page->setUseFixedLayout(true);
-
-    WKPageUIClient pageUIClient = {
-        kWKPageUIClientCurrentVersion,
-        self,
-        0, // createNewPage_deprecatedForUseWithV0
-        0, // showPage
-        0, // closeOtherPage
-        0, // takeFocus
-        0, // focus
-        0, // unfocus
-        0, // runJavaScriptAlert
-        0, // runJavaScriptConfirm
-        0, // runJavaScriptPrompt
-        0, // setStatusText
-        0, // mouseDidMoveOverElement_deprecatedForUseWithV0
-        0, // missingPluginButtonClicked
-        0, // didNotHandleKeyEvent
-        0, // didNotHandleWheelEvent
-        0, // toolbarsAreVisible
-        0, // setToolbarsAreVisible
-        0, // menuBarIsVisible
-        0, // setMenuBarIsVisible
-        0, // statusBarIsVisible
-        0, // setStatusBarIsVisible
-        0, // isResizable
-        0, // setIsResizable
-        0, // getWindowFrameOtherPage
-        0, // setWindowFrameOtherPage
-        0, // runBeforeUnloadConfirmPanel
-        0, // didDraw
-        0, // pageDidScroll
-        0, // exceededDatabaseQuota
-        0, // runOpenPanel
-        decidePolicyForGeolocationPermissionRequest,
-        0, // headerHeight
-        0, // footerHeight
-        0, // drawHeader
-        0, // drawFooter
-        0, // printFrame
-        0, // runModal
-        0, // didCompleteRubberBandForMainFrame
-        0, // saveDataToFileInDownloadsFolder
-        0, // shouldInterruptJavaScript
-        0, // createOtherPage
-        0, // mouseDidMoveOverElement
-        0, // decidePolicyForNotificationPermissionRequest
-        0, // unavailablePluginButtonClicked
-        0, // showColorPicker
-        0, // hideColorPicker
-        0, // unavailablePluginButtonClicked
-    };
-    WKPageSetPageUIClient(toAPI(_page.get()), &pageUIClient);
 
     _browsingContextController = adoptNS([[WKBrowsingContextController alloc] _initWithPageRef:toAPI(_page.get())]);
     [_browsingContextController setLoadDelegateInternal:self];

@@ -120,6 +120,11 @@ public:
 
     virtual void toolTipChanged(const String&, const String&) = 0;
 
+    virtual bool decidePolicyForGeolocationPermissionRequest(WebFrameProxy&, WebSecurityOrigin&, GeolocationPermissionRequestProxy&)
+    {
+        return false;
+    }
+
 #if USE(TILED_BACKING_STORE)
     virtual void pageDidRequestScroll(const WebCore::IntPoint&) = 0;
     virtual void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect) = 0;

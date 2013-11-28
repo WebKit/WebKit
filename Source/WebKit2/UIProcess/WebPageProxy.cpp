@@ -3931,8 +3931,13 @@ void WebPageProxy::requestGeolocationPermissionForFrame(uint64_t geolocationID, 
     RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
     RefPtr<GeolocationPermissionRequestProxy> request = m_geolocationPermissionRequestManager.createRequest(geolocationID);
 
-    if (!m_uiClient.decidePolicyForGeolocationPermissionRequest(this, frame, origin.get(), request.get()))
-        request->deny();
+    if (m_uiClient.decidePolicyForGeolocationPermissionRequest(this, frame, origin.get(), request.get()))
+        return;
+
+    if (m_pageClient->decidePolicyForGeolocationPermissionRequest(*frame, *origin, *request))
+        return;
+
+    request->deny();
 }
 
 void WebPageProxy::requestNotificationPermission(uint64_t requestID, const String& originString)
