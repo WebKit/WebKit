@@ -81,6 +81,7 @@ namespace JSC {
         
         void gatherConservativeRoots(ConservativeRoots&);
         void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&);
+        void sanitizeStack();
 
         Register* getBaseOfStack() const
         {
@@ -154,6 +155,7 @@ namespace JSC {
         Register* m_useableEnd;
         PageReservation m_reservation;
         CallFrame*& m_topCallFrame;
+        Register* m_lastStackTop;
 
         friend class LLIntOffsetsExtractor;
     };

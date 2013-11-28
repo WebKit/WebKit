@@ -59,6 +59,7 @@ struct OSREntryData {
     BitVector m_localsForcedDouble;
     BitVector m_localsForcedMachineInt;
     Vector<OSREntryReshuffling> m_reshufflings;
+    BitVector m_machineStackUsed;
 };
 
 inline unsigned getOSREntryDataBytecodeIndex(OSREntryData* osrEntryData)
