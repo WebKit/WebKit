@@ -793,9 +793,6 @@ webkit.org/b/76439 [ Debug ] fast/dom/shadow/content-element-outside-shadow.html
 # ENABLE(CUSTOM_ELEMENTS) is disabled.
 fast/dom/custom
 
-# CSS Variables are not yet enabled.
-webkit.org/b/85580 fast/css/variables
-
 # CSS image-resolution is not yet enabled.
 webkit.org/b/85262 fast/css/image-resolution
 

@@ -1,5 +1,12 @@
 2013-11-28  Antti Koivisto  <antti@apple.com>
 
+        No need to skip css variables tests as they were removed.
+
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
+2013-11-28  Antti Koivisto  <antti@apple.com>
+
         Remove feature: CSS variables
         https://bugs.webkit.org/show_bug.cgi?id=114119
 
