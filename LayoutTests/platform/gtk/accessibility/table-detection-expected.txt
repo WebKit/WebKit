@@ -5,7 +5,7 @@ AXRole: AXTable
 AXParent: AXWebArea
 AXChildren: 4
 AXPosition: { 8.000000, 54.000000 }
-AXSize: { 62.000000, 43.000000 }
+AXSize: { 62.000000, 45.000000 }
 AXTitle: 
 AXDescription: 
 AXFocusable: 0
@@ -27,7 +27,7 @@ This should be a table because cells have borders.
 AXRole: AXTable
 AXParent: AXWebArea
 AXChildren: 2
-AXPosition: { 8.000000, 482.000000 }
+AXPosition: { 8.000000, 484.000000 }
 AXSize: { 68.000000, 28.000000 }
 AXTitle: 
 AXDescription: 

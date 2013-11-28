@@ -3,6 +3,21 @@
         RenderTableSection Blink merge asserting
         https://bugs.webkit.org/show_bug.cgi?id=124857
 
+        Rebase GTK results after r159848.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/gtk/accessibility/table-detection-expected.txt:
+        * platform/gtk/fast/forms/input-value-expected.png:
+        * platform/gtk/fast/forms/input-value-expected.txt:
+        * platform/gtk/fast/table/[...]:
+        * platform/gtk/tables/[...]:
+
+2013-11-28  Laszlo Vidacs  <lac@inf.u-szeged.hu>
+
+        RenderTableSection Blink merge asserting
+        https://bugs.webkit.org/show_bug.cgi?id=124857
+
         Reviewed by Csaba Osztrogonác.
 
         Skipped tests enabled.
