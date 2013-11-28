@@ -3,7 +3,27 @@
         RenderTableSection Blink merge asserting
         https://bugs.webkit.org/show_bug.cgi?id=124857
 
-        Rebase GTK results after r159848.
+        Rebase EFL results (and the remaining Mac) after r159848.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * fast/table/anonymous-table-section-removed.html: Updated.
+        * platform/efl/accessibility/table-attributes-expected.txt: Added.
+        * platform/efl/accessibility/table-sections-expected.txt: Added.
+        * platform/efl/fast/forms/input-value-expected.png:
+        * platform/efl/fast/forms/input-value-expected.txt:
+        * platform/efl/fast/table/[...]:
+        * platform/efl/tables/[...]:
+        * platform/mac/editing/deleting/deletionUI-single-instance-expected.txt:
+        * platform/mac-mountainlion/fast/forms/input-value-expected.txt: 
+        * platform/mac-mountainlion/tables/mozilla/bugs/bug26178-expected.txt:
+
+2013-11-28  Laszlo Vidacs  <lac@inf.u-szeged.hu>
+
+        RenderTableSection Blink merge asserting
+        https://bugs.webkit.org/show_bug.cgi?id=124857
+
+        Rebase Mac results after r159848.
 
         Reviewed by Csaba Osztrogonác.
 
