@@ -220,13 +220,14 @@ webkit.org/b/98940 fast/events/clipboard-dataTransferItemList.html [ Skip ]
 webkit.org/b/98940 fast/events/drag-dataTransferItemList.html [ Skip ]
 webkit.org/b/98940 fast/events/drag-dataTransferItemList-file-handling.html [ Skip ]
 
+# Custom MIME type support in DataTransfer is not yet implemented; this test was added
+# by Google while implementing a different pasteboard API that was only being used by
+# Chromium and Qt, might make sense to remove.
+webkit.org/b/99068 editing/pasteboard/clipboard-customData.html [ Failure ]
+
 # setAutomaticLinkDetectionEnabled is not yet implemented.
 webkit.org/b/99069 editing/inserting/typing-space-to-trigger-smart-link.html [ Failure ]
 webkit.org/b/85463 editing/inserting/smart-link-when-caret-is-moved-before-URL.html [ Failure ]
-
-# Custom MIME type support in DataTransfer is not yet implemented.
-webkit.org/b/99068 editing/pasteboard/clipboard-customData.html [ Failure ]
-webkit.org/b/99068 fast/events/drag-customData.html [ Failure ]
 
 # PasteBoard::plainText() does not support file names.
 webkit.org/b/99070 editing/pasteboard/drag-files-to-editable-element.html [ Failure ]

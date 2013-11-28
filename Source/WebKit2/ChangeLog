@@ -1,3 +1,14 @@
+2013-11-27  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] Support custom types for drag and drop data
+        https://bugs.webkit.org/show_bug.cgi?id=124659
+
+        Reviewed by Martin Robinson.
+
+        * Shared/gtk/ArgumentCodersGtk.cpp:
+        (CoreIPC::encodeDataObject): encode the unknown types data.
+        (CoreIPC::decodeDataObject): decode the unknown types data.
+
 2013-11-27  Sam Weinig  <sam@webkit.org>
 
         Give the PageClient a chance to handle geolocation permission requests if the UIClient doesn't handle it

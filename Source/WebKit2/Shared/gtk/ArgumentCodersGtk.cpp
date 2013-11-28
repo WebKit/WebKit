@@ -108,6 +108,11 @@ static void encodeDataObject(ArgumentEncoder& encoder, const DataObjectGtk* data
     encoder << hasImage;
     if (hasImage)
         encodeImage(encoder, dataObject->image());
+
+    bool hasUnknownTypeData = dataObject->hasUnknownTypeData();
+    encoder << hasUnknownTypeData;
+    if (hasUnknownTypeData)
+        encoder << dataObject->unknownTypes();
 }
 
 static bool decodeDataObject(ArgumentDecoder& decoder, RefPtr<DataObjectGtk>& dataObject)
@@ -162,6 +167,19 @@ static bool decodeDataObject(ArgumentDecoder& decoder, RefPtr<DataObjectGtk>& da
         if (!decodeImage(decoder, image))
             return false;
         data->setImage(image.get());
+    }
+
+    bool hasUnknownTypeData;
+    if (!decoder.decode(hasUnknownTypeData))
+        return false;
+    if (hasUnknownTypeData) {
+        HashMap<String, String> unknownTypes;
+        if (!decoder.decode(unknownTypes))
+            return false;
+
+        auto end = unknownTypes.end();
+        for (auto it = unknownTypes.begin(); it != end; ++it)
+            data->setUnknownTypeData(it->key, it->value);
     }
 
     dataObject = data;

@@ -1,3 +1,36 @@
+2013-11-27  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] Support custom types for drag and drop data
+        https://bugs.webkit.org/show_bug.cgi?id=124659
+
+        Reviewed by Martin Robinson.
+
+        Covered by fast/events/drag-customData.html.
+
+        * platform/gtk/DataObjectGtk.cpp:
+        (WebCore::DataObjectGtk::unknownTypes): returns a hash map with all custom types set.
+        (WebCore::DataObjectGtk::clearAllExceptFilenames): clear custom types.
+        * platform/gtk/DataObjectGtk.h:
+        (WebCore::DataObjectGtk::hasUnknownTypeData): returns whether custom types are set.
+        (WebCore::DataObjectGtk::unknownTypeData): returns the data for a custom type.
+        (WebCore::DataObjectGtk::setUnknownTypeData): sets the data for a custom type.
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writeString): handle unknown types as custom.
+        (WebCore::Pasteboard::writePasteboard): ditto.
+        (WebCore::Pasteboard::hasData): also check for custom types.
+        (WebCore::Pasteboard::types): also obtain the list of custom types.
+        (WebCore::Pasteboard::readString): handle unknown types as custom.
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::initGdkAtoms): new unknown atom.
+        (WebCore::PasteboardHelper::PasteboardHelper): add custom type to the list of targets.
+        (WebCore::PasteboardHelper::fillSelectionData): turns any custom types' data into a GVariant, which
+        is in turn serialized to a single string for GtkSelectionData to hold.
+        (WebCore::PasteboardHelper::targetListForDataObject): add custom data to the target list if any is
+        set.
+        (WebCore::PasteboardHelper::fillDataObjectFromDropData): retrieve the custom types and their data
+        from the serialized GVariant string held by GtkSelectionData.
+        (WebCore::PasteboardHelper::dropAtomsForContext): handle custom types.
+
 2013-11-27  Eric Carlson  <eric.carlson@apple.com>
 
         Allow the QuickTime plug-in to be replaced by script in an isolated word

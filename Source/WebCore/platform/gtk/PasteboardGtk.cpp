@@ -149,8 +149,10 @@ bool Pasteboard::writeString(const String& type, const String& data)
     case ClipboardDataTypeText:
         m_dataObject->setText(data);
         return true;
-    case ClipboardDataTypeImage:
     case ClipboardDataTypeUnknown:
+        m_dataObject->setUnknownTypeData(type, data);
+        return true;
+    case ClipboardDataTypeImage:
         break;
     }
 
@@ -246,6 +248,12 @@ void Pasteboard::writePasteboard(const Pasteboard& sourcePasteboard)
         m_dataObject->setURIList(sourceDataObject->uriList());
     if (sourceDataObject->hasImage())
         m_dataObject->setImage(sourceDataObject->image());
+    if (sourceDataObject->hasUnknownTypeData()) {
+        auto types = m_dataObject->unknownTypes();
+        auto end = types.end();
+        for (auto it = types.begin(); it != end; ++it)
+            m_dataObject->setUnknownTypeData(it->key, it->value);
+    }
 
     if (m_gtkClipboard)
         PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_gtkClipboard);
@@ -339,7 +347,7 @@ bool Pasteboard::hasData()
     if (m_gtkClipboard)
         PasteboardHelper::defaultPasteboardHelper()->getClipboardContents(m_gtkClipboard);
 
-    return m_dataObject->hasText() || m_dataObject->hasMarkup() || m_dataObject->hasURIList() || m_dataObject->hasImage();
+    return m_dataObject->hasText() || m_dataObject->hasMarkup() || m_dataObject->hasURIList() || m_dataObject->hasImage() || m_dataObject->hasUnknownTypeData();
 }
 
 Vector<String> Pasteboard::types()
@@ -365,6 +373,11 @@ Vector<String> Pasteboard::types()
     if (m_dataObject->hasFilenames())
         types.append(ASCIILiteral("Files"));
 
+    auto unknownTypes = m_dataObject->unknownTypes();
+    auto end = unknownTypes.end();
+    for (auto it = unknownTypes.begin(); it != end; ++it)
+        types.append(it->key);
+
     return types;
 }
 
@@ -382,8 +395,9 @@ String Pasteboard::readString(const String& type)
         return m_dataObject->markup();
     case ClipboardDataTypeText:
         return m_dataObject->text();
-    case ClipboardDataTypeImage:
     case ClipboardDataTypeUnknown:
+        return m_dataObject->unknownTypeData(type);
+    case ClipboardDataTypeImage:
         break;
     }
 

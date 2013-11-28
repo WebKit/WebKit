@@ -50,6 +50,11 @@ String DataObjectGtk::markup() const
     return m_markup;
 }
 
+HashMap<String, String> DataObjectGtk::unknownTypes() const
+{
+    return m_unknownTypeData;
+}
+
 void DataObjectGtk::setText(const String& newText)
 {
     m_range = 0;
@@ -155,6 +160,7 @@ void DataObjectGtk::clearAllExceptFilenames()
     m_url = URL();
     m_image = 0;
     m_range = 0;
+    m_unknownTypeData.clear();
 }
 
 void DataObjectGtk::clearAll()
