@@ -1,3 +1,12 @@
+2013-11-28  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        Typo fix after r159834 to fix 32 bit builds.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-11-27  Nadav Rotem  <nrotem@apple.com>
 
         Add a bunch of early exits and local optimizations to the x86 assembler.

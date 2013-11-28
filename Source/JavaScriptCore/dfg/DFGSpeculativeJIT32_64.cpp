@@ -3690,7 +3690,7 @@ void SpeculativeJIT::compile(Node* node)
             GPRTemporary result(this);
             GPRReg resultGPR = result.gpr();
             m_jit.move(TrustedImmPtr(registers), resultGPR);
-            storageResult(resultGPR);
+            storageResult(resultGPR, node);
             break;
         }
         
