@@ -1,3 +1,9 @@
+2013-11-27  Sam Weinig  <sam@webkit.org>
+
+        Fix the iOS build.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2013-11-25  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] WebKit version in user agent string is incorrect.

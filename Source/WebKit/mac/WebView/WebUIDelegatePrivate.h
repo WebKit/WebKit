@@ -26,6 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebKit/WebAllowDenyPolicyListener.h>
 #import <WebKit/WebUIDelegate.h>
 
 #if !defined(ENABLE_DASHBOARD_SUPPORT)
@@ -124,11 +125,6 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 @class DOMElement;
 @class DOMNode;
 @class WebSecurityOrigin;
-
-@protocol WebAllowDenyPolicyListener <NSObject>
-- (void)allow;
-- (void)deny;
-@end
 
 #if ENABLE_FULLSCREEN_API
 @protocol WebKitFullScreenListener<NSObject>
