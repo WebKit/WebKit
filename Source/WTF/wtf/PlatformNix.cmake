@@ -4,6 +4,8 @@ list(APPEND WTF_SOURCES
     gobject/GlibUtilities.cpp
 
     gtk/MainThreadGtk.cpp
+
+    nix/RunLoopNix.cpp
 )
 
 list(APPEND WTF_LIBRARIES

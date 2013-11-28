@@ -1,16 +1,16 @@
 /*
-*  Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions
-* are met:
-* 1. Redistributions of source code must retain the above copyright
-*    notice, this list of conditions and the following disclaimer.
-* 2. Redistributions in binary form must reproduce the above copyright
-*    notice, this list of conditions and the following disclaimer in the
-*    documentation and/or other materials provided with the distribution.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
  * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
@@ -28,6 +28,10 @@
 
 #if !defined(ENABLE_3D_RENDERING)
 #define ENABLE_3D_RENDERING 1
+#endif
+
+#if !defined(ENABLE_8BIT_TEXTRUN)
+#define ENABLE_8BIT_TEXTRUN 1
 #endif
 
 #if !defined(ENABLE_ACCELERATED_2D_CANVAS)
@@ -150,6 +154,10 @@
 #define ENABLE_INSPECTOR_SERVER 1
 #endif
 
+#if !defined(ENABLE_INPUT_SPEECH)
+#define ENABLE_INPUT_SPEECH 1
+#endif
+
 #if !defined(ENABLE_JAVASCRIPT_DEBUGGER)
 #define ENABLE_JAVASCRIPT_DEBUGGER 1
 #endif
@@ -174,6 +182,10 @@
 #define ENABLE_MATHML 1
 #endif
 
+#if !defined(ENABLE_MEDIA_STREAM)
+#define ENABLE_MEDIA_STREAM 0
+#endif
+
 #if !defined(ENABLE_METER_ELEMENT)
 #define ENABLE_METER_ELEMENT 1
 #endif
@@ -188,6 +200,14 @@
 
 #if !defined(ENABLE_NETWORK_INFO)
 #define ENABLE_NETWORK_INFO 1
+#endif
+
+#if !defined(ENABLE_NETWORK_PROCESS)
+#define ENABLE_NETWORK_PROCESS 0
+#endif
+
+#if !defined(ENABLE_OPENTYPE_VERTICAL)
+#define ENABLE_OPENTYPE_VERTICAL 1
 #endif
 
 #if !defined(ENABLE_PAGE_VISIBILITY_API)
