@@ -791,6 +791,8 @@ public:
     unsigned requiredRegisterCountForExit();
     unsigned requiredRegisterCountForExecutionAndExit();
     
+    WriteBarrierBase<Unknown>* tryGetRegisters(Node*);
+    
     VM& m_vm;
     Plan& m_plan;
     CodeBlock* m_codeBlock;

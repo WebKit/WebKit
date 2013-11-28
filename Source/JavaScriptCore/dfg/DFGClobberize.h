@@ -155,8 +155,13 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case CreateActivation:
     case CreateArguments:
         write(SideState);
+        write(Watchpoint_fire);
         read(GCState);
         write(GCState);
+        return;
+        
+    case ActivationAllocationWatchpoint:
+        read(Watchpoint_fire);
         return;
 
     // These are forward-exiting nodes that assume that the subsequent instruction

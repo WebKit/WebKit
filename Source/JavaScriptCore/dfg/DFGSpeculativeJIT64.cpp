@@ -3990,6 +3990,14 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case GetClosureRegisters: {
+        if (WriteBarrierBase<Unknown>* registers = m_jit.graph().tryGetRegisters(node->child1().node())) {
+            GPRTemporary result(this);
+            GPRReg resultGPR = result.gpr();
+            m_jit.move(TrustedImmPtr(registers), resultGPR);
+            storageResult(resultGPR, node);
+            break;
+        }
+        
         SpeculateCellOperand scope(this, node->child1());
         GPRTemporary result(this);
         GPRReg scopeGPR = scope.gpr();
@@ -4617,6 +4625,11 @@ void SpeculativeJIT::compile(Node* node)
                 framePointerOffsetToGetActivationRegisters()));
         
         cellResult(resultGPR, node);
+        break;
+    }
+        
+    case ActivationAllocationWatchpoint: {
+        noResult(node);
         break;
     }
         

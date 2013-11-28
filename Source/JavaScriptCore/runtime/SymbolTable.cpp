@@ -99,6 +99,7 @@ SymbolTable::SymbolTable(VM& vm)
     , m_usesNonStrictEval(false)
     , m_captureStart(0)
     , m_captureEnd(0)
+    , m_activationAllocatedOnce(ClearWatchpoint)
 {
 }
 

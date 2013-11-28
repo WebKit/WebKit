@@ -35,6 +35,7 @@
 #include "FullBytecodeLiveness.h"
 #include "FunctionExecutableDump.h"
 #include "JIT.h"
+#include "JSActivation.h"
 #include "OperandsInlines.h"
 #include "Operations.h"
 #include <wtf/CommaPrinter.h>
@@ -720,6 +721,18 @@ unsigned Graph::requiredRegisterCountForExit()
 unsigned Graph::requiredRegisterCountForExecutionAndExit()
 {
     return std::max(frameRegisterCount(), requiredRegisterCountForExit());
+}
+
+WriteBarrierBase<Unknown>* Graph::tryGetRegisters(Node* node)
+{
+    if (!node->hasConstant())
+        return 0;
+    JSActivation* activation = jsDynamicCast<JSActivation*>(valueOfJSConstant(node));
+    if (!activation)
+        return 0;
+    if (!activation->isTornOff())
+        return 0;
+    return activation->registers();
 }
 
 } } // namespace JSC::DFG

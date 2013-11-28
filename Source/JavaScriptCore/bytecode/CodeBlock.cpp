@@ -1365,6 +1365,7 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             ++it; // depth
             printLocationAndOp(out, exec, location, it, "resolve_scope");
             out.printf("%s, %s, %d", registerName(r0).data(), idName(id0, identifier(id0)).data(), resolveModeAndType);
+            ++it;
             break;
         }
         case op_get_from_scope: {
@@ -1764,6 +1765,8 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), scope, ident, Get, type);
             instructions[i + 3].u.operand = op.type;
             instructions[i + 4].u.operand = op.depth;
+            if (op.activation)
+                instructions[i + 5].u.activation.set(*vm(), ownerExecutable, op.activation);
             break;
         }
 
@@ -1781,7 +1784,9 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), scope, ident, Get, modeAndType.type());
 
             instructions[i + 4].u.operand = ResolveModeAndType(modeAndType.mode(), op.type).operand();
-            if (op.structure)
+            if (op.type == GlobalVar || op.type == GlobalVarWithVarInjectionChecks)
+                instructions[i + 5].u.watchpointSet = op.watchpointSet;
+            else if (op.structure)
                 instructions[i + 5].u.structure.set(*vm(), ownerExecutable, op.structure);
             instructions[i + 6].u.pointer = reinterpret_cast<void*>(op.operand);
             break;
@@ -1794,10 +1799,9 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), scope, ident, Put, modeAndType.type());
 
             instructions[i + 4].u.operand = ResolveModeAndType(modeAndType.mode(), op.type).operand();
-            if (op.type == GlobalVar || op.type == GlobalVarWithVarInjectionChecks) {
-                ASSERT(!op.structure);
+            if (op.type == GlobalVar || op.type == GlobalVarWithVarInjectionChecks)
                 instructions[i + 5].u.watchpointSet = op.watchpointSet;
-            } else if (op.structure)
+            else if (op.structure)
                 instructions[i + 5].u.structure.set(*vm(), ownerExecutable, op.structure);
             instructions[i + 6].u.pointer = reinterpret_cast<void*>(op.operand);
             break;
@@ -2183,6 +2187,15 @@ void CodeBlock::finalizeUnconditionally()
                     dataLogF("Clearing LLInt get callee with function %p.\n", curInstruction[2].u.jsCell.get());
                 curInstruction[2].u.jsCell.clear();
                 break;
+            case op_resolve_scope: {
+                WriteBarrierBase<JSActivation>& activation = curInstruction[5].u.activation;
+                if (!activation || Heap::isMarked(activation.get()))
+                    break;
+                if (Options::verboseOSR())
+                    dataLogF("Clearing dead activation %p.\n", activation.get());
+                activation.clear();
+                break;
+            }
             case op_get_from_scope:
             case op_put_to_scope: {
                 ResolveModeAndType modeAndType =
@@ -2193,7 +2206,7 @@ void CodeBlock::finalizeUnconditionally()
                 if (!structure || Heap::isMarked(structure.get()))
                     break;
                 if (Options::verboseOSR())
-                    dataLogF("Clearing LLInt scope access with structure %p.\n", structure.get());
+                    dataLogF("Clearing scope access with structure %p.\n", structure.get());
                 structure.clear();
                 break;
             }

@@ -117,6 +117,7 @@ struct Instruction {
         ArrayAllocationProfile* arrayAllocationProfile;
         ObjectAllocationProfile* objectAllocationProfile;
         VariableWatchpointSet* watchpointSet;
+        WriteBarrierBase<JSActivation> activation;
         void* pointer;
         bool* predicatePointer;
     } u;

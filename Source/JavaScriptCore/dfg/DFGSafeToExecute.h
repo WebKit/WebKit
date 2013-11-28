@@ -243,6 +243,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case Int52ToValue:
     case InvalidationPoint:
     case NotifyWrite:
+    case ActivationAllocationWatchpoint:
         return true;
         
     case GetByVal:

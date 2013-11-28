@@ -169,7 +169,7 @@ namespace JSC {
     macro(op_get_pnames, 6) \
     macro(op_next_pname, 7) \
     \
-    macro(op_resolve_scope, 5) \
+    macro(op_resolve_scope, 6) \
     macro(op_get_from_scope, 8) /* has value profiling */ \
     macro(op_put_to_scope, 7) \
     \

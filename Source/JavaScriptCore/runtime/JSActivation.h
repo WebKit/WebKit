@@ -50,6 +50,7 @@ public:
     {
         SymbolTable* symbolTable = codeBlock->symbolTable();
         ASSERT(codeBlock->codeType() == FunctionCode);
+        symbolTable->m_activationAllocatedOnce.notifyWrite();
         JSActivation* activation = new (
             NotNull,
             allocateCell<JSActivation>(

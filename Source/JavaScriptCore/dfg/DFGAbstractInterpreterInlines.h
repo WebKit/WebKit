@@ -1145,6 +1145,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             m_graph, m_codeBlock->globalObjectFor(node->codeOrigin)->activationStructure());
         m_state.setHaveStructures(true);
         break;
+        
+    case ActivationAllocationWatchpoint:
+        break;
     
     case CreateArguments:
         forNode(node).setType(SpecArguments);

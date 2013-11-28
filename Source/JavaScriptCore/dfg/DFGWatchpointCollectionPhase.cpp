@@ -126,6 +126,10 @@ private:
             addLazily(globalObject()->varInjectionWatchpoint());
             break;
             
+        case ActivationAllocationWatchpoint:
+            addLazily(m_node->symbolTable()->m_activationAllocatedOnce);
+            break;
+            
         default:
             break;
         }

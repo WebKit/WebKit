@@ -399,6 +399,8 @@ private:
             break;
         case VariableWatchpoint:
             break;
+        case ActivationAllocationWatchpoint:
+            break;
         case GetMyScope:
             compileGetMyScope();
             break;
@@ -2192,6 +2194,11 @@ private:
     
     void compileGetClosureRegisters()
     {
+        if (WriteBarrierBase<Unknown>* registers = m_graph.tryGetRegisters(m_node->child1().node())) {
+            setStorage(m_out.constIntPtr(registers));
+            return;
+        }
+        
         setStorage(m_out.loadPtr(
             lowCell(m_node->child1()), m_heaps.JSVariableObject_registers));
     }

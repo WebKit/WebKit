@@ -742,7 +742,7 @@ struct Node {
         return op() == GetClosureVar || op() == PutClosureVar;
     }
 
-    unsigned varNumber()
+    int varNumber()
     {
         ASSERT(hasVarNumber());
         return m_opInfo;
@@ -757,7 +757,7 @@ struct Node {
     {
         return bitwise_cast<WriteBarrier<Unknown>*>(m_opInfo);
     }
-
+    
     bool hasResult()
     {
         return m_flags & NodeResultMask;
@@ -1059,6 +1059,17 @@ struct Node {
     {
         ASSERT(hasFunctionExprIndex());
         return m_opInfo;
+    }
+    
+    bool hasSymbolTable()
+    {
+        return op() == ActivationAllocationWatchpoint;
+    }
+    
+    SymbolTable* symbolTable()
+    {
+        ASSERT(hasSymbolTable());
+        return reinterpret_cast<SymbolTable*>(m_opInfo);
     }
     
     bool hasArrayMode()

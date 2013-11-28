@@ -187,6 +187,7 @@ namespace JSC { namespace DFG {
     macro(NotifyWrite, NodeMustGenerate) \
     macro(VariableWatchpoint, NodeMustGenerate) \
     macro(VarInjectionWatchpoint, NodeMustGenerate) \
+    macro(ActivationAllocationWatchpoint, NodeMustGenerate) \
     macro(CheckFunction, NodeMustGenerate) \
     macro(AllocationProfileWatchpoint, NodeMustGenerate) \
     \

@@ -108,6 +108,14 @@ public:
         fireAllSlow();
     }
     
+    void notifyWrite()
+    {
+        if (state() == ClearWatchpoint)
+            startWatching();
+        else
+            fireAll();
+    }
+
     int8_t* addressOfState() { return &m_state; }
     int8_t* addressOfSetIsNotEmpty() { return &m_setIsNotEmpty; }
     
@@ -198,6 +206,19 @@ public:
         if (decodeState(m_data) == ClearWatchpoint)
             return;
         m_data = encodeState(IsInvalidated);
+        WTF::storeStoreFence();
+    }
+    
+    void notifyWrite()
+    {
+        if (isFat()) {
+            fat()->notifyWrite();
+            return;
+        }
+        if (decodeState(m_data) == ClearWatchpoint)
+            m_data = encodeState(IsWatched);
+        else
+            m_data = encodeState(IsInvalidated);
         WTF::storeStoreFence();
     }
     

@@ -583,6 +583,7 @@ private:
         case Unreachable:
         case LoopHint:
         case NotifyWrite:
+        case ActivationAllocationWatchpoint:
             break;
             
         // This gets ignored because it already has a prediction.

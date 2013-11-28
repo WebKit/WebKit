@@ -46,6 +46,7 @@ class JSVariableObject : public JSSymbolTableObject {
 public:
     typedef JSSymbolTableObject Base;
 
+    WriteBarrierBase<Unknown>* registers() { return m_registers; }
     WriteBarrierBase<Unknown>& registerAt(int index) const { return m_registers[index]; }
 
     WriteBarrierBase<Unknown>* const * addressOfRegisters() const { return &m_registers; }

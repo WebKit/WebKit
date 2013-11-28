@@ -1,5 +1,86 @@
 2013-11-27  Filip Pizlo  <fpizlo@apple.com>
 
+        Infer one-time scopes
+        https://bugs.webkit.org/show_bug.cgi?id=124812
+
+        Reviewed by Oliver Hunt.
+        
+        This detects JSActivations that are created only once. The JSActivation pointer is then
+        baked into the machine code.
+        
+        This takes advantage of the one-time scope inference to reduce the number of
+        indirections needed to get to a closure variable in case where the scope is only
+        allocated once. This isn't really a speed-up since in the common case the total number
+        of instruction bytes needed to load the scope from the stack is about equal to the
+        number of instruction bytes needed to materialize the absolute address of a scoped
+        variable. But, this is a necessary prerequisite to
+        https://bugs.webkit.org/show_bug.cgi?id=124630, so it's probably a good idea anyway.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        * bytecode/Instruction.h:
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * bytecode/Watchpoint.h:
+        (JSC::WatchpointSet::notifyWrite):
+        (JSC::InlineWatchpointSet::notifyWrite):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitResolveScope):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::scopedVarLoadElimination):
+        (JSC::DFG::CSEPhase::scopedVarStoreElimination):
+        (JSC::DFG::CSEPhase::getLocalLoadElimination):
+        (JSC::DFG::CSEPhase::setLocalStoreElimination):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::tryGetRegisters):
+        * dfg/DFGGraph.h:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::varNumber):
+        (JSC::DFG::Node::hasSymbolTable):
+        (JSC::DFG::Node::symbolTable):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::WatchpointCollectionPhase::handle):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileGetClosureRegisters):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::create):
+        * runtime/JSScope.cpp:
+        (JSC::abstractAccess):
+        (JSC::JSScope::abstractResolve):
+        * runtime/JSScope.h:
+        (JSC::ResolveOp::ResolveOp):
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::registers):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::SymbolTable):
+        * runtime/SymbolTable.h:
+
+2013-11-27  Filip Pizlo  <fpizlo@apple.com>
+
         Finally fix some obvious Bartlett bugs
         https://bugs.webkit.org/show_bug.cgi?id=124951
 

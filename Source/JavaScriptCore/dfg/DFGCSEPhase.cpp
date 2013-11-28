@@ -227,7 +227,7 @@ private:
         return 0;
     }
     
-    Node* scopedVarLoadElimination(Node* registers, unsigned varNumber)
+    Node* scopedVarLoadElimination(Node* registers, int varNumber)
     {
         for (unsigned i = m_indexInBlock; i--;) {
             Node* node = m_currentBlock->at(i);
@@ -296,7 +296,7 @@ private:
         return 0;
     }
     
-    Node* scopedVarStoreElimination(Node* scope, Node* registers, unsigned varNumber)
+    Node* scopedVarStoreElimination(Node* scope, Node* registers, int varNumber)
     {
         for (unsigned i = m_indexInBlock; i--;) {
             Node* node = m_currentBlock->at(i);
@@ -316,7 +316,8 @@ private:
                 break;
             }
                 
-            case GetLocal: {
+            case GetLocal:
+            case SetLocal: {
                 VariableAccessData* variableAccessData = node->variableAccessData();
                 if (variableAccessData->isCaptured()
                     && variableAccessData->local() == static_cast<VirtualRegister>(varNumber))
@@ -829,6 +830,7 @@ private:
                 }
                 break;
                 
+            case GetClosureVar:
             case PutClosureVar:
                 if (static_cast<VirtualRegister>(node->varNumber()) == local)
                     return 0;
@@ -882,6 +884,7 @@ private:
             }
                 
             case GetClosureVar:
+            case PutClosureVar:
                 if (static_cast<VirtualRegister>(node->varNumber()) == local)
                     result.mayBeAccessed = true;
                 break;

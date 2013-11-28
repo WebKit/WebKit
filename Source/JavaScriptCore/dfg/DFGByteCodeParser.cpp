@@ -36,6 +36,7 @@
 #include "DFGCapabilities.h"
 #include "DFGJITCode.h"
 #include "GetByIdStatus.h"
+#include "JSActivation.h"
 #include "Operations.h"
 #include "PreciseJumpTargets.h"
 #include "PutByIdStatus.h"
@@ -3046,9 +3047,18 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 set(VirtualRegister(dst), cellConstant(m_inlineStackTop->m_codeBlock->globalObject()));
                 break;
             case ClosureVar:
-            case ClosureVarWithVarInjectionChecks:
-                set(VirtualRegister(dst), getScope(m_inlineStackTop->m_codeBlock->needsActivation(), depth));
+            case ClosureVarWithVarInjectionChecks: {
+                JSActivation* activation = currentInstruction[5].u.activation.get();
+                if (activation
+                    && activation->symbolTable()->m_activationAllocatedOnce.isStillValid()) {
+                    addToGraph(ActivationAllocationWatchpoint, OpInfo(activation->symbolTable()));
+                    set(VirtualRegister(dst), cellConstant(activation));
+                    break;
+                }
+                set(VirtualRegister(dst),
+                    getScope(m_inlineStackTop->m_codeBlock->needsActivation(), depth));
                 break;
+            }
             case Dynamic:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
@@ -3063,13 +3073,19 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             StringImpl* uid = m_graph.identifiers()[identifierNumber];
             ResolveType resolveType = ResolveModeAndType(currentInstruction[4].u.operand).type();
 
-            Structure* structure;
+            Structure* structure = 0;
+            WatchpointSet* watchpoints = 0;
             uintptr_t operand;
             {
                 ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-                structure = currentInstruction[5].u.structure.get();
+                if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks)
+                    watchpoints = currentInstruction[5].u.watchpointSet;
+                else
+                    structure = currentInstruction[5].u.structure.get();
                 operand = reinterpret_cast<uintptr_t>(currentInstruction[6].u.pointer);
             }
+
+            UNUSED_PARAM(watchpoints); // We will use this in the future. For now we set it as a way of documenting the fact that that's what index 5 is in GlobalVar mode.
 
             SpeculatedType prediction = getPrediction();
             JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
@@ -3101,7 +3117,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     set(VirtualRegister(dst), addToGraph(GetGlobalVar, OpInfo(operand), OpInfo(prediction)));
                     break;
                 }
-
+                
                 addToGraph(VariableWatchpoint, OpInfo(watchpointSet));
                 if (specificValue.isCell())
                     set(VirtualRegister(dst), cellConstant(specificValue.asCell()));
@@ -3110,11 +3126,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 break;
             }
             case ClosureVar:
-            case ClosureVarWithVarInjectionChecks:
+            case ClosureVarWithVarInjectionChecks: {
+                Node* scopeNode = get(VirtualRegister(scope));
                 set(VirtualRegister(dst),
                     addToGraph(GetClosureVar, OpInfo(operand), OpInfo(prediction), 
-                        addToGraph(GetClosureRegisters, get(VirtualRegister(scope)))));
+                        addToGraph(GetClosureRegisters, scopeNode)));
                 break;
+            }
             case Dynamic:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;

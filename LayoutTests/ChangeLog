@@ -1,3 +1,23 @@
+2013-11-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Infer one-time scopes
+        https://bugs.webkit.org/show_bug.cgi?id=124812
+
+        Reviewed by Oliver Hunt.
+
+        * js/regress/infer-one-time-closure-expected.txt: Added.
+        * js/regress/infer-one-time-closure-ten-vars-expected.txt: Added.
+        * js/regress/infer-one-time-closure-ten-vars.html: Added.
+        * js/regress/infer-one-time-closure-two-vars-expected.txt: Added.
+        * js/regress/infer-one-time-closure-two-vars.html: Added.
+        * js/regress/infer-one-time-closure.html: Added.
+        * js/regress/infer-one-time-deep-closure-expected.txt: Added.
+        * js/regress/infer-one-time-deep-closure.html: Added.
+        * js/regress/script-tests/infer-one-time-closure-ten-vars.js: Added.
+        * js/regress/script-tests/infer-one-time-closure-two-vars.js: Added.
+        * js/regress/script-tests/infer-one-time-closure.js: Added.
+        * js/regress/script-tests/infer-one-time-deep-closure.js: Added.
+
 2013-11-27  Eric Carlson  <eric.carlson@apple.com>
 
         Allow the QuickTime plug-in to be replaced by script in an isolated word

@@ -954,6 +954,7 @@ private:
         case Unreachable:
         case ExtractOSREntryLocal:
         case LoopHint:
+        case ActivationAllocationWatchpoint:
             break;
 #else
         default:

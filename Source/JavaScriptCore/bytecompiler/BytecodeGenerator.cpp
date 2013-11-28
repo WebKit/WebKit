@@ -1212,6 +1212,8 @@ ResolveType BytecodeGenerator::resolveType()
 
 RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Identifier& identifier)
 {
+    m_codeBlock->addPropertyAccessInstruction(instructions().size());
+
     ASSERT(!m_symbolTable || !m_symbolTable->contains(identifier.impl()) || resolveType() == Dynamic);
 
     // resolve_scope dst, id, ResolveType, depth
@@ -1219,6 +1221,7 @@ RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Identifie
     instructions().append(kill(dst));
     instructions().append(addConstant(identifier));
     instructions().append(resolveType());
+    instructions().append(0);
     instructions().append(0);
     return dst;
 }
