@@ -687,6 +687,7 @@
 		7C135AA8173B0BCA00586AE2 /* WKPluginInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C135AA6173B0BCA00586AE2 /* WKPluginInformation.cpp */; };
 		7C135AA9173B0BCA00586AE2 /* WKPluginInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C135AA7173B0BCA00586AE2 /* WKPluginInformation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C135AAC173B0CFF00586AE2 /* PluginInformationMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C135AAA173B0CFF00586AE2 /* PluginInformationMac.mm */; };
+		7C1FB3C01846AEFC001A03D8 /* WKProcessGroupInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1FB3BF1846AEFC001A03D8 /* WKProcessGroupInternal.h */; };
 		7C387434172F5615001BD88A /* PageBanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C387433172F5615001BD88A /* PageBanner.cpp */; };
 		7C3F8C90173AF52D007B7F39 /* PluginInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3F8C8E173AF52D007B7F39 /* PluginInformation.cpp */; };
 		7C3F8C91173AF52D007B7F39 /* PluginInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3F8C8F173AF52D007B7F39 /* PluginInformation.h */; };
@@ -2238,6 +2239,7 @@
 		7C135AA6173B0BCA00586AE2 /* WKPluginInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPluginInformation.cpp; sourceTree = "<group>"; };
 		7C135AA7173B0BCA00586AE2 /* WKPluginInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPluginInformation.h; sourceTree = "<group>"; };
 		7C135AAA173B0CFF00586AE2 /* PluginInformationMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginInformationMac.mm; sourceTree = "<group>"; };
+		7C1FB3BF1846AEFC001A03D8 /* WKProcessGroupInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessGroupInternal.h; sourceTree = "<group>"; };
 		7C387433172F5615001BD88A /* PageBanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageBanner.cpp; sourceTree = "<group>"; };
 		7C3F8C8E173AF52D007B7F39 /* PluginInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInformation.cpp; sourceTree = "<group>"; };
 		7C3F8C8F173AF52D007B7F39 /* PluginInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInformation.h; sourceTree = "<group>"; };
@@ -4651,6 +4653,7 @@
 				BC5C75C614954DA600BC4775 /* WKConnectionInternal.h */,
 				BCBAACE5145225C90053F82F /* WKProcessGroup.h */,
 				BCBAACE6145225CA0053F82F /* WKProcessGroup.mm */,
+				7C1FB3BF1846AEFC001A03D8 /* WKProcessGroupInternal.h */,
 				BCBAACE7145225CB0053F82F /* WKProcessGroupPrivate.h */,
 				7CD5EBBD1746B04C000C1C45 /* WKTypeRefWrapper.h */,
 				7CD5EBBC1746B04C000C1C45 /* WKTypeRefWrapper.mm */,
@@ -6068,6 +6071,7 @@
 				37C4C08918149F23003688B9 /* WKBackForwardListItemInternal.h in Headers */,
 				51D0D437183B353D0097041D /* DatabaseProcessIDBConnectionMessages.h in Headers */,
 				E134F01712EA5D33004EC58D /* WKPrintingView.h in Headers */,
+				7C1FB3C01846AEFC001A03D8 /* WKProcessGroupInternal.h in Headers */,
 				BCBAACEB145225E30053F82F /* WKProcessGroup.h in Headers */,
 				BCBAACED145225E30053F82F /* WKProcessGroupPrivate.h in Headers */,
 				512F58FC12A88A5400629530 /* WKProtectionSpace.h in Headers */,

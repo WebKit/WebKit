@@ -31,6 +31,7 @@
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextGroupInternal.h"
+#import "WKProcessGroupInternal.h"
 #import "WKNSArray.h"
 #import "WKNSDictionary.h"
 #import "WKNSError.h"
@@ -69,6 +70,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::BackForwardListItem:
         wrapper = [WKBackForwardListItem alloc];
+        break;
+
+    case Type::Context:
+        wrapper = [WKProcessGroup alloc];
         break;
 
     case Type::Dictionary:

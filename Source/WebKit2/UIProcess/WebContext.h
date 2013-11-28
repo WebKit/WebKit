@@ -96,8 +96,11 @@ class WebContext : public API::TypedObject<API::Object::Type::Context>, private 
 #endif
     {
 public:
+    WebContext(const String& injectedBundlePath);
+
     static PassRefPtr<WebContext> create(const String& injectedBundlePath);
     virtual ~WebContext();
+
 #if PLATFORM(IOS)
     static WebContext *sharedProcessContext();
 #endif
@@ -313,7 +316,6 @@ public:
     void resetHSTSHosts();
 
 private:
-    WebContext(ProcessModel, const String& injectedBundlePath);
     void platformInitialize();
 
     void platformInitializeWebProcess(WebProcessCreationParameters&);

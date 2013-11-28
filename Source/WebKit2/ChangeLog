@@ -1,5 +1,37 @@
 2013-11-27  Sam Weinig  <sam@webkit.org>
 
+        Make WKProcessGroup work with WKObject wrapping
+        https://bugs.webkit.org/show_bug.cgi?id=124952
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        Add support for WKProcessGroup.
+
+        * UIProcess/API/mac/WKProcessGroup.mm:
+        (-[WKProcessGroup initWithInjectedBundleURL:]):
+        (-[WKProcessGroup dealloc]):
+        (-[WKProcessGroup API::]):
+        (-[WKProcessGroup _contextRef]):
+        (-[WKProcessGroup _geolocationProvider]):
+        Convert from wrapping the C-SPI type to storing the bits of the wrapped object inline
+
+        * UIProcess/API/mac/WKProcessGroupInternal.h: Added.
+        (WebKit::wrapper):
+        Add wrapper() helper and declare conformance to the WKObject protocol.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::create):
+        (WebKit::WebContext::WebContext):
+        * UIProcess/WebContext.h:
+        Make the WebContext constructor public (for use with Object::constructInWrapper) and remove unused ProcessModel parameter.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new file.
+
+2013-11-27  Sam Weinig  <sam@webkit.org>
+
         Make WKBrowsingContextGroup work with WKObject wrapping
         https://bugs.webkit.org/show_bug.cgi?id=124948
 

@@ -108,7 +108,7 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webContextCounter, ("WebCon
 PassRefPtr<WebContext> WebContext::create(const String& injectedBundlePath)
 {
     InitializeWebKit2();
-    return adoptRef(new WebContext(ProcessModelSharedSecondaryProcess, injectedBundlePath));
+    return adoptRef(new WebContext(injectedBundlePath));
 }
 
 static Vector<WebContext*>& contexts()
@@ -131,8 +131,8 @@ WebContext* WebContext::sharedProcessContext()
 }
 #endif
 
-WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePath)
-    : m_processModel(processModel)
+WebContext::WebContext(const String& injectedBundlePath)
+    : m_processModel(ProcessModelSharedSecondaryProcess)
     , m_webProcessCountLimit(UINT_MAX)
     , m_haveInitialEmptyProcess(false)
     , m_processWithPageCache(0)

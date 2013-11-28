@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WKProcessGroupPrivate.h"
+#import "WKProcessGroupInternal.h"
 
 #if WK_API_ENABLED
 
@@ -52,8 +52,7 @@
 using namespace WebKit;
 
 @implementation WKProcessGroup {
-    // Underlying context object.
-    WKRetainPtr<WKContextRef> _contextRef;
+    std::aligned_storage<sizeof(WebContext), std::alignment_of<WebContext>::value>::type _context;
 
 #if PLATFORM(IOS)
     RetainPtr<WKGeolocationProviderIOS> _geolocationProvider;
@@ -176,25 +175,27 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
     InitWebCoreThreadSystemInterface();
 #endif
 
-    if (bundleURL)
-        _contextRef = adoptWK(WKContextCreateWithInjectedBundlePath(adoptWK(WKStringCreateWithCFString((CFStringRef)[bundleURL path])).get()));
-    else
-        _contextRef = adoptWK(WKContextCreate());
+    API::Object::constructInWrapper<WebContext>(self, bundleURL ? String([bundleURL path]) : String());
 
-    setUpConnectionClient(self, _contextRef.get());
-    setUpInectedBundleClient(self, _contextRef.get());
-    setUpHistoryClient(self, _contextRef.get());
+    setUpConnectionClient(self, toAPI(reinterpret_cast<WebContext*>(&_context)));
+    setUpInectedBundleClient(self, toAPI(reinterpret_cast<WebContext*>(&_context)));
+    setUpHistoryClient(self, toAPI(reinterpret_cast<WebContext*>(&_context)));
 
     return self;
 }
 
 - (void)dealloc
 {
-    WKContextSetConnectionClient(_contextRef.get(), 0);
-    WKContextSetInjectedBundleClient(_contextRef.get(), 0);
-    WKContextSetHistoryClient(_contextRef.get(), 0);
+    reinterpret_cast<WebContext*>(&_context)->~WebContext();
 
     [super dealloc];
+}
+
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
+{
+    return *reinterpret_cast<API::Object*>(&_context);
 }
 
 @end
@@ -203,14 +204,14 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
 
 - (WKContextRef)_contextRef
 {
-    return _contextRef.get();
+    return toAPI(reinterpret_cast<WebContext*>(&_context));
 }
 
 #if PLATFORM(IOS)
 - (WKGeolocationProviderIOS *)_geolocationProvider
 {
     if (!_geolocationProvider)
-        _geolocationProvider = adoptNS([[WKGeolocationProviderIOS alloc] initWithContext:toImpl(_contextRef.get())]);
+        _geolocationProvider = adoptNS([[WKGeolocationProviderIOS alloc] initWithContext:reinterpret_cast<WebContext*>(&_context)]);
     return _geolocationProvider.get();
 }
 #endif // PLATFORM(IOS)
