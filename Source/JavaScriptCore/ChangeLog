@@ -1,5 +1,19 @@
 2013-11-29  Julien Brianceau  <jbriance@cisco.com>
 
+        Use moveDoubleToInts in SpecializedThunkJIT::returnDouble for non-X86 JSVALUE32_64 ports.
+        https://bugs.webkit.org/show_bug.cgi?id=124936
+
+        Reviewed by Zoltan Herczeg.
+
+        The moveDoubleToInts implementations in ARM, MIPS and SH4 macro assemblers do not clobber
+        src FPRegister and are likely to be more efficient than the current generic implementation
+        using the stack.
+
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::returnDouble):
+
+2013-11-29  Julien Brianceau  <jbriance@cisco.com>
+
         Merge arm and sh4 paths in nativeForGenerator and privateCompileCTINativeCall functions.
         https://bugs.webkit.org/show_bug.cgi?id=124892
 
