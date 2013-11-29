@@ -1,3 +1,56 @@
+2013-11-29  Sam Weinig  <sam@webkit.org>
+
+        Move API files shared between Mac and iOS to the Cocoa directory
+        https://bugs.webkit.org/show_bug.cgi?id=125017
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.h: Copied from Source/WebKit2/UIProcess/API/mac/WKBrowsingContextController.h.
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm: Copied from Source/WebKit2/UIProcess/API/mac/WKBrowsingContextController.mm.
+        * UIProcess/API/Cocoa/WKBrowsingContextControllerInternal.h: Copied from Source/WebKit2/UIProcess/API/mac/WKBrowsingContextControllerInternal.h.
+        * UIProcess/API/Cocoa/WKBrowsingContextControllerPrivate.h: Copied from Source/WebKit2/UIProcess/API/mac/WKBrowsingContextControllerPrivate.h.
+        * UIProcess/API/Cocoa/WKBrowsingContextGroup.h: Copied from Source/WebKit2/UIProcess/API/mac/WKBrowsingContextGroup.h.
+        * UIProcess/API/Cocoa/WKBrowsingContextGroup.mm: Copied from Source/WebKit2/UIProcess/API/mac/WKBrowsingContextGroup.mm.
+        * UIProcess/API/Cocoa/WKBrowsingContextGroupInternal.h: Copied from Source/WebKit2/UIProcess/API/mac/WKBrowsingContextGroupInternal.h.
+        * UIProcess/API/Cocoa/WKBrowsingContextGroupPrivate.h: Copied from Source/WebKit2/UIProcess/API/mac/WKBrowsingContextGroupPrivate.h.
+        * UIProcess/API/Cocoa/WKBrowsingContextLoadDelegate.h: Copied from Source/WebKit2/UIProcess/API/mac/WKBrowsingContextLoadDelegate.h.
+        * UIProcess/API/Cocoa/WKBrowsingContextPolicyDelegate.h: Copied from Source/WebKit2/UIProcess/API/mac/WKBrowsingContextPolicyDelegate.h.
+        * UIProcess/API/Cocoa/WKConnection.h: Copied from Source/WebKit2/UIProcess/API/mac/WKConnection.h.
+        * UIProcess/API/Cocoa/WKConnection.mm: Copied from Source/WebKit2/UIProcess/API/mac/WKConnection.mm.
+        * UIProcess/API/Cocoa/WKConnectionInternal.h: Copied from Source/WebKit2/UIProcess/API/mac/WKConnectionInternal.h.
+        * UIProcess/API/Cocoa/WKProcessGroup.h: Copied from Source/WebKit2/UIProcess/API/mac/WKProcessGroup.h.
+        * UIProcess/API/Cocoa/WKProcessGroup.mm: Copied from Source/WebKit2/UIProcess/API/mac/WKProcessGroup.mm.
+        * UIProcess/API/Cocoa/WKProcessGroupInternal.h: Copied from Source/WebKit2/UIProcess/API/mac/WKProcessGroupInternal.h.
+        * UIProcess/API/Cocoa/WKProcessGroupPrivate.h: Copied from Source/WebKit2/UIProcess/API/mac/WKProcessGroupPrivate.h.
+        * UIProcess/API/Cocoa/WKTypeRefWrapper.h: Copied from Source/WebKit2/UIProcess/API/mac/WKTypeRefWrapper.h.
+        * UIProcess/API/Cocoa/WKTypeRefWrapper.mm: Copied from Source/WebKit2/UIProcess/API/mac/WKTypeRefWrapper.mm.
+        * UIProcess/API/Cocoa/WKView.h: Copied from Source/WebKit2/UIProcess/API/mac/WKView.h.
+        * UIProcess/API/Cocoa/WKViewPrivate.h: Copied from Source/WebKit2/UIProcess/API/mac/WKViewPrivate.h.
+        * UIProcess/API/Cocoa/WebKit2.h: Copied from Source/WebKit2/UIProcess/API/mac/WebKit2.h.
+        * UIProcess/API/mac/WKBrowsingContextController.h: Removed.
+        * UIProcess/API/mac/WKBrowsingContextController.mm: Removed.
+        * UIProcess/API/mac/WKBrowsingContextControllerInternal.h: Removed.
+        * UIProcess/API/mac/WKBrowsingContextControllerPrivate.h: Removed.
+        * UIProcess/API/mac/WKBrowsingContextGroup.h: Removed.
+        * UIProcess/API/mac/WKBrowsingContextGroup.mm: Removed.
+        * UIProcess/API/mac/WKBrowsingContextGroupInternal.h: Removed.
+        * UIProcess/API/mac/WKBrowsingContextGroupPrivate.h: Removed.
+        * UIProcess/API/mac/WKBrowsingContextLoadDelegate.h: Removed.
+        * UIProcess/API/mac/WKBrowsingContextPolicyDelegate.h: Removed.
+        * UIProcess/API/mac/WKConnection.h: Removed.
+        * UIProcess/API/mac/WKConnection.mm: Removed.
+        * UIProcess/API/mac/WKConnectionInternal.h: Removed.
+        * UIProcess/API/mac/WKProcessGroup.h: Removed.
+        * UIProcess/API/mac/WKProcessGroup.mm: Removed.
+        * UIProcess/API/mac/WKProcessGroupInternal.h: Removed.
+        * UIProcess/API/mac/WKProcessGroupPrivate.h: Removed.
+        * UIProcess/API/mac/WKTypeRefWrapper.h: Removed.
+        * UIProcess/API/mac/WKTypeRefWrapper.mm: Removed.
+        * UIProcess/API/mac/WKView.h: Removed.
+        * UIProcess/API/mac/WKViewPrivate.h: Removed.
+        * UIProcess/API/mac/WebKit2.h: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-11-29  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] viewport must be same with the size of webview
