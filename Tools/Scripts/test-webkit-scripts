@@ -59,8 +59,9 @@ class ScriptsTester(object):
         call_args = [script_path]
         if args:
             call_args.extend(args)
-        subprocess.call(call_args)
+        return_code = subprocess.call(call_args)
         print(70 * "*") # dividing line
+        return not bool(return_code)
 
     def main(self):
         parser = OptionParser(description=__doc__)
@@ -69,17 +70,25 @@ class ScriptsTester(object):
                           'including those suppressed by default')
         (options, args) = parser.parse_args()
 
-        self.run_test_script('Perl scripts', self.script_path('test-webkitperl'))
-        self.run_test_script('Python scripts', self.script_path('test-webkitpy'),
+        webkitperl_success = self.run_test_script('Perl scripts', self.script_path('test-webkitperl'))
+        webkitpy_success = self.run_test_script('Python scripts', self.script_path('test-webkitpy'),
                              ['--all'] if options.all else None)
-        self.run_test_script('Ruby scripts', self.script_path('test-webkitruby'))
+        webkitruby_success = self.run_test_script('Ruby scripts', self.script_path('test-webkitruby'))
 
-        # FIXME: Display a cumulative indication of success or failure.
-        #        In addition, call sys.exit() with 0 or 1 depending on that
-        #        cumulative success or failure.
-        print('Note: Perl, Python, and Ruby results appear separately above.')
-
-
+        if webkitperl_success and webkitpy_success and webkitruby_success:
+            print('All tests completed successfully')
+            sys.exit(0)
+        else:
+            print('The following test scripts have failed: ')
+            if not webkitperl_success:
+                print('test-webkitperl')
+            if not webkitpy_success:
+                print('test-webkitpy')
+            if not webkitruby_success:
+                print('test-webkitruby')
+            print('Detailed results appear separately above.')
+            sys.exit(1)
+            
 if __name__ == '__main__':
     # The scripts directory is the directory containing this file.
     tester = ScriptsTester(os.path.dirname(__file__))
