@@ -369,6 +369,11 @@ void WebView::toolTipChanged(const String&, const String& newToolTip)
     m_client.didChangeTooltip(this, newToolTip);
 }
 
+void WebView::didCommitLoadForMainFrame()
+{
+    notImplemented();
+}
+
 void WebView::setCursor(const WebCore::Cursor&)
 {
     notImplemented();

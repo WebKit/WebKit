@@ -147,6 +147,8 @@ protected:
 
     virtual void toolTipChanged(const String&, const String&) OVERRIDE;
 
+    virtual void didCommitLoadForMainFrame() OVERRIDE;
+
     virtual void pageDidRequestScroll(const WebCore::IntPoint&) OVERRIDE;
     virtual void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect) OVERRIDE;
     virtual void pageTransitionViewportReady() OVERRIDE;

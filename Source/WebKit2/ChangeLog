@@ -1,3 +1,16 @@
+2013-11-28  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] Build fix after r159859
+        https://bugs.webkit.org/show_bug.cgi?id=124991
+
+        Reviewed by Gyuyoung Kim.
+
+        Redefined newly added pure virtual function in PageClient class after r159859.
+
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::didCommitLoadForMainFrame):
+        * UIProcess/CoordinatedGraphics/WebView.h:
+
 2013-11-27  Sam Weinig  <sam@webkit.org>
 
         Perform some spring cleaning to WKContentView and WKView
