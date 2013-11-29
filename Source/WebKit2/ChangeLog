@@ -1,3 +1,20 @@
+2013-11-28  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [CoordinatedGraphics][WK2] Correct wrong usage of m_contentPosition variable in the WebView.
+        https://bugs.webkit.org/show_bug.cgi?id=118548
+
+        Reviewed by Noam Rosenthal.
+
+        CoordinatedGraphics uses its own scaling logic - contents scaling - and
+        WebView of CoordinatedGraphics maintains contents position by scaling
+        with contents scaling factor.
+        However transformToScene() and updateViewportSize() of WebView regard
+        the contents position as a non-scaled value, so it should be fixed.
+
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::transformToScene):
+        (WebKit::WebView::updateViewportSize):
+
 2013-11-28  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] PageViewportController does not need to be unique_ptr instance

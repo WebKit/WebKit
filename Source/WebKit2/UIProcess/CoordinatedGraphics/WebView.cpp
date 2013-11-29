@@ -236,7 +236,7 @@ AffineTransform WebView::transformToScene() const
 {
     FloatPoint position = -m_contentPosition;
     float effectiveScale = m_contentScaleFactor * m_page->deviceScaleFactor();
-    position.scale(effectiveScale, effectiveScale);
+    position.scale(m_page->deviceScaleFactor(), m_page->deviceScaleFactor());
 
     TransformationMatrix transform = m_userViewportTransform;
     transform.translate(position.x(), position.y());
@@ -258,7 +258,9 @@ void WebView::updateViewportSize()
     if (CoordinatedDrawingAreaProxy* drawingArea = static_cast<CoordinatedDrawingAreaProxy*>(page()->drawingArea())) {
         // Web Process expects sizes in UI units, and not raw device units.
         drawingArea->setSize(roundedIntSize(dipSize()), IntSize(), IntSize());
-        FloatRect visibleContentsRect(contentPosition(), visibleContentsSize());
+        FloatPoint position = contentPosition();
+        position.scale(1 / m_contentScaleFactor, 1 / m_contentScaleFactor);
+        FloatRect visibleContentsRect(position, visibleContentsSize());
         visibleContentsRect.intersect(FloatRect(FloatPoint(), contentsSize()));
         drawingArea->setVisibleContentsRect(visibleContentsRect, FloatPoint());
     }
