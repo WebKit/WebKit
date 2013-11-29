@@ -1,5 +1,39 @@
 2013-11-29  Dan Bernstein  <mitz@apple.com>
 
+        [Cocoa] Add a way to recover from load errors
+        https://bugs.webkit.org/show_bug.cgi?id=125020
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (createErrorWithRecoveryAttempter): Added this helper function. It creates an NSError from
+        the given error, adding two keys to the user info dictionary: the context controller under
+        the recovery attempter key, and the frame under a private key.
+        (didFailProvisionalLoadWithErrorForFrame): Changed to use createErrorWithRecoveryAttempter.
+        (didFailLoadWithErrorForFrame): Ditto.
+        (-[WKBrowsingContextController attemptRecoveryFromError:]): Implemented this
+        WKErrorRecoveryAttempting protocol method by loading the failing URL from the error into the
+        frame from the error.
+
+        * UIProcess/API/Cocoa/WKErrorRecoveryAttempting.h: Added. Defines a protocol for attempting
+        recovery from errors and declares the error user info dictionary key under which an object
+        conforming to this protocol may be stored.
+        * UIProcess/API/Cocoa/WKErrorRecoveryAttempting.m: Added. Defines
+        WKRecoveryAttempterErrorKey.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::loadURL): Added. Sends the LoadURLInFrame message to the page.
+        * UIProcess/WebFrameProxy.h:
+
+        * WebKit2.xcodeproj/project.pbxproj: Added references to new files.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadURLInFrame): Added. Loads the URL in the given frame.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Added LoadURLInFrame.
+
+2013-11-29  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Expose loadAlternateHTMLString via the API
         https://bugs.webkit.org/show_bug.cgi?id=125019
 

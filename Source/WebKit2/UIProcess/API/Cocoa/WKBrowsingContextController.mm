@@ -32,9 +32,11 @@
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKErrorCF.h"
+#import "WKErrorRecoveryAttempting.h"
 #import "WKFrame.h"
 #import "WKFramePolicyListener.h"
 #import "WKNSArray.h"
+#import "WKNSError.h"
 #import "WKNSURLExtras.h"
 #import "WKPagePrivate.h"
 #import "WKRetainPtr.h"
@@ -100,6 +102,11 @@ NSString * const WKActionURLResponseKey = @"WKActionURLResponseKey";
 NSString * const WKActionFrameNameKey = @"WKActionFrameNameKey";
 NSString * const WKActionOriginatingFrameURLKey = @"WKActionOriginatingFrameURLKey";
 NSString * const WKActionCanShowMIMETypeKey = @"WKActionCanShowMIMETypeKey";
+
+static NSString * const frameErrorKey = @"WKBrowsingContextFrameErrorKey";
+
+@interface WKBrowsingContextController () <WKErrorRecoveryAttempting>
+@end
 
 @implementation WKBrowsingContextController {
     // Underlying WKPageRef.
@@ -373,6 +380,20 @@ static void releaseNSData(unsigned char*, const void* data)
     return WKPageSetPageZoomFactor(_pageRef.get(), pageZoom);
 }
 
+static NSError *createErrorWithRecoveryAttempter(WKErrorRef wkError, WKFrameRef frame, WKBrowsingContextController *browsingContext)
+{
+    NSError *error = wrapper(*toImpl(wkError));
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+        browsingContext, WKRecoveryAttempterErrorKey,
+        toImpl(frame)->wrapper(), frameErrorKey,
+    nil];
+
+    if (NSDictionary *originalUserInfo = error.userInfo)
+        [userInfo addEntriesFromDictionary:originalUserInfo];
+
+    return [[NSError alloc] initWithDomain:error.domain code:error.code userInfo:userInfo];
+}
+
 static void didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
@@ -400,8 +421,8 @@ static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef f
 
     WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
     if ([browsingContext.loadDelegate respondsToSelector:@selector(browsingContextControllerDidFailProvisionalLoad:withError:)]) {
-        RetainPtr<CFErrorRef> cfError = adoptCF(WKErrorCopyCFError(kCFAllocatorDefault, error));
-        [browsingContext.loadDelegate browsingContextControllerDidFailProvisionalLoad:browsingContext withError:(NSError *)cfError.get()];
+        RetainPtr<NSError> nsError = adoptNS(createErrorWithRecoveryAttempter(error, frame, browsingContext));
+        [browsingContext.loadDelegate browsingContextControllerDidFailProvisionalLoad:browsingContext withError:nsError.get()];
     }
 }
 
@@ -432,8 +453,8 @@ static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErr
 
     WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
     if ([browsingContext.loadDelegate respondsToSelector:@selector(browsingContextControllerDidFailLoad:withError:)]) {
-        RetainPtr<CFErrorRef> cfError = adoptCF(WKErrorCopyCFError(kCFAllocatorDefault, error));
-        [browsingContext.loadDelegate browsingContextControllerDidFailLoad:browsingContext withError:(NSError *)cfError.get()];
+        RetainPtr<NSError> nsError = adoptNS(createErrorWithRecoveryAttempter(error, frame, browsingContext));
+        [browsingContext.loadDelegate browsingContextControllerDidFailLoad:browsingContext withError:nsError.get()];
     }
 }
 
@@ -610,7 +631,30 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
     static NSMutableSet *customSchemes = [[NSMutableSet alloc] init];
     return customSchemes;
 }
- 
+
+#pragma mark WKErrorRecoveryAttempting
+
+- (BOOL)attemptRecoveryFromError:(NSError *)error
+{
+    NSDictionary *userInfo = error.userInfo;
+
+    NSString *failingURLString = userInfo[NSURLErrorFailingURLStringErrorKey];
+    if (!failingURLString)
+        return NO;
+
+    NSObject <WKObject> *frame = userInfo[frameErrorKey];
+    if (![frame conformsToProtocol:@protocol(WKObject)])
+        return NO;
+
+    if (frame._apiObject.type() != API::Object::Type::Frame)
+        return NO;
+
+    WebFrameProxy& webFrame = *static_cast<WebFrameProxy*>(&frame._apiObject);
+    webFrame.loadURL(failingURLString);
+
+    return YES;
+}
+
 @end
 
 @implementation WKBrowsingContextController (Private)

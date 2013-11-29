@@ -73,6 +73,14 @@ bool WebFrameProxy::isMainFrame() const
     return this == m_page->mainFrame();
 }
 
+void WebFrameProxy::loadURL(const String& url)
+{
+    if (!m_page)
+        return;
+
+    m_page->process()->send(Messages::WebPage::LoadURLInFrame(url, m_frameID), m_page->pageID());
+}
+
 void WebFrameProxy::stopLoading() const
 {
     if (!m_page)

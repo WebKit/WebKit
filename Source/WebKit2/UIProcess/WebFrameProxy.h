@@ -71,6 +71,7 @@ public:
 
     FrameLoadState& frameLoadState() { return m_frameLoadState; }
 
+    void loadURL(const String&);
     void stopLoading() const;
 
     const String& url() const { return m_frameLoadState.m_url; }
