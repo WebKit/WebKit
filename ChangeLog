@@ -1,3 +1,13 @@
+2013-11-29  Laszlo Vidacs  <lac@inf.u-szeged.hu>
+
+        [cmake] Fix cmake warning: Argument not separated from preceding token by whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=124899
+
+        Reviewed by Gyuyoung Kim.
+
+        * Source/cmake/FindCairo.cmake:
+        * Source/cmake/FindGStreamer.cmake:
+
 2013-11-28  Antti Koivisto  <antti@apple.com>
 
         Remove feature: CSS variables

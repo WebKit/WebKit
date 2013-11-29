@@ -94,7 +94,7 @@ if (GSTREAMER_INCLUDE_DIRS)
 endif ()
 
 if ("${GStreamer_FIND_VERSION}" VERSION_GREATER "${GSTREAMER_VERSION}")
-    message(FATAL_ERROR "Required version ("${GStreamer_FIND_VERSION}") is higher than found version ("${GSTREAMER_VERSION}")")
+    message(FATAL_ERROR "Required version (" ${GStreamer_FIND_VERSION} ") is higher than found version (" ${GSTREAMER_VERSION} ")")
 endif ()
 
 # -------------------------

@@ -62,7 +62,7 @@ if (CAIRO_INCLUDE_DIRS)
 endif ()
 
 if ("${Cairo_FIND_VERSION}" VERSION_GREATER "${CAIRO_VERSION}")
-    message(FATAL_ERROR "Required version ("${Cairo_FIND_VERSION}") is higher than found version ("${CAIRO_VERSION}")")
+    message(FATAL_ERROR "Required version (" ${Cairo_FIND_VERSION} ") is higher than found version (" ${CAIRO_VERSION} ")")
 endif ()
 
 include(FindPackageHandleStandardArgs)
