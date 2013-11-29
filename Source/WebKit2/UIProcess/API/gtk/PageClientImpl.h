@@ -99,6 +99,7 @@ private:
 #endif
 
     virtual void handleDownloadRequest(DownloadProxy*) OVERRIDE;
+    virtual void didCommitLoadForMainFrame() OVERRIDE;
 
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;

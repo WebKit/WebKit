@@ -284,4 +284,9 @@ bool PageClientImpl::isWindowVisible()
     return webkitWebViewBaseIsWindowVisible(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
+void PageClientImpl::didCommitLoadForMainFrame()
+{
+    notImplemented();
+}
+
 } // namespace WebKit
