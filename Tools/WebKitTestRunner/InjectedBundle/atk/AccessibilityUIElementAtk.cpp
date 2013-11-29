@@ -85,13 +85,18 @@ const String attributesMap[][2] = {
     { "AXUnknownSortDirection", "unknown" }
 };
 
-String coreAttributeToAtkAttribute(JSStringRef attribute)
+String jsStringToWTFString(JSStringRef attribute)
 {
     size_t bufferSize = JSStringGetMaximumUTF8CStringSize(attribute);
     GOwnPtr<gchar> buffer(static_cast<gchar*>(g_malloc(bufferSize)));
     JSStringGetUTF8CString(attribute, buffer.get(), bufferSize);
 
-    String attributeString = String::fromUTF8(buffer.get());
+    return String::fromUTF8(buffer.get());
+}
+
+String coreAttributeToAtkAttribute(JSStringRef attribute)
+{
+    String attributeString = jsStringToWTFString(attribute);
     for (int i = 0; i < NumberOfAttributes; ++i) {
         if (attributesMap[i][CoreDomain] == attributeString)
             return attributesMap[i][AtkDomain];
@@ -751,7 +756,13 @@ bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
 
 bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
 {
-    // FIXME: implement
+    if (!ATK_IS_OBJECT(m_element.get()))
+        return false;
+
+    String attributeString = jsStringToWTFString(attribute);
+    if (attributeString == "AXValue")
+        return checkElementState(m_element.get(), ATK_STATE_EDITABLE);
+
     return false;
 }
 
