@@ -1,3 +1,12 @@
+2013-11-29  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        Unreviewed EFL gardening
+
+        Accessibility rebaselines after r159848.
+
+        * platform/efl-wk1/accessibility/table-detection-expected.txt:
+        * platform/efl-wk2/accessibility/table-detection-expected.txt:
+
 2013-11-29  Krzysztof Czech  <k.czech@samsung.com>
 
         [ATK] Added support for isAttributeSettable in AccessibilityUIElementAtk
