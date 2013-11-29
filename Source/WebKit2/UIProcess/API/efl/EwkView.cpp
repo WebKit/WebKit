@@ -578,7 +578,7 @@ void EwkView::displayTimerFired(Timer<EwkView>*)
     WKViewPaintToCurrentGLContext(wkView());
 #endif
     // sd->image is tied to a native surface, which is in the parent's coordinates.
-    evas_object_image_data_update_add(sd->image, sd->view.x, sd->view.y, sd->view.w, sd->view.h);
+    evas_object_image_data_update_add(sd->image, 0, 0, sd->view.w, sd->view.h);
 }
 
 void EwkView::scheduleUpdateDisplay()
@@ -818,8 +818,11 @@ bool EwkView::createGLSurface()
         EVAS_GL_MULTISAMPLE_NONE
     };
 
+    Ewk_View_Smart_Data* sd = smartData();
+    IntSize viewSize(sd->view.w, sd->view.h);
+
     // Recreate to current size: Replaces if non-null, and frees existing surface after (OwnPtr).
-    m_evasGLSurface = EvasGLSurface::create(m_evasGL.get(), &evasGLConfig, deviceSize());
+    m_evasGLSurface = EvasGLSurface::create(m_evasGL.get(), &evasGLConfig, viewSize);
     if (!m_evasGLSurface)
         return false;
 
@@ -831,8 +834,7 @@ bool EwkView::createGLSurface()
 
     Evas_GL_API* gl = evas_gl_api_get(m_evasGL.get());
 
-    WKPoint boundsEnd = WKViewUserViewportToScene(wkView(), WKPointMake(deviceSize().width(), deviceSize().height()));
-    gl->glViewport(0, 0, boundsEnd.x, boundsEnd.y);
+    gl->glViewport(0, 0, viewSize.width(), viewSize.height());
     gl->glClearColor(1.0, 1.0, 1.0, 0);
     gl->glClear(GL_COLOR_BUFFER_BIT);
 
@@ -1194,7 +1196,6 @@ void EwkView::handleEvasObjectCalculate(Evas_Object* evasObject)
         smartData->view.x = x;
         smartData->view.y = y;
         evas_object_move(smartData->image, x, y);
-        WKViewSetUserViewportTranslation(self->wkView(), x, y);
     }
 
     if (smartData->changed.size) {

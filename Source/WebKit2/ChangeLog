@@ -1,3 +1,18 @@
+2013-11-29  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] viewport must be same with the size of webview
+        https://bugs.webkit.org/show_bug.cgi?id=124965
+
+        Reviewed by Gyuyoung Kim.
+
+        Currently, size of the viewport is larger than size of webview.
+        Changed the size of viewport with size of webview, because viewport is translated by wrong calculation.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::displayTimerFired): Changed to use the (0,0). 
+        (EwkView::createGLSurface): Modified to use the viewSize instead of the boundsEnd.
+        (EwkView::handleEvasObjectCalculate): Removed the WKViewSetUserViewportTranslation.
+
 2013-11-28  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [CoordinatedGraphics][WK2] Correct wrong usage of m_contentPosition variable in the WebView.
