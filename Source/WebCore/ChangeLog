@@ -1,3 +1,14 @@
+2013-11-29  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
+
+        Remove Symbian specific code.
+        https://bugs.webkit.org/show_bug.cgi?id=124939
+
+        Reviewed by Zoltan Herczeg.
+
+        Symbian is not supported, remove leftover code.
+
+        * plugins/npapi.h:
+
 2013-11-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Rename InlineIterator::m_obj and make it private

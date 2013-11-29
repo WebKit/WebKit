@@ -64,12 +64,6 @@
 #endif
 #endif
 
-#if defined(__SYMBIAN32__)
-#ifndef XP_SYMBIAN
-#define XP_SYMBIAN 1
-#endif
-#endif
-
 #if defined(__APPLE_CC__) && !defined(XP_UNIX)
 #ifndef XP_MACOSX
 #define XP_MACOSX 1
@@ -475,9 +469,9 @@ typedef struct _NPWindow
   uint32_t width;  /* Maximum window size */
   uint32_t height;
   NPRect   clipRect; /* Clipping rectangle in port coordinates */
-#if defined(XP_UNIX) || defined(XP_SYMBIAN)
+#if defined(XP_UNIX)
   void * ws_info; /* Platform-dependent additonal data */
-#endif /* XP_UNIX || XP_SYMBIAN */
+#endif /* XP_UNIX */
   NPWindowType type; /* Is this a window or a drawable? */
 } NPWindow;
 
