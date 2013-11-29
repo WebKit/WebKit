@@ -1,3 +1,15 @@
+2013-11-29  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Expose loadAlternateHTMLString via the API
+        https://bugs.webkit.org/show_bug.cgi?id=125019
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.h: Declared new method.
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController loadAlternateHTMLString:baseURL:forUnreachableURL:]): Added.
+        Calls WebPageProxy::loadAlternateHTMLString.
+
 2013-11-29  Sam Weinig  <sam@webkit.org>
 
         Move API files shared between Mac and iOS to the Cocoa directory

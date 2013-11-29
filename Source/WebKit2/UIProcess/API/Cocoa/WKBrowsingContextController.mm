@@ -47,6 +47,7 @@
 #import "WebContext.h"
 #import "WebData.h"
 #import "WebPageProxy.h"
+#import <WebCore/CFURLExtras.h>
 #import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 
@@ -56,6 +57,7 @@
 #import "WKBrowsingContextPolicyDelegate.h"
 #import "WKProcessGroupInternal.h"
 
+using namespace WebCore;
 using namespace WebKit;
 
 class PageLoadStateObserver : public PageLoadState::Observer {
@@ -214,6 +216,17 @@ NSString * const WKActionCanShowMIMETypeKey = @"WKActionCanShowMIMETypeKey";
         wkUserData = ObjCObjectGraph::create(userData);
 
     WKPageLoadHTMLStringWithUserData(_pageRef.get(), wkHTMLString.get(), wkBaseURL.get(), (WKTypeRef)wkUserData.get());
+}
+
+- (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL
+{
+    CString baseURLString;
+    getURLBytes((CFURLRef)baseURL, baseURLString);
+
+    CString unreachableURLString;
+    getURLBytes((CFURLRef)unreachableURL, unreachableURLString);
+
+    toImpl(_pageRef.get())->loadAlternateHTMLString(string, String::fromUTF8(baseURLString), String::fromUTF8(unreachableURLString));
 }
 
 - (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL
