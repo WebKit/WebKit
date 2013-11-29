@@ -33,8 +33,6 @@
 #include "PageLoadClientEfl.h"
 #include "PagePolicyClientEfl.h"
 #include "PageUIClientEfl.h"
-#include "PageViewportController.h"
-#include "PageViewportControllerClientEfl.h"
 #include "SnapshotImageGL.h"
 #include "ViewClientEfl.h"
 #include "WKArray.h"
@@ -282,8 +280,8 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
     , m_displayTimer(this, &EwkView::displayTimerFired)
     , m_inputMethodContext(InputMethodContextEfl::create(this, smartData()->base.evas))
 #if USE(ACCELERATED_COMPOSITING)
-    , m_pageViewportControllerClient(std::make_unique<PageViewportControllerClientEfl>(this))
-    , m_pageViewportController(std::make_unique<PageViewportController>(page(), m_pageViewportControllerClient.get()))
+    , m_pageViewportControllerClient(this)
+    , m_pageViewportController(page(), &m_pageViewportControllerClient)
 #endif
     , m_isAccelerated(true)
 {
@@ -1207,7 +1205,7 @@ void EwkView::handleEvasObjectCalculate(Evas_Object* evasObject)
         WKViewSetSize(self->wkView(), WKSizeMake(width, height));
 #if USE(ACCELERATED_COMPOSITING)
         if (WKPageUseFixedLayout(self->wkPage()))
-            self->pageViewportController()->didChangeViewportSize(self->size());
+            self->pageViewportController().didChangeViewportSize(self->size());
 
         self->setNeedsSurfaceResize();
 #endif
@@ -1403,8 +1401,8 @@ bool EwkView::scrollBy(const IntSize& offset)
     // Update new position to the PageViewportController.
     float contentScale = WKViewGetContentScaleFactor(wkView());
     newPosition.scale(1 / contentScale, 1 / contentScale);
-    newPosition = m_pageViewportController->boundContentsPositionAtScale(newPosition, contentScale);
-    m_pageViewportController->didChangeContentsVisibility(newPosition, contentScale);
+    newPosition = m_pageViewportController.boundContentsPositionAtScale(newPosition, contentScale);
+    m_pageViewportController.didChangeContentsVisibility(newPosition, contentScale);
 
     // Update new position to the WKView.
     WKPoint position = WKPointMake(newPosition.x() * contentScale, newPosition.y() * contentScale);

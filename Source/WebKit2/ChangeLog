@@ -1,3 +1,28 @@
+2013-11-28  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] PageViewportController does not need to be unique_ptr instance
+        https://bugs.webkit.org/show_bug.cgi?id=124993
+
+        Reviewed by Gyuyoung Kim.
+
+        PageViewportController and PageViewportControllerEfl have same life cycle
+        with EwkView. So, we don't need to make them as unique_ptr instance.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        (EwkView::handleEvasObjectCalculate):
+        (EwkView::scrollBy):
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView::pageViewportController):
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::didCommitLoadForFrame):
+        * UIProcess/efl/ViewClientEfl.cpp:
+        (WebKit::ViewClientEfl::didChangeContentsSize):
+        (WebKit::ViewClientEfl::didChangeContentsPosition):
+        (WebKit::ViewClientEfl::didRenderFrame):
+        (WebKit::ViewClientEfl::didCompletePageTransition):
+        (WebKit::ViewClientEfl::didChangeViewportAttributes):
+
 2013-11-28  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         [GTK] Build fix after r159859

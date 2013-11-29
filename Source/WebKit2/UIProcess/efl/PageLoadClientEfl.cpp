@@ -119,7 +119,7 @@ void PageLoadClientEfl::didCommitLoadForFrame(WKPageRef, WKFrameRef frame, WKTyp
     EwkView* view = toPageLoadClientEfl(clientInfo)->view();
     if (WKPageUseFixedLayout(view->wkPage())) {
 #if USE(ACCELERATED_COMPOSITING)
-        view->pageViewportController()->didCommitLoad();
+        view->pageViewportController().didCommitLoad();
 #endif
         return;
     }

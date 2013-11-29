@@ -28,6 +28,9 @@
 #include "RefPtrEfl.h"
 #include "WKEinaSharedString.h"
 #include "WKRetainPtr.h"
+#include "WebContext.h"
+#include "WebPageGroup.h"
+#include "WebPreferences.h"
 #include "WebViewEfl.h"
 #include "ewk_url_request_private.h"
 #include <Evas.h>
@@ -47,9 +50,10 @@
 #include "ewk_touch.h"
 #endif
 
-#include "WebContext.h"
-#include "WebPageGroup.h"
-#include "WebPreferences.h"
+#if USE(ACCELERATED_COMPOSITING)
+#include "PageViewportController.h"
+#include "PageViewportControllerClientEfl.h"
+#endif
 
 typedef struct _cairo_surface cairo_surface_t;
 
@@ -62,10 +66,6 @@ class PageLoadClientEfl;
 class PagePolicyClientEfl;
 class PageUIClientEfl;
 class ViewClientEfl;
-#if USE(ACCELERATED_COMPOSITING)
-class PageViewportController;
-class PageViewportControllerClientEfl;
-#endif
 class WebPageGroup;
 class WebPageProxy;
 
@@ -121,7 +121,7 @@ public:
     EwkWindowFeatures* windowFeatures();
 
 #if USE(ACCELERATED_COMPOSITING)
-    WebKit::PageViewportController* pageViewportController() { return m_pageViewportController.get(); }
+    WebKit::PageViewportController& pageViewportController() { return m_pageViewportController; }
 #endif
 
     void setDeviceScaleFactor(float scale);
@@ -291,8 +291,8 @@ private:
     std::unique_ptr<EwkColorPicker> m_colorPicker;
 #endif
 #if USE(ACCELERATED_COMPOSITING)
-    std::unique_ptr<WebKit::PageViewportControllerClientEfl> m_pageViewportControllerClient;
-    std::unique_ptr<WebKit::PageViewportController> m_pageViewportController;
+    WebKit::PageViewportControllerClientEfl m_pageViewportControllerClient;
+    WebKit::PageViewportController m_pageViewportController;
 #endif
     bool m_isAccelerated;
 
