@@ -2644,6 +2644,22 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          '#include "bar.h"\n',
                                          '')
 
+    def test_check_line_break_before_own_header(self):
+        self.assert_language_rules_check('foo.cpp',
+                                         '#include "config.h"\n'
+                                         '\n'
+                                         '#include "foo.h"\n'
+                                         '\n'
+                                         '#include "bar.h"\n',
+                                         'You should not add a blank line before implementation file\'s own header.  [build/include_order] [4]')
+
+        self.assert_language_rules_check('foo.cpp',
+                                         '#include "config.h"\n'
+                                         '#include "foo.h"\n'
+                                         '\n'
+                                         '#include "bar.h"\n',
+                                         '')
+
     def test_check_preprocessor_in_include_section(self):
         self.assert_language_rules_check('foo.cpp',
                                          '#include "config.h"\n'

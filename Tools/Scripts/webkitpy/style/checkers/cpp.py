@@ -2818,12 +2818,16 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
                                                            file_extension == "h",
                                                            primary_header_exists)
 
-    # Check to make sure we have a blank line after primary header.
+    # Check to make sure we have a blank line after and none before primary header.
     if not error_message and header_type == _PRIMARY_HEADER:
-         next_line = clean_lines.raw_lines[line_number + 1]
-         if not is_blank_line(next_line):
+        next_line = clean_lines.raw_lines[line_number + 1]
+        previous_line = clean_lines.raw_lines[line_number - 1]
+        if not is_blank_line(next_line):
             error(line_number, 'build/include_order', 4,
-                  'You should add a blank line after implementation file\'s own header.')
+                'You should add a blank line after implementation file\'s own header.')
+        if is_blank_line(previous_line):
+            error(line_number, 'build/include_order', 4,
+                'You should not add a blank line before implementation file\'s own header.')
 
     # Check to make sure all headers besides config.h and the primary header are
     # alphabetically sorted.
