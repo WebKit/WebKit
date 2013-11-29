@@ -1,3 +1,18 @@
+2013-11-29  Julien Brianceau  <jbriance@cisco.com>
+
+        Merge arm and sh4 paths in nativeForGenerator and privateCompileCTINativeCall functions.
+        https://bugs.webkit.org/show_bug.cgi?id=124892
+
+        Reviewed by Zoltan Herczeg.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::call): Pick a scratch register instead of getting it as a
+        parameter. The sh4 port was the only one to have this call(Address, RegisterID) prototype.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall): Use argumentGPRx and merge arm and sh4 paths.
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator): Use argumentGPRx and merge arm and sh4 paths.
+
 2013-11-28  Nadav Rotem  <nrotem@apple.com>
 
         Revert the X86 assembler peephole changes

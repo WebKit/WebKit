@@ -2360,12 +2360,14 @@ public:
         return Call(m_assembler.call(target), Call::None);
     }
 
-    void call(Address address, RegisterID target)
+    void call(Address address)
     {
+        RegisterID target = claimScratch();
         load32(address.base, address.offset, target);
         m_assembler.ensureSpace(m_assembler.maxInstructionSize + 2);
         m_assembler.branch(JSR_OPCODE, target);
         m_assembler.nop();
+        releaseScratch(target);
     }
 
     void breakpoint()

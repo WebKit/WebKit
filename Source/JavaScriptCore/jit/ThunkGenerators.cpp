@@ -343,9 +343,8 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
 
     jit.restoreReturnAddressBeforeReturn(JSInterfaceJIT::regT3);
 
-#elif CPU(ARM)
-    // Load caller frame's scope chain into this callframe so that whatever we call can
-    // get to its global data.
+#elif CPU(ARM) || CPU(SH4)
+    // Load caller frame's scope chain into this callframe so that whatever we call can get to its global data.
     jit.emitGetCallerFrameFromCallFrameHeaderPtr(JSInterfaceJIT::regT2);
     jit.emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, JSInterfaceJIT::regT1, JSInterfaceJIT::regT2);
     jit.emitPutCellToCallFrameHeader(JSInterfaceJIT::regT1, JSStack::ScopeChain);
@@ -353,38 +352,16 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
     jit.preserveReturnAddressAfterCall(JSInterfaceJIT::regT3); // Callee preserved
     jit.emitPutReturnPCToCallFrameHeader(JSInterfaceJIT::regT3);
 
-    // Calling convention:      f(r0 == regT0, r1 == regT1, ...);
-    // Host function signature: f(ExecState*);
-    jit.move(JSInterfaceJIT::callFrameRegister, ARMRegisters::r0);
+    // Calling convention is f(argumentGPR0, argumentGPR1, ...).
+    // Host function signature is f(ExecState*).
+    jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::argumentGPR0);
 
-    jit.emitGetFromCallFrameHeaderPtr(JSStack::Callee, ARMRegisters::r1);
+    jit.emitGetFromCallFrameHeaderPtr(JSStack::Callee, JSInterfaceJIT::argumentGPR1);
     jit.move(JSInterfaceJIT::regT2, JSInterfaceJIT::callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
-    jit.loadPtr(JSInterfaceJIT::Address(ARMRegisters::r1, JSFunction::offsetOfExecutable()), JSInterfaceJIT::regT2);
+    jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::argumentGPR1, JSFunction::offsetOfExecutable()), JSInterfaceJIT::regT2);
     jit.call(JSInterfaceJIT::Address(JSInterfaceJIT::regT2, executableOffsetToFunction));
 
     jit.restoreReturnAddressBeforeReturn(JSInterfaceJIT::regT3);
-
-#elif CPU(SH4)
-    // Load caller frame's scope chain into this callframe so that whatever we call can
-    // get to its global data.
-    jit.emitGetCallerFrameFromCallFrameHeaderPtr(JSInterfaceJIT::regT2);
-    jit.emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, JSInterfaceJIT::regT1, JSInterfaceJIT::regT2);
-    jit.emitPutCellToCallFrameHeader(JSInterfaceJIT::regT1, JSStack::ScopeChain);
-
-    jit.preserveReturnAddressAfterCall(JSInterfaceJIT::regT3); // Callee preserved
-    jit.emitPutReturnPCToCallFrameHeader(JSInterfaceJIT::regT3);
-
-    // Calling convention: f(r0 == regT4, r1 == regT5, ...);
-    // Host function signature: f(ExecState*);
-    jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::regT4);
-
-    jit.emitGetFromCallFrameHeaderPtr(JSStack::Callee, JSInterfaceJIT::regT5);
-    jit.move(JSInterfaceJIT::regT2, JSInterfaceJIT::callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
-    jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::regT5, JSFunction::offsetOfExecutable()), JSInterfaceJIT::regT2);
-
-    jit.call(JSInterfaceJIT::Address(JSInterfaceJIT::regT2, executableOffsetToFunction), JSInterfaceJIT::regT0);
-    jit.restoreReturnAddressBeforeReturn(JSInterfaceJIT::regT3);
-
 #elif CPU(MIPS)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
