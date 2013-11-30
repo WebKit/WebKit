@@ -109,7 +109,7 @@ static void didNavigateWithNavigationData(WKContextRef, WKPageRef pageRef, WKNav
     if (!toImpl(frameRef)->isMainFrame())
         return;
 
-    WKBrowsingContextController *controller = [WKBrowsingContextController _browsingContextControllerForPageRef:pageRef];
+    WKBrowsingContextController *controller = wrapper(*toImpl(pageRef));
     if ([controller.historyDelegate respondsToSelector:@selector(browsingContextController:didNavigateWithNavigationData:)])
         [controller.historyDelegate browsingContextController:controller didNavigateWithNavigationData:wrapper(*toImpl(navigationDataRef))];
 }
@@ -119,7 +119,7 @@ static void didPerformClientRedirect(WKContextRef, WKPageRef pageRef, WKURLRef s
     if (!toImpl(frameRef)->isMainFrame())
         return;
 
-    WKBrowsingContextController *controller = [WKBrowsingContextController _browsingContextControllerForPageRef:pageRef];
+    WKBrowsingContextController *controller = wrapper(*toImpl(pageRef));
     if ([controller.historyDelegate respondsToSelector:@selector(browsingContextController:didPerformClientRedirectFromURL:toURL:)])
         [controller.historyDelegate browsingContextController:controller didPerformClientRedirectFromURL:wrapper(*toImpl(sourceURLRef)) toURL:wrapper(*toImpl(destinationURLRef))];
 }
@@ -129,7 +129,7 @@ static void didPerformServerRedirect(WKContextRef, WKPageRef pageRef, WKURLRef s
     if (!toImpl(frameRef)->isMainFrame())
         return;
 
-    WKBrowsingContextController *controller = [WKBrowsingContextController _browsingContextControllerForPageRef:pageRef];
+    WKBrowsingContextController *controller = wrapper(*toImpl(pageRef));
     if ([controller.historyDelegate respondsToSelector:@selector(browsingContextController:didPerformServerRedirectFromURL:toURL:)])
         [controller.historyDelegate browsingContextController:controller didPerformServerRedirectFromURL:wrapper(*toImpl(sourceURLRef)) toURL:wrapper(*toImpl(destinationURLRef))];
 }
@@ -139,7 +139,7 @@ static void didUpdateHistoryTitle(WKContextRef, WKPageRef pageRef, WKStringRef t
     if (!toImpl(frameRef)->isMainFrame())
         return;
 
-    WKBrowsingContextController *controller = [WKBrowsingContextController _browsingContextControllerForPageRef:pageRef];
+    WKBrowsingContextController *controller = wrapper(*toImpl(pageRef));
     if ([controller.historyDelegate respondsToSelector:@selector(browsingContextController:didUpdateHistoryTitle:forURL:)])
         [controller.historyDelegate browsingContextController:controller didUpdateHistoryTitle:wrapper(*toImpl(titleRef)) forURL:wrapper(*toImpl(urlRef))];
 }

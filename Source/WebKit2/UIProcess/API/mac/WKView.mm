@@ -153,9 +153,6 @@ struct WKViewInterpretKeyEventsParameters {
 @public
     std::unique_ptr<PageClientImpl> _pageClient;
     RefPtr<WebPageProxy> _page;
-    
-    // Cache of the associated WKBrowsingContextController.
-    RetainPtr<WKBrowsingContextController> _browsingContextController;
 
     // For ToolTips.
     NSToolTipTag _lastToolTipTag;
@@ -300,9 +297,7 @@ struct WKViewInterpretKeyEventsParameters {
 
 - (WKBrowsingContextController *)browsingContextController
 {
-    if (!_data->_browsingContextController)
-        _data->_browsingContextController = adoptNS([[WKBrowsingContextController alloc] _initWithPageRef:[self pageRef]]);
-    return _data->_browsingContextController.get();
+    return wrapper(*_data->_page);
 }
 
 #endif // WK_API_ENABLED

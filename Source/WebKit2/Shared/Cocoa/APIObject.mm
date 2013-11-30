@@ -30,14 +30,15 @@
 
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
+#import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextGroupInternal.h"
-#import "WKProcessGroupInternal.h"
 #import "WKNSArray.h"
 #import "WKNSDictionary.h"
 #import "WKNSError.h"
 #import "WKNSString.h"
 #import "WKNSURL.h"
 #import "WKNavigationDataInternal.h"
+#import "WKProcessGroupInternal.h"
 
 namespace API {
 
@@ -86,6 +87,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::NavigationData:
         wrapper = [WKNavigationData alloc];
+        break;
+
+    case Type::Page:
+        wrapper = [WKBrowsingContextController alloc];
         break;
 
     case Type::PageGroup:

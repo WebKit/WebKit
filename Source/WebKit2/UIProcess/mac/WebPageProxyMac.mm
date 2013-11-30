@@ -32,11 +32,12 @@
 #import "DictionaryPopupInfo.h"
 #import "EditorState.h"
 #import "NativeWebKeyboardEvent.h"
-#import "PluginComplexTextInputState.h"
 #import "PageClient.h"
 #import "PageClientImpl.h"
+#import "PluginComplexTextInputState.h"
 #import "StringUtilities.h"
 #import "TextChecker.h"
+#import "WKBrowsingContextControllerInternal.h"
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
 #import <WebCore/DictationAlternative.h>
@@ -45,8 +46,8 @@
 #import <WebCore/SystemVersionMac.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebKitSystemInterface.h>
-#import <wtf/text/StringConcatenate.h>
 #import <mach-o/dyld.h>
+#import <wtf/text/StringConcatenate.h>
 
 @interface NSApplication (Details)
 - (void)speakString:(NSString *)string;
@@ -67,6 +68,10 @@ static bool shouldUseLegacyImplicitRubberBandControl()
 void WebPageProxy::platformInitialize()
 {
     m_useLegacyImplicitRubberBandControl = shouldUseLegacyImplicitRubberBandControl();
+
+#if WK_API_ENABLED
+    [WebKit::wrapper(*this) _finishInitialization];
+#endif
 }
 
 #if defined(__ppc__) || defined(__ppc64__)

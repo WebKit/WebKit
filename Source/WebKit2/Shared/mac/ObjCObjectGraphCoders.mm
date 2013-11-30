@@ -32,7 +32,6 @@
 // For UIProcess side encoding/decoding
 #import "WKAPICast.h"
 #import "WKBrowsingContextControllerInternal.h"
-#import "WKBrowsingContextControllerPrivate.h"
 #import "WebContextUserMessageCoders.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
@@ -343,7 +342,7 @@ public:
             if (!webPage)
                 coder.m_root = [NSNull null];
             else 
-                coder.m_root = [WKBrowsingContextController _browsingContextControllerForPageRef:toAPI(webPage)];
+                coder.m_root = wrapper(*webPage);
             break;
         }
         case WKTypeRefWrapperType: {

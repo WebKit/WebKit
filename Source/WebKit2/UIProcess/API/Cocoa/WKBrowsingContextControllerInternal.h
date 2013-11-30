@@ -27,14 +27,22 @@
 
 #if WK_API_ENABLED
 
-@interface WKBrowsingContextController ()
+#import "WKObject.h"
+#import "WebPageProxy.h"
 
-/* This should only be called from associate view. */
-- (id)_initWithPageRef:(WKPageRef)pageRef;
+namespace WebKit {
 
-/* Returns a WKBrowsingContextController associated with the WKPageRef. */
-+ (WKBrowsingContextController *)_browsingContextControllerForPageRef:(WKPageRef)pageRef;
+inline WKBrowsingContextController *wrapper(WebPageProxy& page)
+{
+    ASSERT([page.wrapper() isKindOfClass:[WKBrowsingContextController class]]);
+    return (WKBrowsingContextController *)page.wrapper();
+}
 
+}
+
+@interface WKBrowsingContextController () <WKObject>
+
+- (void)_finishInitialization;
 + (NSMutableSet *)customSchemes;
 
 @end
