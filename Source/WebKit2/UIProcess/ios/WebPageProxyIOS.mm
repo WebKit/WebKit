@@ -275,7 +275,7 @@ void WebPageProxy::interpretQueuedKeyEvent(const EditorState&, bool&, Vector<Web
 void WebPageProxy::interpretKeyEvent(const EditorState& state, bool isCharEvent, bool& handled)
 {
     m_editorState = state;
-    handled = m_pageClient->interpretKeyEvent(m_keyEventQueue.first(), isCharEvent);
+    handled = m_pageClient.interpretKeyEvent(m_keyEventQueue.first(), isCharEvent);
 }
 
 // Complex text input support for plug-ins.
@@ -356,27 +356,27 @@ void WebPageProxy::blurAssistedNode()
 
 void WebPageProxy::mainDocumentDidReceiveMobileDocType()
 {
-    m_pageClient->mainDocumentDidReceiveMobileDocType();
+    m_pageClient.mainDocumentDidReceiveMobileDocType();
 }
 
 void WebPageProxy::didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius)
 {
-    m_pageClient->didGetTapHighlightGeometries(requestID, color, highlightedQuads, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
+    m_pageClient.didGetTapHighlightGeometries(requestID, color, highlightedQuads, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
 }
 
 void WebPageProxy::didChangeViewportArguments(const WebCore::ViewportArguments& viewportArguments)
 {
-    m_pageClient->didChangeViewportArguments(viewportArguments);
+    m_pageClient.didChangeViewportArguments(viewportArguments);
 }
 
 void WebPageProxy::startAssistingNode(const WebCore::IntRect& scrollRect, bool hasNextFocusable, bool hasPreviousFocusable)
 {
-    m_pageClient->startAssistingNode(scrollRect, hasNextFocusable, hasPreviousFocusable);
+    m_pageClient.startAssistingNode(scrollRect, hasNextFocusable, hasPreviousFocusable);
 }
 
 void WebPageProxy::stopAssistingNode()
 {
-    m_pageClient->stopAssistingNode();
+    m_pageClient.stopAssistingNode();
 }
 
 void WebPageProxy::didPerformDictionaryLookup(const AttributedString&, const DictionaryPopupInfo&)
@@ -401,7 +401,7 @@ void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String&
 
 void WebPageProxy::setAcceleratedCompositingRootLayer(PlatformLayer* rootLayer)
 {
-    m_pageClient->setAcceleratedCompositingRootLayer(rootLayer);
+    m_pageClient.setAcceleratedCompositingRootLayer(rootLayer);
 }
 
 } // namespace WebKit

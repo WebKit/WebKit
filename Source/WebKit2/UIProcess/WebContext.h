@@ -158,7 +158,7 @@ public:
 
     StorageManager& storageManager() const { return *m_storageManager; }
 
-    PassRefPtr<WebPageProxy> createWebPage(PageClient*, WebPageGroup*, WebPageProxy* relatedPage = 0);
+    PassRefPtr<WebPageProxy> createWebPage(PageClient&, WebPageGroup*, WebPageProxy* relatedPage = 0);
 
     const String& injectedBundlePath() const { return m_injectedBundlePath; }
 

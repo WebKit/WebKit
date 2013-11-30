@@ -740,7 +740,7 @@ WebProcessProxy* WebContext::createNewWebProcessRespectingProcessCountLimit()
     return result;
 }
 
-PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient* pageClient, WebPageGroup* pageGroup, WebPageProxy* relatedPage)
+PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPageGroup* pageGroup, WebPageProxy* relatedPage)
 {
     RefPtr<WebProcessProxy> process;
     if (m_processModel == ProcessModelSharedSecondaryProcess) {

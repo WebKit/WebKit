@@ -931,7 +931,7 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebCon
 {
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
 
-    priv->pageProxy = context->createWebPage(priv->pageClient.get(), pageGroup);
+    priv->pageProxy = context->createWebPage(*priv->pageClient, pageGroup);
     priv->pageProxy->initializeWebPage();
 
 #if ENABLE(FULLSCREEN_API)

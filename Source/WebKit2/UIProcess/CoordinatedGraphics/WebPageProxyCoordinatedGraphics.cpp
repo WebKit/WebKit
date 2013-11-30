@@ -47,7 +47,7 @@ void WebPageProxy::findZoomableAreaForPoint(const IntPoint& point, const IntSize
 
 void WebPageProxy::didFindZoomableArea(const IntPoint& target, const IntRect& area)
 {
-    m_pageClient->didFindZoomableArea(target, area);
+    m_pageClient.didFindZoomableArea(target, area);
 }
 
 } // namespace WebKit

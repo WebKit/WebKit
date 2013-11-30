@@ -2908,7 +2908,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data = [[WKViewData alloc] init];
 
     _data->_pageClient = std::make_unique<PageClientImpl>(self);
-    _data->_page = toImpl(contextRef)->createWebPage(_data->_pageClient.get(), toImpl(pageGroupRef), toImpl(relatedPage));
+    _data->_page = toImpl(contextRef)->createWebPage(*_data->_pageClient, toImpl(pageGroupRef), toImpl(relatedPage));
     _data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
     _data->_page->initializeWebPage();
 #if ENABLE(FULLSCREEN_API)

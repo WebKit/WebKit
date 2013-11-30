@@ -77,7 +77,7 @@ public:
     WebContext* context() const { return m_context.get(); }
 
     static WebPageProxy* webPage(uint64_t pageID);
-    PassRefPtr<WebPageProxy> createWebPage(PageClient*, WebContext*, WebPageGroup*);
+    PassRefPtr<WebPageProxy> createWebPage(PageClient&, WebContext*, WebPageGroup*);
     void addExistingWebPage(WebPageProxy*, uint64_t pageID);
     void removeWebPage(uint64_t pageID);
     Vector<WebPageProxy*> pages() const;

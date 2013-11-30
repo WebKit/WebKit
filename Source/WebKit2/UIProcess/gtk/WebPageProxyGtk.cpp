@@ -57,7 +57,7 @@ void WebPageProxy::getEditorCommandsForKeyEvent(const AtomicString& eventType, V
     // When the keyboard event is started in the WebProcess side (e.g. from the Inspector)
     // it will arrive without a GdkEvent associated, so the keyEventQueue will be empty.
     if (!m_keyEventQueue.isEmpty())
-        m_pageClient->getEditorCommandsForKeyEvent(m_keyEventQueue.first(), eventType, commandsList);
+        m_pageClient.getEditorCommandsForKeyEvent(m_keyEventQueue.first(), eventType, commandsList);
 }
 
 void WebPageProxy::bindAccessibilityTree(const String& plugID)

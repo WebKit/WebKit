@@ -322,7 +322,7 @@ class WebPageProxy
     , public CoreIPC::MessageReceiver {
 public:
 
-    static PassRefPtr<WebPageProxy> create(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
+    static PassRefPtr<WebPageProxy> create(PageClient&, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
     virtual ~WebPageProxy();
 
     uint64_t pageID() const { return m_pageID; }
@@ -847,7 +847,7 @@ public:
     WebCore::ScrollPinningBehavior scrollPinningBehavior() { return m_scrollPinningBehavior; }
         
 private:
-    WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
+    WebPageProxy(PageClient&, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
     void platformInitialize();
     void initializeCreationParameters();
 
@@ -1138,7 +1138,7 @@ private:
     void findPlugin(const String& mimeType, uint32_t processType, const String& urlString, const String& frameURLString, const String& pageURLString, bool allowOnlyApplicationPlugins, uint64_t& pluginProcessToken, String& newMIMEType, uint32_t& pluginLoadPolicy, String& unavailabilityDescription);
 #endif
 
-    PageClient* m_pageClient;
+    PageClient& m_pageClient;
     WebLoaderClient m_loaderClient;
     WebPolicyClient m_policyClient;
     WebFormClient m_formClient;

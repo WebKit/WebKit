@@ -150,7 +150,7 @@ void WebPageProxy::windowAndViewFramesChanged(const FloatRect& viewFrameInWindow
 
     // In case the UI client overrides getWindowFrame(), we call it here to make sure we send the appropriate window frame.
     FloatRect windowFrameInScreenCoordinates = m_uiClient.windowFrame(this);
-    FloatRect windowFrameInUnflippedScreenCoordinates = m_pageClient->convertToUserSpace(windowFrameInScreenCoordinates);
+    FloatRect windowFrameInUnflippedScreenCoordinates = m_pageClient.convertToUserSpace(windowFrameInScreenCoordinates);
 
     process()->send(Messages::WebPage::WindowAndViewFramesChanged(windowFrameInScreenCoordinates, windowFrameInUnflippedScreenCoordinates, viewFrameInWindowCoordinates, accessibilityViewCoordinates), m_pageID);
 }
@@ -240,7 +240,7 @@ bool WebPageProxy::insertDictatedText(const String& text, uint64_t replacementRa
 
     for (size_t i = 0; i < dictationAlternativesWithRange.size(); ++i) {
         const TextAlternativeWithRange& alternativeWithRange = dictationAlternativesWithRange[i];
-        uint64_t dictationContext = m_pageClient->addDictationAlternatives(alternativeWithRange.alternatives);
+        uint64_t dictationContext = m_pageClient.addDictationAlternatives(alternativeWithRange.alternatives);
         if (dictationContext)
             dictationAlternatives.append(DictationAlternative(alternativeWithRange.range.location, alternativeWithRange.range.length, dictationContext));
     }
@@ -359,7 +359,7 @@ void WebPageProxy::setDragImage(const WebCore::IntPoint& clientPosition, const S
     if (!dragImage)
         return;
     
-    m_pageClient->setDragImage(clientPosition, dragImage.release(), isLinkDrag);
+    m_pageClient.setDragImage(clientPosition, dragImage.release(), isLinkDrag);
 }
 
 void WebPageProxy::setPromisedData(const String& pasteboardName, const SharedMemory::Handle& imageHandle, uint64_t imageSize, const String& filename, const String& extension,
@@ -373,7 +373,7 @@ void WebPageProxy::setPromisedData(const String& pasteboardName, const SharedMem
         RefPtr<SharedMemory> sharedMemoryArchive = SharedMemory::create(archiveHandle, SharedMemory::ReadOnly);;
         archiveBuffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryArchive->data()), archiveSize);
     }
-    m_pageClient->setPromisedData(pasteboardName, imageBuffer, filename, extension, title, url, visibleURL, archiveBuffer);
+    m_pageClient.setPromisedData(pasteboardName, imageBuffer, filename, extension, title, url, visibleURL, archiveBuffer);
 }
 #endif
 
@@ -388,7 +388,7 @@ void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint& 
 void WebPageProxy::interpretQueuedKeyEvent(const EditorState& state, bool& handled, Vector<WebCore::KeypressCommand>& commands)
 {
     m_editorState = state;
-    handled = m_pageClient->interpretKeyEvent(m_keyEventQueue.first(), commands);
+    handled = m_pageClient.interpretKeyEvent(m_keyEventQueue.first(), commands);
 }
 
 // Complex text input support for plug-ins.
@@ -427,22 +427,22 @@ void WebPageProxy::setSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled)
 
 void WebPageProxy::didPerformDictionaryLookup(const AttributedString& text, const DictionaryPopupInfo& dictionaryPopupInfo)
 {
-    m_pageClient->didPerformDictionaryLookup(text, dictionaryPopupInfo);
+    m_pageClient.didPerformDictionaryLookup(text, dictionaryPopupInfo);
 }
     
 void WebPageProxy::registerWebProcessAccessibilityToken(const CoreIPC::DataReference& data)
 {
-    m_pageClient->accessibilityWebProcessTokenReceived(data);
+    m_pageClient.accessibilityWebProcessTokenReceived(data);
 }    
     
 void WebPageProxy::makeFirstResponder()
 {
-    m_pageClient->makeFirstResponder();
+    m_pageClient.makeFirstResponder();
 }
 
 ColorSpaceData WebPageProxy::colorSpace()
 {
-    return m_pageClient->colorSpace();
+    return m_pageClient.colorSpace();
 }
 
 void WebPageProxy::registerUIProcessAccessibilityTokens(const CoreIPC::DataReference& elementToken, const CoreIPC::DataReference& windowToken)
@@ -455,21 +455,21 @@ void WebPageProxy::registerUIProcessAccessibilityTokens(const CoreIPC::DataRefer
 
 void WebPageProxy::pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus)
 {
-    m_pageClient->pluginFocusOrWindowFocusChanged(pluginComplexTextInputIdentifier, pluginHasFocusAndWindowHasFocus);
+    m_pageClient.pluginFocusOrWindowFocusChanged(pluginComplexTextInputIdentifier, pluginHasFocusAndWindowHasFocus);
 }
 
 void WebPageProxy::setPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, uint64_t pluginComplexTextInputState)
 {
     MESSAGE_CHECK(isValidPluginComplexTextInputState(pluginComplexTextInputState));
 
-    m_pageClient->setPluginComplexTextInputState(pluginComplexTextInputIdentifier, static_cast<PluginComplexTextInputState>(pluginComplexTextInputState));
+    m_pageClient.setPluginComplexTextInputState(pluginComplexTextInputIdentifier, static_cast<PluginComplexTextInputState>(pluginComplexTextInputState));
 }
 
 void WebPageProxy::executeSavedCommandBySelector(const String& selector, bool& handled)
 {
     MESSAGE_CHECK(isValidKeypressCommandName(selector));
 
-    handled = m_pageClient->executeSavedCommandBySelector(selector);
+    handled = m_pageClient.executeSavedCommandBySelector(selector);
 }
 
 bool WebPageProxy::shouldDelayWindowOrderingForEvent(const WebKit::WebMouseEvent& event)
@@ -496,17 +496,17 @@ bool WebPageProxy::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEven
 
 WKView* WebPageProxy::wkView() const
 {
-    return m_pageClient->wkView();
+    return m_pageClient.wkView();
 }
 
 void WebPageProxy::intrinsicContentSizeDidChange(const IntSize& intrinsicContentSize)
 {
-    m_pageClient->intrinsicContentSizeDidChange(intrinsicContentSize);
+    m_pageClient.intrinsicContentSizeDidChange(intrinsicContentSize);
 }
 
 void WebPageProxy::setAcceleratedCompositingRootLayer(PlatformLayer* rootLayer)
 {
-    m_pageClient->setAcceleratedCompositingRootLayer(rootLayer);
+    m_pageClient.setAcceleratedCompositingRootLayer(rootLayer);
 }
 
 static NSString *temporaryPDFDirectoryPath()

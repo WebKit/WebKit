@@ -147,7 +147,7 @@ using namespace WebKit;
     RunLoop::initializeMainRunLoop();
 
     _pageClient = std::make_unique<PageClientImpl>(self);
-    _page = toImpl(contextRef)->createWebPage(_pageClient.get(), toImpl(pageGroupRef), toImpl(relatedPage));
+    _page = toImpl(contextRef)->createWebPage(*_pageClient, toImpl(pageGroupRef), toImpl(relatedPage));
     _page->initializeWebPage();
     _page->setIntrinsicDeviceScaleFactor([UIScreen mainScreen].scale);
     _page->setUseFixedLayout(true);

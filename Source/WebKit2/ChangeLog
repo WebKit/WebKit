@@ -1,5 +1,113 @@
 2013-11-30  Sam Weinig  <sam@webkit.org>
 
+        [CTTE] WebPageProxy should store the PageClient as a reference
+        https://bugs.webkit.org/show_bug.cgi?id=125030
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseCreateWebPage):
+        * UIProcess/API/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithContextRef:pageGroupRef:relatedToPage:]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]):
+        * UIProcess/CoordinatedGraphics/WebPageProxyCoordinatedGraphics.cpp:
+        (WebKit::WebPageProxy::didFindZoomableArea):
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::WebView):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createWebPage):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::create):
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::setViewNeedsDisplay):
+        (WebKit::WebPageProxy::displayView):
+        (WebKit::WebPageProxy::canScrollView):
+        (WebKit::WebPageProxy::scrollView):
+        (WebKit::WebPageProxy::updateViewState):
+        (WebKit::WebPageProxy::viewStateDidChange):
+        (WebKit::WebPageProxy::viewSize):
+        (WebKit::WebPageProxy::startDrag):
+        (WebKit::WebPageProxy::handleTouchEvent):
+        (WebKit::WebPageProxy::preferencesDidChange):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::closePage):
+        (WebKit::WebPageProxy::setWindowFrame):
+        (WebKit::WebPageProxy::getWindowFrame):
+        (WebKit::WebPageProxy::screenToWindow):
+        (WebKit::WebPageProxy::windowToScreen):
+        (WebKit::WebPageProxy::pageDidRequestScroll):
+        (WebKit::WebPageProxy::pageTransitionViewportReady):
+        (WebKit::WebPageProxy::didRenderFrame):
+        (WebKit::WebPageProxy::didChangeViewportProperties):
+        (WebKit::WebPageProxy::handleDownloadRequest):
+        (WebKit::WebPageProxy::didChangeContentSize):
+        (WebKit::WebPageProxy::showColorPicker):
+        (WebKit::WebPageProxy::editorStateChanged):
+        (WebKit::WebPageProxy::canUndoRedo):
+        (WebKit::WebPageProxy::executeUndoRedo):
+        (WebKit::WebPageProxy::clearAllEditCommands):
+        (WebKit::WebPageProxy::setFindIndicator):
+        (WebKit::WebPageProxy::showPopupMenu):
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        (WebKit::WebPageProxy::registerEditCommand):
+        (WebKit::WebPageProxy::setToolTip):
+        (WebKit::WebPageProxy::setCursor):
+        (WebKit::WebPageProxy::setCursorHiddenUntilMouseMoves):
+        (WebKit::WebPageProxy::didReceiveEvent):
+        (WebKit::WebPageProxy::processDidCrash):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        (WebKit::WebPageProxy::initializeCreationParameters):
+        (WebKit::WebPageProxy::enterAcceleratedCompositingMode):
+        (WebKit::WebPageProxy::exitAcceleratedCompositingMode):
+        (WebKit::WebPageProxy::updateAcceleratedCompositingMode):
+        (WebKit::WebPageProxy::requestGeolocationPermissionForFrame):
+        (WebKit::WebPageProxy::recommendedScrollbarStyleDidChange):
+        (WebKit::WebPageProxy::updateBackingStoreDiscardableState):
+        (WebKit::WebPageProxy::showCorrectionPanel):
+        (WebKit::WebPageProxy::dismissCorrectionPanel):
+        (WebKit::WebPageProxy::dismissCorrectionPanelSoon):
+        (WebKit::WebPageProxy::recordAutocorrectionResponse):
+        (WebKit::WebPageProxy::showDictationAlternativeUI):
+        (WebKit::WebPageProxy::removeDictationAlternatives):
+        (WebKit::WebPageProxy::dictationAlternatives):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createWebPage):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::getEditorCommandsForKeyEvent):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::interpretKeyEvent):
+        (WebKit::WebPageProxy::mainDocumentDidReceiveMobileDocType):
+        (WebKit::WebPageProxy::didGetTapHighlightGeometries):
+        (WebKit::WebPageProxy::didChangeViewportArguments):
+        (WebKit::WebPageProxy::startAssistingNode):
+        (WebKit::WebPageProxy::stopAssistingNode):
+        (WebKit::WebPageProxy::setAcceleratedCompositingRootLayer):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::windowAndViewFramesChanged):
+        (WebKit::WebPageProxy::insertDictatedText):
+        (WebKit::WebPageProxy::setDragImage):
+        (WebKit::WebPageProxy::setPromisedData):
+        (WebKit::WebPageProxy::interpretQueuedKeyEvent):
+        (WebKit::WebPageProxy::didPerformDictionaryLookup):
+        (WebKit::WebPageProxy::registerWebProcessAccessibilityToken):
+        (WebKit::WebPageProxy::makeFirstResponder):
+        (WebKit::WebPageProxy::colorSpace):
+        (WebKit::WebPageProxy::pluginFocusOrWindowFocusChanged):
+        (WebKit::WebPageProxy::setPluginComplexTextInputState):
+        (WebKit::WebPageProxy::executeSavedCommandBySelector):
+        (WebKit::WebPageProxy::wkView):
+        (WebKit::WebPageProxy::intrinsicContentSizeDidChange):
+        (WebKit::WebPageProxy::setAcceleratedCompositingRootLayer):
+
+2013-11-30  Sam Weinig  <sam@webkit.org>
+
         [RTTE] The PermissionRequestManagerProxies should use WebPageProxy references.
         https://bugs.webkit.org/show_bug.cgi?id=125029
 

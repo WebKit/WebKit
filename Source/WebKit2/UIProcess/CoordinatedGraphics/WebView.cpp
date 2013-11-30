@@ -52,7 +52,7 @@ WebView::WebView(WebContext* context, WebPageGroup* pageGroup)
     , m_opacity(1.0)
 {
     // Need to call createWebPage after other data members, specifically m_visible, are initialized.
-    m_page = context->createWebPage(this, pageGroup);
+    m_page = context->createWebPage(*this, pageGroup);
 
     m_page->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
     m_page->pageGroup()->preferences()->setForceCompositingMode(true);
