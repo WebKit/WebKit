@@ -1384,6 +1384,10 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& p
     }
     return plugin.release();
 #else
+    UNUSED_PARAM(pluginSize);
+    UNUSED_PARAM(appletElement);
+    UNUSED_PARAM(paramNames);
+    UNUSED_PARAM(paramValues);
     return 0;
 #endif
 }

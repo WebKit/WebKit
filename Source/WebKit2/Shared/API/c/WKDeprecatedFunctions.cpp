@@ -37,7 +37,7 @@ WK_EXPORT CGContextRef WKGraphicsContextGetCGContext(WKGraphicsContextRef graphi
 #endif
 }
 
-bool WKArrayIsMutable(WKArrayRef array)
+bool WKArrayIsMutable(WKArrayRef)
 {
     return false;
 }

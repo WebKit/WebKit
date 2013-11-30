@@ -100,7 +100,7 @@ public:
         return condition & m_condition;
     }
 
-    static gboolean eventCallback(GSocket* socket, GIOCondition condition, SocketEventSource* eventSource)
+    static gboolean eventCallback(GSocket*, GIOCondition condition, SocketEventSource* eventSource)
     {
         ASSERT(eventSource);
 

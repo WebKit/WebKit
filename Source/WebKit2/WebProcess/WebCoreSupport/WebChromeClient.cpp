@@ -549,6 +549,9 @@ void WebChromeClient::unavailablePluginButtonClicked(Element* element, RenderEmb
     if (!pluginspageAttributeURL.protocolIsInHTTPFamily())
         pluginspageAttributeURL = URL();
     m_page->send(Messages::WebPageProxy::UnavailablePluginButtonClicked(pluginUnavailabilityReason, pluginElement->serviceType(), pluginURLString, pluginspageAttributeURL.string(), frameURLString, pageURLString));
+#else
+    UNUSED_PARAM(element);
+    UNUSED_PARAM(pluginUnavailabilityReason);
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 }
 
@@ -894,6 +897,8 @@ void WebChromeClient::didAddHeaderLayer(GraphicsLayer* headerParent)
 #if ENABLE(RUBBER_BANDING)
     if (PageBanner* banner = m_page->headerPageBanner())
         banner->didAddParentLayer(headerParent);
+#else
+    UNUSED_PARAM(headerParent);
 #endif
 }
 
@@ -902,6 +907,8 @@ void WebChromeClient::didAddFooterLayer(GraphicsLayer* footerParent)
 #if ENABLE(RUBBER_BANDING)
     if (PageBanner* banner = m_page->footerPageBanner())
         banner->didAddParentLayer(footerParent);
+#else
+    UNUSED_PARAM(footerParent);
 #endif
 }
 
