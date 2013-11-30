@@ -33,12 +33,12 @@
 using namespace WebKit;
 
 @implementation WKNSDictionary {
-    std::aligned_storage<sizeof(ImmutableDictionary), std::alignment_of<ImmutableDictionary>::value>::type _dictionary;
+    API::ObjectStorage<ImmutableDictionary> _dictionary;
 }
 
 - (void)dealloc
 {
-    reinterpret_cast<ImmutableDictionary*>(&_dictionary)->~ImmutableDictionary();
+    _dictionary->~ImmutableDictionary();
 
     [super dealloc];
 }
@@ -53,7 +53,7 @@ using namespace WebKit;
 
 - (NSUInteger)count
 {
-    return reinterpret_cast<ImmutableDictionary*>(&_dictionary)->size();
+    return _dictionary->size();
 }
 
 - (id)objectForKey:(id)key
@@ -62,7 +62,7 @@ using namespace WebKit;
         return nil;
 
     bool exists;
-    API::Object* value = reinterpret_cast<ImmutableDictionary*>(&_dictionary)->get((NSString *)key, exists);
+    API::Object* value = _dictionary->get((NSString *)key, exists);
     if (!exists)
         return nil;
 
@@ -71,17 +71,17 @@ using namespace WebKit;
 
 - (NSEnumerator *)keyEnumerator
 {
-    return [wrapper(*reinterpret_cast<ImmutableDictionary*>(&_dictionary)->keys()) objectEnumerator];
+    return [wrapper(*_dictionary->keys()) objectEnumerator];
 }
 
 #pragma mark NSCopying protocol implementation
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    if (!reinterpret_cast<ImmutableDictionary*>(&_dictionary)->isMutable())
+    if (!_dictionary->isMutable())
         return [self retain];
 
-    auto map = reinterpret_cast<ImmutableDictionary*>(&_dictionary)->map();
+    auto map = _dictionary->map();
     return ImmutableDictionary::adopt(map).leakRef()->wrapper();
 }
 
@@ -89,7 +89,7 @@ using namespace WebKit;
 
 - (API::Object&)_apiObject
 {
-    return *reinterpret_cast<API::Object*>(&_dictionary);
+    return *_dictionary;
 }
 
 @end

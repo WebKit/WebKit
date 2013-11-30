@@ -29,12 +29,12 @@
 #if WK_API_ENABLED
 
 @implementation WKNSArray {
-    std::aligned_storage<sizeof(API::Array), std::alignment_of<API::Array>::value>::type _array;
+    API::ObjectStorage<API::Array> _array;
 }
 
 - (void)dealloc
 {
-    reinterpret_cast<API::Array*>(&_array)->~Array();
+    _array->~Array();
 
     [super dealloc];
 }
@@ -43,12 +43,12 @@
 
 - (NSUInteger)count
 {
-    return reinterpret_cast<API::Array*>(&_array)->size();
+    return _array->size();
 }
 
 - (id)objectAtIndex:(NSUInteger)i
 {
-    API::Object* object = reinterpret_cast<API::Array*>(&_array)->at(i);
+    API::Object* object = _array->at(i);
     return object ? object->wrapper() : [NSNull null];
 }
 
@@ -63,7 +63,7 @@
 
 - (API::Object&)_apiObject
 {
-    return *reinterpret_cast<API::Array*>(&_array);
+    return *_array;
 }
 
 @end

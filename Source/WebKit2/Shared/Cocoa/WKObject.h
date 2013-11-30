@@ -27,8 +27,20 @@
 
 #if WK_API_ENABLED
 
+#import <type_traits>
+
 namespace API {
 class Object;
+
+template<typename T>
+struct ObjectStorage {
+    T* get() { return reinterpret_cast<T*>(&data); }
+    T& operator*() { return *reinterpret_cast<T*>(&data); }
+    T* operator->() { return reinterpret_cast<T*>(&data); }
+
+    typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type data;
+};
+
 }
 
 @protocol WKObject <NSObject>

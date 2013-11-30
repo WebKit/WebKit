@@ -33,39 +33,39 @@
 using namespace WebKit;
 
 @implementation WKBackForwardListItem {
-    std::aligned_storage<sizeof(WebBackForwardListItem), std::alignment_of<WebBackForwardListItem>::value>::type _item;
+    API::ObjectStorage<WebBackForwardListItem> _item;
 }
 
 - (void)dealloc
 {
-    reinterpret_cast<WebBackForwardListItem*>(&_item)->~WebBackForwardListItem();
+    _item->~WebBackForwardListItem();
 
     [super dealloc];
 }
 
 - (NSURL *)URL
 {
-    return [NSURL _web_URLWithWTFString:reinterpret_cast<WebBackForwardListItem*>(&_item)->url() relativeToURL:nil];
+    return [NSURL _web_URLWithWTFString:_item->url() relativeToURL:nil];
 }
 
 - (NSString *)title
 {
-    if (!reinterpret_cast<WebBackForwardListItem*>(&_item)->title())
+    if (!_item->title())
         return nil;
 
-    return reinterpret_cast<WebBackForwardListItem*>(&_item)->title();
+    return _item->title();
 }
 
 - (NSURL *)originalURL
 {
-    return [NSURL _web_URLWithWTFString:reinterpret_cast<WebBackForwardListItem*>(&_item)->originalURL() relativeToURL:nil];
+    return [NSURL _web_URLWithWTFString:_item->originalURL() relativeToURL:nil];
 }
 
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
 {
-    return *reinterpret_cast<API::Object*>(&_item);
+    return *_item;
 }
 
 @end
@@ -74,7 +74,7 @@ using namespace WebKit;
 
 - (WebKit::WebBackForwardListItem&)_item
 {
-    return *reinterpret_cast<WebBackForwardListItem*>(&_item);
+    return *_item;
 }
 
 @end

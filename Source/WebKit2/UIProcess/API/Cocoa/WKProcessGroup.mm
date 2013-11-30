@@ -52,11 +52,18 @@
 using namespace WebKit;
 
 @implementation WKProcessGroup {
-    std::aligned_storage<sizeof(WebContext), std::alignment_of<WebContext>::value>::type _context;
+    API::ObjectStorage<WebContext> _context;
 
 #if PLATFORM(IOS)
     RetainPtr<WKGeolocationProviderIOS> _geolocationProvider;
 #endif // PLATFORM(IOS)
+}
+
+- (void)dealloc
+{
+    _context->~WebContext();
+
+    [super dealloc];
 }
 
 static void didCreateConnection(WKContextRef, WKConnectionRef connectionRef, const void* clientInfo)
@@ -177,25 +184,18 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
 
     API::Object::constructInWrapper<WebContext>(self, bundleURL ? String([bundleURL path]) : String());
 
-    setUpConnectionClient(self, toAPI(reinterpret_cast<WebContext*>(&_context)));
-    setUpInectedBundleClient(self, toAPI(reinterpret_cast<WebContext*>(&_context)));
-    setUpHistoryClient(self, toAPI(reinterpret_cast<WebContext*>(&_context)));
+    setUpConnectionClient(self, toAPI(_context.get()));
+    setUpInectedBundleClient(self, toAPI(_context.get()));
+    setUpHistoryClient(self, toAPI(_context.get()));
 
     return self;
-}
-
-- (void)dealloc
-{
-    reinterpret_cast<WebContext*>(&_context)->~WebContext();
-
-    [super dealloc];
 }
 
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
 {
-    return *reinterpret_cast<API::Object*>(&_context);
+    return *_context;
 }
 
 @end
@@ -204,14 +204,14 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
 
 - (WKContextRef)_contextRef
 {
-    return toAPI(reinterpret_cast<WebContext*>(&_context));
+    return toAPI(_context.get());
 }
 
 #if PLATFORM(IOS)
 - (WKGeolocationProviderIOS *)_geolocationProvider
 {
     if (!_geolocationProvider)
-        _geolocationProvider = adoptNS([[WKGeolocationProviderIOS alloc] initWithContext:reinterpret_cast<WebContext*>(&_context)]);
+        _geolocationProvider = adoptNS([[WKGeolocationProviderIOS alloc] initWithContext:_context.get()]);
     return _geolocationProvider.get();
 }
 #endif // PLATFORM(IOS)

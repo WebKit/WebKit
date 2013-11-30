@@ -35,41 +35,41 @@
 using namespace WebKit;
 
 @implementation WKNavigationData {
-    std::aligned_storage<sizeof(API::NavigationData), std::alignment_of<API::NavigationData>::value>::type _data;
+    API::ObjectStorage<API::NavigationData> _data;
 }
 
 - (void)dealloc
 {
-    reinterpret_cast<API::NavigationData*>(&_data)->~NavigationData();
+    _data->~NavigationData();
 
     [super dealloc];
 }
 
 - (NSString *)title
 {
-    return reinterpret_cast<API::NavigationData*>(&_data)->title();
+    return _data->title();
 }
 
 - (NSURLRequest *)originalRequest
 {
-    return reinterpret_cast<API::NavigationData*>(&_data)->originalRequest().nsURLRequest(WebCore::DoNotUpdateHTTPBody);
+    return _data->originalRequest().nsURLRequest(WebCore::DoNotUpdateHTTPBody);
 }
 
 - (NSURL *)destinationURL
 {
-    return [NSURL _web_URLWithWTFString:reinterpret_cast<API::NavigationData*>(&_data)->url() relativeToURL:nil];
+    return [NSURL _web_URLWithWTFString:_data->url() relativeToURL:nil];
 }
 
 - (NSURLResponse *)response
 {
-    return reinterpret_cast<API::NavigationData*>(&_data)->response().nsURLResponse();
+    return _data->response().nsURLResponse();
 }
 
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
 {
-    return *reinterpret_cast<API::Object*>(&_data);
+    return *_data;
 }
 
 @end

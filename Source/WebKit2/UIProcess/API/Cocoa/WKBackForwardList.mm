@@ -34,12 +34,12 @@
 using namespace WebKit;
 
 @implementation WKBackForwardList {
-    std::aligned_storage<sizeof(WebBackForwardList), std::alignment_of<WebBackForwardList>::value>::type _list;
+    API::ObjectStorage<WebBackForwardList> _list;
 }
 
 - (void)dealloc
 {
-    reinterpret_cast<WebBackForwardList*>(&_list)->~WebBackForwardList();
+    _list->~WebBackForwardList();
 
     [super dealloc];
 }
@@ -54,37 +54,37 @@ static WKBackForwardListItem *toWKBackForwardListItem(WebBackForwardListItem* it
 
 - (WKBackForwardListItem *)currentItem
 {
-    return toWKBackForwardListItem(reinterpret_cast<WebBackForwardList*>(&_list)->currentItem());
+    return toWKBackForwardListItem(_list->currentItem());
 }
 
 - (WKBackForwardListItem *)backItem
 {
-    return toWKBackForwardListItem(reinterpret_cast<WebBackForwardList*>(&_list)->backItem());
+    return toWKBackForwardListItem(_list->backItem());
 }
 
 - (WKBackForwardListItem *)forwardItem
 {
-    return toWKBackForwardListItem(reinterpret_cast<WebBackForwardList*>(&_list)->forwardItem());
+    return toWKBackForwardListItem(_list->forwardItem());
 }
 
 - (WKBackForwardListItem *)itemAtIndex:(NSInteger)index
 {
-    return toWKBackForwardListItem(reinterpret_cast<WebBackForwardList*>(&_list)->itemAtIndex(index));
+    return toWKBackForwardListItem(_list->itemAtIndex(index));
 }
 
 - (NSUInteger)backListCount
 {
-    return reinterpret_cast<WebBackForwardList*>(&_list)->backListCount();
+    return _list->backListCount();
 }
 
 - (NSUInteger)forwardListCount
 {
-    return reinterpret_cast<WebBackForwardList*>(&_list)->forwardListCount();
+    return _list->forwardListCount();
 }
 
 - (NSArray *)backListWithLimit:(NSUInteger)limit
 {
-    RefPtr<API::Array> list = reinterpret_cast<WebBackForwardList*>(&_list)->backListAsAPIArrayWithLimit(limit);
+    RefPtr<API::Array> list = _list->backListAsAPIArrayWithLimit(limit);
     if (!list)
         return nil;
 
@@ -93,7 +93,7 @@ static WKBackForwardListItem *toWKBackForwardListItem(WebBackForwardListItem* it
 
 - (NSArray *)forwardListWithLimit:(NSUInteger)limit
 {
-    RefPtr<API::Array> list = reinterpret_cast<WebBackForwardList*>(&_list)->forwardListAsAPIArrayWithLimit(limit);
+    RefPtr<API::Array> list = _list->forwardListAsAPIArrayWithLimit(limit);
     if (!list)
         return nil;
 
@@ -104,7 +104,7 @@ static WKBackForwardListItem *toWKBackForwardListItem(WebBackForwardListItem* it
 
 - (API::Object&)_apiObject
 {
-    return *reinterpret_cast<API::Object*>(&_list);
+    return *_list;
 }
 
 @end
