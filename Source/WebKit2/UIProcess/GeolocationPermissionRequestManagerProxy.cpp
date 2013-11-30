@@ -32,17 +32,15 @@
 
 namespace WebKit {
 
-GeolocationPermissionRequestManagerProxy::GeolocationPermissionRequestManagerProxy(WebPageProxy* page)
+GeolocationPermissionRequestManagerProxy::GeolocationPermissionRequestManagerProxy(WebPageProxy& page)
     : m_page(page)
 {
 }
 
 void GeolocationPermissionRequestManagerProxy::invalidateRequests()
 {
-    PendingRequestMap::const_iterator it = m_pendingRequests.begin();
-    PendingRequestMap::const_iterator end = m_pendingRequests.end();
-    for (; it != end; ++it)
-        it->value->invalidate();
+    for (auto request : m_pendingRequests.values())
+        request->invalidate();
 
     m_pendingRequests.clear();
 }
@@ -56,15 +54,15 @@ PassRefPtr<GeolocationPermissionRequestProxy> GeolocationPermissionRequestManage
 
 void GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed)
 {
-    if (!m_page->isValid())
+    if (!m_page.isValid())
         return;
 
-    PendingRequestMap::iterator it = m_pendingRequests.find(geolocationID);
+    auto it = m_pendingRequests.find(geolocationID);
     if (it == m_pendingRequests.end())
         return;
 
 #if ENABLE(GEOLOCATION)
-    m_page->process()->send(Messages::WebPage::DidReceiveGeolocationPermissionDecision(geolocationID, allowed), m_page->pageID());
+    m_page.process()->send(Messages::WebPage::DidReceiveGeolocationPermissionDecision(geolocationID, allowed), m_page.pageID());
 #else
     UNUSED_PARAM(allowed);
 #endif

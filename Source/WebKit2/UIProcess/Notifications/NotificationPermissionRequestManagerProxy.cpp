@@ -33,18 +33,16 @@
 
 namespace WebKit {
 
-NotificationPermissionRequestManagerProxy::NotificationPermissionRequestManagerProxy(WebPageProxy* page)
+NotificationPermissionRequestManagerProxy::NotificationPermissionRequestManagerProxy(WebPageProxy& page)
     : m_page(page)
 {
 }
 
 void NotificationPermissionRequestManagerProxy::invalidateRequests()
 {
-    PendingRequestMap::const_iterator it = m_pendingRequests.begin();
-    PendingRequestMap::const_iterator end = m_pendingRequests.end();
-    for (; it != end; ++it)
-        it->value->invalidate();
-    
+    for (auto request : m_pendingRequests.values())
+        request->invalidate();
+
     m_pendingRequests.clear();
 }
 
@@ -57,14 +55,14 @@ PassRefPtr<NotificationPermissionRequest> NotificationPermissionRequestManagerPr
 
 void NotificationPermissionRequestManagerProxy::didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allow)
 {
-    if (!m_page->isValid())
+    if (!m_page.isValid())
         return;
     
     RefPtr<NotificationPermissionRequest> request = m_pendingRequests.take(notificationID);
     if (!request)
         return;
     
-    m_page->process()->send(Messages::WebPage::DidReceiveNotificationPermissionDecision(notificationID, allow), m_page->pageID());
+    m_page.process()->send(Messages::WebPage::DidReceiveNotificationPermissionDecision(notificationID, allow), m_page.pageID());
 }
 
 } // namespace WebKit

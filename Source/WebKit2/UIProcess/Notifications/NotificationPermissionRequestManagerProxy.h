@@ -36,7 +36,7 @@ class WebPageProxy;
 
 class NotificationPermissionRequestManagerProxy {
 public:
-    explicit NotificationPermissionRequestManagerProxy(WebPageProxy*);
+    explicit NotificationPermissionRequestManagerProxy(WebPageProxy&);
     
     void invalidateRequests();
     
@@ -47,12 +47,10 @@ public:
     void didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allow);
     
 private:
-    typedef HashMap<uint64_t, RefPtr<NotificationPermissionRequest>> PendingRequestMap;
-    PendingRequestMap m_pendingRequests;
-    WebPageProxy* m_page;
+    HashMap<uint64_t, RefPtr<NotificationPermissionRequest>> m_pendingRequests;
+    WebPageProxy& m_page;
 };
 
 } // namespace WebKit
-
 
 #endif // NotificationPermissionRequestManagerProxy_h

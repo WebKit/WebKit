@@ -35,7 +35,7 @@ class WebPageProxy;
 
 class GeolocationPermissionRequestManagerProxy {
 public:
-    explicit GeolocationPermissionRequestManagerProxy(WebPageProxy*);
+    explicit GeolocationPermissionRequestManagerProxy(WebPageProxy&);
 
     void invalidateRequests();
 
@@ -46,9 +46,8 @@ public:
     void didReceiveGeolocationPermissionDecision(uint64_t, bool allow);
 
 private:
-    typedef HashMap<uint64_t, RefPtr<GeolocationPermissionRequestProxy>> PendingRequestMap;
-    PendingRequestMap m_pendingRequests;
-    WebPageProxy* m_page;
+    HashMap<uint64_t, RefPtr<GeolocationPermissionRequestProxy>> m_pendingRequests;
+    WebPageProxy& m_page;
 };
 
 } // namespace WebKit
