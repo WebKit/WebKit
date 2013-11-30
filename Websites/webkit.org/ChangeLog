@@ -1,3 +1,14 @@
+2013-11-30  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/125027> Update the analytics account used by webkit.org
+
+        Switch to a Google Analytics id that's accessible to someone that's involved with the WebKit project.
+
+        Reviewed by Sam Weinig.
+
+        * footer.inc: Remove the old analytics code.
+        * header.inc: Add the new stuff.
+
 2013-10-29  Beth Dakin  <bdakin@apple.com>
 
         Just updating the sample code for this potential blog post.
