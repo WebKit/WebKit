@@ -1,3 +1,10 @@
+2013-11-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK build fix after r159889.
+
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::viewWidget): Adjust the static cast of the PageClient reference to PageClientImpl.
+
 2013-11-30  Sam Weinig  <sam@webkit.org>
 
         [CTTE] WebPageProxy should store the PageClient as a reference
