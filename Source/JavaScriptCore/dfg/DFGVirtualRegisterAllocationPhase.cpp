@@ -47,9 +47,6 @@ public:
     {
         ScoreBoard scoreBoard(m_graph.m_nextMachineLocal);
         scoreBoard.assertClear();
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        bool needsNewLine = false;
-#endif
         for (size_t blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
             BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
@@ -58,12 +55,6 @@ public:
                 continue;
             for (size_t indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
                 Node* node = block->at(indexInBlock);
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                if (needsNewLine)
-                    dataLogF("\n");
-                dataLogF("   @%u:", node->index());
-                needsNewLine = true;
-#endif
         
                 if (!node->shouldGenerate())
                     continue;
@@ -97,11 +88,6 @@ public:
                     continue;
 
                 VirtualRegister virtualRegister = scoreBoard.allocate();
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLogF(
-                    " Assigning virtual register %u to node %u.",
-                    virtualRegister, node->index());
-#endif
                 node->setVirtualRegister(virtualRegister);
                 // 'mustGenerate' nodes have their useCount artificially elevated,
                 // call use now to account for this.
@@ -110,10 +96,6 @@ public:
             }
             scoreBoard.assertClear();
         }
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        if (needsNewLine)
-            dataLogF("\n");
-#endif
         
         // Record the number of virtual registers we're using. This is used by calls
         // to figure out where to put the parameters.

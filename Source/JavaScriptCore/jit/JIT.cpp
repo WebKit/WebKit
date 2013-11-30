@@ -540,13 +540,6 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
 
     Jump stackCheck;
     if (m_codeBlock->codeType() == FunctionCode) {
-#if ENABLE(DFG_JIT)
-#if DFG_ENABLE(SUCCESS_STATS)
-        static SamplingCounter counter("orignalJIT");
-        emitCount(counter);
-#endif
-#endif
-
 #if ENABLE(VALUE_PROFILER)
         ASSERT(m_bytecodeOffset == (unsigned)-1);
         if (shouldEmitProfiling()) {

@@ -40,33 +40,12 @@ namespace JSC { namespace DFG {
 void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecovery>& operands, SpeculationRecovery* recovery)
 {
     // 1) Pro-forma stuff.
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("OSR exit for (");
-    for (CodeOrigin codeOrigin = exit.m_codeOrigin; ; codeOrigin = codeOrigin.inlineCallFrame->caller) {
-        dataLogF("bc#%u", codeOrigin.bytecodeIndex);
-        if (!codeOrigin.inlineCallFrame)
-            break;
-        dataLogF(" -> %p ", codeOrigin.inlineCallFrame->executable.get());
-    }
-    dataLogF(")  ");
-    dataLog(operands);
-#endif
-
     if (Options::printEachOSRExit()) {
         SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
         debugInfo->codeBlock = m_jit.codeBlock();
         
         m_jit.debugCall(debugOperationPrintSpeculationFailure, debugInfo);
     }
-    
-#if DFG_ENABLE(JIT_BREAK_ON_SPECULATION_FAILURE)
-    m_jit.breakpoint();
-#endif
-    
-#if DFG_ENABLE(SUCCESS_STATS)
-    static SamplingCounter counter("SpeculationFailure");
-    m_jit.emitCount(counter);
-#endif
     
     // 2) Perform speculation recovery. This only comes into play when an operation
     //    starts mutating state before verifying the speculation it has already made.

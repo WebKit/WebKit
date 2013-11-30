@@ -68,9 +68,6 @@ public:
 private:
     bool foldConstants(BasicBlock* block)
     {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("Constant folding considering Block ", *block, ".\n");
-#endif
         bool changed = false;
         m_state.beginBasicBlock(block);
         for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {

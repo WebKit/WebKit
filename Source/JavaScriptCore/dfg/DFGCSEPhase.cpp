@@ -71,9 +71,6 @@ private:
         else
             result++;
         ASSERT(result <= m_indexInBlock);
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("  limit %u: ", result);
-#endif
         return result;
     }
 
@@ -949,9 +946,6 @@ private:
             if (edge->flags() & NodeRelevantToOSR)
                 continue;
             
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("   Eliminating edge @", m_currentNode->index(), " -> @", edge->index());
-#endif
             node->children.removeEdge(i--);
             m_changed = true;
         }
@@ -961,10 +955,6 @@ private:
     {
         if (!replacement)
             return false;
-        
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("   Replacing @%u -> @%u", m_currentNode->index(), replacement->index());
-#endif
         
         m_currentNode->convertToPhantom();
         eliminateIrrelevantPhantomChildren(m_currentNode);
@@ -979,10 +969,6 @@ private:
     
     void eliminate()
     {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("   Eliminating @%u", m_currentNode->index());
-#endif
-        
         ASSERT(m_currentNode->mustGenerate());
         m_currentNode->convertToPhantom();
         eliminateIrrelevantPhantomChildren(m_currentNode);
@@ -1009,10 +995,6 @@ private:
         
         if (node->op() == SetLocal)
             node->child1()->mergeFlags(NodeRelevantToOSR);
-        
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("   %s @%u: ", Graph::opName(node->op()), node->index());
-#endif
         
         switch (node->op()) {
         
@@ -1337,9 +1319,6 @@ private:
         }
         
         m_lastSeen[node->op()] = m_indexInBlock;
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("\n");
-#endif
     }
     
     void performBlockCSE(BasicBlock* block)

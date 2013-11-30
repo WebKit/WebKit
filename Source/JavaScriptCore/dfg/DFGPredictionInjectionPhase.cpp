@@ -58,13 +58,6 @@ public:
             
                 m_graph.m_arguments[arg]->variableAccessData()->predict(
                     profile->computeUpdatedPrediction(locker));
-            
-#if DFG_ENABLE(DEBUG_VERBOSE)
-                dataLog(
-                    "Argument [", arg, "] prediction: ",
-                    SpeculationDump(m_graph.m_arguments[arg]->variableAccessData()->prediction()),
-                    "\n");
-#endif
             }
         }
         

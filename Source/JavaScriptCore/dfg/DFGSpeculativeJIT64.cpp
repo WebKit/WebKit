@@ -738,9 +738,6 @@ void SpeculativeJIT::emitCall(Node* node)
 template<bool strict>
 GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnFormat)
 {
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("SpecInt@%d   ", edge->index());
-#endif
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
     ASSERT(edge.useKind() != KnownInt32Use || !(value.m_type & ~SpecInt32));
@@ -1123,9 +1120,6 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
 
 FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
 {
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("SpecDouble@%d   ", edge->index());
-#endif
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
     ASSERT(edge.useKind() != KnownNumberUse || !(value.m_type & ~SpecFullNumber));
@@ -1320,9 +1314,6 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
 
 GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
 {
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("SpecCell@%d   ", edge->index());
-#endif
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
     ASSERT((edge.useKind() != KnownCellUse && edge.useKind() != KnownStringUse) || !(value.m_type & ~SpecCell));
@@ -1365,11 +1356,11 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
     case DataFormatJSCell: {
         GPRReg gpr = info.gpr();
         m_gprs.lock(gpr);
-#if DFG_ENABLE(JIT_ASSERT)
-        MacroAssembler::Jump checkCell = m_jit.branchTest64(MacroAssembler::Zero, gpr, GPRInfo::tagMaskRegister);
-        m_jit.breakpoint();
-        checkCell.link(&m_jit);
-#endif
+        if (!ASSERT_DISABLED) {
+            MacroAssembler::Jump checkCell = m_jit.branchTest64(MacroAssembler::Zero, gpr, GPRInfo::tagMaskRegister);
+            m_jit.breakpoint();
+            checkCell.link(&m_jit);
+        }
         return gpr;
     }
 
@@ -1405,9 +1396,6 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
 
 GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
 {
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("SpecBool@%d   ", edge->index());
-#endif
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
     m_interpreter.filter(value, SpecBoolean);
@@ -3430,11 +3418,6 @@ void SpeculativeJIT::compile(Node* node)
         ASSERT(GPRInfo::callFrameRegister != GPRInfo::regT1);
         ASSERT(GPRInfo::regT1 != GPRInfo::returnValueGPR);
         ASSERT(GPRInfo::returnValueGPR != GPRInfo::callFrameRegister);
-
-#if DFG_ENABLE(SUCCESS_STATS)
-        static SamplingCounter counter("SpeculativeJIT");
-        m_jit.emitCount(counter);
-#endif
 
         // Return the result in returnValueGPR.
         JSValueOperand op1(this, node->child1());

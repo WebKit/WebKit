@@ -372,53 +372,6 @@ public:
             }
         }
         
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("Arguments aliasing states:\n");
-        for (unsigned i = 0; i < m_graph.m_variableAccessData.size(); ++i) {
-            VariableAccessData* variableAccessData = &m_graph.m_variableAccessData[i];
-            if (!variableAccessData->isRoot())
-                continue;
-            dataLog("   r", variableAccessData->local(), "(", VariableAccessDataDump(m_graph, variableAccessData), "): ");
-            if (variableAccessData->isCaptured())
-                dataLogF("Captured");
-            else {
-                ArgumentsAliasingData& data =
-                    m_argumentsAliasing.find(variableAccessData)->value;
-                bool first = true;
-                if (data.callContextIsValid()) {
-                    if (!first)
-                        dataLogF(", ");
-                    dataLogF("Have Call Context: %p", data.callContext);
-                    first = false;
-                    if (!m_createsArguments.contains(data.callContext))
-                        dataLogF(" (Does Not Create Arguments)");
-                }
-                if (data.argumentsAssignmentIsValid()) {
-                    if (!first)
-                        dataLogF(", ");
-                    dataLogF("Arguments Assignment Is Valid");
-                    first = false;
-                }
-                if (!data.escapes) {
-                    if (!first)
-                        dataLogF(", ");
-                    dataLogF("Does Not Escape");
-                    first = false;
-                }
-                if (!first)
-                    dataLogF(", ");
-                if (data.isValid()) {
-                    if (m_createsArguments.contains(data.callContext))
-                        dataLogF("VALID");
-                    else
-                        dataLogF("INVALID (due to argument creation)");
-                } else
-                    dataLogF("INVALID (due to bad variable use)");
-            }
-            dataLogF("\n");
-        }
-#endif
-        
         InsertionSet insertionSet(m_graph);
         
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {

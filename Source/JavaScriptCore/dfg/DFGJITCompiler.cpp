@@ -108,11 +108,6 @@ void JITCompiler::compileBody()
     // We generate the speculative code path, followed by OSR exit code to return
     // to the old JIT code if speculations fail.
 
-#if DFG_ENABLE(JIT_BREAK_ON_EVERY_FUNCTION)
-    // Handy debug tool!
-    breakpoint();
-#endif
-    
     bool compiledSpeculative = m_speculative->compile();
     ASSERT_UNUSED(compiledSpeculative, compiledSpeculative);
 }
@@ -150,10 +145,6 @@ void JITCompiler::compileExceptionHandlers()
 void JITCompiler::link(LinkBuffer& linkBuffer)
 {
     // Link the code, populate data in CodeBlock data structures.
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("JIT code for %p start at [%p, %p). Size = %zu.\n", m_codeBlock, linkBuffer.debugAddress(), static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize(), linkBuffer.debugSize());
-#endif
-    
     m_jitCode->common.frameRegisterCount = m_graph.frameRegisterCount();
     m_jitCode->common.requiredRegisterCountForExit = m_graph.requiredRegisterCountForExit();
 

@@ -3260,10 +3260,6 @@ void CodeBlock::tallyFrequentExitSites()
             
             if (!exit.considerAddingAsFrequentExitSite(profiledBlock))
                 continue;
-            
-#if DFG_ENABLE(DEBUG_VERBOSE)
-            dataLog("OSR exit #", i, " (bc#", exit.m_codeOrigin.bytecodeIndex, ", ", exit.m_kind, ") for ", *this, " occurred frequently: counting as frequent exit site.\n");
-#endif
         }
         break;
     }
@@ -3279,10 +3275,6 @@ void CodeBlock::tallyFrequentExitSites()
             
             if (!exit.considerAddingAsFrequentExitSite(profiledBlock))
                 continue;
-            
-#if DFG_ENABLE(DEBUG_VERBOSE)
-            dataLog("OSR exit #", i, " (bc#", exit.m_codeOrigin.bytecodeIndex, ", ", exit.m_kind, ") for ", *this, " occurred frequently: counting as frequent exit site.\n");
-#endif
         }
         break;
     }

@@ -212,7 +212,6 @@ public:
         return isLocked(reg) || name(reg).isValid();
     }
     
-#ifndef NDEBUG
     void dump()
     {
         // For each register, print the VirtualRegister 'name'.
@@ -224,7 +223,6 @@ public:
         }
         dataLogF("\n");
     }
-#endif
 
     class iterator {
     friend class RegisterBank<BankInfo>;

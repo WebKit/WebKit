@@ -1,5 +1,105 @@
 2013-11-29  Filip Pizlo  <fpizlo@apple.com>
 
+        Finally remove those DFG_ENABLE things
+        https://bugs.webkit.org/show_bug.cgi?id=125025
+
+        Rubber stamped by Sam Weinig.
+        
+        This removes a bunch of unused and untested insanity.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::tallyFrequentExitSites):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::injectLazyOperandSpeculation):
+        (JSC::DFG::ByteCodeParser::getArrayModeConsideringSlowPath):
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::makeDivSafe):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::linkBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        (JSC::DFG::ByteCodeParser::parse):
+        (JSC::DFG::parse):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        (JSC::DFG::CFGSimplificationPhase::convertToJump):
+        (JSC::DFG::CFGSimplificationPhase::fixJettisonedPredecessors):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::endIndexForPureCSE):
+        (JSC::DFG::CSEPhase::eliminateIrrelevantPhantomChildren):
+        (JSC::DFG::CSEPhase::setReplacement):
+        (JSC::DFG::CSEPhase::eliminate):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::verboseCompilationEnabled):
+        (JSC::DFG::logCompilationChanges):
+        (JSC::DFG::shouldDumpGraphAtEachPhase):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::injectInt32ToDoubleNode):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::initialize):
+        (JSC::DFG::InPlaceAbstractState::endBasicBlock):
+        (JSC::DFG::InPlaceAbstractState::mergeStateAtTail):
+        (JSC::DFG::InPlaceAbstractState::mergeToSuccessors):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileBody):
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGPredictionInjectionPhase.cpp:
+        (JSC::DFG::PredictionInjectionPhase::run):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::run):
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        (JSC::DFG::PredictionPropagationPhase::propagateForward):
+        (JSC::DFG::PredictionPropagationPhase::propagateBackward):
+        (JSC::DFG::PredictionPropagationPhase::doRoundOfDoubleVoting):
+        * dfg/DFGScoreBoard.h:
+        (JSC::DFG::ScoreBoard::use):
+        * dfg/DFGSlowPathGenerator.h:
+        (JSC::DFG::SlowPathGenerator::generate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecution):
+        (JSC::DFG::SpeculativeJIT::runSlowPathGenerators):
+        (JSC::DFG::SpeculativeJIT::dump):
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::checkGeneratedTypeForToInt32):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct):
+        * dfg/DFGVariableEventStream.h:
+        (JSC::DFG::VariableEventStream::appendAndLog):
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        (JSC::DFG::VirtualRegisterAllocationPhase::run):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+
+2013-11-29  Filip Pizlo  <fpizlo@apple.com>
+
         FTL IC should nop-fill to make up the difference between the actual IC size and the requested patchpoint size
         https://bugs.webkit.org/show_bug.cgi?id=124960
 

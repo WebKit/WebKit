@@ -48,15 +48,11 @@ public:
     virtual ~SlowPathGenerator() { }
     void generate(SpeculativeJIT* jit)
     {
-#if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("Generating slow path %p at offset 0x%x\n", this, jit->m_jit.debugOffset());
-#endif
         m_label = jit->m_jit.label();
         jit->m_currentNode = m_currentNode;
         generateInternal(jit);
-#if !ASSERT_DISABLED
-        jit->m_jit.breakpoint(); // make sure that the generator jumps back to somewhere
-#endif
+        if (!ASSERT_DISABLED)
+            jit->m_jit.breakpoint(); // make sure that the generator jumps back to somewhere
     }
     MacroAssembler::Label label() const { return m_label; }
     virtual MacroAssembler::Call call() const

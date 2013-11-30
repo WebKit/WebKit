@@ -176,10 +176,6 @@ void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit)
     
     jit.move(AssemblyHelpers::TrustedImmPtr(jumpTarget), GPRInfo::regT2);
     jit.jump(GPRInfo::regT2);
-
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("   -> %p\n", jumpTarget);
-#endif
 }
 
 } } // namespace JSC::DFG

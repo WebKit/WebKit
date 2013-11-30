@@ -42,9 +42,6 @@ class VariableEventStream : public Vector<VariableEvent> {
 public:
     void appendAndLog(const VariableEvent& event)
     {
-#if DFG_ENABLE(DEBUG_VERBOSE)
-        logEvent(event);
-#endif
         append(event);
     }
     

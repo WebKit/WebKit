@@ -255,9 +255,6 @@ private:
         ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
         LazyOperandValueProfileKey key(m_currentIndex, node->local());
         SpeculatedType prediction = m_inlineStackTop->m_lazyOperands.prediction(locker, key);
-#if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Lazy operand [@", node->index(), ", bc#", m_currentIndex, ", r", node->local(), "] prediction: ", SpeculationDump(prediction), "\n");
-#endif
         node->variableAccessData()->predict(prediction);
         return node;
     }
@@ -852,12 +849,6 @@ private:
         
         profile->computeUpdatedPrediction(locker, m_inlineStackTop->m_profiledBlock);
         
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        if (m_inlineStackTop->m_profiledBlock->numberOfRareCaseProfiles())
-            dataLogF("Slow case profile for bc#%u: %u\n", m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
-        dataLogF("Array profile for bc#%u: %u %s%s\n", m_currentIndex, profile->observedArrayModes(locker), profile->structureIsPolymorphic(locker) ? " (polymorphic)" : "", profile->mayInterceptIndexedAccesses(locker) ? " (may intercept)" : "");
-#endif
-        
         bool makeSafe =
             m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)
             || profile->outOfBounds(locker);
@@ -899,18 +890,11 @@ private:
 
         case ArithMul:
             if (m_inlineStackTop->m_profiledBlock->likelyToTakeDeepestSlowCase(m_currentIndex)
-                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow)) {
-#if DFG_ENABLE(DEBUG_VERBOSE)
-                dataLogF("Making ArithMul @%u take deepest slow case.\n", node->index());
-#endif
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
                 node->mergeFlags(NodeMayOverflow | NodeMayNegZero);
-            } else if (m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)
-                       || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero)) {
-#if DFG_ENABLE(DEBUG_VERBOSE)
-                dataLogF("Making ArithMul @%u take faster slow case.\n", node->index());
-#endif
+            else if (m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
                 node->mergeFlags(NodeMayNegZero);
-            }
             break;
             
         default:
@@ -935,10 +919,6 @@ private:
             && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow)
             && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
             return node;
-        
-#if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("Making %s @%u safe at bc#%u because special fast-case counter is at %u and exit profiles say %d, %d\n", Graph::opName(node->op()), node->index(), m_currentIndex, m_inlineStackTop->m_profiledBlock->specialFastCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero));
-#endif
         
         // FIXME: It might be possible to make this more granular. The DFG certainly can
         // distinguish between negative zero and overflow in its exit profiles.
@@ -1160,10 +1140,6 @@ void ByteCodeParser::handleCall(Instruction* currentInstruction, NodeType op, Co
         callLinkStatus.setHasBadExecutableExitSite(m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadExecutable));
     }
     
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("For call at bc#", m_currentIndex, ": ", callLinkStatus, "\n");
-#endif
-    
     if (!callLinkStatus.canOptimize()) {
         // Oddly, this conflates calls that haven't executed with calls that behaved sufficiently polymorphically
         // that we cannot optimize them.
@@ -1287,10 +1263,6 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
     if (!canInlineFunctionFor(codeBlock, kind, callLinkStatus.isClosureCall()))
         return false;
     
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("Inlining executable %p.\n", executable);
-#endif
-    
     // Now we know without a doubt that we are committed to inlining. So begin the process
     // by checking the callee (if necessary) and making sure that arguments and the callee
     // are flushed.
@@ -1382,9 +1354,6 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
         // If we created new blocks then the last block needs linking, but in the
         // caller. It doesn't need to be linked to, but it needs outgoing links.
         if (!inlineStackEntry.m_unlinkedBlocks.isEmpty()) {
-#if DFG_ENABLE(DEBUG_VERBOSE)
-            dataLogF("Reascribing bytecode index of block %p from bc#%u to bc#%u (inline return case).\n", lastBlock, lastBlock->bytecodeBegin, m_currentIndex);
-#endif
             // For debugging purposes, set the bytecodeBegin. Note that this doesn't matter
             // for release builds because this block will never serve as a potential target
             // in the linker's binary search.
@@ -1393,10 +1362,6 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
         }
         
         m_currentBlock = m_graph.lastBlock();
-        
-#if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("Done inlining executable %p, continuing code generation at epilogue.\n", executable);
-#endif
         return true;
     }
     
@@ -1406,10 +1371,6 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
 
     // Need to create a new basic block for the continuation at the caller.
     RefPtr<BasicBlock> block = adoptRef(new BasicBlock(nextOffset, m_numArguments, m_numLocals));
-
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("Creating inline epilogue basic block %p, #%zu for %p bc#%u at inline depth %u.\n", block.get(), m_graph.numBlocks(), m_inlineStackTop->executable(), m_currentIndex, CodeOrigin::inlineDepthForCallFrame(inlineCallFrame()));
-#endif
 
     // Link the early returns to the basic block we're about to create.
     for (size_t i = 0; i < inlineStackEntry.m_unlinkedBlocks.size(); ++i) {
@@ -1436,9 +1397,6 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
     
     // At this point we return and continue to generate code for the caller, but
     // in the new basic block.
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("Done inlining executable %p, continuing code generation in new block.\n", executable);
-#endif
     return true;
 }
 
@@ -1901,11 +1859,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             // to be true.
             if (!m_currentBlock->isEmpty())
                 addToGraph(Jump, OpInfo(m_currentIndex));
-            else {
-#if DFG_ENABLE(DEBUG_VERBOSE)
-                dataLogF("Refusing to plant jump at limit %u because block %p is empty.\n", limit, m_currentBlock);
-#endif
-            }
             return shouldContinueParsing;
         }
         
@@ -3325,17 +3278,11 @@ void ByteCodeParser::linkBlock(BasicBlock* block, Vector<BasicBlock*>& possibleT
     switch (node->op()) {
     case Jump:
         node->setTakenBlock(blockForBytecodeOffset(possibleTargets, node->takenBytecodeOffsetDuringParsing()));
-#if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("Linked basic block %p to %p, #%u.\n", block, node->takenBlock(), node->takenBlock()->index);
-#endif
         break;
         
     case Branch:
         node->setTakenBlock(blockForBytecodeOffset(possibleTargets, node->takenBytecodeOffsetDuringParsing()));
         node->setNotTakenBlock(blockForBytecodeOffset(possibleTargets, node->notTakenBytecodeOffsetDuringParsing()));
-#if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("Linked basic block %p to %p, #%u and %p, #%u.\n", block, node->takenBlock(), node->takenBlock()->index, node->notTakenBlock(), node->notTakenBlock()->index);
-#endif
         break;
         
     case Switch:
@@ -3345,9 +3292,6 @@ void ByteCodeParser::linkBlock(BasicBlock* block, Vector<BasicBlock*>& possibleT
         break;
         
     default:
-#if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("Marking basic block %p as linked.\n", block);
-#endif
         break;
     }
     
@@ -3472,12 +3416,6 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
                 m_inlineCallFrame->capturedVars.set(VirtualRegister(local.offset() + m_inlineCallFrame->stackOffset).toLocal());
         }
 
-#if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("Current captured variables: ");
-        m_inlineCallFrame->capturedVars.dump(WTF::dataFile());
-        dataLogF("\n");
-#endif
-        
         byteCodeParser->buildOperandMapsIfNecessary();
         
         m_identifierRemap.resize(codeBlock->numberOfIdentifiers());
@@ -3570,9 +3508,6 @@ void ByteCodeParser::parseCodeBlock()
     }
     
     bool shouldDumpBytecode = Options::dumpBytecodeAtDFGTime();
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    shouldDumpBytecode |= true;
-#endif
     if (shouldDumpBytecode) {
         dataLog("Parsing ", *codeBlock);
         if (inlineCallFrame()) {
@@ -3601,12 +3536,6 @@ void ByteCodeParser::parseCodeBlock()
     for (unsigned jumpTargetIndex = 0; jumpTargetIndex <= jumpTargets.size(); ++jumpTargetIndex) {
         // The maximum bytecode offset to go into the current basicblock is either the next jump target, or the end of the instructions.
         unsigned limit = jumpTargetIndex < jumpTargets.size() ? jumpTargets[jumpTargetIndex] : codeBlock->instructions().size();
-#if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog(
-            "Parsing bytecode with limit ", pointerDump(inlineCallFrame()),
-            " bc#", limit, " at inline depth ",
-            CodeOrigin::inlineDepthForCallFrame(inlineCallFrame()), ".\n");
-#endif
         ASSERT(m_currentIndex < limit);
 
         // Loop until we reach the current limit (i.e. next jump target).
@@ -3626,15 +3555,9 @@ void ByteCodeParser::parseCodeBlock()
                     }
                     // Change its bytecode begin and continue.
                     m_currentBlock = m_graph.lastBlock();
-#if DFG_ENABLE(DEBUG_VERBOSE)
-                    dataLogF("Reascribing bytecode index of block %p from bc#%u to bc#%u (peephole case).\n", m_currentBlock, m_currentBlock->bytecodeBegin, m_currentIndex);
-#endif
                     m_currentBlock->bytecodeBegin = m_currentIndex;
                 } else {
                     RefPtr<BasicBlock> block = adoptRef(new BasicBlock(m_currentIndex, m_numArguments, m_numLocals));
-#if DFG_ENABLE(DEBUG_VERBOSE)
-                    dataLogF("Creating basic block %p, #%zu for %p bc#%u at inline depth %u.\n", block.get(), m_graph.numBlocks(), m_inlineStackTop->executable(), m_currentIndex, CodeOrigin::inlineDepthForCallFrame(inlineCallFrame()));
-#endif
                     m_currentBlock = block.get();
                     // This assertion checks two things:
                     // 1) If the bytecodeBegin is greater than currentIndex, then something has gone
@@ -3681,11 +3604,6 @@ bool ByteCodeParser::parse()
     // Set during construction.
     ASSERT(!m_currentIndex);
     
-#if DFG_ENABLE(ALL_VARIABLES_CAPTURED)
-    // We should be pretending that the code has an activation.
-    ASSERT(m_graph.needsActivation());
-#endif
-    
     InlineStackEntry inlineStackEntry(
         this, m_codeBlock, m_profiledBlock, 0, 0, VirtualRegister(), VirtualRegister(),
         m_codeBlock->numParameters(), CodeForCall);
@@ -3715,12 +3633,7 @@ bool ByteCodeParser::parse()
 bool parse(Graph& graph)
 {
     SamplingRegion samplingRegion("DFG Parsing");
-#if DFG_DEBUG_LOCAL_DISBALE
-    UNUSED_PARAM(graph);
-    return false;
-#else
     return ByteCodeParser(graph).parse();
-#endif
 }
 
 } } // namespace JSC::DFG

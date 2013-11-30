@@ -57,9 +57,6 @@ public:
         ASSERT(m_graph.m_form == ThreadedCPS);
         ASSERT(m_graph.m_unificationState == GloballyUnified);
         
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        m_count = 0;
-#endif
         // 1) propagate predictions
 
         do {
@@ -132,10 +129,6 @@ private:
     {
         NodeType op = node->op();
 
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("   ", Graph::opName(op), " ", m_currentNode, ": ", NodeFlagsDump(node->flags()), " ");
-#endif
-        
         bool changed = false;
         
         switch (op) {
@@ -605,18 +598,11 @@ private:
 #endif
         }
 
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog(SpeculationDump(node->prediction()), "\n");
-#endif
-        
         m_changed |= changed;
     }
         
     void propagateForward()
     {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("Propagating predictions forward [%u]\n", ++m_count);
-#endif
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
             BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
@@ -631,9 +617,6 @@ private:
     
     void propagateBackward()
     {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("Propagating predictions backward [%u]\n", ++m_count);
-#endif
         for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
             BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
@@ -761,9 +744,6 @@ private:
     
     void doRoundOfDoubleVoting()
     {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("Voting on double uses of locals [%u]\n", m_count);
-#endif
         for (unsigned i = 0; i < m_graph.m_variableAccessData.size(); ++i)
             m_graph.m_variableAccessData[i].find()->clearVotes();
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
@@ -794,10 +774,6 @@ private:
     
     Node* m_currentNode;
     bool m_changed;
-
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-    unsigned m_count;
-#endif
 };
     
 bool performPredictionPropagation(Graph& graph)

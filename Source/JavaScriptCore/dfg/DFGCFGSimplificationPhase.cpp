@@ -64,25 +64,12 @@ public:
                     // Successor with one predecessor -> merge.
                     if (block->successor(0)->predecessors.size() == 1) {
                         ASSERT(block->successor(0)->predecessors[0] == block);
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                        dataLog("CFGSimplify: Jump merge on Block ", *block, " to Block ", *block->successor(0), ".\n");
-#endif
                         if (extremeLogging)
                             m_graph.dump();
                         m_graph.dethread();
                         mergeBlocks(block, block->successor(0), noBlocks());
                         innerChanged = outerChanged = true;
                         break;
-                    } else {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                        dataLog("CFGSimplify: Not jump merging on Block ", *block, " to Block ", *block->successor(0), " because predecessors = ",);
-                        for (unsigned i = 0; i < block->successor(0)->predecessors.size(); ++i) {
-                            if (i)
-                                dataLogF(", ");
-                            dataLog(*block->successor(0)->predecessors[i]);
-                        }
-                        dataLogF(".\n");
-#endif
                     }
                 
                     // FIXME: Block only has a jump -> remove. This is tricky though because of
@@ -102,23 +89,11 @@ public:
                         BasicBlock* targetBlock = block->successorForCondition(condition);
                         BasicBlock* jettisonedBlock = block->successorForCondition(!condition);
                         if (targetBlock->predecessors.size() == 1) {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                            dataLog(
-                                "CFGSimplify: Known condition (", condition, ") branch merge ",
-                                "on Block ", *block, " to Block ", *targetBlock,
-                                ", jettisoning Block ", *jettisonedBlock, ".\n");
-#endif
                             if (extremeLogging)
                                 m_graph.dump();
                             m_graph.dethread();
                             mergeBlocks(block, targetBlock, oneBlock(jettisonedBlock));
                         } else {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                            dataLog(
-                                "CFGSimplify: Known condition (", condition, ") ",
-                                "branch->jump conversion on Block ", *block, " to Block ",
-                                targetBlock, ", jettisoning Block ", jettisonedBlock, ".\n");
-#endif
                             if (extremeLogging)
                                 m_graph.dump();
                             m_graph.dethread();
@@ -144,11 +119,6 @@ public:
                         break;
                     }
                     
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                    dataLogF("Not branch simplifying on Block #%u because the successors differ and the condition is not known.\n",
-                            blockIndex);
-#endif
-                
                     // Branch to same destination -> jump.
                     // FIXME: this will currently not be hit because of the lack of jump-only
                     // block simplification.
@@ -198,24 +168,12 @@ public:
                         }
                         
                         if (targetBlock->predecessors.size() == 1) {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                            dataLog(
-                                "CFGSimplify: Known constant (", value, ") switch merge on ",
-                                "Block ", *block, " to Block ", *targetBlock, ".\n");
-#endif
-                            
                             if (extremeLogging)
                                 m_graph.dump();
                             m_graph.dethread();
                             
                             mergeBlocks(block, targetBlock, jettisonedBlocks);
                         } else {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                            dataLog(
-                                "CFGSimplify: Known constant (", value, ") switch->jump "
-                                "conversion on Block ", *block, " to Block #",
-                                *targetBlock, ".\n");
-#endif
                             if (extremeLogging)
                                 m_graph.dump();
                             m_graph.dethread();
@@ -286,19 +244,9 @@ private:
         ASSERT(targetBlock);
         ASSERT(targetBlock->isReachable);
         if (targetBlock->predecessors.size() == 1) {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog(
-                "CFGSimplify: Branch/Switch to same successor merge on Block ", *block,
-                " to Block ", *targetBlock, ".\n");
-#endif
             m_graph.dethread();
             mergeBlocks(block, targetBlock, noBlocks());
         } else {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog(
-                "CFGSimplify: Branch->jump conversion to same successor on Block ",
-                *block, " to Block ", *targetBlock, ".\n",
-#endif
             Node* branch = block->last();
             ASSERT(branch->isTerminal());
             ASSERT(branch->op() == Branch || branch->op() == Switch);
@@ -335,11 +283,6 @@ private:
     
     void fixJettisonedPredecessors(BasicBlock* block, BasicBlock* jettisonedBlock)
     {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog(
-            "Fixing predecessors and phis due to jettison of Block ", *jettisonedBlock,
-            " from Block ", *block, ".\n");
-#endif
         jettisonedBlock->removePredecessor(block);
     }
 

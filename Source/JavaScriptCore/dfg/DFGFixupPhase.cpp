@@ -88,10 +88,6 @@ private:
     {
         NodeType op = node->op();
 
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("   %s @%u: ", Graph::opName(op), node->index());
-#endif
-        
         switch (op) {
         case SetLocal: {
             // This gets handled by fixupSetLocalsInBlock().
@@ -963,14 +959,6 @@ private:
         }
         
         DFG_NODE_DO_TO_CHILDREN(m_graph, node, observeUntypedEdge);
-
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        if (!(node->flags() & NodeHasVarArgs)) {
-            dataLogF("new children: ");
-            node->dumpChildren(WTF::dataFile());
-        }
-        dataLogF("\n");
-#endif
     }
     
     void observeUntypedEdge(Node*, Edge& edge)
@@ -1540,12 +1528,6 @@ private:
         if (direction == ForwardSpeculation)
             result->mergeFlags(NodeExitsForward);
         
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF(
-            "(replacing @%u->@%u with @%u->@%u) ",
-            m_currentNode->index(), edge->index(), m_currentNode->index(), result->index());
-#endif
-
         edge = Edge(result, useKind);
     }
     

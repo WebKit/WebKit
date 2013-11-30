@@ -136,10 +136,6 @@ void VariableEventStream::reconstruct(
     while (at(startIndex).kind() != Reset)
         startIndex--;
     
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("Computing OSR exit recoveries starting at seq#%u.\n", startIndex);
-#endif
-
     // Step 2: Create a mock-up of the DFG's state and execute the events.
     Operands<ValueSource> operandSources(codeBlock->numParameters(), numVariables);
     for (unsigned i = operandSources.size(); i--;)

@@ -1905,15 +1905,7 @@ public:
 
     void linkBranches();
 
-#ifndef NDEBUG
     void dump(const char* label = 0);
-#endif
-
-#if DFG_ENABLE(CONSISTENCY_CHECK)
-    void checkConsistency();
-#else
-    void checkConsistency() { }
-#endif
 
     bool isInteger(Node* node)
     {

@@ -103,18 +103,11 @@ public:
         uint32_t index = child->virtualRegister().toLocal();
         ASSERT(m_used[index] != max());
         if (child->refCount() == ++m_used[index]) {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLogF(" Freeing virtual register %u.", index);
-#endif
             // If the use count in the scoreboard reaches the use count for the node,
             // then this was its last use; the virtual register is now free.
             // Clear the use count & add to the free list.
             m_used[index] = 0;
             m_free.append(index);
-        } else {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLogF(" Virtual register %u is at %u/%u uses.", index, m_used[index], child->refCount());
-#endif
         }
     }
     void use(Edge child)

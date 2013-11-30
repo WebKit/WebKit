@@ -76,13 +76,6 @@ void compileOSRExit(ExecState* exec)
     if (exit.m_recoveryIndex != UINT_MAX)
         recovery = &codeBlock->jitCode()->dfg()->speculationRecovery[exit.m_recoveryIndex];
 
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog(
-        "Generating OSR exit #", exitIndex, " (seq#", exit.m_streamIndex,
-        ", bc#", exit.m_codeOrigin.bytecodeIndex, ", ",
-        exit.m_kind, ") for ", *codeBlock, ".\n");
-#endif
-
     {
         CCallHelpers jit(vm, codeBlock);
         OSRExitCompiler exitCompiler(jit);
