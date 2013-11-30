@@ -1,5 +1,15 @@
 2013-11-29  Sam Weinig  <sam@webkit.org>
 
+        Fix some style boo-boos.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController loadDelegate]):
+        (-[WKBrowsingContextController setLoadDelegate:]):
+        (-[WKBrowsingContextController policyDelegate]):
+        (-[WKBrowsingContextController setPolicyDelegate:]):
+
+2013-11-29  Sam Weinig  <sam@webkit.org>
+
         Fix the iOS build.
 
         * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
