@@ -118,6 +118,7 @@ static NSString * const frameErrorKey = @"WKBrowsingContextFrameErrorKey";
 
 - (void)dealloc
 {
+    reinterpret_cast<WebPageProxy*>(&_page)->pageLoadState().removeObserver(*_pageLoadStateObserver);
     reinterpret_cast<WebPageProxy*>(&_page)->~WebPageProxy();
 
     [super dealloc];

@@ -1,5 +1,12 @@
 2013-11-29  Sam Weinig  <sam@webkit.org>
 
+        Fix crashing API tests.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController dealloc]):
+
+2013-11-29  Sam Weinig  <sam@webkit.org>
+
         Fix some style boo-boos.
 
         * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
