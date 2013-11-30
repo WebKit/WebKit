@@ -607,6 +607,11 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
     WKPageSetPagePolicyClient(pageRef, &policyClient);
 }
 
+- (id<WKBrowsingContextLoadDelegate>)loadDelegate
+{
+    return _loadDelegate;
+}
+
 - (void)setLoadDelegate:(id<WKBrowsingContextLoadDelegate>)loadDelegate
 {
     _loadDelegate = loadDelegate;
@@ -616,7 +621,12 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
         WKPageSetPageLoaderClient(toAPI(reinterpret_cast<WebPageProxy*>(&_page)), nullptr);;
 }
 
--(void)setPolicyDelegate:(id<WKBrowsingContextPolicyDelegate>)policyDelegate
+- (id<WKBrowsingContextPolicyDelegate>)policyDelegate
+{
+    return _policyDelegate;
+}
+
+- (void)setPolicyDelegate:(id<WKBrowsingContextPolicyDelegate>)policyDelegate
 {
     _policyDelegate = policyDelegate;
     if (_policyDelegate)
