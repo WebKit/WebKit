@@ -1,3 +1,9 @@
+2013-11-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix for EFL and GTK WK2 builds.
+
+        * Scripts/generate-forwarding-headers.pl: Add Cocoa to the list of platform prefixes.
+
 2013-11-29  Tibor Meszaros  <mtibor@inf.u-szeged.hu>
 
         Fix build warnings in WebKit2
