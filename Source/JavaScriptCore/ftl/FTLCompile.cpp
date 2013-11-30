@@ -132,6 +132,9 @@ void generateICFastPath(
     // reason to do so, yet.
     RELEASE_ASSERT(linkBuffer.isValid());
     
+    MacroAssembler::AssemblerType_T::fillNops(
+        startOfIC + linkBuffer.size(), sizeOfIC - linkBuffer.size());
+    
     state.finalizer->sideCodeLinkBuffer->link(
         ic.m_slowPathDone, CodeLocationLabel(startOfIC + sizeOfIC));
             

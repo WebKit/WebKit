@@ -2159,6 +2159,11 @@ public:
     {
         m_formatter.oneByteOp(OP_NOP);
     }
+    
+    static void fillNops(void* base, size_t size)
+    {
+        memset(base, OP_NOP, size);
+    }
 
     // This is a no-op on x86
     ALWAYS_INLINE static void cacheFlush(void*, size_t) { }

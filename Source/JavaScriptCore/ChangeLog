@@ -1,3 +1,21 @@
+2013-11-29  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL IC should nop-fill to make up the difference between the actual IC size and the requested patchpoint size
+        https://bugs.webkit.org/show_bug.cgi?id=124960
+
+        Reviewed by Sam Weinig.
+
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::size):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::fillNops):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::dumpHeader):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::generateICFastPath):
+        * jit/JITDisassembler.cpp:
+        (JSC::JITDisassembler::dumpHeader):
+
 2013-11-29  Julien Brianceau  <jbriance@cisco.com>
 
         Use moveDoubleToInts in SpecializedThunkJIT::returnDouble for non-X86 JSVALUE32_64 ports.

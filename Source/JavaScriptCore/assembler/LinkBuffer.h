@@ -244,7 +244,7 @@ public:
         return m_code;
     }
     
-    size_t debugSize()
+    size_t size()
     {
         return m_size;
     }
