@@ -155,18 +155,16 @@ void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder& encoder, 
     int64_t code = [nsError code];
     encoder << code;
 
-    HashMap<String, String> stringUserInfoMap;
+    NSDictionary *userInfo = [nsError userInfo];
 
-    NSDictionary* userInfo = [nsError userInfo];
-    for (NSString *key in userInfo) {
-        id value = [userInfo objectForKey:key];
-        if (![value isKindOfClass:[NSString class]])
-            continue;
+    RetainPtr<CFMutableDictionaryRef> filteredUserInfo = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, userInfo.count, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-        stringUserInfoMap.set(key, (NSString *)value);
-        continue;
-    }
-    encoder << stringUserInfoMap;
+    [userInfo enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL*) {
+        if ([value isKindOfClass:[NSString class]] || [value isKindOfClass:[NSURL class]])
+            CFDictionarySetValue(filteredUserInfo.get(), key, value);
+    }];
+
+    CoreIPC::encode(encoder, filteredUserInfo.get());
 
     id peerCertificateChain = [userInfo objectForKey:@"NSErrorPeerCertificateChainKey"];
     ASSERT(!peerCertificateChain || [peerCertificateChain isKindOfClass:[NSArray class]]);
@@ -192,29 +190,20 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder& decoder, 
     if (!decoder.decode(code))
         return false;
 
-    HashMap<String, String> stringUserInfoMap;
-    if (!decoder.decode(stringUserInfoMap))
+    RetainPtr<CFDictionaryRef> userInfo;
+    if (!CoreIPC::decode(decoder, userInfo))
         return false;
 
     CertificateInfo certificate;
     if (!decoder.decode(certificate))
         return false;
 
-    NSUInteger userInfoSize = stringUserInfoMap.size();
-    if (certificate.certificateChain())
-        userInfoSize++;
+    if (certificate.certificateChain()) {
+        userInfo = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, CFDictionaryGetCount(userInfo.get()) + 1, userInfo.get()));
+        CFDictionarySetValue((CFMutableDictionaryRef)userInfo.get(), CFSTR("NSErrorPeerCertificateChainKey"), (CFArrayRef)certificate.certificateChain());
+    }
 
-    NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithCapacity:userInfoSize];
-    
-    HashMap<String, String>::const_iterator it = stringUserInfoMap.begin();
-    HashMap<String, String>::const_iterator end = stringUserInfoMap.end();
-    for (; it != end; ++it)
-        [userInfo setObject:nsString(it->value) forKey:nsString(it->key)];
-
-    if (certificate.certificateChain())
-        [userInfo setObject:(NSArray *)certificate.certificateChain() forKey:@"NSErrorPeerCertificateChainKey"];
-
-    RetainPtr<NSError> nsError = adoptNS([[NSError alloc] initWithDomain:nsString(domain) code:code userInfo:userInfo]);
+    RetainPtr<NSError> nsError = adoptNS([[NSError alloc] initWithDomain:nsString(domain) code:code userInfo:(NSDictionary *)userInfo.get()]);
 
     resourceError = ResourceError(nsError.get());
     return true;
