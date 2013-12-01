@@ -33,14 +33,16 @@
 
 namespace WebCore {
 
-class ScrollbarThemeEfl : public ScrollbarTheme {
+class ScrollbarThemeEfl FINAL : public ScrollbarTheme {
 public:
-    virtual ~ScrollbarThemeEfl();
+    ScrollbarThemeEfl() : m_scrollbarThickness(0) { }
+    void setScrollbarThickness(int thickness) { m_scrollbarThickness = thickness; }
+    virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar) OVERRIDE { return m_scrollbarThickness; }
 
-    virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
-
-    virtual void registerScrollbar(ScrollbarThemeClient*);
-    virtual void unregisterScrollbar(ScrollbarThemeClient*);
+    virtual void registerScrollbar(ScrollbarThemeClient*) OVERRIDE { }
+    virtual void unregisterScrollbar(ScrollbarThemeClient*) OVERRIDE { }
+private:
+    int m_scrollbarThickness;
 };
 
 }

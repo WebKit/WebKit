@@ -1,3 +1,27 @@
+2013-11-30  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Implement scrollbarThickness for opaque scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=125034
+
+        Reviewed by Gyuyoung Kim.
+
+        Implemented scrollbarThickness to support opaque scrollbar.
+        Now, edj can decide whether to support opaque scrollbar by adding scrollbar.thickness.
+        In addition, added OVERRIDE/FINAL keyword and removed unnecessary destructor
+        in ScrollbarThemeEfl.cpp.
+
+        No new tests, no behavior changes with default theme.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::loadTheme):
+        Update thickness of scrollbar when theme was loaded.
+        * platform/efl/ScrollbarThemeEfl.cpp:
+        * platform/efl/ScrollbarThemeEfl.h:
+        (WebCore::ScrollbarThemeEfl::setScrollbarThickness):
+        (WebCore::ScrollbarThemeEfl::scrollbarThickness):
+        (WebCore::ScrollbarThemeEfl::registerScrollbar):
+        (WebCore::ScrollbarThemeEfl::unregisterScrollbar):
+
 2013-11-29  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         Remove Symbian specific code.

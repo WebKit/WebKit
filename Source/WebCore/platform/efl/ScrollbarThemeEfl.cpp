@@ -37,22 +37,5 @@ ScrollbarTheme* ScrollbarTheme::nativeTheme()
     return &theme;
 }
 
-ScrollbarThemeEfl::~ScrollbarThemeEfl()
-{
-}
-
-int ScrollbarThemeEfl::scrollbarThickness(ScrollbarControlSize)
-{
-    return 0; // we paint on top
-}
-
-void ScrollbarThemeEfl::registerScrollbar(ScrollbarThemeClient*)
-{
-}
-
-void ScrollbarThemeEfl::unregisterScrollbar(ScrollbarThemeClient*)
-{
-}
-
 }
 
