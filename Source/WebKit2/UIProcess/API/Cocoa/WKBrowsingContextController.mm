@@ -277,22 +277,22 @@ static void releaseNSData(unsigned char*, const void* data)
 
 - (NSURL *)activeURL
 {
-    return [NSURL _web_URLWithWTFString:_page->pageLoadState().activeURL() relativeToURL:nil];
+    return [NSURL _web_URLWithWTFString:_page->pageLoadState().activeURL()];
 }
 
 - (NSURL *)provisionalURL
 {
-    return [NSURL _web_URLWithWTFString:_page->pageLoadState().provisionalURL() relativeToURL:nil];
+    return [NSURL _web_URLWithWTFString:_page->pageLoadState().provisionalURL()];
 }
 
 - (NSURL *)committedURL
 {
-    return [NSURL _web_URLWithWTFString:_page->pageLoadState().url() relativeToURL:nil];
+    return [NSURL _web_URLWithWTFString:_page->pageLoadState().url()];
 }
 
 - (NSURL *)unreachableURL
 {
-    return [NSURL _web_URLWithWTFString:_page->pageLoadState().unreachableURL() relativeToURL:nil];
+    return [NSURL _web_URLWithWTFString:_page->pageLoadState().unreachableURL()];
 }
 
 - (double)estimatedProgress
@@ -506,7 +506,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 
             if (originatingFrame) {
                 actionDictionary = [[actionDictionary mutableCopy] autorelease];
-                [(NSMutableDictionary *)actionDictionary setObject:[NSURL _web_URLWithWTFString:toImpl(originatingFrame)->url() relativeToURL:nil] forKey:WKActionOriginatingFrameURLKey];
+                [(NSMutableDictionary *)actionDictionary setObject:[NSURL _web_URLWithWTFString:toImpl(originatingFrame)->url()] forKey:WKActionOriginatingFrameURLKey];
             }
             
             [browsingContext.policyDelegate browsingContextController:browsingContext decidePolicyForNavigationAction:actionDictionary decisionHandler:makePolicyDecisionBlock(listener)];

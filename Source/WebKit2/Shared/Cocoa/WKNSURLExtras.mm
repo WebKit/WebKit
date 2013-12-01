@@ -34,13 +34,23 @@ using namespace WebCore;
 
 @implementation NSURL (WKExtras)
 
-+ (instancetype)_web_URLWithWTFString:(const WTF::String&)string relativeToURL:(NSURL *)baseURL
+static inline NSURL *urlWithWTFString(const String& string, NSURL *baseURL = nil)
 {
     if (!string)
         return nil;
 
     CString buffer = string.utf8();
     return CFBridgingRelease(createCFURLFromBuffer(buffer.data(), buffer.length(), (CFURLRef)baseURL).leakRef());
+}
+
++ (instancetype)_web_URLWithWTFString:(const String&)string
+{
+    return urlWithWTFString(string);
+}
+
++ (instancetype)_web_URLWithWTFString:(const String&)string relativeToURL:(NSURL *)baseURL
+{
+    return urlWithWTFString(string, baseURL);
 }
 
 - (String)_web_originalDataAsWTFString

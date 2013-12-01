@@ -45,7 +45,7 @@ using namespace WebKit;
 
 - (NSURL *)URL
 {
-    return [NSURL _web_URLWithWTFString:_item->url() relativeToURL:nil];
+    return [NSURL _web_URLWithWTFString:_item->url()];
 }
 
 - (NSString *)title
@@ -58,7 +58,7 @@ using namespace WebKit;
 
 - (NSURL *)originalURL
 {
-    return [NSURL _web_URLWithWTFString:_item->originalURL() relativeToURL:nil];
+    return [NSURL _web_URLWithWTFString:_item->originalURL()];
 }
 
 #pragma mark WKObject protocol implementation

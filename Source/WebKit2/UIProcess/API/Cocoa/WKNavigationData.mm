@@ -57,7 +57,7 @@ using namespace WebKit;
 
 - (NSURL *)destinationURL
 {
-    return [NSURL _web_URLWithWTFString:_data->url() relativeToURL:nil];
+    return [NSURL _web_URLWithWTFString:_data->url()];
 }
 
 - (NSURLResponse *)response
