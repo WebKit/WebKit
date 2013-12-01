@@ -513,7 +513,7 @@ static void webkitWebViewConstructed(GObject* object)
     attachContextMenuClientToView(webView);
     attachFormClientToView(webView);
 
-    priv->backForwardList = adoptGRef(webkitBackForwardListCreate(getPage(webView)->backForwardList()));
+    priv->backForwardList = adoptGRef(webkitBackForwardListCreate(&getPage(webView)->backForwardList()));
     priv->windowProperties = adoptGRef(webkitWindowPropertiesCreate());
 
     webkitWebViewUpdateSettings(webView);

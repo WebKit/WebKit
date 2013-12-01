@@ -906,7 +906,7 @@ void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebVi
     context->priv->webViews.set(page->pageID(), webView);
 
     if (!pageGroup && !context->priv->defaultWebViewGroup)
-        context->priv->defaultWebViewGroup = adoptGRef(webkitWebViewGroupCreate(page->pageGroup()));
+        context->priv->defaultWebViewGroup = adoptGRef(webkitWebViewGroupCreate(&page->pageGroup()));
 }
 
 void webkitWebContextWebViewDestroyed(WebKitWebContext* context, WebKitWebView* webView)
