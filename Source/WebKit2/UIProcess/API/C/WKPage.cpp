@@ -205,7 +205,7 @@ void WKPageTryRestoreScrollPosition(WKPageRef pageRef)
 
 WKBackForwardListRef WKPageGetBackForwardList(WKPageRef pageRef)
 {
-    return toAPI(toImpl(pageRef)->backForwardList());
+    return toAPI(&toImpl(pageRef)->backForwardList());
 }
 
 bool WKPageWillHandleHorizontalScrollEvents(WKPageRef pageRef)

@@ -323,11 +323,7 @@ static void releaseNSData(unsigned char*, const void* data)
 
 - (WKBackForwardList *)backForwardList
 {
-    WebBackForwardList* list = _page->backForwardList();
-    if (!list)
-        return nil;
-
-    return wrapper(*list);
+    return wrapper(_page->backForwardList());
 }
 
 #pragma mark Active Load Introspection

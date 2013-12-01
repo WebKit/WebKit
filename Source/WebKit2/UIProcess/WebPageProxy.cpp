@@ -237,7 +237,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, PassRefPtr<WebProcessProxy> p
     , m_notificationPermissionRequestManager(*this)
     , m_estimatedProgress(0)
     , m_viewState(ViewState::NoFlags)
-    , m_backForwardList(WebBackForwardList::create(this))
+    , m_backForwardList(WebBackForwardList::create(*this))
     , m_loadStateAtProcessExit(FrameLoadState::State::Finished)
     , m_temporarilyClosedComposition(false)
     , m_textZoomFactor(1)

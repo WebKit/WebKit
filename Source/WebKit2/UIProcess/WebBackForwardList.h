@@ -29,7 +29,7 @@
 #include "APIObject.h"
 #include "WebBackForwardListItem.h"
 #include "WebPageProxy.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/PassRef.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #if USE(CF)
@@ -46,9 +46,9 @@ namespace WebKit {
 
 class WebBackForwardList : public API::TypedObject<API::Object::Type::BackForwardList> {
 public:
-    static PassRefPtr<WebBackForwardList> create(WebPageProxy* page)
+    static PassRef<WebBackForwardList> create(WebPageProxy& page)
     {
-        return adoptRef(new WebBackForwardList(page));
+        return adoptRef(*new WebBackForwardList(page));
     }
     void pageClosed();
 
@@ -58,10 +58,10 @@ public:
     void goToItem(WebBackForwardListItem*);
     void clear();
 
-    WebBackForwardListItem* currentItem();
-    WebBackForwardListItem* backItem();
-    WebBackForwardListItem* forwardItem();
-    WebBackForwardListItem* itemAtIndex(int);
+    WebBackForwardListItem* currentItem() const;
+    WebBackForwardListItem* backItem() const;
+    WebBackForwardListItem* forwardItem() const;
+    WebBackForwardListItem* itemAtIndex(int) const;
     
     const BackForwardListItemVector& entries() const { return m_entries; }
 
@@ -80,7 +80,7 @@ public:
 #endif
 
 private:
-    explicit WebBackForwardList(WebPageProxy*);
+    explicit WebBackForwardList(WebPageProxy&);
 
     WebPageProxy* m_page;
     BackForwardListItemVector m_entries;

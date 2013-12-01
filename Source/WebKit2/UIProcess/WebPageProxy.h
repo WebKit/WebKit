@@ -333,7 +333,7 @@ public:
 
     DrawingAreaProxy* drawingArea() const { return m_drawingArea.get(); }
 
-    WebBackForwardList* backForwardList() const { return m_backForwardList.get(); }
+    WebBackForwardList& backForwardList() { return m_backForwardList.get(); }
 
 #if ENABLE(INSPECTOR)
     WebInspectorProxy* inspector();
@@ -1212,7 +1212,7 @@ private:
 
     bool m_canGoBack;
     bool m_canGoForward;
-    RefPtr<WebBackForwardList> m_backForwardList;
+    Ref<WebBackForwardList> m_backForwardList;
     
     bool m_maintainsInactiveSelection;
 

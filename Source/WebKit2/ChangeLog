@@ -1,3 +1,27 @@
+2013-11-30  Sam Weinig  <sam@webkit.org>
+
+        [CTTE] The WebPageProxy's WebBackForwardList is never null so it should be stored in a Ref
+        https://bugs.webkit.org/show_bug.cgi?id=125035
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetBackForwardList):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController backForwardList]): Remove null check.
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::WebBackForwardList):
+        (WebKit::WebBackForwardList::currentItem): Constify.
+        (WebKit::WebBackForwardList::backItem): Constify.
+        (WebKit::WebBackForwardList::forwardItem): Constify.
+        (WebKit::WebBackForwardList::itemAtIndex): Constify.
+        * UIProcess/WebBackForwardList.h:
+        (WebKit::WebBackForwardList::create):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::backForwardList):
+
 2013-11-30  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix after r159889.
