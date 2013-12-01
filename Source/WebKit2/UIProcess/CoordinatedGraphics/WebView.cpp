@@ -373,7 +373,7 @@ void WebView::toolTipChanged(const String&, const String& newToolTip)
 
 void WebView::didCommitLoadForMainFrame()
 {
-    notImplemented();
+    m_contentsSize = IntSize();
 }
 
 void WebView::setCursor(const WebCore::Cursor&)

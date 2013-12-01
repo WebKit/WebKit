@@ -986,6 +986,13 @@ TEST_F(EWK2ViewTest, ewk_view_contents_size_changed)
     sizeChanged = false;
     while (!sizeChanged)
         ecore_main_loop_iterate();
+
+    // Make sure we get signal after loaded the contents having same size with previous one.
+    sizeChanged = false;
+    ewk_view_html_string_load(webView(), contentsSizeHTMLPortrait, 0, 0);
+    while (!sizeChanged)
+        ecore_main_loop_iterate();
+
     evas_object_smart_callback_del(webView(), "contents,size,changed", onContentsSizeChangedPortrait);
 }
 

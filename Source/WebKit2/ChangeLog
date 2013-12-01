@@ -1,3 +1,22 @@
+2013-12-01  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][CoordinatedGraphics] Clear m_contentsSize when new contents are loaded
+        https://bugs.webkit.org/show_bug.cgi?id=125033
+
+        Reviewed by Gyuyoung Kim.
+
+        m_contentsSize should be cleared when new contents are loaded so that PageViewportController
+        would take care of newly loaded contents with same size as previous one.
+        It's because PageViewportController is cleared not to make wrong behaviour
+        while loading when new contents are committed.
+
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+        Improve tests to check contents,size,changed signal when loaded contents having
+        same size with previous one.
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::didCommitLoadForMainFrame): Cleared m_contentsSize.
+
 2013-12-01  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed GTK build fix after r159896.
