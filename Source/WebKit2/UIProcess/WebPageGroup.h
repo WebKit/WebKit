@@ -42,6 +42,7 @@ class WebPageGroup : public API::TypedObject<API::Object::Type::PageGroup> {
 public:
     WebPageGroup(const String& identifier = String(), bool visibleToInjectedBundle = true, bool visibleToHistoryClient = true);
     static PassRefPtr<WebPageGroup> create(const String& identifier = String(), bool visibleToInjectedBundle = true, bool visibleToHistoryClient = true);
+    static PassRef<WebPageGroup> createNonNull(const String& identifier = String(), bool visibleToInjectedBundle = true, bool visibleToHistoryClient = true);
     static WebPageGroup* get(uint64_t pageGroupID);
 
     virtual ~WebPageGroup();

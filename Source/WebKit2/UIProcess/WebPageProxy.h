@@ -322,7 +322,7 @@ class WebPageProxy
     , public CoreIPC::MessageReceiver {
 public:
 
-    static PassRefPtr<WebPageProxy> create(PageClient&, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
+    static PassRefPtr<WebPageProxy> create(PageClient&, PassRefPtr<WebProcessProxy>, WebPageGroup&, uint64_t pageID);
     virtual ~WebPageProxy();
 
     uint64_t pageID() const { return m_pageID; }
@@ -700,7 +700,7 @@ public:
     WebProcessProxy* process() const;
     PlatformProcessIdentifier processIdentifier() const;
 
-    WebPageGroup* pageGroup() const { return m_pageGroup.get(); }
+    WebPageGroup& pageGroup() { return m_pageGroup.get(); }
 
     bool isValid() const;
 
@@ -847,7 +847,7 @@ public:
     WebCore::ScrollPinningBehavior scrollPinningBehavior() { return m_scrollPinningBehavior; }
         
 private:
-    WebPageProxy(PageClient&, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
+    WebPageProxy(PageClient&, PassRefPtr<WebProcessProxy>, WebPageGroup&, uint64_t pageID);
     void platformInitialize();
     void initializeCreationParameters();
 
@@ -1154,7 +1154,7 @@ private:
 
     std::unique_ptr<DrawingAreaProxy> m_drawingArea;
     RefPtr<WebProcessProxy> m_process;
-    RefPtr<WebPageGroup> m_pageGroup;
+    Ref<WebPageGroup> m_pageGroup;
     RefPtr<WebFrameProxy> m_mainFrame;
     RefPtr<WebFrameProxy> m_focusedFrame;
     RefPtr<WebFrameProxy> m_frameSetLargestFrame;

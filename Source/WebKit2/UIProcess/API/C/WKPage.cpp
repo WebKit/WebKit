@@ -60,7 +60,7 @@ WKContextRef WKPageGetContext(WKPageRef pageRef)
 
 WKPageGroupRef WKPageGetPageGroup(WKPageRef pageRef)
 {
-    return toAPI(toImpl(pageRef)->pageGroup());
+    return toAPI(&toImpl(pageRef)->pageGroup());
 }
 
 void WKPageLoadURL(WKPageRef pageRef, WKURLRef URLRef)

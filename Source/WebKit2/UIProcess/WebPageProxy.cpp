@@ -222,16 +222,16 @@ static const char* webKeyboardEventTypeString(WebEvent::Type type)
 }
 #endif // !LOG_DISABLED
 
-PassRefPtr<WebPageProxy> WebPageProxy::create(PageClient& pageClient, PassRefPtr<WebProcessProxy> process, WebPageGroup* pageGroup, uint64_t pageID)
+PassRefPtr<WebPageProxy> WebPageProxy::create(PageClient& pageClient, PassRefPtr<WebProcessProxy> process, WebPageGroup& pageGroup, uint64_t pageID)
 {
     return adoptRef(new WebPageProxy(pageClient, process, pageGroup, pageID));
 }
 
-WebPageProxy::WebPageProxy(PageClient& pageClient, PassRefPtr<WebProcessProxy> process, WebPageGroup* pageGroup, uint64_t pageID)
+WebPageProxy::WebPageProxy(PageClient& pageClient, PassRefPtr<WebProcessProxy> process, WebPageGroup& pageGroup, uint64_t pageID)
     : m_pageClient(pageClient)
     , m_process(process)
     , m_pageGroup(pageGroup)
-    , m_mainFrame(0)
+    , m_mainFrame(nullptr)
     , m_userAgent(standardUserAgent())
     , m_geolocationPermissionRequestManager(*this)
     , m_notificationPermissionRequestManager(*this)
@@ -593,7 +593,7 @@ bool WebPageProxy::maybeInitializeSandboxExtensionHandle(const URL& url, Sandbox
 
 #if ENABLE(INSPECTOR)
     // Don't give the inspector full access to the file system.
-    if (WebInspectorProxy::isInspectorPage(this))
+    if (WebInspectorProxy::isInspectorPage(*this))
         return false;
 #endif
 
@@ -2017,7 +2017,7 @@ void WebPageProxy::preferencesDidChange()
     // even if nothing changed in UI process, so that overrides get removed.
 
     // Preferences need to be updated during synchronous printing to make "print backgrounds" preference work when toggled from a print dialog checkbox.
-    m_process->send(Messages::WebPage::PreferencesDidChange(pageGroup()->preferences()->store()), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
+    m_process->send(Messages::WebPage::PreferencesDidChange(pageGroup().preferences()->store()), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }
 
 void WebPageProxy::didCreateMainFrame(uint64_t frameID)

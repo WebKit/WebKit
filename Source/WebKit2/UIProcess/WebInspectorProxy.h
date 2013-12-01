@@ -132,7 +132,7 @@ public:
     bool isProfilingPage() const { return m_isProfilingPage; }
     void togglePageProfiling();
 
-    static bool isInspectorPage(WebPageProxy*);
+    static bool isInspectorPage(WebPageProxy&);
 
     // Implemented the platform WebInspectorProxy file
     String inspectorPageURL() const;

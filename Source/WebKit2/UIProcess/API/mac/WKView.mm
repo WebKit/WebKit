@@ -2272,7 +2272,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)_preferencesDidChange
 {
-    BOOL needsViewFrameInWindowCoordinates = _data->_page->pageGroup()->preferences()->pluginsEnabled();
+    BOOL needsViewFrameInWindowCoordinates = _data->_page->pageGroup().preferences()->pluginsEnabled();
 
     if (!!needsViewFrameInWindowCoordinates == !!_data->_needsViewFrameInWindowCoordinates)
         return;
@@ -2922,7 +2922,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     _data->_intrinsicContentSize = NSMakeSize(NSViewNoInstrinsicMetric, NSViewNoInstrinsicMetric);
 
-    _data->_needsViewFrameInWindowCoordinates = _data->_page->pageGroup()->preferences()->pluginsEnabled();
+    _data->_needsViewFrameInWindowCoordinates = _data->_page->pageGroup().preferences()->pluginsEnabled();
     _data->_frameOrigin = NSZeroPoint;
     _data->_contentAnchor = WKContentAnchorTopLeft;
     

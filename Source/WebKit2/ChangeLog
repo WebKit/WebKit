@@ -1,3 +1,49 @@
+2013-11-30  Sam Weinig  <sam@webkit.org>
+
+        [CTTE] The WebPageProxy's WebPageGroup is never null so it should be stored in a Ref
+        https://bugs.webkit.org/show_bug.cgi?id=125038
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetPageGroup):
+        * UIProcess/API/C/mac/WKPagePrivateMac.cpp:
+        (WKPageIsURLKnownHSTSHost):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController browsingContextGroup]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _preferencesDidChange]):
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::createWebPage):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorPageGroups::inspectorLevel):
+        (WebKit::WebInspectorPageGroups::isInspectorPageGroup):
+        (WebKit::WebInspectorPageGroups::inspectorPageGroupLevel):
+        (WebKit::WebInspectorProxy::isInspectorPage):
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::createNonNull):
+        * UIProcess/WebPageGroup.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::create):
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::maybeInitializeSandboxExtensionHandle):
+        (WebKit::WebPageProxy::preferencesDidChange):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::pageGroup):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createWebPage):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::createInspectorWindow):
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        (WebKit::WebInspectorProxy::windowFrameDidChange):
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::pageIsProcessSuppressible):
+
 2013-11-30  Dan Bernstein  <mitz@apple.com>
 
         Added a version of +[NSURL _web_URLWithWTFString:relativeToURL:] that doesn’t take a base URL and switched all callers to it.

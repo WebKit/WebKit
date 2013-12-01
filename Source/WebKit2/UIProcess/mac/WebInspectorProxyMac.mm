@@ -285,7 +285,7 @@ void WebInspectorProxy::createInspectorWindow()
     NSRect windowFrame = NSMakeRect(0, 0, initialWindowWidth, initialWindowHeight);
 
     // Restore the saved window frame, if there was one.
-    NSString *savedWindowFrameString = page()->pageGroup()->preferences()->inspectorWindowFrame();
+    NSString *savedWindowFrameString = page()->pageGroup().preferences()->inspectorWindowFrame();
     NSRect savedWindowFrame = NSRectFromString(savedWindowFrameString);
     if (!NSIsEmptyRect(savedWindowFrame))
         windowFrame = savedWindowFrame;
@@ -384,7 +384,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     } else {
         initialRect = NSMakeRect(0, 0, initialWindowWidth, initialWindowHeight);
 
-        NSString *windowFrameString = page()->pageGroup()->preferences()->inspectorWindowFrame();
+        NSString *windowFrameString = page()->pageGroup().preferences()->inspectorWindowFrame();
         NSRect windowFrame = NSRectFromString(windowFrameString);
         if (!NSIsEmptyRect(windowFrame))
             initialRect = [NSWindow contentRectForFrameRect:windowFrame styleMask:windowStyleMask];
@@ -607,7 +607,7 @@ void WebInspectorProxy::windowFrameDidChange()
         return;
 
     NSString *frameString = NSStringFromRect([m_inspectorWindow frame]);
-    page()->pageGroup()->preferences()->setInspectorWindowFrame(frameString);
+    page()->pageGroup().preferences()->setInspectorWindowFrame(frameString);
 }
 
 void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)

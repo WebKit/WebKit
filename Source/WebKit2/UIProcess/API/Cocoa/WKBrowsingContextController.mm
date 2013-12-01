@@ -121,10 +121,7 @@ static NSString * const frameErrorKey = @"WKBrowsingContextFrameErrorKey";
 
 - (WKBrowsingContextGroup *)browsingContextGroup
 {
-    WebPageGroup* pageGroup = _page->pageGroup();
-    if (!pageGroup)
-        return nil;
-    return wrapper(*pageGroup);
+    return wrapper(_page->pageGroup());
 }
 
 #pragma mark Loading

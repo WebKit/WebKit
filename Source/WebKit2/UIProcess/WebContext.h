@@ -419,7 +419,7 @@ private:
 
     WebProcessProxy* m_processWithPageCache;
 
-    RefPtr<WebPageGroup> m_defaultPageGroup;
+    Ref<WebPageGroup> m_defaultPageGroup;
 
     RefPtr<API::Object> m_injectedBundleInitializationUserData;
     String m_injectedBundlePath;

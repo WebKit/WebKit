@@ -61,7 +61,7 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
 
 bool WebProcessProxy::pageIsProcessSuppressible(WebPageProxy* page)
 {
-    return !page->isViewVisible() && page->pageGroup()->preferences()->pageVisibilityBasedProcessSuppressionEnabled();
+    return !page->isViewVisible() && page->pageGroup().preferences()->pageVisibilityBasedProcessSuppressionEnabled();
 }
 
 bool WebProcessProxy::allPagesAreProcessSuppressible() const

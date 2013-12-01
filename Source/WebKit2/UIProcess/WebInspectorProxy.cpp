@@ -66,20 +66,20 @@ public:
         return instance;
     }
 
-    unsigned inspectorLevel(WebPageGroup* inspectedPageGroup)
+    unsigned inspectorLevel(WebPageGroup& inspectedPageGroup)
     {
         return isInspectorPageGroup(inspectedPageGroup) ? inspectorPageGroupLevel(inspectedPageGroup) + 1 : 1;
     }
 
-    bool isInspectorPageGroup(WebPageGroup* group)
+    bool isInspectorPageGroup(WebPageGroup& group)
     {
-        return m_pageGroupLevel.contains(group);
+        return m_pageGroupLevel.contains(&group);
     }
 
-    unsigned inspectorPageGroupLevel(WebPageGroup* group)
+    unsigned inspectorPageGroupLevel(WebPageGroup& group)
     {
         ASSERT(isInspectorPageGroup(group));
-        return m_pageGroupLevel.get(group);
+        return m_pageGroupLevel.get(&group);
     }
 
     WebPageGroup* inspectorPageGroupForLevel(unsigned level)
@@ -356,9 +356,9 @@ void WebInspectorProxy::togglePageProfiling()
     m_isProfilingPage = !m_isProfilingPage;
 }
 
-bool WebInspectorProxy::isInspectorPage(WebPageProxy* page)
+bool WebInspectorProxy::isInspectorPage(WebPageProxy& page)
 {
-    return WebInspectorPageGroups::shared().isInspectorPageGroup(page->pageGroup());
+    return WebInspectorPageGroups::shared().isInspectorPageGroup(page.pageGroup());
 }
 
 static bool isMainInspectorPage(const WebInspectorProxy* webInspectorProxy, WKURLRequestRef requestRef)

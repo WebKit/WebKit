@@ -136,7 +136,7 @@ WebContext::WebContext(const String& injectedBundlePath)
     , m_webProcessCountLimit(UINT_MAX)
     , m_haveInitialEmptyProcess(false)
     , m_processWithPageCache(0)
-    , m_defaultPageGroup(WebPageGroup::create())
+    , m_defaultPageGroup(WebPageGroup::createNonNull())
     , m_injectedBundlePath(injectedBundlePath)
     , m_visitedLinkProvider(this)
     , m_plugInAutoStartProvider(this)
@@ -756,10 +756,7 @@ PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPa
             process = createNewWebProcessRespectingProcessCountLimit();
     }
 
-    if (!pageGroup)
-        pageGroup = m_defaultPageGroup.get();
-
-    return process->createWebPage(pageClient, this, pageGroup);
+    return process->createWebPage(pageClient, pageGroup ? *pageGroup : m_defaultPageGroup.get());
 }
 
 DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const ResourceRequest& request)
