@@ -37,12 +37,12 @@ using namespace WebKit;
 
 const WebKit::WebPreferences* EwkSettings::preferences() const
 {
-    return m_view->page()->pageGroup()->preferences();
+    return m_view->page()->pageGroup().preferences();
 }
 
 WebKit::WebPreferences* EwkSettings::preferences()
 {
-    return m_view->page()->pageGroup()->preferences();
+    return m_view->page()->pageGroup().preferences();
 }
 
 Eina_Bool ewk_settings_fullscreen_enabled_set(Ewk_Settings* settings, Eina_Bool enable)

@@ -1,3 +1,14 @@
+2013-12-01  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix after r159896.
+
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (EwkSettings::preferences):
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.cpp:
+        (WebKit::CoordinatedDrawingAreaProxy::CoordinatedDrawingAreaProxy):
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::WebView):
+
 2013-11-30  Sam Weinig  <sam@webkit.org>
 
         [CTTE] The WebPageProxy's WebPageGroup is never null so it should be stored in a Ref
