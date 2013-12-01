@@ -43,4 +43,11 @@ using namespace WebCore;
     return CFBridgingRelease(createCFURLFromBuffer(buffer.data(), buffer.length(), (CFURLRef)baseURL).leakRef());
 }
 
+- (String)_web_originalDataAsWTFString
+{
+    CString originalData;
+    getURLBytes((CFURLRef)self, originalData);
+    return String::fromUTF8(originalData);
+}
+
 @end

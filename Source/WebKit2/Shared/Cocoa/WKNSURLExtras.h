@@ -27,6 +27,8 @@
 
 @interface NSURL (WKExtras)
 
-+ (instancetype)_web_URLWithWTFString:(const WTF::String&)string relativeToURL:(NSURL *)baseURL;
++ (instancetype)_web_URLWithWTFString:(const String&)string relativeToURL:(NSURL *)baseURL;
+
+- (String)_web_originalDataAsWTFString;
 
 @end

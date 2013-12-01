@@ -1,3 +1,51 @@
+2013-11-30  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Stop using the WKPageRef API in WKBrowsingContextController
+        https://bugs.webkit.org/show_bug.cgi?id=125036
+
+        Reviewed by Sam Weinig.
+
+        * Shared/Cocoa/WKNSURLExtras.h: Declared new method.
+        * Shared/Cocoa/WKNSURLExtras.mm:
+        (-[NSURL _web_originalDataAsWTFString]): Added. Returns a WTF::String with the receiver’s
+        bytes.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController loadRequest:userData:]):
+        (-[WKBrowsingContextController loadFileURL:restrictToFilesWithin:userData:]):
+        (-[WKBrowsingContextController loadHTMLString:baseURL:userData:]):
+        (-[WKBrowsingContextController loadAlternateHTMLString:baseURL:forUnreachableURL:]):
+        (-[WKBrowsingContextController loadData:MIMEType:textEncodingName:baseURL:userData:]):
+        (-[WKBrowsingContextController stopLoading]):
+        (-[WKBrowsingContextController reload]):
+        (-[WKBrowsingContextController reloadFromOrigin]):
+        (-[WKBrowsingContextController goForward]):
+        (-[WKBrowsingContextController canGoForward]):
+        (-[WKBrowsingContextController goBack]):
+        (-[WKBrowsingContextController canGoBack]):
+        (-[WKBrowsingContextController activeURL]):
+        (-[WKBrowsingContextController provisionalURL]):
+        (-[WKBrowsingContextController committedURL]):
+        (-[WKBrowsingContextController title]):
+        (-[WKBrowsingContextController textZoom]):
+        (-[WKBrowsingContextController setTextZoom:]):
+        (-[WKBrowsingContextController pageZoom]):
+        (-[WKBrowsingContextController setPageZoom:]):
+        (setUpPageLoaderClient):
+        (setUpPagePolicyClient):
+        (-[WKBrowsingContextController setLoadDelegate:]):
+        (-[WKBrowsingContextController setPolicyDelegate:]):
+        (-[WKBrowsingContextController _pageRef]):
+        (-[WKBrowsingContextController setPaginationMode:]):
+        (-[WKBrowsingContextController paginationMode]):
+        (-[WKBrowsingContextController setPaginationBehavesLikeColumns:]):
+        (-[WKBrowsingContextController paginationBehavesLikeColumns]):
+        (-[WKBrowsingContextController setPageLength:]):
+        (-[WKBrowsingContextController pageLength]):
+        (-[WKBrowsingContextController setGapBetweenPages:]):
+        (-[WKBrowsingContextController gapBetweenPages]):
+        (-[WKBrowsingContextController pageCount]):
+
 2013-11-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r159865.
