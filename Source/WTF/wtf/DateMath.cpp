@@ -411,6 +411,19 @@ static int32_t calculateUTCOffset()
 #endif
 }
 
+#if OS(WINDOWS)
+// Code taken from http://support.microsoft.com/kb/167296
+static void UnixTimeToFileTime(time_t t, LPFILETIME pft)
+{
+    // Note that LONGLONG is a 64-bit value
+    LONGLONG ll;
+
+    ll = Int32x32To64(t, 10000000) + 116444736000000000;
+    pft->dwLowDateTime = (DWORD)ll;
+    pft->dwHighDateTime = ll >> 32;
+}
+#endif
+
 /*
  * Get the DST offset for the time passed in.
  */
@@ -420,6 +433,22 @@ static double calculateDSTOffset(time_t localTime, double utcOffset)
     UNUSED_PARAM(localTime);
     UNUSED_PARAM(utcOffset);
     return 0;
+#elif OS(WINDOWS)
+    FILETIME utcFileTime;
+    UnixTimeToFileTime(localTime, &utcFileTime);
+    SYSTEMTIME utcSystemTime, localSystemTime;
+    FileTimeToSystemTime(&utcFileTime, &utcSystemTime);
+    SystemTimeToTzSpecificLocalTime(0, &utcSystemTime, &localSystemTime);
+
+    double offsetTime = (localTime * msPerSecond) + utcOffset;
+
+    // Offset from UTC but doesn't include DST obviously
+    int offsetHour =  msToHours(offsetTime);
+    int offsetMinute =  msToMinutes(offsetTime);
+
+    double diff = ((localSystemTime.wHour - offsetHour) * secondsPerHour) + ((localSystemTime.wMinute - offsetMinute) * 60);
+
+    return diff * msPerSecond;
 #else
     //input is UTC so we have to shift back to local time to determine DST thus the + getUTCOffset()
     double offsetTime = (localTime * msPerSecond) + utcOffset;
