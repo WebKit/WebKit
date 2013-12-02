@@ -1,5 +1,11 @@
 2013-12-02  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Build fix after r159955
+
+        * Scripts/run-jsc-stress-tests:
+
+2013-12-02  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         run-jsc-stress-tests should be able to package its tests and move them places
         https://bugs.webkit.org/show_bug.cgi?id=124549
 

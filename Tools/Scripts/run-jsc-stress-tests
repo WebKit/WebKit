@@ -166,7 +166,7 @@ def prepareFramework(jscPath)
     $jscPath = $frameworkPath + "Resources" + "jsc"
 
     if frameworkPath
-        FileUtils.cp_r frameworkPath, vmDir
+        FileUtils.cp_r frameworkPath, $outputDir + ".vm"
     else
         Dir.chdir($outputDir) {
             FileUtils.mkdir_p $jscPath.dirname
