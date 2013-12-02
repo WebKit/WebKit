@@ -455,6 +455,7 @@ namespace JSC {
         void emit_compareAndJump(OpcodeID, int op1, int op2, unsigned target, RelationalCondition);
         void emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondition, size_t (JIT_OPERATION *operation)(ExecState*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator&);
 
+        void emit_op_touch_entry(Instruction*);
         void emit_op_add(Instruction*);
         void emit_op_bitand(Instruction*);
         void emit_op_bitor(Instruction*);

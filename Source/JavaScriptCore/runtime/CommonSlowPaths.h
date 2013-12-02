@@ -160,6 +160,7 @@ SLOW_PATH_DECL(name) WTF_INTERNAL
     
 SLOW_PATH_HIDDEN_DECL(slow_path_call_arityCheck);
 SLOW_PATH_HIDDEN_DECL(slow_path_construct_arityCheck);
+SLOW_PATH_HIDDEN_DECL(slow_path_touch_entry);
 SLOW_PATH_HIDDEN_DECL(slow_path_create_arguments);
 SLOW_PATH_HIDDEN_DECL(slow_path_create_this);
 SLOW_PATH_HIDDEN_DECL(slow_path_get_callee);

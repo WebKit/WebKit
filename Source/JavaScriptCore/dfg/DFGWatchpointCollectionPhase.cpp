@@ -126,8 +126,8 @@ private:
             addLazily(globalObject()->varInjectionWatchpoint());
             break;
             
-        case ActivationAllocationWatchpoint:
-            addLazily(m_node->symbolTable()->m_activationAllocatedOnce);
+        case FunctionReentryWatchpoint:
+            addLazily(m_node->symbolTable()->m_functionEnteredOnce);
             break;
             
         default:

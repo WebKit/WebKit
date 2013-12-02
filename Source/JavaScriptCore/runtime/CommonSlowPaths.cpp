@@ -193,6 +193,13 @@ SLOW_PATH_DECL(slow_path_construct_arityCheck)
     RETURN_TWO(0, reinterpret_cast<ExecState*>(SlotsToAdd));
 }
 
+SLOW_PATH_DECL(slow_path_touch_entry)
+{
+    BEGIN();
+    exec->codeBlock()->symbolTable()->m_functionEnteredOnce.touch();
+    END();
+}
+
 SLOW_PATH_DECL(slow_path_get_callee)
 {
     BEGIN();

@@ -1063,7 +1063,7 @@ struct Node {
     
     bool hasSymbolTable()
     {
-        return op() == ActivationAllocationWatchpoint;
+        return op() == FunctionReentryWatchpoint;
     }
     
     SymbolTable* symbolTable()

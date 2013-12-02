@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,6 @@ public:
     {
         SymbolTable* symbolTable = codeBlock->symbolTable();
         ASSERT(codeBlock->codeType() == FunctionCode);
-        symbolTable->m_activationAllocatedOnce.notifyWrite();
         JSActivation* activation = new (
             NotNull,
             allocateCell<JSActivation>(

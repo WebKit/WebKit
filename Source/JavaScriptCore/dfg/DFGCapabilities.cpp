@@ -81,6 +81,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
 {
     switch (opcodeID) {
     case op_enter:
+    case op_touch_entry:
     case op_to_this:
     case op_create_this:
     case op_get_callee:

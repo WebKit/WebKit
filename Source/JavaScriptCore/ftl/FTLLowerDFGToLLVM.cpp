@@ -399,7 +399,7 @@ private:
             break;
         case VariableWatchpoint:
             break;
-        case ActivationAllocationWatchpoint:
+        case FunctionReentryWatchpoint:
             break;
         case GetMyScope:
             compileGetMyScope();

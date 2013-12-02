@@ -1,3 +1,78 @@
+2013-12-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Instead of watchpointing activation allocation, we should watchpoint entry into functions that have captured variables
+        https://bugs.webkit.org/show_bug.cgi?id=125052
+
+        Reviewed by Mark Hahnenberg.
+        
+        This makes us watch function entry rather than activation creation. We only incur the
+        costs of doing so for functions that have captured variables, and only on the first two
+        entries into the function. This means that closure variable constant inference will
+        naturally work even for local uses of the captured variable, like:
+        
+            (function(){
+                var blah = 42;
+                ... // stuff
+                function () { ... blah /* we can fold this to 42 */ }
+                ... blah // we can also fold this to 42.
+            })();
+        
+        Previously, only the nested use would have been foldable.
+
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * bytecode/Watchpoint.h:
+        (JSC::WatchpointSet::touch):
+        (JSC::InlineWatchpointSet::touch):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasSymbolTable):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGWatchpointCollectionPhase.cpp:
+        (JSC::DFG::WatchpointCollectionPhase::handle):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_touch_entry):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::create):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::SymbolTable):
+        * runtime/SymbolTable.h:
+
 2013-12-02  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         [JSC] Get rid of some unused parameters in LLIntSlowPaths.cpp macros

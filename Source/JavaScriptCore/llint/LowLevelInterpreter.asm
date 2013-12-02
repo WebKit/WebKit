@@ -476,6 +476,12 @@ end
 
 
 # Value-representation-agnostic code.
+_llint_op_touch_entry:
+    traceExecution()
+    callSlowPath(_slow_path_touch_entry)
+    dispatch(1)
+
+
 _llint_op_new_array:
     traceExecution()
     callSlowPath(_llint_slow_path_new_array)

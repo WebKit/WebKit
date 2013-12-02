@@ -352,6 +352,9 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
     if (shouldCaptureAllTheThings)
         m_symbolTable->setCaptureEnd(virtualRegisterForLocal(codeBlock->m_numVars).offset());
 
+    if (m_symbolTable->captureCount())
+        emitOpcode(op_touch_entry);
+    
     m_parameters.grow(parameters.size() + 1); // reserve space for "this"
 
     // Add "this" as a parameter

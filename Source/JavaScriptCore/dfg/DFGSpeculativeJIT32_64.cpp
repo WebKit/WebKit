@@ -4336,7 +4336,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case ActivationAllocationWatchpoint: {
+    case FunctionReentryWatchpoint: {
         noResult(node);
         break;
     }

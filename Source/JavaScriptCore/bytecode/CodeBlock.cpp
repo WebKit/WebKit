@@ -671,6 +671,10 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             printLocationAndOp(out, exec, location, it, "enter");
             break;
         }
+        case op_touch_entry: {
+            printLocationAndOp(out, exec, location, it, "touch_entry");
+            break;
+        }
         case op_create_activation: {
             int r0 = (++it)->u.operand;
             printLocationOpAndRegisterOperand(out, exec, location, it, "create_activation", r0);

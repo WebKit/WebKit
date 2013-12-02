@@ -950,7 +950,7 @@ private:
         case Unreachable:
         case ExtractOSREntryLocal:
         case LoopHint:
-        case ActivationAllocationWatchpoint:
+        case FunctionReentryWatchpoint:
             break;
 #else
         default:

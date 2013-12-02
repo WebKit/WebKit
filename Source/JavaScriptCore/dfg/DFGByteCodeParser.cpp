@@ -1881,7 +1881,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             for (int i = 0; i < m_inlineStackTop->m_codeBlock->m_numVars; ++i)
                 set(virtualRegisterForLocal(i), constantUndefined(), SetOnEntry);
             NEXT_OPCODE(op_enter);
-
+            
+        case op_touch_entry:
+            if (m_inlineStackTop->m_codeBlock->symbolTable()->m_functionEnteredOnce.isStillValid())
+                addToGraph(ForceOSRExit);
+            NEXT_OPCODE(op_touch_entry);
+            
         case op_to_this: {
             Node* op1 = getThis();
             if (op1->op() != ToThis) {
@@ -3003,8 +3008,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case ClosureVarWithVarInjectionChecks: {
                 JSActivation* activation = currentInstruction[5].u.activation.get();
                 if (activation
-                    && activation->symbolTable()->m_activationAllocatedOnce.isStillValid()) {
-                    addToGraph(ActivationAllocationWatchpoint, OpInfo(activation->symbolTable()));
+                    && activation->symbolTable()->m_functionEnteredOnce.isStillValid()) {
+                    addToGraph(FunctionReentryWatchpoint, OpInfo(activation->symbolTable()));
                     set(VirtualRegister(dst), cellConstant(activation));
                     break;
                 }

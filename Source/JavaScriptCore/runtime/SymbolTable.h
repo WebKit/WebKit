@@ -497,7 +497,7 @@ private:
     std::unique_ptr<WatchpointCleanup> m_watchpointCleanup;
 
 public:
-    InlineWatchpointSet m_activationAllocatedOnce;
+    InlineWatchpointSet m_functionEnteredOnce;
     
     mutable ConcurrentJITLock m_lock;
 };

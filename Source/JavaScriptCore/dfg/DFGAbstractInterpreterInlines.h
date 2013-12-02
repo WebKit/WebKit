@@ -1146,7 +1146,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         m_state.setHaveStructures(true);
         break;
         
-    case ActivationAllocationWatchpoint:
+    case FunctionReentryWatchpoint:
         break;
     
     case CreateArguments:

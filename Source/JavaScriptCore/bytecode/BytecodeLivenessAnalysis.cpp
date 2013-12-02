@@ -89,6 +89,7 @@ static void computeUsesForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecode
     case op_init_lazy_reg:
     case op_get_callee:
     case op_enter:
+    case op_touch_entry:
     case op_catch:
         return;
     // First argument.
@@ -383,6 +384,7 @@ static void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecode
     case op_put_by_index:
     case op_del_by_id:
     case op_del_by_val:
+    case op_touch_entry:
 #define LLINT_HELPER_OPCODES(opcode, length) case opcode:
         FOR_EACH_LLINT_OPCODE_EXTENSION(LLINT_HELPER_OPCODES);
 #undef LLINT_HELPER_OPCODES

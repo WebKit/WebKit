@@ -102,7 +102,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CheckFunction:
     case StringCharCodeAt:
     case AllocatePropertyStorage:
-    case ActivationAllocationWatchpoint:
+    case FunctionReentryWatchpoint:
     case VariableWatchpoint:
     case NotifyWrite:
         // These are OK.

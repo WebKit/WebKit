@@ -108,7 +108,7 @@ public:
         fireAllSlow();
     }
     
-    void notifyWrite()
+    void touch()
     {
         if (state() == ClearWatchpoint)
             startWatching();
@@ -209,10 +209,10 @@ public:
         WTF::storeStoreFence();
     }
     
-    void notifyWrite()
+    void touch()
     {
         if (isFat()) {
-            fat()->notifyWrite();
+            fat()->touch();
             return;
         }
         if (decodeState(m_data) == ClearWatchpoint)

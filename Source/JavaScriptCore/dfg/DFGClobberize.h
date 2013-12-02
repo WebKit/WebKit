@@ -160,7 +160,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         write(GCState);
         return;
         
-    case ActivationAllocationWatchpoint:
+    case FunctionReentryWatchpoint:
         read(Watchpoint_fire);
         return;
 
