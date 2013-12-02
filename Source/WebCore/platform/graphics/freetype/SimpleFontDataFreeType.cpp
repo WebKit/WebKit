@@ -44,8 +44,9 @@
 #include <cairo-ft.h>
 #include <cairo.h>
 #include <fontconfig/fcfreetype.h>
-#include <freetype/tttables.h>
-#include <freetype/tttags.h>
+#include <ft2build.h>
+#include FT_TRUETYPE_TABLES_H
+#include FT_TRUETYPE_TAGS_H
 #include <unicode/normlzr.h>
 #include <wtf/MathExtras.h>
 #include <wtf/unicode/Unicode.h>

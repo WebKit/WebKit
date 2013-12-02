@@ -29,7 +29,8 @@
 #include <cairo-ft.h>
 #include <cairo.h>
 #include <fontconfig/fcfreetype.h>
-#include <freetype/tttables.h>
+#include <ft2build.h>
+#include FT_TRUETYPE_TABLES_H
 #include <wtf/text/WTFString.h>
 
 #if !PLATFORM(EFL) && !PLATFORM(NIX)
