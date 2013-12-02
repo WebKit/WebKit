@@ -45,15 +45,22 @@ class WebContextUserMessageEncoder : public UserMessageEncoder<WebContextUserMes
 public:
     typedef UserMessageEncoder<WebContextUserMessageEncoder> Base;
 
-    explicit WebContextUserMessageEncoder(API::Object* root) 
+    explicit WebContextUserMessageEncoder(API::Object* root, WebProcessProxy& process)
         : Base(root)
+        , m_process(process)
+    {
+    }
+
+    WebContextUserMessageEncoder(const WebContextUserMessageEncoder& userMessageEncoder, API::Object* root)
+        : Base(root)
+        , m_process(userMessageEncoder.m_process)
     {
     }
 
     void encode(CoreIPC::ArgumentEncoder& encoder) const
     {
         API::Object::Type type = API::Object::Type::Null;
-        if (baseEncode(encoder, type))
+        if (baseEncode(encoder, *this, type))
             return;
 
         switch (type) {
@@ -75,7 +82,7 @@ public:
 #if PLATFORM(MAC)
         case API::Object::Type::ObjCObjectGraph: {
             ObjCObjectGraph* objectGraph = static_cast<ObjCObjectGraph*>(m_root);
-            encoder << WebContextObjCObjectGraphEncoder(objectGraph);
+            encoder << WebContextObjCObjectGraphEncoder(objectGraph, m_process);
             break;
         }
 #endif
@@ -84,6 +91,9 @@ public:
             break;
         }
     }
+
+private:
+    WebProcessProxy& m_process;
 };
 
 // Adds
@@ -95,7 +105,7 @@ class WebContextUserMessageDecoder : public UserMessageDecoder<WebContextUserMes
 public:
     typedef UserMessageDecoder<WebContextUserMessageDecoder> Base;
 
-    WebContextUserMessageDecoder(RefPtr<API::Object>& root, WebProcessProxy* process)
+    WebContextUserMessageDecoder(RefPtr<API::Object>& root, WebProcessProxy& process)
         : Base(root)
         , m_process(process)
     {
@@ -121,14 +131,14 @@ public:
             uint64_t pageID;
             if (!decoder.decode(pageID))
                 return false;
-            coder.m_root = coder.m_process->webPage(pageID);
+            coder.m_root = coder.m_process.webPage(pageID);
             break;
         }
         case API::Object::Type::BundleFrame: {
             uint64_t frameID;
             if (!decoder.decode(frameID))
                 return false;
-            coder.m_root = coder.m_process->webFrame(frameID);
+            coder.m_root = coder.m_process.webFrame(frameID);
             break;
         }
         case API::Object::Type::BundlePageGroup: {
@@ -156,7 +166,7 @@ public:
     }
 
 private:
-    WebProcessProxy* m_process;
+    WebProcessProxy& m_process;
 };
 
 } // namespace WebKit

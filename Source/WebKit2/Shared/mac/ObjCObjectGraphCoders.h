@@ -38,41 +38,43 @@ class WebProcessProxy;
 
 class WebContextObjCObjectGraphEncoder {
 public:
-    explicit WebContextObjCObjectGraphEncoder(ObjCObjectGraph*);
+    explicit WebContextObjCObjectGraphEncoder(ObjCObjectGraph*, WebProcessProxy&);
     void encode(CoreIPC::ArgumentEncoder&) const;
 
 private:
     ObjCObjectGraph* m_objectGraph;
+    WebProcessProxy& m_process;
 };
 
 class WebContextObjCObjectGraphDecoder {
 public:
-    explicit WebContextObjCObjectGraphDecoder(RefPtr<ObjCObjectGraph>&, WebProcessProxy*);
+    explicit WebContextObjCObjectGraphDecoder(RefPtr<ObjCObjectGraph>&, WebProcessProxy&);
     static bool decode(CoreIPC::ArgumentDecoder&, WebContextObjCObjectGraphDecoder&);
 
 private:
     RefPtr<ObjCObjectGraph>& m_objectGraph;
-    WebProcessProxy* m_process;
+    WebProcessProxy& m_process;
 };
 
 
 class InjectedBundleObjCObjectGraphEncoder {
 public:
-    explicit InjectedBundleObjCObjectGraphEncoder(ObjCObjectGraph*);
+    explicit InjectedBundleObjCObjectGraphEncoder(ObjCObjectGraph*, WebProcess&);
     void encode(CoreIPC::ArgumentEncoder&) const;
 
 private:
     ObjCObjectGraph* m_objectGraph;
+    WebProcess& m_process;
 };
 
 class InjectedBundleObjCObjectGraphDecoder {
 public:
-    explicit InjectedBundleObjCObjectGraphDecoder(RefPtr<ObjCObjectGraph>&, WebProcess*);
+    explicit InjectedBundleObjCObjectGraphDecoder(RefPtr<ObjCObjectGraph>&, WebProcess&);
     static bool decode(CoreIPC::ArgumentDecoder&, InjectedBundleObjCObjectGraphDecoder&);
 
 private:
     RefPtr<ObjCObjectGraph>& m_objectGraph;
-    WebProcess* m_process;
+    WebProcess& m_process;
 };
 
 } // namespace WebKit

@@ -48,7 +48,12 @@ class InjectedBundleUserMessageEncoder : public UserMessageEncoder<InjectedBundl
 public:
     typedef UserMessageEncoder<InjectedBundleUserMessageEncoder> Base;
 
-    InjectedBundleUserMessageEncoder(API::Object* root) 
+    InjectedBundleUserMessageEncoder(API::Object* root)
+        : Base(root)
+    {
+    }
+
+    InjectedBundleUserMessageEncoder(const InjectedBundleUserMessageEncoder&, API::Object* root)
         : Base(root)
     {
     }
@@ -56,7 +61,7 @@ public:
     void encode(CoreIPC::ArgumentEncoder& encoder) const
     {
         API::Object::Type type = API::Object::Type::Null;
-        if (baseEncode(encoder, type))
+        if (baseEncode(encoder, *this, type))
             return;
 
         switch (type) {
@@ -78,7 +83,7 @@ public:
 #if PLATFORM(MAC)
         case API::Object::Type::ObjCObjectGraph: {
             ObjCObjectGraph* objectGraph = static_cast<ObjCObjectGraph*>(m_root);
-            encoder << InjectedBundleObjCObjectGraphEncoder(objectGraph);
+            encoder << InjectedBundleObjCObjectGraphEncoder(objectGraph, WebProcess::shared());
             break;
         }
 #endif
@@ -142,7 +147,7 @@ public:
 #if PLATFORM(MAC)
         case API::Object::Type::ObjCObjectGraph: {
             RefPtr<ObjCObjectGraph> objectGraph;
-            InjectedBundleObjCObjectGraphDecoder objectGraphDecoder(objectGraph, &WebProcess::shared());
+            InjectedBundleObjCObjectGraphDecoder objectGraphDecoder(objectGraph, WebProcess::shared());
             if (!decoder.decode(objectGraphDecoder))
                 return false;
             coder.m_root = objectGraph.get();

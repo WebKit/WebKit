@@ -1,5 +1,24 @@
 2013-12-01  Sam Weinig  <sam@webkit.org>
 
+        Give UserMessageEncoders WebProcessProxy reference (like the decoders already have)
+        https://bugs.webkit.org/show_bug.cgi?id=125053
+
+        Reviewed by Dan Bernstein.
+
+        - Give the UserMessageEncoders a process reference.
+        - Switch UserMessageDecoders to storing a process reference, rather than pointer.
+
+        * Shared/UserMessageCoders.h:
+        * Shared/mac/ObjCObjectGraphCoders.h:
+        * Shared/mac/ObjCObjectGraphCoders.mm:
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        * UIProcess/WebContext.cpp:
+        * UIProcess/WebContextUserMessageCoders.h:
+        * UIProcess/WebPageProxy.cpp:
+        * WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h:
+
+2013-12-01  Sam Weinig  <sam@webkit.org>
+
         [Cocoa] The PageLoadState::Observer is not being set on iOS
         https://bugs.webkit.org/show_bug.cgi?id=125051
 
