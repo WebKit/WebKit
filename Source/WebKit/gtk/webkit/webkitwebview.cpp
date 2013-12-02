@@ -671,6 +671,17 @@ static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* 
     gdk_region_get_rectangles(event->region, &rects.outPtr(), &rectCount);
 
     RefPtr<cairo_t> cr = adoptRef(gdk_cairo_create(event->window));
+
+    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW(widget)->priv;
+#if USE(TEXTURE_MAPPER)
+    GdkRectangle clipRect;
+    gdk_region_get_clipbox(event->region, &clipRect);
+    if (priv->acceleratedCompositingContext->renderLayersToWindow(cr.get(), clipRect)) {
+        GTK_WIDGET_CLASS(webkit_web_view_parent_class)->expose_event(widget, event);
+        return FALSE;
+    }
+#endif
+
     for (int i = 0; i < rectCount; i++) {
         copyRectFromCairoSurfaceToContext(WEBKIT_WEB_VIEW(widget)->priv->backingStore->cairoSurface(),
                                           cr.get(), IntSize(), IntRect(rects.get()[i]));
