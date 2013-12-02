@@ -1,3 +1,21 @@
+2013-12-02  Beth Dakin  <bdakin@apple.com>
+
+        Add a setting to opt into a mode where the background extends and fixed elements 
+        don't move on rubber-band
+        https://bugs.webkit.org/show_bug.cgi?id=124745
+
+        Reviewed by Tim Horton.
+
+        Add SPI to enable the new setting.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetBackgroundShouldExtendBeyondPage):
+        (WKPreferencesGetBackgroundShouldExtendBeyondPage):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2013-12-02  Tim Horton  <timothy_horton@apple.com>
 
         Remote Layer Tree: Hook up setLayerTreeStateIsFrozen

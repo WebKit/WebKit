@@ -136,8 +136,11 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
 
         tiledBacking->setIsInWindow(page->isInWindow());
 
-        if (m_isMainFrameRenderViewLayer)
+        if (m_isMainFrameRenderViewLayer) {
             tiledBacking->setUnparentsOffscreenTiles(true);
+            if (page->settings().backgroundShouldExtendBeyondPage())
+                tiledBacking->setTileMargins(512, 512, 512, 512);
+        }
 
         tiledBacking->setScrollingPerformanceLoggingEnabled(page->settings().scrollingPerformanceLoggingEnabled());
         adjustTiledBackingCoverage();

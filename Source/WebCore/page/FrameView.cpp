@@ -4178,8 +4178,7 @@ void FrameView::setScrollPinningBehavior(ScrollPinningBehavior pinning)
 
 ScrollBehaviorForFixedElements FrameView::scrollBehaviorForFixedElements() const
 {
-    // FIXME: Implement. This should consult a setting that does not yet exist.
-    return StickToDocumentBounds;
+    return frame().settings().backgroundShouldExtendBeyondPage() ? StickToViewportBounds : StickToDocumentBounds;
 }
 
 RenderView* FrameView::renderView() const

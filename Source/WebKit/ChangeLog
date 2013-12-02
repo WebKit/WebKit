@@ -1,3 +1,15 @@
+2013-12-02  Beth Dakin  <bdakin@apple.com>
+
+        Add a setting to opt into a mode where the background extends and fixed elements 
+        don't move on rubber-band
+        https://bugs.webkit.org/show_bug.cgi?id=124745
+
+        Reviewed by Tim Horton.
+
+        Keep Windows happy.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-12-02  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] WebKit Project doesn't copy resource bundle

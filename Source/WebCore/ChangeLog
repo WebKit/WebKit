@@ -1,3 +1,22 @@
+2013-12-02  Beth Dakin  <bdakin@apple.com>
+
+        Add a setting to opt into a mode where the background extends and fixed elements 
+        don't move on rubber-band
+        https://bugs.webkit.org/show_bug.cgi?id=124745
+
+        Reviewed by Tim Horton.
+
+        New setting backgroundShouldExtendBeyondPage() will cause the tile cache to have a 
+        margin, and it will also cause fixed elements and backgrounds to stick to the 
+        viewport on scroll instead of sticking to the document. 
+
+        * WebCore.exp.in:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollBehaviorForFixedElements):
+        * page/Settings.in:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+
 2013-12-02  Roger Zanoni  <rogerzanoni@gmail.com>
 
         [MediaStream] Use iterator-based loops instead of index-based loops
