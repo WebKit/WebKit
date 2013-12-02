@@ -1,3 +1,18 @@
+2013-12-02  Lauro Neto  <lauro.neto@openbossa.org>
+
+        [MediaStream] Update layout tests to newer spec.
+        https://bugs.webkit.org/show_bug.cgi?id=124985
+
+        Reviewed by Eric Carlson.
+
+        * TestExpectations:
+        * fast/mediastream/MediaStream-onended-expected.txt: Removed.
+        * fast/mediastream/MediaStreamTrack-onended-expected.txt: Added.
+        * fast/mediastream/MediaStreamTrack-onended.html: Renamed from LayoutTests/fast/mediastream/MediaStream-onended.html.
+        * fast/mediastream/RTCPeerConnection-ice-expected.txt:
+        * fast/mediastream/RTCPeerConnection-state-expected.txt:
+        * fast/mediastream/RTCSessionDescription-expected.txt:
+
 2013-12-02  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crash at WebCore::commonTreeScope

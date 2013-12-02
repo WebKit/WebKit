@@ -11,9 +11,9 @@ PASS initializer = JSON.parse(JSON.stringify(sessionDescription)); did not throw
 PASS sessionDescription = new RTCSessionDescription(initializer); did not throw exception.
 PASS sessionDescription.type is "offer"
 PASS sessionDescription.sdp is "foobar"
-PASS new RTCSessionDescription(null); threw exception TypeError: Optional description init argument of RTCSessionDescription must be a valid Dictionary.
-PASS new RTCSessionDescription(5); threw exception TypeError: Optional description init argument of RTCSessionDescription must be a valid Dictionary.
-PASS new RTCSessionDescription('foobar'); threw exception TypeError: Optional description init argument of RTCSessionDescription must be a valid Dictionary.
+PASS new RTCSessionDescription(null); threw exception TypeError: Optional RTCSessionDescription constructor argument must be a valid Dictionary.
+PASS new RTCSessionDescription(5); threw exception TypeError: Optional RTCSessionDescription constructor argument must be a valid Dictionary.
+PASS new RTCSessionDescription('foobar'); threw exception TypeError: Optional RTCSessionDescription constructor argument must be a valid Dictionary.
 PASS new RTCSessionDescription({type:'foobar', sdp:'x'}); threw exception TypeError: Invalid RTCSessionDescription constructor arguments.
 PASS new RTCSessionDescription({type:'offer', sdp:''}); threw exception TypeError: Invalid RTCSessionDescription constructor arguments.
 PASS new RTCSessionDescription({}); did not throw exception.
