@@ -1,3 +1,30 @@
+2013-12-02  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        Simplify MediaPlayerPrivateGStreamerBase::createVideoSink()
+        https://bugs.webkit.org/show_bug.cgi?id=125077
+
+        Remove the method's unused parameter.
+        Remove the GStreamer 0.10.22 run-time validation, since we are using
+        GStreamer 1.0 officially.
+        Remove the creation of a spurious Bin for the video sink, since
+        either the fpssink or the webkitsink are valid sink elements.
+        Change fpsink to a GRefPtr.
+
+        Now, createVideoSink() returns a simple pointer to the created sink
+        element.
+
+        Reviewed by Philippe Normand.
+
+        No new tests, no behavior changes.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::createVideoSink):
+        (WebCore::MediaPlayerPrivateGStreamerBase::decodedFrameCount):
+        (WebCore::MediaPlayerPrivateGStreamerBase::droppedFrameCount):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+
 2013-12-02  Alexey Proskuryakov  <ap@apple.com>
 
         Add support for WebCrypto RSA-OAEP

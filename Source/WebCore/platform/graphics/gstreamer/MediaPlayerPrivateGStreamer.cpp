@@ -1890,9 +1890,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     }
 #endif
 
-    createVideoSink(m_playBin.get());
-
-    g_object_set(m_playBin.get(), "video-sink", m_videoSinkBin.get(), nullptr);
+    g_object_set(m_playBin.get(), "video-sink", createVideoSink(), nullptr);
 
     GRefPtr<GstPad> videoSinkPad = adoptGRef(gst_element_get_static_pad(m_webkitVideoSink.get(), "sink"));
     if (videoSinkPad)

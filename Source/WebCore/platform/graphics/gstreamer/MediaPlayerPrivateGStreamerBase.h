@@ -103,7 +103,7 @@ public:
 
 protected:
     MediaPlayerPrivateGStreamerBase(MediaPlayer*);
-    void createVideoSink(GstElement* pipeline);
+    GstElement* createVideoSink();
     void setStreamVolumeElement(GstStreamVolume*);
     virtual GstElement* audioSink() const { return 0; }
     GRefPtr<GstCaps> currentVideoSinkCaps() const;
@@ -111,8 +111,7 @@ protected:
     MediaPlayer* m_player;
     GRefPtr<GstStreamVolume> m_volumeElement;
     GRefPtr<GstElement> m_webkitVideoSink;
-    GRefPtr<GstElement> m_videoSinkBin;
-    GstElement* m_fpsSink;
+    GRefPtr<GstElement> m_fpsSink;
     MediaPlayer::ReadyState m_readyState;
     MediaPlayer::NetworkState m_networkState;
     IntSize m_size;

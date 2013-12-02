@@ -462,57 +462,41 @@ GRefPtr<GstCaps> MediaPlayerPrivateGStreamerBase::currentVideoSinkCaps() const
     return currentCaps;
 }
 
-void MediaPlayerPrivateGStreamerBase::createVideoSink(GstElement* pipeline)
+GstElement* MediaPlayerPrivateGStreamerBase::createVideoSink()
 {
-    if (!initializeGStreamer())
-        return;
+    ASSERT(initializeGStreamer());
 
-    UNUSED_PARAM(pipeline);
+    GstElement* videoSink = nullptr;
     m_webkitVideoSink = webkitVideoSinkNew();
 
     m_repaintHandler = g_signal_connect(m_webkitVideoSink.get(), "repaint-requested", G_CALLBACK(mediaPlayerPrivateRepaintCallback), this);
 
-    m_videoSinkBin = gst_bin_new(nullptr);
-
-    GstElement* videoSink = nullptr;
     m_fpsSink = gst_element_factory_make("fpsdisplaysink", "sink");
     if (m_fpsSink) {
-        // The verbose property has been added in -bad 0.10.22. Making
-        // this whole code depend on it because we don't want
-        // fpsdiplaysink to spit data on stdout.
-        GstElementFactory* factory = GST_ELEMENT_FACTORY(GST_ELEMENT_GET_CLASS(m_fpsSink)->elementfactory);
-        if (gst_plugin_feature_check_version(GST_PLUGIN_FEATURE(factory), 0, 10, 22)) {
-            g_object_set(m_fpsSink, "silent", TRUE , nullptr);
+        g_object_set(m_fpsSink.get(), "silent", TRUE , nullptr);
 
-            // Turn off text overlay unless logging is enabled.
+        // Turn off text overlay unless logging is enabled.
 #if LOG_DISABLED
-            g_object_set(m_fpsSink, "text-overlay", FALSE , nullptr);
+        g_object_set(m_fpsSink.get(), "text-overlay", FALSE , nullptr);
 #else
-            WTFLogChannel* channel = logChannelByName("Media");
-            if (channel->state != WTFLogChannelOn)
-                g_object_set(m_fpsSink, "text-overlay", FALSE , nullptr);
+        WTFLogChannel* channel = logChannelByName("Media");
+        if (channel->state != WTFLogChannelOn)
+            g_object_set(m_fpsSink.get(), "text-overlay", FALSE , nullptr);
 #endif // LOG_DISABLED
 
-            if (g_object_class_find_property(G_OBJECT_GET_CLASS(m_fpsSink), "video-sink")) {
-                g_object_set(m_fpsSink, "video-sink", m_webkitVideoSink.get(), nullptr);
-                gst_bin_add(GST_BIN(m_videoSinkBin.get()), m_fpsSink);
-                videoSink = m_fpsSink;
-            } else
-                m_fpsSink = nullptr;
+        if (g_object_class_find_property(G_OBJECT_GET_CLASS(m_fpsSink.get()), "video-sink")) {
+            g_object_set(m_fpsSink.get(), "video-sink", m_webkitVideoSink.get(), nullptr);
+            videoSink = m_fpsSink.get();
         } else
             m_fpsSink = nullptr;
     }
 
-    if (!m_fpsSink) {
-        gst_bin_add(GST_BIN(m_videoSinkBin.get()), m_webkitVideoSink.get());
+    if (!m_fpsSink)
         videoSink = m_webkitVideoSink.get();
-    }
 
     ASSERT(videoSink);
 
-    GstElement* firstChild = videoSink;
-    GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(firstChild, "sink"));
-    gst_element_add_pad(m_videoSinkBin.get(), gst_ghost_pad_new("sink", pad.get()));
+    return videoSink;
 }
 
 void MediaPlayerPrivateGStreamerBase::setStreamVolumeElement(GstStreamVolume* volume)
@@ -539,7 +523,7 @@ unsigned MediaPlayerPrivateGStreamerBase::decodedFrameCount() const
 {
     guint64 decodedFrames = 0;
     if (m_fpsSink)
-        g_object_get(m_fpsSink, "frames-rendered", &decodedFrames, NULL);
+        g_object_get(m_fpsSink.get(), "frames-rendered", &decodedFrames, NULL);
     return static_cast<unsigned>(decodedFrames);
 }
 
@@ -547,7 +531,7 @@ unsigned MediaPlayerPrivateGStreamerBase::droppedFrameCount() const
 {
     guint64 framesDropped = 0;
     if (m_fpsSink)
-        g_object_get(m_fpsSink, "frames-dropped", &framesDropped, NULL);
+        g_object_get(m_fpsSink.get(), "frames-dropped", &framesDropped, NULL);
     return static_cast<unsigned>(framesDropped);
 }
 
