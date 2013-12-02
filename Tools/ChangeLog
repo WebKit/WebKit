@@ -1,3 +1,13 @@
+2013-12-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Port run-jsc-stress-tests
+        https://bugs.webkit.org/show_bug.cgi?id=124801
+
+        Reviewed by Filip Pizlo.
+
+        * Scripts/run-jsc-stress-tests: Gracefully handle lack of sysctl
+        command on Windows so that stress tests can run.
+
 2013-12-02  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Build fix after r159955
