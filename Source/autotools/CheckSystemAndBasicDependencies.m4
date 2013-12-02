@@ -135,11 +135,5 @@ bool libstdcxxTest = std::is_trivially_destructible<bool>::value;
     CXXFLAGS="$OLD_CXXFLAGS"
 fi
 
-# C/C++ Language Features
-AC_C_CONST
-AC_C_INLINE
-AC_C_VOLATILE
-
 # C/C++ Headers
-AC_HEADER_STDC
 AC_HEADER_STDBOOL
