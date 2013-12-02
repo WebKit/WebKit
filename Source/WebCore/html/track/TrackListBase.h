@@ -30,6 +30,7 @@
 
 #include "EventListener.h"
 #include "EventTarget.h"
+#include "GenericEventQueue.h"
 #include "Timer.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -63,8 +64,6 @@ public:
     Element* element() const;
     HTMLMediaElement* mediaElement() const { return m_element; }
 
-    bool isFiringEventListeners() { return m_dispatchingEvents; }
-
     // Needs to be public so tracks can call it
     void scheduleChangeEvent();
 
@@ -79,20 +78,16 @@ protected:
     Vector<RefPtr<TrackBase>> m_inbandTracks;
 
 private:
+    void scheduleTrackEvent(const AtomicString& eventName, PassRefPtr<TrackBase>);
 
     // EventTarget
     virtual void refEventTarget() OVERRIDE FINAL { ref(); }
     virtual void derefEventTarget() OVERRIDE FINAL { deref(); }
 
-    void asyncEventTimerFired(Timer<TrackListBase>*);
-
     ScriptExecutionContext* m_context;
     HTMLMediaElement* m_element;
 
-    Vector<RefPtr<Event>> m_pendingEvents;
-    Timer<TrackListBase> m_pendingEventTimer;
-
-    int m_dispatchingEvents;
+    GenericEventQueue m_asyncEventQueue;
 };
 
 } // namespace WebCore

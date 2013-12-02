@@ -39,8 +39,7 @@ using namespace WebCore;
 TrackListBase::TrackListBase(HTMLMediaElement* element, ScriptExecutionContext* context)
     : m_context(context)
     , m_element(element)
-    , m_pendingEventTimer(this, &TrackListBase::asyncEventTimerFired)
-    , m_dispatchingEvents(0)
+    , m_asyncEventQueue(*this)
 {
     ASSERT(context->isDocument());
 }
@@ -79,6 +78,16 @@ bool TrackListBase::contains(TrackBase* track) const
     return m_inbandTracks.find(track) != notFound;
 }
 
+void TrackListBase::scheduleTrackEvent(const AtomicString& eventName, PassRefPtr<TrackBase> track)
+{
+    TrackEventInit initializer;
+    initializer.track = track;
+    initializer.bubbles = false;
+    initializer.cancelable = false;
+
+    m_asyncEventQueue.enqueueEvent(TrackEvent::create(eventName, initializer));
+}
+
 void TrackListBase::scheduleAddTrackEvent(PassRefPtr<TrackBase> track)
 {
     // 4.8.10.5 Loading the media resource
@@ -98,17 +107,8 @@ void TrackListBase::scheduleAddTrackEvent(PassRefPtr<TrackBase> track)
     // ... then queue a task to fire an event with the name addtrack, that does not
     // bubble and is not cancelable, and that uses the TrackEvent interface, with
     // the track attribute initialized to the text track's TextTrack object, at
-    // the media element's textTracks attribute's TextTrackList object. 
-
-    RefPtr<TrackBase> trackRef = track;
-    TrackEventInit initializer;
-    initializer.track = trackRef;
-    initializer.bubbles = false;
-    initializer.cancelable = false;
-
-    m_pendingEvents.append(TrackEvent::create(eventNames().addtrackEvent, initializer));
-    if (!m_pendingEventTimer.isActive())
-        m_pendingEventTimer.startOneShot(0);
+    // the media element's textTracks attribute's TextTrackList object.
+    scheduleTrackEvent(eventNames().addtrackEvent, track);
 }
 
 void TrackListBase::scheduleRemoveTrackEvent(PassRefPtr<TrackBase> track)
@@ -135,16 +135,7 @@ void TrackListBase::scheduleRemoveTrackEvent(PassRefPtr<TrackBase> track)
     // interface, with the track attribute initialized to the text track's
     // TextTrack object, at the media element's textTracks attribute's
     // TextTrackList object.
-
-    RefPtr<TrackBase> trackRef = track;
-    TrackEventInit initializer;
-    initializer.track = trackRef;
-    initializer.bubbles = false;
-    initializer.cancelable = false;
-
-    m_pendingEvents.append(TrackEvent::create(eventNames().removetrackEvent, initializer));
-    if (!m_pendingEventTimer.isActive())
-        m_pendingEventTimer.startOneShot(0);
+    scheduleTrackEvent(eventNames().removetrackEvent, track);
 }
 
 void TrackListBase::scheduleChangeEvent()
@@ -162,21 +153,7 @@ void TrackListBase::scheduleChangeEvent()
     initializer.bubbles = false;
     initializer.cancelable = false;
 
-    m_pendingEvents.append(Event::create(eventNames().changeEvent, initializer));
-    if (!m_pendingEventTimer.isActive())
-        m_pendingEventTimer.startOneShot(0);
-}
-
-void TrackListBase::asyncEventTimerFired(Timer<TrackListBase>*)
-{
-    Vector<RefPtr<Event>> pendingEvents;
-
-    ++m_dispatchingEvents;
-    m_pendingEvents.swap(pendingEvents);
-    size_t count = pendingEvents.size();
-    for (size_t index = 0; index < count; ++index)
-        dispatchEvent(pendingEvents[index].release(), IGNORE_EXCEPTION);
-    --m_dispatchingEvents;
+    m_asyncEventQueue.enqueueEvent(Event::create(eventNames().changeEvent, initializer));
 }
 
 bool TrackListBase::isAnyTrackEnabled() const
