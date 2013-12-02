@@ -5191,9 +5191,7 @@ gboolean webkit_web_view_get_view_source_mode (WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    core(webView)->mainFrame().inViewSourceMode();
-
-    return FALSE;
+    return core(webView)->mainFrame().inViewSourceMode();
 }
 
 // Internal subresource management
