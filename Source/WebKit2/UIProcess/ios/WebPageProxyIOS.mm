@@ -27,11 +27,12 @@
 #import "WebPageProxy.h"
 
 #import "NativeWebKeyboardEvent.h"
+#import "PageClient.h"
+#import "WKBrowsingContextControllerInternal.h"
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
 #import <WebCore/NotImplemented.h>
 #import <WebCore/SharedBuffer.h>
-#import "PageClientImplIOS.h"
 
 using namespace WebCore;
 
@@ -39,7 +40,9 @@ namespace WebKit {
 
 void WebPageProxy::platformInitialize()
 {
-    notImplemented();
+#if WK_API_ENABLED
+    [WebKit::wrapper(*this) _finishInitialization];
+#endif
 }
 
 String WebPageProxy::standardUserAgent(const String&)
