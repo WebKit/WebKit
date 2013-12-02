@@ -86,17 +86,17 @@ void GtkPopupMenu::popUp(const IntSize& menuSize, const IntPoint& menuPosition, 
 #else
     gtk_widget_get_preferred_size(m_popup.get(), &requisition, 0);
 #endif
-
     gtk_widget_set_size_request(m_popup.get(), std::max(menuSize.width(), requisition.width), -1);
 
-    GList* children = gtk_container_get_children(GTK_CONTAINER(m_popup.get()));
-    GList* p = children;
     if (itemCount) {
-        for (int i = 0; i < itemCount; i++) {
+        GOwnPtr<GList> children(gtk_container_get_children(GTK_CONTAINER(m_popup.get())));
+        int i;
+        GList* child;
+        for (i = 0, child = children.get(); i < itemCount; i++, child = g_list_next(child)) {
             if (i > selectedItem)
                 break;
 
-            GtkWidget* item = reinterpret_cast<GtkWidget*>(p->data);
+            GtkWidget* item = GTK_WIDGET(child->data);
             GtkRequisition itemRequisition;
 #ifdef GTK_API_VERSION_2
             gtk_widget_get_child_requisition(item, &itemRequisition);
@@ -104,31 +104,23 @@ void GtkPopupMenu::popUp(const IntSize& menuSize, const IntPoint& menuPosition, 
             gtk_widget_get_preferred_size(item, &itemRequisition, 0);
 #endif
             m_menuPosition.setY(m_menuPosition.y() - itemRequisition.height);
-
-            p = g_list_next(p);
         }
     } else {
         // Center vertically the empty popup in the combo box area.
         m_menuPosition.setY(m_menuPosition.y() - menuSize.height() / 2);
     }
-    g_list_free(children);
 
-    guint button;
-    guint32 activateTime;
-    if (event) {
-        button = event->type == GDK_BUTTON_PRESS ? event->button.button : 1;
-        activateTime = gdk_event_get_time(event);
-    } else {
-        button = 1;
-        activateTime = GDK_CURRENT_TIME;
-    }
-
+    guint button = event && event->type == GDK_BUTTON_PRESS ? event->button.button : 1;
+    guint32 activateTime = event ? gdk_event_get_time(event) : GDK_CURRENT_TIME;
 #ifdef GTK_API_VERSION_2
     gtk_menu_popup(GTK_MENU(m_popup.get()), 0, 0, reinterpret_cast<GtkMenuPositionFunc>(menuPositionFunction), this, button, activateTime);
 #else
     gtk_menu_popup_for_device(GTK_MENU(m_popup.get()), event ? gdk_event_get_device(event) : 0, 0, 0,
-                              reinterpret_cast<GtkMenuPositionFunc>(menuPositionFunction), this, 0, button, activateTime);
+        reinterpret_cast<GtkMenuPositionFunc>(menuPositionFunction), this, 0, button, activateTime);
 #endif
+
+    // Now that the menu has a position, schedule a resize to make sure it's resized to fit vertically in the work area.
+    gtk_widget_queue_resize(m_popup.get());
 }
 
 void GtkPopupMenu::popDown()

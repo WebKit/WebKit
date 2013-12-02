@@ -1,3 +1,20 @@
+2013-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Cannot scroll in option menu when it larger than the screen
+        https://bugs.webkit.org/show_bug.cgi?id=124671
+
+        Reviewed by Martin Robinson.
+
+        The problem is that the popup menu is not resized to fit in the
+        screen, so it doesn't scroll and some of the items are offscreen
+        so they can't be selected either. GTK+ automatically resizes the
+        popup menus to fit in the work area, but only when the menu is
+        already positioned.
+
+        * platform/gtk/GtkPopupMenu.cpp:
+        (WebCore::GtkPopupMenu::popUp): Schedule a resize of the popup
+        menu right after showing it once it has a position.
+
 2013-11-20  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GTK] Remove Chromium as user agent and claim to be Safari in OS X
