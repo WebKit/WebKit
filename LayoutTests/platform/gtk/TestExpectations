@@ -1410,6 +1410,14 @@ webkit.org/b/120105 http/tests/navigation/post-frames-goback1-uncached.html [ Fa
 
 webkit.org/b/120203 http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html [ Failure ]
 
+webkit.org/b/124770 fast/forms/ValidityState-valueMissing-002.html [ Failure ]
+webkit.org/b/124770 fast/forms/access-key-for-all-elements.html [ Failure ]
+webkit.org/b/124770 fast/forms/access-key.html [ Failure ]
+webkit.org/b/124770 fast/forms/focus-selection-input.html [ Failure ]
+webkit.org/b/124770 fast/forms/focus-selection-textarea.html [ Failure ]
+webkit.org/b/124770 fast/forms/legend-access-key.html [ Failure ]
+webkit.org/b/124770 fast/forms/select-accesskey.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
