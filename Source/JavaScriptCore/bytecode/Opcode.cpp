@@ -31,7 +31,7 @@
 #include "Opcode.h"
 
 #if ENABLE(OPCODE_STATS)
-#include <stdio.h>
+#include <wtf/DataLog.h>
 #include <wtf/FixedArray.h>
 #endif
 
