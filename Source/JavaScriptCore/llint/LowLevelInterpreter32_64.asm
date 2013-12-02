@@ -190,8 +190,8 @@ macro doCallToJavaScript()
         const entry = a0
         const newCallFrame = a1
     elsif MIPS
-        const extraStackSpace = 20
-        const previousCFR = t2  
+        const extraStackSpace = 36
+        const previousCFR = t2
         const previousPC = lr
         const entry = a0
         const newCallFrame = a1

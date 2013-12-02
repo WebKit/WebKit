@@ -1,3 +1,14 @@
+2013-12-02  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        [MIPS] Small stack frame causes regressions.
+        https://bugs.webkit.org/show_bug.cgi?id=124945
+
+        Reviewed by Michael Saboff.
+
+        Fix stack space for LLInt on MIPS.
+
+        * llint/LowLevelInterpreter32_64.asm:
+
 2013-12-02  Brian J. Burg  <burg@cs.washington.edu>
 
         jsc: implement a native readFile function
