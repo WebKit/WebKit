@@ -46,6 +46,7 @@ public:
         HmacParams,
         RsaKeyGenParams,
         RsaKeyParamsWithHash,
+        RsaOaepParams,
         RsaSsaParams
     };
     virtual Class parametersClass() const { return Class::None; }

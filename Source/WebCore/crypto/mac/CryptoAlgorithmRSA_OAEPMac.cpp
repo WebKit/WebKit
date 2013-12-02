@@ -24,20 +24,18 @@
  */
 
 #include "config.h"
-#include "CryptoAlgorithmRSASSA_PKCS1_v1_5.h"
+#include "CryptoAlgorithmRSA_OAEP.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CommonCryptoUtilities.h"
-#include "CryptoAlgorithmRsaSsaParams.h"
-#include "CryptoDigest.h"
+#include "CryptoAlgorithmRsaOaepParams.h"
 #include "CryptoKeyRSA.h"
 #include "ExceptionCode.h"
-#include <CommonCrypto/CommonCryptor.h>
 
 namespace WebCore {
 
-void CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(const CryptoAlgorithmRsaSsaParams& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
+void CryptoAlgorithmRSA_OAEP::platformEncrypt(const CryptoAlgorithmRsaOaepParams& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
 {
     CCDigestAlgorithm digestAlgorithm;
     if (!getCommonCryptoDigestAlgorithm(parameters.hash, digestAlgorithm)) {
@@ -45,30 +43,20 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(const CryptoAlgorithmRsaSsaP
         return;
     }
 
-    std::unique_ptr<CryptoDigest> digest = CryptoDigest::create(parameters.hash);
-    if (!digest) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-
-    digest->addBytes(data.first, data.second);
-
-    Vector<uint8_t> digestData = digest->computeHash();
-
-    Vector<uint8_t> signature(512);
-    size_t signatureSize = signature.size();
-
-    CCCryptorStatus status = CCRSACryptorSign(key.platformKey(), ccPKCS1Padding, digestData.data(), digestData.size(), digestAlgorithm, 0, signature.data(), &signatureSize);
+    Vector<uint8_t> cipherText(1024);
+    size_t cipherTextLength = cipherText.size();
+    ASSERT(parameters.hasLabel || parameters.label.isEmpty());
+    CCCryptorStatus status = CCRSACryptorEncrypt(key.platformKey(), ccOAEPPadding, data.first, data.second, cipherText.data(), &cipherTextLength, parameters.label.data(), parameters.label.size(), digestAlgorithm);
     if (status) {
         failureCallback();
         return;
     }
 
-    signature.resize(signatureSize);
-    callback(signature);
+    cipherText.resize(cipherTextLength);
+    callback(cipherText);
 }
 
-void CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify(const CryptoAlgorithmRsaSsaParams& parameters, const CryptoKeyRSA& key, const CryptoOperationData& signature, const CryptoOperationData& data, BoolCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
+void CryptoAlgorithmRSA_OAEP::platformDecrypt(const CryptoAlgorithmRsaOaepParams& parameters, const CryptoKeyRSA& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode& ec)
 {
     CCDigestAlgorithm digestAlgorithm;
     if (!getCommonCryptoDigestAlgorithm(parameters.hash, digestAlgorithm)) {
@@ -76,23 +64,16 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify(const CryptoAlgorithmRsaSs
         return;
     }
 
-    std::unique_ptr<CryptoDigest> digest = CryptoDigest::create(parameters.hash);
-    if (!digest) {
-        ec = NOT_SUPPORTED_ERR;
+    Vector<uint8_t> plainText(1024);
+    size_t plainTextLength = plainText.size();
+    CCCryptorStatus status = CCRSACryptorDecrypt(key.platformKey(), ccOAEPPadding, data.first, data.second, plainText.data(), &plainTextLength, parameters.label.data(), parameters.label.size(), digestAlgorithm);
+    if (status) {
+        failureCallback();
         return;
     }
 
-    digest->addBytes(data.first, data.second);
-
-    Vector<uint8_t> digestData = digest->computeHash();
-
-    CCCryptorStatus status = CCRSACryptorVerify(key.platformKey(), ccPKCS1Padding, digestData.data(), digestData.size(), digestAlgorithm, 0, signature.first, signature.second);
-    if (!status)
-        callback(true);
-    else if (status == kCCNotVerified || kCCDecodeError) // <rdar://problem/15464982> CCRSACryptorVerify returns kCCDecodeError instead of kCCNotVerified sometimes
-        callback(false);
-    else
-        failureCallback();
+    plainText.resize(plainTextLength);
+    callback(plainText);
 }
 
 } // namespace WebCore

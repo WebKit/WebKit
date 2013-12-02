@@ -35,6 +35,7 @@
 #include "CryptoAlgorithmRegistry.h"
 #include "CryptoAlgorithmRsaKeyGenParams.h"
 #include "CryptoAlgorithmRsaKeyParamsWithHash.h"
+#include "CryptoAlgorithmRsaOaepParams.h"
 #include "CryptoAlgorithmRsaSsaParams.h"
 #include "ExceptionCode.h"
 #include "JSCryptoOperationData.h"
@@ -244,6 +245,40 @@ static std::unique_ptr<CryptoAlgorithmParameters> createRsaKeyParamsWithHash(Exe
     return std::make_unique<CryptoAlgorithmRsaKeyParamsWithHash>();
 }
 
+static std::unique_ptr<CryptoAlgorithmParameters> createRsaOaepParams(ExecState* exec, JSValue value)
+{
+    if (!value.isObject()) {
+        throwTypeError(exec);
+        return nullptr;
+    }
+
+    JSDictionary jsDictionary(exec, value.getObject());
+    auto result = std::make_unique<CryptoAlgorithmRsaOaepParams>();
+
+    if (!getHashAlgorithm(jsDictionary, result->hash)) {
+        ASSERT(exec->hadException());
+        return nullptr;
+    }
+
+    JSValue labelValue = getProperty(exec, value.getObject(), "label");
+    if (exec->hadException())
+        return nullptr;
+
+    result->hasLabel = !labelValue.isUndefinedOrNull();
+    if (!result->hasLabel)
+        return std::move(result);
+
+    CryptoOperationData labelData;
+    if (!cryptoOperationDataFromJSValue(exec, labelValue, labelData)) {
+        ASSERT(exec->hadException());
+        return nullptr;
+    }
+
+    result->label.append(labelData.first, labelData.second);
+
+    return std::move(result);
+}
+
 static std::unique_ptr<CryptoAlgorithmParameters> createRsaSsaParams(ExecState* exec, JSValue value)
 {
     if (!value.isObject()) {
@@ -268,7 +303,10 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
     case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
     case CryptoAlgorithmIdentifier::RSA_PSS:
+        setDOMException(exec, NOT_SUPPORTED_ERR);
+        return nullptr;
     case CryptoAlgorithmIdentifier::RSA_OAEP:
+        return createRsaOaepParams(exec, value);
     case CryptoAlgorithmIdentifier::ECDSA:
     case CryptoAlgorithmIdentifier::ECDH:
     case CryptoAlgorithmIdentifier::AES_CTR:
@@ -300,7 +338,10 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
     case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
     case CryptoAlgorithmIdentifier::RSA_PSS:
+        setDOMException(exec, NOT_SUPPORTED_ERR);
+        return nullptr;
     case CryptoAlgorithmIdentifier::RSA_OAEP:
+        return createRsaOaepParams(exec, value);
     case CryptoAlgorithmIdentifier::ECDSA:
     case CryptoAlgorithmIdentifier::ECDH:
     case CryptoAlgorithmIdentifier::AES_CTR:
@@ -528,7 +569,9 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
         return createRsaKeyParamsWithHash(exec, value);
     case CryptoAlgorithmIdentifier::RSA_PSS:
+        return std::make_unique<CryptoAlgorithmParameters>();
     case CryptoAlgorithmIdentifier::RSA_OAEP:
+        return createRsaKeyParamsWithHash(exec, value);
     case CryptoAlgorithmIdentifier::ECDSA:
     case CryptoAlgorithmIdentifier::ECDH:
     case CryptoAlgorithmIdentifier::AES_CTR:

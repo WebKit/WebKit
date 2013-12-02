@@ -1,3 +1,54 @@
+2013-12-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Add support for WebCrypto RSA-OAEP
+        https://bugs.webkit.org/show_bug.cgi?id=125084
+
+        Reviewed by Sam Weinig.
+
+        Tests: crypto/subtle/rsa-oaep-key-manipulation.html
+               crypto/subtle/rsa-oaep-plaintext-length.html
+               crypto/subtle/rsa-oaep-wrap-unwrap-aes.html
+
+        * WebCore.xcodeproj/project.pbxproj: Added new files.
+
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::createRsaOaepParams):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForEncrypt):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDecrypt):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForImportKey):
+        Added RSA-OAEP parameters.
+
+        * bindings/js/JSCryptoKeySerializationJWK.cpp:
+        (WebCore::JSCryptoKeySerializationJWK::reconcileAlgorithm):
+        (WebCore::JSCryptoKeySerializationJWK::keySizeIsValid):
+        (WebCore::JSCryptoKeySerializationJWK::addJWKAlgorithmToJSON):
+        Support RSA-OAEP in JWK. It is more limited than general WebCrypto, as JWK only
+        allows SHA-1 as hash.
+
+        * crypto/CommonCryptoUtilities.cpp: Added. (WebCore::getCommonCryptoDigestAlgorithm):
+        * crypto/CommonCryptoUtilities.h: Added.
+        Extracted some shared code and forward declarations for CommonCrypto.
+
+        * crypto/CryptoAlgorithmParameters.h: (WebCore::CryptoAlgorithmParameters::Class):
+        * crypto/parameters/CryptoAlgorithmRsaOaepParams.h: Added.
+        Added RsaOaepParams.
+
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp: Added.
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.h: Added.
+        * crypto/mac/CryptoAlgorithmRSA_OAEPMac.cpp: Added.
+
+        * crypto/mac/CryptoAlgorithmHMACMac.cpp:
+        (WebCore::getCommonCryptoHMACAlgorithm):
+        (WebCore::CryptoAlgorithmHMAC::platformSign):
+        (WebCore::CryptoAlgorithmHMAC::platformVerify):
+        * crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp:
+        * crypto/mac/CryptoKeyMac.cpp:
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        Use CommonCryptoUtilities.
+
+        * crypto/mac/CryptoAlgorithmRegistryMac.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms): Register RSA-OAEP.
+
 2013-12-02  Andres Gomez  <agomez@igalia.com>
 
         [GTK] Fails to build with freetype 2.5.1

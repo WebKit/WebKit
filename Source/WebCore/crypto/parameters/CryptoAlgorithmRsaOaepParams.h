@@ -23,36 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CryptoAlgorithmRegistry.h"
+#ifndef CryptoAlgorithmRsaOaepParams_h
+#define CryptoAlgorithmRsaOaepParams_h
+
+#include "CryptoAlgorithmIdentifier.h"
+#include "CryptoAlgorithmParameters.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmAES_CBC.h"
-#include "CryptoAlgorithmHMAC.h"
-#include "CryptoAlgorithmRSASSA_PKCS1_v1_5.h"
-#include "CryptoAlgorithmRSA_OAEP.h"
-#include "CryptoAlgorithmSHA1.h"
-#include "CryptoAlgorithmSHA224.h"
-#include "CryptoAlgorithmSHA256.h"
-#include "CryptoAlgorithmSHA384.h"
-#include "CryptoAlgorithmSHA512.h"
-
 namespace WebCore {
 
-void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
-{
-    registerAlgorithm<CryptoAlgorithmAES_CBC>();
-    registerAlgorithm<CryptoAlgorithmHMAC>();
-    registerAlgorithm<CryptoAlgorithmRSASSA_PKCS1_v1_5>();
-    registerAlgorithm<CryptoAlgorithmRSA_OAEP>();
-    registerAlgorithm<CryptoAlgorithmSHA1>();
-    registerAlgorithm<CryptoAlgorithmSHA224>();
-    registerAlgorithm<CryptoAlgorithmSHA256>();
-    registerAlgorithm<CryptoAlgorithmSHA384>();
-    registerAlgorithm<CryptoAlgorithmSHA512>();
-}
+class CryptoAlgorithmRsaOaepParams FINAL : public CryptoAlgorithmParameters {
+public:
+    CryptoAlgorithmRsaOaepParams()
+        : hasLabel(false)
+    {
+    }
+
+    // The hash function to apply to the message.
+    CryptoAlgorithmIdentifier hash;
+
+    // The optional label/application data to associate with the message.
+    // FIXME: Is there a difference between a missing label and an empty one? Perhaps we don't need the hasLabel member.
+    bool hasLabel;
+    Vector<uint8_t> label;
+
+    virtual Class parametersClass() const OVERRIDE { return Class::RsaOaepParams; }
+};
+
+CRYPTO_ALGORITHM_PARAMETERS_CASTS(RsaOaepParams)
 
 }
 
 #endif // ENABLE(SUBTLE_CRYPTO)
+#endif // CryptoAlgorithmRsaOaepParams_h

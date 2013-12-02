@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static bool getCommonCryptoAlgorithm(CryptoAlgorithmIdentifier hashFunction, CCHmacAlgorithm& algorithm)
+static bool getCommonCryptoHMACAlgorithm(CryptoAlgorithmIdentifier hashFunction, CCHmacAlgorithm& algorithm)
 {
     switch (hashFunction) {
     case CryptoAlgorithmIdentifier::SHA_1:
@@ -91,7 +91,7 @@ static Vector<uint8_t> calculateSignature(CCHmacAlgorithm algorithm, const Vecto
 void CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParams& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback, ExceptionCode& ec)
 {
     CCHmacAlgorithm algorithm;
-    if (!getCommonCryptoAlgorithm(parameters.hash, algorithm)) {
+    if (!getCommonCryptoHMACAlgorithm(parameters.hash, algorithm)) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
@@ -104,7 +104,7 @@ void CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParams& paramete
 void CryptoAlgorithmHMAC::platformVerify(const CryptoAlgorithmHmacParams& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback callback, VoidCallback, ExceptionCode& ec)
 {
     CCHmacAlgorithm algorithm;
-    if (!getCommonCryptoAlgorithm(parameters.hash, algorithm)) {
+    if (!getCommonCryptoHMACAlgorithm(parameters.hash, algorithm)) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }

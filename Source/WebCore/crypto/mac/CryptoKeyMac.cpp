@@ -28,15 +28,7 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#if defined(__has_include) && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
-#if __has_include(<CommonCrypto/CommonRandomSPI.h>)
-#include <CommonCrypto/CommonRandomSPI.h>
-#endif
-#endif
-
-typedef struct __CCRandom *CCRandomRef;
-extern const CCRandomRef kCCRandomDefault;
-extern "C" int CCRandomCopyBytes(CCRandomRef rnd, void *bytes, size_t count);
+#include "CommonCryptoUtilities.h"
 
 namespace WebCore {
 

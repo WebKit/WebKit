@@ -28,32 +28,12 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#include "CommonCryptoUtilities.h"
 #include "CryptoAlgorithmDescriptionBuilder.h"
 #include "CryptoAlgorithmRegistry.h"
 #include "CryptoKeyDataRSAComponents.h"
 #include "CryptoKeyPair.h"
 #include <CommonCrypto/CommonCryptor.h>
-
-#if defined(__has_include)
-#if __has_include(<CommonCrypto/CommonRSACryptor.h>)
-#include <CommonCrypto/CommonRSACryptor.h>
-#endif
-#endif
-
-#ifndef _CC_RSACRYPTOR_H_
-enum {
-    ccRSAKeyPublic          = 0,
-    ccRSAKeyPrivate         = 1
-};
-typedef uint32_t CCRSAKeyType;
-#endif
-
-extern "C" CCCryptorStatus CCRSACryptorCreateFromData(CCRSAKeyType keyType, uint8_t *modulus, size_t modulusLength, uint8_t *exponent, size_t exponentLength, uint8_t *p, size_t pLength, uint8_t *q, size_t qLength, CCRSACryptorRef *ref);
-extern "C" CCCryptorStatus CCRSACryptorGeneratePair(size_t keysize, uint32_t e, CCRSACryptorRef *publicKey, CCRSACryptorRef *privateKey);
-extern "C" CCRSACryptorRef CCRSACryptorGetPublicKeyFromPrivateKey(CCRSACryptorRef privkey);
-extern "C" void CCRSACryptorRelease(CCRSACryptorRef key);
-extern "C" CCCryptorStatus CCRSAGetKeyComponents(CCRSACryptorRef rsaKey, uint8_t *modulus, size_t *modulusLength, uint8_t *exponent, size_t *exponentLength, uint8_t *p, size_t *pLength, uint8_t *q, size_t *qLength);
-extern "C" CCRSAKeyType CCRSAGetKeyType(CCRSACryptorRef key);
 
 namespace WebCore {
 

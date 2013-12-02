@@ -190,6 +190,9 @@ bool JSCryptoKeySerializationJWK::reconcileAlgorithm(std::unique_ptr<CryptoAlgor
     } else if (m_jwkAlgorithmName == "RS512") {
         algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5);
         parameters = createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier::SHA_512);
+    } else if (m_jwkAlgorithmName == "RSA-OAEP") {
+        algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::RSA_OAEP);
+        parameters = createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier::SHA_1);
     } else if (m_jwkAlgorithmName == "A128CBC") {
         algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::AES_CBC);
         parameters = std::make_unique<CryptoAlgorithmParameters>();
@@ -218,7 +221,8 @@ bool JSCryptoKeySerializationJWK::reconcileAlgorithm(std::unique_ptr<CryptoAlgor
 
     if (algorithm->identifier() == CryptoAlgorithmIdentifier::HMAC)
         return toCryptoAlgorithmHmacParams(*parameters).hash == toCryptoAlgorithmHmacParams(*suggestedParameters).hash;
-    if (algorithm->identifier() == CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5) {
+    if (algorithm->identifier() == CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5
+        || algorithm->identifier() == CryptoAlgorithmIdentifier::RSA_OAEP) {
         CryptoAlgorithmRsaKeyParamsWithHash& rsaKeyParameters = toCryptoAlgorithmRsaKeyParamsWithHash(*parameters);
         CryptoAlgorithmRsaKeyParamsWithHash& suggestedRSAKeyParameters = toCryptoAlgorithmRsaKeyParamsWithHash(*suggestedParameters);
         ASSERT(rsaKeyParameters.hasHash);
@@ -282,6 +286,8 @@ bool JSCryptoKeySerializationJWK::keySizeIsValid(size_t sizeInBits) const
     if (m_jwkAlgorithmName == "RS384")
         return sizeInBits >= 2048;
     if (m_jwkAlgorithmName == "RS512")
+        return sizeInBits >= 2048;
+    if (m_jwkAlgorithmName == "RSA_OAEP")
         return sizeInBits >= 2048;
     return true;
 }
@@ -536,6 +542,17 @@ void JSCryptoKeySerializationJWK::addJWKAlgorithmToJSON(ExecState* exec, JSObjec
         default:
             break;
         }
+        break;
+    }
+    case CryptoAlgorithmIdentifier::RSA_OAEP: {
+        const CryptoKeyRSA& rsaKey = toCryptoKeyRSA(key);
+        CryptoAlgorithmIdentifier hash;
+        // WebCrypto RSA-OAEP keys are not tied to any particular hash, unless previously imported from JWK, which only supports SHA-1.
+        if (rsaKey.isRestrictedToHash(hash) && hash != CryptoAlgorithmIdentifier::SHA_1)
+            break;
+        if (rsaKey.keySizeInBits() < 2048)
+            break;
+        jwkAlgorithm = "RSA-OAEP";
         break;
     }
     default:

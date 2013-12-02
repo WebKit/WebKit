@@ -24,35 +24,35 @@
  */
 
 #include "config.h"
-#include "CryptoAlgorithmRegistry.h"
+#include "CommonCryptoUtilities.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmAES_CBC.h"
-#include "CryptoAlgorithmHMAC.h"
-#include "CryptoAlgorithmRSASSA_PKCS1_v1_5.h"
-#include "CryptoAlgorithmRSA_OAEP.h"
-#include "CryptoAlgorithmSHA1.h"
-#include "CryptoAlgorithmSHA224.h"
-#include "CryptoAlgorithmSHA256.h"
-#include "CryptoAlgorithmSHA384.h"
-#include "CryptoAlgorithmSHA512.h"
-
 namespace WebCore {
 
-void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
+bool getCommonCryptoDigestAlgorithm(CryptoAlgorithmIdentifier hashFunction, CCDigestAlgorithm& algorithm)
 {
-    registerAlgorithm<CryptoAlgorithmAES_CBC>();
-    registerAlgorithm<CryptoAlgorithmHMAC>();
-    registerAlgorithm<CryptoAlgorithmRSASSA_PKCS1_v1_5>();
-    registerAlgorithm<CryptoAlgorithmRSA_OAEP>();
-    registerAlgorithm<CryptoAlgorithmSHA1>();
-    registerAlgorithm<CryptoAlgorithmSHA224>();
-    registerAlgorithm<CryptoAlgorithmSHA256>();
-    registerAlgorithm<CryptoAlgorithmSHA384>();
-    registerAlgorithm<CryptoAlgorithmSHA512>();
+    switch (hashFunction) {
+    case CryptoAlgorithmIdentifier::SHA_1:
+        algorithm = kCCDigestSHA1;
+        return true;
+    case CryptoAlgorithmIdentifier::SHA_224:
+        algorithm = kCCDigestSHA224;
+        return true;
+    case CryptoAlgorithmIdentifier::SHA_256:
+        algorithm = kCCDigestSHA256;
+        return true;
+    case CryptoAlgorithmIdentifier::SHA_384:
+        algorithm = kCCDigestSHA384;
+        return true;
+    case CryptoAlgorithmIdentifier::SHA_512:
+        algorithm = kCCDigestSHA512;
+        return true;
+    default:
+        return false;
+    }
 }
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)
