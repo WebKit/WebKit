@@ -1,3 +1,14 @@
+2013-12-02  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Disable direct image compositing
+        https://bugs.webkit.org/show_bug.cgi?id=124875
+        <rdar://problem/15446024>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/GraphicsLayerCARemote.h:
+        Image-as-layer-contents is not implemented for the remote layer tree.
+
 2013-12-01  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Unreviewed Gtk port Build fix after r159903

@@ -56,6 +56,9 @@ private:
     // No accelerated animations for now.
     virtual bool addAnimation(const WebCore::KeyframeValueList&, const WebCore::IntSize&, const WebCore::Animation*, const String&, double) OVERRIDE { return false; }
 
+    // PlatformCALayerRemote can't currently proxy directly composited image contents, so opt out of this optimization.
+    virtual bool shouldDirectlyCompositeImage(WebCore::Image*) const OVERRIDE { return false; }
+
     RemoteLayerTreeContext* m_context;
 };
 
