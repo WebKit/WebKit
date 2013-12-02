@@ -49,7 +49,11 @@ Methods:
 """
 
 
+import logging
 import sys
+
+
+_log = logging.getLogger(__name__)
 
 
 class DefaultStyleErrorHandler(object):
@@ -159,6 +163,6 @@ class DefaultStyleErrorHandler(object):
                                               line_number=line_number,
                                               message=message)
         if category_total == max_reports:
-            self._configuration.stderr_write("Suppressing further [%s] reports "
-                                             "for this file.\n" % category)
+            _log.error("Suppressing further [%s] reports "
+                                             "for this file." % category)
         return True

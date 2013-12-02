@@ -596,16 +596,9 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
             self.assert_checker_none(path)
 
 
-class StyleProcessorConfigurationTest(unittest.TestCase):
+class StyleProcessorConfigurationTest(LoggingTestCase):
 
     """Tests the StyleProcessorConfiguration class."""
-
-    def setUp(self):
-        self._error_messages = []
-        """The messages written to _mock_stderr_write() of this class."""
-
-    def _mock_stderr_write(self, message):
-        self._error_messages.append(message)
 
     def _style_checker_configuration(self, output_format="vs7"):
         """Return a StyleProcessorConfiguration instance for testing."""
@@ -616,8 +609,7 @@ class StyleProcessorConfigurationTest(unittest.TestCase):
                    filter_configuration=filter_configuration,
                    max_reports_per_category={"whitespace/newline": 1},
                    min_confidence=3,
-                   output_format=output_format,
-                   stderr_write=self._mock_stderr_write)
+                   output_format=output_format)
 
     def test_init(self):
         """Test the __init__() method."""
@@ -626,7 +618,6 @@ class StyleProcessorConfigurationTest(unittest.TestCase):
         # Check that __init__ sets the "public" data attributes correctly.
         self.assertEqual(configuration.max_reports_per_category,
                           {"whitespace/newline": 1})
-        self.assertEqual(configuration.stderr_write, self._mock_stderr_write)
         self.assertEqual(configuration.min_confidence, 3)
 
     def test_is_reportable(self):
@@ -652,27 +643,17 @@ class StyleProcessorConfigurationTest(unittest.TestCase):
     def test_write_style_error_emacs(self):
         """Test the write_style_error() method."""
         self._call_write_style_error("emacs")
-        self.assertEqual(self._error_messages,
-                          ["foo.h:100:  message  [whitespace/tab] [5]\n"])
+        self.assertLog(["ERROR: foo.h:100:  message  [whitespace/tab] [5]\n"])
 
     def test_write_style_error_vs7(self):
         """Test the write_style_error() method."""
         self._call_write_style_error("vs7")
-        self.assertEqual(self._error_messages,
-                          ["foo.h(100):  message  [whitespace/tab] [5]\n"])
+        self.assertLog(["ERROR: foo.h(100):  message  [whitespace/tab] [5]\n"])
 
 
 class StyleProcessor_EndToEndTest(LoggingTestCase):
 
     """Test the StyleProcessor class with an emphasis on end-to-end tests."""
-
-    def setUp(self):
-        LoggingTestCase.setUp(self)
-        self._messages = []
-
-    def _mock_stderr_write(self, message):
-        """Save a message so it can later be asserted."""
-        self._messages.append(message)
 
     def test_init(self):
         """Test __init__ constructor."""
@@ -680,28 +661,26 @@ class StyleProcessor_EndToEndTest(LoggingTestCase):
                             filter_configuration=FilterConfiguration(),
                             max_reports_per_category={},
                             min_confidence=3,
-                            output_format="vs7",
-                            stderr_write=self._mock_stderr_write)
+                            output_format="vs7")
         processor = StyleProcessor(configuration)
 
         self.assertEqual(processor.error_count, 0)
-        self.assertEqual(self._messages, [])
 
     def test_process(self):
         configuration = StyleProcessorConfiguration(
                             filter_configuration=FilterConfiguration(),
                             max_reports_per_category={},
                             min_confidence=3,
-                            output_format="vs7",
-                            stderr_write=self._mock_stderr_write)
+                            output_format="vs7")
         processor = StyleProcessor(configuration)
 
         processor.process(lines=['line1', 'Line with tab:\t'],
                           file_path='foo.txt')
+
         self.assertEqual(processor.error_count, 1)
-        expected_messages = ['foo.txt(2):  Line contains tab character.  '
+        expected_messages = ['ERROR: foo.txt(2):  Line contains tab character.  '
                              '[whitespace/tab] [5]\n']
-        self.assertEqual(self._messages, expected_messages)
+        self.assertLog(expected_messages)
 
 
 class StyleProcessor_CodeCoverageTest(LoggingTestCase):
@@ -763,8 +742,7 @@ class StyleProcessor_CodeCoverageTest(LoggingTestCase):
                             filter_configuration=FilterConfiguration(),
                             max_reports_per_category={"whitespace/newline": 1},
                             min_confidence=3,
-                            output_format="vs7",
-                            stderr_write=self._swallow_stderr_message)
+                            output_format="vs7")
 
         mock_carriage_checker_class = self._create_carriage_checker_class()
         mock_dispatcher = self.MockDispatcher()

@@ -1,3 +1,44 @@
+2013-12-02  László Langó  <lango@inf.u-szeged.hu>
+
+        Remove the stderr_write attribute from StyleProcessorConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=124703
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove the stderr_write attribute from this class in checker and
+        replace its use with calls to a logging module logger. We Should 
+        use logging module instead of writing to stderr directly.
+
+        * Scripts/webkitpy/style/checker.py: Change stderr_write attribute to logging module logger.
+        (check_webkit_style_configuration):
+        (CheckerDispatcher.dispatch): Remove FIXME comment.
+        (StyleProcessorConfiguration):
+        (StyleProcessorConfiguration.__init__):
+        (StyleProcessorConfiguration.write_style_error):
+        * Scripts/webkitpy/style/checker_unittest.py: Update test to the modification.
+        There is an "ERROR" prefix in log messiges from now.
+        (StyleProcessorConfigurationTest):
+        (StyleProcessorConfigurationTest._style_checker_configuration):
+        (StyleProcessorConfigurationTest.test_init):
+        (StyleProcessorConfigurationTest.test_write_style_error_emacs):
+        (StyleProcessorConfigurationTest.test_write_style_error_vs7):
+        (StyleProcessor_EndToEndTest.with):
+        (StyleProcessor_EndToEndTest.test_init):
+        (StyleProcessor_EndToEndTest.test_process):
+        (StyleProcessor_CodeCoverageTest.setUp):
+        * Scripts/webkitpy/style/error_handlers.py: Remove stderr_write usage and replace with logging module logger.
+        (DefaultStyleErrorHandler.__call__):
+        * Scripts/webkitpy/style/error_handlers_unittest.py: Update test to the modification.
+        There is an "ERROR" prefix in log messiges from now.
+        (DefaultStyleErrorHandlerTest):
+        (DefaultStyleErrorHandlerTest.setUp):
+        (DefaultStyleErrorHandlerTest._mock_increment_error_count):
+        (DefaultStyleErrorHandlerTest._style_checker_configuration):
+        (DefaultStyleErrorHandlerTest._check_initialized):
+        (DefaultStyleErrorHandlerTest.test_non_reportable_error):
+        (DefaultStyleErrorHandlerTest.test_max_reports_per_category):
+        (DefaultStyleErrorHandlerTest.test_line_numbers):
+
 2013-12-02  Brian J. Burg  <burg@cs.washington.edu>
 
         Add JavaScript style checker and teach checker.py about .js files

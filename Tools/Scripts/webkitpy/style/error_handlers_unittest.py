@@ -28,14 +28,15 @@ import unittest2 as unittest
 from checker import StyleProcessorConfiguration
 from error_handlers import DefaultStyleErrorHandler
 from filter import FilterConfiguration
+from webkitpy.common.system.logtesting import LoggingTestCase
 
 
-class DefaultStyleErrorHandlerTest(unittest.TestCase):
+class DefaultStyleErrorHandlerTest(LoggingTestCase):
 
     """Tests the DefaultStyleErrorHandler class."""
 
     def setUp(self):
-        self._error_messages = []
+        super(DefaultStyleErrorHandlerTest, self).setUp()
         self._error_count = 0
 
     _category = "whitespace/tab"
@@ -47,9 +48,6 @@ class DefaultStyleErrorHandlerTest(unittest.TestCase):
     def _mock_increment_error_count(self):
         self._error_count += 1
 
-    def _mock_stderr_write(self, message):
-        self._error_messages.append(message)
-
     def _style_checker_configuration(self):
         """Return a StyleProcessorConfiguration instance for testing."""
         base_rules = ["-whitespace", "+whitespace/tab"]
@@ -59,8 +57,7 @@ class DefaultStyleErrorHandlerTest(unittest.TestCase):
                    filter_configuration=filter_configuration,
                    max_reports_per_category={"whitespace/tab": 2},
                    min_confidence=3,
-                   output_format="vs7",
-                   stderr_write=self._mock_stderr_write)
+                   output_format="vs7")
 
     def _error_handler(self, configuration, line_numbers=None):
         return DefaultStyleErrorHandler(configuration=configuration,
@@ -71,7 +68,6 @@ class DefaultStyleErrorHandlerTest(unittest.TestCase):
     def _check_initialized(self):
         """Check that count and error messages are initialized."""
         self.assertEqual(0, self._error_count)
-        self.assertEqual(0, len(self._error_messages))
 
     def _call_error_handler(self, handle_error, confidence, line_number=100):
         """Call the given error handler with a test error."""
@@ -132,7 +128,6 @@ class DefaultStyleErrorHandlerTest(unittest.TestCase):
         self._call_error_handler(error_handler, confidence)
 
         self.assertEqual(0, self._error_count)
-        self.assertEqual([], self._error_messages)
 
     # Also serves as a reportable error test.
     def test_max_reports_per_category(self):
@@ -146,26 +141,21 @@ class DefaultStyleErrorHandlerTest(unittest.TestCase):
         # First call: usual reporting.
         self._call_error_handler(error_handler, confidence)
         self.assertEqual(1, self._error_count)
-        self.assertEqual(1, len(self._error_messages))
-        self.assertEqual(self._error_messages,
-                          ["foo.h(100):  message  [whitespace/tab] [5]\n"])
+        self.assertLog(["ERROR: foo.h(100):  message  [whitespace/tab] [5]\n"])
 
         # Second call: suppression message reported.
         self._call_error_handler(error_handler, confidence)
         # The "Suppressing further..." message counts as an additional
         # message (but not as an addition to the error count).
         self.assertEqual(2, self._error_count)
-        self.assertEqual(3, len(self._error_messages))
-        self.assertEqual(self._error_messages[-2],
-                          "foo.h(100):  message  [whitespace/tab] [5]\n")
-        self.assertEqual(self._error_messages[-1],
-                          "Suppressing further [whitespace/tab] reports "
-                          "for this file.\n")
+        expected_message = ["ERROR: foo.h(100):  message  [whitespace/tab] [5]\n",
+                            "ERROR: Suppressing further [whitespace/tab] reports for this file.\n"]
+        self.assertLog(expected_message)
 
         # Third call: no report.
         self._call_error_handler(error_handler, confidence)
         self.assertEqual(3, self._error_count)
-        self.assertEqual(3, len(self._error_messages))
+        self.assertLog([])
 
     def test_line_numbers(self):
         """Test the line_numbers parameter."""
@@ -178,19 +168,16 @@ class DefaultStyleErrorHandlerTest(unittest.TestCase):
         # Error on non-modified line: no error.
         self._call_error_handler(error_handler, confidence, line_number=60)
         self.assertEqual(0, self._error_count)
-        self.assertEqual([], self._error_messages)
+        self.assertLog([])
 
         # Error on modified line: error.
         self._call_error_handler(error_handler, confidence, line_number=50)
         self.assertEqual(1, self._error_count)
-        self.assertEqual(self._error_messages,
-                          ["foo.h(50):  message  [whitespace/tab] [5]\n"])
+        self.assertLog(["ERROR: foo.h(50):  message  [whitespace/tab] [5]\n"])
 
         # Error on non-modified line after turning off line filtering: error.
         error_handler.turn_off_line_filtering()
         self._call_error_handler(error_handler, confidence, line_number=60)
         self.assertEqual(2, self._error_count)
-        self.assertEqual(self._error_messages,
-                          ['foo.h(50):  message  [whitespace/tab] [5]\n',
-                           'foo.h(60):  message  [whitespace/tab] [5]\n',
-                           'Suppressing further [whitespace/tab] reports for this file.\n'])
+        self.assertLog(['ERROR: foo.h(60):  message  [whitespace/tab] [5]\n',
+                        'ERROR: Suppressing further [whitespace/tab] reports for this file.\n'])

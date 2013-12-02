@@ -398,8 +398,7 @@ def check_webkit_style_configuration(options):
     return StyleProcessorConfiguration(filter_configuration=filter_configuration,
                max_reports_per_category=_MAX_REPORTS_PER_CATEGORY,
                min_confidence=options.min_confidence,
-               output_format=options.output_format,
-               stderr_write=sys.stderr.write)
+               output_format=options.output_format)
 
 
 def _create_log_handlers(stream):
@@ -654,8 +653,6 @@ class CheckerDispatcher(object):
         return checker
 
 
-# FIXME: Remove the stderr_write attribute from this class and replace
-#        its use with calls to a logging module logger.
 class StyleProcessorConfiguration(object):
 
     """Stores configuration values for the StyleProcessor class.
@@ -667,17 +664,13 @@ class StyleProcessorConfiguration(object):
       max_reports_per_category: The maximum number of errors to report
                                 per category, per file.
 
-      stderr_write: A function that takes a string as a parameter and
-                    serves as stderr.write.
-
     """
 
     def __init__(self,
                  filter_configuration,
                  max_reports_per_category,
                  min_confidence,
-                 output_format,
-                 stderr_write):
+                 output_format):
         """Create a StyleProcessorConfiguration instance.
 
         Args:
@@ -696,16 +689,12 @@ class StyleProcessorConfiguration(object):
                          output formats are "emacs" which emacs can parse
                          and "vs7" which Microsoft Visual Studio 7 can parse.
 
-          stderr_write: A function that takes a string as a parameter and
-                        serves as stderr.write.
-
         """
         self._filter_configuration = filter_configuration
         self._output_format = output_format
 
         self.max_reports_per_category = max_reports_per_category
         self.min_confidence = min_confidence
-        self.stderr_write = stderr_write
 
     def is_reportable(self, category, confidence_in_error, file_path):
         """Return whether an error is reportable.
@@ -735,11 +724,11 @@ class StyleProcessorConfiguration(object):
                           message):
         """Write a style error to the configured stderr."""
         if self._output_format == 'vs7':
-            format_string = "%s(%s):  %s  [%s] [%d]\n"
+            format_string = "%s(%s):  %s  [%s] [%d]"
         else:
-            format_string = "%s:%s:  %s  [%s] [%d]\n"
+            format_string = "%s:%s:  %s  [%s] [%d]"
 
-        self.stderr_write(format_string % (file_path,
+        _log.error(format_string % (file_path,
                                            line_number,
                                            message,
                                            category,
