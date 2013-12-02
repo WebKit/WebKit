@@ -181,7 +181,65 @@ bool CSSDeprecatedBasicShapeCircle::equals(const CSSBasicShape& shape) const
         && compareCSSValuePtr(m_box, other.m_box);
 }
 
-static String buildEllipseString(const String& x, const String& y, const String& radiusX, const String& radiusY, const String& box)
+static String buildEllipseString(const String& radiusX, const String& radiusY, const String& centerX, const String& centerY, const String& box)
+{
+    char opening[] = "ellipse(";
+    char at[] = "at";
+    char separator[] = " ";
+    StringBuilder result;
+    result.appendLiteral(opening);
+    bool needsSeparator = false;
+    if (!radiusX.isNull()) {
+        result.append(radiusX);
+        needsSeparator = true;
+    }
+    if (!radiusY.isNull()) {
+        if (needsSeparator)
+            result.appendLiteral(separator);
+        result.append(radiusY);
+        needsSeparator = true;
+    }
+
+    if (!centerX.isNull() || !centerY.isNull()) {
+        if (needsSeparator)
+            result.appendLiteral(separator);
+        result.appendLiteral(at);
+        result.appendLiteral(separator);
+        result.append(centerX);
+        result.appendLiteral(separator);
+        result.append(centerY);
+    }
+    result.appendLiteral(")");
+    if (box.length()) {
+        result.appendLiteral(separator);
+        result.append(box);
+    }
+    return result.toString();
+}
+
+String CSSBasicShapeEllipse::cssText() const
+{
+    return buildEllipseString(m_radiusX ? m_radiusX->cssText() : String(),
+        m_radiusY ? m_radiusY->cssText() : String(),
+        m_centerX ? m_centerX->cssText() : String(),
+        m_centerY ? m_centerY->cssText() : String(),
+        m_box ? m_box->cssText() : String());
+}
+
+bool CSSBasicShapeEllipse::equals(const CSSBasicShape& shape) const
+{
+    if (shape.type() != CSSBasicShapeEllipseType)
+        return false;
+
+    const CSSBasicShapeEllipse& other = static_cast<const CSSBasicShapeEllipse&>(shape);
+    return compareCSSValuePtr(m_centerX, other.m_centerX)
+        && compareCSSValuePtr(m_centerY, other.m_centerY)
+        && compareCSSValuePtr(m_radiusX, other.m_radiusX)
+        && compareCSSValuePtr(m_radiusY, other.m_radiusY)
+        && compareCSSValuePtr(m_box, other.m_box);
+}
+
+static String buildDeprecatedEllipseString(const String& x, const String& y, const String& radiusX, const String& radiusY, const String& box)
 {
     StringBuilder result;
     char opening[] = "ellipse(";
@@ -202,17 +260,17 @@ static String buildEllipseString(const String& x, const String& y, const String&
     return result.toString();
 }
 
-String CSSBasicShapeEllipse::cssText() const
+String CSSDeprecatedBasicShapeEllipse::cssText() const
 {
-    return buildEllipseString(m_centerX->cssText(), m_centerY->cssText(), m_radiusX->cssText(), m_radiusY->cssText(), m_box ? m_box->cssText() : String());
+    return buildDeprecatedEllipseString(m_centerX->cssText(), m_centerY->cssText(), m_radiusX->cssText(), m_radiusY->cssText(), m_box ? m_box->cssText() : String());
 }
 
-bool CSSBasicShapeEllipse::equals(const CSSBasicShape& shape) const
+bool CSSDeprecatedBasicShapeEllipse::equals(const CSSBasicShape& shape) const
 {
-    if (shape.type() != CSSBasicShapeEllipseType)
+    if (shape.type() != CSSDeprecatedBasicShapeEllipseType)
         return false;
 
-    const CSSBasicShapeEllipse& other = static_cast<const CSSBasicShapeEllipse&>(shape);
+    const CSSDeprecatedBasicShapeEllipse& other = static_cast<const CSSDeprecatedBasicShapeEllipse&>(shape);
     return compareCSSValuePtr(m_centerX, other.m_centerX)
         && compareCSSValuePtr(m_centerY, other.m_centerY)
         && compareCSSValuePtr(m_radiusX, other.m_radiusX)

@@ -43,10 +43,11 @@ public:
     enum Type {
         CSSBasicShapeRectangleType = 1,
         CSSDeprecatedBasicShapeCircleType = 2,
-        CSSBasicShapeEllipseType = 3,
+        CSSDeprecatedBasicShapeEllipseType = 3,
         CSSBasicShapePolygonType = 4,
         CSSBasicShapeInsetRectangleType = 5,
-        CSSBasicShapeCircleType = 6
+        CSSBasicShapeCircleType = 6,
+        CSSBasicShapeEllipseType = 7
     };
 
     virtual Type type() const = 0;
@@ -176,6 +177,33 @@ private:
     RefPtr<CSSPrimitiveValue> m_centerY;
     RefPtr<CSSPrimitiveValue> m_centerX;
     RefPtr<CSSPrimitiveValue> m_radius;
+};
+
+class CSSDeprecatedBasicShapeEllipse : public CSSBasicShape {
+public:
+    static PassRefPtr<CSSDeprecatedBasicShapeEllipse> create() { return adoptRef(new CSSDeprecatedBasicShapeEllipse); }
+
+    CSSPrimitiveValue* centerX() const { return m_centerX.get(); }
+    CSSPrimitiveValue* centerY() const { return m_centerY.get(); }
+    CSSPrimitiveValue* radiusX() const { return m_radiusX.get(); }
+    CSSPrimitiveValue* radiusY() const { return m_radiusY.get(); }
+
+    void setCenterX(PassRefPtr<CSSPrimitiveValue> centerX) { m_centerX = centerX; }
+    void setCenterY(PassRefPtr<CSSPrimitiveValue> centerY) { m_centerY = centerY; }
+    void setRadiusX(PassRefPtr<CSSPrimitiveValue> radiusX) { m_radiusX = radiusX; }
+    void setRadiusY(PassRefPtr<CSSPrimitiveValue> radiusY) { m_radiusY = radiusY; }
+
+    virtual Type type() const OVERRIDE { return CSSDeprecatedBasicShapeEllipseType; }
+    virtual String cssText() const OVERRIDE;
+    virtual bool equals(const CSSBasicShape&) const OVERRIDE;
+
+private:
+    CSSDeprecatedBasicShapeEllipse() { }
+
+    RefPtr<CSSPrimitiveValue> m_centerX;
+    RefPtr<CSSPrimitiveValue> m_centerY;
+    RefPtr<CSSPrimitiveValue> m_radiusX;
+    RefPtr<CSSPrimitiveValue> m_radiusY;
 };
 
 class CSSBasicShapeEllipse : public CSSBasicShape {

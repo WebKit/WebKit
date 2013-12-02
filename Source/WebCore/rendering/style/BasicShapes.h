@@ -48,10 +48,11 @@ public:
     enum Type {
         BasicShapeRectangleType = 1,
         DeprecatedBasicShapeCircleType = 2,
-        BasicShapeEllipseType = 3,
+        DeprecatedBasicShapeEllipseType = 3,
         BasicShapePolygonType = 4,
         BasicShapeInsetRectangleType = 5,
-        BasicShapeCircleType = 6
+        BasicShapeCircleType = 6,
+        BasicShapeEllipseType = 7
     };
 
     enum ReferenceBox {
@@ -235,6 +236,33 @@ class BasicShapeEllipse : public BasicShape {
 public:
     static PassRefPtr<BasicShapeEllipse> create() { return adoptRef(new BasicShapeEllipse); }
 
+    const BasicShapeCenterCoordinate& centerX() const { return m_centerX; }
+    const BasicShapeCenterCoordinate& centerY() const { return m_centerY; }
+    const BasicShapeRadius& radiusX() const { return m_radiusX; }
+    const BasicShapeRadius& radiusY() const { return m_radiusY; }
+
+    void setCenterX(BasicShapeCenterCoordinate centerX) { m_centerX = std::move(centerX); }
+    void setCenterY(BasicShapeCenterCoordinate centerY) { m_centerY = std::move(centerY); }
+    void setRadiusX(BasicShapeRadius radiusX) { m_radiusX = std::move(radiusX); }
+    void setRadiusY(BasicShapeRadius radiusY) { m_radiusY = std::move(radiusY); }
+
+    virtual void path(Path&, const FloatRect&) OVERRIDE;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
+
+    virtual Type type() const OVERRIDE { return BasicShapeEllipseType; }
+private:
+    BasicShapeEllipse() { }
+
+    BasicShapeCenterCoordinate m_centerX;
+    BasicShapeCenterCoordinate m_centerY;
+    BasicShapeRadius m_radiusX;
+    BasicShapeRadius m_radiusY;
+};
+
+class DeprecatedBasicShapeEllipse : public BasicShape {
+public:
+    static PassRefPtr<DeprecatedBasicShapeEllipse> create() { return adoptRef(new DeprecatedBasicShapeEllipse); }
+
     const Length& centerX() const { return m_centerX; }
     const Length& centerY() const { return m_centerY; }
     const Length& radiusX() const { return m_radiusX; }
@@ -248,9 +276,9 @@ public:
     virtual void path(Path&, const FloatRect&) OVERRIDE;
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
 
-    virtual Type type() const OVERRIDE { return BasicShapeEllipseType; }
+    virtual Type type() const OVERRIDE { return DeprecatedBasicShapeEllipseType; }
 private:
-    BasicShapeEllipse() { }
+    DeprecatedBasicShapeEllipse() { }
 
     Length m_centerX;
     Length m_centerY;

@@ -152,7 +152,7 @@ PassRefPtr<BasicShape> BasicShapeCircle::blend(const BasicShape* other, double p
     return result.release();
 }
 
-void BasicShapeEllipse::path(Path& path, const FloatRect& boundingBox)
+void DeprecatedBasicShapeEllipse::path(Path& path, const FloatRect& boundingBox)
 {
     ASSERT(path.isEmpty());
     float centerX = floatValueForLength(m_centerX, boundingBox.width());
@@ -167,12 +167,57 @@ void BasicShapeEllipse::path(Path& path, const FloatRect& boundingBox)
     ));
 }
 
-PassRefPtr<BasicShape> BasicShapeEllipse::blend(const BasicShape* other, double progress) const
+PassRefPtr<BasicShape> DeprecatedBasicShapeEllipse::blend(const BasicShape* other, double progress) const
 {
     ASSERT(type() == other->type());
 
+    const DeprecatedBasicShapeEllipse* o = static_cast<const DeprecatedBasicShapeEllipse*>(other);
+    RefPtr<DeprecatedBasicShapeEllipse> result = DeprecatedBasicShapeEllipse::create();
+    result->setCenterX(m_centerX.blend(o->centerX(), progress));
+    result->setCenterY(m_centerY.blend(o->centerY(), progress));
+    result->setRadiusX(m_radiusX.blend(o->radiusX(), progress));
+    result->setRadiusY(m_radiusY.blend(o->radiusY(), progress));
+    return result.release();
+}
+
+void BasicShapeEllipse::path(Path& path, const FloatRect& boundingBox)
+{
+    ASSERT(path.isEmpty());
+    // FIXME: The implementation of path is incomplete. See https://bugs.webkit.org/show_bug.cgi?id=125079 
+    // Compute closest-side and farthest-side from boundingBox.
+    // Compute top, left, bottom, right from boundingBox.
+    if (m_radiusX.type() != BasicShapeRadius::Value || m_radiusY.type() != BasicShapeRadius::Value)
+        return;
+    if (m_centerX.keyword() != BasicShapeCenterCoordinate::None || m_centerY.keyword() != BasicShapeCenterCoordinate::None)
+        return;
+
+    float diagonal = sqrtf((boundingBox.width() * boundingBox.width() + boundingBox.height() * boundingBox.height()) / 2);
+    float centerX = floatValueForLength(m_centerX.length(), boundingBox.width());
+    float centerY = floatValueForLength(m_centerY.length(), boundingBox.height());
+    float radiusX = floatValueForLength(m_radiusX.value(), diagonal);
+    float radiusY = floatValueForLength(m_radiusY.value(), diagonal);
+    path.addEllipse(FloatRect(
+        centerX - radiusX + boundingBox.x(),
+        centerY - radiusY + boundingBox.y(),
+        radiusX * 2,
+        radiusY * 2));
+}
+
+PassRefPtr<BasicShape> BasicShapeEllipse::blend(const BasicShape* other, double progress) const
+{
+    ASSERT(type() == other->type());
     const BasicShapeEllipse* o = static_cast<const BasicShapeEllipse*>(other);
-    RefPtr<BasicShapeEllipse> result =  BasicShapeEllipse::create();
+    RefPtr<BasicShapeEllipse> result = BasicShapeEllipse::create();
+
+    if (m_radiusX.type() != BasicShapeRadius::Value || o->radiusX().type() != BasicShapeRadius::Value
+        || m_radiusY.type() != BasicShapeRadius::Value || o->radiusY().type() != BasicShapeRadius::Value) {
+        result->setCenterX(o->centerX());
+        result->setCenterY(o->centerY());
+        result->setRadiusX(o->radiusX());
+        result->setRadiusY(o->radiusY());
+        return result;
+    }
+
     result->setCenterX(m_centerX.blend(o->centerX(), progress));
     result->setCenterY(m_centerY.blend(o->centerY(), progress));
     result->setRadiusX(m_radiusX.blend(o->radiusX(), progress));

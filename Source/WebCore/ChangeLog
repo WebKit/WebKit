@@ -1,3 +1,64 @@
+2013-12-02  Rob Buis  <rob.buis@samsung.com>
+
+        [css shapes] Parse new ellipse shape syntax
+        https://bugs.webkit.org/show_bug.cgi?id=124620
+
+        Reviewed by Dirk Schulze.
+
+        Implement parsing of the new ellipse shape syntax. This closely follows the patch
+        for the new circle syntax (https://bugs.webkit.org/show_bug.cgi?id=124618), with
+        some refactoring of functionality shared by both.
+
+        Updated existing parsing tests to cover this.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::BasicShapeRadiusToCSSValue):
+        (WebCore::valueForBasicShape):
+        (WebCore::CSSValueToBasicShapeRadius):
+        (WebCore::basicShapeForValue):
+        * css/CSSBasicShapes.cpp:
+        (WebCore::buildEllipseString):
+        (WebCore::CSSBasicShapeEllipse::cssText):
+        (WebCore::CSSBasicShapeEllipse::equals):
+        (WebCore::buildDeprecatedEllipseString):
+        (WebCore::CSSDeprecatedBasicShapeEllipse::cssText):
+        (WebCore::CSSDeprecatedBasicShapeEllipse::equals):
+        * css/CSSBasicShapes.h:
+        (WebCore::CSSDeprecatedBasicShapeEllipse::create):
+        (WebCore::CSSDeprecatedBasicShapeEllipse::centerX):
+        (WebCore::CSSDeprecatedBasicShapeEllipse::centerY):
+        (WebCore::CSSDeprecatedBasicShapeEllipse::radiusX):
+        (WebCore::CSSDeprecatedBasicShapeEllipse::radiusY):
+        (WebCore::CSSDeprecatedBasicShapeEllipse::setCenterX):
+        (WebCore::CSSDeprecatedBasicShapeEllipse::setCenterY):
+        (WebCore::CSSDeprecatedBasicShapeEllipse::setRadiusX):
+        (WebCore::CSSDeprecatedBasicShapeEllipse::setRadiusY):
+        (WebCore::CSSDeprecatedBasicShapeEllipse::CSSDeprecatedBasicShapeEllipse):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseBasicShapeEllipse):
+        (WebCore::CSSParser::parseDeprecatedBasicShapeEllipse):
+        (WebCore::CSSParser::parseBasicShape):
+        * css/CSSParser.h:
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createShape):
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::DeprecatedBasicShapeEllipse::path):
+        (WebCore::DeprecatedBasicShapeEllipse::blend):
+        (WebCore::BasicShapeEllipse::path):
+        (WebCore::BasicShapeEllipse::blend):
+        * rendering/style/BasicShapes.h:
+        (WebCore::BasicShapeEllipse::centerX):
+        (WebCore::BasicShapeEllipse::centerY):
+        (WebCore::BasicShapeEllipse::radiusX):
+        (WebCore::BasicShapeEllipse::radiusY):
+        (WebCore::BasicShapeEllipse::setCenterX):
+        (WebCore::BasicShapeEllipse::setCenterY):
+        (WebCore::BasicShapeEllipse::setRadiusX):
+        (WebCore::BasicShapeEllipse::setRadiusY):
+        (WebCore::BasicShapeEllipse::BasicShapeEllipse):
+        (WebCore::DeprecatedBasicShapeEllipse::create):
+        (WebCore::DeprecatedBasicShapeEllipse::DeprecatedBasicShapeEllipse):
+
 2013-12-02  Alexey Proskuryakov  <ap@apple.com>
 
         Add support for WebCrypto RSA-OAEP

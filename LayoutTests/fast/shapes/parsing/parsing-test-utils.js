@@ -14,13 +14,12 @@ var validShapeValues = [
     ["inset-rectangle(10px, 20px, 30px, 40px, 5px)", "inset-rectangle(10px, 20px, 30px, 40px, 5px)", "inset-rectangle(10px, 20px, 30px, 40px, 5px, 5px)"],
     "inset-rectangle(10px, 20px, 30px, 40px, 5px, 10px)",
 
-    "circle(10px, 20px, 30px)", // FIXME remove with deprecated circle
+    "circle(10px, 20px, 30px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
 
     ["circle()", "circle()", "circle(closest-side at 50% 50%)"],
     ["circle(10px)", "circle(10px)", "circle(10px at 50% 50%)"],
     ["circle(10px at 10px)", "circle(10px at 10px 50%)"],
     "circle(10px at 10px 10px)",
-    ["circle(at 10px)", "circle(at 10px 50%)", "circle(closest-side at 10px 50%)"],
     ["circle(at 10px)", "circle(at 10px 50%)", "circle(closest-side at 10px 50%)"],
     ["circle(at 10px 10px)", "circle(at 10px 10px)", "circle(closest-side at 10px 10px)"],
     ["circle(at top left)", "circle(at 0% 0%)", "circle(closest-side at 0% 0%)"],
@@ -29,7 +28,24 @@ var validShapeValues = [
     ["circle(10px at top 10px left 10px)", "circle(10px at left 10px top 10px)"],
     ["circle(10px at right 10px bottom 10px)", "circle(10px at right 10px bottom 10px)"],
 
-    "ellipse(10px, 20px, 30px, 40px)",
+    "ellipse(10px, 20px, 30px, 40px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
+
+    ["ellipse()", "ellipse()", "ellipse(closest-side closest-side at 50% 50%)"],
+    ["ellipse(10px)", "ellipse(10px)", "ellipse(10px closest-side at 50% 50%)"],
+    ["ellipse(10px 20px)", "ellipse(10px 20px)", "ellipse(10px 20px at 50% 50%)"],
+    ["ellipse(10px at 10px)", "ellipse(10px at 10px 50%)", "ellipse(10px closest-side at 10px 50%)"],
+    ["ellipse(10px 20px at 10px)", "ellipse(10px 20px at 10px 50%)"],
+    ["ellipse(10px at 10px 10px)", "ellipse(10px at 10px 10px)", "ellipse(10px closest-side at 10px 10px)"],
+    ["ellipse(at 10px)", "ellipse(at 10px 50%)", "ellipse(closest-side closest-side at 10px 50%)"],
+    ["ellipse(at 10px 10px)", "ellipse(at 10px 10px)", "ellipse(closest-side closest-side at 10px 10px)"],
+    ["ellipse(at top left)", "ellipse(at 0% 0%)", "ellipse(closest-side closest-side at 0% 0%)"],
+    ["ellipse(at right bottom)", "ellipse(at 100% 100%)", "ellipse(closest-side closest-side at 100% 100%)"],
+    ["ellipse(10px at left top 10px)", "ellipse(10px at left 0% top 10px)", "ellipse(10px closest-side at left 0% top 10px)"],
+    ["ellipse(10px at top 10px left 10px)", "ellipse(10px at left 10px top 10px)", "ellipse(10px closest-side at left 10px top 10px)"],
+    ["ellipse(10px at right 10px bottom 10px)", "ellipse(10px at right 10px bottom 10px)", "ellipse(10px closest-side at right 10px bottom 10px)"],
+    ["ellipse(10px 20px at left top 10px)", "ellipse(10px 20px at left 0% top 10px)"],
+    ["ellipse(10px 20px at top 10px left 10px)", "ellipse(10px 20px at left 10px top 10px)"],
+    ["ellipse(10px 20px at right 10px bottom 10px)", "ellipse(10px 20px at right 10px bottom 10px)"],
 
     ["polygon(10px 20px, 30px 40px, 40px 50px)", "polygon(nonzero, 10px 20px, 30px 40px, 40px 50px)"],
     ["polygon(evenodd, 10px 20px, 30px 40px, 40px 50px)", "polygon(evenodd, 10px 20px, 30px 40px, 40px 50px)"],
@@ -71,9 +87,9 @@ var invalidShapeValues = [
     "inset-rectangle(10px 20px 30px 40px)",
     "inset-rectangle(10px, 20px, 30px, 40px, 50px, 60px, 70px)",
 
-    "circle(10px, 20px)", // FIXME remove with deprecated circle
-    "circle(10px 20px 30px)", // FIXME remove with deprecated circle
-    "circle(10px, 20px, 30px, 40px)", // FIXME remove with deprecated circle
+    "circle(10px, 20px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
+    "circle(10px 20px 30px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
+    "circle(10px, 20px, 30px, 40px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
 
     "circle(10px 20px)",
     "circle(10px at 10px 10px 10px)",
@@ -83,11 +99,18 @@ var invalidShapeValues = [
     "circle(at 10px 10px at center)",
     "circle(at center center 10px)",
 
-    "ellipse()",
-    "ellipse(10px)",
-    "ellipse(10px, 20px)",
-    "ellipse(10px, 20px, 30px)",
-    "ellipse(10px 20px 30px 40px)",
+    "ellipse(10px, 20px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
+    "ellipse(10px, 20px, 30px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
+    "ellipse(10px 20px 30px 40px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
+
+    "ellipse(10px 20px 30px)",
+    "ellipse(10px at 10px 10px 10px)",
+    "ellipse(10px at 10px 10px at center)",
+    "ellipse(10px at center center 10px)",
+    "ellipse(10px 20px 30px at center center 10px)",
+    "ellipse(at 10px 10px 10px)",
+    "ellipse(at 10px 10px at center)",
+    "ellipse(at center center 10px)",
 
     "polygon()",
     "polygon(evenodd 10px 20px, 30px 40px, 40px 50px)",

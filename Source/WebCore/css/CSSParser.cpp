@@ -5565,11 +5565,60 @@ PassRefPtr<CSSBasicShape> CSSParser::parseBasicShapeEllipse(CSSParserValueList* 
 {
     ASSERT(args);
 
+    // ellipse(radiusX)
+    // ellipse(radiusX at <position>
+    // ellipse(radiusX radiusY)
+    // ellipse(radiusX radiusY at <position>
+    // ellipse(at <position>)
+    // where position defines centerX and centerY using a CSS <position> data type.
+    RefPtr<CSSBasicShapeEllipse> shape = CSSBasicShapeEllipse::create();
+
+    for (CSSParserValue* argument = args->current(); argument; argument = args->next()) {
+        // The call to parseFillPosition below should consume all of the
+        // arguments except the first three. Thus, an index greater than two
+        // indicates an invalid production.
+        if (args->currentIndex() > 2)
+            return 0;
+
+        if (args->currentIndex() < 2 && argument->id != CSSValueAt) {
+            if (RefPtr<CSSPrimitiveValue> radius = parseShapeRadius(argument)) {
+                if (!shape->radiusX())
+                    shape->setRadiusX(radius);
+                else
+                    shape->setRadiusY(radius);
+                continue;
+            }
+
+            return 0;
+        }
+
+        if (argument->id != CSSValueAt)
+            return 0;
+        RefPtr<CSSValue> centerX;
+        RefPtr<CSSValue> centerY;
+        args->next(); // set list to start of position center
+        parseFillPosition(args, centerX, centerY);
+        if (!centerX || !centerY)
+            return 0;
+
+        ASSERT(centerX->isPrimitiveValue());
+        ASSERT(centerY->isPrimitiveValue());
+        shape->setCenterX(toCSSPrimitiveValue(centerX.get()));
+        shape->setCenterY(toCSSPrimitiveValue(centerY.get()));
+    }
+
+    return shape;
+}
+
+PassRefPtr<CSSBasicShape> CSSParser::parseDeprecatedBasicShapeEllipse(CSSParserValueList* args)
+{
+    ASSERT(args);
+
     // ellipse(centerX, centerY, radiusX, radiusY)
     if (args->size() != 7)
         return 0;
 
-    RefPtr<CSSBasicShapeEllipse> shape = CSSBasicShapeEllipse::create();
+    RefPtr<CSSDeprecatedBasicShapeEllipse> shape = CSSDeprecatedBasicShapeEllipse::create();
     unsigned argumentNumber = 0;
     CSSParserValue* argument = args->current();
     while (argument) {
@@ -5761,7 +5810,10 @@ PassRefPtr<CSSBasicShape> CSSParser::parseBasicShape()
         else
             shape = parseBasicShapeCircle(args);
     else if (equalIgnoringCase(value->function->name, "ellipse("))
-        shape = parseBasicShapeEllipse(args);
+        if (isDeprecatedBasicShape(args))
+            shape = parseDeprecatedBasicShapeEllipse(args);
+        else
+            shape = parseBasicShapeEllipse(args);
     else if (equalIgnoringCase(value->function->name, "polygon("))
         shape = parseBasicShapePolygon(args);
     else if (equalIgnoringCase(value->function->name, "inset-rectangle("))
