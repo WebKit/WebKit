@@ -80,8 +80,8 @@ void RemoteLayerTreeHost::commit(const RemoteLayerTreeTransaction& transaction)
                 relatedLayers.set(child, getLayer(child));
         }
 
-        if (properties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged)
-            relatedLayers.set(properties.maskLayer, getLayer(properties.maskLayer));
+        if (properties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged && properties.maskLayerID)
+            relatedLayers.set(properties.maskLayerID, getLayer(properties.maskLayerID));
 
         RemoteLayerTreePropertyApplier::applyPropertiesToLayer(layer, properties, relatedLayers);
     }

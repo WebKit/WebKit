@@ -59,7 +59,7 @@ static PlatformCALayerRemote* toPlatformCALayerRemote(PlatformCALayer* layer)
     return static_cast<PlatformCALayerRemote*>(layer);
 }
 
-PassRefPtr<PlatformCALayer> PlatformCALayerRemote::create(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext* context)
+PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(LayerType layerType, PlatformCALayerClient* owner, RemoteLayerTreeContext* context)
 {
     RefPtr<PlatformCALayerRemote> layer;
 
@@ -73,7 +73,7 @@ PassRefPtr<PlatformCALayer> PlatformCALayerRemote::create(LayerType layerType, P
     return layer.release();
 }
 
-PassRefPtr<PlatformCALayer> PlatformCALayerRemote::create(PlatformLayer *platformLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext* context)
+PassRefPtr<PlatformCALayerRemote> PlatformCALayerRemote::create(PlatformLayer *platformLayer, PlatformCALayerClient* owner, RemoteLayerTreeContext* context)
 {
     RefPtr<PlatformCALayerRemote> layer = adoptRef(new PlatformCALayerRemoteCustom(static_cast<PlatformLayer*>(platformLayer), owner, context));
 
@@ -86,6 +86,7 @@ PlatformCALayerRemote::PlatformCALayerRemote(LayerType layerType, PlatformCALaye
     : PlatformCALayer(layerType, owner)
     , m_layerID(generateLayerID())
     , m_superlayer(nullptr)
+    , m_maskLayer(nullptr)
     , m_acceleratesDrawing(false)
     , m_context(context)
 {
@@ -93,9 +94,14 @@ PlatformCALayerRemote::PlatformCALayerRemote(LayerType layerType, PlatformCALaye
     setContentsScale(1);
 }
 
-PassRefPtr<PlatformCALayer> PlatformCALayerRemote::clone(PlatformCALayerClient* owner) const
+PassRefPtr<PlatformCALayer> PlatformCALayerRemote::clone(PlatformCALayerClient* client) const
 {
-    return nullptr;
+    RefPtr<PlatformCALayerRemote> clone = PlatformCALayerRemote::create(layerType(), client, m_context);
+
+    clone->m_properties = m_properties;
+    clone->m_properties.notePropertiesChanged(static_cast<RemoteLayerTreeTransaction::LayerChange>(m_properties.everChangedProperties & ~RemoteLayerTreeTransaction::BackingStoreChanged));
+
+    return clone.release();
 }
 
 PlatformCALayerRemote::~PlatformCALayerRemote()
@@ -132,6 +138,9 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeTransaction
         ASSERT(child->superlayer() == this);
         child->recursiveBuildTransaction(transaction);
     }
+
+    if (m_maskLayer)
+        m_maskLayer->recursiveBuildTransaction(transaction);
 }
 
 void PlatformCALayerRemote::animationStarted(CFTimeInterval beginTime)
@@ -264,7 +273,14 @@ PassRefPtr<PlatformCAAnimation> PlatformCALayerRemote::animationForKey(const Str
 
 void PlatformCALayerRemote::setMask(PlatformCALayer* layer)
 {
-    m_properties.maskLayer = toPlatformCALayerRemote(layer)->layerID();
+    if (layer) {
+        m_maskLayer = toPlatformCALayerRemote(layer);
+        m_properties.maskLayerID = m_maskLayer->layerID();
+    } else {
+        m_maskLayer = nullptr;
+        m_properties.maskLayerID = 0;
+    }
+
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::MaskLayerChanged);
 }
 

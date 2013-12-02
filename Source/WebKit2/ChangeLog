@@ -1,3 +1,51 @@
+2013-12-02  Tim Horton  <timothy_horton@apple.com>
+
+        Remote Layer Tree: Support cloning layers
+        https://bugs.webkit.org/show_bug.cgi?id=124874
+        <rdar://problem/15349468>
+
+        Reviewed by Simon Fraser.
+
+        We use PlatformCALayer::clone for CSS reflections, so implement it.
+
+        Also, since many reflections testcases also use masks,
+        working on this revealed that masks weren't working, because
+        we weren't flushing mask layers.
+
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::applyPropertiesToLayer):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::LayerProperties):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        Rename maskLayer->maskLayerID since it's a LayerID.
+
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::commit):
+        Don't try to look up the layer if it's null.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::notePropertiesChanged):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::LayerProperties):
+        Keep track of all properties that have ever been changed on a layer.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (PlatformCALayerRemote::create):
+        (PlatformCALayerRemote::PlatformCALayerRemote):
+        (PlatformCALayerRemote::clone):
+        Copy all of the layer properties from the original to the clone,
+        and mark all properties that have ever been modified as
+        needing to be flushed to the UI process.
+
+        (PlatformCALayerRemote::recursiveBuildTransaction):
+        Flush our mask layer, if we have one.
+
+        (PlatformCALayerRemote::setMask):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.h:
+        Store the mask layer we're given. Our owning GraphicsLayer will
+        hold on to it for us.
+
 2013-12-02  Anders Carlsson  <andersca@apple.com>
 
         WKPageLoaderClient should be versioned

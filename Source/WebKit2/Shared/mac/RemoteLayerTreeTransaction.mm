@@ -70,6 +70,7 @@ bool RemoteLayerTreeTransaction::LayerCreationProperties::decode(CoreIPC::Argume
 
 RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
     : changedProperties(NoChange)
+    , everChangedProperties(NoChange)
 {
 }
 
@@ -126,7 +127,7 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(CoreIPC::ArgumentEncode
         encoder << opaque;
 
     if (changedProperties & MaskLayerChanged)
-        encoder << maskLayer;
+        encoder << maskLayerID;
 
     if (changedProperties & ContentsRectChanged)
         encoder << contentsRect;
@@ -247,7 +248,7 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecode
     }
 
     if (result.changedProperties & MaskLayerChanged) {
-        if (!decoder.decode(result.maskLayer))
+        if (!decoder.decode(result.maskLayerID))
             return false;
     }
 
@@ -609,7 +610,7 @@ static void dumpChangedLayers(RemoteLayerTreeTextStream& ts, const HashMap<Remot
             dumpProperty<bool>(ts, "opaque", layerProperties.opaque);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged)
-            dumpProperty<RemoteLayerTreeTransaction::LayerID>(ts, "maskLayer", layerProperties.maskLayer);
+            dumpProperty<RemoteLayerTreeTransaction::LayerID>(ts, "maskLayer", layerProperties.maskLayerID);
 
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ContentsRectChanged)
             dumpProperty<FloatRect>(ts, "contentsRect", layerProperties.contentsRect);

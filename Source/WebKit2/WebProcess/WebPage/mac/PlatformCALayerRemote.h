@@ -39,8 +39,8 @@ class RemoteLayerTreeContext;
 
 class PlatformCALayerRemote : public WebCore::PlatformCALayer {
 public:
-    static PassRefPtr<PlatformCALayer> create(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext*);
-    static PassRefPtr<PlatformCALayer> create(PlatformLayer *, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext*);
+    static PassRefPtr<PlatformCALayerRemote> create(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext*);
+    static PassRefPtr<PlatformCALayerRemote> create(PlatformLayer *, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext*);
 
     virtual ~PlatformCALayerRemote();
 
@@ -161,6 +161,7 @@ private:
     RemoteLayerTreeTransaction::LayerProperties m_properties;
     WebCore::PlatformCALayerList m_children;
     PlatformCALayerRemote* m_superlayer;
+    PlatformCALayerRemote* m_maskLayer;
     bool m_acceleratesDrawing;
 
     RemoteLayerTreeContext* m_context;
