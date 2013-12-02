@@ -1,3 +1,20 @@
+2013-12-02  Attila Dusnoki  <adusnoki@inf.u-szeged.hu>
+
+        HTML5 required attribute validation messages implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=125003
+
+        Reviewed by Gyuyoung Kim.
+
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::validationMessagePatternMismatchText):
+        (WebCore::validationMessageValueMissingText):
+        (WebCore::validationMessageValueMissingForCheckboxText):
+        (WebCore::validationMessageValueMissingForFileText):
+        (WebCore::validationMessageValueMissingForMultipleFileText):
+        (WebCore::validationMessageValueMissingForRadioText):
+        (WebCore::validationMessageValueMissingForSelectText):
+        (WebCore::validationMessageBadInputForNumberText):
+
 2013-12-01  Andreas Kling  <akling@apple.com>
 
         SVG: Intersection/enclosure checks should use RenderElement.

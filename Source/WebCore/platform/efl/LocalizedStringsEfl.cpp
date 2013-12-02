@@ -528,7 +528,7 @@ String mediaElementLiveBroadcastStateText()
 
 String validationMessagePatternMismatchText()
 {
-    return String::fromUTF8("pattern mismatch");
+    return ASCIILiteral("Please match the requested format:");
 }
 
 String validationMessageRangeOverflowText(const String& maximum)
@@ -573,43 +573,37 @@ String validationMessageTypeMismatchForURLText()
 
 String validationMessageValueMissingText()
 {
-    return String::fromUTF8("value missing");
+    return ASCIILiteral("Please fill out this field.");
 }
 
 String validationMessageValueMissingForCheckboxText()
 {
-    notImplemented();
-    return validationMessageValueMissingText();
+    return ASCIILiteral("Please check this box if you want to proceed.");
 }
 
 String validationMessageValueMissingForFileText()
 {
-    notImplemented();
-    return validationMessageValueMissingText();
+    return ASCIILiteral("Please select a file.");
 }
 
 String validationMessageValueMissingForMultipleFileText()
 {
-    notImplemented();
-    return validationMessageValueMissingText();
+    return ASCIILiteral("Please select one or more files.");
 }
 
 String validationMessageValueMissingForRadioText()
 {
-    notImplemented();
-    return validationMessageValueMissingText();
+    return ASCIILiteral("Please select one of these options.");
 }
 
 String validationMessageValueMissingForSelectText()
 {
-    notImplemented();
-    return validationMessageValueMissingText();
+    return ASCIILiteral("Please select an item in the list.");
 }
 
 String validationMessageBadInputForNumberText()
 {
-    notImplemented();
-    return validationMessageTypeMismatchText();
+    return ASCIILiteral("Please enter a number.");
 }
 
 String missingPluginText()
