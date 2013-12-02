@@ -142,7 +142,7 @@ namespace JSC { namespace LLInt {
 
 #define LLINT_CALL_END_IMPL(exec, callTarget) LLINT_RETURN_TWO((callTarget), (exec))
 
-#define LLINT_CALL_THROW(exec, pc, exceptionToThrow) do {               \
+#define LLINT_CALL_THROW(exec, exceptionToThrow) do {                   \
         ExecState* __ct_exec = (exec);                                  \
         vm.throwException(__ct_exec, exceptionToThrow);                 \
         LLINT_CALL_END_IMPL(__ct_exec, callToThrow(__ct_exec));         \
@@ -154,7 +154,7 @@ namespace JSC { namespace LLInt {
             LLINT_CALL_END_IMPL(__cce_exec, callToThrow(__cce_exec));   \
     } while (false)
 
-#define LLINT_CALL_RETURN(exec, pc, callTarget) do {                    \
+#define LLINT_CALL_RETURN(exec, callTarget) do {                        \
         ExecState* __cr_exec = (exec);                                  \
         void* __cr_callTarget = (callTarget);                           \
         LLINT_CALL_CHECK_EXCEPTION(__cr_exec->callerFrame());           \
@@ -963,6 +963,8 @@ LLINT_SLOW_PATH_DECL(slow_path_new_func_exp)
 
 static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc, JSValue callee, CodeSpecializationKind kind)
 {
+    UNUSED_PARAM(pc);
+
 #if LLINT_SLOW_PATH_TRACING
     dataLog("Performing host call.\n");
 #endif
@@ -985,7 +987,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
             execCallee->setCallee(asObject(callee));
             vm.hostCallReturnValue = JSValue::decode(callData.native.function(execCallee));
             
-            LLINT_CALL_RETURN(execCallee, pc, LLInt::getCodePtr(getHostCallReturnValue));
+            LLINT_CALL_RETURN(execCallee, LLInt::getCodePtr(getHostCallReturnValue));
         }
         
 #if LLINT_SLOW_PATH_TRACING
@@ -993,7 +995,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
 #endif
 
         ASSERT(callType == CallTypeNone);
-        LLINT_CALL_THROW(exec, pc, createNotAFunctionError(exec, callee));
+        LLINT_CALL_THROW(exec, createNotAFunctionError(exec, callee));
     }
 
     ASSERT(kind == CodeForConstruct);
@@ -1008,7 +1010,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
         execCallee->setCallee(asObject(callee));
         vm.hostCallReturnValue = JSValue::decode(constructData.native.function(execCallee));
 
-        LLINT_CALL_RETURN(execCallee, pc, LLInt::getCodePtr(getHostCallReturnValue));
+        LLINT_CALL_RETURN(execCallee, LLInt::getCodePtr(getHostCallReturnValue));
     }
     
 #if LLINT_SLOW_PATH_TRACING
@@ -1016,7 +1018,7 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, Instruction* pc,
 #endif
 
     ASSERT(constructType == ConstructTypeNone);
-    LLINT_CALL_THROW(exec, pc, createNotAConstructorError(exec, callee));
+    LLINT_CALL_THROW(exec, createNotAConstructorError(exec, callee));
 }
 
 inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, CodeSpecializationKind kind, JSValue calleeAsValue, LLIntCallLinkInfo* callLinkInfo = 0)
@@ -1043,7 +1045,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
         JSObject* error = functionExecutable->prepareForExecution(execCallee, callee->scope(), kind);
         if (error)
-            LLINT_CALL_THROW(execCallee->callerFrame(), pc, error);
+            LLINT_CALL_THROW(execCallee->callerFrame(), error);
         codeBlock = functionExecutable->codeBlockFor(kind);
         ASSERT(codeBlock);
         if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()))
@@ -1068,7 +1070,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
             codeBlock->linkIncomingCall(execCaller, callLinkInfo);
     }
 
-    LLINT_CALL_RETURN(execCallee, pc, codePtr.executableAddress());
+    LLINT_CALL_RETURN(execCallee, codePtr.executableAddress());
 }
 
 inline SlowPathReturnType genericCall(ExecState* exec, Instruction* pc, CodeSpecializationKind kind)
@@ -1144,7 +1146,7 @@ LLINT_SLOW_PATH_DECL(slow_path_call_eval)
         return setUpCall(execCallee, pc, CodeForCall, calleeAsValue);
     
     vm.hostCallReturnValue = eval(execCallee);
-    LLINT_CALL_RETURN(execCallee, pc, LLInt::getCodePtr(getHostCallReturnValue));
+    LLINT_CALL_RETURN(execCallee, LLInt::getCodePtr(getHostCallReturnValue));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_tear_off_activation)
