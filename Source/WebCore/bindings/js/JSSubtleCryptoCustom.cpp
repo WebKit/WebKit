@@ -556,7 +556,7 @@ JSValue JSSubtleCrypto::importKey(ExecState* exec)
         promiseWrapper.reject(nullptr);
     };
 
-    WebCore::importKey(exec, keyFormat, data, algorithm.release(), parameters.release(), extractable, keyUsages, successCallback, failureCallback);
+    WebCore::importKey(exec, keyFormat, data, algorithm.release(), parameters.release(), extractable, keyUsages, std::move(successCallback), std::move(failureCallback));
     if (exec->hadException())
         return jsUndefined();
 
@@ -620,7 +620,7 @@ JSValue JSSubtleCrypto::exportKey(ExecState* exec)
         promiseWrapper.reject(nullptr);
     };
 
-    WebCore::exportKey(exec, keyFormat, *key, successCallback, failureCallback);
+    WebCore::exportKey(exec, keyFormat, *key, std::move(successCallback), std::move(failureCallback));
     if (exec->hadException())
         return jsUndefined();
 
@@ -687,7 +687,7 @@ JSValue JSSubtleCrypto::wrapKey(ExecState* exec)
     };
 
     ExceptionCode ec = 0;
-    WebCore::exportKey(exec, keyFormat, *key, exportSuccessCallback, exportFailureCallback);
+    WebCore::exportKey(exec, keyFormat, *key, std::move(exportSuccessCallback), std::move(exportFailureCallback));
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
@@ -781,7 +781,7 @@ JSValue JSSubtleCrypto::unwrapKey(ExecState* exec)
             promiseWrapper.reject(nullptr);
         };
         ExecState* exec = domGlobalObject->globalExec();
-        WebCore::importKey(exec, keyFormat, std::make_pair(result.data(), result.size()), unwrappedKeyAlgorithmPtr, unwrappedKeyAlgorithmParametersPtr, extractable, keyUsages, importSuccessCallback, importFailureCallback);
+        WebCore::importKey(exec, keyFormat, std::make_pair(result.data(), result.size()), unwrappedKeyAlgorithmPtr, unwrappedKeyAlgorithmParametersPtr, extractable, keyUsages, std::move(importSuccessCallback), std::move(importFailureCallback));
         if (exec->hadException()) {
             // FIXME: Report exception details to console, and possibly to calling script once there is a standardized way to pass errors to WebCrypto promise reject functions.
             exec->clearException();

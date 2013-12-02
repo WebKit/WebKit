@@ -202,6 +202,15 @@ bool JSCryptoKeySerializationJWK::reconcileAlgorithm(std::unique_ptr<CryptoAlgor
     } else if (m_jwkAlgorithmName == "A256CBC") {
         algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::AES_CBC);
         parameters = std::make_unique<CryptoAlgorithmParameters>();
+    } else if (m_jwkAlgorithmName == "A128KW") {
+        algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::AES_KW);
+        parameters = std::make_unique<CryptoAlgorithmParameters>();
+    } else if (m_jwkAlgorithmName == "A192KW") {
+        algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::AES_KW);
+        parameters = std::make_unique<CryptoAlgorithmParameters>();
+    } else if (m_jwkAlgorithmName == "A256KW") {
+        algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::AES_KW);
+        parameters = std::make_unique<CryptoAlgorithmParameters>();
     } else {
         throwTypeError(m_exec, "Unsupported JWK algorithm " + m_jwkAlgorithmName);
         return false;
@@ -280,6 +289,12 @@ bool JSCryptoKeySerializationJWK::keySizeIsValid(size_t sizeInBits) const
     if (m_jwkAlgorithmName == "A192CBC")
         return sizeInBits == 192;
     if (m_jwkAlgorithmName == "A256CBC")
+        return sizeInBits == 256;
+    if (m_jwkAlgorithmName == "A128KW")
+        return sizeInBits == 128;
+    if (m_jwkAlgorithmName == "A192KW")
+        return sizeInBits == 192;
+    if (m_jwkAlgorithmName == "A256KW")
         return sizeInBits == 256;
     if (m_jwkAlgorithmName == "RS256")
         return sizeInBits >= 2048;
@@ -519,6 +534,19 @@ void JSCryptoKeySerializationJWK::addJWKAlgorithmToJSON(ExecState* exec, JSObjec
             break;
         case 256:
             jwkAlgorithm = "A256CBC";
+            break;
+        }
+        break;
+    case CryptoAlgorithmIdentifier::AES_KW:
+        switch (toCryptoKeyAES(key).key().size() * 8) {
+        case 128:
+            jwkAlgorithm = "A128KW";
+            break;
+        case 192:
+            jwkAlgorithm = "A192KW";
+            break;
+        case 256:
+            jwkAlgorithm = "A256KW";
             break;
         }
         break;

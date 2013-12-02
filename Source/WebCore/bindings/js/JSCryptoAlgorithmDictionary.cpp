@@ -329,6 +329,8 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     case CryptoAlgorithmIdentifier::PBKDF2:
         setDOMException(exec, NOT_SUPPORTED_ERR);
         return nullptr;
+    case CryptoAlgorithmIdentifier::AES_KW:
+        return std::make_unique<CryptoAlgorithmParameters>();
     }
 }
 
@@ -364,6 +366,8 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     case CryptoAlgorithmIdentifier::PBKDF2:
         setDOMException(exec, NOT_SUPPORTED_ERR);
         return nullptr;
+    case CryptoAlgorithmIdentifier::AES_KW:
+        return std::make_unique<CryptoAlgorithmParameters>();
     }
 }
 
@@ -397,6 +401,7 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     case CryptoAlgorithmIdentifier::CONCAT:
     case CryptoAlgorithmIdentifier::HKDF_CTR:
     case CryptoAlgorithmIdentifier::PBKDF2:
+    case CryptoAlgorithmIdentifier::AES_KW:
         setDOMException(exec, NOT_SUPPORTED_ERR);
         return nullptr;
     }
@@ -432,6 +437,7 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     case CryptoAlgorithmIdentifier::CONCAT:
     case CryptoAlgorithmIdentifier::HKDF_CTR:
     case CryptoAlgorithmIdentifier::PBKDF2:
+    case CryptoAlgorithmIdentifier::AES_KW:
         setDOMException(exec, NOT_SUPPORTED_ERR);
         return nullptr;
     }
@@ -464,6 +470,7 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     case CryptoAlgorithmIdentifier::CONCAT:
     case CryptoAlgorithmIdentifier::HKDF_CTR:
     case CryptoAlgorithmIdentifier::PBKDF2:
+    case CryptoAlgorithmIdentifier::AES_KW:
         setDOMException(exec, NOT_SUPPORTED_ERR);
         return nullptr;
     }
@@ -500,6 +507,8 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     case CryptoAlgorithmIdentifier::PBKDF2:
         setDOMException(exec, NOT_SUPPORTED_ERR);
         return nullptr;
+    case CryptoAlgorithmIdentifier::AES_KW:
+        return createAesKeyGenParams(exec, value);
     }
 }
 
@@ -527,6 +536,7 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     case CryptoAlgorithmIdentifier::CONCAT:
     case CryptoAlgorithmIdentifier::HKDF_CTR:
     case CryptoAlgorithmIdentifier::PBKDF2:
+    case CryptoAlgorithmIdentifier::AES_KW:
         setDOMException(exec, NOT_SUPPORTED_ERR);
         return nullptr;
     }
@@ -556,6 +566,7 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     case CryptoAlgorithmIdentifier::CONCAT:
     case CryptoAlgorithmIdentifier::HKDF_CTR:
     case CryptoAlgorithmIdentifier::PBKDF2:
+    case CryptoAlgorithmIdentifier::AES_KW:
         setDOMException(exec, NOT_SUPPORTED_ERR);
         return nullptr;
     }
@@ -594,6 +605,8 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     case CryptoAlgorithmIdentifier::PBKDF2:
         setDOMException(exec, NOT_SUPPORTED_ERR);
         return nullptr;
+    case CryptoAlgorithmIdentifier::AES_KW:
+        return std::make_unique<CryptoAlgorithmParameters>();
     }
 }
 
@@ -624,6 +637,8 @@ std::unique_ptr<CryptoAlgorithmParameters> JSCryptoAlgorithmDictionary::createPa
     case CryptoAlgorithmIdentifier::PBKDF2:
         setDOMException(exec, NOT_SUPPORTED_ERR);
         return nullptr;
+    case CryptoAlgorithmIdentifier::AES_KW:
+        return std::make_unique<CryptoAlgorithmParameters>();
     }
 }
 

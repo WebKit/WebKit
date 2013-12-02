@@ -43,7 +43,8 @@ CryptoKeyAES::CryptoKeyAES(CryptoAlgorithmIdentifier algorithm, const Vector<uin
         || algorithm == CryptoAlgorithmIdentifier::AES_CBC
         || algorithm == CryptoAlgorithmIdentifier::AES_CMAC
         || algorithm == CryptoAlgorithmIdentifier::AES_GCM
-        || algorithm == CryptoAlgorithmIdentifier::AES_CFB);
+        || algorithm == CryptoAlgorithmIdentifier::AES_CFB
+        || algorithm == CryptoAlgorithmIdentifier::AES_KW);
 }
 
 CryptoKeyAES::~CryptoKeyAES()

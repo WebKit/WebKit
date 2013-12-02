@@ -1,3 +1,54 @@
+2013-12-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Support WebCrypto AES-KW
+        https://bugs.webkit.org/show_bug.cgi?id=125105
+
+        Reviewed by Sam Weinig.
+
+        Tests: crypto/subtle/aes-kw-key-manipulation.html
+               crypto/subtle/aes-kw-wrap-unwrap-aes.html
+
+        * WebCore.xcodeproj/project.pbxproj: Added new files.
+
+        * crypto/CryptoAlgorithmIdentifier.h: (WebCore::CryptoAlgorithmIdentifier): Added AES-KW.
+        It's not standardized yet, but there appears to be a consensus that it will be specified.
+
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForEncrypt):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDecrypt):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForSign):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForVerify):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDigest):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForGenerateKey):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDeriveKey):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDeriveBits):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForImportKey):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForExportKey):
+        Added AES-KW cases everywhere.
+
+        * bindings/js/JSCryptoKeySerializationJWK.cpp:
+        (WebCore::JSCryptoKeySerializationJWK::reconcileAlgorithm):
+        (WebCore::JSCryptoKeySerializationJWK::keySizeIsValid):
+        (WebCore::JSCryptoKeySerializationJWK::addJWKAlgorithmToJSON):
+        Support importing/exporting AES-KW keys in JWK.
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::JSSubtleCrypto::importKey):
+        (WebCore::JSSubtleCrypto::exportKey):
+        (WebCore::JSSubtleCrypto::wrapKey):
+        (WebCore::JSSubtleCrypto::unwrapKey):
+        Added some accidentally forgotten std::moves.
+
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp: Added.
+        * crypto/algorithms/CryptoAlgorithmAES_KW.h: Added.
+        * crypto/mac/CryptoAlgorithmAES_KWMac.cpp: Added.
+
+        * crypto/keys/CryptoKeyAES.cpp: (WebCore::CryptoKeyAES::CryptoKeyAES): Allow AES-KW
+        as valid algorithm for AES keys.
+
+        * crypto/mac/CryptoAlgorithmRegistryMac.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms): Register AES-KW.
+
 2013-12-02  Beth Dakin  <bdakin@apple.com>
 
         Add a setting to opt into a mode where the background extends and fixed elements 

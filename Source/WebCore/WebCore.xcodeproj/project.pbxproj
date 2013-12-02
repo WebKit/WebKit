@@ -5734,6 +5734,9 @@
 		E1FE137418402A6700892F13 /* CommonCryptoUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FE137218402A6700892F13 /* CommonCryptoUtilities.cpp */; };
 		E1FE137518402A6700892F13 /* CommonCryptoUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FE137318402A6700892F13 /* CommonCryptoUtilities.h */; };
 		E1FE1377184D1E3300892F13 /* CryptoAlgorithmRsaOaepParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FE1376184D1E3300892F13 /* CryptoAlgorithmRsaOaepParams.h */; };
+		E1FE137A184D21BB00892F13 /* CryptoAlgorithmAES_KW.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FE1378184D21BB00892F13 /* CryptoAlgorithmAES_KW.cpp */; };
+		E1FE137B184D21BB00892F13 /* CryptoAlgorithmAES_KW.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FE1379184D21BB00892F13 /* CryptoAlgorithmAES_KW.h */; };
+		E1FE137E184D270200892F13 /* CryptoAlgorithmAES_KWMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FE137C184D270200892F13 /* CryptoAlgorithmAES_KWMac.cpp */; };
 		E1FF57A30F01255B00891EBB /* ThreadGlobalData.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FF57A20F01255B00891EBB /* ThreadGlobalData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1FF57A60F01256B00891EBB /* ThreadGlobalData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF57A50F01256B00891EBB /* ThreadGlobalData.cpp */; };
 		E1FF8F5F1807442100132674 /* SubtleCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF8F5D1807442100132674 /* SubtleCrypto.cpp */; };
@@ -12860,6 +12863,9 @@
 		E1FE137218402A6700892F13 /* CommonCryptoUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommonCryptoUtilities.cpp; sourceTree = "<group>"; };
 		E1FE137318402A6700892F13 /* CommonCryptoUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonCryptoUtilities.h; sourceTree = "<group>"; };
 		E1FE1376184D1E3300892F13 /* CryptoAlgorithmRsaOaepParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CryptoAlgorithmRsaOaepParams.h; path = parameters/CryptoAlgorithmRsaOaepParams.h; sourceTree = "<group>"; };
+		E1FE1378184D21BB00892F13 /* CryptoAlgorithmAES_KW.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmAES_KW.cpp; sourceTree = "<group>"; };
+		E1FE1379184D21BB00892F13 /* CryptoAlgorithmAES_KW.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAES_KW.h; sourceTree = "<group>"; };
+		E1FE137C184D270200892F13 /* CryptoAlgorithmAES_KWMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoAlgorithmAES_KWMac.cpp; path = mac/CryptoAlgorithmAES_KWMac.cpp; sourceTree = "<group>"; };
 		E1FF57A20F01255B00891EBB /* ThreadGlobalData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadGlobalData.h; sourceTree = "<group>"; };
 		E1FF57A50F01256B00891EBB /* ThreadGlobalData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadGlobalData.cpp; sourceTree = "<group>"; };
 		E1FF8F5C1807364B00132674 /* SubtleCrypto.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SubtleCrypto.idl; sourceTree = "<group>"; };
@@ -20421,6 +20427,7 @@
 				E1FE137218402A6700892F13 /* CommonCryptoUtilities.cpp */,
 				E1FE137318402A6700892F13 /* CommonCryptoUtilities.h */,
 				E125F843182425C900D84CD9 /* CryptoAlgorithmAES_CBCMac.cpp */,
+				E1FE137C184D270200892F13 /* CryptoAlgorithmAES_KWMac.cpp */,
 				E125F8371822F1EB00D84CD9 /* CryptoAlgorithmHMACMac.cpp */,
 				E1BB84AC1822CA7400525043 /* CryptoAlgorithmRegistryMac.cpp */,
 				E1C266D618317AB4003F8B33 /* CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp */,
@@ -20437,6 +20444,8 @@
 			children = (
 				E125F83F1824253A00D84CD9 /* CryptoAlgorithmAES_CBC.cpp */,
 				E125F8401824253A00D84CD9 /* CryptoAlgorithmAES_CBC.h */,
+				E1FE1378184D21BB00892F13 /* CryptoAlgorithmAES_KW.cpp */,
+				E1FE1379184D21BB00892F13 /* CryptoAlgorithmAES_KW.h */,
 				E125F82F1822F11B00D84CD9 /* CryptoAlgorithmHMAC.cpp */,
 				E125F8301822F11B00D84CD9 /* CryptoAlgorithmHMAC.h */,
 				E1FE1368183FE1AB00892F13 /* CryptoAlgorithmRSA_OAEP.cpp */,
@@ -24326,6 +24335,7 @@
 				BCC52FD6151298D2003F914B /* RenderMultiColumnBlock.h in Headers */,
 				1A3586E015264C450022A659 /* RenderMultiColumnFlowThread.h in Headers */,
 				BCE32B9C1517C0B200F542EC /* RenderMultiColumnSet.h in Headers */,
+				E1FE137B184D21BB00892F13 /* CryptoAlgorithmAES_KW.h in Headers */,
 				BC85F23D151915E000BC17BE /* RenderNamedFlowThread.h in Headers */,
 				BCEA4880097D93020094C9E4 /* RenderObject.h in Headers */,
 				BCFA930810333193007B25D1 /* RenderOverflow.h in Headers */,
@@ -25636,6 +25646,7 @@
 				37DDCD9E13844FFA0008B793 /* Archive.cpp in Sources */,
 				512DD8FA0D91E6AF000F89EE /* ArchiveFactory.cpp in Sources */,
 				512DD8FB0D91E6AF000F89EE /* ArchiveResource.cpp in Sources */,
+				E1FE137A184D21BB00892F13 /* CryptoAlgorithmAES_KW.cpp in Sources */,
 				512DD8F70D91E6AF000F89EE /* ArchiveResourceCollection.cpp in Sources */,
 				49B3760C15C6C6840059131D /* ArrayValue.cpp in Sources */,
 				FD5686C913AC180200B69C68 /* AsyncAudioDecoder.cpp in Sources */,
@@ -28294,6 +28305,7 @@
 				7E99AF510B13846468FB01A5 /* WindowFocusAllowedIndicator.cpp in Sources */,
 				379919961200DDF400EA041C /* WOFFFileFormat.cpp in Sources */,
 				2E4346450F546A8200B0F1BA /* Worker.cpp in Sources */,
+				E1FE137E184D270200892F13 /* CryptoAlgorithmAES_KWMac.cpp in Sources */,
 				51059DDD1820B17600DFF9B1 /* IDBTransactionBackendOperations.cpp in Sources */,
 				F3820896147D35F90010BC06 /* WorkerConsoleAgent.cpp in Sources */,
 				F34742E01343631F00531BC2 /* WorkerDebuggerAgent.cpp in Sources */,

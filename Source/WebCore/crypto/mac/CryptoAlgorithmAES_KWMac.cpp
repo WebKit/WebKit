@@ -23,39 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmIdentifier_h
-#define CryptoAlgorithmIdentifier_h
+#include "config.h"
+#include "CryptoAlgorithmAES_KW.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#include "CryptoKeyAES.h"
+#include "ExceptionCode.h"
+#include <CommonCrypto/CommonCrypto.h>
+
 namespace WebCore {
 
-ENUM_CLASS(CryptoAlgorithmIdentifier) {
-    RSAES_PKCS1_v1_5 = 1,
-    RSASSA_PKCS1_v1_5,
-    RSA_PSS,
-    RSA_OAEP,
-    ECDSA,
-    ECDH,
-    AES_CTR,
-    AES_CBC,
-    AES_CMAC,
-    AES_GCM,
-    AES_CFB,
-    HMAC,
-    DH,
-    SHA_1,
-    SHA_224,
-    SHA_256,
-    SHA_384,
-    SHA_512,
-    CONCAT,
-    HKDF_CTR,
-    PBKDF2,
-    AES_KW // Not yet standardized.
-};
-
+void CryptoAlgorithmAES_KW::platformEncrypt(const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode&)
+{
+    Vector<uint8_t> result(CCSymmetricWrappedSize(kCCWRAPAES, data.second));
+    size_t resultSize = result.size();
+    int status = CCSymmetricKeyWrap(kCCWRAPAES, CCrfc3394_iv, CCrfc3394_ivLen, key.key().data(), key.key().size(), data.first, data.second, result.data(), &resultSize);
+    if (status) {
+        failureCallback();
+        return;
+    }
+    result.shrink(resultSize);
+    callback(result);
 }
 
+void CryptoAlgorithmAES_KW::platformDecrypt(const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback callback, VoidCallback failureCallback, ExceptionCode&)
+{
+    Vector<uint8_t> result(CCSymmetricUnwrappedSize(kCCWRAPAES, data.second));
+    size_t resultSize = result.size();
+    int status = CCSymmetricKeyUnwrap(kCCWRAPAES, CCrfc3394_iv, CCrfc3394_ivLen, key.key().data(), key.key().size(), data.first, data.second, result.data(), &resultSize);
+    if (status) {
+        failureCallback();
+        return;
+    }
+    result.shrink(resultSize);
+    callback(result);
+}
+
+} // namespace WebCore
+
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoAlgorithmIdentifier_h
