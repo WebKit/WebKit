@@ -1,3 +1,13 @@
+2013-12-02  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        [WK2] Improve readability of 'generate_message_handler' function
+        https://bugs.webkit.org/show_bug.cgi?id=125085
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkit2/messages.py:
+        (generate_message_handler):
+
 2013-12-02  Tim Horton  <timothy_horton@apple.com>
 
         Remote Layer Tree: Support cloning layers

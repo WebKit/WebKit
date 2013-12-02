@@ -461,7 +461,7 @@ def headers_for_type(type):
 
 def generate_message_handler(file):
     receiver = parser.parse(file)
-    headers = {
+    header_conditions = {
         '"%s"' % messages_header_filename(receiver): [None],
         '"HandleMessage.h"': [None],
         '"MessageDecoder.h"': [None],
@@ -482,15 +482,15 @@ def generate_message_handler(file):
         argument_encoder_headers = argument_coder_headers_for_type(type)
         if argument_encoder_headers:
             for header in argument_encoder_headers:
-                if header not in headers:
-                    headers[header] = []
-                headers[header].extend(conditions)
+                if header not in header_conditions:
+                    header_conditions[header] = []
+                header_conditions[header].extend(conditions)
 
         type_headers = headers_for_type(type)
         for header in type_headers:
-            if header not in headers:
-                headers[header] = []
-            headers[header].extend(conditions)
+            if header not in header_conditions:
+                header_conditions[header] = []
+            header_conditions[header].extend(conditions)
 
     for message in receiver.messages:
         if message.reply_parameters is not None:
@@ -499,15 +499,15 @@ def generate_message_handler(file):
                 argument_encoder_headers = argument_coder_headers_for_type(type)
                 if argument_encoder_headers:
                     for header in argument_encoder_headers:
-                        if header not in headers:
-                            headers[header] = []
-                        headers[header].append(message.condition)
+                        if header not in header_conditions:
+                            header_conditions[header] = []
+                        header_conditions[header].append(message.condition)
 
                 type_headers = headers_for_type(type)
                 for header in type_headers:
-                    if header not in headers:
-                        headers[header] = []
-                    headers[header].append(message.condition)
+                    if header not in header_conditions:
+                        header_conditions[header] = []
+                    header_conditions[header].append(message.condition)
 
 
     result = []
@@ -520,13 +520,13 @@ def generate_message_handler(file):
         result.append('#if %s\n\n' % receiver.condition)
 
     result.append('#include "%s.h"\n\n' % receiver.name)
-    for headercondition in sorted(headers):
-        if headers[headercondition] and not None in headers[headercondition]:
-            result.append('#if %s\n' % ' || '.join(set(headers[headercondition])))
-            result += ['#include %s\n' % headercondition]
+    for header in sorted(header_conditions):
+        if header_conditions[header] and not None in header_conditions[header]:
+            result.append('#if %s\n' % ' || '.join(set(header_conditions[header])))
+            result += ['#include %s\n' % header]
             result.append('#endif\n')
         else:
-            result += ['#include %s\n' % headercondition]
+            result += ['#include %s\n' % header]
     result.append('\n')
 
     sync_delayed_messages = []
@@ -542,7 +542,7 @@ def generate_message_handler(file):
 
             if message.condition:
                 result.append('#if %s\n\n' % message.condition)
-            
+
             result.append('%s::DelayedReply::DelayedReply(PassRefPtr<CoreIPC::Connection> connection, std::unique_ptr<CoreIPC::MessageEncoder> encoder)\n' % message.name)
             result.append('    : m_connection(connection)\n')
             result.append('    , m_encoder(std::move(encoder))\n')
