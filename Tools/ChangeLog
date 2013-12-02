@@ -1,3 +1,20 @@
+2013-12-02  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        run-jsc-stress-tests should be able to package its tests and move them places
+        https://bugs.webkit.org/show_bug.cgi?id=124549
+
+        Reviewed by Filip Pizlo.
+
+        * Scripts/jsc-stress-test-helpers/check-mozilla-failure: Removed. Was just a ruby reimplementation
+        of grep -i -q
+        * Scripts/run-javascriptcore-tests: Pass through the --tarball flag.
+        * Scripts/run-jsc-stress-tests: Changed to create a bundle of tests inside the results directory.
+        We now also copy whatever VM was specified, along with its associated framework, into this directory.
+        All of the generated scripts now are completely relative within the results directory. This allows
+        run-jsc-stress-tests to execute a bundle from anywhere. Also added a --tarball flag which creates a
+        tarball of the generated results directory. Also refactored several portions of the script into
+        separate functions to make it easier to run them conditionally depending on which mode we're running in. 
+
 2013-12-02  Andrzej Badowski  <a.badowski@samsung.com>
 
         [ATK] Support active state for listbox elements.
