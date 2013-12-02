@@ -1,3 +1,23 @@
+2013-12-02  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [ATK] Support active state for listbox elements.
+        https://bugs.webkit.org/show_bug.cgi?id=125009
+
+        Reviewed by Chris Fleizach.
+
+        Supplement WebKitTestRunner and DumpRenderTree to support isSelectedOptionActive.
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::isSelectedOptionActive):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::isSelectedOptionActive):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::isSelectedOptionActive):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::isSelectedOptionActive):
+
 2013-12-02  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.

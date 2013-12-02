@@ -136,6 +136,7 @@ public:
     bool isFocused() const;
     bool isFocusable() const;
     bool isSelected() const;
+    bool isSelectedOptionActive() const;
     bool isSelectable() const;
     bool isMultiSelectable() const;
     void setSelectedChild(AccessibilityUIElement*) const;

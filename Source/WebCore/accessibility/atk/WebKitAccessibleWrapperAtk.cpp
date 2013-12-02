@@ -706,6 +706,9 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
     bool isListBoxOption = parent && parent->isListBox();
 
     // Please keep the state list in alphabetical order
+    if (isListBoxOption && coreObject->isSelectedOptionActive())
+        atk_state_set_add_state(stateSet, ATK_STATE_ACTIVE);
+
     if (coreObject->isChecked())
         atk_state_set_add_state(stateSet, ATK_STATE_CHECKED);
 

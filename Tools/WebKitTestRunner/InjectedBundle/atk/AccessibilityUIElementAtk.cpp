@@ -1063,6 +1063,11 @@ bool AccessibilityUIElement::isSelected() const
     return checkElementState(m_element.get(), ATK_STATE_SELECTED);
 }
 
+bool AccessibilityUIElement::isSelectedOptionActive() const
+{
+    return checkElementState(m_element.get(), ATK_STATE_ACTIVE);
+}
+
 bool AccessibilityUIElement::isExpanded() const
 {
     return checkElementState(m_element.get(), ATK_STATE_EXPANDED);

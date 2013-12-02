@@ -114,6 +114,7 @@ bool AccessibilityUIElement::isRequired() const { return false; }
 bool AccessibilityUIElement::isFocused() const { return false; }
 bool AccessibilityUIElement::isFocusable() const { return false; }
 bool AccessibilityUIElement::isSelected() const { return false; }
+bool AccessibilityUIElement::isSelectedOptionActive() const { return false; }
 bool AccessibilityUIElement::isSelectable() const { return false; }
 bool AccessibilityUIElement::isMultiSelectable() const { return false; }
 void AccessibilityUIElement::setSelectedChild(AccessibilityUIElement*) const { }

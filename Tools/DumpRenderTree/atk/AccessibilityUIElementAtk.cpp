@@ -1346,8 +1346,7 @@ bool AccessibilityUIElement::isMultiSelectable() const
 
 bool AccessibilityUIElement::isSelectedOptionActive() const
 {
-    // FIXME: implement
-    return false;
+    return checkElementState(m_element, ATK_STATE_ACTIVE);
 }
 
 bool AccessibilityUIElement::isVisible() const

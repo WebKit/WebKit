@@ -76,6 +76,7 @@ interface AccessibilityUIElement {
     readonly attribute boolean isFocusable;
     readonly attribute boolean isSelectable;
     readonly attribute boolean isSelected;
+    readonly attribute boolean isSelectedOptionActive;
     readonly attribute boolean isMultiSelectable;
     readonly attribute boolean isExpanded;
     readonly attribute boolean isChecked;

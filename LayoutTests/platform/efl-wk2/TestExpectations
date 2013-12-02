@@ -171,7 +171,6 @@ webkit.org/b/117182 accessibility/text-role-with-aria-hidden-inside.html [ Failu
 
 webkit.org/b/118418 accessibility/img-fallsback-to-title.html [ Missing ]
 webkit.org/b/98348  accessibility/internal-link-anchors2.html [ Missing ]
-webkit.org/b/116970 accessibility/multiselect-list-reports-active-option.html [ Missing ]
 webkit.org/b/98348  accessibility/radio-button-group-members.html [ Missing ]
 
 accessibility/negative-tabindex-does-not-expose-label.html [ Missing ]
