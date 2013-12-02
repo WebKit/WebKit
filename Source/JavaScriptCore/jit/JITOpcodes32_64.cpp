@@ -411,13 +411,10 @@ void JIT::emit_op_to_primitive(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_to_primitive(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int dst = currentInstruction[1].u.operand;
-
     linkSlowCase(iter);
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_to_primitive);
     slowPathCall.call();
-    emitLoad(dst, regT1, regT0, callFrameRegister);
 }
 
 void JIT::emit_op_strcat(Instruction* currentInstruction)
@@ -442,13 +439,10 @@ void JIT::emit_op_not(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_not(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int dst = currentInstruction[1].u.operand;
-
     linkSlowCase(iter);
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_not);
     slowPathCall.call();
-    emitLoad(dst, regT1, regT0, callFrameRegister);
 }
 
 void JIT::emit_op_jfalse(Instruction* currentInstruction)
@@ -706,15 +700,12 @@ void JIT::emit_op_stricteq(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_stricteq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int dst = currentInstruction[1].u.operand;
-
     linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_stricteq);
     slowPathCall.call();
-    emitLoad(dst, regT1, regT0, callFrameRegister);
 }
 
 void JIT::emit_op_nstricteq(Instruction* currentInstruction)
@@ -724,15 +715,12 @@ void JIT::emit_op_nstricteq(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_nstricteq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int dst = currentInstruction[1].u.operand;
-
     linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_nstricteq);
     slowPathCall.call();
-    emitLoad(dst, regT1, regT0, callFrameRegister);
 }
 
 void JIT::emit_op_eq_null(Instruction* currentInstruction)
@@ -934,13 +922,10 @@ void JIT::emit_op_to_number(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_to_number(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int dst = currentInstruction[1].u.operand;
-
     linkSlowCase(iter);
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_to_number);
     slowPathCall.call();
-    emitLoad(dst, regT1, regT0, callFrameRegister);
 }
 
 void JIT::emit_op_push_name_scope(Instruction* currentInstruction)
@@ -1096,7 +1081,6 @@ void JIT::emitSlow_op_get_callee(Instruction* currentInstruction, Vector<SlowCas
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_get_callee);
     slowPathCall.call();
-    emitLoad(currentInstruction[1].u.operand, regT1, regT0);
 }
 
 void JIT::emit_op_create_this(Instruction* currentInstruction)
@@ -1119,13 +1103,11 @@ void JIT::emit_op_create_this(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_create_this(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int dst = currentInstruction[1].u.operand;
     linkSlowCase(iter); // doesn't have an allocation profile
     linkSlowCase(iter); // allocation failed
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_create_this);
     slowPathCall.call();
-    emitLoad(dst, regT1, regT0);
 }
 
 void JIT::emit_op_to_this(Instruction* currentInstruction)
@@ -1144,13 +1126,11 @@ void JIT::emit_op_to_this(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_to_this(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int dst = currentInstruction[1].u.operand;
     linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_to_this);
     slowPathCall.call();
-    emitLoad(dst, regT1, regT0);
 }
 
 void JIT::emit_op_profile_will_call(Instruction* currentInstruction)

@@ -220,14 +220,11 @@ void JIT::emit_op_negate(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_negate(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int result = currentInstruction[1].u.operand;
-
     linkSlowCase(iter); // 0x7fffffff check
     linkSlowCase(iter); // double check
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_negate);
     slowPathCall.call();
-    emitGetVirtualRegister(result, regT0);
 }
 
 void JIT::emit_op_lshift(Instruction* currentInstruction)
@@ -249,13 +246,10 @@ void JIT::emit_op_lshift(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_lshift(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int result = currentInstruction[1].u.operand;
-
     linkSlowCase(iter);
     linkSlowCase(iter);
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_lshift);
     slowPathCall.call();
-    emitGetVirtualRegister(result, regT0);
 }
 
 void JIT::emit_op_rshift(Instruction* currentInstruction)
@@ -295,11 +289,7 @@ void JIT::emit_op_rshift(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_rshift(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int result = currentInstruction[1].u.operand;
-    int op1 = currentInstruction[2].u.operand;
     int op2 = currentInstruction[3].u.operand;
-
-    UNUSED_PARAM(op1);
 
     if (isOperandConstantImmediateInt(op2))
         linkSlowCase(iter);
@@ -317,7 +307,6 @@ void JIT::emitSlow_op_rshift(Instruction* currentInstruction, Vector<SlowCaseEnt
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_rshift);
     slowPathCall.call();
-    emitGetVirtualRegister(result, regT0);
 }
 
 void JIT::emit_op_urshift(Instruction* currentInstruction)
@@ -410,7 +399,6 @@ void JIT::emitSlow_op_urshift(Instruction* currentInstruction, Vector<SlowCaseEn
     
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_urshift);
     slowPathCall.call();
-    emitGetVirtualRegister(dst, regT0);
 }
 
 void JIT::emit_compareAndJump(OpcodeID, int op1, int op2, unsigned target, RelationalCondition condition)
@@ -587,13 +575,10 @@ void JIT::emit_op_bitand(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_bitand(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int result = currentInstruction[1].u.operand;
-
     linkSlowCase(iter);
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_bitand);
     slowPathCall.call();
-    emitGetVirtualRegister(result, regT0);
 }
 
 void JIT::emit_op_inc(Instruction* currentInstruction)
@@ -609,13 +594,10 @@ void JIT::emit_op_inc(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_inc(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int srcDst = currentInstruction[1].u.operand;
-
     linkSlowCase(iter);
     linkSlowCase(iter);
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_inc);
     slowPathCall.call();
-    emitGetVirtualRegister(srcDst, regT0);
 }
 
 void JIT::emit_op_dec(Instruction* currentInstruction)
@@ -631,13 +613,10 @@ void JIT::emit_op_dec(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_dec(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int srcDst = currentInstruction[1].u.operand;
-
     linkSlowCase(iter);
     linkSlowCase(iter);
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_dec);
     slowPathCall.call();
-    emitGetVirtualRegister(srcDst, regT0);
 }
 
 /* ------------------------------ BEGIN: OP_MOD ------------------------------ */
@@ -675,8 +654,6 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int result = currentInstruction[1].u.operand;
-
     linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
@@ -684,7 +661,6 @@ void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>
     linkSlowCase(iter);
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mod);
     slowPathCall.call();
-    emitGetVirtualRegister(result, regT0);
 }
 
 #else // CPU(X86) || CPU(X86_64)
@@ -700,7 +676,6 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
 
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mod);
     slowPathCall.call();
-    emitGetVirtualRegister(result, regT0);
 }
 
 void JIT::emitSlow_op_mod(Instruction*, Vector<SlowCaseEntry>::iterator&)
@@ -784,7 +759,6 @@ void JIT::compileBinaryArithOpSlowCase(Instruction* currentInstruction, OpcodeID
 
     JITSlowPathCall slowPathCall(this, currentInstruction, opcodeID == op_add ? slow_path_add : opcodeID == op_sub ? slow_path_sub : slow_path_mul);
     slowPathCall.call();
-    emitGetVirtualRegister(result, regT0);
     Jump end = jump();
 
     if (op1HasImmediateIntFastCase) {
@@ -1020,7 +994,6 @@ void JIT::emit_op_div(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_div(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int result = currentInstruction[1].u.operand;
     int op1 = currentInstruction[2].u.operand;
     int op2 = currentInstruction[3].u.operand;
     OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
@@ -1041,7 +1014,6 @@ void JIT::emitSlow_op_div(Instruction* currentInstruction, Vector<SlowCaseEntry>
     // There is an extra slow case for (op1 * -N) or (-N * op2), to check for 0 since this should produce a result of -0.
     JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_div);
     slowPathCall.call();
-    emitGetVirtualRegister(result, regT0);
 }
 
 void JIT::emit_op_sub(Instruction* currentInstruction)

@@ -1,3 +1,59 @@
+2013-12-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Baseline JIT calls to CommonSlowPaths shouldn't restore the last result
+        https://bugs.webkit.org/show_bug.cgi?id=125107
+
+        Reviewed by Mark Hahnenberg.
+
+        Just killing dead code.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitSlow_op_negate):
+        (JSC::JIT::emitSlow_op_lshift):
+        (JSC::JIT::emitSlow_op_rshift):
+        (JSC::JIT::emitSlow_op_urshift):
+        (JSC::JIT::emitSlow_op_bitand):
+        (JSC::JIT::emitSlow_op_inc):
+        (JSC::JIT::emitSlow_op_dec):
+        (JSC::JIT::emitSlow_op_mod):
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+        (JSC::JIT::emitSlow_op_div):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitSlow_op_negate):
+        (JSC::JIT::emitSlow_op_lshift):
+        (JSC::JIT::emitRightShiftSlowCase):
+        (JSC::JIT::emitSlow_op_bitand):
+        (JSC::JIT::emitSlow_op_bitor):
+        (JSC::JIT::emitSlow_op_bitxor):
+        (JSC::JIT::emitSlow_op_inc):
+        (JSC::JIT::emitSlow_op_dec):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emitSlow_op_sub):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emitSlow_op_div):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_strcat):
+        (JSC::JIT::emitSlow_op_get_callee):
+        (JSC::JIT::emitSlow_op_create_this):
+        (JSC::JIT::emitSlow_op_to_this):
+        (JSC::JIT::emitSlow_op_to_primitive):
+        (JSC::JIT::emitSlow_op_not):
+        (JSC::JIT::emitSlow_op_bitxor):
+        (JSC::JIT::emitSlow_op_bitor):
+        (JSC::JIT::emitSlow_op_stricteq):
+        (JSC::JIT::emitSlow_op_nstricteq):
+        (JSC::JIT::emitSlow_op_to_number):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emitSlow_op_to_primitive):
+        (JSC::JIT::emitSlow_op_not):
+        (JSC::JIT::emitSlow_op_stricteq):
+        (JSC::JIT::emitSlow_op_nstricteq):
+        (JSC::JIT::emitSlow_op_to_number):
+        (JSC::JIT::emitSlow_op_get_callee):
+        (JSC::JIT::emitSlow_op_create_this):
+        (JSC::JIT::emitSlow_op_to_this):
+
 2013-12-01  Filip Pizlo  <fpizlo@apple.com>
 
         Stores to local captured variables should be intercepted
