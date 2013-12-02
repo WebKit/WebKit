@@ -125,8 +125,10 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
     
     if (![sender respondsToSelector:@selector(tag)] || [sender tag] == WebKit1NewWindowTag)
         controller = [[WK1BrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
+#if WK_API_ENABLED
     else if ([sender tag] == WebKit2NewWindowTag)
         controller = [[WK2BrowserWindowController alloc] initWithContext:_processContext pageGroup:_pageGroup];
+#endif
 
     if (!controller)
         return;
@@ -192,6 +194,7 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
         return;
     }
 
+#if WK_API_ENABLED
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
     [openPanel beginWithCompletionHandler:^(NSInteger result) {
         if (result != NSOKButton)
@@ -204,6 +207,7 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
         NSURL *url = [openPanel.URLs objectAtIndex:0];
         [newBrowserWindowController loadURLString:[url absoluteString]];
     }];
+#endif // WK_API_ENABLED
 }
 
 @end

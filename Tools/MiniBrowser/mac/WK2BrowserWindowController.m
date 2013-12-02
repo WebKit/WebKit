@@ -25,13 +25,17 @@
 
 #import "WK2BrowserWindowController.h"
 
+#if WK_API_ENABLED
+
 #import "AppDelegate.h"
+#import <WebKit2/WKBrowsingContextController.h>
+#import <WebKit2/WKBrowsingContextPolicyDelegate.h>
 #import <WebKit2/WKPagePrivate.h>
 #import <WebKit2/WKStringCF.h>
 #import <WebKit2/WKURLCF.h>
 #import <WebKit2/WKViewPrivate.h>
 
-@interface WK2BrowserWindowController ()
+@interface WK2BrowserWindowController () <WKBrowsingContextPolicyDelegate>
 - (void)didStartProgress;
 - (void)didChangeProgress:(double)value;
 - (void)didFinishProgress;
@@ -44,7 +48,11 @@
 - (BOOL)isPaginated;
 @end
 
-@implementation WK2BrowserWindowController
+@implementation WK2BrowserWindowController {
+    WKContextRef _context;
+    WKPageGroupRef _pageGroup;
+    WKView *_webView;
+}
 
 - (id)initWithContext:(WKContextRef)context pageGroup:(WKPageGroupRef)pageGroup
 {
@@ -61,6 +69,7 @@
 {
     WKRelease(_context);
     WKRelease(_pageGroup);
+    _webView.browsingContextController.policyDelegate = nil;
     [_webView release];
 
     [super dealloc];
@@ -412,25 +421,6 @@ static void didChangeBackForwardList(WKPageRef page, WKBackForwardListItemRef ad
     [(WK2BrowserWindowController *)clientInfo validateToolbar];
 }
 
-// MARK: Policy Client Callbacks
-
-static void decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKFrameRef originatingFrame, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
-{
-    LOG(@"decidePolicyForNavigationAction");
-    WKFramePolicyListenerUse(listener);
-}
-
-static void decidePolicyForNewWindowAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKStringRef frameName, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
-{
-    LOG(@"decidePolicyForNewWindowAction");
-    WKFramePolicyListenerUse(listener);
-}
-
-static void decidePolicyForResponse(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef request, bool canShowMIMEType, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
-{
-    WKFramePolicyListenerUse(listener);
-}
-
 // MARK: UI Client Callbacks
 
 static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef request, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton button, const void* clientInfo)
@@ -666,18 +656,8 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         0, // pluginLoadPolicy
     };
     WKPageSetPageLoaderClient(_webView.pageRef, &loadClient);
-    
-    WKPagePolicyClient policyClient = {
-        kWKPagePolicyClientCurrentVersion,
-        self,       /* clientInfo */
-        0,          /* decidePolicyForNavigationAction_deprecatedForUseWithV0 */
-        decidePolicyForNewWindowAction,
-        0,          /* decidePolicyForResponse_deprecatedForUseWithV */
-        0,          /* unableToImplementPolicy */
-        decidePolicyForNavigationAction,
-        decidePolicyForResponse,
-    };
-    WKPageSetPagePolicyClient(_webView.pageRef, &policyClient);
+
+    _webView.browsingContextController.policyDelegate = self;
 
     WKPageUIClient uiClient = {
         kWKPageUIClientCurrentVersion,
@@ -847,4 +827,25 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     WKPageFindString(_webView.pageRef, string, kWKFindOptionsCaseInsensitive | kWKFindOptionsWrapAround | kWKFindOptionsShowFindIndicator | kWKFindOptionsShowOverlay, 100);
 }
 
+#pragma mark WKBrowsingContextPolicyDelegate
+
+- (void)browsingContextController:(WKBrowsingContextController *)browsingContext decidePolicyForNavigationAction:(NSDictionary *)actionInformation decisionHandler:(WKPolicyDecisionHandler)decisionHandler
+{
+    LOG(@"decidePolicyForNavigationAction");
+    decisionHandler(WKPolicyDecisionAllow);
+}
+
+- (void)browsingContextController:(WKBrowsingContextController *)browsingContext decidePolicyForNewWindowAction:(NSDictionary *)actionInformation decisionHandler:(WKPolicyDecisionHandler)decisionHandler
+{
+    LOG(@"decidePolicyForNewWindowAction");
+    decisionHandler(WKPolicyDecisionAllow);
+}
+
+- (void)browsingContextController:(WKBrowsingContextController *)browsingContext decidePolicyForResponseAction:(NSDictionary *)actionInformation decisionHandler:(WKPolicyDecisionHandler)decisionHandler
+{
+    decisionHandler(WKPolicyDecisionAllow);
+}
+
 @end
+
+#endif // WK_API_ENABLED
