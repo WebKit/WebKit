@@ -1,3 +1,26 @@
+2013-12-02  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        Fix a crash in the webaudio source provider when the audio track is going away.
+        https://bugs.webkit.org/show_bug.cgi?id=124975
+
+        Reviewed by Philippe Normand.
+
+        Merged https://chromium.googlesource.com/chromium/blink/+/b21838b32bf11b1a972dfc449ddde71115490c23
+
+        Before this patch, it was hitting a use-after-free crash  when the audio
+        track in the media stream is going away and the webaudio mediastreamsourcenode
+        is still running.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createMediaStreamSource): Passing audio track
+        pointer to MediaStreamAudioSourceNode constructor.
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::create):
+        (WebCore::MediaStreamAudioSourceNode::MediaStreamAudioSourceNode):
+        * Modules/webaudio/MediaStreamAudioSourceNode.h: Added
+        MediaStreamTrack class variable and change the constructor to receive
+        it as parameter.
+
 2013-12-02  Andrzej Badowski  <a.badowski@samsung.com>
 
         [ATK] Support active state for listbox elements.

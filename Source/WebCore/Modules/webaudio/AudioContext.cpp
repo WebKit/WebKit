@@ -417,20 +417,21 @@ PassRefPtr<MediaStreamAudioSourceNode> AudioContext::createMediaStreamSource(Med
     AudioSourceProvider* provider = 0;
 
     Vector<RefPtr<MediaStreamTrack>> audioTracks = mediaStream->getAudioTracks();
+    RefPtr<MediaStreamTrack> audioTrack;
+
     // FIXME: get a provider for non-local MediaStreams (like from a remote peer).
     for (size_t i = 0; i < audioTracks.size(); ++i) {
-        RefPtr<MediaStreamTrack> localAudio = audioTracks[i];
-        if (!localAudio->source()->isAudioStreamSource())
-            continue;
-
-        MediaStreamAudioSource* source = static_cast<MediaStreamAudioSource*>(localAudio->source());
-        ASSERT(!source->deviceId().isEmpty());
-        destination()->enableInput(source->deviceId());
-        provider = destination()->localAudioInputProvider();
-        break;
+        audioTrack = audioTracks[i];
+        if (audioTrack->source()->isAudioStreamSource()) {
+            auto source = static_cast<MediaStreamAudioSource*>(audioTrack->source());
+            ASSERT(!source->deviceId().isEmpty());
+            destination()->enableInput(source->deviceId());
+            provider = destination()->localAudioInputProvider();
+            break;
+        }
     }
 
-    RefPtr<MediaStreamAudioSourceNode> node = MediaStreamAudioSourceNode::create(this, mediaStream, provider);
+    RefPtr<MediaStreamAudioSourceNode> node = MediaStreamAudioSourceNode::create(this, mediaStream, audioTrack.get(), provider);
 
     // FIXME: Only stereo streams are supported right now. We should be able to accept multi-channel streams.
     node->setFormat(2, sampleRate());
