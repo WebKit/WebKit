@@ -293,9 +293,8 @@ static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
     CString defaultUserAgent = webkit_settings_get_user_agent(settings.get());
     webkit_web_view_set_settings(test->m_webView, settings.get());
 
+    g_assert(g_strstr_len(defaultUserAgent.data(), -1, "AppleWebKit"));
     g_assert(g_strstr_len(defaultUserAgent.data(), -1, "Safari"));
-    g_assert(g_strstr_len(defaultUserAgent.data(), -1, "Chromium"));
-    g_assert(g_strstr_len(defaultUserAgent.data(), -1, "Chrome"));
 
     webkit_settings_set_user_agent(settings.get(), 0);
     g_assert_cmpstr(defaultUserAgent.data(), ==, webkit_settings_get_user_agent(settings.get()));
