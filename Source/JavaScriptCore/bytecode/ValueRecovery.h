@@ -27,12 +27,13 @@
 #define ValueRecovery_h
 
 #include "DataFormat.h"
+#if ENABLE(JIT)
 #include "GPRInfo.h"
 #include "FPRInfo.h"
+#endif
 #include "JSCJSValue.h"
 #include "MacroAssembler.h"
 #include "VirtualRegister.h"
-#include <stdio.h>
 #include <wtf/Platform.h>
 
 namespace JSC {
@@ -246,8 +247,10 @@ public:
     
     JSValue recover(ExecState*) const;
     
+#if ENABLE(JIT)
     void dumpInContext(PrintStream& out, DumpContext* context) const;
     void dump(PrintStream& out) const;
+#endif
 
 private:
     ValueRecoveryTechnique m_technique;

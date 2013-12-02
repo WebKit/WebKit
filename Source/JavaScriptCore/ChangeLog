@@ -1,3 +1,16 @@
+2013-12-02  László Langó  <lango@inf.u-szeged.hu>
+
+        Unused include files when building without JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=125062
+
+        Reviewed by Michael Saboff.
+
+        We should organize the includes, and guard JIT methods
+        in ValueRecovery.
+
+        * bytecode/ValueRecovery.cpp: Guard include files.
+        * bytecode/ValueRecovery.h: Guard JIT methods.
+
 2013-12-02  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         [MIPS] Small stack frame causes regressions.

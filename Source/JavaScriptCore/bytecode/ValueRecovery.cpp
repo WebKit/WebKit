@@ -60,6 +60,8 @@ JSValue ValueRecovery::recover(ExecState* exec) const
     }
 }
 
+#if ENABLE(JIT)
+
 void ValueRecovery::dumpInContext(PrintStream& out, DumpContext* context) const
 {
     switch (technique()) {
@@ -130,6 +132,7 @@ void ValueRecovery::dump(PrintStream& out) const
 {
     dumpInContext(out, 0);
 }
+#endif // ENABLE(JIT)
 
 } // namespace JSC
 
