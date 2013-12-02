@@ -382,7 +382,7 @@ static FloatQuad inflateQuad(const FloatQuad& quad, float inflateSize)
     if (![self isFirstResponder])
         [self becomeFirstResponder];
 
-    _page->process()->send(Messages::WebPage::HandleTap(IntPoint(location)), _page->pageID());
+    _page->process().send(Messages::WebPage::HandleTap(IntPoint(location)), _page->pageID());
 }
 
 - (UIView *)inputAccessoryView

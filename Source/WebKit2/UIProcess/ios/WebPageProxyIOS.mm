@@ -103,7 +103,7 @@ bool WebPageProxy::insertText(const String& text, uint64_t replacementRangeStart
         return true;
     
     bool handled = true;
-    process()->sendSync(Messages::WebPage::InsertText(text, replacementRangeStart, replacementRangeEnd), Messages::WebPage::InsertText::Reply(handled, m_editorState), m_pageID);
+    process().sendSync(Messages::WebPage::InsertText(text, replacementRangeStart, replacementRangeEnd), Messages::WebPage::InsertText::Reply(handled, m_editorState), m_pageID);
     return handled;
 }
 
@@ -333,12 +333,12 @@ bool WebPageProxy::acceptsFirstMouse(int, const WebKit::WebMouseEvent&)
 
 void WebPageProxy::didFinishScrolling(const WebCore::FloatPoint& contentOffset)
 {
-    process()->send(Messages::WebPage::DidFinishScrolling(contentOffset), m_pageID);
+    process().send(Messages::WebPage::DidFinishScrolling(contentOffset), m_pageID);
 }
 
 void WebPageProxy::didFinishZooming(float newScale)
 {
-    process()->send(Messages::WebPage::DidFinishZooming(newScale), m_pageID);
+    process().send(Messages::WebPage::DidFinishZooming(newScale), m_pageID);
 }
 
 void WebPageProxy::tapHighlightAtPosition(const WebCore::FloatPoint& position, uint64_t& requestID)
@@ -346,12 +346,12 @@ void WebPageProxy::tapHighlightAtPosition(const WebCore::FloatPoint& position, u
     static uint64_t uniqueRequestID = 0;
     requestID = ++uniqueRequestID;
 
-    process()->send(Messages::WebPage::TapHighlightAtPosition(requestID, position), m_pageID);
+    process().send(Messages::WebPage::TapHighlightAtPosition(requestID, position), m_pageID);
 }
 
 void WebPageProxy::blurAssistedNode()
 {
-    process()->send(Messages::WebPage::BlurAssistedNode(), m_pageID);
+    process().send(Messages::WebPage::BlurAssistedNode(), m_pageID);
 }
 
 void WebPageProxy::mainDocumentDidReceiveMobileDocType()
