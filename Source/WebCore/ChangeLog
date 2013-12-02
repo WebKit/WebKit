@@ -1,3 +1,13 @@
+2013-12-01  Andreas Kling  <akling@apple.com>
+
+        Make more computed style helpers return PassRef.
+        <https://webkit.org/b/125043>
+
+        Reduce branchiness in computed style code by making more of the
+        file-local helpers return PassRef instead of PassRefPtr.
+
+        Reviewed by Anders Carlsson.
+
 2013-11-30  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Implement scrollbarThickness for opaque scrollbar

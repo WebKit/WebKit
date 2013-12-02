@@ -600,24 +600,24 @@ static PassRefPtr<CSSValue> valueForNinePieceImage(const NinePieceImage& image)
     return createBorderImageValue(imageValue.release(), imageSlices.release(), borderSlices.release(), outset.release(), repeat.release());
 }
 
-inline static PassRefPtr<CSSPrimitiveValue> zoomAdjustedPixelValue(double value, const RenderStyle* style)
+inline static PassRef<CSSPrimitiveValue> zoomAdjustedPixelValue(double value, const RenderStyle* style)
 {
     return cssValuePool().createValue(adjustFloatForAbsoluteZoom(value, style), CSSPrimitiveValue::CSS_PX);
 }
 
-inline static PassRefPtr<CSSPrimitiveValue> zoomAdjustedNumberValue(double value, const RenderStyle* style)
+inline static PassRef<CSSPrimitiveValue> zoomAdjustedNumberValue(double value, const RenderStyle* style)
 {
     return cssValuePool().createValue(value / style->effectiveZoom(), CSSPrimitiveValue::CSS_NUMBER);
 }
 
-static PassRefPtr<CSSValue> zoomAdjustedPixelValueForLength(const Length& length, const RenderStyle* style)
+static PassRef<CSSValue> zoomAdjustedPixelValueForLength(const Length& length, const RenderStyle* style)
 {
     if (length.isFixed())
         return zoomAdjustedPixelValue(length.value(), style);
     return cssValuePool().createValue(length);
 }
 
-static PassRefPtr<CSSValue> valueForReflection(const StyleReflection* reflection, const RenderStyle* style)
+static PassRef<CSSValue> valueForReflection(const StyleReflection* reflection, const RenderStyle* style)
 {
     if (!reflection)
         return cssValuePool().createIdentifierValue(CSSValueNone);
@@ -647,20 +647,20 @@ static PassRefPtr<CSSValue> valueForReflection(const StyleReflection* reflection
     return CSSReflectValue::create(direction.release(), offset.release(), valueForNinePieceImage(reflection->mask()));
 }
 
-static PassRefPtr<CSSValueList> createPositionListForLayer(CSSPropertyID propertyID, const FillLayer* layer, const RenderStyle* style)
+static PassRef<CSSValueList> createPositionListForLayer(CSSPropertyID propertyID, const FillLayer* layer, const RenderStyle* style)
 {
-    RefPtr<CSSValueList> positionList = CSSValueList::createSpaceSeparated();
+    auto positionList = CSSValueList::createSpaceSeparated();
     if (layer->isBackgroundOriginSet()) {
         ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPosition || propertyID == CSSPropertyWebkitMaskPosition);
-        positionList->append(cssValuePool().createValue(layer->backgroundXOrigin()));
+        positionList.get().append(cssValuePool().createValue(layer->backgroundXOrigin()));
     }
-    positionList->append(zoomAdjustedPixelValueForLength(layer->xPosition(), style));
+    positionList.get().append(zoomAdjustedPixelValueForLength(layer->xPosition(), style));
     if (layer->isBackgroundOriginSet()) {
         ASSERT(propertyID == CSSPropertyBackgroundPosition || propertyID == CSSPropertyWebkitMaskPosition);
-        positionList->append(cssValuePool().createValue(layer->backgroundYOrigin()));
+        positionList.get().append(cssValuePool().createValue(layer->backgroundYOrigin()));
     }
-    positionList->append(zoomAdjustedPixelValueForLength(layer->yPosition(), style));
-    return positionList.release();
+    positionList.get().append(zoomAdjustedPixelValueForLength(layer->yPosition(), style));
+    return positionList;
 }
 
 static PassRefPtr<CSSValue> getPositionOffsetValue(RenderStyle* style, CSSPropertyID propertyID, RenderView* renderView)
@@ -712,21 +712,21 @@ PassRefPtr<CSSPrimitiveValue> ComputedStyleExtractor::currentColorOrValidColor(R
     return cssValuePool().createColorValue(color.rgb());
 }
 
-static PassRefPtr<CSSValueList> getBorderRadiusCornerValues(const LengthSize& radius, const RenderStyle* style, RenderView* renderView)
+static PassRef<CSSValueList> getBorderRadiusCornerValues(const LengthSize& radius, const RenderStyle* style, RenderView* renderView)
 {
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    auto list = CSSValueList::createSpaceSeparated();
     if (radius.width().type() == Percent)
-        list->append(cssValuePool().createValue(radius.width().percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
+        list.get().append(cssValuePool().createValue(radius.width().percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
     else
-        list->append(zoomAdjustedPixelValue(valueForLength(radius.width(), 0, renderView), style));
+        list.get().append(zoomAdjustedPixelValue(valueForLength(radius.width(), 0, renderView), style));
     if (radius.height().type() == Percent)
-        list->append(cssValuePool().createValue(radius.height().percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
+        list.get().append(cssValuePool().createValue(radius.height().percent(), CSSPrimitiveValue::CSS_PERCENTAGE));
     else
-        list->append(zoomAdjustedPixelValue(valueForLength(radius.height(), 0, renderView), style));
-    return list.release();
+        list.get().append(zoomAdjustedPixelValue(valueForLength(radius.height(), 0, renderView), style));
+    return list;
 }
 
-static PassRefPtr<CSSValue> getBorderRadiusCornerValue(const LengthSize& radius, const RenderStyle* style, RenderView* renderView)
+static PassRef<CSSValue> getBorderRadiusCornerValue(const LengthSize& radius, const RenderStyle* style, RenderView* renderView)
 {
     if (radius.width() == radius.height()) {
         if (radius.width().type() == Percent)
@@ -736,9 +736,9 @@ static PassRefPtr<CSSValue> getBorderRadiusCornerValue(const LengthSize& radius,
     return getBorderRadiusCornerValues(radius, style, renderView);
 }
 
-static PassRefPtr<CSSValueList> getBorderRadiusShorthandValue(const RenderStyle* style, RenderView* renderView)
+static PassRef<CSSValueList> getBorderRadiusShorthandValue(const RenderStyle* style, RenderView* renderView)
 {
-    RefPtr<CSSValueList> list = CSSValueList::createSlashSeparated();
+    auto list = CSSValueList::createSlashSeparated();
     bool showHorizontalBottomLeft = style->borderTopRightRadius().width() != style->borderBottomLeftRadius().width();
     bool showHorizontalBottomRight = showHorizontalBottomLeft || (style->borderBottomRightRadius().width() != style->borderTopLeftRadius().width());
     bool showHorizontalTopRight = showHorizontalBottomRight || (style->borderTopRightRadius().width() != style->borderTopLeftRadius().width());
@@ -762,7 +762,7 @@ static PassRefPtr<CSSValueList> getBorderRadiusShorthandValue(const RenderStyle*
     if (showHorizontalBottomLeft)
         horizontalRadii->append(bottomLeftRadius->item(0));
 
-    list->append(horizontalRadii.release());
+    list.get().append(horizontalRadii.release());
 
     if (showVerticalTopLeft) {
         RefPtr<CSSValueList> verticalRadii = CSSValueList::createSpaceSeparated();
@@ -773,9 +773,9 @@ static PassRefPtr<CSSValueList> getBorderRadiusShorthandValue(const RenderStyle*
             verticalRadii->append(bottomRightRadius->item(1));
         if (showVerticalBottomLeft)
             verticalRadii->append(bottomLeftRadius->item(1));
-        list->append(verticalRadii.release());
+        list.get().append(verticalRadii.release());
     }
-    return list.release();
+    return list;
 }
 
 static LayoutRect sizingBox(RenderObject* renderer)
@@ -787,7 +787,7 @@ static LayoutRect sizingBox(RenderObject* renderer)
     return box->style().boxSizing() == BORDER_BOX ? box->borderBoxRect() : box->computedCSSContentBoxRect();
 }
 
-static PassRefPtr<WebKitCSSTransformValue> matrixTransformValue(const TransformationMatrix& transform, const RenderStyle* style)
+static PassRef<WebKitCSSTransformValue> matrixTransformValue(const TransformationMatrix& transform, const RenderStyle* style)
 {
     RefPtr<WebKitCSSTransformValue> transformValue;
     if (transform.isAffine()) {
@@ -823,10 +823,10 @@ static PassRefPtr<WebKitCSSTransformValue> matrixTransformValue(const Transforma
         transformValue->append(cssValuePool().createValue(transform.m44(), CSSPrimitiveValue::CSS_NUMBER));
     }
 
-    return transformValue.release();
+    return transformValue.releaseNonNull();
 }
 
-static PassRefPtr<CSSValue> computedTransform(RenderObject* renderer, const RenderStyle* style)
+static PassRef<CSSValue> computedTransform(RenderObject* renderer, const RenderStyle* style)
 {
     if (!renderer || !renderer->hasTransform() || !style->hasTransform())
         return cssValuePool().createIdentifierValue(CSSValueNone);
@@ -840,45 +840,44 @@ static PassRefPtr<CSSValue> computedTransform(RenderObject* renderer, const Rend
     // Note that this does not flatten to an affine transform if ENABLE(3D_RENDERING) is off, by design.
 
     // FIXME: Need to print out individual functions (https://bugs.webkit.org/show_bug.cgi?id=23924)
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    list->append(matrixTransformValue(transform, style));
-
-    return list.release();
+    auto list = CSSValueList::createSpaceSeparated();
+    list.get().append(matrixTransformValue(transform, style));
+    return std::move(list);
 }
 
 #if ENABLE(CSS_SHADERS)
-static PassRefPtr<CSSValue> valueForCustomFilterArrayParameter(const CustomFilterArrayParameter* arrayParameter)
+static PassRef<WebKitCSSArrayFunctionValue> valueForCustomFilterArrayParameter(const CustomFilterArrayParameter* arrayParameter)
 {
-    RefPtr<WebKitCSSArrayFunctionValue> arrayParameterValue = WebKitCSSArrayFunctionValue::create();
+    auto arrayParameterValue = WebKitCSSArrayFunctionValue::create();
     for (unsigned i = 0, size = arrayParameter->size(); i < size; ++i)
-        arrayParameterValue->append(cssValuePool().createValue(arrayParameter->valueAt(i), CSSPrimitiveValue::CSS_NUMBER));
-    return arrayParameterValue.release();
+        arrayParameterValue.get().append(cssValuePool().createValue(arrayParameter->valueAt(i), CSSPrimitiveValue::CSS_NUMBER));
+    return arrayParameterValue;
 }
 
-static PassRefPtr<CSSValue> valueForCustomFilterMatParameter(const CustomFilterArrayParameter* matrixParameter)
+static PassRef<WebKitCSSMatFunctionValue> valueForCustomFilterMatParameter(const CustomFilterArrayParameter* matrixParameter)
 {
-    RefPtr<WebKitCSSMatFunctionValue> matrixParameterValue = WebKitCSSMatFunctionValue::create();
+    auto matrixParameterValue = WebKitCSSMatFunctionValue::create();
     for (unsigned i = 0, size = matrixParameter->size(); i < size; ++i)
-        matrixParameterValue->append(cssValuePool().createValue(matrixParameter->valueAt(i), CSSPrimitiveValue::CSS_NUMBER));
-    return matrixParameterValue.release();
+        matrixParameterValue.get().append(cssValuePool().createValue(matrixParameter->valueAt(i), CSSPrimitiveValue::CSS_NUMBER));
+    return matrixParameterValue;
 }
 
-static PassRefPtr<CSSValue> valueForCustomFilterColorParameter(const CustomFilterColorParameter* colorParameter)
+static PassRef<CSSValueList> valueForCustomFilterColorParameter(const CustomFilterColorParameter* colorParameter)
 {
-    RefPtr<CSSValueList> colorParameterValue = CSSValueList::createSpaceSeparated();
-    colorParameterValue->append(cssValuePool().createColorValue(colorParameter->color().rgb()));
-    return colorParameterValue.release();
+    auto colorParameterValue = CSSValueList::createSpaceSeparated();
+    colorParameterValue.get().append(cssValuePool().createColorValue(colorParameter->color().rgb()));
+    return colorParameterValue;
 }
 
-static PassRefPtr<CSSValue> valueForCustomFilterNumberParameter(const CustomFilterNumberParameter* numberParameter)
+static PassRef<CSSValueList> valueForCustomFilterNumberParameter(const CustomFilterNumberParameter* numberParameter)
 {
-    RefPtr<CSSValueList> numberParameterValue = CSSValueList::createSpaceSeparated();
+    auto numberParameterValue = CSSValueList::createSpaceSeparated();
     for (unsigned i = 0; i < numberParameter->size(); ++i)
-        numberParameterValue->append(cssValuePool().createValue(numberParameter->valueAt(i), CSSPrimitiveValue::CSS_NUMBER));
-    return numberParameterValue.release();
+        numberParameterValue.get().append(cssValuePool().createValue(numberParameter->valueAt(i), CSSPrimitiveValue::CSS_NUMBER));
+    return numberParameterValue;
 }
 
-static PassRefPtr<CSSValue> valueForCustomFilterTransformParameter(const RenderObject* renderer, const RenderStyle* style, const CustomFilterTransformParameter* transformParameter)
+static PassRef<WebKitCSSTransformValue> valueForCustomFilterTransformParameter(const RenderObject* renderer, const RenderStyle* style, const CustomFilterTransformParameter* transformParameter)
 {
     IntSize size;
     if (renderer && renderer->isBox())
@@ -912,12 +911,12 @@ static PassRefPtr<CSSValue> valueForCustomFilterParameter(const RenderObject* re
 }
 #endif // ENABLE(CSS_SHADERS)
 
-static inline PassRefPtr<CSSPrimitiveValue> adjustLengthForZoom(double length, const RenderStyle* style, AdjustPixelValuesForComputedStyle adjust)
+static inline PassRef<CSSPrimitiveValue> adjustLengthForZoom(double length, const RenderStyle* style, AdjustPixelValuesForComputedStyle adjust)
 {
     return adjust == AdjustPixelValues ? zoomAdjustedPixelValue(length, style) : cssValuePool().createValue(length, CSSPrimitiveValue::CSS_PX);
 }
 
-static inline PassRefPtr<CSSPrimitiveValue> adjustLengthForZoom(const Length& length, const RenderStyle* style, AdjustPixelValuesForComputedStyle adjust)
+static inline PassRef<CSSPrimitiveValue> adjustLengthForZoom(const Length& length, const RenderStyle* style, AdjustPixelValuesForComputedStyle adjust)
 {
     return adjust == AdjustPixelValues ? zoomAdjustedPixelValue(length.value(), style) : cssValuePool().createValue(length);
 }
@@ -1100,7 +1099,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderObject* 
 }
 #endif
 
-static PassRefPtr<CSSValue> valueForGridTrackBreadth(const GridLength& trackBreadth, const RenderStyle* style, RenderView* renderView)
+static PassRef<CSSValue> valueForGridTrackBreadth(const GridLength& trackBreadth, const RenderStyle* style, RenderView* renderView)
 {
     if (!trackBreadth.isLength())
         return cssValuePool().createValue(trackBreadth.flex(), CSSPrimitiveValue::CSS_FR);
@@ -1146,7 +1145,7 @@ static void addValuesForNamedGridLinesAtIndex(const NamedGridLinesMap& namedGrid
     }
 }
 
-static PassRefPtr<CSSValue> valueForGridTrackList(const Vector<GridTrackSize>& trackSizes, const NamedGridLinesMap& namedGridLines, const RenderStyle* style, RenderView* renderView)
+static PassRef<CSSValue> valueForGridTrackList(const Vector<GridTrackSize>& trackSizes, const NamedGridLinesMap& namedGridLines, const RenderStyle* style, RenderView* renderView)
 {
     // Handle the 'none' case here.
     if (!trackSizes.size()) {
@@ -1154,17 +1153,17 @@ static PassRefPtr<CSSValue> valueForGridTrackList(const Vector<GridTrackSize>& t
         return cssValuePool().createIdentifierValue(CSSValueNone);
     }
 
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    auto list = CSSValueList::createSpaceSeparated();
     for (size_t i = 0; i < trackSizes.size(); ++i) {
-        addValuesForNamedGridLinesAtIndex(namedGridLines, i, *list);
-        list->append(valueForGridTrackSize(trackSizes[i], style, renderView));
+        addValuesForNamedGridLinesAtIndex(namedGridLines, i, list.get());
+        list.get().append(valueForGridTrackSize(trackSizes[i], style, renderView));
     }
     // Those are the trailing <string>* allowed in the syntax.
-    addValuesForNamedGridLinesAtIndex(namedGridLines, trackSizes.size(), *list);
-    return list.release();
+    addValuesForNamedGridLinesAtIndex(namedGridLines, trackSizes.size(), list.get());
+    return std::move(list);
 }
 
-static PassRefPtr<CSSValue> valueForGridPosition(const GridPosition& position)
+static PassRef<CSSValue> valueForGridPosition(const GridPosition& position)
 {
     if (position.isAuto())
         return cssValuePool().createIdentifierValue(CSSValueAuto);
@@ -1172,65 +1171,62 @@ static PassRefPtr<CSSValue> valueForGridPosition(const GridPosition& position)
     if (position.isNamedGridArea())
         return cssValuePool().createValue(position.namedGridLine(), CSSPrimitiveValue::CSS_STRING);
 
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    auto list = CSSValueList::createSpaceSeparated();
     if (position.isSpan()) {
-        list->append(cssValuePool().createIdentifierValue(CSSValueSpan));
-        list->append(cssValuePool().createValue(position.spanPosition(), CSSPrimitiveValue::CSS_NUMBER));
+        list.get().append(cssValuePool().createIdentifierValue(CSSValueSpan));
+        list.get().append(cssValuePool().createValue(position.spanPosition(), CSSPrimitiveValue::CSS_NUMBER));
     } else
-        list->append(cssValuePool().createValue(position.integerPosition(), CSSPrimitiveValue::CSS_NUMBER));
+        list.get().append(cssValuePool().createValue(position.integerPosition(), CSSPrimitiveValue::CSS_NUMBER));
 
     if (!position.namedGridLine().isNull())
-        list->append(cssValuePool().createValue(position.namedGridLine(), CSSPrimitiveValue::CSS_STRING));
-    return list.release();
+        list.get().append(cssValuePool().createValue(position.namedGridLine(), CSSPrimitiveValue::CSS_STRING));
+    return std::move(list);
 }
 
-static PassRefPtr<CSSValue> createTransitionPropertyValue(const Animation& animation)
+static PassRef<CSSValue> createTransitionPropertyValue(const Animation& animation)
 {
-    RefPtr<CSSValue> propertyValue;
     if (animation.animationMode() == Animation::AnimateNone)
-        propertyValue = cssValuePool().createIdentifierValue(CSSValueNone);
-    else if (animation.animationMode() == Animation::AnimateAll)
-        propertyValue = cssValuePool().createIdentifierValue(CSSValueAll);
-    else
-        propertyValue = cssValuePool().createValue(getPropertyNameString(animation.property()), CSSPrimitiveValue::CSS_STRING);
-    return propertyValue.release();
+        return cssValuePool().createIdentifierValue(CSSValueNone);
+    if (animation.animationMode() == Animation::AnimateAll)
+        return cssValuePool().createIdentifierValue(CSSValueAll);
+    return cssValuePool().createValue(getPropertyNameString(animation.property()), CSSPrimitiveValue::CSS_STRING);
 }
 
-static PassRefPtr<CSSValue> getTransitionPropertyValue(const AnimationList* animList)
+static PassRef<CSSValueList> getTransitionPropertyValue(const AnimationList* animList)
 {
-    RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+    auto list = CSSValueList::createCommaSeparated();
     if (animList) {
         for (size_t i = 0; i < animList->size(); ++i)
-            list->append(createTransitionPropertyValue(animList->animation(i)));
+            list.get().append(createTransitionPropertyValue(animList->animation(i)));
     } else
-        list->append(cssValuePool().createIdentifierValue(CSSValueAll));
-    return list.release();
+        list.get().append(cssValuePool().createIdentifierValue(CSSValueAll));
+    return list;
 }
 
-static PassRefPtr<CSSValue> getDelayValue(const AnimationList* animList)
+static PassRef<CSSValueList> getDelayValue(const AnimationList* animList)
 {
-    RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+    auto list = CSSValueList::createCommaSeparated();
     if (animList) {
         for (size_t i = 0; i < animList->size(); ++i)
-            list->append(cssValuePool().createValue(animList->animation(i).delay(), CSSPrimitiveValue::CSS_S));
+            list.get().append(cssValuePool().createValue(animList->animation(i).delay(), CSSPrimitiveValue::CSS_S));
     } else {
         // Note that initialAnimationDelay() is used for both transitions and animations
-        list->append(cssValuePool().createValue(Animation::initialAnimationDelay(), CSSPrimitiveValue::CSS_S));
+        list.get().append(cssValuePool().createValue(Animation::initialAnimationDelay(), CSSPrimitiveValue::CSS_S));
     }
-    return list.release();
+    return list;
 }
 
-static PassRefPtr<CSSValue> getDurationValue(const AnimationList* animList)
+static PassRef<CSSValueList> getDurationValue(const AnimationList* animList)
 {
-    RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+    auto list = CSSValueList::createCommaSeparated();
     if (animList) {
         for (size_t i = 0; i < animList->size(); ++i)
-            list->append(cssValuePool().createValue(animList->animation(i).duration(), CSSPrimitiveValue::CSS_S));
+            list.get().append(cssValuePool().createValue(animList->animation(i).duration(), CSSPrimitiveValue::CSS_S));
     } else {
         // Note that initialAnimationDuration() is used for both transitions and animations
-        list->append(cssValuePool().createValue(Animation::initialAnimationDuration(), CSSPrimitiveValue::CSS_S));
+        list.get().append(cssValuePool().createValue(Animation::initialAnimationDuration(), CSSPrimitiveValue::CSS_S));
     }
-    return list.release();
+    return list;
 }
 
 static PassRefPtr<CSSValue> createTimingFunctionValue(const TimingFunction* timingFunction)
@@ -1272,16 +1268,16 @@ static PassRefPtr<CSSValue> createTimingFunctionValue(const TimingFunction* timi
     return 0;
 }
 
-static PassRefPtr<CSSValue> getTimingFunctionValue(const AnimationList* animList)
+static PassRef<CSSValueList> getTimingFunctionValue(const AnimationList* animList)
 {
-    RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+    auto list = CSSValueList::createCommaSeparated();
     if (animList) {
         for (size_t i = 0; i < animList->size(); ++i)
-            list->append(createTimingFunctionValue(animList->animation(i).timingFunction().get()));
+            list.get().append(createTimingFunctionValue(animList->animation(i).timingFunction().get()));
     } else
         // Note that initialAnimationTimingFunction() is used for both transitions and animations
-        list->append(createTimingFunctionValue(Animation::initialAnimationTimingFunction().get()));
-    return list.release();
+        list.get().append(createTimingFunctionValue(Animation::initialAnimationTimingFunction().get()));
+    return list;
 }
 
 static PassRefPtr<CSSValue> createLineBoxContainValue(unsigned lineBoxContain)
