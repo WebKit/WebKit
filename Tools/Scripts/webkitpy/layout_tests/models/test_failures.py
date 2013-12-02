@@ -27,9 +27,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import cPickle
+import logging
 
 from webkitpy.layout_tests.models import test_expectations
 
+_log = logging.getLogger(__name__)
 
 def is_reftest_failure(failure_list):
     failure_types = [type(f) for f in failure_list]
@@ -107,6 +109,20 @@ class TestFailure(object):
         """Returns True if we should kill DumpRenderTree/WebKitTestRunner before the next test."""
         return False
 
+    def write_failure(self, writer, driver_output, expected_driver_output, port):
+        assert isinstance(self, (FailureTimeout, FailureReftestNoImagesGenerated))
+
+
+class FailureText(TestFailure):
+    def write_failure(self, writer, driver_output, expected_driver_output, port):
+        writer.write_text_files(driver_output.text, expected_driver_output.text)
+        writer.create_text_diff_and_write_result(driver_output.text, expected_driver_output.text)
+
+
+class FailureAudio(TestFailure):
+    def write_failure(self, writer, driver_output, expected_driver_output, port):
+        writer.write_audio_files(driver_output.audio, expected_driver_output.audio)
+
 
 class FailureTimeout(TestFailure):
     def __init__(self, is_reftest=False):
@@ -135,24 +151,35 @@ class FailureCrash(TestFailure):
     def driver_needs_restart(self):
         return True
 
+    def write_failure(self, writer, driver_output, expected_driver_output, port):
+        crashed_driver_output = expected_driver_output if self.is_reftest else driver_output
+        writer.write_crash_log(crashed_driver_output.crash_log)
 
-class FailureMissingResult(TestFailure):
+
+class FailureMissingResult(FailureText):
     def message(self):
         return "-expected.txt was missing"
 
 
-class FailureTextMismatch(TestFailure):
+class FailureTextMismatch(FailureText):
     def message(self):
         return "text diff"
+
 
 class FailureMissingImageHash(TestFailure):
     def message(self):
         return "-expected.png was missing an embedded checksum"
 
+    def write_failure(self, writer, driver_output, expected_driver_output, port):
+        writer.write_image_files(driver_output.image, expected_driver_output.image)
+
 
 class FailureMissingImage(TestFailure):
     def message(self):
         return "-expected.png was missing"
+
+    def write_failure(self, writer, driver_output, expected_driver_output, port):
+        writer.write_image_files(driver_output.image, expected_image=None)
 
 
 class FailureImageHashMismatch(TestFailure):
@@ -162,6 +189,10 @@ class FailureImageHashMismatch(TestFailure):
 
     def message(self):
         return "image diff"
+
+    def write_failure(self, writer, driver_output, expected_driver_output, port):
+        writer.write_image_files(driver_output.image, expected_driver_output.image)
+        writer.write_image_diff_files(driver_output.image_diff)
 
 
 class FailureImageHashIncorrect(TestFailure):
@@ -178,6 +209,19 @@ class FailureReftestMismatch(TestFailure):
     def message(self):
         return "reference mismatch"
 
+    def write_failure(self, writer, driver_output, expected_driver_output, port):
+        writer.write_image_files(driver_output.image, expected_driver_output.image)
+        # FIXME: This work should be done earlier in the pipeline (e.g., when we compare images for non-ref tests).
+        # FIXME: We should always have 2 images here.
+        if driver_output.image and expected_driver_output.image:
+            diff_image, diff_percent, err_str = port.diff_image(expected_driver_output.image, driver_output.image, tolerance=0)
+            if diff_image:
+                writer.write_image_diff_files(diff_image)
+                self.diff_percent = diff_percent
+            else:
+                _log.warn('ref test mismatch did not produce an image diff.')
+        writer.write_reftest(self.reference_filename)
+
 
 class FailureReftestMismatchDidNotOccur(TestFailure):
     def __init__(self, reference_filename=None):
@@ -187,6 +231,9 @@ class FailureReftestMismatchDidNotOccur(TestFailure):
     def message(self):
         return "reference mismatch didn't happen"
 
+    def write_failure(self, writer, driver_output, expected_driver_output, port):
+        writer.write_image_files(driver_output.image, expected_image=None)
+        writer.write_reftest(self.reference_filename)
 
 class FailureReftestNoImagesGenerated(TestFailure):
     def __init__(self, reference_filename=None):
@@ -197,12 +244,12 @@ class FailureReftestNoImagesGenerated(TestFailure):
         return "reference didn't generate pixel results."
 
 
-class FailureMissingAudio(TestFailure):
+class FailureMissingAudio(FailureAudio):
     def message(self):
         return "expected audio result was missing"
 
 
-class FailureAudioMismatch(TestFailure):
+class FailureAudioMismatch(FailureAudio):
     def message(self):
         return "audio mismatch"
 

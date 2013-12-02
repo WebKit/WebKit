@@ -1,3 +1,29 @@
+2013-12-02  Dániel Bátyai  <Batyai.Daniel@stud.u-szeged.hu>
+
+        Instead of a large 'if' block, each failure class should write it's own result in test_result_writer.py
+        https://bugs.webkit.org/show_bug.cgi?id=124714
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (write_test_result):
+        * Scripts/webkitpy/layout_tests/models/test_failures.py:
+        (TestFailure.write_failure):
+        (FailureText):
+        (FailureText.write_failure):
+        (FailureAudio):
+        (FailureAudio.write_failure):
+        (FailureCrash.write_failure):
+        (FailureMissingResult):
+        (FailureTextMismatch):
+        (FailureMissingImageHash.write_failure):
+        (FailureMissingImage.write_failure):
+        (FailureImageHashMismatch.write_failure):
+        (FailureReftestMismatch.write_failure):
+        (FailureReftestMismatchDidNotOccur.write_failure):
+        (FailureMissingAudio):
+        (FailureAudioMismatch):
+
 2013-12-02  László Langó  <lango@inf.u-szeged.hu>
 
         Remove the stderr_write attribute from StyleProcessorConfiguration
