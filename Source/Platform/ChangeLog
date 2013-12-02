@@ -1,3 +1,22 @@
+2013-12-02  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Nix Upstream: Updating Platform files
+        https://bugs.webkit.org/show_bug.cgi?id=124982
+
+        Reviewed by Benjamin Poulain.
+
+        Adding new Platform files that are missing in the trunk.
+
+        * PlatformNix.cmake:
+        * nix/public/AudioDestinationConsumer.h: Added.
+        (Nix::AudioDestinationConsumer::~AudioDestinationConsumer):
+        * nix/public/MediaConstraints.h: Added.
+        * nix/public/MediaStream.h: Added.
+        * nix/public/MediaStreamAudioSource.h: Added.
+        * nix/public/MediaStreamCenter.h: Added.
+        * nix/public/MediaStreamSource.h: Added.
+        * nix/public/PrivatePtr.h: Added.
+
 2013-11-26  Marcelo Lira  <marcelo.lira@openbossa.org>
 
         Nix upstreaming - Adding build files and supporting scripts

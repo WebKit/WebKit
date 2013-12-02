@@ -6,6 +6,7 @@ set(Platform_INCLUDES
 )
 
 set(Platform_HEADERS
+    nix/public/AudioDestinationConsumer.h
     nix/public/AudioDevice.h
     nix/public/Canvas.h
     nix/public/Color.h
@@ -13,9 +14,15 @@ set(Platform_HEADERS
     nix/public/FFTFrame.h
     nix/public/Gamepad.h
     nix/public/Gamepads.h
+    nix/public/MediaConstraints.h
     nix/public/MediaPlayer.h
+    nix/public/MediaStream.h
+    nix/public/MediaStreamAudioSource.h
+    nix/public/MediaStreamCenter.h
+    nix/public/MediaStreamSource.h
     nix/public/MultiChannelPCMData.h
     nix/public/Platform.h
+    nix/public/PrivatePtr.h
     nix/public/Rect.h
     nix/public/Size.h
     nix/public/ThemeEngine.h
