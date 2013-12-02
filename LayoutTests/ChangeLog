@@ -1,3 +1,14 @@
+2013-12-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Stores to local captured variables should be intercepted
+        https://bugs.webkit.org/show_bug.cgi?id=124883
+
+        Reviewed by Mark Hahnenberg.
+
+        * js/regress/captured-assignments-expected.txt: Added.
+        * js/regress/captured-assignments.html: Added.
+        * js/regress/script-tests/captured-assignments.js: Added.
+
 2013-12-02  Lauro Neto  <lauro.neto@openbossa.org>
 
         [MediaStream] Update layout tests to newer spec.

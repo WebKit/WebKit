@@ -1,3 +1,86 @@
+2013-12-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Stores to local captured variables should be intercepted
+        https://bugs.webkit.org/show_bug.cgi?id=124883
+
+        Reviewed by Mark Hahnenberg.
+        
+        Previously, in bytecode, you could assign to a captured variable just as you would
+        assign to any other kind of variable. This complicates closure variable constant
+        inference because we don't have any place where we can intercept stores to captured
+        variables in the LLInt.
+        
+        This patch institutes a policy that only certain instructions can store to captured
+        variables. If you interpret those instructions and you are required to notifyWrite()
+        then you need to check if the relevant variable is captured. Those instructions are
+        tracked in CodeBlock.cpp's VerifyCapturedDef. The main one is simply op_captured_mov.
+        In the future, we'll probably modify those instructions to have a pointer directly to
+        the VariableWatchpointSet; but for now we just introduce the captured instructions as
+        placeholders.
+        
+        In order to validate that the placeholders are inserted correctly, this patch improves
+        the CodeBlock validation to be able to inspect every def in the bytecode. To do that,
+        this patch refactors the liveness analysis' use/def calculator to be reusable; it now
+        takes a functor for each use or def.
+        
+        In the process of refactoring the liveness analysis, I noticed that op_enter was
+        claiming to def all callee registers. That's wrong; it only defs the non-temporary
+        variables. Making that change revealed preexisting bugs in the liveness analysis, since
+        now the validator would pick up cases where the bytecode claimed to use a temporary and
+        the def calculator never noticed the definition (or the converse - where the bytecode
+        was actually not using a temporary but the liveness analysis thought that it was a
+        use). This patch fixes a few of those bugs.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::stepOverInstruction):
+        * bytecode/BytecodeUseDef.h: Added.
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::isCaptured):
+        (JSC::CodeBlock::validate):
+        * bytecode/CodeBlock.h:
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::resolveCallee):
+        (JSC::BytecodeGenerator::emitMove):
+        (JSC::BytecodeGenerator::isCaptured):
+        (JSC::BytecodeGenerator::local):
+        (JSC::BytecodeGenerator::constLocal):
+        (JSC::BytecodeGenerator::emitNewFunction):
+        (JSC::BytecodeGenerator::emitLazyNewFunction):
+        (JSC::BytecodeGenerator::emitNewFunctionInternal):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::Local::Local):
+        (JSC::Local::isCaptured):
+        (JSC::Local::captureMode):
+        (JSC::BytecodeGenerator::captureMode):
+        (JSC::BytecodeGenerator::emitNode):
+        (JSC::BytecodeGenerator::pushOptimisedForIn):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PostfixNode::emitResolve):
+        (JSC::PrefixNode::emitResolve):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::ConstDeclNode::emitCodeSingle):
+        (JSC::ForInNode::emitBytecode):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/SymbolTable.h:
+        (JSC::SymbolTable::isCaptured):
+
 2013-12-02  Filip Pizlo  <fpizlo@apple.com>
 
         Instead of watchpointing activation allocation, we should watchpoint entry into functions that have captured variables

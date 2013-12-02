@@ -673,11 +673,22 @@ RegisterID* PostfixNode::emitResolve(BytecodeGenerator& generator, RegisterID* d
     const Identifier& ident = resolve->identifier();
 
     if (Local local = generator.local(ident)) {
+        RegisterID* localReg = local.get();
         if (local.isReadOnly()) {
             generator.emitReadOnlyExceptionIfNeeded();
-            local = Local(generator.emitMove(generator.tempDestination(dst), local.get()), 0);
+            localReg = generator.emitMove(generator.tempDestination(dst), localReg);
         }
-        return emitPostIncOrDec(generator, generator.finalDestination(dst), local.get(), m_operator);
+        if (local.isCaptured()) {
+            RefPtr<RegisterID> tempDst = generator.finalDestination(dst);
+            ASSERT(dst != localReg);
+            RefPtr<RegisterID> tempDstSrc = generator.newTemporary();
+            generator.emitToNumber(tempDst.get(), localReg);
+            generator.emitMove(tempDstSrc.get(), localReg);
+            emitIncOrDec(generator, tempDstSrc.get(), m_operator);
+            generator.emitMove(localReg, tempDstSrc.get());
+            return tempDst.get();
+        }
+        return emitPostIncOrDec(generator, generator.finalDestination(dst), localReg, m_operator);
     }
 
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
@@ -838,12 +849,20 @@ RegisterID* PrefixNode::emitResolve(BytecodeGenerator& generator, RegisterID* ds
     const Identifier& ident = resolve->identifier();
 
     if (Local local = generator.local(ident)) {
+        RegisterID* localReg = local.get();
         if (local.isReadOnly()) {
             generator.emitReadOnlyExceptionIfNeeded();
-            local = Local(generator.emitMove(generator.tempDestination(dst), local.get()), 0);
+            localReg = generator.emitMove(generator.tempDestination(dst), localReg);
         }
-        emitIncOrDec(generator, local.get(), m_operator);
-        return generator.moveToDestinationIfNeeded(dst, local.get());
+        if (local.isCaptured()) {
+            RefPtr<RegisterID> tempDst = generator.tempDestination(dst);
+            generator.emitMove(tempDst.get(), localReg);
+            emitIncOrDec(generator, tempDst.get(), m_operator);
+            generator.emitMove(localReg, tempDst.get());
+            return generator.moveToDestinationIfNeeded(dst, tempDst.get());
+        }
+        emitIncOrDec(generator, localReg, m_operator);
+        return generator.moveToDestinationIfNeeded(dst, localReg);
     }
 
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
@@ -1327,7 +1346,8 @@ RegisterID* ReadModifyResolveNode::emitBytecode(BytecodeGenerator& generator, Re
             return emitReadModifyAssignment(generator, generator.finalDestination(dst), local.get(), m_right, m_operator, OperandTypes(ResultType::unknownType(), m_right->resultDescriptor()));
         }
         
-        if (generator.leftHandSideNeedsCopy(m_rightHasAssignments, m_right->isPure(generator))) {
+        if (local.isCaptured()
+            || generator.leftHandSideNeedsCopy(m_rightHasAssignments, m_right->isPure(generator))) {
             RefPtr<RegisterID> result = generator.newTemporary();
             generator.emitMove(result.get(), local.get());
             emitReadModifyAssignment(generator, result.get(), result.get(), m_right, m_operator, OperandTypes(ResultType::unknownType(), m_right->resultDescriptor()));
@@ -1355,6 +1375,12 @@ RegisterID* AssignResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
         if (local.isReadOnly()) {
             generator.emitReadOnlyExceptionIfNeeded();
             return generator.emitNode(dst, m_right);
+        }
+        if (local.isCaptured()) {
+            RefPtr<RegisterID> tempDst = generator.tempDestination(dst);
+            generator.emitNode(tempDst.get(), m_right);
+            generator.emitMove(local.get(), tempDst.get());
+            return generator.moveToDestinationIfNeeded(dst, tempDst.get());
         }
         RegisterID* result = generator.emitNode(local.get(), m_right);
         return generator.moveToDestinationIfNeeded(dst, result);
@@ -1451,11 +1477,17 @@ RegisterID* CommaNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
 RegisterID* ConstDeclNode::emitCodeSingle(BytecodeGenerator& generator)
 {
     // FIXME: This code does not match the behavior of const in Firefox.
-    if (RegisterID* local = generator.constLocal(m_ident).get()) {
+    if (Local local = generator.constLocal(m_ident)) {
         if (!m_init)
-            return local;
+            return local.get();
 
-        return generator.emitNode(local, m_init);
+        if (local.isCaptured()) {
+            RefPtr<RegisterID> tempDst = generator.newTemporary();
+            generator.emitNode(tempDst.get(), m_init);
+            return generator.emitMove(local.get(), tempDst.get());
+        }
+        
+        return generator.emitNode(local.get(), m_init);
     }
 
     RefPtr<RegisterID> value = m_init ? generator.emitNode(m_init) : generator.emitLoad(0, jsUndefined());
@@ -1730,8 +1762,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     if (m_lexpr->isResolveNode()) {
         const Identifier& ident = static_cast<ResolveNode*>(m_lexpr)->identifier();
         Local local = generator.local(ident);
-        propertyName = local.get();
-        if (!propertyName) {
+        if (!local.get()) {
             propertyName = generator.newTemporary();
             RefPtr<RegisterID> protect = propertyName;
             if (generator.isStrictMode())
@@ -1740,8 +1771,10 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
             generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
             generator.emitPutToScope(scope, ident, propertyName, generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound);
         } else {
-            expectedSubscript = generator.emitMove(generator.newTemporary(), propertyName);
-            generator.pushOptimisedForIn(expectedSubscript.get(), iter.get(), i.get(), propertyName);
+            expectedSubscript = generator.newTemporary();
+            propertyName = expectedSubscript.get();
+            generator.emitMove(local.get(), propertyName);
+            generator.pushOptimisedForIn(expectedSubscript.get(), iter.get(), i.get(), local.get());
             optimizedForinAccess = true;
         }
     } else if (m_lexpr->isDotAccessorNode()) {
@@ -1771,7 +1804,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
             Identifier ident = simpleBinding->boundProperty();
             Local local = generator.local(ident);
             propertyName = local.get();
-            if (!propertyName)
+            if (!propertyName || local.isCaptured())
                 goto genericBinding;
             expectedSubscript = generator.emitMove(generator.newTemporary(), propertyName);
             generator.pushOptimisedForIn(expectedSubscript.get(), iter.get(), i.get(), propertyName);

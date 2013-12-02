@@ -930,7 +930,12 @@ public:
     bool m_allTransitionsHaveBeenMarked; // Initialized and used on every GC.
     
     bool m_didFailFTLCompilation;
-    
+
+    // Internal methods for use by validation code. It would be private if it wasn't
+    // for the fact that we use it from anonymous namespaces.
+    void beginValidationDidFail();
+    NO_RETURN_DUE_TO_CRASH void endValidationDidFail();
+
 protected:
     virtual void visitWeakReferences(SlotVisitor&) OVERRIDE;
     virtual void finalizeUnconditionally() OVERRIDE;
@@ -1031,9 +1036,6 @@ private:
             m_rareData = adoptPtr(new RareData);
     }
     
-    void beginValidationDidFail();
-    NO_RETURN_DUE_TO_CRASH void endValidationDidFail();
-
 #if ENABLE(JIT)
     void resetStubInternal(RepatchBuffer&, StructureStubInfo&);
     void resetStubDuringGCInternal(RepatchBuffer&, StructureStubInfo&);

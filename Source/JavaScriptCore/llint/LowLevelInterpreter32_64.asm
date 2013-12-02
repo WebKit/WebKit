@@ -542,6 +542,16 @@ _llint_op_mov:
     dispatch(3)
 
 
+_llint_op_captured_mov:
+    traceExecution()
+    loadi 8[PC], t1
+    loadi 4[PC], t0
+    loadConstantOrVariable(t1, t2, t3)
+    storei t2, TagOffset[cfr, t0, 8]
+    storei t3, PayloadOffset[cfr, t0, 8]
+    dispatch(3)
+
+
 _llint_op_not:
     traceExecution()
     loadi 8[PC], t0
@@ -1659,6 +1669,17 @@ _llint_op_new_func:
 .opNewFuncUnchecked:
     callSlowPath(_llint_slow_path_new_func)
 .opNewFuncDone:
+    dispatch(4)
+
+
+_llint_op_new_captured_func:
+    traceExecution()
+    btiz 12[PC], .opNewCapturedFuncUnchecked
+    loadi 4[PC], t1
+    bineq TagOffset[cfr, t1, 8], EmptyValueTag, .opNewCapturedFuncDone
+.opNewCapturedFuncUnchecked:
+    callSlowPath(_llint_slow_path_new_func)
+.opNewCapturedFuncDone:
     dispatch(4)
 
 

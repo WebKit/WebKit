@@ -55,6 +55,7 @@ namespace JSC {
     macro(op_new_array_buffer, 5) \
     macro(op_new_regexp, 3) \
     macro(op_mov, 3) \
+    macro(op_captured_mov, 3) \
     \
     macro(op_not, 3) \
     macro(op_eq, 4) \
@@ -154,6 +155,7 @@ namespace JSC {
     macro(op_switch_string, 4) \
     \
     macro(op_new_func, 4) \
+    macro(op_new_captured_func, 4) \
     macro(op_new_func_exp, 3) \
     macro(op_call, 8) /* has value profiling */ \
     macro(op_call_eval, 8) /* has value profiling */ \

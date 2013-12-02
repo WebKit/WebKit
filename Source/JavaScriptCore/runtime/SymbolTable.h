@@ -453,6 +453,11 @@ public:
     void setCaptureEnd(int captureEnd) { m_captureEnd = captureEnd; }
 
     int captureCount() const { return -(m_captureEnd - m_captureStart); }
+    
+    bool isCaptured(int operand)
+    {
+        return operand <= captureStart() && operand > captureEnd();
+    }
 
     int parameterCount() { return m_parameterCountIncludingThis - 1; }
     int parameterCountIncludingThis() { return m_parameterCountIncludingThis; }

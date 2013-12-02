@@ -31,6 +31,7 @@
 #include "CodeBlock.h"
 
 #include "BytecodeGenerator.h"
+#include "BytecodeUseDef.h"
 #include "CallLinkStatus.h"
 #include "DFGCapabilities.h"
 #include "DFGCommon.h"
@@ -762,6 +763,13 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             out.printf("%s, %s", registerName(r0).data(), registerName(r1).data());
             break;
         }
+        case op_captured_mov: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "captured_mov");
+            out.printf("%s, %s", registerName(r0).data(), registerName(r1).data());
+            break;
+        }
         case op_not: {
             printUnaryOp(out, exec, location, it, "not");
             break;
@@ -1210,6 +1218,14 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int f0 = (++it)->u.operand;
             int shouldCheck = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "new_func");
+            out.printf("%s, f%d, %s", registerName(r0).data(), f0, shouldCheck ? "<Checked>" : "<Unchecked>");
+            break;
+        }
+        case op_new_captured_func: {
+            int r0 = (++it)->u.operand;
+            int f0 = (++it)->u.operand;
+            int shouldCheck = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "new_captured_func");
             out.printf("%s, f%d, %s", registerName(r0).data(), f0, shouldCheck ? "<Checked>" : "<Unchecked>");
             break;
         }
@@ -2472,8 +2488,7 @@ bool CodeBlock::isCaptured(VirtualRegister operand, InlineCallFrame* inlineCallF
     if (!symbolTable())
         return false;
 
-    return operand.offset() <= symbolTable()->captureStart()
-        && operand.offset() > symbolTable()->captureEnd();
+    return symbolTable()->isCaptured(operand.offset());
 }
 
 int CodeBlock::framePointerOffsetToGetActivationRegisters(int machineCaptureStart)
@@ -3430,6 +3445,48 @@ String CodeBlock::nameForRegister(VirtualRegister virtualRegister)
     return "";
 }
 
+namespace {
+
+struct VerifyCapturedDef {
+    void operator()(CodeBlock* codeBlock, Instruction* instruction, OpcodeID opcodeID, int operand)
+    {
+        unsigned bytecodeOffset = instruction - codeBlock->instructions().begin();
+        
+        if (codeBlock->isConstantRegisterIndex(operand)) {
+            codeBlock->beginValidationDidFail();
+            dataLog("    At bc#", bytecodeOffset, " encountered a definition of a constant.\n");
+            codeBlock->endValidationDidFail();
+            return;
+        }
+
+        switch (opcodeID) {
+        case op_enter:
+        case op_captured_mov:
+        case op_init_lazy_reg:
+        case op_create_arguments:
+        case op_new_captured_func:
+            return;
+        default:
+            break;
+        }
+        
+        VirtualRegister virtualReg(operand);
+        if (!virtualReg.isLocal())
+            return;
+        
+        if (codeBlock->captureCount() && codeBlock->symbolTable()->isCaptured(operand)) {
+            codeBlock->beginValidationDidFail();
+            dataLog("    At bc#", bytecodeOffset, " encountered invalid assignment to captured variable loc", virtualReg.toLocal(), ".\n");
+            codeBlock->endValidationDidFail();
+            return;
+        }
+        
+        return;
+    }
+};
+
+} // anonymous namespace
+
 void CodeBlock::validate()
 {
     BytecodeLivenessAnalysis liveness(this); // Compute directly from scratch so it doesn't effect CodeBlock footprint.
@@ -3466,6 +3523,16 @@ void CodeBlock::validate()
                 endValidationDidFail();
             }
         }
+    }
+    
+    for (unsigned bytecodeOffset = 0; bytecodeOffset < instructions().size();) {
+        Instruction* currentInstruction = instructions().begin() + bytecodeOffset;
+        OpcodeID opcodeID = m_vm->interpreter->getOpcodeID(currentInstruction->u.opcode);
+        
+        VerifyCapturedDef verifyCapturedDef;
+        computeDefsForBytecodeOffset(this, bytecodeOffset, verifyCapturedDef);
+        
+        bytecodeOffset += opcodeLength(opcodeID);
     }
 }
 

@@ -114,6 +114,11 @@ namespace JSC {
         TryData* tryData;
     };
 
+    enum CaptureMode {
+        NotCaptured,
+        IsCaptured
+    };
+
     class Local {
     public:
         Local()
@@ -122,9 +127,10 @@ namespace JSC {
         {
         }
 
-        Local(RegisterID* local, unsigned attributes)
+        Local(RegisterID* local, unsigned attributes, CaptureMode captureMode)
             : m_local(local)
             , m_attributes(attributes)
+            , m_isCaptured(captureMode == IsCaptured)
         {
         }
 
@@ -133,10 +139,14 @@ namespace JSC {
         RegisterID* get() { return m_local; }
 
         bool isReadOnly() { return m_attributes & ReadOnly; }
+        
+        bool isCaptured() { return m_isCaptured; }
+        CaptureMode captureMode() { return isCaptured() ? IsCaptured : NotCaptured; }
 
     private:
         RegisterID* m_local;
         unsigned m_attributes;
+        bool m_isCaptured;
     };
 
     struct TryRange {
@@ -171,6 +181,9 @@ namespace JSC {
         bool willResolveToArguments(const Identifier&);
         RegisterID* uncheckedRegisterForArguments();
 
+        bool isCaptured(int operand);
+        CaptureMode captureMode(int operand) { return isCaptured(operand) ? IsCaptured : NotCaptured; }
+        
         Local local(const Identifier&);
         Local constLocal(const Identifier&);
 
@@ -231,6 +244,8 @@ namespace JSC {
         {
             // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
             ASSERT(!dst || dst == ignoredResult() || !dst->isTemporary() || dst->refCount());
+            // Should never store directly into a captured variable.
+            ASSERT(!dst || dst == ignoredResult() || !isCaptured(dst->index()));
             if (!m_vm->isSafeToRecurse()) {
                 emitThrowExpressionTooDeepException();
                 return;
@@ -247,6 +262,8 @@ namespace JSC {
         {
             // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
             ASSERT(!dst || dst == ignoredResult() || !dst->isTemporary() || dst->refCount());
+            // Should never store directly into a captured variable.
+            ASSERT(!dst || dst == ignoredResult() || !isCaptured(dst->index()));
             if (!m_vm->isSafeToRecurse())
                 return emitThrowExpressionTooDeepException();
             return n->emitBytecode(*this, dst);
@@ -329,12 +346,13 @@ namespace JSC {
         RegisterID* emitNewObject(RegisterID* dst);
         RegisterID* emitNewArray(RegisterID* dst, ElementNode*, unsigned length); // stops at first elision
 
-        RegisterID* emitNewFunction(RegisterID* dst, FunctionBodyNode* body);
+        RegisterID* emitNewFunction(RegisterID* dst, CaptureMode, FunctionBodyNode*);
         RegisterID* emitLazyNewFunction(RegisterID* dst, FunctionBodyNode* body);
-        RegisterID* emitNewFunctionInternal(RegisterID* dst, unsigned index, bool shouldNullCheck);
+        RegisterID* emitNewFunctionInternal(RegisterID* dst, CaptureMode, unsigned index, bool shouldNullCheck);
         RegisterID* emitNewFunctionExpression(RegisterID* dst, FuncExprNode* func);
         RegisterID* emitNewRegExp(RegisterID* dst, RegExp*);
 
+        RegisterID* emitMove(RegisterID* dst, CaptureMode, RegisterID* src);
         RegisterID* emitMove(RegisterID* dst, RegisterID* src);
 
         RegisterID* emitToNumber(RegisterID* dst, RegisterID* src) { return emitUnaryOp(op_to_number, dst, src); }
@@ -420,9 +438,9 @@ namespace JSC {
         void pushFinallyContext(StatementNode* finallyBlock);
         void popFinallyContext();
 
-        void pushOptimisedForIn(RegisterID* expectedBase, RegisterID* iter, RegisterID* index, RegisterID* propertyRegister)
+        void pushOptimisedForIn(RegisterID* expectedSubscript, RegisterID* iter, RegisterID* index, RegisterID* propertyRegister)
         {
-            ForInContext context = { expectedBase, iter, index, propertyRegister };
+            ForInContext context = { expectedSubscript, iter, index, propertyRegister };
             m_forInContextStack.append(context);
         }
 

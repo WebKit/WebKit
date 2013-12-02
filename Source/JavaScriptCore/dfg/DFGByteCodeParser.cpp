@@ -2146,7 +2146,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             addToGraph(Breakpoint);
             NEXT_OPCODE(op_debug);
 #endif
-        case op_mov: {
+        case op_mov:
+        case op_captured_mov: {
             Node* op = get(VirtualRegister(currentInstruction[2].u.operand));
             set(VirtualRegister(currentInstruction[1].u.operand), op);
             NEXT_OPCODE(op_mov);
@@ -3226,7 +3227,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_get_argument_by_val);
         }
             
-        case op_new_func: {
+        case op_new_func:
+        case op_new_captured_func: {
             if (!currentInstruction[3].u.operand) {
                 set(VirtualRegister(currentInstruction[1].u.operand),
                     addToGraph(NewFunctionNoCheck, OpInfo(currentInstruction[2].u.operand)));

@@ -102,10 +102,11 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/ByValInfo.h \
 	Source/JavaScriptCore/bytecode/BytecodeBasicBlock.cpp \
 	Source/JavaScriptCore/bytecode/BytecodeBasicBlock.h \
+	Source/JavaScriptCore/bytecode/BytecodeConventions.h \
 	Source/JavaScriptCore/bytecode/BytecodeLivenessAnalysis.cpp \
 	Source/JavaScriptCore/bytecode/BytecodeLivenessAnalysis.h \
 	Source/JavaScriptCore/bytecode/BytecodeLivenessAnalysisInlines.h \
-	Source/JavaScriptCore/bytecode/BytecodeConventions.h \
+	Source/JavaScriptCore/bytecode/BytecodeUseDef.h \
 	Source/JavaScriptCore/bytecode/CallLinkInfo.cpp \
 	Source/JavaScriptCore/bytecode/CallLinkInfo.h \
 	Source/JavaScriptCore/bytecode/CallLinkStatus.cpp \

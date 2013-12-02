@@ -418,6 +418,15 @@ _llint_op_mov:
     dispatch(3)
 
 
+_llint_op_captured_mov:
+    traceExecution()
+    loadisFromInstruction(2, t1)
+    loadisFromInstruction(1, t0)
+    loadConstantOrVariable(t1, t2)
+    storeq t2, [cfr, t0, 8]
+    dispatch(3)
+
+
 _llint_op_not:
     traceExecution()
     loadisFromInstruction(2, t0)
@@ -1511,6 +1520,18 @@ _llint_op_new_func:
 .opNewFuncUnchecked:
     callSlowPath(_llint_slow_path_new_func)
 .opNewFuncDone:
+    dispatch(4)
+
+
+_llint_op_new_captured_func:
+    traceExecution()
+    loadisFromInstruction(3, t2)
+    btiz t2, .opNewCapturedFuncUnchecked
+    loadisFromInstruction(1, t1)
+    btqnz [cfr, t1, 8], .opNewCapturedFuncDone
+.opNewCapturedFuncUnchecked:
+    callSlowPath(_llint_slow_path_new_func)
+.opNewCapturedFuncDone:
     dispatch(4)
 
 
