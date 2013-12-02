@@ -59,8 +59,8 @@ public:
     virtual const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const OVERRIDE FINAL;
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
 
-    static bool checkIntersection(RenderObject*, const FloatRect&);
-    static bool checkEnclosure(RenderObject*, const FloatRect&);
+    static bool checkIntersection(RenderElement*, const FloatRect&);
+    static bool checkEnclosure(RenderElement*, const FloatRect&);
 
     virtual FloatRect repaintRectInLocalCoordinatesExcludingSVGShadow() const { return repaintRectInLocalCoordinates(); }
     bool hasSVGShadow() const { return m_hasSVGShadow; }

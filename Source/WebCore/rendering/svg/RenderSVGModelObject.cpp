@@ -155,9 +155,9 @@ static bool intersectsAllowingEmpty(const FloatRect& r, const FloatRect& other)
 
 // One of the element types that can cause graphics to be drawn onto the target canvas. Specifically: circle, ellipse,
 // image, line, path, polygon, polyline, rect, text and use.
-static bool isGraphicsElement(RenderObject* renderer)
+static bool isGraphicsElement(const RenderElement& renderer)
 {
-    return renderer->isSVGShape() || renderer->isSVGText() || renderer->isSVGImage() || renderer->node()->hasTagName(SVGNames::useTag);
+    return renderer.isSVGShape() || renderer.isSVGText() || renderer.isSVGImage() || renderer.element()->hasTagName(SVGNames::useTag);
 }
 
 // The SVG addFocusRingRects() method adds rects in local coordinates so the default absoluteFocusRingQuads
@@ -167,27 +167,27 @@ void RenderSVGModelObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
     quads.append(localToAbsoluteQuad(FloatQuad(repaintRectInLocalCoordinates())));
 }
     
-bool RenderSVGModelObject::checkIntersection(RenderObject* renderer, const FloatRect& rect)
+bool RenderSVGModelObject::checkIntersection(RenderElement* renderer, const FloatRect& rect)
 {
     if (!renderer || renderer->style().pointerEvents() == PE_NONE)
         return false;
-    if (!isGraphicsElement(renderer))
+    if (!isGraphicsElement(*renderer))
         return false;
     AffineTransform ctm;
-    SVGElement* svgElement = toSVGElement(renderer->node());
+    SVGElement* svgElement = toSVGElement(renderer->element());
     getElementCTM(svgElement, ctm);
     ASSERT(svgElement->renderer());
     return intersectsAllowingEmpty(rect, ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinates()));
 }
 
-bool RenderSVGModelObject::checkEnclosure(RenderObject* renderer, const FloatRect& rect)
+bool RenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRect& rect)
 {
     if (!renderer || renderer->style().pointerEvents() == PE_NONE)
         return false;
-    if (!isGraphicsElement(renderer))
+    if (!isGraphicsElement(*renderer))
         return false;
     AffineTransform ctm;
-    SVGElement* svgElement = toSVGElement(renderer->node());
+    SVGElement* svgElement = toSVGElement(renderer->element());
     getElementCTM(svgElement, ctm);
     ASSERT(svgElement->renderer());
     return rect.contains(ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinates()));

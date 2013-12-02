@@ -1,5 +1,16 @@
 2013-12-01  Andreas Kling  <akling@apple.com>
 
+        SVG: Intersection/enclosure checks should use RenderElement.
+        <https://webkit.org/b/125058>
+
+        Make RenderSVGModelObject's checkIntersection() and checkEnclosure()
+        take RenderElement* instead of RenderObject*. They are only ever
+        called with SVGElement's renderers.
+
+        Reviewed by Sam Weinig.
+
+2013-12-01  Andreas Kling  <akling@apple.com>
+
         Remove unreachable labels for -webkit-margin-*-collapse properties.
         <https://webkit.org/b/125057>
 
