@@ -1,3 +1,20 @@
+2013-12-02  Brady Eidson  <beidson@apple.com>
+
+        Add more CachedPage null checks
+        https://bugs.webkit.org/show_bug.cgi?id=125106
+
+        Reviewed by Sam Weinig.
+
+        Only some functions in PageCache.cpp null-check the CachedPages in HistoryItems.
+
+        Every part that manipulates the CachedPage should.
+
+        * history/PageCache.cpp:
+        (WebCore::PageCache::markPagesForVistedLinkStyleRecalc):
+        (WebCore::PageCache::markPagesForFullStyleRecalc):
+        (WebCore::PageCache::markPagesForDeviceScaleChanged):
+        (WebCore::PageCache::markPagesForCaptionPreferencesChanged):
+
 2013-12-02  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Support inset parsing
