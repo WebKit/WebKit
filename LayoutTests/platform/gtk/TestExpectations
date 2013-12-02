@@ -1510,6 +1510,8 @@ webkit.org/b/124834 fast/block/float/clear-negative-margin-top.html [ ImageOnlyF
 
 webkit.org/b/124835 fast/repaint/repaint-regions-overflow.html [ Failure ]
 
+webkit.org/b/125071 fast/shapes/shape-inside/shape-inside-subpixel-rectangle-top.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
