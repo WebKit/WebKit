@@ -162,18 +162,6 @@ void InspectorAgent::inspect(PassRefPtr<TypeBuilder::Runtime::RemoteObject> obje
     m_pendingInspectData.second = hints;
 }
 
-URL InspectorAgent::inspectedURL() const
-{
-    return m_inspectedPage->mainFrame().document()->url();
-}
-
-URL InspectorAgent::inspectedURLWithoutFragment() const
-{
-    URL url = inspectedURL();
-    url.removeFragmentIdentifier();
-    return url;
-}
-
 bool InspectorAgent::developerExtrasEnabled() const
 {
     if (!m_inspectedPage)

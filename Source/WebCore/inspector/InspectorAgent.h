@@ -31,11 +31,9 @@
 #define InspectorAgent_h
 
 #include "InspectorBaseAgent.h"
-#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -46,7 +44,6 @@ class InjectedScriptManager;
 class InspectorInspectorFrontendDispatcher;
 class InspectorObject;
 class InstrumentingAgents;
-class URL;
 class Page;
 
 typedef String ErrorString;
@@ -66,9 +63,6 @@ public:
     // Inspector front-end API.
     void enable(ErrorString*);
     void disable(ErrorString*);
-
-    URL inspectedURL() const;
-    URL inspectedURLWithoutFragment() const;
 
     virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
