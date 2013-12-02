@@ -1,3 +1,10 @@
+2013-12-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Skip two unit tests that are causing the subsequent test to crash.
+
 2013-12-01  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Transition MiniBrowser to the Cocoa API: policy delegate   
