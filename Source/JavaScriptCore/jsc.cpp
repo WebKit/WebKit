@@ -108,6 +108,7 @@ static EncodedJSValue JSC_HOST_CALL functionDumpCallFrame(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionVersion(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionRun(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionLoad(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionReadFile(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionReadline(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionPreciseTime(ExecState*);
@@ -226,6 +227,7 @@ protected:
         addFunction(vm, "version", functionVersion, 1);
         addFunction(vm, "run", functionRun, 1);
         addFunction(vm, "load", functionLoad, 1);
+        addFunction(vm, "readFile", functionReadFile, 1);
         addFunction(vm, "checkSyntax", functionCheckSyntax, 1);
         addFunction(vm, "jscStack", functionJSCStack, 1);
         addFunction(vm, "readline", functionReadline, 0);
@@ -419,6 +421,16 @@ EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
     if (evaluationException)
         exec->vm().throwException(exec, evaluationException);
     return JSValue::encode(result);
+}
+
+EncodedJSValue JSC_HOST_CALL functionReadFile(ExecState* exec)
+{
+    String fileName = exec->argument(0).toString(exec)->value(exec);
+    Vector<char> script;
+    if (!fillBufferWithContentsOfFile(fileName, script))
+        return JSValue::encode(exec->vm().throwException(exec, createError(exec, "Could not open file.")));
+
+    return JSValue::encode(jsString(exec, stringFromUTF(script.data())));
 }
 
 EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
