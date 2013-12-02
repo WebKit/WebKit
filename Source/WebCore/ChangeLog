@@ -1,5 +1,25 @@
 2013-12-01  Andreas Kling  <akling@apple.com>
 
+        Remove unreachable labels for -webkit-margin-*-collapse properties.
+        <https://webkit.org/b/125057>
+
+        The following properties are implemented in DeprecatedStyleBuilder
+        and should not have case labels in the applyProperty() switch:
+
+            -webkit-margin-before-collapse
+            -webkit-margin-top-collapse
+            -webkit-margin-after-collapse
+            -webkit-margin-bottom-collapse
+
+        This seems counter-intuitive, but they are actually *not* like other
+        directional properties. In this case, before/after are only aliases
+        for top/bottom, and do not depend on writing-mode or text-direction.
+        See also r68561, where the aliases were originally added.
+
+        Reviewed by Anders Carlsson.
+
+2013-12-01  Andreas Kling  <akling@apple.com>
+
         CSSFunctionValue constructors should return PassRef.
         <https://webkit.org/b/125054>
 
