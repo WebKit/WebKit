@@ -30,6 +30,8 @@
 
 #include "CryptoAlgorithmIdentifier.h"
 
+#include <CommonCrypto/CommonCryptor.h>
+
 #if defined(__has_include)
 #if __has_include(<CommonCrypto/CommonRSACryptor.h>)
 #include <CommonCrypto/CommonRSACryptor.h>
@@ -73,6 +75,7 @@ typedef struct __CCRandom *CCRandomRef;
 extern const CCRandomRef kCCRandomDefault;
 extern "C" int CCRandomCopyBytes(CCRandomRef rnd, void *bytes, size_t count);
 
+typedef struct _CCRSACryptor *CCRSACryptorRef;
 extern "C" CCCryptorStatus CCRSACryptorEncrypt(CCRSACryptorRef publicKey, CCAsymmetricPadding padding, const void *plainText, size_t plainTextLen, void *cipherText, size_t *cipherTextLen, const void *tagData, size_t tagDataLen, CCDigestAlgorithm digestType);
 extern "C" CCCryptorStatus CCRSACryptorDecrypt(CCRSACryptorRef privateKey, CCAsymmetricPadding padding, const void *cipherText, size_t cipherTextLen, void *plainText, size_t *plainTextLen, const void *tagData, size_t tagDataLen, CCDigestAlgorithm digestType);
 extern "C" CCCryptorStatus CCRSACryptorSign(CCRSACryptorRef privateKey, CCAsymmetricPadding padding, const void *hashToSign, size_t hashSignLen, CCDigestAlgorithm digestType, size_t saltLen, void *signedData, size_t *signedDataLen);
