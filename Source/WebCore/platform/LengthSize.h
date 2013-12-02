@@ -48,6 +48,11 @@ public:
     void setHeight(Length height) { m_height = std::move(height); }
     const Length& height() const { return m_height; }
 
+    LengthSize blend(const LengthSize& from, double progress) const
+    {
+        return LengthSize(m_width.blend(from.width(), progress), m_height.blend(from.height(), progress));
+    }
+
 private:
     Length m_width;
     Length m_height;

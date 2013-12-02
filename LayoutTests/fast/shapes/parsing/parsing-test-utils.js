@@ -14,6 +14,10 @@ var validShapeValues = [
     ["inset-rectangle(10px, 20px, 30px, 40px, 5px)", "inset-rectangle(10px, 20px, 30px, 40px, 5px)", "inset-rectangle(10px, 20px, 30px, 40px, 5px, 5px)"],
     "inset-rectangle(10px, 20px, 30px, 40px, 5px, 10px)",
 
+    ["inset(10px 20px 30px 40px)", "inset(10px 20px 30px 40px)", "inset(10px 20px 30px 40px round 0px 0px 0px 0px / 0px 0px 0px 0px)"],
+    ["inset(10px 20px 30px 40px round 5px 6px)", "inset(10px 20px 30px 40px round 5px 6px 5px 6px / 5px 6px 5px 6px)", "inset(10px 20px 30px 40px round 5px 6px 5px 6px / 5px 6px 5px 6px)"],
+    "inset(10px 20px 30px 40px round 5px 6px 7px 8px / 50px 60px 70px 80px)",
+
     "circle(10px, 20px, 30px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
 
     ["circle()", "circle()", "circle(closest-side at 50% 50%)"],
@@ -86,6 +90,22 @@ var invalidShapeValues = [
     "inset-rectangle(10px, 20px, 30px)",
     "inset-rectangle(10px 20px 30px 40px)",
     "inset-rectangle(10px, 20px, 30px, 40px, 50px, 60px, 70px)",
+
+    "inset()",
+    "inset(10px, 10px)",
+    "inset(10px 20px, 30px)",
+    "inset(10px, 20px 30px 40px)",
+    "inset(10px 20px 30px 40px 50px 60px)",
+    "inset(round)",
+    "inset(round 10px)",
+    "inset(10px round)",
+    "inset(10px round 10px /)",
+    "inset(10px round 20px 30px 40px 50px 60px)",
+    "inset(10px round /)",
+    "inset(10px round / 10px)",
+    "inset(/)",
+    "inset(/ 10px)",
+    "inset(round /)",
 
     "circle(10px, 20px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
     "circle(10px 20px 30px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.

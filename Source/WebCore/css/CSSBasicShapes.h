@@ -47,7 +47,8 @@ public:
         CSSBasicShapePolygonType = 4,
         CSSBasicShapeInsetRectangleType = 5,
         CSSBasicShapeCircleType = 6,
-        CSSBasicShapeEllipseType = 7
+        CSSBasicShapeEllipseType = 7,
+        CSSBasicShapeInsetType = 8
     };
 
     virtual Type type() const = 0;
@@ -129,6 +130,54 @@ private:
     RefPtr<CSSPrimitiveValue> m_left;
     RefPtr<CSSPrimitiveValue> m_radiusX;
     RefPtr<CSSPrimitiveValue> m_radiusY;
+};
+
+
+class CSSBasicShapeInset : public CSSBasicShape {
+public:
+    static PassRefPtr<CSSBasicShapeInset> create() { return adoptRef(new CSSBasicShapeInset); }
+
+    CSSPrimitiveValue* top() const { return m_top.get(); }
+    CSSPrimitiveValue* right() const { return m_right.get(); }
+    CSSPrimitiveValue* bottom() const { return m_bottom.get(); }
+    CSSPrimitiveValue* left() const { return m_left.get(); }
+
+    CSSPrimitiveValue* topLeftRadius() const { return m_topLeftRadius.get(); }
+    CSSPrimitiveValue* topRightRadius() const { return m_topRightRadius.get(); }
+    CSSPrimitiveValue* bottomRightRadius() const { return m_bottomRightRadius.get(); }
+    CSSPrimitiveValue* bottomLeftRadius() const { return m_bottomLeftRadius.get(); }
+
+    void setTop(PassRefPtr<CSSPrimitiveValue> top) { m_top = top; }
+    void setRight(PassRefPtr<CSSPrimitiveValue> right) { m_right = right; }
+    void setBottom(PassRefPtr<CSSPrimitiveValue> bottom) { m_bottom = bottom; }
+    void setLeft(PassRefPtr<CSSPrimitiveValue> left) { m_left = left; }
+
+    void setTopLeftRadius(PassRefPtr<CSSPrimitiveValue> radius) { m_topLeftRadius = radius; }
+    void setTopRightRadius(PassRefPtr<CSSPrimitiveValue> radius) { m_topRightRadius = radius; }
+    void setBottomRightRadius(PassRefPtr<CSSPrimitiveValue> radius) { m_bottomRightRadius = radius; }
+    void setBottomLeftRadius(PassRefPtr<CSSPrimitiveValue> radius) { m_bottomLeftRadius = radius; }
+
+    virtual Type type() const OVERRIDE { return CSSBasicShapeInsetType; }
+    virtual String cssText() const OVERRIDE;
+    virtual bool equals(const CSSBasicShape&) const OVERRIDE;
+
+#if ENABLE(CSS_VARIABLES)
+    virtual String serializeResolvingVariables(const HashMap<AtomicString, String>&) const;
+    virtual bool hasVariableReference() const;
+#endif
+
+private:
+    CSSBasicShapeInset() { }
+
+    RefPtr<CSSPrimitiveValue> m_top;
+    RefPtr<CSSPrimitiveValue> m_right;
+    RefPtr<CSSPrimitiveValue> m_bottom;
+    RefPtr<CSSPrimitiveValue> m_left;
+
+    RefPtr<CSSPrimitiveValue> m_topLeftRadius;
+    RefPtr<CSSPrimitiveValue> m_topRightRadius;
+    RefPtr<CSSPrimitiveValue> m_bottomRightRadius;
+    RefPtr<CSSPrimitiveValue> m_bottomLeftRadius;
 };
 
 class CSSBasicShapeCircle : public CSSBasicShape {

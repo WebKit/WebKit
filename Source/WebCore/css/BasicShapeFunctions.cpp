@@ -205,6 +205,23 @@ PassRefPtr<CSSValue> valueForBasicShape(const RenderStyle* style, const BasicSha
         basicShapeValue = rectangleValue.release();
         break;
     }
+    case BasicShape::BasicShapeInsetType: {
+        const BasicShapeInset* inset = static_cast<const BasicShapeInset*>(basicShape);
+        RefPtr<CSSBasicShapeInset> insetValue = CSSBasicShapeInset::create();
+
+        insetValue->setTop(pool.createValue(inset->top()));
+        insetValue->setRight(pool.createValue(inset->right()));
+        insetValue->setBottom(pool.createValue(inset->bottom()));
+        insetValue->setLeft(pool.createValue(inset->left()));
+
+        insetValue->setTopLeftRadius(pool.createValue(inset->topLeftRadius()));
+        insetValue->setTopRightRadius(pool.createValue(inset->topRightRadius()));
+        insetValue->setBottomRightRadius(pool.createValue(inset->bottomRightRadius()));
+        insetValue->setBottomLeftRadius(pool.createValue(inset->bottomLeftRadius()));
+
+        basicShapeValue = insetValue.release();
+        break;
+    }
     default:
         break;
     }
@@ -380,6 +397,48 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
             rect->setCornerRadiusX(Length(0, Fixed));
             rect->setCornerRadiusY(Length(0, Fixed));
         }
+        basicShape = rect.release();
+        break;
+    }
+    case CSSBasicShape::CSSBasicShapeInsetType: {
+        const CSSBasicShapeInset* rectValue = static_cast<const CSSBasicShapeInset* >(basicShapeValue);
+        RefPtr<BasicShapeInset> rect = BasicShapeInset::create();
+
+        if (rectValue->left())
+            rect->setTop(convertToLength(style, rootStyle, rectValue->top()));
+        else
+            return rect;
+        if (rectValue->right())
+            rect->setRight(convertToLength(style, rootStyle, rectValue->right()));
+        if (rectValue->bottom())
+            rect->setBottom(convertToLength(style, rootStyle, rectValue->bottom()));
+        if (rectValue->left())
+            rect->setLeft(convertToLength(style, rootStyle, rectValue->left()));
+
+        if (rectValue->topLeftRadius()) {
+            Pair* topLeftRadius = rectValue->topLeftRadius()->getPairValue();
+            rect->setTopLeftRadius(LengthSize(convertToLength(style, rootStyle, topLeftRadius->first()), convertToLength(style, rootStyle, topLeftRadius->second())));
+        } else
+            rect->setTopLeftRadius(LengthSize(Length(0, Fixed), Length(0, Fixed)));
+
+        if (rectValue->topRightRadius()) {
+            Pair* topRightRadius = rectValue->topRightRadius()->getPairValue();
+            rect->setTopRightRadius(LengthSize(convertToLength(style, rootStyle, topRightRadius->first()), convertToLength(style, rootStyle, topRightRadius->second())));
+        } else
+            rect->setTopRightRadius(LengthSize(Length(0, Fixed), Length(0, Fixed)));
+
+        if (rectValue->bottomRightRadius()) {
+            Pair* bottomRightRadius = rectValue->bottomRightRadius()->getPairValue();
+            rect->setBottomRightRadius(LengthSize(convertToLength(style, rootStyle, bottomRightRadius->first()), convertToLength(style, rootStyle, bottomRightRadius->second())));
+        } else
+            rect->setBottomRightRadius(LengthSize(Length(0, Fixed), Length(0, Fixed)));
+
+        if (rectValue->topLeftRadius()) {
+            Pair* bottomLeftRadius = rectValue->bottomLeftRadius()->getPairValue();
+            rect->setBottomLeftRadius(LengthSize(convertToLength(style, rootStyle, bottomLeftRadius->first()), convertToLength(style, rootStyle, bottomLeftRadius->second())));
+        } else
+            rect->setBottomLeftRadius(LengthSize(Length(0, Fixed), Length(0, Fixed)));
+
         basicShape = rect.release();
         break;
     }

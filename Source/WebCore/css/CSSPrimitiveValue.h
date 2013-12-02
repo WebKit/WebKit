@@ -43,6 +43,7 @@ class RenderStyle;
 class CSSBasicShape;
 
 struct Length;
+struct LengthSize;
 
 // Dimension calculations are imprecise, often resulting in values of e.g.
 // 44.99998. We need to go ahead and round if we're really close to the next
@@ -213,6 +214,7 @@ public:
     static PassRef<CSSPrimitiveValue> create(double value, UnitTypes type) { return adoptRef(*new CSSPrimitiveValue(value, type)); }
     static PassRef<CSSPrimitiveValue> create(const String& value, UnitTypes type) { return adoptRef(*new CSSPrimitiveValue(value, type)); }
     static PassRef<CSSPrimitiveValue> create(const Length& value, const RenderStyle* style) { return adoptRef(*new CSSPrimitiveValue(value, style)); }
+    static PassRef<CSSPrimitiveValue> create(const LengthSize& value) { return adoptRef(*new CSSPrimitiveValue(value)); }
 
     template<typename T> static PassRef<CSSPrimitiveValue> create(T value)
     {
@@ -344,6 +346,7 @@ private:
     CSSPrimitiveValue(unsigned color); // RGB value
     CSSPrimitiveValue(const Length&);
     CSSPrimitiveValue(const Length&, const RenderStyle*);
+    CSSPrimitiveValue(const LengthSize&);
     CSSPrimitiveValue(const String&, UnitTypes);
     CSSPrimitiveValue(double, UnitTypes);
 
@@ -365,6 +368,7 @@ private:
     template<typename T> operator T*(); // compile-time guard
 
     void init(const Length&);
+    void init(const LengthSize&);
     void init(PassRefPtr<Counter>);
     void init(PassRefPtr<Rect>);
     void init(PassRefPtr<Pair>);

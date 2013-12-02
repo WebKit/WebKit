@@ -268,7 +268,6 @@ CSSPrimitiveValue::CSSPrimitiveValue(const String& str, UnitTypes type)
         m_value.string->ref();
 }
 
-
 CSSPrimitiveValue::CSSPrimitiveValue(RGBA32 color)
     : CSSValue(PrimitiveClass)
 {
@@ -312,6 +311,12 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length, const RenderStyle* st
         ASSERT_NOT_REACHED();
         break;
     }
+}
+
+CSSPrimitiveValue::CSSPrimitiveValue(const LengthSize& lengthSize)
+    : CSSValue(PrimitiveClass)
+{
+    init(lengthSize);
 }
 
 void CSSPrimitiveValue::init(const Length& length)
@@ -376,6 +381,13 @@ void CSSPrimitiveValue::init(const Length& length)
         ASSERT_NOT_REACHED();
         break;
     }
+}
+
+void CSSPrimitiveValue::init(const LengthSize& lengthSize)
+{
+    m_primitiveUnitType = CSS_PAIR;
+    m_hasCachedCSSText = false;
+    m_value.pair = Pair::create(create(lengthSize.width()), create(lengthSize.height())).leakRef();
 }
 
 void CSSPrimitiveValue::init(PassRefPtr<Counter> c)

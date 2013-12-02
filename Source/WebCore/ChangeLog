@@ -1,3 +1,84 @@
+2013-12-02  Zoltan Horvath  <zoltan@webkit.org>
+
+        [CSS Shapes] Support inset parsing
+        https://bugs.webkit.org/show_bug.cgi?id=124903
+
+        Reviewed by David Hyatt.
+
+        In this patch I added support for inset shape parsing for CSS Shapes. Inset is defined
+        by CSS Shapes Level 1 (http://dev.w3.org/csswg/css-shapes-1/#supported-basic-shapes).
+        Inset is going to be used by shape-outside (bug #124905), and eventually by shape-inside.
+
+        No new tests, I updated existing tests to cover the changes.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::valueForBasicShape): Add support for inset.
+        (WebCore::basicShapeForValue): Add support for inset.
+        * css/CSSBasicShapes.cpp:
+        (WebCore::buildInsetString): Create inset css string.
+        (WebCore::CSSBasicShapeInset::cssText): Convert inset shape to a CSS string.
+        (WebCore::CSSBasicShapeInset::equals): Compare two inset rectangles.
+        (WebCore::CSSBasicShapeInset::serializeResolvingVariables): Create an inset string, with CSS variables resolved.
+        (WebCore::CSSBasicShapeInset::hasVariableReference): Determine if this inset has any CSS Variable references.
+        * css/CSSBasicShapes.h: Add inset class.
+        (WebCore::CSSBasicShapeInset::create):
+        (WebCore::CSSBasicShapeInset::top):
+        (WebCore::CSSBasicShapeInset::right):
+        (WebCore::CSSBasicShapeInset::bottom):
+        (WebCore::CSSBasicShapeInset::left):
+        (WebCore::CSSBasicShapeInset::topLeftRadius):
+        (WebCore::CSSBasicShapeInset::topRightRadius):
+        (WebCore::CSSBasicShapeInset::bottomRightRadius):
+        (WebCore::CSSBasicShapeInset::bottomLeftRadius):
+        (WebCore::CSSBasicShapeInset::setTop):
+        (WebCore::CSSBasicShapeInset::setRight):
+        (WebCore::CSSBasicShapeInset::setBottom):
+        (WebCore::CSSBasicShapeInset::setLeft):
+        (WebCore::CSSBasicShapeInset::setTopLeftRadius):
+        (WebCore::CSSBasicShapeInset::setTopRightRadius):
+        (WebCore::CSSBasicShapeInset::setBottomRightRadius):
+        (WebCore::CSSBasicShapeInset::setBottomLeftRadius):
+        (WebCore::CSSBasicShapeInset::CSSBasicShapeInset):
+        * css/CSSParser.cpp:
+        (WebCore::completeBorderRadii): Move static function before parseInsetBorderRadius.
+        (WebCore::CSSParser::parseInsetRoundedCorners): I added this helper function for parsing the rounded corners
+        (WebCore::CSSParser::parseBasicShapeInset): Parse inset.
+        (WebCore::CSSParser::parseBasicShape): Add call to parse inset.
+        * css/CSSParser.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Add constructor for LengthSize.
+        (WebCore::CSSPrimitiveValue::init): Initialize LengthSize.
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::create): Add support for creating PrimitiveValue from LengthSize.
+        * css/CSSValuePool.h:
+        (WebCore::CSSValuePool::createValue): Add support for LengthSize.
+        * platform/LengthSize.h:
+        (WebCore::LengthSize::blend): Add blend for LengthSize.
+        * rendering/shapes/ShapeInsideInfo.cpp:
+        (WebCore::ShapeInsideInfo::isEnabledFor): Keep inset disabled for shape-inside now.
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShapeInset::path): Calculate path for an inset.
+        (WebCore::BasicShapeInset::blend): Blend two insets.
+        * rendering/style/BasicShapes.h: Add higher level inset.
+        (WebCore::BasicShapeInset::create):
+        (WebCore::BasicShapeInset::top):
+        (WebCore::BasicShapeInset::right):
+        (WebCore::BasicShapeInset::bottom):
+        (WebCore::BasicShapeInset::left):
+        (WebCore::BasicShapeInset::topLeftRadius):
+        (WebCore::BasicShapeInset::topRightRadius):
+        (WebCore::BasicShapeInset::bottomRightRadius):
+        (WebCore::BasicShapeInset::bottomLeftRadius):
+        (WebCore::BasicShapeInset::setTop):
+        (WebCore::BasicShapeInset::setRight):
+        (WebCore::BasicShapeInset::setBottom):
+        (WebCore::BasicShapeInset::setLeft):
+        (WebCore::BasicShapeInset::setTopLeftRadius):
+        (WebCore::BasicShapeInset::setTopRightRadius):
+        (WebCore::BasicShapeInset::setBottomRightRadius):
+        (WebCore::BasicShapeInset::setBottomLeftRadius):
+        (WebCore::BasicShapeInset::BasicShapeInset):
+
 2013-12-02  Alexey Proskuryakov  <ap@apple.com>
 
         Support WebCrypto AES-KW

@@ -299,4 +299,54 @@ PassRefPtr<BasicShape> BasicShapeInsetRectangle::blend(const BasicShape* other, 
     result->setCornerRadiusY(m_cornerRadiusY.blend(o->cornerRadiusY(), progress));
     return result.release();
 }
+
+void BasicShapeInset::path(Path& path, const FloatRect& boundingBox)
+{
+    ASSERT(path.isEmpty());
+    float left = floatValueForLength(m_left, boundingBox.width());
+    float top = floatValueForLength(m_top, boundingBox.height());
+    path.addRoundedRect(
+        FloatRect(
+            left + boundingBox.x(),
+            top + boundingBox.y(),
+            std::max<float>(boundingBox.width() - left - floatValueForLength(m_right, boundingBox.width()), 0),
+            std::max<float>(boundingBox.height() - top - floatValueForLength(m_bottom, boundingBox.height()), 0)
+        ),
+        FloatSize(
+            floatValueForLength(m_topLeftRadius.width(), boundingBox.width()),
+            floatValueForLength(m_topLeftRadius.height(), boundingBox.height())
+        ),
+        FloatSize(
+            floatValueForLength(m_topRightRadius.width(), boundingBox.width()),
+            floatValueForLength(m_topRightRadius.height(), boundingBox.height())
+        ),
+        FloatSize(
+            floatValueForLength(m_bottomRightRadius.width(), boundingBox.width()),
+            floatValueForLength(m_bottomRightRadius.height(), boundingBox.height())
+        ),
+        FloatSize(
+            floatValueForLength(m_bottomLeftRadius.width(), boundingBox.width()),
+            floatValueForLength(m_bottomLeftRadius.height(), boundingBox.height())
+        )
+    );
+}
+
+PassRefPtr<BasicShape> BasicShapeInset::blend(const BasicShape* other, double progress) const
+{
+    ASSERT(type() == other->type());
+
+    const BasicShapeInset* o = static_cast<const BasicShapeInset*>(other);
+    RefPtr<BasicShapeInset> result =  BasicShapeInset::create();
+    result->setTop(m_top.blend(o->top(), progress));
+    result->setRight(m_right.blend(o->right(), progress));
+    result->setBottom(m_bottom.blend(o->bottom(), progress));
+    result->setLeft(m_left.blend(o->left(), progress));
+
+    result->setTopLeftRadius(m_topLeftRadius.blend(o->topLeftRadius(), progress));
+    result->setTopRightRadius(m_topRightRadius.blend(o->topRightRadius(), progress));
+    result->setBottomRightRadius(m_bottomRightRadius.blend(o->bottomRightRadius(), progress));
+    result->setBottomLeftRadius(m_bottomLeftRadius.blend(o->bottomLeftRadius(), progress));
+
+    return result.release();
+}
 }
