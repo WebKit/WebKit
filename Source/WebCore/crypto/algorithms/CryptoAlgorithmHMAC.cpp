@@ -56,11 +56,14 @@ CryptoAlgorithmIdentifier CryptoAlgorithmHMAC::identifier() const
     return s_identifier;
 }
 
-bool CryptoAlgorithmHMAC::keyAlgorithmMatches(const CryptoAlgorithmHmacParams&, const CryptoKey& key) const
+bool CryptoAlgorithmHMAC::keyAlgorithmMatches(const CryptoAlgorithmHmacParams& parameters, const CryptoKey& key) const
 {
     if (key.algorithmIdentifier() != s_identifier)
         return false;
     ASSERT(isCryptoKeyHMAC(key));
+
+    if (toCryptoKeyHMAC(key).hashAlgorithmIdentifier() != parameters.hash)
+        return false;
 
     return true;
 }
