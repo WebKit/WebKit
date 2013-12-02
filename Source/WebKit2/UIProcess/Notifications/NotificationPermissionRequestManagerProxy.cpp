@@ -62,7 +62,7 @@ void NotificationPermissionRequestManagerProxy::didReceiveNotificationPermission
     if (!request)
         return;
     
-    m_page.process()->send(Messages::WebPage::DidReceiveNotificationPermissionDecision(notificationID, allow), m_page.pageID());
+    m_page.process().send(Messages::WebPage::DidReceiveNotificationPermissionDecision(notificationID, allow), m_page.pageID());
 }
 
 } // namespace WebKit

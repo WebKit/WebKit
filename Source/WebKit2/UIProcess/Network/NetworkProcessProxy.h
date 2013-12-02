@@ -50,7 +50,7 @@ struct NetworkProcessCreationParameters;
 
 class NetworkProcessProxy : public ChildProcessProxy {
 public:
-    static PassRefPtr<NetworkProcessProxy> create(WebContext*);
+    static PassRefPtr<NetworkProcessProxy> create(WebContext&);
     ~NetworkProcessProxy();
 
     void getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>);
@@ -62,7 +62,7 @@ public:
 #endif
 
 private:
-    NetworkProcessProxy(WebContext*);
+    NetworkProcessProxy(WebContext&);
 
     // ChildProcessProxy
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) OVERRIDE;
@@ -86,7 +86,7 @@ private:
     // ProcessLauncher::Client
     virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier);
 
-    WebContext* m_webContext;
+    WebContext& m_webContext;
     
     unsigned m_numPendingConnectionRequests;
     Deque<RefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>> m_pendingConnectionReplies;

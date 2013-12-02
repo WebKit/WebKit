@@ -222,12 +222,12 @@ static const char* webKeyboardEventTypeString(WebEvent::Type type)
 }
 #endif // !LOG_DISABLED
 
-PassRefPtr<WebPageProxy> WebPageProxy::create(PageClient& pageClient, PassRefPtr<WebProcessProxy> process, WebPageGroup& pageGroup, uint64_t pageID)
+PassRefPtr<WebPageProxy> WebPageProxy::create(PageClient& pageClient, WebProcessProxy& process, WebPageGroup& pageGroup, uint64_t pageID)
 {
     return adoptRef(new WebPageProxy(pageClient, process, pageGroup, pageID));
 }
 
-WebPageProxy::WebPageProxy(PageClient& pageClient, PassRefPtr<WebProcessProxy> process, WebPageGroup& pageGroup, uint64_t pageID)
+WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, WebPageGroup& pageGroup, uint64_t pageID)
     : m_pageClient(pageClient)
     , m_process(process)
     , m_pageGroup(pageGroup)
@@ -345,7 +345,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, PassRefPtr<WebProcessProxy> p
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, this);
 
     // FIXME: If we ever expose the session storage size as a preference, we need to pass it here.
-    m_process->context()->storageManager().createSessionStorageNamespace(m_pageID, m_process->isValid() ? m_process->connection() : 0, std::numeric_limits<unsigned>::max());
+    m_process->context().storageManager().createSessionStorageNamespace(m_pageID, m_process->isValid() ? m_process->connection() : 0, std::numeric_limits<unsigned>::max());
 }
 
 WebPageProxy::~WebPageProxy()
@@ -363,11 +363,6 @@ WebPageProxy::~WebPageProxy()
 #ifndef NDEBUG
     webPageProxyCounter.decrement();
 #endif
-}
-
-WebProcessProxy* WebPageProxy::process() const
-{
-    return m_process.get();
 }
 
 PlatformProcessIdentifier WebPageProxy::processIdentifier() const
@@ -466,7 +461,6 @@ void WebPageProxy::initializeContextMenuClient(const WKPageContextMenuClient* cl
 void WebPageProxy::reattachToWebProcess()
 {
     ASSERT(!isValid());
-    ASSERT(m_process);
     ASSERT(!m_process->isValid());
     ASSERT(!m_process->isLaunching());
 
@@ -474,10 +468,10 @@ void WebPageProxy::reattachToWebProcess()
 
     m_isValid = true;
 
-    if (m_process->context()->processModel() == ProcessModelSharedSecondaryProcess)
-        m_process = m_process->context()->ensureSharedWebProcess();
+    if (m_process->context().processModel() == ProcessModelSharedSecondaryProcess)
+        m_process = m_process->context().ensureSharedWebProcess();
     else
-        m_process = m_process->context()->createNewWebProcessRespectingProcessCountLimit();
+        m_process = m_process->context().createNewWebProcessRespectingProcessCountLimit();
     m_process->addExistingWebPage(this, m_pageID);
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, this);
 
@@ -572,8 +566,8 @@ void WebPageProxy::close()
     m_process->send(Messages::WebPage::Close(), m_pageID);
     m_process->removeWebPage(m_pageID);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
-    m_process->context()->storageManager().destroySessionStorageNamespace(m_pageID);
-    m_process->context()->supplement<WebNotificationManagerProxy>()->clearNotifications(this);
+    m_process->context().storageManager().destroySessionStorageNamespace(m_pageID);
+    m_process->context().supplement<WebNotificationManagerProxy>()->clearNotifications(this);
 }
 
 bool WebPageProxy::tryClose()
@@ -828,7 +822,7 @@ void WebPageProxy::shouldGoToBackForwardListItem(uint64_t itemID, bool& shouldGo
 void WebPageProxy::willGoToBackForwardListItem(uint64_t itemID, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -836,14 +830,14 @@ void WebPageProxy::willGoToBackForwardListItem(uint64_t itemID, CoreIPC::Message
         m_loaderClient.willGoToBackForwardListItem(this, item, userData.get());
 }
 
-bool WebPageProxy::canShowMIMEType(const String& mimeType) const
+bool WebPageProxy::canShowMIMEType(const String& mimeType)
 {
     if (MIMETypeRegistry::canShowMIMEType(mimeType))
         return true;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     String newMimeType = mimeType;
-    PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, URL());
+    PluginModuleInfo plugin = m_process->context().pluginInfoStore().findPlugin(newMimeType, URL());
     if (!plugin.path.isNull() && m_pageGroup->preferences()->pluginsEnabled())
         return true;
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
@@ -1074,7 +1068,7 @@ void WebPageProxy::commitPageTransitionViewport()
     if (!isValid())
         return;
 
-    process()->send(Messages::WebPage::CommitPageTransitionViewport(), m_pageID);
+    process().send(Messages::WebPage::CommitPageTransitionViewport(), m_pageID);
 }
 #endif
 
@@ -1319,7 +1313,7 @@ void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, cons
     pluginLoadPolicy = PluginModuleLoadNormally;
 
     PluginData::AllowedPluginTypes allowedPluginTypes = allowOnlyApplicationPlugins ? PluginData::OnlyApplicationPlugins : PluginData::AllPlugins;
-    PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, URL(URL(), urlString), allowedPluginTypes);
+    PluginModuleInfo plugin = m_process->context().pluginInfoStore().findPlugin(newMimeType, URL(URL(), urlString), allowedPluginTypes);
     if (!plugin.path) {
         pluginProcessToken = 0;
         return;
@@ -1414,7 +1408,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
     uint64_t downloadID = 0;
     if (action == PolicyDownload) {
         // Create a download proxy.
-        DownloadProxy* download = m_process->context()->createDownloadProxy();
+        DownloadProxy* download = m_process->context().createDownloadProxy();
         downloadID = download->downloadID();
 #if PLATFORM(EFL) || PLATFORM(GTK)
         // Our design does not suppport downloads without a WebPage.
@@ -2081,7 +2075,7 @@ void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, const Strin
     m_pageLoadState.clearPendingAPIRequestURL();
 
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2101,7 +2095,7 @@ void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, const Strin
 void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, const String& url, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2120,7 +2114,7 @@ void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t f
 void WebPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, const ResourceError& error, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2151,7 +2145,7 @@ void WebPageProxy::clearLoadDependentCallbacks()
 void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeType, uint32_t opaqueFrameLoadType, const CertificateInfo& certificateInfo, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2188,7 +2182,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeTyp
 void WebPageProxy::didFinishDocumentLoadForFrame(uint64_t frameID, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2201,7 +2195,7 @@ void WebPageProxy::didFinishDocumentLoadForFrame(uint64_t frameID, CoreIPC::Mess
 void WebPageProxy::didFinishLoadForFrame(uint64_t frameID, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2219,7 +2213,7 @@ void WebPageProxy::didFinishLoadForFrame(uint64_t frameID, CoreIPC::MessageDecod
 void WebPageProxy::didFailLoadForFrame(uint64_t frameID, const ResourceError& error, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2239,7 +2233,7 @@ void WebPageProxy::didFailLoadForFrame(uint64_t frameID, const ResourceError& er
 void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint32_t opaqueSameDocumentNavigationType, const String& url, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2259,7 +2253,7 @@ void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint32_t 
 void WebPageProxy::didReceiveTitleForFrame(uint64_t frameID, const String& title, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2277,7 +2271,7 @@ void WebPageProxy::didReceiveTitleForFrame(uint64_t frameID, const String& title
 void WebPageProxy::didFirstLayoutForFrame(uint64_t frameID, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2290,7 +2284,7 @@ void WebPageProxy::didFirstLayoutForFrame(uint64_t frameID, CoreIPC::MessageDeco
 void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2303,7 +2297,7 @@ void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, Core
 void WebPageProxy::didLayout(uint32_t layoutMilestones, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2313,7 +2307,7 @@ void WebPageProxy::didLayout(uint32_t layoutMilestones, CoreIPC::MessageDecoder&
 void WebPageProxy::didRemoveFrameFromHierarchy(uint64_t frameID, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2326,7 +2320,7 @@ void WebPageProxy::didRemoveFrameFromHierarchy(uint64_t frameID, CoreIPC::Messag
 void WebPageProxy::didDisplayInsecureContentForFrame(uint64_t frameID, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2339,7 +2333,7 @@ void WebPageProxy::didDisplayInsecureContentForFrame(uint64_t frameID, CoreIPC::
 void WebPageProxy::didRunInsecureContentForFrame(uint64_t frameID, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2352,7 +2346,7 @@ void WebPageProxy::didRunInsecureContentForFrame(uint64_t frameID, CoreIPC::Mess
 void WebPageProxy::didDetectXSSForFrame(uint64_t frameID, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2376,7 +2370,7 @@ void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
 void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t opaqueNavigationType, uint32_t opaqueModifiers, int32_t opaqueMouseButton, uint64_t originatingFrameID, const ResourceRequest& request, uint64_t listenerID, CoreIPC::MessageDecoder& decoder, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2415,7 +2409,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t op
 void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, uint32_t opaqueNavigationType, uint32_t opaqueModifiers, int32_t opaqueMouseButton, const ResourceRequest& request, const String& frameName, uint64_t listenerID, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2435,7 +2429,7 @@ void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, uint32_t opa
 void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, uint64_t listenerID, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2474,7 +2468,7 @@ void WebPageProxy::decidePolicyForResponseSync(uint64_t frameID, const ResourceR
 void WebPageProxy::unableToImplementPolicy(uint64_t frameID, const ResourceError& error, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
     
@@ -2489,7 +2483,7 @@ void WebPageProxy::unableToImplementPolicy(uint64_t frameID, const ResourceError
 void WebPageProxy::willSubmitForm(uint64_t frameID, uint64_t sourceFrameID, const Vector<std::pair<String, String>>& textFieldValues, uint64_t listenerID, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2516,7 +2510,7 @@ void WebPageProxy::createNewPage(const ResourceRequest& request, const WindowFea
 
     newPageID = newPage->pageID();
     newPageParameters = newPage->creationParameters();
-    process()->context()->storageManager().cloneSessionStorageNamespace(m_pageID, newPage->pageID());
+    process().context().storageManager().cloneSessionStorageNamespace(m_pageID, newPage->pageID());
 }
     
 void WebPageProxy::showPage()
@@ -2582,7 +2576,7 @@ void WebPageProxy::setStatusText(const String& text)
 void WebPageProxy::mouseDidMoveOverElement(const WebHitTestResult::Data& hitTestResultData, uint32_t opaqueModifiers, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -2595,14 +2589,14 @@ void WebPageProxy::connectionWillOpen(CoreIPC::Connection* connection)
 {
     ASSERT(connection == m_process->connection());
 
-    m_process->context()->storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, connection);
+    m_process->context().storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, connection);
 }
 
 void WebPageProxy::connectionWillClose(CoreIPC::Connection* connection)
 {
     ASSERT_UNUSED(connection, connection == m_process->connection());
 
-    m_process->context()->storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, 0);
+    m_process->context().storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, 0);
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -2615,7 +2609,7 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
 
     RefPtr<ImmutableDictionary> pluginInformation;
     String newMimeType = mimeType;
-    PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, URL(URL(), pluginURLString));
+    PluginModuleInfo plugin = m_process->context().pluginInfoStore().findPlugin(newMimeType, URL(URL(), pluginURLString));
     pluginInformation = createPluginInformationDictionary(plugin, frameURLString, mimeType, pageURLString, pluginspageAttributeURLString, pluginURLString);
 
     WKPluginUnavailabilityReason pluginUnavailabilityReason = kWKPluginUnavailabilityReasonPluginMissing;
@@ -2801,7 +2795,7 @@ void WebPageProxy::setMayStartMediaWhenInWindow(bool mayStartMedia)
     if (!isValid())
         return;
 
-    process()->send(Messages::WebPage::SetMayStartMediaWhenInWindow(mayStartMedia), m_pageID);
+    process().send(Messages::WebPage::SetMayStartMediaWhenInWindow(mayStartMedia), m_pageID);
 }
 
 #if PLATFORM(EFL) || PLATFORM(GTK)
@@ -3055,7 +3049,7 @@ NativeWebMouseEvent* WebPageProxy::currentlyProcessedMouseDownEvent()
 
 void WebPageProxy::postMessageToInjectedBundle(const String& messageName, API::Object* messageBody)
 {
-    process()->send(Messages::WebPage::PostInjectedBundleMessage(messageName, WebContextUserMessageEncoder(messageBody)), m_pageID);
+    process().send(Messages::WebPage::PostInjectedBundleMessage(messageName, WebContextUserMessageEncoder(messageBody)), m_pageID);
 }
 
 #if PLATFORM(GTK)
@@ -3126,7 +3120,7 @@ void WebPageProxy::showContextMenu(const IntPoint& menuLocation, const WebHitTes
 void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const WebHitTestResult::Data& hitTestResultData, const Vector<WebContextMenuItemData>& proposedItems, CoreIPC::MessageDecoder& decoder)
 {
     RefPtr<API::Object> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
+    WebContextUserMessageDecoder messageDecoder(userData, &m_process.get());
     if (!decoder.decode(messageDecoder))
         return;
 
@@ -3199,15 +3193,15 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
     }
 #endif
     if (item.action() == ContextMenuItemTagDownloadImageToDisk) {
-        m_process->context()->download(this, URL(URL(), m_activeContextMenuHitTestResultData.absoluteImageURL));
+        m_process->context().download(this, URL(URL(), m_activeContextMenuHitTestResultData.absoluteImageURL));
         return;    
     }
     if (item.action() == ContextMenuItemTagDownloadLinkToDisk) {
-        m_process->context()->download(this, URL(URL(), m_activeContextMenuHitTestResultData.absoluteLinkURL));
+        m_process->context().download(this, URL(URL(), m_activeContextMenuHitTestResultData.absoluteLinkURL));
         return;
     }
     if (item.action() == ContextMenuItemTagDownloadMediaToDisk) {
-        m_process->context()->download(this, URL(URL(), m_activeContextMenuHitTestResultData.absoluteMediaURL));
+        m_process->context().download(this, URL(URL(), m_activeContextMenuHitTestResultData.absoluteMediaURL));
         return;
     }
     if (item.action() == ContextMenuItemTagCheckSpellingWhileTyping) {
@@ -3265,12 +3259,12 @@ void WebPageProxy::didCancelForOpenPanel()
     m_openPanelResultListener = 0;
 }
 
-void WebPageProxy::advanceToNextMisspelling(bool startBeforeSelection) const
+void WebPageProxy::advanceToNextMisspelling(bool startBeforeSelection)
 {
     m_process->send(Messages::WebPage::AdvanceToNextMisspelling(startBeforeSelection), m_pageID);
 }
 
-void WebPageProxy::changeSpellingToWord(const String& word) const
+void WebPageProxy::changeSpellingToWord(const String& word)
 {
     if (word.isEmpty())
         return;
@@ -3370,12 +3364,12 @@ void WebPageProxy::requestCheckingOfString(uint64_t requestID, const TextCheckin
     TextChecker::requestCheckingOfString(TextCheckerCompletion::create(requestID, request, this));
 }
 
-void WebPageProxy::didFinishCheckingText(uint64_t requestID, const Vector<WebCore::TextCheckingResult>& result) const
+void WebPageProxy::didFinishCheckingText(uint64_t requestID, const Vector<WebCore::TextCheckingResult>& result)
 {
     m_process->send(Messages::WebPage::DidFinishCheckingText(requestID, result), m_pageID);
 }
 
-void WebPageProxy::didCancelCheckingText(uint64_t requestID) const
+void WebPageProxy::didCancelCheckingText(uint64_t requestID)
 {
     m_process->send(Messages::WebPage::DidCancelCheckingText(requestID), m_pageID);
 }
@@ -3955,22 +3949,22 @@ void WebPageProxy::requestNotificationPermission(uint64_t requestID, const Strin
 
 void WebPageProxy::showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, const String& dir, const String& originString, uint64_t notificationID)
 {
-    m_process->context()->supplement<WebNotificationManagerProxy>()->show(this, title, body, iconURL, tag, lang, dir, originString, notificationID);
+    m_process->context().supplement<WebNotificationManagerProxy>()->show(this, title, body, iconURL, tag, lang, dir, originString, notificationID);
 }
 
 void WebPageProxy::cancelNotification(uint64_t notificationID)
 {
-    m_process->context()->supplement<WebNotificationManagerProxy>()->cancel(this, notificationID);
+    m_process->context().supplement<WebNotificationManagerProxy>()->cancel(this, notificationID);
 }
 
 void WebPageProxy::clearNotifications(const Vector<uint64_t>& notificationIDs)
 {
-    m_process->context()->supplement<WebNotificationManagerProxy>()->clearNotifications(this, notificationIDs);
+    m_process->context().supplement<WebNotificationManagerProxy>()->clearNotifications(this, notificationIDs);
 }
 
 void WebPageProxy::didDestroyNotification(uint64_t notificationID)
 {
-    m_process->context()->supplement<WebNotificationManagerProxy>()->didDestroyNotification(this, notificationID);
+    m_process->context().supplement<WebNotificationManagerProxy>()->didDestroyNotification(this, notificationID);
 }
 
 float WebPageProxy::headerHeight(WebFrameProxy* frame)
@@ -4060,7 +4054,7 @@ void WebPageProxy::didBlockInsecurePluginVersion(const String& mimeType, const S
 
 #if PLATFORM(MAC) && ENABLE(NETSCAPE_PLUGIN_API)
     String newMimeType = mimeType;
-    PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, URL(URL(), pluginURLString));
+    PluginModuleInfo plugin = m_process->context().pluginInfoStore().findPlugin(newMimeType, URL(URL(), pluginURLString));
     pluginInformation = createPluginInformationDictionary(plugin, frameURLString, mimeType, pageURLString, String(), String(), replacementObscured);
 #else
     UNUSED_PARAM(mimeType);
@@ -4296,7 +4290,7 @@ void WebPageProxy::dictationAlternatives(uint64_t dictationContext, Vector<Strin
 #if USE(SOUP)
 void WebPageProxy::didReceiveURIRequest(String uriString, uint64_t requestID)
 {
-    m_process->context()->supplement<WebSoupRequestManagerProxy>()->didReceiveURIRequest(uriString, this, requestID);
+    m_process->context().supplement<WebSoupRequestManagerProxy>()->didReceiveURIRequest(uriString, this, requestID);
 }
 #endif
 
@@ -4307,7 +4301,7 @@ void WebPageProxy::setComposition(const String& text, Vector<CompositionUnderlin
     if (!isValid())
         return;
 
-    process()->send(Messages::WebPage::SetComposition(text, underlines, selectionStart, selectionEnd, replacementRangeStart, replacementRangeEnd), m_pageID);
+    process().send(Messages::WebPage::SetComposition(text, underlines, selectionStart, selectionEnd, replacementRangeStart, replacementRangeEnd), m_pageID);
 }
 
 void WebPageProxy::confirmComposition(const String& compositionString, int64_t selectionStart, int64_t selectionLength)
@@ -4315,7 +4309,7 @@ void WebPageProxy::confirmComposition(const String& compositionString, int64_t s
     if (!isValid())
         return;
 
-    process()->send(Messages::WebPage::ConfirmComposition(compositionString, selectionStart, selectionLength), m_pageID);
+    process().send(Messages::WebPage::ConfirmComposition(compositionString, selectionStart, selectionLength), m_pageID);
 }
 
 void WebPageProxy::cancelComposition()
@@ -4323,7 +4317,7 @@ void WebPageProxy::cancelComposition()
     if (!isValid())
         return;
 
-    process()->send(Messages::WebPage::CancelComposition(), m_pageID);
+    process().send(Messages::WebPage::CancelComposition(), m_pageID);
 }
 #endif // PLATFORM(GTK)
 

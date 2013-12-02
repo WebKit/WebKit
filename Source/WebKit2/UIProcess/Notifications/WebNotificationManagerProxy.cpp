@@ -183,7 +183,7 @@ void WebNotificationManagerProxy::providerDidShowNotification(uint64_t globalNot
         return;
 
     uint64_t pageNotificationID = it->value.second;
-    webPage->process()->send(Messages::WebNotificationManager::DidShowNotification(pageNotificationID), 0);
+    webPage->process().send(Messages::WebNotificationManager::DidShowNotification(pageNotificationID), 0);
 }
 
 void WebNotificationManagerProxy::providerDidClickNotification(uint64_t globalNotificationID)
@@ -198,7 +198,7 @@ void WebNotificationManagerProxy::providerDidClickNotification(uint64_t globalNo
         return;
 
     uint64_t pageNotificationID = it->value.second;
-    webPage->process()->send(Messages::WebNotificationManager::DidClickNotification(pageNotificationID), 0);
+    webPage->process().send(Messages::WebNotificationManager::DidClickNotification(pageNotificationID), 0);
 }
 
 
@@ -229,7 +229,7 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
     }
 
     for (auto it = pageNotificationIDs.begin(), end = pageNotificationIDs.end(); it != end; ++it)
-        it->key->process()->send(Messages::WebNotificationManager::DidCloseNotifications(it->value), 0);
+        it->key->process().send(Messages::WebNotificationManager::DidCloseNotifications(it->value), 0);
 }
 
 void WebNotificationManagerProxy::providerDidUpdateNotificationPolicy(const WebSecurityOrigin* origin, bool allowed)

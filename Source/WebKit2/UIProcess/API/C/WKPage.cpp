@@ -55,7 +55,7 @@ WKTypeID WKPageGetTypeID()
 
 WKContextRef WKPageGetContext(WKPageRef pageRef)
 {
-    return toAPI(toImpl(pageRef)->process()->context());
+    return toAPI(&toImpl(pageRef)->process().context());
 }
 
 WKPageGroupRef WKPageGetPageGroup(WKPageRef pageRef)

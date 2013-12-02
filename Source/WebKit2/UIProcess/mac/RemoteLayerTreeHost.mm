@@ -46,12 +46,12 @@ RemoteLayerTreeHost::RemoteLayerTreeHost(WebPageProxy* webPageProxy)
     : m_webPageProxy(webPageProxy)
     , m_rootLayer(nullptr)
 {
-    m_webPageProxy->process()->addMessageReceiver(Messages::RemoteLayerTreeHost::messageReceiverName(), m_webPageProxy->pageID(), this);
+    m_webPageProxy->process().addMessageReceiver(Messages::RemoteLayerTreeHost::messageReceiverName(), m_webPageProxy->pageID(), this);
 }
 
 RemoteLayerTreeHost::~RemoteLayerTreeHost()
 {
-    m_webPageProxy->process()->removeMessageReceiver(Messages::RemoteLayerTreeHost::messageReceiverName(), m_webPageProxy->pageID());
+    m_webPageProxy->process().removeMessageReceiver(Messages::RemoteLayerTreeHost::messageReceiverName(), m_webPageProxy->pageID());
 }
 
 void RemoteLayerTreeHost::commit(const RemoteLayerTreeTransaction& transaction)

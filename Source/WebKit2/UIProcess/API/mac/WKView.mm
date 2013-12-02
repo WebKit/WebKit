@@ -916,7 +916,7 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
     bool spellCheckingEnabled = !TextChecker::state().isContinuousSpellCheckingEnabled;
     TextChecker::setContinuousSpellCheckingEnabled(spellCheckingEnabled);
 
-    _data->_page->process()->updateTextCheckerState();
+    _data->_page->process().updateTextCheckerState();
 }
 
 - (BOOL)isGrammarCheckingEnabled
@@ -930,7 +930,7 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
         return;
     
     TextChecker::setGrammarCheckingEnabled(flag);
-    _data->_page->process()->updateTextCheckerState();
+    _data->_page->process().updateTextCheckerState();
 }
 
 - (IBAction)toggleGrammarChecking:(id)sender
@@ -938,14 +938,14 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
     bool grammarCheckingEnabled = !TextChecker::state().isGrammarCheckingEnabled;
     TextChecker::setGrammarCheckingEnabled(grammarCheckingEnabled);
 
-    _data->_page->process()->updateTextCheckerState();
+    _data->_page->process().updateTextCheckerState();
 }
 
 - (IBAction)toggleAutomaticSpellingCorrection:(id)sender
 {
     TextChecker::setAutomaticSpellingCorrectionEnabled(!TextChecker::state().isAutomaticSpellingCorrectionEnabled);
 
-    _data->_page->process()->updateTextCheckerState();
+    _data->_page->process().updateTextCheckerState();
 }
 
 - (void)orderFrontSubstitutionsPanel:(id)sender
@@ -980,13 +980,13 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
         return;
 
     TextChecker::setAutomaticQuoteSubstitutionEnabled(flag);
-    _data->_page->process()->updateTextCheckerState();
+    _data->_page->process().updateTextCheckerState();
 }
 
 - (void)toggleAutomaticQuoteSubstitution:(id)sender
 {
     TextChecker::setAutomaticQuoteSubstitutionEnabled(!TextChecker::state().isAutomaticQuoteSubstitutionEnabled);
-    _data->_page->process()->updateTextCheckerState();
+    _data->_page->process().updateTextCheckerState();
 }
 
 - (BOOL)isAutomaticDashSubstitutionEnabled
@@ -1000,13 +1000,13 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
         return;
 
     TextChecker::setAutomaticDashSubstitutionEnabled(flag);
-    _data->_page->process()->updateTextCheckerState();
+    _data->_page->process().updateTextCheckerState();
 }
 
 - (void)toggleAutomaticDashSubstitution:(id)sender
 {
     TextChecker::setAutomaticDashSubstitutionEnabled(!TextChecker::state().isAutomaticDashSubstitutionEnabled);
-    _data->_page->process()->updateTextCheckerState();
+    _data->_page->process().updateTextCheckerState();
 }
 
 - (BOOL)isAutomaticLinkDetectionEnabled
@@ -1020,13 +1020,13 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
         return;
 
     TextChecker::setAutomaticLinkDetectionEnabled(flag);
-    _data->_page->process()->updateTextCheckerState();
+    _data->_page->process().updateTextCheckerState();
 }
 
 - (void)toggleAutomaticLinkDetection:(id)sender
 {
     TextChecker::setAutomaticLinkDetectionEnabled(!TextChecker::state().isAutomaticLinkDetectionEnabled);
-    _data->_page->process()->updateTextCheckerState();
+    _data->_page->process().updateTextCheckerState();
 }
 
 - (BOOL)isAutomaticTextReplacementEnabled
@@ -1040,13 +1040,13 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
         return;
 
     TextChecker::setAutomaticTextReplacementEnabled(flag);
-    _data->_page->process()->updateTextCheckerState();
+    _data->_page->process().updateTextCheckerState();
 }
 
 - (void)toggleAutomaticTextReplacement:(id)sender
 {
     TextChecker::setAutomaticTextReplacementEnabled(!TextChecker::state().isAutomaticTextReplacementEnabled);
-    _data->_page->process()->updateTextCheckerState();
+    _data->_page->process().updateTextCheckerState();
 }
 
 - (void)uppercaseWord:(id)sender
@@ -1820,7 +1820,7 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     SandboxExtension::Handle sandboxExtensionHandle;
     bool createdExtension = maybeCreateSandboxExtensionFromPasteboard([draggingInfo draggingPasteboard], sandboxExtensionHandle);
     if (createdExtension)
-        _data->_page->process()->willAcquireUniversalFileReadSandboxExtension();
+        _data->_page->process().willAcquireUniversalFileReadSandboxExtension();
 
     SandboxExtension::HandleArray sandboxExtensionForUpload;
     createSandboxExtensionsForFileUpload([draggingInfo draggingPasteboard], sandboxExtensionForUpload);
@@ -2095,8 +2095,8 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     // needs to be updated with the pid of the remote process. If the process is going
     // away, that information is not present in WebProcess
     pid_t pid = 0;
-    if (registerProcess && _data->_page->process())
-        pid = _data->_page->process()->processIdentifier();
+    if (registerProcess)
+        pid = _data->_page->process().processIdentifier();
     else if (!registerProcess) {
         pid = WKAXRemoteProcessIdentifier(_data->_remoteAccessibilityChild.get());
         _data->_remoteAccessibilityChild = nil;

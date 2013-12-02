@@ -44,7 +44,7 @@ DownloadProxyMap::~DownloadProxyMap()
     ASSERT(m_downloads.isEmpty());
 }
 
-DownloadProxy* DownloadProxyMap::createDownloadProxy(WebContext* webContext)
+DownloadProxy* DownloadProxyMap::createDownloadProxy(WebContext& webContext)
 {
     RefPtr<DownloadProxy> downloadProxy = DownloadProxy::create(*this, webContext);
     m_downloads.set(downloadProxy->downloadID(), downloadProxy);

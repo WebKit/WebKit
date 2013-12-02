@@ -76,12 +76,12 @@ static WebProcessProxy::WebPageProxyMap& globalPageMap()
     return pageMap;
 }
 
-PassRefPtr<WebProcessProxy> WebProcessProxy::create(PassRefPtr<WebContext> context)
+PassRefPtr<WebProcessProxy> WebProcessProxy::create(WebContext& context)
 {
     return adoptRef(new WebProcessProxy(context));
 }
 
-WebProcessProxy::WebProcessProxy(PassRefPtr<WebContext> context)
+WebProcessProxy::WebProcessProxy(WebContext& context)
     : m_responsivenessTimer(this)
     , m_context(context)
     , m_mayHaveUniversalFileReadSandboxExtension(false)
@@ -163,7 +163,7 @@ WebPageProxy* WebProcessProxy::webPage(uint64_t pageID)
 PassRefPtr<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, WebPageGroup& pageGroup)
 {
     uint64_t pageID = generatePageID();
-    RefPtr<WebPageProxy> webPage = WebPageProxy::create(pageClient, this, pageGroup, pageID);
+    RefPtr<WebPageProxy> webPage = WebPageProxy::create(pageClient, *this, pageGroup, pageID);
     m_pageMap.set(pageID, webPage.get());
     globalPageMap().set(pageID, webPage.get());
 #if PLATFORM(MAC)
@@ -545,7 +545,7 @@ void WebProcessProxy::didNavigateWithNavigationData(uint64_t pageID, const WebNa
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK(frame->page() == page);
     
-    m_context->historyClient().didNavigateWithNavigationData(m_context.get(), page, store, frame);
+    m_context->historyClient().didNavigateWithNavigationData(&m_context.get(), page, store, frame);
 }
 
 void WebProcessProxy::didPerformClientRedirect(uint64_t pageID, const String& sourceURLString, const String& destinationURLString, uint64_t frameID)
@@ -563,7 +563,7 @@ void WebProcessProxy::didPerformClientRedirect(uint64_t pageID, const String& so
     MESSAGE_CHECK_URL(sourceURLString);
     MESSAGE_CHECK_URL(destinationURLString);
 
-    m_context->historyClient().didPerformClientRedirect(m_context.get(), page, sourceURLString, destinationURLString, frame);
+    m_context->historyClient().didPerformClientRedirect(&m_context.get(), page, sourceURLString, destinationURLString, frame);
 }
 
 void WebProcessProxy::didPerformServerRedirect(uint64_t pageID, const String& sourceURLString, const String& destinationURLString, uint64_t frameID)
@@ -581,7 +581,7 @@ void WebProcessProxy::didPerformServerRedirect(uint64_t pageID, const String& so
     MESSAGE_CHECK_URL(sourceURLString);
     MESSAGE_CHECK_URL(destinationURLString);
 
-    m_context->historyClient().didPerformServerRedirect(m_context.get(), page, sourceURLString, destinationURLString, frame);
+    m_context->historyClient().didPerformServerRedirect(&m_context.get(), page, sourceURLString, destinationURLString, frame);
 }
 
 void WebProcessProxy::didUpdateHistoryTitle(uint64_t pageID, const String& title, const String& url, uint64_t frameID)
@@ -595,7 +595,7 @@ void WebProcessProxy::didUpdateHistoryTitle(uint64_t pageID, const String& title
     MESSAGE_CHECK(frame->page() == page);
     MESSAGE_CHECK_URL(url);
 
-    m_context->historyClient().didUpdateHistoryTitle(m_context.get(), page, title, url, frame);
+    m_context->historyClient().didUpdateHistoryTitle(&m_context.get(), page, title, url, frame);
 }
 
 void WebProcessProxy::pageVisibilityChanged(WebKit::WebPageProxy *page)

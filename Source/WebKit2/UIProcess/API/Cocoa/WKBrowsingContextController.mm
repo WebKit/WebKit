@@ -113,10 +113,7 @@ static NSString * const frameErrorKey = @"WKBrowsingContextFrameErrorKey";
 
 - (WKProcessGroup *)processGroup
 {
-    WebContext* context = _page->process()->context();
-    if (!context)
-        return nil;
-    return wrapper(*context);
+    return wrapper(_page->process().context());
 }
 
 - (WKBrowsingContextGroup *)browsingContextGroup

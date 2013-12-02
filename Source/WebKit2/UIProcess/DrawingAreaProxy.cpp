@@ -41,12 +41,12 @@ DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy* webPagePr
     , m_webPageProxy(webPageProxy)
     , m_size(webPageProxy->viewSize())
 {
-    m_webPageProxy->process()->addMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), webPageProxy->pageID(), this);
+    m_webPageProxy->process().addMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), webPageProxy->pageID(), this);
 }
 
 DrawingAreaProxy::~DrawingAreaProxy()
 {
-    m_webPageProxy->process()->removeMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_webPageProxy->pageID());
+    m_webPageProxy->process().removeMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_webPageProxy->pageID());
 }
 
 void DrawingAreaProxy::setSize(const IntSize& size, const IntSize& layerPosition, const IntSize& scrollOffset)

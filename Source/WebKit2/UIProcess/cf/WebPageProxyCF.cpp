@@ -158,16 +158,16 @@ void WebPageProxy::restoreFromSessionStateData(WebData* webData)
             const BackForwardListItemVector& entries = m_backForwardList->entries();
             if (size_t size = entries.size()) {
                 for (size_t i = 0; i < size; ++i)
-                    process()->registerNewWebBackForwardListItem(entries[i].get());
+                    process().registerNewWebBackForwardListItem(entries[i].get());
 
                 SessionState state(m_backForwardList->entries(), m_backForwardList->currentIndex());
                 if (provisionalURL)
-                    process()->send(Messages::WebPage::RestoreSession(state), m_pageID);
+                    process().send(Messages::WebPage::RestoreSession(state), m_pageID);
                 else {
                     if (WebBackForwardListItem* item = m_backForwardList->currentItem())
                         m_pageLoadState.setPendingAPIRequestURL(item->url());
 
-                    process()->send(Messages::WebPage::RestoreSessionAndNavigateToCurrentItem(state), m_pageID);
+                    process().send(Messages::WebPage::RestoreSessionAndNavigateToCurrentItem(state), m_pageID);
                 }
             }
         }

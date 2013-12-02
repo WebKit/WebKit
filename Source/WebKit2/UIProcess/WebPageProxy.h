@@ -322,7 +322,7 @@ class WebPageProxy
     , public CoreIPC::MessageReceiver {
 public:
 
-    static PassRefPtr<WebPageProxy> create(PageClient&, PassRefPtr<WebProcessProxy>, WebPageGroup&, uint64_t pageID);
+    static PassRefPtr<WebPageProxy> create(PageClient&, WebProcessProxy&, WebPageGroup&, uint64_t pageID);
     virtual ~WebPageProxy();
 
     uint64_t pageID() const { return m_pageID; }
@@ -391,7 +391,7 @@ public:
 
     bool willHandleHorizontalScrollEvents() const;
 
-    bool canShowMIMEType(const String& mimeType) const;
+    bool canShowMIMEType(const String& mimeType);
 
     bool drawsBackground() const { return m_drawsBackground; }
     void setDrawsBackground(bool);
@@ -697,7 +697,7 @@ public:
     bool isValidKeypressCommandName(const String& name) const { return m_knownKeypressCommandNames.contains(name); }
 #endif
 
-    WebProcessProxy* process() const;
+    WebProcessProxy& process() { return m_process.get(); }
     PlatformProcessIdentifier processIdentifier() const;
 
     WebPageGroup& pageGroup() { return m_pageGroup.get(); }
@@ -738,8 +738,8 @@ public:
     void handleDownloadRequest(DownloadProxy*);
 #endif
 
-    void advanceToNextMisspelling(bool startBeforeSelection) const;
-    void changeSpellingToWord(const String& word) const;
+    void advanceToNextMisspelling(bool startBeforeSelection);
+    void changeSpellingToWord(const String& word);
 #if USE(APPKIT)
     void uppercaseWord();
     void lowercaseWord();
@@ -835,8 +835,8 @@ public:
     void didReceiveAuthenticationChallengeProxy(uint64_t frameID, PassRefPtr<AuthenticationChallengeProxy>);
 
     int64_t spellDocumentTag();
-    void didFinishCheckingText(uint64_t requestID, const Vector<WebCore::TextCheckingResult>&) const;
-    void didCancelCheckingText(uint64_t requestID) const;
+    void didFinishCheckingText(uint64_t requestID, const Vector<WebCore::TextCheckingResult>&);
+    void didCancelCheckingText(uint64_t requestID);
 
     void connectionWillOpen(CoreIPC::Connection*);
     void connectionWillClose(CoreIPC::Connection*);
@@ -847,7 +847,7 @@ public:
     WebCore::ScrollPinningBehavior scrollPinningBehavior() { return m_scrollPinningBehavior; }
         
 private:
-    WebPageProxy(PageClient&, PassRefPtr<WebProcessProxy>, WebPageGroup&, uint64_t pageID);
+    WebPageProxy(PageClient&, WebProcessProxy&, WebPageGroup&, uint64_t pageID);
     void platformInitialize();
     void initializeCreationParameters();
 
@@ -1153,7 +1153,7 @@ private:
 #endif
 
     std::unique_ptr<DrawingAreaProxy> m_drawingArea;
-    RefPtr<WebProcessProxy> m_process;
+    Ref<WebProcessProxy> m_process;
     Ref<WebPageGroup> m_pageGroup;
     RefPtr<WebFrameProxy> m_mainFrame;
     RefPtr<WebFrameProxy> m_focusedFrame;

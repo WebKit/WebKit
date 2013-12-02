@@ -140,7 +140,7 @@ WebInspectorProxy::WebInspectorProxy(WebPageProxy* page)
 #endif
 {
     m_level = WebInspectorPageGroups::shared().inspectorLevel(m_page->pageGroup());
-    m_page->process()->addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_page->pageID(), this);
+    m_page->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_page->pageID(), this);
 }
 
 WebInspectorProxy::~WebInspectorProxy()
@@ -159,7 +159,7 @@ void WebInspectorProxy::invalidate()
         WebInspectorServer::shared().unregisterPage(m_remoteInspectionPageId);
 #endif
 
-    m_page->process()->removeMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_page->pageID());
+    m_page->process().removeMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_page->pageID());
 
     m_page->close();
 
@@ -188,7 +188,7 @@ void WebInspectorProxy::connect()
     m_showMessageSent = true;
     m_ignoreFirstBringToFront = true;
 
-    m_page->process()->send(Messages::WebInspector::Show(), m_page->pageID());
+    m_page->process().send(Messages::WebInspector::Show(), m_page->pageID());
 }
 
 void WebInspectorProxy::show()
@@ -222,7 +222,7 @@ void WebInspectorProxy::close()
     if (!m_page)
         return;
 
-    m_page->process()->send(Messages::WebInspector::Close(), m_page->pageID());
+    m_page->process().send(Messages::WebInspector::Close(), m_page->pageID());
 
     didClose();
 }
@@ -232,7 +232,7 @@ void WebInspectorProxy::showConsole()
     if (!m_page)
         return;
 
-    m_page->process()->send(Messages::WebInspector::ShowConsole(), m_page->pageID());
+    m_page->process().send(Messages::WebInspector::ShowConsole(), m_page->pageID());
 }
 
 void WebInspectorProxy::showResources()
@@ -240,7 +240,7 @@ void WebInspectorProxy::showResources()
     if (!m_page)
         return;
 
-    m_page->process()->send(Messages::WebInspector::ShowResources(), m_page->pageID());
+    m_page->process().send(Messages::WebInspector::ShowResources(), m_page->pageID());
 }
 
 void WebInspectorProxy::showMainResourceForFrame(WebFrameProxy* frame)
@@ -248,7 +248,7 @@ void WebInspectorProxy::showMainResourceForFrame(WebFrameProxy* frame)
     if (!m_page)
         return;
 
-    m_page->process()->send(Messages::WebInspector::ShowMainResourceForFrame(frame->frameID()), m_page->pageID());
+    m_page->process().send(Messages::WebInspector::ShowMainResourceForFrame(frame->frameID()), m_page->pageID());
 }
 
 void WebInspectorProxy::attachBottom()
@@ -276,11 +276,11 @@ void WebInspectorProxy::attach(AttachmentSide side)
 
     switch (m_attachmentSide) {
     case AttachmentSideBottom:
-        m_page->process()->send(Messages::WebInspector::AttachedBottom(), m_page->pageID());
+        m_page->process().send(Messages::WebInspector::AttachedBottom(), m_page->pageID());
         break;
 
     case AttachmentSideRight:
-        m_page->process()->send(Messages::WebInspector::AttachedRight(), m_page->pageID());
+        m_page->process().send(Messages::WebInspector::AttachedRight(), m_page->pageID());
         break;
     }
 
@@ -297,7 +297,7 @@ void WebInspectorProxy::detach()
     if (m_isVisible)
         inspectorPageGroup()->preferences()->setInspectorStartsAttached(false);
 
-    m_page->process()->send(Messages::WebInspector::Detached(), m_page->pageID());
+    m_page->process().send(Messages::WebInspector::Detached(), m_page->pageID());
 
     platformDetach();
 }
@@ -320,9 +320,9 @@ void WebInspectorProxy::toggleJavaScriptDebugging()
         return;
 
     if (m_isDebuggingJavaScript)
-        m_page->process()->send(Messages::WebInspector::StopJavaScriptDebugging(), m_page->pageID());
+        m_page->process().send(Messages::WebInspector::StopJavaScriptDebugging(), m_page->pageID());
     else
-        m_page->process()->send(Messages::WebInspector::StartJavaScriptDebugging(), m_page->pageID());
+        m_page->process().send(Messages::WebInspector::StartJavaScriptDebugging(), m_page->pageID());
 
     // FIXME: have the WebProcess notify us on state changes.
     m_isDebuggingJavaScript = !m_isDebuggingJavaScript;
@@ -334,9 +334,9 @@ void WebInspectorProxy::toggleJavaScriptProfiling()
         return;
 
     if (m_isProfilingJavaScript)
-        m_page->process()->send(Messages::WebInspector::StopJavaScriptProfiling(), m_page->pageID());
+        m_page->process().send(Messages::WebInspector::StopJavaScriptProfiling(), m_page->pageID());
     else
-        m_page->process()->send(Messages::WebInspector::StartJavaScriptProfiling(), m_page->pageID());
+        m_page->process().send(Messages::WebInspector::StartJavaScriptProfiling(), m_page->pageID());
 
     // FIXME: have the WebProcess notify us on state changes.
     m_isProfilingJavaScript = !m_isProfilingJavaScript;
@@ -348,9 +348,9 @@ void WebInspectorProxy::togglePageProfiling()
         return;
 
     if (m_isProfilingPage)
-        m_page->process()->send(Messages::WebInspector::StopPageProfiling(), m_page->pageID());
+        m_page->process().send(Messages::WebInspector::StopPageProfiling(), m_page->pageID());
     else
-        m_page->process()->send(Messages::WebInspector::StartPageProfiling(), m_page->pageID());
+        m_page->process().send(Messages::WebInspector::StartPageProfiling(), m_page->pageID());
 
     // FIXME: have the WebProcess notify us on state changes.
     m_isProfilingPage = !m_isProfilingPage;
@@ -405,17 +405,17 @@ void WebInspectorProxy::enableRemoteInspection()
 
 void WebInspectorProxy::remoteFrontendConnected()
 {
-    m_page->process()->send(Messages::WebInspector::RemoteFrontendConnected(), m_page->pageID());
+    m_page->process().send(Messages::WebInspector::RemoteFrontendConnected(), m_page->pageID());
 }
 
 void WebInspectorProxy::remoteFrontendDisconnected()
 {
-    m_page->process()->send(Messages::WebInspector::RemoteFrontendDisconnected(), m_page->pageID());
+    m_page->process().send(Messages::WebInspector::RemoteFrontendDisconnected(), m_page->pageID());
 }
 
 void WebInspectorProxy::dispatchMessageFromRemoteFrontend(const String& message)
 {
-    m_page->process()->send(Messages::WebInspector::DispatchMessageFromRemoteFrontend(message), m_page->pageID());
+    m_page->process().send(Messages::WebInspector::DispatchMessageFromRemoteFrontend(message), m_page->pageID());
 }
 #endif
 
@@ -459,17 +459,17 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
         switch (m_attachmentSide) {
         case AttachmentSideBottom:
             url.append("bottom");
-            m_page->process()->send(Messages::WebInspector::AttachedBottom(), m_page->pageID());
+            m_page->process().send(Messages::WebInspector::AttachedBottom(), m_page->pageID());
             break;
         case AttachmentSideRight:
             url.append("right");
-            m_page->process()->send(Messages::WebInspector::AttachedRight(), m_page->pageID());
+            m_page->process().send(Messages::WebInspector::AttachedRight(), m_page->pageID());
             break;
         }
     } else
         url.append("undocked");
 
-    m_page->process()->assumeReadAccessToBaseURL(inspectorBaseURL());
+    m_page->process().assumeReadAccessToBaseURL(inspectorBaseURL());
 
     inspectorPage->loadURL(url);
 

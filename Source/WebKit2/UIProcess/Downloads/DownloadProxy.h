@@ -48,7 +48,7 @@ class WebPageProxy;
 
 class DownloadProxy : public API::TypedObject<API::Object::Type::Download>, public CoreIPC::MessageReceiver {
 public:
-    static PassRefPtr<DownloadProxy> create(DownloadProxyMap&, WebContext*);
+    static PassRefPtr<DownloadProxy> create(DownloadProxyMap&, WebContext&);
     ~DownloadProxy();
 
     uint64_t downloadID() const { return m_downloadID; }
@@ -64,7 +64,7 @@ public:
     void didReceiveSyncDownloadProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, std::unique_ptr<CoreIPC::MessageEncoder>&);
 
 private:
-    explicit DownloadProxy(DownloadProxyMap&, WebContext*);
+    explicit DownloadProxy(DownloadProxyMap&, WebContext&);
 
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;

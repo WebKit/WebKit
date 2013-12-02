@@ -390,7 +390,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
             initialRect = [NSWindow contentRectForFrameRect:windowFrame styleMask:windowStyleMask];
     }
 
-    m_inspectorView = adoptNS([[WKWebInspectorWKView alloc] initWithFrame:initialRect contextRef:toAPI(page()->process()->context()) pageGroupRef:toAPI(inspectorPageGroup()) relatedToPage:toAPI(m_page)]);
+    m_inspectorView = adoptNS([[WKWebInspectorWKView alloc] initWithFrame:initialRect contextRef:toAPI(&page()->process().context()) pageGroupRef:toAPI(inspectorPageGroup()) relatedToPage:toAPI(m_page)]);
     ASSERT(m_inspectorView);
 
     [m_inspectorView.get() setDrawsBackground:NO];
@@ -560,7 +560,7 @@ void WebInspectorProxy::platformSave(const String& suggestedURL, const String& c
         } else
             [contentCopy writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 
-        m_page->process()->send(Messages::WebInspector::DidSave([actualURL absoluteString]), m_page->pageID());
+        m_page->process().send(Messages::WebInspector::DidSave([actualURL absoluteString]), m_page->pageID());
     };
 
     if (!forceSaveDialog) {
@@ -594,7 +594,7 @@ void WebInspectorProxy::platformAppend(const String& suggestedURL, const String&
     [handle writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
     [handle closeFile];
 
-    m_page->process()->send(Messages::WebInspector::DidAppend([actualURL absoluteString]), m_page->pageID());
+    m_page->process().send(Messages::WebInspector::DidAppend([actualURL absoluteString]), m_page->pageID());
 }
 
 void WebInspectorProxy::windowFrameDidChange()

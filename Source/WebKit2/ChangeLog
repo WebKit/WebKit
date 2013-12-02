@@ -1,3 +1,43 @@
+2013-12-01  Sam Weinig  <sam@webkit.org>
+
+        [CTTE] The WebPageProxy's WebProcessProxy is never null so it should be stored in a Ref
+        https://bugs.webkit.org/show_bug.cgi?id=125047
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/C/mac/WKPagePrivateMac.cpp:
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        * UIProcess/Downloads/DownloadProxyMap.h:
+        * UIProcess/DrawingAreaProxy.cpp:
+        * UIProcess/GeolocationPermissionRequestManagerProxy.cpp:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp:
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        * UIProcess/WebContext.cpp:
+        * UIProcess/WebContext.h:
+        * UIProcess/WebEditCommandProxy.cpp:
+        * UIProcess/WebFrameProxy.cpp:
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        * UIProcess/WebInspectorProxy.cpp:
+        * UIProcess/WebPageGroup.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        * UIProcess/mac/WebFullScreenManagerProxyMac.mm:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        * UIProcess/mac/WebPageProxyMac.mm:
+
 2013-12-01  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][CoordinatedGraphics] Clear m_contentsSize when new contents are loaded

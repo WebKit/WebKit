@@ -47,12 +47,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<NetworkProcessProxy> NetworkProcessProxy::create(WebContext* webContext)
+PassRefPtr<NetworkProcessProxy> NetworkProcessProxy::create(WebContext& webContext)
 {
     return adoptRef(new NetworkProcessProxy(webContext));
 }
 
-NetworkProcessProxy::NetworkProcessProxy(WebContext* webContext)
+NetworkProcessProxy::NetworkProcessProxy(WebContext& webContext)
     : m_webContext(webContext)
     , m_numPendingConnectionRequests(0)
 #if ENABLE(CUSTOM_PROTOCOLS)
@@ -117,7 +117,7 @@ void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()
     }
 
     // Tell the network process manager to forget about this network process proxy. This may cause us to be deleted.
-    m_webContext->networkProcessCrashed(this);
+    m_webContext.networkProcessCrashed(this);
 }
 
 void NetworkProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
@@ -125,7 +125,7 @@ void NetworkProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, Cor
     if (dispatchMessage(connection, decoder))
         return;
 
-    if (m_webContext->dispatchMessage(connection, decoder))
+    if (m_webContext.dispatchMessage(connection, decoder))
         return;
 
     didReceiveNetworkProcessProxyMessage(connection, decoder);
@@ -190,7 +190,7 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, CoreIPC:
     m_numPendingConnectionRequests = 0;
 
 #if PLATFORM(MAC)
-    if (m_webContext->canEnableProcessSuppressionForNetworkProcess())
+    if (m_webContext.canEnableProcessSuppressionForNetworkProcess())
         setProcessSuppressionEnabled(true);
 #endif
 }

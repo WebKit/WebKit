@@ -370,7 +370,7 @@ void WebContext::ensureNetworkProcess()
     if (m_networkProcess)
         return;
 
-    m_networkProcess = NetworkProcessProxy::create(this);
+    m_networkProcess = NetworkProcessProxy::create(*this);
 
     NetworkProcessCreationParameters parameters;
 
@@ -506,22 +506,22 @@ void WebContext::processDidCachePage(WebProcessProxy* process)
     m_processWithPageCache = process;
 }
 
-WebProcessProxy* WebContext::ensureSharedWebProcess()
+WebProcessProxy& WebContext::ensureSharedWebProcess()
 {
     ASSERT(m_processModel == ProcessModelSharedSecondaryProcess);
     if (m_processes.isEmpty())
         createNewWebProcess();
-    return m_processes[0].get();
+    return *m_processes[0];
 }
 
-WebProcessProxy* WebContext::createNewWebProcess()
+WebProcessProxy& WebContext::createNewWebProcess()
 {
 #if ENABLE(NETWORK_PROCESS)
     if (m_usesNetworkProcess)
         ensureNetworkProcess();
 #endif
 
-    RefPtr<WebProcessProxy> process = WebProcessProxy::create(this);
+    RefPtr<WebProcessProxy> process = WebProcessProxy::create(*this);
 
     WebProcessCreationParameters parameters;
 
@@ -615,7 +615,7 @@ WebProcessProxy* WebContext::createNewWebProcess()
     } else
         ASSERT(m_messagesToInjectedBundlePostedToEmptyContext.isEmpty());
 
-    return process.get();
+    return *process;
 }
 
 void WebContext::warmInitialProcess()  
@@ -723,13 +723,13 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
     m_processes.remove(m_processes.find(process));
 }
 
-WebProcessProxy* WebContext::createNewWebProcessRespectingProcessCountLimit()
+WebProcessProxy& WebContext::createNewWebProcessRespectingProcessCountLimit()
 {
     if (m_processes.size() < m_webProcessCountLimit)
         return createNewWebProcess();
 
     // Choose a process with fewest pages, to achieve flat distribution.
-    WebProcessProxy* result = 0;
+    WebProcessProxy* result = nullptr;
     unsigned fewestPagesSeen = UINT_MAX;
     for (unsigned i = 0; i < m_processes.size(); ++i) {
         if (fewestPagesSeen > m_processes[i]->pages().size()) {
@@ -737,23 +737,23 @@ WebProcessProxy* WebContext::createNewWebProcessRespectingProcessCountLimit()
             fewestPagesSeen = m_processes[i]->pages().size();
         }
     }
-    return result;
+    return *result;
 }
 
 PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPageGroup* pageGroup, WebPageProxy* relatedPage)
 {
     RefPtr<WebProcessProxy> process;
     if (m_processModel == ProcessModelSharedSecondaryProcess) {
-        process = ensureSharedWebProcess();
+        process = &ensureSharedWebProcess();
     } else {
         if (m_haveInitialEmptyProcess) {
             process = m_processes.last();
             m_haveInitialEmptyProcess = false;
         } else if (relatedPage) {
             // Sharing processes, e.g. when creating the page via window.open().
-            process = relatedPage->process();
+            process = &relatedPage->process();
         } else
-            process = createNewWebProcessRespectingProcessCountLimit();
+            process = &createNewWebProcessRespectingProcessCountLimit();
     }
 
     return process->createWebPage(pageClient, pageGroup ? *pageGroup : m_defaultPageGroup.get());
@@ -916,7 +916,7 @@ DownloadProxy* WebContext::createDownloadProxy()
         return m_networkProcess->createDownloadProxy();
 #endif
 
-    return ensureSharedWebProcess()->createDownloadProxy();
+    return ensureSharedWebProcess().createDownloadProxy();
 }
 
 void WebContext::addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver* messageReceiver)
