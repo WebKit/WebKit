@@ -1,5 +1,25 @@
 2013-12-02  Tim Horton  <timothy_horton@apple.com>
 
+        Remote Layer Tree: Hook up setLayerTreeStateIsFrozen
+        https://bugs.webkit.org/show_bug.cgi?id=124872
+
+        Reviewed by Brent Fulgham.
+
+        setLayerTreeStateIsFrozen is the mechanism used to ensure that
+        layer property changes (including new backing store) aren't committed
+        while e.g. the page is reconfigured for printing.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::RemoteLayerTreeContext):
+        (WebKit::RemoteLayerTreeContext::flushLayers):
+        (WebKit::RemoteLayerTreeContext::setIsFlushingSuspended):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen):
+
+2013-12-02  Tim Horton  <timothy_horton@apple.com>
+
         Remote Layer Tree: Disable direct image compositing
         https://bugs.webkit.org/show_bug.cgi?id=124875
         <rdar://problem/15446024>

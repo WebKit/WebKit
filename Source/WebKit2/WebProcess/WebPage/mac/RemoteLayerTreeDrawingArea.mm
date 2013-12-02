@@ -187,4 +187,9 @@ float RemoteLayerTreeDrawingArea::deviceScaleFactor() const
     return m_webPage->corePage()->deviceScaleFactor();
 }
 
+void RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen(bool isFrozen)
+{
+    m_remoteLayerTreeContext->setIsFlushingSuspended(isFrozen);
+}
+
 } // namespace WebKit

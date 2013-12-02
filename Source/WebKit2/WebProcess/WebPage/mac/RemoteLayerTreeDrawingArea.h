@@ -64,6 +64,8 @@ private:
     virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&) OVERRIDE;
     virtual void setPageOverlayOpacity(PageOverlay*, float) OVERRIDE;
 
+    virtual void setLayerTreeStateIsFrozen(bool) OVERRIDE;
+
     // WebCore::GraphicsLayerClient
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) OVERRIDE { }
     virtual void notifyFlushRequired(const WebCore::GraphicsLayer*) OVERRIDE { }
