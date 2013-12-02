@@ -1,5 +1,22 @@
 2013-12-02  Antoine Quint  <graouts@apple.com>
 
+        Web Inspector: popover can overlap target frame
+        https://bugs.webkit.org/show_bug.cgi?id=125069
+
+        Reviewed by Joseph Pecoraro.
+
+        Fix a regression introduced in http://trac.webkit.org/changeset/159286. We should only
+        offset the frame of the popover in the y-axis if the target edge is on the x-axis, and
+        vice versa. We also remove the needsToDrawBackground check since it incorrectly disregarded
+        the anchor point. We now always draw the background which is a lot safer and guarantees
+        we'll always draw an adequate frame and anchor point.
+
+        * UserInterface/Popover.js:
+        (WebInspector.Popover.prototype._update):
+        (WebInspector.Popover.prototype._bestMetricsForEdge):
+
+2013-12-02  Antoine Quint  <graouts@apple.com>
+
         Web Inspector: add a method to add padding around a WebInspector.Rect
         https://bugs.webkit.org/show_bug.cgi?id=125072
 

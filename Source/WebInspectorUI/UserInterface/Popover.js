@@ -232,8 +232,6 @@ WebInspector.Popover.prototype = {
         var anchorPoint;
         var bestFrame = bestMetrics.frame;
 
-        var needsToDrawBackground = !this._frame.size.equals(bestFrame.size) || this._edge !== bestEdge;
-
         this.frame = bestFrame;
         this._edge = bestEdge;
 
@@ -258,8 +256,7 @@ WebInspector.Popover.prototype = {
 
             this._element.classList.add(this._cssClassNameForEdge());
 
-            if (needsToDrawBackground)
-                this._drawBackground(bestEdge, anchorPoint);
+            this._drawBackground(bestEdge, anchorPoint);
 
             // Make sure content is centered in case either of the dimension is smaller than the minimal bounds.
             if (this._preferredSize.width < WebInspector.Popover.MinWidth || this._preferredSize.height < WebInspector.Popover.MinHeight)
@@ -394,14 +391,17 @@ WebInspector.Popover.prototype = {
             break;
         }
 
-        if (x < containerFrame.minX())
-            x = containerFrame.minX(); 
-        if (y < containerFrame.minY())
-            y = containerFrame.minY();
-        if (x + width > containerFrame.maxX())
-            x += containerFrame.maxX() - (x + width);
-        if (y + height > containerFrame.maxY())
-            y += containerFrame.maxY() - (y + height);
+        if (edge === WebInspector.RectEdge.MIN_X || edge === WebInspector.RectEdge.MAX_X) {
+            if (y < containerFrame.minY())
+                y = containerFrame.minY();
+            if (y + height > containerFrame.maxY())
+                y = containerFrame.maxY() - height;
+        } else {
+            if (x < containerFrame.minX())
+                x = containerFrame.minX(); 
+            if (x + width > containerFrame.maxX())
+                x = containerFrame.maxX() - width;
+        }
 
         var preferredFrame = new WebInspector.Rect(x, y, width, height);
         var bestFrame = preferredFrame.intersectionWithRect(containerFrame);
