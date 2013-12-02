@@ -27,7 +27,6 @@
 #include "Profile.h"
 
 #include "ProfileNode.h"
-#include <stdio.h>
 #include <wtf/DataLog.h>
 
 namespace JSC {

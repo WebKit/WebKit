@@ -1,5 +1,21 @@
 2013-12-02  László Langó  <lango@inf.u-szeged.hu>
 
+        Remove stdio.h from JSC files.
+        https://bugs.webkit.org/show_bug.cgi?id=125066
+
+        Reviewed by Michael Saboff.
+
+        Remove stdio.h, when it is not necessary to be included.
+
+        * bytecode/CodeBlock.cpp:
+        * bytecode/StructureSet.h:
+        * profiler/LegacyProfiler.cpp:
+        * profiler/Profile.cpp:
+        * profiler/ProfileNode.cpp:
+        * yarr/YarrInterpreter.cpp:
+
+2013-12-02  László Langó  <lango@inf.u-szeged.hu>
+
         Unused include files when building without JIT.
         https://bugs.webkit.org/show_bug.cgi?id=125062
 

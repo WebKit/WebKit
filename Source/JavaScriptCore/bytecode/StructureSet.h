@@ -30,7 +30,6 @@
 #include "SpeculatedType.h"
 #include "Structure.h"
 #include "DumpContext.h"
-#include <stdio.h>
 #include <wtf/CommaPrinter.h>
 #include <wtf/Vector.h>
 

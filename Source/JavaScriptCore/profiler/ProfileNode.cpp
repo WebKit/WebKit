@@ -30,7 +30,6 @@
 #include "ProfileNode.h"
 
 #include "LegacyProfiler.h"
-#include <stdio.h>
 #include <wtf/DateMath.h>
 #include <wtf/DataLog.h>
 #include <wtf/text/StringHash.h>
