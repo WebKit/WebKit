@@ -1,3 +1,41 @@
+2013-12-02  Brian J. Burg  <burg@cs.washington.edu>
+
+        Add JavaScript style checker and teach checker.py about .js files
+        https://bugs.webkit.org/show_bug.cgi?id=125049
+
+        Reviewed by Joseph Pecoraro.
+
+        Add a JavaScript file type, extension, and checker (JSChecker).
+        Use TextChecker for JavaScript tests, libraries, website resources,
+        etc. and use JSChecker for files within WebInspectorUI/UserInterface.
+
+        Amended tests for TextChecker to reflect the rule above.
+
+        * Scripts/webkitpy/style/checker.py:
+        (_all_categories): Add categories defined by JSChecker.
+        (FileType): Add file type for JS and re-number the enum.
+        (CheckerDispatcher._file_type): Detect .js files as JavaScript.
+        (CheckerDispatcher._create_checker):
+        Create a JSChecker or TextChecker depending on the file's path.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (CheckerDispatcherDispatchTest.assert_checker_js): Added.
+        (CheckerDispatcherDispatchTest.test_js_paths): Added.
+        (CheckerDispatcherDispatchTest.test_text_paths): Add new test paths
+        that end in .js but should be checked with TextChecker.
+        * Scripts/webkitpy/style/checkers/js.py: Added.
+        (JSChecker):
+        (JSChecker.__init__):
+        (JSChecker.check):
+        * Scripts/webkitpy/style/checkers/js_unittest.py: Added.
+        (JSTestCase):
+        (JSTestCase.assertNoError):
+        (JSTestCase.assertNoError.error_for_test):
+        (JSTestCase.assertError):
+        (JSTestCase.assertError.error_for_test):
+        (JSTestCase.test_no_error):
+        (JSTestCase.test_error):
+
 2013-12-02  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         run-jsc-stress-tests always copies the VM

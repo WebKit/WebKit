@@ -52,6 +52,7 @@ from checker import StyleProcessor
 from checker import StyleProcessorConfiguration
 from checkers.changelog import ChangeLogChecker
 from checkers.cpp import CppChecker
+from checkers.js import JSChecker
 from checkers.jsonchecker import JSONChecker
 from checkers.python import PythonChecker
 from checkers.text import TextChecker
@@ -393,6 +394,10 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
         """Assert that the dispatched checker is a CppChecker."""
         self.assert_checker(file_path, CppChecker)
 
+    def assert_checker_js(self, file_path):
+        """Assert that the dispatched checker is a JSChecker."""
+        self.assert_checker(file_path, JSChecker)
+
     def assert_checker_json(self, file_path):
         """Assert that the dispatched checker is a JSONChecker."""
         self.assert_checker(file_path, JSONChecker)
@@ -459,6 +464,24 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
         self.assertEqual(checker.file_extension, file_extension)
         self.assertEqual(checker.file_path, file_path)
 
+    def test_js_paths(self):
+        """Test paths that should be checked as JavaScript."""
+        paths = [
+           "Source/WebInspectorUI/UserInterface/dummy.js",
+        ]
+
+        for path in paths:
+            self.assert_checker_js(path)
+
+        # Check checker attributes on a typical input.
+        file_base = "foo"
+        file_extension = "css"
+        file_path = file_base + "." + file_extension
+        self.assert_checker_text(file_path)
+        checker = self.dispatch(file_path)
+        self.assertEqual(checker.handle_style_error,
+                          self.mock_handle_style_error)
+
     def test_json_paths(self):
         """Test paths that should be checked as JSON."""
         paths = [
@@ -512,7 +535,6 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
            "foo.html",
            "foo.idl",
            "foo.in",
-           "foo.js",
            "foo.mm",
            "foo.php",
            "foo.pl",
@@ -525,7 +547,9 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
            "foo.wm",
            "foo.xhtml",
            "foo.y",
-           os.path.join("Source", "WebCore", "inspector", "front-end", "inspector.js"),
+           "Source/WebInspectorUI/External/codemirror.js",
+           "LayoutTests/fast/foo.js",
+           "Websites/webkit.org/foo.js",
            os.path.join("Tools", "Scripts", "check-webkit-style"),
         ]
 
