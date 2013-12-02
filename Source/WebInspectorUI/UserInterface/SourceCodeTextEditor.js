@@ -1091,15 +1091,9 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
         content.classList.add(WebInspector.SourceCodeTextEditor.PopoverDebuggerContentStyleClassName);
 
-        const padding = 5;
-        bounds.origin.x -= padding;
-        bounds.origin.y -= padding;
-        bounds.size.width += padding * 2;
-        bounds.size.height += padding * 2;
-
         this._popover = this._popover || new WebInspector.Popover(this);
         this._popover.content = content;
-        this._popover.present(bounds, [WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MAX_X]);
+        this._popover.present(bounds.pad(5), [WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MAX_X]);
 
         this._trackPopoverEvents();
 

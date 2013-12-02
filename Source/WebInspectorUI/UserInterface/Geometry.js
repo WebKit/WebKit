@@ -126,6 +126,16 @@ WebInspector.Rect.prototype = {
         );
     },
 
+    pad: function(padding)
+    {
+        return new WebInspector.Rect(
+            this.origin.x - padding,
+            this.origin.y - padding,
+            this.size.width + padding * 2,
+            this.size.height + padding * 2
+        );
+    },
+
     minX: function()
     {
         return this.origin.x;

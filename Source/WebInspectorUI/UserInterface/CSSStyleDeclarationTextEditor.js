@@ -750,14 +750,9 @@ WebInspector.CSSStyleDeclarationTextEditor.prototype = {
             }.bind(this));
 
             var bounds = WebInspector.Rect.rectFromClientRect(swatch.getBoundingClientRect());
-            const padding = 2;
-            bounds.origin.x -= padding;
-            bounds.origin.y -= padding;
-            bounds.size.width += padding * 2;
-            bounds.size.height += padding * 2;
 
             this._colorPickerPopover.content = colorPicker.element;
-            this._colorPickerPopover.present(bounds, [WebInspector.RectEdge.MIN_X]);
+            this._colorPickerPopover.present(bounds.pad(2), [WebInspector.RectEdge.MIN_X]);
 
             colorPicker.color = color;
         }

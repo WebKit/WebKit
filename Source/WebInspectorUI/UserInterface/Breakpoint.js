@@ -480,18 +480,12 @@ WebInspector.Breakpoint.prototype = {
 
     _showEditBreakpointPopover: function(boundingClientRect)
     {
-        const padding = 2;
         var bounds = WebInspector.Rect.rectFromClientRect(boundingClientRect);
-
         bounds.origin.x -= 1; // Move the anchor left one pixel so it looks more centered.
-        bounds.origin.x -= padding;
-        bounds.origin.y -= padding;
-        bounds.size.width += padding * 2;
-        bounds.size.height += padding * 2;
 
         this._popover = this._popover || new WebInspector.Popover(this);
         this._popover.content = this._editBreakpointPopoverContentElement();
-        this._popover.present(bounds, [WebInspector.RectEdge.MAX_Y]);
+        this._popover.present(bounds.pad(2), [WebInspector.RectEdge.MAX_Y]);
 
         if (!this._keyboardShortcutEsc) {
             this._keyboardShortcutEsc = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Escape);

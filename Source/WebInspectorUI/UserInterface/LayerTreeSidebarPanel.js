@@ -337,16 +337,11 @@ WebInspector.LayerTreeSidebarPanel.prototype = {
             popover = this._popover = new WebInspector.Popover;
 
         var targetFrame = WebInspector.Rect.rectFromClientRect(dataGridNode.element.getBoundingClientRect());
-        const padding = 2;
-        targetFrame.origin.x -= padding;
-        targetFrame.origin.y -= padding;
-        targetFrame.size.width += padding * 2;
-        targetFrame.size.height += padding * 2;
 
         if (content)
             popover.content = content;
 
-        popover.present(targetFrame, [WebInspector.RectEdge.MIN_X]);
+        popover.present(targetFrame.pad(2), [WebInspector.RectEdge.MIN_X]);
     },
 
     _hidePopover: function()

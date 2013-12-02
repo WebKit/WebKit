@@ -1,3 +1,27 @@
+2013-12-02  Antoine Quint  <graouts@apple.com>
+
+        Web Inspector: add a method to add padding around a WebInspector.Rect
+        https://bugs.webkit.org/show_bug.cgi?id=125072
+
+        Reviewed by Joseph Pecoraro.
+
+        Add a new WebInspector.Rect.prototype.pad() method which does not alter
+        the rectangle it's called and returns a new rect much like .inset(). I've
+        checked all call sites and there was no reuse of the rectangle that was
+        padded so this patch won't have any side effects.
+
+        * UserInterface/Breakpoint.js:
+        (WebInspector.Breakpoint.prototype._showEditBreakpointPopover):
+        * UserInterface/CSSStyleDeclarationTextEditor.js:
+        * UserInterface/Geometry.js:
+        (WebInspector.Rect.prototype.pad):
+        * UserInterface/LayerTreeSidebarPanel.js:
+        (WebInspector.LayerTreeSidebarPanel.prototype._updatePopoverForSelectedNode):
+        * UserInterface/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._showPopover):
+        * UserInterface/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid.prototype._updatePopoverForSelectedNode):
+
 2013-11-26  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: Allow showing a context menu on all mouse events.

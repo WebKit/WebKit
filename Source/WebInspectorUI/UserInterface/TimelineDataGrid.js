@@ -217,16 +217,10 @@ WebInspector.TimelineDataGrid.prototype = {
             delete this._hidePopoverContentClearTimeout;
         }
 
-        const padding = 2;
-        targetFrame.origin.x -= padding;
-        targetFrame.origin.y -= padding;
-        targetFrame.size.width += padding * 2;
-        targetFrame.size.height += padding * 2;
-
         if (updateContent)
             this._popover.content = this._createPopoverContent();
 
-        this._popover.present(targetFrame, [WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_X]);
+        this._popover.present(targetFrame.pad(2), [WebInspector.RectEdge.MAX_Y, WebInspector.RectEdge.MIN_Y, WebInspector.RectEdge.MAX_X]);
     },
 
     _createPopoverContent: function()
