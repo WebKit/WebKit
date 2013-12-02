@@ -505,11 +505,11 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
     }
 
     while (currentPosition < characters.length()) {
-        RefPtr<Text> textNode = Text::createWithLengthLimit(task.parent->document(), stringForTextNode(characters, shouldUseAtomicString), currentPosition, lengthLimit);
+        RefPtr<Text> textNode = Text::createWithLengthLimit(task.parent->document(), shouldUseAtomicString ? AtomicString(characters).string() : characters, currentPosition, lengthLimit);
         // If we have a whole string of unbreakable characters the above could lead to an infinite loop. Exceeding the length limit is the lesser evil.
         if (!textNode->length()) {
             String substring = characters.substring(currentPosition);
-            textNode = Text::create(task.parent->document(), stringForTextNode(substring, shouldUseAtomicString));
+            textNode = Text::create(task.parent->document(), shouldUseAtomicString ? AtomicString(substring).string() : substring);
         }
 
         currentPosition += textNode->length();
@@ -664,16 +664,6 @@ void HTMLConstructionSite::fosterParent(PassRefPtr<Node> node)
     ASSERT(task.parent);
 
     m_attachmentQueue.append(task);
-}
-
-String HTMLConstructionSite::stringForTextNode(const String& string, bool shouldUseAtomicString)
-{
-    static const unsigned maximumLengthForDeduplication = 64;
-    if (shouldUseAtomicString)
-        return AtomicString(string).string();
-    if (string.length() > maximumLengthForDeduplication)
-        return string;
-    return *m_stringsForDeduplication.add(string).iterator;
 }
 
 }
