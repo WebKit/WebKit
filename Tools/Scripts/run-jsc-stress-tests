@@ -91,6 +91,7 @@ $outputDir = Pathname.new("results")
 $verbosity = 0
 $bundle = nil
 $tarball = false
+$copyVM = false
 
 def usage
     puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
@@ -111,6 +112,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--output-dir', '-o', GetoptLong::REQUIRED_ARGUMENT],
                ['--run-bundle', GetoptLong::REQUIRED_ARGUMENT],
                ['--tarball', GetoptLong::NO_ARGUMENT],
+               ['--force-vm-copy', GetoptLong::NO_ARGUMENT],
                ['--verbose', '-v', GetoptLong::NO_ARGUMENT]).each {
     | opt, arg |
     case opt
@@ -128,6 +130,9 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $bundle = Pathname.new(arg)
     when '--tarball'
         $tarball = true
+        $copyVM = true
+    when '--force-vm-copy'
+        $copyVM = true
     end
 }
 
@@ -171,13 +176,28 @@ def prepareFramework(jscPath)
     $jscPath = $frameworkPath + "Resources" + "jsc"
 
     if frameworkPath
-        FileUtils.cp_r frameworkPath, $outputDir + ".vm"
+        source = frameworkPath
+        destination = Pathname.new(".vm")
     else
+        source = jscPath
+        destination = $jscPath
+
         Dir.chdir($outputDir) {
             FileUtils.mkdir_p $jscPath.dirname
-            FileUtils.cp jscPath, $jscPath
         }
     end
+
+    Dir.chdir($outputDir) {
+        if $copyVM
+            FileUtils.cp_r source, destination
+        else
+            begin 
+                FileUtils.ln_s source, destination
+            rescue
+                FileUtils.cp_r source, destination
+            end
+        end
+    }
 end
 
 def copyVMToBundle
