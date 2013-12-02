@@ -43,12 +43,12 @@ PassRefPtr<WebVibrationProxy> WebVibrationProxy::create(WebPageProxy* page)
 WebVibrationProxy::WebVibrationProxy(WebPageProxy* page)
     : m_page(page)
 {
-    m_page->process()->context()->addMessageReceiver(Messages::WebVibrationProxy::messageReceiverName(), m_page->pageID(), this);
+    m_page->process().context().addMessageReceiver(Messages::WebVibrationProxy::messageReceiverName(), m_page->pageID(), this);
 }
 
 WebVibrationProxy::~WebVibrationProxy()
 {
-    m_page->process()->context()->removeMessageReceiver(Messages::WebVibrationProxy::messageReceiverName(), m_page->pageID());
+    m_page->process().context().removeMessageReceiver(Messages::WebVibrationProxy::messageReceiverName(), m_page->pageID());
 }
 
 void WebVibrationProxy::invalidate()

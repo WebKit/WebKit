@@ -1,3 +1,37 @@
+2013-12-01  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed EFL Build fix attempt after r159903
+
+        * UIProcess/CoordinatedGraphics/CoordinatedDrawingAreaProxy.cpp:
+        (WebKit::CoordinatedDrawingAreaProxy::layerHostingModeDidChange):
+        (WebKit::CoordinatedDrawingAreaProxy::update):
+        (WebKit::CoordinatedDrawingAreaProxy::didUpdateBackingStoreState):
+        (WebKit::CoordinatedDrawingAreaProxy::sendUpdateBackingStoreState):
+        (WebKit::CoordinatedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp:
+        (WebKit::CoordinatedLayerTreeHostProxy::CoordinatedLayerTreeHostProxy):
+        (WebKit::CoordinatedLayerTreeHostProxy::~CoordinatedLayerTreeHostProxy):
+        (WebKit::CoordinatedLayerTreeHostProxy::setVisibleContentsRect):
+        (WebKit::CoordinatedLayerTreeHostProxy::renderNextFrame):
+        (WebKit::CoordinatedLayerTreeHostProxy::purgeBackingStores):
+        (WebKit::CoordinatedLayerTreeHostProxy::commitScrollOffset):
+        * UIProcess/WebTextChecker.cpp:
+        (WebKit::WebTextChecker::checkSpelling):
+        (WebKit::WebTextChecker::changeSpellingToWord):
+        * UIProcess/WebTextChecker.h:
+        * UIProcess/WebVibrationProxy.cpp:
+        (WebKit::WebVibrationProxy::WebVibrationProxy):
+        (WebKit::WebVibrationProxy::~WebVibrationProxy):
+        * UIProcess/efl/WebFullScreenManagerProxyEfl.cpp:
+        (WebKit::WebFullScreenManagerProxy::invalidate):
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::setThemePath):
+        (WebKit::WebPageProxy::confirmComposition):
+        (WebKit::WebPageProxy::setComposition):
+        (WebKit::WebPageProxy::cancelComposition):
+
 2013-12-01  Sam Weinig  <sam@webkit.org>
 
         Fix the iOS build.
