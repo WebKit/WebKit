@@ -115,7 +115,7 @@ void DrawingAreaProxyImpl::deviceScaleFactorDidChange()
 
 void DrawingAreaProxyImpl::layerHostingModeDidChange()
 {
-    m_webPageProxy->process()->send(Messages::DrawingArea::SetLayerHostingMode(m_webPageProxy->layerHostingMode()), m_webPageProxy->pageID());
+    m_webPageProxy->process().send(Messages::DrawingArea::SetLayerHostingMode(m_webPageProxy->layerHostingMode()), m_webPageProxy->pageID());
 }
 
 void DrawingAreaProxyImpl::setBackingStoreIsDiscardable(bool isBackingStoreDiscardable)
@@ -144,7 +144,7 @@ void DrawingAreaProxyImpl::update(uint64_t backingStoreStateID, const UpdateInfo
     // FIXME: Handle the case where the view is hidden.
 
     incorporateUpdate(updateInfo);
-    m_webPageProxy->process()->send(Messages::DrawingArea::DidUpdate(), m_webPageProxy->pageID());
+    m_webPageProxy->process().send(Messages::DrawingArea::DidUpdate(), m_webPageProxy->pageID());
 }
 
 void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo& updateInfo, const LayerTreeContext& layerTreeContext)
@@ -156,7 +156,7 @@ void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreState
     m_isWaitingForDidUpdateBackingStoreState = false;
 
     // Stop the responsiveness timer that was started in sendUpdateBackingStoreState.
-    m_webPageProxy->process()->responsivenessTimer()->stop();
+    m_webPageProxy->process().responsivenessTimer()->stop();
 
 #if USE(ACCELERATED_COMPOSITING)
     if (layerTreeContext != m_layerTreeContext) {
@@ -280,13 +280,13 @@ void DrawingAreaProxyImpl::sendUpdateBackingStoreState(RespondImmediatelyOrNot r
 
     m_isWaitingForDidUpdateBackingStoreState = respondImmediatelyOrNot == RespondImmediately;
 
-    m_webPageProxy->process()->send(Messages::DrawingArea::UpdateBackingStoreState(m_nextBackingStoreStateID, respondImmediatelyOrNot == RespondImmediately, m_webPageProxy->deviceScaleFactor(), m_size, m_scrollOffset), m_webPageProxy->pageID());
+    m_webPageProxy->process().send(Messages::DrawingArea::UpdateBackingStoreState(m_nextBackingStoreStateID, respondImmediatelyOrNot == RespondImmediately, m_webPageProxy->deviceScaleFactor(), m_size, m_scrollOffset), m_webPageProxy->pageID());
     m_scrollOffset = IntSize();
 
     if (m_isWaitingForDidUpdateBackingStoreState) {
         // Start the responsiveness timer. We will stop it when we hear back from the WebProcess
         // in didUpdateBackingStoreState.
-        m_webPageProxy->process()->responsivenessTimer()->start();
+        m_webPageProxy->process().responsivenessTimer()->start();
     }
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -304,7 +304,7 @@ void DrawingAreaProxyImpl::waitForAndDispatchDidUpdateBackingStoreState()
 
     if (!m_webPageProxy->isValid())
         return;
-    if (m_webPageProxy->process()->isLaunching())
+    if (m_webPageProxy->process().isLaunching())
         return;
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -315,7 +315,7 @@ void DrawingAreaProxyImpl::waitForAndDispatchDidUpdateBackingStoreState()
 
     // The timeout, in seconds, we use when waiting for a DidUpdateBackingStoreState message when we're asked to paint.
     static const double didUpdateBackingStoreStateTimeout = 0.5;
-    m_webPageProxy->process()->connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateBackingStoreState>(m_webPageProxy->pageID(), didUpdateBackingStoreStateTimeout);
+    m_webPageProxy->process().connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateBackingStoreState>(m_webPageProxy->pageID(), didUpdateBackingStoreStateTimeout);
 #endif
 }
 

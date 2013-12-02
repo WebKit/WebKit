@@ -1,3 +1,20 @@
+2013-12-01  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Unreviewed Gtk port Build fix after r159903
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::layerHostingModeDidChange):
+        (WebKit::DrawingAreaProxyImpl::update):
+        (WebKit::DrawingAreaProxyImpl::didUpdateBackingStoreState):
+        (WebKit::DrawingAreaProxyImpl::sendUpdateBackingStoreState):
+        (WebKit::DrawingAreaProxyImpl::waitForAndDispatchDidUpdateBackingStoreState):
+        * UIProcess/gtk/WebFullScreenManagerProxyGtk.cpp:
+        (WebKit::WebFullScreenManagerProxy::invalidate):
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::setAcceleratedCompositingWindowId):
+
 2013-12-01  Sam Weinig  <sam@webkit.org>
 
         Give UserMessageEncoders WebProcessProxy reference (like the decoders already have)
