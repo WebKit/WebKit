@@ -1,3 +1,13 @@
+2013-12-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] WebKit Project doesn't copy resource bundle
+        https://bugs.webkit.org/show_bug.cgi?id=125078
+
+        Reviewed by Jer Noble.
+
+        * WebKit.vcxproj/WebKit/WebKitPostBuild.cmd: Correct post-build step
+        to copy WebKit.resources to build target.
+
 2013-11-28  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
 
         Building EFL Webkit again with mediastream enabled
