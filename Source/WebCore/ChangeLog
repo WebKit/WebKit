@@ -1,3 +1,13 @@
+2013-12-02  Tibor Meszaros  <mtibor@inf.u-szeged.hu>
+
+        Fix build warning in EventHandler.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=125010
+
+        Reviewed by Csaba Osztrogonác.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::eventInvertsTabsToLinksClientCallResult):
+
 2013-12-02  Attila Dusnoki  <adusnoki@inf.u-szeged.hu>
 
         HTML5 required attribute validation messages implemented.

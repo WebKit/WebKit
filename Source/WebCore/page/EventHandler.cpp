@@ -3336,6 +3336,7 @@ bool EventHandler::eventInvertsTabsToLinksClientCallResult(KeyboardEvent* event)
 #if PLATFORM(MAC) || PLATFORM(EFL)
     return EventHandler::isKeyboardOptionTab(event);
 #else
+    UNUSED_PARAM(event);
     return false;
 #endif
 }
