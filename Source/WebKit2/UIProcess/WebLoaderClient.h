@@ -37,6 +37,11 @@
 
 namespace API {
 class Object;
+
+template<> struct ClientTraits<WKPageLoaderClientBase> {
+    typedef std::tuple<WKPageLoaderClientV0, WKPageLoaderClientV1, WKPageLoaderClientV2, WKPageLoaderClientV3> Versions;
+};
+
 }
 
 namespace WebCore {
@@ -53,7 +58,7 @@ class WebFrameProxy;
 class WebPageProxy;
 class WebProtectionSpace;
 
-class WebLoaderClient : public APIClient<WKPageLoaderClient, kWKPageLoaderClientCurrentVersion> {
+class WebLoaderClient : public API::Client<WKPageLoaderClientBase> {
 public:
     void didStartProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*, API::Object*);

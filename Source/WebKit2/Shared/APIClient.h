@@ -27,6 +27,69 @@
 #define APIClient_h
 
 #include "APIClientTraits.h"
+#include <array>
+
+// FIXME: Transition all clients from WebKit::APIClient to API::Client.
+namespace API {
+
+template<typename ClientInterface> struct ClientTraits;
+
+template<typename ClientInterface> class Client {
+    typedef typename ClientTraits<ClientInterface>::Versions ClientVersions;
+    static const int latestClientVersion = std::tuple_size<ClientVersions>::value - 1;
+    typedef typename std::tuple_element<latestClientVersion, ClientVersions>::type LatestClientInterface;
+
+    // Helper class that can return an std::array of element sizes in a tuple.
+    template<typename> struct InterfaceSizes;
+    template<typename... Interfaces> struct InterfaceSizes<std::tuple<Interfaces...>> {
+        static std::array<size_t, sizeof...(Interfaces)> sizes()
+        {
+#if COMPILER(CLANG)
+// Workaround for http://llvm.org/bugs/show_bug.cgi?id=18117
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-braces"
+#endif
+            return { sizeof(Interfaces)... };
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
+        }
+    };
+
+public:
+    Client()
+    {
+#if !ASSERT_DISABLED
+        auto interfaceSizes = InterfaceSizes<ClientVersions>::sizes();
+        ASSERT(std::is_sorted(interfaceSizes.begin(), interfaceSizes.end()));
+#endif
+
+        initialize(nullptr);
+    }
+
+    void initialize(const ClientInterface* client)
+    {
+        if (client && client->version == latestClientVersion) {
+            m_client = *reinterpret_cast<const LatestClientInterface*>(client);
+            return;
+        }
+
+        memset(&m_client, 0, sizeof(m_client));
+
+        if (client && client->version < latestClientVersion) {
+            auto interfaceSizes = InterfaceSizes<ClientVersions>::sizes();
+
+            memcpy(&m_client, client, interfaceSizes[client->version]);
+        }
+    }
+
+    const LatestClientInterface& client() const { return m_client; }
+
+protected:
+    LatestClientInterface m_client;
+};
+
+} // namespace API
 
 namespace WebKit {
 

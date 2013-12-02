@@ -353,7 +353,7 @@ public:
     void initializeFindClient(const WKPageFindClient*);
     void initializeFindMatchesClient(const WKPageFindMatchesClient*);
     void initializeFormClient(const WKPageFormClient*);
-    void initializeLoaderClient(const WKPageLoaderClient*);
+    void initializeLoaderClient(const WKPageLoaderClientBase*);
     void initializePolicyClient(const WKPagePolicyClient*);
     void initializeUIClient(const WKPageUIClient*);
 #if PLATFORM(EFL)

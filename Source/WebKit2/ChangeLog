@@ -1,3 +1,74 @@
+2013-12-02  Anders Carlsson  <andersca@apple.com>
+
+        WKPageLoaderClient should be versioned
+        https://bugs.webkit.org/show_bug.cgi?id=125104
+
+        Reviewed by Sam Weinig.
+
+        Add multiple versions of the WKPageLoaderClient struct. In a subsequent patch,
+        WKPageLoaderClient and kWKPageLoaderClientCurrentVersion will be deprecated. Instead,
+        users of the API are supposed to explicitly choose a version and a versioned struct.
+
+        * Shared/APIClient.h:
+        Add a new API::Client class with a new ClientTraits template that uses std::tuple for versions.
+
+        * Shared/APIClientTraits.cpp:
+        * Shared/APIClientTraits.h:
+        Remove WKPageLoaderClient interface sizes.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        Add an explicit cast to WKPageLoaderClientBase. In an upcoming patch, WKPageSetPageLoaderClient
+        will be changed to take a WKPageLoaderClientBase instead.
+
+        * UIProcess/API/C/WKPageLoaderClient.h:
+        Add new versions.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (setUpPageLoaderClient):
+        Use an explicit version.
+
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didStartProvisionalLoadForFrame):
+        (WebKit::WebLoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::WebLoaderClient::didFailProvisionalLoadWithErrorForFrame):
+        (WebKit::WebLoaderClient::didCommitLoadForFrame):
+        (WebKit::WebLoaderClient::didFinishDocumentLoadForFrame):
+        (WebKit::WebLoaderClient::didFinishLoadForFrame):
+        (WebKit::WebLoaderClient::didFailLoadWithErrorForFrame):
+        (WebKit::WebLoaderClient::didSameDocumentNavigationForFrame):
+        (WebKit::WebLoaderClient::didReceiveTitleForFrame):
+        (WebKit::WebLoaderClient::didFirstLayoutForFrame):
+        (WebKit::WebLoaderClient::didFirstVisuallyNonEmptyLayoutForFrame):
+        (WebKit::WebLoaderClient::didLayout):
+        (WebKit::WebLoaderClient::didRemoveFrameFromHierarchy):
+        (WebKit::WebLoaderClient::didDisplayInsecureContentForFrame):
+        (WebKit::WebLoaderClient::didRunInsecureContentForFrame):
+        (WebKit::WebLoaderClient::didDetectXSSForFrame):
+        (WebKit::WebLoaderClient::canAuthenticateAgainstProtectionSpaceInFrame):
+        (WebKit::WebLoaderClient::didReceiveAuthenticationChallengeInFrame):
+        (WebKit::WebLoaderClient::didStartProgress):
+        (WebKit::WebLoaderClient::didChangeProgress):
+        (WebKit::WebLoaderClient::didFinishProgress):
+        (WebKit::WebLoaderClient::processDidBecomeUnresponsive):
+        (WebKit::WebLoaderClient::interactionOccurredWhileProcessUnresponsive):
+        (WebKit::WebLoaderClient::processDidBecomeResponsive):
+        (WebKit::WebLoaderClient::processDidCrash):
+        (WebKit::WebLoaderClient::didChangeBackForwardList):
+        (WebKit::WebLoaderClient::shouldGoToBackForwardListItem):
+        (WebKit::WebLoaderClient::willGoToBackForwardListItem):
+        (WebKit::WebLoaderClient::didFailToInitializePlugin):
+        (WebKit::WebLoaderClient::didBlockInsecurePluginVersion):
+        (WebKit::WebLoaderClient::pluginLoadPolicy):
+        Go through client.base everywhere.
+
+        * UIProcess/WebLoaderClient.h:
+        Add API::ClientTraits specialization. Change WebLoaderClient to derive from API::Client<WKPageLoaderClientBase>.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeLoaderClient):
+        This now takes a WKPageLoaderClientBase*.
+        
 2013-12-02  Beth Dakin  <bdakin@apple.com>
 
         Add a setting to opt into a mode where the background extends and fixed elements 

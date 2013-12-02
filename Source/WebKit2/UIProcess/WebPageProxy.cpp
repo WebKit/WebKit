@@ -398,7 +398,7 @@ PassRefPtr<API::Array> WebPageProxy::relatedPages() const
     return API::Array::create(std::move(result));
 }
 
-void WebPageProxy::initializeLoaderClient(const WKPageLoaderClient* loadClient)
+void WebPageProxy::initializeLoaderClient(const WKPageLoaderClientBase* loadClient)
 {
     m_loaderClient.initialize(loadClient);
     
@@ -409,9 +409,9 @@ void WebPageProxy::initializeLoaderClient(const WKPageLoaderClient* loadClient)
     // didFirstLayoutInFrame and didFirstVisuallyNonEmptyLayoutInFrame. In the meantime, this is required
     // for backwards compatibility.
     WebCore::LayoutMilestones milestones = 0;
-    if (loadClient->didFirstLayoutForFrame)
+    if (m_loaderClient.client().didFirstLayoutForFrame)
         milestones |= WebCore::DidFirstLayout;
-    if (loadClient->didFirstVisuallyNonEmptyLayoutForFrame)
+    if (m_loaderClient.client().didFirstVisuallyNonEmptyLayoutForFrame)
         milestones |= WebCore::DidFirstVisuallyNonEmptyLayout;
 
     if (milestones)

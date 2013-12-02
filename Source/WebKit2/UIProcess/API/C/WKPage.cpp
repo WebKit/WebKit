@@ -653,7 +653,7 @@ void WKPageSetPageFormClient(WKPageRef pageRef, const WKPageFormClient* wkClient
 
 void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClient* wkClient)
 {
-    toImpl(pageRef)->initializeLoaderClient(wkClient);
+    toImpl(pageRef)->initializeLoaderClient(reinterpret_cast<const WKPageLoaderClientBase*>(wkClient));
 }
 
 void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClient* wkClient)
