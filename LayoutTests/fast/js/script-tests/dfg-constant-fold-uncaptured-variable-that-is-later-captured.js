@@ -25,5 +25,4 @@ function foo(p, a) {
     return baz(x);
 }
 
-for (var i = 0; i < 100; ++i)
-    shouldBe("foo(true, 5)[0]", "462");
+dfgShouldBe(foo, "foo(true, 5)[0]", "462");

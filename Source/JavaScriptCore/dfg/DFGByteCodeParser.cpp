@@ -1902,7 +1902,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 if (profile->m_singletonValueIsTop
                     || !profile->m_singletonValue
                     || !profile->m_singletonValue.isCell()
-                    || profile->m_singletonValue.asCell()->classInfo() != Structure::info())
+                    || profile->m_singletonValue.asCell()->classInfo() != Structure::info()
+                    || static_cast<Structure*>(profile->m_singletonValue.asCell())->classInfo()->methodTable.toThis != JSObject::info()->methodTable.toThis)
                     setThis(addToGraph(ToThis, op1));
                 else {
                     addToGraph(

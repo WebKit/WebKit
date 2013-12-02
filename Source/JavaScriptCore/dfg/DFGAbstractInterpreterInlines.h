@@ -1072,7 +1072,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         AbstractValue& destination = forNode(node);
             
         destination = source;
-        destination.merge(SpecObjectOther);
+        destination.merge(SpecObject);
         break;
     }
 

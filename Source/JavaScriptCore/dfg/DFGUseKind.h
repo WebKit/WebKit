@@ -46,6 +46,7 @@ enum UseKind {
     CellUse,
     KnownCellUse,
     ObjectUse,
+    FinalObjectUse,
     ObjectOrOtherUse,
     StringIdentUse,
     StringUse,
@@ -77,6 +78,8 @@ ALWAYS_INLINE SpeculatedType typeFilterFor(UseKind useKind)
         return SpecCell;
     case ObjectUse:
         return SpecObject;
+    case FinalObjectUse:
+        return SpecFinalObject;
     case ObjectOrOtherUse:
         return SpecObject | SpecOther;
     case StringIdentUse:
@@ -150,6 +153,7 @@ ALWAYS_INLINE bool isCell(UseKind kind)
     case CellUse:
     case KnownCellUse:
     case ObjectUse:
+    case FinalObjectUse:
     case StringIdentUse:
     case StringUse:
     case KnownStringUse:

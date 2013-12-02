@@ -3649,18 +3649,31 @@ void SpeculativeJIT::compile(Node* node)
         
     case ToThis: {
         ASSERT(node->child1().useKind() == UntypedUse);
-
         JSValueOperand thisValue(this, node->child1());
-        GPRReg thisValueTagGPR = thisValue.tagGPR();
+        GPRTemporary temp(this);
+        GPRTemporary tempTag(this);
         GPRReg thisValuePayloadGPR = thisValue.payloadGPR();
+        GPRReg thisValueTagGPR = thisValue.tagGPR();
+        GPRReg tempGPR = temp.gpr();
+        GPRReg tempTagGPR = tempTag.gpr();
         
-        flushRegisters();
-        
-        GPRResult2 resultTag(this);
-        GPRResult resultPayload(this);
-        callOperation(operationToThis, resultTag.gpr(), resultPayload.gpr(), thisValueTagGPR, thisValuePayloadGPR);
-        
-        cellResult(resultPayload.gpr(), node);
+        MacroAssembler::JumpList slowCases;
+        slowCases.append(m_jit.branch32(
+            MacroAssembler::NotEqual, thisValueTagGPR, TrustedImm32(JSValue::CellTag)));
+        m_jit.loadPtr(
+            MacroAssembler::Address(thisValuePayloadGPR, JSCell::structureOffset()), tempGPR);
+        slowCases.append(m_jit.branch8(
+            MacroAssembler::NotEqual,
+            MacroAssembler::Address(tempGPR, Structure::typeInfoTypeOffset()),
+            TrustedImm32(FinalObjectType)));
+        m_jit.move(thisValuePayloadGPR, tempGPR);
+        m_jit.move(thisValueTagGPR, tempTagGPR);
+        addSlowPathGenerator(
+            slowPathCall(
+                slowCases, this, operationToThis,
+                JSValueRegs(tempTagGPR, tempGPR), thisValueTagGPR, thisValuePayloadGPR));
+
+        jsValueResult(tempTagGPR, tempGPR, node);
         break;
     }
 

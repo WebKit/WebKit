@@ -706,7 +706,7 @@ private:
             }
             
             if (isFinalObjectSpeculation(node->child1()->prediction())) {
-                setUseKindAndUnboxIfProfitable<ObjectUse>(node->child1());
+                setUseKindAndUnboxIfProfitable<FinalObjectUse>(node->child1());
                 node->convertToIdentity();
                 break;
             }

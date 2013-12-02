@@ -3,12 +3,7 @@ This tests that a constant folding on a node that has obviously mispredicted typ
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS foo(0.5) is 1000.50025
-PASS foo(0.5) is 1000.50025
-PASS foo(0.5) is 1000.50025
-PASS foo(0.5) is 1000.50025
-PASS foo(0.5) is 1000.50025
-PASS successfullyParsed is true
+Passed some tests silently.
 
 TEST COMPLETE
 

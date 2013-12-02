@@ -3570,14 +3570,24 @@ void SpeculativeJIT::compile(Node* node)
     case ToThis: {
         ASSERT(node->child1().useKind() == UntypedUse);
         JSValueOperand thisValue(this, node->child1());
+        GPRTemporary temp(this);
         GPRReg thisValueGPR = thisValue.gpr();
+        GPRReg tempGPR = temp.gpr();
         
-        flushRegisters();
-        
-        GPRResult result(this);
-        callOperation(operationToThis, result.gpr(), thisValueGPR);
+        MacroAssembler::JumpList slowCases;
+        slowCases.append(m_jit.branchTest64(
+            MacroAssembler::NonZero, thisValueGPR, GPRInfo::tagMaskRegister));
+        m_jit.loadPtr(
+            MacroAssembler::Address(thisValueGPR, JSCell::structureOffset()), tempGPR);
+        slowCases.append(m_jit.branch8(
+            MacroAssembler::NotEqual,
+            MacroAssembler::Address(tempGPR, Structure::typeInfoTypeOffset()),
+            TrustedImm32(FinalObjectType)));
+        m_jit.move(thisValueGPR, tempGPR);
+        addSlowPathGenerator(
+            slowPathCall(slowCases, this, operationToThis, tempGPR, thisValueGPR));
 
-        cellResult(result.gpr(), node);
+        jsValueResult(tempGPR, node);
         break;
     }
 

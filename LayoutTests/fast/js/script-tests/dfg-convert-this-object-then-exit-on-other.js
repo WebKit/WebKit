@@ -8,7 +8,10 @@ function foo() {
 
 x = 42;
 
-for (var i = 0; i < 200; ++i) {
+silentTestPass = true;
+noInline(foo);
+
+for (var i = 0; i < 200; i = dfgIncrement({f:foo, i:i + 1, n:100})) {
     var me;
     if (i < 150)
         me = this;
