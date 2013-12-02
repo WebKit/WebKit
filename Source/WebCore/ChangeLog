@@ -1,3 +1,20 @@
+2013-12-02  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash at WebCore::commonTreeScope
+        https://bugs.webkit.org/show_bug.cgi?id=125042
+
+        Reviewed by Mario Sanchez Prada.
+
+        When an AX text marker that references a node in a detached document is used to create a text marker range, a crash occurs
+        because the method to determine commonTreeScopes does not account for when there are no common tree scopes.
+
+        Test: platform/mac/accessibility/ordered-textmarker-crash.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::visiblePositionRangeForUnorderedPositions):
+        * dom/TreeScope.cpp:
+        (WebCore::commonTreeScope):
+
 2013-12-02  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         Fix a crash in the webaudio source provider when the audio track is going away.

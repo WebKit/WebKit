@@ -649,6 +649,10 @@ VisiblePositionRange AccessibilityObject::visiblePositionRangeForUnorderedPositi
     if (visiblePos1.isNull() || visiblePos2.isNull())
         return VisiblePositionRange();
 
+    // If there's no common tree scope between positions, return early.
+    if (!commonTreeScope(visiblePos1.deepEquivalent().deprecatedNode(), visiblePos2.deepEquivalent().deprecatedNode()))
+        return VisiblePositionRange();
+    
     VisiblePosition startPos;
     VisiblePosition endPos;
     bool alreadyInOrder;
