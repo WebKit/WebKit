@@ -1,3 +1,12 @@
+2013-12-03  Alexey Proskuryakov  <ap@apple.com>
+
+        WebCrypto HMAC doesn't check key algorithm's hash
+        https://bugs.webkit.org/show_bug.cgi?id=125114
+
+        Update layout test result for a last minute change in test content.
+
+        * crypto/subtle/hmac-check-algorithm-expected.txt:
+
 2013-12-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         XML fragment parsing algorithm doesn't use the context element's default namespace URI
