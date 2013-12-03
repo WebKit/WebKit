@@ -69,13 +69,13 @@ my $extraTests;
 
 my $buildJSC = 1;
 
-my $runTestAPI = isAppleMacWebKit() || isAppleWinWebKit();
+my $runTestAPI = isAppleMacWebKit() || isAppleWinWebKit() || isWinCairo();
 
 my $runMozilla = 0;
 
 # FIXME: run-jsc-stress-tests should be ported to other platforms.
 # https://bugs.webkit.org/show_bug.cgi?id=120809
-my $runJSCStress = !isAppleWinWebKit() && !isWinCairo();
+my $runJSCStress = !isAppleWinWebKit();
 
 my $enableFTL = 0;
 

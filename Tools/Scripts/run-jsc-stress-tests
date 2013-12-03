@@ -275,7 +275,7 @@ def diffErrorHandler(expectedFilename)
         outp.puts "    " + plan.failCommand
         outp.puts "elif test -e ../#{Shellwords.shellescape(expectedFilename)}"
         outp.puts "then"
-        outp.puts "    diff -u ../#{Shellwords.shellescape(expectedFilename)} #{outputFilename} > #{diffFilename}"
+        outp.puts "    diff --strip-trailing-cr -u ../#{Shellwords.shellescape(expectedFilename)} #{outputFilename} > #{diffFilename}"
         outp.puts "    if [ $? -eq 0 ]"
         outp.puts "    then"
         outp.puts "    " + plan.successCommand
