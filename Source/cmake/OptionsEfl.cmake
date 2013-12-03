@@ -254,7 +254,7 @@ set(CPACK_SOURCE_GENERATOR TBZ2)
 # Optimize binary size for release builds by removing dead sections on unix/gcc
 if (CMAKE_COMPILER_IS_GNUCC AND UNIX AND NOT APPLE)
     set(CMAKE_C_FLAGS_RELEASE "-ffunction-sections -fdata-sections ${CMAKE_C_FLAGS_RELEASE}")
-    set(CMAKE_CXX_FLAGS_RELEASE "-ffunction-sections -fdata-sections ${CMAKE_CXX_FLAGS_RELEASE}")
+    set(CMAKE_CXX_FLAGS_RELEASE "-ffunction-sections -fdata-sections -fno-rtti ${CMAKE_CXX_FLAGS_RELEASE}")
     set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-Wl,--gc-sections ${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
 endif ()
 
