@@ -136,6 +136,10 @@
 		1A3EED0F161A535400AEB4F5 /* MessageReceiverMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3EED0D161A535300AEB4F5 /* MessageReceiverMap.h */; };
 		1A3EED12161A53D600AEB4F5 /* MessageReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3EED11161A53D600AEB4F5 /* MessageReceiver.h */; };
 		1A433F0D113C53DD00FACDE9 /* WebErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A433F0C113C53DD00FACDE9 /* WebErrors.h */; };
+		1A445B9F184D5FB5004B3414 /* WKContextInjectedBundleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A445B9E184D5FB5004B3414 /* WKContextInjectedBundleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A445BA1184D5FC1004B3414 /* WKContextHistoryClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A445BA0184D5FC1004B3414 /* WKContextHistoryClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A445BA3184D5FCF004B3414 /* WKContextDownloadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A445BA2184D5FCF004B3414 /* WKContextDownloadClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A445BA5184D5FDA004B3414 /* WKContextConnectionClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A445BA4184D5FDA004B3414 /* WKContextConnectionClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A44B95716B737AA00B7BBD8 /* StorageNamespaceImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A17635416B1D5D000D88FD6 /* StorageNamespaceImpl.cpp */; };
 		1A44B95B16B73F9F00B7BBD8 /* StorageManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A44B95916B73F9F00B7BBD8 /* StorageManager.cpp */; };
 		1A44B95C16B73F9F00B7BBD8 /* StorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A44B95A16B73F9F00B7BBD8 /* StorageManager.h */; };
@@ -1631,6 +1635,10 @@
 		1A3EED0D161A535300AEB4F5 /* MessageReceiverMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageReceiverMap.h; sourceTree = "<group>"; };
 		1A3EED11161A53D600AEB4F5 /* MessageReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageReceiver.h; sourceTree = "<group>"; };
 		1A433F0C113C53DD00FACDE9 /* WebErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebErrors.h; sourceTree = "<group>"; };
+		1A445B9E184D5FB5004B3414 /* WKContextInjectedBundleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextInjectedBundleClient.h; sourceTree = "<group>"; };
+		1A445BA0184D5FC1004B3414 /* WKContextHistoryClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextHistoryClient.h; sourceTree = "<group>"; };
+		1A445BA2184D5FCF004B3414 /* WKContextDownloadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextDownloadClient.h; sourceTree = "<group>"; };
+		1A445BA4184D5FDA004B3414 /* WKContextConnectionClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextConnectionClient.h; sourceTree = "<group>"; };
 		1A44B95916B73F9F00B7BBD8 /* StorageManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageManager.cpp; sourceTree = "<group>"; };
 		1A44B95A16B73F9F00B7BBD8 /* StorageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageManager.h; sourceTree = "<group>"; };
 		1A4A9AA612B7E796008FE984 /* WKTextInputWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKTextInputWindowController.h; sourceTree = "<group>"; };
@@ -4554,6 +4562,10 @@
 				F036978415F4BE6B00C3A80E /* WKColorPickerResultListener.h */,
 				BCB9E24A1120E15C00A137E0 /* WKContext.cpp */,
 				BCB9E2491120E15C00A137E0 /* WKContext.h */,
+				1A445BA4184D5FDA004B3414 /* WKContextConnectionClient.h */,
+				1A445BA2184D5FCF004B3414 /* WKContextDownloadClient.h */,
+				1A445BA0184D5FC1004B3414 /* WKContextHistoryClient.h */,
+				1A445B9E184D5FB5004B3414 /* WKContextInjectedBundleClient.h */,
 				BCC938E01180DE440085E5FE /* WKContextPrivate.h */,
 				330934581315B9980097A7BC /* WKCookieManager.cpp */,
 				330934591315B9980097A7BC /* WKCookieManager.h */,
@@ -5570,6 +5582,7 @@
 				BCEE966D112FAF57006BCC24 /* Attachment.h in Headers */,
 				E1A31732134CEA6C007C9A4F /* AttributedString.h in Headers */,
 				512F589712A8838800629530 /* AuthenticationChallengeProxy.h in Headers */,
+				1A445B9F184D5FB5004B3414 /* WKContextInjectedBundleClient.h in Headers */,
 				512F589912A8838800629530 /* AuthenticationDecisionListener.h in Headers */,
 				518E8EF916B2091C00E91429 /* AuthenticationManager.h in Headers */,
 				512F58A312A883AD00629530 /* AuthenticationManagerMessages.h in Headers */,
@@ -5647,6 +5660,7 @@
 				512935E41288D97800A4B695 /* InjectedBundlePageContextMenuClient.h in Headers */,
 				E1EE53E311F8CFC000CCBEE4 /* InjectedBundlePageEditorClient.h in Headers */,
 				BC14E10A120B905E00826C0C /* InjectedBundlePageFormClient.h in Headers */,
+				1A445BA5184D5FDA004B3414 /* WKContextConnectionClient.h in Headers */,
 				CD5C66A1134B9D38004FE2A8 /* InjectedBundlePageFullScreenClient.h in Headers */,
 				BCA8C6A911E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.h in Headers */,
 				BC8147A912F64CDA007B2C32 /* InjectedBundlePagePolicyClient.h in Headers */,
@@ -5697,6 +5711,7 @@
 				51829DA61637C70C000953D6 /* NetworkResourceLoadScheduler.h in Headers */,
 				31A2EC5614899C0900810D71 /* NotificationPermissionRequest.h in Headers */,
 				3131261F148FF82C00BA2A39 /* NotificationPermissionRequestManager.h in Headers */,
+				1A445BA1184D5FC1004B3414 /* WKContextHistoryClient.h in Headers */,
 				31A2EC521489981900810D71 /* NotificationPermissionRequestManagerProxy.h in Headers */,
 				1AB474E0184D446A0051B622 /* WKBundlePageEditorClient.h in Headers */,
 				1A2D848B127F6A49001EB962 /* NPIdentifierData.h in Headers */,
@@ -5854,6 +5869,7 @@
 				F6A25FDD12ADC6CC00DC40CC /* WebDatabaseManager.h in Headers */,
 				F62A76B712B1B25F0005F1B6 /* WebDatabaseManagerMessages.h in Headers */,
 				F62A765D12B1ABC30005F1B6 /* WebDatabaseManagerProxy.h in Headers */,
+				1A445BA3184D5FCF004B3414 /* WKContextDownloadClient.h in Headers */,
 				BCAC111F12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.h in Headers */,
 				F62A76B912B1B25F0005F1B6 /* WebDatabaseManagerProxyMessages.h in Headers */,
 				1AB7D72C1288CAAD00CFD08C /* WebDownloadClient.h in Headers */,

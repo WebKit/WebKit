@@ -27,6 +27,10 @@
 #define WKContext_h
 
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKContextConnectionClient.h>
+#include <WebKit2/WKContextDownloadClient.h>
+#include <WebKit2/WKContextHistoryClient.h>
+#include <WebKit2/WKContextInjectedBundleClient.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -56,90 +60,6 @@ struct WKContextClient {
 typedef struct WKContextClient WKContextClient;
 
 enum { kWKContextClientCurrentVersion = 0 };
-
-// Injected Bundle Client
-typedef void (*WKContextDidReceiveMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo);
-typedef void (*WKContextDidReceiveSynchronousMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData, const void *clientInfo);
-typedef WKTypeRef (*WKContextGetInjectedBundleInitializationUserDataCallback)(WKContextRef context, const void *clientInfo);
-
-struct WKContextInjectedBundleClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-
-    // Version 0.
-    WKContextDidReceiveMessageFromInjectedBundleCallback                didReceiveMessageFromInjectedBundle;
-    WKContextDidReceiveSynchronousMessageFromInjectedBundleCallback     didReceiveSynchronousMessageFromInjectedBundle;
-
-    // Version 1.
-    WKContextGetInjectedBundleInitializationUserDataCallback            getInjectedBundleInitializationUserData;
-};
-typedef struct WKContextInjectedBundleClient WKContextInjectedBundleClient;
-
-enum { kWKContextInjectedBundleClientCurrentVersion = 1 };
-
-// History Client
-typedef void (*WKContextDidNavigateWithNavigationDataCallback)(WKContextRef context, WKPageRef page, WKNavigationDataRef navigationData, WKFrameRef frame, const void *clientInfo);
-typedef void (*WKContextDidPerformClientRedirectCallback)(WKContextRef context, WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo);
-typedef void (*WKContextDidPerformServerRedirectCallback)(WKContextRef context, WKPageRef page, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void *clientInfo);
-typedef void (*WKContextDidUpdateHistoryTitleCallback)(WKContextRef context, WKPageRef page, WKStringRef title, WKURLRef URL, WKFrameRef frame, const void *clientInfo);
-typedef void (*WKContextPopulateVisitedLinksCallback)(WKContextRef context, const void *clientInfo);
-
-struct WKContextHistoryClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-    WKContextDidNavigateWithNavigationDataCallback                      didNavigateWithNavigationData;
-    WKContextDidPerformClientRedirectCallback                           didPerformClientRedirect;
-    WKContextDidPerformServerRedirectCallback                           didPerformServerRedirect;
-    WKContextDidUpdateHistoryTitleCallback                              didUpdateHistoryTitle;
-    WKContextPopulateVisitedLinksCallback                               populateVisitedLinks;
-};
-typedef struct WKContextHistoryClient WKContextHistoryClient;
-
-enum { kWKContextHistoryClientCurrentVersion = 0 };
-
-// Download Client
-typedef void (*WKContextDownloadDidStartCallback)(WKContextRef context, WKDownloadRef download, const void *clientInfo);
-typedef void (*WKContextDownloadDidReceiveAuthenticationChallengeCallback)(WKContextRef context, WKDownloadRef download, WKAuthenticationChallengeRef authenticationChallenge, const void *clientInfo);
-typedef void (*WKContextDownloadDidReceiveResponseCallback)(WKContextRef context, WKDownloadRef download, WKURLResponseRef response, const void *clientInfo);
-typedef void (*WKContextDownloadDidReceiveDataCallback)(WKContextRef context, WKDownloadRef download, uint64_t length, const void *clientInfo);
-typedef bool (*WKContextDownloadShouldDecodeSourceDataOfMIMETypeCallback)(WKContextRef context, WKDownloadRef download, WKStringRef mimeType, const void *clientInfo);
-typedef WKStringRef (*WKContextDownloadDecideDestinationWithSuggestedFilenameCallback)(WKContextRef context, WKDownloadRef download, WKStringRef filename, bool* allowOverwrite, const void *clientInfo);
-typedef void (*WKContextDownloadDidCreateDestinationCallback)(WKContextRef context, WKDownloadRef download, WKStringRef path, const void *clientInfo);
-typedef void (*WKContextDownloadDidFinishCallback)(WKContextRef context, WKDownloadRef download, const void *clientInfo);
-typedef void (*WKContextDownloadDidFailCallback)(WKContextRef context, WKDownloadRef download, WKErrorRef error, const void *clientInfo);
-typedef void (*WKContextDownloadDidCancel)(WKContextRef context, WKDownloadRef download, const void *clientInfo);
-typedef void (*WKContextDownloadProcessDidCrashCallback)(WKContextRef context, WKDownloadRef download, const void *clientInfo);
-
-struct WKContextDownloadClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-    WKContextDownloadDidStartCallback                                   didStart;
-    WKContextDownloadDidReceiveAuthenticationChallengeCallback          didReceiveAuthenticationChallenge;
-    WKContextDownloadDidReceiveResponseCallback                         didReceiveResponse;
-    WKContextDownloadDidReceiveDataCallback                             didReceiveData;
-    WKContextDownloadShouldDecodeSourceDataOfMIMETypeCallback           shouldDecodeSourceDataOfMIMEType;
-    WKContextDownloadDecideDestinationWithSuggestedFilenameCallback     decideDestinationWithSuggestedFilename;
-    WKContextDownloadDidCreateDestinationCallback                       didCreateDestination;
-    WKContextDownloadDidFinishCallback                                  didFinish;
-    WKContextDownloadDidFailCallback                                    didFail;
-    WKContextDownloadDidCancel                                          didCancel;
-    WKContextDownloadProcessDidCrashCallback                            processDidCrash;
-};
-typedef struct WKContextDownloadClient WKContextDownloadClient;
-
-enum { kWKContextDownloadClientCurrentVersion = 0 };
-
-// Connection Client
-typedef void (*WKContextDidCreateConnection)(WKContextRef context, WKConnectionRef connection, const void* clientInfo);
-
-struct WKContextConnectionClient {
-    int                                                                 version;
-    const void *                                                        clientInfo;
-    WKContextDidCreateConnection                                        didCreateConnection;
-};
-typedef struct WKContextConnectionClient WKContextConnectionClient;
-
-enum { kWKContextConnectionClientCurrentVersion = 0 };
 
 enum {
     kWKProcessModelSharedSecondaryProcess = 0,
