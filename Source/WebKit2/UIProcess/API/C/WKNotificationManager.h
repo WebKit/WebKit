@@ -34,7 +34,7 @@ extern "C" {
 #endif
 
 WK_EXPORT WKTypeID WKNotificationManagerGetTypeID();
-WK_EXPORT void WKNotificationManagerSetProvider(WKNotificationManagerRef managerRef, const WKNotificationProvider* wkProvider);
+WK_EXPORT void WKNotificationManagerSetProvider(WKNotificationManagerRef managerRef, const WKNotificationProviderBase* wkProvider);
 
 WK_EXPORT void WKNotificationManagerProviderDidShowNotification(WKNotificationManagerRef managerRef, uint64_t notificationID);
 WK_EXPORT void WKNotificationManagerProviderDidClickNotification(WKNotificationManagerRef managerRef, uint64_t notificationID);

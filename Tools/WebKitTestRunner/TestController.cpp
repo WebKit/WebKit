@@ -376,8 +376,8 @@ void TestController::initialize(int argc, const char* argv[])
     WKContextSetInjectedBundleClient(m_context.get(), &injectedBundleClient);
 
     WKNotificationManagerRef notificationManager = WKContextGetNotificationManager(m_context.get());
-    WKNotificationProvider notificationKit = m_webNotificationProvider.provider();
-    WKNotificationManagerSetProvider(notificationManager, &notificationKit);
+    WKNotificationProviderV0 notificationKit = m_webNotificationProvider.provider();
+    WKNotificationManagerSetProvider(notificationManager, &notificationKit.base);
 
     if (testPluginDirectory())
         WKContextSetAdditionalPluginsDirectory(m_context.get(), testPluginDirectory());

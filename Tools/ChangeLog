@@ -1,3 +1,18 @@
+2013-12-03  Anders Carlsson  <andersca@apple.com>
+
+        Deprecate WKNotificationProvider
+        https://bugs.webkit.org/show_bug.cgi?id=125178
+
+        Reviewed by Sam Weinig.
+
+        Update for WebKit2 changes.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        * WebKitTestRunner/WebNotificationProvider.cpp:
+        (WTR::WebNotificationProvider::provider):
+        * WebKitTestRunner/WebNotificationProvider.h:
+
 2013-12-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Support 64-bit Application Support Libraries Location 

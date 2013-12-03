@@ -37,7 +37,7 @@ class WebNotificationProvider {
 public:
     WebNotificationProvider();
     ~WebNotificationProvider();
-    WKNotificationProvider provider();
+    WKNotificationProviderV0 provider();
 
     void showWebNotification(WKPageRef, WKNotificationRef);
     void closeWebNotification(WKNotificationRef);

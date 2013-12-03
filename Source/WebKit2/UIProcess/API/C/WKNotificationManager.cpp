@@ -36,9 +36,9 @@ WKTypeID WKNotificationManagerGetTypeID()
     return toAPI(WebNotificationManagerProxy::APIType);
 }
 
-void WKNotificationManagerSetProvider(WKNotificationManagerRef managerRef, const WKNotificationProvider* wkProvider)
+void WKNotificationManagerSetProvider(WKNotificationManagerRef managerRef, const WKNotificationProviderBase* wkProvider)
 {
-    toImpl(managerRef)->initializeProvider(reinterpret_cast<const WKNotificationProviderBase*>(wkProvider));
+    toImpl(managerRef)->initializeProvider(wkProvider);
 }
 
 void WKNotificationManagerProviderDidShowNotification(WKNotificationManagerRef managerRef, uint64_t notificationID)
