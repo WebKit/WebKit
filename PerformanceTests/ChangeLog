@@ -1,3 +1,18 @@
+2013-12-03  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Regions] Fix Layout/RegionsSelection.html in Mac platform
+        https://bugs.webkit.org/show_bug.cgi?id=124963
+
+        Reviewed by Ryosuke Niwa.
+
+        Layout/RegionsSelection.html introduced in r159488 was not working in
+        Mac platform because of it was trying to use mouse events out of the
+        window dimensions. Use collapse() and extend() methods from Selection
+        object to solve the issue.
+
+        * Layout/resources/regions.js: Use collapse() and extend() instead of
+        mouse events.
+
 2013-11-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r159805.

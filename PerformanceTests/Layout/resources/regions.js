@@ -88,23 +88,14 @@
         };
     }
 
-    function mouseMoveToRegionCenter(region) {
-        var rect = region.getBoundingClientRect();
-        eventSender.mouseMoveTo(rect.left + (rect.width / 2), rect.top + (rect.height / 2));
-    }
+    function performSelection(paragraphCount) {
+        var paragraphs = document.getElementsByClassName("contentParagraph");
+        var selection = getSelection();
 
-    function performSelection(regionCount) {
-        var regions = document.getElementsByClassName("region");
+        selection.collapse(paragraphs[0], 0);
 
-        if (window.eventSender) {
-            mouseMoveToRegionCenter(regions[0]);
-            eventSender.mouseDown();
-
-            for (var i = 1; i < regionCount; i++)
-                mouseMoveToRegionCenter(regions[i]);
-
-            eventSender.mouseUp();
-        }
+        for (var i = 1; i < paragraphCount; i++)
+            selection.extend(paragraphs[i], 0);
     }
 
     function createRegionsSelectionTest(regionCount) {
