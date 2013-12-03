@@ -38,6 +38,8 @@
 #import "PDFPluginAnnotation.h"
 #import "PDFPluginPasswordField.h"
 #import "PluginView.h"
+#import "WKAccessibilityWebPageObject.h"
+#import "WKPageFindMatchesClient.h"
 #import "WebContextMessages.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebEvent.h"
@@ -45,7 +47,6 @@
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
 #import "WebProcess.h"
-#import "WKAccessibilityWebPageObject.h"
 #import <JavaScriptCore/JSContextRef.h>
 #import <JavaScriptCore/JSObjectRef.h>
 #import <JavaScriptCore/JSStringRef.h>

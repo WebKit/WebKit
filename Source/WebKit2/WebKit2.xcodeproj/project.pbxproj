@@ -674,8 +674,6 @@
 		5272B28A1406985D0096A5D0 /* StatisticsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5272B2881406985D0096A5D0 /* StatisticsData.cpp */; };
 		5272B28B1406985D0096A5D0 /* StatisticsData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5272B2891406985D0096A5D0 /* StatisticsData.h */; };
 		5D1A239115E75B220023E981 /* webkit2 in Copy Message Generation Scripts */ = {isa = PBXBuildFile; fileRef = 5D1A238E15E75AD50023E981 /* webkit2 */; };
-		5D51845513BCF9CC00C7FF4A /* APIClientTraits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D51845313BCF9CC00C7FF4A /* APIClientTraits.cpp */; };
-		5D51845613BCF9CC00C7FF4A /* APIClientTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D51845413BCF9CC00C7FF4A /* APIClientTraits.h */; };
 		5DA6ED0A1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA6ED081490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h */; };
 		5DA6ED0B1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5DA6ED091490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm */; };
 		6501BD1A12F1243400E9F248 /* WKBundleInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */; };
@@ -2241,8 +2239,6 @@
 		5272B2891406985D0096A5D0 /* StatisticsData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatisticsData.h; sourceTree = "<group>"; };
 		5D1A238E15E75AD50023E981 /* webkit2 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = webkit2; sourceTree = "<group>"; };
 		5D442A5516D5856700AC3331 /* PluginService.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PluginService.entitlements; sourceTree = "<group>"; };
-		5D51845313BCF9CC00C7FF4A /* APIClientTraits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIClientTraits.cpp; sourceTree = "<group>"; };
-		5D51845413BCF9CC00C7FF4A /* APIClientTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIClientTraits.h; sourceTree = "<group>"; };
 		5DA6ED081490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicLinkerEnvironmentExtractor.h; sourceTree = "<group>"; };
 		5DA6ED091490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DynamicLinkerEnvironmentExtractor.mm; sourceTree = "<group>"; };
 		5DAD7294116FF70B00EE5396 /* WebContentProcess.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebContentProcess.xcconfig; sourceTree = "<group>"; };
@@ -3405,8 +3401,6 @@
 				BC64696D11DBE603006455B0 /* APIArray.cpp */,
 				BC64696E11DBE603006455B0 /* APIArray.h */,
 				1A3DD205125E5A2F004515E6 /* APIClient.h */,
-				5D51845313BCF9CC00C7FF4A /* APIClientTraits.cpp */,
-				5D51845413BCF9CC00C7FF4A /* APIClientTraits.h */,
 				B63403F814910D57001070B5 /* APIObject.cpp */,
 				BCF04C8C11FF9B7D00F86A58 /* APIObject.h */,
 				A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */,
@@ -5583,7 +5577,6 @@
 				A7D792D81767CCA300881CBE /* ActivityAssertion.h in Headers */,
 				1A3DD206125E5A2F004515E6 /* APIClient.h in Headers */,
 				1AC75380183BE50F0072CB15 /* DataReference.h in Headers */,
-				5D51845613BCF9CC00C7FF4A /* APIClientTraits.h in Headers */,
 				1AB474D8184D43FD0051B622 /* WKBundlePageLoaderClient.h in Headers */,
 				1AEFD27911D16C81008219D3 /* ArgumentCoder.h in Headers */,
 				1AEFD2F711D1807B008219D3 /* ArgumentCoders.h in Headers */,
@@ -6909,7 +6902,6 @@
 			files = (
 				51E35200180F5D0F00E53BE9 /* DatabaseToWebProcessConnection.cpp in Sources */,
 				A7D792D61767CB6E00881CBE /* ActivityAssertion.cpp in Sources */,
-				5D51845513BCF9CC00C7FF4A /* APIClientTraits.cpp in Sources */,
 				B63403F914910D57001070B5 /* APIObject.cpp in Sources */,
 				1A3D610513A7F03A00F95D4E /* ArgumentCoders.cpp in Sources */,
 				1AAF0C4B12B16334008E49E2 /* ArgumentCodersCF.cpp in Sources */,

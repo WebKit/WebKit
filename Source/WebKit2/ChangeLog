@@ -1,3 +1,16 @@
+2013-12-03  Anders Carlsson  <andersca@apple.com>
+
+        Remove old WebKit::APIClient cruft
+        https://bugs.webkit.org/show_bug.cgi?id=125173
+
+        Reviewed by Antti Koivisto.
+
+        * Shared/APIClient.h:
+        * Shared/APIClientTraits.cpp: Removed.
+        * Shared/APIClientTraits.h: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+
 2013-12-03  Enrica Casucci  <enrica@apple.com>
 
         Build fix for iOS.

@@ -26,11 +26,9 @@
 #ifndef APIClient_h
 #define APIClient_h
 
-#include "APIClientTraits.h"
 #include <algorithm>
 #include <array>
 
-// FIXME: Transition all clients from WebKit::APIClient to API::Client.
 namespace API {
 
 template<typename ClientInterface> struct ClientTraits;
@@ -83,37 +81,5 @@ protected:
 };
 
 } // namespace API
-
-namespace WebKit {
-
-template<typename ClientInterface, int currentVersion> class APIClient {
-public:
-    APIClient()
-    {
-        initialize(0);
-    }
-    
-    void initialize(const ClientInterface* client)
-    {
-        COMPILE_ASSERT(sizeof(APIClientTraits<ClientInterface>::interfaceSizesByVersion) / sizeof(size_t) == currentVersion + 1, size_of_some_interfaces_are_unknown);
-
-        if (client && client->version == currentVersion) {
-            m_client = *client;
-            return;
-        }
-
-        memset(&m_client, 0, sizeof(m_client));
-
-        if (client && client->version < currentVersion)
-            memcpy(&m_client, client, APIClientTraits<ClientInterface>::interfaceSizesByVersion[client->version]);
-    }
-
-    const ClientInterface& client() const { return m_client; }
-
-protected:
-    ClientInterface m_client;
-};
-
-} // namespace WebKit
 
 #endif // APIClient_h
