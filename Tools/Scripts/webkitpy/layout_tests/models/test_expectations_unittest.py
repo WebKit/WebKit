@@ -53,17 +53,13 @@ class Base(unittest.TestCase):
         self._exp = None
         unittest.TestCase.__init__(self, testFunc)
 
-    def get_test(self, test_name):
-        # FIXME: Remove this routine and just reference test names directly.
-        return test_name
-
     def get_basic_tests(self):
-        return [self.get_test('failures/expected/text.html'),
-                self.get_test('failures/expected/image_checksum.html'),
-                self.get_test('failures/expected/crash.html'),
-                self.get_test('failures/expected/missing_text.html'),
-                self.get_test('failures/expected/image.html'),
-                self.get_test('passes/text.html')]
+        return ['failures/expected/text.html',
+                'failures/expected/image_checksum.html',
+                'failures/expected/crash.html',
+                'failures/expected/missing_text.html',
+                'failures/expected/image.html',
+                'passes/text.html']
 
     def get_basic_expectations(self):
         return """
@@ -84,7 +80,7 @@ Bug(test) failures/expected/image.html [ WontFix Mac ]
         self._exp = TestExpectations(self._port, self.get_basic_tests(), expectations_to_lint=expectations_to_lint)
 
     def assert_exp(self, test, result):
-        self.assertEqual(self._exp.get_expectations(self.get_test(test)),
+        self.assertEqual(self._exp.get_expectations(test),
                           set([result]))
 
     def assert_bad_expectations(self, expectations, overrides=None):
@@ -104,7 +100,7 @@ class MiscTests(Base):
     def test_multiple_results(self):
         self.parse_exp('Bug(x) failures/expected/text.html [ Crash Failure ]')
         self.assertEqual(self._exp.get_expectations(
-            self.get_test('failures/expected/text.html')),
+            'failures/expected/text.html'),
             set([FAIL, CRASH]))
 
     def test_result_was_expected(self):
@@ -140,21 +136,18 @@ class MiscTests(Base):
         exp_str = 'Bug(x) failures/expected [ WontFix ]'
         self.parse_exp(exp_str)
         test_name = 'failures/expected/unknown-test.html'
-        unknown_test = self.get_test(test_name)
+        unknown_test = test_name
         self.assertRaises(KeyError, self._exp.get_expectations,
                           unknown_test)
         self.assert_exp('failures/expected/crash.html', PASS)
 
     def test_get_modifiers(self):
         self.parse_exp(self.get_basic_expectations())
-        self.assertEqual(self._exp.get_modifiers(
-                         self.get_test('passes/text.html')), [])
+        self.assertEqual(self._exp.get_modifiers('passes/text.html'), [])
 
     def test_get_expectations_string(self):
         self.parse_exp(self.get_basic_expectations())
-        self.assertEqual(self._exp.get_expectations_string(
-                          self.get_test('failures/expected/text.html')),
-                          'FAIL')
+        self.assertEqual(self._exp.get_expectations_string('failures/expected/text.html'), 'FAIL')
 
     def test_expectation_to_string(self):
         # Normal cases are handled by other tests.
@@ -167,14 +160,13 @@ class MiscTests(Base):
         self.parse_exp(self.get_basic_expectations())
         s = self._exp.get_test_set(WONTFIX)
         self.assertEqual(s,
-            set([self.get_test('failures/expected/crash.html'),
-                 self.get_test('failures/expected/image_checksum.html')]))
+            set(['failures/expected/crash.html',
+                 'failures/expected/image_checksum.html']))
 
     def test_parse_warning(self):
         try:
             filesystem = self._port.host.filesystem
             filesystem.write_text_file(filesystem.join(self._port.layout_tests_dir(), 'disabled-test.html-disabled'), 'content')
-            self.get_test('disabled-test.html-disabled'),
             self.parse_exp("[ FOO ] failures/expected/text.html [ Failure ]\n"
                 "Bug(rniwa) non-existent-test.html [ Failure ]\n"
                 "Bug(rniwa) disabled-test.html-disabled [ ImageOnlyFailure ]", is_lint_mode=True)
@@ -224,7 +216,7 @@ class MiscTests(Base):
     def test_pixel_tests_flag(self):
         def match(test, result, pixel_tests_enabled):
             return self._exp.matches_an_expected_result(
-                self.get_test(test), result, pixel_tests_enabled)
+                test, result, pixel_tests_enabled)
 
         self.parse_exp(self.get_basic_expectations())
         self.assertTrue(match('failures/expected/text.html', FAIL, True))
