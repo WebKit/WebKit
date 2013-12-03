@@ -1,3 +1,23 @@
+2013-12-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        XML fragment parsing algorithm doesn't use the context element's default namespace URI
+        https://bugs.webkit.org/show_bug.cgi?id=125132
+
+        Reviewed by Darin Adler.
+
+        Always use the context element's namespace as the default namespace URI when one is not specified by xmlns.
+
+        The new behavior matches that of Internet Explorer and the specified behavior in HTML5:
+        http://www.w3.org/TR/2013/CR-html5-20130806/the-xhtml-syntax.html#parsing-xhtml-fragments
+
+        "The default namespace is the namespace for which the DOM isDefaultNamespace() method on the element would
+        return true."
+
+        Test: fast/parser/fragment-parsing-in-document-without-xmlns.html
+
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+
 2013-12-03  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         Remove some CSS Variables leftovers

@@ -627,6 +627,7 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment& fragment, Element* parent
     if (elemStack.isEmpty())
         return;
 
+    // FIXME: Share code with isDefaultNamespace() per http://www.whatwg.org/specs/web-apps/current-work/multipage/the-xhtml-syntax.html#parsing-xhtml-fragments
     for (; !elemStack.isEmpty(); elemStack.removeLast()) {
         Element* element = elemStack.last();
         if (element->hasAttributes()) {
@@ -640,8 +641,7 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment& fragment, Element* parent
         }
     }
 
-    // If the parent element is not in document tree, there may be no xmlns attribute; just default to the parent's namespace.
-    if (m_defaultNamespaceURI.isNull() && !parentElement->inDocument())
+    if (m_defaultNamespaceURI.isNull())
         m_defaultNamespaceURI = parentElement->namespaceURI();
 }
 
