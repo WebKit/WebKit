@@ -58,7 +58,6 @@ public:
     WorkerInspectorController(WorkerGlobalScope*);
     ~WorkerInspectorController();
 
-    bool hasFrontend() const { return m_frontendChannel; }
     void connectFrontend();
     void disconnectFrontend();
     void dispatchMessageFromFrontend(const String&);

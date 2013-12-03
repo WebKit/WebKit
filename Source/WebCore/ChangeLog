@@ -1,5 +1,20 @@
 2013-12-03  Seokju Kwon  <seokju@webkit.org>
 
+        Web Inspector: Get rid of 'hasFrontend()' in InspectorController and WorkerInspectorController
+        https://bugs.webkit.org/show_bug.cgi?id=125135
+
+        Reviewed by Darin Adler.
+
+        Remove 'hasFrontend()' from InspectorController and WorkerInspectorController
+        as it's never called.
+
+        No new tests, no behavior changes.
+
+        * inspector/InspectorController.h:
+        * inspector/WorkerInspectorController.h:
+
+2013-12-03  Seokju Kwon  <seokju@webkit.org>
+
         Web Inspector: webViewResized() is not used anywhere in WebInspectorUI
         https://bugs.webkit.org/show_bug.cgi?id=125137
 

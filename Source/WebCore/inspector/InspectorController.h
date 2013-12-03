@@ -91,7 +91,6 @@ public:
 
     void dispatchMessageFromFrontend(const String& message);
 
-    bool hasFrontend() const { return !!m_inspectorFrontendChannel; }
     void connectFrontend(InspectorFrontendChannel*);
     void disconnectFrontend();
     void setProcessId(long);
