@@ -31,6 +31,8 @@
 #include "ChildProcess.h"
 #include "UniqueIDBDatabaseIdentifier.h"
 
+class WorkQueue;
+
 namespace WebKit {
 
 class DatabaseToWebProcessConnection;
@@ -47,6 +49,8 @@ public:
 
     PassRefPtr<UniqueIDBDatabase> getOrCreateUniqueIDBDatabase(const UniqueIDBDatabaseIdentifier&);
     void removeUniqueIDBDatabase(const UniqueIDBDatabase&);
+
+    WorkQueue& queue() const { return const_cast<WorkQueue&>(m_queue.get()); }
 
 private:
     DatabaseProcess();
@@ -69,6 +73,8 @@ private:
     void createDatabaseToWebProcessConnection();
 
     Vector<RefPtr<DatabaseToWebProcessConnection>> m_databaseToWebProcessConnections;
+
+    Ref<WorkQueue> m_queue;
 
     String m_indexedDatabaseDirectory;
 

@@ -1,3 +1,40 @@
+2013-12-03  Brady Eidson  <beidson@apple.com>
+
+        Indexed Database work should be done on a non-main queue
+        https://bugs.webkit.org/show_bug.cgi?id=125127
+
+        Reviewed by Darin Adler.
+
+        Add a non-main WorkQueue to the DatabaseProcess:
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::DatabaseProcess):
+        (WebKit::DatabaseProcess::queue):
+        * DatabaseProcess/DatabaseProcess.h:
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::UniqueIDBDatabase):
+        (WebKit::UniqueIDBDatabase::enqueueDatabaseQueueRequest): Add an AsyncRequest to the deque then schedule performing
+          the requests on the background WorkQueue.
+        (WebKit::UniqueIDBDatabase::processDatabaseRequestQueue): Processes all enqueued database requests.
+        (WebKit::UniqueIDBDatabase::getOrEstablishIDBDatabaseMetadata): Renamed from getIDBDatabaseMetadata().
+        (WebKit::UniqueIDBDatabase::getOrEstablishIDBDatabaseMetadataInternal): For doing i/o on a background queue/thread.
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+
+        Add a creator that takes the abort handler as an argument, and rename requestedCompleted()
+        to completeRequest(). This makes more sense in more situations:
+        * Shared/AsyncRequest.cpp:
+        (WebKit::AsyncRequest::AsyncRequest):
+        (WebKit::AsyncRequest::setAbortHandler):
+        * Shared/AsyncRequest.h:
+        (WebKit::AsyncRequest::completeRequest):
+
+        Update for the AsyncRequest rename:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::didGetOrEstablishIDBDatabaseMetadata):
+
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp:
+        (WebKit::DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata):
+
 2013-12-03  Tim Horton  <timothy_horton@apple.com>
 
         Remove TiledCoreAnimationDrawingArea(Proxy)IOS

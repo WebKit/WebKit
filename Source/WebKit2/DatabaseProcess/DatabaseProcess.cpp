@@ -26,12 +26,12 @@
 #include "config.h"
 #include "DatabaseProcess.h"
 
+#if ENABLE(DATABASE_PROCESS)
+
 #include "DatabaseProcessCreationParameters.h"
 #include "DatabaseProcessProxyMessages.h"
 #include "DatabaseToWebProcessConnection.h"
 #include "UniqueIDBDatabase.h"
-
-#if ENABLE(DATABASE_PROCESS)
 
 namespace WebKit {
 
@@ -42,6 +42,7 @@ DatabaseProcess& DatabaseProcess::shared()
 }
 
 DatabaseProcess::DatabaseProcess()
+    : m_queue(adoptRef(*WorkQueue::create("com.apple.WebKit.DatabaseProcess").leakRef()))
 {
 }
 

@@ -28,9 +28,11 @@
 
 #if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
 
+#include "AsyncRequest.h"
 #include "DatabaseProcess.h"
 #include "DatabaseProcessIDBConnection.h"
 #include <WebCore/IDBDatabaseMetadata.h>
+#include <wtf/MainThread.h>
 
 using namespace WebCore;
 
@@ -38,6 +40,7 @@ namespace WebKit {
 
 UniqueIDBDatabase::UniqueIDBDatabase(const UniqueIDBDatabaseIdentifier& identifier)
     : m_identifier(identifier)
+    , m_processingDatabaseQueueRequests(false)
 {
 }
 
@@ -60,13 +63,66 @@ void UniqueIDBDatabase::unregisterConnection(DatabaseProcessIDBConnection& conne
         DatabaseProcess::shared().removeUniqueIDBDatabase(*this);
 }
 
-void UniqueIDBDatabase::getIDBDatabaseMetadata(std::function<void(bool, const WebCore::IDBDatabaseMetadata&)> completionCallback)
+void UniqueIDBDatabase::enqueueDatabaseQueueRequest(PassRefPtr<AsyncRequest> request)
+{
+    ASSERT(request);
+
+    MutexLocker locker(m_databaseQueueRequestsMutex);
+    m_databaseQueueRequests.append(request);
+
+    if (m_processingDatabaseQueueRequests)
+        return;
+
+    m_processingDatabaseQueueRequests = true;
+    DatabaseProcess::shared().queue().dispatch(bind(&UniqueIDBDatabase::processDatabaseRequestQueue, this));
+}
+
+void UniqueIDBDatabase::processDatabaseRequestQueue()
+{
+    ASSERT(m_processingDatabaseQueueRequests);
+
+    while (true) {
+        RefPtr<AsyncRequest> request;
+        {
+            MutexLocker locker(m_databaseQueueRequestsMutex);
+            if (m_databaseQueueRequests.isEmpty()) {
+                m_processingDatabaseQueueRequests = false;
+                return;
+            }
+            request = m_databaseQueueRequests.takeFirst();
+        }
+
+        request->completeRequest();
+    }
+}
+
+void UniqueIDBDatabase::getOrEstablishIDBDatabaseMetadata(std::function<void(bool, const IDBDatabaseMetadata&)> completionCallback)
+{
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<>::create([completionCallback, this]() {
+        IDBDatabaseMetadata metadata;
+        bool success = getOrEstablishIDBDatabaseMetadataInternal(metadata);
+
+        RunLoop::main()->dispatch([metadata, success, completionCallback]() {
+            completionCallback(success, metadata);
+        });
+    }, [completionCallback]() {
+        RunLoop::main()->dispatch([completionCallback]() {
+            // The boolean flag to the completion callback represents whether the attempt to get/establish metadata
+            // succeeded or failed.
+            // Since we're aborting the attempt, it failed, so we always pass in false.
+            completionCallback(false, IDBDatabaseMetadata());
+        });
+    });
+
+    enqueueDatabaseQueueRequest(request.release());
+}
+
+bool UniqueIDBDatabase::getOrEstablishIDBDatabaseMetadataInternal(const WebCore::IDBDatabaseMetadata&)
 {
     // FIXME: This method is successfully called by messaging from the WebProcess, and calls back with dummy data.
     // Needs real implementation.
-
-    IDBDatabaseMetadata metadata;
-    completionCallback(false, metadata);
+    ASSERT(!isMainThread());
+    return false;
 }
 
 } // namespace WebKit

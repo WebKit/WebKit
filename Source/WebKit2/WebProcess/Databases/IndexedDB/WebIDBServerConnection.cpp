@@ -101,7 +101,7 @@ void WebIDBServerConnection::didGetOrEstablishIDBDatabaseMetadata(uint64_t reque
     RefPtr<AsyncRequest> serverRequest = m_serverRequests.take(requestID);
     ASSERT(serverRequest);
 
-    serverRequest->requestCompleted(metadata, success);
+    serverRequest->completeRequest(metadata, success);
 }
 
 void WebIDBServerConnection::close()

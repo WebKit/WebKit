@@ -30,6 +30,7 @@
 
 #include "UniqueIDBDatabaseIdentifier.h"
 #include <functional>
+#include <wtf/Deque.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -41,6 +42,7 @@ struct IDBDatabaseMetadata;
 
 namespace WebKit {
 
+class AsyncRequest;
 class DatabaseProcessIDBConnection;
 
 struct SecurityOriginData;
@@ -59,7 +61,7 @@ public:
     void registerConnection(DatabaseProcessIDBConnection&);
     void unregisterConnection(DatabaseProcessIDBConnection&);
 
-    void getIDBDatabaseMetadata(std::function<void(bool, const WebCore::IDBDatabaseMetadata&)> completionCallback);
+    void getOrEstablishIDBDatabaseMetadata(std::function<void(bool, const WebCore::IDBDatabaseMetadata&)> completionCallback);
 
 private:
     UniqueIDBDatabase(const UniqueIDBDatabaseIdentifier&);
@@ -67,6 +69,17 @@ private:
     UniqueIDBDatabaseIdentifier m_identifier;
 
     HashSet<RefPtr<DatabaseProcessIDBConnection>> m_connections;
+    HashMap<uint64_t, RefPtr<AsyncRequest>> m_databaseRequests;
+
+    void enqueueDatabaseQueueRequest(PassRefPtr<AsyncRequest>);
+
+    // To be called from the database workqueue thread only
+    void processDatabaseRequestQueue();
+    bool getOrEstablishIDBDatabaseMetadataInternal(const WebCore::IDBDatabaseMetadata&);
+
+    Mutex m_databaseQueueRequestsMutex;
+    Deque<RefPtr<AsyncRequest>> m_databaseQueueRequests;
+    bool m_processingDatabaseQueueRequests;
 };
 
 } // namespace WebKit

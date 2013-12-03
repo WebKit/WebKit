@@ -39,16 +39,16 @@ public:
 
     uint64_t requestID() { return m_requestID; }
 
-    void setAbortHandler(std::function<void()>);
+    void setAbortHandler(std::function<void ()>);
     void requestAborted();
-    template<typename... Arguments> void requestCompleted(Arguments&&... arguments);
+    template<typename... Arguments> void completeRequest(Arguments&&... arguments);
 
 protected:
-    AsyncRequest();
+    explicit AsyncRequest(std::function<void ()> abortHandler);
 
     virtual void clearCompletionHandler() = 0;
 
-    std::function<void()> m_abortHandler;
+    std::function<void ()> m_abortHandler;
 
 private:
     uint64_t m_requestID;
@@ -59,7 +59,12 @@ class AsyncRequestImpl FINAL : public AsyncRequest {
 public:
     static PassRefPtr<AsyncRequest> create(std::function<void (Arguments...)> completionHandler)
     {
-        return adoptRef(new AsyncRequestImpl<Arguments...>(std::move(completionHandler)));
+        return adoptRef(new AsyncRequestImpl<Arguments...>(std::move(completionHandler), nullptr));
+    }
+
+    static PassRefPtr<AsyncRequest> create(std::function<void (Arguments...)> completionHandler, std::function<void ()> abortHandler)
+    {
+        return adoptRef(new AsyncRequestImpl<Arguments...>(std::move(completionHandler), std::move(abortHandler)));
     }
 
     virtual ~AsyncRequestImpl()
@@ -67,15 +72,16 @@ public:
         ASSERT(!m_completionHandler);
     }
 
-    void requestCompleted(Arguments&&... arguments)
+    void completeRequest(Arguments&&... arguments)
     {
         m_completionHandler(std::forward<Arguments>(arguments)...);
         m_completionHandler = nullptr;
     }
 
 private:
-    AsyncRequestImpl(std::function<void (Arguments...)> completionHandler)
-        : m_completionHandler(std::move(completionHandler))
+    AsyncRequestImpl(std::function<void (Arguments...)> completionHandler, std::function<void ()> abortHandler)
+        : AsyncRequest(std::move(abortHandler))
+        , m_completionHandler(std::move(completionHandler))
     {
         ASSERT(m_completionHandler);
     }
@@ -88,10 +94,10 @@ private:
     std::function<void (Arguments...)> m_completionHandler;
 };
 
-template<typename... Arguments> void AsyncRequest::requestCompleted(Arguments&&... arguments)
+template<typename... Arguments> void AsyncRequest::completeRequest(Arguments&&... arguments)
 {
     AsyncRequestImpl<Arguments...>* request = static_cast<AsyncRequestImpl<Arguments...>*>(this);
-    request->requestCompleted(std::forward<Arguments>(arguments)...);
+    request->completeRequest(std::forward<Arguments>(arguments)...);
     m_abortHandler = nullptr;
 }
 

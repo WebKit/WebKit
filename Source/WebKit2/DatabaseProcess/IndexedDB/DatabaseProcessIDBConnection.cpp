@@ -67,7 +67,7 @@ void DatabaseProcessIDBConnection::getOrEstablishIDBDatabaseMetadata(uint64_t re
     ASSERT(m_uniqueIDBDatabase);
 
     RefPtr<DatabaseProcessIDBConnection> connection(this);
-    m_uniqueIDBDatabase->getIDBDatabaseMetadata([connection, requestID](bool success, const IDBDatabaseMetadata& metadata) {
+    m_uniqueIDBDatabase->getOrEstablishIDBDatabaseMetadata([connection, requestID](bool success, const IDBDatabaseMetadata& metadata) {
         connection->send(Messages::WebIDBServerConnection::DidGetOrEstablishIDBDatabaseMetadata(requestID, success, metadata));
     });
 }

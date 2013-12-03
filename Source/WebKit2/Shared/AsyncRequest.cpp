@@ -38,8 +38,9 @@ static uint64_t generateRequestID()
     return ++requestID;
 }
 
-AsyncRequest::AsyncRequest()
-    : m_requestID(generateRequestID())
+AsyncRequest::AsyncRequest(std::function<void ()> abortHandler)
+    : m_abortHandler(std::move(abortHandler))
+    , m_requestID(generateRequestID())
 {
 }
 
@@ -48,7 +49,7 @@ AsyncRequest::~AsyncRequest()
     ASSERT(!m_abortHandler);
 }
 
-void AsyncRequest::setAbortHandler(std::function<void()> handler)
+void AsyncRequest::setAbortHandler(std::function<void ()> handler)
 {
     m_abortHandler = std::move(handler);
 }
