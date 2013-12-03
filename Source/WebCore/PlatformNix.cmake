@@ -116,16 +116,21 @@ list(APPEND WebCore_SOURCES
     platform/nix/CursorNix.cpp
     platform/nix/DragDataNix.cpp
     platform/nix/DragImageNix.cpp
+    platform/nix/ErrorsNix.cpp
+    platform/nix/FileSystemNix.cpp
     platform/nix/GamepadsNix.cpp
     platform/nix/LanguageNix.cpp
     platform/nix/LocalizedStringsNix.cpp
+    platform/nix/MIMETypeRegistryNix.cpp
     platform/nix/NixKeyboardUtilities.cpp
     platform/nix/PasteboardNix.cpp
     platform/nix/PlatformKeyboardEventNix.cpp
     platform/nix/PlatformScreenNix.cpp
     platform/nix/RenderThemeNix.cpp
     platform/nix/ScrollbarThemeNix.cpp
+    platform/nix/SharedTimerNix.cpp
     platform/nix/SoundNix.cpp
+    platform/nix/TemporaryLinkStubs.cpp
     platform/nix/WidgetNix.cpp
 
     platform/nix/support/MultiChannelPCMData.cpp
