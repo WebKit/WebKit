@@ -1,3 +1,19 @@
+2013-12-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a script to automatically configure a git clone
+        https://bugs.webkit.org/show_bug.cgi?id=110073
+
+        Reviewed by Benjamin Poulain.
+
+        Added "webkit-patch setup-git-clone" to setup a brand new Git clone.
+
+        This command runs various commands listed on http://trac.webkit.org/wiki/UsingGitWithWebKit
+
+        * Scripts/webkitpy/tool/commands/__init__.py:
+        * Scripts/webkitpy/tool/commands/setupgitclone.py: Added.
+        (SetupGitClone):
+        (SetupGitClone.execute):
+
 2013-12-03  Anders Carlsson  <andersca@apple.com>
 
         Deprecate WKNotificationProvider
