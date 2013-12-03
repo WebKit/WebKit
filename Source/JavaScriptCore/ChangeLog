@@ -1,3 +1,40 @@
+2013-12-02  Mark Lam  <mark.lam@apple.com>
+
+        Build failure when disabling JIT, YARR_JIT, and ASSEMBLER.
+        https://bugs.webkit.org/show_bug.cgi?id=123809.
+
+        Reviewed by Geoffrey Garen.
+
+        Also fixed build when disabling the DISASSEMBLER.
+        Added some needed #if's and some comments.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::finalizeCodeWithDisassembly):
+        * dfg/DFGDisassembler.cpp:
+        * dfg/DFGDisassembler.h:
+        (JSC::DFG::Disassembler::Disassembler):
+        (JSC::DFG::Disassembler::setStartOfCode):
+        (JSC::DFG::Disassembler::setForBlockIndex):
+        (JSC::DFG::Disassembler::setForNode):
+        (JSC::DFG::Disassembler::setEndOfMainPath):
+        (JSC::DFG::Disassembler::setEndOfCode):
+        (JSC::DFG::Disassembler::dump):
+        (JSC::DFG::Disassembler::reportToProfiler):
+        * disassembler/Disassembler.cpp:
+        * disassembler/X86Disassembler.cpp:
+        * jit/FPRInfo.h:
+        * jit/GPRInfo.h:
+        * jit/JITDisassembler.cpp:
+        * jit/JITDisassembler.h:
+        (JSC::JITDisassembler::JITDisassembler):
+        (JSC::JITDisassembler::setStartOfCode):
+        (JSC::JITDisassembler::setForBytecodeMainPath):
+        (JSC::JITDisassembler::setForBytecodeSlowPath):
+        (JSC::JITDisassembler::setEndOfSlowPath):
+        (JSC::JITDisassembler::setEndOfCode):
+        (JSC::JITDisassembler::dump):
+        (JSC::JITDisassembler::reportToProfiler):
+
 2013-12-02  Filip Pizlo  <fpizlo@apple.com>
 
         Baseline JIT calls to CommonSlowPaths shouldn't restore the last result

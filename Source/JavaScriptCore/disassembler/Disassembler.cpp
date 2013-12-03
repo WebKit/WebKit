@@ -26,6 +26,8 @@
 #include "config.h"
 #include "Disassembler.h"
 
+#if ENABLE(DISASSEMBLER)
+
 #include "MacroAssemblerCodeRef.h"
 #include <wtf/DataLog.h>
 
@@ -41,3 +43,4 @@ void disassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const char* 
 
 } // namespace JSC
 
+#endif // ENABLE(DISASSEMBLER)

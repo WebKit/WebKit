@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JITDisassembler.h"
 
-#if ENABLE(JIT)
+#if ENABLE(JIT) && ENABLE(DISASSEMBLER)
 
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
@@ -164,5 +164,5 @@ void JITDisassembler::dumpDisassembly(PrintStream& out, LinkBuffer& linkBuffer, 
 
 } // namespace JSC
 
-#endif // ENABLE(JIT)
+#endif // ENABLE(JIT) && ENABLE(DISASSEMBLER)
 

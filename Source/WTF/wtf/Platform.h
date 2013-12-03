@@ -851,6 +851,16 @@
 #endif
 #endif
 
+/* If the Disassembler is enabled, then the Assembler must be enabled as well: */
+#if ENABLE(DISASSEMBLER)
+#if defined(ENABLE_ASSEMBLER) && !ENABLE_ASSEMBLER
+#error "Cannot enable the Disassembler without enabling the Assembler"
+#else
+#undef ENABLE_ASSEMBLER
+#define ENABLE_ASSEMBLER 1
+#endif
+#endif
+
 /* FIXME: We currently unconditionally use spearate stacks. When we switch to using the
    C stack for JS frames, we'll need to make the following conditional on ENABLE(LLINT_CLOOP)
    only.

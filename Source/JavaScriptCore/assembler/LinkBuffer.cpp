@@ -49,7 +49,8 @@ LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithDisassembly(const char* format, 
     ASSERT(Options::showDisassembly() || Options::showDFGDisassembly());
     
     CodeRef result = finalizeCodeWithoutDisassembly();
-    
+
+#if ENABLE(DISASSEMBLER)
     dataLogF("Generated JIT code for ");
     va_list argList;
     va_start(argList, format);
@@ -59,6 +60,9 @@ LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithDisassembly(const char* format, 
     
     dataLogF("    Code at [%p, %p):\n", result.code().executableAddress(), static_cast<char*>(result.code().executableAddress()) + result.size());
     disassemble(result.code(), m_size, "    ", WTF::dataFile());
+#else
+    UNUSED_PARAM(format);
+#endif // ENABLE(DISASSEMBLER)
     
     return result;
 }

@@ -34,6 +34,8 @@ namespace JSC {
 typedef MacroAssembler::FPRegisterID FPRReg;
 #define InvalidFPRReg ((::JSC::FPRReg)-1)
 
+#if ENABLE(JIT)
+
 #if CPU(X86) || CPU(X86_64)
 
 class FPRInfo {
@@ -108,7 +110,7 @@ public:
     static const unsigned InvalidIndex = 0xffffffff;
 };
 
-#endif
+#endif // CPU(X86) || CPU(X86_64)
 
 #if CPU(ARM)
 
@@ -172,7 +174,7 @@ public:
     static const unsigned InvalidIndex = 0xffffffff;
 };
 
-#endif
+#endif // CPU(ARM)
 
 #if CPU(ARM64)
 
@@ -260,7 +262,7 @@ public:
     static const unsigned InvalidIndex = 0xffffffff;
 };
 
-#endif
+#endif // CPU(ARM64)
 
 #if CPU(MIPS)
 
@@ -327,7 +329,7 @@ public:
     static const unsigned InvalidIndex = 0xffffffff;
 };
 
-#endif
+#endif // CPU(MIPS)
 
 #if CPU(SH4)
 
@@ -389,7 +391,9 @@ public:
     static const unsigned InvalidIndex = 0xffffffff;
 };
 
-#endif
+#endif // CPU(SH4)
+
+#endif // ENABLE(JIT)
 
 } // namespace JSC
 

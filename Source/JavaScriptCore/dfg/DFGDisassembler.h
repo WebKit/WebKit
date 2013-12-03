@@ -42,6 +42,8 @@ namespace JSC { namespace DFG {
 
 class Graph;
 
+#if ENABLE(DISASSEMBLER)
+
 class Disassembler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -96,6 +98,25 @@ private:
     MacroAssembler::Label m_endOfMainPath;
     MacroAssembler::Label m_endOfCode;
 };
+
+#else // ENABLE(DISASSEMBLER)
+
+class Disassembler {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    Disassembler(Graph&) { }
+
+    void setStartOfCode(MacroAssembler::Label) { }
+    void setForBlockIndex(BlockIndex, MacroAssembler::Label) { }
+    void setForNode(Node*, MacroAssembler::Label) { }
+    void setEndOfMainPath(MacroAssembler::Label) { }
+    void setEndOfCode(MacroAssembler::Label) { }
+
+    void dump(LinkBuffer&) { }
+    void reportToProfiler(Profiler::Compilation*, LinkBuffer&) { }
+};
+
+#endif // ENABLE(DISASSEMBLER)
 
 } } // namespace JSC::DFG
 

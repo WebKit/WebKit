@@ -34,6 +34,8 @@ namespace JSC {
 typedef MacroAssembler::RegisterID GPRReg;
 #define InvalidGPRReg ((::JSC::GPRReg)-1)
 
+#if ENABLE(JIT)
+
 #if USE(JSVALUE64)
 class JSValueRegs {
 public:
@@ -125,7 +127,7 @@ private:
     int32_t m_offset;
     GPRReg m_base;
 };
-#endif
+#endif // USE(JSVALUE64)
 
 #if USE(JSVALUE32_64)
 class JSValueRegs {
@@ -276,7 +278,7 @@ private:
     int8_t m_payload; 
     int8_t m_tagType; // Contains the low bits of the tag.
 };
-#endif
+#endif // USE(JSVALUE32_64)
 
 // The baseline JIT requires that regT3 be callee-preserved.
 
@@ -343,7 +345,7 @@ public:
     static const unsigned InvalidIndex = 0xffffffff;
 };
 
-#endif
+#endif // CPU(X86)
 
 #if CPU(X86_64)
 #if !OS(WINDOWS)
@@ -440,7 +442,7 @@ public:
     static const unsigned InvalidIndex = 0xffffffff;
 };
 
-#endif
+#endif // CPU(X86_64)
 
 #if CPU(ARM)
 #define NUMBER_OF_ARGUMENT_REGISTERS 4u
@@ -521,7 +523,7 @@ public:
     static const unsigned InvalidIndex = 0xffffffff;
 };
 
-#endif
+#endif // CPU(ARM)
 
 #if CPU(ARM64)
 #define NUMBER_OF_ARGUMENT_REGISTERS 8u
@@ -619,7 +621,7 @@ public:
     static const unsigned InvalidIndex = 0xffffffff;
 };
 
-#endif
+#endif // CPU(ARM64)
 
 #if CPU(MIPS)
 #define NUMBER_OF_ARGUMENT_REGISTERS 4u
@@ -695,7 +697,7 @@ public:
     static const unsigned InvalidIndex = 0xffffffff;
 };
 
-#endif
+#endif // CPU(MIPS)
 
 #if CPU(SH4)
 #define NUMBER_OF_ARGUMENT_REGISTERS 4u
@@ -765,7 +767,7 @@ public:
     static const unsigned InvalidIndex = 0xffffffff;
 };
 
-#endif
+#endif // CPU(SH4)
 
 // The baseline JIT uses "accumulator" style execution with regT0 (for 64-bit)
 // and regT0 + regT1 (for 32-bit) serving as the accumulator register(s) for
@@ -774,6 +776,8 @@ COMPILE_ASSERT(GPRInfo::regT0 == GPRInfo::returnValueGPR, regT0_must_equal_retur
 #if USE(JSVALUE32_64)
 COMPILE_ASSERT(GPRInfo::regT1 == GPRInfo::returnValueGPR2, regT1_must_equal_returnValueGPR2);
 #endif
+
+#endif // ENABLE(JIT)
 
 } // namespace JSC
 

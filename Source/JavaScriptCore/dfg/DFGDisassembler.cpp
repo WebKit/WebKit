@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DFGDisassembler.h"
 
-#if ENABLE(DFG_JIT)
+#if ENABLE(DFG_JIT) && ENABLE(DISASSEMBLER)
 
 #include "CodeBlockWithJITType.h"
 #include "DFGGraph.h"
@@ -172,4 +172,4 @@ void Disassembler::dumpDisassembly(PrintStream& out, const char* prefix, LinkBuf
 
 } } // namespace JSC::DFG
 
-#endif // ENABLE(DFG_JIT)
+#endif // ENABLE(DFG_JIT) && ENABLE(DISASSEMBLER)

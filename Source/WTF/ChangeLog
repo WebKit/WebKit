@@ -1,3 +1,13 @@
+2013-12-02  Mark Lam  <mark.lam@apple.com>
+
+        Build failure when disabling JIT, YARR_JIT, and ASSEMBLER.
+        https://bugs.webkit.org/show_bug.cgi?id=123809.
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/Platform.h:
+        - Ensure that the ASSEMBLER is enabled when the DISASSEMBLER is enabled.
+
 2013-11-30  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] Some JavaScript date tests are failing.
