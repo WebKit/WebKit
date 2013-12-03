@@ -5575,7 +5575,7 @@ PassRefPtr<CSSBasicShape> CSSParser::parseBasicShapeInsetRectangle(CSSParserValu
 
 PassRefPtr<CSSPrimitiveValue> CSSParser::parseShapeRadius(CSSParserValue* value)
 {
-    if (value->id == CSSValueClosestSide && value->id == CSSValueFarthestSide)
+    if (value->id == CSSValueClosestSide || value->id == CSSValueFarthestSide)
         return cssValuePool().createIdentifierValue(value->id);
 
     if (!validUnit(value, FLength | FPercent | FNonNeg))

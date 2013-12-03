@@ -102,24 +102,22 @@ static String buildCircleString(const String& radius, const String& centerX, con
     char at[] = "at";
     char separator[] = " ";
     StringBuilder result;
-    // Compute the required capacity in advance to reduce allocations.
-    result.reserveCapacity((sizeof(opening) - 1) + (3 * (sizeof(separator) - 1)) + 1 + radius.length() + sizeof(at) + centerX.length() + centerY.length());
-    result.append(opening);
+    result.appendLiteral(opening);
     if (!radius.isNull()) 
         result.append(radius);
 
     if (!centerX.isNull() || !centerY.isNull()) {
         if (!radius.isNull())
-            result.append(separator);
-        result.append(at);
-        result.append(separator);
+            result.appendLiteral(separator);
+        result.appendLiteral(at);
+        result.appendLiteral(separator);
         result.append(centerX);
-        result.append(separator);
+        result.appendLiteral(separator);
         result.append(centerY);
     }
-    result.append(")");
+    result.appendLiteral(")");
     if (box.length()) {
-        result.append(separator);
+        result.appendLiteral(separator);
         result.append(box);
     }
     return result.toString();

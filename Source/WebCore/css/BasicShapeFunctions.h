@@ -45,5 +45,8 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle*, const RenderStyle*
 
 PassRefPtr<CSSPrimitiveValue> valueForBox(BasicShape::ReferenceBox);
 BasicShape::ReferenceBox boxForValue(const CSSPrimitiveValue*);
+
+float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate&, float);
 }
+
 #endif

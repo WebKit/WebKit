@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<title>Circle shape-outside on floats</title>
+<style>
+.container {
+    font: 20px/1 Ahem, sans-serif;
+    width: 500px;
+    height: 200px;
+    border: 1px solid black;
+}
+
+.circle {
+    width: 160px;
+    height: 160px;
+    background-color: blue;
+    overflow: hidden;
+    border-radius: 80px;
+    -webkit-shape-outside: circle(80px at 80px 80px);
+}
+</style>
+
+<body>
+<p>The black squares should trace the right side of the circle's blue outline.</p>
+<div class="container">
+X<br/>
+    <div style="float: left" class="circle"></div>
+X<br/>
+X<br/>
+X<br/>
+X<br/>
+X<br/>
+X<br/>
+X<br/>
+X<br/>
+X
+</div>
+
+<p>The black squares should trace the left side of the circle's blue outline.</p>
+<div class="container" style="text-align: right">
+X<br/>
+    <div style="float: right" class="circle"></div>
+X<br/>
+X<br/>
+X<br/>
+X<br/>
+X<br/>
+X<br/>
+X<br/>
+X<br/>
+X
+</div>
+</body>

@@ -151,8 +151,13 @@ PassOwnPtr<Shape> Shape::createShape(const BasicShape* basicShape, const LayoutS
     }
 
     case BasicShape::BasicShapeCircleType: {
-        // FIXME implement layout. bug 124619
-        shape = createRectangleShape(FloatRect(0, 0, boxWidth, boxHeight), FloatSize(0, 0));
+        const BasicShapeCircle* circle = static_cast<const BasicShapeCircle*>(basicShape);
+        float centerX = floatValueForCenterCoordinate(circle->centerX(), boxWidth);
+        float centerY = floatValueForCenterCoordinate(circle->centerY(), boxHeight);
+        float radius = circle->floatValueForRadiusInBox(boxWidth, boxHeight);
+        FloatPoint logicalCenter = physicalPointToLogical(FloatPoint(centerX, centerY), logicalBoxSize.height(), writingMode);
+
+        shape = createShapeCircle(logicalCenter, radius);
         break;
     }
 

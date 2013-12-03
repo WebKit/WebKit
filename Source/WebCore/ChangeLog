@@ -1,3 +1,45 @@
+2013-12-02  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [css shapes] Layout support for new circle shape syntax
+        https://bugs.webkit.org/show_bug.cgi?id=124619
+
+        Reviewed by Dirk Schulze.
+
+        Implement support for doing layout with the new circle shape syntax,
+        inclduing basic animation support.
+
+        Tests: fast/shapes/shape-outside-floats/shape-outside-floats-circle-000.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-circle-001.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-circle-002.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-circle-003.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-circle-004.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-circle-005.html
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::floatValueForCenterCoordinate): Used by both the CSS Shapes
+            layout code and the clip path code.
+        * css/BasicShapeFunctions.h:
+        * css/CSSBasicShapes.cpp:
+        (WebCore::buildCircleString): Update to use appendLiteral, and remove
+            call to reserveCapacity - if we find that it's actually slow when
+            doing performance tests, we can hopefully do something smarter and
+            less ugly than that.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseShapeRadius): Fix a logic error that caused
+            the radius keywords not to work properly.
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createShape): Convert new circle to a layout shape.
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShape::canBlend): Ignore circles with values that
+            cannot be interpolated.
+        (WebCore::BasicShapeCircle::floatValueForRadiusInBox): Convert circle
+            radius keywords to a float value.
+        (WebCore::BasicShapeCircle::path):
+        (WebCore::BasicShapeCircle::blend):
+        * rendering/style/BasicShapes.h:
+        (WebCore::BasicShapeCenterCoordinate::canBlend):
+        (WebCore::BasicShapeRadius::canBlend):
+
 2013-12-02  Alexey Proskuryakov  <ap@apple.com>
 
         WebCrypto HMAC doesn't check key algorithm's hash

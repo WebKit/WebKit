@@ -21,6 +21,8 @@ var validShapeValues = [
     "circle(10px, 20px, 30px)", // FIXME: Remove this test once we do not support the deprecated CSS Shapes syntax anymore.
 
     ["circle()", "circle()", "circle(closest-side at 50% 50%)"],
+    ["circle(farthest-side)", "circle(farthest-side)", "circle(farthest-side at 50% 50%)"],
+    ["circle(closest-side)", "circle(closest-side)", "circle(closest-side at 50% 50%)"],
     ["circle(10px)", "circle(10px)", "circle(10px at 50% 50%)"],
     ["circle(10px at 10px)", "circle(10px at 10px 50%)"],
     "circle(10px at 10px 10px)",

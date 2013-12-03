@@ -450,4 +450,23 @@ PassRefPtr<BasicShape> basicShapeForValue(const RenderStyle* style, const Render
 
     return basicShape.release();
 }
+
+float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate& center, float boxDimension)
+{
+    float offset = floatValueForLength(center.length(), boxDimension);
+    switch (center.keyword()) {
+    case BasicShapeCenterCoordinate::None:
+        return offset;
+    case BasicShapeCenterCoordinate::Top:
+    case BasicShapeCenterCoordinate::Left:
+        return offset;
+    case BasicShapeCenterCoordinate::Bottom:
+    case BasicShapeCenterCoordinate::Right:
+        return boxDimension - offset;
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 }

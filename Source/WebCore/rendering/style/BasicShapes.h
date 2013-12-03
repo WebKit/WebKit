@@ -144,6 +144,12 @@ public:
     Keyword keyword() const { return m_keyword; }
     const Length& length() const { return m_length; }
 
+    bool canBlend(const BasicShapeCenterCoordinate& other) const
+    {
+        // FIXME determine how to interpolate between keywords. See bug 125108.
+        return m_keyword == None && other.keyword() == None;
+    }
+
     BasicShapeCenterCoordinate blend(const BasicShapeCenterCoordinate& other, double progress) const
     {
         if (m_keyword != None || other.keyword() != None)
@@ -172,6 +178,12 @@ public:
     const Length& value() const { return m_value; }
     Type type() const { return m_type; }
 
+    bool canBlend(const BasicShapeRadius& other) const
+    {
+        // FIXME determine how to interpolate between keywords. See bug 125108.
+        return m_type == Value && other.type() == Value;
+    }
+
     BasicShapeRadius blend(const BasicShapeRadius& other, double progress) const
     {
         if (m_type != Value || other.type() != Value)
@@ -193,6 +205,7 @@ public:
     const BasicShapeCenterCoordinate& centerX() const { return m_centerX; }
     const BasicShapeCenterCoordinate& centerY() const { return m_centerY; }
     const BasicShapeRadius& radius() const { return m_radius; }
+    float floatValueForRadiusInBox(float boxWidth, float boxHeight) const;
 
     void setCenterX(BasicShapeCenterCoordinate centerX) { m_centerX = std::move(centerX); }
     void setCenterY(BasicShapeCenterCoordinate centerY) { m_centerY = std::move(centerY); }

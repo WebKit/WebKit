@@ -1,3 +1,54 @@
+2013-12-02  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [css shapes] Layout support for new circle shape syntax
+        https://bugs.webkit.org/show_bug.cgi?id=124619
+
+        Reviewed by Dirk Schulze.
+
+        Add a few tests for the new circle syntax. The old tests in
+        LayoutTests/csswg will be removed when the old syntax is removed.
+
+        Also update existing shape-inside, animation, and clip-path tests to
+        test the new syntax. 
+
+        * animations/resources/animation-test-helpers.js:
+        (parseBasicShape):
+        * LayoutTests/animations/resources/animation-test-helpers.js:
+        * LayoutTests/css3/masking/clip-path-animation-expected.txt:
+        * LayoutTests/css3/masking/clip-path-animation.html:
+        * LayoutTests/css3/masking/clip-path-circle-filter.html:
+        * LayoutTests/css3/masking/clip-path-circle-overflow-hidden.html:
+        * LayoutTests/css3/masking/clip-path-circle-overflow.html:
+        * LayoutTests/css3/masking/clip-path-circle-relative-overflow.html:
+        * LayoutTests/css3/masking/clip-path-circle.html:
+        * LayoutTests/css3/masking/clip-path-restore.html:
+        * LayoutTests/fast/shapes/parsing/parsing-shape-inside-expected.txt:
+        * LayoutTests/fast/shapes/parsing/parsing-shape-outside-expected.txt:
+        * LayoutTests/fast/shapes/parsing/parsing-test-utils.js:
+        * LayoutTests/fast/shapes/shape-inside/shape-inside-animation-expected.txt:
+        * LayoutTests/fast/shapes/shape-inside/shape-inside-animation.html:
+        * LayoutTests/fast/shapes/shape-inside/shape-inside-calc-crash-expected.txt:
+        * LayoutTests/fast/shapes/shape-inside/shape-inside-calc-crash.html:
+        * LayoutTests/fast/shapes/shape-inside/shape-inside-circle-padding.html:
+        * LayoutTests/fast/shapes/shape-inside/shape-inside-circle.html:
+        * LayoutTests/fast/shapes/shape-inside/shape-inside-dynamic-nested.html:
+        * LayoutTests/fast/shapes/shape-inside/shape-inside-empty-expected.html:
+        * LayoutTests/fast/shapes/shape-inside/shape-inside-empty.html:
+        * fast/shapes/shape-outside-floats/shape-outside-animation-expected.txt:
+        * fast/shapes/shape-outside-floats/shape-outside-animation.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-circle-000-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-circle-000.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-circle-001-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-circle-001.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-circle-002-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-circle-002.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-circle-003-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-circle-003.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-circle-004-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-circle-004.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-circle-005-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-circle-005.html: Added.
+
 2013-12-02  Alexey Proskuryakov  <ap@apple.com>
 
         WebCrypto HMAC doesn't check key algorithm's hash
