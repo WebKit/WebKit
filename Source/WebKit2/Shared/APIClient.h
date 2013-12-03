@@ -29,6 +29,10 @@
 #include "APIClientTraits.h"
 #include <array>
 
+#if !ASSERT_DISABLED
+#include <algorithm> // std::is_sorted
+#endif
+
 // FIXME: Transition all clients from WebKit::APIClient to API::Client.
 namespace API {
 
