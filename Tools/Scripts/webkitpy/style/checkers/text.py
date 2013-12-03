@@ -42,10 +42,3 @@ class TextChecker(object):
 
     def check(self, lines):
         self._tab_checker.check(lines)
-
-
-# FIXME: Remove this function (requires refactoring unit tests).
-def process_file_data(filename, lines, error):
-    checker = TextChecker(filename, error)
-    checker.check(lines)
-

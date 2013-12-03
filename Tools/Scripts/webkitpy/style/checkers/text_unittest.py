@@ -36,6 +36,10 @@ from text import TextChecker
 class TextStyleTestCase(unittest.TestCase):
     """TestCase for text_style.py"""
 
+    def process_file_data(self, filename, lines, error):
+        checker = TextChecker(filename, error)
+        checker.check(lines)
+
     def assertNoError(self, lines):
         """Asserts that the specified lines has no errors."""
         self.had_error = False
@@ -44,7 +48,7 @@ class TextStyleTestCase(unittest.TestCase):
             """Records if an error occurs."""
             self.had_error = True
 
-        text_style.process_file_data('', lines, error_for_test)
+        self.process_file_data('', lines, error_for_test)
         self.assertFalse(self.had_error, '%s should not have any errors.' % lines)
 
     def assertError(self, lines, expected_line_number):
@@ -57,7 +61,7 @@ class TextStyleTestCase(unittest.TestCase):
             self.assertEqual('whitespace/tab', category)
             self.had_error = True
 
-        text_style.process_file_data('', lines, error_for_test)
+        self.process_file_data('', lines, error_for_test)
         self.assertTrue(self.had_error, '%s should have an error [whitespace/tab].' % lines)
 
 
