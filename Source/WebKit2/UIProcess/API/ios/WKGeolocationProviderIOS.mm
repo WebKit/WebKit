@@ -155,7 +155,7 @@ struct GeolocationRequestData {
         stopUpdatingCallback,
         setEnableHighAccuracy
     };
-    _geolocationManager->initializeProvider(&providerCallback);
+    _geolocationManager->initializeProvider(reinterpret_cast<WKGeolocationProviderBase*>(&providerCallback));
     _coreLocationProvider = adoptNS([[WebGeolocationCoreLocationProvider alloc] initWithListener:self]);
     return self;
 }

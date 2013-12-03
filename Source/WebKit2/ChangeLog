@@ -1,3 +1,10 @@
+2013-12-02  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * UIProcess/API/ios/WKGeolocationProviderIOS.mm:
+        (-[WKGeolocationProviderIOS initWithContext:]):
+
 2013-12-02  Martin Hock  <mhock@apple.com>
 
         Add ability to iterate over API::Array
