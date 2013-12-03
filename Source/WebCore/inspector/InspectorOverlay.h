@@ -113,7 +113,6 @@ public:
     void paint(GraphicsContext&);
     void drawOutline(GraphicsContext*, const LayoutRect&, const Color&);
     void getHighlight(Highlight*) const;
-    void resize(const IntSize&);
 
     void setPausedInDebuggerMessage(const String*);
 

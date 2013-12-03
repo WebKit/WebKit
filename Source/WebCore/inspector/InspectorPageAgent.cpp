@@ -386,11 +386,6 @@ void InspectorPageAgent::willDestroyFrontendAndBackend()
 #endif
 }
 
-void InspectorPageAgent::webViewResized(const IntSize& size)
-{
-    m_overlay->resize(m_screenWidthOverride ? size : IntSize());
-}
-
 void InspectorPageAgent::enable(ErrorString*)
 {
     m_enabled = true;

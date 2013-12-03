@@ -165,8 +165,6 @@ public:
     virtual void didCreateFrontendAndBackend(InspectorFrontendChannel*, InspectorBackendDispatcher*) OVERRIDE;
     virtual void willDestroyFrontendAndBackend() OVERRIDE;
 
-    void webViewResized(const IntSize&);
-
     // Cross-agents API
     Page* page() { return m_page; }
     Frame* mainFrame();

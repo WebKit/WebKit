@@ -95,7 +95,6 @@ public:
     void connectFrontend(InspectorFrontendChannel*);
     void disconnectFrontend();
     void setProcessId(long);
-    void webViewResized(const IntSize&);
 
     void inspect(Node*);
     void drawHighlight(GraphicsContext&) const;

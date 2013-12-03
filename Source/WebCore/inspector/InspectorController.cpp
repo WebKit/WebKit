@@ -279,11 +279,6 @@ void InspectorController::setProcessId(long processId)
     IdentifiersFactory::setProcessId(processId);
 }
 
-void InspectorController::webViewResized(const IntSize& size)
-{
-    m_pageAgent->webViewResized(size);
-}
-
 bool InspectorController::isUnderTest()
 {
     return m_isUnderTest;
