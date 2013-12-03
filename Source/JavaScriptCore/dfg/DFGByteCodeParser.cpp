@@ -1916,19 +1916,18 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 ASSERT(cell->inherits(JSFunction::info()));
                 
                 JSFunction* function = jsCast<JSFunction*>(cell);
-                ObjectAllocationProfile* allocationProfile = function->tryGetAllocationProfile();
-                if (allocationProfile) {
+                if (Structure* structure = function->allocationStructure()) {
                     addToGraph(AllocationProfileWatchpoint, OpInfo(function));
                     // The callee is still live up to this point.
                     addToGraph(Phantom, callee);
-                    set(VirtualRegister(currentInstruction[1].u.operand),
-                        addToGraph(NewObject, OpInfo(allocationProfile->structure())));
+                    set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(NewObject, OpInfo(structure)));
                     alreadyEmitted = true;
                 }
             }
-            if (!alreadyEmitted)
+            if (!alreadyEmitted) {
                 set(VirtualRegister(currentInstruction[1].u.operand),
                     addToGraph(CreateThis, OpInfo(currentInstruction[3].u.operand), callee));
+            }
             NEXT_OPCODE(op_create_this);
         }
 

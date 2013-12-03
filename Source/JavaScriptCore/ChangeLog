@@ -1,3 +1,24 @@
+2013-12-03  Filip Pizlo  <fpizlo@apple.com>
+
+        ObjectAllocationProfile is racy and the DFG should be cool with that
+        https://bugs.webkit.org/show_bug.cgi?id=125172
+        <rdar://problem/15233487>
+
+        Reviewed by Mark Hahnenberg.
+        
+        We would previously sometimes get a null Structure because checking if the profile is non-null and loading
+        the structure from it were two separate operations.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::setFuturePossibleStructure):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::allocationProfile):
+        (JSC::JSFunction::allocationStructure):
+
 2013-12-03  peavo@outlook.com  <peavo@outlook.com>
 
         testapi test crashes on Windows in WTF::Vector<wchar_t,64,WTF::UnsafeVectorOverflow>::size()

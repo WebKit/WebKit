@@ -153,6 +153,7 @@ FiltrationResult AbstractValue::filterByValue(JSValue value)
 
 void AbstractValue::setFuturePossibleStructure(Graph& graph, Structure* structure)
 {
+    ASSERT(structure);
     if (graph.watchpoints().isStillValid(structure->transitionWatchpointSet()))
         m_futurePossibleStructure = structure;
     else

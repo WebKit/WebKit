@@ -137,22 +137,9 @@ namespace JSC {
                 return createAllocationProfile(exec, inlineCapacity);
             return &m_allocationProfile;
         }
+        
+        Structure* allocationStructure() { return m_allocationProfile.structure(); }
 
-        ObjectAllocationProfile* tryGetAllocationProfile()
-        {
-            if (m_allocationProfile.isNull())
-                return 0;
-            if (m_allocationProfileWatchpoint.hasBeenInvalidated())
-                return 0;
-            return &m_allocationProfile;
-        }
-        
-        void addAllocationProfileWatchpoint(Watchpoint* watchpoint)
-        {
-            ASSERT(tryGetAllocationProfile());
-            m_allocationProfileWatchpoint.add(watchpoint);
-        }
-        
         InlineWatchpointSet& allocationProfileWatchpointSet()
         {
             return m_allocationProfileWatchpoint;
