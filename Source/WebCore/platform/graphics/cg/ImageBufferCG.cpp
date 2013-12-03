@@ -158,7 +158,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace 
     if (!accelerateRendering) {
         if (!tryFastCalloc(height.unsafeGet(), m_data.m_bytesPerRow.unsafeGet()).getValue(m_data.m_data))
             return;
-        ASSERT(!(reinterpret_cast<size_t>(m_data.m_data) & 2));
+        ASSERT(!(reinterpret_cast<intptr_t>(m_data.m_data) & 3));
 
         m_data.m_bitmapInfo = kCGImageAlphaPremultipliedLast;
         cgContext = adoptCF(CGBitmapContextCreate(m_data.m_data, width.unsafeGet(), height.unsafeGet(), 8, m_data.m_bytesPerRow.unsafeGet(), m_data.m_colorSpace, m_data.m_bitmapInfo));
