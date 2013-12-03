@@ -749,7 +749,6 @@ void WebPage::didFinishScrolling(const WebCore::FloatPoint& contentOffset)
 
 void WebPage::didFinishZooming(float newScale)
 {
-    m_page->mainFrame().setDocumentScale(newScale);
     m_page->setPageScaleFactor(newScale, m_page->mainFrame().view()->scrollPosition());
 }
 

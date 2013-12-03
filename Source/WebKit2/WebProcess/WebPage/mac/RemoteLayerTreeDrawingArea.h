@@ -74,7 +74,6 @@ private:
     virtual void didCommitChangesForLayer(const WebCore::GraphicsLayer*) const OVERRIDE { }
 #if PLATFORM(IOS)
     virtual void setDeviceScaleFactor(float) OVERRIDE;
-    virtual float minimumDocumentScale() const OVERRIDE;
     virtual bool allowCompositingLayerVisualDegradation() const OVERRIDE { return false; }
 #endif
 

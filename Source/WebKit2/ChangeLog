@@ -1,3 +1,21 @@
+2013-12-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove some iOS-related documentScale code
+        https://bugs.webkit.org/show_bug.cgi?id=125194
+
+        Reviewed by Enrica Casucci.
+        
+        Upstream bits of removal of Frame::documentScale on iOS.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Whitespace.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::didFinishZooming): Don't call setDocumentScale().
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h: Remove minimumDocumentScale().
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm: Ditto.
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea): We delegate page scaling on iOS.
+        (WebKit::RemoteLayerTreeDrawingArea::setDeviceScaleFactor):
+
 2013-12-03  Anders Carlsson  <andersca@apple.com>
 
         PageBannerClientImpl should be an API::Client
