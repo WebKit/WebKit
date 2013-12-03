@@ -28,6 +28,9 @@ WebInspector.CookieStorageObject = function(host)
     this._host = host;
 };
 
+WebInspector.CookieStorageObject.TypeIdentifier = "cookie-storage";
+WebInspector.CookieStorageObject.CookieHostCookieKey = "cookie-storage-host";
+
 WebInspector.CookieStorageObject.prototype = {
     constructor: WebInspector.CookieStorageObject,
 
@@ -36,5 +39,9 @@ WebInspector.CookieStorageObject.prototype = {
         return this._host;
     },
     
+    saveIdentityToCookie: function(cookie)
+    {
+        cookie[WebInspector.CookieStorageObject.CookieHostCookieKey] = this.host;
+    }
     // FIXME: This class will need to look up cookies that are set for this host.
 };

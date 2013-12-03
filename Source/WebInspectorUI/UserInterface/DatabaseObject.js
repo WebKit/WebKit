@@ -31,9 +31,15 @@ WebInspector.DatabaseObject = function(id, host, name, version)
     this._version = version;
 };
 
+WebInspector.DatabaseObject.TypeIdentifier = "database";
+WebInspector.DatabaseObject.HostCookieKey = "database-object-host";
+WebInspector.DatabaseObject.NameCookieKey = "database-object-name";
+
 WebInspector.DatabaseObject.prototype = {
     constructor: WebInspector.DatabaseObject,
     
+    // Public
+
     get id()
     {
         return this._id;
@@ -54,6 +60,12 @@ WebInspector.DatabaseObject.prototype = {
         return this._version;
     },
     
+    saveIdentityToCookie: function(cookie)
+    {
+        cookie[WebInspector.DatabaseObject.HostCookieKey] = this.host;
+        cookie[WebInspector.DatabaseObject.NameCookieKey] = this.name;
+    },
+
     getTableNames: function(callback)
     {
         function sortingCallback(error, names)

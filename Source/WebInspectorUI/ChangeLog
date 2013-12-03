@@ -1,3 +1,165 @@
+2013-12-03  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: restore navigation panel state across reloads and reopens
+        https://bugs.webkit.org/show_bug.cgi?id=122125
+
+        Reviewed by Timothy Hatcher.
+
+        The previous strategy for restoring content views after inspector
+        re-open did not consider the active sidebar and its selection, and
+        tried to recreate the appropriate selection from the saved content
+        view. However, doesn't work for tree elements in the sidebar panel
+        that don't change views when selected, such as script breakpoints,
+        special breakpoints, call stack, timeline sections, etc.
+
+        This patch implements a new strategy that saves the navigation
+        sidebar panel's view state by serializing the identity of the
+        selected element's represented object. Relevant represented
+        object classes implement the saveIdentityToCookie() method. Each
+        represented object class also adds a TypeIdentifier property to
+        its constructor, to aid inexact matching based on represented
+        object type, rather than its complete identity.
+
+        When restoring, the navigation sidebar attempts to match added
+        tree elements against the pending cookie, and selects the element
+        if it matches. A represented object matches if its serialized
+        identity matches the previously saved serialized identity.
+
+        The inspector view state is now only saved on the page hide event
+        (for saving across reopen) and when the main frame commits its
+        provisional load (for saving across same-page reloads). It
+        consolidates similar view state settings into a single setting.
+
+        * UserInterface/ApplicationCacheFrame.js:
+        (WebInspector.ApplicationCacheFrame): Add cookie keys and type identifier.
+        (WebInspector.ApplicationCacheFrame.prototype.saveIdentityToCookie): Added.
+        * UserInterface/ApplicationCacheManager.js: remove objectForCookie().
+        * UserInterface/Breakpoint.js:
+        (WebInspector.Breakpoint): Add cookie keys and type identifier.
+        (WebInspector.Breakpoint.prototype.saveIdentityToCookie):
+        * UserInterface/CookieStorageObject.js:
+        (WebInspector.CookieStorageObject.prototype.saveIdentityToCookie): Added.
+        * UserInterface/DOMStorageObject.js:
+        (WebInspector.DOMStorageObject): Add cookie keys and type identifier.
+        (WebInspector.DOMStorageObject.prototype.saveIdentityToCookie): Added.
+        * UserInterface/DatabaseObject.js:
+        (WebInspector.DatabaseObject): Add cookie keys and type identifier.
+        (WebInspector.DatabaseObject.prototype.saveIdentityToCookie): Added.
+        * UserInterface/DatabaseTableObject.js:
+        (WebInspector.DatabaseTableObject): Add cookie keys and type identifier.
+        (WebInspector.DatabaseTableObject.prototype.saveIdentityToCookie): Added.
+        * UserInterface/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype.saveStateToCookie): Added.
+        (WebInspector.DebuggerSidebarPanel.prototype.restoreStateFromCookie): Added.
+        * UserInterface/Frame.js:
+        (WebInspector.Frame): Add cookie keys and type identifier.
+        (WebInspector.Frame.prototype.saveIdentityToCookie): Added.
+        * UserInterface/FrameResourceManager.js: remove objectForCookie().
+        * UserInterface/InstrumentSidebarPanel.js:
+        (WebInspector.InstrumentSidebarPanel.prototype.showTimelineForRecordType):
+        Return the shown timeline, if any.
+
+        (WebInspector.InstrumentSidebarPanel.prototype.saveStateToCookie): Added.
+        (WebInspector.InstrumentSidebarPanel.prototype.restoreStateFromCookie): Added.
+        (WebInspector.InstrumentSidebarPanel.prototype.showProfile):
+        Return the shown profile, if any.
+
+        * UserInterface/Main.js:
+        (WebInspector): Added cookie keys for the selected sidebar and
+        typeidentifier of the sidebar's selected tree element.
+
+        (WebInspector.contentLoaded): Remove callbacks for
+        resolveAndShowPendingContentViewCookie(). Consolidate all saved
+        inspector view state into one Setting. Move special-cased
+        restoring of the console to the restoration method. Move saving
+        of last opened navigation panel to the saving method.
+
+        (WebInspector._mainResourceDidChange): Try to restore saved view
+        state when the main resource changes.
+
+        (WebInspector._provisionalLoadCommitted): Update the saved view
+        state when the navigation commits. This is the last chance to save
+        it before the main resource changes and the navigation panel view
+        state is discarded and rebuilt.
+
+        (WebInspector._pageHidden): Update the saved view state when the
+        inspector page is hidden, but before state is discarded.
+
+        (WebInspector._navigationSidebarPanelSelected): Don't save last
+        navigation sidebar panel.
+        (WebInspector._updateCookieForInspectorViewState): Renamed from
+        _updateCurrentContentViewCookie. It delegates view state
+        serialization to the currently open navigation sidebar, rather
+        than the current content view.
+
+        (WebInspector._contentBrowserRepresentedObjectsDidChange): Don't
+        spuriously serialize the current view state cookie on every
+        ContentView change.
+
+        (WebInspector._restoreInspectorViewStateFromCookie): Renamed from
+        _showContentViewForCookie. It now restores a specific navigation
+        panel and delegates remaining view state restoration to the panel
+        itself. Last-resort selection of any tree element with the same
+        type identifier was moved to the navigation panel's restore method.
+
+        * UserInterface/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel):
+        (WebInspector.NavigationSidebarPanel.prototype.set contentTreeOutline):
+        (WebInspector.NavigationSidebarPanel.prototype.createContentTreeOutline):
+        Save references to all created TreeOutlines in a Set, so we can
+        restore any tree's selection.
+
+        (WebInspector.NavigationSidebarPanel.prototype.saveStateToCookie):
+        Added. Find the selected tree element from all tree outlines and
+        ask it to serialize its identity.
+
+        (WebInspector.NavigationSidebarPanel.prototype.restoreStateFromCookie):
+        Added. Eagerly search existing tree elements for a matching
+        representedObject. If none exists, save the pending cookie and
+        schedule last-resort matching using the provided timeout interval.
+
+        (WebInspector.NavigationSidebarPanel.prototype._treeElementAddedOrChanged):
+        Check if the added tree element matches a pending view state
+        cookie, if one exists.
+
+        (WebInspector.NavigationSidebarPanel.prototype.treeElementMatchesCookie):
+        Added. Check if the tree element's representedObject matches the
+        pending view state cookie.
+
+        (WebInspector.NavigationSidebarPanel.prototype._checkElementsForPendingViewStateCookie):
+        Added. For each provided tree element, check if the tree
+        element's represented object produces the same serialized identity
+        as the pending view state cookie that we are trying to resolve.
+        If a match is found (possibly by relaxing to matching anything
+        with the same type), select the tree element and clear both the
+        pending view state cookie and last-resort selection timer.
+
+        * UserInterface/Resource.js:
+        (WebInspector.Resource): Add cookie keys and type identifier.
+        (WebInspector.Resource.prototype.saveIdentityToCookie): Added.
+
+        * UserInterface/ResourceClusterContentView.js:
+        (WebInspector.ResourceClusterContentView.prototype.saveToCookie):
+        (WebInspector.ResourceClusterContentView.prototype.restoreFromCookie):
+        Since identity state is serialized by the representedObject, these
+        methods only need to save view-specific state, such as the visible
+        subview. Remove extraneous state.
+
+        * UserInterface/Script.js:
+        (WebInspector.Script): Add cookie keys and type identifier.
+        (WebInspector.Script.prototype.saveIdentityToCookie): Added.
+        * UserInterface/StorageManager.js: remove objectForCookie().
+        * UserInterface/TimelineManager.js: remove objectForCookie().
+        * UserInterface/TimelinesContentView.js:
+        (WebInspector.TimelinesContentView.prototype.saveToCookie):
+        (WebInspector.TimelinesContentView.prototype.restoreFromCookie):
+        Since identity state is serialized by the representedObject, these
+        methods only need to save view-specific state, such as the visible
+        subview. Remove extraneous state.
+
+        * UserInterface/TreeOutline.js: Add TreeOutline.prototype.constructor
+        so other code can assume the constructor property exists.
+
 2013-12-02  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: popover can overlap target frame

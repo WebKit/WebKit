@@ -43,6 +43,10 @@ WebInspector.Script = function(id, range, url, injected, sourceMapURL)
         WebInspector.sourceMapManager.downloadSourceMap(sourceMapURL, this._url, this);
 };
 
+WebInspector.Script.TypeIdentifier = "script";
+WebInspector.Script.URLCookieKey = "script-url";
+WebInspector.Script.DisplayNameCookieKey = "script-display-name";
+
 WebInspector.Script.resetUniqueDisplayNameNumbers = function()
 {
     WebInspector.Script._nextUniqueDisplayNameNumber = 1;
@@ -115,6 +119,12 @@ WebInspector.Script.prototype = {
 
         DebuggerAgent.getScriptSource(this._id, callback);
         return true;
+    },
+
+    saveIdentityToCookie: function(cookie)
+    {
+        cookie[WebInspector.Script.URLCookieKey] = this.url;
+        cookie[WebInspector.Script.DisplayNameCookieKey] = this.displayName;
     },
 
     // Private

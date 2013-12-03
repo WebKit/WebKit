@@ -40,6 +40,9 @@ WebInspector.ContentViewCookieType = {
 
 };
 
+WebInspector.SelectedSidebarPanelCookieKey = "selected-sidebar-panel";
+WebInspector.TypeIdentifierCookieKey = "represented-object-type";
+
 WebInspector.loaded = function()
 {
     // Tell the InspectorFrontendHost we loaded first to establish communication with InspectorBackend.
@@ -103,13 +106,7 @@ WebInspector.loaded = function()
     this.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
 
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-
-    // These listeners are for events that could resolve a pending content view cookie.
-    this.applicationCacheManager.addEventListener(WebInspector.ApplicationCacheManager.Event.FrameManifestAdded, this._resolveAndShowPendingContentViewCookie, this);
-    this.frameResourceManager.addEventListener(WebInspector.FrameResourceManager.Event.MainFrameDidChange, this._resolveAndShowPendingContentViewCookie, this);
-    this.storageManager.addEventListener(WebInspector.StorageManager.Event.DatabaseWasAdded, this._resolveAndShowPendingContentViewCookie, this);
-    this.storageManager.addEventListener(WebInspector.StorageManager.Event.CookieStorageObjectWasAdded, this._resolveAndShowPendingContentViewCookie, this);
-    this.storageManager.addEventListener(WebInspector.StorageManager.Event.DOMStorageObjectWasAdded, this._resolveAndShowPendingContentViewCookie, this);
+    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ProvisionalLoadCommitted, this._provisionalLoadCommitted, this);
 
     document.addEventListener("DOMContentLoaded", this.contentLoaded.bind(this));
 
@@ -126,18 +123,17 @@ WebInspector.loaded = function()
     window.addEventListener("keydown", this._windowKeyDown.bind(this));
     window.addEventListener("keyup", this._windowKeyUp.bind(this));
     window.addEventListener("mousemove", this._mouseMoved.bind(this), true);
+    window.addEventListener("pagehide", this._pageHidden.bind(this));
 
     // Create settings.
-    this._lastSelectedNavigationSidebarPanelSetting = new WebInspector.Setting("last-selected-navigation-sidebar-panel", "resource");
+    this._lastInspectorViewStateCookieSetting = new WebInspector.Setting("last-content-view-state-cookie", {});
+
     this._navigationSidebarCollapsedSetting = new WebInspector.Setting("navigation-sidebar-collapsed", false);
     this._navigationSidebarWidthSetting = new WebInspector.Setting("navigation-sidebar-width", null);
 
     this._lastSelectedDetailsSidebarPanelSetting = new WebInspector.Setting("last-selected-details-sidebar-panel", null);
     this._detailsSidebarCollapsedSetting = new WebInspector.Setting("details-sidebar-collapsed", true);
     this._detailsSidebarWidthSetting = new WebInspector.Setting("details-sidebar-width", null);
-
-    this._lastContentViewResponsibleSidebarPanelSetting = new WebInspector.Setting("last-content-view-responsible-sidebar-panel", "resource");
-    this._lastContentCookieSetting = new WebInspector.Setting("last-content-view-cookie", {});
 
     this._toolbarDockedRightDisplayModeSetting = new WebInspector.Setting("toolbar-docked-right-display-mode", WebInspector.Toolbar.DisplayMode.IconAndLabelVertical);
     this._toolbarDockedRightSizeModeSetting = new WebInspector.Setting("toolbar-docked-right-size-mode",WebInspector.Toolbar.SizeMode.Normal);
@@ -278,8 +274,6 @@ WebInspector.contentLoaded = function()
 
     this._updateToolbarHeight();
 
-    this.navigationSidebar.selectedSidebarPanel = this._lastSelectedNavigationSidebarPanelSetting.value;
-
     if (this._navigationSidebarWidthSetting.value)
         this.navigationSidebar.width = this._navigationSidebarWidthSetting.value;
 
@@ -296,14 +290,9 @@ WebInspector.contentLoaded = function()
     // selected sidebar panel gets shown and has a say in what content view gets shown.
     this.navigationSidebar.collapsed = this._navigationSidebarCollapsedSetting.value;
 
-    // If InspectorFrontendAPI didn't show a content view, then try to show the last content view.
-    if (!this.contentBrowser.currentContentView && !this.ignoreLastContentCookie) {
-        if (this._lastContentCookieSetting.value === "console") {
-            // The console does not have a sidebar, so handle its special cookie here.
-            this.showFullHeightConsole();
-        } else
-            this._showContentViewForCookie(this._lastContentCookieSetting.value);
-    }
+    // If InspectorFrontendAPI didn't show a content view, then try to restore the last saved view state.
+    if (!this.contentBrowser.currentContentView && !this.ignoreLastContentCookie)
+        this._restoreInspectorViewStateFromCookie(this._lastInspectorViewStateCookieSetting.value);
 
     this._updateSplitConsoleHeight(this._splitConsoleHeightSetting.value);
 
@@ -726,7 +715,18 @@ WebInspector._mainResourceDidChange = function(event)
 {
     if (!event.target.isMainFrame())
         return;
+
+    this._restoreInspectorViewStateFromCookie(this._lastInspectorViewStateCookieSetting.value, true);
+
     this.updateWindowTitle();
+}
+
+WebInspector._provisionalLoadCommitted = function(event)
+{
+    if (!event.target.isMainFrame())
+        return;
+
+    this._updateCookieForInspectorViewState();
 }
 
 WebInspector._windowFocused = function(event)
@@ -787,6 +787,11 @@ WebInspector._mouseMoved = function(event)
         x: event.pageX,
         y: event.pageY
     };
+}
+
+WebInspector._pageHidden = function(event)
+{
+    this._updateCookieForInspectorViewState();
 }
 
 WebInspector._undock = function(event)
@@ -890,8 +895,6 @@ WebInspector._navigationSidebarPanelSelected = function(event)
     if (!selectedSidebarPanel)
         return;
 
-    this._lastSelectedNavigationSidebarPanelSetting.value = selectedSidebarPanel.identifier;
-
     this._updateNavigationSidebarForCurrentContentView();
 }
 
@@ -965,27 +968,28 @@ WebInspector._toolbarSizeModeDidChange = function(event)
     this._updateToolbarHeight();
 }
 
-WebInspector._updateCurrentContentViewCookie = function()
+WebInspector._updateCookieForInspectorViewState = function()
 {
+    var cookie = {};
     var currentContentView = this.contentBrowser.currentContentView;
-    if (!currentContentView)
-        return;
 
     // The console does not have a sidebar, so create a cookie here.
-    if (currentContentView.representedObject instanceof WebInspector.LogObject) {
-        this._lastContentViewResponsibleSidebarPanelSetting.value = null;
-        this._lastContentCookieSetting.value = "console";
+    if (currentContentView && currentContentView.representedObject instanceof WebInspector.LogObject) {
+        cookie[WebInspector.SelectedSidebarPanelCookieKey] = "console";
+        this._lastInspectorViewStateCookieSetting.value = cookie;
         return;
     }
 
-    var responsibleSidebarPanel = this.sidebarPanelForRepresentedObject(currentContentView.representedObject);
-    if (!responsibleSidebarPanel)
+    var selectedSidebarPanel = this.navigationSidebar.selectedSidebarPanel;
+    if (!selectedSidebarPanel)
         return;
 
-    var cookie = {};
-    currentContentView.saveToCookie(cookie);
-    this._lastContentViewResponsibleSidebarPanelSetting.value = responsibleSidebarPanel.identifier;
-    this._lastContentCookieSetting.value = cookie;
+    // Restoring view state after inspector re-open or page reload is delegated to navigation sidebars.
+    // This is because some navigation sidebar state (such as breakpoint selections) cannot be inferred
+    // solely based on which content view is visible, or multiple navigation sidebars could be shown.
+    cookie[WebInspector.SelectedSidebarPanelCookieKey] = selectedSidebarPanel.identifier;
+    selectedSidebarPanel.saveStateToCookie(cookie);
+    this._lastInspectorViewStateCookieSetting.value = cookie;
 }
 
 WebInspector._contentBrowserCurrentContentViewDidChange = function(event)
@@ -1079,75 +1083,30 @@ WebInspector._contentBrowserRepresentedObjectsDidChange = function(event)
 
     // Stop ignoring the sidebar panel selected event.
     delete this._ignoreDetailsSidebarPanelSelectedEvent;
-
-    this._updateCurrentContentViewCookie(event);
 }
 
-WebInspector._showContentViewForCookie = function(cookie)
+WebInspector._restoreInspectorViewStateFromCookie = function(cookie, causedByReload)
 {
-    if (!cookie || !cookie.type)
-        return null;
-
-    this._pendingContentViewCookie = cookie;
-    var shownContentView = this._resolveAndShowPendingContentViewCookie();
-
-    // At this point, we assume no storage objects or views have been created yet.
-    // If the cookie requests these views, they will be shown when the storage object
-    // is added (if it matches exactly), or any view of the same type (after a timeout).
-    if (!shownContentView) {
-        if (this._lastAttemptCookieCheckingTimeout)
-            clearTimeout(this._lastAttemptCookieCheckingTimeout);
-
-        var lastAttemptToRestoreFromCookie = function() {
-            delete this._lastAttemptCookieCheckingTimeout;
-            this._resolveAndShowPendingContentViewCookie(true);
-        };
-
-        // When the specific storage item wasn't found we want to relax the check to show the first item with the
-        // same type. There is no good time to naturally declare the cookie wasn't found, so we do that on a timeout.
-        this._lastAttemptCookieCheckingTimeout = setTimeout(lastAttemptToRestoreFromCookie.bind(this), 500);
-    }
-
-    return shownContentView;
-}
-
-WebInspector._resolveAndShowPendingContentViewCookie = function(matchOnTypeAlone)
-{
-    var cookie = this._pendingContentViewCookie;
     if (!cookie)
-        return false;
+        return;
 
-    var representedObject = null;
-
-    if (cookie.type === WebInspector.ContentViewCookieType.Resource)
-        representedObject = this.frameResourceManager.objectForCookie(cookie);
-
-    if (cookie.type === WebInspector.ContentViewCookieType.Timelines)
-        representedObject = this.timelineManager.objectForCookie(cookie);
-
-    if (cookie.type === WebInspector.ContentViewCookieType.CookieStorage || cookie.type === WebInspector.ContentViewCookieType.Database  || cookie.type === WebInspector.ContentViewCookieType.DatabaseTable || cookie.type === WebInspector.ContentViewCookieType.DOMStorage)
-        representedObject = this.storageManager.objectForCookie(cookie, matchOnTypeAlone);
-
-    if (cookie.type === WebInspector.ContentViewCookieType.ApplicationCache)
-        representedObject = this.applicationCacheManager.objectForCookie(cookie, matchOnTypeAlone);
-
-    if (!representedObject)
-        return false;
-
-    // If we reached this point, then we should be able to create and/or display a content view based on the cookie.
-    delete this._pendingContentViewCookie;
-    if (this._lastAttemptCookieCheckingTimeout)
-        clearTimeout(this._lastAttemptCookieCheckingTimeout);
-
-    // Delay this work because other listeners of the originating event might not have fired yet.
-    // So displaying the content view before those listeners do their work might cause the
-    // dependent view states (navigation sidebar tree elements, path components) to be wrong.
-    function delayedWork()
-    {
-        this.contentBrowser.showContentViewForRepresentedObject(representedObject, cookie);
+    // The console does not have a sidebar, so handle its special cookie here.
+    if (cookie[WebInspector.SelectedSidebarPanelCookieKey] === "console") {
+        this.showFullHeightConsole();
+        return;
     }
-    setTimeout(delayedWork.bind(this), 0);
-    return true;
+
+    const matchTypeOnlyDelayForReload = 2000;
+    const matchTypeOnlyDelayForReopen = 1000;
+    var sidebarPanelIdentifier = cookie[WebInspector.SelectedSidebarPanelCookieKey];
+    var sidebarPanel = WebInspector.navigationSidebar.findSidebarPanel(sidebarPanelIdentifier);
+    if (!sidebarPanel)
+        return;
+
+    WebInspector.navigationSidebar.selectedSidebarPanel = sidebarPanel;
+
+    var relaxMatchDelay = causedByReload ? matchTypeOnlyDelayForReload : matchTypeOnlyDelayForReopen;
+    sidebarPanel.restoreStateFromCookie(cookie, relaxMatchDelay);
 }
 
 WebInspector._initializeWebSocketIfNeeded = function()

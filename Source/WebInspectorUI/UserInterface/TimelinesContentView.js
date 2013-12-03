@@ -209,6 +209,8 @@ WebInspector.TimelinesContentView.CollapseButton.States = {};
 WebInspector.TimelinesContentView.CollapseButton.States.Normal = "normal";
 WebInspector.TimelinesContentView.CollapseButton.States.Active = "active";
 
+WebInspector.TimelinesContentView.SelectedTimelineCookieKey = "timelines-content-view-selected-timeline";
+
 WebInspector.TimelinesContentView.generateEmbossedCollapseImages = function()
 {
     if (WebInspector.TimelinesContentView._generatedImages)
@@ -337,13 +339,13 @@ WebInspector.TimelinesContentView.prototype = {
 
     saveToCookie: function(cookie)
     {
-        cookie.type = WebInspector.ContentViewCookieType.Timelines;
-        cookie.timeline = this._currentRecordTypeSetting.value;
+        cookie[WebInspector.TimelinesContentView.SelectedTimelineCookieKey] = this._currentRecordTypeSetting.value;
     },
 
     restoreFromCookie: function(cookie)
     {
-        this.showTimelineForRecordType(cookie.timeline);
+        var timeline = cookie[WebInspector.TimelinesContentView.SelectedTimelineCookieKey];
+        this.showTimelineForRecordType(timeline);
     },
 
     timelineOverviewRecordsWithType: function(type)

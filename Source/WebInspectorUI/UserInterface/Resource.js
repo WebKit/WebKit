@@ -55,6 +55,10 @@ WebInspector.Resource = function(url, mimeType, type, loaderIdentifier, requestI
 
 WebInspector.Object.addConstructorFunctions(WebInspector.Resource);
 
+WebInspector.Resource.TypeIdentifier = "resource";
+WebInspector.Resource.URLCookieKey = "resource-url";
+WebInspector.Resource.MainResourceCookieKey = "resource-is-main-resource";
+
 WebInspector.Resource.Event = {
     URLDidChange: "resource-url-did-change",
     MIMETypeDidChange: "resource-mime-type-did-change",
@@ -691,6 +695,12 @@ WebInspector.Resource.prototype = {
             this._type = WebInspector.Resource.Type.Script;
             this.dispatchEventToListeners(WebInspector.Resource.Event.TypeDidChange, {oldType: oldType});
         }
+    },
+
+    saveIdentityToCookie: function(cookie)
+    {
+        cookie[WebInspector.Resource.URLCookieKey] = this.url;
+        cookie[WebInspector.Resource.MainResourceCookieKey] = this.isMainResource();
     }
 };
 

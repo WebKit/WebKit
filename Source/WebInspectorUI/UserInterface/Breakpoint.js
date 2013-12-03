@@ -69,6 +69,11 @@ WebInspector.Breakpoint.PopoverOptionsAutoContinueInputId = "edit-breakpoint-pop
 
 WebInspector.Breakpoint.DefaultBreakpointActionType = WebInspector.BreakpointAction.Type.Log;
 
+WebInspector.Breakpoint.TypeIdentifier = "breakpoint";
+WebInspector.Breakpoint.URLCookieKey = "breakpoint-url";
+WebInspector.Breakpoint.LineNumberCookieKey = "breakpoint-line-number";
+WebInspector.Breakpoint.ColumnNumberCookieKey = "breakpoint-column-number";
+
 WebInspector.Breakpoint.Event = {
     DisabledStateDidChange: "breakpoint-disabled-state-did-change",
     ResolvedStateDidChange: "breakpoint-resolved-state-did-change",
@@ -288,6 +293,13 @@ WebInspector.Breakpoint.prototype = {
         this._actions.splice(index, 1);
 
         this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ActionsDidChange);
+    },
+
+    saveIdentityToCookie: function(cookie)
+    {
+        cookie[WebInspector.Breakpoint.URLCookieKey] = this.url;
+        cookie[WebInspector.Breakpoint.LineNumberCookieKey] = this.sourceCodeLocation.lineNumber;
+        cookie[WebInspector.Breakpoint.ColumnNumberCookieKey] = this.sourceCodeLocation.columnNumber;
     },
 
     // Protected (Called by BreakpointAction)

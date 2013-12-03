@@ -67,6 +67,9 @@ WebInspector.Frame.Event = {
     ExecutionContextsCleared: "frame-execution-contexts-cleared"
 };
 
+WebInspector.Frame.TypeIdentifier = "Frame";
+WebInspector.Frame.MainResourceURLCookieKey = "frame-main-resource-url";
+
 WebInspector.Frame.prototype = {
     constructor: WebInspector.Frame,
 
@@ -430,6 +433,11 @@ WebInspector.Frame.prototype = {
         this._resourceCollection.removeAllResources();
 
         this.dispatchEventToListeners(WebInspector.Frame.Event.AllResourcesRemoved);
+    },
+
+    saveIdentityToCookie: function(cookie)
+    {
+        cookie[WebInspector.Frame.MainResourceURLCookieKey] = this.mainResource.url;
     },
 
     // Private

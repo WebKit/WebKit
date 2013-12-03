@@ -31,6 +31,9 @@ WebInspector.DatabaseTableObject = function(name, database)
     this._database = database;
 };
 
+WebInspector.DatabaseTableObject.TypeIdentifier = "database-table";
+WebInspector.DatabaseTableObject.NameCookieKey = "database-table-object-name";
+
 WebInspector.DatabaseTableObject.prototype = {
     constructor: WebInspector.DatabaseTableObject,
     
@@ -42,7 +45,12 @@ WebInspector.DatabaseTableObject.prototype = {
     get database()
     {
         return this._database;
-    }
+    },
+
+    saveIdentityToCookie: function(cookie)
+    {
+        cookie[WebInspector.DatabaseTableObject.NameCookieKey] = this.name;
+    },
 };
 
 WebInspector.DatabaseTableObject.prototype.__proto__ = WebInspector.Object.prototype;

@@ -80,20 +80,6 @@ WebInspector.FrameResourceManager.prototype = {
         return this._frameIdentifierMap[frameId] || null;
     },
 
-
-    objectForCookie: function(cookie)
-    {
-        var representedObject = cookie.url ? this.resourceForURL(cookie.url) : this.mainFrame;
-
-        if (!representedObject)
-            representedObject = this.mainFrame;
-
-        if (representedObject instanceof WebInspector.Resource && representedObject.isMainResource())
-            representedObject = representedObject.parentFrame;
-
-        return representedObject;
-    },
-
     frameDidNavigate: function(framePayload)
     {
         // Called from WebInspector.PageObserver.

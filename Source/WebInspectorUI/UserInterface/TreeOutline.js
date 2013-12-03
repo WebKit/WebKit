@@ -57,6 +57,7 @@ function TreeOutline(listNode)
 }
 
 TreeOutline._knownTreeElementNextIdentifier = 1;
+TreeOutline.prototype.constructor = TreeOutline;
 
 TreeOutline.prototype.appendChild = function(child)
 {

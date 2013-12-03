@@ -35,9 +35,15 @@ WebInspector.ApplicationCacheFrame = function(frame, manifest, status)
     this._status = status;
 };
 
+WebInspector.ApplicationCacheFrame.TypeIdentifier = "application-cache-frame";
+WebInspector.ApplicationCacheFrame.FrameURLCookieKey = "application-cache-frame-url";
+WebInspector.ApplicationCacheFrame.ManifestURLCookieKey = "application-cache-frame-manifest-url";
+
 WebInspector.ApplicationCacheFrame.prototype = {
     constructor: WebInspector.ApplicationCacheFrame,
     
+    // Public
+
     get frame()
     {
         return this._frame;
@@ -56,6 +62,12 @@ WebInspector.ApplicationCacheFrame.prototype = {
     set status(status)
     {
         this._status = status;
+    },
+
+    saveIdentityToCookie: function(cookie)
+    {
+        cookie[WebInspector.ApplicationCacheFrame.FrameURLCookieKey] = this.frame.url;
+        cookie[WebInspector.ApplicationCacheFrame.ManifestURLCookieKey] = this.manifest.manifestURL;
     }
 };
 

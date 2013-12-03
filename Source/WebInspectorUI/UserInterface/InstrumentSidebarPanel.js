@@ -158,6 +158,10 @@ WebInspector.InstrumentSidebarPanel.StartJavaScriptProfileValue = "start-javascr
 WebInspector.InstrumentSidebarPanel.StartCSSSelectorProfileValue = "start-css-selector-profile";
 WebInspector.InstrumentSidebarPanel.StartCanvasProfileValue = "start-canvas-profile";
 
+WebInspector.InstrumentSidebarPanel.SelectedTimelineCookieKey = "instrument-sidebar-panel-selected-timeline";
+WebInspector.InstrumentSidebarPanel.SelectedProfileTypeCookieKey = "instrument-sidebar-panel-selected-profile-type";
+WebInspector.InstrumentSidebarPanel.SelectedProfileTitleCookieKey = "instrument-sidebar-panel-selected-profile-title";
+
 WebInspector.InstrumentSidebarPanel.prototype = {
     constructor: WebInspector.InstrumentSidebarPanel,
 
@@ -179,9 +183,48 @@ WebInspector.InstrumentSidebarPanel.prototype = {
     {
         var treeElementToSelect = this._timelineTreeElementMap[type];
         if (!treeElementToSelect)
-            return;
+            return null;
 
         treeElementToSelect.select(true, true);
+        return treeElementToSelect.representedObject;
+    },
+
+    saveStateToCookie: function(cookie)
+    {
+        console.assert(cookie);
+
+        // This sidebar has two separate tree outlines, but only one selected tree element between them.
+        var selectedTreeElement = this._timelinesTreeOutline.selectedTreeElement || this.contentTreeOutline.selectedTreeElement;
+        if (!selectedTreeElement)
+            return;
+
+        var representedObject = selectedTreeElement.representedObject;
+        if (representedObject === WebInspector.TimelineRecord.Type.Script || representedObject === WebInspector.TimelineRecord.Type.Layout || representedObject === WebInspector.TimelineRecord.Type.Network)
+            cookie[WebInspector.InstrumentSidebarPanel.SelectedTimelineCookieKey] = representedObject;
+        else if (representedObject instanceof WebInspector.ProfileObject) {
+            cookie[WebInspector.InstrumentSidebarPanel.SelectedProfileTypeCookieKey] = representedObject.type;
+            cookie[WebInspector.InstrumentSidebarPanel.SelectedProfileTitleCookieKey] = representedObject.title;
+        }
+    },
+
+    restoreStateFromCookie: function(cookie)
+    {
+        // Eagerly restore the sidebar's selection, since its elements are persistent or permanent.
+        console.assert(cookie);
+        var selectedTimelineType = cookie[WebInspector.InstrumentSidebarPanel.SelectedTimelineCookieKey];
+        if (selectedTimelineType) {
+            return this.showTimelineForRecordType(selectedTimelineType);
+            return WebInspector.timelineManager.timelines;
+        }
+
+        // Profiles are persisted across page reloads, but not across inspector open/close.
+        var selectedProfileType = cookie[WebInspector.InstrumentSidebarPanel.SelectedProfileTypeCookieKey];
+        var selectedProfileTitle = cookie[WebInspector.InstrumentSidebarPanel.SelectedProfileTitleCookieKey];
+        // Profile titles are optional, but profile types are mandatory.
+        if (!selectedProfileType)
+            return null;
+
+        return this.showProfile(selectedProfileType, selectedProfileTitle);
     },
 
     showProfile: function(type, title)
@@ -192,7 +235,7 @@ WebInspector.InstrumentSidebarPanel.prototype = {
             var profile = treeElement.representedObject;
             if (profile.type === type && profile.title === title) {
                 treeElement.revealAndSelect();
-                return;
+                return profile;
             }
         }
     },

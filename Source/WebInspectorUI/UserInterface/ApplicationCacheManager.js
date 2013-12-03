@@ -102,19 +102,6 @@ WebInspector.ApplicationCacheManager.prototype = {
         ApplicationCacheAgent.getApplicationCacheForFrame(frame.id, callbackWrapper);
     },
 
-    objectForCookie: function(cookie, matchOnTypeAlone)
-    {
-        console.assert(cookie.type && cookie.type === WebInspector.ContentViewCookieType.ApplicationCache);
-
-        for (var i = 0; i < this._applicationCacheObjects.length; ++i) {
-            var object = this._applicationCacheObjects[i];
-            if (object.frame.url === cookie.frame && object.manifest.manifestURL === cookie.manifest)
-                return object;
-        }
-
-        return matchOnTypeAlone && this._applicationCacheObjects.length ? this._applicationCacheObjects[0] : null;
-    },
-
     // Private
 
     _mainResourceDidChange: function(event)
