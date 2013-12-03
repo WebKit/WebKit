@@ -33,7 +33,7 @@
 #include "IntSize.h"
 #include <wtf/Forward.h>
 
-#if USE(CG)
+#if USE(CG) || PLATFORM(NIX)
 #define DefaultInterpolationQuality InterpolationLow
 #else
 #define DefaultInterpolationQuality InterpolationDefault

@@ -4,24 +4,16 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/cairo"
     "${WEBCORE_DIR}/platform/graphics/freetype"
     "${WEBCORE_DIR}/platform/graphics/glx"
-    "${WEBCORE_DIR}/platform/graphics/harfbuzz/"
-    "${WEBCORE_DIR}/platform/graphics/harfbuzz/ng"
     "${WEBCORE_DIR}/platform/graphics/nix"
     "${WEBCORE_DIR}/platform/graphics/opengl"
     "${WEBCORE_DIR}/platform/graphics/opentype"
     "${WEBCORE_DIR}/platform/graphics/surfaces"
-    "${WEBCORE_DIR}/platform/graphics/texmap"
     "${WEBCORE_DIR}/platform/linux"
     "${WEBCORE_DIR}/platform/mediastream/gstreamer"
     "${PLATFORM_DIR}/nix/"
 )
 
 list(APPEND WebCore_SOURCES
-    css/WebKitCSSArrayFunctionValue.cpp
-    css/WebKitCSSMatFunctionValue.cpp
-    css/WebKitCSSMatrix.cpp
-    css/WebKitCSSMixFunctionValue.cpp
-
     editing/SmartReplaceICU.cpp
 
     editing/nix/EditorNix.cpp
@@ -35,12 +27,9 @@ list(APPEND WebCore_SOURCES
     platform/ContextMenuItemNone.cpp
     platform/ContextMenuNone.cpp
     platform/Cursor.cpp
-    platform/LocalizedStrings.cpp
-    platform/PlatformStrategies.cpp
 
     platform/cairo/WidgetBackingStoreCairo.cpp
 
-    platform/graphics/ImageSource.cpp
     platform/graphics/OpenGLShims.cpp
     platform/graphics/WOFFFileFormat.cpp
 
@@ -63,9 +52,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cairo/TileCairo.cpp
     platform/graphics/cairo/TiledBackingStoreBackendCairo.cpp
     platform/graphics/cairo/TransformationMatrixCairo.cpp
-
-    platform/graphics/filters/CustomFilterMeshGenerator.cpp
-    platform/graphics/filters/CustomFilterValidatedProgram.cpp
 
     platform/graphics/freetype/FontCacheFreeType.cpp
     platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp
@@ -93,23 +79,7 @@ list(APPEND WebCore_SOURCES
     platform/gtk/LoggingGtk.cpp
     platform/gtk/SharedBufferGtk.cpp
 
-    platform/image-decoders/ImageDecoder.cpp
-
-    platform/image-decoders/bmp/BMPImageDecoder.cpp
-    platform/image-decoders/bmp/BMPImageReader.cpp
-
     platform/image-decoders/cairo/ImageDecoderCairo.cpp
-
-    platform/image-decoders/gif/GIFImageDecoder.cpp
-    platform/image-decoders/gif/GIFImageReader.cpp
-
-    platform/image-decoders/ico/ICOImageDecoder.cpp
-
-    platform/image-decoders/jpeg/JPEGImageDecoder.cpp
-
-    platform/image-decoders/png/PNGImageDecoder.cpp
-
-    platform/image-decoders/webp/WEBPImageDecoder.cpp
 
     platform/linux/GamepadDeviceLinux.cpp
 
@@ -139,17 +109,9 @@ list(APPEND WebCore_SOURCES
 
     platform/text/nix/TextBreakIteratorInternalICUNix.cpp
 
-    plugins/PluginDatabase.cpp
-    plugins/PluginDebug.cpp
     plugins/PluginPackage.cpp
     plugins/PluginPackageNone.cpp
-    plugins/PluginStream.cpp
-    plugins/PluginView.cpp
     plugins/PluginViewNone.cpp
-
-    rendering/style/StyleCachedShader.cpp
-    rendering/style/StyleCustomFilterProgram.cpp
-    rendering/style/StyleCustomFilterProgramCache.cpp
 )
 
 if (WTF_USE_OPENGL_ES_2)
@@ -186,8 +148,8 @@ if (WTF_USE_EGL)
     list(APPEND WebCore_LIBRARIES ${EGL_LIBRARY})
 else ()
     list(APPEND WebCore_INCLUDE_DIRECTORIES
-        platform/graphics/surfaces/glx
         platform/graphics/surfaces/efl
+        platform/graphics/surfaces/glx
         ${X11_X11_INCLUDE_PATH}
     )
     list(APPEND WebCore_SOURCES
@@ -226,7 +188,7 @@ list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
 list(APPEND WebCore_LIBRARIES
     ${CAIRO_LIBRARIES}
     ${FONTCONFIG_LIBRARIES}
-    ${FREETYPE_LIBRARIES}
+    ${FREETYPE2_LIBRARIES}
     ${GLIB_GIO_LIBRARIES}
     ${GLIB_GMODULE_LIBRARIES}
     ${GLIB_GOBJECT_LIBRARIES}
@@ -242,15 +204,15 @@ list(APPEND WebCore_LIBRARIES
 )
 
 list(APPEND WebCore_INCLUDE_DIRECTORIES
-    ${FONTCONFIG_INCLUDE_DIR}
     ${CAIRO_INCLUDE_DIRS}
-    ${FREETYPE_INCLUDE_DIRS}
+    ${FONTCONFIG_INCLUDE_DIR}
+    ${FREETYPE2_INCLUDE_DIRS}
+    ${GLIB_INCLUDE_DIRS}
+    ${HARFBUZZ_INCLUDE_DIRS}
     ${LIBXML2_INCLUDE_DIR}
     ${LIBXSLT_INCLUDE_DIR}
     ${SQLITE_INCLUDE_DIR}
-    ${GLIB_INCLUDE_DIRS}
     ${ZLIB_INCLUDE_DIRS}
-    ${HARFBUZZ_INCLUDE_DIRS}
 )
 
 add_definitions(-DDATA_DIR="${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}")
@@ -284,6 +246,8 @@ if (WTF_USE_CURL)
         platform/network/curl/CookieNode.cpp
         platform/network/curl/CookieStorageCurl.cpp
         platform/network/curl/CredentialStorageCurl.cpp
+        platform/network/curl/CurlCacheEntry.cpp
+        platform/network/curl/CurlCacheManager.cpp
         platform/network/curl/DNSCurl.cpp
         platform/network/curl/FormDataStreamCurl.cpp
         platform/network/curl/MultipartHandle.cpp
@@ -291,12 +255,14 @@ if (WTF_USE_CURL)
         platform/network/curl/ProxyServerCurl.cpp
         platform/network/curl/ResourceHandleCurl.cpp
         platform/network/curl/ResourceHandleManager.cpp
+        platform/network/curl/SSLHandle.cpp
         platform/network/curl/SocketStreamHandleCurl.cpp
         platform/network/curl/SynchronousLoaderClientCurl.cpp
     )
 
     list(APPEND WebCore_LIBRARIES
         ${CURL_LIBRARIES}
+        ${OPENSSL_LIBRARIES}
     )
 else ()
     list(APPEND WebCore_SOURCES

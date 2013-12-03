@@ -1,3 +1,105 @@
+2013-12-03  Thiago de Barros Lacerda  <thiago.lacerda@openbossa.org>
+
+        Nix Upstream: Updating WebCore files
+        https://bugs.webkit.org/show_bug.cgi?id=124981
+
+        Reviewed by Benjamin Poulain.
+
+        Just to sync our github repo files and the trunk, as part of the upstream process
+
+        No new tests needed.
+
+        * PlatformNix.cmake:
+        * css/mediaControlsNix.css:
+        (audio):
+        (video::-webkit-media-controls):
+        (audio::-webkit-media-controls-enclosure, video::-webkit-media-controls-enclosure):
+        (video::-webkit-media-controls-enclosure):
+        (audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel):
+        (video:-webkit-full-page-media):
+        (audio:-webkit-full-page-media, video:-webkit-full-page-media):
+        (audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button):
+        (audio::-webkit-media-controls-overlay-play-button, video::-webkit-media-controls-overlay-play-button):
+        (audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button):
+        (audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-timeline-container):
+        (audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-controls-time-remaining-display):
+        (audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline):
+        (audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider):
+        (input[type="range"]::-webkit-media-slider-container):
+        (input[type="range"]::-webkit-media-slider-container > div):
+        (input[type="range"]::-webkit-media-slider-thumb):
+        (audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button):
+        (audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls-seek-forward-button):
+        (audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button):
+        (audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-media-controls-toggle-closed-captions-button):
+        (audio::-webkit-media-controls-fullscreen-volume-slider, video::-webkit-media-controls-fullscreen-volume-slider):
+        (audio::-webkit-media-controls-fullscreen-volume-min-button, video::-webkit-media-controls-fullscreen-volume-min-button):
+        (audio::-webkit-media-controls-fullscreen-volume-max-button, video::-webkit-media-controls-fullscreen-volume-max-button):
+        (video::-webkit-media-text-track-container):
+        (video::cue):
+        (video::-webkit-media-text-track-region):
+        (video::-webkit-media-text-track-region-container):
+        (video::-webkit-media-text-track-region-container.scrolling):
+        (video::-webkit-media-text-track-display):
+        (video::cue(:future)):
+        (video::-webkit-media-text-track-container b):
+        (video::-webkit-media-text-track-container u):
+        (video::-webkit-media-text-track-container i):
+        * editing/Editor.cpp:
+        (WebCore::Editor::cut):
+        (WebCore::Editor::copy):
+        (WebCore::Editor::copyImage):
+        * editing/Editor.h:
+        * html/HTMLCanvasElement.h:
+        * platform/Cursor.h:
+        * platform/audio/FFTFrame.h:
+        * platform/audio/nix/AudioBusNix.cpp:
+        (WebCore::AudioBus::loadPlatformResource):
+        * platform/graphics/GLContext.h:
+        * platform/nix/CursorNix.cpp:
+        (WebCore::Cursor::ensurePlatformCursor):
+        * platform/nix/GamepadsNix.cpp:
+        (WebCore::sampleGamepads):
+        * platform/nix/RenderThemeNix.cpp:
+        (WebCore::toIntSize):
+        (WebCore::toNixRect):
+        (WebCore::RenderThemeNix::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeNix::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeNix::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeNix::platformInactiveSelectionForegroundColor):
+        (WebCore::RenderThemeNix::platformActiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeNix::platformInactiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeNix::platformActiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeNix::platformInactiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeNix::platformActiveTextSearchHighlightColor):
+        (WebCore::RenderThemeNix::platformInactiveTextSearchHighlightColor):
+        (WebCore::RenderThemeNix::platformFocusRingColor):
+        (WebCore::RenderThemeNix::platformTapHighlightColor):
+        (WebCore::RenderThemeNix::paintButton):
+        (WebCore::RenderThemeNix::paintTextField):
+        (WebCore::RenderThemeNix::paintCheckbox):
+        (WebCore::RenderThemeNix::setCheckboxSize):
+        (WebCore::RenderThemeNix::paintRadio):
+        (WebCore::RenderThemeNix::setRadioSize):
+        (WebCore::RenderThemeNix::paintMenuList):
+        (WebCore::RenderThemeNix::paintProgressBar):
+        (WebCore::RenderThemeNix::paintSliderTrack):
+        (WebCore::RenderThemeNix::paintSliderThumb):
+        (WebCore::RenderThemeNix::paintInnerSpinButton):
+        (WebCore::RenderThemeNix::paintMeter):
+        (WebCore::RenderThemeNix::extraMediaControlsStyleSheet):
+        (WebCore::RenderThemeNix::paintMediaPlayButton):
+        (WebCore::RenderThemeNix::paintMediaMuteButton):
+        (WebCore::RenderThemeNix::paintMediaSeekBackButton):
+        (WebCore::RenderThemeNix::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeNix::paintMediaSliderTrack):
+        (WebCore::RenderThemeNix::paintMediaVolumeSliderContainer):
+        (WebCore::RenderThemeNix::paintMediaVolumeSliderTrack):
+        (WebCore::RenderThemeNix::paintMediaRewindButton):
+        * platform/nix/RenderThemeNix.h:
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+
 2013-12-03  Ralph Thomas  <ralpht@gmail.com>
 
         Typo: FixedPositionConstaint -> FixedPositionConstraint

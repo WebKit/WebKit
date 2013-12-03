@@ -184,7 +184,6 @@ private:
 #endif // USE(WEBAUDIO_IPP)
 
 #if PLATFORM(NIX)
-    void scalePlanarData(float scale);
     OwnPtr<Nix::FFTFrame> m_fftFrame;
 #endif // PLATFORM(NIX)
 

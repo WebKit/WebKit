@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2012, 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,6 +103,22 @@ protected:
     virtual bool paintMeter(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
 #endif
 
+#if ENABLE(VIDEO)
+    virtual String extraMediaControlsStyleSheet() OVERRIDE;
+    virtual bool usesVerticalVolumeSlider() const OVERRIDE { return false; }
+    virtual bool usesMediaControlStatusDisplay() OVERRIDE { return true; }
+    virtual bool usesMediaControlVolumeSlider() const OVERRIDE { return false; }
+
+    virtual bool paintMediaPlayButton(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+    virtual bool paintMediaMuteButton(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+    virtual bool paintMediaSeekBackButton(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+    virtual bool paintMediaSeekForwardButton(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+    virtual bool paintMediaSliderTrack(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+    virtual bool paintMediaVolumeSliderContainer(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+    virtual bool paintMediaVolumeSliderTrack(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+    virtual bool paintMediaRewindButton(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+#endif
+
     virtual bool paintSliderTrack(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
     virtual void adjustSliderTrackStyle(StyleResolver*, RenderStyle*, Element*) const OVERRIDE;
 
@@ -123,6 +139,6 @@ private:
     RenderThemeNix();
 };
 
-}
+} // namespace WebCore
 
 #endif // RenderThemeNix_h

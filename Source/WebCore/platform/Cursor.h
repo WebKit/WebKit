@@ -77,8 +77,10 @@ namespace WebCore {
     typedef NSCursor *PlatformCursor;
 #elif PLATFORM(GTK)
     typedef GRefPtr<GdkCursor> PlatformCursor;
-#elif PLATFORM(EFL) || PLATFORM(NIX)
+#elif PLATFORM(EFL)
     typedef const char* PlatformCursor;
+#elif PLATFORM(NIX)
+    typedef unsigned PlatformCursor;
 #elif PLATFORM(BLACKBERRY)
     typedef BlackBerry::Platform::BlackBerryCursor PlatformCursor;
 #else

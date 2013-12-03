@@ -409,7 +409,7 @@ public:
     PassRefPtr<DocumentFragment> webContentFromPasteboard(Pasteboard&, Range& context, bool allowPlainText, bool& chosePlainText);
 #endif
 
-#if PLATFORM(MAC) || PLATFORM(EFL)
+#if PLATFORM(MAC) || PLATFORM(EFL) || PLATFORM(NIX)
     void writeSelectionToPasteboard(Pasteboard&);
     void writeImageToPasteboard(Pasteboard&, Element& imageElement, const URL&, const String& title);
 #endif
