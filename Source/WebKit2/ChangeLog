@@ -1,3 +1,11 @@
+2013-12-03  Enrica Casucci  <enrica@apple.com>
+
+        Build fix for iOS.
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebCoreArgumentCoders.cpp: Added missing header.
+
 2013-12-03  Tamas Gergely  <tgergely.u-szeged@partner.samsung.com>
 
         Remove WTF:: prefix from types in messages.in files.

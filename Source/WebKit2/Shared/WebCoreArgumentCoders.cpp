@@ -61,6 +61,7 @@
 
 #if PLATFORM(IOS)
 #include <WebCore/FloatQuad.h>
+#include <WebCore/Pasteboard.h>
 #include <WebCore/SelectionRect.h>
 #include <WebCore/SharedBuffer.h>
 #endif // PLATFORM(IOS)
