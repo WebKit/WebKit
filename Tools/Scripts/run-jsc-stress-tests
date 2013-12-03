@@ -810,7 +810,11 @@ def handleCollectionFile(collection)
         prepareCollection($collectionName)
       
         Dir.chdir($outputDir) {
-            allJSFiles($collection).each {
+            directoryToSearch = $collection
+            if entry["tests"]
+                directoryToSearch += entry["tests"]
+            end
+            allJSFiles(directoryToSearch).each {
                 | path |
                
                 $benchmark = path.basename

@@ -1,3 +1,12 @@
+2013-12-02  Filip Pizlo  <fpizlo@apple.com>
+
+        run-jsc-stress-tests should allow for tests that have a directory containing .js files nested within a directory containing the data
+        https://bugs.webkit.org/show_bug.cgi?id=125130
+
+        Reviewed by Geoffrey Garen.
+
+        * Scripts/run-jsc-stress-tests:
+
 2013-12-02  Samuel White  <samuel_white@apple.com>
 
         AX: Add AXUIElementCountForSearchPredicate parameterized attribute.
