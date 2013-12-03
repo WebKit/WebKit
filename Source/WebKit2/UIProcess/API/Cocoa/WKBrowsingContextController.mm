@@ -363,9 +363,9 @@ static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef f
         return;
 
     WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
-    if ([browsingContext.loadDelegate respondsToSelector:@selector(browsingContextControllerDidFailProvisionalLoad:withError:)]) {
+    if ([browsingContext.loadDelegate respondsToSelector:@selector(browsingContextController:didFailProvisionalLoadWithError:)]) {
         RetainPtr<NSError> nsError = adoptNS(createErrorWithRecoveryAttempter(error, frame, browsingContext));
-        [browsingContext.loadDelegate browsingContextControllerDidFailProvisionalLoad:browsingContext withError:nsError.get()];
+        [browsingContext.loadDelegate browsingContextController:browsingContext didFailProvisionalLoadWithError:nsError.get()];
     }
 }
 
@@ -395,9 +395,9 @@ static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErr
         return;
 
     WKBrowsingContextController *browsingContext = (WKBrowsingContextController *)clientInfo;
-    if ([browsingContext.loadDelegate respondsToSelector:@selector(browsingContextControllerDidFailLoad:withError:)]) {
+    if ([browsingContext.loadDelegate respondsToSelector:@selector(browsingContextController:didFailLoadWithError:)]) {
         RetainPtr<NSError> nsError = adoptNS(createErrorWithRecoveryAttempter(error, frame, browsingContext));
-        [browsingContext.loadDelegate browsingContextControllerDidFailLoad:browsingContext withError:nsError.get()];
+        [browsingContext.loadDelegate browsingContextController:browsingContext didFailLoadWithError:nsError.get()];
     }
 }
 
