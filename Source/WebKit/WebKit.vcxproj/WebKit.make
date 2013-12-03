@@ -14,5 +14,6 @@ install:
 	devenv "WebKit.submit.sln" /rebuild $(BUILDSTYLE)
 	xcopy "%ConfigurationBuildDir%\bin32\*.pdb" "$(DSTROOT)\%ProgramFilesAAS%" /e/v/i/h/y
 	-xcopy "%ConfigurationBuildDir%\bin32\*.dll" "$(DSTROOT)\%ProgramFilesAAS%" /e/v/i/h/y
+	xcopy "%ConfigurationBuildDir%\bin32\WebKit.resources" "$(DSTROOT)\%ProgramFilesAAS%" /e/v/i/h/y
 	xcopy "%ConfigurationBuildDir%\include\*" "$(DSTROOT)\AppleInternal\include\" /e/v/i/h/y	
 	xcopy "%ConfigurationBuildDir%\lib32\*" "$(DSTROOT)\AppleInternal\lib32\" /e/v/i/h/y
