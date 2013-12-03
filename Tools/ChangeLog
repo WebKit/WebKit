@@ -3,6 +3,16 @@
         Add a script to automatically configure a git clone
         https://bugs.webkit.org/show_bug.cgi?id=110073
 
+        Revert the change to use https for now since git.webkit.org is setup with http.
+
+        * Scripts/webkitpy/tool/commands/setupgitclone.py:
+        (SetupGitClone.execute):
+
+2013-12-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a script to automatically configure a git clone
+        https://bugs.webkit.org/show_bug.cgi?id=110073
+
         Reviewed by Benjamin Poulain.
 
         Added "webkit-patch setup-git-clone" to setup a brand new Git clone.
